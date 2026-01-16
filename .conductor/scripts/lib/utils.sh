@@ -110,7 +110,7 @@ check_port() {
     local port="$1"
     local service_name="${2:-Service on port $port}"
 
-    if lsof -ti:"$port" -sTCP:LISTEN -sUDP:CLOSE -t &>/dev/null | grep -q .; then
+    if lsof -ti:"$port" -sTCP:LISTEN -t &>/dev/null | head -n1 | grep -q .; then
         log_success "$service_name is running on port $port"
         return 0
     else
@@ -136,6 +136,134 @@ wait_for_port() {
 
     log_warning "$service_name did not start within ${timeout}s"
     return 1
+}
+
+# =============================================================================
+# PM2 FUNCTIONS
+# =============================================================================
+
+pm2_installed() {
+    command -v pm2 &>/dev/null
+}
+
+pm2_frontend_running() {
+    pm2_installed || return 1
+    pm2 list 2>/dev/null | grep -E "wb-repricer-frontend(-dev)?\s.*online" > /dev/null 2>&1
+}
+
+get_pm2_frontend_name() {
+    if ! pm2_installed; then
+        return 1
+    fi
+
+    # Check for dev version first, then production
+    if pm2 list 2>/dev/null | grep -q "wb-repricer-frontend-dev.*online"; then
+        echo "wb-repricer-frontend-dev"
+        return 0
+    elif pm2 list 2>/dev/null | grep -q "wb-repricer-frontend.*online"; then
+        echo "wb-repricer-frontend"
+        return 0
+    fi
+    return 1
+}
+
+get_pm2_frontend_info() {
+    local app_name=$(get_pm2_frontend_name)
+    if [ -n "$app_name" ]; then
+        pm2 describe "$app_name" 2>/dev/null
+    fi
+}
+
+pm2_process_cwd() {
+    local info=$(get_pm2_frontend_info)
+    if [ -n "$info" ]; then
+        # Extract the path from PM2 output using pipe as delimiter
+        echo "$info" | grep "exec cwd" | awk -F'│' '{print $3}' | xargs
+    fi
+}
+
+pm2_process_cwd_matches() {
+    local pm2_cwd=$(pm2_process_cwd)
+    if [ -z "$pm2_cwd" ]; then
+        return 1
+    fi
+    [ "$pm2_cwd" = "$PROJECT_ROOT" ]
+}
+
+start_pm2_frontend() {
+    local mode="${1:-development}"
+    local app_name="wb-repricer-frontend"
+
+    if [ "$mode" = "development" ]; then
+        app_name="wb-repricer-frontend-dev"
+    fi
+
+    if ! [ -f "ecosystem.config.js" ]; then
+        log_error "PM2 ecosystem config not found"
+        return 1
+    fi
+
+    log_info "Starting frontend via PM2 ($app_name)..."
+
+    # Create logs directory
+    mkdir -p logs
+
+    if pm2 start ecosystem.config.js --only "$app_name" 2>&1; then
+        # Save PM2 process list
+        pm2 save --force >/dev/null 2>&1
+
+        # Wait for startup
+        if wait_for_port 3100 "PM2 Frontend" 30; then
+            log_success "Frontend started via PM2"
+            return 0
+        else
+            log_error "PM2 process started but port 3100 not responding"
+            return 1
+        fi
+    else
+        log_error "Failed to start PM2 frontend"
+        return 1
+    fi
+}
+
+restart_pm2_frontend() {
+    local app_name=$(get_pm2_frontend_name)
+
+    if [ -z "$app_name" ]; then
+        log_warning "No PM2 frontend process to restart"
+        return 1
+    fi
+
+    log_info "Restarting PM2 frontend ($app_name)..."
+
+    if pm2 restart "$app_name" 2>&1; then
+        sleep 2
+        log_success "PM2 frontend restarted"
+        return 0
+    else
+        log_error "Failed to restart PM2 frontend"
+        return 1
+    fi
+}
+
+stop_pm2_frontend() {
+    local app_name=$(get_pm2_frontend_name)
+
+    if [ -z "$app_name" ]; then
+        log_info "No PM2 frontend process to stop"
+        return 0
+    fi
+
+    log_info "Stopping PM2 frontend ($app_name)..."
+
+    if pm2 stop "$app_name" 2>&1; then
+        pm2 save --force >/dev/null 2>&1
+        log_success "PM2 frontend stopped"
+        return 0
+    else
+        log_error "Failed to stop PM2 frontend"
+        return 1
+    fi
 }
 
 # =============================================================================
