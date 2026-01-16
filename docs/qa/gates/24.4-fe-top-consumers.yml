@@ -1,0 +1,50 @@
+# QA Gate: Story 24.4-fe Top Consumers Widget
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.4-fe"
+  title: "Top Consumers Widget"
+  status: "PASS"
+  score: 90
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "All UX decisions implemented. Lucide icons for ranks, CSS color-coded severity dots."
+
+acceptance_criteria:
+  AC1_display:
+    status: "PASS"
+    evidence: "Top 5 products, compact table, rank with icons"
+  AC2_ratio:
+    status: "PASS"
+    evidence: "Color coding: >20% red, 10-20% yellow, <10% green"
+  AC3_interactions:
+    status: "PASS"
+    evidence: "Row click navigates, Показать все scrolls to table"
+  AC4_design:
+    status: "PASS"
+    evidence: "Card container, Trophy/Medal Lucide icons, colored dots"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/components/TopConsumersWidget.tsx"
+    lines: 218
+    assessment: "Excellent - integrated helpers, clean structure"
+
+ux_decisions_verified:
+  - id: "Q9"
+    decision: "Lucide icons for top 3 ranks"
+    status: "Implemented (Trophy gold, Medal silver/bronze)"
+  - id: "Q10"
+    decision: "CSS color classes for cost severity"
+    status: "Implemented (red/yellow/green/gray)"
+
+color_thresholds:
+  high: ">20% → Red (bg-red-500)"
+  medium: "10-20% → Yellow (bg-yellow-500)"
+  low: "<10% → Green (bg-green-500)"
+  unknown: "null → Gray (bg-gray-300)"
+
+issues: []

@@ -1,0 +1,119 @@
+schema: 1
+story: "5.2-fe"
+story_title: "COGS Edit Dialog"
+gate: PASS
+status_reason: "Complete implementation with all 24 ACs met, 24 unit tests passing, proper form validation, margin warning, and toast notifications."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-11-28T16:40:00Z"
+
+waiver: { active: false }
+
+top_issues: []
+
+risk_summary:
+  totals: { critical: 0, high: 0, medium: 0, low: 0 }
+  recommendations:
+    must_fix: []
+    monitor: []
+
+evidence:
+  tests_reviewed: 24
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    ac_gaps: []
+  test_coverage_source: "useCogsEdit.test.ts (24 tests)"
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "Role-based access (Analyst cannot edit), Authorization headers sent, input validation prevents invalid COGS values."
+  performance:
+    status: PASS
+    notes: "TanStack Mutation with proper query invalidation, optimistic form state, minimal re-renders."
+  reliability:
+    status: PASS
+    notes: "Comprehensive error handling (400/403/404/network), toast notifications, loading states during submission."
+  maintainability:
+    status: PASS
+    notes: "Validation helpers exported for unit testing, clear separation between hook and component, TypeScript strict compliance."
+  accessibility:
+    status: PASS
+    notes: "Form labels properly associated, disabled states during loading, keyboard navigable."
+
+quality_score: 95
+
+test_coverage:
+  unit_tests: 24
+  breakdown:
+    - "validateUnitCost validation (7 tests)"
+    - "validateNotes validation (3 tests)"
+    - "hasCogsChanges detection (7 tests)"
+    - "buildUpdatePayload construction (6 tests)"
+    - "Error message edge cases (1 test)"
+  coverage_areas:
+    - "Positive number validation"
+    - "Empty/whitespace handling"
+    - "Non-numeric string rejection (strict regex)"
+    - "Zero/negative number rejection"
+    - "Notes 1000 character limit"
+    - "Change detection (cost vs notes)"
+    - "Payload optimization (only changed fields)"
+
+component_analysis:
+  dialog: "src/components/custom/CogsEditDialog.tsx"
+  hook: "src/hooks/useCogsEdit.ts"
+
+validation_implementation:
+  unit_cost_rub:
+    - "Required field check"
+    - "Strict numeric validation (rejects '12abc')"
+    - "Positive number enforcement"
+    - "Decimal support"
+  notes:
+    - "Max 1000 characters"
+    - "Character counter shown when >800"
+    - "Counter red when >950"
+  form_level:
+    - "At least one field must change"
+    - "Save button disabled when invalid or unchanged"
+
+acceptance_criteria_verification:
+  ac_1: "✅ Edit button in COGS History table dropdown opens dialog"
+  ac_2: "✅ Dialog can be opened for any active COGS record"
+  ac_3: "✅ Button unavailable for Analyst role"
+  ac_4: "✅ Modal dialog with title 'Редактирование COGS'"
+  ac_5: "✅ Read-only info displayed: nm_id, valid_from, source"
+  ac_6: "✅ Editable fields: unit_cost_rub (number), notes (textarea)"
+  ac_7: "✅ Vertical stack layout (label above input)"
+  ac_8: "✅ Current value shown inline above input field"
+  ac_9: "✅ Margin warning: 'Изменение затронет маржу за N недель'"
+  ac_10: "✅ unit_cost_rub required and > 0"
+  ac_11: "✅ notes max 1000 characters"
+  ac_12: "✅ At least one field must be changed"
+  ac_13: "✅ Real-time validation with error messages"
+  ac_14: "✅ Character counter shown when >800 (red >950)"
+  ac_15: "✅ Save button (primary variant)"
+  ac_16: "✅ Cancel button closes dialog"
+  ac_17: "✅ Loading state: spinner + disabled buttons"
+  ac_18: "✅ Save disabled when invalid or no changes"
+  ac_19: "✅ Success: toast 'COGS обновлён' with margin info"
+  ac_20: "✅ Margin recalculation info in toast description"
+  ac_21: "✅ 400 error: validation errors under fields"
+  ac_22: "✅ 403 error: toast 'Недостаточно прав'"
+  ac_23: "✅ 404 error: toast 'Запись не найдена'"
+  ac_24: "✅ Network error: toast with 'Попробуйте ещё раз'"
+
+recommendations:
+  immediate: []
+  future:
+    - action: "Consider component tests for form interactions (submit flow)"
+      refs: ["src/components/custom/CogsEditDialog.tsx"]
+    - action: "Consider E2E test for edit workflow end-to-end"
+      refs: ["src/components/custom/CogsEditDialog.tsx"]
+
+notes:
+  - "Backend PATCH /v1/cogs/:cogsId already QA passed (90/100)"
+  - "Key difference from POST (new version): PATCH modifies existing record"
+  - "Validation matches backend constraints exactly"
+  - "Character counter UX improves form usability"

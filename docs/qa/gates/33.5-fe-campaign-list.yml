@@ -1,0 +1,74 @@
+# Quality Gate: 33.5-FE
+schema: 1
+story: "33.5-FE"
+story_title: "Campaign List & Filtering"
+gate: PASS
+status_reason: "All 6 ACs fully implemented with proper multi-select, status/type badges, empty states, and accessibility."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-12-22T21:30:00Z"
+
+waiver: { active: false }
+
+top_issues: []
+
+quality_score: 93
+
+evidence:
+  tests_reviewed: 37
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6]
+    ac_gaps: []
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "No security concerns; read-only campaign display"
+  performance:
+    status: PASS
+    notes: "Client-side filtering; campaigns list typically small (<100); useMemo for filtered list"
+  reliability:
+    status: PASS
+    notes: "Graceful error handling; loading skeletons; fallback labels for unknown status/type codes"
+  maintainability:
+    status: PASS
+    notes: "Clean separation between utils (campaign-utils.ts) and components; well-typed interfaces"
+
+recommendations:
+  immediate: []
+  future:
+    - action: "Consider virtualization if campaign list exceeds 100+ items"
+      refs: ["src/app/(dashboard)/analytics/advertising/components/CampaignSelector.tsx:186"]
+
+# Traceability Matrix (Given-When-Then)
+requirements_trace:
+  AC1_Campaign_Selector:
+    - given: "User clicks campaign selector button"
+      when: "Popover opens"
+      then: "Multi-select dropdown with search input, Select All/Clear buttons visible"
+      tests: ["CampaignSelector.test.tsx: opens dropdown on click"]
+  AC2_Status_Badges:
+    - given: "Campaign with status=9 (Active)"
+      when: "CampaignStatusDot renders"
+      then: "Green dot with tooltip 'Активна'"
+      tests: ["campaign-utils.test.ts: getCampaignStatusLabel tests"]
+  AC3_Type_Labels:
+    - given: "Campaign with type=8 (Auto)"
+      when: "CampaignTypeBadge renders"
+      then: "Badge shows 'Авто'"
+      tests: ["campaign-utils.test.ts: getCampaignTypeLabel tests"]
+  AC4_Filter_Behavior:
+    - given: "User selects campaigns"
+      when: "onSelectionChange fires"
+      then: "Parent receives selected IDs; URL updates with campaign IDs"
+      tests: ["CampaignSelector.test.tsx: calls onSelectionChange"]
+  AC5_Empty_State:
+    - given: "No campaigns returned from API"
+      when: "CampaignSelector renders"
+      then: "Shows 'Нет рекламных кампаний' with WB suggestion"
+      tests: ["CampaignSelector.test.tsx: empty state tests"]
+  AC6_Accessibility:
+    - given: "User navigates with keyboard"
+      when: "Focus is on selector"
+      then: "Arrow keys navigate, Enter selects, Escape closes; combobox role with aria-expanded"
+      tests: ["CampaignSelector.test.tsx: accessibility tests"]

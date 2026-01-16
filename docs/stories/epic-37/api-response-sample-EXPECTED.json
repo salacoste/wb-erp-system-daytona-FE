@@ -1,0 +1,125 @@
+{
+  "comment": "EXPECTED response structure per Story 37.1 (Lines 122-178)",
+  "source": "docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md",
+  "date": "2025-12-29",
+  "note": "This is NESTED structure - aggregate in separate object, individual products with full metrics",
+  "status": "NOT IMPLEMENTED - Backend returns FLAT structure instead",
+
+  "data": [
+    {
+      "imtId": 328632,
+
+      "mainProduct": {
+        "nmId": "ter-09",
+        "name": "Product Display Name"
+      },
+
+      "productCount": 6,
+
+      "aggregateMetrics": {
+        "totalSales": 35570,
+        "revenue": 10234,
+        "organicSales": 25336,
+        "organicContribution": 71.2,
+        "spend": 11337,
+        "roas": 0.90
+      },
+
+      "products": [
+        {
+          "nmId": "ter-09",
+          "imtId": 328632,
+          "isMainProduct": true,
+          "totalSales": 15000,
+          "revenue": 4000,
+          "organicSales": 11000,
+          "organicContribution": 73.3,
+          "spend": 6000,
+          "roas": 0.67
+        },
+        {
+          "nmId": "ter-10",
+          "imtId": 328632,
+          "isMainProduct": false,
+          "totalSales": 1489,
+          "revenue": 400,
+          "organicSales": 1089,
+          "organicContribution": 73.1,
+          "spend": 0,
+          "roas": null
+        },
+        {
+          "nmId": "ter-11",
+          "imtId": 328632,
+          "isMainProduct": false,
+          "totalSales": 8500,
+          "revenue": 2300,
+          "organicSales": 6200,
+          "organicContribution": 72.9,
+          "spend": 0,
+          "roas": null
+        },
+        {
+          "nmId": "ter-12",
+          "imtId": 328632,
+          "isMainProduct": false,
+          "totalSales": 5234,
+          "revenue": 1500,
+          "organicSales": 3734,
+          "organicContribution": 71.3,
+          "spend": 0,
+          "roas": null
+        },
+        {
+          "nmId": "ter-13",
+          "imtId": 328632,
+          "isMainProduct": false,
+          "totalSales": 3242,
+          "revenue": 1234,
+          "organicSales": 2008,
+          "organicContribution": 61.9,
+          "spend": 0,
+          "roas": null
+        },
+        {
+          "nmId": "ter-14",
+          "imtId": 328632,
+          "isMainProduct": false,
+          "totalSales": 2105,
+          "revenue": 800,
+          "organicSales": 1305,
+          "organicContribution": 62.0,
+          "spend": 0,
+          "roas": null
+        }
+      ]
+    },
+
+    {
+      "imtId": null,
+      "nmId": 12345678,
+      "vendorCode": "izo30white",
+      "productName": "Standalone Product",
+      "totalViews": 3000,
+      "totalClicks": 150,
+      "totalOrders": 5,
+      "totalSpend": 5000,
+      "totalRevenue": 7500,
+      "totalSales": 7500,
+      "organicSales": 0,
+      "organicContribution": 0,
+      "roas": 1.5,
+      "roi": 0.5,
+      "ctr": 5.0,
+      "cpc": 33.33,
+      "conversionRate": 3.33,
+      "profitAfterAds": 2500
+    }
+  ],
+
+  "meta": {
+    "total": 2,
+    "limit": 100,
+    "offset": 0
+  }
+}

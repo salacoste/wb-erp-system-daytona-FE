@@ -1,0 +1,53 @@
+# QA Gate: Story 24.2-fe Storage Analytics Page Layout
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.2-fe"
+  title: "Storage Analytics Page Layout"
+  status: "PASS"
+  score: 80
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "Core layout functionality complete. Multi-select filters are placeholders (acceptable for MVP)."
+
+acceptance_criteria:
+  AC1_route:
+    status: "PASS"
+    evidence: "Route /analytics/storage accessible, sidebar link with Warehouse icon"
+  AC2_header:
+    status: "PASS"
+    evidence: "StoragePageHeader.tsx with breadcrumbs + Lucide icons"
+  AC3_summary:
+    status: "PASS"
+    evidence: "StorageSummaryCards.tsx with 4 metric cards, Intl.NumberFormat"
+  AC4_sections:
+    status: "PASS"
+    evidence: "All sections (summary, trends, top consumers, SKU table) present"
+  AC5_loading:
+    status: "PASS"
+    evidence: "Comprehensive loading.tsx skeleton (92 lines)"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/page.tsx"
+    lines: 182
+    assessment: "Good - clean layout with all sections"
+  - path: "src/app/(dashboard)/analytics/storage/loading.tsx"
+    lines: 92
+    assessment: "Excellent - comprehensive skeleton"
+
+issues:
+  - id: "UI-001"
+    severity: "Medium"
+    finding: "Multi-select filters are placeholders"
+    action: "Future enhancement"
+    status: "Deferred"
+
+bugfixes_applied:
+  - date: "2025-12-04"
+    fix: "formatIsoWeek import fixed"
+  - date: "2025-12-04"
+    fix: "Sidebar double-highlight fixed (Storage + Analytics)"

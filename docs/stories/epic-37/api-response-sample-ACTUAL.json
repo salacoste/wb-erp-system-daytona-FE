@@ -1,0 +1,89 @@
+{
+  "comment": "ACTUAL backend response structure for group_by=imtId (Epic 36)",
+  "source": "Request #83 (frontend/docs/request-backend/83-epic-36-api-contract.md)",
+  "date": "2025-12-29",
+  "note": "This is FLAT structure - aggregate metrics on top level, NOT nested",
+
+  "data": [
+    {
+      "type": "merged_group",
+      "key": "imtId:328632",
+      "imtId": 328632,
+
+      "mergedProducts": [
+        {
+          "nmId": 173588306,
+          "vendorCode": "ter-09"
+        },
+        {
+          "nmId": 173589306,
+          "vendorCode": "ter-10"
+        },
+        {
+          "nmId": 270937054,
+          "vendorCode": "ter-13-1"
+        }
+      ],
+
+      "totalViews": 6200,
+      "totalClicks": 310,
+      "totalOrders": 13,
+      "totalSpend": 11337,
+      "totalRevenue": 34058,
+      "totalSales": 34058,
+      "organicSales": 0,
+      "organicContribution": 0,
+
+      "financials": {
+        "roas": 3.0,
+        "roi": 2.0,
+        "ctr": 5.0,
+        "cpc": 36.57,
+        "conversionRate": 4.19,
+        "profitAfterAds": 22721
+      },
+
+      "efficiency": {
+        "status": "profitable",
+        "recommendation": "Рентабельная кампания"
+      }
+    },
+
+    {
+      "type": "individual",
+      "key": "sku:12345678",
+      "nmId": 12345678,
+      "vendorCode": "izo30white",
+      "imtId": null,
+
+      "totalViews": 3000,
+      "totalClicks": 150,
+      "totalOrders": 5,
+      "totalSpend": 5000,
+      "totalRevenue": 7500,
+      "totalSales": 7500,
+      "organicSales": 0,
+      "organicContribution": 0,
+
+      "financials": {
+        "roas": 1.5,
+        "roi": 0.5,
+        "ctr": 5.0,
+        "cpc": 33.33,
+        "conversionRate": 3.33,
+        "profitAfterAds": 2500
+      },
+
+      "efficiency": {
+        "status": "profitable",
+        "recommendation": "Умеренная рентабельность"
+      }
+    }
+  ],
+
+  "meta": {
+    "total": 2,
+    "limit": 100,
+    "offset": 0
+  }
+}

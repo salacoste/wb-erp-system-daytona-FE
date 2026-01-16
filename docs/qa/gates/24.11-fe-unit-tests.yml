@@ -1,0 +1,84 @@
+# QA Gate: Story 24.11-FE - Unit Tests for Storage Analytics
+# Epic 24: Paid Storage Analytics (Frontend)
+
+schema: 1
+story: "24.11-fe"
+story_title: "Unit Tests for Storage Analytics"
+gate: CONCERNS
+status_reason: "Excellent test coverage achieved (97%+ hooks, 99%+ components). Some test failures detected during review that need investigation."
+reviewer: "Quinn (Test Architect)"
+updated: "2026-01-03T05:30:00Z"
+
+waiver: { active: false }
+
+top_issues:
+  - id: "TEST-001"
+    severity: medium
+    finding: "Several hook tests failing (useStorageBySku, useStorageTopConsumers, useStorageTrends parameter passing)"
+    suggested_action: "Investigate API client mock setup - tests may need URL encoding fixes"
+    suggested_owner: dev
+  - id: "TEST-002"
+    severity: medium
+    finding: "StorageBySkuTable and TopConsumersWidget integration tests failing"
+    suggested_action: "Review component test setup and mock data alignment"
+    suggested_owner: dev
+  - id: "DEFER-001"
+    severity: low
+    finding: "PaidStorageImportDialog tests deferred (complex dialog state mocking)"
+    suggested_action: "Add dialog tests in future sprint with proper Radix portal mocking"
+    suggested_owner: dev
+
+quality_score: 78
+
+evidence:
+  tests_reviewed: 156
+  risks_identified: 3
+  trace:
+    ac_covered: [1, 2, 3]
+    ac_gaps: [4]  # Import dialog flow tests deferred
+
+nfr_validation:
+  security: { status: PASS, notes: "N/A for test story" }
+  performance: { status: PASS, notes: "Tests run in reasonable time (<15s)" }
+  reliability: { status: CONCERNS, notes: "Some tests failing - need investigation" }
+  maintainability: { status: PASS, notes: "Well-organized test structure with fixtures" }
+
+coverage_report:
+  hooks: "97.18% (target: 80%)"
+  components: "99.38% (target: 70%)"
+  helpers: "92.85% (target: 90%)"
+  api_client: "100%"
+
+code_quality_assessment: |
+  Comprehensive test coverage exceeding all targets:
+  - 156 tests created across hooks, components, helpers, and API client
+  - Test utilities and fixtures properly organized
+  - Coverage targets exceeded significantly
+
+  Issues requiring attention:
+  - Hook parameter passing tests failing (brand, warehouse, cursor)
+  - Component integration tests failing (StorageBySkuTable, TopConsumersWidget)
+  - May be related to API client mock configuration or URL encoding
+
+test_files_created:
+  - src/hooks/__tests__/useStorageAnalytics.test.ts (28 tests)
+  - src/components/custom/__tests__/ProductNameCell.test.tsx (10 tests)
+  - src/components/custom/__tests__/WarehouseBadges.test.tsx (8 tests)
+  - src/components/custom/__tests__/StorageAlertBanner.test.tsx (15 tests)
+  - src/components/custom/__tests__/TopConsumersWidget.test.tsx (19 tests)
+  - src/components/custom/__tests__/StorageBySkuTable.test.tsx (19 tests)
+  - src/lib/api/__tests__/storage-analytics.test.ts (21 tests)
+  - src/test/fixtures/storage-analytics.ts
+  - src/test/utils/test-utils.tsx
+
+recommendations:
+  immediate:
+    - action: "Fix failing hook tests - check API client mock URL encoding"
+      refs: ["src/hooks/__tests__/useStorageAnalytics.test.ts"]
+    - action: "Fix failing component tests - align mock data with component expectations"
+      refs: ["src/app/(dashboard)/analytics/storage/components/__tests__/"]
+  future:
+    - action: "Add PaidStorageImportDialog tests with proper portal mocking"
+      refs: ["src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportDialog.test.tsx"]
+
+expires: "2026-01-17T00:00:00Z"

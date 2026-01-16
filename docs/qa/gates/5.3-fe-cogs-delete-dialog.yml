@@ -1,0 +1,115 @@
+schema: 1
+story: "5.3-fe"
+story_title: "COGS Delete Confirmation Dialog"
+gate: PASS
+status_reason: "Complete implementation with all 17 ACs met, 18 unit tests passing, sophisticated version chain analysis, and proper destructive action UX patterns."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-11-28T16:40:00Z"
+
+waiver: { active: false }
+
+top_issues: []
+
+risk_summary:
+  totals: { critical: 0, high: 0, medium: 0, low: 0 }
+  recommendations:
+    must_fix: []
+    monitor: []
+
+evidence:
+  tests_reviewed: 18
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    ac_gaps: []
+  test_coverage_source: "useCogsDelete.test.ts (18 tests)"
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "Role-based access (Analyst cannot delete), soft delete allows admin recovery, Authorization headers sent."
+  performance:
+    status: PASS
+    notes: "TanStack Mutation with query invalidation, minimal API calls, efficient version chain analysis."
+  reliability:
+    status: PASS
+    notes: "Comprehensive error handling (403/404/network), toast notifications, confirmation checkbox prevents accidental deletion."
+  maintainability:
+    status: PASS
+    notes: "analyzeVersionChain exported for testing, formatters extracted to hook, clear separation of concerns."
+  accessibility:
+    status: PASS
+    notes: "AlertDialog pattern for destructive actions, checkbox with label association, proper focus management."
+
+quality_score: 95
+
+test_coverage:
+  unit_tests: 18
+  breakdown:
+    - "formatDateForDelete validation (4 tests)"
+    - "formatCurrencyForDelete validation (3 tests)"
+    - "analyzeVersionChain (11 tests)"
+  coverage_areas:
+    - "Single version detection (isOnlyVersion)"
+    - "Current version detection (null valid_to)"
+    - "Previous version detection (matching dates)"
+    - "Deleted version exclusion"
+    - "Multiple version chain analysis"
+    - "Edge cases (empty history, self-match prevention)"
+
+component_analysis:
+  dialog: "src/components/custom/CogsDeleteDialog.tsx"
+  hook: "src/hooks/useCogsDelete.ts"
+
+version_chain_logic:
+  isCurrentVersion: "record.valid_to === null"
+  hasPreviousVersion: "history.find(r => r.valid_to === record.valid_from && r.is_active)"
+  isOnlyVersion: "activeVersions.length === 1"
+
+ux_patterns:
+  destructive_action:
+    - "AlertDialog (not Dialog) for destructive confirmation"
+    - "Red destructive button variant"
+    - "Detailed summary of what will be deleted"
+    - "Clear explanation of consequences"
+  conditional_warnings:
+    - "Version chain info when deleting current with previous"
+    - "Red alert block for 'only version' case"
+    - "Checkbox confirmation for high-risk deletion"
+  no_undo:
+    - "Soft delete allows admin recovery"
+    - "Toast mentions admin recovery option"
+
+acceptance_criteria_verification:
+  ac_1: "✅ Delete button in dropdown opens confirmation dialog"
+  ac_2: "✅ Button unavailable for Analyst role"
+  ac_3: "✅ Button unavailable for already deleted records"
+  ac_4: "✅ Dialog title: '⚠️ Удаление записи COGS'"
+  ac_5: "✅ Detailed summary: cost, date range, affected weeks"
+  ac_6: "✅ Record info displayed: unit_cost_rub, valid_from, affected_weeks"
+  ac_7: "✅ Version chain warning with previous version details"
+  ac_8: "✅ Red alert for 'only version' case"
+  ac_9: "✅ Delete button (destructive/red variant)"
+  ac_10: "✅ Cancel button (outline)"
+  ac_11: "✅ Loading state: spinner + disabled buttons"
+  ac_12: "✅ Checkbox confirmation required for only version"
+  ac_13: "✅ Success toast with admin recovery mention"
+  ac_14: "✅ No undo option (soft delete → admin recovery)"
+  ac_15: "✅ 403 error: toast 'Недостаточно прав'"
+  ac_16: "✅ 404 error: toast 'Запись не найдена или уже удалена'"
+  ac_17: "✅ Network error: toast with 'Попробуйте ещё раз'"
+
+recommendations:
+  immediate: []
+  future:
+    - action: "Consider E2E test for delete workflow with version chain scenarios"
+      refs: ["src/components/custom/CogsDeleteDialog.tsx"]
+    - action: "Consider visual regression test for red alert styling"
+      refs: ["src/components/custom/CogsDeleteDialog.tsx"]
+
+notes:
+  - "Backend DELETE /v1/cogs/:cogsId already QA passed (90/100)"
+  - "Soft delete preserves data integrity and audit trail"
+  - "AlertDialog pattern follows shadcn/ui best practices for destructive actions"
+  - "Version chain logic handles complex multi-version scenarios correctly"
+  - "Edge case: empty history returns isOnlyVersion=false (0 !== 1)"

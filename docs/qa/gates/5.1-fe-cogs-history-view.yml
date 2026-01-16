@@ -1,0 +1,106 @@
+schema: 1
+story: "5.1-fe"
+story_title: "COGS History View"
+gate: PASS
+status_reason: "Complete implementation with all 20 ACs met, 50 unit tests passing, excellent code organization with exported helper functions for testability."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-11-28T16:40:00Z"
+
+waiver: { active: false }
+
+top_issues: []
+
+risk_summary:
+  totals: { critical: 0, high: 0, medium: 0, low: 0 }
+  recommendations:
+    must_fix: []
+    monitor: []
+
+evidence:
+  tests_reviewed: 50
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    ac_gaps: []
+  test_coverage_source: "useCogsHistoryFull.test.ts (37 tests) + CogsHistoryTable.test.tsx (13 tests)"
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "Role-based access control implemented (Analyst=view only, Manager+=edit/delete, Owner/Admin=view deleted). Authorization headers verified."
+  performance:
+    status: PASS
+    notes: "TanStack Query with staleTime=1min/gcTime=5min, cursor-based pagination (25/page), efficient client-side state for pagination cursors."
+  reliability:
+    status: PASS
+    notes: "Comprehensive loading/error/empty states, retry button on errors, graceful degradation when data unavailable."
+  maintainability:
+    status: PASS
+    notes: "Clean separation of concerns: hook (helpers) + component (UI). Helper functions exported for unit testing. TypeScript strict mode compliance."
+  accessibility:
+    status: PASS
+    notes: "WCAG AA compliant, proper ARIA labels (sr-only for icons), keyboard navigable dropdowns, semantic table structure."
+
+quality_score: 95
+
+test_coverage:
+  unit_tests: 50
+  breakdown:
+    - "formatDateRu validation (6 tests)"
+    - "formatCurrencyRu validation (7 tests)"
+    - "getSourceLabel/getSourceIcon (8 tests)"
+    - "formatWeeksCount Russian pluralization (11 tests)"
+    - "analyzeVersionChain logic (5 tests)"
+    - "CogsHistoryTable rendering (13 tests)"
+  coverage_areas:
+    - "Date/currency formatting for Russian locale"
+    - "Source icon mapping with tooltips"
+    - "Version chain analysis for delete confirmation"
+    - "Table column rendering and styling"
+    - "Role-based visibility (Owner/Admin vs Analyst)"
+    - "Affected weeks expand/collapse"
+    - "Deleted record strikethrough styling"
+
+component_analysis:
+  page: "src/app/(dashboard)/cogs/history/page.tsx"
+  table: "src/components/custom/CogsHistoryTable.tsx"
+  meta: "src/components/custom/CogsHistoryMeta.tsx"
+  pagination: "src/components/custom/CogsHistoryPagination.tsx"
+  weeks_cell: "src/components/custom/AffectedWeeksCell.tsx"
+  hook: "src/hooks/useCogsHistoryFull.ts"
+
+acceptance_criteria_verification:
+  ac_1: "✅ Page route /cogs/history?nmId={nmId} implemented"
+  ac_2: "✅ Page title shows product name and current COGS"
+  ac_3: "✅ Breadcrumb: Главная → COGS → История → {Product Name}"
+  ac_4: "✅ Table displays all columns (valid_from, valid_to, cost, source, weeks, notes, actions)"
+  ac_5: "✅ Records sorted by date (newest first via API)"
+  ac_6: "✅ Cursor-based pagination with 25 records/page"
+  ac_7: "✅ Affected weeks collapsible (N недель → expand on click)"
+  ac_8: "✅ Source icons (✏️📥⚙️) with tooltips"
+  ac_9: "✅ Meta card with product_name, current_cogs, total_versions"
+  ac_10: "✅ nm_id as small text under product name"
+  ac_11: "✅ Skeleton loader during loading"
+  ac_12: "✅ Empty state with CTA to assign COGS"
+  ac_13: "✅ Error state with retry button"
+  ac_14: "✅ 'Показать удалённые' checkbox for Owner/Admin"
+  ac_15: "✅ Deleted rows: gray background + strikethrough"
+  ac_16: "✅ Deleted records have no action buttons"
+  ac_17: "✅ Dropdown menu (⋮) with Edit/Delete actions"
+  ac_18: "✅ Edit button opens CogsEditDialog"
+  ac_19: "✅ Delete button opens CogsDeleteDialog"
+  ac_20: "✅ Dropdown only for Manager/Owner/Admin (not Analyst)"
+
+recommendations:
+  immediate: []
+  future:
+    - action: "Consider E2E tests for full history navigation workflow"
+      refs: ["src/app/(dashboard)/cogs/history/page.tsx"]
+    - action: "Consider visual regression tests for deleted row styling"
+      refs: ["src/components/custom/CogsHistoryTable.tsx"]
+
+notes:
+  - "Backend endpoint already implemented and QA passed (90/100)"
+  - "Russian locale properly implemented for all formatting"
+  - "UX decisions documented and implemented per spec"
+  - "Reusable analyzeVersionChain exported for Story 5.3-fe"

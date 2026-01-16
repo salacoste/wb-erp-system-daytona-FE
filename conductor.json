@@ -1,0 +1,141 @@
+{
+  "projectRoot": "{project-root}",
+  "conductorVersion": "1.0",
+  "lastUpdated": "2026-01-15",
+
+  "scripts": {
+    "setup": "./.conductor/scripts/setup.sh",
+    "run": "./.conductor/scripts/run.sh",
+    "archive": "./.conductor/scripts/archive.sh"
+  },
+
+  "bmad": {
+    "core": ".bmad-core/",
+    "bmm": "_bmad/bmm/",
+    "agents": "_bmad/bmm/agents/",
+    "workflows": "_bmad/bmm/workflows/",
+    "config": "_bmad/bmm/config.yaml",
+    "coreWorkflow": "_bmad/core/tasks/workflow.xml",
+    "outputFolder": "_bmad-output",
+    "cheatsheet": "bmad-cheatsheet.md"
+  },
+
+  "frontend": {
+    "technology": "Next.js 15",
+    "language": "TypeScript",
+    "runtime": "Node.js 20+",
+    "state": "Zustand",
+    "testing": "Jest + React Testing Library + Playwright",
+    "styling": "Tailwind CSS",
+    "components": "React 19"
+  },
+
+  "documentation": {
+    "pmInstruction": "docs/PM-AGENT-INSTRUCTION-BMM.md",
+    "adr": "docs/adr/",
+    "architecture": "docs/front-end-architecture.md",
+    "apiIntegration": "docs/api-integration-guide.md",
+    "developmentLifecycle": "docs/DEVELOPMENT-LIFECYCLE.md",
+    "conductorSetup": "CONDUCTOR-SETUP.md"
+  },
+
+  "bmmWorkflows": {
+    "analysis": "_bmad/bmm/workflows/1-analysis/",
+    "plan": "_bmad/bmm/workflows/2-plan-workflows/",
+    "solutioning": "_bmad/bmm/workflows/3-solutioning/",
+    "implementation": "_bmad/bmm/bmad/bmm/workflows/4-implementation/"
+  },
+
+  "bmmAgents": {
+    "pm": "_bmad/bmm/agents/pm.md",
+    "architect": "_bmad/bmm/agents/architect.md",
+    "dev": "_bmad/bmm/agents/dev.md",
+    "sm": "_bmad/bmm/agents/sm.md",
+    "tea": "_bmad/bmm/agents/tea.md",
+    "tech-writer": "_bmad/bmm/agents/tech-writer.md",
+    "analyst": "_bmad/bmm/agents/analyst.md",
+    "ux-designer": "_bmad/bmm/agents/ux-designer.md",
+    "quick-flow-solo-dev": "_bmad/bmm/agents/quick-flow-solo-dev.md"
+  },
+
+  "backendIntegration": {
+    "apiDocs": "../docs/API-PATHS-REFERENCE.md",
+    "apiBaseURL": "http://localhost:3000",
+    "integrationGuide": "docs/api-integration-guide.md"
+  },
+
+  "paths": {
+    "frontendRoot": "src/",
+    "appRoot": "src/app/",
+    "components": "src/components/",
+    "hooks": "src/hooks/",
+    "lib": "src/lib/",
+    "stores": "src/stores/",
+    "styles": "src/styles/",
+    "types": "src/types/",
+    "utils": "src/utils/",
+    "app": "src/app/",
+    "pages": "src/app/",
+    "public": "public/"
+  },
+
+  "sprintTracking": {
+    "sprintStatus": "sprint-status.yaml",
+    "epicsFolder": "docs/stories/epic-*/",
+    "storiesFolder": "docs/stories/epic-*/"
+  },
+
+  "qa": {
+    "gates": "docs/qa/gates/",
+    "gateFormat": "story: XX.Y, date: YYYY-MM-DD, gate_decision: PASS|CONCERNS|FAIL|WAIVED",
+    "qualityScore": "0-100",
+    "frontendValidation": [
+      "Component hierarchy is correct",
+      "Accessibility: WCAG AA compliant",
+      "Responsive: mobile/tablet/desktop tested",
+      "API integration working (if applicable)",
+      "Error handling is proper"
+    ]
+  },
+
+  "doR": {
+    "reference": "docs/PM-AGENT-INSTRUCTION-BMM.md#2-frontend-definition-of-ready-dor",
+    "checklist": [
+      "User Story format: As a/I want/So that",
+      "Numbered Acceptance Criteria (AC1-ACn)",
+      "Related documents linked (Epic, UX Design, Backend API)",
+      "UI/UX requirements defined (components, state, responsive)",
+      "Accessibility considered (WCAG 2.1 AA minimum)",
+      "Backend API endpoints specified (if integration required)"
+    ]
+  },
+
+  "doD": {
+    "reference": "docs/PM-AGENT-INSTRUCTION-BMM.md#3-frontend-definition-of-done-dod",
+    "checklist": [
+      "All Acceptance Criteria executed and verified (100%)",
+      "Components created/updated (React components)",
+      "Tests written and passing (unit + integration)",
+      "Visual regression tests passed (if applicable)",
+      "No breaking changes without versioning/migration",
+      "Documentation updated (Storybook, component docs)",
+      "QA Gate passed (no blockers)",
+      "Dev Agent Record filled (file list + changes)"
+    ]
+  },
+
+  "development": {
+    "port": 3100,
+    "devCommand": "npm run dev",
+    "buildCommand": "npm run build",
+    "testCommand": "npm run test",
+    "lintCommand": "npm run lint",
+    "formatCommand": "npm run format"
+  },
+
+  "external": {
+    "context7": "Check ../.mcp.json for configured documentation servers",
+    "wbSdk": "Backend via ../docs/API-PATHS-REFERENCE.md",
+    "mcpServers": "context7 (docs), sequential (analysis), magic (UI), playwright (testing)"
+  }
+}

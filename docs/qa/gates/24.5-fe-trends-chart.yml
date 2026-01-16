@@ -1,0 +1,52 @@
+# QA Gate: Story 24.5-fe Storage Trends Chart
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.5-fe"
+  title: "Storage Trends Chart"
+  status: "PASS"
+  score: 92
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "Excellent implementation. Purple color scheme, proper null handling, summary stats."
+
+acceptance_criteria:
+  AC1_chart:
+    status: "PASS"
+    evidence: "Recharts AreaChart with gradient fill, X-axis weeks, Y-axis currency"
+  AC2_summary:
+    status: "PASS"
+    evidence: "Min, max, avg values displayed, trend percentage"
+  AC3_interactivity:
+    status: "PASS"
+    evidence: "Custom tooltip, gaps for null data (UX Q12)"
+  AC4_single_product:
+    status: "PASS"
+    evidence: "nmId prop support, title changes"
+  AC5_null_handling:
+    status: "PASS"
+    evidence: "connectNulls=false shows gaps, tooltip explains"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/components/StorageTrendsChart.tsx"
+    lines: 197
+    assessment: "Excellent - under 200 lines, clean structure"
+
+ux_decisions_verified:
+  - id: "Q11"
+    decision: "Click week filter tables"
+    status: "DEFERRED (adds complexity)"
+  - id: "Q12"
+    decision: "Show gaps for null data"
+    status: "Implemented (connectNulls=false)"
+
+color_scheme:
+  storage_line: "#7C4DFF (Purple)"
+  trend_up_bad: "text-red-600"
+  trend_down_good: "text-green-600"
+
+issues: []

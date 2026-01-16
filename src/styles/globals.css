@@ -1,0 +1,122 @@
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    /* Primary red colors - WCAG 2.1 AA compliant (5.48:1 with white) */
+    --primary: 0 65% 47%; /* #C62828 - accessible with white text */
+    --primary-dark: 0 65% 40%; /* #A31515 */
+    --primary-light: 0 100% 90%; /* #FFCDD2 */
+    --primary-foreground: 0 0% 100%; /* White text */
+
+    /* Background colors */
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 20%; /* Dark gray text */
+
+    /* Card colors */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 0 0% 20%;
+
+    /* Popover colors (dropdowns, tooltips) */
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 0 0% 20%;
+
+    /* Muted colors (disabled states, placeholders) */
+    --muted: 0 0% 96%; /* #F5F5F5 */
+    --muted-foreground: 0 0% 46%; /* #757575 */
+
+    /* Accent colors (hover states in selects/menus) */
+    --accent: 0 0% 96%; /* #F5F5F5 */
+    --accent-foreground: 0 0% 20%;
+
+    /* Border and input */
+    --border: 0 0% 93%; /* #EEEEEE */
+    --input: 0 0% 93%;
+    --ring: 0 65% 55%; /* Primary red for focus rings */
+    --ring-offset-background: 0 0% 100%; /* White */
+
+    /* Semantic colors */
+    --success: 142 76% 36%; /* #4CAF50 */
+    --error: 0 65% 47%; /* #C62828 - WCAG AA compliant */
+    --info: 217 91% 60%; /* #2196F3 */
+    --destructive: 0 65% 47%; /* #C62828 - WCAG AA compliant */
+    --destructive-foreground: 0 0% 100%; /* White */
+
+    /* Border radius */
+    --radius: 0.5rem; /* 8px */
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Smooth sidebar slide animations - outside @layer for higher specificity */
+/* Initial state - always start from left (only when not open) */
+[data-side="left"]:not([data-state="open"]) {
+  transform: translateX(-100%) !important;
+}
+
+/* Opening animation - works with or without data-radix-dialog-content */
+[data-side="left"][data-state="open"],
+[data-radix-dialog-content][data-side="left"][data-state="open"] {
+  animation: slideInFromLeft 300ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+/* Closing animation */
+[data-side="left"][data-state="closed"],
+[data-radix-dialog-content][data-side="left"][data-state="closed"] {
+  animation: slideOutToLeft 200ms cubic-bezier(0.7, 0, 0.84, 0) both !important;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Fallback selectors */
+[data-side="left"] {
+  transform: translateX(-100%);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-side="left"][data-state="open"] {
+  transform: translateX(0);
+}
+
+[data-side="left"][data-state="closed"] {
+  transform: translateX(-100%);
+  transition: transform 200ms cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+@layer utilities {
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+

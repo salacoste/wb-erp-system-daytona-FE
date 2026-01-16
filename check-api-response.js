@@ -1,0 +1,22 @@
+// Temporary script to check API response
+console.log('Checking what API returns for finance summary...');
+console.log('Open DevTools Console in browser and run:');
+console.log('');
+console.log('fetch("http://localhost:3100/v1/analytics/weekly/available-weeks", {');
+console.log('  headers: {');
+console.log('    "Authorization": "Bearer YOUR_TOKEN",');
+console.log('    "X-Cabinet-Id": "YOUR_CABINET_ID"');
+console.log('  }');
+console.log('}).then(r => r.json()).then(weeks => {');
+console.log('  console.log("Available weeks:", weeks);');
+console.log('  const latestWeek = weeks[0]?.week || weeks.data?.[0]?.week;');
+console.log('  return fetch(`http://localhost:3100/v1/analytics/weekly/finance-summary?week=${latestWeek}`, {');
+console.log('    headers: {');
+console.log('      "Authorization": "Bearer YOUR_TOKEN",');
+console.log('      "X-Cabinet-Id": "YOUR_CABINET_ID"');
+console.log('    }');
+console.log('  });');
+console.log('}).then(r => r.json()).then(data => {');
+console.log('  console.log("Finance Summary:", data);');
+console.log('  console.log("Summary Total:", data.summary_total);');
+console.log('});');

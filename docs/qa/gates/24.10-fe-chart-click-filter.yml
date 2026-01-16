@@ -1,0 +1,68 @@
+# QA Gate: Story 24.10-FE - Chart Click-to-Filter Interaction
+# Epic 24: Paid Storage Analytics (Frontend)
+
+schema: 1
+story: "24.10-fe"
+story_title: "Chart Click-to-Filter Interaction"
+gate: CONCERNS
+status_reason: "Implementation complete with visual highlight and filter propagation. Missing dedicated unit tests for WeekFilterBadge component."
+reviewer: "Quinn (Test Architect)"
+updated: "2026-01-03T05:30:00Z"
+
+waiver: { active: false }
+
+top_issues:
+  - id: "TEST-001"
+    severity: medium
+    finding: "No dedicated unit tests for WeekFilterBadge component"
+    suggested_action: "Add unit tests for WeekFilterBadge render, clear button, and accessibility"
+    suggested_owner: dev
+  - id: "AC-001"
+    severity: low
+    finding: "AC1 missing visual: cursor changes to pointer on hover over data points"
+    suggested_action: "Verify cursor: pointer style is applied to chart data points"
+    suggested_owner: dev
+
+quality_score: 75
+
+evidence:
+  tests_reviewed: 0
+  risks_identified: 2
+  trace:
+    ac_covered: [2, 3, 4]
+    ac_gaps: [1]
+
+nfr_validation:
+  security: { status: PASS, notes: "No security concerns" }
+  performance: { status: PASS, notes: "Efficient state propagation via props" }
+  reliability: { status: PASS, notes: "Proper handling of null/undefined selectedWeek" }
+  maintainability: { status: CONCERNS, notes: "Missing test coverage for WeekFilterBadge" }
+
+code_quality_assessment: |
+  Good implementation with click-to-filter functionality working correctly:
+  - CustomDot component properly highlights selected week (larger radius, red color)
+  - WeekFilterBadge displays selected week with clear button
+  - Filter state persisted in URL params
+  - Toggle deselection works (click same week to clear)
+  - Week filter clears on week range change
+
+  Areas for improvement:
+  - WeekFilterBadge component needs dedicated unit tests
+  - Verify cursor: pointer is visible on chart hover
+
+implementation_highlights:
+  - files_created:
+      - src/app/(dashboard)/analytics/storage/components/WeekFilterBadge.tsx
+  - files_updated:
+      - src/app/(dashboard)/analytics/storage/components/StorageTrendsChart.tsx
+      - src/app/(dashboard)/analytics/storage/page.tsx
+
+recommendations:
+  immediate:
+    - action: "Add unit tests for WeekFilterBadge component"
+      refs: ["src/app/(dashboard)/analytics/storage/components/__tests__/WeekFilterBadge.test.tsx"]
+  future:
+    - action: "Add E2E test for chart click → table filter integration"
+      refs: ["e2e/storage-analytics.spec.ts"]
+
+expires: "2026-01-17T00:00:00Z"

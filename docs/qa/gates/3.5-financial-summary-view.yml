@@ -1,0 +1,41 @@
+schema: 1
+story: '3.5'
+story_title: 'Financial Summary View'
+gate: PASS
+status_reason: 'All acceptance criteria met. Comprehensive test coverage added (43 tests total: 10 for FinancialSummaryTable, 8 for WeekSelector, 25 for useFinancialSummary hooks).'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-01-20T13:00:00Z'
+
+waiver: { active: false }
+
+top_issues: []
+
+risk_summary:
+  totals: { critical: 0, high: 0, medium: 0, low: 0 }
+  recommendations:
+    must_fix: []
+    monitor: []
+
+evidence:
+  tests_reviewed: 43
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    ac_gaps: []
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'Uses existing API client with authentication headers'
+  performance:
+    status: PASS
+    notes: 'Uses TanStack Query for efficient caching and refetching'
+  reliability:
+    status: PASS
+    notes: 'Proper error handling with retry functionality and loading states'
+  maintainability:
+    status: PASS
+    notes: 'Comprehensive test coverage (43 tests) ensures maintainability and reduces regression risk'
+
+quality_score: 100
+

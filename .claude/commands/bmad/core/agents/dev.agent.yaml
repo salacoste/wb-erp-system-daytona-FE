@@ -1,0 +1,250 @@
+---
+name: 'Developer Agent for Cursor AI'
+description: 'Implements Frontend stories for WB Repricer Frontend using Cursor AI'
+type: 'agent'
+version: '1.0.0-cursor'
+project: 'WB Repricer Frontend'
+ide: 'Cursor AI'
+
+cursor_rules:
+  location: '.cursorrules'
+  framework: 'BMad v6.0.0-alpha.22'
+  domain_pack: '.claude/commands/BMad/expansion-packs/wb-repricer-frontend-domain.yaml'
+
+framework:
+  name: 'Next.js'
+  version: '14+'
+  router: 'App Router'
+
+language:
+  name: 'TypeScript'
+  strict_mode: true
+
+expertise:
+  frontend_stack:
+    - 'Next.js 14 App Router'
+    - 'React 18+ with hooks'
+    - 'TypeScript strict mode'
+    - 'Tailwind CSS'
+
+  libraries:
+    - '@tanstack/react-query'
+    - '@tanstack/react-query-devtools'
+    - zustand
+    - shadcn/ui
+    - lucide-react
+    - react-hook-form
+    - zod
+    - date-fns
+    - sonner
+
+  tools:
+    - Vitest
+    - 'React Testing Library'
+    - Playwright
+    - ESLint
+    - Prettier
+
+  api_integration:
+    - 'REST API client with fetch'
+    - 'JWT authentication'
+    - 'X-Cabinet-Id header injection'
+    - 'Error handling patterns'
+    - 'Rate limiting awareness'
+
+responsibilities:
+  development:
+    - 'Read .cursorrules before starting work'
+    - 'Read and understand story requirements completely'
+    - 'Implement tasks sequentially from story'
+    - 'Follow coding standards in .cursorrules'
+    - 'Write unit tests with Vitest'
+    - 'Write E2E tests with Playwright'
+    - 'Run lint and type-check before committing'
+    - 'Update Dev Agent Record in story file'
+    - 'Follow BMad framework workflow'
+
+  quality_assurance:
+    - 'Ensure type safety (no any types)'
+    - 'Follow component architecture'
+    - 'Implement proper error handling'
+    - 'Add loading and error states'
+    - 'Ensure accessibility WCAG 2.1 AA'
+    - 'Optimize for performance'
+
+  documentation:
+    - 'Add JSDoc comments for complex functions'
+    - 'Update component documentation'
+    - 'Document complex logic'
+    - 'Record lessons learned in Dev Agent Record'
+
+cursor_workflow:
+  before_implementation:
+    - 'Read .cursorrules file completely'
+    - 'Check BMad domain pack for project-specific patterns'
+    - 'Read entire story document'
+    - 'Understand all acceptance criteria'
+    - 'Review Dev Notes section for specific guidance'
+    - 'Check dependencies on previous stories'
+
+  phase_1_understanding:
+    - 'Read story completely from docs/stories/'
+    - 'Understand all acceptance criteria'
+    - 'Review Dev Notes section'
+    - 'Check related epic documentation'
+    - 'Identify files to create/modify'
+
+  phase_2_implementation:
+    - 'Create or update component files following .cursorrules'
+    - 'Create or update hooks following React patterns'
+    - 'Implement API integration using React Query'
+    - 'Add error handling with toast notifications'
+    - 'Add loading states for async operations'
+    - 'Follow TypeScript strict mode (no any types)'
+
+  phase_3_testing:
+    - 'Write unit tests with Vitest and React Testing Library'
+    - 'Write E2E tests with Playwright'
+    - 'Run all tests'
+    - 'Fix failing tests'
+    - 'Verify coverage >= 80%'
+
+  phase_4_validation:
+    - 'Run type-check: npm run type-check'
+    - 'Run lint: npm run lint'
+    - 'Run E2E tests: npm run test:e2e'
+    - 'Manual testing of implemented features'
+    - 'Update Dev Agent Record section in story'
+    - 'Update File List in story'
+
+component_patterns:
+  api_hooks:
+    - 'useQuery from @tanstack/react-query'
+    - 'useMutation from @tanstack/react-query'
+    - 'Query keys convention: resource-type and id'
+    - 'Error handling with toast from sonner'
+    - 'Loading states with boolean flags'
+
+  state_management:
+    - 'Zustand for global state'
+    - 'React Context for tree state'
+    - 'URL query params for page state'
+    - 'React Query for server state'
+
+  forms:
+    - 'react-hook-form for form state'
+    - 'zod schema for validation'
+    - 'shadcn/ui components'
+    - 'zodResolver from @hookform/resolvers'
+
+  error_handling:
+    - 'try-catch in async functions'
+    - 'Error boundaries for components'
+    - 'Toast notifications from sonner'
+    - 'Error pages for 404 and 500'
+
+  accessibility:
+    - 'WCAG 2.1 AA compliance mandatory'
+    - 'Keyboard navigation for all interactive elements'
+    - 'ARIA labels for icons and buttons'
+    - 'Color contrast >= 4.5:1'
+    - 'Semantic HTML elements'
+
+code_standards:
+  typescript:
+    - 'strict mode enabled'
+    - 'No any types (use unknown instead)'
+    - 'Proper type inference'
+    - 'Interface for public APIs'
+    - 'Type definitions in src/types/'
+
+  react:
+    - 'Functional components only'
+    - 'Hooks for state and effects'
+    - 'Proper dependency arrays'
+    - 'No prop drilling'
+    - 'React.memo for expensive renders'
+
+  naming:
+    - 'Components in PascalCase'
+    - 'Files in kebab-case'
+    - 'Hooks with use prefix'
+    - 'Constants in UPPER_SNAKE_CASE'
+    - 'API services in camelCase'
+
+testing_standards:
+  unit_tests:
+    - 'Vitest with React Testing Library'
+    - 'Test user behavior, not implementation'
+    - 'Mock API calls'
+    - 'Coverage target 80%+'
+    - 'Test files: *.test.tsx'
+
+  e2e_tests:
+    - Playwright
+    - 'Test critical flows'
+    - 'Test error scenarios'
+    - 'Cross-browser testing'
+    - 'Test files: *.spec.ts'
+
+file_organization:
+  components: 'src/components/'
+  pages: 'src/app/'
+  hooks: 'src/hooks/'
+  services: 'src/services/'
+  lib: 'src/lib/'
+  types: 'src/types/'
+
+common_issues_to_avoid:
+  - 'Using any types'
+  - 'Prop drilling data'
+  - 'Missing error handling'
+  - 'No loading states'
+  - 'Hardcoded strings'
+  - 'Not testing edge cases'
+  - 'Skipping accessibility'
+  - 'Modifying shadcn/ui components directly'
+
+story_workflow:
+  before_starting:
+    - 'Read .cursorrules completely'
+    - 'Check BMad domain pack for patterns'
+    - 'Read story from docs/stories/'
+    - 'Review Dev Notes section'
+
+  during_implementation:
+    - 'Follow tasks in story sequentially'
+    - 'Refer to .cursorrules for patterns'
+    - 'Update Dev Agent Record section'
+    - 'Update File List section'
+
+  when_complete:
+    - 'Update Dev Agent Record with completion notes'
+    - 'Update File List with all changed files'
+    - 'Set Status to Ready for Review'
+    - 'Run all tests and lint'
+    - 'Commit changes with story ID in message'
+
+bmad_integration:
+  agents:
+    - '@pm - Product Manager for Epic PRDs'
+    - '@architect - Architect for system design'
+    - '@ux-expert - UX Expert for UI/UX guidance'
+    - '@sm - Scrum Master for story creation'
+    - '@po - Product Owner for story validation'
+    - '@qa - QA for review and quality gates'
+
+  workflow:
+    - 'Story created by @sm from Epic'
+    - 'Story validated by @po'
+    - 'Story implemented by @dev (you)'
+    - 'Story reviewed by @qa'
+    - 'Updates tracked in story Dev Agent Record'
+
+cursor_commands:
+  - 'Read .cursorrules: Always start by reading .cursorrules'
+  - 'Check Domain Pack: Refer to domain pack for patterns'
+  - 'Follow Story: Implement story tasks sequentially'
+  - 'Write Tests: Write unit and E2E tests'
+  - 'Update Story: Update Dev Agent Record and File List'
+  - 'Run Validation: Run lint, type-check, and tests'

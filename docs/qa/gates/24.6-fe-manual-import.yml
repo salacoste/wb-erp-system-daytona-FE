@@ -1,0 +1,60 @@
+# QA Gate: Story 24.6-fe Manual Import UI
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.6-fe"
+  title: "Manual Import UI"
+  status: "PASS"
+  score: 88
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "Complete import flow. Indeterminate progress, close confirmation, scheduler info."
+
+acceptance_criteria:
+  AC1_button:
+    status: "PASS"
+    evidence: "Import button in header, dialog opens, visible for Manager/Owner"
+  AC2_dialog:
+    status: "PASS"
+    evidence: "Date range picker, 8-day max validation, default last 7 days"
+  AC3_progress:
+    status: "PASS"
+    evidence: "Indeterminate progress bar, status text, polling"
+  AC4_cancel:
+    status: "PASS"
+    evidence: "AlertDialog confirmation, backend continues"
+  AC5_scheduler:
+    status: "PASS"
+    evidence: "Minimal info: вторник, 08:00 МСК"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx"
+    lines: 305
+    assessment: "Acceptable - complex dialog, slightly over 200 lines"
+
+ux_decisions_verified:
+  - id: "Q13"
+    decision: "Indeterminate progress bar"
+    status: "Implemented (backend no percentage)"
+  - id: "Q14"
+    decision: "Allow cancel with confirmation"
+    status: "Implemented (AlertDialog)"
+  - id: "Q15"
+    decision: "Minimal scheduler info"
+    status: "Implemented (static text)"
+
+validation_rules:
+  max_days: 8
+  no_future_dates: true
+  from_before_to: true
+
+issues:
+  - id: "SIZE-001"
+    severity: "Low"
+    finding: "305 lines (over 200)"
+    action: "Acceptable for complex dialog"
+    status: "Accepted"

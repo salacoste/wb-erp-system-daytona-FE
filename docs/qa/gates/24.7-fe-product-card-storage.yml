@@ -1,0 +1,41 @@
+# QA Gate: Story 24.7-fe Product Card Storage Info
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.7-fe"
+  title: "Product Card Storage Info"
+  status: "PASS"
+  score: 92
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "Clean standalone component. Daily + monthly estimate with tooltip."
+
+acceptance_criteria:
+  AC1_display:
+    status: "PASS"
+    evidence: "Storage cost per day, monthly estimate"
+  AC2_data:
+    status: "PASS"
+    evidence: "Uses getLastCompletedWeek(), include_storage=true supported"
+  AC3_design:
+    status: "PASS"
+    evidence: "Package icon, tooltip with period info"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/components/ProductStorageInfo.tsx"
+    lines: 91
+    assessment: "Excellent - clean standalone component"
+
+backend_integration:
+  status: "COMPLETE"
+  notes:
+    - "Backend supports include_storage=true in Products API"
+    - "Frontend types updated: ProductListItem has storage fields"
+    - "useProducts hook updated with include_storage parameter"
+    - "N+1 query concern RESOLVED"
+
+issues: []

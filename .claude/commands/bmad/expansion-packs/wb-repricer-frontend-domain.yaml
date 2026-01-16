@@ -1,0 +1,330 @@
+name: 'WB Repricer Frontend Domain'
+version: '1.0.0'
+project: 'WB Repricer Frontend'
+
+framework:
+  name: 'Next.js'
+  version: '14+'
+  router: 'App Router'
+  ssr: true
+
+language:
+  name: 'TypeScript'
+  strict_mode: true
+
+stack:
+  runtime: 'Next.js 14'
+  ui: 'React 18+'
+  styling: 'Tailwind CSS'
+  icons: 'Lucide React'
+
+libraries:
+  data_fetching:
+    - package: '@tanstack/react-query'
+      purpose: 'Data fetching and caching'
+      version: '^5.0.0'
+
+  state_management:
+    - package: 'zustand'
+      purpose: 'Global state management'
+      version: '^4.0.0'
+
+  forms:
+    - package: 'react-hook-form'
+      purpose: 'Form state and validation'
+      version: '^7.0.0'
+    - package: 'zod'
+      purpose: 'Schema validation'
+      version: '^3.0.0'
+
+  ui_components:
+    - package: 'shadcn/ui'
+      purpose: 'UI component library'
+      based_on: 'Radix UI'
+    - package: 'class-variance-authority'
+      purpose: 'Component variants'
+    - package: 'clsx'
+      purpose: 'Conditional classes'
+    - package: 'tailwind-merge'
+      purpose: 'Tailwind class merging'
+
+  utilities:
+    - package: 'date-fns'
+      purpose: 'Date manipulation'
+      version: '^3.0.0'
+    - package: 'axios'
+      purpose: 'HTTP client'
+      version: '^1.6.0'
+
+  testing:
+    - package: 'playwright'
+      purpose: 'E2E testing'
+      version: '^1.40.0'
+    - package: 'vitest'
+      purpose: 'Unit testing'
+      version: '^1.0.0'
+    - package: '@testing-library/react'
+      purpose: 'React testing utilities'
+      version: '^14.0.0'
+
+project_structure:
+  src:
+    app:
+      description: 'Next.js 14 App Router pages'
+      structure:
+        - layout.tsx
+        - page.tsx
+        - (routes)/
+    components:
+      description: 'React components'
+      organization:
+        - ui/ (shadcn/ui components)
+        - features/ (feature-specific components)
+        - shared/ (reusable components)
+    hooks:
+      description: 'Custom React hooks'
+      patterns:
+        - useQuery (data fetching)
+        - useMutation (mutations)
+        - useTelegramBinding (domain-specific)
+        - useNotificationPreferences (domain-specific)
+    services:
+      description: 'API client services'
+      responsibilities:
+        - API endpoint definitions
+        - Request/response interceptors
+        - Error handling
+        - Authentication (JWT + headers)
+    lib:
+      description: 'Utility functions'
+      contents:
+        - api-client.ts (HTTP client setup)
+        - utils.ts (helpers)
+        - constants.ts
+    config:
+      description: 'Configuration files'
+      contents:
+        - api.config.ts (API base URL)
+        - environment.ts
+    types:
+      description: 'TypeScript type definitions'
+      examples:
+        - advertising-analytics.ts (Epic 33, 36 types)
+        - api.types.ts (API response types)
+        - app.types.ts (app state types)
+
+api_integration:
+  base_url: 'http://localhost:3001'
+  authentication:
+    method: 'Bearer token'
+    storage: 'localStorage'
+    token_key: 'auth_token'
+    headers:
+      - 'Authorization: Bearer {token}'
+      - 'X-Cabinet-Id: {cabinetId}'
+  endpoints:
+    products:
+      - method: GET
+        path: /v1/products
+        description: 'Get products with COGS'
+        params:
+          - include_cogs: boolean
+    cogs:
+      - method: POST
+        path: /v1/products/{nmId}/cogs
+        description: 'Assign COGS to product'
+    analytics:
+      - method: GET
+        path: /v1/analytics/weekly/summary
+        description: 'Weekly payout summary'
+      - method: GET
+        path: /v1/analytics/advertising
+        description: 'Advertising analytics (Epic 33, 36)'
+        params:
+          - group_by: sku | imtId (Epic 36)
+          - view_by: sku | campaign | brand | category
+    notifications:
+      - method: GET
+        path: /v1/notifications/telegram/status
+        description: 'Get Telegram binding status'
+      - method: POST
+        path: /v1/notifications/telegram/bind
+        description: 'Generate binding code'
+      - method: DELETE
+        path: /v1/notifications/telegram/unbind
+        description: 'Remove binding'
+
+component_patterns:
+  data_fetching:
+    hook: '@tanstack/react-query/useQuery'
+    pattern: |
+      const { data, isLoading, error } = useQuery({
+        queryKey: ['products', cabinetId],
+        queryFn: () => fetchProducts(cabinetId),
+        staleTime: 5 * 60 * 1000, // 5 min
+      })
+
+  mutations:
+    hook: '@tanstack/react-query/useMutation'
+    pattern: |
+      const mutation = useMutation({
+        mutationFn: createCOGS,
+        onSuccess: () => {
+          queryClient.invalidateQueries(['products']);
+          toast.success('COGS assigned');
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      })
+
+  forms:
+    library: 'react-hook-form + zod'
+    pattern: |
+      const form = useForm<FormData>({
+        resolver: zodResolver(schema),
+      });
+
+  loading_states:
+    implementation: 'isLoading from useQuery'
+    ui_components:
+      - Skeleton (shadcn/ui)
+      - Spinner
+      - LoadingButton
+
+  error_handling:
+    implementation: 'isError from useQuery'
+    ui_components:
+      - ErrorBoundary
+      - Alert (shadcn/ui)
+      - toast notifications
+
+  toast_notifications:
+    library: 'sonner'
+    usage: 'toast.success() / toast.error()'
+
+state_management:
+  zustand:
+    stores:
+      - cabinetStore (active cabinet state)
+      - uiStore (UI state: sidebar, theme)
+    pattern: |
+      const useCabinetStore = create((set) => ({
+        cabinetId: null,
+        setCabinetId: (id) => set({ cabinetId: id }),
+      }));
+
+  context:
+    usage: 'Component tree state'
+    providers:
+      - QueryClientProvider (React Query)
+      - ThemeProvider (dark mode)
+
+  url_state:
+    usage: 'Filter state, pagination'
+    library: 'useSearchParams() from next/navigation'
+
+testing:
+  unit:
+    framework: 'Vitest'
+    library: '@testing-library/react'
+    coverage_target: '80%+'
+    pattern: |
+      describe('Component', () => {
+        it('renders correctly', () => {
+          render(<Component />);
+          expect(screen.getByText('...')).toBeInTheDocument();
+        });
+      });
+
+  e2e:
+    framework: 'Playwright'
+    critical_flows: '100% coverage'
+    pattern: |
+      test('user flow', async ({ page }) => {
+        await page.goto('/');
+        await page.click('button');
+        await expect(page.locator('.result')).toBeVisible();
+      });
+
+code_standards:
+  typescript:
+    strict_mode: true
+    no_any: true
+    types_over_interfaces: 'public APIs use interfaces, internal use types'
+  react:
+    functional_components: true
+    hooks_over_classes: true
+    proper_dependencies: 'useEffect dependencies'
+  naming:
+    components: 'PascalCase'
+    files: 'kebab-case'
+    hooks: "camelCase with 'use' prefix"
+    constants: 'UPPER_SNAKE_CASE'
+
+accessibility:
+  standard: 'WCAG 2.1 AA'
+  requirements:
+    - Keyboard navigation
+    - Screen reader support
+    - Color contrast >= 4.5:1
+    - ARIA labels for interactive elements
+    - Focus management
+  testing:
+    - axe-core (automated)
+    - Manual keyboard testing
+    - Screen reader testing (NVDA, VoiceOver)
+
+deployment:
+  platform: 'Vercel'
+  environment_variables:
+    - NEXT_PUBLIC_API_URL
+    - NEXT_PUBLIC_APP_URL
+  build_command: 'npm run build'
+  dev_command: 'npm run dev'
+  port: 3100
+
+examples:
+  component: |
+    // components/features/TelegramBindingCard.tsx
+    export function TelegramBindingCard() {
+      const { data, isLoading } = useTelegramBinding();
+      // ...
+    }
+
+  hook: |
+    // hooks/useTelegramBinding.ts
+    export function useTelegramBinding() {
+      return useQuery({
+        queryKey: ['telegram-binding'],
+        queryFn: fetchTelegramStatus,
+      });
+    }
+
+  service: |
+    // services/api/notifications.service.ts
+    export async function fetchTelegramStatus() {
+      const response = await fetch('/v1/notifications/telegram/status');
+      return response.json();
+    }
+
+epic_references:
+  - Epic 33: Advertising Analytics (view_by modes)
+  - Epic 34: Telegram Notifications (UI)
+  - Epic 36: Product Card Linking (imtId grouping)
+  - Epic 37: Merged Group Table (component)
+
+known_issues:
+  - React Query stale data
+  - Next.js caching
+  - Zustand re-renders
+  - Playwright flaky tests
+
+best_practices:
+  - Always use TypeScript
+  - No prop drilling (use Context)
+  - Implement error boundaries
+  - Add loading states
+  - Test critical paths
+  - Optimize images (next/image)
+  - Use Next.js Link for navigation

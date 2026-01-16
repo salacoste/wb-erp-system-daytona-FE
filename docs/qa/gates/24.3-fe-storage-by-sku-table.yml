@@ -1,0 +1,54 @@
+# QA Gate: Story 24.3-fe Storage by SKU Table
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.3-fe"
+  title: "Storage by SKU Table"
+  status: "PASS"
+  score: 85
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "All sortable columns implemented. Warehouse badges and product name truncation per UX decisions."
+
+acceptance_criteria:
+  AC1_display:
+    status: "PASS"
+    evidence: "All columns: Артикул, Название, Бренд, Хранение, ₽/день, Объём, Склады, Дней"
+  AC2_formatting:
+    status: "PASS"
+    evidence: "Currency with ₽, volume with л, 45-char truncation with tooltip"
+  AC3_pagination:
+    status: "PASS"
+    evidence: "Cursor-based pagination, 20 items per page"
+  AC4_filtering:
+    status: "PASS"
+    evidence: "Search by nm_id/vendor_code, brand/warehouse from parent"
+  AC5_actions:
+    status: "PASS"
+    evidence: "Row click navigates to /analytics/sku?nm_id={nm_id}"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/components/StorageBySkuTable.tsx"
+    lines: 242
+    assessment: "Good - all sortable columns"
+  - path: "src/app/(dashboard)/analytics/storage/components/WarehouseBadges.tsx"
+    lines: 53
+    assessment: "Excellent - +N overflow with tooltip"
+  - path: "src/app/(dashboard)/analytics/storage/components/ProductNameCell.tsx"
+    lines: 45
+    assessment: "Excellent - 45-char truncation with tooltip"
+
+ux_decisions_verified:
+  - id: "Q6"
+    decision: "Warehouse badges with +N overflow"
+    status: "Implemented"
+  - id: "Q7"
+    decision: "Mobile horizontal scroll"
+    status: "Implemented (min-w-900px)"
+  - id: "Q8"
+    decision: "45-50 char truncation + tooltip"
+    status: "Implemented"

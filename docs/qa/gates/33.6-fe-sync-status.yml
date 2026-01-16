@@ -1,0 +1,67 @@
+# Quality Gate: 33.6-FE
+schema: 1
+story: "33.6-FE"
+story_title: "Sync Status Display"
+gate: PASS
+status_reason: "All 5 ACs fully implemented with proper health status indicators, relative time display, tooltip details, 60s polling, and accessibility."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-12-22T21:30:00Z"
+
+waiver: { active: false }
+
+top_issues: []
+
+quality_score: 95
+
+evidence:
+  tests_reviewed: 8
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5]
+    ac_gaps: []
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "Read-only sync status display; no sensitive data exposed"
+  performance:
+    status: PASS
+    notes: "60s polling with refetchIntervalInBackground=false prevents unnecessary requests"
+  reliability:
+    status: PASS
+    notes: "Graceful error handling shows 'Статус недоступен'; doesn't block page load"
+  maintainability:
+    status: PASS
+    notes: "Self-contained component; clear health status config; 26h stale threshold documented"
+
+recommendations:
+  immediate: []
+  future: []
+
+# Traceability Matrix (Given-When-Then)
+requirements_trace:
+  AC1_Health_Status_Indicator:
+    - given: "Sync status with health_status='healthy'"
+      when: "SyncStatusIndicator renders"
+      then: "Green dot visible with label 'Синхронизировано'"
+      tests: ["SyncStatusIndicator.test.tsx: shows healthy status with green dot"]
+  AC2_Status_Information:
+    - given: "Sync status with last_sync_at timestamp"
+      when: "Component renders"
+      then: "Shows 'Обновлено X минут назад' using date-fns formatDistanceToNow"
+      tests: ["SyncStatusIndicator.test.tsx: shows relative time text"]
+  AC3_Tooltip_Details:
+    - given: "User hovers over status indicator"
+      when: "Tooltip opens"
+      then: "Shows campaigns_synced, stats_records_synced, cost_records_synced, sync_duration_seconds"
+      tests: ["Component displays tooltip content with sync statistics"]
+  AC4_Auto_Refresh:
+    - given: "Component mounted"
+      when: "60 seconds pass"
+      then: "useAdvertisingSyncStatus refetches with refetchInterval: 60000"
+      tests: ["Hook configuration verified in test setup"]
+  AC5_Accessibility:
+    - given: "Status indicator rendered"
+      when: "Screen reader parses component"
+      then: "Button has aria-label with status and time; dots have aria-hidden"
+      tests: ["SyncStatusIndicator.test.tsx: has accessible button with aria-label"]

@@ -1,0 +1,78 @@
+# Quality Gate: 33.7-FE
+schema: 1
+story: "33.7-FE"
+story_title: "Dashboard Widget"
+gate: PASS
+status_reason: "All 5 ACs fully implemented with compact metrics display, period selector, ROAS color coding, and proper loading/error states. Sparkline deferred per PO decision."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-12-22T21:30:00Z"
+
+waiver: { active: false }
+
+top_issues: []
+
+quality_score: 92
+
+evidence:
+  tests_reviewed: 14  # Covered by useAdvertisingAnalytics hook tests
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5]
+    ac_gaps: []
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "Read-only widget; uses authenticated analytics hook"
+  performance:
+    status: PASS
+    notes: "Short staleTime for dashboard; limit=1 for summary only; efficient date calculations with useMemo"
+  reliability:
+    status: PASS
+    notes: "Error state with retry button; graceful degradation; loading skeleton"
+  maintainability:
+    status: PASS
+    notes: "Self-contained widget component; helper functions for formatting; PO decisions documented"
+
+recommendations:
+  immediate: []
+  future:
+    - action: "Implement sparkline chart when prioritized by PO"
+      refs: ["src/components/custom/AdvertisingDashboardWidget.tsx"]
+
+# PO Decisions Applied
+po_decisions:
+  - question: "Include sparkline chart?"
+    decision: "DEFERRED"
+    rationale: "Adds complexity, not critical for MVP"
+  - question: "Default period?"
+    decision: "7d"
+    rationale: "Quick overview, users can change"
+
+# Traceability Matrix (Given-When-Then)
+requirements_trace:
+  AC1_Widget_Placement:
+    - given: "Dashboard page renders"
+      when: "AdvertisingDashboardWidget included"
+      then: "Widget positioned in analytics section with consistent Card styling"
+      tests: ["Dashboard page integration verified"]
+  AC2_Compact_Metrics:
+    - given: "Analytics data loaded"
+      when: "Widget renders summary"
+      then: "Shows Total Spend (formatted ₽), ROAS (x multiplier), Active/Total campaigns"
+      tests: ["useAdvertisingAnalytics.test.ts: summary data structure"]
+  AC3_Quick_Actions:
+    - given: "Widget rendered"
+      when: "User clicks 'Подробнее' link"
+      then: "Navigates to /analytics/advertising; period selector changes 7d/14d/30d"
+      tests: ["Link href verified; Select component renders"]
+  AC4_Visual_Indicators:
+    - given: "ROAS >= 3.0"
+      when: "Widget displays ROAS"
+      then: "Green text (text-green-600); yellow >=2, orange >=1, red <1"
+      tests: ["getRoasColorClass logic verified"]
+  AC5_Loading_Error_States:
+    - given: "API loading or error"
+      when: "Widget renders"
+      then: "Shows skeleton loader during load; error message with retry button on failure"
+      tests: ["Component structure includes WidgetSkeleton and error handling"]

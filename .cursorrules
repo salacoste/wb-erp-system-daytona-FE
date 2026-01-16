@@ -1,0 +1,302 @@
+# Cursor AI Rules for WB Repricer Frontend
+
+## Project Overview
+
+This is a Next.js 14 + TypeScript frontend application for WB Repricer System.
+Backend API is a separate service running on http://localhost:3001.
+
+## Technology Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript 5+ (strict mode)
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **State Management**: Zustand (global) + React Query (server)
+- **Forms**: react-hook-form + zod validation
+- **Testing**: Vitest (unit) + Playwright (E2E)
+- **API**: REST with fetch, JWT auth, X-Cabinet-Id header
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js 14 App Router pages
+│   ├── (dashboard)/  # Authenticated routes
+│   ├── (auth)/       # Public auth routes
+│   └── layout.tsx
+├── components/
+│   ├── ui/            # shadcn/ui components (DO NOT EDIT MANUALLY)
+│   ├── features/       # Feature-specific components
+│   └── shared/         # Reusable components
+├── hooks/             # Custom React hooks
+├── services/          # API client functions
+├── lib/               # Utilities and helpers
+├── config/            # Configuration files
+└── types/             # TypeScript type definitions
+```
+
+## Code Standards
+
+### TypeScript Rules
+
+- **Strict mode is ENABLED** - No `any` types
+- Use `unknown` instead of `any` when type is truly unknown
+- Define interfaces for all API contracts
+- Use type inference where possible
+- No implicit `any` in function parameters
+
+### React Rules
+
+- Use **functional components only** (no class components)
+- Use **React hooks** for state and effects
+- Proper dependency arrays in `useEffect`, `useMemo`, `useCallback`
+- Avoid prop drilling - use React Context or Zustand
+- Components in **PascalCase**
+- Files in **kebab-case**
+- Hooks must start with `use` prefix
+
+### API Integration Rules
+
+- All API calls go through `services/api/*.ts`
+- Use `@tanstack/react-query` for data fetching:
+  - `useQuery` for GET requests
+  - `useMutation` for POST/PUT/DELETE
+- Always include JWT in Authorization header
+- Always include X-Cabinet-Id header
+- Handle errors gracefully with toast notifications
+- Add loading states for all async operations
+
+### Component Patterns
+
+#### API Hooks Pattern
+
+```typescript
+// Good pattern for API hooks
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { api } from '@/services/api/client';
+import { toast } from 'sonner';
+
+export function useMyData() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['my-data'],
+    queryFn: () => api.getMyData(),
+  });
+
+  const updateData = useMutation({
+    mutationFn: (dto: UpdateDto) => api.updateMyData(dto),
+    onSuccess: () => {
+      toast.success('Updated successfully');
+      queryClient.invalidateQueries(['my-data']);
+    },
+    onError: (error) => {
+      toast.error('Failed to update');
+    },
+  });
+
+  return { data, isLoading, error, updateData };
+}
+```
+
+#### Form Pattern
+
+```typescript
+// Good pattern for forms
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers';
+import { z } from 'zod';
+
+const schema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email'),
+});
+
+type FormData = z.infer<typeof schema>;
+
+export function MyForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = async (data: FormData) => {
+    // Handle submit
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* form fields */}
+    </form>
+  );
+}
+```
+
+### Error Handling Rules
+
+- Wrap all async functions in try-catch
+- Use Error Boundaries for components
+- Show user-friendly error messages (not raw errors)
+- Log errors to console in development only
+- Toast notifications for user feedback
+
+### Accessibility Rules
+
+- **WCAG 2.1 AA compliance** is mandatory
+- All interactive elements must have keyboard navigation
+- All images must have alt text
+- All form inputs must have labels
+- Color contrast ≥4.5:1
+- Use semantic HTML elements
+- Add ARIA labels where needed
+
+## Testing Rules
+
+### Unit Tests (Vitest)
+
+- Target ≥80% code coverage
+- Test user behavior, not implementation details
+- Mock API calls with Vitest mocks
+- Use React Testing Library:
+  - `render()` from `@testing-library/react`
+  - `fireEvent` from `@testing-library/user-event`
+- Test queries: `getByRole()`, `getByText()`, etc.
+
+### E2E Tests (Playwright)
+
+- Test critical user flows
+- Test error scenarios
+- Cross-browser testing (Chrome, Safari, Firefox)
+- Use `page.goto()` for navigation
+- Use `page.waitForURL()` for route changes
+
+## Performance Rules
+
+- Use `useMemo` for expensive computations
+- Use `useCallback` for functions passed to children
+- Lazy load routes with Next.js dynamic imports
+- Optimize images with Next.js Image component
+- Avoid unnecessary re-renders (use React.memo when needed)
+- Debounce search inputs (300-500ms)
+
+## Documentation Rules
+
+- Add JSDoc comments for complex functions
+- Document props with TypeScript interfaces
+- Document component purpose in file header
+- Record lessons learned in story Dev Agent Record
+
+## Development Workflow
+
+When working on a story:
+
+1. **Read the story completely** - Understand requirements and AC
+2. **Review Dev Notes** - Check for specific technical guidance
+3. **Check dependencies** - Ensure previous stories are complete
+4. **Implement tasks sequentially** - Don't skip ahead
+5. **Write tests as you go** - Test-driven approach preferred
+6. **Run lint and type-check** - `npm run lint && npm run type-check`
+7. **Run tests** - `npm run test && npm run test:e2e`
+8. **Update Dev Agent Record** - Document progress and issues
+
+## BMad Agent Integration
+
+This project uses BMad framework with specialized agents:
+
+- **@pm** - Product Manager for Epic PRDs
+- **@architect** - Architect for system design
+- **@ux-expert** - UX Expert for UI/UX guidance
+- **@sm** - Scrum Master for story creation
+- **@po** - Product Owner for story validation
+- **@dev** - Developer for implementation (YOU)
+- **@qa** - QA for review and quality gates
+
+Follow story requirements exactly. If something is unclear, ask for clarification.
+
+## Common Pitfalls to Avoid
+
+❌ **DON'T:**
+- Use `any` type - use `unknown` instead
+- Prop drill data across many components
+- Skip error handling
+- Forget loading states
+- Hardcode strings (use constants)
+- Skip accessibility
+- Skip edge case testing
+- Modify shadcn/ui components directly
+
+✅ **DO:**
+- Use TypeScript strict mode
+- Use React Query for API calls
+- Handle errors gracefully
+- Add loading indicators
+- Extract constants to files
+- Test accessibility
+- Write comprehensive tests
+- Use shadcn/ui components as-is
+
+## Project-Specific Notes
+
+### API Base URL
+
+```typescript
+const API_BASE_URL = 'http://localhost:3001/v1';
+```
+
+### Authentication
+
+All API requests must include:
+```typescript
+headers: {
+  'Authorization': `Bearer ${token}`,
+  'X-Cabinet-Id': cabinetId,
+}
+```
+
+### Domain Pack
+
+WB Repricer Frontend Domain Pack is located at:
+`.claude/commands/BMad/expansion-packs/wb-repricer-frontend-domain.yaml`
+
+Refer to this for:
+- Specific patterns used in this project
+- Component conventions
+- API integration patterns
+- Testing strategies
+
+### Epic References
+
+This project has 20+ Epics. Common Epics:
+- Epic 34-FE: Telegram Notifications UI
+- Epic 37-FE: Merged Group Table Display
+- Epic 36-FE: Frontend Types & API Hooks
+
+Refer to epic documents for context:
+`docs/epics/epic-{ID}-*.md`
+
+### Story Location
+
+Story documents are in: `docs/stories/epic-{ID}/story-{ID}.{NUM}*.md`
+
+When implementing a story:
+1. Read the story completely
+2. Check Dev Notes section for specific guidance
+3. Follow Acceptance Criteria strictly
+4. Update Dev Agent Record section when done
+
+## Git Workflow
+
+- Create feature branch: `feature/story-{ID}.{NUM}`
+- Commit frequently with clear messages
+- Run tests before committing
+- Create PR for review
+- Merge to main after approval
+
+## Questions?
+
+If you're unsure about something:
+1. Check the story's Dev Notes section
+2. Refer to epic documentation
+3. Check related component implementations
+4. Ask for clarification if truly stuck
+
+---
+
+**Last Updated**: 2026-01-10
+**Framework Version**: BMad v6.0.0-alpha.22

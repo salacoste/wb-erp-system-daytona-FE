@@ -1,0 +1,46 @@
+# QA Gate: Story 24.8-fe High Storage Ratio Alert
+# Epic 24: Paid Storage Analytics (Frontend)
+
+gate:
+  story_id: "24.8-fe"
+  title: "High Storage Ratio Alert"
+  status: "PASS"
+  score: 92
+  reviewed_by: "Quinn (Test Architect)"
+  reviewed_date: "2025-11-29"
+  updated_date: "2025-12-04"
+
+summary:
+  verdict: "Ready for Done"
+  rationale: "Clean alert component. Russian pluralization, color-coded tooltip."
+
+acceptance_criteria:
+  AC1_alert:
+    status: "PASS"
+    evidence: "Alert banner for products with ratio > 20%"
+  AC2_locations:
+    status: "PASS"
+    evidence: "TopConsumers (CostSeverityDot), StorageBySkuTable, AlertBanner"
+  AC3_summary:
+    status: "PASS"
+    evidence: "Count of high-ratio products in header"
+
+files_reviewed:
+  - path: "src/app/(dashboard)/analytics/storage/components/StorageAlertBanner.tsx"
+    lines: 96
+    assessment: "Excellent - clean component with pluralization"
+
+threshold_config:
+  warning: "10% (yellow)"
+  critical: "20% (red, triggers alert)"
+
+tooltip_content:
+  excellent: "< 10%"
+  attention: "10-20%"
+  optimize: "> 20%"
+  recommendations:
+    - "Уменьшить запасы на складе"
+    - "Повысить оборачиваемость"
+    - "Рассмотреть вывод товара из ассортимента"
+
+issues: []
