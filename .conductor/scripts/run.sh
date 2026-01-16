@@ -71,27 +71,57 @@ TARGET_APP="wb-repricer-frontend-dev"
 OTHER_APP="wb-repricer-frontend"
 TARGET_PORT=3100
 
-# Check if our target service is already running
-if pm2 list 2>/dev/null | grep -q "$TARGET_APP.*online"; then
-    log_info "Service $TARGET_APP is already running in PM2"
-    log_info "Restarting service..."
-    restart_pm2_frontend
+# Check if our target service already exists in PM2 (online or stopped)
+# Use word boundary matching to avoid matching similar process names
+if pm2 list 2>/dev/null | grep -qw "$TARGET_APP"; then
+    if pm2 list 2>/dev/null | grep -q "$TARGET_APP.*online"; then
+        log_info "Service $TARGET_APP is already running in PM2"
+        log_info "Restarting service..."
+        restart_pm2_frontend
+    else
+        # Process exists but is stopped - delete and start fresh
+        log_info "Service $TARGET_APP is stopped, cleaning up and starting..."
+        if pm2 delete "$TARGET_APP" 2>&1; then
+            log_success "Removed stopped PM2 process"
+        else
+            log_warning "Failed to delete PM2 process (may not exist)"
+        fi
+
+        # Verify the process was actually removed and wait for port release
+        if pm2 list 2>/dev/null | grep -qw "$TARGET_APP"; then
+            log_error "Failed to remove PM2 process $TARGET_APP"
+            exit 1
+        fi
+
+        # Wait a moment for PM2 to fully release the port
+        sleep 1
+
+        # Check if port is in use by non-PM2 process using helper
+        if ! check_port_conflict "$TARGET_PORT" "$TARGET_APP"; then
+            exit 1
+        fi
+
+        if start_pm2_frontend "development"; then
+            log_success "Service started from stopped state"
+        else
+            log_error "Failed to start service"
+            exit 1
+        fi
+    fi
 else
     # Check if the OTHER frontend service is running and stop it
-    if pm2 list 2>/dev/null | grep -q "$OTHER_APP.*online"; then
-        log_info "Stopping $OTHER_APP to free port $TARGET_PORT..."
-        pm2 stop "$OTHER_APP" >/dev/null 2>&1
-        pm2 save --force >/dev/null 2>&1
-        log_info "Waiting for port to be freed..."
-        sleep 5
+    if pm2 list 2>/dev/null | grep -qw "$OTHER_APP"; then
+        if pm2 list 2>/dev/null | grep -q "$OTHER_APP.*online"; then
+            log_info "Stopping $OTHER_APP to free port $TARGET_PORT..."
+            pm2 stop "$OTHER_APP" >/dev/null 2>&1
+            pm2 save --force >/dev/null 2>&1
+            log_info "Waiting for port to be freed..."
+            sleep 5
+        fi
     fi
 
-    # Check if port is in use by non-PM2 process
-    port_pid=$(lsof -ti:$TARGET_PORT -sTCP:LISTEN -t 2>/dev/null | head -n1)
-
-    if [ -n "$port_pid" ]; then
-        log_error "Port $TARGET_PORT is in use by non-PM2 process (PID: $port_pid)"
-        echo "💡 Kill it: kill $port_pid"
+    # Check if port is in use by non-PM2 process using helper
+    if ! check_port_conflict "$TARGET_PORT" "$TARGET_APP"; then
         exit 1
     fi
 

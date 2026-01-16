@@ -138,6 +138,43 @@ wait_for_port() {
     return 1
 }
 
+wait_for_port_free() {
+    local port="$1"
+    local service_name="${2:-Port}"
+    local timeout="${3:-10}"
+
+    log_info "Waiting for $service_name port $port to be released..."
+    local count=0
+    while [ $count -lt "$timeout" ]; do
+        if ! lsof -ti:"$port" -sTCP:LISTEN &>/dev/null | head -n1 | grep -q .; then
+            log_success "Port $port is now free"
+            return 0
+        fi
+        sleep 1
+        count=$((count + 1))
+    done
+
+    log_warning "Port $port did not become free within ${timeout}s"
+    return 1
+}
+
+check_port_conflict() {
+    local port="$1"
+    local app_name="${2:-PM2 service}"
+
+    # Check if port is in use by non-PM2 process
+    local port_pid
+    port_pid=$(lsof -ti:"$port" -sTCP:LISTEN &>/dev/null | head -n1)
+
+    if [ -n "$port_pid" ]; then
+        log_error "Port $port is in use by non-$app_name process (PID: $port_pid)"
+        echo "💡 Kill it: kill $port_pid"
+        return 1
+    fi
+
+    return 0
+}
+
 # =============================================================================
 # PM2 FUNCTIONS
 # =============================================================================
