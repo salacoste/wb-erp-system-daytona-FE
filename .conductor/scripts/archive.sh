@@ -8,21 +8,39 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 ARCHIVE_DIR="$PROJECT_ROOT/.conductor/archive"
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-log_success() { echo -e "${GREEN}✅ $*${NC}"; }
-log_warning() { echo -e "${YELLOW}⚠️  $*${NC}"; }
-log_error() { echo -e "${RED}❌ $*${NC}"; }
+# Load shared utilities for PM2 functions and logging
+source "$SCRIPT_DIR/lib/utils.sh"
 
 echo "📦 Archiving Conductor Session - WB Repricer System Frontend"
 echo "Archive directory: $ARCHIVE_DIR"
 echo ""
 
 cd "$PROJECT_ROOT"
+
+# =============================================================================
+# PHASE 0: Stop PM2 Processes
+# =============================================================================
+echo "🛑 Checking for running PM2 processes..."
+
+if pm2_installed; then
+    if pm2_frontend_running; then
+        FRONTEND_NAME=$(get_pm2_frontend_name)
+        if [ -n "$FRONTEND_NAME" ]; then
+            echo "📦 Stopping PM2 frontend ($FRONTEND_NAME) before archive..."
+            stop_pm2_frontend
+            log_success "PM2 frontend stopped, port 3100 freed"
+            # Wait for OS to fully release the port and PM2 to clean up
+            # This prevents potential race conditions in subsequent operations
+            sleep 2
+        fi
+    else
+        log_info "No PM2 frontend processes running"
+    fi
+else
+    log_info "PM2 not installed, skipping PM2 shutdown"
+fi
+
+echo ""
 
 # Create archive if it doesn't exist
 mkdir -p "$ARCHIVE_DIR"
