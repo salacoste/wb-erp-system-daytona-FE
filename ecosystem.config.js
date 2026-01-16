@@ -1,10 +1,15 @@
 /**
  * PM2 Ecosystem Configuration for WB Repricer Frontend
- * Default port: 3100
- * 
- * Usage:
- * - Development: pm2 start ecosystem.config.js --only wb-repricer-frontend-dev
- * - Production: pm2 start ecosystem.config.js --only wb-repricer-frontend --env production
+ * IMPORTANT: Only ONE instance should run at a time (Dev OR Production)
+ * Both use port 3100 - never run both simultaneously
+ *
+ * Usage (switch between Dev and Production):
+ * - To run DEV:     ./pm2-switch-dev.sh
+ * - To run PROD:    ./pm2-switch-prod.sh
+ *
+ * Or manually:
+ * - Development: pm2 stop wb-repricer-frontend && pm2 start ecosystem.config.js --only wb-repricer-frontend-dev
+ * - Production:  pm2 stop wb-repricer-frontend-dev && npm run build && pm2 start ecosystem.config.js --only wb-repricer-frontend --env production
  */
 module.exports = {
   apps: [
