@@ -59,15 +59,48 @@ fi
 # =============================================================================
 check_section "Phase 3: Dev Server"
 
-if dev_server_running; then
-    log_info "Dev server is already running"
-    log_info "To restart, run: bash .conductor/scripts/restart.sh"
+# Check if PM2 is available
+if ! pm2_installed; then
+    log_error "PM2 is not installed"
+    echo ""
+    echo "💡 Install PM2: npm install -g pm2"
+    exit 1
+fi
+
+TARGET_APP="wb-repricer-frontend-dev"
+OTHER_APP="wb-repricer-frontend"
+TARGET_PORT=3100
+
+# Check if our target service is already running
+if pm2 list 2>/dev/null | grep -q "$TARGET_APP.*online"; then
+    log_info "Service $TARGET_APP is already running in PM2"
+    log_info "Restarting service..."
+    restart_pm2_frontend
 else
-    log_info "Starting dev server..."
-    if start_dev_server "development" 3100; then
-        log_success "Dev server started successfully"
+    # Check if the OTHER frontend service is running and stop it
+    if pm2 list 2>/dev/null | grep -q "$OTHER_APP.*online"; then
+        log_info "Stopping $OTHER_APP to free port $TARGET_PORT..."
+        pm2 stop "$OTHER_APP" >/dev/null 2>&1
+        pm2 save --force >/dev/null 2>&1
+        log_info "Waiting for port to be freed..."
+        sleep 5
+    fi
+
+    # Check if port is in use by non-PM2 process
+    port_pid=$(lsof -ti:$TARGET_PORT -sTCP:LISTEN -t 2>/dev/null | head -n1)
+
+    if [ -n "$port_pid" ]; then
+        log_error "Port $TARGET_PORT is in use by non-PM2 process (PID: $port_pid)"
+        echo "💡 Kill it: kill $port_pid"
+        exit 1
+    fi
+
+    # Start fresh
+    log_info "Starting service via PM2..."
+    if start_pm2_frontend "development"; then
+        log_success "Service started successfully"
     else
-        log_error "Failed to start dev server"
+        log_error "Failed to start service"
         exit 1
     fi
 fi
