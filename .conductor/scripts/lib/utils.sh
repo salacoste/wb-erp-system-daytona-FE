@@ -164,7 +164,7 @@ check_port_conflict() {
 
     # Check if port is in use by non-PM2 process
     local port_pid
-    port_pid=$(lsof -ti:"$port" -sTCP:LISTEN &>/dev/null | head -n1)
+    port_pid=$(lsof -ti:"$port" -sTCP:LISTEN 2>/dev/null | head -n1)
 
     if [ -n "$port_pid" ]; then
         log_error "Port $port is in use by non-$app_name process (PID: $port_pid)"
@@ -303,6 +303,71 @@ stop_pm2_frontend() {
     fi
 }
 
+# Helper function to check if PM2 process exists by exact name
+# Uses JSON parsing for reliability across PM2 versions
+pm2_process_exists() {
+    local app_name="$1"
+    if command -v jq &>/dev/null; then
+        # Use jq for reliable JSON parsing
+        pm2 jlist 2>/dev/null | jq -e ".[] | select(.name == \"$app_name\")" >/dev/null 2>&1
+    else
+        # Fallback to text parsing with proper escaping
+        pm2 list 2>/dev/null | awk -F'│' '
+            {
+                # Trim leading/trailing whitespace from second field
+                name = $2
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+                if (name == app_name) {
+                    found = 1
+                    exit
+                }
+            }
+            END { exit (found ? 0 : 1) }
+        ' app_name="$app_name"
+    fi
+}
+
+# Helper function to check PM2 process status
+# Returns: online, stopped, errored, launching, or empty if not found
+pm2_process_status() {
+    local app_name="$1"
+    if command -v jq &>/dev/null; then
+        # Use jq for reliable JSON parsing
+        pm2 jlist 2>/dev/null | jq -r ".[] | select(.name == \"$app_name\") | .pm2_env.status" 2>/dev/null
+    else
+        # Fallback to text parsing - find status column dynamically
+        pm2 list 2>/dev/null | awk -F'│' '
+            BEGIN {
+                status_col = 0
+            }
+            NR == 1 {
+                # Find the column index containing "status" (case-insensitive)
+                for (i = 1; i <= NF; i++) {
+                    col = $i
+                    gsub(/^[[:space:]]+|[[:space:]]+$/, "", col)
+                    if (tolower(col) == "status") {
+                        status_col = i
+                        break
+                    }
+                }
+                next
+            }
+            status_col > 0 {
+                # Trim leading/trailing whitespace from name field (col 2)
+                name = $2
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+                if (name == app_name) {
+                    # Get status from the status column
+                    status = $status_col
+                    gsub(/^[[:space:]]+|[[:space:]]+$/, "", status)
+                    print tolower(status)
+                    exit
+                }
+            }
+        ' app_name="$app_name"
+    fi
+}
+
 # =============================================================================
 # DEV SERVER FUNCTIONS
 # =============================================================================
@@ -313,7 +378,7 @@ dev_server_running() {
     fi
 
     # Also check if node process is listening on the port
-    if lsof -ti:3100 -sTCP:LISTEN -sUDP:CLOSE -t &>/dev/null | grep -q node; then
+    if lsof -ti:3100 -sTCP:LISTEN -sUDP:CLOSE -t 2>/dev/null | grep -q node; then
         return 0
     fi
 

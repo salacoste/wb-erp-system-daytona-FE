@@ -27,8 +27,8 @@ module.exports = {
         PORT: 3100,
         NEXT_TELEMETRY_DISABLED: '1',
       },
-      error_file: './logs/pm2-error.log',
-      out_file: './logs/pm2-out.log',
+      error_file: './logs/pm2-dev-error.log',
+      out_file: './logs/pm2-dev-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       // Prevent restart loops on port conflicts (CRITICAL FIX)
@@ -53,8 +53,8 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3100,
       },
-      error_file: './logs/pm2-error.log',
-      out_file: './logs/pm2-out.log',
+      error_file: './logs/pm2-prod-error.log',
+      out_file: './logs/pm2-prod-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       // Prevent restart loops

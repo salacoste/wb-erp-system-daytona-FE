@@ -87,6 +87,57 @@ fi
 log_success "Dependencies installed"
 
 # =============================================================================
+# PHASE 4: Auto-start PM2 Dev Server
+# =============================================================================
+echo ""
+echo "🚀 Starting PM2 dev server..."
+
+# Load PM2 utilities
+if ! pm2_installed; then
+    log_warning "PM2 is not installed - skipping auto-start"
+    echo "💡 Install PM2: npm install -g pm2"
+else
+    # Check if already running
+    if pm2_process_exists "wb-repricer-frontend-dev" && [ "$(pm2_process_status "wb-repricer-frontend-dev")" = "online" ]; then
+        log_info "PM2 dev server is already running!"
+        echo ""
+        echo "📊 Current PM2 status:"
+        pm2 list 2>/dev/null | grep -E "wb-repricer-frontend(-dev)?"
+        echo ""
+        echo "💡 Commands:"
+        echo "   • Restart: bash .conductor/scripts/restart.sh"
+        echo "   • Stop:    bash .conductor/scripts/stop.sh"
+        echo "   • Logs:    pm2 logs wb-repricer-frontend-dev"
+        echo ""
+    else
+        # Clean up any stopped PM2 processes
+        if pm2_process_exists "wb-repricer-frontend-dev"; then
+            pm2 delete "wb-repricer-frontend-dev" >/dev/null 2>&1
+
+            # Wait for port to be released
+            if ! wait_for_port_free 3100 "PM2" 5; then
+                log_warning "Port 3100 not released after cleanup - skipping auto-start"
+                echo "💡 Free the port and run: bash .conductor/scripts/run.sh"
+            fi
+        fi
+
+        # Check port availability
+        if ! check_port_conflict 3100 "PM2"; then
+            log_warning "Port 3100 is in use - skipping auto-start"
+            echo "💡 Free the port and run: bash .conductor/scripts/run.sh"
+        else
+            # Start PM2
+            if start_pm2_frontend "development"; then
+                log_success "PM2 dev server started automatically"
+            else
+                log_warning "Failed to start PM2 - manual start required"
+                echo "💡 Run: bash .conductor/scripts/run.sh"
+            fi
+        fi
+    fi
+fi
+
+# =============================================================================
 # Display configuration summary
 # =============================================================================
 echo ""
@@ -121,7 +172,7 @@ echo "📖 Documentation:"
 echo "  → DoR/DoD: docs/PM-AGENT-INSTRUCTION-BMM.md"
 echo ""
 echo "🎯 Quick Start:"
-echo "  1. Start Conductor: bash .conductor/scripts/run.sh"
-echo "  2. Access frontend: http://localhost:3100"
+echo "  1. Frontend: http://localhost:3100"
+echo "  2. PM2 logs: pm2 logs wb-repricer-frontend-dev"
 echo "  3. Start coding with AI assistance"
 echo ""
