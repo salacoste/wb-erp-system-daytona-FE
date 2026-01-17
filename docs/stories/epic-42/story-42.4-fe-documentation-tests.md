@@ -177,6 +177,16 @@ Check these files for `enrich_cogs` references:
 
 ---
 
+## Non-goals
+
+- Writing new automated tests (only verify existing tests)
+- Code changes to implementation files
+- API integration guide rewrite (add task types section only)
+- Changelog creation (documentation update only)
+- Translation of documentation (Russian documentation already present)
+
+---
+
 ## Notes
 
 - Low risk - documentation only

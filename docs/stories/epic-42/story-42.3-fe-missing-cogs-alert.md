@@ -295,6 +295,16 @@ describe('MissingCogsAlert', () => {
 
 ---
 
+## Non-goals
+
+- Backend sanity check API (Story 42.2-FE provides hook)
+- Persistent dismissal (localStorage) - session only required
+- Automatic sanity check triggering - manual trigger only
+- Multiple alert instances - single shared component
+- Real-time count updates - requires manual refresh
+
+---
+
 ## Notes
 
 - Depends on Story 42.2-FE (useSanityCheck hook)

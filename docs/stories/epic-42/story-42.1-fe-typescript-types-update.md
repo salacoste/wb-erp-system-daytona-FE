@@ -229,6 +229,16 @@ export interface EnqueueTaskResponse {
 
 ---
 
+## Non-goals
+
+- Backend task handler implementation (already complete in Epic 42)
+- Runtime behavior changes (type-only changes)
+- Breaking changes to existing API contracts
+- Migration of existing task data
+- E2E testing for task queue
+
+---
+
 ## Notes
 
 - **Low risk**: Type-only changes, no runtime impact

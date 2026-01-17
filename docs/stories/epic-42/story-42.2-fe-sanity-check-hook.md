@@ -71,6 +71,7 @@ And toast notification shown
  * - Products without COGS assignment
  */
 
+import { useState, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { useAuthStore } from '@/stores/authStore'
@@ -255,6 +256,16 @@ This hook can be used in:
 - Dashboard data quality indicator
 - Settings page "Run Data Check" button
 - COGS management page for missing COGS alert
+
+---
+
+## Non-goals
+
+- Backend sanity check implementation (already complete in Epic 42.3)
+- UI components for displaying results (Story 42.3-FE)
+- Automatic polling on dashboard mount (implement when needed)
+- Rate limiting enforcement (backend responsibility)
+- Data quality scoring algorithms (backend responsibility)
 
 ---
 
