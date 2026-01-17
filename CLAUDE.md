@@ -295,6 +295,62 @@ This section provides API contract references for integration with the backend s
 - Copy-paste architecture - each component is in your codebase
 - Customize via variants or wrapper components
 
+### MCP-Assisted Development (Design Patterns & Styles)
+
+**Context7 MCP** provides access to **design patterns, styling examples, and best practices** - NOT for installing components.
+
+**⚠️ CRITICAL DISTINCTION:**
+- **Creative Tim UI** → Source of **design patterns and styling ideas** (DO NOT INSTALL)
+- **shadcn/ui** → Base components we actually use (already installed in `src/components/ui/`)
+
+**Available Design Pattern Sources:**
+- `/creativetimofficial/ui` - **Creative Tim UI design patterns** (121+ styling examples, High reputation)
+- `/llmstxt/ui_shadcn_llms_txt` - **shadcn/ui component examples** (1141 code examples)
+
+**Usage Workflow for New UI Features:**
+```bash
+# 1. Get DESIGN PATTERNS from Creative Tim UI via Context7
+mcp-cli call context7/query-docs '{
+  "libraryId": "/creativetimofficial/ui",
+  "query": "[component type] design layout styling examples",
+  "maxResults": 5
+}'
+
+# 2. Get IMPLEMENTATION EXAMPLES from shadcn/ui via Context7
+mcp-cli call context7/query-docs '{
+  "libraryId": "/llmstxt/ui_shadcn_llms_txt",
+  "query": "[component] react typescript implementation",
+  "maxResults": 3
+}'
+
+# 3. Use EXISTING shadcn/ui components from src/components/ui/
+# 4. Apply Creative Tim design patterns (spacing, typography, colors, layout)
+# 5. Adapt to project requirements (RU locale, red primary #E53935, etc.)
+```
+
+**When to use Context7 MCP:**
+- Starting new UI features → Get design patterns first
+- Need layout inspiration → Check Creative Tim styling
+- Looking for component examples → Check shadcn implementation
+- Stuck on styling → Query for similar patterns
+
+**DO NOT:**
+- ❌ Install Creative Tim UI (`npx @creative-tim/ui@latest add`)
+- ❌ Copy Creative Tim code directly (uses different patterns)
+- ❌ Assume Creative Tim components match our design system
+
+**DO:**
+- ✅ Use Context7 to get design/layout ideas
+- ✅ Adapt patterns to our shadcn/ui components
+- ✅ Follow project conventions (Russian locale, red primary, WCAG 2.1 AA)
+- ✅ Check existing custom components first (`src/components/custom/`)
+
+**Priority for UI Development:**
+1. Check existing custom components (`src/components/custom/`)
+2. Query Context7 for Creative Tim **design patterns** (layout, spacing, styling)
+3. Use base shadcn/ui components (`src/components/ui/`)
+4. Build custom component with learned patterns
+
 ---
 
 ## Key Architecture Patterns
@@ -371,6 +427,46 @@ const { mutate, isPolling } = useSingleCogsAssignmentWithPolling()
 **Feedback**: alert, progress, skeleton, sonner (toast)
 **Navigation**: dropdown-menu, tabs, popover
 **Other**: table, badge, tooltip
+
+### Creative Tim UI Design Patterns (Context7 MCP Only)
+**Purpose**: Source of **design patterns and styling inspiration** (NOT for installation)
+**Access**: Context7 MCP → `/creativetimofficial/ui`
+**Documentation**: https://creative-tim.com/ui
+
+**⚠️ IMPORTANT:**
+- **DO NOT INSTALL** - We use shadcn/ui components, not Creative Tim UI packages
+- **USE FOR** - Design layout patterns, spacing inspiration, styling ideas
+- **WORKFLOW** - Query Context7 → Adapt patterns to our shadcn/ui components
+
+**Available Design Categories:**
+- **Application UI** - Account, Billing, Modals (layout patterns)
+- **Marketing** - Testimonials, Contact, Footers, FAQs (section designs)
+- **E-commerce** - Product cards, Pricing sections (display patterns)
+
+**How to Use:**
+```bash
+# 1. Query for design patterns
+mcp-cli call context7/query-docs '{
+  "libraryId": "/creativetimofficial/ui",
+  "query": "pricing card layout design examples",
+  "maxResults": 3
+}'
+
+# 2. Extract design ideas (spacing, typography, colors)
+# 3. Apply to YOUR shadcn/ui components
+# 4. Follow our design system (red #E53935, Russian locale)
+```
+
+**Example Use Cases:**
+- Need pricing section layout? → Query "pricing card layout"
+- Building testimonials? → Query "testimonial section design"
+- Stuck on card spacing? → Query "card padding margin examples"
+
+**What You Get:**
+- ✅ Design patterns (spacing, typography, layout)
+- ✅ Styling inspiration (colors, shadows, borders)
+- ✅ Component structure ideas
+- ❌ NOT installable components (use shadcn/ui instead)
 
 ### Custom Components (70+ components, ~18,490 lines)
 **Location**: `src/components/custom/`
