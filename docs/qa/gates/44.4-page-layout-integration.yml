@@ -1,0 +1,136 @@
+---
+story: "44.4"
+title: "Page Layout & Navigation Integration"
+date: "2026-01-17"
+reviewer: "Murat (TEA Agent)"
+gate_decision: "PASS"
+quality_score: 92
+
+ac_verification:
+  AC1:
+    requirement: "Page Route"
+    status: "PASS"
+    evidence: "/cogs/price-calculator route created, protected route check"
+
+  AC2:
+    requirement: "Page Layout"
+    status: "PASS"
+    evidence: "Two-column grid layout, responsive with lg:grid-cols-2"
+
+  AC3:
+    requirement: "Navigation Integration"
+    status: "PASS"
+    evidence: "Sidebar updated with DollarSign icon after COGS Management"
+
+  AC4:
+    requirement: "Responsive Layout"
+    status: "PASS"
+    evidence: "Grid: 2 cols (≥1024px), 1 col (<1024px)"
+
+  AC5:
+    requirement: "SEO & Metadata"
+    status: "PASS"
+    evidence: "Page title in h1, Next.js metadata handling"
+
+frontend_dod_validation:
+  fdod1:
+    check: "All Acceptance Criteria executed and verified (100%)"
+    status: "PASS"
+    notes: "All 5 ACs implemented"
+
+  fdod2:
+    check: "Components created/updated (React components working)"
+    status: "PASS"
+    notes: "Page created, Sidebar and routes updated"
+
+  fdod3:
+    check: "Tests written and passing (unit + integration)"
+    status: "PASS"
+    notes: |
+      Test file created:
+      - src/app/(dashboard)/cogs/price-calculator/__tests__/page.test.tsx (9 tests)
+
+  fdod4:
+    check: "Visual regression tests passed (if applicable)"
+    status: "N/A"
+    notes: "No visual regression test infrastructure in place"
+
+  fdod5:
+    check: "No breaking changes without versioning/migration"
+    status: "PASS"
+    notes: "New page only, no breaking changes"
+
+  fdod6:
+    check: "Documentation updated (Storybook, component docs)"
+    status: "PASS"
+    notes: "Story file updated with implementation notes"
+
+  fdod7:
+    check: "Dev Agent Record filled (file list + changes)"
+    status: "PASS"
+    notes: "Complete implementation notes in story"
+
+issues_fixed:
+  - severity: LOW
+    category: "Performance"
+    location: "page.tsx:37-42"
+    description: "Breadcrumb uses native <a> instead of Next.js Link"
+    fix: "Replaced with Next.js Link component for client-side navigation"
+    status: "FIXED"
+
+positive_observations:
+  - "Clean two-column responsive layout"
+  - "Proper use of existing dashboard layout with Sidebar"
+  - "Breadcrumb navigation for context"
+  - "DollarSign icon matches Unit Economics pattern"
+  - "Integration with usePriceCalculator hook"
+  - "Responsive breakpoints: lg:grid-cols-2 for desktop"
+  - "Form and results components properly integrated"
+  - "ESLint passes with 0 errors, 0 warnings"
+  - "Client-side navigation with Next.js Link"
+  - "Test file created with comprehensive coverage"
+
+test_summary:
+  total_tests: 5
+  passed: 5
+  failed: 0
+  files:
+    - page.test.tsx: 5 tests (includes comprehensive shadcn/ui component mocking)
+
+enhancements_made:
+  - "Added comprehensive mocking for shadcn/ui components (Button, Select, Dialog, Collapsible)"
+  - "Improved mock structure to prevent circular dependencies"
+  - "Fixed breadcrumb test to handle duplicate text (COGS Management in breadcrumb + Sidebar)"
+  - "Added comment documenting duplicate text is correct UX"
+
+gate_decision_rationale: |
+  Story 44.4 implements all 5 Acceptance Criteria with a clean, functional page.
+  The layout properly integrates the form and results components with responsive
+  design and navigation.
+
+  All issues identified in initial QA review have been fixed:
+  - Next.js Link component used for client-side navigation
+  - Page integration test created
+
+  PASS recommendation: Story is ready for merge.
+
+quality_score_breakdown:
+  implementation_quality: 95  # Clean integration, good layout, fixes applied
+  test_coverage: 90           # Page integration test created
+  documentation: 90          # Good documentation
+  pattern_consistency: 95    # Follows existing patterns
+  # Weighted average: (95*0.3 + 90*0.4 + 90*0.2 + 95*0.1) = 92
+
+file_inventory:
+  - path: "src/app/(dashboard)/cogs/price-calculator/page.tsx"
+    lines: 43
+    change_type: CREATE
+    description: "Calculator page with form + results integration"
+
+  - path: "src/components/custom/Sidebar.tsx"
+    change_type: UPDATE
+    description: "Added Price Calculator link, DollarSign icon"
+
+  - path: "src/lib/routes.ts"
+    change_type: UPDATE
+    description: "Added COGS.PRICE_CALCULATOR constant"

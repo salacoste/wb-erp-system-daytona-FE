@@ -1,7 +1,7 @@
 # Story 44.4: Page Layout & Navigation Integration
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: Complete ✅
+**Status**: Review
 **Priority**: P0 - CRITICAL
 **Effort**: 2 SP
 **Depends On**: Stories 44.1, 44.2, 44.3 ✅
@@ -88,14 +88,12 @@ export default function PriceCalculatorPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <nav className="mb-4 text-sm text-muted-foreground">
-        <a href="/cogs" className="hover:text-foreground hover:underline">
-          COGS Management
-        </a>
+        <a href="/cogs" className="hover:underline">COGS Management</a>
         {' / '}
-        <span className="text-foreground font-medium">Price Calculator</span>
+        <span>Price Calculator</span>
       </nav>
 
       {/* Page Header */}
@@ -105,12 +103,19 @@ export default function PriceCalculatorPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Input Form */}
         <div>
-          <PriceCalculatorForm onSubmit={handleCalculate} loading={isPending} />
+          <PriceCalculatorForm
+            onSubmit={handleCalculate}
+            loading={isPending}
+          />
         </div>
 
         {/* Right: Results */}
         <div>
-          <PriceCalculatorResults data={data} loading={isPending} error={error} />
+          <PriceCalculatorResults
+            data={data}
+            loading={isPending}
+            error={error}
+          />
         </div>
       </div>
     </div>
@@ -123,7 +128,7 @@ export default function PriceCalculatorPage() {
 Update existing Sidebar component to add Price Calculator link:
 
 ```typescript
-// src/components/custom/Sidebar.tsx (updated)
+// src/components/custom/Sidebar.tsx (partial update)
 // Import DollarSign icon
 import { DollarSign } from 'lucide-react'
 
@@ -197,26 +202,21 @@ COGS: {
 
 ## Accessibility (WCAG 2.1 AA)
 
-- [x] Skip navigation link (breadcrumb acts as skip link)
-- [x] Proper heading hierarchy (h1 > h2)
-- [x] Focus visible on interactive elements
-- [x] Touch targets ≥ 44×44px
-
-### Review Follow-ups (AI-Code-Review 2026-01-17)
-- All accessibility items verified and passing
-- Two-column responsive layout with proper grid breakpoints
-- Breadcrumb navigation for screen readers
+- [ ] Skip navigation link
+- [ ] Proper heading hierarchy (h1 > h2)
+- [ ] Focus visible on interactive elements
+- [ ] Touch targets ≥ 44×44px
 
 ---
 
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines | Description |
-|------|-------------|------|-------------|
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE | 43 | Calculator page with form + results |
-| `src/components/custom/Sidebar.tsx` | UPDATE | 214 | Added Price Calculator link, DollarSign icon |
-| `src/lib/routes.ts` | UPDATE | 93 | Added COGS.PRICE_CALCULATOR constant |
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE | Calculator page |
+| `src/components/custom/Sidebar.tsx` | UPDATE | Add Price Calculator link |
+| `src/lib/routes.ts` | UPDATE | Add COGS.PRICE_CALCULATOR route |
 
 ### Change Log
 1. Created Price Calculator page with layout
@@ -248,36 +248,23 @@ COGS: {
 
 ## QA Results
 
-**Reviewer**: Dev Agent (Amelia)
-**Date**: 2026-01-17
-**Gate Decision**: ✅ READY FOR REVIEW
+**Reviewer**: TBD
+**Date**: TBD
+**Gate Decision**: ⏳ PENDING
 
 ### AC Verification
 | AC | Requirement | Status | Evidence |
 |----|-------------|--------|----------|
-| AC1 | Page route | ✅ | `/cogs/price-calculator` route created, protected route check |
-| AC2 | Page layout | ✅ | Two-column grid layout, responsive with `lg:grid-cols-2` |
-| AC3 | Navigation integration | ✅ | Sidebar updated with DollarSign icon after COGS Management |
-| AC4 | Responsive layout | ✅ | Grid: 2 cols (≥1024px), 1 col (<1024px) |
-| AC5 | SEO & metadata | ✅ | Page title in h1, Next.js metadata handling |
+| AC1 | Page route | ⏳ |  |
+| AC2 | Page layout | ⏳ |  |
+| AC3 | Navigation integration | ⏳ |  |
+| AC4 | Responsive layout | ⏳ |  |
+| AC5 | SEO & metadata | ⏳ |  |
 
 ### Responsive Testing
-| Viewport | Expected Layout | Status | Evidence |
-|----------|----------------|--------|----------|
-| 1920×1080 | Two columns | ✅ | lg:grid-cols-2 breakpoint applies |
-| 1024×768 | Two columns | ✅ | lg breakpoint applies |
-| 768×1024 | Stacked | ✅ | Default grid-cols-1 stacked |
-| 375×667 | Single column | ✅ | Full-width inputs |
-
-### Accessibility Check
-- [x] Skip navigation link (breadcrumb acts as skip link)
-- [x] Proper heading hierarchy (h1 > h2)
-- [x] Focus visible on interactive elements
-- [x] Touch targets ≥ 44×44px
-
-### File List (Updated)
-| File | Change Type | Lines | Description |
-|------|-------------|------|-------------|
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE | 43 | Calculator page with form + results |
-| `src/components/custom/Sidebar.tsx` | UPDATE | 214 | Added Price Calculator link, DollarSign icon |
-| `src/lib/routes.ts` | UPDATE | 93 | Added COGS.PRICE_CALCULATOR constant |
+| Viewport | Expected Layout | Status |
+|----------|----------------|--------|
+| 1920×1080 | Two columns | ⏳ |
+| 1024×768 | Two columns | ⏳ |
+| 768×1024 | Stacked | ⏳ |
+| 375×667 | Single column | ⏳ |
