@@ -1,10 +1,23 @@
 import type { NextConfig } from 'next'
+import path from 'path'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
 const nextConfig: NextConfig = {
+  // Workspace root - monorepo with backend at parent level
+  outputFileTracingRoot: path.join(__dirname, '../..'),
+
+  // Disable tracing for lockfiles in development
+  ...(isDevelopment && {
+    // Disable webpack cache to avoid ENOENT race conditions
+    webpack: (config) => {
+      config.cache = false;
+      return config;
+    },
+  }),
   // React strict mode for development
-  reactStrictMode: true,
+  // TEMPORARILY DISABLED: Investigating infinite reload issue
+  // reactStrictMode: true,
 
   // Image optimization
   images: {
