@@ -211,7 +211,15 @@ test.describe('Epic 37: MergedGroupTable 3-Tier Structure', () => {
   test('should have sticky columns on tablet/mobile', async ({ page }) => {
     // Set tablet viewport (iPad)
     await page.setViewportSize({ width: 768, height: 1024 })
-    await page.reload()
+    // Re-navigate after viewport change to ensure proper rendering
+    await page.goto('/analytics/advertising')
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(2000)
+
+    // Switch to merged groups view again after navigation
+    const imtIdButton = page.locator('button:has-text("По склейкам")')
+    await imtIdButton.waitFor({ state: 'visible', timeout: 10000 })
+    await imtIdButton.click()
     await page.waitForLoadState('networkidle')
 
     // Wait for table
@@ -236,8 +244,10 @@ test.describe('Epic 37: MergedGroupTable 3-Tier Structure', () => {
 
     // Test mobile viewport (iPhone 12)
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.reload()
+    // Re-navigate after viewport change
+    await page.goto('/analytics/advertising')
     await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(2000)
 
     // Verify table is scrollable horizontally
     const tableWrapper = page.locator('div').filter({ has: page.locator('table') }).first()

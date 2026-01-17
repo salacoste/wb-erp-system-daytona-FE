@@ -317,11 +317,18 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
   test('should be accessible on mobile devices', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.reload()
+    // Re-navigate after viewport change
+    await page.goto('/analytics/advertising')
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(2000)
+
+    // Switch to merged groups view
+    const imtIdButton = page.locator('button:has-text("По склейкам")')
+    await imtIdButton.waitFor({ state: 'visible', timeout: 10000 })
+    await imtIdButton.click()
     await page.waitForLoadState('networkidle')
 
-    // Test touch target sizes (minimum 44x44 pixels per WCAG)
-    const imtIdButton = page.getByRole('button', { name: /По склейкам/i })
+    // Test touch target sizes (minimum 44x44 pixels per WCAC)
     const buttonBox = await imtIdButton.boundingBox()
 
     if (buttonBox) {

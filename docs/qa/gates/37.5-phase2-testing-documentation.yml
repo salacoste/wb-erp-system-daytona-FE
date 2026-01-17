@@ -5,9 +5,9 @@ schema: 1
 story: "37.5-phase2"
 story_title: "Testing & Documentation - Phase 2 Manual Testing"
 gate: CONCERNS
-status_reason: "Dev tasks complete (Mixpanel, axe-core). 4 manual testing tasks pending execution by QA team."
-reviewer: "Quinn (Test Architect)"
-updated: "2026-01-03T05:35:00Z"
+status_reason: "A11Y-001 FIXED. 3 manual testing tasks pending (UAT, Performance, Screen Reader). Mixpanel + Axe-core complete."
+reviewer: "Murat (Test Architect)"
+updated: "2026-01-17T10:00:00Z"
 
 waiver: { active: false }
 
@@ -17,6 +17,7 @@ top_issues:
     finding: "Radix UI aria-controls violation (aria-valid-attr-value)"
     suggested_action: "Update @radix-ui/react-tabs or replace with custom toggle buttons"
     suggested_owner: dev
+    status: "FIXED - Replaced Radix Tabs with accessible ViewByToggle (2026-01-17)"
   - id: "UAT-001"
     severity: medium
     finding: "UAT with 3 real users not yet executed"
@@ -33,7 +34,7 @@ top_issues:
     suggested_action: "Execute manual screen reader testing per handoff document"
     suggested_owner: qa
 
-quality_score: 70
+quality_score: 78
 
 evidence:
   tests_reviewed: 77
@@ -63,7 +64,7 @@ nfr_validation:
   performance: { status: PENDING, notes: "Awaiting Lighthouse audit" }
   reliability: { status: PASS, notes: "Error handling implemented" }
   maintainability: { status: PASS, notes: "Well-documented with user guide" }
-  accessibility: { status: CONCERNS, notes: "Color contrast fixed, Radix aria issue remaining" }
+  accessibility: { status: CONCERNS, notes: "Color contrast fixed, Radix aria-controls FIXED (2026-01-17). 3 manual tests pending." }
 
 completed_work:
   mixpanel_events:
@@ -72,10 +73,14 @@ completed_work:
     - "Advertising Analytics - Sort Table"
     - "Advertising Analytics - Row Click"
   accessibility_fix:
-    issue: "Color contrast (sidebar active link)"
-    before: "#E53935 (4.22:1)"
-    after: "#C62828 (5.48:1)"
-    status: "Fixed"
+    - issue: "Color contrast (sidebar active link)"
+      before: "#E53935 (4.22:1)"
+      after: "#C62828 (5.48:1)"
+      status: "Fixed"
+    - issue: "Radix UI aria-controls violation (aria-valid-attr-value)"
+      before: "Radix Tabs with role='tab' + aria-controls"
+      after: "ViewByToggle + GroupByToggle with aria-pressed"
+      status: "Fixed (2026-01-17)"
 
 files_created:
   - src/lib/mixpanel.ts
@@ -83,6 +88,7 @@ files_created:
   - docs/stories/epic-37/MIXPANEL-SETUP.md
   - docs/stories/epic-37/ACCESSIBILITY-REPORT.md
   - docs/stories/epic-37/QA-PHASE-2-COMPLETION-REPORT.md
+  - src/app/(dashboard)/analytics/advertising/components/ViewByToggle.tsx (A11Y fix)
 
 files_modified:
   - .env.example (MIXPANEL_TOKEN added)
@@ -91,6 +97,7 @@ files_modified:
   - src/components/custom/Sidebar.tsx (active link color)
   - src/components/custom/Sidebar.test.tsx (test assertions)
   - src/app/(dashboard)/analytics/advertising/page.tsx (analytics tracking)
+  - src/app/(dashboard)/analytics/advertising/components/AdvertisingFilters.tsx (A11Y fix - replaced Radix Tabs)
 
 recommendations:
   immediate:
@@ -99,7 +106,7 @@ recommendations:
     - action: "Run Lighthouse performance audit"
       refs: ["docs/stories/epic-37/QA-HANDOFF-PHASE-2.md#task-2"]
   future:
-    - action: "Fix Radix aria-controls issue (update package or replace with custom toggle)"
-      refs: ["docs/stories/epic-37/ACCESSIBILITY-REPORT.md"]
+    - action: "Screen reader testing (VoiceOver, NVDA, TalkBack)"
+      refs: ["docs/stories/epic-37/QA-HANDOFF-PHASE-2.md#task-4"]
 
-expires: "2026-01-17T00:00:00Z"
+expires: "2026-01-31T00:00:00Z"
