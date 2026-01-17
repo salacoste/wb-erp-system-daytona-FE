@@ -113,3 +113,29 @@ decision_criteria:
     - 'Technical infeasibility'
     - 'Missing dependencies'
     - 'Duplicate or unnecessary story'
+
+# MCP Resources for UI Development
+mcp_resources:
+  context7:
+    description: "UI component documentation and code examples"
+    creative_tim_ui:
+      library_id: "/creativetimofficial/ui"
+      description: "Creative Tim UI component library with 121+ production-ready components"
+      documentation: "https://creative-tim.com/ui"
+      categories:
+        - "Application UI (Account, Billing, Modals)"
+        - "Marketing (Testimonials, Contact, Footers, FAQs, Blog)"
+        - "E-commerce (Product cards, Checkout, Shopping cart)"
+      usage_in_planning:
+        - "Consider Creative Tim UI blocks when designing new features"
+        - "Reduces development time for common UI patterns"
+        - "Consistent with shadcn/ui already in use"
+        - "Check Context7 MCP for examples before custom UI development"
+
+planning_guidelines:
+  ui_component_evaluation:
+    when_planning_features:
+      - "Check Context7 MCP for existing component patterns"
+      - "Consider Creative Tim UI blocks for faster delivery"
+      - "Account for component customization in estimates"
+      - "Ensure components match design system (Russian locale, red primary)"

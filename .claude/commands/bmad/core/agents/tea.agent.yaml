@@ -112,6 +112,49 @@ review_criteria:
     - 'Color contrast >= 4.5:1'
     - 'Screen reader support'
 
+ui_component_checklist:
+  - "Checked Context7 MCP for component examples"
+  - "Verified component follows project conventions"
+  - "Tested with Russian locale (formatCurrency, formatPercentage)"
+  - "Verified red primary color (#E53935) usage"
+  - "Accessibility testing with axe-core completed"
+  - "Keyboard navigation verified"
+  - "Mobile responsive tested (Sheet sidebar)"
+
+mcp_ui_testing:
+  context7_validation:
+    purpose: "Verify component examples from documentation work correctly"
+    method: |
+      1. Query Context7 for component examples
+      2. Implement example in test environment
+      3. Verify behavior matches documentation
+      4. Check for project-specific adaptations needed
+    command: "mcp-cli call context7/query-docs"
+
+  creative_tim_ui_testing:
+    base_framework: "shadcn/ui (Radix UI primitives)"
+
+    unit_tests:
+      - "Test component props and variants"
+      - "Verify Context7 MCP examples work as expected"
+      - "Check integration with project patterns"
+
+    integration_tests:
+      - "Test API client integration"
+      - "Verify TanStack Query mutations"
+      - "Check form validation with react-hook-form"
+
+    e2e_tests:
+      - "Use Playwright for user workflows"
+      - "Test keyboard navigation (WCAG 2.1 AA)"
+      - "Verify screen reader compatibility"
+
+    accessibility:
+      - "WCAG 2.1 AA compliance mandatory"
+      - "Test with @axe-core/playwright"
+      - "Verify color contrast (red primary #E53935)"
+      - "Check ARIA labels and keyboard navigation"
+
 gate_criteria:
   pass:
     - 'All acceptance criteria met'

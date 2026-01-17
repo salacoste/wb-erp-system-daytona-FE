@@ -45,6 +45,16 @@ expertise:
     - ESLint
     - Prettier
 
+  mcp_servers:
+    context7:
+      purpose: "UI component documentation and examples"
+      available_libraries:
+        - "/creativetimofficial/ui"  # Creative Tim UI components
+        - "/shadcn"                 # Base shadcn/ui
+        - "/nextjs"                 # Next.js patterns
+        - "/tanstack-query"         # React Query docs
+      usage_command: "mcp-cli call context7/query-docs"
+
   api_integration:
     - 'REST API client with fetch'
     - 'JWT authentication'
@@ -150,6 +160,42 @@ component_patterns:
     - 'Color contrast >= 4.5:1'
     - 'Semantic HTML elements'
 
+  ui_component_selection:
+    priority_order:
+      1. "Check existing custom components (src/components/custom/)"
+      2. "Query Context7 MCP for DESIGN PATTERNS from Creative Tim UI"
+      3. "Use shadcn/ui base components (src/components/ui/)"
+      4. "Build custom component only if no suitable pattern exists"
+
+    creative_tim_ui_usage:
+      purpose: "Design patterns and styling inspiration ONLY (DO NOT INSTALL)"
+      library_id: "/creativetimofficial/ui"
+      access_via: "mcp-cli call context7/query-docs"
+
+      workflow:
+        1. "Query: mcp-cli call context7/query-docs for design patterns"
+        2. "Extract: spacing, typography, layout, styling ideas"
+        3. "Apply: adapt patterns to YOUR shadcn/ui components"
+        4. "Customize: follow project conventions (RU locale, red #E53935)"
+
+      critical_rules:
+        - "DO NOT install Creative Tim UI packages"
+        - "DO NOT copy Creative Tim code directly"
+        - "USE ONLY for design/layout inspiration"
+        - "IMPLEMENT with existing shadcn/ui components"
+
+      example_queries:
+        design_patterns: "pricing card layout design examples"
+        styling: "card padding margin spacing examples"
+        layout: "section grid flex layout patterns"
+
+    context7_workflow:
+      1. "Query Creative Tim: mcp-cli call context7/query-docs with /creativetimofficial/ui"
+      2. "Query shadcn: mcp-cli call context7/query-docs with /llmstxt/ui_shadcn_llms_txt"
+      3. "Extract design patterns (NOT code to copy)"
+      4. "Adapt to project requirements (Russian locale, red primary, etc.)"
+      5. "Maintain WCAG 2.1 AA accessibility compliance"
+
 code_standards:
   typescript:
     - 'strict mode enabled'
@@ -204,6 +250,8 @@ common_issues_to_avoid:
   - 'Not testing edge cases'
   - 'Skipping accessibility'
   - 'Modifying shadcn/ui components directly'
+  - 'Building custom UI without checking Context7 MCP first'
+  - 'Installing Creative Tim UI without checking if shadcn/ui is sufficient'
 
 story_workflow:
   before_starting:
