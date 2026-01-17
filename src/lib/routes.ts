@@ -22,6 +22,7 @@ export const ROUTES = {
     ROOT: '/cogs',
     SINGLE: '/cogs/single',
     BULK: '/cogs/bulk',
+    PRICE_CALCULATOR: '/cogs/price-calculator', // Epic 44: Price Calculator UI
   },
   ANALYTICS: {
     ROOT: '/analytics',
@@ -59,6 +60,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.COGS.ROOT,
     ROUTES.COGS.SINGLE,
     ROUTES.COGS.BULK,
+    ROUTES.COGS.PRICE_CALCULATOR, // Epic 44: Price Calculator UI
     ROUTES.ANALYTICS.ROOT,
     ROUTES.ANALYTICS.DASHBOARD, // Story 6.4-FE: Cabinet Summary Dashboard
     ROUTES.ANALYTICS.SKU,
