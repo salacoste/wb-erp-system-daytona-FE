@@ -1,13 +1,12 @@
 # Stories Status Report
 
 **Generated:** 2025-11-23
-**Last Updated:** 2026-01-06
-**Total Stories:** 70 (62 Done, 4 Ready for QA, 4 Ready for Dev)
+**Last Updated:** 2026-01-17
+**Total Stories:** 76 (68 Done, 4 Ready for Dev)
 
 ## Summary
 
-- ✅ **Completed (Done):** 62 stories (89%)
-- 🔍 **Ready for QA:** 4 stories (Epic 24 - stories 24.3, 24.4, 24.5, 24.8)
+- ✅ **Completed (Done):** 68 stories (89%)
 - 📋 **Ready for Development:** 4 stories (Epic 42-FE - Task Handlers Adaptation)
 - 📝 **Draft (Not Started):** 0 stories
 - ⚠️ **Partially Complete:** 0 stories
@@ -37,11 +36,12 @@
 ### ✅ Epic 4: COGS Management & Margin Analysis — COMPLETE (10/10 stories)
 ### ✅ Epic 5: COGS History Management — COMPLETE (3/3 stories, 92 tests)
 ### ✅ Epic 6: Advanced Analytics — COMPLETE (5/5 stories, 21 pts)
-### 🔍 Epic 24: Paid Storage Analytics — READY FOR QA (4/8 in QA)
+### ✅ Epic 24: Paid Storage Analytics — COMPLETE (11/11 stories, 39 pts)
 ### ✅ Epic 33-FE: Advertising Analytics — COMPLETE (8/8 stories, 26 pts)
 ### ✅ Epic 34-FE: Telegram Notifications — PRODUCTION READY (6/6 stories, 21 pts)
 ### ✅ Epic 36-FE: Product Card Linking — COMPLETE (5/5 stories, 91 tests)
 ### ✅ Epic 37: Merged Group Table Display — DONE (5/5 stories, 89.4/100)
+### ✅ Epic 44: Price Calculator UI — COMPLETE (6/6 stories, 14 pts)
 ### 📋 Epic 42-FE: Task Handlers Adaptation — READY FOR DEV (4 stories, 7 pts)
 
 ---
@@ -365,11 +365,37 @@ Update README, api-integration-guide, verify tests.
 
 ---
 
+## Epic 44-FE: Price Calculator UI (6 stories) ✅ **COMPLETE**
+
+**Status:** ✅ Complete
+**Total Points:** 14
+**Completed:** 2026-01-17
+**Documentation:** `docs/stories/epic-44/README.md`
+
+### ✅ 44.1-FE: TypeScript Types & API Client — Done (2 pts)
+Types, API client, `usePriceCalculator` hook, tests.
+
+### ✅ 44.2-FE: Input Form Component — Done (3 pts)
+PriceCalculatorForm with all input fields, validation, tests.
+
+### ✅ 44.3-FE: Results Display Component — Done (3 pts)
+PriceCalculatorResults, RecommendedPriceCard, CostBreakdownTable, tests.
+
+### ✅ 44.4-FE: Page Layout & Integration — Done (2 pts)
+`/cogs/price-calculator` route, Sidebar integration, responsive layout.
+
+### ✅ 44.5-FE: Real-time Calculation & UX — Done (2 pts)
+MarginSlider, real-time updates, interactive UX.
+
+### ✅ 44.6-FE: Testing & Documentation — Done (2 pts)
+15+ test files, integration tests, documentation.
+
+---
+
 ## Statistics
 
 ### By Status
-- **Done:** 62 stories (89%)
-- **Ready for QA:** 4 stories (6%) — Epic 24
+- **Done:** 68 stories (89%)
 - **Ready for Development:** 4 stories (5%) — Epic 42-FE
 - **Draft:** 0 stories
 
@@ -382,19 +408,19 @@ Update README, api-integration-guide, verify tests.
 | Epic 4 | ✅ Complete | 10/10 | - |
 | Epic 5 | ✅ Complete | 3/3 (92 tests) | - |
 | Epic 6 | ✅ Complete | 5/5 | 21 pts |
-| Epic 24 | 🔍 Ready for QA | 8/8 (4 in QA) | - |
+| Epic 24 | ✅ Complete | 11/11 | 39 pts |
 | Epic 33-FE | ✅ Complete | 8/8 | 26 pts |
 | Epic 34-FE | ✅ Production Ready | 6/6 | 21 pts |
 | Epic 36-FE | ✅ Complete | 5/5 (91 tests) | 16 pts |
 | Epic 37 | ✅ Done | 5/5 (89.4/100) | - |
 | Epic 42-FE | 📋 Ready for Dev | 4/4 | 7 pts |
+| Epic 44-FE | ✅ Complete | 6/6 | 14 pts |
 
 ### Overall Progress
-- **Total Stories:** 70
-- **Completed:** 62 (89%)
-- **In QA:** 4 (6%)
+- **Total Stories:** 76
+- **Completed:** 68 (89%)
 - **Ready for Dev:** 4 (5%)
-- **Total Tests:** 700+ (estimated)
+- **Total Tests:** 800+ (estimated)
 
 ---
 
@@ -415,27 +441,28 @@ Update README, api-integration-guide, verify tests.
 | 2025-12-30 | **Epic 34-FE production ready** (Telegram Notifications) |
 | 2026-01-02 | Documentation sync — 94% complete (62/66 stories) |
 | 2026-01-06 | **Epic 42-FE created** (Task Handlers Adaptation, 4 stories, 7 pts) |
+| 2026-01-17 | **Epic 44-FE complete** (Price Calculator UI, 6 stories, 14 pts) |
 
 ---
 
 ## Recommendations
 
-### ✅ 62/66 STORIES COMPLETE (2026-01-02)
+### ✅ 68/76 STORIES COMPLETE (2026-01-17)
 
 **Achievement Summary:**
-- ✅ **62/66 Stories Complete** (94%)
-- ✅ **Epic 1-5:** Core MVP complete with 300+ tests
-- ✅ **Epic 6:** Advanced Analytics (21 pts)
+- ✅ **68/76 Stories Complete** (89%)
+- ✅ **Epic 1-6:** Core MVP complete with 300+ tests
+- ✅ **Epic 24:** Paid Storage Analytics (39 pts, 11 stories)
 - ✅ **Epic 33-FE:** Advertising Analytics (26 pts)
 - ✅ **Epic 34-FE:** Telegram Notifications (Production Ready)
 - ✅ **Epic 36-FE:** Product Card Linking (91 tests)
 - ✅ **Epic 37:** Merged Group Table (89.4/100 quality)
-- 🔍 **Epic 24:** Paid Storage Analytics (4 stories in QA)
-- ✅ **Total: 700+ tests**
+- ✅ **Epic 44-FE:** Price Calculator UI (14 pts, 6 stories)
+- ✅ **Total: 800+ tests**
 
 ### Next Steps
 
-1. **Complete QA for Epic 24** — 4 stories remaining in QA (24.3, 24.4, 24.8)
+1. **Epic 42-FE** — Task Handlers Adaptation (4 stories, 7 pts) — Ready for Dev
 2. **End-to-end testing** with real Wildberries data
 3. **Performance testing** — verify API response times
 4. **Security audit** — final security review
@@ -459,10 +486,12 @@ Update README, api-integration-guide, verify tests.
 
 ### Epic READMEs
 - `docs/stories/epic-6/README.md` — Advanced Analytics (5/5 ✅)
+- `docs/stories/epic-24/README.md` — Paid Storage Analytics (11/11 ✅)
 - `docs/stories/epic-33/README.md` — Advertising Analytics (8/8 ✅)
 - `docs/stories/epic-36/README.md` — Product Card Linking (5/5 ✅)
 - `docs/stories/epic-37/STATUS.md` — Merged Group Table (5/5 ✅)
 - `docs/stories/epic-42/README.md` — Task Handlers Adaptation (4 stories 📋)
+- `docs/stories/epic-44/README.md` — Price Calculator UI (6/6 ✅)
 
 ### Backend Requests
 - `docs/request-backend/README.md` — All backend requests index
@@ -474,7 +503,6 @@ Update README, api-integration-guide, verify tests.
 
 **Legend:**
 - ✅ Done — Story completed
-- 🔍 Ready for QA — Story ready for QA review
 - 📋 Ready for Development — Story ready to implement
 - 📝 Draft — Story not started
 - ⚠️ Partially Complete — Story done but has deferred tasks

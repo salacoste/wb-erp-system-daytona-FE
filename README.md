@@ -260,7 +260,77 @@ npm run test:e2e:ui      # Run E2E tests with UI
 - [6.4-fe Cabinet Summary Dashboard](docs/stories/epic-6/story-6.4-fe-cabinet-summary.md) - ✅ Done
 - [6.5-fe Export Analytics UI](docs/stories/epic-6/story-6.5-fe-export-analytics.md) - ✅ Done
 
-**Epic 37: Merged Group Table Display (Склейки)** (5 stories - 100% PO validated) 📋 **READY FOR DEVELOPMENT**:
+**Epic 24: Paid Storage Analytics** (11 stories - 100% Complete) ✅ **PRODUCTION READY** 🎉:
+- **[Epic 24 README](docs/stories/epic-24/README.md)** - Complete Epic 24 documentation
+- [24.1-fe Types & API Client](docs/stories/epic-24/story-24.1-fe-types-api-client.md) - ✅ Complete (3 SP)
+- [24.2-fe Page Layout](docs/stories/epic-24/story-24.2-fe-page-layout.md) - ✅ Complete (5 SP)
+- [24.3-fe Storage by SKU Table](docs/stories/epic-24/story-24.3-fe-storage-by-sku-table.md) - ✅ Complete (5 SP)
+- [24.4-fe Top Consumers](docs/stories/epic-24/story-24.4-fe-top-consumers.md) - ✅ Complete (3 SP)
+- [24.5-fe Trends Chart](docs/stories/epic-24/story-24.5-fe-trends-chart.md) - ✅ Complete (3 SP)
+- [24.6-fe Manual Import](docs/stories/epic-24/story-24.6-fe-manual-import.md) - ✅ Complete (3 SP)
+- [24.7-fe Product Card Storage](docs/stories/epic-24/story-24.7-fe-product-card-storage.md) - ✅ Complete (2 SP)
+- [24.8-fe High Ratio Alert](docs/stories/epic-24/story-24.8-fe-high-ratio-alert.md) - ✅ Complete (2 SP)
+- [24.9-fe Multi-select Filters](docs/stories/epic-24/story-24.9-fe-multi-select-filters.md) - ✅ Complete (5 SP)
+- [24.10-fe Chart Click Filter](docs/stories/epic-24/story-24.10-fe-chart-click-filter.md) - ✅ Complete (3 SP)
+- [24.11-fe Unit Tests](docs/stories/epic-24/story-24.11-fe-unit-tests.md) - ✅ Complete (5 SP)
+- **Key Features**:
+  - Storage analytics page with filters, summary cards, and visualizations
+  - Top consumers widget with rank indicators and cost severity dots
+  - Trends chart with gap handling for null data
+  - Manual import dialog with date validation and progress polling
+  - High ratio alert banner with Russian pluralization
+  - Multi-select brand/warehouse filters
+  - Chart click-to-filter interaction
+  - Comprehensive unit tests (133 tests passing, 8 test files)
+  - WCAG 2.1 AA accessibility compliance
+  - QA Review: PASS - Ready for production deployment
+- **Backend Integration**: Epic 24 ✅ COMPLETE
+
+**Epic 44: Price Calculator UI** (6 stories - 100% Complete) ✅ **PRODUCTION READY** 🎉:
+- **[Epic 44 Documentation](docs/epics/epic-44-price-calculator-ui.md)** - Complete Epic 44 documentation
+- [44.1-fe Types & API Client](docs/stories/epic-44/story-44.1-fe-types-api-client.md) - ✅ Complete (2 SP)
+- [44.2-fe Input Form Component](docs/stories/epic-44/story-44.2-fe-input-form-component.md) - ✅ Complete (3 SP)
+- [44.3-fe Results Display Component](docs/stories/epic-44/story-44.3-fe-results-display-component.md) - ✅ Complete (3 SP)
+- [44.4-fe Page Layout Integration](docs/stories/epic-44/story-44.4-fe-page-layout-integration.md) - ✅ Complete (2 SP)
+- [44.5-fe Real-time Calculation UX](docs/stories/epic-44/story-44.5-fe-realtime-calculation-ux.md) - ✅ Complete (2 SP)
+- [44.6-fe Testing & Documentation](docs/stories/epic-44/story-44.6-fe-testing-documentation.md) - ✅ Complete (2 SP)
+- **Key Features**:
+  - Price Calculator UI for calculating optimal selling price based on target margin
+  - Real-time calculation with 500ms debounce
+  - Comprehensive error handling (400, 401, 403, 429)
+  - Visual cost breakdown with stacked bar chart (Recharts)
+  - Copy to clipboard, reset confirmation, Esc keyboard shortcut
+  - WCAG 2.1 AA accessibility compliance
+  - 208 tests passing, 6 QA gates passed (88-95/100 scores)
+  - Backend Integration: Epic 43 ✅ COMPLETE
+
+**Epic 24: Paid Storage Analytics** (11 stories - 100% Complete) ✅ **PRODUCTION READY** 🎉:
+- **[Epic 24 README](docs/stories/epic-24/README.md)** - Complete Epic 24 documentation
+- [24.1-fe Types & API Client](docs/stories/epic-24/story-24.1-fe-types-api-client.md) - ✅ Complete (3 SP)
+- [24.2-fe Page Layout](docs/stories/epic-24/story-24.2-fe-page-layout.md) - ✅ Complete (5 SP)
+- [24.3-fe Storage by SKU Table](docs/stories/epic-24/story-24.3-fe-storage-by-sku-table.md) - ✅ Complete (5 SP)
+- [24.4-fe Top Consumers](docs/stories/epic-24/story-24.4-fe-top-consumers.md) - ✅ Complete (3 SP)
+- [24.5-fe Trends Chart](docs/stories/epic-24/story-24.5-fe-trends-chart.md) - ✅ Complete (3 SP)
+- [24.6-fe Manual Import](docs/stories/epic-24/story-24.6-fe-manual-import.md) - ✅ Complete (3 SP)
+- [24.7-fe Product Card Storage](docs/stories/epic-24/story-24.7-fe-product-card-storage.md) - ✅ Complete (2 SP)
+- [24.8-fe High Ratio Alert](docs/stories/epic-24/story-24.8-fe-high-ratio-alert.md) - ✅ Complete (2 SP)
+- [24.9-fe Multi-select Filters](docs/stories/epic-24/story-24.9-fe-multi-select-filters.md) - ✅ Complete (5 SP)
+- [24.10-fe Chart Click Filter](docs/stories/epic-24/story-24.10-fe-chart-click-filter.md) - ✅ Complete (3 SP)
+- [24.11-fe Unit Tests](docs/stories/epic-24/story-24.11-fe-unit-tests.md) - ✅ Complete (5 SP)
+- **Key Features**:
+  - Storage analytics page with filters, summary cards, and visualizations
+  - Top consumers widget with rank indicators and cost severity dots
+  - Trends chart with gap handling for null data
+  - Manual import dialog with date validation and progress polling
+  - High ratio alert banner with Russian pluralization
+  - Multi-select brand/warehouse filters
+  - Chart click-to-filter interaction
+  - Comprehensive unit tests (133 tests passing, 8 test files)
+  - WCAG 2.1 AA accessibility compliance
+  - QA Review: PASS - Ready for production deployment
+- **Backend Integration**: Epic 24 ✅ COMPLETE
+
+**Epic 37: Merged Group Table Display (Склейки)** (6 stories + Phase 2 QA - 100% Complete) 📋 **READY FOR DEVELOPMENT**:
 - **[CHANGELOG-EPIC-37-FE.md](docs/CHANGELOG-EPIC-37-FE.md)** - Complete Epic 37 documentation ✨
 - **[PO Validation Report](docs/stories/epic-37/PO-VALIDATION-REPORT-EPIC-37.md)** - Quality 9.2/10 ⭐⭐⭐⭐
 - [37.1 Backend API Validation](docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md) - 1-2h
@@ -1739,10 +1809,27 @@ npm test -- --testPathPattern="storage"
 
 ---
 
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-01-17
 **Maintained by:** Development Team
 
 **Recent Updates:**
+- 2025-01-17: **Epic 24: Paid Storage Analytics** ✅ COMPLETE — QA Review PASS
+  - 11 stories implemented (39 SP total)
+  - 133 tests passing, 8 test files, 3.91s duration
+  - Unit tests: 21/21 API Client, 28/28 Hooks, 84/84 Components
+  - Multi-select brand/warehouse filters
+  - Chart click-to-filter interaction
+  - Full E2E test coverage
+  - QA Review: PASS - Ready for production deployment
+  - Route: `/analytics/storage`
+- 2025-01-17: **Epic 44: Price Calculator UI** ✅ COMPLETE
+  - 6 stories implemented (14 SP total)
+  - 208 tests passing (100% coverage)
+  - 6 QA gates passed (88-95/100 scores)
+  - Real-time calculation with 500ms debounce
+  - Visual cost breakdown with stacked bar chart (Recharts)
+  - WCAG 2.1 AA accessibility compliance
+  - Route: `/cogs/price-calculator`
 - 2025-12-06: **Epic 26: Per-SKU Operating Profit & Expense Tracking** ✅ COMPLETE
   - New "Опер. прибыль" column in all 3 margin tables (SKU/Brand/Category)
   - Operating Profit section in Cabinet Summary Dashboard
