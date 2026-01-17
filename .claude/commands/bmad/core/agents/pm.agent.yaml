@@ -89,25 +89,55 @@ bmad_integration:
 # MCP Resources for UI Development
 mcp_resources:
   context7:
-    description: "UI component documentation and code examples"
-    creative_tim_ui:
+    description: "Design patterns and UI inspiration source"
+
+    creative_tim_ui_design_patterns:
       library_id: "/creativetimofficial/ui"
-      description: "Creative Tim UI component library with 121+ production-ready components"
+      description: "Source of design patterns and styling inspiration (NOT component installation)"
       documentation: "https://creative-tim.com/ui"
+
+      critical_distinction:
+        purpose: "Design patterns and styling inspiration ONLY"
+        what_it_is: "Source of layout, spacing, and visual design ideas"
+        what_it_is_not: "NOT a component library to install"
+        access_method: "Context7 MCP queries only"
+
       categories:
-        - "Application UI (Account, Billing, Modals)"
-        - "Marketing (Testimonials, Contact, Footers, FAQs, Blog)"
-        - "E-commerce (Product cards, Checkout, Shopping cart)"
-      usage_in_planning:
-        - "Consider Creative Tim UI blocks when designing new features"
-        - "Reduces development time for common UI patterns"
-        - "Consistent with shadcn/ui already in use"
-        - "Check Context7 MCP for examples before custom UI development"
+        - "Application UI (Account, Billing, Modals) - layout patterns"
+        - "Marketing (Testimonials, Contact, Footers) - section designs"
+        - "E-commerce (Product cards, Pricing) - display patterns"
+
+      usage_in_epic_planning:
+        - "Consider design pattern availability when planning epics"
+        - "Reference Creative Tim UI categories in epic PRD"
+        - "Clarify that patterns are adapted, not components installed"
+        - "Account for pattern research and adaptation in estimates"
+
+      epic_documentation_requirements:
+        design_system_section:
+          - "Specify that shadcn/ui is the component library"
+          - "Reference Creative Tim UI as design pattern source via Context7"
+          - "Include examples of Context7 MCP queries for relevant patterns"
+          - "Document adaptation approach for project design system"
+
+        implementation_guidance:
+          - "Provide Context7 MCP query examples for developers"
+          - "Specify which design patterns to reference"
+          - "Clarify adaptation requirements (RU locale, red #E53935)"
+          - "Include design pattern validation in acceptance criteria"
 
 planning_guidelines:
   ui_component_evaluation:
     when_planning_features:
-      - "Check Context7 MCP for existing component patterns"
-      - "Consider Creative Tim UI blocks for faster delivery"
-      - "Account for component customization in estimates"
+      - "Check Context7 MCP for existing design patterns FIRST"
+      - "Use Creative Tim UI for layout/styling inspiration ONLY"
+      - "DO NOT plan to install Creative Tim UI packages"
+      - "Account for pattern adaptation in development estimates"
       - "Ensure components match design system (Russian locale, red primary)"
+
+    story_breakdown_considerations:
+      design_pattern_research:
+        - "Allocate time for Context7 MCP research before implementation"
+        - "Include pattern adaptation tasks in story breakdown"
+        - "Verify pattern compatibility with existing design system"
+        - "Account for Russian localization and red primary color scheme"

@@ -37,6 +37,56 @@ expertise:
     - 'shadcn/ui component library'
     - 'Tailwind CSS'
     - 'Lucide icons'
+    - 'Context7 MCP for design pattern research'
+    - 'Creative Tim UI for layout and styling inspiration'
+
+mcp_servers:
+  context7:
+    purpose: "Design pattern research and UI inspiration"
+
+    creative_tim_ui_for_design:
+      library_id: "/creativetimofficial/ui"
+      purpose: "Layout, spacing, typography, and styling inspiration (NOT for installation)"
+
+      design_research_workflow:
+        1. "Query: mcp-cli call context7/query-docs for design patterns"
+        2. "Extract: Layout structure, spacing patterns, visual hierarchy"
+        3. "Analyze: Typography, color usage, component relationships"
+        4. "Adapt: Apply patterns to project design system"
+        5. "Document: Record design decisions for implementation"
+
+      design_categories_to_research:
+        layout_patterns:
+          - "Section layouts and grid structures"
+          - "Card compositions and groupings"
+          - "Spacing and padding patterns"
+          - "Responsive breakpoint patterns"
+
+        styling_inspiration:
+          - "Typography hierarchy and scale"
+          - "Color schemes and accent usage"
+          - "Shadow and border patterns"
+          - "Button and form styling"
+
+        component_composition:
+          - "Card header/content/footer patterns"
+          - "Form field groupings"
+          - "Navigation structures"
+          - "Data display patterns"
+
+      critical_design_rules:
+        - "DO NOT install Creative Tim UI packages"
+        - "DO NOT copy Creative Tim code directly"
+        - "USE ONLY for visual and layout inspiration"
+        - "ADAPT patterns to our shadcn/ui components"
+        - "FOLLOW project design system (red #E53935, Russian locale)"
+        - "MAINTAIN WCAG 2.1 AA accessibility"
+
+      example_queries:
+        pricing_section: "pricing card layout design examples"
+        form_design: "form field input spacing patterns"
+        card_layout: "card header content footer composition"
+        section_spacing: "padding margin spacing between sections"
 
   methodology:
     - 'User-centered design'
@@ -88,6 +138,8 @@ cursor_workflow:
     - 'Identify pain points'
     - 'Define user stories'
     - 'Research best practices'
+    - 'Query Context7 MCP for Creative Tim UI design patterns'
+    - 'Analyze layout and styling examples from industry sources'
 
   phase_2_design:
     - 'Create wireframes'

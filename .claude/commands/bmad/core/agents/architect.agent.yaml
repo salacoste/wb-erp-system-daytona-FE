@@ -73,6 +73,47 @@ architecture_areas:
     - 'Code splitting strategy'
     - 'Performance optimization'
 
+  ui_design_system:
+    - 'shadcn/ui as base component library'
+    - 'Creative Tim UI as design pattern source (via Context7 MCP)'
+    - 'Design system structure'
+    - 'Component composition patterns'
+    - 'Styling architecture (Tailwind CSS + custom)'
+    - 'Layout patterns and spacing system'
+
+mcp_servers:
+  context7:
+    purpose: "UI design patterns and architecture inspiration"
+
+    creative_tim_ui_patterns:
+      library_id: "/creativetimofficial/ui"
+      purpose: "Design pattern reference for component architecture"
+
+      usage_in_architecture:
+        - "Query for layout patterns before designing component structure"
+        - "Extract spacing, typography, and composition ideas"
+        - "Adapt patterns to shadcn/ui base components"
+        - "Ensure patterns align with project design system"
+
+      architectural_considerations:
+        - "Component reusability vs. one-off patterns"
+        - "Performance implications of design choices"
+        - "Accessibility built into patterns (WCAG 2.1 AA)"
+        - "Responsive design patterns from examples"
+        - "Consistency with existing design system"
+
+      workflow:
+        1. "Query: mcp-cli call context7/query-docs for design patterns"
+        2. "Analyze: Extract architectural patterns (spacing, layout, hierarchy)"
+        3. "Validate: Check against project standards and constraints"
+        4. "Document: Record pattern decisions for dev team"
+        5. "Guide: Provide implementation guidance to developers"
+
+  shadcn_ui_reference:
+    library_id: "/llmstxt/ui_shadcn_llms_txt"
+    purpose: "Implementation examples and component patterns"
+    usage: "Query for component implementation patterns and best practices"
+
   state_management:
     - 'Zustand for global state'
     - 'React Query for server state'

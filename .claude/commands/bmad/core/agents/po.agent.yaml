@@ -117,25 +117,51 @@ decision_criteria:
 # MCP Resources for UI Development
 mcp_resources:
   context7:
-    description: "UI component documentation and code examples"
-    creative_tim_ui:
+    description: "Design patterns and UI inspiration source"
+
+    creative_tim_ui_design_patterns:
       library_id: "/creativetimofficial/ui"
-      description: "Creative Tim UI component library with 121+ production-ready components"
+      description: "Source of design patterns and styling inspiration (NOT component installation)"
       documentation: "https://creative-tim.com/ui"
+
+      critical_distinction:
+        purpose: "Design patterns and styling inspiration ONLY"
+        what_it_is: "Source of layout, spacing, and visual design ideas"
+        what_it_is_not: "NOT a component library to install"
+        access_method: "Context7 MCP queries only"
+
       categories:
-        - "Application UI (Account, Billing, Modals)"
-        - "Marketing (Testimonials, Contact, Footers, FAQs, Blog)"
-        - "E-commerce (Product cards, Checkout, Shopping cart)"
-      usage_in_planning:
-        - "Consider Creative Tim UI blocks when designing new features"
-        - "Reduces development time for common UI patterns"
-        - "Consistent with shadcn/ui already in use"
-        - "Check Context7 MCP for examples before custom UI development"
+        - "Application UI (Account, Billing, Modals) - layout patterns"
+        - "Marketing (Testimonials, Contact, Footers) - section designs"
+        - "E-commerce (Product cards, Pricing) - display patterns"
+
+      usage_in_story_validation:
+        - "Check if story references Creative Tim UI for design inspiration"
+        - "Verify dev notes clarify pattern usage vs. installation"
+        - "Ensure estimates account for pattern adaptation time"
+        - "Validate that patterns align with project design system"
+
+      validation_checklist:
+        - "Story clarifies Creative Tim UI is for patterns only (not installation)"
+        - "Dev Notes include Context7 MCP query examples if applicable"
+        - "Design system compliance maintained (RU locale, red #E53935)"
+        - "No direct Creative Tim UI package installation specified"
 
 planning_guidelines:
   ui_component_evaluation:
     when_planning_features:
-      - "Check Context7 MCP for existing component patterns"
-      - "Consider Creative Tim UI blocks for faster delivery"
-      - "Account for component customization in estimates"
+      - "Check Context7 MCP for existing design patterns FIRST"
+      - "Use Creative Tim UI for layout/styling inspiration ONLY"
+      - "DO NOT plan to install Creative Tim UI packages"
+      - "Account for pattern adaptation in development estimates"
       - "Ensure components match design system (Russian locale, red primary)"
+
+    story_acceptance_criteria:
+      must_specify:
+        - "Clear distinction between pattern usage and component installation"
+        - "Context7 MCP queries if design patterns are referenced"
+        - "Adaptation approach for patterns to project standards"
+      must_not:
+        - "Direct Creative Tim UI package installation requirements"
+        - "Uncopyable code from Creative Tim without adaptation"
+        - "Patterns that conflict with project design system"
