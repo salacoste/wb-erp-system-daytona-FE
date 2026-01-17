@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { format, parse, differenceInDays, subDays } from 'date-fns'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ViewByToggle } from './ViewByToggle'
 import type { ViewByMode } from '@/types/advertising-analytics'
 
 /**
@@ -160,17 +160,10 @@ export function AdvertisingFilters({
 
       {/* View Mode Toggle (AC4) */}
       <div className="ml-auto">
-        <Tabs
-          value={viewBy}
-          onValueChange={(v) => onViewByChange(v as ViewByMode)}
-        >
-          <TabsList aria-label="Режим группировки данных">
-            <TabsTrigger value="sku">По товарам</TabsTrigger>
-            <TabsTrigger value="campaign">По кампаниям</TabsTrigger>
-            <TabsTrigger value="brand">По брендам</TabsTrigger>
-            <TabsTrigger value="category">По категориям</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <ViewByToggle
+          viewBy={viewBy}
+          onViewByChange={onViewByChange}
+        />
       </div>
     </div>
   )

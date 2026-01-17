@@ -108,7 +108,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('brand=RepairPro')
+        expect.stringContaining('brand=RepairPro'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -123,7 +124,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('warehouse=')
+        expect.stringContaining('warehouse='),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -138,7 +140,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('cursor=abc123')
+        expect.stringContaining('cursor=abc123'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -228,7 +231,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('limit=10')
+        expect.stringContaining('limit=10'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -243,7 +247,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('include_revenue=true')
+        expect.stringContaining('include_revenue=true'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -297,7 +302,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('nm_id=147205694')
+        expect.stringContaining('nm_id=147205694'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -313,7 +319,8 @@ describe('Storage Analytics Hooks', () => {
 
       // URL encoding may encode commas, so check both parts are present
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringMatching(/metrics=.*storage_cost.*volume|metrics=.*volume.*storage_cost/)
+        expect.stringMatching(/metrics=.*storage_cost.*volume|metrics=.*volume.*storage_cost/),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 

@@ -78,10 +78,14 @@ export async function getStorageBySku(
 
   // Story 24: Use skipDataUnwrap to get full response with period, summary, pagination
   // The response has a 'data' field but also other important fields we need
-  const response = await apiClient.get<StorageBySkuResponse>(
+  const rawResponse = await apiClient.get<StorageBySkuResponse | unknown>(
     `/v1/analytics/storage/by-sku?${queryParams}`,
     { skipDataUnwrap: true },
   )
+
+  // Defensive: Handle case where API returns bare array (unwrap bug scenario)
+  // Reconstruct proper response structure from params
+  const response = normalizeStorageBySkuResponse(rawResponse, weekStart, weekEnd)
 
   console.info('[Storage Analytics] By SKU response:', {
     count: response.data?.length ?? 0,
@@ -90,6 +94,57 @@ export async function getStorageBySku(
   })
 
   return response
+}
+
+/**
+ * Normalize API response to proper StorageBySkuResponse structure
+ * Handles both proper response objects and bare array fallback
+ */
+function normalizeStorageBySkuResponse(
+  rawResponse: unknown,
+  weekStart: string,
+  weekEnd: string,
+): StorageBySkuResponse {
+  // If response is already properly structured, return as-is
+  if (
+    typeof rawResponse === 'object' &&
+    rawResponse !== null &&
+    'data' in rawResponse
+  ) {
+    return rawResponse as StorageBySkuResponse
+  }
+
+  // Fallback: If response is a bare array (unwrap bug), reconstruct structure
+  if (Array.isArray(rawResponse)) {
+    return {
+      period: {
+        from: weekStart,
+        to: weekEnd,
+        days_count: 0, // Not derivable from array alone
+      },
+      data: rawResponse,
+      summary: {
+        total_storage_cost: 0,
+        products_count: rawResponse.length,
+        avg_cost_per_product: 0,
+      },
+      pagination: {
+        total: rawResponse.length,
+        cursor: null,
+        has_more: false,
+      },
+      has_data: rawResponse.length > 0,
+    }
+  }
+
+  // Ultimate fallback: empty response structure
+  return {
+    period: { from: weekStart, to: weekEnd, days_count: 0 },
+    data: [],
+    summary: { total_storage_cost: 0, products_count: 0, avg_cost_per_product: 0 },
+    pagination: { total: 0, cursor: null, has_more: false },
+    has_data: false,
+  }
 }
 
 /**
@@ -126,10 +181,13 @@ export async function getStorageTopConsumers(
   })
 
   // Story 24: Use skipDataUnwrap to ensure we get the full response
-  const response = await apiClient.get<TopConsumersResponse>(
+  const rawResponse = await apiClient.get<TopConsumersResponse | unknown>(
     `/v1/analytics/storage/top-consumers?${queryParams}`,
     { skipDataUnwrap: true },
   )
+
+  // Defensive: Handle case where API returns malformed response
+  const response = normalizeTopConsumersResponse(rawResponse)
 
   console.info('[Storage Analytics] Top consumers response:', {
     count: response.top_consumers?.length ?? 0,
@@ -137,6 +195,48 @@ export async function getStorageTopConsumers(
   })
 
   return response
+}
+
+/**
+ * Normalize API response to proper TopConsumersResponse structure
+ */
+function normalizeTopConsumersResponse(
+  rawResponse: unknown,
+): TopConsumersResponse {
+  // If response is already properly structured, return as-is
+  if (
+    typeof rawResponse === 'object' &&
+    rawResponse !== null &&
+    'top_consumers' in rawResponse
+  ) {
+    return rawResponse as TopConsumersResponse
+  }
+
+  // Fallback: If response has unexpected structure, try to recover
+  if (typeof rawResponse === 'object' && rawResponse !== null) {
+    const response = rawResponse as Record<string, unknown>
+    // Check if it has period field (likely valid response with different field name)
+    if ('period' in response) {
+      return {
+        period: (response.period as { from: string; to: string; days_count: number }) ?? {
+          from: '',
+          to: '',
+          days_count: 0,
+        },
+        top_consumers: (response.top_consumers as TopConsumersResponse['top_consumers']) ?? [],
+        total_storage_cost: (response.total_storage_cost as number) ?? 0,
+        has_data: (response.has_data as boolean) ?? false,
+      }
+    }
+  }
+
+  // Ultimate fallback: empty response structure
+  return {
+    period: { from: '', to: '', days_count: 0 },
+    top_consumers: [],
+    total_storage_cost: 0,
+    has_data: false,
+  }
 }
 
 /**
@@ -177,10 +277,13 @@ export async function getStorageTrends(
 
   // Story 24: Use skipDataUnwrap to get full response with period, summary
   // The response has a 'data' field but also other important fields we need
-  const response = await apiClient.get<StorageTrendsResponse>(
+  const rawResponse = await apiClient.get<StorageTrendsResponse | unknown>(
     `/v1/analytics/storage/trends?${queryParams}`,
     { skipDataUnwrap: true },
   )
+
+  // Defensive: Handle case where API returns bare array (unwrap bug scenario)
+  const response = normalizeStorageTrendsResponse(rawResponse, weekStart, weekEnd)
 
   // Story 24.9: Debug logging for filter troubleshooting
   console.info('[Storage Analytics] Trends response:', {
@@ -191,6 +294,49 @@ export async function getStorageTrends(
   })
 
   return response
+}
+
+/**
+ * Normalize API response to proper StorageTrendsResponse structure
+ * Handles both proper response objects and bare array fallback
+ */
+function normalizeStorageTrendsResponse(
+  rawResponse: unknown,
+  weekStart: string,
+  weekEnd: string,
+): StorageTrendsResponse {
+  // If response is already properly structured, return as-is
+  if (
+    typeof rawResponse === 'object' &&
+    rawResponse !== null &&
+    'data' in rawResponse
+  ) {
+    return rawResponse as StorageTrendsResponse
+  }
+
+  // Fallback: If response is a bare array (unwrap bug), reconstruct structure
+  if (Array.isArray(rawResponse)) {
+    return {
+      period: {
+        from: weekStart,
+        to: weekEnd,
+        days_count: 0,
+      },
+      nm_id: null,
+      data: rawResponse,
+      summary: undefined,
+      has_data: rawResponse.length > 0,
+    }
+  }
+
+  // Ultimate fallback: empty response structure
+  return {
+    period: { from: weekStart, to: weekEnd, days_count: 0 },
+    nm_id: null,
+    data: [],
+    summary: undefined,
+    has_data: false,
+  }
 }
 
 /**
@@ -286,10 +432,13 @@ export async function getStorageSummary(
     dateTo: params.dateTo,
   })
 
-  const response = await apiClient.get<StorageSummaryResponse>(
+  const rawResponse = await apiClient.get<StorageSummaryResponse | unknown>(
     `/v1/analytics/storage/summary?${queryParams}`,
     { skipDataUnwrap: true },
   )
+
+  // Defensive: Handle case where API returns malformed response
+  const response = normalizeStorageSummaryResponse(rawResponse)
 
   console.info('[Storage Analytics] Summary response:', {
     totalCost: response.data?.totalCost ?? 0,
@@ -297,4 +446,55 @@ export async function getStorageSummary(
   })
 
   return response
+}
+
+/**
+ * Normalize API response to proper StorageSummaryResponse structure
+ */
+function normalizeStorageSummaryResponse(
+  rawResponse: unknown,
+): StorageSummaryResponse {
+  // If response is already properly structured, return as-is
+  if (
+    typeof rawResponse === 'object' &&
+    rawResponse !== null &&
+    'data' in rawResponse
+  ) {
+    return rawResponse as StorageSummaryResponse
+  }
+
+  // Fallback: If response has unexpected structure, try to recover
+  if (typeof rawResponse === 'object' && rawResponse !== null) {
+    const response = rawResponse as Record<string, unknown>
+    return {
+      data: (response.data as StorageSummaryResponse['data']) ?? {
+        totalCost: 0,
+        uniqueSkus: 0,
+        totalVolume: 0,
+        daysCount: 0,
+        avgCostPerSku: 0,
+        dateFrom: '',
+        dateTo: '',
+      },
+      period: (response.period as StorageSummaryResponse['period']) ?? {
+        from: '',
+        to: '',
+        days_count: 0,
+      },
+    }
+  }
+
+  // Ultimate fallback: empty response structure
+  return {
+    data: {
+      totalCost: 0,
+      uniqueSkus: 0,
+      totalVolume: 0,
+      daysCount: 0,
+      avgCostPerSku: 0,
+      dateFrom: '',
+      dateTo: '',
+    },
+    period: { from: '', to: '', days_count: 0 },
+  }
 }

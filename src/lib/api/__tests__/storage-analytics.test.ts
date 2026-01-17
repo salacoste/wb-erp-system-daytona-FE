@@ -65,12 +65,15 @@ describe('Storage Analytics API Client', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/storage/by-sku?'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('weekStart=2025-W44'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('weekEnd=2025-W47'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -94,6 +97,9 @@ describe('Storage Analytics API Client', () => {
       expect(call).toContain('sort_by=storage_cost')
       expect(call).toContain('sort_order=desc')
       expect(call).toContain('limit=50')
+      // Verify skipDataUnwrap option is passed
+      const callOptions = vi.mocked(apiClient.get).mock.calls[0][1]
+      expect(callOptions).toEqual(expect.objectContaining({ skipDataUnwrap: true }))
     })
 
     it('returns response data', async () => {
@@ -172,6 +178,7 @@ describe('Storage Analytics API Client', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/storage/top-consumers?'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 
@@ -230,6 +237,7 @@ describe('Storage Analytics API Client', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/storage/trends?'),
+        expect.objectContaining({ skipDataUnwrap: true }),
       )
     })
 

@@ -235,6 +235,8 @@ export interface ImportStatusResponse {
  * Request #52: Storage summary for date range
  */
 export interface StorageSummaryResponse {
+  /** Period information (added for defensive normalization) */
+  period: StoragePeriod
   data: {
     /** Total storage cost for the period (RUB) */
     totalCost: number
@@ -244,6 +246,8 @@ export interface StorageSummaryResponse {
     daysCount: number
     /** Number of unique SKUs with storage data */
     uniqueSkus: number
+    /** Average cost per SKU (calculated as totalCost / uniqueSkus) */
+    avgCostPerSku: number
     /** Period start date (YYYY-MM-DD) */
     dateFrom: string
     /** Period end date (YYYY-MM-DD) */
