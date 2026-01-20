@@ -97,7 +97,7 @@ export function Sidebar() {
       href: ROUTES.SETTINGS.ROOT,
       icon: Settings,
     },
-  ] as const
+  ]
 
   return (
     <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-white">
