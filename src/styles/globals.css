@@ -24,6 +24,10 @@
     --muted: 0 0% 96%; /* #F5F5F5 */
     --muted-foreground: 0 0% 46%; /* #757575 */
 
+    /* Secondary colors (slider tracks, secondary buttons) */
+    --secondary: 0 0% 85%; /* #D9D9D9 - visible on white */
+    --secondary-foreground: 0 0% 20%;
+
     /* Accent colors (hover states in selects/menus) */
     --accent: 0 0% 96%; /* #F5F5F5 */
     --accent-foreground: 0 0% 20%;
