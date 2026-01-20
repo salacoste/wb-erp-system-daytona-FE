@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "memobrain": {
+      "type": "stdio",
+      "command": "/path/to/memobrain/.venv/bin/python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/path/to/memobrain",
+      "env": {
+        "PYTHONPATH": "/path/to/memobrain",
+        "MEMOBRAIN_STORAGE_PATH": "/path/to/frontend/_bmad-output/memory"
+      }
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "CONTEXT7_API_KEY": "your_context7_api_key_here"
+      }
+    }
+  }
+}

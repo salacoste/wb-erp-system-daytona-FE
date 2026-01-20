@@ -56,6 +56,9 @@ next-env.d.ts
 .bmad-core/
 _bmad-output/
 
+# MCP configuration (contains absolute paths)
+.mcp.json
+
 # Local backups only
 .backup/
 logs/
