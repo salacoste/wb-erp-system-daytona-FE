@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "memobrain": {
+      "type": "stdio",
+      "command": "/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/memobrain/.venv/bin/python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/memobrain",
+      "env": {
+        "PYTHONPATH": "/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/memobrain",
+        "MEMOBRAIN_STORAGE_PATH": "/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/_bmad-output/memory"
+      }
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "CONTEXT7_API_KEY": "ctx7sk-5d755f9d-fce7-424e-be0c-209540b4ab27"
+      }
+    }
+  }
+}
