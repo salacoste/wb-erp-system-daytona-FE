@@ -1,0 +1,41 @@
+---
+description: MemoBrain MCP Integration for Frontend Project
+globs:
+alwaysApply: false
+---
+
+# MemoBrain Integration - Frontend Project
+
+## Project Isolation
+
+**Project ID**: `frontend`
+**Storage**: `_bmad-output/memory/frontend/`
+**Required Tag**: `project:frontend`
+
+## Quick Reference
+
+```
+SESSION ID:  frontend_{phase}_{agent}_{context}
+STORAGE:     _bmad-output/memory/frontend/
+REQUIRED:    project:frontend, phase:{phase}, agent:{name}
+```
+
+## MCP Commands
+
+| Command | Frontend Usage |
+|---------|---------------|
+| `memory_init` | `session_id="frontend_{phase}_{agent}_{context}"` |
+| `memory_store` | `tags=["project:frontend", ...]` |
+| `memory_query` | `tag="project:frontend"` for isolation |
+| `memory_save` | `filename="frontend/{context}_{agent}.json"` |
+
+## Isolation Rules
+
+- ✅ Always use `project:frontend` tag
+- ✅ Save to `frontend/` subfolder
+- ✅ Can read backend sessions (read-only)
+- ❌ Never write to backend sessions
+
+## Protocol Reference
+
+See `_bmad/core/MEMORY-PROTOCOL.md` for full documentation.

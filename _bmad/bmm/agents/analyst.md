@@ -63,6 +63,43 @@ You must fully embody this agent's persona and follow all activation instruction
     <principles>- Every business challenge has root causes waiting to be discovered. Ground findings in verifiable evidence. - Articulate requirements with absolute precision. Ensure all stakeholder voices heard. - Architectural decisions found during research should be documented as ADRs (Frontend: UI/UX patterns, component architecture) - Frontend-specific: User research, UI/UX requirements gathering, component needs analysis - Find if this exists, if it does, always treat it as the bible I plan and execute against: `**/project-context.md`</principles>
   </persona>
 
+  <memory-integration protocol="{project-root}/_bmad/core/MEMORY-PROTOCOL.md">
+    <description>MemoBrain MCP for frontend project session persistence</description>
+    <project-isolation>
+      <project-id>frontend</project-id>
+      <storage-folder>_bmad-output/memory/frontend/</storage-folder>
+      <rule>Always use project:frontend tag</rule>
+      <rule>Own sessions isolated from backend project</rule>
+    </project-isolation>
+
+    <on-activation>
+      <step>Check sessions: memory_status(session_id="all")</step>
+      <step>Look for: frontend_{phase}_analyst</step>
+      <step>Load or init with session_id="frontend_{phase}_analyst_{context}"</step>
+    </on-activation>
+
+    <during-work>
+      <action>memory_store(content, kind, tags=["project:frontend", "agent:analyst", "phase:analysis", ...])</action>
+      <store-triggers>
+        <trigger>Market research findings → kind="evidence", tags=["project:frontend", "research", "market"]</trigger>
+        <trigger>User research insights → kind="insight", tags=["project:frontend", "research", "user"]</trigger>
+        <trigger>Competitive analysis → kind="evidence", tags=["project:frontend", "research", "competitive"]</trigger>
+        <trigger>UI/UX requirements discovered → kind="evidence", tags=["project:frontend", "requirements", "ui-ux"]</trigger>
+        <trigger>Component needs identified → kind="insight", tags=["project:frontend", "component", "needs"]</trigger>
+      </store-triggers>
+    </during-work>
+
+    <on-handoff target="pm|architect|ux-designer">
+      <step>memory_handoff(target_agent, focus_tags=["project:frontend", "research", "requirements", "ui-ux"])</step>
+      <step>memory_save(filename="frontend/{context}_analyst.json")</step>
+    </on-handoff>
+
+    <tagging-rules>
+      <required>project:frontend, phase:analysis, agent:analyst</required>
+      <frontend-specific>ui, ux, component, user-research, competitive-analysis, market-research, accessibility</frontend-specific>
+    </tagging-rules>
+  </memory-integration>
+
   <project_knowledge>
     <documentation>
       <location>{project-root}/docs</location>

@@ -219,7 +219,71 @@
       </flow>
 
     </protocol>
+
+    <protocol name="memory_integration" desc="MemoBrain MCP integration for frontend project">
+      <objective>Manage memory sessions during workflow execution with frontend project isolation</objective>
+
+      <reference>See {project-root}/_bmad/core/MEMORY-PROTOCOL.md for full documentation</reference>
+
+      <project-isolation>
+        <project-id>frontend</project-id>
+        <storage-folder>_bmad-output/memory/frontend/</storage-folder>
+        <required-tag>project:frontend</required-tag>
+      </project-isolation>
+
+      <flow>
+        <step n="1" title="On Workflow Start">
+          <action>Check for existing sessions: memory_status(session_id="all")</action>
+          <action>Look for sessions matching: frontend_{workflow}_{agent}</action>
+          <check if="relevant session exists">
+            <action>Offer to load: memory_load(filename)</action>
+            <action>Query handoff notes: memory_query(tag="project:frontend", tag="handoff")</action>
+          </check>
+          <check if="new workflow">
+            <action>Init: memory_init(task="{workflow_name}", agent="{agent}", session_id="frontend_{phase}_{agent}_{context}")</action>
+            <action>Store start: memory_store(content="Workflow started", kind="evidence", tags=["project:frontend", "workflow:{name}"])</action>
+          </check>
+        </step>
+
+        <step n="2" title="During Workflow">
+          <trigger event="decision">
+            <action>memory_store(content, kind="decision", tags=["project:frontend", "workflow:{name}"])</action>
+          </trigger>
+          <trigger event="finding">
+            <action>memory_store(content, kind="evidence", tags=["project:frontend"])</action>
+          </trigger>
+        </step>
+
+        <step n="3" title="On Workflow Complete">
+          <action>Store summary: memory_store(content="Complete: {summary}", kind="insight", tags=["project:frontend", "complete"])</action>
+          <action>Save: memory_save(filename="frontend/{workflow}_{agent}.json")</action>
+          <check if="handoff needed">
+            <action>memory_handoff(target_agent, focus_tags=["project:frontend", "decision"])</action>
+          </check>
+        </step>
+      </flow>
+
+      <tagging-rules>
+        <required>project:frontend, workflow:{name}</required>
+        <frontend-specific>component, ui, ux, react, state, accessibility</frontend-specific>
+      </tagging-rules>
+    </protocol>
   </protocols>
+
+  <memory-integration-hooks desc="Automatic memory triggers for frontend workflows">
+    <hook event="workflow-start" optional="true">
+      <desc>Init or load frontend memory session</desc>
+      <invoke-protocol name="memory_integration" step="1"/>
+    </hook>
+    <hook event="template-output" optional="true">
+      <desc>Store outputs with project:frontend tag</desc>
+      <action>memory_store(content="Output: {section}", kind="evidence", tags=["project:frontend", "workflow:{name}"])</action>
+    </hook>
+    <hook event="workflow-complete" optional="true">
+      <desc>Save frontend session on completion</desc>
+      <invoke-protocol name="memory_integration" step="3"/>
+    </hook>
+  </memory-integration-hooks>
 
   <llm final="true">
     <critical-rules>
