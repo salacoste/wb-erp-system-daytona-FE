@@ -32,42 +32,42 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
       {/* Fixed Costs Section */}
       <div>
         <h3 className="text-sm font-medium text-muted-foreground mb-3">
-          Fixed Costs
+          Фиксированные затраты
         </h3>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Cost</TableHead>
-              <TableHead className="text-right">Amount (₽)</TableHead>
+              <TableHead>Затрата</TableHead>
+              <TableHead className="text-right">Сумма (₽)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell>COGS</TableCell>
+              <TableCell>Себестоимость (COGS)</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(cost_breakdown?.cogs || 0)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Logistics Forward</TableCell>
+              <TableCell>Логистика до склада</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(cost_breakdown?.logistics_forward || 0)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Logistics Reverse (effective)</TableCell>
+              <TableCell>Логистика возврата (эффективная)</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(cost_breakdown?.logistics_reverse_effective || 0)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Storage</TableCell>
+              <TableCell>Хранение</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(cost_breakdown?.storage || 0)}
               </TableCell>
             </TableRow>
             <TableRow className="bg-muted/50 font-medium">
-              <TableCell>Fixed Total</TableCell>
+              <TableCell>Итого фиксированные</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(cost_breakdown?.fixed_total || 0)}
               </TableCell>
@@ -79,48 +79,48 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
       {/* Percentage Costs Section */}
       <div>
         <h3 className="text-sm font-medium text-muted-foreground mb-3">
-          Percentage Costs
+          Процентные затраты
         </h3>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Cost</TableHead>
-              <TableHead className="text-right">Amount (₽)</TableHead>
+              <TableHead>Затрата</TableHead>
+              <TableHead className="text-right">Сумма (₽)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell>WB Commission</TableCell>
+              <TableCell>Комиссия WB</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(percentage_breakdown.commission_wb || 0)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Acquiring</TableCell>
+              <TableCell>Эквайринг</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(percentage_breakdown.acquiring || 0)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Advertising</TableCell>
+              <TableCell>Реклама</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(percentage_breakdown.advertising || 0)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>VAT</TableCell>
+              <TableCell>НДС</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(percentage_breakdown.vat || 0)}
               </TableCell>
             </TableRow>
             <TableRow className="bg-green-50 dark:bg-green-950 font-medium">
-              <TableCell>Margin (Profit)</TableCell>
+              <TableCell>Маржа (прибыль)</TableCell>
               <TableCell className="text-right text-green-700 dark:text-green-400">
                 {formatCurrency(percentage_breakdown.margin || 0)}
               </TableCell>
             </TableRow>
             <TableRow className="bg-muted/50 font-medium">
-              <TableCell>Total Percentage Costs</TableCell>
+              <TableCell>Итого процентные</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(percentage_breakdown.percentage_total || 0)}
               </TableCell>

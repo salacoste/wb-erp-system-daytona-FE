@@ -1,0 +1,76 @@
+# QA Gate Decision - Story 44.18
+# Frontend Definition of Done Validation
+
+story_id: "44.18"
+story_title: "DRR Input (Advertising %)"
+epic_id: "44"
+phase: "Phase 4 - V2 Enhancements"
+gate_date: "2026-01-20"
+reviewer: "TEA (Murat)"
+
+# Gate Decision
+decision: PASS
+quality_score: 98
+
+# DoD Validation Checklist
+dod_validation:
+  fdod1_acceptance_criteria:
+    status: PASS
+    evidence:
+      - "AC1: DRR slider renders with 0-30% range"
+      - "AC2: Level indicators (low/medium/high/very-high)"
+      - "AC3: Advertising cost preview calculates correctly"
+      - "AC4: Default 5%"
+      - "AC5: Color coding matches level"
+      - "AC6: Warning for very high DRR (>15%)"
+
+  fdod2_components_working:
+    status: PASS
+    components:
+      - name: "DrrSlider.tsx"
+        lines: 171
+        tests: 26
+        coverage: "98.24%"
+
+  fdod3_tests_passing:
+    status: PASS
+    unit_tests: 26
+    coverage: "98.24%"
+
+  fdod4_visual_regression:
+    status: N/A
+
+  fdod5_no_breaking_changes:
+    status: PASS
+
+  fdod6_documentation_updated:
+    status: PASS
+    files:
+      - "docs/stories/epic-44/story-44.18-fe-drr-input.md"
+
+  fdod7_dev_agent_record:
+    status: PASS
+    files_created:
+      - "src/components/custom/price-calculator/DrrSlider.tsx"
+    files_modified:
+      - "src/components/custom/price-calculator/PriceCalculatorForm.tsx"
+
+# Risk Assessment
+risk_assessment:
+  probability: LOW
+  impact: LOW
+  mitigations:
+    - "26 unit tests with 98.24% coverage"
+    - "Level indicators provide visual feedback"
+
+# DRR Levels
+drr_levels:
+  low: "0-3% (green)"
+  moderate: "3-7% (yellow)"
+  high: "7-15% (orange)"
+  very_high: ">15% (red)"
+
+# Notes
+notes:
+  - "DRR = Доля рекламных расходов"
+  - "Affects recommended price calculation"

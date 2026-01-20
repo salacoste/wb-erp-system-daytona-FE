@@ -59,7 +59,7 @@ export function RecommendedPriceCard({
       <CardContent className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-pulse text-2xl text-muted-foreground">
-            Calculating...
+            Расчёт...
           </div>
         </div>
       </CardContent>
@@ -75,7 +75,7 @@ export function RecommendedPriceCard({
           <div className="text-center">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
             <p className="text-muted-foreground">
-              {error?.message || 'Enter parameters and click Calculate'}
+              {error?.message || 'Введите параметры и нажмите «Рассчитать»'}
             </p>
           </div>
         </CardContent>
@@ -90,7 +90,7 @@ export function RecommendedPriceCard({
     <Card>
       <CardHeader>
         <CardTitle className="text-center text-lg font-medium">
-          Recommended Selling Price
+          Рекомендуемая цена продажи
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -116,12 +116,12 @@ export function RecommendedPriceCard({
             {copied ? (
               <>
                 <CheckCircle2 className="h-4 w-4" />
-                Copied!
+                Скопировано!
               </>
             ) : (
               <>
                 <Copy className="h-4 w-4" />
-                Copy Price
+                Копировать цену
               </>
             )}
           </Button>
@@ -130,11 +130,11 @@ export function RecommendedPriceCard({
         {/* Margin Info */}
         <div className="pt-4 border-t space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Target Margin:</span>
+            <span className="text-muted-foreground">Целевая маржа:</span>
             <span className="font-medium">{data.result.target_margin_pct}%</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Actual Margin:</span>
+            <span className="text-muted-foreground">Фактическая маржа:</span>
             <span
               className={`font-medium ${
                 actual_margin_pct >= 20

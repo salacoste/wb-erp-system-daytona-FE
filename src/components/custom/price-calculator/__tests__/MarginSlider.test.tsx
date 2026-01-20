@@ -3,35 +3,44 @@
  * Story 44.2-FE: Input Form Component for Price Calculator
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { useForm } from 'react-hook-form'
 import { MarginSlider } from '../MarginSlider'
 
-describe('MarginSlider', () => {
-  // Mock register function
-  const mockRegister = vi.fn().mockReturnValue({
-    ref: { current: null },
-    onChange: vi.fn(),
-    name: 'test-field',
-  })
+// Helper to render MarginSlider with form context
+function renderMarginSlider(props: Partial<Parameters<typeof MarginSlider>[0]> = {}) {
+  const defaultProps = {
+    name: 'testField',
+    min: 0,
+    max: 100,
+    step: 1,
+    unit: '%',
+  }
 
+  function Wrapper() {
+    const { control, register } = useForm({ defaultValues: { testField: 50 } })
+    return (
+      <MarginSlider
+        {...defaultProps}
+        {...props}
+        control={control}
+        register={register}
+      />
+    )
+  }
+
+  return render(<Wrapper />)
+}
+
+describe('MarginSlider', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   describe('Rendering', () => {
     it('renders slider and number input', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={0}
-          max={100}
-          step={1}
-          unit="%"
-          defaultValue={50}
-        />
-      )
+      renderMarginSlider()
 
       // Check that slider is rendered (via its accessible role if available)
       const input = screen.getByRole('spinbutton')
@@ -43,34 +52,13 @@ describe('MarginSlider', () => {
     })
 
     it('displays unit label', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={0}
-          max={100}
-          step={1}
-          unit="%"
-          defaultValue={50}
-        />
-      )
+      renderMarginSlider()
 
       expect(screen.getByText('%')).toBeInTheDocument()
     })
 
     it('displays error message when provided', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={0}
-          max={100}
-          step={1}
-          unit="%"
-          error="This field is required"
-          defaultValue={50}
-        />
-      )
+      renderMarginSlider({ error: 'This field is required' })
 
       expect(screen.getByText('This field is required')).toBeInTheDocument()
     })
@@ -78,92 +66,30 @@ describe('MarginSlider', () => {
 
   describe('Value Constraints', () => {
     it('respects min value', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={10}
-          max={100}
-          step={1}
-          unit="%"
-          defaultValue={50}
-        />
-      )
+      renderMarginSlider({ min: 10, max: 100 })
 
       const input = screen.getByRole('spinbutton')
       expect(input).toHaveAttribute('min', '10')
     })
 
     it('respects max value', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={0}
-          max={50}
-          step={1}
-          unit="%"
-          defaultValue={25}
-        />
-      )
+      renderMarginSlider({ min: 0, max: 50 })
 
       const input = screen.getByRole('spinbutton')
       expect(input).toHaveAttribute('max', '50')
     })
 
     it('respects step increment', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={0}
-          max={100}
-          step={0.5}
-          unit="%"
-          defaultValue={20}
-        />
-      )
+      renderMarginSlider({ step: 0.5 })
 
       const input = screen.getByRole('spinbutton')
       expect(input).toHaveAttribute('step', '0.5')
     })
   })
 
-  describe('Bidirectional Sync', () => {
-    it('registers with validation constraints', () => {
-      render(
-        <MarginSlider
-          name="target_margin_pct"
-          register={mockRegister}
-          min={0}
-          max={50}
-          step={0.5}
-          unit="%"
-          defaultValue={20}
-        />
-      )
-
-      expect(mockRegister).toHaveBeenCalledWith('target_margin_pct', {
-        valueAsNumber: true,
-        min: { value: 0, message: 'Minimum 0' },
-        max: { value: 50, message: 'Maximum 50' },
-      })
-    })
-  })
-
   describe('Accessibility', () => {
     it('has proper input type for numbers', () => {
-      render(
-        <MarginSlider
-          name="test-field"
-          register={mockRegister}
-          min={0}
-          max={100}
-          step={1}
-          unit="%"
-          defaultValue={50}
-        />
-      )
+      renderMarginSlider()
 
       const input = screen.getByRole('spinbutton')
       expect(input).toHaveAttribute('type', 'number')

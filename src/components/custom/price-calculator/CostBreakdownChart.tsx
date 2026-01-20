@@ -74,31 +74,31 @@ export function CostBreakdownChart({ data }: CostBreakdownChartProps) {
   const chartData = useMemo(
     () => [
       {
-        name: 'WB Commission',
+        name: 'Комиссия WB',
         value: recommended_price > 0 ? (percentage_breakdown.commission_wb / recommended_price * 100) : 0,
         rub: percentage_breakdown.commission_wb || 0,
         fill: CHART_COLORS.commission_wb,
       },
       {
-        name: 'Acquiring',
+        name: 'Эквайринг',
         value: recommended_price > 0 ? (percentage_breakdown.acquiring / recommended_price * 100) : 0,
         rub: percentage_breakdown.acquiring || 0,
         fill: CHART_COLORS.acquiring,
       },
       {
-        name: 'Advertising',
+        name: 'Реклама',
         value: recommended_price > 0 ? (percentage_breakdown.advertising / recommended_price * 100) : 0,
         rub: percentage_breakdown.advertising || 0,
         fill: CHART_COLORS.advertising,
       },
       {
-        name: 'VAT',
+        name: 'НДС',
         value: recommended_price > 0 ? (percentage_breakdown.vat / recommended_price * 100) : 0,
         rub: percentage_breakdown.vat || 0,
         fill: CHART_COLORS.vat,
       },
       {
-        name: 'Margin',
+        name: 'Маржа',
         value: recommended_price > 0 ? (percentage_breakdown.margin / recommended_price * 100) : 0,
         rub: percentage_breakdown.margin || 0,
         fill: CHART_COLORS.margin,
@@ -110,11 +110,11 @@ export function CostBreakdownChart({ data }: CostBreakdownChartProps) {
   // Memoize legend data to prevent unnecessary re-renders
   const legendData = useMemo(
     () => [
-      { name: 'WB Commission', color: CHART_COLORS.commission_wb },
-      { name: 'Acquiring', color: CHART_COLORS.acquiring },
-      { name: 'Advertising', color: CHART_COLORS.advertising },
-      { name: 'VAT', color: CHART_COLORS.vat },
-      { name: 'Margin (Profit)', color: CHART_COLORS.margin },
+      { name: 'Комиссия WB', color: CHART_COLORS.commission_wb },
+      { name: 'Эквайринг', color: CHART_COLORS.acquiring },
+      { name: 'Реклама', color: CHART_COLORS.advertising },
+      { name: 'НДС', color: CHART_COLORS.vat },
+      { name: 'Маржа (прибыль)', color: CHART_COLORS.margin },
     ],
     []
   )
@@ -122,7 +122,7 @@ export function CostBreakdownChart({ data }: CostBreakdownChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Cost Breakdown</CardTitle>
+        <CardTitle className="text-lg">Структура затрат</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

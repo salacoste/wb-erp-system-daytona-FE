@@ -1,0 +1,133 @@
+# QA Gate Decision - Story 44.20
+# Frontend Definition of Done Validation
+
+story_id: "44.20"
+story_title: "Two-Level Pricing Display"
+epic_id: "44"
+phase: "Phase 4 - V2 Enhancements"
+gate_date: "2026-01-20"
+reviewer: "TEA (Murat)"
+
+# Gate Decision
+decision: PASS
+quality_score: 99
+
+# DoD Validation Checklist
+dod_validation:
+  fdod1_acceptance_criteria:
+    status: PASS
+    evidence:
+      - "AC1: Minimum price displays correctly (floor with 0% margin)"
+      - "AC2: Recommended price displays correctly (with target margin + DRR)"
+      - "AC3: Customer price shows after SPP discount"
+      - "AC4: Cost breakdown shows all fixed costs with amounts and %"
+      - "AC5: Cost breakdown shows all percentage costs"
+      - "AC6: Profit amount and % displayed"
+      - "AC7: Side-by-side comparison of min vs recommended"
+      - "AC8: Real-time updates as form inputs change"
+      - "AC9: Collapsible/expandable cost breakdown section"
+      - "AC10: Russian locale formatting (1 234,56 ₽)"
+      - "AC11: Accessible (keyboard, screen readers)"
+
+  fdod2_components_working:
+    status: PASS
+    components:
+      - name: "TwoLevelPricingDisplay.tsx"
+        lines: 121
+      - name: "TwoLevelPriceHeader.tsx"
+        lines: 121
+      - name: "FixedCostsBreakdown.tsx"
+        lines: 124
+      - name: "PercentageCostsBreakdown.tsx"
+        lines: 70
+      - name: "VariableCostsBreakdown.tsx"
+        lines: 56
+      - name: "MarginSection.tsx"
+        lines: 93
+      - name: "PriceSummaryFooter.tsx"
+        lines: 150
+      - name: "two-level-pricing.ts"
+        lines: 260
+        tests: 30
+        coverage: "100%"
+
+  fdod3_tests_passing:
+    status: PASS
+    unit_tests: 30
+    coverage: "100%"
+
+  fdod4_visual_regression:
+    status: N/A
+
+  fdod5_no_breaking_changes:
+    status: PASS
+
+  fdod6_documentation_updated:
+    status: PASS
+    files:
+      - "docs/stories/epic-44/story-44.20-fe-two-level-pricing-display.md"
+      - "docs/stories/epic-44/PRICE-CALCULATOR-REQUIREMENTS.md"
+
+  fdod7_dev_agent_record:
+    status: PASS
+    files_created:
+      - "src/lib/two-level-pricing.ts"
+      - "src/components/custom/price-calculator/TwoLevelPricingDisplay.tsx"
+      - "src/components/custom/price-calculator/TwoLevelPriceHeader.tsx"
+      - "src/components/custom/price-calculator/FixedCostsBreakdown.tsx"
+      - "src/components/custom/price-calculator/PercentageCostsBreakdown.tsx"
+      - "src/components/custom/price-calculator/VariableCostsBreakdown.tsx"
+      - "src/components/custom/price-calculator/MarginSection.tsx"
+      - "src/components/custom/price-calculator/PriceSummaryFooter.tsx"
+    files_modified:
+      - "src/types/price-calculator.ts"
+      - "src/components/custom/price-calculator/PriceCalculatorResults.tsx"
+
+# Business Logic
+business_logic:
+  minimum_price:
+    formula: "fixed_costs / (1 - min_pct)"
+    min_pct: "commission + acquiring + tax"
+  recommended_price:
+    formula: "fixed_costs / (1 - total_pct)"
+    total_pct: "commission + acquiring + drr + tax + margin"
+  customer_price:
+    formula: "recommended_price × (1 - spp_pct / 100)"
+
+# Formula Validation
+formula_validation:
+  test_input:
+    cogs: 500
+    logistics_forward: 120
+    logistics_reverse_effective: 36
+    storage: 25
+    acceptance: 19
+    commission: 0.15
+    acquiring: 0.015
+    tax: 0.06
+    drr: 0.05
+    margin: 0.15
+    spp: 0.10
+  expected_output:
+    fixed_costs: 700
+    minimum_price: 903.23
+    recommended_price: 1217.39
+    customer_price: 1095.65
+    profit: 182.61
+  validation_status: PASS
+
+# Risk Assessment
+risk_assessment:
+  probability: LOW
+  impact: HIGH
+  mitigations:
+    - "30 unit tests with 100% coverage"
+    - "Formula validation with real numbers"
+    - "Edge cases tested (division by zero, zero costs)"
+
+# Notes
+notes:
+  - "Integration story combining all Phase 4 work"
+  - "Client-side calculation for real-time updates"
+  - "Collapsible breakdown for clean UI"
+  - "Copy buttons for all price levels"

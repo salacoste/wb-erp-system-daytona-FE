@@ -45,7 +45,6 @@ export interface MarginSliderProps {
 export function MarginSlider({
   name,
   control,
-  register,
   min,
   max,
   step,
@@ -53,48 +52,45 @@ export function MarginSlider({
   error,
 }: MarginSliderProps) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex-1 relative">
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => (
-            <Slider
-              min={min}
-              max={max}
-              step={step}
-              value={[Number(field.value) || 0]}
-              onValueChange={(values) => {
-                field.onChange(values[0])
-                control.setValue(name, values[0], { shouldValidate: false })
-              }}
-              className="w-full"
-              style={{
-                // Red slider with dark track for better visibility
-                '--tw-bg-opacity': '1',
-                '--tw-ring-opacity': '1',
-                '--tw-ring-offset-width': '2px',
-                '--tw-ring-offset-color': 'rgb(239 68 68)', // red-500
-                '--tw-slider-track-primary': 'rgb(220 38 38)', // red-600
-              }}
-            />
-          )}
-        />
-      </div>
-      <div className="flex items-center gap-2 w-28">
-        <Input
-          type="number"
-          step={step}
-          min={min}
-          max={max}
-          className="w-20 text-right"
-          {...register(name)}
-        />
-        <span className="text-sm text-muted-foreground w-6">{unit}</span>
-      </div>
-      {error && (
-        <p className="text-sm text-destructive text-xs">{error}</p>
-      )}
-    </div>
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => {
+        const value = Number(field.value) || 0
+
+        return (
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <Slider
+                min={min}
+                max={max}
+                step={step}
+                value={[value]}
+                onValueChange={(values) => {
+                  field.onChange(values[0])
+                }}
+                className="w-full"
+              />
+            </div>
+            <div className="flex items-center gap-2 w-28">
+              <Input
+                type="number"
+                step={step}
+                min={min}
+                max={max}
+                value={value}
+                onChange={(e) => {
+                  const num = parseFloat(e.target.value)
+                  field.onChange(isNaN(num) ? 0 : num)
+                }}
+                className="w-20 text-right"
+              />
+              <span className="text-sm text-muted-foreground w-6">{unit}</span>
+            </div>
+            {error && <p className="text-sm text-destructive text-xs">{error}</p>}
+          </div>
+        )
+      }}
+    />
   )
 }

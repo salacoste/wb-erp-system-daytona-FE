@@ -9,6 +9,8 @@ import type {
   PriceCalculatorResponse,
   PriceCalculatorErrorResponse,
   ErrorCode,
+  TwoLevelPricingFormData,
+  TwoLevelPricingResult,
 } from '@/types/price-calculator'
 
 // ============================================================================
@@ -70,14 +72,15 @@ export const mockPriceCalculatorResponse: PriceCalculatorResponse = {
     storage: 50.0,
     fixed_total: 1753.0,
   },
-  // percentage_breakdown is now at root level of response
+  // percentage_breakdown is now at root level with simple number values
   percentage_breakdown: {
-    commission_wb: { pct: 10.0, rub: 250.0 },
-    acquiring: { pct: 1.5, rub: 37.5 },
-    advertising: { pct: 5.0, rub: 125.0 },
-    vat: { pct: 20.0, rub: 416.67 },
-    margin: { pct: 20.0, rub: 500.0 },
-    percentage_total: { pct: 56.5, rub: 1329.17 },
+    commission_wb: 250.0,
+    commission_pct: 10.0,
+    acquiring: 37.5,
+    advertising: 125.0,
+    vat: 416.67,
+    margin: 500.0,
+    percentage_total: 1329.17,
   },
   intermediate_values: {
     buyback_rate_pct: 0.02,
@@ -154,3 +157,57 @@ export const errorCodes: ErrorCode[] = [
   'INTERNAL_ERROR',
   'NETWORK_ERROR',
 ]
+
+// ============================================================================
+// Two-Level Pricing Fixtures (Story 44.20)
+// ============================================================================
+
+/** Standard two-level pricing form data for testing */
+export const mockTwoLevelPricingFormData: TwoLevelPricingFormData = {
+  fulfillment_type: 'FBO',
+  cogs_rub: 500,
+  logistics_forward_rub: 120,
+  logistics_reverse_rub: 180,
+  buyback_pct: 80,
+  storage_rub: 25,
+  acceptance_cost: 19,
+  acquiring_pct: 1.5,
+  drr_pct: 5,
+  target_margin_pct: 15,
+  tax_rate_pct: 6,
+  tax_type: 'income',
+  spp_pct: 10,
+}
+
+/** FBS variant (no storage/acceptance costs) */
+export const mockTwoLevelPricingFormDataFBS: TwoLevelPricingFormData = {
+  ...mockTwoLevelPricingFormData,
+  fulfillment_type: 'FBS',
+}
+
+/** Expected result for standard form data */
+export const mockTwoLevelPricingResult: TwoLevelPricingResult = {
+  minimumPrice: 903.23,
+  recommendedPrice: 1217.39,
+  customerPrice: 1095.65,
+  priceGap: { rub: 314.16, pct: 34.78 },
+  fixedCosts: {
+    cogs: 500,
+    logisticsForward: 120,
+    logisticsReverseEffective: 36,
+    storage: 25,
+    acceptance: 19,
+    total: 700,
+  },
+  percentageCosts: {
+    commissionWb: { pct: 15, rub: 182.61 },
+    acquiring: { pct: 1.5, rub: 18.26 },
+    taxIncome: { pct: 6, rub: 73.04 },
+    total: { pct: 22.5, rub: 273.91 },
+  },
+  variableCosts: {
+    drr: { pct: 5, rub: 60.87 },
+    total: { pct: 5, rub: 60.87 },
+  },
+  margin: { pct: 15, rub: 182.61, afterTax: null },
+}

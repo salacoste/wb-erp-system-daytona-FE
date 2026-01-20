@@ -3,7 +3,7 @@
  * Story 44.3-FE: Results Display Component for Price Calculator
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { mockPriceCalculatorResponse } from '@/test/fixtures/price-calculator'
 

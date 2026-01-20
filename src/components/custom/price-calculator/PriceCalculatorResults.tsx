@@ -1,14 +1,20 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import type { PriceCalculatorResponse } from '@/types/price-calculator'
+import { useMemo } from 'react'
+import type {
+  PriceCalculatorResponse,
+  TwoLevelPricingFormData,
+} from '@/types/price-calculator'
+import { calculateTwoLevelPricing } from '@/lib/two-level-pricing'
 import { RecommendedPriceCard } from './RecommendedPriceCard'
-import { CostBreakdownTable } from './CostBreakdownTable'
+import { TwoLevelPricingDisplay } from './TwoLevelPricingDisplay'
 import { CostBreakdownChart } from './CostBreakdownChart'
 import { WarningsDisplay } from './WarningsDisplay'
 
 /**
  * Props for PriceCalculatorResults component
+ * Story 44.20: Updated to support two-level pricing display
  */
 export interface PriceCalculatorResultsProps {
   /** Calculation result from API */
@@ -17,47 +23,99 @@ export interface PriceCalculatorResultsProps {
   loading?: boolean
   /** Error state */
   error?: Error | null
+  /** SPP percentage for customer price display (Story 44.19) */
+  sppPct?: number
+  /** Form data for two-level pricing calculation (Story 44.20) */
+  formData?: TwoLevelPricingFormData | null
+  /** Commission percentage from category selection (Story 44.20) */
+  commissionPct?: number
 }
 
 /**
  * Main results container component
- * Displays recommended price, cost breakdown table, and chart
+ * Story 44.20: Two-Level Pricing Display
+ *
+ * Displays:
+ * - Two-level pricing (minimum + recommended + customer price)
+ * - Cost breakdown with collapsible details
+ * - Visual chart
+ * - Warnings
  *
  * @example
  * <PriceCalculatorResults
  *   data={result}
  *   loading={false}
+ *   formData={formData}
+ *   commissionPct={15}
+ *   sppPct={10}
  * />
  */
 export function PriceCalculatorResults({
   data,
   loading = false,
   error = null,
+  sppPct = 0,
+  formData = null,
+  commissionPct = 15, // Default commission if not provided
 }: PriceCalculatorResultsProps) {
+  // Calculate two-level pricing from form data
+  const twoLevelResult = useMemo(() => {
+    if (!formData || !data) return null
+    return calculateTwoLevelPricing(formData, commissionPct)
+  }, [formData, commissionPct, data])
+
   // Empty state (before first calculation)
   if (!data && !loading && !error) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
           <p className="text-muted-foreground">
-            Enter cost parameters and click "Calculate Price" to see results
+            Введите параметры затрат и нажмите «Рассчитать цену» для получения результатов
           </p>
         </CardContent>
       </Card>
     )
   }
 
+  // Loading state
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-pulse text-2xl text-muted-foreground">
+              Расчёт...
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Error state - show RecommendedPriceCard to handle error display
+  if (error || !data) {
+    return <RecommendedPriceCard data={data} loading={loading} error={error} />
+  }
+
   return (
     <div className="space-y-6" data-testid="price-calculator-results">
-      {/* Recommended Price Card */}
-      <RecommendedPriceCard data={data} loading={loading} error={error} />
+      {/* Two-Level Pricing Display (Story 44.20) */}
+      {twoLevelResult && formData ? (
+        <TwoLevelPricingDisplay
+          result={twoLevelResult}
+          fulfillmentType={formData.fulfillment_type}
+          taxType={formData.tax_type}
+          taxRatePct={formData.tax_rate_pct}
+          sppPct={sppPct}
+        />
+      ) : (
+        /* Fallback to original display if no form data */
+        <RecommendedPriceCard data={data} loading={loading} error={error} />
+      )}
 
-      {/* Only show detailed results if we have complete data and no error */}
-      {data && !error && data.percentage_breakdown && (
+      {/* Only show additional components if we have complete data */}
+      {data.percentage_breakdown && (
         <>
-          {/* Cost Breakdown Table */}
-          <CostBreakdownTable data={data} />
-
           {/* Cost Breakdown Chart */}
           <CostBreakdownChart data={data} />
 

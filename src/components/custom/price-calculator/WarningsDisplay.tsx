@@ -27,7 +27,7 @@ export function WarningsDisplay({ data }: WarningsDisplayProps) {
     <Alert variant="warning">
       <AlertCircle className="h-4 w-4" />
       <AlertDescription>
-        <p className="font-medium">Warnings:</p>
+        <p className="font-medium">Предупреждения:</p>
         <ul className="list-disc list-inside space-y-1 ml-4">
           {data.warnings.map((warning, index) => (
             <li key={index}>{warning}</li>

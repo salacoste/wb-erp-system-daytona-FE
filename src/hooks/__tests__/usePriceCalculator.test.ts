@@ -202,7 +202,7 @@ describe('Price Calculator Hooks', () => {
 
       expect(result.current.data?.cost_breakdown).toBeDefined()
       expect(result.current.data?.cost_breakdown.cogs).toBe(1500.0)
-      expect(result.current.data?.percentage_breakdown.margin.pct).toBe(20.0)
+      expect(result.current.data?.percentage_breakdown.margin).toBe(500.0)
     })
 
     it('includes intermediate values in response', async () => {

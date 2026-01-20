@@ -3,7 +3,7 @@
  * Story 44.2-FE: Input Form Component for Price Calculator
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
 // Mock the entire FieldTooltip component

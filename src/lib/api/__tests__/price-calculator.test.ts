@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { calculatePrice } from '../price-calculator'
 import { apiClient } from '@/lib/api-client'
+import type { PriceCalculatorRequest } from '@/types/price-calculator'
 import {
   mockPriceCalculatorRequest,
   mockMinimalPriceCalculatorRequest,
@@ -69,7 +70,7 @@ describe('Price Calculator API Client', () => {
 
       await calculatePrice(mockPriceCalculatorRequestWithOverrides)
 
-      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1]
+      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1] as PriceCalculatorRequest
       expect(requestObject).toHaveProperty('overrides')
       expect(requestObject.overrides).toEqual({
         commission_pct: 8.0,
@@ -104,7 +105,7 @@ describe('Price Calculator API Client', () => {
       expect(result.cost_breakdown).toBeDefined()
       expect(result.cost_breakdown.cogs).toBe(1500.0)
       expect(result.cost_breakdown.logistics_total).toBe(203.0)
-      expect(result.percentage_breakdown.commission_wb.rub).toBe(250.0)
+      expect(result.percentage_breakdown.commission_wb).toBe(250.0)
     })
 
     it('includes intermediate values in response', async () => {
@@ -186,7 +187,7 @@ describe('Price Calculator API Client', () => {
         target_margin_pct: 25.5,
       })
 
-      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1]
+      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1] as PriceCalculatorRequest
       expect(requestObject.target_margin_pct).toBe(25.5)
       expect(typeof requestObject.target_margin_pct).toBe('number')
     })
@@ -196,7 +197,7 @@ describe('Price Calculator API Client', () => {
 
       await calculatePrice(mockPriceCalculatorRequest)
 
-      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1]
+      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1] as PriceCalculatorRequest
       expect(typeof requestObject.cogs_rub).toBe('number')
       expect(typeof requestObject.logistics_forward_rub).toBe('number')
       expect(typeof requestObject.logistics_reverse_rub).toBe('number')
@@ -208,7 +209,7 @@ describe('Price Calculator API Client', () => {
 
       await calculatePrice(mockPriceCalculatorRequest)
 
-      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1]
+      const requestObject = vi.mocked(apiClient.post).mock.calls[0][1] as PriceCalculatorRequest
       expect(typeof requestObject.buyback_pct).toBe('number')
       expect(typeof requestObject.advertising_pct).toBe('number')
       expect(typeof requestObject.vat_pct).toBe('number')

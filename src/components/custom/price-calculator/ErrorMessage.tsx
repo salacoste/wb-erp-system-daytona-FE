@@ -42,35 +42,35 @@ interface ErrorConfig {
  */
 const ERROR_CONFIG: Record<number, ErrorConfig> = {
   400: {
-    title: 'Invalid input',
-    message: 'Please check your input values and try again.',
+    title: 'Некорректные данные',
+    message: 'Проверьте введённые значения и попробуйте снова.',
     variant: 'warning',
     icon: AlertCircle,
   },
   401: {
-    title: 'Not authenticated',
-    message: 'Please log in to use the Price Calculator.',
-    action: { label: 'Go to Login', href: '/login' },
+    title: 'Не авторизован',
+    message: 'Войдите в систему для использования калькулятора цены.',
+    action: { label: 'Войти', href: '/login' },
     variant: 'destructive',
     icon: AlertCircle,
   },
   403: {
-    title: 'Cabinet access denied',
-    message: 'Please select a valid cabinet to continue.',
-    action: { label: 'Select Cabinet', href: '/cabinets' },
+    title: 'Доступ к кабинету запрещён',
+    message: 'Выберите действующий кабинет для продолжения.',
+    action: { label: 'Выбрать кабинет', href: '/cabinets' },
     variant: 'destructive',
     icon: AlertCircle,
   },
   429: {
-    title: 'Too many requests',
-    message: 'Please wait a moment before trying again.',
+    title: 'Слишком много запросов',
+    message: 'Подождите немного перед повторной попыткой.',
     variant: 'warning',
     icon: AlertCircle,
   },
   0: {
-    title: 'Connection error',
-    message: 'Could not reach the server. Please check your connection.',
-    action: { label: 'Retry', onClick: true },
+    title: 'Ошибка соединения',
+    message: 'Не удалось связаться с сервером. Проверьте подключение к интернету.',
+    action: { label: 'Повторить', onClick: true },
     variant: 'destructive',
     icon: AlertCircle,
   },
@@ -150,7 +150,7 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
         {process.env.NODE_ENV === 'development' && (
           <details className="text-xs mt-2">
             <summary className="cursor-pointer opacity-70 hover:opacity-100">
-              Technical details
+              Технические детали
             </summary>
             <pre className="mt-2 p-2 bg-black/5 rounded overflow-x-auto">
               {error.message}

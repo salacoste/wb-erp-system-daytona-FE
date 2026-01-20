@@ -41,7 +41,7 @@ vi.mock('@/components/ui/collapsible', () => ({
   Collapsible: ({ children, open, _onOpenChange }: any) => (
     <div data-collapsible-open={open}>{children}</div>
   ),
-  CollapsibleTrigger: ({ children }: { children: React.ReactElement }) => children,
+  CollapsibleTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   CollapsibleContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
@@ -61,7 +61,7 @@ vi.mock('@/components/custom/price-calculator/PriceCalculatorResults', () => ({
   PriceCalculatorResults: ({ data, _loading, _error }: { data: unknown; _loading: boolean; _error: Error | null }) => (
     <div data-testid="price-calculator-results">
       <span>Results Component</span>
-      {data && <div data-testid="results-data">Data present</div>}
+      {data !== null && data !== undefined && <div data-testid="results-data">Data present</div>}
     </div>
   ),
 }))

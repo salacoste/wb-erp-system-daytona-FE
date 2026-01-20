@@ -49,10 +49,10 @@ test.describe('Price Calculator E2E', () => {
 
       // Fixed Costs section
       await expect(page.getByText(/fixed costs/i)).toBeVisible()
-      await expect(page.getByLabelText(/cogs/i, { exact: false })).toBeVisible()
-      await expect(page.getByLabelText(/logistics forward/i, { exact: false })).toBeVisible()
-      await expect(page.getByLabelText(/logistics reverse/i, { exact: false })).toBeVisible()
-      await expect(page.getByLabelText(/storage/i, { exact: false })).toBeVisible()
+      await expect(page.getByLabel(/cogs/i)).toBeVisible()
+      await expect(page.getByLabel(/logistics forward/i)).toBeVisible()
+      await expect(page.getByLabel(/logistics reverse/i)).toBeVisible()
+      await expect(page.getByLabel(/storage/i)).toBeVisible()
 
       // Percentage Costs section
       await expect(page.getByText(/percentage costs/i)).toBeVisible()
@@ -66,21 +66,21 @@ test.describe('Price Calculator E2E', () => {
       await expect(advancedTrigger).toBeVisible()
 
       // Initially collapsed
-      await expect(page.getByLabelText(/vat %/i)).not.toBeVisible()
+      await expect(page.getByLabel(/vat %/i)).not.toBeVisible()
 
       // Click to expand
       await advancedTrigger.click()
-      await expect(page.getByLabelText(/vat %/i)).toBeVisible()
-      await expect(page.getByLabelText(/acquiring %/i, { exact: false })).toBeVisible()
+      await expect(page.getByLabel(/vat %/i)).toBeVisible()
+      await expect(page.getByLabel(/acquiring %/i)).toBeVisible()
 
       // Collapse again
       await advancedTrigger.click()
-      await expect(page.getByLabelText(/vat %/i)).not.toBeVisible()
+      await expect(page.getByLabel(/vat %/i)).not.toBeVisible()
     })
 
     test('validates negative values', async ({ page }) => {
       // Try to enter negative COGS
-      const cogsInput = page.getByLabelText(/cogs/i, { exact: false })
+      const cogsInput = page.getByLabel(/cogs/i)
       await cogsInput.fill('-100')
 
       // Should show validation error
@@ -91,7 +91,7 @@ test.describe('Price Calculator E2E', () => {
   test.describe('Story 44.5: Auto-calculation', () => {
     test('auto-calculates after input changes', async ({ page }) => {
       // Fill in a value
-      const cogsInput = page.getByLabelText(/cogs/i, { exact: false })
+      const cogsInput = page.getByLabel(/cogs/i)
       await cogsInput.fill('1500')
 
       // Wait for auto-calculation (500ms debounce + API call)
@@ -109,7 +109,7 @@ test.describe('Price Calculator E2E', () => {
 
     test('shows calculating indicator during API call', async ({ page }) => {
       // Fill in multiple fields quickly
-      const cogsInput = page.getByLabelText(/cogs/i, { exact: false })
+      const cogsInput = page.getByLabel(/cogs/i)
       await cogsInput.fill('1500')
 
       // Should show "Calculating..." at some point
@@ -121,7 +121,7 @@ test.describe('Price Calculator E2E', () => {
   test.describe('Story 44.3: Results Display', () => {
     test('displays calculation results', async ({ page }) => {
       // Fill form to trigger calculation
-      const cogsInput = page.getByLabelText(/cogs/i, { exact: false })
+      const cogsInput = page.getByLabel(/cogs/i)
       await cogsInput.fill('1500')
 
       // Wait for results (may need to wait for API)
@@ -134,7 +134,7 @@ test.describe('Price Calculator E2E', () => {
 
     test('displays cost breakdown table', async ({ page }) => {
       // Fill form
-      const cogsInput = page.getByLabelText(/cogs/i, { exact: false })
+      const cogsInput = page.getByLabel(/cogs/i)
       await cogsInput.fill('1500')
 
       // Wait for results
@@ -158,7 +158,7 @@ test.describe('Price Calculator E2E', () => {
 
     test('shows reset confirmation when results exist', async ({ page }) => {
       // First, get results by filling form
-      const cogsInput = page.getByLabelText(/cogs/i, { exact: false })
+      const cogsInput = page.getByLabel(/cogs/i)
       await cogsInput.fill('1500')
 
       // Wait for results
