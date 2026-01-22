@@ -8,24 +8,24 @@ import { render, screen } from '@testing-library/react'
 import { useForm } from 'react-hook-form'
 import { MarginSlider } from '../MarginSlider'
 
-// Helper to render MarginSlider with form context
-function renderMarginSlider(props: Partial<Parameters<typeof MarginSlider>[0]> = {}) {
-  const defaultProps = {
-    name: 'testField',
-    min: 0,
-    max: 100,
-    step: 1,
-    unit: '%',
-  }
+// Test form type
+interface TestFormData {
+  testField: number
+}
 
+// Helper to render MarginSlider with form context
+function renderMarginSlider(overrides: { error?: string; min?: number; max?: number; step?: number } = {}) {
   function Wrapper() {
-    const { control, register } = useForm({ defaultValues: { testField: 50 } })
+    const { control } = useForm<TestFormData>({ defaultValues: { testField: 50 } })
     return (
-      <MarginSlider
-        {...defaultProps}
-        {...props}
+      <MarginSlider<TestFormData>
+        name="testField"
         control={control}
-        register={register}
+        min={overrides.min ?? 0}
+        max={overrides.max ?? 100}
+        step={overrides.step ?? 1}
+        unit="%"
+        error={overrides.error}
       />
     )
   }

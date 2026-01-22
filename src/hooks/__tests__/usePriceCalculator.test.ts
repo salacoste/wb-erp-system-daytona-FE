@@ -54,7 +54,10 @@ describe('Price Calculator Hooks', () => {
 
     it('generates correct calculate key with params', () => {
       const key = priceCalculatorQueryKeys.calculate(mockPriceCalculatorRequest)
-      expect(key).toEqual(['price-calculator', 'calculate', mockPriceCalculatorRequest])
+      // Key uses getStableKey which returns JSON string for cache stability
+      expect(key[0]).toBe('price-calculator')
+      expect(key[1]).toBe('calculate')
+      expect(typeof key[2]).toBe('string') // JSON stringified params
     })
 
     it('generates different keys for different requests', () => {

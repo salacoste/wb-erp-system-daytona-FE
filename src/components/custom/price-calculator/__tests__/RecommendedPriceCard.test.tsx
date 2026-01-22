@@ -28,7 +28,7 @@ describe('RecommendedPriceCard', () => {
     it('shows loading skeleton when loading', () => {
       render(<RecommendedPriceCard data={null} loading={true} />)
 
-      expect(screen.getByText('Calculating...')).toBeInTheDocument()
+      expect(screen.getByText('Расчёт...')).toBeInTheDocument()
     })
 
     it('shows loading message with pulse animation', () => {
@@ -50,7 +50,7 @@ describe('RecommendedPriceCard', () => {
     it('shows placeholder when no data and no error', () => {
       render(<RecommendedPriceCard data={null} />)
 
-      expect(screen.getByText(/enter parameters and click calculate/i)).toBeInTheDocument()
+      expect(screen.getByText(/Введите параметры и нажмите «Рассчитать»/)).toBeInTheDocument()
     })
 
     it('shows alert icon in error state', () => {
@@ -162,14 +162,14 @@ describe('RecommendedPriceCard', () => {
     it('has copy button in DOM', () => {
       render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      const copyButton = screen.queryByRole('button', { name: /copy/i })
+      const copyButton = screen.queryByRole('button', { name: /Копировать цену/i })
       expect(copyButton).toBeInTheDocument()
     })
 
     it('button copies price to clipboard', () => {
       render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      const copyButton = screen.queryByRole('button', { name: /copy/i })
+      const copyButton = screen.queryByRole('button', { name: /Копировать цену/i })
       copyButton?.click?.()
 
       expect(mockClipboard.writeText).toHaveBeenCalled()
@@ -180,13 +180,13 @@ describe('RecommendedPriceCard', () => {
     it('has proper heading for price display', () => {
       render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('Recommended Selling Price')).toBeInTheDocument()
+      expect(screen.getByText('Рекомендуемая цена продажи')).toBeInTheDocument()
     })
 
     it('has accessible copy button', () => {
       render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      expect(screen.queryByRole('button', { name: /copy/i })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /Копировать цену/i })).toBeInTheDocument()
     })
   })
 })

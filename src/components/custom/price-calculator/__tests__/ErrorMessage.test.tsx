@@ -30,9 +30,10 @@ describe('ErrorMessage', () => {
 
       render(<ErrorMessage error={error} onRetry={onRetryMock} />)
 
-      expect(screen.getByText('Invalid input')).toBeInTheDocument()
+      // Russian locale: "Некорректные данные"
+      expect(screen.getByText('Некорректные данные')).toBeInTheDocument()
       expect(
-        screen.getByText('Please check your input values and try again.')
+        screen.getByText('Проверьте введённые значения и попробуйте снова.')
       ).toBeInTheDocument()
     })
 
@@ -42,9 +43,10 @@ describe('ErrorMessage', () => {
 
       render(<ErrorMessage error={error} onRetry={onRetryMock} />)
 
-      expect(screen.getByText('Not authenticated')).toBeInTheDocument()
-      expect(screen.getByText('Please log in to use the Price Calculator.')).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: /go to login/i })).toHaveAttribute('href', '/login')
+      // Russian locale
+      expect(screen.getByText('Не авторизован')).toBeInTheDocument()
+      expect(screen.getByText('Войдите в систему для использования калькулятора цены.')).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: /войти/i })).toHaveAttribute('href', '/login')
     })
 
     it('displays forbidden error (403) with cabinet link', () => {
@@ -53,11 +55,12 @@ describe('ErrorMessage', () => {
 
       render(<ErrorMessage error={error} onRetry={onRetryMock} />)
 
-      expect(screen.getByText('Cabinet access denied')).toBeInTheDocument()
+      // Russian locale
+      expect(screen.getByText('Доступ к кабинету запрещён')).toBeInTheDocument()
       expect(
-        screen.getByText('Please select a valid cabinet to continue.')
+        screen.getByText('Выберите действующий кабинет для продолжения.')
       ).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: /select cabinet/i })).toHaveAttribute(
+      expect(screen.getByRole('link', { name: /выбрать кабинет/i })).toHaveAttribute(
         'href',
         '/cabinets'
       )
@@ -69,9 +72,10 @@ describe('ErrorMessage', () => {
 
       render(<ErrorMessage error={error} onRetry={onRetryMock} />)
 
-      expect(screen.getByText('Too many requests')).toBeInTheDocument()
+      // Russian locale
+      expect(screen.getByText('Слишком много запросов')).toBeInTheDocument()
       expect(
-        screen.getByText('Please wait a moment before trying again.')
+        screen.getByText('Подождите немного перед повторной попыткой.')
       ).toBeInTheDocument()
     })
 
@@ -81,9 +85,10 @@ describe('ErrorMessage', () => {
 
       render(<ErrorMessage error={error} onRetry={onRetryMock} />)
 
-      expect(screen.getByText('Connection error')).toBeInTheDocument()
+      // Russian locale
+      expect(screen.getByText('Ошибка соединения')).toBeInTheDocument()
       expect(
-        screen.getByText('Could not reach the server. Please check your connection.')
+        screen.getByText('Не удалось связаться с сервером. Проверьте подключение к интернету.')
       ).toBeInTheDocument()
     })
 
@@ -113,7 +118,8 @@ describe('ErrorMessage', () => {
 
       render(<ErrorMessage error={error} onRetry={onRetryMock} />)
 
-      const retryButton = screen.getByRole('button', { name: /retry/i })
+      // Russian locale: "Повторить"
+      const retryButton = screen.getByRole('button', { name: /повторить/i })
       await user.click(retryButton)
 
       expect(onRetryMock).toHaveBeenCalledTimes(1)

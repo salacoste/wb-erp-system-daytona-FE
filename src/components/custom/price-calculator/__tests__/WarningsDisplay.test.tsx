@@ -47,31 +47,31 @@ describe('WarningsDisplay', () => {
     it('displays alert when warnings exist', () => {
       const dataWithWarnings = {
         ...mockPriceCalculatorResponse,
-        warnings: ['Target margin may not be achievable', 'Logistics cost is above average'],
+        warnings: ['Целевая маржа может быть недостижима', 'Затраты на логистику выше среднего'],
       }
 
       render(<WarningsDisplay data={dataWithWarnings} />)
 
-      expect(screen.getByText('Warnings:')).toBeInTheDocument()
+      expect(screen.getByText('Предупреждения:')).toBeInTheDocument()
     })
 
     it('displays all warning messages in a list', () => {
       const dataWithWarnings = {
         ...mockPriceCalculatorResponse,
-        warnings: ['Warning 1', 'Warning 2', 'Warning 3'],
+        warnings: ['Предупреждение 1', 'Предупреждение 2', 'Предупреждение 3'],
       }
 
       render(<WarningsDisplay data={dataWithWarnings} />)
 
-      expect(screen.getByText('Warning 1')).toBeInTheDocument()
-      expect(screen.getByText('Warning 2')).toBeInTheDocument()
-      expect(screen.getByText('Warning 3')).toBeInTheDocument()
+      expect(screen.getByText('Предупреждение 1')).toBeInTheDocument()
+      expect(screen.getByText('Предупреждение 2')).toBeInTheDocument()
+      expect(screen.getByText('Предупреждение 3')).toBeInTheDocument()
     })
 
     it('uses list-disc styling for warnings', () => {
       const dataWithWarnings = {
         ...mockPriceCalculatorResponse,
-        warnings: ['Single warning'],
+        warnings: ['Одно предупреждение'],
       }
 
       const { container } = render(<WarningsDisplay data={dataWithWarnings} />)
@@ -85,13 +85,13 @@ describe('WarningsDisplay', () => {
     it('has proper alert role', () => {
       const dataWithWarnings = {
         ...mockPriceCalculatorResponse,
-        warnings: ['Test warning'],
+        warnings: ['Тестовое предупреждение'],
       }
 
       render(<WarningsDisplay data={dataWithWarnings} />)
 
       // Alert component should have appropriate role/styling
-      expect(screen.getByText('Warnings:')).toBeInTheDocument()
+      expect(screen.getByText('Предупреждения:')).toBeInTheDocument()
     })
   })
 })

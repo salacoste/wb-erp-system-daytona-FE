@@ -13,17 +13,17 @@ describe('CostBreakdownChart', () => {
     it('renders chart component', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('Cost Breakdown')).toBeInTheDocument()
+      expect(screen.getByText('Структура затрат')).toBeInTheDocument()
     })
 
     it('renders all legend items', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('WB Commission')).toBeInTheDocument()
-      expect(screen.getByText('Acquiring')).toBeInTheDocument()
-      expect(screen.getByText('Advertising')).toBeInTheDocument()
-      expect(screen.getByText('VAT')).toBeInTheDocument()
-      expect(screen.getByText('Margin (Profit)')).toBeInTheDocument()
+      expect(screen.getByText('Комиссия WB')).toBeInTheDocument()
+      expect(screen.getByText('Эквайринг')).toBeInTheDocument()
+      expect(screen.getByText('Реклама')).toBeInTheDocument()
+      expect(screen.getByText('НДС')).toBeInTheDocument()
+      expect(screen.getByText('Маржа (прибыль)')).toBeInTheDocument()
     })
 
     it('displays chart with proper height', () => {
@@ -56,18 +56,18 @@ describe('CostBreakdownChart', () => {
     it('has accessible title', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('Cost Breakdown')).toBeInTheDocument()
+      expect(screen.getByText('Структура затрат')).toBeInTheDocument()
     })
 
     it('legend items have text labels', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
       // All legend items should have text labels
-      expect(screen.getByText('WB Commission')).toBeInTheDocument()
-      expect(screen.getByText('Acquiring')).toBeInTheDocument()
-      expect(screen.getByText('Advertising')).toBeInTheDocument()
-      expect(screen.getByText('VAT')).toBeInTheDocument()
-      expect(screen.getByText('Margin (Profit)')).toBeInTheDocument()
+      expect(screen.getByText('Комиссия WB')).toBeInTheDocument()
+      expect(screen.getByText('Эквайринг')).toBeInTheDocument()
+      expect(screen.getByText('Реклама')).toBeInTheDocument()
+      expect(screen.getByText('НДС')).toBeInTheDocument()
+      expect(screen.getByText('Маржа (прибыль)')).toBeInTheDocument()
     })
   })
 })

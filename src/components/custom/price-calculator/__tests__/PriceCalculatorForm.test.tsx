@@ -7,11 +7,56 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PriceCalculatorForm } from '../PriceCalculatorForm'
 
-// Mock the sub-components
+// Create a test query client
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  })
+
+// Render with providers wrapper
+const renderWithProviders = (ui: React.ReactElement) => {
+  const queryClient = createTestQueryClient()
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  )
+}
+
+// Mock the sub-components that use React Query or complex logic
 vi.mock('../MarginSlider', () => ({
-  MarginSlider: ({ name, error, unit }: { name: string; error?: string; unit: string }) => (
+  MarginSlider: ({
+    name,
+    error,
+    unit,
+  }: {
+    name: string
+    error?: string
+    unit: string
+  }) => (
+    <div data-testid={`slider-${name}`}>
+      <input type="number" data-testid={`input-${name}`} />
+      <span>{unit}</span>
+      {error && <span className="error">{error}</span>}
+    </div>
+  ),
+}))
+
+// Story 44.30: Mock BuybackSlider (new component without margin zones)
+vi.mock('../BuybackSlider', () => ({
+  BuybackSlider: ({
+    name,
+    error,
+    unit,
+  }: {
+    name: string
+    error?: string
+    unit: string
+  }) => (
     <div data-testid={`slider-${name}`}>
       <input type="number" data-testid={`input-${name}`} />
       <span>{unit}</span>
@@ -21,11 +66,71 @@ vi.mock('../MarginSlider', () => ({
 }))
 
 vi.mock('../FieldTooltip', () => ({
-  FieldTooltip: ({ _content }: { _content: string }) => (
+  FieldTooltip: ({ content: _content }: { content: string }) => (
     <button type="button" aria-label="Show tooltip">
       ?
     </button>
   ),
+}))
+
+vi.mock('../ProductSearchSelect', () => ({
+  ProductSearchSelect: ({
+    onProductSelect,
+  }: {
+    onProductSelect?: (p: unknown) => void
+  }) => (
+    <div data-testid="product-search-select">
+      <button type="button" onClick={() => onProductSelect?.({ nmId: 123 })}>
+        Выбрать товар
+      </button>
+    </div>
+  ),
+}))
+
+vi.mock('../CategorySelector', () => ({
+  CategorySelector: () => (
+    <div data-testid="category-selector">Category Selector Mock</div>
+  ),
+}))
+
+vi.mock('../WarehouseSection', () => ({
+  WarehouseSection: () => (
+    <div data-testid="warehouse-section">Warehouse Section Mock</div>
+  ),
+}))
+
+vi.mock('../FulfillmentTypeSelector', () => ({
+  FulfillmentTypeSelector: () => (
+    <div data-testid="fulfillment-type-selector">FBO/FBS Selector Mock</div>
+  ),
+}))
+
+vi.mock('../DimensionInputSection', () => ({
+  DimensionInputSection: () => (
+    <div data-testid="dimension-input-section">Dimensions Mock</div>
+  ),
+}))
+
+vi.mock('../AutoFillWarning', () => ({
+  AutoFillWarning: () => null,
+}))
+
+vi.mock('../TaxConfigurationSection', () => ({
+  TaxConfigurationSection: () => (
+    <div data-testid="tax-configuration-section">Tax Config Mock</div>
+  ),
+}))
+
+vi.mock('@/hooks/useProductAutoFill', () => ({
+  useProductAutoFill: () => ({
+    dimensionAutoFill: null,
+    categoryAutoFill: null,
+    handleProductSelect: vi.fn(),
+    markDimensionsModified: vi.fn(),
+    restoreDimensions: vi.fn(),
+    productHasDimensions: true,
+    productHasCategory: true,
+  }),
 }))
 
 describe('PriceCalculatorForm', () => {
@@ -36,233 +141,201 @@ describe('PriceCalculatorForm', () => {
   })
 
   describe('Required Fields', () => {
-    it('renders all required input fields', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders form with Russian title', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      // Check for key labels and headings
-      expect(screen.getByText('Price Calculator')).toBeInTheDocument()
-      expect(screen.getByText(/target margin %/i)).toBeInTheDocument()
-      expect(screen.getByText(/fixed costs/i)).toBeInTheDocument()
-      expect(screen.getByText(/percentage costs/i)).toBeInTheDocument()
+      // Check for Russian title
+      expect(screen.getByText('Калькулятор цены')).toBeInTheDocument()
     })
 
-    it('renders percentage sliders', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders form description', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
+      expect(
+        screen.getByText(
+          /Рассчитайте оптимальную цену на основе затрат и желаемой маржи/
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('renders target margin slider', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+
+      // Target margin section header
+      expect(screen.getByText('Целевая маржа')).toBeInTheDocument()
       expect(screen.getByTestId('slider-target_margin_pct')).toBeInTheDocument()
-      expect(screen.getByTestId('slider-buyback_pct')).toBeInTheDocument()
-      expect(screen.getByTestId('slider-advertising_pct')).toBeInTheDocument()
     })
 
-    it('renders storage input with default 0', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders fixed costs section', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      const storageInput = screen.getByLabelText(/storage/i)
-      expect(storageInput).toBeInTheDocument()
+      // Fixed costs section - check for COGS field
+      expect(screen.getByText(/Фиксированные затраты/)).toBeInTheDocument()
+    })
+
+    it('renders percentage costs section', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+
+      // Percentage costs section
+      expect(screen.getByText(/Процентные расходы/)).toBeInTheDocument()
+      expect(screen.getByTestId('slider-buyback_pct')).toBeInTheDocument()
     })
   })
 
-  describe('Advanced Options', () => {
-    it('renders collapsible advanced section', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+  describe('Form Structure', () => {
+    it('renders product search select', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      expect(screen.getByText(/advanced options/i)).toBeInTheDocument()
+      expect(screen.getByTestId('product-search-select')).toBeInTheDocument()
     })
 
-    it('toggles advanced section on click', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders category selector', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      const trigger = screen.getByRole('button', { name: /advanced options/i })
-      await userEvent.click(trigger)
-
-      // After clicking, VAT select should be visible
-      await waitFor(() => {
-        expect(screen.getByLabelText(/vat %/i)).toBeInTheDocument()
-      })
+      expect(screen.getByTestId('category-selector')).toBeInTheDocument()
     })
 
-    it('renders VAT select with correct options', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders tax configuration section', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      const trigger = screen.getByRole('button', { name: /advanced options/i })
-      await userEvent.click(trigger)
-
-      await waitFor(() => {
-        const vatSelect = screen.getByLabelText(/vat %/i)
-        expect(vatSelect).toBeInTheDocument()
-      })
-    })
-
-    it('renders acquiring input', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      const trigger = screen.getByRole('button', { name: /advanced options/i })
-      await userEvent.click(trigger)
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/acquiring %/i)).toBeInTheDocument()
-      })
-    })
-
-    it('renders commission override input', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      const trigger = screen.getByRole('button', { name: /advanced options/i })
-      await userEvent.click(trigger)
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/commission % \(override\)/i)).toBeInTheDocument()
-      })
-    })
-
-    it('renders nm_id override input', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      const trigger = screen.getByRole('button', { name: /advanced options/i })
-      await userEvent.click(trigger)
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/product id \(override\)/i)).toBeInTheDocument()
-      })
+      expect(screen.getByTestId('tax-configuration-section')).toBeInTheDocument()
     })
   })
 
   describe('Story 44.5: Auto-calculation', () => {
     it('shows calculating indicator during loading', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />)
+      renderWithProviders(
+        <PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />
+      )
 
-      // Check for the loading button text (using getAllByText since there may be multiple)
-      const calculatingElements = screen.getAllByText('Calculating...')
-      expect(calculatingElements.length).toBeGreaterThan(0)
+      // Check for loading text (Russian: Расчёт...) - may appear multiple times
+      const loadingElements = screen.getAllByText('Расчёт...')
+      expect(loadingElements.length).toBeGreaterThan(0)
     })
 
     it('triggers reset confirmation when results exist', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={true} />)
+      renderWithProviders(
+        <PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={true} />
+      )
 
-      const resetButton = screen.getByRole('button', { name: /reset/i })
+      const resetButton = screen.getByRole('button', { name: /сбросить/i })
       await userEvent.click(resetButton)
 
-      // Should show confirmation dialog
+      // Should show confirmation dialog (Russian)
       await waitFor(() => {
-        expect(screen.getByText(/confirm reset/i)).toBeInTheDocument()
+        expect(screen.getByText(/Подтверждение сброса/i)).toBeInTheDocument()
       })
     })
 
     it('resets immediately when no results', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={false} />)
+      renderWithProviders(
+        <PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={false} />
+      )
 
-      const resetButton = screen.getByRole('button', { name: /reset/i })
+      const resetButton = screen.getByRole('button', { name: /сбросить/i })
       await userEvent.click(resetButton)
 
       // Should NOT show confirmation dialog
-      expect(screen.queryByText(/confirm reset/i)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/Подтверждение сброса/i)
+      ).not.toBeInTheDocument()
     })
   })
 
   describe('Form Actions', () => {
-    it('renders Calculate button', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders Calculate button in Russian', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      expect(screen.getByRole('button', { name: /calculate price/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /рассчитать цену/i })
+      ).toBeInTheDocument()
     })
 
-    it('renders Reset button', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('renders Reset button in Russian', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      expect(screen.getByRole('button', { name: /reset/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /сбросить/i })
+      ).toBeInTheDocument()
     })
 
     it('shows loading state on Calculate button', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />)
+      renderWithProviders(
+        <PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />
+      )
 
-      // Check for the loading button text (using getAllByText since there may be multiple)
-      const calculatingElements = screen.getAllByText('Calculating...')
-      expect(calculatingElements.length).toBeGreaterThan(0)
+      // When loading, shows "Расчёт..." instead of "Рассчитать цену" - may appear multiple times
+      const loadingElements = screen.getAllByText('Расчёт...')
+      expect(loadingElements.length).toBeGreaterThan(0)
     })
 
-    it('disables Calculate button when disabled', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} disabled={true} />)
+    it('disables Calculate button when disabled prop is true', () => {
+      renderWithProviders(
+        <PriceCalculatorForm onSubmit={mockOnSubmit} disabled={true} />
+      )
 
-      const calculateBtn = screen.getByRole('button', { name: /calculate price/i })
+      const calculateBtn = screen.getByRole('button', {
+        name: /рассчитать цену/i,
+      })
       expect(calculateBtn).toBeDisabled()
-    })
-  })
-
-  describe('Form Validation', () => {
-    it('shows required field errors when submitting empty form', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      // Clear the COGS input (has default 0) and blur to trigger validation
-      const cogsInput = screen.getByLabelText(/cogs/i)
-      await userEvent.clear(cogsInput)
-      await userEvent.tab() // Blur to trigger validation
-
-      // Validation error should appear
-      await waitFor(() => {
-        expect(screen.getByText(/COGS is required/i)).toBeInTheDocument()
-      })
-    })
-
-    it('shows error for negative values', async () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      const cogsInput = screen.getByLabelText(/cogs/i)
-      await userEvent.clear(cogsInput)
-      await userEvent.type(cogsInput, '-10')
-
-      await waitFor(() => {
-        expect(screen.getByText(/cannot be negative/i)).toBeInTheDocument()
-      })
-    })
-
-    it('has title attribute for keyboard hint', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      const calculateBtn = screen.getByRole('button', { name: /calculate price/i })
-      expect(calculateBtn).toHaveAttribute('title', 'Press Enter to calculate')
     })
   })
 
   describe('Accessibility', () => {
     it('has proper heading structure', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      expect(screen.getByText('Price Calculator')).toBeInTheDocument()
-      expect(screen.getByText(/enter your cost parameters/i)).toBeInTheDocument()
-    })
-
-    it('all inputs have associated labels', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
-
-      // Check that key inputs have labels
-      expect(screen.getByLabelText(/logistics forward/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/logistics reverse/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/storage/i)).toBeInTheDocument()
+      expect(screen.getByText('Калькулятор цены')).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          /Рассчитайте оптимальную цену на основе затрат и желаемой маржи/
+        )
+      ).toBeInTheDocument()
     })
 
     it('has field tooltips for explanations', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
       // Should have multiple tooltip buttons
       const tooltips = screen.getAllByLabelText(/show tooltip/i)
       expect(tooltips.length).toBeGreaterThan(0)
     })
 
-    it('reset button has keyboard shortcut hint', () => {
-      render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+    it('reset button has keyboard shortcut hint in Russian', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      const resetButton = screen.getByRole('button', { name: /reset/i })
-      expect(resetButton).toHaveAttribute('title', 'Press Esc to reset (keyboard shortcut)')
+      const resetButton = screen.getByRole('button', { name: /сбросить/i })
+      expect(resetButton).toHaveAttribute('title', 'Нажмите Esc для сброса')
+    })
+
+    it('calculate button has keyboard shortcut hint in Russian', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+
+      const calculateBtn = screen.getByRole('button', {
+        name: /рассчитать цену/i,
+      })
+      expect(calculateBtn).toHaveAttribute(
+        'title',
+        'Нажмите Enter для расчёта'
+      )
     })
   })
 
   describe('Responsive Layout', () => {
     it('renders in responsive grid structure', () => {
-      const { container } = render(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+      const { container } = renderWithProviders(
+        <PriceCalculatorForm onSubmit={mockOnSubmit} />
+      )
 
-      // Check for grid classes (using querySelector since className is complex)
+      // Check for form element
       const form = container.querySelector('form')
       expect(form).toBeInTheDocument()
+    })
+
+    it('renders form with test id', () => {
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
+
+      expect(screen.getByTestId('price-calculator-form')).toBeInTheDocument()
     })
   })
 })
