@@ -34,10 +34,11 @@ describe('CoefficientField', () => {
     expect(input).toHaveValue(1.5)
   })
 
-  it('shows "Автозаполнено" badge when source is auto', () => {
+  it('shows "Авто" badge when source is auto', () => {
     renderWithProviders(<CoefficientField {...defaultProps} source="auto" />)
 
-    expect(screen.getByText('Автозаполнено')).toBeInTheDocument()
+    // Legacy API uses shortened "Авто" text (see AutoFillBadge.tsx line 71)
+    expect(screen.getByText('Авто')).toBeInTheDocument()
   })
 
   it('shows "Вручную" badge when source is manual', () => {

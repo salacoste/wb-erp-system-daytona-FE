@@ -3,36 +3,75 @@
  * Story 44.10-FE: Return Logistics Calculation
  * Epic 44: Price Calculator UI (Frontend)
  *
- * Business Logic:
- * return_logistics = logistics_to_customer × (1 - buyback_rate / 100)
+ * Business Logic (Story 44.10):
+ * - base_return = forward_logistics (same tariff per WB rules)
+ * - effective_return = base_return × (100 - buyback_pct) / 100
  *
  * Example:
- * - logistics_to_customer = 100₽
- * - buyback_rate = 90% (выкуп)
- * - return_rate = 10% (возврат = 100 - 90)
- * - return_logistics = 100 * 0.10 = 10₽
+ * - Forward logistics: 72.50 ₽
+ * - Buyback: 98% (typical WB value)
+ * - Return rate: 100 - 98 = 2%
+ * - Effective return: 72.50 × 0.02 = 1.45 ₽
  */
 
 // ============================================================================
-// Types
+// Local Currency Formatter (2 decimal places for consistency)
 // ============================================================================
 
-/** Input parameters for return logistics calculation */
+/**
+ * Format currency with exactly 2 decimal places
+ * Uses Russian locale formatting (e.g., "72,50 ₽")
+ */
+function formatCurrencyFixed(value: number): string {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+// ============================================================================
+// Types - Story 44.10 TDD Interface
+// ============================================================================
+
+/** Breakdown object for display formatting (Story 44.10) */
+export interface ReturnLogisticsBreakdown {
+  baseReturnDisplay: string
+  buybackDisplay: string
+  returnRateDisplay: string
+  effectiveReturnDisplay: string
+}
+
+/** Result of return logistics calculation (Story 44.10) */
+export interface ReturnLogisticsResult {
+  baseReturn: number
+  effectiveReturn: number
+  buybackPct: number
+  returnRatePct: number
+  breakdown: ReturnLogisticsBreakdown
+}
+
+// ============================================================================
+// Legacy Types (Backward Compatibility)
+// ============================================================================
+
+/** @deprecated Use new API - Input parameters for return logistics calculation */
 export interface ReturnLogisticsParams {
   logisticsToCustomer: number
   buybackRate: number
 }
 
-/** Result of return logistics calculation */
-export interface ReturnLogisticsResult {
+/** @deprecated Use ReturnLogisticsResult - Legacy result interface */
+export interface LegacyReturnLogisticsResult {
   logisticsToCustomer: number
   buybackRate: number
   returnRate: number
   returnLogisticsCost: number
 }
 
-/** Breakdown object for detailed display */
-export interface ReturnLogisticsBreakdown {
+/** @deprecated Use ReturnLogisticsBreakdown - Legacy breakdown interface */
+export interface LegacyReturnLogisticsBreakdown {
   logisticsToCustomer: number
   buybackRate: number
   returnRate: number
@@ -54,16 +93,12 @@ const LOW_RETURN_RATE_THRESHOLD = 5
 // Core Calculation Functions
 // ============================================================================
 
-/**
- * Clamps a value to a min-max range
- */
+/** Clamps a value to a min-max range */
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max)
 }
 
-/**
- * Rounds a number to specified decimal places
- */
+/** Rounds a number to specified decimal places */
 function roundTo(value: number, decimals: number): number {
   const factor = Math.pow(10, decimals)
   return Math.round(value * factor) / factor
@@ -78,16 +113,89 @@ export function calculateReturnRate(buybackRate: number): number {
   return 100 - clampedBuyback
 }
 
+// ============================================================================
+// Story 44.10 TDD Functions
+// ============================================================================
+
 /**
- * Main calculation function for return logistics cost
- * return_logistics = logistics_to_customer × (1 - buyback_rate / 100)
+ * Calculates base return logistics (equals forward logistics per WB rules)
+ * Story 44.10: base_return = forward_logistics
+ */
+export function calculateBaseReturnLogistics(forwardLogistics: number): number {
+  return forwardLogistics < 0 ? 0 : forwardLogistics
+}
+
+/**
+ * Calculates effective return after buyback percentage
+ * Story 44.10: effective_return = base_return × (100 - buyback_pct) / 100
+ */
+export function calculateEffectiveReturn(
+  baseReturn: number,
+  buybackPct: number
+): number {
+  if (baseReturn < 0) return 0
+  const clampedBuyback = clamp(buybackPct, 0, 100)
+  const returnRatePct = 100 - clampedBuyback
+  return roundTo(baseReturn * (returnRatePct / 100), 2)
+}
+
+/**
+ * Checks if manual value differs significantly from calculated value
+ * Story 44.10: Default threshold is 50%
+ */
+export function hasSignificantDifference(
+  manualValue: number,
+  calculatedValue: number,
+  thresholdPct: number = 50
+): boolean {
+  if (calculatedValue === 0) {
+    return manualValue > 0
+  }
+  const difference = Math.abs(manualValue - calculatedValue)
+  const percentDiff = (difference / calculatedValue) * 100
+  return percentDiff > thresholdPct
+}
+
+/**
+ * Main calculation function for return logistics (Story 44.10 TDD API)
+ * Returns complete result with breakdown for display
  */
 export function calculateReturnLogistics(
-  params: ReturnLogisticsParams
+  forwardLogistics: number,
+  buybackPct: number
 ): ReturnLogisticsResult {
+  const baseReturn = calculateBaseReturnLogistics(forwardLogistics)
+  const clampedBuyback = clamp(buybackPct, 0, 100)
+  const returnRatePct = 100 - clampedBuyback
+  const effectiveReturn = calculateEffectiveReturn(baseReturn, clampedBuyback)
+
+  return {
+    baseReturn,
+    effectiveReturn,
+    buybackPct: clampedBuyback,
+    returnRatePct,
+    breakdown: {
+      baseReturnDisplay: formatCurrencyFixed(baseReturn),
+      buybackDisplay: `${clampedBuyback}%`,
+      returnRateDisplay: `${returnRatePct}%`,
+      effectiveReturnDisplay: formatCurrencyFixed(effectiveReturn),
+    },
+  }
+}
+
+// ============================================================================
+// Legacy API (Backward Compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use calculateReturnLogistics(forwardLogistics, buybackPct) instead
+ * Legacy calculation function for return logistics cost
+ */
+export function calculateReturnLogisticsLegacy(
+  params: ReturnLogisticsParams
+): LegacyReturnLogisticsResult {
   const { logisticsToCustomer, buybackRate } = params
 
-  // Handle negative logistics cost
   if (logisticsToCustomer < 0) {
     return {
       logisticsToCustomer,
@@ -97,15 +205,9 @@ export function calculateReturnLogistics(
     }
   }
 
-  // Clamp buyback rate to valid range
   const clampedBuybackRate = clamp(buybackRate, 0, 100)
   const returnRate = calculateReturnRate(clampedBuybackRate)
-
-  // Calculate return logistics cost
-  const returnLogisticsCost = roundTo(
-    logisticsToCustomer * (returnRate / 100),
-    2
-  )
+  const returnLogisticsCost = roundTo(logisticsToCustomer * (returnRate / 100), 2)
 
   return {
     logisticsToCustomer,
@@ -120,13 +222,14 @@ export function calculateReturnLogistics(
 // ============================================================================
 
 /**
+ * @deprecated Use calculateReturnLogistics().breakdown instead
  * Returns detailed breakdown object for tooltip/display
  */
 export function getReturnLogisticsBreakdown(
   logisticsToCustomer: number,
   buybackRate: number
-): ReturnLogisticsBreakdown {
-  const result = calculateReturnLogistics({ logisticsToCustomer, buybackRate })
+): LegacyReturnLogisticsBreakdown {
+  const result = calculateReturnLogisticsLegacy({ logisticsToCustomer, buybackRate })
 
   const formula = `${result.logisticsToCustomer} × ${result.returnRate}% = ${result.returnLogisticsCost}`
 

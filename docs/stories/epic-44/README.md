@@ -40,10 +40,10 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 | 44.5 | [Real-time Calculation & UX](./story-44.5-fe-realtime-calculation-ux.md) | P1 | 2 | ✅ Complete |
 | 44.6 | [Testing & Documentation](./story-44.6-fe-testing-documentation.md) | P1 | 2 | ✅ Complete |
 | **Phase 2: Enhanced Logistics** |||||
-| 44.7 | [Dimension-Based Volume Calculation](./story-44.7-fe-dimension-volume-calculation.md) | P1 | 2 | 📋 Ready for Dev |
-| 44.8 | [Logistics Tariff Calculation](./story-44.8-fe-logistics-tariff-calculation.md) | P1 | 2 | 📋 Ready for Dev |
-| 44.9 | [Logistics Coefficients UI](./story-44.9-fe-logistics-coefficients-ui.md) | P1 | 2 | 📋 Ready for Dev |
-| 44.10 | [Return Logistics Calculation](./story-44.10-fe-return-logistics-calculation.md) | P1 | 2 | 📋 Ready for Dev |
+| 44.7 | [Dimension-Based Volume Calculation](./story-44.7-fe-dimension-volume-calculation.md) | P1 | 2 | ✅ Complete |
+| 44.8 | [Logistics Tariff Calculation](./story-44.8-fe-logistics-tariff-calculation.md) | P1 | 2 | ✅ Complete |
+| 44.9 | [Logistics Coefficients UI](./story-44.9-fe-logistics-coefficients-ui.md) | P1 | 2 | ✅ Complete |
+| 44.10 | [Return Logistics Calculation](./story-44.10-fe-return-logistics-calculation.md) | P1 | 2 | ✅ Complete |
 | **Phase 3: Warehouse & Tariffs** |||||
 | 44.12 | [Warehouse Selection Dropdown](./story-44.12-fe-warehouse-selection.md) | P0 | 3 | ✅ Complete |
 | 44.13 | [Auto-fill Coefficients from Warehouse](./story-44.13-fe-auto-fill-coefficients.md) | P1 | 3 | ✅ Complete |

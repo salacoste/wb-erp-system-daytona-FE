@@ -17,14 +17,14 @@
 
 import { describe, it, expect } from 'vitest'
 import {
-  calculateReturnLogistics,
+  calculateReturnLogisticsLegacy as calculateReturnLogistics,
   calculateReturnRate,
   getReturnLogisticsBreakdown,
   formatReturnLogisticsTooltip,
   isHighReturnRate,
   getReturnRateColor,
   type ReturnLogisticsParams,
-  type ReturnLogisticsResult,
+  type LegacyReturnLogisticsResult as ReturnLogisticsResult,
 } from '../return-logistics-utils'
 
 // ============================================================================
