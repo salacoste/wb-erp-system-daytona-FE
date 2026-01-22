@@ -102,7 +102,8 @@ describe('PriceCalculator Page', () => {
 
       const heading = screen.getByRole('heading', { level: 1 })
       expect(heading).toBeInTheDocument()
-      expect(heading.textContent).toContain('Price Calculator')
+      // Russian locale: "Калькулятор цены"
+      expect(heading.textContent).toContain('Калькулятор цены')
     })
 
     it('renders breadcrumb navigation', () => {
@@ -110,9 +111,9 @@ describe('PriceCalculator Page', () => {
 
       // Check breadcrumb specifically (nav element with text-sm class)
       const breadcrumb = screen.getByRole('navigation')
-      expect(breadcrumb).toHaveTextContent('COGS Management')
-      expect(breadcrumb).toHaveTextContent('Price Calculator')
-      // Note: COGS Management also appears in Sidebar (that's correct UX)
+      // Russian locale: "Управление себестоимостью" / "Калькулятор цены"
+      expect(breadcrumb).toHaveTextContent('Управление себестоимостью')
+      expect(breadcrumb).toHaveTextContent('Калькулятор цены')
     })
   })
 

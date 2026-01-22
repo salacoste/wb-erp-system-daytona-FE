@@ -13,6 +13,7 @@ import type { PriceCalculatorRequest, TwoLevelPricingFormData } from '@/types/pr
  * Story 44.4-FE: Page Layout & Navigation Integration
  * Story 44.5-FE: Real-time Calculation & UX Enhancements
  * Story 44.20-FE: Two-Level Pricing Display
+ * Story 44.30-FE: UX Polish & Accessibility Fixes
  *
  * Features:
  * - Two-column layout (form + results)
@@ -33,6 +34,8 @@ export default function PriceCalculatorPage() {
   const [formData, setFormData] = useState<TwoLevelPricingFormData | null>(null)
   // Story 44.20: Commission percentage from category selection
   const [commissionPct, setCommissionPct] = useState(15) // Default 15%
+  // Story 44.30: Track last request for retry functionality
+  const [lastRequest, setLastRequest] = useState<PriceCalculatorRequest | null>(null)
 
   const { mutate, isPending, data, error } = usePriceCalculator({
     onSettled: () => {
@@ -42,6 +45,7 @@ export default function PriceCalculatorPage() {
 
   const handleCalculate = useCallback(
     (requestData: PriceCalculatorRequest) => {
+      setLastRequest(requestData) // Story 44.30: Save for retry
       setIsCalculating(true)
       mutate(requestData)
     },
@@ -74,8 +78,8 @@ export default function PriceCalculatorPage() {
         <span className="text-foreground font-medium">Калькулятор цены</span>
       </nav>
 
-      {/* Page Header */}
-      <h1 className="text-2xl font-bold mb-6">Калькулятор цены</h1>
+      {/* Page Header - Story 44.30: Fixed H1 size to match design system (32px) */}
+      <h1 className="text-3xl md:text-4xl font-bold mb-6">Калькулятор цены</h1>
 
       {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -93,14 +97,14 @@ export default function PriceCalculatorPage() {
 
         {/* Right: Results */}
         <div className="space-y-6">
-          {/* Error message */}
+          {/* Error message - Story 44.30: Fixed retry callback */}
           {error && (
             <ErrorMessage
               error={error}
               onRetry={() => {
-                // Retry last calculation if data exists
-                if (data) {
-                  // Form will auto-recalculate with current values
+                if (lastRequest) {
+                  setIsCalculating(true)
+                  mutate(lastRequest)
                 }
               }}
             />
