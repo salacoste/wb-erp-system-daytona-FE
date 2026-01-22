@@ -193,7 +193,7 @@ describe('WbTokenForm', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByRole('button', { name: /сохранение.../i }),
+            screen.getByRole('button', { name: /проверка токена/i }),
           ).toBeInTheDocument()
           expect(screen.getByRole('button')).toBeDisabled()
         },
@@ -275,7 +275,7 @@ describe('WbTokenForm', () => {
 
       await waitFor(
         () => {
-          expect(mockPush).toHaveBeenCalledWith('/onboarding/processing')
+          expect(mockPush).toHaveBeenCalledWith('/processing')
           expect(toast.success).toHaveBeenCalled()
         },
         { timeout: 5000 },

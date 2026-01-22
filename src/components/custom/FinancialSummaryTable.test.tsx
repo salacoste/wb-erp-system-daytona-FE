@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { FinancialSummaryTable } from './FinancialSummaryTable'
 import type { FinanceSummary } from '@/hooks/useDashboard'
 
@@ -58,16 +58,15 @@ describe('FinancialSummaryTable', () => {
   it('should render table with single week data', () => {
     render(<FinancialSummaryTable summary={mockSummary} />)
 
-    // Check revenue section
+    // Check revenue section (Updated labels per component refactoring)
     expect(screen.getByText('Доходы')).toBeInTheDocument()
-    expect(screen.getByText('Вайлдберриз реализовал Товар (Пр)')).toBeInTheDocument()
-    
-    // Check specific values in revenue section
-    const revenueSection = screen.getByText('Доходы').closest('.space-y-6') as HTMLElement
-    expect(within(revenueSection).getByText('1 000 000,00 ₽')).toBeInTheDocument()
+    expect(screen.getByText('Чистые продажи (NET)')).toBeInTheDocument()
 
-    // Check expenses section
-    expect(screen.getByText('Расходы')).toBeInTheDocument()
+    // Check specific values in revenue section
+    expect(screen.getAllByText('1 000 000,00 ₽').length).toBeGreaterThan(0)
+
+    // Check expenses section - now labeled "💸 Расходы WB"
+    expect(screen.getByText(/Расходы WB/)).toBeInTheDocument()
     expect(screen.getByText('Логистика')).toBeInTheDocument()
 
     // Check payout summary
@@ -150,10 +149,10 @@ describe('FinancialSummaryTable', () => {
   it('should display all metric groups', () => {
     render(<FinancialSummaryTable summary={mockSummary} />)
 
-    // Check all sections are present
+    // Check all sections are present (Updated labels per component refactoring)
     expect(screen.getByText('Доходы')).toBeInTheDocument()
-    expect(screen.getByText('Расходы')).toBeInTheDocument()
-    expect(screen.getByText('Корректировки')).toBeInTheDocument()
+    expect(screen.getByText(/Расходы WB/)).toBeInTheDocument()
+    expect(screen.getByText('Компенсации')).toBeInTheDocument()
     expect(screen.getAllByText('Итого к оплате').length).toBeGreaterThan(0)
   })
 

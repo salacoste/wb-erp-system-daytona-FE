@@ -23,6 +23,7 @@ const mockBrandData: MarginAnalyticsAggregated[] = [
     qty: 100,
     cogs: 130000,
     profit: 70000,
+    operating_profit: 70000, // Required for summary calculation
     margin_pct: 35.0,
     markup_percent: 53.85,
     missing_cogs_count: 0,
@@ -33,6 +34,7 @@ const mockBrandData: MarginAnalyticsAggregated[] = [
     qty: 50,
     cogs: 80000,
     profit: 20000,
+    operating_profit: 20000,
     margin_pct: 20.0,
     markup_percent: 25.0,
     missing_cogs_count: 5,
@@ -43,6 +45,7 @@ const mockBrandData: MarginAnalyticsAggregated[] = [
     qty: 75,
     cogs: undefined,
     profit: undefined,
+    operating_profit: undefined,
     margin_pct: undefined,
     markup_percent: undefined,
     missing_cogs_count: 75,
@@ -190,7 +193,8 @@ describe('MarginByBrandTable', () => {
     it('should display total brands count', () => {
       render(<MarginByBrandTable data={mockBrandData} />)
 
-      expect(screen.getByText('Всего брендов')).toBeInTheDocument()
+      // Updated: uses ComparisonSummary which shows "Всего позиций"
+      expect(screen.getByText('Всего позиций')).toBeInTheDocument()
       expect(screen.getByText('3')).toBeInTheDocument()
     })
 

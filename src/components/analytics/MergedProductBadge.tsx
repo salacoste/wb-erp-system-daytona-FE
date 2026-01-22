@@ -38,8 +38,8 @@ export function MergedProductBadge({
 }: MergedProductBadgeProps) {
   const productCount = mergedProducts.length
 
-  // Edge case: Single product with imtId (display as individual)
-  if (productCount === 1) {
+  // Edge case: Single product or empty array (display as individual)
+  if (productCount < 2) {
     return null
   }
 

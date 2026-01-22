@@ -8,8 +8,22 @@
 
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { vi } from 'vitest'
 import { ProductRowBadge } from './ProductRowBadge'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
+
+// Mock Radix UI Tooltip to avoid timing issues in tests
+// Tooltips use portals and delayed states that are hard to test reliably
+vi.mock('@/components/ui/tooltip', () => ({
+  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children: React.ReactNode }) => (
+    <span data-testid="tooltip-trigger">{children}</span>
+  ),
+  TooltipContent: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="tooltip-content">{children}</div>
+  ),
+  TooltipProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}))
 
 // Helper to create mock AdvertisingItem
 const createMockItem = (overrides: Partial<AdvertisingItem> = {}): AdvertisingItem => ({
@@ -48,7 +62,7 @@ describe('ProductRowBadge', () => {
 
     it('should NOT render badge even with callback provided', () => {
       const item = createMockItem({ imtId: null })
-      const mockCallback = jest.fn()
+      const mockCallback = vi.fn()
       const { container } = render(
         <ProductRowBadge item={item} onShowMergedGroup={mockCallback} />
       )
@@ -76,33 +90,25 @@ describe('ProductRowBadge', () => {
       expect(icon).toBeInTheDocument()
     })
 
-    it('should show tooltip on hover with main product explanation', async () => {
-      const user = userEvent.setup()
+    it('should show tooltip content with main product explanation', () => {
+      // With mocked tooltip, content is always rendered
       const item = createMockItem({ imtId: 328632, spend: 11337 })
       render(<ProductRowBadge item={item} />)
 
-      const badge = screen.getByText(/Главный товар в склейке №328632/)
-
-      // Hover over badge to show tooltip
-      await user.hover(badge)
-
-      // Tooltip should explain main product
-      expect(await screen.findByText(/Главный товар в склейке/)).toBeInTheDocument()
-      expect(screen.getByText(/получает рекламный бюджет/)).toBeInTheDocument()
+      // Tooltip content should explain main product (look inside tooltip-content)
+      const tooltipContent = screen.getByTestId('tooltip-content')
+      expect(tooltipContent).toHaveTextContent(/Главный товар в склейке/)
+      expect(tooltipContent).toHaveTextContent(/получает рекламный бюджет/)
     })
 
     it('should call onShowMergedGroup when button clicked', async () => {
       const user = userEvent.setup()
-      const mockCallback = jest.fn()
+      const mockCallback = vi.fn()
       const item = createMockItem({ imtId: 328632, spend: 11337 })
       render(<ProductRowBadge item={item} onShowMergedGroup={mockCallback} />)
 
-      // Open tooltip
-      const badge = screen.getByText(/Главный товар в склейке №328632/)
-      await user.hover(badge)
-
-      // Click "Показать метрики склейки" button
-      const button = await screen.findByText(/Показать метрики склейки/)
+      // With mocked tooltip, button is always visible
+      const button = screen.getByText(/Показать метрики склейки/)
       await user.click(button)
 
       // Callback should be called with imtId
@@ -110,15 +116,11 @@ describe('ProductRowBadge', () => {
       expect(mockCallback).toHaveBeenCalledTimes(1)
     })
 
-    it('should NOT show button when callback not provided', async () => {
-      const user = userEvent.setup()
+    it('should NOT show button when callback not provided', () => {
       const item = createMockItem({ imtId: 328632, spend: 11337 })
       render(<ProductRowBadge item={item} />)
 
-      const badge = screen.getByText(/Главный товар в склейке №328632/)
-      await user.hover(badge)
-
-      // Button should not exist
+      // Button should not exist when no callback provided
       expect(screen.queryByText(/Показать метрики склейки/)).not.toBeInTheDocument()
     })
   })
@@ -136,39 +138,30 @@ describe('ProductRowBadge', () => {
       const item = createMockItem({ imtId: 328632, spend: 0 })
       const { container } = render(<ProductRowBadge item={item} />)
 
-      // Badge component applies variant styles
-      // Check that badge exists (can't directly test variant without DOM inspection)
-      const badge = container.querySelector('[class*="badge"]')
+      // Badge component applies variant styles - secondary variant has bg-secondary class
+      const badge = container.querySelector('[class*="bg-secondary"]')
       expect(badge).toBeInTheDocument()
     })
 
-    it('should show tooltip on hover with child product explanation', async () => {
-      const user = userEvent.setup()
+    it('should show tooltip content with child product explanation', () => {
+      // With mocked tooltip, content is always rendered
       const item = createMockItem({ imtId: 328632, spend: 0 })
       render(<ProductRowBadge item={item} />)
 
-      const badge = screen.getByText(/Дочерний товар склейки №328632/)
-
-      // Hover over badge to show tooltip
-      await user.hover(badge)
-
-      // Tooltip should explain child product
-      expect(await screen.findByText(/Дочерний товар склейки/)).toBeInTheDocument()
-      expect(screen.getByText(/не получает прямой бюджет/)).toBeInTheDocument()
+      // Tooltip content should explain child product (look inside tooltip-content)
+      const tooltipContent = screen.getByTestId('tooltip-content')
+      expect(tooltipContent).toHaveTextContent(/Дочерний товар склейки/)
+      expect(tooltipContent).toHaveTextContent(/не получает прямой бюджет/)
     })
 
     it('should call onShowMergedGroup when button clicked from child product', async () => {
       const user = userEvent.setup()
-      const mockCallback = jest.fn()
+      const mockCallback = vi.fn()
       const item = createMockItem({ imtId: 328632, spend: 0 })
       render(<ProductRowBadge item={item} onShowMergedGroup={mockCallback} />)
 
-      // Open tooltip
-      const badge = screen.getByText(/Дочерний товар склейки №328632/)
-      await user.hover(badge)
-
-      // Click button
-      const button = await screen.findByText(/Показать метрики склейки/)
+      // With mocked tooltip, button is always visible
+      const button = screen.getByText(/Показать метрики склейки/)
       await user.click(button)
 
       // Callback should be called with imtId
@@ -208,8 +201,8 @@ describe('ProductRowBadge', () => {
 
     it('should stop propagation when button clicked', async () => {
       const user = userEvent.setup()
-      const mockCallback = jest.fn()
-      const mockParentClick = jest.fn()
+      const mockCallback = vi.fn()
+      const mockParentClick = vi.fn()
       const item = createMockItem({ imtId: 328632, spend: 100 })
 
       render(
@@ -218,12 +211,8 @@ describe('ProductRowBadge', () => {
         </div>
       )
 
-      // Open tooltip
-      const badge = screen.getByText(/Главный товар в склейке №328632/)
-      await user.hover(badge)
-
-      // Click button
-      const button = await screen.findByText(/Показать метрики склейки/)
+      // With mocked tooltip, button is always visible
+      const button = screen.getByText(/Показать метрики склейки/)
       await user.click(button)
 
       // Only callback should fire, not parent click

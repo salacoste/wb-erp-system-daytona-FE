@@ -231,7 +231,7 @@ describe('CampaignSelector', () => {
   })
 
   describe('Selection Callback', () => {
-    it('calls onSelectionChange when campaign toggled', async () => {
+    it('calls onSelectionChange when dropdown closes after selection', async () => {
       const user = userEvent.setup()
       renderWithProviders(
         <CampaignSelector
@@ -244,6 +244,7 @@ describe('CampaignSelector', () => {
         expect(screen.getByRole('combobox')).toBeEnabled()
       })
 
+      // Open dropdown
       await user.click(screen.getByRole('combobox'))
 
       // Wait for campaigns to load
@@ -251,12 +252,21 @@ describe('CampaignSelector', () => {
         expect(screen.getByText('Осенняя распродажа')).toBeInTheDocument()
       })
 
-      // Click on a campaign
+      // Click on a campaign to select it (this only updates temp selection)
       const campaignOption = screen.getByText('Осенняя распродажа').closest('[role="option"]')
+      expect(campaignOption).toBeInTheDocument()
       if (campaignOption) {
         await user.click(campaignOption)
-        expect(onSelectionChange).toHaveBeenCalledWith([1001])
       }
+
+      // Click "Готово" button to close dropdown and apply selection
+      const doneButton = screen.getByRole('button', { name: 'Готово' })
+      await user.click(doneButton)
+
+      // Callback should be called with selected IDs when dropdown closes
+      await waitFor(() => {
+        expect(onSelectionChange).toHaveBeenCalledWith([1001])
+      })
     })
   })
 })

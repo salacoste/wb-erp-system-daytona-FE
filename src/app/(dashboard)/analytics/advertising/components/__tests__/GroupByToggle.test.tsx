@@ -157,7 +157,7 @@ describe('GroupByToggle', () => {
 
       const buttons = container.querySelectorAll('button')
       buttons.forEach((button) => {
-        expect(button.className).toContain('h-9') // sm size
+        expect(button.className).toContain('h-8') // updated to smaller size
       })
     })
   })

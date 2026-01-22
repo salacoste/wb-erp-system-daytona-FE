@@ -273,7 +273,7 @@ describe('CabinetCreationForm', () => {
 
     await waitFor(
       () => {
-        expect(mockPush).toHaveBeenCalledWith('/onboarding/wb-token')
+        expect(mockPush).toHaveBeenCalledWith('/wb-token')
         expect(toast.success).toHaveBeenCalled()
       },
       { timeout: 5000 }
