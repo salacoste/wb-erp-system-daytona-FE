@@ -335,90 +335,66 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
   })
 
   // --------------------------------------------------------------------------
-  // AC6: Other Optional Fields Still Sent
+  // AC6: Supported Optional Fields Still Sent
   // --------------------------------------------------------------------------
-  describe('AC6: Other Optional Fields Still Sent', () => {
-    it('should include warehouse_id when set', () => {
+  describe('AC6: Supported Optional Fields Still Sent', () => {
+    // Story 44.37: warehouse_id, logistics_coefficient, storage_coefficient,
+    // delivery_date, weight_exceeds_25kg, localization_index were ALL removed
+    // from API request as backend does not support them yet.
+    // Only commission_pct and overrides are currently supported.
+
+    it('should NOT include warehouse_id (backend not supported)', () => {
       const formData = createValidFormData({ warehouse_id: 123 })
       const request = toApiRequest(formData)
 
-      expect(request.warehouse_id).toBe(123)
-    })
-
-    it('should NOT include warehouse_id when null', () => {
-      const formData = createValidFormData({ warehouse_id: null })
-      const request = toApiRequest(formData)
-
+      // Story 44.37: Backend does not support warehouse_id yet
       expect(request).not.toHaveProperty('warehouse_id')
     })
 
-    it('should include logistics_coefficient when != 1.0', () => {
+    it('should NOT include logistics_coefficient (backend not supported)', () => {
       const formData = createValidFormData({ logistics_coefficient: 1.5 })
       const request = toApiRequest(formData)
 
-      expect(request.logistics_coefficient).toBe(1.5)
-    })
-
-    it('should NOT include logistics_coefficient when == 1.0', () => {
-      const formData = createValidFormData({ logistics_coefficient: 1.0 })
-      const request = toApiRequest(formData)
-
+      // Story 44.37: Backend does not support logistics_coefficient yet
       expect(request).not.toHaveProperty('logistics_coefficient')
     })
 
-    it('should include storage_coefficient for FBO when != 1.0', () => {
+    it('should NOT include storage_coefficient for FBO (backend not supported)', () => {
       const formData = createFboFormData({ storage_coefficient: 1.3 })
       const request = toApiRequest(formData)
 
-      expect(request.storage_coefficient).toBe(1.3)
+      // Story 44.37: Backend does not support storage_coefficient yet
+      expect(request).not.toHaveProperty('storage_coefficient')
     })
 
-    it('should NOT include storage_coefficient for FBS even when != 1.0', () => {
+    it('should NOT include storage_coefficient for FBS', () => {
       const formData = createFbsFormData({ storage_coefficient: 1.3 })
       const request = toApiRequest(formData)
 
       expect(request).not.toHaveProperty('storage_coefficient')
     })
 
-    it('should include delivery_date when set', () => {
+    it('should NOT include delivery_date (backend not supported)', () => {
       const formData = createValidFormData({ delivery_date: '2026-01-25' })
       const request = toApiRequest(formData)
 
-      expect(request.delivery_date).toBe('2026-01-25')
-    })
-
-    it('should NOT include delivery_date when null', () => {
-      const formData = createValidFormData({ delivery_date: null })
-      const request = toApiRequest(formData)
-
+      // Story 44.37: Backend does not support delivery_date yet
       expect(request).not.toHaveProperty('delivery_date')
     })
 
-    it('should include weight_exceeds_25kg when true', () => {
+    it('should NOT include weight_exceeds_25kg (backend not supported)', () => {
       const formData = createValidFormData({ weight_exceeds_25kg: true })
       const request = toApiRequest(formData)
 
-      expect(request.weight_exceeds_25kg).toBe(true)
-    })
-
-    it('should NOT include weight_exceeds_25kg when false', () => {
-      const formData = createValidFormData({ weight_exceeds_25kg: false })
-      const request = toApiRequest(formData)
-
+      // Story 44.37: Backend does not support weight_exceeds_25kg yet
       expect(request).not.toHaveProperty('weight_exceeds_25kg')
     })
 
-    it('should include localization_index when != 1.0', () => {
+    it('should NOT include localization_index (backend not supported)', () => {
       const formData = createValidFormData({ localization_index: 1.8 })
       const request = toApiRequest(formData)
 
-      expect(request.localization_index).toBe(1.8)
-    })
-
-    it('should NOT include localization_index when == 1.0', () => {
-      const formData = createValidFormData({ localization_index: 1.0 })
-      const request = toApiRequest(formData)
-
+      // Story 44.37: Backend does not support localization_index yet
       expect(request).not.toHaveProperty('localization_index')
     })
 
@@ -534,32 +510,31 @@ describe('API Request Snapshot', () => {
 
     const request = toApiRequest(formData)
 
-    // Verify rejected fields are NOT present
+    // Story 44.36/44.37: Verify ALL unsupported fields are NOT present
+    // These fields are kept in form state for UI but not sent to backend
     expect(request).not.toHaveProperty('box_type')
     expect(request).not.toHaveProperty('turnover_days')
     expect(request).not.toHaveProperty('fulfillment_type')
+    expect(request).not.toHaveProperty('warehouse_id')
+    expect(request).not.toHaveProperty('logistics_coefficient')
+    expect(request).not.toHaveProperty('storage_coefficient')
+    expect(request).not.toHaveProperty('delivery_date')
+    expect(request).not.toHaveProperty('weight_exceeds_25kg')
+    expect(request).not.toHaveProperty('localization_index')
 
-    // Verify all allowed fields are correctly mapped
-    expect(request).toEqual(
-      expect.objectContaining({
-        target_margin_pct: 20,
-        cogs_rub: 1000,
-        logistics_forward_rub: 200,
-        logistics_reverse_rub: 150,
-        buyback_pct: 95,
-        advertising_pct: 5,
-        storage_rub: 50,
-        vat_pct: 20,
-        acquiring_pct: 2,
-        commission_pct: 8,
-        warehouse_id: 456,
-        logistics_coefficient: 1.2,
-        storage_coefficient: 1.1,
-        delivery_date: '2026-01-25',
-        weight_exceeds_25kg: true,
-        localization_index: 1.5,
-        overrides: { nm_id: '147205694' },
-      })
-    )
+    // Verify only supported fields are sent to backend
+    expect(request).toEqual({
+      target_margin_pct: 20,
+      cogs_rub: 1000,
+      logistics_forward_rub: 200,
+      logistics_reverse_rub: 150,
+      buyback_pct: 95,
+      advertising_pct: 5,
+      storage_rub: 50,
+      vat_pct: 20,
+      acquiring_pct: 2,
+      commission_pct: 8,
+      overrides: { nm_id: '147205694' },
+    })
   })
 })

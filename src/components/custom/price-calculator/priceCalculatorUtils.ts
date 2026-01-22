@@ -42,8 +42,24 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
 /**
  * Convert form data to PriceCalculatorRequest for API submission
  * Note: fulfillment_type is used internally for UI logic only, not sent to API
- * Story 44.27: Added warehouse_id, coefficients, and delivery_date
- * Story 44.32: Added box_type, weight_exceeds_25kg, localization_index, turnover_days
+ *
+ * Story 44.37: Remove unsupported fields from API request
+ * These fields are used for frontend display and calculations only.
+ * Backend API (Epic 43) does not yet support these fields.
+ * TODO: Re-enable when backend implements support
+ *       (see docs/request-backend/100-epic-44-open-issues-consolidated.md)
+ *
+ * Removed fields (Story 44.27 - Warehouse Integration):
+ * - warehouse_id
+ * - logistics_coefficient
+ * - storage_coefficient
+ * - delivery_date
+ *
+ * Removed fields (Story 44.32 - Missing Fields):
+ * - weight_exceeds_25kg
+ * - localization_index
+ *
+ * Story 44.36 removes: box_type, turnover_days
  */
 export function toApiRequest(data: FormData): PriceCalculatorRequest {
   const baseRequest: PriceCalculatorRequest = {
@@ -60,36 +76,14 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
     ...(data.nm_id !== undefined && { overrides: { nm_id: String(data.nm_id) } }),
   }
 
-  // Story 44.27: Warehouse & Coefficients
-  if (data.warehouse_id !== null) {
-    baseRequest.warehouse_id = data.warehouse_id
-  }
-  if (data.logistics_coefficient !== 1.0) {
-    baseRequest.logistics_coefficient = data.logistics_coefficient
-  }
-  if (data.fulfillment_type === 'FBO' && data.storage_coefficient !== 1.0) {
-    baseRequest.storage_coefficient = data.storage_coefficient
-  }
-  if (data.delivery_date !== null) {
-    baseRequest.delivery_date = data.delivery_date
-  }
+  // Story 44.37: REMOVED - Backend does not support these fields yet
+  // Warehouse & Coefficients (Story 44.27):
+  // - warehouse_id, logistics_coefficient, storage_coefficient, delivery_date
+  // Additional fields (Story 44.32):
+  // - weight_exceeds_25kg, localization_index
 
-  // Story 44.32: Phase 1 HIGH priority fields
-  // Only send box_type and turnover_days for FBO
-  if (data.fulfillment_type === 'FBO') {
-    baseRequest.box_type = data.box_type
-    baseRequest.turnover_days = data.turnover_days
-  }
-
-  // Send weight_exceeds_25kg for both FBO and FBS
-  if (data.weight_exceeds_25kg) {
-    baseRequest.weight_exceeds_25kg = true
-  }
-
-  // Send localization_index for both FBO and FBS
-  if (data.localization_index !== 1.0) {
-    baseRequest.localization_index = data.localization_index
-  }
+  // Story 44.36: REMOVED - Backend does not support these fields yet
+  // - box_type, turnover_days
 
   return baseRequest
 }

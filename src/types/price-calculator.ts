@@ -153,40 +153,66 @@ export interface PriceCalculatorRequest {
   /**
    * Story 44.32: Box type for FBO (default: 'box')
    * Only applies to FBO fulfillment
+   *
+   * @frontend-only NOT sent to API (Story 44.36)
+   * Backend does not support this field yet
+   * @todo Re-enable when backend Epic 45/46 implements support
    */
   box_type?: BoxType
   /**
    * Story 44.32: Weight exceeds 25kg threshold (default: false)
    * Applies 1.5x multiplier to logistics cost
+   *
+   * @frontend-only NOT sent to API (Story 44.37)
+   * Backend does not support this field yet
    */
   weight_exceeds_25kg?: boolean
   /**
    * Story 44.32: Localization index (КТР) for regional delivery (default: 1.0)
    * Range: 0.5-3.0, auto-filled from warehouse delivery coefficient
+   *
+   * @frontend-only NOT sent to API (Story 44.37)
+   * Backend does not support this field yet
    */
   localization_index?: number
   /**
    * Story 44.32: Turnover days in storage (FBO only, default: 20)
    * Total storage = storage_per_day × turnover_days
+   *
+   * @frontend-only NOT sent to API (Story 44.36)
+   * Backend does not support this field yet
+   * @todo Re-enable when backend Epic 45/46 implements support
    */
   turnover_days?: number
   /**
    * Story 44.27: Warehouse ID for coefficient lookup
+   *
+   * @frontend-only NOT sent to API (Story 44.37)
+   * Backend does not support this field yet
    */
   warehouse_id?: number
   /**
    * Story 44.27: Logistics coefficient from warehouse (default: 1.0)
    * Multiplier for forward logistics cost
+   *
+   * @frontend-only NOT sent to API (Story 44.37)
+   * Backend does not support this field yet
    */
   logistics_coefficient?: number
   /**
    * Story 44.27: Storage coefficient from warehouse (default: 1.0)
    * Multiplier for storage cost (FBO only)
+   *
+   * @frontend-only NOT sent to API (Story 44.37)
+   * Backend does not support this field yet
    */
   storage_coefficient?: number
   /**
    * Story 44.27: Delivery date in ISO format (YYYY-MM-DD)
    * Used for coefficient calendar lookup
+   *
+   * @frontend-only NOT sent to API (Story 44.37)
+   * Backend does not support this field yet
    */
   delivery_date?: string
   /**

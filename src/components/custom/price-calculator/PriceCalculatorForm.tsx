@@ -78,6 +78,13 @@ export function PriceCalculatorForm({
   const heightCm = useWatch({ control, name: 'height_cm' }) ?? 0
   const dimensions = { length_cm: lengthCm, width_cm: widthCm, height_cm: heightCm }
 
+  // Story 44.35: Move useWatch hooks to top level to fix FBO/FBS toggle crash
+  // These MUST be called unconditionally to satisfy React's Rules of Hooks
+  const boxType = useWatch({ control, name: 'box_type' })
+  const turnoverDays = useWatch({ control, name: 'turnover_days' })
+  const weightExceeds25kg = useWatch({ control, name: 'weight_exceeds_25kg' })
+  const localizationIndex = useWatch({ control, name: 'localization_index' })
+
   // Story 44.27: Warehouse form state hook
   const {
     warehouseId, storageDays, storageRub, volumeLiters,
@@ -182,15 +189,16 @@ export function PriceCalculatorForm({
               onDeliveryDateChange={handleDeliveryDateChange}
             />
             {/* Story 44.32: FBO-only fields */}
+            {/* Story 44.35: useWatch hooks moved to top level to fix toggle crash */}
             {fulfillmentType === 'FBO' && (
               <>
                 <BoxTypeSelector
-                  value={useWatch({ control, name: 'box_type' })}
+                  value={boxType}
                   onValueChange={(value) => setValue('box_type', value, { shouldValidate: true })}
                   disabled={disabled}
                 />
                 <TurnoverDaysInput
-                  value={useWatch({ control, name: 'turnover_days' })}
+                  value={turnoverDays}
                   onChange={(value) => setValue('turnover_days', value, { shouldValidate: true })}
                   storagePerDay={storageRub}
                   disabled={disabled}
@@ -199,13 +207,13 @@ export function PriceCalculatorForm({
             )}
             {/* Story 44.32: Weight threshold (both FBO and FBS) */}
             <WeightThresholdCheckbox
-              checked={useWatch({ control, name: 'weight_exceeds_25kg' })}
+              checked={weightExceeds25kg}
               onChange={(checked) => setValue('weight_exceeds_25kg', checked, { shouldValidate: true })}
               disabled={disabled}
             />
             {/* Story 44.32: Localization index (both FBO and FBS) */}
             <LocalizationIndexInput
-              value={useWatch({ control, name: 'localization_index' })}
+              value={localizationIndex}
               onChange={(value) => setValue('localization_index', value, { shouldValidate: true })}
               warehouseId={warehouseId}
               disabled={disabled}
