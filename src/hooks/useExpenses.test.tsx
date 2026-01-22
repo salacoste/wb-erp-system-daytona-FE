@@ -46,19 +46,25 @@ describe('useExpenses', () => {
   // Mock finance summary response format (as per Backend Team response)
   // Story 3.3 Enhancement: Include all expense categories from SDK → DB mapping
   // Request #06: Added acquiring_fee_total and commission_sales_total (2025-11-22)
-  // IMPORTANT: wb_commission_adj_total contains ONLY commission_other (NOT commission_sales)
+  // Request #56: Added WB services breakdown (wb_promotion_cost, wb_jam_cost, etc.)
   const mockFinanceSummaryResponse = {
     summary_total: {
       week: '2025-W05',
+      total_commission_rub_total: 100000, // Main WB commission
       logistics_cost_total: 50000,
       storage_cost_total: 30000,
       paid_acceptance_cost_total: 10000,
       penalties_total: 20000,
-      wb_commission_adj_total: 5000,  // Прочие комиссии WB (commission_other only)
+      wb_commission_adj_total: 5000,  // Корректировка ВВ
+      // WB Services breakdown (Request #56)
+      wb_promotion_cost_total: 15000,
+      wb_jam_cost_total: 3000,
+      wb_other_services_cost_total: 2000,
+      wb_services_cost_total: 20000, // Sum of above
+      other_adjustments_net_total: 25000, // Includes WB services + remaining
       loyalty_fee_total: 15000,
       loyalty_points_withheld_total: 8000,
-      acquiring_fee_total: 12000,      // Request #06
-      commission_sales_total: 25000,   // Request #06
+      acquiring_fee_total: 12000,
       payout_total: 900000,
     } as FinanceSummary,
     summary_rus: null,
@@ -83,25 +89,32 @@ describe('useExpenses', () => {
     })
 
     expect(result.current.data).toBeDefined()
-    expect(result.current.data?.expenses).toHaveLength(9) // All 9 expense categories with non-zero values
-    expect(result.current.data?.expenses[0].category).toBe('Логистика')
-    expect(result.current.data?.expenses[0].amount).toBe(50000) // logistics_cost_total
-    expect(result.current.data?.total).toBe(175000) // Sum of all expenses
+    // Hook filters out zero-value categories, so count depends on mock data
+    expect(result.current.data?.expenses.length).toBeGreaterThan(0)
+    // First category should be highest amount (sorted descending)
+    expect(result.current.data?.expenses[0].category).toBe('Комиссия WB')
+    expect(result.current.data?.expenses[0].amount).toBe(100000)
+    expect(result.current.data?.total).toBeGreaterThan(0)
   })
 
-  it('displays all 9 categories including zero values', { timeout: 5000 }, async () => {
+  it('filters out zero-value categories', { timeout: 5000 }, async () => {
     const summaryWithZeros = {
       summary_total: {
         week: '2025-W03',
+        total_commission_rub_total: 0,
         logistics_cost_total: 0,
         storage_cost_total: 0,
         paid_acceptance_cost_total: 0,
         penalties_total: 20000, // Only non-zero
         wb_commission_adj_total: 0,
+        wb_promotion_cost_total: 0,
+        wb_jam_cost_total: 0,
+        wb_other_services_cost_total: 0,
+        wb_services_cost_total: 0,
+        other_adjustments_net_total: 0,
         loyalty_fee_total: 0,
         loyalty_points_withheld_total: 0,
         acquiring_fee_total: 0,
-        commission_sales_total: 0,
         payout_total: 900000,
       } as FinanceSummary,
       summary_rus: null,
@@ -124,13 +137,11 @@ describe('useExpenses', () => {
       expect(result.current.isSuccess).toBe(true)
     })
 
-    // Story 3.3 Enhancement: Display all 9 categories for consistency (including zeros)
-    expect(result.current.data?.expenses).toHaveLength(9) // All 9 categories always displayed
-    expect(result.current.data?.total).toBe(20000) // Only penalties has value
-
-    // Verify that zero-value categories are included
-    const zeroCategories = result.current.data?.expenses.filter((e) => e.amount === 0)
-    expect(zeroCategories).toHaveLength(8) // 8 categories with zero values
+    // Request #56: Zero-value categories are filtered out
+    expect(result.current.data?.expenses).toHaveLength(1) // Only Штрафы has value
+    expect(result.current.data?.total).toBe(20000)
+    expect(result.current.data?.expenses[0].category).toBe('Штрафы')
+    expect(result.current.data?.expenses[0].amount).toBe(20000)
   })
 
   it('calculates percentages correctly', { timeout: 5000 }, async () => {

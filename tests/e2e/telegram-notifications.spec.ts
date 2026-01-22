@@ -439,7 +439,7 @@ test.describe('Epic 34-FE: Telegram Notifications UI', () => {
 
     // Step 2: Verify cards are full-width
     const heroBanner = page.locator('[data-testid="hero-banner"]');
-    const bannerWidth = await heroBanner.evaluate((el) => el.offsetWidth);
+    const bannerWidth = await heroBanner.evaluate((el) => (el as HTMLElement).offsetWidth);
     const viewportWidth = page.viewportSize()?.width || 0;
 
     // Cards should be nearly full-width (accounting for padding)
@@ -447,7 +447,7 @@ test.describe('Epic 34-FE: Telegram Notifications UI', () => {
 
     // Step 3: Verify CTA button is full-width
     const ctaButton = heroBanner.locator('button:has-text("Подключить Telegram")');
-    const buttonWidth = await ctaButton.evaluate((el) => el.offsetWidth);
+    const buttonWidth = await ctaButton.evaluate((el) => (el as HTMLElement).offsetWidth);
 
     // Button should be full-width within card
     expect(buttonWidth).toBeGreaterThan(bannerWidth * 0.9);
@@ -463,7 +463,7 @@ test.describe('Epic 34-FE: Telegram Notifications UI', () => {
     await expect(modal).toBeVisible();
 
     // Modal should be full-screen on mobile
-    const modalWidth = await modal.evaluate((el) => el.offsetWidth);
+    const modalWidth = await modal.evaluate((el) => (el as HTMLElement).offsetWidth);
     expect(modalWidth).toBeGreaterThan(viewportWidth * 0.9);
   });
 

@@ -81,7 +81,9 @@ describe('Telegram Binding API', () => {
       })
     );
 
-    await expect(unbindTelegram()).resolves.toBeUndefined();
+    // 204 No Content returns empty string from apiClient (response.text())
+    const result = await unbindTelegram();
+    expect(result === undefined || result === '').toBe(true);
   });
 
   it('should handle API errors', async () => {

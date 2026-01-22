@@ -228,8 +228,9 @@ export const supplyPlanningHandlers = [
     const week = url.searchParams.get('week')
 
     // Handle special test cases
+    // Note: API client uses skipDataUnwrap: true, so we return response directly
     if (week === 'empty') {
-      return HttpResponse.json({ data: mockEmptySupplyPlanningResponse })
+      return HttpResponse.json(mockEmptySupplyPlanningResponse)
     }
 
     if (week === 'error') {
@@ -272,11 +273,15 @@ export const supplyPlanningHandlers = [
       filteredItems = filteredItems.slice(0, parseInt(limit, 10))
     }
 
+    // Use request params or defaults
+    const velocityWeeks = url.searchParams.get('velocity_weeks')
+    const safetyStockDays = url.searchParams.get('safety_stock_days')
+
     const response: SupplyPlanningResponse = {
       meta: {
         cabinet_id: 'test-cabinet',
-        velocity_weeks: 4,
-        safety_stock_days: 7,
+        velocity_weeks: velocityWeeks ? parseInt(velocityWeeks, 10) : 4,
+        safety_stock_days: safetyStockDays ? parseInt(safetyStockDays, 10) : 7,
         stocks_updated_at: new Date().toISOString(),
         generated_at: new Date().toISOString(),
       },
@@ -284,8 +289,8 @@ export const supplyPlanningHandlers = [
       data: filteredItems,
     }
 
-    // Wrap in { data: ... } to match apiClient response format
-    return HttpResponse.json({ data: response })
+    // API client uses skipDataUnwrap: true, so return response directly
+    return HttpResponse.json(response)
   }),
 ]
 
@@ -301,7 +306,7 @@ export const slowSupplyPlanningHandler = http.get(
   `${API_BASE_URL}/v1/analytics/supply-planning`,
   async () => {
     await delay(2000)
-    return HttpResponse.json({ data: mockSupplyPlanningResponse })
+    return HttpResponse.json(mockSupplyPlanningResponse)
   },
 )
 

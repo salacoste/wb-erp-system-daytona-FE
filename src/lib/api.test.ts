@@ -23,9 +23,6 @@ vi.mock('@/stores/authStore', () => ({
   },
 }))
 
-// Mock fetch
-global.fetch = vi.fn()
-
 // Mock Headers object for fetch Response
 const mockHeaders = {
   get: vi.fn((key: string) => {
@@ -34,9 +31,14 @@ const mockHeaders = {
   }),
 }
 
+// Create fetch mock that can be reset between tests
+const fetchMock = vi.fn()
+
 describe('createCabinet', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset fetch mock for each test
+    vi.stubGlobal('fetch', fetchMock)
     // Reset auth store for each test
     mockAuthStore = {
       token: null,
@@ -54,7 +56,7 @@ describe('createCabinet', () => {
       newToken: 'new-jwt-token-with-updated-cabinet-ids',
     }
 
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: true,
       headers: mockHeaders,
       json: async () => mockResponse,
@@ -83,7 +85,7 @@ describe('createCabinet', () => {
   })
 
   it('throws error on creation failure', async () => {
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: false,
       statusText: 'Bad Request',
       headers: mockHeaders,
@@ -104,6 +106,8 @@ describe('updateWbToken', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset fetch mock for each test
+    vi.stubGlobal('fetch', fetchMock)
     // Reset auth store for each test
     mockAuthStore = {
       token: null,
@@ -118,7 +122,7 @@ describe('updateWbToken', () => {
       updatedAt: '2025-01-12T10:00:00Z',
     }
 
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: true,
       headers: mockHeaders,
       json: async () => mockResponse,
@@ -159,7 +163,7 @@ describe('updateWbToken', () => {
       ],
     }
 
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: false,
       status: 400,
       headers: mockHeaders,
@@ -172,7 +176,7 @@ describe('updateWbToken', () => {
   })
 
   it('throws error for missing X-Cabinet-Id header', async () => {
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: false,
       status: 400,
       headers: mockHeaders,
@@ -188,7 +192,7 @@ describe('updateWbToken', () => {
   })
 
   it('throws error for insufficient permissions', async () => {
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: false,
       status: 403,
       headers: mockHeaders,
@@ -203,7 +207,7 @@ describe('updateWbToken', () => {
   })
 
   it('throws error for not found', async () => {
-    ;(fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: false,
       status: 404,
       headers: mockHeaders,

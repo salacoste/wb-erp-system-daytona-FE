@@ -7,12 +7,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { analyticsService } from '../analytics.service';
 import { TelegramMetrics } from '../telegram-metrics';
 
-// Mock fetch globally
-global.fetch = vi.fn();
+// Create fetch mock that can be reset between tests
+const fetchMock = vi.fn();
 
 describe('Analytics Service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset fetch mock for each test
+    vi.stubGlobal('fetch', fetchMock);
     // Clear any queued events
     analyticsService.stop();
   });
@@ -31,7 +33,7 @@ describe('Analytics Service', () => {
     });
 
     it('should auto-flush when queue reaches 50 events', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: true,
         json: async () => ({}),
       });
@@ -48,13 +50,13 @@ describe('Analytics Service', () => {
       // Wait for async flush
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(global.fetch).toHaveBeenCalled();
+      expect(fetchMock).toHaveBeenCalled();
     });
   });
 
   describe('Batch Flushing', () => {
     it('should send events in batch to backend', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: true,
         json: async () => ({}),
       });
@@ -73,7 +75,7 @@ describe('Analytics Service', () => {
 
       await analyticsService.flush();
 
-      expect(global.fetch).toHaveBeenCalledWith(
+      expect(fetchMock).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/events'),
         expect.objectContaining({
           method: 'POST',
@@ -83,7 +85,7 @@ describe('Analytics Service', () => {
     });
 
     it('should retry failed requests once', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 500,
         text: async () => 'Internal Server Error',
