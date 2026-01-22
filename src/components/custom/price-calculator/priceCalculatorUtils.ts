@@ -5,6 +5,30 @@ import type {
 import type { FormData } from './usePriceCalculatorForm'
 
 /**
+ * Story 44.38: Calculate per-unit acceptance cost
+ * Divides total package acceptance cost by units per package
+ *
+ * @param acceptanceTotal - Total acceptance cost for the package in rubles
+ * @param unitsPerPackage - Number of product units in the package
+ * @returns Per-unit acceptance cost in rubles
+ *
+ * @example
+ * // Box costs 100₽, contains 10 units
+ * calculateAcceptancePerUnit(100, 10) // Returns 10
+ *
+ * // Pallet costs 500₽, contains 100 units
+ * calculateAcceptancePerUnit(500, 100) // Returns 5
+ */
+export function calculateAcceptancePerUnit(
+  acceptanceTotal: number,
+  unitsPerPackage: number
+): number {
+  // Fallback to total cost if invalid units
+  if (unitsPerPackage <= 0) return acceptanceTotal
+  return acceptanceTotal / unitsPerPackage
+}
+
+/**
  * Check if all form values are zero (empty form state)
  */
 export function isFormEmpty(data: FormData): boolean {

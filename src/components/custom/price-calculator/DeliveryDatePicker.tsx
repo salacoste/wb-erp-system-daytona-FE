@@ -156,7 +156,7 @@ export function DeliveryDatePicker({
 
             {selectedCoefficient && config && (
               <div className={cn('flex items-center gap-1 text-sm', config.textColor)}>
-                <span>Коэффициент:</span>
+                <span>Коэфф. приёмки:</span>
                 <span className={cn('font-medium px-1.5 py-0.5 rounded', config.bgColor)}>
                   ×{formatCoefficient(selectedCoefficient.coefficient)}
                 </span>
@@ -289,7 +289,7 @@ function DeliveryDateHelpPopover() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-1">🎨 Цвета коэффициентов</h4>
+            <h4 className="font-semibold mb-1">🎨 Цвета коэффициентов приёмки</h4>
             <ul className="text-muted-foreground space-y-0.5">
               <li><span className="inline-block w-3 h-3 rounded bg-green-200 mr-1" />≤1.0 — базовый тариф</li>
               <li><span className="inline-block w-3 h-3 rounded bg-yellow-200 mr-1" />1.0-1.5 — повышенный</li>
@@ -300,8 +300,8 @@ function DeliveryDateHelpPopover() {
           </div>
 
           <div className="pt-2 border-t text-xs text-muted-foreground">
-            💡 Коэффициент умножается на базовый тариф логистики.
-            Например, ×1.5 означает +50% к стоимости доставки.
+            💡 Коэффициент приёмки умножается на базовый тариф приёмки товара на склад.
+            Например, ×1.5 означает +50% к стоимости приёмки.
           </div>
         </div>
       </PopoverContent>

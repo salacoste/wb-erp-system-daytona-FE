@@ -16,7 +16,7 @@ import type {
   AcceptanceCoefficientsResponse,
   TariffSettings,
 } from '@/types/tariffs'
-import type { BoxTariffsResponse, WarehouseWithTariffs } from '@/types/warehouse'
+import type { BoxTariffsResponse, BoxTariffItem, WarehouseWithTariffs } from '@/types/warehouse'
 
 /**
  * Fetch all category commissions (7346 categories)
@@ -141,7 +141,7 @@ export async function getTariffSettings(): Promise<TariffSettings> {
 
 /**
  * Fetch box tariffs with logistics/storage coefficients by warehouse name
- * GET /v1/tariffs/warehouses/box
+ * Uses GET /v1/tariffs/warehouses-with-tariffs and transforms response
  *
  * Used as fallback when acceptance coefficients API fails (e.g., synthetic warehouse IDs).
  * Contains coefficients matched by warehouse name.
@@ -155,13 +155,37 @@ export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> 
   const params = date ? `?date=${date}` : ''
   console.info('[Tariffs] Fetching box tariffs', { date: date || 'today' })
 
-  const response = await apiClient.get<BoxTariffsResponse>(
-    `/v1/tariffs/warehouses/box${params}`,
+  // Use warehouses-with-tariffs endpoint and transform to BoxTariffsResponse
+  const response = await apiClient.get<WarehousesWithTariffsResponse>(
+    `/v1/tariffs/warehouses-with-tariffs${params}`,
   )
 
-  console.info('[Tariffs] Loaded', response.tariffs?.length || 0, 'box tariffs')
+  // Transform WarehouseWithTariffs[] to BoxTariffItem[]
+  const tariffs: BoxTariffItem[] = (response.warehouses || []).map((w) => ({
+    warehouseName: w.name,
+    geoName: w.federal_district || undefined,
+    logistics: {
+      coefficient: w.tariffs?.fbo?.logistics_coefficient ?? 1.0,
+      baseLiterRub: w.tariffs?.fbo?.delivery_base_rub ?? 0,
+      additionalLiterRub: w.tariffs?.fbo?.delivery_liter_rub ?? 0,
+    },
+    storage: {
+      coefficient: w.tariffs?.storage?.coefficient ?? 1.0,
+      baseLiterRub: w.tariffs?.storage?.base_per_day_rub ?? 0,
+      additionalLiterRub: w.tariffs?.storage?.liter_per_day_rub ?? 0,
+    },
+  }))
 
-  return response
+  console.info('[Tariffs] Loaded', tariffs.length, 'box tariffs')
+
+  return {
+    tariffs,
+    meta: {
+      date: date || new Date().toISOString().split('T')[0],
+      cached: true,
+      cache_ttl_seconds: 3600,
+    },
+  }
 }
 
 /**

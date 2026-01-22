@@ -52,6 +52,12 @@ export interface UseWarehouseCoefficientsResult {
   deliveryDate: DeliveryDateState
   /** Update delivery date */
   setDeliveryDate: (date: string, coefficient: number) => void
+  /** Story 44.34: Currently debouncing warehouse changes */
+  isDebouncing: boolean
+  /** Story 44.34: Rate limited by backend (429 error) */
+  isRateLimited: boolean
+  /** Story 44.34: Remaining cooldown seconds if rate limited */
+  cooldownRemaining: number
 }
 
 /**
@@ -70,7 +76,15 @@ export function useWarehouseCoefficients(
   warehouse?: Warehouse | null,
 ): UseWarehouseCoefficientsResult {
   // Acceptance API for daily coefficients calendar (optional, may fail for synthetic IDs)
-  const { data: coefficients, isLoading, error } = useAcceptanceCoefficients(warehouseId)
+  // Story 44.34: Includes debouncing (500ms) and rate limit handling
+  const {
+    data: coefficients,
+    isLoading,
+    error,
+    isDebouncing,
+    isRateLimited,
+    cooldownRemaining,
+  } = useAcceptanceCoefficients(warehouseId)
 
   // Coefficient states
   const [logisticsCoeff, setLogisticsCoeff] = useState<CoefficientState>({
@@ -213,5 +227,9 @@ export function useWarehouseCoefficients(
     byBoxType,
     deliveryDate,
     setDeliveryDate,
+    // Story 44.34: Debouncing and rate limit state
+    isDebouncing,
+    isRateLimited,
+    cooldownRemaining,
   }
 }

@@ -71,7 +71,8 @@ export function TwoLevelPriceHeader({
   priceGap,
 }: TwoLevelPriceHeaderProps) {
   const showTightMarginWarning = isTightMargin(priceGap.pct)
-  const showCustomerPrice = customerPrice && sppPct && sppPct > 0
+  // Fix: Use proper boolean check to prevent React rendering "0" as text
+  const showCustomerPrice = Boolean(customerPrice && customerPrice > 0 && sppPct && sppPct > 0)
 
   return (
     <div className="space-y-4" data-testid="two-level-price-header">
@@ -121,7 +122,7 @@ export function TwoLevelPriceHeader({
       </div>
 
       {/* Customer Price (if SPP > 0) */}
-      {showCustomerPrice && (
+      {showCustomerPrice && customerPrice && (
         <div className="p-4 border rounded-lg">
           <div className="text-sm text-muted-foreground uppercase tracking-wide">
             Цена для покупателя

@@ -58,7 +58,8 @@ export function PriceSummaryFooter({
     }
   }, [])
 
-  const showCustomerPrice = customerPrice && sppPct && sppPct > 0
+  // Fix: Use proper boolean check to prevent React rendering "0" as text
+  const showCustomerPrice = Boolean(customerPrice && customerPrice > 0 && sppPct && sppPct > 0)
 
   return (
     <div
@@ -101,7 +102,7 @@ export function PriceSummaryFooter({
       </div>
 
       {/* Customer Price Row (if SPP > 0) */}
-      {showCustomerPrice && (
+      {showCustomerPrice && customerPrice && (
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
             ЦЕНА ДЛЯ ПОКУПАТЕЛЯ (СПП {sppPct}%)

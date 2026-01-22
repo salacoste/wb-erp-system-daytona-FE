@@ -33,7 +33,7 @@ export function CoefficientsLoadingSkeleton({
   message = 'Загрузка коэффициентов...',
 }: CoefficientsLoadingSkeletonProps) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" role="status" aria-busy="true">
       <CardContent className="pt-6 space-y-4">
         {/* Coefficient field skeletons */}
         {Array.from({ length: fieldCount }).map((_, index) => (
@@ -52,12 +52,16 @@ export function CoefficientsLoadingSkeleton({
           </div>
         ))}
 
-        {/* Loading message with spinner */}
+        {/* Loading message with spinner - accessible */}
         {showMessage && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2">
+          <div
+            className="flex items-center gap-2 text-sm text-muted-foreground pt-2"
+            aria-live="polite"
+          >
             <div
               className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"
-              aria-hidden="true"
+              role="status"
+              aria-label="Загрузка"
             />
             <span>{message}</span>
           </div>

@@ -1,11 +1,36 @@
 # Request #98: Warehouses & Tariffs Coefficients API
 
 **Date**: 2026-01-19
-**Status**: ✅ IMPLEMENTED
+**Status**: ⚠️ PARTIALLY IMPLEMENTED (see Implementation Status below)
 **Priority**: P1 - IMPORTANT
 **Related Epic**: Epic 44-FE (Price Calculator UI) - Phase 3
 **Frontend Stories**: 44.12, 44.13, 44.14
 **Backend Stories**: 43.1, 43.5, 43.8, 43.9
+**Last Updated**: 2026-01-22
+
+---
+
+## ⚠️ IMPLEMENTATION STATUS
+
+### ✅ ACTUALLY IMPLEMENTED (6 endpoints)
+
+| Endpoint | Status | Description |
+|----------|--------|-------------|
+| `GET /v1/tariffs/commissions` | ✅ | 7346 категорий с комиссиями FBO/FBS |
+| `GET /v1/tariffs/warehouses` | ✅ | Список складов (wrapped: `{data: {warehouses}}`) |
+| `GET /v1/tariffs/warehouses-with-tariffs` | ✅ | Склады + тарифы логистики/хранения |
+| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | ✅ | Коэффициенты приёмки по складу |
+| `GET /v1/tariffs/acceptance/coefficients/all` | ✅ | Все коэффициенты всех складов |
+| `GET /v1/tariffs/settings` | ✅ | Глобальные настройки тарифов |
+
+### ❌ NOT IMPLEMENTED (wishlist - use alternatives)
+
+| Requested Endpoint | Status | Alternative |
+|-------------------|--------|-------------|
+| `GET /v1/tariffs/box` | ❌ | Use `/warehouses-with-tariffs` |
+| `GET /v1/tariffs/box/{warehouse_name}` | ❌ | Filter `/warehouses-with-tariffs` client-side |
+
+**Actual API Reference**: `test-api/18-tariffs.http`, `test-api/15-tariffs-endpoints.http`
 
 ---
 
@@ -162,82 +187,68 @@ curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
 # Expected: 45-50 warehouses
 ```
 
-### Endpoint 2: GET /v1/tariffs/box
+### ~~Endpoint 2: GET /v1/tariffs/box~~ ❌ NOT IMPLEMENTED
 
-**Описание:** Тарифы и коэффициенты для мелких товаров по всем складам
+> **⚠️ Этот endpoint НЕ реализован. Используйте альтернативу:**
+>
+> **Альтернатива:** `GET /v1/tariffs/warehouses-with-tariffs`
+>
+> Этот endpoint возвращает склады с встроенными тарифами и коэффициентами.
+
+### ~~Endpoint 3: GET /v1/tariffs/box/{warehouse_name}~~ ❌ NOT IMPLEMENTED
+
+> **⚠️ Этот endpoint НЕ реализован. Используйте альтернативу:**
+>
+> **Альтернатива:** Получите данные из `GET /v1/tariffs/warehouses-with-tariffs` и отфильтруйте по `name` на клиенте.
+
+### Endpoint 2 (Actual): GET /v1/tariffs/warehouses-with-tariffs ✅ IMPLEMENTED
+
+**Описание:** Агрегированные данные: склады + тарифы логистики/хранения
 
 **Response:**
 ```json
 {
-  "data": {
-    "effective_from": "2026-01-20",
-    "effective_until": "2026-02-01",
-    "warehouses": [
-      {
-        "warehouse_name": "Коледино",
-        "geo_name": "Центральный ФО",
-
-        "logistics_coefficient": 1.0,
-        "storage_coefficient": 1.0,
-
-        "delivery_base_rub": 46.0,
-        "delivery_liter_rub": 14.0,
-
-        "storage_base_rub": 0.07,
-        "storage_liter_rub": 0.05
-      },
-      {
-        "warehouse_name": "Хабаровск",
-        "geo_name": "Дальневосточный ФО",
-
-        "logistics_coefficient": 1.5,
-        "storage_coefficient": 0.8,
-
-        "delivery_base_rub": 46.0,
-        "delivery_liter_rub": 14.0,
-
-        "storage_base_rub": 0.07,
-        "storage_liter_rub": 0.05
+  "warehouses": [
+    {
+      "id": 507,
+      "name": "Коледино",
+      "federal_district": "Центральный ФО",
+      "tariffs": {
+        "fbo": {
+          "logistics_coefficient": 1.0,
+          "delivery_base_rub": 46.0,
+          "delivery_liter_rub": 14.0
+        },
+        "storage": {
+          "coefficient": 1.0,
+          "base_per_day_rub": 0.07,
+          "liter_per_day_rub": 0.05
+        }
       }
-    ]
-  }
+    }
+  ],
+  "updated_at": "2026-01-22T10:00:00Z"
 }
 ```
 
-### Endpoint 3: GET /v1/tariffs/box/{warehouse_name}
-
-**Описание:** Тарифы для конкретного склада
-
-**Path Parameters:**
-- `warehouse_name` - Название склада (URL-encoded)
-
-**Response:**
-```json
-{
-  "data": {
-    "warehouse_name": "Коледино",
-    "geo_name": "Центральный ФО",
-    "effective_from": "2026-01-20",
-
-    "logistics": {
-      "coefficient": 1.0,
-      "base_rub": 46.0,
-      "per_liter_rub": 14.0
-    },
-
-    "storage": {
-      "coefficient": 1.0,
-      "base_per_day_rub": 0.07,
-      "per_liter_per_day_rub": 0.05
-    },
-
-    "fbs": {
-      "coefficient": 1.2,
-      "base_rub": 50.0,
-      "per_liter_rub": 16.0
-    }
-  }
-}
+**Frontend Usage:**
+```typescript
+// src/lib/api/tariffs.ts - getBoxTariffs()
+// Transforms warehouses-with-tariffs response to BoxTariffItem[]
+const tariffs = response.warehouses.map(w => ({
+  warehouseName: w.name,
+  geoName: w.federal_district,
+  logistics: {
+    coefficient: w.tariffs?.fbo?.logistics_coefficient ?? 1.0,
+    baseLiterRub: w.tariffs?.fbo?.delivery_base_rub ?? 0,
+    additionalLiterRub: w.tariffs?.fbo?.delivery_liter_rub ?? 0,
+  },
+  storage: {
+    coefficient: w.tariffs?.storage?.coefficient ?? 1.0,
+    baseLiterRub: w.tariffs?.storage?.base_per_day_rub ?? 0,
+    additionalLiterRub: w.tariffs?.storage?.liter_per_day_rub ?? 0,
+  },
+}))
 ```
 
 ---

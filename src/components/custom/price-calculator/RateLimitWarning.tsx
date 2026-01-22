@@ -74,7 +74,13 @@ export function RateLimitWarning({
   const defaultMessage = message || `Слишком много запросов. Подождите ${localRemaining} сек.`
 
   return (
-    <Alert variant="destructive" className="relative pr-10">
+    <Alert
+      variant="destructive"
+      className="relative pr-10"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
       <AlertCircle className="h-4 w-4" aria-hidden="true" />
 
       <div className="flex-1 space-y-3">
@@ -86,14 +92,21 @@ export function RateLimitWarning({
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-destructive/80">До повторной попытки:</span>
-            <span className="flex items-center gap-1 font-medium tabular-nums">
+            <span
+              className="flex items-center gap-1 font-medium tabular-nums"
+              aria-label={`Осталось ${localRemaining} секунд`}
+            >
               <Clock className="h-3 w-3" aria-hidden="true" />
               {formatTime(localRemaining)}
             </span>
           </div>
 
-          {/* Progress bar */}
-          <Progress value={progressPercent} className="h-2" />
+          {/* Progress bar with ARIA attributes */}
+          <Progress
+            value={progressPercent}
+            className="h-2"
+            aria-label={`Прогресс ожидания: ${Math.round(progressPercent)}%`}
+          />
         </div>
 
         {/* Context info */}

@@ -2,13 +2,13 @@
 
 **Status**: 🚧 **IN PROGRESS**
 **Backend Dependency**: Epic 43 ✅ Complete
-**Total Stories**: 26
-**Total Estimate**: 60 Story Points
+**Total Stories**: 27
+**Total Estimate**: 63 Story Points
 **Completed (Phase 1)**: 2026-01-17
 **Phase 2**: Enhanced Logistics Calculation (4 stories)
 **Phase 3**: Warehouse, Storage & Tariffs Integration (5 stories)
 **Phase 4**: V2 Enhancements (6 stories)
-**Phase 5**: Bug Fixes & Improvements (3 stories - NEW)
+**Phase 5**: Bug Fixes & Improvements (7 stories)
 
 ---
 
@@ -64,6 +64,7 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 | 44.35 | [FBO/FBS Toggle Crashes Application](./story-44.35-fe-fbo-fbs-toggle-crash.md) | **P0** | **3** | **✅ Complete** |
 | 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **✅ Complete** |
 | 44.37 | [API Field Mismatch - Warehouse & Additional Fields](./story-44.37-fe-api-field-mismatch-warehouse.md) | **P0** | **2** | **✅ Complete** |
+| 44.38 | [Units Per Package - Acceptance Cost Division](./story-44.38-fe-units-per-package.md) | **P1** | **3** | **📋 Ready for Dev** |
 
 ---
 
@@ -143,6 +144,12 @@ Critical fixes based on frontend integration guide and competitor analysis:
    - Removes redundant/unsupported fields, companion fix to Story 44.36
    - **Impact**: Form submission validation errors, API rejection
 
+7. **Units Per Package - Acceptance Cost Division** (Story 44.38) - P1 HIGH
+   - Box/pallet acceptance cost not divided by units per package
+   - Shows cost per package instead of per product unit
+   - Add input field for units count (1-1000)
+   - **Impact**: 5-50% overstated acceptance costs, wrong pricing decisions
+
 ### Phase 5 Dependencies
 
 ```
@@ -152,6 +159,7 @@ Story 44.34 (Debounce) ← Story 44.12 (Warehouse) + Story 44.27 (Integration)
 Story 44.35 (FBO/FBS Toggle Crash) ← Story 44.15 (FBO/FBS Selection) - BLOCKER for Phase 4
 Story 44.36 (API Field Mismatch - box_type/turnover_days) ← Story 44.2 (Form) + Story 44.20 (Results) - BLOCKER for calculations
 Story 44.37 (API Field Mismatch - warehouse/additional) ← Story 44.36 (companion fix) - BLOCKER for calculations
+Story 44.38 (Units Per Package) ← Story 44.32 (BoxTypeSelector) - Enhancement for acceptance cost accuracy
 ```
 
 **Priority**: Stories 44.35, 44.36, and 44.37 are **critical blockers** and must be resolved before full Phase 4 implementation can proceed.
@@ -265,8 +273,8 @@ Story is complete when:
 **Phase 2 Progress**: 0/4 stories (0%) 📋
 **Phase 3 Progress**: 4/5 stories (80%) - **1 story Ready for Dev (44.27 Integration)**
 **Phase 4 Progress**: 0/6 stories (0%) 📋
-**Phase 5 Progress**: 3/6 stories (50%) ✅ - **Stories 44.35, 44.36, 44.37 Complete**
-**Overall Progress**: 13/26 stories (50%)
+**Phase 5 Progress**: 3/7 stories (43%) ✅ - **Stories 44.35, 44.36, 44.37 Complete**
+**Overall Progress**: 13/27 stories (48%)
 
 ---
 
@@ -297,8 +305,8 @@ Story is complete when:
 | Phase 2 | 4 | 8 SP |
 | Phase 3 | 5 | 9 SP |
 | Phase 4 | 6 | 12 SP |
-| Phase 5 | 6 | 16 SP |
-| **Total** | **26** | **60 SP** |
+| Phase 5 | 7 | 19 SP |
+| **Total** | **27** | **63 SP** |
 
 **Phase 5 Breakdown**:
 - Story 44.32 (Missing Fields): 5 SP
@@ -307,6 +315,7 @@ Story is complete when:
 - Story 44.35 (FBO/FBS Toggle Crash): 3 SP ⚠️ **CRITICAL**
 - Story 44.36 (API Field Mismatch - box_type/turnover_days): 2 SP ⚠️ **CRITICAL**
 - Story 44.37 (API Field Mismatch - warehouse/additional): 2 SP ⚠️ **CRITICAL**
+- Story 44.38 (Units Per Package): 3 SP
 
 ---
 
@@ -398,3 +407,4 @@ See `PRICE-CALCULATOR-REQUIREMENTS.md` Section 4 for complete API reference.
 
 **Last Updated**: 2026-01-22
 **Bugfix Stories Completed**: 2026-01-22 (Stories 44.35, 44.36 & 44.37 - FBO/FBS Toggle & API Field Mismatches Fixed)
+**Story 44.38 Added**: 2026-01-22 (Units Per Package - Acceptance Cost Division)

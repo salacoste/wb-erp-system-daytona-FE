@@ -39,6 +39,7 @@ export function FieldTooltip({ content, icon }: FieldTooltipProps) {
             variant="ghost"
             className="h-5 w-5 p-0 text-muted-foreground hover:text-foreground"
             onClick={() => setOpen(!open)}
+            aria-label="Информация"
           >
             {icon || <HelpCircle className="h-4 w-4" />}
           </Button>

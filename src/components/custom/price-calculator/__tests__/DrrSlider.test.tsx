@@ -309,9 +309,8 @@ describe('DrrSlider - AC2: Tooltip Content', () => {
   it('should render tooltip trigger button', () => {
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-    // FieldTooltip renders a button with HelpCircle icon
-    // Button doesn't have accessible name, find by data-state attribute
-    const tooltipTrigger = screen.getByRole('button', { name: '' })
+    // FieldTooltip renders a button with aria-label="Информация"
+    const tooltipTrigger = screen.getByRole('button', { name: 'Информация' })
     expect(tooltipTrigger).toBeInTheDocument()
     expect(tooltipTrigger).toHaveAttribute('data-state', 'closed')
   })
@@ -320,8 +319,8 @@ describe('DrrSlider - AC2: Tooltip Content', () => {
     const user = userEvent.setup()
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-    // Find and click tooltip trigger button
-    const tooltipTrigger = screen.getByRole('button', { name: '' })
+    // FieldTooltip uses aria-label="Информация"
+    const tooltipTrigger = screen.getByRole('button', { name: 'Информация' })
     await user.click(tooltipTrigger)
 
     // Tooltip should contain DRR explanation (per AC2)
@@ -334,7 +333,8 @@ describe('DrrSlider - AC2: Tooltip Content', () => {
     const user = userEvent.setup()
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-    const tooltipTrigger = screen.getByRole('button', { name: '' })
+    // FieldTooltip uses aria-label="Информация"
+    const tooltipTrigger = screen.getByRole('button', { name: 'Информация' })
     await user.click(tooltipTrigger)
 
     // AC2 requires tooltip to explain how DRR affects calculation

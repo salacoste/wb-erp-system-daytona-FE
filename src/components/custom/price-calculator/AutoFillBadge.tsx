@@ -68,7 +68,7 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
         )}
         aria-live="polite"
       >
-        {isAuto ? 'Автозаполнено' : 'Вручную'}
+        {isAuto ? 'Авто' : 'Вручную'}
       </Badge>
     )
   }

@@ -12,6 +12,7 @@ import type { FulfillmentType, TaxType, BoxType } from '@/types/price-calculator
  * Story 44.14: Added storage_days for storage cost calculation
  * Story 44.27: Added warehouse coefficients and delivery date
  * Story 44.32: Added box_type, weight_exceeds_25kg, localization_index, turnover_days
+ * Story 44.38: Added units_per_package for acceptance cost division
  */
 export interface FormData {
   fulfillment_type: FulfillmentType
@@ -30,7 +31,8 @@ export interface FormData {
   vat_pct: number
   acquiring_pct: number
   commission_pct?: number
-  nm_id?: number
+  /** Product nm_id (STRING from backend!) - Story 44.33 */
+  nm_id?: string
   /** Product length in cm (Story 44.7) */
   length_cm: number
   /** Product width in cm (Story 44.7) */
@@ -57,6 +59,8 @@ export interface FormData {
   localization_index: number
   /** Story 44.32: Turnover days in storage for FBO (default: 20) */
   turnover_days: number
+  /** Story 44.38: Units per package for acceptance cost division (default: 1) */
+  units_per_package: number
 }
 
 /**
@@ -67,6 +71,7 @@ export interface FormData {
  * Story 44.18: Added drr_pct (5%) default for DRR
  * Story 44.19: Added spp_pct (0%) default for SPP - no discount by default
  * Story 44.32: Added box_type ('box'), weight_exceeds_25kg (false), localization_index (1.0), turnover_days (20)
+ * Story 44.38: Added units_per_package (1) default for single unit
  */
 export const defaultFormValues: FormData = {
   fulfillment_type: 'FBO',
@@ -108,4 +113,6 @@ export const defaultFormValues: FormData = {
   localization_index: 1.0,
   /** Story 44.32: Turnover days default (typical for WB) */
   turnover_days: 20,
+  /** Story 44.38: Units per package default (single unit) */
+  units_per_package: 1,
 }

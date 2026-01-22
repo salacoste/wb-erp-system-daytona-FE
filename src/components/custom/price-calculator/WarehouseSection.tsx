@@ -6,17 +6,18 @@
  * Story 44.13-FE: Auto-fill Coefficients
  * Story 44.14-FE: Storage Cost Calculation
  * Story 44.26a-FE: Delivery Date Selection
+ * Story 44.34-FE: Debounce Warehouse Selection & Rate Limit Handling
  * Epic 44: Price Calculator UI (Frontend)
  */
 
 import { useState, useMemo, useCallback } from 'react'
 import { Warehouse as WarehouseIcon, Loader2 } from 'lucide-react'
-import { Label } from '@/components/ui/label'
 import { WarehouseSelect } from './WarehouseSelect'
 import { CoefficientField } from './CoefficientField'
 import { StorageCostCalculator } from './StorageCostCalculator'
 import { DeliveryDatePicker } from './DeliveryDatePicker'
-import { FieldTooltip } from './FieldTooltip'
+import { RateLimitWarning } from './RateLimitWarning'
+import { CoefficientsLoadingSkeleton } from './CoefficientsLoadingSkeleton'
 import { useWarehouseCoefficients } from '@/hooks/useWarehouseCoefficients'
 import type { Warehouse } from '@/types/warehouse'
 import type { StorageTariff } from '@/lib/storage-cost-utils'
@@ -64,6 +65,10 @@ export function WarehouseSection({
     byBoxType,
     deliveryDate,
     setDeliveryDate,
+    // Story 44.34: Debouncing and rate limit state
+    isDebouncing,
+    isRateLimited,
+    cooldownRemaining,
   } = useWarehouseCoefficients(warehouseId, selectedWarehouse)
 
   // Build storage tariff from warehouse data
@@ -100,17 +105,25 @@ export function WarehouseSection({
       <div className="flex items-center gap-2 mb-4">
         <WarehouseIcon className="h-4 w-4 text-purple-600" aria-hidden="true" />
         <h3 className="text-base font-semibold text-purple-900">Склад и хранение</h3>
-        {isLoading && <Loader2 className="h-4 w-4 animate-spin text-purple-500" />}
+        {isLoading && <Loader2 className="h-4 w-4 animate-spin text-purple-500" role="status" aria-label="Загрузка данных склада" />}
       </div>
 
-      {/* Warehouse Selection */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Label>Склад WB</Label>
-          <FieldTooltip content="Выберите склад Wildberries для автоматического расчёта тарифов" />
-        </div>
-        <WarehouseSelect value={warehouseId} onChange={handleWarehouseChange} disabled={disabled} />
-      </div>
+      {/* Warehouse Selection - label is in WarehouseSelect component (Story 44.34) */}
+      <WarehouseSelect value={warehouseId} onChange={handleWarehouseChange} disabled={disabled || isRateLimited} />
+
+      {/* Story 44.34: Rate Limit Warning with progress bar (AC3, AC4) */}
+      {isRateLimited && (
+        <RateLimitWarning
+          remainingSeconds={cooldownRemaining}
+          retryAfter={cooldownRemaining}
+          endpointName="коэффициентов приёмки"
+        />
+      )}
+
+      {/* Story 44.34: Loading skeleton during debounce (AC2) */}
+      {isDebouncing && warehouseId && (
+        <CoefficientsLoadingSkeleton fieldCount={2} message="Загрузка коэффициентов склада..." />
+      )}
 
       {/* Delivery Date Picker - Story 44.26a */}
       {warehouseId && (dailyCoefficients.length > 0 || byBoxType.length > 0) && (

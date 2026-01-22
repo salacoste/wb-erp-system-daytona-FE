@@ -71,30 +71,46 @@ export function BoxTypeSelector({
         disabled={disabled}
         className="grid grid-cols-2 gap-4"
       >
-        {(Object.keys(BOX_TYPE_CONFIG) as BoxType[]).map((type) => (
-          <div
-            key={type}
-            className={cn(
-              'flex items-center space-x-2 border rounded-lg p-3',
-              'hover:bg-muted/50 transition-colors',
-              value === type && 'border-primary bg-primary/5',
-              disabled && 'opacity-50 cursor-not-allowed'
-            )}
-          >
-            <RadioGroupItem value={type} id={`box-${type}`} disabled={disabled} />
-            <Label
-              htmlFor={`box-${type}`}
-              className="flex-1 cursor-pointer font-normal"
+        {(Object.keys(BOX_TYPE_CONFIG) as BoxType[]).map((type) => {
+          const isSelected = value === type
+          return (
+            <div
+              key={type}
+              className={cn(
+                'flex items-center space-x-2 border rounded-lg p-3',
+                'hover:bg-muted/50 transition-colors cursor-pointer',
+                isSelected && 'border-primary border-2 bg-red-50',
+                !isSelected && 'border-gray-200 bg-white',
+                disabled && 'opacity-50 cursor-not-allowed'
+              )}
             >
-              <div className="flex flex-col">
-                <span className="font-medium">{BOX_TYPE_CONFIG[type].label}</span>
-                <span className="text-xs text-muted-foreground">
-                  {BOX_TYPE_CONFIG[type].description}
-                </span>
-              </div>
-            </Label>
-          </div>
-        ))}
+              <RadioGroupItem value={type} id={`box-${type}`} disabled={disabled} />
+              <Label
+                htmlFor={`box-${type}`}
+                className="flex-1 cursor-pointer font-normal"
+              >
+                <div className="flex flex-col">
+                  <span
+                    className={cn(
+                      'font-medium',
+                      isSelected ? 'text-primary-dark' : 'text-foreground'
+                    )}
+                  >
+                    {BOX_TYPE_CONFIG[type].label}
+                  </span>
+                  <span
+                    className={cn(
+                      'text-xs',
+                      isSelected ? 'text-gray-700' : 'text-muted-foreground'
+                    )}
+                  >
+                    {BOX_TYPE_CONFIG[type].description}
+                  </span>
+                </div>
+              </Label>
+            </div>
+          )
+        })}
       </RadioGroup>
     </div>
   )

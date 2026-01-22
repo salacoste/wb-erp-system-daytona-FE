@@ -20,6 +20,8 @@ import { BoxTypeSelector } from './BoxTypeSelector'
 import { WeightThresholdCheckbox } from './WeightThresholdCheckbox'
 import { LocalizationIndexInput } from './LocalizationIndexInput'
 import { TurnoverDaysInput } from './TurnoverDaysInput'
+// Story 44.38: Units Per Package
+import { UnitsPerPackageInput } from './UnitsPerPackageInput'
 import { isFormEmpty, toTwoLevelFormData, toApiRequest } from './priceCalculatorUtils'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useProductAutoFill } from '@/hooks/useProductAutoFill'
@@ -84,6 +86,8 @@ export function PriceCalculatorForm({
   const turnoverDays = useWatch({ control, name: 'turnover_days' })
   const weightExceeds25kg = useWatch({ control, name: 'weight_exceeds_25kg' })
   const localizationIndex = useWatch({ control, name: 'localization_index' })
+  // Story 44.38: Units per package for acceptance cost division
+  const unitsPerPackage = useWatch({ control, name: 'units_per_package' })
 
   // Story 44.27: Warehouse form state hook
   const {
@@ -94,6 +98,11 @@ export function PriceCalculatorForm({
   useEffect(() => {
     return () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current) }
   }, [])
+
+  // Story 44.38: Reset units_per_package when box_type or fulfillment_type changes
+  useEffect(() => {
+    setValue('units_per_package', 1, { shouldValidate: true })
+  }, [boxType, fulfillmentType, setValue])
 
   // Story 44.19: Propagate SPP changes to parent for results display
   const handleSppChange = useCallback((value: number) => {
@@ -195,6 +204,13 @@ export function PriceCalculatorForm({
                 <BoxTypeSelector
                   value={boxType}
                   onValueChange={(value) => setValue('box_type', value, { shouldValidate: true })}
+                  disabled={disabled}
+                />
+                {/* Story 44.38: Units per package for acceptance cost division */}
+                <UnitsPerPackageInput
+                  value={unitsPerPackage}
+                  onValueChange={(value) => setValue('units_per_package', value, { shouldValidate: true })}
+                  boxType={boxType}
                   disabled={disabled}
                 />
                 <TurnoverDaysInput

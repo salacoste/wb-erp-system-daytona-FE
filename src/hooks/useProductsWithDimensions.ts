@@ -24,11 +24,12 @@ export const productsWithDimensionsKeys = {
  * @returns Query result with products containing dimensions and category
  *
  * Features:
- * - Case-insensitive client-side filtering (Bug fix: search "шпатлевка" finds "Шпатлевка")
- * - Matches sa_name and vendor_code fields
+ * - Case-insensitive client-side filtering
+ * - Matches sa_name, vendor_code, nm_id, AND brand fields
+ * - Supports partial matching (e.g., "вил" finds "Вилли")
  *
  * @example
- * const { data, isLoading } = useProductsWithDimensions('платье')
+ * const { data, isLoading } = useProductsWithDimensions('вилли')
  */
 export function useProductsWithDimensions(search: string) {
   const trimmedSearch = search.trim()
@@ -46,16 +47,25 @@ export function useProductsWithDimensions(search: string) {
     staleTime: STALE_TIME,
     // Show previous data while loading new results
     placeholderData: (previousData) => previousData,
-    // Bug fix: Apply case-insensitive client-side filtering
-    // Backend search may return broader results, we filter to exact (case-insensitive) matches
+    // Case-insensitive client-side filtering across ALL searchable fields
+    // Including brand for cases like searching "Вилли" brand name
     select: (data) => ({
       ...data,
-      products: data.products.filter(
-        (product) =>
-          product.sa_name?.toLowerCase().includes(lowerSearch) ||
-          product.vendor_code?.toLowerCase().includes(lowerSearch) ||
-          product.nm_id?.toLowerCase().includes(lowerSearch)
-      ),
+      products: data.products.filter((product) => {
+        // Normalize all fields to lowercase for case-insensitive search
+        const saName = product.sa_name?.toLowerCase() ?? ''
+        const vendorCode = product.vendor_code?.toLowerCase() ?? ''
+        const nmId = product.nm_id?.toLowerCase() ?? ''
+        const brand = product.brand?.toLowerCase() ?? ''
+
+        // Match against any field
+        return (
+          saName.includes(lowerSearch) ||
+          vendorCode.includes(lowerSearch) ||
+          nmId.includes(lowerSearch) ||
+          brand.includes(lowerSearch)
+        )
+      }),
     }),
   })
 }

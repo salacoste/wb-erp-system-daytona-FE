@@ -406,7 +406,7 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
     })
 
     it('should include overrides with nm_id when defined', () => {
-      const formData = createValidFormData({ nm_id: 147205694 })
+      const formData = createValidFormData({ nm_id: '147205694' })
       const request = toApiRequest(formData)
 
       expect(request.overrides).toBeDefined()
@@ -492,7 +492,7 @@ describe('API Request Snapshot', () => {
       vat_pct: 20,
       acquiring_pct: 2,
       commission_pct: 8,
-      nm_id: 147205694,
+      nm_id: '147205694',
       length_cm: 30,
       width_cm: 20,
       height_cm: 10,
@@ -506,6 +506,7 @@ describe('API Request Snapshot', () => {
       weight_exceeds_25kg: true,
       localization_index: 1.5,
       turnover_days: 45, // Should NOT be in API request
+      units_per_package: 10, // Story 44.38: Should NOT be in API request
     }
 
     const request = toApiRequest(formData)
@@ -521,6 +522,7 @@ describe('API Request Snapshot', () => {
     expect(request).not.toHaveProperty('delivery_date')
     expect(request).not.toHaveProperty('weight_exceeds_25kg')
     expect(request).not.toHaveProperty('localization_index')
+    expect(request).not.toHaveProperty('units_per_package') // Story 44.38
 
     // Verify only supported fields are sent to backend
     expect(request).toEqual({

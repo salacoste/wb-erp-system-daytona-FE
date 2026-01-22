@@ -1,10 +1,38 @@
 # Request #98: Warehouses & Tariffs Coefficients API - BACKEND RESPONSE
 
 **Date**: 2026-01-19
-**Status**: ✅ IMPLEMENTED
+**Status**: ⚠️ PARTIALLY IMPLEMENTED (see details below)
 **Priority**: P1 - IMPORTANT
 **Related Epic**: Epic 43 (Price Calculator), Epic 44-FE (Price Calculator UI)
 **Backend Stories**: 43.1, 43.5, 43.8, 43.9
+**Last Updated**: 2026-01-22
+
+---
+
+## ⚠️ IMPLEMENTATION STATUS
+
+**ACTUALLY IMPLEMENTED (6 endpoints):**
+| Endpoint | Status | Notes |
+|----------|--------|-------|
+| `GET /v1/tariffs/commissions` | ✅ IMPLEMENTED | All 7346 categories |
+| `GET /v1/tariffs/warehouses` | ✅ IMPLEMENTED | Simplified list |
+| `GET /v1/tariffs/warehouses-with-tariffs` | ✅ IMPLEMENTED | Aggregated data |
+| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | ✅ IMPLEMENTED | Per-warehouse |
+| `GET /v1/tariffs/acceptance/coefficients/all` | ✅ IMPLEMENTED | All warehouses |
+| `GET /v1/tariffs/settings` | ✅ IMPLEMENTED | Global config |
+
+**NOT IMPLEMENTED (wishlist - filter client-side):**
+| Endpoint | Status | Recommendation |
+|----------|--------|----------------|
+| `GET /v1/tariffs/commissions/category/:id` | ❌ NOT IMPLEMENTED | Use client-side filter on `/commissions` |
+| `GET /v1/tariffs/commissions/product/:nmId` | ❌ NOT IMPLEMENTED | Use Products API category + filter |
+| `GET /v1/tariffs/settings/logistics` | ❌ NOT IMPLEMENTED | Calculate client-side |
+| `GET /v1/tariffs/settings/acceptance/box` | ❌ NOT IMPLEMENTED | Data in `/settings` |
+| `GET /v1/tariffs/settings/storage/free` | ❌ NOT IMPLEMENTED | Data in `/settings` |
+| `GET /v1/tariffs/warehouses/box` | ❌ WRONG PATH | Use `/warehouses-with-tariffs` |
+| `GET /v1/tariffs/acceptance/available` | ❌ NOT IMPLEMENTED | Filter client-side |
+
+**Actual API documentation**: See `test-api/18-tariffs.http`
 
 ---
 
@@ -132,30 +160,17 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 - Rate limit: 10 req/min (scope: `tariffs`)
 - FBS комиссия в 96.5% случаев выше FBO
 
-#### GET /v1/tariffs/commissions/category/{categoryId}
+#### ~~GET /v1/tariffs/commissions/category/{categoryId}~~ ❌ NOT IMPLEMENTED
 
-Комиссия для конкретной категории.
+> **⚠️ Этот endpoint НЕ реализован.**
+>
+> **Альтернатива:** Получите все комиссии через `GET /v1/tariffs/commissions` и отфильтруйте по `parentID` на клиенте.
 
-**Query Parameters:**
-- `fulfillmentType` (optional): `FBO` | `FBS` | `DBS` | `EDBS`
+#### ~~GET /v1/tariffs/commissions/product/{nmId}~~ ❌ NOT IMPLEMENTED
 
-**Response:**
-```json
-{
-  "data": {
-    "categoryId": 123,
-    "categoryName": "Одежда",
-    "fulfillmentType": "FBO",
-    "commission_pct": 25,
-    "source": "wb_api",
-    "cached": true
-  }
-}
-```
-
-#### GET /v1/tariffs/commissions/product/{nmId}
-
-Комиссия для товара (по nmId). Сначала определяет категорию товара, затем возвращает комиссию.
+> **⚠️ Этот endpoint НЕ реализован.**
+>
+> **Альтернатива:** Используйте Products API для получения категории товара, затем найдите комиссию в `/commissions`.
 
 ---
 
@@ -202,50 +217,37 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 - Кэш 24 часа
 - Источник данных: официальный PDF WB "Стоимость логистики, приёмки и хранения"
 
-#### GET /v1/tariffs/settings/logistics
+#### ~~GET /v1/tariffs/settings/logistics~~ ❌ NOT IMPLEMENTED
 
-Расчёт стоимости логистики по объёму.
+> **⚠️ Этот endpoint НЕ реализован.**
+>
+> **Альтернатива:** Получите `logistics_volume_tiers` из `GET /v1/tariffs/settings` и рассчитайте на клиенте:
+> ```typescript
+> // Логика расчёта (client-side)
+> if (volume <= 1) {
+>   // Используется volume_tier (23-32 ₽ фиксированно)
+> } else {
+>   // Прогрессивная формула: 46 + 14 × (volume - 1)
+> }
+> ```
 
-**Query Parameters:**
-- `volumeLiters` (required): объём в литрах
-- `fulfillmentType` (required): `FBO` | `FBS`
+#### ~~GET /v1/tariffs/settings/acceptance/box~~ ❌ NOT IMPLEMENTED
 
-**Логика расчёта**:
-```
-Если volume ≤ 1L:
-  → Используется volume_tier (23-32 ₽ фиксированно)
+> **⚠️ Этот endpoint НЕ реализован.**
+>
+> **Альтернатива:** Используйте `acceptance_box_rate_per_liter` из `GET /v1/tariffs/settings`:
+> ```typescript
+> const cost = settings.acceptance_box_rate_per_liter * volumeLiters * coefficient;
+> ```
 
-Если volume > 1L:
-  → Прогрессивная формула: 46 + 14 × (volume - 1)
+#### ~~GET /v1/tariffs/settings/storage/free~~ ❌ NOT IMPLEMENTED
 
-Примеры:
-  0.5L → 29 ₽ (volume tier)
-  1.5L → 46 + 14×0.5 = 53 ₽
-  3.0L → 46 + 14×2.0 = 74 ₽
-  5.0L → 46 + 14×4.0 = 102 ₽
-```
-
-#### GET /v1/tariffs/settings/acceptance/box
-
-Расчёт стоимости приёмки для коробов.
-
-**Query Parameters:**
-- `volumeLiters` (required): объём в литрах
-
-**Формула**: `1.70 ₽/литр × volumeLiters`
-
-**⚠️ ВАЖНО**: Это базовая ставка! Для финальной стоимости нужно умножить на коэффициент склада из AcceptanceCoefficientsService.
-
-#### GET /v1/tariffs/settings/storage/free
-
-Проверка бесплатного периода хранения.
-
-**Query Parameters:**
-- `daysSinceShipment` (required): дней с момента поставки
-
-**Логика**:
-- Бесплатный период: **60 дней** (с 15 сентября 2025)
-- `daysSinceShipment < 60` → хранение бесплатно
+> **⚠️ Этот endpoint НЕ реализован.**
+>
+> **Альтернатива:** Используйте `storage_free_days` из `GET /v1/tariffs/settings`:
+> ```typescript
+> const isFree = daysSinceShipment < settings.storage_free_days; // 60 дней
+> ```
 
 ---
 
@@ -282,45 +284,38 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 }
 ```
 
-#### GET /v1/tariffs/warehouses/box
+#### ~~GET /v1/tariffs/warehouses/box~~ ❌ NOT IMPLEMENTED (WRONG PATH)
 
-Тарифы логистики и хранения по складам.
+> **⚠️ Этот endpoint НЕ существует!**
+>
+> **✅ Используйте:** `GET /v1/tariffs/warehouses-with-tariffs`
+>
+> ```json
+> {
+>   "warehouses": [
+>     {
+>       "id": 507,
+>       "name": "Краснодар",
+>       "federal_district": "Южный ФО",
+>       "tariffs": {
+>         "fbo": {
+>           "logistics_coefficient": 1.2,
+>           "delivery_base_rub": 46.0,
+>           "delivery_liter_rub": 14.0
+>         },
+>         "storage": {
+>           "coefficient": 1.0,
+>           "base_per_day_rub": 0.07,
+>           "liter_per_day_rub": 0.05
+>         }
+>       }
+>     }
+>   ],
+>   "updated_at": "2026-01-22T10:00:00Z"
+> }
+> ```
 
-**Query Parameters:**
-- `date` (optional): дата в формате `YYYY-MM-DD` (по умолчанию сегодня)
-
-**Response:**
-```json
-{
-  "data": {
-    "tariffs": [
-      {
-        "warehouseName": "Краснодар",
-        "geoName": "Южный ФО",
-
-        "logistics": {
-          "coefficient": 1.2,
-          "baseLiterRub": 46.0,
-          "additionalLiterRub": 14.0
-        },
-
-        "storage": {
-          "coefficient": 1.0,
-          "baseLiterRub": 0.07,
-          "additionalLiterRub": 0.05
-        }
-      }
-    ],
-    "meta": {
-      "date": "2026-01-19",
-      "cached": true,
-      "cache_ttl_seconds": 3600
-    }
-  }
-}
-```
-
-**⚠️ ВАЖНО**: Этот эндпоинт НЕ возвращает коэффициенты приёмки! Используйте AcceptanceCoefficientsService.
+**⚠️ ВАЖНО**: Для коэффициентов приёмки используйте `GET /v1/tariffs/acceptance/coefficients`.
 
 ---
 
@@ -394,38 +389,18 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 | `1` | Стандартная стоимость | Обычное отображение |
 | `>1` | Повышенная стоимость | Показать warning (×1.5 = 150%) |
 
-#### GET /v1/tariffs/acceptance/available
+#### ~~GET /v1/tariffs/acceptance/available~~ ❌ NOT IMPLEMENTED
 
-Список складов, доступных для приёмки на указанную дату.
-
-**Query Parameters:**
-- `date` (required): дата в формате `YYYY-MM-DD`
-- `boxTypeId` (optional): `2` (Короба), `5` (Паллеты), `6` (Суперсейф)
-
-**Response:**
-```json
-{
-  "data": {
-    "warehouses": [
-      {
-        "warehouseId": 507,
-        "warehouseName": "Краснодар",
-        "date": "2026-01-20",
-        "coefficient": 0,
-        "boxType": "Boxes",
-        "isSortingCenter": false
-      }
-    ],
-    "meta": {
-      "date": "2026-01-20",
-      "totalAvailable": 45,
-      "filteredBy": "boxTypeId=2"
-    }
-  }
-}
-```
-
-**Sorting**: Результаты отсортированы по `coefficient` ASC (самые дешёвые первыми).
+> **⚠️ Этот endpoint НЕ реализован.**
+>
+> **Альтернатива:** Получите данные из `GET /v1/tariffs/acceptance/coefficients/all` и отфильтруйте на клиенте:
+> ```typescript
+> const available = coefficients.filter(c =>
+>   c.coefficient >= 0 && c.allowUnload === true
+> );
+> // Сортировка по coefficient ASC
+> available.sort((a, b) => a.coefficient - b.coefficient);
+> ```
 
 ---
 
@@ -601,7 +576,8 @@ export async function getWarehouses() {
 
 export async function getBoxTariffs(date?: string) {
   const params = date ? `?date=${date}` : '';
-  return apiClient.get(`/v1/tariffs/warehouses/box${params}`);
+  // ⚠️ Note: Uses /warehouses-with-tariffs, NOT /warehouses/box
+  return apiClient.get(`/v1/tariffs/warehouses-with-tariffs${params}`);
 }
 
 // Acceptance Coefficients
@@ -612,11 +588,10 @@ export async function getAcceptanceCoefficients(warehouseIds?: number[]) {
   return apiClient.get(`/v1/tariffs/acceptance/coefficients${params}`);
 }
 
-export async function getAvailableWarehouses(date: string, boxTypeId?: number) {
-  const params = new URLSearchParams({ date });
-  if (boxTypeId) params.append('boxTypeId', String(boxTypeId));
-  return apiClient.get(`/v1/tariffs/acceptance/available?${params}`);
-}
+// ⚠️ NOT IMPLEMENTED - use client-side filtering instead:
+// export async function getAvailableWarehouses(date: string, boxTypeId?: number) {
+//   // Filter data from /acceptance/coefficients/all on client
+// }
 ```
 
 ---
@@ -735,9 +710,27 @@ type BoxTypeId = 2 | 5 | 6; // 2=Boxes, 5=Pallets, 6=Supersafe
 | 2026-01-19 | FBO/FBS commission analysis (96.5% FBS > FBO) |
 | 2026-01-19 | AcceptanceCoefficientsService implementation (OrdersFBW module) |
 | 2026-01-19 | API documentation in test-api/18-tariffs.http |
+| 2026-01-22 | **Documentation Audit**: Marked non-implemented endpoints, updated status |
 
 ---
 
-**Status**: ✅ IMPLEMENTED
-**Last Updated**: 2026-01-19
+## ⚠️ Documentation Audit (2026-01-22)
+
+**Реализовано:** 6 endpoints (см. Implementation Status выше)
+
+**НЕ реализовано (wishlist):** 7 endpoints помечены как `❌ NOT IMPLEMENTED` с альтернативами:
+- `GET /v1/tariffs/commissions/category/:id` → filter client-side
+- `GET /v1/tariffs/commissions/product/:nmId` → use Products API
+- `GET /v1/tariffs/settings/logistics` → calculate client-side
+- `GET /v1/tariffs/settings/acceptance/box` → use `/settings` data
+- `GET /v1/tariffs/settings/storage/free` → use `/settings` data
+- `GET /v1/tariffs/warehouses/box` → use `/warehouses-with-tariffs`
+- `GET /v1/tariffs/acceptance/available` → filter client-side
+
+**Actual API Reference**: `test-api/15-tariffs-endpoints.http`, `test-api/18-tariffs.http`
+
+---
+
+**Status**: ⚠️ PARTIALLY IMPLEMENTED (6 of 13 documented endpoints)
+**Last Updated**: 2026-01-22
 **Author**: Backend Team

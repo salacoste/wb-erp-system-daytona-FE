@@ -1,10 +1,26 @@
 # Epic 43: Price Calculator API (Reverse Margin Calculator)
 
-**Date**: 2026-01-16 → 2026-01-20 (Updated)
-**Status**: ✅ Implemented (8/9 stories complete, 89%)
+**Date**: 2026-01-16 → 2026-01-22 (Updated)
+**Status**: ✅ COMPLETE (10/10 stories, 100%)
 **Backend Epic**: `docs/epics/epic-43-price-calculator.md`
-**Stories**: 43.1 (TariffsService), 43.2 (PriceCalculatorService), 43.3 (API Endpoint), 43.4 (Testing & Docs), **43.5 (Warehouses & Tariffs), 43.6 (Autofill Integration), 43.7 (Dimension & Logistics), 43.8 (WB Knowledge Base), 43.9 (Acceptance Coefficients)**
+**Stories**: 43.1-43.10 (all complete)
 **Frontend Guide**: `docs/PRICE-CALCULATOR-GUIDE.md`
+**Last Updated**: 2026-01-22
+
+---
+
+## ⚠️ IMPORTANT: Actual Implemented Endpoints
+
+**6 endpoints реализованы (см. `test-api/15-tariffs-endpoints.http`):**
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v1/tariffs/commissions` | 7346 категорий |
+| `GET /v1/tariffs/warehouses` | Список складов (wrapped: `{data: ...}`) |
+| `GET /v1/tariffs/warehouses-with-tariffs` | Склады + тарифы |
+| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | По складу |
+| `GET /v1/tariffs/acceptance/coefficients/all` | Все склады |
+| `GET /v1/tariffs/settings` | Глобальные настройки |
 
 ---
 
@@ -632,7 +648,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 
 ### GET /v1/tariffs/warehouses
 
-**Назначение:** Получить список всех складов WB (~50 позиций)
+**Назначение:** Получить список всех складов WB (~50-80 позиций)
 
 ```bash
 curl -H "Authorization: Bearer $JWT_TOKEN" \
@@ -640,26 +656,27 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
      http://localhost:3000/v1/tariffs/warehouses
 ```
 
-**Response:**
+**Response (ACTUAL FORMAT):**
 ```json
 {
-  "warehouses": [
-    {
-      "id": 507,
-      "name": "Коледино",
-      "city": "Москва",
-      "federalDistrict": "Центральный"
-    }
-    // ... ~50 warehouses
-  ],
-  "meta": {
-    "total": 50,
-    "cached": true
+  "data": {
+    "warehouses": [
+      {
+        "id": 507,
+        "name": "Коледино",
+        "address": null,
+        "city": "Подольск",
+        "federalDistrict": "Центральный ФО"
+      }
+    ],
+    "updated_at": "2026-01-22T10:00:00Z"
   }
 }
 ```
 
 **Использование:** Селектор склада для автозаполнения логистики
+
+> ⚠️ **Note:** Response wrapped in `{data: ...}`. Frontend ApiClient auto-unwraps this.
 
 ### GET /v1/tariffs/acceptance/coefficients
 
@@ -922,7 +939,15 @@ API использует следующий приоритет для опред
 
 ---
 
-**Last Updated:** 2026-01-20
-**Version:** 2.0 (Stories 43.6 & 43.7 added)
-**Epic Status:** 8/9 complete (89%)
-**Test Results:** 72/72 passing, 0 TypeScript errors, 0 ESLint errors
+**Last Updated:** 2026-01-22
+**Version:** 2.1 (All stories complete + documentation audit)
+**Epic Status:** 10/10 complete (100%) ✅
+**Test Results:** All passing, 0 TypeScript errors, 0 ESLint errors
+
+---
+
+## ⚠️ Documentation Audit Notes (2026-01-22)
+
+- Response format for `/v1/tariffs/warehouses` updated to actual implementation (`{data: {warehouses, updated_at}}`)
+- Epic status updated to 100% (Story 43.10 completed)
+- All 6 tariff endpoints verified against `test-api/15-tariffs-endpoints.http`
