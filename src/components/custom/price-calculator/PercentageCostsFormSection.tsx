@@ -1,8 +1,9 @@
 'use client'
 
+import { Percent } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { FieldTooltip } from './FieldTooltip'
-import { MarginSlider } from './MarginSlider'
+import { BuybackSlider } from './BuybackSlider'
 import { DrrSlider } from './DrrSlider'
 import { SppInput } from './SppInput'
 import type { UseFormRegister, Control, FieldValues, Path } from 'react-hook-form'
@@ -39,7 +40,6 @@ export interface PercentageCostsFormSectionProps<T extends FieldValues> {
  * Story 44.19-FE: SPP Display
  */
 export function PercentageCostsFormSection<T extends FieldValues>({
-  register,
   control,
   drrValue,
   sppValue,
@@ -51,13 +51,15 @@ export function PercentageCostsFormSection<T extends FieldValues>({
   const buybackField = 'buyback_pct' as Path<T>
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium text-muted-foreground">
-        Процентные затраты (%)
-      </h3>
+    // Story 44.30: Changed from purple to emerald to distinguish from WarehouseSection
+    <div className="bg-emerald-50 rounded-lg p-4 border-l-4 border-l-emerald-400">
+      <div className="flex items-center gap-2 mb-4">
+        <Percent className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+        <h3 className="text-base font-semibold text-emerald-900">Процентные расходы (%)</h3>
+      </div>
 
       <div className="space-y-4">
-        {/* Buyback % */}
+        {/* Buyback % - Story 44.30: Use BuybackSlider without margin zones */}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Label htmlFor="buyback_pct" className="flex-1">
@@ -65,9 +67,8 @@ export function PercentageCostsFormSection<T extends FieldValues>({
             </Label>
             <FieldTooltip content="Доля заказов, которые фактически выкупаются покупателями. При 98% выкупе из 100 заказов 2 будут возвращены. Влияет на расчёт логистики возврата. Средний показатель по WB: 95-98%." />
           </div>
-          <MarginSlider
+          <BuybackSlider
             name={buybackField}
-            register={register}
             control={control}
             min={10}
             max={100}

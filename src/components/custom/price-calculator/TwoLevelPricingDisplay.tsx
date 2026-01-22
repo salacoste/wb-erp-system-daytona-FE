@@ -58,7 +58,10 @@ export function TwoLevelPricingDisplay({
   const [breakdownOpen, setBreakdownOpen] = useState(true)
 
   return (
-    <Card data-testid="two-level-pricing-display">
+    <Card
+      data-testid="two-level-pricing-display"
+      className="shadow-md rounded-xl bg-gradient-to-br from-background to-muted/30"
+    >
       <CardHeader>
         <CardTitle className="text-lg">Расчёт цены</CardTitle>
       </CardHeader>

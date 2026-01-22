@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Calculator, RotateCcw } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 /**
  * Props for FormActionsSection component
@@ -44,35 +45,41 @@ export function FormActionsSection({
   onReset,
 }: FormActionsSectionProps) {
   return (
-    <>
-      {/* Loading indicator */}
+    <div className="border-t border-muted pt-6">
       {loading && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span>Расчёт...</span>
         </div>
       )}
 
-      {/* Action Buttons */}
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-4 flex-col md:flex-row">
         <Button
           type="button"
           variant="outline"
           onClick={onReset}
           disabled={disabled || loading}
-          title="Нажмите Esc для сброса (горячая клавиша)"
+          className="flex items-center gap-2"
+          title="Нажмите Esc для сброса"
         >
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
           Сбросить
         </Button>
         <Button
           type="submit"
           disabled={disabled || loading || !isValid}
-          className="flex-1"
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2',
+            'bg-gradient-to-r from-primary to-primary/80',
+            'hover:shadow-md hover:from-primary/90 hover:to-primary/70',
+            'transition-all duration-200'
+          )}
           title="Нажмите Enter для расчёта"
         >
+          <Calculator className="h-4 w-4" aria-hidden="true" />
           {loading ? 'Расчёт...' : 'Рассчитать цену'}
         </Button>
       </div>
-    </>
+    </div>
   )
 }

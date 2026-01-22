@@ -41,10 +41,12 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
 
 /**
  * Convert form data to PriceCalculatorRequest for API submission
+ * Note: fulfillment_type is used internally for UI logic only, not sent to API
+ * Story 44.27: Added warehouse_id, coefficients, and delivery_date
+ * Story 44.32: Added box_type, weight_exceeds_25kg, localization_index, turnover_days
  */
 export function toApiRequest(data: FormData): PriceCalculatorRequest {
-  return {
-    fulfillment_type: data.fulfillment_type,
+  const baseRequest: PriceCalculatorRequest = {
     target_margin_pct: data.target_margin_pct,
     cogs_rub: data.cogs_rub,
     logistics_forward_rub: data.logistics_forward_rub,
@@ -55,6 +57,39 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
     vat_pct: data.vat_pct,
     acquiring_pct: data.acquiring_pct,
     ...(data.commission_pct !== undefined && { commission_pct: data.commission_pct }),
-    ...(data.nm_id !== undefined && { overrides: { nm_id: data.nm_id } }),
+    ...(data.nm_id !== undefined && { overrides: { nm_id: String(data.nm_id) } }),
   }
+
+  // Story 44.27: Warehouse & Coefficients
+  if (data.warehouse_id !== null) {
+    baseRequest.warehouse_id = data.warehouse_id
+  }
+  if (data.logistics_coefficient !== 1.0) {
+    baseRequest.logistics_coefficient = data.logistics_coefficient
+  }
+  if (data.fulfillment_type === 'FBO' && data.storage_coefficient !== 1.0) {
+    baseRequest.storage_coefficient = data.storage_coefficient
+  }
+  if (data.delivery_date !== null) {
+    baseRequest.delivery_date = data.delivery_date
+  }
+
+  // Story 44.32: Phase 1 HIGH priority fields
+  // Only send box_type and turnover_days for FBO
+  if (data.fulfillment_type === 'FBO') {
+    baseRequest.box_type = data.box_type
+    baseRequest.turnover_days = data.turnover_days
+  }
+
+  // Send weight_exceeds_25kg for both FBO and FBS
+  if (data.weight_exceeds_25kg) {
+    baseRequest.weight_exceeds_25kg = true
+  }
+
+  // Send localization_index for both FBO and FBS
+  if (data.localization_index !== 1.0) {
+    baseRequest.localization_index = data.localization_index
+  }
+
+  return baseRequest
 }

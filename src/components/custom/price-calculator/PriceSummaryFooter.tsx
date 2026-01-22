@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { Copy, CheckCircle2 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 
@@ -136,12 +136,20 @@ function CopyButton({ onClick, copied, label }: CopyButtonProps) {
     <Button
       variant="ghost"
       size="icon"
-      className="h-6 w-6"
+      className={cn(
+        'h-6 w-6 transition-all duration-200',
+        copied && 'scale-110 text-green-600'
+      )}
       onClick={onClick}
       aria-label={label}
     >
       {copied ? (
-        <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+        <CheckCircle2
+          className={cn(
+            'h-3.5 w-3.5',
+            'animate-in zoom-in-50 duration-200'
+          )}
+        />
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}

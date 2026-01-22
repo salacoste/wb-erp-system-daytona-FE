@@ -1,20 +1,32 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Calculator } from 'lucide-react'
 import { FulfillmentTypeSelector } from './FulfillmentTypeSelector'
+import { WarehouseSection } from './WarehouseSection'
+import { ProductSearchSelect } from './ProductSearchSelect'
 import { CategorySelector } from './CategorySelector'
-import { TaxConfigurationSection } from './TaxConfigurationSection'
 import { TargetMarginSection } from './TargetMarginSection'
 import { FixedCostsSection } from './FixedCostsSection'
 import { PercentageCostsFormSection } from './PercentageCostsFormSection'
-import { AdvancedOptionsSection } from './AdvancedOptionsSection'
+import { TaxConfigurationSection } from './TaxConfigurationSection'
 import { FormActionsSection } from './FormActionsSection'
 import { ResetConfirmDialog } from './ResetConfirmDialog'
+import { DimensionInputSection } from './DimensionInputSection'
+import { AutoFillWarning } from './AutoFillWarning'
+// Story 44.32: Missing Price Calculator Fields
+import { BoxTypeSelector } from './BoxTypeSelector'
+import { WeightThresholdCheckbox } from './WeightThresholdCheckbox'
+import { LocalizationIndexInput } from './LocalizationIndexInput'
+import { TurnoverDaysInput } from './TurnoverDaysInput'
 import { isFormEmpty, toTwoLevelFormData, toApiRequest } from './priceCalculatorUtils'
-import type { CategoryCommission } from '@/types/tariffs'
 import { useState, useCallback, useEffect, useRef } from 'react'
-import type { PriceCalculatorRequest, TaxType, TwoLevelPricingFormData } from '@/types/price-calculator'
+import { useProductAutoFill } from '@/hooks/useProductAutoFill'
+import { useWarehouseFormState } from './useWarehouseFormState'
+import type { PriceCalculatorRequest, TwoLevelPricingFormData, TaxType } from '@/types/price-calculator'
+import type { CategoryCommission } from '@/types/tariffs'
+import type { ProductWithDimensions } from '@/types/product'
 import { type FormData, defaultFormValues } from './usePriceCalculatorForm'
 
 export interface PriceCalculatorFormProps {
@@ -28,8 +40,8 @@ export interface PriceCalculatorFormProps {
 }
 
 /**
- * Price Calculator input form - Story 44.2-FE, 44.5-FE
- * Composed of extracted sub-components for maintainability
+ * Price Calculator input form
+ * Story 44.2-FE: Input Form Component
  */
 export function PriceCalculatorForm({
   onSubmit,
@@ -40,28 +52,58 @@ export function PriceCalculatorForm({
   onFormDataChange,
   onCommissionChange,
 }: PriceCalculatorFormProps) {
-  const [advancedOpen, setAdvancedOpen] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithDimensions | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<CategoryCommission | null>(null)
+  const [drrValue, setDrrValue] = useState(5)
+  const [sppValue, setSppValue] = useState(0)
+  const [taxRate, setTaxRate] = useState(6)
+  const [taxType, setTaxType] = useState<TaxType>('income')
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const { register, handleSubmit, reset, setValue, formState: { errors, isValid }, watch, control } =
+  const { handleSubmit, reset, setValue, register, formState: { isValid, errors }, control } =
     useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
 
-  const fulfillmentType = watch('fulfillment_type')
+  // Auto-fill hook for dimensions and category (Story 44.26b)
+  const {
+    dimensionAutoFill, categoryAutoFill, handleProductSelect,
+    markDimensionsModified, restoreDimensions, productHasDimensions, productHasCategory,
+  } = useProductAutoFill({ setValue, setSelectedCategory })
 
-  useEffect(() => {
-    if (fulfillmentType === 'FBS') setValue('storage_rub', 0)
-    if (selectedCategory) {
-      const commission = fulfillmentType === 'FBO'
-        ? selectedCategory.paidStorageKgvp : selectedCategory.kgvpMarketplace
-      setValue('commission_pct', commission, { shouldValidate: true })
-    }
-  }, [fulfillmentType, setValue, selectedCategory])
+  // Watch form values
+  const fulfillmentType = useWatch({ control, name: 'fulfillment_type' })
+  const buybackValue = useWatch({ control, name: 'buyback_pct' }) ?? 95
+  const lengthCm = useWatch({ control, name: 'length_cm' }) ?? 0
+  const widthCm = useWatch({ control, name: 'width_cm' }) ?? 0
+  const heightCm = useWatch({ control, name: 'height_cm' }) ?? 0
+  const dimensions = { length_cm: lengthCm, width_cm: widthCm, height_cm: heightCm }
+
+  // Story 44.27: Warehouse form state hook
+  const {
+    warehouseId, storageDays, storageRub, volumeLiters,
+    handleWarehouseChange, handleStorageDaysChange, handleStorageChange, handleDeliveryDateChange,
+  } = useWarehouseFormState({ setValue, lengthCm, widthCm, heightCm })
 
   useEffect(() => {
     return () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current) }
   }, [])
+
+  // Story 44.19: Propagate SPP changes to parent for results display
+  const handleSppChange = useCallback((value: number) => {
+    setSppValue(value)
+    onSppChange?.(value)
+  }, [onSppChange])
+
+  // Story 44.20: Propagate commission changes to parent for two-level pricing
+  // Story 44.16: Get commission based on fulfillment type
+  useEffect(() => {
+    if (selectedCategory) {
+      const commission = fulfillmentType === 'FBO'
+        ? selectedCategory.paidStorageKgvp
+        : selectedCategory.kgvpMarketplace
+      onCommissionChange?.(commission)
+    }
+  }, [selectedCategory, fulfillmentType, onCommissionChange])
 
   const performCalculation = useCallback((data: FormData) => {
     if (!isValid || isFormEmpty(data)) return
@@ -69,96 +111,162 @@ export function PriceCalculatorForm({
     onSubmit(toApiRequest(data))
   }, [isValid, onSubmit, onFormDataChange])
 
-  const onReset = () => {
+  const onReset = useCallback(() => {
     if (hasResults) setShowResetConfirm(true)
-    else { reset(defaultFormValues); setSelectedCategory(null) }
-  }
+    else reset(defaultFormValues)
+  }, [hasResults, reset])
 
   const confirmReset = () => {
     reset(defaultFormValues)
-    setSelectedCategory(null)
     setShowResetConfirm(false)
   }
 
+  // Story 44.30: Fixed Escape key - check if event was already handled by modal/popover
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !disabled) onReset()
+      // Skip if already handled (e.g., by Dialog/Popover)
+      if (e.defaultPrevented) return
+
+      // Skip if focus is inside a dialog, popover, or modal
+      const activeElement = document.activeElement
+      const isInModal = activeElement?.closest(
+        '[role="dialog"], [data-radix-popover-content], [data-radix-dropdown-content]'
+      )
+
+      if (e.key === 'Escape' && !disabled && !isInModal) {
+        onReset()
+      }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [hasResults, disabled])
-
-  const handleCategoryChange = (category: CategoryCommission | null) => {
-    setSelectedCategory(category)
-    setValue('category_id', category?.parentID ?? null)
-    if (category) {
-      const commission = fulfillmentType === 'FBO'
-        ? category.paidStorageKgvp : category.kgvpMarketplace
-      setValue('commission_pct', commission, { shouldValidate: true })
-      onCommissionChange?.(commission)
-    }
-  }
+  }, [disabled, onReset])
 
   return (
     <>
-      <Card data-testid="price-calculator-form">
-        <CardHeader>
-          <CardTitle>Калькулятор цены</CardTitle>
-          <CardDescription>
-            Введите параметры затрат для расчёта оптимальной цены продажи
-          </CardDescription>
+      <Card
+        data-testid="price-calculator-form"
+        className="shadow-sm hover:shadow-md transition-shadow duration-200 rounded-xl"
+      >
+        <CardHeader className="border-b-4 border-b-primary bg-muted/30 py-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Calculator className="h-5 w-5 text-primary" aria-hidden="true" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Калькулятор цены</CardTitle>
+              <CardDescription className="mt-1">
+                Рассчитайте оптимальную цену на основе затрат и желаемой маржи
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(performCalculation)} className="space-y-6">
+            {/* FBO/FBS selection */}
             <FulfillmentTypeSelector
-              value={watch('fulfillment_type')}
+              value={fulfillmentType}
+              disabled={disabled}
               onChange={(type) => setValue('fulfillment_type', type, { shouldValidate: true })}
+            />
+            {/* Warehouse & Coefficients - Story 44.27 */}
+            <WarehouseSection
+              warehouseId={warehouseId}
+              onWarehouseChange={handleWarehouseChange}
+              storageDays={storageDays}
+              onStorageDaysChange={handleStorageDaysChange}
+              storageRub={storageRub}
+              onStorageChange={handleStorageChange}
+              volumeLiters={volumeLiters}
+              disabled={disabled}
+              fulfillmentType={fulfillmentType}
+              onDeliveryDateChange={handleDeliveryDateChange}
+            />
+            {/* Story 44.32: FBO-only fields */}
+            {fulfillmentType === 'FBO' && (
+              <>
+                <BoxTypeSelector
+                  value={useWatch({ control, name: 'box_type' })}
+                  onValueChange={(value) => setValue('box_type', value, { shouldValidate: true })}
+                  disabled={disabled}
+                />
+                <TurnoverDaysInput
+                  value={useWatch({ control, name: 'turnover_days' })}
+                  onChange={(value) => setValue('turnover_days', value, { shouldValidate: true })}
+                  storagePerDay={storageRub}
+                  disabled={disabled}
+                />
+              </>
+            )}
+            {/* Story 44.32: Weight threshold (both FBO and FBS) */}
+            <WeightThresholdCheckbox
+              checked={useWatch({ control, name: 'weight_exceeds_25kg' })}
+              onChange={(checked) => setValue('weight_exceeds_25kg', checked, { shouldValidate: true })}
               disabled={disabled}
             />
+            {/* Story 44.32: Localization index (both FBO and FBS) */}
+            <LocalizationIndexInput
+              value={useWatch({ control, name: 'localization_index' })}
+              onChange={(value) => setValue('localization_index', value, { shouldValidate: true })}
+              warehouseId={warehouseId}
+              disabled={disabled}
+            />
+            {/* Product search (optional) - Story 44.26a-FE */}
+            <ProductSearchSelect
+              value={selectedProduct?.nm_id ?? null}
+              selectedProductName={selectedProduct?.sa_name}
+              onChange={(_nmId: string | null, product: ProductWithDimensions | null) => {
+                setSelectedProduct(product)
+                handleProductSelect(product)
+              }}
+              disabled={disabled}
+            />
+            {/* Auto-fill warnings (Story 44.26b) */}
+            {selectedProduct && !productHasDimensions && <AutoFillWarning type="dimensions" />}
+            {selectedProduct && !productHasCategory && <AutoFillWarning type="category" />}
+            {/* Product category with commission */}
             <CategorySelector
               value={selectedCategory}
-              onChange={handleCategoryChange}
+              onChange={setSelectedCategory}
               fulfillmentType={fulfillmentType}
               disabled={disabled}
+              autoFillState={categoryAutoFill}
             />
-            <TargetMarginSection
+            {/* Product dimensions with auto-fill (Story 44.26b) */}
+            <DimensionInputSection
               register={register}
-              control={control}
-              error={errors.target_margin_pct?.message}
+              errors={errors}
+              disabled={disabled}
+              dimensions={dimensions}
+              autoFillState={dimensionAutoFill}
+              onRestore={restoreDimensions}
+              onDimensionChange={markDimensionsModified}
             />
+            {/* Target margin slider */}
+            <TargetMarginSection control={control} />
+            {/* Fixed costs: COGS, logistics, storage */}
             <FixedCostsSection
               register={register}
               errors={errors}
               disabled={disabled}
               fulfillmentType={fulfillmentType}
             />
+            {/* Percentage costs: buyback, DRR, SPP */}
             <PercentageCostsFormSection
               register={register}
               control={control}
-              buybackValue={watch('buyback_pct')}
-              drrValue={watch('drr_pct')}
-              sppValue={watch('spp_pct')}
-              onDrrChange={(v) => setValue('drr_pct', v, { shouldValidate: true })}
-              onSppChange={(v) => { setValue('spp_pct', v, { shouldValidate: true }); onSppChange?.(v) }}
+              buybackValue={buybackValue}
+              drrValue={drrValue}
+              sppValue={sppValue}
+              onDrrChange={setDrrValue}
+              onSppChange={handleSppChange}
               disabled={disabled}
             />
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Налоги</h3>
-              <TaxConfigurationSection
-                taxRate={watch('tax_rate_pct')}
-                taxType={watch('tax_type')}
-                onTaxRateChange={(v) => setValue('tax_rate_pct', v, { shouldValidate: true })}
-                onTaxTypeChange={(v: TaxType) => setValue('tax_type', v, { shouldValidate: true })}
-                disabled={disabled}
-              />
-            </div>
-            <AdvancedOptionsSection
-              register={register}
-              errors={errors}
-              vatValue={watch('vat_pct')}
-              onVatChange={(v) => setValue('vat_pct', v, { shouldValidate: true })}
-              isOpen={advancedOpen}
-              onOpenChange={setAdvancedOpen}
+            {/* Tax configuration */}
+            <TaxConfigurationSection
+              taxRate={taxRate}
+              taxType={taxType}
+              onTaxRateChange={setTaxRate}
+              onTaxTypeChange={setTaxType}
               disabled={disabled}
             />
             <FormActionsSection loading={loading} disabled={disabled} isValid={isValid} onReset={onReset} />

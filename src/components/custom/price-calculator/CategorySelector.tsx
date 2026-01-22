@@ -3,6 +3,7 @@
 /**
  * CategorySelector - Searchable combobox for WB product categories
  * Story 44.16-FE: Category Selection with Search
+ * Story 44.26b-FE: Auto-fill Category with Lock/Unlock
  */
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
@@ -18,13 +19,14 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Check, ChevronsUpDown, X, AlertCircle } from 'lucide-react'
+import { Check, ChevronsUpDown, X, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCommissions } from '@/hooks/useCommissions'
 import { FieldTooltip } from './FieldTooltip'
+import { AutoFillBadge } from './AutoFillBadge'
+import { CategorySelectorLoading, CategorySelectorError } from './CategorySelectorStates'
 import type { CategoryCommission } from '@/types/tariffs'
-import type { FulfillmentType } from '@/types/price-calculator'
+import type { FulfillmentType, CategoryAutoFillState } from '@/types/price-calculator'
 
 const MAX_VISIBLE_RESULTS = 50
 const SEARCH_DEBOUNCE_MS = 300
@@ -36,6 +38,8 @@ export interface CategorySelectorProps {
   fulfillmentType: FulfillmentType
   disabled?: boolean
   error?: string
+  /** Auto-fill state for category (Story 44.26b) */
+  autoFillState?: CategoryAutoFillState
 }
 
 export function CategorySelector({
@@ -44,6 +48,7 @@ export function CategorySelector({
   fulfillmentType,
   disabled = false,
   error,
+  autoFillState,
 }: CategorySelectorProps) {
   const [open, setOpen] = useState(false)
   const [searchInput, setSearchInput] = useState('')
@@ -52,6 +57,11 @@ export function CategorySelector({
 
   const { data: commissionsData, isLoading, error: apiError, refetch } = useCommissions()
   const categories = commissionsData?.commissions ?? []
+
+  // Lock state from auto-fill (Story 44.26b)
+  const isLocked = autoFillState?.isLocked ?? false
+  const isAutoFilled = autoFillState?.source === 'auto'
+  const effectiveDisabled = disabled || isLocked
 
   // Debounce search input
   useEffect(() => {
@@ -78,47 +88,12 @@ export function CategorySelector({
   const formatCategoryName = (category: CategoryCommission) => `${category.parentName} → ${category.subjectName}`
 
   const handleSelect = (category: CategoryCommission) => {
-    onChange(category)
-    setOpen(false)
-    setSearchInput('')
-    setDebouncedSearch('')
+    onChange(category); setOpen(false); setSearchInput(''); setDebouncedSearch('')
   }
+  const handleClear = () => { onChange(null); setSearchInput(''); setDebouncedSearch('') }
 
-  const handleClear = () => {
-    onChange(null)
-    setSearchInput('')
-    setDebouncedSearch('')
-  }
-
-  if (isLoading) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Label className="flex-1">Категория товара</Label>
-          <FieldTooltip content="Категория определяет комиссию WB. FBO и FBS имеют разные ставки." />
-        </div>
-        <Skeleton className="h-10 w-full" />
-      </div>
-    )
-  }
-
-  if (apiError) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Label className="flex-1">Категория товара</Label>
-          <FieldTooltip content="Категория определяет комиссию WB. FBO и FBS имеют разные ставки." />
-        </div>
-        <div className="flex items-center gap-2 p-3 rounded-md border border-destructive bg-destructive/10">
-          <AlertCircle className="h-4 w-4 text-destructive" />
-          <span className="text-sm text-destructive flex-1">Ошибка загрузки категорий</span>
-          <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
-            Повторить
-          </Button>
-        </div>
-      </div>
-    )
-  }
+  if (isLoading) return <CategorySelectorLoading />
+  if (apiError) return <CategorySelectorError onRetry={() => refetch()} />
 
   const selectedCommission = value ? getCommissionPct(value) : null
   const isHighCommission = selectedCommission !== null && selectedCommission > HIGH_COMMISSION_THRESHOLD
@@ -127,6 +102,7 @@ export function CategorySelector({
     <div className="space-y-2">
       <div className="flex items-center gap-2">
         <Label className="flex-1">Категория товара</Label>
+        {isAutoFilled && <AutoFillBadge status="auto" />}
         <FieldTooltip content="Категория определяет комиссию WB. FBO и FBS имеют разные ставки. Поиск среди 7346 категорий." />
       </div>
 
@@ -137,8 +113,8 @@ export function CategorySelector({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            aria-label="Выбрать категорию товара"
-            disabled={disabled}
+            aria-label={isLocked ? 'Категория из карточки товара (заблокировано)' : 'Выбрать категорию товара'}
+            disabled={effectiveDisabled}
             className={cn('w-full justify-between font-normal', !value && 'text-muted-foreground', error && 'border-destructive')}
           >
             {value ? (
@@ -147,6 +123,7 @@ export function CategorySelector({
                 <Badge variant={isHighCommission ? 'destructive' : 'secondary'} className="ml-auto shrink-0">
                   {selectedCommission}%
                 </Badge>
+                {isLocked && <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" aria-hidden="true" />}
               </span>
             ) : (
               <span>Выберите категорию...</span>
@@ -155,7 +132,7 @@ export function CategorySelector({
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[400px] p-0" align="start">
+        <PopoverContent className="w-full p-0" align="start">
           <Command shouldFilter={false}>
             <CommandInput placeholder="Поиск категории..." value={searchInput} onValueChange={setSearchInput} />
             <CommandList>
@@ -192,7 +169,7 @@ export function CategorySelector({
         </PopoverContent>
       </Popover>
 
-      {value && !disabled && (
+      {value && !effectiveDisabled && (
         <Button
           type="button"
           variant="ghost"
@@ -203,6 +180,13 @@ export function CategorySelector({
           <X className="h-3 w-3 mr-1" />
           Очистить выбор
         </Button>
+      )}
+
+      {isLocked && (
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <Lock className="h-3 w-3" aria-hidden="true" />
+          Категория из карточки товара WB
+        </p>
       )}
 
       {error && <p className="text-sm text-destructive">{error}</p>}

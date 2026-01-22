@@ -1,4 +1,4 @@
-import type { FulfillmentType, TaxType } from '@/types/price-calculator'
+import type { FulfillmentType, TaxType, BoxType } from '@/types/price-calculator'
 
 /**
  * Form data structure matching PriceCalculatorRequest
@@ -7,6 +7,11 @@ import type { FulfillmentType, TaxType } from '@/types/price-calculator'
  * Story 44.17: Added tax_rate_pct and tax_type for tax configuration
  * Story 44.18: Added drr_pct for DRR input (replaces advertising_pct)
  * Story 44.19: Added spp_pct for SPP display (client-side only)
+ * Story 44.7: Added dimension fields (length_cm, width_cm, height_cm)
+ * Story 44.12: Added warehouse_id for warehouse selection
+ * Story 44.14: Added storage_days for storage cost calculation
+ * Story 44.27: Added warehouse coefficients and delivery date
+ * Story 44.32: Added box_type, weight_exceeds_25kg, localization_index, turnover_days
  */
 export interface FormData {
   fulfillment_type: FulfillmentType
@@ -26,6 +31,32 @@ export interface FormData {
   acquiring_pct: number
   commission_pct?: number
   nm_id?: number
+  /** Product length in cm (Story 44.7) */
+  length_cm: number
+  /** Product width in cm (Story 44.7) */
+  width_cm: number
+  /** Product height in cm (Story 44.7) */
+  height_cm: number
+  /** Selected warehouse ID (Story 44.12) */
+  warehouse_id: number | null
+  /** Selected warehouse name (Story 44.27) */
+  warehouse_name: string | null
+  /** Storage duration in days (Story 44.14) */
+  storage_days: number
+  /** Logistics coefficient from warehouse (Story 44.27) */
+  logistics_coefficient: number
+  /** Storage coefficient from warehouse (Story 44.27) */
+  storage_coefficient: number
+  /** Delivery date ISO string (Story 44.27) */
+  delivery_date: string | null
+  /** Story 44.32: Box type for FBO fulfillment (default: 'box') */
+  box_type: BoxType
+  /** Story 44.32: Weight exceeds 25kg threshold (default: false) */
+  weight_exceeds_25kg: boolean
+  /** Story 44.32: Localization index (КТР) for regional delivery (default: 1.0) */
+  localization_index: number
+  /** Story 44.32: Turnover days in storage for FBO (default: 20) */
+  turnover_days: number
 }
 
 /**
@@ -35,6 +66,7 @@ export interface FormData {
  * Story 44.17: Added tax_rate_pct (6%) and tax_type ('income') defaults - УСН Доходы
  * Story 44.18: Added drr_pct (5%) default for DRR
  * Story 44.19: Added spp_pct (0%) default for SPP - no discount by default
+ * Story 44.32: Added box_type ('box'), weight_exceeds_25kg (false), localization_index (1.0), turnover_days (20)
  */
 export const defaultFormValues: FormData = {
   fulfillment_type: 'FBO',
@@ -54,4 +86,26 @@ export const defaultFormValues: FormData = {
   acquiring_pct: 1.8,
   commission_pct: undefined,
   nm_id: undefined,
+  /** Story 44.7: Dimension defaults */
+  length_cm: 0,
+  width_cm: 0,
+  height_cm: 0,
+  /** Story 44.12: Warehouse selection default */
+  warehouse_id: null,
+  /** Story 44.27: Warehouse name default */
+  warehouse_name: null,
+  /** Story 44.14: Storage days default (14 days typical turnover) */
+  storage_days: 14,
+  /** Story 44.27: Coefficient defaults (1.0 = base rate) */
+  logistics_coefficient: 1.0,
+  storage_coefficient: 1.0,
+  delivery_date: null,
+  /** Story 44.32: Box type default (standard box) */
+  box_type: 'box',
+  /** Story 44.32: Weight threshold default (not exceeded) */
+  weight_exceeds_25kg: false,
+  /** Story 44.32: Localization index default (Central Federal District) */
+  localization_index: 1.0,
+  /** Story 44.32: Turnover days default (typical for WB) */
+  turnover_days: 20,
 }

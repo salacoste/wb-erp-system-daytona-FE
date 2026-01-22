@@ -49,7 +49,7 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Логистика до склада</TableCell>
+              <TableCell>Логистика к клиенту</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(cost_breakdown?.logistics_forward || 0)}
               </TableCell>

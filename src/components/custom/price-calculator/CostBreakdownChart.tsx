@@ -120,7 +120,7 @@ export function CostBreakdownChart({ data }: CostBreakdownChartProps) {
   )
 
   return (
-    <Card>
+    <Card className="shadow-sm rounded-xl border-l-4 border-l-primary">
       <CardHeader>
         <CardTitle className="text-lg">Структура затрат</CardTitle>
       </CardHeader>

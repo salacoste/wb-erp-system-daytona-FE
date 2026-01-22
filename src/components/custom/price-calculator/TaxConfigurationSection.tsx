@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { FieldTooltip } from './FieldTooltip'
 import { TaxPresetGrid } from './TaxPresetGrid'
 import { TAX_PRESETS, QUICK_TAX_RATES } from './tax-presets'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Receipt } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import type { TaxType, TaxPreset } from '@/types/price-calculator'
 
@@ -74,8 +74,14 @@ export function TaxConfigurationSection({
   }
 
   return (
-    <div className="space-y-4" data-testid="tax-configuration-section">
+    <div className="bg-amber-50 rounded-lg p-4 border-l-4 border-l-amber-400" data-testid="tax-configuration-section">
+      <div className="flex items-center gap-2 mb-4">
+        <Receipt className="h-4 w-4 text-amber-600" aria-hidden="true" />
+        <h3 className="text-sm font-medium text-amber-900">Налоги</h3>
+      </div>
+
       {/* Tax Rate Input */}
+      <div className="space-y-4">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <Label htmlFor="tax_rate_pct" className="flex-1">
@@ -191,6 +197,7 @@ export function TaxConfigurationSection({
         onPresetSelect={applyPreset}
         disabled={disabled}
       />
+      </div>
     </div>
   )
 }

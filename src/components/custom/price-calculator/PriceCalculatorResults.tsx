@@ -11,6 +11,7 @@ import { RecommendedPriceCard } from './RecommendedPriceCard'
 import { TwoLevelPricingDisplay } from './TwoLevelPricingDisplay'
 import { CostBreakdownChart } from './CostBreakdownChart'
 import { WarningsDisplay } from './WarningsDisplay'
+import { ResultsSkeleton } from './ResultsSkeleton'
 
 /**
  * Props for PriceCalculatorResults component
@@ -77,19 +78,9 @@ export function PriceCalculatorResults({
     )
   }
 
-  // Loading state
+  // Loading state - use skeleton
   if (loading) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-pulse text-2xl text-muted-foreground">
-              Расчёт...
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
+    return <ResultsSkeleton estimatedDuration={1500} />
   }
 
   // Error state - show RecommendedPriceCard to handle error display
