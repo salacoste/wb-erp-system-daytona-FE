@@ -117,37 +117,49 @@ interface ModelsWarehousePalletRates {
 
 **Описание:** Список складов WB с базовой информацией
 
-**Response:**
+**✅ IMPLEMENTED** - Story 43.10
+
+**Actual Response Format (Verified):**
 ```json
 {
   "data": {
     "warehouses": [
       {
-        "id": 1,
-        "name": "Коледино",
-        "city": "Подольск",
-        "federal_district": "Центральный ФО",
-        "cargo_types": ["MGT", "KGT"],
-        "coordinates": {
-          "lat": 55.3897,
-          "lon": 37.5674
-        }
+        "id": 507,
+        "name": "Краснодар",
+        "address": null,
+        "city": "Краснодар",
+        "federalDistrict": "Южный ФО"
       },
       {
-        "id": 2,
-        "name": "Казань",
-        "city": "Казань",
-        "federal_district": "Приволжский ФО",
-        "cargo_types": ["MGT", "SGT", "KGT"],
-        "coordinates": {
-          "lat": 55.7879,
-          "lon": 49.1233
-        }
+        "id": 23,
+        "name": "Коледино",
+        "address": null,
+        "city": "Подольск",
+        "federalDistrict": "Центральный ФО"
       }
     ],
-    "updated_at": "2026-01-19T10:00:00Z"
+    "updated_at": "2026-01-21T10:00:00Z"
   }
 }
+```
+
+**Field Mapping:**
+- `id` (number) - Warehouse ID
+- `name` (string) - Warehouse name
+- `address` (null) - Not available in simplified response
+- `city` (string) - City name
+- `federalDistrict` (string | null) - Federal district
+- `updated_at` (ISO string) - Response timestamp
+
+**Curl Example:**
+```bash
+curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Cabinet-Id: YOUR_CABINET_ID" \
+  | jq '.data.warehouses | length'
+
+# Expected: 45-50 warehouses
 ```
 
 ### Endpoint 2: GET /v1/tariffs/box
@@ -366,6 +378,98 @@ const storageCost = (volume * tariffs.storage.per_liter_per_day_rub)
 
 ---
 
-**Status:** Отправлено команде backend. Ожидаем ответы на вопросы.
+**Status:** ✅ IMPLEMENTED - All endpoints working correctly
 
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-01-21
+
+---
+
+## Implementation Summary (2026-01-21)
+
+### Fixes Applied
+
+**Issue #1: Warehouse Response Format** - ✅ FIXED
+- **File**: `src/tariffs/tariffs.controller.ts:215-221`
+- **Change**: Response wrapped in `{data: {warehouses, updated_at}}`
+- **Impact**: Frontend can now correctly unwrap and display warehouses
+
+**Issue #2: Category Hierarchy** - ✅ FIXED
+- **File**: `src/products/products.service.ts:1815`
+- **Change**: Field reference `subjectName` → `category`
+- **Impact**: Category data now correctly populated in products endpoint
+
+### Frontend Integration Verified
+
+```typescript
+// Frontend type (src/types/tariffs.ts)
+interface Warehouse {
+  id: number;
+  name: string;
+  address?: string | null;
+  city?: string;
+  federalDistrict?: string | null;
+}
+
+// Frontend usage
+const { data } = useWarehouses();
+// Returns: { warehouses: Warehouse[], updated_at: string }
+```
+
+### Response Format Examples
+
+**GET /v1/tariffs/warehouses:**
+```json
+{
+  "data": {
+    "warehouses": [
+      { "id": 507, "name": "Краснодар", "address": null, "city": "Краснодар", "federalDistrict": "Южный ФО" }
+    ],
+    "updated_at": "2026-01-21T10:00:00Z"
+  }
+}
+```
+
+**GET /v1/products?include_dimensions=true:**
+```json
+{
+  "products": [
+    {
+      "nm_id": "686701815",
+      "sa_name": "Эпоксидная смола для творчества 5 кг",
+      "dimensions": {
+        "length_mm": 400,
+        "width_mm": 300,
+        "height_mm": 100,
+        "volume_liters": 12.0
+      },
+      "category_hierarchy": {
+        "subject_id": 123,
+        "subject_name": "Клеи и герметики",
+        "parent_id": 8,
+        "parent_name": "Строительные материалы"
+      }
+    }
+  ]
+}
+```
+
+### Test Commands
+
+```bash
+# Test warehouses endpoint
+curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Cabinet-Id: YOUR_CABINET_ID" \
+  | jq '.data.warehouses | length'
+
+# Test products with dimensions
+curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&q=686701815" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Cabinet-Id: YOUR_CABINET_ID" \
+  | jq '.products[0] | {dimensions, category_hierarchy}'
+```
+
+---
+
+*Status:* ✅ IMPLEMENTED
+*Last Updated:* 2026-01-21

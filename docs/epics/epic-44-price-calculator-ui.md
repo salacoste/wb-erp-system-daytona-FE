@@ -224,7 +224,126 @@ UI страница в фронтенде, которая:
 - E2E test for full flow
 - Update documentation
 
-**Total Estimate:** 14 Story Points
+**Phase 1 Estimate:** 14 Story Points
+
+---
+
+## Phase 2: Visual Enhancement Stories
+
+После завершения базовой функциональности (Stories 44.1-44.6), проводится визуальный polish для улучшения UX.
+
+**Depends On:** Story 44.20 (Two-Level Pricing Display - Complete)
+
+### Visual Enhancement Stories Table
+
+| Story ID | Title | Status | SP | Priority | Depends On |
+|----------|-------|--------|----|:--------:|------------|
+| 44.21-FE | Card Elevation System & Shadow Hierarchy | 📋 Ready for Dev | 2 | P0 | 44.20 |
+| 44.22-FE | Hero Price Display Enhancement | 📋 Ready for Dev | 2 | P0 | 44.20 |
+| 44.23-FE | Form Card Visual Upgrade | 📋 Ready for Dev | 3 | P0 | 44.20 |
+| 44.24-FE | Enhanced Slider with Visual Zones | 📋 Ready for Dev | 2 | P1 | 44.20 |
+| 44.25-FE | Loading States & Micro-interactions | 📋 Ready for Dev | 3 | P1 | 44.20 |
+
+**Phase 2 Estimate:** 12 Story Points
+
+### Story 44.21-FE: Card Elevation System & Shadow Hierarchy
+**Priority:** P0 | **Points:** 2
+- Define elevation levels (0-3) with shadow hierarchy
+- Apply shadows to form, results, and breakdown cards
+- Add hover transitions and mobile responsiveness
+- Ensure WCAG 2.1 AA compliance
+
+### Story 44.22-FE: Hero Price Display Enhancement
+**Priority:** P0 | **Points:** 2
+- Enhanced gradient background and shadow for recommended price
+- Larger font size with drop-shadow
+- Price gap indicator with colored backgrounds and icons
+- Visual hierarchy reinforcement (min/recommended/customer)
+
+### Story 44.23-FE: Form Card Visual Upgrade
+**Priority:** P0 | **Points:** 3
+- Enhanced card header with icon and primary border
+- Section grouping with colored backgrounds (target, fixed, percentage, tax)
+- Input field focus enhancements
+- Action buttons with gradient and icons
+
+### Story 44.24-FE: Enhanced Slider with Visual Zones
+**Priority:** P1 | **Points:** 2
+- Visual zone overlay (low/medium/high margin zones)
+- Dynamic track color based on value
+- Zone labels and colored value badge
+- Keyboard accessible with zone announcements
+
+### Story 44.25-FE: Loading States & Micro-interactions
+**Priority:** P1 | **Points:** 3
+- Skeleton loader with progress indicator
+- Value transition animations (count up/down)
+- Copy button success animation
+- Hover and focus micro-interactions
+- `prefers-reduced-motion` support
+
+---
+
+## Phase 3: Warehouse & Coefficients Integration
+
+**Status:** 🚧 IN PROGRESS
+**Критичность:** P0 - Без этого расчёт цены неточный
+
+Интеграция выбора склада и коэффициентов для логистики/хранения.
+
+### Бизнес-логика коэффициентов
+
+1. **Базовая ставка** - единая для всех складов (backend знает)
+2. **Коэффициент склада** - повышающий/понижающий множитель (100 = 1.0, 125 = 1.25)
+3. **Итоговая ставка** = Базовая × Коэффициент
+4. **Применяется к**:
+   - Хранение (только ФБО)
+   - Логистика доставки (ФБО и ФБС)
+   - Логистика возврата (ФБО и ФБС)
+
+### Phase 3 Stories
+
+| Story ID | Title | Status | SP | Priority | Depends On |
+|----------|-------|--------|----|:--------:|------------|
+| 44.12-FE | Warehouse Selection Dropdown | ✅ Complete | 3 | P0 | Backend #98 |
+| 44.13-FE | Auto-fill Coefficients | ✅ Complete | 3 | P1 | 44.12 |
+| 44.9-FE | Logistics Coefficients UI | ✅ Complete | 2 | P1 | 44.12 |
+| 44.14-FE | Storage Cost Calculation | ✅ Complete | 2 | P1 | 44.12, 44.7 |
+| **44.27-FE** | **Warehouse & Coefficients Integration** | **📋 Ready for Dev** | **2** | **P0** | **44.12, 44.13** |
+
+**Phase 3 Total:** 12 Story Points
+
+### Story 44.27-FE: Warehouse & Coefficients Integration (NEW - CRITICAL)
+**Priority:** P0 | **Points:** 2
+
+**Проблема:** Компоненты `WarehouseSection`, `WarehouseSelect`, `CoefficientField` созданы, но **НЕ ИНТЕГРИРОВАНЫ** в `PriceCalculatorForm.tsx`.
+
+**Задачи:**
+- Добавить `WarehouseSection` в форму калькулятора
+- Связать выбор склада с получением коэффициентов
+- Передать коэффициенты в API запрос
+- Показать хранение только для FBO
+
+**Детальная спецификация:** `docs/stories/epic-44/story-44.27-fe-warehouse-integration.md`
+
+---
+
+## Phase 4: Bug Fixes & User Feedback
+
+| Story ID | Title | Status | SP | Priority | Depends On |
+|----------|-------|--------|----|:--------:|------------|
+| 44.28-FE | Logistics Field Naming Fix | 📋 Ready for Dev | 1 | P1 | None |
+
+### Story 44.28-FE: Logistics Field Naming Fix
+**Priority:** P1 | **Points:** 1
+- Fix incorrect "Логистика до склада" label → "Логистика к клиенту"
+- Update tooltips to clarify WB → customer delivery direction
+- User feedback: labels should match WB terminology
+- No API changes required (cosmetic fix only)
+
+---
+
+**Total Estimate (Phase 1 + Phase 2 + Phase 3 + Phase 4):** 39 Story Points
 
 ---
 

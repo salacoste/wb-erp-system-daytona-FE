@@ -1,10 +1,10 @@
 # Story 44.14: Storage Cost Calculation
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: Blocked (Backend)
+**Status**: 📋 Ready for Dev
 **Priority**: P1 - IMPORTANT
 **Effort**: 2 SP
-**Depends On**: Story 44.7 (Volume), Story 44.13 (Storage Tariffs), Request #98 (Backend API)
+**Depends On**: Story 44.7 (Volume) ✅, Story 44.12 (Warehouse) ✅
 
 ---
 
@@ -22,28 +22,33 @@
 
 ---
 
-## Backend Dependency
+## Backend API Status: READY (Request #98)
 
-**Request #98**: Warehouses & Tariffs Coefficients API
-**Status**: Pending Backend Response
+Backend has implemented storage tariffs as part of the warehouse API:
+- `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`
+- `docs/stories/epic-44/SDK-WAREHOUSES-TARIFFS-REFERENCE.md`
 
-> "Запрос отправлен команде backend, ожидаем уточнения по ряду вопросов."
+### Storage Tariff Data (from Warehouse API)
 
-**Blocking Questions**:
-1. Caching TTL for storage tariffs
-2. Coefficient normalization (string "125" -> decimal 1.25)
-3. FBS vs FBO storage tariff differentiation
-
-**Required API Response** (from Request #98):
 ```json
 {
-  "storage": {
-    "coefficient": 1.0,
-    "base_per_day_rub": 0.07,
-    "per_liter_per_day_rub": 0.05
-  }
+  "warehouseID": 507,
+  "warehouseName": "Коледино",
+  "boxStorageBase": "1*1",    // 1 RUB base per day
+  "boxStorageLiter": "1*x"    // 1 RUB per liter per day
 }
 ```
+
+**Tariff Parsing**:
+```typescript
+const baseLiterRub = parseTariffExpression("1*1") // → 1
+const perLiterRub = parseTariffExpression("1*x")  // → 1
+```
+
+**Key Points**:
+1. Storage tariffs come from warehouse data (Story 44.12)
+2. Coefficient is 1.0 by default (no storage coefficient in API)
+3. Formula matches logistics pattern: `(base + (volume-1) × per_liter) × coefficient`
 
 ---
 
@@ -646,13 +651,13 @@ _(To be filled after code review)_
 ### AC Verification
 | AC | Requirement | Status | Evidence |
 |----|-------------|--------|----------|
-| AC1 | Storage days input field | ⏳ Blocked | |
-| AC2 | Daily storage cost calculation | ⏳ Blocked | |
-| AC3 | Total storage cost calculation | ⏳ Blocked | |
-| AC4 | Calculation breakdown display | ⏳ Blocked | |
-| AC5 | Long storage warning | ⏳ Blocked | |
-| AC6 | Form integration | ⏳ Blocked | |
-| AC7 | Fallback mode | ⏳ Blocked | |
+| AC1 | Storage days input field | ⏳ | |
+| AC2 | Daily storage cost calculation | ⏳ | |
+| AC3 | Total storage cost calculation | ⏳ | |
+| AC4 | Calculation breakdown display | ⏳ | |
+| AC5 | Long storage warning | ⏳ | |
+| AC6 | Form integration | ⏳ | |
+| AC7 | Fallback mode | ⏳ | |
 
 ### Accessibility Check
 | Check | Status | Evidence |
@@ -666,17 +671,18 @@ _(To be filled after code review)_
 
 ---
 
-## Unblock Criteria
+## Unblock Status: READY
 
-This story will be unblocked when:
+All blocking dependencies resolved:
 
-1. [ ] Request #98 backend response received
-2. [ ] Story 44.13 (Storage Tariffs Auto-fill) implementation complete
-3. [ ] Storage tariff API endpoint available OR fallback mode approved
+1. [x] Request #98 backend response received (2026-01-20)
+2. [x] Storage tariffs available from warehouse API (Story 44.12)
+3. [x] Fallback mode with default tariffs available
 
-**Alternative Path**: If backend is delayed, implement with fallback mode (AC7) first, then integrate API when available.
+**Implementation Path**: Use warehouse storage tariffs from Story 44.12, with fallback to defaults when no warehouse selected.
 
 ---
 
 **Created**: 2026-01-19
-**Last Updated**: 2026-01-19
+**Last Updated**: 2026-01-20
+**Unblocked**: 2026-01-20 (Backend API Ready - Request #98)

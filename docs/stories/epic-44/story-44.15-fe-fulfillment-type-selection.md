@@ -6,6 +6,7 @@
 **Effort**: 2 SP
 **Depends On**: Story 44.2 (Input Form)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 2, Step 1
+**Backend API**: `POST /v1/products/price-calculator` with `delivery_type` parameter
 
 ---
 
@@ -26,13 +27,16 @@
 
 | Aspect | FBO (Fulfillment by WB) | FBS (Fulfillment by Seller) |
 |--------|-------------------------|----------------------------|
+| Описание (RU) | Товар на складе WB | Товар у продавца |
 | Storage | Items stored at WB warehouse | Items stored by seller |
 | Commission Field | `paidStorageKgvp` (~25%) | `kgvpMarketplace` (~28%) |
 | Storage Costs | Applicable | Not applicable (N/A) |
 | Acceptance Costs | Applicable | Not applicable (N/A) |
+| Turnover Days | Applicable (default: 20) | Not applicable (N/A) |
+| API Field | `delivery_type: "fbo"` | `delivery_type: "fbs"` |
 | Typical Use | High-volume items | Low-volume or fragile items |
 
-**Business Impact**: FBS commission is typically **3-4% higher** than FBO (96.5% of categories).
+**Business Impact**: FBS commission is typically **3-4% higher** than FBO (96.5% of categories based on analysis of 7,346 WB categories).
 
 ---
 
@@ -87,7 +91,46 @@
 - **Parent Epic**: `docs/epics/epic-44-price-calculator-ui.md`
 - **Story 44.2**: Input Form Component (form structure)
 - **Story 44.16**: Category Selection (provides commission rates)
-- **Backend API**: Commission rates per fulfillment type from `/v1/tariffs/commissions`
+- **Backend API**:
+  - `GET /v1/tariffs/commissions` - Commission rates per fulfillment type
+  - `POST /v1/products/price-calculator` - Accepts `delivery_type: "fbo" | "fbs"`
+
+---
+
+## API Contract
+
+### Backend Integration
+
+**Price Calculator Request** (`POST /v1/products/price-calculator`):
+```json
+{
+  "delivery_type": "fbo",           // "fbo" | "fbs" - affects commission & costs
+  "target_margin_pct": 20,
+  "cogs_rub": 1500,
+  // ... other fields
+  "storage_rub": 50,                // FBO only - set to 0 for FBS
+  "storage_days": 7                 // FBO only - ignored for FBS
+}
+```
+
+**Commission Field Mapping** (from `GET /v1/tariffs/commissions`):
+```typescript
+// API returns commission rates per category
+{
+  "parentID": 123,
+  "parentName": "Одежда",
+  "subjectName": "Платья",
+  "paidStorageKgvp": 25,    // ← Use for FBO
+  "kgvpMarketplace": 28,    // ← Use for FBS (+3% higher)
+  "kgvpSupplier": 10,       // DBS (future)
+  "kgvpSupplierExpress": 5  // EDBS (future)
+}
+```
+
+**Commission Difference Analysis** (from backend):
+- 96.5% of 7,346 categories: FBS > FBO
+- Average difference: +3.38%
+- Max difference: up to +10% in some categories
 
 ---
 
@@ -245,9 +288,15 @@ const fulfillmentType = watch('fulfillment_type')
 // Effect to reset FBO-only fields when switching to FBS
 useEffect(() => {
   if (fulfillmentType === 'FBS') {
+    // Reset FBO-only fields
     setValue('storage_rub', 0)
+    setValue('storage_days', 0)
+    setValue('turnover_days', 0)
     setValue('acceptance_type', 'free')
     setValue('acceptance_coefficient', 1)
+  } else {
+    // Restore FBO defaults
+    setValue('turnover_days', 20)  // Default turnover days
   }
 }, [fulfillmentType, setValue])
 
@@ -260,10 +309,26 @@ useEffect(() => {
       name="storage_rub"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Хранение (за единицу)</FormLabel>
+          <FormLabel>Хранение (за единицу в сутки)</FormLabel>
           <FormControl>
             <Input type="number" min="0" step="0.01" {...field} />
           </FormControl>
+          <FormDescription>Стоимость хранения на складе WB</FormDescription>
+        </FormItem>
+      )}
+    />
+
+    {/* Turnover days */}
+    <FormField
+      control={control}
+      name="turnover_days"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Оборачиваемость (дней)</FormLabel>
+          <FormControl>
+            <Input type="number" min="1" max="365" {...field} />
+          </FormControl>
+          <FormDescription>Среднее время от поставки до продажи</FormDescription>
         </FormItem>
       )}
     />
@@ -272,6 +337,33 @@ useEffect(() => {
     <AcceptanceTypeSection control={control} />
   </>
 )}
+```
+
+### API Request Builder
+
+```typescript
+// Build request based on fulfillment type
+function buildCalculatorRequest(formData: FormData): PriceCalculatorRequest {
+  const request: PriceCalculatorRequest = {
+    delivery_type: formData.fulfillment_type.toLowerCase() as 'fbo' | 'fbs',
+    cogs_rub: formData.cogs_rub,
+    target_margin_pct: formData.target_margin_pct,
+    // ... other common fields
+  }
+
+  // Add FBO-specific fields
+  if (formData.fulfillment_type === 'FBO') {
+    request.storage_rub = formData.storage_rub
+    request.storage_days = formData.storage_days
+    request.turnover_days = formData.turnover_days
+  } else {
+    // FBS: storage fields are 0
+    request.storage_rub = 0
+    request.storage_days = 0
+  }
+
+  return request
+}
 ```
 
 ### UI Layout
@@ -304,12 +396,14 @@ When FBS selected:
 
 | Scenario | Handling |
 |----------|----------|
-| Switch FBO → FBS | Reset storage/acceptance to 0, hide sections |
-| Switch FBS → FBO | Restore default storage/acceptance, show sections |
+| Switch FBO → FBS | Reset storage/acceptance/turnover to 0, hide FBO sections |
+| Switch FBS → FBO | Restore defaults (turnover=20, storage=0), show FBO sections |
 | No category selected | Show placeholder commission % (25% FBO / 28% FBS) |
 | Category selected | Calculate actual commission difference from API data |
-| Form reset | Fulfillment type resets to FBO |
+| Form reset | Fulfillment type resets to FBO (default) |
 | Mobile viewport | Full-width buttons, stack vertically if needed |
+| API error on commission fetch | Use default commission (25% FBO / 28% FBS), show warning |
+| Rapid FBO↔FBS toggle | Debounce state changes (100ms) |
 
 ---
 

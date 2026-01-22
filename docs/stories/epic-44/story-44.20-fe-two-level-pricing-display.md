@@ -4,8 +4,9 @@
 **Status**: 📋 Ready for Dev
 **Priority**: P0 - CRITICAL
 **Effort**: 3 SP
-**Depends On**: Story 44.3 (Results Display), Story 44.15-44.19 (new inputs)
+**Depends On**: Story 44.3 (Results Display), Story 44.15-44.19 (all V2 inputs)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 5, Section 8
+**Backend API**: `POST /v1/products/price-calculator` (returns full breakdown)
 
 ---
 
@@ -124,7 +125,76 @@
 - **Requirements**: `PRICE-CALCULATOR-REQUIREMENTS.md` Section 5, Section 8
 - **Parent Epic**: `docs/epics/epic-44-price-calculator-ui.md`
 - **Story 44.3**: Results Display (existing component to update)
+- **Story 44.15**: Fulfillment Type (FBO/FBS affects costs)
+- **Story 44.16**: Category Selection (commission rate)
+- **Story 44.17**: Tax Configuration (tax in breakdown)
+- **Story 44.18**: DRR Input (variable costs)
 - **Story 44.19**: SPP Display (customer price)
+
+---
+
+## API Contract
+
+### Backend Response Structure
+
+**POST /v1/products/price-calculator Response:**
+```json
+{
+  "result": {
+    "recommended_price": 4057.87,
+    "target_margin_pct": 20.0,
+    "actual_margin_rub": 811.57,
+    "actual_margin_pct": 20.0
+  },
+
+  "fixed_costs": {
+    "cogs": { "rub": 1500.00 },
+    "logistics_to_customer": { "rub": 74.00 },
+    "logistics_return_effective": { "rub": 53.00 },
+    "storage": { "rub": 50.00 },                    // FBO only
+    "acceptance": { "rub": 76.00 },                 // FBO only
+    "total": { "rub": 1753.00 }
+  },
+
+  "percentage_breakdown": {
+    "commission_wb": { "pct": 25.0, "rub": 1014.47 },
+    "acquiring": { "pct": 2.0, "rub": 81.16 },
+    "advertising": { "pct": 5.0, "rub": 202.89 },
+    "vat": { "pct": 6.0, "rub": 243.47 },
+    "margin": { "pct": 20.0, "rub": 811.57 }
+  },
+
+  "summary": {
+    "fixed_costs_total": 1753.00,
+    "percentage_costs_total": 2353.56,
+    "total_costs": 4106.56,
+    "profit_before_tax": 811.57
+  }
+}
+```
+
+### Frontend Calculation: Minimum Price
+
+**Backend returns `recommended_price`** (with margin + DRR). Frontend calculates **minimum_price** (without margin, without DRR):
+
+```typescript
+// Minimum price formula (frontend-only calculation)
+const minPctRate = commission_pct/100 + acquiring_pct/100 + tax_income_pct/100
+const minimumPrice = fixedCostsTotal / (1 - minPctRate)
+
+// Example:
+// fixedCostsTotal = 1753 ₽
+// minPctRate = 0.25 + 0.02 + 0.06 = 0.33
+// minimumPrice = 1753 / (1 - 0.33) = 1753 / 0.67 = 2616.42 ₽
+```
+
+### Customer Price (with SPP)
+
+```typescript
+// Frontend-only (SPP not sent to backend)
+const customerPrice = recommendedPrice * (1 - sppPct / 100)
+// 4057.87 × 0.90 = 3652.08 ₽
+```
 
 ---
 
@@ -152,41 +222,64 @@ src/
 ```typescript
 // src/types/price-calculator.ts
 
+/**
+ * Two-Level Pricing Result
+ * Combined from API response + frontend calculations
+ */
 export interface TwoLevelPricingResult {
-  minimumPrice: number
-  recommendedPrice: number
-  customerPrice: number
+  // Price levels
+  minimumPrice: number        // Frontend-calculated (no margin, no DRR)
+  recommendedPrice: number    // From API (with margin + DRR)
+  customerPrice: number       // Frontend-calculated (with SPP discount)
+
+  // Price gap analysis
   priceGap: {
-    rub: number
-    pct: number
+    rub: number               // Absolute difference
+    pct: number               // Percentage difference
   }
 
+  // Fixed costs (from API)
   fixedCosts: {
     cogs: number
     logisticsForward: number
     logisticsReverseEffective: number
-    storage: number        // FBO only
-    acceptance: number     // FBO only
+    storage: number           // FBO only (0 for FBS)
+    acceptance: number        // FBO only (0 for FBS)
     total: number
   }
 
+  // Percentage costs (from API + calculated)
   percentageCosts: {
     commissionWb: { pct: number; rub: number }
     acquiring: { pct: number; rub: number }
-    taxIncome: { pct: number; rub: number } | null  // Only for income tax
+    taxIncome: { pct: number; rub: number } | null  // Only for income tax type
     total: { pct: number; rub: number }
   }
 
+  // Variable costs (DRR/advertising)
   variableCosts: {
     drr: { pct: number; rub: number }
     total: { pct: number; rub: number }
   }
 
+  // Margin breakdown
   margin: {
-    pct: number
-    rub: number
-    afterTax: number | null  // Only for profit tax
+    pct: number               // Target margin percentage
+    rub: number               // Gross margin in rubles
+    afterTax: number | null   // Net margin after profit tax (only for profit tax type)
   }
+}
+
+/**
+ * Price gap status for UI display
+ */
+export type PriceGapStatus = 'excellent' | 'good' | 'normal' | 'low' | 'critical'
+
+export interface PriceGapStatusConfig {
+  status: PriceGapStatus
+  color: string
+  bgColor: string
+  message: string
 }
 ```
 
@@ -427,75 +520,94 @@ export function VariableCostsBreakdown({
 ```typescript
 // src/lib/two-level-pricing.ts
 
-import type { PriceCalculatorFormData, TwoLevelPricingResult } from '@/types/price-calculator'
+import type {
+  PriceCalculatorFormData,
+  PriceCalculatorResponse,
+  TwoLevelPricingResult
+} from '@/types/price-calculator'
 
 /**
- * Calculate two-level pricing from form data
+ * Calculate two-level pricing from API response + form data
+ *
+ * Backend provides: recommended_price, cost breakdowns
+ * Frontend calculates: minimum_price, customer_price, price_gap
  */
 export function calculateTwoLevelPricing(
+  apiResponse: PriceCalculatorResponse,
   formData: PriceCalculatorFormData,
   commissionPct: number
 ): TwoLevelPricingResult {
-  // Fixed costs
+  // Use backend values for fixed costs
   const fixedCosts = {
-    cogs: formData.cogs_rub,
-    logisticsForward: formData.logistics_forward_rub,
-    logisticsReverseEffective: formData.logistics_reverse_rub * (1 - formData.buyback_pct / 100),
-    storage: formData.fulfillment_type === 'FBO' ? formData.storage_rub : 0,
-    acceptance: formData.fulfillment_type === 'FBO' ? formData.acceptance_cost : 0,
-    total: 0,
+    cogs: apiResponse.fixed_costs.cogs.rub,
+    logisticsForward: apiResponse.fixed_costs.logistics_to_customer.rub,
+    logisticsReverseEffective: apiResponse.fixed_costs.logistics_return_effective.rub,
+    storage: apiResponse.fixed_costs.storage?.rub ?? 0,       // FBO only
+    acceptance: apiResponse.fixed_costs.acceptance?.rub ?? 0, // FBO only
+    total: apiResponse.fixed_costs.total.rub,
   }
-  fixedCosts.total = Object.values(fixedCosts).reduce((sum, v) => sum + (typeof v === 'number' ? v : 0), 0) - fixedCosts.total
 
-  // Percentage rates
+  // Percentage rates from form/API
   const commissionRate = commissionPct / 100
   const acquiringRate = formData.acquiring_pct / 100
-  const drrRate = formData.drr_pct / 100
+  const taxRate = formData.tax_type === 'income' ? formData.tax_rate_pct / 100 : 0
+  const drrRate = formData.advertising_pct / 100  // Note: advertising_pct = DRR
   const marginRate = formData.target_margin_pct / 100
 
-  // Tax handling
-  const taxRate = formData.tax_type === 'income' ? formData.tax_rate_pct / 100 : 0
-
-  // LEVEL 1: Minimum price (no margin, no DRR)
+  // LEVEL 1: Minimum price (frontend calculation)
+  // Excludes: margin, DRR (variable costs)
+  // Includes: commission, acquiring, income tax
   const minPctRate = commissionRate + acquiringRate + taxRate
   const minimumPrice = fixedCosts.total / (1 - minPctRate)
 
-  // LEVEL 2: Recommended price (with margin and DRR)
-  const totalPctRate = minPctRate + drrRate + marginRate
-  const recommendedPrice = fixedCosts.total / (1 - totalPctRate)
+  // LEVEL 2: Recommended price (from API)
+  const recommendedPrice = apiResponse.result.recommended_price
 
-  // Customer price (after SPP)
+  // LEVEL 3: Customer price (frontend calculation with SPP)
   const customerPrice = recommendedPrice * (1 - formData.spp_pct / 100)
 
-  // Price gap
+  // Price gap (recommended vs minimum)
   const priceGap = {
     rub: recommendedPrice - minimumPrice,
-    pct: ((recommendedPrice - minimumPrice) / minimumPrice) * 100,
+    pct: minimumPrice > 0 ? ((recommendedPrice - minimumPrice) / minimumPrice) * 100 : 0,
   }
 
-  // Percentage costs (based on recommended price)
+  // Percentage costs (from API breakdown)
   const percentageCosts = {
-    commissionWb: { pct: commissionPct, rub: recommendedPrice * commissionRate },
-    acquiring: { pct: formData.acquiring_pct, rub: recommendedPrice * acquiringRate },
-    taxIncome: taxRate > 0
-      ? { pct: formData.tax_rate_pct, rub: recommendedPrice * taxRate }
-      : null,
+    commissionWb: {
+      pct: apiResponse.percentage_breakdown.commission_wb.pct,
+      rub: apiResponse.percentage_breakdown.commission_wb.rub,
+    },
+    acquiring: {
+      pct: apiResponse.percentage_breakdown.acquiring.pct,
+      rub: apiResponse.percentage_breakdown.acquiring.rub,
+    },
+    taxIncome: taxRate > 0 ? {
+      pct: apiResponse.percentage_breakdown.vat.pct,
+      rub: apiResponse.percentage_breakdown.vat.rub,
+    } : null,
     total: {
       pct: minPctRate * 100,
       rub: recommendedPrice * minPctRate,
     },
   }
 
-  // Variable costs
+  // Variable costs (DRR from API)
   const variableCosts = {
-    drr: { pct: formData.drr_pct, rub: recommendedPrice * drrRate },
-    total: { pct: formData.drr_pct, rub: recommendedPrice * drrRate },
+    drr: {
+      pct: apiResponse.percentage_breakdown.advertising.pct,
+      rub: apiResponse.percentage_breakdown.advertising.rub,
+    },
+    total: {
+      pct: apiResponse.percentage_breakdown.advertising.pct,
+      rub: apiResponse.percentage_breakdown.advertising.rub,
+    },
   }
 
-  // Margin
-  const grossMargin = recommendedPrice * marginRate
+  // Margin (from API + profit tax calculation)
+  const grossMargin = apiResponse.result.actual_margin_rub
   const margin = {
-    pct: formData.target_margin_pct,
+    pct: apiResponse.result.actual_margin_pct,
     rub: grossMargin,
     afterTax: formData.tax_type === 'profit'
       ? grossMargin * (1 - formData.tax_rate_pct / 100)
@@ -511,6 +623,47 @@ export function calculateTwoLevelPricing(
     percentageCosts,
     variableCosts,
     margin,
+  }
+}
+
+/**
+ * Get price gap status for UI display
+ */
+export function getPriceGapStatus(gapPct: number): {
+  status: 'excellent' | 'good' | 'normal' | 'low' | 'critical'
+  color: string
+  bgColor: string
+  message: string
+} {
+  if (gapPct > 30) return {
+    status: 'excellent',
+    color: 'text-green-600',
+    bgColor: 'bg-green-50',
+    message: 'Высокий запас прибыльности'
+  }
+  if (gapPct > 20) return {
+    status: 'good',
+    color: 'text-green-600',
+    bgColor: 'bg-green-50',
+    message: 'Хороший запас прибыльности'
+  }
+  if (gapPct > 10) return {
+    status: 'normal',
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-50',
+    message: 'Умеренный запас прибыльности'
+  }
+  if (gapPct > 5) return {
+    status: 'low',
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50',
+    message: 'Низкий запас прибыльности'
+  }
+  return {
+    status: 'critical',
+    color: 'text-red-600',
+    bgColor: 'bg-red-50',
+    message: '⚠️ Критически низкий запас — риск убытков'
   }
 }
 ```
@@ -565,13 +718,28 @@ export function calculateTwoLevelPricing(
 
 | Scenario | Handling |
 |----------|----------|
-| Minimum ≈ Recommended | Show tight margin warning |
-| Minimum > Recommended | Invalid state (show error) |
-| SPP = 0 | Don't show customer price |
-| DRR = 0 | Don't show variable costs section |
-| FBS mode | Don't show storage/acceptance lines |
-| Profit tax | Show after-tax margin |
-| All zero inputs | Show placeholder state |
+| Minimum ≈ Recommended (gap < 5%) | Show tight margin warning (red) |
+| Minimum > Recommended | Invalid state: Show error "Ошибка расчёта: маржа отрицательная" |
+| SPP = 0% | Don't show customer price row (hide section) |
+| DRR = 0% | Don't show variable costs section (all zeros) |
+| FBS mode | Don't show storage/acceptance lines (0 values) |
+| Profit tax | Show "Чистая прибыль после налога" with calculated value |
+| Income tax | Include tax in percentage costs breakdown |
+| All zero inputs | Show placeholder: "Заполните данные для расчёта" |
+| API error | Show error state with retry button |
+| Very high margin (>50%) | Show info message about competitiveness |
+| Negative actual margin | Show error highlighting, prevent copy |
+| Mobile viewport (<640px) | Vertical stack, collapsible sections |
+
+### Price Gap Classification
+
+| Gap % | Status | Color | Message |
+|-------|--------|-------|---------|
+| > 30% | Отлично | Green | "Высокий запас прибыльности" |
+| 20-30% | Хорошо | Green | "Хороший запас прибыльности" |
+| 10-20% | Норма | Yellow | "Умеренный запас прибыльности" |
+| 5-10% | Низкий | Orange | "Низкий запас прибыльности" |
+| < 5% | Критический | Red | "⚠️ Критически низкий запас — риск убытков" |
 
 ---
 
@@ -631,15 +799,26 @@ export function calculateTwoLevelPricing(
 ### File List
 | File | Change Type | Lines (Est.) | Description |
 |------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | CREATE | ~100 | Price header with gap |
-| `src/components/custom/price-calculator/FixedCostsBreakdown.tsx` | CREATE | ~50 | Fixed costs section |
-| `src/components/custom/price-calculator/PercentageCostsBreakdown.tsx` | CREATE | ~50 | % costs section |
-| `src/components/custom/price-calculator/VariableCostsBreakdown.tsx` | CREATE | ~40 | DRR section |
-| `src/components/custom/price-calculator/MarginSection.tsx` | CREATE | ~40 | Margin display |
-| `src/components/custom/price-calculator/PriceSummaryFooter.tsx` | CREATE | ~60 | Summary with copy |
-| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE | +50 | Integrate new components |
-| `src/lib/two-level-pricing.ts` | CREATE | ~100 | Calculation helpers |
-| `src/types/price-calculator.ts` | UPDATE | +30 | Add TwoLevelPricingResult |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | CREATE | ~100 | Price header with min/rec/customer prices |
+| `src/components/custom/price-calculator/TwoLevelPricingDisplay.tsx` | CREATE | ~80 | Main container for two-level display |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx` | CREATE | ~60 | Fixed costs breakdown (COGS, logistics, storage) |
+| `src/components/custom/price-calculator/PercentageCostsSection.tsx` | CREATE | ~60 | Percentage costs (commission, acquiring, tax) |
+| `src/components/custom/price-calculator/VariableCostsSection.tsx` | CREATE | ~40 | Variable costs (DRR) |
+| `src/components/custom/price-calculator/MarginSection.tsx` | CREATE | ~50 | Margin display with profit tax |
+| `src/components/custom/price-calculator/PriceSummaryFooter.tsx` | CREATE | ~70 | Summary footer with copy buttons |
+| `src/components/custom/price-calculator/PriceGapIndicator.tsx` | CREATE | ~40 | Price gap status indicator |
+| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE | +30 | Integrate TwoLevelPricingDisplay |
+| `src/lib/two-level-pricing.ts` | CREATE | ~120 | Calculation helpers + gap status |
+| `src/types/price-calculator.ts` | UPDATE | +40 | TwoLevelPricingResult, PriceGapStatus types |
+
+### Dependencies on Previous Stories
+| Story | Component/Type Used |
+|-------|---------------------|
+| 44.15 | `FulfillmentType` for conditional rendering (FBO storage/acceptance) |
+| 44.16 | `commissionPct` from category selection |
+| 44.17 | `tax_type`, `tax_rate_pct` for tax breakdown |
+| 44.18 | `advertising_pct` (DRR) for variable costs |
+| 44.19 | `spp_pct` for customer price calculation |
 
 ### Change Log
 _(To be filled by Dev Agent during implementation)_

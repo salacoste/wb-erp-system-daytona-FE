@@ -1,27 +1,27 @@
 # Story 44.13: Auto-fill Coefficients from Warehouse
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 🔒 Blocked (Backend)
+**Status**: 📋 Ready for Dev
 **Priority**: P1 - IMPORTANT
 **Effort**: 3 SP
-**Depends On**: Story 44.12 (Warehouse Dropdown), Request #98 (Backend API)
+**Depends On**: Story 44.12 (Warehouse Selection) ✅
 
 ---
 
-## Blocking Information
+## Backend API Status: READY (Request #98)
 
-> **Запрос #98 отправлен команде backend, ожидаем уточнения по ряду вопросов.**
+Backend has implemented the acceptance coefficients API as documented in:
+- `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`
+- `docs/stories/epic-44/SDK-WAREHOUSES-TARIFFS-REFERENCE.md`
 
-### Pending Backend Questions (Request #98)
+### Key Points from Backend Implementation
 
-1. **Кэширование:** Какой TTL для тарифов? (Предложение: 1 час)
-2. **Cargo Type Filtering:** Фильтровать склады по типу груза?
-3. **FBS vs FBO:** Какие тарифы по умолчанию?
-4. **Coefficient Format:** Нормализация `"125"` → `1.25`?
-5. **Return Logistics:** Отдельный endpoint для возвратов?
+1. **Caching**: Tariffs cached for 1 hour (`staleTime: 3600000`)
+2. **Coefficient Format**: Backend returns integers (100 = 1.0, 125 = 1.25)
+3. **14-Day Window**: Coefficients provided for next 14 days
+4. **FBO Mode**: Default tariffs are for FBO (Fulfillment By Operator)
 
-**Backend API Status:** Not implemented
-**Expected Endpoint:** `GET /v1/tariffs/box/{warehouse_name}`
+**Endpoint**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
 
 ---
 
@@ -107,42 +107,38 @@
 
 ---
 
-## API Contract (Pending)
+## API Contract (Backend Request #98)
 
 ### Request
 ```http
-GET /v1/tariffs/box/{warehouse_name}
+GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
 X-Cabinet-Id: {cabinet_id}
 ```
 
-### Response (Expected)
+### Response (Actual from Backend)
 ```json
 {
   "data": {
-    "warehouse_name": "Коледино",
-    "geo_name": "Центральный ФО",
-    "effective_from": "2026-01-20",
-
-    "logistics": {
-      "coefficient": 1.0,
-      "base_rub": 46.0,
-      "per_liter_rub": 14.0
-    },
-
-    "storage": {
-      "coefficient": 1.0,
-      "base_per_day_rub": 0.07,
-      "per_liter_per_day_rub": 0.05
-    },
-
-    "fbs": {
-      "coefficient": 1.2,
-      "base_rub": 50.0,
-      "per_liter_rub": 16.0
-    }
+    "warehouseId": 507,
+    "warehouseName": "Коледино",
+    "coefficients": [
+      { "date": "2026-01-20", "coefficient": 100 },
+      { "date": "2026-01-21", "coefficient": 125 },
+      { "date": "2026-01-22", "coefficient": 150 },
+      { "date": "2026-01-23", "coefficient": 100 },
+      { "date": "2026-01-24", "coefficient": 100 }
+    ],
+    "effectiveFrom": "2026-01-20T00:00:00Z",
+    "effectiveUntil": "2026-02-03T00:00:00Z"
   }
 }
+```
+
+**Coefficient Normalization**: Backend returns integers (100 = 1.0). Frontend normalizes:
+```typescript
+const normalizedCoefficient = rawCoefficient / 100
+// 100 → 1.0, 125 → 1.25, 150 → 1.5
 ```
 
 ---
@@ -673,7 +669,7 @@ useEffect(() => {
 
 ## Definition of Done
 
-- [ ] Backend API available (Request #98 resolved)
+- [ ] Backend API available (Request #98 resolved) ✅
 - [ ] All Acceptance Criteria verified (AC1-AC7)
 - [ ] Components created with proper TypeScript types
 - [ ] Unit tests written and passing
@@ -688,5 +684,5 @@ useEffect(() => {
 ---
 
 **Created**: 2026-01-19
-**Last Updated**: 2026-01-19
-**Blocked Since**: 2026-01-19 (Awaiting Backend Response)
+**Last Updated**: 2026-01-20
+**Unblocked**: 2026-01-20 (Backend API Ready - Request #98)

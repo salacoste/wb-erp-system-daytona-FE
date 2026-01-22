@@ -2,12 +2,13 @@
 
 **Status**: 🚧 **IN PROGRESS**
 **Backend Dependency**: Epic 43 ✅ Complete
-**Total Stories**: 20
-**Total Estimate**: 44 Story Points
+**Total Stories**: 25
+**Total Estimate**: 58 Story Points
 **Completed (Phase 1)**: 2026-01-17
 **Phase 2**: Enhanced Logistics Calculation (4 stories)
-**Phase 3**: Warehouse, Storage & Tariffs Integration (3 stories, blocked)
-**Phase 4**: V2 Enhancements (6 stories - NEW)
+**Phase 3**: Warehouse, Storage & Tariffs Integration (5 stories)
+**Phase 4**: V2 Enhancements (6 stories)
+**Phase 5**: Bug Fixes & Improvements (3 stories - NEW)
 
 ---
 
@@ -44,9 +45,11 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 | 44.9 | [Logistics Coefficients UI](./story-44.9-fe-logistics-coefficients-ui.md) | P1 | 2 | 📋 Ready for Dev |
 | 44.10 | [Return Logistics Calculation](./story-44.10-fe-return-logistics-calculation.md) | P1 | 2 | 📋 Ready for Dev |
 | **Phase 3: Warehouse & Tariffs** |||||
-| 44.12 | [Warehouse Selection Dropdown](./story-44.12-fe-warehouse-selection.md) | P1 | 2 | 🔒 Blocked |
-| 44.13 | [Auto-fill Coefficients from Warehouse](./story-44.13-fe-auto-fill-coefficients.md) | P1 | 3 | 🔒 Blocked |
-| 44.14 | [Storage Cost Calculation](./story-44.14-fe-storage-cost-calculation.md) | P1 | 2 | 🔒 Blocked |
+| 44.12 | [Warehouse Selection Dropdown](./story-44.12-fe-warehouse-selection.md) | P0 | 3 | ✅ Complete |
+| 44.13 | [Auto-fill Coefficients from Warehouse](./story-44.13-fe-auto-fill-coefficients.md) | P1 | 3 | ✅ Complete |
+| 44.9 | [Logistics Coefficients UI](./story-44.9-fe-logistics-coefficients-ui.md) | P1 | 2 | ✅ Complete |
+| 44.14 | [Storage Cost Calculation](./story-44.14-fe-storage-cost-calculation.md) | P1 | 2 | ✅ Complete |
+| **44.27** | **[Warehouse & Coefficients Integration](./story-44.27-fe-warehouse-integration.md)** | **P0** | **2** | **📋 Ready for Dev** |
 | **Phase 4: V2 Enhancements (NEW)** |||||
 | 44.15 | [FBO/FBS Fulfillment Type Selection](./story-44.15-fe-fulfillment-type-selection.md) | P0 | 2 | 📋 Ready for Dev |
 | 44.16 | [Category Selection with Search](./story-44.16-fe-category-selection.md) | P0 | 3 | 📋 Ready for Dev |
@@ -54,6 +57,12 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 | 44.18 | [DRR Input (Advertising %)](./story-44.18-fe-drr-input.md) | P1 | 1 | 📋 Ready for Dev |
 | 44.19 | [SPP Display (Customer Price)](./story-44.19-fe-spp-display.md) | P2 | 1 | 📋 Ready for Dev |
 | 44.20 | [Two-Level Pricing Display](./story-44.20-fe-two-level-pricing-display.md) | P0 | 3 | 📋 Ready for Dev |
+| **Phase 5: Bug Fixes & Improvements (NEW)** |||||
+| 44.32 | [Missing Price Calculator Fields - Phase 1 HIGH](./story-44.32-fe-missing-price-calc-fields.md) | P0 | 5 | 📋 Ready for Dev |
+| 44.33 | [Frontend Type Mismatch & Field Name Fixes](./story-44.33-fe-type-mismatch-field-names.md) | P1 | 2 | 📋 Ready for Dev |
+| 44.34 | [Debounce Warehouse Selection & Rate Limit Handling](./story-44.34-fe-debounce-warehouse-selection.md) | P1 | 2 | 📋 Ready for Dev |
+| 44.35 | [FBO/FBS Toggle Crashes Application](./story-44.35-fe-fbo-fbs-toggle-crash.md) | **P0** | **3** | **📋 Ready for Dev** |
+| 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **📋 Ready for Dev** |
 
 ---
 
@@ -92,7 +101,69 @@ New features based on `PRICE-CALCULATOR-REQUIREMENTS.md`:
    - Recommended price (with margin + DRR)
    - Complete cost breakdown
 
-### Phase 4 Dependencies
+### Phase 5: Bug Fixes & Improvements (NEW)
+
+Critical fixes based on frontend integration guide and competitor analysis:
+
+1. **Missing Price Calculator Fields** (Story 44.32) - P0 HIGH
+   - Box type selection (Короб/Монопаллета)
+   - Weight threshold >25kg checkbox
+   - Localization index (КТР) input
+   - Turnover days calculation
+   - **Impact**: 5-15% calculation accuracy improvement
+
+2. **Type Mismatch & Field Name Fixes** (Story 44.33) - P1 MEDIUM
+   - Fix `nm_id` type: string (not number)
+   - Fix product name: `sa_name` (not `title`)
+   - Fix category: `category_hierarchy` (not `category`)
+   - **Impact**: Eliminates runtime errors and undefined values
+
+3. **Debounce Warehouse Selection** (Story 44.34) - P1 MEDIUM
+   - 500ms debounce on warehouse changes
+   - Rate limit error handling (6/min limit)
+   - Cooldown UI with countdown timer
+   - **Impact**: Prevents API rate limit errors
+
+4. **FBO/FBS Toggle Crashes Application** (Story 44.35) - **P0 CRITICAL**
+   - Application crashes when toggling between FBO/FBS fulfillment types
+   - State management issue in form component
+   - UI unresponsive after first toggle
+   - **Impact**: Blocks all user interactions with fulfillment selection
+
+5. **API Field Mismatch - box_type, turnover_days** (Story 44.36) - **P0 CRITICAL**
+   - Form field `box_type` not properly mapped to API schema
+   - Backend field mismatch for `turnover_days` calculation
+   - Calculation returns incorrect cost breakdown
+   - **Impact**: Inaccurate price calculations, failed form submissions
+
+### Phase 5 Dependencies
+
+```
+Story 44.32 (Missing Fields) ← Story 44.2 (Form) + Story 44.15 (FBO/FBS) + Story 44.27 (Warehouse)
+Story 44.33 (Type Fixes) ← Story 44.1 (Types) + Story 44.2 (Form)
+Story 44.34 (Debounce) ← Story 44.12 (Warehouse) + Story 44.27 (Integration)
+Story 44.35 (FBO/FBS Toggle Crash) ← Story 44.15 (FBO/FBS Selection) - BLOCKER for Phase 4
+Story 44.36 (API Field Mismatch) ← Story 44.2 (Form) + Story 44.20 (Results) - BLOCKER for calculations
+```
+
+**Priority**: Stories 44.35 and 44.36 are **critical blockers** and must be resolved before full Phase 4 implementation can proceed.
+
+### Phase 5 Context
+
+**Source Documents**:
+- `frontend/docs/request-backend/FRONTEND-INTEGRATION-GUIDE.md`
+- `frontend/docs/stories/epic-44/PRICE-CALCULATOR-REQUIREMENTS.md` Section 14
+- `frontend/docs/request-backend/99-products-dimensions-category-api.md`
+
+**Gap Analysis**:
+- 9 missing fields identified in competitor analysis
+- 4 HIGH priority fields (Story 44.32)
+- 3 type/field mismatches (Story 44.33)
+- 1 rate limit confusion issue (Story 44.34)
+
+---
+
+## Phase 4 Dependencies
 
 ```
 Story 44.15 (FBO/FBS) ← Story 44.2 (Form)
@@ -169,9 +240,11 @@ Story is complete when:
 | Coefficients | 44.9 | 📋 |
 | Returns | 44.10 | 📋 |
 | **Phase 3: Warehouse & Tariffs** ||
-| Warehouse Selection | 44.12 | 🔒 |
-| Auto-fill Coefficients | 44.13 | 🔒 |
-| Storage Calculation | 44.14 | 🔒 |
+| Warehouse Selection | 44.12 | ✅ |
+| Auto-fill Coefficients | 44.13 | ✅ |
+| Logistics Coefficients UI | 44.9 | ✅ |
+| Storage Calculation | 44.14 | ✅ |
+| **Integration into Form** | **44.27** | **📋 Ready** |
 | **Phase 4: V2 Enhancements** ||
 | FBO/FBS Selection | 44.15 | 📋 |
 | Category Selection | 44.16 | 📋 |
@@ -182,9 +255,10 @@ Story is complete when:
 
 **Phase 1 Progress**: 6/6 stories (100%) ✅
 **Phase 2 Progress**: 0/4 stories (0%) 📋
-**Phase 3 Progress**: 0/3 stories (0%) 🔒 (Blocked by Request #98)
+**Phase 3 Progress**: 4/5 stories (80%) - **1 story Ready for Dev (44.27 Integration)**
 **Phase 4 Progress**: 0/6 stories (0%) 📋
-**Overall Progress**: 6/20 stories (30%)
+**Phase 5 Progress**: 0/5 stories (0%) 📋 - **2 CRITICAL blockers added (44.35, 44.36)**
+**Overall Progress**: 10/25 stories (40%)
 
 ---
 
@@ -213,9 +287,17 @@ Story is complete when:
 |-------|---------|----------|
 | Phase 1 | 6 | 14 SP |
 | Phase 2 | 4 | 8 SP |
-| Phase 3 | 3 | 7 SP |
+| Phase 3 | 5 | 9 SP |
 | Phase 4 | 6 | 12 SP |
-| **Total** | **20** | **41 SP** |
+| Phase 5 | 5 | 14 SP |
+| **Total** | **25** | **58 SP** |
+
+**Phase 5 Breakdown**:
+- Story 44.32 (Missing Fields): 5 SP
+- Story 44.33 (Type Fixes): 2 SP
+- Story 44.34 (Debounce): 2 SP
+- Story 44.35 (FBO/FBS Toggle Crash): 3 SP ⚠️ **CRITICAL**
+- Story 44.36 (API Field Mismatch): 2 SP ⚠️ **CRITICAL**
 
 ---
 
@@ -248,16 +330,34 @@ Story 44.10 (Returns) ← Story 44.9 (КТР)
 ## Phase 3 Dependencies
 
 ```
-Request #98 (Backend API) ← Blocked (Pending Backend Response)
+Request #98 (Backend API) ← ✅ COMPLETE
     ↓
-Story 44.12 (Warehouse Selection) ← Request #98
+Story 44.12 (Warehouse Selection) ← ✅ COMPLETE
     ↓
-Story 44.13 (Auto-fill Coefficients) ← Story 44.12
+Story 44.13 (Auto-fill Coefficients) ← ✅ COMPLETE
     ↓
-Story 44.14 (Storage Cost Calculation) ← Story 44.13 + Story 44.7 (Volume)
+Story 44.14 (Storage Cost Calculation) ← ✅ COMPLETE
+    ↓
+Story 44.27 (Integration into Form) ← 📋 READY FOR DEV
 ```
 
 **Backend Request**: `docs/request-backend/98-warehouses-tariffs-coefficients-api.md`
+
+### Story 44.27: Critical Integration Task
+
+**Проблема:** Компоненты созданы, но не интегрированы в форму калькулятора!
+
+**Компоненты готовы:**
+- `WarehouseSelect.tsx` - выбор склада
+- `WarehouseSection.tsx` - секция с коэффициентами и хранением
+- `CoefficientField.tsx` - поля коэффициентов
+- `StorageCostCalculator.tsx` - расчёт хранения
+- `useWarehouseCoefficients.ts` - hook для коэффициентов
+
+**Нужно сделать:**
+- Добавить `WarehouseSection` в `PriceCalculatorForm.tsx`
+- Связать выбор склада с API запросом
+- Передать коэффициенты в расчёт цены
 
 ---
 
@@ -287,4 +387,4 @@ See `PRICE-CALCULATOR-REQUIREMENTS.md` Section 4 for complete API reference.
 
 ---
 
-**Last Updated**: 2026-01-20
+**Last Updated**: 2026-01-22 (Added critical bugfix stories 44.35 & 44.36)

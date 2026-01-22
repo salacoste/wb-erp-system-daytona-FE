@@ -6,6 +6,38 @@
 
 ## ✅ Recently Resolved
 
+### Request #99: Products API - Add Dimensions and Category ✅ **DOCUMENTATION UPDATED**
+**Date**: 2026-01-21
+**Priority**: P1 - Documentation Update
+**Status**: ✅ **DOCUMENTATION UPDATED** - Product retrieval guide added
+**Component**: Backend API - Products Module (Epic 45)
+**Related**: Epic 44-FE (Price Calculator UI)
+
+**Summary**: Added comprehensive guide for retrieving products by nm_id with dimensions and category data.
+
+**New Documentation Section**:
+- ✅ "How to Get Product by nm_id" - Quick reference table with endpoint, headers, params
+- ✅ cURL examples for common scenarios
+- ✅ Response structure with critical field warnings (nm_id is string, sa_name not title, category_hierarchy not category)
+- ✅ TypeScript integration examples with proper type definitions
+- ✅ Error handling patterns for missing dimensions
+- ✅ Performance notes (cache hit ~150ms, cache miss ~350-550ms)
+- ✅ Testing guide with REST Client examples
+
+**Critical Warnings Added**:
+⚠️ **Field Name Differences**:
+- `nm_id` is `string` (not `number`)
+- Use `sa_name` (not `title`)
+- Use `category_hierarchy` (not `category`)
+
+**Documentation**:
+- **[99-products-dimensions-category-api.md](./99-products-dimensions-category-api.md)** ← **UPDATED** with "How to Get Product by nm_id" section
+- **[test-api/45-products-dimensions.http](../../../test-api/45-products-dimensions.http)** ← API test examples
+
+**Frontend Action Required**: Review new documentation section and update Price Calculator components if needed.
+
+---
+
 ### Request #87: Backend Response - imtId Field in SKU Mode ✅ **IMPLEMENTED**
 **Date**: 2025-12-28
 **Priority**: High
@@ -1746,11 +1778,12 @@ WB Excel → qty=1 (Product) → SKU Analytics ✅
 
 ---
 
-**Last Updated**: 2025-12-30
+**Last Updated**: 2026-01-21
 **Active Requests**: 1 (Request #61 - WB Column Rename)
 **Backlog Requests**: 1 (Request #58 - retail_price_total)
-**Resolved Requests**: 68 (Request #01 through #64) + Guide #24, #29, #30 + **Epic 33 Fix** + **Epic 34 Complete**
+**Resolved Requests**: 69 (Request #01 through #64, #99) + Guide #24, #29, #30 + **Epic 33 Fix** + **Epic 34 Complete** + **Epic 45 Documentation**
 **Latest Update**:
+- ✅ **Request #99 (2026-01-21)** - Products Dimensions & Category API - Documentation updated with "How to Get Product by nm_id" guide including cURL examples, TypeScript integration, and critical field warnings
 - ✅ **Request #90 (2025-12-30)** - Telegram Notifications System Architecture - Complete frontend integration guide with event system, templates, and API reference
 - ✅ **Request #89 (2025-12-30)** - Telegram Notifications Integration - TypeScript types, React hooks, and UI components guide
 - ✅ **Request #73 (2025-12-24)** - Epic 34 Telegram Notifications - Complete API guide with bot integration

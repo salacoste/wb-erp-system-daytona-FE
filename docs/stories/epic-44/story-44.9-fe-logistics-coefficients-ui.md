@@ -1,115 +1,179 @@
 # Story 44.9: Logistics Coefficients UI
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: Ready for Dev
+**Status**: 📋 Ready for Dev
 **Priority**: P1 - IMPORTANT
 **Effort**: 2 SP
-**Depends On**: Story 44.8
+**Depends On**: Story 44.8 (Logistics Tariff), Story 44.12 (Warehouse Selection)
 
 ---
 
 ## User Story
 
 **As a** Seller,
-**I want** to apply logistics coefficients to the base logistics costs in the price calculator,
-**So that** I can accurately calculate the final price accounting for warehouse-specific and territorial distribution factors.
+**I want** to view and apply logistics coefficients from WB warehouse data in the price calculator,
+**So that** I can accurately calculate final logistics costs accounting for warehouse-specific coefficient variations.
 
 **Non-goals**:
-- Automatic fetching of coefficients from WB API (future enhancement)
-- Coefficient history/presets (future enhancement)
-- Backend API changes (coefficients applied client-side to base logistics)
+- Automatic coefficient history/presets (future enhancement)
+- Manual coefficient entry without warehouse selection (Story 44.13 handles auto-fill)
+- Backend API changes (use existing coefficients API from Request #98)
 
 ---
 
-## Background: WB Logistics Coefficients
+## Background: WB Logistics Coefficients (from Backend Response #98)
 
-Wildberries applies two coefficients that affect the final logistics cost:
+### Acceptance Coefficients Structure
 
-### 1. Logistics Coefficient (Коэффициент логистики)
-- **Formula**: Base Logistics Cost x Coefficient
-- **Range**: Typically 1.0 to 3.0+ (varies by warehouse and date)
-- **Frequency**: Changes frequently, different for each warehouse
-- **Default**: 1.0 (no adjustment)
-- **Source**: WB Personal Account > Logistics > Tariffs
+WB provides acceptance coefficients per warehouse for a 14-day rolling window:
 
-### 2. KTR (Коэффициент территориального распределения)
-- **Full name**: Territorial Distribution Coefficient
-- **Formula**: Applied on top of logistics coefficient
-- **Range**: Typically 1.0 to 1.5+
-- **Purpose**: Adjusts for regional distribution costs
-- **Default**: 1.0 (no adjustment)
-- **Source**: WB Personal Account > Logistics > KTR
-
-### Final Formula
+```json
+{
+  "warehouseId": 507,
+  "warehouseName": "Коледино",
+  "coefficients": [
+    { "date": "2026-01-20", "coefficient": 100 },
+    { "date": "2026-01-21", "coefficient": 125 },
+    { "date": "2026-01-22", "coefficient": 150 },
+    ...
+  ]
+}
 ```
-Final Logistics Cost = Base Cost x Logistics Coefficient x KTR
+
+**Key points:**
+- Coefficients are integers (100 = 1.0, 125 = 1.25, 150 = 1.5)
+- Frontend must normalize: `displayCoefficient = coefficient / 100`
+- Coefficients change daily based on warehouse capacity
+- Higher coefficient = higher cost (warehouse busy/peak period)
+
+### Final Logistics Formula
+
+```
+logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coefficient
 ```
 
 **Example**:
-- Base logistics: 100 RUB
-- Logistics coefficient: 1.5
-- KTR: 1.2
-- **Final**: 100 x 1.5 x 1.2 = **180 RUB**
+- Base logistics: 58 RUB (for 3L volume)
+- Coefficient: 1.25 (warehouse "busy")
+- **Final**: 58 × 1.25 = **72.50 RUB**
 
 ---
 
 ## Acceptance Criteria
 
-### AC1: Logistics Coefficient Input Field
-- [ ] Add numeric input field "Коэффициент логистики" (logistics coefficient)
-- [ ] Default value: 1.0
-- [ ] Minimum value: 1.0 (validation error if < 1.0)
-- [ ] Step: 0.01 for precision
-- [ ] Placeholder: "1.00"
-- [ ] Applied to both forward and reverse logistics costs
-
-### AC2: KTR Input Field
-- [ ] Add numeric input field "КТР" (territorial distribution coefficient)
-- [ ] Default value: 1.0
-- [ ] Minimum value: 1.0 (validation error if < 1.0)
-- [ ] Step: 0.01 for precision
-- [ ] Placeholder: "1.00"
-- [ ] Applied to both forward and reverse logistics costs
-
-### AC3: Collapsible Section
+### AC1: Coefficient Display in Collapsible Section
 - [ ] Create collapsible section "Коэффициенты логистики"
-- [ ] Collapsed by default (coefficients are optional)
-- [ ] Section header shows current coefficient values when collapsed (e.g., "1.5 x 1.2")
+- [ ] Collapsed by default (coefficients are auto-filled from warehouse)
+- [ ] Section header shows current coefficient: "Коэффициент: 1.25"
 - [ ] Chevron icon indicates expand/collapse state
+- [ ] Show coefficient date: "Действует с: 20.01.2026"
 
-### AC4: Cost Application
-- [ ] Apply coefficients to `logistics_forward_rub` before API call
-- [ ] Apply coefficients to `logistics_reverse_rub` before API call
-- [ ] Formula: `adjusted_cost = base_cost * logistics_coefficient * ktr`
-- [ ] Show adjusted values in calculation summary (if visible)
-- [ ] Original base values remain in input fields (coefficients applied separately)
+### AC2: Coefficient Value Display
+- [ ] Display current coefficient value with 2 decimal places (e.g., "1.25")
+- [ ] Show coefficient status badge:
+  - `1.00` = "Базовый" (green)
+  - `1.01-1.50` = "Повышенный" (yellow)
+  - `> 1.50` = "Высокий" (red)
+- [ ] Tooltip explaining coefficient impact on logistics cost
 
-### AC5: Tooltips
-- [ ] Tooltip for logistics coefficient explaining warehouse-specific variation
-- [ ] Tooltip for KTR explaining territorial distribution adjustment
-- [ ] Both tooltips include guidance on where to find current values in WB
+### AC3: 14-Day Coefficient Calendar (Optional Enhancement)
+- [ ] Show mini-calendar with coefficients for next 14 days
+- [ ] Color-coded by coefficient level (green/yellow/red)
+- [ ] Click on date to see that day's coefficient
+- [ ] Current date highlighted
+- [ ] Collapsed by default (expand on user request)
 
-### AC6: External Documentation Link
-- [ ] Add help link "Где найти коэффициенты?" (Where to find coefficients?)
-- [ ] Link opens WB documentation about logistics tariffs in new tab
-- [ ] URL: `https://seller.wildberries.ru/help/logistics/tariffs` (or similar)
-- [ ] Link styled as small text link below the coefficient inputs
+### AC4: Cost Impact Calculation
+- [ ] Apply coefficient to `logistics_forward_rub` before API call
+- [ ] Formula: `adjusted_logistics = base_logistics × coefficient`
+- [ ] Show cost impact: "Увеличение: +X ₽ (+Y%)"
+- [ ] Update in real-time as coefficient changes
 
-### AC7: Validation & Error Handling
-- [ ] Show error if coefficient < 1.0 ("Коэффициент должен быть >= 1.0")
-- [ ] Allow empty field (defaults to 1.0 if empty)
-- [ ] Validate on blur and on form submit
-- [ ] Visual error state (red border) for invalid values
+### AC5: Coefficient Auto-fill Integration (with Story 44.13)
+- [ ] When warehouse selected, auto-fill coefficient from API
+- [ ] Show "Автозаполнено" badge when coefficient from API
+- [ ] Show "Вручную" badge when user overrides (if allowed)
+- [ ] Track original vs current coefficient value
+
+### AC6: Tooltips and Help
+- [ ] Tooltip for coefficient explaining warehouse-specific variation
+- [ ] Help link: "Где найти коэффициенты?" → WB documentation
+- [ ] URL: `https://seller.wildberries.ru/supplies-management/all-supplies`
+- [ ] Link styled as small text link below the coefficient display
+
+### AC7: No Warehouse Selected State
+- [ ] If no warehouse selected, show info notice
+- [ ] Text: "Выберите склад для отображения коэффициента"
+- [ ] Coefficient field hidden or disabled until warehouse selected
+
+---
+
+## API Contract (Backend Request #98)
+
+### Get Acceptance Coefficients
+
+**Endpoint**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
+
+**Request**:
+```http
+GET /v1/tariffs/acceptance/coefficients?warehouseId=507
+Authorization: Bearer {token}
+X-Cabinet-Id: {cabinet_id}
+```
+
+**Response**:
+```json
+{
+  "data": {
+    "warehouseId": 507,
+    "warehouseName": "Коледино",
+    "coefficients": [
+      {
+        "date": "2026-01-20",
+        "coefficient": 100
+      },
+      {
+        "date": "2026-01-21",
+        "coefficient": 125
+      },
+      {
+        "date": "2026-01-22",
+        "coefficient": 150
+      }
+    ],
+    "effectiveFrom": "2026-01-20T00:00:00Z",
+    "effectiveUntil": "2026-02-03T00:00:00Z"
+  }
+}
+```
+
+### Coefficient Normalization
+
+The Backend returns integer coefficients. Frontend must normalize:
+
+```typescript
+// Backend: 125 → Frontend: 1.25
+function normalizeCoefficient(rawCoefficient: number): number {
+  return rawCoefficient / 100
+}
+
+// Frontend: 1.25 → Backend: 125 (if needed for API calls)
+function denormalizeCoefficient(coefficient: number): number {
+  return Math.round(coefficient * 100)
+}
+```
 
 ---
 
 ## Context & References
 
 - **Parent Epic**: `docs/epics/epic-44-price-calculator-ui.md`
-- **Story 44.2**: `docs/stories/epic-44/story-44.2-fe-input-form-component.md` (form patterns)
-- **Story 44.8**: Dependencies for form structure updates
-- **WB Docs**: https://seller.wildberries.ru/help/logistics/tariffs
-- **Current Form**: `src/components/custom/price-calculator/PriceCalculatorForm.tsx`
+- **Backend Request #98**: `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`
+- **SDK Reference**: `docs/stories/epic-44/SDK-WAREHOUSES-TARIFFS-REFERENCE.md`
+- **Story 44.8**: Logistics Tariff Calculation (uses coefficient)
+- **Story 44.12**: Warehouse Selection (coefficient source)
+- **Story 44.13**: Auto-fill Coefficients (integration)
+- **WB Docs**: https://seller.wildberries.ru/supplies-management/all-supplies
 
 ---
 
@@ -123,181 +187,492 @@ src/
 │   └── custom/
 │       └── price-calculator/
 │           ├── PriceCalculatorForm.tsx           # UPDATE - Add coefficients section
-│           └── LogisticsCoefficientsSection.tsx  # CREATE - New collapsible section
-├── types/
-│   └── price-calculator.ts                       # UPDATE - Add coefficient types (if needed)
+│           ├── LogisticsCoefficientsSection.tsx  # CREATE - Collapsible section
+│           ├── CoefficientDisplay.tsx            # CREATE - Coefficient value display
+│           └── CoefficientCalendar.tsx           # CREATE - 14-day mini calendar
+├── lib/
+│   └── coefficient-utils.ts                      # CREATE - Normalization helpers
+├── hooks/
+│   └── useAcceptanceCoefficients.ts              # CREATE - API hook
+└── types/
+    └── coefficients.ts                           # CREATE - Type definitions
+```
+
+### TypeScript Interfaces
+
+```typescript
+// src/types/coefficients.ts
+
+/**
+ * Raw coefficient from WB API (integer: 100 = 1.0)
+ */
+export interface RawCoefficient {
+  date: string  // "2026-01-20"
+  coefficient: number  // 100, 125, 150...
+}
+
+/**
+ * Normalized coefficient for frontend (decimal: 1.0, 1.25)
+ */
+export interface NormalizedCoefficient {
+  date: string
+  coefficient: number  // 1.0, 1.25, 1.5...
+  status: CoefficientStatus
+}
+
+/**
+ * Coefficient status based on value
+ */
+export type CoefficientStatus = 'base' | 'elevated' | 'high'
+
+/**
+ * Coefficient status configuration
+ */
+export interface CoefficientStatusConfig {
+  status: CoefficientStatus
+  label: string
+  color: 'green' | 'yellow' | 'red'
+  minValue: number
+  maxValue: number
+}
+
+/**
+ * Acceptance coefficients response
+ */
+export interface AcceptanceCoefficientsResponse {
+  warehouseId: number
+  warehouseName: string
+  coefficients: RawCoefficient[]
+  effectiveFrom: string
+  effectiveUntil: string
+}
+```
+
+### Coefficient Utility Functions
+
+```typescript
+// src/lib/coefficient-utils.ts
+
+import type {
+  RawCoefficient,
+  NormalizedCoefficient,
+  CoefficientStatus,
+  CoefficientStatusConfig,
+} from '@/types/coefficients'
+
+/**
+ * Normalize coefficient from API (integer → decimal)
+ * 100 → 1.0, 125 → 1.25, 150 → 1.5
+ */
+export function normalizeCoefficient(raw: number): number {
+  return raw / 100
+}
+
+/**
+ * Denormalize coefficient for API (decimal → integer)
+ * 1.0 → 100, 1.25 → 125, 1.5 → 150
+ */
+export function denormalizeCoefficient(normalized: number): number {
+  return Math.round(normalized * 100)
+}
+
+/**
+ * Get coefficient status based on normalized value
+ */
+export function getCoefficientStatus(coefficient: number): CoefficientStatus {
+  if (coefficient <= 1.0) return 'base'
+  if (coefficient <= 1.5) return 'elevated'
+  return 'high'
+}
+
+/**
+ * Coefficient status configuration
+ */
+export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientStatusConfig> = {
+  base: {
+    status: 'base',
+    label: 'Базовый',
+    color: 'green',
+    minValue: 0,
+    maxValue: 1.0,
+  },
+  elevated: {
+    status: 'elevated',
+    label: 'Повышенный',
+    color: 'yellow',
+    minValue: 1.01,
+    maxValue: 1.5,
+  },
+  high: {
+    status: 'high',
+    label: 'Высокий',
+    color: 'red',
+    minValue: 1.51,
+    maxValue: Infinity,
+  },
+}
+
+/**
+ * Get coefficient status config
+ */
+export function getCoefficientStatusConfig(
+  coefficient: number
+): CoefficientStatusConfig {
+  const status = getCoefficientStatus(coefficient)
+  return COEFFICIENT_STATUS_CONFIG[status]
+}
+
+/**
+ * Normalize array of coefficients from API response
+ */
+export function normalizeCoefficients(
+  raw: RawCoefficient[]
+): NormalizedCoefficient[] {
+  return raw.map((item) => ({
+    date: item.date,
+    coefficient: normalizeCoefficient(item.coefficient),
+    status: getCoefficientStatus(normalizeCoefficient(item.coefficient)),
+  }))
+}
+
+/**
+ * Get today's coefficient from array
+ */
+export function getTodayCoefficient(
+  coefficients: NormalizedCoefficient[]
+): NormalizedCoefficient | null {
+  const today = new Date().toISOString().split('T')[0]
+  return coefficients.find((c) => c.date === today) ?? coefficients[0] ?? null
+}
+
+/**
+ * Calculate cost increase from coefficient
+ */
+export function calculateCoefficientImpact(
+  baseCost: number,
+  coefficient: number
+): { increase: number; percentIncrease: number } {
+  const adjustedCost = baseCost * coefficient
+  const increase = adjustedCost - baseCost
+  const percentIncrease = coefficient > 1 ? (coefficient - 1) * 100 : 0
+
+  return {
+    increase: Math.round(increase * 100) / 100,
+    percentIncrease: Math.round(percentIncrease * 10) / 10,
+  }
+}
 ```
 
 ### Component Structure
 
 ```typescript
 // src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx
-interface LogisticsCoefficientsProps {
-  logisticsCoefficient: number
-  ktr: number
-  onLogisticsCoefficientChange: (value: number) => void
-  onKtrChange: (value: number) => void
+
+interface LogisticsCoefficientsSectionProps {
+  /** Selected warehouse ID */
+  warehouseId: number | null
+  /** Current coefficient value */
+  coefficient: number
+  /** Coefficient source */
+  source: 'auto' | 'manual'
+  /** Base logistics cost before coefficient */
+  baseLogisticsCost: number
+  /** Is loading coefficients */
+  isLoading?: boolean
+  /** Disabled state */
   disabled?: boolean
-  errors?: {
-    logisticsCoefficient?: string
-    ktr?: string
-  }
 }
 
 export function LogisticsCoefficientsSection({
-  logisticsCoefficient,
-  ktr,
-  onLogisticsCoefficientChange,
-  onKtrChange,
+  warehouseId,
+  coefficient,
+  source,
+  baseLogisticsCost,
+  isLoading,
   disabled,
-  errors
-}: LogisticsCoefficientsProps) {
+}: LogisticsCoefficientsSectionProps) {
   const [isOpen, setIsOpen] = useState(false)
 
-  // Display summary when collapsed
-  const summaryText = logisticsCoefficient !== 1 || ktr !== 1
-    ? `${logisticsCoefficient.toFixed(2)} × ${ktr.toFixed(2)}`
-    : 'По умолчанию (1.0)'
+  // Fetch coefficients for calendar
+  const { data: coefficientsData } = useAcceptanceCoefficients(warehouseId)
+
+  // Calculate impact
+  const impact = useMemo(
+    () => calculateCoefficientImpact(baseLogisticsCost, coefficient),
+    [baseLogisticsCost, coefficient]
+  )
+
+  // Summary text for collapsed state
+  const summaryText = coefficient !== 1.0
+    ? `Коэффициент: ${coefficient.toFixed(2)} (+${impact.percentIncrease}%)`
+    : 'Коэффициент: 1.00 (базовый)'
+
+  if (!warehouseId) {
+    return (
+      <Alert variant="info">
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          Выберите склад для отображения коэффициента
+        </AlertDescription>
+      </Alert>
+    )
+  }
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      {/* ... */}
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="ghost"
+          className="flex w-full justify-between p-2"
+          disabled={isLoading}
+        >
+          <span className="text-sm text-muted-foreground">{summaryText}</span>
+          <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
+        </Button>
+      </CollapsibleTrigger>
+
+      <CollapsibleContent className="space-y-4 pt-2">
+        {/* Coefficient display */}
+        <CoefficientDisplay
+          coefficient={coefficient}
+          source={source}
+          effectiveDate={coefficientsData?.coefficients?.[0]?.date}
+        />
+
+        {/* Cost impact */}
+        {impact.increase > 0 && (
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Увеличение стоимости:</span>
+            <span className="text-destructive">
+              +{formatCurrency(impact.increase)} (+{impact.percentIncrease}%)
+            </span>
+          </div>
+        )}
+
+        {/* 14-day calendar */}
+        {coefficientsData?.coefficients && (
+          <CoefficientCalendar
+            coefficients={normalizeCoefficients(coefficientsData.coefficients)}
+          />
+        )}
+
+        {/* Help link */}
+        <div className="text-xs text-muted-foreground">
+          <a
+            href="https://seller.wildberries.ru/supplies-management/all-supplies"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" />
+            Где найти коэффициенты?
+          </a>
+        </div>
+      </CollapsibleContent>
     </Collapsible>
   )
 }
 ```
 
-### Form Data Updates
+### Coefficient Display Component
 
 ```typescript
-// Add to FormData interface in PriceCalculatorForm.tsx
-interface FormData {
-  // ... existing fields
-  logistics_coefficient: number  // Default: 1.0
-  ktr: number                    // Default: 1.0
+// src/components/custom/price-calculator/CoefficientDisplay.tsx
+
+interface CoefficientDisplayProps {
+  coefficient: number
+  source: 'auto' | 'manual'
+  effectiveDate?: string
 }
 
-// Update defaultValues
-const defaultValues: FormData = {
-  // ... existing defaults
-  logistics_coefficient: 1.0,
-  ktr: 1.0,
+export function CoefficientDisplay({
+  coefficient,
+  source,
+  effectiveDate,
+}: CoefficientDisplayProps) {
+  const config = getCoefficientStatusConfig(coefficient)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">{coefficient.toFixed(2)}</span>
+          <Badge
+            variant="outline"
+            className={cn(
+              config.color === 'green' && 'border-green-500 text-green-700',
+              config.color === 'yellow' && 'border-yellow-500 text-yellow-700',
+              config.color === 'red' && 'border-red-500 text-red-700'
+            )}
+          >
+            {config.label}
+          </Badge>
+          <AutoFillBadge source={source} />
+        </div>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+          </TooltipTrigger>
+          <TooltipContent side="left" className="max-w-xs">
+            <p>
+              Коэффициент логистики зависит от загруженности склада.
+              Более высокий коэффициент означает повышенную стоимость
+              доставки в периоды пиковой нагрузки.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+
+      {effectiveDate && (
+        <div className="text-xs text-muted-foreground">
+          Действует с: {formatDate(effectiveDate)}
+        </div>
+      )}
+    </div>
+  )
 }
 ```
 
-### Cost Application Logic
+### 14-Day Coefficient Calendar
 
 ```typescript
-// In performCalculation function
-const adjustedLogisticsForward =
-  data.logistics_forward_rub * data.logistics_coefficient * data.ktr
-const adjustedLogisticsReverse =
-  data.logistics_reverse_rub * data.logistics_coefficient * data.ktr
+// src/components/custom/price-calculator/CoefficientCalendar.tsx
 
-const request: PriceCalculatorRequest = {
-  // ... other fields
-  logistics_forward_rub: adjustedLogisticsForward,
-  logistics_reverse_rub: adjustedLogisticsReverse,
-  // ... rest of fields
+interface CoefficientCalendarProps {
+  coefficients: NormalizedCoefficient[]
+}
+
+export function CoefficientCalendar({ coefficients }: CoefficientCalendarProps) {
+  const today = new Date().toISOString().split('T')[0]
+
+  return (
+    <div className="space-y-2">
+      <div className="text-xs font-medium text-muted-foreground">
+        Коэффициенты на 14 дней:
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {coefficients.slice(0, 14).map((item) => {
+          const config = getCoefficientStatusConfig(item.coefficient)
+          const isToday = item.date === today
+
+          return (
+            <Tooltip key={item.date}>
+              <TooltipTrigger asChild>
+                <div
+                  className={cn(
+                    'p-1 text-center text-xs rounded cursor-help',
+                    config.color === 'green' && 'bg-green-100 text-green-700',
+                    config.color === 'yellow' && 'bg-yellow-100 text-yellow-700',
+                    config.color === 'red' && 'bg-red-100 text-red-700',
+                    isToday && 'ring-2 ring-primary'
+                  )}
+                >
+                  <div className="font-medium">{new Date(item.date).getDate()}</div>
+                  <div className="text-[10px]">{item.coefficient.toFixed(2)}</div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{formatDate(item.date)}</p>
+                <p>Коэффициент: {item.coefficient.toFixed(2)} ({config.label})</p>
+              </TooltipContent>
+            </Tooltip>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 ```
-
-### Validation Rules
-
-```typescript
-const validation = {
-  logistics_coefficient: {
-    min: 1.0,
-    required: false,
-    default: 1.0,
-    message: 'Коэффициент должен быть >= 1.0'
-  },
-  ktr: {
-    min: 1.0,
-    required: false,
-    default: 1.0,
-    message: 'КТР должен быть >= 1.0'
-  },
-}
-```
-
-### Tooltip Content
-
-| Field | Tooltip Text (Russian) |
-|-------|------------------------|
-| Коэффициент логистики | Множитель стоимости логистики, зависящий от склада и даты отгрузки. Меняется часто — проверяйте актуальное значение в ЛК WB перед расчётом. Обычно от 1.0 до 3.0. |
-| КТР | Коэффициент территориального распределения. Учитывает региональные особенности логистики. Обычно от 1.0 до 1.5. Найти можно в разделе «Логистика» ЛК WB. |
 
 ### UI Layout
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Коэффициенты логистики                           [▼]        │
-│ (1.50 × 1.20)                                               │
+│ ▸ Коэффициент: 1.25 (+25%)                            [▼]   │
 ├─────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────┐ ┌──────────────────────────┐   │
-│ │ Коэффициент логистики [?]│ │ КТР                   [?]│   │
-│ │ [    1.50              ] │ │ [    1.20              ] │   │
-│ └──────────────────────────┘ └──────────────────────────┘   │
+│ ┌───────────────────────────────────────────────────────┐   │
+│ │ 1.25  [Повышенный]  [Автозаполнено]             [?]   │   │
+│ │ Действует с: 20.01.2026                               │   │
+│ └───────────────────────────────────────────────────────┘   │
+│                                                             │
+│ Увеличение стоимости:                  +14,50 ₽ (+25%)      │
+│                                                             │
+│ Коэффициенты на 14 дней:                                    │
+│ ┌────┬────┬────┬────┬────┬────┬────┐                       │
+│ │ 20 │ 21 │ 22 │ 23 │ 24 │ 25 │ 26 │                       │
+│ │1.25│1.25│1.50│1.50│1.25│1.00│1.00│                       │
+│ └────┴────┴────┴────┴────┴────┴────┘                       │
+│ ┌────┬────┬────┬────┬────┬────┬────┐                       │
+│ │ 27 │ 28 │ 29 │ 30 │ 31 │  1 │  2 │                       │
+│ │1.00│1.25│1.25│1.50│1.50│1.25│1.00│                       │
+│ └────┴────┴────┴────┴────┴────┴────┘                       │
 │                                                             │
 │ 📎 Где найти коэффициенты? (ссылка на WB)                   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Invariants & Edge Cases
+---
 
-- **Invariant**: Coefficients must be >= 1.0 (WB never reduces logistics cost via coefficients)
-- **Edge case**: Empty field → treat as 1.0 (no adjustment)
-- **Edge case**: User enters 0 → show validation error
-- **Edge case**: Very high coefficient (>5.0) → allow but could add warning
-- **Edge case**: Form reset → coefficients reset to 1.0
+## Invariants & Edge Cases
+
+| Scenario | Expected Behavior |
+|----------|-------------------|
+| Coefficient = 100 (API) | Display as 1.00 (normalized) |
+| Coefficient = 125 (API) | Display as 1.25 (normalized) |
+| Coefficient > 200 (API) | Allow but show "Высокий" (red) status |
+| No warehouse selected | Show info notice, hide coefficient section |
+| API returns empty coefficients | Use default 1.0, show warning |
+| API error | Show error message, allow fallback |
+| Form reset | Coefficients reset when warehouse cleared |
+| Date outside 14-day window | Extrapolate or show last known value |
 
 ---
 
 ## Observability
 
-- **Analytics**: Track coefficient usage (how often non-default values used)
-- **Metrics**: Average coefficient values entered by users
-- **Logs**: Log adjusted logistics values for debugging
+- **Analytics**: Track coefficient usage (how often non-1.0 coefficients)
+- **Metrics**: Average coefficient values by warehouse
+- **Logs**: Log coefficient normalization for debugging
 
 ---
 
 ## Security
 
-- **Input Sanitization**: Parse coefficient inputs as float, validate range
-- **XSS**: No user-generated HTML in tooltips or links
-- **External Link**: Use `rel="noopener noreferrer"` for WB documentation link
+- **Input Sanitization**: Coefficients validated as positive numbers
+- **XSS**: No user-generated HTML in tooltips or calendar
+- **External Link**: Use `rel="noopener noreferrer"` for WB link
 
 ---
 
 ## Accessibility (WCAG 2.1 AA)
 
-- [ ] All inputs have associated labels
-- [ ] Error messages announced to screen readers (`role="alert"`)
 - [ ] Collapsible section keyboard accessible (Enter/Space to toggle)
-- [ ] Color contrast >= 4.5:1 for all text
-- [ ] Touch targets >= 44x44px
-- [ ] External link has visible indicator and `aria-label` with destination
+- [ ] Color contrast ≥ 4.5:1 for coefficient status badges
+- [ ] Calendar items have tooltips accessible via keyboard
+- [ ] Status communicated via text, not just color
+- [ ] External link has visible indicator and `aria-label`
+- [ ] aria-expanded attribute on collapsible trigger
 
 ---
 
 ## Testing Requirements
 
 ### Unit Tests
-- [ ] LogisticsCoefficientsSection renders correctly
-- [ ] Coefficient validation (min 1.0)
-- [ ] Empty field defaults to 1.0
-- [ ] Coefficient multiplication applied correctly
+- [ ] normalizeCoefficient: 100 → 1.0, 125 → 1.25
+- [ ] getCoefficientStatus: base/elevated/high
+- [ ] calculateCoefficientImpact: increase calculation
 
-### Integration Tests
-- [ ] Coefficient changes trigger form validation
-- [ ] Adjusted logistics values sent to API
-- [ ] Reset clears coefficients to 1.0
+### Component Tests
+- [ ] CoefficientDisplay renders correctly
+- [ ] Calendar shows correct 14 days
+- [ ] Collapsed state shows summary
+- [ ] No warehouse shows info notice
 
 ### E2E Tests
 - [ ] User can expand coefficients section
-- [ ] User can enter custom coefficients
-- [ ] Calculation reflects adjusted logistics costs
+- [ ] Calendar dates are clickable
+- [ ] Help link opens in new tab
 
 ---
 
@@ -306,9 +681,13 @@ const validation = {
 ### File List
 | File | Change Type | Lines (Est.) | Description |
 |------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx` | CREATE | ~100 | Collapsible coefficients section |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +30 | Add coefficients to form |
-| `src/types/price-calculator.ts` | UPDATE | +5 | Add coefficient fields (optional) |
+| `src/types/coefficients.ts` | CREATE | ~40 | Type definitions |
+| `src/lib/coefficient-utils.ts` | CREATE | ~80 | Normalization and status helpers |
+| `src/hooks/useAcceptanceCoefficients.ts` | CREATE | ~30 | TanStack Query hook |
+| `src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx` | CREATE | ~100 | Main collapsible section |
+| `src/components/custom/price-calculator/CoefficientDisplay.tsx` | CREATE | ~60 | Coefficient value display |
+| `src/components/custom/price-calculator/CoefficientCalendar.tsx` | CREATE | ~70 | 14-day mini calendar |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +20 | Integrate coefficients section |
 
 ### Change Log
 _To be filled during implementation_
@@ -318,35 +697,14 @@ _To be filled after code review_
 
 ---
 
-## QA Checklist
-
-### Functional Verification
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| Enter coefficient = 1.5, KTR = 1.0 | Logistics cost x 1.5 | [ ] |
-| Enter coefficient = 1.0, KTR = 1.2 | Logistics cost x 1.2 | [ ] |
-| Enter coefficient = 1.5, KTR = 1.2 | Logistics cost x 1.8 | [ ] |
-| Enter coefficient = 0.5 | Validation error | [ ] |
-| Leave fields empty | Default to 1.0 each | [ ] |
-| Reset form | Coefficients reset to 1.0 | [ ] |
-| Click help link | Opens WB docs in new tab | [ ] |
-
-### Accessibility Verification
-| Check | Status |
-|-------|--------|
-| Keyboard navigation | [ ] |
-| Screen reader announces errors | [ ] |
-| Color contrast | [ ] |
-| Focus visible | [ ] |
-
----
-
 ## Definition of Done
 
 - [ ] All Acceptance Criteria verified (AC1-AC7)
-- [ ] Component created with proper TypeScript types
+- [ ] Components created with proper TypeScript types
+- [ ] Coefficient normalization works correctly
+- [ ] 14-day calendar displays accurately
+- [ ] Cost impact calculation is correct
 - [ ] Unit tests written and passing
-- [ ] Integration tests with form flow
 - [ ] No ESLint errors
 - [ ] Accessibility audit passed
 - [ ] Code review completed
@@ -355,5 +713,27 @@ _To be filled after code review_
 
 ---
 
+## QA Checklist
+
+### Functional Verification
+| Test Case | Expected Result | Status |
+|-----------|-----------------|--------|
+| Coefficient = 1.00 | "Базовый" badge (green) | [ ] |
+| Coefficient = 1.25 | "Повышенный" badge (yellow) | [ ] |
+| Coefficient = 1.75 | "Высокий" badge (red) | [ ] |
+| No warehouse | Info notice displayed | [ ] |
+| Expand section | Shows calendar and help link | [ ] |
+| Click help link | Opens WB docs in new tab | [ ] |
+
+### Accessibility Verification
+| Check | Status |
+|-------|--------|
+| Keyboard navigation | [ ] |
+| Color contrast | [ ] |
+| Focus visible | [ ] |
+| Screen reader compatible | [ ] |
+
+---
+
 **Created**: 2026-01-19
-**Last Updated**: 2026-01-19
+**Last Updated**: 2026-01-20
