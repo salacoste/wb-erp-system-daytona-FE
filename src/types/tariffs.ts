@@ -27,7 +27,7 @@ export interface Warehouse {
 
 export interface WarehousesResponse {
   warehouses: Warehouse[]
-  meta: { total: number; cached: boolean }
+  updated_at: string
 }
 
 /** Delivery coefficient data */

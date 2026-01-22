@@ -49,9 +49,9 @@ export async function calculatePrice(
   )
 
   console.info('[Price Calculator] Calculation result:', {
-    recommendedPrice: response.result.recommended_price,
-    actualMargin: response.result.actual_margin_pct,
-    warnings: response.warnings.length,
+    recommendedPrice: response.result?.recommended_price,
+    actualMargin: response.result?.actual_margin_pct,
+    warnings: response.warnings?.length ?? 0,
   })
 
   return response

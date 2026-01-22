@@ -16,6 +16,7 @@ import type {
   AcceptanceCoefficientsResponse,
   TariffSettings,
 } from '@/types/tariffs'
+import type { BoxTariffsResponse, WarehouseWithTariffs } from '@/types/warehouse'
 
 /**
  * Fetch all category commissions (7346 categories)
@@ -60,7 +61,7 @@ export async function getWarehouses(): Promise<WarehousesResponse> {
     '/v1/tariffs/warehouses',
   )
 
-  console.info('[Tariffs] Loaded', response.meta.total, 'warehouses')
+  console.info('[Tariffs] Loaded', response.warehouses.length, 'warehouses')
 
   return response
 }
@@ -94,6 +95,28 @@ export async function getAcceptanceCoefficients(
 }
 
 /**
+ * Fetch ALL acceptance coefficients for ALL warehouses
+ * GET /v1/tariffs/acceptance/coefficients/all
+ *
+ * Returns coefficients for all 140+ warehouses with REAL WB IDs and names.
+ * Use this for warehouse dropdown - these IDs work with acceptance API.
+ * Cached for 1 hour.
+ *
+ * @returns All acceptance coefficients with real warehouse IDs
+ */
+export async function getAllAcceptanceCoefficients(): Promise<AcceptanceCoefficientsResponse> {
+  console.info('[Tariffs] Fetching ALL acceptance coefficients')
+
+  const response = await apiClient.get<AcceptanceCoefficientsResponse>(
+    '/v1/tariffs/acceptance/coefficients/all',
+  )
+
+  console.info('[Tariffs] Loaded', response.coefficients?.length || 0, 'coefficients for all warehouses')
+
+  return response
+}
+
+/**
  * Fetch global tariff settings
  * GET /v1/tariffs/settings
  *
@@ -112,6 +135,61 @@ export async function getTariffSettings(): Promise<TariffSettings> {
     fbsCommission: response.default_commission_fbs_pct,
     effectiveFrom: response.effective_from,
   })
+
+  return response
+}
+
+/**
+ * Fetch box tariffs with logistics/storage coefficients by warehouse name
+ * GET /v1/tariffs/warehouses/box
+ *
+ * Used as fallback when acceptance coefficients API fails (e.g., synthetic warehouse IDs).
+ * Contains coefficients matched by warehouse name.
+ * Cached for 1 hour.
+ * Rate Limit: 10 req/min (tariffs scope)
+ *
+ * @param date - Optional date in YYYY-MM-DD format (defaults to today)
+ * @returns Box tariffs with coefficients for all warehouses
+ */
+export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> {
+  const params = date ? `?date=${date}` : ''
+  console.info('[Tariffs] Fetching box tariffs', { date: date || 'today' })
+
+  const response = await apiClient.get<BoxTariffsResponse>(
+    `/v1/tariffs/warehouses/box${params}`,
+  )
+
+  console.info('[Tariffs] Loaded', response.tariffs?.length || 0, 'box tariffs')
+
+  return response
+}
+
+/**
+ * Response from GET /v1/tariffs/warehouses-with-tariffs
+ */
+export interface WarehousesWithTariffsResponse {
+  warehouses: WarehouseWithTariffs[]
+  updated_at?: string
+}
+
+/**
+ * Fetch warehouses with embedded tariffs and coefficients
+ * GET /v1/tariffs/warehouses-with-tariffs
+ *
+ * Returns warehouses with logistics and storage coefficients embedded.
+ * Preferred over /v1/tariffs/warehouses for Price Calculator.
+ * Cached for 1 hour.
+ *
+ * @returns Warehouses with coefficients
+ */
+export async function getWarehousesWithTariffs(): Promise<WarehousesWithTariffsResponse> {
+  console.info('[Tariffs] Fetching warehouses with tariffs')
+
+  const response = await apiClient.get<WarehousesWithTariffsResponse>(
+    '/v1/tariffs/warehouses-with-tariffs',
+  )
+
+  console.info('[Tariffs] Loaded', response.warehouses?.length || 0, 'warehouses with tariffs')
 
   return response
 }

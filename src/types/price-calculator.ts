@@ -4,6 +4,7 @@
  * Story 44.15-FE: FBO/FBS Fulfillment Type Selection
  * Story 44.17-FE: Tax Configuration Types
  * Story 44.18-FE: DRR Input Types
+ * Story 44.26b-FE: Auto-fill Dimensions & Category Types
  * Epic 44: Price Calculator UI (Frontend)
  * Reference: docs/request-backend/95-epic-43-price-calculator-api.md
  */
@@ -68,6 +69,57 @@ export const COMMISSION_FIELD_MAP = {
 } as const
 
 // ============================================================================
+// Story 44.32: Missing Price Calculator Fields (Phase 1 HIGH Priority)
+// ============================================================================
+
+/**
+ * Box type for FBO fulfillment
+ * - 'box': Standard box delivery (paidStorageKgvp commission)
+ * - 'pallet': Large items on pallet (different tariff structure)
+ *
+ * Business Impact: Pallet has fixed ~500₽ acceptance, box is ~1.70₽/liter
+ */
+export type BoxType = 'box' | 'pallet'
+
+/**
+ * Box type configuration
+ */
+export const BOX_TYPE_CONFIG: Record<BoxType, {
+  label: string
+  description: string
+  apiId: number
+}> = {
+  box: {
+    label: 'Короб',
+    description: 'Стандартная доставка в коробе',
+    apiId: 2,
+  },
+  pallet: {
+    label: 'Монопаллета',
+    description: 'Крупногабаритные товары на паллете',
+    apiId: 5,
+  },
+} as const
+
+/**
+ * Localization index ranges
+ * Central Federal District: 1.0-1.2
+ * Regions: 1.3-1.7
+ * Remote (Far East/North): 1.8-2.5
+ */
+export const LOCALIZATION_RANGES = {
+  MIN: 0.5,
+  MAX: 3.0,
+  STEP: 0.1,
+  DEFAULT: 1.0,
+  ZONES: {
+    central: { min: 1.0, max: 1.2, label: 'Центральный ФО' },
+    regional: { min: 1.3, max: 1.7, label: 'Регионы' },
+    remote: { min: 1.8, max: 2.5, label: 'Дальний Восток / Крайний Север' },
+  } as const,
+} as const
+
+// ============================================================================
 // Request Types
 // ============================================================================
 
@@ -75,6 +127,7 @@ export const COMMISSION_FIELD_MAP = {
  * Price calculator request parameters
  * Matches backend DTO from Epic 43
  * Updated for Story 44.15 with fulfillment_type support
+ * Updated for Story 44.32 with Phase 1 HIGH priority fields
  */
 export interface PriceCalculatorRequest {
   /** Fulfillment type: FBO (WB warehouse) or FBS (seller warehouse) */
@@ -98,6 +151,45 @@ export interface PriceCalculatorRequest {
   /** Acquiring percentage (optional) */
   acquiring_pct?: number
   /**
+   * Story 44.32: Box type for FBO (default: 'box')
+   * Only applies to FBO fulfillment
+   */
+  box_type?: BoxType
+  /**
+   * Story 44.32: Weight exceeds 25kg threshold (default: false)
+   * Applies 1.5x multiplier to logistics cost
+   */
+  weight_exceeds_25kg?: boolean
+  /**
+   * Story 44.32: Localization index (КТР) for regional delivery (default: 1.0)
+   * Range: 0.5-3.0, auto-filled from warehouse delivery coefficient
+   */
+  localization_index?: number
+  /**
+   * Story 44.32: Turnover days in storage (FBO only, default: 20)
+   * Total storage = storage_per_day × turnover_days
+   */
+  turnover_days?: number
+  /**
+   * Story 44.27: Warehouse ID for coefficient lookup
+   */
+  warehouse_id?: number
+  /**
+   * Story 44.27: Logistics coefficient from warehouse (default: 1.0)
+   * Multiplier for forward logistics cost
+   */
+  logistics_coefficient?: number
+  /**
+   * Story 44.27: Storage coefficient from warehouse (default: 1.0)
+   * Multiplier for storage cost (FBO only)
+   */
+  storage_coefficient?: number
+  /**
+   * Story 44.27: Delivery date in ISO format (YYYY-MM-DD)
+   * Used for coefficient calendar lookup
+   */
+  delivery_date?: string
+  /**
    * Commission percentage (optional)
    * @deprecated Use overrides.commission_pct instead for clarity
    * Root-level commission_pct is supported for backward compatibility
@@ -107,7 +199,7 @@ export interface PriceCalculatorRequest {
    * Optional overrides for specific calculations
    * @example
    * // Override commission for a specific product
-   * overrides: { commission_pct: 8.0, nm_id: 147205694 }
+   * overrides: { commission_pct: 8.0, nm_id: "147205694" }
    */
   overrides?: {
     /**
@@ -115,8 +207,8 @@ export interface PriceCalculatorRequest {
      * Takes precedence over root-level commission_pct if both are provided
      */
     commission_pct?: number
-    /** Filter by specific product */
-    nm_id?: number
+    /** Filter by specific product (STRING from backend!) */
+    nm_id?: string
   }
 }
 
@@ -395,4 +487,203 @@ export interface TwoLevelPricingFormData {
   tax_type: TaxType
   /** SPP percentage for customer price */
   spp_pct: number
+}
+
+// ============================================================================
+// Auto-fill Types (Story 44.26b)
+// ============================================================================
+
+/**
+ * Source of auto-filled value
+ * - 'auto': Value populated from product selection (WB catalog)
+ * - 'manual': Value entered manually by user
+ */
+export type AutoFillSource = 'auto' | 'manual'
+
+/**
+ * Auto-fill badge display status
+ * - 'auto': Showing "Автозаполнено" (green badge)
+ * - 'modified': Showing "Изменено" (yellow badge) with restore button
+ * - 'none': No badge displayed (manual entry mode)
+ */
+export type AutoFillStatus = 'auto' | 'modified' | 'none'
+
+/**
+ * Dimension auto-fill state for tracking changes
+ * Used to manage dimensions section when product is selected
+ */
+export interface DimensionAutoFillState {
+  /** Source of current values */
+  source: AutoFillSource
+  /** Original values from product for restore functionality */
+  originalValues: {
+    length_cm: number
+    width_cm: number
+    height_cm: number
+    volume_liters: number // Pre-calculated by backend
+  } | null
+  /** Current status for badge display */
+  status: AutoFillStatus
+}
+
+/**
+ * Category auto-fill state for tracking selection mode
+ * Used to manage category section lock/unlock behavior
+ */
+export interface CategoryAutoFillState {
+  /** Source of current selection */
+  source: AutoFillSource
+  /** Whether category selector is locked (product selected) */
+  isLocked: boolean
+  /** Original category from product for restore functionality */
+  originalCategory: CategoryHierarchy | null
+}
+
+// ============================================================================
+// Product Dimensions & Category Types (Backend Epic 45)
+// ============================================================================
+
+/**
+ * Product dimensions from WB catalog (in millimeters)
+ * Backend Epic 45 - Products Dimensions & Category API
+ *
+ * CRITICAL: All dimensions are in mm from backend!
+ * Frontend must convert: mm / 10 = cm
+ */
+export interface ProductDimensionsMm {
+  /** Length in millimeters */
+  length_mm: number
+  /** Width in millimeters */
+  width_mm: number
+  /** Height in millimeters */
+  height_mm: number
+  /** Volume in liters (pre-calculated by backend: L×W×H/1000000) */
+  volume_liters: number
+}
+
+/**
+ * Category hierarchy from WB catalog
+ * Backend Epic 45 - Products Dimensions & Category API
+ *
+ * NOTE: Field name in API response is "category_hierarchy", NOT "category"!
+ */
+export interface CategoryHierarchy {
+  /** WB subject (subcategory) ID */
+  subject_id: number
+  /** Subject name (e.g., "Платья") */
+  subject_name: string
+  /** Parent category ID (null for top-level categories) */
+  parent_id: number | null
+  /** Parent category name (null for top-level categories) */
+  parent_name: string | null
+}
+
+/**
+ * Product with dimensions and category for Price Calculator
+ * Backend Epic 45 - Products Dimensions & Category API
+ *
+ * CRITICAL Implementation Notes:
+ * - nm_id is STRING (backend returns "147205694", not 147205694)
+ * - Product name field is "sa_name" (WB naming), not "title"
+ * - Category field is "category_hierarchy", not "category"
+ * - volume_liters is pre-calculated by backend (no frontend calc needed)
+ */
+export interface ProductWithDimensions {
+  /** Wildberries nomenclature ID (STRING from backend!) */
+  nm_id: string
+  /** Vendor code / article */
+  vendor_code: string
+  /** Product name (WB uses "sa_name", NOT "title") */
+  sa_name: string
+  /** Brand name */
+  brand?: string
+  /** Photo URL */
+  photo_url?: string
+  /** Whether product has COGS assigned */
+  has_cogs?: boolean
+  /** COGS data if available */
+  cogs?: {
+    unit_cost_rub: number
+    valid_from: string
+  }
+  /** Product dimensions (null if not set in WB) */
+  dimensions?: ProductDimensionsMm | null
+  /** Category hierarchy (null if not set in WB) */
+  category_hierarchy?: CategoryHierarchy | null
+}
+
+/**
+ * Products with dimensions API response
+ * GET /v1/products?include_dimensions=true
+ */
+export interface ProductsWithDimensionsResponse {
+  products: ProductWithDimensions[]
+  pagination: {
+    next_cursor: string | null
+    has_more: boolean
+    count: number
+    total: number
+  }
+}
+
+/**
+ * Parameters for fetching products with dimensions
+ */
+export interface GetProductsWithDimensionsParams {
+  /** Search query (matches sa_name, vendor_code) */
+  search?: string
+  /** Include dimensions in response */
+  include_dimensions?: boolean
+  /** Include COGS data in response */
+  include_cogs?: boolean
+  /** Include storage data in response */
+  include_storage?: boolean
+  /** Limit results per page */
+  limit?: number
+  /** Pagination cursor */
+  cursor?: string
+  /** Bypass Redis cache (default: false) */
+  skip_cache?: boolean
+}
+
+// ============================================================================
+// Delivery Date Types (Story 44.26a-FE)
+// ============================================================================
+
+/**
+ * Delivery date status based on coefficient
+ * Story 44.26a-FE: DeliveryDatePicker
+ */
+export type DeliveryDateStatus = 'base' | 'elevated' | 'high' | 'peak' | 'unavailable'
+
+/**
+ * Delivery date selection state
+ * Story 44.26a-FE: For form state management
+ */
+export interface DeliveryDateState {
+  /** Selected date in ISO format (YYYY-MM-DD) */
+  date: string | null
+  /** Coefficient for the selected date (normalized: 1.0, 1.25, etc.) */
+  coefficient: number
+  /** Formatted date for display ("21 января 2026") */
+  formattedDate: string
+  /** Status for styling */
+  status: DeliveryDateStatus
+}
+
+/**
+ * Coefficient calendar day (enhanced for click-to-select)
+ * Story 44.26a-FE: CoefficientCalendar
+ */
+export interface CoefficientDay {
+  /** Date in ISO format */
+  date: string
+  /** Normalized coefficient (1.0, 1.25, etc.) */
+  coefficient: number
+  /** Whether date is available for selection */
+  isAvailable: boolean
+  /** Whether date is currently selected */
+  isSelected: boolean
+  /** Status for styling */
+  status: DeliveryDateStatus
 }
