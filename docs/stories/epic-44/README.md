@@ -2,8 +2,8 @@
 
 **Status**: 🚧 **IN PROGRESS**
 **Backend Dependency**: Epic 43 ✅ Complete
-**Total Stories**: 25
-**Total Estimate**: 58 Story Points
+**Total Stories**: 26
+**Total Estimate**: 60 Story Points
 **Completed (Phase 1)**: 2026-01-17
 **Phase 2**: Enhanced Logistics Calculation (4 stories)
 **Phase 3**: Warehouse, Storage & Tariffs Integration (5 stories)
@@ -63,6 +63,7 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 | 44.34 | [Debounce Warehouse Selection & Rate Limit Handling](./story-44.34-fe-debounce-warehouse-selection.md) | P1 | 2 | 📋 Ready for Dev |
 | 44.35 | [FBO/FBS Toggle Crashes Application](./story-44.35-fe-fbo-fbs-toggle-crash.md) | **P0** | **3** | **📋 Ready for Dev** |
 | 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **📋 Ready for Dev** |
+| 44.37 | [API Field Mismatch - Warehouse & Additional Fields](./story-44.37-fe-api-field-mismatch-warehouse.md) | **P0** | **2** | **📋 Ready for Dev** |
 
 ---
 
@@ -136,6 +137,12 @@ Critical fixes based on frontend integration guide and competitor analysis:
    - Calculation returns incorrect cost breakdown
    - **Impact**: Inaccurate price calculations, failed form submissions
 
+6. **API Field Mismatch - Warehouse & Additional Fields** (Story 44.37) - **P0 CRITICAL**
+   - 6 unsupported fields sent in API request causing validation errors
+   - Fields: `warehouse_id`, `logistics_coefficient`, `storage_coefficient`, `delivery_date`, `weight_exceeds_25kg`, `localization_index`
+   - Removes redundant/unsupported fields, companion fix to Story 44.36
+   - **Impact**: Form submission validation errors, API rejection
+
 ### Phase 5 Dependencies
 
 ```
@@ -143,10 +150,11 @@ Story 44.32 (Missing Fields) ← Story 44.2 (Form) + Story 44.15 (FBO/FBS) + Sto
 Story 44.33 (Type Fixes) ← Story 44.1 (Types) + Story 44.2 (Form)
 Story 44.34 (Debounce) ← Story 44.12 (Warehouse) + Story 44.27 (Integration)
 Story 44.35 (FBO/FBS Toggle Crash) ← Story 44.15 (FBO/FBS Selection) - BLOCKER for Phase 4
-Story 44.36 (API Field Mismatch) ← Story 44.2 (Form) + Story 44.20 (Results) - BLOCKER for calculations
+Story 44.36 (API Field Mismatch - box_type/turnover_days) ← Story 44.2 (Form) + Story 44.20 (Results) - BLOCKER for calculations
+Story 44.37 (API Field Mismatch - warehouse/additional) ← Story 44.36 (companion fix) - BLOCKER for calculations
 ```
 
-**Priority**: Stories 44.35 and 44.36 are **critical blockers** and must be resolved before full Phase 4 implementation can proceed.
+**Priority**: Stories 44.35, 44.36, and 44.37 are **critical blockers** and must be resolved before full Phase 4 implementation can proceed.
 
 ### Phase 5 Context
 
@@ -257,8 +265,8 @@ Story is complete when:
 **Phase 2 Progress**: 0/4 stories (0%) 📋
 **Phase 3 Progress**: 4/5 stories (80%) - **1 story Ready for Dev (44.27 Integration)**
 **Phase 4 Progress**: 0/6 stories (0%) 📋
-**Phase 5 Progress**: 0/5 stories (0%) 📋 - **2 CRITICAL blockers added (44.35, 44.36)**
-**Overall Progress**: 10/25 stories (40%)
+**Phase 5 Progress**: 0/6 stories (0%) 📋 - **3 CRITICAL blockers (44.35, 44.36, 44.37)**
+**Overall Progress**: 10/26 stories (38%)
 
 ---
 
@@ -289,15 +297,16 @@ Story is complete when:
 | Phase 2 | 4 | 8 SP |
 | Phase 3 | 5 | 9 SP |
 | Phase 4 | 6 | 12 SP |
-| Phase 5 | 5 | 14 SP |
-| **Total** | **25** | **58 SP** |
+| Phase 5 | 6 | 16 SP |
+| **Total** | **26** | **60 SP** |
 
 **Phase 5 Breakdown**:
 - Story 44.32 (Missing Fields): 5 SP
 - Story 44.33 (Type Fixes): 2 SP
 - Story 44.34 (Debounce): 2 SP
 - Story 44.35 (FBO/FBS Toggle Crash): 3 SP ⚠️ **CRITICAL**
-- Story 44.36 (API Field Mismatch): 2 SP ⚠️ **CRITICAL**
+- Story 44.36 (API Field Mismatch - box_type/turnover_days): 2 SP ⚠️ **CRITICAL**
+- Story 44.37 (API Field Mismatch - warehouse/additional): 2 SP ⚠️ **CRITICAL**
 
 ---
 
@@ -387,4 +396,4 @@ See `PRICE-CALCULATOR-REQUIREMENTS.md` Section 4 for complete API reference.
 
 ---
 
-**Last Updated**: 2026-01-22 (Added critical bugfix stories 44.35 & 44.36)
+**Last Updated**: 2026-01-22 (Added critical bugfix stories 44.35, 44.36 & 44.37)
