@@ -61,9 +61,9 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 | 44.32 | [Missing Price Calculator Fields - Phase 1 HIGH](./story-44.32-fe-missing-price-calc-fields.md) | P0 | 5 | 📋 Ready for Dev |
 | 44.33 | [Frontend Type Mismatch & Field Name Fixes](./story-44.33-fe-type-mismatch-field-names.md) | P1 | 2 | 📋 Ready for Dev |
 | 44.34 | [Debounce Warehouse Selection & Rate Limit Handling](./story-44.34-fe-debounce-warehouse-selection.md) | P1 | 2 | 📋 Ready for Dev |
-| 44.35 | [FBO/FBS Toggle Crashes Application](./story-44.35-fe-fbo-fbs-toggle-crash.md) | **P0** | **3** | **📋 Ready for Dev** |
-| 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **📋 Ready for Dev** |
-| 44.37 | [API Field Mismatch - Warehouse & Additional Fields](./story-44.37-fe-api-field-mismatch-warehouse.md) | **P0** | **2** | **📋 Ready for Dev** |
+| 44.35 | [FBO/FBS Toggle Crashes Application](./story-44.35-fe-fbo-fbs-toggle-crash.md) | **P0** | **3** | **✅ Complete** |
+| 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **✅ Complete** |
+| 44.37 | [API Field Mismatch - Warehouse & Additional Fields](./story-44.37-fe-api-field-mismatch-warehouse.md) | **P0** | **2** | **✅ Complete** |
 
 ---
 
@@ -265,8 +265,8 @@ Story is complete when:
 **Phase 2 Progress**: 0/4 stories (0%) 📋
 **Phase 3 Progress**: 4/5 stories (80%) - **1 story Ready for Dev (44.27 Integration)**
 **Phase 4 Progress**: 0/6 stories (0%) 📋
-**Phase 5 Progress**: 0/6 stories (0%) 📋 - **3 CRITICAL blockers (44.35, 44.36, 44.37)**
-**Overall Progress**: 10/26 stories (38%)
+**Phase 5 Progress**: 3/6 stories (50%) ✅ - **Stories 44.35, 44.36, 44.37 Complete**
+**Overall Progress**: 13/26 stories (50%)
 
 ---
 
@@ -396,4 +396,5 @@ See `PRICE-CALCULATOR-REQUIREMENTS.md` Section 4 for complete API reference.
 
 ---
 
-**Last Updated**: 2026-01-22 (Added critical bugfix stories 44.35, 44.36 & 44.37)
+**Last Updated**: 2026-01-22
+**Bugfix Stories Completed**: 2026-01-22 (Stories 44.35, 44.36 & 44.37 - FBO/FBS Toggle & API Field Mismatches Fixed)
