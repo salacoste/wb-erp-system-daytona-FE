@@ -1,5 +1,6 @@
 {
   "mcpServers": {
+    "firecrawl": { "command": "npx", "args": ["-y", "firecrawl-mcp"] },
     "memobrain": {
       "type": "stdio",
       "command": "/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/memobrain/.venv/bin/python",
