@@ -3,9 +3,10 @@
 **Epic**: Epic 52-FE - Tariff Settings Admin UI
 **Story ID**: 52-FE.4
 **Title**: Audit Log Viewer
-**Status**: 📋 Ready for Development
+**Status**: ✅ Complete
 **Story Points**: 4
 **Priority**: Required
+**Completed**: 2026-01-23
 
 ---
 
@@ -19,17 +20,17 @@
 
 ## Acceptance Criteria
 
-- [ ] **AC1**: Table displays audit entries from `GET /v1/tariffs/settings/audit`
-- [ ] **AC2**: Columns: timestamp, user_email, action, field_name, old_value, new_value, IP address
-- [ ] **AC3**: Filter dropdown by field_name (21 options)
-- [ ] **AC4**: Pagination (50 items per page, server-side)
-- [ ] **AC5**: Values formatted appropriately:
+- [x] **AC1**: Table displays audit entries from `GET /v1/tariffs/settings/audit`
+- [x] **AC2**: Columns: timestamp, user_email, action, field_name, old_value, new_value, IP address
+- [x] **AC3**: Filter dropdown by field_name (21 options)
+- [x] **AC4**: Pagination (50 items per page, server-side)
+- [x] **AC5**: Values formatted appropriately:
   - Arrays (tiers) → JSON formatted, expandable
   - Numbers → With units (₽, %, дней)
   - Booleans → Да/Нет
-- [ ] **AC6**: Empty state when no audit entries: "Журнал изменений пуст"
-- [ ] **AC7**: Loading skeleton while data is being fetched
-- [ ] **AC8**: Action badges: UPDATE (blue), CREATE (green), DELETE (red)
+- [x] **AC6**: Empty state when no audit entries: "Журнал изменений пуст"
+- [x] **AC7**: Loading skeleton while data is being fetched
+- [x] **AC8**: Action badges: UPDATE (blue), CREATE (green), DELETE (red)
 
 ---
 
@@ -250,20 +251,20 @@ const FILTER_OPTIONS = [
 
 ### Unit Tests
 
-- [ ] Table renders with audit data
-- [ ] Filter dropdown shows all 21 fields
-- [ ] Pagination controls work correctly
-- [ ] Values formatted with correct units
-- [ ] JSON values expandable
-- [ ] Empty state displayed correctly
-- [ ] Action badges have correct colors
+- [x] Table renders with audit data
+- [x] Filter dropdown shows all 21 fields
+- [x] Pagination controls work correctly
+- [x] Values formatted with correct units
+- [x] JSON values expandable
+- [x] Empty state displayed correctly
+- [x] Action badges have correct colors
 
 ### Integration Tests
 
-- [ ] Fetches data with correct query params
-- [ ] Filter updates query and refetches
-- [ ] Pagination updates page param
-- [ ] Loading skeleton during fetch
+- [x] Fetches data with correct query params
+- [x] Filter updates query and refetches
+- [x] Pagination updates page param
+- [x] Loading skeleton during fetch
 
 ---
 
@@ -290,14 +291,30 @@ src/hooks/useTariffAuditLog.ts
 
 ## Definition of Done
 
-- [ ] All acceptance criteria met
-- [ ] Unit tests written and passing
-- [ ] All 21 fields have translations
-- [ ] Values display with correct formatting
-- [ ] Pagination works with server-side data
-- [ ] Code reviewed and approved
+- [x] All acceptance criteria met
+- [x] Unit tests written and passing
+- [x] All 21 fields have translations
+- [x] Values display with correct formatting
+- [x] Pagination works with server-side data
+- [x] Code reviewed and approved
+
+---
+
+## Implementation Status
+
+**Status:** ✅ Complete
+
+### Implemented Components
+- `AuditLogTable.tsx` (274 lines) - Main audit table with filtering and pagination
+- `AuditFieldFilter.tsx` - Field name dropdown filter with 21 options + Russian labels
+- `AuditActionBadge.tsx` - Color-coded action badges (UPDATE/CREATE/DELETE)
+- `AuditValueDisplay.tsx` - Smart value formatting (currency, percentage, days, booleans)
+- `__tests__/AuditLogTable.test.tsx` - Comprehensive test coverage
+
+### Notes
+Uses useTariffAuditLog hook with server-side pagination. Filter resets to page 1 on change. Pagination controls show "Показано X-Y из Z" format.
 
 ---
 
 **Created**: 2026-01-22
-**Last Updated**: 2026-01-22
+**Last Updated**: 2026-01-23

@@ -3,9 +3,10 @@
 **Epic**: Epic 52-FE - Tariff Settings Admin UI
 **Story ID**: 52-FE.7
 **Title**: Page Layout, Types & Integration
-**Status**: 📋 Ready for Development
+**Status**: ✅ Complete
 **Story Points**: 2
 **Priority**: Required (Foundation)
+**Completed**: 2026-01-23
 
 ---
 
@@ -19,18 +20,18 @@
 
 ## Acceptance Criteria
 
-- [ ] **AC1**: Page accessible at `/settings/tariffs`
-- [ ] **AC2**: Admin role check - non-admins redirected to dashboard
-- [ ] **AC3**: 3 tabs layout:
+- [x] **AC1**: Page accessible at `/settings/tariffs`
+- [x] **AC2**: Admin role check - non-admins redirected to dashboard
+- [x] **AC3**: 3 tabs layout:
   - Tab 1: "Текущие настройки"
   - Tab 2: "История версий"
   - Tab 3: "Журнал изменений"
-- [ ] **AC4**: Sidebar navigation: Settings > Тарифы (Admin only)
-- [ ] **AC5**: TypeScript types for all API DTOs
-- [ ] **AC6**: React Query hooks with proper caching
-- [ ] **AC7**: Breadcrumbs: Главная > Настройки > Тарифы
-- [ ] **AC8**: Responsive layout (desktop-first)
-- [ ] **AC9**: Loading skeletons for all tabs
+- [x] **AC4**: Sidebar navigation: Settings > Тарифы (Admin only)
+- [x] **AC5**: TypeScript types for all API DTOs
+- [x] **AC6**: React Query hooks with proper caching
+- [x] **AC7**: Breadcrumbs: Главная > Настройки > Тарифы
+- [x] **AC8**: Responsive layout (desktop-first)
+- [x] **AC9**: Loading skeletons for all tabs
 
 ---
 
@@ -412,17 +413,17 @@ function TariffSettingsPageSkeleton() {
 
 ### Unit Tests
 
-- [ ] Page renders for admin users
-- [ ] Non-admin users redirected to dashboard
-- [ ] All 3 tabs render correctly
-- [ ] Tab switching works
-- [ ] Loading skeleton displayed while auth loading
+- [x] Page renders for admin users
+- [x] Non-admin users redirected to dashboard
+- [x] All 3 tabs render correctly
+- [x] Tab switching works
+- [x] Loading skeleton displayed while auth loading
 
 ### Integration Tests
 
-- [ ] TypeScript types match API responses
-- [ ] Query hooks fetch data correctly
-- [ ] Cache invalidation works across hooks
+- [x] TypeScript types match API responses
+- [x] Query hooks fetch data correctly
+- [x] Cache invalidation works across hooks
 
 ---
 
@@ -449,14 +450,32 @@ src/components/layout/Sidebar.tsx (add tariffs link for admin)
 
 ## Definition of Done
 
-- [ ] All acceptance criteria met
-- [ ] TypeScript types compile without errors
-- [ ] Page loads for admin users
-- [ ] Non-admins redirected correctly
-- [ ] Tabs switch content correctly
-- [ ] Code reviewed and approved
+- [x] All acceptance criteria met
+- [x] TypeScript types compile without errors
+- [x] Page loads for admin users
+- [x] Non-admins redirected correctly
+- [x] Tabs switch content correctly
+- [x] Code reviewed and approved
+
+---
+
+## Implementation Status
+
+**Status:** ✅ Complete
+
+### Implemented Files
+- `src/app/(dashboard)/settings/tariffs/page.tsx` (146 lines) - Main page with tabs and admin check
+- `src/types/tariffs-admin.ts` (179 lines) - All 21 field types, DTOs, tracked fields constant
+- `src/lib/api/tariffs-admin.ts` - API client functions for all 7 endpoints
+- `src/hooks/tariff-query-keys.ts` - Query key factory for React Query
+- `src/hooks/useTariffSettings.ts` - Settings fetch hook
+- `src/lib/routes.ts` - Added TARIFFS route constant
+- `__tests__/page.test.tsx` - Page-level tests
+
+### Notes
+Page uses useAuth for role check (Owner only). Tabs use shadcn/ui Tabs component. Loading skeleton displayed during auth loading. Breadcrumb navigation implemented with links.
 
 ---
 
 **Created**: 2026-01-22
-**Last Updated**: 2026-01-22
+**Last Updated**: 2026-01-23

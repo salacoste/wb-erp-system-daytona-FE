@@ -1,12 +1,12 @@
 # Stories Status Report
 
 **Generated:** 2025-11-23
-**Last Updated:** 2026-01-17
-**Total Stories:** 76 (68 Done, 4 Ready for Dev)
+**Last Updated:** 2026-01-23
+**Total Stories:** 83 (75 Done, 4 Ready for Dev)
 
 ## Summary
 
-- ✅ **Completed (Done):** 68 stories (89%)
+- ✅ **Completed (Done):** 75 stories (90%)
 - 📋 **Ready for Development:** 4 stories (Epic 42-FE - Task Handlers Adaptation)
 - 📝 **Draft (Not Started):** 0 stories
 - ⚠️ **Partially Complete:** 0 stories
@@ -42,6 +42,7 @@
 ### ✅ Epic 36-FE: Product Card Linking — COMPLETE (5/5 stories, 91 tests)
 ### ✅ Epic 37: Merged Group Table Display — DONE (5/5 stories, 89.4/100)
 ### ✅ Epic 44: Price Calculator UI — COMPLETE (6/6 stories, 14 pts)
+### ✅ Epic 52-FE: Tariff Settings Admin UI — COMPLETE (7/7 stories, 26 pts)
 ### 📋 Epic 42-FE: Task Handlers Adaptation — READY FOR DEV (4 stories, 7 pts)
 
 ---
@@ -365,6 +366,36 @@ Update README, api-integration-guide, verify tests.
 
 ---
 
+## Epic 52-FE: Tariff Settings Admin UI (7 stories) ✅ **COMPLETE**
+
+**Status:** ✅ Complete
+**Total Points:** 26
+**Completed:** 2026-01-23
+**Documentation:** `docs/stories/epic-52-fe/README.md`
+
+### ✅ 52-FE.1: Version History Table — Done (3 pts)
+VersionHistoryTable, VersionStatusBadge, loading/empty/error states.
+
+### ✅ 52-FE.2: Tariff Settings Edit Form — Done (8 pts)
+TariffSettingsForm with 6 collapsible sections, 21 fields, PUT/PATCH support, validation.
+
+### ✅ 52-FE.3: Schedule Future Version — Done (5 pts)
+ScheduleVersionModal, ScheduleVersionForm, date picker, pre-fill from current settings.
+
+### ✅ 52-FE.4: Audit Log Viewer — Done (4 pts)
+AuditLogTable with server-side pagination, field filter, value formatting, action badges.
+
+### ✅ 52-FE.5: Delete Scheduled Version — Done (2 pts)
+DeleteVersionDialog with confirmation, loading state, cache invalidation.
+
+### ✅ 52-FE.6: Rate Limit UX & Error Handling — Done (2 pts)
+RateLimitIndicator, tariffRateLimitStore, countdown timer, error handling.
+
+### ✅ 52-FE.7: Page Layout, Types & Integration — Done (2 pts)
+Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API client.
+
+---
+
 ## Epic 44-FE: Price Calculator UI (6 stories) ✅ **COMPLETE**
 
 **Status:** ✅ Complete
@@ -395,7 +426,7 @@ MarginSlider, real-time updates, interactive UX.
 ## Statistics
 
 ### By Status
-- **Done:** 68 stories (89%)
+- **Done:** 75 stories (90%)
 - **Ready for Development:** 4 stories (5%) — Epic 42-FE
 - **Draft:** 0 stories
 
@@ -415,10 +446,11 @@ MarginSlider, real-time updates, interactive UX.
 | Epic 37 | ✅ Done | 5/5 (89.4/100) | - |
 | Epic 42-FE | 📋 Ready for Dev | 4/4 | 7 pts |
 | Epic 44-FE | ✅ Complete | 6/6 | 14 pts |
+| Epic 52-FE | ✅ Complete | 7/7 | 26 pts |
 
 ### Overall Progress
-- **Total Stories:** 76
-- **Completed:** 68 (89%)
+- **Total Stories:** 83
+- **Completed:** 75 (90%)
 - **Ready for Dev:** 4 (5%)
 - **Total Tests:** 800+ (estimated)
 
@@ -442,15 +474,16 @@ MarginSlider, real-time updates, interactive UX.
 | 2026-01-02 | Documentation sync — 94% complete (62/66 stories) |
 | 2026-01-06 | **Epic 42-FE created** (Task Handlers Adaptation, 4 stories, 7 pts) |
 | 2026-01-17 | **Epic 44-FE complete** (Price Calculator UI, 6 stories, 14 pts) |
+| 2026-01-23 | **Epic 52-FE complete** (Tariff Settings Admin UI, 7 stories, 26 pts) |
 
 ---
 
 ## Recommendations
 
-### ✅ 68/76 STORIES COMPLETE (2026-01-17)
+### ✅ 75/83 STORIES COMPLETE (2026-01-23)
 
 **Achievement Summary:**
-- ✅ **68/76 Stories Complete** (89%)
+- ✅ **75/83 Stories Complete** (90%)
 - ✅ **Epic 1-6:** Core MVP complete with 300+ tests
 - ✅ **Epic 24:** Paid Storage Analytics (39 pts, 11 stories)
 - ✅ **Epic 33-FE:** Advertising Analytics (26 pts)
@@ -458,6 +491,7 @@ MarginSlider, real-time updates, interactive UX.
 - ✅ **Epic 36-FE:** Product Card Linking (91 tests)
 - ✅ **Epic 37:** Merged Group Table (89.4/100 quality)
 - ✅ **Epic 44-FE:** Price Calculator UI (14 pts, 6 stories)
+- ✅ **Epic 52-FE:** Tariff Settings Admin UI (26 pts, 7 stories)
 - ✅ **Total: 800+ tests**
 
 ### Next Steps
@@ -492,6 +526,7 @@ MarginSlider, real-time updates, interactive UX.
 - `docs/stories/epic-37/STATUS.md` — Merged Group Table (5/5 ✅)
 - `docs/stories/epic-42/README.md` — Task Handlers Adaptation (4 stories 📋)
 - `docs/stories/epic-44/README.md` — Price Calculator UI (6/6 ✅)
+- `docs/stories/epic-52-fe/README.md` — Tariff Settings Admin UI (7/7 ✅)
 
 ### Backend Requests
 - `docs/request-backend/README.md` — All backend requests index

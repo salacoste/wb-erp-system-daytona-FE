@@ -3,9 +3,10 @@
 **Epic**: Epic 52-FE - Tariff Settings Admin UI
 **Story ID**: 52-FE.5
 **Title**: Delete Scheduled Version
-**Status**: 📋 Ready for Development
+**Status**: ✅ Complete
 **Story Points**: 2
 **Priority**: Required
+**Completed**: 2026-01-23
 
 ---
 
@@ -19,16 +20,16 @@
 
 ## Acceptance Criteria
 
-- [ ] **AC1**: Delete button visible only for versions with `status = "scheduled"`
-- [ ] **AC2**: Delete button hidden for `active` and `expired` versions
-- [ ] **AC3**: Clicking delete opens confirmation dialog
-- [ ] **AC4**: Dialog text: "Вы уверены, что хотите удалить версию, запланированную на {date}?"
-- [ ] **AC5**: Confirm button calls `DELETE /v1/tariffs/settings/:id`
-- [ ] **AC6**: Error handling:
+- [x] **AC1**: Delete button visible only for versions with `status = "scheduled"`
+- [x] **AC2**: Delete button hidden for `active` and `expired` versions
+- [x] **AC3**: Clicking delete opens confirmation dialog
+- [x] **AC4**: Dialog text: "Вы уверены, что хотите удалить версию, запланированную на {date}?"
+- [x] **AC5**: Confirm button calls `DELETE /v1/tariffs/settings/:id`
+- [x] **AC6**: Error handling:
   - 400 → "Нельзя удалить активную или истекшую версию"
   - 403 → Redirect to dashboard
-- [ ] **AC7**: Success toast: "Запланированная версия удалена"
-- [ ] **AC8**: After success, refresh version history table
+- [x] **AC7**: Success toast: "Запланированная версия удалена"
+- [x] **AC8**: After success, refresh version history table
 
 ---
 
@@ -207,19 +208,19 @@ interface DeleteVersionDialogProps {
 
 ### Unit Tests
 
-- [ ] Delete button only visible for scheduled versions
-- [ ] Delete button hidden for active/expired versions
-- [ ] Dialog opens with correct version date
-- [ ] Confirm button triggers onConfirm callback
-- [ ] Cancel button triggers onCancel callback
-- [ ] Loading state shows spinner
+- [x] Delete button only visible for scheduled versions
+- [x] Delete button hidden for active/expired versions
+- [x] Dialog opens with correct version date
+- [x] Confirm button triggers onConfirm callback
+- [x] Cancel button triggers onCancel callback
+- [x] Loading state shows spinner
 
 ### Integration Tests
 
-- [ ] DELETE request sent with correct version ID
-- [ ] Success toast appears after deletion
-- [ ] Version history table refreshes
-- [ ] Error toast for 400/404 responses
+- [x] DELETE request sent with correct version ID
+- [x] Success toast appears after deletion
+- [x] Version history table refreshes
+- [x] Error toast for 400/404 responses
 
 ---
 
@@ -250,14 +251,28 @@ src/components/custom/tariffs-admin/VersionHistoryTable.tsx (add delete button a
 
 ## Definition of Done
 
-- [ ] All acceptance criteria met
-- [ ] Unit tests written and passing
-- [ ] Dialog accessible (focus trap, ESC to close)
-- [ ] Error states handled gracefully
-- [ ] Optimistic UI update or refresh after delete
-- [ ] Code reviewed and approved
+- [x] All acceptance criteria met
+- [x] Unit tests written and passing
+- [x] Dialog accessible (focus trap, ESC to close)
+- [x] Error states handled gracefully
+- [x] Optimistic UI update or refresh after delete
+- [x] Code reviewed and approved
+
+---
+
+## Implementation Status
+
+**Status:** ✅ Complete
+
+### Implemented Components
+- `DeleteVersionDialog.tsx` (136 lines) - AlertDialog-based confirmation with loading state
+- `useDeleteTariffVersion.ts` - Delete mutation hook with cache invalidation
+- `__tests__/DeleteVersionDialog.test.tsx` - Comprehensive test coverage
+
+### Notes
+Dialog prevents closing during deletion (loading state). Uses AlertDialog from shadcn/ui with proper ARIA labels. Integrated into VersionHistoryTable via state management.
 
 ---
 
 **Created**: 2026-01-22
-**Last Updated**: 2026-01-22
+**Last Updated**: 2026-01-23

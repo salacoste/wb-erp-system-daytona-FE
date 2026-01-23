@@ -107,6 +107,7 @@ This is a frontend project. We track frontend implementation epics (marked with 
 | Epic 37-FE | Merged Group Table Display UI | ✅ Done | 5 | Backend Epic 37 |
 | Epic 42-FE | Task Handlers Adaptation | 📋 Ready for Dev | 4 | Backend Epic 42 |
 | Epic 44-FE | Price Calculator UI | ✅ Complete | 6 | Backend Epic 43 |
+| Epic 52-FE | Tariff Settings Admin UI | ✅ Complete | 7 | Backend Epic 52 |
 
 **Status Legend**: ✅ Complete | 🚧 In Progress | 📋 Ready for Dev
 
@@ -120,7 +121,7 @@ This is a frontend project. We track frontend implementation epics (marked with 
 
 ---
 
-## Route Structure (23 Pages)
+## Route Structure (24 Pages)
 
 ### Public Routes `(auth)`
 | Path | Purpose |
@@ -155,6 +156,7 @@ This is a frontend project. We track frontend implementation epics (marked with 
 | `/analytics/liquidity` | Liquidity analysis (Epic 7) |
 | `/analytics/advertising` | Advertising ROAS (Epic 33) |
 | `/settings/notifications` | Telegram settings (Epic 34) |
+| `/settings/tariffs` | Tariff settings admin (Epic 52, Admin only) |
 
 **Routes reference**: `src/lib/routes.ts` - centralized route constants
 
