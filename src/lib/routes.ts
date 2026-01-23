@@ -41,6 +41,7 @@ export const ROUTES = {
   SETTINGS: {
     ROOT: '/settings',
     NOTIFICATIONS: '/settings/notifications', // Epic 34-FE: Telegram Notifications
+    TARIFFS: '/settings/tariffs', // Epic 52-FE: Tariff Settings Admin (Admin only)
   },
 } as const
 
@@ -75,6 +76,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.ADVERTISING,
     ROUTES.SETTINGS.ROOT,
     ROUTES.SETTINGS.NOTIFICATIONS, // Epic 34-FE: Telegram Notifications
+    ROUTES.SETTINGS.TARIFFS, // Epic 52-FE: Tariff Settings Admin (Admin only)
   ]
 
   return protectedPaths.some((path) => pathname.startsWith(path))

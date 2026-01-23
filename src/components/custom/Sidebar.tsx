@@ -15,12 +15,14 @@ import {
   Droplets,
   Megaphone,
   Bell,
+  Settings2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
 import { LogoutButton } from './LogoutButton'
 import { useSupplyPlanning } from '@/hooks/useSupplyPlanning'
 import { getUrgentSkuCount } from '@/lib/supply-planning-utils'
+import { useAuth } from '@/hooks/useAuth'
 
 /**
  * Sidebar navigation component
@@ -30,10 +32,14 @@ import { getUrgentSkuCount } from '@/lib/supply-planning-utils'
  */
 export function Sidebar() {
   const pathname = usePathname()
+  const { user } = useAuth()
 
   // Fetch supply planning summary for urgent badge count (Story 6.2)
   const { data: supplyData } = useSupplyPlanning({})
   const urgentCount = supplyData?.summary ? getUrgentSkuCount(supplyData.summary) : 0
+
+  // Check if user is admin (Owner role) for admin-only menu items (Epic 52-FE)
+  const isAdmin = user?.role === 'Owner'
 
   const navigationItems = [
     {
@@ -92,6 +98,16 @@ export function Sidebar() {
       href: ROUTES.SETTINGS.NOTIFICATIONS,
       icon: Bell,
     },
+    // Epic 52-FE: Tariff Settings Admin (Admin only)
+    ...(isAdmin
+      ? [
+          {
+            label: 'Тарифы',
+            href: ROUTES.SETTINGS.TARIFFS,
+            icon: Settings2,
+          },
+        ]
+      : []),
     {
       label: 'Settings',
       href: ROUTES.SETTINGS.ROOT,
