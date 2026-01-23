@@ -11,8 +11,27 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { TariffSettingsForm } from '../TariffSettingsForm'
 
-// Import mock data from unit test file
-import { mockTariffSettings } from './TariffSettingsForm.test'
+// Mock tariff settings data - same as unit test for consistency
+const mockTariffSettings = {
+  acceptanceBoxRatePerLiter: 1.8,
+  acceptancePalletRate: 520,
+  logisticsVolumeTiers: [
+    { fromLiters: 0.001, toLiters: 0.2, rateRub: 24 },
+    { fromLiters: 0.201, toLiters: 0.4, rateRub: 27 },
+  ],
+  logisticsLargeFirstLiterRate: 48,
+  logisticsLargeAdditionalLiterRate: 15,
+  returnLogisticsFboRate: 50,
+  returnLogisticsFbsRate: 60,
+  defaultCommissionFboPct: 15,
+  defaultCommissionFbsPct: 12,
+  storageFreeDays: 30,
+  fixationClothingDays: 14,
+  fixationOtherDays: 7,
+  fbsUsesFboLogisticsRates: true,
+  source: 'manual' as const,
+  notes: '',
+}
 
 // Mock API module
 const mockGetTariffSettings = vi.fn()

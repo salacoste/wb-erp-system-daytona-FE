@@ -128,7 +128,9 @@ describe('AuditLogTable', () => {
       renderWithProviders(<AuditLogTable />)
 
       await waitFor(() => {
-        expect(screen.getByText('admin@example.com')).toBeInTheDocument()
+        // Use getAllByText since admin@example.com appears multiple times
+        const adminEmails = screen.getAllByText('admin@example.com')
+        expect(adminEmails.length).toBeGreaterThan(0)
         expect(screen.getByText('manager@example.com')).toBeInTheDocument()
       })
     })
@@ -237,12 +239,12 @@ describe('AuditLogTable', () => {
       const dropdown = screen.getByRole('combobox')
       await user.click(dropdown)
 
-      // Should show translated field names
+      // Should show translated field names (use getAllByText as text may appear multiple times)
       await waitFor(() => {
-        expect(
-          screen.getByText(/бесплатные дни хранения/i)
-        ).toBeInTheDocument()
-        expect(screen.getByText(/комиссия fbo/i)).toBeInTheDocument()
+        const storageDaysOptions = screen.getAllByText(/бесплатные дни хранения/i)
+        expect(storageDaysOptions.length).toBeGreaterThan(0)
+        const commissionOptions = screen.getAllByText(/комиссия fbo/i)
+        expect(commissionOptions.length).toBeGreaterThan(0)
       })
     })
 
@@ -268,13 +270,15 @@ describe('AuditLogTable', () => {
       await user.click(dropdown)
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/бесплатные дни хранения/i)
-        ).toBeInTheDocument()
+        const storageDaysOptions = screen.getAllByText(/бесплатные дни хранения/i)
+        expect(storageDaysOptions.length).toBeGreaterThan(0)
       })
 
-      const option = screen.getByText(/бесплатные дни хранения/i)
-      await user.click(option)
+      // Get option from dropdown (role="option" for Select items)
+      const options = screen.getAllByText(/бесплатные дни хранения/i)
+      // Click the last one which should be the dropdown option
+      const dropdownOption = options[options.length - 1]
+      await user.click(dropdownOption)
 
       // Should update hook params with field_name filter
       await waitFor(() => {
@@ -402,6 +406,32 @@ describe('AuditLogTable', () => {
     })
 
     it('should format booleans as Да/Нет', async () => {
+      // Create mock data with a proper boolean field (not matching Rate pattern)
+      const booleanMockResponse = {
+        data: [
+          {
+            id: 200,
+            action: 'UPDATE' as const,
+            field_name: 'someFlag', // Generic boolean field
+            old_value: 'true',
+            new_value: 'false',
+            user_id: '550e8400-e29b-41d4-a716-446655440000',
+            user_email: 'admin@example.com',
+            ip_address: '192.168.1.1',
+            created_at: '2026-01-22T10:00:00.000Z',
+          },
+        ],
+        meta: { page: 1, limit: 50, total: 1, total_pages: 1 },
+      }
+
+      mockUseTariffAuditLog.mockReturnValue({
+        data: booleanMockResponse,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+      } as unknown as ReturnType<typeof useTariffAuditLog>)
+
       const { AuditLogTable } = await import('../AuditLogTable')
       renderWithProviders(<AuditLogTable />)
 
