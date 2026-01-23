@@ -80,7 +80,7 @@ export function formatIsoWeek(date: string | Date): string {
  */
 export function setAuthCookie(token: string, expiresInHours = 24): void {
   if (typeof document === 'undefined') return
-  
+
   const expires = new Date()
   expires.setTime(expires.getTime() + expiresInHours * 60 * 60 * 1000)
   document.cookie = `auth-token=${token}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`

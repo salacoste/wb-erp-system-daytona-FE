@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { getAcceptanceCoefficients } from '@/lib/api/tariffs'
 import { useRateLimitStore } from '@/stores/rateLimitStore'
 import type { AcceptanceCoefficient } from '@/types/tariffs'
@@ -181,7 +181,7 @@ export interface UseAcceptanceCoefficientsOptions {
 }
 
 /** Enhanced result with debouncing state */
-export interface UseAcceptanceCoefficientsResult extends ReturnType<typeof useQuery<NormalizedCoefficients | null>> {
+export type UseAcceptanceCoefficientsResult = UseQueryResult<NormalizedCoefficients | null, Error> & {
   /** Currently debouncing warehouse changes */
   isDebouncing: boolean
   /** Rate limited by backend (429 error) */
@@ -215,7 +215,7 @@ export function useAcceptanceCoefficients(
   // Debounced warehouse ID state
   const [debouncedWarehouseId, setDebouncedWarehouseId] = useState<number | null>(null)
   const [isDebouncing, setIsDebouncing] = useState(false)
-  const debounceTimerRef = useRef<NodeJS.Timeout>()
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Rate limit store integration
   const { addRateLimit, isRateLimited: checkRateLimited, getRemainingSeconds } = useRateLimitStore()
@@ -269,8 +269,9 @@ export function useAcceptanceCoefficients(
         // AC3: Rate Limit Error Handling
         const apiError = error as ApiError
         if (apiError?.status === 429) {
-          // Extract retry-after from response
-          const retryAfter = (apiError.response as any)?.retryAfter ?? 10
+          // Extract retry-after from response data
+          const errorData = apiError.data as { retryAfter?: number } | undefined
+          const retryAfter = errorData?.retryAfter ?? 10
 
           // Add to rate limit store for cross-tab sync
           addRateLimit(endpoint, retryAfter, `warehouseId: ${debouncedWarehouseId}`)

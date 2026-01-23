@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { loginUser } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
-import { setAuthCookie } from '@/lib/utils'
 import type { LoginRequest } from '@/types/auth'
 
 interface LoginFormData {
@@ -51,21 +50,21 @@ export function LoginForm() {
         response.token,
         response.user.cabinet_ids?.[0] || null,
       )
-      
+
       toast.success('Вход выполнен успешно!')
-      
+
       // Redirect to specified page or default to dashboard
       const redirectTo = searchParams.get('redirect') || '/dashboard'
       // Ensure redirect is a safe path (prevent open redirects)
       const safeRedirect = redirectTo.startsWith('/') ? redirectTo : '/dashboard'
-      
+
       // Use window.location for full page reload to ensure middleware can check auth state
       // Small delay to ensure token is saved to localStorage and cookie before navigation
       setTimeout(() => {
         window.location.href = safeRedirect
       }, 100)
     },
-    onError: (error: Error) => {
+    onError: (_error: Error) => {
       // Generic error message for security
       toast.error('Неверный email или пароль')
     },
