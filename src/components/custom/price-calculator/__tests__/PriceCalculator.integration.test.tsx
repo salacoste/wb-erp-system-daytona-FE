@@ -100,7 +100,8 @@ describe('Price Calculator Integration Tests', () => {
       render(<PriceCalculatorPage />)
 
       expect(screen.getByTestId('price-calculator-form')).toBeInTheDocument()
-      expect(screen.getByTestId('price-calculator-results')).toBeInTheDocument()
+      // Responsive layout renders results twice (desktop + mobile), use getAllByTestId
+      expect(screen.getAllByTestId('price-calculator-results')[0]).toBeInTheDocument()
     })
   })
 

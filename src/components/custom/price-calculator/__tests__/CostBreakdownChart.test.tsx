@@ -23,13 +23,14 @@ describe('CostBreakdownChart', () => {
       expect(screen.getByText('Эквайринг')).toBeInTheDocument()
       expect(screen.getByText('Реклама')).toBeInTheDocument()
       expect(screen.getByText('НДС')).toBeInTheDocument()
-      expect(screen.getByText('Маржа (прибыль)')).toBeInTheDocument()
+      expect(screen.getByText('Маржа')).toBeInTheDocument()
     })
 
     it('displays chart with proper height', () => {
       const { container } = render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      const chartContainer = container.querySelector('.h-32')
+      // Component uses h-10 for the horizontal stacked bar
+      const chartContainer = container.querySelector('.h-10')
       expect(chartContainer).toBeInTheDocument()
     })
   })
@@ -67,7 +68,7 @@ describe('CostBreakdownChart', () => {
       expect(screen.getByText('Эквайринг')).toBeInTheDocument()
       expect(screen.getByText('Реклама')).toBeInTheDocument()
       expect(screen.getByText('НДС')).toBeInTheDocument()
-      expect(screen.getByText('Маржа (прибыль)')).toBeInTheDocument()
+      expect(screen.getByText('Маржа')).toBeInTheDocument()
     })
   })
 })
