@@ -8,10 +8,24 @@ import { useAuthStore } from '@/stores/authStore'
 // Mock dependencies
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(() => '/dashboard'),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    prefetch: vi.fn(),
+  })),
 }))
 
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: vi.fn(),
+}))
+
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: vi.fn(() => ({
+    user: { id: '1', email: 'test@test.com', role: 'Owner' },
+    isAuthenticated: true,
+    token: 'test-token',
+  })),
 }))
 
 vi.mock('./LogoutButton', () => ({

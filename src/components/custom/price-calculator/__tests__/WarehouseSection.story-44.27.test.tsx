@@ -416,8 +416,8 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
       dailyCoefficients: [
-        { date: '2026-01-22', coefficient: 100, isAvailable: true },
-        { date: '2026-01-23', coefficient: 125, isAvailable: true },
+        { date: '2026-01-22', coefficient: 100, status: 'base' as const, isAvailable: true },
+        { date: '2026-01-23', coefficient: 125, status: 'elevated' as const, isAvailable: true },
       ],
     } as ReturnType<typeof useWarehouseCoefficients>)
 
@@ -443,8 +443,8 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
       dailyCoefficients: [
-        { date: '2026-01-22', coefficient: 100, isAvailable: true },
-        { date: '2026-01-23', coefficient: 125, isAvailable: true },
+        { date: '2026-01-22', coefficient: 100, status: 'base' as const, isAvailable: true },
+        { date: '2026-01-23', coefficient: 125, status: 'elevated' as const, isAvailable: true },
       ],
       setDeliveryDate,
     } as ReturnType<typeof useWarehouseCoefficients>)
@@ -461,7 +461,7 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
   it('should display coefficient for selected date', () => {
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
-      dailyCoefficients: [{ date: '2026-01-23', coefficient: 125, isAvailable: true }],
+      dailyCoefficients: [{ date: '2026-01-23', coefficient: 125, status: 'elevated' as const, isAvailable: true }],
       deliveryDate: {
         date: '2026-01-23',
         coefficient: 1.25,

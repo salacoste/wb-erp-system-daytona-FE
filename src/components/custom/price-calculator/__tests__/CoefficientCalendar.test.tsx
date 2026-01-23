@@ -477,8 +477,8 @@ describe('CoefficientCalendar', () => {
   describe('edge cases', () => {
     it('handles coefficients array shorter than maxDays', () => {
       const shortCoefficients: NormalizedCoefficient[] = [
-        { date: '2026-01-22', coefficient: 1.0, status: 'base' },
-        { date: '2026-01-23', coefficient: 1.25, status: 'elevated' },
+        { date: '2026-01-22', coefficient: 1.0, status: 'base', isAvailable: true },
+        { date: '2026-01-23', coefficient: 1.25, status: 'elevated', isAvailable: true },
       ]
 
       render(<CoefficientCalendar coefficients={shortCoefficients} maxDays={14} />)

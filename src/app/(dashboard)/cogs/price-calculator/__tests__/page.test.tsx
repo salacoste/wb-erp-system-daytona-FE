@@ -94,7 +94,9 @@ describe('PriceCalculator Page', () => {
       render(<PriceCalculatorPage />)
 
       expect(screen.getByTestId('price-calculator-form')).toBeInTheDocument()
-      expect(screen.getByTestId('price-calculator-results')).toBeInTheDocument()
+      // Results component is rendered twice for responsive layout (desktop + mobile)
+      const results = screen.getAllByTestId('price-calculator-results')
+      expect(results.length).toBeGreaterThanOrEqual(1)
     })
 
     it('renders h1 heading with title', () => {

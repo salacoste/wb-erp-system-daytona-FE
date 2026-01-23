@@ -255,7 +255,7 @@ describe('AuditLogTable', () => {
         isError: false,
         error: null,
         refetch: mockRefetch,
-      } as ReturnType<typeof useTariffAuditLog>)
+      } as unknown as ReturnType<typeof useTariffAuditLog>)
 
       const { AuditLogTable } = await import('../AuditLogTable')
       renderWithProviders(<AuditLogTable />)

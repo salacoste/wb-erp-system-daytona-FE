@@ -131,7 +131,8 @@ vi.mock('@/hooks/useProductAutoFill', () => ({
 
 describe('Story 44.35-FE: FBO/FBS Toggle Does Not Crash', () => {
   const mockOnSubmit = vi.fn()
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let consoleErrorSpy: any
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -205,7 +206,7 @@ describe('Story 44.35-FE: FBO/FBS Toggle Does Not Crash', () => {
 
       // Check console.error was not called with hooks-related errors
       const hookErrors = consoleErrorSpy.mock.calls.filter(
-        call => call.some(arg =>
+        (call: unknown[]) => call.some((arg: unknown) =>
           typeof arg === 'string' &&
           (arg.includes('Rendered fewer hooks than expected') ||
            arg.includes('Rendered more hooks than expected') ||
@@ -311,7 +312,7 @@ describe('Story 44.35-FE: FBO/FBS Toggle Does Not Crash', () => {
 
       // No console errors
       const hookErrors = consoleErrorSpy.mock.calls.filter(
-        call => call.some(arg =>
+        (call: unknown[]) => call.some((arg: unknown) =>
           typeof arg === 'string' && arg.includes('hooks')
         )
       )

@@ -74,7 +74,7 @@ describe('Price Calculator API Client', () => {
       expect(requestObject).toHaveProperty('overrides')
       expect(requestObject.overrides).toEqual({
         commission_pct: 8.0,
-        nm_id: 147205694,
+        nm_id: '147205694',
       })
     })
 
