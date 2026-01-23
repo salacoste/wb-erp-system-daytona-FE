@@ -9,7 +9,8 @@
 | **Type** | Enhancement |
 | **Priority** | P1 - High |
 | **Story Points** | 3 SP |
-| **Status** | Ready for Dev |
+| **Status** | ✅ Complete |
+| **Completed** | 2026-01-23 |
 | **Depends On** | Story 44.32 (BoxTypeSelector) |
 
 ## User Story
@@ -96,33 +97,33 @@ export interface FormData {
 
 ## Acceptance Criteria
 
-- [ ] **AC1: New Input Field Appears**
+- [x] **AC1: New Input Field Appears**
   - New input field "Количество штук в упаковке" appears below box type selector
   - Field only visible when FBO fulfillment type is selected
   - Field label includes tooltip explaining purpose
 
-- [ ] **AC2: Input Validation**
+- [x] **AC2: Input Validation**
   - Minimum value: 1
   - Maximum value: 1000
   - Integer only (no decimals)
   - Default value: 1
   - Error message shown for invalid values
 
-- [ ] **AC3: Acceptance Cost Division**
+- [x] **AC3: Acceptance Cost Division**
   - Acceptance cost in results is divided by units per package
   - Formula: `acceptance_per_unit = acceptance_total / units_per_package`
   - Division only applies when `units_per_package > 1`
 
-- [ ] **AC4: Results Display Update**
+- [x] **AC4: Results Display Update**
   - Results show "Стоимость приёмки за единицу: X ₽"
   - When units > 1, show both: "Стоимость приёмки за упаковку: Y ₽ (Z шт. = X ₽/шт.)"
   - Tooltip explains the per-unit calculation
 
-- [ ] **AC5: Tooltip Explanation**
+- [x] **AC5: Tooltip Explanation**
   - BoxTypeSelector tooltip updated to mention units per package
   - New field tooltip: "Укажите сколько штук товара помещается в одну упаковку (короб или паллету). Стоимость приёмки будет разделена на это количество."
 
-- [ ] **AC6: Field Reset Behavior**
+- [x] **AC6: Field Reset Behavior**
   - Field resets to default (1) when switching between box/pallet types
   - Field resets to default (1) when switching from FBO to FBS
   - Field preserves value during same box type edits
@@ -412,18 +413,18 @@ console.debug('[PriceCalculator] Units per package applied', {
 
 ## Definition of Done
 
-- [ ] Type definition added to `price-calculator.ts`
-- [ ] FormData interface updated with `units_per_package`
-- [ ] UnitsPerPackageInput component created
-- [ ] Component integrated into PriceCalculatorForm
-- [ ] Division logic added to priceCalculatorUtils
-- [ ] Results display updated with per-unit cost
-- [ ] Tooltips added/updated
-- [ ] Unit tests written and passing
-- [ ] Manual testing completed
-- [ ] TypeScript strict mode passes
-- [ ] No ESLint errors
-- [ ] Code reviewed
+- [x] Type definition added to `price-calculator.ts`
+- [x] FormData interface updated with `units_per_package`
+- [x] UnitsPerPackageInput component created
+- [x] Component integrated into PriceCalculatorForm
+- [x] Division logic added to priceCalculatorUtils
+- [x] Results display updated with per-unit cost
+- [x] Tooltips added/updated
+- [x] Unit tests written and passing
+- [x] Manual testing completed
+- [x] TypeScript strict mode passes
+- [x] No ESLint errors
+- [x] Code reviewed
 
 ## Related Stories
 

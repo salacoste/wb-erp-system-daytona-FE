@@ -1,9 +1,10 @@
 # Story 44.27-FE: Warehouse & Coefficients Integration
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P0 - CRITICAL (Blocks real price calculation)
 **Effort**: 2 SP
+**Completed**: 2026-01-23
 **Depends On**: Story 44.12 (Warehouse Selection) ✅, Story 44.13 (Auto-fill Coefficients) ✅
 
 ---
@@ -48,49 +49,49 @@
 ## Acceptance Criteria
 
 ### AC1: WarehouseSection Integration
-- [ ] Add `WarehouseSection` component to `PriceCalculatorForm.tsx`
-- [ ] Place after `FulfillmentTypeSelector`, before `CategorySelector`
-- [ ] Pass required props: `warehouseId`, `storageDays`, `volumeLiters`, `fulfillmentType`
-- [ ] Component visible in both FBO and FBS modes
+- [x] Add `WarehouseSection` component to `PriceCalculatorForm.tsx`
+- [x] Place after `FulfillmentTypeSelector`, before `CategorySelector`
+- [x] Pass required props: `warehouseId`, `storageDays`, `volumeLiters`, `fulfillmentType`
+- [x] Component visible in both FBO and FBS modes
 
 ### AC2: Form State for Warehouse
-- [ ] Add form state: `warehouseId: number | null`
-- [ ] Add form state: `warehouseName: string | null`
-- [ ] Add form state: `storageDays: number` (default: 14)
-- [ ] Add form state: `storageRub: number` (calculated)
-- [ ] Add form state: `logisticsCoefficient: number` (default: 1.0)
-- [ ] Add form state: `storageCoefficient: number` (default: 1.0)
+- [x] Add form state: `warehouseId: number | null`
+- [x] Add form state: `warehouseName: string | null`
+- [x] Add form state: `storageDays: number` (default: 14)
+- [x] Add form state: `storageRub: number` (calculated)
+- [x] Add form state: `logisticsCoefficient: number` (default: 1.0)
+- [x] Add form state: `storageCoefficient: number` (default: 1.0)
 
 ### AC3: Volume Calculation for Warehouse
-- [ ] Calculate volume from dimensions: `(length × width × height) / 1000` liters
-- [ ] Pass calculated volume to `WarehouseSection`
-- [ ] Volume updates in real-time as dimensions change
-- [ ] Minimum volume: 0.1 liters (validation)
+- [x] Calculate volume from dimensions: `(length × width × height) / 1000` liters
+- [x] Pass calculated volume to `WarehouseSection`
+- [x] Volume updates in real-time as dimensions change
+- [x] Minimum volume: 0.1 liters (validation)
 
 ### AC4: Coefficient Application to Logistics
-- [ ] When coefficients auto-fill, recalculate logistics costs
-- [ ] Forward logistics: `base_tariff × logistics_coefficient`
-- [ ] Return logistics: `base_tariff × logistics_coefficient × return_rate`
-- [ ] Show coefficient impact in logistics breakdown
+- [x] When coefficients auto-fill, recalculate logistics costs
+- [x] Forward logistics: `base_tariff × logistics_coefficient`
+- [x] Return logistics: `base_tariff × logistics_coefficient × return_rate`
+- [x] Show coefficient impact in logistics breakdown
 
 ### AC5: Storage Cost Integration (FBO only)
-- [ ] Auto-fill `storage_rub` field from `StorageCostCalculator`
-- [ ] Pass storage cost to API request
-- [ ] Show storage breakdown: base + per-liter + coefficient × days
-- [ ] Hide storage section when FBS mode selected
+- [x] Auto-fill `storage_rub` field from `StorageCostCalculator`
+- [x] Pass storage cost to API request
+- [x] Show storage breakdown: base + per-liter + coefficient × days
+- [x] Hide storage section when FBS mode selected
 
 ### AC6: Delivery Date Selection (Story 44.26a)
-- [ ] When warehouse selected, show delivery date picker
-- [ ] Calendar shows 14-day coefficient preview
-- [ ] Selected date determines which coefficient applies
-- [ ] Default: tomorrow or first available date with coefficient > 0
+- [x] When warehouse selected, show delivery date picker
+- [x] Calendar shows 14-day coefficient preview
+- [x] Selected date determines which coefficient applies
+- [x] Default: tomorrow or first available date with coefficient > 0
 
 ### AC7: API Request Integration
-- [ ] Include `warehouse_id` in API request (if selected)
-- [ ] Include `logistics_coefficient` in API request
-- [ ] Include `storage_coefficient` in API request (FBO)
-- [ ] Include `storage_rub` calculated value
-- [ ] Backend uses coefficients in price calculation
+- [x] Include `warehouse_id` in API request (if selected)
+- [x] Include `logistics_coefficient` in API request
+- [x] Include `storage_coefficient` in API request (FBO)
+- [x] Include `storage_rub` calculated value
+- [x] Backend uses coefficients in price calculation
 
 ---
 

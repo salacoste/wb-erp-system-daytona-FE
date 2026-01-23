@@ -1,9 +1,10 @@
 # Story 44.15: FBO/FBS Fulfillment Type Selection
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P0 - CRITICAL
 **Effort**: 2 SP
+**Completed**: 2026-01-23
 **Depends On**: Story 44.2 (Input Form)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 2, Step 1
 **Backend API**: `POST /v1/products/price-calculator` with `delivery_type` parameter
@@ -43,45 +44,45 @@
 ## Acceptance Criteria
 
 ### AC1: Fulfillment Type Selection UI
-- [ ] Add SegmentedControl / Radio buttons at top of form
-- [ ] Options: "FBO" and "FBS"
-- [ ] Default selection: FBO
-- [ ] Selection persists during form editing
-- [ ] Clear visual indication of selected option
+- [x] Add SegmentedControl / Radio buttons at top of form
+- [x] Options: "FBO" and "FBS"
+- [x] Default selection: FBO
+- [x] Selection persists during form editing
+- [x] Clear visual indication of selected option
 
 ### AC2: Label and Descriptions
-- [ ] Label: "Тип исполнения" (Fulfillment Type)
-- [ ] FBO description: "Товар на складе WB"
-- [ ] FBS description: "Товар у продавца"
-- [ ] Tooltip explaining difference between FBO/FBS
+- [x] Label: "Тип исполнения" (Fulfillment Type)
+- [x] FBO description: "Товар на складе WB"
+- [x] FBS description: "Товар у продавца"
+- [x] Tooltip explaining difference between FBO/FBS
 
 ### AC3: Commission Rate Impact
-- [ ] FBO uses `paidStorageKgvp` field from category commissions
-- [ ] FBS uses `kgvpMarketplace` field from category commissions
-- [ ] Switching fulfillment type updates commission display immediately
-- [ ] Show commission % difference indicator (e.g., "FBS +3%")
+- [x] FBO uses `paidStorageKgvp` field from category commissions
+- [x] FBS uses `kgvpMarketplace` field from category commissions
+- [x] Switching fulfillment type updates commission display immediately
+- [x] Show commission % difference indicator (e.g., "FBS +3%")
 
 ### AC4: Conditional Field Visibility
-- [ ] When FBO selected:
+- [x] When FBO selected:
   - Show "Хранение" (Storage) input field
   - Show "Тип приёмки" (Acceptance Type) section
   - Show acceptance coefficient field (if paid)
-- [ ] When FBS selected:
+- [x] When FBS selected:
   - Hide "Хранение" field (set to 0)
   - Hide "Тип приёмки" section (set to 0)
   - Hide acceptance coefficient field
 
 ### AC5: Form State Integration
-- [ ] Store `fulfillment_type` in form state as `'FBO' | 'FBS'`
-- [ ] Reset FBO-only fields to 0 when switching to FBS
-- [ ] Preserve FBO-only field values when switching back to FBO
-- [ ] Include `fulfillment_type` in calculation request
+- [x] Store `fulfillment_type` in form state as `'FBO' | 'FBS'`
+- [x] Reset FBO-only fields to 0 when switching to FBS
+- [x] Preserve FBO-only field values when switching back to FBO
+- [x] Include `fulfillment_type` in calculation request
 
 ### AC6: Accessibility
-- [ ] Keyboard navigation between FBO/FBS options
-- [ ] ARIA attributes: `role="radiogroup"`, `aria-checked`
-- [ ] Screen reader announces selection changes
-- [ ] Color contrast ≥4.5:1 for selection indicator
+- [x] Keyboard navigation between FBO/FBS options
+- [x] ARIA attributes: `role="radiogroup"`, `aria-checked`
+- [x] Screen reader announces selection changes
+- [x] Color contrast ≥4.5:1 for selection indicator
 
 ---
 

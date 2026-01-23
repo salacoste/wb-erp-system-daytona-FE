@@ -1,9 +1,10 @@
 # Story 44.18: DRR Input (Advertising Percentage)
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P1 - IMPORTANT
 **Effort**: 1 SP
+**Completed**: 2026-01-23
 **Depends On**: Story 44.2 (Input Form)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 2, Step 12
 **Backend API**: `POST /v1/products/price-calculator` with `advertising_pct` parameter
@@ -56,27 +57,27 @@ advertising_cost = recommended_price * (drr_pct / 100)
 ## Acceptance Criteria
 
 ### AC1: DRR Input Field
-- [ ] Input field for "DRR" (Доля рекламных расходов)
-- [ ] Numeric input with % suffix
-- [ ] Range: 0-30%
-- [ ] Default: 5%
-- [ ] Step: 0.5%
-- [ ] Slider + input combo (like margin slider)
+- [x] Input field for "DRR" (Доля рекламных расходов)
+- [x] Numeric input with % suffix
+- [x] Range: 0-30%
+- [x] Default: 5%
+- [x] Step: 0.5%
+- [x] Slider + input combo (like margin slider)
 
 ### AC2: Field Label and Tooltip
-- [ ] Label: "DRR (Доля рекламных расходов)"
-- [ ] Tooltip explaining:
+- [x] Label: "DRR (Доля рекламных расходов)"
+- [x] Tooltip explaining:
   - What DRR means
   - How it affects price calculation
   - Typical values for different seller types
 
 ### AC3: Visual Feedback
-- [ ] Color indicator based on DRR level:
+- [x] Color indicator based on DRR level:
   - 0-3%: Green (low advertising spend)
   - 3-7%: Yellow (moderate)
   - 7-15%: Orange (high)
   - >15%: Red (very high)
-- [ ] Warning message if DRR > 15%
+- [x] Warning message if DRR > 15%
 
 ### AC4: Advertising Cost Preview
 - [ ] Show calculated advertising cost in ₽ (when price available)

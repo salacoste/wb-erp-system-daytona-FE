@@ -1,9 +1,10 @@
 # Story 44.34: Debounce Warehouse Selection & Rate Limit Handling
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P1 - MEDIUM
 **Effort**: 2 SP
+**Completed**: 2026-01-23
 **Depends On**: Story 44.12 (Warehouse Selection), Story 44.27 (Warehouse Integration)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 4.2, FRONTEND-INTEGRATION-GUIDE.md Section "Rate Limits Reference"
 **Backend API**: `GET /v1/tariffs/acceptance/coefficients` (rate limited: 6/min)
@@ -46,57 +47,57 @@ Backend Request #98 revealed a critical rate limit issue:
 ## Acceptance Criteria
 
 ### AC1: Warehouse Selection Debouncing
-- [ ] Implement 500ms debounce on warehouse selection changes
-- [ ] Show loading indicator during debounce delay
-- [ ] Cancel pending debounce if user changes warehouse again
-- [ ] Only fetch coefficients after debounce period completes
-- [ ] No API calls until user stops changing warehouses
+- [x] Implement 500ms debounce on warehouse selection changes
+- [x] Show loading indicator during debounce delay
+- [x] Cancel pending debounce if user changes warehouse again
+- [x] Only fetch coefficients after debounce period completes
+- [x] No API calls until user stops changing warehouses
 
 ### AC2: Loading State During Debounce
-- [ ] Show "Загрузка коэффициентов..." indicator during debounce
-- [ ] Show spinner/skeleton in coefficient fields
-- [ ] Disable warehouse dropdown during debounce
-- [ ] Display countdown: "Получение данных через {ms}..." (optional UX)
-- [ ] Clear loading state when API call completes
+- [x] Show "Загрузка коэффициентов..." indicator during debounce
+- [x] Show spinner/skeleton in coefficient fields
+- [x] Disable warehouse dropdown during debounce
+- [x] Display countdown: "Получение данных через {ms}..." (optional UX)
+- [x] Clear loading state when API call completes
 
 ### AC3: Rate Limit Error Handling
-- [ ] Detect HTTP 429 responses from acceptance coefficients API
-- [ ] Show user-friendly error message: "Слишком много запросов. Подождите {N} секунд."
-- [ ] Display retry countdown timer in error message
-- [ ] Disable warehouse dropdown during rate limit cooldown
-- [ ] Auto-retry after cooldown period (optional)
+- [x] Detect HTTP 429 responses from acceptance coefficients API
+- [x] Show user-friendly error message: "Слишком много запросов. Подождите {N} секунд."
+- [x] Display retry countdown timer in error message
+- [x] Disable warehouse dropdown during rate limit cooldown
+- [x] Auto-retry after cooldown period (optional)
 
 ### AC4: Rate Limit Cooldown UI
-- [ ] Show progress bar for cooldown period
-- [ ] Display remaining time: "Доступно через {сек} сек"
-- [ ] Visual indicator: locked warehouse dropdown
-- [ ] Tooltip explains: "Лимит запросов WB: 6/мин. Подождите немного."
-- [ ] Re-enable dropdown after cooldown expires
+- [x] Show progress bar for cooldown period
+- [x] Display remaining time: "Доступно через {сек} сек"
+- [x] Visual indicator: locked warehouse dropdown
+- [x] Tooltip explains: "Лимит запросов WB: 6/мин. Подождите немного."
+- [x] Re-enable dropdown after cooldown expires
 
 ### AC5: Intelligent Caching Strategy
-- [ ] Cache warehouse coefficients for 1 hour (as per backend TTL)
-- [ ] Use cached data if available (no API call)
-- [ ] Show "Из кэша" badge when using cached data
-- [ ] Invalidate cache on warehouse change
-- [ ] Prefetch coefficients for recently used warehouses (optional)
+- [x] Cache warehouse coefficients for 1 hour (as per backend TTL)
+- [x] Use cached data if available (no API call)
+- [x] Show "Из кэша" badge when using cached data
+- [x] Invalidate cache on warehouse change
+- [x] Prefetch coefficients for recently used warehouses (optional)
 
 ### AC6: User Guidance for Rate Limits
-- [ ] Show info tooltip on warehouse dropdown: "Коэффициенты обновляются автоматически. Не переключайте склады слишком часто."
-- [ ] Display rate limit status: "Запросов осталось: {N}/6" (if available from backend)
-- [ ] Show warning when approaching limit: "Осталось мало запросов ({N}/6). Подождите {сек} сек."
-- [ ] Help text explains: "Лимит установлен Wildberries API"
+- [x] Show info tooltip on warehouse dropdown: "Коэффициенты обновляются автоматически. Не переключайте склады слишком часто."
+- [x] Display rate limit status: "Запросов осталось: {N}/6" (if available from backend)
+- [x] Show warning when approaching limit: "Осталось мало запросов ({N}/6). Подождите {сек} сек."
+- [x] Help text explains: "Лимит установлен Wildberries API"
 
 ### AC7: Fallback to Previous Selection
-- [ ] If rate limited, revert to previously working warehouse selection
-- [ ] Keep previous coefficients in form during cooldown
-- [ ] Show message: "Восстановлен предыдущий выбор: {warehouse_name}"
-- [ ] Don't lose form data on rate limit error
+- [x] If rate limited, revert to previously working warehouse selection
+- [x] Keep previous coefficients in form during cooldown
+- [x] Show message: "Восстановлен предыдущий выбор: {warehouse_name}"
+- [x] Don't lose form data on rate limit error
 
 ### AC8: Analytics & Logging
-- [ ] Log rate limit occurrences for monitoring
-- [ ] Track debounce effectiveness (canceled calls)
-- [ ] Monitor cache hit rate
-- [ ] Alert if rate limits hit frequently (indicates UX issue)
+- [x] Log rate limit occurrences for monitoring
+- [x] Track debounce effectiveness (canceled calls)
+- [x] Monitor cache hit rate
+- [x] Alert if rate limits hit frequently (indicates UX issue)
 
 ---
 

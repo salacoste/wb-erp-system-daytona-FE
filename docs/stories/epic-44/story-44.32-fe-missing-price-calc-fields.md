@@ -1,9 +1,10 @@
 # Story 44.32: Missing Price Calculator Fields (Phase 1 HIGH Priority)
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P0 - HIGH
 **Effort**: 5 SP
+**Completed**: 2026-01-23
 **Depends On**: Story 44.2 (Input Form), Story 44.15 (FBO/FBS Selection), Story 44.27 (Warehouse Integration)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 14.2, Section 8
 **Backend API**: `POST /v1/products/price-calculator` (existing endpoint with extended fields)
@@ -39,79 +40,79 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 ## Acceptance Criteria
 
 ### AC1: Box Type Selection (FBO Only)
-- [ ] Show radio buttons: "Короб" (Box) | "Монопаллета" (Pallet)
-- [ ] Default: "Короб" selected
-- [ ] Condition: Only shown when `fulfillment_type === 'FBO'`
-- [ ] Field: `box_type` (enum: 'box' | 'pallet')
-- [ ] Tooltip: "Тип доставки влияет на стоимость приёмки"
-- [ ] Visual indicator showing which type is selected
+- [x] Show radio buttons: "Короб" (Box) | "Монопаллета" (Pallet)
+- [x] Default: "Короб" selected
+- [x] Condition: Only shown when `fulfillment_type === 'FBO'`
+- [x] Field: `box_type` (enum: 'box' | 'pallet')
+- [x] Tooltip: "Тип доставки влияет на стоимость приёмки"
+- [x] Visual indicator showing which type is selected
 
 ### AC2: Weight Threshold Checkbox
-- [ ] Show checkbox: "Вес превышает 25 кг"
-- [ ] Default: unchecked (false)
-- [ ] Field: `weight_exceeds_25kg` (boolean)
-- [ ] Applies to BOTH FBO and FBS
-- [ ] Tooltip: "Тяжеловесные товары (>25 кг) имеют повышенный коэффициент логистики (~1.5x)"
-- [ ] Show warning when checked: "Учтён повышенный тариф логистики для тяжеловесных грузов"
+- [x] Show checkbox: "Вес превышает 25 кг"
+- [x] Default: unchecked (false)
+- [x] Field: `weight_exceeds_25kg` (boolean)
+- [x] Applies to BOTH FBO and FBS
+- [x] Tooltip: "Тяжеловесные товары (>25 кг) имеют повышенный коэффициент логистики (~1.5x)"
+- [x] Show warning when checked: "Учтён повышенный тариф логистики для тяжеловесных грузов"
 
 ### AC3: Localization Index Input
-- [ ] Show number input: "Индекс локализации (КТР)"
-- [ ] Range: 0.5 - 3.0, step 0.1
-- [ ] Default: 1.0 (auto-filled from warehouse selection)
-- [ ] Field: `localization_index` (number)
-- [ ] Applies to BOTH FBO and FBS
-- [ ] Tooltip: "Коэффициент доставки в удалённые регионы (1.0 = Москва/ЦФО, 1.5-2.5 = Дальний Восток)"
-- [ ] Show source indicator: "Авто: из коэффициента склада" or "Вручную"
+- [x] Show number input: "Индекс локализации (КТР)"
+- [x] Range: 0.5 - 3.0, step 0.1
+- [x] Default: 1.0 (auto-filled from warehouse selection)
+- [x] Field: `localization_index` (number)
+- [x] Applies to BOTH FBO and FBS
+- [x] Tooltip: "Коэффициент доставки в удалённые регионы (1.0 = Москва/ЦФО, 1.5-2.5 = Дальний Восток)"
+- [x] Show source indicator: "Авто: из коэффициента склада" or "Вручную"
 
 ### AC4: Turnover Days Input (FBO Only)
-- [ ] Show number input: "Оборачиваемость, дней"
-- [ ] Range: 1-365
-- [ ] Default: 20
-- [ ] Field: `turnover_days` (number)
-- [ ] Condition: Only shown when `fulfillment_type === 'FBO'`
-- [ ] Tooltip: "Сколько дней товар лежит на складе до продажи. Влияет на общую стоимость хранения."
-- [ ] Auto-calculate total storage: `storage_total = storage_per_day × turnover_days`
-- [ ] Display preview: "Хранение за период: {total} ₽"
+- [x] Show number input: "Оборачиваемость, дней"
+- [x] Range: 1-365
+- [x] Default: 20
+- [x] Field: `turnover_days` (number)
+- [x] Condition: Only shown when `fulfillment_type === 'FBO'`
+- [x] Tooltip: "Сколько дней товар лежит на складе до продажи. Влияет на общую стоимость хранения."
+- [x] Auto-calculate total storage: `storage_total = storage_per_day × turnover_days`
+- [x] Display preview: "Хранение за период: {total} ₽"
 
 ### AC5: Form Integration
-- [ ] All new fields integrate into existing `PriceCalculatorForm` component
-- [ ] Form validation: `localization_index` between 0.5-3.0, `turnover_days` between 1-365
-- [ ] Fields participate in form watch (real-time calculation updates)
-- [ ] Form submission includes all new fields in `POST /v1/products/price-calculator`
-- [ ] Values persist across form re-renders
+- [x] All new fields integrate into existing `PriceCalculatorForm` component
+- [x] Form validation: `localization_index` between 0.5-3.0, `turnover_days` between 1-365
+- [x] Fields participate in form watch (real-time calculation updates)
+- [x] Form submission includes all new fields in `POST /v1/products/price-calculator`
+- [x] Values persist across form re-renders
 
 ### AC6: Conditional Display Logic
-- [ ] `box_type` hidden when `fulfillment_type === 'FBS'`
-- [ ] `turnover_days` hidden when `fulfillment_type === 'FBS'`
-- [ ] Smooth transitions when switching FBO/FBS (fade in/out)
-- [ ] No layout shift when fields appear/disappear
+- [x] `box_type` hidden when `fulfillment_type === 'FBS'`
+- [x] `turnover_days` hidden when `fulfillment_type === 'FBS'`
+- [x] Smooth transitions when switching FBO/FBS (fade in/out)
+- [x] No layout shift when fields appear/disappear
 
 ### AC7: Warehouse Auto-fill Integration
-- [ ] On warehouse selection: auto-fill `localization_index` from `delivery.coefficient`
-- [ ] Store original coefficient value before manual override
-- [ ] Show "Изменён" badge when `localization_index` manually modified
-- [ ] Reset to warehouse coefficient when warehouse changes (unless manually locked)
+- [x] On warehouse selection: auto-fill `localization_index` from `delivery.coefficient`
+- [x] Store original coefficient value before manual override
+- [x] Show "Изменён" badge when `localization_index` manually modified
+- [x] Reset to warehouse coefficient when warehouse changes (unless manually locked)
 
 ### AC8: Results Display Impact
-- [ ] Two-Level Pricing (Story 44.20) shows updated calculations
-- [ ] Cost breakdown shows individual components affected by new fields:
+- [x] Two-Level Pricing (Story 44.20) shows updated calculations
+- [x] Cost breakdown shows individual components affected by new fields:
   - "Логистика WB" includes weight multiplier
   - "Логистика WB" includes localization index
   - "Хранение" shows total with turnover days applied
   - "Приёмка" reflects box type tariff
-- [ ] Visual indicators show which multipliers are active
+- [x] Visual indicators show which multipliers are active
 
 ### AC9: Tooltip Explanations
-- [ ] All new fields have helper tooltips (Russian)
-- [ ] Tooltips explain business impact on calculation
-- [ ] Icons trigger tooltip on hover/click
-- [ ] Tooltips are mobile-friendly (tap to show)
+- [x] All new fields have helper tooltips (Russian)
+- [x] Tooltips explain business impact on calculation
+- [x] Icons trigger tooltip on hover/click
+- [x] Tooltips are mobile-friendly (tap to show)
 
 ### AC10: Mobile Responsive
-- [ ] All fields stack vertically on mobile (<640px)
-- [ ] Radio buttons use full width on mobile
-- [ ] Number inputs show +/- buttons on mobile
-- [ ] Tooltips don't overflow viewport
+- [x] All fields stack vertically on mobile (<640px)
+- [x] Radio buttons use full width on mobile
+- [x] Number inputs show +/- buttons on mobile
+- [x] Tooltips don't overflow viewport
 
 ---
 

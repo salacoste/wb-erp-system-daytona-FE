@@ -2,12 +2,12 @@
 
 **Generated:** 2025-11-23
 **Last Updated:** 2026-01-23
-**Total Stories:** 83 (75 Done, 4 Ready for Dev)
+**Total Stories:** 93 (85 Done, 5 Ready for Dev)
 
 ## Summary
 
-- ✅ **Completed (Done):** 75 stories (90%)
-- 📋 **Ready for Development:** 4 stories (Epic 42-FE - Task Handlers Adaptation)
+- ✅ **Completed (Done):** 85 stories (91%)
+- 📋 **Ready for Development:** 5 stories (Epic 42-FE 4 stories + Epic 44 Story 44.33)
 - 📝 **Draft (Not Started):** 0 stories
 - ⚠️ **Partially Complete:** 0 stories
 
@@ -41,7 +41,7 @@
 ### ✅ Epic 34-FE: Telegram Notifications — PRODUCTION READY (6/6 stories, 21 pts)
 ### ✅ Epic 36-FE: Product Card Linking — COMPLETE (5/5 stories, 91 tests)
 ### ✅ Epic 37: Merged Group Table Display — DONE (5/5 stories, 89.4/100)
-### ✅ Epic 44: Price Calculator UI — COMPLETE (6/6 stories, 14 pts)
+### ✅ Epic 44: Price Calculator UI — COMPLETE (26/27 stories, 61 pts)
 ### ✅ Epic 52-FE: Tariff Settings Admin UI — COMPLETE (7/7 stories, 26 pts)
 ### 📋 Epic 42-FE: Task Handlers Adaptation — READY FOR DEV (4 stories, 7 pts)
 
@@ -396,30 +396,49 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 
 ---
 
-## Epic 44-FE: Price Calculator UI (6 stories) ✅ **COMPLETE**
+## Epic 44-FE: Price Calculator UI (27 stories) ✅ **96% COMPLETE**
 
-**Status:** ✅ Complete
-**Total Points:** 14
-**Completed:** 2026-01-17
+**Status:** ✅ 96% Complete (26/27 stories)
+**Total Points:** 63
+**Completed:** 2026-01-23
 **Documentation:** `docs/stories/epic-44/README.md`
 
-### ✅ 44.1-FE: TypeScript Types & API Client — Done (2 pts)
-Types, API client, `usePriceCalculator` hook, tests.
+### Phase 1: Core Calculator (6/6 Complete)
+- ✅ 44.1-FE: TypeScript Types & API Client — Done (2 pts)
+- ✅ 44.2-FE: Input Form Component — Done (3 pts)
+- ✅ 44.3-FE: Results Display Component — Done (3 pts)
+- ✅ 44.4-FE: Page Layout & Integration — Done (2 pts)
+- ✅ 44.5-FE: Real-time Calculation & UX — Done (2 pts)
+- ✅ 44.6-FE: Testing & Documentation — Done (2 pts)
 
-### ✅ 44.2-FE: Input Form Component — Done (3 pts)
-PriceCalculatorForm with all input fields, validation, tests.
+### Phase 2: Enhanced Logistics (4/4 Complete)
+- ✅ 44.7-FE: Dimension-Based Volume Calculation — Done (2 pts)
+- ✅ 44.8-FE: Logistics Tariff Calculation — Done (2 pts)
+- ✅ 44.9-FE: Logistics Coefficients UI — Done (2 pts)
+- ✅ 44.10-FE: Return Logistics Calculation — Done (2 pts)
 
-### ✅ 44.3-FE: Results Display Component — Done (3 pts)
-PriceCalculatorResults, RecommendedPriceCard, CostBreakdownTable, tests.
+### Phase 3: Warehouse & Tariffs (5/5 Complete)
+- ✅ 44.12-FE: Warehouse Selection Dropdown — Done (3 pts)
+- ✅ 44.13-FE: Auto-fill Coefficients — Done (3 pts)
+- ✅ 44.14-FE: Storage Cost Calculation — Done (2 pts)
+- ✅ 44.27-FE: Warehouse & Coefficients Integration — Done (2 pts)
 
-### ✅ 44.4-FE: Page Layout & Integration — Done (2 pts)
-`/cogs/price-calculator` route, Sidebar integration, responsive layout.
+### Phase 4: V2 Enhancements (6/6 Complete)
+- ✅ 44.15-FE: FBO/FBS Fulfillment Type Selection — Done (2 pts)
+- ✅ 44.16-FE: Category Selection with Search — Done (3 pts)
+- ✅ 44.17-FE: Tax Configuration — Done (2 pts)
+- ✅ 44.18-FE: DRR Input (Advertising %) — Done (1 pt)
+- ✅ 44.19-FE: SPP Display (Customer Price) — Done (1 pt)
+- ✅ 44.20-FE: Two-Level Pricing Display — Done (3 pts)
 
-### ✅ 44.5-FE: Real-time Calculation & UX — Done (2 pts)
-MarginSlider, real-time updates, interactive UX.
-
-### ✅ 44.6-FE: Testing & Documentation — Done (2 pts)
-15+ test files, integration tests, documentation.
+### Phase 5: Bug Fixes & Improvements (6/7 Complete)
+- ✅ 44.32-FE: Missing Price Calculator Fields — Done (5 pts)
+- 📋 44.33-FE: Type Mismatch & Field Name Fixes — Ready for Dev (2 pts)
+- ✅ 44.34-FE: Debounce Warehouse Selection — Done (2 pts)
+- ✅ 44.35-FE: FBO/FBS Toggle Crash Fix — Done (3 pts)
+- ✅ 44.36-FE: API Field Mismatch — Done (2 pts)
+- ✅ 44.37-FE: API Field Mismatch Warehouse — Done (2 pts)
+- ✅ 44.38-FE: Units Per Package — Done (3 pts)
 
 ---
 

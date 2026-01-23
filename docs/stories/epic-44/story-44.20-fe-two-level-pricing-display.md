@@ -1,9 +1,10 @@
 # Story 44.20: Two-Level Pricing Display
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P0 - CRITICAL
 **Effort**: 3 SP
+**Completed**: 2026-01-23
 **Depends On**: Story 44.3 (Results Display), Story 44.15-44.19 (all V2 inputs)
 **Requirements Ref**: PRICE-CALCULATOR-REQUIREMENTS.md Section 5, Section 8
 **Backend API**: `POST /v1/products/price-calculator` (returns full breakdown)
@@ -60,24 +61,24 @@
 ## Acceptance Criteria
 
 ### AC1: Two-Level Price Display Header
-- [ ] Show minimum price prominently: "МИНИМАЛЬНАЯ ЦЕНА: X ₽"
-- [ ] Label: "покрывает фиксированные расходы"
-- [ ] Show recommended price: "РЕКОМЕНДУЕМАЯ ЦЕНА: Y ₽"
-- [ ] Label: "с учётом маржи и рекламы"
-- [ ] Show customer price if SPP > 0: "Цена для покупателя: Z ₽"
-- [ ] Visual hierarchy: recommended > minimum > customer
+- [x] Show minimum price prominently: "МИНИМАЛЬНАЯ ЦЕНА: X ₽"
+- [x] Label: "покрывает фиксированные расходы"
+- [x] Show recommended price: "РЕКОМЕНДУЕМАЯ ЦЕНА: Y ₽"
+- [x] Label: "с учётом маржи и рекламы"
+- [x] Show customer price if SPP > 0: "Цена для покупателя: Z ₽"
+- [x] Visual hierarchy: recommended > minimum > customer
 
 ### AC2: Price Comparison Visual
-- [ ] Show price gap between minimum and recommended
-- [ ] Format: "Запас прибыльности: X ₽ (+Y%)"
-- [ ] Color-coded indicator:
+- [x] Show price gap between minimum and recommended
+- [x] Format: "Запас прибыльности: X ₽ (+Y%)"
+- [x] Color-coded indicator:
   - Green: gap > 20%
   - Yellow: gap 10-20%
   - Red: gap < 10%
-- [ ] Warning if recommended ≈ minimum (tight margin)
+- [x] Warning if recommended ≈ minimum (tight margin)
 
 ### AC3: Fixed Costs Breakdown Section
-- [ ] Section header: "ФИКСИРОВАННЫЕ ЗАТРАТЫ: X ₽"
+- [x] Section header: "ФИКСИРОВАННЫЕ ЗАТРАТЫ: X ₽"
 - [ ] Line items:
   - Себестоимость (COGS): X ₽
   - Логистика (прямая): X ₽
