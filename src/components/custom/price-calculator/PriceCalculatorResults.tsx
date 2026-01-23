@@ -69,8 +69,8 @@ export function PriceCalculatorResults({
   if (!data && !loading && !error) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">
+        <CardContent className="flex items-center justify-center py-8 text-center">
+          <p className="text-muted-foreground text-sm">
             Введите параметры затрат и нажмите «Рассчитать цену» для получения результатов
           </p>
         </CardContent>

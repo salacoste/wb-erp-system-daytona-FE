@@ -1,13 +1,5 @@
 'use client'
 
-import {
-  Bar,
-  BarChart,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-} from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/utils'
 import type { PriceCalculatorResponse } from '@/types/price-calculator'
@@ -21,143 +13,108 @@ export interface CostBreakdownChartProps {
   data: PriceCalculatorResponse
 }
 
-/** Color palette for chart segments - matches Epic 24 storage colors */
+/** Color palette for chart segments */
 const CHART_COLORS = {
   commission_wb: '#8b5cf6', // purple
   acquiring: '#22c55e',     // green
   advertising: '#f97316',   // orange
   vat: '#ef4444',          // red
   margin: '#10b981',        // emerald
-  fallback: '#94a3b8',      // gray
 }
 
 /**
- * Custom tooltip for the stacked bar chart
- */
-function ChartTooltip({ active, payload }: {
-  active?: boolean
-  payload?: Array<{ payload: { name: string; value: number; rub: number } }>
-}) {
-  if (!active || !payload || !payload.length) return null
-
-  const data = payload[0].payload
-
-  return (
-    <div className="rounded-lg border bg-background p-2 shadow-sm">
-      <p className="text-sm font-medium">{data?.name || 'Unknown'}</p>
-      <p className="text-xs text-muted-foreground">
-        {data?.value?.toFixed(2) || '0.00'}% ({formatCurrency(data?.rub || 0)})
-      </p>
-    </div>
-  )
-}
-
-/**
- * Stacked bar chart showing cost composition
- * Uses Recharts library following ExpenseChart.tsx pattern
+ * Simple horizontal stacked bar chart showing cost composition
+ * Uses pure CSS instead of Recharts to avoid dimension issues
  *
  * @example
  * <CostBreakdownChart data={result} />
  */
 export function CostBreakdownChart({ data }: CostBreakdownChartProps) {
-  // percentage_breakdown is now at root level of API response
   const percentage_breakdown = data.percentage_breakdown
 
-  // Guard clause for incomplete data
   if (!percentage_breakdown) {
     return null
   }
 
-  // Memoize chart data to prevent unnecessary re-renders
-  // API returns simple numbers, need to calculate percentages for display
   const recommended_price = data.result?.recommended_price || 0
-  const chartData = useMemo(
-    () => [
+
+  // Calculate percentages for display
+  const chartData = useMemo(() => {
+    if (recommended_price <= 0) return []
+
+    return [
       {
         name: 'Комиссия WB',
-        value: recommended_price > 0 ? (percentage_breakdown.commission_wb / recommended_price * 100) : 0,
+        pct: (percentage_breakdown.commission_wb / recommended_price) * 100,
         rub: percentage_breakdown.commission_wb || 0,
-        fill: CHART_COLORS.commission_wb,
+        color: CHART_COLORS.commission_wb,
       },
       {
         name: 'Эквайринг',
-        value: recommended_price > 0 ? (percentage_breakdown.acquiring / recommended_price * 100) : 0,
+        pct: (percentage_breakdown.acquiring / recommended_price) * 100,
         rub: percentage_breakdown.acquiring || 0,
-        fill: CHART_COLORS.acquiring,
+        color: CHART_COLORS.acquiring,
       },
       {
         name: 'Реклама',
-        value: recommended_price > 0 ? (percentage_breakdown.advertising / recommended_price * 100) : 0,
+        pct: (percentage_breakdown.advertising / recommended_price) * 100,
         rub: percentage_breakdown.advertising || 0,
-        fill: CHART_COLORS.advertising,
+        color: CHART_COLORS.advertising,
       },
       {
         name: 'НДС',
-        value: recommended_price > 0 ? (percentage_breakdown.vat / recommended_price * 100) : 0,
+        pct: (percentage_breakdown.vat / recommended_price) * 100,
         rub: percentage_breakdown.vat || 0,
-        fill: CHART_COLORS.vat,
+        color: CHART_COLORS.vat,
       },
       {
         name: 'Маржа',
-        value: recommended_price > 0 ? (percentage_breakdown.margin / recommended_price * 100) : 0,
+        pct: (percentage_breakdown.margin / recommended_price) * 100,
         rub: percentage_breakdown.margin || 0,
-        fill: CHART_COLORS.margin,
+        color: CHART_COLORS.margin,
       },
-    ],
-    [percentage_breakdown, recommended_price]
-  )
+    ].filter(item => item.pct > 0)
+  }, [percentage_breakdown, recommended_price])
 
-  // Memoize legend data to prevent unnecessary re-renders
-  const legendData = useMemo(
-    () => [
-      { name: 'Комиссия WB', color: CHART_COLORS.commission_wb },
-      { name: 'Эквайринг', color: CHART_COLORS.acquiring },
-      { name: 'Реклама', color: CHART_COLORS.advertising },
-      { name: 'НДС', color: CHART_COLORS.vat },
-      { name: 'Маржа (прибыль)', color: CHART_COLORS.margin },
-    ],
-    []
-  )
+  if (chartData.length === 0) {
+    return null
+  }
 
   return (
     <Card className="shadow-sm rounded-xl border-l-4 border-l-primary">
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle className="text-lg">Структура затрат</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {/* Chart */}
-          <div className="h-32">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                layout="vertical"
-                data={[{ stack: chartData }]}
-              >
-                <XAxis type="number" domain={[0, 100]} hide />
-                <Bar
-                  dataKey="stack"
-                  stackId="costs"
-                  isAnimationActive={false}
-                  barSize={40}
-                >
-                  {chartData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.fill} />
-                  ))}
-                </Bar>
-                <Tooltip content={<ChartTooltip />} cursor={{ fill: 'transparent' }} />
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Horizontal stacked bar */}
+          <div className="h-10 flex rounded-lg overflow-hidden">
+            {chartData.map((item) => (
+              <div
+                key={item.name}
+                className="h-full transition-all duration-300 hover:opacity-80 group relative"
+                style={{
+                  width: `${item.pct}%`,
+                  backgroundColor: item.color,
+                  minWidth: item.pct > 0 ? '2px' : '0',
+                }}
+                title={`${item.name}: ${item.pct.toFixed(1)}% (${formatCurrency(item.rub)})`}
+              />
+            ))}
           </div>
 
           {/* Legend */}
           <div className="flex flex-wrap justify-center gap-4 text-xs">
-            {legendData.map((item) => (
-              <div key={item.name} className="flex items-center gap-1">
+            {chartData.map((item) => (
+              <div key={item.name} className="flex items-center gap-1.5">
                 <div
                   className="h-3 w-3 rounded"
                   style={{ backgroundColor: item.color }}
                 />
                 <span>{item.name}</span>
+                <span className="text-muted-foreground">
+                  ({item.pct.toFixed(1)}%)
+                </span>
               </div>
             ))}
           </div>

@@ -44,7 +44,7 @@ export const mockPriceCalculatorRequestWithOverrides: PriceCalculatorRequest = {
   ...mockPriceCalculatorRequest,
   overrides: {
     commission_pct: 8.0,
-    nm_id: 147205694,
+    nm_id: '147205694',
   },
 }
 

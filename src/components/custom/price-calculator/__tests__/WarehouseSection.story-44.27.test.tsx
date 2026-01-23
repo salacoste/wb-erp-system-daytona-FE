@@ -62,8 +62,8 @@ const mockCoefficientsResponse = {
   restoreLogistics: vi.fn(),
   restoreStorage: vi.fn(),
   dailyCoefficients: [
-    { date: '2026-01-22', coefficient: 100 },
-    { date: '2026-01-23', coefficient: 125 },
+    { date: '2026-01-22', coefficient: 100, status: 'base' as const, isAvailable: true },
+    { date: '2026-01-23', coefficient: 125, status: 'elevated' as const, isAvailable: true },
   ],
   byBoxType: [],
   deliveryDate: { date: null, coefficient: 1.0, formattedDate: '', status: 'base' as const },
@@ -697,7 +697,7 @@ describe('Story 44.27: Accessibility', () => {
 
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
-      dailyCoefficients: [{ date: '2026-01-22', coefficient: 100 }],
+      dailyCoefficients: [{ date: '2026-01-22', coefficient: 100, status: 'base' as const, isAvailable: true }],
     } as ReturnType<typeof useWarehouseCoefficients>)
 
     renderWarehouseSection({ warehouseId: 507 })

@@ -208,6 +208,55 @@ export interface PriceCalculatorRequest {
    */
   storage_coefficient?: number
   /**
+   * Story 44.27: Warehouse name for auto-fill (Epic 43 backend API)
+   * Triggers tariff lookup and automatic logistics/storage cost calculation
+   *
+   * @example
+   * warehouse_name: "Коледино" - Auto-fills logistics from warehouse tariffs
+   */
+  warehouse_name?: string
+
+  /**
+   * Story 44.27: Product volume in liters (can be calculated from dimensions)
+   * Alternative to providing dimensions object
+   *
+   * @example
+   * volume_liters: 6.0 - 30cm × 20cm × 10cm / 1000
+   */
+  volume_liters?: number
+
+  /**
+   * Story 44.27: Storage duration in days for FBO storage cost calculation
+   * Only applies when fulfillment_type is "fbo"
+   *
+   * @example
+   * storage_days: 14 - Calculate storage for 2 weeks
+   */
+  storage_days?: number
+
+  /**
+   * Story 44.27: Delivery type for tariff selection
+   * Maps to frontend's fulfillment_type ("fbo" | "fbs")
+   *
+   * @example
+   * delivery_type: "fbo" - WB warehouse fulfillment
+   */
+  delivery_type?: "fbo" | "fbs"
+
+  /**
+   * Story 43.7: Product dimensions for volume calculation and tariff lookup
+   * Alternative to volume_liters - backend calculates volume from dimensions
+   *
+   * @example
+   * dimensions: { length_cm: 30, width_cm: 20, height_cm: 10 }
+   */
+  dimensions?: {
+    length_cm: number
+    width_cm: number
+    height_cm: number
+  }
+
+  /**
    * Story 44.27: Delivery date in ISO format (YYYY-MM-DD)
    * Used for coefficient calendar lookup
    *

@@ -29,6 +29,8 @@ export interface UseWarehouseFormStateReturn {
   handleStorageDaysChange: (days: number) => void
   handleStorageChange: (value: number) => void
   handleDeliveryDateChange: (date: string | null, coefficient: number) => void
+  // Story 44.27: Method to get warehouse object for API request
+  getWarehouseForApi: (warehouses: Warehouse[]) => Warehouse | null
 }
 
 export function useWarehouseFormState({
@@ -80,6 +82,15 @@ export function useWarehouseFormState({
     [setValue],
   )
 
+  // Story 44.27: Get warehouse object for API request
+  const getWarehouseForApi = useCallback(
+    (warehouses: Warehouse[]) => {
+      if (!warehouseId) return null
+      return warehouses.find(w => w.id === warehouseId) || null
+    },
+    [warehouseId],
+  )
+
   return {
     warehouseId,
     storageDays,
@@ -89,5 +100,6 @@ export function useWarehouseFormState({
     handleStorageDaysChange,
     handleStorageChange,
     handleDeliveryDateChange,
+    getWarehouseForApi,
   }
 }

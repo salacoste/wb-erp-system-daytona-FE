@@ -1,6 +1,15 @@
 @import 'tailwindcss';
 
 @layer base {
+  /* Prevent body-level scrolling - app uses fixed positioning */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
   :root {
     /* Primary red colors - WCAG 2.1 AA compliant (5.48:1 with white) */
     --primary: 0 65% 47%; /* #C62828 - accessible with white text */

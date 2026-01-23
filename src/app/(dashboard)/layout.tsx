@@ -71,7 +71,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="fixed inset-0 flex overflow-hidden">
       {/* Desktop Sidebar - скрыт на мобильных, занимает место в потоке */}
       <div className="hidden lg:block lg:flex-shrink-0">
         <Sidebar />
@@ -155,8 +155,8 @@ export default function DashboardLayout({
           <Navbar />
         </div>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        {/* Page Content - overscroll-contain prevents elastic scrolling artifacts */}
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-y-contain">
           <div className="p-4 lg:p-6">{children}</div>
         </main>
       </div>
