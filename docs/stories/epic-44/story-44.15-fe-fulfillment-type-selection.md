@@ -109,8 +109,8 @@
   "target_margin_pct": 20,
   "cogs_rub": 1500,
   // ... other fields
-  "storage_rub": 50,                // FBO only - set to 0 for FBS
-  "storage_days": 7                 // FBO only - ignored for FBS
+  "storage_rub": 50,                // FBO only - calculated as dailyStorageCost × turnover_days
+  "turnover_days": 20               // FBO only - storage duration (default: 20)
 }
 ```
 
@@ -291,13 +291,12 @@ useEffect(() => {
   if (fulfillmentType === 'FBS') {
     // Reset FBO-only fields
     setValue('storage_rub', 0)
-    setValue('storage_days', 0)
-    setValue('turnover_days', 0)
+    setValue('turnover_days', 0)      // No storage duration for FBS
     setValue('acceptance_type', 'free')
     setValue('acceptance_coefficient', 1)
   } else {
     // Restore FBO defaults
-    setValue('turnover_days', 20)  // Default turnover days
+    setValue('turnover_days', 20)     // Default turnover days (typical WB inventory turnover)
   }
 }, [fulfillmentType, setValue])
 
@@ -354,13 +353,12 @@ function buildCalculatorRequest(formData: FormData): PriceCalculatorRequest {
 
   // Add FBO-specific fields
   if (formData.fulfillment_type === 'FBO') {
-    request.storage_rub = formData.storage_rub
-    request.storage_days = formData.storage_days
-    request.turnover_days = formData.turnover_days
+    request.storage_rub = formData.storage_rub        // Calculated: dailyStorageCost × turnover_days
+    request.turnover_days = formData.turnover_days    // Storage duration (sole input)
   } else {
-    // FBS: storage fields are 0
+    // FBS: no storage costs
     request.storage_rub = 0
-    request.storage_days = 0
+    request.turnover_days = 0
   }
 
   return request

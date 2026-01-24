@@ -71,6 +71,94 @@ logistics_forward = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeff
 
 ---
 
+### Cargo Types Classification (from Backend Request #102)
+
+WB categorizes shipments into three cargo types based on maximum dimension:
+
+| Cargo Type | Code | Max Dimension | Box Tariff | Description |
+|-----------|------|---------------|-----------|-------------|
+| **MGT** | MGT | ≤ 60 cm | ✅ Yes | Small packages (auto-fill supported) |
+| **SGT** | SGT | ≤ 120 cm | ✅ Yes | Medium packages (auto-fill supported) |
+| **KGT** | KGT | > 120 cm | ❌ No | Large/heavy items (manual input required) |
+
+**Selection Logic** (from Story 44.7 dimensions input):
+```
+if (maxDimension <= 60) {
+  cargoType = MGT  // Auto-fill supported
+} else if (maxDimension <= 120) {
+  cargoType = SGT  // Auto-fill supported
+} else {
+  cargoType = KGT  // Manual input required - show error
+}
+```
+
+---
+
+### Auto-Fill Supported Indicator
+
+Backend response now includes `autoFillSupported` boolean flag (from Backend Response #102):
+
+```json
+{
+  "warehouseId": 507,
+  "warehouseName": "Коледино",
+  "cargoType": "SGT",
+  "autoFillSupported": true,  // ✅ Auto-fill enabled for MGT/SGT
+  "tariffs": { ... },
+  "coefficients": [ ... ]
+}
+```
+
+**Auto-Fill Trigger Conditions** (from Backend Response #102):
+1. ✅ `warehouse_name` provided (Story 44.12)
+2. ✅ `volume_liters` OR `dimensions` provided (Story 44.7)
+3. ✅ `autoFillSupported = true` in API response (MGT/SGT only)
+4. ❌ NOT triggered if `autoFillSupported = false` (KGT cargo type)
+
+**When NOT to Auto-Fill**:
+- KGT cargo type (> 120cm) → Show error, require manual input
+- Missing warehouse → Use fallback with info notice
+- Insufficient dimensions → Wait for volume calculation
+
+---
+
+### KGT (Large/Heavy) Cargo Handling
+
+**When cargoType = KGT** (max dimension > 120cm):
+1. **Block auto-calculation** - Do not auto-fill logistics value
+2. **Show error alert**:
+   ```
+   ⚠️ Товар категории KGT (>120см) требует индивидуального расчёта логистики.
+   Пожалуйста, введите стоимость логистики вручную или обратитесь в поддержку WB.
+   ```
+3. **Allow manual input only** - User must enter value manually
+4. **Display source badge**: "Вручную" (manual input)
+5. **No tariff breakdown display** - Since calculation is N/A for KGT
+
+**Implementation**:
+- Check `cargoType` from dimensions (Story 44.7)
+- If `cargoType === 'KGT'`, disable auto-fill and show alert
+- Require manual input via form field
+- Skip tariff breakdown display
+
+---
+
+### Forward vs Reverse Logistics Auto-Fill
+
+**Forward Logistics** (Story 44.8 - This Story):
+- Trigger: warehouse_name + (volume OR dimensions)
+- Response includes: `autoFillSupported` boolean
+- KGT handling: Manual input required, show error
+- Cargo types: MGT/SGT only
+
+**Reverse Logistics** (Story 44.10):
+- Trigger: warehouse_name + reverse_shipping_method
+- Response includes: separate `autoFillSupported` flag
+- KGT handling: TBD by Story 44.10
+- May support different cargo types
+
+---
+
 ## Acceptance Criteria
 
 ### AC1: Volume-Based Tariff Calculation (from Story 44.7 dimensions)
@@ -116,6 +204,26 @@ logistics_forward = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeff
 - [ ] Recalculate when warehouse changes (from Story 44.12)
 - [ ] Recalculate when coefficient changes (from Story 44.13)
 - [ ] Debounce recalculation (300ms delay)
+
+### AC7: Cargo Type Classification
+- [ ] Classify cargo type from max dimension (Story 44.7):
+  - MGT: max dimension ≤ 60cm → Auto-fill supported ✅
+  - SGT: max dimension ≤ 120cm → Auto-fill supported ✅
+  - KGT: max dimension > 120cm → Manual input required ❌
+- [ ] For KGT, show error alert and disable auto-fill
+- [ ] Error message (Russian): "Товар категории KGT (>120см) требует индивидуального расчёта логистики. Пожалуйста, введите стоимость логистики вручную..."
+
+### AC8: Auto-Fill Support Indicator
+- [ ] Check `autoFillSupported` boolean from API response
+- [ ] Only enable auto-fill when:
+  1. Warehouse selected (warehouseId provided)
+  2. Volume/dimensions provided (from Story 44.7)
+  3. `autoFillSupported === true` from API response
+  4. Cargo type is NOT KGT
+- [ ] Show auto-fill status in UI:
+  - Enabled: Show "Рассчитано" badge, auto-fill value
+  - Disabled (KGT): Show error alert, require manual input
+  - Disabled (missing data): Show info notice, allow manual input
 
 ---
 
@@ -197,6 +305,15 @@ src/
 // src/types/tariffs.ts
 
 /**
+ * Cargo type classification based on max dimension
+ */
+export enum CargoType {
+  MGT = 'MGT',   // ≤ 60cm - auto-fill supported
+  SGT = 'SGT',   // ≤ 120cm - auto-fill supported
+  KGT = 'KGT',   // > 120cm - manual input required
+}
+
+/**
  * Box delivery tariffs from WB API
  */
 export interface BoxDeliveryTariffs {
@@ -206,6 +323,10 @@ export interface BoxDeliveryTariffs {
   additionalLiterRub: number
   /** Warehouse coefficient (normalized: 1.0, 1.25, etc.) */
   coefficient: number
+  /** Cargo type classification (from max dimension) */
+  cargoType?: CargoType
+  /** Whether auto-fill is supported for this cargo type */
+  autoFillSupported?: boolean
 }
 
 /**
@@ -226,6 +347,12 @@ export interface LogisticsTariffResult {
   breakdown: LogisticsTariffBreakdown
   /** Source of tariff data */
   source: 'warehouse' | 'default' | 'manual'
+  /** Cargo type classification (from max dimension) */
+  cargoType?: CargoType
+  /** Whether auto-fill is supported for this cargo */
+  autoFillSupported?: boolean
+  /** Error message if auto-fill not supported (e.g., KGT) */
+  autoFillError?: string
 }
 
 export interface LogisticsTariffBreakdown {
@@ -258,16 +385,42 @@ import type { BoxDeliveryTariffs, LogisticsTariffResult } from '@/types/tariffs'
  *
  * Formula: (baseLiterRub + (volume - 1) × additionalLiterRub) × coefficient
  *
+ * For KGT cargo (> 120cm), returns error result requiring manual input.
+ *
  * @param volumeLiters - Product volume in liters (from Story 44.7)
  * @param tariffs - Box delivery tariffs (from warehouse or default)
- * @returns Calculated logistics cost and breakdown
+ * @param cargoType - Cargo type classification (MGT/SGT/KGT)
+ * @returns Calculated logistics cost and breakdown, or error if KGT
  */
 export function calculateLogisticsTariff(
   volumeLiters: number,
-  tariffs: BoxDeliveryTariffs
+  tariffs: BoxDeliveryTariffs,
+  cargoType?: CargoType
 ): LogisticsTariffResult {
+  // KGT (large cargo > 120cm) requires manual input
+  if (cargoType === CargoType.KGT) {
+    return {
+      volumeLiters,
+      baseCost: 0,
+      additionalLitersCost: 0,
+      coefficient: tariffs.coefficient,
+      totalCost: 0,
+      breakdown: {
+        volumeDisplay: '—',
+        baseRateDisplay: '—',
+        additionalDisplay: '—',
+        coefficientDisplay: '—',
+        totalDisplay: '—',
+      },
+      source: 'manual',
+      cargoType: CargoType.KGT,
+      autoFillSupported: false,
+      autoFillError: 'Товар категории KGT (>120см) требует индивидуального расчёта логистики. Пожалуйста, введите стоимость логистики вручную или обратитесь в поддержку WB.',
+    }
+  }
+
   if (volumeLiters <= 0) {
-    return createZeroResult(tariffs)
+    return createZeroResult(tariffs, cargoType)
   }
 
   // Calculate additional liters (first liter is included in base)
@@ -303,6 +456,8 @@ export function calculateLogisticsTariff(
       finalCost
     ),
     source: 'warehouse',
+    cargoType: cargoType || (tariffs.cargoType || CargoType.SGT),
+    autoFillSupported: tariffs.autoFillSupported !== false,
   }
 }
 
@@ -325,7 +480,7 @@ function createBreakdown(
   }
 }
 
-function createZeroResult(tariffs: BoxDeliveryTariffs): LogisticsTariffResult {
+function createZeroResult(tariffs: BoxDeliveryTariffs, cargoType?: CargoType): LogisticsTariffResult {
   return {
     volumeLiters: 0,
     baseCost: 0,
@@ -340,6 +495,8 @@ function createZeroResult(tariffs: BoxDeliveryTariffs): LogisticsTariffResult {
       totalDisplay: '0,00 ₽',
     },
     source: 'default',
+    cargoType: cargoType || (tariffs.cargoType || CargoType.SGT),
+    autoFillSupported: tariffs.autoFillSupported !== false,
   }
 }
 
@@ -381,6 +538,8 @@ interface LogisticsTariffCalculatorProps {
   autoCalculate: boolean
   /** Toggle auto-calculate */
   onAutoCalculateChange: (enabled: boolean) => void
+  /** Cargo type from dimensions (Story 44.7) */
+  cargoType?: CargoType
   /** Disabled state */
   disabled?: boolean
 }
@@ -393,6 +552,7 @@ export function LogisticsTariffCalculator({
   onChange,
   autoCalculate,
   onAutoCalculateChange,
+  cargoType,
   disabled,
 }: LogisticsTariffCalculatorProps) {
   // Fetch warehouse tariffs when warehouse selected
@@ -405,25 +565,43 @@ export function LogisticsTariffCalculator({
           baseLiterRub: tariffs.boxDeliveryBase,
           additionalLiterRub: tariffs.boxDeliveryLiter,
           coefficient: coefficient,
+          cargoType: cargoType,
+          autoFillSupported: tariffs.autoFillSupported,
         }
-      : DEFAULT_BOX_TARIFFS
+      : {
+          ...DEFAULT_BOX_TARIFFS,
+          cargoType: cargoType,
+          autoFillSupported: cargoType !== CargoType.KGT,
+        }
 
-    return calculateLogisticsTariff(volumeLiters, effectiveTariffs)
-  }, [volumeLiters, tariffs, coefficient])
+    return calculateLogisticsTariff(volumeLiters, effectiveTariffs, cargoType)
+  }, [volumeLiters, tariffs, coefficient, cargoType])
 
-  // Auto-update form value when auto-calculate enabled
+  // Auto-update form value when auto-calculate enabled AND auto-fill supported
   useEffect(() => {
-    if (autoCalculate && result.totalCost !== value) {
+    if (autoCalculate && result.autoFillSupported && result.totalCost !== value) {
       onChange(result.totalCost)
     }
-  }, [autoCalculate, result.totalCost, value, onChange])
+  }, [autoCalculate, result.totalCost, result.autoFillSupported, value, onChange])
 
   const isManualOverride = !autoCalculate || value !== result.totalCost
+  const isKgtCargo = cargoType === CargoType.KGT
+  const canAutoCalculate = result.autoFillSupported && !isKgtCargo
 
   return (
     <div className="space-y-4">
-      {/* No warehouse notice */}
-      {!warehouseId && (
+      {/* KGT Error Alert */}
+      {isKgtCargo && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {result.autoFillError}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* No warehouse notice (info level) */}
+      {!warehouseId && !isKgtCargo && (
         <Alert variant="info">
           <Info className="h-4 w-4" />
           <AlertDescription>
@@ -432,14 +610,14 @@ export function LogisticsTariffCalculator({
         </Alert>
       )}
 
-      {/* Auto-calculate toggle */}
+      {/* Auto-calculate toggle - disabled for KGT */}
       <div className="flex items-center justify-between">
         <Label htmlFor="auto-calc-logistics">Рассчитать автоматически</Label>
         <Switch
           id="auto-calc-logistics"
           checked={autoCalculate}
           onCheckedChange={onAutoCalculateChange}
-          disabled={disabled || isLoading}
+          disabled={disabled || isLoading || !canAutoCalculate}
         />
       </div>
 
@@ -447,7 +625,9 @@ export function LogisticsTariffCalculator({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Логистика прямая, ₽</Label>
-          <AutoFillBadge source={isManualOverride ? 'manual' : 'auto'} />
+          <AutoFillBadge
+            source={isManualOverride || isKgtCargo ? 'manual' : 'auto'}
+          />
         </div>
         <div className="flex gap-2">
           <Input
@@ -457,12 +637,13 @@ export function LogisticsTariffCalculator({
               onChange(parseFloat(e.target.value) || 0)
               onAutoCalculateChange(false)
             }}
-            disabled={disabled || (autoCalculate && !isLoading)}
+            disabled={disabled}
             className="flex-1"
             min={0}
             step={0.01}
+            aria-label="Стоимость логистики прямой доставки"
           />
-          {isManualOverride && (
+          {isManualOverride && !isKgtCargo && (
             <Button
               type="button"
               variant="outline"
@@ -472,6 +653,7 @@ export function LogisticsTariffCalculator({
                 onAutoCalculateChange(true)
               }}
               title="Восстановить расчётное значение"
+              aria-label="Восстановить автоматически рассчитанное значение"
             >
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -479,12 +661,14 @@ export function LogisticsTariffCalculator({
         </div>
       </div>
 
-      {/* Tariff breakdown */}
-      <LogisticsTariffDisplay
-        result={result}
-        warehouseName={tariffs?.warehouseName}
-        isLoading={isLoading}
-      />
+      {/* Tariff breakdown - hide for KGT */}
+      {!isKgtCargo && (
+        <LogisticsTariffDisplay
+          result={result}
+          warehouseName={tariffs?.warehouseName}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   )
 }
@@ -586,28 +770,117 @@ export function LogisticsTariffDisplay({
 
 | Scenario | Expected Behavior |
 |----------|-------------------|
-| Volume < 0.001 L | Use minimum 1 L for calculation |
-| Volume exactly 1 L | Only base rate applies (no additional liters) |
-| Volume 1.001 L | Base + 0.001L additional (minimal extra) |
-| Large volume (10 L) | Base + 9L additional |
-| Coefficient = 0 | Treat as 1.0 (no adjustment) |
-| Coefficient > 5.0 | Allow but show warning |
-| No warehouse selected | Use DEFAULT_BOX_TARIFFS |
-| Manual override | Keep user value, show "Вручную" badge |
-| Dimension changed | Recalculate if auto-calculate enabled |
-| Warehouse changed | Refetch tariffs, recalculate |
+| **Volume < 0.001 L** | Use minimum 1 L for calculation |
+| **Volume exactly 1 L** | Only base rate applies (no additional liters) |
+| **Volume 1.001 L** | Base + 0.001L additional (minimal extra) |
+| **Large volume (10 L)** | Base + 9L additional |
+| **Coefficient = 0** | Treat as 1.0 (no adjustment) |
+| **Coefficient > 5.0** | Allow but show warning |
+| **No warehouse selected** | Use DEFAULT_BOX_TARIFFS, show info notice |
+| **Manual override** | Keep user value, show "Вручную" badge |
+| **Dimension changed** | Recalculate if auto-calculate enabled |
+| **Warehouse changed** | Refetch tariffs, recalculate |
+| **Cargo Type = MGT** | max_dim ≤ 60cm, auto-fill supported ✅ |
+| **Cargo Type = SGT** | max_dim ≤ 120cm, auto-fill supported ✅ |
+| **Cargo Type = KGT** | max_dim > 120cm, manual input required, show error ❌ |
+| **KGT Selected** | Disable auto-fill toggle, show error alert, require manual input |
+| **API Missing autoFillSupported** | Assume true for MGT/SGT, false for KGT |
+| **autoFillSupported = false** | Disable auto-fill, allow manual input |
+| **Insufficient data for auto-fill** | Use fallback, show info notice |
 
 ### Test Scenarios
 
-| Volume (L) | Base (₽) | Per-L (₽) | Coef | Expected Cost |
-|------------|----------|-----------|------|---------------|
-| 1.0 | 48 | 5 | 1.0 | 48.00 ₽ |
-| 2.0 | 48 | 5 | 1.0 | 53.00 ₽ |
-| 3.0 | 48 | 5 | 1.0 | 58.00 ₽ |
-| 3.0 | 48 | 5 | 1.25 | 72.50 ₽ |
-| 5.0 | 48 | 5 | 1.0 | 68.00 ₽ |
-| 10.0 | 48 | 5 | 1.5 | 117.00 ₽ |
-| 0.5 | 48 | 5 | 1.0 | 48.00 ₽ (min 1L) |
+| Volume (L) | Base (₽) | Per-L (₽) | Coef | Cargo | Expected Cost | Expected Result |
+|------------|----------|-----------|------|-------|----------------|-----------------|
+| 1.0 | 48 | 5 | 1.0 | MGT | 48.00 ₽ | Auto-fill ✅ |
+| 2.0 | 48 | 5 | 1.0 | SGT | 53.00 ₽ | Auto-fill ✅ |
+| 3.0 | 48 | 5 | 1.0 | SGT | 58.00 ₽ | Auto-fill ✅ |
+| 3.0 | 48 | 5 | 1.25 | SGT | 72.50 ₽ | Auto-fill ✅ |
+| 5.0 | 48 | 5 | 1.0 | SGT | 68.00 ₽ | Auto-fill ✅ |
+| 10.0 | 48 | 5 | 1.5 | SGT | 117.00 ₽ | Auto-fill ✅ |
+| 0.5 | 48 | 5 | 1.0 | MGT | 48.00 ₽ | Auto-fill ✅ (min 1L) |
+| — | — | — | — | KGT | — | Error: Manual input required ❌ |
+
+**KGT-Specific Test Cases**:
+
+| Max Dimension | Cargo | autoFillSupported | Expected Behavior |
+|---------------|-------|------------------|-------------------|
+| 50 cm | MGT | true | Auto-fill enabled ✅ |
+| 100 cm | SGT | true | Auto-fill enabled ✅ |
+| 120 cm | SGT | true | Auto-fill enabled ✅ |
+| 121 cm | KGT | false | Error alert shown, manual input required ❌ |
+| 200 cm | KGT | false | Error alert shown, manual input required ❌ |
+| 300 cm | KGT | false | Error alert shown, manual input required ❌ |
+
+---
+
+## Auto-Fill Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ User enters Dimensions (Story 44.7)                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│ 1. Calculate volume from dimensions                                   │
+│ 2. Determine cargo type from max_dimension:                           │
+│    - ≤60cm → MGT (auto-fill supported)                              │
+│    - ≤120cm → SGT (auto-fill supported)                             │
+│    - >120cm → KGT (manual input required)                            │
+└──────────────────────┬──────────────────────────────────────────────┘
+                       │
+        ┌──────────────┴──────────────┐
+        │                              │
+    ┌───▼────────────────┐    ┌───────▼──────────────┐
+    │ CARGO: MGT/SGT     │    │ CARGO: KGT           │
+    │ Auto-fill OK ✅    │    │ Manual Required ❌    │
+    └───┬────────────────┘    └───────┬──────────────┘
+        │                             │
+        │ User selects Warehouse      │ Show Error Alert:
+        │ (Story 44.12)               │ "Товар категории KGT..."
+        │                             │
+    ┌───▼──────────────────┐         │ Disable auto-fill toggle
+    │ API: GET tariffs     │         │ Allow manual input only
+    │ Returns:             │         │ No tariff breakdown
+    │ - boxDeliveryBase    │         │ Show "Вручную" badge
+    │ - boxDeliveryLiter   │         │
+    │ - autoFillSupported  │         │
+    └───┬──────────────────┘         │
+        │                             │
+        ├─ autoFillSupported=true     │
+        │  ✅ Calculate & auto-fill    │
+        │  Show "Рассчитано" badge    │
+        │  Show tariff breakdown      │
+        │                              │
+        ├─ autoFillSupported=false    │
+        │  ❌ Disable auto-fill        │
+        │  Allow manual input          │
+        │  Show info notice           │
+        │                              │
+        └─ Missing warehouse           │
+           ❌ Use default tariffs      │
+           Show info notice            │
+           Allow manual input          │
+                                       │
+                    ┌──────────────────┘
+                    │
+                ┌───▼─────────────────────┐
+                │ Form Submission         │
+                │ - logistics_forward_rub │
+                │   = user or calculated  │
+                └─────────────────────────┘
+```
+
+**Decision Points**:
+1. **Cargo Type Check** (from dimensions max_dimension)
+   - MGT/SGT → Continue to auto-fill flow
+   - KGT → Show error, require manual input
+
+2. **Warehouse Selection** (Story 44.12)
+   - Selected → Fetch tariffs, check autoFillSupported
+   - Not selected → Use defaults, show info notice
+
+3. **Auto-Fill Enabled** (autoFillSupported flag)
+   - true → Auto-calculate and fill value
+   - false → Allow manual input only
 
 ---
 

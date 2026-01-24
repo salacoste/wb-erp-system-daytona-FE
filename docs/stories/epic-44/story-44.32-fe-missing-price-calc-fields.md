@@ -1,5 +1,19 @@
 # Story 44.32: Missing Price Calculator Fields (Phase 1 HIGH Priority)
 
+> **Note (2026-01-24)**: This story implements the **unified turnover_days approach** for storage cost calculation.
+>
+> **Key Design Decision:**
+> - `turnover_days` is the **SOLE** storage duration input (no separate `storage_days` field)
+> - Storage cost formula: `storage_rub = dailyStorageCost × turnover_days`
+> - `dailyStorageCost` comes from warehouse tariffs (Story 44.27)
+> - This approach supersedes the original Story 44.14 (StorageDaysInput/StorageCostCalculator)
+>
+> **Deleted Components (originally planned in Story 44.14):**
+> - `StorageDaysInput.tsx` - NOT CREATED
+> - `StorageCostCalculator.tsx` - NOT CREATED
+> - `StorageCostBreakdown.tsx` - NOT CREATED
+> - `storage-cost-utils.ts` - NOT CREATED
+
 **Epic**: 44 - Price Calculator UI (Frontend)
 **Status**: ✅ Complete
 **Priority**: P0 - HIGH
@@ -64,15 +78,20 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 - [x] Tooltip: "Коэффициент доставки в удалённые регионы (1.0 = Москва/ЦФО, 1.5-2.5 = Дальний Восток)"
 - [x] Show source indicator: "Авто: из коэффициента склада" or "Вручную"
 
-### AC4: Turnover Days Input (FBO Only)
+### AC4: Turnover Days Input (FBO Only) - **PRIMARY STORAGE DURATION FIELD**
 - [x] Show number input: "Оборачиваемость, дней"
 - [x] Range: 1-365
-- [x] Default: 20
+- [x] Default: 20 (typical WB inventory turnover)
 - [x] Field: `turnover_days` (number)
 - [x] Condition: Only shown when `fulfillment_type === 'FBO'`
 - [x] Tooltip: "Сколько дней товар лежит на складе до продажи. Влияет на общую стоимость хранения."
-- [x] Auto-calculate total storage: `storage_total = storage_per_day × turnover_days`
+- [x] **Auto-calculate `storage_rub`**: `storage_rub = dailyStorageCost × turnover_days`
+- [x] `dailyStorageCost` sourced from warehouse tariffs (Story 44.27)
 - [x] Display preview: "Хранение за период: {total} ₽"
+- [x] Slider for visual adjustment (1-365 days)
+
+> **Note**: This is the ONLY storage duration input in the calculator. There is no separate
+> `storage_days` field - the `turnover_days` approach handles all storage cost calculation.
 
 ### AC5: Form Integration
 - [x] All new fields integrate into existing `PriceCalculatorForm` component

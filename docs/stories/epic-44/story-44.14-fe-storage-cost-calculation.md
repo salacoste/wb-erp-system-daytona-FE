@@ -1,7 +1,26 @@
 # Story 44.14: Storage Cost Calculation
 
+> ⚠️ **DEPRECATED** (2026-01-24)
+>
+> This story has been superseded by the **turnover_days** approach implemented in Story 44.32.
+>
+> **Changes:**
+> - `StorageDaysInput` component: **DELETED**
+> - `StorageCostCalculator` component: **DELETED**
+> - `StorageCostBreakdown` component: **DELETED**
+> - `storage-cost-utils.ts`: **NOT CREATED** (functionality integrated into TurnoverDaysInput)
+>
+> **Current Implementation:**
+> - Storage cost is calculated as: `dailyStorageCost × turnover_days`
+> - `TurnoverDaysInput` component (Story 44.32) handles storage duration input
+> - Daily storage cost comes from warehouse tariffs (Story 44.27)
+>
+> See [Story 44.32](./story-44.32-fe-missing-price-calc-fields.md) for current implementation.
+
+---
+
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: 📋 Ready for Dev
+**Status**: ⛔ DEPRECATED (superseded by Story 44.32)
 **Priority**: P1 - IMPORTANT
 **Effort**: 2 SP
 **Depends On**: Story 44.7 (Volume) ✅, Story 44.12 (Warehouse) ✅
@@ -52,6 +71,33 @@ const perLiterRub = parseTariffExpression("1*x")  // → 1
 
 ---
 
+## Backend Clarifications (2026-01-24)
+
+### 60-Day Free Storage Grace Period (NEW - Backend Update)
+**Source**: Backend team confirmation
+**Implementation Date**: 2026-01-24
+
+Wildberries provides **60 days of FREE storage** before any charges apply. This is a mandatory policy applied to all sellers.
+
+```
+billable_days = max(0, inventory_turnover_days - 60)
+total_storage_cost = daily_cost × billable_days  (NOT × full turnover_days)
+```
+
+**Key Impact on Frontend**:
+1. **Formula Update**: Use `billable_days` instead of `turnover_days` in final calculation
+2. **UI Change**: Show "БЕСПЛАТНО (60 дней)" when `turnover_days ≤ 60`
+3. **Breakdown**: Display both free period and billable days in calculation details
+4. **Warnings**: Adjust thresholds (now 90+ days warning, 120+ days critical instead of 30/60)
+
+**Examples**:
+- 45-day turnover → 0 billable days → Cost = 0 (FREE)
+- 60-day turnover → 0 billable days → Cost = 0 (FREE)
+- 61-day turnover → 1 billable day → Cost = daily_rate × 1
+- 90-day turnover → 30 billable days → Cost = daily_rate × 30
+
+---
+
 ## WB Storage Business Rules
 
 ### Key Principles (from official WB documentation)
@@ -68,33 +114,82 @@ const perLiterRub = parseTariffExpression("1*x")  // → 1
    - Storage coefficient varies by warehouse
    - Applied as multiplier to base storage cost
 
+### 60-Day Free Storage Policy
+
+**Critical Business Rule**: Wildberries provides **60 days of FREE storage** before charging begins. This is a mandatory discount applied to all sellers.
+
+```
+# Billable storage days calculation (2026-01-24 Backend Update)
+billable_days = max(0, inventory_turnover_days - 60)
+
+# Key Points:
+# - First 60 days: FREE (no charge)
+# - Days 61+: Billable at warehouse tariff rate
+# - Formula only applies daily_cost if billable_days > 0
+# - Example: 90 day turnover → (90 - 60) = 30 billable days charged
+```
+
 ### Storage Cost Formulas
 
 ```
-# Daily storage cost
+# Volume calculation (from Story 44.7 dimensions)
+volume_liters = (length_cm × width_cm × height_cm) / 1000
+# Minimum: 1 liter (products smaller than 1L round up to 1L)
+
+# Daily storage cost per unit
 daily_storage = (base_per_day + (volume - 1) * per_liter_per_day) * storage_coefficient
 
-# Total storage cost for period
-total_storage = daily_storage * days_in_storage
+# Billable days (2026-01-24 Backend Clarification - NEW)
+billable_days = max(0, turnover_days - 60)
+
+# Total storage cost for period (only charged for days > 60)
+total_storage = daily_storage * billable_days
 
 # Where:
 #   base_per_day = First liter base rate (e.g., 0.07 RUB/day)
 #   per_liter_per_day = Additional liter rate (e.g., 0.05 RUB/day)
-#   volume = Product volume in liters (from Story 44.7)
+#   volume = Product volume in liters (from Story 44.7, minimum 1L)
 #   storage_coefficient = Warehouse coefficient (from Story 44.13)
-#   days_in_storage = User input (default: 14 days)
+#   turnover_days = Inventory turnover days (estimated by seller, Story 44.32)
+#   billable_days = max(0, turnover_days - 60) [2026-01-24: Backend Clarification]
 ```
 
-**Example Calculation**:
-- Volume: 3.0 liters
+**Example Calculation - Within Free Period (< 60 days)**:
+- Dimensions: 10cm × 10cm × 15cm
+- Volume: (10 × 10 × 15) / 1000 = 1.5 liters
 - Base rate: 0.07 RUB/day
 - Per-liter rate: 0.05 RUB/day
 - Coefficient: 1.0
-- Days: 14
+- Turnover days: 45 days (estimated)
 
 ```
-daily = (0.07 + (3.0 - 1) * 0.05) * 1.0 = 0.17 RUB/day
-total = 0.17 * 14 = 2.38 RUB
+# Step 1: Calculate volume
+volume_liters = (10 × 10 × 15) / 1000 = 1.5 liters ✓
+
+# Step 2: Calculate daily cost
+daily = (0.07 + (1.5 - 1) * 0.05) * 1.0
+daily = (0.07 + 0.5 * 0.05) = (0.07 + 0.025) = 0.095 RUB/day
+
+# Step 3: Calculate billable days (2026-01-24 Backend Rule)
+billable_days = max(0, 45 - 60) = max(0, -15) = 0 days
+
+# Step 4: Calculate total
+total = 0.095 * 0 = 0.00 RUB  ← FREE! (within 60-day grace period)
+```
+
+**Example Calculation - Beyond Free Period (> 60 days)**:
+- Same product as above
+- Turnover days: 90 days (estimated)
+
+```
+# Steps 1-2: Same as above
+daily = 0.095 RUB/day
+
+# Step 3: Calculate billable days (NEW - 2026-01-24 Backend Rule)
+billable_days = max(0, 90 - 60) = 30 billable days
+
+# Step 4: Calculate total
+total = 0.095 * 30 = 2.85 RUB  ← Charged only for days 61-90
 ```
 
 ---
@@ -115,19 +210,32 @@ total = 0.17 * 14 = 2.38 RUB
 - [ ] Update in real-time as volume or coefficient changes
 - [ ] Show "0,00 ₽/день" when volume is 0
 
-### AC3: Total Storage Cost Calculation
-- [ ] Calculate total storage: `daily_cost * days`
+### AC3: Total Storage Cost Calculation (With 60-Day Grace Period)
+- [ ] Calculate billable days: `billable_days = max(0, turnover_days - 60)`
+- [ ] Calculate total storage: `daily_cost * billable_days` (NOT full turnover days)
 - [ ] Display prominently: "Итого хранение: X,XX ₽" (Total storage: X.XX RUB)
+- [ ] **NEW (2026-01-24)**: Show "БЕСПЛАТНО (60 дней)" when turnover_days ≤ 60
 - [ ] Update in real-time as any input changes
 - [ ] Auto-fill `storage_rub` field in main calculator form
 
-### AC4: Calculation Breakdown Display
+### AC3a: Auto-Fill Indicators (2026-01-24 Backend Clarification)
+- [ ] **Can auto-fill if**: warehouse_name provided AND (volume_liters provided OR dimensions L×W×H provided)
+- [ ] **Cannot auto-fill if**: Missing either warehouse_name OR both volume AND dimensions
+- [ ] Show lock icon 🔒 when auto-fill not possible (manual entry required)
+- [ ] Show info icon ℹ️ when auto-fill is active (warehouse tariff applied)
+
+### AC4: Calculation Breakdown Display (With 60-Day Free Period)
 - [ ] Show expandable breakdown section
-- [ ] Display 3-step calculation:
-  1. "Базовая ставка: X,XX ₽/день" (Base: first liter rate)
-  2. "Доп. литры (Y л): Z,ZZ ₽/день" (Additional liters rate)
-  3. "Коэффициент склада: ×K" (Warehouse coefficient)
-- [ ] Show final: "Итого за период (N дней): X,XX ₽"
+- [ ] Display volume calculation step:
+  1. "Объём (L × W × H / 1000): X,XX л" (Volume: dimensions calculation)
+- [ ] Display 3-step daily cost calculation:
+  2. "Базовая ставка: X,XX ₽/день" (Base: first liter rate)
+  3. "Доп. литры (Y л): Z,ZZ ₽/день" (Additional liters rate)
+  4. "Коэффициент склада: ×K" (Warehouse coefficient)
+- [ ] **NEW (2026-01-24)**: Show free period calculation:
+  5. "60 дней бесплатно" (60 days free storage)
+  6. "Платные дни: max(0, N - 60) = M дней" (Billable days calculation)
+- [ ] Show final: "Итого за M платных дней: X,XX ₽"
 
 ### AC5: Long Storage Warning
 - [ ] Show warning alert when storage > 30 days
@@ -199,22 +307,26 @@ export interface StorageTariff {
 export interface StorageCostResult {
   /** Daily storage cost per unit (RUB) */
   daily_cost: number
-  /** Total storage cost for period (RUB) */
+  /** Total storage cost for period (RUB) - only for billable days */
   total_cost: number
-  /** Number of storage days */
-  days: number
+  /** Inventory turnover days (estimated) */
+  turnover_days: number
+  /** Billable days (2026-01-24: after 60-day grace period) */
+  billable_days: number
   /** Volume used in calculation (liters) */
   volume_liters: number
+  /** Whether in free storage period (turnover_days <= 60) */
+  is_free_period: boolean
   /** Tariff used */
   tariff: StorageTariff
 }
 
 export interface StorageCostInputs {
-  /** Product volume in liters */
+  /** Product volume in liters (from Story 44.7 or dimensions) */
   volume_liters: number
-  /** Number of storage days */
-  days: number
-  /** Storage tariff (from API or manual) */
+  /** Inventory turnover days (estimated, from Story 44.32) */
+  turnover_days: number
+  /** Storage tariff (from warehouse API or manual fallback) */
   tariff: StorageTariff
 }
 ```
@@ -251,29 +363,48 @@ export function calculateDailyStorageCost(
 }
 
 /**
- * Calculate total storage cost for a period
+ * Calculate billable storage days (2026-01-24: 60-day free period)
+ * Formula: billable_days = max(0, inventory_turnover_days - 60)
+ * @param turnoverDays Inventory turnover days (estimated)
+ * @returns Number of days charged at warehouse tariff rate
  */
-export function calculateTotalStorageCost(
-  volumeLiters: number,
-  days: number,
-  tariff: StorageTariff
-): number {
-  const dailyCost = calculateDailyStorageCost(volumeLiters, tariff)
-  return dailyCost * days
+export function calculateBillableDays(turnoverDays: number): number {
+  return Math.max(0, turnoverDays - 60)
 }
 
 /**
- * Full storage cost calculation with breakdown
+ * Calculate total storage cost for a period (2026-01-24: Accounting for 60-day free period)
+ * @param volumeLiters Product volume in liters
+ * @param turnoverDays Inventory turnover days (estimated)
+ * @param tariff Storage tariff rates
+ * @returns Total cost only for billable days (after 60-day grace period)
+ */
+export function calculateTotalStorageCost(
+  volumeLiters: number,
+  turnoverDays: number,
+  tariff: StorageTariff
+): number {
+  const dailyCost = calculateDailyStorageCost(volumeLiters, tariff)
+  const billableDays = calculateBillableDays(turnoverDays)
+  return dailyCost * billableDays
+}
+
+/**
+ * Full storage cost calculation with breakdown (2026-01-24: 60-day free period)
  */
 export function calculateStorageCost(inputs: StorageCostInputs): StorageCostResult {
   const dailyCost = calculateDailyStorageCost(inputs.volume_liters, inputs.tariff)
-  const totalCost = dailyCost * inputs.days
+  const billableDays = calculateBillableDays(inputs.turnover_days)
+  const totalCost = dailyCost * billableDays
+  const isFreePeriod = inputs.turnover_days <= 60
 
   return {
     daily_cost: dailyCost,
     total_cost: totalCost,
-    days: inputs.days,
+    turnover_days: inputs.turnover_days,
+    billable_days: billableDays,
     volume_liters: inputs.volume_liters,
+    is_free_period: isFreePeriod,
     tariff: inputs.tariff,
   }
 }
@@ -299,14 +430,14 @@ export const STORAGE_DAYS_PRESETS = [7, 14, 30, 60, 90] as const
 // src/components/custom/price-calculator/StorageCostCalculator.tsx
 
 interface StorageCostCalculatorProps {
-  /** Product volume in liters (from Story 44.7) */
+  /** Product volume in liters (from Story 44.7 or calculated from dimensions) */
   volumeLiters: number
-  /** Storage tariff (from Story 44.13 or manual) */
+  /** Storage tariff (from Story 44.13 warehouse API or manual fallback) */
   tariff: StorageTariff | null
-  /** Current storage days value */
-  days: number
-  /** Storage days change handler */
-  onDaysChange: (days: number) => void
+  /** Current inventory turnover days value (from Story 44.32) */
+  turnoverDays: number
+  /** Turnover days change handler */
+  onTurnoverDaysChange: (days: number) => void
   /** Calculated storage cost */
   value: number
   /** Storage cost change handler (for auto-fill) */
@@ -318,8 +449,8 @@ interface StorageCostCalculatorProps {
 export function StorageCostCalculator({
   volumeLiters,
   tariff,
-  days,
-  onDaysChange,
+  turnoverDays,
+  onTurnoverDaysChange,
   value,
   onChange,
   disabled,
@@ -328,14 +459,14 @@ export function StorageCostCalculator({
   const effectiveTariff = tariff ?? DEFAULT_STORAGE_TARIFF
   const isUsingFallback = tariff === null
 
-  // Calculate storage cost
+  // Calculate storage cost (2026-01-24: With 60-day grace period)
   const result = useMemo(
     () => calculateStorageCost({
       volume_liters: volumeLiters,
-      days,
+      turnover_days: turnoverDays,
       tariff: effectiveTariff,
     }),
-    [volumeLiters, days, effectiveTariff]
+    [volumeLiters, turnoverDays, effectiveTariff]
   )
 
   // Auto-update parent form value
@@ -343,8 +474,8 @@ export function StorageCostCalculator({
     onChange(result.total_cost)
   }, [result.total_cost, onChange])
 
-  // Warning level
-  const warningLevel = getStorageWarningLevel(days)
+  // Warning level based on turnover days
+  const warningLevel = getStorageWarningLevel(turnoverDays)
 
   return (
     <div className="space-y-4">
@@ -358,10 +489,10 @@ export function StorageCostCalculator({
         </Alert>
       )}
 
-      {/* Days input with presets */}
+      {/* Turnover days input with presets (2026-01-24: renamed from "days") */}
       <StorageDaysInput
-        value={days}
-        onChange={onDaysChange}
+        value={turnoverDays}
+        onChange={onTurnoverDaysChange}
         disabled={disabled}
       />
 
@@ -371,19 +502,30 @@ export function StorageCostCalculator({
         <span className="font-medium">{formatCurrency(result.daily_cost)}/день</span>
       </div>
 
-      <div className="flex justify-between items-center text-lg">
-        <span className="font-medium">Итого хранение:</span>
-        <span className="font-bold text-primary">
-          {formatCurrency(result.total_cost)}
-        </span>
-      </div>
+      {/* Free period indicator (2026-01-24 NEW) */}
+      {result.is_free_period ? (
+        <div className="flex justify-between items-center text-lg bg-green-50 p-3 rounded">
+          <span className="font-medium">Итого хранение:</span>
+          <span className="font-bold text-green-700">
+            БЕСПЛАТНО (60 дней) ✓
+          </span>
+        </div>
+      ) : (
+        <div className="flex justify-between items-center text-lg">
+          <span className="font-medium">Итого хранение (платные дни {result.billable_days}):</span>
+          <span className="font-bold text-primary">
+            {formatCurrency(result.total_cost)}
+          </span>
+        </div>
+      )}
 
-      {/* Warning for long storage */}
+      {/* Warning for long storage (beyond 60-day free period) */}
       {warningLevel === 'warning' && (
         <Alert variant="warning">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Хранение более 30 дней значительно увеличивает расходы. Рассмотрите оптимизацию запасов.
+            Хранение более 90 дней значительно увеличивает расходы (учитывая бесплатные 60 дней).
+            Рассмотрите оптимизацию запасов.
           </AlertDescription>
         </Alert>
       )}
@@ -392,7 +534,7 @@ export function StorageCostCalculator({
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Хранение более 60 дней: высокие расходы! Рекомендуем пересмотреть объём поставки.
+            Хранение более 120 дней: очень высокие расходы! Рекомендуем пересмотреть объём поставки.
           </AlertDescription>
         </Alert>
       )}
@@ -477,6 +619,15 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
       </CollapsibleTrigger>
 
       <CollapsibleContent className="mt-2 space-y-1 text-sm border-l-2 border-muted pl-4">
+        {/* Volume calculation (2026-01-24 NEW) */}
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Объём товара:</span>
+          <span>{result.volume_liters.toFixed(2)} л</span>
+        </div>
+
+        <Separator className="my-2" />
+
+        {/* Daily cost breakdown */}
         <div className="flex justify-between">
           <span className="text-muted-foreground">Базовая ставка (1 л):</span>
           <span>{formatCurrency(baseCost)}/день</span>
@@ -505,9 +656,25 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
           <span>{formatCurrency(result.daily_cost)}</span>
         </div>
 
+        {/* 60-day grace period breakdown (2026-01-24 NEW) */}
+        <Separator className="my-2" />
+        <div className="flex justify-between text-green-700 font-medium">
+          <span>60 дней бесплатно</span>
+          <span>✓</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">
+            Платные дни (max(0, {result.turnover_days} - 60)):
+          </span>
+          <span>{result.billable_days} дней</span>
+        </div>
+
+        <Separator className="my-2" />
+
         <div className="flex justify-between font-medium">
           <span className="text-muted-foreground">
-            За {result.days} дней:
+            Итого хранение за {result.billable_days} платных дней:
           </span>
           <span className="text-primary">{formatCurrency(result.total_cost)}</span>
         </div>
@@ -517,33 +684,67 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 }
 ```
 
-### UI Layout
+### UI Layout (2026-01-24: Updated with 60-day grace period)
 
+**Example 1: Within Free Period (45 days turnover)**:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Расчёт хранения                                      [?]    │
 ├─────────────────────────────────────────────────────────────┤
 │ ℹ️ Используются стандартные тарифы. Выберите склад.         │
 ├─────────────────────────────────────────────────────────────┤
-│ Срок хранения (дней)                                        │
-│ [7] [14] [30] [60] [90]     Своё: [_14_]                   │
+│ Оборачиваемость запасов (дней)                              │
+│ [7] [14] [30] [60] [90]     Своё: [_45_]                   │
 │                                                             │
-│ Объём товара:                              3,00 л           │
-│ Стоимость хранения/день:                   0,17 ₽/день      │
+│ Стоимость хранения/день:                   0,10 ₽/день      │
 │                                                             │
 │ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Итого хранение:                          2,38 ₽         │ │
+│ │ Итого хранение:                  БЕСПЛАТНО (60 дней) ✓  │ │
 │ └─────────────────────────────────────────────────────────┘ │
 │                                                             │
-│ ⚠️ Хранение более 30 дней значительно увеличивает расходы.  │
+│ ▸ Показать расчёт                                           │
+│   ├─ Объём товара:                  1,50 л                  │
+│   ├──────────────────────────────────────────               │
+│   ├─ Базовая ставка (1 л):          0,07 ₽/день            │
+│   ├─ Доп. литры (0.5 л):            0,03 ₽/день            │
+│   ├─ Коэффициент склада:            ×1.00                  │
+│   ├─ Итого/день:                    0,10 ₽                 │
+│   ├──────────────────────────────────────────               │
+│   ├─ 60 дней бесплатно:             ✓                      │
+│   ├─ Платные дни (max(0, 45-60)):   0 дней                 │
+│   └─ Итого хранение:                0,00 ₽                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Example 2: Beyond Free Period (90 days turnover)**:
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Расчёт хранения                                      [?]    │
+├─────────────────────────────────────────────────────────────┤
+│ ℹ️ Используются стандартные тарифы. Выберите склад.         │
+├─────────────────────────────────────────────────────────────┤
+│ Оборачиваемость запасов (дней)                              │
+│ [7] [14] [30] [60] [90]     Своё: [_90_]                   │
+│                                                             │
+│ Стоимость хранения/день:                   0,10 ₽/день      │
+│                                                             │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ Итого хранение (платные дни 30):           3,00 ₽      │ │
+│ └─────────────────────────────────────────────────────────┘ │
+│                                                             │
+│ ⚠️ Хранение более 90 дней увеличивает расходы.              │
 │                                                             │
 │ ▸ Показать расчёт                                           │
-│   ├─ Базовая ставка (1 л):           0,07 ₽/день            │
-│   ├─ Доп. литры (2.0 л):             0,10 ₽/день            │
-│   ├─ Коэффициент склада:             ×1.00                  │
+│   ├─ Объём товара:                  1,50 л                  │
 │   ├──────────────────────────────────────────               │
-│   ├─ Итого/день:                     0,17 ₽                 │
-│   └─ За 14 дней:                     2,38 ₽                 │
+│   ├─ Базовая ставка (1 л):          0,07 ₽/день            │
+│   ├─ Доп. литры (0.5 л):            0,03 ₽/день            │
+│   ├─ Коэффициент склада:            ×1.00                  │
+│   ├─ Итого/день:                    0,10 ₽                 │
+│   ├──────────────────────────────────────────               │
+│   ├─ 60 дней бесплатно:             ✓                      │
+│   ├─ Платные дни (max(0, 90-60)):   30 дней                │
+│   └─ Итого хранение за 30 платных дней: 3,00 ₽            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -554,12 +755,17 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 | Case | Handling |
 |------|----------|
 | Volume = 0 | Storage cost = 0, show "Введите габариты товара" |
-| Days = 0 | Treat as 1 day minimum |
-| Days > 365 | Show validation error, cap at 365 |
+| Turnover days ≤ 60 | Show "БЕСПЛАТНО (60 дней)" in green, total_cost = 0 |
+| Turnover days = 61 | billable_days = 1, charge for 1 day only |
+| Turnover days > 365 | Show validation error, cap at 365 |
 | Tariff API unavailable | Use DEFAULT_STORAGE_TARIFF fallback |
 | Coefficient = 0 | Treat as 1.0 (no adjustment) |
 | Very large volume (>100L) | Allow calculation, consider warning |
 | Negative inputs | Validation prevents (min: 0/1) |
+| Dimensions smaller than 1L | Round up to minimum 1 liter |
+| warehouse_name missing | Cannot auto-fill tariff, show manual entry option |
+| warehouse_name + dimensions | Can auto-fill volume, look up tariff from warehouse |
+| warehouse_name + volume_liters | Can auto-fill tariff from warehouse |
 
 ---
 
@@ -600,11 +806,16 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 | Daily cost - 1 liter | vol=1, base=0.07, per_liter=0.05, coef=1.0 | daily=0.07 |
 | Daily cost - 3 liters | vol=3, base=0.07, per_liter=0.05, coef=1.0 | daily=0.17 |
 | Daily cost with coefficient | vol=2, base=0.07, per_liter=0.05, coef=1.5 | daily=0.18 |
-| Total cost 14 days | vol=3, days=14, daily=0.17 | total=2.38 |
+| Billable days - within free period | turnover=45 | billable=0 |
+| Billable days - beyond free period | turnover=90 | billable=30 |
+| Total cost - free period | vol=3, turnover=45, daily=0.17 | total=0.00 |
+| Total cost - partial charge | vol=3, turnover=90, daily=0.17 | total=5.10 |
 | Volume = 0 | vol=0 | daily=0, total=0 |
-| Warning level 7 days | days=7 | 'none' |
-| Warning level 31 days | days=31 | 'warning' |
-| Warning level 61 days | days=61 | 'critical' |
+| is_free_period flag - 45 days | turnover=45 | is_free_period=true |
+| is_free_period flag - 61 days | turnover=61 | is_free_period=false |
+| Warning level 45 days | turnover=45 | 'none' |
+| Warning level 95 days | turnover=95 | 'warning' |
+| Warning level 121 days | turnover=121 | 'critical' |
 
 ### Component Tests
 
