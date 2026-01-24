@@ -28,6 +28,86 @@ Frontend UI for the Price Calculator API (Epic 43). Enables sellers to calculate
 
 ---
 
+## Backend Requirements (2026-01-24)
+
+Updated backend business rules from the tariff calculation API. Critical for price calculator accuracy.
+
+### Storage Cost Rules
+
+**60 Days Free Storage**
+- WB offers 60 days of free storage before charging
+- Formula: `storage_rub = daily_cost × max(0, turnover_days - 60)`
+- Only charges if product sits longer than 60 days
+
+**Daily Storage Cost Calculation**
+```
+daily_cost = (base + (vol - 1) × liter_price) × coefficient
+```
+
+Where:
+- `base` = base storage rate (₽)
+- `vol` = volume in liters
+- `liter_price` = additional rate per liter
+- `coefficient` = regional/seasonal adjustment factor
+
+**Storage Billing Example**
+- Turnover days = 30 → No charge (30 < 60)
+- Turnover days = 90 → Charged for 30 days (90 - 60 = 30)
+- Turnover days = 180 → Charged for 120 days (180 - 60 = 120)
+
+### Logistics Cost Rules
+
+**Forward Logistics (Доставка до склада)**
+- **Auto-fill allowed** ✅ when:
+  - Warehouse selected
+  - Product volume/dimensions provided
+  - Cargo type determined
+- Uses tariff coefficients from selected warehouse
+- Formula: `forward_cost = base_rate × coefficient`
+
+**Reverse Logistics (Обратная логистика)**
+- **MANUAL ONLY** ❌ Never auto-fill
+- User must manually input reverse logistics cost
+- Affected by buyback percentage
+- Formula: `reverse_cost = reverse_rate × (1 - buyback_pct/100)`
+- **Example**: 50 ₽ reverse with 10% buyback = 50 × (1 - 10/100) = 45 ₽
+
+**Buyback Percentage Adjustment**
+- Applied only to reverse logistics costs
+- Reduces the reverse cost proportionally
+- Input range: 0-100%
+- If buyback = 0%, reverse cost = 100%
+- If buyback = 50%, reverse cost = 50%
+
+### Cargo Type Classification
+
+**MGT (Мелкогабаритный товар)** - Small items
+- Max dimension: ≤60 cm
+- Auto-filled from dimension inputs
+- Standard warehouse rates apply
+
+**SGT (Среднегабаритный товар)** - Medium items
+- Max dimension: ≤120 cm (but >60 cm)
+- Auto-filled from dimension inputs
+- Standard warehouse rates apply
+
+**KGT (Крупногабаритный товар)** - Large items
+- Max dimension: >120 cm
+- **ERROR**: Should not proceed to calculation
+- **UI Behavior**: Show error message, block form submission
+- **Note**: KGT requires special handling (pallet tariffs) - out of scope for Phase 5
+
+**Auto-fill Indicators**
+
+| Field | Forward | Reverse | Condition |
+|-------|---------|---------|-----------|
+| Cargo Type | ✅ Auto | ❌ Manual | Determined from dimensions |
+| Forward Cost | ✅ Auto | N/A | Warehouse + volume + cargo type |
+| Reverse Cost | N/A | ❌ Manual | User input only |
+| Buyback % | N/A | ✅ Auto | From warehouse or tariff config |
+
+---
+
 ## Stories
 
 | Story | Title | Priority | Points | Status |
@@ -377,13 +457,17 @@ Story 44.27 (Integration into Form) ← 📋 READY FOR DEV
 - `WarehouseSelect.tsx` - выбор склада
 - `WarehouseSection.tsx` - секция с коэффициентами и хранением
 - `CoefficientField.tsx` - поля коэффициентов
-- `StorageCostCalculator.tsx` - расчёт хранения
+- `TurnoverDaysInput.tsx` - ввод оборачиваемости с расчётом хранения (Story 44.32)
 - `useWarehouseCoefficients.ts` - hook для коэффициентов
 
-**Нужно сделать:**
-- Добавить `WarehouseSection` в `PriceCalculatorForm.tsx`
-- Связать выбор склада с API запросом
-- Передать коэффициенты в расчёт цены
+> **Note (2026-01-24)**: `StorageCostCalculator.tsx`, `StorageDaysInput.tsx`, and `StorageCostBreakdown.tsx`
+> were NOT created. Storage calculation is handled by `TurnoverDaysInput.tsx` using the formula:
+> `storage_rub = dailyStorageCost × turnover_days`
+
+**Интеграция выполнена (Story 44.27):**
+- ✅ `WarehouseSection` добавлен в `PriceCalculatorForm.tsx`
+- ✅ Выбор склада связан с API запросом
+- ✅ Коэффициенты передаются в расчёт цены
 
 ---
 

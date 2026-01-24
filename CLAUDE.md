@@ -810,13 +810,30 @@ payout_total = to_pay_goods
 
 ---
 
-## Environment Variables (Optional)
+## Environment Variables
+
+### Development Environment
 
 ```bash
 # .env.local (optional - defaults work for local dev)
 NEXT_PUBLIC_API_URL=http://localhost:3000  # Default: localhost:3000
 NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot  # Optional (has fallback)
 ```
+
+### E2E Test Environment
+
+```bash
+# .env.e2e (for Playwright end-to-end tests)
+E2E_BASE_URL=http://localhost:3100        # Frontend dev server
+E2E_API_URL=http://localhost:3000         # Backend API URL
+E2E_TEST_EMAIL=test@test.com              # Test user credentials
+E2E_TEST_PASSWORD=Russia23!               # Test user password
+E2E_REQUEST_TIMEOUT=30000                 # Request timeout (ms)
+E2E_SCREENSHOT_DIR=test-results/screenshots  # Screenshot directory
+E2E_DEBUG=false                           # Debug mode
+```
+
+**Note**: The `.env.e2e` file is excluded from version control via `.gitignore` (`.env*.local` pattern). Test credentials match the seeded database user.
 
 ---
 

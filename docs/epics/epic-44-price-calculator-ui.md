@@ -102,6 +102,80 @@ UI страница в фронтенде, которая:
 
 ---
 
+## Backend Requirements Update (2026-01-24)
+
+**Source:** Backend team documentation update providing critical business rules for accurate price calculation.
+
+### Storage Cost Rules
+
+**Formula:** `storage_daily = (base_rate + (volume - 1) × liter_rate) × warehouse_coefficient`
+
+**Calculation:**
+- **Base Rate** (₽/day) - Fixed base cost per unit
+- **Volume** (liters/dm³) - Product dimensions (from product catalog)
+- **Liter Rate** (₽/day per liter) - Cost per unit volume above 1 liter
+- **Warehouse Coefficient** - Warehouse-specific multiplier (100 = 1.0, 125 = 1.25)
+
+**Application Rules:**
+- Storage is **60 days FREE** per Wildberries policy
+- Calculate effective storage: `storage_cost = daily_cost × max(0, effective_days - 60)`
+- **FBO Only** - Storage applies only to Fulfillment by Wildberries
+- **FBS has zero storage** - No storage costs for seller-fulfilled orders
+
+**Key Implementation Notes:**
+- Frontend receives pre-calculated `storage_rub` from user input or auto-calculation
+- Backend API endpoint validates storage values
+- Use warehouse selection to adjust coefficients automatically
+
+### Logistics Rules
+
+**Forward Logistics (WB → Customer):**
+- **Auto-fill enabled** when warehouse + volume + dimensions available
+- Uses formula: `forward = (base_rate + (vol - 1) × liter_rate) × warehouse_coef`
+- **FBO & FBS both use** forward logistics
+- Can be overridden by user if custom value needed
+
+**Reverse Logistics (Customer → Warehouse - Returns):**
+- **MANUAL ONLY** - Never auto-fill under any circumstances
+- Backend always requires explicit user input
+- User must provide reverse logistics cost based on return policy
+- No formula calculation for reverse logistics
+
+**Buyback Effect on Reverse Logistics:**
+- `reverse_effective = reverse_logistics_rub × (1 - buyback_pct / 100)`
+- Example: 150 ₽ reverse with 98% buyback → `150 × (1 - 0.98) = 3 ₽ effective cost`
+- Higher buyback% = lower effective reverse cost
+
+### Cargo Type Classification
+
+**Cargo type determined by maximum dimension:**
+| Type | Code | Max Dimension | Example |
+|------|------|---------------|---------|
+| MGT  | `MGT` | ≤60cm | Books, small items |
+| SGT  | `SGT` | ≤120cm | Clothing, medium boxes |
+| KGT  | `KGT` | >120cm | Large furniture, oversized goods |
+
+**Validation Rules:**
+- If max dimension > 120cm AND no KGT warehouse available → **Error: Cannot calculate**
+- Warehouse must support the cargo type
+- Backend API validates cargo type compatibility
+
+### Implementation Priority
+
+1. **Storage** - Must use correct formula with 60-day free threshold
+2. **Forward Logistics** - Auto-fill OK when warehouse selected
+3. **Reverse Logistics** - **ALWAYS manual, never auto-fill**
+4. **Buyback Effect** - Critical for accurate return cost calculation
+5. **Cargo Classification** - Validate before sending API request
+
+**Testing Focus:**
+- Reverse logistics field always empty on init (user must enter)
+- Forward logistics auto-populates on warehouse selection
+- Storage displays as zero or "Не применимо" for FBS cabinets
+- Buyback slider affects effective reverse cost display (if shown)
+
+---
+
 ## UI Requirements
 
 ### Page Layout
