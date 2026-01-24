@@ -146,11 +146,11 @@ export interface AdvertisingItem {
   /** Unique identifier from backend (e.g., "sku:270937054", "campaign:12345") */
   key: string;
 
-  // Epic 36: Product Card Linking fields (optional - only present when group_by='imtId')
+  // Epic 36: Product Card Linking fields
   /** Item type: merged group or individual product (Epic 36) */
   type?: 'merged_group' | 'individual';
-  /** WB merged card identifier - склейка ID (Epic 36) */
-  imtId?: number | null;
+  /** WB merged card identifier - склейка ID (Epic 36). Backend ALWAYS returns this field. */
+  imtId: number | null;
   /** Products within the merged group (Epic 36, only for type='merged_group') */
   mergedProducts?: MergedProduct[];
 

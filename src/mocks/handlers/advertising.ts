@@ -62,6 +62,7 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
   {
     key: 'sku:123456',
     sku_id: '123456',
+    imtId: null, // Individual product (no merged group)
     product_name: 'Товар с отличным ROAS',
     views: 10000,
     clicks: 300,
@@ -84,6 +85,7 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
   {
     key: 'sku:234567',
     sku_id: '234567',
+    imtId: null, // Individual product (no merged group)
     product_name: 'Товар с хорошим ROAS',
     views: 8000,
     clicks: 200,
@@ -105,6 +107,7 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
   {
     key: 'sku:345678',
     sku_id: '345678',
+    imtId: null, // Individual product (no merged group)
     product_name: 'Товар с умеренным ROAS',
     views: 5000,
     clicks: 100,
@@ -126,6 +129,7 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
   {
     key: 'sku:456789',
     sku_id: '456789',
+    imtId: null, // Individual product (no merged group)
     product_name: 'Товар со слабым ROAS',
     views: 3000,
     clicks: 50,
@@ -147,6 +151,7 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
   {
     key: 'sku:567890',
     sku_id: '567890',
+    imtId: null, // Individual product (no merged group)
     product_name: 'Убыточный товар',
     views: 2000,
     clicks: 30,
@@ -168,6 +173,7 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
   {
     key: 'sku:678901',
     sku_id: '678901',
+    imtId: null, // Individual product (no merged group)
     product_name: 'Товар без данных о прибыли',
     views: 1000,
     clicks: 20,
