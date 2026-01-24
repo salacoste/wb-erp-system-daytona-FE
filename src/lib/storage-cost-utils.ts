@@ -54,12 +54,6 @@ export const DEFAULT_STORAGE_TARIFF: StorageTariff = {
 }
 
 /**
- * Storage days presets for quick selection
- */
-export const STORAGE_DAYS_PRESETS = [7, 14, 30, 60, 90] as const
-export type StorageDaysPreset = (typeof STORAGE_DAYS_PRESETS)[number]
-
-/**
  * Calculate daily storage cost per unit
  *
  * Formula: (base_per_day + (volume - 1) * per_liter_per_day) * coefficient

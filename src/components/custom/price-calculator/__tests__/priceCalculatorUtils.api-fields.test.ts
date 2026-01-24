@@ -498,7 +498,6 @@ describe('API Request Snapshot', () => {
       height_cm: 10,
       warehouse_id: 456,
       warehouse_name: 'Коледино',
-      storage_days: 14,
       logistics_coefficient: 1.2,
       storage_coefficient: 1.1,
       delivery_date: '2026-01-25',

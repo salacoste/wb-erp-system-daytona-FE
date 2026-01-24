@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
@@ -10,44 +11,48 @@ import { cn } from '@/lib/utils'
 /**
  * Props for TurnoverDaysInput component
  * Story 44.32: Missing Price Calculator Fields
+ * Updated: Now calculates and emits storage_rub
  */
 export interface TurnoverDaysInputProps {
   /** Current turnover days value */
   value?: number
   /** Callback when value changes */
   onChange?: (value: number) => void
-  /** Storage cost per day (calculated from volume) */
-  storagePerDay?: number
+  /** Daily storage cost per unit (from warehouse tariff calculation) */
+  dailyStorageCost: number
+  /** Callback when calculated storage cost changes */
+  onStorageRubChange?: (storageRub: number) => void
   /** Disable the input */
   disabled?: boolean
 }
 
 /**
  * Turnover days input component
- * Number input + slider with storage cost preview
+ * Number input + slider with storage cost calculation and preview
  *
  * Features:
  * - Number input for turnover days (1-365)
  * - Slider for quick adjustment
+ * - Calculates and emits storage_rub = dailyStorageCost × turnover_days
  * - Live preview of total storage cost
  * - Zone labels (fast/average/slow)
  * - Tooltip explaining business impact
  * - Validation with min/max constraints
  *
- * Business Impact: storage_total = storage_per_day × turnover_days
- *
  * @example
  * <TurnoverDaysInput
  *   value={turnoverDays}
- *   onChange={setTurnoverDays}
- *   storagePerDay={2.5}
+ *   onChange={(v) => setValue('turnover_days', v)}
+ *   dailyStorageCost={2.5}
+ *   onStorageRubChange={(v) => setValue('storage_rub', v)}
  *   disabled={disabled}
  * />
  */
 export function TurnoverDaysInput({
   value = 20,
   onChange,
-  storagePerDay = 0,
+  dailyStorageCost,
+  onStorageRubChange,
   disabled = false,
 }: TurnoverDaysInputProps) {
   const handleChange = (newValue: number) => {
@@ -56,7 +61,12 @@ export function TurnoverDaysInput({
     }
   }
 
-  const totalStorage = value * storagePerDay
+  // Calculate total storage cost and emit to parent
+  const calculatedStorageRub = value * dailyStorageCost
+
+  useEffect(() => {
+    onStorageRubChange?.(calculatedStorageRub)
+  }, [calculatedStorageRub, onStorageRubChange])
 
   return (
     <div className="space-y-3">
@@ -104,20 +114,21 @@ export function TurnoverDaysInput({
         </div>
       </div>
 
-      {storagePerDay > 0 && (
-        <div className={cn(
-          'p-3 bg-muted/50 rounded-lg',
-          value > 90 && 'bg-yellow-50 border border-yellow-200'
-        )}>
+      {dailyStorageCost > 0 && (
+        <div
+          className={cn(
+            'p-3 bg-muted/50 rounded-lg',
+            value > 90 && 'bg-yellow-50 border border-yellow-200',
+          )}
+        >
           <p className="text-sm">
             Хранение за период:{' '}
-            <strong className={cn(
-              value > 90 && 'text-yellow-700'
-            )}>
-              {formatCurrency(totalStorage)} ₽
+            <strong className={cn(value > 90 && 'text-yellow-700')}>
+              {formatCurrency(calculatedStorageRub)}
             </strong>
             <span className="text-muted-foreground">
-              {' '}({storagePerDay.toFixed(2)} ₽/день × {value} дней)
+              {' '}
+              ({formatCurrency(dailyStorageCost)}/день × {value} дней)
             </span>
           </p>
           {value > 90 && (

@@ -91,8 +91,8 @@ export function PriceCalculatorForm({
 
   // Story 44.27: Warehouse form state hook
   const {
-    warehouseId, storageDays, storageRub, volumeLiters,
-    handleWarehouseChange, handleStorageDaysChange, handleStorageChange, handleDeliveryDateChange,
+    warehouseId, dailyStorageCost,
+    handleWarehouseChange, handleStorageRubChange, handleDeliveryDateChange,
   } = useWarehouseFormState({ setValue, lengthCm, widthCm, heightCm })
 
   useEffect(() => {
@@ -188,13 +188,7 @@ export function PriceCalculatorForm({
             <WarehouseSection
               warehouseId={warehouseId}
               onWarehouseChange={handleWarehouseChange}
-              storageDays={storageDays}
-              onStorageDaysChange={handleStorageDaysChange}
-              storageRub={storageRub}
-              onStorageChange={handleStorageChange}
-              volumeLiters={volumeLiters}
               disabled={disabled}
-              fulfillmentType={fulfillmentType}
               onDeliveryDateChange={handleDeliveryDateChange}
             />
             {/* Story 44.32: FBO-only fields */}
@@ -216,7 +210,8 @@ export function PriceCalculatorForm({
                 <TurnoverDaysInput
                   value={turnoverDays}
                   onChange={(value) => setValue('turnover_days', value, { shouldValidate: true })}
-                  storagePerDay={storageRub}
+                  dailyStorageCost={dailyStorageCost}
+                  onStorageRubChange={handleStorageRubChange}
                   disabled={disabled}
                 />
               </>

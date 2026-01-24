@@ -9,7 +9,6 @@ import type { FulfillmentType, TaxType, BoxType } from '@/types/price-calculator
  * Story 44.19: Added spp_pct for SPP display (client-side only)
  * Story 44.7: Added dimension fields (length_cm, width_cm, height_cm)
  * Story 44.12: Added warehouse_id for warehouse selection
- * Story 44.14: Added storage_days for storage cost calculation
  * Story 44.27: Added warehouse coefficients and delivery date
  * Story 44.32: Added box_type, weight_exceeds_25kg, localization_index, turnover_days
  * Story 44.38: Added units_per_package for acceptance cost division
@@ -43,8 +42,6 @@ export interface FormData {
   warehouse_id: number | null
   /** Selected warehouse name (Story 44.27) */
   warehouse_name: string | null
-  /** Storage duration in days (Story 44.14) */
-  storage_days: number
   /** Logistics coefficient from warehouse (Story 44.27) */
   logistics_coefficient: number
   /** Storage coefficient from warehouse (Story 44.27) */
@@ -99,8 +96,6 @@ export const defaultFormValues: FormData = {
   warehouse_id: null,
   /** Story 44.27: Warehouse name default */
   warehouse_name: null,
-  /** Story 44.14: Storage days default (14 days typical turnover) */
-  storage_days: 14,
   /** Story 44.27: Coefficient defaults (1.0 = base rate) */
   logistics_coefficient: 1.0,
   storage_coefficient: 1.0,
