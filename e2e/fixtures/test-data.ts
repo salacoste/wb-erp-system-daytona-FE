@@ -6,10 +6,29 @@
 // Base URL (frontend runs on 3100 in development)
 export const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:3100'
 
-// Test user credentials (configure in .env.local or CI secrets)
+/**
+ * Test user credentials (configure in .env.e2e or CI secrets)
+ *
+ * SECURITY: These credentials are required for E2E testing and must be provided via environment variables.
+ * Defaults are removed to prevent accidental use of hardcoded credentials.
+ *
+ * Required environment variables:
+ * - E2E_TEST_EMAIL: Test user email address
+ * - E2E_TEST_PASSWORD: Test user password
+ *
+ * @throws {Error} If environment variables are not set
+ */
+function getRequiredEnv(key: string): string {
+  const value = process.env[key]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}\nPlease set ${key} in your .env.e2e file or CI secrets.`)
+  }
+  return value
+}
+
 export const TEST_USER = {
-  email: process.env.E2E_TEST_EMAIL || 'test@test.com',
-  password: process.env.E2E_TEST_PASSWORD || 'Russia23!',
+  email: getRequiredEnv('E2E_TEST_EMAIL'),
+  password: getRequiredEnv('E2E_TEST_PASSWORD'),
 }
 
 // Test cabinet data

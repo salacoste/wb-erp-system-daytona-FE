@@ -22,7 +22,7 @@ vi.mock('@/stores/authStore', () => ({
 
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({
-    user: { id: '1', email: 'test@test.com', role: 'Owner' },
+    user: { id: '1', email: 'test-user@example.com', role: 'Owner' },
     isAuthenticated: true,
     token: 'test-token',
   })),
