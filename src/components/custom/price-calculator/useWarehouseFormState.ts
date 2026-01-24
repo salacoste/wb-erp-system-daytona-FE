@@ -2,14 +2,16 @@ import { useState, useMemo, useCallback } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
 import type { Warehouse } from '@/types/warehouse'
 import type { FormData } from './usePriceCalculatorForm'
+import { calculateDailyStorageCost, DEFAULT_STORAGE_TARIFF } from '@/lib/storage-cost-utils'
 
 /**
  * Hook for managing warehouse-related form state
  * Story 44.27-FE: Warehouse & Coefficients Integration
+ * Story 44.XX: Simplified storage - dailyStorageCost for TurnoverDaysInput
  *
  * Handles:
  * - Warehouse selection state
- * - Storage days and storage cost
+ * - Daily storage cost calculation (for TurnoverDaysInput)
  * - Volume calculation from dimensions
  * - Form value synchronization
  */
@@ -22,12 +24,14 @@ export interface UseWarehouseFormStateProps {
 
 export interface UseWarehouseFormStateReturn {
   warehouseId: number | null
-  storageDays: number
+  /** Daily storage cost per unit (RUB/day) for TurnoverDaysInput */
+  dailyStorageCost: number
+  /** Current storage_rub value from form */
   storageRub: number
   volumeLiters: number
   handleWarehouseChange: (id: number | null, warehouse: Warehouse | null) => void
-  handleStorageDaysChange: (days: number) => void
-  handleStorageChange: (value: number) => void
+  /** Handler for TurnoverDaysInput storage_rub emission */
+  handleStorageRubChange: (value: number) => void
   handleDeliveryDateChange: (date: string | null, coefficient: number) => void
   // Story 44.27: Method to get warehouse object for API request
   getWarehouseForApi: (warehouses: Warehouse[]) => Warehouse | null
@@ -40,7 +44,7 @@ export function useWarehouseFormState({
   heightCm,
 }: UseWarehouseFormStateProps): UseWarehouseFormStateReturn {
   const [warehouseId, setWarehouseId] = useState<number | null>(null)
-  const [storageDays, setStorageDays] = useState(14)
+  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
   const [storageRub, setStorageRub] = useState(0)
 
   // Calculate volume from dimensions (cm to liters)
@@ -49,24 +53,30 @@ export function useWarehouseFormState({
     return (lengthCm * widthCm * heightCm) / 1000
   }, [lengthCm, widthCm, heightCm])
 
+  // Calculate daily storage cost from warehouse tariff and volume
+  const dailyStorageCost = useMemo(() => {
+    const tariff = selectedWarehouse
+      ? {
+          basePerDayRub: selectedWarehouse.tariffs.storageBaseLiterRub,
+          perLiterPerDayRub: selectedWarehouse.tariffs.storagePerLiterRub,
+          coefficient: 1.0, // Storage coefficient applied separately
+        }
+      : DEFAULT_STORAGE_TARIFF
+    return calculateDailyStorageCost(volumeLiters, tariff)
+  }, [selectedWarehouse, volumeLiters])
+
   const handleWarehouseChange = useCallback(
     (id: number | null, warehouse: Warehouse | null) => {
       setWarehouseId(id)
+      setSelectedWarehouse(warehouse)
       setValue('warehouse_id', id)
       setValue('warehouse_name', warehouse?.name ?? null)
     },
     [setValue],
   )
 
-  const handleStorageDaysChange = useCallback(
-    (days: number) => {
-      setStorageDays(days)
-      setValue('storage_days', days)
-    },
-    [setValue],
-  )
-
-  const handleStorageChange = useCallback(
+  // Handler for TurnoverDaysInput to emit calculated storage_rub
+  const handleStorageRubChange = useCallback(
     (value: number) => {
       setStorageRub(value)
       setValue('storage_rub', value)
@@ -93,12 +103,11 @@ export function useWarehouseFormState({
 
   return {
     warehouseId,
-    storageDays,
+    dailyStorageCost,
     storageRub,
     volumeLiters,
     handleWarehouseChange,
-    handleStorageDaysChange,
-    handleStorageChange,
+    handleStorageRubChange,
     handleDeliveryDateChange,
     getWarehouseForApi,
   }

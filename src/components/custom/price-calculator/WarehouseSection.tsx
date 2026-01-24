@@ -4,51 +4,38 @@
  * WarehouseSection Component
  * Story 44.12-FE: Warehouse Selection
  * Story 44.13-FE: Auto-fill Coefficients
- * Story 44.14-FE: Storage Cost Calculation
  * Story 44.26a-FE: Delivery Date Selection
  * Story 44.34-FE: Debounce Warehouse Selection & Rate Limit Handling
  * Epic 44: Price Calculator UI (Frontend)
+ *
+ * Note: Storage cost calculation moved to TurnoverDaysInput (turnover_days approach)
  */
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Warehouse as WarehouseIcon, Loader2 } from 'lucide-react'
 import { WarehouseSelect } from './WarehouseSelect'
 import { CoefficientField } from './CoefficientField'
-import { StorageCostCalculator } from './StorageCostCalculator'
 import { DeliveryDatePicker } from './DeliveryDatePicker'
 import { RateLimitWarning } from './RateLimitWarning'
 import { CoefficientsLoadingSkeleton } from './CoefficientsLoadingSkeleton'
 import { useWarehouseCoefficients } from '@/hooks/useWarehouseCoefficients'
 import type { Warehouse } from '@/types/warehouse'
-import type { StorageTariff } from '@/lib/storage-cost-utils'
 
 export interface WarehouseSectionProps {
   warehouseId: number | null
   onWarehouseChange: (id: number | null, warehouse: Warehouse | null) => void
-  storageDays: number
-  onStorageDaysChange: (days: number) => void
-  storageRub: number
-  onStorageChange: (value: number) => void
-  volumeLiters: number
   disabled?: boolean
-  fulfillmentType: 'FBO' | 'FBS'
   /** Delivery date change handler (Story 44.26a) */
   onDeliveryDateChange?: (date: string | null, coefficient: number) => void
 }
 
 /**
- * Warehouse section with coefficients, storage, and delivery date
+ * Warehouse section with coefficients and delivery date
  */
 export function WarehouseSection({
   warehouseId,
   onWarehouseChange,
-  storageDays,
-  onStorageDaysChange,
-  storageRub,
-  onStorageChange,
-  volumeLiters,
   disabled,
-  fulfillmentType,
   onDeliveryDateChange,
 }: WarehouseSectionProps) {
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
@@ -71,16 +58,6 @@ export function WarehouseSection({
     cooldownRemaining,
   } = useWarehouseCoefficients(warehouseId, selectedWarehouse)
 
-  // Build storage tariff from warehouse data
-  const storageTariff: StorageTariff | null = useMemo(() => {
-    if (!selectedWarehouse) return null
-    return {
-      basePerDayRub: selectedWarehouse.tariffs.storageBaseLiterRub,
-      perLiterPerDayRub: selectedWarehouse.tariffs.storagePerLiterRub,
-      coefficient: storageCoeff.value,
-    }
-  }, [selectedWarehouse, storageCoeff.value])
-
   const handleWarehouseChange = useCallback(
     (id: number | null, warehouse: Warehouse | null) => {
       setSelectedWarehouse(warehouse)
@@ -96,8 +73,6 @@ export function WarehouseSection({
     },
     [setDeliveryDate, onDeliveryDateChange],
   )
-
-  const showStorage = fulfillmentType === 'FBO'
 
   return (
     <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-l-purple-400 space-y-5">
@@ -164,20 +139,6 @@ export function WarehouseSection({
         </div>
       )}
 
-      {/* Storage Cost Calculator - FBO only */}
-      {showStorage && (
-        <div className="pt-2 border-t border-purple-200">
-          <StorageCostCalculator
-            volumeLiters={volumeLiters}
-            tariff={storageTariff}
-            days={storageDays}
-            onDaysChange={onStorageDaysChange}
-            value={storageRub}
-            onChange={onStorageChange}
-            disabled={disabled}
-          />
-        </div>
-      )}
     </div>
   )
 }

@@ -951,3 +951,16 @@ API использует следующий приоритет для опред
 - Response format for `/v1/tariffs/warehouses` updated to actual implementation (`{data: {warehouses, updated_at}}`)
 - Epic status updated to 100% (Story 43.10 completed)
 - All 6 tariff endpoints verified against `test-api/15-tariffs-endpoints.http`
+
+---
+
+## Related Documentation
+
+- **[102-tariffs-base-rates-frontend-guide.md](./102-tariffs-base-rates-frontend-guide.md)** - Comprehensive guide on base rates, calculation formulas, and TypeScript integration examples (NEW)
+- **[98-warehouses-tariffs-coefficients-api.md](./98-warehouses-tariffs-coefficients-api.md)** - Warehouses and tariffs coefficients API
+- **[98-warehouses-tariffs-BACKEND-RESPONSE.md](./98-warehouses-tariffs-BACKEND-RESPONSE.md)** - Backend response details
+
+### Planned Stories (NOT YET IMPLEMENTED)
+
+- **Story 43.11**: `mono_pallet_storage_rate_per_day` (23 ₽/day) - Mono-pallet storage rate
+- **Story 43.12**: `storage_box_base_per_day`, `storage_box_liter_per_day` (0.11 ₽) - Default fallback rates

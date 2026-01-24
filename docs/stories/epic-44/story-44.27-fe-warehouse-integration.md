@@ -57,8 +57,8 @@
 ### AC2: Form State for Warehouse
 - [x] Add form state: `warehouseId: number | null`
 - [x] Add form state: `warehouseName: string | null`
-- [x] Add form state: `storageDays: number` (default: 14)
-- [x] Add form state: `storageRub: number` (calculated)
+- [x] Add form state: `turnover_days: number` (default: 20) - storage duration in days
+- [x] Add form state: `storageRub: number` (calculated as `dailyStorageCost × turnover_days`)
 - [x] Add form state: `logisticsCoefficient: number` (default: 1.0)
 - [x] Add form state: `storageCoefficient: number` (default: 1.0)
 
@@ -75,9 +75,10 @@
 - [x] Show coefficient impact in logistics breakdown
 
 ### AC5: Storage Cost Integration (FBO only)
-- [x] Auto-fill `storage_rub` field from `StorageCostCalculator`
+- [x] Calculate `storage_rub` as: `dailyStorageCost × turnover_days`
+- [x] `dailyStorageCost` comes from warehouse tariffs (`boxStorageBase` + volume calculation)
+- [x] `turnover_days` input handled by `TurnoverDaysInput` component (Story 44.32)
 - [x] Pass storage cost to API request
-- [x] Show storage breakdown: base + per-liter + coefficient × days
 - [x] Hide storage section when FBS mode selected
 
 ### AC6: Delivery Date Selection (Story 44.26a)
@@ -178,7 +179,7 @@ export interface FormData {
   // Warehouse & Coefficients (Story 44.27)
   warehouse_id: number | null
   warehouse_name: string | null
-  storage_days: number
+  turnover_days: number          // Storage duration (replaces storage_days)
   logistics_coefficient: number
   storage_coefficient: number
   delivery_date: string | null
@@ -189,12 +190,16 @@ export const defaultFormValues: FormData = {
 
   warehouse_id: null,
   warehouse_name: null,
-  storage_days: 14,
+  turnover_days: 20,             // Default 20 days (WB typical inventory turnover)
   logistics_coefficient: 1.0,
   storage_coefficient: 1.0,
   delivery_date: null,
 }
 ```
+
+> **Note (2026-01-24)**: The `storage_days` field was renamed to `turnover_days` as part of the
+> unified storage approach in Story 44.32. Storage cost is calculated as:
+> `storage_rub = dailyStorageCost × turnover_days`
 
 ### PriceCalculatorForm Integration
 
@@ -202,10 +207,11 @@ export const defaultFormValues: FormData = {
 // PriceCalculatorForm.tsx - Add after FulfillmentTypeSelector
 
 import { WarehouseSection } from './WarehouseSection'
+import { TurnoverDaysInput } from './TurnoverDaysInput'  // Story 44.32
 
 // Add state
 const [warehouseId, setWarehouseId] = useState<number | null>(null)
-const [storageDays, setStorageDays] = useState(14)
+const [turnoverDays, setTurnoverDays] = useState(20)   // Default 20 days
 const [storageRub, setStorageRub] = useState(0)
 
 // Calculate volume from dimensions
@@ -217,6 +223,13 @@ const volumeLiters = useMemo(() => {
   return (length * width * height) / 1000
 }, [lengthCm, widthCm, heightCm])
 
+// Calculate daily storage cost from warehouse tariffs
+const dailyStorageCost = useMemo(() => {
+  if (!warehouseData) return 0
+  // Parse tariff: boxStorageBase (e.g., "1*1") + boxStorageLiter × volume
+  return calculateDailyStorageCost(volumeLiters, warehouseData)
+}, [volumeLiters, warehouseData])
+
 // In form JSX, after FulfillmentTypeSelector:
 <WarehouseSection
   warehouseId={warehouseId}
@@ -224,13 +237,6 @@ const volumeLiters = useMemo(() => {
     setWarehouseId(id)
     setValue('warehouse_id', id)
     setValue('warehouse_name', warehouse?.name ?? null)
-  }}
-  storageDays={storageDays}
-  onStorageDaysChange={setStorageDays}
-  storageRub={storageRub}
-  onStorageChange={(value) => {
-    setStorageRub(value)
-    setValue('storage_rub', value)
   }}
   volumeLiters={volumeLiters}
   disabled={disabled}
@@ -240,7 +246,23 @@ const volumeLiters = useMemo(() => {
     setValue('logistics_coefficient', coefficient)
   }}
 />
+
+{/* TurnoverDaysInput handles storage duration (Story 44.32) */}
+{fulfillmentType === 'FBO' && (
+  <TurnoverDaysInput
+    control={control}
+    storagePerDay={dailyStorageCost}
+    onStorageChange={(totalStorage) => {
+      setStorageRub(totalStorage)
+      setValue('storage_rub', totalStorage)
+    }}
+  />
+)}
 ```
+
+> **Note (2026-01-24)**: Storage calculation is now handled by `TurnoverDaysInput` component.
+> The formula is: `storage_rub = dailyStorageCost × turnover_days`
+> See Story 44.32 for `TurnoverDaysInput` implementation details.
 
 ### API Request Update
 
@@ -280,8 +302,8 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
 │  │ Коэфф. логистики: 1.25 [Автозаполнено]              │   │
 │  │ Коэфф. хранения:  1.00 [Автозаполнено]              │   │
 │  │                                                       │   │
-│  │ Срок хранения: [14] дней                             │   │ ← FBO only
-│  │ Стоимость хранения: 2,38 ₽                           │   │
+│  │ Оборачиваемость: [20] дней                            │   │ ← FBO only (TurnoverDaysInput)
+│  │ Хранение за период: 2,38 ₽                           │   │ ← dailyStorageCost × turnover_days
 │  └─────────────────────────────────────────────────────┘   │
 │                                                             │
 │  [Поиск товара]                        ← ProductSearchSelect

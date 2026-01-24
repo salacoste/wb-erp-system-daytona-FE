@@ -2,9 +2,8 @@
  * TDD Tests for Story 44.27-FE
  * Warehouse & Coefficients Integration
  *
- * RED Phase: Tests written before implementation
- * These tests define the expected behavior for integrating
- * WarehouseSection into PriceCalculatorForm
+ * Updated: Storage calculation moved to TurnoverDaysInput
+ * WarehouseSection now only handles warehouse selection and coefficients
  *
  * @see docs/stories/epic-44/story-44.27-fe-warehouse-integration.md
  */
@@ -87,13 +86,7 @@ function renderWarehouseSection(props: Partial<Parameters<typeof WarehouseSectio
   const defaultProps = {
     warehouseId: null,
     onWarehouseChange: vi.fn(),
-    storageDays: 14,
-    onStorageDaysChange: vi.fn(),
-    storageRub: 0,
-    onStorageChange: vi.fn(),
-    volumeLiters: 6.0,
     disabled: false,
-    fulfillmentType: 'FBO' as const,
     onDeliveryDateChange: vi.fn(),
   }
 
@@ -109,7 +102,9 @@ function renderWarehouseSection(props: Partial<Parameters<typeof WarehouseSectio
 describe('Story 44.27: AC1 - WarehouseSection Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
+    mockUseWarehouseCoefficients.mockReturnValue(
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+    )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
       isLoading: false,
@@ -129,18 +124,12 @@ describe('Story 44.27: AC1 - WarehouseSection Integration', () => {
     // Icon should be present
     const header = screen.getByText('Склад и хранение')
     expect(header.closest('.flex')).toContainElement(
-      header.parentElement?.querySelector('[aria-hidden="true"]') || null
+      header.parentElement?.querySelector('[aria-hidden="true"]') || null,
     )
   })
 
-  it('should be visible in FBO mode', () => {
-    renderWarehouseSection({ fulfillmentType: 'FBO' })
-
-    expect(screen.getByText('Склад и хранение')).toBeVisible()
-  })
-
-  it('should be visible in FBS mode', () => {
-    renderWarehouseSection({ fulfillmentType: 'FBS' })
+  it('should be visible when rendered', () => {
+    renderWarehouseSection()
 
     expect(screen.getByText('Склад и хранение')).toBeVisible()
   })
@@ -153,7 +142,9 @@ describe('Story 44.27: AC1 - WarehouseSection Integration', () => {
 describe('Story 44.27: AC2 - Form State for Warehouse', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
+    mockUseWarehouseCoefficients.mockReturnValue(
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+    )
   })
 
   it('should call onWarehouseChange when warehouse is selected', async () => {
@@ -182,14 +173,6 @@ describe('Story 44.27: AC2 - Form State for Warehouse', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument()
   })
 
-  it('should support storage_days with default of 14', () => {
-    renderWarehouseSection({ storageDays: 14 })
-
-    // Storage days input should show 14
-    // This assumes StorageCostCalculator displays the value
-    expect(screen.getByDisplayValue('14')).toBeInTheDocument()
-  })
-
   it('should pass logistics coefficient to form', () => {
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
@@ -212,48 +195,6 @@ describe('Story 44.27: AC2 - Form State for Warehouse', () => {
 
     // Coefficient should be displayed in input field
     expect(screen.getByDisplayValue('1.1')).toBeInTheDocument()
-  })
-})
-
-// ============================================================================
-// Story 44.27: AC3 - Volume Calculation for Warehouse
-// ============================================================================
-
-describe('Story 44.27: AC3 - Volume Calculation for Warehouse', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
-  })
-
-  it('should receive calculated volume from dimensions', () => {
-    // Volume = (30 × 20 × 10) / 1000 = 6.0 liters
-    renderWarehouseSection({ volumeLiters: 6.0 })
-
-    // Volume should be passed to StorageCostCalculator
-    // This will fail until volume display is implemented
-    expect(screen.getByText(/6.*л/i)).toBeInTheDocument()
-  })
-
-  it('should update storage cost when volume changes', () => {
-    const onStorageChange = vi.fn()
-    renderWarehouseSection({ volumeLiters: 12.0, onStorageChange })
-
-    // Storage cost should recalculate
-    // This test verifies that storage calculation uses volume
-  })
-
-  it('should handle minimum volume of 0.1 liters', () => {
-    renderWarehouseSection({ volumeLiters: 0.1 })
-
-    // Should not show error for minimum valid volume
-    expect(screen.queryByText(/ошибка/i)).not.toBeInTheDocument()
-  })
-
-  it('should show warning when volume is 0', () => {
-    renderWarehouseSection({ volumeLiters: 0 })
-
-    // Should show "Введите габариты" warning
-    expect(screen.getByText(/введите габариты/i)).toBeInTheDocument()
   })
 })
 
@@ -329,76 +270,6 @@ describe('Story 44.27: AC4 - Coefficient Application to Logistics', () => {
 })
 
 // ============================================================================
-// Story 44.27: AC5 - Storage Cost Integration (FBO only)
-// ============================================================================
-
-describe('Story 44.27: AC5 - Storage Cost Integration (FBO only)', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
-  })
-
-  it('should show storage section when FBO mode selected', () => {
-    renderWarehouseSection({ fulfillmentType: 'FBO' })
-
-    // StorageCostCalculator should be visible - look for the specific storage days label
-    expect(screen.getByText('Срок хранения (дней)')).toBeInTheDocument()
-  })
-
-  it('should hide storage section when FBS mode selected', () => {
-    renderWarehouseSection({ fulfillmentType: 'FBS' })
-
-    // Storage section should be hidden
-    expect(screen.queryByText(/срок хранения/i)).not.toBeInTheDocument()
-  })
-
-  it('should auto-fill storage cost from StorageCostCalculator', () => {
-    const onStorageChange = vi.fn()
-
-    renderWarehouseSection({
-      fulfillmentType: 'FBO',
-      volumeLiters: 6.0,
-      storageDays: 14,
-      onStorageChange,
-    })
-
-    // StorageCostCalculator should trigger onStorageChange
-    expect(onStorageChange).toHaveBeenCalled()
-  })
-
-  it('should update storage cost when days change', async () => {
-    const user = userEvent.setup()
-    const onStorageChange = vi.fn()
-    const onStorageDaysChange = vi.fn()
-
-    renderWarehouseSection({
-      fulfillmentType: 'FBO',
-      storageDays: 14,
-      onStorageChange,
-      onStorageDaysChange,
-    })
-
-    // Click on a preset button instead of typing in input
-    // StorageDaysInput has preset buttons (7, 14, 30, 60, 90)
-    const presetButton = screen.getByRole('button', { name: '30' })
-    await user.click(presetButton)
-
-    expect(onStorageDaysChange).toHaveBeenCalledWith(30)
-  })
-
-  it('should display storage coefficient field for FBO', () => {
-    mockUseWarehouseCoefficients.mockReturnValue({
-      ...mockCoefficientsResponse,
-      storageCoeff: { value: 1.1, source: 'auto', originalValue: 1.1 },
-    } as ReturnType<typeof useWarehouseCoefficients>)
-
-    renderWarehouseSection({ warehouseId: 507, fulfillmentType: 'FBO' })
-
-    expect(screen.getByText('Коэффициент хранения')).toBeInTheDocument()
-  })
-})
-
-// ============================================================================
 // Story 44.27: AC6 - Delivery Date Selection (Story 44.26a)
 // ============================================================================
 
@@ -428,7 +299,9 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
   })
 
   it('should hide delivery date picker when no warehouse selected', () => {
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
+    mockUseWarehouseCoefficients.mockReturnValue(
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+    )
 
     renderWarehouseSection({ warehouseId: null })
 
@@ -461,7 +334,9 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
   it('should display coefficient for selected date', () => {
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
-      dailyCoefficients: [{ date: '2026-01-23', coefficient: 125, status: 'elevated' as const, isAvailable: true }],
+      dailyCoefficients: [
+        { date: '2026-01-23', coefficient: 125, status: 'elevated' as const, isAvailable: true },
+      ],
       deliveryDate: {
         date: '2026-01-23',
         coefficient: 1.25,
@@ -484,7 +359,9 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
 describe('Story 44.27: AC7 - API Request Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
+    mockUseWarehouseCoefficients.mockReturnValue(
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+    )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
       isLoading: false,
@@ -514,31 +391,15 @@ describe('Story 44.27: AC7 - API Request Integration', () => {
     expect(screen.getByDisplayValue('1.25')).toBeInTheDocument()
   })
 
-  it('should include storage_coefficient in form state for FBO', () => {
+  it('should include storage_coefficient in form state', () => {
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
       storageCoeff: { value: 1.1, source: 'auto', originalValue: 1.1 },
     } as ReturnType<typeof useWarehouseCoefficients>)
 
-    renderWarehouseSection({ warehouseId: 507, fulfillmentType: 'FBO' })
+    renderWarehouseSection({ warehouseId: 507 })
 
     expect(screen.getByDisplayValue('1.1')).toBeInTheDocument()
-  })
-
-  it('should include storage_rub calculated value', () => {
-    const onStorageChange = vi.fn()
-
-    renderWarehouseSection({
-      fulfillmentType: 'FBO',
-      volumeLiters: 6.0,
-      storageDays: 14,
-      storageRub: 2.38,
-      onStorageChange,
-    })
-
-    // Storage cost is calculated and displayed via StorageCostCalculator
-    // The onStorageChange should be called with calculated value
-    expect(onStorageChange).toHaveBeenCalled()
   })
 })
 
@@ -549,7 +410,9 @@ describe('Story 44.27: AC7 - API Request Integration', () => {
 describe('Story 44.27: Edge Cases & Invariants', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
+    mockUseWarehouseCoefficients.mockReturnValue(
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+    )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
       isLoading: false,
@@ -632,7 +495,9 @@ describe('Story 44.27: Edge Cases & Invariants', () => {
 describe('Story 44.27: Accessibility', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseWarehouseCoefficients.mockReturnValue(mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>)
+    mockUseWarehouseCoefficients.mockReturnValue(
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+    )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
       isLoading: false,
@@ -657,47 +522,14 @@ describe('Story 44.27: Accessibility', () => {
     expect(storageLabel).toBeInTheDocument()
   })
 
-  it('should announce storage section visibility changes', () => {
-    const { rerender } = render(
-      <WarehouseSection
-        warehouseId={507}
-        onWarehouseChange={vi.fn()}
-        storageDays={14}
-        onStorageDaysChange={vi.fn()}
-        storageRub={0}
-        onStorageChange={vi.fn()}
-        volumeLiters={6.0}
-        fulfillmentType="FBO"
-      />,
-      { wrapper: createWrapper() }
-    )
-
-    // Check for storage days label specifically
-    expect(screen.getByText('Срок хранения (дней)')).toBeInTheDocument()
-
-    rerender(
-      <WarehouseSection
-        warehouseId={507}
-        onWarehouseChange={vi.fn()}
-        storageDays={14}
-        onStorageDaysChange={vi.fn()}
-        storageRub={0}
-        onStorageChange={vi.fn()}
-        volumeLiters={6.0}
-        fulfillmentType="FBS"
-      />
-    )
-
-    // Storage section should be hidden
-    expect(screen.queryByText('Срок хранения (дней)')).not.toBeInTheDocument()
-  })
-
   it('should have keyboard-navigable delivery date calendar', async () => {
     const user = userEvent.setup()
 
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
-      dailyCoefficients: [{ date: '2026-01-22', coefficient: 100, status: 'base' as const, isAvailable: true }],
+      dailyCoefficients: [
+        { date: '2026-01-22', coefficient: 100, status: 'base' as const, isAvailable: true },
+      ],
     } as ReturnType<typeof useWarehouseCoefficients>)
 
     renderWarehouseSection({ warehouseId: 507 })

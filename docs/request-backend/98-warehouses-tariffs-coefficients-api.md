@@ -483,4 +483,12 @@ curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&q=6867018
 ---
 
 *Status:* ✅ IMPLEMENTED
-*Last Updated:* 2026-01-21
+*Last Updated:* 2026-01-24
+
+---
+
+## Related Documentation
+
+- **[102-tariffs-base-rates-frontend-guide.md](./102-tariffs-base-rates-frontend-guide.md)** - Comprehensive guide on base rates, calculation formulas, and TypeScript integration examples
+- **[98-warehouses-tariffs-BACKEND-RESPONSE.md](./98-warehouses-tariffs-BACKEND-RESPONSE.md)** - Backend response details and implementation status
+- **[95-epic-43-price-calculator-api.md](./95-epic-43-price-calculator-api.md)** - Price Calculator API documentation

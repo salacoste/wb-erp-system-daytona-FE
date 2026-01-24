@@ -176,8 +176,12 @@ export interface PriceCalculatorRequest {
    */
   localization_index?: number
   /**
-   * Story 44.32: Turnover days in storage (FBO only, default: 20)
-   * Total storage = storage_per_day × turnover_days
+   * Turnover days in storage (FBO only, default: 20)
+   * This is the ONLY storage duration field.
+   *
+   * Frontend calculation: storage_rub = daily_storage_cost × turnover_days
+   *
+   * @example turnover_days: 20 → 20 days average to sell
    *
    * @frontend-only NOT sent to API (Story 44.36)
    * Backend does not support this field yet
@@ -224,15 +228,6 @@ export interface PriceCalculatorRequest {
    * volume_liters: 6.0 - 30cm × 20cm × 10cm / 1000
    */
   volume_liters?: number
-
-  /**
-   * Story 44.27: Storage duration in days for FBO storage cost calculation
-   * Only applies when fulfillment_type is "fbo"
-   *
-   * @example
-   * storage_days: 14 - Calculate storage for 2 weeks
-   */
-  storage_days?: number
 
   /**
    * Story 44.27: Delivery type for tariff selection
