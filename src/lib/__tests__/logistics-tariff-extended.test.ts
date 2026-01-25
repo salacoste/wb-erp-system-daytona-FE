@@ -478,21 +478,22 @@ describe('denormalizeCoefficient Extended', () => {
 // ============================================================================
 
 describe('calculateWithDefaultTariffs Extended', () => {
-  it('uses default tariffs (48/5/1.0) correctly for 1L', () => {
+  // Story 44.XX: Updated to match correct API values (46/14 instead of 48/5)
+  it('uses default tariffs (46/14/1.0) correctly for 1L', () => {
     const result = calculateWithDefaultTariffs(1.0)
-    expect(result.totalCost).toBe(48.0)
+    expect(result.totalCost).toBe(46.0)
   })
 
   it('uses default tariffs for 5L', () => {
-    // (48 + 4 * 5) * 1.0 = 68
+    // (46 + 4 * 14) * 1.0 = 102
     const result = calculateWithDefaultTariffs(5.0)
-    expect(result.totalCost).toBe(68.0)
+    expect(result.totalCost).toBe(102.0)
   })
 
   it('uses default tariffs for 10L', () => {
-    // (48 + 9 * 5) * 1.0 = 93
+    // (46 + 9 * 14) * 1.0 = 172
     const result = calculateWithDefaultTariffs(10.0)
-    expect(result.totalCost).toBe(93.0)
+    expect(result.totalCost).toBe(172.0)
   })
 
   it('always returns source as "default"', () => {
@@ -512,12 +513,13 @@ describe('calculateWithDefaultTariffs Extended', () => {
 // ============================================================================
 
 describe('DEFAULT_BOX_TARIFFS Values', () => {
-  it('baseLiterRub is 48 (per AC5)', () => {
-    expect(DEFAULT_BOX_TARIFFS.baseLiterRub).toBe(48)
+  // Story 44.XX: Updated to match correct API values (46/14 instead of 48/5)
+  it('baseLiterRub is 46 (matches WB API)', () => {
+    expect(DEFAULT_BOX_TARIFFS.baseLiterRub).toBe(46)
   })
 
-  it('additionalLiterRub is 5 (per AC5)', () => {
-    expect(DEFAULT_BOX_TARIFFS.additionalLiterRub).toBe(5)
+  it('additionalLiterRub is 14 (matches WB API)', () => {
+    expect(DEFAULT_BOX_TARIFFS.additionalLiterRub).toBe(14)
   })
 
   it('coefficient is 1.0 (per AC5)', () => {

@@ -34,9 +34,7 @@ import type { BoxTariffsResponse, BoxTariffItem, WarehouseWithTariffs } from '@/
 export async function getCommissions(): Promise<CommissionsResponse> {
   console.info('[Tariffs] Fetching category commissions')
 
-  const response = await apiClient.get<CommissionsResponse>(
-    '/v1/tariffs/commissions',
-  )
+  const response = await apiClient.get<CommissionsResponse>('/v1/tariffs/commissions')
 
   console.info('[Tariffs] Loaded', response.meta.total, 'categories', {
     cached: response.meta.cached,
@@ -57,9 +55,7 @@ export async function getCommissions(): Promise<CommissionsResponse> {
 export async function getWarehouses(): Promise<WarehousesResponse> {
   console.info('[Tariffs] Fetching warehouses')
 
-  const response = await apiClient.get<WarehousesResponse>(
-    '/v1/tariffs/warehouses',
-  )
+  const response = await apiClient.get<WarehousesResponse>('/v1/tariffs/warehouses')
 
   console.info('[Tariffs] Loaded', response.warehouses.length, 'warehouses')
 
@@ -78,12 +74,12 @@ export async function getWarehouses(): Promise<WarehousesResponse> {
  * @returns Acceptance coefficients with delivery/storage data
  */
 export async function getAcceptanceCoefficients(
-  warehouseId: number,
+  warehouseId: number
 ): Promise<AcceptanceCoefficientsResponse> {
   console.info('[Tariffs] Fetching acceptance coefficients for warehouse', warehouseId)
 
   const response = await apiClient.get<AcceptanceCoefficientsResponse>(
-    `/v1/tariffs/acceptance/coefficients?warehouseId=${warehouseId}`,
+    `/v1/tariffs/acceptance/coefficients?warehouseId=${warehouseId}`
   )
 
   console.info('[Tariffs] Loaded', response.coefficients.length, 'coefficients', {
@@ -108,10 +104,14 @@ export async function getAllAcceptanceCoefficients(): Promise<AcceptanceCoeffici
   console.info('[Tariffs] Fetching ALL acceptance coefficients')
 
   const response = await apiClient.get<AcceptanceCoefficientsResponse>(
-    '/v1/tariffs/acceptance/coefficients/all',
+    '/v1/tariffs/acceptance/coefficients/all'
   )
 
-  console.info('[Tariffs] Loaded', response.coefficients?.length || 0, 'coefficients for all warehouses')
+  console.info(
+    '[Tariffs] Loaded',
+    response.coefficients?.length || 0,
+    'coefficients for all warehouses'
+  )
 
   return response
 }
@@ -157,11 +157,11 @@ export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> 
 
   // Use warehouses-with-tariffs endpoint and transform to BoxTariffsResponse
   const response = await apiClient.get<WarehousesWithTariffsResponse>(
-    `/v1/tariffs/warehouses-with-tariffs${params}`,
+    `/v1/tariffs/warehouses-with-tariffs${params}`
   )
 
   // Transform WarehouseWithTariffs[] to BoxTariffItem[]
-  const tariffs: BoxTariffItem[] = (response.warehouses || []).map((w) => ({
+  const tariffs: BoxTariffItem[] = (response.warehouses || []).map(w => ({
     warehouseName: w.name,
     geoName: w.federal_district || undefined,
     logistics: {
@@ -170,9 +170,10 @@ export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> 
       additionalLiterRub: w.tariffs?.fbo?.delivery_liter_rub ?? 0,
     },
     storage: {
-      coefficient: w.tariffs?.storage?.coefficient ?? 1.0,
-      baseLiterRub: w.tariffs?.storage?.base_per_day_rub ?? 0,
-      additionalLiterRub: w.tariffs?.storage?.liter_per_day_rub ?? 0,
+      // IMPORTANT: Use || instead of ?? because API may return 0 for missing storage data
+      coefficient: w.tariffs?.storage?.coefficient || 1.0,
+      baseLiterRub: w.tariffs?.storage?.base_per_day_rub || 0,
+      additionalLiterRub: w.tariffs?.storage?.liter_per_day_rub || 0,
     },
   }))
 
@@ -210,7 +211,7 @@ export async function getWarehousesWithTariffs(): Promise<WarehousesWithTariffsR
   console.info('[Tariffs] Fetching warehouses with tariffs')
 
   const response = await apiClient.get<WarehousesWithTariffsResponse>(
-    '/v1/tariffs/warehouses-with-tariffs',
+    '/v1/tariffs/warehouses-with-tariffs'
   )
 
   console.info('[Tariffs] Loaded', response.warehouses?.length || 0, 'warehouses with tariffs')

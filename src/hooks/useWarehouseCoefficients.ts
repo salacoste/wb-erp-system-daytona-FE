@@ -6,10 +6,17 @@
  *
  * Uses coefficients embedded in warehouse data from /v1/tariffs/warehouses-with-tariffs.
  * Falls back to acceptance coefficients API for daily coefficient calendar.
+ *
+ * IMPORTANT: Warehouse IDs between endpoints differ!
+ * - /v1/tariffs/warehouses-with-tariffs uses tariff DB IDs
+ * - /v1/tariffs/acceptance/coefficients uses OrdersFBW API IDs
+ * Solution: Use /all endpoint and match by warehouse NAME
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useAcceptanceCoefficients, type BoxTypeCoefficients } from './useAcceptanceCoefficients'
+import { useAllAcceptanceCoefficients, findCoefficientsByName } from './useAllAcceptanceCoefficients'
+import type { BoxTypeCoefficients, DailyCoefficient, NormalizedCoefficients } from './useAcceptanceCoefficients'
+import { BOX_TYPE_CONFIG } from './useAcceptanceCoefficients'
 import { getCoefficientStatus, getTomorrowDate, type NormalizedCoefficient } from '@/lib/coefficient-utils'
 import type { FieldSource } from '@/components/custom/price-calculator/AutoFillBadge'
 import type { Warehouse } from '@/types/warehouse'
@@ -60,6 +67,22 @@ export interface UseWarehouseCoefficientsResult {
   cooldownRemaining: number
 }
 
+/** Get BoxType key from boxTypeId */
+function getBoxTypeKey(boxTypeId: number): 'boxes' | 'pallets' | 'supersafe' {
+  switch (boxTypeId) {
+    case 2: return 'boxes'
+    case 5: return 'pallets'
+    case 6: return 'supersafe'
+    default: return 'boxes'
+  }
+}
+
+/** Normalize coefficient from API */
+function normalizeCoefficient(rawCoeff: number): number {
+  if (rawCoeff < 0) return 0
+  return rawCoeff > 10 ? rawCoeff / 100 : rawCoeff
+}
+
 /**
  * Hook to manage warehouse coefficient state
  * Features:
@@ -67,24 +90,97 @@ export interface UseWarehouseCoefficientsResult {
  * - Track auto/manual source for each coefficient
  * - Restore functionality for edited values
  * - Delivery date selection with calendar support (from acceptance API)
+ * - Matches warehouse by NAME to resolve ID mismatch between endpoints
  *
- * @param warehouseId - Warehouse ID
- * @param warehouse - Warehouse object with embedded coefficients
+ * @param warehouseId - Warehouse ID (from tariff DB)
+ * @param warehouse - Warehouse object with embedded coefficients and name
  */
 export function useWarehouseCoefficients(
   warehouseId: number | null,
   warehouse?: Warehouse | null,
 ): UseWarehouseCoefficientsResult {
-  // Acceptance API for daily coefficients calendar (optional, may fail for synthetic IDs)
-  // Story 44.34: Includes debouncing (500ms) and rate limit handling
+  // Fetch ALL acceptance coefficients from /all endpoint
+  // Then match by warehouse NAME (IDs differ between endpoints)
   const {
-    data: coefficients,
+    data: allCoefficients,
     isLoading,
     error,
-    isDebouncing,
-    isRateLimited,
-    cooldownRemaining,
-  } = useAcceptanceCoefficients(warehouseId)
+  } = useAllAcceptanceCoefficients()
+
+  // Find coefficients for this warehouse by name (fuzzy matching)
+  const coefficients: NormalizedCoefficients | null = useMemo(() => {
+    if (!warehouse?.name || !allCoefficients) return null
+
+    const warehouseData = findCoefficientsByName(allCoefficients, warehouse.name)
+    if (!warehouseData || warehouseData.coefficients.length === 0) {
+      // No acceptance data found - coefficients will come from embedded warehouse data
+      return null
+    }
+
+    const coeffs = warehouseData.coefficients
+    const firstCoeff = coeffs[0]
+
+    // Group by box type
+    const byBoxTypeMap = new Map<'boxes' | 'pallets' | 'supersafe', DailyCoefficient[]>()
+    for (const c of coeffs) {
+      const boxType = getBoxTypeKey(c.boxTypeId)
+      const daily: DailyCoefficient = {
+        date: c.date.split('T')[0],
+        coefficient: normalizeCoefficient(c.coefficient),
+        isAvailable: c.isAvailable,
+      }
+      if (!byBoxTypeMap.has(boxType)) {
+        byBoxTypeMap.set(boxType, [])
+      }
+      byBoxTypeMap.get(boxType)!.push(daily)
+    }
+
+    // Convert to array
+    const byBoxType: BoxTypeCoefficients[] = []
+    for (const [boxType, dailyCoeffs] of byBoxTypeMap) {
+      const config = BOX_TYPE_CONFIG[boxType]
+      dailyCoeffs.sort((a, b) => a.date.localeCompare(b.date))
+      byBoxType.push({
+        boxType,
+        boxTypeId: config.id,
+        label: config.label,
+        dailyCoefficients: dailyCoeffs,
+      })
+    }
+    byBoxType.sort((a, b) => a.boxTypeId - b.boxTypeId)
+
+    // Default to boxes for legacy dailyCoefficients
+    const boxesCoeffs = byBoxTypeMap.get('boxes') || []
+    const availableCoeffs = boxesCoeffs.filter((c) => c.coefficient > 0)
+    const avgCoeff = availableCoeffs.length > 0
+      ? availableCoeffs.reduce((sum, c) => sum + c.coefficient, 0) / availableCoeffs.length
+      : 1.0
+    const todayCoeff = boxesCoeffs[0]?.coefficient ?? 1.0
+
+    return {
+      warehouseId: warehouseData.warehouseId,
+      warehouseName: warehouseData.warehouseName,
+      todayCoefficient: todayCoeff,
+      averageCoefficient: avgCoeff,
+      dailyCoefficients: boxesCoeffs,
+      byBoxType,
+      delivery: {
+        baseLiterRub: firstCoeff.delivery.baseLiterRub,
+        additionalLiterRub: firstCoeff.delivery.additionalLiterRub,
+        coefficient: normalizeCoefficient(firstCoeff.delivery.coefficient),
+      },
+      storage: {
+        baseLiterRub: firstCoeff.storage.baseLiterRub,
+        additionalLiterRub: firstCoeff.storage.additionalLiterRub,
+        coefficient: normalizeCoefficient(firstCoeff.storage.coefficient),
+      },
+    }
+  }, [warehouse?.name, allCoefficients])
+
+  // Story 44.34: No per-warehouse debouncing needed anymore (using /all)
+  const isDebouncing = false
+  const isRateLimited = false
+  const cooldownRemaining = 0
 
   // Coefficient states
   const [logisticsCoeff, setLogisticsCoeff] = useState<CoefficientState>({
@@ -166,12 +262,13 @@ export function useWarehouseCoefficients(
   }, [warehouseId])
 
   // Transform daily coefficients to NormalizedCoefficient format
+  // Use isAvailable flag for unavailable status (original coefficient is normalized)
   const dailyCoefficients: NormalizedCoefficient[] = useMemo(() => {
     if (!coefficients?.dailyCoefficients) return []
     return coefficients.dailyCoefficients.map((c) => ({
       date: c.date,
       coefficient: c.coefficient,
-      status: getCoefficientStatus(c.coefficient),
+      status: !c.isAvailable ? 'unavailable' : getCoefficientStatus(c.coefficient),
       isAvailable: c.isAvailable,
     }))
   }, [coefficients])

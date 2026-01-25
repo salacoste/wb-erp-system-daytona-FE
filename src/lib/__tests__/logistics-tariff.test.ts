@@ -178,12 +178,13 @@ describe('calculateLogisticsTariff', () => {
 // ============================================================================
 
 describe('DEFAULT_BOX_TARIFFS', () => {
-  it('has correct default base liter rate (48₽)', () => {
-    expect(DEFAULT_BOX_TARIFFS.baseLiterRub).toBe(48)
+  // Story 44.XX: Updated to match correct API values (46/14 instead of 48/5)
+  it('has correct default base liter rate (46₽)', () => {
+    expect(DEFAULT_BOX_TARIFFS.baseLiterRub).toBe(46)
   })
 
-  it('has correct default additional liter rate (5₽)', () => {
-    expect(DEFAULT_BOX_TARIFFS.additionalLiterRub).toBe(5)
+  it('has correct default additional liter rate (14₽)', () => {
+    expect(DEFAULT_BOX_TARIFFS.additionalLiterRub).toBe(14)
   })
 
   it('has correct default coefficient (1.0)', () => {
@@ -197,9 +198,10 @@ describe('DEFAULT_BOX_TARIFFS', () => {
 
 describe('calculateWithDefaultTariffs', () => {
   it('calculates using default tariffs', () => {
-    // 3L with defaults: (48 + 2*5) * 1.0 = 58
+    // 3L with defaults: (46 + 2*14) * 1.0 = 74
+    // Story 44.XX: Updated to match correct API values (46/14 instead of 48/5)
     const result = calculateWithDefaultTariffs(3.0)
-    expect(result.totalCost).toBe(58.0)
+    expect(result.totalCost).toBe(74.0)
     expect(result.source).toBe('default')
   })
 })

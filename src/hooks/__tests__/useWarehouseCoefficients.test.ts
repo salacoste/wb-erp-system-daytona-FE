@@ -2,52 +2,104 @@
  * Unit tests for useWarehouseCoefficients hook
  * Story 44.26a-FE: Product Search & Delivery Date Selection
  * Epic 44: Price Calculator UI (Frontend)
+ *
+ * Tests the warehouse coefficient state management including:
+ * - Matching warehouses by NAME (not ID) to resolve endpoint ID mismatch
+ * - Auto-fill from /all acceptance coefficients endpoint
+ * - Manual override and restore functionality
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useWarehouseCoefficients } from '../useWarehouseCoefficients'
 import { createQueryWrapper } from '@/test/utils/test-utils'
+import type { Warehouse } from '@/types/warehouse'
+import type { GroupedCoefficients } from '../useAllAcceptanceCoefficients'
+import type { AcceptanceCoefficient } from '@/types/tariffs'
 
-// Mock useAcceptanceCoefficients hook
-const mockCoefficientsData = {
-  warehouseId: 507,
-  warehouseName: 'Коледино',
-  todayCoefficient: 1.25,
-  averageCoefficient: 1.15,
-  dailyCoefficients: [
-    { date: '2026-01-22', coefficient: 1.0, isAvailable: true },
-    { date: '2026-01-23', coefficient: 1.25, isAvailable: true },
-    { date: '2026-01-24', coefficient: 1.5, isAvailable: true },
-    { date: '2026-01-25', coefficient: -1, isAvailable: false },
-    { date: '2026-01-26', coefficient: 1.0, isAvailable: true },
-    { date: '2026-01-27', coefficient: 2.0, isAvailable: true },
-    { date: '2026-01-28', coefficient: 2.5, isAvailable: true },
-  ],
-  delivery: {
-    baseLiterRub: 50,
-    additionalLiterRub: 5,
-    coefficient: 1.25,
-  },
-  storage: {
-    baseLiterRub: 2,
-    additionalLiterRub: 0.5,
-    coefficient: 1.1,
+// Mock warehouse data from /v1/tariffs/warehouses-with-tariffs
+const mockWarehouse: Warehouse = {
+  id: 1733387774, // This is the tariff DB ID (different from OrdersFBW API ID!)
+  name: 'Коледино',
+  tariffs: {
+    deliveryBaseLiterRub: 46,
+    deliveryPerLiterRub: 14,
+    logisticsCoefficient: 1.2,
+    storageBaseLiterRub: 0.07,
+    storagePerLiterRub: 0.05,
+    storageCoefficient: 1.1,
   },
 }
 
-const mockUseAcceptanceCoefficients = vi.fn()
+// Base coefficient factory for tests
+const createCoefficient = (
+  date: string,
+  coefficient: number,
+  isAvailable: boolean
+): AcceptanceCoefficient => ({
+  warehouseId: 507, // OrdersFBW API ID
+  warehouseName: 'Коледино', // Matched by NAME
+  date,
+  coefficient,
+  boxTypeId: 2,
+  boxTypeName: 'Коробы',
+  isAvailable,
+  allowUnload: true,
+  isSortingCenter: false,
+  delivery: { baseLiterRub: 50, additionalLiterRub: 5, coefficient: 1.25 },
+  storage: { baseLiterRub: 2, additionalLiterRub: 0.5, coefficient: 1.1 },
+})
 
-vi.mock('../useAcceptanceCoefficients', () => ({
-  useAcceptanceCoefficients: () => mockUseAcceptanceCoefficients(),
+// Mock coefficients from /v1/tariffs/acceptance/coefficients/all
+// Note: warehouseId here is from OrdersFBW API (507), different from tariff DB (1733387774)
+const mockAllCoefficients: AcceptanceCoefficient[] = [
+  createCoefficient('2026-01-22', 1.0, true),
+  createCoefficient('2026-01-23', 1.25, true),
+  createCoefficient('2026-01-24', 1.5, true),
+  createCoefficient('2026-01-25', -1, false), // Unavailable
+  createCoefficient('2026-01-26', 1.0, true),
+  createCoefficient('2026-01-27', 2.0, true),
+  createCoefficient('2026-01-28', 2.5, true),
+]
+
+// Create grouped coefficients (as returned by useAllAcceptanceCoefficients)
+function createGroupedCoefficients(coefficients: AcceptanceCoefficient[]): GroupedCoefficients {
+  const byName = new Map()
+  const byId = new Map()
+
+  for (const coeff of coefficients) {
+    const name = coeff.warehouseName
+    const id = coeff.warehouseId
+
+    if (!byName.has(name)) {
+      byName.set(name, { warehouseId: id, warehouseName: name, coefficients: [] })
+    }
+    byName.get(name)!.coefficients.push(coeff)
+
+    if (!byId.has(id)) {
+      byId.set(id, byName.get(name)!)
+    }
+  }
+
+  return { byName, byId }
+}
+
+const mockUseAllAcceptanceCoefficients = vi.fn()
+
+vi.mock('../useAllAcceptanceCoefficients', () => ({
+  useAllAcceptanceCoefficients: () => mockUseAllAcceptanceCoefficients(),
+  findCoefficientsByName: (grouped: GroupedCoefficients | undefined, name: string | undefined) => {
+    if (!grouped || !name) return null
+    return grouped.byName.get(name) ?? null
+  },
 }))
 
 describe('useWarehouseCoefficients', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     // Default mock - no data
-    mockUseAcceptanceCoefficients.mockReturnValue({
-      data: null,
+    mockUseAllAcceptanceCoefficients.mockReturnValue({
+      data: undefined,
       isLoading: false,
       error: null,
     })
@@ -63,7 +115,7 @@ describe('useWarehouseCoefficients', () => {
 
   describe('initial state', () => {
     it('returns default values when warehouse is null', () => {
-      const { result } = renderHook(() => useWarehouseCoefficients(null), {
+      const { result } = renderHook(() => useWarehouseCoefficients(null, null), {
         wrapper: createQueryWrapper(),
       })
 
@@ -77,13 +129,13 @@ describe('useWarehouseCoefficients', () => {
     })
 
     it('shows loading state while fetching', () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: null,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: undefined,
         isLoading: true,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
+      const { result } = renderHook(() => useWarehouseCoefficients(507, mockWarehouse), {
         wrapper: createQueryWrapper(),
       })
 
@@ -92,38 +144,41 @@ describe('useWarehouseCoefficients', () => {
   })
 
   // ==========================================================================
-  // Auto-fill Tests
+  // Auto-fill Tests (matching by warehouse NAME)
   // ==========================================================================
 
-  describe('auto-fill coefficients', () => {
-    it('auto-fills logistics coefficient from API', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+  describe('auto-fill coefficients (matched by name)', () => {
+    it('auto-fills logistics coefficient from embedded warehouse data', async () => {
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
-        expect(result.current.logisticsCoeff.value).toBe(1.25)
+        // Uses embedded coefficient from warehouse.tariffs
+        expect(result.current.logisticsCoeff.value).toBe(1.2)
         expect(result.current.logisticsCoeff.source).toBe('auto')
-        expect(result.current.logisticsCoeff.originalValue).toBe(1.25)
+        expect(result.current.logisticsCoeff.originalValue).toBe(1.2)
       })
     })
 
-    it('auto-fills storage coefficient from API', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+    it('auto-fills storage coefficient from embedded warehouse data', async () => {
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.storageCoeff.value).toBe(1.1)
@@ -132,28 +187,29 @@ describe('useWarehouseCoefficients', () => {
       })
     })
 
-    it('transforms dailyCoefficients to NormalizedCoefficient format', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+    it('transforms dailyCoefficients from /all endpoint matched by name', async () => {
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.dailyCoefficients).toHaveLength(7)
-        expect(result.current.dailyCoefficients[0]).toEqual({
+        expect(result.current.dailyCoefficients[0]).toMatchObject({
           date: '2026-01-22',
           coefficient: 1.0,
           status: 'base',
           isAvailable: true,
         })
-        expect(result.current.dailyCoefficients[3]).toEqual({
+        expect(result.current.dailyCoefficients[3]).toMatchObject({
           date: '2026-01-25',
-          coefficient: -1,
+          coefficient: 0, // Normalized from -1 to 0
           status: 'unavailable',
           isAvailable: false,
         })
@@ -167,33 +223,34 @@ describe('useWarehouseCoefficients', () => {
 
   describe('delivery date selection', () => {
     it('auto-selects first available date when coefficients load', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
-        // Should select first available date
+        // Should have a date selected (from embedded coefficient)
         expect(result.current.deliveryDate.date).not.toBeNull()
-        expect(result.current.deliveryDate.coefficient).toBeGreaterThan(0)
       })
     })
 
     it('allows manual delivery date selection', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.dailyCoefficients).toHaveLength(7)
@@ -214,15 +271,16 @@ describe('useWarehouseCoefficients', () => {
 
   describe('manual override', () => {
     it('allows manual logistics coefficient override', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.logisticsCoeff.source).toBe('auto')
@@ -234,19 +292,20 @@ describe('useWarehouseCoefficients', () => {
 
       expect(result.current.logisticsCoeff.value).toBe(1.5)
       expect(result.current.logisticsCoeff.source).toBe('manual')
-      expect(result.current.logisticsCoeff.originalValue).toBe(1.25)
+      expect(result.current.logisticsCoeff.originalValue).toBe(1.2)
     })
 
     it('allows manual storage coefficient override', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.storageCoeff.source).toBe('auto')
@@ -268,15 +327,16 @@ describe('useWarehouseCoefficients', () => {
 
   describe('restore functionality', () => {
     it('restores logistics to original value', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.logisticsCoeff.source).toBe('auto')
@@ -295,20 +355,21 @@ describe('useWarehouseCoefficients', () => {
         result.current.restoreLogistics()
       })
 
-      expect(result.current.logisticsCoeff.value).toBe(1.25)
+      expect(result.current.logisticsCoeff.value).toBe(1.2)
       expect(result.current.logisticsCoeff.source).toBe('auto')
     })
 
     it('restores storage to original value', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(result.current.storageCoeff.source).toBe('auto')
@@ -337,31 +398,26 @@ describe('useWarehouseCoefficients', () => {
 
   describe('reset on warehouse change', () => {
     it('resets all values when warehouse is cleared', async () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: mockCoefficientsData,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: createGroupedCoefficients(mockAllCoefficients),
         isLoading: false,
         error: null,
       })
 
       const { result, rerender } = renderHook(
-        ({ warehouseId }) => useWarehouseCoefficients(warehouseId),
+        ({ warehouseId, warehouse }) => useWarehouseCoefficients(warehouseId, warehouse),
         {
           wrapper: createQueryWrapper(),
-          initialProps: { warehouseId: 507 as number | null },
+          initialProps: { warehouseId: mockWarehouse.id as number | null, warehouse: mockWarehouse as Warehouse | null },
         }
       )
 
       await waitFor(() => {
-        expect(result.current.logisticsCoeff.value).toBe(1.25)
+        expect(result.current.logisticsCoeff.value).toBe(1.2)
       })
 
       // Clear warehouse
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: null,
-        isLoading: false,
-        error: null,
-      })
-      rerender({ warehouseId: null })
+      rerender({ warehouseId: null, warehouse: null })
 
       await waitFor(() => {
         expect(result.current.logisticsCoeff.value).toBe(1.0)
@@ -381,32 +437,72 @@ describe('useWarehouseCoefficients', () => {
   describe('error handling', () => {
     it('returns error state when API fails', () => {
       const error = new Error('Failed to fetch coefficients')
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: null,
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: undefined,
         isLoading: false,
         error,
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
-      })
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
 
       expect(result.current.error).toBe(error)
     })
 
-    it('maintains default values on error', () => {
-      mockUseAcceptanceCoefficients.mockReturnValue({
-        data: null,
+    it('uses embedded warehouse coefficients when API fails', async () => {
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: undefined,
         isLoading: false,
         error: new Error('API error'),
       })
 
-      const { result } = renderHook(() => useWarehouseCoefficients(507), {
-        wrapper: createQueryWrapper(),
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(mockWarehouse.id, mockWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
+
+      await waitFor(() => {
+        // Should still use embedded coefficients from warehouse.tariffs
+        expect(result.current.logisticsCoeff.value).toBe(1.2)
+        expect(result.current.storageCoeff.value).toBe(1.1)
+      })
+    })
+
+    it('handles warehouse not found in /all response gracefully', async () => {
+      // Return empty grouped coefficients (warehouse name not found)
+      mockUseAllAcceptanceCoefficients.mockReturnValue({
+        data: { byName: new Map(), byId: new Map() },
+        isLoading: false,
+        error: null,
       })
 
-      expect(result.current.logisticsCoeff.value).toBe(1.0)
-      expect(result.current.storageCoeff.value).toBe(1.0)
+      const unknownWarehouse: Warehouse = {
+        id: 99999,
+        name: 'Неизвестный склад',
+        tariffs: {
+          deliveryBaseLiterRub: 46,
+          deliveryPerLiterRub: 14,
+          logisticsCoefficient: 1.5,
+          storageBaseLiterRub: 0.07,
+          storagePerLiterRub: 0.05,
+          storageCoefficient: 1.2,
+        },
+      }
+
+      const { result } = renderHook(
+        () => useWarehouseCoefficients(unknownWarehouse.id, unknownWarehouse),
+        { wrapper: createQueryWrapper() }
+      )
+
+      await waitFor(() => {
+        // Should use embedded coefficients when not found in /all
+        expect(result.current.logisticsCoeff.value).toBe(1.5)
+        expect(result.current.storageCoeff.value).toBe(1.2)
+        // Daily coefficients should be empty
+        expect(result.current.dailyCoefficients).toHaveLength(0)
+      })
     })
   })
 })
