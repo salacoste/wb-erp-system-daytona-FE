@@ -1,25 +1,54 @@
 # Request #98: Warehouses & Tariffs Coefficients API - BACKEND RESPONSE
 
 **Date**: 2026-01-19
-**Status**: ⚠️ PARTIALLY IMPLEMENTED (see details below)
+**Status**: ✅ PRODUCTION READY
 **Priority**: P1 - IMPORTANT
 **Related Epic**: Epic 43 (Price Calculator), Epic 44-FE (Price Calculator UI)
 **Backend Stories**: 43.1, 43.5, 43.8, 43.9
-**Last Updated**: 2026-01-22
+**Last Updated**: 2026-01-25
 
 ---
 
-## ⚠️ IMPLEMENTATION STATUS
+## ⚠️ CRITICAL: Two Tariff Systems
 
-**ACTUALLY IMPLEMENTED (6 endpoints):**
-| Endpoint | Status | Notes |
-|----------|--------|-------|
-| `GET /v1/tariffs/commissions` | ✅ IMPLEMENTED | All 7346 categories |
-| `GET /v1/tariffs/warehouses` | ✅ IMPLEMENTED | Simplified list |
-| `GET /v1/tariffs/warehouses-with-tariffs` | ✅ IMPLEMENTED | Aggregated data |
-| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | ✅ IMPLEMENTED | Per-warehouse |
-| `GET /v1/tariffs/acceptance/coefficients/all` | ✅ IMPLEMENTED | All warehouses |
-| `GET /v1/tariffs/settings` | ✅ IMPLEMENTED | Global config |
+**Wildberries has TWO different tariff systems**, both **already implemented**:
+
+| Система | Назначение | SDK Метод | Service | Endpoint |
+|---------|------------|-----------|--------|----------|
+| **Inventory (остатки)** | Фактические затраты на хранение | `sdk.tariffs.getTariffsBox()` | `WarehousesTariffsService` | `GET /v1/tariffs/warehouses-with-tariffs` |
+| **Supply (поставка)** | Планирование поставок на 14 дней | `sdk.ordersFBW.getAcceptanceCoefficients()` | `AcceptanceCoefficientsService` | `GET /v1/tariffs/acceptance/coefficients` |
+
+**Ключевое понимание**: Разница между Marketplace (более высокие ставки) и нашим API обусловлена тем, что:
+- Marketplace показывает ставки **Supply** (для планирования)
+- Наш API возвращает ставки **Inventory** (текущие затраты)
+
+**Это правильное поведение** - системы serve разные цели.
+
+### Когда использовать какую систему?
+
+| Сценарий | Система | Endpoint | Причина |
+|----------|---------|----------|---------|
+| **Price Calculator** (текущие затраты) | Inventory | `/warehouses-with-tariffs` | Фактические ставки на сегодня |
+| **Price Calculator** (планирование доставки) | Supply | `/acceptance/coefficients` | Прогноз на 14 дней |
+| **Финансовые отчеты** | Inventory | `/warehouses-with-tariffs` | Реальные понесенные расходы |
+| **Планирование поставок** | Supply | `/acceptance/coefficients/all` | 14-дневный прогноз |
+| **Анализ затрат на хранение** | Inventory | `/warehouses-with-tariffs` | Фактические затраты |
+
+📖 **Полное руководство**: [`108-two-tariff-systems-guide.md`](./108-two-tariff-systems-guide.md)
+
+---
+
+## ✅ IMPLEMENTATION STATUS
+
+**ALL 6 ENDPOINTS IMPLEMENTED:**
+| Endpoint | Method | Status | Description |
+|----------|--------|--------|-------------|
+| `/v1/tariffs/warehouses-with-tariffs` | GET | ✅ | Aggregated warehouses + tariffs |
+| `/v1/tariffs/warehouses` | GET | ✅ | Simplified warehouse list |
+| `/v1/tariffs/commissions` | GET | ✅ | Commission categories |
+| `/v1/tariffs/settings` | GET | ✅ | Global tariff settings |
+| `/v1/tariffs/acceptance/coefficients` | GET | ✅ | Acceptance coefficients by warehouse |
+| `/v1/tariffs/acceptance/coefficients/all` | GET | ✅ | All acceptance coefficients |
 
 **NOT IMPLEMENTED (wishlist - filter client-side):**
 | Endpoint | Status | Recommendation |
@@ -33,6 +62,21 @@
 | `GET /v1/tariffs/acceptance/available` | ❌ NOT IMPLEMENTED | Filter client-side |
 
 **Actual API documentation**: See `test-api/18-tariffs.http`
+
+### Storage Fallback Logic
+
+When WB API returns zero or missing storage rates, the backend automatically applies fallback values from `WbTariffSettings`:
+
+**Default Values**:
+- `storage_box_base_per_day`: 0.11 ₽/день
+- `storage_box_liter_per_day`: 0.11 ₽/литр/день
+
+**Fallback Condition**: `storageBase > 0 ? storageBase : defaultStorageBasePerDay ?? storageBase`
+
+**For Frontend Developers**:
+- You don't need to implement fallback logic on the frontend
+- The backend already substitutes default values when WB API returns 0
+- See `frontend/docs/request-backend/105-tariffs-storage-fallback-guide.md` for details
 
 ---
 
@@ -688,6 +732,7 @@ type BoxTypeId = 2 | 5 | 6; // 2=Boxes, 5=Pallets, 6=Supersafe
 - **Knowledge Base**: [`docs/stories/epic-43/story-43.8-wb-tariffs-knowledge-base.md`](../../../docs/stories/epic-43/story-43.8-wb-tariffs-knowledge-base.md)
 - **Story 43.1**: [`docs/stories/epic-43/story-43.1-tariffs-integration.md`](../../../docs/stories/epic-43/story-43.1-tariffs-integration.md)
 - **Story 43.9**: [`docs/stories/epic-43/story-43.9-acceptance-coefficients-service.md`](../../../docs/stories/epic-43/story-43.9-acceptance-coefficients-service.md)
+- **[Tariffs Formulas Validation Report](104-tariffs-formulas-validation-report.md)** - Complete formula validation with examples (✅ ALL CHECKS PASSED)
 
 ### Source Code
 - **TariffsService**: `src/tariffs/tariffs.service.ts`
@@ -731,6 +776,6 @@ type BoxTypeId = 2 | 5 | 6; // 2=Boxes, 5=Pallets, 6=Supersafe
 
 ---
 
-**Status**: ⚠️ PARTIALLY IMPLEMENTED (6 of 13 documented endpoints)
-**Last Updated**: 2026-01-22
+**Status**: ✅ PRODUCTION READY (6 endpoints implemented)
+**Last Updated**: 2026-01-25
 **Author**: Backend Team

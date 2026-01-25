@@ -1,9 +1,9 @@
 # Epic 44: Price Calculator UI (Frontend)
 
-**Status**: ✅ **COMPLETE**
+**Status**: 🔄 **Phase 6 In Progress** (Two Tariff Systems)
 **Backend Dependency**: Epic 43 ✅ Complete
-**Total Stories**: 27
-**Total Estimate**: 63 Story Points
+**Total Stories**: 28
+**Total Estimate**: 68 Story Points
 **Phase 1 Completed**: 2026-01-17 (Core Calculator)
 **Phase 2 Completed**: 2026-01-22 (Enhanced Logistics)
 **Phase 3 Completed**: 2026-01-23 (Warehouse & Tariffs)
@@ -145,6 +145,32 @@ Where:
 | 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **✅ Complete** |
 | 44.37 | [API Field Mismatch - Warehouse & Additional Fields](./story-44.37-fe-api-field-mismatch-warehouse.md) | **P0** | **2** | **✅ Complete** |
 | 44.38 | [Units Per Package - Acceptance Cost Division](./story-44.38-fe-units-per-package.md) | **P1** | **3** | **✅ Complete** |
+| **Phase 6: Two Tariff Systems** |||||
+| **44.40** | **[Two Tariff Systems Integration](./story-44.40-fe-two-tariff-systems-integration.md)** | **P0** | **5** | **📋 Ready** |
+
+---
+
+## Phase 6: Two Tariff Systems (NEW - 2026-01-26)
+
+**CRITICAL DISCOVERY**: WB has TWO different tariff systems that serve different purposes:
+
+| System | Purpose | API Endpoint | Use Case |
+|--------|---------|--------------|----------|
+| **INVENTORY** | Current actual costs | `/v1/tariffs/warehouses-with-tariffs` | Financial reports, TODAY calculations |
+| **SUPPLY** | 14-day planning | `/v1/tariffs/acceptance/coefficients/all` | Future delivery planning, TOMORROW+ |
+
+### Why This Matters
+- When user selects a **FUTURE delivery date**, ALL tariffs (baseLiterRub, additionalLiterRub, coefficients) must come from **SUPPLY system**
+- Supply tariffs are typically HIGHER than Inventory tariffs (conservative estimates)
+- Without this fix, cost estimates for future deliveries are INACCURATE
+
+### Stories Affected
+- **Story 44.40-FE**: New integration story for two tariff systems
+- **Story 44.26a-FE**: Updated with SUPPLY system requirements
+- **Story 44.27-FE**: Updated with SUPPLY system requirements (AC8 pending)
+
+### Reference
+- `docs/request-backend/108-two-tariff-systems-guide.md`
 
 ---
 
@@ -356,13 +382,16 @@ Story is complete when:
 | API Field Mismatch | 44.36 | ✅ |
 | API Field Mismatch Warehouse | 44.37 | ✅ |
 | Units Per Package | 44.38 | ✅ |
+| **Phase 6: Two Tariff Systems** ||
+| Two Tariff Systems Integration | 44.40 | 📋 |
 
 **Phase 1 Progress**: 6/6 stories (100%) ✅
 **Phase 2 Progress**: 4/4 stories (100%) ✅
 **Phase 3 Progress**: 5/5 stories (100%) ✅
 **Phase 4 Progress**: 6/6 stories (100%) ✅
 **Phase 5 Progress**: 7/7 stories (100%) ✅
-**Overall Progress**: 27/27 stories (100%) ✅
+**Phase 6 Progress**: 0/1 stories (0%) 📋
+**Overall Progress**: 27/28 stories (96%)
 
 ---
 
@@ -394,7 +423,8 @@ Story is complete when:
 | Phase 3 | 5 | 9 SP |
 | Phase 4 | 6 | 12 SP |
 | Phase 5 | 7 | 19 SP |
-| **Total** | **27** | **63 SP** |
+| Phase 6 | 1 | 5 SP |
+| **Total** | **28** | **68 SP** |
 
 **Phase 5 Breakdown**:
 - Story 44.32 (Missing Fields): 5 SP
@@ -497,6 +527,7 @@ See `PRICE-CALCULATOR-REQUIREMENTS.md` Section 4 for complete API reference.
 
 ---
 
-**Last Updated**: 2026-01-23
-**Epic Status**: ✅ **COMPLETE** (27/27 stories, 100%)
+**Last Updated**: 2026-01-26
+**Epic Status**: 🔄 **Phase 6 In Progress** (27/28 stories, 96%)
 **Phase 2-5 Completed**: 2026-01-23 (All stories complete)
+**Phase 6 Added**: 2026-01-26 (Two Tariff Systems Integration)

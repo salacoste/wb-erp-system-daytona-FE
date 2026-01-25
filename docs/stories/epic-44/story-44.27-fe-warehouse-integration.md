@@ -1,11 +1,38 @@
 # Story 44.27-FE: Warehouse & Coefficients Integration
 
 **Epic**: 44 - Price Calculator UI (Frontend)
-**Status**: ✅ Complete
+**Status**: ✅ Complete (but requires enhancement for Story 44.40)
 **Priority**: P0 - CRITICAL (Blocks real price calculation)
 **Effort**: 2 SP
 **Completed**: 2026-01-23
 **Depends On**: Story 44.12 (Warehouse Selection) ✅, Story 44.13 (Auto-fill Coefficients) ✅
+
+**Related Stories**:
+- **Story 44.40-FE** (Two Tariff Systems Integration) - EXTENDS THIS STORY
+
+---
+
+## CRITICAL: Two Tariff Systems Enhancement
+
+> **⚠️ UPDATE 2026-01-26**: This story needs enhancement per **Story 44.40-FE**.
+>
+> Currently, this story uses ONLY the **INVENTORY system** for tariffs.
+> When a **FUTURE delivery date** is selected (Story 44.26a), ALL tariffs must
+> switch to the **SUPPLY system**.
+
+### Current Implementation (INVENTORY Only)
+- ✅ Fetches warehouse list from `/v1/tariffs/warehouses`
+- ✅ Parses tariff expressions (`boxDeliveryBase`, etc.)
+- ✅ Uses static tariffs for calculations
+- ❌ Does NOT account for date-specific SUPPLY tariffs
+
+### Required Enhancement (Story 44.40)
+- [ ] Add `tariffSystem` prop to `WarehouseSection`
+- [ ] When `tariffSystem='supply'`: Display SUPPLY tariffs (from Story 44.26a)
+- [ ] Show tariff system indicator in UI
+- [ ] Use correct tariff source in calculations
+
+**See Story 44.40-FE for complete requirements.**
 
 ---
 
@@ -19,7 +46,8 @@
 - ✅ `WarehouseSection.tsx` - создан, включает коэффициенты и хранение
 - ✅ `useWarehouseCoefficients.ts` - hook для получения коэффициентов
 - ✅ `useAcceptanceCoefficients.ts` - API hook для backend
-- ❌ **НЕ интегрировано в `PriceCalculatorForm.tsx`**
+- ✅ **Интегрировано в `PriceCalculatorForm.tsx`**
+- ❌ **НЕ учитывает систему SUPPLY для будущих дат** (see Story 44.40)
 
 **Бизнес-логика коэффициентов:**
 1. **Базовая ставка** - единая для всех складов (backend знает)
@@ -29,6 +57,10 @@
    - Хранение (только ФБО)
    - Логистика доставки (ФБО и ФБС)
    - Логистика возврата (ФБО и ФБС)
+
+**ВАЖНО (Story 44.40)**: Базовые ставки различаются между системами:
+- **INVENTORY**: Текущие фактические ставки (для финансовых отчётов)
+- **SUPPLY**: Ставки планирования (для будущих поставок, обычно выше)
 
 ---
 
@@ -93,6 +125,21 @@
 - [x] Include `storage_coefficient` in API request (FBO)
 - [x] Include `storage_rub` calculated value
 - [x] Backend uses coefficients in price calculation
+
+### AC8: Two Tariff Systems Support (NEW - Story 44.40) ⏳
+> **Enhancement Required**: This AC is for Story 44.40 integration.
+
+- [ ] Accept `tariffSystem: 'inventory' | 'supply'` prop
+- [ ] Accept `supplyTariffs: SupplyDateTariffs | null` prop (from DeliveryDatePicker)
+- [ ] When `tariffSystem='inventory'`:
+  - Display static INVENTORY tariffs (current implementation)
+  - Show badge: "📊 Текущие тарифы"
+- [ ] When `tariffSystem='supply'`:
+  - Display SUPPLY tariffs from `supplyTariffs` prop
+  - Show badge: "📅 Тарифы на {date}"
+  - Use `supplyTariffs.delivery.baseLiterRub` for logistics display
+  - Use `supplyTariffs.storage.baseLiterRub` for storage display
+- [ ] Update calculation functions to use correct tariff source
 
 ---
 
@@ -327,6 +374,9 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
 | Coefficient > 2.0 | Allow but show warning about high cost |
 | Warehouse cleared | Reset all coefficients to 1.0 |
 | Delivery date unavailable | Use first available date with coefficient > 0 |
+| **NEW: tariffSystem='inventory'** | Display static INVENTORY tariffs (default behavior) |
+| **NEW: tariffSystem='supply'** | Display SUPPLY tariffs from `supplyTariffs` prop |
+| **NEW: supplyTariffs is null** | Fall back to INVENTORY tariffs with warning |
 
 ---
 
@@ -444,6 +494,15 @@ _(To be filled after code review)_
 
 ---
 
+## Related Documentation
+
+- **Story 44.40-FE**: Two Tariff Systems Integration (EXTENDS THIS STORY)
+- **Two Tariff Systems Guide**: `docs/request-backend/108-two-tariff-systems-guide.md`
+- **Story 44.26a-FE**: Delivery Date Selection (provides `supplyTariffs` data)
+
+---
+
 **Created**: 2026-01-21
-**Last Updated**: 2026-01-21
+**Last Updated**: 2026-01-26
 **Unblocked**: Yes (all dependencies complete)
+**Enhancement Pending**: AC8 (Story 44.40 integration)
