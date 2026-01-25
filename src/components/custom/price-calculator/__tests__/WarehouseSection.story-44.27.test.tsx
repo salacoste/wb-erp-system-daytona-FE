@@ -145,6 +145,12 @@ describe('Story 44.27: AC2 - Form State for Warehouse', () => {
     mockUseWarehouseCoefficients.mockReturnValue(
       mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
     )
+    // Fixed: Add missing mock for useWarehouses
+    mockUseWarehouses.mockReturnValue({
+      data: [mockWarehouse],
+      isLoading: false,
+      error: null,
+    } as ReturnType<typeof useWarehouses>)
   })
 
   it('should call onWarehouseChange when warehouse is selected', async () => {

@@ -101,13 +101,15 @@ export function WarehouseSection({
       )}
 
       {/* Delivery Date Picker - Story 44.26a */}
-      {warehouseId && (dailyCoefficients.length > 0 || byBoxType.length > 0) && (
+      {/* Story 44.XX: Always show when warehouse selected - uses fallback mode when API has no data */}
+      {warehouseId && (
         <DeliveryDatePicker
           coefficients={dailyCoefficients}
           byBoxType={byBoxType}
           selectedDate={deliveryDate.date}
           onDateSelect={handleDeliveryDateSelect}
-          isLoading={isLoading}
+          isLoading={isLoading && !isDebouncing}
+          showFallback={!isLoading && !isDebouncing && dailyCoefficients.length === 0 && byBoxType.length === 0}
         />
       )}
 

@@ -11,8 +11,8 @@
  */
 
 import { useState, useMemo } from 'react'
-import { Check, ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Check, ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info, Truck, Package } from 'lucide-react'
+import { cn, formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -26,7 +26,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useWarehouses } from '@/hooks/useWarehouses'
-import { useAcceptanceCoefficients } from '@/hooks/useAcceptanceCoefficients'
 import { filterWarehouses, separateWarehouses } from '@/lib/warehouse-utils'
 import type { Warehouse } from '@/types/warehouse'
 
@@ -50,22 +49,16 @@ export function WarehouseSelect({
   onChange,
   disabled,
   error,
-  enableDebounce = true,
-  debounceMs = 500,
 }: WarehouseSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const { data: warehouses, isLoading, isError, refetch } = useWarehouses()
 
-  // Story 44.34: Fetch coefficients with debouncing and rate limit handling
-  const {
-    isDebouncing,
-    isRateLimited,
-    cooldownRemaining,
-  } = useAcceptanceCoefficients(value, {
-    debounceMs: enableDebounce ? debounceMs : 0,
-    enabled: enableDebounce,
-  })
+  // Story 44.34: Debouncing and rate limit state removed - now handled by useWarehouseCoefficients
+  // via /all endpoint which doesn't require per-warehouse calls
+  const isDebouncing = false
+  const isRateLimited = false
+  const cooldownRemaining = 0
 
   // Find selected warehouse
   const selectedWarehouse = useMemo(
@@ -265,10 +258,30 @@ export function WarehouseSelect({
       )}
 
       {/* Count display */}
-      {warehouses && !isLoading && (
+      {warehouses && !isLoading && !selectedWarehouse && (
         <p className="text-xs text-muted-foreground">
           Найдено: {warehouses.length} складов
         </p>
+      )}
+
+      {/* Selected warehouse tariffs display */}
+      {selectedWarehouse && (
+        <div className="p-3 bg-muted/50 rounded-lg space-y-2 text-xs">
+          <div className="flex items-center gap-2 text-muted-foreground font-medium">
+            <Truck className="h-3.5 w-3.5" />
+            <span>Логистика:</span>
+            <span className="text-foreground">
+              {formatCurrency(selectedWarehouse.tariffs.deliveryBaseLiterRub)} (1л) + {formatCurrency(selectedWarehouse.tariffs.deliveryPerLiterRub)}/л
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground font-medium">
+            <Package className="h-3.5 w-3.5" />
+            <span>Хранение:</span>
+            <span className="text-foreground">
+              {selectedWarehouse.tariffs.storageBaseLiterRub.toFixed(2)} ₽/день (1л) + {selectedWarehouse.tariffs.storagePerLiterRub.toFixed(2)} ₽/л/день
+            </span>
+          </div>
+        </div>
       )}
     </div>
   )

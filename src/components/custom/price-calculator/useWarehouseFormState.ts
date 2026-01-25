@@ -1,8 +1,15 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
 import type { Warehouse } from '@/types/warehouse'
 import type { FormData } from './usePriceCalculatorForm'
 import { calculateDailyStorageCost, DEFAULT_STORAGE_TARIFF } from '@/lib/storage-cost-utils'
+import { calculateLogisticsTariff, DEFAULT_BOX_TARIFFS, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
+import {
+  calculateAcceptanceCost,
+  DEFAULT_ACCEPTANCE_TARIFF,
+  type AcceptanceTariff,
+  type AcceptanceCostResult,
+} from '@/lib/acceptance-cost-utils'
 
 /**
  * Hook for managing warehouse-related form state
@@ -20,6 +27,12 @@ export interface UseWarehouseFormStateProps {
   lengthCm: number
   widthCm: number
   heightCm: number
+  /** Delivery box type: 'box' or 'pallet' */
+  boxType: 'box' | 'pallet'
+  /** Number of units per package (for per-unit cost calculation) */
+  unitsPerPackage: number
+  /** Optional acceptance tariff from admin settings */
+  acceptanceTariff?: AcceptanceTariff
 }
 
 export interface UseWarehouseFormStateReturn {
@@ -29,9 +42,19 @@ export interface UseWarehouseFormStateReturn {
   /** Current storage_rub value from form */
   storageRub: number
   volumeLiters: number
+  /** Calculated logistics forward cost (auto-fill) */
+  logisticsForwardRub: number
+  /** Whether logistics was auto-filled (vs manually set) */
+  isLogisticsAutoFilled: boolean
+  /** Current acceptance coefficient from delivery date selection */
+  acceptanceCoefficient: number
+  /** Calculated acceptance cost with formula for display */
+  acceptanceCost: AcceptanceCostResult
   handleWarehouseChange: (id: number | null, warehouse: Warehouse | null) => void
   /** Handler for TurnoverDaysInput storage_rub emission */
   handleStorageRubChange: (value: number) => void
+  /** Handler for manual logistics forward override */
+  handleLogisticsForwardChange: (value: number) => void
   handleDeliveryDateChange: (date: string | null, coefficient: number) => void
   // Story 44.27: Method to get warehouse object for API request
   getWarehouseForApi: (warehouses: Warehouse[]) => Warehouse | null
@@ -42,10 +65,15 @@ export function useWarehouseFormState({
   lengthCm,
   widthCm,
   heightCm,
+  boxType,
+  unitsPerPackage,
+  acceptanceTariff,
 }: UseWarehouseFormStateProps): UseWarehouseFormStateReturn {
   const [warehouseId, setWarehouseId] = useState<number | null>(null)
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
   const [storageRub, setStorageRub] = useState(0)
+  const [isLogisticsManuallySet, setIsLogisticsManuallySet] = useState(false)
+  const [acceptanceCoefficient, setAcceptanceCoefficient] = useState(1.0)
 
   // Calculate volume from dimensions (cm to liters)
   const volumeLiters = useMemo(() => {
@@ -54,21 +82,53 @@ export function useWarehouseFormState({
   }, [lengthCm, widthCm, heightCm])
 
   // Calculate daily storage cost from warehouse tariff and volume
+  // Note: Values are validated in useWarehouses.ts to handle API data issues
   const dailyStorageCost = useMemo(() => {
     const tariff = selectedWarehouse
       ? {
           basePerDayRub: selectedWarehouse.tariffs.storageBaseLiterRub,
           perLiterPerDayRub: selectedWarehouse.tariffs.storagePerLiterRub,
-          coefficient: 1.0, // Storage coefficient applied separately
+          coefficient: selectedWarehouse.tariffs.storageCoefficient || 1.0,
         }
       : DEFAULT_STORAGE_TARIFF
+
     return calculateDailyStorageCost(volumeLiters, tariff)
   }, [selectedWarehouse, volumeLiters])
+
+  // Calculate logistics forward cost from warehouse tariff and volume
+  // Note: Values are validated in useWarehouses.ts to handle API data issues
+  const logisticsForwardRub = useMemo(() => {
+    if (volumeLiters <= 0) return 0
+    const tariff: BoxDeliveryTariffs = selectedWarehouse
+      ? {
+          baseLiterRub: selectedWarehouse.tariffs.deliveryBaseLiterRub,
+          additionalLiterRub: selectedWarehouse.tariffs.deliveryPerLiterRub,
+          coefficient: selectedWarehouse.tariffs.logisticsCoefficient || 1.0,
+        }
+      : DEFAULT_BOX_TARIFFS
+
+    return calculateLogisticsTariff(volumeLiters, tariff).totalCost
+  }, [selectedWarehouse, volumeLiters])
+
+  // Story 44.XX: Calculate acceptance cost from tariff, dimensions, and coefficient
+  const acceptanceCost = useMemo(() => {
+    const tariff = acceptanceTariff ?? DEFAULT_ACCEPTANCE_TARIFF
+    const effectiveUnits = unitsPerPackage > 0 ? unitsPerPackage : 1
+    return calculateAcceptanceCost(boxType, volumeLiters, acceptanceCoefficient, effectiveUnits, tariff)
+  }, [boxType, volumeLiters, acceptanceCoefficient, unitsPerPackage, acceptanceTariff])
+
+  // Auto-fill logistics_forward_rub when calculated value changes
+  useEffect(() => {
+    if (!isLogisticsManuallySet && logisticsForwardRub > 0) {
+      setValue('logistics_forward_rub', logisticsForwardRub)
+    }
+  }, [logisticsForwardRub, isLogisticsManuallySet, setValue])
 
   const handleWarehouseChange = useCallback(
     (id: number | null, warehouse: Warehouse | null) => {
       setWarehouseId(id)
       setSelectedWarehouse(warehouse)
+      setIsLogisticsManuallySet(false) // Reset manual flag to allow auto-fill
       setValue('warehouse_id', id)
       setValue('warehouse_name', warehouse?.name ?? null)
     },
@@ -84,10 +144,21 @@ export function useWarehouseFormState({
     [setValue],
   )
 
+  // Handler for manual logistics forward override
+  const handleLogisticsForwardChange = useCallback(
+    (value: number) => {
+      setIsLogisticsManuallySet(true)
+      setValue('logistics_forward_rub', value)
+    },
+    [setValue],
+  )
+
   const handleDeliveryDateChange = useCallback(
     (date: string | null, coefficient: number) => {
       setValue('delivery_date', date)
       setValue('logistics_coefficient', coefficient)
+      // Story 44.XX: Update acceptance coefficient for cost calculation
+      setAcceptanceCoefficient(coefficient)
     },
     [setValue],
   )
@@ -106,8 +177,13 @@ export function useWarehouseFormState({
     dailyStorageCost,
     storageRub,
     volumeLiters,
+    logisticsForwardRub,
+    isLogisticsAutoFilled: !isLogisticsManuallySet && logisticsForwardRub > 0,
+    acceptanceCoefficient,
+    acceptanceCost,
     handleWarehouseChange,
     handleStorageRubChange,
+    handleLogisticsForwardChange,
     handleDeliveryDateChange,
     getWarehouseForApi,
   }
