@@ -339,8 +339,9 @@ describe('AC4: Form Integration - Restore Button', () => {
     const restoreButton = screen.getByRole('button', { name: /Восстановить/i })
     await user.click(restoreButton)
 
-    // Should call onChange with calculated value (58 for 3L with standard tariffs)
-    expect(onChange).toHaveBeenCalledWith(58)
+    // Should call onChange with calculated value
+    // 3L with default tariffs: (46 + 2 × 14) × 1.0 = 74
+    expect(onChange).toHaveBeenCalledWith(74)
   })
 
   it('restore button re-enables auto-calculate', async () => {

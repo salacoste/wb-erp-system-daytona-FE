@@ -17,109 +17,20 @@
 import { describe, it, expect } from 'vitest'
 
 // ============================================================================
-// Expected Module Imports (TDD - These may not exist yet)
+// ACTUAL IMPLEMENTATIONS - Imported from utility modules
 // ============================================================================
 
-/**
- * These imports define the expected API for the utility functions.
- * Implementation should create these functions in the specified modules.
- */
+import {
+  calculateBillableDays,
+  calculateStorageCostWith60DaysFree,
+  calculateVolumeWithMinimum,
+} from '@/lib/storage-cost-utils'
 
-// Expected import path for storage utilities
-// import {
-//   calculateBillableDays,
-//   calculateStorageCostWith60DaysFree,
-//   calculateVolumeWithMinimum,
-// } from '@/lib/storage-cost-utils'
-
-// Expected import path for logistics utilities
-// import {
-//   determineCargoType,
-//   canAutoFillForwardLogistics,
-//   calculateForwardLogistics,
-//   calculateEffectiveReverseLogistics,
-// } from '@/lib/logistics-utils'
-
-// ============================================================================
-// MOCK IMPLEMENTATIONS FOR TDD RED PHASE
-// These simulate the expected behavior - tests will fail until real impl exists
-// ============================================================================
-
-/**
- * Calculate billable storage days (60 days free)
- * Backend formula: billable_days = max(0, turnover_days - 60)
- */
-function calculateBillableDays(_turnoverDays: number): number {
-  // Placeholder - will fail when tested against real implementation
-  throw new Error('Not implemented: calculateBillableDays')
-}
-
-/**
- * Calculate storage cost with 60-day free period
- * Formula: storage_rub = daily_cost × billable_days
- */
-function calculateStorageCostWith60DaysFree(
-  _dailyCost: number,
-  _turnoverDays: number
-): number {
-  throw new Error('Not implemented: calculateStorageCostWith60DaysFree')
-}
-
-/**
- * Calculate volume in liters with minimum 1L enforcement
- * Formula: volume_liters = (L × W × H) / 1000, minimum 1 liter
- */
-function calculateVolumeWithMinimum(
-  _lengthCm: number,
-  _widthCm: number,
-  _heightCm: number
-): number {
-  throw new Error('Not implemented: calculateVolumeWithMinimum')
-}
-
-/**
- * Cargo types for WB logistics tariffs
- */
-type CargoType = 'MGT' | 'SGT' | 'KGT'
-
-/**
- * Determine cargo type based on max dimension
- * MGT: max <= 60cm
- * SGT: max <= 120cm
- * KGT: max > 120cm
- */
-function determineCargoType(
-  _lengthCm: number,
-  _widthCm: number,
-  _heightCm: number
-): CargoType {
-  throw new Error('Not implemented: determineCargoType')
-}
-
-/**
- * Check if forward logistics can be auto-filled
- * Requirements: warehouse_name + (volume_liters OR dimensions)
- * Returns false for KGT cargo (requires manual input)
- */
-function canAutoFillForwardLogistics(_params: {
-  warehouseName?: string
-  volumeLiters?: number
-  dimensions?: { lengthCm: number; widthCm: number; heightCm: number }
-}): { canAutoFill: boolean; reason?: string; cargoType?: CargoType } {
-  throw new Error('Not implemented: canAutoFillForwardLogistics')
-}
-
-/**
- * Calculate effective reverse logistics cost
- * Formula: effective = reverse × (1 - buyback_pct/100)
- * NOTE: Reverse logistics is NEVER auto-filled
- */
-function calculateEffectiveReverseLogistics(
-  _reverseLogisticsRub: number,
-  _buybackPct: number
-): number {
-  throw new Error('Not implemented: calculateEffectiveReverseLogistics')
-}
+import {
+  determineCargoType,
+  canAutoFillForwardLogistics,
+  calculateEffectiveReverseLogistics,
+} from '@/lib/logistics-utils'
 
 // ============================================================================
 // TEST SUITE 1: Storage 60 Days Free
@@ -323,7 +234,8 @@ describe('Forward Logistics: Auto-fill with Cargo Type Validation', () => {
       })
 
       expect(result.canAutoFill).toBe(false)
-      expect(result.reason).toContain('warehouse')
+      // Russian: "Укажите склад для автозаполнения логистики"
+      expect(result.reason).toContain('склад')
     })
 
     it('returns false when dimensions are missing', () => {
@@ -333,7 +245,8 @@ describe('Forward Logistics: Auto-fill with Cargo Type Validation', () => {
       })
 
       expect(result.canAutoFill).toBe(false)
-      expect(result.reason).toContain('dimensions')
+      // Russian: "Укажите объём или размеры товара для автозаполнения логистики"
+      expect(result.reason).toContain('объём')
     })
 
     it('returns true when volume is provided instead of dimensions', () => {
@@ -351,7 +264,8 @@ describe('Forward Logistics: Auto-fill with Cargo Type Validation', () => {
       })
 
       expect(result.canAutoFill).toBe(false)
-      expect(result.reason).toContain('volume')
+      // Russian: "Укажите объём или размеры товара для автозаполнения логистики"
+      expect(result.reason).toContain('объём')
     })
 
     it('returns false when empty warehouse string', () => {

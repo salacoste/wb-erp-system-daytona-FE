@@ -6,7 +6,14 @@ export default defineConfig({
   plugins: [react()] as any,
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    environmentOptions: {
+      jsdom: {
+        // Enable localStorage for MSW v2
+        storageQuota: 10000000,
+      },
+    },
+    // Polyfill localStorage before MSW loads
+    setupFiles: ['./src/test/localStorage-polyfill.ts', './src/test/setup.ts'],
     testTimeout: 10000, // 10 seconds timeout for all tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
     exclude: [

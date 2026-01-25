@@ -5,6 +5,8 @@
  * - Testing Library jest-dom matchers
  * - MSW server for API mocking
  * - Browser API mocks (ResizeObserver, etc.)
+ *
+ * Note: localStorage is mocked in globalSetup.ts to support MSW v2
  */
 
 import '@testing-library/jest-dom';

@@ -167,23 +167,33 @@ describe('AC2: Coefficient Value Display', () => {
     })
   })
 
-  describe('status badge - unavailable (gray)', () => {
-    it('shows "Недоступно" badge for coefficient 0', () => {
+  describe('status badge - FREE slot (coefficient=0)', () => {
+    it('shows "Базовый" badge for coefficient 0 (FREE slot)', () => {
+      // coefficient = 0 means FREE acceptance, treated as base
       renderComponent({ coefficient: 0 })
-      const badge = screen.getByText('Недоступно')
+      const badge = screen.getByText('Базовый')
       expect(badge).toBeInTheDocument()
     })
 
-    it('applies gray styling to unavailable badge', () => {
+    it('applies green styling to FREE slot (coefficient=0)', () => {
       renderComponent({ coefficient: 0 })
-      const badge = screen.getByText('Недоступно')
-      expect(badge).toHaveClass('bg-gray-100')
-      expect(badge).toHaveClass('text-gray-400')
+      const badge = screen.getByText('Базовый')
+      expect(badge).toHaveClass('bg-green-100')
+      expect(badge).toHaveClass('text-green-700')
     })
+  })
 
+  describe('status badge - unavailable (gray)', () => {
     it('shows unavailable status for negative coefficient', () => {
       renderComponent({ coefficient: -1 })
       expect(screen.getByText('Недоступно')).toBeInTheDocument()
+    })
+
+    it('applies gray styling to unavailable badge', () => {
+      renderComponent({ coefficient: -1 })
+      const badge = screen.getByText('Недоступно')
+      expect(badge).toHaveClass('bg-gray-100')
+      expect(badge).toHaveClass('text-gray-400')
     })
   })
 
@@ -319,10 +329,11 @@ describe('Layout and Styling', () => {
 // =============================================================================
 
 describe('Edge Cases', () => {
-  it('handles coefficient of exactly 0', () => {
+  it('handles coefficient of exactly 0 (FREE slot)', () => {
+    // coefficient = 0 means FREE acceptance, treated as base
     renderComponent({ coefficient: 0 })
     expect(screen.getByText('0.00')).toBeInTheDocument()
-    expect(screen.getByText('Недоступно')).toBeInTheDocument()
+    expect(screen.getByText('Базовый')).toBeInTheDocument()
   })
 
   it('handles very high coefficient (10.0)', () => {

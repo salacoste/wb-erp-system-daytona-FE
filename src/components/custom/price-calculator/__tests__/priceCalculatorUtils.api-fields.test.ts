@@ -506,6 +506,7 @@ describe('API Request Snapshot', () => {
       localization_index: 1.5,
       turnover_days: 45, // Should NOT be in API request
       units_per_package: 10, // Story 44.38: Should NOT be in API request
+      acceptance_cost: 5.5, // Story 44.XX: Should NOT be in API request
     }
 
     const request = toApiRequest(formData)

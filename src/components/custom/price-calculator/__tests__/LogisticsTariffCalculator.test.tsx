@@ -417,7 +417,8 @@ describe('Auto-Calculate Toggle', () => {
     await user.click(toggle)
 
     // Should call onChange with calculated value
-    expect(onChange).toHaveBeenCalledWith(58) // 3L with default tariffs
+    // 3L with default tariffs: (46 + 2 × 14) × 1.0 = 74
+    expect(onChange).toHaveBeenCalledWith(74)
   })
 })
 
@@ -463,7 +464,8 @@ describe('Manual Override', () => {
     const restoreButton = screen.getByRole('button', { name: /Восстановить/i })
     await user.click(restoreButton)
 
-    expect(onChange).toHaveBeenCalledWith(58)
+    // 3L with default tariffs: (46 + 2 × 14) × 1.0 = 74
+    expect(onChange).toHaveBeenCalledWith(74)
   })
 })
 

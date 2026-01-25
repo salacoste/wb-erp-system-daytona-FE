@@ -446,15 +446,16 @@ describe('LogisticsCoefficientsSection', () => {
   // ===========================================
 
   describe('Edge Cases', () => {
-    it('handles coefficient of 0 (unavailable)', () => {
+    it('handles coefficient of 0 (FREE slot)', () => {
+      // coefficient = 0 means FREE acceptance, treated as base
       render(<LogisticsCoefficientsSection {...defaultProps} coefficient={0} />)
 
       // Expand section
       fireEvent.click(screen.getByRole('button'))
 
-      const badge = screen.getByText('Недоступно')
+      const badge = screen.getByText('Базовый')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('bg-gray-100')
+      expect(badge).toHaveClass('bg-green-100')
     })
 
     it('handles loading state', () => {

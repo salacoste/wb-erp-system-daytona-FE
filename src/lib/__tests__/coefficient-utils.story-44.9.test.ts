@@ -155,9 +155,15 @@ describe('denormalizeCoefficient', () => {
 
 describe('getCoefficientStatus', () => {
   describe('status badge rules from Story 44.9', () => {
-    it('returns "unavailable" for coefficient <= 0', () => {
-      expect(getCoefficientStatus(0)).toBe('unavailable')
+    it('returns "unavailable" for coefficient < 0', () => {
+      // coefficient = 0 is FREE (base), only negative is unavailable
       expect(getCoefficientStatus(-1)).toBe('unavailable')
+      expect(getCoefficientStatus(-0.5)).toBe('unavailable')
+    })
+
+    it('returns "base" for coefficient = 0 (FREE slot)', () => {
+      // coefficient = 0 means FREE acceptance, not unavailable
+      expect(getCoefficientStatus(0)).toBe('base')
     })
 
     it('returns "base" for coefficient 1.00 (green)', () => {
@@ -239,11 +245,19 @@ describe('getCoefficientStatusConfig', () => {
     expect(config.color).toBe('red')
   })
 
-  it('returns correct config for unavailable status', () => {
-    const config = getCoefficientStatusConfig(0)
+  it('returns correct config for unavailable status (negative coefficient)', () => {
+    const config = getCoefficientStatusConfig(-1)
     expect(config.status).toBe('unavailable')
     expect(config.label).toBe('Недоступно')
     expect(config.color).toBe('gray')
+  })
+
+  it('returns base config for FREE slot (coefficient=0)', () => {
+    // coefficient = 0 is FREE, not unavailable
+    const config = getCoefficientStatusConfig(0)
+    expect(config.status).toBe('base')
+    expect(config.label).toBe('Базовый')
+    expect(config.color).toBe('green')
   })
 
   it('includes styling classes in config', () => {
@@ -488,12 +502,13 @@ describe('normalizeCoefficients', () => {
     expect(normalized[0].date).toBe('2026-01-20')
   })
 
-  it('handles unavailable (0) coefficients', () => {
+  it('handles FREE (0) coefficients as base status', () => {
+    // coefficient = 0 means FREE acceptance slot, not unavailable
     const raw: RawCoefficient[] = [{ date: '2026-01-20', coefficient: 0 }]
     const normalized = normalizeCoefficients(raw)
 
     expect(normalized[0].coefficient).toBe(0)
-    expect(normalized[0].status).toBe('unavailable')
+    expect(normalized[0].status).toBe('base') // FREE = base (green)
   })
 
   it('sets isAvailable based on coefficient value by default', () => {
@@ -532,8 +547,8 @@ describe('normalizeCoefficients', () => {
     expect(normalized).toHaveLength(8)
     expect(normalized[0].coefficient).toBe(1.0)
     expect(normalized[1].coefficient).toBe(1.25)
-    expect(normalized[7].coefficient).toBe(0) // Unavailable
-    expect(normalized[7].status).toBe('unavailable')
+    expect(normalized[7].coefficient).toBe(0) // FREE slot
+    expect(normalized[7].status).toBe('base') // 0 = FREE = base
   })
 })
 
@@ -679,7 +694,8 @@ describe('integration: coefficient workflow', () => {
     const apiResponse: RawCoefficient[] = [
       { date: '2026-01-20', coefficient: 100 },
       { date: '2026-01-21', coefficient: 125 },
-      { date: '2026-01-22', coefficient: 0 }, // Unavailable
+      { date: '2026-01-22', coefficient: 0 }, // FREE slot
+      { date: '2026-01-23', coefficient: -100 }, // Unavailable
     ]
 
     // Normalize
@@ -694,9 +710,13 @@ describe('integration: coefficient workflow', () => {
     expect(normalized[1].coefficient).toBe(1.25)
     expect(normalized[1].status).toBe('elevated')
 
-    // Check unavailable
+    // Check FREE slot (coefficient = 0)
     expect(normalized[2].coefficient).toBe(0)
-    expect(normalized[2].status).toBe('unavailable')
+    expect(normalized[2].status).toBe('base') // FREE = base
+
+    // Check unavailable (coefficient < 0)
+    expect(normalized[3].coefficient).toBe(-1)
+    expect(normalized[3].status).toBe('unavailable')
   })
 
   it('calculates cost impact for logistics scenario from Story 44.9', () => {
