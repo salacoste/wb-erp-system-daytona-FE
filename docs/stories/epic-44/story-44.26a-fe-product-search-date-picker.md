@@ -10,13 +10,31 @@
 - Story 44.12 ✅ (Warehouse Selection)
 - Story 44.13 ✅ (Auto-fill Coefficients)
 
+**Related Stories**:
+- **Story 44.40-FE** (Two Tariff Systems Integration) - MUST READ FIRST
+
+---
+
+## CRITICAL: Two Tariff Systems
+
+> **⚠️ IMPORTANT**: Before implementing this story, review **Story 44.40-FE** and the
+> **Two Tariff Systems Guide** (`docs/request-backend/108-two-tariff-systems-guide.md`).
+
+When a **FUTURE delivery date** is selected, ALL tariffs must come from the **SUPPLY system**,
+not the static INVENTORY system. See Story 44.40-FE for complete implementation requirements.
+
+| Delivery Date | Tariff System | API Endpoint |
+|---------------|---------------|--------------|
+| TODAY or NULL | INVENTORY | `/v1/tariffs/warehouses-with-tariffs` |
+| TOMORROW+ | **SUPPLY** | `/v1/tariffs/acceptance/coefficients/all` |
+
 ---
 
 ## User Story
 
 **As a** Seller,
 **I want** to search and select a product from my catalog, and choose a delivery date with coefficient visualization,
-**So that** I can prepare for automated logistics calculation with proper warehouse timing.
+**So that** I can prepare for automated logistics calculation with accurate tariffs for my selected delivery timing.
 
 ---
 
@@ -65,10 +83,26 @@
 - [ ] Integrate with acceptance coefficients API (Story 44.13)
 - [ ] Update coefficient display on date change
 - [ ] Format date in Russian locale: "21 января 2026"
+- [ ] **NEW (Story 44.40)**: When date selected, store FULL TARIFF DATA from SUPPLY system
+- [ ] **NEW (Story 44.40)**: Update `tariffSystem` to 'supply' when future date selected
+- [ ] **NEW (Story 44.40)**: Show tariff system indicator: "📅 Тарифы на дату" vs "📊 Текущие"
+
+### AC3a: SUPPLY System Tariff Integration (CRITICAL - Story 44.40)
+- [ ] When delivery date is TOMORROW or later: Fetch from SUPPLY system (`/acceptance/coefficients/all`)
+- [ ] Extract FULL tariff data for selected date:
+  - `delivery.baseLiterRub` - base logistics cost
+  - `delivery.additionalLiterRub` - per-liter logistics cost
+  - `delivery.coefficient` - logistics coefficient
+  - `storage.baseLiterRub` - base storage cost
+  - `storage.additionalLiterRub` - per-liter storage cost
+  - `storage.coefficient` - storage coefficient
+- [ ] Store tariff data in `DeliveryDateState.supplyTariffs`
+- [ ] Pass tariff data to parent form for use in calculations
+- [ ] Show tariff system badge next to date picker
 
 ### AC4: Coefficient Calendar Enhancement
 - [ ] Update existing CoefficientCalendar to support click-to-select
-- [ ] Add `onDateSelect(date: string, coefficient: number)` callback
+- [ ] Add `onDateSelect(date: string, coefficient: number, tariffs: SupplyDateTariffs)` callback
 - [ ] Highlight currently selected date with distinct styling
 - [ ] Maintain existing color coding:
   - Green: coefficient ≤ 100 (×1.0) - базовый
@@ -76,7 +110,13 @@
   - Orange: 150 < coefficient ≤ 200 (×1.5-2.0) - высокий
   - Red: coefficient > 200 (×2.0+) - пиковый
   - Gray: coefficient = -1 - недоступно
-- [ ] Show tooltip on hover with date and exact coefficient
+- [ ] **NEW (Story 44.40)**: Show FULL tariff preview on hover (not just coefficient):
+  ```
+  21 января 2026
+  Коэффициент: ×1.25
+  Логистика: 46 + 14×(V-1) ₽
+  Хранение: 0.07 + 0.05×V ₽/день
+  ```
 - [ ] Prevent selection of unavailable dates (gray)
 
 ### AC5: Form Integration
@@ -131,21 +171,59 @@ export interface ProductForSelection {
 
 // src/types/price-calculator.ts - Add delivery date types
 
-/** Delivery date selection state */
-export interface DeliveryDateState {
-  date: string | null // ISO date
-  coefficient: number
-  formattedDate: string
-  status: 'base' | 'elevated' | 'high' | 'peak' | 'unavailable'
+/** Tariff system type */
+export type TariffSystem = 'inventory' | 'supply'
+
+/** Supply system tariff data for a specific date (from /acceptance/coefficients/all) */
+export interface SupplyDateTariffs {
+  date: string
+  warehouseId: number
+  warehouseName: string
+  coefficient: number        // -1 = unavailable, 0 = free, ≥1 = multiplier
+  isAvailable: boolean
+  allowUnload: boolean
+  boxTypeId: number
+  delivery: {
+    coefficient: number
+    baseLiterRub: number     // CRITICAL: Use this for future date calculations
+    additionalLiterRub: number  // CRITICAL: Use this for future date calculations
+  }
+  storage: {
+    coefficient: number
+    baseLiterRub: number
+    additionalLiterRub: number
+  }
 }
 
-/** Coefficient calendar day (enhanced) */
+/**
+ * Enhanced Delivery date selection state with FULL TARIFF DATA
+ *
+ * CRITICAL: When date is in the future (tomorrow+), tariffs MUST come from
+ * the SUPPLY system, not INVENTORY. See Story 44.40-FE.
+ */
+export interface DeliveryDateState {
+  date: string | null               // ISO date
+  coefficient: number               // Acceptance coefficient (legacy, for display)
+  formattedDate: string             // Russian locale formatted
+  status: 'base' | 'elevated' | 'high' | 'peak' | 'unavailable'
+  tariffSystem: TariffSystem        // NEW: Which system tariffs come from
+  supplyTariffs: SupplyDateTariffs | null  // NEW: Full tariff data from SUPPLY system
+}
+
+/** Coefficient calendar day (enhanced with tariff preview) */
 export interface CoefficientDay {
   date: string
   coefficient: number
   isAvailable: boolean
   isSelected: boolean
   status: 'base' | 'elevated' | 'high' | 'peak' | 'unavailable'
+  // NEW: Full tariff data for tooltip/preview
+  tariffs?: {
+    deliveryBaseLiterRub: number
+    deliveryAdditionalLiterRub: number
+    storageBaseLiterRub: number
+    storageAdditionalLiterRub: number
+  }
 }
 ```
 
@@ -187,6 +265,37 @@ interface FormData {
   // Delivery date (NEW in 44.26a)
   delivery_date: string | null
   delivery_coefficient: number
+
+  // NEW (Story 44.40): Tariff system selection based on delivery date
+  tariff_system: TariffSystem  // 'inventory' | 'supply'
+
+  // NEW (Story 44.40): Full tariff data from SUPPLY system when future date selected
+  supply_tariffs: SupplyDateTariffs | null
+}
+```
+
+### SUPPLY System Hook (NEW - Story 44.40)
+
+```typescript
+// src/hooks/useSupplyTariffsByDate.ts
+
+/**
+ * Fetch SUPPLY system tariffs for a specific warehouse and date
+ * CRITICAL: Use this when delivery date is tomorrow or later
+ */
+export function useSupplyTariffsByDate(warehouseId: number | null, date: string | null) {
+  return useQuery({
+    queryKey: ['supply-tariffs', warehouseId, date],
+    queryFn: async () => {
+      // Fetch all coefficients and filter for specific warehouse+date
+      const response = await getAcceptanceCoefficientsAll()
+      return response.coefficients.find(
+        c => c.warehouseId === warehouseId && c.date === date
+      ) ?? null
+    },
+    enabled: !!warehouseId && !!date && isDateInSupplyWindow(date),
+    staleTime: 60 * 60 * 1000, // 1 hour cache
+  })
 }
 ```
 
@@ -277,7 +386,7 @@ src/
     └── price-calculator.ts                      # UPDATE +15 lines
 ```
 
-### Data Flow
+### Data Flow (Updated for Two Tariff Systems - Story 44.40)
 
 ```
 ┌─────────────────┐
@@ -291,18 +400,39 @@ src/
                             │
 ┌─────────────────┐         │
 │ WarehouseSelect │────────┼────▶ warehouseId
+│ (INVENTORY API) │         │     + INVENTORY tariffs (for TODAY)
 └─────────────────┘         │
         │                   │
         ▼ (triggers)        │
-┌─────────────────┐         │
-│ DatePicker +    │────────┼────▶ deliveryDate, coefficient
-│ Calendar        │         │
-└─────────────────┘         │
-                            ▼
-                   ┌─────────────────┐
-                   │ Logistics Calc  │
-                   │ (uses coeff)    │
-                   └─────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│ DatePicker + Calendar (SUPPLY API for FUTURE dates)                  │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐│
+│  │ IF date = TODAY or NULL:                                         ││
+│  │   └── Use INVENTORY tariffs (from WarehouseSelect)               ││
+│  │       └── tariffSystem = 'inventory'                             ││
+│  │                                                                  ││
+│  │ IF date = TOMORROW+ (within 14 days):                            ││
+│  │   └── Fetch SUPPLY tariffs: /acceptance/coefficients/all         ││
+│  │   └── Extract: delivery.baseLiterRub, delivery.additionalLiterRub││
+│  │   └── Extract: storage.baseLiterRub, storage.additionalLiterRub  ││
+│  │   └── tariffSystem = 'supply'                                    ││
+│  └─────────────────────────────────────────────────────────────────┘│
+│                                                                      │
+│  OUTPUT: deliveryDate, coefficient, tariffSystem, supplyTariffs      │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               │
+                               ▼
+                      ┌─────────────────────────────────────┐
+                      │ Logistics Calculation               │
+                      │                                     │
+                      │ IF tariffSystem = 'inventory':      │
+                      │   Use warehouse.tariffs.fbo.*       │
+                      │                                     │
+                      │ IF tariffSystem = 'supply':         │
+                      │   Use supplyTariffs.delivery.*      │
+                      │   Use supplyTariffs.storage.*       │
+                      └─────────────────────────────────────┘
 ```
 
 ---
@@ -320,6 +450,11 @@ src/
 | Product has no photo | Show placeholder icon |
 | Very long product name | Truncate with ellipsis |
 | Date in past | Should not appear in calendar |
+| **NEW: Date = TODAY** | Use INVENTORY tariffs (tariffSystem='inventory') |
+| **NEW: Date = TOMORROW+** | Fetch SUPPLY tariffs (tariffSystem='supply') |
+| **NEW: Date > 14 days** | Show warning, use INVENTORY tariffs (no SUPPLY data) |
+| **NEW: SUPPLY API rate limit** | Show cooldown, use cached data |
+| **NEW: SUPPLY tariffs unavailable** | Show "Нет данных", block calculation |
 
 ---
 
@@ -386,6 +521,15 @@ src/
 
 ---
 
+## Related Documentation
+
+- **Story 44.40-FE**: Two Tariff Systems Integration (MUST READ)
+- **Two Tariff Systems Guide**: `docs/request-backend/108-two-tariff-systems-guide.md`
+- **Backend API**: SUPPLY system `/v1/tariffs/acceptance/coefficients/all`
+
+---
+
 **Created**: 2026-01-21
-**Last Updated**: 2026-01-21
+**Last Updated**: 2026-01-26
 **Author**: PM (Story Split from 44.26-FE)
+**Updated**: PM (Added Two Tariff Systems requirements per Story 44.40)
