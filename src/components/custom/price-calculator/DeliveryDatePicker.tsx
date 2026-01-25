@@ -43,6 +43,8 @@ interface DeliveryDatePickerProps {
   label?: string
   /** Show hint icon */
   showHint?: boolean
+  /** Show fallback mode when API has no data (simple date picker with default coefficient) */
+  showFallback?: boolean
 }
 
 /**
@@ -65,6 +67,7 @@ export function DeliveryDatePicker({
   error = null,
   label = 'Дата сдачи товара',
   showHint = true,
+  showFallback: _showFallback = false,
 }: DeliveryDatePickerProps) {
   // Use first available box type as default, or 'boxes' if none
   const defaultBoxType = byBoxType.length > 0 ? byBoxType[0].boxType : 'boxes'
@@ -85,6 +88,9 @@ export function DeliveryDatePicker({
     }
     return coefficients
   }, [byBoxType, selectedBoxType, coefficients])
+
+  // Check if API returned no data (this is an error condition)
+  const hasNoApiData = coefficients.length === 0 && byBoxType.length === 0
 
   // Get current coefficient for selected date
   const selectedCoefficient = useMemo(() => {
@@ -123,8 +129,14 @@ export function DeliveryDatePicker({
     return <DeliveryDatePickerError message={error} label={label} />
   }
 
-  if (!hasAvailableDates && !hasMultipleBoxTypes) {
-    return <DeliveryDatePickerNoAvailable label={label} />
+  // Story 44.XX: Show error when API returns no data (should always return coefficients)
+  if (hasNoApiData) {
+    return (
+      <DeliveryDatePickerError
+        message="API не вернул данные о коэффициентах приёмки для этого склада"
+        label={label}
+      />
+    )
   }
 
   const config = selectedCoefficient ? getCoefficientStatusConfig(selectedCoefficient.coefficient) : null
@@ -189,6 +201,7 @@ export function DeliveryDatePicker({
                 Нет доступных дат для типа «{byBoxType.find((b) => b.boxType === selectedBoxType)?.label}»
               </div>
             )}
+
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -242,17 +255,6 @@ function DeliveryDatePickerError({ message, label }: { message: string; label: s
       <Label>{label}</Label>
       <div className="px-3 py-2 rounded-md border border-destructive/50 bg-destructive/10 text-destructive text-sm">
         {message}
-      </div>
-    </div>
-  )
-}
-
-function DeliveryDatePickerNoAvailable({ label }: { label: string }) {
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div className="px-3 py-2 rounded-md border border-yellow-500/50 bg-yellow-50 text-yellow-700 text-sm">
-        Нет доступных дат для выбранного склада. Попробуйте выбрать другой склад.
       </div>
     </div>
   )

@@ -14,6 +14,8 @@ export interface FixedCostsBreakdownProps {
   fulfillmentType: FulfillmentType
   /** Recommended price for percentage calculation */
   recommendedPrice: number
+  /** Number of units per package (for acceptance cost breakdown) */
+  unitsPerPackage?: number
 }
 
 /**
@@ -38,6 +40,7 @@ export function FixedCostsBreakdown({
   costs,
   fulfillmentType,
   recommendedPrice,
+  unitsPerPackage,
 }: FixedCostsBreakdownProps) {
   const isFbo = fulfillmentType === 'FBO'
 
@@ -101,12 +104,20 @@ export function FixedCostsBreakdown({
 
         {/* FBO-only: Acceptance */}
         {isFbo && (
-          <div className="flex justify-between">
-            <span>└─ Приёмка</span>
-            <span className="flex gap-4">
-              <span className="w-16 text-right">{formatCurrency(costs.acceptance)}</span>
-              <span className="w-12 text-right text-xs">{acceptancePct.toFixed(1)}%</span>
-            </span>
+          <div className="flex flex-col">
+            <div className="flex justify-between">
+              <span>└─ Приёмка</span>
+              <span className="flex gap-4">
+                <span className="w-16 text-right">{formatCurrency(costs.acceptance)}</span>
+                <span className="w-12 text-right text-xs">{acceptancePct.toFixed(1)}%</span>
+              </span>
+            </div>
+            {/* Show per-unit breakdown when multiple units per package */}
+            {unitsPerPackage && unitsPerPackage > 1 && costs.acceptance > 0 && (
+              <div className="text-xs text-muted-foreground pl-4 mt-0.5">
+                ({unitsPerPackage} шт × {formatCurrency(costs.acceptance / unitsPerPackage)}/шт)
+              </div>
+            )}
           </div>
         )}
       </div>

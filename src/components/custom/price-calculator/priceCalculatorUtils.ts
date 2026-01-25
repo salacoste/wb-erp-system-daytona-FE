@@ -45,6 +45,7 @@ export function isFormEmpty(data: FormData): boolean {
 
 /**
  * Convert form data to TwoLevelPricingFormData for two-level pricing calculation
+ * Story 44.XX: Added acceptance_cost for FBO acceptance fees
  */
 export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
   return {
@@ -54,6 +55,8 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
     logistics_reverse_rub: data.logistics_reverse_rub,
     buyback_pct: data.buyback_pct,
     storage_rub: data.fulfillment_type === 'FBS' ? 0 : data.storage_rub,
+    // Story 44.XX: Pass acceptance cost for FBO (0 for FBS)
+    acceptance_cost: data.fulfillment_type === 'FBO' ? data.acceptance_cost : 0,
     acquiring_pct: data.acquiring_pct,
     drr_pct: data.drr_pct,
     target_margin_pct: data.target_margin_pct,

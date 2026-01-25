@@ -3,8 +3,10 @@
 import { Package } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import { FieldTooltip } from './FieldTooltip'
 import { numericFieldOptions } from '@/lib/form-utils'
+import { formatCurrency } from '@/lib/utils'
 import type { UseFormRegister, FieldErrors, FieldValues, Path } from 'react-hook-form'
 import type { FulfillmentType } from '@/types/price-calculator'
 
@@ -21,6 +23,12 @@ export interface FixedCostsSectionProps<T extends FieldValues> {
   disabled?: boolean
   /** Current fulfillment type - affects storage field visibility */
   fulfillmentType: FulfillmentType
+  /** Auto-filled logistics forward value (controlled) */
+  logisticsForwardValue?: number
+  /** Whether logistics forward was auto-filled */
+  isLogisticsAutoFilled?: boolean
+  /** Callback when logistics forward is manually changed */
+  onLogisticsForwardChange?: (value: number) => void
 }
 
 /**
@@ -35,12 +43,18 @@ export function FixedCostsSection<T extends FieldValues>({
   errors,
   disabled = false,
   fulfillmentType,
+  logisticsForwardValue,
+  isLogisticsAutoFilled = false,
+  onLogisticsForwardChange,
 }: FixedCostsSectionProps<T>) {
   // Cast field names to Path<T> for type safety with generic forms
   const cogsField = 'cogs_rub' as Path<T>
   const logisticsForwardField = 'logistics_forward_rub' as Path<T>
   const logisticsReverseField = 'logistics_reverse_rub' as Path<T>
   const storageField = 'storage_rub' as Path<T>
+
+  // Use controlled value if provided (auto-fill mode)
+  const isControlled = logisticsForwardValue !== undefined && logisticsForwardValue > 0
 
   return (
     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400">
@@ -83,20 +97,46 @@ export function FixedCostsSection<T extends FieldValues>({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Label htmlFor="logistics_forward_rub">Логистика к клиенту</Label>
+            {isLogisticsAutoFilled && (
+              <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
+                Автозаполнено
+              </Badge>
+            )}
             <FieldTooltip content="Стоимость доставки товара от склада WB до покупателя. Зависит от объема товара и коэффициента выбранного склада." />
           </div>
-          <Input
-            id="logistics_forward_rub"
-            type="number"
-            step="0.01"
-            min={0}
-            placeholder="0,00"
-            disabled={disabled}
-            {...register(logisticsForwardField, numericFieldOptions({
-              required: 'Обязательное поле',
-              min: { value: 0, message: 'Не может быть отрицательным' },
-            }))}
-          />
+          {isControlled ? (
+            <>
+              <Input
+                id="logistics_forward_rub"
+                type="number"
+                step="0.01"
+                min={0}
+                placeholder="0,00"
+                disabled={disabled}
+                value={logisticsForwardValue}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value) || 0
+                  onLogisticsForwardChange?.(value)
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Рассчитано: {formatCurrency(logisticsForwardValue ?? 0)}
+              </p>
+            </>
+          ) : (
+            <Input
+              id="logistics_forward_rub"
+              type="number"
+              step="0.01"
+              min={0}
+              placeholder="0,00"
+              disabled={disabled}
+              {...register(logisticsForwardField, numericFieldOptions({
+                required: 'Обязательное поле',
+                min: { value: 0, message: 'Не может быть отрицательным' },
+              }))}
+            />
+          )}
           {/* Story 44.30: Added role="alert" for screen reader announcement */}
           {errors.logistics_forward_rub && (
             <p className="text-sm text-destructive" role="alert">

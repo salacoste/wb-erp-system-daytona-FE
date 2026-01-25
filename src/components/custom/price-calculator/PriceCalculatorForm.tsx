@@ -23,9 +23,10 @@ import { TurnoverDaysInput } from './TurnoverDaysInput'
 // Story 44.38: Units Per Package
 import { UnitsPerPackageInput } from './UnitsPerPackageInput'
 import { isFormEmpty, toTwoLevelFormData, toApiRequest } from './priceCalculatorUtils'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useProductAutoFill } from '@/hooks/useProductAutoFill'
 import { useWarehouseFormState } from './useWarehouseFormState'
+import { useTariffSettings } from '@/hooks/useTariffSettings'
 import type { PriceCalculatorRequest, TwoLevelPricingFormData, TaxType } from '@/types/price-calculator'
 import type { CategoryCommission } from '@/types/tariffs'
 import type { ProductWithDimensions } from '@/types/product'
@@ -66,6 +67,29 @@ export function PriceCalculatorForm({
   const { handleSubmit, reset, setValue, register, formState: { isValid, errors }, control } =
     useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
 
+  // Story 44.XX: Load global tariff settings for acceptance rates
+  // Fallback to defaults if API fails (500 error handling)
+  const { data: tariffSettings, error: tariffSettingsError } = useTariffSettings()
+
+  // Log tariff settings error but continue with defaults
+  useEffect(() => {
+    if (tariffSettingsError) {
+      console.warn('[PriceCalculator] Tariff settings API error, using defaults:', tariffSettingsError)
+    }
+  }, [tariffSettingsError])
+
+  // Story 44.XX: Create acceptance tariff object for useWarehouseFormState
+  // Use defaults if tariff settings fail to load
+  const DEFAULT_ACCEPTANCE_BOX_RATE = 1.7
+  const DEFAULT_ACCEPTANCE_PALLET_RATE = 500
+
+  const acceptanceTariff = useMemo(() => {
+    return {
+      boxRatePerLiter: tariffSettings?.acceptanceBoxRatePerLiter ?? DEFAULT_ACCEPTANCE_BOX_RATE,
+      palletRate: tariffSettings?.acceptancePalletRate ?? DEFAULT_ACCEPTANCE_PALLET_RATE,
+    }
+  }, [tariffSettings])
+
   // Auto-fill hook for dimensions and category (Story 44.26b)
   const {
     dimensionAutoFill, categoryAutoFill, handleProductSelect,
@@ -90,10 +114,21 @@ export function PriceCalculatorForm({
   const unitsPerPackage = useWatch({ control, name: 'units_per_package' })
 
   // Story 44.27: Warehouse form state hook
+  // Story 44.XX: Added logistics auto-fill and acceptance cost calculation
   const {
-    warehouseId, dailyStorageCost,
-    handleWarehouseChange, handleStorageRubChange, handleDeliveryDateChange,
-  } = useWarehouseFormState({ setValue, lengthCm, widthCm, heightCm })
+    warehouseId, dailyStorageCost, logisticsForwardRub, isLogisticsAutoFilled,
+    acceptanceCost,
+    handleWarehouseChange, handleStorageRubChange, handleLogisticsForwardChange,
+    handleDeliveryDateChange,
+  } = useWarehouseFormState({
+    setValue,
+    lengthCm,
+    widthCm,
+    heightCm,
+    boxType: boxType ?? 'box',
+    unitsPerPackage: unitsPerPackage ?? 1,
+    acceptanceTariff,
+  })
 
   useEffect(() => {
     return () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current) }
@@ -103,6 +138,13 @@ export function PriceCalculatorForm({
   useEffect(() => {
     setValue('units_per_package', 1, { shouldValidate: true })
   }, [boxType, fulfillmentType, setValue])
+
+  // Story 44.XX: Auto-fill acceptance cost when calculated
+  useEffect(() => {
+    if (acceptanceCost.perUnitCost > 0) {
+      setValue('acceptance_cost', acceptanceCost.perUnitCost)
+    }
+  }, [acceptanceCost.perUnitCost, setValue])
 
   // Story 44.19: Propagate SPP changes to parent for results display
   const handleSppChange = useCallback((value: number) => {
@@ -268,6 +310,9 @@ export function PriceCalculatorForm({
               errors={errors}
               disabled={disabled}
               fulfillmentType={fulfillmentType}
+              logisticsForwardValue={logisticsForwardRub}
+              isLogisticsAutoFilled={isLogisticsAutoFilled}
+              onLogisticsForwardChange={handleLogisticsForwardChange}
             />
             {/* Percentage costs: buyback, DRR, SPP */}
             <PercentageCostsFormSection

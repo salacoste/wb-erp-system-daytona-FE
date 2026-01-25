@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider'
 import { FieldTooltip } from './FieldTooltip'
 import { formatCurrency } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { calculateBillableDays } from '@/lib/storage-cost-utils'
 
 /**
  * Props for TurnoverDaysInput component
@@ -61,8 +62,11 @@ export function TurnoverDaysInput({
     }
   }
 
-  // Calculate total storage cost and emit to parent
-  const calculatedStorageRub = value * dailyStorageCost
+  // Calculate billable days (first 60 days are FREE per WB policy)
+  const billableDays = calculateBillableDays(value)
+  // Calculate total storage cost for billable days only
+  const calculatedStorageRub = billableDays * dailyStorageCost
+  const isFreePeriod = billableDays === 0
 
   useEffect(() => {
     onStorageRubChange?.(calculatedStorageRub)
@@ -118,20 +122,32 @@ export function TurnoverDaysInput({
         <div
           className={cn(
             'p-3 bg-muted/50 rounded-lg',
-            value > 90 && 'bg-yellow-50 border border-yellow-200',
+            isFreePeriod && 'bg-green-50 border border-green-200',
+            !isFreePeriod && value > 90 && 'bg-yellow-50 border border-yellow-200',
           )}
         >
-          <p className="text-sm">
-            Хранение за период:{' '}
-            <strong className={cn(value > 90 && 'text-yellow-700')}>
-              {formatCurrency(calculatedStorageRub)}
-            </strong>
-            <span className="text-muted-foreground">
-              {' '}
-              ({formatCurrency(dailyStorageCost)}/день × {value} дней)
-            </span>
-          </p>
-          {value > 90 && (
+          {isFreePeriod ? (
+            <p className="text-sm text-green-700">
+              <strong>Бесплатно</strong> — первые 60 дней хранения на WB бесплатны
+            </p>
+          ) : (
+            <>
+              <p className="text-sm">
+                Хранение за период:{' '}
+                <strong className={cn(value > 90 && 'text-yellow-700')}>
+                  {formatCurrency(calculatedStorageRub)}
+                </strong>
+                <span className="text-muted-foreground">
+                  {' '}
+                  ({formatCurrency(dailyStorageCost)}/день × {billableDays} платных дней)
+                </span>
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Первые 60 дней бесплатно, оплата с {61}-го дня
+              </p>
+            </>
+          )}
+          {!isFreePeriod && value > 90 && (
             <p className="text-xs text-yellow-700 mt-1">
               Длительное хранение снизит маржинальность
             </p>

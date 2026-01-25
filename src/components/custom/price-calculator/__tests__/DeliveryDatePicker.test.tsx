@@ -96,7 +96,7 @@ describe('DeliveryDatePicker', () => {
       expect(screen.getByText(/×1.25/i)).toBeInTheDocument()
     })
 
-    it('shows warning when no coefficients array provided', () => {
+    it('shows API error when no coefficients provided', () => {
       render(
         <DeliveryDatePicker
           {...defaultProps}
@@ -105,8 +105,8 @@ describe('DeliveryDatePicker', () => {
         />
       )
 
-      // Empty coefficients array = no available dates
-      expect(screen.getByText(/нет доступных дат/i)).toBeInTheDocument()
+      // Empty coefficients = API error (API should always return data)
+      expect(screen.getByText(/API не вернул данные/i)).toBeInTheDocument()
     })
   })
 
@@ -146,8 +146,8 @@ describe('DeliveryDatePicker', () => {
     })
   })
 
-  describe('no available dates', () => {
-    it('shows warning when all dates are unavailable', () => {
+  describe('no available dates from API', () => {
+    it('shows warning when all dates are unavailable', async () => {
       render(
         <DeliveryDatePicker
           {...defaultProps}
@@ -155,12 +155,17 @@ describe('DeliveryDatePicker', () => {
         />
       )
 
-      expect(
-        screen.getByText(/нет доступных дат для выбранного склада/i)
-      ).toBeInTheDocument()
+      // Expand calendar to see warning
+      const trigger = screen.getByRole('button', { name: /выбрать дату/i })
+      await userEvent.click(trigger)
+
+      await waitFor(() => {
+        // Shows "no available dates" message (not API error, just no slots)
+        expect(screen.getByText(/нет доступных дат/i)).toBeInTheDocument()
+      })
     })
 
-    it('suggests changing warehouse when no dates available', () => {
+    it('does not show calendar grid when all dates unavailable', async () => {
       render(
         <DeliveryDatePicker
           {...defaultProps}
@@ -168,7 +173,14 @@ describe('DeliveryDatePicker', () => {
         />
       )
 
-      expect(screen.getByText(/попробуйте выбрать другой склад/i)).toBeInTheDocument()
+      // Expand calendar
+      const trigger = screen.getByRole('button', { name: /выбрать дату/i })
+      await userEvent.click(trigger)
+
+      // Calendar grid should NOT be visible (no available dates)
+      await waitFor(() => {
+        expect(screen.queryByRole('grid')).not.toBeInTheDocument()
+      })
     })
   })
 
@@ -337,11 +349,11 @@ describe('DeliveryDatePicker', () => {
   // ==========================================================================
 
   describe('edge cases', () => {
-    it('handles empty coefficients array', () => {
+    it('handles empty coefficients array with API error', () => {
       render(<DeliveryDatePicker {...defaultProps} coefficients={[]} />)
 
-      // Empty = no available dates message
-      expect(screen.getByText(/нет доступных дат/i)).toBeInTheDocument()
+      // Story 44.XX: Empty coefficients = API error (should always return data)
+      expect(screen.getByText(/API не вернул данные/i)).toBeInTheDocument()
     })
 
     it('selects first available date as default when selectedDate is null', () => {

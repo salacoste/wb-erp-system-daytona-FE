@@ -58,6 +58,8 @@ export interface FormData {
   turnover_days: number
   /** Story 44.38: Units per package for acceptance cost division (default: 1) */
   units_per_package: number
+  /** Story 44.XX: Calculated acceptance cost per unit (auto-filled from tariffs) */
+  acceptance_cost: number
 }
 
 /**
@@ -110,4 +112,6 @@ export const defaultFormValues: FormData = {
   turnover_days: 20,
   /** Story 44.38: Units per package default (single unit) */
   units_per_package: 1,
+  /** Story 44.XX: Acceptance cost default (0 until calculated) */
+  acceptance_cost: 0,
 }
