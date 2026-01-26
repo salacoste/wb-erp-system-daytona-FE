@@ -185,3 +185,35 @@ export function calculateWithDefaultTariffs(volumeLiters: number): LogisticsTari
   const result = calculateLogisticsTariff(volumeLiters, DEFAULT_BOX_TARIFFS)
   return { ...result, source: 'default' }
 }
+
+/**
+ * Default return logistics tariffs
+ * Base rate: 50 RUB for first liter
+ * Additional: 25 RUB per each additional liter
+ */
+export const DEFAULT_RETURN_TARIFFS = {
+  baseLiterRub: 50,
+  additionalLiterRub: 25,
+}
+
+/**
+ * Calculate return logistics cost
+ * Formula: baseLiterRub + (volume - 1) × additionalLiterRub
+ *
+ * @param volumeLiters - Product volume in liters
+ * @param tariffs - Return logistics tariffs (default: 50 + 25 per liter)
+ * @returns Calculated return logistics cost in RUB
+ */
+export function calculateReturnLogistics(
+  volumeLiters: number,
+  tariffs = DEFAULT_RETURN_TARIFFS
+): number {
+  if (volumeLiters <= 0) return 0
+
+  // Minimum 1 liter
+  const effectiveVolume = Math.max(1, volumeLiters)
+  const additionalLiters = Math.max(0, effectiveVolume - 1)
+
+  const total = tariffs.baseLiterRub + additionalLiters * tariffs.additionalLiterRub
+  return Math.round(total * 100) / 100
+}

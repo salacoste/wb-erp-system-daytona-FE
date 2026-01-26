@@ -103,6 +103,38 @@ describe('calculateTwoLevelPricing', () => {
       expect(result.percentageCosts.acquiring.rub).toBeCloseTo(price * 0.015, 1)
       expect(result.percentageCosts.taxIncome?.rub).toBeCloseTo(price * 0.06, 1)
     })
+
+    it('should store commission percentage in percentageCosts.commissionWb.pct', () => {
+      // Test with 15% commission
+      const result15 = calculateTwoLevelPricing(standardFormData, 15)
+      expect(result15.percentageCosts.commissionWb.pct).toBe(15)
+
+      // Test with 29.5% commission (typical FBO for some categories)
+      const result29 = calculateTwoLevelPricing(standardFormData, 29.5)
+      expect(result29.percentageCosts.commissionWb.pct).toBe(29.5)
+
+      // Test with 33% commission (typical FBS for some categories)
+      const result33 = calculateTwoLevelPricing(standardFormData, 33)
+      expect(result33.percentageCosts.commissionWb.pct).toBe(33)
+    })
+
+    it('should use different commission values for different categories', () => {
+      // Simulate FBO commission 29.5%
+      const fboResult = calculateTwoLevelPricing(standardFormData, 29.5)
+      expect(fboResult.percentageCosts.commissionWb.pct).toBe(29.5)
+      expect(fboResult.percentageCosts.commissionWb.rub).toBeCloseTo(
+        fboResult.recommendedPrice * 0.295,
+        1
+      )
+
+      // Simulate FBS commission 33%
+      const fbsResult = calculateTwoLevelPricing(standardFormData, 33)
+      expect(fbsResult.percentageCosts.commissionWb.pct).toBe(33)
+      expect(fbsResult.percentageCosts.commissionWb.rub).toBeCloseTo(
+        fbsResult.recommendedPrice * 0.33,
+        1
+      )
+    })
   })
 
   describe('Customer Price Calculation', () => {

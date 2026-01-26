@@ -3,7 +3,7 @@ import type { UseFormSetValue } from 'react-hook-form'
 import type { Warehouse } from '@/types/warehouse'
 import type { FormData } from './usePriceCalculatorForm'
 import { calculateDailyStorageCost } from '@/lib/storage-cost-utils'
-import { calculateLogisticsTariff, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
+import { calculateLogisticsTariff, calculateReturnLogistics, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
 import {
   calculateAcceptanceCost,
   DEFAULT_ACCEPTANCE_TARIFF,
@@ -51,8 +51,12 @@ export interface UseWarehouseFormStateReturn {
   volumeLiters: number
   /** Calculated logistics forward cost (auto-fill) */
   logisticsForwardRub: number
-  /** Whether logistics was auto-filled (vs manually set) */
+  /** Whether logistics forward was auto-filled (vs manually set) */
   isLogisticsAutoFilled: boolean
+  /** Calculated logistics reverse cost (auto-fill) */
+  logisticsReverseRub: number
+  /** Whether logistics reverse was auto-filled (vs manually set) */
+  isLogisticsReverseAutoFilled: boolean
   /** Current acceptance coefficient from delivery date selection */
   acceptanceCoefficient: number
   /** Calculated acceptance cost with formula for display */
@@ -62,6 +66,8 @@ export interface UseWarehouseFormStateReturn {
   handleStorageRubChange: (value: number) => void
   /** Handler for manual logistics forward override */
   handleLogisticsForwardChange: (value: number) => void
+  /** Handler for manual logistics reverse override */
+  handleLogisticsReverseChange: (value: number) => void
   /** Handler for delivery date change with optional supply tariffs */
   handleDeliveryDateChange: (date: string | null, coefficient: number, supplyData?: SupplyDateTariffs) => void
   // Story 44.27: Method to get warehouse object for API request
@@ -88,6 +94,7 @@ export function useWarehouseFormState({
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
   const [storageRub, setStorageRub] = useState(0)
   const [isLogisticsManuallySet, setIsLogisticsManuallySet] = useState(false)
+  const [isLogisticsReverseManuallySet, setIsLogisticsReverseManuallySet] = useState(false)
   const [acceptanceCoefficient, setAcceptanceCoefficient] = useState(1.0)
   // Story 44.40: Two Tariff Systems state
   const [tariffSystem, setTariffSystem] = useState<TariffSystem>('inventory')
@@ -136,6 +143,12 @@ export function useWarehouseFormState({
     return calculateLogisticsTariff(volumeLiters, tariff).totalCost
   }, [effectiveTariffs, volumeLiters])
 
+  // Calculate return logistics cost from volume
+  // Formula: 50 RUB base + 25 RUB per additional liter
+  const logisticsReverseRub = useMemo(() => {
+    return calculateReturnLogistics(volumeLiters)
+  }, [volumeLiters])
+
   // Story 44.XX: Calculate acceptance cost from tariff, dimensions, and coefficient
   const acceptanceCost = useMemo(() => {
     const tariff = acceptanceTariff ?? DEFAULT_ACCEPTANCE_TARIFF
@@ -149,6 +162,13 @@ export function useWarehouseFormState({
       setValue('logistics_forward_rub', logisticsForwardRub)
     }
   }, [logisticsForwardRub, isLogisticsManuallySet, setValue])
+
+  // Auto-fill logistics_reverse_rub when calculated value changes
+  useEffect(() => {
+    if (!isLogisticsReverseManuallySet && logisticsReverseRub > 0) {
+      setValue('logistics_reverse_rub', logisticsReverseRub)
+    }
+  }, [logisticsReverseRub, isLogisticsReverseManuallySet, setValue])
 
   const handleWarehouseChange = useCallback(
     (id: number | null, warehouse: Warehouse | null) => {
@@ -179,6 +199,15 @@ export function useWarehouseFormState({
     [setValue],
   )
 
+  // Handler for manual logistics reverse override
+  const handleLogisticsReverseChange = useCallback(
+    (value: number) => {
+      setIsLogisticsReverseManuallySet(true)
+      setValue('logistics_reverse_rub', value)
+    },
+    [setValue],
+  )
+
   const handleDeliveryDateChange = useCallback(
     (date: string | null, coefficient: number, supplyData?: SupplyDateTariffs) => {
       setValue('delivery_date', date)
@@ -188,6 +217,11 @@ export function useWarehouseFormState({
 
       // Story 44.40: Determine tariff system based on date
       const newSystem = determineTariffSystem(date)
+      console.info('[useWarehouseFormState] handleDeliveryDateChange:', {
+        date,
+        newSystem,
+        hasSupplyData: !!supplyData,
+      })
       setTariffSystem(newSystem)
 
       // Store supply tariffs if provided and using supply system
@@ -216,11 +250,14 @@ export function useWarehouseFormState({
     volumeLiters,
     logisticsForwardRub,
     isLogisticsAutoFilled: !isLogisticsManuallySet && logisticsForwardRub > 0,
+    logisticsReverseRub,
+    isLogisticsReverseAutoFilled: !isLogisticsReverseManuallySet && logisticsReverseRub > 0,
     acceptanceCoefficient,
     acceptanceCost,
     handleWarehouseChange,
     handleStorageRubChange,
     handleLogisticsForwardChange,
+    handleLogisticsReverseChange,
     handleDeliveryDateChange,
     getWarehouseForApi,
     // Story 44.40: Two Tariff Systems

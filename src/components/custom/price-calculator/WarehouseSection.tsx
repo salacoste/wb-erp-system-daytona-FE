@@ -49,6 +49,14 @@ export function WarehouseSection({
 }: WarehouseSectionProps) {
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
 
+  // Debug: Log tariffSystem prop
+  console.info('[WarehouseSection] Render:', {
+    tariffSystem,
+    warehouseId,
+    hasEffectiveTariffs: !!effectiveTariffs,
+    showCoefficientFields: warehouseId && tariffSystem !== 'supply',
+  })
+
   const {
     isLoading,
     logisticsCoeff,
@@ -174,8 +182,9 @@ export function WarehouseSection({
         />
       )}
 
-      {/* Coefficients */}
-      {warehouseId && (
+      {/* Coefficients - Hidden for SUPPLY system (rates already include coefficient) */}
+      {/* Story 44.40-FE: UX fix - hide coefficient inputs when SUPPLY tariffs are active */}
+      {warehouseId && tariffSystem !== 'supply' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
           <CoefficientField
             label="Коэффициент логистики"
@@ -199,6 +208,22 @@ export function WarehouseSection({
             disabled={disabled}
             tooltip="Коэффициент увеличения стоимости хранения"
           />
+        </div>
+      )}
+
+      {/* SUPPLY system info note - explains why coefficient fields are hidden */}
+      {warehouseId && tariffSystem === 'supply' && effectiveTariffs && (
+        <div className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-md p-3">
+          <p className="font-medium text-blue-700 mb-1">Тарифы SUPPLY</p>
+          <p>
+            Тарифы на дату поставки уже включают коэффициент склада
+            {effectiveTariffs.displayLogisticsCoefficient !== 1.0 && (
+              <span className="font-semibold text-blue-600">
+                {' '}×{effectiveTariffs.displayLogisticsCoefficient.toFixed(2)}
+              </span>
+            )}
+            . Дополнительная настройка коэффициентов не требуется.
+          </p>
         </div>
       )}
 
