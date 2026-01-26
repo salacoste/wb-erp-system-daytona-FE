@@ -1,7 +1,9 @@
 'use client'
 
+import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
+import { FieldTooltip } from './FieldTooltip'
 import { Controller, type FieldValues, type Control, type Path } from 'react-hook-form'
 
 /**
@@ -11,6 +13,14 @@ import { Controller, type FieldValues, type Control, type Path } from 'react-hoo
  * Story 44.30-FE: UX Polish - Buyback slider should not show margin zones
  * Unlike MarginSlider, this component has no colored zones or labels
  *
+ * UX Update: Now includes label and tooltip for consistent layout with DrrSlider/SppInput
+ * Target structure:
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │ [Label]                     [FieldTooltip]                  │
+ * ├─────────────────────────────────────────────────────────────┤
+ * │ [═══════ Slider ═══════]              [Input][%]            │
+ * └─────────────────────────────────────────────────────────────┘
+ *
  * @example
  * <BuybackSlider
  *   name="buyback_pct"
@@ -19,6 +29,8 @@ import { Controller, type FieldValues, type Control, type Path } from 'react-hoo
  *   max={100}
  *   step={0.5}
  *   unit="%"
+ *   label="Процент выкупа"
+ *   tooltipContent="Доля заказов, которые фактически выкупаются покупателями."
  * />
  */
 export interface BuybackSliderProps<T extends FieldValues = FieldValues> {
@@ -36,6 +48,12 @@ export interface BuybackSliderProps<T extends FieldValues = FieldValues> {
   unit: string
   /** Error message to display */
   error?: string
+  /** Disable the input */
+  disabled?: boolean
+  /** Label text */
+  label?: string
+  /** Tooltip content */
+  tooltipContent?: string
 }
 
 export function BuybackSlider<T extends FieldValues = FieldValues>({
@@ -46,51 +64,80 @@ export function BuybackSlider<T extends FieldValues = FieldValues>({
   step,
   unit,
   error,
+  disabled = false,
+  label = 'Процент выкупа',
+  tooltipContent = 'Доля заказов, которые фактически выкупаются покупателями.',
 }: BuybackSliderProps<T>) {
   return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => {
-        const value = Number(field.value) || 0
+    <div className="space-y-3" data-testid="buyback-slider-section">
+      {/* Label row */}
+      <div className="flex items-center gap-2">
+        <Label htmlFor={String(name)} className="flex-1">
+          {label}
+        </Label>
+        <FieldTooltip content={tooltipContent} />
+      </div>
 
-        return (
-          <div className="space-y-3">
-            {/* Simple slider without zone overlay */}
-            <Slider
-              min={min}
-              max={max}
-              step={step}
-              value={[value]}
-              onValueChange={(values) => field.onChange(values[0])}
-              className="w-full"
-            />
+      {/* Slider + Input row (horizontal) */}
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => {
+          const value = Number(field.value) || 0
 
-            {/* Value input */}
-            <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                step={step}
-                min={min}
-                max={max}
-                value={value}
-                onChange={(e) => {
-                  const num = parseFloat(e.target.value)
-                  field.onChange(isNaN(num) ? 0 : num)
-                }}
-                className="w-20 text-right"
-              />
-              <span className="text-sm text-muted-foreground">{unit}</span>
+          const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const val = parseFloat(e.target.value)
+            if (!isNaN(val) && val >= min && val <= max) {
+              field.onChange(val)
+            } else if (e.target.value === '') {
+              field.onChange(min)
+            }
+          }
+
+          return (
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <Slider
+                  id={String(name)}
+                  value={[value]}
+                  onValueChange={([val]) => field.onChange(val)}
+                  min={min}
+                  max={max}
+                  step={step}
+                  disabled={disabled}
+                  className="w-full"
+                  aria-label={label}
+                  aria-valuenow={value}
+                  aria-valuemin={min}
+                  aria-valuemax={max}
+                  data-testid="buyback-slider"
+                />
+              </div>
+              <div className="flex items-center gap-1 w-20">
+                <Input
+                  type="number"
+                  value={value}
+                  onChange={handleInputChange}
+                  min={min}
+                  max={max}
+                  step={step}
+                  disabled={disabled}
+                  className="w-16 text-center"
+                  aria-label={`${label} в процентах`}
+                  data-testid="buyback-input"
+                />
+                <span className="text-sm text-muted-foreground">{unit}</span>
+              </div>
             </div>
+          )
+        }}
+      />
 
-            {error && (
-              <p className="text-sm text-destructive" role="alert">
-                {error}
-              </p>
-            )}
-          </div>
-        )
-      }}
-    />
+      {error && (
+        <p className="text-sm text-destructive" role="alert" data-testid="buyback-error">
+          {error}
+        </p>
+      )}
+    </div>
   )
 }
