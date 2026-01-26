@@ -65,7 +65,8 @@ export function TurnoverDaysInput({
   // Calculate billable days (first 60 days are FREE per WB policy)
   const billableDays = calculateBillableDays(value)
   // Calculate total storage cost for billable days only
-  const calculatedStorageRub = billableDays * dailyStorageCost
+  // Round to 2 decimal places to avoid floating point precision issues
+  const calculatedStorageRub = Math.round(billableDays * dailyStorageCost * 100) / 100
   const isFreePeriod = billableDays === 0
 
   useEffect(() => {

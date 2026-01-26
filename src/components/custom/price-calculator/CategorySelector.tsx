@@ -88,6 +88,19 @@ export function CategorySelector({
   const formatCategoryName = (category: CategoryCommission) => `${category.parentName} → ${category.subjectName}`
 
   const handleSelect = (category: CategoryCommission) => {
+    // Debug: Log actual FBO vs FBS commission values
+    console.info('[CategorySelector] Selected category:', {
+      parentID: category.parentID,
+      parentName: category.parentName,
+      subjectID: category.subjectID,
+      subjectName: category.subjectName,
+      FBO_paidStorageKgvp: category.paidStorageKgvp,
+      FBS_kgvpMarketplace: category.kgvpMarketplace,
+      DBS_kgvpSupplier: category.kgvpSupplier,
+      EDBS_kgvpSupplierExpress: category.kgvpSupplierExpress,
+      currentFulfillmentType: fulfillmentType,
+      displayedCommission: fulfillmentType === 'FBO' ? category.paidStorageKgvp : category.kgvpMarketplace,
+    })
     onChange(category); setOpen(false); setSearchInput(''); setDebouncedSearch('')
   }
   const handleClear = () => { onChange(null); setSearchInput(''); setDebouncedSearch('') }

@@ -1,29 +1,46 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+/**
+ * DeliveryDatePicker Component
+ * Story 44.26a-FE: Delivery Date Selection
+ * Story 44.40-FE: Two Tariff Systems Integration
+ * Epic 44: Price Calculator UI (Frontend)
+ *
+ * Date picker for selecting delivery date with coefficient calendar.
+ * When a date is selected, passes full supply tariff data for that date
+ * to support the two tariff systems (INVENTORY vs SUPPLY).
+ */
+
+import { useMemo, useState, useCallback } from 'react'
 import { Calendar, Package, Layers, Shield, HelpCircle } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { CoefficientCalendar } from './CoefficientCalendar'
+import { AcceptanceStatusBadge } from './AcceptanceStatusBadge'
 import {
   formatDateLongRu,
-  formatCoefficient,
-  getCoefficientStatusConfig,
   getTomorrowDate,
   getFirstAvailableDate,
   getCoefficientStatus,
   type NormalizedCoefficient,
 } from '@/lib/coefficient-utils'
 import { cn } from '@/lib/utils'
-import type { BoxTypeCoefficients, BoxType } from '@/hooks/useAcceptanceCoefficients'
+import type { BoxTypeCoefficients, BoxType, DailyCoefficient } from '@/hooks/useAcceptanceCoefficients'
+import type { SupplyDateTariffs } from '@/lib/tariff-system-utils'
 
 /** Box type icons mapping */
 const BOX_TYPE_ICONS: Record<BoxType, React.ElementType> = {
   boxes: Package,
   pallets: Layers,
   supersafe: Shield,
+}
+
+/** Extended daily coefficient with full tariff data for SUPPLY system */
+export interface ExtendedDailyCoefficient extends DailyCoefficient {
+  /** Full supply tariff data for this date (Story 44.40) */
+  supplyTariffs?: SupplyDateTariffs
 }
 
 interface DeliveryDatePickerProps {
@@ -33,8 +50,16 @@ interface DeliveryDatePickerProps {
   byBoxType?: BoxTypeCoefficients[]
   /** Currently selected date (ISO format) */
   selectedDate: string | null
-  /** Callback when date is selected */
+  /** Callback when date is selected - Story 44.40: includes supply tariffs */
   onDateSelect: (date: string, coefficient: number) => void
+  /** Story 44.40: Extended callback with full supply tariff data */
+  onDateSelectWithTariffs?: (
+    date: string,
+    coefficient: number,
+    supplyTariffs: SupplyDateTariffs | null
+  ) => void
+  /** Story 44.40: Full supply tariff data indexed by date */
+  supplyTariffsMap?: Map<string, SupplyDateTariffs>
   /** Whether the coefficients are loading */
   isLoading?: boolean
   /** Error message if coefficients failed to load */
@@ -63,6 +88,8 @@ export function DeliveryDatePicker({
   byBoxType = [],
   selectedDate,
   onDateSelect,
+  onDateSelectWithTariffs,
+  supplyTariffsMap,
   isLoading = false,
   error = null,
   label = 'Дата сдачи товара',
@@ -121,6 +148,21 @@ export function DeliveryDatePicker({
   // Check if we have multiple box types to show tabs
   const hasMultipleBoxTypes = byBoxType.length > 1
 
+  // Story 44.40: Wrap date selection to include supply tariffs
+  const handleDateSelect = useCallback(
+    (date: string, coefficient: number) => {
+      // Call the basic handler
+      onDateSelect(date, coefficient)
+
+      // Also call the extended handler with supply tariffs if provided
+      if (onDateSelectWithTariffs) {
+        const supplyTariffs = supplyTariffsMap?.get(date) ?? null
+        onDateSelectWithTariffs(date, coefficient, supplyTariffs)
+      }
+    },
+    [onDateSelect, onDateSelectWithTariffs, supplyTariffsMap]
+  )
+
   if (isLoading) {
     return <DeliveryDatePickerSkeleton label={label} />
   }
@@ -138,8 +180,6 @@ export function DeliveryDatePicker({
       />
     )
   }
-
-  const config = selectedCoefficient ? getCoefficientStatusConfig(selectedCoefficient.coefficient) : null
 
   return (
     <div className="space-y-2">
@@ -166,12 +206,14 @@ export function DeliveryDatePicker({
               </span>
             </div>
 
-            {selectedCoefficient && config && (
-              <div className={cn('flex items-center gap-1 text-sm', config.textColor)}>
-                <span>Коэфф. приёмки:</span>
-                <span className={cn('font-medium px-1.5 py-0.5 rounded', config.bgColor)}>
-                  ×{formatCoefficient(selectedCoefficient.coefficient)}
-                </span>
+            {selectedCoefficient && (
+              <div className="flex items-center gap-1 text-sm">
+                <span className="text-muted-foreground">Коэфф. приёмки:</span>
+                <AcceptanceStatusBadge
+                  coefficient={selectedCoefficient.coefficient}
+                  size="sm"
+                  showTooltip={false}
+                />
               </div>
             )}
           </button>
@@ -188,12 +230,12 @@ export function DeliveryDatePicker({
               />
             )}
 
-            {/* Calendar */}
+            {/* Calendar - Story 44.40: Uses handleDateSelect to include supply tariffs */}
             {hasAvailableDates ? (
               <CoefficientCalendar
                 coefficients={activeCoefficients}
                 selectedDate={effectiveDate}
-                onDateSelect={onDateSelect}
+                onDateSelect={handleDateSelect}
                 maxDays={15}
               />
             ) : (

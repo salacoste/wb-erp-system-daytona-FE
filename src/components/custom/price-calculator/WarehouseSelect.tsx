@@ -3,16 +3,15 @@
 /**
  * WarehouseSelect Component
  * Story 44.12-FE: Warehouse Selection Dropdown
- * Story 44.34-FE: Debounce Warehouse Selection & Rate Limit Handling
+ * Story 44.40-FE: Two Tariff Systems Integration
  * Epic 44: Price Calculator UI (Frontend)
  *
- * Searchable dropdown for selecting WB warehouses
- * Features: Search by name/ID, popular warehouses section, debouncing, rate limit handling
+ * Searchable dropdown for selecting WB warehouses from SUPPLY system
  */
 
 import { useState, useMemo } from 'react'
-import { Check, ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info, Truck, Package } from 'lucide-react'
-import { cn, formatCurrency } from '@/lib/utils'
+import { Check, ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -26,22 +25,19 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useWarehouses } from '@/hooks/useWarehouses'
+import { useSupplyTariffs, type SupplyWarehouse } from '@/hooks/useSupplyTariffs'
 import { filterWarehouses, separateWarehouses } from '@/lib/warehouse-utils'
+import { WarehouseTariffsByBoxType } from './WarehouseTariffsByBoxType'
 import type { Warehouse } from '@/types/warehouse'
 
 export interface WarehouseSelectProps {
-  /** Selected warehouse ID */
   value: number | null
-  /** Callback when warehouse selection changes */
   onChange: (warehouseId: number | null, warehouse: Warehouse | null) => void
-  /** Disable the dropdown */
   disabled?: boolean
-  /** Error message to display */
   error?: string
-  /** Enable debouncing for coefficient fetching (default: true) */
-  enableDebounce?: boolean
-  /** Debounce delay in milliseconds (default: 500ms) */
-  debounceMs?: number
+  deliveryDate?: string | null
+  /** Use SUPPLY warehouses instead of INVENTORY (default: false) */
+  useSupplySource?: boolean
 }
 
 export function WarehouseSelect({
@@ -49,30 +45,48 @@ export function WarehouseSelect({
   onChange,
   disabled,
   error,
+  deliveryDate,
+  useSupplySource = false,
 }: WarehouseSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
-  const { data: warehouses, isLoading, isError, refetch } = useWarehouses()
 
-  // Story 44.34: Debouncing and rate limit state removed - now handled by useWarehouseCoefficients
-  // via /all endpoint which doesn't require per-warehouse calls
-  const isDebouncing = false
-  const isRateLimited = false
-  const cooldownRemaining = 0
+  // Fetch from both sources
+  const inventoryQuery = useWarehouses()
+  const supplyQuery = useSupplyTariffs()
 
-  // Find selected warehouse
+  // Convert SupplyWarehouse[] to Warehouse[] with tariffs from SUPPLY coefficients
+  const supplyWarehouses = useMemo((): Warehouse[] => {
+    return supplyQuery.warehouses.map((sw: SupplyWarehouse) => ({
+      id: sw.id,
+      name: sw.name,
+      tariffs: {
+        deliveryBaseLiterRub: sw.tariffs.deliveryBaseLiterRub,
+        deliveryPerLiterRub: sw.tariffs.deliveryPerLiterRub,
+        storageBaseLiterRub: sw.tariffs.storageBaseLiterRub,
+        storagePerLiterRub: sw.tariffs.storagePerLiterRub,
+        logisticsCoefficient: sw.tariffs.logisticsCoefficient,
+        storageCoefficient: sw.tariffs.storageCoefficient,
+      },
+    }))
+  }, [supplyQuery.warehouses])
+
+  // Use SUPPLY or INVENTORY based on prop
+  const warehouses = useSupplySource ? supplyWarehouses : inventoryQuery.data
+  const isLoading = useSupplySource ? supplyQuery.isLoading : inventoryQuery.isLoading
+  const isError = useSupplySource ? !!supplyQuery.error : inventoryQuery.isError
+  const refetch = useSupplySource ? () => {} : inventoryQuery.refetch
+
   const selectedWarehouse = useMemo(
     () => warehouses?.find((w) => w.id === value) ?? null,
     [warehouses, value],
   )
 
-  // Filter warehouses by search query
   const filteredWarehouses = useMemo(
     () => filterWarehouses(warehouses ?? [], search),
     [warehouses, search],
   )
 
-  // Separate popular and other warehouses
   const { popular, other } = useMemo(
     () => separateWarehouses(filteredWarehouses),
     [filteredWarehouses],
@@ -91,25 +105,18 @@ export function WarehouseSelect({
     setSearch('')
   }
 
-  // Combined disabled state (AC4: Rate Limit Cooldown UI)
-  const isDisabled = disabled || isLoading || isRateLimited
-
   return (
     <div className="space-y-3">
-      {/* Header with label and info tooltip (AC6: User Guidance for Rate Limits) */}
+      {/* Header with label and tooltip */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">Склад WB</span>
-
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Info className="h-4 w-4 text-muted-foreground cursor-help" />
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
-              <p className="text-xs">
-                Коэффициенты обновляются автоматически. Не переключайте склады слишком часто
-                (лимит Wildberries API: 6 запросов/мин).
-              </p>
+              <p className="text-xs">Выберите склад для расчета тарифов логистики и хранения.</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -122,13 +129,8 @@ export function WarehouseSelect({
             role="combobox"
             aria-expanded={open}
             aria-label="Выберите склад"
-            className={cn(
-              'w-full justify-between',
-              !value && 'text-muted-foreground',
-              error && 'border-destructive',
-              isRateLimited && 'bg-muted',
-            )}
-            disabled={isDisabled}
+            className={cn('w-full justify-between', !value && 'text-muted-foreground', error && 'border-destructive')}
+            disabled={disabled || isLoading}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
@@ -149,32 +151,16 @@ export function WarehouseSelect({
 
         <PopoverContent className="w-[400px] p-0" align="start">
           <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Поиск склада..."
-              value={search}
-              onValueChange={setSearch}
-            />
+            <CommandInput placeholder="Поиск склада..." value={search} onValueChange={setSearch} />
             <CommandList>
               <CommandEmpty>Склад не найден</CommandEmpty>
 
-              {/* Popular warehouses */}
               {popular.length > 0 && (
                 <CommandGroup heading="Популярные">
                   {popular.map((warehouse) => (
-                    <CommandItem
-                      key={warehouse.id}
-                      value={warehouse.id.toString()}
-                      onSelect={() => handleSelect(warehouse.id)}
-                    >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          value === warehouse.id ? 'opacity-100' : 'opacity-0',
-                        )}
-                      />
-                      <span className="text-muted-foreground text-xs mr-2">
-                        [{warehouse.id}]
-                      </span>
+                    <CommandItem key={warehouse.id} value={warehouse.id.toString()} onSelect={() => handleSelect(warehouse.id)}>
+                      <Check className={cn('mr-2 h-4 w-4', value === warehouse.id ? 'opacity-100' : 'opacity-0')} />
+                      <span className="text-muted-foreground text-xs mr-2">[{warehouse.id}]</span>
                       {warehouse.name}
                     </CommandItem>
                   ))}
@@ -183,31 +169,18 @@ export function WarehouseSelect({
 
               {popular.length > 0 && other.length > 0 && <CommandSeparator />}
 
-              {/* All other warehouses */}
               {other.length > 0 && (
                 <CommandGroup heading={`Все склады (${other.length})`}>
                   {other.map((warehouse) => (
-                    <CommandItem
-                      key={warehouse.id}
-                      value={warehouse.id.toString()}
-                      onSelect={() => handleSelect(warehouse.id)}
-                    >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          value === warehouse.id ? 'opacity-100' : 'opacity-0',
-                        )}
-                      />
-                      <span className="text-muted-foreground text-xs mr-2">
-                        [{warehouse.id}]
-                      </span>
+                    <CommandItem key={warehouse.id} value={warehouse.id.toString()} onSelect={() => handleSelect(warehouse.id)}>
+                      <Check className={cn('mr-2 h-4 w-4', value === warehouse.id ? 'opacity-100' : 'opacity-0')} />
+                      <span className="text-muted-foreground text-xs mr-2">[{warehouse.id}]</span>
                       {warehouse.name}
                     </CommandItem>
                   ))}
                 </CommandGroup>
               )}
 
-              {/* Clear selection */}
               {value && (
                 <>
                   <CommandSeparator />
@@ -221,67 +194,26 @@ export function WarehouseSelect({
         </PopoverContent>
       </Popover>
 
-      {/* Error state */}
       {isError && (
         <div className="flex items-center gap-2 text-sm text-destructive">
           <span>Не удалось загрузить склады</span>
-          <Button
-            variant="link"
-            size="sm"
-            onClick={() => refetch()}
-            className="h-auto p-0"
-          >
+          <Button variant="link" size="sm" onClick={() => refetch()} className="h-auto p-0">
             Повторить
           </Button>
         </div>
       )}
 
-      {/* Form validation error */}
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      {/* Debouncing indicator (AC2: Loading State During Debounce) */}
-      {isDebouncing && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Загрузка коэффициентов...</span>
-        </div>
-      )}
-
-      {/* Rate limited indicator (AC4: Rate Limit Cooldown UI) */}
-      {isRateLimited && (
-        <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-2 rounded">
-          <Info className="h-4 w-4" />
-          <span>
-            Лимит запросов превышен. Доступно через {cooldownRemaining} сек.
-          </span>
-        </div>
-      )}
-
-      {/* Count display */}
       {warehouses && !isLoading && !selectedWarehouse && (
-        <p className="text-xs text-muted-foreground">
-          Найдено: {warehouses.length} складов
-        </p>
+        <p className="text-xs text-muted-foreground">Найдено: {warehouses.length} складов</p>
       )}
 
-      {/* Selected warehouse tariffs display */}
       {selectedWarehouse && (
-        <div className="p-3 bg-muted/50 rounded-lg space-y-2 text-xs">
-          <div className="flex items-center gap-2 text-muted-foreground font-medium">
-            <Truck className="h-3.5 w-3.5" />
-            <span>Логистика:</span>
-            <span className="text-foreground">
-              {formatCurrency(selectedWarehouse.tariffs.deliveryBaseLiterRub)} (1л) + {formatCurrency(selectedWarehouse.tariffs.deliveryPerLiterRub)}/л
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground font-medium">
-            <Package className="h-3.5 w-3.5" />
-            <span>Хранение:</span>
-            <span className="text-foreground">
-              {selectedWarehouse.tariffs.storageBaseLiterRub.toFixed(2)} ₽/день (1л) + {selectedWarehouse.tariffs.storagePerLiterRub.toFixed(2)} ₽/л/день
-            </span>
-          </div>
-        </div>
+        <WarehouseTariffsByBoxType
+          tariffsByBoxType={supplyQuery.getTariffsByBoxType(selectedWarehouse.id)}
+          deliveryDate={deliveryDate}
+        />
       )}
     </div>
   )

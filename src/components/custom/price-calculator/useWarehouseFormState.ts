@@ -2,14 +2,21 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
 import type { Warehouse } from '@/types/warehouse'
 import type { FormData } from './usePriceCalculatorForm'
-import { calculateDailyStorageCost, DEFAULT_STORAGE_TARIFF } from '@/lib/storage-cost-utils'
-import { calculateLogisticsTariff, DEFAULT_BOX_TARIFFS, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
+import { calculateDailyStorageCost } from '@/lib/storage-cost-utils'
+import { calculateLogisticsTariff, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
 import {
   calculateAcceptanceCost,
   DEFAULT_ACCEPTANCE_TARIFF,
   type AcceptanceTariff,
   type AcceptanceCostResult,
 } from '@/lib/acceptance-cost-utils'
+import {
+  determineTariffSystem,
+  extractTariffs,
+  type TariffSystem,
+  type SupplyDateTariffs,
+  type ExtractedTariffs,
+} from '@/lib/tariff-system-utils'
 
 /**
  * Hook for managing warehouse-related form state
@@ -55,9 +62,17 @@ export interface UseWarehouseFormStateReturn {
   handleStorageRubChange: (value: number) => void
   /** Handler for manual logistics forward override */
   handleLogisticsForwardChange: (value: number) => void
-  handleDeliveryDateChange: (date: string | null, coefficient: number) => void
+  /** Handler for delivery date change with optional supply tariffs */
+  handleDeliveryDateChange: (date: string | null, coefficient: number, supplyData?: SupplyDateTariffs) => void
   // Story 44.27: Method to get warehouse object for API request
   getWarehouseForApi: (warehouses: Warehouse[]) => Warehouse | null
+  // Story 44.40: Two Tariff Systems Integration
+  /** Active tariff system ('inventory' for today/no date, 'supply' for future) */
+  tariffSystem: TariffSystem
+  /** SUPPLY tariffs for selected date (null if using INVENTORY) */
+  supplyTariffs: SupplyDateTariffs | null
+  /** Effective tariffs extracted from the active system */
+  effectiveTariffs: ExtractedTariffs
 }
 
 export function useWarehouseFormState({
@@ -74,6 +89,9 @@ export function useWarehouseFormState({
   const [storageRub, setStorageRub] = useState(0)
   const [isLogisticsManuallySet, setIsLogisticsManuallySet] = useState(false)
   const [acceptanceCoefficient, setAcceptanceCoefficient] = useState(1.0)
+  // Story 44.40: Two Tariff Systems state
+  const [tariffSystem, setTariffSystem] = useState<TariffSystem>('inventory')
+  const [supplyTariffs, setSupplyTariffs] = useState<SupplyDateTariffs | null>(null)
 
   // Calculate volume from dimensions (cm to liters)
   const volumeLiters = useMemo(() => {
@@ -81,34 +99,42 @@ export function useWarehouseFormState({
     return (lengthCm * widthCm * heightCm) / 1000
   }, [lengthCm, widthCm, heightCm])
 
-  // Calculate daily storage cost from warehouse tariff and volume
-  // Note: Values are validated in useWarehouses.ts to handle API data issues
+  // Story 44.40: Calculate effective tariffs based on active system
+  // MUST be before dailyStorageCost and logisticsForwardRub calculations
+  const effectiveTariffs = useMemo(() => {
+    const result = extractTariffs(tariffSystem, selectedWarehouse, supplyTariffs)
+    console.info('[useWarehouseFormState] effectiveTariffs calculated:', {
+      tariffSystem,
+      hasSupplyTariffs: !!supplyTariffs,
+      logisticsCoefficient: result.logisticsCoefficient,
+      deliveryBase: result.deliveryBaseLiterRub,
+      source: result.source,
+    })
+    return result
+  }, [tariffSystem, selectedWarehouse, supplyTariffs])
+
+  // Calculate daily storage cost from effective tariffs and volume
+  // Uses effectiveTariffs to respect SUPPLY vs INVENTORY tariff system
   const dailyStorageCost = useMemo(() => {
-    const tariff = selectedWarehouse
-      ? {
-          basePerDayRub: selectedWarehouse.tariffs.storageBaseLiterRub,
-          perLiterPerDayRub: selectedWarehouse.tariffs.storagePerLiterRub,
-          coefficient: selectedWarehouse.tariffs.storageCoefficient || 1.0,
-        }
-      : DEFAULT_STORAGE_TARIFF
-
+    const tariff = {
+      basePerDayRub: effectiveTariffs.storageBaseLiterRub,
+      perLiterPerDayRub: effectiveTariffs.storagePerLiterRub,
+      coefficient: effectiveTariffs.storageCoefficient,
+    }
     return calculateDailyStorageCost(volumeLiters, tariff)
-  }, [selectedWarehouse, volumeLiters])
+  }, [effectiveTariffs, volumeLiters])
 
-  // Calculate logistics forward cost from warehouse tariff and volume
-  // Note: Values are validated in useWarehouses.ts to handle API data issues
+  // Calculate logistics forward cost from effective tariffs and volume
+  // Uses effectiveTariffs to respect SUPPLY vs INVENTORY tariff system
   const logisticsForwardRub = useMemo(() => {
     if (volumeLiters <= 0) return 0
-    const tariff: BoxDeliveryTariffs = selectedWarehouse
-      ? {
-          baseLiterRub: selectedWarehouse.tariffs.deliveryBaseLiterRub,
-          additionalLiterRub: selectedWarehouse.tariffs.deliveryPerLiterRub,
-          coefficient: selectedWarehouse.tariffs.logisticsCoefficient || 1.0,
-        }
-      : DEFAULT_BOX_TARIFFS
-
+    const tariff: BoxDeliveryTariffs = {
+      baseLiterRub: effectiveTariffs.deliveryBaseLiterRub,
+      additionalLiterRub: effectiveTariffs.deliveryPerLiterRub,
+      coefficient: effectiveTariffs.logisticsCoefficient,
+    }
     return calculateLogisticsTariff(volumeLiters, tariff).totalCost
-  }, [selectedWarehouse, volumeLiters])
+  }, [effectiveTariffs, volumeLiters])
 
   // Story 44.XX: Calculate acceptance cost from tariff, dimensions, and coefficient
   const acceptanceCost = useMemo(() => {
@@ -154,11 +180,22 @@ export function useWarehouseFormState({
   )
 
   const handleDeliveryDateChange = useCallback(
-    (date: string | null, coefficient: number) => {
+    (date: string | null, coefficient: number, supplyData?: SupplyDateTariffs) => {
       setValue('delivery_date', date)
       setValue('logistics_coefficient', coefficient)
       // Story 44.XX: Update acceptance coefficient for cost calculation
       setAcceptanceCoefficient(coefficient)
+
+      // Story 44.40: Determine tariff system based on date
+      const newSystem = determineTariffSystem(date)
+      setTariffSystem(newSystem)
+
+      // Store supply tariffs if provided and using supply system
+      if (newSystem === 'supply' && supplyData) {
+        setSupplyTariffs(supplyData)
+      } else {
+        setSupplyTariffs(null)
+      }
     },
     [setValue],
   )
@@ -186,5 +223,9 @@ export function useWarehouseFormState({
     handleLogisticsForwardChange,
     handleDeliveryDateChange,
     getWarehouseForApi,
+    // Story 44.40: Two Tariff Systems
+    tariffSystem,
+    supplyTariffs,
+    effectiveTariffs,
   }
 }

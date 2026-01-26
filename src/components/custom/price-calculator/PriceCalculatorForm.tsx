@@ -120,6 +120,9 @@ export function PriceCalculatorForm({
     acceptanceCost,
     handleWarehouseChange, handleStorageRubChange, handleLogisticsForwardChange,
     handleDeliveryDateChange,
+    // Story 44.40: Two Tariff Systems
+    tariffSystem,
+    effectiveTariffs,
   } = useWarehouseFormState({
     setValue,
     lengthCm,
@@ -156,9 +159,20 @@ export function PriceCalculatorForm({
   // Story 44.16: Get commission based on fulfillment type
   useEffect(() => {
     if (selectedCategory) {
-      const commission = fulfillmentType === 'FBO'
-        ? selectedCategory.paidStorageKgvp
-        : selectedCategory.kgvpMarketplace
+      const fboCommission = selectedCategory.paidStorageKgvp
+      const fbsCommission = selectedCategory.kgvpMarketplace
+      const commission = fulfillmentType === 'FBO' ? fboCommission : fbsCommission
+
+      // Debug: Log FBO vs FBS commission comparison
+      console.info('[PriceCalculatorForm] Commission update:', {
+        category: `${selectedCategory.parentName} → ${selectedCategory.subjectName}`,
+        fulfillmentType,
+        FBO_commission: fboCommission,
+        FBS_commission: fbsCommission,
+        activeCommission: commission,
+        difference: fbsCommission - fboCommission,
+      })
+
       onCommissionChange?.(commission)
     }
   }, [selectedCategory, fulfillmentType, onCommissionChange])
@@ -227,11 +241,14 @@ export function PriceCalculatorForm({
               onChange={(type) => setValue('fulfillment_type', type, { shouldValidate: true })}
             />
             {/* Warehouse & Coefficients - Story 44.27 */}
+            {/* Story 44.40: Pass tariff system data for SUPPLY/INVENTORY display */}
             <WarehouseSection
               warehouseId={warehouseId}
               onWarehouseChange={handleWarehouseChange}
               disabled={disabled}
               onDeliveryDateChange={handleDeliveryDateChange}
+              tariffSystem={tariffSystem}
+              effectiveTariffs={effectiveTariffs}
             />
             {/* Story 44.32: FBO-only fields */}
             {/* Story 44.35: useWatch hooks moved to top level to fix toggle crash */}

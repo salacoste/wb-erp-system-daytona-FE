@@ -48,13 +48,13 @@ export interface LogisticsTariffResult {
 
 /**
  * Default tariffs (fallback when no warehouse selected)
- * Based on typical WB box tariffs
+ * Values from /v1/tariffs/settings API defaults
  * Formula: (baseLiterRub + (volume - 1) × additionalLiterRub) × coefficient
- * Example: 3L = (48 + 2 × 5) × 1.0 = 58
+ * Example: 3L = (46 + 2 × 14) × 1.0 = 74
  */
 export const DEFAULT_BOX_TARIFFS: BoxDeliveryTariffs = {
-  baseLiterRub: 48,
-  additionalLiterRub: 5,
+  baseLiterRub: 46,
+  additionalLiterRub: 14,
   coefficient: 1.0,
 }
 

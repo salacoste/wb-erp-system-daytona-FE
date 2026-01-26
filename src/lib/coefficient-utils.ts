@@ -46,13 +46,13 @@ export interface CoefficientImpact {
   percentDisplay: string
 }
 
-/** 5-level status config: base ≤1.0, elevated 1.01-1.5, high 1.51-2.0, peak >2.0, unavailable ≤0 */
+/** 5-level status config: base 0-1.0 (0=FREE), elevated 1.01-1.5, high 1.51-2.0, peak >2.0, unavailable <0 */
 export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientStatusConfig> = {
   base: { status: 'base', label: 'Базовый', color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-700', borderColor: 'border-green-300', minValue: 0, maxValue: 1.0 },
   elevated: { status: 'elevated', label: 'Повышенный', color: 'yellow', bgColor: 'bg-yellow-100', textColor: 'text-yellow-700', borderColor: 'border-yellow-300', minValue: 1.01, maxValue: 1.5 },
   high: { status: 'high', label: 'Высокий', color: 'orange', bgColor: 'bg-orange-100', textColor: 'text-orange-700', borderColor: 'border-orange-300', minValue: 1.51, maxValue: 2.0 },
   peak: { status: 'peak', label: 'Пиковый', color: 'red', bgColor: 'bg-red-100', textColor: 'text-red-700', borderColor: 'border-red-300', minValue: 2.01, maxValue: Infinity },
-  unavailable: { status: 'unavailable', label: 'Недоступно', color: 'gray', bgColor: 'bg-gray-100', textColor: 'text-gray-400', borderColor: 'border-gray-300', minValue: -Infinity, maxValue: 0 },
+  unavailable: { status: 'unavailable', label: 'Недоступно', color: 'gray', bgColor: 'bg-gray-100', textColor: 'text-gray-400', borderColor: 'border-gray-300', minValue: -Infinity, maxValue: -0.01 },
 }
 
 /** Normalize coefficient from API: 100 → 1.0 */
@@ -67,7 +67,9 @@ export function denormalizeCoefficient(normalized: number): number {
 
 /** Get coefficient status based on normalized value (5 levels) */
 export function getCoefficientStatus(coefficient: number): CoefficientStatus {
-  if (coefficient <= 0) return 'unavailable'
+  // coefficient < 0 (e.g. -1) = unavailable
+  // coefficient = 0 = FREE (no markup), treated as 'base'
+  if (coefficient < 0) return 'unavailable'
   if (coefficient <= 1.0) return 'base'
   if (coefficient <= 1.5) return 'elevated'
   if (coefficient <= 2.0) return 'high'
