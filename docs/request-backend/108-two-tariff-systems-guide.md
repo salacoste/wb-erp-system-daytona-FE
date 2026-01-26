@@ -1,6 +1,6 @@
 # Request #108: Two Tariff Systems Guide - Frontend Documentation
 
-**Date**: 2026-01-25
+**Date**: 2026-01-27
 **Status**: ✅ PRODUCTION READY
 **Priority**: P1 - CRITICAL FOR FRONTEND
 **Related Epic**: Epic 43 (Price Calculator), Epic 44-FE (Price Calculator UI)
@@ -120,28 +120,28 @@ GET /v1/tariffs/acceptance/coefficients/all
 
 **Purpose**: Discover all warehouses and their 14-day coefficients
 
-**Response**:
+**Response Structure**:
 ```json
 {
   "coefficients": [
     {
-      "warehouseId": 507,
-      "warehouseName": "Краснодар",
-      "date": "2026-01-20",
+      "warehouseId": 130744,
+      "warehouseName": "Краснодар (Тихорецкая)",
+      "date": "2026-01-27T00:00:00Z",
       "coefficient": 1,
       "isAvailable": true,
       "allowUnload": true,
-      "boxTypeId": 2,
-      "boxTypeName": "Boxes",
+      "boxTypeId": 5,
+      "boxTypeName": "Pallets",
       "delivery": {
-        "coefficient": 1.2,
-        "baseLiterRub": 46.0,
-        "additionalLiterRub": 14.0
+        "coefficient": 1.65,
+        "baseLiterRub": 75,
+        "additionalLiterRub": 0
       },
       "storage": {
-        "coefficient": 1.0,
-        "baseLiterRub": 0.07,
-        "additionalLiterRub": 0.05
+        "coefficient": 1.65,
+        "baseLiterRub": 41.25,
+        "additionalLiterRub": 0
       },
       "isSortingCenter": false
     }
@@ -155,6 +155,116 @@ GET /v1/tariffs/acceptance/coefficients/all
   }
 }
 ```
+
+### Critical: Understanding Rates and Coefficients
+
+**IMPORTANT**: All monetary values returned by the API are in **RAW RUB (₽)**, and coefficients are **multipliers** that must be applied during calculation.
+
+**Backend Processing**:
+1. WB SDK returns strings like `"0,13"` (comma separator for Russian locale)
+2. Backend parses to numbers: `"0,13"` → `0.13`
+3. Coefficients returned as percentages: `"165"` → `1.65` (divided by 100)
+4. Frontend receives ready-to-use numbers
+
+**Box Type Differences**:
+
+| Box Type | ID | `additionalLiterRub` | Formula Behavior |
+|----------|----|---------------------|-----------------|
+| **Boxes** | 2 | Has value (e.g., 0.13 ₽) | Volume-based calculation |
+| **Pallets** | 5 | Always 0 (null in WB API) | Fixed rate, no volume calculation |
+| **Supersafe** | 6 | Has value | Volume-based calculation |
+
+### Cost Calculation Formulas
+
+#### Logistics Cost
+```typescript
+logisticsCost = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
+```
+
+**Parameters**:
+- `baseLiterRub`: First liter rate in ₽ (e.g., 75 ₽)
+- `additionalLiterRub`: Additional liter rate in ₽ (e.g., 0 ₽ for pallets, 0.13 ₽ for boxes)
+- `coefficient`: Multiplier (e.g., 1.65 = 165%, not 1.65%)
+- `volume`: Product volume in liters (minimum 1)
+
+**Example Calculation (Pallets, 1 liter)**:
+```typescript
+// Input
+baseLiterRub = 75
+additionalLiterRub = 0  // Pallets always have 0
+coefficient = 1.65     // 165% multiplier
+volume = 1
+
+// Calculation
+logisticsCost = (75 + max(0, 1-1) × 0) × 1.65
+            = (75 + 0 × 0) × 1.65
+            = 75 × 1.65
+            = 123.75 ₽
+```
+
+#### Storage Cost
+```typescript
+dailyStorage = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
+storageCost = dailyStorage × days
+```
+
+**Parameters**:
+- `baseLiterRub`: Base rate in ₽ per day (e.g., 41.25 ₽)
+- `additionalLiterRub`: Additional liter rate in ₽ per day
+- `coefficient`: Multiplier (e.g., 1.65)
+- `volume`: Product volume in liters (minimum 1)
+- `days`: Number of storage days
+
+**Example Calculation (Pallets, 1 liter, 30 days)**:
+```typescript
+// Input
+baseLiterRub = 41.25
+additionalLiterRub = 0  // Pallets always have 0
+coefficient = 1.65
+volume = 1
+days = 30
+
+// Calculation
+dailyStorage = (41.25 + max(0, 1-1) × 0) × 1.65
+             = (41.25 + 0 × 0) × 1.65
+             = 41.25 × 1.65
+             = 68.0625 ₽ per day
+
+storageCost = 68.0625 × 30 = 2,041.88 ₽
+```
+
+### Real-World Example: Краснодар (Тихорецкая)
+
+**Test Scenario**: 1-liter product, warehouse "Краснодар (Тихорецкая)", date 2026-01-27
+
+**Pallets (boxTypeID: 5)**:
+```json
+{
+  "warehouseId": 130744,
+  "warehouseName": "Краснодар (Тихорецкая)",
+  "date": "2026-01-27T00:00:00Z",
+  "boxTypeId": 5,
+  "boxTypeName": "Pallets",
+  "delivery": {
+    "coefficient": 1.65,
+    "baseLiterRub": 75,
+    "additionalLiterRub": 0
+  },
+  "storage": {
+    "coefficient": 1.65,
+    "baseLiterRub": 41.25,
+    "additionalLiterRub": 0
+  }
+}
+```
+
+**Calculated costs for 1 liter, 30 days**:
+- Logistics: (75 + 0 × 0) × 1.65 = **123.75 ₽**
+- Storage: (41.25 + 0 × 0) × 1.65 × 30 = **2,041.88 ₽**
+
+**Boxes (boxTypeID: 2)**:
+- Similar delivery structure
+- Storage rates may vary by warehouse and date (some warehouses return 0)
 
 #### 2. Get Acceptance Coefficients by Warehouse
 ```
@@ -321,6 +431,82 @@ function AvailabilityBadge({ coefficient }: { coefficient: number }) {
 }
 ```
 
+### Example 4: Supply Cost Calculator (Future Planning)
+
+```typescript
+/**
+ * Calculate logistics cost using Supply API tariffs
+ * Formula: (base + max(0, volume-1) × additional) × coefficient
+ */
+function calculateLogisticsCost(
+  baseLiterRub: number,
+  additionalLiterRub: number,
+  coefficient: number,
+  volumeLiters: number
+): number {
+  const volume = Math.max(volumeLiters, 1);
+  const additionalLiters = Math.max(0, volume - 1);
+  const totalCost = (baseLiterRub + additionalLiters * additionalLiterRub) * coefficient;
+  return Math.round(totalCost * 100) / 100;
+}
+
+/**
+ * Calculate storage cost using Supply API tariffs
+ * Formula: (base + max(0, volume-1) × additional) × coefficient × days
+ */
+function calculateStorageCost(
+  baseLiterRub: number,
+  additionalLiterRub: number,
+  coefficient: number,
+  volumeLiters: number,
+  days: number
+): number {
+  const volume = Math.max(volumeLiters, 1);
+  const additionalLiters = Math.max(0, volume - 1);
+  const dailyCost = (baseLiterRub + additionalLiters * additionalLiterRub) * coefficient;
+  const totalCost = dailyCost * days;
+  return Math.round(totalCost * 100) / 100;
+}
+
+// Example: Pallets (boxTypeID: 5)
+function PalletsCostExample() {
+  // From API response for Краснодар (Тихорецкая), 2026-01-27
+  const palletsData = {
+    delivery: { coefficient: 1.65, baseLiterRub: 75, additionalLiterRub: 0 },
+    storage: { coefficient: 1.65, baseLiterRub: 41.25, additionalLiterRub: 0 }
+  };
+
+  const volume = 1; // liters
+  const days = 30;
+
+  const logistics = calculateLogisticsCost(
+    palletsData.delivery.baseLiterRub,
+    palletsData.delivery.additionalLiterRub,
+    palletsData.delivery.coefficient,
+    volume
+  );
+  // Result: (75 + 0 × 0) × 1.65 = 123.75 ₽
+
+  const storage = calculateStorageCost(
+    palletsData.storage.baseLiterRub,
+    palletsData.storage.additionalLiterRub,
+    palletsData.storage.coefficient,
+    volume,
+    days
+  );
+  // Result: (41.25 + 0 × 0) × 1.65 × 30 = 2,041.88 ₽
+
+  return (
+    <div>
+      <h3>Pallets Cost Calculation (1 liter, 30 days)</h3>
+      <p>Logistics: {logistics.toFixed(2)} ₽</p>
+      <p>Storage: {storage.toFixed(2)} ₽</p>
+      <p>Total: {(logistics + storage).toFixed(2)} ₽</p>
+    </div>
+  );
+}
+```
+
 ---
 
 ## Cache Strategy
@@ -369,6 +555,17 @@ function AvailabilityBadge({ coefficient }: { coefficient: number }) {
 
 **A**: Acceptance is unavailable on that date. Show as "Unavailable" in UI.
 
+### Q6: How do I calculate costs for different box types?
+
+**A**:
+- **Pallets (boxTypeID: 5)**: `additionalLiterRub` is always 0, so formula simplifies to `baseLiterRub × coefficient × days`
+- **Boxes (boxTypeID: 2)**: Full volume-based formula with `additionalLiterRub` value
+- **Supersafe (boxTypeID: 6)**: Volume-based like boxes
+
+### Q7: Why are some storage rates 0?
+
+**A**: Some warehouses/dates may have 0 storage rates in the WB API. This is warehouse-specific and may vary.
+
 ---
 
 ## TypeScript Types
@@ -415,14 +612,14 @@ interface AcceptanceCoefficient {
   boxTypeId: 2 | 5 | 6;       // 2=Boxes, 5=Pallets, 6=Supersafe
   boxTypeName: string;
   delivery: {
-    coefficient: number;
-    baseLiterRub: number;
-    additionalLiterRub: number;
+    coefficient: number;      // Multiplier (e.g., 1.65 for 165%)
+    baseLiterRub: number;     // First liter rate in ₽
+    additionalLiterRub: number; // Additional liter rate in ₽
   };
   storage: {
-    coefficient: number;
-    baseLiterRub: number;
-    additionalLiterRub: number;
+    coefficient: number;      // Multiplier
+    baseLiterRub: number;     // Base rate in ₽ per day
+    additionalLiterRub: number; // Additional liter rate in ₽ per day
   };
   isSortingCenter: boolean;
 }
@@ -446,6 +643,23 @@ interface AcceptanceCoefficient {
 - **Rate Limit**: 6 req/min (stricter!)
 - **Cache**: 1 hour
 
+### Key Formulas
+
+**Logistics Cost**:
+```typescript
+logisticsCost = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
+```
+
+**Storage Cost**:
+```typescript
+dailyStorage = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
+storageCost = dailyStorage × days
+```
+
+**Box Type Differences**:
+- **Pallets**: `additionalLiterRub = 0` (fixed rate)
+- **Boxes/Supersafe**: `additionalLiterRub > 0` (volume-based)
+
 ---
 
 ## Backend Documentation References
@@ -454,11 +668,14 @@ interface AcceptanceCoefficient {
 - **Story 43.9**: `docs/stories/epic-43/story-43.9-acceptance-coefficients-service.md`
 - **Source Code**: `src/tariffs/warehouses-tariffs.service.ts`
 - **Source Code**: `src/tariffs/acceptance-coefficients.service.ts`
+- **Type Definitions**: `src/tariffs/types/acceptance-coefficients.types.ts`
+- **Price Calculator**: `src/products/services/price-calculator.service.ts`
 - **API Tests**: `test-api/18-tariffs.http`
+- **Test Script**: `src/scripts/test-krasnodar-tariffs-2026-01-27.ts`
 
 ---
 
 **Status**: ✅ PRODUCTION READY
-**Last Updated**: 2026-01-25
+**Last Updated**: 2026-01-27
 **Author**: Backend Team
 **Review**: Frontend Team - Please integrate this guide into Price Calculator UI

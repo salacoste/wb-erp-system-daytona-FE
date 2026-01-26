@@ -1,9 +1,10 @@
 # Quick Reference: Tariffs API для Frontend
 
-**Дата**: 2026-01-25
+**Дата**: 2026-01-26
 **Целевая аудитория**: Frontend-разработчики
-**Epic**: Epic 43 (Price Calculator)
+**Epic**: Epic 43 (Price Calculator), Epic 44 (Tariffs)
 **Статус**: Production Ready
+**Обновлено**: Формулы проверены на production данных
 
 ---
 
@@ -242,38 +243,53 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 
 | SDK Field | API Response | Frontend Usage |
 |-----------|--------------|----------------|
-| `boxStorageBase` | `storage.base_per_day_rub` | Базовая ставка хранений/день |
+| `boxStorageBase` | `storage.base_per_day_rub` | Базовая ставка хранения/день |
 | `boxStorageLiter` | `storage.liter_per_day_rub` | Дополнительный литр/день |
 | `boxStorageCoefExpr` | `storage.coefficient` | Региональный коэффициент |
 
 **Формула расчёта**:
 ```typescript
-// Хранение за день
-const storageCost = (base + (volume - 1) * perLiter) * coefficient;
+// Хранение за день (применяется коэффициент)
+const dailyStorage = (base + max(0, volume - 1) * perLiter) * coefficient;
 
-// Пример: 5L коробка, Краснодар
-// (0.07 + (5 - 1) * 0.05) * 1.0 = 0.27₽/день
+// Хранение за период
+const totalStorage = dailyStorage * days;
+
+// Пример 1: 1L, Pallets, Краснодар (Тихорецкая)
+// daily = (41.25 + 0 × 0) × 1.65 = 68.06₽/день
+// total (30 дней) = 68.06 × 30 = 2,041.88₽
+
+// Пример 2: 5L коробка, Краснодар
+// daily = (0.07 + (5 - 1) * 0.05) × 1.0 = 0.27₽/день
+// total (30 дней) = 0.27 × 30 = 8.10₽
 ```
+
+**ВАЖНО**: API возвращает ставки в ₽, коэффициент - множитель.
 
 ### Logistics Rates
 
 | SDK Field | API Response | Frontend Usage |
 |-----------|--------------|----------------|
 | `boxDeliveryBase` | `fbo.delivery_base_rub` | Базовая ставка логистики FBO |
-| `boxDeliveryLiter` | `fbo.delivery_liter_rub` | Литер логистики FBO |
+| `boxDeliveryLiter` | `fbo.delivery_liter_rub` | Дополнительный литр FBO |
 | `boxDeliveryCoefExpr` | `fbo.logistics_coefficient` | Коэффициент логистики FBO |
 | `boxDeliveryMarketplaceBase` | `fbs.delivery_base_rub` | Базовая ставка логистики FBS |
-| `boxDeliveryMarketplaceLiter` | `fbs.delivery_liter_rub` | Литер логистики FBS |
+| `boxDeliveryMarketplaceLiter` | `fbs.delivery_liter_rub` | Дополнительный литр FBS |
 | `boxDeliveryMarketplaceCoefExpr` | `fbs.logistics_coefficient` | Коэффициент логистики FBS |
 
 **Формула расчёта**:
 ```typescript
-// Логистика за поставку
-const logisticsCost = (base + (volume - 1) * perLiter) * coefficient;
+// Логистика за поставку (применяется коэффициент)
+const logisticsCost = (base + max(0, volume - 1) * perLiter) * coefficient;
 
-// Пример: 5L коробка, Коледино
+// Пример 1: 1L, Pallets, Краснодар (Тихорецкая)
+// (75 + 0 × 23) × 1.65 = 123.75₽
+
+// Пример 2: 5L коробка, Коледино
 // (46.0 + (5 - 1) * 14.0) * 1.2 = 116.40₽
 ```
+
+**ВАЖНО**: API возвращает ставки в ₽, коэффициент - множитель.
 
 ---
 
@@ -338,9 +354,17 @@ function calculateStorageCost(
   const liter = liter_per_day_rub || 0.05;
   const coef = coefficient || 1.0;
 
-  const dailyCost = (base + (volume - 1) * liter) * coef;
+  // Формула: dailyStorage = (base + max(0, volume - 1) × liter) × coefficient
+  const additionalLiters = Math.max(0, volume - 1);
+  const dailyCost = (base + additionalLiters * liter) * coef;
+
   return dailyCost * days;
 }
+
+// Пример: Pallets, 1L, 30 дней, Краснодар (Тихорецкая)
+// base = 41.25, liter = 0, coef = 1.65
+// dailyCost = (41.25 + max(0, 1 - 1) × 0) × 1.65 = 68.0625₽
+// totalStorage = 68.0625 × 30 = 2,041.88₽
 ```
 
 ---
@@ -433,15 +457,88 @@ try {
 | 1 | Стандартная стоимость | Базовая ставка |
 | >1 | Повышенная стоимость | Множитель (1.5 = 150% от базы) |
 
-**Формула**:
-```typescript
-const acceptanceCost = baseRate * volume * coefficient;
+---
 
-// Пример: 5L коробка, Краснодар (coef=1.2)
-// 1.70 * 5 * 1.2 = 10.20₽
+## Типы упаковки (Box Types)
+
+### Box Type ID Mapping
+
+| boxTypeID | BoxTypeName | Особенности расчёта |
+|-----------|-------------|-------------------|
+| 2 | Boxes (Короба) | Объём-based: `additionalLiterRub` имеет значение |
+| 5 | Pallets (Монопаллеты) | Фиксированная ставка: `additionalLiterRub` = 0 |
+| 6 | Supersafe (Суперсейф) | Объём-based: `additionalLiterRub` имеет значение |
+
+### Различия в расчёте
+
+**Boxes (Короба)** - объём-based расчёт:
+```typescript
+// Логистика
+logistics = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × deliveryCoef
+
+// Хранение в день
+dailyStorage = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × storageCoef
 ```
 
-**⚠️ ВАЖНО**: 1.70₽/L - это DATABASE DEFAULT из `acceptance_box_rate_per_liter`. Реальные ставки по складам могут отличаться.
+**Pallets (Монопаллеты)** - фиксированная ставка:
+```typescript
+// Логистика (additionalLiterRub всегда 0)
+logistics = (baseLiterRub + max(0, volume - 1) × 0) × deliveryCoef
+           = baseLiterRub × deliveryCoef
+
+// Хранение в день (additionalLiterRub всегда 0)
+dailyStorage = (baseLiterRub + max(0, volume - 1) × 0) × storageCoef
+              = baseLiterRub × storageCoef
+```
+
+### Реальный пример из API
+
+**Склад**: Краснодар (Тихорецкая) - ID: 130744
+**Дата**: 2026-01-27
+**Товар**: 1 литр
+
+**Pallets Response**:
+```json
+{
+  "warehouseId": 130744,
+  "warehouseName": "Краснодар (Тихорецкая)",
+  "date": "2026-01-27T00:00:00Z",
+  "boxTypeId": 5,
+  "boxTypeName": "Pallets",
+  "coefficient": 1,
+  "delivery": {
+    "coefficient": 1.65,
+    "baseLiterRub": 75,
+    "additionalLiterRub": 0
+  },
+  "storage": {
+    "coefficient": 1.65,
+    "baseLiterRub": 41.25,
+    "additionalLiterRub": 0
+  }
+}
+```
+
+**Расчёт для 1 литра на 30 дней**:
+```typescript
+// Логистика
+logistics = (75 + max(0, 1 - 1) × 0) × 1.65 = 75 × 1.65 = 123.75₽
+
+// Хранение в день
+dailyStorage = (41.25 + max(0, 1 - 1) × 0) × 1.65 = 41.25 × 1.65 = 68.0625₽
+
+// Хранение за 30 дней
+totalStorage = 68.0625 × 30 = 2,041.88₽
+
+// ИТОГО
+total = 123.75 + 2,041.88 = 2,165.63₽
+```
+
+**ВАЖНО**:
+- API возвращает **RAW ставки** в ₽ (не коэффициенты)
+- `coefficient` - множитель, применяемый при расчёте
+- Для Pallets `additionalLiterRub` всегда = 0 (фиксированная ставка)
+- Формула использует `max(0, volume - 1)` для расчёта дополнительных литров
 
 ---
 
@@ -504,31 +601,45 @@ const fetchedAt = data?.meta?.fetched_at;
 interface PriceCalculatorTariffs {
   // Логистика
   logistics: {
-    base: number;        // delivery_base_rub
-    perLiter: number;    // delivery_liter_rub
-    coefficient: number; // logistics_coefficient
+    base: number;        // delivery_base_rub (₽)
+    perLiter: number;    // delivery_liter_rub (₽)
+    coefficient: number; // logistics_coefficient (множитель)
   };
 
   // Хранение
   storage: {
-    basePerDay: number;  // base_per_day_rub
-    literPerDay: number; // liter_per_day_rub
-    coefficient: number; // coefficient
+    basePerDay: number;  // base_per_day_rub (₽/день)
+    literPerDay: number; // liter_per_day_rub (₽/день)
+    coefficient: number; // coefficient (множитель)
     freeDays: number;    // storage_free_days (из settings)
   };
 
   // Приёмка
   acceptance: {
-    coefficient: number; // из acceptance/coefficients
-    baseRate: number;    // acceptance_box_rate_per_liter
+    coefficient: number; // из acceptance/coefficients (множитель)
+    baseRate: number;    // acceptance_box_rate_per_liter (₽)
   };
 
   // Комиссия
   commission: {
-    fbo: number;  // paidStorageKgvp
-    fbs: number;  // kgvpMarketplace
+    fbo: number;  // paidStorageKgvp (%)
+    fbs: number;  // kgvpMarketplace (%)
   };
 }
+```
+
+**ВАЖНО**: Все ставки в API возвращаются в ₽ (rub), коэффициенты - безразмерные множители.
+
+**Формулы (подтверждены на production)**:
+```typescript
+// Логистика
+logistics = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × deliveryCoef
+
+// Хранение в день
+dailyStorage = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × storageCoef
+
+// Хранение за период
+totalStorage = dailyStorage × days
 ```
 
 ---
@@ -562,15 +673,17 @@ function calculateTotalCost(
   acceptance: number;
   total: number;
 } {
-  // Логистика
+  // Логистика: (base + max(0, volume - 1) × perLiter) × coefficient
+  const additionalLiters = Math.max(0, volume - 1);
   const logistics = (tariffs.fbo.delivery_base_rub +
-    (volume - 1) * tariffs.fbo.delivery_liter_rub) *
+    additionalLiters * tariffs.fbo.delivery_liter_rub) *
     tariffs.fbo.logistics_coefficient;
 
-  // Хранение
-  const storageDaily = (tariffs.storage.base_per_day_rub || 0.11) +
-    (volume - 1) * (tariffs.storage.liter_per_day_rub || 0.05);
-  const storage = storageDaily * tariffs.storage.coefficient * days;
+  // Хранение: ((base + max(0, volume - 1) × perLiter) × coefficient) × days
+  const storageDaily = ((tariffs.storage.base_per_day_rub || 0.11) +
+    additionalLiters * (tariffs.storage.liter_per_day_rub || 0.05)) *
+    tariffs.storage.coefficient;
+  const storage = storageDaily * days;
 
   // Приёмка
   const acceptance = 1.70 * volume * acceptanceCoef;
@@ -582,6 +695,14 @@ function calculateTotalCost(
     total: logistics + storage + acceptance,
   };
 }
+
+// Пример: Pallets, 1L, 30 дней, Краснодар (Тихорецкая)
+// additionalLiters = max(0, 1 - 1) = 0
+// logistics = (75 + 0 × 23) × 1.65 = 123.75₽
+// storageDaily = (41.25 + 0 × 0) × 1.65 = 68.0625₽
+// storage = 68.0625 × 30 = 2,041.88₽
+// acceptance = 1.70 × 1 × 1 = 1.70₽
+// total = 123.75 + 2,041.88 + 1.70 = 2,167.33₽
 ```
 
 ---
@@ -596,6 +717,11 @@ function calculateTotalCost(
 
 ---
 
-**Последнее обновление**: 2026-01-25
+**Последнее обновление**: 2026-01-26
 **Backend API**: http://localhost:3000/api (Swagger)
-**Epic Status**: ✅ Complete (10/10 stories)
+**Epic Status**: ✅ Complete (Epic 43: 10/10, Epic 44: 7/7)
+**Обновления**:
+- Формулы логистики и хранения проверены на production данных
+- Добавлен раздел "Типы упаковки (Box Types)"
+- Реальные примеры из API (Краснодар Тихорецкая, 2026-01-27)
+- Уточнено различие между Pallets (фиксированная ставка) и Boxes (объём-based)

@@ -373,65 +373,92 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 
 **Rate Limit**: 6 req/min (строже чем tariffs!)
 
-#### GET /v1/tariffs/acceptance/coefficients
+#### GET /v1/tariffs/acceptance/coefficients/all
 
-Коэффициенты приёмки для всех складов на 14 дней вперёд.
+**SUPPLY System** - Коэффициенты приёмки для всех складов на 14 дней вперёд.
 
 **Query Parameters:**
 - `warehouseId` (optional): ID конкретного склада
 - `warehouseIds` (optional): список ID через запятую
 
-**Response:**
+**Response (SUPPLY System):**
 ```json
 {
-  "data": {
-    "coefficients": [
-      {
-        "warehouseId": 507,
-        "warehouseName": "Краснодар",
-        "date": "2026-01-20",
-
-        "coefficient": 1,
-        "isAvailable": true,
-        "allowUnload": true,
-
-        "boxTypeId": 2,
-        "boxTypeName": "Boxes",
-
-        "delivery": {
-          "coefficient": 1.2,
-          "baseLiterRub": 46.0,
-          "additionalLiterRub": 14.0
-        },
-
-        "storage": {
-          "coefficient": 1.0,
-          "baseLiterRub": 0.07,
-          "additionalLiterRub": 0.05
-        },
-
-        "isSortingCenter": false
-      }
-    ],
-    "meta": {
-      "total": 250,
-      "available": 200,
-      "unavailable": 50,
-      "fetched_at": "2026-01-19T14:00:00Z",
-      "cache_ttl_seconds": 3600
+  "coefficients": [
+    {
+      "warehouseId": 130744,
+      "warehouseName": "Краснодар (Тихорецкая)",
+      "date": "2026-01-27T00:00:00Z",
+      "boxTypeId": 5,
+      "boxTypeName": "Pallets",
+      "coefficient": 1,
+      "isAvailable": true,
+      "allowUnload": true,
+      "delivery": {
+        "coefficient": 1.65,
+        "baseLiterRub": 75,
+        "additionalLiterRub": 23
+      },
+      "storage": {
+        "coefficient": 1.65,
+        "baseLiterRub": 41.25,
+        "additionalLiterRub": 0
+      },
+      "isSortingCenter": false
     }
-  }
+  ]
 }
 ```
 
-**Interpretation of `coefficient` field:**
+**Box Type Values:**
+- `boxTypeId: 2` → "Boxes" (Коробки)
+- `boxTypeId: 5` → "Pallets" (Паллеты)
+- `boxTypeId: 6` → "Supersafe" (Суперсейф)
+
+**Calculation Formulas (Backend Applied):**
+
+```typescript
+// Logistics Cost
+logistics = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × deliveryCoef
+
+// Storage Cost (Per Day)
+dailyStorage = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × storageCoef
+storage = dailyStorage × days
+```
+
+**IMPORTANT for Pallets (boxTypeId: 5):**
+- `additionalLiterRub = 0` for storage (null in WB API)
+- Storage becomes fixed rate: `baseLiterRub × storageCoef × days`
+
+**Example Calculation (1 liter, 30 days, Краснодар Pallets):**
+
+```typescript
+// Logistics
+logistics = (75 + 0 × 23) × 1.65 = 123.75 ₽
+
+// Storage (Pallets have additionalLiterRub = 0)
+dailyStorage = (41.25 + 0 × 0) × 1.65 = 68.06 ₽/день
+storage = 68.06 × 30 = 2041.80 ₽
+
+// Total
+total = 123.75 + 2041.80 = 2165.55 ₽
+```
+
+**Coefficient Interpretation:**
 
 | Value | Meaning | UI Recommendation |
 |-------|---------|-------------------|
 | `-1` | Приёмка недоступна | Показать "Недоступно", disabled |
 | `0` | Приёмка бесплатная | Показать "Бесплатно" badge |
 | `1` | Стандартная стоимость | Обычное отображение |
-| `>1` | Повышенная стоимость | Показать warning (×1.5 = 150%) |
+| `>1` | Повышенная стоимость | Показать warning (×1.65 = 165%) |
+
+**Key Differences from INVENTORY System:**
+- **Date-specific**: Returns coefficients for specific dates (14-day window)
+- **Box type separated**: Different rates for Boxes vs Pallets
+- **Forward-looking**: Planning rates, not current actual costs
+- **Higher rates**: Typically 20-60% higher than INVENTORY rates
+- **null handling**: Pallets have `additionalLiterRub = null` for storage (treated as 0)
 
 #### ~~GET /v1/tariffs/acceptance/available~~ ❌ NOT IMPLEMENTED
 
@@ -448,9 +475,54 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 
 ---
 
+## Сравнительная таблица тарифных систем
+
+| Характеристика | **INVENTORY System** | **SUPPLY System** |
+|---------------|---------------------|-------------------|
+| **Endpoint** | `/v1/tariffs/warehouses-with-tariffs` | `/v1/tariffs/acceptance/coefficients/all` |
+| **Service** | `WarehousesTariffsService` | `AcceptanceCoefficientsService` |
+| **SDK Method** | `sdk.tariffs.getTariffsBox()` | `sdk.ordersFBW.getAcceptanceCoefficients()` |
+| **Назначение** | Фактические затраты на хранение | Планирование поставок на 14 дней |
+| **Временной охват** | Текущие тарифы на сегодня | Прогноз на 14 дней вперёд |
+| **Box Type** | Не разделяется (общие тарифы) | Разделяется: Boxes (2), Pallets (5), Supersafe (6) |
+| **Date Field** | `effective_from`, `effective_until` | `date` (конкретная дата поставки) |
+| **Warehouse IDs** | ID из `sdk.products.offices()` | ID из `sdk.ordersFBW.getAcceptanceCoefficients()` |
+| **Rate Limit** | 10 req/min (scope: tariffs) | 6 req/min (scope: orders_fbw) |
+| **Cache TTL** | 1 hour | 1 hour |
+| **Уровень ставок** | Базовые (фактические) | Повышенные (планирование) |
+| **Coef Expression** | Проценты → множитель (120% → 1.2) | Проценты → множитель (165% → 1.65) |
+| **Storage null handling** | Использует fallback значения | `additionalLiterRub = 0` для Pallets |
+| **Использовать для** | Price Calculator (текущие затраты) | Price Calculator (планирование доставки) |
+
+### Когда использовать какую систему?
+
+| Сценарий | Система | Endpoint | Причина |
+|----------|---------|----------|---------|
+| **Price Calculator** (текущие затраты) | INVENTORY | `/warehouses-with-tariffs` | Фактические ставки на сегодня |
+| **Price Calculator** (планирование доставки) | SUPPLY | `/acceptance/coefficients/all` | Прогноз на 14 дней |
+| **Финансовые отчеты** | INVENTORY | `/warehouses-with-tariffs` | Реальные понесенные расходы |
+| **Планирование поставок** | SUPPLY | `/acceptance/coefficients/all` | 14-дневный прогноз |
+| **Анализ затрат на хранение** | INVENTORY | `/warehouses-with-tariffs` | Фактические затраты |
+| **Сравнение Boxes vs Pallets** | SUPPLY | `/acceptance/coefficients/all` | Разделение по boxTypeId |
+
+### Warehouse ID Mapping
+
+**IMPORTANT**: Different systems use different warehouse IDs!
+
+| Warehouse Name | INVENTORY ID | SUPPLY ID |
+|----------------|--------------|-----------|
+| Краснодар | 507 | 130744 |
+| Краснодар (Тихорецкая) | - | 130744 |
+| Коледино | 117686 | 117686 |
+| Электросталь | 117825 | 117825 |
+
+**Solution**: Use `GET /v1/tariffs/acceptance/coefficients/all` to discover valid SUPPLY warehouse IDs.
+
+---
+
 ## Формулы расчёта
 
-### Комиссия WB
+### 1. Комиссия WB
 
 ```typescript
 // API field mapping
@@ -468,47 +540,103 @@ const commissionPct = commissionRate[COMMISSION_FIELD_MAP[fulfillmentType]];
 ### Логистика (Delivery)
 
 ```typescript
-// Для товаров ≤ 1 литр — фиксированная ставка по тиру
-const volumeTiers = [
-  { min: 0.001, max: 0.2, rate: 23 },
-  { min: 0.201, max: 0.4, rate: 26 },
-  { min: 0.401, max: 0.6, rate: 29 },
-  { min: 0.601, max: 0.8, rate: 30 },
-  { min: 0.801, max: 1.0, rate: 32 },
-];
+// Logistics Formula (applies to BOTH systems)
+logistics = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × deliveryCoef
 
-// Для товаров > 1 литр — прогрессивная формула
-const largeItemCost = firstLiterRate + additionalLiterRate * (volume - 1);
-// Пример: 3L = 46 + 14 * 2 = 74 ₽
+// Example: 3 liter item, Pallets (SUPPLY system)
+logistics = (75 + 2 × 23) × 1.65
+          = (75 + 46) × 1.65
+          = 121 × 1.65
+          = 199.65 ₽
 
-// С коэффициентом склада
-const finalCost = baseCost * warehouseCoefficient;
-// Пример: 74 * 1.2 = 88.80 ₽
+// Example: 3 liter item, INVENTORY system
+logistics = (46 + 2 × 14) × 1.2
+          = (46 + 28) × 1.2
+          = 74 × 1.2
+          = 88.80 ₽
 ```
 
-### Приёмка (Acceptance)
+**INVENTORY System** (Current costs):
+- Uses `logistics_coefficient` from tariffs
+- Fixed rates: `delivery_base_rub`, `delivery_liter_rub`
+
+**SUPPLY System** (Planning):
+- Uses `delivery.coefficient` (multiplier, e.g., 1.65 = 165%)
+- Per-box-type rates: `delivery.baseLiterRub`, `delivery.additionalLiterRub`
+- Separates Boxes (2), Pallets (5), Supersafe (6)
+
+### Приёмка (Acceptance) - SUPPLY System ONLY
+
+**Only SUPPLY system provides acceptance coefficients:**
 
 ```typescript
-// Базовая формула
-const acceptanceCost = baseRate * volumeLiters * coefficient;
+// Acceptance availability coefficient
+acceptanceAvailable = coefficient >= 0 && allowUnload
 
-// Пример: 5L, Краснодар (coefficient=1)
-const cost = 1.70 * 5 * 1.0; // = 8.50 ₽
+// Coefficient interpretation
+-1 = Недоступно (unavailable)
+ 0 = Бесплатно (free)
+ 1 = Стандартно (standard)
+>1 = Повышенная стоимость (increased cost, e.g., 1.65 = 165%)
+```
 
-// Пример: 5L, склад с повышенным coefficient=1.5
-const costHigh = 1.70 * 5 * 1.5; // = 12.75 ₽
+**UI Display Recommendations:**
+```typescript
+if (coefficient === -1 || !allowUnload) {
+  return <Badge variant="destructive">Недоступно</Badge>;
+}
+if (coefficient === 0) {
+  return <Badge variant="success">Бесплатно</Badge>;
+}
+if (coefficient > 1) {
+  return <Badge variant="warning">×{coefficient}</Badge>;
+}
+return <Badge variant="default">Стандартно</Badge>;
 ```
 
 ### Хранение (Storage)
 
-```typescript
-// Формула
-const storageCostPerDay = (baseLiterRub + additionalLiterRub * (volume - 1))
-                          * coefficient
-                          * daysStored;
+**BOTH SYSTEMS (INVENTORY & SUPPLY):**
 
-// Бесплатный период
-const isFree = daysSinceShipment < 60; // 60 дней бесплатно
+```typescript
+// Storage Formula (per day)
+dailyStorage = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × storageCoef
+
+// Total storage cost
+storage = dailyStorage × days
+
+// Example: 1 liter, 30 days, Pallets (SUPPLY system)
+dailyStorage = (41.25 + 0 × 0) × 1.65
+            = 41.25 × 1.65
+            = 68.06 ₽/день
+
+storage = 68.06 × 30 = 2041.80 ₽
+
+// Example: 1 liter, 30 days, INVENTORY system
+dailyStorage = (0.07 + 0 × 0.05) × 1.0
+            = 0.07 ₽/день
+
+storage = 0.07 × 30 = 2.10 ₽
+```
+
+**IMPORTANT for Pallets (SUPPLY system, boxTypeId: 5):**
+- `additionalLiterRub = 0` (null in WB API)
+- Storage becomes **fixed rate**: `baseLiterRub × storageCoef × days`
+- No volume-based calculation for storage
+
+**INVENTORY System** (Current costs):
+- Uses fallback values when WB API returns 0
+- Default: `base_per_day_rub = 0.07 ₽`, `liter_per_day_rub = 0.05 ₽`
+
+**SUPPLY System** (Planning):
+- Per-box-type rates: `storage.baseLiterRub`, `storage.additionalLiterRub`
+- Higher coefficients (e.g., 1.65 = 165%)
+
+**Free Storage Period:**
+```typescript
+// Free storage for first 60 days
+const isFree = daysSinceShipment < 60;
+const storageCost = isFree ? 0 : dailyStorage × days;
 ```
 
 ---
@@ -681,7 +809,7 @@ interface CommissionRate {
   kgvpPickup: number;
 }
 
-// Acceptance Coefficient (transformed)
+// Acceptance Coefficient (SUPPLY system, transformed)
 interface AcceptanceCoefficient {
   warehouseId: number;
   warehouseName: string;
@@ -719,8 +847,81 @@ interface AvailableWarehouse {
   isSortingCenter: boolean;
 }
 
+// Warehouse with INVENTORY tariffs
+interface Warehouse {
+  id: number;
+  name: string;
+  city: string;
+  federal_district: string | null;
+  coordinates: {
+    lat: number;
+    lon: number;
+  };
+  cargo_type: 'MGT' | 'SGT' | 'KGT';
+  delivery_types: string[];
+  tariffs: WarehouseTariffs | null;
+}
+
+// INVENTORY System Tariffs
+interface WarehouseTariffs {
+  fbo: {
+    delivery_base_rub: number;
+    delivery_liter_rub: number;
+    logistics_coefficient: number;
+  };
+  fbs: {
+    delivery_base_rub: number;
+    delivery_liter_rub: number;
+    logistics_coefficient: number;
+  };
+  storage: {
+    base_per_day_rub: number;
+    liter_per_day_rub: number;
+    coefficient: number;
+  };
+  effective_from: string;
+  effective_until: string;
+}
+
+// SUPPLY System Date Tariffs
+interface SupplyDateTariffs {
+  date: string;
+  warehouseId: number;
+  warehouseName: string;
+  coefficient: number;         // -1 | 0 | ≥1
+  isAvailable: boolean;
+  allowUnload: boolean;
+  boxTypeId: number;
+  boxTypeName: string;
+  delivery: {
+    coefficient: number;
+    baseLiterRub: number;
+    additionalLiterRub: number;
+  };
+  storage: {
+    coefficient: number;
+    baseLiterRub: number;
+    additionalLiterRub: number;
+  };
+  isSortingCenter: boolean;
+}
+
+// Extracted tariffs (normalized for calculation)
+interface ExtractedTariffs {
+  deliveryBaseLiterRub: number;
+  deliveryPerLiterRub: number;
+  storageBaseLiterRub: number;
+  storagePerLiterRub: number;
+  logisticsCoefficient: number;
+  storageCoefficient: number;
+  source: 'inventory' | 'supply';
+  isAvailable?: boolean;
+}
+
+// Type definitions
 type FulfillmentType = 'FBO' | 'FBS' | 'DBS' | 'EDBS';
 type BoxTypeId = 2 | 5 | 6; // 2=Boxes, 5=Pallets, 6=Supersafe
+type TariffSystem = 'inventory' | 'supply';
 ```
 
 ---
@@ -756,6 +957,67 @@ type BoxTypeId = 2 | 5 | 6; // 2=Boxes, 5=Pallets, 6=Supersafe
 | 2026-01-19 | AcceptanceCoefficientsService implementation (OrdersFBW module) |
 | 2026-01-19 | API documentation in test-api/18-tariffs.http |
 | 2026-01-22 | **Documentation Audit**: Marked non-implemented endpoints, updated status |
+| 2026-01-27 | **SUPPLY System Documentation**: Added boxTypeId, calculation formulas, real test results |
+
+---
+
+## Real Test Results (2026-01-27)
+
+**Test Scenario**: Краснодар (Тихорецкая) warehouse, delivery date 2026-01-27
+
+**SUPPLY API Response** (`/v1/tariffs/acceptance/coefficients/all`):
+
+```json
+{
+  "coefficients": [
+    {
+      "warehouseId": 130744,
+      "warehouseName": "Краснодар (Тихорецкая)",
+      "date": "2026-01-27T00:00:00Z",
+      "boxTypeId": 5,
+      "boxTypeName": "Pallets",
+      "coefficient": 1,
+      "isAvailable": true,
+      "allowUnload": true,
+      "delivery": {
+        "coefficient": 1.65,
+        "baseLiterRub": 75,
+        "additionalLiterRub": 23
+      },
+      "storage": {
+        "coefficient": 1.65,
+        "baseLiterRub": 41.25,
+        "additionalLiterRub": 0
+      },
+      "isSortingCenter": false
+    }
+  ]
+}
+```
+
+**Calculated Costs** (1 liter, 30 days):
+
+| Component | Formula | Result |
+|-----------|---------|--------|
+| **Logistics** | `(75 + 0 × 23) × 1.65` | 123.75 ₽ |
+| **Storage (daily)** | `(41.25 + 0 × 0) × 1.65` | 68.06 ₽/день |
+| **Storage (30 days)** | `68.06 × 30` | 2041.80 ₽ |
+| **TOTAL** | `123.75 + 2041.80` | **2165.55 ₽** |
+
+**Key Findings**:
+1. **Pallets have `additionalLiterRub = 0` for storage** (fixed rate per day)
+2. **Coefficients are multipliers** (1.65 = 165%, not 1.65%)
+3. **SUPPLY rates are significantly higher** than INVENTORY rates
+4. **Backend handles comma decimal separator** (e.g., "0,13" → 0.13)
+5. **Warehouse IDs differ** between systems (INVENTORY: 507, SUPPLY: 130744)
+
+**Reference Test Script**: `src/scripts/test-krasnodar-tariffs-2026-01-27.ts`
+
+---
+
+**Status**: ✅ PRODUCTION READY (6 endpoints implemented)
+**Last Updated**: 2026-01-27
+**Author**: Backend Team
 
 ---
 
