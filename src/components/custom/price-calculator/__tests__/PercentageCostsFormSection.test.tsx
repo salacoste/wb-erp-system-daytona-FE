@@ -37,15 +37,13 @@ function renderPercentageCostsFormSection(options: RenderOptions = {}) {
   const mockOnSppChange = vi.fn()
 
   function Wrapper() {
-    const { register, control } = useForm<TestFormData>({
+    const { control } = useForm<TestFormData>({
       defaultValues: { buyback_pct: buybackValue },
     })
 
     return (
       <PercentageCostsFormSection<TestFormData>
-        register={register}
         control={control}
-        buybackValue={buybackValue}
         drrValue={drrValue}
         sppValue={sppValue}
         onDrrChange={mockOnDrrChange}
