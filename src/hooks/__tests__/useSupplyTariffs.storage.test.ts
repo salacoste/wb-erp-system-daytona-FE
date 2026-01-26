@@ -25,6 +25,9 @@ import { useSupplyTariffs } from '../useSupplyTariffs'
 // Import API module to mock
 import * as tariffsApi from '@/lib/api/tariffs'
 
+// Import types
+import type { AcceptanceCoefficient } from '@/types/tariffs'
+
 // ============================================================================
 // Mock Setup
 // ============================================================================
@@ -507,8 +510,8 @@ describe('useSupplyTariffs - Storage Tariff Extraction', () => {
     it('should handle missing storage object in API response', async () => {
       const coefficientWithoutStorage = {
         ...STANDARD_WAREHOUSE_COEFFICIENT,
-        storage: undefined as unknown,
-      }
+        storage: undefined,
+      } as unknown as AcceptanceCoefficient
 
       mockGetAllAcceptanceCoefficients.mockResolvedValue({
         coefficients: [coefficientWithoutStorage],

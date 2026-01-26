@@ -157,6 +157,7 @@ export function PriceCalculatorForm({
 
   // Story 44.20: Propagate commission changes to parent for two-level pricing
   // Story 44.16: Get commission based on fulfillment type
+  // BUG FIX: Also set commission_pct in form data for API request
   useEffect(() => {
     if (selectedCategory) {
       const fboCommission = selectedCategory.paidStorageKgvp
@@ -173,9 +174,11 @@ export function PriceCalculatorForm({
         difference: fbsCommission - fboCommission,
       })
 
+      // BUG FIX: Set commission_pct in form data so it gets sent to API
+      setValue('commission_pct', commission)
       onCommissionChange?.(commission)
     }
-  }, [selectedCategory, fulfillmentType, onCommissionChange])
+  }, [selectedCategory, fulfillmentType, onCommissionChange, setValue])
 
   const performCalculation = useCallback((data: FormData) => {
     if (!isValid || isFormEmpty(data)) return

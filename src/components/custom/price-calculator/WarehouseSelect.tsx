@@ -56,6 +56,8 @@ export function WarehouseSelect({
   const supplyQuery = useSupplyTariffs()
 
   // Convert SupplyWarehouse[] to Warehouse[] with tariffs from SUPPLY coefficients
+  // CRITICAL: Use calculation coefficients (1.0) since rates are pre-multiplied
+  // @see docs/request-backend/108-two-tariff-systems-guide.md
   const supplyWarehouses = useMemo((): Warehouse[] => {
     return supplyQuery.warehouses.map((sw: SupplyWarehouse) => ({
       id: sw.id,
@@ -65,6 +67,7 @@ export function WarehouseSelect({
         deliveryPerLiterRub: sw.tariffs.deliveryPerLiterRub,
         storageBaseLiterRub: sw.tariffs.storageBaseLiterRub,
         storagePerLiterRub: sw.tariffs.storagePerLiterRub,
+        // Calculation coefficients = 1.0 (rates are pre-multiplied in SUPPLY system)
         logisticsCoefficient: sw.tariffs.logisticsCoefficient,
         storageCoefficient: sw.tariffs.storageCoefficient,
       },

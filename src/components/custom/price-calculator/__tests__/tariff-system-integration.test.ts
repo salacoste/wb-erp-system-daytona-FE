@@ -236,16 +236,22 @@ describe('Story 44.40: Tariff Selection Logic', () => {
       expect(tariffs.storageBaseLiterRub).toBeGreaterThan(mockInventoryWarehouse.tariffs.storageBaseLiterRub)
     })
 
-    it('should use SUPPLY delivery coefficient', () => {
+    it('should use SUPPLY delivery coefficient for display', () => {
       const tariffs = extractTariffs('supply', mockInventoryWarehouse, mockSupplyTariffs)
 
-      expect(tariffs.logisticsCoefficient).toBe(1.3)
+      // SUPPLY calculation coefficient is 1.0 (rates pre-multiplied)
+      expect(tariffs.logisticsCoefficient).toBe(1.0)
+      // Display coefficient shows original value
+      expect(tariffs.displayLogisticsCoefficient).toBe(1.3)
     })
 
-    it('should use SUPPLY storage coefficient', () => {
+    it('should use SUPPLY storage coefficient for display', () => {
       const tariffs = extractTariffs('supply', mockInventoryWarehouse, mockSupplyTariffs)
 
-      expect(tariffs.storageCoefficient).toBe(1.1)
+      // SUPPLY calculation coefficient is 1.0 (rates pre-multiplied)
+      expect(tariffs.storageCoefficient).toBe(1.0)
+      // Display coefficient shows original value
+      expect(tariffs.displayStorageCoefficient).toBe(1.1)
     })
   })
 

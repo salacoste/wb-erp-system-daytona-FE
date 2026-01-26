@@ -32,8 +32,21 @@ export interface SupplyWarehouse {
     deliveryPerLiterRub: number
     storageBaseLiterRub: number
     storagePerLiterRub: number
+    /**
+     * Logistics coefficient for CALCULATION - always 1.0 for SUPPLY since rates are pre-multiplied.
+     * @see docs/request-backend/108-two-tariff-systems-guide.md
+     */
     logisticsCoefficient: number
     storageCoefficient: number
+    /**
+     * Original logistics coefficient for DISPLAY purposes (e.g., 1.65 for Krasnodar).
+     * Use this when showing coefficient to user, not for calculations.
+     */
+    displayLogisticsCoefficient?: number
+    /**
+     * Original storage coefficient for DISPLAY purposes.
+     */
+    displayStorageCoefficient?: number
     /** True if storage tariffs are using fallback defaults (baseLiterRub was 0) */
     usingStorageFallback?: boolean
   }
@@ -173,6 +186,10 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
         // Only triggers fallback when baseLiterRub=0, NOT when additionalLiterRub=0 (Pallets)
         const storageExtraction = extractStorageTariffs(c.storage, 'supply')
 
+        // CRITICAL: SUPPLY API returns rates ALREADY multiplied by coefficient!
+        // Example: base=46₽, coefficient=1.65 → API returns baseLiterRub=75.9 (46×1.65)
+        // So we use coefficient=1.0 for calculations to avoid double multiplication
+        // @see docs/request-backend/108-two-tariff-systems-guide.md
         return {
           id: c.warehouseId,
           name: c.warehouseName,
@@ -181,8 +198,12 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
             deliveryPerLiterRub: c.delivery.additionalLiterRub,
             storageBaseLiterRub: storageExtraction.tariffs.baseLiterRub,
             storagePerLiterRub: storageExtraction.tariffs.additionalLiterRub,
-            logisticsCoefficient: c.delivery.coefficient,
-            storageCoefficient: storageExtraction.tariffs.coefficient,
+            // Calculation coefficients = 1.0 (rates are pre-multiplied)
+            logisticsCoefficient: 1.0,
+            storageCoefficient: 1.0,
+            // Display coefficients = original values for UI
+            displayLogisticsCoefficient: c.delivery.coefficient,
+            displayStorageCoefficient: storageExtraction.tariffs.coefficient,
             usingStorageFallback: storageExtraction.usingFallback,
           },
         }
