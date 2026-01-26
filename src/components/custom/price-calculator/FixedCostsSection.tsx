@@ -29,6 +29,12 @@ export interface FixedCostsSectionProps<T extends FieldValues> {
   isLogisticsAutoFilled?: boolean
   /** Callback when logistics forward is manually changed */
   onLogisticsForwardChange?: (value: number) => void
+  /** Auto-filled logistics reverse value (controlled) */
+  logisticsReverseValue?: number
+  /** Whether logistics reverse was auto-filled */
+  isLogisticsReverseAutoFilled?: boolean
+  /** Callback when logistics reverse is manually changed */
+  onLogisticsReverseChange?: (value: number) => void
 }
 
 /**
@@ -46,6 +52,9 @@ export function FixedCostsSection<T extends FieldValues>({
   logisticsForwardValue,
   isLogisticsAutoFilled = false,
   onLogisticsForwardChange,
+  logisticsReverseValue,
+  isLogisticsReverseAutoFilled = false,
+  onLogisticsReverseChange,
 }: FixedCostsSectionProps<T>) {
   // Cast field names to Path<T> for type safety with generic forms
   const cogsField = 'cogs_rub' as Path<T>
@@ -55,6 +64,7 @@ export function FixedCostsSection<T extends FieldValues>({
 
   // Use controlled value if provided (auto-fill mode)
   const isControlled = logisticsForwardValue !== undefined && logisticsForwardValue > 0
+  const isReverseControlled = logisticsReverseValue !== undefined && logisticsReverseValue > 0
 
   return (
     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400">
@@ -149,20 +159,46 @@ export function FixedCostsSection<T extends FieldValues>({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Label htmlFor="logistics_reverse_rub">Логистика возврата</Label>
-            <FieldTooltip content="Стоимость возврата товара от покупателя на склад WB. Обычно равна стоимости логистики к клиенту. Применяется с учетом процента выкупа (buyback)." />
+            {isLogisticsReverseAutoFilled && (
+              <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
+                Автозаполнено
+              </Badge>
+            )}
+            <FieldTooltip content="Стоимость возврата товара от покупателя на склад WB. Формула: 50₽ (первый литр) + 25₽ за каждый дополнительный литр. Применяется с учетом процента выкупа." />
           </div>
-          <Input
-            id="logistics_reverse_rub"
-            type="number"
-            step="0.01"
-            min={0}
-            placeholder="0,00"
-            disabled={disabled}
-            {...register(logisticsReverseField, numericFieldOptions({
-              required: 'Обязательное поле',
-              min: { value: 0, message: 'Не может быть отрицательным' },
-            }))}
-          />
+          {isReverseControlled ? (
+            <>
+              <Input
+                id="logistics_reverse_rub"
+                type="number"
+                step="0.01"
+                min={0}
+                placeholder="0,00"
+                disabled={disabled}
+                value={logisticsReverseValue}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value) || 0
+                  onLogisticsReverseChange?.(value)
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Рассчитано: {formatCurrency(logisticsReverseValue ?? 0)}
+              </p>
+            </>
+          ) : (
+            <Input
+              id="logistics_reverse_rub"
+              type="number"
+              step="0.01"
+              min={0}
+              placeholder="0,00"
+              disabled={disabled}
+              {...register(logisticsReverseField, numericFieldOptions({
+                required: 'Обязательное поле',
+                min: { value: 0, message: 'Не может быть отрицательным' },
+              }))}
+            />
+          )}
           {/* Story 44.30: Added role="alert" for screen reader announcement */}
           {errors.logistics_reverse_rub && (
             <p className="text-sm text-destructive" role="alert">

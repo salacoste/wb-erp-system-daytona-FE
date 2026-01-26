@@ -11,7 +11,7 @@
  * to support the two tariff systems (INVENTORY vs SUPPLY).
  */
 
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import { Calendar, Package, Layers, Shield, HelpCircle } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -162,6 +162,26 @@ export function DeliveryDatePicker({
     },
     [onDateSelect, onDateSelectWithTariffs, supplyTariffsMap]
   )
+
+  // Story 44.40-FE: Auto-notify parent when date is auto-selected on first load
+  // This ensures tariffSystem is set to 'supply' for future dates
+  const hasNotifiedAutoSelect = useRef(false)
+  useEffect(() => {
+    // Only auto-notify once when effectiveDate is set and differs from selectedDate
+    if (
+      !hasNotifiedAutoSelect.current &&
+      effectiveDate &&
+      !selectedDate &&
+      activeCoefficients.length > 0
+    ) {
+      const coeff = activeCoefficients.find((c) => c.date === effectiveDate)
+      if (coeff) {
+        console.info('[DeliveryDatePicker] Auto-selecting date:', effectiveDate, 'coefficient:', coeff.coefficient)
+        handleDateSelect(effectiveDate, coeff.coefficient)
+        hasNotifiedAutoSelect.current = true
+      }
+    }
+  }, [effectiveDate, selectedDate, activeCoefficients, handleDateSelect])
 
   if (isLoading) {
     return <DeliveryDatePickerSkeleton label={label} />

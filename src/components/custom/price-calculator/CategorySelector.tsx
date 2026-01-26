@@ -182,6 +182,12 @@ export function CategorySelector({
         </PopoverContent>
       </Popover>
 
+      {value && (
+        <p className="text-xs text-muted-foreground">
+          FBO: {value.paidStorageKgvp}% • FBS: {value.kgvpMarketplace}%
+        </p>
+      )}
+
       {value && !effectiveDisabled && (
         <Button
           type="button"

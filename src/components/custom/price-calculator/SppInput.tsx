@@ -3,13 +3,7 @@
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Info } from 'lucide-react'
+import { FieldTooltip } from './FieldTooltip'
 
 /**
  * Props for SppInput component
@@ -34,6 +28,14 @@ export interface SppInputProps {
  * - Default value: 0% (no SPP)
  * - Tooltip explaining SPP (WB discount at their expense)
  * - Inline numeric input for precise value entry
+ *
+ * UX Update: Uses FieldTooltip for consistency with BuybackSlider and DrrSlider
+ * Target structure:
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │ [Label]                     [FieldTooltip]                  │
+ * ├─────────────────────────────────────────────────────────────┤
+ * │ [═══════ Slider ═══════]              [Input][%]            │
+ * └─────────────────────────────────────────────────────────────┘
  *
  * @example
  * <SppInput
@@ -64,33 +66,15 @@ export function SppInput({
 
   return (
     <div className="space-y-3" data-testid="spp-input-section">
-      {/* Label with Tooltip */}
+      {/* Label with FieldTooltip - consistent with BuybackSlider and DrrSlider */}
       <div className="flex items-center gap-2">
         <Label htmlFor="spp_pct" className="flex-1">
           СПП (Скидка постоянного покупателя)
         </Label>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Info
-                className="h-4 w-4 text-muted-foreground cursor-help"
-                aria-label="Информация о СПП"
-              />
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <p>
-                СПП — скидка, которую WB предоставляет покупателям за свой счёт.
-              </p>
-              <p className="mt-2 text-xs">
-                <strong>Важно:</strong> Вы получаете полную сумму без учёта СПП.
-                Эта скидка показывает, какую цену увидит покупатель.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <FieldTooltip content="СПП — скидка, которую WB предоставляет покупателям за свой счёт. Важно: Вы получаете полную сумму без учёта СПП. Эта скидка показывает, какую цену увидит покупатель." />
       </div>
 
-      {/* Slider + Input */}
+      {/* Slider + Input - horizontal layout */}
       <div className="flex items-center gap-4">
         <Slider
           value={[value]}
