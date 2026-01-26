@@ -27,7 +27,8 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useProductAutoFill } from '@/hooks/useProductAutoFill'
 import { useWarehouseFormState } from './useWarehouseFormState'
 import { useTariffSettings } from '@/hooks/useTariffSettings'
-import type { PriceCalculatorRequest, TwoLevelPricingFormData, TaxType } from '@/types/price-calculator'
+import { useCommissions } from '@/hooks/useCommissions'
+import type { PriceCalculatorRequest, TwoLevelPricingFormData, TaxType, CategoryHierarchy } from '@/types/price-calculator'
 import type { CategoryCommission } from '@/types/tariffs'
 import type { ProductWithDimensions } from '@/types/product'
 import { type FormData, defaultFormValues } from './usePriceCalculatorForm'
@@ -71,6 +72,9 @@ export function PriceCalculatorForm({
   // Fallback to defaults if API fails (500 error handling)
   const { data: tariffSettings, error: tariffSettingsError } = useTariffSettings()
 
+  // Story 44.26b: Load commissions for category auto-fill from product
+  const { data: commissionsData } = useCommissions()
+
   // Log tariff settings error but continue with defaults
   useEffect(() => {
     if (tariffSettingsError) {
@@ -90,15 +94,37 @@ export function PriceCalculatorForm({
     }
   }, [tariffSettings])
 
+  // Story 44.26b: Find CategoryCommission by CategoryHierarchy from product
+  const findCategoryByHierarchy = useCallback(
+    (hierarchy: CategoryHierarchy): CategoryCommission | null => {
+      if (!commissionsData?.commissions) return null
+
+      // Match by subjectID (primary) and optionally parentID
+      const result = commissionsData.commissions.find(
+        (c) => c.subjectID === hierarchy.subject_id &&
+               (hierarchy.parent_id === null || c.parentID === hierarchy.parent_id)
+      ) ?? null
+
+      // Debug: Log category lookup result
+      console.info('[PriceCalculatorForm] findCategoryByHierarchy:', {
+        hierarchy,
+        found: result ? `${result.parentName} → ${result.subjectName}` : 'not found',
+        commission: result ? `FBO: ${result.paidStorageKgvp}% / FBS: ${result.kgvpMarketplace}%` : 'N/A',
+      })
+
+      return result
+    },
+    [commissionsData]
+  )
+
   // Auto-fill hook for dimensions and category (Story 44.26b)
   const {
     dimensionAutoFill, categoryAutoFill, handleProductSelect,
     markDimensionsModified, restoreDimensions, productHasDimensions, productHasCategory,
-  } = useProductAutoFill({ setValue, setSelectedCategory })
+  } = useProductAutoFill({ setValue, setSelectedCategory, findCategoryByHierarchy })
 
   // Watch form values
   const fulfillmentType = useWatch({ control, name: 'fulfillment_type' })
-  const buybackValue = useWatch({ control, name: 'buyback_pct' }) ?? 95
   const lengthCm = useWatch({ control, name: 'length_cm' }) ?? 0
   const widthCm = useWatch({ control, name: 'width_cm' }) ?? 0
   const heightCm = useWatch({ control, name: 'height_cm' }) ?? 0
@@ -116,9 +142,12 @@ export function PriceCalculatorForm({
   // Story 44.27: Warehouse form state hook
   // Story 44.XX: Added logistics auto-fill and acceptance cost calculation
   const {
-    warehouseId, dailyStorageCost, logisticsForwardRub, isLogisticsAutoFilled,
+    warehouseId, dailyStorageCost,
+    logisticsForwardRub, isLogisticsAutoFilled,
+    logisticsReverseRub, isLogisticsReverseAutoFilled,
     acceptanceCost,
-    handleWarehouseChange, handleStorageRubChange, handleLogisticsForwardChange,
+    handleWarehouseChange, handleStorageRubChange,
+    handleLogisticsForwardChange, handleLogisticsReverseChange,
     handleDeliveryDateChange,
     // Story 44.40: Two Tariff Systems
     tariffSystem,
@@ -150,10 +179,20 @@ export function PriceCalculatorForm({
   }, [acceptanceCost.perUnitCost, setValue])
 
   // Story 44.19: Propagate SPP changes to parent for results display
+  // Story 44.18: Sync SPP value with form field for API/calculations
   const handleSppChange = useCallback((value: number) => {
     setSppValue(value)
+    setValue('spp_pct', value)
     onSppChange?.(value)
-  }, [onSppChange])
+  }, [onSppChange, setValue])
+
+  // Story 44.18: Sync DRR value with form fields for API request and two-level pricing
+  // Both drr_pct (for TwoLevelPricingFormData) and advertising_pct (for API) need to be updated
+  const handleDrrChange = useCallback((value: number) => {
+    setDrrValue(value)
+    setValue('drr_pct', value)
+    setValue('advertising_pct', value)
+  }, [setValue])
 
   // Story 44.20: Propagate commission changes to parent for two-level pricing
   // Story 44.16: Get commission based on fulfillment type
@@ -312,6 +351,12 @@ export function PriceCalculatorForm({
               disabled={disabled}
               autoFillState={categoryAutoFill}
             />
+            {/* Warning if category not selected AND no product category available */}
+            {!selectedCategory && (!selectedProduct || !productHasCategory) && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Выберите категорию для точной комиссии. Без категории используется 15%.
+              </p>
+            )}
             {/* Product dimensions with auto-fill (Story 44.26b) */}
             <DimensionInputSection
               register={register}
@@ -333,15 +378,16 @@ export function PriceCalculatorForm({
               logisticsForwardValue={logisticsForwardRub}
               isLogisticsAutoFilled={isLogisticsAutoFilled}
               onLogisticsForwardChange={handleLogisticsForwardChange}
+              logisticsReverseValue={logisticsReverseRub}
+              isLogisticsReverseAutoFilled={isLogisticsReverseAutoFilled}
+              onLogisticsReverseChange={handleLogisticsReverseChange}
             />
             {/* Percentage costs: buyback, DRR, SPP */}
             <PercentageCostsFormSection
-              register={register}
               control={control}
-              buybackValue={buybackValue}
               drrValue={drrValue}
               sppValue={sppValue}
-              onDrrChange={setDrrValue}
+              onDrrChange={handleDrrChange}
               onSppChange={handleSppChange}
               disabled={disabled}
             />
