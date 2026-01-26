@@ -32,7 +32,7 @@ export interface WarehouseSectionProps {
   onDeliveryDateChange?: (date: string | null, coefficient: number, supplyData?: SupplyDateTariffs) => void
   /** Story 44.40: Active tariff system for display */
   tariffSystem?: 'inventory' | 'supply'
-  /** Story 44.40: Effective tariffs for display */
+  /** Story 44.40: Effective tariffs for display (includes displayLogisticsCoefficient) */
   effectiveTariffs?: ExtractedTariffs
 }
 
@@ -44,8 +44,8 @@ export function WarehouseSection({
   onWarehouseChange,
   disabled,
   onDeliveryDateChange,
-  tariffSystem: _tariffSystem,
-  effectiveTariffs: _effectiveTariffs,
+  tariffSystem,
+  effectiveTariffs,
 }: WarehouseSectionProps) {
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
 

@@ -480,9 +480,13 @@ describe('useSupplyTariffs - Storage Tariff Extraction', () => {
         wrapper: createQueryWrapper(),
       })
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false)
-      })
+      // Wait for retries to complete (query has retry: 2)
+      await waitFor(
+        () => {
+          expect(result.current.isLoading).toBe(false)
+        },
+        { timeout: 10000 }
+      )
 
       expect(result.current.error).toBeDefined()
       expect(result.current.coefficients).toHaveLength(0)

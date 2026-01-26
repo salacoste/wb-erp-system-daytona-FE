@@ -47,9 +47,11 @@ vi.mock('@/hooks/useAllAcceptanceCoefficients', () => ({
 // Import mocked hooks
 import { useWarehouseCoefficients } from '@/hooks/useWarehouseCoefficients'
 import { useWarehouses } from '@/hooks/useWarehouses'
+import { useSupplyTariffs } from '@/hooks/useSupplyTariffs'
 
 const mockUseWarehouseCoefficients = vi.mocked(useWarehouseCoefficients)
 const mockUseWarehouses = vi.mocked(useWarehouses)
+const mockUseSupplyTariffs = vi.mocked(useSupplyTariffs)
 
 // ============================================================================
 // Test Fixtures
