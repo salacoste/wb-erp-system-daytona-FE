@@ -1,14 +1,19 @@
 /**
  * Storage Cost Calculation Utilities
  * Story 44.14-FE: Storage Cost Calculation
+ * Story 44.42-FE: Box Type Selection Support
  * Epic 44: Price Calculator UI (Frontend)
  *
  * Functions for calculating WB storage costs based on volume, tariffs, and duration
  *
- * Formula:
- * daily_cost = (base + (volume - 1) * per_liter) * coefficient
- * total_cost = daily_cost * days
+ * CRITICAL: Different formulas by box type!
+ * - Standard (Boxes=2, Supersafe=6): (base + (volume - 1) * per_liter) * coefficient
+ * - Fixed (Pallets=5): base * coefficient (VOLUME-INDEPENDENT!)
+ *
+ * @see docs/stories/epic-44/story-44.42-fe-box-type-support.md
  */
+
+import { isFixedStorageFormula, type BoxTypeId } from './box-type-utils'
 
 /**
  * Storage tariff configuration
@@ -45,33 +50,53 @@ export type StorageWarningLevel = 'none' | 'warning' | 'critical'
 
 /**
  * Default WB storage tariffs (fallback when no warehouse selected)
- * Based on typical Коледино rates
+ * Based on WB official rates per documentation:
+ * - base_per_day_rub: 0.07 ₽ (for first liter)
+ * - liter_per_day_rub: 0.05 ₽ (per additional liter)
+ *
+ * Note: Storage rates are very low per day - cost accumulates over turnover days.
+ * Example: 10L product × 0.07 base + 9L × 0.05 = 0.07 + 0.45 = 0.52 ₽/day
+ * Over 30 days: 0.52 × 30 = 15.6 ₽
+ *
+ * Reference: docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md
  */
 export const DEFAULT_STORAGE_TARIFF: StorageTariff = {
-  basePerDayRub: 1, // 1 RUB base per day for first liter
-  perLiterPerDayRub: 1, // 1 RUB per additional liter per day
+  basePerDayRub: 0.07, // 0.07 ₽ per day for first liter (WB official rate)
+  perLiterPerDayRub: 0.05, // 0.05 ₽ per additional liter per day
   coefficient: 1.0,
 }
 
 /**
  * Calculate daily storage cost per unit
  *
- * Formula: (base_per_day + (volume - 1) * per_liter_per_day) * coefficient
+ * CRITICAL: Different formulas by box type!
+ * - Standard (Boxes=2, Supersafe=6): (base + (volume-1) * per_liter) * coefficient
+ * - Fixed (Pallets=5): base * coefficient (VOLUME-INDEPENDENT!)
  *
  * @param volumeLiters - Product volume in liters
  * @param tariff - Storage tariff configuration
+ * @param boxTypeId - Box type ID (2=Boxes, 5=Pallets, 6=Supersafe), defaults to 2
  * @returns Daily storage cost in RUB
  */
 export function calculateDailyStorageCost(
   volumeLiters: number,
   tariff: StorageTariff,
+  boxTypeId: BoxTypeId = 2
 ): number {
   if (volumeLiters <= 0) return 0
 
+  // CRITICAL: Pallets (boxTypeId=5) use FIXED formula (volume-independent!)
+  if (isFixedStorageFormula(boxTypeId)) {
+    // Fixed formula: base * coefficient (ignores volume!)
+    return Math.round(tariff.basePerDayRub * tariff.coefficient * 10000) / 10000
+  }
+
+  // Standard formula: (base + (volume-1) * per_liter) * coefficient
   const additionalLiters = Math.max(0, volumeLiters - 1)
   const baseCost =
     tariff.basePerDayRub + additionalLiters * tariff.perLiterPerDayRub
-  return baseCost * tariff.coefficient
+  // Round to 4 decimal places for storage (small daily rates)
+  return Math.round(baseCost * tariff.coefficient * 10000) / 10000
 }
 
 /**
@@ -159,4 +184,74 @@ export function formatStorageBreakdown(result: StorageCostResult): string[] {
   lines.push(`За ${result.days} дней: ${result.totalCost.toFixed(2)} ₽`)
 
   return lines
+}
+
+/**
+ * Calculate billable storage days with 60-day free period
+ *
+ * Backend formula: billable_days = max(0, turnover_days - 60)
+ * WB policy provides 60 days of free storage before billing starts.
+ *
+ * @param turnoverDays - Product turnover in days
+ * @returns Billable days (0 if within free 60-day period)
+ */
+export function calculateBillableDays(turnoverDays: number): number {
+  // Handle NaN - return 0
+  if (Number.isNaN(turnoverDays)) {
+    return 0
+  }
+
+  // Handle Infinity - return as-is
+  if (!Number.isFinite(turnoverDays)) {
+    return turnoverDays
+  }
+
+  // Normal case: max(0, days - 60)
+  return Math.max(0, turnoverDays - 60)
+}
+
+/**
+ * Calculate storage cost with 60-day free period
+ *
+ * Formula: storage_rub = daily_cost × billable_days
+ * Where billable_days = max(0, turnover_days - 60)
+ *
+ * @param dailyCost - Daily storage cost in RUB
+ * @param turnoverDays - Product turnover in days
+ * @returns Total storage cost in RUB (0 if within free period)
+ */
+export function calculateStorageCostWith60DaysFree(
+  dailyCost: number,
+  turnoverDays: number,
+): number {
+  // Handle negative daily cost
+  if (dailyCost < 0) {
+    return 0
+  }
+
+  const billableDays = calculateBillableDays(turnoverDays)
+  return dailyCost * billableDays
+}
+
+/**
+ * Calculate volume in liters with minimum 1 liter enforcement
+ *
+ * Formula: volume_liters = (length × width × height) / 1000, minimum 1 liter
+ * Prevents undersizing of storage charges for small items.
+ *
+ * @param lengthCm - Length in centimeters
+ * @param widthCm - Width in centimeters
+ * @param heightCm - Height in centimeters
+ * @returns Volume in liters (minimum 1)
+ */
+export function calculateVolumeWithMinimum(
+  lengthCm: number,
+  widthCm: number,
+  heightCm: number,
+): number {
+  // Calculate volume: cm³ → liters (divide by 1000)
+  const volumeLiters = (lengthCm * widthCm * heightCm) / 1000
+
+  // Enforce minimum of 1 liter
+  return Math.max(1, volumeLiters)
 }
