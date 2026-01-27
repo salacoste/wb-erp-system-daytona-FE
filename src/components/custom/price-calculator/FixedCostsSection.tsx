@@ -2,11 +2,8 @@
 
 import { Package } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { FieldTooltip } from './FieldTooltip'
+import { FixedCostField } from './FixedCostField'
 import { numericFieldOptions } from '@/lib/form-utils'
-import { formatCurrency } from '@/lib/utils'
 import type { UseFormRegister, FieldErrors, FieldValues, Path } from 'react-hook-form'
 import type { FulfillmentType } from '@/types/price-calculator'
 
@@ -58,13 +55,17 @@ export function FixedCostsSection<T extends FieldValues>({
 }: FixedCostsSectionProps<T>) {
   // Cast field names to Path<T> for type safety with generic forms
   const cogsField = 'cogs_rub' as Path<T>
+  const packagingField = 'packaging_rub' as Path<T>
+  const logisticsToMpField = 'logistics_to_mp_rub' as Path<T>
   const logisticsForwardField = 'logistics_forward_rub' as Path<T>
   const logisticsReverseField = 'logistics_reverse_rub' as Path<T>
   const storageField = 'storage_rub' as Path<T>
 
   // Use controlled value if provided (auto-fill mode)
-  const isControlled = logisticsForwardValue !== undefined && logisticsForwardValue > 0
-  const isReverseControlled = logisticsReverseValue !== undefined && logisticsReverseValue > 0
+  // Fix: Use >= 0 to include 0 values and prevent undefined → defined transition
+  // that causes React "uncontrolled to controlled" warning
+  const isControlled = logisticsForwardValue !== undefined
+  const isReverseControlled = logisticsReverseValue !== undefined
 
   return (
     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400">
@@ -74,15 +75,14 @@ export function FixedCostsSection<T extends FieldValues>({
         <h3 className="text-base font-semibold text-blue-900">Фиксированные затраты (₽)</h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
         {/* COGS */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="cogs_rub" className="flex-1">
-              Себестоимость (COGS)
-            </Label>
-            <FieldTooltip content="Закупочная цена товара у поставщика или стоимость производства одной единицы. Включите все прямые затраты: материалы, упаковку, маркировку." />
-          </div>
+        <FixedCostField
+          id="cogs_rub"
+          label="Себестоимость (COGS)"
+          tooltipContent="Закупочная цена товара у поставщика или стоимость производства одной единицы. Включите все прямые затраты: материалы, упаковку, маркировку."
+          error={(errors.cogs_rub as { message?: string })?.message}
+        >
           <Input
             id="cogs_rub"
             type="number"
@@ -95,44 +95,72 @@ export function FixedCostsSection<T extends FieldValues>({
               min: { value: 0, message: 'Себестоимость не может быть отрицательной' },
             }))}
           />
-          {/* Story 44.30: Added role="alert" for screen reader announcement */}
-          {errors.cogs_rub && (
-            <p className="text-sm text-destructive" role="alert">
-              {(errors.cogs_rub as { message?: string })?.message}
-            </p>
-          )}
-        </div>
+        </FixedCostField>
+
+        {/* Story 44.52: Packaging cost */}
+        <FixedCostField
+          id="packaging_rub"
+          label="Упаковка"
+          tooltipContent="Стоимость упаковки на короб/паллету. Делится на количество единиц в коробе. Например: 100₽ за короб с 10 шт = 10₽ за единицу."
+          error={(errors.packaging_rub as { message?: string })?.message}
+        >
+          <Input
+            id="packaging_rub"
+            type="number"
+            step="0.01"
+            min={0}
+            placeholder="0,00"
+            disabled={disabled}
+            {...register(packagingField, numericFieldOptions({
+              min: { value: 0, message: 'Не может быть отрицательным' },
+            }))}
+          />
+        </FixedCostField>
+
+        {/* Story 44.52: Logistics to marketplace cost */}
+        <FixedCostField
+          id="logistics_to_mp_rub"
+          label="Логистика до МП"
+          tooltipContent="Стоимость доставки до склада WB на короб/паллету. Делится на количество единиц. Например: 500₽ за доставку короба с 50 шт = 10₽ за единицу."
+          error={(errors.logistics_to_mp_rub as { message?: string })?.message}
+        >
+          <Input
+            id="logistics_to_mp_rub"
+            type="number"
+            step="0.01"
+            min={0}
+            placeholder="0,00"
+            disabled={disabled}
+            {...register(logisticsToMpField, numericFieldOptions({
+              min: { value: 0, message: 'Не может быть отрицательным' },
+            }))}
+          />
+        </FixedCostField>
 
         {/* Logistics Forward */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="logistics_forward_rub">Логистика к клиенту</Label>
-            {isLogisticsAutoFilled && (
-              <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
-                Автозаполнено
-              </Badge>
-            )}
-            <FieldTooltip content="Стоимость доставки товара от склада WB до покупателя. Зависит от объема товара и коэффициента выбранного склада." />
-          </div>
+        <FixedCostField
+          id="logistics_forward_rub"
+          label="Логистика к клиенту"
+          tooltipContent="Стоимость доставки товара от склада WB до покупателя. Зависит от объема товара и коэффициента выбранного склада."
+          showBadge={isLogisticsAutoFilled}
+          showCalculated={isControlled && (logisticsForwardValue ?? 0) > 0}
+          calculatedValue={logisticsForwardValue}
+          error={(errors.logistics_forward_rub as { message?: string })?.message}
+        >
           {isControlled ? (
-            <>
-              <Input
-                id="logistics_forward_rub"
-                type="number"
-                step="0.01"
-                min={0}
-                placeholder="0,00"
-                disabled={disabled}
-                value={logisticsForwardValue}
-                onChange={(e) => {
-                  const value = parseFloat(e.target.value) || 0
-                  onLogisticsForwardChange?.(value)
-                }}
-              />
-              <p className="text-xs text-muted-foreground">
-                Рассчитано: {formatCurrency(logisticsForwardValue ?? 0)}
-              </p>
-            </>
+            <Input
+              id="logistics_forward_rub"
+              type="number"
+              step="0.01"
+              min={0}
+              placeholder="0,00"
+              disabled={disabled}
+              value={logisticsForwardValue ?? ''}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0
+                onLogisticsForwardChange?.(value)
+              }}
+            />
           ) : (
             <Input
               id="logistics_forward_rub"
@@ -147,44 +175,32 @@ export function FixedCostsSection<T extends FieldValues>({
               }))}
             />
           )}
-          {/* Story 44.30: Added role="alert" for screen reader announcement */}
-          {errors.logistics_forward_rub && (
-            <p className="text-sm text-destructive" role="alert">
-              {(errors.logistics_forward_rub as { message?: string })?.message}
-            </p>
-          )}
-        </div>
+        </FixedCostField>
 
         {/* Logistics Reverse */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="logistics_reverse_rub">Логистика возврата</Label>
-            {isLogisticsReverseAutoFilled && (
-              <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
-                Автозаполнено
-              </Badge>
-            )}
-            <FieldTooltip content="Стоимость возврата товара от покупателя на склад WB. Формула: 50₽ (первый литр) + 25₽ за каждый дополнительный литр. Применяется с учетом процента выкупа." />
-          </div>
+        <FixedCostField
+          id="logistics_reverse_rub"
+          label="Логистика возврата"
+          tooltipContent="Стоимость возврата товара от покупателя на склад WB. Формула: 50₽ (первый литр) + 25₽ за каждый дополнительный литр. Применяется с учетом процента выкупа."
+          showBadge={isLogisticsReverseAutoFilled}
+          showCalculated={isReverseControlled && (logisticsReverseValue ?? 0) > 0}
+          calculatedValue={logisticsReverseValue}
+          error={(errors.logistics_reverse_rub as { message?: string })?.message}
+        >
           {isReverseControlled ? (
-            <>
-              <Input
-                id="logistics_reverse_rub"
-                type="number"
-                step="0.01"
-                min={0}
-                placeholder="0,00"
-                disabled={disabled}
-                value={logisticsReverseValue}
-                onChange={(e) => {
-                  const value = parseFloat(e.target.value) || 0
-                  onLogisticsReverseChange?.(value)
-                }}
-              />
-              <p className="text-xs text-muted-foreground">
-                Рассчитано: {formatCurrency(logisticsReverseValue ?? 0)}
-              </p>
-            </>
+            <Input
+              id="logistics_reverse_rub"
+              type="number"
+              step="0.01"
+              min={0}
+              placeholder="0,00"
+              disabled={disabled}
+              value={logisticsReverseValue ?? ''}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0
+                onLogisticsReverseChange?.(value)
+              }}
+            />
           ) : (
             <Input
               id="logistics_reverse_rub"
@@ -199,21 +215,16 @@ export function FixedCostsSection<T extends FieldValues>({
               }))}
             />
           )}
-          {/* Story 44.30: Added role="alert" for screen reader announcement */}
-          {errors.logistics_reverse_rub && (
-            <p className="text-sm text-destructive" role="alert">
-              {(errors.logistics_reverse_rub as { message?: string })?.message}
-            </p>
-          )}
-        </div>
+        </FixedCostField>
 
         {/* Storage - FBO only (Story 44.15) */}
         {fulfillmentType === 'FBO' && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="storage_rub">Хранение</Label>
-              <FieldTooltip content="Ежемесячная стоимость хранения одной единицы на складе WB. Рассчитывается как: (объём × тариф × дней) / 30. Узнать тариф можно в ЛК WB. Только для FBO." />
-            </div>
+          <FixedCostField
+            id="storage_rub"
+            label="Хранение"
+            tooltipContent="Ежемесячная стоимость хранения одной единицы на складе WB. Рассчитывается как: (объём × тариф × дней) / 30. Узнать тариф можно в ЛК WB. Только для FBO."
+            error={(errors.storage_rub as { message?: string })?.message}
+          >
             <Input
               id="storage_rub"
               type="number"
@@ -225,7 +236,7 @@ export function FixedCostsSection<T extends FieldValues>({
                 min: { value: 0, message: 'Не может быть отрицательным' },
               }))}
             />
-          </div>
+          </FixedCostField>
         )}
       </div>
     </div>

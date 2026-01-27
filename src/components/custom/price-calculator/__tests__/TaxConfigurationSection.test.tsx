@@ -12,6 +12,20 @@ import { TaxConfigurationSection } from '../TaxConfigurationSection'
 describe('TaxConfigurationSection', () => {
   const mockOnTaxRateChange = vi.fn()
   const mockOnTaxTypeChange = vi.fn()
+  const mockOnVatPayerChange = vi.fn()
+  const mockOnVatRateChange = vi.fn()
+
+  // Default props including VAT configuration
+  const defaultProps = {
+    taxRate: 6,
+    taxType: 'income' as const,
+    onTaxRateChange: mockOnTaxRateChange,
+    onTaxTypeChange: mockOnTaxTypeChange,
+    isVatPayer: false,
+    vatRate: 20,
+    onVatPayerChange: mockOnVatPayerChange,
+    onVatRateChange: mockOnVatRateChange,
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -19,14 +33,7 @@ describe('TaxConfigurationSection', () => {
 
   describe('Rendering', () => {
     it('should render tax rate input', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       const input = screen.getByTestId('tax-rate-input')
       expect(input).toBeInTheDocument()
@@ -34,28 +41,14 @@ describe('TaxConfigurationSection', () => {
     })
 
     it('should render tax type toggle buttons', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       expect(screen.getByTestId('tax-type-income')).toBeInTheDocument()
       expect(screen.getByTestId('tax-type-profit')).toBeInTheDocument()
     })
 
     it('should render Russian labels', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       expect(screen.getByText('Ставка налога')).toBeInTheDocument()
       expect(screen.getByText('Тип налога')).toBeInTheDocument()
@@ -64,14 +57,7 @@ describe('TaxConfigurationSection', () => {
     })
 
     it('should render quick rate preset buttons', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       expect(screen.getByTestId('tax-rate-preset-6')).toBeInTheDocument()
       expect(screen.getByTestId('tax-rate-preset-13')).toBeInTheDocument()
@@ -83,14 +69,7 @@ describe('TaxConfigurationSection', () => {
   describe('Tax Rate Input', () => {
     it('should call onTaxRateChange when rate is changed', async () => {
       const user = userEvent.setup()
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       const input = screen.getByTestId('tax-rate-input')
       await user.clear(input)
@@ -100,14 +79,7 @@ describe('TaxConfigurationSection', () => {
     })
 
     it('should have min=0 and max=50 constraints', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       const input = screen.getByTestId('tax-rate-input')
       expect(input).toHaveAttribute('min', '0')
@@ -117,14 +89,7 @@ describe('TaxConfigurationSection', () => {
 
   describe('Tax Type Toggle', () => {
     it('should highlight income button when taxType is income', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       // Income button should be in secondary variant (selected state)
       const incomeButton = screen.getByTestId('tax-type-income')
@@ -133,14 +98,7 @@ describe('TaxConfigurationSection', () => {
 
     it('should call onTaxTypeChange when profit is clicked', async () => {
       const user = userEvent.setup()
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       await user.click(screen.getByTestId('tax-type-profit'))
       expect(mockOnTaxTypeChange).toHaveBeenCalledWith('profit')
@@ -148,14 +106,7 @@ describe('TaxConfigurationSection', () => {
 
     it('should call onTaxTypeChange when income is clicked', async () => {
       const user = userEvent.setup()
-      render(
-        <TaxConfigurationSection
-          taxRate={15}
-          taxType="profit"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={15} taxType="profit" />)
 
       await user.click(screen.getByTestId('tax-type-income'))
       expect(mockOnTaxTypeChange).toHaveBeenCalledWith('income')
@@ -165,14 +116,7 @@ describe('TaxConfigurationSection', () => {
   describe('Preset Buttons', () => {
     it('should apply 6% preset when clicked', async () => {
       const user = userEvent.setup()
-      render(
-        <TaxConfigurationSection
-          taxRate={15}
-          taxType="profit"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={15} taxType="profit" />)
 
       await user.click(screen.getByTestId('tax-rate-preset-6'))
       expect(mockOnTaxRateChange).toHaveBeenCalledWith(6)
@@ -180,14 +124,7 @@ describe('TaxConfigurationSection', () => {
 
     it('should apply 15% preset when clicked', async () => {
       const user = userEvent.setup()
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       await user.click(screen.getByTestId('tax-rate-preset-15'))
       expect(mockOnTaxRateChange).toHaveBeenCalledWith(15)
@@ -195,14 +132,7 @@ describe('TaxConfigurationSection', () => {
 
     it('should apply 20% preset when clicked', async () => {
       const user = userEvent.setup()
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       await user.click(screen.getByTestId('tax-rate-preset-20'))
       expect(mockOnTaxRateChange).toHaveBeenCalledWith(20)
@@ -211,28 +141,14 @@ describe('TaxConfigurationSection', () => {
 
   describe('High Tax Rate Warning', () => {
     it('should show warning for tax rates > 20%', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={25}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={25} />)
 
       expect(screen.getByTestId('high-tax-warning')).toBeInTheDocument()
       expect(screen.getByText('Высокая ставка налога')).toBeInTheDocument()
     })
 
     it('should not show warning for tax rates <= 20%', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={20}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={20} />)
 
       expect(screen.queryByTestId('high-tax-warning')).not.toBeInTheDocument()
     })
@@ -242,10 +158,7 @@ describe('TaxConfigurationSection', () => {
     it('should show tax amount when calculatedTaxAmount is provided', () => {
       render(
         <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
+          {...defaultProps}
           calculatedTaxAmount={73.04}
           recommendedPrice={1217.39}
         />
@@ -257,10 +170,8 @@ describe('TaxConfigurationSection', () => {
     it('should not show preview when calculatedTaxAmount is 0', () => {
       render(
         <TaxConfigurationSection
+          {...defaultProps}
           taxRate={0}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
           calculatedTaxAmount={0}
         />
       )
@@ -271,27 +182,13 @@ describe('TaxConfigurationSection', () => {
 
   describe('Matching Preset Badge', () => {
     it('should show matching preset badge for USN 6%', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} />)
 
       expect(screen.getByTestId('matching-preset-badge')).toBeInTheDocument()
     })
 
     it('should show matching preset badge for USN 15%', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={15}
-          taxType="profit"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={15} taxType="profit" />)
 
       expect(screen.getByTestId('matching-preset-badge')).toBeInTheDocument()
     })
@@ -299,15 +196,7 @@ describe('TaxConfigurationSection', () => {
 
   describe('Disabled State', () => {
     it('should disable all inputs when disabled prop is true', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-          disabled
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} disabled />)
 
       expect(screen.getByTestId('tax-rate-input')).toBeDisabled()
       expect(screen.getByTestId('tax-type-income')).toBeDisabled()
@@ -315,15 +204,7 @@ describe('TaxConfigurationSection', () => {
     })
 
     it('should disable preset buttons when disabled', () => {
-      render(
-        <TaxConfigurationSection
-          taxRate={6}
-          taxType="income"
-          onTaxRateChange={mockOnTaxRateChange}
-          onTaxTypeChange={mockOnTaxTypeChange}
-          disabled
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} disabled />)
 
       expect(screen.getByTestId('tax-rate-preset-6')).toBeDisabled()
       expect(screen.getByTestId('tax-rate-preset-20')).toBeDisabled()

@@ -16,12 +16,19 @@ import { TaxConfigurationSection } from '../TaxConfigurationSection'
 describe('Story 44.17: Tax Configuration (Rate + Type)', () => {
   const mockOnTaxRateChange = vi.fn()
   const mockOnTaxTypeChange = vi.fn()
+  const mockOnVatPayerChange = vi.fn()
+  const mockOnVatRateChange = vi.fn()
 
   const defaultProps = {
     taxRate: 6,
     taxType: 'income' as const,
     onTaxRateChange: mockOnTaxRateChange,
     onTaxTypeChange: mockOnTaxTypeChange,
+    // VAT configuration (default: non-VAT payer)
+    isVatPayer: false,
+    vatRate: 20,
+    onVatPayerChange: mockOnVatPayerChange,
+    onVatRateChange: mockOnVatRateChange,
   }
 
   beforeEach(() => {

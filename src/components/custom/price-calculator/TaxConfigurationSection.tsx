@@ -12,12 +12,23 @@ import { AlertTriangle, Receipt } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import type { TaxType, TaxPreset } from '@/types/price-calculator'
 
+/** Common VAT rates in Russia (including 5% for small business, 22% for special categories) */
+const VAT_RATES = [0, 5, 10, 20, 22] as const
+
 /** Props for TaxConfigurationSection */
 export interface TaxConfigurationSectionProps {
   taxRate: number
   taxType: TaxType
   onTaxRateChange: (value: number) => void
   onTaxTypeChange: (value: TaxType) => void
+  /** Story 44.XX: VAT payer status */
+  isVatPayer: boolean
+  /** Story 44.XX: VAT rate (0, 10, 20) */
+  vatRate: number
+  /** Story 44.XX: VAT payer toggle handler */
+  onVatPayerChange: (isPayer: boolean) => void
+  /** Story 44.XX: VAT rate change handler */
+  onVatRateChange: (rate: number) => void
   disabled?: boolean
   calculatedTaxAmount?: number
   recommendedPrice?: number
@@ -40,6 +51,10 @@ export function TaxConfigurationSection({
   taxType,
   onTaxRateChange,
   onTaxTypeChange,
+  isVatPayer,
+  vatRate,
+  onVatPayerChange,
+  onVatRateChange,
   disabled,
   calculatedTaxAmount,
   recommendedPrice,
@@ -168,6 +183,52 @@ export function TaxConfigurationSection({
           <Badge variant="outline" className="text-xs" data-testid="matching-preset-badge">
             {matchingPreset.name}
           </Badge>
+        )}
+      </div>
+
+      {/* VAT Configuration - Story 44.XX */}
+      <div className="space-y-2 pt-2 border-t border-amber-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="vat-toggle" className="text-sm">
+              Плательщик НДС
+            </Label>
+            <FieldTooltip content="Если вы на ОСН, вы обязаны платить НДС. Комиссия WB рассчитывается от цены с НДС. УСН и самозанятые не платят НДС." />
+          </div>
+          <Button
+            id="vat-toggle"
+            type="button"
+            variant={isVatPayer ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onVatPayerChange(!isVatPayer)}
+            disabled={disabled}
+            className="h-7 px-3"
+            data-testid="vat-toggle"
+          >
+            {isVatPayer ? 'Да' : 'Нет'}
+          </Button>
+        </div>
+
+        {isVatPayer && (
+          <div className="flex items-center gap-2">
+            <Label className="text-sm text-muted-foreground">Ставка НДС:</Label>
+            <div className="flex gap-1">
+              {VAT_RATES.map((rate) => (
+                <Button
+                  key={rate}
+                  type="button"
+                  variant={vatRate === rate ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => onVatRateChange(rate)}
+                  disabled={disabled}
+                  className="h-7 px-2"
+                  data-testid={`vat-rate-${rate}`}
+                >
+                  {rate}%
+                </Button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
