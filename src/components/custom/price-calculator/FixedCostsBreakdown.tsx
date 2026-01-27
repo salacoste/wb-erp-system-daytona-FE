@@ -46,11 +46,17 @@ export function FixedCostsBreakdown({
 
   // Calculate each cost as percentage of recommended price
   const cogsPct = calculateCostPercentage(costs.cogs, recommendedPrice)
+  const packagingPct = calculateCostPercentage(costs.packaging, recommendedPrice)
+  const logisticsToMpPct = calculateCostPercentage(costs.logisticsToMp, recommendedPrice)
   const logisticsFwdPct = calculateCostPercentage(costs.logisticsForward, recommendedPrice)
   const logisticsRevPct = calculateCostPercentage(costs.logisticsReverseEffective, recommendedPrice)
   const storagePct = calculateCostPercentage(costs.storage, recommendedPrice)
   const acceptancePct = calculateCostPercentage(costs.acceptance, recommendedPrice)
   const totalPct = calculateCostPercentage(costs.total, recommendedPrice)
+
+  // Story 44.53: Check if seller-side costs are present
+  const hasPackaging = costs.packaging > 0
+  const hasLogisticsToMp = costs.logisticsToMp > 0
 
   return (
     <div className="space-y-2" data-testid="fixed-costs-breakdown">
@@ -70,6 +76,28 @@ export function FixedCostsBreakdown({
             <span className="w-12 text-right text-xs">{cogsPct.toFixed(1)}%</span>
           </span>
         </div>
+
+        {/* Story 44.53: Packaging (seller-side) - show only if > 0 */}
+        {hasPackaging && (
+          <div className="flex justify-between">
+            <span>├─ Упаковка</span>
+            <span className="flex gap-4">
+              <span className="w-16 text-right">{formatCurrency(costs.packaging)}</span>
+              <span className="w-12 text-right text-xs">{packagingPct.toFixed(1)}%</span>
+            </span>
+          </div>
+        )}
+
+        {/* Story 44.53: Logistics to MP (seller-side) - show only if > 0 */}
+        {hasLogisticsToMp && (
+          <div className="flex justify-between">
+            <span>├─ Логистика до МП</span>
+            <span className="flex gap-4">
+              <span className="w-16 text-right">{formatCurrency(costs.logisticsToMp)}</span>
+              <span className="w-12 text-right text-xs">{logisticsToMpPct.toFixed(1)}%</span>
+            </span>
+          </div>
+        )}
 
         {/* Forward Logistics */}
         <div className="flex justify-between">

@@ -69,8 +69,19 @@ export function calculateAcceptanceCost(
   unitsPerPackage: number,
   tariff: AcceptanceTariff
 ): AcceptanceCostResult {
-  // Handle invalid coefficient - use 1.0 as default
-  const effectiveCoefficient = coefficient > 0 ? coefficient : 1.0
+  // Handle unavailable acceptance (coefficient = -1) - return zero result
+  // WB uses -1 to indicate acceptance is not available at this warehouse
+  if (coefficient === -1) {
+    return createZeroResult()
+  }
+
+  // Handle coefficient values:
+  // - 0 = free acceptance (cost multiplier is 0, resulting in zero cost)
+  // - 1.0 = standard rate
+  // - >1 = surcharge (e.g., 1.5 = 50% higher cost)
+  // - undefined/null/NaN/negative (except -1) = invalid, fallback to 1.0
+  const effectiveCoefficient =
+    coefficient >= 0 && !Number.isNaN(coefficient) ? coefficient : 1.0
 
   // Handle zero/negative volume for box type
   if (boxType === 'box' && volumeLiters <= 0) {
