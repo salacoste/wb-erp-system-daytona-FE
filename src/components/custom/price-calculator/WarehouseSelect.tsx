@@ -88,15 +88,20 @@ export function WarehouseSelect({
   // Story 44.44: Restore warehouse from preset when data loads
   useEffect(() => {
     if (presetRestoredRef.current) return
-    if (!value || !warehouses?.length || !onSetWarehouseById) return
+    if (!value || !warehouses?.length) return
 
     // Check if warehouse with this ID exists in loaded data
-    const warehouseExists = warehouses.some((w) => w.id === value)
-    if (warehouseExists) {
+    const warehouse = warehouses.find((w) => w.id === value)
+    if (warehouse) {
       presetRestoredRef.current = true
-      onSetWarehouseById(value, warehouses)
+      // Call onChange to update WarehouseSection's selectedWarehouse state
+      // This triggers coefficient loading via useWarehouseCoefficients
+      console.info('[WarehouseSelect] Restoring warehouse from preset:', { id: value, name: warehouse.name })
+      onChange(value, warehouse)
+      // Also call setWarehouseById for hook state sync
+      onSetWarehouseById?.(value, warehouses)
     }
-  }, [value, warehouses, onSetWarehouseById])
+  }, [value, warehouses, onChange, onSetWarehouseById])
 
   const selectedWarehouse = useMemo(
     () => warehouses?.find((w) => w.id === value) ?? null,
