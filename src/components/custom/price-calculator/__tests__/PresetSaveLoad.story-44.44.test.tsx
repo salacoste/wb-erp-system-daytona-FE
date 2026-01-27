@@ -20,7 +20,8 @@ import type { FormData } from '../usePriceCalculatorForm'
 // ============================================================================
 
 const PRESET_KEY = 'price-calculator-preset'
-const CURRENT_VERSION = 1
+/** Version 2: Added nm_id, category_id, is_vat_payer, vat_pct, spp_pct, buyback_pct, acquiring_pct, warehouse_name, packaging_rub, logistics_to_mp_rub */
+const CURRENT_VERSION = 2
 
 // ============================================================================
 // Test Fixtures
@@ -28,7 +29,7 @@ const CURRENT_VERSION = 1
 
 /** Valid preset matching story schema */
 const mockValidPreset = {
-  version: 1,
+  version: 2,
   savedAt: '2026-01-27T10:30:00.000Z',
   data: {
     cogs_rub: 500,
@@ -70,9 +71,9 @@ const mockFormValues: Partial<FormData> = {
   storage_coefficient: 1.1,
 }
 
-/** Outdated preset with wrong version */
+/** Outdated preset with wrong version (v1 is now outdated, v2 is current) */
 const mockOutdatedPreset = {
-  version: 0,
+  version: 1,
   savedAt: '2025-01-01T00:00:00.000Z',
   data: {
     cogs_rub: 100,
@@ -741,7 +742,7 @@ describe('Story 44.44: Preset Save/Load', () => {
 
     it('should handle empty preset data object', async () => {
       const emptyDataPreset = {
-        version: 1,
+        version: 2, // Current version
         savedAt: '2026-01-27T10:30:00.000Z',
         data: {},
       }
