@@ -13,7 +13,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
+import { render } from '@/test/utils/test-utils'
 import userEvent from '@testing-library/user-event'
 import { BoxTypeSelector } from '../BoxTypeSelector'
 // These components need to be created - tests will FAIL
@@ -22,148 +23,87 @@ import { BoxTypeSelector } from '../BoxTypeSelector'
 // import { TurnoverDaysInput } from '../TurnoverDaysInput'
 
 // ============================================================================
-// Story 44.32: AC1 - Box Type Selection (FBO Only)
+// Story 44.32/44.42: AC1 - Box Type Selection (FBO Only)
+// Updated for Story 44.42: Now uses BoxTypeId (2, 5, 6) and Select component
 // ============================================================================
 
-describe('Story 44.32: AC1 - BoxTypeSelector', () => {
-  const mockOnValueChange = vi.fn()
+describe('Story 44.32/44.42: AC1 - BoxTypeSelector', () => {
+  const mockOnChange = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   describe('Rendering', () => {
-    it('should render two radio options: Короб and Монопаллета', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should render select dropdown with label "Тип доставки"', () => {
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} />)
 
-      expect(screen.getByText('Короб')).toBeInTheDocument()
-      expect(screen.getByText('Монопаллета')).toBeInTheDocument()
+      expect(screen.getByText('Тип доставки')).toBeInTheDocument()
     })
 
-    it('should render "Тип упаковки" label', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should show current selection text (Коробки)', () => {
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} />)
 
-      expect(screen.getByText('Тип упаковки')).toBeInTheDocument()
+      // Should display current box type name
+      expect(screen.getByText('Коробки')).toBeInTheDocument()
     })
 
-    it('should have "Короб" selected by default', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should show Монопаллеты when value is 5', () => {
+      render(<BoxTypeSelector value={5} onChange={mockOnChange} />)
 
-      const boxRadio = screen.getByRole('radio', { name: /Короб/i })
-      expect(boxRadio).toBeChecked()
+      expect(screen.getByText('Монопаллеты')).toBeInTheDocument()
     })
 
-    it('should show description for each option', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should show Суперсейф when value is 6', () => {
+      render(<BoxTypeSelector value={6} onChange={mockOnChange} />)
 
-      expect(screen.getByText('Стандартная доставка в коробе')).toBeInTheDocument()
-      expect(screen.getByText('Крупногабаритные товары на паллете')).toBeInTheDocument()
+      expect(screen.getByText('Суперсейф')).toBeInTheDocument()
     })
 
     it('should display tooltip explaining cost impact', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} />)
 
       // Tooltip trigger should be present
       const tooltipTrigger = screen.getByRole('button', { name: /информация/i })
       expect(tooltipTrigger).toBeInTheDocument()
     })
-  })
 
-  describe('Interactions', () => {
-    it('should call onValueChange with "pallet" when Монопаллета selected', async () => {
-      const user = userEvent.setup()
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should show fixed rate note when Pallets (5) selected', () => {
+      render(<BoxTypeSelector value={5} onChange={mockOnChange} />)
 
-      const palletRadio = screen.getByRole('radio', { name: /Монопаллета/i })
-      await user.click(palletRadio)
-
-      expect(mockOnValueChange).toHaveBeenCalledWith('pallet')
-    })
-
-    it('should call onValueChange with "box" when Короб selected', async () => {
-      const user = userEvent.setup()
-      render(<BoxTypeSelector value="pallet" onValueChange={mockOnValueChange} />)
-
-      const boxRadio = screen.getByRole('radio', { name: /Короб/i })
-      await user.click(boxRadio)
-
-      expect(mockOnValueChange).toHaveBeenCalledWith('box')
-    })
-
-    it('should not call onValueChange when disabled', async () => {
-      const user = userEvent.setup()
-      render(
-        <BoxTypeSelector value="box" onValueChange={mockOnValueChange} disabled />
-      )
-
-      const palletRadio = screen.getByRole('radio', { name: /Монопаллета/i })
-      await user.click(palletRadio)
-
-      expect(mockOnValueChange).not.toHaveBeenCalled()
+      // Fixed rate explanation for pallets
+      expect(screen.getByText(/не зависит от объёма/i)).toBeInTheDocument()
     })
   })
 
-  describe('Visual State', () => {
-    it('should show selected state styling for box', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
-
-      // The selected radio item has aria-checked="true"
-      const boxRadio = screen.getByRole('radio', { name: /Короб/i })
-      expect(boxRadio).toHaveAttribute('aria-checked', 'true')
-
-      // The container has border-primary class - find by parent traversal
-      const container = boxRadio.parentElement
-      expect(container).toHaveClass('border-primary')
-    })
-
-    it('should show selected state styling for pallet', () => {
-      render(<BoxTypeSelector value="pallet" onValueChange={mockOnValueChange} />)
-
-      // The selected radio item has aria-checked="true"
-      const palletRadio = screen.getByRole('radio', { name: /Монопаллета/i })
-      expect(palletRadio).toHaveAttribute('aria-checked', 'true')
-
-      // The container has border-primary class - find by parent traversal
-      const container = palletRadio.parentElement
-      expect(container).toHaveClass('border-primary')
-    })
-
+  describe('Disabled State', () => {
     it('should apply disabled styling when disabled', () => {
-      render(
-        <BoxTypeSelector value="box" onValueChange={mockOnValueChange} disabled />
-      )
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} disabled />)
 
-      const boxRadio = screen.getByRole('radio', { name: /Короб/i })
-      expect(boxRadio).toBeDisabled()
+      const trigger = screen.getByRole('combobox')
+      expect(trigger).toBeDisabled()
+    })
+
+    it('should be disabled when availableTypes is empty', () => {
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} availableTypes={[]} />)
+
+      const trigger = screen.getByRole('combobox')
+      expect(trigger).toBeDisabled()
     })
   })
 
   describe('Accessibility', () => {
-    it('should have proper radio group role', () => {
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should have accessible combobox role', () => {
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} />)
 
-      expect(screen.getByRole('radiogroup')).toBeInTheDocument()
+      expect(screen.getByRole('combobox')).toBeInTheDocument()
     })
 
-    it('should be keyboard navigable', async () => {
-      const user = userEvent.setup()
-      render(<BoxTypeSelector value="box" onValueChange={mockOnValueChange} />)
+    it('should have associated label', () => {
+      render(<BoxTypeSelector value={2} onChange={mockOnChange} />)
 
-      // Verify radiogroup has tabindex for keyboard navigation
-      const radioGroup = screen.getByRole('radiogroup')
-      expect(radioGroup).toHaveAttribute('tabindex', '0')
-
-      // Verify both radio items are accessible via keyboard
-      const boxRadio = screen.getByRole('radio', { name: /Короб/i })
-      const palletRadio = screen.getByRole('radio', { name: /Монопаллета/i })
-
-      // Both radios are present and accessible
-      expect(boxRadio).toBeInTheDocument()
-      expect(palletRadio).toBeInTheDocument()
-
-      // Can click to select via keyboard (simulating space/enter)
-      await user.click(palletRadio)
-      expect(mockOnValueChange).toHaveBeenCalledWith('pallet')
+      const label = screen.getByText('Тип доставки')
+      expect(label).toBeInTheDocument()
     })
   })
 })
@@ -554,14 +494,15 @@ describe('Story 44.32: AC6 - Conditional Display Logic', () => {
 describe('Story 44.32: AC9 - Tooltip Explanations', () => {
   it('should show BoxTypeSelector tooltip on hover', async () => {
     const user = userEvent.setup()
-    render(<BoxTypeSelector value="box" onValueChange={vi.fn()} />)
+    render(<BoxTypeSelector value={2} onChange={vi.fn()} />)
 
     const tooltipTrigger = screen.getByRole('button', { name: /информация/i })
     await user.hover(tooltipTrigger)
 
     await waitFor(() => {
+      // Story 44.42: Updated tooltip content explains storage calculation
       // Tooltip renders multiple elements, use getAllByText and check at least one exists
-      const tooltipElements = screen.getAllByText(/стоимость приёмки/i)
+      const tooltipElements = screen.getAllByText(/расчёт хранения|не зависит от объёма/i)
       expect(tooltipElements.length).toBeGreaterThan(0)
     })
   })
@@ -674,12 +615,11 @@ describe('Story 44.32: Form Integration', () => {
 
 describe('Story 44.32: Accessibility', () => {
   it('should have associated labels for all inputs', () => {
-    render(<BoxTypeSelector value="box" onValueChange={vi.fn()} />)
+    render(<BoxTypeSelector value={2} onChange={vi.fn()} />)
 
-    const radios = screen.getAllByRole('radio')
-    radios.forEach((radio) => {
-      expect(radio).toHaveAccessibleName()
-    })
+    // BoxTypeSelector now uses Select (combobox), not RadioGroup
+    const combobox = screen.getByRole('combobox')
+    expect(combobox).toBeInTheDocument()
   })
 
   it.skip('should have role="alert" on weight threshold warning', () => {

@@ -10,6 +10,7 @@ import {
   type AcceptanceTariff,
   type AcceptanceCostResult,
 } from '@/lib/acceptance-cost-utils'
+import type { BoxTypeId } from '@/lib/box-type-utils'
 import {
   determineTariffSystem,
   extractTariffs,
@@ -34,8 +35,8 @@ export interface UseWarehouseFormStateProps {
   lengthCm: number
   widthCm: number
   heightCm: number
-  /** Delivery box type: 'box' or 'pallet' */
-  boxType: 'box' | 'pallet'
+  /** Delivery box type ID: 2=Boxes, 5=Pallets, 6=Supersafe */
+  boxType: BoxTypeId
   /** Number of units per package (for per-unit cost calculation) */
   unitsPerPackage: number
   /** Optional acceptance tariff from admin settings */

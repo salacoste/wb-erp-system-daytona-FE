@@ -16,6 +16,24 @@ export default defineConfig({
     setupFiles: ['./src/test/localStorage-polyfill.ts', './src/test/setup.ts'],
     testTimeout: 10000, // 10 seconds timeout for all tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
+    // Configure fake timers to work with waitFor and MSW
+    // Story 44.44: Required for PresetIndicator auto-hide tests
+    fakeTimers: {
+      // Automatically advance time when real time passes
+      // This helps waitFor work with fake timers
+      shouldAdvanceTime: true,
+      advanceTimeDelta: 10,
+      // Don't mock queueMicrotask (needed for MSW v2 and React concurrent mode)
+      toFake: [
+        'setTimeout',
+        'clearTimeout',
+        'setInterval',
+        'clearInterval',
+        'setImmediate',
+        'clearImmediate',
+        'Date',
+      ],
+    },
     exclude: [
       'node_modules/**',
       'e2e/**', // Exclude E2E tests from Vitest

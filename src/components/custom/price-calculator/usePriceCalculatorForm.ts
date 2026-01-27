@@ -1,4 +1,5 @@
-import type { FulfillmentType, TaxType, BoxType } from '@/types/price-calculator'
+import type { FulfillmentType, TaxType } from '@/types/price-calculator'
+import { DEFAULT_BOX_TYPE_ID, type BoxTypeId } from '@/lib/box-type-utils'
 
 /**
  * Form data structure matching PriceCalculatorRequest
@@ -51,8 +52,8 @@ export interface FormData {
   storage_coefficient: number
   /** Delivery date ISO string (Story 44.27) */
   delivery_date: string | null
-  /** Story 44.32: Box type for FBO fulfillment (default: 'box') */
-  box_type: BoxType
+  /** Story 44.32/44.42: Box type ID for FBO fulfillment (2=Boxes, 5=Pallets, 6=Supersafe) */
+  box_type: BoxTypeId
   /** Story 44.32: Weight exceeds 25kg threshold (default: false) */
   weight_exceeds_25kg: boolean
   /** Story 44.32: Localization index (КТР) for regional delivery (default: 1.0) */
@@ -112,8 +113,8 @@ export const defaultFormValues: FormData = {
   logistics_coefficient: 1.0,
   storage_coefficient: 1.0,
   delivery_date: null,
-  /** Story 44.32: Box type default (standard box) */
-  box_type: 'box',
+  /** Story 44.32/44.42: Box type default (2 = Boxes/Коробки) */
+  box_type: DEFAULT_BOX_TYPE_ID,
   /** Story 44.32: Weight threshold default (not exceeded) */
   weight_exceeds_25kg: false,
   /** Story 44.32: Localization index default (Central Federal District) */

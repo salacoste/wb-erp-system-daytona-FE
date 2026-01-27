@@ -28,6 +28,10 @@ import { useProductAutoFill } from '@/hooks/useProductAutoFill'
 import { useWarehouseFormState } from './useWarehouseFormState'
 import { useTariffSettings } from '@/hooks/useTariffSettings'
 import { useCommissions } from '@/hooks/useCommissions'
+// Story 44.44: Preset Save/Load
+import { usePriceCalculatorPreset } from './usePriceCalculatorPreset'
+import { PresetIndicator } from './PresetIndicator'
+import { PresetActions } from './PresetActions'
 import type { PriceCalculatorRequest, TwoLevelPricingFormData, TaxType, CategoryHierarchy } from '@/types/price-calculator'
 import type { CategoryCommission } from '@/types/tariffs'
 import type { ProductWithDimensions } from '@/types/product'
@@ -67,9 +71,14 @@ export function PriceCalculatorForm({
   const [isVatPayer, setIsVatPayer] = useState(false)
   const [vatRate, setVatRate] = useState(20)
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+  // Story 44.44: Preset initialization flag to prevent double-load
+  const presetLoadedRef = useRef(false)
 
-  const { handleSubmit, reset, setValue, register, formState: { isValid, errors }, control } =
+  const { handleSubmit, reset, setValue, getValues, register, formState: { isValid, errors }, control } =
     useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
+
+  // Story 44.44: Preset Save/Load hook
+  const { hasPreset, isPresetLoaded, loadPreset, savePreset, clearPreset } = usePriceCalculatorPreset()
 
   // Story 44.XX: Load global tariff settings for acceptance rates
   // Fallback to defaults if API fails (500 error handling)
@@ -160,7 +169,7 @@ export function PriceCalculatorForm({
     lengthCm,
     widthCm,
     heightCm,
-    boxType: boxType ?? 'box',
+    boxType: boxType ?? 2,
     unitsPerPackage: unitsPerPackage ?? 1,
     acceptanceTariff,
   })
@@ -168,6 +177,23 @@ export function PriceCalculatorForm({
   useEffect(() => {
     return () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current) }
   }, [])
+
+  // Story 44.44: Load preset on mount (AC2)
+  useEffect(() => {
+    if (presetLoadedRef.current) return
+    presetLoadedRef.current = true
+
+    const presetData = loadPreset()
+    if (presetData) {
+      // Apply preset values to form state
+      if (presetData.drr_pct !== undefined) setDrrValue(presetData.drr_pct)
+      if (presetData.tax_rate_pct !== undefined) setTaxRate(presetData.tax_rate_pct)
+      if (presetData.tax_type !== undefined) setTaxType(presetData.tax_type)
+
+      // Reset form with preset data merged with defaults
+      reset({ ...defaultFormValues, ...presetData })
+    }
+  }, [loadPreset, reset])
 
   // Story 44.38: Reset units_per_package when box_type or fulfillment_type changes
   useEffect(() => {
@@ -293,8 +319,12 @@ export function PriceCalculatorForm({
             <div className="p-2 bg-primary/10 rounded-lg">
               <Calculator className="h-5 w-5 text-primary" aria-hidden="true" />
             </div>
-            <div>
-              <CardTitle className="text-xl">Калькулятор цены</CardTitle>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-xl">Калькулятор цены</CardTitle>
+                {/* Story 44.44: Preset loaded indicator (AC4) */}
+                <PresetIndicator isVisible={isPresetLoaded} />
+              </div>
               <CardDescription className="mt-1">
                 Рассчитайте оптимальную цену на основе затрат и желаемой маржи
               </CardDescription>
@@ -325,7 +355,7 @@ export function PriceCalculatorForm({
               <>
                 <BoxTypeSelector
                   value={boxType}
-                  onValueChange={(value) => setValue('box_type', value, { shouldValidate: true })}
+                  onChange={(value) => setValue('box_type', value, { shouldValidate: true })}
                   disabled={disabled}
                 />
                 {/* Story 44.38: Units per package for acceptance cost division */}
@@ -430,7 +460,26 @@ export function PriceCalculatorForm({
               onVatRateChange={handleVatRateChange}
               disabled={disabled}
             />
-            <FormActionsSection loading={loading} disabled={disabled} isValid={isValid} onReset={onReset} />
+            {/* Story 44.44: Form actions with preset Save/Clear buttons */}
+            <FormActionsSection
+              loading={loading}
+              disabled={disabled}
+              isValid={isValid}
+              onReset={onReset}
+              presetActions={
+                <PresetActions
+                  getFormValues={getValues}
+                  isFormValid={isValid}
+                  hasPreset={hasPreset}
+                  onSave={savePreset}
+                  onClear={() => {
+                    clearPreset()
+                    reset(defaultFormValues)
+                  }}
+                  disabled={disabled}
+                />
+              }
+            />
           </form>
         </CardContent>
       </Card>

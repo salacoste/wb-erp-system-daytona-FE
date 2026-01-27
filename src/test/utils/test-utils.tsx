@@ -7,6 +7,7 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, type RenderOptions } from '@testing-library/react'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 /**
  * Creates a fresh QueryClient for each test
@@ -47,7 +48,11 @@ interface AllProvidersProps {
 
 function AllProviders({ children }: AllProvidersProps) {
   const queryClient = createTestQueryClient()
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>{children}</TooltipProvider>
+    </QueryClientProvider>
+  )
 }
 
 /**

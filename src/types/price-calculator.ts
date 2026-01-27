@@ -5,9 +5,27 @@
  * Story 44.17-FE: Tax Configuration Types
  * Story 44.18-FE: DRR Input Types
  * Story 44.26b-FE: Auto-fill Dimensions & Category Types
+ * Story 44.42-FE: Box Type Selection Support
  * Epic 44: Price Calculator UI (Frontend)
  * Reference: docs/request-backend/95-epic-43-price-calculator-api.md
  */
+
+// ============================================================================
+// Box Type Re-exports (Story 44.42)
+// ============================================================================
+
+// Re-export from box-type-utils for convenience
+export type { BoxTypeId, BoxTypeInfo } from '@/lib/box-type-utils'
+export {
+  BOX_TYPES,
+  DEFAULT_BOX_TYPE_ID,
+  ALL_BOX_TYPE_IDS,
+  getBoxTypeInfo,
+  isBoxTypeAvailable,
+  getAvailableBoxTypes,
+  isFixedStorageFormula,
+  isValidBoxTypeId,
+} from '@/lib/box-type-utils'
 
 // ============================================================================
 // Tax Types (Story 44.17)

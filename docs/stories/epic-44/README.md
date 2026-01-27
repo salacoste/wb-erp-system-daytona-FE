@@ -1,14 +1,15 @@
 # Epic 44: Price Calculator UI (Frontend)
 
-**Status**: 🔄 **Phase 6 In Progress** (Two Tariff Systems)
+**Status**: ✅ **COMPLETE** (All 32 Stories Done)
 **Backend Dependency**: Epic 43 ✅ Complete
-**Total Stories**: 28
-**Total Estimate**: 68 Story Points
+**Total Stories**: 32
+**Total Estimate**: 81 Story Points
 **Phase 1 Completed**: 2026-01-17 (Core Calculator)
 **Phase 2 Completed**: 2026-01-22 (Enhanced Logistics)
 **Phase 3 Completed**: 2026-01-23 (Warehouse & Tariffs)
 **Phase 4 Completed**: 2026-01-23 (V2 Enhancements)
 **Phase 5 Completed**: 2026-01-23 (Bug Fixes & Improvements)
+**Phase 6 Completed**: 2026-01-27 (Two Tariff Systems & Enhancements)
 
 ---
 
@@ -145,8 +146,12 @@ Where:
 | 44.36 | [API Field Mismatch - box_type, turnover_days](./story-44.36-fe-api-field-mismatch.md) | **P0** | **2** | **✅ Complete** |
 | 44.37 | [API Field Mismatch - Warehouse & Additional Fields](./story-44.37-fe-api-field-mismatch-warehouse.md) | **P0** | **2** | **✅ Complete** |
 | 44.38 | [Units Per Package - Acceptance Cost Division](./story-44.38-fe-units-per-package.md) | **P1** | **3** | **✅ Complete** |
-| **Phase 6: Two Tariff Systems** |||||
-| **44.40** | **[Two Tariff Systems Integration](./story-44.40-fe-two-tariff-systems-integration.md)** | **P0** | **5** | **📋 Ready** |
+| **Phase 6: Two Tariff Systems & Enhancements** |||||
+| **44.40** | **[Two Tariff Systems Integration](./story-44.40-fe-two-tariff-systems-integration.md)** | **P0** | **5** | **✅ Complete** |
+| **44.41** | **[Storage Tariff Zero Bug Fix](./story-44.41-fe-storage-tariff-fix.md)** | **P0** | **3** | **✅ Complete** |
+| **44.42** | **[Box Type Selection Support](./story-44.42-fe-box-type-support.md)** | **P1** | **5** | **✅ Complete** |
+| **44.43** | **[Acceptance Coefficient Status Badge](./story-44.43-fe-acceptance-coefficient-badge.md)** | **P2** | **2** | **✅ Complete** |
+| **44.44** | **[Preset Save/Load](./story-44.44-fe-preset-save-load.md)** | **P2** | **3** | **✅ Complete** |
 
 ---
 
@@ -382,16 +387,20 @@ Story is complete when:
 | API Field Mismatch | 44.36 | ✅ |
 | API Field Mismatch Warehouse | 44.37 | ✅ |
 | Units Per Package | 44.38 | ✅ |
-| **Phase 6: Two Tariff Systems** ||
-| Two Tariff Systems Integration | 44.40 | 📋 |
+| **Phase 6: Two Tariff Systems & Enhancements** ||
+| Two Tariff Systems Integration | 44.40 | ✅ |
+| Storage Tariff Zero Bug Fix | 44.41 | ✅ |
+| Box Type Selection Support | 44.42 | ✅ |
+| Acceptance Coefficient Badge | 44.43 | ✅ |
+| Preset Save/Load | 44.44 | ✅ |
 
 **Phase 1 Progress**: 6/6 stories (100%) ✅
 **Phase 2 Progress**: 4/4 stories (100%) ✅
 **Phase 3 Progress**: 5/5 stories (100%) ✅
 **Phase 4 Progress**: 6/6 stories (100%) ✅
 **Phase 5 Progress**: 7/7 stories (100%) ✅
-**Phase 6 Progress**: 0/1 stories (0%) 📋
-**Overall Progress**: 27/28 stories (96%)
+**Phase 6 Progress**: 5/5 stories (100%) ✅
+**Overall Progress**: 32/32 stories (100%) ✅
 
 ---
 
@@ -423,8 +432,8 @@ Story is complete when:
 | Phase 3 | 5 | 9 SP |
 | Phase 4 | 6 | 12 SP |
 | Phase 5 | 7 | 19 SP |
-| Phase 6 | 1 | 5 SP |
-| **Total** | **28** | **68 SP** |
+| Phase 6 | 5 | 18 SP |
+| **Total** | **32** | **81 SP** |
 
 **Phase 5 Breakdown**:
 - Story 44.32 (Missing Fields): 5 SP
@@ -434,6 +443,13 @@ Story is complete when:
 - Story 44.36 (API Field Mismatch - box_type/turnover_days): 2 SP ⚠️ **CRITICAL**
 - Story 44.37 (API Field Mismatch - warehouse/additional): 2 SP ⚠️ **CRITICAL**
 - Story 44.38 (Units Per Package): 3 SP
+
+**Phase 6 Breakdown**:
+- Story 44.40 (Two Tariff Systems Integration): 5 SP ⚠️ **CRITICAL**
+- Story 44.41 (Storage Tariff Zero Bug Fix): 3 SP ⚠️ **CRITICAL**
+- Story 44.42 (Box Type Selection Support): 5 SP
+- Story 44.43 (Acceptance Coefficient Badge): 2 SP
+- Story 44.44 (Preset Save/Load): 3 SP
 
 ---
 
@@ -518,16 +534,16 @@ See `PRICE-CALCULATOR-REQUIREMENTS.md` Section 4 for complete API reference.
 
 | Feature | Description | Priority |
 |---------|-------------|----------|
-| Pallet tariffs (КГТ) | Support for large items | Phase 5 |
-| DBS/EDBS fulfillment | Delivery by seller modes | Phase 5 |
-| Batch calculation | Multiple products at once | Phase 5 |
-| Presets | Save common configurations | Phase 5 |
-| Calculation history | Track past calculations | Phase 5 |
-| Auto-detect category | From existing products | Phase 5 |
+| Pallet tariffs (КГТ) | Support for large items | Phase 7 |
+| DBS/EDBS fulfillment | Delivery by seller modes | Phase 7 |
+| Batch calculation | Multiple products at once | Phase 7 |
+| Calculation history | Track past calculations | Phase 7 |
+| Auto-detect category | From existing products | Phase 7 |
+| Multiple presets | Save multiple configurations | Phase 7 |
 
 ---
 
-**Last Updated**: 2026-01-26
-**Epic Status**: 🔄 **Phase 6 In Progress** (27/28 stories, 96%)
+**Last Updated**: 2026-01-27
+**Epic Status**: ✅ **COMPLETE** (32/32 stories, 100%)
 **Phase 2-5 Completed**: 2026-01-23 (All stories complete)
-**Phase 6 Added**: 2026-01-26 (Two Tariff Systems Integration)
+**Phase 6 Completed**: 2026-01-27 (Two Tariff Systems & Enhancements)

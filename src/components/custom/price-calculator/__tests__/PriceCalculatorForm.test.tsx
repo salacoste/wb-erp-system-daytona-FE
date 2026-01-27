@@ -5,27 +5,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { renderWithProviders } from '@/test/utils/test-utils'
 import { PriceCalculatorForm } from '../PriceCalculatorForm'
-
-// Create a test query client
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  })
-
-// Render with providers wrapper
-const renderWithProviders = (ui: React.ReactElement) => {
-  const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
-}
 
 // Mock the sub-components that use React Query or complex logic
 vi.mock('../MarginSlider', () => ({
@@ -131,6 +114,26 @@ vi.mock('@/hooks/useProductAutoFill', () => ({
     productHasDimensions: true,
     productHasCategory: true,
   }),
+}))
+
+// Story 44.44: Mock preset components and hook
+vi.mock('../usePriceCalculatorPreset', () => ({
+  usePriceCalculatorPreset: () => ({
+    hasPreset: false,
+    isPresetLoaded: false,
+    loadPreset: vi.fn(() => null),
+    savePreset: vi.fn(),
+    clearPreset: vi.fn(),
+  }),
+}))
+
+vi.mock('../PresetIndicator', () => ({
+  PresetIndicator: ({ isVisible }: { isVisible: boolean }) =>
+    isVisible ? <span data-testid="preset-indicator">Preset Loaded</span> : null,
+}))
+
+vi.mock('../PresetActions', () => ({
+  PresetActions: () => <div data-testid="preset-actions">Preset Actions Mock</div>,
 }))
 
 describe('PriceCalculatorForm', () => {

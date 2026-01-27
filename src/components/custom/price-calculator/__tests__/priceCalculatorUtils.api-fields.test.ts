@@ -58,7 +58,7 @@ function createValidFormData(overrides: Partial<FormData> = {}): FormData {
 function createFboFormData(overrides: Partial<FormData> = {}): FormData {
   return createValidFormData({
     fulfillment_type: 'FBO',
-    box_type: 'pallet',
+    box_type: 5,
     turnover_days: 45,
     weight_exceeds_25kg: true,
     localization_index: 1.5,
@@ -87,7 +87,7 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
   // --------------------------------------------------------------------------
   describe('AC1: box_type field exclusion', () => {
     it('should NOT include box_type in API request for FBO', () => {
-      const formData = createFboFormData({ box_type: 'pallet' })
+      const formData = createFboFormData({ box_type: 5 })
 
       const request = toApiRequest(formData)
 
@@ -103,7 +103,7 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
     })
 
     it('should NOT include box_type with default value "box"', () => {
-      const formData = createFboFormData({ box_type: 'box' })
+      const formData = createFboFormData({ box_type: 2 })
 
       const request = toApiRequest(formData)
 
@@ -166,7 +166,7 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
   describe('AC3: Valid API Request Structure', () => {
     it('should produce a valid API request without rejected fields', () => {
       const formData = createFboFormData({
-        box_type: 'pallet',
+        box_type: 5,
         turnover_days: 45,
       })
 
@@ -304,10 +304,10 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
   // --------------------------------------------------------------------------
   describe('AC5: Frontend-Only Fields Still Work', () => {
     it('should have box_type in FormData type', () => {
-      const formData = createFboFormData({ box_type: 'pallet' })
+      const formData = createFboFormData({ box_type: 5 })
 
       // Form data should still have box_type for UI
-      expect(formData.box_type).toBe('pallet')
+      expect(formData.box_type).toBe(5)
     })
 
     it('should have turnover_days in FormData type', () => {
@@ -319,12 +319,12 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
 
     it('should preserve box_type and turnover_days in form state', () => {
       const formData = createFboFormData({
-        box_type: 'pallet',
+        box_type: 5,
         turnover_days: 60,
       })
 
       // Fields exist in form data
-      expect(formData).toHaveProperty('box_type', 'pallet')
+      expect(formData).toHaveProperty('box_type', 5)
       expect(formData).toHaveProperty('turnover_days', 60)
 
       // But NOT sent to API
@@ -502,7 +502,7 @@ describe('API Request Snapshot', () => {
       logistics_coefficient: 1.2,
       storage_coefficient: 1.1,
       delivery_date: '2026-01-25',
-      box_type: 'pallet', // Should NOT be in API request
+      box_type: 5, // Should NOT be in API request
       weight_exceeds_25kg: true,
       localization_index: 1.5,
       turnover_days: 45, // Should NOT be in API request

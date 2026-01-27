@@ -3,19 +3,20 @@
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { FieldTooltip } from './FieldTooltip'
-import type { BoxType } from '@/types/price-calculator'
+import type { BoxTypeId } from '@/lib/box-type-utils'
 
 /**
  * Props for UnitsPerPackageInput component
  * Story 44.38: Units Per Package - Acceptance Cost Division
+ * Story 44.42: Updated to use BoxTypeId (2, 5, 6) instead of string
  */
 export interface UnitsPerPackageInputProps {
   /** Current value (1-1000) */
   value: number
   /** Callback when value changes */
   onValueChange: (value: number) => void
-  /** Box type for dynamic label */
-  boxType: BoxType
+  /** Box type ID for dynamic label (2=Boxes, 5=Pallets, 6=Supersafe) */
+  boxType: BoxTypeId
   /** Disable the input */
   disabled?: boolean
   /** Error message to display */
@@ -23,11 +24,13 @@ export interface UnitsPerPackageInputProps {
 }
 
 /**
- * Labels based on box type
+ * Labels based on box type ID
+ * Story 44.42: Updated to use BoxTypeId
  */
-const LABELS: Record<BoxType, string> = {
-  box: 'Количество штук в коробе',
-  pallet: 'Количество штук на паллете',
+const LABELS: Record<BoxTypeId, string> = {
+  2: 'Количество штук в коробе', // Boxes
+  5: 'Количество штук на паллете', // Pallets
+  6: 'Количество штук в коробе', // Supersafe (similar to Boxes)
 }
 
 /**
@@ -47,10 +50,11 @@ const DEFAULT_UNITS = 1
 /**
  * Units per package input for FBO fulfillment
  * Story 44.38: Acceptance Cost Division
+ * Story 44.42: Updated to use BoxTypeId
  *
  * Features:
  * - Number input with min/max validation (1-1000)
- * - Dynamic label based on box type (box/pallet)
+ * - Dynamic label based on box type (box/pallet/supersafe)
  * - Tooltip explaining acceptance cost division
  * - Error state support
  * - Full accessibility support
@@ -59,7 +63,7 @@ const DEFAULT_UNITS = 1
  * <UnitsPerPackageInput
  *   value={unitsPerPackage}
  *   onValueChange={setUnitsPerPackage}
- *   boxType="box"
+ *   boxType={2}
  *   disabled={disabled}
  * />
  */
@@ -70,7 +74,7 @@ export function UnitsPerPackageInput({
   disabled = false,
   error,
 }: UnitsPerPackageInputProps) {
-  const label = LABELS[boxType]
+  const label = LABELS[boxType] ?? LABELS[2]
   const inputId = 'units-per-package'
   const errorId = error ? `${inputId}-error` : undefined
 

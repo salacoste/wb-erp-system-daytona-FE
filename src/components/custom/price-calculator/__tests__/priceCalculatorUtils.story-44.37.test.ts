@@ -395,7 +395,7 @@ describe('Story 44.37-FE: API Field Mismatch Bug Fix', () => {
         advertising_pct: 5,
         storage_rub: 50,
         // Story 44.36 fields
-        box_type: 'pallet',
+        box_type: 5,
         turnover_days: 45,
         // Story 44.37 fields
         warehouse_id: 507,

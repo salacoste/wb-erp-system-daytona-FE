@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Loader2, Calculator, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { ReactNode } from 'react'
 
 /**
  * Props for FormActionsSection component
@@ -16,6 +17,8 @@ export interface FormActionsSectionProps {
   isValid: boolean
   /** Callback when reset is clicked */
   onReset: () => void
+  /** Optional preset actions slot (Story 44.44) */
+  presetActions?: ReactNode
 }
 
 /**
@@ -43,6 +46,7 @@ export function FormActionsSection({
   disabled = false,
   isValid,
   onReset,
+  presetActions,
 }: FormActionsSectionProps) {
   return (
     <div className="border-t border-muted pt-6">
@@ -52,6 +56,9 @@ export function FormActionsSection({
           <span>Расчёт...</span>
         </div>
       )}
+
+      {/* Story 44.44: Preset Save/Clear buttons */}
+      {presetActions && <div className="mb-4">{presetActions}</div>}
 
       <div className="flex gap-4 flex-col md:flex-row">
         <Button

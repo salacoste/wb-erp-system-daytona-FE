@@ -1,15 +1,16 @@
 # Stories Status Report
 
 **Generated:** 2025-11-23
-**Last Updated:** 2026-01-23
-**Total Stories:** 93 (86 Done, 4 Ready for Dev)
+**Last Updated:** 2026-01-27
+**Total Stories:** 102 (91 Done, 8 Ready for Dev)
 
 ## Summary
 
-- ✅ **Completed (Done):** 86 stories (92%)
-- 📋 **Ready for Development:** 4 stories (Epic 42-FE 4 stories)
+- ✅ **Completed (Done):** 91 stories (89%)
+- 📋 **Ready for Development:** 4 stories (Epic 42-FE: 4)
 - 📝 **Draft (Not Started):** 0 stories
 - ⚠️ **Partially Complete:** 0 stories
+- 🔄 **In Progress:** 0 stories
 
 ---
 
@@ -41,7 +42,7 @@
 ### ✅ Epic 34-FE: Telegram Notifications — PRODUCTION READY (6/6 stories, 21 pts)
 ### ✅ Epic 36-FE: Product Card Linking — COMPLETE (5/5 stories, 91 tests)
 ### ✅ Epic 37: Merged Group Table Display — DONE (5/5 stories, 89.4/100)
-### ✅ Epic 44: Price Calculator UI — COMPLETE (27/27 stories, 63 pts)
+### ✅ Epic 44-FE: Price Calculator UI — COMPLETE (32/32 stories, 81 pts)
 ### ✅ Epic 52-FE: Tariff Settings Admin UI — COMPLETE (7/7 stories, 26 pts)
 ### 📋 Epic 42-FE: Task Handlers Adaptation — READY FOR DEV (4 stories, 7 pts)
 
@@ -396,11 +397,12 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 
 ---
 
-## Epic 44-FE: Price Calculator UI (27 stories) ✅ **100% COMPLETE**
+## Epic 44-FE: Price Calculator UI (32 stories) ✅ **COMPLETE**
 
-**Status:** ✅ 100% Complete (27/27 stories)
-**Total Points:** 63
-**Completed:** 2026-01-23
+**Status:** ✅ Complete (32/32 stories, 100%)
+**Total Points:** 81
+**Phase 1-5 Completed:** 2026-01-23
+**Phase 6 Completed:** 2026-01-27
 **Documentation:** `docs/stories/epic-44/README.md`
 
 ### Phase 1: Core Calculator (6/6 Complete)
@@ -440,12 +442,19 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 - ✅ 44.37-FE: API Field Mismatch Warehouse — Done (2 pts)
 - ✅ 44.38-FE: Units Per Package — Done (3 pts)
 
+### Phase 6: Two Tariff Systems & Enhancements (5/5 Complete) ✅
+- ✅ 44.40-FE: Two Tariff Systems Integration — Done (5 pts)
+- ✅ 44.41-FE: Storage Tariff Zero Bug Fix — Done (3 pts)
+- ✅ 44.42-FE: Box Type Selection Support — Done (5 pts)
+- ✅ 44.43-FE: Acceptance Coefficient Status Badge — Done (2 pts)
+- ✅ 44.44-FE: Preset Save/Load — Done (3 pts)
+
 ---
 
 ## Statistics
 
 ### By Status
-- **Done:** 86 stories (92%)
+- **Done:** 91 stories (89%)
 - **Ready for Development:** 4 stories (4%) — Epic 42-FE (4)
 - **Draft:** 0 stories
 
@@ -464,12 +473,12 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 | Epic 36-FE | ✅ Complete | 5/5 (91 tests) | 16 pts |
 | Epic 37 | ✅ Done | 5/5 (89.4/100) | - |
 | Epic 42-FE | 📋 Ready for Dev | 4/4 | 7 pts |
-| Epic 44-FE | ✅ Complete | 27/27 | 63 pts |
+| Epic 44-FE | ✅ Complete | 32/32 | 81 pts |
 | Epic 52-FE | ✅ Complete | 7/7 | 26 pts |
 
 ### Overall Progress
-- **Total Stories:** 93
-- **Completed:** 86 (92%)
+- **Total Stories:** 102
+- **Completed:** 91 (89%)
 - **Ready for Dev:** 4 (4%)
 - **Total Tests:** 800+ (estimated)
 
@@ -494,33 +503,35 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 | 2026-01-06 | **Epic 42-FE created** (Task Handlers Adaptation, 4 stories, 7 pts) |
 | 2026-01-17 | **Epic 44-FE Phase 1 complete** (Price Calculator UI Core, 6 stories, 14 pts) |
 | 2026-01-23 | **Epic 52-FE complete** (Tariff Settings Admin UI, 7 stories, 26 pts) |
-| 2026-01-23 | **Epic 44-FE Phases 2-5 complete** (Price Calculator UI Full, 26/27 stories, 61 pts) |
+| 2026-01-23 | **Epic 44-FE Phases 2-5 complete** (Price Calculator UI, 27 stories, 63 pts) |
+| 2026-01-26 | **Epic 44-FE Phase 6 started** (Two Tariff Systems, 4 stories, 15 pts) |
+| 2026-01-27 | **Epic 44-FE Phase 6 complete** (Price Calculator Full, 32/32 stories, 81 pts) |
 
 ---
 
 ## Recommendations
 
-### ✅ 86/93 STORIES COMPLETE (2026-01-23)
+### ✅ 91/102 STORIES COMPLETE (2026-01-27)
 
 **Achievement Summary:**
-- ✅ **86/93 Stories Complete** (92%)
+- ✅ **91/102 Stories Complete** (89%)
 - ✅ **Epic 1-6:** Core MVP complete with 300+ tests
 - ✅ **Epic 24:** Paid Storage Analytics (39 pts, 11 stories)
 - ✅ **Epic 33-FE:** Advertising Analytics (26 pts)
 - ✅ **Epic 34-FE:** Telegram Notifications (Production Ready)
 - ✅ **Epic 36-FE:** Product Card Linking (91 tests)
 - ✅ **Epic 37:** Merged Group Table (89.4/100 quality)
-- ✅ **Epic 44-FE:** Price Calculator UI (63 pts, 27/27 stories) — **COMPLETE**
+- ✅ **Epic 44-FE:** Price Calculator UI (81 pts, 32/32 stories) — **COMPLETE**
 - ✅ **Epic 52-FE:** Tariff Settings Admin UI (26 pts, 7 stories)
 - ✅ **Total: 800+ tests**
 
 ### Next Steps
 
 1. **Epic 42-FE** — Task Handlers Adaptation (4 stories, 7 pts) — Ready for Dev
-3. **End-to-end testing** with real Wildberries data
-4. **Performance testing** — verify API response times
-5. **Security audit** — final security review
-6. **Production Deployment**
+2. **End-to-end testing** with real Wildberries data
+3. **Performance testing** — verify API response times
+4. **Security audit** — final security review
+5. **Production Deployment**
 
 ### Deferred Items
 
