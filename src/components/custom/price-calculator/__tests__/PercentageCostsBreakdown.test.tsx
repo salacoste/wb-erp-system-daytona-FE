@@ -16,6 +16,7 @@ describe('PercentageCostsBreakdown', () => {
     commissionWb: { pct: commissionPct, rub: 1000 * (commissionPct / 100) },
     acquiring: { pct: 1.8, rub: 18 },
     taxIncome: { pct: 6, rub: 60 },
+    vat: null, // Default: non-VAT payer
     total: { pct: commissionPct + 1.8 + 6, rub: 1000 * (commissionPct / 100) + 18 + 60 },
   })
 
@@ -79,11 +80,67 @@ describe('PercentageCostsBreakdown', () => {
         commissionWb: { pct: 15, rub: 150 },
         acquiring: { pct: 1.8, rub: 18 },
         taxIncome: null,
+        vat: null,
         total: { pct: 16.8, rub: 168 },
       }
       render(<PercentageCostsBreakdown costs={costs} />)
 
       expect(screen.queryByText(/Налог с выручки/)).not.toBeInTheDocument()
+    })
+  })
+
+  describe('VAT Display', () => {
+    it('should show VAT line when vat is not null', () => {
+      const costs: TwoLevelPercentageCosts = {
+        commissionWb: { pct: 29.5, rub: 295 },
+        acquiring: { pct: 1.8, rub: 18 },
+        taxIncome: { pct: 6, rub: 60 },
+        vat: { pct: 5, rub: 50 },
+        total: { pct: 42.3, rub: 423 },
+      }
+      render(<PercentageCostsBreakdown costs={costs} />)
+
+      expect(screen.getByText(/НДС \(5%\)/)).toBeInTheDocument()
+    })
+
+    it('should not show VAT line when vat is null', () => {
+      const costs: TwoLevelPercentageCosts = {
+        commissionWb: { pct: 15, rub: 150 },
+        acquiring: { pct: 1.8, rub: 18 },
+        taxIncome: { pct: 6, rub: 60 },
+        vat: null,
+        total: { pct: 22.8, rub: 228 },
+      }
+      render(<PercentageCostsBreakdown costs={costs} />)
+
+      expect(screen.queryByText(/НДС/)).not.toBeInTheDocument()
+    })
+
+    it('should display 20% VAT correctly', () => {
+      const costs: TwoLevelPercentageCosts = {
+        commissionWb: { pct: 15, rub: 150 },
+        acquiring: { pct: 1.8, rub: 18 },
+        taxIncome: null,
+        vat: { pct: 20, rub: 200 },
+        total: { pct: 36.8, rub: 368 },
+      }
+      render(<PercentageCostsBreakdown costs={costs} />)
+
+      expect(screen.getByText(/НДС \(20%\)/)).toBeInTheDocument()
+    })
+
+    it('should include VAT in total calculation', () => {
+      const costs: TwoLevelPercentageCosts = {
+        commissionWb: { pct: 29.5, rub: 295 },
+        acquiring: { pct: 1.8, rub: 18 },
+        taxIncome: { pct: 6, rub: 60 },
+        vat: { pct: 5, rub: 50 },
+        total: { pct: 42.3, rub: 423 },
+      }
+      render(<PercentageCostsBreakdown costs={costs} />)
+
+      // Total should be 42.3%
+      expect(screen.getByText(/Итого процентные \(42\.3%\)/)).toBeInTheDocument()
     })
   })
 })

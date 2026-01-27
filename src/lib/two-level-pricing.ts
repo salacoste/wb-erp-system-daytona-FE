@@ -22,6 +22,7 @@ import type {
 /**
  * Calculate fixed costs from form data
  * Fixed costs don't depend on selling price
+ * Story 44.51: Added packaging and logistics to marketplace (divided by units_per_package)
  */
 function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevelFixedCosts {
   const returnRate = (100 - formData.buyback_pct) / 100
@@ -31,12 +32,19 @@ function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevelFixedCo
   const storage = formData.fulfillment_type === 'FBO' ? formData.storage_rub : 0
   const acceptance = formData.fulfillment_type === 'FBO' ? (formData.acceptance_cost ?? 0) : 0
 
+  // Story 44.51: Packaging and logistics to MP - per box/pallet costs divided by units
+  const unitsPerPackage = Math.max(formData.units_per_package ?? 1, 1)
+  const packaging = (formData.packaging_rub ?? 0) / unitsPerPackage
+  const logisticsToMp = (formData.logistics_to_mp_rub ?? 0) / unitsPerPackage
+
   const total =
     formData.cogs_rub +
     formData.logistics_forward_rub +
     logisticsReverseEffective +
     storage +
-    acceptance
+    acceptance +
+    packaging +
+    logisticsToMp
 
   return {
     cogs: formData.cogs_rub,
@@ -44,23 +52,29 @@ function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevelFixedCo
     logisticsReverseEffective,
     storage,
     acceptance,
+    packaging,
+    logisticsToMp,
     total,
   }
 }
 
 /**
  * Calculate percentage costs based on recommended price
+ * Story 44.XX: Added VAT support
  */
 function calculatePercentageCosts(
   recommendedPrice: number,
   commissionPct: number,
   acquiringPct: number,
   taxRatePct: number,
-  taxType: 'income' | 'profit'
+  taxType: 'income' | 'profit',
+  isVatPayer: boolean,
+  vatPct: number
 ): TwoLevelPercentageCosts {
   const commissionRate = commissionPct / 100
   const acquiringRate = acquiringPct / 100
   const taxRate = taxType === 'income' ? taxRatePct / 100 : 0
+  const vatRate = isVatPayer ? vatPct / 100 : 0
 
   const commissionWb = {
     pct: commissionPct,
@@ -77,13 +91,21 @@ function calculatePercentageCosts(
       ? { pct: taxRatePct, rub: recommendedPrice * taxRate }
       : null
 
-  const totalPct = commissionPct + acquiringPct + (taxType === 'income' ? taxRatePct : 0)
-  const totalRub = commissionWb.rub + acquiring.rub + (taxIncome?.rub ?? 0)
+  // Story 44.XX: VAT calculation (only if payer)
+  const vat = isVatPayer
+    ? { pct: vatPct, rub: recommendedPrice * vatRate }
+    : null
+
+  const totalPct = commissionPct + acquiringPct +
+    (taxType === 'income' ? taxRatePct : 0) +
+    (isVatPayer ? vatPct : 0)
+  const totalRub = commissionWb.rub + acquiring.rub + (taxIncome?.rub ?? 0) + (vat?.rub ?? 0)
 
   return {
     commissionWb,
     acquiring,
     taxIncome,
+    vat,
     total: { pct: totalPct, rub: totalRub },
   }
 }
@@ -177,9 +199,15 @@ export function calculateTwoLevelPricing(
   // Tax handling - income tax is included in percentage rate
   const taxRate = formData.tax_type === 'income' ? formData.tax_rate_pct / 100 : 0
 
+  // VAT handling - only if seller is VAT payer (ОСН)
+  const isVatPayer = formData.is_vat_payer ?? false
+  const vatPct = formData.vat_pct ?? 0
+  const vatRate = isVatPayer ? vatPct / 100 : 0
+
   // Step 3: LEVEL 1 - Minimum price (no margin, no DRR)
   // Formula: minimum_price = fixed_costs / (1 - min_pct_rate)
-  const minPctRate = commissionRate + acquiringRate + taxRate
+  // Note: VAT is included because WB commission is calculated on price WITH VAT
+  const minPctRate = commissionRate + acquiringRate + taxRate + vatRate
   const minimumPrice = minPctRate < 1 ? fixedCosts.total / (1 - minPctRate) : 0
 
   // Step 4: LEVEL 2 - Recommended price (with margin and DRR)
@@ -196,7 +224,9 @@ export function calculateTwoLevelPricing(
     commissionPct,
     formData.acquiring_pct,
     formData.tax_rate_pct,
-    formData.tax_type
+    formData.tax_type,
+    isVatPayer,
+    vatPct
   )
 
   const variableCosts = calculateVariableCosts(recommendedPrice, formData.drr_pct)

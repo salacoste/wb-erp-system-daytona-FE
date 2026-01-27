@@ -11,6 +11,7 @@ import { PercentageCostsBreakdown } from './PercentageCostsBreakdown'
 import { VariableCostsBreakdown } from './VariableCostsBreakdown'
 import { MarginSection } from './MarginSection'
 import { PriceSummaryFooter } from './PriceSummaryFooter'
+import { HighRateWarning } from './HighRateWarning'
 import type { TwoLevelPricingResult, FulfillmentType, TaxType } from '@/types/price-calculator'
 
 /**
@@ -66,6 +67,13 @@ export function TwoLevelPricingDisplay({
         <CardTitle className="text-lg">Расчёт цены</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* High Rate Warning - show if total % rate exceeds 75% */}
+        <HighRateWarning
+          result={result}
+          drrPct={result.variableCosts.drr.pct}
+          marginPct={result.margin.pct}
+        />
+
         {/* Price Header with Min/Recommended/Customer prices */}
         <TwoLevelPriceHeader
           minimumPrice={result.minimumPrice}

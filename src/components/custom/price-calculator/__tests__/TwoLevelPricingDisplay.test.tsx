@@ -27,12 +27,15 @@ describe('TwoLevelPricingDisplay', () => {
       logisticsReverseEffective: 50,
       storage: 20,
       acceptance: 0,
+      packaging: 0,
+      logisticsToMp: 0,
       total: 670,
     },
     percentageCosts: {
       commissionWb: { pct: 15, rub: 182.61 },
       acquiring: { pct: 2, rub: 24.35 },
       taxIncome: { pct: 6, rub: 73.04 },
+      vat: null,
       total: { pct: 23, rub: 279.99 },
     },
     variableCosts: {

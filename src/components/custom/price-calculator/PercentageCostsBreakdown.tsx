@@ -19,6 +19,7 @@ export interface PercentageCostsBreakdownProps {
  * - WB Commission (always)
  * - Acquiring fee (always)
  * - Income tax (only if tax_type === 'income')
+ * - VAT (only if isVatPayer === true)
  *
  * Note: DRR is shown separately in VariableCostsBreakdown
  * because it's NOT included in minimum price calculation.
@@ -28,6 +29,10 @@ export interface PercentageCostsBreakdownProps {
  */
 export function PercentageCostsBreakdown({ costs }: PercentageCostsBreakdownProps) {
   const hasTaxIncome = costs.taxIncome !== null
+  const hasVat = costs.vat !== null
+
+  // Determine which item is last for proper tree visualization
+  const lastItem = hasVat ? 'vat' : hasTaxIncome ? 'taxIncome' : 'acquiring'
 
   return (
     <div className="space-y-2" data-testid="percentage-costs-breakdown">
@@ -47,15 +52,23 @@ export function PercentageCostsBreakdown({ costs }: PercentageCostsBreakdownProp
 
         {/* Acquiring */}
         <div className="flex justify-between">
-          <span>{hasTaxIncome ? '├─' : '└─'} Эквайринг ({costs.acquiring.pct}%)</span>
+          <span>{lastItem === 'acquiring' ? '└─' : '├─'} Эквайринг ({costs.acquiring.pct}%)</span>
           <span className="w-24 text-right">{formatCurrency(costs.acquiring.rub)}</span>
         </div>
 
         {/* Income Tax (if applicable) */}
         {hasTaxIncome && (
           <div className="flex justify-between">
-            <span>└─ Налог с выручки ({costs.taxIncome?.pct}%)</span>
+            <span>{lastItem === 'taxIncome' ? '└─' : '├─'} Налог с выручки ({costs.taxIncome?.pct}%)</span>
             <span className="w-24 text-right">{formatCurrency(costs.taxIncome?.rub ?? 0)}</span>
+          </div>
+        )}
+
+        {/* VAT (if applicable) */}
+        {hasVat && (
+          <div className="flex justify-between">
+            <span>└─ НДС ({costs.vat?.pct}%)</span>
+            <span className="w-24 text-right">{formatCurrency(costs.vat?.rub ?? 0)}</span>
           </div>
         )}
       </div>
