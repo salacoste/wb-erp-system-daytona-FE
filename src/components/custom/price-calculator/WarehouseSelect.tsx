@@ -9,7 +9,7 @@
  * Searchable dropdown for selecting WB warehouses from SUPPLY system
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Check, ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -33,6 +33,8 @@ import type { Warehouse } from '@/types/warehouse'
 export interface WarehouseSelectProps {
   value: number | null
   onChange: (warehouseId: number | null, warehouse: Warehouse | null) => void
+  /** Story 44.44: Callback to restore warehouse from preset after data loads */
+  onSetWarehouseById?: (id: number, warehouses: Warehouse[]) => void
   disabled?: boolean
   error?: string
   deliveryDate?: string | null
@@ -43,6 +45,7 @@ export interface WarehouseSelectProps {
 export function WarehouseSelect({
   value,
   onChange,
+  onSetWarehouseById,
   disabled,
   error,
   deliveryDate,
@@ -50,6 +53,8 @@ export function WarehouseSelect({
 }: WarehouseSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
+  // Story 44.44: Track if preset warehouse was restored
+  const presetRestoredRef = useRef(false)
 
   // Fetch from both sources
   const inventoryQuery = useWarehouses()
@@ -79,6 +84,19 @@ export function WarehouseSelect({
   const isLoading = useSupplySource ? supplyQuery.isLoading : inventoryQuery.isLoading
   const isError = useSupplySource ? !!supplyQuery.error : inventoryQuery.isError
   const refetch = useSupplySource ? () => {} : inventoryQuery.refetch
+
+  // Story 44.44: Restore warehouse from preset when data loads
+  useEffect(() => {
+    if (presetRestoredRef.current) return
+    if (!value || !warehouses?.length || !onSetWarehouseById) return
+
+    // Check if warehouse with this ID exists in loaded data
+    const warehouseExists = warehouses.some((w) => w.id === value)
+    if (warehouseExists) {
+      presetRestoredRef.current = true
+      onSetWarehouseById(value, warehouses)
+    }
+  }, [value, warehouses, onSetWarehouseById])
 
   const selectedWarehouse = useMemo(
     () => warehouses?.find((w) => w.id === value) ?? null,

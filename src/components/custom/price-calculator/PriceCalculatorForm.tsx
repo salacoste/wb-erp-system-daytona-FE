@@ -73,6 +73,10 @@ export function PriceCalculatorForm({
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   // Story 44.44: Preset initialization flag to prevent double-load
   const presetLoadedRef = useRef(false)
+  // Story 44.44: Store preset warehouse ID until warehouses load
+  const [presetWarehouseId, setPresetWarehouseId] = useState<number | null>(null)
+  // Story 44.44: Track if units_per_package reset should be skipped (after preset load)
+  const skipUnitsResetRef = useRef(false)
 
   const { handleSubmit, reset, setValue, getValues, register, formState: { isValid, errors }, control } =
     useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
@@ -153,12 +157,13 @@ export function PriceCalculatorForm({
 
   // Story 44.27: Warehouse form state hook
   // Story 44.XX: Added logistics auto-fill and acceptance cost calculation
+  // Story 44.44: Added initialWarehouseId for preset restoration
   const {
     warehouseId, dailyStorageCost,
     logisticsForwardRub, isLogisticsAutoFilled,
     logisticsReverseRub, isLogisticsReverseAutoFilled,
     acceptanceCost,
-    handleWarehouseChange, handleStorageRubChange,
+    handleWarehouseChange, setWarehouseById, handleStorageRubChange,
     handleLogisticsForwardChange, handleLogisticsReverseChange,
     handleDeliveryDateChange,
     // Story 44.40: Two Tariff Systems
@@ -172,6 +177,7 @@ export function PriceCalculatorForm({
     boxType: boxType ?? 2,
     unitsPerPackage: unitsPerPackage ?? 1,
     acceptanceTariff,
+    initialWarehouseId: presetWarehouseId,
   })
 
   useEffect(() => {
@@ -187,8 +193,21 @@ export function PriceCalculatorForm({
     if (presetData) {
       // Apply preset values to form state
       if (presetData.drr_pct !== undefined) setDrrValue(presetData.drr_pct)
+      if (presetData.spp_pct !== undefined) setSppValue(presetData.spp_pct)
       if (presetData.tax_rate_pct !== undefined) setTaxRate(presetData.tax_rate_pct)
       if (presetData.tax_type !== undefined) setTaxType(presetData.tax_type)
+      if (presetData.is_vat_payer !== undefined) setIsVatPayer(presetData.is_vat_payer)
+      if (presetData.vat_pct !== undefined) setVatRate(presetData.vat_pct)
+
+      // Store warehouse ID for later selection (after warehouses load from API)
+      if (presetData.warehouse_id) {
+        setPresetWarehouseId(presetData.warehouse_id)
+      }
+
+      // Skip units_per_package reset on initial load
+      if (presetData.units_per_package !== undefined) {
+        skipUnitsResetRef.current = true
+      }
 
       // Reset form with preset data merged with defaults
       reset({ ...defaultFormValues, ...presetData })
@@ -196,7 +215,12 @@ export function PriceCalculatorForm({
   }, [loadPreset, reset])
 
   // Story 44.38: Reset units_per_package when box_type or fulfillment_type changes
+  // Story 44.44: Skip reset on initial preset load
   useEffect(() => {
+    if (skipUnitsResetRef.current) {
+      skipUnitsResetRef.current = false
+      return
+    }
     setValue('units_per_package', 1, { shouldValidate: true })
   }, [boxType, fulfillmentType, setValue])
 
@@ -341,9 +365,11 @@ export function PriceCalculatorForm({
             />
             {/* Warehouse & Coefficients - Story 44.27 */}
             {/* Story 44.40: Pass tariff system data for SUPPLY/INVENTORY display */}
+            {/* Story 44.44: Pass setWarehouseById for preset restoration */}
             <WarehouseSection
               warehouseId={warehouseId}
               onWarehouseChange={handleWarehouseChange}
+              onSetWarehouseById={setWarehouseById}
               disabled={disabled}
               onDeliveryDateChange={handleDeliveryDateChange}
               tariffSystem={tariffSystem}

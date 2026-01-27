@@ -41,6 +41,8 @@ export interface UseWarehouseFormStateProps {
   unitsPerPackage: number
   /** Optional acceptance tariff from admin settings */
   acceptanceTariff?: AcceptanceTariff
+  /** Initial warehouse ID from preset (selected after warehouses load) */
+  initialWarehouseId?: number | null
 }
 
 export interface UseWarehouseFormStateReturn {
@@ -63,6 +65,8 @@ export interface UseWarehouseFormStateReturn {
   /** Calculated acceptance cost with formula for display */
   acceptanceCost: AcceptanceCostResult
   handleWarehouseChange: (id: number | null, warehouse: Warehouse | null) => void
+  /** Set warehouse by ID from loaded warehouses list (for preset restoration) */
+  setWarehouseById: (id: number, warehouses: Warehouse[]) => void
   /** Handler for TurnoverDaysInput storage_rub emission */
   handleStorageRubChange: (value: number) => void
   /** Handler for manual logistics forward override */
@@ -90,8 +94,10 @@ export function useWarehouseFormState({
   boxType,
   unitsPerPackage,
   acceptanceTariff,
+  initialWarehouseId,
 }: UseWarehouseFormStateProps): UseWarehouseFormStateReturn {
-  const [warehouseId, setWarehouseId] = useState<number | null>(null)
+  // Initialize with preset warehouse ID if provided
+  const [warehouseId, setWarehouseId] = useState<number | null>(initialWarehouseId ?? null)
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
   const [storageRub, setStorageRub] = useState(0)
   const [isLogisticsManuallySet, setIsLogisticsManuallySet] = useState(false)
@@ -182,6 +188,18 @@ export function useWarehouseFormState({
     [setValue],
   )
 
+  /** Set warehouse by ID from loaded warehouses list (for preset restoration) */
+  const setWarehouseById = useCallback(
+    (id: number, warehouses: Warehouse[]) => {
+      const warehouse = warehouses.find(w => w.id === id) ?? null
+      if (warehouse) {
+        console.info('[useWarehouseFormState] setWarehouseById: restoring warehouse from preset', { id, name: warehouse.name })
+        handleWarehouseChange(id, warehouse)
+      }
+    },
+    [handleWarehouseChange],
+  )
+
   // Handler for TurnoverDaysInput to emit calculated storage_rub
   const handleStorageRubChange = useCallback(
     (value: number) => {
@@ -256,6 +274,7 @@ export function useWarehouseFormState({
     acceptanceCoefficient,
     acceptanceCost,
     handleWarehouseChange,
+    setWarehouseById,
     handleStorageRubChange,
     handleLogisticsForwardChange,
     handleLogisticsReverseChange,

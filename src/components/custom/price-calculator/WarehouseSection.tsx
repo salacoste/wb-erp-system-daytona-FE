@@ -27,6 +27,8 @@ import type { SupplyDateTariffs, ExtractedTariffs } from '@/lib/tariff-system-ut
 export interface WarehouseSectionProps {
   warehouseId: number | null
   onWarehouseChange: (id: number | null, warehouse: Warehouse | null) => void
+  /** Story 44.44: Callback to set warehouse by ID after warehouses load (preset restoration) */
+  onSetWarehouseById?: (id: number, warehouses: Warehouse[]) => void
   disabled?: boolean
   /** Delivery date change handler - Story 44.40: includes supply tariffs */
   onDeliveryDateChange?: (date: string | null, coefficient: number, supplyData?: SupplyDateTariffs) => void
@@ -42,6 +44,7 @@ export interface WarehouseSectionProps {
 export function WarehouseSection({
   warehouseId,
   onWarehouseChange,
+  onSetWarehouseById,
   disabled,
   onDeliveryDateChange,
   tariffSystem,
@@ -149,6 +152,7 @@ export function WarehouseSection({
       <WarehouseSelect
         value={warehouseId}
         onChange={handleWarehouseChange}
+        onSetWarehouseById={onSetWarehouseById}
         disabled={disabled || isRateLimited}
         deliveryDate={deliveryDate.date}
         useSupplySource
