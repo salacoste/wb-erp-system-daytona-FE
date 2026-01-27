@@ -37,12 +37,12 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         expect(screen.getByText('%')).toBeInTheDocument()
       })
 
-      it('should have range 0-30%', () => {
+      it('should have range 0-50%', () => {
         render(<SppInput value={0} onChange={mockOnChange} />)
 
         const input = screen.getByTestId('spp-input')
         expect(input).toHaveAttribute('min', '0')
-        expect(input).toHaveAttribute('max', '30')
+        expect(input).toHaveAttribute('max', '50')
       })
 
       it('should default to 0% (no discount)', () => {
@@ -80,7 +80,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         const user = userEvent.setup()
         render(<SppInput value={0} onChange={mockOnChange} />)
 
-        const tooltipTrigger = screen.getByLabelText('Информация о СПП')
+        const tooltipTrigger = screen.getByLabelText('Информация')
         await user.hover(tooltipTrigger)
 
         await waitFor(() => {
@@ -97,7 +97,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         const user = userEvent.setup()
         render(<SppInput value={0} onChange={mockOnChange} />)
 
-        const tooltipTrigger = screen.getByLabelText('Информация о СПП')
+        const tooltipTrigger = screen.getByLabelText('Информация')
         await user.hover(tooltipTrigger)
 
         await waitFor(() => {

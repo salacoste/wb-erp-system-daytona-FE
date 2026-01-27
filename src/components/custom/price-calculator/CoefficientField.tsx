@@ -45,6 +45,8 @@ export interface CoefficientFieldProps {
   max?: number
   /** Step increment */
   step?: number
+  /** Story 44.XX: Lock field when warehouse is selected */
+  isWarehouseLocked?: boolean
 }
 
 export function CoefficientField({
@@ -60,6 +62,7 @@ export function CoefficientField({
   min = 0,
   max = 10,
   step = 0.01,
+  isWarehouseLocked = false,
 }: CoefficientFieldProps) {
   const handleChange = (newValue: number) => {
     onChange(newValue)
@@ -69,6 +72,10 @@ export function CoefficientField({
   }
 
   const canRestore = source === 'manual' && originalValue !== undefined
+
+  // Story 44.XX: Disable input when warehouse is selected and value is auto-filled
+  const isLocked = isWarehouseLocked && source === 'auto'
+  const effectiveDisabled = disabled || isLocked
 
   return (
     <div className="space-y-2">
@@ -99,7 +106,7 @@ export function CoefficientField({
           step={step}
           min={min}
           max={max}
-          disabled={disabled}
+          disabled={effectiveDisabled}
           className="flex-1"
           aria-describedby={canRestore ? `${label}-restore-hint` : undefined}
         />
@@ -116,6 +123,13 @@ export function CoefficientField({
           </Button>
         )}
       </div>
+
+      {/* Story 44.XX: Show warehouse coefficient source note */}
+      {isLocked && (
+        <p className="text-xs text-muted-foreground">
+          Используются коэффициенты склада WB
+        </p>
+      )}
 
       {source === 'manual' && originalValue !== undefined && (
         <p id={`${label}-restore-hint`} className="text-xs text-muted-foreground">

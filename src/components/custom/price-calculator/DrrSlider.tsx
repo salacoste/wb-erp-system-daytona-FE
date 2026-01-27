@@ -49,7 +49,7 @@ export interface DrrSliderProps {
   /** Calculated advertising cost (auto-calculated if recommendedPrice provided) */
   advertisingCost?: number
   error?: string
-  /** Max value (default: 30, can extend to 100) */
+  /** Max value (default: 50) */
   maxValue?: number
   /** Warning threshold (default: 15) */
   warningThreshold?: number
@@ -60,7 +60,7 @@ export interface DrrSliderProps {
 /** DRR slider with visual zones, configurable range/threshold, auto-calculation */
 export function DrrSlider({
   value, onChange, disabled, advertisingCost, error,
-  maxValue = 30, warningThreshold = 15, recommendedPrice,
+  maxValue = 50, warningThreshold = 15, recommendedPrice,
 }: DrrSliderProps) {
   const { label, color, bgColor } = getDrrLevel(value)
   const isVeryHigh = value > warningThreshold
@@ -96,11 +96,12 @@ export function DrrSlider({
       {/* Slider with zone overlay + Input - responsive layout */}
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative w-full sm:flex-1 pt-1">
-          {/* Zone background overlay - visual indicator of DRR zones */}
+          {/* Zone background overlay - visual indicator of DRR zones (max=50%) */}
+          {/* 0-3%=6%, 3-7%=8%, 7-15%=16%, 15-50%=70% */}
           <div className="absolute inset-x-0 top-1 h-2 rounded-full overflow-hidden flex pointer-events-none">
-            <div className="bg-green-100 w-[10%]" />
-            <div className="bg-yellow-100 w-[13.3%]" />
-            <div className="bg-orange-100 w-[26.7%]" />
+            <div className="bg-green-100 w-[6%]" />
+            <div className="bg-yellow-100 w-[8%]" />
+            <div className="bg-orange-100 w-[16%]" />
             <div className="bg-red-100 flex-1" />
           </div>
           <Slider

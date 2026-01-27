@@ -47,12 +47,12 @@ describe('DrrSlider', () => {
   })
 
   describe('Range Constraints', () => {
-    it('should have 0-30% range on input', () => {
+    it('should have 0-50% range on input', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
       const input = screen.getByTestId('drr-input')
       expect(input).toHaveAttribute('min', '0')
-      expect(input).toHaveAttribute('max', '30')
+      expect(input).toHaveAttribute('max', '50')
     })
 
     it('should have 0.5% step on input', () => {
@@ -467,11 +467,11 @@ describe('DrrSlider - Boundary Value Tests', () => {
     expect(screen.getByTestId('drr-high-warning')).toBeInTheDocument()
   })
 
-  it('should handle maximum value DRR = 30%', () => {
-    render(<DrrSlider value={30} onChange={mockOnChange} />)
+  it('should handle maximum value DRR = 50%', () => {
+    render(<DrrSlider value={50} onChange={mockOnChange} />)
 
     const input = screen.getByTestId('drr-input')
-    expect(input).toHaveValue(30)
+    expect(input).toHaveValue(50)
 
     const badge = screen.getByTestId('drr-level-badge')
     expect(badge).toHaveTextContent('Очень высокий')
@@ -510,7 +510,7 @@ describe('DrrSlider - Keyboard Accessibility', () => {
 
     const slider = screen.getByTestId('drr-slider')
     expect(slider).toHaveAttribute('aria-valuemin', '0')
-    expect(slider).toHaveAttribute('aria-valuemax', '30')
+    expect(slider).toHaveAttribute('aria-valuemax', '50')
   })
 
   it('should have slider with role="slider" for assistive technology', () => {
@@ -745,14 +745,14 @@ describe('DrrSlider - Complete AC Verification', () => {
   })
 
   // AC1: Complete input field requirements
-  it('AC1: should have slider with min=0, max=30, step=0.5, default=5', () => {
-    render(<DrrSlider value={5} onChange={mockOnChange} />)
+  it('AC1: should have slider with min=0, max=50, step=0.5', () => {
+    render(<DrrSlider value={10} onChange={mockOnChange} />)
 
     const input = screen.getByTestId('drr-input')
     expect(input).toHaveAttribute('min', '0')
-    expect(input).toHaveAttribute('max', '30')
+    expect(input).toHaveAttribute('max', '50')
     expect(input).toHaveAttribute('step', '0.5')
-    expect(input).toHaveValue(5)
+    expect(input).toHaveValue(10)
   })
 
   // AC2: Label and tooltip requirements

@@ -9,7 +9,7 @@ import { FieldTooltip } from './FieldTooltip'
  * Props for SppInput component
  */
 export interface SppInputProps {
-  /** Current SPP percentage (0-30) */
+  /** Current SPP percentage (0-50) */
   value: number
   /** Callback when value changes */
   onChange: (value: number) => void
@@ -24,7 +24,7 @@ export interface SppInputProps {
  * Story 44.19-FE: SPP Display (Customer Price)
  *
  * Features:
- * - Slider with 0-30% range, 1% step
+ * - Slider with 0-50% range, 1% step
  * - Default value: 0% (no SPP)
  * - Tooltip explaining SPP (WB discount at their expense)
  * - Inline numeric input for precise value entry
@@ -57,7 +57,7 @@ export function SppInput({
   // Handle input change with validation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value, 10)
-    if (!isNaN(newValue) && newValue >= 0 && newValue <= 30) {
+    if (!isNaN(newValue) && newValue >= 0 && newValue <= 50) {
       onChange(newValue)
     } else if (e.target.value === '') {
       onChange(0)
@@ -80,7 +80,7 @@ export function SppInput({
           value={[value]}
           onValueChange={handleSliderChange}
           min={0}
-          max={30}
+          max={50}
           step={1}
           disabled={disabled}
           className="flex-1"
@@ -94,7 +94,7 @@ export function SppInput({
             value={value}
             onChange={handleInputChange}
             min={0}
-            max={30}
+            max={50}
             step={1}
             disabled={disabled}
             className="w-16 text-center"

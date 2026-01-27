@@ -170,4 +170,40 @@ describe('CoefficientField', () => {
 
     expect(onChange).toHaveBeenCalledWith(0) // parseFloat returns NaN, fallback to 0
   })
+
+  describe('isWarehouseLocked behavior', () => {
+    it('disables input when warehouse is locked and source is auto', () => {
+      renderWithProviders(
+        <CoefficientField {...defaultProps} source="auto" isWarehouseLocked />,
+      )
+
+      const input = screen.getByRole('spinbutton')
+      expect(input).toBeDisabled()
+    })
+
+    it('shows warehouse coefficient note when locked', () => {
+      renderWithProviders(
+        <CoefficientField {...defaultProps} source="auto" isWarehouseLocked />,
+      )
+
+      expect(screen.getByText('Используются коэффициенты склада WB')).toBeInTheDocument()
+    })
+
+    it('does not lock when source is manual even if isWarehouseLocked', () => {
+      renderWithProviders(
+        <CoefficientField {...defaultProps} source="manual" isWarehouseLocked />,
+      )
+
+      const input = screen.getByRole('spinbutton')
+      expect(input).not.toBeDisabled()
+    })
+
+    it('does not show note when source is manual', () => {
+      renderWithProviders(
+        <CoefficientField {...defaultProps} source="manual" isWarehouseLocked />,
+      )
+
+      expect(screen.queryByText('Используются коэффициенты склада WB')).not.toBeInTheDocument()
+    })
+  })
 })
