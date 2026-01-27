@@ -427,6 +427,7 @@ export type ErrorCode =
 /**
  * Fixed costs breakdown for two-level pricing
  * Includes all costs that don't depend on price
+ * Story 44.50: Added packaging and logisticsToMp for seller-side costs
  */
 export interface TwoLevelFixedCosts {
   /** Cost of goods sold */
@@ -439,6 +440,10 @@ export interface TwoLevelFixedCosts {
   storage: number
   /** Acceptance cost (FBO only) */
   acceptance: number
+  /** Story 44.50: Packaging cost per unit (packaging_rub / units_per_package) */
+  packaging: number
+  /** Story 44.50: Logistics to marketplace per unit (logistics_to_mp_rub / units_per_package) */
+  logisticsToMp: number
   /** Total fixed costs */
   total: number
 }
@@ -455,6 +460,7 @@ export interface PercentageCostItem {
 
 /**
  * Percentage costs breakdown for two-level pricing
+ * Story 44.XX: Added VAT support
  */
 export interface TwoLevelPercentageCosts {
   /** WB commission */
@@ -463,6 +469,8 @@ export interface TwoLevelPercentageCosts {
   acquiring: PercentageCostItem
   /** Tax on income (only for income tax type) */
   taxIncome: PercentageCostItem | null
+  /** VAT (only if is_vat_payer = true) */
+  vat: PercentageCostItem | null
   /** Total percentage costs */
   total: PercentageCostItem
 }
@@ -529,6 +537,7 @@ export interface TwoLevelPricingResult {
 /**
  * Form data needed for two-level pricing calculation
  * Subset of full PriceCalculatorRequest with additional fields
+ * Story 44.50: Added packaging_rub and logistics_to_mp_rub for seller-side costs
  */
 export interface TwoLevelPricingFormData {
   /** Fulfillment type for conditional costs */
@@ -557,6 +566,16 @@ export interface TwoLevelPricingFormData {
   tax_type: TaxType
   /** SPP percentage for customer price */
   spp_pct: number
+  /** Story 44.50: Packaging cost per box/pallet (divided by units_per_package) */
+  packaging_rub?: number
+  /** Story 44.50: Logistics to marketplace per box/pallet (divided by units_per_package) */
+  logistics_to_mp_rub?: number
+  /** Story 44.50: Units per package for cost division (default: 1) */
+  units_per_package?: number
+  /** Story 44.XX: Whether seller is VAT payer (плательщик НДС) */
+  is_vat_payer?: boolean
+  /** Story 44.XX: VAT rate percentage (0, 10, 20) - only applies if is_vat_payer */
+  vat_pct?: number
 }
 
 // ============================================================================

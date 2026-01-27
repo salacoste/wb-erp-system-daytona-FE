@@ -197,12 +197,15 @@ export const mockTwoLevelPricingResult: TwoLevelPricingResult = {
     logisticsReverseEffective: 36,
     storage: 25,
     acceptance: 19,
+    packaging: 0,
+    logisticsToMp: 0,
     total: 700,
   },
   percentageCosts: {
     commissionWb: { pct: 15, rub: 182.61 },
     acquiring: { pct: 1.5, rub: 18.26 },
     taxIncome: { pct: 6, rub: 73.04 },
+    vat: null,
     total: { pct: 22.5, rub: 273.91 },
   },
   variableCosts: {
