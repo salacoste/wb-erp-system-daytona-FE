@@ -59,10 +59,13 @@ export function PriceCalculatorForm({
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<ProductWithDimensions | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<CategoryCommission | null>(null)
-  const [drrValue, setDrrValue] = useState(5)
+  const [drrValue, setDrrValue] = useState(defaultFormValues.drr_pct)
   const [sppValue, setSppValue] = useState(0)
   const [taxRate, setTaxRate] = useState(6)
   const [taxType, setTaxType] = useState<TaxType>('income')
+  // Story 44.XX: VAT configuration state (ОСН payers only)
+  const [isVatPayer, setIsVatPayer] = useState(false)
+  const [vatRate, setVatRate] = useState(20)
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const { handleSubmit, reset, setValue, register, formState: { isValid, errors }, control } =
@@ -192,6 +195,30 @@ export function PriceCalculatorForm({
     setDrrValue(value)
     setValue('drr_pct', value)
     setValue('advertising_pct', value)
+  }, [setValue])
+
+  // Story 44.XX: Sync tax rate with form field for calculations
+  const handleTaxRateChange = useCallback((value: number) => {
+    setTaxRate(value)
+    setValue('tax_rate_pct', value)
+  }, [setValue])
+
+  // Story 44.XX: Sync tax type with form field for calculations
+  const handleTaxTypeChange = useCallback((value: TaxType) => {
+    setTaxType(value)
+    setValue('tax_type', value)
+  }, [setValue])
+
+  // Story 44.XX: Sync VAT payer status with form field for calculations
+  const handleVatPayerChange = useCallback((isPayer: boolean) => {
+    setIsVatPayer(isPayer)
+    setValue('is_vat_payer', isPayer)
+  }, [setValue])
+
+  // Story 44.XX: Sync VAT rate with form field for calculations
+  const handleVatRateChange = useCallback((rate: number) => {
+    setVatRate(rate)
+    setValue('vat_pct', rate)
   }, [setValue])
 
   // Story 44.20: Propagate commission changes to parent for two-level pricing
@@ -395,8 +422,12 @@ export function PriceCalculatorForm({
             <TaxConfigurationSection
               taxRate={taxRate}
               taxType={taxType}
-              onTaxRateChange={setTaxRate}
-              onTaxTypeChange={setTaxType}
+              onTaxRateChange={handleTaxRateChange}
+              onTaxTypeChange={handleTaxTypeChange}
+              isVatPayer={isVatPayer}
+              vatRate={vatRate}
+              onVatPayerChange={handleVatPayerChange}
+              onVatRateChange={handleVatRateChange}
               disabled={disabled}
             />
             <FormActionsSection loading={loading} disabled={disabled} isValid={isValid} onReset={onReset} />

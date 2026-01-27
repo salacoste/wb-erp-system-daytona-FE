@@ -27,6 +27,9 @@ export interface FormData {
   tax_rate_pct: number
   tax_type: TaxType
   storage_rub: number
+  /** Story 44.XX: Whether seller is VAT payer (плательщик НДС) */
+  is_vat_payer: boolean
+  /** VAT rate percentage (0, 10, 20) - only applies if is_vat_payer */
   vat_pct: number
   acquiring_pct: number
   commission_pct?: number
@@ -60,6 +63,10 @@ export interface FormData {
   units_per_package: number
   /** Story 44.XX: Calculated acceptance cost per unit (auto-filled from tariffs) */
   acceptance_cost: number
+  /** Story 44.50: Packaging cost per box/pallet (seller's cost before delivery to WB) */
+  packaging_rub: number
+  /** Story 44.50: Logistics to marketplace per box/pallet (seller's delivery cost to WB) */
+  logistics_to_mp_rub: number
 }
 
 /**
@@ -67,7 +74,7 @@ export interface FormData {
  * Story 44.15: Added fulfillment_type default to FBO
  * Story 44.16: Added category_id default to null
  * Story 44.17: Added tax_rate_pct (6%) and tax_type ('income') defaults - УСН Доходы
- * Story 44.18: Added drr_pct (5%) default for DRR
+ * Story 44.18: Added drr_pct (10%) default for DRR
  * Story 44.19: Added spp_pct (0%) default for SPP - no discount by default
  * Story 44.32: Added box_type ('box'), weight_exceeds_25kg (false), localization_index (1.0), turnover_days (20)
  * Story 44.38: Added units_per_package (1) default for single unit
@@ -81,11 +88,14 @@ export const defaultFormValues: FormData = {
   logistics_reverse_rub: 0,
   buyback_pct: 98,
   advertising_pct: 5,
-  drr_pct: 5,
+  drr_pct: 10,
   spp_pct: 0,
   tax_rate_pct: 6,
   tax_type: 'income',
   storage_rub: 0,
+  /** Story 44.XX: Default to non-VAT payer (УСН by default) */
+  is_vat_payer: false,
+  /** Story 44.XX: Default VAT rate 20% (used when is_vat_payer = true) */
   vat_pct: 20,
   acquiring_pct: 1.8,
   commission_pct: undefined,
@@ -114,4 +124,8 @@ export const defaultFormValues: FormData = {
   units_per_package: 1,
   /** Story 44.XX: Acceptance cost default (0 until calculated) */
   acceptance_cost: 0,
+  /** Story 44.50: Packaging cost default (0 - optional field) */
+  packaging_rub: 0,
+  /** Story 44.50: Logistics to MP cost default (0 - optional field) */
+  logistics_to_mp_rub: 0,
 }

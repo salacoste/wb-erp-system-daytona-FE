@@ -196,6 +196,7 @@ export function WarehouseSection({
             onRestore={restoreLogistics}
             disabled={disabled}
             tooltip="Коэффициент увеличения стоимости логистики"
+            isWarehouseLocked={!!warehouseId}
           />
           <CoefficientField
             label="Коэффициент хранения"
@@ -207,6 +208,7 @@ export function WarehouseSection({
             onRestore={restoreStorage}
             disabled={disabled}
             tooltip="Коэффициент увеличения стоимости хранения"
+            isWarehouseLocked={!!warehouseId}
           />
         </div>
       )}

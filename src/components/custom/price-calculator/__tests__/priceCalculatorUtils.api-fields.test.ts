@@ -488,6 +488,7 @@ describe('API Request Snapshot', () => {
       spp_pct: 10,
       tax_rate_pct: 6,
       tax_type: 'income',
+      is_vat_payer: true, // Story 44.XX: VAT payer status
       storage_rub: 50,
       vat_pct: 20,
       acquiring_pct: 2,
@@ -507,6 +508,8 @@ describe('API Request Snapshot', () => {
       turnover_days: 45, // Should NOT be in API request
       units_per_package: 10, // Story 44.38: Should NOT be in API request
       acceptance_cost: 5.5, // Story 44.XX: Should NOT be in API request
+      packaging_rub: 100, // Story 44.50: Should NOT be in API request
+      logistics_to_mp_rub: 500, // Story 44.50: Should NOT be in API request
     }
 
     const request = toApiRequest(formData)
@@ -523,6 +526,8 @@ describe('API Request Snapshot', () => {
     expect(request).not.toHaveProperty('weight_exceeds_25kg')
     expect(request).not.toHaveProperty('localization_index')
     expect(request).not.toHaveProperty('units_per_package') // Story 44.38
+    expect(request).not.toHaveProperty('packaging_rub') // Story 44.50
+    expect(request).not.toHaveProperty('logistics_to_mp_rub') // Story 44.50
 
     // Verify only supported fields are sent to backend
     expect(request).toEqual({

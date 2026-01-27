@@ -46,6 +46,7 @@ export function isFormEmpty(data: FormData): boolean {
 /**
  * Convert form data to TwoLevelPricingFormData for two-level pricing calculation
  * Story 44.XX: Added acceptance_cost for FBO acceptance fees
+ * Story 44.XX: Added VAT support (is_vat_payer, vat_pct)
  */
 export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
   return {
@@ -62,6 +63,9 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
     target_margin_pct: data.target_margin_pct,
     tax_rate_pct: data.tax_rate_pct,
     tax_type: data.tax_type,
+    // Story 44.XX: VAT configuration (ОСН payers)
+    is_vat_payer: data.is_vat_payer,
+    vat_pct: data.vat_pct,
     spp_pct: data.spp_pct,
   }
 }
