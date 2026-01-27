@@ -99,6 +99,14 @@ export function useWarehouseFormState({
   // Initialize with preset warehouse ID if provided
   const [warehouseId, setWarehouseId] = useState<number | null>(initialWarehouseId ?? null)
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null)
+
+  // Story 44.44: Sync warehouseId when initialWarehouseId changes (preset loaded after mount)
+  useEffect(() => {
+    if (initialWarehouseId && warehouseId !== initialWarehouseId) {
+      console.info('[useWarehouseFormState] Syncing warehouseId from preset:', initialWarehouseId)
+      setWarehouseId(initialWarehouseId)
+    }
+  }, [initialWarehouseId, warehouseId])
   const [storageRub, setStorageRub] = useState(0)
   const [isLogisticsManuallySet, setIsLogisticsManuallySet] = useState(false)
   const [isLogisticsReverseManuallySet, setIsLogisticsReverseManuallySet] = useState(false)
