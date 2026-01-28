@@ -2,14 +2,12 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { useMemo } from 'react'
-import type {
-  PriceCalculatorResponse,
-  TwoLevelPricingFormData,
-} from '@/types/price-calculator'
+import type { PriceCalculatorResponse, TwoLevelPricingFormData } from '@/types/price-calculator'
 import { calculateTwoLevelPricing } from '@/lib/two-level-pricing'
 import { RecommendedPriceCard } from './RecommendedPriceCard'
 import { TwoLevelPricingDisplay } from './TwoLevelPricingDisplay'
 import { CostBreakdownChart } from './CostBreakdownChart'
+import type { ChartInputParams } from './cost-breakdown-helpers'
 import { WarningsDisplay } from './WarningsDisplay'
 import { ResultsSkeleton } from './ResultsSkeleton'
 
@@ -65,6 +63,17 @@ export function PriceCalculatorResults({
     return calculateTwoLevelPricing(formData, commissionPct)
   }, [formData, commissionPct, data])
 
+  // Build chart input params from form data for dynamic labels (#1)
+  const chartInputParams: ChartInputParams | undefined = useMemo(() => {
+    if (!formData) return undefined
+    return {
+      commissionPct,
+      acquiringPct: formData.acquiring_pct ?? 1.5,
+      drrPct: formData.drr_pct ?? 0,
+      vatPct: formData.is_vat_payer ? (formData.vat_pct ?? 0) : 0,
+    }
+  }, [formData, commissionPct])
+
   // Empty state (before first calculation)
   if (!data && !loading && !error) {
     return (
@@ -108,7 +117,7 @@ export function PriceCalculatorResults({
       {data.percentage_breakdown && (
         <>
           {/* Cost Breakdown Chart */}
-          <CostBreakdownChart data={data} />
+          <CostBreakdownChart data={data} inputParams={chartInputParams} />
 
           {/* Warnings (if any) */}
           <WarningsDisplay data={data} />
