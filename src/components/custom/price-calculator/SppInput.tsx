@@ -87,7 +87,7 @@ export function SppInput({
           aria-label="СПП процент"
           data-testid="spp-slider"
         />
-        <div className="flex items-center gap-1 w-20">
+        <div className="flex items-center gap-1 w-24">
           <Input
             id="spp_pct"
             type="number"
@@ -97,7 +97,7 @@ export function SppInput({
             max={50}
             step={1}
             disabled={disabled}
-            className="w-16 text-center"
+            className="w-20 text-center"
             aria-label="СПП процент"
             data-testid="spp-input"
           />

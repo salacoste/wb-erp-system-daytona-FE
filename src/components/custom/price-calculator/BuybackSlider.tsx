@@ -113,7 +113,7 @@ export function BuybackSlider<T extends FieldValues = FieldValues>({
                   data-testid="buyback-slider"
                 />
               </div>
-              <div className="flex items-center gap-1 w-20">
+              <div className="flex items-center gap-1 w-24">
                 <Input
                   type="number"
                   value={value}
@@ -122,7 +122,7 @@ export function BuybackSlider<T extends FieldValues = FieldValues>({
                   max={max}
                   step={step}
                   disabled={disabled}
-                  className="w-16 text-center"
+                  className="w-20 text-center"
                   aria-label={`${label} в процентах`}
                   data-testid="buyback-input"
                 />

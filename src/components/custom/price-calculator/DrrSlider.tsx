@@ -120,7 +120,7 @@ export function DrrSlider({
             data-testid="drr-slider"
           />
         </div>
-        <div className="flex items-center gap-1 w-20">
+        <div className="flex items-center gap-1 w-24">
           <Input
             id="drr_pct"
             type="number"
@@ -130,7 +130,7 @@ export function DrrSlider({
             max={maxValue}
             step={0.5}
             disabled={disabled}
-            className="w-16 text-center"
+            className="w-20 text-center"
             aria-label="DRR в процентах"
             data-testid="drr-input"
           />
