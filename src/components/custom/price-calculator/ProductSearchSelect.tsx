@@ -29,6 +29,8 @@ export interface ProductSearchSelectProps {
   onChange: (nmId: string | null, product: ProductWithDimensions | null) => void
   /** Display name for selected product */
   selectedProductName?: string
+  /** Story 44.44: Initial nm_id from preset to auto-select after API loads */
+  initialNmId?: string | null
   /** Disable the selector */
   disabled?: boolean
   /** Error message */
@@ -39,17 +41,42 @@ export function ProductSearchSelect({
   value,
   onChange,
   selectedProductName = '',
+  initialNmId,
   disabled = false,
   error,
 }: ProductSearchSelectProps) {
   const [open, setOpen] = useState(false)
   const [searchInput, setSearchInput] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState(initialNmId ?? '')
   const [selectedProduct, setSelectedProduct] = useState<ProductWithDimensions | null>(null)
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+  // Story 44.44: Track if preset product was restored
+  const presetRestoredRef = useRef(false)
+
+  // Story 44.44: Trigger search when initialNmId arrives after mount
+  useEffect(() => {
+    if (presetRestoredRef.current) return
+    if (!initialNmId) return
+    setDebouncedSearch(initialNmId)
+  }, [initialNmId])
 
   const { data, isLoading, error: apiError, refetch } = useProductsWithDimensions(debouncedSearch)
   const products = data?.products ?? []
+
+  // Story 44.44: Auto-select product from preset when API data loads
+  useEffect(() => {
+    if (presetRestoredRef.current) return
+    if (!initialNmId || !products.length) return
+
+    const product = products.find((p) => p.nm_id === initialNmId)
+    if (product) {
+      presetRestoredRef.current = true
+      console.info('[ProductSearchSelect] Restoring product from preset:', { nmId: initialNmId, name: product.sa_name })
+      setSelectedProduct(product)
+      onChange(product.nm_id, product)
+      setDebouncedSearch('')
+    }
+  }, [initialNmId, products, onChange])
 
   // Debounce search input
   useEffect(() => {

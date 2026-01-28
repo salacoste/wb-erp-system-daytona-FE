@@ -77,6 +77,8 @@ export function PriceCalculatorForm({
   const [presetWarehouseId, setPresetWarehouseId] = useState<number | null>(null)
   // Story 44.44: Track if units_per_package reset should be skipped (after preset load)
   const skipUnitsResetRef = useRef(false)
+  // Story 44.44: Store preset nm_id until product data loads from API
+  const [presetNmId, setPresetNmId] = useState<string | null>(null)
 
   const { handleSubmit, reset, setValue, getValues, register, formState: { isValid, errors }, control } =
     useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
@@ -202,6 +204,11 @@ export function PriceCalculatorForm({
       // Store warehouse ID for later selection (after warehouses load from API)
       if (presetData.warehouse_id) {
         setPresetWarehouseId(presetData.warehouse_id)
+      }
+
+      // Story 44.44: Store product nm_id for later selection (after products load from API)
+      if (presetData.nm_id) {
+        setPresetNmId(presetData.nm_id as string)
       }
 
       // Skip units_per_package reset on initial load
@@ -414,11 +421,14 @@ export function PriceCalculatorForm({
               disabled={disabled}
             />
             {/* Product search (optional) - Story 44.26a-FE */}
+            {/* Story 44.44: Pass initialNmId for preset product restoration */}
             <ProductSearchSelect
               value={selectedProduct?.nm_id ?? null}
               selectedProductName={selectedProduct?.sa_name}
-              onChange={(_nmId: string | null, product: ProductWithDimensions | null) => {
+              initialNmId={presetNmId}
+              onChange={(nmId: string | null, product: ProductWithDimensions | null) => {
                 setSelectedProduct(product)
+                setValue('nm_id', nmId ?? undefined)
                 handleProductSelect(product)
               }}
               disabled={disabled}
