@@ -16,6 +16,7 @@ import {
   Megaphone,
   Bell,
   Settings2,
+  ShoppingCart,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
@@ -46,6 +47,11 @@ export function Sidebar() {
       label: 'Dashboard',
       href: ROUTES.DASHBOARD,
       icon: Home,
+    },
+    {
+      label: 'Заказы', // Epic 40-FE: Orders UI (WB Native Orders History)
+      href: ROUTES.ORDERS.ROOT,
+      icon: ShoppingCart,
     },
     {
       label: 'COGS Management',
@@ -125,7 +131,7 @@ export function Sidebar() {
 
         {/* Navigation Items */}
         <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
-          {navigationItems.map((item) => {
+          {navigationItems.map(item => {
             const Icon = item.icon
             return (
               <Link
@@ -134,7 +140,7 @@ export function Sidebar() {
                 className={cn(
                   'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/50',
                   pathname === item.href ? 'bg-accent' : 'transparent',
-                  pathname === item.href ? 'text-accent-foreground' : 'text-muted-foreground',
+                  pathname === item.href ? 'text-accent-foreground' : 'text-muted-foreground'
                 )}
               >
                 <Icon className="h-4 w-4" />

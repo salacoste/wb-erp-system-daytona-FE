@@ -37,21 +37,37 @@ export const ROUTES = {
     UNIT_ECONOMICS: '/analytics/unit-economics', // Epic 5: Unit Economics Analytics
     LIQUIDITY: '/analytics/liquidity', // Epic 7: Liquidity Analysis
     ADVERTISING: '/analytics/advertising', // Epic 33: Advertising Analytics
+    ORDERS: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
+  },
+
+  // Epic 40-FE: Orders UI (WB Native Orders History)
+  ORDERS: {
+    ROOT: '/orders',
+    LIST: '/orders/list',
+  },
+
+  // Epic 53-FE: Supply Management
+  SUPPLIES: {
+    ROOT: '/supplies',
+    DETAIL: '/supplies/[id]', // Dynamic route - use buildSupplyDetailRoute helper
   },
   SETTINGS: {
     ROOT: '/settings',
     NOTIFICATIONS: '/settings/notifications', // Epic 34-FE: Telegram Notifications
     TARIFFS: '/settings/tariffs', // Epic 52-FE: Tariff Settings Admin (Admin only)
+    BACKFILL: '/settings/backfill', // Epic 51-FE: Backfill Admin (Admin only)
   },
 } as const
 
 // Type for route paths
 export type RoutePath =
-  | typeof ROUTES[keyof typeof ROUTES]
-  | typeof ROUTES.ONBOARDING[keyof typeof ROUTES.ONBOARDING]
-  | typeof ROUTES.COGS[keyof typeof ROUTES.COGS]
-  | typeof ROUTES.ANALYTICS[keyof typeof ROUTES.ANALYTICS]
-  | typeof ROUTES.SETTINGS[keyof typeof ROUTES.SETTINGS]
+  | (typeof ROUTES)[keyof typeof ROUTES]
+  | (typeof ROUTES.ONBOARDING)[keyof typeof ROUTES.ONBOARDING]
+  | (typeof ROUTES.COGS)[keyof typeof ROUTES.COGS]
+  | (typeof ROUTES.ANALYTICS)[keyof typeof ROUTES.ANALYTICS]
+  | (typeof ROUTES.ORDERS)[keyof typeof ROUTES.ORDERS]
+  | (typeof ROUTES.SUPPLIES)[keyof typeof ROUTES.SUPPLIES]
+  | (typeof ROUTES.SETTINGS)[keyof typeof ROUTES.SETTINGS]
   | string
 
 // Protected route matcher
@@ -74,12 +90,17 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.UNIT_ECONOMICS,
     ROUTES.ANALYTICS.LIQUIDITY,
     ROUTES.ANALYTICS.ADVERTISING,
+    ROUTES.ANALYTICS.ORDERS, // Epic 51-FE: FBS Historical Analytics
+    ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
+    ROUTES.ORDERS.LIST,
+    ROUTES.SUPPLIES.ROOT, // Epic 53-FE: Supply Management
     ROUTES.SETTINGS.ROOT,
     ROUTES.SETTINGS.NOTIFICATIONS, // Epic 34-FE: Telegram Notifications
     ROUTES.SETTINGS.TARIFFS, // Epic 52-FE: Tariff Settings Admin (Admin only)
+    ROUTES.SETTINGS.BACKFILL, // Epic 51-FE: Backfill Admin (Admin only)
   ]
 
-  return protectedPaths.some((path) => pathname.startsWith(path))
+  return protectedPaths.some(path => pathname.startsWith(path))
 }
 
 // Public route matcher
@@ -96,3 +117,12 @@ export const isPublicRoute = (pathname: string): boolean => {
   return publicPaths.includes(pathname)
 }
 
+// Route builder helpers for dynamic routes
+
+/**
+ * Build supply detail route with specific supply ID
+ * Epic 53-FE: Supply Management
+ */
+export const buildSupplyDetailRoute = (supplyId: string): string => {
+  return `/supplies/${supplyId}`
+}
