@@ -206,8 +206,23 @@ export function DateRangePickerExtended({
         </PopoverContent>
       </Popover>
 
-      {/* External validation error (shown outside popover when closed) */}
-      {!isOpen && isRangeExceeded && (
+      {/* External info (shown outside popover) */}
+      {showAggregationSuggestion && aggregation && !isRangeExceeded && (
+        <div className="mt-2 text-sm text-muted-foreground flex items-center">
+          <Info className="mr-2 h-4 w-4" />
+          Рекомендуемая агрегация: {getAggregationLabel(aggregation)}
+        </div>
+      )}
+
+      {/* Days count display (shown outside popover) */}
+      {daysInRange > 0 && !isRangeExceeded && (
+        <div className="mt-1 text-sm text-muted-foreground">
+          Выбрано: {daysInRange} {pluralizeDays(daysInRange)}
+        </div>
+      )}
+
+      {/* External validation error (shown outside popover) */}
+      {isRangeExceeded && (
         <Alert variant="destructive" className="mt-2">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>

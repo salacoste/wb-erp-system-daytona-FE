@@ -21,7 +21,9 @@ export const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:3100'
 function getRequiredEnv(key: string): string {
   const value = process.env[key]
   if (!value) {
-    throw new Error(`Missing required environment variable: ${key}\nPlease set ${key} in your .env.e2e file or CI secrets.`)
+    throw new Error(
+      `Missing required environment variable: ${key}\nPlease set ${key} in your .env.e2e file or CI secrets.`
+    )
   }
   return value
 }
@@ -84,21 +86,27 @@ export const ROUTES = {
   register: '/register',
   dashboard: '/dashboard',
   onboarding: {
-    cabinet: '/cabinet',      // (onboarding)/cabinet/page.tsx
-    token: '/wb-token',       // (onboarding)/wb-token/page.tsx
+    cabinet: '/cabinet', // (onboarding)/cabinet/page.tsx
+    token: '/wb-token', // (onboarding)/wb-token/page.tsx
     processing: '/processing', // (onboarding)/processing/page.tsx
   },
   cogs: '/cogs',
   cogsBulk: '/cogs/bulk',
   analytics: {
-    main: '/analytics',           // Main analytics page
+    main: '/analytics', // Main analytics page
     sku: '/analytics/sku',
     brand: '/analytics/brand',
     category: '/analytics/category',
-    timePeriod: '/analytics/time-period',  // Time period analytics
-    unitEconomics: '/analytics/unit-economics',  // Epic 5: Unit Economics
+    timePeriod: '/analytics/time-period', // Time period analytics
+    unitEconomics: '/analytics/unit-economics', // Epic 5: Unit Economics
     supplyPlanning: '/analytics/supply-planning', // Epic 6: Supply Planning
     liquidity: '/analytics/liquidity', // Epic 7: Liquidity Analysis
+    orders: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
+  },
+  settings: {
+    backfill: '/settings/backfill', // Epic 51-FE: Backfill Admin (Owner only)
+    notifications: '/settings/notifications', // Epic 34: Telegram Notifications
+    tariffs: '/settings/tariffs', // Epic 52: Tariff Settings
   },
 }
 

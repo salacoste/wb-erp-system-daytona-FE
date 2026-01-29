@@ -12,7 +12,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public data?: unknown,
+    public data?: unknown
   ) {
     super(message)
     this.name = 'ApiError'
@@ -40,10 +40,12 @@ export interface Task {
   type:
     | 'finances_weekly_ingest'
     | 'products_sync'
-    | 'enrich_cogs'
+    | 'recalculate_weekly_margin'
     | 'weekly_margin_aggregate'
     | 'weekly_sanity_check'
     | 'publish_weekly_views'
+    /** @deprecated Use recalculate_weekly_margin instead */
+    | 'enrich_cogs'
   status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'dlq' | 'cancelled'
   progress?: number // 0-100
   result?: unknown

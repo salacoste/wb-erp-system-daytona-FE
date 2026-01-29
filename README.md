@@ -1319,6 +1319,20 @@ POST /v1/tasks/enqueue
 - Uses `canEnqueueTasks(role)` helper function
 - Files: `ProductMarginCell.tsx`, `SingleCogsForm.tsx`
 
+### Task Types Reference
+
+| Task Type | Purpose | Status |
+|-----------|---------|--------|
+| `finances_weekly_ingest` | Import weekly financial data | Active |
+| `products_sync` | Sync product catalog | Active |
+| `recalculate_weekly_margin` | Recalculate margins for weeks | Active (recommended) |
+| `weekly_margin_aggregate` | Re-aggregate weekly data | Active |
+| `weekly_sanity_check` | Data quality validation | Active |
+| `publish_weekly_views` | Publish materialized views | Active |
+| `enrich_cogs` | Legacy margin calculation | **Deprecated** |
+
+**Note:** `enrich_cogs` is deprecated. Use `recalculate_weekly_margin` instead.
+
 ---
 
 ## 🔄 Margin Recalculation Polling (Story 4.8) - 2025-11-25

@@ -51,6 +51,7 @@ import {
   PackageSearch,
   Calculator,
   ArrowRight,
+  ClipboardList,
 } from 'lucide-react'
 import { RequireWbToken } from '@/components/custom/RequireWbToken'
 
@@ -129,6 +130,17 @@ const analyticsNavigation = {
         hoverBg: 'hover:bg-rose-100',
         borderColor: 'border-rose-200',
         badge: 'Важно',
+      },
+      {
+        href: ROUTES.ANALYTICS.ORDERS,
+        icon: ClipboardList,
+        title: 'Заказы FBS',
+        description: 'Анализ заказов FBS за 365 дней',
+        color: 'text-orange-600',
+        bgColor: 'bg-orange-50',
+        hoverBg: 'hover:bg-orange-100',
+        borderColor: 'border-orange-200',
+        badge: 'Новое',
       },
     ],
   },
@@ -246,12 +258,15 @@ function NavigationSection({
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{title}</h3>
         <p className="text-xs text-gray-400">{description}</p>
       </div>
-      <div className={cn(
-        'grid gap-3 flex-1',
-        items.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2'
-      )}>
-        {items.map((item) => (
-          <NavigationCard key={item.href} {...item} className={items.length === 1 ? 'h-full' : ''} />
+      <div
+        className={cn('grid gap-3 flex-1', items.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2')}
+      >
+        {items.map(item => (
+          <NavigationCard
+            key={item.href}
+            {...item}
+            className={items.length === 1 ? 'h-full' : ''}
+          />
         ))}
       </div>
     </div>
@@ -300,13 +315,15 @@ export default function AnalyticsSummaryPage() {
   const isComparisonWeekAvailable = availableWeeks?.some(w => w.week === comparisonWeek) ?? false
 
   // Filter selectedWeeks to only include available weeks
-  const availableSelectedWeeks = selectedWeeks.filter(w =>
-    availableWeeks?.some(aw => aw.week === w) ?? false
+  const availableSelectedWeeks = selectedWeeks.filter(
+    w => availableWeeks?.some(aw => aw.week === w) ?? false
   )
 
   // Fetch data based on mode - only when weeks are confirmed available
   const singleWeekQuery = useFinancialSummary(isWeekAvailable ? selectedWeek : '')
-  const multiWeekQuery = useMultiWeekFinancialSummary(availableSelectedWeeks.length > 0 ? availableSelectedWeeks : [])
+  const multiWeekQuery = useMultiWeekFinancialSummary(
+    availableSelectedWeeks.length > 0 ? availableSelectedWeeks : []
+  )
   const comparisonQuery = useFinancialSummaryComparison(
     isWeekAvailable ? selectedWeek : '',
     isComparisonWeekAvailable ? comparisonWeek : ''
@@ -314,34 +331,44 @@ export default function AnalyticsSummaryPage() {
 
   // Determine loading/error states based on mode
   // Include isLoadingWeeks to prevent 404 errors when availableWeeks hasn't loaded yet
-  const isLoading = isLoadingWeeks || (viewMode === 'multi'
-    ? multiWeekQuery.isLoading
-    : viewMode === 'comparison'
-      ? comparisonQuery.isLoading
-      : singleWeekQuery.isLoading)
+  const isLoading =
+    isLoadingWeeks ||
+    (viewMode === 'multi'
+      ? multiWeekQuery.isLoading
+      : viewMode === 'comparison'
+        ? comparisonQuery.isLoading
+        : singleWeekQuery.isLoading)
 
-  const isError = viewMode === 'multi'
-    ? multiWeekQuery.isError
-    : viewMode === 'comparison'
-      ? comparisonQuery.isError
-      : singleWeekQuery.isError
+  const isError =
+    viewMode === 'multi'
+      ? multiWeekQuery.isError
+      : viewMode === 'comparison'
+        ? comparisonQuery.isError
+        : singleWeekQuery.isError
 
-  const error = viewMode === 'multi'
-    ? multiWeekQuery.error
-    : viewMode === 'comparison'
-      ? comparisonQuery.error
-      : singleWeekQuery.error
+  const error =
+    viewMode === 'multi'
+      ? multiWeekQuery.error
+      : viewMode === 'comparison'
+        ? comparisonQuery.error
+        : singleWeekQuery.error
 
   // Get summary data based on mode
-  const primarySummary = viewMode === 'multi'
-    ? multiWeekQuery.data || undefined
-    : viewMode === 'comparison'
-      ? (comparisonQuery.week1.data?.summary_total || comparisonQuery.week1.data?.summary_rus || undefined)
-      : (singleWeekQuery.data?.summary_total || singleWeekQuery.data?.summary_rus || undefined)
+  const primarySummary =
+    viewMode === 'multi'
+      ? multiWeekQuery.data || undefined
+      : viewMode === 'comparison'
+        ? comparisonQuery.week1.data?.summary_total ||
+          comparisonQuery.week1.data?.summary_rus ||
+          undefined
+        : singleWeekQuery.data?.summary_total || singleWeekQuery.data?.summary_rus || undefined
 
-  const secondarySummary = viewMode === 'comparison'
-    ? (comparisonQuery.week2.data?.summary_total || comparisonQuery.week2.data?.summary_rus || undefined)
-    : undefined
+  const secondarySummary =
+    viewMode === 'comparison'
+      ? comparisonQuery.week2.data?.summary_total ||
+        comparisonQuery.week2.data?.summary_rus ||
+        undefined
+      : undefined
 
   const handleRetry = () => {
     if (viewMode === 'multi') {
@@ -371,131 +398,127 @@ export default function AnalyticsSummaryPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика</h1>
-          <p className="text-muted-foreground mt-1">
-            {viewMode === 'multi' && selectedWeeks.length > 1
-              ? `Агрегированные данные за ${selectedWeeks.length} ${selectedWeeks.length >= 2 && selectedWeeks.length <= 4 ? 'недели' : 'недель'}`
-              : 'Выберите раздел аналитики или просмотрите финансовую сводку ниже'}
-          </p>
-        </div>
-        <Button
-          variant={viewMode !== 'single' ? 'default' : 'outline'}
-          size="sm"
-          onClick={cycleViewMode}
-          className="gap-2"
-        >
-          <GitCompare className="h-4 w-4" />
-          {viewMode === 'single' && 'Несколько периодов'}
-          {viewMode === 'multi' && 'Сравнить периоды'}
-          {viewMode === 'comparison' && 'Один период'}
-        </Button>
-      </div>
-
-      {/* Quick Navigation - UX: Primary action area at top */}
-      <Card className="border-none shadow-none bg-gray-50/50">
-        <CardContent className="p-4">
-          <div className="grid gap-6 lg:grid-cols-3">
-            <NavigationSection {...analyticsNavigation.financial} />
-            <NavigationSection {...analyticsNavigation.operational} />
-            <NavigationSection {...analyticsNavigation.strategic} />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика</h1>
+            <p className="text-muted-foreground mt-1">
+              {viewMode === 'multi' && selectedWeeks.length > 1
+                ? `Агрегированные данные за ${selectedWeeks.length} ${selectedWeeks.length >= 2 && selectedWeeks.length <= 4 ? 'недели' : 'недель'}`
+                : 'Выберите раздел аналитики или просмотрите финансовую сводку ниже'}
+            </p>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Divider with title */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+          <Button
+            variant={viewMode !== 'single' ? 'default' : 'outline'}
+            size="sm"
+            onClick={cycleViewMode}
+            className="gap-2"
+          >
+            <GitCompare className="h-4 w-4" />
+            {viewMode === 'single' && 'Несколько периодов'}
+            {viewMode === 'multi' && 'Сравнить периоды'}
+            {viewMode === 'comparison' && 'Один период'}
+          </Button>
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-4 text-muted-foreground font-medium">
-            Финансовая сводка за период
-          </span>
-        </div>
-      </div>
 
-      {/* Week Selector - different UI based on view mode */}
-      {viewMode === 'single' && (
-        <WeekSelector value={selectedWeek} onChange={setSelectedWeek} label="Выберите период" />
-      )}
-      {viewMode === 'multi' && (
-        <MultiWeekSelector
-          value={selectedWeeks}
-          onChange={setSelectedWeeks}
-          label="Выберите периоды для агрегации"
-          maxSelection={12}
-        />
-      )}
-      {viewMode === 'comparison' && (
-        <WeekComparisonSelector
-          week1={selectedWeek}
-          week2={comparisonWeek}
-          onWeek1Change={setSelectedWeek}
-          onWeek2Change={setComparisonWeek}
-        />
-      )}
+        {/* Quick Navigation - UX: Primary action area at top */}
+        <Card className="border-none shadow-none bg-gray-50/50">
+          <CardContent className="p-4">
+            <div className="grid gap-6 lg:grid-cols-3">
+              <NavigationSection {...analyticsNavigation.financial} />
+              <NavigationSection {...analyticsNavigation.operational} />
+              <NavigationSection {...analyticsNavigation.strategic} />
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Error State */}
-      {isError && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>
-              {error instanceof Error
-                ? error.message
-                : 'Не удалось загрузить финансовые данные. Пожалуйста, попробуйте еще раз.'}
+        {/* Divider with title */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-4 text-muted-foreground font-medium">
+              Финансовая сводка за период
             </span>
-            <Button variant="outline" size="sm" onClick={handleRetry} className="ml-4">
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Повторить
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Loading State */}
-      {isLoading && (
-        <div className="space-y-6">
-          <Skeleton className="h-[600px] w-full" />
-          <Skeleton className="h-[400px] w-full" />
+          </div>
         </div>
-      )}
 
-      {/* Content */}
-      {!isLoading && !isError && primarySummary && (
-        <>
-          {/* Financial Summary Table */}
-          <FinancialSummaryTable
-            summary={primarySummary}
-            comparisonSummary={secondarySummary}
+        {/* Week Selector - different UI based on view mode */}
+        {viewMode === 'single' && (
+          <WeekSelector value={selectedWeek} onChange={setSelectedWeek} label="Выберите период" />
+        )}
+        {viewMode === 'multi' && (
+          <MultiWeekSelector
+            value={selectedWeeks}
+            onChange={setSelectedWeeks}
+            label="Выберите периоды для агрегации"
+            maxSelection={12}
           />
+        )}
+        {viewMode === 'comparison' && (
+          <WeekComparisonSelector
+            week1={selectedWeek}
+            week2={comparisonWeek}
+            onWeek1Change={setSelectedWeek}
+            onWeek2Change={setComparisonWeek}
+          />
+        )}
 
-          {/* Expense Chart - only for single week mode */}
-          {viewMode === 'single' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Разбивка расходов</CardTitle>
-                <CardDescription>
-                  Визуализация структуры расходов за {formatWeekDisplay(selectedWeek)}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ExpenseChart weekOverride={selectedWeek} />
-              </CardContent>
-            </Card>
-          )}
+        {/* Error State */}
+        {isError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>
+                {error instanceof Error
+                  ? error.message
+                  : 'Не удалось загрузить финансовые данные. Пожалуйста, попробуйте еще раз.'}
+              </span>
+              <Button variant="outline" size="sm" onClick={handleRetry} className="ml-4">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Повторить
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
 
-        </>
-      )}
+        {/* Loading State */}
+        {isLoading && (
+          <div className="space-y-6">
+            <Skeleton className="h-[600px] w-full" />
+            <Skeleton className="h-[400px] w-full" />
+          </div>
+        )}
+
+        {/* Content */}
+        {!isLoading && !isError && primarySummary && (
+          <>
+            {/* Financial Summary Table */}
+            <FinancialSummaryTable summary={primarySummary} comparisonSummary={secondarySummary} />
+
+            {/* Expense Chart - only for single week mode */}
+            {viewMode === 'single' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Разбивка расходов</CardTitle>
+                  <CardDescription>
+                    Визуализация структуры расходов за {formatWeekDisplay(selectedWeek)}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ExpenseChart weekOverride={selectedWeek} />
+                </CardContent>
+              </Card>
+            )}
+          </>
+        )}
 
         {/* Empty State */}
         {!isLoading && !isError && !primarySummary && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Нет данных для отображения. Пожалуйста, загрузите финансовые отчеты или выберите другой
-              период.
+              Нет данных для отображения. Пожалуйста, загрузите финансовые отчеты или выберите
+              другой период.
             </AlertDescription>
           </Alert>
         )}

@@ -17,42 +17,42 @@ import type { DateRange, DateRangePreset, AggregationLevel } from '@/types/date-
 // ============================================================================
 
 /** Current date for relative calculations */
-export const MOCK_TODAY = new Date('2025-01-29T12:00:00Z')
+export const MOCK_TODAY = new Date('2025-01-29T12:00:00')
 
 /** 30-day range ending today */
 export const mockRange30Days: DateRange = {
-  from: new Date('2024-12-31T00:00:00Z'),
-  to: new Date('2025-01-29T23:59:59Z'),
+  from: new Date('2024-12-31'),
+  to: new Date('2025-01-29'),
 }
 
 /** 90-day range ending today */
 export const mockRange90Days: DateRange = {
-  from: new Date('2024-11-01T00:00:00Z'),
-  to: new Date('2025-01-29T23:59:59Z'),
+  from: new Date('2024-11-01'),
+  to: new Date('2025-01-29'),
 }
 
 /** 180-day range ending today (half year) */
 export const mockRange180Days: DateRange = {
-  from: new Date('2024-08-03T00:00:00Z'),
-  to: new Date('2025-01-29T23:59:59Z'),
+  from: new Date('2024-08-03'),
+  to: new Date('2025-01-29'),
 }
 
 /** 365-day range ending today (full year) */
 export const mockRange365Days: DateRange = {
-  from: new Date('2024-01-31T00:00:00Z'),
-  to: new Date('2025-01-29T23:59:59Z'),
+  from: new Date('2024-01-31'),
+  to: new Date('2025-01-29'),
 }
 
 /** Single day range (same day) */
 export const mockRangeSingleDay: DateRange = {
-  from: new Date('2025-01-15T00:00:00Z'),
-  to: new Date('2025-01-15T23:59:59Z'),
+  from: new Date('2025-01-15'),
+  to: new Date('2025-01-15'),
 }
 
 /** Week range (7 days) */
 export const mockRangeOneWeek: DateRange = {
-  from: new Date('2025-01-22T00:00:00Z'),
-  to: new Date('2025-01-28T23:59:59Z'),
+  from: new Date('2025-01-22'),
+  to: new Date('2025-01-28'),
 }
 
 // ============================================================================
@@ -61,20 +61,20 @@ export const mockRangeOneWeek: DateRange = {
 
 /** Range exceeding 365 days (400 days) */
 export const mockRangeExceeds365Days: DateRange = {
-  from: new Date('2023-12-26T00:00:00Z'),
-  to: new Date('2025-01-29T23:59:59Z'),
+  from: new Date('2023-12-26'),
+  to: new Date('2025-01-29'),
 }
 
 /** Range with future end date */
 export const mockRangeFutureDates: DateRange = {
-  from: new Date('2025-01-20T00:00:00Z'),
-  to: new Date('2025-03-15T23:59:59Z'),
+  from: new Date('2025-01-20'),
+  to: new Date('2025-03-15'),
 }
 
 /** Range with start after end (inverted) */
 export const mockRangeInverted: DateRange = {
-  from: new Date('2025-01-29T00:00:00Z'),
-  to: new Date('2025-01-15T23:59:59Z'),
+  from: new Date('2025-01-29'),
+  to: new Date('2025-01-15'),
 }
 
 // ============================================================================
@@ -83,20 +83,20 @@ export const mockRangeInverted: DateRange = {
 
 /** Year boundary crossing range */
 export const mockRangeYearBoundary: DateRange = {
-  from: new Date('2024-12-15T00:00:00Z'),
-  to: new Date('2025-01-15T23:59:59Z'),
+  from: new Date('2024-12-15'),
+  to: new Date('2025-01-15'),
 }
 
 /** Leap year boundary (Feb 29, 2024) */
 export const mockRangeLeapYear: DateRange = {
-  from: new Date('2024-02-28T00:00:00Z'),
-  to: new Date('2024-03-01T23:59:59Z'),
+  from: new Date('2024-02-28'),
+  to: new Date('2024-03-01'),
 }
 
 /** End of month boundary */
 export const mockRangeEndOfMonth: DateRange = {
-  from: new Date('2025-01-31T00:00:00Z'),
-  to: new Date('2025-02-28T23:59:59Z'),
+  from: new Date('2025-01-31'),
+  to: new Date('2025-02-28'),
 }
 
 // ============================================================================

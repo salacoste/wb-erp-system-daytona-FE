@@ -17,6 +17,7 @@ import {
   Bell,
   Settings2,
   ShoppingCart,
+  ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
@@ -98,6 +99,11 @@ export function Sidebar() {
       label: 'Реклама', // Epic 33: Advertising Analytics
       href: ROUTES.ANALYTICS.ADVERTISING,
       icon: Megaphone,
+    },
+    {
+      label: 'Заказы FBS', // Epic 51-FE: FBS Historical Analytics
+      href: ROUTES.ANALYTICS.ORDERS,
+      icon: ClipboardList,
     },
     {
       label: 'Уведомления', // Epic 34-FE: Telegram Notifications
