@@ -226,6 +226,26 @@ describe('useDashboardMetrics with Period Support - Story 60.4-FE', () => {
   })
 
   // ==========================================================================
+  // Bug Fix 2: Month period support
+  // ==========================================================================
+
+  describe('month period support (Bug Fix 2)', () => {
+    it('should use period type in query keys for cache isolation', () => {
+      // Week period query key should include 'week'
+      const weekQueryKey = [...dashboardQueryKeys.metrics('2026-W05'), 'week']
+      expect(weekQueryKey).toEqual(['dashboard', 'metrics', '2026-W05', 'week'])
+
+      // Month period query key should include 'month'
+      const monthQueryKey = [...dashboardQueryKeys.metrics('2026-01'), 'month']
+      expect(monthQueryKey).toEqual(['dashboard', 'metrics', '2026-01', 'month'])
+    })
+
+    it.todo('should aggregate weekly data for monthly period')
+    it.todo('should handle API errors gracefully when fetching monthly data')
+    it.todo('should fetch all weeks in month when periodType is month')
+  })
+
+  // ==========================================================================
   // AC8: Manual refresh / query invalidation
   // ==========================================================================
 

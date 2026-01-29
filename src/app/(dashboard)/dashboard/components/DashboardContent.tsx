@@ -21,6 +21,7 @@ import { useProcessingStatus } from '@/hooks/useProcessingStatus'
 import { useProductsCount } from '@/hooks/useProducts'
 import { useFinancialSummary } from '@/hooks/useFinancialSummary'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
+import { useAdvertisingAnalytics } from '@/hooks/useAdvertisingAnalytics'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
 import { MetricCardEnhanced } from '@/components/custom/MetricCardEnhanced'
 import { ProductCountMetricCard } from '@/components/custom/ProductCountMetricCard'
@@ -48,8 +49,11 @@ export function DashboardContent(): React.ReactElement {
   const { data: processingStatus } = useProcessingStatus()
   const { data: productCount, isLoading: productsLoading } = useProductsCount()
 
-  // Fetch COGS coverage data from finance summary
-  const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(selectedWeek)
+  // Fetch COGS coverage data from finance summary (supports both week and month periods)
+  const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
+    periodType === 'week' ? selectedWeek : selectedMonth,
+    periodType
+  )
   const summary = financeSummary?.summary_total || financeSummary?.summary_rus
 
   // Initialize data import toast notification (AC4)
@@ -77,6 +81,18 @@ export function DashboardContent(): React.ReactElement {
     }
     return monthToDateRange(selectedMonth)
   }, [periodType, selectedWeek, selectedMonth])
+
+  // Fetch advertising analytics for ROAS display
+  const { data: advertisingData, isLoading: advertisingLoading } = useAdvertisingAnalytics(
+    {
+      from: advertisingDateRange.from,
+      to: advertisingDateRange.to,
+      limit: 1, // Only need summary
+    },
+    {
+      refetchInterval: undefined,
+    }
+  )
 
   // COGS coverage data from finance summary
   const cogsCoverage = summary?.cogs_coverage_pct ?? 0
@@ -155,10 +171,10 @@ export function DashboardContent(): React.ReactElement {
         {/* Card 6: ROAS (optional - AC7) */}
         <MetricCardEnhanced
           title="ROAS рекламы"
-          value={null} // Placeholder - linked to AdvertisingDashboardWidget data
-          format="number"
-          tooltip="Окупаемость рекламных расходов (из виджета рекламы)"
-          isLoading={false}
+          value={advertisingData?.summary?.overall_roas ?? null}
+          format="roas"
+          tooltip="Окупаемость рекламных расходов (Revenue / Ad Spend)"
+          isLoading={advertisingLoading}
         />
       </div>
 

@@ -12,6 +12,7 @@
 import { useQuery, useQueries, keepPreviousData } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { FinanceSummary } from './useDashboard'
+import { getWeeksInMonth } from '@/lib/period-helpers'
 
 /**
  * Response from finance-summary endpoint
@@ -37,21 +38,65 @@ export interface WeekData {
 }
 
 /**
- * Hook to get financial summary for a specific week
+ * Hook to get financial summary for a specific week or month
+ * Supports both week format (YYYY-Www) and month format (YYYY-MM)
+ *
+ * For months, aggregates data from all weeks in that month
  */
-export function useFinancialSummary(week: string) {
+export function useFinancialSummary(period: string, periodType: 'week' | 'month' = 'week') {
+  // For week periods, use the existing single-week query
+  if (periodType === 'week') {
+    return useQuery({
+      queryKey: ['financial', 'summary', period, 'week'],
+      queryFn: async (): Promise<FinanceSummaryResponse> => {
+        const response = await apiClient.get<FinanceSummaryResponse>(
+          `/v1/analytics/weekly/finance-summary?week=${period}`
+        )
+        return response
+      },
+      enabled: !!period,
+      staleTime: 30000, // 30 seconds
+      gcTime: 5 * 60 * 1000, // 5 minutes (renamed from cacheTime)
+      placeholderData: keepPreviousData, // Keep previous data while loading new week - prevents scroll jump
+    })
+  }
+
+  // For month periods, use multi-week aggregation
+  const weeksInMonth = getWeeksInMonth(period)
+
   return useQuery({
-    queryKey: ['financial', 'summary', week],
+    queryKey: ['financial', 'summary', period, 'month', weeksInMonth],
     queryFn: async (): Promise<FinanceSummaryResponse> => {
-      const response = await apiClient.get<FinanceSummaryResponse>(
-        `/v1/analytics/weekly/finance-summary?week=${week}`
+      // Fetch all weeks in parallel
+      const weekPromises = weeksInMonth.map((week: string) =>
+        apiClient.get<FinanceSummaryResponse>(`/v1/analytics/weekly/finance-summary?week=${week}`)
       )
-      return response
+
+      const responses = await Promise.all(weekPromises)
+
+      // Aggregate all summaries
+      const summaries = responses
+        .map(r => r.summary_total || r.summary_rus)
+        .filter(Boolean) as FinanceSummary[]
+
+      const aggregatedSummary = aggregateFinanceSummaries(summaries)
+
+      return {
+        summary_total: aggregatedSummary,
+        summary_rus: aggregatedSummary,
+        summary_eaeu: null,
+        meta: {
+          week: weeksInMonth.join(', '),
+          cabinet_id: responses[0]?.meta?.cabinet_id || '',
+          generated_at: new Date().toISOString(),
+          timezone: 'Europe/Moscow',
+        },
+      }
     },
-    enabled: !!week,
+    enabled: !!period && weeksInMonth.length > 0,
     staleTime: 30000, // 30 seconds
-    gcTime: 5 * 60 * 1000, // 5 minutes (renamed from cacheTime)
-    placeholderData: keepPreviousData, // Keep previous data while loading new week - prevents scroll jump
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -78,9 +123,9 @@ export function useAvailableWeeks() {
   return useQuery({
     queryKey: ['financial', 'available-weeks'],
     queryFn: async (): Promise<WeekData[]> => {
-      const response = await apiClient.get<
-        Array<WeekData> | { data: Array<WeekData> }
-      >('/v1/analytics/weekly/available-weeks')
+      const response = await apiClient.get<Array<WeekData> | { data: Array<WeekData> }>(
+        '/v1/analytics/weekly/available-weeks'
+      )
 
       // Handle both array and object formats
       const weeksArray = Array.isArray(response) ? response : response?.data || []
@@ -159,7 +204,7 @@ export function formatWeekWithDateRange(week: string): string {
  */
 export function useMultiWeekFinancialSummary(weeks: string[]) {
   const queries = useQueries({
-    queries: weeks.map((week) => ({
+    queries: weeks.map(week => ({
       queryKey: ['financial', 'summary', week],
       queryFn: async (): Promise<FinanceSummaryResponse> => {
         const response = await apiClient.get<FinanceSummaryResponse>(
@@ -173,14 +218,19 @@ export function useMultiWeekFinancialSummary(weeks: string[]) {
     })),
   })
 
-  const isLoading = queries.some((q) => q.isLoading)
-  const isError = queries.some((q) => q.isError)
-  const error = queries.find((q) => q.error)?.error
+  const isLoading = queries.some(q => q.isLoading)
+  const isError = queries.some(q => q.isError)
+  const error = queries.find(q => q.error)?.error
 
   // Aggregate data from all weeks
-  const aggregatedSummary = !isLoading && !isError ? aggregateFinanceSummaries(
-    queries.map((q) => q.data?.summary_total || q.data?.summary_rus || null).filter(Boolean) as FinanceSummary[]
-  ) : null
+  const aggregatedSummary =
+    !isLoading && !isError
+      ? aggregateFinanceSummaries(
+          queries
+            .map(q => q.data?.summary_total || q.data?.summary_rus || null)
+            .filter(Boolean) as FinanceSummary[]
+        )
+      : null
 
   return {
     data: aggregatedSummary,
@@ -188,7 +238,7 @@ export function useMultiWeekFinancialSummary(weeks: string[]) {
     isError,
     error,
     weekCount: weeks.length,
-    refetch: () => queries.forEach((q) => q.refetch()),
+    refetch: () => queries.forEach(q => q.refetch()),
   }
 }
 
@@ -202,31 +252,54 @@ function aggregateFinanceSummaries(summaries: FinanceSummary[]): FinanceSummary 
 
   // Define numeric fields to aggregate
   const numericFields: (keyof FinanceSummary)[] = [
-    'sales_gross_total', 'sales_gross',
-    'returns_gross_total', 'returns_gross',
-    'sale_gross_total', 'sale_gross',
-    'to_pay_goods_total', 'to_pay_goods',
-    'total_commission_rub_total', 'total_commission_rub',
+    'sales_gross_total',
+    'sales_gross',
+    'returns_gross_total',
+    'returns_gross',
+    'sale_gross_total',
+    'sale_gross',
+    'to_pay_goods_total',
+    'to_pay_goods',
+    'total_commission_rub_total',
+    'total_commission_rub',
     'payout_total',
-    'logistics_cost_total', 'logistics_cost',
-    'storage_cost_total', 'storage_cost',
-    'paid_acceptance_cost_total', 'paid_acceptance_cost',
+    'logistics_cost_total',
+    'logistics_cost',
+    'storage_cost_total',
+    'storage_cost',
+    'paid_acceptance_cost_total',
+    'paid_acceptance_cost',
     'penalties_total',
-    'wb_commission_adj_total', 'wb_commission_adj',
-    'loyalty_fee_total', 'loyalty_fee',
-    'loyalty_points_withheld_total', 'loyalty_points_withheld',
-    'loyalty_compensation_total', 'loyalty_compensation',
-    'acquiring_fee_total', 'acquiring_fee',
-    'commission_sales_total', 'commission_sales',
-    'other_adjustments_net_total', 'other_adjustments_net',
-    'seller_delivery_revenue_total', 'seller_delivery_revenue',
-    'wb_services_cost_total', 'wb_services_cost',
-    'wb_promotion_cost_total', 'wb_promotion_cost',
-    'wb_jam_cost_total', 'wb_jam_cost',
-    'wb_other_services_cost_total', 'wb_other_services_cost',
-    'wb_sales_gross_total', 'wb_sales_gross',
-    'wb_returns_gross_total', 'wb_returns_gross',
-    'retail_price_total', 'retail_price_total_total',
+    'wb_commission_adj_total',
+    'wb_commission_adj',
+    'loyalty_fee_total',
+    'loyalty_fee',
+    'loyalty_points_withheld_total',
+    'loyalty_points_withheld',
+    'loyalty_compensation_total',
+    'loyalty_compensation',
+    'acquiring_fee_total',
+    'acquiring_fee',
+    'commission_sales_total',
+    'commission_sales',
+    'other_adjustments_net_total',
+    'other_adjustments_net',
+    'seller_delivery_revenue_total',
+    'seller_delivery_revenue',
+    'wb_services_cost_total',
+    'wb_services_cost',
+    'wb_promotion_cost_total',
+    'wb_promotion_cost',
+    'wb_jam_cost_total',
+    'wb_jam_cost',
+    'wb_other_services_cost_total',
+    'wb_other_services_cost',
+    'wb_sales_gross_total',
+    'wb_sales_gross',
+    'wb_returns_gross_total',
+    'wb_returns_gross',
+    'retail_price_total',
+    'retail_price_total_total',
     'cogs_total',
   ]
 
@@ -246,7 +319,7 @@ function aggregateFinanceSummaries(summaries: FinanceSummary[]): FinanceSummary 
 
     // Only set if at least one summary had this field
     if (summaries.some(s => typeof s[field] === 'number')) {
-      (result as Record<string, number>)[field] = sum
+      ;(result as Record<string, number>)[field] = sum
     }
   }
 
@@ -273,12 +346,21 @@ function aggregateFinanceSummaries(summaries: FinanceSummary[]): FinanceSummary 
 /**
  * Calculate percentage change between two values
  */
-export function calculateChange(current: number | undefined | null, previous: number | undefined | null): {
+export function calculateChange(
+  current: number | undefined | null,
+  previous: number | undefined | null
+): {
   value: number | null
   percentage: number | null
   trend: 'up' | 'down' | 'same'
 } {
-  if (current === undefined || current === null || previous === undefined || previous === null || previous === 0) {
+  if (
+    current === undefined ||
+    current === null ||
+    previous === undefined ||
+    previous === null ||
+    previous === 0
+  ) {
     return { value: null, percentage: null, trend: 'same' }
   }
 

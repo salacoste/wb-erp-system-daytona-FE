@@ -1,9 +1,11 @@
 /**
  * Dashboard Metrics with Period Comparison Hook
  * Story 60.4-FE: Connect Dashboard to Period State
+ * Bug Fix 2: Support both week and month periods for data fetching
  *
  * Provides parallel fetching of current and previous period data
  * for comparison indicators in MetricCardEnhanced components.
+ * Supports both weekly and monthly periods with proper data aggregation.
  *
  * @see docs/stories/epic-60/story-60.4-fe-connect-dashboard-period.md
  */
@@ -15,6 +17,7 @@ import { apiClient } from '@/lib/api-client'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { dashboardQueryKeys, type DashboardMetrics } from '@/hooks/useDashboard'
 import type { FinanceSummary } from '@/types/finance-summary'
+import { getWeeksInMonth } from '@/lib/period-helpers'
 
 export interface DashboardMetricsWithComparison {
   current: DashboardMetrics | undefined
@@ -49,27 +52,81 @@ async function fetchDashboardMetrics(week: string): Promise<DashboardMetrics> {
 }
 
 /**
+ * Fetch and aggregate finance summaries for all weeks in a month
+ * Used when periodType is 'month' to aggregate weekly data into monthly metrics
+ */
+async function fetchMonthlyMetrics(month: string): Promise<DashboardMetrics> {
+  try {
+    const weeksInMonth = getWeeksInMonth(month)
+
+    if (weeksInMonth.length === 0) {
+      return {}
+    }
+
+    // Fetch all weeks in parallel
+    const weeklyPromises = weeksInMonth.map(week => fetchDashboardMetrics(week))
+    const weeklyResults = await Promise.allSettled(weeklyPromises)
+
+    // Aggregate successful results
+    let aggregatedTotalPayable = 0
+    let aggregatedRevenue = 0
+
+    weeklyResults.forEach(result => {
+      if (result.status === 'fulfilled' && result.value) {
+        aggregatedTotalPayable += result.value.totalPayable ?? 0
+        aggregatedRevenue += result.value.revenue ?? 0
+      }
+    })
+
+    return {
+      totalPayable: aggregatedTotalPayable || undefined,
+      revenue: aggregatedRevenue || undefined,
+    }
+  } catch (error) {
+    console.error('Error fetching monthly metrics:', error)
+    return {}
+  }
+}
+
+/**
  * Hook for parallel fetching of current + previous periods
  * Used when comparison indicators are needed on dashboard
  *
  * Uses DashboardPeriodContext for selected week/month values.
+ * Supports both weekly and monthly periods with proper cache isolation.
  * Fetches both periods in parallel using useQueries for optimal performance.
  */
 export function useDashboardMetricsWithComparison(): DashboardMetricsWithComparison {
-  const { selectedWeek, previousWeek } = useDashboardPeriod()
+  const { periodType, selectedWeek, selectedMonth, previousWeek, previousMonth } =
+    useDashboardPeriod()
+
+  // Determine which period identifier to use based on periodType
+  const currentPeriod = periodType === 'week' ? selectedWeek : selectedMonth
+  const previousPeriod = periodType === 'week' ? previousWeek : previousMonth
+
+  // Select the appropriate fetch function based on period type
+  const fetchCurrent =
+    periodType === 'week'
+      ? () => fetchDashboardMetrics(selectedWeek)
+      : () => fetchMonthlyMetrics(selectedMonth)
+
+  const fetchPrevious =
+    periodType === 'week'
+      ? () => fetchDashboardMetrics(previousWeek)
+      : () => fetchMonthlyMetrics(previousMonth)
 
   const results = useQueries({
     queries: [
       {
-        queryKey: dashboardQueryKeys.metrics(selectedWeek),
-        queryFn: () => fetchDashboardMetrics(selectedWeek),
+        queryKey: [...dashboardQueryKeys.metrics(currentPeriod), periodType],
+        queryFn: fetchCurrent,
         staleTime: 60 * 1000, // 1 min for current period (fresh data)
         gcTime: 5 * 60 * 1000, // 5 min garbage collection
         retry: 1,
       },
       {
-        queryKey: dashboardQueryKeys.metrics(previousWeek),
-        queryFn: () => fetchDashboardMetrics(previousWeek),
+        queryKey: [...dashboardQueryKeys.metrics(previousPeriod), periodType],
+        queryFn: fetchPrevious,
         staleTime: 5 * 60 * 1000, // 5 min for previous period (historical data)
         gcTime: 10 * 60 * 1000, // 10 min garbage collection
         retry: 1,

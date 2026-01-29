@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Info } from 'lucide-react'
-import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentage, formatRoas } from '@/lib/utils'
 import {
   calculateComparison,
   type TrendDirection,
@@ -21,7 +21,7 @@ import {
 import { TrendIndicator } from './TrendIndicator'
 import { ComparisonBadge } from './ComparisonBadge'
 
-export type MetricFormat = 'currency' | 'percentage' | 'number'
+export type MetricFormat = 'currency' | 'percentage' | 'number' | 'roas'
 
 export interface MetricCardEnhancedProps {
   title: string
@@ -41,6 +41,7 @@ const FORMAT_FN: Record<MetricFormat, (value: number) => string> = {
   currency: formatCurrency,
   percentage: formatPercentage,
   number: (v: number) => new Intl.NumberFormat('ru-RU').format(v),
+  roas: formatRoas,
 }
 
 /** Check if user prefers reduced motion (safely handles SSR and test environments) */

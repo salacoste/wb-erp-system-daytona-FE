@@ -57,15 +57,24 @@ export function formatDate(date: string | Date): string {
 export function formatIsoWeek(date: string | Date): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   const year = dateObj.getFullYear()
-  
+
   // Calculate ISO week number
   const d = new Date(Date.UTC(year, dateObj.getMonth(), dateObj.getDate()))
   const dayNum = d.getUTCDay() || 7
   d.setUTCDate(d.getUTCDate() + 4 - dayNum)
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
   const weekNo = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
-  
+
   return `${year}-W${weekNo.toString().padStart(2, '0')}`
+}
+
+/**
+ * Formats a number as ROAS (Return on Ad Spend)
+ * @param value - The numeric ROAS value
+ * @returns Formatted ROAS string (e.g., "2,5x")
+ */
+export function formatRoas(value: number): string {
+  return `${value.toFixed(1).replace('.', ',')}x`
 }
 
 /**
@@ -138,4 +147,3 @@ export function formatWeeksAgoShort(weeks: number | null | undefined): string {
 
   return `${weeks} нед. назад`
 }
-
