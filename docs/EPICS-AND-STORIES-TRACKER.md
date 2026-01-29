@@ -4,7 +4,7 @@
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
 **Last Updated**: 2026-01-29
-**Total Epics**: 16 (13 complete + 3 new)
+**Total Epics**: 16 (14 complete + 2 in progress)
 **Total Stories**: 103 (76 legacy + 27 new)
 
 ---
@@ -45,9 +45,9 @@
 
 | Epic ID | Title | Stories | SP | Status | Sprint | Routes |
 |---------|-------|---------|---:|--------|--------|--------|
-| Epic 40-FE | Orders UI & WB Status History | 7 | 26 | 📋 Ready | 1-2 | `/orders` |
+| Epic 40-FE | Orders UI & WB Status History | 7 | 26 | ✅ Complete | 1-2 | `/orders` |
 | Epic 53-FE | Supply Management UI | 8 | 34 | 📋 Ready | 3-4 | `/supplies`, `/supplies/:id` |
-| Epic 51-FE | FBS Historical Analytics (365d) | 12 | 39 | 📋 Ready | 4-6 | `/analytics/orders`, `/settings/backfill` |
+| Epic 51-FE | FBS Historical Analytics (365d) | 12 | 39 | 🚧 In Progress | 2-6 | `/analytics/orders`, `/settings/backfill` |
 
 ---
 
@@ -121,29 +121,42 @@
 
 ### Sprint 2 (Feb 17-28) - Orders History & Analytics
 
+**Status**: ✅ Complete
+
 | Story | Title | SP | Status | Owner |
 |-------|-------|---:|--------|-------|
-| 40.5-FE | History Timeline Components | 5 | 🚧 In Progress | - |
-| 40.6-FE | Orders Analytics Dashboard | 5 | 🚧 In Progress | - |
-| 40.7-FE | Integration & Polish | 2 | 🚧 In Progress | - |
-| 51.1-FE | FBS Analytics Types | 2 | 🚧 In Progress | - |
-| 51.2-FE | FBS Analytics Hooks | 3 | 🚧 In Progress | - |
+| 40.5-FE | History Timeline Components | 5 | ✅ Complete | - |
+| 40.6-FE | Orders Analytics Dashboard | 5 | ✅ Complete | - |
+| 40.7-FE | Integration & Polish | 2 | ✅ Complete | - |
+| 51.1-FE | FBS Analytics Types | 2 | ✅ Complete | - |
+| 51.2-FE | FBS Analytics Hooks | 3 | ✅ Complete | - |
 
-**Sprint Goal**: Complete Epic 40-FE, start Epic 51-FE foundation
+**Sprint Goal**: ~~Complete Epic 40-FE, start Epic 51-FE foundation~~
+- [x] Epic 40-FE fully complete (7 stories, 26 SP)
+- [x] Timeline components with 40+ WB status visualization
+- [x] Analytics dashboard with SLA/Velocity widgets
+- [x] FBS Analytics foundation (types, API, hooks)
 
 ---
 
 ### Sprint 3 (Mar 3-14) - Supplies Foundation
 
+**Status**: 🚧 In Progress
+
 | Story | Title | SP | Status | Owner |
 |-------|-------|---:|--------|-------|
-| 53.1-FE | Types & API Client | 2 | 📋 Ready | - |
-| 53.2-FE | Supplies List Page | 5 | 📋 Ready | - |
-| 53.3-FE | Create Supply Flow | 3 | 📋 Ready | - |
-| 53.4-FE | Supply Detail Page | 5 | 📋 Ready | - |
-| 51.3-FE | Extended Date Picker | 3 | 📋 Ready | - |
+| 53.1-FE | Types & API Client | 2 | 🚧 In Progress | - |
+| 53.2-FE | Supplies List Page | 5 | 🚧 In Progress | - |
+| 53.3-FE | Create Supply Flow | 3 | 🚧 In Progress | - |
+| 53.4-FE | Supply Detail Page | 5 | 🚧 In Progress | - |
+| 51.3-FE | Extended Date Picker | 3 | 🚧 In Progress | - |
 
 **Sprint Goal**: Supplies CRUD functional
+- [ ] Supply types & API client foundation
+- [ ] Supplies list page with status badges
+- [ ] Create supply modal flow
+- [ ] Supply detail page with stepper
+- [ ] Extended date picker (365-day support)
 
 ---
 
@@ -264,6 +277,14 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 ---
 
 ## Changelog
+
+### 2026-01-29 (Sprint 2 Complete)
+- Sprint 2 completed (5 stories, 17 SP)
+- Epic 40-FE Orders UI fully complete (7 stories, 26 SP)
+- Timeline components with 40+ WB status visualization
+- Analytics dashboard with SLA/Velocity widgets
+- FBS Analytics foundation (types, API, hooks)
+- Sprint 3 started (5 stories, 18 SP)
 
 ### 2026-01-29
 - Sprint 1 completed (4 stories, 14 SP)

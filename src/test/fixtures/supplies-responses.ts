@@ -60,6 +60,14 @@ export const mockSupplyClosed: Supply = {
   documents: [mockStickerDocumentPng, mockBarcodeDocument],
 }
 
+export const mockSupplyDelivering: Supply = {
+  ...mockSupplyListItemDelivering,
+  warehouseId: 507,
+  warehouseName: 'Коледино',
+  orders: [mockSupplyOrder, mockSupplyOrder2],
+  documents: [mockStickerDocumentPng, mockBarcodeDocument],
+}
+
 export const mockSupplyDelivered: Supply = {
   ...mockSupplyListItemDelivered,
   warehouseId: 507,

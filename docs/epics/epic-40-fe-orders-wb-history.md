@@ -1,10 +1,10 @@
 # Epic 40-FE: Orders UI & WB Native Status History
 
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Complete
 **Priority**: P0 (Foundation)
 **Backend Epic**: Epic 40, Story 40.9
 **Story Points**: 26 SP
-**Stories**: 7
+**Stories**: 7 (all complete)
 
 ---
 
@@ -302,5 +302,45 @@ src/
 
 ---
 
+---
+
+## Completion Summary
+
+**Completed**: 2026-01-29
+
+### Sprint 1 (Feb 3-14) - Foundation
+- Story 40.1-FE: Types & API Client Foundation (3 SP) - ✅
+- Story 40.2-FE: React Query Hooks (3 SP) - ✅
+- Story 40.3-FE: Orders List Page (5 SP) - ✅
+- Story 40.4-FE: Order Details Modal (3 SP) - ✅
+
+### Sprint 2 (Feb 17-28) - History & Analytics
+- Story 40.5-FE: History Timeline Components (5 SP) - ✅
+- Story 40.6-FE: Orders Analytics Dashboard (5 SP) - ✅
+- Story 40.7-FE: Integration & Polish (2 SP) - ✅
+
+### Key Achievements
+- Complete Orders module with `/orders` route
+- 40+ WB native status codes mapped with Russian translations
+- Three timeline views: Full, WB-only, Local-only
+- SLA compliance and velocity metrics widgets
+- At-risk orders tracking with pagination
+- Order sync status indicator
+- E2E tests with Playwright
+- Lazy loading for timeline components
+- Error boundary implementation
+
+### Files Created
+- `src/types/orders.ts`, `src/types/orders-history.ts`
+- `src/lib/api/orders.ts`
+- `src/hooks/useOrders.ts`, `src/hooks/useOrderHistory.ts`, `src/hooks/useOrdersAnalytics.ts`
+- `src/lib/wb-status-mapping.ts`
+- `src/lib/duration-utils.ts`, `src/lib/history-utils.ts`
+- 16 components in `src/app/(dashboard)/orders/components/`
+- E2E tests in `e2e/orders.spec.ts`
+
+---
+
 **Created**: 2026-01-29
 **Last Updated**: 2026-01-29
+**Completed**: 2026-01-29

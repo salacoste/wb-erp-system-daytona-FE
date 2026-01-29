@@ -51,38 +51,38 @@ afterEach(() => {
 // ============================================================================
 
 describe('DateRangePickerExtended - Basic Rendering', () => {
-  it.skip('should render with placeholder text when no value', () => {
+  it('should render with placeholder text when no value', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
     expect(screen.getByText('Выберите период')).toBeInTheDocument()
   })
 
-  it.skip('should render with custom placeholder', () => {
+  it('should render with custom placeholder', () => {
     render(<DateRangePickerExtended {...defaultProps} placeholder="Выбрать даты" />)
     expect(screen.getByText('Выбрать даты')).toBeInTheDocument()
   })
 
-  it.skip('should render with selected date range formatted in Russian', () => {
+  it('should render with selected date range formatted in Russian', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
     expect(screen.getByText(/31\.12\.2024 — 29\.01\.2025/)).toBeInTheDocument()
   })
 
-  it.skip('should render calendar icon in trigger button', () => {
+  it('should render calendar icon in trigger button', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
     const trigger = screen.getByRole('button')
     expect(trigger.querySelector('svg')).toBeInTheDocument()
   })
 
-  it.skip('should render clear button when range is selected', () => {
+  it('should render clear button when range is selected', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
     expect(screen.getByLabelText(/очистить/i)).toBeInTheDocument()
   })
 
-  it.skip('should not render clear button when no range selected', () => {
+  it('should not render clear button when no range selected', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
     expect(screen.queryByLabelText(/очистить/i)).not.toBeInTheDocument()
   })
 
-  it.skip('should open popover with two calendar views on click', async () => {
+  it('should open popover with two calendar views on click', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -94,19 +94,19 @@ describe('DateRangePickerExtended - Basic Rendering', () => {
     })
   })
 
-  it.skip('should render in disabled state when disabled prop is true', () => {
+  it('should render in disabled state when disabled prop is true', () => {
     render(<DateRangePickerExtended {...defaultProps} disabled />)
     expect(screen.getByRole('button')).toBeDisabled()
   })
 
-  it.skip('should apply custom className to root element', () => {
+  it('should apply custom className to root element', () => {
     const { container } = render(
       <DateRangePickerExtended {...defaultProps} className="custom-class" />
     )
     expect(container.firstChild).toHaveClass('custom-class')
   })
 
-  it.skip('should render with id for accessibility', () => {
+  it('should render with id for accessibility', () => {
     render(<DateRangePickerExtended {...defaultProps} id="date-picker-test" />)
     expect(screen.getByRole('button')).toHaveAttribute('id', 'date-picker-test')
   })
@@ -117,7 +117,7 @@ describe('DateRangePickerExtended - Basic Rendering', () => {
 // ============================================================================
 
 describe('DateRangePickerExtended - Preset Buttons', () => {
-  it.skip('should show 4 default preset buttons in popover', async () => {
+  it('should show 4 default preset buttons in popover', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -131,7 +131,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     })
   })
 
-  it.skip('should call onChange with last 30 days when "30 дней" clicked', async () => {
+  it('should call onChange with last 30 days when "30 дней" clicked', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -146,7 +146,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     )
   })
 
-  it.skip('should call onChange with last 90 days when "90 дней" clicked', async () => {
+  it('should call onChange with last 90 days when "90 дней" clicked', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -159,7 +159,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     expect(callArg.to).toBeInstanceOf(Date)
   })
 
-  it.skip('should call onChange with last 180 days when "180 дней" clicked', async () => {
+  it('should call onChange with last 180 days when "180 дней" clicked', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -169,7 +169,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     expect(mockOnChange).toHaveBeenCalled()
   })
 
-  it.skip('should call onChange with last 365 days when "365 дней" clicked', async () => {
+  it('should call onChange with last 365 days when "365 дней" clicked', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -179,7 +179,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     expect(mockOnChange).toHaveBeenCalled()
   })
 
-  it.skip('should highlight active preset when current range matches', async () => {
+  it('should highlight active preset when current range matches', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
@@ -191,7 +191,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     })
   })
 
-  it.skip('should not highlight any preset for custom range', async () => {
+  it('should not highlight any preset for custom range', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     const customRange = {
       from: new Date('2025-01-10'),
@@ -209,7 +209,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     })
   })
 
-  it.skip('should use custom presets when provided', async () => {
+  it('should use custom presets when provided', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} presets={customPresets} />)
 
@@ -222,7 +222,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     })
   })
 
-  it.skip('should respect maxDays when preset exceeds it', async () => {
+  it('should respect maxDays when preset exceeds it', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} maxDays={90} />)
 
@@ -234,7 +234,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     })
   })
 
-  it.skip('should update both from and to dates simultaneously on preset click', async () => {
+  it('should update both from and to dates simultaneously on preset click', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -247,7 +247,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     expect(callArg.from).not.toEqual(callArg.to)
   })
 
-  it.skip('should set preset end date to today', async () => {
+  it('should set preset end date to today', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -258,7 +258,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     expect(callArg.to.toDateString()).toBe(MOCK_TODAY.toDateString())
   })
 
-  it.skip('should deactivate preset highlight on custom date selection', async () => {
+  it('should deactivate preset highlight on custom date selection', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
@@ -274,7 +274,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     // After parent updates value to custom range, preset should deactivate
   })
 
-  it.skip('should show preset labels in Russian', async () => {
+  it('should show preset labels in Russian', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -287,7 +287,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     })
   })
 
-  it.skip('should show "Быстрый выбор:" label above presets', async () => {
+  it('should show "Быстрый выбор:" label above presets', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -304,7 +304,7 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
 // ============================================================================
 
 describe('DateRangePickerExtended - Range Selection', () => {
-  it.skip('should allow selecting start date in calendar', async () => {
+  it('should allow selecting start date in calendar', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -316,7 +316,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should allow selecting end date after start date', async () => {
+  it('should allow selecting end date after start date', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -328,7 +328,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should highlight range between selected dates', async () => {
+  it('should highlight range between selected dates', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
@@ -341,7 +341,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should not allow selecting future dates', async () => {
+  it('should not allow selecting future dates', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -354,7 +354,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should show validation error when range exceeds 365 days', async () => {
+  it('should show validation error when range exceeds 365 days', async () => {
     const invalidRange = {
       from: new Date('2023-12-01'),
       to: new Date('2025-01-29'),
@@ -364,7 +364,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(screen.getByText(/Диапазон не может превышать 365 дней/i)).toBeInTheDocument()
   })
 
-  it.skip('should show validation error message in Russian', async () => {
+  it('should show validation error message in Russian', async () => {
     const invalidRange = {
       from: new Date('2023-12-01'),
       to: new Date('2025-01-29'),
@@ -375,7 +375,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(screen.getByText(/дней/)).toBeInTheDocument()
   })
 
-  it.skip('should show selected days count in error message', async () => {
+  it('should show selected days count in error message', async () => {
     const invalidRange = {
       from: new Date('2023-12-01'),
       to: new Date('2025-01-29'),
@@ -385,7 +385,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(screen.getByText(/Выбрано:/)).toBeInTheDocument()
   })
 
-  it.skip('should clear selection when clear button clicked', async () => {
+  it('should clear selection when clear button clicked', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
@@ -395,7 +395,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(mockOnChange).toHaveBeenCalledWith(undefined)
   })
 
-  it.skip('should call onChange with selected range', async () => {
+  it('should call onChange with selected range', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -407,13 +407,13 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should display days count when range selected', async () => {
+  it('should display days count when range selected', async () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
     expect(screen.getByText(/Выбрано: 30/)).toBeInTheDocument()
   })
 
-  it.skip('should use correct Russian pluralization for days count', async () => {
+  it('should use correct Russian pluralization for days count', async () => {
     const range1Day = {
       from: new Date('2025-01-15'),
       to: new Date('2025-01-15'),
@@ -429,7 +429,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(screen.getByText(/2 дня/)).toBeInTheDocument()
   })
 
-  it.skip('should respect custom maxDays validation', async () => {
+  it('should respect custom maxDays validation', async () => {
     const range100Days = {
       from: new Date('2024-10-21'),
       to: new Date('2025-01-29'),
@@ -439,7 +439,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(screen.getByText(/Диапазон не может превышать 90 дней/)).toBeInTheDocument()
   })
 
-  it.skip('should allow selecting same day for start and end', async () => {
+  it('should allow selecting same day for start and end', async () => {
     const sameDay = {
       from: new Date('2025-01-15'),
       to: new Date('2025-01-15'),
@@ -449,7 +449,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     expect(screen.getByText(/1 день/)).toBeInTheDocument()
   })
 
-  it.skip('should navigate between months in calendar', async () => {
+  it('should navigate between months in calendar', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -461,7 +461,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should show two months side by side on desktop', async () => {
+  it('should show two months side by side on desktop', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -473,7 +473,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should disable dates older than 365 days', async () => {
+  it('should disable dates older than 365 days', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -485,7 +485,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should close popover when clicking outside', async () => {
+  it('should close popover when clicking outside', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -499,7 +499,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     await user.click(document.body)
   })
 
-  it.skip('should show "Применить" button in popover', async () => {
+  it('should show "Применить" button in popover', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -510,7 +510,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
     })
   })
 
-  it.skip('should show "Очистить" button in popover when range selected', async () => {
+  it('should show "Очистить" button in popover when range selected', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
@@ -527,7 +527,7 @@ describe('DateRangePickerExtended - Range Selection', () => {
 // ============================================================================
 
 describe('DateRangePickerExtended - Aggregation Suggestion', () => {
-  it.skip('should show "Агрегация: Ежедневно" for 1 day range', () => {
+  it('should show "Агрегация: Ежедневно" for 1 day range', () => {
     const range1Day = { from: new Date('2025-01-15'), to: new Date('2025-01-15') }
     render(<DateRangePickerExtended {...defaultProps} value={range1Day} />)
 
@@ -535,13 +535,13 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.getByText(/Ежедневно/)).toBeInTheDocument()
   })
 
-  it.skip('should show "Агрегация: Ежедневно" for 30 days range', () => {
+  it('should show "Агрегация: Ежедневно" for 30 days range', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
     expect(screen.getByText(/Ежедневно/)).toBeInTheDocument()
   })
 
-  it.skip('should show "Агрегация: Ежедневно" for exactly 90 days (boundary)', () => {
+  it('should show "Агрегация: Ежедневно" for exactly 90 days (boundary)', () => {
     const range90 = {
       from: new Date('2024-11-01'),
       to: new Date('2025-01-29'),
@@ -551,7 +551,7 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.getByText(/Ежедневно/)).toBeInTheDocument()
   })
 
-  it.skip('should show "Агрегация: Еженедельно" for 91 days', () => {
+  it('should show "Агрегация: Еженедельно" for 91 days', () => {
     const range91 = {
       from: new Date('2024-10-31'),
       to: new Date('2025-01-29'),
@@ -561,7 +561,7 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.getByText(/Еженедельно/)).toBeInTheDocument()
   })
 
-  it.skip('should show "Агрегация: Еженедельно" for 180 days (boundary)', () => {
+  it('should show "Агрегация: Еженедельно" for 180 days (boundary)', () => {
     const range180 = {
       from: new Date('2024-08-03'),
       to: new Date('2025-01-29'),
@@ -571,7 +571,7 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.getByText(/Еженедельно/)).toBeInTheDocument()
   })
 
-  it.skip('should show "Агрегация: Ежемесячно" for 181 days', () => {
+  it('should show "Агрегация: Ежемесячно" for 181 days', () => {
     const range181 = {
       from: new Date('2024-08-02'),
       to: new Date('2025-01-29'),
@@ -581,7 +581,7 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.getByText(/Ежемесячно/)).toBeInTheDocument()
   })
 
-  it.skip('should show "Агрегация: Ежемесячно" for 365 days', () => {
+  it('should show "Агрегация: Ежемесячно" for 365 days', () => {
     const range365 = {
       from: new Date('2024-01-30'),
       to: new Date('2025-01-29'),
@@ -591,7 +591,7 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.getByText(/Ежемесячно/)).toBeInTheDocument()
   })
 
-  it.skip('should hide aggregation suggestion when showAggregationSuggestion=false', () => {
+  it('should hide aggregation suggestion when showAggregationSuggestion=false', () => {
     render(
       <DateRangePickerExtended
         {...defaultProps}
@@ -603,13 +603,13 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
     expect(screen.queryByText(/Рекомендуемая агрегация/)).not.toBeInTheDocument()
   })
 
-  it.skip('should not show aggregation suggestion when no range selected', () => {
+  it('should not show aggregation suggestion when no range selected', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
 
     expect(screen.queryByText(/Рекомендуемая агрегация/)).not.toBeInTheDocument()
   })
 
-  it.skip('should show info icon with aggregation suggestion', () => {
+  it('should show info icon with aggregation suggestion', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
     const suggestionArea = screen.getByText(/Рекомендуемая агрегация/).closest('div')
@@ -622,7 +622,7 @@ describe('DateRangePickerExtended - Aggregation Suggestion', () => {
 // ============================================================================
 
 describe('DateRangePickerExtended - Russian Locale', () => {
-  it.skip('should display month names in Russian', async () => {
+  it('should display month names in Russian', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -634,7 +634,7 @@ describe('DateRangePickerExtended - Russian Locale', () => {
     })
   })
 
-  it.skip('should display day names in Russian (Пн, Вт, Ср, etc.)', async () => {
+  it('should display day names in Russian (Пн, Вт, Ср, etc.)', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -647,54 +647,54 @@ describe('DateRangePickerExtended - Russian Locale', () => {
     })
   })
 
-  it.skip('should format dates as DD.MM.YYYY in trigger', () => {
+  it('should format dates as DD.MM.YYYY in trigger', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
     // Should show Russian date format
     expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}/)).toBeInTheDocument()
   })
 
-  it.skip('should show placeholder in Russian', () => {
+  it('should show placeholder in Russian', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
 
     expect(screen.getByText('Выберите период')).toBeInTheDocument()
   })
 
-  it.skip('should show range with em-dash separator (—)', () => {
+  it('should show range with em-dash separator (—)', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
     expect(screen.getByText(/—/)).toBeInTheDocument()
   })
 
-  it.skip('should pluralize "день" correctly for 1 day', () => {
+  it('should pluralize "день" correctly for 1 day', () => {
     const range1 = { from: new Date('2025-01-15'), to: new Date('2025-01-15') }
     render(<DateRangePickerExtended {...defaultProps} value={range1} />)
 
     expect(screen.getByText(/1 день/)).toBeInTheDocument()
   })
 
-  it.skip('should pluralize "дня" correctly for 2-4 days', () => {
+  it('should pluralize "дня" correctly for 2-4 days', () => {
     const range3 = { from: new Date('2025-01-13'), to: new Date('2025-01-15') }
     render(<DateRangePickerExtended {...defaultProps} value={range3} />)
 
     expect(screen.getByText(/3 дня/)).toBeInTheDocument()
   })
 
-  it.skip('should pluralize "дней" correctly for 5+ days', () => {
+  it('should pluralize "дней" correctly for 5+ days', () => {
     const range10 = { from: new Date('2025-01-06'), to: new Date('2025-01-15') }
     render(<DateRangePickerExtended {...defaultProps} value={range10} />)
 
     expect(screen.getByText(/10 дней/)).toBeInTheDocument()
   })
 
-  it.skip('should show validation error in Russian', () => {
+  it('should show validation error in Russian', () => {
     const invalidRange = { from: new Date('2023-01-01'), to: new Date('2025-01-29') }
     render(<DateRangePickerExtended {...defaultProps} value={invalidRange} />)
 
     expect(screen.getByText(/Диапазон не может превышать/)).toBeInTheDocument()
   })
 
-  it.skip('should show all UI labels in Russian', async () => {
+  it('should show all UI labels in Russian', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
@@ -713,7 +713,7 @@ describe('DateRangePickerExtended - Russian Locale', () => {
 // ============================================================================
 
 describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
-  it.skip('should open popover with Enter key', async () => {
+  it('should open popover with Enter key', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -726,7 +726,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should open popover with Space key', async () => {
+  it('should open popover with Space key', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -739,7 +739,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should close popover with Escape key', async () => {
+  it('should close popover with Escape key', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -756,7 +756,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should navigate calendar with arrow keys', async () => {
+  it('should navigate calendar with arrow keys', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -771,7 +771,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     await user.keyboard('{ArrowDown}')
   })
 
-  it.skip('should select date with Enter key', async () => {
+  it('should select date with Enter key', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -786,7 +786,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     await user.keyboard('{Enter}')
   })
 
-  it.skip('should have ARIA labels on calendars', async () => {
+  it('should have ARIA labels on calendars', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -800,14 +800,14 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should have accessible trigger button', () => {
+  it('should have accessible trigger button', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
 
     const trigger = screen.getByRole('button')
     expect(trigger).toHaveAttribute('aria-haspopup')
   })
 
-  it.skip('should return focus to trigger when popover closes', async () => {
+  it('should return focus to trigger when popover closes', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -825,7 +825,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should Tab through preset buttons', async () => {
+  it('should Tab through preset buttons', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -841,7 +841,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     await user.keyboard('{Tab}')
   })
 
-  it.skip('should have role="dialog" on popover', async () => {
+  it('should have role="dialog" on popover', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -852,14 +852,14 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should announce selected range to screen readers', () => {
+  it('should announce selected range to screen readers', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
     const trigger = screen.getByRole('button')
     expect(trigger).toHaveAttribute('aria-label')
   })
 
-  it.skip('should have visible focus indicator on interactive elements', async () => {
+  it('should have visible focus indicator on interactive elements', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -874,7 +874,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     expect(focusedElement).toBeTruthy()
   })
 
-  it.skip('should support Tab navigation between months', async () => {
+  it('should support Tab navigation between months', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -889,7 +889,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     await user.keyboard('{Tab}')
   })
 
-  it.skip('should have aria-expanded on trigger button', async () => {
+  it('should have aria-expanded on trigger button', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
@@ -903,7 +903,7 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     })
   })
 
-  it.skip('should have aria-disabled on disabled trigger', () => {
+  it('should have aria-disabled on disabled trigger', () => {
     render(<DateRangePickerExtended {...defaultProps} disabled />)
 
     const trigger = screen.getByRole('button')

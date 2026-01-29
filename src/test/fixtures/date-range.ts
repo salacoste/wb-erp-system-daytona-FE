@@ -39,7 +39,7 @@ export const mockRange180Days: DateRange = {
 
 /** 365-day range ending today (full year) */
 export const mockRange365Days: DateRange = {
-  from: new Date('2024-01-30T00:00:00Z'),
+  from: new Date('2024-01-31T00:00:00Z'),
   to: new Date('2025-01-29T23:59:59Z'),
 }
 
