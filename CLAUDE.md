@@ -290,6 +290,15 @@ X-Cabinet-Id: {cabinet_id}
 - `createTestQueryClient()` - Fresh TanStack Query client
 - **Fixtures**: `src/test/fixtures/` - Mock data for each domain
 
+### Visual Verification with Chrome
+
+After implementing UI changes:
+- Use **Claude Chrome** (browser tool) to verify the functionality works as expected
+- Take screenshots to confirm visual appearance matches requirements
+- Test interactive elements (buttons, forms, navigation)
+- Verify responsive behavior at different viewport sizes
+- Check that animations and transitions work correctly
+
 ---
 
 ## Environment Variables
