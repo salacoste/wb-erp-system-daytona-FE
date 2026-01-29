@@ -16,8 +16,10 @@ import { axe, toHaveNoViolations } from 'jest-axe'
 // Extend expect with axe matchers
 expect.extend(toHaveNoViolations)
 
-// Mock next/navigation
-const mockPush = vi.fn()
+// Mock next/navigation - using vi.hoisted to avoid hoisting issues
+const { mockPush } = vi.hoisted(() => ({
+  mockPush: vi.fn(),
+}))
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mockPush,
@@ -43,6 +45,9 @@ vi.mock('@/lib/api/supplies', () => ({
   },
 }))
 
+// Import component after mocks
+import { CreateSupplyButton } from '../CreateSupplyButton'
+
 // Test query client factory
 const createTestQueryClient = (): QueryClient =>
   new QueryClient({
@@ -61,11 +66,6 @@ function renderWithProviders(
   return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
 }
 
-// Placeholder component until implementation
-function CreateSupplyButton(_props: { disabled?: boolean }) {
-  return null
-}
-
 describe('CreateSupplyButton', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -76,13 +76,13 @@ describe('CreateSupplyButton', () => {
   // ==========================================================================
 
   describe('AC1: Button Rendering', () => {
-    it.skip('renders button with correct label "Создать поставку"', () => {
+    it('renders button with correct label "Создать поставку"', () => {
       renderWithProviders(<CreateSupplyButton />)
 
       expect(screen.getByRole('button', { name: /создать поставку/i })).toBeInTheDocument()
     })
 
-    it.skip('renders Plus icon from Lucide', () => {
+    it('renders Plus icon from Lucide', () => {
       renderWithProviders(<CreateSupplyButton />)
 
       const button = screen.getByRole('button', { name: /создать поставку/i })
@@ -105,7 +105,7 @@ describe('CreateSupplyButton', () => {
   // ==========================================================================
 
   describe('Modal Trigger', () => {
-    it.skip('opens CreateSupplyModal on click', async () => {
+    it('opens CreateSupplyModal on click', async () => {
       const user = userEvent.setup()
       renderWithProviders(<CreateSupplyButton />)
 
@@ -117,7 +117,7 @@ describe('CreateSupplyButton', () => {
       })
     })
 
-    it.skip('modal has correct title when opened', async () => {
+    it('modal has correct title when opened', async () => {
       const user = userEvent.setup()
       renderWithProviders(<CreateSupplyButton />)
 

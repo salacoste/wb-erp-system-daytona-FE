@@ -27,16 +27,15 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useCreateSupply } from '@/hooks/useCreateSupply'
 
-// Form validation schema
+// Form input schema - what the form collects
 const createSupplySchema = z.object({
-  name: z
-    .string()
-    .max(100, 'Максимум 100 символов')
-    .optional()
-    .transform(val => val?.trim() || undefined),
+  name: z.string().max(100, 'Максимум 100 символов'),
 })
 
-type CreateSupplyFormValues = z.infer<typeof createSupplySchema>
+// Form values type for the form inputs
+interface CreateSupplyFormValues {
+  name: string
+}
 
 export interface CreateSupplyModalProps {
   /** Whether the modal is open */
@@ -79,8 +78,10 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
   }, [open])
 
   const onSubmit = (values: CreateSupplyFormValues) => {
+    // Normalize empty string to undefined
+    const name = values.name.trim() || undefined
     mutate(
-      { name: values.name },
+      { name },
       {
         onSuccess: () => {
           form.reset()
@@ -124,8 +125,8 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
               {...form.register('name')}
               ref={e => {
                 form.register('name').ref(e)
-                // @ts-expect-error - combining refs for focus
-                inputRef.current = e
+                // Store ref for focus handling
+                ;(inputRef as React.MutableRefObject<HTMLInputElement | null>).current = e
               }}
               onKeyDown={handleKeyDown}
             />

@@ -114,6 +114,13 @@ export const mockSuppliesListResponseEmpty: SuppliesListResponse = {
   filters: { status: null, from: null, to: null },
 }
 
+/** Paginated list response (page 2) */
+export const mockSuppliesListResponsePaginated: SuppliesListResponse = {
+  items: [mockSupplyListItemOpen, mockSupplyListItemClosed, mockSupplyListItemDelivering],
+  pagination: { total: 150, limit: 20, offset: 20 },
+  filters: { status: null, from: null, to: null },
+}
+
 // =============================================================================
 // Detail Response Fixtures
 // =============================================================================
@@ -137,7 +144,11 @@ export const mockCreateSupplyResponse: CreateSupplyResponse = {
   wbSupplyId: 'WB-SUPPLY-NEW-12345',
   name: null,
   status: 'OPEN',
+  ordersCount: 0,
+  totalValue: 0,
   createdAt: '2026-01-15T14:30:00.000Z',
+  closedAt: null,
+  syncedAt: null,
 }
 
 // =============================================================================

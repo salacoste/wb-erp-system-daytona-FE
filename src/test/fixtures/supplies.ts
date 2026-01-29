@@ -198,3 +198,116 @@ export const mockListParamsFiltered: SuppliesListParams = {
   limit: 50,
   offset: 0,
 }
+
+// Document with no size (null sizeBytes)
+export const mockDocumentNoSize: SupplyDocument = {
+  ...mockStickerDocumentPng,
+  sizeBytes: null,
+}
+
+// =============================================================================
+// Re-exports from supplies-responses.ts
+// =============================================================================
+
+export {
+  mockSupplyOpen,
+  mockSupplyClosed,
+  mockSupplyDelivering,
+  mockSupplyDelivered,
+  mockSupplyCancelled,
+  mockSupplyEmpty,
+  mockSuppliesListResponse,
+  mockSuppliesListResponseEmpty,
+  mockSuppliesListResponsePaginated,
+  mockSupplyDetailResponse,
+  mockSupplyDetailResponseNoRateLimit,
+  mockCreateSupplyRequestEmpty,
+  mockCreateSupplyRequestWithName,
+  mockCreateSupplyResponse,
+  mockAddOrdersRequest,
+  mockAddOrdersResponse,
+  mockAddOrdersResponsePartial,
+  mockRemoveOrdersRequest,
+  mockRemoveOrdersResponse,
+  mockCloseSupplyResponse,
+  mockGenerateStickersRequestPng,
+  mockGenerateStickersRequestSvg,
+  mockGenerateStickersRequestZpl,
+  mockGenerateStickersResponsePng,
+  mockGenerateStickersResponseSvg,
+  mockGenerateStickersResponseZpl,
+} from './supplies-responses'
+
+// =============================================================================
+// Error Fixtures
+// =============================================================================
+
+import type { SuppliesErrorResponse } from '@/types/supplies'
+
+export const mockErrorNotFound: SuppliesErrorResponse = {
+  code: 'SUPPLY_NOT_FOUND',
+  message: 'Supply not found',
+}
+
+export const mockErrorForbidden: SuppliesErrorResponse = {
+  code: 'FORBIDDEN',
+  message: 'Access denied to this supply',
+}
+
+export const mockErrorNetworkError: SuppliesErrorResponse = {
+  code: 'NETWORK_ERROR',
+  message: 'Network error occurred',
+}
+
+export const mockErrorConflict: SuppliesErrorResponse = {
+  code: 'CONFLICT',
+  message: 'Supply has been modified',
+  details: { currentVersion: 2 },
+}
+
+export const mockErrorRateLimit: SuppliesErrorResponse = {
+  code: 'RATE_LIMIT_EXCEEDED',
+  message: 'Rate limit exceeded',
+  details: { retryAfter: 300 },
+}
+
+// =============================================================================
+// Sync Response Fixtures
+// =============================================================================
+
+import type { SyncSuppliesResponse } from '@/types/supplies'
+
+export const mockSyncSuppliesResponse: SyncSuppliesResponse = {
+  syncedCount: 10,
+  statusChanges: [
+    { supplyId: 'supply-002', oldStatus: 'CLOSED', newStatus: 'DELIVERING' },
+    { supplyId: 'supply-003', oldStatus: 'DELIVERING', newStatus: 'DELIVERED' },
+  ],
+  errors: [],
+  nextSyncAt: '2026-01-15T13:05:00.000Z',
+}
+
+/** Mock response for sync with no changes */
+export const mockSyncSuppliesResponseNoChanges: SyncSuppliesResponse = {
+  syncedCount: 5,
+  statusChanges: [],
+  errors: [],
+  nextSyncAt: '2026-01-15T13:05:00.000Z',
+}
+
+// =============================================================================
+// Helper Function for Creating Mock Orders
+// =============================================================================
+
+export function createMockSupplyOrders(count: number): SupplyOrder[] {
+  return Array.from({ length: count }, (_, i) => ({
+    orderId: `order-${i + 1}`,
+    orderUid: `order-uid-${i + 1}`,
+    nmId: 10000000 + i,
+    vendorCode: `SKU-${String(i + 1).padStart(3, '0')}`,
+    productName: `Product ${i + 1}`,
+    salePrice: 1000 + i * 100,
+    supplierStatus: 'confirm',
+    addedAt: new Date(Date.now() - i * 3600000).toISOString(),
+  }))
+}

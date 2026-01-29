@@ -44,10 +44,11 @@ export const suppliesQueryKeys = {
 // =============================================================================
 
 /** Build query string from params object, filtering out null/undefined */
-function buildQueryString(params: Record<string, unknown>): string {
+function buildQueryString(params: SuppliesListParams): string {
   const searchParams = new URLSearchParams()
 
-  for (const [key, value] of Object.entries(params)) {
+  const entries = Object.entries(params) as [string, unknown][]
+  for (const [key, value] of entries) {
     if (value !== undefined && value !== null) {
       searchParams.append(key, String(value))
     }
@@ -234,3 +235,13 @@ export async function syncSupplies(): Promise<SyncSuppliesResponse> {
 
   return response
 }
+
+// =============================================================================
+// Alias Exports (for hook compatibility)
+// =============================================================================
+
+/** Alias for getSupply - used by useSupplyDetail hook */
+export const getSupplyDetail = getSupply
+
+/** Alias for removeOrders - used by useRemoveOrders hook */
+export const removeOrdersFromSupply = removeOrders

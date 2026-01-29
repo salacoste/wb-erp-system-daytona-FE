@@ -16,8 +16,10 @@ import { axe, toHaveNoViolations } from 'jest-axe'
 // Extend expect with axe matchers
 expect.extend(toHaveNoViolations)
 
-// Mock next/navigation
-const mockPush = vi.fn()
+// Mock next/navigation - using vi.hoisted to avoid hoisting issues
+const { mockPush } = vi.hoisted(() => ({
+  mockPush: vi.fn(),
+}))
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mockPush,
@@ -26,17 +28,21 @@ vi.mock('next/navigation', () => ({
   }),
 }))
 
-// Mock toast from sonner
-const mockToast = {
-  success: vi.fn(),
-  error: vi.fn(),
-}
+// Mock toast from sonner - using vi.hoisted to avoid hoisting issues
+const { mockToast } = vi.hoisted(() => ({
+  mockToast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}))
 vi.mock('sonner', () => ({
   toast: mockToast,
 }))
 
-// Mock API module
-const mockCreateSupply = vi.fn()
+// Mock API module - using vi.hoisted to avoid hoisting issues
+const { mockCreateSupply } = vi.hoisted(() => ({
+  mockCreateSupply: vi.fn(),
+}))
 vi.mock('@/lib/api/supplies', () => ({
   createSupply: (data: unknown) => mockCreateSupply(data),
   suppliesQueryKeys: {
@@ -45,8 +51,8 @@ vi.mock('@/lib/api/supplies', () => ({
   },
 }))
 
-// Import component after mocks (will fail until implemented - TDD)
-// import { CreateSupplyModal } from '../CreateSupplyModal'
+// Import component after mocks
+import { CreateSupplyModal } from '../CreateSupplyModal'
 import {
   mockCreatedSupplyWithName,
   mockCreatedSupplyGenerated,
@@ -75,11 +81,6 @@ function renderWithProviders(
   return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
 }
 
-// Placeholder component until implementation
-function CreateSupplyModal(_props: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  return null
-}
-
 describe('CreateSupplyModal', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -91,32 +92,32 @@ describe('CreateSupplyModal', () => {
   // ==========================================================================
 
   describe('AC2: Modal Display & Visibility', () => {
-    it.skip('renders nothing when open is false', () => {
+    it('renders nothing when open is false', () => {
       renderWithProviders(<CreateSupplyModal open={false} onOpenChange={vi.fn()} />)
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
 
-    it.skip('renders modal when open is true', () => {
+    it('renders modal when open is true', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     })
 
-    it.skip('has max-width of 400px', () => {
+    it('has max-width of 400px', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       const dialog = screen.getByRole('dialog')
       expect(dialog.className).toMatch(/max-w-\[400px\]|max-w-sm/)
     })
 
-    it.skip('displays title "Новая поставка"', () => {
+    it('displays title "Новая поставка"', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByText('Новая поставка')).toBeInTheDocument()
     })
 
-    it.skip('displays description "Создайте поставку для группировки заказов"', () => {
+    it('displays description "Создайте поставку для группировки заказов"', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByText('Создайте поставку для группировки заказов')).toBeInTheDocument()
@@ -128,26 +129,26 @@ describe('CreateSupplyModal', () => {
   // ==========================================================================
 
   describe('AC3: Modal Form - Name Input', () => {
-    it.skip('renders name input field', () => {
+    it('renders name input field', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByRole('textbox')).toBeInTheDocument()
     })
 
-    it.skip('has label "Название поставки (опционально)"', () => {
+    it('has label "Название поставки (опционально)"', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByLabelText(/название поставки/i)).toBeInTheDocument()
     })
 
-    it.skip('has placeholder "Например: Поставка на склад Коледино"', () => {
+    it('has placeholder "Например: Поставка на склад Коледино"', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       const input = screen.getByRole('textbox')
       expect(input).toHaveAttribute('placeholder', 'Например: Поставка на склад Коледино')
     })
 
-    it.skip('allows typing in the name input', async () => {
+    it('allows typing in the name input', async () => {
       const user = userEvent.setup()
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
@@ -207,13 +208,13 @@ describe('CreateSupplyModal', () => {
   // ==========================================================================
 
   describe('AC4: Modal Actions - Cancel Button', () => {
-    it.skip('renders "Отмена" button', () => {
+    it('renders "Отмена" button', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByRole('button', { name: /отмена/i })).toBeInTheDocument()
     })
 
-    it.skip('closes modal when "Отмена" button is clicked', async () => {
+    it('closes modal when "Отмена" button is clicked', async () => {
       const onOpenChange = vi.fn()
       const user = userEvent.setup()
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={onOpenChange} />)
@@ -242,7 +243,7 @@ describe('CreateSupplyModal', () => {
   })
 
   describe('AC4: Modal Actions - Submit Button', () => {
-    it.skip('renders "Создать" button', () => {
+    it('renders "Создать" button', () => {
       renderWithProviders(<CreateSupplyModal open={true} onOpenChange={vi.fn()} />)
 
       expect(screen.getByRole('button', { name: /создать$/i })).toBeInTheDocument()

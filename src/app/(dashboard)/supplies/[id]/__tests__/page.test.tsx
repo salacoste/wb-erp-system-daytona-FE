@@ -18,7 +18,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { UseQueryResult } from '@tanstack/react-query'
 import type { SupplyDetailResponse } from '@/types/supplies'
 
 // ============================================================================
@@ -66,11 +65,21 @@ import {
 // TDD: Mock Response Builders
 // ============================================================================
 
-type SupplyDetailQueryResult = Partial<UseQueryResult<SupplyDetailResponse, Error>>
+/** Helper type for mocking useSupplyDetail results in tests */
+interface MockSupplyDetailResult {
+  data?: SupplyDetailResponse
+  isLoading: boolean
+  isError: boolean
+  error: Error | null
+  refetch: ReturnType<typeof vi.fn>
+  isFetching: boolean
+  isSuccess: boolean
+  isPending: boolean
+}
 
 function createSupplyDetailQueryResult(
-  overrides: SupplyDetailQueryResult = {}
-): SupplyDetailQueryResult {
+  overrides: Partial<MockSupplyDetailResult> = {}
+): MockSupplyDetailResult {
   return {
     data: mockSupplyDetailResponse,
     isLoading: false,
