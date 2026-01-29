@@ -56,6 +56,11 @@ next-env.d.ts
 .bmad-core/
 _bmad-output/
 
+# Claude Code sessions
+.claude/sessions/*.tmp
+.claude/state/tool-count-*.txt
+.claude/sessions/compaction-log.txt
+
 # Local backups only
 .backup/
 logs/
