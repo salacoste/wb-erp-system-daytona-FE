@@ -19,7 +19,8 @@
     "clean": "rm -rf .next node_modules/.cache",
     "clean:full": "rm -rf .next node_modules/.cache node_modules && npm install",
     "dev:clean": "npm run clean && npm run dev",
-    "restart:safe": "npm run clean && npm run dev"
+    "restart:safe": "npm run clean && npm run dev",
+    "cleanup:claude": "bash scripts/cleanup-claude-sessions.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
