@@ -60,7 +60,9 @@ const mockOrderDetails = {
 }
 
 describe('Orders API Client - Core', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   describe('getOrders', () => {
     it('calls API with correct endpoint without params', async () => {

@@ -103,7 +103,9 @@ const mockFullHistory = {
 }
 
 describe('Orders History API Client', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   describe('getOrderHistory', () => {
     it('calls API with correct endpoint', async () => {

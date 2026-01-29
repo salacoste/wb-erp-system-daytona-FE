@@ -78,7 +78,9 @@ const mockVolume = {
 }
 
 describe('Orders Analytics API Client', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   describe('getVelocityMetrics', () => {
     it('calls API with date params', async () => {

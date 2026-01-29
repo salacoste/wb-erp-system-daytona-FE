@@ -20,7 +20,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { UseQueryResult, UseMutationResult } from '@tanstack/react-query'
 import type { OrdersListResponse, SyncStatusResponse } from '@/types/orders'
 
 // ============================================================================
@@ -62,11 +61,36 @@ import {
 // TDD: Mock Response Builders
 // ============================================================================
 
-type OrdersQueryResult = Partial<UseQueryResult<OrdersListResponse, Error>>
-type SyncQueryResult = Partial<UseQueryResult<SyncStatusResponse, Error>>
-type SyncMutationResult = Partial<UseMutationResult<unknown, Error, void, unknown>>
+// Use simple object types to avoid TanStack Query type compatibility issues
+interface MockOrdersQueryResult {
+  data?: OrdersListResponse
+  isLoading: boolean
+  isError: boolean
+  error: Error | null
+  refetch: ReturnType<typeof vi.fn>
+  isFetching: boolean
+  isSuccess: boolean
+  isPending: boolean
+}
 
-function createOrdersQueryResult(overrides: OrdersQueryResult = {}): OrdersQueryResult {
+interface MockSyncQueryResult {
+  data?: SyncStatusResponse
+  isLoading: boolean
+  isError: boolean
+}
+
+interface MockSyncMutationResult {
+  mutate: ReturnType<typeof vi.fn>
+  isPending: boolean
+  isIdle: boolean
+  isError: boolean
+  isSuccess: boolean
+  reset: ReturnType<typeof vi.fn>
+}
+
+function createOrdersQueryResult(
+  overrides: Partial<MockOrdersQueryResult> = {}
+): MockOrdersQueryResult {
   return {
     data: mockOrdersListResponse,
     isLoading: false,
@@ -80,7 +104,7 @@ function createOrdersQueryResult(overrides: OrdersQueryResult = {}): OrdersQuery
   }
 }
 
-function createSyncQueryResult(overrides: SyncQueryResult = {}): SyncQueryResult {
+function createSyncQueryResult(overrides: Partial<MockSyncQueryResult> = {}): MockSyncQueryResult {
   return {
     data: mockSyncStatusResponse,
     isLoading: false,
@@ -89,7 +113,9 @@ function createSyncQueryResult(overrides: SyncQueryResult = {}): SyncQueryResult
   }
 }
 
-function createSyncMutationResult(overrides: SyncMutationResult = {}): SyncMutationResult {
+function createSyncMutationResult(
+  overrides: Partial<MockSyncMutationResult> = {}
+): MockSyncMutationResult {
   return {
     mutate: vi.fn(),
     isPending: false,

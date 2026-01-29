@@ -31,6 +31,8 @@ export interface LocalHistoryEntry {
   changedAt: string
   /** Duration in this status (minutes, null for first entry) */
   durationMinutes: number | null
+  /** User/system that changed the status (optional) */
+  changedBy?: string
 }
 
 /**

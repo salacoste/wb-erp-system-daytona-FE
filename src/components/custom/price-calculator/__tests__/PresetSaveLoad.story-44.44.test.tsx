@@ -87,17 +87,26 @@ const corruptedJson = '{ invalid json syntax'
 // Mock Setup
 // ============================================================================
 
+// Separate store to avoid circular reference
+let mockStore: Record<string, string> = {}
+
+// Simple localStorage mock with explicit typing for Vitest mocks
 const localStorageMock = {
-  store: {} as Record<string, string>,
-  getItem: vi.fn((key: string) => localStorageMock.store[key] || null),
-  setItem: vi.fn((key: string, value: string) => {
-    localStorageMock.store[key] = value
+  get store(): Record<string, string> {
+    return mockStore
+  },
+  set store(value: Record<string, string>) {
+    mockStore = value
+  },
+  getItem: vi.fn().mockImplementation((key: string): string | null => mockStore[key] || null),
+  setItem: vi.fn().mockImplementation((key: string, value: string): void => {
+    mockStore[key] = value
   }),
-  removeItem: vi.fn((key: string) => {
-    delete localStorageMock.store[key]
+  removeItem: vi.fn().mockImplementation((key: string): void => {
+    delete mockStore[key]
   }),
-  clear: vi.fn(() => {
-    localStorageMock.store = {}
+  clear: vi.fn().mockImplementation((): void => {
+    mockStore = {}
   }),
 }
 
@@ -132,9 +141,7 @@ describe('Story 44.44: Preset Save/Load', () => {
   describe('AC1: Save Preset Button', () => {
     it('should save all form values to localStorage on savePreset call', async () => {
       // Import hook (will fail until implemented)
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -143,10 +150,7 @@ describe('Story 44.44: Preset Save/Load', () => {
       })
 
       // Verify localStorage.setItem was called
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        PRESET_KEY,
-        expect.any(String)
-      )
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(PRESET_KEY, expect.any(String))
 
       // Verify saved data structure
       const savedData = JSON.parse(localStorageMock.store[PRESET_KEY])
@@ -158,9 +162,7 @@ describe('Story 44.44: Preset Save/Load', () => {
 
     it('should show success toast after saving', async () => {
       const { toast } = await import('sonner')
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -172,9 +174,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     })
 
     it('should set hasPreset to true after saving', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -190,9 +190,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should overwrite existing preset when saving again', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -213,9 +211,7 @@ describe('Story 44.44: Preset Save/Load', () => {
       })
 
       const { toast } = await import('sonner')
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -234,9 +230,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should return preset data when valid preset exists', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -246,15 +240,14 @@ describe('Story 44.44: Preset Save/Load', () => {
       })
 
       expect(loadedData).not.toBeNull()
-      expect(loadedData?.cogs_rub).toBe(500)
-      expect(loadedData?.target_margin_pct).toBe(25)
-      expect(loadedData?.fulfillment_type).toBe('FBO')
+      // Non-null assertion after expect verification
+      expect(loadedData!.cogs_rub).toBe(500)
+      expect(loadedData!.target_margin_pct).toBe(25)
+      expect(loadedData!.fulfillment_type).toBe('FBO')
     })
 
     it('should return null when no preset exists', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -269,9 +262,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should set isPresetLoaded to true after successful load', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -287,9 +278,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should detect hasPreset on mount when preset exists', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -300,9 +289,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     })
 
     it('should set hasPreset to false on mount when no preset', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -319,9 +306,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should remove preset from localStorage on clearPreset', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -337,9 +322,7 @@ describe('Story 44.44: Preset Save/Load', () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
       const { toast } = await import('sonner')
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -353,9 +336,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should set hasPreset to false after clearing', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -374,9 +355,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should set isPresetLoaded to false after clearing', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockValidPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -490,9 +469,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should discard preset with wrong version', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockOutdatedPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -508,9 +485,7 @@ describe('Story 44.44: Preset Save/Load', () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockOutdatedPreset)
 
       const { toast } = await import('sonner')
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -526,9 +501,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should remove outdated preset from localStorage', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockOutdatedPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -542,9 +515,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should set hasPreset to false after discarding outdated preset', async () => {
       localStorageMock.store[PRESET_KEY] = JSON.stringify(mockOutdatedPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -561,9 +532,7 @@ describe('Story 44.44: Preset Save/Load', () => {
   // ==========================================================================
   describe('AC6: Form Fields Covered', () => {
     it('should save all required form fields', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -608,9 +577,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     })
 
     it('should exclude delivery_date from preset (dynamic data)', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -628,9 +595,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     })
 
     it('should exclude API-fetched coefficients from preset', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -650,9 +615,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     })
 
     it('should exclude calculation results from preset', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -681,9 +644,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     it('should handle corrupted JSON gracefully', async () => {
       localStorageMock.store[PRESET_KEY] = corruptedJson
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -702,9 +663,7 @@ describe('Story 44.44: Preset Save/Load', () => {
         throw new Error('SecurityError: localStorage not available')
       })
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -725,9 +684,7 @@ describe('Story 44.44: Preset Save/Load', () => {
       }
       localStorageMock.store[PRESET_KEY] = JSON.stringify(malformedPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -748,9 +705,7 @@ describe('Story 44.44: Preset Save/Load', () => {
       }
       localStorageMock.store[PRESET_KEY] = JSON.stringify(emptyDataPreset)
 
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -764,9 +719,7 @@ describe('Story 44.44: Preset Save/Load', () => {
     })
 
     it('should include savedAt timestamp in saved preset', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
@@ -785,9 +738,7 @@ describe('Story 44.44: Preset Save/Load', () => {
   // ==========================================================================
   describe('Hook Return Interface', () => {
     it('should return all expected properties', async () => {
-      const { usePriceCalculatorPreset } = await import(
-        '../usePriceCalculatorPreset'
-      )
+      const { usePriceCalculatorPreset } = await import('../usePriceCalculatorPreset')
 
       const { result } = renderHook(() => usePriceCalculatorPreset())
 
