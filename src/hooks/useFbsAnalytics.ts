@@ -11,11 +11,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getFbsTrends, getFbsSeasonal, getFbsCompare } from '@/lib/api/fbs-analytics'
 import type {
   FbsTrendsParams,
-  FbsTrendsResponse,
+  TrendsResponse,
   FbsSeasonalParams,
-  FbsSeasonalResponse,
+  SeasonalResponse,
   FbsCompareParams,
-  FbsCompareResponse,
+  CompareResponse,
 } from '@/types/fbs-analytics'
 
 // ============================================================================
@@ -82,7 +82,7 @@ export interface UseFbsTrendsOptions {
 export function useFbsTrends(params: FbsTrendsParams, options: UseFbsTrendsOptions = {}) {
   const { enabled = true, refetchInterval } = options
 
-  return useQuery<FbsTrendsResponse, Error>({
+  return useQuery<TrendsResponse, Error>({
     queryKey: fbsAnalyticsQueryKeys.trends(params),
     queryFn: () => getFbsTrends(params),
     enabled: enabled && !!params.from && !!params.to,
@@ -105,7 +105,7 @@ export interface UseFbsSeasonalOptions {
 export function useFbsSeasonal(params: FbsSeasonalParams, options: UseFbsSeasonalOptions = {}) {
   const { enabled = true } = options
 
-  return useQuery<FbsSeasonalResponse, Error>({
+  return useQuery<SeasonalResponse, Error>({
     queryKey: fbsAnalyticsQueryKeys.seasonal(params),
     queryFn: () => getFbsSeasonal(params),
     enabled,
@@ -130,7 +130,7 @@ export function useFbsCompare(params: FbsCompareParams, options: UseFbsCompareOp
   const isValid =
     !!params.period1From && !!params.period1To && !!params.period2From && !!params.period2To
 
-  return useQuery<FbsCompareResponse, Error>({
+  return useQuery<CompareResponse, Error>({
     queryKey: fbsAnalyticsQueryKeys.compare(params),
     queryFn: () => getFbsCompare(params),
     enabled: enabled && isValid,
