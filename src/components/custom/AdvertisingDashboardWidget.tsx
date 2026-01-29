@@ -23,9 +23,29 @@ import { useAdvertisingAnalytics } from '@/hooks/useAdvertisingAnalytics'
 
 type PeriodOption = '7d' | '14d' | '30d'
 
+/** Date range with ISO date strings */
+interface DateRange {
+  /** Start date in YYYY-MM-DD format */
+  from: string
+  /** End date in YYYY-MM-DD format */
+  to: string
+}
+
 interface AdvertisingDashboardWidgetProps {
   /** Additional class names */
   className?: string
+  /**
+   * Date range from parent context.
+   * If provided, widget uses this range for API calls instead of internal state.
+   * Story 60.6-FE: Sync with global dashboard period.
+   */
+  dateRange?: DateRange
+  /**
+   * When true, hide the local period selector.
+   * Use when embedded in dashboard with global selector.
+   * Story 60.6-FE: Hide when controlled by parent.
+   */
+  hideLocalSelector?: boolean
 }
 
 // ============================================================================
@@ -50,12 +70,11 @@ function formatCurrency(value: number | undefined | null): string {
 }
 
 /**
- * Get ROAS color class based on value (AC4).
+ * Get ROAS color class based on value.
  * - >= 3.0: Green (excellent)
  * - >= 2.0: Yellow (good)
  * - >= 1.0: Orange (break-even)
  * - < 1.0: Red (loss)
- * Handles undefined/null values gracefully.
  */
 function getRoasColorClass(roas: number | undefined | null): string {
   if (roas == null || isNaN(roas)) return 'text-muted-foreground'
@@ -79,19 +98,33 @@ function getPeriodLabel(period: PeriodOption): string {
   }
 }
 
+/**
+ * Calculate internal date range from period option.
+ * Used as fallback when no external dateRange is provided.
+ */
+function calculateInternalDateRange(period: PeriodOption): DateRange {
+  const to = subDays(new Date(), 1) // Yesterday (account for sync delay)
+  const days = parseInt(period)
+  const from = subDays(to, days)
+  return {
+    from: format(from, 'yyyy-MM-dd'),
+    to: format(to, 'yyyy-MM-dd'),
+  }
+}
+
 // ============================================================================
 // Widget Skeleton Component
 // ============================================================================
 
 function WidgetSkeleton({ className }: { className?: string }) {
   return (
-    <Card className={cn('p-4', className)}>
+    <Card className={cn('p-4', className)} data-testid="advertising-skeleton">
       <div className="flex items-center justify-between mb-4">
         <Skeleton className="h-5 w-24" />
         <Skeleton className="h-8 w-20" />
       </div>
       <div className="grid grid-cols-3 gap-4">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3].map(i => (
           <div key={i}>
             <Skeleton className="h-3 w-12 mb-1" />
             <Skeleton className="h-6 w-16" />
@@ -111,34 +144,48 @@ function WidgetSkeleton({ className }: { className?: string }) {
 
 /**
  * Advertising Dashboard Widget
+ *
  * Story 33.7-FE: Dashboard Widget
- * Epic 33: Advertising Analytics (Frontend)
- * Epic 35: Organic vs Advertising Revenue Split
+ * Story 60.6-FE: Sync with Global Dashboard Period
  *
  * Features:
- * - Compact metrics display: Total Sales, Organic %, ROAS (AC2)
- * - Period selector: 7d / 14d / 30d (AC3)
- * - ROAS color-coded (AC4)
- * - Epic 35: Organic contribution percentage
- * - Link to full analytics page (AC3)
- * - Loading & error states (AC5)
+ * - Compact metrics display: Total Sales, Organic %, ROAS
+ * - Period selector: 7d / 14d / 30d (hidden when externally controlled)
+ * - ROAS color-coded by value
+ * - Organic contribution percentage
+ * - Link to full analytics page
+ * - Loading & error states
+ *
+ * Usage:
+ * - Dashboard: Pass dateRange and hideLocalSelector={true} for global period sync
+ * - Standalone: No props needed, uses internal period selector
+ *
+ * @example
+ * // On dashboard with global period
+ * <AdvertisingDashboardWidget dateRange={{ from: '2026-01-27', to: '2026-02-02' }} hideLocalSelector />
+ *
+ * @example
+ * // Standalone on analytics page
+ * <AdvertisingDashboardWidget />
  */
 export function AdvertisingDashboardWidget({
   className,
+  dateRange: externalDateRange,
+  hideLocalSelector = false,
 }: AdvertisingDashboardWidgetProps) {
-  // Default period: 7 days (PO decision)
-  const [period, setPeriod] = useState<PeriodOption>('7d')
+  // Internal period state as fallback for standalone mode
+  const [internalPeriod, setInternalPeriod] = useState<PeriodOption>('7d')
 
-  // Calculate date range based on period
+  // Determine if externally controlled
+  const isControlled = !!externalDateRange
+
+  // Use external range if provided, otherwise calculate from internal state
   const dateRange = useMemo(() => {
-    const to = subDays(new Date(), 1) // Yesterday (account for sync delay)
-    const days = parseInt(period)
-    const from = subDays(to, days)
-    return {
-      from: format(from, 'yyyy-MM-dd'),
-      to: format(to, 'yyyy-MM-dd'),
+    if (externalDateRange) {
+      return externalDateRange
     }
-  }, [period])
+    return calculateInternalDateRange(internalPeriod)
+  }, [externalDateRange, internalPeriod])
 
   // Fetch advertising analytics (only need summary)
   const { data, isLoading, error, refetch } = useAdvertisingAnalytics(
@@ -161,7 +208,7 @@ export function AdvertisingDashboardWidget({
   // Error state or missing data
   if (error || !data || !data.summary) {
     return (
-      <Card className={cn('p-4', className)}>
+      <Card className={cn('p-4', className)} data-testid="advertising-widget">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Megaphone className="h-5 w-5 text-muted-foreground" />
@@ -182,40 +229,42 @@ export function AdvertisingDashboardWidget({
 
   const { summary } = data
 
+  // Determine whether to show local selector (AC1, AC4, AC5, AC6)
+  // Show only when NOT externally controlled AND hideLocalSelector is false
+  const showLocalSelector = !isControlled && !hideLocalSelector
+
   return (
-    <Card className={cn('p-4', className)}>
-      {/* Header with title and period selector */}
+    <Card className={cn('p-4', className)} data-testid="advertising-widget">
+      {/* Header with title and optional period selector */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Megaphone className="h-5 w-5 text-blue-600" aria-hidden="true" />
           <h3 className="font-semibold">Реклама</h3>
         </div>
-        <Select
-          value={period}
-          onValueChange={(v) => setPeriod(v as PeriodOption)}
-        >
-          <SelectTrigger className="w-24 h-8" aria-label="Выбрать период">
-            <SelectValue>{getPeriodLabel(period)}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7d">7 дней</SelectItem>
-            <SelectItem value="14d">14 дней</SelectItem>
-            <SelectItem value="30d">30 дней</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Local selector only shown in standalone mode (AC1, AC4, AC5, AC6) */}
+        {showLocalSelector && (
+          <Select value={internalPeriod} onValueChange={v => setInternalPeriod(v as PeriodOption)}>
+            <SelectTrigger className="w-24 h-8" aria-label="Выбрать период">
+              <SelectValue>{getPeriodLabel(internalPeriod)}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7d">7 дней</SelectItem>
+              <SelectItem value="14d">14 дней</SelectItem>
+              <SelectItem value="30d">30 дней</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
-      {/* Compact metrics grid - Epic 35: Shows Total Sales, Organic %, ROAS */}
+      {/* Compact metrics grid: Total Sales, Organic %, ROAS */}
       <div className="grid grid-cols-3 gap-4">
-        {/* Epic 35: Total Sales (organic + advertising) */}
+        {/* Total Sales (organic + advertising) */}
         <div>
           <p className="text-xs text-muted-foreground">Продажи</p>
-          <p className="text-lg font-bold">
-            {formatCurrency(summary.total_sales)}
-          </p>
+          <p className="text-lg font-bold">{formatCurrency(summary.total_sales)}</p>
         </div>
 
-        {/* Epic 35: Organic Contribution % */}
+        {/* Organic Contribution % */}
         <div>
           <p className="text-xs text-muted-foreground">Органика</p>
           <p className="text-lg font-bold text-green-600">
@@ -228,18 +277,13 @@ export function AdvertisingDashboardWidget({
         {/* Overall ROAS with color coding */}
         <div>
           <p className="text-xs text-muted-foreground">ROAS</p>
-          <p
-            className={cn(
-              'text-lg font-bold',
-              getRoasColorClass(summary.overall_roas)
-            )}
-          >
+          <p className={cn('text-lg font-bold', getRoasColorClass(summary.overall_roas))}>
             {summary.overall_roas != null ? `${summary.overall_roas.toFixed(1)}x` : '—'}
           </p>
         </div>
       </div>
 
-      {/* Epic 35: Current Week Indicator - Shows data includes incomplete current week */}
+      {/* Current Week Indicator */}
       <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
         <Clock className="h-3.5 w-3.5" aria-hidden="true" />
         <span>Включает текущую неделю (обновляется ежедневно)</span>

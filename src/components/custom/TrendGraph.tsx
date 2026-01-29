@@ -19,6 +19,7 @@ import {
 import { RefreshCw, AlertCircle, TrendingUp } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
+import { EmptyStateIllustration } from './EmptyStateIllustration'
 
 /**
  * Trend graph component for key metrics over time
@@ -48,10 +49,12 @@ export function TrendGraph() {
           <p className="font-semibold text-gray-900 mb-2">
             {dataPoint.week} ({formatDate(dataPoint.date)})
           </p>
-          {payload.map((entry) => (
+          {payload.map(entry => (
             <p key={entry.dataKey} className="text-sm" style={{ color: entry.color }}>
-              {entry.dataKey === 'revenue' ? 'Вайлдберриз реализовал Товар' : 'К перечислению за товар'}:{' '}
-              <span className="font-medium">{formatCurrency(entry.value)}</span>
+              {entry.dataKey === 'revenue'
+                ? 'Вайлдберриз реализовал Товар'
+                : 'К перечислению за товар'}
+              : <span className="font-medium">{formatCurrency(entry.value)}</span>
             </p>
           ))}
         </div>
@@ -109,11 +112,7 @@ export function TrendGraph() {
           <CardDescription>Изменение метрик по неделям</CardDescription>
         </CardHeader>
         <CardContent>
-          <Alert>
-            <AlertDescription>
-              Данные о трендах пока недоступны. Тренды появятся после загрузки финансовых отчетов за несколько недель.
-            </AlertDescription>
-          </Alert>
+          <EmptyStateIllustration type="trends" />
         </CardContent>
       </Card>
     )
@@ -137,10 +136,7 @@ export function TrendGraph() {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={data.trends}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
+          <LineChart data={data.trends} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
             <XAxis
               dataKey="week"
@@ -150,13 +146,10 @@ export function TrendGraph() {
               height={80}
               tick={{ fontSize: 12 }}
             />
-            <YAxis
-              tickFormatter={(value) => formatCurrency(value)}
-              tick={{ fontSize: 12 }}
-            />
+            <YAxis tickFormatter={value => formatCurrency(value)} tick={{ fontSize: 12 }} />
             <Tooltip content={<CustomTooltip />} />
             <Legend
-              formatter={(value) =>
+              formatter={value =>
                 value === 'revenue' ? 'Вайлдберриз реализовал Товар' : 'К перечислению за товар'
               }
             />
@@ -184,4 +177,3 @@ export function TrendGraph() {
     </Card>
   )
 }
-

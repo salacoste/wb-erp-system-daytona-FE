@@ -10,6 +10,40 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { RefreshCw, AlertCircle } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { EmptyStateIllustration } from './EmptyStateIllustration'
+
+/** Shimmer skeleton component for expense chart loading state */
+function ExpenseChartSkeleton(): React.ReactElement {
+  // Heights as percentages to simulate varying bar heights
+  const barHeights = [0.65, 0.85, 0.45, 0.75, 0.55, 0.9, 0.35]
+
+  return (
+    <Card aria-busy="true">
+      <CardHeader>
+        <Skeleton className="h-5 w-32" aria-hidden="true" />
+        <Skeleton className="h-4 w-48 mt-1" aria-hidden="true" />
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-end gap-2 h-[300px] px-4">
+          {barHeights.map((height, i) => (
+            <Skeleton
+              key={i}
+              className="flex-1 rounded-t-lg"
+              style={{ height: `${height * 100}%` }}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+        {/* X-axis label skeletons */}
+        <div className="flex justify-between mt-4 px-4">
+          {barHeights.map((_, i) => (
+            <Skeleton key={i} className="h-3 w-12" aria-hidden="true" />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 /**
  * Expense breakdown chart component
@@ -64,7 +98,13 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
   ]
 
   // Custom tooltip component
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: ExpenseItem }> }) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean
+    payload?: Array<{ payload: ExpenseItem }>
+  }) => {
     if (active && payload && payload.length > 0) {
       const data = payload[0].payload as ExpenseItem
       return (
@@ -85,17 +125,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
   }
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Разбивка расходов</CardTitle>
-          <CardDescription>Визуализация расходов по категориям</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-64 w-full" />
-        </CardContent>
-      </Card>
-    )
+    return <ExpenseChartSkeleton />
   }
 
   if (error) {
@@ -128,11 +158,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
           <CardDescription>Визуализация расходов по категориям</CardDescription>
         </CardHeader>
         <CardContent>
-          <Alert>
-            <AlertDescription>
-              Данные о расходах пока недоступны. Расходы появятся после загрузки финансовых отчетов.
-            </AlertDescription>
-          </Alert>
+          <EmptyStateIllustration type="expenses" />
         </CardContent>
       </Card>
     )
@@ -145,7 +171,11 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
         <CardDescription>Визуализация расходов по категориям</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={400} aria-label="Диаграмма расходов по категориям">
+        <ResponsiveContainer
+          width="100%"
+          height={400}
+          aria-label="Диаграмма расходов по категориям"
+        >
           <BarChart
             data={data.expenses}
             margin={{
@@ -164,7 +194,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               tick={{ fontSize: 11 }}
             />
             <YAxis
-              tickFormatter={(value) => formatCurrency(value)}
+              tickFormatter={value => formatCurrency(value)}
               tick={{ fontSize: 12 }}
               width={isMobile ? 60 : 80}
             />
@@ -180,5 +210,3 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
     </Card>
   )
 }
-
-

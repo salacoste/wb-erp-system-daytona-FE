@@ -1,12 +1,9 @@
 'use client'
 
-import {
-  isServer,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { env } from '@/lib/env'
 
 function makeQueryClient() {
@@ -53,9 +50,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
-      {env.enableDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+      <TooltipProvider>
+        {children}
+        {env.enableDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+      </TooltipProvider>
     </QueryClientProvider>
   )
 }
-
