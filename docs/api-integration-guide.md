@@ -708,3 +708,38 @@ Frontend Specs: /frontend/docs/request-backend/*.md
 **Overall Integration Status:** ✅ 100% Complete
 
 All frontend API clients are fully mapped to backend documentation with complete HTTP test coverage.
+
+---
+
+## Task Queue API
+
+The backend provides a task queue system for background processing.
+
+### Enqueue Task
+
+```http
+POST /v1/tasks/enqueue
+Authorization: Bearer {token}
+X-Cabinet-Id: {cabinet_id}
+
+{
+  "task_type": "recalculate_weekly_margin",
+  "payload": {
+    "weeks": ["2025-W49", "2025-W50"]
+  }
+}
+```
+
+### Task Types
+
+| Task Type | Payload | Description |
+|-----------|---------|-------------|
+| `recalculate_weekly_margin` | `{ weeks: string[], nm_ids?: string[] }` | Recalculate margins |
+| `weekly_sanity_check` | `{ week?: string }` | Validate data quality |
+| `weekly_margin_aggregate` | `{ week?: string }` | Re-aggregate data |
+
+### Deprecated Tasks
+
+- `enrich_cogs` - Use `recalculate_weekly_margin` instead
+
+See [Request #94](request-backend/94-epic-42-tech-debt-task-handlers.md) for details.

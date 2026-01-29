@@ -1,13 +1,13 @@
 # Stories Status Report
 
 **Generated:** 2025-11-23
-**Last Updated:** 2026-01-27
-**Total Stories:** 102 (91 Done, 8 Ready for Dev)
+**Last Updated:** 2026-01-29
+**Total Stories:** 102 (93 Done, 6 Ready for Dev)
 
 ## Summary
 
-- ✅ **Completed (Done):** 91 stories (89%)
-- 📋 **Ready for Development:** 4 stories (Epic 42-FE: 4)
+- ✅ **Completed (Done):** 93 stories (91%)
+- 📋 **Ready for Development:** 2 stories (Epic 42-FE: 2 optional)
 - 📝 **Draft (Not Started):** 0 stories
 - ⚠️ **Partially Complete:** 0 stories
 - 🔄 **In Progress:** 0 stories
@@ -44,7 +44,7 @@
 ### ✅ Epic 37: Merged Group Table Display — DONE (5/5 stories, 89.4/100)
 ### ✅ Epic 44-FE: Price Calculator UI — COMPLETE (32/32 stories, 81 pts)
 ### ✅ Epic 52-FE: Tariff Settings Admin UI — COMPLETE (7/7 stories, 26 pts)
-### 📋 Epic 42-FE: Task Handlers Adaptation — READY FOR DEV (4 stories, 7 pts)
+### ✅ Epic 42-FE: Task Handlers Adaptation — PARTIALLY COMPLETE (2/4 stories, 3 pts required done)
 
 ---
 
@@ -341,18 +341,19 @@ Unit tests ≥90%, E2E tests, WCAG 2.1 AA compliance.
 
 ---
 
-## Epic 42-FE: Task Handlers Adaptation (4 stories) 📋 **READY FOR DEVELOPMENT**
+## Epic 42-FE: Task Handlers Adaptation (4 stories) ✅ **REQUIRED STORIES COMPLETE**
 
-**Status:** 📋 Ready for Development
-**Total Points:** 7 (3 required, 4 optional)
+**Status:** ✅ Required Stories Complete (2/4)
+**Total Points:** 7 (3 required done, 4 optional backlog)
 **Created:** 2026-01-06
+**Completed:** 2026-01-29
 **Backend Epic:** Epic 42 (Complete)
 **Documentation:** `docs/epics/epic-42-fe-task-handlers-adaptation.md`
 
 **Key Change:** `enrich_cogs` task DEPRECATED → use `recalculate_weekly_margin`
 
-### 📋 42.1-FE: TypeScript Types Update — Ready (1 pt, Required)
-Update Task.type union, add `recalculate_weekly_margin`, mark deprecated.
+### ✅ 42.1-FE: TypeScript Types Update — Done (1 pt, Required)
+Task.type union includes `recalculate_weekly_margin`, `enrich_cogs` marked `@deprecated`.
 
 ### 📋 42.2-FE: Sanity Check Hook — Backlog (2 pts, Optional)
 `useSanityCheck` hook for data quality validation, polling support.
@@ -360,10 +361,10 @@ Update Task.type union, add `recalculate_weekly_margin`, mark deprecated.
 ### 📋 42.3-FE: Missing COGS Alert — Backlog (2 pts, Optional)
 `MissingCogsAlert` component, depends on 42.2-FE.
 
-### 📋 42.4-FE: Documentation & Tests — Ready (2 pts, Required)
-Update README, api-integration-guide, verify tests.
+### ✅ 42.4-FE: Documentation & Tests — Done (2 pts, Required)
+README Task Types Reference table, api-integration-guide Task Queue API section.
 
-**Note:** Frontend already uses `recalculate_weekly_margin` in existing code. Changes minimal.
+**Note:** Frontend already uses `recalculate_weekly_margin` in existing code. Required stories complete.
 
 ---
 
@@ -454,8 +455,8 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 ## Statistics
 
 ### By Status
-- **Done:** 91 stories (89%)
-- **Ready for Development:** 4 stories (4%) — Epic 42-FE (4)
+- **Done:** 93 stories (91%)
+- **Ready for Development:** 2 stories (2%) — Epic 42-FE (2 optional)
 - **Draft:** 0 stories
 
 ### By Epic
@@ -472,14 +473,14 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 | Epic 34-FE | ✅ Production Ready | 6/6 | 21 pts |
 | Epic 36-FE | ✅ Complete | 5/5 (91 tests) | 16 pts |
 | Epic 37 | ✅ Done | 5/5 (89.4/100) | - |
-| Epic 42-FE | 📋 Ready for Dev | 4/4 | 7 pts |
+| Epic 42-FE | ✅ Required Complete | 2/4 (2 optional) | 3 pts done |
 | Epic 44-FE | ✅ Complete | 32/32 | 81 pts |
 | Epic 52-FE | ✅ Complete | 7/7 | 26 pts |
 
 ### Overall Progress
 - **Total Stories:** 102
-- **Completed:** 91 (89%)
-- **Ready for Dev:** 4 (4%)
+- **Completed:** 93 (91%)
+- **Ready for Dev:** 2 (2%) — optional stories
 - **Total Tests:** 800+ (estimated)
 
 ---
@@ -506,15 +507,16 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 | 2026-01-23 | **Epic 44-FE Phases 2-5 complete** (Price Calculator UI, 27 stories, 63 pts) |
 | 2026-01-26 | **Epic 44-FE Phase 6 started** (Two Tariff Systems, 4 stories, 15 pts) |
 | 2026-01-27 | **Epic 44-FE Phase 6 complete** (Price Calculator Full, 32/32 stories, 81 pts) |
+| 2026-01-29 | **Epic 42-FE required stories complete** (42.1, 42.4 - Types & Docs, 3 pts) |
 
 ---
 
 ## Recommendations
 
-### ✅ 91/102 STORIES COMPLETE (2026-01-27)
+### ✅ 93/102 STORIES COMPLETE (2026-01-29)
 
 **Achievement Summary:**
-- ✅ **91/102 Stories Complete** (89%)
+- ✅ **93/102 Stories Complete** (91%)
 - ✅ **Epic 1-6:** Core MVP complete with 300+ tests
 - ✅ **Epic 24:** Paid Storage Analytics (39 pts, 11 stories)
 - ✅ **Epic 33-FE:** Advertising Analytics (26 pts)
@@ -527,7 +529,7 @@ Page at `/settings/tariffs`, admin check, 3 tabs, types for 21 fields, API clien
 
 ### Next Steps
 
-1. **Epic 42-FE** — Task Handlers Adaptation (4 stories, 7 pts) — Ready for Dev
+1. **Epic 42-FE optional stories** — Sanity Check Hook (42.2) and Missing COGS Alert (42.3) — Backlog
 2. **End-to-end testing** with real Wildberries data
 3. **Performance testing** — verify API response times
 4. **Security audit** — final security review

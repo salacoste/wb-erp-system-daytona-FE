@@ -30,12 +30,12 @@
 - Story 53.4-FE: Supply Detail Page (pending)
 
 ### Sprint 4 (Order Picker & Stickers)
-- Story 53.5-FE: Order Picker Drawer (pending)
-- Story 53.6-FE: Close Supply & Stickers (pending)
+- [Story 53.5-FE: Order Picker Drawer](./story-53.5-fe-order-picker-drawer.md)
+- [Story 53.6-FE: Close Supply & Stickers](./story-53.6-fe-close-supply-stickers.md)
 
 ### Sprint 5 (Polling & Polish)
-- Story 53.7-FE: Status Polling & Sync (pending)
-- Story 53.8-FE: E2E Tests & Polish (pending)
+- [Story 53.7-FE: Status Polling & Sync](./story-53.7-fe-status-polling-sync.md)
+- [Story 53.8-FE: E2E Tests & Polish](./story-53.8-fe-e2e-tests-polish.md)
 
 ---
 
@@ -118,3 +118,5 @@
 | Date | Change |
 |------|--------|
 | 2026-01-29 | Created 53.1-FE, 53.2-FE, 53.3-FE story files |
+| 2026-01-29 | Created 53.4-FE, 53.6-FE story files |
+| 2026-01-29 | Created 53.5-FE story file (Order Picker Drawer) |

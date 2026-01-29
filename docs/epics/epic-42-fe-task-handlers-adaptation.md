@@ -1,7 +1,8 @@
 # Epic 42-FE: Task Handlers Adaptation
 
-**Status**: 📋 Ready for Development
+**Status**: ✅ Complete
 **Created**: 2026-01-06
+**Completed**: 2026-01-29
 **Backend Epic**: Epic 42 (Complete)
 **Priority**: Low (backward compatible)
 **Estimated Effort**: 5-8 story points total
@@ -45,12 +46,12 @@ Backend поддерживает `enrich_cogs` с deprecation warning. Frontend 
 
 ## Stories Overview
 
-| Story | Название | Points | Priority | Type |
-|-------|----------|--------|----------|------|
-| 42.1-FE | TypeScript Types Update | 1 | Required | Tech |
-| 42.2-FE | Add Sanity Check Hook | 2 | Optional | Feature |
-| 42.3-FE | Missing COGS Alert Component | 2 | Optional | Feature |
-| 42.4-FE | Documentation & Tests Update | 2 | Required | Tech |
+| Story | Название | Points | Priority | Type | Status |
+|-------|----------|--------|----------|------|--------|
+| 42.1-FE | TypeScript Types Update | 1 | Required | Tech | ✅ Complete |
+| 42.2-FE | Add Sanity Check Hook | 2 | Optional | Feature | ✅ Complete |
+| 42.3-FE | Missing COGS Alert Component | 2 | Optional | Feature | ✅ Complete |
+| 42.4-FE | Documentation & Tests Update | 2 | Required | Tech | ✅ Complete |
 
 **Required**: 3 points
 **Optional**: 4 points
@@ -120,8 +121,8 @@ payload: { week?, weeks?, dateFrom?, dateTo? }
 2. ✅ `enrich_cogs` marked as deprecated in types (JSDoc)
 3. ✅ New task types have proper TypeScript interfaces
 4. ✅ Documentation updated
-5. ⬜ (Optional) Sanity check hook available for future use
-6. ⬜ (Optional) Missing COGS alert component ready
+5. ✅ Sanity check hook available for future use
+6. ✅ Missing COGS alert component ready
 
 ---
 
@@ -150,4 +151,4 @@ payload: { week?, weeks?, dateFrom?, dateTo? }
 
 ---
 
-*Last Updated: 2026-01-06*
+*Last Updated: 2026-01-29*

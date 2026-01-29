@@ -1,7 +1,8 @@
 # Story 42.1-FE: TypeScript Types Update
 
 **Epic**: [42-FE Task Handlers Adaptation](../../epics/epic-42-fe-task-handlers-adaptation.md)
-**Status**: 📋 Ready for Development
+**Status**: ✅ Complete
+**Completed**: 2026-01-29
 **Priority**: Required
 **Points**: 1
 **Estimated Time**: 30 min - 1 hour
@@ -18,11 +19,18 @@
 
 ## Background
 
-Backend Epic 42 deprecated `enrich_cogs` task type and added two new types:
-- `weekly_sanity_check` - data quality validation
-- `weekly_margin_aggregate` - re-aggregation standalone
+Backend Epic 42 deprecated `enrich_cogs` task type and introduced `recalculate_weekly_margin` as the replacement.
 
-Current `Task.type` in `src/types/api.ts` needs update.
+**Current state of `src/types/api.ts` Task.type union (lines 40-46):**
+- `finances_weekly_ingest` ✓
+- `products_sync` ✓
+- `enrich_cogs` ✓ (needs @deprecated JSDoc)
+- `weekly_margin_aggregate` ✓
+- `weekly_sanity_check` ✓
+- `publish_weekly_views` ✓
+- **MISSING**: `recalculate_weekly_margin`
+
+**Type safety gap**: `useManualMarginRecalculation.ts` (line 49) already uses `recalculate_weekly_margin` but the type isn't in the union.
 
 ---
 
@@ -30,13 +38,12 @@ Current `Task.type` in `src/types/api.ts` needs update.
 
 ### AC1: Task Type Union Updated
 ```gherkin
-Given the Task interface in api.ts
+Given the Task interface in api.ts (lines 38-53)
 When I review the type union
 Then it should include:
-  - 'recalculate_weekly_margin' (ADDED)
-  - 'weekly_sanity_check' (already present)
-  - 'weekly_margin_aggregate' (already present)
-  - 'enrich_cogs' (mark deprecated)
+  - 'recalculate_weekly_margin' (ADD - currently missing, used in useManualMarginRecalculation)
+  - 'enrich_cogs' (KEEP - mark with @deprecated JSDoc)
+  - Other types remain unchanged
 ```
 
 ### AC2: Deprecation JSDoc
@@ -63,35 +70,48 @@ Then proper response types should be available:
 
 ### File: `src/types/api.ts`
 
-**Current** (line ~40-47):
+**Current** (lines 38-53):
 ```typescript
 export interface Task {
   uuid: string
   type:
     | 'finances_weekly_ingest'
     | 'products_sync'
-    | 'enrich_cogs'  // ← deprecated
+    | 'enrich_cogs'             // ← needs @deprecated JSDoc
     | 'weekly_margin_aggregate'
     | 'weekly_sanity_check'
     | 'publish_weekly_views'
+  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'dlq' | 'cancelled'
   // ...
 }
 ```
 
-**Updated**:
+**Changes Required**:
+1. Add `recalculate_weekly_margin` to the union (fixes type gap with useManualMarginRecalculation)
+2. Add `@deprecated` JSDoc comment to `enrich_cogs`
+
+**Updated** (replace lines 38-53):
 ```typescript
+/**
+ * Task types for processing status
+ */
 export interface Task {
   uuid: string
   type:
     | 'finances_weekly_ingest'
     | 'products_sync'
-    | 'recalculate_weekly_margin'  // ← ADD: recommended for margin recalc
+    | 'recalculate_weekly_margin'  // Epic 42: recommended for margin recalc
     | 'weekly_margin_aggregate'
     | 'weekly_sanity_check'
     | 'publish_weekly_views'
-    /** @deprecated Use 'recalculate_weekly_margin' instead */
+    /** @deprecated Use 'recalculate_weekly_margin' instead. Backend Epic 42. */
     | 'enrich_cogs'
-  // ...
+  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'dlq' | 'cancelled'
+  progress?: number // 0-100
+  result?: unknown
+  error?: string
+  created_at: string
+  updated_at: string
 }
 ```
 
@@ -206,13 +226,28 @@ export interface EnqueueTaskResponse {
 
 ## Definition of Done
 
-- [ ] `Task.type` union updated in `api.ts`
+- [ ] `Task.type` union updated in `api.ts` (lines 38-53)
 - [ ] `enrich_cogs` has JSDoc deprecation warning
-- [ ] `recalculate_weekly_margin` added to union
+- [ ] `recalculate_weekly_margin` added to union (fixes type gap with `useManualMarginRecalculation.ts`)
 - [ ] New `src/types/tasks.ts` file created with all interfaces
 - [ ] TypeScript compiles without errors (`npm run type-check`)
 - [ ] Existing tests pass
 - [ ] Self-review completed
+
+## Implementation Steps
+
+1. **Edit `src/types/api.ts`** (lines 38-53):
+   - Add `| 'recalculate_weekly_margin'` after `'products_sync'`
+   - Add `/** @deprecated Use 'recalculate_weekly_margin' instead. Backend Epic 42. */` before `| 'enrich_cogs'`
+
+2. **Create `src/types/tasks.ts`**:
+   - Copy the template from Technical Implementation section below
+   - Contains: TaskType union, payload types, result types, enqueue request/response
+
+3. **Verify**:
+   - Run `npm run type-check` - should pass
+   - Run `npm run lint` - should pass
+   - Check IDE shows deprecation warning on `enrich_cogs`
 
 ---
 
@@ -250,8 +285,16 @@ export interface EnqueueTaskResponse {
 ## Related
 
 - [Request #94](../../request-backend/94-epic-42-tech-debt-task-handlers.md)
-- [useManualMarginRecalculation.ts](../../../src/hooks/useManualMarginRecalculation.ts) - already uses correct type
+- [useManualMarginRecalculation.ts](../../../src/hooks/useManualMarginRecalculation.ts) - uses `recalculate_weekly_margin` (line 49), needs type in union
+
+## Files to Modify
+
+| File | Change |
+|------|--------|
+| `src/types/api.ts` | Update Task.type union (lines 38-53) |
+| `src/types/tasks.ts` | **CREATE** - New file with task-specific types |
 
 ---
 
 *Created: 2026-01-06*
+*Updated: 2026-01-29 - Corrected current state analysis, added implementation steps*

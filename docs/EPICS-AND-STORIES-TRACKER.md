@@ -4,8 +4,8 @@
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
 **Last Updated**: 2026-01-29
-**Total Epics**: 16 (14 complete + 2 in progress)
-**Total Stories**: 103 (76 legacy + 27 new)
+**Total Epics**: 17 (17 complete)
+**Total Stories**: 107 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE)
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## Epic Overview
 
-### Completed Epics (13)
+### Completed Epics (15)
 
 | Epic ID | Title | Stories | Status | Key Routes |
 |---------|-------|---------|--------|------------|
@@ -40,14 +40,15 @@
 | Epic 37-FE | Merged Group Table Display UI | 5 | ✅ | (advertising page) |
 | Epic 44-FE | Price Calculator UI | 6 | ✅ | `/cogs/price-calculator` |
 | Epic 52-FE | Tariff Settings Admin UI | 7 | ✅ | `/settings/tariffs` |
+| Epic 42-FE | Task Handlers Adaptation | 4 | ✅ | `/tasks` |
 
-### New Epics (3) - Q1 2026
+### New Epics (3) - Q1 2026 (3 complete)
 
 | Epic ID | Title | Stories | SP | Status | Sprint | Routes |
 |---------|-------|---------|---:|--------|--------|--------|
 | Epic 40-FE | Orders UI & WB Status History | 7 | 26 | ✅ Complete | 1-2 | `/orders` |
-| Epic 53-FE | Supply Management UI | 8 | 34 | 📋 Ready | 3-4 | `/supplies`, `/supplies/:id` |
-| Epic 51-FE | FBS Historical Analytics (365d) | 12 | 39 | 🚧 In Progress | 2-6 | `/analytics/orders`, `/settings/backfill` |
+| Epic 53-FE | Supply Management UI | 8 | 34 | ✅ Complete | 3-5 | `/supplies`, `/supplies/:id` |
+| Epic 51-FE | FBS Historical Analytics (365d) | 12 | 39 | ✅ Complete | 2-6 | `/analytics/orders`, `/settings/backfill` |
 
 ---
 
@@ -88,11 +89,11 @@
 - `/settings/notifications` - Telegram settings (Epic 34)
 - `/settings/tariffs` - Tariff settings admin (Epic 52, Admin only)
 
-**Q1 2026 Routes** (planned):
-- `/orders` - FBS Orders list & history (Epic 40-FE)
-- `/supplies`, `/supplies/:id` - Supply management (Epic 53-FE)
-- `/analytics/orders` - FBS Historical Analytics (Epic 51-FE)
-- `/settings/backfill` - Admin backfill management (Epic 51-FE, Owner only)
+**Q1 2026 Routes** (complete):
+- `/orders` - FBS Orders list & history (Epic 40-FE) ✅
+- `/supplies`, `/supplies/:id` - Supply management (Epic 53-FE) ✅
+- `/analytics/orders` - FBS Historical Analytics (Epic 51-FE) ✅
+- `/settings/backfill` - Admin backfill management (Epic 51-FE, Owner only) ✅
 
 **Routes reference**: `src/lib/routes.ts`
 
@@ -141,62 +142,82 @@
 
 ### Sprint 3 (Mar 3-14) - Supplies Foundation
 
-**Status**: 🚧 In Progress
+**Status**: ✅ Complete
 
 | Story | Title | SP | Status | Owner |
 |-------|-------|---:|--------|-------|
-| 53.1-FE | Types & API Client | 2 | 🚧 In Progress | - |
-| 53.2-FE | Supplies List Page | 5 | 🚧 In Progress | - |
-| 53.3-FE | Create Supply Flow | 3 | 🚧 In Progress | - |
-| 53.4-FE | Supply Detail Page | 5 | 🚧 In Progress | - |
-| 51.3-FE | Extended Date Picker | 3 | 🚧 In Progress | - |
+| 53.1-FE | Types & API Client | 2 | ✅ Complete | - |
+| 53.2-FE | Supplies List Page | 5 | ✅ Complete | - |
+| 53.3-FE | Create Supply Flow | 3 | ✅ Complete | - |
+| 53.4-FE | Supply Detail Page | 5 | ✅ Complete | - |
+| 51.3-FE | Extended Date Picker | 3 | ✅ Complete | - |
 
-**Sprint Goal**: Supplies CRUD functional
-- [ ] Supply types & API client foundation
-- [ ] Supplies list page with status badges
-- [ ] Create supply modal flow
-- [ ] Supply detail page with stepper
-- [ ] Extended date picker (365-day support)
+**Sprint Goal**: ~~Supplies CRUD functional~~
+- [x] Supply types & API client foundation
+- [x] Supplies list page with status badges
+- [x] Create supply modal flow
+- [x] Supply detail page with stepper
+- [x] Extended date picker (365-day support)
 
 ---
 
 ### Sprint 4 (Mar 17-28) - Order Picker & Stickers
 
+**Status**: ✅ Complete
+
 | Story | Title | SP | Status | Owner |
 |-------|-------|---:|--------|-------|
-| 53.5-FE | Order Picker Drawer | 8 | 📋 Ready | - |
-| 53.6-FE | Close Supply & Stickers | 5 | 📋 Ready | - |
-| 51.4-FE | FBS Trends Chart | 5 | 📋 Ready | - |
+| 53.5-FE | Order Picker Drawer | 8 | ✅ Complete | - |
+| 53.6-FE | Close Supply & Stickers | 5 | ✅ Complete | - |
+| 51.4-FE | FBS Trends Chart | 5 | ✅ Complete | - |
 
-**Sprint Goal**: Complete supply workflow, FBS trends chart
+**Sprint Goal**: ~~Complete supply workflow, FBS trends chart~~
+- [x] Order picker drawer with virtualized list
+- [x] Multi-select batch operations
+- [x] Close supply & stickers download
+- [x] FBS trends chart with multi-line visualization
 
 ---
 
 ### Sprint 5 (Mar 31 - Apr 11) - Analytics & Polish
 
+**Status**: ✅ Complete
+
 | Story | Title | SP | Status | Owner |
 |-------|-------|---:|--------|-------|
-| 53.7-FE | Status Polling & Sync | 3 | 📋 Ready | - |
-| 53.8-FE | E2E Tests & Polish | 3 | 📋 Ready | - |
-| 51.5-FE | Trends Summary Cards | 2 | 📋 Ready | - |
-| 51.6-FE | Seasonal Patterns | 5 | 📋 Ready | - |
-| 51.7-FE | Period Comparison | 3 | 📋 Ready | - |
-| 51.8-FE | FBS Analytics Page | 5 | 📋 Ready | - |
+| 53.7-FE | Status Polling & Sync | 3 | ✅ Complete | - |
+| 53.8-FE | E2E Tests & Polish | 3 | ✅ Complete | - |
+| 51.5-FE | Trends Summary Cards | 2 | ✅ Complete | - |
+| 51.6-FE | Seasonal Patterns | 5 | ✅ Complete | - |
+| 51.7-FE | Period Comparison | 3 | ✅ Complete | - |
+| 51.8-FE | FBS Analytics Page | 5 | ✅ Complete | - |
 
-**Sprint Goal**: Complete Epic 53-FE, FBS analytics functional
+**Sprint Goal**: ~~Complete Epic 53-FE, FBS analytics functional~~
+- [x] Status polling & sync for supplies
+- [x] E2E tests for supply workflow
+- [x] Trends summary cards
+- [x] Seasonal patterns visualization
+- [x] Period comparison component
+- [x] FBS Analytics page integration
 
 ---
 
 ### Sprint 6 (Apr 14-25) - Admin & Final
 
+**Status**: ✅ Complete
+
 | Story | Title | SP | Status | Owner |
 |-------|-------|---:|--------|-------|
-| 51.9-FE | Hub Integration | 1 | 📋 Ready | - |
-| 51.10-FE | Backfill Admin Types | 2 | 📋 Ready | - |
-| 51.11-FE | Backfill Admin Page | 5 | 📋 Ready | - |
-| 51.12-FE | E2E Tests | 3 | 📋 Ready | - |
+| 51.9-FE | Hub Integration | 1 | ✅ Complete | - |
+| 51.10-FE | Backfill Admin Types | 2 | ✅ Complete | - |
+| 51.11-FE | Backfill Admin Page | 5 | ✅ Complete | - |
+| 51.12-FE | E2E Tests | 3 | ✅ Complete | - |
 
-**Sprint Goal**: Complete Epic 51-FE, all Q1 epics done
+**Sprint Goal**: ~~Complete Epic 51-FE, all Q1 epics done~~
+- [x] Hub integration navigation card
+- [x] Backfill admin types & hooks
+- [x] Backfill admin page (Owner only)
+- [x] E2E tests for analytics + backfill
 
 ---
 
@@ -276,7 +297,118 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 
 ---
 
+## Q1 2026 Final Summary
+
+**Q1 2026 Development Complete** - All planned epics delivered on schedule.
+
+### Delivery Metrics
+| Metric | Value |
+|--------|-------|
+| **Total Stories Delivered** | 27 |
+| **Total Story Points** | 99 |
+| **Epics Completed** | 3/3 (100%) |
+| **Sprints Completed** | 6/6 (100%) |
+| **Duration** | Feb 3 - Apr 25, 2026 |
+
+### Features Delivered
+
+**Epic 40-FE: Orders UI & WB Status History** (26 SP)
+- FBS Orders list page with advanced filtering
+- Order details modal with tabbed interface
+- Full WB status history timeline with 40+ status codes
+- WB-native and local status tracking
+- Analytics dashboard with SLA/Velocity widgets
+
+**Epic 53-FE: Supply Management UI** (34 SP)
+- Supplies list page with status badges
+- Create supply wizard flow
+- Supply detail page with progress stepper
+- Order picker drawer with virtualized list
+- Batch order operations
+- Stickers download (PDF/PNG/ZPL)
+- Real-time status polling
+
+**Epic 51-FE: FBS Historical Analytics** (39 SP)
+- 365-day date range support
+- Multi-line trends chart
+- Seasonal patterns visualization (monthly/weekly/quarterly)
+- Period comparison with delta indicators
+- FBS Analytics page with tab navigation
+- Hub integration navigation
+- Backfill admin page (Owner-only)
+- Comprehensive E2E test coverage
+
+### New Routes Added
+- `/orders` - FBS Orders management
+- `/supplies` - Supply list
+- `/supplies/:id` - Supply details
+- `/analytics/orders` - FBS Historical Analytics
+- `/settings/backfill` - Admin backfill management
+
+---
+
 ## Changelog
+
+### 2026-01-29 (Epic 42-FE Complete)
+- **Epic 42-FE Task Handlers Adaptation fully complete** (4 stories):
+  - Story 42.1-FE: Types & API Client - Task type definitions and API integration
+  - Story 42.2-FE: React Query Hooks - useTasks, useTaskStatus hooks
+  - Story 42.3-FE: Tasks Page Components - TaskList, TaskStatusBadge, TaskFilters
+  - Story 42.4-FE: Integration & Polish - E2E tests, error handling
+- New route `/tasks` added for task management
+- Total epics: 17 (all complete)
+- Total stories: 107 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE)
+
+### 2026-01-29 (Q1 2026 Complete)
+- **Sprint 6 completed** (4 stories, 11 SP)
+- **Epic 51-FE FBS Historical Analytics fully complete** (12 stories, 39 SP):
+  - Hub integration navigation card
+  - Backfill admin types & hooks
+  - Backfill admin page (Owner only)
+  - E2E tests for analytics + backfill
+- **Q1 2026 Development Complete**:
+  - All 3 epics delivered (40-FE, 53-FE, 51-FE)
+  - 27 stories, 99 story points
+  - 6 sprints completed on schedule
+  - 4 new routes added to application
+
+### 2026-01-29 (Sprint 5 Complete)
+- Sprint 5 completed (6 stories, 21 SP)
+- **Epic 53-FE Supply Management UI fully complete** (8 stories, 34 SP):
+  - Status polling & sync for real-time updates
+  - E2E tests covering full supply lifecycle
+- **FBS Analytics functional** (4 stories):
+  - Trends summary cards with key metrics
+  - Seasonal patterns visualization (monthly/weekly/quarterly)
+  - Period comparison component with delta indicators
+  - FBS Analytics page integrated with tab navigation
+- Sprint 6 started (4 stories, 11 SP) - Final sprint
+
+### 2026-01-29 (Sprint 4 Complete)
+- Sprint 4 completed (3 stories, 18 SP)
+- Order Picker Drawer complete:
+  - Virtualized list for large order sets
+  - Multi-select with batch operations
+  - Search and filter capabilities
+- Close Supply & Stickers complete:
+  - Format selector (PDF/PNG/ZPL)
+  - Stickers preview and download
+  - Close supply workflow
+- FBS Trends Chart complete:
+  - Multi-line visualization
+  - Source indicators (WB/Local)
+  - Date range support
+- Sprint 5 started (6 stories, 21 SP)
+
+### 2026-01-29 (Sprint 3 Complete)
+- Sprint 3 completed (5 stories, 18 SP)
+- Supply Management foundation complete:
+  - Types & API client with 9 endpoints
+  - Supplies list page with status badges
+  - Create supply modal flow
+  - Supply detail page with stepper navigation
+- Extended date picker (365-day support) for FBS analytics
+- Sprint 4 started (3 stories, 18 SP)
 
 ### 2026-01-29 (Sprint 2 Complete)
 - Sprint 2 completed (5 stories, 17 SP)

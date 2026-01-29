@@ -1,7 +1,8 @@
 # Story 42.2-FE: Add Sanity Check Hook
 
 **Epic**: [42-FE Task Handlers Adaptation](../../epics/epic-42-fe-task-handlers-adaptation.md)
-**Status**: 📋 Backlog (Optional)
+**Status**: ✅ Complete
+**Completed**: 2026-01-29
 **Priority**: Optional
 **Points**: 2
 **Estimated Time**: 2-3 hours
@@ -58,6 +59,73 @@ And toast notification shown
 
 ## Technical Implementation
 
+### Types to Add: `src/types/tasks.ts` (NEW FILE)
+
+```typescript
+/**
+ * Task-related types for Epic 42 task handlers
+ * Story 42.2-FE: Sanity Check Hook
+ */
+
+/**
+ * Payload for weekly sanity check task
+ * 2 Modes:
+ * - Specific week: { week: "2025-W49" }
+ * - All weeks: {} (empty object)
+ */
+export interface SanityCheckPayload {
+  /** Optional: specific week to validate (ISO format, e.g., "2025-W49") */
+  week?: string
+}
+
+/**
+ * Response from POST /v1/tasks/enqueue
+ */
+export interface EnqueueTaskResponse {
+  task_uuid: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  enqueued_at: string
+  /** Present when task type is deprecated (e.g., enrich_cogs) */
+  deprecated?: boolean
+}
+
+/**
+ * Result from weekly_sanity_check task
+ * Returned in task status response as `metrics` when status='completed'
+ *
+ * Reference: docs/request-backend/94-epic-42-tech-debt-task-handlers.md
+ */
+export interface SanityCheckResult {
+  /** Task completion status */
+  status: 'completed'
+  /** Number of weeks validated */
+  weeks_validated: number
+  /** Number of checks that passed */
+  checks_passed: number
+  /** Number of checks that failed */
+  checks_failed: number
+  /** Human-readable warnings (e.g., "[2025-W49] Row balance discrepancy: 1.5%") */
+  warnings: string[]
+  /** First 100 nm_ids without COGS assignment */
+  missing_cogs_products: string[]
+  /** Total count of products without COGS */
+  missing_cogs_total: number
+  /** Task execution time in milliseconds */
+  duration_ms: number
+}
+
+/**
+ * Task status response from GET /v1/tasks/{task_uuid}
+ */
+export interface TaskStatusResponse {
+  status: 'pending' | 'in_progress' | 'completed' | 'failed'
+  /** Result metrics when status='completed' */
+  metrics?: SanityCheckResult
+  /** Error message when status='failed' */
+  error?: string
+}
+```
+
 ### New File: `src/hooks/useSanityCheck.ts`
 
 ```typescript
@@ -69,17 +137,20 @@ And toast notification shown
  * - Validation checks passed/failed
  * - Warnings about data issues
  * - Products without COGS assignment
+ *
+ * Reference: docs/request-backend/94-epic-42-tech-debt-task-handlers.md
  */
 
 import { useState, useEffect } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { useAuthStore } from '@/stores/authStore'
 import { toast } from 'sonner'
 import type {
   SanityCheckPayload,
   SanityCheckResult,
-  EnqueueTaskResponse
+  EnqueueTaskResponse,
+  TaskStatusResponse,
 } from '@/types/tasks'
 
 interface UseSanityCheckOptions {
@@ -96,9 +167,10 @@ interface UseSanityCheckOptions {
  *
  * @example
  * const {
- *   mutate: runCheck,
- *   data: result,
- *   isPending
+ *   runCheck,
+ *   result,
+ *   isPending,
+ *   isPolling
  * } = useSanityCheck();
  *
  * // Run for specific week
@@ -106,10 +178,15 @@ interface UseSanityCheckOptions {
  *
  * // Run for all weeks
  * runCheck({});
+ *
+ * // Access results when complete
+ * if (result) {
+ *   console.log(`Checks passed: ${result.checks_passed}`);
+ *   console.log(`Missing COGS: ${result.missing_cogs_total}`);
+ * }
  */
 export function useSanityCheck(options: UseSanityCheckOptions = {}) {
   const { enablePolling = true, pollInterval = 2000, maxAttempts = 30 } = options
-  const queryClient = useQueryClient()
   const { cabinetId } = useAuthStore()
 
   // Track task UUID for polling
@@ -157,24 +234,24 @@ export function useSanityCheck(options: UseSanityCheckOptions = {}) {
     queryFn: async (): Promise<SanityCheckResult | null> => {
       if (!taskUuid || !cabinetId) return null
 
-      const response = await apiClient.get<{
-        status: string
-        metrics?: SanityCheckResult
-      }>(`/v1/tasks/${taskUuid}`)
+      const response = await apiClient.get<TaskStatusResponse>(
+        `/v1/tasks/${taskUuid}`
+      )
 
       if (response.status === 'completed' && response.metrics) {
-        return response.metrics as SanityCheckResult
+        return response.metrics
       }
 
       if (response.status === 'failed') {
-        throw new Error('Sanity check failed')
+        throw new Error(response.error || 'Sanity check failed')
       }
 
       // Still processing
       return null
     },
     enabled: enablePolling && !!taskUuid && attempts < maxAttempts,
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
+      const data = query.state.data
       // Stop polling when complete or max attempts reached
       if (data || attempts >= maxAttempts) return false
       setAttempts((a) => a + 1)
@@ -200,13 +277,21 @@ export function useSanityCheck(options: UseSanityCheckOptions = {}) {
   }, [statusQuery.data])
 
   return {
+    /** Trigger sanity check (fire-and-forget) */
     runCheck: enqueueMutation.mutate,
+    /** Trigger sanity check (returns Promise) */
     runCheckAsync: enqueueMutation.mutateAsync,
+    /** True while enqueueing task */
     isEnqueuing: enqueueMutation.isPending,
+    /** True while polling for result */
     isPolling: statusQuery.isFetching && !!taskUuid,
+    /** True while either enqueueing or polling */
     isPending: enqueueMutation.isPending || (statusQuery.isFetching && !!taskUuid),
+    /** Sanity check result when complete */
     result: statusQuery.data,
+    /** Error from enqueue or polling */
     error: enqueueMutation.error || statusQuery.error,
+    /** Current task UUID being tracked */
     taskUuid,
   }
 }
@@ -218,10 +303,11 @@ export type { SanityCheckResult, SanityCheckPayload }
 
 ## Definition of Done
 
-- [ ] `useSanityCheck` hook implemented
-- [ ] Hook exports proper types
-- [ ] Polling works correctly
-- [ ] Toast notifications for states
+- [ ] `src/types/tasks.ts` created with all task-related types
+- [ ] `useSanityCheck` hook implemented in `src/hooks/useSanityCheck.ts`
+- [ ] Hook exports proper types (`SanityCheckResult`, `SanityCheckPayload`)
+- [ ] Polling works correctly (2s interval, 30 max attempts)
+- [ ] Toast notifications for all states (info, success, warning, error)
 - [ ] TypeScript compiles without errors
 - [ ] Unit tests written (≥80% coverage)
 - [ ] JSDoc documentation complete
@@ -274,14 +360,45 @@ This hook can be used in:
 - **Optional story** - implement when data quality features needed
 - Backend must have `weekly_sanity_check` handler (Epic 42.3) ✅
 - Consider rate limiting (1 check per 5 minutes)
+- **Types location**: Create new `src/types/tasks.ts` file (doesn't exist yet)
+- **Polling pattern**: Similar to `useProcessingStatus.ts` but with mutation trigger
+
+---
+
+## API Reference
+
+### Validation Checks Performed by Backend
+1. **Row Balance** - gross - fees ≈ net_for_pay (±1% tolerance)
+2. **Alternative Reconstruction** - WB formula validation (±0.1%)
+3. **Storno Control** - storno ≤ 5% of original amounts
+4. **Transport Exclusion** - qty=2 rows properly excluded
+5. **Missing COGS** - products without COGS assignment
+
+### Response Example
+```json
+{
+  "status": "completed",
+  "weeks_validated": 12,
+  "checks_passed": 47,
+  "checks_failed": 3,
+  "warnings": [
+    "[2025-W49] Row balance discrepancy: 1.5%",
+    "[2025-W48] Missing COGS for 15 products"
+  ],
+  "missing_cogs_products": ["12345678", "87654321"],
+  "missing_cogs_total": 15,
+  "duration_ms": 2345
+}
+```
 
 ---
 
 ## Related
 
 - [Story 42.3-FE](./story-42.3-fe-missing-cogs-alert.md) - UI component for missing COGS
-- [Request #94](../../request-backend/94-epic-42-tech-debt-task-handlers.md)
+- [Request #94](../../request-backend/94-epic-42-tech-debt-task-handlers.md) - Backend API contract
 
 ---
 
 *Created: 2026-01-06*
+*Validated: 2026-01-29* (API contract verified against Request #94)

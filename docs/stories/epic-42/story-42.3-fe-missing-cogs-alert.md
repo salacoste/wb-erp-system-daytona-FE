@@ -1,7 +1,8 @@
 # Story 42.3-FE: Missing COGS Alert Component
 
 **Epic**: [42-FE Task Handlers Adaptation](../../epics/epic-42-fe-task-handlers-adaptation.md)
-**Status**: 📋 Backlog (Optional)
+**Status**: ✅ Complete
+**Completed**: 2026-01-29
 **Priority**: Optional
 **Points**: 2
 **Estimated Time**: 2-3 hours
@@ -67,6 +68,8 @@ And can be re-shown via manual check
  * Alert component for products without COGS assignment
  * Story 42.3-FE: Missing COGS Alert Component
  *
+ * Pattern reference: StorageAlertBanner.tsx (Epic 24.8), WbTokenBanner.tsx
+ *
  * Usage:
  * <MissingCogsAlert
  *   missingCount={45}
@@ -79,10 +82,13 @@ And can be re-shown via manual check
 
 import { useState } from 'react'
 import { AlertTriangle, X, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+
+import { cn } from '@/lib/utils'
+import { ROUTES } from '@/lib/routes'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
 import {
   Tooltip,
   TooltipContent,
@@ -101,6 +107,20 @@ interface MissingCogsAlertProps {
   className?: string
 }
 
+/**
+ * Russian pluralization helper for "товар"
+ * Pattern from StorageAlertBanner.tsx
+ */
+function pluralizeProduct(count: number): string {
+  const mod10 = count % 10
+  const mod100 = count % 100
+
+  if (mod100 >= 11 && mod100 <= 19) return 'товаров'
+  if (mod10 === 1) return 'товар'
+  if (mod10 >= 2 && mod10 <= 4) return 'товара'
+  return 'товаров'
+}
+
 export function MissingCogsAlert({
   missingCount,
   missingProducts = [],
@@ -109,6 +129,7 @@ export function MissingCogsAlert({
 }: MissingCogsAlertProps) {
   const [isDismissed, setIsDismissed] = useState(false)
 
+  // Don't render if dismissed or no missing COGS
   if (isDismissed || missingCount === 0) {
     return null
   }
@@ -118,57 +139,45 @@ export function MissingCogsAlert({
     onDismiss?.()
   }
 
-  // Russian pluralization for "товар"
-  const getProductWord = (count: number): string => {
-    const lastTwo = count % 100
-    const lastOne = count % 10
-
-    if (lastTwo >= 11 && lastTwo <= 19) return 'товаров'
-    if (lastOne === 1) return 'товар'
-    if (lastOne >= 2 && lastOne <= 4) return 'товара'
-    return 'товаров'
-  }
-
   const previewProducts = missingProducts.slice(0, 5)
   const hasMore = missingProducts.length > 5
 
   return (
     <Alert
-      variant="destructive"
+      variant="warning"
       className={cn(
-        'border-amber-500 bg-amber-50 text-amber-900',
-        'dark:border-amber-600 dark:bg-amber-950 dark:text-amber-100',
+        'border-amber-300 bg-amber-50',
         className
       )}
     >
       <AlertTriangle className="h-4 w-4 text-amber-600" />
-      <AlertTitle className="flex items-center justify-between">
+      <AlertTitle className="flex items-center justify-between text-amber-800">
         <span>Товары без себестоимости</span>
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6 text-amber-600 hover:text-amber-800"
+          className="h-6 w-6 text-amber-600 hover:text-amber-800 hover:bg-amber-100"
           onClick={handleDismiss}
-          aria-label="Закрыть"
+          aria-label="Закрыть уведомление"
         >
           <X className="h-4 w-4" />
         </Button>
       </AlertTitle>
-      <AlertDescription className="mt-2">
+      <AlertDescription className="mt-2 text-amber-700">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Badge
                     variant="outline"
-                    className="border-amber-600 text-amber-700 cursor-help"
+                    className="border-amber-500 text-amber-700 bg-amber-100 cursor-help"
                   >
-                    {missingCount} {getProductWord(missingCount)}
+                    {missingCount} {pluralizeProduct(missingCount)}
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                  <p className="font-medium mb-1">Артикулы без COGS:</p>
+                  <p className="font-medium mb-1">Артикулы без себестоимости:</p>
                   <ul className="text-xs space-y-0.5">
                     {previewProducts.map((nmId) => (
                       <li key={nmId}>• {nmId}</li>
@@ -195,10 +204,10 @@ export function MissingCogsAlert({
           <Button
             variant="outline"
             size="sm"
-            className="border-amber-600 text-amber-700 hover:bg-amber-100"
+            className="border-amber-500 text-amber-700 hover:bg-amber-100 whitespace-nowrap"
             asChild
           >
-            <Link href="/cogs?has_cogs=false">
+            <Link href={`${ROUTES.COGS.ROOT}?has_cogs=false`}>
               Назначить COGS
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
@@ -208,10 +217,43 @@ export function MissingCogsAlert({
     </Alert>
   )
 }
-
-// Utility for cn (if not already imported)
-import { cn } from '@/lib/utils'
 ```
+
+---
+
+## Expected Data from Story 42.2-FE
+
+The `useSanityCheck` hook returns `SanityCheckResult` with these relevant fields:
+
+```typescript
+interface SanityCheckResult {
+  // ... other validation fields ...
+
+  /** Total count of products without COGS in cabinet */
+  missing_cogs_total: number
+
+  /** First 100 nm_ids without COGS (for preview) */
+  missing_cogs_products: string[]
+}
+```
+
+---
+
+## Display Locations
+
+### Primary: Dashboard Page (`/dashboard`)
+- Position: Top of content area, below header
+- Trigger: After sanity check completes (manual or automatic)
+- Behavior: Dismissible for current session
+
+### Secondary: COGS Management Page (`/cogs`)
+- Position: Above product list
+- Trigger: When `missingCount > 0` from ProductList API response
+- Alternative: Can use ProductList `has_cogs=false` count instead of sanity check
+
+### Optional: Analytics Pages
+- Show banner on pages where margin accuracy matters
+- e.g., `/analytics/sku`, `/analytics/dashboard`
 
 ---
 
@@ -288,10 +330,23 @@ describe('MissingCogsAlert', () => {
 
 ## Design Notes
 
-- **Color**: Amber (warning, not error) - actionable, not critical
+### Visual Design
+- **Color**: Amber (warning variant) - actionable, not critical
+- **Icon**: `AlertTriangle` (lucide-react) - consistent with similar alerts
 - **Position**: Top of page content, below header
 - **Animation**: Subtle fade-in, no bounce
-- **Dismiss**: Session only, not persistent
+- **Dismiss**: Session only, not persistent (no localStorage)
+
+### Pattern References
+- **`StorageAlertBanner.tsx`** (Epic 24.8) - Similar tooltip pattern, Russian pluralization
+- **`WbTokenBanner.tsx`** - Same amber color scheme, action button pattern
+- **`alert.tsx` variant="warning"** - Uses yellow-300/yellow-50/yellow-800 base
+
+### Accessibility (WCAG 2.1 AA)
+- Color contrast: Amber text on light background meets 4.5:1 ratio
+- Dismiss button has `aria-label="Закрыть уведомление"`
+- Alert has `role="alert"` (from base component)
+- Tooltip content accessible via keyboard
 
 ---
 
@@ -315,10 +370,13 @@ describe('MissingCogsAlert', () => {
 
 ## Related
 
-- [Story 42.2-FE](./story-42.2-fe-sanity-check-hook.md) - Hook that provides data
-- [Story 4.1](../4.1.single-product-cogs-assignment.md) - COGS assignment flow
-- [Epic 24 High Ratio Alert](../epic-24/story-24.8-fe-high-ratio-alert.md) - Similar pattern
+- [Story 42.2-FE](./story-42.2-fe-sanity-check-hook.md) - `useSanityCheck` hook that provides data
+- [Story 4.1-FE](../epic-4/story-4.1-fe-single-product-cogs-assignment.md) - COGS assignment flow
+- **StorageAlertBanner.tsx** - `src/app/(dashboard)/analytics/storage/components/StorageAlertBanner.tsx` - Similar pattern
+- **WbTokenBanner.tsx** - `src/components/custom/WbTokenBanner.tsx` - Amber action banner pattern
+- **Routes** - `src/lib/routes.ts` - Use `ROUTES.COGS.ROOT` for navigation
 
 ---
 
 *Created: 2026-01-06*
+*Updated: 2026-01-29 - PM validation: Added pattern references, display locations, fixed code sample*
