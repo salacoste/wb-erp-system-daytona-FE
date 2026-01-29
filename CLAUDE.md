@@ -1,168 +1,170 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working with this repository.
 
 ## Project Overview
 
-**WB Repricer System - Frontend** - Financial analytics dashboard for Wildberries marketplace sellers. Next.js 15 + TypeScript frontend with public REST API backend integration.
+**WB Repricer System - Frontend** - Financial analytics dashboard for Wildberries marketplace sellers.
 
-**Backend API**: Separate service running on `http://localhost:3000` (default), configurable via `NEXT_PUBLIC_API_URL`.
+| Aspect | Details |
+|--------|---------|
+| Stack | Next.js 15 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui |
+| State | TanStack Query v5 (server) + Zustand (client) |
+| Testing | Vitest (unit) + Playwright (E2E) |
+| Backend | REST API on `localhost:3000` (configurable via `NEXT_PUBLIC_API_URL`) |
 
-### Core Purpose
-- Display weekly financial analytics (revenue, expenses, margin, profit)
-- COGS (Cost of Goods Sold) management with versioning
-- Product margin analysis with real-time recalculation
-- Storage analytics, advertising metrics, price calculator
-- Telegram notification preferences management
+**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, Telegram notifications.
+
+---
+
+## Quick Reference
+
+| Resource | Location | Contains |
+|----------|----------|----------|
+| **Epics & Stories** | [`docs/EPICS-AND-STORIES-TRACKER.md`](docs/EPICS-AND-STORIES-TRACKER.md) | **Single source of truth** - all statuses, sprints, routes |
+| **API Reference** | [`docs/api-integration-guide.md`](docs/api-integration-guide.md) | **Full endpoint catalog**, HTTP files, integration patterns |
+| **UI/UX Spec** | [`docs/front-end-spec.md`](docs/front-end-spec.md) | **Design System**, User Personas, WCAG, Accessibility |
+| **Architecture** | `docs/front-end-architecture.md` | Technical architecture |
+| **Routes Code** | `src/lib/routes.ts` | Centralized route constants |
+| **Backend Swagger** | `http://localhost:3000/api` | Live API documentation |
+| **Test API Examples** | `test-api.http` | HTTP request examples |
 
 ---
 
 ## Development Commands
 
 ```bash
-# Development (recommended)
-npm run dev              # Start on port 3000 with hot reload
+# Development
+npm run dev              # Port 3000
 
 # Production (PM2)
-npm run build           # Build production bundle
-pm2 start ecosystem.config.js --only wb-repricer-frontend --env production  # Port 3100
+npm run build && pm2 start ecosystem.config.js --only wb-repricer-frontend  # Port 3100
 
-# PM2 Management
-pm2 status              # Check running processes
-pm2 logs wb-repricer-frontend[-dev]    # View logs
-pm2 restart wb-repricer-frontend[-dev] # Restart
-pm2 stop wb-repricer-frontend[-dev]    # Stop
-
-# Code Quality
-npm run lint            # ESLint check
-npm run lint:fix        # Auto-fix ESLint errors
-npm run type-check      # TypeScript type checking
-npm run format          # Prettier format
-npm run format:check    # Check formatting
+# Quality
+npm run lint && npm run type-check && npm run format:check
 
 # Testing
-npm test                # Run unit tests (Vitest)
-npm run test:ui         # Run tests with UI
-npm run test:coverage   # Coverage report
-npm run test:e2e        # Run E2E tests (Playwright)
-npm run test:e2e:ui     # Run E2E tests with UI
-
-# Cleanup
-npm run clean           # Remove .next and cache
-npm run clean:full      # Full clean + reinstall
+npm test                 # Unit (Vitest)
+npm run test:e2e         # E2E (Playwright)
 ```
 
 ---
 
-## Architecture & Structure
+## Project Structure
 
-### Tech Stack
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript 5 (strict mode, no `any`)
-- **Styling**: Tailwind CSS 4.x + shadcn/ui components
-- **State**: TanStack Query v5 (server) + Zustand (client)
-- **Forms**: react-hook-form + zod validation
-- **Testing**: Vitest (unit) + Playwright (E2E)
-
-### Project Structure
 ```
 src/
-├── app/              # Next.js App Router pages
-│   ├── (dashboard)/  # Authenticated routes (layout with sidebar)
-│   ├── (auth)/       # Public auth routes
-│   └── layout.tsx    # Root layout with providers
+├── app/                 # Next.js App Router pages
+│   ├── (dashboard)/     # Protected routes (sidebar layout)
+│   ├── (auth)/          # Public auth routes
+│   └── (onboarding)/    # Onboarding flow
 ├── components/
-│   ├── ui/           # shadcn/ui components (DO NOT EDIT MANUALLY)
-│   ├── custom/       # Feature components (ProductList, ExpenseChart, etc.)
-│   ├── layout/       # Layout components (Sidebar, Header)
-│   └── auth/         # Auth components (AuthProvider)
-├── lib/              # Utilities, API client, helpers
-│   └── api/          # API modules by domain (storage, price-calculator, etc.)
-├── hooks/            # Custom React hooks (useDashboard, useProducts, etc.)
-├── stores/           # Zustand stores (authStore, marginPollingStore)
-├── types/            # TypeScript type definitions
-├── services/         # Service layer (cabinets.service.ts)
-├── config/           # Configuration files (features.ts, routes.ts)
-└── test/             # Test utilities and fixtures
+│   ├── ui/              # shadcn/ui (DO NOT EDIT - use npx shadcn@latest add)
+│   └── custom/          # Feature components (70+)
+├── lib/
+│   ├── api/             # API modules by domain
+│   ├── api-client.ts    # HTTP client with auth injection
+│   └── *-utils.ts       # Business logic helpers
+├── hooks/               # TanStack Query hooks (45+)
+├── stores/              # Zustand stores (auth, margin-polling)
+├── types/               # TypeScript definitions (13 files)
+└── config/              # Features, routes configuration
 ```
 
 ---
 
-## Frontend Epic Catalog
+## Critical Development Rules
 
-This is a frontend project. We track frontend implementation epics (marked with -FE suffix) that integrate with backend APIs.
+### Mandatory
+- **File size limit**: All source files MUST be under 200 lines (ESLint enforced)
+- **TypeScript strict**: No `any` types (use `unknown`)
+- **Path aliases**: Use `@/components` not `../../components`
+- **Server Components**: Default (no `'use client'` unless needed)
+- **shadcn/ui**: Never edit manually - use CLI to add components
 
-| Epic ID | Title | Status | Stories | Backend API Reference |
-|---------|-------|--------|---------|----------------------|
-| Epic 1-FE | Foundation & Authentication | ✅ Complete | 5 | Backend Epic 6 |
-| Epic 2-FE | Onboarding & Initial Data Setup | ✅ Complete | 4 | Backend Epic 2 |
-| Epic 3-FE | Dashboard & Financial Overview | ✅ Complete | 6 | Backend Epic 3 |
-| Epic 4-FE | COGS Management & Margin Analysis | ✅ Complete | 10 | Backend Epic 12 |
-| Epic 5-FE | COGS History Management | ✅ Complete | 3 | Backend Epic 12 |
-| Epic 6-FE | Advanced Analytics & Reporting | ✅ Complete | 5 | Backend Epic 16 |
-| Epic 24-FE | Paid Storage Analytics UI | ✅ Complete | 11 | Backend Epic 24 |
-| Epic 33-FE | Advertising Analytics UI | ✅ Complete | 8 | Backend Epic 33 |
-| Epic 34-FE | Telegram Notifications UI | ✅ Complete | 6 | Backend Epic 34 |
-| Epic 36-FE | Product Card Linking UI | ✅ Complete | 5 | Backend Epic 36 |
-| Epic 37-FE | Merged Group Table Display UI | ✅ Done | 5 | Backend Epic 37 |
-| Epic 42-FE | Task Handlers Adaptation | 📋 Ready for Dev | 4 | Backend Epic 42 |
-| Epic 44-FE | Price Calculator UI | ✅ Complete | 6 | Backend Epic 43 |
-| Epic 52-FE | Tariff Settings Admin UI | ✅ Complete | 7 | Backend Epic 52 |
+### MCP-Assisted Development
+**Context7 MCP** for design patterns and examples:
+- `/creativetimofficial/ui` - Design patterns (DO NOT INSTALL, use for inspiration)
+- `/llmstxt/ui_shadcn_llms_txt` - shadcn/ui implementation examples
 
-**Status Legend**: ✅ Complete | 🚧 In Progress | 📋 Ready for Dev
-
-**Note**: Backend epics are managed by the backend team. We only track which backend APIs our frontend epic integrates with.
-
-**Documentation locations**:
-- Frontend epic docs: `docs/epics/epic-*-fe.md` or `docs/stories/epic-*/`
-- Story details: `docs/stories/epic-XX/story-XX.Y-*.md`
-- Status tracking: `docs/stories/STORIES-STATUS-REPORT.md`
-- Backend API contracts: `/test-api/*.http` (for API reference only)
+**Workflow**: Query Context7 → Extract design ideas → Apply to shadcn/ui components → Follow project conventions (Russian locale, red primary #E53935, WCAG 2.1 AA)
 
 ---
 
-## Route Structure (24 Pages)
+## Key Architecture Patterns
 
-### Public Routes `(auth)`
-| Path | Purpose |
-|------|---------|
-| `/login` | Login page |
-| `/register` | Registration page |
+### API Client (`src/lib/api-client.ts`)
+Auto-injects `Authorization: Bearer {token}` and `X-Cabinet-Id: {cabinetId}`. Auto-unwraps `{ data: ... }` responses.
 
-### Onboarding `(onboarding)` (no URL prefix)
-| Path | Purpose |
-|------|---------|
-| `/cabinet` | Cabinet creation |
-| `/wb-token` | WB API token entry |
-| `/processing` | Initial data processing status |
+### TanStack Query (`src/hooks/`)
+```typescript
+// Standard hook pattern
+export function useFeature(params) {
+  return useQuery({
+    queryKey: featureQueryKeys.byId(params),
+    queryFn: () => getFeature(params),
+    enabled: !!params,
+  })
+}
+```
+Config: staleTime=60s, gcTime=5min, retry=1
 
-### Protected Routes `(dashboard)` (requires auth)
-| Path | Purpose |
-|------|---------|
-| `/dashboard` | Main dashboard |
-| `/cogs` | Product list with COGS form |
-| `/cogs/bulk` | Bulk COGS assignment |
-| `/cogs/history` | COGS version history |
-| `/cogs/price-calculator` | Price calculator (Epic 44) |
-| `/analytics` | Analytics hub |
-| `/analytics/dashboard` | Cabinet summary (Epic 6.4) |
-| `/analytics/sku` | Margin by SKU |
-| `/analytics/brand` | Margin by brand |
-| `/analytics/category` | Margin by category |
-| `/analytics/time-period` | Time-period comparison |
-| `/analytics/storage` | Storage analytics (Epic 24) |
-| `/analytics/supply-planning` | Stockout prediction |
-| `/analytics/unit-economics` | Unit economics (Epic 5) |
-| `/analytics/liquidity` | Liquidity analysis (Epic 7) |
-| `/analytics/advertising` | Advertising ROAS (Epic 33) |
-| `/settings/notifications` | Telegram settings (Epic 34) |
-| `/settings/tariffs` | Tariff settings admin (Epic 52, Admin only) |
+### Zustand (`src/stores/`)
+- `authStore.ts` - Authentication with localStorage persistence
+- `marginPollingStore.ts` - COGS→Margin calculation tracking
 
-**Routes reference**: `src/lib/routes.ts` - centralized route constants
+### Polling Pattern (COGS → Margin)
+After COGS assignment, poll for margin calculation:
+```typescript
+getPollingStrategy(validFrom, isBulk) -> { interval: 3000-5000ms, maxAttempts: 10-20 }
+```
+Files: `src/lib/margin-helpers.ts`, `src/hooks/*-polling.ts`
 
 ---
 
-## API Integration (40+ Endpoints)
+## Critical Business Rules
+
+### Week Definition
+- **Format**: ISO week `YYYY-Www` (e.g., "2025-W49")
+- **Timezone**: `Europe/Moscow`
+- **Week starts**: Monday
+- **Last completed week**: Mon/Tue before 12:00 → W-2, Tue after 12:00 → W-1
+
+### Key Formulas
+```
+margin_pct = ((revenue - cogs) / revenue) * 100
+roas = revenue / spend (where spend > 0)
+```
+
+### COGS Temporal Logic
+- **Midpoint rule**: Thursday determines which COGS version applies
+- `valid_from` after last completed week → Warning + manual recalc button
+
+---
+
+## Business Logic Locations
+
+| Domain | File | Key Functions |
+|--------|------|---------------|
+| Week/COGS | `src/lib/margin-helpers.ts` | `getLastCompletedWeek()`, `calculateAffectedWeeks()` |
+| Unit Economics | `src/lib/unit-economics-utils.ts` | Profitability status, health score |
+| Liquidity | `src/lib/liquidity-utils.ts` | Turnover categories, liquidation scenarios |
+| Supply Planning | `src/lib/supply-planning-utils.ts` | Stockout risk, reorder values |
+| Advertising | `src/lib/campaign-utils.ts`, `efficiency-utils.ts` | Campaign status, ROAS categorization |
+
+### Formatters (Russian Locale)
+```typescript
+formatCurrency(1234567.89)  // "1 234 567,89 ₽"
+formatPercentage(15.5)      // "15,5 %"
+formatDate(date)            // "20.01.2025"
+formatIsoWeek(date)         // "2025-W03"
+```
+
+---
+
+## API Integration
+
+> **Full Reference**: [`docs/api-integration-guide.md`](docs/api-integration-guide.md) - Complete endpoint catalog, HTTP files, integration patterns
 
 ### Authentication Headers (Auto-Added)
 ```http
@@ -170,720 +172,43 @@ Authorization: Bearer {JWT_TOKEN}
 X-Cabinet-Id: {cabinet_id}
 ```
 
-**Implementation**: Automatic injection via `ApiClient` class in `src/lib/api-client.ts`
+### Key Endpoints Summary
+| Domain | Endpoints | Notes |
+|--------|-----------|-------|
+| Auth | `/v1/auth/login`, `register`, `logout` | JWT tokens |
+| Cabinets | `/v1/cabinets/*` | CRUD + WB token |
+| Products | `/v1/products` | `include_cogs=true` for margin data |
+| Analytics | `/v1/analytics/weekly/*` | Finance summary, by-sku/brand/category |
+| Tasks | `/v1/tasks/enqueue` | Manager+ role required |
 
-### API Endpoint Catalog
-
-#### Authentication (3)
-- `POST /v1/auth/register` - Create account
-- `POST /v1/auth/login` - Get JWT token
-- `POST /v1/auth/logout` - Invalidate session
-
-#### Cabinets (7)
-- `POST /v1/cabinets` - Create cabinet
-- `GET /v1/cabinets` - List cabinets (paginated)
-- `GET /v1/cabinets/{id}` - Get details
-- `PUT /v1/cabinets/{id}` - Update cabinet
-- `POST /v1/cabinets/{id}/keys` - Save WB token
-- `GET /v1/cabinets/{id}/status` - Sync status
-- `DELETE /v1/cabinets/{id}` - Delete cabinet
-
-#### Products (7+)
-- `GET /v1/products` - List with filters (`has_cogs`, `search`, `cursor`, `limit`)
-- `GET /v1/products/{nmId}` - Get details
-- `POST /v1/products/{nmId}/cogs` - Assign COGS (single)
-- `POST /v1/products/cogs/bulk` - Bulk assign (up to 1000)
-- `POST /v1/products/price-calculator` - Reverse margin calc (Epic 43)
-- **Request #15**: `include_cogs=true` adds margin data to list
-
-#### Analytics (12+)
-- `GET /v1/analytics/weekly/finance-summary` - Dashboard metrics
-- `GET /v1/analytics/weekly/by-sku` - SKU analytics
-- `GET /v1/analytics/weekly/by-brand` - Brand analytics
-- `GET /v1/analytics/weekly/by-category` - Category analytics
-- `GET /v1/analytics/weekly/margin-trends` - Margin trends
-- `GET /v1/analytics/cabinet-summary` - Cabinet KPIs (Epic 6.4)
-- `GET /v1/analytics/unit-economics` - Cost breakdown % (Epic 27)
-- `GET /v1/analytics/supply-planning` - Stockout prediction (Epic 28)
-- `GET /v1/analytics/liquidity` - Inventory turnover (Epic 7)
-- `GET /v1/analytics/advertising` - Ad performance (Epic 33, 36)
-- `GET /v1/analytics/storage/*` - Storage analytics (Epic 24)
-
-#### Tasks (5)
-- `GET /v1/tasks` - List tasks
-- `GET /v1/tasks/{task_uuid}` - Get status
-- `POST /v1/tasks/enqueue` - Manual trigger (Manager+ only)
-
-**Task types**: `finances_weekly_ingest`, `products_sync`, `weekly_margin_aggregate`, `recalculate_weekly_margin`
-
-#### Exports (Story 6.5)
-- `POST /v1/exports/analytics` - Create export job
-- `GET /v1/exports/{export_id}` - Get status + download URL
-
-**Types**: `by-sku`, `by-brand`, `by-category`, `cabinet-summary`
-**Formats**: `csv`, `xlsx`
-
-### Role-Based Access Control
-| Role | Task Enqueue | View Analytics |
-|------|--------------|---------------|
-| Owner | ✅ | ✅ |
-| Manager | ✅ | ✅ |
-| Service | ✅ | ✅ |
+### Role-Based Access
+| Role | Task Enqueue | Analytics |
+|------|--------------|-----------|
+| Owner/Manager/Service | ✅ | ✅ |
 | Analyst | ❌ (403) | ✅ |
 
-**Frontend**: Hide/disable buttons for Analyst using `canEnqueueTasks(role)` helper
-
 ---
 
-## Backend API Documentation Reference
+## Component Patterns
 
-This section provides API contract references for integration with the backend service.
-
-### Quick Reference Map
-
-| Frontend Module | Backend .http File | Backend Epic | Purpose |
-|-----------------|-------------------|--------------|---------|
-| `storage-analytics.ts` | `12-storage.http` | Backend Epic 24 | Paid storage analytics |
-| `advertising-analytics.ts` | `07-advertising-analytics.http` | Backend Epic 33/36 | Advertising metrics |
-| `notifications.ts` | `13-notifications.http` | Backend Epic 34 | Telegram notifications |
-| `price-calculator.ts` | `15-price-calculator.http` | Backend Epic 43/44 | Price calculator |
-| `liquidity.ts` | `06-analytics-advanced.http` | Backend Epic 29 | Liquidity analysis |
-| `supply-planning.ts` | `06-analytics-advanced.http` | Backend Epic 28 | Supply planning |
-
-### Backend HTTP Files Catalog
-
-| File | Size | Endpoints | Backend Epic Reference |
-|------|------|-----------|------------------------|
-| `00-variables.http` | 3.1 KB | Login setup | - |
-| `01-auth.http` | 1.7 KB | Auth endpoints | Backend Epic 6 |
-| `03-cabinets.http` | 4.4 KB | Cabinet CRUD | Backend Epic 1 |
-| `05-analytics-basic.http` | 17.8 KB | Weekly analytics | Backend Epic 3 |
-| `06-analytics-advanced.http` | 46.3 KB | Advanced analytics | Backend Epics 27-29 |
-| `07-advertising-analytics.http` | 77.3 KB | Advertising | Backend Epic 33 |
-| `12-storage.http` | 11.6 KB | Storage | Backend Epic 24 |
-| `13-notifications.http` | 17.9 KB | Telegram | Backend Epic 34 |
-| `15-price-calculator.http` | 16.3 KB | Price calc | Backend Epic 43 |
-
-**Usage**: Install "REST Client" extension (Huachao Mao) for VS Code, open any `.http` file, click "Send Request"
-
-**Note**: These files contain backend API contracts for reference only. Backend epics are managed by the backend team.
-
----
-
-## Critical Development Rules
-
-### File Size Limit (MANDATORY)
-- **All source files MUST be under 200 lines** (ESLint enforced)
-- Split large files into smaller modules
-
-### TypeScript Requirements
-- **Strict mode enabled** - No `any` types (use `unknown`)
-- All functions must have explicit return types
-- Interfaces for all API contracts
-
-### Component Standards
-- Server Components by default (no `'use client'` unless needed)
-- Functional components only (no classes)
-- One component per file
-- Components in PascalCase, files in kebab-case
-
-### Import Rules
-- Use path aliases: `@/components` not `../../components`
-- Group imports: external → internal → types
-- Absolute imports preferred
-
-### shadcn/ui Components
-- **DO NOT EDIT manually** - Use `npx shadcn@latest add [component]`
-- Copy-paste architecture - each component is in your codebase
-- Customize via variants or wrapper components
-
-### MCP-Assisted Development (Design Patterns & Styles)
-
-**Context7 MCP** provides access to **design patterns, styling examples, and best practices** - NOT for installing components.
-
-**⚠️ CRITICAL DISTINCTION:**
-- **Creative Tim UI** → Source of **design patterns and styling ideas** (DO NOT INSTALL)
-- **shadcn/ui** → Base components we actually use (already installed in `src/components/ui/`)
-
-**Available Design Pattern Sources:**
-- `/creativetimofficial/ui` - **Creative Tim UI design patterns** (121+ styling examples, High reputation)
-- `/llmstxt/ui_shadcn_llms_txt` - **shadcn/ui component examples** (1141 code examples)
-
-**Usage Workflow for New UI Features:**
-```bash
-# 1. Get DESIGN PATTERNS from Creative Tim UI via Context7
-mcp-cli call context7/query-docs '{
-  "libraryId": "/creativetimofficial/ui",
-  "query": "[component type] design layout styling examples",
-  "maxResults": 5
-}'
-
-# 2. Get IMPLEMENTATION EXAMPLES from shadcn/ui via Context7
-mcp-cli call context7/query-docs '{
-  "libraryId": "/llmstxt/ui_shadcn_llms_txt",
-  "query": "[component] react typescript implementation",
-  "maxResults": 3
-}'
-
-# 3. Use EXISTING shadcn/ui components from src/components/ui/
-# 4. Apply Creative Tim design patterns (spacing, typography, colors, layout)
-# 5. Adapt to project requirements (RU locale, red primary #E53935, etc.)
-```
-
-**When to use Context7 MCP:**
-- Starting new UI features → Get design patterns first
-- Need layout inspiration → Check Creative Tim styling
-- Looking for component examples → Check shadcn implementation
-- Stuck on styling → Query for similar patterns
-
-**DO NOT:**
-- ❌ Install Creative Tim UI (`npx @creative-tim/ui@latest add`)
-- ❌ Copy Creative Tim code directly (uses different patterns)
-- ❌ Assume Creative Tim components match our design system
-
-**DO:**
-- ✅ Use Context7 to get design/layout ideas
-- ✅ Adapt patterns to our shadcn/ui components
-- ✅ Follow project conventions (Russian locale, red primary, WCAG 2.1 AA)
-- ✅ Check existing custom components first (`src/components/custom/`)
-
-**Priority for UI Development:**
-1. Check existing custom components (`src/components/custom/`)
-2. Query Context7 for Creative Tim **design patterns** (layout, spacing, styling)
-3. Use base shadcn/ui components (`src/components/ui/`)
-4. Build custom component with learned patterns
-
----
-
-## Key Architecture Patterns
-
-### API Client Pattern
-**Location**: `src/lib/api-client.ts`
-
-**Features**:
-- Auto-includes JWT (`Authorization: Bearer {token}`)
-- Auto-includes Cabinet ID (`X-Cabinet-Id: {cabinetId}`)
-- Auto-unwraps `{ data: ... }` responses
-- Error handling with `ApiError` class
-- `skipDataUnwrap` option for complex responses
-
-### TanStack Query Pattern
-**Location**: All hooks in `src/hooks/`
-
-```typescript
-// GET requests
-const { data, isLoading, error } = useQuery({
-  queryKey: ['key', params],
-  queryFn: () => apiClient.get('/endpoint'),
-})
-
-// POST/PUT/DELETE
-const mutation = useMutation({
-  mutationFn: (data) => apiClient.post('/endpoint', data),
-  onSuccess: () => queryClient.invalidateQueries(['key']),
-})
-```
-
-**Configuration**: `src/lib/queryClient.ts`
-- staleTime: 60s, gcTime: 5min
-- retry: 1
-- refetchOnWindowFocus: true
-
-### Zustand Pattern
-**Location**: `src/stores/`
-
-```typescript
-// Auth store with persistence
-const { user, token, cabinetId } = useAuthStore()
-
-// Margin polling store
-const { addPollingProduct, isPolling } = useMarginPollingStore()
-```
-
-### Polling Pattern (Critical for COGS → Margin)
-**Pattern**: After COGS assignment, poll for margin calculation
-
-```typescript
-// Strategy based on COGS date
-getPollingStrategy(validFrom, isBulk) -> {
-  interval: 3000-5000ms,
-  maxAttempts: 10-20,
-  estimatedTime: 30000-180000ms
-}
-
-// Usage
-const { mutate, isPolling } = useSingleCogsAssignmentWithPolling()
-```
-
-**Files**: `src/lib/margin-helpers.ts`, `src/hooks/*-polling.ts`
-
----
-
-## Component Catalog
-
-### shadcn/ui Components (22 base components)
-**Location**: `src/components/ui/`
-
-**Form**: button, input, label, form, select, checkbox, switch, slider
-**Layout**: card, sheet, dialog, alert-dialog, collapsible
-**Feedback**: alert, progress, skeleton, sonner (toast)
-**Navigation**: dropdown-menu, tabs, popover
-**Other**: table, badge, tooltip
-
-### Creative Tim UI Design Patterns (Context7 MCP Only)
-**Purpose**: Source of **design patterns and styling inspiration** (NOT for installation)
-**Access**: Context7 MCP → `/creativetimofficial/ui`
-**Documentation**: https://creative-tim.com/ui
-
-**⚠️ IMPORTANT:**
-- **DO NOT INSTALL** - We use shadcn/ui components, not Creative Tim UI packages
-- **USE FOR** - Design layout patterns, spacing inspiration, styling ideas
-- **WORKFLOW** - Query Context7 → Adapt patterns to our shadcn/ui components
-
-**Available Design Categories:**
-- **Application UI** - Account, Billing, Modals (layout patterns)
-- **Marketing** - Testimonials, Contact, Footers, FAQs (section designs)
-- **E-commerce** - Product cards, Pricing sections (display patterns)
-
-**How to Use:**
-```bash
-# 1. Query for design patterns
-mcp-cli call context7/query-docs '{
-  "libraryId": "/creativetimofficial/ui",
-  "query": "pricing card layout design examples",
-  "maxResults": 3
-}'
-
-# 2. Extract design ideas (spacing, typography, colors)
-# 3. Apply to YOUR shadcn/ui components
-# 4. Follow our design system (red #E53935, Russian locale)
-```
-
-**Example Use Cases:**
-- Need pricing section layout? → Query "pricing card layout"
-- Building testimonials? → Query "testimonial section design"
-- Stuck on card spacing? → Query "card padding margin examples"
-
-**What You Get:**
-- ✅ Design patterns (spacing, typography, layout)
-- ✅ Styling inspiration (colors, shadows, borders)
-- ✅ Component structure ideas
-- ❌ NOT installable components (use shadcn/ui instead)
-
-### Custom Components (70+ components, ~18,490 lines)
-**Location**: `src/components/custom/`
-
-**Auth/Onboarding**: LoginForm, RegistrationForm, CabinetCreationForm, WbTokenForm, ProcessingStatus
-
-**Layout**: Sidebar, Navbar, RequireWbToken wrapper
-
-**Products/COGS**: ProductList, ProductSearchFilter, ProductPagination, SingleCogsForm, BulkCogsForm, CogsHistoryTable
-
-**Analytics**: FinancialSummaryTable, MarginBySkuTable, ExpenseChart, TrendGraph, MetricCard, KPICard
-
-**Date Selection**: WeekSelector, WeekComparisonSelector, MultiWeekSelector, DateRangePicker
-
-**Storage (Epic 24)**: ProductStorageInfo
-
-**Notifications (Epic 34)**: NotificationPreferencesPanel, TelegramBindingModal, QuietHoursPanel
-
-**Price Calculator (Epic 44)**: PriceCalculatorForm, PriceCalculatorResults, CostBreakdownChart, MarginSlider
-
-### Component Patterns
+### Organization
 1. **Page → Container → Presenters**: Page orchestrates, containers manage state, presenters render
-2. **Compound Components**: Parent with multiple sub-components
-3. **Hook-Driven Features**: Components consume hooks for all data/mutations
-4. **Protection Wrappers**: Route protection via RequireWbToken
-5. **Responsive Layout**: Sheet sidebar on mobile, fixed on desktop
+2. **Hook-Driven**: Components consume hooks for all data/mutations
+3. **Compound Components**: Parent with sub-components (e.g., Form with Field)
+
+### Key Custom Components
+| Category | Location | Examples |
+|----------|----------|----------|
+| Auth/Onboarding | `custom/auth/`, `custom/onboarding/` | LoginForm, WbTokenForm |
+| Products/COGS | `custom/products/`, `custom/cogs/` | ProductList, SingleCogsForm |
+| Analytics | `custom/analytics/` | FinancialSummaryTable, ExpenseChart |
+| Date Selection | `custom/date/` | WeekSelector, DateRangePicker |
 
 ---
 
-## Hooks Catalog (45 hooks)
+## Design System
 
-**Location**: `src/hooks/`
-
-**Auth**: `useAuth`, `useCabinetSummary`
-**Products/COGS**: `useProducts`, `useSingleCogsAssignment`, `useBulkCogsAssignment`, `useCogsHistory`
-**Analytics**: `useDashboard`, `useFinancialSummary`, `useMarginAnalytics`, `useTrends`
-**Storage**: `useStorageAnalytics` (Epic 24)
-**Supply**: `useSupplyPlanning` (Epic 6)
-**Unit Economics**: `useUnitEconomics` (Epic 5)
-**Liquidity**: `useLiquidity` (Epic 7)
-**Advertising**: `useAdvertisingAnalytics` (Epic 33)
-**Price Calculator**: `usePriceCalculator` (Epic 44)
-**Notifications**: `useNotificationPreferences`, `useTelegramBinding` (Epic 34)
-**Tasks**: `useProcessingStatus`, `useManualMarginRecalculation`
-
-### Hook Pattern
-```typescript
-export function useFeature(params) {
-  return useQuery({
-    queryKey: featureQueryKeys.byId(params),
-    queryFn: () => getFeature(params),
-    enabled: !!params,
-    staleTime: 30000,
-  })
-}
-```
-
----
-
-## State Management
-
-### Zustand Stores (2 stores)
-
-**`authStore.ts`**: Authentication state
-- State: user, token, cabinetId, isAuthenticated
-- Persistence: localStorage with cross-tab sync
-- Actions: login, logout, refreshToken, setToken
-- Cookie sync: Sets auth-token cookie for middleware
-
-**`marginPollingStore.ts`**: Margin calculation tracking
-- State: Set of nmIds currently polling
-- Actions: addPollingProduct, removePollingProduct, isPolling
-
-### React Query Cache
-**Query Keys Pattern**:
-```typescript
-storageQueryKeys.all = ['storage']
-storageQueryKeys.bySku = (params) => ['storage', 'by-sku', params]
-
-// Invalidation
-queryClient.invalidateQueries({ queryKey: storageQueryKeys.all })
-```
-
----
-
-## Type System (13 type files)
-
-**Location**: `src/types/`
-
-**Core**: `api.ts`, `auth.ts`, `cabinet.ts`, `cogs.ts`
-**Analytics**: `analytics.ts`, `storage-analytics.ts`, `advertising-analytics.ts`
-**Business Logic**: `unit-economics.ts`, `liquidity.ts`, `supply-planning.ts`
-**Features**: `price-calculator.ts`, `notifications.ts`
-
-**Patterns**:
-- Request/Response pairs for API contracts
-- Status enums with string literal unions
-- Config interfaces with labels, colors, icons
-- Cursor-based pagination types
-
----
-
-## Business Logic Locations
-
-### Calculations
-**`src/lib/margin-helpers.ts`**: Week calculations, COGS temporal logic
-- `getLastCompletedWeek()` - Conservative week logic (Mon/Tue AM → W-2, Tue PM → W-1)
-- `getWeekMidpointDate()` - Thursday (COGS version lookup)
-- `calculateAffectedWeeks()` - Array of weeks needing recalc
-- `isCogsAfterLastCompletedWeek()` - Warning check (Request #17)
-
-**`src/lib/*-utils.ts`**: Domain-specific business logic
-- `unit-economics-utils.ts`: Profitability status, health score
-- `liquidity-utils.ts`: Turnover categories, liquidation scenarios
-- `supply-planning-utils.ts`: Stockout risk, reorder values
-- `campaign-utils.ts`: Campaign status, efficiency labels
-- `efficiency-utils.ts`: ROAS/ROI categorization
-
-### Formatters
-**All in Russian locale**:
-- `formatCurrency()` → "1 234 567,89 ₽"
-- `formatPercentage()` → "15,5 %"
-- `formatDate()` → "20.01.2025"
-- `formatIsoWeek()` → "2025-W03"
-
-### Transformers
-**`src/lib/transformers/advertising-transformers.ts`**: Epic 37 merged groups conversion
-
----
-
-## Configuration & Constants
-
-### Environment (`src/lib/env.ts`)
-```typescript
-apiUrl: NEXT_PUBLIC_API_URL (default: localhost:3000)
-appName, appVersion, enableAnalytics
-isDevelopment, isProduction, enableDevTools
-```
-
-### Feature Flags (`src/config/features.ts`)
-```typescript
-features.epic37MergedGroups = {
-  enabled: boolean,
-  useRealApi: boolean,
-  debug: boolean
-}
-```
-
-### Routes (`src/lib/routes.ts`)
-Centralized route constants with type safety:
-```typescript
-ROUTES.DASHBOARD.SKA
-ROUTES.COGS.PRICE_CALCULATOR
-ROUTES.ANALYTICS.STORAGE
-```
-
----
-
-## Testing Strategy
-
-### Structure
-- **Unit tests**: `src/**/*.test.tsx` (colocated with components)
-- **Integration tests**: `src/lib/api/__tests__/`
-- **E2E tests**: `e2e/**/*.spec.ts` (Playwright)
-
-### Coverage Goals
-- Unit Tests: 60%+
-- Integration Tests: 30%+
-- E2E Tests: 10%+
-
-### Test Utilities
-**Location**: `src/test/utils/test-utils.tsx`
-
-- `createTestQueryClient()` - Fresh client
-- `createQueryWrapper()` - Wrapper for hooks
-- `renderWithProviders()` - Custom render
-
-### Test Fixtures
-**Location**: `src/test/fixtures/`
-
-- `price-calculator.ts` - Epic 44 mocks
-- `storage-analytics.ts` - Epic 24 mocks
-
----
-
-## Common Patterns
-
-### Currency Formatting
-```typescript
-import { formatCurrency } from '@/lib/utils'
-formatCurrency(1234567.89) // "1 234 567,89 ₽"
-```
-
-### Conditional Classes
-```typescript
-import { cn } from '@/lib/utils'
-<div className={cn('base-class', condition && 'conditional-class')} />
-```
-
-### Debounced Search
-```typescript
-// Pattern: two-state search (searchInput + search)
-const [searchInput, setSearchInput] = useState('')
-const [search, setSearch] = useState('')
-
-useEffect(() => {
-  const delay = setTimeout(() => setSearch(searchInput), 500)
-  return () => clearTimeout(delay)
-}, [searchInput])
-```
-
-### Query Keys Factory
-```typescript
-export const xxxQueryKeys = {
-  all: ['xxx'] as const,
-  byId: (id: string) => [...xxxQueryKeys.all, 'id', id] as const,
-  list: (params) => [...xxxQueryKeys.all, 'list', params] as const,
-}
-```
-
-### Status Configuration Pattern
-```typescript
-const STATUS_CONFIG: Record<Status, Config> = {
-  status1: { label, color, bgColor, icon },
-  status2: { label, color, bgColor, icon },
-}
-
-export function getStatusConfig(status): Config
-export function getStatusLabel(status): string
-```
-
-**Used in**: Unit economics, liquidity, supply planning, advertising
-
----
-
-## Critical Business Rules
-
-### Week Definition (CRITICAL)
-- **ISO week format**: `YYYY-Www` (e.g., "2025-W49")
-- **Timezone**: `Europe/Moscow`
-- **Week starts**: Monday
-- **Last completed week**: Mon/Tue before 12:00 → W-2, Tue after 12:00 → W-1
-
-### Margin Formula
-```
-margin_pct = ((revenue - cogs) / revenue) * 100
-```
-
-### ROAS Formula
-```
-roas = revenue / spend (where spend > 0)
-```
-
-### COGS Temporal Logic
-- **Midpoint rule**: Thursday determines which COGS version applies
-- COGS with `valid_from` after last completed week → Warning + manual recalc button (Request #17)
-
-### Payout Total Formula (WB Dashboard Compatible)
-```
-payout_total = to_pay_goods
-  - logistics_cost
-  - storage_cost
-  - paid_acceptance_cost
-  - penalties_total
-  - wb_commission_adj  # commission_other ONLY (reason='Удержание')
-  - acquiring_fee_total
-  - commission_sales_total
-  - loyalty_fee
-  - loyalty_points_withheld
-  + loyalty_compensation
-  ± other_adjustments_net
-```
-
-### Data Quality Rules
-- COGS must be positive number (> 0)
-- Historical COGS tracked with `valid_from` dates
-- Task idempotency: `task_uuid = hash({cabinet_id, task_type, payload, planned_at})`
-
----
-
-## Key Issues & Solutions
-
-### Product Search (Story 4.1)
-- **Parameter fix**: Backend expects `q=` not `search=` (fixed in `useProducts.ts`)
-- **Debounce**: 500ms delay prevents API spam
-- **Partial match**: Backend filters client-side for partial article matches
-
-### Margin Display (Request #15)
-- Use `include_cogs=true` for batch margin data
-- Performance: ~300ms for 25 products (8x faster than sequential)
-
-### COGS After Last Week (Request #17)
-- Automatic recalculation skipped if `valid_from > lastCompletedWeek`
-- Warning alert + manual button in `SingleCogsForm.tsx`
-
-### Pagination Duplicates (Request #13)
-- WB SDK cursor pagination bug → Client-side workaround
-- Backend fetches ALL products, paginates in-memory
-- Redis caching: First load ~500ms, cached ~50ms
-
----
-
-## Documentation References
-
-### Essential Documents
-
-**Architecture & Design**:
-- `docs/front-end-architecture.md` - Technical architecture
-- `docs/front-end-spec.md` - UI/UX specifications (comprehensive)
-- `docs/prd.md` - Product requirements
-
-**API Integration**:
-- `docs/api-integration-guide.md` - Complete API reference (33+ endpoints)
-- `docs/MARGIN-COGS-BACKEND-INTEGRATION.md` - Margin & COGS integration
-- `docs/request-backend/README.md` - All backend requests (100+ files)
-
-**Epic Documentation**:
-- `docs/epics/epic-24-price-calculator-ui.md` - Price Calculator
-- `docs/epics/epic-34-fe-telegram-notifications-ui.md` - Telegram
-- `docs/stories/epic-37/` - Merged Groups documentation
-- `docs/stories/epic-24/README.md` - Storage Analytics
-
-**UI/UX Reference Documents**:
-- `docs/front-end-spec.md` - Complete UI/UX specification (personas, flows, design system)
-- `docs/wireframes/` - Wireframe documentation
-  - `epic-36-ui-mockup.md` - Product card linking UI
-  - `epic-42-ui-mockup.md` - Task handlers UI
-- `docs/user-guide/` - User guide documentation
-  - `price-calculator.md` - Price calculator user guide
-
-**Stories & Status**:
-- `docs/stories/STORIES-STATUS-REPORT.md` - All stories status (76 total, 68 done)
-- `docs/stories/EPIC-4-COMPLETION-SUMMARY.md` - Epic 4 summary
-- `docs/stories/epic-*/story-*.md` - Individual story documents
-
-**Backend API**:
-- Swagger UI: `http://localhost:3000/api`
-- `test-api.http` - HTTP request examples for all endpoints
-
----
-
-## Environment Variables
-
-### Development Environment
-
-```bash
-# .env.local (optional - defaults work for local dev)
-NEXT_PUBLIC_API_URL=http://localhost:3000  # Default: localhost:3000
-NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot  # Optional (has fallback)
-```
-
-### E2E Test Environment
-
-```bash
-# .env.e2e (for Playwright end-to-end tests)
-E2E_BASE_URL=http://localhost:3100        # Frontend dev server
-E2E_API_URL=http://localhost:3000         # Backend API URL
-E2E_TEST_EMAIL=test@test.com              # Test user credentials
-E2E_TEST_PASSWORD=Russia23!               # Test user password
-E2E_REQUEST_TIMEOUT=30000                 # Request timeout (ms)
-E2E_SCREENSHOT_DIR=test-results/screenshots  # Screenshot directory
-E2E_DEBUG=false                           # Debug mode
-```
-
-**Note**: The `.env.e2e` file is excluded from version control via `.gitignore` (`.env*.local` pattern). Test credentials match the seeded database user.
-
----
-
-## Port Configuration
-
-- **Development (`npm run dev`)**: Port 3000 (Next.js default)
-- **PM2 (both modes)**: Port 3100 (configured in `ecosystem.config.js`)
-
----
-
-## WCAG 2.1 AA Accessibility (Mandatory)
-
-- Color contrast ≥4.5:1
-- All interactive elements keyboard-navigable
-- All images have alt text
-- All form inputs have labels
-- ARIA labels where needed
-- E2E tests with `@axe-core/playwright`
-
----
-
-## Git Workflow
-
-```bash
-# Feature branch
-git checkout -b feature/story-{ID}.{NUM}
-
-# Commit (lint + type-check first)
-npm run lint && npm run type-check
-git commit -m "feat: implement story X.Y"
-
-# PR for review
-git push origin feature-story-X.Y
-```
-
----
-
-## Tech Stack Rationale
-
-1. **Next.js over CRA**: SSR for performance, built-in routing, better TypeScript
-2. **shadcn/ui over MUI**: Copy-paste architecture, Radix UI accessibility, Tailwind customization
-3. **TanStack Query over Redux**: Designed for server state, automatic caching, less boilerplate
-4. **Zustand over Redux**: Lightweight, no boilerplate, TypeScript-friendly
-5. **React Hook Form over Formik**: Minimal re-renders, excellent TypeScript, shadcn integration
-6. **200-line file limit**: Optimizes AI context, enforces single responsibility
-7. **Red primary color**: Matches Wildberries brand, different from typical SaaS
-
----
-
-## Design System Specifications
+> **Full Reference**: [`docs/front-end-spec.md`](docs/front-end-spec.md) - Complete design system, typography, spacing, components
 
 ### Color Palette
 | Element | Color | Usage |
@@ -895,11 +220,13 @@ git push origin feature-story-X.Y
 | Gray Scale | `#F5F5F5` (light), `#EEEEEE` (borders), `#757575` (text) | UI elements |
 
 ### Semantic Colors
-- **Green** (`#22C55E`) - Positive values, profitable margins
-- **Red** (`#EF4444`) - Negative values, losses, high expenses
-- **Blue** (`#3B82F6`) - Primary metrics, information
-- **Purple** (`#7C4DFF`) - Storage analytics (Epic 24)
-- **Yellow** (`#F59E0B`) - Warnings, medium severity
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Green | `#22C55E` | Positive values, profitable margins |
+| Red | `#EF4444` | Negative values, losses, high expenses |
+| Blue | `#3B82F6` | Primary metrics, information |
+| Purple | `#7C4DFF` | Storage analytics (Epic 24) |
+| Yellow | `#F59E0B` | Warnings, medium severity |
 
 ### Typography
 | Element | Size/Weight | Usage |
@@ -913,6 +240,8 @@ git push origin feature-story-X.Y
 
 ## User Personas
 
+> **Full Reference**: [`docs/front-end-spec.md`](docs/front-end-spec.md) - Detailed personas, goals, pain points
+
 ### Primary: Business Owner / Entrepreneur
 - 50-5000 SKUs, 500K-50M RUB/month revenue
 - **Goals**: Quick profit insight, reduce manual work by 75%, optimize pricing
@@ -925,19 +254,120 @@ git push origin feature-story-X.Y
 
 ---
 
+## WCAG 2.1 AA Accessibility (Mandatory)
+
+> **Full Reference**: [`docs/front-end-spec.md`](docs/front-end-spec.md) - Complete accessibility guidelines, testing checklist
+
+### Key Requirements
+- **Color contrast**: ≥4.5:1 for normal text, ≥3:1 for large text
+- **Keyboard navigation**: All interactive elements must be keyboard-navigable
+- **Images**: All images must have alt text
+- **Forms**: All form inputs must have associated labels
+- **ARIA**: Use ARIA labels where semantic HTML is insufficient
+- **Focus indicators**: Visible focus states for all interactive elements
+
+### Testing Tools
+- `@axe-core/playwright` - Automated accessibility testing in E2E
+- Lighthouse accessibility audit
+- Manual keyboard navigation testing
+
+---
+
+## Testing Strategy
+
+> **Playwright Config**: `_bmad/bmm/testarch/knowledge/playwright-config.md`
+
+### Structure
+| Type | Location | Coverage Goal |
+|------|----------|---------------|
+| Unit | `src/**/*.test.tsx` | 60%+ |
+| Integration | `src/lib/api/__tests__/` | 30%+ |
+| E2E | `e2e/**/*.spec.ts` | 10%+ |
+
+### Test Utilities
+- **Location**: `src/test/utils/test-utils.tsx`
+- `renderWithProviders()` - Custom render with providers
+- `createTestQueryClient()` - Fresh TanStack Query client
+- **Fixtures**: `src/test/fixtures/` - Mock data for each domain
+
+---
+
+## Environment Variables
+
+### Development
+```bash
+# .env.local
+NEXT_PUBLIC_API_URL=http://localhost:3000  # Default
+NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot
+```
+
+### E2E Testing (Playwright)
+```bash
+# .env.e2e (for Playwright end-to-end tests)
+E2E_BASE_URL=http://localhost:3100        # Frontend dev server
+E2E_API_URL=http://localhost:3000         # Backend API URL
+E2E_TEST_EMAIL=test@test.com              # Test user credentials
+E2E_TEST_PASSWORD=Russia23!               # Test user password
+E2E_REQUEST_TIMEOUT=30000                 # Request timeout (ms)
+E2E_SCREENSHOT_DIR=test-results/screenshots  # Screenshot directory
+E2E_DEBUG=false                           # Debug mode
+```
+
+**Note**: `.env.e2e` is excluded from version control. Test credentials match the seeded database user.
+
+---
+
 ## Performance Requirements
 
 | Metric | Target |
 |--------|--------|
-| Initial page load | < 3 seconds |
-| Time to interactive | < 5 seconds |
-| Dashboard data load | < 2 seconds |
+| Initial page load | < 3s |
+| Time to interactive | < 5s |
+| Dashboard data load | < 2s |
 | API response (p95) | < 500ms |
 | Error rate | < 1% |
 
 ---
 
-## Test User Credentials
+## Documentation Index
+
+### Core Documentation
+| Document | Purpose |
+|----------|---------|
+| [`docs/EPICS-AND-STORIES-TRACKER.md`](docs/EPICS-AND-STORIES-TRACKER.md) | **Epic/story tracking, routes, sprint planning** |
+| [`docs/api-integration-guide.md`](docs/api-integration-guide.md) | **Full API reference** (40+ endpoints, HTTP files) |
+| [`docs/front-end-spec.md`](docs/front-end-spec.md) | **UI/UX specification** (design system, personas, WCAG) |
+| `docs/front-end-architecture.md` | Technical architecture |
+| `docs/MARGIN-COGS-BACKEND-INTEGRATION.md` | COGS temporal logic |
+
+### Epic & Story Documentation
+| Resource | Location |
+|----------|----------|
+| Epic specs | `docs/epics/epic-{N}-*.md` |
+| Story files | `docs/stories/epic-{N}/story-*.md` |
+| Sprint planning | `docs/sprint-planning/` |
+| Backend requests | `docs/request-backend/` |
+
+### UI/UX & Testing References
+| Resource | Location |
+|----------|----------|
+| Wireframes | `docs/wireframes/` |
+| User guides | `docs/user-guide/` |
+| Playwright config | `_bmad/bmm/testarch/knowledge/playwright-config.md` |
+
+---
+
+## Git Workflow
+
+```bash
+git checkout -b feature/story-{ID}.{NUM}
+npm run lint && npm run type-check
+git commit -m "feat: implement story X.Y"
+```
+
+---
+
+## Test Credentials
 
 ```
 Email: test@test.com
@@ -946,9 +376,4 @@ Password: Russia23!
 
 ---
 
-**Last Updated**: 2026-01-17
-**Backend API Docs**: `http://localhost:3000/api` (Swagger)
-**Total Frontend Epics**: 13
-**Total Stories**: 76 (68 complete, 89% done)
-**Total Components**: 100+ (70 custom, 22 shadcn/ui)
-**Total Hooks**: 45
+**Last Updated**: 2026-01-29
