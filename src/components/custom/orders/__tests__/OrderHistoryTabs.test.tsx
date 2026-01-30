@@ -301,22 +301,26 @@ describe('OrderHistoryTabs', () => {
 
   describe('AC9: Error States per Tab', () => {
     it('shows error message with retry button on full history fetch failure', async () => {
-      // Reset mock from beforeEach and set to reject
+      // Reset mock from beforeEach and set to reject (component has retry: 1, so will be called twice)
       mockGetFullHistory.mockReset()
       mockGetFullHistory.mockRejectedValue(new Error('Network error'))
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
-      await waitFor(() => {
-        expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
-      })
+      // Wait for error state (after initial call + 1 retry)
+      await waitFor(
+        () => {
+          expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+        },
+        { timeout: 5000 }
+      )
 
       expect(screen.getByRole('button', { name: /повторить/i })).toBeInTheDocument()
     })
 
     it('shows error message for WB history fetch failure', async () => {
       const user = userEvent.setup()
-      // Reset mock from beforeEach and set to reject
+      // Reset mock from beforeEach and set to reject (component has retry: 1)
       mockGetWbHistory.mockReset()
       mockGetWbHistory.mockRejectedValue(new Error('WB API error'))
 
@@ -326,9 +330,13 @@ describe('OrderHistoryTabs', () => {
       const wbHistoryTab = screen.getByRole('tab', { name: /wb история/i })
       await user.click(wbHistoryTab)
 
-      await waitFor(() => {
-        expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
-      })
+      // Wait for error state
+      await waitFor(
+        () => {
+          expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+        },
+        { timeout: 5000 }
+      )
     })
 
     it('retry button refetches data for current tab', async () => {
@@ -336,35 +344,44 @@ describe('OrderHistoryTabs', () => {
 
       // Reset mock from beforeEach
       mockGetFullHistory.mockReset()
-      // First call fails, second succeeds
+      // First call fails (with retry), second call succeeds
       mockGetFullHistory
         .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce(mockFullHistoryResponse)
+        .mockRejectedValueOnce(new Error('Network error')) // Retry also fails
+        .mockResolvedValueOnce(mockFullHistoryResponse) // Retry button click succeeds
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
-      await waitFor(() => {
-        expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
-      })
+      await waitFor(
+        () => {
+          expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+        },
+        { timeout: 5000 }
+      )
 
       const retryButton = screen.getByRole('button', { name: /повторить/i })
       await user.click(retryButton)
 
       await waitFor(() => {
-        expect(mockGetFullHistory).toHaveBeenCalledTimes(2)
+        expect(mockGetFullHistory).toHaveBeenCalledTimes(3)
       })
     })
   })
 
   describe('AC10: Empty States', () => {
     it('shows empty message when no history entries', async () => {
+      // Reset mock from beforeEach and set to return empty response
+      mockGetFullHistory.mockReset()
       mockGetFullHistory.mockResolvedValue(mockEmptyFullHistoryResponse)
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
-      await waitFor(() => {
-        expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
-      })
+      await waitFor(
+        () => {
+          expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
+        },
+        { timeout: 5000 }
+      )
     })
 
     it('shows specific message when WB history not synced yet', async () => {
