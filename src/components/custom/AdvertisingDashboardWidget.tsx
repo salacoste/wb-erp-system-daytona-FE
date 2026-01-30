@@ -16,6 +16,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useAdvertisingAnalytics } from '@/hooks/useAdvertisingAnalytics'
+import { useAdvertisingEmptyState } from '@/hooks/useAdvertisingEmptyState'
+import { AdvertisingEmptyState } from './AdvertisingEmptyState'
 
 // ============================================================================
 // Types
@@ -46,6 +48,12 @@ interface AdvertisingDashboardWidgetProps {
    * Story 60.6-FE: Hide when controlled by parent.
    */
   hideLocalSelector?: boolean
+  /**
+   * Callback when user selects a different date range from empty state.
+   * Used to notify parent of period changes.
+   * Story 60.6-FE: Empty state integration.
+   */
+  onDateRangeChange?: (range: DateRange) => void
 }
 
 // ============================================================================
@@ -172,6 +180,7 @@ export function AdvertisingDashboardWidget({
   className,
   dateRange: externalDateRange,
   hideLocalSelector = false,
+  onDateRangeChange,
 }: AdvertisingDashboardWidgetProps) {
   // Internal period state as fallback for standalone mode
   const [internalPeriod, setInternalPeriod] = useState<PeriodOption>('7d')
@@ -200,13 +209,16 @@ export function AdvertisingDashboardWidget({
     }
   )
 
+  // Detect empty state using custom hook (refactor phase)
+  const { isEmpty, availableRange } = useAdvertisingEmptyState(data)
+
   // Loading state
   if (isLoading) {
     return <WidgetSkeleton className={className} />
   }
 
-  // Error state or missing data
-  if (error || !data || !data.summary) {
+  // Error state
+  if (error) {
     return (
       <Card className={cn('p-4', className)} data-testid="advertising-widget">
         <div className="flex items-center justify-between mb-4">
@@ -216,9 +228,7 @@ export function AdvertisingDashboardWidget({
           </div>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">
-            {error ? 'Ошибка загрузки данных' : 'Нет данных'}
-          </span>
+          <span className="text-muted-foreground">Ошибка загрузки данных</span>
           <Button variant="ghost" size="sm" onClick={() => refetch()}>
             Повторить
           </Button>
@@ -227,7 +237,26 @@ export function AdvertisingDashboardWidget({
     )
   }
 
-  const { summary } = data
+  // Empty state component
+  if (isEmpty) {
+    return (
+      <AdvertisingEmptyState
+        availableRange={availableRange}
+        requestedRange={dateRange}
+        onDateRangeChange={range => {
+          if (onDateRangeChange) {
+            onDateRangeChange(range)
+          }
+          // Refetch data with new range
+          refetch()
+        }}
+        className={className}
+      />
+    )
+  }
+
+  // At this point, data must exist and have a summary (isEmpty is false)
+  const { summary } = data!
 
   // Determine whether to show local selector (AC1, AC4, AC5, AC6)
   // Show only when NOT externally controlled AND hideLocalSelector is false

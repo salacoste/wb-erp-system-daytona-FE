@@ -69,7 +69,7 @@ function buildQueryString(params: Record<string, unknown>): string {
         searchParams.append(key, String(value[0]))
         searchParams.append(key, String(value[0]))
       } else {
-        value.forEach((item) => {
+        value.forEach(item => {
           searchParams.append(key, String(item))
         })
       }
@@ -114,7 +114,7 @@ function buildQueryString(params: Record<string, unknown>): string {
  * });
  */
 export async function getAdvertisingAnalytics(
-  params: AdvertisingAnalyticsParams,
+  params: AdvertisingAnalyticsParams
 ): Promise<AdvertisingAnalyticsResponse> {
   // Request #76: Backend now supports efficiency_filter (server-side filtering)
   const queryParams = buildQueryString({ ...params })
@@ -130,10 +130,9 @@ export async function getAdvertisingAnalytics(
   })
 
   // Story 33.1-fe: Use skipDataUnwrap to get full response
-  const backendResponse = await apiClient.get<any>(
-    `/v1/analytics/advertising?${queryParams}`,
-    { skipDataUnwrap: true },
-  )
+  const backendResponse = await apiClient.get<any>(`/v1/analytics/advertising?${queryParams}`, {
+    skipDataUnwrap: true,
+  })
 
   // ADAPTER: Backend returns different format (camelCase, "items" instead of "data")
   // Adapt backend response to match frontend types
@@ -153,7 +152,7 @@ export async function getAdvertisingAnalytics(
       total_sales: backendResponse.summary?.totalSales ?? 0,
       total_revenue: backendResponse.summary?.totalRevenue ?? 0,
       total_profit: backendResponse.summary?.totalProfit ?? 0,
-      overall_roas: backendResponse.summary?.avgRoas ?? 0,
+      overall_roas: backendResponse.summary?.avgRoas ?? null,
       overall_roi: backendResponse.summary?.avgRoi ?? 0,
       avg_ctr: backendResponse.summary?.avgCtr ?? 0,
       avg_conversion_rate: backendResponse.summary?.avgConversionRate ?? 0,
@@ -241,7 +240,7 @@ export async function getAdvertisingAnalytics(
  * });
  */
 export async function getAdvertisingCampaigns(
-  params?: CampaignsParams,
+  params?: CampaignsParams
 ): Promise<CampaignsResponse> {
   const queryParams = params ? buildQueryString({ ...params }) : ''
   const url = queryParams
@@ -274,7 +273,8 @@ export async function getAdvertisingCampaigns(
       endDate: string
       createdAt: string
       updatedAt: string
-      placements?: { // Story 33.9 - Request #79: Type 9 campaigns only
+      placements?: {
+        // Story 33.9 - Request #79: Type 9 campaigns only
         search: boolean
         recommendations: boolean
         carousel?: boolean
@@ -295,9 +295,9 @@ export async function getAdvertisingCampaigns(
     meta: {
       cabinet_id: '', // TODO: Get from auth context
       total_count: backendResponse.total,
-      active_count: backendResponse.campaigns.filter((c) => c.status === 9).length,
+      active_count: backendResponse.campaigns.filter(c => c.status === 9).length,
     },
-    data: backendResponse.campaigns.map((campaign) => ({
+    data: backendResponse.campaigns.map(campaign => ({
       campaign_id: campaign.advertId,
       name: campaign.name, // Used by sortCampaignsByStatus
       type: campaign.type,
@@ -349,7 +349,7 @@ export async function getAdvertisingSyncStatus(): Promise<SyncStatusResponse> {
   // Story 33.1-fe: Use skipDataUnwrap to get full response
   const response = await apiClient.get<SyncStatusResponse>(
     '/v1/analytics/advertising/sync-status',
-    { skipDataUnwrap: true },
+    { skipDataUnwrap: true }
   )
 
   console.info('[Advertising Analytics] Sync status:', {
