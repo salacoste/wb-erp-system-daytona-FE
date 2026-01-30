@@ -287,3 +287,42 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
 - Frontend can now display complete expense breakdown
 - Migration applied, fields available in all API responses
 - Historical data recalculation available via `scripts/recalculate-direct.ts` (optional)
+
+---
+
+## Margin Fields Returning Null - Current Behavior (2026-01-30)
+
+### Observed Response
+```json
+{
+  "sale_gross_total": 305778.32,
+  "cogs_total": null,
+  "gross_profit": null,
+  "margin_pct": null
+}
+```
+
+### Explanation
+The `cogs_total` and `gross_profit` fields return `null` when:
+1. The `weekly_margin_fact` table is empty (no aggregated margin data)
+2. COGS coverage is < 100% for the requested period
+
+This is **expected behavior** - the system does not calculate margins without complete COGS data.
+
+### FrontEnd Handling
+Display appropriate empty state to users:
+- Show warning badge with coverage percentage
+- Provide call-to-action to assign COGS
+- See component: `CogsMissingState` or `MissingCogsAlert`
+
+### Data Pipeline Status
+- ✅ `weekly_payout_summary` - Working (populated by Epic 2)
+- ✅ `cogs` table - Has 40 records (Epic 12, 16, 56)
+- ❌ `weekly_margin_fact` - **EMPTY** (data aggregation pipeline not implemented)
+
+### Solution
+See **Request #113** for complete documentation:
+- Epic 56 (Historical Inventory Import) has been completed but does NOT populate `weekly_margin_fact`
+- This requires a separate data aggregation pipeline (future roadmap item)
+- FrontEnd should display empty state when `cogs_total === null`
+- See `frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md` for details

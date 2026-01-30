@@ -516,7 +516,47 @@ It's an approximation. Actual completion may vary by ±5-10 seconds depending on
 
 ---
 
-**Backend Team**  
-**Date**: 2025-01-27  
+**Backend Team**
+**Date**: 2025-01-27
 **Status**: ✅ Ready for Frontend Integration
+
+---
+
+## Current Status (2026-01-30)
+
+### Implementation Status
+- ✅ Finance summary endpoint working
+- ✅ COGS data available (40 records in `cogs` table)
+- ✅ Margin calculation status endpoint implemented
+- ❌ Margin calculation aggregation: **NOT IMPLEMENTED**
+
+### Why Returns Null
+The endpoint returns `null` for margin fields because `weekly_margin_fact` table is not being populated by the data aggregation pipeline.
+
+### Expected Behavior
+When `weekly_margin_fact` has data:
+```json
+{
+  "cogs_total": 53626.0,
+  "cogs_coverage_pct": 100.0,
+  "gross_profit": 102038.76,
+  "margin_pct": 33.4
+}
+```
+
+### Roadmap
+- **Epic 56**: Completed (2026-01-29) - Historical COGS import from WB API
+  - Does NOT populate `weekly_margin_fact`
+  - Only imports COGS data into `cogs` table
+- **Future**: Separate Epic needed for margin data aggregation
+  - Required: Pipeline to aggregate `cogs` → `weekly_margin_fact`
+  - Trigger points: COGS assignment, historical import, weekly scheduled task
+  - See **Request #113** for complete documentation
+
+### FrontEnd Action Required
+Display empty state when:
+- `cogs_total === null`
+- `gross_profit === null`
+
+See `frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md` for implementation details.
 

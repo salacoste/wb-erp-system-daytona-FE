@@ -425,6 +425,36 @@ const { data, error } = useAdvertisingSyncStatus({
 
 ---
 
+## 404 Error for Date Outside Available Range (Updated 2026-01-30)
+
+### Scenario
+
+When querying advertising data for a date range with no data, the API returns:
+- HTTP 200 with empty `items: []`
+- **NOT** a 404 error (404 only occurs for invalid cabinet IDs)
+
+### Expected Behavior
+
+- Empty response with `summary: { totalSpend: 0, ... }`
+- FrontEnd should display empty state, not error state
+- Consider adding sync status endpoint for available date range
+
+### Example
+
+**Request**: `GET /v1/analytics/advertising?from=2025-11-18&to=2025-11-24`
+**Response**: HTTP 200 OK with empty data (no data exists for this range)
+
+**Solution**: Use sync status endpoint to get available date range:
+```http
+GET /v1/analytics/advertising/sync-status
+```
+
+Response includes `dataAvailableFrom` and `dataAvailableTo` fields.
+
+**Documentation**: [Request #115](./115-advertising-date-filter-empty-state-behavior.md) - Complete empty state handling guide
+
+---
+
 *Created: 2025-12-22*
 *Fixed: 2025-12-22 22:11 MSK*
 *Backend Analysis & Resolution by James (Full Stack Developer)*

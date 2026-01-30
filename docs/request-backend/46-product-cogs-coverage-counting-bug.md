@@ -230,3 +230,34 @@ The frontend displays these metrics in the "Статистика товаров"
 - **Frontend Component**: `frontend/src/app/(dashboard)/analytics/dashboard/page.tsx`
 - **Backend Service**: `src/analytics/weekly-analytics.service.ts:2523`
 - **Story**: `docs/stories/epic-6/story-6.4-fe-cabinet-summary.md`
+
+---
+
+## Resolution Update (2026-01-30)
+
+### Root Cause
+This was not a bug but a data availability issue. The `weekly_margin_fact` table was never populated by any aggregation pipeline.
+
+### Current Status
+- **Table Status**: `weekly_margin_fact` is EMPTY
+- **COGS Records**: 40 records exist in `cogs` table
+- **Calculation Status**: Backend logic is correct, only returns null when table is empty
+
+### FrontEnd Action Required
+Display the `CogsMissingState` component when:
+- `cogs_total === null`
+- `gross_profit === null`
+
+See **Request #113** for complete documentation on:
+- Why margin fields return `null`
+- Data pipeline status
+- FrontEnd empty state handling
+- Future roadmap for margin aggregation
+
+### Implementation Details
+See `frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md` for:
+- Complete explanation of the issue
+- FrontEnd component examples
+- Code examples for handling null values
+- Testing scenarios
+- Solution roadmap

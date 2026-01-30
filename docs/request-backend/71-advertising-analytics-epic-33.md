@@ -479,6 +479,42 @@ Authorization: Bearer <wb-token>
 
 ---
 
+## Data Availability (Updated 2026-01-30)
+
+### Actual Data Range
+
+The advertising analytics API contains data from **2025-12-01 to 2026-01-28**.
+
+### Querying Outside Available Range
+
+When querying with `from`/`to` parameters that don't overlap with this range:
+- The API correctly returns empty results
+- `items: []` and `summary: { totalSpend: 0, ... }`
+- This is expected behavior - no data exists for requested period
+
+### Example
+
+**Request**: `GET /v1/analytics/advertising?from=2025-11-18&to=2025-11-24`
+**Result**: Empty (2025-11-18 to 2025-11-24 is BEFORE data starts)
+
+**Solution**: Use dates within the available range (2025-12-01 to 2026-01-28).
+
+### Frontend Integration
+
+**Empty State Handling**:
+1. Check if requested date range overlaps with available data
+2. Display empty state component when no overlap
+3. Show available date range to user
+4. Provide smart date picker with unavailable dates disabled
+
+**Component Reference**:
+- `AdvertisingEmptyState` - Empty state component
+- Smart date picker - Calendar with unavailable dates disabled
+
+**Documentation**: [Request #115](./115-advertising-date-filter-empty-state-behavior.md) - Complete empty state guide
+
+---
+
 ## Related Documentation
 
 ### Backend (Updated 2025-12-24)
@@ -504,5 +540,5 @@ Authorization: Bearer <wb-token>
 ---
 
 *Дата создания: 2025-12-22*
-*Последнее обновление: 2025-12-24*
+*Последнее обновление: 2026-01-30*
 *SDK Version: daytona-wildberries-typescript-sdk v2.3.1+*
