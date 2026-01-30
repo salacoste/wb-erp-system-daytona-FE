@@ -15,6 +15,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { useDashboardMetricsWithComparison } from '@/hooks/useDashboardMetricsWithPeriod'
 import { useProcessingStatus } from '@/hooks/useProcessingStatus'
@@ -23,6 +24,7 @@ import { useFinancialSummary } from '@/hooks/useFinancialSummary'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
 import { useAdvertisingAnalytics } from '@/hooks/useAdvertisingAnalytics'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
+import { ROUTES } from '@/lib/routes'
 import { MetricCardEnhanced } from '@/components/custom/MetricCardEnhanced'
 import { ProductCountMetricCard } from '@/components/custom/ProductCountMetricCard'
 import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
@@ -42,6 +44,7 @@ import { ProcessingAlert, FailedAlert, ErrorAlert } from './DashboardAlerts'
  * Story 60.5-FE: Remove data duplication
  */
 export function DashboardContent(): React.ReactElement {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const { periodType, selectedWeek, selectedMonth, lastRefresh } = useDashboardPeriod()
   const { current, previous, isLoading, isFetching, isError, error, refetch } =
@@ -148,16 +151,22 @@ export function DashboardContent(): React.ReactElement {
         <MetricCardEnhanced
           title="Маржа %"
           value={calculateMarginPercentage(summary?.gross_profit, summary?.sale_gross_total)}
+          previousValue={calculateMarginPercentage(previous?.grossProfit, previous?.revenue)}
           format="percentage"
           icon={Percent}
           tooltip="Валовая маржа = (Выручка - COGS) / Выручка"
           isLoading={summaryLoading}
+          showCogsWarning={summary?.cogs_total === null}
+          productsWithCogs={productsWithCogs}
+          totalProducts={totalProducts}
+          cogsCoverage={cogsCoverage}
+          onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
         />
 
         {/* Card 4: Товаров (AC2) */}
         <ProductCountMetricCard
-          count={totalProducts}
-          isLoading={productsLoading || summaryLoading}
+          count={productCount ?? 0}
+          isLoading={productsLoading}
         />
 
         {/* Card 5: COGS покрытие (AC5) */}

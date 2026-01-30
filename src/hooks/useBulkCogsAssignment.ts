@@ -6,11 +6,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type {
-  BulkCogsUploadRequest,
-  BulkCogsUploadResponse,
-  BulkCogsItem,
-} from '@/types/api'
+import type { BulkCogsUploadRequest, BulkCogsUploadResponse, BulkCogsItem } from '@/types/api'
 
 export interface BulkCogsAssignmentParams {
   items: BulkCogsItem[]
@@ -92,15 +88,25 @@ export function useBulkCogsAssignment() {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
 
       // Log detailed results
-      const { succeeded, failed, results } = data.data
+      const { succeeded, failed, results, marginRecalculation } = data.data
 
       console.log(`✅ Bulk COGS assignment completed:`)
       console.log(`   Succeeded: ${succeeded}/${variables.items.length}`)
       console.log(`   Failed: ${failed}/${variables.items.length}`)
 
+      // Log margin recalculation status (Request #118/119 - Automatic margin recalculation)
+      if (marginRecalculation) {
+        console.log(`   Margin Recalculation:`)
+        console.log(`     Status: ${marginRecalculation.status}`)
+        console.log(`     Weeks: ${marginRecalculation.weeks.join(', ')}`)
+        console.log(`     Task ID: ${marginRecalculation.taskId}`)
+      } else if (succeeded > 0) {
+        console.log(`   Margin Recalculation: Not triggered (no sales data for uploaded COGS)`)
+      }
+
       // Log failed items for debugging
       if (failed > 0) {
-        const failedItems = results.filter((r) => !r.success)
+        const failedItems = results.filter(r => !r.success)
         console.warn('❌ Failed items:', failedItems)
       }
     },
@@ -213,7 +219,7 @@ export function createBulkCogsItems(
     notes?: string
   }
 ): BulkCogsItem[] {
-  return nmIds.map((nm_id) => ({
+  return nmIds.map(nm_id => ({
     nm_id,
     unit_cost_rub: unitCostRub,
     valid_from: validFrom,

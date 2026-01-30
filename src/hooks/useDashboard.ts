@@ -13,6 +13,7 @@ import type { FinanceSummary } from '@/types/finance-summary'
 export interface DashboardMetrics {
   totalPayable?: number
   revenue?: number
+  grossProfit?: number
   totalProducts?: number
 }
 
@@ -46,6 +47,7 @@ async function fetchFinanceSummaryForWeek(week: string): Promise<DashboardMetric
   return {
     totalPayable: summary.to_pay_goods_total ?? summary.to_pay_goods,
     revenue: summary.sale_gross_total ?? summary.sale_gross,
+    grossProfit: summary.gross_profit ?? undefined,
   }
 }
 

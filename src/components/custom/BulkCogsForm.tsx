@@ -3,10 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useProducts } from '@/hooks/useProducts'
-import {
-  validateBulkCogsAssignment,
-  createBulkCogsItems,
-} from '@/hooks/useBulkCogsAssignment'
+import { validateBulkCogsAssignment, createBulkCogsItems } from '@/hooks/useBulkCogsAssignment'
 import { useBulkCogsAssignmentWithPolling } from '@/hooks/useBulkCogsAssignmentWithPolling'
 import { MarginCalculationStatus } from './MarginCalculationStatus'
 import { formatCogs } from '@/hooks/useSingleCogsAssignment'
@@ -32,15 +29,21 @@ import {
 } from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Search,
-  CheckSquare,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-  XCircle,
-} from 'lucide-react'
+import { Search, CheckSquare, Loader2, AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
+
+/**
+ * Translate margin recalculation status to Russian
+ * Request #118/119 - Backend fix for automatic margin recalculation
+ */
+function getStatusText(status: string): string {
+  const statusMap: Record<string, string> = {
+    pending: 'В очереди',
+    in_progress: 'Выполняется',
+    completed: 'Завершено',
+  }
+  return statusMap[status] || status
+}
 
 interface FormData {
   unit_cost_rub: string
@@ -119,13 +122,13 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
   // Get selected product details
   const selectedProductDetails = useMemo(() => {
     if (!data?.products) return []
-    return data.products.filter((p) => selectedProducts.has(p.nm_id))
+    return data.products.filter(p => selectedProducts.has(p.nm_id))
   }, [data, selectedProducts])
 
   // Check if all visible products are selected
   const allVisibleSelected = useMemo(() => {
     if (!data?.products || data.products.length === 0) return false
-    return data.products.every((p) => selectedProducts.has(p.nm_id))
+    return data.products.every(p => selectedProducts.has(p.nm_id))
   }, [data, selectedProducts])
 
   // Handle individual product selection
@@ -146,12 +149,12 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
     if (allVisibleSelected) {
       // Deselect all visible
       const newSelected = new Set(selectedProducts)
-      data.products.forEach((p) => newSelected.delete(p.nm_id))
+      data.products.forEach(p => newSelected.delete(p.nm_id))
       setSelectedProducts(newSelected)
     } else {
       // Select all visible
       const newSelected = new Set(selectedProducts)
-      data.products.forEach((p) => newSelected.add(p.nm_id))
+      data.products.forEach(p => newSelected.add(p.nm_id))
       setSelectedProducts(newSelected)
     }
   }
@@ -193,12 +196,8 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
     mutate(
       { items },
       {
-        onSuccess: (response) => {
-          if (
-            !response ||
-            typeof response !== 'object' ||
-            !('data' in response)
-          ) {
+        onSuccess: response => {
+          if (!response || typeof response !== 'object' || !('data' in response)) {
             return
           }
           const bulkResponse = response as {
@@ -234,7 +233,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
             setTimeout(onSuccess, 2000) // Delay for user to see results
           }
         },
-        onError: (err) => {
+        onError: err => {
           setShowPreview(false)
           toast.error('Ошибка при назначении себестоимости', {
             description: err instanceof Error ? err.message : 'Неизвестная ошибка',
@@ -248,9 +247,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
   const handleRetry = () => {
     if (!resultData) return
 
-    const failedNmIds = resultData.data.results
-      .filter((r) => !r.success)
-      .map((r) => r.nm_id)
+    const failedNmIds = resultData.data.results.filter(r => !r.success).map(r => r.nm_id)
 
     // Update selection to only failed items
     setSelectedProducts(new Set(failedNmIds))
@@ -284,9 +281,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
           <div className="flex items-center justify-between">
-            <span>
-              {error instanceof Error ? error.message : 'Ошибка загрузки товаров'}
-            </span>
+            <span>{error instanceof Error ? error.message : 'Ошибка загрузки товаров'}</span>
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               Повторить
             </Button>
@@ -307,7 +302,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
             type="text"
             placeholder="Поиск по артикулу или названию..."
             value={search}
-            onChange={(e) => {
+            onChange={e => {
               setSearch(e.target.value)
               setCursor(undefined)
               setPrevCursors([])
@@ -319,13 +314,9 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
         {/* Empty state */}
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
           <CheckSquare className="mb-4 h-12 w-12 text-gray-400" />
-          <h3 className="mb-2 text-lg font-semibold text-gray-900">
-            Товары не найдены
-          </h3>
+          <h3 className="mb-2 text-lg font-semibold text-gray-900">Товары не найдены</h3>
           <p className="text-sm text-gray-500">
-            {search
-              ? 'Попробуйте изменить условия поиска'
-              : 'Все товары уже имеют себестоимость'}
+            {search ? 'Попробуйте изменить условия поиска' : 'Все товары уже имеют себестоимость'}
           </p>
         </div>
       </div>
@@ -342,7 +333,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
             type="text"
             placeholder="Поиск по артикулу или названию..."
             value={search}
-            onChange={(e) => {
+            onChange={e => {
               setSearch(e.target.value)
               setCursor(undefined)
               setPrevCursors([])
@@ -373,7 +364,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.products.map((product) => (
+            {data.products.map(product => (
               <TableRow
                 key={product.nm_id}
                 className={selectedProducts.has(product.nm_id) ? 'bg-blue-50' : ''}
@@ -381,7 +372,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
                 <TableCell>
                   <Checkbox
                     checked={selectedProducts.has(product.nm_id)}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       handleProductSelect(product.nm_id, checked as boolean)
                     }
                     aria-label={`Выбрать ${product.nm_id}`}
@@ -389,9 +380,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
                 </TableCell>
                 <TableCell className="font-mono text-sm">{product.nm_id}</TableCell>
                 <TableCell className="font-medium">{product.sa_name}</TableCell>
-                <TableCell className="text-sm text-gray-600">
-                  {product.brand || '—'}
-                </TableCell>
+                <TableCell className="text-sm text-gray-600">{product.brand || '—'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -460,7 +449,7 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
               {...register('unit_cost_rub', {
                 required: 'Себестоимость обязательна',
                 min: { value: 0, message: 'Себестоимость не может быть отрицательной' },
-                validate: (value) => {
+                validate: value => {
                   const num = parseFloat(value)
                   if (isNaN(num)) return 'Введите корректное число'
                   if (!Number.isFinite(num)) return 'Введите корректное число'
@@ -558,12 +547,8 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
 
           <div className="space-y-4">
             <div className="rounded-lg bg-gray-50 p-4">
-              <div className="mb-2 text-sm font-medium text-gray-600">
-                Себестоимость
-              </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {formattedPreview || '—'}
-              </div>
+              <div className="mb-2 text-sm font-medium text-gray-600">Себестоимость</div>
+              <div className="text-2xl font-bold text-gray-900">{formattedPreview || '—'}</div>
             </div>
 
             <div>
@@ -573,11 +558,9 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
               <div className="max-h-64 overflow-y-auto rounded-lg border">
                 <Table>
                   <TableBody>
-                    {selectedProductDetails.slice(0, 50).map((product) => (
+                    {selectedProductDetails.slice(0, 50).map(product => (
                       <TableRow key={product.nm_id}>
-                        <TableCell className="font-mono text-sm">
-                          {product.nm_id}
-                        </TableCell>
+                        <TableCell className="font-mono text-sm">{product.nm_id}</TableCell>
                         <TableCell>{product.sa_name}</TableCell>
                       </TableRow>
                     ))}
@@ -632,6 +615,41 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
 
           {resultData && (
             <div className="space-y-4">
+              {/* Margin Recalculation Status (Request #118/119) */}
+              {resultData.data.marginRecalculation && (
+                <Alert variant="default" className="border-blue-200 bg-blue-50">
+                  <AlertCircle className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-900">
+                    <div className="font-medium mb-1">Пересчёт маржи запущен автоматически</div>
+                    <div className="text-sm space-y-1">
+                      <div>
+                        Статус:{' '}
+                        <span className="font-medium">
+                          {getStatusText(resultData.data.marginRecalculation.status)}
+                        </span>
+                      </div>
+                      {resultData.data.marginRecalculation.weeks.length > 0 && (
+                        <div>Недели: {resultData.data.marginRecalculation.weeks.join(', ')}</div>
+                      )}
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* No Margin Recalculation Warning */}
+              {resultData.data.succeeded > 0 && !resultData.data.marginRecalculation && (
+                <Alert variant="default" className="border-yellow-200 bg-yellow-50">
+                  <AlertCircle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-900">
+                    <div className="font-medium mb-1">Пересчёт маржи не требуется</div>
+                    <div className="text-sm">
+                      Для загруженных недель нет данных о продажах. Маржа будет рассчитана
+                      автоматически после импорта финансовых отчетов.
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {/* Margin Calculation Status */}
               {isPolling && resultData.data.succeeded > 0 && (
                 <MarginCalculationStatus
@@ -680,19 +698,15 @@ export function BulkCogsForm({ onSuccess }: { onSuccess?: () => void }) {
               {/* Failed Items */}
               {resultData.data.failed > 0 && (
                 <div>
-                  <div className="mb-2 text-sm font-medium text-gray-900">
-                    Не удалось обновить:
-                  </div>
+                  <div className="mb-2 text-sm font-medium text-gray-900">Не удалось обновить:</div>
                   <div className="max-h-64 overflow-y-auto rounded-lg border">
                     <Table>
                       <TableBody>
                         {resultData.data.results
-                          .filter((r) => !r.success)
-                          .map((result) => (
+                          .filter(r => !r.success)
+                          .map(result => (
                             <TableRow key={result.nm_id}>
-                              <TableCell className="font-mono text-sm">
-                                {result.nm_id}
-                              </TableCell>
+                              <TableCell className="font-mono text-sm">{result.nm_id}</TableCell>
                               <TableCell className="text-sm text-red-600">
                                 {result.error_message || result.error_code}
                               </TableCell>

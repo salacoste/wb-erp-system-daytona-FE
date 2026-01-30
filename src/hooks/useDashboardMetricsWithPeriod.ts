@@ -48,6 +48,7 @@ async function fetchDashboardMetrics(week: string): Promise<DashboardMetrics> {
   return {
     totalPayable: summary.to_pay_goods_total ?? summary.to_pay_goods,
     revenue: summary.sale_gross_total ?? summary.sale_gross,
+    grossProfit: summary.gross_profit ?? undefined,
   }
 }
 
@@ -70,17 +71,20 @@ async function fetchMonthlyMetrics(month: string): Promise<DashboardMetrics> {
     // Aggregate successful results
     let aggregatedTotalPayable = 0
     let aggregatedRevenue = 0
+    let aggregatedGrossProfit = 0
 
     weeklyResults.forEach(result => {
       if (result.status === 'fulfilled' && result.value) {
         aggregatedTotalPayable += result.value.totalPayable ?? 0
         aggregatedRevenue += result.value.revenue ?? 0
+        aggregatedGrossProfit += result.value.grossProfit ?? 0
       }
     })
 
     return {
       totalPayable: aggregatedTotalPayable || undefined,
       revenue: aggregatedRevenue || undefined,
+      grossProfit: aggregatedGrossProfit || undefined,
     }
   } catch (error) {
     console.error('Error fetching monthly metrics:', error)
