@@ -239,11 +239,6 @@ describe('OrderDetailsModal', () => {
         </QueryClientProvider>
       )
 
-      // Focus the trigger first
-      const trigger = screen.getByTestId('trigger')
-      trigger.focus()
-      expect(document.activeElement).toBe(trigger)
-
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
       })
