@@ -210,6 +210,6 @@ function calculateMarginPercentage(
   grossProfit: number | null | undefined,
   revenue: number | null | undefined
 ): number | null {
-  if (!grossProfit || !revenue || revenue === 0) return null
+  if (grossProfit == null || revenue == null || revenue === 0) return null
   return (grossProfit / revenue) * 100
 }
