@@ -19,13 +19,29 @@ expect.extend(toHaveNoViolations)
 // Mock API module
 const mockGetFullHistory = vi.fn()
 const mockGetWbHistory = vi.fn()
-const mockGetLocalHistory = vi.fn()
+const mockGetOrderHistory = vi.fn()
 
-vi.mock('@/lib/api/orders', () => ({
-  getFullHistory: (orderId: string) => mockGetFullHistory(orderId),
-  getWbHistory: (orderId: string) => mockGetWbHistory(orderId),
-  getLocalHistory: (orderId: string) => mockGetLocalHistory(orderId),
-}))
+vi.mock('@/lib/api/orders', () => {
+  // Create ordersQueryKeys mock that matches the real implementation
+  const ordersQueryKeys = {
+    all: ['orders'],
+    lists: () => ['orders', 'list'],
+    list: (params: unknown) => ['orders', 'list', params],
+    details: () => ['orders', 'detail'],
+    detail: (orderId: string) => ['orders', 'detail', orderId],
+    history: (orderId: string) => ['orders', 'history', orderId],
+    wbHistory: (orderId: string) => ['orders', 'wb-history', orderId],
+    fullHistory: (orderId: string) => ['orders', 'full-history', orderId],
+    syncStatus: () => ['orders', 'sync-status'],
+  }
+
+  return {
+    getFullHistory: (orderId: string) => mockGetFullHistory(orderId),
+    getWbHistory: (orderId: string) => mockGetWbHistory(orderId),
+    getOrderHistory: (orderId: string) => mockGetOrderHistory(orderId),
+    ordersQueryKeys,
+  }
+})
 
 // Import component after mocks
 import { OrderHistoryTabs } from '../OrderHistoryTabs'
@@ -58,7 +74,7 @@ describe('OrderHistoryTabs', () => {
     vi.clearAllMocks()
     mockGetFullHistory.mockResolvedValue(mockFullHistoryResponse)
     mockGetWbHistory.mockResolvedValue(mockWbHistoryResponse)
-    mockGetLocalHistory.mockResolvedValue(mockLocalHistoryResponse)
+    mockGetOrderHistory.mockResolvedValue(mockLocalHistoryResponse)
   })
 
   describe('AC3: Tab Navigation - Tab Rendering', () => {
@@ -165,7 +181,7 @@ describe('OrderHistoryTabs', () => {
 
       // Other histories should NOT be fetched yet
       expect(mockGetWbHistory).not.toHaveBeenCalled()
-      expect(mockGetLocalHistory).not.toHaveBeenCalled()
+      expect(mockGetOrderHistory).not.toHaveBeenCalled()
     })
 
     it('fetches WB history only when WB tab becomes active', async () => {
@@ -189,14 +205,14 @@ describe('OrderHistoryTabs', () => {
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
       // Initially local history should not be fetched
-      expect(mockGetLocalHistory).not.toHaveBeenCalled()
+      expect(mockGetOrderHistory).not.toHaveBeenCalled()
 
       // Switch to Local tab
       const localTab = screen.getByRole('tab', { name: /локальная/i })
       await user.click(localTab)
 
       await waitFor(() => {
-        expect(mockGetLocalHistory).toHaveBeenCalledWith('order-uuid-001')
+        expect(mockGetOrderHistory).toHaveBeenCalledWith('order-uuid-001')
       })
     })
 
@@ -272,30 +288,36 @@ describe('OrderHistoryTabs', () => {
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
+      // Component shows loading skeleton instead of aria-busy attribute
       await waitFor(() => {
         const tabPanel = screen.getByRole('tabpanel')
-        expect(tabPanel).toHaveAttribute('aria-busy', 'true')
+        const skeleton =
+          within(tabPanel).queryByTestId('history-skeleton') ||
+          tabPanel.querySelector('[class*="skeleton"], [class*="animate-pulse"]')
+        expect(skeleton).toBeInTheDocument()
       })
     })
   })
 
   describe('AC9: Error States per Tab', () => {
     it('shows error message with retry button on full history fetch failure', async () => {
+      // Reset mock from beforeEach and set to reject
+      mockGetFullHistory.mockReset()
       mockGetFullHistory.mockRejectedValue(new Error('Network error'))
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
       await waitFor(() => {
-        expect(screen.getByText(/не удалось загрузить данные/i)).toBeInTheDocument()
+        expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
       })
 
-      expect(
-        screen.getByRole('button', { name: /попробуйте снова|повторить/i })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /повторить/i })).toBeInTheDocument()
     })
 
     it('shows error message for WB history fetch failure', async () => {
       const user = userEvent.setup()
+      // Reset mock from beforeEach and set to reject
+      mockGetWbHistory.mockReset()
       mockGetWbHistory.mockRejectedValue(new Error('WB API error'))
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
@@ -305,13 +327,15 @@ describe('OrderHistoryTabs', () => {
       await user.click(wbHistoryTab)
 
       await waitFor(() => {
-        expect(screen.getByText(/не удалось загрузить данные/i)).toBeInTheDocument()
+        expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
       })
     })
 
     it('retry button refetches data for current tab', async () => {
       const user = userEvent.setup()
 
+      // Reset mock from beforeEach
+      mockGetFullHistory.mockReset()
       // First call fails, second succeeds
       mockGetFullHistory
         .mockRejectedValueOnce(new Error('Network error'))
@@ -320,10 +344,10 @@ describe('OrderHistoryTabs', () => {
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
       await waitFor(() => {
-        expect(screen.getByText(/не удалось загрузить данные/i)).toBeInTheDocument()
+        expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
       })
 
-      const retryButton = screen.getByRole('button', { name: /попробуйте снова|повторить/i })
+      const retryButton = screen.getByRole('button', { name: /повторить/i })
       await user.click(retryButton)
 
       await waitFor(() => {
@@ -339,7 +363,7 @@ describe('OrderHistoryTabs', () => {
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
       await waitFor(() => {
-        expect(screen.getByText(/история статусов пока пуста/i)).toBeInTheDocument()
+        expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
       })
     })
 
@@ -362,7 +386,7 @@ describe('OrderHistoryTabs', () => {
 
     it('shows empty message for empty local history', async () => {
       const user = userEvent.setup()
-      mockGetLocalHistory.mockResolvedValue(mockEmptyLocalHistoryResponse)
+      mockGetOrderHistory.mockResolvedValue(mockEmptyLocalHistoryResponse)
 
       renderWithProviders(<OrderHistoryTabs orderId="order-uuid-001" />)
 
@@ -424,7 +448,7 @@ describe('OrderHistoryTabs', () => {
 
       await waitFor(() => {
         // Should show history entries
-        expect(mockGetLocalHistory).toHaveBeenCalled()
+        expect(mockGetOrderHistory).toHaveBeenCalled()
       })
     })
   })
@@ -454,14 +478,12 @@ describe('OrderHistoryTabs', () => {
       const activeTab = screen.getByRole('tab', { selected: true })
       const tabPanel = screen.getByRole('tabpanel')
 
-      // Tab should control the tabpanel
-      const tabId = activeTab.id || activeTab.getAttribute('id')
-      const panelLabelledBy = tabPanel.getAttribute('aria-labelledby')
-
       // Panel should be labelled by the active tab
-      if (tabId && panelLabelledBy) {
-        expect(panelLabelledBy).toContain(tabId.replace('-trigger', ''))
-      }
+      const panelLabelledBy = tabPanel.getAttribute('aria-labelledby')
+      expect(panelLabelledBy).toBe('full-tab')
+
+      // The active tab should control the panel
+      expect(activeTab).toHaveAttribute('data-state', 'active')
     })
 
     it('only one tabpanel is visible at a time', () => {

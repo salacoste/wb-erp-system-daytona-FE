@@ -13,9 +13,7 @@ vi.mock('recharts', () => ({
   BarChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="bar-chart">{children}</div>
   ),
-  Bar: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="bar">{children}</div>
-  ),
+  Bar: ({ children }: { children: React.ReactNode }) => <div data-testid="bar">{children}</div>,
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
   Tooltip: () => <div data-testid="tooltip" />,
@@ -91,12 +89,14 @@ describe('ExpenseChart', () => {
 
     render(<ExpenseChart />, { wrapper })
 
+    // Skeleton is rendered without card title (uses ExpenseChartSkeleton component)
     await waitFor(() => {
-      expect(screen.getByText('Разбивка расходов')).toBeInTheDocument()
+      const skeleton = document.querySelector('.animate-pulse')
+      expect(skeleton).toBeInTheDocument()
     })
 
-    const skeleton = document.querySelector('.animate-pulse')
-    expect(skeleton).toBeInTheDocument()
+    // Check for aria-busy attribute
+    expect(document.querySelector('[aria-busy="true"]')).toBeInTheDocument()
   })
 
   it('displays error message with retry button when error occurs', { timeout: 5000 }, async () => {
@@ -112,7 +112,7 @@ describe('ExpenseChart', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Не удалось загрузить данные о расходах. Пожалуйста, попробуйте еще раз.'),
+        screen.getByText('Не удалось загрузить данные о расходах. Пожалуйста, попробуйте еще раз.')
       ).toBeInTheDocument()
       expect(screen.getByText('Повторить')).toBeInTheDocument()
     })
@@ -129,10 +129,9 @@ describe('ExpenseChart', () => {
     render(<ExpenseChart />, { wrapper })
 
     await waitFor(() => {
+      expect(screen.getByText('Нет данных за этот период')).toBeInTheDocument()
       expect(
-        screen.getByText(
-          'Данные о расходах пока недоступны. Расходы появятся после загрузки финансовых отчетов.',
-        ),
+        screen.getByText('Данные о расходах появятся после загрузки финансовых отчетов')
       ).toBeInTheDocument()
     })
   })
@@ -180,4 +179,3 @@ describe('ExpenseChart', () => {
     })
   })
 })
-

@@ -27,12 +27,12 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
       expect(screen.getByTestId('drr-slider')).toBeInTheDocument()
     })
 
-    it('should have range 0-30%', () => {
+    it('should have range 0-50%', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
       const input = screen.getByTestId('drr-input')
       expect(input).toHaveAttribute('min', '0')
-      expect(input).toHaveAttribute('max', '30')
+      expect(input).toHaveAttribute('max', '50')
     })
 
     it('should default to 5%', () => {
@@ -381,7 +381,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
 
       const slider = screen.getByTestId('drr-slider')
       expect(slider).toHaveAttribute('aria-valuemin', '0')
-      expect(slider).toHaveAttribute('aria-valuemax', '30')
+      expect(slider).toHaveAttribute('aria-valuemax', '50')
     })
 
     it('should have aria-valuetext with level', () => {

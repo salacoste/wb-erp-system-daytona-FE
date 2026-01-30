@@ -26,6 +26,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
+import { useAvailableWeeks } from '@/hooks/useFinancialSummary'
 import { formatWeekLabel, formatMonthLabel } from '@/lib/period-helpers'
 import type { PeriodType } from '@/contexts/dashboard-period-types'
 
@@ -69,7 +70,15 @@ export function DashboardPeriodSelector({
     refresh,
   } = useDashboardPeriod()
 
-  const availableWeeks = useGeneratedWeeks(selectedWeek)
+  // Fetch available weeks from backend API
+  const { data: backendWeeks } = useAvailableWeeks()
+
+  // Always call hooks (Rules of Hooks)
+  const generatedWeeks = useGeneratedWeeks(selectedWeek)
+
+  // Use backend weeks if available, otherwise fallback to generated weeks
+  const availableWeeks = backendWeeks?.map(w => w.week) || generatedWeeks
+
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [relativeTime, setRelativeTime] = useState('')
 

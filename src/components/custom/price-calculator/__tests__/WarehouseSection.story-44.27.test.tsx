@@ -120,7 +120,7 @@ describe('Story 44.27: AC1 - WarehouseSection Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseWarehouseCoefficients.mockReturnValue(
-      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>
     )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
@@ -130,7 +130,13 @@ describe('Story 44.27: AC1 - WarehouseSection Integration', () => {
     // Mock useSupplyTariffs for WarehouseSelect with useSupplySource=true
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),
@@ -152,7 +158,7 @@ describe('Story 44.27: AC1 - WarehouseSection Integration', () => {
     // Icon should be present
     const header = screen.getByText('Склад и хранение')
     expect(header.closest('.flex')).toContainElement(
-      header.parentElement?.querySelector('[aria-hidden="true"]') || null,
+      header.parentElement?.querySelector('[aria-hidden="true"]') || null
     )
   })
 
@@ -171,7 +177,7 @@ describe('Story 44.27: AC2 - Form State for Warehouse', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseWarehouseCoefficients.mockReturnValue(
-      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>
     )
     // Fixed: Add missing mock for useWarehouses
     mockUseWarehouses.mockReturnValue({
@@ -182,7 +188,13 @@ describe('Story 44.27: AC2 - Form State for Warehouse', () => {
     // Mock useSupplyTariffs for WarehouseSelect with useSupplySource=true
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),
@@ -258,7 +270,13 @@ describe('Story 44.27: AC4 - Coefficient Application to Logistics', () => {
     } as ReturnType<typeof useWarehouses>)
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),
@@ -309,13 +327,15 @@ describe('Story 44.27: AC4 - Coefficient Application to Logistics', () => {
 
     mockUseWarehouseCoefficients.mockReturnValue({
       ...mockCoefficientsResponse,
-      logisticsCoeff: { value: 1.25, source: 'auto', originalValue: 1.25 },
+      logisticsCoeff: { value: 1.25, source: 'manual', originalValue: undefined },
       setLogisticsValue,
     } as ReturnType<typeof useWarehouseCoefficients>)
 
     renderWarehouseSection({ warehouseId: 507 })
 
     const input = screen.getByDisplayValue('1.25')
+    // Use click().type() instead of clear() for better compatibility
+    await user.click(input)
     await user.clear(input)
     await user.type(input, '1.5')
 
@@ -339,7 +359,13 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
     } as ReturnType<typeof useWarehouses>)
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),
@@ -366,7 +392,7 @@ describe('Story 44.27: AC6 - Delivery Date Selection', () => {
 
   it('should hide delivery date picker when no warehouse selected', () => {
     mockUseWarehouseCoefficients.mockReturnValue(
-      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>
     )
 
     renderWarehouseSection({ warehouseId: null })
@@ -426,7 +452,7 @@ describe('Story 44.27: AC7 - API Request Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseWarehouseCoefficients.mockReturnValue(
-      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>
     )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
@@ -435,7 +461,13 @@ describe('Story 44.27: AC7 - API Request Integration', () => {
     } as ReturnType<typeof useWarehouses>)
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),
@@ -487,7 +519,7 @@ describe('Story 44.27: Edge Cases & Invariants', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseWarehouseCoefficients.mockReturnValue(
-      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>
     )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
@@ -496,7 +528,13 @@ describe('Story 44.27: Edge Cases & Invariants', () => {
     } as ReturnType<typeof useWarehouses>)
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),
@@ -585,7 +623,7 @@ describe('Story 44.27: Accessibility', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseWarehouseCoefficients.mockReturnValue(
-      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>,
+      mockCoefficientsResponse as ReturnType<typeof useWarehouseCoefficients>
     )
     mockUseWarehouses.mockReturnValue({
       data: [mockWarehouse],
@@ -594,7 +632,13 @@ describe('Story 44.27: Accessibility', () => {
     } as ReturnType<typeof useWarehouses>)
     mockUseSupplyTariffs.mockReturnValue({
       coefficients: [],
-      warehouses: [{ id: 507, name: 'Коледино', tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 } }],
+      warehouses: [
+        {
+          id: 507,
+          name: 'Коледино',
+          tariffs: { ...mockWarehouse.tariffs, logisticsCoefficient: 1.0, storageCoefficient: 1.0 },
+        },
+      ],
       findTariffsForDate: vi.fn(() => null),
       findTariffsByNameAndDate: vi.fn(() => null),
       getTariffsByBoxType: vi.fn(() => []),

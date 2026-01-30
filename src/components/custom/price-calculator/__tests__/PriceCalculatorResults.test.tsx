@@ -52,9 +52,7 @@ describe('PriceCalculatorResults', () => {
       render(<PriceCalculatorResults data={null} loading={false} />)
 
       // Component should render the empty state with Russian text
-      expect(
-        screen.getByText(/Введите параметры затрат и нажмите/)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/Введите параметры затрат и нажмите/)).toBeInTheDocument()
     })
 
     it('shows loading skeleton when loading initially', () => {
@@ -77,14 +75,12 @@ describe('PriceCalculatorResults', () => {
     it('renders cost breakdown chart section', () => {
       render(<PriceCalculatorResults data={mockPriceCalculatorResponse} />)
 
-      // CostBreakdownChart renders with Russian title
-      expect(screen.getByText('Структура затрат')).toBeInTheDocument()
+      // CostBreakdownChart renders with Russian title (renamed to "Структура цены")
+      expect(screen.getByText('Структура цены')).toBeInTheDocument()
     })
 
     it('renders warnings banner when warnings exist', () => {
-      render(
-        <PriceCalculatorResults data={mockPriceCalculatorResponseWithWarnings} />
-      )
+      render(<PriceCalculatorResults data={mockPriceCalculatorResponseWithWarnings} />)
 
       // WarningsDisplay shows Russian text
       expect(screen.getByText(/Предупреждения/)).toBeInTheDocument()
@@ -100,12 +96,7 @@ describe('PriceCalculatorResults', () => {
 
   describe('Loading State', () => {
     it('shows loading skeleton when loading', () => {
-      render(
-        <PriceCalculatorResults
-          data={mockPriceCalculatorResponse}
-          loading={true}
-        />
-      )
+      render(<PriceCalculatorResults data={mockPriceCalculatorResponse} loading={true} />)
 
       // When loading, shows skeleton
       expect(screen.getByTestId('results-skeleton')).toBeInTheDocument()
@@ -126,15 +117,11 @@ describe('PriceCalculatorResults', () => {
       const error = new Error('Calculation failed')
 
       render(
-        <PriceCalculatorResults
-          data={mockPriceCalculatorResponse}
-          loading={false}
-          error={error}
-        />
+        <PriceCalculatorResults data={mockPriceCalculatorResponse} loading={false} error={error} />
       )
 
       // When error exists, detailed results (cost breakdown) should not be shown
-      expect(screen.queryByText('Структура затрат')).not.toBeInTheDocument()
+      expect(screen.queryByText('Структура цены')).not.toBeInTheDocument()
     })
   })
 
@@ -147,9 +134,7 @@ describe('PriceCalculatorResults', () => {
     })
 
     it('renders results section with content', () => {
-      const { container } = render(
-        <PriceCalculatorResults data={mockPriceCalculatorResponse} />
-      )
+      const { container } = render(<PriceCalculatorResults data={mockPriceCalculatorResponse} />)
 
       // Verify the component renders with the test id
       const resultsDiv = container.querySelector('[data-testid="price-calculator-results"]')

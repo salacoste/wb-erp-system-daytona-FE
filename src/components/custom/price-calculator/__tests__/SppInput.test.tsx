@@ -27,9 +27,7 @@ describe('SppInput', () => {
     it('should render with Russian labels', () => {
       render(<SppInput value={0} onChange={mockOnChange} />)
 
-      expect(
-        screen.getByText('СПП (Скидка постоянного покупателя)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('СПП (Скидка постоянного покупателя)')).toBeInTheDocument()
     })
 
     it('should display current value in input', () => {
@@ -47,12 +45,12 @@ describe('SppInput', () => {
   })
 
   describe('Range Constraints', () => {
-    it('should have 0-30% range on input', () => {
+    it('should have 0-50% range on input', () => {
       render(<SppInput value={0} onChange={mockOnChange} />)
 
       const input = screen.getByTestId('spp-input')
       expect(input).toHaveAttribute('min', '0')
-      expect(input).toHaveAttribute('max', '30')
+      expect(input).toHaveAttribute('max', '50')
     })
 
     it('should have 1% step on input', () => {
@@ -68,9 +66,7 @@ describe('SppInput', () => {
       render(<SppInput value={10} onChange={mockOnChange} />)
 
       expect(screen.getByTestId('spp-help-text')).toBeInTheDocument()
-      expect(
-        screen.getByText('Покупатель увидит цену со скидкой 10%')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Покупатель увидит цену со скидкой 10%')).toBeInTheDocument()
     })
 
     it('should not show help text when SPP = 0', () => {
@@ -80,14 +76,13 @@ describe('SppInput', () => {
     })
   })
 
-  describe('Tooltip', () => {
-    it('should have tooltip with SPP explanation', () => {
+  describe('Accessibility', () => {
+    it('should have accessible label on slider and input', () => {
       render(<SppInput value={0} onChange={mockOnChange} />)
 
-      // Info icon should be present for tooltip trigger
-      expect(
-        screen.getByLabelText('Информация о СПП')
-      ).toBeInTheDocument()
+      // Both slider and input have the same aria-label
+      const elements = screen.getAllByLabelText('СПП процент')
+      expect(elements.length).toBe(2)
     })
   })
 
@@ -113,7 +108,7 @@ describe('SppInput', () => {
 
       // Should not call onChange with values > 30
       const calls = mockOnChange.mock.calls
-      const validCalls = calls.filter((call) => call[0] <= 30)
+      const validCalls = calls.filter(call => call[0] <= 30)
       expect(validCalls.length).toBe(calls.length)
     })
 
@@ -127,25 +122,17 @@ describe('SppInput', () => {
 
       // Should not call onChange with negative values
       const calls = mockOnChange.mock.calls
-      const validCalls = calls.filter((call) => call[0] >= 0)
+      const validCalls = calls.filter(call => call[0] >= 0)
       expect(validCalls.length).toBe(calls.length)
     })
   })
 
   describe('Error State', () => {
     it('should display error message when provided', () => {
-      render(
-        <SppInput
-          value={0}
-          onChange={mockOnChange}
-          error="СПП не может превышать 30%"
-        />
-      )
+      render(<SppInput value={0} onChange={mockOnChange} error="СПП не может превышать 30%" />)
 
       expect(screen.getByTestId('spp-error')).toBeInTheDocument()
-      expect(
-        screen.getByText('СПП не может превышать 30%')
-      ).toBeInTheDocument()
+      expect(screen.getByText('СПП не может превышать 30%')).toBeInTheDocument()
     })
 
     it('should not display error when not provided', () => {

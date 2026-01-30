@@ -13,17 +13,18 @@ describe('CostBreakdownChart', () => {
     it('renders chart component', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('Структура затрат')).toBeInTheDocument()
+      expect(screen.getByText('Структура цены')).toBeInTheDocument()
     })
 
     it('renders all legend items', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('Комиссия WB')).toBeInTheDocument()
-      expect(screen.getByText('Эквайринг')).toBeInTheDocument()
-      expect(screen.getByText('Реклама')).toBeInTheDocument()
-      expect(screen.getByText('НДС')).toBeInTheDocument()
-      expect(screen.getByText('Маржа')).toBeInTheDocument()
+      // Legend items with regex for flexible matching (text is split across spans)
+      expect(screen.getByText(/Комиссия/)).toBeInTheDocument()
+      expect(screen.getByText(/Эквайринг/)).toBeInTheDocument()
+      expect(screen.getByText(/Реклама/)).toBeInTheDocument()
+      expect(screen.getByText(/НДС/)).toBeInTheDocument()
+      expect(screen.getByText(/Маржа/)).toBeInTheDocument()
     })
 
     it('displays chart with proper height', () => {
@@ -57,18 +58,18 @@ describe('CostBreakdownChart', () => {
     it('has accessible title', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText('Структура затрат')).toBeInTheDocument()
+      expect(screen.getByText('Структура цены')).toBeInTheDocument()
     })
 
     it('legend items have text labels', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      // All legend items should have text labels
-      expect(screen.getByText('Комиссия WB')).toBeInTheDocument()
-      expect(screen.getByText('Эквайринг')).toBeInTheDocument()
-      expect(screen.getByText('Реклама')).toBeInTheDocument()
-      expect(screen.getByText('НДС')).toBeInTheDocument()
-      expect(screen.getByText('Маржа')).toBeInTheDocument()
+      // All legend items should have text labels (using regex for flexible matching)
+      expect(screen.getByText(/Комиссия/)).toBeInTheDocument()
+      expect(screen.getByText(/Эквайринг/)).toBeInTheDocument()
+      expect(screen.getByText(/Реклама/)).toBeInTheDocument()
+      expect(screen.getByText(/НДС/)).toBeInTheDocument()
+      expect(screen.getByText(/Маржа/)).toBeInTheDocument()
     })
   })
 })

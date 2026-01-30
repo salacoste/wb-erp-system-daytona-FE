@@ -20,6 +20,7 @@ import {
 } from '@/lib/comparison-helpers'
 import { TrendIndicator } from './TrendIndicator'
 import { ComparisonBadge } from './ComparisonBadge'
+import { CogsMissingState } from './CogsMissingState'
 
 export type MetricFormat = 'currency' | 'percentage' | 'number' | 'roas'
 
@@ -35,6 +36,12 @@ export interface MetricCardEnhancedProps {
   invertComparison?: boolean
   className?: string
   onClick?: () => void
+  // CogsMissingState integration props
+  showCogsWarning?: boolean
+  productsWithCogs?: number
+  totalProducts?: number
+  cogsCoverage?: number
+  onAssignCogs?: () => void
 }
 
 const FORMAT_FN: Record<MetricFormat, (value: number) => string> = {
@@ -63,6 +70,11 @@ export function MetricCardEnhanced({
   invertComparison = false,
   className,
   onClick,
+  showCogsWarning = false,
+  productsWithCogs = 0,
+  totalProducts = 0,
+  cogsCoverage = 0,
+  onAssignCogs,
 }: MetricCardEnhancedProps): React.ReactElement {
   if (isLoading) {
     return (
@@ -103,27 +115,37 @@ export function MetricCardEnhanced({
     >
       <CardContent className="p-4">
         <CardHeader title={title} icon={Icon} tooltip={tooltip} />
+        {/* Priority: Error > CogsWarning > Normal Content */}
         {error ? (
           <div className="mt-2 text-sm text-destructive">{error}</div>
+        ) : showCogsWarning && value === null ? (
+          <CogsMissingState
+            productsWithCogs={productsWithCogs}
+            totalProducts={totalProducts}
+            coverage={cogsCoverage}
+            onAssignCogs={onAssignCogs}
+          />
         ) : (
-          <div
-            key={`value-${value}`}
-            className="mt-2 animate-in fade-in duration-200"
-            style={{
-              animationDuration: prefersReducedMotion() ? '0ms' : '200ms',
-            }}
-          >
-            <span className="text-2xl font-bold" data-testid="metric-value">
-              {displayValue}
-            </span>
-          </div>
+          <>
+            <div
+              key={`value-${value}`}
+              className="mt-2 animate-in fade-in duration-200"
+              style={{
+                animationDuration: prefersReducedMotion() ? '0ms' : '200ms',
+              }}
+            >
+              <span className="text-2xl font-bold" data-testid="metric-value">
+                {displayValue}
+              </span>
+            </div>
+            <ComparisonRow
+              comparison={comparison}
+              previousValue={previousValue}
+              formatValue={formatValue}
+              hasError={!!error}
+            />
+          </>
         )}
-        <ComparisonRow
-          comparison={comparison}
-          previousValue={previousValue}
-          formatValue={formatValue}
-          hasError={!!error}
-        />
       </CardContent>
     </Card>
   )

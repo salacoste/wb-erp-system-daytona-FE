@@ -159,8 +159,9 @@ describe('TwoLevelPricingDisplay', () => {
     it('renders MarginSection', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      // Margin section shows percentage in header
-      expect(screen.getByText(/МАРЖА \(17%\)/)).toBeInTheDocument()
+      // Margin section shows "МАРЖА" text and percentage in badge
+      expect(screen.getByText('МАРЖА')).toBeInTheDocument()
+      expect(screen.getByText(/17%/)).toBeInTheDocument()
     })
   })
 
@@ -183,8 +184,9 @@ describe('TwoLevelPricingDisplay', () => {
     it('passes tax info to MarginSection', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      // Margin section shows percentage in header (МАРЖА (17%))
-      expect(screen.getByText(/МАРЖА \(17%\)/)).toBeInTheDocument()
+      // Margin section shows "МАРЖА" text and percentage badge
+      expect(screen.getByText('МАРЖА')).toBeInTheDocument()
+      expect(screen.getByText(/17%/)).toBeInTheDocument()
     })
   })
 

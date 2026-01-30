@@ -74,8 +74,9 @@ describe('TrendGraph', () => {
 
     render(<TrendGraph />, { wrapper: createWrapper() })
 
+    expect(screen.getByText('Нет данных за этот период')).toBeInTheDocument()
     expect(
-      screen.getByText(/Данные о трендах пока недоступны/),
+      screen.getByText('Данные о трендах появятся после загрузки отчетов за несколько недель')
     ).toBeInTheDocument()
   })
 
@@ -139,4 +140,3 @@ describe('TrendGraph', () => {
     expect(link).toHaveAttribute('href', '/analytics/time-period')
   })
 })
-
