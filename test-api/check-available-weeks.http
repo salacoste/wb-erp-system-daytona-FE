@@ -1,0 +1,55 @@
+# Check Available Weeks - Diagnostic
+# Проверка доступных недель для кабинета
+
+@baseUrl = http://localhost:3000
+@cabinetId = f75836f7-c0bc-4b2c-823c-a1f3508cce8e
+@email = test@test.com
+@password = Russia23!
+
+###############################################################################
+
+### Login (ВЫПОЛНИТЕ ПЕРВЫМ)
+# @name login
+POST {{baseUrl}}/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+@token = {{login.response.body.access_token}}
+
+###############################################################################
+
+### Get Available Weeks
+# Проверить, какие недели есть для этого кабинета
+# @name availableWeeks
+GET {{baseUrl}}/v1/analytics/weekly/available-weeks
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+
+### Try Finance Summary for 2026-W04 (должно работать)
+# Неделя 2026-W04 = 19-25 января 2026
+# Бэкэнд заполнил данные для этой недели
+GET {{baseUrl}}/v1/analytics/weekly/finance-summary?week=2026-W04
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+
+### Try Finance Summary for 2026-W05 (ожидается 404)
+# Неделя 2026-W05 = 26 января - 1 февраля 2026
+# Данных за эту неделю ещё нет (на 30 января 2026)
+GET {{baseUrl}}/v1/analytics/weekly/finance-summary?week=2026-W05
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+
+### Try Finance Summary for 2025-W47 (первая заполненная неделя)
+GET {{baseUrl}}/v1/analytics/weekly/finance-summary?week=2025-W47
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}

@@ -1,0 +1,182 @@
+###############################################################################
+# DIAGNOSTIC TEST SUITE - Empty Dashboard Data Investigation
+###############################################################################
+# Issue: Dashboard shows "Нет данных за выбранный период" (No data for selected period)
+# Cabinet ID: f75836f7-c0bc-4b2c-823c-a1f3508cce8e
+# Period shown: 20-26 Jan 2026 (2026-W04)
+# Backend: COGS data filled for weeks 2025-W47 to 2026-W04
+#
+# Created: 2026-01-30
+# Purpose: Verify backend API returns data for the selected period
+###############################################################################
+
+@baseUrl = http://localhost:3000
+@cabinetId = f75836f7-c0bc-4b2c-823c-a1f3508cce8e
+@email = test@test.com
+@password = Russia23!
+
+###############################################################################
+# STEP 1: AUTHENTICATION
+###############################################################################
+
+### 1.1 Login (Get JWT token)
+# @name login
+POST {{baseUrl}}/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+@token = {{login.response.body.access_token}}
+
+###############################################################################
+# STEP 2: VERIFY AVAILABLE WEEKS
+###############################################################################
+
+### 2.1 Get Available Weeks (Backend should return weeks 2025-W47 to 2026-W04)
+# Expected: Array of weeks with 2026-W04 included
+# If 2026-W04 is NOT in the list, backend has not processed data for this week
+GET {{baseUrl}}/v1/analytics/weekly/available-weeks
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+# STEP 3: FINANCE SUMMARY DATA
+###############################################################################
+
+### 3.1 Get Finance Summary for 2026-W04 (Current week shown in screenshot)
+# Expected: summary_total or summary_rus with non-null values
+# If null/empty: Data not processed for this week/cabinet combination
+GET {{baseUrl}}/v1/analytics/weekly/finance-summary?week=2026-W04
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+### 3.2 Get Finance Summary for 2025-W47 (First week with COGS data)
+# This should have data if backend team filled COGS correctly
+# If this is also empty: Backend may not have processed ANY data
+GET {{baseUrl}}/v1/analytics/weekly/finance-summary?week=2025-W47
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+### 3.3 Get Finance Summary for 2026-W03 (Previous week)
+# Check if previous week has data
+GET {{baseUrl}}/v1/analytics/weekly/finance-summary?week=2026-W03
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+# STEP 4: ADVERTISING ANALYTICS DATA (Date Range: 20-26 Jan 2026)
+###############################################################################
+
+### 4.1 Get Advertising Analytics for 2026-01-20 to 2026-01-26 (Screenshot period)
+# Expected: summary object with total_sales, total_spend, overall_roas
+# If empty/404: No advertising data for this period
+GET {{baseUrl}}/v1/analytics/advertising?from=2026-01-20&to=2026-01-26&limit=1
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+### 4.2 Get Advertising Sync Status
+# Check if advertising data sync is working
+# Expected: health_status="healthy", lastSyncAt recent (<26 hours)
+GET {{baseUrl}}/v1/analytics/advertising/sync-status
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+### 4.3 Get Advertising Analytics for W04 Date Range (2026-01-20 to 2026-01-26 is W04)
+# W04 2026 is Mon Jan 20 to Sun Jan 26
+GET {{baseUrl}}/v1/analytics/advertising?from=2026-01-20&to=2026-01-26&view_by=sku&limit=1
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+# STEP 5: COGS DATA VERIFICATION
+###############################################################################
+
+### 5.1 Get Products with COGS (Check if COGS data exists)
+# Expected: pagination.total > 0 (products with COGS assigned)
+GET {{baseUrl}}/v1/products?include_cogs=true&limit=1
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+### 5.2 Get Products Count
+# Expected: Total product count > 0
+GET {{baseUrl}}/v1/products?limit=1
+Authorization: Bearer {{token}}
+X-Cabinet-Id: {{cabinetId}}
+
+###############################################################################
+# STEP 6: FRONTEND PERIOD CALCULATION VERIFICATION
+###############################################################################
+
+### 6.1 Week 2026-W04 Date Range Calculation
+# Frontend uses date-fns: startOfISOWeek + endOfISOWeek
+# Expected: Mon 2026-01-20 to Sun 2026-01-26
+#
+# If backend uses different week calculation, there will be a mismatch
+#
+# Verify backend returns data for exact date range:
+# GET {{baseUrl}}/v1/analytics/advertising?from=2026-01-20&to=2026-01-26
+
+###############################################################################
+# DIAGNOSIS GUIDE
+###############################################################################
+
+# If ALL finance-summary calls return null/empty:
+#   → Backend has not processed weekly report data for this cabinet
+#   → Check weekly_payout_summary and weekly_margin_fact tables
+#
+# If finance-summary returns data but advertising is empty:
+#   → Advertising sync may not be running
+#   → Check sync-status health_status and dataAvailableFrom/dataAvailableTo
+#
+# If available-weeks does NOT include 2026-W04:
+#   → Backend has not processed week 2026-W04 yet
+#   → Try selecting a week that IS in the available-weeks list
+#
+# If specific week (2025-W47) has data but 2026-W04 doesn't:
+#   → Week 2026-W04 may still be processing
+#   → Check processing status endpoints
+#
+# If COGS data is missing (products_with_cogs = 0):
+#   → COGS not assigned yet
+#   → Gross profit will be null even if payout data exists
+
+###############################################################################
+# EXPECTED RESPONSE STRUCTURE
+###############################################################################
+
+# Finance Summary Success Response:
+# {
+#   "summary_total": {
+#     "to_pay_goods_total": 123456.78,
+#     "sale_gross_total": 234567.89,
+#     "gross_profit": 50000.00,
+#     "cogs_total": 150000.00,
+#     "products_total": 100,
+#     "products_with_cogs": 80
+#   },
+#   "summary_rus": { ... },
+#   "meta": {
+#     "week": "2026-W04",
+#     "cabinet_id": "f75836f7-c0bc-4b2c-823c-a1f3508cce8e",
+#     "generated_at": "2026-01-30T10:00:00Z"
+#   }
+# }
+
+# Advertising Analytics Success Response:
+# {
+#   "meta": {
+#     "cabinet_id": "f75836f7-c0bc-4b2c-823c-a1f3508cce8e",
+#     "date_range": { "from": "2026-01-20", "to": "2026-01-26" }
+#   },
+#   "summary": {
+#     "total_spend": 5000.00,
+#     "total_sales": 25000.00,
+#     "overall_roas": 5.0,
+#     "total_organic_sales": 15000.00,
+#     "avg_organic_contribution": 60.0
+#   },
+#   "data": [...]
+# }
