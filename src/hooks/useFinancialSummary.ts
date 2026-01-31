@@ -13,6 +13,7 @@ import { useQuery, useQueries, keepPreviousData } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { FinanceSummary } from './useDashboard'
 import { getWeeksInMonth } from '@/lib/period-helpers'
+import { getLastCompletedWeek } from '@/lib/margin-helpers'
 
 /**
  * Response from finance-summary endpoint
@@ -62,7 +63,11 @@ export function useFinancialSummary(period: string, periodType: 'week' | 'month'
   }
 
   // For month periods, use multi-week aggregation
-  const weeksInMonth = getWeeksInMonth(period)
+  // BUG FIX: Filter out weeks that are after the last completed week
+  // to avoid 404 errors for incomplete weeks (e.g., current week has no data yet)
+  const allWeeksInMonth = getWeeksInMonth(period)
+  const lastCompletedWeek = getLastCompletedWeek()
+  const weeksInMonth = allWeeksInMonth.filter(week => week <= lastCompletedWeek)
 
   return useQuery({
     queryKey: ['financial', 'summary', period, 'month', weeksInMonth],
