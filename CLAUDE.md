@@ -27,7 +27,8 @@ Guidance for Claude Code when working with this repository.
 | **Architecture** | `docs/front-end-architecture.md` | Technical architecture |
 | **Routes Code** | `src/lib/routes.ts` | Centralized route constants |
 | **Backend Swagger** | `http://localhost:3000/api` | Live API documentation |
-| **Test API Examples** | `test-api.http` | HTTP request examples |
+| **Test API Examples** | [`../test-api/`](../test-api/) | **HTTP request examples** - actual backend API tests |
+| **Backend API Docs** | [`../docs/API-PATHS-REFERENCE.md`](../docs/API-PATHS-REFERENCE.md) | **Complete backend endpoint reference** |
 
 ---
 
@@ -165,6 +166,38 @@ formatIsoWeek(date)         // "2025-W03"
 ## API Integration
 
 > **Full Reference**: [`docs/api-integration-guide.md`](docs/api-integration-guide.md) - Complete endpoint catalog, HTTP files, integration patterns
+
+### Backend API Test Files (test-api/)
+
+> **Location**: [`../test-api/`](../test-api/) (root of monorepo)
+
+This folder contains **actual HTTP request examples** for all backend API endpoints. These are the most reliable source of information about available backend methods.
+
+**What it contains**:
+- **27 `.http` files** with ready-to-use API requests
+- Each file covers a specific domain (auth, products, analytics, orders, etc.)
+- Real request/response examples with headers and payloads
+- Tests for all CRUD operations, edge cases, and error scenarios
+
+**How to use**:
+1. Open any `.http` file in VS Code (with REST Client extension)
+2. Click "Send Request" above any HTTP request
+3. View actual response from backend API
+4. Copy request patterns for frontend integration
+
+**Key test files**:
+| File | Domain | Endpoints |
+|------|--------|-----------|
+| `01-auth.http` | Authentication | Login, register, refresh token |
+| `03-products.http` | Products | List, details, search, dimensions |
+| `04-imports.http` | Data Import | Excel, paid storage, **historical stocks** |
+| `06-analytics.http` | Analytics | Weekly summary, by-SKU/brand/category |
+| `07-cogs.http` | COGS | Single/bulk assignment, history |
+| `08-tariffs.http` | Tariffs | Categories, warehouses, acceptance |
+| `14-orders.http` | FBS Orders | Orders list, history, status |
+| `15-analytics-fbs.http` | FBS Analytics | Trends, seasonal, backfill |
+
+**Backend API Reference**: [`../docs/API-PATHS-REFERENCE.md`](../docs/API-PATHS-REFERENCE.md) - Complete endpoint documentation with examples
 
 ### Authentication Headers (Auto-Added)
 ```http
@@ -348,6 +381,14 @@ E2E_DEBUG=false                           # Debug mode
 | [`docs/front-end-spec.md`](docs/front-end-spec.md) | **UI/UX specification** (design system, personas, WCAG) |
 | `docs/front-end-architecture.md` | Technical architecture |
 | `docs/MARGIN-COGS-BACKEND-INTEGRATION.md` | COGS temporal logic |
+
+### Backend API Documentation (Root Level)
+| Resource | Location | Purpose |
+|----------|----------|---------|
+| **Test API Files** | [`../test-api/`](../test-api/) | **HTTP request examples** - 27 files with actual backend tests |
+| **API Paths Reference** | [`../docs/API-PATHS-REFERENCE.md`](../docs/API-PATHS-REFERENCE.md) | Complete backend endpoint documentation |
+| **Business Logic** | [`../docs/BUSINESS-LOGIC-REFERENCE.md`](../docs/BUSINESS-LOGIC-REFERENCE.md) | Formulas, calculations, examples |
+| **User Guide** | [`../docs/USER-GUIDE.md`](../docs/USER-GUIDE.md) | Complete API usage guide |
 
 ### Epic & Story Documentation
 | Resource | Location |
