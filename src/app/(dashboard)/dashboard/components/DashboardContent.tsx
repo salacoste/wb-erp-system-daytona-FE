@@ -19,10 +19,10 @@ import { useRouter } from 'next/navigation'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { useDashboardMetricsWithComparison } from '@/hooks/useDashboardMetricsWithPeriod'
 import { useProcessingStatus } from '@/hooks/useProcessingStatus'
-import { useProductsCount } from '@/hooks/useProducts'
+import { useProductsCount, useProductsWithCogs } from '@/hooks/useProducts'
 import { useFinancialSummary } from '@/hooks/useFinancialSummary'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
-import { useAdvertisingAnalytics } from '@/hooks/useAdvertisingAnalytics'
+import { useAdvertisingAnalyticsComparison } from '@/hooks/useAdvertisingAnalytics'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
 import { ROUTES } from '@/lib/routes'
 import { MetricCardEnhanced } from '@/components/custom/MetricCardEnhanced'
@@ -51,6 +51,11 @@ export function DashboardContent(): React.ReactElement {
     useDashboardMetricsWithComparison()
   const { data: processingStatus } = useProcessingStatus()
   const { data: productCount, isLoading: productsLoading } = useProductsCount()
+
+  // Fetch count of products that have COGS assigned (for Inventory Coverage)
+  // We only need the total count from pagination, so limit=1 is enough
+  const { data: productsWithCogsData, isLoading: cogsLoading } = useProductsWithCogs({ limit: 1 })
+  const inventoryWithCogs = productsWithCogsData?.pagination?.total ?? 0
 
   // Fetch COGS coverage data from finance summary (supports both week and month periods)
   const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
@@ -85,22 +90,45 @@ export function DashboardContent(): React.ReactElement {
     return monthToDateRange(selectedMonth)
   }, [periodType, selectedWeek, selectedMonth])
 
-  // Fetch advertising analytics for ROAS display
-  const { data: advertisingData, isLoading: advertisingLoading } = useAdvertisingAnalytics(
+  // Calculate previous period date range for comparison
+  const { previousWeek, previousMonth } = useDashboardPeriod()
+
+  const prevAdRange = useMemo(() => {
+    if (periodType === 'week') {
+      return weekToDateRange(previousWeek)
+    }
+    return monthToDateRange(previousMonth)
+  }, [periodType, previousWeek, previousMonth])
+
+  // Fetch advertising analytics comparison
+  const {
+    current: advertisingData,
+    previous: previousAdvertisingData,
+    isLoading: advertisingLoading,
+  } = useAdvertisingAnalyticsComparison(
     {
       from: advertisingDateRange.from,
       to: advertisingDateRange.to,
-      limit: 1, // Only need summary
+      limit: 1,
+    },
+    {
+      from: prevAdRange.from,
+      to: prevAdRange.to,
+      limit: 1,
     },
     {
       refetchInterval: undefined,
     }
   )
 
-  // COGS coverage data from finance summary
-  const cogsCoverage = summary?.cogs_coverage_pct ?? 0
-  const productsWithCogs = summary?.products_with_cogs ?? 0
-  const totalProducts = summary?.products_total ?? productCount ?? 0
+  // COGS Inventory Coverage
+  // Use inventoryWithCogs (from products API) / productCount (total inventory)
+  const cogsCoverage =
+    productCount && productCount > 0 ? (inventoryWithCogs / productCount) * 100 : 0
+
+  // For card display
+  const displayProductsWithCogs = inventoryWithCogs
+  const displayTotalProducts = productCount ?? 0
 
   return (
     <div className="space-y-6">
@@ -157,32 +185,34 @@ export function DashboardContent(): React.ReactElement {
           tooltip="Валовая маржа = (Выручка - COGS) / Выручка"
           isLoading={summaryLoading}
           showCogsWarning={summary?.cogs_total === null}
-          productsWithCogs={productsWithCogs}
-          totalProducts={totalProducts}
+          productsWithCogs={displayProductsWithCogs}
+          totalProducts={displayTotalProducts}
           cogsCoverage={cogsCoverage}
           onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
         />
 
         {/* Card 4: Товаров (AC2) */}
-        <ProductCountMetricCard
-          count={productCount ?? 0}
-          isLoading={productsLoading}
-        />
+        <ProductCountMetricCard count={productCount ?? 0} isLoading={productsLoading} />
 
         {/* Card 5: COGS покрытие (AC5) */}
         <CogsCoverageMetricCard
-          productsWithCogs={productsWithCogs}
-          totalProducts={totalProducts}
+          productsWithCogs={displayProductsWithCogs}
+          totalProducts={displayTotalProducts}
           coverage={cogsCoverage}
-          isLoading={summaryLoading}
+          isLoading={summaryLoading || cogsLoading}
+          onClick={() => router.push(ROUTES.COGS.ROOT)}
+          className="cursor-pointer hover:shadow-md transition-shadow"
         />
 
-        {/* Card 6: ROAS (optional - AC7) */}
+        {/* Card 6: ROAS рекламы (AC6) */}
         <MetricCardEnhanced
           title="ROAS рекламы"
-          value={advertisingData?.summary?.overall_roas ?? null}
+          value={advertisingLoading ? undefined : advertisingData?.summary?.overall_roas}
+          previousValue={
+            advertisingLoading ? undefined : previousAdvertisingData?.summary?.overall_roas
+          }
           format="roas"
-          tooltip="Окупаемость рекламных расходов (Revenue / Ad Spend)"
+          tooltip="Return on Ad Spend = Выручка с рекламы / Расходы"
           isLoading={advertisingLoading}
         />
       </div>
@@ -190,8 +220,8 @@ export function DashboardContent(): React.ReactElement {
       {/* Advertising Widget - Story 60.6-FE: Synced with global period */}
       <AdvertisingDashboardWidget dateRange={advertisingDateRange} hideLocalSelector />
 
-      {/* Expense Chart with week from context */}
-      <ExpenseChart weekOverride={selectedWeek} />
+      {/* Expense Chart - only use week override in week mode */}
+      <ExpenseChart weekOverride={periodType === 'week' ? selectedWeek : undefined} />
 
       {/* Trend Graphs */}
       <TrendGraph />
@@ -199,8 +229,8 @@ export function DashboardContent(): React.ReactElement {
       {/* Conditional CTA (AC3) - only shows when COGS < 100% */}
       <InitialDataSummary
         cogsCoverage={cogsCoverage}
-        totalProducts={totalProducts}
-        productsWithCogs={productsWithCogs}
+        totalProducts={displayTotalProducts}
+        productsWithCogs={displayProductsWithCogs}
       />
 
       {/* Refetching indicator */}

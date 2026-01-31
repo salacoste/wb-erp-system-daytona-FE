@@ -7,7 +7,7 @@
  * @see Story 33.1-fe: Types & API Client
  */
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query'
 import {
   getAdvertisingAnalytics,
   getAdvertisingCampaigns,
@@ -349,4 +349,45 @@ export function useAdvertisingMergedGroups(
     { ...params, group_by: 'imtId' },
     options,
   );
+}
+/**
+ * Hook for parallel fetching of current + previous advertising analytics
+ * Used for comparison indicators on dashboard
+ */
+export function useAdvertisingAnalyticsComparison(
+  currentParams: AdvertisingAnalyticsParams,
+  previousParams: AdvertisingAnalyticsParams,
+  options: UseAdvertisingAnalyticsOptions = {}
+) {
+  const { enabled = true, refetchInterval } = options
+
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: advertisingQueryKeys.analytics(currentParams),
+        queryFn: () => getAdvertisingAnalytics(currentParams),
+        enabled: enabled && !!currentParams.from && !!currentParams.to,
+        staleTime: 30000,
+        gcTime: 300000,
+        refetchInterval,
+      },
+      {
+        queryKey: advertisingQueryKeys.analytics(previousParams),
+        queryFn: () => getAdvertisingAnalytics(previousParams),
+        enabled: enabled && !!previousParams.from && !!previousParams.to,
+        staleTime: 5 * 60 * 1000, // Longer stale time for history
+        gcTime: 300000,
+      },
+    ],
+  })
+
+  const [currentResult, previousResult] = results
+
+  return {
+    current: currentResult.data,
+    previous: previousResult.data,
+    isLoading: currentResult.isLoading || previousResult.isLoading,
+    isError: currentResult.isError || previousResult.isError,
+    error: currentResult.error || previousResult.error,
+  }
 }

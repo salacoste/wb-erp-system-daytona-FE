@@ -18,6 +18,7 @@ import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { dashboardQueryKeys, type DashboardMetrics } from '@/hooks/useDashboard'
 import type { FinanceSummary } from '@/types/finance-summary'
 import { getWeeksInMonth } from '@/lib/period-helpers'
+import { getLastCompletedWeek } from '@/lib/margin-helpers'
 
 export interface DashboardMetricsWithComparison {
   current: DashboardMetrics | undefined
@@ -58,13 +59,17 @@ async function fetchDashboardMetrics(week: string): Promise<DashboardMetrics> {
  */
 async function fetchMonthlyMetrics(month: string): Promise<DashboardMetrics> {
   try {
-    const weeksInMonth = getWeeksInMonth(month)
+    // BUG FIX: Filter out weeks that are after the last completed week
+    // to avoid 404 errors for incomplete weeks (e.g., current week has no data yet)
+    const allWeeksInMonth = getWeeksInMonth(month)
+    const lastCompletedWeek = getLastCompletedWeek()
+    const weeksInMonth = allWeeksInMonth.filter(week => week <= lastCompletedWeek)
 
     if (weeksInMonth.length === 0) {
       return {}
     }
 
-    // Fetch all weeks in parallel
+    // Fetch all weeks in parallel (only completed weeks)
     const weeklyPromises = weeksInMonth.map(week => fetchDashboardMetrics(week))
     const weeklyResults = await Promise.allSettled(weeklyPromises)
 

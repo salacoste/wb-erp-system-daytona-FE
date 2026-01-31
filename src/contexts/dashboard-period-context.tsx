@@ -106,10 +106,13 @@ export function DashboardPeriodProvider({
     return defaultWeek
   })
 
-  // Initialize selected month: URL > derived from week
+  // Initialize selected month: URL > derived from last completed week
+  // CRITICAL: Always derive from last completed week, not selected week from URL,
+  // because URL week might be incomplete (no data yet). Prevents 404 errors.
   const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
     if (urlMonth && isValidMonthFormat(urlMonth)) return urlMonth
-    return getMonthFromWeek(selectedWeek)
+    // Use defaultWeek (last completed week) to derive initial month
+    return getMonthFromWeek(defaultWeek)
   })
 
   // Compute previous periods
@@ -141,7 +144,12 @@ export function DashboardPeriodProvider({
       setPeriodTypeState(type)
       setStoredPeriodType(type)
       if (type === 'month') {
-        const derivedMonth = getMonthFromWeek(selectedWeek)
+        // CRITICAL FIX: When switching to month view, derive month from last completed week
+        // instead of selected week, because selected week might be incomplete (no data yet).
+        // This prevents 404 errors when user clicks "Month" button.
+        // See: docs/pages/dashboard/period-selection-bug-fix.md
+        const lastCompletedWeek = getLastCompletedWeek()
+        const derivedMonth = getMonthFromWeek(lastCompletedWeek)
         setSelectedMonthState(derivedMonth)
         syncToUrl(selectedWeek, derivedMonth, type)
       } else {
@@ -176,6 +184,25 @@ export function DashboardPeriodProvider({
     queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     queryClient.invalidateQueries({ queryKey: ['analytics'] })
   }, [queryClient])
+
+  // Sync period state to URL whenever it changes
+  // This ensures URL always reflects current period, even when changed programmatically
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (periodType === 'week') {
+      params.set(URL_PARAMS.week, selectedWeek)
+      params.delete(URL_PARAMS.month)
+    } else {
+      params.set(URL_PARAMS.month, selectedMonth)
+      params.delete(URL_PARAMS.week)
+    }
+    params.set(URL_PARAMS.type, periodType)
+    // Only update URL if params actually changed (avoid infinite loop)
+    const newUrl = `${pathname}?${params.toString()}`
+    if (newUrl !== pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')) {
+      router.replace(newUrl, { scroll: false })
+    }
+  }, [periodType, selectedWeek, selectedMonth, searchParams, pathname, router])
 
   const getDateRange = useCallback((): { startDate: string; endDate: string } => {
     if (periodType === 'week') {
