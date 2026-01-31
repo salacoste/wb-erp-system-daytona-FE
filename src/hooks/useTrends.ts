@@ -57,7 +57,10 @@ function getISOWeekString(date: Date): string {
   const weekNumber =
     1 +
     Math.round(
-      ((target.getTime() - firstThursday.getTime()) / 86400000 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7
+      ((target.getTime() - firstThursday.getTime()) / 86400000 -
+        3 +
+        ((firstThursday.getDay() + 6) % 7)) /
+        7
     )
   return `${target.getFullYear()}-W${weekNumber.toString().padStart(2, '0')}`
 }
@@ -77,7 +80,9 @@ export function useTrends(limit = 8) {
     queryFn: async (): Promise<TrendData> => {
       try {
         // Story 3.4a: Single optimized request instead of N+1 requests
-        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=sale_gross,to_pay_goods`
+        // Story 61.1: Use wb_sales_gross (seller revenue after WB commission), NOT sale_gross (retail price)
+        // Difference: sale_gross includes WB's ~33% commission, wb_sales_gross is actual seller earnings
+        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=wb_sales_gross,to_pay_goods`
         console.info(`[Trends] Fetching trends (optimized): ${endpoint}`)
 
         const response = await apiClient.get<WeeklyTrendsResponse>(endpoint)
@@ -90,11 +95,12 @@ export function useTrends(limit = 8) {
 
         // Map API response to TrendDataPoint format for backward compatibility
         // TrendGraph component expects: { week, date, revenue, totalPayable }
+        // Story 61.1: Use wb_sales_gross (seller revenue) instead of sale_gross (retail price)
         const trends: TrendDataPoint[] = response.data
-          .map((point) => ({
+          .map(point => ({
             week: point.week,
             date: point.week, // Use week as date (component formats it anyway)
-            revenue: point.sale_gross ?? 0,
+            revenue: point.wb_sales_gross ?? 0,
             totalPayable: point.to_pay_goods ?? 0,
           }))
           .sort((a, b) => a.week.localeCompare(b.week)) // Ascending order

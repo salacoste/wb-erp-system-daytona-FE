@@ -70,4 +70,9 @@ export interface FinanceSummary {
   products_with_cogs?: number | null
   products_total?: number | null
   gross_profit?: number | null
+
+  // Story 61.13-FE: Margin Calculation Consistency
+  // margin_pct = (sale_gross_total - cogs_total) / sale_gross_total * 100
+  // Calculated by frontend aggregation, only when cogs_coverage_pct = 100%
+  margin_pct?: number | null
 }

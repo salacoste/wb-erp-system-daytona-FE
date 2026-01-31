@@ -13,7 +13,7 @@ Guidance for Claude Code when working with this repository.
 | Testing | Vitest (unit) + Playwright (E2E) |
 | Backend | REST API on `localhost:3000` (configurable via `NEXT_PUBLIC_API_URL`) |
 
-**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, Telegram notifications.
+**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, Telegram notifications, dashboard business logic (sales/orders metrics, expense structure, period comparison).
 
 ---
 
@@ -426,4 +426,4 @@ Password: Russia23!
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-01-31

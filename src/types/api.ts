@@ -139,8 +139,10 @@ export interface WeeklyTrendDataPoint {
   week: string
   /** Итого к оплате */
   payout_total?: number | null
-  /** Продажи (gross) */
+  /** Продажи (gross) - retail price (цена для покупателя) */
   sale_gross?: number | null
+  /** Выручка продавца после комиссии WB (Story 61.1) */
+  wb_sales_gross?: number | null
   /** К перечислению за товар */
   to_pay_goods?: number | null
   /** Логистика */

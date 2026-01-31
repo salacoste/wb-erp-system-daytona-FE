@@ -1,7 +1,7 @@
 # API Integration Guide
 
-**Version:** 2.0
-**Date:** 2026-01-17
+**Version:** 2.1
+**Date:** 2026-01-31
 **Author:** Frontend Team
 **Status:** Complete
 
@@ -685,8 +685,8 @@ Frontend Specs: /frontend/docs/request-backend/*.md
 
 ---
 
-**Last Updated:** 2026-01-17
-**Version:** 2.0
+**Last Updated:** 2026-01-31
+**Version:** 2.1
 **Maintained By:** Frontend Team
 
 ---
@@ -704,8 +704,11 @@ Frontend Specs: /frontend/docs/request-backend/*.md
 | 43/44 | Price Calculator | ✅ Complete | ✅ Complete | 100% Mapped |
 | 6 | Date Range & Comparison | ✅ Complete | ✅ Complete | 100% Mapped |
 | 10 | COGS & Margin | ✅ Complete | ✅ Complete | 100% Mapped |
+| 61-FE | Dashboard Data Integration | ✅ Complete | ✅ Complete | 100% Mapped |
+| 62-FE | Dashboard UI/UX | ✅ Complete | ✅ Complete | 100% Mapped |
+| 63-FE | Dashboard Business Logic | 📋 Ready | ✅ Complete | 100% Mapped |
 
-**Overall Integration Status:** ✅ 100% Complete
+**Overall Integration Status:** ✅ 100% Mapped (Epic 63-FE ready for dev)
 
 All frontend API clients are fully mapped to backend documentation with complete HTTP test coverage.
 
@@ -743,3 +746,77 @@ X-Cabinet-Id: {cabinet_id}
 - `enrich_cogs` - Use `recalculate_weekly_margin` instead
 
 See [Request #94](request-backend/94-epic-42-tech-debt-task-handlers.md) for details.
+
+---
+
+## Dashboard Business Logic (Epic 63-FE) - 100% Mapped
+
+**Epic Documentation**: `docs/epics/epic-63-fe-dashboard-business-logic.md`
+**Backend Specs**: `docs/request-backend/121-125-DASHBOARD-*.md`
+**Stories**: 12 (Story 63.1-FE through 63.12-FE)
+
+| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
+|----------------|----------|-------------------|-------------------|--------|
+| `lib/api/dashboard.ts` | GET `/v1/advertising/sync/status` | `07-advertising-analytics.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | 📋 Ready |
+| `lib/api/dashboard.ts` | GET `/v1/advertising/efficiency-filter` | `07-advertising-analytics.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | 📋 Ready |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/top-consumers` | `12-storage.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | ✅ Complete |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/trends` | `12-storage.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | ✅ Complete |
+| `lib/api/orders.ts` | GET `/v1/orders/fbs/status-breakdown` | `14-orders.http` | `request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md` | 📋 Ready |
+| `lib/api/orders.ts` | GET `/v1/orders/fbs/seasonal-patterns` | `14-orders.http` | `request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md` | 📋 Ready |
+| `lib/api/analytics.ts` | GET `/v1/analytics/weekly/comparison` | `05-analytics-basic.http` | `request-backend/124-DASHBOARD-MAIN-PAGE-PERIODS-API.md` | 📋 Ready |
+| `lib/api/analytics.ts` | GET `/v1/analytics/weekly/trends` | `05-analytics-basic.http` | `request-backend/124-DASHBOARD-MAIN-PAGE-PERIODS-API.md` | 📋 Ready |
+
+**Key Features (Epic 63-FE)**:
+- Sales Metric Cards (`wb_sales_gross`, `cogs_sales`)
+- Advertising sync status indicator (fresh/stale/outdated)
+- Advertising efficiency filter (ROAS tiers: excellent/good/poor)
+- Storage top consumers widget (top 5-10 products)
+- Storage trends chart (cost over time)
+- Orders status breakdown (pending/transit/delivered/cancelled)
+- Orders seasonal patterns (day/time heatmap)
+- Expense structure chart (pie/donut)
+- Unit economics enhancement (per-order breakdown)
+- Period comparison cards (WoW/MoM deltas)
+- Historical trends section (4W/8W/12W/YTD)
+
+**Usage Example - Period Comparison**:
+```typescript
+// Get WoW comparison
+const comparison = await apiClient.get<ComparisonResponse>(
+  `/v1/analytics/weekly/comparison?period1=2026-W04&period2=2026-W03`
+)
+
+// Response structure
+interface ComparisonResponse {
+  period1: PeriodMetrics;
+  period2: PeriodMetrics;
+  deltas: {
+    revenue_delta_pct: number;
+    profit_delta_pct: number;
+    orders_delta_pct: number;
+    margin_delta_pct: number;
+  }
+}
+```
+
+**Usage Example - Advertising Sync Status**:
+```typescript
+// Check data freshness
+const syncStatus = await apiClient.get<SyncStatusResponse>(
+  `/v1/advertising/sync/status`
+)
+
+// Response structure
+interface SyncStatusResponse {
+  last_sync_at: string;      // ISO timestamp
+  status: 'fresh' | 'stale' | 'outdated';
+  hours_since_sync: number;
+}
+
+// UI color mapping
+const statusColors = {
+  fresh: '#22C55E',    // Green (<1h)
+  stale: '#F59E0B',    // Yellow (1-24h)
+  outdated: '#EF4444'  // Red (>24h)
+}
+```

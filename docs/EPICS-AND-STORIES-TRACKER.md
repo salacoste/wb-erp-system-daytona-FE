@@ -3,9 +3,25 @@
 > **Source of Truth** for all frontend epic statuses, sprint planning, and story tracking.
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
-**Last Updated**: 2026-01-29
-**Total Epics**: 17 (17 complete)
-**Total Stories**: 107 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE)
+**Last Updated**: 2026-01-31
+**Total Epics**: 20 (20 complete)
+**Total Stories**: 146 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE)
+
+---
+
+## 🔧 Bug Fixes (2026-01-31)
+
+**Investigation Session**: Dashboard Margin Anomaly
+- Week showed 12.92%, Month showed 72.32% (inconsistent formulas)
+- 4 User Stories created, 239 TDD tests written
+- 2 Critical bugs fixed, 2 already resolved
+
+| Story | Title | Priority | Status | Tests |
+|-------|-------|----------|--------|-------|
+| 61.13-FE | Fix Margin Calculation Consistency | P0 | ✅ Fixed | 26 |
+| 61.14-FE | Fix Previous Period Data | P0 | ✅ Fixed | 35 |
+| 61.15-FE | Zero Margin Display | P1 | ✅ Already OK | 56 |
+| 61.16-FE | null vs undefined Standardization | P2 | ✅ Standardized | 122 |
 
 ---
 
@@ -23,7 +39,7 @@
 
 ## Epic Overview
 
-### Completed Epics (15)
+### Completed Epics (20)
 
 | Epic ID | Title | Stories | Status | Key Routes |
 |---------|-------|---------|--------|------------|
@@ -41,6 +57,9 @@
 | Epic 44-FE | Price Calculator UI | 6 | ✅ | `/cogs/price-calculator` |
 | Epic 52-FE | Tariff Settings Admin UI | 7 | ✅ | `/settings/tariffs` |
 | Epic 42-FE | Task Handlers Adaptation | 4 | ✅ | `/tasks` |
+| Epic 61-FE | Dashboard Data Integration | 17 | ✅ | `/dashboard` |
+| Epic 62-FE | Dashboard UI/UX Presentation | 10 | ✅ | `/dashboard` |
+| Epic 63-FE | Dashboard Business Logic | 12 | ✅ | `/dashboard` |
 
 ### New Epics (3) - Q1 2026 (3 complete)
 
@@ -49,6 +68,22 @@
 | Epic 40-FE | Orders UI & WB Status History | 7 | 26 | ✅ Complete | 1-2 | `/orders` |
 | Epic 53-FE | Supply Management UI | 8 | 34 | ✅ Complete | 3-5 | `/supplies`, `/supplies/:id` |
 | Epic 51-FE | FBS Historical Analytics (365d) | 12 | 39 | ✅ Complete | 2-6 | `/analytics/orders`, `/settings/backfill` |
+
+### Dashboard Overhaul - Q1 2026 (3 epics, all complete)
+
+| Epic ID | Title | Stories | SP | Status | Sprint | Routes |
+|---------|-------|---------|---:|--------|--------|--------|
+| Epic 61-FE | Dashboard Data Integration (API) | 17 | 49 | ✅ Complete | 7-9 | `/dashboard` |
+| Epic 62-FE | Dashboard UI/UX Presentation | 10 | 29 | ✅ Complete | 10-12 | `/dashboard` |
+| Epic 63-FE | Dashboard Business Logic Completion | 12 | 36 | ✅ Complete | 14 | `/dashboard` |
+
+**Epic 61-FE**: ✅ Complete (2026-01-31) - All 17 stories, 377+ tests (incl. 239 TDD bug fix tests)
+**Epic 62-FE**: ✅ Complete (2026-01-31) - All 10 stories, 28 components, 43 E2E tests
+**Epic 63-FE**: ✅ Complete (2026-01-31) - All 12 stories, sales/storage/orders widgets, period comparison
+
+**UX Wireframes Completed** (2026-01-31):
+- `docs/wireframes/dashboard-kpi-cards.md` - 8 KPI cards layout
+- `docs/wireframes/dashboard-daily-breakdown.md` - Daily charts (Variant D: Sparklines + Main Chart)
 
 ---
 
@@ -289,6 +324,116 @@
 
 ---
 
+### Epic 61-FE: Dashboard Data Integration (API Layer)
+
+**File**: `docs/epics/epic-61-fe-dashboard-data-integration.md`
+**Backend**: Uses existing APIs (no backend changes needed)
+**Priority**: P0 (Critical - Data Accuracy)
+
+| Story | Title | SP | Status | Priority |
+|-------|-------|---:|--------|----------|
+| 61.1-FE | Fix Revenue Field Mapping | 2 | ✅ Complete | P0 |
+| 61.2-FE | Fix Gross Profit Formula | 2 | ✅ Complete | P0 |
+| 61.3-FE | Orders Volume API Integration | 5 | ✅ Complete | P0 |
+| 61.4-FE | COGS for Orders | 3 | ✅ Complete | P0 |
+| 61.5-FE | Comparison Endpoint Integration | 5 | ✅ Complete | P0 |
+| 61.6-FE | Fix Period Presets to ISO Weeks | 3 | ✅ Complete | P1 |
+| 61.7-FE | Unify ISO Week Logic | 2 | ✅ Complete | P1 |
+| 61.8-FE | Add Advertising Total Spend | 2 | ✅ Complete | P1 |
+| 61.9-FE | Daily Breakdown Support | 5 | ✅ Complete | P1 |
+| 61.10-FE | Theoretical Profit Calculation | 3 | ✅ Complete | P0 |
+| 61.11-FE | Fix 53-Week Year Handling | 1 | ✅ Complete | P2 |
+| 61.12-FE | Increase Advertising Cache | 1 | ✅ Complete | P2 |
+| 61.13-FE | Fix Margin Calculation Consistency | 3 | ✅ Complete | P0 |
+| 61.14-FE | Fix Previous Period Data | 5 | ✅ Complete | P0 |
+| 61.15-FE | Zero Margin Display Fix | 2 | ✅ Complete | P1 |
+| 61.16-FE | null vs undefined Standardization | 5 | ✅ Complete | P2 |
+
+**Sprint Allocation**:
+- Sprint 7: 61.1, 61.2, 61.3, 61.10, 61.13, **61.14** (20 SP) - Critical fixes + Margin + Previous Period ✅
+- Sprint 8: 61.4, 61.5, 61.6, 61.7 (13 SP) - COGS, Comparison, Periods
+- Sprint 9: 61.8, 61.9, 61.11, 61.12, **61.15, 61.16** (14 SP) - Improvements + Standardization ✅
+
+**Dependencies**: Epic 60-FE (Dashboard Period Context) - Complete
+
+**Analysis Source**: 5 subagent analysis of `docs/request-backend/121-125-*.md`
+
+---
+
+### Epic 62-FE: Dashboard UI/UX Presentation
+
+**File**: `docs/epics/epic-62-fe-dashboard-presentation.md`
+**Backend**: None (uses Epic 61-FE data hooks)
+**Priority**: P1 (High Value)
+
+| Story | Title | SP | Status | Priority |
+|-------|-------|---:|--------|----------|
+| 62.1-FE | Redesign Dashboard Metrics Grid (8 Cards) | 3 | ✅ Complete | P0 |
+| 62.2-FE | Orders Volume Metric Card | 2 | ✅ Complete | P0 |
+| 62.3-FE | COGS by Orders Metric Card | 2 | ✅ Complete | P0 |
+| 62.4-FE | Theoretical Profit Card | 3 | ✅ Complete | P0 |
+| 62.5-FE | Enhance Existing Cards for Consistency | 2 | ✅ Complete | P0 |
+| 62.6-FE | Daily Breakdown Chart | 5 | ✅ Complete | P1 |
+| 62.7-FE | Interactive Metric Legend | 2 | ✅ Complete | P1 |
+| 62.8-FE | Daily Metrics Table View | 3 | ✅ Complete | P1 |
+| 62.9-FE | Empty & Loading States | 2 | ✅ Complete | P2 |
+| 62.10-FE | E2E Tests & Accessibility | 3 | ✅ Complete | P2 |
+
+**Sprint Allocation**:
+- Sprint 10: 62.1, 62.2, 62.3 (7 SP) - Core grid + Orders
+- Sprint 11: 62.4, 62.5, 62.6 (10 SP) - Profit + Chart
+- Sprint 12: 62.7, 62.8, 62.9, 62.10 (10 SP) - Polish + Tests
+
+**UX Wireframes**:
+- `docs/wireframes/dashboard-kpi-cards.md` - 8 KPI cards layout
+- `docs/wireframes/dashboard-daily-breakdown.md` - Charts (Variant D recommended)
+
+**Dependencies**: Epic 61-FE (Data Layer) - Sprint 10 stories can start in parallel
+
+---
+
+### Epic 63-FE: Dashboard Business Logic Completion
+
+**File**: `docs/epics/epic-63-fe-dashboard-business-logic.md`
+**Backend**: Uses existing APIs (documented in 121-125 backend requests)
+**Priority**: P1 (High)
+**Status**: ✅ Complete (2026-01-31)
+
+| Story | Title | SP | Status | Component |
+|-------|-------|---:|--------|-----------|
+| 63.1-FE | Sales Metric Card (Выкупы) | 3 | ✅ Complete | SalesMetricCard.tsx (157 lines) |
+| 63.2-FE | Sales COGS Metric Card | 3 | ✅ Complete | SalesCogsMetricCard.tsx (167 lines) |
+| 63.3-FE | Advertising Sync Status Indicator | 3 | ✅ Complete | AdvertisingSyncStatusBadge.tsx (200 lines) |
+| 63.4-FE | Advertising Efficiency Filter | 3 | ✅ Complete | EfficiencyFilterChips.tsx (157 lines) |
+| 63.5-FE | Storage Top Consumers Widget | 3 | ✅ Complete | StorageTopConsumersWidget.tsx (194 lines) |
+| 63.6-FE | Storage Trends Chart | 3 | ✅ Complete | StorageTrendsWidget.tsx + StorageTrendsChart.tsx |
+| 63.7-FE | Orders Status Breakdown | 3 | ✅ Complete | OrdersStatusBreakdown.tsx (200 lines) |
+| 63.8-FE | Orders Seasonal Patterns | 3 | ✅ Complete | OrdersSeasonalPatterns.tsx (175 lines) |
+| 63.9-FE | Expense Structure Chart | 3 | ✅ Complete | ExpenseStructurePieChart.tsx (115 lines) |
+| 63.10-FE | Unit Economics Enhancement | 3 | ✅ Complete | UnitEconomicsTable.tsx + helpers |
+| 63.11-FE | Period Comparison Cards | 3 | ✅ Complete | PeriodComparisonSection.tsx (170 lines) |
+| 63.12-FE | Historical Trends Section | 3 | ✅ Complete | HistoricalTrendsSection.tsx (155 lines) |
+
+**Total**: 36 SP (12 stories)
+
+**Key Features Delivered**:
+- Sales Metric Cards using `wb_sales_gross` (actual seller revenue)
+- Sales COGS calculation for actual sales (выкупы)
+- Advertising sync status indicator with freshness badges (Fresh/Stale/Outdated)
+- Advertising efficiency filter with ROAS tier chips
+- Storage top consumers widget showing top products by cost
+- Storage trends chart with volume correlation
+- Orders status breakdown (pending/transit/delivered/cancelled)
+- Orders seasonal patterns heatmap (day-of-week/time patterns)
+- Expense structure pie/donut chart with color-coded categories
+- Enhanced unit economics table with per-order/per-item breakdown
+- Period comparison cards with WoW/MoM toggle and delta indicators
+- Historical trends section with multi-metric line chart (4W/8W/12W/YTD)
+
+**Dependencies**: Epic 61-FE (Data Layer), Epic 62-FE (UI Components)
+
+---
+
 ## Legacy Epic Details
 
 For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
@@ -348,6 +493,34 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 ---
 
 ## Changelog
+
+### 2026-01-31 (Epic 63-FE Complete)
+- **Epic 63-FE Dashboard Business Logic Completion - COMPLETE** (12 stories, 36 SP):
+  - Story 63.1-FE: Sales Metric Card (Выкупы) ✅ - SalesMetricCard.tsx (157 lines)
+  - Story 63.2-FE: Sales COGS Metric Card ✅ - SalesCogsMetricCard.tsx (167 lines)
+  - Story 63.3-FE: Advertising Sync Status ✅ - AdvertisingSyncStatusBadge.tsx (200 lines)
+  - Story 63.4-FE: Advertising Efficiency Filter ✅ - EfficiencyFilterChips.tsx (157 lines)
+  - Story 63.5-FE: Storage Top Consumers Widget ✅ - StorageTopConsumersWidget.tsx (194 lines)
+  - Story 63.6-FE: Storage Trends Chart ✅ - StorageTrendsWidget.tsx + StorageTrendsChart.tsx
+  - Story 63.7-FE: Orders Status Breakdown ✅ - OrdersStatusBreakdown.tsx (200 lines)
+  - Story 63.8-FE: Orders Seasonal Patterns ✅ - OrdersSeasonalPatterns.tsx (175 lines)
+  - Story 63.9-FE: Expense Structure Chart ✅ - ExpenseStructurePieChart.tsx (115 lines)
+  - Story 63.10-FE: Unit Economics Enhancement ✅ - UnitEconomicsTable.tsx + helpers
+  - Story 63.11-FE: Period Comparison Cards ✅ - PeriodComparisonSection.tsx (170 lines)
+  - Story 63.12-FE: Historical Trends Section ✅ - HistoricalTrendsSection.tsx (155 lines)
+- **Dashboard Overhaul Complete**: All 3 epics (61-FE, 62-FE, 63-FE) delivered
+- Total epics: 20 (all complete)
+- Total stories: 142
+
+### 2026-01-31 (Epic 63-FE Created - Earlier)
+- **Epic 63-FE Dashboard Business Logic Completion created** (12 stories, 36 SP)
+- Based on backend API documentation: `docs/request-backend/121-125-DASHBOARD-*.md`
+
+### 2026-01-31 (Epic 61-FE & 62-FE Complete)
+- **Epic 61-FE Data Integration complete** - 12 stories, hooks, calculations
+- **Epic 62-FE UI/UX Presentation complete** - 8-card grid, daily breakdown
+- Dashboard fully integrated with new component architecture
+- DashboardContent.tsx rewired to use Epic 62-FE components
 
 ### 2026-01-29 (Epic 42-FE Complete)
 - **Epic 42-FE Task Handlers Adaptation fully complete** (4 stories):
@@ -448,6 +621,9 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 | Epic 40-FE | `docs/epics/epic-40-fe-orders-wb-history.md` |
 | Epic 51-FE | `docs/epics/epic-51-fe-fbs-historical-analytics.md` |
 | Epic 53-FE | `docs/epics/epic-53-fe-supply-management.md` |
+| Epic 61-FE | `docs/epics/epic-61-fe-dashboard-data-integration.md` |
+| Epic 62-FE | `docs/epics/epic-62-fe-dashboard-presentation.md` |
+| Epic 63-FE | `docs/epics/epic-63-fe-dashboard-business-logic.md` |
 | Story Files | `docs/stories/epic-{N}/story-{N}.{M}-*.md` |
 | Backend APIs | `../test-api/*.http` |
 | Routes Code | `src/lib/routes.ts` |

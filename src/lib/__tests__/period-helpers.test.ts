@@ -1,12 +1,14 @@
 /**
- * TDD Tests for Story 60.1-FE: Period Helper Functions
- * Epic 60-FE: Dashboard & Analytics UX Improvements
+ * TDD Tests for Period Helper Functions
  *
- * GREEN Phase: Tests enabled and passing after implementation
+ * Story 60.1-FE: Period State Management (GREEN Phase - passing)
+ * Story 61.7-FE: Unify ISO Week Calculation Logic (RED Phase - new tests)
+ * Story 61.11-FE: Fix 53-Week Year Handling (RED Phase - new tests)
  *
  * Pure utility functions for period calculations, formatting, and conversions.
  *
  * @see docs/stories/epic-60/story-60.1-fe-period-state-management.md
+ * @see docs/epics/epic-61-fe-dashboard-data-integration.md
  */
 
 import { describe, it, expect } from 'vitest'
@@ -336,5 +338,242 @@ describe('Story 60.1-FE: getMonthEndDate', () => {
       const end = getMonthEndDate('2026-12')
       expect(end.getDate()).toBe(31)
     })
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE & 61.11-FE: getIsoWeeksInYear Function
+// NEW: To be implemented in period-helpers.ts
+// =============================================================================
+
+describe('Story 61.11-FE: getIsoWeeksInYear', () => {
+  // Function to be added to period-helpers.ts
+  // import { getIsoWeeksInYear } from '../period-helpers'
+
+  describe('years with 53 weeks', () => {
+    it.todo('returns 53 for year 2020')
+    // 2020 is a 53-week year (Jan 1 is Wednesday, Dec 31 is Thursday)
+
+    it.todo('returns 53 for year 2026')
+    // 2026 is a 53-week year (Jan 1 is Thursday)
+
+    it.todo('returns 53 for year 2032')
+    // 2032 is a 53-week year
+
+    it.todo('returns 53 for year 2037')
+    // 2037 is a 53-week year
+
+    it.todo('returns 53 for year 2043')
+    // 2043 is a 53-week year
+
+    it.todo('returns 53 for year 2048')
+    // 2048 is a 53-week year
+  })
+
+  describe('years with 52 weeks', () => {
+    it.todo('returns 52 for year 2021')
+    // 2021 has 52 weeks
+
+    it.todo('returns 52 for year 2022')
+    // 2022 has 52 weeks
+
+    it.todo('returns 52 for year 2023')
+    // 2023 has 52 weeks
+
+    it.todo('returns 52 for year 2024')
+    // 2024 has 52 weeks
+
+    it.todo('returns 52 for year 2025')
+    // 2025 has 52 weeks
+
+    it.todo('returns 52 for year 2027')
+    // 2027 has 52 weeks
+  })
+
+  describe('ISO 8601 rule verification', () => {
+    it.todo('year has 53 weeks when Jan 1 is Thursday')
+    // Direct rule: If Jan 1 is Thursday -> 53 weeks
+
+    it.todo('year has 53 weeks when Dec 31 is Thursday')
+    // Alternative rule: If Dec 31 is Thursday -> 53 weeks
+
+    it.todo('leap year that starts on Wednesday has 53 weeks')
+    // 2020: leap year, Jan 1 is Wednesday -> 53 weeks
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE: getCurrentIsoWeek Function
+// NEW: To be consolidated in period-helpers.ts
+// =============================================================================
+
+describe('Story 61.7-FE: getCurrentIsoWeek (unified)', () => {
+  // Function to be consolidated in period-helpers.ts
+  // Currently duplicated in:
+  // - useFinancialSummary.ts:148-164
+  // - useTrends.ts:52-63
+  // - useMarginTrends.ts:155-162
+
+  describe('basic functionality', () => {
+    it.todo('returns current ISO week in YYYY-Www format')
+    // Expected format: "2026-W05"
+
+    it.todo('pads single-digit week numbers with leading zero')
+    // Expected: "2026-W05" not "2026-W5"
+
+    it.todo('uses ISO week year (may differ from calendar year)')
+    // 2025-12-29 should return "2026-W01"
+  })
+
+  describe('consistency with existing functions', () => {
+    it.todo('result matches format of parseWeek input')
+    // getCurrentIsoWeek() output can be passed to parseWeek()
+
+    it.todo('result matches format used by getWeekStartDate')
+    // getCurrentIsoWeek() output can be passed to getWeekStartDate()
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE: getWeekRange Function
+// NEW: To be added to period-helpers.ts
+// =============================================================================
+
+describe('Story 61.7-FE: getWeekRange (new function)', () => {
+  // New function to generate range of weeks going back from current/given week
+
+  describe('basic functionality', () => {
+    it.todo('returns array of N weeks going back from current week')
+    // getWeekRange(4) -> ["2026-W05", "2026-W04", "2026-W03", "2026-W02"]
+
+    it.todo('returns single week when numWeeks is 1')
+    // getWeekRange(1) -> ["2026-W05"]
+
+    it.todo('returns empty array when numWeeks is 0')
+    // getWeekRange(0) -> []
+
+    it.todo('first element is the current/starting week')
+  })
+
+  describe('year boundary handling', () => {
+    it.todo('correctly crosses year boundary from 52-week year')
+    // From W02 2026 going back 4 weeks -> W02, W01 2026, W52, W51 2025
+
+    it.todo('correctly crosses year boundary from 53-week year')
+    // From W02 2021 going back 4 weeks -> W02, W01 2021, W53, W52 2020
+
+    it.todo('includes W53 only when previous year has 53 weeks')
+    // Going back from 2021 should include W53 2020
+    // Going back from 2026 should NOT include W53 2025
+  })
+
+  describe('optional startWeek parameter', () => {
+    it.todo('accepts startWeek to generate range from specific week')
+    // getWeekRange(3, "2026-W10") -> ["2026-W10", "2026-W09", "2026-W08"]
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE: getPreviousIsoWeek (Enhanced for 53-week years)
+// =============================================================================
+
+describe('Story 61.7-FE: getPreviousIsoWeek enhanced', () => {
+  // Enhance existing getPreviousWeek or create new getPreviousIsoWeek
+
+  describe('53-week year transitions', () => {
+    it('correctly handles W01 -> W53 for years with 53 weeks', () => {
+      // 2020 has 53 weeks, so W01 2021 -> W53 2020
+      expect(getPreviousPeriod('2021-W01', 'week')).toBe('2020-W53')
+    })
+
+    it('correctly handles W01 -> W52 for years with 52 weeks', () => {
+      // 2025 has 52 weeks, so W01 2026 -> W52 2025
+      expect(getPreviousPeriod('2026-W01', 'week')).toBe('2025-W52')
+    })
+
+    it('correctly handles W53 -> W52 within same year', () => {
+      // W53 2020 -> W52 2020
+      expect(getPreviousPeriod('2020-W53', 'week')).toBe('2020-W52')
+    })
+
+    it('correctly handles W01 -> W53 for 2027 (2026 has 53 weeks)', () => {
+      // 2026 has 53 weeks, so W01 2027 -> W53 2026
+      expect(getPreviousPeriod('2027-W01', 'week')).toBe('2026-W53')
+    })
+  })
+
+  describe('multiple year transitions with 53-week years', () => {
+    it.todo('handles sequence through multiple 53-week year boundaries')
+    // W02 2021 -> W01 2021 -> W53 2020 -> W52 2020 -> ...
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE: isoWeekToDateRange Function
+// NEW: To be added to period-helpers.ts
+// =============================================================================
+
+describe('Story 61.7-FE: isoWeekToDateRange (new function)', () => {
+  // New function to convert ISO week to date range { from, to }
+
+  describe('basic functionality', () => {
+    it.todo('returns { from: Monday, to: Sunday } for given week')
+    // "2026-W05" -> { from: "2026-01-26", to: "2026-02-01" }
+
+    it.todo('from is always Monday (ISO standard)')
+
+    it.todo('to is always Sunday (ISO standard)')
+
+    it.todo('returns dates in YYYY-MM-DD format')
+  })
+
+  describe('year boundary weeks', () => {
+    it.todo('W01 may start in previous calendar year')
+    // "2026-W01" -> { from: "2025-12-29", to: "2026-01-04" }
+
+    it.todo('W52/W53 may end in next calendar year')
+    // "2020-W53" -> { from: "2020-12-28", to: "2021-01-03" }
+  })
+
+  describe('consistency with existing functions', () => {
+    it.todo('from matches getWeekStartDate result')
+
+    it.todo('to matches getWeekEndDate result')
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE: dateToIsoWeek Function
+// NEW: To be added to period-helpers.ts
+// =============================================================================
+
+describe('Story 61.7-FE: dateToIsoWeek (new function)', () => {
+  // New function to convert Date/string to ISO week string
+
+  describe('basic functionality', () => {
+    it.todo('converts Date object to ISO week string')
+    // new Date("2026-01-31") -> "2026-W05"
+
+    it.todo('converts date string to ISO week string')
+    // "2026-01-31" -> "2026-W05"
+
+    it.todo('pads week number with zero')
+    // "2026-01-05" -> "2026-W01"
+  })
+
+  describe('ISO week year determination', () => {
+    it.todo('returns ISO week year when different from calendar year')
+    // "2025-12-29" -> "2026-W01" (ISO year 2026, calendar year 2025)
+
+    it.todo('handles December dates in next years W01')
+    // "2025-12-30", "2025-12-31" -> "2026-W01"
+
+    it.todo('handles January dates in previous years W52/W53')
+    // "2021-01-01" -> "2020-W53"
+  })
+
+  describe('round-trip consistency', () => {
+    it.todo('dateToIsoWeek(parseWeek(week)) returns same week for any day in week')
+    // All 7 days in a week should return the same ISO week string
   })
 })

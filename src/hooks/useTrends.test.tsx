@@ -59,17 +59,21 @@ describe('useTrends', () => {
       expect(apiClient.get).toHaveBeenCalledTimes(1)
 
       // Should call the trends endpoint with correct parameters
+      // Story 61.1: Use wb_sales_gross (seller revenue after WB commission), NOT sale_gross
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringMatching(/\/v1\/analytics\/weekly\/trends\?from=.*&to=.*&metrics=sale_gross,to_pay_goods/)
+        expect.stringMatching(
+          /\/v1\/analytics\/weekly\/trends\?from=.*&to=.*&metrics=wb_sales_gross,to_pay_goods/
+        )
       )
     })
 
     it('fetches trend data for multiple weeks', async () => {
+      // Story 61.1: Use wb_sales_gross (seller revenue after WB commission)
       const mockResponse: WeeklyTrendsResponse = {
         period: { from: '2025-W45', to: '2025-W46', weeks_count: 2 },
         data: [
-          { week: '2025-W45', sale_gross: 120000, to_pay_goods: 60000 },
-          { week: '2025-W46', sale_gross: 100000, to_pay_goods: 50000 },
+          { week: '2025-W45', wb_sales_gross: 120000, to_pay_goods: 60000 },
+          { week: '2025-W46', wb_sales_gross: 100000, to_pay_goods: 50000 },
         ],
       }
 
@@ -182,7 +186,9 @@ describe('useTrends', () => {
     })
 
     it('handles 400 errors gracefully', async () => {
-      const error = new Error('Bad Request') as Error & { response?: { status: number; data?: { message: string } } }
+      const error = new Error('Bad Request') as Error & {
+        response?: { status: number; data?: { message: string } }
+      }
       error.response = { status: 400, data: { message: 'Invalid week format' } }
       vi.mocked(apiClient.get).mockRejectedValueOnce(error)
 
@@ -221,10 +227,11 @@ describe('useTrends', () => {
   })
 
   describe('Data mapping', () => {
-    it('maps sale_gross to revenue and to_pay_goods to totalPayable', async () => {
+    // Story 61.1: Use wb_sales_gross (seller revenue after WB commission), NOT sale_gross
+    it('maps wb_sales_gross to revenue and to_pay_goods to totalPayable', async () => {
       const mockResponse: WeeklyTrendsResponse = {
         period: { from: '2025-W46', to: '2025-W46', weeks_count: 1 },
-        data: [{ week: '2025-W46', sale_gross: 150000, to_pay_goods: 75000 }],
+        data: [{ week: '2025-W46', wb_sales_gross: 150000, to_pay_goods: 75000 }],
       }
 
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)

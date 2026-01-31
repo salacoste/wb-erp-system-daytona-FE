@@ -1,12 +1,31 @@
 /**
  * Generated Weeks Hook
  * Story 60.2-FE: Period Selector Component
+ * Story 61.11-FE: Fix 53-Week Year Handling
  *
  * Generates recent weeks based on selected week.
  * Temporary solution until availableWeeks comes from API/context.
+ *
+ * @see docs/stories/epic-61/story-61.11-fe-53-week-year-handling.md
  */
 
 import { useEffect, useState } from 'react'
+import { getISOWeeksInYear } from 'date-fns'
+
+/**
+ * Get the number of ISO weeks in a given year.
+ * Uses date-fns getISOWeeksInYear for accurate calculation.
+ *
+ * ISO years can have 52 or 53 weeks. 53-week years include:
+ * 2020, 2026, 2032, 2037, 2043, 2048, etc.
+ *
+ * @param year - The year to check
+ * @returns 52 or 53
+ */
+export function getIsoWeeksInYear(year: number): number {
+  // getISOWeeksInYear requires a Date object
+  return getISOWeeksInYear(new Date(year, 0, 1))
+}
 
 /**
  * Generate recent weeks based on selected week
@@ -33,7 +52,8 @@ export function useGeneratedWeeks(selectedWeek: string): string[] {
       weekNum--
       if (weekNum < 1) {
         year--
-        weekNum = 52 // Simplified: assume 52 weeks per year
+        // Story 61.11-FE: Use dynamic week count instead of hardcoded 52
+        weekNum = getIsoWeeksInYear(year)
       }
     }
 

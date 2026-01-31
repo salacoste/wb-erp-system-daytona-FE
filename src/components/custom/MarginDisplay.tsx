@@ -61,21 +61,17 @@ export function MarginDisplay({
     lg: 'text-2xl font-bold',
   }
 
-  // If margin is available, display with color coding
-  if (marginPct !== null && marginPct !== undefined) {
+  // If margin is available and valid (not NaN or Infinity), display with color coding
+  if (marginPct !== null && marginPct !== undefined && Number.isFinite(marginPct)) {
     const isPositive = marginPct > 0
     const isZero = marginPct === 0
     const colorClass = isZero ? 'text-gray-600' : isPositive ? 'text-green-600' : 'text-red-600'
 
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <span className={cn(sizeClasses[size], colorClass)}>
-          {formatMarginPercent(marginPct)}
-        </span>
+        <span className={cn(sizeClasses[size], colorClass)}>{formatMarginPercent(marginPct)}</span>
         {size !== 'sm' && !isZero && (
-          <span className="text-xs text-gray-500">
-            {isPositive ? '(прибыльно)' : '(убыток)'}
-          </span>
+          <span className="text-xs text-gray-500">{isPositive ? '(прибыльно)' : '(убыток)'}</span>
         )}
       </div>
     )
@@ -87,9 +83,7 @@ export function MarginDisplay({
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <span className={cn(sizeClasses[size], 'text-gray-400')}>—</span>
-      {message && size !== 'sm' && (
-        <span className="text-xs text-gray-500">{message}</span>
-      )}
+      {message && size !== 'sm' && <span className="text-xs text-gray-500">{message}</span>}
     </div>
   )
 }
@@ -104,19 +98,12 @@ export function MarginBadge({
   marginPct,
   missingDataReason,
 }: Omit<MarginDisplayProps, 'className' | 'size'>) {
-  if (marginPct !== null && marginPct !== undefined) {
+  // Check for valid finite number (handles null, undefined, NaN, Infinity)
+  if (marginPct !== null && marginPct !== undefined && Number.isFinite(marginPct)) {
     const isPositive = marginPct > 0
     const isZero = marginPct === 0
-    const bgColor = isZero
-      ? 'bg-gray-50'
-      : isPositive
-        ? 'bg-green-50'
-        : 'bg-red-50'
-    const textColor = isZero
-      ? 'text-gray-700'
-      : isPositive
-        ? 'text-green-700'
-        : 'text-red-700'
+    const bgColor = isZero ? 'bg-gray-50' : isPositive ? 'bg-green-50' : 'bg-red-50'
+    const textColor = isZero ? 'text-gray-700' : isPositive ? 'text-green-700' : 'text-red-700'
     const borderColor = isZero
       ? 'border-gray-200'
       : isPositive
@@ -137,7 +124,7 @@ export function MarginBadge({
     )
   }
 
-  // No margin available
+  // No margin available (null, undefined, NaN, or Infinity)
   const message = getMissingDataReasonMessage(missingDataReason || null)
 
   return (
@@ -188,9 +175,7 @@ export function MarginInfoCard({
       {period && marginPct !== null && (
         <div className="mt-3 space-y-1 text-xs text-gray-500">
           <div>Период расчёта: {period}</div>
-          {salesQty !== null && salesQty !== undefined && (
-            <div>Продано: {salesQty} шт.</div>
-          )}
+          {salesQty !== null && salesQty !== undefined && <div>Продано: {salesQty} шт.</div>}
           {revenue !== null && revenue !== undefined && (
             <div>
               Выручка:{' '}
