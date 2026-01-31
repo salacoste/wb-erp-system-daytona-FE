@@ -4,26 +4,26 @@
  * Epic 61-FE: Dashboard Data Integration
  *
  * Business Formula:
- * Теор. прибыль = Заказы - COGS - рекламные затраты - логистика - хранение
+ * Теор. прибыль = Выкупы - COGS - рекламные затраты - логистика - хранение
  *
- * This represents POTENTIAL profit from all orders (not just sales),
- * accounting for all major operational costs.
+ * Uses SALES (Выкупы / wb_sales_gross) as the revenue base, NOT orders.
+ * This represents actual realized profit from completed sales.
  *
- * KEY DIFFERENCE from Gross Profit:
- * - Gross Profit = revenue - COGS (margin on actual sales)
- * - Theoretical Profit = orders - COGS - ads - logistics - storage
+ * NOTE: Changed from Orders to Sales per QA report 128-DASHBOARD-QA-VERIFICATION.
+ * Orders FBS may be 0 if sync started recently, but Sales data is always available.
  *
  * @see docs/stories/epic-61/story-61.10-fe-theoretical-profit.md
+ * @see docs/request-backend/128-DASHBOARD-QA-VERIFICATION-REPORT.md
  */
 
 /**
  * Input for theoretical profit calculation
- * Business: Заказы, COGS, реклама, логистика, хранение
+ * Business: Выкупы, COGS, реклама, логистика, хранение
  */
 export interface TheoreticalProfitInput {
-  /** Total order amount (Заказы) - potential revenue */
-  ordersAmount: number | null
-  /** Cost of Goods Sold for orders (COGS по заказам) */
+  /** Total sales amount (Выкупы / wb_sales_gross) - actual revenue */
+  salesAmount: number | null
+  /** Cost of Goods Sold for sales (COGS по выкупам) */
   cogs: number | null
   /** Total advertising spend (Рекламные затраты) */
   advertisingSpend: number | null
@@ -37,7 +37,7 @@ export interface TheoreticalProfitInput {
  * Breakdown of all cost components in the calculation
  */
 export interface TheoreticalProfitBreakdown {
-  orders: number
+  sales: number
   cogs: number
   advertising: number
   logistics: number
@@ -61,28 +61,28 @@ export interface TheoreticalProfitResult {
 /**
  * Calculate theoretical profit based on business formula
  *
- * Formula: Заказы - COGS - реклама - логистика - хранение
+ * Formula: Выкупы - COGS - реклама - логистика - хранение
  *
  * @param input - All required cost components
  * @returns Profit value with breakdown and completeness indicator
  *
  * @example
  * const result = calculateTheoreticalProfit({
- *   ordersAmount: 500000,
- *   cogs: 200000,
- *   advertisingSpend: 50000,
- *   logisticsCost: 30000,
- *   storageCost: 10000,
+ *   salesAmount: 84377,
+ *   cogs: 35818,
+ *   advertisingSpend: 3728,
+ *   logisticsCost: 17566,
+ *   storageCost: 2024,
  * });
- * // result.value = 210000 (42% margin)
+ * // result.value = 25241 (profit)
  * // result.isComplete = true
  */
 export function calculateTheoreticalProfit(input: TheoreticalProfitInput): TheoreticalProfitResult {
   const missingFields: string[] = []
 
   // Check for missing values (null or undefined)
-  if (input.ordersAmount === null || input.ordersAmount === undefined) {
-    missingFields.push('ordersAmount')
+  if (input.salesAmount === null || input.salesAmount === undefined) {
+    missingFields.push('salesAmount')
   }
   if (input.cogs === null || input.cogs === undefined) {
     missingFields.push('cogs')
@@ -98,19 +98,19 @@ export function calculateTheoreticalProfit(input: TheoreticalProfitInput): Theor
   }
 
   // Use 0 for null/undefined values in calculation
-  const orders = input.ordersAmount ?? 0
+  const sales = input.salesAmount ?? 0
   const cogs = input.cogs ?? 0
   const advertising = input.advertisingSpend ?? 0
   const logistics = input.logisticsCost ?? 0
   const storage = input.storageCost ?? 0
 
-  // Calculate: Orders - COGS - Advertising - Logistics - Storage
-  const value = orders - cogs - advertising - logistics - storage
+  // Calculate: Sales - COGS - Advertising - Logistics - Storage
+  const value = sales - cogs - advertising - logistics - storage
 
   return {
     value,
     breakdown: {
-      orders,
+      sales,
       cogs,
       advertising,
       logistics,
@@ -125,18 +125,18 @@ export function calculateTheoreticalProfit(input: TheoreticalProfitInput): Theor
  * Calculate theoretical profit margin percentage
  *
  * @param profitValue - Calculated profit
- * @param ordersAmount - Total orders amount (base)
- * @returns Margin percentage (0-100) or null if orders is 0
+ * @param salesAmount - Total sales amount (base)
+ * @returns Margin percentage (0-100) or null if sales is 0
  *
  * @example
- * calculateTheoreticalMarginPct(210000, 500000) // returns 42
+ * calculateTheoreticalMarginPct(25241, 84377) // returns ~30
  * calculateTheoreticalMarginPct(-25000, 100000) // returns -25
  * calculateTheoreticalMarginPct(1000, 0)        // returns null
  */
 export function calculateTheoreticalMarginPct(
   profitValue: number,
-  ordersAmount: number
+  salesAmount: number
 ): number | null {
-  if (ordersAmount === 0) return null
-  return (profitValue / ordersAmount) * 100
+  if (salesAmount === 0) return null
+  return (profitValue / salesAmount) * 100
 }

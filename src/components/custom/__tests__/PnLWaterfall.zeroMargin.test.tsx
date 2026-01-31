@@ -69,7 +69,7 @@ function createTestData(overrides: Partial<CabinetSummaryTotals> = {}): CabinetS
 
     // COGS and profit
     cogs_total: 66000,
-    gross_profit: 50000, // payout - cogs
+    profit: 50000, // payout - cogs
 
     // Metrics
     qty: 100,
@@ -128,7 +128,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 100000,
         cogs_total: 100000,
-        gross_profit: 0, // Break-even: payout equals COGS
+        profit: 0, // Break-even: payout equals COGS
       })
       const products = createTestProducts()
 
@@ -155,7 +155,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 100000,
         cogs_total: 100000,
-        gross_profit: 0,
+        profit: 0,
       })
       const products = createTestProducts()
 
@@ -174,7 +174,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 100000,
         cogs_total: 100000,
-        gross_profit: 0,
+        profit: 0,
       })
       const products = createTestProducts()
 
@@ -194,7 +194,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 0,
         cogs_total: 0,
-        gross_profit: 0,
+        profit: 0,
         sale_gross: 0,
       })
       const products = createTestProducts()
@@ -211,7 +211,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 80000,
         cogs_total: 100000,
-        gross_profit: -20000, // Loss: COGS exceeds payout
+        profit: -20000, // Loss: COGS exceeds payout
       })
       const products = createTestProducts()
 
@@ -226,7 +226,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 80000,
         cogs_total: 100000,
-        gross_profit: -20000,
+        profit: -20000,
       })
       const products = createTestProducts()
 
@@ -265,7 +265,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
   describe('COGS coverage interaction with zero values', () => {
     it('should show gross profit section when coverage is 100% even if profit is 0', () => {
       const data = createTestData({
-        gross_profit: 0,
+        profit: 0,
         payout_total: 50000,
         cogs_total: 50000,
       })
@@ -284,7 +284,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
 
     it('should show coverage warning when coverage < 100% regardless of profit value', () => {
       const data = createTestData({
-        gross_profit: 50000, // Non-zero profit
+        profit: 50000, // Non-zero profit
       })
       const products = createTestProducts({
         coverage_pct: 80,
@@ -302,7 +302,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
   describe('Key metrics with zero values', () => {
     it('should display ROI as 0% when gross profit is 0 and COGS > 0', () => {
       const data = createTestData({
-        gross_profit: 0,
+        profit: 0,
         cogs_total: 100000,
         roi: 0, // ROI = (0 / 100000) * 100 = 0%
       })
@@ -317,7 +317,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
 
     it('should display 0 ₽ for profit per unit when it equals zero', () => {
       const data = createTestData({
-        gross_profit: 0,
+        profit: 0,
         qty: 100,
         profit_per_unit: 0, // 0 / 100 = 0
       })
@@ -385,7 +385,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 100000,
         cogs_total: 85000,
-        gross_profit: 15000,
+        profit: 15000,
       })
       const products = createTestProducts()
 
@@ -399,7 +399,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 100000,
         cogs_total: 75000,
-        gross_profit: 25000,
+        profit: 25000,
       })
       const products = createTestProducts()
 
@@ -413,7 +413,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       const data = createTestData({
         payout_total: 100000,
         cogs_total: 100000,
-        gross_profit: 0,
+        profit: 0,
       })
       const products = createTestProducts()
 
@@ -427,7 +427,7 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
   describe('Regression prevention: falsy value confusion', () => {
     it('should differentiate between 0 gross profit and null gross profit', () => {
       // Test with 0
-      const dataWithZero = createTestData({ gross_profit: 0 })
+      const dataWithZero = createTestData({ profit: 0 })
       const products = createTestProducts()
 
       const { unmount } = renderWithTooltipProvider(

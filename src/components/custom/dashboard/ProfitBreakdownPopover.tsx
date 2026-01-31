@@ -37,7 +37,7 @@ export function ProfitBreakdownPopover({
   totalProfit,
 }: ProfitBreakdownPopoverProps): React.ReactElement {
   const rows: BreakdownRow[] = [
-    { label: 'Заказы', value: breakdown.orders, sign: '+', color: 'text-blue-500' },
+    { label: 'Выкупы', value: breakdown.sales, sign: '+', color: 'text-blue-500' },
     { label: 'COGS', value: breakdown.cogs, sign: '-', color: 'text-gray-500' },
     { label: 'Реклама', value: breakdown.advertising, sign: '-', color: 'text-yellow-600' },
     { label: 'Логистика', value: breakdown.logistics, sign: '-', color: 'text-red-500' },

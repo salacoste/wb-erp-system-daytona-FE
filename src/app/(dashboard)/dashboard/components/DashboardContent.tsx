@@ -111,21 +111,17 @@ export function DashboardContent(): React.ReactElement {
   )
 
   // Epic 61-FE: Theoretical Profit (Story 61.10)
+  // Formula: Выкупы - COGS - Реклама - Логистика - Хранение
+  // Uses salesAmount (wb_sales_gross) NOT ordersAmount per QA report 128
   const theoreticalProfit = useMemo(() => {
     return calculateTheoreticalProfit({
-      ordersAmount: ordersQuery.current?.totalAmount ?? null,
-      cogs: ordersCogs.current?.cogsTotal ?? null,
+      salesAmount: salesAmount ?? null,
+      cogs: cogsTotal ?? null,
       advertisingSpend: advertisingQuery.current?.summary?.total_spend ?? null,
       logisticsCost: logisticsCost ?? null,
       storageCost: storageCost ?? null,
     })
-  }, [
-    ordersQuery.current,
-    ordersCogs.current,
-    advertisingQuery.current,
-    logisticsCost,
-    storageCost,
-  ])
+  }, [salesAmount, cogsTotal, advertisingQuery.current, logisticsCost, storageCost])
 
   // Previous period data for comparison (Story 61.11-FE)
   const previousPeriodData = useMemo<PreviousPeriodData | undefined>(() => {
@@ -144,20 +140,22 @@ export function DashboardContent(): React.ReactElement {
     const prevOrdersAmount = ordersQuery.previous?.totalAmount ?? null
     const prevOrdersCogs = ordersCogs.previous?.cogsTotal ?? null
     const prevAdvertisingSpend = advertisingQuery.previous?.summary?.total_spend ?? null
+    const prevCogsTotal = prevSummaryRus?.cogs_total ?? prevSummaryTotal?.cogs_total ?? null
 
-    // Calculate theoretical profit for previous period if all components available
+    // Calculate theoretical profit for previous period using Sales (not Orders)
+    // Formula: Выкупы - COGS - Реклама - Логистика - Хранение
     const prevTheoreticalProfit =
-      prevOrdersAmount !== null &&
-      prevOrdersCogs !== null &&
-      prevAdvertisingSpend !== null &&
-      prevLogisticsCost !== null &&
-      prevStorageCost !== null
+      prevSalesAmount != null &&
+      prevCogsTotal != null &&
+      prevAdvertisingSpend != null &&
+      prevLogisticsCost != null &&
+      prevStorageCost != null
         ? calculateTheoreticalProfit({
-            ordersAmount: prevOrdersAmount,
-            cogs: prevOrdersCogs,
-            advertisingSpend: prevAdvertisingSpend,
-            logisticsCost: prevLogisticsCost ?? 0,
-            storageCost: prevStorageCost ?? 0,
+            salesAmount: prevSalesAmount ?? null,
+            cogs: prevCogsTotal ?? null,
+            advertisingSpend: prevAdvertisingSpend ?? null,
+            logisticsCost: prevLogisticsCost ?? null,
+            storageCost: prevStorageCost ?? null,
           })
         : null
 

@@ -44,6 +44,7 @@ const WEEK_W04_DATA: FinanceSummary = {
   products_total: 50,
   products_with_cogs: 50,
   gross_profit: 16401.92, // API returns this (payout - cogs, WRONG formula)
+  penalties_total: 0,
 }
 
 /** Expected Gross Margin for W04: (126922.45 - 35818) / 126922.45 = 71.78% */
@@ -62,6 +63,7 @@ const JANUARY_WEEKS: FinanceSummary[] = [
     cogs_coverage_pct: 100,
     products_total: 50,
     products_with_cogs: 50,
+    penalties_total: 0,
   },
   {
     week: '2025-W02',
@@ -71,6 +73,7 @@ const JANUARY_WEEKS: FinanceSummary[] = [
     cogs_coverage_pct: 100,
     products_total: 50,
     products_with_cogs: 50,
+    penalties_total: 0,
   },
   {
     week: '2025-W03',
@@ -80,6 +83,7 @@ const JANUARY_WEEKS: FinanceSummary[] = [
     cogs_coverage_pct: 100,
     products_total: 50,
     products_with_cogs: 50,
+    penalties_total: 0,
   },
   WEEK_W04_DATA,
 ]
@@ -189,6 +193,7 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
         products_total: 50,
         products_with_cogs: 40,
         payout_total: 52219.92,
+        penalties_total: 0,
       }
 
       const result = aggregateFinanceSummaries([incompleteData])
@@ -209,6 +214,7 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
         products_total: 50,
         products_with_cogs: 50,
         payout_total: 0,
+        penalties_total: 0,
       }
 
       const result = aggregateFinanceSummaries([zeroSalesData])
@@ -229,6 +235,7 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
         products_total: 50,
         products_with_cogs: 50,
         payout_total: 20000,
+        penalties_total: 0,
       }
 
       const result = aggregateFinanceSummaries([lossData])
@@ -311,6 +318,7 @@ describe('aggregateFinanceSummaries - margin consistency', () => {
           products_total: 50,
           products_with_cogs: 50,
           payout_total: 60000,
+          penalties_total: 0,
         },
         {
           week: '2025-W02',
@@ -320,6 +328,7 @@ describe('aggregateFinanceSummaries - margin consistency', () => {
           products_total: 50,
           products_with_cogs: 40,
           payout_total: 60000,
+          penalties_total: 0,
         },
       ]
 

@@ -6,11 +6,11 @@
  * GREEN Phase: Tests now using actual implementation.
  *
  * Business Formula:
- * Теор. прибыль = Заказы - COGS - рекламные затраты - логистика - хранение
+ * Теор. прибыль = Выкупы - COGS - рекламные затраты - логистика - хранение
  *
  * KEY REQUIREMENTS:
  * - AC1: Create calculateTheoreticalProfit() function
- * - AC2: Accept all 5 inputs: orders, COGS, advertising, logistics, storage
+ * - AC2: Accept all 5 inputs: sales (Выкупы), COGS, advertising, logistics, storage
  * - AC3: Return value and breakdown object
  * - AC4: Handle null/undefined values gracefully
  * - AC5: Return isComplete flag if all values present
@@ -34,7 +34,7 @@ describe('calculateTheoreticalProfit', () => {
     it('should calculate theoretical profit correctly with all values', () => {
       // Story 61.10-FE: Formula = Заказы - COGS - реклама - логистика - хранение
       const input: TheoreticalProfitInput = {
-        ordersAmount: 500000,
+        salesAmount: 500000,
         cogs: 200000,
         advertisingSpend: 50000,
         logisticsCost: 30000,
@@ -51,7 +51,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should return correct breakdown object', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 500000,
+        salesAmount: 500000,
         cogs: 200000,
         advertisingSpend: 50000,
         logisticsCost: 30000,
@@ -61,7 +61,7 @@ describe('calculateTheoreticalProfit', () => {
       const result = calculateTheoreticalProfit(input)
 
       expect(result.breakdown).toEqual({
-        orders: 500000,
+        sales: 500000,
         cogs: 200000,
         advertising: 50000,
         logistics: 30000,
@@ -71,7 +71,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should handle zero values correctly', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 0,
         advertisingSpend: 0,
         logisticsCost: 0,
@@ -86,7 +86,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should handle large values correctly (typical monthly sales)', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 5_000_000, // 5M rubles
+        salesAmount: 5_000_000, // 5M rubles
         cogs: 2_000_000,
         advertisingSpend: 500_000,
         logisticsCost: 300_000,
@@ -108,7 +108,7 @@ describe('calculateTheoreticalProfit', () => {
     it('should return negative profit when costs exceed orders', () => {
       // Story 61.10-FE: Business case - unprofitable period
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 80000,
         advertisingSpend: 30000,
         logisticsCost: 10000,
@@ -124,7 +124,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should handle extremely negative profit (high advertising spend)', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 50000,
+        salesAmount: 50000,
         cogs: 30000,
         advertisingSpend: 100000, // High ad spend exceeds orders
         logisticsCost: 5000,
@@ -145,7 +145,7 @@ describe('calculateTheoreticalProfit', () => {
   describe('null value handling (AC4)', () => {
     it('should handle null values gracefully and use 0 in calculation', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: null,
         advertisingSpend: 10000,
         logisticsCost: null,
@@ -159,14 +159,14 @@ describe('calculateTheoreticalProfit', () => {
       expect(result.isComplete).toBe(false)
       expect(result.missingFields).toContain('cogs')
       expect(result.missingFields).toContain('logisticsCost')
-      expect(result.missingFields).not.toContain('ordersAmount')
+      expect(result.missingFields).not.toContain('salesAmount')
       expect(result.missingFields).not.toContain('advertisingSpend')
       expect(result.missingFields).not.toContain('storageCost')
     })
 
     it('should handle all null values', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: null,
+        salesAmount: null,
         cogs: null,
         advertisingSpend: null,
         logisticsCost: null,
@@ -178,16 +178,16 @@ describe('calculateTheoreticalProfit', () => {
       expect(result.value).toBe(0)
       expect(result.isComplete).toBe(false)
       expect(result.missingFields).toHaveLength(5)
-      expect(result.missingFields).toContain('ordersAmount')
+      expect(result.missingFields).toContain('salesAmount')
       expect(result.missingFields).toContain('cogs')
       expect(result.missingFields).toContain('advertisingSpend')
       expect(result.missingFields).toContain('logisticsCost')
       expect(result.missingFields).toContain('storageCost')
     })
 
-    it('should handle only ordersAmount as null', () => {
+    it('should handle only salesAmount as null', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: null,
+        salesAmount: null,
         cogs: 50000,
         advertisingSpend: 10000,
         logisticsCost: 5000,
@@ -199,12 +199,12 @@ describe('calculateTheoreticalProfit', () => {
       // 0 - 50000 - 10000 - 5000 - 2000 = -67000
       expect(result.value).toBe(-67000)
       expect(result.isComplete).toBe(false)
-      expect(result.missingFields).toEqual(['ordersAmount'])
+      expect(result.missingFields).toEqual(['salesAmount'])
     })
 
     it('should report correct missing fields in order', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: null,
         advertisingSpend: null,
         logisticsCost: 5000,
@@ -224,7 +224,7 @@ describe('calculateTheoreticalProfit', () => {
   describe('isComplete flag (AC5)', () => {
     it('should return isComplete=true when all values present', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 50000,
         advertisingSpend: 10000,
         logisticsCost: 5000,
@@ -238,7 +238,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should return isComplete=false when any value is null', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 50000,
         advertisingSpend: 10000,
         logisticsCost: null, // Single missing value
@@ -252,7 +252,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should return isComplete=true when values are 0 (zero is valid)', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 0, // Zero is a valid value, not missing
         advertisingSpend: 0,
         logisticsCost: 0,
@@ -273,7 +273,7 @@ describe('calculateTheoreticalProfit', () => {
   describe('edge cases', () => {
     it('should handle very small decimal values', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100.5,
+        salesAmount: 100.5,
         cogs: 40.25,
         advertisingSpend: 10.1,
         logisticsCost: 5.05,
@@ -288,7 +288,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should handle exactly zero orders (new seller scenario)', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 0,
+        salesAmount: 0,
         cogs: 0,
         advertisingSpend: 1000, // Spent on ads before first sale
         logisticsCost: 0,
@@ -304,7 +304,7 @@ describe('calculateTheoreticalProfit', () => {
 
     it('should handle break-even scenario (profit = 0)', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 60000,
         advertisingSpend: 20000,
         logisticsCost: 15000,
@@ -325,7 +325,7 @@ describe('calculateTheoreticalProfit', () => {
   describe('type safety', () => {
     it('should return correct TheoreticalProfitResult structure', () => {
       const input: TheoreticalProfitInput = {
-        ordersAmount: 100000,
+        salesAmount: 100000,
         cogs: 50000,
         advertisingSpend: 10000,
         logisticsCost: 5000,
@@ -338,7 +338,7 @@ describe('calculateTheoreticalProfit', () => {
       expect(typeof result.value).toBe('number')
       expect(typeof result.isComplete).toBe('boolean')
       expect(Array.isArray(result.missingFields)).toBe(true)
-      expect(typeof result.breakdown.orders).toBe('number')
+      expect(typeof result.breakdown.sales).toBe('number')
       expect(typeof result.breakdown.cogs).toBe('number')
       expect(typeof result.breakdown.advertising).toBe('number')
       expect(typeof result.breakdown.logistics).toBe('number')
@@ -401,7 +401,7 @@ describe('calculateTheoreticalMarginPct', () => {
 describe('integration: calculateTheoreticalProfit + calculateTheoreticalMarginPct', () => {
   it('should work together for complete profit analysis', () => {
     const input: TheoreticalProfitInput = {
-      ordersAmount: 500000,
+      salesAmount: 500000,
       cogs: 200000,
       advertisingSpend: 50000,
       logisticsCost: 30000,
@@ -411,7 +411,7 @@ describe('integration: calculateTheoreticalProfit + calculateTheoreticalMarginPc
     const profitResult = calculateTheoreticalProfit(input)
     const marginPct = calculateTheoreticalMarginPct(
       profitResult.value,
-      profitResult.breakdown.orders
+      profitResult.breakdown.sales
     )
 
     expect(profitResult.value).toBe(210000)
@@ -420,7 +420,7 @@ describe('integration: calculateTheoreticalProfit + calculateTheoreticalMarginPc
 
   it('should handle incomplete data gracefully', () => {
     const input: TheoreticalProfitInput = {
-      ordersAmount: 100000,
+      salesAmount: 100000,
       cogs: null,
       advertisingSpend: 10000,
       logisticsCost: null,
@@ -430,7 +430,7 @@ describe('integration: calculateTheoreticalProfit + calculateTheoreticalMarginPc
     const profitResult = calculateTheoreticalProfit(input)
     const marginPct = calculateTheoreticalMarginPct(
       profitResult.value,
-      profitResult.breakdown.orders
+      profitResult.breakdown.sales
     )
 
     // Profit calculated with 0s for missing values
