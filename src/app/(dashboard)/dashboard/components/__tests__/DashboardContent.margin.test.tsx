@@ -30,6 +30,8 @@ vi.mock('@/hooks/useDashboardPeriod', () => ({
     periodType: 'week',
     selectedWeek: '2025-W03',
     selectedMonth: '2025-01',
+    previousWeek: '2025-W02',
+    previousMonth: '2024-12',
     lastRefresh: new Date(),
   }),
 }))
@@ -52,6 +54,12 @@ vi.mock('@/hooks/useProcessingStatus', () => ({
 
 vi.mock('@/hooks/useProducts', () => ({
   useProductsCount: () => ({ data: 100, isLoading: false }),
+  useProductsWithCogs: () => ({
+    data: { pagination: { total: 80 } },
+    isLoading: false,
+  }),
+  // Export other functions that might be imported
+  useProducts: () => ({ data: [], isLoading: false }),
 }))
 
 vi.mock('@/hooks/useFinancialSummary', () => ({
@@ -83,6 +91,11 @@ vi.mock('@/hooks/useDataImportNotification', () => ({
 vi.mock('@/hooks/useAdvertisingAnalytics', () => ({
   useAdvertisingAnalytics: () => ({
     data: { summary: { overall_roas: 3.5 } },
+    isLoading: false,
+  }),
+  useAdvertisingAnalyticsComparison: () => ({
+    current: { summary: { overall_roas: 3.5 } },
+    previous: { summary: { overall_roas: 3.0 } },
     isLoading: false,
   }),
 }))
