@@ -163,6 +163,11 @@ export function getWeeksInMonth(month: string): string[] {
     .filter(week => getMonthFromWeek(week) === month)
 }
 
+/** Check if a week is the current (incomplete) week */
+export function isCurrentWeek(week: string): boolean {
+  return week === getCurrentWeek()
+}
+
 /** Format week for display with Russian locale */
 export function formatWeekLabel(week: string): string {
   const match = week.match(WEEK_REGEX)
@@ -176,14 +181,24 @@ export function formatWeekLabel(week: string): string {
   const startStr = format(start, 'd MMM', { locale: ru })
   const endStr = format(end, 'd MMM', { locale: ru })
 
-  return `Неделя ${weekNum}, ${yearStr} (${startStr} — ${endStr})`
+  // Mark current (incomplete) week with indicator
+  const currentIndicator = isCurrentWeek(week) ? ' ⏳' : ''
+  return `Неделя ${weekNum}, ${yearStr} (${startStr} — ${endStr})${currentIndicator}`
+}
+
+/** Check if a month is the current (incomplete) month */
+export function isCurrentMonth(month: string): boolean {
+  return month === getCurrentMonth()
 }
 
 /** Format month for display with Russian locale */
 export function formatMonthLabel(month: string): string {
   const date = parseMonth(month)
   const formatted = format(date, 'LLLL yyyy', { locale: ru })
-  return formatted.charAt(0).toUpperCase() + formatted.slice(1)
+  const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1)
+  // Mark current (incomplete) month with indicator
+  const currentIndicator = isCurrentMonth(month) ? ' ⏳' : ''
+  return `${capitalized}${currentIndicator}`
 }
 
 /** Format period for display based on type */

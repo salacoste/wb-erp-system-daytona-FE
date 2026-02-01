@@ -246,7 +246,7 @@ describe('DashboardContent currentPeriodData consistency', () => {
       // ordersAmount: ordersQuery.current?.totalAmount ?? null
 
       // Simulating the pattern
-      const ordersQuery = { current: undefined }
+      const ordersQuery: { current?: { totalAmount: number } } = { current: undefined }
       const ordersAmount = ordersQuery.current?.totalAmount ?? null
 
       expect(ordersAmount).toBeNull()

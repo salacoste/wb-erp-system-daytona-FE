@@ -30,9 +30,18 @@ const mockOrdersVolumeComparison = vi.fn()
 const mockOrdersCogsComparison = vi.fn()
 const mockFinancialSummaryComparison = vi.fn()
 const mockAdvertisingComparison = vi.fn()
+const mockFulfillmentSummaryComparison = vi.fn()
+const mockFulfillmentSyncStatus = vi.fn()
+const mockStartFulfillmentSync = vi.fn()
 
 vi.mock('@/hooks/useOrdersVolume', () => ({
   useOrdersVolumeWithComparison: () => mockOrdersVolumeComparison(),
+}))
+
+vi.mock('@/hooks/useFulfillment', () => ({
+  useFulfillmentSummaryWithComparison: () => mockFulfillmentSummaryComparison(),
+  useFulfillmentSyncStatus: () => mockFulfillmentSyncStatus(),
+  useStartFulfillmentSync: () => mockStartFulfillmentSync(),
 }))
 
 vi.mock('@/hooks/useOrdersCogs', () => ({
@@ -64,27 +73,33 @@ const mockCurrentPeriodData = {
   ordersAmount: 100000,
   ordersCount: 250,
   ordersCogs: 35818,
+  salesAmount: 84377, // wb_sales_gross (actual sales, not orders)
+  salesCogs: 35818, // cogs_total from finance summary
   advertisingSpend: 12131,
   logisticsCost: 17566.04,
   storageCost: 2024.94,
-  // theoreticalProfit = orders - cogs - ads - logistics - storage
-  // = 100000 - 35818 - 12131 - 17566.04 - 2024.94 = 32459.02
-  theoreticalProfit: 32459.02,
+  // theoreticalProfit = sales - salesCogs - ads - logistics - storage
+  // = 84377 - 35818 - 12131 - 17566.04 - 2024.94 = 16837.02
+  theoreticalProfit: 16837.02,
 }
 
 /**
  * Previous period mock data
  * All 8 metrics for comparison (week/month prior)
+ * Theoretical profit uses SALES (not orders) per QA report 128
  */
 const mockPreviousPeriodData = {
   ordersAmount: 116077.27,
   ordersCount: 280,
   ordersCogs: 43890,
+  salesAmount: 95000, // wb_sales_gross (actual sales for previous period)
+  salesCogs: 43890, // cogs_total from finance summary
   advertisingSpend: 15000,
   logisticsCost: 20000,
   storageCost: 2500,
-  // theoreticalProfit = 116077.27 - 43890 - 15000 - 20000 - 2500 = 34687.27
-  theoreticalProfit: 34687.27,
+  // theoreticalProfit = sales - salesCogs - ads - logistics - storage
+  // = 95000 - 43890 - 15000 - 20000 - 2500 = 13610
+  theoreticalProfit: 13610,
 }
 
 // =============================================================================
@@ -211,14 +226,18 @@ function setupDefaultMocks() {
   mockFinancialSummaryComparison.mockReturnValue({
     current: {
       summary_total: {
-        logistics_cost: mockCurrentPeriodData.logisticsCost,
-        storage_cost: mockCurrentPeriodData.storageCost,
+        wb_sales_gross_total: mockCurrentPeriodData.salesAmount,
+        cogs_total: mockCurrentPeriodData.salesCogs,
+        logistics_cost_total: mockCurrentPeriodData.logisticsCost,
+        storage_cost_total: mockCurrentPeriodData.storageCost,
       },
     },
     previous: {
       summary_total: {
-        logistics_cost: mockPreviousPeriodData.logisticsCost,
-        storage_cost: mockPreviousPeriodData.storageCost,
+        wb_sales_gross_total: mockPreviousPeriodData.salesAmount,
+        cogs_total: mockPreviousPeriodData.salesCogs,
+        logistics_cost_total: mockPreviousPeriodData.logisticsCost,
+        storage_cost_total: mockPreviousPeriodData.storageCost,
       },
     },
     isLoading: false,
@@ -228,6 +247,41 @@ function setupDefaultMocks() {
     current: { summary: { total_spend: mockCurrentPeriodData.advertisingSpend } },
     previous: { summary: { total_spend: mockPreviousPeriodData.advertisingSpend } },
     isLoading: false,
+  })
+
+  // Epic 60: Fulfillment mocks (FBO/FBS)
+  mockFulfillmentSummaryComparison.mockReturnValue({
+    current: {
+      summary: {
+        fbo: { ordersCount: 150, ordersRevenue: 60000 },
+        fbs: { ordersCount: 100, ordersRevenue: 40000 },
+        total: { ordersCount: 250, ordersRevenue: 100000, fboShare: 60, fbsShare: 40 },
+      },
+    },
+    previous: {
+      summary: {
+        fbo: { ordersCount: 170, ordersRevenue: 70000 },
+        fbs: { ordersCount: 110, ordersRevenue: 46077 },
+        total: {
+          ordersCount: 280,
+          ordersRevenue: mockPreviousPeriodData.ordersAmount,
+          fboShare: 60,
+          fbsShare: 40,
+        },
+      },
+    },
+    isLoading: false,
+    error: null,
+  })
+
+  mockFulfillmentSyncStatus.mockReturnValue({
+    data: { isDataAvailable: true },
+    isLoading: false,
+  })
+
+  mockStartFulfillmentSync.mockReturnValue({
+    mutate: vi.fn(),
+    isPending: false,
   })
 }
 
@@ -325,10 +379,11 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
         const prevData = getPreviousPeriodDataFromRender()
         expect(prevData?.theoreticalProfit).not.toBeNull()
 
-        // Verify calculation: orders - cogs - ads - logistics - storage
+        // Verify calculation: sales - salesCogs - ads - logistics - storage
+        // Uses SALES (not orders) per QA report 128
         const expectedProfit =
-          mockPreviousPeriodData.ordersAmount -
-          mockPreviousPeriodData.ordersCogs -
+          mockPreviousPeriodData.salesAmount -
+          mockPreviousPeriodData.salesCogs -
           mockPreviousPeriodData.advertisingSpend -
           mockPreviousPeriodData.logisticsCost -
           mockPreviousPeriodData.storageCost
@@ -338,13 +393,26 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
     })
 
     it('should return null for theoreticalProfit when any component is missing', async () => {
-      // Override COGS mock to return null for previous period
-      mockOrdersCogsComparison.mockReturnValue({
-        current: { cogsTotal: mockCurrentPeriodData.ordersCogs },
-        previous: null, // Missing COGS
+      // Override financial summary to have missing cogs_total for previous period
+      // Theoretical profit uses cogs_total from finance summary, not orders COGS
+      mockFinancialSummaryComparison.mockReturnValue({
+        current: {
+          summary_total: {
+            wb_sales_gross_total: mockCurrentPeriodData.salesAmount,
+            cogs_total: mockCurrentPeriodData.salesCogs,
+            logistics_cost_total: mockCurrentPeriodData.logisticsCost,
+            storage_cost_total: mockCurrentPeriodData.storageCost,
+          },
+        },
+        previous: {
+          summary_total: {
+            wb_sales_gross_total: mockPreviousPeriodData.salesAmount,
+            // Missing cogs_total - this should cause theoreticalProfit to be null
+            logistics_cost_total: mockPreviousPeriodData.logisticsCost,
+            storage_cost_total: mockPreviousPeriodData.storageCost,
+          },
+        },
         isLoading: false,
-        isError: false,
-        error: null,
       })
 
       renderWithProviders(<DashboardContent />)
@@ -377,9 +445,9 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
         expect(prevData?.storageCost).toBe(mockPreviousPeriodData.storageCost)
         expect(prevData?.theoreticalProfit).toBeCloseTo(mockPreviousPeriodData.theoreticalProfit, 2)
 
-        // Placeholders (salesAmount, salesCogs) should remain null until Sales API
-        expect(prevData?.salesAmount).toBeNull()
-        expect(prevData?.salesCogs).toBeNull()
+        // salesAmount and salesCogs from finance summary
+        expect(prevData?.salesAmount).toBe(mockPreviousPeriodData.salesAmount)
+        expect(prevData?.salesCogs).toBe(mockPreviousPeriodData.salesCogs)
       })
     })
 
@@ -408,7 +476,7 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
       })
 
       mockFinancialSummaryComparison.mockReturnValue({
-        current: { summary_total: { logistics_cost: 17566, storage_cost: 2025 } },
+        current: { summary_total: { logistics_cost_total: 17566, storage_cost_total: 2025 } },
         previous: null, // No financial summary for previous period
         isLoading: false,
       })
@@ -418,8 +486,8 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
 
-        // Available data should be filled
-        expect(prevData?.ordersAmount).toBe(116077)
+        // Available data should be filled (mockPreviousPeriodData.ordersAmount = 116077.27)
+        expect(prevData?.ordersAmount).toBe(116077.27)
         expect(prevData?.advertisingSpend).toBe(15000)
 
         // Missing data should be null (not 0)

@@ -1,11 +1,13 @@
 /**
  * Dashboard Content Component
  * Epic 62-FE: Dashboard UI/UX Presentation
+ * Epic 60: FBO/FBS Order Analytics Separation
  *
- * Main dashboard with 8-card metrics grid, daily breakdown chart/table,
- * advertising widget, and expense chart. Uses hooks from Epic 61-FE.
+ * Main dashboard with 8-card metrics grid (including FBO/FBS card),
+ * daily breakdown chart/table, advertising widget, and expense chart.
  *
  * @see docs/epics/epic-62-fe-dashboard-presentation.md
+ * @see docs/request-backend/130-DASHBOARD-FBO-ORDERS-API.md
  */
 
 'use client'
@@ -15,19 +17,23 @@ import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
-import { useOrdersVolumeWithComparison } from '@/hooks/useOrdersVolume'
 import { useOrdersCogsWithComparison } from '@/hooks/useOrdersCogs'
 import { useFinancialSummaryWithPeriodComparison } from '@/hooks/useFinancialSummary'
 import { useAdvertisingAnalyticsComparison } from '@/hooks/useAdvertisingAnalytics'
+import {
+  useFulfillmentSummaryWithComparison,
+  useFulfillmentSyncStatus,
+  useStartFulfillmentSync,
+} from '@/hooks/useFulfillment'
 import { useProcessingStatus } from '@/hooks/useProcessingStatus'
 import { useProductsCount, useProductsWithCogs } from '@/hooks/useProducts'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
+import { usePreviousPeriodData } from '@/hooks/usePreviousPeriodData'
 import { calculateTheoreticalProfit } from '@/lib/theoretical-profit'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
 import { ROUTES } from '@/lib/routes'
 import { dashboardQueryKeys } from '@/hooks/useDashboard'
-import { DashboardMetricsGrid } from '@/components/custom/dashboard'
-import { DailyBreakdownSection } from '@/components/custom/dashboard'
+import { DashboardMetricsGrid, DailyBreakdownSection } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
@@ -35,10 +41,9 @@ import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
 import { ProcessingAlert, FailedAlert, ErrorAlert } from './DashboardAlerts'
-import type { PreviousPeriodData } from '@/components/custom/dashboard'
 
 /**
- * Dashboard content with Epic 62-FE 8-card metrics grid
+ * Dashboard content with Epic 62-FE 8-card metrics grid and Epic 60 FBO/FBS
  */
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()
@@ -46,11 +51,25 @@ export function DashboardContent(): React.ReactElement {
   const { periodType, selectedWeek, selectedMonth, lastRefresh } = useDashboardPeriod()
   const selectedPeriod = periodType === 'week' ? selectedWeek : selectedMonth
 
-  // Epic 61-FE: Orders Volume (Story 61.3)
-  const ordersQuery = useOrdersVolumeWithComparison({
-    periodType,
-    period: selectedPeriod,
+  // Calculate date ranges for fulfillment
+  const fulfillmentDateRange = useMemo(() => {
+    return periodType === 'week' ? weekToDateRange(selectedWeek) : monthToDateRange(selectedMonth)
+  }, [periodType, selectedWeek, selectedMonth])
+
+  const { previousWeek, previousMonth } = useDashboardPeriod()
+  const prevFulfillmentRange = useMemo(() => {
+    return periodType === 'week' ? weekToDateRange(previousWeek) : monthToDateRange(previousMonth)
+  }, [periodType, previousWeek, previousMonth])
+
+  // Epic 60: FBO/FBS Fulfillment metrics
+  const fulfillmentQuery = useFulfillmentSummaryWithComparison({
+    from: fulfillmentDateRange.from,
+    to: fulfillmentDateRange.to,
+    previousFrom: prevFulfillmentRange.from,
+    previousTo: prevFulfillmentRange.to,
   })
+  const { data: syncStatus } = useFulfillmentSyncStatus()
+  const startSyncMutation = useStartFulfillmentSync()
 
   // Epic 61-FE: Orders with COGS (Story 61.4) with comparison (Story 61.11)
   const ordersCogs = useOrdersCogsWithComparison({ periodType, period: selectedPeriod })
@@ -73,7 +92,9 @@ export function DashboardContent(): React.ReactElement {
   const logisticsCost = summaryRus?.logistics_cost ?? summaryTotal?.logistics_cost_total
   const storageCost = summaryRus?.storage_cost ?? summaryTotal?.storage_cost_total
   const cogsTotal = summaryRus?.cogs_total ?? summaryTotal?.cogs_total
-  const revenueTotal = summaryRus?.sale_gross ?? summaryTotal?.sale_gross_total
+  // Issue #3 Fix: Use wb_sales_gross (Выкупы) as base for expense percentages
+  // This ensures consistency with the "Выкупы" card value (84,377₽ vs sale_gross 128,487₽)
+  const revenueTotal = summaryRus?.wb_sales_gross ?? summaryTotal?.wb_sales_gross_total
 
   // Previous period values
   const prevSalesAmount = prevSummaryRus?.wb_sales_gross ?? prevSummaryTotal?.wb_sales_gross_total
@@ -90,19 +111,13 @@ export function DashboardContent(): React.ReactElement {
   const cogsCoverage =
     productCount && productCount > 0 ? (inventoryWithCogs / productCount) * 100 : 0
 
-  // Initialize data import notification
-  const hasFinancialData = ordersQuery.current !== undefined
-  useDataImportNotification(!!hasFinancialData, ordersQuery.isLoading)
+  // Initialize data import notification (use fulfillment data availability)
+  const hasFinancialData = fulfillmentQuery.current !== undefined
+  useDataImportNotification(!!hasFinancialData, fulfillmentQuery.isLoading)
 
-  // Advertising data with comparison
-  const advertisingDateRange = useMemo(() => {
-    return periodType === 'week' ? weekToDateRange(selectedWeek) : monthToDateRange(selectedMonth)
-  }, [periodType, selectedWeek, selectedMonth])
-
-  const { previousWeek, previousMonth } = useDashboardPeriod()
-  const prevAdRange = useMemo(() => {
-    return periodType === 'week' ? weekToDateRange(previousWeek) : monthToDateRange(previousMonth)
-  }, [periodType, previousWeek, previousMonth])
+  // Advertising data with comparison (reuse fulfillment date ranges)
+  const advertisingDateRange = fulfillmentDateRange
+  const prevAdRange = prevFulfillmentRange
 
   const advertisingQuery = useAdvertisingAnalyticsComparison(
     { from: advertisingDateRange.from, to: advertisingDateRange.to, limit: 1 },
@@ -124,71 +139,26 @@ export function DashboardContent(): React.ReactElement {
   }, [salesAmount, cogsTotal, advertisingQuery.current, logisticsCost, storageCost])
 
   // Previous period data for comparison (Story 61.11-FE)
-  const previousPeriodData = useMemo<PreviousPeriodData | undefined>(() => {
-    // Check if we have any previous period data
-    const hasPrevFinancial = prevSummaryRus || prevSummaryTotal
-    if (
-      !ordersQuery.previous &&
-      !advertisingQuery.previous &&
-      !ordersCogs.previous &&
-      !hasPrevFinancial
-    ) {
-      return undefined
-    }
-
-    // Get previous period values
-    const prevOrdersAmount = ordersQuery.previous?.totalAmount ?? null
-    const prevOrdersCogs = ordersCogs.previous?.cogsTotal ?? null
-    const prevAdvertisingSpend = advertisingQuery.previous?.summary?.total_spend ?? null
-    const prevCogsTotal = prevSummaryRus?.cogs_total ?? prevSummaryTotal?.cogs_total ?? null
-
-    // Calculate theoretical profit for previous period using Sales (not Orders)
-    // Formula: Выкупы - COGS - Реклама - Логистика - Хранение
-    const prevTheoreticalProfit =
-      prevSalesAmount != null &&
-      prevCogsTotal != null &&
-      prevAdvertisingSpend != null &&
-      prevLogisticsCost != null &&
-      prevStorageCost != null
-        ? calculateTheoreticalProfit({
-            salesAmount: prevSalesAmount ?? null,
-            cogs: prevCogsTotal ?? null,
-            advertisingSpend: prevAdvertisingSpend ?? null,
-            logisticsCost: prevLogisticsCost ?? null,
-            storageCost: prevStorageCost ?? null,
-          })
-        : null
-
-    return {
-      ordersAmount: prevOrdersAmount,
-      ordersCogs: prevOrdersCogs,
-      salesAmount: prevSalesAmount ?? null,
-      salesCogs: prevSummaryRus?.cogs_total ?? prevSummaryTotal?.cogs_total ?? null,
-      advertisingSpend: prevAdvertisingSpend,
-      logisticsCost: prevLogisticsCost ?? null,
-      storageCost: prevStorageCost ?? null,
-      theoreticalProfit: prevTheoreticalProfit?.value ?? null,
-    }
-  }, [
-    ordersQuery.previous,
-    advertisingQuery.previous,
-    ordersCogs.previous,
+  const previousPeriodData = usePreviousPeriodData({
+    fulfillmentPrevious: fulfillmentQuery.previous,
+    advertisingPrevious: advertisingQuery.previous,
+    ordersCogsTotal: ordersCogs.previous?.cogsTotal,
     prevSummaryRus,
     prevSummaryTotal,
     prevSalesAmount,
     prevLogisticsCost,
     prevStorageCost,
-  ])
+  })
 
-  // Combined loading state
-  const isLoading = ordersQuery.isLoading || summaryLoading || advertisingQuery.isLoading
+  // Combined loading state (without fulfillment - it's independent)
+  const isLoading = summaryLoading || advertisingQuery.isLoading || ordersCogs.isLoading
 
-  // Combined error state
-  const error = ordersQuery.error || ordersCogs.error || null
+  // Separate error states - fulfillment errors don't affect other cards
+  const fulfillmentError = fulfillmentQuery.error || null
+  const otherError = ordersCogs.error || null
 
   const handleRetry = (): void => {
     queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all })
-    ordersQuery.current // Trigger refetch
   }
 
   // Processing status alerts
@@ -219,13 +189,24 @@ export function DashboardContent(): React.ReactElement {
       {isFinancialDataProcessing && <ProcessingAlert processingStatus={processingStatus} />}
       {isFinancialDataFailed && <FailedAlert />}
 
-      {/* Error State */}
-      {error && !isFinancialDataProcessing && <ErrorAlert onRetry={handleRetry} />}
+      {/* Error State - only show for non-fulfillment errors */}
+      {otherError && !isFinancialDataProcessing && <ErrorAlert onRetry={handleRetry} />}
 
-      {/* Epic 62-FE: 8-Card Metrics Grid */}
+      {/* Epic 62-FE: 8-Card Metrics Grid with Epic 60 FBO/FBS */}
       <DashboardMetricsGrid
-        ordersAmount={ordersQuery.current?.totalAmount}
-        ordersCount={ordersQuery.current?.totalOrders}
+        // FBO/FBS Fulfillment (Epic 60)
+        fboOrdersCount={fulfillmentQuery.current?.summary.fbo.ordersCount}
+        fboOrdersRevenue={fulfillmentQuery.current?.summary.fbo.ordersRevenue}
+        fbsOrdersCount={fulfillmentQuery.current?.summary.fbs.ordersCount}
+        fbsOrdersRevenue={fulfillmentQuery.current?.summary.fbs.ordersRevenue}
+        fboShare={fulfillmentQuery.current?.summary.total.fboShare}
+        fbsShare={fulfillmentQuery.current?.summary.total.fbsShare}
+        previousFulfillmentRevenue={fulfillmentQuery.previous?.summary.total.ordersRevenue}
+        isFulfillmentDataAvailable={syncStatus?.isDataAvailable ?? false}
+        onStartFulfillmentSync={() => startSyncMutation.mutate({ dataSource: 'both' })}
+        isFulfillmentSyncLoading={startSyncMutation.isPending}
+        fulfillmentError={fulfillmentError}
+        // Other metrics
         ordersCogs={ordersCogs.current?.cogsTotal}
         salesAmount={salesAmount}
         salesCogs={cogsTotal ?? undefined}
@@ -239,7 +220,8 @@ export function DashboardContent(): React.ReactElement {
         cogsCoverage={cogsCoverage}
         previousPeriodData={previousPeriodData}
         isLoading={isLoading || productsLoading || cogsLoading}
-        error={error}
+        isFulfillmentLoading={fulfillmentQuery.isLoading}
+        error={otherError}
         onRetry={handleRetry}
         onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
       />
@@ -264,7 +246,7 @@ export function DashboardContent(): React.ReactElement {
       />
 
       {/* Refetching indicator */}
-      {ordersQuery.isLoading && (
+      {fulfillmentQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
           <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />
           Обновление данных...

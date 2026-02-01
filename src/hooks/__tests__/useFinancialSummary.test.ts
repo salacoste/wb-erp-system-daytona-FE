@@ -46,6 +46,7 @@ interface FinanceSummary {
   logistics_cost?: number | null
   storage_cost_total?: number | null
   storage_cost?: number | null
+  penalties_total?: number | null
   [key: string]: string | number | null | undefined
 }
 

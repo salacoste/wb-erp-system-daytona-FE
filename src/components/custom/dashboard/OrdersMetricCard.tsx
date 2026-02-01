@@ -1,14 +1,8 @@
 /**
- * Orders Volume Metric Card Component
- * Story 62.2-FE: Orders Volume Metric Card
- * Epic 62-FE: Dashboard UI/UX Presentation
- *
- * Displays orders volume metric with comparison and order count.
- * Uses blue color to indicate potential/pending revenue.
- *
+ * Orders Volume Metric Card - Story 62.2-FE
+ * Displays orders volume with comparison. Blue color = potential/pending revenue.
  * @see docs/stories/epic-62/story-62.2-fe-orders-volume-metric-card.md
  */
-
 'use client'
 
 import { ShoppingCart, Info, AlertCircle, RefreshCw } from 'lucide-react'
@@ -20,61 +14,36 @@ import { calculateComparison } from '@/lib/comparison-helpers'
 import { TrendIndicator } from '@/components/custom/TrendIndicator'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { MetricCardSkeleton } from './DashboardMetricsGridSkeleton'
+import { EmptyStateFBS } from './EmptyStateFBS'
 
 export interface OrdersMetricCardProps {
-  /** Total order amount in RUB */
   totalAmount: number | null | undefined
-  /** Total number of orders */
   totalOrders: number | null | undefined
-  /** Previous period order amount for comparison */
   previousAmount: number | null | undefined
-  /** Loading state */
   isLoading?: boolean
-  /** Error state */
   error?: Error | null
-  /** Additional CSS classes */
   className?: string
-  /** Retry callback for error state */
   onRetry?: () => void
+  periodFrom?: string
+  periodTo?: string
+  onBackfill?: () => void
+  isBackfillLoading?: boolean
 }
 
-/**
- * Format number with Russian locale
- */
 function formatNumber(value: number): string {
   return new Intl.NumberFormat('ru-RU').format(value)
 }
 
-/**
- * Russian plural form for "заказ" (order)
- * @param count - Number of orders
- * @returns Correctly pluralized string
- */
+/** Russian plural for "заказ" */
 function pluralizeOrders(count: number): string {
   const lastDigit = count % 10
   const lastTwoDigits = count % 100
-
-  if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-    return `${formatNumber(count)} заказов`
-  }
-  if (lastDigit === 1) {
-    return `${formatNumber(count)} заказ`
-  }
-  if (lastDigit >= 2 && lastDigit <= 4) {
-    return `${formatNumber(count)} заказа`
-  }
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return `${formatNumber(count)} заказов`
+  if (lastDigit === 1) return `${formatNumber(count)} заказ`
+  if (lastDigit >= 2 && lastDigit <= 4) return `${formatNumber(count)} заказа`
   return `${formatNumber(count)} заказов`
 }
 
-/**
- * Orders Volume Metric Card
- *
- * Displays the total order amount as potential revenue with:
- * - Blue color theme indicating pending/potential status
- * - Period comparison with percentage change
- * - Order count subtitle
- * - Info tooltip explaining the metric
- */
 export function OrdersMetricCard({
   totalAmount,
   totalOrders,
@@ -83,20 +52,16 @@ export function OrdersMetricCard({
   error,
   className,
   onRetry,
+  periodFrom,
+  periodTo,
+  onBackfill,
+  isBackfillLoading,
 }: OrdersMetricCardProps): React.ReactElement {
-  // Loading state
-  if (isLoading) {
-    return <MetricCardSkeleton className={className} />
-  }
+  if (isLoading) return <MetricCardSkeleton className={className} />
 
-  // Error state
   if (error) {
     return (
-      <Card
-        className={cn('min-h-[120px]', className)}
-        role="article"
-        aria-label="Ошибка загрузки заказов"
-      >
+      <Card className={cn('min-h-[120px]', className)} role="article" aria-label="Ошибка загрузки">
         <CardContent className="flex h-full flex-col items-center justify-center p-4">
           <AlertCircle className="h-6 w-6 text-destructive" />
           <p className="mt-2 text-sm text-muted-foreground">Ошибка загрузки</p>
@@ -111,13 +76,30 @@ export function OrdersMetricCard({
     )
   }
 
-  // Calculate comparison
+  // Issue #2: Empty state when orders = 0
+  if (totalOrders === 0 && periodFrom && periodTo) {
+    return (
+      <Card className={cn('min-h-[120px]', className)} role="article" aria-label="Нет заказов FBS">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <span className="text-sm font-medium text-muted-foreground">Заказы</span>
+          </div>
+          <EmptyStateFBS
+            periodFrom={periodFrom}
+            periodTo={periodTo}
+            onBackfill={onBackfill}
+            isBackfillLoading={isBackfillLoading}
+          />
+        </CardContent>
+      </Card>
+    )
+  }
+
   const comparison =
     totalAmount != null && previousAmount != null
       ? calculateComparison(totalAmount, previousAmount, false)
       : null
-
-  // Format display value
   const displayValue = totalAmount != null ? formatCurrency(totalAmount) : '—'
   const ariaValue = totalAmount != null ? `Заказы: ${displayValue}` : 'Заказы: нет данных'
 
@@ -133,7 +115,6 @@ export function OrdersMetricCard({
       aria-label={ariaValue}
     >
       <CardContent className="p-4">
-        {/* Header: Icon + Title + Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
@@ -153,13 +134,9 @@ export function OrdersMetricCard({
             </TooltipContent>
           </Tooltip>
         </div>
-
-        {/* Main Value - Blue to indicate potential/pending */}
         <div className="mt-2">
           <span className="text-[32px] font-bold leading-tight text-blue-500">{displayValue}</span>
         </div>
-
-        {/* Comparison Row */}
         {comparison && (
           <div className="mt-2 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
@@ -173,8 +150,6 @@ export function OrdersMetricCard({
             </span>
           </div>
         )}
-
-        {/* Subtitle: Order count */}
         <div className="mt-1">
           <span className="text-xs text-gray-400">
             {totalOrders != null ? pluralizeOrders(totalOrders) : ''}

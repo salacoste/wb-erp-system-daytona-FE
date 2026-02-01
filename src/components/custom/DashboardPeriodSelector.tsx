@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { useAvailableWeeks } from '@/hooks/useFinancialSummary'
-import { formatWeekLabel, formatMonthLabel } from '@/lib/period-helpers'
+import { formatWeekLabel, formatMonthLabel, getCurrentWeek } from '@/lib/period-helpers'
 import type { PeriodType } from '@/contexts/dashboard-period-types'
 
 import {
@@ -37,6 +37,13 @@ import {
   MAX_WEEKS,
   MAX_MONTHS,
 } from './period-selector'
+
+/** Ensure current week is at the top of the weeks list */
+function ensureCurrentWeekFirst(weeks: string[]): string[] {
+  const currentWeek = getCurrentWeek()
+  const filtered = weeks.filter(w => w !== currentWeek)
+  return [currentWeek, ...filtered]
+}
 
 export interface DashboardPeriodSelectorProps {
   /** Optional className for styling overrides */
@@ -77,7 +84,9 @@ export function DashboardPeriodSelector({
   const generatedWeeks = useGeneratedWeeks(selectedWeek)
 
   // Use backend weeks if available, otherwise fallback to generated weeks
-  const availableWeeks = backendWeeks?.map(w => w.week) || generatedWeeks
+  // Always ensure current week is at the top for user selection
+  const baseWeeks = backendWeeks?.map(w => w.week) || generatedWeeks
+  const availableWeeks = ensureCurrentWeekFirst(baseWeeks)
 
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [relativeTime, setRelativeTime] = useState('')

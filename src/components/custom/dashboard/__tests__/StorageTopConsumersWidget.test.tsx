@@ -12,6 +12,12 @@
 import { describe, it, vi, beforeEach } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { TopConsumerItem } from '@/types/storage-analytics'
+import {
+  createMockQueryResult,
+  createLoadingQueryResult,
+  createErrorQueryResult,
+} from '@/test/utils/query-mock'
+import type { TopConsumersResponse } from '@/types/storage-analytics'
 
 // NOTE: Uncomment these imports when implementing tests
 // import { expect } from 'vitest'
@@ -133,13 +139,7 @@ void QueryClientProvider
 describe('StorageTopConsumersWidget - Ranking Display', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should show Trophy icon for rank 1 (gold)')
@@ -166,13 +166,7 @@ describe('StorageTopConsumersWidget - Ranking Display', () => {
 describe('StorageTopConsumersWidget - Storage Cost Display', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should format storage cost as Russian currency (3 500 RUB)')
@@ -195,13 +189,7 @@ describe('StorageTopConsumersWidget - Storage Cost Display', () => {
 describe('StorageTopConsumersWidget - Ratio Indicators', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should show red dot for ratio >20% (high risk)')
@@ -259,13 +247,7 @@ describe('StorageTopConsumersWidget - Navigation', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockPush.mockClear()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should navigate to storage analytics on row click')
@@ -288,13 +270,9 @@ describe('StorageTopConsumersWidget - Navigation', () => {
 describe('StorageTopConsumersWidget - Loading State', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(
+      createLoadingQueryResult<TopConsumersResponse>()
+    )
   })
 
   it.todo('should show loading skeleton during fetch')
@@ -315,13 +293,9 @@ describe('StorageTopConsumersWidget - Loading State', () => {
 describe('StorageTopConsumersWidget - Empty State', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: { ...mockResponse, top_consumers: [], has_data: false },
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(
+      createMockQueryResult({ ...mockResponse, top_consumers: [], has_data: false })
+    )
   })
 
   it.todo('should show empty state message in Russian')
@@ -340,13 +314,9 @@ describe('StorageTopConsumersWidget - Empty State', () => {
 describe('StorageTopConsumersWidget - Error State', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      error: new Error('Failed to fetch'),
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(
+      createErrorQueryResult<TopConsumersResponse>(new Error('Failed to fetch'))
+    )
   })
 
   it.todo('should show error state when fetch fails')
@@ -367,13 +337,7 @@ describe('StorageTopConsumersWidget - Error State', () => {
 describe('StorageTopConsumersWidget - Accessibility', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should have aria-label on rank icons')
@@ -400,13 +364,7 @@ describe('StorageTopConsumersWidget - Accessibility', () => {
 describe('StorageTopConsumersWidget - Period Context', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should pass weekStart and weekEnd to hook')
@@ -425,13 +383,7 @@ describe('StorageTopConsumersWidget - Period Context', () => {
 describe('StorageTopConsumersWidget - Header', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTopConsumers).mockReturnValue({
-      data: mockResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTopConsumers>)
+    vi.mocked(useStorageTopConsumers).mockReturnValue(createMockQueryResult(mockResponse))
   })
 
   it.todo('should display Package icon in header')

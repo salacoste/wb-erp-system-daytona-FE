@@ -225,18 +225,19 @@ describe('Story 60.1-FE: formatPeriodDisplay', () => {
     })
 
     it('uses correct Russian month names', () => {
-      expect(formatPeriodDisplay('2026-01', 'month')).toBe('Январь 2026')
-      expect(formatPeriodDisplay('2026-02', 'month')).toBe('Февраль 2026')
-      expect(formatPeriodDisplay('2026-03', 'month')).toBe('Март 2026')
-      expect(formatPeriodDisplay('2026-04', 'month')).toBe('Апрель 2026')
-      expect(formatPeriodDisplay('2026-05', 'month')).toBe('Май 2026')
-      expect(formatPeriodDisplay('2026-06', 'month')).toBe('Июнь 2026')
-      expect(formatPeriodDisplay('2026-07', 'month')).toBe('Июль 2026')
-      expect(formatPeriodDisplay('2026-08', 'month')).toBe('Август 2026')
-      expect(formatPeriodDisplay('2026-09', 'month')).toBe('Сентябрь 2026')
-      expect(formatPeriodDisplay('2026-10', 'month')).toBe('Октябрь 2026')
-      expect(formatPeriodDisplay('2026-11', 'month')).toBe('Ноябрь 2026')
-      expect(formatPeriodDisplay('2026-12', 'month')).toBe('Декабрь 2026')
+      // Note: Current month (Feb 2026) gets ⏳ indicator
+      expect(formatPeriodDisplay('2025-01', 'month')).toBe('Январь 2025')
+      expect(formatPeriodDisplay('2025-02', 'month')).toBe('Февраль 2025')
+      expect(formatPeriodDisplay('2025-03', 'month')).toBe('Март 2025')
+      expect(formatPeriodDisplay('2025-04', 'month')).toBe('Апрель 2025')
+      expect(formatPeriodDisplay('2025-05', 'month')).toBe('Май 2025')
+      expect(formatPeriodDisplay('2025-06', 'month')).toBe('Июнь 2025')
+      expect(formatPeriodDisplay('2025-07', 'month')).toBe('Июль 2025')
+      expect(formatPeriodDisplay('2025-08', 'month')).toBe('Август 2025')
+      expect(formatPeriodDisplay('2025-09', 'month')).toBe('Сентябрь 2025')
+      expect(formatPeriodDisplay('2025-10', 'month')).toBe('Октябрь 2025')
+      expect(formatPeriodDisplay('2025-11', 'month')).toBe('Ноябрь 2025')
+      expect(formatPeriodDisplay('2025-12', 'month')).toBe('Декабрь 2025')
     })
 
     it('capitalizes month name', () => {

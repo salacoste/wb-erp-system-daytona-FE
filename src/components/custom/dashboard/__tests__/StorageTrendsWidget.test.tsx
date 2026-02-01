@@ -17,6 +17,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen, fireEvent } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
+import {
+  createMockQueryResult,
+  createLoadingQueryResult,
+  createErrorQueryResult,
+} from '@/test/utils/query-mock'
 import type { StorageTrendsResponse, MetricSummary } from '@/types/storage-analytics'
 
 // ============================================================================
@@ -86,13 +91,7 @@ const defaultProps = {
 describe('StorageTrendsWidget - Loading State', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createLoadingQueryResult<StorageTrendsResponse>())
   })
 
   it('renders loading skeleton when isLoading is true', () => {
@@ -136,13 +135,11 @@ describe('StorageTrendsWidget - Error State', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockRefetch.mockClear()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      error: new Error('Failed to fetch storage trends'),
-      refetch: mockRefetch,
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(
+      createErrorQueryResult<StorageTrendsResponse>(new Error('Failed to fetch storage trends'), {
+        refetch: mockRefetch,
+      })
+    )
   })
 
   it('renders error state when fetch fails', () => {
@@ -175,13 +172,7 @@ describe('StorageTrendsWidget - Error State', () => {
   })
 
   it('displays default error message when error.message is empty', () => {
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      error: null,
-      refetch: mockRefetch,
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createErrorQueryResult<StorageTrendsResponse>(null))
 
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
@@ -196,13 +187,7 @@ describe('StorageTrendsWidget - Error State', () => {
 describe('StorageTrendsWidget - Empty State', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockEmptyResponse,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockEmptyResponse))
   })
 
   it('renders empty state when has_data is false', () => {
@@ -242,13 +227,7 @@ describe('StorageTrendsWidget - Empty State', () => {
 describe('StorageTrendsWidget - Data Display', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockTrendsData,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockTrendsData))
   })
 
   it('renders card with title and TrendingUp icon', () => {
@@ -301,13 +280,9 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
   })
 
   it('shows red color for positive trend (increase = bad for costs)', () => {
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockTrendsData, // trend: 12.5 (positive)
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(
+      createMockQueryResult(mockTrendsData) // trend: 12.5 (positive)
+    )
 
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
@@ -328,13 +303,7 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
       },
     }
 
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: negativeTrendData,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(negativeTrendData))
 
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
@@ -355,13 +324,7 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
       },
     }
 
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: neutralTrendData,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(neutralTrendData))
 
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
@@ -372,13 +335,9 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
   })
 
   it('displays + sign for positive trend', () => {
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockTrendsData, // trend: 12.5 (positive)
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(
+      createMockQueryResult(mockTrendsData) // trend: 12.5 (positive)
+    )
 
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
@@ -394,13 +353,7 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
 describe('StorageTrendsWidget - Period Props', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockTrendsData,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockTrendsData))
   })
 
   it('passes weekStart and weekEnd to useStorageTrends hook', () => {
@@ -421,13 +374,7 @@ describe('StorageTrendsWidget - Period Props', () => {
 describe('StorageTrendsWidget - Accessibility', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockTrendsData,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockTrendsData))
   })
 
   it.todo('has accessible card structure')
@@ -446,13 +393,7 @@ describe('StorageTrendsWidget - Accessibility', () => {
 describe('StorageTrendsWidget - Chart Height', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStorageTrends).mockReturnValue({
-      data: mockTrendsData,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useStorageTrends>)
+    vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockTrendsData))
   })
 
   it.todo('uses default height of 250px')

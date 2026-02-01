@@ -72,24 +72,30 @@ Content-Type: application/json
 ### Бизнес-формула
 
 ```
-Теоретическая прибыль = Заказы - COGS - Рекламные затраты - Логистика - Хранение
+Теоретическая прибыль = Выкупы - COGS - Рекламные затраты - Логистика - Хранение
 ```
 
-### Реализация через API
+> ⚠️ **ВАЖНО:** Рекомендуется использовать **Выкупы (Sales)** вместо Заказов в формуле.
+> FBS-заказы могут отсутствовать за периоды до активации синхронизации.
+> См. [129-FBS-DATA-ANALYSIS-REPORT.md](./129-FBS-DATA-ANALYSIS-REPORT.md) для деталей.
+
+### Реализация через API (РЕКОМЕНДУЕМАЯ)
 
 ```typescript
 interface TheoreticalProfit {
-  orders: number;           // /v1/analytics/orders/volume → totalOrders × avgOrderValue
-  cogs: number;            // /v1/analytics/weekly/by-sku?includeCogs=true → sum(cogs)
+  sales: number;           // /v1/analytics/weekly/finance-summary → summary_total.wb_sales_gross_total
+  cogs: number;            // /v1/analytics/weekly/finance-summary → summary_total.cogs_total
   advertisingCost: number; // /v1/analytics/advertising → summary.totalSpend
-  logisticsCost: number;   // /v1/analytics/weekly/finance-summary → logistics_cost
-  storageCost: number;     // /v1/analytics/weekly/finance-summary → storage_cost
+  logisticsCost: number;   // /v1/analytics/weekly/finance-summary → summary_total.logistics_cost_total
+  storageCost: number;     // /v1/analytics/weekly/finance-summary → summary_total.storage_cost_total
   theoreticalProfit: number;
 }
 
 function calculateTheoreticalProfit(data: TheoreticalProfit): number {
-  return data.orders - data.cogs - data.advertisingCost - data.logisticsCost - data.storageCost;
+  return data.sales - data.cogs - data.advertisingCost - data.logisticsCost - data.storageCost;
 }
+
+// Пример W04: 84377.52 - 35818 - 3728.55 - 17566.04 - 2024.94 = 25239.99 ₽
 ```
 
 ### Альтернатива: Использовать Operating Profit
@@ -224,6 +230,10 @@ const storage = await fetch(`/v1/analytics/storage/trends?weekStart=${weekStart}
 | [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) | Выкупы, продажи, finance-summary, формулы прибыли |
 | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) | Реклама, логистика, хранение, unit-economics |
 | [124-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./124-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | Периоды, ISO-недели, сравнение, тренды |
+| [126-DASHBOARD-API-STATUS-REPORT.md](./126-DASHBOARD-API-STATUS-REPORT.md) | Статус-отчёт: все API реализованы |
+| [127-DASHBOARD-DEBUG-REPORT.md](./127-DASHBOARD-DEBUG-REPORT.md) | Отладка: данные в `summary_rus`, не в корне |
+| [128-DASHBOARD-QA-VERIFICATION-REPORT.md](./128-DASHBOARD-QA-VERIFICATION-REPORT.md) | QA верификация W04: backend корректен |
+| [129-FBS-DATA-ANALYSIS-REPORT.md](./129-FBS-DATA-ANALYSIS-REPORT.md) | **Анализ FBS данных: синхронизация и рекомендации** |
 
 ### Backend Reference
 
@@ -316,6 +326,7 @@ export function useDashboardData(period: 'week' | 'month', selectedWeek: string)
 
 | Дата | Версия | Изменения |
 |------|--------|-----------|
+| 2026-01-31 | 1.1 | Добавлены ссылки на QA/Debug/FBS отчёты; обновлена формула прибыли (Sales вместо Orders) |
 | 2026-01-31 | 1.0 | Первоначальная версия документации |
 
 ---

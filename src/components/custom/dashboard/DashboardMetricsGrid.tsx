@@ -2,18 +2,21 @@
  * Dashboard Metrics Grid Component
  * Story 62.1-FE: Redesign Dashboard Metrics Grid
  * Epic 62-FE: Dashboard UI/UX Presentation
+ * Epic 60: FBO/FBS Order Analytics Separation
  *
  * 8-card responsive grid for dashboard metrics.
  * Card order matches business priority.
+ * Card 1 now shows FBO/FBS combined orders with share breakdown.
  *
  * @see docs/stories/epic-62/story-62.1-fe-redesign-dashboard-metrics-grid.md
+ * @see docs/request-backend/130-DASHBOARD-FBO-ORDERS-API.md
  */
 
 'use client'
 
 import { cn } from '@/lib/utils'
 import { DashboardMetricsGridSkeleton } from './DashboardMetricsGridSkeleton'
-import { OrdersMetricCard } from './OrdersMetricCard'
+import { FulfillmentMetricCard } from './FulfillmentMetricCard'
 import { OrdersCogsMetricCard } from './OrdersCogsMetricCard'
 import { SalesMetricCard } from './SalesMetricCard'
 import { SalesCogsMetricCard } from './SalesCogsMetricCard'
@@ -46,8 +49,20 @@ export interface FinanceSummaryData {
 }
 
 export interface DashboardMetricsGridProps {
-  ordersAmount: number | undefined
-  ordersCount: number | undefined
+  // FBO/FBS Fulfillment metrics (Epic 60)
+  fboOrdersCount?: number
+  fboOrdersRevenue?: number
+  fbsOrdersCount?: number
+  fbsOrdersRevenue?: number
+  fboShare?: number
+  fbsShare?: number
+  previousFulfillmentRevenue?: number
+  isFulfillmentDataAvailable?: boolean
+  onStartFulfillmentSync?: () => void
+  isFulfillmentSyncLoading?: boolean
+  fulfillmentError?: Error | null
+  isFulfillmentLoading?: boolean
+  // COGS metrics
   ordersCogs: number | undefined
   salesAmount: number | undefined
   salesCogs: number | undefined
@@ -73,12 +88,22 @@ const gridClasses = cn('grid gap-4', 'grid-cols-1', 'md:grid-cols-2', 'xl:grid-c
 /**
  * Dashboard Metrics Grid - 8-card responsive layout
  *
- * Row 1: Заказы | COGS заказов | Выкупы | COGS выкупов
+ * Row 1: Заказы FBO/FBS | COGS заказов | Выкупы | COGS выкупов
  * Row 2: Реклама | Логистика | Хранение | Теор.прибыль*
  */
 export function DashboardMetricsGrid({
-  ordersAmount,
-  ordersCount,
+  fboOrdersCount,
+  fboOrdersRevenue,
+  fbsOrdersCount,
+  fbsOrdersRevenue,
+  fboShare,
+  fbsShare,
+  previousFulfillmentRevenue,
+  isFulfillmentDataAvailable,
+  onStartFulfillmentSync,
+  isFulfillmentSyncLoading,
+  fulfillmentError,
+  isFulfillmentLoading,
   ordersCogs,
   salesAmount,
   salesCogs,
@@ -97,7 +122,8 @@ export function DashboardMetricsGrid({
   onAssignCogs,
   className,
 }: DashboardMetricsGridProps): React.ReactElement {
-  if (isLoading && ordersAmount === undefined) {
+  // Show skeleton only when main data is loading (not fulfillment)
+  if (isLoading) {
     return <DashboardMetricsGridSkeleton className={className} />
   }
 
@@ -108,14 +134,21 @@ export function DashboardMetricsGrid({
       aria-label="Основные метрики"
       aria-busy={isLoading}
     >
-      {/* Card 1: Заказы (Orders Volume) */}
-      <OrdersMetricCard
-        totalAmount={ordersAmount}
-        totalOrders={ordersCount}
-        previousAmount={previousPeriodData?.ordersAmount}
-        isLoading={isLoading}
-        error={error}
+      {/* Card 1: Заказы FBO/FBS (Epic 60) */}
+      <FulfillmentMetricCard
+        fboOrdersCount={fboOrdersCount}
+        fboOrdersRevenue={fboOrdersRevenue}
+        fbsOrdersCount={fbsOrdersCount}
+        fbsOrdersRevenue={fbsOrdersRevenue}
+        fboShare={fboShare}
+        fbsShare={fbsShare}
+        previousTotalRevenue={previousFulfillmentRevenue}
+        isDataAvailable={isFulfillmentDataAvailable}
+        isLoading={isFulfillmentLoading}
+        error={fulfillmentError}
         onRetry={onRetry}
+        onStartSync={onStartFulfillmentSync}
+        isSyncLoading={isFulfillmentSyncLoading}
       />
 
       {/* Card 2: COGS заказов */}

@@ -8,7 +8,7 @@ This shard contains requests related to FBS (Fulfillment by Seller) orders, ware
 
 ---
 
-## Epic Status: FBS & Warehouses
+## Epic Status: FBS/FBO & Warehouses
 
 | Epic | Name | Status | Stories |
 |------|------|--------|---------|
@@ -16,6 +16,55 @@ This shard contains requests related to FBS (Fulfillment by Seller) orders, ware
 | **Epic 51** | FBS Historical Analytics | COMPLETE | 5 stories (25 SP) |
 | **Epic 52** | Tariff Settings Admin | COMPLETE | - |
 | **Epic 53** | FBS Supply Management | COMPLETE | 6 stories (26 SP) |
+| **Epic 60** | FBO/FBS Order Analytics | ✅ COMPLETE | 6 stories (34 SP) |
+
+---
+
+## Request #130: Epic 60 - Dashboard FBO Orders API
+
+**Date**: 2026-02-01
+**Priority**: P1 - HIGH
+**Status**: PENDING - Awaiting backend implementation
+**Component**: Backend API - FBO/FBS Analytics
+**Epic**: Epic 60 - FBO/FBS Order Analytics Separation
+
+**Summary**: Complete API for FBO/FBS order and sales analytics separation on dashboard.
+
+**Business Problem**:
+- Dashboard only shows FBS orders, missing FBO data from Wildberries warehouses
+- No way to compare FBO vs FBS performance and profitability
+- Users see incomplete picture of their sales distribution
+
+**Solution**:
+- New sync services for WB Reports API (orders + sales with warehouseType)
+- Unified analytics API with FBO/FBS breakdown
+- Daily aggregation for performance metrics
+
+**API Endpoints** (Epic 60):
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/v1/analytics/fulfillment/summary` | FBO/FBS/Total summary metrics |
+| GET | `/v1/analytics/fulfillment/trends` | Daily breakdown by fulfillment type |
+| GET | `/v1/analytics/fulfillment/products` | Product-level FBO/FBS analysis |
+| GET | `/v1/analytics/fulfillment/sync-status` | Sync status and data availability |
+| POST | `/v1/admin/fulfillment/sync` | Manual sync trigger (Admin) |
+
+**Documentation**:
+- **[130-DASHBOARD-FBO-ORDERS-API.md](./130-DASHBOARD-FBO-ORDERS-API.md)** - COMPLETE API SPEC (635 lines)
+  - TypeScript interfaces for all endpoints
+  - Request/response examples
+  - React Query hooks
+  - Empty state handling
+  - UI wireframes
+
+**Backend Epic**: [Epic 60 - FBO/FBS Analytics](../../../docs/epics/epic-60-fbo-fbs-analytics.md) (34 SP, 6 stories)
+
+**FrontEnd TODO** (after backend completion):
+- [ ] Integrate with `/v1/analytics/fulfillment/summary` endpoint
+- [ ] Create FBO metrics card on dashboard
+- [ ] Add FBO/FBS toggle or combined view
+- [ ] Implement empty state with sync trigger button
+- [ ] Add FBO/FBS comparison charts
 
 ---
 

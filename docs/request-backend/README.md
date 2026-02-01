@@ -2,7 +2,7 @@
 
 Documentation of requests from frontend team to backend team and backend team responses.
 
-**Last Updated**: 2026-01-30 | **Total Requests**: 120+ | **Active**: 3 | **Pending**: 2 | **Resolved**: 115+
+**Last Updated**: 2026-02-01 | **Total Requests**: 130+ | **Active**: 4 | **Pending**: 3 | **Resolved**: 120+
 
 ---
 
@@ -17,7 +17,7 @@ Documentation of requests from frontend team to backend team and backend team re
 | **[Shard 05: Margin & Products](./README-SHARD-05-margin-products.md)** | Margin, Products API, #01-#21 | #01-21, #25-26 |
 | **[Shard 06: Workflow & Guides](./README-SHARD-06-workflow-guides.md)** | Process, Integration Guides | Guide #24, #29, #30 |
 | **[Shard 07: Status & Auth](./README-SHARD-07-status-auth.md)** | Epic Status, JWT Auth | Story 23.10 |
-| **[Shard 08: FBS & Warehouses](./README-SHARD-08-fbs-warehouses.md)** | Epic 51, 53, Warehouses, Tariffs | #98, #101-102, #108-111 |
+| **[Shard 08: FBS & Warehouses](./README-SHARD-08-fbs-warehouses.md)** | Epic 51, 53, 60, Warehouses, Tariffs | #98, #101-102, #108-111, #130 |
 | **[Shard 09: Margin Fixes](./README-SHARD-09-margin-fixes.md)** | Recent margin calculation fixes | #113-120 |
 
 ---
@@ -28,6 +28,7 @@ Documentation of requests from frontend team to backend team and backend team re
 
 | Request | Title | Priority | Shard |
 |---------|-------|----------|-------|
+| #130 | Dashboard FBO Orders API (Epic 60) | HIGH | [Shard 08](./README-SHARD-08-fbs-warehouses.md) |
 | #61 | WB Column Rename (Dec 2024) | HIGH | [Shard 02](./README-SHARD-02-pending-financial.md) |
 | #58 | retail_price_total Aggregation | HIGH | [Shard 02](./README-SHARD-02-pending-financial.md) |
 | #113 | Margin Calculation Empty State | LOW | [Shard 09](./README-SHARD-09-margin-fixes.md) |
@@ -65,6 +66,7 @@ Documentation of requests from frontend team to backend team and backend team re
 | **Epic 53** | **FBS Supply Management** | **COMPLETE** | - |
 | **Epic 56** | **Historical Inventory Import** | **COMPLETE** | - |
 | **Epic 57** | **FBS Analytics Enhancement** | **COMPLETE** | - |
+| **Epic 60** | **FBO/FBS Order Analytics** | **✅ COMPLETE** | 34 SP (6 stories) |
 
 ---
 
@@ -81,11 +83,12 @@ Documentation of requests from frontend team to backend team and backend team re
 
 ## Topic Index
 
-### FBS Analytics & Related
+### FBS/FBO Analytics & Related
 - **#93** [Epic 40 - Orders FBS Frontend Guide](./93-epic-40-orders-fbs-frontend-guide.md)
 - **#109** [Epic 40 - WB Native Status History API](./109-epic-40-wb-native-status-history-api.md)
 - **#110** [Epic 51 - FBS Historical Analytics API](./110-epic-51-fbs-historical-analytics-api.md) - Cross-API (OrdersFBS + Reports + Analytics)
 - **#111** [Epic 53 - FBS Supply Management API](./111-epic-53-supply-management-api.md) - Supply lifecycle, stickers, documents
+- **#130** [Epic 60 - Dashboard FBO Orders API](./130-DASHBOARD-FBO-ORDERS-API.md) - FBO/FBS separation, fulfillment analytics (PENDING)
 
 ### COGS & Margin Calculation
 - **#07** [COGS/Margin Analytics includeCogs Parameter](./07-cogs-margin-analytics-includecogs-parameter.md)
@@ -188,7 +191,10 @@ See [Shard 06](./README-SHARD-06-workflow-guides.md) for full workflow details.
 
 ---
 
-## Recent Updates (2026-01-30)
+## Recent Updates (2026-02-01)
+
+### New Requests
+- **#130**: Dashboard FBO Orders API - **PENDING** (Awaiting Epic 60 backend implementation)
 
 ### Completed Fixes
 - **#120**: Margin recalculation auto-trigger - **FIXED** (COGS bulk upload now triggers margin calculation)
@@ -197,6 +203,7 @@ See [Shard 06](./README-SHARD-06-workflow-guides.md) for full workflow details.
 - **#113**: Empty state behavior documentation - **DOCUMENTED** (Not a bug)
 
 ### Epic Status Updates
+- **Epic 60** (FBO/FBS Order Analytics) - **PLANNED** (34 SP, 6 stories)
 - **Epic 56** (Historical Inventory Import) - **COMPLETED** (2026-01-29)
 - **Epic 57** (FBS Analytics Enhancement) - **COMPLETED**
 - **Epic 51** (FBS Historical Analytics) - **COMPLETED**

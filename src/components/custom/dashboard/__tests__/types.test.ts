@@ -181,13 +181,13 @@ describe('FinanceSummaryData Type Safety', () => {
 
 describe('DashboardMetricsGridProps Type Safety', () => {
   describe('current behavior - accepts undefined (to be changed)', () => {
-    it('currently accepts undefined for ordersAmount', () => {
+    it('currently accepts undefined for fboOrdersCount', () => {
       // This documents the CURRENT (incorrect) behavior
       // After standardization, this should use null instead
       const props: Partial<DashboardMetricsGridProps> = {
-        ordersAmount: undefined,
+        fboOrdersCount: undefined,
       }
-      expect(props.ordersAmount).toBeUndefined()
+      expect(props.fboOrdersCount).toBeUndefined()
     })
   })
 

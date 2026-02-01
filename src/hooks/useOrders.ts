@@ -12,9 +12,11 @@ import {
   getOrders,
   getOrderById,
   triggerOrdersSync,
+  triggerOrdersBackfill,
   getOrdersSyncStatus,
   ordersQueryKeys,
 } from '@/lib/api/orders'
+import type { BackfillParams, BackfillResponse } from '@/lib/api/orders'
 import type {
   OrdersListParams,
   OrdersListResponse,
@@ -132,6 +134,41 @@ export function useOrdersSync(options: UseOrdersSyncOptions = {}) {
     },
     onError: error => {
       console.error('[Orders] Sync failed:', error)
+      options.onError?.(error)
+    },
+  })
+}
+
+// ============================================================================
+// Backfill Mutation Hook (Issue #2: FBS Empty State)
+// ============================================================================
+
+export interface UseOrdersBackfillOptions {
+  /** Callback on successful backfill trigger */
+  onSuccess?: (data: BackfillResponse) => void
+  /** Callback on error */
+  onError?: (error: Error) => void
+}
+
+/**
+ * Hook to trigger historical orders backfill (up to 90 days)
+ * Issue #2: Allows loading FBS data for periods before sync was enabled
+ */
+export function useOrdersBackfill(options: UseOrdersBackfillOptions = {}) {
+  const queryClient = useQueryClient()
+
+  return useMutation<BackfillResponse, Error, BackfillParams>({
+    mutationFn: triggerOrdersBackfill,
+    onSuccess: data => {
+      console.info('[Orders] Backfill triggered:', data.jobId, data.days, 'days')
+      // Invalidate orders queries after delay to allow processing
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ordersQueryKeys.all })
+      }, 30000)
+      options.onSuccess?.(data)
+    },
+    onError: error => {
+      console.error('[Orders] Backfill failed:', error)
       options.onError?.(error)
     },
   })

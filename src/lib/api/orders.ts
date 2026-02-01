@@ -148,6 +148,32 @@ export async function triggerOrdersSync(): Promise<TriggerSyncResponse> {
   return apiClient.post<TriggerSyncResponse>('/v1/orders/sync', {})
 }
 
+/** Backfill request params (Issue #2 - FBS Empty State) */
+export interface BackfillParams {
+  dateFrom: string
+  dateTo: string
+}
+
+/** Backfill response from POST /v1/orders/backfill */
+export interface BackfillResponse {
+  jobId: string
+  message: string
+  dateFrom: string
+  dateTo: string
+  days: number
+}
+
+/**
+ * Trigger historical orders backfill (up to 90 days)
+ * POST /v1/orders/backfill
+ * Issue #2: FBS Orders Empty State - allows loading historical data
+ */
+export async function triggerOrdersBackfill(params: BackfillParams): Promise<BackfillResponse> {
+  console.info('[Orders API] Triggering backfill:', params)
+
+  return apiClient.post<BackfillResponse>('/v1/orders/backfill', params)
+}
+
 /**
  * Get orders sync status
  * GET /v1/orders/sync-status

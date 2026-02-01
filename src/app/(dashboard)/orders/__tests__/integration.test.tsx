@@ -43,7 +43,7 @@ vi.mock('next/navigation', () => ({
 // Mock auth store
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: () => ({
-    user: { id: 'test-user', email: 'test@test.com', role: 'Owner' },
+    user: { id: 'test-user', email: 'mock-user@example.local', role: 'Owner' },
     token: 'mock-jwt-token',
     cabinetId: 'test-cabinet-id',
     isAuthenticated: true,
