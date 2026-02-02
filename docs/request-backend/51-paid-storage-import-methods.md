@@ -409,4 +409,4 @@ curl -X GET "https://api.example.com/v1/imports/paid-storage/status" \
 - [Story 24.4: Auto Scheduler](../../../docs/stories/epic-24/story-24.4-auto-scheduler.md)
 - [API Reference: Paid Storage Import](../../../docs/API-PATHS-REFERENCE.md#paid-storage-import-epic-24)
 - [Storage API Guide](../../../docs/STORAGE-API-GUIDE.md) — SDK workflow, сравнение данных, troubleshooting
-- [Request #39: Storage Data Sources Discrepancy](./39-storage-data-sources-discrepancy.md) — анализ расхождений между источниками
+- [Request #39: Storage Data Sources Discrepancy](./135-storage-data-sources-discrepancy.md) — анализ расхождений между источниками

@@ -280,7 +280,7 @@ controllers: [
 
 ### 3. Create Missing Story Documentation
 
-**New File Required**: `frontend/docs/request-backend/113-epic-57-api-controller-missing.md`
+**New File Required**: `frontend/docs/request-backend/141-epic-57-api-controller-missing.md`
 
 ```markdown
 # Epic 57: REST API Controller Missing - Frontend Team Notice

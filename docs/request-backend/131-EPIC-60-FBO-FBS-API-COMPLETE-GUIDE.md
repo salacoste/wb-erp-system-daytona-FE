@@ -549,3 +549,5 @@ Backend автоматически синхронизирует данные FBO
 
 **Последнее обновление:** 2026-02-01
 **Статус:** ✅ COMPLETE - Ready for Frontend Integration
+
+**Fix (2026-02-01):** FBS `ordersCount` теперь корректно возвращает данные из `OrderFbs` таблицы как fallback.

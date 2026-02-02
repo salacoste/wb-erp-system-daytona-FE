@@ -167,7 +167,7 @@ SUM(loyalty_compensation) as loyalty_compensation
 ## Related Documentation
 
 - `docs/WB-DASHBOARD-METRICS.md` — основная документация метрик
-- `frontend/docs/request-backend/51-wb-commission-adj-payout.md` — формула payout_total
+- `frontend/docs/request-backend/136-wb-commission-adj-payout.md` — формула payout_total
 - `frontend/docs/request-backend/57-wb-dashboard-exact-match-fields.md` — wb_sales_gross/wb_returns_gross
 - `src/aggregation/formulas/payout-total.formula.ts` — реализация формулы
 

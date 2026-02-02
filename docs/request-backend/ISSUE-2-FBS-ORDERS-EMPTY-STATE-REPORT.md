@@ -460,5 +460,51 @@ const theoreticalProfit =
 
 ---
 
+## 9. Дополнительное исправление: FBS ordersCount Fallback
+
+**Дата исправления**: 2026-02-01
+**Статус**: ✅ RESOLVED
+
+### Описание проблемы
+Эндпоинт `/v1/analytics/fulfillment/summary` возвращал `fbs.ordersCount: 0` даже при наличии FBS заказов в таблице `OrderFbs`.
+
+### Корневая причина
+Сервис `FulfillmentAnalyticsService` не использовал данные из таблицы `OrderFbs` как fallback при подсчёте FBS заказов.
+
+### Решение
+Добавлен fallback в `FulfillmentAnalyticsService.getSummary()`:
+- При отсутствии FBS данных в основном источнике (`reports_orders`)
+- Система теперь проверяет таблицу `OrderFbs` и возвращает корректное количество
+
+### До исправления
+```json
+{
+  "summary": {
+    "fbs": {
+      "ordersCount": 0,
+      "ordersRevenue": 0
+    }
+  }
+}
+```
+
+### После исправления
+```json
+{
+  "summary": {
+    "fbs": {
+      "ordersCount": 11,
+      "ordersRevenue": 45000.00
+    }
+  }
+}
+```
+
+### Затронутые файлы
+- `src/analytics/services/fulfillment-analytics.service.ts`
+
+---
+
 *Отчёт подготовлен: 2026-02-01*
+*Последнее обновление: 2026-02-01 (добавлено исправление FBS ordersCount fallback)*
 *Автор: Claude Opus 4.5 (Financial Analytics Documentation Specialist)*

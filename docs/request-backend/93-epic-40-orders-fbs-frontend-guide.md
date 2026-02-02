@@ -833,7 +833,7 @@ orders_analytics_cache_misses_total{endpoint="velocity|sla|volume"}
 |------|----------|-------|
 | [Epic 34](./73-telegram-notifications-epic-34.md) | Telegram Notifications | Базовая интеграция Telegram |
 | [Epic 33](./71-advertising-analytics-epic-33.md) | Advertising Analytics | Аналогичная структура sync |
-| [Epic 35](./77-total-sales-organic-ad-split.md) | Total Sales & Organic | Daily sales sync |
+| [Epic 35](./139-total-sales-organic-ad-split.md) | Total Sales & Organic | Daily sales sync |
 
 ---
 

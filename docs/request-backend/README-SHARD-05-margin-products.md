@@ -225,7 +225,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Implemented client-side filtering for partial article matching when WB API textSearch doesn't support it.
 
 **Documentation**:
-- [Backend Response](./14-search-by-partial-article-not-working.md)
+- [Backend Response](./134-search-by-partial-article-not-working.md)
 
 ---
 
@@ -316,8 +316,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Component**: Backend API - Products Module + COGS Module
 
 **Documentation**:
-- [Original Request](./09-epic-18-cogs-management-api.md)
-- [Backend Response](./09-epic-18-backend-response.md)
+- [Original Request](./09-epic-18-cogs-management-api-backend.md)
 
 ---
 

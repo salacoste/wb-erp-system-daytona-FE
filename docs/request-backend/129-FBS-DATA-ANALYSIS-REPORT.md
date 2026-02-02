@@ -292,15 +292,20 @@ X-Cabinet-Id: {cabinetId}
 | `test-api/14-orders.http` | HTTP тесты FBS API |
 | `docs/ORDERS-FBS-SYNC-GUIDE.md` | Руководство по синхронизации |
 
-### Epic 60: Будущее решение для FBO данных
+### Epic 60: FBO/FBS Analytics (COMPLETE)
 
-**Статус:** PLANNED (34 SP, 6 stories)
+**Статус:** ✅ COMPLETE (34 SP, 6 stories) - Реализовано 2026-02-01
 
-Epic 60 решает проблему отсутствия FBO данных путём:
+Epic 60 решил проблему отсутствия FBO данных путём:
 1. Синхронизации данных из WB Reports API (`getSupplierOrders`, `getSupplierSales`)
 2. Разделения по `warehouseType` ("Склад WB" → FBO, "Склад продавца" → FBS)
 3. Агрегации в таблице `fbo_fbs_analytics_daily`
 4. Нового API `/v1/analytics/fulfillment/*` с FBO/FBS метриками
+
+**Исправление FBS Empty State (2026-02-01):**
+- `/v1/analytics/fulfillment/summary` теперь корректно возвращает `fbs.ordersCount` из таблицы `OrderFbs` как fallback
+- До исправления: `fbs.ordersCount: 0`
+- После исправления: `fbs.ordersCount: N` (реальное количество FBS заказов)
 
 См. [130-DASHBOARD-FBO-ORDERS-API.md](./130-DASHBOARD-FBO-ORDERS-API.md) для полной спецификации.
 

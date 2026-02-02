@@ -92,7 +92,7 @@ Documentation of requests from frontend team to backend team and backend team re
 
 ### COGS & Margin Calculation
 - **#07** [COGS/Margin Analytics includeCogs Parameter](./07-cogs-margin-analytics-includecogs-parameter.md)
-- **#09** [Epic 18 - COGS Management API](./09-epic-18-cogs-management-api.md)
+- **#09** [Epic 18 - COGS Management API](./09-epic-18-cogs-management-api-backend.md)
 - **#11** [Undefined Fields in COGS Assignment](./11-undefined-fields-in-cogs-assignment-response.md)
 - **#12** [COGS Update Conflict 409 Error](./12-cogs-update-conflict-409-error.md)
 - **#14** [Automatic Margin Recalculation on COGS Update](./14-automatic-margin-recalculation-on-cogs-update.md) - **FIXED (#120)**

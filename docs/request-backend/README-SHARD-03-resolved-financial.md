@@ -178,7 +178,7 @@ X-Cabinet-Id: <uuid>
 **Status**: DEPLOYED - Backend + Frontend Complete
 **Component**: Backend API - Analytics Module + Frontend Integration
 **Related**: Request #51 (wb_commission_adj), Technical Debt (commission-separation.md)
-**File**: [56-wb-services-expenses-visibility.md](./56-wb-services-expenses-visibility.md) | [56-wb-services-breakdown.md](./56-wb-services-breakdown.md)
+**File**: [137-wb-services-expenses-visibility.md](./137-wb-services-expenses-visibility.md) | [56-wb-services-breakdown.md](./56-wb-services-breakdown.md)
 
 **Problem Solved**: Expenses for **advertising (WB.Promotion)**, **Jam subscription** and **other WB services** are now **VISIBLE** in UI (previously hidden in `other_adjustments_net`).
 
@@ -214,7 +214,7 @@ X-Cabinet-Id: <uuid>
 **Status**: FIXED - Formula corrected, 100% WB Dashboard match
 **Component**: Backend API - Analytics Module
 **Related**: Request #49 (payout_total fix), Request #43 (WB Dashboard alignment)
-**File**: [51-wb-commission-adj-payout.md](./51-wb-commission-adj-payout.md)
+**File**: [136-wb-commission-adj-payout.md](./136-wb-commission-adj-payout.md)
 
 **Problem**: `payout_total` was missing "Commission adjustment" deduction, causing **2,153.28 discrepancy** with WB Dashboard for W49.
 
@@ -261,7 +261,7 @@ SUM(ABS(commission_other)) as wb_commission_adj
 | PVZ compensation | NO | This is INCOME, not expense |
 | **Withholding** | YES | Real deduction = WB "Commission adjustment" |
 
-**Full Documentation**: [51-wb-commission-adj-payout.md](./51-wb-commission-adj-payout.md) | [docs/WB-DASHBOARD-METRICS.md](../../../docs/WB-DASHBOARD-METRICS.md)
+**Full Documentation**: [136-wb-commission-adj-payout.md](./136-wb-commission-adj-payout.md) | [docs/WB-DASHBOARD-METRICS.md](../../../docs/WB-DASHBOARD-METRICS.md)
 
 ---
 

@@ -27,7 +27,7 @@ This document summarizes the documentation cleanup and updates performed to alig
 
 **Files Updated**:
 - `src/products/dto/product-response.dto.ts` - Updated enum in DTO
-- `09-epic-18-backend-response.md` - Updated all examples and descriptions
+- `09-epic-18-cogs-management-api-backend.md` - Updated all examples and descriptions
 - `11-undefined-fields-in-cogs-assignment-response-backend.md` - Updated values
 - `11-undefined-fields-in-cogs-assignment-response.md` - Updated values
 - `14-automatic-margin-recalculation-on-cogs-update.md` - Removed `"calculation_in_progress"` reference
@@ -46,7 +46,7 @@ This document summarizes the documentation cleanup and updates performed to alig
 
 **Files Updated**:
 - `README.md` - Added note about Request #16
-- `09-epic-18-backend-response.md` - Added header note
+- `09-epic-18-cogs-management-api-backend.md` - Added header note
 - `11-undefined-fields-in-cogs-assignment-response.md` - Added header note
 - `11-undefined-fields-in-cogs-assignment-response-backend.md` - Added header note
 - `14-automatic-margin-recalculation-on-cogs-update.md` - Added header note
@@ -62,7 +62,7 @@ This document summarizes the documentation cleanup and updates performed to alig
 - `missing_data_reason` is determined by **checking actual COGS existence** and **sales data**, not by fallback weeks
 
 **Files Updated**:
-- `09-epic-18-backend-response.md` - Updated "How it works" section to clarify fallback is for data availability, not for missing_data_reason
+- `09-epic-18-cogs-management-api-backend.md` - Updated "How it works" section to clarify fallback is for data availability, not for missing_data_reason
 
 ### 4. ✅ Clarified Epic 20 Behavior
 
@@ -84,7 +84,7 @@ This document summarizes the documentation cleanup and updates performed to alig
 - ✅ `src/products/dto/product-response.dto.ts` - Updated enum values
 
 ### Documentation Files
-- ✅ `09-epic-18-backend-response.md`
+- ✅ `09-epic-18-cogs-management-api-backend.md`
 - ✅ `11-undefined-fields-in-cogs-assignment-response.md`
 - ✅ `11-undefined-fields-in-cogs-assignment-response-backend.md`
 - ✅ `14-automatic-margin-recalculation-on-cogs-update.md`

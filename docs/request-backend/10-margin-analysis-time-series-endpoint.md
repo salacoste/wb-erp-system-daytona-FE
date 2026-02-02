@@ -454,7 +454,7 @@ const trends = aggregateClientSide(results);
 **Backend**:
 - Epic 17: COGS & Margin Feature Integration
 - Request #07: `docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md`
-- Backend Response: `docs/request-backend/09-epic-18-backend-response.md`
+- Backend Response: `docs/request-backend/09-epic-18-cogs-management-api-backend.md`
 
 **API Documentation**:
 - Swagger: `/v1/analytics/weekly/*` endpoints

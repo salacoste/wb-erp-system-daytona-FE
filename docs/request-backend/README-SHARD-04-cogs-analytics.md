@@ -106,7 +106,7 @@ GET /v1/products?include_cogs=true&include_storage=true&limit=25
 - **[36-epic-24-paid-storage-analytics-api.md](./36-epic-24-paid-storage-analytics-api.md)** - FRONTEND INTEGRATION GUIDE
 - **[docs/STORAGE-API-GUIDE.md](../../../docs/STORAGE-API-GUIDE.md)** - SDK WORKFLOW, DATA COMPARISON, TROUBLESHOOTING (2025-12-15)
 - [51-paid-storage-import-methods.md](./51-paid-storage-import-methods.md) - SMART/MANUAL IMPORT
-- [39-storage-data-sources-discrepancy.md](./39-storage-data-sources-discrepancy.md) - DISCREPANCY ANALYSIS (W46: 0.67%)
+- [135-storage-data-sources-discrepancy.md](./135-storage-data-sources-discrepancy.md) - DISCREPANCY ANALYSIS (W46: 0.67%)
 - [Epic 24 Overview](../../../docs/epics/epic-24-paid-storage-by-article.md)
 - [Story 24.5](../../../docs/stories/epic-24/story-24.5-storage-in-products-api.md)
 

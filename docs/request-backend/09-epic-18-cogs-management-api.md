@@ -827,4 +827,4 @@ CREATE INDEX idx_cogs_current ON cogs(nm_id) WHERE valid_to IS NULL;
 
 **Document Version:** 1.0
 **Last Updated:** 2025-11-23
-**Status:** 🔴 Awaiting Backend Review
+**Status:** ✅ IMPLEMENTED

@@ -486,7 +486,7 @@ queryClient.clear()
 
 | Документ | Описание |
 |----------|----------|
-| [124-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./124-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | API периодов, сравнение, тренды |
+| [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | API периодов, сравнение, тренды |
 | [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) | API продаж, finance-summary |
 | [125-DASHBOARD-MAIN-PAGE-GUIDE.md](./125-DASHBOARD-MAIN-PAGE-GUIDE.md) | Сводное руководство дашборда |
 | `test-api/05-analytics-basic.http` | HTTP примеры запросов |

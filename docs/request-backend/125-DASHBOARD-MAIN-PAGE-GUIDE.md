@@ -55,7 +55,7 @@
 | **Рекламные затраты** | `GET /v1/analytics/advertising` | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
 | **Логистика** | `GET /v1/analytics/weekly/finance-summary` (поле `logistics_cost`) | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
 | **Хранение** | `GET /v1/analytics/storage/by-sku`, `GET /v1/analytics/weekly/finance-summary` | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
-| **Периоды** | `GET /v1/analytics/weekly/available-weeks` | [124-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./124-DASHBOARD-MAIN-PAGE-PERIODS-API.md) |
+| **Периоды** | `GET /v1/analytics/weekly/available-weeks` | [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md) |
 
 ### Обязательные заголовки
 
@@ -229,7 +229,7 @@ const storage = await fetch(`/v1/analytics/storage/trends?weekStart=${weekStart}
 | [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md) | Заказы FBS, COGS, аналитика заказов, примеры |
 | [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) | Выкупы, продажи, finance-summary, формулы прибыли |
 | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) | Реклама, логистика, хранение, unit-economics |
-| [124-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./124-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | Периоды, ISO-недели, сравнение, тренды |
+| [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | Периоды, ISO-недели, сравнение, тренды |
 | [126-DASHBOARD-API-STATUS-REPORT.md](./126-DASHBOARD-API-STATUS-REPORT.md) | Статус-отчёт: все API реализованы |
 | [127-DASHBOARD-DEBUG-REPORT.md](./127-DASHBOARD-DEBUG-REPORT.md) | Отладка: данные в `summary_rus`, не в корне |
 | [128-DASHBOARD-QA-VERIFICATION-REPORT.md](./128-DASHBOARD-QA-VERIFICATION-REPORT.md) | QA верификация W04: backend корректен |
