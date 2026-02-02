@@ -30,3 +30,9 @@ export {
   useInvalidateAnalyticsQueries,
   usePrefetchAdvertisingAnalytics,
 } from './helpers'
+
+// Date validation hook
+export {
+  useAdvertisingDateValidation,
+  type DateValidationResult,
+} from './useAdvertisingDateValidation'
