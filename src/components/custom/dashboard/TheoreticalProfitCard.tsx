@@ -92,16 +92,18 @@ export function TheoreticalProfitCard({
         className
       )}
       role="article"
-      aria-label={`Теоретическая прибыль: ${value != null ? formatCurrency(value) : 'нет данных'}`}
+      aria-label={`Теоретическая прибыль: ${value != null && isComplete ? formatCurrency(value) : 'нет данных'}`}
     >
       <CardContent className="p-4">
         <Header isComplete={isComplete} />
         <div className="mt-3">
-          <span className={cn('text-5xl font-bold', valueColor)}>
-            {value != null ? formatCurrency(value) : '—'}
+          <span
+            className={cn('text-5xl font-bold', isComplete ? valueColor : 'text-muted-foreground')}
+          >
+            {value != null && isComplete ? formatCurrency(value) : '—'}
           </span>
         </div>
-        {comparison && (
+        {comparison && isComplete && (
           <div className="mt-2 flex items-center gap-2">
             <ComparisonBadge
               percentageChange={comparison.percentageChange}

@@ -18,6 +18,8 @@ export interface TrendDataPoint {
   date: string // Formatted date for display (uses week as fallback)
   revenue: number
   totalPayable: number
+  /** Logistics cost for the week (Doc 122/123: logistics_cost metric) */
+  logisticsCost: number
 }
 
 export interface TrendData {
@@ -82,7 +84,8 @@ export function useTrends(limit = 8) {
         // Story 3.4a: Single optimized request instead of N+1 requests
         // Story 61.1: Use wb_sales_gross (seller revenue after WB commission), NOT sale_gross (retail price)
         // Difference: sale_gross includes WB's ~33% commission, wb_sales_gross is actual seller earnings
-        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=wb_sales_gross,to_pay_goods`
+        // Doc 122/123: Added logistics_cost for expense tracking
+        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=wb_sales_gross,to_pay_goods,logistics_cost`
         console.info(`[Trends] Fetching trends (optimized): ${endpoint}`)
 
         const response = await apiClient.get<WeeklyTrendsResponse>(endpoint)
@@ -94,14 +97,16 @@ export function useTrends(limit = 8) {
         }
 
         // Map API response to TrendDataPoint format for backward compatibility
-        // TrendGraph component expects: { week, date, revenue, totalPayable }
+        // TrendGraph component expects: { week, date, revenue, totalPayable, logisticsCost }
         // Story 61.1: Use wb_sales_gross (seller revenue) instead of sale_gross (retail price)
+        // Doc 122/123: Include logistics_cost for expense tracking
         const trends: TrendDataPoint[] = response.data
           .map(point => ({
             week: point.week,
             date: point.week, // Use week as date (component formats it anyway)
             revenue: point.wb_sales_gross ?? 0,
             totalPayable: point.to_pay_goods ?? 0,
+            logisticsCost: point.logistics_cost ?? 0,
           }))
           .sort((a, b) => a.week.localeCompare(b.week)) // Ascending order
 

@@ -266,3 +266,10 @@ export {
   formatCompactValue,
 } from './trends-config'
 export type { TrendsMetricKey, TrendsMetricConfig } from './trends-config'
+
+// Data Availability Indicators (Dashboard Enhancement)
+export { DataAvailabilityBadge } from './DataAvailabilityBadge'
+export type { DataAvailabilityBadgeProps } from './DataAvailabilityBadge'
+
+export { IncompleteWeekBanner } from './IncompleteWeekBanner'
+export type { IncompleteWeekBannerProps } from './IncompleteWeekBanner'

@@ -33,7 +33,11 @@ import { calculateTheoreticalProfit } from '@/lib/theoretical-profit'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
 import { ROUTES } from '@/lib/routes'
 import { dashboardQueryKeys } from '@/hooks/useDashboard'
-import { DashboardMetricsGrid, DailyBreakdownSection } from '@/components/custom/dashboard'
+import {
+  DashboardMetricsGrid,
+  DailyBreakdownSection,
+  IncompleteWeekBanner,
+} from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
@@ -184,6 +188,9 @@ export function DashboardContent(): React.ReactElement {
         </div>
         <DashboardPeriodSelector />
       </div>
+
+      {/* Incomplete Week Banner - shows when viewing current/incomplete week */}
+      <IncompleteWeekBanner period={selectedPeriod} periodType={periodType} />
 
       {/* Processing Status Alerts */}
       {isFinancialDataProcessing && <ProcessingAlert processingStatus={processingStatus} />}

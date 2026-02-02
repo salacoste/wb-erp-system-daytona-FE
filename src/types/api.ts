@@ -157,6 +157,15 @@ export interface WeeklyTrendDataPoint {
   loyalty_fee?: number | null
   /** Комиссия WB */
   wb_commission_adj?: number | null
+
+  /**
+   * WB Services expense breakdown
+   * @see docs/request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md
+   */
+  wb_services_cost?: number | null
+  wb_promotion_cost?: number | null
+  wb_jam_cost?: number | null
+  wb_other_services_cost?: number | null
 }
 
 export interface TrendMetricSummary {
@@ -184,6 +193,11 @@ export interface WeeklyTrendsResponse {
     penalties_total?: TrendMetricSummary
     loyalty_fee?: TrendMetricSummary
     wb_commission_adj?: TrendMetricSummary
+    // WB Services expense breakdown (Request #56, Epic 47)
+    wb_services_cost?: TrendMetricSummary
+    wb_promotion_cost?: TrendMetricSummary
+    wb_jam_cost?: TrendMetricSummary
+    wb_other_services_cost?: TrendMetricSummary
   }
   message?: string
 }

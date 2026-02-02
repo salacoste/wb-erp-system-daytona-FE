@@ -180,12 +180,14 @@ describe('TrendDataPoint type structure (AC2)', () => {
       date: '2026-W05',
       revenue: 100000, // Should come from wb_sales_gross
       totalPayable: 80000, // Should come from to_pay_goods
+      logisticsCost: 5000, // Doc 122/123: logistics_cost metric
     }
 
     expect(point.week).toBeDefined()
     expect(point.date).toBeDefined()
     expect(point.revenue).toBeDefined()
     expect(point.totalPayable).toBeDefined()
+    expect(point.logisticsCost).toBeDefined()
   })
 
   it('should use numeric types for financial values', () => {
@@ -194,10 +196,12 @@ describe('TrendDataPoint type structure (AC2)', () => {
       date: '2026-W05',
       revenue: 100000.5,
       totalPayable: 80000.25,
+      logisticsCost: 5000.75, // Doc 122/123: logistics_cost metric
     }
 
     expect(typeof point.revenue).toBe('number')
     expect(typeof point.totalPayable).toBe('number')
+    expect(typeof point.logisticsCost).toBe('number')
   })
 })
 
