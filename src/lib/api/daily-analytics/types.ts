@@ -6,23 +6,25 @@
  */
 
 /**
- * Backend response for orders volume with daily aggregation.
+ * Backend response for orders volume.
+ * GET /v1/analytics/orders/volume?from=...&to=...
  */
 export interface OrdersVolumeResponse {
-  total_orders: number
-  total_amount: number
-  avg_order_value: number
-  by_status: {
-    new: number
-    confirm: number
-    complete: number
-    cancel: number
-  }
-  by_day?: Array<{
+  totalOrders: number
+  cancellationRate: number
+  b2bPercentage: number
+  statusBreakdown: Record<string, number>
+  dailyTrend?: Array<{
     date: string
-    orders: number
-    amount: number
+    count: number
   }>
+  hourlyTrend?: Array<{
+    hour: number
+    count: number
+  }>
+  peakHours?: number[]
+  period: { from: string; to: string }
+  cachedAt?: string
 }
 
 /**

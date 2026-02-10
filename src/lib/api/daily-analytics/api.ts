@@ -7,18 +7,15 @@
 
 import { apiClient } from '../../api-client'
 import type { OrdersDailyData, FinanceDailyData, AdvertisingDailyData } from '@/types/daily-metrics'
-import type { OrdersVolumeResponse, FinanceSummaryResponse, AdvertisingResponse } from './types'
+import type { OrdersVolumeResponse, AdvertisingResponse } from './types'
 
 /**
  * Fetch orders volume with daily breakdown.
- * GET /v1/analytics/orders/volume?aggregation=day
+ * GET /v1/analytics/orders/volume?from=...&to=...
+ * Backend returns dailyTrend: Array<{ date, count }>
  */
 export async function getOrdersDailyData(from: string, to: string): Promise<OrdersDailyData[]> {
-  const searchParams = new URLSearchParams({
-    from,
-    to,
-    aggregation: 'day',
-  })
+  const searchParams = new URLSearchParams({ from, to })
 
   console.info('[Daily Analytics] Fetching orders daily data:', { from, to })
 
@@ -29,15 +26,15 @@ export async function getOrdersDailyData(from: string, to: string): Promise<Orde
     )
 
     const dailyData: OrdersDailyData[] =
-      response.by_day?.map(day => ({
+      response.dailyTrend?.map(day => ({
         date: day.date,
-        total_amount: day.amount,
-        total_orders: day.orders,
+        total_amount: 0,
+        total_orders: day.count,
       })) ?? []
 
     console.info('[Daily Analytics] Orders daily data:', {
       days: dailyData.length,
-      totalAmount: response.total_amount,
+      totalOrders: response.totalOrders,
     })
 
     return dailyData
@@ -48,57 +45,29 @@ export async function getOrdersDailyData(from: string, to: string): Promise<Orde
 }
 
 /**
- * Fetch finance summary with daily breakdown.
- * GET /v1/analytics/weekly/finance-summary?aggregation=day
+ * Fetch finance daily data.
+ * Backend /v1/analytics/weekly/finance-summary accepts only `week` param
+ * and does NOT return daily breakdown. Returns empty array.
+ * Daily finance breakdown is not supported by the backend yet.
  */
-export async function getFinanceDailyData(from: string, to: string): Promise<FinanceDailyData[]> {
-  const searchParams = new URLSearchParams({
-    from,
-    to,
-    aggregation: 'day',
-  })
-
-  console.info('[Daily Analytics] Fetching finance daily data:', { from, to })
-
-  try {
-    const response = await apiClient.get<FinanceSummaryResponse>(
-      `/v1/analytics/weekly/finance-summary?${searchParams.toString()}`,
-      { skipDataUnwrap: true }
-    )
-
-    const dailyData: FinanceDailyData[] =
-      response.daily?.map(day => ({
-        date: day.date,
-        wb_sales_gross: day.wb_sales_gross,
-        cogs_total: day.cogs_total,
-        logistics_cost: day.logistics_cost,
-        storage_cost: day.storage_cost,
-      })) ?? []
-
-    console.info('[Daily Analytics] Finance daily data:', {
-      days: dailyData.length,
-    })
-
-    return dailyData
-  } catch (error) {
-    console.error('[Daily Analytics] Failed to fetch finance daily data:', error)
-    return []
-  }
+export async function getFinanceDailyData(_from: string, _to: string): Promise<FinanceDailyData[]> {
+  // Backend finance-summary endpoint does not support daily breakdown.
+  // It only accepts ?week=YYYY-Www and returns aggregate summary_total/summary_rus/summary_eaeu.
+  // Return empty array — daily chart will show zeros for finance metrics.
+  console.info('[Daily Analytics] Finance daily breakdown not available from backend, skipping')
+  return []
 }
 
 /**
  * Fetch advertising data with daily breakdown.
- * GET /v1/analytics/advertising?aggregation=day
+ * GET /v1/analytics/advertising?from=...&to=...
+ * Backend does not return daily breakdown (no `daily` field).
  */
 export async function getAdvertisingDailyData(
   from: string,
   to: string
 ): Promise<AdvertisingDailyData[]> {
-  const searchParams = new URLSearchParams({
-    from,
-    to,
-    aggregation: 'day',
-  })
+  const searchParams = new URLSearchParams({ from, to })
 
   console.info('[Daily Analytics] Fetching advertising daily data:', { from, to })
 
@@ -108,6 +77,7 @@ export async function getAdvertisingDailyData(
       { skipDataUnwrap: true }
     )
 
+    // Backend advertising endpoint returns items + summary, no daily breakdown
     const dailyData: AdvertisingDailyData[] =
       response.daily?.map(day => ({
         date: day.date,
