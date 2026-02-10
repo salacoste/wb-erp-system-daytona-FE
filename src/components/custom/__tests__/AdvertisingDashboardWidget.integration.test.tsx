@@ -10,9 +10,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, cleanup, waitFor } from '@testing-library/react'
+import { render, screen, cleanup, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { format, subDays } from 'date-fns'
 
 // Mock API client
 vi.mock('@/lib/api-client', () => ({
@@ -36,7 +37,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { AdvertisingDashboardWidget } from '../AdvertisingDashboardWidget'
 
 // ============================================================================
-// Test Fixtures
+// Test Fixtures (dynamic dates so predefined ranges always include all options)
 // ============================================================================
 
 const createQueryWrapper = () => {
@@ -50,56 +51,77 @@ const createQueryWrapper = () => {
   )
 }
 
-// Empty state response (backend format - no advertising data)
-const mockEmptyResponse = {
-  query: {
-    cabinetId: 'test-cabinet-id',
-    from: '2025-12-01',
-    to: '2026-01-28',
-    viewBy: 'sku',
-  },
-  summary: {
-    totalSpend: 0,
-    totalSales: 0,
-    totalRevenue: 0,
-    totalProfit: 0,
-    avgRoas: null,
-    avgRoi: 0,
-    avgCtr: 0,
-    avgConversionRate: 0,
-    campaignCount: 0,
-    activeCampaigns: 0,
-    totalOrganicSales: 0,
-    avgOrganicContribution: 0,
-  },
-  items: [],
-  cachedAt: '2026-01-30T12:00:00Z',
+/**
+ * Build dynamic date strings relative to today so the AdvertisingEmptyState
+ * getPredefinedRanges() always produces all 3 period options (7d, 14d, 30d).
+ */
+function dynamicDates() {
+  const today = new Date()
+  return {
+    from: format(subDays(today, 90), 'yyyy-MM-dd'),
+    to: format(today, 'yyyy-MM-dd'),
+    cachedAt: new Date().toISOString(),
+    // A recent date range for the widget dateRange prop
+    recentFrom: format(subDays(today, 7), 'yyyy-MM-dd'),
+    recentTo: format(subDays(today, 1), 'yyyy-MM-dd'),
+    // Formatted for DD.MM.YYYY assertions
+    fromFormatted: format(subDays(today, 90), 'dd.MM.yyyy'),
+    toFormatted: format(today, 'dd.MM.yyyy'),
+  }
 }
 
-// Valid advertising data response (backend format)
-const mockDataResponse = {
-  query: {
-    cabinetId: 'test-cabinet-id',
-    from: '2025-12-01',
-    to: '2026-01-28',
-    viewBy: 'sku',
-  },
-  summary: {
-    totalSpend: 125300,
-    totalSales: 500000,
-    totalRevenue: 400000,
-    totalProfit: 274700,
-    avgRoas: 3.99,
-    avgRoi: 1.19,
-    avgCtr: 2.5,
-    avgConversionRate: 3.2,
-    campaignCount: 5,
-    activeCampaigns: 3,
-    totalOrganicSales: 100000,
-    avgOrganicContribution: 72,
-  },
-  items: [],
-  cachedAt: '2026-01-30T12:00:00Z',
+function buildMockEmptyResponse(dates = dynamicDates()) {
+  return {
+    query: {
+      cabinetId: 'test-cabinet-id',
+      from: dates.from,
+      to: dates.to,
+      viewBy: 'sku',
+    },
+    summary: {
+      totalSpend: 0,
+      totalSales: 0,
+      totalRevenue: 0,
+      totalProfit: 0,
+      avgRoas: null,
+      avgRoi: 0,
+      avgCtr: 0,
+      avgConversionRate: 0,
+      campaignCount: 0,
+      activeCampaigns: 0,
+      totalOrganicSales: 0,
+      avgOrganicContribution: 0,
+    },
+    items: [],
+    cachedAt: dates.cachedAt,
+  }
+}
+
+function buildMockDataResponse(dates = dynamicDates()) {
+  return {
+    query: {
+      cabinetId: 'test-cabinet-id',
+      from: dates.from,
+      to: dates.to,
+      viewBy: 'sku',
+    },
+    summary: {
+      totalSpend: 125300,
+      totalSales: 500000,
+      totalRevenue: 400000,
+      totalProfit: 274700,
+      avgRoas: 3.99,
+      avgRoi: 1.19,
+      avgCtr: 2.5,
+      avgConversionRate: 3.2,
+      campaignCount: 5,
+      activeCampaigns: 3,
+      totalOrganicSales: 100000,
+      avgOrganicContribution: 72,
+    },
+    items: [],
+    cachedAt: dates.cachedAt,
+  }
 }
 
 // ============================================================================
@@ -107,11 +129,18 @@ const mockDataResponse = {
 // ============================================================================
 
 describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
+  let dates: ReturnType<typeof dynamicDates>
+  let mockEmptyResponse: ReturnType<typeof buildMockEmptyResponse>
+  let mockDataResponse: ReturnType<typeof buildMockDataResponse>
+
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useAuthStore).mockReturnValue({
       cabinetId: 'test-cabinet-id',
     } as ReturnType<typeof useAuthStore>)
+    dates = dynamicDates()
+    mockEmptyResponse = buildMockEmptyResponse(dates)
+    mockDataResponse = buildMockDataResponse(dates)
   })
 
   afterEach(() => {
@@ -127,9 +156,10 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
     it('should render AdvertisingEmptyState when data.summary is null (Test 1)', async () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(screen.getByTestId('advertising-empty-state')).toBeInTheDocument()
@@ -142,9 +172,10 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
         data: [],
       })
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(screen.getByTestId('advertising-empty-state')).toBeInTheDocument()
@@ -154,9 +185,10 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
     it('should NOT render AdvertisingEmptyState when data.summary exists (Test 3)', async () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockDataResponse)
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(screen.queryByTestId('advertising-empty-state')).not.toBeInTheDocument()
@@ -171,36 +203,31 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
   describe('available range prop', () => {
     it('should pass availableRange from data to AdvertisingEmptyState (Test 4)', async () => {
-      const responseWithRange = {
-        ...mockEmptyResponse,
-        query: {
-          ...mockEmptyResponse.query,
-          from: '2025-12-01',
-          to: '2026-01-28',
-        },
-      }
-      vi.mocked(apiClient.get).mockResolvedValue(responseWithRange)
+      vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         const emptyState = screen.getByTestId('advertising-empty-state')
         expect(emptyState).toBeInTheDocument()
         // Should show available range text (format: DD.MM.YYYY)
-        expect(screen.getByText(/01\.12\.2025/)).toBeInTheDocument()
-        expect(screen.getByText(/28\.01\.2026/)).toBeInTheDocument()
+        const escapedFrom = dates.fromFormatted.replace(/\./g, '\\.')
+        const escapedTo = dates.toFormatted.replace(/\./g, '\\.')
+        expect(screen.getByText(new RegExp(escapedFrom))).toBeInTheDocument()
+        expect(screen.getByText(new RegExp(escapedTo))).toBeInTheDocument()
       })
     })
 
     it('should pass requestedRange from props to AdvertisingEmptyState (Test 5)', async () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
-      const requestedRange = { from: '2026-01-20', to: '2026-01-27' }
-      render(<AdvertisingDashboardWidget dateRange={requestedRange} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(screen.getByTestId('advertising-empty-state')).toBeInTheDocument()
@@ -219,7 +246,7 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       render(
         <AdvertisingDashboardWidget
-          dateRange={{ from: '2026-01-20', to: '2026-01-27' }}
+          dateRange={{ from: dates.recentFrom, to: dates.recentTo }}
           onDateRangeChange={onDateRangeChange}
         />,
         { wrapper: createQueryWrapper() }
@@ -231,11 +258,13 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       const user = userEvent.setup()
 
-      // Click period selector (combobox)
+      // Click period selector (combobox) to open the dropdown
       await user.click(screen.getByRole('combobox'))
 
-      // Select "Последние 14 дней" (different from current selection to avoid duplicate text)
-      await user.click(screen.getAllByText(/Последние 14 дней/)[0])
+      // Find the option inside the listbox (Radix Select renders options in a portal)
+      const listbox = await screen.findByRole('listbox')
+      const option14d = within(listbox).getByText(/Последние 14 дней/)
+      await user.click(option14d)
 
       // Callback should be called
       expect(onDateRangeChange).toHaveBeenCalledWith({
@@ -247,9 +276,10 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
     it('should refetch advertising data after period selection (Test 7)', async () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       // Wait for empty state to be rendered
       await waitFor(() => {
@@ -258,13 +288,13 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       const user = userEvent.setup()
 
-      // Click period selector (using data-testid or more specific selector)
-      const combobox = screen.getByRole('combobox')
-      await user.click(combobox)
+      // Click period selector to open dropdown
+      await user.click(screen.getByRole('combobox'))
 
-      // Select different period (30 days to avoid duplicate text issue)
-      const options = screen.getAllByText(/Последние 30 дней/)
-      await user.click(options[0])
+      // Find the option inside the listbox (Radix portal)
+      const listbox = await screen.findByRole('listbox')
+      const option30d = within(listbox).getByText(/Последние 30 дней/)
+      await user.click(option30d)
 
       // Should trigger refetch (at least one more call)
       await waitFor(
@@ -284,9 +314,10 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
     it('should show loading skeleton when loading (Test 8)', () => {
       vi.mocked(apiClient.get).mockImplementation(() => new Promise(() => {}))
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       expect(screen.getByTestId('advertising-skeleton')).toBeInTheDocument()
       expect(screen.queryByTestId('advertising-empty-state')).not.toBeInTheDocument()
@@ -303,7 +334,7 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />
+          <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />
         </QueryClientProvider>
       )
 
@@ -327,7 +358,7 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />
+          <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />
         </QueryClientProvider>
       )
 
@@ -351,9 +382,10 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
     it('should handle API response with empty summary array (Test 11)', async () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         expect(screen.getByTestId('advertising-empty-state')).toBeInTheDocument()
@@ -361,24 +393,19 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
     })
 
     it('should extract available range from API response (Test 12)', async () => {
-      const responseWithRange = {
-        ...mockEmptyResponse,
-        query: {
-          ...mockEmptyResponse.query,
-          from: '2025-12-01',
-          to: '2026-01-28',
-        },
-      }
-      vi.mocked(apiClient.get).mockResolvedValue(responseWithRange)
+      vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
-      render(<AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />, {
-        wrapper: createQueryWrapper(),
-      })
+      render(
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
+        { wrapper: createQueryWrapper() }
+      )
 
       await waitFor(() => {
         // Should show the available range from query (format: DD.MM.YYYY)
-        expect(screen.getByText(/01\.12\.2025/)).toBeInTheDocument()
-        expect(screen.getByText(/28\.01\.2026/)).toBeInTheDocument()
+        const escapedFrom = dates.fromFormatted.replace(/\./g, '\\.')
+        const escapedTo = dates.toFormatted.replace(/\./g, '\\.')
+        expect(screen.getByText(new RegExp(escapedFrom))).toBeInTheDocument()
+        expect(screen.getByText(new RegExp(escapedTo))).toBeInTheDocument()
       })
     })
   })
@@ -387,13 +414,13 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
   // Full Integration Flow (Test 13)
   // ==========================================================================
 
-  describe('user flow: no data → select period → show data', () => {
+  describe('user flow: no data -> select period -> show data', () => {
     it('should complete flow from empty state to data display (Test 13)', async () => {
       // Start with empty response
       vi.mocked(apiClient.get).mockResolvedValue(mockEmptyResponse)
 
       const { rerender } = render(
-        <AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />,
+        <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />,
         { wrapper: createQueryWrapper() }
       )
 
@@ -415,7 +442,7 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
             })
           }
         >
-          <AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-27' }} />
+          <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />
         </QueryClientProvider>
       )
 

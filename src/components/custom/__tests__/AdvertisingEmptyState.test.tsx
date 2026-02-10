@@ -6,30 +6,61 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
+import { format, subDays } from 'date-fns'
 import { AdvertisingEmptyState } from '@/components/custom/AdvertisingEmptyState'
+
+/**
+ * Build an availableRange that always includes "yesterday" and extends
+ * far enough into the past so all predefined periods (7d, 14d, 30d)
+ * pass the 3-day minimum threshold.
+ */
+function buildAvailableRange() {
+  const today = new Date()
+  const from = subDays(today, 90) // 90 days ago
+  const to = subDays(today, 0) // today (includes yesterday)
+  return {
+    from: format(from, 'yyyy-MM-dd'),
+    to: format(to, 'yyyy-MM-dd'),
+  }
+}
 
 describe('AdvertisingEmptyState', () => {
   it('renders empty state with available range', () => {
-    const availableRange = { from: '2025-12-01', to: '2026-01-28' }
+    const availableRange = buildAvailableRange()
 
     render(<AdvertisingEmptyState availableRange={availableRange} />)
 
     expect(screen.getByTestId('advertising-empty-state')).toBeInTheDocument()
     expect(screen.getByText('Нет данных за выбранный период')).toBeInTheDocument()
-    expect(screen.getByText(/с 01\.12\.2025 по 28\.01\.2026/)).toBeInTheDocument()
+    // Verify the range text is displayed (format: DD.MM.YYYY)
+    const fromDate = new Date(availableRange.from)
+    const toDate = new Date(availableRange.to)
+    const fromFormatted = format(fromDate, 'dd.MM.yyyy')
+    const toFormatted = format(toDate, 'dd.MM.yyyy')
+    expect(
+      screen.getByText(
+        new RegExp(
+          `с ${fromFormatted.replace(/\./g, '\\.')} по ${toFormatted.replace(/\./g, '\\.')}`
+        )
+      )
+    ).toBeInTheDocument()
   })
 
   it('renders predefined period options', () => {
-    const availableRange = { from: '2025-12-01', to: '2026-01-28' }
+    const availableRange = buildAvailableRange()
 
     render(<AdvertisingEmptyState availableRange={availableRange} />)
 
+    // The select trigger should be present with the default selected value
+    const select = screen.getByLabelText('Выбрать период для просмотра рекламы')
+    expect(select).toBeInTheDocument()
+    // The trigger renders the currently selected option (first = 7d).
+    // Radix Select renders selected ItemText in the trigger.
     expect(screen.getByText('Последние 7 дней')).toBeInTheDocument()
-    expect(screen.getByLabelText('Выбрать период для просмотра рекламы')).toBeInTheDocument()
   })
 
   it('calls onDateRangeChange when period is selected', async () => {
-    const availableRange = { from: '2025-12-01', to: '2026-01-28' }
+    const availableRange = buildAvailableRange()
     const handleChange = vi.fn()
 
     render(
@@ -42,8 +73,8 @@ describe('AdvertisingEmptyState', () => {
   })
 
   it('shows no data message when no predefined ranges available', () => {
-    // Available range less than 3 days (minimum threshold)
-    const availableRange = { from: '2026-01-28', to: '2026-01-28' }
+    // Available range far in the past: all options get filtered out
+    const availableRange = { from: '2020-01-01', to: '2020-01-01' }
 
     render(<AdvertisingEmptyState availableRange={availableRange} />)
 
@@ -51,7 +82,7 @@ describe('AdvertisingEmptyState', () => {
   })
 
   it('displays info tooltip with helpful content', () => {
-    const availableRange = { from: '2025-12-01', to: '2026-01-28' }
+    const availableRange = buildAvailableRange()
 
     render(<AdvertisingEmptyState availableRange={availableRange} />)
 
@@ -61,7 +92,7 @@ describe('AdvertisingEmptyState', () => {
   })
 
   it('disables select when loading', () => {
-    const availableRange = { from: '2025-12-01', to: '2026-01-28' }
+    const availableRange = buildAvailableRange()
 
     render(<AdvertisingEmptyState availableRange={availableRange} isLoading />)
 
