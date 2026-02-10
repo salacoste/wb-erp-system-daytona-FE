@@ -207,11 +207,15 @@ export interface WarehousesWithTariffsResponse {
  *
  * @returns Warehouses with coefficients
  */
-export async function getWarehousesWithTariffs(): Promise<WarehousesWithTariffsResponse> {
-  console.info('[Tariffs] Fetching warehouses with tariffs')
+export async function getWarehousesWithTariffs(
+  date?: string
+): Promise<WarehousesWithTariffsResponse> {
+  // Backend requires date param (forwarded to WB API tariffs/box)
+  const effectiveDate = date || new Date().toISOString().split('T')[0]
+  console.info('[Tariffs] Fetching warehouses with tariffs', { date: effectiveDate })
 
   const response = await apiClient.get<WarehousesWithTariffsResponse>(
-    '/v1/tariffs/warehouses-with-tariffs'
+    `/v1/tariffs/warehouses-with-tariffs?date=${effectiveDate}`
   )
 
   console.info('[Tariffs] Loaded', response.warehouses?.length || 0, 'warehouses with tariffs')
