@@ -143,7 +143,7 @@ export function DailyBreakdownChart({
         <p id="chart-description" className="sr-only">
           Линейный график показывает {visibleSeries.length} метрик за {chartData.length} дней
         </p>
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height={240}>
           <LineChart data={chartData} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
             <XAxis

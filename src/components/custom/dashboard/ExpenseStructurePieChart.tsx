@@ -75,7 +75,7 @@ export function ExpenseStructurePieChart({ week, className }: ExpenseStructurePi
           role="img"
           aria-label="Диаграмма структуры расходов: круговая диаграмма с распределением затрат по категориям"
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={320}>
             <PieChart>
               <Pie
                 data={chartData}
