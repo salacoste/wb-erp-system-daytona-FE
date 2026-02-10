@@ -110,7 +110,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 - `invalidateCache()` - Cache invalidation
 
 **Data Sources Combined**:
-1. **Order Statistics**: `sdk.analytics.getOrdersStats()`
+1. **Order Statistics**: `sdk.analytics.createGroupedHistory()`
    - ordersCount, ordersSumRub, cancelCount, buyoutCount, avgPriceRub
 2. **Stock Analytics**: `sdk.products.getProductsProduct()`
    - totalStock, inTransit, productCount
