@@ -27,8 +27,10 @@ export interface DailyMetrics {
   date: string
   /** ISO day of week (1=Monday, 7=Sunday) */
   dayOfWeek: number
-  /** Total order amount in rubles (Заказы) */
+  /** Total order amount in rubles (Сумма заказов) */
   orders: number
+  /** Number of orders (Заказы шт) */
+  ordersCount: number
   /** COGS for orders in rubles */
   ordersCogs: number
   /** Sales amount in rubles (Выкупы / wb_sales_gross) */
@@ -50,15 +52,16 @@ export interface DailyMetrics {
 // ============================================================================
 
 /**
- * Raw orders daily data from Orders Volume API.
- * GET /v1/analytics/orders/volume?aggregation=day
+ * Raw orders daily data from Orders Trends API.
+ * GET /v1/analytics/orders/trends?aggregation=day
+ * Provides both revenue and count per day (Request #137 fix).
  */
 export interface OrdersDailyData {
   /** Date in YYYY-MM-DD format */
   date: string
-  /** Total order amount in rubles */
+  /** Total order revenue in rubles (from orders/trends.revenue) */
   total_amount: number
-  /** Total number of orders */
+  /** Total number of orders (from orders/trends.ordersCount) */
   total_orders: number
 }
 
@@ -88,6 +91,18 @@ export interface AdvertisingDailyData {
   date: string
   /** Total advertising spend */
   total_spend: number
+}
+
+/**
+ * Per-day COGS data from Orders Volume API.
+ * GET /v1/analytics/orders/volume?include_cogs=true
+ * Extracted from by_day_with_cogs response field.
+ */
+export interface OrdersCogsDailyData {
+  /** Date in YYYY-MM-DD format */
+  date: string
+  /** COGS for orders on this day */
+  cogs: number
 }
 
 // ============================================================================
@@ -133,7 +148,9 @@ export interface AggregateDailyMetricsInput {
   financeData: FinanceDailyData[]
   /** Daily advertising data from Advertising API */
   advertisingData: AdvertisingDailyData[]
-  /** Orders COGS value (applied to all days, optional) */
+  /** Per-day COGS from orders/volume?include_cogs=true */
+  ordersCogsByDay?: OrdersCogsDailyData[]
+  /** @deprecated Use ordersCogsByDay. Single COGS value applied to all days. */
   ordersCogs?: number
 }
 

@@ -7,12 +7,18 @@
 export { dailyAnalyticsQueryKeys } from './query-keys'
 
 // Types
-export type { OrdersVolumeResponse, FinanceSummaryResponse, AdvertisingResponse } from './types'
+export type {
+  OrdersVolumeResponse,
+  OrdersTrendsResponse,
+  FinanceSummaryResponse,
+  AdvertisingResponse,
+} from './types'
 
 // API functions
 export {
   getOrdersDailyData,
   getFinanceDailyData,
   getAdvertisingDailyData,
+  getOrdersCogsDailyData,
   getAllDailyData,
 } from './api'

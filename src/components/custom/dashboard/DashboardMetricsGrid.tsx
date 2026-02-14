@@ -1,30 +1,28 @@
 /**
- * Dashboard Metrics Grid Component
- * Story 62.1-FE: Redesign Dashboard Metrics Grid
- * Epic 62-FE: Dashboard UI/UX Presentation
- * Epic 60: FBO/FBS Order Analytics Separation
+ * Dashboard Metrics Grid — P&L Narrative Layout
+ * 10 cards in 5 sections following CFO/COO logic:
  *
- * 8-card responsive grid for dashboard metrics.
- * Card order matches business priority.
- * Card 1 now shows FBO/FBS combined orders with share breakdown.
- *
- * @see docs/stories/epic-62/story-62.1-fe-redesign-dashboard-metrics-grid.md
- * @see docs/request-backend/130-DASHBOARD-FBO-ORDERS-API.md
+ * Секция 1: ВЫРУЧКА      — Заказы | Продажи
+ * Секция 2: РАСХОДЫ WB    — Комиссии WB | Логистика
+ * Секция 3: К ПЕРЕЧИСЛЕНИЮ — К перечислению ★ | Хранение и приёмка
+ * Секция 4: СЕБЕСТОИМОСТЬ  — Себестоимость | Реклама
+ * Секция 5: ПРИБЫЛЬ       — Валовая прибыль ★ | Маржинальность ★
  */
 
 'use client'
 
 import { cn } from '@/lib/utils'
 import { DashboardMetricsGridSkeleton } from './DashboardMetricsGridSkeleton'
-import { FulfillmentMetricCard } from './FulfillmentMetricCard'
-import { OrdersCogsMetricCard } from './OrdersCogsMetricCard'
-import { SalesMetricCard } from './SalesMetricCard'
-import { SalesCogsMetricCard } from './SalesCogsMetricCard'
-import { TheoreticalProfitCard } from './TheoreticalProfitCard'
-import { AdvertisingMetricCard } from './AdvertisingMetricCard'
+import { OrdersCard } from './OrdersCard'
+import { SalesNetCard } from './SalesNetCard'
+import { WbCommissionsCard } from './WbCommissionsCard'
 import { LogisticsMetricCard } from './LogisticsMetricCard'
-import { StorageMetricCard } from './StorageMetricCard'
-import type { TheoreticalProfitResult } from '@/lib/theoretical-profit'
+import { PayoutCard } from './PayoutCard'
+import { StorageAcceptanceCard } from './StorageAcceptanceCard'
+import { CostsCard } from './CostsCard'
+import { AdvertisingCard } from './AdvertisingCard'
+import { GrossProfitCard } from './GrossProfitCard'
+import { MarginCard } from './MarginCard'
 
 // =============================================================================
 // Types
@@ -32,48 +30,53 @@ import type { TheoreticalProfitResult } from '@/lib/theoretical-profit'
 
 export interface PreviousPeriodData {
   ordersAmount: number | null
+  ordersCount: number | null
+  saleGross: number | null
+  wbCommissionsTotal: number | null
+  logisticsCost: number | null
+  payoutTotal: number | null
+  storageAcceptanceTotal: number | null
+  cogsTotal: number | null
+  advertisingSpend: number | null
+  grossProfit: number | null
+  marginPct: number | null
+  // Legacy fields for compatibility
   ordersCogs: number | null
   salesAmount: number | null
   salesCogs: number | null
-  advertisingSpend: number | null
-  logisticsCost: number | null
   storageCost: number | null
   theoreticalProfit: number | null
 }
 
-export interface FinanceSummaryData {
-  revenue?: number | null
-  logistics_cost?: number | null
-  storage_cost?: number | null
-  sale_gross_total?: number | null
-}
-
 export interface DashboardMetricsGridProps {
-  // FBO/FBS Fulfillment metrics (Epic 60)
-  fboOrdersCount?: number
-  fboOrdersRevenue?: number
-  fbsOrdersCount?: number
-  fbsOrdersRevenue?: number
-  fboShare?: number
-  fbsShare?: number
-  previousFulfillmentRevenue?: number
-  isFulfillmentDataAvailable?: boolean
-  onStartFulfillmentSync?: () => void
-  isFulfillmentSyncLoading?: boolean
-  fulfillmentError?: Error | null
-  isFulfillmentLoading?: boolean
-  // COGS metrics
-  ordersCogs: number | undefined
-  salesAmount: number | undefined
-  salesCogs: number | undefined
-  advertisingSpend: number | undefined
+  // Секция 1: ВЫРУЧКА
+  totalOrders: number | undefined
+  saleGross: number | undefined
+  wbSalesGross: number | undefined
+  wbReturnsGross: number | undefined
+  // Секция 2: РАСХОДЫ WB
+  commissionSales: number | undefined
+  acquiringFee: number | undefined
+  loyaltyFee: number | undefined
+  penaltiesTotal: number | undefined
+  wbCommissionAdj: number | undefined
+  wbServicesCost: number | undefined
   logisticsCost: number | undefined
+  // Секция 3: К ПЕРЕЧИСЛЕНИЮ
+  payoutTotal: number | undefined
   storageCost: number | undefined
-  revenueTotal: number | undefined
-  theoreticalProfit: TheoreticalProfitResult | undefined
+  paidAcceptanceCost: number | undefined
+  // Секция 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА
+  cogsTotal: number | undefined
+  cogsCoverage: number
   productsWithCogs: number
   totalProducts: number
-  cogsCoverage: number
+  advertisingSpend: number | undefined
+  advertisingRoas: number | undefined
+  // Секция 5: ПРИБЫЛЬ
+  grossProfit: number | undefined
+  marginPct: number | undefined
+  // Common
   previousPeriodData: PreviousPeriodData | undefined
   isLoading: boolean
   error: Error | null
@@ -82,39 +85,34 @@ export interface DashboardMetricsGridProps {
   className?: string
 }
 
-/** Responsive grid: 4 cols (xl), 2 cols (md), 1 col (sm) */
-const gridClasses = cn('grid gap-4', 'grid-cols-1', 'md:grid-cols-2', 'xl:grid-cols-4')
+const sectionGrid = 'grid grid-cols-1 md:grid-cols-2 gap-4'
 
 /**
- * Dashboard Metrics Grid - 8-card responsive layout
- *
- * Row 1: Заказы FBO/FBS | COGS заказов | Выкупы | COGS выкупов
- * Row 2: Реклама | Логистика | Хранение | Теор.прибыль*
+ * Dashboard Metrics Grid — 5 sections × 2 cards, P&L narrative
  */
 export function DashboardMetricsGrid({
-  fboOrdersCount,
-  fboOrdersRevenue,
-  fbsOrdersCount,
-  fbsOrdersRevenue,
-  fboShare,
-  fbsShare,
-  previousFulfillmentRevenue,
-  isFulfillmentDataAvailable,
-  onStartFulfillmentSync,
-  isFulfillmentSyncLoading,
-  fulfillmentError,
-  isFulfillmentLoading,
-  ordersCogs,
-  salesAmount,
-  salesCogs,
-  advertisingSpend,
+  totalOrders,
+  saleGross,
+  wbSalesGross,
+  wbReturnsGross,
+  commissionSales,
+  acquiringFee,
+  loyaltyFee,
+  penaltiesTotal,
+  wbCommissionAdj,
+  wbServicesCost,
   logisticsCost,
+  payoutTotal,
   storageCost,
-  revenueTotal,
-  theoreticalProfit,
+  paidAcceptanceCost,
+  cogsTotal,
+  cogsCoverage,
   productsWithCogs,
   totalProducts,
-  cogsCoverage,
+  advertisingSpend,
+  advertisingRoas,
+  grossProfit,
+  marginPct,
   previousPeriodData,
   isLoading,
   error,
@@ -122,108 +120,136 @@ export function DashboardMetricsGrid({
   onAssignCogs,
   className,
 }: DashboardMetricsGridProps): React.ReactElement {
-  // Show skeleton only when main data is loading (not fulfillment)
   if (isLoading) {
     return <DashboardMetricsGridSkeleton className={className} />
   }
 
+  const prev = previousPeriodData
+
   return (
     <div
-      className={cn(gridClasses, className)}
+      className={cn('space-y-6', className)}
       role="region"
-      aria-label="Основные метрики"
+      aria-label="Основные метрики P&L"
       aria-busy={isLoading}
     >
-      {/* Card 1: Заказы FBO/FBS (Epic 60) */}
-      <FulfillmentMetricCard
-        fboOrdersCount={fboOrdersCount}
-        fboOrdersRevenue={fboOrdersRevenue}
-        fbsOrdersCount={fbsOrdersCount}
-        fbsOrdersRevenue={fbsOrdersRevenue}
-        fboShare={fboShare}
-        fbsShare={fbsShare}
-        previousTotalRevenue={previousFulfillmentRevenue}
-        isDataAvailable={isFulfillmentDataAvailable}
-        isLoading={isFulfillmentLoading}
-        error={fulfillmentError}
-        onRetry={onRetry}
-        onStartSync={onStartFulfillmentSync}
-        isSyncLoading={isFulfillmentSyncLoading}
-      />
+      {/* Секция 1: ВЫРУЧКА */}
+      <div className={sectionGrid}>
+        <OrdersCard
+          totalOrders={totalOrders}
+          previousOrders={prev?.ordersCount}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+        <SalesNetCard
+          saleGross={saleGross}
+          wbSalesGross={wbSalesGross}
+          wbReturnsGross={wbReturnsGross}
+          previousSaleGross={prev?.saleGross}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+      </div>
 
-      {/* Card 2: COGS заказов */}
-      <OrdersCogsMetricCard
-        cogsTotal={ordersCogs}
-        previousCogsTotal={previousPeriodData?.ordersCogs}
-        productsWithCogs={productsWithCogs}
-        totalProducts={totalProducts}
-        cogsCoverage={cogsCoverage}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-        onAssignCogs={onAssignCogs}
-      />
+      {/* Секция 2: РАСХОДЫ WB */}
+      <div className={sectionGrid}>
+        <WbCommissionsCard
+          commissionSales={commissionSales}
+          acquiringFee={acquiringFee}
+          loyaltyFee={loyaltyFee}
+          penaltiesTotal={penaltiesTotal}
+          wbCommissionAdj={wbCommissionAdj}
+          wbServicesCost={wbServicesCost}
+          previousTotal={prev?.wbCommissionsTotal}
+          saleGross={saleGross}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+        <LogisticsMetricCard
+          logisticsCost={logisticsCost}
+          previousLogisticsCost={prev?.logisticsCost}
+          revenueTotal={saleGross}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+      </div>
 
-      {/* Card 3: Выкупы (Sales from wb_sales_gross) */}
-      <SalesMetricCard
-        salesGross={salesAmount}
-        previousSalesGross={previousPeriodData?.salesAmount}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
+      {/* Секция 3: К ПЕРЕЧИСЛЕНИЮ */}
+      <div className={sectionGrid}>
+        <PayoutCard
+          payoutTotal={payoutTotal}
+          previousPayout={prev?.payoutTotal}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+        <StorageAcceptanceCard
+          storageCost={storageCost}
+          paidAcceptanceCost={paidAcceptanceCost}
+          previousTotal={prev?.storageAcceptanceTotal}
+          saleGross={saleGross}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+      </div>
 
-      {/* Card 4: COGS выкупов (from finance-summary cogs_total) */}
-      <SalesCogsMetricCard
-        cogsTotal={salesCogs}
-        previousCogsTotal={previousPeriodData?.salesCogs}
-        productsWithCogs={productsWithCogs}
-        totalProducts={totalProducts}
-        cogsCoverage={cogsCoverage}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-        onAssignCogs={onAssignCogs}
-      />
+      {/* Секция 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА */}
+      <div className={sectionGrid}>
+        <CostsCard
+          cogsTotal={cogsTotal}
+          previousCogs={prev?.cogsTotal}
+          cogsCoverage={cogsCoverage}
+          productsWithCogs={productsWithCogs}
+          totalProducts={totalProducts}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+          onAssignCogs={onAssignCogs}
+        />
+        <AdvertisingCard
+          totalSpend={advertisingSpend}
+          roas={advertisingRoas}
+          previousSpend={prev?.advertisingSpend}
+          saleGross={saleGross}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+      </div>
 
-      {/* Card 5: Реклама */}
-      <AdvertisingMetricCard
-        totalSpend={advertisingSpend}
-        previousSpend={previousPeriodData?.advertisingSpend}
-        revenueTotal={revenueTotal}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
-
-      {/* Card 6: Логистика */}
-      <LogisticsMetricCard
-        logisticsCost={logisticsCost}
-        previousLogisticsCost={previousPeriodData?.logisticsCost}
-        revenueTotal={revenueTotal}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
-
-      {/* Card 7: Хранение */}
-      <StorageMetricCard
-        storageCost={storageCost}
-        previousStorageCost={previousPeriodData?.storageCost}
-        revenueTotal={revenueTotal}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
-
-      {/* Card 8: Теор.прибыль (highlighted) */}
-      <TheoreticalProfitCard
-        profit={theoreticalProfit}
-        previousProfit={previousPeriodData?.theoreticalProfit}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
+      {/* Секция 5: ПРИБЫЛЬ */}
+      <div className={sectionGrid}>
+        <GrossProfitCard
+          grossProfit={grossProfit}
+          previousGrossProfit={prev?.grossProfit}
+          cogsCoverage={cogsCoverage}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+          onAssignCogs={onAssignCogs}
+        />
+        <MarginCard
+          marginPct={marginPct}
+          previousMarginPct={prev?.marginPct}
+          cogsCoverage={cogsCoverage}
+          isLoading={false}
+          error={error}
+          onRetry={onRetry}
+        />
+      </div>
     </div>
   )
+}
+
+// Re-export for backward compatibility
+export interface FinanceSummaryData {
+  revenue?: number | null
+  logistics_cost?: number | null
+  storage_cost?: number | null
+  sale_gross_total?: number | null
 }

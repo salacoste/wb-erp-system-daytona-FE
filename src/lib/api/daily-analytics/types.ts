@@ -28,6 +28,40 @@ export interface OrdersVolumeResponse {
 }
 
 /**
+ * Backend response for orders trends with daily aggregation.
+ * GET /v1/analytics/orders/trends?from=...&to=...&aggregation=day
+ * Provides revenue, cancellations, returns per day (Request #137 fix).
+ */
+export interface OrdersTrendsResponse {
+  trends: Array<{
+    date: string
+    ordersCount: number
+    revenue: number
+    cancellations: number
+    cancellationRate: number
+    returns: number
+    returnRate: number
+    avgOrderValue: number
+  }>
+  summary: {
+    totalOrders: number
+    totalRevenue: number
+    avgDailyOrders: number
+    cancellationRate: number
+    returnRate: number
+  }
+  dataSource: {
+    primary: string
+  }
+  period: {
+    from: string
+    to: string
+    aggregation: string
+    daysIncluded: number
+  }
+}
+
+/**
  * Backend response for finance summary with daily breakdown.
  */
 export interface FinanceSummaryResponse {

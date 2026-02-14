@@ -39,6 +39,37 @@ export type {
   FinanceSummaryData,
 } from './DashboardMetricsGrid'
 
+// P&L Section Cards (Dashboard Restructuring v2)
+export { OrdersCard } from './OrdersCard'
+export type { OrdersCardProps } from './OrdersCard'
+
+export { SalesNetCard } from './SalesNetCard'
+export type { SalesNetCardProps } from './SalesNetCard'
+
+export { WbCommissionsCard } from './WbCommissionsCard'
+export type { WbCommissionsCardProps } from './WbCommissionsCard'
+
+export { LogisticsMetricCard } from './LogisticsMetricCard'
+export type { LogisticsMetricCardProps } from './LogisticsMetricCard'
+
+export { PayoutCard } from './PayoutCard'
+export type { PayoutCardProps } from './PayoutCard'
+
+export { StorageAcceptanceCard } from './StorageAcceptanceCard'
+export type { StorageAcceptanceCardProps } from './StorageAcceptanceCard'
+
+export { CostsCard } from './CostsCard'
+export type { CostsCardProps } from './CostsCard'
+
+export { AdvertisingCard } from './AdvertisingCard'
+export type { AdvertisingCardProps } from './AdvertisingCard'
+
+export { GrossProfitCard } from './GrossProfitCard'
+export type { GrossProfitCardProps } from './GrossProfitCard'
+
+export { MarginCard } from './MarginCard'
+export type { MarginCardProps } from './MarginCard'
+
 // Re-export TheoreticalProfitResult from lib for convenience
 export type { TheoreticalProfitResult } from '@/lib/theoretical-profit'
 

@@ -22,18 +22,12 @@
  * - loss: ROAS < 1.0, ROI < 0
  * - unknown: No profit data available
  */
-export type EfficiencyStatus =
-  | 'excellent'
-  | 'good'
-  | 'moderate'
-  | 'poor'
-  | 'loss'
-  | 'unknown';
+export type EfficiencyStatus = 'excellent' | 'good' | 'moderate' | 'poor' | 'loss' | 'unknown'
 
 /**
  * View aggregation mode for analytics data.
  */
-export type ViewByMode = 'sku' | 'campaign' | 'brand' | 'category';
+export type ViewByMode = 'sku' | 'campaign' | 'brand' | 'category'
 
 /**
  * Grouping mode for analytics data (Epic 36).
@@ -44,7 +38,7 @@ export type ViewByMode = 'sku' | 'campaign' | 'brand' | 'category';
  * @see Epic 36: Product Card Linking
  * @see docs/request-backend/83-epic-36-api-contract.md
  */
-export type GroupByMode = 'sku' | 'imtId';
+export type GroupByMode = 'sku' | 'imtId'
 
 /**
  * Sync health status for advertising data.
@@ -52,19 +46,19 @@ export type GroupByMode = 'sku' | 'imtId';
  * Note: Backend marks sync as "stale" after 26 hours (24h daily sync + 2h buffer).
  * @see Story 33.6-fe for 26h rationale
  */
-export type HealthStatus = 'healthy' | 'degraded' | 'unhealthy' | 'stale';
+export type HealthStatus = 'healthy' | 'degraded' | 'unhealthy' | 'stale'
 
 /**
  * Last sync operation status (original Request #71 format - deprecated).
  * @deprecated Use SyncTaskStatus instead
  */
-export type SyncStatus = 'success' | 'error' | 'partial';
+export type SyncStatus = 'success' | 'error' | 'partial'
 
 /**
  * Current sync task status (actual backend response).
  * @see Request #72 backend-response
  */
-export type SyncTaskStatus = 'syncing' | 'completed' | 'failed' | 'idle';
+export type SyncTaskStatus = 'syncing' | 'completed' | 'failed' | 'idle'
 
 // ============================================================================
 // Response Interfaces
@@ -81,9 +75,9 @@ export type SyncTaskStatus = 'syncing' | 'completed' | 'failed' | 'idle';
  */
 export interface MergedProduct {
   /** Product SKU identifier (nmId from WB) */
-  nmId: number;
+  nmId: number
   /** Product vendor code (артикул продавца) */
-  vendorCode: string;
+  vendorCode: string
 }
 
 /**
@@ -91,18 +85,18 @@ export interface MergedProduct {
  */
 export interface AdvertisingMeta {
   /** Cabinet identifier */
-  cabinet_id: string;
+  cabinet_id: string
   /** Date range for the analytics data */
   date_range: {
     /** Start date in YYYY-MM-DD format */
-    from: string;
+    from: string
     /** End date in YYYY-MM-DD format */
-    to: string;
-  };
+    to: string
+  }
   /** Current view aggregation mode */
-  view_by: ViewByMode;
+  view_by: ViewByMode
   /** Last sync timestamp (ISO datetime) */
-  last_sync: string;
+  last_sync: string
 }
 
 /**
@@ -110,29 +104,29 @@ export interface AdvertisingMeta {
  */
 export interface AdvertisingSummary {
   /** Total advertising spend in rubles */
-  total_spend: number;
+  total_spend: number
   /** Total revenue from all sources (organic + ad) - Epic 35 */
-  total_sales: number;
+  total_sales: number
   /** Total revenue attributed to ads only in rubles */
-  total_revenue: number;
+  total_revenue: number
   /** Total profit after ad costs in rubles */
-  total_profit: number;
+  total_profit: number
   /** Overall Return on Ad Spend (revenue / spend) */
-  overall_roas: number;
+  overall_roas: number
   /** Overall Return on Investment ((profit - spend) / spend) */
-  overall_roi: number;
+  overall_roi: number
   /** Average click-through rate (%) */
-  avg_ctr: number;
+  avg_ctr: number
   /** Average conversion rate (%) */
-  avg_conversion_rate: number;
+  avg_conversion_rate: number
   /** Total number of campaigns */
-  campaign_count: number;
+  campaign_count: number
   /** Number of currently active campaigns */
-  active_campaigns: number;
+  active_campaigns: number
   /** Total organic sales not attributed to ads - Epic 35 */
-  total_organic_sales: number;
+  total_organic_sales: number
   /** Average percentage of organic sales across all items - Epic 35 */
-  avg_organic_contribution: number;
+  avg_organic_contribution: number
 }
 
 /**
@@ -144,67 +138,67 @@ export interface AdvertisingSummary {
  */
 export interface AdvertisingItem {
   /** Unique identifier from backend (e.g., "sku:270937054", "campaign:12345") */
-  key: string;
+  key: string
 
   // Epic 36: Product Card Linking fields
   /** Item type: merged group or individual product (Epic 36) */
-  type?: 'merged_group' | 'individual';
+  type?: 'merged_group' | 'individual'
   /** WB merged card identifier - склейка ID (Epic 36). Backend ALWAYS returns this field. */
-  imtId: number | null;
+  imtId: number | null
   /** Products within the merged group (Epic 36, only for type='merged_group') */
-  mergedProducts?: MergedProduct[];
+  mergedProducts?: MergedProduct[]
 
   // Identifiers (depend on view_by mode)
   /** SKU identifier (present when view_by='sku') */
-  sku_id?: string;
+  sku_id?: string
   /** Campaign identifier (present when view_by='campaign') */
-  campaign_id?: number;
+  campaign_id?: number
   /** Brand name (present when view_by='brand') */
-  brand?: string;
+  brand?: string
   /** Category name (present when view_by='category') */
-  category?: string;
+  category?: string
   /** Product name (present when view_by='sku') */
-  product_name?: string;
+  product_name?: string
 
   // Core metrics
   /** Number of ad views/impressions */
-  views: number;
+  views: number
   /** Number of ad clicks */
-  clicks: number;
+  clicks: number
   /** Number of orders attributed to ads */
-  orders: number;
+  orders: number
   /** Total ad spend in rubles */
-  spend: number;
+  spend: number
   /** Total sales from all sources (organic + ad) - Epic 35 */
-  total_sales: number;
+  total_sales: number
   /** Revenue attributed to ads only in rubles */
-  revenue: number;
+  revenue: number
   /** Profit before ad costs in rubles */
-  profit: number;
+  profit: number
 
   // Epic 35: Organic vs advertising split
   /** Organic sales not attributed to ads (totalSales - revenue) - Epic 35 */
-  organic_sales: number;
+  organic_sales: number
   /** Percentage of sales from organic sources - Epic 35 */
-  organic_contribution: number;
+  organic_contribution: number
 
   // Calculated metrics
   /** Return on Ad Spend (revenue / spend) */
-  roas: number;
+  roas: number
   /** Return on Investment ((profit - spend) / spend) */
-  roi: number;
+  roi: number
   /** Click-through rate (clicks / views * 100) */
-  ctr: number;
+  ctr: number
   /** Cost per click (spend / clicks) */
-  cpc: number;
+  cpc: number
   /** Conversion rate (orders / clicks * 100) */
-  conversion_rate: number;
+  conversion_rate: number
   /** Profit after advertising costs (profit - spend) */
-  profit_after_ads: number;
+  profit_after_ads: number
 
   // Classification
   /** Efficiency status based on ROAS/ROI thresholds */
-  efficiency_status: EfficiencyStatus;
+  efficiency_status: EfficiencyStatus
 }
 
 /**
@@ -212,11 +206,11 @@ export interface AdvertisingItem {
  */
 export interface AdvertisingAnalyticsResponse {
   /** Response metadata */
-  meta: AdvertisingMeta;
+  meta: AdvertisingMeta
   /** Summary metrics */
-  summary: AdvertisingSummary;
+  summary: AdvertisingSummary
   /** List of analytics items */
-  data: AdvertisingItem[];
+  data: AdvertisingItem[]
 }
 
 // ============================================================================
@@ -230,11 +224,11 @@ export interface AdvertisingAnalyticsResponse {
  */
 export interface CampaignPlacements {
   /** Campaign active in Search placement */
-  search: boolean;
+  search: boolean
   /** Campaign active in Recommendations (showcase/product cards) */
-  recommendations: boolean;
+  recommendations: boolean
   /** Campaign active in Carousel (optional, may not be present) */
-  carousel?: boolean;
+  carousel?: boolean
 }
 
 /**
@@ -242,31 +236,31 @@ export interface CampaignPlacements {
  */
 export interface Campaign {
   /** Unique campaign identifier */
-  campaign_id: number;
+  campaign_id: number
   /** Campaign name */
-  name: string;
+  name: string
   /** Campaign type code */
-  type: number;
+  type: number
   /** Campaign type display name */
-  type_name: string;
+  type_name: string
   /** Campaign status code */
-  status: number;
+  status: number
   /** Campaign status display name */
-  status_name: string;
+  status_name: string
   /** Campaign creation timestamp */
-  created_at: string;
+  created_at: string
   /** Campaign start timestamp */
-  start_time: string;
+  start_time: string
   /** Campaign end timestamp (null if ongoing) */
-  end_time: string | null;
+  end_time: string | null
   /** Daily budget in rubles */
-  daily_budget: number;
+  daily_budget: number
   /** List of nm_ids (SKUs) in the campaign */
-  nm_ids: string[];
+  nm_ids: string[]
   /** Number of SKUs in the campaign */
-  sku_count: number;
+  sku_count: number
   /** Placement settings (only for Type 9 campaigns, null for legacy) - Story 33.9 */
-  placements: CampaignPlacements | null;
+  placements: CampaignPlacements | null
 }
 
 /**
@@ -276,14 +270,14 @@ export interface CampaignsResponse {
   /** Response metadata */
   meta: {
     /** Cabinet identifier */
-    cabinet_id: string;
+    cabinet_id: string
     /** Total number of campaigns */
-    total_count: number;
+    total_count: number
     /** Number of active campaigns */
-    active_count: number;
-  };
+    active_count: number
+  }
   /** List of campaigns */
-  data: Campaign[];
+  data: Campaign[]
 }
 
 // ============================================================================
@@ -296,15 +290,15 @@ export interface CampaignsResponse {
  */
 export interface SyncLastTask {
   /** Task UUID */
-  taskUuid: string;
+  taskUuid: string
   /** Task status */
-  status: string;
+  status: string
   /** Task start timestamp */
-  startedAt: string;
+  startedAt: string
   /** Task finish timestamp */
-  finishedAt: string;
+  finishedAt: string
   /** Error message if failed */
-  error: string | null;
+  error: string | null
 }
 
 /**
@@ -315,19 +309,25 @@ export interface SyncLastTask {
  */
 export interface SyncStatusResponse {
   /** Last sync timestamp (null if never synced) */
-  lastSyncAt: string | null;
+  lastSyncAt: string | null
   /** Next scheduled sync timestamp (ISO datetime) */
-  nextScheduledSync: string;
+  nextScheduledSync: string
   /** Current sync status */
-  status: SyncTaskStatus;
+  status: SyncTaskStatus
   /** Last sync task details (optional) */
-  lastTask?: SyncLastTask;
+  lastTask?: SyncLastTask
   /** Number of campaigns synced */
-  campaignsSynced: number;
+  campaignsSynced: number
   /** Data available from date (YYYY-MM-DD) */
-  dataAvailableFrom: string | null;
+  dataAvailableFrom: string | null
   /** Data available to date (YYYY-MM-DD) */
-  dataAvailableTo: string | null;
+  dataAvailableTo: string | null
+  /** How many days behind today dataAvailableTo is (0-1 is normal for T-1 sync) */
+  dataLagDays?: number | null
+  /** Health status: ok (lag<=2), warning (lag 3-5), stale (lag>5), no_data */
+  healthStatus?: 'ok' | 'warning' | 'stale' | 'no_data'
+  /** Detected gaps in the date range (missing dates between from and to) */
+  dataGaps?: Array<{ from: string; to: string; missingDays: number }>
 }
 
 /**
@@ -342,24 +342,24 @@ export interface SyncStatusResponse {
  */
 export function deriveHealthStatus(response: SyncStatusResponse): HealthStatus {
   if (response.status === 'failed') {
-    return 'unhealthy';
+    return 'unhealthy'
   }
 
   if (!response.lastSyncAt) {
-    return 'stale';
+    return 'stale'
   }
 
-  const lastSyncTime = new Date(response.lastSyncAt).getTime();
-  const now = Date.now();
-  const hoursSinceSync = (now - lastSyncTime) / (1000 * 60 * 60);
+  const lastSyncTime = new Date(response.lastSyncAt).getTime()
+  const now = Date.now()
+  const hoursSinceSync = (now - lastSyncTime) / (1000 * 60 * 60)
 
   if (hoursSinceSync <= 24) {
-    return 'healthy';
+    return 'healthy'
   } else if (hoursSinceSync <= 26) {
     // 26h = 24h sync schedule + 2h buffer
-    return 'degraded';
+    return 'degraded'
   } else {
-    return 'stale';
+    return 'stale'
   }
 }
 
@@ -376,11 +376,11 @@ export function deriveHealthStatus(response: SyncStatusResponse): HealthStatus {
  */
 export interface MainProduct {
   /** Product SKU identifier (nmId from WB) */
-  nmId: number;
+  nmId: number
   /** Product vendor code (артикул продавца) */
-  vendorCode: string;
+  vendorCode: string
   /** Product name (optional, for display) */
-  name?: string;
+  name?: string
 }
 
 /**
@@ -391,33 +391,33 @@ export interface MainProduct {
  */
 export interface AggregateMetrics {
   /** Total views across all products */
-  totalViews: number;
+  totalViews: number
   /** Total clicks across all products */
-  totalClicks: number;
+  totalClicks: number
   /** Total orders across all products */
-  totalOrders: number;
+  totalOrders: number
   /** Total ad spend across all products */
-  totalSpend: number;
+  totalSpend: number
   /** Total revenue attributed to ads */
-  totalRevenue: number;
+  totalRevenue: number
   /** Total sales from all sources (organic + ad) - Epic 35 */
-  totalSales: number;
+  totalSales: number
   /** Organic sales not attributed to ads - Epic 35 */
-  organicSales: number;
+  organicSales: number
   /** Percentage of sales from organic sources - Epic 35 */
-  organicContribution: number;
+  organicContribution: number
   /** Return on Ad Spend (revenue / spend), null if spend = 0 */
-  roas: number | null;
+  roas: number | null
   /** Return on Investment ((profit - spend) / spend), null if spend = 0 */
-  roi: number | null;
+  roi: number | null
   /** Click-through rate (clicks / views * 100) */
-  ctr: number;
+  ctr: number
   /** Cost per click (spend / clicks), null if clicks = 0 */
-  cpc: number | null;
+  cpc: number | null
   /** Conversion rate (orders / clicks * 100), null if clicks = 0 */
-  conversionRate: number;
+  conversionRate: number
   /** Profit after advertising costs */
-  profitAfterAds: number;
+  profitAfterAds: number
 }
 
 /**
@@ -428,43 +428,43 @@ export interface AggregateMetrics {
  */
 export interface MergedGroupProduct {
   /** Product SKU identifier */
-  nmId: number;
+  nmId: number
   /** Product vendor code */
-  vendorCode: string;
+  vendorCode: string
   /** WB merged card identifier, null for standalone products (склейка ID) */
-  imtId: number | null;
+  imtId: number | null
   /** Whether this is the main product (spend > 0) */
-  isMainProduct: boolean;
+  isMainProduct: boolean
 
   // Core metrics (same structure as AggregateMetrics)
   /** Number of ad views/impressions */
-  totalViews: number;
+  totalViews: number
   /** Number of ad clicks */
-  totalClicks: number;
+  totalClicks: number
   /** Number of orders attributed to ads */
-  totalOrders: number;
+  totalOrders: number
   /** Total ad spend in rubles */
-  totalSpend: number;
+  totalSpend: number
   /** Revenue attributed to ads only */
-  totalRevenue: number;
+  totalRevenue: number
   /** Total sales from all sources (organic + ad) - Epic 35 */
-  totalSales: number;
+  totalSales: number
   /** Organic sales not attributed to ads - Epic 35 */
-  organicSales: number;
+  organicSales: number
   /** Percentage of sales from organic sources - Epic 35 */
-  organicContribution: number;
+  organicContribution: number
   /** Return on Ad Spend (revenue / spend), null for child products */
-  roas: number | null;
+  roas: number | null
   /** Return on Investment ((profit - spend) / spend) */
-  roi: number | null;
+  roi: number | null
   /** Click-through rate (clicks / views * 100) */
-  ctr: number;
+  ctr: number
   /** Cost per click (spend / clicks) */
-  cpc: number | null;
+  cpc: number | null
   /** Conversion rate (orders / clicks * 100) */
-  conversionRate: number;
+  conversionRate: number
   /** Profit after advertising costs */
-  profitAfterAds: number;
+  profitAfterAds: number
 }
 
 /**
@@ -476,17 +476,17 @@ export interface MergedGroupProduct {
  */
 export interface AdvertisingGroup {
   /** Type of group: merged_group (склейка) or individual (standalone) */
-  type: 'merged_group' | 'individual';
+  type: 'merged_group' | 'individual'
   /** WB merged card identifier, null for standalone products */
-  imtId: number | null;
+  imtId: number | null
   /** Main product reference (drives advertising spend) */
-  mainProduct: MainProduct;
+  mainProduct: MainProduct
   /** Number of products in this group (1 for standalone) */
-  productCount: number;
+  productCount: number
   /** Aggregate metrics across all products in group */
-  aggregateMetrics: AggregateMetrics;
+  aggregateMetrics: AggregateMetrics
   /** Individual product metrics array */
-  products: MergedGroupProduct[];
+  products: MergedGroupProduct[]
 }
 
 // ============================================================================
@@ -498,27 +498,27 @@ export interface AdvertisingGroup {
  */
 export interface AdvertisingAnalyticsParams {
   /** Start date in YYYY-MM-DD format (required) */
-  from: string;
+  from: string
   /** End date in YYYY-MM-DD format (required) */
-  to: string;
+  to: string
   /** View aggregation mode (default: 'sku') */
-  view_by?: ViewByMode;
+  view_by?: ViewByMode
   /** Grouping mode for product card linking (Epic 36, default: 'sku') */
-  group_by?: GroupByMode;
+  group_by?: GroupByMode
   /** Filter by efficiency status (default: 'all') */
-  efficiency_filter?: EfficiencyStatus | 'all';
+  efficiency_filter?: EfficiencyStatus | 'all'
   /** Filter by campaign IDs (array of numbers) */
-  campaign_ids?: number[];
+  campaign_ids?: number[]
   /** Filter by SKU IDs (array of strings) */
-  sku_ids?: string[];
+  sku_ids?: string[]
   /** Sort field (default: 'spend') - Request #80: Full backend support */
-  sort_by?: 'spend' | 'revenue' | 'orders' | 'views' | 'clicks' | 'roas' | 'roi' | 'ctr' | 'cpc';
+  sort_by?: 'spend' | 'revenue' | 'orders' | 'views' | 'clicks' | 'roas' | 'roi' | 'ctr' | 'cpc'
   /** Sort direction (default: 'desc') */
-  sort_order?: 'asc' | 'desc';
+  sort_order?: 'asc' | 'desc'
   /** Maximum number of items to return */
-  limit?: number;
+  limit?: number
   /** Number of items to skip (offset-based pagination) */
-  offset?: number;
+  offset?: number
 }
 
 /**
@@ -526,13 +526,13 @@ export interface AdvertisingAnalyticsParams {
  */
 export interface CampaignsParams {
   /** Filter by status codes (comma-separated: '9' active, '11' paused) */
-  status?: string;
+  status?: string
   /** Filter by campaign type (8: auto, 9: unified/auction) */
-  type?: number;
+  type?: number
   /** Search by campaign name */
-  search?: string;
+  search?: string
   /** Maximum number of items to return */
-  limit?: number;
+  limit?: number
   /** Number of items to skip (offset-based pagination) */
-  offset?: number;
+  offset?: number
 }

@@ -50,44 +50,18 @@ export interface ColumnDef {
   colorize?: boolean
 }
 
-/** Table column definitions */
+/** Table column definitions — simplified P&L view (4 columns) */
 export const COLUMNS: ColumnDef[] = [
-  { key: 'date', label: 'День', width: '100px', align: 'left', sortable: true },
-  { key: 'orders', label: 'Заказы', width: '110px', align: 'right', sortable: true },
-  { key: 'ordersCogs', label: 'COGS заказов', width: '120px', align: 'right', sortable: true },
-  { key: 'sales', label: 'Выкупы', width: '110px', align: 'right', sortable: true },
-  { key: 'salesCogs', label: 'COGS выкупов', width: '120px', align: 'right', sortable: true },
+  { key: 'date', label: 'Дата', width: '100px', align: 'left', sortable: true },
+  { key: 'ordersCount', label: 'Заказы, шт', width: '110px', align: 'right', sortable: true },
+  { key: 'orders', label: 'Сумма заказов', width: '140px', align: 'right', sortable: true },
   {
     key: 'advertising',
     label: 'Реклама',
-    width: '100px',
-    align: 'right',
-    sortable: true,
-    negativePrefix: true,
-  },
-  {
-    key: 'logistics',
-    label: 'Логистика',
-    width: '100px',
-    align: 'right',
-    sortable: true,
-    negativePrefix: true,
-  },
-  {
-    key: 'storage',
-    label: 'Хранение',
-    width: '100px',
-    align: 'right',
-    sortable: true,
-    negativePrefix: true,
-  },
-  {
-    key: 'theoreticalProfit',
-    label: 'Теор.прибыль',
     width: '120px',
     align: 'right',
     sortable: true,
-    colorize: true,
+    negativePrefix: true,
   },
 ]
 
@@ -101,6 +75,11 @@ export function formatCellValue(row: DailyMetrics, column: ColumnDef): string {
 
   const value = row[column.key as keyof DailyMetrics] as number
   if (typeof value !== 'number') return '-'
+
+  // ordersCount is integer — format without currency symbol
+  if (column.key === 'ordersCount') {
+    return new Intl.NumberFormat('ru-RU').format(Math.round(value))
+  }
 
   const formatted = formatCurrency(Math.abs(value))
 
@@ -133,6 +112,7 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
     date: 'Итого',
     dayOfWeek: 0,
     orders: 0,
+    ordersCount: 0,
     ordersCogs: 0,
     sales: 0,
     salesCogs: 0,
@@ -146,6 +126,7 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
     (acc, day) => ({
       ...acc,
       orders: acc.orders + day.orders,
+      ordersCount: acc.ordersCount + day.ordersCount,
       ordersCogs: acc.ordersCogs + day.ordersCogs,
       sales: acc.sales + day.sales,
       salesCogs: acc.salesCogs + day.salesCogs,

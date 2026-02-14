@@ -71,14 +71,18 @@ export function useDailyMetrics(
   return useQuery<DailyMetrics[], Error>({
     queryKey: dailyAnalyticsQueryKeys.metrics(from, to),
     queryFn: async () => {
-      // Fetch all daily data sources in parallel
-      const { ordersData, financeData, advertisingData } = await getAllDailyData(from, to)
+      // Fetch all daily data sources in parallel (including per-day COGS)
+      const { ordersData, financeData, advertisingData, ordersCogsByDay } = await getAllDailyData(
+        from,
+        to
+      )
 
       // Aggregate data from all sources
       const aggregatedData = aggregateDailyMetrics({
         ordersData,
         financeData,
         advertisingData,
+        ordersCogsByDay,
         ordersCogs,
       })
 
@@ -150,11 +154,15 @@ export function usePrefetchDailyMetrics() {
     await queryClient.prefetchQuery({
       queryKey: dailyAnalyticsQueryKeys.metrics(from, to),
       queryFn: async () => {
-        const { ordersData, financeData, advertisingData } = await getAllDailyData(from, to)
+        const { ordersData, financeData, advertisingData, ordersCogsByDay } = await getAllDailyData(
+          from,
+          to
+        )
         const aggregatedData = aggregateDailyMetrics({
           ordersData,
           financeData,
           advertisingData,
+          ordersCogsByDay,
           ordersCogs,
         })
         return fillMissingDays(aggregatedData, from, to)

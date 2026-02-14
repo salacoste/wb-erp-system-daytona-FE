@@ -38,6 +38,7 @@ export function createEmptyDailyMetrics(dateStr: string): DailyMetrics {
     date: dateStr,
     dayOfWeek: getDayOfWeek(dateStr),
     orders: 0,
+    ordersCount: 0,
     ordersCogs: 0,
     sales: 0,
     salesCogs: 0,

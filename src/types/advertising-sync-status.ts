@@ -35,6 +35,12 @@ export interface ExtendedSyncStatusResponse {
   dataAvailableFrom: string | null
   /** Data available to date (YYYY-MM-DD) */
   dataAvailableTo: string | null
+  /** How many days behind today dataAvailableTo is (0-1 is normal for T-1 sync) */
+  dataLagDays: number | null
+  /** Health status: ok (lag<=2), warning (lag 3-5), stale (lag>5), no_data */
+  healthStatus: 'ok' | 'warning' | 'stale' | 'no_data'
+  /** Detected gaps in the date range (missing dates between from and to) */
+  dataGaps: Array<{ from: string; to: string; missingDays: number }>
 }
 
 /**
