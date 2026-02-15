@@ -53,10 +53,10 @@ export function MetricCardSkeleton({ className }: MetricCardSkeletonProps): Reac
  * Grid classes matching DashboardMetricsGrid
  */
 const gridClasses = cn(
-  'grid gap-4',
+  'grid gap-4 items-stretch',
   'grid-cols-1', // Mobile: 1 column
   'md:grid-cols-2', // Tablet: 2 columns
-  'xl:grid-cols-4' // Desktop: 4 columns
+  'xl:grid-cols-3' // Desktop: 3 columns (Story 65.17)
 )
 
 export interface DashboardMetricsGridSkeletonProps {
