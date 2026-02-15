@@ -1,15 +1,15 @@
 /**
  * Dashboard Metrics Grid — Flat responsive P&L layout
  * Single grid: 1col → 2col (sm) → 3col (lg) → 4col (xl)
- * 10 cards flowing in P&L order without section wrappers.
+ * 15 cards: 7 simple (data-driven) + 8 complex with tooltips/breakdowns.
  */
 
 'use client'
 
 import { cn } from '@/lib/utils'
 import { DashboardMetricsGridSkeleton } from './DashboardMetricsGridSkeleton'
-import { OrdersCard } from './OrdersCard'
-import { SalesNetCard } from './SalesNetCard'
+import { SimpleMetricCard } from './SimpleMetricCard'
+import { buildSimpleCards } from './simpleCardConfigs'
 import { WbCommissionsCard } from './WbCommissionsCard'
 import { LogisticsMetricCard } from './LogisticsMetricCard'
 import { PayoutCard } from './PayoutCard'
@@ -20,15 +20,13 @@ import { GrossProfitCard } from './GrossProfitCard'
 import { MarginCard } from './MarginCard'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 
-// Re-export types for backward compatibility
 export type {
   DashboardMetricsGridProps,
   PreviousPeriodData,
   FinanceSummaryData,
 } from './DashboardMetricsGridTypes'
 
-/** Flat responsive grid: 1 → 2 → 3 → 4 columns */
-const gridClasses = cn(
+const gridCls = cn(
   'grid gap-3 items-stretch',
   'grid-cols-1',
   'sm:grid-cols-2',
@@ -36,15 +34,8 @@ const gridClasses = cn(
   'xl:grid-cols-4'
 )
 
-/**
- * Dashboard Metrics Grid — flat 10-card P&L layout
- */
 export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.ReactElement {
   const {
-    totalOrders,
-    saleGross,
-    wbSalesGross,
-    wbReturnsGross,
     commissionSales,
     acquiringFee,
     loyaltyFee,
@@ -52,6 +43,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     wbCommissionAdj,
     wbServicesCost,
     logisticsCost,
+    saleGross,
     payoutTotal,
     storageCost,
     paidAcceptanceCost,
@@ -71,30 +63,16 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     className,
   } = props
 
-  if (isLoading) {
-    return <DashboardMetricsGridSkeleton className={className} />
-  }
+  if (isLoading) return <DashboardMetricsGridSkeleton cardCount={15} className={className} />
+
+  const cards = buildSimpleCards(props)
+  const e = error ?? undefined
 
   return (
-    <div className={cn(gridClasses, className)} role="region" aria-label="Основные метрики P&L">
-      {/* Выручка */}
-      <OrdersCard
-        totalOrders={totalOrders}
-        previousOrders={prev?.ordersCount}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
-      <SalesNetCard
-        saleGross={saleGross}
-        wbSalesGross={wbSalesGross}
-        wbReturnsGross={wbReturnsGross}
-        previousSaleGross={prev?.saleGross}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
-      {/* Расходы WB */}
+    <div className={cn(gridCls, className)} role="region" aria-label="Основные метрики P&L">
+      {cards.map(c => (
+        <SimpleMetricCard key={c.title} {...c} error={e} onRetry={onRetry} />
+      ))}
       <WbCommissionsCard
         commissionSales={commissionSales}
         acquiringFee={acquiringFee}
@@ -116,14 +94,6 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         error={error}
         onRetry={onRetry}
       />
-      {/* К перечислению */}
-      <PayoutCard
-        payoutTotal={payoutTotal}
-        previousPayout={prev?.payoutTotal}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
       <StorageAcceptanceCard
         storageCost={storageCost}
         paidAcceptanceCost={paidAcceptanceCost}
@@ -133,7 +103,13 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         error={error}
         onRetry={onRetry}
       />
-      {/* Себестоимость и реклама */}
+      <PayoutCard
+        payoutTotal={payoutTotal}
+        previousPayout={prev?.payoutTotal}
+        isLoading={false}
+        error={error}
+        onRetry={onRetry}
+      />
       <CostsCard
         cogsTotal={cogsTotal}
         previousCogs={prev?.cogsTotal}
@@ -154,7 +130,6 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         error={error}
         onRetry={onRetry}
       />
-      {/* Прибыль */}
       <GrossProfitCard
         grossProfit={grossProfit}
         previousGrossProfit={prev?.grossProfit}

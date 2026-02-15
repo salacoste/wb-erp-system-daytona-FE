@@ -26,6 +26,9 @@ vi.mock('next/navigation', () => ({
 function createMinimalGridProps() {
   return {
     totalOrders: 100,
+    ordersRevenue: 120000,
+    salesCount: 80,
+    returnsCount: 20,
     saleGross: 50000,
     wbSalesGross: 45000,
     wbReturnsGross: 5000,
@@ -63,21 +66,20 @@ describe('MetricsGrid (Story 65.17)', () => {
       const grid = screen.getByRole('region', { name: /метрик/i })
       expect(grid).toBeInTheDocument()
 
-      // After Story 65.17 implementation, the grid should use:
-      // grid-cols-1 (mobile) + md:grid-cols-2 (tablet) + xl:grid-cols-3 (desktop)
+      // Flat grid: 1col → 2col (sm) → 3col (lg) → 4col (xl)
       expect(grid).toHaveClass('grid')
       expect(grid).toHaveClass('grid-cols-1')
-      expect(grid).toHaveClass('md:grid-cols-2')
-      expect(grid).toHaveClass('xl:grid-cols-3')
+      expect(grid).toHaveClass('sm:grid-cols-2')
+      expect(grid).toHaveClass('xl:grid-cols-4')
     })
 
-    /** AC-65.17.1: 3 columns on desktop (xl breakpoint) */
-    it('uses xl:grid-cols-3 for desktop layout', () => {
+    /** AC-65.17.1: 4 columns on desktop (xl breakpoint) */
+    it('uses xl:grid-cols-4 for desktop layout', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
       const grid = screen.getByRole('region', { name: /метрик/i })
-      expect(grid).toHaveClass('xl:grid-cols-3')
+      expect(grid).toHaveClass('xl:grid-cols-4')
     })
 
     /** AC-65.17.4: cards equal height in row */
@@ -89,47 +91,24 @@ describe('MetricsGrid (Story 65.17)', () => {
       expect(grid).toHaveClass('items-stretch')
     })
 
-    /** AC-65.17.1: gap-4 between cards */
-    it('applies gap-4 between grid items', () => {
+    /** AC-65.17.1: gap-3 between cards */
+    it('applies gap-3 between grid items', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
       const grid = screen.getByRole('region', { name: /метрик/i })
-      expect(grid).toHaveClass('gap-4')
+      expect(grid).toHaveClass('gap-3')
     })
   })
 
-  describe('section headers (Story 65.18 integration)', () => {
-    /** AC-65.18.1, AC-65.17.6: section headers span full width */
-    it('section headers use col-span-full in grid context', () => {
-      const props = createMinimalGridProps()
-      const { container } = renderWithProviders(<DashboardMetricsGrid {...props} />)
-
-      // Section headers should span all columns
-      const sectionHeaders = container.querySelectorAll('[class*="col-span-full"]')
-      expect(sectionHeaders.length).toBeGreaterThan(0)
-    })
-
-    /** AC-65.18.1: renders section header labels */
-    it('renders section headers for logical groups', () => {
+  describe('flat grid card count', () => {
+    it('renders all 15 metric cards in flat grid', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
-      // At minimum, the current 5 sections should have headers
-      // Exact labels depend on implementation, but these are the defined sections:
-      expect(screen.getByText(/ВЫРУЧКА/i)).toBeInTheDocument()
-      expect(screen.getByText(/РАСХОДЫ/i)).toBeInTheDocument()
-      // "ПРИБЫЛЬ" section header coexists with "Валовая прибыль" card title
-      expect(screen.getAllByText(/ПРИБЫЛЬ/i).length).toBeGreaterThanOrEqual(1)
-    })
-
-    it('cards are grouped under correct sections', () => {
-      const props = createMinimalGridProps()
-      renderWithProviders(<DashboardMetricsGrid {...props} />)
-
-      // All 10 metric cards should be rendered
+      // 7 simple cards + 8 complex cards = 15 total
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(10)
+      expect(articles.length).toBe(15)
     })
   })
 
@@ -141,9 +120,8 @@ describe('MetricsGrid (Story 65.17)', () => {
       const grid = screen.getByRole('region', { name: /загрузка/i })
       expect(grid).toHaveClass('grid')
       expect(grid).toHaveClass('grid-cols-1')
-      expect(grid).toHaveClass('md:grid-cols-2')
-      // AC-65.17.5: skeleton should use xl:grid-cols-3 (not 4)
-      expect(grid).toHaveClass('xl:grid-cols-3')
+      expect(grid).toHaveClass('sm:grid-cols-2')
+      expect(grid).toHaveClass('xl:grid-cols-4')
     })
 
     /** AC-65.17.5: skeleton card count matches actual */

@@ -24,12 +24,16 @@ export interface PreviousPeriodData {
 }
 
 export interface DashboardMetricsGridProps {
-  // Секция 1: ВЫРУЧКА
+  // Заказы
   totalOrders: number | undefined
+  ordersRevenue: number | undefined
+  // Продажи и возвраты
   saleGross: number | undefined
   wbSalesGross: number | undefined
   wbReturnsGross: number | undefined
-  // Секция 2: РАСХОДЫ WB
+  salesCount: number | undefined
+  returnsCount: number | undefined
+  // Расходы WB
   commissionSales: number | undefined
   acquiringFee: number | undefined
   loyaltyFee: number | undefined
@@ -37,18 +41,18 @@ export interface DashboardMetricsGridProps {
   wbCommissionAdj: number | undefined
   wbServicesCost: number | undefined
   logisticsCost: number | undefined
-  // Секция 3: К ПЕРЕЧИСЛЕНИЮ
+  // К перечислению
   payoutTotal: number | undefined
   storageCost: number | undefined
   paidAcceptanceCost: number | undefined
-  // Секция 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА
+  // Себестоимость и реклама
   cogsTotal: number | undefined
   cogsCoverage: number
   productsWithCogs: number
   totalProducts: number
   advertisingSpend: number | undefined
   advertisingRoas: number | undefined
-  // Секция 5: ПРИБЫЛЬ
+  // Прибыль
   grossProfit: number | undefined
   marginPct: number | undefined
   // Common
