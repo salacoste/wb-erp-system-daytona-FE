@@ -34,8 +34,8 @@ export type {
   FinanceSummaryData,
 } from './DashboardMetricsGridTypes'
 
-/** Responsive grid: 1col mobile, 2col tablet, 3col desktop */
-const gridClasses = cn(
+/** Responsive card grid inside each section */
+const sectionGridClasses = cn(
   'grid gap-4 items-stretch',
   'grid-cols-1',
   'md:grid-cols-2',
@@ -83,115 +83,136 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
 
   return (
     <div
-      className={cn(gridClasses, className)}
+      className={cn('space-y-6', className)}
       role="region"
       aria-label="Основные метрики P&L"
       aria-busy={isLoading}
     >
       {/* Секция 1: ВЫРУЧКА */}
-      <SectionHeader title="ВЫРУЧКА" />
-      <OrdersCard
-        totalOrders={totalOrders}
-        previousOrders={prev?.ordersCount}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
-      <SalesNetCard
-        saleGross={saleGross}
-        wbSalesGross={wbSalesGross}
-        wbReturnsGross={wbReturnsGross}
-        previousSaleGross={prev?.saleGross}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
+      <div>
+        <SectionHeader title="ВЫРУЧКА" />
+        <div className={cn(sectionGridClasses, 'mt-4')}>
+          <OrdersCard
+            totalOrders={totalOrders}
+            previousOrders={prev?.ordersCount}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+          <SalesNetCard
+            saleGross={saleGross}
+            wbSalesGross={wbSalesGross}
+            wbReturnsGross={wbReturnsGross}
+            previousSaleGross={prev?.saleGross}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+        </div>
+      </div>
 
       {/* Секция 2: РАСХОДЫ WB */}
-      <SectionHeader title="РАСХОДЫ WB" />
-      <WbCommissionsCard
-        commissionSales={commissionSales}
-        acquiringFee={acquiringFee}
-        loyaltyFee={loyaltyFee}
-        penaltiesTotal={penaltiesTotal}
-        wbCommissionAdj={wbCommissionAdj}
-        wbServicesCost={wbServicesCost}
-        previousTotal={prev?.wbCommissionsTotal}
-        saleGross={saleGross}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
-      <LogisticsMetricCard
-        logisticsCost={logisticsCost}
-        previousLogisticsCost={prev?.logisticsCost}
-        revenueTotal={saleGross}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
+      <div>
+        <SectionHeader title="РАСХОДЫ WB" />
+        <div className={cn(sectionGridClasses, 'mt-4')}>
+          <WbCommissionsCard
+            commissionSales={commissionSales}
+            acquiringFee={acquiringFee}
+            loyaltyFee={loyaltyFee}
+            penaltiesTotal={penaltiesTotal}
+            wbCommissionAdj={wbCommissionAdj}
+            wbServicesCost={wbServicesCost}
+            previousTotal={prev?.wbCommissionsTotal}
+            saleGross={saleGross}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+          <LogisticsMetricCard
+            logisticsCost={logisticsCost}
+            previousLogisticsCost={prev?.logisticsCost}
+            revenueTotal={saleGross}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+        </div>
+      </div>
 
       {/* Секция 3: К ПЕРЕЧИСЛЕНИЮ */}
-      <SectionHeader title="К ПЕРЕЧИСЛЕНИЮ" />
-      <PayoutCard
-        payoutTotal={payoutTotal}
-        previousPayout={prev?.payoutTotal}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
-      <StorageAcceptanceCard
-        storageCost={storageCost}
-        paidAcceptanceCost={paidAcceptanceCost}
-        previousTotal={prev?.storageAcceptanceTotal}
-        saleGross={saleGross}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
+      <div>
+        <SectionHeader title="К ПЕРЕЧИСЛЕНИЮ" />
+        <div className={cn(sectionGridClasses, 'mt-4')}>
+          <PayoutCard
+            payoutTotal={payoutTotal}
+            previousPayout={prev?.payoutTotal}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+          <StorageAcceptanceCard
+            storageCost={storageCost}
+            paidAcceptanceCost={paidAcceptanceCost}
+            previousTotal={prev?.storageAcceptanceTotal}
+            saleGross={saleGross}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+        </div>
+      </div>
 
       {/* Секция 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА */}
-      <SectionHeader title="СЕБЕСТОИМОСТЬ И РЕКЛАМА" />
-      <CostsCard
-        cogsTotal={cogsTotal}
-        previousCogs={prev?.cogsTotal}
-        cogsCoverage={cogsCoverage}
-        productsWithCogs={productsWithCogs}
-        totalProducts={totalProducts}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-        onAssignCogs={onAssignCogs}
-      />
-      <AdvertisingCard
-        totalSpend={advertisingSpend}
-        roas={advertisingRoas}
-        previousSpend={prev?.advertisingSpend}
-        saleGross={saleGross}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
+      <div>
+        <SectionHeader title="СЕБЕСТОИМОСТЬ И РЕКЛАМА" />
+        <div className={cn(sectionGridClasses, 'mt-4')}>
+          <CostsCard
+            cogsTotal={cogsTotal}
+            previousCogs={prev?.cogsTotal}
+            cogsCoverage={cogsCoverage}
+            productsWithCogs={productsWithCogs}
+            totalProducts={totalProducts}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+            onAssignCogs={onAssignCogs}
+          />
+          <AdvertisingCard
+            totalSpend={advertisingSpend}
+            roas={advertisingRoas}
+            previousSpend={prev?.advertisingSpend}
+            saleGross={saleGross}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+          />
+        </div>
+      </div>
 
       {/* Секция 5: ПРИБЫЛЬ */}
-      <SectionHeader title="ПРИБЫЛЬ" />
-      <GrossProfitCard
-        grossProfit={grossProfit}
-        previousGrossProfit={prev?.grossProfit}
-        cogsCoverage={cogsCoverage}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-        onAssignCogs={onAssignCogs}
-      />
-      <MarginCard
-        marginPct={marginPct}
-        previousMarginPct={prev?.marginPct}
-        cogsCoverage={cogsCoverage}
-        isLoading={false}
-        error={error}
-        onRetry={onRetry}
-      />
+      <div>
+        <SectionHeader title="ПРИБЫЛЬ" />
+        <div className={cn(sectionGridClasses, 'mt-4')}>
+          <GrossProfitCard
+            grossProfit={grossProfit}
+            previousGrossProfit={prev?.grossProfit}
+            cogsCoverage={cogsCoverage}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+            onAssignCogs={onAssignCogs}
+          />
+          <MarginCard
+            marginPct={marginPct}
+            previousMarginPct={prev?.marginPct}
+            cogsCoverage={cogsCoverage}
+            isLoading={false}
+            error={error}
+            onRetry={onRetry}
+            onAssignCogs={onAssignCogs}
+          />
+        </div>
+      </div>
     </div>
   )
 }

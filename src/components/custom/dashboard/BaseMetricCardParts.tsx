@@ -26,10 +26,10 @@ export function BaseMetricCardSkeleton({
 
   return (
     <Card
-      className={cn(isHighlighted ? 'min-h-[140px] border-2' : 'min-h-[120px]', className)}
+      className={cn(isHighlighted ? 'min-h-[110px] border-2' : 'min-h-[100px]', className)}
       aria-busy="true"
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
@@ -38,7 +38,7 @@ export function BaseMetricCardSkeleton({
           <Skeleton className="h-4 w-4 rounded" />
         </div>
         <Skeleton className={cn('mt-2', isHighlighted ? 'h-12 w-44' : 'h-8 w-32')} />
-        <Skeleton className="mt-2 h-5 w-24" />
+        <Skeleton className="mt-1 h-4 w-24" />
         <Skeleton className="mt-1 h-3 w-40" />
       </CardContent>
     </Card>
@@ -63,7 +63,7 @@ export function BaseMetricCardError({
 }: ErrorProps): React.ReactElement {
   return (
     <Card className={cn('border-red-200', className)} role="alert">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center gap-2">
           <Icon className="h-4 w-4 text-gray-500" />
           <span className="text-sm font-medium text-muted-foreground">{title}</span>
@@ -72,7 +72,7 @@ export function BaseMetricCardError({
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-2 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
           >
             <RefreshCw className="h-3 w-3" />
             Повторить

@@ -102,7 +102,7 @@ export function AdvertisingCard({
       role="article"
       aria-label={`Реклама: ${displayValue}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Megaphone className="h-4 w-4 text-yellow-600" aria-hidden="true" />
@@ -122,11 +122,11 @@ export function AdvertisingCard({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-2">
-          <span className="text-2xl font-bold text-yellow-600">{displayValue}</span>
+        <div className="mt-1">
+          <span className="text-xl font-bold text-yellow-600">{displayValue}</span>
         </div>
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}
@@ -139,6 +139,11 @@ export function AdvertisingCard({
           {roas != null && (
             <span className={cn('text-xs font-medium', getRoasColor(roas))}>
               ROAS: {roas.toFixed(1)}x
+            </span>
+          )}
+          {roas != null && drr != null && (
+            <span className="text-xs text-gray-300" aria-hidden="true">
+              ·
             </span>
           )}
           {drr != null && (

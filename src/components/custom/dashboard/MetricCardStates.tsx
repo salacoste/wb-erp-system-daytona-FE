@@ -40,11 +40,11 @@ export function MetricCardError({
   error,
   onRetry,
   className,
-  minHeight = 'min-h-[120px]',
+  minHeight = 'min-h-[100px]',
 }: MetricCardErrorProps): React.ReactElement {
   return (
     <Card className={cn(minHeight, 'border-red-200', className)} role="alert">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center gap-2">
           <Icon className="h-4 w-4 text-gray-500" />
           <span className="text-sm font-medium text-muted-foreground">{title}</span>
@@ -53,7 +53,7 @@ export function MetricCardError({
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-2 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
           >
             <RefreshCw className="h-3 w-3" />
             Повторить
@@ -74,11 +74,11 @@ export interface StandardSkeletonProps {
  */
 export function StandardMetricSkeleton({
   className,
-  minHeight = 'min-h-[120px]',
+  minHeight = 'min-h-[100px]',
 }: StandardSkeletonProps): React.ReactElement {
   return (
     <Card className={cn(minHeight, className)} aria-busy="true" aria-hidden="true">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
@@ -86,8 +86,8 @@ export function StandardMetricSkeleton({
           </div>
           <Skeleton className="h-4 w-4 rounded" />
         </div>
-        <Skeleton className="mt-2 h-8 w-32" />
-        <Skeleton className="mt-2 h-5 w-24" />
+        <Skeleton className="mt-1 h-7 w-32" />
+        <Skeleton className="mt-1 h-4 w-24" />
         <Skeleton className="mt-1 h-3 w-40" />
       </CardContent>
     </Card>
@@ -99,11 +99,11 @@ export function StandardMetricSkeleton({
  */
 export function HighlightedMetricSkeleton({
   className,
-  minHeight = 'min-h-[140px]',
+  minHeight = 'min-h-[110px]',
 }: StandardSkeletonProps): React.ReactElement {
   return (
     <Card className={cn(minHeight, 'border-2', className)} aria-busy="true" aria-hidden="true">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
@@ -111,9 +111,9 @@ export function HighlightedMetricSkeleton({
           </div>
           <Skeleton className="h-5 w-28 rounded-full" />
         </div>
-        <Skeleton className="mt-3 h-12 w-44" />
-        <Skeleton className="mt-2 h-5 w-32" />
-        <Skeleton className="mt-3 h-4 w-28" />
+        <Skeleton className="mt-1 h-7 w-44" />
+        <Skeleton className="mt-1 h-4 w-32" />
+        <Skeleton className="mt-1 h-3 w-28" />
       </CardContent>
     </Card>
   )

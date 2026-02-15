@@ -21,13 +21,13 @@ export interface PeriodComparisonSkeletonProps {
 function CardSkeleton(): React.ReactElement {
   return (
     <Card className="animate-pulse">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-4 w-10" />
         </div>
-        <Skeleton className="mt-3 h-7 w-32" />
-        <div className="mt-2 flex items-center gap-2">
+        <Skeleton className="mt-1 h-6 w-32" />
+        <div className="mt-1 flex items-center gap-2">
           <Skeleton className="h-5 w-16" />
           <Skeleton className="h-4 w-24" />
         </div>

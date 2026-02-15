@@ -69,8 +69,8 @@ function CardSkeleton({ className }: { className?: string }): React.ReactElement
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-4 w-10" />
         </div>
-        <Skeleton className="mt-3 h-7 w-32" />
-        <div className="mt-2 flex items-center gap-2">
+        <Skeleton className="mt-1 h-6 w-32" />
+        <div className="mt-1 flex items-center gap-2">
           <Skeleton className="h-5 w-16" />
           <Skeleton className="h-4 w-24" />
         </div>
@@ -106,7 +106,7 @@ export function PeriodComparisonCard({
       role="article"
       aria-label={ariaLabel}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         {/* Header: title and period label */}
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-muted-foreground">{title}</span>
@@ -114,8 +114,8 @@ export function PeriodComparisonCard({
         </div>
 
         {/* Current value (large) */}
-        <div className="mt-2">
-          <span className="text-2xl font-bold text-foreground">{formattedCurrent}</span>
+        <div className="mt-1">
+          <span className="text-xl font-bold text-foreground">{formattedCurrent}</span>
         </div>
 
         {/* Delta indicator and previous value */}

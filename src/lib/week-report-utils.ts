@@ -8,7 +8,7 @@
  * @see docs/request-backend/136-DAILY-DATA-AVAILABILITY-GUIDE.md
  */
 
-import { format, nextTuesday } from 'date-fns'
+import { format, nextMonday } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { getWeekEndDate, isCurrentWeek, isCurrentMonth } from './period-helpers'
 
@@ -74,10 +74,9 @@ export const METRIC_AVAILABILITY: Record<string, DataAvailability> = {
  */
 export function getWeeklyReportExpectedDate(weekString: string): Date {
   const weekEnd = getWeekEndDate(weekString)
-  // Report typically available Tuesday-Wednesday after week ends
-  // We use Tuesday as the conservative estimate
-  const nextTues = nextTuesday(weekEnd)
-  return nextTues
+  // WB report is generated on Monday after week ends (Sunday)
+  const nextMon = nextMonday(weekEnd)
+  return nextMon
 }
 
 /**

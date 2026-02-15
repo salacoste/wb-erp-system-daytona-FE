@@ -144,7 +144,7 @@ export function CommissionBreakdownPopover(
             </div>
           ))}
         </div>
-        <div className="mt-2 flex items-center justify-between border-t pt-2 text-sm font-semibold">
+        <div className="mt-1 flex items-center justify-between border-t pt-2 text-sm font-semibold">
           <span>Итого</span>
           <span className="text-red-600">
             {netTotal != null ? formatCurrency(Math.abs(netTotal)) : '—'}

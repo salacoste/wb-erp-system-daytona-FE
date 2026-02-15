@@ -55,7 +55,7 @@ export function FulfillmentMetricCard({
   const pctChange =
     hasPrevious && previousTotal ? ((totalOrders - previousTotal) / previousTotal) * 100 : null
 
-  const baseClass = cn('min-h-[120px] rounded-lg border bg-card p-4', className)
+  const baseClass = cn('min-h-[100px] rounded-lg border bg-card p-4', className)
 
   if (isLoading) {
     return (
@@ -166,7 +166,7 @@ export function FulfillmentMetricCard({
       </div>
 
       <div className="flex items-baseline gap-2 mb-1">
-        <span className="text-2xl font-bold">{totalOrders.toLocaleString('ru-RU')}</span>
+        <span className="text-xl font-bold">{totalOrders.toLocaleString('ru-RU')}</span>
         {pctChange !== null && (
           <span
             data-testid="comparison-badge"

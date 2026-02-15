@@ -47,7 +47,7 @@ export function UnitEconomicsSummaryBanner({
 
   return (
     <Card className={className}>
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex flex-wrap items-center gap-4">
           {/* Total count */}
           <div className="text-sm text-muted-foreground">

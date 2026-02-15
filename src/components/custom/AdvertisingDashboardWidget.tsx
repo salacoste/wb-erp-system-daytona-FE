@@ -319,10 +319,10 @@ export function AdvertisingDashboardWidget({
       </div>
 
       {/* Link to full analytics page */}
-      <div className="mt-4 pt-4 border-t">
+      <div className="mt-2">
         <Link
           href="/analytics/advertising"
-          className="text-sm text-blue-600 hover:underline inline-flex items-center"
+          className="text-sm text-primary hover:underline inline-flex items-center"
         >
           Подробная аналитика
           <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />

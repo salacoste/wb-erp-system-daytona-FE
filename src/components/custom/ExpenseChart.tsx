@@ -173,7 +173,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
       <CardContent>
         <ResponsiveContainer
           width="100%"
-          height={400}
+          height={Math.max(250, data.expenses.length * 50 + 160)}
           aria-label="Диаграмма расходов по категориям"
         >
           <BarChart

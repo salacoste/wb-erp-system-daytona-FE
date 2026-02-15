@@ -90,7 +90,7 @@ export function SalesMetricCard({
   return (
     <Card
       className={cn(
-        'min-h-[120px] transition-all hover:shadow-md hover:scale-[1.01]',
+        'min-h-[100px] transition-all hover:shadow-md hover:scale-[1.01]',
         'border border-[#EEEEEE] rounded-lg',
         'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2',
         className
@@ -98,7 +98,7 @@ export function SalesMetricCard({
       role="article"
       aria-label={ariaValue}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         {/* Header: Icon + Title + Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -124,13 +124,13 @@ export function SalesMetricCard({
         </div>
 
         {/* Main Value - Green for revenue */}
-        <div className="mt-2">
+        <div className="mt-1">
           <span className="text-[32px] font-bold leading-tight text-green-500">{displayValue}</span>
         </div>
 
         {/* Comparison Row */}
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}

@@ -54,13 +54,13 @@ function calculateRevenuePercentage(
 function ExpenseCardSkeleton({ className }: SkeletonProps): React.ReactElement {
   return (
     <Card className={className} data-testid="expense-card-skeleton" aria-busy="true">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center gap-2">
           <Skeleton className="h-4 w-4 rounded" />
           <Skeleton className="h-4 w-24" />
         </div>
-        <Skeleton className="mt-2 h-8 w-32" />
-        <Skeleton className="mt-2 h-4 w-28" />
+        <Skeleton className="mt-1 h-7 w-32" />
+        <Skeleton className="mt-1 h-3 w-28" />
         <Skeleton className="mt-1 h-3 w-20" />
       </CardContent>
     </Card>
@@ -71,7 +71,7 @@ function ExpenseCardSkeleton({ className }: SkeletonProps): React.ReactElement {
 function ExpenseCardError({ title, icon: Icon, error, onRetry, className }: ErrorProps) {
   return (
     <Card className={className} data-testid="expense-card-error" role="alert">
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center gap-2">
           <Icon className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium text-muted-foreground">{title}</span>
@@ -129,7 +129,7 @@ export function ExpenseMetricCard({
       role="article"
       aria-label={`${title}: ${value != null ? formatCurrency(value) : 'нет данных'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -152,15 +152,15 @@ export function ExpenseMetricCard({
         </div>
 
         {/* Value */}
-        <div className="mt-2">
-          <span className={cn('text-2xl font-bold', valueColor)} data-testid="metric-value">
+        <div className="mt-1">
+          <span className={cn('text-xl font-bold', valueColor)} data-testid="metric-value">
             {value != null ? formatCurrency(value) : '—'}
           </span>
         </div>
 
         {/* Comparison */}
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}

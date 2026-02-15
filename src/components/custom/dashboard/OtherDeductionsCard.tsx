@@ -75,7 +75,7 @@ export function OtherDeductionsCard({
       role="article"
       aria-label={`Прочие удержания: ${hasValue ? formatCurrency(value) : 'нет данных'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-red-500" aria-hidden="true" />
@@ -88,14 +88,14 @@ export function OtherDeductionsCard({
           />
         </div>
 
-        <div className="mt-2">
-          <span className="text-2xl font-bold text-red-500" data-testid="metric-value">
+        <div className="mt-1">
+          <span className="text-xl font-bold text-red-500" data-testid="metric-value">
             {displayValue}
           </span>
         </div>
 
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <InlineTrend direction={comparison.direction} />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}

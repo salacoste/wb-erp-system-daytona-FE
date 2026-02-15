@@ -67,7 +67,7 @@ export function OrdersCogsMetricCard({
       role="article"
       aria-label={`COGS по заказам: ${!hasNoCogs ? formatCurrency(cogsTotal!) : 'не заполнен'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Package className="h-4 w-4 text-gray-500" />
@@ -130,7 +130,7 @@ function MissingState(props: {
       </p>
       <button
         onClick={onAssignCogs}
-        className="mt-2 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+        className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
       >
         Заполнить COGS <ArrowRight className="h-3 w-3" />
       </button>
@@ -160,11 +160,11 @@ function ValueDisplay(props: {
   } = props
   return (
     <>
-      <div className="mt-2">
-        <span className="text-2xl font-bold text-gray-500">{formatCurrency(cogsTotal)}</span>
+      <div className="mt-1">
+        <span className="text-xl font-bold text-gray-500">{formatCurrency(cogsTotal)}</span>
       </div>
       {comparison && (
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-1 flex items-center gap-2">
           <ComparisonBadge
             percentageChange={comparison.percentageChange}
             direction={comparison.direction}

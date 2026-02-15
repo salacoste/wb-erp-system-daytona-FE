@@ -82,7 +82,7 @@ export function GrossProfitCard({
       role="article"
       aria-label={`Валовая прибыль: ${canShow && grossProfit != null ? formatCurrency(grossProfit) : 'нет данных'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-gray-500" aria-hidden="true" />

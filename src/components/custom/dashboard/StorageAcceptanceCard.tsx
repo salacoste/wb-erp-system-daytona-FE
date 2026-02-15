@@ -70,7 +70,7 @@ export function StorageAcceptanceCard({
       role="article"
       aria-label={`Хранение и приёмка: ${hasValue ? formatCurrency(total) : 'нет данных'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Warehouse className="h-4 w-4 text-red-500" aria-hidden="true" />
@@ -90,13 +90,13 @@ export function StorageAcceptanceCard({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-2">
-          <span className="text-2xl font-bold text-red-500">
+        <div className="mt-1">
+          <span className="text-xl font-bold text-red-500">
             {hasValue ? formatCurrency(total) : '—'}
           </span>
         </div>
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}

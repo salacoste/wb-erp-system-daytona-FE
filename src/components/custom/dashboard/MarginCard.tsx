@@ -22,6 +22,7 @@ export interface MarginCardProps {
   isLoading?: boolean
   error?: Error | null
   onRetry?: () => void
+  onAssignCogs?: () => void
   className?: string
 }
 
@@ -55,6 +56,7 @@ export function MarginCard({
   isLoading = false,
   error,
   onRetry,
+  onAssignCogs,
   className,
 }: MarginCardProps): React.ReactElement {
   if (isLoading) return <HighlightedMetricSkeleton className={className} />
@@ -88,7 +90,7 @@ export function MarginCard({
       role="article"
       aria-label={`Маржинальность: ${canShow ? `${marginPct!.toFixed(1)}%` : 'нет данных'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Percent className="h-4 w-4 text-gray-500" aria-hidden="true" />
@@ -139,6 +141,14 @@ export function MarginCard({
           <div className="mt-2 flex items-center gap-1 text-xs text-yellow-600">
             <AlertTriangle className="h-3 w-3" />
             <span>Заполните себестоимость для расчёта</span>
+            {onAssignCogs && (
+              <button
+                onClick={onAssignCogs}
+                className="ml-1 font-medium text-primary hover:underline"
+              >
+                Перейти
+              </button>
+            )}
           </div>
         )}
       </CardContent>

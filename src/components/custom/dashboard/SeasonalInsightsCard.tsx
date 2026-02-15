@@ -45,7 +45,7 @@ export function SeasonalInsightsCard({
     <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 ${className || ''}`}>
       {/* Peak Month Card */}
       <Card className="border-green-200 bg-green-50">
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-center gap-2 text-green-700">
             <TrendingUp className="h-5 w-5" aria-hidden="true" />
             <span className="text-sm font-medium">Пик месяц</span>
@@ -61,7 +61,7 @@ export function SeasonalInsightsCard({
 
       {/* Low Month Card */}
       <Card className="border-red-200 bg-red-50">
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-center gap-2 text-red-700">
             <TrendingDown className="h-5 w-5" aria-hidden="true" />
             <span className="text-sm font-medium">Мин месяц</span>
@@ -75,7 +75,7 @@ export function SeasonalInsightsCard({
 
       {/* Peak Day Card */}
       <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-center gap-2 text-blue-700">
             <CalendarDays className="h-5 w-5" aria-hidden="true" />
             <span className="text-sm font-medium">Пик день</span>

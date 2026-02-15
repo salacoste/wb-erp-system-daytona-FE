@@ -159,7 +159,13 @@ export function DailyBreakdownChart({
               tick={{ fontSize: 12, fill: '#757575' }}
               axisLine={{ stroke: '#EEEEEE' }}
               tickLine={false}
-              width={50}
+              width={55}
+              label={{
+                value: '₽',
+                angle: -90,
+                position: 'insideLeft',
+                style: { fontSize: 11, fill: '#757575' },
+              }}
             />
             <YAxis
               yAxisId="right"
@@ -168,7 +174,13 @@ export function DailyBreakdownChart({
               tick={{ fontSize: 12, fill: '#757575' }}
               axisLine={{ stroke: '#EEEEEE' }}
               tickLine={false}
-              width={50}
+              width={55}
+              label={{
+                value: '₽',
+                angle: 90,
+                position: 'insideRight',
+                style: { fontSize: 11, fill: '#757575' },
+              }}
             />
             <Tooltip content={<DailyBreakdownTooltip visibleSeries={visibleSeries} />} />
             {METRIC_SERIES.filter(s => visibleSeries.includes(s.key)).map(series => (

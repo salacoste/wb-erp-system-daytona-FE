@@ -61,7 +61,7 @@ export function OrdersMetricCard({
 
   if (error) {
     return (
-      <Card className={cn('min-h-[120px]', className)} role="article" aria-label="Ошибка загрузки">
+      <Card className={cn('min-h-[100px]', className)} role="article" aria-label="Ошибка загрузки">
         <CardContent className="flex h-full flex-col items-center justify-center p-4">
           <AlertCircle className="h-6 w-6 text-destructive" />
           <p className="mt-2 text-sm text-muted-foreground">Ошибка загрузки</p>
@@ -79,8 +79,8 @@ export function OrdersMetricCard({
   // Issue #2: Empty state when orders = 0
   if (totalOrders === 0 && periodFrom && periodTo) {
     return (
-      <Card className={cn('min-h-[120px]', className)} role="article" aria-label="Нет заказов FBS">
-        <CardContent className="p-4">
+      <Card className={cn('min-h-[100px]', className)} role="article" aria-label="Нет заказов FBS">
+        <CardContent className="p-3">
           <div className="flex items-center gap-2 mb-2">
             <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Заказы</span>
@@ -106,7 +106,7 @@ export function OrdersMetricCard({
   return (
     <Card
       className={cn(
-        'min-h-[120px] transition-all hover:shadow-md hover:scale-[1.01]',
+        'min-h-[100px] transition-all hover:shadow-md hover:scale-[1.01]',
         'border border-[#EEEEEE] rounded-lg',
         'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2',
         className
@@ -114,7 +114,7 @@ export function OrdersMetricCard({
       role="article"
       aria-label={ariaValue}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
@@ -134,11 +134,11 @@ export function OrdersMetricCard({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-2">
+        <div className="mt-1">
           <span className="text-[32px] font-bold leading-tight text-blue-500">{displayValue}</span>
         </div>
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}

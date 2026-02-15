@@ -14,7 +14,10 @@ import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
-import { useFinancialSummaryWithPeriodComparison } from '@/hooks/useFinancialSummary'
+import {
+  useFinancialSummaryWithPeriodComparison,
+  useAvailableWeeks,
+} from '@/hooks/useFinancialSummary'
 import { useAdvertisingAnalyticsComparison } from '@/hooks/useAdvertisingAnalytics'
 import { useFulfillmentSummaryWithComparison } from '@/hooks/useFulfillment'
 import { useProcessingStatus } from '@/hooks/useProcessingStatus'
@@ -30,6 +33,7 @@ import {
   IncompleteWeekBanner,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
+import { ReportPendingBanner } from './ReportPendingBanner'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
 import { TrendGraph } from '@/components/custom/TrendGraph'
@@ -57,23 +61,37 @@ export function DashboardContent(): React.ReactElement {
     [periodType, previousWeek, previousMonth]
   )
 
+  // Available weeks — used to detect "report not ready" vs real errors
+  const { data: availableWeeks } = useAvailableWeeks()
+  const isWeekNotAvailable = useMemo(() => {
+    if (periodType !== 'week' || !availableWeeks) return false
+    return !availableWeeks.some(w => w.week === selectedWeek)
+  }, [periodType, availableWeeks, selectedWeek])
+
+  // Latest available week for fallback suggestion
+  const latestAvailableWeek = availableWeeks?.[0]?.week ?? null
+
+  // Skip week-dependent API calls when the selected week has no WB report yet
+  const weekDataEnabled = !isWeekNotAvailable
+
   // Data queries
   const fulfillmentQuery = useFulfillmentSummaryWithComparison({
-    from: dateRange.from,
-    to: dateRange.to,
-    previousFrom: prevDateRange.from,
-    previousTo: prevDateRange.to,
+    from: weekDataEnabled ? dateRange.from : '',
+    to: weekDataEnabled ? dateRange.to : '',
+    previousFrom: weekDataEnabled ? prevDateRange.from : '',
+    previousTo: weekDataEnabled ? prevDateRange.to : '',
   })
 
   const financialComparison = useFinancialSummaryWithPeriodComparison({
     periodType,
     period: selectedPeriod,
+    enabled: weekDataEnabled,
   })
 
   const advertisingQuery = useAdvertisingAnalyticsComparison(
     { from: dateRange.from, to: dateRange.to, limit: 1 },
     { from: prevDateRange.from, to: prevDateRange.to, limit: 1 },
-    { refetchInterval: undefined }
+    { refetchInterval: undefined, enabled: weekDataEnabled }
   )
 
   // Products count for COGS coverage
@@ -114,7 +132,7 @@ export function DashboardContent(): React.ReactElement {
   const isFailed = processingStatus?.reportLoading?.status === 'failed'
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -130,44 +148,59 @@ export function DashboardContent(): React.ReactElement {
       </div>
 
       <IncompleteWeekBanner period={selectedPeriod} periodType={periodType} />
+      {isWeekNotAvailable && !isProcessing && (
+        <ReportPendingBanner week={selectedWeek} latestAvailableWeek={latestAvailableWeek} />
+      )}
       {isProcessing && <ProcessingAlert processingStatus={processingStatus} />}
       {isFailed && <FailedAlert />}
-      {error && !isProcessing && <ErrorAlert onRetry={handleRetry} />}
+      {error && !isProcessing && !isWeekNotAvailable && <ErrorAlert onRetry={handleRetry} />}
 
-      {/* P&L Metrics Grid: 5 sections × 2 cards */}
-      <DashboardMetricsGrid
-        totalOrders={fulfillmentQuery.current?.summary.total.ordersCount}
-        saleGross={s?.sale_gross ?? st?.sale_gross_total}
-        wbSalesGross={s?.wb_sales_gross ?? st?.wb_sales_gross_total}
-        wbReturnsGross={s?.wb_returns_gross ?? st?.wb_returns_gross_total}
-        commissionSales={s?.commission_sales ?? st?.commission_sales_total}
-        acquiringFee={s?.acquiring_fee ?? st?.acquiring_fee_total}
-        loyaltyFee={s?.loyalty_fee ?? st?.loyalty_fee_total}
-        penaltiesTotal={s?.penalties_total ?? st?.penalties_total}
-        wbCommissionAdj={s?.wb_commission_adj ?? st?.wb_commission_adj_total}
-        wbServicesCost={s?.wb_services_cost ?? st?.wb_services_cost_total}
-        logisticsCost={s?.logistics_cost ?? st?.logistics_cost_total}
-        payoutTotal={s?.payout_total ?? st?.payout_total}
-        storageCost={s?.storage_cost ?? st?.storage_cost_total}
-        paidAcceptanceCost={s?.paid_acceptance_cost ?? st?.paid_acceptance_cost_total}
-        cogsTotal={s?.cogs_total ?? st?.cogs_total ?? undefined}
-        cogsCoverage={cogsCoverage}
-        productsWithCogs={inventoryWithCogs}
-        totalProducts={productCount ?? 0}
-        advertisingSpend={advertisingQuery.current?.summary?.total_spend}
-        advertisingRoas={advertisingQuery.current?.summary?.overall_roas}
-        grossProfit={s?.gross_profit ?? st?.gross_profit ?? undefined}
-        marginPct={s?.margin_pct ?? st?.margin_pct ?? undefined}
-        previousPeriodData={previousPeriodData}
-        isLoading={isLoading || productsLoading || cogsLoading}
-        error={error}
-        onRetry={handleRetry}
-        onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
-      />
+      {/* P&L Metrics Grid — hidden when selected week has no WB report */}
+      {!isWeekNotAvailable && (
+        <>
+          <DashboardMetricsGrid
+            totalOrders={fulfillmentQuery.current?.summary.total.ordersCount}
+            saleGross={s?.sale_gross ?? st?.sale_gross_total}
+            wbSalesGross={s?.wb_sales_gross ?? st?.wb_sales_gross_total}
+            wbReturnsGross={s?.wb_returns_gross ?? st?.wb_returns_gross_total}
+            commissionSales={s?.commission_sales ?? st?.commission_sales_total}
+            acquiringFee={s?.acquiring_fee ?? st?.acquiring_fee_total}
+            loyaltyFee={s?.loyalty_fee ?? st?.loyalty_fee_total}
+            penaltiesTotal={s?.penalties_total ?? st?.penalties_total}
+            wbCommissionAdj={s?.wb_commission_adj ?? st?.wb_commission_adj_total}
+            wbServicesCost={s?.wb_services_cost ?? st?.wb_services_cost_total}
+            logisticsCost={s?.logistics_cost ?? st?.logistics_cost_total}
+            payoutTotal={s?.payout_total ?? st?.payout_total}
+            storageCost={s?.storage_cost ?? st?.storage_cost_total}
+            paidAcceptanceCost={s?.paid_acceptance_cost ?? st?.paid_acceptance_cost_total}
+            cogsTotal={s?.cogs_total ?? st?.cogs_total ?? undefined}
+            cogsCoverage={cogsCoverage}
+            productsWithCogs={inventoryWithCogs}
+            totalProducts={productCount ?? 0}
+            advertisingSpend={advertisingQuery.current?.summary?.total_spend}
+            advertisingRoas={advertisingQuery.current?.summary?.overall_roas}
+            grossProfit={s?.gross_profit ?? st?.gross_profit ?? undefined}
+            marginPct={s?.margin_pct ?? st?.margin_pct ?? undefined}
+            previousPeriodData={previousPeriodData}
+            isLoading={isLoading || productsLoading || cogsLoading}
+            error={error}
+            onRetry={handleRetry}
+            onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
+          />
 
-      <DailyBreakdownSection className="mt-8" />
-      <AdvertisingDashboardWidget dateRange={dateRange} hideLocalSelector />
-      <ExpenseChart weekOverride={periodType === 'week' ? selectedWeek : undefined} />
+          <DailyBreakdownSection className="mt-8" />
+          <AdvertisingDashboardWidget dateRange={dateRange} hideLocalSelector />
+          <ExpenseChart weekOverride={periodType === 'week' ? selectedWeek : undefined} />
+
+          {fulfillmentQuery.isLoading && (
+            <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
+              <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />
+              Обновление данных...
+            </div>
+          )}
+        </>
+      )}
+
       <TrendGraph />
 
       <InitialDataSummary
@@ -175,13 +208,6 @@ export function DashboardContent(): React.ReactElement {
         totalProducts={productCount ?? 0}
         productsWithCogs={inventoryWithCogs}
       />
-
-      {fulfillmentQuery.isLoading && (
-        <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
-          <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />
-          Обновление данных...
-        </div>
-      )}
     </div>
   )
 }

@@ -178,7 +178,7 @@ export function BaseMetricCard(props: BaseMetricCardProps): React.ReactElement {
         </div>
 
         {comparison && (
-          <div className="mt-2 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-1.5">
             <TrendIndicator direction={comparison.direction} size="sm" />
             <ComparisonBadge
               percentageChange={comparison.percentageChange}
@@ -188,9 +188,9 @@ export function BaseMetricCard(props: BaseMetricCardProps): React.ReactElement {
           </div>
         )}
 
-        {badge && <div className="mt-2">{badge}</div>}
+        {badge && <div className="mt-1">{badge}</div>}
         {subtitle && <div className="mt-1">{subtitle}</div>}
-        {actions && <div className="mt-2">{actions}</div>}
+        {actions && <div className="mt-1">{actions}</div>}
       </div>
     </div>
   )

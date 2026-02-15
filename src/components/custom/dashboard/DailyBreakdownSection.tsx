@@ -70,6 +70,18 @@ export function DailyBreakdownSection({ className }: DailyBreakdownSectionProps)
         <ViewToggle value={view} onChange={setView} />
       </div>
 
+      {/* Legend area (chart view only) */}
+      {view === 'chart' && (
+        <div className="border-b pb-4 mb-4">
+          <MetricLegend
+            visibleSeries={visibleSeries}
+            onSeriesToggle={toggleSeries}
+            onShowAll={showAll}
+            onHideAll={hideAll}
+          />
+        </div>
+      )}
+
       {/* Content area with transition */}
       <div className="min-h-[300px]">
         {view === 'chart' ? (
@@ -93,18 +105,6 @@ export function DailyBreakdownSection({ className }: DailyBreakdownSectionProps)
           </div>
         )}
       </div>
-
-      {/* Legend area (chart view only) */}
-      {view === 'chart' && (
-        <div className="border-t pt-4">
-          <MetricLegend
-            visibleSeries={visibleSeries}
-            onSeriesToggle={toggleSeries}
-            onShowAll={showAll}
-            onHideAll={hideAll}
-          />
-        </div>
-      )}
     </section>
   )
 }

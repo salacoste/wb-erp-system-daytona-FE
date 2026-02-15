@@ -60,7 +60,7 @@ export function TheoreticalProfitCard({
         error={error}
         onRetry={onRetry}
         className={className}
-        minHeight="min-h-[140px]"
+        minHeight="min-h-[110px]"
       />
     )
 
@@ -94,9 +94,9 @@ export function TheoreticalProfitCard({
       role="article"
       aria-label={`Теоретическая прибыль: ${value != null && isComplete ? formatCurrency(value) : 'нет данных'}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <Header isComplete={isComplete} />
-        <div className="mt-3">
+        <div className="mt-1.5">
           <span
             className={cn('text-5xl font-bold', isComplete ? valueColor : 'text-muted-foreground')}
           >
@@ -104,7 +104,7 @@ export function TheoreticalProfitCard({
           </span>
         </div>
         {comparison && isComplete && (
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-1 flex items-center gap-2">
             <ComparisonBadge
               percentageChange={comparison.percentageChange}
               direction={comparison.direction}

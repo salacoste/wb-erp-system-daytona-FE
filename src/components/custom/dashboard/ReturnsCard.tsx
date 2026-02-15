@@ -56,12 +56,12 @@ export function ReturnsCard({
   if (isLoading) {
     return (
       <Card
-        className={cn('min-h-[120px]', className)}
+        className={cn('min-h-[100px]', className)}
         role="article"
         aria-busy="true"
         data-testid="returns-card-skeleton"
       >
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 w-4 rounded" />
@@ -69,8 +69,8 @@ export function ReturnsCard({
             </div>
             <Skeleton className="h-4 w-4 rounded" />
           </div>
-          <Skeleton className="mt-2 h-8 w-32" />
-          <Skeleton className="mt-2 h-5 w-24" />
+          <Skeleton className="mt-1 h-7 w-32" />
+          <Skeleton className="mt-1 h-4 w-24" />
         </CardContent>
       </Card>
     )

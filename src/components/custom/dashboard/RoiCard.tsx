@@ -68,12 +68,12 @@ export function RoiCard({
   if (isLoading) {
     return (
       <Card
-        className={cn('min-h-[120px]', className)}
+        className={cn('min-h-[100px]', className)}
         role="article"
         aria-busy="true"
         data-testid="roi-card-skeleton"
       >
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 w-4 rounded" />
@@ -81,8 +81,8 @@ export function RoiCard({
             </div>
             <Skeleton className="h-4 w-4 rounded" />
           </div>
-          <Skeleton className="mt-2 h-8 w-32" />
-          <Skeleton className="mt-2 h-5 w-24" />
+          <Skeleton className="mt-1 h-7 w-32" />
+          <Skeleton className="mt-1 h-4 w-24" />
         </CardContent>
       </Card>
     )
@@ -100,7 +100,7 @@ export function RoiCard({
       role="article"
       aria-label={`ROI: ${ariaValue}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-blue-500" aria-hidden="true" />
@@ -124,16 +124,16 @@ export function RoiCard({
           </Tooltip>
         </div>
 
-        <div className="mt-2">
+        <div className="mt-1">
           {canShow ? (
-            <span className={cn('text-2xl font-bold', getRoiColor(roi))}>{formatRoi(roi)}</span>
+            <span className={cn('text-xl font-bold', getRoiColor(roi))}>{formatRoi(roi)}</span>
           ) : (
-            <span className="text-2xl font-bold text-muted-foreground">—</span>
+            <span className="text-xl font-bold text-muted-foreground">—</span>
           )}
         </div>
 
         {diff != null && (
-          <div className="mt-2">
+          <div className="mt-1">
             <span
               className={cn(
                 'text-sm font-medium',

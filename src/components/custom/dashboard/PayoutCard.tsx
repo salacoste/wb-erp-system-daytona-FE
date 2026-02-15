@@ -65,7 +65,7 @@ export function PayoutCard({
       role="article"
       aria-label={`К перечислению: ${displayValue}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Banknote className="h-4 w-4 text-green-600" aria-hidden="true" />

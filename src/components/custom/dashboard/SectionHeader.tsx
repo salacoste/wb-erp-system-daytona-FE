@@ -56,6 +56,19 @@ export function SectionHeader({
   onToggle,
   className,
 }: SectionHeaderProps) {
+  // Static, non-interactive divider when no toggle handler is provided
+  if (!onToggle) {
+    return (
+      <div className={cn('border-b border-border', className)}>
+        <div className="py-2 px-1">
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            {title}
+          </span>
+        </div>
+      </div>
+    )
+  }
+
   const expanded = !collapsed
   const contentId = titleToId(title)
 
