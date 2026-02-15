@@ -39,7 +39,7 @@ describe('PenaltiesCard', () => {
         <PenaltiesCard
           value={currentData.penalties_amount!}
           previousValue={null}
-          revenueTotal={currentData.sales_gross_total}
+          revenueTotal={currentData.sales_gross_total ?? null}
           isLoading={false}
         />
       )

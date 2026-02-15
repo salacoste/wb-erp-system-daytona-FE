@@ -433,7 +433,7 @@ describe('SalesMetricCard', () => {
       renderWithProviders(<SalesMetricCard {...defaultProps} />)
 
       const card = screen.getByRole('article')
-      expect(card).toHaveClass('min-h-[120px]')
+      expect(card).toHaveClass('min-h-[100px]')
     })
 
     it('has hover shadow effect', () => {

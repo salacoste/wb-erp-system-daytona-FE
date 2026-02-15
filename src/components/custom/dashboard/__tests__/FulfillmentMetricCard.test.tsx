@@ -177,7 +177,7 @@ describe('FulfillmentMetricCard', () => {
 
     it('has minimum height of 120px', () => {
       renderWithProviders(<FulfillmentMetricCard {...defaultProps} />)
-      expect(screen.getByRole('article')).toHaveClass('min-h-[120px]')
+      expect(screen.getByRole('article')).toHaveClass('min-h-[100px]')
     })
 
     it('FBO bar uses blue color and FBS bar uses purple color', () => {

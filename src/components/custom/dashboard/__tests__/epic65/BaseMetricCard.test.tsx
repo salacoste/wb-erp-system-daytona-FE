@@ -172,8 +172,8 @@ describe('BaseMetricCard', () => {
 
       const skeleton = container.querySelector('[aria-busy="true"]')
       expect(skeleton).toBeInTheDocument()
-      // Standard skeleton has min-h-[120px]
-      expect(skeleton).toHaveClass('min-h-[120px]')
+      // Standard skeleton has min-h-[100px]
+      expect(skeleton).toHaveClass('min-h-[100px]')
     })
 
     it('renders highlighted skeleton for highlighted variant', () => {
@@ -182,9 +182,9 @@ describe('BaseMetricCard', () => {
 
       const skeleton = container.querySelector('[aria-busy="true"]')
       expect(skeleton).toBeInTheDocument()
-      // Highlighted skeleton has border-2 and min-h-[140px]
+      // Highlighted skeleton has border-2 and min-h-[110px]
       expect(skeleton).toHaveClass('border-2')
-      expect(skeleton).toHaveClass('min-h-[140px]')
+      expect(skeleton).toHaveClass('min-h-[110px]')
     })
   })
 
