@@ -2,8 +2,10 @@
  * Advertising Card — Секция 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА (правая)
  * Dashboard Restructuring: P&L Narrative
  *
- * Shows ad spend + ROAS in subtitle. Yellow accent.
- * Source: advertising endpoint summary.
+ * Shows ad spend + ROAS, ДРР (% of sales), ДРРз (% of orders revenue).
+ * Story 65.4: added ordersRevenue prop + DRRz calculation.
+ * Source: advertising endpoint summary + fulfillment total.
+ * @see docs/epics/epic-65-dashboard-metrics-parity/stories-wave-1-2.md Story 65.4
  */
 
 'use client'
@@ -22,6 +24,8 @@ export interface AdvertisingCardProps {
   roas: number | null | undefined
   previousSpend: number | null | undefined
   saleGross: number | null | undefined
+  /** Orders revenue (retail price) from fulfillment total — for DRRz calculation */
+  ordersRevenue?: number | null | undefined
   isLoading?: boolean
   error?: Error | null
   onRetry?: () => void
@@ -34,11 +38,30 @@ function getRoasColor(roas: number): string {
   return 'text-red-600'
 }
 
+/** DRR = totalSpend / saleGross * 100 (% of net sales) */
+function calculateDrr(
+  totalSpend: number | null | undefined,
+  saleGross: number | null | undefined
+): number | null {
+  if (totalSpend == null || saleGross == null || saleGross <= 0) return null
+  return (totalSpend / saleGross) * 100
+}
+
+/** DRRz = totalSpend / ordersRevenue * 100 (% of orders retail price) */
+function calculateDrrz(
+  totalSpend: number | null | undefined,
+  ordersRevenue: number | null | undefined
+): number | null {
+  if (totalSpend == null || ordersRevenue == null || ordersRevenue <= 0) return null
+  return (totalSpend / ordersRevenue) * 100
+}
+
 export function AdvertisingCard({
   totalSpend,
   roas,
   previousSpend,
   saleGross,
+  ordersRevenue,
   isLoading = false,
   error,
   onRetry,
@@ -64,8 +87,14 @@ export function AdvertisingCard({
       ? calculateComparison(totalSpend, previousSpend, true)
       : null
 
-  const pctOfSales =
-    totalSpend != null && saleGross != null && saleGross > 0 ? (totalSpend / saleGross) * 100 : null
+  const drr = calculateDrr(totalSpend, saleGross)
+  const drrz = calculateDrrz(totalSpend, ordersRevenue)
+  // Show DRRz only when ordersRevenue is available and > 0
+  const showDrrz = ordersRevenue != null && ordersRevenue > 0
+
+  const tooltipText = showDrrz
+    ? 'ДРР — доля рекламных расходов от продаж. ДРРз — от суммы заказов (розничная цена). ДРРз всегда ниже ДРР.'
+    : 'Общие расходы на рекламу в Wildberries за период.'
 
   return (
     <Card
@@ -83,13 +112,13 @@ export function AdvertisingCard({
             <TooltipTrigger asChild>
               <button
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Подробнее о рекламе"
+                aria-label="Подробнее о метрике Реклама"
               >
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent size="md">
-              <p>Общие расходы на рекламу в Wildberries за период.</p>
+              <p>{tooltipText}</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -106,14 +135,17 @@ export function AdvertisingCard({
             />
           </div>
         )}
-        <div className="mt-1 flex flex-wrap gap-x-2">
+        <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
           {roas != null && (
             <span className={cn('text-xs font-medium', getRoasColor(roas))}>
               ROAS: {roas.toFixed(1)}x
             </span>
           )}
-          {pctOfSales != null && (
-            <span className="text-xs text-gray-400">{formatPercentage(pctOfSales)} от продаж</span>
+          {drr != null && (
+            <span className="text-xs text-gray-400">
+              ДРР: {formatPercentage(drr)}
+              {showDrrz && drrz != null && ` · ДРРз: ${formatPercentage(drrz)}`}
+            </span>
           )}
         </div>
       </CardContent>

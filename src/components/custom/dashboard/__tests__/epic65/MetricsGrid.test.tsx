@@ -8,11 +8,16 @@
  * @see docs/epics/epic-65-dashboard-metrics-parity/stories-wave-4-ux.md — Story 65.17
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { DashboardMetricsGrid } from '@/components/custom/dashboard/DashboardMetricsGrid'
 import { DashboardMetricsGridSkeleton } from '@/components/custom/dashboard/DashboardMetricsGridSkeleton'
+
+// CostsCard uses useRouter for navigation to COGS page
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}))
 
 /**
  * Minimal props for DashboardMetricsGrid rendering (all values undefined = empty state).
@@ -114,7 +119,8 @@ describe('MetricsGrid (Story 65.17)', () => {
       // Exact labels depend on implementation, but these are the defined sections:
       expect(screen.getByText(/ВЫРУЧКА/i)).toBeInTheDocument()
       expect(screen.getByText(/РАСХОДЫ/i)).toBeInTheDocument()
-      expect(screen.getByText(/ПРИБЫЛЬ/i)).toBeInTheDocument()
+      // "ПРИБЫЛЬ" section header coexists with "Валовая прибыль" card title
+      expect(screen.getAllByText(/ПРИБЫЛЬ/i).length).toBeGreaterThanOrEqual(1)
     })
 
     it('cards are grouped under correct sections', () => {
