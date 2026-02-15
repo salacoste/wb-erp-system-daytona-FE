@@ -71,7 +71,7 @@
 | A1 | **Логистика по 4 типам** | `WbFinanceRaw.logistics_delivery`, `logistics_return`, `doc_type` | Агрегация по doc_type в finance-summary |
 | A2 | **Штрафы отдельно** | `WbFinanceRaw.penalties` | Уже агрегируется как `penalties_total = SUM(ABS(penalties))`. Нужно разделить по знаку: штрафы (penalties > 0) vs компенсации штрафов (penalties < 0) |
 | A3 | **Компенсации отдельно** | `WbFinanceRaw.corrections` | Поле `corrections` сейчас суммируется вместе с `other_adjustments` в `other_adjustments_net`. Нужно выделить `corrections` отдельно. **Важно**: `corrections` содержит как удержания WB (Продвижение, Джем), так и компенсации — нужна фильтрация по `reason` |
-| A4 | **Реализация (GMV)** | `WeeklyPayoutSummary.salesGross` | `salesGross` = SUM(net_for_pay) WHERE doc_type='sale' — это и есть Реализация (gross sales before returns deduction). `sale_gross` = salesGross - returnsGross (NET). Поле уже доступно, нужно только вывести на дашборд |
+| ~~A4~~ | ~~**Реализация (GMV)**~~ | — | **Переклассифицировано → C9**: `sales_gross_total` уже доступно в finance-summary API response (Request #41). Бэкенд-изменения НЕ нужны. |
 
 ### Категория B: Нужен новый эндпоинт/таблица
 
@@ -95,6 +95,7 @@
 | C6 | **Ср. прибыль/шт** | gross_profit / salesCount | finance-summary + fulfillment |
 | C7 | **Оборачиваемость** | totalStock / (salesCount / days) | inventorySummary + fulfillment |
 | C8 | **Ср. цена до скидок** | retail_price_total / salesCount | finance-summary + fulfillment. **Примечание**: `retail_price_total` = SUM(retail_price) WHERE doc_type='sale', поэтому делить нужно на salesCount (количество выкупов), а не ordersCount |
+| C9 | **Реализация (GMV)** | sales_gross_total | finance-summary. `sales_gross_total` = SUM(retail_price_with_discount) WHERE doc_type='sale' — уже доступно в API (Request #41, API-PATHS-REFERENCE.md строка 33). Бэкенд НЕ нужен |
 
 ---
 
@@ -164,13 +165,13 @@ Response: {
 **Реализация**: Агрегация из `InventorySnapshot` WHERE `cabinetId` = X, latest snapshot per nmId.
 
 **Маппинг полей Prisma → Response**:
-- `totalStock` (Prisma: `total_stock`) → `totalStock` (кол-во на складах WB)
-- `onWarehouse` = `SUM(totalStock)` (в InventorySnapshot `totalStock` = количество на складе, без учёта в пути)
-- `inWayToClient` (Prisma: `in_way_to_client`) → `inWayToClient`
-- `inWayFromClient` (Prisma: `in_way_from_client`) → `inWayFromClient`
+- `onWarehouse` = `SUM(InventorySnapshot.totalStock)` — физически на складах WB (Prisma `total_stock`)
+- `inWayToClient` = `SUM(InventorySnapshot.inWayToClient)` — в пути к клиентам (Prisma `in_way_to_client`)
+- `inWayFromClient` = `SUM(InventorySnapshot.inWayFromClient)` — в пути от клиентов (Prisma `in_way_from_client`)
+- **Response `totalStock`** = `onWarehouse + inWayToClient + inWayFromClient` — ИТОГО все остатки (агрегированное)
 - `warehouseBreakdown` (Prisma: `warehouse_breakdown` JSON) → группировка по складам
 
-**Примечание**: `totalStock` в InventorySnapshot хранит остаток на складе, `inWayToClient`/`inWayFromClient` — отдельные поля. Итоговый `totalStock` в response = SUM(totalStock) + SUM(inWayToClient) + SUM(inWayFromClient).
+**ВАЖНО о naming**: Prisma `InventorySnapshot.totalStock` = остаток физически НА складе (без учёта в пути). Response `totalStock` = ИТОГО все остатки (суммарно). Не путать! Подтверждено в `regional-stock.service.ts:238-240`: `totalQuantity = totalStock`, `quantityAvailable = totalStock - inWayToClient`.
 
 **Сложность**: M
 
@@ -184,16 +185,23 @@ Response: {
 ```prisma
 model Cabinet {
   // ... existing fields
-  taxSystem     String?   @map("tax_system") @db.VarChar(10) // usn6, usn15, osn, patent
+  taxSystem     String?   @map("tax_system") @db.VarChar(20) // "usn6" | "usn15" | "manual"
   taxRate       Decimal?  @map("tax_rate") @db.Decimal(5, 2)  // custom rate override
 }
 ```
 
-**API**:
+**API** (2 варианта, выбрать один):
 ```
-PATCH /v1/cabinets/:id
-Body: { taxSystem: "usn6", taxRate?: 6.0 }
+# Вариант 1: Расширить существующий PUT (UpdateCabinetDto уже принимает { name?: string })
+PUT /v1/cabinets/:id
+Body: { name?: string, taxSystem?: "usn6" | "usn15" | "manual", taxRate?: number }
+
+# Вариант 2: Новый endpoint для настроек
+PATCH /v1/cabinets/:id/settings
+Body: { taxSystem: "usn6" | "usn15" | "manual", taxRate?: number }
 ```
+
+**ВАЖНО**: Текущий бэкенд не поддерживает PATCH на `/v1/cabinets/:id`. Используется `PUT` с `UpdateCabinetDto` (только `name`). Необходима доработка DTO или новый endpoint.
 
 **Сложность**: S
 

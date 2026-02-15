@@ -19,10 +19,11 @@
 - Нужен API эндпоинт для агрегации по кабинету (последний snapshot date).
 
 **Данные**:
-- Остатки шт = `SUM(totalStock)` по всем SKU на последнюю дату snapshot
-- На складах МП = `SUM(totalStock) - SUM(inWayToClient) - SUM(inWayFromClient)`
+- Остатки шт (ИТОГО) = `SUM(totalStock) + SUM(inWayToClient) + SUM(inWayFromClient)` по всем SKU на последнюю дату snapshot
+- На складах МП = `SUM(totalStock)` (в InventorySnapshot `totalStock` = количество физически НА складе WB)
 - В пути к клиентам = `SUM(inWayToClient)`
 - В пути от клиентов = `SUM(inWayFromClient)`
+- **ВАЖНО**: `totalStock` в Prisma = остаток на складе, БЕЗ учёта товаров в пути. Подтверждено в `regional-stock.service.ts:238-240`.
 - Капитализация по себес. = `SUM(stock * cogs_per_unit)` — JOIN InventorySnapshot с Cogs таблицей
 - Капитализация по розн. = `SUM(stock * retail_price)` — JOIN InventorySnapshot с Product
 
@@ -43,8 +44,8 @@ GET /v1/inventory/summary
 Headers: Authorization + X-Cabinet-Id (cabinetId из JWT claims)
 
 Response: {
-  totalStock: number,
-  onWarehouse: number,        // totalStock - inWayToClient - inWayFromClient
+  totalStock: number,           // ИТОГО = onWarehouse + inWayToClient + inWayFromClient
+  onWarehouse: number,          // SUM(InventorySnapshot.totalStock) — физически на складах WB
   inWayToClient: number,
   inWayFromClient: number,
   capitalizationByCogs: number | null,   // null если COGS не заполнен
@@ -112,7 +113,7 @@ Response: {
 
 **Бэкенд-статус**:
 - Поле `taxSystem` НЕ существует в модели `Cabinet` Prisma-схемы (schema.prisma:10-50)
-- Нужен backend request для добавления поля в Cabinet и PATCH эндпоинт
+- Нужен backend request для добавления поля в Cabinet и расширения PUT эндпоинта (или нового PATCH /settings)
 
 **Реализация**:
 - Налоговая база зависит от выбранной системы
@@ -122,16 +123,22 @@ Response: {
 **Системы налогообложения (MVP)**:
 | Система | Ставка | База | Формула на фронте |
 |---------|--------|------|-------------------|
-| УСН 6% (Доходы) | 6% | Продажи (выручка) | `sales_gross_total * 0.06` |
-| УСН 15% (Доходы-Расходы) | 15% | Продажи - Все расходы WB - Себестоимость | `(sales_gross_total - logistics_cost_total - storage_cost_total - paid_acceptance_cost_total - penalties_total - wb_services_cost_total - cogs_total) * 0.15` |
+| УСН 6% (Доходы) | 6% | NET выручка (продажи - возвраты) | `sale_gross_total * 0.06` |
+| УСН 15% (Доходы-Расходы) | 15% | NET выручка - Все расходы WB - Себестоимость - Реклама | `MAX((sale_gross_total - logistics_cost_total - storage_cost_total - paid_acceptance_cost_total - penalties_total - other_adjustments_net_total - cogs_total - advertising_spend) * 0.15, sale_gross_total * 0.01)` |
 | Ручной ввод | Пользовательская | — | Пользователь вводит сумму налога вручную |
+
+**ВАЖНО по формулам**:
+- Используем `sale_gross_total` (NET = sales - returns), НЕ `sales_gross_total` (gross) — для налогов учитывается фактический доход
+- Для УСН 15% используем `other_adjustments_net_total` (НЕ `wb_services_cost_total`), т.к. `wb_services_cost` уже ВКЛЮЧЕНА в `other_adjustments_net`
+- Для УСН 15%: минимальный налог = 1% от дохода (законодательное требование)
+- `advertising_spend` берётся из `advertising/analytics` API (`summary.total_spend`)
 
 **Примечание по налогам**: ОСН (НДС) и Патент — сложные системы, требующие профессионального бухгалтерского учёта. В MVP поддерживаем только УСН 6%, УСН 15% и ручной ввод. ОСН/Патент можно добавить позже.
 
 **Примечание по УСН 15%**: Формула упрощена. В реальности база = доходы - расходы, где в расходы входят все подтверждённые расходы. Для MVP используем доступные данные из finance-summary как приблизительный расчёт. Пользователь может переключиться на ручной ввод для точности.
 
 **AC**:
-- [ ] AC-65.11.1: Карточка "Налоги" — `₽ / % от выр.` (% считается как налог / sales_gross_total * 100)
+- [ ] AC-65.11.1: Карточка "Налоги" — `₽ / % от выр.` (% считается как налог / sale_gross_total * 100, где sale_gross_total = NET выручка)
 - [ ] AC-65.11.2: Карточка "Налоговая база" — `₽`
 - [ ] AC-65.11.3: Сравнение с прошлым периодом
 - [ ] AC-65.11.4: Настройка налоговой системы в профиле кабинета (отдельная страница настроек)
@@ -145,7 +152,16 @@ Response: {
 #   taxSystem  String? @map("tax_system") @db.VarChar(20)  // "usn6" | "usn15" | "manual"
 #   taxRate    Decimal? @map("tax_rate") @db.Decimal(5,2)  // для кастомной ставки
 
-PATCH /v1/cabinets/:id
+# ВАЖНО: Текущий бэкенд использует PUT /v1/cabinets/:id (НЕ PATCH),
+# и UpdateCabinetDto принимает только { name?: string }.
+# Нужно: расширить UpdateCabinetDto или создать отдельный PATCH endpoint для настроек.
+
+# Вариант 1: Расширить PUT /v1/cabinets/:id
+PUT /v1/cabinets/:id
+Body: { name?: string, taxSystem?: "usn6" | "usn15" | "manual", taxRate?: number }
+
+# Вариант 2: Новый endpoint для настроек кабинета
+PATCH /v1/cabinets/:id/settings
 Body: { taxSystem: "usn6" | "usn15" | "manual", taxRate?: number }
 ```
 
@@ -416,3 +432,112 @@ DELETE /v1/expenses/:id
 | `WeeklyPayoutSummary.correctionsTotal` | NOT FOUND | Needs backend #142 |
 | `finance-summary.sales_gross_total` | Correct | API-PATHS-REFERENCE.md:33 |
 | `finance-summary.wb_services_cost_total` | Correct | API-PATHS-REFERENCE.md:91 |
+
+---
+
+## PM Final Validation — 2026-02-15 (Round 2: Deep Cross-Reference)
+
+**Validated by**: Senior PM Agent (Claude Opus 4.6)
+**Method**: Cross-referenced every field name with Prisma schema (schema.prisma), API-PATHS-REFERENCE.md, test-api/*.http files, frontend TypeScript types, and backend controller/service code.
+
+### Validation Summary
+
+| Story | Verdict | Notes |
+|-------|---------|-------|
+| 65.9 (Остатки + Капитализация) | ⚠️ NEEDS FIX (APPLIED) | Fixed `onWarehouse` formula: Prisma `totalStock` = on-warehouse only, NOT grand total. Response `totalStock` = grand total = onWarehouse + inWayToClient + inWayFromClient. Confirmed via `regional-stock.service.ts:238-240`. |
+| 65.10 (Оборачиваемость) | ✅ READY | Formulas correct. `salesCount` from `fbo.salesCount + fbs.salesCount` (FulfillmentTotal does NOT have salesCount -- confirmed in fulfillment.ts:59-64). Division-by-zero AC present. Can TDD with mock inventory + fulfillment data. |
+| 65.11 (Налоги) | ⚠️ NEEDS FIX (APPLIED) | 3 fixes: (1) Backend uses `PUT /v1/cabinets/:id` (NOT PATCH), `UpdateCabinetDto` only accepts `{ name }`. (2) Tax base changed from `sales_gross_total` to `sale_gross_total` (NET revenue). (3) УСН 15% fixed: uses `other_adjustments_net_total` instead of `wb_services_cost_total` (avoids double-counting), added `advertising_spend`, added MIN tax rule. Can TDD tax calculation logic with mock taxSystem config. |
+| 65.12 (Штрафы/Компенсации) | ✅ READY | Prisma fields verified: `WbFinanceRaw.penalties` (line 209), `WbFinanceRaw.corrections` (line 210). No `correctionsTotal` in WeeklyPayoutSummary -- backend must aggregate from raw. AC complete. Can TDD with mock finance-summary containing new fields. |
+| 65.13 (Реализация) | ✅ READY | `sales_gross_total` confirmed in: FinanceSummary type (line 11), API-PATHS-REFERENCE.md (line 33: 153220.48), Prisma `WeeklyPayoutTotal.salesGrossTotal` (line 319). No backend needed. Immediately TDD-ready. |
+| 65.14 (Опер. расходы) | ✅ READY | CRUD spec complete. No `/v1/expenses` endpoint exists in backend (verified grep). No `OperationalExpense` model in Prisma (verified grep). All AC testable. Can TDD with mock expenses API. |
+| 65.15 (Прочие удержания) | ✅ READY | All fields confirmed: `wb_services_cost_total` (Prisma line 326/frontend type line 48), `wb_promotion_cost_total` (Prisma 323/type 50), `wb_jam_cost_total` (Prisma 321/type 52), `wb_other_services_cost_total` (Prisma 322/type 54). No backend needed. Immediately TDD-ready. |
+
+### Backend Requests Status
+
+| Request | Spec Complete | Prisma Verified | API Method Verified | Notes |
+|---------|:------------:|:---------------:|:-------------------:|-------|
+| #140 (Inventory Summary) | ✅ | ✅ `InventorySnapshot` exists (line 623) | N/A (new endpoint) | `totalStock` naming disambiguation added. Semantics: Prisma `totalStock` = on-warehouse; Response `totalStock` = grand total. |
+| #141 (Tax Settings) | ⚠️ FIXED | ❌ `taxSystem`/`taxRate` NOT in Cabinet | ❌ No PATCH on cabinets | Fixed: clarified that current backend uses PUT+UpdateCabinetDto(name only). Two API variants proposed. |
+| #142 (Penalties/Compensations) | ✅ | ✅ `WbFinanceRaw.penalties` (209), `corrections` (210) | N/A (extend existing) | `correctionsTotal` NOT in WeeklyPayoutSummary. Backend must add field or aggregate from WbFinanceRaw. |
+| #143 (Operational Expenses) | ✅ | ❌ `OperationalExpense` NOT in schema | ❌ No `/v1/expenses` endpoint | New model + CRUD. Spec is complete and well-defined. |
+
+### Prisma Deep Verification (Round 2)
+
+| Field Reference in Stories | Prisma Line | Verified | Type |
+|---------------------------|:-----------:|:--------:|------|
+| `InventorySnapshot.totalStock` | 628 | ✅ | Int |
+| `InventorySnapshot.inWayToClient` | 629 | ✅ | Int (default 0) |
+| `InventorySnapshot.inWayFromClient` | 630 | ✅ | Int (default 0) |
+| `InventorySnapshot.warehouseBreakdown` | 631 | ✅ | Json (default "[]") |
+| `InventorySnapshot.syncedAt` | 632 | ✅ | DateTime |
+| `InventorySnapshot unique constraint` | 636 | ✅ | [cabinetId, date, nmId] |
+| `WbFinanceRaw.penalties` | 209 | ✅ | Decimal(15,2) |
+| `WbFinanceRaw.corrections` | 210 | ✅ | Decimal(15,2) |
+| `WbFinanceRaw.docType` | 176 | ✅ | String? VarChar(50) |
+| `WbFinanceRaw.reason` | 177 | ✅ | String? VarChar(100) |
+| `WeeklyPayoutSummary.penaltiesTotal` | 252 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.salesGross` | 274 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.returnsGross` | 273 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.wbServicesCost` | 281 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.wbPromotionCost` | 278 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.wbJamCost` | 276 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.wbOtherServicesCost` | 277 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutSummary.retailPriceTotal` | 272 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutTotal.salesGrossTotal` | 319 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutTotal.retailPriceTotalCombined` | 317 | ✅ | Decimal(15,2) |
+| `WeeklyPayoutTotal.wbServicesCostTotal` | 326 | ✅ | Decimal(15,2) |
+| `Cabinet.taxSystem` | — | ❌ NOT FOUND | Needs migration |
+| `Cabinet.taxRate` | — | ❌ NOT FOUND | Needs migration |
+| `OperationalExpense` model | — | ❌ NOT FOUND | Needs new model |
+
+### Frontend Types Cross-Check
+
+| Story | Frontend Type | Field | Exists | Notes |
+|-------|--------------|-------|:------:|-------|
+| 65.13 | `FinanceSummary` | `sales_gross_total` | ✅ (line 11) | Used as "Реализация" |
+| 65.13 | `FinanceSummary` | `sale_gross_total` | ✅ (line 15) | NET = sales - returns |
+| 65.15 | `FinanceSummary` | `wb_services_cost_total` | ✅ (line 48) | |
+| 65.15 | `FinanceSummary` | `wb_promotion_cost_total` | ✅ (line 50) | |
+| 65.15 | `FinanceSummary` | `wb_jam_cost_total` | ✅ (line 52) | |
+| 65.15 | `FinanceSummary` | `wb_other_services_cost_total` | ✅ (line 54) | |
+| 65.12 | `FinanceSummary` | `penalties_amount` | ❌ | Needs addition after backend #142 |
+| 65.12 | `FinanceSummary` | `corrections_amount` | ❌ | Needs addition after backend #142 |
+| 65.10 | `FulfillmentTotal` | `salesCount` | ❌ | NOT in `total` -- must use `fbo.salesCount + fbs.salesCount` |
+| 65.10 | `FulfillmentMetrics` | `salesCount` | ✅ (line 49) | Per FBO/FBS |
+| 65.10 | `FulfillmentTotal` | `ordersCount` | ✅ (line 60) | In `total` |
+| 65.9 | N/A | `InventorySummary` type | ❌ | New type needed |
+| 65.14 | N/A | `OperationalExpense` type | ❌ | New type needed |
+
+### Backend Controller Cross-Check
+
+| Endpoint | Controller | Method | Status |
+|----------|-----------|--------|--------|
+| `PUT /v1/cabinets/:id` | `CabinetsController` | `@Put(':id')` | ✅ Exists (only accepts `name`) |
+| `PATCH /v1/cabinets/:id` | — | — | ❌ Does NOT exist |
+| `GET /v1/inventory/summary` | — | — | ❌ Does NOT exist (needs #140) |
+| `POST /v1/expenses` | — | — | ❌ Does NOT exist (needs #143) |
+| `GET /v1/expenses` | — | — | ❌ Does NOT exist (needs #143) |
+| `GET /v1/analytics/fulfillment/summary` | `FulfillmentAnalyticsController` | ✅ | ✅ Exists and confirmed |
+| `GET /v1/analytics/weekly/finance-summary` | `WeeklyAnalyticsController` | ✅ | ✅ Exists and confirmed |
+
+### TDD Readiness: CONFIRMED
+
+**Frontend TDD**: Can proceed with mocks for ALL stories:
+- **65.13, 65.15**: Immediately testable -- data already in existing API response. No mocks needed.
+- **65.10**: Testable with mock inventory summary + existing fulfillment types.
+- **65.9**: Testable with mock `InventorySummary` response type.
+- **65.11**: Testable with mock `taxSystem` config + tax calculation pure functions.
+- **65.12**: Testable with mock extended `FinanceSummary` containing `penalties_amount`, `corrections_amount`.
+- **65.14**: Testable with mock expenses CRUD responses.
+
+**Backend TDD**: Requires the following before implementation:
+- #140: Prisma schema unchanged (InventorySnapshot exists). Need new service + controller.
+- #141: Prisma migration required (add `taxSystem`, `taxRate` to Cabinet). Need DTO extension.
+- #142: Aggregation service change needed. May need Prisma migration (add `correctionsTotal` to WeeklyPayoutSummary) OR aggregate from WbFinanceRaw on-the-fly.
+- #143: New Prisma model + migration + full CRUD service/controller.
+
+**Risk Items**:
+1. `totalStock` naming confusion between Prisma (on-warehouse) and API response (grand total) -- documented and clarified.
+2. `corrections` field in WbFinanceRaw contains mixed data (WB services + compensations) -- requires `reason`-based filtering per gap analysis Risk #7.
+3. Cabinet update API uses PUT (not PATCH) -- backend team needs to decide approach.
+4. `retail_price_total` for "Ср. цена до скидок" (Wave 1 C8) verified: exists in both WeeklyPayoutSummary (line 272) and WeeklyPayoutTotal (line 317 as `retailPriceTotalCombined`), and in frontend type (line 64).

@@ -44,12 +44,14 @@ function getCardBackground(direction: TrendDirection): string {
 - [ ] AC-65.15.5: WCAG: контрастность текста на цветном фоне ≥4.5:1 (проверить `text-2xl font-bold` значения и `text-xs text-gray-400` субтитры на `bg-green-50`/`bg-red-50`)
 - [ ] AC-65.15.6: Поддержка `prefers-reduced-motion`: фон меняется без анимации если пользователь предпочитает
 - [ ] AC-65.15.7: Опциональная настройка: можно отключить (зависит от Story 65.8 "Настройка виджетов")
+- [ ] AC-65.15.8: Highlighted карточки (PayoutCard, GrossProfitCard, MarginCard) НЕ получают sentiment bg — у них уже есть собственные `bg-gradient-to-br` фоны и `border-2` с динамическим цветом. Sentiment bg применяется ТОЛЬКО к standard variant карточкам
 
 **Файлы**:
 - NEW: `src/lib/card-sentiment.ts` — утилита `getCardBackground(direction: TrendDirection)`
 - EDIT: `ExpenseMetricCard.tsx` — применить фон через `getCardBackground(comparison?.direction)`
-- EDIT: `OrdersCard.tsx`, `SalesNetCard.tsx`, `PayoutCard.tsx`, `GrossProfitCard.tsx`, `MarginCard.tsx` — аналогично
-- EDIT: `StorageAcceptanceCard.tsx`, `CostsCard.tsx`, `AdvertisingCard.tsx` — расходные карточки (уже inverted)
+- EDIT: `OrdersCard.tsx`, `SalesNetCard.tsx` — доходные standard карточки
+- EDIT: `StorageAcceptanceCard.tsx`, `CostsCard.tsx`, `AdvertisingCard.tsx` — расходные standard карточки (уже inverted)
+- SKIP: `PayoutCard.tsx`, `GrossProfitCard.tsx`, `MarginCard.tsx` — highlighted variant, имеют собственные gradient bg (см. AC-65.15.8)
 
 **Маппинг метрик** (сверено с `calculateComparison(value, prev, invertComparison)` в коде):
 
@@ -99,6 +101,7 @@ function getCardBackground(direction: TrendDirection): string {
 - [ ] AC-65.16.3: Доходные карточки: `₽ / шт` (сумма + количество) где применимо
 - [ ] AC-65.16.4: Единый компонент `DualValue` для консистентности
 - [ ] AC-65.16.5: Вторичное значение визуально менее выделено (`text-muted-foreground`, normal weight)
+- [ ] AC-65.16.6: Separator `/` объединён с primary/secondary в одном `<span>` или `<div>` для корректного чтения screen reader'ами (не должен читаться как отдельный элемент)
 
 **Компонент DualValue**:
 ```typescript
@@ -111,8 +114,8 @@ interface DualValueProps {
 }
 ```
 
-> **Примечание**: `formatPercentage()` в `utils.ts` использует `Intl.NumberFormat('ru-RU', { style: 'percent' })`
-> и делит на 100. Поэтому `formatPercentage(14.09)` вернет `"14,1 %"`. Для вычисления
+> **Примечание**: `formatPercentage()` в `utils.ts` использует `Intl.NumberFormat('ru-RU', { style: 'percent', maximumFractionDigits: 2 })`
+> и делит на 100. Поэтому `formatPercentage(14.09)` вернет `"14,09 %"`. Для вычисления
 > используется паттерн из `ExpenseMetricCard`: `(expense / revenue) * 100`.
 
 **Файлы**:
@@ -199,6 +202,8 @@ interface SectionHeaderProps {
 - [ ] AC-65.18.4: Состояние collapsed сохраняется в localStorage (ключ: `dashboard-sections-collapsed`)
 - [ ] AC-65.18.5: Aria-expanded на кнопке toggle для accessibility
 - [ ] AC-65.18.6: Клик по заголовку или chevron — toggle; keyboard Enter/Space — toggle
+- [ ] AC-65.18.7: Начальное состояние: все секции expanded (если нет сохранённого в localStorage)
+- [ ] AC-65.18.8: На мобильном (<768px) SectionHeader занимает полную ширину (`col-span-full` в grid контексте)
 
 **Файлы**:
 - NEW: `src/components/custom/dashboard/SectionHeader.tsx` (< 80 строк)
@@ -293,7 +298,7 @@ interface BaseMetricCardProps {
 - [ ] AC-65.19.5: Unit-тесты покрывают: standard variant, highlighted variant, loading, error, comparison, dual value, sentiment bg
 - [ ] AC-65.19.6: `ExpenseMetricCard` сохраняется как thin wrapper вокруг BaseMetricCard (обратная совместимость)
 - [ ] AC-65.19.7: `MetricCardStates.tsx` (skeleton, error) интегрированы в BaseMetricCard
-- [ ] AC-65.19.8: Accessibility: `role="article"`, `aria-label`, `aria-busy` на loading (текущий паттерн сохранен)
+- [ ] AC-65.19.8: Accessibility: `role="article"`, `aria-label` на data state; `aria-busy="true"` на loading skeleton (NOTE: текущий `StandardMetricSkeleton` использует `aria-busy="true" aria-hidden="true"` одновременно — это анти-паттерн. BaseMetricCard должен использовать только `aria-busy="true"` в loading state, без `aria-hidden`)
 
 **Файлы**:
 - NEW: `src/components/custom/dashboard/BaseMetricCard.tsx` (< 150 строк)
@@ -345,9 +350,10 @@ interface BaseMetricCardProps {
 | Card border | default | 2px colored | — / `border-2` |
 | Icon | 16x16 | 16x16 | `h-4 w-4` |
 | Title | 14px medium | 14px medium | `text-sm font-medium text-muted-foreground` |
+| Primary value mt | mt-2 | mt-3 | `mt-2` / `mt-3` |
 | Primary value | 24px bold | **36px bold** | `text-2xl font-bold` / `text-4xl font-bold` |
 | Secondary value | 14px muted | — | `text-base text-muted-foreground` |
-| Comparison gap | mt-2 | mt-2 | `mt-2 flex items-center gap-1.5` |
+| Comparison gap | mt-2 | mt-2 | `mt-2 flex items-center gap-1.5` (NOTE: GrossProfitCard currently uses `gap-2` — нужно унифицировать на `gap-1.5`) |
 | Subtitle/extras | mt-1 | mt-1 | `text-xs text-gray-400` |
 | Info tooltip | 14px | 14px | TooltipContent `size="md"` |
 
@@ -467,3 +473,140 @@ interface BaseMetricCardProps {
 - Import button on Storage (pattern #5 from epic) is a separate feature, not Wave 4 scope
 
 **No missing stories identified** -- the 5 stories comprehensively cover all Wave 4 UX scope.
+
+---
+
+## PM Final Validation -- 2026-02-15
+
+### Validation Summary
+
+| Story | Verdict | Notes |
+|-------|---------|-------|
+| 65.15 | ⚠️ NEEDS FIX (FIXED) | Added AC-65.15.8 for highlighted cards exclusion; removed PayoutCard/GrossProfitCard/MarginCard from EDIT list (they have own gradient bg, sentiment bg conflicts) |
+| 65.16 | ⚠️ NEEDS FIX (FIXED) | Fixed `formatPercentage(14.09)` output from `"14,1 %"` to `"14,09 %"` (maximumFractionDigits=2, not 1); added AC-65.16.6 for screen reader separator handling |
+| 65.17 | ✅ READY | All breakpoints correct (md=768px, xl=1280px); skeleton inconsistency correctly identified; `items-stretch` is valid though it's CSS Grid default |
+| 65.18 | ⚠️ NEEDS FIX (FIXED) | Added AC-65.18.7 (initial state: all expanded) and AC-65.18.8 (mobile col-span-full); all other ACs verified against codebase |
+| 65.19 | ⚠️ NEEDS FIX (FIXED) | Fixed accessibility anti-pattern note in AC-65.19.8 (`aria-busy` + `aria-hidden` simultaneous usage); documented `mt-2` vs `mt-3` difference for standard vs highlighted; documented GrossProfitCard `gap-2` deviation (should be `gap-1.5`) |
+
+### Component Inventory Verified
+
+| Component | Status | Path | Verified |
+|-----------|--------|------|----------|
+| BaseMetricCard | to create | `src/components/custom/dashboard/BaseMetricCard.tsx` | N/A |
+| BaseMetricCardParts | to create | `src/components/custom/dashboard/BaseMetricCardParts.tsx` | N/A |
+| DualValue | to create | `src/components/custom/dashboard/DualValue.tsx` | N/A |
+| SectionHeader | to create | `src/components/custom/dashboard/SectionHeader.tsx` | N/A |
+| card-sentiment utility | to create | `src/lib/card-sentiment.ts` | N/A |
+| OrdersCard | exists | `src/components/custom/dashboard/OrdersCard.tsx` | ✅ 103 lines, uses `calculateComparison(totalOrders, prev, false)` |
+| SalesNetCard | exists | `src/components/custom/dashboard/SalesNetCard.tsx` | ✅ 112 lines, uses `calculateComparison(saleGross, prev, false)` |
+| PayoutCard | exists | `src/components/custom/dashboard/PayoutCard.tsx` | ✅ 108 lines, highlighted, `text-4xl`, `border-2 border-green-500`, gradient |
+| GrossProfitCard | exists | `src/components/custom/dashboard/GrossProfitCard.tsx` | ✅ 147 lines, highlighted, dynamic border/gradient, COGS gate |
+| MarginCard | exists | `src/components/custom/dashboard/MarginCard.tsx` | ✅ 148 lines, highlighted, п.п. comparison (no `calculateComparison`) |
+| CostsCard | exists | `src/components/custom/dashboard/CostsCard.tsx` | ✅ 163 lines, uses `calculateComparison(cogs, prev, true)` |
+| AdvertisingCard | exists | `src/components/custom/dashboard/AdvertisingCard.tsx` | ✅ 123 lines, uses `calculateComparison(spend, prev, true)` |
+| StorageAcceptanceCard | exists | `src/components/custom/dashboard/StorageAcceptanceCard.tsx` | ✅ 127 lines, uses `calculateComparison(total, prev, true)` |
+| ExpenseMetricCard | exists | `src/components/custom/dashboard/ExpenseMetricCard.tsx` | ✅ 186 lines, base for WbCommissions + Logistics, `inverted=true` |
+| WbCommissionsCard | exists | `src/components/custom/dashboard/WbCommissionsCard.tsx` | ✅ 80 lines, thin wrapper over ExpenseMetricCard |
+| LogisticsMetricCard | exists | `src/components/custom/dashboard/LogisticsMetricCard.tsx` | ✅ 75 lines, thin wrapper over ExpenseMetricCard |
+| DashboardMetricsGrid | exists | `src/components/custom/dashboard/DashboardMetricsGrid.tsx` | ✅ 256 lines, `sectionGrid = 'grid grid-cols-1 md:grid-cols-2 gap-4'` |
+| DashboardMetricsGridSkeleton | exists | `src/components/custom/dashboard/DashboardMetricsGridSkeleton.tsx` | ✅ 89 lines, BUG: `xl:grid-cols-4` (should be 3) |
+| MetricCardStates | exists | `src/components/custom/dashboard/MetricCardStates.tsx` | ✅ 121 lines, StandardMetricSkeleton + HighlightedMetricSkeleton + MetricCardError |
+| TrendIndicator | exists | `src/components/custom/TrendIndicator.tsx` | ✅ 80 lines, accepts `TrendDirection` |
+| ComparisonBadge | exists | `src/components/custom/ComparisonBadge.tsx` | ✅ 100 lines, `transition-transform hover:scale-105` (needs `motion-safe:` wrap) |
+| comparison-helpers | exists | `src/lib/comparison-helpers.ts` | ✅ 115 lines, exports `TrendDirection`, `ComparisonResult`, `calculateComparison()` |
+| utils (formatters) | exists | `src/lib/utils.ts` | ✅ 150 lines, exports `formatCurrency`, `formatPercentage`, `cn` |
+
+### Type Alignment Verified
+
+| Type | Location | Status |
+|------|----------|--------|
+| `TrendDirection` | `src/lib/comparison-helpers.ts:19` | ✅ `'positive' \| 'negative' \| 'neutral'` -- matches story refs |
+| `ComparisonResult` | `src/lib/comparison-helpers.ts:24` | ✅ `{ percentageChange, formattedPercentage, absoluteDifference, formattedDifference, direction }` |
+| `calculateComparison()` | `src/lib/comparison-helpers.ts:73` | ✅ `(current, previous, invertComparison?) => ComparisonResult \| null` |
+| `formatPercentage()` | `src/lib/utils.ts:31` | ✅ Divides by 100, uses `Intl.NumberFormat('ru-RU', { style: 'percent', maxFractionDigits: 2 })` |
+| `formatCurrency()` | `src/lib/utils.ts:17` | ✅ `Intl.NumberFormat('ru-RU', { currency: 'RUB', maxFractionDigits: 2 })` |
+| `ExpenseMetricCardProps.icon` | `src/components/custom/dashboard/ExpenseMetricCard.tsx:22` | ✅ `React.ComponentType<{ className?: string }>` -- matches BaseMetricCard spec |
+
+### Tailwind Classes Verified
+
+| Class | Usage | Status |
+|-------|-------|--------|
+| `bg-green-50` | Sentiment positive bg | ✅ Used in 8+ files in codebase |
+| `bg-red-50` | Sentiment negative bg | ✅ Used in 15+ files in codebase |
+| `border-green-200` | Sentiment positive border | ✅ Used in 20+ files in codebase |
+| `border-red-200` | Sentiment negative border | ✅ Used in 20+ files in codebase |
+| `text-muted-foreground` | Secondary value class | ✅ CSS var `--muted-foreground` defined in globals.css |
+| `border-border` | Section header border | ✅ CSS var `--border` defined in globals.css |
+| `tracking-wider` | Section header text | ✅ Standard Tailwind utility, used in 2 existing files |
+| `col-span-full` | Section header grid | ✅ Standard Tailwind utility (not yet used but valid) |
+| `items-stretch` | Grid container | ✅ Standard Tailwind utility (CSS Grid default) |
+| `transition-shadow hover:shadow-md` | Card hover | ✅ Used in all 10+ card components |
+| `transition-colors` | Bg color change animation | ✅ Used in 11 dashboard component files |
+| `transition-transform hover:scale-105` | ComparisonBadge hover | ✅ Verified in ComparisonBadge.tsx:77 |
+| `animate-in fade-in` | Skeleton transition | ✅ Provided by `tailwindcss-animate` plugin |
+| `motion-safe:` / `motion-reduce:` | Reduced motion | ✅ Tailwind 4 native modifiers |
+| `text-2xl font-bold` | Standard value | ✅ Used in all standard cards |
+| `text-4xl font-bold` | Highlighted value | ✅ Used in PayoutCard, GrossProfitCard, MarginCard |
+| `text-sm font-medium` | Card title | ✅ Used in all 10 cards |
+| `h-4 w-4` | Icon size | ✅ Used in all 10 cards |
+| `text-xs font-medium uppercase` | Section header | ✅ Valid standard Tailwind utilities |
+| `gap-1.5` | Comparison row | ✅ Used in 7 of 10 cards (GrossProfitCard deviates with `gap-2`) |
+
+### Design System Verified
+
+| Token | Spec Value | Code Value | Status |
+|-------|-----------|------------|--------|
+| Tailwind version | 4 | `^4.0.0` (package.json) | ✅ |
+| tailwindcss-animate | required | `^1.0.7` (package.json) | ✅ |
+| Global reduced motion | required | `globals.css` `@media (prefers-reduced-motion)` rule | ✅ Global rule exists, zeroes durations |
+| Card shadow | `shadow` | `rounded-xl border bg-card text-card-foreground shadow` (card.tsx) | ✅ |
+| Card padding | `p-4` | `CardContent className="p-4"` in all cards | ✅ |
+| shadcn Tooltip size | `size="md"` | Custom `size` prop on TooltipContent: sm=180px, md=280px, lg=350px | ✅ |
+
+### Accessibility Audit
+
+| Requirement | Status | Evidence |
+|-------------|--------|----------|
+| `role="article"` on cards | ✅ | All 10 cards have `role="article"` |
+| `aria-label` on cards | ✅ | All 10 cards have descriptive `aria-label` |
+| `aria-hidden="true"` on icons | ✅ | All card icons have `aria-hidden="true"` |
+| `aria-label` on info buttons | ✅ | All tooltip trigger buttons have Russian `aria-label` |
+| `aria-busy` on skeleton | ⚠️ FIX NEEDED | `StandardMetricSkeleton` uses `aria-busy="true" aria-hidden="true"` simultaneously -- anti-pattern documented in AC-65.19.8 |
+| `aria-expanded` for sections | ✅ | Specified in AC-65.18.5 |
+| Keyboard navigation | ✅ | AC-65.18.6 specifies Enter/Space for toggle |
+| `prefers-reduced-motion` | ✅ | Global CSS rule in `globals.css` zeroes all animation durations |
+| WCAG contrast on tinted bg | ✅ | AC-65.15.5 requires verification of contrast on `bg-green-50`/`bg-red-50` |
+
+### Issues Found and Fixed During Validation
+
+1. **`formatPercentage()` output error** (Story 65.16): Note incorrectly stated `formatPercentage(14.09)` returns `"14,1 %"`. Actual: function uses `maximumFractionDigits: 2`, so returns `"14,09 %"`. **FIXED** in spec.
+
+2. **Highlighted cards sentiment bg conflict** (Story 65.15): PayoutCard, GrossProfitCard, MarginCard have existing `bg-gradient-to-br` backgrounds. Applying `bg-green-50`/`bg-red-50` would conflict. **FIXED**: Added AC-65.15.8 excluding highlighted cards; updated file edit list.
+
+3. **Screen reader separator handling** (Story 65.16): DualValue separator `/` needs proper semantic handling to avoid being read as a separate element. **FIXED**: Added AC-65.16.6.
+
+4. **Section initial state missing** (Story 65.18): No AC specified whether sections start collapsed or expanded. **FIXED**: Added AC-65.18.7 (default: all expanded).
+
+5. **Mobile section header** (Story 65.18): No explicit AC for mobile layout of section headers. **FIXED**: Added AC-65.18.8.
+
+6. **`aria-busy` + `aria-hidden` anti-pattern** (Story 65.19): Current skeletons use both simultaneously, which is contradictory. **FIXED**: Documented in AC-65.19.8 that BaseMetricCard must use only `aria-busy` without `aria-hidden`.
+
+7. **GrossProfitCard gap deviation** (Design Spec): Uses `gap-2` while all other cards use `gap-1.5` for comparison row. **FIXED**: Documented in design spec table as deviation to unify.
+
+8. **Value margin-top difference** (Design Spec): Standard cards use `mt-2`, highlighted use `mt-3`. Was implicit in anatomy diagram but not in the sizing table. **FIXED**: Added explicit row to sizing table.
+
+### TDD Readiness: CONFIRMED
+
+- **Component tests**: READY -- All ACs are measurable and testable. Component props, variants, CSS classes, and behavior specified with enough precision for unit tests using Vitest + Testing Library.
+- **Accessibility tests**: READY -- WCAG requirements explicit (contrast ratios, ARIA attributes, keyboard navigation, reduced motion). Testable with `@axe-core/playwright`.
+- **Visual regression tests**: READY -- All Tailwind classes specified; animations have concrete durations; responsive breakpoints are explicit standard Tailwind values (md=768px, xl=1280px).
+- **Integration tests**: READY -- Component dependencies mapped; cascading behavior documented (ExpenseMetricCard -> WbCommissions/Logistics); story execution order specified.
+
+### Recommended Execution Order (confirmed)
+```
+65.19 (BaseMetricCard)  --> FIRST: architectural foundation
+65.17 (3-column grid)   --> independent, simple
+65.18 (Section headers) --> depends on 65.17 flat grid
+65.16 (Dual value)      --> depends on 65.19 BaseMetricCard
+65.15 (Color coding)    --> depends on 65.19 BaseMetricCard
+```
