@@ -132,7 +132,7 @@ export function DashboardContent(): React.ReactElement {
   const isFailed = processingStatus?.reportLoading?.status === 'failed'
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-4 pb-8">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -188,7 +188,7 @@ export function DashboardContent(): React.ReactElement {
             onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
           />
 
-          <DailyBreakdownSection className="mt-8" />
+          <DailyBreakdownSection className="mt-4" />
           <AdvertisingDashboardWidget dateRange={dateRange} hideLocalSelector />
           <ExpenseChart weekOverride={periodType === 'week' ? selectedWeek : undefined} />
 

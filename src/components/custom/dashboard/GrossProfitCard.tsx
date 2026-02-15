@@ -47,7 +47,7 @@ export function GrossProfitCard({
         error={error}
         onRetry={onRetry}
         className={className}
-        minHeight="min-h-[140px]"
+        minHeight="min-h-[100px]"
       />
     )
   }
@@ -102,13 +102,13 @@ export function GrossProfitCard({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-3">
+        <div className="mt-1">
           {canShow && grossProfit != null ? (
-            <span className={cn('text-4xl font-bold', valueColor)}>
+            <span className={cn('text-xl font-bold', valueColor)}>
               {formatCurrency(grossProfit)}
             </span>
           ) : (
-            <span className="text-2xl font-bold text-muted-foreground">—</span>
+            <span className="text-xl font-bold text-muted-foreground">—</span>
           )}
         </div>
         {comparison && (

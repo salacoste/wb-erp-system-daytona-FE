@@ -22,8 +22,8 @@ export interface MetricCardSkeletonProps {
  */
 export function MetricCardSkeleton({ className }: MetricCardSkeletonProps): React.ReactElement {
   return (
-    <Card className={cn('min-h-[120px]', className)} aria-hidden="true">
-      <CardContent className="p-4">
+    <Card className={cn('min-h-[90px]', className)} aria-hidden="true">
+      <CardContent className="p-3">
         {/* Header: icon + title */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -50,13 +50,14 @@ export function MetricCardSkeleton({ className }: MetricCardSkeletonProps): Reac
 }
 
 /**
- * Grid classes matching DashboardMetricsGrid
+ * Grid classes matching DashboardMetricsGrid flat layout
  */
 const gridClasses = cn(
-  'grid gap-4 items-stretch',
-  'grid-cols-1', // Mobile: 1 column
-  'md:grid-cols-2', // Tablet: 2 columns
-  'xl:grid-cols-3' // Desktop: 3 columns (Story 65.17)
+  'grid gap-3 items-stretch',
+  'grid-cols-1',
+  'sm:grid-cols-2',
+  'lg:grid-cols-3',
+  'xl:grid-cols-4'
 )
 
 export interface DashboardMetricsGridSkeletonProps {

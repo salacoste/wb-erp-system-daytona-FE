@@ -43,7 +43,7 @@ export function PayoutCard({
         error={error}
         onRetry={onRetry}
         className={className}
-        minHeight="min-h-[140px]"
+        minHeight="min-h-[100px]"
       />
     )
   }
@@ -85,8 +85,8 @@ export function PayoutCard({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-3">
-          <span className="text-4xl font-bold text-green-600">{displayValue}</span>
+        <div className="mt-1">
+          <span className="text-xl font-bold text-green-600">{displayValue}</span>
         </div>
         {comparison && (
           <div className="mt-2 flex items-center gap-1.5">
