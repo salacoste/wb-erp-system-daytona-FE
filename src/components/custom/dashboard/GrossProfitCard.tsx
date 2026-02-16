@@ -52,11 +52,12 @@ export function GrossProfitCard({
     )
   }
 
-  const canShow = cogsCoverage >= 80
+  // Show value if backend/aggregation computed gross_profit (they gate on per-week coverage=100%)
+  const canShow = grossProfit != null
   const isPositive = grossProfit != null && grossProfit >= 0
   const comparison =
-    canShow && grossProfit != null && previousGrossProfit != null && previousGrossProfit !== 0
-      ? calculateComparison(grossProfit, previousGrossProfit, false)
+    canShow && previousGrossProfit != null && previousGrossProfit !== 0
+      ? calculateComparison(grossProfit!, previousGrossProfit, false)
       : null
 
   const borderColor = !canShow
@@ -120,10 +121,10 @@ export function GrossProfitCard({
             />
           </div>
         )}
-        {!canShow && (
-          <div className="mt-2 flex items-center gap-1 text-xs text-yellow-600">
-            <AlertTriangle className="h-3 w-3" />
-            <span>Заполните себестоимость для расчёта</span>
+        {cogsCoverage < 100 && (
+          <div className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
+            <AlertTriangle className="h-3 w-3 shrink-0" />
+            <span>Покрытие COGS: {Math.round(cogsCoverage)}%</span>
             {onAssignCogs && (
               <button
                 onClick={onAssignCogs}
@@ -132,12 +133,6 @@ export function GrossProfitCard({
                 Перейти
               </button>
             )}
-          </div>
-        )}
-        {canShow && cogsCoverage < 100 && (
-          <div className="mt-1 text-xs text-yellow-600">
-            <AlertTriangle className="mr-1 inline h-3 w-3" />
-            Покрытие COGS: {Math.round(cogsCoverage)}%
           </div>
         )}
       </CardContent>

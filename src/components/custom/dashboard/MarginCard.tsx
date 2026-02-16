@@ -73,7 +73,8 @@ export function MarginCard({
     )
   }
 
-  const canShow = cogsCoverage >= 80 && marginPct != null
+  // Show value if backend/aggregation computed margin_pct (they gate on per-week coverage=100%)
+  const canShow = marginPct != null
   const diff = canShow && previousMarginPct != null ? marginPct! - previousMarginPct : null
 
   const borderColor = canShow ? getMarginBorder(marginPct!) : 'border-gray-300'
@@ -137,10 +138,10 @@ export function MarginCard({
             </span>
           </div>
         )}
-        {!canShow && cogsCoverage < 80 && (
-          <div className="mt-2 flex items-center gap-1 text-xs text-yellow-600">
-            <AlertTriangle className="h-3 w-3" />
-            <span>Заполните себестоимость для расчёта</span>
+        {cogsCoverage < 100 && (
+          <div className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
+            <AlertTriangle className="h-3 w-3 shrink-0" />
+            <span>Покрытие COGS: {Math.round(cogsCoverage)}%</span>
             {onAssignCogs && (
               <button
                 onClick={onAssignCogs}
