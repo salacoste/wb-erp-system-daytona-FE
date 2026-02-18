@@ -18,6 +18,10 @@ import {
   Settings2,
   ShoppingCart,
   ClipboardList,
+  Activity,
+  Funnel,
+  RotateCcw,
+  ShoppingBag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
@@ -104,6 +108,26 @@ export function Sidebar() {
       label: 'Заказы FBS', // Epic 51-FE: FBS Historical Analytics
       href: ROUTES.ANALYTICS.ORDERS,
       icon: ClipboardList,
+    },
+    {
+      label: 'Воронка продаж', // Epic 68: Marketing Funnel Analytics
+      href: ROUTES.ANALYTICS.FUNNEL,
+      icon: Funnel,
+    },
+    {
+      label: 'Аналитика выкупов', // Epic 69: Buyout Rate Analytics
+      href: ROUTES.ANALYTICS.BUYOUT,
+      icon: ShoppingBag,
+    },
+    {
+      label: 'Аналитика возвратов', // Epic 71: Return Analytics
+      href: ROUTES.ANALYTICS.RETURNS,
+      icon: RotateCcw,
+    },
+    {
+      label: 'Мониторинг', // Epic 68-FE: Monitoring Health Dashboard
+      href: ROUTES.MONITORING,
+      icon: Activity,
     },
     {
       label: 'Уведомления', // Epic 34-FE: Telegram Notifications

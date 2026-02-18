@@ -38,6 +38,9 @@ export const ROUTES = {
     LIQUIDITY: '/analytics/liquidity', // Epic 7: Liquidity Analysis
     ADVERTISING: '/analytics/advertising', // Epic 33: Advertising Analytics
     ORDERS: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
+    FUNNEL: '/analytics/funnel', // Epic 68: Marketing Funnel Analytics
+    BUYOUT: '/analytics/buyout', // Epic 69: Buyout Rate Analytics
+    RETURNS: '/analytics/returns', // Epic 71: Return Analytics
   },
 
   // Epic 40-FE: Orders UI (WB Native Orders History)
@@ -51,6 +54,9 @@ export const ROUTES = {
     ROOT: '/supplies',
     DETAIL: '/supplies/[id]', // Dynamic route - use buildSupplyDetailRoute helper
   },
+  // Epic 68-FE: Monitoring Health Dashboard
+  MONITORING: '/monitoring',
+
   SETTINGS: {
     ROOT: '/settings',
     NOTIFICATIONS: '/settings/notifications', // Epic 34-FE: Telegram Notifications
@@ -91,8 +97,12 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.LIQUIDITY,
     ROUTES.ANALYTICS.ADVERTISING,
     ROUTES.ANALYTICS.ORDERS, // Epic 51-FE: FBS Historical Analytics
+    ROUTES.ANALYTICS.FUNNEL, // Epic 68: Marketing Funnel Analytics
+    ROUTES.ANALYTICS.BUYOUT, // Epic 69: Buyout Rate Analytics
+    ROUTES.ANALYTICS.RETURNS, // Epic 71: Return Analytics
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
+    ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard
     ROUTES.SUPPLIES.ROOT, // Epic 53-FE: Supply Management
     ROUTES.SETTINGS.ROOT,
     ROUTES.SETTINGS.NOTIFICATIONS, // Epic 34-FE: Telegram Notifications

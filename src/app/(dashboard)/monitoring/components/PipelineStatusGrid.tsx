@@ -1,0 +1,155 @@
+/**
+ * PipelineStatusGrid — Grid of 11 pipeline cards grouped by category
+ * Epic 68-FE (Story 68.2)
+ * Pattern: Categorized grid with status badges, accessible text+icon labels
+ */
+
+'use client'
+
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+import type { DashboardPipeline, PipelineCategory, PipelineStatus } from '../types/monitoring'
+
+interface PipelineStatusGridProps {
+  pipelines: DashboardPipeline[] | undefined
+  isLoading: boolean
+}
+
+const STATUS_ORDER: Record<string, number> = {
+  critical: 0,
+  warning: 1,
+  stale: 2,
+  healthy: 3,
+  no_data: 4,
+}
+
+const STATUS_COLORS: Record<PipelineStatus, string> = {
+  healthy: 'bg-green-500 text-white',
+  warning: 'bg-yellow-500 text-white',
+  critical: 'bg-red-500 text-white',
+  stale: 'bg-gray-500 text-white',
+  no_data: 'bg-gray-300 text-gray-700',
+}
+
+const STATUS_LABELS: Record<PipelineStatus, string> = {
+  healthy: '✓ Работает',
+  warning: '⚠ Задержка',
+  critical: '✕ Критично',
+  stale: '◷ Устарело',
+  no_data: '— Нет данных',
+}
+
+const CATEGORY_TITLES: Record<PipelineCategory, string> = {
+  high_frequency: 'Высокочастотные',
+  daily: 'Ежедневные',
+  weekly: 'Еженедельные',
+}
+
+const CATEGORY_ORDER: PipelineCategory[] = ['high_frequency', 'daily', 'weekly']
+
+function formatRelativeTime(isoDate: string | null): string {
+  if (!isoDate) return '—'
+  const diffMs = Date.now() - new Date(isoDate).getTime()
+  const diffMin = Math.floor(diffMs / 60_000)
+  if (diffMin < 1) return 'только что'
+  if (diffMin < 60) return `${diffMin} мин назад`
+  const diffHours = Math.floor(diffMin / 60)
+  if (diffHours < 24) return `${diffHours} ч назад`
+  return `${Math.floor(diffHours / 24)} дн назад`
+}
+
+function sortPipelines(items: DashboardPipeline[]): DashboardPipeline[] {
+  return [...items].sort((a, b) => (STATUS_ORDER[a.status] ?? 4) - (STATUS_ORDER[b.status] ?? 4))
+}
+
+export function PipelineStatusGrid({ pipelines, isLoading }: PipelineStatusGridProps) {
+  if (isLoading) return <PipelineStatusGridSkeleton />
+  if (!pipelines?.length) return null
+
+  const grouped = CATEGORY_ORDER.map(cat => ({
+    category: cat,
+    title: CATEGORY_TITLES[cat],
+    items: sortPipelines(pipelines.filter(p => p.category === cat)),
+  })).filter(g => g.items.length > 0)
+
+  return (
+    <div className="space-y-6" role="region" aria-label="Статус пайплайнов">
+      {grouped.map(group => (
+        <section key={group.category} aria-label={group.title}>
+          <h3 className="mb-3 text-sm font-semibold text-muted-foreground">{group.title}</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {group.items.map(p => (
+              <PipelineCard key={p.pipelineId} pipeline={p} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
+  const { displayName, status, lastSuccessAt, successRate24h } = pipeline
+  const label = STATUS_LABELS[status]
+  const colorClass = STATUS_COLORS[status]
+  const rate = Math.round(successRate24h * 100)
+
+  return (
+    <Card className="p-3" role="article" aria-label={`${displayName}: ${label}`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="truncate text-sm font-medium">{displayName}</span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge className={cn('shrink-0 whitespace-nowrap', colorClass)}>{label}</Badge>
+          </TooltipTrigger>
+          <TooltipContent size="sm">
+            <p>Статус: {label}</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+
+      <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+        <span>{formatRelativeTime(lastSuccessAt)}</span>
+        <span aria-label={`Успешность за 24ч: ${rate}%`}>{rate}%</span>
+      </div>
+
+      {/* Mini progress bar for successRate24h */}
+      <div
+        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-200"
+        role="progressbar"
+        aria-valuenow={rate}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Успешность выполнения: ${rate}%`}
+      >
+        <div
+          className={cn(
+            'h-full rounded-full transition-all duration-500',
+            rate >= 90 ? 'bg-green-500' : rate >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+          )}
+          style={{ width: `${rate}%` }}
+        />
+      </div>
+    </Card>
+  )
+}
+
+function PipelineStatusGridSkeleton() {
+  return (
+    <div className="space-y-6" aria-busy="true">
+      {CATEGORY_ORDER.map(cat => (
+        <div key={cat}>
+          <Skeleton className="mb-3 h-4 w-32" />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: cat === 'daily' ? 5 : 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-xl" />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
