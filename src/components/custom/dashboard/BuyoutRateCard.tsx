@@ -1,13 +1,24 @@
 /**
- * BuyoutRateCard -- Story 65.1: Buyout Rate (Процент выкупа)
+ * BuyoutRateCard -- Epic 69, Story 69.7: Frontend Buyout Rate Formula Fix
  *
  * Shows the percentage of orders that were bought out (not returned).
- * Formula: buyoutRate = (salesCount / ordersCount) * 100
+ *
+ * FIXED (P-005): Previously used salesCount/ordersCount*100 (WRONG).
+ * Now uses pre-calculated buyoutRate from backend API:
+ *   Primary: GET /v1/analytics/buyout/summary -> overallBuyoutRatePct
+ *   Fallback: GET /v1/analytics/fbs/enhanced -> orderStats.buyoutRate
+ *
+ * Unified formula (Story 69.1): buyout_rate = (sales - returns) / sales * 100
+ * @see docs/stories/epic-69/story-69.7-frontend-formula-fix.md
+ * @see src/analytics/utils/buyout-formula.ts
+ *
+ * Color thresholds (AC-69.7.3):
+ *   - null/undefined -> "Нет данных" (gray)
+ *   - >= 80% -> green (healthy)
+ *   - < 80% -> red (warning)
+ *   - 100% -> green (perfect)
+ *
  * Comparison uses percentage points (п.п.), NOT relative %.
- *
- * Color thresholds: green >= 80%, yellow >= 60%, red < 60%.
- *
- * @see docs/epics/epic-65-dashboard-metrics-parity/stories-wave-1-2.md
  */
 
 'use client'
@@ -18,31 +29,41 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
+/**
+ * Epic 69, Story 69.7: Updated props interface.
+ * Primary prop: buyoutRate (pre-calculated by backend).
+ * Legacy props (salesCount, ordersCount) kept for backward compatibility
+ * but are no longer used for calculation.
+ */
 export interface BuyoutRateCardProps {
-  salesCount: number | undefined
-  ordersCount: number | undefined
+  /** Pre-calculated buyout rate from backend API (0-100 or null) */
+  buyoutRate?: number | null | undefined
+  /** Previous period buyout rate for comparison (0-100 or null) */
+  previousBuyoutRate?: number | null | undefined
+  /** @deprecated Legacy prop -- no longer used for buyout rate calculation */
+  salesCount?: number | undefined
+  /** @deprecated Legacy prop -- no longer used for buyout rate calculation */
+  ordersCount?: number | undefined
+  /** @deprecated Legacy prop -- use previousBuyoutRate instead */
   previousSalesCount?: number | undefined
+  /** @deprecated Legacy prop -- use previousBuyoutRate instead */
   previousOrdersCount?: number | undefined
+  /** Total buyout count for tooltip detail */
+  buyoutCount?: number | null
+  /** Total orders count for tooltip detail */
+  totalOrders?: number | null
   isLoading?: boolean
   error?: Error | null
   onRetry?: () => void
   className?: string
 }
 
-/** Calculate buyout rate percentage, guarding against division by zero */
-function calculateBuyoutRate(
-  salesCount: number | undefined,
-  ordersCount: number | undefined
-): number | null {
-  if (salesCount == null || ordersCount == null) return null
-  if (ordersCount === 0) return null
-  return (salesCount / ordersCount) * 100
-}
-
-/** Color class for the main value based on buyout rate thresholds */
+/**
+ * Color class for the main value based on buyout rate thresholds.
+ * Epic 69, AC-69.7.3: >= 80% green, < 80% red warning.
+ */
 function getValueColor(rate: number): string {
   if (rate >= 80) return 'text-green-600'
-  if (rate >= 60) return 'text-yellow-600'
   return 'text-red-600'
 }
 
@@ -63,11 +84,27 @@ function getPpColor(diff: number): string {
   return 'text-gray-500'
 }
 
+/**
+ * Build tooltip text with buyout details.
+ * Epic 69, AC-69.7.2: "Выкуп: {N} из {M} заказов выкуплено. Данные за последние 30 дней."
+ */
+function buildTooltip(buyoutCount?: number | null, totalOrders?: number | null): string {
+  if (buyoutCount != null && totalOrders != null && totalOrders > 0) {
+    return `Выкуп: ${buyoutCount} из ${totalOrders} заказов выкуплено. Данные за последние 30 дней.`
+  }
+  // Epic 69: Unified formula reference in tooltip
+  return 'Процент выкупа: (продажи - возвраты) / продажи * 100%. Данные за последние 30 дней.'
+}
+
 export function BuyoutRateCard({
-  salesCount,
-  ordersCount,
-  previousSalesCount,
-  previousOrdersCount,
+  buyoutRate,
+  previousBuyoutRate,
+  salesCount: _salesCount,
+  ordersCount: _ordersCount,
+  previousSalesCount: _prevSales,
+  previousOrdersCount: _prevOrders,
+  buyoutCount,
+  totalOrders,
   isLoading = false,
   error,
   onRetry,
@@ -97,8 +134,10 @@ export function BuyoutRateCard({
     )
   }
 
-  const currentRate = calculateBuyoutRate(salesCount, ordersCount)
-  const previousRate = calculateBuyoutRate(previousSalesCount, previousOrdersCount)
+  // Epic 69, Story 69.7: Use pre-calculated buyoutRate from backend (AC-69.7.1)
+  // Do NOT calculate salesCount/ordersCount*100 locally (P-005 fix)
+  const currentRate = buyoutRate ?? null
+  const previousRate = previousBuyoutRate ?? null
 
   // pp difference for comparison (percentage points, not relative %)
   const ppDiff = currentRate != null && previousRate != null ? currentRate - previousRate : null
@@ -109,10 +148,13 @@ export function BuyoutRateCard({
       <span className={cn('text-sm font-medium', getPpColor(ppDiff))}>{formatPp(ppDiff)}</span>
     ) : null
 
+  // Epic 69, AC-69.7.2: Tooltip with buyout details
+  const tooltip = buildTooltip(buyoutCount, totalOrders)
+
   return (
     <BaseMetricCard
       title="Процент выкупа"
-      tooltip="Доля заказов, которые были выкуплены покупателями (не возвращены). Формула: выкупы / заказы * 100%."
+      tooltip={tooltip}
       icon={ShoppingBag}
       accentColor="text-blue-500"
       value={currentRate}
