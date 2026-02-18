@@ -19,7 +19,7 @@ import {
   ShoppingCart,
   ClipboardList,
   Activity,
-  Funnel,
+  Filter,
   RotateCcw,
   ShoppingBag,
 } from 'lucide-react'
@@ -112,7 +112,7 @@ export function Sidebar() {
     {
       label: 'Воронка продаж', // Epic 68: Marketing Funnel Analytics
       href: ROUTES.ANALYTICS.FUNNEL,
-      icon: Funnel,
+      icon: Filter,
     },
     {
       label: 'Аналитика выкупов', // Epic 69: Buyout Rate Analytics

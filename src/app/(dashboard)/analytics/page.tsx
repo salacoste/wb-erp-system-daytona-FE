@@ -53,6 +53,7 @@ import {
   ArrowRight,
   ClipboardList,
 } from 'lucide-react'
+import { Filter, ShoppingBag, RotateCcw } from 'lucide-react'
 import { RequireWbToken } from '@/components/custom/RequireWbToken'
 
 /**
@@ -142,6 +143,17 @@ const analyticsNavigation = {
         borderColor: 'border-orange-200',
         badge: 'Новое',
       },
+      {
+        href: ROUTES.ANALYTICS.FUNNEL,
+        icon: Filter,
+        title: 'Воронка продаж',
+        description: 'Просмотры → корзина → заказы → выкупы',
+        color: 'text-cyan-600',
+        bgColor: 'bg-cyan-50',
+        hoverBg: 'hover:bg-cyan-100',
+        borderColor: 'border-cyan-200',
+        badge: 'Новое',
+      },
     ],
   },
   strategic: {
@@ -157,6 +169,28 @@ const analyticsNavigation = {
         bgColor: 'bg-indigo-50',
         hoverBg: 'hover:bg-indigo-100',
         borderColor: 'border-indigo-200',
+        badge: 'Новое',
+      },
+      {
+        href: ROUTES.ANALYTICS.BUYOUT,
+        icon: ShoppingBag,
+        title: 'Аналитика выкупов',
+        description: 'Процент выкупа и тренды по SKU',
+        color: 'text-teal-600',
+        bgColor: 'bg-teal-50',
+        hoverBg: 'hover:bg-teal-100',
+        borderColor: 'border-teal-200',
+        badge: 'Новое',
+      },
+      {
+        href: ROUTES.ANALYTICS.RETURNS,
+        icon: RotateCcw,
+        title: 'Аналитика возвратов',
+        description: 'Причины возвратов и аномалии',
+        color: 'text-pink-600',
+        bgColor: 'bg-pink-50',
+        hoverBg: 'hover:bg-pink-100',
+        borderColor: 'border-pink-200',
         badge: 'Новое',
       },
     ],
