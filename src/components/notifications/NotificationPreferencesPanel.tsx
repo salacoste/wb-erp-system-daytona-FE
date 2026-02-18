@@ -3,25 +3,25 @@
 // Epic 34-FE: Story 34.3-FE - Notification Preferences Panel
 // ============================================================================
 
-'use client';
+'use client'
 
-import { useState, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/ui/alert';
-import { useNotificationPreferences } from '@/hooks/useNotificationPreferences';
-import { TelegramMetrics } from '@/lib/analytics/telegram-metrics';
-import { EventTypeCard } from './EventTypeCard';
-import { LanguageRadio } from './LanguageRadio';
-import type { NotificationPreferencesResponseDto } from '@/types/notifications';
+import { useState, useEffect, useRef } from 'react'
+import { toast } from 'sonner'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Alert } from '@/components/ui/alert'
+import { useNotificationPreferences } from '@/hooks/useNotificationPreferences'
+import { TelegramMetrics } from '@/lib/analytics/telegram-metrics'
+import { EventTypeCard } from './EventTypeCard'
+import { LanguageRadio } from './LanguageRadio'
+import type { NotificationPreferencesResponseDto } from '@/types/notifications'
 
 /**
  * Props for NotificationPreferencesPanel component
  * Story 34.3-FE: Main preferences panel
  */
 interface NotificationPreferencesPanelProps {
-  disabled?: boolean; // Disable when Telegram not bound
+  disabled?: boolean // Disable when Telegram not bound
 }
 
 /**
@@ -48,43 +48,39 @@ interface NotificationPreferencesPanelProps {
 export function NotificationPreferencesPanel({
   disabled = false,
 }: NotificationPreferencesPanelProps) {
-  const { preferences, updatePreferences, isUpdating } =
-    useNotificationPreferences();
+  const { preferences, updatePreferences, isUpdating } = useNotificationPreferences()
 
   // Local state for form (AC5: Manual save strategy)
   const [localPreferences, setLocalPreferences] =
-    useState<NotificationPreferencesResponseDto | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    useState<NotificationPreferencesResponseDto | null>(null)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   // Track previous values for analytics (to detect what changed)
-  const previousPreferencesRef = useRef<NotificationPreferencesResponseDto | null>(null);
+  const previousPreferencesRef = useRef<NotificationPreferencesResponseDto | null>(null)
 
   // Sync local state with fetched preferences
   useEffect(() => {
     if (preferences) {
-      setLocalPreferences(preferences);
-      setHasUnsavedChanges(false);
+      setLocalPreferences(preferences)
+      setHasUnsavedChanges(false)
       // Initialize previous ref for change detection
-      previousPreferencesRef.current = { ...preferences };
+      previousPreferencesRef.current = { ...preferences }
     }
-  }, [preferences]);
+  }, [preferences])
 
   // AC5: Dirty state detection (JSON comparison)
   useEffect(() => {
     if (preferences && localPreferences) {
-      const hasChanges =
-        JSON.stringify(localPreferences) !== JSON.stringify(preferences);
-      setHasUnsavedChanges(hasChanges);
+      const hasChanges = JSON.stringify(localPreferences) !== JSON.stringify(preferences)
+      setHasUnsavedChanges(hasChanges)
     }
-  }, [localPreferences, preferences]);
+  }, [localPreferences, preferences])
 
   // AC1: Event type toggle handler
-  const toggleEventType = (
-    eventType: keyof NotificationPreferencesResponseDto['preferences']
-  ) => {
-    if (!localPreferences) return;
+  const toggleEventType = (eventType: keyof NotificationPreferencesResponseDto['preferences']) => {
+    if (!localPreferences) return
 
-    const newValue = !localPreferences.preferences[eventType];
+    const newValue = !localPreferences.preferences[eventType]
 
     setLocalPreferences({
       ...localPreferences,
@@ -92,37 +88,37 @@ export function NotificationPreferencesPanel({
         ...localPreferences.preferences,
         [eventType]: newValue,
       },
-    });
+    })
 
     // Track event type toggle
-    TelegramMetrics.eventTypeToggled(eventType, newValue);
+    TelegramMetrics.eventTypeToggled(eventType, newValue)
 
     // Track daily digest enable
     if (eventType === 'daily_digest' && newValue) {
-      TelegramMetrics.dailyDigestEnabled();
+      TelegramMetrics.dailyDigestEnabled()
     }
-  };
+  }
 
   // AC3: Language change handler
   const changeLanguage = (lang: 'ru' | 'en') => {
-    if (!localPreferences) return;
+    if (!localPreferences) return
 
-    const previousLang = localPreferences.language;
+    const previousLang = localPreferences.language
 
     setLocalPreferences({
       ...localPreferences,
       language: lang,
-    });
+    })
 
     // Track language change
     if (previousLang !== lang) {
-      TelegramMetrics.languageChanged(previousLang, lang);
+      TelegramMetrics.languageChanged(previousLang, lang)
     }
-  };
+  }
 
   // AC4: Digest time change handler
   const changeDigestTime = (time: string) => {
-    if (!localPreferences) return;
+    if (!localPreferences) return
 
     setLocalPreferences({
       ...localPreferences,
@@ -130,90 +126,94 @@ export function NotificationPreferencesPanel({
         ...localPreferences.preferences,
         digest_time: time,
       },
-    });
-  };
+    })
+  }
 
   // AC5: Save handler (Manual save button)
   const handleSave = () => {
-    if (!localPreferences) return;
+    if (!localPreferences) return
 
     // Track what changed for analytics
     const changes: {
-      event_types?: NotificationPreferencesResponseDto['preferences'];
-      language?: string;
-      daily_digest?: boolean;
-      quiet_hours_enabled?: boolean;
-    } = {};
+      event_types?: NotificationPreferencesResponseDto['preferences']
+      language?: string
+      daily_digest?: boolean
+      quiet_hours_enabled?: boolean
+    } = {}
 
     if (previousPreferencesRef.current) {
-      const prev = previousPreferencesRef.current;
+      const prev = previousPreferencesRef.current
 
       // Check event types changes
       const eventTypesChanged = Object.keys(localPreferences.preferences).some(
-        (key) =>
+        key =>
           localPreferences.preferences[key as keyof typeof localPreferences.preferences] !==
           prev.preferences[key as keyof typeof prev.preferences]
-      );
+      )
 
       if (eventTypesChanged) {
-        changes.event_types = localPreferences.preferences;
+        changes.event_types = localPreferences.preferences
       }
 
       // Check language change
       if (localPreferences.language !== prev.language) {
-        changes.language = localPreferences.language;
+        changes.language = localPreferences.language
       }
 
       // Check daily digest change
       if (localPreferences.preferences.daily_digest !== prev.preferences.daily_digest) {
-        changes.daily_digest = localPreferences.preferences.daily_digest;
+        changes.daily_digest = localPreferences.preferences.daily_digest
       }
 
       // Check quiet hours change
       if (localPreferences.quiet_hours.enabled !== prev.quiet_hours.enabled) {
-        changes.quiet_hours_enabled = localPreferences.quiet_hours.enabled;
+        changes.quiet_hours_enabled = localPreferences.quiet_hours.enabled
       }
     }
 
     // Track preferences update
-    TelegramMetrics.preferencesUpdated(changes);
+    TelegramMetrics.preferencesUpdated(changes)
 
     // Update previous ref for next comparison
-    previousPreferencesRef.current = { ...localPreferences };
+    previousPreferencesRef.current = { ...localPreferences }
 
-    updatePreferences({
-      preferences: localPreferences.preferences,
-      language: localPreferences.language,
-      quiet_hours: localPreferences.quiet_hours,
-    });
-
-    // Toast messages will be shown after mutation completes
-    // Success toast
-    toast.success('Настройки сохранены', {
-      duration: 3000,
-    });
-  };
+    updatePreferences(
+      {
+        preferences: localPreferences.preferences,
+        language: localPreferences.language,
+        quiet_hours: localPreferences.quiet_hours,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Настройки сохранены', { duration: 3000 })
+        },
+        onError: () => {
+          toast.error('Не удалось сохранить настройки. Попробуйте ещё раз.')
+        },
+      }
+    )
+  }
 
   // AC5: Cancel handler (reset to last saved)
   const handleCancel = () => {
     if (preferences) {
-      setLocalPreferences(preferences);
-      setHasUnsavedChanges(false);
+      setLocalPreferences(preferences)
+      setHasUnsavedChanges(false)
     }
-  };
+  }
 
   // AC5: Navigation prevention when unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = '';
+        e.preventDefault()
+        e.returnValue = ''
       }
-    };
+    }
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [hasUnsavedChanges]);
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasUnsavedChanges])
 
   // Loading state
   if (!localPreferences) {
@@ -226,7 +226,7 @@ export function NotificationPreferencesPanel({
           <div className="h-24 bg-gray-100 rounded" />
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -278,7 +278,7 @@ export function NotificationPreferencesPanel({
                   <input
                     type="time"
                     value={localPreferences.preferences.digest_time}
-                    onChange={(e) => changeDigestTime(e.target.value)}
+                    onChange={e => changeDigestTime(e.target.value)}
                     className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-telegram-blue"
                     aria-label="Время отправки ежедневного дайджеста"
                   />
@@ -311,10 +311,7 @@ export function NotificationPreferencesPanel({
 
         {/* AC5: Unsaved Changes Warning */}
         {hasUnsavedChanges && (
-          <Alert
-            variant="default"
-            className="bg-orange-50 border-orange-500 text-orange-700"
-          >
+          <Alert variant="default" className="bg-orange-50 border-orange-500 text-orange-700">
             ⚠️ У вас есть несохранённые изменения
           </Alert>
         )}
@@ -352,5 +349,5 @@ export function NotificationPreferencesPanel({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

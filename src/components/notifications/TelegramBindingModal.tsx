@@ -3,22 +3,22 @@
 // Epic 34-FE: Story 34.2-FE
 // ============================================================================
 
-'use client';
+'use client'
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useTelegramBinding } from '@/hooks/useTelegramBinding';
-import { TelegramMetrics } from '@/lib/analytics/telegram-metrics';
-import { Loader2, Copy, Send } from 'lucide-react';
-import { toast } from 'sonner';
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTelegramBinding } from '@/hooks/useTelegramBinding'
+import { TelegramMetrics } from '@/lib/analytics/telegram-metrics'
+import { Loader2, Copy, Send } from 'lucide-react'
+import { toast } from 'sonner'
 
 // ============================================================================
 // Constants
@@ -28,24 +28,23 @@ import { toast } from 'sonner';
  * Binding code expiration time in seconds (10 minutes)
  * Must match backend TTL configuration
  */
-const BINDING_CODE_TTL_SECONDS = 600;
+const BINDING_CODE_TTL_SECONDS = 600
 
 /**
  * Telegram bot username for binding instructions
  * Configured via NEXT_PUBLIC_TELEGRAM_BOT_USERNAME env var
  * Fallback to hardcoded bot for development
  */
-const TELEGRAM_BOT_USERNAME =
-  process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'Kernel_crypto_bot';
+const TELEGRAM_BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'Kernel_crypto_bot'
 
 // ============================================================================
 // Component Props
 // ============================================================================
 
 interface TelegramBindingModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSuccess: () => void
 }
 
 // ============================================================================
@@ -64,30 +63,42 @@ interface TelegramBindingModalProps {
  *
  * @see docs/stories/epic-34/story-34.2-fe-telegram-binding-flow.md
  */
-export function TelegramBindingModal({
-  open,
-  onOpenChange,
-  onSuccess,
-}: TelegramBindingModalProps) {
+export function TelegramBindingModal({ open, onOpenChange, onSuccess }: TelegramBindingModalProps) {
   // ============================================================================
   // State
   // ============================================================================
 
-  const [bindingCode, setBindingCode] = useState<string | null>(null);
-  const [deepLink, setDeepLink] = useState<string | null>(null);
-  const [expiresAt, setExpiresAt] = useState<string | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState(BINDING_CODE_TTL_SECONDS);
+  const [bindingCode, setBindingCode] = useState<string | null>(null)
+  const [deepLink, setDeepLink] = useState<string | null>(null)
+  const [expiresAt, setExpiresAt] = useState<string | null>(null)
+  const [timeRemaining, setTimeRemaining] = useState(BINDING_CODE_TTL_SECONDS)
 
-  const { startBinding, isBound, isStartingBinding } = useTelegramBinding();
+  const { startBinding, isBound, isStartingBinding } = useTelegramBinding()
 
   // ============================================================================
   // Analytics Tracking Refs
   // ============================================================================
 
-  const bindingStartTimeRef = useRef<number | null>(null);
-  const modalOpenTimeRef = useRef<number | null>(null);
-  const bindingExpiredTrackedRef = useRef(false);
-  const previousIsBoundRef = useRef(false); // Track previous bound state
+  const bindingStartTimeRef = useRef<number | null>(null)
+  const modalOpenTimeRef = useRef<number | null>(null)
+  const bindingExpiredTrackedRef = useRef(false)
+  const previousIsBoundRef = useRef(false) // Track previous bound state
+
+  // ============================================================================
+  // Reset State on Modal Close
+  // ============================================================================
+
+  useEffect(() => {
+    if (!open) {
+      setBindingCode(null)
+      setDeepLink(null)
+      setExpiresAt(null)
+      setTimeRemaining(BINDING_CODE_TTL_SECONDS)
+      bindingExpiredTrackedRef.current = false
+      modalOpenTimeRef.current = null
+      bindingStartTimeRef.current = null
+    }
+  }, [open])
 
   // ============================================================================
   // Start Binding on Modal Open
@@ -96,55 +107,51 @@ export function TelegramBindingModal({
   useEffect(() => {
     if (open && !bindingCode) {
       // Track modal opened and binding flow started
-      modalOpenTimeRef.current = Date.now();
-      bindingStartTimeRef.current = Date.now();
-      TelegramMetrics.bindingStarted();
+      modalOpenTimeRef.current = Date.now()
+      bindingStartTimeRef.current = Date.now()
+      TelegramMetrics.bindingStarted()
 
       startBinding(undefined, {
-        onSuccess: (data) => {
-          setBindingCode(data.binding_code);
-          setDeepLink(data.deep_link);
-          setExpiresAt(data.expires_at);
+        onSuccess: data => {
+          setBindingCode(data.binding_code)
+          setDeepLink(data.deep_link)
+          setExpiresAt(data.expires_at)
         },
-        onError: (error) => {
-          toast.error('Не удалось создать код привязки. Попробуйте ещё раз.');
-          console.error('Binding start error:', error);
+        onError: error => {
+          toast.error('Не удалось создать код привязки. Попробуйте ещё раз.')
+          console.error('Binding start error:', error)
 
           // Track binding failed
-          TelegramMetrics.bindingFailed(
-            error instanceof Error ? error.message : 'Unknown error'
-          );
+          TelegramMetrics.bindingFailed(error instanceof Error ? error.message : 'Unknown error')
         },
-      });
+      })
     }
-  }, [open, bindingCode, startBinding]);
+  }, [open, bindingCode, startBinding])
 
   // ============================================================================
   // Countdown Timer
   // ============================================================================
 
   useEffect(() => {
-    if (!expiresAt) return;
+    if (!expiresAt) return
 
     const interval = setInterval(() => {
-      const remaining = Math.floor(
-        (new Date(expiresAt).getTime() - Date.now()) / 1000
-      );
-      setTimeRemaining(Math.max(0, remaining));
+      const remaining = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
+      setTimeRemaining(Math.max(0, remaining))
 
       if (remaining <= 0) {
-        clearInterval(interval);
+        clearInterval(interval)
 
         // Track binding expired (only once)
         if (!bindingExpiredTrackedRef.current) {
-          TelegramMetrics.bindingExpired();
-          bindingExpiredTrackedRef.current = true;
+          TelegramMetrics.bindingExpired()
+          bindingExpiredTrackedRef.current = true
         }
       }
-    }, 1000);
+    }, 1000)
 
-    return () => clearInterval(interval);
-  }, [expiresAt]);
+    return () => clearInterval(interval)
+  }, [expiresAt])
 
   // ============================================================================
   // Success Handler
@@ -156,20 +163,20 @@ export function TelegramBindingModal({
     // 2. Binding code was generated (binding flow started in this session)
     // 3. Status changed from unbound to bound (prevents page reload toast)
     if (open && bindingCode && isBound && !previousIsBoundRef.current) {
-      toast.success('Telegram успешно подключен!');
+      toast.success('Telegram успешно подключен!')
 
       // Track binding completion with duration
       if (bindingStartTimeRef.current) {
-        const durationSeconds = (Date.now() - bindingStartTimeRef.current) / 1000;
-        TelegramMetrics.bindingCompleted(durationSeconds);
+        const durationSeconds = (Date.now() - bindingStartTimeRef.current) / 1000
+        TelegramMetrics.bindingCompleted(durationSeconds)
       }
 
-      onSuccess();
+      onSuccess()
     }
 
     // Update previous state
-    previousIsBoundRef.current = isBound;
-  }, [open, bindingCode, isBound, onSuccess]);
+    previousIsBoundRef.current = isBound
+  }, [open, bindingCode, isBound, onSuccess])
 
   // ============================================================================
   // Modal Close Tracking (Cancellation)
@@ -178,66 +185,61 @@ export function TelegramBindingModal({
   useEffect(() => {
     // Track cancellation when modal closes without binding completion
     return () => {
-      if (
-        !isBound &&
-        bindingCode &&
-        modalOpenTimeRef.current &&
-        timeRemaining > 0
-      ) {
-        const elapsedSeconds = (Date.now() - modalOpenTimeRef.current) / 1000;
-        TelegramMetrics.bindingCancelled(elapsedSeconds);
+      if (!isBound && bindingCode && modalOpenTimeRef.current && timeRemaining > 0) {
+        const elapsedSeconds = (Date.now() - modalOpenTimeRef.current) / 1000
+        TelegramMetrics.bindingCancelled(elapsedSeconds)
       }
-    };
-  }, [isBound, bindingCode, timeRemaining]);
+    }
+  }, [isBound, bindingCode, timeRemaining])
 
   // ============================================================================
   // Polling Time Tracking
   // ============================================================================
 
-  const [pollingStartTime] = useState(() => Date.now());
-  const pollingDuration = Math.floor((Date.now() - pollingStartTime) / 1000);
+  const [pollingStartTime] = useState(() => Date.now())
+  const pollingDuration = Math.floor((Date.now() - pollingStartTime) / 1000)
 
   // ============================================================================
   // Helpers
   // ============================================================================
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
 
-  const progress = (timeRemaining / BINDING_CODE_TTL_SECONDS) * 100;
+  const progress = (timeRemaining / BINDING_CODE_TTL_SECONDS) * 100
 
   // Progress bar color based on time remaining
   const getProgressColor = () => {
-    if (timeRemaining > 120) return 'bg-[#0088CC]'; // Telegram Blue
-    if (timeRemaining > 30) return 'bg-orange-500'; // Warning Orange
-    return 'bg-red-500'; // Error Red
-  };
+    if (timeRemaining > 120) return 'bg-[#0088CC]' // Telegram Blue
+    if (timeRemaining > 30) return 'bg-orange-500' // Warning Orange
+    return 'bg-red-500' // Error Red
+  }
 
   // Dynamic polling message based on elapsed time
   const getPollingMessage = () => {
-    if (pollingDuration <= 5) return 'Ожидаем подтверждения...';
-    if (pollingDuration <= 60) return 'Всё ещё ожидаем... Проверьте Telegram.';
-    return 'Подтверждение занимает дольше обычного. Убедитесь, что вы отправили команду боту.';
-  };
+    if (pollingDuration <= 5) return 'Ожидаем подтверждения...'
+    if (pollingDuration <= 60) return 'Всё ещё ожидаем... Проверьте Telegram.'
+    return 'Подтверждение занимает дольше обычного. Убедитесь, что вы отправили команду боту.'
+  }
 
   const handleCopyCode = async () => {
-    if (!bindingCode) return;
+    if (!bindingCode) return
 
     try {
-      await navigator.clipboard.writeText(`/start ${bindingCode}`);
-      toast.success('Команда скопирована!');
+      await navigator.clipboard.writeText(`/start ${bindingCode}`)
+      toast.success('Команда скопирована!')
     } catch (error) {
-      toast.error('Не удалось скопировать');
+      toast.error('Не удалось скопировать')
     }
-  };
+  }
 
   const handleOpenTelegram = () => {
-    if (!deepLink) return;
-    window.open(deepLink, '_blank', 'noopener,noreferrer');
-  };
+    if (!deepLink) return
+    window.open(deepLink, '_blank', 'noopener,noreferrer')
+  }
 
   // ============================================================================
   // Render
@@ -247,9 +249,7 @@ export function TelegramBindingModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[540px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold">
-            Подключение Telegram
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">Подключение Telegram</DialogTitle>
           <DialogDescription>
             Подключите Telegram для получения уведомлений о задачах
           </DialogDescription>
@@ -268,18 +268,14 @@ export function TelegramBindingModal({
             <>
               {/* Step 1: Instructions */}
               <div>
-                <h4 className="text-base font-medium mb-2">
-                  Шаг 1: Откройте бот в Telegram
-                </h4>
+                <h4 className="text-base font-medium mb-2">Шаг 1: Откройте бот в Telegram</h4>
                 <p className="text-sm text-muted-foreground mb-4">
                   Отправьте боту @{TELEGRAM_BOT_USERNAME}:
                 </p>
 
                 {/* Verification Code */}
                 <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-lg">
-                  <code className="flex-1 font-mono text-lg select-all">
-                    /start {bindingCode}
-                  </code>
+                  <code className="flex-1 font-mono text-lg select-all">/start {bindingCode}</code>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -315,9 +311,7 @@ export function TelegramBindingModal({
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
                     Код действителен ещё:{' '}
-                    <strong className="font-semibold">
-                      {formatTime(timeRemaining)}
-                    </strong>
+                    <strong className="font-semibold">{formatTime(timeRemaining)}</strong>
                   </p>
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div
@@ -358,5 +352,5 @@ export function TelegramBindingModal({
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
