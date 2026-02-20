@@ -13,11 +13,27 @@
 
 import { FinanceSummary } from '@/hooks/useDashboard'
 import { calculateChange } from '@/hooks/useFinancialSummary'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
-import { TrendingUp, TrendingDown, Minus, Package, AlertTriangle, Gem, ArrowDown, HelpCircle } from 'lucide-react'
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Package,
+  AlertTriangle,
+  Gem,
+  ArrowDown,
+  HelpCircle,
+} from 'lucide-react'
 
 /**
  * Словарь пояснений для каждого показателя
@@ -25,42 +41,61 @@ import { TrendingUp, TrendingDown, Minus, Package, AlertTriangle, Gem, ArrowDown
  */
 const METRIC_EXPLANATIONS: Record<string, string> = {
   // Доходы
-  'Продажи (gross)': 'Сумма, которую оплатили покупатели за товары. Это цена товара со скидкой WB (retail_price_with_discount). Включает продажи по основному отчёту и по выкупам (ЕАЭС).',
-  'Возвраты (gross)': 'Сумма возвращённых товаров по той же цене, что и при продаже. Уменьшает итоговую выручку.',
-  'Чистые продажи (NET)': 'Продажи минус возвраты. Это ваш реальный оборот за период, база для расчёта % расходов.',
-  'К перечислению за товар': 'Сумма к перечислению за товары ДО вычета операционных расходов (логистика, хранение и т.д.). Уже за вычетом комиссии WB.',
-  'Выручка доставки продавца (DBS)': 'Доход от платной доставки DBS/EDBS, когда покупатель оплачивает доставку отдельно. Входит в payout_total.',
+  'Продажи (gross)':
+    'Сумма, которую оплатили покупатели за товары. Это цена товара со скидкой WB (retail_price_with_discount). Включает продажи по основному отчёту и по выкупам (ЕАЭС).',
+  'Возвраты (gross)':
+    'Сумма возвращённых товаров по той же цене, что и при продаже. Уменьшает итоговую выручку.',
+  'Продажи (розница)':
+    'Выручка минус возвраты. Розничная стоимость проданных товаров, база для расчёта % расходов.',
+  'К перечислению за товар':
+    'Сумма к перечислению за товары ДО вычета операционных расходов (логистика, хранение и т.д.). Уже за вычетом комиссии WB.',
+  'Выручка доставки продавца (DBS)':
+    'Доход от платной доставки DBS/EDBS, когда покупатель оплачивает доставку отдельно. Входит в payout_total.',
 
   // Расходы WB
-  'Комиссия WB (из оборота)': 'Торговая комиссия Wildberries = разница между ценой покупателя и суммой продавцу. Формула: retail_price_with_discount − gross. Включает КВВ (комиссию по ставке), эквайринг и прочие удержания.',
+  'Комиссия WB (из оборота)':
+    'Торговая комиссия Wildberries = разница между ценой покупателя и суммой продавцу. Формула: retail_price_with_discount − gross. Включает КВВ (комиссию по ставке), эквайринг и прочие удержания.',
 
   // Commission breakdown subcategories
-  'Эквайринг (из комиссии)': 'Комиссия за обработку платежей (банковские карты, SBP, QR-коды). Взимается с каждой транзакции, обычно 1-2% от суммы платежа. Это часть общей комиссии WB.',
-  'Прочие комиссии (КВВ + SPP)': 'Остаток комиссии после эквайринга. Включает: КВВ (комиссия по ставке категории, обычно 15-25%), компенсацию SPP-скидок (когда WB субсидирует скидку покупателю), участие в промо-акциях.',
-  'Удержания WB (из к перечислению)': 'Сумма всех операционных расходов, которые WB удерживает из "К перечислению за товар": логистика + хранение + приёмка + штрафы + сервисы + корректировки.',
-  'Логистика': 'Стоимость доставки товаров покупателям и возврата на склад. Складывается из logistics_delivery + logistics_return.',
-  'Хранение': 'Плата за хранение товаров на складах WB. Начисляется ежедневно по тарифам склада.',
+  'Эквайринг (из комиссии)':
+    'Комиссия за обработку платежей (банковские карты, SBP, QR-коды). Взимается с каждой транзакции, обычно 1-2% от суммы платежа. Это часть общей комиссии WB.',
+  'Прочие комиссии (КВВ + SPP)':
+    'Остаток комиссии после эквайринга. Включает: КВВ (комиссия по ставке категории, обычно 15-25%), компенсацию SPP-скидок (когда WB субсидирует скидку покупателю), участие в промо-акциях.',
+  'Удержания WB (из к перечислению)':
+    'Сумма всех операционных расходов, которые WB удерживает из "К перечислению за товар": логистика + хранение + приёмка + штрафы + сервисы + корректировки.',
+  Логистика:
+    'Стоимость доставки товаров покупателям и возврата на склад. Складывается из logistics_delivery + logistics_return.',
+  Хранение: 'Плата за хранение товаров на складах WB. Начисляется ежедневно по тарифам склада.',
   'Платная приёмка': 'Плата за приёмку товаров на склад WB. Зависит от способа поставки и объёма.',
-  'Штрафы': 'Штрафы за нарушения: некорректная маркировка, брак, нарушение условий договора.',
-  'Прочие удержания (WB сервисы)': 'Удержания за сервисы WB: WB.Продвижение (реклама), Джем (подписка), утилизация и другие.',
-  'WB.Продвижение': 'Расходы на рекламу через сервис WB.Продвижение. Оплата за показы и клики в карточках товаров.',
+  Штрафы: 'Штрафы за нарушения: некорректная маркировка, брак, нарушение условий договора.',
+  'Прочие удержания (WB сервисы)':
+    'Удержания за сервисы WB: WB.Продвижение (реклама), Джем (подписка), утилизация и другие.',
+  'WB.Продвижение':
+    'Расходы на рекламу через сервис WB.Продвижение. Оплата за показы и клики в карточках товаров.',
   'Подписка Джем': 'Ежемесячная подписка на сервис Джем для получения приоритетов в продвижении.',
   'Прочие сервисы WB': 'Другие удержания: утилизация, фото-услуги, консультации и прочее.',
-  'Корректировка ВВ': 'Дополнительные корректировки комиссии WB с reason="Удержание". Например, корректировки по акциям или ошибкам.',
+  'Корректировка ВВ':
+    'Дополнительные корректировки комиссии WB с reason="Удержание". Например, корректировки по акциям или ошибкам.',
   'Комиссия лояльности': 'Комиссия за участие товаров в программе лояльности WB.',
   'Удержание баллов': 'Сумма, удержанная за начисленные покупателям баллы лояльности.',
 
   // Компенсации
-  'Компенсация лояльности': 'Компенсация от WB за скидки по программе лояльности. Это ДОХОД, увеличивает payout.',
+  'Компенсация лояльности':
+    'Компенсация от WB за скидки по программе лояльности. Это ДОХОД, увеличивает payout.',
 
   // Итого
-  'Итого к оплате': 'Финальная сумма к перечислению продавцу. Формула: К_перечислению_за_товар − Логистика − Хранение − Приёмка − Штрафы − Прочие_удержания − Корр.ВВ.',
+  'Итого к оплате':
+    'Финальная сумма к перечислению продавцу. Формула: К_перечислению_за_товар − Логистика − Хранение − Приёмка − Штрафы − Прочие_удержания − Корр.ВВ.',
 
   // COGS
-  'Себестоимость (COGS)': 'Cost of Goods Sold — закупочная стоимость проданных товаров. Вносится вручную для каждого артикула.',
-  'Покрытие COGS': 'Процент товаров, для которых указана себестоимость. При 100% можно рассчитать чистую прибыль.',
-  'Товаров с COGS': 'Количество артикулов с указанной себестоимостью / общее количество артикулов за период.',
-  'Чистая прибыль': 'Реальный заработок: Итого_к_оплате − Себестоимость. Показывается только при 100% покрытии COGS.',
+  'Себестоимость (COGS)':
+    'Cost of Goods Sold — закупочная стоимость проданных товаров. Вносится вручную для каждого артикула.',
+  'Покрытие COGS':
+    'Процент товаров, для которых указана себестоимость. При 100% можно рассчитать чистую прибыль.',
+  'Товаров с COGS':
+    'Количество артикулов с указанной себестоимостью / общее количество артикулов за период.',
+  'Чистая прибыль':
+    'Реальный заработок: Итого_к_оплате − Себестоимость. Показывается только при 100% покрытии COGS.',
 }
 
 /**
@@ -219,7 +254,11 @@ export function FinancialSummaryTable({
               : formatCurrency(comparisonValue)}
           </TableCell>
           <TableCell className="text-right">
-            <ChangeIndicator current={value} previous={comparisonValue} isNegativeMetric={isNegative} />
+            <ChangeIndicator
+              current={value}
+              previous={comparisonValue}
+              isNegativeMetric={isNegative}
+            />
           </TableCell>
         </>
       )}
@@ -253,31 +292,40 @@ export function FinancialSummaryTable({
               <MetricRow
                 label="Продажи (gross)"
                 value={summary.sales_gross_total ?? summary.sales_gross}
-                comparisonValue={comparisonSummary?.sales_gross_total ?? comparisonSummary?.sales_gross}
+                comparisonValue={
+                  comparisonSummary?.sales_gross_total ?? comparisonSummary?.sales_gross
+                }
               />
               <MetricRow
                 label="Возвраты (gross)"
                 value={summary.returns_gross_total ?? summary.returns_gross}
-                comparisonValue={comparisonSummary?.returns_gross_total ?? comparisonSummary?.returns_gross}
+                comparisonValue={
+                  comparisonSummary?.returns_gross_total ?? comparisonSummary?.returns_gross
+                }
                 isNegative
               />
               <MetricRow
-                label="Чистые продажи (NET)"
+                label="Продажи (розница)"
                 value={summary.sale_gross_total ?? summary.sale_gross}
-                comparisonValue={comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross}
+                comparisonValue={
+                  comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross
+                }
                 highlight
               />
               <MetricRow
                 label="К перечислению за товар"
                 value={summary.to_pay_goods_total ?? summary.to_pay_goods}
-                comparisonValue={comparisonSummary?.to_pay_goods_total ?? comparisonSummary?.to_pay_goods}
+                comparisonValue={
+                  comparisonSummary?.to_pay_goods_total ?? comparisonSummary?.to_pay_goods
+                }
                 highlight
               />
               <MetricRow
                 label="Выручка доставки продавца (DBS)"
                 value={summary.seller_delivery_revenue_total ?? summary.seller_delivery_revenue}
                 comparisonValue={
-                  comparisonSummary?.seller_delivery_revenue_total ?? comparisonSummary?.seller_delivery_revenue
+                  comparisonSummary?.seller_delivery_revenue_total ??
+                  comparisonSummary?.seller_delivery_revenue
                 }
               />
             </TableBody>
@@ -299,7 +347,8 @@ export function FinancialSummaryTable({
             <div className="space-y-4">
               {/* Level 1: Your Price */}
               {(() => {
-                const retailPrice = summary.retail_price_total_total ?? summary.retail_price_total ?? 0
+                const retailPrice =
+                  summary.retail_price_total_total ?? summary.retail_price_total ?? 0
                 const salesGross = summary.sales_gross_total ?? summary.sales_gross ?? 0
                 const saleGross = summary.sale_gross_total ?? summary.sale_gross ?? 0
                 const payoutTotal = summary.payout_total ?? 0
@@ -318,9 +367,14 @@ export function FinancialSummaryTable({
                 const wbDeductionsPct = saleGross > 0 ? (wbDeductions / saleGross) * 100 : 0
 
                 // Comparison values
-                const compRetailPrice = comparisonSummary?.retail_price_total_total ?? comparisonSummary?.retail_price_total ?? 0
-                const compSalesGross = comparisonSummary?.sales_gross_total ?? comparisonSummary?.sales_gross ?? 0
-                const compSaleGross = comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross ?? 0
+                const compRetailPrice =
+                  comparisonSummary?.retail_price_total_total ??
+                  comparisonSummary?.retail_price_total ??
+                  0
+                const compSalesGross =
+                  comparisonSummary?.sales_gross_total ?? comparisonSummary?.sales_gross ?? 0
+                const compSaleGross =
+                  comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross ?? 0
 
                 return (
                   <>
@@ -332,7 +386,9 @@ export function FinancialSummaryTable({
                           <div className="text-sm text-indigo-600">Цена до скидок WB</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xl font-bold text-indigo-900">{formatCurrency(retailPrice)}</div>
+                          <div className="text-xl font-bold text-indigo-900">
+                            {formatCurrency(retailPrice)}
+                          </div>
                           <div className="text-sm text-indigo-600">100%</div>
                         </div>
                       </div>
@@ -346,7 +402,10 @@ export function FinancialSummaryTable({
                     {/* WB Discount Arrow */}
                     <div className="flex items-center justify-center gap-2 text-orange-600">
                       <ArrowDown className="h-5 w-5" />
-                      <span className="text-sm">Скидка WB (СПП, акции): −{formatCurrency(wbDiscount)} ({wbDiscountPct.toFixed(1)}%)</span>
+                      <span className="text-sm">
+                        Скидка WB (СПП, акции): −{formatCurrency(wbDiscount)} (
+                        {wbDiscountPct.toFixed(1)}%)
+                      </span>
                     </div>
 
                     {/* Customer Paid */}
@@ -357,9 +416,12 @@ export function FinancialSummaryTable({
                           <div className="text-sm text-blue-600">После скидок WB</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xl font-bold text-blue-900">{formatCurrency(salesGross)}</div>
+                          <div className="text-xl font-bold text-blue-900">
+                            {formatCurrency(salesGross)}
+                          </div>
                           <div className="text-sm text-blue-600">
-                            {retailPrice > 0 ? ((salesGross / retailPrice) * 100).toFixed(0) : 0}% от вашей цены
+                            {retailPrice > 0 ? ((salesGross / retailPrice) * 100).toFixed(0) : 0}%
+                            от вашей цены
                           </div>
                         </div>
                       </div>
@@ -374,7 +436,9 @@ export function FinancialSummaryTable({
                     {returnsGross > 0 && (
                       <div className="flex items-center justify-center gap-2 text-red-600">
                         <ArrowDown className="h-5 w-5" />
-                        <span className="text-sm">Возвраты: −{formatCurrency(returnsGross)} ({returnsPct.toFixed(1)}%)</span>
+                        <span className="text-sm">
+                          Возвраты: −{formatCurrency(returnsGross)} ({returnsPct.toFixed(1)}%)
+                        </span>
                       </div>
                     )}
 
@@ -386,9 +450,12 @@ export function FinancialSummaryTable({
                           <div className="text-sm text-cyan-600">После возвратов</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xl font-bold text-cyan-900">{formatCurrency(saleGross)}</div>
+                          <div className="text-xl font-bold text-cyan-900">
+                            {formatCurrency(saleGross)}
+                          </div>
                           <div className="text-sm text-cyan-600">
-                            {retailPrice > 0 ? ((saleGross / retailPrice) * 100).toFixed(0) : 0}% от вашей цены
+                            {retailPrice > 0 ? ((saleGross / retailPrice) * 100).toFixed(0) : 0}% от
+                            вашей цены
                           </div>
                         </div>
                       </div>
@@ -402,7 +469,10 @@ export function FinancialSummaryTable({
                     {/* WB Deductions Arrow */}
                     <div className="flex items-center justify-center gap-2 text-gray-600">
                       <ArrowDown className="h-5 w-5" />
-                      <span className="text-sm">Удержания WB: −{formatCurrency(wbDeductions)} ({wbDeductionsPct.toFixed(1)}% от оборота)</span>
+                      <span className="text-sm">
+                        Удержания WB: −{formatCurrency(wbDeductions)} ({wbDeductionsPct.toFixed(1)}%
+                        от оборота)
+                      </span>
                     </div>
 
                     {/* Payout */}
@@ -413,9 +483,12 @@ export function FinancialSummaryTable({
                           <div className="text-sm text-green-600">К перечислению от WB</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xl font-bold text-green-900">{formatCurrency(payoutTotal)}</div>
+                          <div className="text-xl font-bold text-green-900">
+                            {formatCurrency(payoutTotal)}
+                          </div>
                           <div className="text-sm text-green-600">
-                            {retailPrice > 0 ? ((payoutTotal / retailPrice) * 100).toFixed(0) : 0}% от вашей цены
+                            {retailPrice > 0 ? ((payoutTotal / retailPrice) * 100).toFixed(0) : 0}%
+                            от вашей цены
                           </div>
                         </div>
                       </div>
@@ -431,7 +504,9 @@ export function FinancialSummaryTable({
                       <>
                         <div className="flex items-center justify-center gap-2 text-amber-600">
                           <ArrowDown className="h-5 w-5" />
-                          <span className="text-sm">Себестоимость (COGS): −{formatCurrency(summary.cogs_total ?? 0)}</span>
+                          <span className="text-sm">
+                            Себестоимость (COGS): −{formatCurrency(summary.cogs_total ?? 0)}
+                          </span>
                         </div>
 
                         <div className="p-4 bg-emerald-100 rounded-lg border-2 border-emerald-400">
@@ -441,17 +516,25 @@ export function FinancialSummaryTable({
                               <div className="text-sm text-emerald-600">Ваш реальный заработок</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-xl font-bold text-emerald-900">{formatCurrency(grossProfit)}</div>
+                              <div className="text-xl font-bold text-emerald-900">
+                                {formatCurrency(grossProfit)}
+                              </div>
                               <div className="text-sm text-emerald-600">
-                                Маржа: {payoutTotal > 0 ? ((grossProfit / payoutTotal) * 100).toFixed(1) : 0}%
+                                Маржа:{' '}
+                                {payoutTotal > 0
+                                  ? ((grossProfit / payoutTotal) * 100).toFixed(1)
+                                  : 0}
+                                %
                               </div>
                             </div>
                           </div>
-                          {isComparison && comparisonSummary?.gross_profit !== null && comparisonSummary?.gross_profit !== undefined && (
-                            <div className="mt-2 text-sm text-emerald-600">
-                              Сравнение: {formatCurrency(comparisonSummary.gross_profit)}
-                            </div>
-                          )}
+                          {isComparison &&
+                            comparisonSummary?.gross_profit !== null &&
+                            comparisonSummary?.gross_profit !== undefined && (
+                              <div className="mt-2 text-sm text-emerald-600">
+                                Сравнение: {formatCurrency(comparisonSummary.gross_profit)}
+                              </div>
+                            )}
                         </div>
                       </>
                     )}
@@ -468,64 +551,112 @@ export function FinancialSummaryTable({
       <Card>
         <CardHeader>
           <CardTitle>💸 Расходы WB</CardTitle>
-          <CardDescription>Все удержания Wildberries (комиссии + операционные расходы)</CardDescription>
+          <CardDescription>
+            Все удержания Wildberries (комиссии + операционные расходы)
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {(() => {
             // Calculate values for expense breakdown
             const saleGross = summary.sale_gross_total ?? summary.sale_gross ?? 0
-            const compSaleGross = comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross ?? 0
+            const compSaleGross =
+              comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross ?? 0
 
             // WB Commission (implicit: retail_price_with_discount - gross)
-            const commission = summary.total_commission_rub_total ?? summary.total_commission_rub ?? 0
-            const compCommission = comparisonSummary?.total_commission_rub_total ?? comparisonSummary?.total_commission_rub ?? 0
+            const commission =
+              summary.total_commission_rub_total ?? summary.total_commission_rub ?? 0
+            const compCommission =
+              comparisonSummary?.total_commission_rub_total ??
+              comparisonSummary?.total_commission_rub ??
+              0
 
             // Operational deductions
             const logistics = summary.logistics_cost_total ?? summary.logistics_cost ?? 0
-            const compLogistics = comparisonSummary?.logistics_cost_total ?? comparisonSummary?.logistics_cost ?? 0
+            const compLogistics =
+              comparisonSummary?.logistics_cost_total ?? comparisonSummary?.logistics_cost ?? 0
 
             const storage = summary.storage_cost_total ?? summary.storage_cost ?? 0
-            const compStorage = comparisonSummary?.storage_cost_total ?? comparisonSummary?.storage_cost ?? 0
+            const compStorage =
+              comparisonSummary?.storage_cost_total ?? comparisonSummary?.storage_cost ?? 0
 
-            const paidAcceptance = summary.paid_acceptance_cost_total ?? summary.paid_acceptance_cost ?? 0
-            const compPaidAcceptance = comparisonSummary?.paid_acceptance_cost_total ?? comparisonSummary?.paid_acceptance_cost ?? 0
+            const paidAcceptance =
+              summary.paid_acceptance_cost_total ?? summary.paid_acceptance_cost ?? 0
+            const compPaidAcceptance =
+              comparisonSummary?.paid_acceptance_cost_total ??
+              comparisonSummary?.paid_acceptance_cost ??
+              0
 
             const penalties = summary.penalties_total ?? 0
             const compPenalties = comparisonSummary?.penalties_total ?? 0
 
             // WB Services breakdown (inside other_adjustments_net)
-            const otherAdjustments = summary.other_adjustments_net_total ?? summary.other_adjustments_net ?? 0
-            const compOtherAdjustments = comparisonSummary?.other_adjustments_net_total ?? comparisonSummary?.other_adjustments_net ?? 0
+            const otherAdjustments =
+              summary.other_adjustments_net_total ?? summary.other_adjustments_net ?? 0
+            const compOtherAdjustments =
+              comparisonSummary?.other_adjustments_net_total ??
+              comparisonSummary?.other_adjustments_net ??
+              0
 
             // WB Services sub-items (Request #56)
             const wbPromotion = summary.wb_promotion_cost_total ?? summary.wb_promotion_cost ?? 0
-            const compWbPromotion = comparisonSummary?.wb_promotion_cost_total ?? comparisonSummary?.wb_promotion_cost ?? 0
+            const compWbPromotion =
+              comparisonSummary?.wb_promotion_cost_total ??
+              comparisonSummary?.wb_promotion_cost ??
+              0
 
             const wbJam = summary.wb_jam_cost_total ?? summary.wb_jam_cost ?? 0
-            const compWbJam = comparisonSummary?.wb_jam_cost_total ?? comparisonSummary?.wb_jam_cost ?? 0
+            const compWbJam =
+              comparisonSummary?.wb_jam_cost_total ?? comparisonSummary?.wb_jam_cost ?? 0
 
-            const wbOtherServices = summary.wb_other_services_cost_total ?? summary.wb_other_services_cost ?? 0
-            const compWbOtherServices = comparisonSummary?.wb_other_services_cost_total ?? comparisonSummary?.wb_other_services_cost ?? 0
+            const wbOtherServices =
+              summary.wb_other_services_cost_total ?? summary.wb_other_services_cost ?? 0
+            const compWbOtherServices =
+              comparisonSummary?.wb_other_services_cost_total ??
+              comparisonSummary?.wb_other_services_cost ??
+              0
 
             // Корректировка ВВ (Request #51)
-            const wbCommissionAdj = summary.wb_commission_adj_total ?? summary.wb_commission_adj ?? 0
-            const compWbCommissionAdj = comparisonSummary?.wb_commission_adj_total ?? comparisonSummary?.wb_commission_adj ?? 0
+            const wbCommissionAdj =
+              summary.wb_commission_adj_total ?? summary.wb_commission_adj ?? 0
+            const compWbCommissionAdj =
+              comparisonSummary?.wb_commission_adj_total ??
+              comparisonSummary?.wb_commission_adj ??
+              0
 
             // Loyalty fees (separate from commission)
             const loyaltyFee = summary.loyalty_fee_total ?? summary.loyalty_fee ?? 0
-            const compLoyaltyFee = comparisonSummary?.loyalty_fee_total ?? comparisonSummary?.loyalty_fee ?? 0
+            const compLoyaltyFee =
+              comparisonSummary?.loyalty_fee_total ?? comparisonSummary?.loyalty_fee ?? 0
 
-            const loyaltyPointsWithheld = summary.loyalty_points_withheld_total ?? summary.loyalty_points_withheld ?? 0
-            const compLoyaltyPointsWithheld = comparisonSummary?.loyalty_points_withheld_total ?? comparisonSummary?.loyalty_points_withheld ?? 0
+            const loyaltyPointsWithheld =
+              summary.loyalty_points_withheld_total ?? summary.loyalty_points_withheld ?? 0
+            const compLoyaltyPointsWithheld =
+              comparisonSummary?.loyalty_points_withheld_total ??
+              comparisonSummary?.loyalty_points_withheld ??
+              0
 
             // Total operational deductions (without commission - shown separately)
             // Note: Commission is deducted from GROSS to get to_pay_goods
             // Operational deductions are deducted from to_pay_goods to get payout
             // These are different "levels" of the funnel - cannot be summed!
-            const totalDeductions = logistics + storage + paidAcceptance + penalties +
-                                   otherAdjustments + wbCommissionAdj + loyaltyFee + loyaltyPointsWithheld
-            const compTotalDeductions = compLogistics + compStorage + compPaidAcceptance + compPenalties +
-                                       compOtherAdjustments + compWbCommissionAdj + compLoyaltyFee + compLoyaltyPointsWithheld
+            const totalDeductions =
+              logistics +
+              storage +
+              paidAcceptance +
+              penalties +
+              otherAdjustments +
+              wbCommissionAdj +
+              loyaltyFee +
+              loyaltyPointsWithheld
+            const compTotalDeductions =
+              compLogistics +
+              compStorage +
+              compPaidAcceptance +
+              compPenalties +
+              compOtherAdjustments +
+              compWbCommissionAdj +
+              compLoyaltyFee +
+              compLoyaltyPointsWithheld
 
             // Helper to calculate % of turnover
             const pctOfTurnover = (value: number, base: number) =>
@@ -551,16 +682,22 @@ export function FinancialSummaryTable({
               bold?: boolean
               highlight?: boolean
             }) => (
-              <TableRow className={highlight ? 'bg-amber-50 font-semibold' : bold ? 'font-semibold' : ''}>
+              <TableRow
+                className={highlight ? 'bg-amber-50 font-semibold' : bold ? 'font-semibold' : ''}
+              >
                 <TableCell className="font-medium" style={{ paddingLeft: `${16 + indent * 16}px` }}>
                   <LabelWithTooltip label={label} />
                 </TableCell>
                 <TableCell className="text-right">{formatCurrency(value)}</TableCell>
-                <TableCell className="text-right text-gray-500">{pctOfTurnover(value, base)}</TableCell>
+                <TableCell className="text-right text-gray-500">
+                  {pctOfTurnover(value, base)}
+                </TableCell>
                 {isComparison && (
                   <>
                     <TableCell className="text-right">{formatCurrency(compValue)}</TableCell>
-                    <TableCell className="text-right text-gray-500">{pctOfTurnover(compValue, compBase)}</TableCell>
+                    <TableCell className="text-right text-gray-500">
+                      {pctOfTurnover(compValue, compBase)}
+                    </TableCell>
                     <TableCell className="text-right">
                       <ChangeIndicator current={value} previous={compValue} isNegativeMetric />
                     </TableCell>
@@ -599,7 +736,10 @@ export function FinancialSummaryTable({
                   {/* Commission breakdown: Эквайринг + Прочие (КВВ + SPP) */}
                   {(() => {
                     const acquiring = summary.acquiring_fee_total ?? summary.acquiring_fee ?? 0
-                    const compAcquiring = comparisonSummary?.acquiring_fee_total ?? comparisonSummary?.acquiring_fee ?? 0
+                    const compAcquiring =
+                      comparisonSummary?.acquiring_fee_total ??
+                      comparisonSummary?.acquiring_fee ??
+                      0
                     // Прочие = Total Commission - Acquiring (includes КВВ, SPP subsidies, promo)
                     const otherCommission = commission - acquiring
                     const compOtherCommission = compCommission - compAcquiring
@@ -773,7 +913,7 @@ export function FinancialSummaryTable({
 
       {/* Compensations Section - only positive adjustments (income side) */}
       {/* Note: wb_commission_adj and other_adjustments_net moved to Expenses section above */}
-      {((summary.loyalty_compensation_total ?? summary.loyalty_compensation ?? 0) > 0) && (
+      {(summary.loyalty_compensation_total ?? summary.loyalty_compensation ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Компенсации</CardTitle>
@@ -798,7 +938,8 @@ export function FinancialSummaryTable({
                   label="Компенсация лояльности"
                   value={summary.loyalty_compensation_total ?? summary.loyalty_compensation}
                   comparisonValue={
-                    comparisonSummary?.loyalty_compensation_total ?? comparisonSummary?.loyalty_compensation
+                    comparisonSummary?.loyalty_compensation_total ??
+                    comparisonSummary?.loyalty_compensation
                   }
                 />
               </TableBody>
@@ -855,8 +996,8 @@ export function FinancialSummaryTable({
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Нет данных о себестоимости за этот период. Назначьте себестоимости товарам для расчёта
-                маржи.
+                Нет данных о себестоимости за этот период. Назначьте себестоимости товарам для
+                расчёта маржи.
               </AlertDescription>
             </Alert>
           ) : (
@@ -912,7 +1053,9 @@ export function FinancialSummaryTable({
                               {summary.cogs_coverage_pct > comparisonSummary.cogs_coverage_pct
                                 ? '+'
                                 : ''}
-                              {(summary.cogs_coverage_pct - comparisonSummary.cogs_coverage_pct).toFixed(1)}
+                              {(
+                                summary.cogs_coverage_pct - comparisonSummary.cogs_coverage_pct
+                              ).toFixed(1)}
                               pp
                             </span>
                           ) : (
@@ -959,8 +1102,8 @@ export function FinancialSummaryTable({
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
                       Внесите себестоимости для{' '}
-                      {(summary.products_total ?? 0) - (summary.products_with_cogs ?? 0)} товаров для
-                      расчёта чистой прибыли.
+                      {(summary.products_total ?? 0) - (summary.products_with_cogs ?? 0)} товаров
+                      для расчёта чистой прибыли.
                     </AlertDescription>
                   </Alert>
                 )}

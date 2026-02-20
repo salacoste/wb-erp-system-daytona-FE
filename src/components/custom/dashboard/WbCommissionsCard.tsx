@@ -4,6 +4,9 @@
  *
  * Aggregates 6 commission/fee fields from finance-summary.
  * Shows total + % от продаж. Red accent. Inverted comparison.
+ *
+ * Note: Renamed to "Удержания WB" (WB Deductions) as it includes
+ * not only commissions but also acquiring, loyalty fees, penalties, etc.
  */
 
 'use client'
@@ -63,8 +66,8 @@ export function WbCommissionsCard({
 
   return (
     <ExpenseMetricCard
-      title="Комиссии WB"
-      tooltip="Комиссия продаж, эквайринг, лояльность, штрафы, корректировки и сервисы WB."
+      title="Удержания WB"
+      tooltip="Все удержания WB: комиссия, эквайринг, лояльность, штрафы, корректировки, сервисы."
       icon={Receipt}
       valueColor="text-red-500"
       value={total}

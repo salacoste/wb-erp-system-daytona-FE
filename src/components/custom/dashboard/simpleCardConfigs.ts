@@ -42,12 +42,12 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
     {
       icon: TrendingUp,
       iconColor: 'text-green-500',
-      title: 'Выкупы, ₽',
+      title: 'Выручка',
       value: fmtRub(p.wbSalesGross),
       valueColor: 'text-green-600',
       current: p.wbSalesGross,
       previous: prev?.salesAmount,
-      tooltip: 'Сумма выкупленных товаров из еженедельного отчёта WB',
+      tooltip: 'Деньги продавца от выкупленных товаров (wb_sales_gross)',
     },
     {
       icon: Package,
@@ -76,12 +76,12 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
     {
       icon: TrendingUp,
       iconColor: 'text-green-500',
-      title: 'Чистые продажи',
+      title: 'Продажи (розница)',
       value: fmtRub(p.saleGross),
       valueColor: 'text-green-600',
       current: p.saleGross,
       previous: prev?.saleGross,
-      tooltip: 'Выкупы минус возвраты. Основа для расчёта P&L.',
+      tooltip: 'Выручка минус возвраты. Розничная стоимость проданных товаров.',
     },
   ]
 }

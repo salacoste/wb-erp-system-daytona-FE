@@ -5,9 +5,9 @@
  * Shows complete financial picture with clear formulas and explanations.
  *
  * STRUCTURE (WB Dashboard aligned):
- * 1. Выручка: Продажи (GMV) - Возвраты = Чистые продажи (100%)
+ * 1. Выручка: Продажи (GMV) - Возвраты = Продажи (розница) (100%)
  * 2. Удержания WB: Комиссия + Логистика + Хранение + Штрафы + Эквайринг + Лояльность - Компенсации
- * 3. К перечислению: Чистые продажи - Удержания WB
+ * 3. К перечислению: Продажи (розница) - Удержания WB
  * 4. Валовая прибыль: К перечислению - COGS (только при 100% покрытии)
  * 5. Ключевые метрики: ROI, Прибыль/ед, Продано единиц
  *
@@ -21,12 +21,7 @@
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { HelpCircle, TrendingUp, TrendingDown, AlertTriangle, Info, Calculator } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CabinetSummaryTotals, CabinetProductStats } from '@/types/analytics'
@@ -62,16 +57,16 @@ const formatPercent = (value: number | null | undefined): string => {
 interface PnLRowProps {
   label: string
   value: number | null | undefined
-  formula?: string           // Short formula explanation
+  formula?: string // Short formula explanation
   isSubtotal?: boolean
   isTotal?: boolean
   isNegative?: boolean
-  isPositive?: boolean       // For compensations (green, adds to payout)
+  isPositive?: boolean // For compensations (green, adds to payout)
   indent?: number
   tooltip?: string
   percentOfRevenue?: number | null
   highlight?: 'positive' | 'negative' | 'warning' | 'neutral'
-  showZero?: boolean         // Show row even if value is 0
+  showZero?: boolean // Show row even if value is 0
 }
 
 const PnLRow = ({
@@ -86,7 +81,7 @@ const PnLRow = ({
   tooltip,
   percentOfRevenue,
   highlight,
-  showZero = true
+  showZero = true,
 }: PnLRowProps) => {
   // Hide row if value is 0 or null and showZero is false
   if (!showZero && (value === null || value === undefined || value === 0)) {
@@ -101,7 +96,7 @@ const PnLRow = ({
     isSubtotal && 'bg-slate-50 font-semibold border-t border-slate-200',
     highlight === 'positive' && 'bg-green-50',
     highlight === 'negative' && 'bg-red-50',
-    highlight === 'warning' && 'bg-amber-50',
+    highlight === 'warning' && 'bg-amber-50'
   )
 
   const valueClasses = cn(
@@ -109,17 +104,19 @@ const PnLRow = ({
     isNegative && 'text-red-600',
     isPositive && 'text-green-600',
     highlight === 'positive' && 'text-green-700 font-bold',
-    highlight === 'negative' && 'text-red-700 font-bold',
+    highlight === 'negative' && 'text-red-700 font-bold'
   )
 
   return (
     <div className={rowClasses} style={{ paddingLeft: `${12 + indent * 20}px` }}>
       <div className="flex items-center gap-2 flex-1">
-        <span className={cn(
-          isTotal && 'text-slate-900',
-          isSubtotal && 'text-slate-700',
-          indent > 0 && !isSubtotal && !isTotal && 'text-slate-600'
-        )}>
+        <span
+          className={cn(
+            isTotal && 'text-slate-900',
+            isSubtotal && 'text-slate-700',
+            indent > 0 && !isSubtotal && !isTotal && 'text-slate-600'
+          )}
+        >
           {label}
         </span>
         {tooltip && (
@@ -133,9 +130,7 @@ const PnLRow = ({
               <p className="text-sm font-medium mb-1">{label}</p>
               <p className="text-xs text-muted-foreground">{tooltip}</p>
               {formula && (
-                <p className="text-xs mt-2 font-mono bg-slate-100 px-2 py-1 rounded">
-                  {formula}
-                </p>
+                <p className="text-xs mt-2 font-mono bg-slate-100 px-2 py-1 rounded">{formula}</p>
               )}
             </TooltipContent>
           </Tooltip>
@@ -143,14 +138,20 @@ const PnLRow = ({
       </div>
       <div className="flex items-center gap-2">
         {/* Always reserve space for percentage column to ensure vertical alignment */}
-        <span className={cn(
-          'text-xs w-14 text-right font-mono tabular-nums',
-          percentOfRevenue !== null && percentOfRevenue !== undefined
-            ? (isPositive ? 'text-green-600' : 'text-muted-foreground')
-            : 'invisible'
-        )}>
+        <span
+          className={cn(
+            'text-xs w-14 text-right font-mono tabular-nums',
+            percentOfRevenue !== null && percentOfRevenue !== undefined
+              ? isPositive
+                ? 'text-green-600'
+                : 'text-muted-foreground'
+              : 'invisible'
+          )}
+        >
           {percentOfRevenue !== null && percentOfRevenue !== undefined
-            ? (isPositive ? `−${Math.abs(percentOfRevenue).toFixed(1)}%` : formatPercent(percentOfRevenue))
+            ? isPositive
+              ? `−${Math.abs(percentOfRevenue).toFixed(1)}%`
+              : formatPercent(percentOfRevenue)
             : '\u00A0'}
         </span>
         <span className={cn('min-w-[130px] text-right', valueClasses)}>
@@ -166,7 +167,7 @@ const PnLRow = ({
 const SectionHeader = ({
   title,
   description,
-  formula
+  formula,
 }: {
   title: string
   description?: string
@@ -191,9 +192,7 @@ const SectionHeader = ({
         </Tooltip>
       )}
     </div>
-    {description && (
-      <p className="text-xs text-muted-foreground mt-1">{description}</p>
-    )}
+    {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
   </div>
 )
 
@@ -210,14 +209,10 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
     : null
 
   // Logistics percentage
-  const logisticsPct = data.logistics_cost
-    ? (data.logistics_cost / revenueBase) * 100
-    : null
+  const logisticsPct = data.logistics_cost ? (data.logistics_cost / revenueBase) * 100 : null
 
   // Storage percentage
-  const storagePct = data.storage_cost
-    ? (data.storage_cost / revenueBase) * 100
-    : null
+  const storagePct = data.storage_cost ? (data.storage_cost / revenueBase) * 100 : null
 
   // Paid acceptance percentage
   const acceptancePct = data.paid_acceptance_cost
@@ -225,19 +220,13 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
     : null
 
   // Penalties percentage
-  const penaltiesPct = data.penalties
-    ? (data.penalties / revenueBase) * 100
-    : null
+  const penaltiesPct = data.penalties ? (data.penalties / revenueBase) * 100 : null
 
   // Acquiring fee percentage
-  const acquiringPct = data.acquiring_fee
-    ? (data.acquiring_fee / revenueBase) * 100
-    : null
+  const acquiringPct = data.acquiring_fee ? (data.acquiring_fee / revenueBase) * 100 : null
 
   // Loyalty fee percentage
-  const loyaltyFeePct = data.loyalty_fee
-    ? (data.loyalty_fee / revenueBase) * 100
-    : null
+  const loyaltyFeePct = data.loyalty_fee ? (data.loyalty_fee / revenueBase) * 100 : null
 
   // Loyalty compensation percentage (positive = reduces deductions)
   const loyaltyCompensationPct = data.loyalty_compensation
@@ -268,32 +257,22 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
   // formula differences (toPayGoods ≠ sale_gross - commission). See payout-total.formula.ts.
 
   // Percentage calculations (relative to Net Sales = 100%)
-  const totalDeductionsPct = revenueBase > 0
-    ? (totalWBDeductions / revenueBase) * 100
-    : null
+  const totalDeductionsPct = revenueBase > 0 ? (totalWBDeductions / revenueBase) * 100 : null
 
-  const payoutPct = revenueBase > 0
-    ? (sellerPayout / revenueBase) * 100
-    : null
+  const payoutPct = revenueBase > 0 ? (sellerPayout / revenueBase) * 100 : null
 
   // COGS percentage of revenue
-  const cogsPct = data.cogs_total
-    ? (data.cogs_total / revenueBase) * 100
-    : null
+  const cogsPct = data.cogs_total ? (data.cogs_total / revenueBase) * 100 : null
 
   // Gross Profit = Payout - COGS (only when COGS coverage = 100%)
-  const grossProfit = hasCogs
-    ? sellerPayout - (data.cogs_total || 0)
-    : null
+  const grossProfit = hasCogs ? sellerPayout - (data.cogs_total || 0) : null
 
-  const grossMarginPct = grossProfit !== null && sellerPayout
-    ? (grossProfit / sellerPayout) * 100
-    : null
+  const grossMarginPct =
+    grossProfit !== null && sellerPayout ? (grossProfit / sellerPayout) * 100 : null
 
   // Profit margin relative to Net Sales (for comparison)
-  const profitToRevenuePct = grossProfit !== null && revenueBase
-    ? (grossProfit / revenueBase) * 100
-    : null
+  const profitToRevenuePct =
+    grossProfit !== null && revenueBase ? (grossProfit / revenueBase) * 100 : null
 
   return (
     <TooltipProvider>
@@ -311,36 +290,37 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                 <p className="font-bold mb-2">Как читать этот отчёт</p>
                 <div className="text-xs space-y-2">
                   <p>
-                    <strong>Водопадная структура:</strong> каждый блок показывает, куда уходят деньги
-                    от продаж покупателям до вашей чистой прибыли.
+                    <strong>Водопадная структура:</strong> каждый блок показывает, куда уходят
+                    деньги от продаж покупателям до вашей чистой прибыли.
                   </p>
                   <p>
                     <strong>Процент справа:</strong> доля от чистых продаж (Net Sales = 100%).
                     Помогает быстро оценить структуру затрат.
                   </p>
                   <p>
-                    <strong>Формулы:</strong> нажмите на иконку калькулятора для просмотра
-                    формулы расчёта каждого блока.
+                    <strong>Формулы:</strong> нажмите на иконку калькулятора для просмотра формулы
+                    расчёта каждого блока.
                   </p>
                 </div>
               </TooltipContent>
             </Tooltip>
           </CardTitle>
           <CardDescription>
-            Полная финансовая картина за выбранный период. Все суммы соответствуют данным WB Dashboard.
+            Полная финансовая картина за выбранный период. Все суммы соответствуют данным WB
+            Dashboard.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-8">
           {/* ══════════════════════════════════════════════════════════════════
               SECTION 1: ВЫРУЧКА (Revenue)
-              Formula: Продажи (GMV) - Возвраты = Чистые продажи
+              Formula: Продажи (GMV) - Возвраты = Продажи (розница)
               ══════════════════════════════════════════════════════════════════ */}
           <div>
             <SectionHeader
               title="1. Выручка"
               description="Сколько заплатили покупатели за ваши товары"
-              formula="Чистые продажи = GMV − Возвраты"
+              formula="Продажи (розница) = GMV − Возвраты"
             />
             <div className="space-y-1">
               <PnLRow
@@ -362,7 +342,7 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                 formula="SUM(retail_price_with_discount) WHERE doc_type='return'"
               />
               <PnLRow
-                label="Чистые продажи (Net Sales)"
+                label="Продажи (розница)"
                 value={data.sale_gross}
                 isSubtotal
                 tooltip="Итоговая выручка после возвратов.
@@ -525,9 +505,11 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                               Это внутренняя рекламная площадка Wildberries
                               для продвижения товаров в поиске и каталоге."
                       formula="Оказание услуг «WB Продвижение»"
-                      percentOfRevenue={data.wb_promotion_cost && revenueBase > 0
-                        ? (data.wb_promotion_cost / revenueBase) * 100
-                        : null}
+                      percentOfRevenue={
+                        data.wb_promotion_cost && revenueBase > 0
+                          ? (data.wb_promotion_cost / revenueBase) * 100
+                          : null
+                      }
                     />
                   )}
 
@@ -543,9 +525,11 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                               Включает аналитику, автоматизацию и инструменты
                               для управления продажами."
                       formula="Предоставление услуг по подписке «Джем»"
-                      percentOfRevenue={data.wb_jam_cost && revenueBase > 0
-                        ? (data.wb_jam_cost / revenueBase) * 100
-                        : null}
+                      percentOfRevenue={
+                        data.wb_jam_cost && revenueBase > 0
+                          ? (data.wb_jam_cost / revenueBase) * 100
+                          : null
+                      }
                     />
                   )}
 
@@ -561,9 +545,11 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                               - Утилизация товаров
                               - Другие сервисные комиссии"
                       formula="Утилизация + Другие сервисы"
-                      percentOfRevenue={data.wb_other_services_cost && revenueBase > 0
-                        ? (data.wb_other_services_cost / revenueBase) * 100
-                        : null}
+                      percentOfRevenue={
+                        data.wb_other_services_cost && revenueBase > 0
+                          ? (data.wb_other_services_cost / revenueBase) * 100
+                          : null
+                      }
                     />
                   )}
                 </>
@@ -604,7 +590,7 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
             <SectionHeader
               title="3. К перечислению продавцу"
               description="Сколько денег WB перечислит вам после всех удержаний"
-              formula="К перечислению = Чистые продажи − Удержания WB"
+              formula="К перечислению = Продажи (розница) − Удержания WB"
             />
             <div className="space-y-1">
               <PnLRow
@@ -625,8 +611,10 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
               <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground bg-blue-50 rounded-lg mt-2">
                 <Info className="h-4 w-4 text-blue-500" />
                 <span>
-                  WB удерживает <strong className="text-slate-700">{formatPercent(totalDeductionsPct)}</strong> от продаж.
-                  Вам остаётся <strong className="text-green-700">{formatPercent(payoutPct)}</strong>.
+                  WB удерживает{' '}
+                  <strong className="text-slate-700">{formatPercent(totalDeductionsPct)}</strong> от
+                  продаж. Вам остаётся{' '}
+                  <strong className="text-green-700">{formatPercent(payoutPct)}</strong>.
                 </span>
               </div>
             </div>
@@ -684,25 +672,35 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                   )}
                   <div className="flex-1">
                     <div className="text-sm text-muted-foreground">Валовая маржа от Payout:</div>
-                    <div className={cn(
-                      'text-xl font-bold',
-                      grossMarginPct && grossMarginPct >= 25 ? 'text-green-600' :
-                      grossMarginPct && grossMarginPct >= 15 ? 'text-amber-600' :
-                      'text-red-600'
-                    )}>
+                    <div
+                      className={cn(
+                        'text-xl font-bold',
+                        grossMarginPct && grossMarginPct >= 25
+                          ? 'text-green-600'
+                          : grossMarginPct && grossMarginPct >= 15
+                            ? 'text-amber-600'
+                            : 'text-red-600'
+                      )}
+                    >
                       {formatPercent(grossMarginPct)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className={cn(
-                      'text-sm px-3 py-1.5 rounded-full font-medium',
-                      grossMarginPct && grossMarginPct >= 25 ? 'bg-green-100 text-green-800' :
-                      grossMarginPct && grossMarginPct >= 15 ? 'bg-amber-100 text-amber-800' :
-                      'bg-red-100 text-red-800'
-                    )}>
-                      {grossMarginPct && grossMarginPct >= 25 ? 'Отлично (≥25%)' :
-                       grossMarginPct && grossMarginPct >= 15 ? 'Норма (15-25%)' :
-                       'Низкая (<15%)'}
+                    <span
+                      className={cn(
+                        'text-sm px-3 py-1.5 rounded-full font-medium',
+                        grossMarginPct && grossMarginPct >= 25
+                          ? 'bg-green-100 text-green-800'
+                          : grossMarginPct && grossMarginPct >= 15
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-red-100 text-red-800'
+                      )}
+                    >
+                      {grossMarginPct && grossMarginPct >= 25
+                        ? 'Отлично (≥25%)'
+                        : grossMarginPct && grossMarginPct >= 15
+                          ? 'Норма (15-25%)'
+                          : 'Низкая (<15%)'}
                     </span>
                   </div>
                 </div>
@@ -712,10 +710,12 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-amber-800">Требуется 100% покрытие себестоимости</p>
+                    <p className="font-semibold text-amber-800">
+                      Требуется 100% покрытие себестоимости
+                    </p>
                     <p className="text-sm text-amber-700 mt-1">
-                      Для расчёта валовой прибыли добавьте себестоимость для всех
-                      {' '}<strong>{products.without_cogs}</strong> товаров без COGS.
+                      Для расчёта валовой прибыли добавьте себестоимость для всех{' '}
+                      <strong>{products.without_cogs}</strong> товаров без COGS.
                     </p>
                     <div className="mt-3 flex items-center gap-2">
                       <div className="flex-1 h-2 bg-amber-200 rounded-full overflow-hidden">
@@ -797,9 +797,7 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                 <div className="text-2xl font-bold text-purple-700">
                   {data.qty.toLocaleString('ru-RU')}
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  Продано единиц
-                </div>
+                <div className="text-sm text-muted-foreground mt-1">Продано единиц</div>
               </div>
 
               {/* Dormant SKUs - only if > 0 */}
@@ -817,8 +815,7 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                       <TooltipContent className="max-w-xs">
                         <p className="font-medium">Товары без продаж</p>
                         <p className="text-xs mt-1">
-                          SKU, которые генерируют расходы на хранение,
-                          но не имеют продаж за период.
+                          SKU, которые генерируют расходы на хранение, но не имеют продаж за период.
                         </p>
                         <p className="text-xs mt-1 text-amber-600 font-medium">
                           Рекомендация: рассмотрите ликвидацию или продвижение.

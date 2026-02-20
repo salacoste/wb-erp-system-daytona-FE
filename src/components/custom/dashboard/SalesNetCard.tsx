@@ -3,7 +3,7 @@
  * Dashboard Restructuring: P&L Narrative
  *
  * Shows net sales (sale_gross = wb_sales_gross - wb_returns_gross).
- * Subtitle shows breakdown: Выкупы X ₽ — Возвраты Y ₽.
+ * Subtitle shows breakdown: Выручка X ₽ — Возвраты Y ₽.
  * Green accent. Source: finance-summary.
  */
 
@@ -81,7 +81,7 @@ export function SalesNetCard({
               </button>
             </TooltipTrigger>
             <TooltipContent size="md">
-              <p>Чистые продажи: выкупы минус возвраты. Основа для расчёта P&L.</p>
+              <p>Продажи (розница): выручка минус возвраты. Основа для расчёта P&L.</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -101,7 +101,7 @@ export function SalesNetCard({
         {wbSalesGross != null && wbReturnsGross != null && (
           <div className="mt-1">
             <span className="text-xs text-gray-400">
-              Выкупы {formatCurrency(wbSalesGross)} — Возвраты {formatCurrency(wbReturnsGross)}
+              Выручка {formatCurrency(wbSalesGross)} — Возвраты {formatCurrency(wbReturnsGross)}
             </span>
           </div>
         )}
