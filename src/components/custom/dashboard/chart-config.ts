@@ -29,7 +29,7 @@ export const CHART_COLORS = {
 export const METRIC_LABELS: Record<keyof typeof CHART_COLORS, string> = {
   orders: 'Заказы',
   ordersCogs: 'COGS заказов',
-  sales: 'Выручка',
+  sales: 'Выкупы',
   salesCogs: 'COGS выкупов',
   advertising: 'Реклама',
   logistics: 'Логистика',
