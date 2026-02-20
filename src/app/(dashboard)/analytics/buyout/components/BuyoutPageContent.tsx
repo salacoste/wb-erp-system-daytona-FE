@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
+import { useFulfillmentSummary } from '@/hooks/useFulfillment'
 import type { DateRange } from '@/types/date-range'
 import type { BuyoutSource } from '@/types/analytics-epics-68-71'
 import { BuyoutSummaryWidget } from './BuyoutSummaryWidget'
@@ -37,6 +38,10 @@ export function BuyoutPageContent() {
 
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
+
+  // Fulfillment summary for FBS return breakdown
+  const { data: fulfillmentData } = useFulfillmentSummary(apiFrom, apiTo)
+  const returnBreakdown = fulfillmentData?.summary?.fbs?.returnBreakdown ?? null
 
   return (
     <div className="space-y-6">
@@ -70,7 +75,12 @@ export function BuyoutPageContent() {
       </div>
 
       {/* Summary widget */}
-      <BuyoutSummaryWidget from={apiFrom} to={apiTo} source={source} />
+      <BuyoutSummaryWidget
+        from={apiFrom}
+        to={apiTo}
+        source={source}
+        returnBreakdown={returnBreakdown}
+      />
 
       {/* Per-SKU table */}
       <BuyoutTable from={apiFrom} to={apiTo} source={source} />

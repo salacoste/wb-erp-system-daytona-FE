@@ -1,38 +1,32 @@
 /**
  * Return Analytics API Client
  * Epic 71: Return reasons & per-SKU breakdown with anomaly detection
- * Reference: docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md
  *
- * IMPORTANT: Returns endpoints use cabinetId as QUERY PARAM, not X-Cabinet-Id header.
+ * Auth: X-Cabinet-Id header (auto-injected by apiClient)
  */
 
 import { apiClient } from '@/lib/api-client'
 import type {
-  ReturnReasonsParams,
   ReturnReasonsResponse,
-  ReturnsBySkuParams,
   BySkuReturnResponse,
+  ReturnsBySkuParams,
 } from '@/types/analytics-epics-68-71'
 
 /**
  * Aggregated return reasons by category (for pie chart)
  * GET /v1/analytics/returns/reasons
- * Auth: cabinetId in query params (NOT header)
  */
 export async function getReturnReasons(
-  params: ReturnReasonsParams
+  from?: string,
+  to?: string,
+  locale?: 'ru' | 'en'
 ): Promise<ReturnReasonsResponse> {
   const sp = new URLSearchParams()
-  sp.set('cabinetId', params.cabinetId)
-  if (params.from) sp.set('from', params.from)
-  if (params.to) sp.set('to', params.to)
-  if (params.locale) sp.set('locale', params.locale)
+  if (from) sp.set('from', from)
+  if (to) sp.set('to', to)
+  if (locale) sp.set('locale', locale)
 
-  console.info('[Returns] Fetching reasons:', {
-    from: params.from,
-    to: params.to,
-    locale: params.locale ?? 'ru',
-  })
+  console.info('[Returns] Fetching reasons:', { from, to, locale: locale ?? 'ru' })
 
   const response = await apiClient.get<ReturnReasonsResponse>(
     `/v1/analytics/returns/reasons?${sp.toString()}`,
@@ -50,11 +44,22 @@ export async function getReturnReasons(
 /**
  * Per-SKU return breakdown with anomaly flags (cursor pagination)
  * GET /v1/analytics/returns/reasons/by-sku
- * Auth: cabinetId in query params (NOT header)
+ *
+ * Handles both raw classification records (current backend) and
+ * pre-aggregated per-SKU data (future backend). Detects format
+ * by checking if first item has `returnCategory` (raw) or `totalReturns` (aggregated).
  */
-export async function getReturnsBySku(params: ReturnsBySkuParams): Promise<BySkuReturnResponse> {
+export async function getReturnsBySku(params: {
+  from?: string
+  to?: string
+  nmId?: number
+  anomalyOnly?: boolean
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+  limit?: number
+  cursor?: string
+}): Promise<BySkuReturnResponse> {
   const sp = new URLSearchParams()
-  sp.set('cabinetId', params.cabinetId)
   if (params.from) sp.set('from', params.from)
   if (params.to) sp.set('to', params.to)
   if (params.nmId != null) sp.set('nmId', String(params.nmId))
@@ -70,24 +75,66 @@ export async function getReturnsBySku(params: ReturnsBySkuParams): Promise<BySku
     anomalyOnly: params.anomalyOnly ?? false,
   })
 
-  const response = await apiClient.get<BySkuReturnResponse>(
-    `/v1/analytics/returns/reasons/by-sku?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
-
-  console.info('[Returns] by-sku response:', {
-    items: response.data?.length ?? 0,
-    anomalies: response.summary?.anomalyCount ?? 0,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw = await apiClient.get<any>(`/v1/analytics/returns/reasons/by-sku?${sp.toString()}`, {
+    skipDataUnwrap: true,
   })
 
-  return response
+  const items = raw.data ?? []
+  const isRaw = items.length > 0 && 'returnCategory' in items[0]
+
+  if (isRaw) {
+    const aggregated = aggregateRawRecords(items)
+    console.info('[Returns] by-sku (raw→aggregated):', {
+      rawRecords: items.length,
+      aggregatedSkus: aggregated.length,
+    })
+    return {
+      data: aggregated,
+      pagination: raw.pagination ?? { count: aggregated.length, hasMore: false },
+      summary: { totalSkus: aggregated.length, anomalyCount: 0 },
+    }
+  }
+
+  console.info('[Returns] by-sku (pre-aggregated):', {
+    items: items.length,
+    totalSkus: raw.summary?.totalSkus ?? 0,
+  })
+  return raw as BySkuReturnResponse
+}
+
+/** Aggregate raw classification records into per-SKU summary */
+function aggregateRawRecords(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  records: Array<{ nmId: number; returnCategory: string; [k: string]: any }>
+) {
+  const map = new Map<number, { cancel: number; refusal: number; receipt: number }>()
+  for (const r of records) {
+    const entry = map.get(r.nmId) ?? { cancel: 0, refusal: 0, receipt: 0 }
+    if (r.returnCategory === 'cancel_before_shipment') entry.cancel++
+    else if (r.returnCategory === 'refusal_at_pvz') entry.refusal++
+    else if (r.returnCategory === 'return_after_receipt') entry.receipt++
+    map.set(r.nmId, entry)
+  }
+  return Array.from(map.entries()).map(([nmId, counts]) => ({
+    nmId,
+    productName: '',
+    brand: '',
+    totalReturns: counts.cancel + counts.refusal + counts.receipt,
+    returnRate: 0,
+    cancelBeforeShipment: counts.cancel,
+    refusalAtPvz: counts.refusal,
+    returnAfterReceipt: counts.receipt,
+    anomalyFlag: false,
+  }))
 }
 
 // Query Keys Factory
 export const returnQueryKeys = {
   all: ['return-analytics'] as const,
-  reasons: (params: ReturnReasonsParams) => [...returnQueryKeys.all, 'reasons', params] as const,
-  bySku: (params: ReturnsBySkuParams) => [...returnQueryKeys.all, 'by-sku', params] as const,
+  reasons: (from?: string, to?: string) => [...returnQueryKeys.all, 'reasons', from, to] as const,
+  bySku: (params: Partial<ReturnsBySkuParams>) =>
+    [...returnQueryKeys.all, 'by-sku', params] as const,
 }
 
 // Cache: staleTime < backend TTL (5 min)

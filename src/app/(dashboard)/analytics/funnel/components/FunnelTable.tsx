@@ -28,6 +28,10 @@ interface FunnelTableProps {
 
 type SortField = NonNullable<FunnelParams['sort']>
 
+function ariaSort(field: SortField, currentSort: SortField, currentOrder: 'asc' | 'desc') {
+  return field === currentSort ? (`${currentOrder}ending` as const) : ('none' as const)
+}
+
 export function FunnelTable({ from, to }: FunnelTableProps) {
   const [sort, setSort] = useState<SortField>('openCardCount')
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
@@ -84,7 +88,7 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
             <TableRow>
               <TableHead className="w-20">nmId</TableHead>
               <TableHead>Артикул</TableHead>
-              <TableHead>
+              <TableHead aria-sort={ariaSort('openCardCount', sort, order)}>
                 <SortButton
                   active={sort === 'openCardCount'}
                   onClick={() => handleSort('openCardCount')}
@@ -93,7 +97,7 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
                 </SortButton>
               </TableHead>
               <TableHead>Корзина</TableHead>
-              <TableHead>
+              <TableHead aria-sort={ariaSort('ordersCount', sort, order)}>
                 <SortButton
                   active={sort === 'ordersCount'}
                   onClick={() => handleSort('ordersCount')}
@@ -101,7 +105,7 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
                   Заказы
                 </SortButton>
               </TableHead>
-              <TableHead>
+              <TableHead aria-sort={ariaSort('buyoutCount', sort, order)}>
                 <SortButton
                   active={sort === 'buyoutCount'}
                   onClick={() => handleSort('buyoutCount')}
@@ -109,7 +113,7 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
                   Выкупы
                 </SortButton>
               </TableHead>
-              <TableHead>
+              <TableHead aria-sort={ariaSort('totalConversion', sort, order)}>
                 <SortButton
                   active={sort === 'totalConversion'}
                   onClick={() => handleSort('totalConversion')}
@@ -117,7 +121,7 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
                   Конверсия
                 </SortButton>
               </TableHead>
-              <TableHead>
+              <TableHead aria-sort={ariaSort('cancelRate', sort, order)}>
                 <SortButton active={sort === 'cancelRate'} onClick={() => handleSort('cancelRate')}>
                   Отмены
                 </SortButton>

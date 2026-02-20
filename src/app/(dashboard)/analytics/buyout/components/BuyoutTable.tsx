@@ -1,12 +1,14 @@
 /**
  * Buyout Per-SKU Table
  * Epic 69: Table with confidence badges, trend arrows, sorting
+ * Includes return reason columns from Epic 71 data
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useBuyoutBySku } from '@/hooks/use-buyout-analytics'
+import { useProducts } from '@/hooks/useProducts'
 import {
   Table,
   TableBody,
@@ -32,7 +34,17 @@ interface BuyoutTableProps {
   source: BuyoutSource
 }
 
+interface ProductInfo {
+  saName: string
+  brand: string
+  vendorCode: string
+}
+
 type SortField = NonNullable<BuyoutBySkuParams['sort']>
+
+function ariaSort(field: SortField, currentSort: SortField, order: 'asc' | 'desc') {
+  return field === currentSort ? (`${order}ending` as const) : ('none' as const)
+}
 
 export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
   const [sort, setSort] = useState<SortField>('buyoutRate')
@@ -47,6 +59,22 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
     limit,
     offset,
   })
+
+  // Fetch products for name/brand/vendor_code enrichment
+  const { data: productsData } = useProducts({ limit: 200 })
+
+  // Build nmId -> product info lookup map
+  const productsMap = useMemo(() => {
+    const map = new Map<number, ProductInfo>()
+    for (const p of productsData?.products ?? []) {
+      map.set(Number(p.nm_id), {
+        saName: p.sa_name ?? '',
+        brand: p.brand ?? '',
+        vendorCode: p.vendor_code ?? '',
+      })
+    }
+    return map
+  }, [productsData])
 
   const handleSort = (field: SortField) => {
     if (sort === field) {
@@ -83,25 +111,35 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-20">nmId</TableHead>
+              <TableHead>Артикул</TableHead>
               <TableHead>Товар</TableHead>
               <TableHead>Бренд</TableHead>
-              <TableHead>
+              <TableHead aria-sort={ariaSort('salesCount', sort, sortOrder)}>
                 <SortBtn active={sort === 'salesCount'} onClick={() => handleSort('salesCount')}>
                   Продажи
                 </SortBtn>
               </TableHead>
-              <TableHead>Возвраты</TableHead>
-              <TableHead>
+              <TableHead title="Финансовые возвраты по отчёту WB (FBO+FBS)">Возвраты</TableHead>
+              <TableHead aria-sort={ariaSort('buyoutRate', sort, sortOrder)}>
                 <SortBtn active={sort === 'buyoutRate'} onClick={() => handleSort('buyoutRate')}>
                   Выкуп %
                 </SortBtn>
               </TableHead>
-              <TableHead>
+              <TableHead className="text-blue-600" title="По статусам FBS-заказов">
+                До отправки
+              </TableHead>
+              <TableHead className="text-orange-600" title="По статусам FBS-заказов">
+                Отказ ПВЗ
+              </TableHead>
+              <TableHead className="text-red-600" title="По статусам FBS-заказов">
+                После получ.
+              </TableHead>
+              <TableHead aria-sort={ariaSort('trend', sort, sortOrder)}>
                 <SortBtn active={sort === 'trend'} onClick={() => handleSort('trend')}>
                   Тренд
                 </SortBtn>
@@ -110,26 +148,36 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map(item => (
-              <TableRow key={item.nmId}>
-                <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
-                <TableCell className="text-sm max-w-40 truncate">
-                  {item.productName ?? item.supplierArticle ?? '—'}
-                </TableCell>
-                <TableCell className="text-sm">{item.brand ?? '—'}</TableCell>
-                <TableCell>{item.salesCount.toLocaleString('ru-RU')}</TableCell>
-                <TableCell>{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
-                <TableCell className="font-medium">
-                  {item.buyoutRatePct != null ? `${item.buyoutRatePct.toFixed(1)}%` : '—'}
-                </TableCell>
-                <TableCell>
-                  <TrendIndicator trend={item.trend} delta={item.trendDelta} />
-                </TableCell>
-                <TableCell>
-                  <ConfidenceBadge confidence={item.confidence} />
-                </TableCell>
-              </TableRow>
-            ))}
+            {items.map(item => {
+              const product = productsMap.get(item.nmId)
+              const rb = item.returnBreakdown
+              return (
+                <TableRow key={item.nmId}>
+                  <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
+                  <TableCell className="text-sm font-medium">
+                    {product?.vendorCode || '—'}
+                  </TableCell>
+                  <TableCell className="text-sm max-w-48 truncate" title={product?.saName}>
+                    {product?.saName || item.productName || '—'}
+                  </TableCell>
+                  <TableCell className="text-sm">{product?.brand || item.brand || '—'}</TableCell>
+                  <TableCell>{item.salesCount.toLocaleString('ru-RU')}</TableCell>
+                  <TableCell>{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
+                  <TableCell className="font-medium">
+                    {item.buyoutRatePct != null ? `${item.buyoutRatePct.toFixed(1)}%` : '—'}
+                  </TableCell>
+                  <ReasonCell count={rb?.cancelBeforeShipment} color="text-blue-600" />
+                  <ReasonCell count={rb?.refusalAtPvz} color="text-orange-600" />
+                  <ReasonCell count={rb?.returnAfterReceipt} color="text-red-600" />
+                  <TableCell>
+                    <TrendIndicator trend={item.trend} delta={item.trendDelta} />
+                  </TableCell>
+                  <TableCell>
+                    <ConfidenceBadge confidence={item.confidence} />
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>
@@ -162,6 +210,11 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
       )}
     </div>
   )
+}
+
+function ReasonCell({ count, color }: { count?: number; color: string }) {
+  if (!count) return <TableCell className="text-muted-foreground">—</TableCell>
+  return <TableCell className={`font-medium ${color}`}>{count}</TableCell>
 }
 
 function TrendIndicator({ trend, delta }: { trend?: TrendDirection; delta?: number }) {

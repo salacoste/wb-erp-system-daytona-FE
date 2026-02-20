@@ -16,6 +16,7 @@ interface FunnelSummaryCardsProps {
 }
 
 export function FunnelSummaryCards({ from, to }: FunnelSummaryCardsProps) {
+  // limit=1 is minimum allowed by backend; we only use summary, not items
   const { data, isLoading } = useFunnelData(from, to, { limit: 1 })
 
   if (isLoading) {
@@ -33,28 +34,28 @@ export function FunnelSummaryCards({ from, to }: FunnelSummaryCardsProps) {
   const cards = [
     {
       label: 'Просмотры',
-      value: summary?.totalOpenCards ?? 0,
+      value: summary?.openCardCount ?? 0,
       icon: Eye,
       color: 'text-blue-600',
       format: formatNumber,
     },
     {
       label: 'Заказы',
-      value: summary?.totalOrders ?? 0,
+      value: summary?.ordersCount ?? 0,
       icon: ShoppingCart,
       color: 'text-orange-600',
       format: formatNumber,
     },
     {
       label: 'Выкупы',
-      value: summary?.totalBuyouts ?? 0,
+      value: summary?.buyoutCount ?? 0,
       icon: PackageCheck,
       color: 'text-green-600',
       format: formatNumber,
     },
     {
       label: 'Сквозная конверсия',
-      value: summary?.avgTotalConversion ?? 0,
+      value: summary?.totalConversion ?? 0,
       icon: TrendingUp,
       color: 'text-indigo-600',
       format: formatPercent,

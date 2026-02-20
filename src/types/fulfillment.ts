@@ -42,6 +42,15 @@ export interface FulfillmentProductsParams {
 // Summary Response Types
 // =============================================================================
 
+/** Return reasons breakdown from return_classifications (FBS only) */
+export interface ReturnBreakdown {
+  cancelBeforeShipment: number
+  refusalAtPvz: number
+  returnAfterReceipt: number
+  total: number
+  classificationCoverage: number
+}
+
 /** Metrics for a single fulfillment type (FBO or FBS) */
 export interface FulfillmentMetrics {
   ordersCount: number
@@ -53,6 +62,7 @@ export interface FulfillmentMetrics {
   returnsRevenue: number
   returnRate: number
   avgOrderValue: number
+  returnBreakdown?: ReturnBreakdown | null
 }
 
 /** Aggregated totals with FBO/FBS share percentages */

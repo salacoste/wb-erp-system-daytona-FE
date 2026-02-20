@@ -11,14 +11,21 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, TrendingDown } from 'lucide-react'
 import type { BuyoutSource } from '@/types/analytics-epics-68-71'
+import type { ReturnBreakdown } from '@/types/fulfillment'
 
 interface BuyoutSummaryWidgetProps {
   from: string
   to: string
   source: BuyoutSource
+  returnBreakdown?: ReturnBreakdown | null
 }
 
-export function BuyoutSummaryWidget({ from, to, source }: BuyoutSummaryWidgetProps) {
+export function BuyoutSummaryWidget({
+  from,
+  to,
+  source,
+  returnBreakdown,
+}: BuyoutSummaryWidgetProps) {
   const { data, isLoading, isError } = useBuyoutSummary(from, to, source)
 
   if (isLoading) return <Skeleton className="h-40 w-full" />
@@ -63,6 +70,11 @@ export function BuyoutSummaryWidget({ from, to, source }: BuyoutSummaryWidgetPro
           </p>
         </div>
 
+        {/* Return reasons breakdown (FBS) */}
+        {returnBreakdown && returnBreakdown.total > 0 && (
+          <ReturnBreakdownBar breakdown={returnBreakdown} />
+        )}
+
         {/* Top decliners */}
         {decliners.length > 0 && (
           <div className="space-y-2">
@@ -78,10 +90,10 @@ export function BuyoutSummaryWidget({ from, to, source }: BuyoutSummaryWidgetPro
                 >
                   <span className="font-mono text-xs">#{d.nmId}</span>
                   <span>
-                    {d.currentBuyoutRate != null ? `${d.currentBuyoutRate.toFixed(0)}%` : '—'}
+                    {d.buyoutRatePct != null ? `${d.buyoutRatePct.toFixed(0)}%` : '—'}
                     <span className="text-red-500 ml-1">
-                      ({d.declinePct > 0 ? '-' : ''}
-                      {Math.abs(d.declinePct).toFixed(0)} п.п.)
+                      ({d.trendDelta < 0 ? '' : '-'}
+                      {Math.abs(d.trendDelta).toFixed(0)} п.п.)
                     </span>
                   </span>
                 </div>
@@ -91,5 +103,45 @@ export function BuyoutSummaryWidget({ from, to, source }: BuyoutSummaryWidgetPro
         )}
       </CardContent>
     </Card>
+  )
+}
+
+const REASON_COLORS = [
+  { key: 'cancelBeforeShipment', label: 'До отправки', bg: 'bg-blue-500', text: 'text-blue-600' },
+  { key: 'refusalAtPvz', label: 'Отказ на ПВЗ', bg: 'bg-orange-500', text: 'text-orange-600' },
+  { key: 'returnAfterReceipt', label: 'После получения', bg: 'bg-red-500', text: 'text-red-600' },
+] as const
+
+function ReturnBreakdownBar({ breakdown }: { breakdown: ReturnBreakdown }) {
+  const total = breakdown.total
+  const segments = REASON_COLORS.map(c => ({
+    ...c,
+    count: breakdown[c.key],
+    pct: total > 0 ? (breakdown[c.key] / total) * 100 : 0,
+  }))
+
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-medium">Причины возвратов (FBS)</p>
+      <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden flex">
+        {segments.map(s =>
+          s.pct > 0 ? (
+            <div key={s.key} className={`h-full ${s.bg}`} style={{ width: `${s.pct}%` }} />
+          ) : null
+        )}
+      </div>
+      <div className="flex gap-4 text-xs">
+        {segments.map(s => (
+          <span key={s.key} className={s.text}>
+            {s.label}: {s.count}
+          </span>
+        ))}
+      </div>
+      {breakdown.classificationCoverage < 100 && (
+        <p className="text-xs text-muted-foreground">
+          Покрытие классификации: {breakdown.classificationCoverage}%
+        </p>
+      )}
+    </div>
   )
 }

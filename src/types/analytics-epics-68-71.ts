@@ -34,14 +34,19 @@ export interface FunnelDayItem {
 }
 
 export interface FunnelSummary {
-  avgCartConversion?: number
-  avgOrderConversion?: number
-  avgBuyoutConversion?: number
-  avgCancelRate?: number
-  avgTotalConversion: number
-  totalOpenCards: number
-  totalOrders: number
-  totalBuyouts: number
+  openCardCount: number
+  addToCartCount: number
+  ordersCount: number
+  ordersSumRub: number
+  buyoutCount: number
+  buyoutSumRub: number
+  cancelCount: number
+  cancelSumRub: number
+  cartConversion: number
+  orderConversion: number
+  buyoutConversion: number
+  cancelRate: number
+  totalConversion: number
 }
 
 export interface FunnelPagination {
@@ -98,6 +103,13 @@ export interface BySkuBuyoutItem {
   trend?: TrendDirection
   trendDelta?: number
   previousBuyoutRatePct?: number | null
+  /** Return breakdown from return_classifications (FBS only), joined by backend */
+  returnBreakdown?: {
+    cancelBeforeShipment: number
+    refusalAtPvz: number
+    returnAfterReceipt: number
+    total: number
+  } | null
 }
 
 export interface BySkuBuyoutResponse {
@@ -113,9 +125,8 @@ export interface BuyoutSummaryResponse {
   skuCount?: number
   topDecliners?: Array<{
     nmId: number
-    currentBuyoutRate: number | null
-    previousBuyoutRate: number | null
-    declinePct: number
+    buyoutRatePct: number | null
+    trendDelta: number
   }>
   period: { from: string; to: string }
   source: string
@@ -171,10 +182,13 @@ export interface ReturnReasonsResponse {
   period: { from: string; to: string }
 }
 
+/** Per-SKU return item with breakdown and anomaly flag */
 export interface BySkuReturnItem {
   nmId: number
   productName: string
   brand: string
+  /** Number of sales for this SKU (Story 71.7 — used for returnRate calculation) */
+  salesCount?: number
   totalReturns: number
   returnRate: number
   cancelBeforeShipment: number
@@ -183,23 +197,15 @@ export interface BySkuReturnItem {
   anomalyFlag: boolean
 }
 
+/** Response from GET /v1/analytics/returns/reasons/by-sku */
 export interface BySkuReturnResponse {
   data: BySkuReturnItem[]
   pagination: { count: number; hasMore: boolean; nextCursor?: string }
   summary: { totalSkus: number; anomalyCount: number }
 }
 
-/** Query params for GET /v1/analytics/returns/reasons */
-export interface ReturnReasonsParams {
-  cabinetId: string
-  from?: string
-  to?: string
-  locale?: 'ru' | 'en'
-}
-
 /** Query params for GET /v1/analytics/returns/reasons/by-sku */
 export interface ReturnsBySkuParams {
-  cabinetId: string
   from?: string
   to?: string
   nmId?: number
