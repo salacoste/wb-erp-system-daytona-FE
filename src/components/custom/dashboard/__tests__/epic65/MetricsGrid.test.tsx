@@ -27,6 +27,7 @@ function createMinimalGridProps() {
   return {
     totalOrders: 100,
     ordersRevenue: 120000,
+    ordersRevenueDiscounted: 45600,
     salesCount: 80,
     returnsCount: 20,
     saleGross: 50000,
@@ -102,13 +103,13 @@ describe('MetricsGrid (Story 65.17)', () => {
   })
 
   describe('flat grid card count', () => {
-    it('renders all 15 metric cards in flat grid', () => {
+    it('renders all 16 metric cards in flat grid', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
-      // 7 simple cards + 8 complex cards = 15 total
+      // 8 simple cards + 8 complex cards = 16 total
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(15)
+      expect(articles.length).toBe(16)
     })
   })
 

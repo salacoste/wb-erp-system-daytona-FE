@@ -63,7 +63,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     className,
   } = props
 
-  if (isLoading) return <DashboardMetricsGridSkeleton cardCount={15} className={className} />
+  if (isLoading) return <DashboardMetricsGridSkeleton cardCount={16} className={className} />
 
   const cards = buildSimpleCards(props)
   const e = error ?? undefined

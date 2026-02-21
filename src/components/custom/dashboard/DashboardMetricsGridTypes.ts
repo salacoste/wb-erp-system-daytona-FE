@@ -1,6 +1,17 @@
 /**
  * Type definitions for DashboardMetricsGrid
  * Extracted for 200-line file limit compliance (Story 65.17).
+ *
+ * WB Price Chain:
+ * ┌─────────────────────────────────────────────────────────────────┐
+ * │ РРЦ (ordersRevenue)                                            │
+ * │   × (1 - скидка продавца)                                       │
+ * │ = Цена на карточке (ordersRevenueDiscounted) ← база комиссии WB │
+ * │   × (1 - комиссия WB)                                           │
+ * │ = Выкупы (wbSalesGross) ← реальная выручка продавца             │
+ * │   − Возвраты (wbReturnsGross)                                   │
+ * │ = Продажи розница (saleGross)                                   │
+ * └─────────────────────────────────────────────────────────────────┘
  */
 
 export interface PreviousPeriodData {
@@ -25,14 +36,15 @@ export interface PreviousPeriodData {
 
 export interface DashboardMetricsGridProps {
   // Заказы
-  totalOrders: number | undefined
-  ordersRevenue: number | undefined
+  totalOrders: number | undefined // Количество заказов (шт)
+  ordersRevenue: number | undefined // РРЦ — полная цена каталога
+  ordersRevenueDiscounted: number | undefined // Цена на карточке WB (после скидки продавца)
   // Продажи и возвраты
-  saleGross: number | undefined
-  wbSalesGross: number | undefined
-  wbReturnsGross: number | undefined
-  salesCount: number | undefined
-  returnsCount: number | undefined
+  saleGross: number | undefined // Продажи розница = выкупы - возвраты
+  wbSalesGross: number | undefined // Выкупы — деньги от выкупленных товаров
+  wbReturnsGross: number | undefined // Возвраты — деньги за возвращённые товары
+  salesCount: number | undefined // Количество выкупов (шт)
+  returnsCount: number | undefined // Количество возвратов (шт)
   // Расходы WB
   commissionSales: number | undefined
   acquiringFee: number | undefined

@@ -42,11 +42,9 @@ import {
 const METRIC_EXPLANATIONS: Record<string, string> = {
   // Доходы
   'Продажи (gross)':
-    'Сумма, которую оплатили покупатели за товары. Это цена товара со скидкой WB (retail_price_with_discount). Включает продажи по основному отчёту и по выкупам (ЕАЭС).',
-  'Возвраты (gross)':
-    'Сумма возвращённых товаров по той же цене, что и при продаже. Уменьшает итоговую выручку.',
-  'Продажи (розница)':
-    'Выручка минус возвраты. Розничная стоимость проданных товаров, база для расчёта % расходов.',
+    'Цена на карточке WB — то, что видит покупатель. База для расчёта комиссии WB. Включает продажи по основному отчёту и по выкупам (ЕАЭС).',
+  'Возвраты (gross)': 'Сумма возвращённых товаров по цене на карточке. Уменьшает итоговую выручку.',
+  'Продажи (розница)': 'Выкупы − Возвраты = ваш оборот за период. База для расчёта % расходов.',
   'К перечислению за товар':
     'Сумма к перечислению за товары ДО вычета операционных расходов (логистика, хранение и т.д.). Уже за вычетом комиссии WB.',
   'Выручка доставки продавца (DBS)':
@@ -378,12 +376,12 @@ export function FinancialSummaryTable({
 
                 return (
                   <>
-                    {/* Your Price */}
+                    {/* Your Price - РРЦ */}
                     <div className="p-4 bg-indigo-100 rounded-lg">
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="font-semibold text-indigo-900">ВАША ЦЕНА</div>
-                          <div className="text-sm text-indigo-600">Цена до скидок WB</div>
+                          <div className="font-semibold text-indigo-900">РРЦ (каталог)</div>
+                          <div className="text-sm text-indigo-600">Ваша цена в каталоге WB</div>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-indigo-900">
@@ -399,21 +397,20 @@ export function FinancialSummaryTable({
                       )}
                     </div>
 
-                    {/* WB Discount Arrow */}
+                    {/* Seller Discount Arrow */}
                     <div className="flex items-center justify-center gap-2 text-orange-600">
                       <ArrowDown className="h-5 w-5" />
                       <span className="text-sm">
-                        Скидка WB (СПП, акции): −{formatCurrency(wbDiscount)} (
-                        {wbDiscountPct.toFixed(1)}%)
+                        Ваша скидка: −{formatCurrency(wbDiscount)} ({wbDiscountPct.toFixed(1)}%)
                       </span>
                     </div>
 
-                    {/* Customer Paid */}
+                    {/* Price on Card */}
                     <div className="p-4 bg-blue-100 rounded-lg">
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="font-semibold text-blue-900">Оплатили покупатели</div>
-                          <div className="text-sm text-blue-600">После скидок WB</div>
+                          <div className="font-semibold text-blue-900">Цена на карточке</div>
+                          <div className="text-sm text-blue-600">База для комиссии WB</div>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-blue-900">
@@ -421,7 +418,7 @@ export function FinancialSummaryTable({
                           </div>
                           <div className="text-sm text-blue-600">
                             {retailPrice > 0 ? ((salesGross / retailPrice) * 100).toFixed(0) : 0}%
-                            от вашей цены
+                            от РРЦ
                           </div>
                         </div>
                       </div>
@@ -442,12 +439,12 @@ export function FinancialSummaryTable({
                       </div>
                     )}
 
-                    {/* Net Turnover */}
+                    {/* Net Sales - after returns */}
                     <div className="p-4 bg-cyan-100 rounded-lg">
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="font-semibold text-cyan-900">Оборот (нетто)</div>
-                          <div className="text-sm text-cyan-600">После возвратов</div>
+                          <div className="font-semibold text-cyan-900">Выкупы (нетто)</div>
+                          <div className="text-sm text-cyan-600">Выкупы − Возвраты</div>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-cyan-900">
@@ -455,7 +452,7 @@ export function FinancialSummaryTable({
                           </div>
                           <div className="text-sm text-cyan-600">
                             {retailPrice > 0 ? ((saleGross / retailPrice) * 100).toFixed(0) : 0}% от
-                            вашей цены
+                            РРЦ
                           </div>
                         </div>
                       </div>

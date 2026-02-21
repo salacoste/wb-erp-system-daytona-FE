@@ -51,17 +51,23 @@ export interface ReturnBreakdown {
   classificationCoverage: number
 }
 
-/** Metrics for a single fulfillment type (FBO or FBS) */
+/**
+ * Metrics for a single fulfillment type (FBO or FBS)
+ *
+ * WB Price Chain:
+ * ordersRevenue (РРЦ) → ordersRevenueDiscounted (цена на карточке) → salesRevenue (выкупы)
+ */
 export interface FulfillmentMetrics {
-  ordersCount: number
-  ordersRevenue: number
-  salesCount: number
-  salesRevenue: number
-  forPayTotal: number
-  returnsCount: number
-  returnsRevenue: number
-  returnRate: number
-  avgOrderValue: number
+  ordersCount: number // Количество заказов (шт)
+  ordersRevenue: number // РРЦ — полная цена каталога
+  ordersRevenueDiscounted: number // Цена на карточке WB (база для комиссии)
+  salesCount: number // Количество выкупов (шт)
+  salesRevenue: number // Выкупы — деньги от выкупленных товаров
+  forPayTotal: number // К перечислению
+  returnsCount: number // Количество возвратов (шт)
+  returnsRevenue: number // Возвраты — деньги за возвращённые товары
+  returnRate: number // % возвратов от выкупов
+  avgOrderValue: number // Средний чек
   returnBreakdown?: ReturnBreakdown | null
 }
 
@@ -69,6 +75,7 @@ export interface FulfillmentMetrics {
 export interface FulfillmentTotal {
   ordersCount: number
   ordersRevenue: number
+  ordersRevenueDiscounted: number
   fboShare: number
   fbsShare: number
 }

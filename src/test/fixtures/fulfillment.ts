@@ -19,6 +19,7 @@ import type {
 const fboMetrics = {
   ordersCount: 150,
   ordersRevenue: 450000,
+  ordersRevenueDiscounted: 171000,
   salesCount: 142,
   salesRevenue: 420000,
   forPayTotal: 380000,
@@ -31,6 +32,7 @@ const fboMetrics = {
 const fbsMetrics = {
   ordersCount: 85,
   ordersRevenue: 255000,
+  ordersRevenueDiscounted: 96900,
   salesCount: 80,
   salesRevenue: 240000,
   forPayTotal: 220000,
@@ -43,6 +45,7 @@ const fbsMetrics = {
 const zeroMetrics = {
   ordersCount: 0,
   ordersRevenue: 0,
+  ordersRevenueDiscounted: 0,
   salesCount: 0,
   salesRevenue: 0,
   forPayTotal: 0,
@@ -56,7 +59,13 @@ export const mockFulfillmentSummary: FulfillmentSummaryResponse = {
   summary: {
     fbo: fboMetrics,
     fbs: fbsMetrics,
-    total: { ordersCount: 235, ordersRevenue: 705000, fboShare: 63.8, fbsShare: 36.2 },
+    total: {
+      ordersCount: 235,
+      ordersRevenue: 705000,
+      ordersRevenueDiscounted: 267900,
+      fboShare: 63.8,
+      fbsShare: 36.2,
+    },
   },
   period: { from: '2026-01-19', to: '2026-01-25' },
 }
@@ -65,7 +74,13 @@ export const mockFulfillmentSummaryEmpty: FulfillmentSummaryResponse = {
   summary: {
     fbo: zeroMetrics,
     fbs: zeroMetrics,
-    total: { ordersCount: 0, ordersRevenue: 0, fboShare: 0, fbsShare: 0 },
+    total: {
+      ordersCount: 0,
+      ordersRevenue: 0,
+      ordersRevenueDiscounted: 0,
+      fboShare: 0,
+      fbsShare: 0,
+    },
   },
   period: { from: '2026-01-19', to: '2026-01-25' },
 }
@@ -74,7 +89,13 @@ export const mockFulfillmentSummaryPrevious: FulfillmentSummaryResponse = {
   summary: {
     fbo: { ...fboMetrics, ordersCount: 130, ordersRevenue: 390000 },
     fbs: { ...fbsMetrics, ordersCount: 70, ordersRevenue: 210000 },
-    total: { ordersCount: 200, ordersRevenue: 600000, fboShare: 65.0, fbsShare: 35.0 },
+    total: {
+      ordersCount: 200,
+      ordersRevenue: 600000,
+      ordersRevenueDiscounted: 228000,
+      fboShare: 65.0,
+      fbsShare: 35.0,
+    },
   },
   period: { from: '2026-01-12', to: '2026-01-18' },
 }

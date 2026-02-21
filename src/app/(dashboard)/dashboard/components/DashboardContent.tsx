@@ -139,6 +139,7 @@ export function DashboardContent(): React.ReactElement {
           <DashboardMetricsGrid
             totalOrders={fSummary?.total.ordersCount}
             ordersRevenue={fSummary?.total.ordersRevenue}
+            ordersRevenueDiscounted={fSummary?.total.ordersRevenueDiscounted}
             salesCount={salesCount}
             returnsCount={returnsCount}
             saleGross={s?.sale_gross ?? st?.sale_gross_total}

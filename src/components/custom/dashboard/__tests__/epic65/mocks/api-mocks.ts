@@ -208,6 +208,7 @@ export function createFulfillmentSummaryMock(
       fbo: {
         ordersCount: 280,
         ordersRevenue: 420000,
+        ordersRevenueDiscounted: 159600,
         salesCount: 210,
         salesRevenue: 315000,
         forPayTotal: 250000,
@@ -219,6 +220,7 @@ export function createFulfillmentSummaryMock(
       fbs: {
         ordersCount: 120,
         ordersRevenue: 180000,
+        ordersRevenueDiscounted: 68400,
         salesCount: 100,
         salesRevenue: 150000,
         forPayTotal: 120000,
@@ -230,6 +232,7 @@ export function createFulfillmentSummaryMock(
       total: {
         ordersCount: 400,
         ordersRevenue: 600000,
+        ordersRevenueDiscounted: 228000,
         fboShare: 70,
         fbsShare: 30,
       },

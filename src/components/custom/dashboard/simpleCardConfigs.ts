@@ -1,6 +1,11 @@
 /**
  * Simple metric card configurations for DashboardMetricsGrid.
  * Data-driven card definitions: orders, sales, returns, net sales.
+ *
+ * WB Price Chain:
+ * РРЦ (totalPrice) → скидка продавца → Цена на карточке → SPP скидка WB
+ *                              ↑
+ *                    База для комиссии WB и выплат продавцу
  */
 
 import { ShoppingCart, TrendingUp, RotateCcw, Package } from 'lucide-react'
@@ -31,13 +36,26 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
     {
       icon: ShoppingCart,
       iconColor: 'text-blue-500',
-      title: 'Заказы, ₽',
+      title: 'Заказы (РРЦ), ₽',
       value: fmtRub(p.ordersRevenue),
       valueColor: 'text-blue-600',
       current: p.ordersRevenue,
       previous: prev?.ordersAmount,
-      tooltip: 'Сумма заказов по розничной цене (до удержаний WB)',
-      subtitle: 'розничная цена',
+      tooltip:
+        'РРЦ — рекомендованная розничная цена, которую вы задаёте в каталоге WB. До вашей скидки.',
+      subtitle: 'полная цена каталога',
+    },
+    {
+      icon: ShoppingCart,
+      iconColor: 'text-blue-500',
+      title: 'Заказы (со скидкой), ₽',
+      value: fmtRub(p.ordersRevenueDiscounted),
+      valueColor: 'text-blue-600',
+      current: p.ordersRevenueDiscounted,
+      previous: undefined,
+      tooltip:
+        'Цена на карточке WB — то, что видит покупатель. База для расчёта комиссии WB и выплат вам.',
+      subtitle: 'цена на карточке',
     },
     {
       icon: TrendingUp,
@@ -47,7 +65,7 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       valueColor: 'text-green-600',
       current: p.wbSalesGross,
       previous: prev?.salesAmount,
-      tooltip: 'Сумма выкупленных товаров из еженедельного отчёта WB',
+      tooltip: 'Деньги от выкупленных товаров. Это ваша реальная выручка за вычетом комиссии WB.',
     },
     {
       icon: Package,
@@ -81,7 +99,7 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       valueColor: 'text-green-600',
       current: p.saleGross,
       previous: prev?.saleGross,
-      tooltip: 'Выкупы минус возвраты. Розничная стоимость проданных товаров.',
+      tooltip: 'Выкупы − Возвраты = ваш оборот за период.',
     },
   ]
 }

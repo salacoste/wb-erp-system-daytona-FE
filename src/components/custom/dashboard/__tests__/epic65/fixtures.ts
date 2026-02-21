@@ -110,6 +110,7 @@ export function createFulfillmentMetrics(
   return {
     ordersCount: 500,
     ordersRevenue: 2_500_000,
+    ordersRevenueDiscounted: 950_000,
     salesCount: 420,
     salesRevenue: 2_100_000,
     forPayTotal: 1_800_000,
@@ -130,6 +131,7 @@ export function createFulfillmentTotal(
   return {
     ordersCount: 1000,
     ordersRevenue: 5_000_000,
+    ordersRevenueDiscounted: 1_900_000,
     fboShare: 60,
     fbsShare: 40,
     ...overrides,
