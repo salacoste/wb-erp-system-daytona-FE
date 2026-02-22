@@ -16,37 +16,30 @@
  * - low_liquid: 61-90 days (slow movers)
  * - illiquid: >90 days (dead stock)
  */
-export type LiquidityCategory =
-  | 'highly_liquid'
-  | 'medium_liquid'
-  | 'low_liquid'
-  | 'illiquid';
+export type LiquidityCategory = 'highly_liquid' | 'medium_liquid' | 'low_liquid' | 'illiquid'
 
 /**
  * Action type recommendation
  */
 export type ActionType =
-  | 'MAXIMIZE'   // Scale up - invest more
-  | 'MAINTAIN'   // Keep current level
-  | 'REDUCE'     // Reduce stock
-  | 'LIQUIDATE'; // Discount and sell
+  | 'MAXIMIZE' // Scale up - invest more
+  | 'MAINTAIN' // Keep current level
+  | 'REDUCE' // Reduce stock
+  | 'LIQUIDATE' // Discount and sell
 
 /**
  * Benchmark comparison status
  */
 export type BenchmarkStatus =
-  | 'excellent'  // Better than target
-  | 'good'       // Meeting target
-  | 'warning'    // Below target
-  | 'critical';  // Far below target
+  | 'excellent' // Better than target
+  | 'good' // Meeting target
+  | 'warning' // Below target
+  | 'critical' // Far below target
 
 /**
  * Trend insight type
  */
-export type TrendInsightType =
-  | 'improvement'
-  | 'warning'
-  | 'info';
+export type TrendInsightType = 'improvement' | 'warning' | 'info'
 
 // ============================================================================
 // Query Parameters
@@ -57,15 +50,13 @@ export type TrendInsightType =
  */
 export interface LiquidityQueryParams {
   /** Filter by liquidity category */
-  category_filter?: LiquidityCategory | 'all';
+  category_filter?: LiquidityCategory | 'all'
   /** Sort field */
-  sort_by?: 'turnover_days' | 'stock_value' | 'velocity_per_day' | 'frozen_capital';
+  sort_by?: 'turnover_days' | 'stock_value' | 'velocity_per_day' | 'frozen_capital'
   /** Sort order */
-  sort_order?: 'asc' | 'desc';
+  sort_order?: 'asc' | 'desc'
   /** Max results (1-500, default: 100) */
-  limit?: number;
-  /** Include liquidation scenarios for illiquid SKUs */
-  include_liquidation_scenarios?: boolean;
+  limit?: number
 }
 
 /**
@@ -73,7 +64,7 @@ export interface LiquidityQueryParams {
  */
 export interface LiquidityTrendsQueryParams {
   /** Days of history (default: 90) */
-  period?: number;
+  period?: number
 }
 
 // ============================================================================
@@ -86,21 +77,21 @@ export interface LiquidityTrendsQueryParams {
  */
 export interface LiquidationScenario {
   /** Target turnover days */
-  target_days: number;
+  target_days: number
   /** Required daily velocity to achieve target */
-  required_velocity: number;
+  required_velocity: number
   /** Multiplier needed vs current velocity */
-  velocity_multiplier: number;
+  velocity_multiplier: number
   /** Suggested discount percentage */
-  suggested_discount_pct: number;
+  suggested_discount_pct: number
   /** New price after discount */
-  new_price: number;
+  new_price: number
   /** Expected revenue if all stock sells */
-  expected_revenue: number;
+  expected_revenue: number
   /** Expected profit after COGS */
-  expected_profit: number;
+  expected_profit: number
   /** Is this scenario profitable? */
-  is_profitable: boolean;
+  is_profitable: boolean
 }
 
 /**
@@ -108,43 +99,43 @@ export interface LiquidationScenario {
  */
 export interface LiquidityItem {
   /** WB article ID */
-  sku_id: string;
+  sku_id: string
   /** Product name */
-  product_name: string;
+  product_name: string
   /** Category name */
-  category: string;
+  category: string
   /** Brand name */
-  brand: string;
+  brand: string
 
   /** Current stock quantity */
-  current_stock_qty: number;
+  current_stock_qty: number
   /** Average stock quantity over 30 days */
-  avg_stock_qty_30d: number;
+  avg_stock_qty_30d: number
   /** Stock value in ₽ (current_stock × COGS) */
-  stock_value: number;
+  stock_value: number
 
   /** Units sold in last 30 days */
-  units_sold_30d: number;
+  units_sold_30d: number
   /** Daily sales velocity */
-  velocity_per_day: number;
+  velocity_per_day: number
 
   /** Calculated turnover days */
-  turnover_days: number;
+  turnover_days: number
   /** Liquidity classification */
-  liquidity_category: LiquidityCategory;
+  liquidity_category: LiquidityCategory
 
   /** Current selling price */
-  current_price: number;
+  current_price: number
   /** Cost of goods sold per unit */
-  cogs_per_unit: number;
+  cogs_per_unit: number
 
   /** AI-generated recommendation text */
-  recommendation: string;
+  recommendation: string
   /** Recommended action type */
-  action_type: ActionType;
+  action_type: ActionType
 
   /** Liquidation scenarios (only for illiquid SKUs) */
-  liquidation_scenarios: LiquidationScenario[] | null;
+  liquidation_scenarios: LiquidationScenario[] | null
 }
 
 /**
@@ -152,23 +143,23 @@ export interface LiquidityItem {
  */
 export interface LiquidityDistributionItem {
   /** Number of SKUs in this category */
-  count: number;
+  count: number
   /** Total stock value in this category */
-  value: number;
+  value: number
   /** Percentage of total inventory value */
-  pct: number;
+  pct: number
   /** Average turnover days in this category */
-  avg_turnover_days: number;
+  avg_turnover_days: number
 }
 
 /**
  * Distribution breakdown by liquidity category
  */
 export interface LiquidityDistribution {
-  highly_liquid: LiquidityDistributionItem;
-  medium_liquid: LiquidityDistributionItem;
-  low_liquid: LiquidityDistributionItem;
-  illiquid: LiquidityDistributionItem;
+  highly_liquid: LiquidityDistributionItem
+  medium_liquid: LiquidityDistributionItem
+  low_liquid: LiquidityDistributionItem
+  illiquid: LiquidityDistributionItem
 }
 
 /**
@@ -176,21 +167,21 @@ export interface LiquidityDistribution {
  */
 export interface LiquidityBenchmarks {
   /** Your average turnover days */
-  your_avg_turnover: number;
+  your_avg_turnover: number
   /** Target average turnover days */
-  target_avg_turnover: number;
+  target_avg_turnover: number
   /** Industry average turnover days */
-  industry_avg_turnover: number;
+  industry_avg_turnover: number
   /** Your highly liquid percentage */
-  highly_liquid_pct: number;
+  highly_liquid_pct: number
   /** Target highly liquid percentage (>50%) */
-  target_highly_liquid_pct: number;
+  target_highly_liquid_pct: number
   /** Your illiquid percentage */
-  illiquid_pct: number;
+  illiquid_pct: number
   /** Target illiquid percentage (<5%) */
-  target_illiquid_pct: number;
+  target_illiquid_pct: number
   /** Overall benchmark status */
-  overall_status: BenchmarkStatus;
+  overall_status: BenchmarkStatus
 }
 
 /**
@@ -198,19 +189,19 @@ export interface LiquidityBenchmarks {
  */
 export interface LiquiditySummary {
   /** Total inventory value in ₽ */
-  total_inventory_value: number;
+  total_inventory_value: number
   /** Total number of SKUs */
-  total_sku_count: number;
+  total_sku_count: number
   /** Frozen capital (value of illiquid stock) in ₽ */
-  frozen_capital: number;
+  frozen_capital: number
   /** Frozen capital as percentage of total */
-  frozen_capital_pct: number;
+  frozen_capital_pct: number
   /** Average turnover days across all SKUs */
-  avg_turnover_days: number;
+  avg_turnover_days: number
   /** Distribution by liquidity category */
-  distribution: LiquidityDistribution;
+  distribution: LiquidityDistribution
   /** Benchmark comparison */
-  benchmarks: LiquidityBenchmarks;
+  benchmarks: LiquidityBenchmarks
 }
 
 /**
@@ -218,22 +209,22 @@ export interface LiquiditySummary {
  */
 export interface LiquidityMeta {
   /** Cabinet UUID */
-  cabinet_id: string;
+  cabinet_id: string
   /** Analysis period in days (default: 30) */
-  analysis_period_days: number;
+  analysis_period_days: number
   /** When response was generated */
-  generated_at: string;
+  generated_at: string
   /** Last stock data update timestamp */
-  stock_data_updated_at: string;
+  stock_data_updated_at: string
 }
 
 /**
  * Full API response from GET /v1/analytics/liquidity
  */
 export interface LiquidityResponse {
-  meta: LiquidityMeta;
-  summary: LiquiditySummary;
-  data: LiquidityItem[];
+  meta: LiquidityMeta
+  summary: LiquiditySummary
+  data: LiquidityItem[]
 }
 
 // ============================================================================
@@ -244,10 +235,10 @@ export interface LiquidityResponse {
  * Distribution percentages for a trend point
  */
 export interface TrendDistribution {
-  highly_liquid_pct: number;
-  medium_liquid_pct: number;
-  low_liquid_pct: number;
-  illiquid_pct: number;
+  highly_liquid_pct: number
+  medium_liquid_pct: number
+  low_liquid_pct: number
+  illiquid_pct: number
 }
 
 /**
@@ -255,13 +246,13 @@ export interface TrendDistribution {
  */
 export interface TrendDataPoint {
   /** Date string (YYYY-MM-DD) */
-  date: string;
+  date: string
   /** Distribution percentages */
-  distribution: TrendDistribution;
+  distribution: TrendDistribution
   /** Frozen capital in ₽ */
-  frozen_capital: number;
+  frozen_capital: number
   /** Average turnover days */
-  avg_turnover_days: number;
+  avg_turnover_days: number
 }
 
 /**
@@ -269,9 +260,9 @@ export interface TrendDataPoint {
  */
 export interface TrendInsight {
   /** Insight type */
-  type: TrendInsightType;
+  type: TrendInsightType
   /** Human-readable message */
-  message: string;
+  message: string
 }
 
 /**
@@ -279,20 +270,20 @@ export interface TrendInsight {
  */
 export interface LiquidityTrendsMeta {
   /** Cabinet UUID */
-  cabinet_id: string;
+  cabinet_id: string
   /** Period in days */
-  period_days: number;
+  period_days: number
   /** When response was generated */
-  generated_at: string;
+  generated_at: string
 }
 
 /**
  * Full API response from GET /v1/analytics/liquidity/trends
  */
 export interface LiquidityTrendsResponse {
-  meta: LiquidityTrendsMeta;
-  trends: TrendDataPoint[];
-  insights: TrendInsight[];
+  meta: LiquidityTrendsMeta
+  trends: TrendDataPoint[]
+  insights: TrendInsight[]
 }
 
 // ============================================================================
@@ -304,25 +295,25 @@ export interface LiquidityTrendsResponse {
  */
 export interface LiquidityCategoryConfig {
   /** Full Russian label */
-  label: string;
+  label: string
   /** Short label for badges */
-  labelShort: string;
+  labelShort: string
   /** Primary color hex */
-  color: string;
+  color: string
   /** Background color for badges */
-  bgColor: string;
+  bgColor: string
   /** Tailwind bg class */
-  bgClass: string;
+  bgClass: string
   /** Tailwind text class */
-  textClass: string;
+  textClass: string
   /** Emoji icon */
-  icon: string;
+  icon: string
   /** Min turnover days for this category */
-  minDays: number;
+  minDays: number
   /** Max turnover days for this category */
-  maxDays: number;
+  maxDays: number
   /** Target share percentage */
-  targetShare: string;
+  targetShare: string
 }
 
 /**
@@ -330,13 +321,13 @@ export interface LiquidityCategoryConfig {
  */
 export interface ActionTypeConfig {
   /** Full Russian label */
-  label: string;
+  label: string
   /** Button label */
-  buttonLabel: string;
+  buttonLabel: string
   /** Primary color hex */
-  color: string;
+  color: string
   /** Tailwind variant */
-  variant: 'default' | 'destructive' | 'outline' | 'secondary';
+  variant: 'default' | 'destructive' | 'outline' | 'secondary'
 }
 
 /**
@@ -344,13 +335,13 @@ export interface ActionTypeConfig {
  */
 export interface BenchmarkStatusConfig {
   /** Russian label */
-  label: string;
+  label: string
   /** Primary color hex */
-  color: string;
+  color: string
   /** Tailwind text class */
-  textClass: string;
+  textClass: string
   /** Emoji icon */
-  icon: string;
+  icon: string
 }
 
 /**
@@ -358,17 +349,17 @@ export interface BenchmarkStatusConfig {
  */
 export interface DistributionChartData {
   /** Category key */
-  category: LiquidityCategory;
+  category: LiquidityCategory
   /** Russian label */
-  name: string;
+  name: string
   /** Value (percentage) */
-  value: number;
+  value: number
   /** SKU count */
-  count: number;
+  count: number
   /** Stock value in ₽ */
-  stockValue: number;
+  stockValue: number
   /** Color */
-  color: string;
+  color: string
 }
 
 /**
@@ -376,16 +367,16 @@ export interface DistributionChartData {
  */
 export interface TrendChartData {
   /** Date string */
-  date: string;
+  date: string
   /** Formatted date for display */
-  dateLabel: string;
+  dateLabel: string
   /** Category percentages */
-  highly_liquid: number;
-  medium_liquid: number;
-  low_liquid: number;
-  illiquid: number;
+  highly_liquid: number
+  medium_liquid: number
+  low_liquid: number
+  illiquid: number
   /** Frozen capital */
-  frozen_capital: number;
+  frozen_capital: number
   /** Average turnover */
-  avg_turnover: number;
+  avg_turnover: number
 }

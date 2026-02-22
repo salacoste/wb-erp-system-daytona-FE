@@ -28,16 +28,13 @@ export const liquidityQueryKeys = {
   all: ['liquidity'] as const,
 
   /** Key for liquidity list queries */
-  list: (params: LiquidityQueryParams) =>
-    [...liquidityQueryKeys.all, 'list', params] as const,
+  list: (params: LiquidityQueryParams) => [...liquidityQueryKeys.all, 'list', params] as const,
 
   /** Key for trends queries */
-  trends: (period?: number) =>
-    [...liquidityQueryKeys.all, 'trends', period] as const,
+  trends: (period?: number) => [...liquidityQueryKeys.all, 'trends', period] as const,
 
   /** Key for specific SKU detail (for future expansion) */
-  detail: (skuId: string) =>
-    [...liquidityQueryKeys.all, 'detail', skuId] as const,
+  detail: (skuId: string) => [...liquidityQueryKeys.all, 'detail', skuId] as const,
 }
 
 // ============================================================================
@@ -68,10 +65,9 @@ export interface UseLiquidityOptions {
  * const { data, isLoading, error } = useLiquidity();
  *
  * @example
- * // Filter to show only illiquid SKUs with liquidation scenarios
+ * // Filter to show only illiquid SKUs
  * const { data } = useLiquidity({
  *   category_filter: 'illiquid',
- *   include_liquidation_scenarios: true,
  *   sort_by: 'turnover_days',
  *   sort_order: 'desc',
  * });
@@ -85,10 +81,7 @@ export interface UseLiquidityOptions {
  *   limit: 50,
  * });
  */
-export function useLiquidity(
-  params: LiquidityQueryParams = {},
-  options: UseLiquidityOptions = {},
-) {
+export function useLiquidity(params: LiquidityQueryParams = {}, options: UseLiquidityOptions = {}) {
   const {
     enabled = true,
     refetchInterval,
@@ -127,7 +120,7 @@ export function useLiquidity(
  */
 export function useLiquidityTrends(
   params: LiquidityTrendsQueryParams = {},
-  options: UseLiquidityOptions = {},
+  options: UseLiquidityOptions = {}
 ) {
   const {
     enabled = true,
@@ -168,8 +161,7 @@ export function useLiquidityTrends(
  * });
  */
 export function useIlliquidStock(
-  options: Omit<LiquidityQueryParams, 'category_filter' | 'include_liquidation_scenarios'> &
-    UseLiquidityOptions = {},
+  options: Omit<LiquidityQueryParams, 'category_filter'> & UseLiquidityOptions = {}
 ) {
   const { enabled, refetchInterval, staleTime, ...params } = options
 
@@ -177,9 +169,8 @@ export function useIlliquidStock(
     {
       ...params,
       category_filter: 'illiquid',
-      include_liquidation_scenarios: true,
     },
-    { enabled, refetchInterval, staleTime },
+    { enabled, refetchInterval, staleTime }
   )
 }
 
@@ -198,14 +189,13 @@ export function useIlliquidStock(
  * });
  */
 export function useHighlyLiquidStock(
-  options: Omit<LiquidityQueryParams, 'category_filter'> &
-    UseLiquidityOptions = {},
+  options: Omit<LiquidityQueryParams, 'category_filter'> & UseLiquidityOptions = {}
 ) {
   const { enabled, refetchInterval, staleTime, ...params } = options
 
   return useLiquidity(
     { ...params, category_filter: 'highly_liquid' },
-    { enabled, refetchInterval, staleTime },
+    { enabled, refetchInterval, staleTime }
   )
 }
 
@@ -226,8 +216,7 @@ export function useHighlyLiquidStock(
  */
 export function useLiquidityByCategory(
   category: LiquidityCategory,
-  options: Omit<LiquidityQueryParams, 'category_filter'> &
-    UseLiquidityOptions = {},
+  options: Omit<LiquidityQueryParams, 'category_filter'> & UseLiquidityOptions = {}
 ) {
   const { enabled, refetchInterval, staleTime, ...params } = options
 
@@ -235,9 +224,8 @@ export function useLiquidityByCategory(
     {
       ...params,
       category_filter: category,
-      include_liquidation_scenarios: category === 'illiquid',
     },
-    { enabled, refetchInterval, staleTime },
+    { enabled, refetchInterval, staleTime }
   )
 }
 
@@ -254,12 +242,10 @@ export function useLiquidityByCategory(
  * const { data } = useLiquiditySummary();
  * console.log(data?.summary.frozen_capital_pct); // % of frozen capital
  */
-export function useLiquiditySummary(
-  options: UseLiquidityOptions = {},
-) {
+export function useLiquiditySummary(options: UseLiquidityOptions = {}) {
   return useLiquidity(
     { limit: 1 }, // Minimal data, we just need summary
-    options,
+    options
   )
 }
 

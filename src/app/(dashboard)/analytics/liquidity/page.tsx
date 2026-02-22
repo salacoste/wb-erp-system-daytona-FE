@@ -25,7 +25,9 @@ import { LiquidityTable } from './components/LiquidityTable'
 export default function LiquidityPage() {
   // Filter state
   const [activeFilter, setActiveFilter] = useState<LiquidityCategory | null>(null)
-  const [sortBy, setSortBy] = useState<'turnover_days' | 'stock_value' | 'velocity_per_day'>('turnover_days')
+  const [sortBy, setSortBy] = useState<'turnover_days' | 'stock_value' | 'velocity_per_day'>(
+    'turnover_days'
+  )
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   // Build query params
@@ -33,25 +35,18 @@ export default function LiquidityPage() {
     category_filter: activeFilter || 'all',
     sort_by: sortBy,
     sort_order: sortOrder,
-    include_liquidation_scenarios: activeFilter === 'illiquid' || activeFilter === null,
     limit: 200,
   }
 
   // Fetch data
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    dataUpdatedAt,
-  } = useLiquidity(queryParams, {
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useLiquidity(queryParams, {
     staleTime: 300000, // 5 minutes
     refetchInterval: 600000, // 10 minutes auto-refresh
   })
 
   // Handle card click - toggle filter
   const handleCardClick = useCallback((category: LiquidityCategory) => {
-    setActiveFilter(prev => prev === category ? null : category)
+    setActiveFilter(prev => (prev === category ? null : category))
   }, [])
 
   // Handle refresh
@@ -60,23 +55,20 @@ export default function LiquidityPage() {
   }, [refetch])
 
   // Handle sort change
-  const handleSortChange = useCallback((
-    field: 'turnover_days' | 'stock_value' | 'velocity_per_day',
-    order: 'asc' | 'desc'
-  ) => {
-    setSortBy(field)
-    setSortOrder(order)
-  }, [])
+  const handleSortChange = useCallback(
+    (field: 'turnover_days' | 'stock_value' | 'velocity_per_day', order: 'asc' | 'desc') => {
+      setSortBy(field)
+      setSortOrder(order)
+    },
+    []
+  )
 
   // Error state
   if (error) {
     console.error('Liquidity analysis error:', error)
     return (
       <div className="space-y-6">
-        <LiquidityHeader
-          onRefresh={handleRefresh}
-          isRefreshing={isLoading}
-        />
+        <LiquidityHeader onRefresh={handleRefresh} isRefreshing={isLoading} />
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
@@ -95,10 +87,7 @@ export default function LiquidityPage() {
   if (isLoading && !data) {
     return (
       <div className="space-y-6">
-        <LiquidityHeader
-          onRefresh={handleRefresh}
-          isRefreshing={true}
-        />
+        <LiquidityHeader onRefresh={handleRefresh} isRefreshing={true} />
         <LiquidityLoading />
       </div>
     )
@@ -108,10 +97,7 @@ export default function LiquidityPage() {
   if (!data || !data.summary || data.summary.total_sku_count === 0) {
     return (
       <div className="space-y-6">
-        <LiquidityHeader
-          onRefresh={handleRefresh}
-          isRefreshing={isLoading}
-        />
+        <LiquidityHeader onRefresh={handleRefresh} isRefreshing={isLoading} />
         <LiquidityEmpty />
       </div>
     )

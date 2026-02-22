@@ -26,13 +26,10 @@ import type {
  *   category_filter: 'illiquid',
  *   sort_by: 'turnover_days',
  *   sort_order: 'desc',
- *   include_liquidation_scenarios: true,
  *   limit: 100,
  * });
  */
-export async function getLiquidity(
-  params: LiquidityQueryParams = {}
-): Promise<LiquidityResponse> {
+export async function getLiquidity(params: LiquidityQueryParams = {}): Promise<LiquidityResponse> {
   const searchParams = new URLSearchParams()
 
   // Add all defined parameters to search params
@@ -42,9 +39,6 @@ export async function getLiquidity(
   if (params.sort_by) searchParams.set('sort_by', params.sort_by)
   if (params.sort_order) searchParams.set('sort_order', params.sort_order)
   if (params.limit !== undefined) searchParams.set('limit', String(params.limit))
-  if (params.include_liquidation_scenarios !== undefined) {
-    searchParams.set('include_liquidation_scenarios', String(params.include_liquidation_scenarios))
-  }
 
   const queryString = searchParams.toString()
   const endpoint = `/v1/analytics/liquidity${queryString ? `?${queryString}` : ''}`
