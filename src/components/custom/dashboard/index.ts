@@ -67,8 +67,16 @@ export type { AdvertisingCardProps } from './AdvertisingCard'
 export { GrossProfitCard } from './GrossProfitCard'
 export type { GrossProfitCardProps } from './GrossProfitCard'
 
+// Request #155: Operating Profit (renamed from old "Валовая прибыль")
+export { OperatingProfitCard } from './OperatingProfitCard'
+export type { OperatingProfitCardProps } from './OperatingProfitCard'
+
 export { MarginCard } from './MarginCard'
 export type { MarginCardProps } from './MarginCard'
+
+// Request #155: Gross Margin (new analytical card)
+export { GrossMarginCard } from './GrossMarginCard'
+export type { GrossMarginCardProps } from './GrossMarginCard'
 
 // Re-export TheoreticalProfitResult from lib for convenience
 export type { TheoreticalProfitResult } from '@/lib/theoretical-profit'

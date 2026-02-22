@@ -72,7 +72,21 @@ export interface FinanceSummary {
   gross_profit?: number | null
 
   // Story 61.13-FE: Margin Calculation Consistency
-  // margin_pct = (sale_gross_total - cogs_total) / sale_gross_total * 100
+  // margin_pct = (payout_total - cogs_total) / sale_gross_total * 100
   // Calculated by frontend aggregation, only when cogs_coverage_pct = 100%
   margin_pct?: number | null
+
+  // Validation fix: product-level transaction count (qty=1 operations)
+  // More accurate than fulfillment.fbo.salesCount which misses FBS/EAEU
+  product_transactions?: number
+
+  // Request #155: Product transactions total (from summary_total)
+  product_transactions_total?: number | null
+
+  // Request #155: Analytical profit/margin from weekly_margin_fact
+  revenue_net?: number | null
+  gross_profit_analytical?: number | null // revenue_net − COGS (before WB deductions)
+  operating_profit_analytical?: number | null // revenue_net − COGS − expenses
+  gross_margin_pct?: number | null // (revenue_net − COGS) / revenue_net × 100
+  operating_margin_pct?: number | null // operating_profit / revenue_net × 100
 }

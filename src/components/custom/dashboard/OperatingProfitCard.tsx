@@ -1,7 +1,7 @@
 /**
- * Gross Profit Card — Request #155: TRUE Gross Profit
- * Shows gross_profit_analytical = revenue_net − COGS (before WB deductions).
- * From weekly_margin_fact SUM(gross_profit_rub).
+ * Operating Profit Card — Request #155: Renamed from "Валовая прибыль"
+ * Shows operating_profit = payout_total − cogs_total (after WB deductions).
+ * Conditional on COGS coverage = 100%.
  * Green/Red accent based on sign.
  */
 
@@ -15,9 +15,9 @@ import { calculateComparison } from '@/lib/comparison-helpers'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { HighlightedMetricSkeleton, MetricCardError } from './MetricCardStates'
 
-export interface GrossProfitCardProps {
-  grossProfit: number | null | undefined
-  previousGrossProfit: number | null | undefined
+export interface OperatingProfitCardProps {
+  operatingProfit: number | null | undefined
+  previousOperatingProfit: number | null | undefined
   cogsCoverage: number
   isLoading?: boolean
   error?: Error | null
@@ -26,21 +26,21 @@ export interface GrossProfitCardProps {
   className?: string
 }
 
-export function GrossProfitCard({
-  grossProfit,
-  previousGrossProfit,
+export function OperatingProfitCard({
+  operatingProfit,
+  previousOperatingProfit,
   cogsCoverage,
   isLoading = false,
   error,
   onRetry,
   onAssignCogs,
   className,
-}: GrossProfitCardProps): React.ReactElement {
+}: OperatingProfitCardProps): React.ReactElement {
   if (isLoading) return <HighlightedMetricSkeleton className={className} />
   if (error) {
     return (
       <MetricCardError
-        title="Валовая прибыль"
+        title="Операционная прибыль"
         icon={TrendingUp}
         error={error}
         onRetry={onRetry}
@@ -50,11 +50,11 @@ export function GrossProfitCard({
     )
   }
 
-  const canShow = grossProfit != null
-  const isPositive = grossProfit != null && grossProfit >= 0
+  const canShow = operatingProfit != null
+  const isPositive = operatingProfit != null && operatingProfit >= 0
   const comparison =
-    canShow && previousGrossProfit != null && previousGrossProfit !== 0
-      ? calculateComparison(grossProfit!, previousGrossProfit, false)
+    canShow && previousOperatingProfit != null && previousOperatingProfit !== 0
+      ? calculateComparison(operatingProfit!, previousOperatingProfit, false)
       : null
 
   const borderColor = !canShow
@@ -78,32 +78,32 @@ export function GrossProfitCard({
         className
       )}
       role="article"
-      aria-label={`Валовая прибыль: ${canShow && grossProfit != null ? formatCurrency(grossProfit) : 'нет данных'}`}
+      aria-label={`Операционная прибыль: ${canShow && operatingProfit != null ? formatCurrency(operatingProfit) : 'нет данных'}`}
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-gray-500" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Валовая прибыль</span>
+            <span className="text-sm font-medium text-muted-foreground">Операционная прибыль</span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Подробнее о валовой прибыли"
+                aria-label="Подробнее об операционной прибыли"
               >
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent size="md">
-              <p>Выручка нетто − Себестоимость. До удержаний WB (логистика, хранение и т.д.).</p>
+              <p>К перечислению − Себестоимость. После всех удержаний WB.</p>
             </TooltipContent>
           </Tooltip>
         </div>
         <div className="mt-1">
-          {canShow && grossProfit != null ? (
+          {canShow && operatingProfit != null ? (
             <span className={cn('text-xl font-bold', valueColor)}>
-              {formatCurrency(grossProfit)}
+              {formatCurrency(operatingProfit)}
             </span>
           ) : (
             <span className="text-xl font-bold text-muted-foreground">—</span>

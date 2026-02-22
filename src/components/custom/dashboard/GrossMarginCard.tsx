@@ -1,8 +1,8 @@
 /**
- * Operating Margin Card — Request #155: Renamed from "Маржинальность"
- * Shows margin_pct = (payout − COGS) / sale_gross × 100 (after WB deductions).
+ * Gross Margin Card — Request #155: TRUE Gross Margin
+ * Shows gross_margin_pct = (revenue_net − COGS) / revenue_net × 100.
+ * Weighted by SKU revenue from weekly_margin_fact.
  * Comparison in percentage points (п.п.).
- * Conditional on COGS coverage >= 80%.
  */
 
 'use client'
@@ -13,9 +13,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { cn } from '@/lib/utils'
 import { HighlightedMetricSkeleton, MetricCardError } from './MetricCardStates'
 
-export interface MarginCardProps {
-  marginPct: number | null | undefined
-  previousMarginPct: number | null | undefined
+export interface GrossMarginCardProps {
+  grossMarginPct: number | null | undefined
+  previousGrossMarginPct: number | null | undefined
   cogsCoverage: number
   isLoading?: boolean
   error?: Error | null
@@ -25,20 +25,20 @@ export interface MarginCardProps {
 }
 
 function getMarginColor(pct: number): string {
-  if (pct >= 30) return 'text-green-600'
-  if (pct >= 15) return 'text-yellow-600'
+  if (pct >= 50) return 'text-green-600'
+  if (pct >= 30) return 'text-yellow-600'
   return 'text-red-600'
 }
 
 function getMarginBorder(pct: number): string {
-  if (pct >= 30) return 'border-green-500'
-  if (pct >= 15) return 'border-yellow-500'
+  if (pct >= 50) return 'border-green-500'
+  if (pct >= 30) return 'border-yellow-500'
   return 'border-red-500'
 }
 
 function getMarginBg(pct: number): string {
-  if (pct >= 30) return 'bg-gradient-to-br from-green-50 to-white'
-  if (pct >= 15) return 'bg-gradient-to-br from-yellow-50 to-white'
+  if (pct >= 50) return 'bg-gradient-to-br from-green-50 to-white'
+  if (pct >= 30) return 'bg-gradient-to-br from-yellow-50 to-white'
   return 'bg-gradient-to-br from-red-50 to-white'
 }
 
@@ -47,21 +47,21 @@ function formatPp(diff: number): string {
   return `${sign}${diff.toFixed(1)} п.п.`
 }
 
-export function MarginCard({
-  marginPct,
-  previousMarginPct,
+export function GrossMarginCard({
+  grossMarginPct,
+  previousGrossMarginPct,
   cogsCoverage,
   isLoading = false,
   error,
   onRetry,
   onAssignCogs,
   className,
-}: MarginCardProps): React.ReactElement {
+}: GrossMarginCardProps): React.ReactElement {
   if (isLoading) return <HighlightedMetricSkeleton className={className} />
   if (error) {
     return (
       <MetricCardError
-        title="Операционная маржа"
+        title="Валовая маржа"
         icon={Percent}
         error={error}
         onRetry={onRetry}
@@ -71,11 +71,14 @@ export function MarginCard({
     )
   }
 
-  const canShow = marginPct != null
-  const diff = canShow && previousMarginPct != null ? marginPct! - previousMarginPct : null
+  const canShow = grossMarginPct != null
+  const diff =
+    canShow && previousGrossMarginPct != null ? grossMarginPct! - previousGrossMarginPct : null
 
-  const borderColor = canShow ? getMarginBorder(marginPct!) : 'border-gray-300'
-  const bgGradient = canShow ? getMarginBg(marginPct!) : 'bg-gradient-to-br from-gray-50 to-white'
+  const borderColor = canShow ? getMarginBorder(grossMarginPct!) : 'border-gray-300'
+  const bgGradient = canShow
+    ? getMarginBg(grossMarginPct!)
+    : 'bg-gradient-to-br from-gray-50 to-white'
 
   return (
     <Card
@@ -86,35 +89,32 @@ export function MarginCard({
         className
       )}
       role="article"
-      aria-label={`Операционная маржа: ${canShow ? `${marginPct!.toFixed(1)}%` : 'нет данных'}`}
+      aria-label={`Валовая маржа: ${canShow ? `${grossMarginPct!.toFixed(1)}%` : 'нет данных'}`}
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Percent className="h-4 w-4 text-gray-500" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Операционная маржа</span>
+            <span className="text-sm font-medium text-muted-foreground">Валовая маржа</span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Подробнее об операционной марже"
+                aria-label="Подробнее о валовой марже"
               >
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent size="md">
-              <p>
-                (К перечислению − Себестоимость) / Продажи нетто × 100%. Рентабельность после всех
-                удержаний WB.
-              </p>
+              <p>(Выручка нетто − Себестоимость) / Выручка нетто × 100%. Маржа до удержаний WB.</p>
             </TooltipContent>
           </Tooltip>
         </div>
         <div className="mt-1">
           {canShow ? (
-            <span className={cn('text-xl font-bold', getMarginColor(marginPct!))}>
-              {marginPct!.toFixed(1)}%
+            <span className={cn('text-xl font-bold', getMarginColor(grossMarginPct!))}>
+              {grossMarginPct!.toFixed(1)}%
             </span>
           ) : (
             <span className="text-xl font-bold text-muted-foreground">—</span>
@@ -131,7 +131,7 @@ export function MarginCard({
               {formatPp(diff)}
             </span>
             <span className="ml-1 text-xs text-muted-foreground">
-              vs {previousMarginPct!.toFixed(1)}%
+              vs {previousGrossMarginPct!.toFixed(1)}%
             </span>
           </div>
         )}
