@@ -41,8 +41,10 @@ export function usePreviousPeriodData(
     const prevStorageCost = s?.storage_cost ?? st?.storage_cost_total ?? null
     const prevPaidAcceptance = s?.paid_acceptance_cost ?? st?.paid_acceptance_cost_total ?? null
     const prevCogsTotal = s?.cogs_total ?? st?.cogs_total ?? null
+    const prevWbPromotionCost = s?.wb_promotion_cost ?? st?.wb_promotion_cost_total ?? null
 
-    // WB Commissions: sum of 6 commission/fee fields
+    // WB Commissions: sum of 6 commission/fee fields, minus wb_promotion_cost
+    // (promotions shown separately in AdvertisingCard)
     const commissionFields = [
       s?.commission_sales ?? st?.commission_sales_total,
       s?.acquiring_fee ?? st?.acquiring_fee_total,
@@ -52,9 +54,13 @@ export function usePreviousPeriodData(
       s?.wb_services_cost ?? st?.wb_services_cost_total,
     ]
     const hasAnyCommission = commissionFields.some(v => v != null)
-    const wbCommissionsTotal: number | null = hasAnyCommission
+    let wbCommissionsTotal: number | null = hasAnyCommission
       ? commissionFields.reduce<number>((sum, v) => sum + (v ?? 0), 0)
       : null
+    // Subtract promotion cost to avoid double-counting with AdvertisingCard
+    if (wbCommissionsTotal != null && prevWbPromotionCost != null) {
+      wbCommissionsTotal -= prevWbPromotionCost
+    }
 
     // Storage + Acceptance combined
     const storageAcceptanceTotal =
@@ -72,8 +78,15 @@ export function usePreviousPeriodData(
       storageAcceptanceTotal,
       cogsTotal: prevCogsTotal,
       advertisingSpend: prevAdvertisingSpend,
+      wbPromotionCost: prevWbPromotionCost,
       grossProfit: s?.gross_profit ?? st?.gross_profit ?? null,
       marginPct: s?.margin_pct ?? st?.margin_pct ?? null,
+      // Request #155: Analytical profit/margin
+      grossProfitAnalytical: s?.gross_profit_analytical ?? st?.gross_profit_analytical ?? null,
+      operatingProfitAnalytical:
+        s?.operating_profit_analytical ?? st?.operating_profit_analytical ?? null,
+      grossMarginPct: s?.gross_margin_pct ?? st?.gross_margin_pct ?? null,
+      operatingMarginPct: s?.operating_margin_pct ?? st?.operating_margin_pct ?? null,
       // Legacy fields for backward compatibility
       ordersCogs: null,
       salesAmount: s?.wb_sales_gross ?? st?.wb_sales_gross_total ?? null,

@@ -83,9 +83,13 @@ export function DashboardContent(): React.ReactElement {
   const s = financialComparison.current?.summary_rus
   const st = financialComparison.current?.summary_total
   const fSummary = fulfillmentQuery.current?.summary
-  const salesCount = fSummary
-    ? (fSummary.fbo.salesCount ?? 0) + (fSummary.fbs.salesCount ?? 0)
-    : undefined
+  // wb_services_cost includes wb_promotion_cost; split out promotions to AdvertisingCard
+  const rawWbServices = s?.wb_services_cost ?? st?.wb_services_cost_total
+  const rawWbPromo = s?.wb_promotion_cost ?? st?.wb_promotion_cost_total
+  const wbServicesExPromo = rawWbServices != null ? rawWbServices - (rawWbPromo ?? 0) : undefined
+  // Use product_transactions from finance-summary (includes FBO+FBS+EAEU)
+  // Fulfillment API fbo.salesCount misses FBS/EAEU sales (167 vs actual 187)
+  const salesCount = s?.product_transactions ?? st?.product_transactions ?? undefined
   const returnsCount = fSummary
     ? (fSummary.fbo.returnsCount ?? 0) + (fSummary.fbs.returnsCount ?? 0)
     : undefined
@@ -150,7 +154,7 @@ export function DashboardContent(): React.ReactElement {
             loyaltyFee={s?.loyalty_fee ?? st?.loyalty_fee_total}
             penaltiesTotal={s?.penalties_total ?? st?.penalties_total}
             wbCommissionAdj={s?.wb_commission_adj ?? st?.wb_commission_adj_total}
-            wbServicesCost={s?.wb_services_cost ?? st?.wb_services_cost_total}
+            wbServicesCost={wbServicesExPromo}
             logisticsCost={s?.logistics_cost ?? st?.logistics_cost_total}
             payoutTotal={s?.payout_total ?? st?.payout_total}
             storageCost={s?.storage_cost ?? st?.storage_cost_total}
@@ -161,8 +165,17 @@ export function DashboardContent(): React.ReactElement {
             totalProducts={productCount ?? 0}
             advertisingSpend={advertisingQuery.current?.summary?.total_spend}
             advertisingRoas={advertisingQuery.current?.summary?.overall_roas}
+            wbPromotionCost={rawWbPromo ?? undefined}
             grossProfit={s?.gross_profit ?? st?.gross_profit ?? undefined}
             marginPct={s?.margin_pct ?? st?.margin_pct ?? undefined}
+            grossProfitAnalytical={
+              s?.gross_profit_analytical ?? st?.gross_profit_analytical ?? undefined
+            }
+            operatingProfitAnalytical={
+              s?.operating_profit_analytical ?? st?.operating_profit_analytical ?? undefined
+            }
+            operatingMarginPct={s?.operating_margin_pct ?? st?.operating_margin_pct ?? undefined}
+            grossMarginPct={s?.gross_margin_pct ?? st?.gross_margin_pct ?? undefined}
             previousPeriodData={previousPeriodData}
             isLoading={isLoading || productsLoading || cogsLoading}
             error={error}

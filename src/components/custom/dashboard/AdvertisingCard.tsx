@@ -22,6 +22,10 @@ import { StandardMetricSkeleton, MetricCardError } from './MetricCardStates'
 export interface AdvertisingCardProps {
   totalSpend: number | null | undefined
   roas: number | null | undefined
+  /** Actual WB promotion deductions from finance-summary */
+  wbPromotionCost?: number | null | undefined
+  /** Previous period wb_promotion_cost for comparison */
+  previousWbPromotionCost?: number | null | undefined
   previousSpend: number | null | undefined
   saleGross: number | null | undefined
   /** Orders revenue (retail price) from fulfillment total — for DRRz calculation */
@@ -59,6 +63,8 @@ function calculateDrrz(
 export function AdvertisingCard({
   totalSpend,
   roas,
+  wbPromotionCost,
+  previousWbPromotionCost,
   previousSpend,
   saleGross,
   ordersRevenue,
@@ -80,21 +86,25 @@ export function AdvertisingCard({
     )
   }
 
-  const hasValue = totalSpend != null
-  const displayValue = hasValue ? formatCurrency(totalSpend) : '—'
+  // Prefer actual WB deductions (finance-summary), fallback to ad API spend
+  const useFinanceSrc = wbPromotionCost != null
+  const amount = useFinanceSrc ? wbPromotionCost : totalSpend
+  const prevAmount = useFinanceSrc ? (previousWbPromotionCost ?? previousSpend) : previousSpend
+  const hasValue = amount != null
+  const displayValue = hasValue ? formatCurrency(amount) : '—'
   const comparison =
-    totalSpend != null && previousSpend != null && previousSpend !== 0
-      ? calculateComparison(totalSpend, previousSpend, true)
+    amount != null && prevAmount != null && prevAmount !== 0
+      ? calculateComparison(amount, prevAmount, true)
       : null
 
-  const drr = calculateDrr(totalSpend, saleGross)
-  const drrz = calculateDrrz(totalSpend, ordersRevenue)
+  const drr = calculateDrr(amount, saleGross)
+  const drrz = calculateDrrz(amount, ordersRevenue)
   // Show DRRz only when ordersRevenue is available and > 0
   const showDrrz = ordersRevenue != null && ordersRevenue > 0
 
-  const tooltipText = showDrrz
-    ? 'ДРР — доля рекламных расходов от продаж. ДРРз — от суммы заказов (розничная цена). ДРРз всегда ниже ДРР.'
-    : 'Общие расходы на рекламу в Wildberries за период.'
+  const tooltipText = useFinanceSrc
+    ? 'Фактические удержания WB за продвижение (из недельного отчёта). ROAS рассчитан по данным рекламного API.'
+    : 'Расходы на рекламу по данным API Wildberries.'
 
   return (
     <Card

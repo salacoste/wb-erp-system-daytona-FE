@@ -24,8 +24,14 @@ export interface PreviousPeriodData {
   storageAcceptanceTotal: number | null
   cogsTotal: number | null
   advertisingSpend: number | null
+  wbPromotionCost?: number | null
   grossProfit: number | null
   marginPct: number | null
+  // Request #155: Analytical profit/margin
+  grossProfitAnalytical?: number | null
+  operatingProfitAnalytical?: number | null
+  grossMarginPct?: number | null
+  operatingMarginPct?: number | null
   // Legacy fields for compatibility
   ordersCogs: number | null
   salesAmount: number | null
@@ -64,9 +70,16 @@ export interface DashboardMetricsGridProps {
   totalProducts: number
   advertisingSpend: number | undefined
   advertisingRoas: number | undefined
+  /** Actual WB promotion deductions from finance-summary (wb_promotion_cost) */
+  wbPromotionCost?: number | undefined
   // Прибыль
   grossProfit: number | undefined
   marginPct: number | undefined
+  // Request #155: Analytical profit/margin from margin_fact
+  grossProfitAnalytical?: number | undefined
+  operatingProfitAnalytical?: number | undefined
+  operatingMarginPct?: number | undefined
+  grossMarginPct?: number | undefined
   // Common
   previousPeriodData: PreviousPeriodData | undefined
   isLoading: boolean

@@ -1,7 +1,8 @@
 /**
  * Dashboard Metrics Grid — Flat responsive P&L layout
  * Single grid: 1col → 2col (sm) → 3col (lg) → 4col (xl)
- * 15 cards: 7 simple (data-driven) + 8 complex with tooltips/breakdowns.
+ * 18 cards: 8 simple (data-driven) + 10 complex with tooltips/breakdowns.
+ * Request #155: Added GrossMarginCard, OperatingProfitCard (renamed from GrossProfitCard).
  */
 
 'use client'
@@ -17,6 +18,8 @@ import { StorageAcceptanceCard } from './StorageAcceptanceCard'
 import { CostsCard } from './CostsCard'
 import { AdvertisingCard } from './AdvertisingCard'
 import { GrossProfitCard } from './GrossProfitCard'
+import { OperatingProfitCard } from './OperatingProfitCard'
+import { GrossMarginCard } from './GrossMarginCard'
 import { MarginCard } from './MarginCard'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 
@@ -53,8 +56,14 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     totalProducts,
     advertisingSpend,
     advertisingRoas,
+    wbPromotionCost,
     grossProfit,
     marginPct,
+    // Request #155: Analytical profit/margin
+    grossProfitAnalytical,
+    operatingProfitAnalytical,
+    operatingMarginPct,
+    grossMarginPct,
     previousPeriodData: prev,
     isLoading,
     error,
@@ -63,7 +72,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     className,
   } = props
 
-  if (isLoading) return <DashboardMetricsGridSkeleton cardCount={16} className={className} />
+  if (isLoading) return <DashboardMetricsGridSkeleton cardCount={18} className={className} />
 
   const cards = buildSimpleCards(props)
   const e = error ?? undefined
@@ -124,6 +133,8 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
       <AdvertisingCard
         totalSpend={advertisingSpend}
         roas={advertisingRoas}
+        wbPromotionCost={wbPromotionCost}
+        previousWbPromotionCost={prev?.wbPromotionCost}
         previousSpend={prev?.advertisingSpend}
         saleGross={saleGross}
         isLoading={false}
@@ -131,8 +142,26 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         onRetry={onRetry}
       />
       <GrossProfitCard
-        grossProfit={grossProfit}
-        previousGrossProfit={prev?.grossProfit}
+        grossProfit={grossProfitAnalytical}
+        previousGrossProfit={prev?.grossProfitAnalytical}
+        cogsCoverage={cogsCoverage}
+        isLoading={false}
+        error={error}
+        onRetry={onRetry}
+        onAssignCogs={onAssignCogs}
+      />
+      <OperatingProfitCard
+        operatingProfit={operatingProfitAnalytical ?? grossProfit}
+        previousOperatingProfit={prev?.operatingProfitAnalytical ?? prev?.grossProfit}
+        cogsCoverage={cogsCoverage}
+        isLoading={false}
+        error={error}
+        onRetry={onRetry}
+        onAssignCogs={onAssignCogs}
+      />
+      <GrossMarginCard
+        grossMarginPct={grossMarginPct}
+        previousGrossMarginPct={prev?.grossMarginPct}
         cogsCoverage={cogsCoverage}
         isLoading={false}
         error={error}
@@ -140,8 +169,8 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         onAssignCogs={onAssignCogs}
       />
       <MarginCard
-        marginPct={marginPct}
-        previousMarginPct={prev?.marginPct}
+        marginPct={operatingMarginPct ?? marginPct}
+        previousMarginPct={prev?.operatingMarginPct ?? prev?.marginPct}
         cogsCoverage={cogsCoverage}
         isLoading={false}
         error={error}

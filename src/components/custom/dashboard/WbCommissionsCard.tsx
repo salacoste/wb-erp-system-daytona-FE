@@ -67,7 +67,7 @@ export function WbCommissionsCard({
   return (
     <ExpenseMetricCard
       title="Удержания WB"
-      tooltip="Все удержания WB: комиссия, эквайринг, лояльность, штрафы, корректировки, сервисы."
+      tooltip="Комиссия, эквайринг, лояльность, штрафы, корректировки и прочие сервисы WB. Продвижение показано отдельно в карточке «Реклама»."
       icon={Receipt}
       valueColor="text-red-500"
       value={total}
