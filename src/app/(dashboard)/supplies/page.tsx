@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { format, subDays } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
@@ -27,6 +27,21 @@ import {
   CreateSupplyModal,
 } from '@/components/custom/supplies'
 import type { SupplyStatus, SuppliesSortField, SortOrder, SupplyListItem } from '@/types/supplies'
+
+/** Client-side sort for supplies (backend does not support sort params) */
+function sortSupplies(
+  items: SupplyListItem[],
+  sortBy: SuppliesSortField,
+  sortOrder: SortOrder
+): SupplyListItem[] {
+  return [...items].sort((a, b) => {
+    let cmp = 0
+    if (sortBy === 'created_at') cmp = a.createdAt.localeCompare(b.createdAt)
+    else if (sortBy === 'closed_at') cmp = (a.closedAt ?? '').localeCompare(b.closedAt ?? '')
+    else if (sortBy === 'orders_count') cmp = a.ordersCount - b.ordersCount
+    return sortOrder === 'asc' ? cmp : -cmp
+  })
+}
 
 const PAGE_SIZE = 20
 const DEFAULT_SORT: SuppliesSortField = 'created_at'
@@ -67,23 +82,23 @@ export default function SuppliesPage() {
     if (status) params.set('status', status)
     if (dateFrom !== defaultRange.from) params.set('from', dateFrom)
     if (dateTo !== defaultRange.to) params.set('to', dateTo)
-    if (sortBy !== DEFAULT_SORT) params.set('sort_by', sortBy)
-    if (sortOrder !== DEFAULT_ORDER) params.set('sort_order', sortOrder)
     if (page > 1) params.set('page', String(page))
     const qs = params.toString()
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
-  }, [status, dateFrom, dateTo, sortBy, sortOrder, page, pathname, router])
+  }, [status, dateFrom, dateTo, page, pathname, router])
 
-  // Data fetching
+  // Data fetching (sort is client-side — backend does not support sort params)
   const { data, isLoading, isError, error, refetch } = useSupplies({
     status,
     from: dateFrom,
     to: dateTo,
-    sort_by: sortBy,
-    sort_order: sortOrder,
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
   })
+  const sortedItems = useMemo(
+    () => sortSupplies(data?.items ?? [], sortBy, sortOrder),
+    [data?.items, sortBy, sortOrder]
+  )
   const { mutate: triggerSync, isPending: isSyncing } = useSyncSupplies()
 
   // Handlers
@@ -184,7 +199,7 @@ export default function SuppliesPage() {
       </Card>
 
       <SuppliesTable
-        supplies={data?.items ?? []}
+        supplies={sortedItems}
         sortBy={sortBy}
         sortOrder={sortOrder}
         onSortChange={handleSortChange}

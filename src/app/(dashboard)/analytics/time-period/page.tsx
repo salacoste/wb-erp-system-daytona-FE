@@ -4,7 +4,13 @@ import { useState } from 'react'
 import { MarginTrendChart } from '@/components/custom/MarginTrendChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Info, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
@@ -80,8 +86,9 @@ export default function MarginAnalysisByTimePeriodPage() {
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          График показывает изменение маржинальности по неделям. Маржа рассчитывается на основе выручки и себестоимости (COGS).
-          Недели без данных COGS отмечены предупреждением в подсказках.
+          График показывает изменение маржинальности по неделям. Маржа рассчитывается на основе
+          выручки и себестоимости (COGS). Недели без данных COGS отмечены предупреждением в
+          подсказках.
         </AlertDescription>
       </Alert>
 
@@ -101,7 +108,7 @@ export default function MarginAnalysisByTimePeriodPage() {
                 <SelectValue placeholder="Выберите период" />
               </SelectTrigger>
               <SelectContent>
-                {TIME_PERIODS.map((period) => (
+                {TIME_PERIODS.map(period => (
                   <SelectItem key={period.value} value={period.value}>
                     {period.label}
                   </SelectItem>
@@ -116,10 +123,9 @@ export default function MarginAnalysisByTimePeriodPage() {
       <MarginTrendChart
         queryParams={{
           weeks: parseInt(selectedPeriod, 10),
-          includeCogs: true,
         }}
         title="Динамика маржинальности"
-        description={`Изменение маржи за последние ${TIME_PERIODS.find((p) => p.value === selectedPeriod)?.label.toLowerCase()}`}
+        description={`Изменение маржи за последние ${TIME_PERIODS.find(p => p.value === selectedPeriod)?.label.toLowerCase()}`}
         height={450}
       />
 
@@ -135,27 +141,46 @@ export default function MarginAnalysisByTimePeriodPage() {
           </div>
           <div>
             <p className="font-semibold text-gray-900 mb-1">Ось Y (вертикальная):</p>
-            <p>Процент маржи. Формула: <code className="bg-gray-100 px-1 rounded">((Выручка - COGS) / Выручка) × 100%</code></p>
+            <p>
+              Процент маржи. Формула:{' '}
+              <code className="bg-gray-100 px-1 rounded">((Выручка - COGS) / Выручка) × 100%</code>
+            </p>
           </div>
           <div>
             <p className="font-semibold text-gray-900 mb-1">Цветовые обозначения:</p>
             <ul className="list-disc list-inside space-y-1">
-              <li><span className="text-green-600 font-semibold">Зелёные точки</span> — положительная маржа (прибыль)</li>
-              <li><span className="text-red-600 font-semibold">Красные точки</span> — отрицательная маржа (убыток)</li>
-              <li><span className="text-gray-600 font-semibold">Серые точки</span> — нулевая маржа (безубыточность)</li>
+              <li>
+                <span className="text-green-600 font-semibold">Зелёные точки</span> — положительная
+                маржа (прибыль)
+              </li>
+              <li>
+                <span className="text-red-600 font-semibold">Красные точки</span> — отрицательная
+                маржа (убыток)
+              </li>
+              <li>
+                <span className="text-gray-600 font-semibold">Серые точки</span> — нулевая маржа
+                (безубыточность)
+              </li>
             </ul>
           </div>
           <div>
             <p className="font-semibold text-gray-900 mb-1">Интерактивность:</p>
-            <p>Наведите курсор на точку графика, чтобы увидеть подробные метрики: маржа, выручка, прибыль, количество проданных единиц.</p>
+            <p>
+              Наведите курсор на точку графика, чтобы увидеть подробные метрики: маржа, выручка,
+              прибыль, количество проданных единиц.
+            </p>
           </div>
           <div>
             <p className="font-semibold text-gray-900 mb-1">Статистика:</p>
-            <p>Под графиком отображается сводная информация: количество недель, средняя маржа, максимальная и минимальная маржа за период.</p>
+            <p>
+              Под графиком отображается сводная информация: количество недель, средняя маржа,
+              максимальная и минимальная маржа за период.
+            </p>
           </div>
           <div className="pt-2 border-t">
             <p className="text-xs text-gray-500">
-              <strong>Примечание:</strong> Для расчёта маржи необходимы данные о себестоимости (COGS). Недели без COGS данных будут отмечены предупреждением в подсказке.
+              <strong>Примечание:</strong> Для расчёта маржи необходимы данные о себестоимости
+              (COGS). Недели без COGS данных будут отмечены предупреждением в подсказке.
             </p>
           </div>
         </CardContent>

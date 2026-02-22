@@ -193,8 +193,6 @@ export const mockListParamsFiltered: SuppliesListParams = {
   status: 'OPEN',
   from: '2026-01-01T00:00:00.000Z',
   to: '2026-01-31T23:59:59.000Z',
-  sort_by: 'created_at',
-  sort_order: 'desc',
   limit: 50,
   offset: 0,
 }

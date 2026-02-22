@@ -142,8 +142,6 @@ export interface SuppliesListParams {
   status?: SupplyStatus
   from?: string
   to?: string
-  sort_by?: SuppliesSortField
-  sort_order?: SortOrder
   limit?: number
   offset?: number
 }
