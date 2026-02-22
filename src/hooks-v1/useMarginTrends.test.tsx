@@ -14,10 +14,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  useMarginTrends,
-  getWeekRange,
-} from './useMarginTrends'
+import { useMarginTrends, getWeekRange } from './useMarginTrends'
 import { apiClient } from '@/lib/api-client'
 
 // Mock apiClient
@@ -76,10 +73,9 @@ describe('useMarginTrends', () => {
 
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
-      const { result } = renderHook(
-        () => useMarginTrends({ weeks: 12, includeCogs: true }),
-        { wrapper: createWrapper() }
-      )
+      const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+        wrapper: createWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -124,10 +120,9 @@ describe('useMarginTrends', () => {
 
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
-      const { result } = renderHook(
-        () => useMarginTrends({ weeks: 12 }),
-        { wrapper: createWrapper() }
-      )
+      const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+        wrapper: createWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -163,7 +158,6 @@ describe('useMarginTrends', () => {
           useMarginTrends({
             weekStart: '2025-W40',
             weekEnd: '2025-W47',
-            includeCogs: true,
           }),
         { wrapper: createWrapper() }
       )
@@ -203,10 +197,9 @@ describe('useMarginTrends', () => {
 
       vi.mocked(apiClient.get).mockRejectedValueOnce(error)
 
-      const { result } = renderHook(
-        () => useMarginTrends({ weeks: 12 }),
-        { wrapper: createWrapper() }
-      )
+      const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+        wrapper: createWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
       expect(result.current.data).toEqual([])
@@ -226,25 +219,18 @@ describe('useMarginTrends', () => {
         { wrapper: createWrapper() }
       )
 
-      await waitFor(
-        () => expect(result.current.isError).toBe(true),
-        { timeout: 5000 }
-      )
+      await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
       expect(result.current.error).toBeDefined()
     })
 
     it('handles generic API errors', async () => {
       vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('Network Error'))
 
-      const { result } = renderHook(
-        () => useMarginTrends({ weeks: 12 }),
-        { wrapper: createWrapper() }
-      )
+      const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+        wrapper: createWrapper(),
+      })
 
-      await waitFor(
-        () => expect(result.current.isError).toBe(true),
-        { timeout: 5000 }
-      )
+      await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
       expect(result.current.error).toBeDefined()
     })
   })
@@ -292,4 +278,3 @@ describe('getWeekRange', () => {
     expect(range.weekEnd).toMatch(/^\d{4}-W\d{2}$/)
   })
 })
-

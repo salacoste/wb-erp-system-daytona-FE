@@ -23,8 +23,6 @@ export interface MarginTrendsQueryParams {
   weekStart?: string
   /** ISO week end (e.g., "2025-W47") - use with weekStart */
   weekEnd?: string
-  /** Include COGS in calculation (default: true) */
-  includeCogs?: boolean
 }
 
 /**
@@ -42,11 +40,13 @@ export interface MarginTrendsQueryParams {
  * const { data } = useMarginTrends({ weekStart: '2025-W40', weekEnd: '2025-W47' })
  */
 export function useMarginTrends(params: MarginTrendsQueryParams) {
-  const { weeks, weekStart, weekEnd, includeCogs = true } = params
+  const { weeks, weekStart, weekEnd } = params
 
   // Validate parameters
   if (!weeks && (!weekStart || !weekEnd)) {
-    throw new Error('useMarginTrends: Must provide either "weeks" or both "weekStart" and "weekEnd"')
+    throw new Error(
+      'useMarginTrends: Must provide either "weeks" or both "weekStart" and "weekEnd"'
+    )
   }
 
   if (weeks && (weekStart || weekEnd)) {
@@ -54,7 +54,7 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
   }
 
   return useQuery({
-    queryKey: ['analytics', 'margin-trends', { weeks, weekStart, weekEnd, includeCogs }],
+    queryKey: ['analytics', 'margin-trends', { weeks, weekStart, weekEnd }],
     queryFn: async (): Promise<MarginTrendPoint[]> => {
       try {
         // Build query string
@@ -66,8 +66,6 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
           queryParams.append('weekStart', weekStart)
           queryParams.append('weekEnd', weekEnd)
         }
-
-        queryParams.append('includeCogs', includeCogs.toString())
 
         const endpoint = `/v1/analytics/weekly/margin-trends?${queryParams.toString()}`
         console.info(`[MarginTrends] Fetching margin trends: ${endpoint}`)
@@ -88,7 +86,9 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
         console.error('[MarginTrends] Failed to fetch margin trends:', error)
 
         if (error instanceof Error && 'response' in error) {
-          const httpError = error as { response?: { status?: number; data?: { error?: { message?: string } } } }
+          const httpError = error as {
+            response?: { status?: number; data?: { error?: { message?: string } } }
+          }
 
           // Handle specific error cases
           if (httpError.response?.status === 404) {
@@ -97,7 +97,8 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
           }
 
           if (httpError.response?.status === 400) {
-            const errorMessage = httpError.response.data?.error?.message || 'Invalid request parameters'
+            const errorMessage =
+              httpError.response.data?.error?.message || 'Invalid request parameters'
             console.error('[MarginTrends] Bad request:', errorMessage)
             throw new Error(`Неверные параметры запроса: ${errorMessage}`)
           }
@@ -137,7 +138,7 @@ export function getWeekRange(numWeeks: number): { weekStart: string; weekEnd: st
 
   // Calculate start week (numWeeks ago)
   const startDate = new Date(now)
-  startDate.setDate(startDate.getDate() - (numWeeks * 7))
+  startDate.setDate(startDate.getDate() - numWeeks * 7)
   const startWeekNumber = getISOWeek(startDate)
   const startYear = startDate.getFullYear()
   const startWeek = `${startYear}-W${startWeekNumber.toString().padStart(2, '0')}`
@@ -157,6 +158,13 @@ function getISOWeek(date: Date): number {
   const dayNr = (date.getDay() + 6) % 7 // Monday = 0, Sunday = 6
   target.setDate(target.getDate() - dayNr + 3) // Nearest Thursday
   const firstThursday = new Date(target.getFullYear(), 0, 4) // Jan 4th is always in week 1
-  const weekNumber = 1 + Math.round(((target.getTime() - firstThursday.getTime()) / 86400000 - 3 + (firstThursday.getDay() + 6) % 7) / 7)
+  const weekNumber =
+    1 +
+    Math.round(
+      ((target.getTime() - firstThursday.getTime()) / 86400000 -
+        3 +
+        ((firstThursday.getDay() + 6) % 7)) /
+        7
+    )
   return weekNumber
 }

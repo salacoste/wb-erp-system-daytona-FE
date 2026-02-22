@@ -3,15 +3,11 @@
  * Story 61.11-FE: Previous Period Data Integration
  * Epic 61-FE: Dashboard Data Integration
  *
- * BUG: previousPeriodData object only fills 2 of 8 fields:
- * - ordersAmount - WORKS (via useOrdersVolumeWithComparison)
- * - ordersCogs - ALWAYS null (no previous period query)
- * - advertisingSpend - WORKS (via useAdvertisingAnalyticsComparison)
- * - logisticsCost - ALWAYS null (no previous period finance summary)
- * - storageCost - ALWAYS null (no previous period finance summary)
- * - theoreticalProfit - ALWAYS null (not calculated for previous period)
- *
- * These tests are written to FAIL (TDD Red phase) until implementation
+ * Updated for P&L restructuring (Epic 65):
+ * - DashboardContent now delegates to usePreviousPeriodData hook
+ * - Previous period data comes from finance-summary, fulfillment, and advertising
+ * - Legacy fields (ordersCogs, theoreticalProfit) are always null
+ * - New fields: cogsTotal, saleGross, wbCommissionsTotal, etc.
  *
  * @see docs/stories/epic-61/story-61.11-fe-previous-period-data.md
  */
@@ -26,36 +22,28 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 // =============================================================================
 
 // Default mock implementations
-const mockOrdersVolumeComparison = vi.fn()
-const mockOrdersCogsComparison = vi.fn()
 const mockFinancialSummaryComparison = vi.fn()
 const mockAdvertisingComparison = vi.fn()
 const mockFulfillmentSummaryComparison = vi.fn()
-const mockFulfillmentSyncStatus = vi.fn()
-const mockStartFulfillmentSync = vi.fn()
-
-vi.mock('@/hooks/useOrdersVolume', () => ({
-  useOrdersVolumeWithComparison: () => mockOrdersVolumeComparison(),
-}))
 
 vi.mock('@/hooks/useFulfillment', () => ({
-  useFulfillmentSummaryWithComparison: () => mockFulfillmentSummaryComparison(),
-  useFulfillmentSyncStatus: () => mockFulfillmentSyncStatus(),
-  useStartFulfillmentSync: () => mockStartFulfillmentSync(),
-}))
-
-vi.mock('@/hooks/useOrdersCogs', () => ({
-  useOrdersCogsWithComparison: () => mockOrdersCogsComparison(),
+  useFulfillmentSummaryWithComparison: (_params: unknown) => mockFulfillmentSummaryComparison(),
 }))
 
 vi.mock('@/hooks/useFinancialSummary', () => ({
   useFinancialSummaryWithPeriodComparison: () => mockFinancialSummaryComparison(),
-  // Also export useAvailableWeeks needed by DashboardPeriodSelector
-  useAvailableWeeks: () => ({ data: [], isLoading: false }),
+  useAvailableWeeks: () => ({
+    data: [{ week: '2026-W05' }, { week: '2026-W04' }],
+    isLoading: false,
+  }),
 }))
 
 vi.mock('@/hooks/useAdvertisingAnalytics', () => ({
   useAdvertisingAnalyticsComparison: () => mockAdvertisingComparison(),
+}))
+
+vi.mock('@/hooks/useDashboard', () => ({
+  dashboardQueryKeys: { all: ['dashboard'] },
 }))
 
 // Import component after mocks are set up
@@ -66,40 +54,61 @@ import { DashboardContent } from '../DashboardContent'
 // =============================================================================
 
 /**
- * Current period mock data
- * All 8 metrics populated with realistic values
+ * Current period finance summary mock data
+ * summary_total fields (used when summary_rus is absent)
  */
-const mockCurrentPeriodData = {
-  ordersAmount: 100000,
-  ordersCount: 250,
-  ordersCogs: 35818,
-  salesAmount: 84377, // wb_sales_gross (actual sales, not orders)
-  salesCogs: 35818, // cogs_total from finance summary
-  advertisingSpend: 12131,
-  logisticsCost: 17566.04,
-  storageCost: 2024.94,
-  // theoreticalProfit = sales - salesCogs - ads - logistics - storage
-  // = 84377 - 35818 - 12131 - 17566.04 - 2024.94 = 16837.02
-  theoreticalProfit: 16837.02,
+const mockCurrentFinanceSummaryTotal = {
+  wb_sales_gross_total: 84377,
+  cogs_total: 35818,
+  logistics_cost_total: 17566.04,
+  storage_cost_total: 2024.94,
+  sale_gross_total: 70000,
+  commission_sales_total: 5000,
+  acquiring_fee_total: 1000,
+  loyalty_fee_total: 500,
+  penalties_total: 200,
+  wb_commission_adj_total: 300,
+  wb_services_cost_total: 400,
+  payout_total: 50000,
+  paid_acceptance_cost_total: 100,
+  product_transactions: 187,
 }
 
 /**
- * Previous period mock data
- * All 8 metrics for comparison (week/month prior)
- * Theoretical profit uses SALES (not orders) per QA report 128
+ * Previous period finance summary mock data
+ * Used by usePreviousPeriodData hook to build PreviousPeriodData
  */
-const mockPreviousPeriodData = {
+const mockPreviousFinanceSummaryTotal = {
+  wb_sales_gross_total: 95000,
+  cogs_total: 43890,
+  logistics_cost_total: 20000,
+  storage_cost_total: 2500,
+  sale_gross_total: 80000,
+  commission_sales_total: 6000,
+  acquiring_fee_total: 1200,
+  loyalty_fee_total: 600,
+  penalties_total: 250,
+  wb_commission_adj_total: 350,
+  wb_services_cost_total: 450,
+  payout_total: 55000,
+  paid_acceptance_cost_total: 150,
+  gross_profit: 10000,
+  margin_pct: 12.5,
+}
+
+/**
+ * Previous period expected values for assertion
+ * These match what usePreviousPeriodData computes from the mock data
+ */
+const expectedPreviousPeriod = {
   ordersAmount: 116077.27,
   ordersCount: 280,
-  ordersCogs: 43890,
-  salesAmount: 95000, // wb_sales_gross (actual sales for previous period)
-  salesCogs: 43890, // cogs_total from finance summary
   advertisingSpend: 15000,
   logisticsCost: 20000,
-  storageCost: 2500,
-  // theoreticalProfit = sales - salesCogs - ads - logistics - storage
-  // = 95000 - 43890 - 15000 - 20000 - 2500 = 13610
-  theoreticalProfit: 13610,
+  storageCost: 2500, // legacy field, same as storage_cost_total
+  cogsTotal: 43890,
+  salesAmount: 95000, // legacy field from wb_sales_gross_total
+  salesCogs: 43890, // legacy field, same as cogsTotal
 }
 
 // =============================================================================
@@ -159,6 +168,28 @@ vi.mock('@/components/custom/AdvertisingDashboardWidget', () => ({
   AdvertisingDashboardWidget: () => <div data-testid="advertising-widget">Ads Widget</div>,
 }))
 
+vi.mock('@/components/custom/DashboardPeriodSelector', () => ({
+  DashboardPeriodSelector: () => <div data-testid="period-selector">Period Selector</div>,
+}))
+
+vi.mock('@/components/custom/PeriodContextLabel', () => ({
+  PeriodContextLabel: () => <span data-testid="period-label">Period Label</span>,
+}))
+
+vi.mock('@/components/custom/InitialDataSummary', () => ({
+  InitialDataSummary: () => <div data-testid="initial-data-summary">Initial Data Summary</div>,
+}))
+
+vi.mock('./ReportPendingBanner', () => ({
+  ReportPendingBanner: () => null,
+}))
+
+vi.mock('./DashboardAlerts', () => ({
+  ProcessingAlert: () => null,
+  FailedAlert: () => null,
+  ErrorAlert: () => null,
+}))
+
 vi.mock('@/components/custom/dashboard', () => ({
   DashboardMetricsGrid: vi.fn(({ previousPeriodData }) => (
     <div data-testid="metrics-grid" data-previous={JSON.stringify(previousPeriodData)}>
@@ -208,45 +239,20 @@ function getPreviousPeriodDataFromRender() {
  * Setup default mock implementations for all hooks
  */
 function setupDefaultMocks() {
-  mockOrdersVolumeComparison.mockReturnValue({
-    current: { totalAmount: mockCurrentPeriodData.ordersAmount, totalOrders: 250 },
-    previous: { totalAmount: mockPreviousPeriodData.ordersAmount, totalOrders: 280 },
-    isLoading: false,
-    isError: false,
-    error: null,
-  })
-
-  mockOrdersCogsComparison.mockReturnValue({
-    current: { cogsTotal: mockCurrentPeriodData.ordersCogs },
-    previous: { cogsTotal: mockPreviousPeriodData.ordersCogs },
-    isLoading: false,
-    isError: false,
-    error: null,
-  })
-
   mockFinancialSummaryComparison.mockReturnValue({
     current: {
-      summary_total: {
-        wb_sales_gross_total: mockCurrentPeriodData.salesAmount,
-        cogs_total: mockCurrentPeriodData.salesCogs,
-        logistics_cost_total: mockCurrentPeriodData.logisticsCost,
-        storage_cost_total: mockCurrentPeriodData.storageCost,
-      },
+      summary_total: mockCurrentFinanceSummaryTotal,
     },
     previous: {
-      summary_total: {
-        wb_sales_gross_total: mockPreviousPeriodData.salesAmount,
-        cogs_total: mockPreviousPeriodData.salesCogs,
-        logistics_cost_total: mockPreviousPeriodData.logisticsCost,
-        storage_cost_total: mockPreviousPeriodData.storageCost,
-      },
+      summary_total: mockPreviousFinanceSummaryTotal,
     },
     isLoading: false,
+    error: null,
   })
 
   mockAdvertisingComparison.mockReturnValue({
-    current: { summary: { total_spend: mockCurrentPeriodData.advertisingSpend } },
-    previous: { summary: { total_spend: mockPreviousPeriodData.advertisingSpend } },
+    current: { summary: { total_spend: 12131 } },
+    previous: { summary: { total_spend: expectedPreviousPeriod.advertisingSpend } },
     isLoading: false,
   })
 
@@ -264,8 +270,8 @@ function setupDefaultMocks() {
         fbo: { ordersCount: 170, ordersRevenue: 70000 },
         fbs: { ordersCount: 110, ordersRevenue: 46077 },
         total: {
-          ordersCount: 280,
-          ordersRevenue: mockPreviousPeriodData.ordersAmount,
+          ordersCount: expectedPreviousPeriod.ordersCount,
+          ordersRevenue: expectedPreviousPeriod.ordersAmount,
           fboShare: 60,
           fbsShare: 40,
         },
@@ -273,16 +279,6 @@ function setupDefaultMocks() {
     },
     isLoading: false,
     error: null,
-  })
-
-  mockFulfillmentSyncStatus.mockReturnValue({
-    data: { isDataAvailable: true },
-    isLoading: false,
-  })
-
-  mockStartFulfillmentSync.mockReturnValue({
-    mutate: vi.fn(),
-    isPending: false,
   })
 }
 
@@ -298,29 +294,37 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
   })
 
   // ===========================================================================
-  // COGS for Previous Period (Currently ALWAYS null)
+  // COGS for Previous Period
+  // In P&L restructuring, cogsTotal carries COGS data (ordersCogs is legacy null)
   // ===========================================================================
 
-  describe('Previous Period COGS (ordersCogs)', () => {
+  describe('Previous Period COGS (cogsTotal)', () => {
     it('should provide previous period COGS data (NOT null)', async () => {
-      // Default mocks already set up in beforeEach via setupDefaultMocks()
-      // The mocks return both current and previous period data
-
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
-        expect(prevData?.ordersCogs).not.toBeNull()
-        expect(prevData?.ordersCogs).toBe(mockPreviousPeriodData.ordersCogs)
+        // cogsTotal carries the previous period COGS value
+        expect(prevData?.cogsTotal).not.toBeNull()
+        expect(prevData?.cogsTotal).toBe(expectedPreviousPeriod.cogsTotal)
+        // Legacy ordersCogs is always null in P&L restructuring
+        expect(prevData?.ordersCogs).toBeNull()
       })
     })
 
     it('should return null for ordersCogs when previous period has no data', async () => {
-      mockOrdersCogsComparison.mockReturnValue({
-        current: { cogsTotal: mockCurrentPeriodData.ordersCogs },
-        previous: null, // No previous period data
+      // Override financial summary to have no cogs_total for previous period
+      mockFinancialSummaryComparison.mockReturnValue({
+        current: {
+          summary_total: mockCurrentFinanceSummaryTotal,
+        },
+        previous: {
+          summary_total: {
+            ...mockPreviousFinanceSummaryTotal,
+            cogs_total: undefined, // No COGS data
+          },
+        },
         isLoading: false,
-        isError: false,
         error: null,
       })
 
@@ -328,148 +332,128 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
+        // Legacy ordersCogs is always null
         expect(prevData?.ordersCogs).toBeNull()
+        // cogsTotal should also be null when not in summary
+        expect(prevData?.cogsTotal).toBeNull()
       })
     })
   })
 
   // ===========================================================================
-  // Logistics Cost for Previous Period (Currently ALWAYS null)
+  // Logistics Cost for Previous Period
   // ===========================================================================
 
   describe('Previous Period Logistics Cost (logisticsCost)', () => {
     it('should provide previous period logistics cost (NOT null)', async () => {
-      // Default mocks already set up in beforeEach via setupDefaultMocks()
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
         expect(prevData?.logisticsCost).not.toBeNull()
-        expect(prevData?.logisticsCost).toBe(mockPreviousPeriodData.logisticsCost)
+        expect(prevData?.logisticsCost).toBe(expectedPreviousPeriod.logisticsCost)
       })
     })
   })
 
   // ===========================================================================
-  // Storage Cost for Previous Period (Currently ALWAYS null)
+  // Storage Cost for Previous Period
   // ===========================================================================
 
   describe('Previous Period Storage Cost (storageCost)', () => {
     it('should provide previous period storage cost (NOT null)', async () => {
-      // Default mocks already set up in beforeEach via setupDefaultMocks()
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
         expect(prevData?.storageCost).not.toBeNull()
-        expect(prevData?.storageCost).toBe(mockPreviousPeriodData.storageCost)
+        expect(prevData?.storageCost).toBe(expectedPreviousPeriod.storageCost)
       })
     })
   })
 
   // ===========================================================================
-  // Theoretical Profit for Previous Period (Currently ALWAYS null)
+  // Theoretical Profit for Previous Period
+  // In P&L restructuring, theoreticalProfit is a legacy null field.
+  // grossProfit from finance summary carries the profit data instead.
   // ===========================================================================
 
-  describe('Previous Period Theoretical Profit (theoreticalProfit)', () => {
-    it('should calculate previous period theoretical profit (NOT null)', async () => {
-      // Default mocks already set up in beforeEach via setupDefaultMocks()
+  describe('Previous Period Theoretical Profit (theoreticalProfit / grossProfit)', () => {
+    it('should provide previous period gross profit (NOT null)', async () => {
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
-        expect(prevData?.theoreticalProfit).not.toBeNull()
-
-        // Verify calculation: sales - salesCogs - ads - logistics - storage
-        // Uses SALES (not orders) per QA report 128
-        const expectedProfit =
-          mockPreviousPeriodData.salesAmount -
-          mockPreviousPeriodData.salesCogs -
-          mockPreviousPeriodData.advertisingSpend -
-          mockPreviousPeriodData.logisticsCost -
-          mockPreviousPeriodData.storageCost
-
-        expect(prevData?.theoreticalProfit).toBeCloseTo(expectedProfit, 2)
+        // grossProfit carries the profit data in P&L restructuring
+        expect(prevData?.grossProfit).not.toBeNull()
+        expect(prevData?.grossProfit).toBe(mockPreviousFinanceSummaryTotal.gross_profit)
+        // Legacy theoreticalProfit is always null
+        expect(prevData?.theoreticalProfit).toBeNull()
       })
     })
 
     it('should return null for theoreticalProfit when any component is missing', async () => {
-      // Override financial summary to have missing cogs_total for previous period
-      // Theoretical profit uses cogs_total from finance summary, not orders COGS
+      // Override financial summary to have missing gross_profit for previous period
       mockFinancialSummaryComparison.mockReturnValue({
         current: {
-          summary_total: {
-            wb_sales_gross_total: mockCurrentPeriodData.salesAmount,
-            cogs_total: mockCurrentPeriodData.salesCogs,
-            logistics_cost_total: mockCurrentPeriodData.logisticsCost,
-            storage_cost_total: mockCurrentPeriodData.storageCost,
-          },
+          summary_total: mockCurrentFinanceSummaryTotal,
         },
         previous: {
           summary_total: {
-            wb_sales_gross_total: mockPreviousPeriodData.salesAmount,
-            // Missing cogs_total - this should cause theoreticalProfit to be null
-            logistics_cost_total: mockPreviousPeriodData.logisticsCost,
-            storage_cost_total: mockPreviousPeriodData.storageCost,
+            wb_sales_gross_total: 95000,
+            // Missing cogs_total - gross_profit should be null
+            logistics_cost_total: 20000,
+            storage_cost_total: 2500,
           },
         },
         isLoading: false,
+        error: null,
       })
 
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
-        // When COGS is missing, theoreticalProfit should be null (not 0)
+        // Legacy theoreticalProfit is always null
         expect(prevData?.theoreticalProfit).toBeNull()
+        // grossProfit is null when not in summary
+        expect(prevData?.grossProfit).toBeNull()
       })
     })
   })
 
   // ===========================================================================
-  // Full Integration - All 8 Metrics with Comparison
+  // Full Integration - All Metrics with Comparison
+  // Updated for P&L restructuring: uses new field names
   // ===========================================================================
 
   describe('Full Previous Period Data Integration', () => {
     it('should provide all 8 metrics for previous period comparison', async () => {
-      // Default mocks already set up in beforeEach via setupDefaultMocks()
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
 
-        // All metrics should be populated
-        expect(prevData?.ordersAmount).toBe(mockPreviousPeriodData.ordersAmount)
-        expect(prevData?.advertisingSpend).toBe(mockPreviousPeriodData.advertisingSpend)
-        expect(prevData?.ordersCogs).toBe(mockPreviousPeriodData.ordersCogs)
-        expect(prevData?.logisticsCost).toBe(mockPreviousPeriodData.logisticsCost)
-        expect(prevData?.storageCost).toBe(mockPreviousPeriodData.storageCost)
-        expect(prevData?.theoreticalProfit).toBeCloseTo(mockPreviousPeriodData.theoreticalProfit, 2)
+        // Fulfillment-derived metrics
+        expect(prevData?.ordersAmount).toBe(expectedPreviousPeriod.ordersAmount)
+        expect(prevData?.ordersCount).toBe(expectedPreviousPeriod.ordersCount)
 
-        // salesAmount and salesCogs from finance summary
-        expect(prevData?.salesAmount).toBe(mockPreviousPeriodData.salesAmount)
-        expect(prevData?.salesCogs).toBe(mockPreviousPeriodData.salesCogs)
+        // Advertising
+        expect(prevData?.advertisingSpend).toBe(expectedPreviousPeriod.advertisingSpend)
+
+        // Finance summary-derived metrics
+        expect(prevData?.logisticsCost).toBe(expectedPreviousPeriod.logisticsCost)
+        expect(prevData?.storageCost).toBe(expectedPreviousPeriod.storageCost)
+        expect(prevData?.cogsTotal).toBe(expectedPreviousPeriod.cogsTotal)
+
+        // salesAmount and salesCogs from finance summary (legacy fields)
+        expect(prevData?.salesAmount).toBe(expectedPreviousPeriod.salesAmount)
+        expect(prevData?.salesCogs).toBe(expectedPreviousPeriod.salesCogs)
       })
     })
 
     it('should handle mixed availability - some previous period data missing', async () => {
-      // Override mocks for this test: Orders and Advertising available, but no COGS
-      mockOrdersVolumeComparison.mockReturnValue({
-        current: { totalAmount: 100000, totalOrders: 250 },
-        previous: { totalAmount: 116077, totalOrders: 280 },
-        isLoading: false,
-        isError: false,
-        error: null,
-      })
-
-      mockOrdersCogsComparison.mockReturnValue({
-        current: { cogsTotal: 35818 },
-        previous: null, // No COGS for previous period
-        isLoading: false,
-        isError: false,
-        error: null,
-      })
-
+      // Advertising available, but no financial summary for previous period
       mockAdvertisingComparison.mockReturnValue({
         current: { summary: { total_spend: 12131 } },
         previous: { summary: { total_spend: 15000 } },
@@ -477,9 +461,37 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
       })
 
       mockFinancialSummaryComparison.mockReturnValue({
-        current: { summary_total: { logistics_cost_total: 17566, storage_cost_total: 2025 } },
+        current: {
+          summary_total: { logistics_cost_total: 17566, storage_cost_total: 2025 },
+        },
         previous: null, // No financial summary for previous period
         isLoading: false,
+        error: null,
+      })
+
+      // Fulfillment still available
+      mockFulfillmentSummaryComparison.mockReturnValue({
+        current: {
+          summary: {
+            fbo: { ordersCount: 150, ordersRevenue: 60000 },
+            fbs: { ordersCount: 100, ordersRevenue: 40000 },
+            total: { ordersCount: 250, ordersRevenue: 100000, fboShare: 60, fbsShare: 40 },
+          },
+        },
+        previous: {
+          summary: {
+            fbo: { ordersCount: 170, ordersRevenue: 70000 },
+            fbs: { ordersCount: 110, ordersRevenue: 46077.27 },
+            total: {
+              ordersCount: 280,
+              ordersRevenue: 116077.27,
+              fboShare: 60,
+              fbsShare: 40,
+            },
+          },
+        },
+        isLoading: false,
+        error: null,
       })
 
       renderWithProviders(<DashboardContent />)
@@ -487,16 +499,17 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
       await waitFor(() => {
         const prevData = getPreviousPeriodDataFromRender()
 
-        // Available data should be filled (mockPreviousPeriodData.ordersAmount = 116077.27)
+        // Available data should be filled from fulfillment + advertising
         expect(prevData?.ordersAmount).toBe(116077.27)
         expect(prevData?.advertisingSpend).toBe(15000)
 
-        // Missing data should be null (not 0)
-        expect(prevData?.ordersCogs).toBeNull()
+        // Missing data should be null (no financial summary for previous period)
+        expect(prevData?.ordersCogs).toBeNull() // legacy field always null
         expect(prevData?.logisticsCost).toBeNull()
         expect(prevData?.storageCost).toBeNull()
+        expect(prevData?.cogsTotal).toBeNull()
 
-        // Theoretical profit null when any component missing
+        // Theoretical profit null (legacy field always null)
         expect(prevData?.theoreticalProfit).toBeNull()
       })
     })

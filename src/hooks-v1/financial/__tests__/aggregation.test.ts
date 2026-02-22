@@ -2,26 +2,23 @@
  * TDD Tests for Financial Aggregation - Margin Calculation Consistency
  * Story 61.13-FE: Fix Margin Calculation Inconsistency (Week vs Month)
  *
- * BUG DESCRIPTION:
- * - Week W04: Shows 12.92% (Net Margin formula used)
- * - Month January: Shows 72.32% (Gross Margin formula used)
- * - This is inconsistent - different formulas for different periods
+ * BUG DESCRIPTION (original):
+ * - Week W04: Shows 12.92% (Operating Margin formula)
+ * - Month January: Shows 72.32% (Gross Margin formula)
+ * - This was inconsistent - different formulas for different periods
  *
- * EXPECTED FIX:
- * - Standardize on Gross Margin: (sale_gross_total - cogs_total) / sale_gross_total * 100
+ * FIX (Request #155):
+ * - Standardize on Operating Margin: (payout_total - cogs_total) / sale_gross_total * 100
  * - Same formula for both week and month aggregations
+ * - gross_profit = payout_total - cogs_total (Operating Profit)
  *
  * Real data from API (W04):
  *   sale_gross_total: 126922.45
  *   payout_total: 52219.92
  *   cogs_total: 35818
- *   gross_profit: 16401.92 (API returns this)
+ *   gross_profit: 16401.92 (payout - cogs)
  *
- * Expected Gross Margin: (126922.45 - 35818) / 126922.45 = 71.78%
- * Current Net Margin (BUG): 16401.92 / 126922.45 = 12.92%
- *
- * The bug is that current code uses gross_profit (from API) instead of
- * recalculating as (revenue - COGS) / revenue.
+ * Operating Margin: (52219.92 - 35818) / 126922.45 * 100 = 12.92%
  *
  * @see docs/stories/epic-61/story-61.13-fe-margin-consistency.md
  */
@@ -43,15 +40,12 @@ const WEEK_W04_DATA: FinanceSummary = {
   cogs_coverage_pct: 100,
   products_total: 50,
   products_with_cogs: 50,
-  gross_profit: 16401.92, // API returns this (payout - cogs, WRONG formula)
+  gross_profit: 16401.92, // API returns this (payout - cogs)
   penalties_total: 0,
 }
 
-/** Expected Gross Margin for W04: (126922.45 - 35818) / 126922.45 = 71.78% */
-const EXPECTED_GROSS_MARGIN_W04 = 71.78
-
-/** Current buggy Net Margin: 16401.92 / 126922.45 = 12.92% */
-const BUGGY_NET_MARGIN_W04 = 12.92
+/** Expected Operating Margin for W04: (52219.92 - 35818) / 126922.45 * 100 = 12.92% */
+const EXPECTED_OPERATING_MARGIN_W04 = 12.92
 
 /** Week data for monthly aggregation (4 weeks in January) */
 const JANUARY_WEEKS: FinanceSummary[] = [
@@ -90,37 +84,34 @@ const JANUARY_WEEKS: FinanceSummary[] = [
 
 /**
  * Month January aggregated values:
+ * payout_total: 60000 + 70000 + 44028.34 + 52219.92 = 226248.26
  * sale_gross_total: 150000 + 175000 + 224322.35 + 126922.45 = 676244.80
  * cogs_total: 42000 + 49000 + 60382 + 35818 = 187200
  *
- * Expected Gross Margin: (676244.80 - 187200) / 676244.80 = 72.32%
+ * Expected Operating Margin: (226248.26 - 187200) / 676244.80 * 100 = 5.77%
+ * Operating gross_profit: 226248.26 - 187200 = 39048.26
  */
-const EXPECTED_GROSS_MARGIN_MONTH = 72.32
+const EXPECTED_OPERATING_MARGIN_MONTH = 5.77
 
 // ============================================================================
 // Core Margin Calculation Tests (Story 61.13-FE)
 // ============================================================================
 
 describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
-  describe('Gross Margin Formula', () => {
+  describe('Operating Margin Formula', () => {
     /**
-     * RED TEST: This test should FAIL with current implementation
-     *
-     * Current behavior: Uses gross_profit from API (Net Margin)
-     * Expected behavior: Calculate (revenue - COGS) / revenue (Gross Margin)
+     * Operating Margin formula (Request #155):
+     * margin_pct = (payout_total - cogs_total) / sale_gross_total * 100
      */
-    it('should calculate margin_pct as Gross Margin, not Net Margin', () => {
+    it('should calculate margin_pct as Operating Margin', () => {
       const result = aggregateFinanceSummaries([WEEK_W04_DATA])
 
-      // Expected: Gross Margin = (126922.45 - 35818) / 126922.45 * 100 = 71.78%
-      expect(result?.margin_pct).toBeCloseTo(EXPECTED_GROSS_MARGIN_W04, 1)
-
-      // Should NOT be the buggy Net Margin (12.92%)
-      expect(result?.margin_pct).not.toBeCloseTo(BUGGY_NET_MARGIN_W04, 1)
+      // Expected: Operating Margin = (52219.92 - 35818) / 126922.45 * 100 = 12.92%
+      expect(result?.margin_pct).toBeCloseTo(EXPECTED_OPERATING_MARGIN_W04, 1)
     })
 
     /**
-     * RED TEST: Margin formula must be consistent across periods
+     * Margin formula must be consistent across periods
      */
     it('should use same formula for week and month periods', () => {
       // Single week
@@ -129,60 +120,67 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
       // Month (aggregated weeks)
       const monthResult = aggregateFinanceSummaries(JANUARY_WEEKS)
 
-      // Both should use Gross Margin formula
-      // Week: ~71.78%
-      // Month: ~72.32%
+      // Both should use Operating Margin formula:
+      // (payout_total - cogs_total) / sale_gross_total * 100
+      // Week: ~12.92%
+      // Month: ~5.77%
       // The VALUES differ (different data), but the FORMULA should be the same
 
-      // Verify Gross Margin formula is used for week
-      const weekGrossMargin =
-        ((WEEK_W04_DATA.sale_gross_total! - WEEK_W04_DATA.cogs_total!) /
+      // Verify Operating Margin formula is used for week
+      const weekOperatingMargin =
+        ((WEEK_W04_DATA.payout_total! - WEEK_W04_DATA.cogs_total!) /
           WEEK_W04_DATA.sale_gross_total!) *
         100
-      expect(weekResult?.margin_pct).toBeCloseTo(weekGrossMargin, 1)
+      expect(weekResult?.margin_pct).toBeCloseTo(weekOperatingMargin, 1)
 
-      // Verify Gross Margin formula is used for month
+      // Verify Operating Margin formula is used for month
+      const monthPayout = JANUARY_WEEKS.reduce((sum, w) => sum + (w.payout_total || 0), 0)
       const monthSaleGross = JANUARY_WEEKS.reduce((sum, w) => sum + (w.sale_gross_total || 0), 0)
       const monthCogs = JANUARY_WEEKS.reduce((sum, w) => sum + (w.cogs_total || 0), 0)
-      const monthGrossMargin = ((monthSaleGross - monthCogs) / monthSaleGross) * 100
-      expect(monthResult?.margin_pct).toBeCloseTo(monthGrossMargin, 1)
+      const monthOperatingMargin = ((monthPayout - monthCogs) / monthSaleGross) * 100
+      expect(monthResult?.margin_pct).toBeCloseTo(monthOperatingMargin, 1)
     })
 
     /**
-     * RED TEST: Month aggregation should produce correct Gross Margin
+     * Month aggregation should produce correct Operating Margin
      */
-    it('should calculate correct Gross Margin for month aggregation', () => {
+    it('should calculate correct Operating Margin for month aggregation', () => {
       const result = aggregateFinanceSummaries(JANUARY_WEEKS)
 
       // Aggregated values:
+      // payout_total: 226248.26
       // sale_gross_total: 676244.80
       // cogs_total: 187200
-      // Gross Margin: (676244.80 - 187200) / 676244.80 * 100 = 72.32%
-      expect(result?.margin_pct).toBeCloseTo(EXPECTED_GROSS_MARGIN_MONTH, 1)
+      // Operating Margin: (226248.26 - 187200) / 676244.80 * 100 = 5.77%
+      expect(result?.margin_pct).toBeCloseTo(EXPECTED_OPERATING_MARGIN_MONTH, 1)
     })
   })
 
   describe('margin_pct calculation function', () => {
     /**
-     * RED TEST: Should add calculateMarginPct helper function
+     * Verify the Operating Margin formula inline
      */
-    it('should export calculateMarginPct function', () => {
-      // This test verifies the function exists and works correctly
-      // After implementation, import { calculateMarginPct } from '../aggregation'
-
-      // Inline test of expected formula
-      const calculateMarginPct = (saleGross: number, cogs: number): number | null => {
+    it('should calculate Operating Margin correctly', () => {
+      // Operating Margin formula: (payout - cogs) / saleGross * 100
+      const calculateOperatingMarginPct = (
+        payout: number,
+        cogs: number,
+        saleGross: number
+      ): number | null => {
         if (saleGross <= 0) return null
-        return ((saleGross - cogs) / saleGross) * 100
+        return ((payout - cogs) / saleGross) * 100
       }
 
-      expect(calculateMarginPct(126922.45, 35818)).toBeCloseTo(71.78, 1)
-      expect(calculateMarginPct(676244.8, 187200)).toBeCloseTo(72.32, 1)
-      expect(calculateMarginPct(0, 35818)).toBeNull()
+      // W04: (52219.92 - 35818) / 126922.45 * 100 = 12.92%
+      expect(calculateOperatingMarginPct(52219.92, 35818, 126922.45)).toBeCloseTo(12.92, 1)
+      // January: (226248.26 - 187200) / 676244.80 * 100 = 5.77%
+      expect(calculateOperatingMarginPct(226248.26, 187200, 676244.8)).toBeCloseTo(5.77, 1)
+      // Zero sales: null
+      expect(calculateOperatingMarginPct(0, 35818, 0)).toBeNull()
     })
 
     /**
-     * RED TEST: margin_pct should be null when COGS coverage is incomplete
+     * margin_pct should be undefined when COGS coverage is incomplete
      */
     it('should return null margin_pct when cogs_coverage_pct < 100', () => {
       const incompleteData: FinanceSummary = {
@@ -203,7 +201,7 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
     })
 
     /**
-     * RED TEST: margin_pct should be null when sale_gross_total is zero
+     * margin_pct should be undefined when sale_gross_total is zero
      */
     it('should return null margin_pct when sale_gross_total is zero', () => {
       const zeroSalesData: FinanceSummary = {
@@ -224,13 +222,13 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
     })
 
     /**
-     * RED TEST: Should handle negative margin (COGS > Revenue)
+     * Should handle negative margin (COGS > payout)
      */
-    it('should calculate negative margin when COGS exceeds revenue', () => {
+    it('should calculate negative margin when COGS exceeds payout', () => {
       const lossData: FinanceSummary = {
         week: '2025-W04',
         sale_gross_total: 50000,
-        cogs_total: 80000, // COGS > Revenue = loss
+        cogs_total: 80000, // COGS > payout = loss
         cogs_coverage_pct: 100,
         products_total: 50,
         products_with_cogs: 50,
@@ -240,8 +238,8 @@ describe('Margin Calculation Consistency (Story 61.13-FE)', () => {
 
       const result = aggregateFinanceSummaries([lossData])
 
-      // Gross Margin: (50000 - 80000) / 50000 = -60%
-      expect(result?.margin_pct).toBeCloseTo(-60, 1)
+      // Operating Margin: (20000 - 80000) / 50000 * 100 = -120%
+      expect(result?.margin_pct).toBeCloseTo(-120, 1)
     })
   })
 })
@@ -257,7 +255,8 @@ describe('aggregateFinanceSummaries - margin consistency', () => {
 
       expect(result).not.toBeNull()
       expect(result?.margin_pct).toBeDefined()
-      expect(result?.margin_pct).toBeCloseTo(71.78, 1)
+      // Operating Margin: (52219.92 - 35818) / 126922.45 * 100 = 12.92%
+      expect(result?.margin_pct).toBeCloseTo(12.92, 1)
     })
 
     it('should preserve all original fields for single week', () => {
@@ -288,17 +287,17 @@ describe('aggregateFinanceSummaries - margin consistency', () => {
     it('should calculate gross_profit from aggregated values', () => {
       const result = aggregateFinanceSummaries(JANUARY_WEEKS)
 
-      // gross_profit = sale_gross_total - cogs_total
-      // 676244.80 - 187200 = 489044.80
-      expect(result?.gross_profit).toBeCloseTo(489044.8, 1)
+      // gross_profit = payout_total - cogs_total
+      // 226248.26 - 187200 = 39048.26
+      expect(result?.gross_profit).toBeCloseTo(39048.26, 1)
     })
 
     it('should calculate margin_pct from aggregated values', () => {
       const result = aggregateFinanceSummaries(JANUARY_WEEKS)
 
-      // margin_pct = gross_profit / sale_gross_total * 100
-      // 489044.80 / 676244.80 * 100 = 72.32%
-      expect(result?.margin_pct).toBeCloseTo(72.32, 1)
+      // margin_pct = (payout_total - cogs_total) / sale_gross_total * 100
+      // (226248.26 - 187200) / 676244.80 * 100 = 5.77%
+      expect(result?.margin_pct).toBeCloseTo(5.77, 1)
     })
   })
 
@@ -341,10 +340,12 @@ describe('aggregateFinanceSummaries - margin consistency', () => {
       // This is a potential bug that should be considered
 
       // For now, test that the current behavior is preserved or improved
-      // The key requirement is that margin_pct uses Gross Margin formula
+      // The key requirement is that margin_pct uses Operating Margin formula
       if (result?.cogs_coverage_pct === 100) {
-        // If coverage is treated as 100%, margin should be Gross Margin
-        const expectedMargin = ((200000 - 60000) / 200000) * 100
+        // If coverage is treated as 100%, margin should use Operating Margin
+        // Operating Margin: (payout_total - cogs_total) / sale_gross_total * 100
+        // (120000 - 60000) / 200000 * 100 = 30%
+        const expectedMargin = ((120000 - 60000) / 200000) * 100
         expect(result?.margin_pct).toBeCloseTo(expectedMargin, 1)
       }
     })
@@ -359,39 +360,40 @@ describe('Margin Formula Verification', () => {
   /**
    * These tests document the expected formula behavior
    */
-  it('Gross Margin formula: (Revenue - COGS) / Revenue * 100', () => {
-    // Reference documentation formula
+  it('Operating Margin formula: (payout - COGS) / sale_gross * 100', () => {
+    // Reference documentation formula (Request #155)
+    const payout = 52219.92
+    const cogs = 35818
+    const saleGross = 126922.45
+    const operatingMargin = ((payout - cogs) / saleGross) * 100
+
+    expect(operatingMargin).toBeCloseTo(12.92, 1)
+  })
+
+  it('Gross Margin formula (old, replaced by Operating Margin): (Revenue - COGS) / Revenue * 100', () => {
+    // This was the old formula before Request #155
     const revenue = 126922.45
     const cogs = 35818
     const grossMargin = ((revenue - cogs) / revenue) * 100
 
+    // Old Gross Margin = 71.78% - no longer used for margin_pct
     expect(grossMargin).toBeCloseTo(71.78, 1)
   })
 
-  it('Net Margin formula (WRONG for this use case): gross_profit / Revenue * 100', () => {
-    // This is what the current buggy code does
-    const revenue = 126922.45
-    const grossProfitFromApi = 16401.92 // payout - cogs (wrong formula)
-    const netMargin = (grossProfitFromApi / revenue) * 100
-
-    // This produces 12.92% which is WRONG
-    expect(netMargin).toBeCloseTo(12.92, 1)
-  })
-
-  it('should NOT use payout_total as revenue base', () => {
-    // payout_total already has deductions (logistics, storage, commission)
-    // Using it as revenue base produces incorrect margin
+  it('should use payout_total in numerator but sale_gross_total as denominator', () => {
+    // Operating Margin uses payout_total (actual seller earnings after WB deductions)
+    // in the numerator, but sale_gross_total as the denominator for normalization
 
     const payout = 52219.92
     const cogs = 35818
-    const wrongMargin = ((payout - cogs) / payout) * 100
-
-    // This is NOT what we want
-    expect(wrongMargin).toBeCloseTo(31.38, 1)
-
-    // Gross Margin should use sale_gross_total
     const saleGross = 126922.45
-    const correctMargin = ((saleGross - cogs) / saleGross) * 100
-    expect(correctMargin).toBeCloseTo(71.78, 1)
+
+    // Correct Operating Margin
+    const correctMargin = ((payout - cogs) / saleGross) * 100
+    expect(correctMargin).toBeCloseTo(12.92, 1)
+
+    // Wrong: using payout as denominator gives a different result
+    const wrongMargin = ((payout - cogs) / payout) * 100
+    expect(wrongMargin).toBeCloseTo(31.38, 1)
   })
 })

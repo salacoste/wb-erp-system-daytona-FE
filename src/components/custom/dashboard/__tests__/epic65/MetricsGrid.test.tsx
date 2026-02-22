@@ -103,13 +103,13 @@ describe('MetricsGrid (Story 65.17)', () => {
   })
 
   describe('flat grid card count', () => {
-    it('renders all 16 metric cards in flat grid', () => {
+    it('renders all 18 metric cards in flat grid', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
-      // 8 simple cards + 8 complex cards = 16 total
+      // 8 simple cards + 10 complex cards = 18 total (Request #155: +2 analytical cards)
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(16)
+      expect(articles.length).toBe(18)
     })
   })
 

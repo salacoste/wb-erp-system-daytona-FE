@@ -43,6 +43,15 @@ export function useFinancialSummary(period: string, periodType: 'week' | 'month'
         const summary = response.summary_total || response.summary_rus
         if (summary) {
           const processedSummary = aggregateFinanceSummaries([summary])
+          // Preserve product_transactions from original summaries (sum of rus + eaeu)
+          // summary_total doesn't include this field, so we merge from originals
+          if (processedSummary) {
+            const ptRus = response.summary_rus?.product_transactions
+            const ptEaeu = response.summary_eaeu?.product_transactions
+            if (ptRus != null || ptEaeu != null) {
+              processedSummary.product_transactions = (ptRus ?? 0) + (ptEaeu ?? 0)
+            }
+          }
           return {
             ...response,
             summary_total: processedSummary,
@@ -81,6 +90,21 @@ export function useFinancialSummary(period: string, periodType: 'week' | 'month'
         .filter(Boolean) as FinanceSummary[]
 
       const aggregatedSummary = aggregateFinanceSummaries(summaries)
+
+      // Sum product_transactions across all weeks from original summaries
+      if (aggregatedSummary) {
+        let totalPt = 0
+        let hasPt = false
+        for (const r of responses) {
+          const ptR = r.summary_rus?.product_transactions
+          const ptE = r.summary_eaeu?.product_transactions
+          if (ptR != null || ptE != null) {
+            totalPt += (ptR ?? 0) + (ptE ?? 0)
+            hasPt = true
+          }
+        }
+        if (hasPt) aggregatedSummary.product_transactions = totalPt
+      }
 
       return {
         summary_total: aggregatedSummary,
