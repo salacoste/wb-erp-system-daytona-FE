@@ -1,6 +1,7 @@
 /**
  * Type definitions for DashboardMetricsGrid
  * Extracted for 200-line file limit compliance (Story 65.17).
+ * Epic 66-FE: Added TaxMetrics integration for tax/VAT cards.
  *
  * WB Price Chain:
  * ┌─────────────────────────────────────────────────────────────────┐
@@ -13,6 +14,8 @@
  * │ = Продажи розница (saleGross)                                   │
  * └─────────────────────────────────────────────────────────────────┘
  */
+
+import type { TaxMetrics } from '@/types/finance-summary'
 
 export interface PreviousPeriodData {
   ordersAmount: number | null
@@ -38,6 +41,8 @@ export interface PreviousPeriodData {
   salesCogs: number | null
   storageCost: number | null
   theoreticalProfit: number | null
+  // Epic 66-FE: Tax metrics for TaxCard/NetProfitCard comparison
+  taxMetrics?: TaxMetrics | null
 }
 
 export interface DashboardMetricsGridProps {
@@ -80,6 +85,8 @@ export interface DashboardMetricsGridProps {
   operatingProfitAnalytical?: number | undefined
   operatingMarginPct?: number | undefined
   grossMarginPct?: number | undefined
+  // Epic 66-FE: Tax & VAT data from backend
+  taxMetrics?: TaxMetrics | null
   // Common
   previousPeriodData: PreviousPeriodData | undefined
   isLoading: boolean

@@ -22,6 +22,7 @@ import {
   DashboardMetricsGrid,
   DailyBreakdownSection,
   IncompleteWeekBanner,
+  TaxWarningBanner,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { ReportPendingBanner } from './ReportPendingBanner'
@@ -138,6 +139,8 @@ export function DashboardContent(): React.ReactElement {
       {isFailed && <FailedAlert />}
       {error && !isProcessing && !isWeekNotAvailable && <ErrorAlert onRetry={handleRetry} />}
 
+      <TaxWarningBanner taxConfigured={!!st?.tax} />
+
       {!isWeekNotAvailable && (
         <>
           <DashboardMetricsGrid
@@ -176,6 +179,7 @@ export function DashboardContent(): React.ReactElement {
             }
             operatingMarginPct={s?.operating_margin_pct ?? st?.operating_margin_pct ?? undefined}
             grossMarginPct={s?.gross_margin_pct ?? st?.gross_margin_pct ?? undefined}
+            taxMetrics={st?.tax ?? null}
             previousPeriodData={previousPeriodData}
             isLoading={isLoading || productsLoading || cogsLoading}
             error={error}

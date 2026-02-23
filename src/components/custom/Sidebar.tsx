@@ -22,6 +22,7 @@ import {
   Filter,
   RotateCcw,
   ShoppingBag,
+  Receipt,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
@@ -144,6 +145,11 @@ export function Sidebar() {
           },
         ]
       : []),
+    {
+      label: 'Налоги', // Epic 66-FE: Tax & VAT Settings
+      href: ROUTES.SETTINGS.TAX,
+      icon: Receipt,
+    },
     {
       label: 'Settings',
       href: ROUTES.SETTINGS.ROOT,

@@ -78,6 +78,17 @@ export type { MarginCardProps } from './MarginCard'
 export { GrossMarginCard } from './GrossMarginCard'
 export type { GrossMarginCardProps } from './GrossMarginCard'
 
+// Epic 66-FE: Tax & VAT Cards (backend-calculated)
+export { TaxCard } from './TaxCard'
+export type { TaxCardProps } from './TaxCard'
+
+export { NetProfitCard } from './NetProfitCard'
+export type { NetProfitCardProps } from './NetProfitCard'
+
+// Story 66.7-FE: Tax Warning Banner
+export { TaxWarningBanner } from './TaxWarningBanner'
+export type { TaxWarningBannerProps } from './TaxWarningBanner'
+
 // Re-export TheoreticalProfitResult from lib for convenience
 export type { TheoreticalProfitResult } from '@/lib/theoretical-profit'
 

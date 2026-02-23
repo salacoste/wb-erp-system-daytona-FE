@@ -1,137 +1,96 @@
-/**
- * TaxCard — Story 65.11: Tax Estimate
- *
- * Displays estimated tax based on selected tax system (USN 6%, USN 15%, Manual).
- * Supports tax system switching, period comparison (inverted), and revenue %.
- *
- * @see docs/epics/epic-65-dashboard-metrics-parity/stories-wave-3.md
- * @see docs/epics/epic-65-dashboard-metrics-parity/backend-gap-analysis.md
- */
-
+/** TaxCard -- Story 66.5-FE: Backend tax metrics display (Epic 72 / Task-50) */
 'use client'
 
-import { useRef, useState } from 'react'
-import { Receipt, ChevronDown } from 'lucide-react'
+import { Receipt } from 'lucide-react'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { cn, formatCurrency } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { StandardMetricSkeleton } from './MetricCardStates'
-import {
-  calculateTax,
-  calculateTaxPct,
-  getTaxSystemLabel,
-  TAX_SYSTEMS,
-  type TaxSystem,
-} from '@/lib/tax-calculations'
+import type { TaxMetrics } from '@/types/finance-summary'
 
 export interface TaxCardProps {
-  taxSystem: TaxSystem | null
-  saleGrossTotal: number | null
-  previousTaxAmount: number | null
+  taxMetrics: TaxMetrics | null
+  previousTaxMetrics: TaxMetrics | null
   isLoading: boolean
-  logisticsCostTotal?: number
-  storageCostTotal?: number
-  paidAcceptanceCostTotal?: number
-  penaltiesTotal?: number
-  otherAdjustmentsNetTotal?: number
-  cogsTotal?: number
-  advertisingSpend?: number
-  manualTaxAmount?: number
-  onTaxSystemChange?: (system: TaxSystem) => void
   className?: string
 }
 
-function formatRevenuePct(value: number): string {
-  return new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(value)
+/** Human-readable tax system label */
+function getTaxLabel(system: string | null): string {
+  switch (system) {
+    case 'usn6':
+      return 'УСН 6%'
+    case 'usn15':
+      return 'УСН 15%'
+    case 'manual':
+      return 'Ручная ставка'
+    default:
+      return 'Не указана'
+  }
+}
+
+/** Nominal rate for a tax system (used to avoid duplicate rate display) */
+function getNominalRate(system: string | null): number | null {
+  switch (system) {
+    case 'usn6':
+      return 6
+    case 'usn15':
+      return 15
+    default:
+      return null
+  }
+}
+
+/** Format effective tax rate for display */
+function formatRate(rate: number | null): string {
+  if (rate == null) return '—'
+  return (
+    new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 1,
+    }).format(rate) + ' %'
+  )
 }
 
 export function TaxCard({
-  taxSystem,
-  saleGrossTotal,
-  previousTaxAmount,
+  taxMetrics,
+  previousTaxMetrics,
   isLoading,
-  logisticsCostTotal,
-  storageCostTotal,
-  paidAcceptanceCostTotal,
-  penaltiesTotal,
-  otherAdjustmentsNetTotal,
-  cogsTotal,
-  advertisingSpend,
-  manualTaxAmount,
-  onTaxSystemChange,
   className,
 }: TaxCardProps): React.ReactElement {
   if (isLoading) return <StandardMetricSkeleton className={className} />
 
-  const taxAmount = calculateTax(
-    taxSystem,
-    saleGrossTotal,
-    {
-      logisticsCostTotal,
-      storageCostTotal,
-      paidAcceptanceCostTotal,
-      penaltiesTotal,
-      otherAdjustmentsNetTotal,
-      cogsTotal,
-      advertisingSpend,
-    },
-    manualTaxAmount
-  )
+  const hasData = taxMetrics != null && taxMetrics.tax_amount != null
+  const displayValue = hasData ? formatCurrency(taxMetrics.tax_amount!) : '—'
 
-  const taxPct = calculateTaxPct(taxAmount, saleGrossTotal)
-  const hasValue = taxAmount != null && saleGrossTotal != null
-  const displayValue = hasValue ? formatCurrency(taxAmount) : '—'
-
-  // Inverted comparison: higher tax is negative (bad)
+  // Inverted comparison: higher tax = negative (bad)
   const comparison =
-    taxAmount != null && previousTaxAmount != null
-      ? calculateComparison(taxAmount, previousTaxAmount, true)
+    taxMetrics?.tax_amount != null && previousTaxMetrics?.tax_amount != null
+      ? calculateComparison(taxMetrics.tax_amount, previousTaxMetrics.tax_amount, true)
       : null
 
   return (
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
-      aria-label={`Налоги: ${hasValue ? formatCurrency(taxAmount) : 'нет данных'}`}
+      aria-label={`Налоги: ${hasData ? formatCurrency(taxMetrics!.tax_amount!) : 'нет данных'}`}
     >
       <CardContent className="p-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Receipt className="h-4 w-4 text-orange-500" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Налоги</span>
-          </div>
-          {onTaxSystemChange && taxSystem && (
-            <TaxSystemDropdown value={taxSystem} onChange={onTaxSystemChange} />
-          )}
-        </div>
-
-        <div className="mt-1">
-          {taxSystem === null ? (
-            <span className="text-sm text-muted-foreground">Настройте систему</span>
-          ) : (
-            <span className="text-xl font-bold text-orange-600" data-testid="metric-value">
-              {displayValue}
-            </span>
-          )}
-        </div>
-
+        <Header />
+        <Body taxMetrics={taxMetrics} hasData={hasData} displayValue={displayValue} />
         {comparison && (
-          <div className="mt-1 flex items-center gap-1.5">
+          <div className="mt-1 flex items-center gap-2">
             <ComparisonBadge
               percentageChange={comparison.percentageChange}
               direction={comparison.direction}
               absoluteDifference={comparison.formattedDifference}
             />
-          </div>
-        )}
-
-        {taxPct != null && (
-          <div className="mt-1">
-            <span className="text-xs text-gray-400">{formatRevenuePct(taxPct)}% от выручки</span>
+            <span className="text-xs text-muted-foreground">
+              vs {formatCurrency(previousTaxMetrics!.tax_amount!)}
+            </span>
           </div>
         )}
       </CardContent>
@@ -139,49 +98,99 @@ export function TaxCard({
   )
 }
 
-/** Custom dropdown for tax system selection */
-function TaxSystemDropdown({
-  value,
-  onChange,
+function Header(): React.ReactElement {
+  return (
+    <div className="flex items-center gap-2">
+      <Receipt className="h-4 w-4 text-orange-500" aria-hidden="true" />
+      <span className="text-sm font-medium text-muted-foreground">Налоги</span>
+    </div>
+  )
+}
+
+function Body({
+  taxMetrics,
+  hasData,
+  displayValue,
 }: {
-  value: TaxSystem
-  onChange: (system: TaxSystem) => void
-}) {
-  const [open, setOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  taxMetrics: TaxMetrics | null
+  hasData: boolean
+  displayValue: string
+}): React.ReactElement {
+  if (taxMetrics === null) {
+    return (
+      <div className="mt-1">
+        <Link href="/settings/tax" className="text-sm text-primary hover:underline">
+          Настройте систему
+        </Link>
+      </div>
+    )
+  }
+
+  // Only show separate effective rate when it differs from the system's nominal rate
+  const nominalRate = getNominalRate(taxMetrics.tax_system)
+  const showEffectiveRate =
+    hasData &&
+    taxMetrics.effective_tax_rate != null &&
+    taxMetrics.effective_tax_rate !== nominalRate
 
   return (
-    <div className="relative" ref={containerRef}>
-      <button
-        data-testid="tax-system-selector"
-        className="flex items-center gap-1 rounded border px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
-        onClick={() => setOpen(prev => !prev)}
-        onBlur={e => {
-          if (!containerRef.current?.contains(e.relatedTarget)) {
-            setOpen(false)
-          }
-        }}
-      >
-        {getTaxSystemLabel(value)}
-        <ChevronDown className="h-3 w-3" />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full z-50 mt-1 rounded border bg-popover shadow-md">
-          {TAX_SYSTEMS.filter(sys => sys !== value).map(sys => (
-            <button
-              key={sys}
-              className="block w-full whitespace-nowrap px-3 py-1.5 text-left text-xs hover:bg-accent"
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => {
-                onChange(sys)
-                setOpen(false)
-              }}
-            >
-              {getTaxSystemLabel(sys)}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <div className="mt-1">
+        <span className="text-xl font-bold text-orange-600" data-testid="metric-value">
+          {displayValue}
+        </span>
+      </div>
+      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+        <span className="text-xs text-muted-foreground">{getTaxLabel(taxMetrics.tax_system)}</span>
+        {showEffectiveRate && (
+          <span className="text-xs text-gray-400">{formatRate(taxMetrics.effective_tax_rate)}</span>
+        )}
+        {taxMetrics.is_minimum_rule && <MinimumRuleBadge />}
+        {taxMetrics.vat_payer && taxMetrics.vat_rate != null && (
+          <VatBadge taxMetrics={taxMetrics} />
+        )}
+      </div>
+    </>
+  )
+}
+
+function MinimumRuleBadge(): React.ReactElement {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs font-medium text-yellow-700">
+          Мин. 1%
+        </span>
+      </TooltipTrigger>
+      <TooltipContent size="sm">
+        <p>Применено правило минимального налога 1% от выручки (УСН 15%)</p>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+function VatBadge({ taxMetrics }: { taxMetrics: TaxMetrics }): React.ReactElement {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+          НДС {taxMetrics.vat_rate}%
+        </span>
+      </TooltipTrigger>
+      <TooltipContent size="sm">
+        <p>
+          НДС от продаж:{' '}
+          {taxMetrics.vat_output != null ? formatCurrency(taxMetrics.vat_output) : '—'}
+        </p>
+        <p>
+          НДС к уплате:{' '}
+          {taxMetrics.vat_payable != null ? formatCurrency(taxMetrics.vat_payable) : '—'}
+        </p>
+        <p>
+          Выручка без НДС:{' '}
+          {taxMetrics.revenue_excl_vat != null ? formatCurrency(taxMetrics.revenue_excl_vat) : '—'}
+        </p>
+      </TooltipContent>
+    </Tooltip>
   )
 }

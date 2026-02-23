@@ -18,6 +18,7 @@ export interface MarginCardProps {
   previousMarginPct: number | null | undefined
   cogsCoverage: number
   isLoading?: boolean
+  showPreTaxLabel?: boolean
   error?: Error | null
   onRetry?: () => void
   onAssignCogs?: () => void
@@ -51,6 +52,7 @@ export function MarginCard({
   marginPct,
   previousMarginPct,
   cogsCoverage,
+  showPreTaxLabel = false,
   isLoading = false,
   error,
   onRetry,
@@ -92,7 +94,12 @@ export function MarginCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Percent className="h-4 w-4 text-gray-500" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Операционная маржа</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              Операционная маржа
+              {showPreTaxLabel && (
+                <span className="ml-1 text-xs text-muted-foreground/70">(до налога)</span>
+              )}
+            </span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>

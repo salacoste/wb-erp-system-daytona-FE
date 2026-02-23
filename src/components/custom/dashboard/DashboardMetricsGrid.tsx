@@ -1,9 +1,4 @@
-/**
- * Dashboard Metrics Grid — Flat responsive P&L layout
- * Single grid: 1col → 2col (sm) → 3col (lg) → 4col (xl)
- * 18 cards: 8 simple (data-driven) + 10 complex with tooltips/breakdowns.
- * Request #155: Added GrossMarginCard, OperatingProfitCard (renamed from GrossProfitCard).
- */
+/** Dashboard Metrics Grid — 20 P&L cards. Epic 66-FE: Tax + NetProfit + pre-tax labels. */
 
 'use client'
 
@@ -21,6 +16,8 @@ import { GrossProfitCard } from './GrossProfitCard'
 import { OperatingProfitCard } from './OperatingProfitCard'
 import { GrossMarginCard } from './GrossMarginCard'
 import { MarginCard } from './MarginCard'
+import { TaxCard } from './TaxCard'
+import { NetProfitCard } from './NetProfitCard'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 
 export type {
@@ -64,6 +61,8 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     operatingProfitAnalytical,
     operatingMarginPct,
     grossMarginPct,
+    // Epic 66-FE: Tax & VAT
+    taxMetrics,
     previousPeriodData: prev,
     isLoading,
     error,
@@ -74,6 +73,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
 
   if (isLoading) return <DashboardMetricsGridSkeleton cardCount={18} className={className} />
 
+  const showPreTaxLabel = !taxMetrics
   const cards = buildSimpleCards(props)
   const e = error ?? undefined
 
@@ -115,6 +115,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
       <PayoutCard
         payoutTotal={payoutTotal}
         previousPayout={prev?.payoutTotal}
+        showPreTaxLabel={showPreTaxLabel}
         isLoading={false}
         error={error}
         onRetry={onRetry}
@@ -145,6 +146,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         grossProfit={grossProfitAnalytical}
         previousGrossProfit={prev?.grossProfitAnalytical}
         cogsCoverage={cogsCoverage}
+        showPreTaxLabel={showPreTaxLabel}
         isLoading={false}
         error={error}
         onRetry={onRetry}
@@ -154,6 +156,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         operatingProfit={operatingProfitAnalytical ?? grossProfit}
         previousOperatingProfit={prev?.operatingProfitAnalytical ?? prev?.grossProfit}
         cogsCoverage={cogsCoverage}
+        showPreTaxLabel={showPreTaxLabel}
         isLoading={false}
         error={error}
         onRetry={onRetry}
@@ -172,10 +175,24 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         marginPct={operatingMarginPct ?? marginPct}
         previousMarginPct={prev?.operatingMarginPct ?? prev?.marginPct}
         cogsCoverage={cogsCoverage}
+        showPreTaxLabel={showPreTaxLabel}
         isLoading={false}
         error={error}
         onRetry={onRetry}
         onAssignCogs={onAssignCogs}
+      />
+      <TaxCard
+        taxMetrics={taxMetrics ?? null}
+        previousTaxMetrics={prev?.taxMetrics ?? null}
+        isLoading={false}
+      />
+      <NetProfitCard
+        taxMetrics={taxMetrics ?? null}
+        payoutTotal={payoutTotal ?? null}
+        saleGrossTotal={saleGross ?? null}
+        previousTaxMetrics={prev?.taxMetrics ?? null}
+        previousPayoutTotal={prev?.payoutTotal ?? null}
+        isLoading={false}
       />
     </div>
   )

@@ -21,6 +21,7 @@ export interface PayoutCardProps {
   payoutTotal: number | null | undefined
   previousPayout: number | null | undefined
   isLoading?: boolean
+  showPreTaxLabel?: boolean
   error?: Error | null
   onRetry?: () => void
   className?: string
@@ -29,6 +30,7 @@ export interface PayoutCardProps {
 export function PayoutCard({
   payoutTotal,
   previousPayout,
+  showPreTaxLabel = false,
   isLoading = false,
   error,
   onRetry,
@@ -69,7 +71,12 @@ export function PayoutCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Banknote className="h-4 w-4 text-green-600" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">К перечислению</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              К перечислению
+              {showPreTaxLabel && (
+                <span className="ml-1 text-xs text-muted-foreground/70">(до налога)</span>
+              )}
+            </span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>

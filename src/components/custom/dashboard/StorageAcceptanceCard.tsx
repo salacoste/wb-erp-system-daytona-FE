@@ -86,7 +86,11 @@ export function StorageAcceptanceCard({
               </button>
             </TooltipTrigger>
             <TooltipContent size="md">
-              <p>Расходы на хранение товаров и платную приёмку на складах WB.</p>
+              <p>
+                Расходы на хранение товаров и платную приёмку на складах WB. Данные из еженедельного
+                финансового отчёта WB (финальные суммы). Детализация по SKU — на странице аналитики
+                хранения.
+              </p>
             </TooltipContent>
           </Tooltip>
         </div>
