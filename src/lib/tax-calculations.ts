@@ -1,4 +1,8 @@
 /**
+ * @deprecated Epic 66-FE: Tax calculations now performed by backend.
+ * Use TaxMetrics from finance-summary API response instead.
+ * This file retained for backward compatibility during migration.
+ *
  * Tax Calculation Helpers for Story 65.11: Tax Estimate
  *
  * Tax formulas (from backend-gap-analysis.md Section 4):

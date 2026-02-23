@@ -62,6 +62,7 @@ export const ROUTES = {
     NOTIFICATIONS: '/settings/notifications', // Epic 34-FE: Telegram Notifications
     TARIFFS: '/settings/tariffs', // Epic 52-FE: Tariff Settings Admin (Admin only)
     BACKFILL: '/settings/backfill', // Epic 51-FE: Backfill Admin (Admin only)
+    TAX: '/settings/tax', // Epic 66-FE: Tax & VAT Settings
   },
 } as const
 
@@ -108,6 +109,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.SETTINGS.NOTIFICATIONS, // Epic 34-FE: Telegram Notifications
     ROUTES.SETTINGS.TARIFFS, // Epic 52-FE: Tariff Settings Admin (Admin only)
     ROUTES.SETTINGS.BACKFILL, // Epic 51-FE: Backfill Admin (Admin only)
+    ROUTES.SETTINGS.TAX, // Epic 66-FE: Tax & VAT Settings
   ]
 
   return protectedPaths.some(path => pathname.startsWith(path))

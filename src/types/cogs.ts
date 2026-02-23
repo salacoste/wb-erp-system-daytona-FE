@@ -420,6 +420,7 @@ export interface MarginAnalyticsAggregated {
   revenue_gross?: number // Request #69: Gross revenue (before WB commission) for UI consistency
   revenue_net: number // Aggregated net revenue (after WB commission)
   qty: number // Total units sold
+  total_skus?: number // Unique SKU count (for "Товаров (SKU)" column display)
 
   // Aggregated COGS & Margin fields
   cogs?: number // Sum of all COGS

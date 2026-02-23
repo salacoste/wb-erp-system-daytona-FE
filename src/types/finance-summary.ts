@@ -1,9 +1,32 @@
 /**
  * Finance Summary Types
  * Story 60.4-FE: Connect Dashboard to Period State
+ * Epic 66-FE: Added TaxMetrics interface (Story 66.1)
  *
  * Types for weekly financial summary data from backend API.
  */
+
+/**
+ * Tax + VAT metrics from backend (Epic 72 + Task-50).
+ * Located in summary_total.tax ONLY (summary_rus/eaeu are always null).
+ */
+export interface TaxMetrics {
+  // Income tax fields (Epic 72)
+  tax_amount: number | null
+  tax_base: number | null
+  effective_tax_rate: number | null
+  tax_system: string | null // 'usn6' | 'usn15' | 'manual'
+  is_minimum_rule: boolean
+  net_profit_after_tax: number | null
+
+  // VAT/НДС fields (Task-50)
+  vat_payer: boolean
+  vat_rate: number | null // 0, 5, 20, 22
+  vat_output: number | null // НДС от продаж
+  vat_payable: number | null // НДС к уплате (output - input)
+  revenue_excl_vat: number | null // Выручка без НДС
+  net_profit_after_all_tax: number | null // После ВСЕХ налогов
+}
 
 export interface FinanceSummary {
   week: string
@@ -89,4 +112,7 @@ export interface FinanceSummary {
   operating_profit_analytical?: number | null // revenue_net − COGS − expenses
   gross_margin_pct?: number | null // (revenue_net − COGS) / revenue_net × 100
   operating_margin_pct?: number | null // operating_profit / revenue_net × 100
+
+  // Epic 66-FE: Tax metrics from summary_total.tax (Story 66.1)
+  tax?: TaxMetrics | null
 }

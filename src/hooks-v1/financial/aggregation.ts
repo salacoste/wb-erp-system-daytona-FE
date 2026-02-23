@@ -5,7 +5,35 @@
  * Helper functions for aggregating financial summaries.
  */
 
-import type { FinanceSummary } from '../useDashboard'
+import type { FinanceSummary, TaxMetrics } from '@/types/finance-summary'
+
+/** Sum a nullable numeric field across items, treating null as 0 */
+function sumNullable(items: TaxMetrics[], key: keyof TaxMetrics): number {
+  return items.reduce((acc, t) => acc + ((t[key] as number | null) ?? 0), 0)
+}
+
+/** Aggregate multiple TaxMetrics into one. Returns null if no valid entries. */
+export function aggregateTaxMetrics(taxMetrics: TaxMetrics[]): TaxMetrics | null {
+  const valid = taxMetrics.filter((t): t is TaxMetrics => t != null)
+  if (valid.length === 0) return null
+  if (valid.length === 1) return valid[0]
+
+  const first = valid[0]
+  return {
+    tax_amount: sumNullable(valid, 'tax_amount'),
+    tax_base: sumNullable(valid, 'tax_base'),
+    net_profit_after_tax: sumNullable(valid, 'net_profit_after_tax'),
+    vat_output: sumNullable(valid, 'vat_output'),
+    vat_payable: sumNullable(valid, 'vat_payable'),
+    revenue_excl_vat: sumNullable(valid, 'revenue_excl_vat'),
+    net_profit_after_all_tax: sumNullable(valid, 'net_profit_after_all_tax'),
+    effective_tax_rate: first.effective_tax_rate,
+    tax_system: first.tax_system,
+    vat_payer: first.vat_payer,
+    vat_rate: first.vat_rate,
+    is_minimum_rule: valid.some(t => t.is_minimum_rule),
+  }
+}
 
 /**
  * Aggregate multiple FinanceSummary objects into one
@@ -129,19 +157,7 @@ export function aggregateFinanceSummaries(summaries: FinanceSummary[]): FinanceS
     result.cogs_coverage_pct = (result.products_with_cogs / maxProductsTotal) * 100
   }
 
-  // Calculate gross_profit and margin_pct only if aggregated coverage is 100%
-  /**
-   * Validation fix: Operating Profit formula
-   * gross_profit = payout_total - cogs_total
-   *
-   * Where payout_total = actual seller earnings after ALL WB deductions
-   * (commissions, logistics, storage, penalties, etc.)
-   *
-   * margin_pct = (payout_total - cogs_total) / sale_gross_total * 100
-   *
-   * Previous formula (sale_gross - COGS) overstated profit by 3-5x because
-   * it ignored ~56% of revenue taken by WB as deductions.
-   */
+  // Validation fix: Operating Margin = (payout_total - cogs_total) / sale_gross_total
   if (
     result.cogs_coverage_pct === 100 &&
     result.payout_total != null &&
@@ -170,6 +186,10 @@ export function aggregateFinanceSummaries(summaries: FinanceSummary[]): FinanceS
       result.operating_margin_pct = (operatingProfitA / revenueNet) * 100
     }
   }
+
+  // Epic 66-FE: Aggregate tax metrics across weeks
+  const taxEntries = summaries.map(s => s.tax).filter((t): t is TaxMetrics => t != null)
+  result.tax = taxEntries.length > 0 ? aggregateTaxMetrics(taxEntries) : null
 
   return result as FinanceSummary
 }
