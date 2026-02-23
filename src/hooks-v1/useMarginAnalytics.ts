@@ -8,10 +8,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type {
-  MarginAnalyticsSkuResponse,
-  MarginAnalyticsAggregatedResponse,
-} from '@/types/api'
+import type { MarginAnalyticsSkuResponse, MarginAnalyticsAggregatedResponse } from '@/types/api'
 
 /**
  * Filters for margin analytics hooks
@@ -19,18 +16,18 @@ import type {
  * Story 6.2-FE: Added compareTo for period comparison
  */
 export interface MarginAnalyticsFilters {
-  week?: string             // Single week (backward compatible, e.g., "2025-W47")
-  weekStart?: string        // Story 6.1-FE: Range start (ISO week)
-  weekEnd?: string          // Story 6.1-FE: Range end (ISO week)
-  compareTo?: string        // Story 6.2-FE: Comparison period (ISO week, e.g., "2025-W43")
-  compareToStart?: string   // Story 6.2-FE: Comparison range start
-  compareToEnd?: string     // Story 6.2-FE: Comparison range end
-  includeCogs?: boolean     // Default: true (maps to include_cogs in API)
-  cursor?: string           // Pagination cursor
-  limit?: number            // Items per page (default: 50)
-  nmId?: string             // Story 4.9: nm_id for CLIENT-SIDE filtering only
-                            // Note: /by-sku endpoint does NOT support nm_id param
-                            // Data is filtered after fetch, not in API call
+  week?: string // Single week (backward compatible, e.g., "2025-W47")
+  weekStart?: string // Story 6.1-FE: Range start (ISO week)
+  weekEnd?: string // Story 6.1-FE: Range end (ISO week)
+  compareTo?: string // Story 6.2-FE: Comparison period (ISO week, e.g., "2025-W43")
+  compareToStart?: string // Story 6.2-FE: Comparison range start
+  compareToEnd?: string // Story 6.2-FE: Comparison range end
+  includeCogs?: boolean // Default: true (maps to include_cogs in API)
+  cursor?: string // Pagination cursor
+  limit?: number // Items per page (default: 50)
+  nmId?: string // Story 4.9: nm_id for CLIENT-SIDE filtering only
+  // Note: /by-sku endpoint does NOT support nm_id param
+  // Data is filtered after fetch, not in API call
 }
 
 export type SortField = 'margin_pct' | 'revenue_net' | 'sa_name' | 'profit'
@@ -57,7 +54,18 @@ export type SortOrder = 'asc' | 'desc'
  * @returns Query result with margin data for each SKU
  */
 export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
-  const { week, weekStart, weekEnd, compareTo, compareToStart, compareToEnd, includeCogs = true, cursor, limit = 50, nmId } = filters
+  const {
+    week,
+    weekStart,
+    weekEnd,
+    compareTo,
+    compareToStart,
+    compareToEnd,
+    includeCogs = true,
+    cursor,
+    limit = 50,
+    nmId,
+  } = filters
 
   // Story 6.1-FE: Determine if using date range or single week
   const isRangeQuery = weekStart && weekEnd
@@ -70,7 +78,23 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
     // Story 4.9: Include nmId in query key for proper cache invalidation on filter change
     // Story 6.1-FE: Include weekStart/weekEnd for date range cache isolation
     // Story 6.2-FE: Include compareTo for comparison cache isolation
-    queryKey: ['analytics', 'margin', 'by-sku', { week: effectiveWeek, weekStart, weekEnd, compareTo, compareToStart, compareToEnd, includeCogs, cursor, limit, nmId }],
+    queryKey: [
+      'analytics',
+      'margin',
+      'by-sku',
+      {
+        week: effectiveWeek,
+        weekStart,
+        weekEnd,
+        compareTo,
+        compareToStart,
+        compareToEnd,
+        includeCogs,
+        cursor,
+        limit,
+        nmId,
+      },
+    ],
     queryFn: async (): Promise<MarginAnalyticsSkuResponse> => {
       try {
         // Build query parameters
@@ -127,9 +151,7 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
         // 1. Array directly (apiClient unwrapped data)
         // 2. Object with items array
         // 3. Object with data array
-        const items = Array.isArray(response)
-          ? response
-          : (response.items ?? response.data ?? [])
+        const items = Array.isArray(response) ? response : (response.items ?? response.data ?? [])
 
         // Transform response to match expected format
         // Request #60: Include operational costs per SKU
@@ -153,7 +175,9 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
           logistics_cost_rub: item.logistics_cost ? String(item.logistics_cost) : undefined,
           storage_cost_rub: item.storage_cost ? String(item.storage_cost) : undefined,
           penalties_rub: item.penalties ? String(item.penalties) : undefined,
-          paid_acceptance_cost_rub: item.paid_acceptance_cost ? String(item.paid_acceptance_cost) : undefined,
+          paid_acceptance_cost_rub: item.paid_acceptance_cost
+            ? String(item.paid_acceptance_cost)
+            : undefined,
           // Placeholder for future advertising costs
           advertising_cost_rub: item.advertising_cost ? String(item.advertising_cost) : undefined,
           // Epic 30: Calculated totals from backend (field names without _rub suffix)
@@ -171,10 +195,11 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
 
         // Story 4.9: Client-side filtering by nm_id (backend doesn't support this param)
         if (nmId) {
-          transformedData = transformedData.filter(
-            (item) => String(item.nm_id) === String(nmId)
-          )
-          console.info('[Margin Analytics] Filtered by nm_id:', { nmId, matchCount: transformedData.length })
+          transformedData = transformedData.filter(item => String(item.nm_id) === String(nmId))
+          console.info('[Margin Analytics] Filtered by nm_id:', {
+            nmId,
+            matchCount: transformedData.length,
+          })
         }
 
         const transformed: MarginAnalyticsSkuResponse = {
@@ -184,7 +209,7 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
 
         console.info('[Margin Analytics] SKU analytics received:', {
           count: transformed.data.length,
-          has_cogs_data: transformed.data.some((item) => item.cogs !== undefined),
+          has_cogs_data: transformed.data.some(item => item.cogs !== undefined),
         })
 
         return transformed
@@ -193,8 +218,8 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
         throw error
       }
     },
-    staleTime: 30000,  // 30 seconds
-    gcTime: 300000,    // 5 minutes
+    staleTime: 30000, // 30 seconds
+    gcTime: 300000, // 5 minutes
     refetchOnWindowFocus: true,
     retry: 1,
     // Story 6.1-FE: Enable query when week or weekStart+weekEnd is provided
@@ -223,7 +248,17 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
  * @returns Query result with aggregated margin data by brand
  */
 export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
-  const { week, weekStart, weekEnd, compareTo, compareToStart, compareToEnd, includeCogs = true, cursor, limit = 50 } = filters
+  const {
+    week,
+    weekStart,
+    weekEnd,
+    compareTo,
+    compareToStart,
+    compareToEnd,
+    includeCogs = true,
+    cursor,
+    limit = 50,
+  } = filters
 
   // Story 6.1-FE: Determine if using date range or single week
   const isRangeQuery = weekStart && weekEnd
@@ -235,7 +270,22 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
   return useQuery({
     // Story 6.1-FE: Include weekStart/weekEnd for date range cache isolation
     // Story 6.2-FE: Include compareTo for comparison cache isolation
-    queryKey: ['analytics', 'margin', 'by-brand', { week: effectiveWeek, weekStart, weekEnd, compareTo, compareToStart, compareToEnd, includeCogs, cursor, limit }],
+    queryKey: [
+      'analytics',
+      'margin',
+      'by-brand',
+      {
+        week: effectiveWeek,
+        weekStart,
+        weekEnd,
+        compareTo,
+        compareToStart,
+        compareToEnd,
+        includeCogs,
+        cursor,
+        limit,
+      },
+    ],
     queryFn: async (): Promise<MarginAnalyticsAggregatedResponse> => {
       try {
         // Build query parameters
@@ -283,9 +333,7 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
         )
 
         // Handle different response structures
-        const items = Array.isArray(response)
-          ? response
-          : (response.items ?? response.data ?? [])
+        const items = Array.isArray(response) ? response : (response.items ?? response.data ?? [])
 
         // Transform response to match expected format
         // Epic 26: Include operating expenses and operating profit for consistency with SKU page
@@ -297,6 +345,7 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
             revenue_gross: item.revenue_gross, // Request #69: already a number from Brand API
             revenue_net: item.revenue_net,
             qty: item.total_units,
+            total_skus: item.total_skus, // Unique SKU count for "Товаров (SKU)" column
             cogs: item.cogs,
             profit: item.profit,
             margin_pct: item.margin_pct,
@@ -330,8 +379,8 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
         throw error
       }
     },
-    staleTime: 30000,  // 30 seconds
-    gcTime: 300000,    // 5 minutes
+    staleTime: 30000, // 30 seconds
+    gcTime: 300000, // 5 minutes
     refetchOnWindowFocus: true,
     retry: 1,
     // Story 6.1-FE: Enable query when week or weekStart+weekEnd is provided
@@ -360,7 +409,17 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
  * @returns Query result with aggregated margin data by category
  */
 export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
-  const { week, weekStart, weekEnd, compareTo, compareToStart, compareToEnd, includeCogs = true, cursor, limit = 50 } = filters
+  const {
+    week,
+    weekStart,
+    weekEnd,
+    compareTo,
+    compareToStart,
+    compareToEnd,
+    includeCogs = true,
+    cursor,
+    limit = 50,
+  } = filters
 
   // Story 6.1-FE: Determine if using date range or single week
   const isRangeQuery = weekStart && weekEnd
@@ -372,7 +431,22 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
   return useQuery({
     // Story 6.1-FE: Include weekStart/weekEnd for date range cache isolation
     // Story 6.2-FE: Include compareTo for comparison cache isolation
-    queryKey: ['analytics', 'margin', 'by-category', { week: effectiveWeek, weekStart, weekEnd, compareTo, compareToStart, compareToEnd, includeCogs, cursor, limit }],
+    queryKey: [
+      'analytics',
+      'margin',
+      'by-category',
+      {
+        week: effectiveWeek,
+        weekStart,
+        weekEnd,
+        compareTo,
+        compareToStart,
+        compareToEnd,
+        includeCogs,
+        cursor,
+        limit,
+      },
+    ],
     queryFn: async (): Promise<MarginAnalyticsAggregatedResponse> => {
       try {
         // Build query parameters
@@ -420,9 +494,7 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
         )
 
         // Handle different response structures
-        const items = Array.isArray(response)
-          ? response
-          : (response.items ?? response.data ?? [])
+        const items = Array.isArray(response) ? response : (response.items ?? response.data ?? [])
 
         // Transform response to match expected format
         // Epic 26: Include operating expenses and operating profit for consistency with SKU page
@@ -432,7 +504,8 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
             category: item.subject_name,
             revenue_gross: item.revenue_gross_rub ? parseFloat(item.revenue_gross_rub) : undefined, // Request #69
             revenue_net: parseFloat(item.revenue_net_rub || '0'),
-            qty: item.sku_count,
+            qty: item.total_units ?? item.sku_count, // Fix: use total_units for profit_per_unit calc
+            total_skus: item.sku_count, // Unique SKU count for "Товаров (SKU)" column
             cogs: item.cogs_rub ? parseFloat(item.cogs_rub) : undefined,
             profit: item.profit_rub ? parseFloat(item.profit_rub) : undefined,
             margin_pct: item.margin_pct,
@@ -441,14 +514,24 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
             // Epic 26: Operating expenses and profit
             storage_cost: item.storage_cost_rub ? parseFloat(item.storage_cost_rub) : undefined,
             penalties: item.penalties_rub ? parseFloat(item.penalties_rub) : undefined,
-            paid_acceptance_cost: item.paid_acceptance_cost_rub ? parseFloat(item.paid_acceptance_cost_rub) : undefined,
+            paid_acceptance_cost: item.paid_acceptance_cost_rub
+              ? parseFloat(item.paid_acceptance_cost_rub)
+              : undefined,
             acquiring_fee: item.acquiring_fee_rub ? parseFloat(item.acquiring_fee_rub) : undefined,
             loyalty_fee: item.loyalty_fee_rub ? parseFloat(item.loyalty_fee_rub) : undefined,
-            loyalty_compensation: item.loyalty_compensation_rub ? parseFloat(item.loyalty_compensation_rub) : undefined,
+            loyalty_compensation: item.loyalty_compensation_rub
+              ? parseFloat(item.loyalty_compensation_rub)
+              : undefined,
             commission: item.commission_rub ? parseFloat(item.commission_rub) : undefined,
-            other_adjustments: item.other_adjustments_rub ? parseFloat(item.other_adjustments_rub) : undefined,
-            total_expenses: item.total_expenses_rub ? parseFloat(item.total_expenses_rub) : undefined,
-            operating_profit: item.operating_profit_rub ? parseFloat(item.operating_profit_rub) : undefined,
+            other_adjustments: item.other_adjustments_rub
+              ? parseFloat(item.other_adjustments_rub)
+              : undefined,
+            total_expenses: item.total_expenses_rub
+              ? parseFloat(item.total_expenses_rub)
+              : undefined,
+            operating_profit: item.operating_profit_rub
+              ? parseFloat(item.operating_profit_rub)
+              : undefined,
             operating_margin_pct: item.operating_margin_pct,
             skus_with_expenses_only: item.skus_with_expenses_only,
           })),
@@ -466,8 +549,8 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
         throw error
       }
     },
-    staleTime: 30000,  // 30 seconds
-    gcTime: 300000,    // 5 minutes
+    staleTime: 30000, // 30 seconds
+    gcTime: 300000, // 5 minutes
     refetchOnWindowFocus: true,
     retry: 1,
     // Story 6.1-FE: Enable query when week or weekStart+weekEnd is provided
@@ -491,7 +574,7 @@ export function getCurrentIsoWeek(): string {
   const firstThursday = target.valueOf()
   target.setMonth(0, 1)
   if (target.getDay() !== 4) {
-    target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7)
+    target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7))
   }
   const weekNumber = 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000)
 
@@ -590,9 +673,13 @@ export function useCabinetLevelExpenses(filters: { weekStart?: string; weekEnd?:
         )
 
         // Handle wrapped response
-        const expenses = 'data' in response && response.data && typeof response.data === 'object' && 'storage' in response.data
-          ? response.data
-          : response as CabinetLevelExpenses
+        const expenses =
+          'data' in response &&
+          response.data &&
+          typeof response.data === 'object' &&
+          'storage' in response.data
+            ? response.data
+            : (response as CabinetLevelExpenses)
 
         console.info('[Cabinet Expenses] Received:', expenses)
 

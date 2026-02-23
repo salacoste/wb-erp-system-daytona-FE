@@ -1,8 +1,9 @@
 'use client'
 
-import { Wallet, TrendingUp, Percent, Target, ShoppingCart, Sprout } from 'lucide-react'
+import { Wallet, TrendingUp, Percent, Target, ShoppingCart, Sprout, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { AdvertisingSummary } from '@/types/advertising-analytics'
 
@@ -57,31 +58,8 @@ function getRoiColor(roi: number): string {
   return 'text-red-600'
 }
 
-/**
- * Advertising Summary Cards Component
- * Story 33.2-FE: Advertising Analytics Page Layout
- * Epic 33: Advertising Analytics (Frontend)
- * Epic 35: Total Sales & Organic Split
- *
- * Displays 6 summary metric cards (Epic 35 updated):
- * - Total Sales (NEW: Epic 35 - organic + ad revenue)
- * - Ad Revenue (ad-attributed only)
- * - Overall ROAS
- * - Overall ROI
- * - Organic Contribution % (NEW: Epic 35)
- * - Active Campaigns
- *
- * Features:
- * - Loading skeleton state
- * - Color-coded ROAS/ROI values
- * - Epic 35: Organic vs advertising split visualization
- * - Responsive grid (AC6)
- * - Accessible (AC8)
- */
-export function AdvertisingSummaryCards({
-  summary,
-  isLoading,
-}: AdvertisingSummaryCardsProps) {
+/** Advertising Summary Cards - Story 33.2-FE, Epic 35: 6 metric cards with tooltips */
+export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSummaryCardsProps) {
   // Loading state (Epic 35: now 6 cards)
   if (isLoading) {
     return (
@@ -108,26 +86,26 @@ export function AdvertisingSummaryCards({
   }
 
   const cards = [
-    // Epic 35: Total Sales (organic + ad revenue)
     {
       id: 'total_sales',
       label: 'Всего продаж',
       value: formatCurrency(summary.total_sales),
       icon: ShoppingCart,
       colorClass: 'text-indigo-600',
-      description: 'Общая выручка (органика + реклама)',
-      subtext: summary.total_organic_sales > 0
-        ? `${formatCurrency(summary.total_organic_sales)} органика`
-        : undefined,
+      tooltip: 'Органические + рекламные продажи. Данные из рекламного кабинета WB.',
+      subtext:
+        summary.total_organic_sales > 0
+          ? `${formatCurrency(summary.total_organic_sales)} органика`
+          : undefined,
     },
-    // Epic 35: Ad Revenue (renamed from Total Revenue)
     {
       id: 'ad_revenue',
       label: 'Из рекламы',
       value: formatCurrency(summary.total_revenue),
       icon: Wallet,
       colorClass: 'text-blue-600',
-      description: 'Выручка только из рекламных кампаний',
+      tooltip:
+        'Выручка от заказов, атрибутированных рекламе. WB определяет атрибуцию: клик → заказ.',
     },
     {
       id: 'roas',
@@ -135,7 +113,7 @@ export function AdvertisingSummaryCards({
       value: `${summary.overall_roas.toFixed(1)}x`,
       icon: TrendingUp,
       colorClass: getRoasColor(summary.overall_roas),
-      description: 'Возврат на рекламные расходы (выручка / расходы)',
+      tooltip: 'Выручка от рекламы \u00F7 расход на кампании. Данные из рекламного кабинета WB.',
     },
     {
       id: 'roi',
@@ -143,22 +121,24 @@ export function AdvertisingSummaryCards({
       value: formatPercent(summary.overall_roi),
       icon: Percent,
       colorClass: getRoiColor(summary.overall_roi),
-      description: 'Рентабельность инвестиций в рекламу',
+      tooltip:
+        '(Прибыль \u2212 расход на рекламу) \u00F7 расход \u00D7 100%. Прибыль из маржинальной аналитики.',
     },
-    // Epic 35: Organic Contribution %
     {
       id: 'organic_contribution',
       label: 'Доля органики',
-      value: summary.avg_organic_contribution >= 0
-        ? `${summary.avg_organic_contribution.toFixed(1)}%`  // Backend returns percentage already
-        : '—',
+      value:
+        summary.avg_organic_contribution >= 0
+          ? `${summary.avg_organic_contribution.toFixed(1)}%`
+          : '\u2014',
       icon: Sprout,
-      colorClass: summary.avg_organic_contribution >= 50  // Compare with 50% not 0.5
-        ? 'text-green-600'
-        : summary.avg_organic_contribution >= 20  // Compare with 20% not 0.2
-        ? 'text-yellow-600'
-        : 'text-orange-600',
-      description: 'Средний процент органических продаж',
+      colorClass:
+        summary.avg_organic_contribution >= 50
+          ? 'text-green-600'
+          : summary.avg_organic_contribution >= 20
+            ? 'text-yellow-600'
+            : 'text-orange-600',
+      tooltip: 'Доля продаж без рекламы. При переатрибуции WB может быть <0%.',
     },
     {
       id: 'campaigns',
@@ -167,7 +147,7 @@ export function AdvertisingSummaryCards({
       icon: Target,
       colorClass: 'text-purple-600',
       subtext: `из ${summary.campaign_count}`,
-      description: `${summary.active_campaigns} активных из ${summary.campaign_count} всего`,
+      tooltip: 'Кампании со статусом «active» за выбранный период.',
     },
   ]
 
@@ -177,29 +157,27 @@ export function AdvertisingSummaryCards({
       role="region"
       aria-label="Ключевые показатели рекламы"
     >
-      {cards.map((card) => {
+      {cards.map(card => {
         const Icon = card.icon
         return (
           <Card key={card.id}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                <Icon
-                  className={cn('h-4 w-4', card.colorClass)}
-                  aria-hidden="true"
-                />
+                <Icon className={cn('h-4 w-4', card.colorClass)} aria-hidden="true" />
                 <span>{card.label}</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent size="md">{card.tooltip}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <div
-                className={cn('text-2xl font-bold', card.colorClass)}
-                aria-label={card.description}
-              >
+              <div className={cn('text-2xl font-bold', card.colorClass)} aria-label={card.tooltip}>
                 {card.value}
               </div>
-              {card.subtext && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {card.subtext}
-                </p>
-              )}
+              {card.subtext && <p className="text-sm text-muted-foreground mt-1">{card.subtext}</p>}
             </CardContent>
           </Card>
         )

@@ -9,8 +9,14 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, HelpCircle } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Tooltip as UiTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { StorageTrendPoint, MetricSummary } from '@/types/storage-analytics'
 
@@ -74,9 +80,14 @@ function TrendBadge({ trend }: { trend: number }) {
   const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus
 
   return (
-    <div className={cn('flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium', colorClass)}>
+    <div
+      className={cn('flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium', colorClass)}
+    >
       <Icon className="h-4 w-4" />
-      <span>{isPositive ? '+' : ''}{trend.toFixed(1)}%</span>
+      <span>
+        {isPositive ? '+' : ''}
+        {trend.toFixed(1)}%
+      </span>
     </div>
   )
 }
@@ -109,7 +120,7 @@ interface TooltipPayload {
 function CustomTooltip({
   active,
   payload,
-  label
+  label,
 }: {
   active?: boolean
   payload?: TooltipPayload[]
@@ -128,9 +139,7 @@ function CustomTooltip({
           {formatCurrency(data.storage_cost!)}
         </p>
       ) : (
-        <p className="text-sm text-muted-foreground">
-          Нет данных за эту неделю
-        </p>
+        <p className="text-sm text-muted-foreground">Нет данных за эту неделю</p>
       )}
     </div>
   )
@@ -205,10 +214,24 @@ export function StorageTrendsChart({
 
   return (
     <div className="space-y-4">
-      {/* Header with trend badge */}
+      {/* Header with trend badge and data source info */}
       {summary && (
         <div className="flex items-center justify-between">
-          <SummaryStats summary={summary} />
+          <div className="flex items-center gap-2">
+            <SummaryStats summary={summary} />
+            <TooltipProvider>
+              <UiTooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help mb-4" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[240px]">
+                  <p className="text-xs">
+                    Тренд по данным API платного хранения (ежедневная агрегация по неделям).
+                  </p>
+                </TooltipContent>
+              </UiTooltip>
+            </TooltipProvider>
+          </div>
           <TrendBadge trend={summary.trend} />
         </div>
       )}
@@ -246,12 +269,8 @@ export function StorageTrendsChart({
             fill="url(#storageFill)"
             strokeWidth={2}
             connectNulls={false}
-            dot={(props) => (
-              <CustomDot
-                {...props}
-                selectedWeek={selectedWeek}
-                onClick={onWeekClick}
-              />
+            dot={props => (
+              <CustomDot {...props} selectedWeek={selectedWeek} onClick={onWeekClick} />
             )}
             activeDot={{
               r: 6,

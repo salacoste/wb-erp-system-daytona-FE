@@ -9,12 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { MarginBadge } from './MarginDisplay'
 import { formatCogs } from '@/hooks/useSingleCogsAssignment'
 import { ArrowUp, ArrowDown, ArrowUpDown, ExternalLink, HelpCircle } from 'lucide-react'
@@ -32,7 +27,15 @@ import { ComparisonSummary, PeriodTotals } from './SummaryComparison'
 
 // Story 6.3-FE: Added roi and profit_per_unit sort fields
 // Epic 26: Added operating_profit sort field
-export type BrandSortField = 'margin_pct' | 'revenue_net' | 'brand' | 'profit' | 'qty' | 'roi' | 'profit_per_unit' | 'operating_profit'
+export type BrandSortField =
+  | 'margin_pct'
+  | 'revenue_net'
+  | 'brand'
+  | 'profit'
+  | 'qty'
+  | 'roi'
+  | 'profit_per_unit'
+  | 'operating_profit'
 export type SortOrder = 'asc' | 'desc'
 
 export interface MarginByBrandTableProps {
@@ -60,7 +63,12 @@ export interface MarginByBrandTableProps {
  *   onBrandClick={(brand) => router.push(`/analytics/sku?brand=${brand}`)}
  * />
  */
-export function MarginByBrandTable({ data, onBrandClick, columnVisibility, comparisonTotals }: MarginByBrandTableProps) {
+export function MarginByBrandTable({
+  data,
+  onBrandClick,
+  columnVisibility,
+  comparisonTotals,
+}: MarginByBrandTableProps) {
   const [sortField, setSortField] = useState<BrandSortField>('margin_pct')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
 
@@ -102,8 +110,8 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
           bValue = b.profit
           break
         case 'qty':
-          aValue = a.qty
-          bValue = b.qty
+          aValue = a.total_skus ?? a.qty
+          bValue = b.total_skus ?? b.qty
           break
         case 'brand':
           aValue = (a.brand || '').toLowerCase()
@@ -203,9 +211,7 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
               </button>
             </TableHead>
             <TableHead className="text-right">
-              <div className="flex items-center justify-end font-medium">
-                Себестоимость
-              </div>
+              <div className="flex items-center justify-end font-medium">Себестоимость</div>
             </TableHead>
             <TableHead className="text-right">
               <button
@@ -221,8 +227,7 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                 onClick={() => handleSort('margin_pct')}
                 className="ml-auto flex items-center font-medium hover:text-blue-600"
               >
-                Маржа %
-                {renderSortIcon('margin_pct')}
+                Маржа %{renderSortIcon('margin_pct')}
               </button>
             </TableHead>
             {/* Story 6.3-FE: Profit per Unit column */}
@@ -290,9 +295,7 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
               </TooltipProvider>
             </TableHead>
             <TableHead className="w-[100px] text-center">
-              <div className="flex items-center justify-center font-medium">
-                Без COGS
-              </div>
+              <div className="flex items-center justify-center font-medium">Без COGS</div>
             </TableHead>
             <TableHead className="w-[50px]" />
           </TableRow>
@@ -315,7 +318,7 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                   <div className="font-medium">{item.brand || '(Без бренда)'}</div>
                 </TableCell>
                 <TableCell className="text-right font-medium">
-                  {item.qty.toLocaleString('ru-RU')}
+                  {(item.total_skus ?? item.qty).toLocaleString('ru-RU')}
                 </TableCell>
                 <TableCell className="text-right font-medium">
                   {formatCogs(item.revenue_net)}
@@ -351,13 +354,17 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                 {showProfitPerUnit && (
                   <TableCell className="text-right">
                     {hasCogs && item.profit !== undefined ? (
-                      <span className={cn(
-                        'font-medium',
-                        (item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty)) !== null &&
-                        (item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty))! >= 0
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      )}>
+                      <span
+                        className={cn(
+                          'font-medium',
+                          (item.profit_per_unit ??
+                            calculateProfitPerUnit(item.profit, item.qty)) !== null &&
+                            (item.profit_per_unit ??
+                              calculateProfitPerUnit(item.profit, item.qty))! >= 0
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        )}
+                      >
                         {formatProfitPerUnit(
                           item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty)
                         )}
@@ -371,10 +378,12 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                 {showROI && (
                   <TableCell className="text-right">
                     {hasCogs && item.profit !== undefined ? (
-                      <span className={cn(
-                        'font-medium',
-                        getROIColor(item.roi ?? calculateROI(item.profit, item.cogs))
-                      )}>
+                      <span
+                        className={cn(
+                          'font-medium',
+                          getROIColor(item.roi ?? calculateROI(item.profit, item.cogs))
+                        )}
+                      >
                         {formatROI(item.roi ?? calculateROI(item.profit, item.cogs))}
                       </span>
                     ) : (
@@ -388,11 +397,14 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className={cn(
-                            'font-medium cursor-help',
-                            item.operating_profit < 0 ? 'text-red-600' : 'text-green-600',
-                            (item.skus_with_expenses_only ?? 0) > 0 && 'underline decoration-dotted'
-                          )}>
+                          <span
+                            className={cn(
+                              'font-medium cursor-help',
+                              item.operating_profit < 0 ? 'text-red-600' : 'text-green-600',
+                              (item.skus_with_expenses_only ?? 0) > 0 &&
+                                'underline decoration-dotted'
+                            )}
+                          >
                             {formatCogs(item.operating_profit)}
                             {(item.skus_with_expenses_only ?? 0) > 0 && (
                               <span className="ml-1 text-xs">💤{item.skus_with_expenses_only}</span>
@@ -404,11 +416,14 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                             {item.total_expenses !== undefined && (
                               <p>Расходы: {formatCogs(item.total_expenses)}</p>
                             )}
-                            {item.operating_margin_pct !== null && item.operating_margin_pct !== undefined && (
-                              <p>Опер. маржа: {item.operating_margin_pct.toFixed(2)}%</p>
-                            )}
+                            {item.operating_margin_pct !== null &&
+                              item.operating_margin_pct !== undefined && (
+                                <p>Опер. маржа: {item.operating_margin_pct.toFixed(2)}%</p>
+                              )}
                             {(item.skus_with_expenses_only ?? 0) > 0 && (
-                              <p className="text-amber-500">{item.skus_with_expenses_only} SKU без продаж</p>
+                              <p className="text-amber-500">
+                                {item.skus_with_expenses_only} SKU без продаж
+                              </p>
                             )}
                           </div>
                         </TooltipContent>
@@ -430,7 +445,7 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
                 <TableCell>
                   {onBrandClick && item.brand && (
                     <button
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation()
                         onBrandClick(item.brand!)
                       }}
@@ -456,10 +471,12 @@ export function MarginByBrandTable({ data, onBrandClick, columnVisibility, compa
           totalProfit: data.reduce((sum, item) => sum + (item.operating_profit || 0), 0),
           avgMargin: (() => {
             const withMargin = data.filter(
-              (item) => item.margin_pct !== undefined && item.margin_pct !== null
+              item => item.margin_pct !== undefined && item.margin_pct !== null
             )
             if (withMargin.length === 0) return null
-            return withMargin.reduce((sum, item) => sum + (item.margin_pct || 0), 0) / withMargin.length
+            return (
+              withMargin.reduce((sum, item) => sum + (item.margin_pct || 0), 0) / withMargin.length
+            )
           })(),
         }}
         compare={comparisonTotals}

@@ -1,8 +1,9 @@
 'use client'
 
-import { Wallet, Package, Calculator, Calendar } from 'lucide-react'
+import { Wallet, Package, Calculator, Calendar, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { StorageSummary, StoragePeriod } from '@/types/storage-analytics'
 
 /**
@@ -61,30 +62,35 @@ export function StorageSummaryCards({
       value: summary ? formatCurrency(summary.total_storage_cost) : '—',
       icon: Wallet,
       description: 'на хранение',
+      tooltip:
+        'Данные из API платного хранения WB (ежедневная детализация по SKU). Могут отличаться от суммы в финансовом отчёте на 1-3% из-за разных методов расчёта.',
     },
     {
       title: 'Товаров',
       value: summary ? formatNumber(summary.products_count) : '—',
       icon: Package,
       description: 'с данными о хранении',
+      tooltip: 'Количество SKU с ненулевыми расходами на хранение за период.',
     },
     {
       title: 'Среднее на товар',
       value: summary ? formatCurrency(summary.avg_cost_per_product) : '—',
       icon: Calculator,
       description: 'за период',
+      tooltip: 'Средние расходы на хранение в расчёте на один товар за выбранный период.',
     },
     {
       title: 'Период',
       value: period ? `${period.days_count} дней` : '—',
       icon: Calendar,
       description: period ? `${period.from} — ${period.to}` : '',
+      tooltip: null,
     },
   ]
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card) => {
+      {cards.map(card => {
         const Icon = card.icon
         return (
           <Card key={card.title}>
@@ -92,6 +98,18 @@ export function StorageSummaryCards({
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                 <Icon className="h-4 w-4" />
                 <span>{card.title}</span>
+                {card.tooltip && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-[260px]">
+                        <p className="text-xs">{card.tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
               <div className="text-2xl font-bold">{card.value}</div>
               {card.description && (
