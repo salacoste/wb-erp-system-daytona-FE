@@ -3,9 +3,9 @@
 > **Source of Truth** for all frontend epic statuses, sprint planning, and story tracking.
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
-**Last Updated**: 2026-01-31
-**Total Epics**: 20 (20 complete)
-**Total Stories**: 146 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE)
+**Last Updated**: 2026-02-23
+**Total Epics**: 21 (21 complete)
+**Total Stories**: 153 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE)
 
 ---
 
@@ -81,6 +81,20 @@
 **Epic 62-FE**: ✅ Complete (2026-01-31) - All 10 stories, 28 components, 43 E2E tests
 **Epic 63-FE**: ✅ Complete (2026-01-31) - All 12 stories, sales/storage/orders widgets, period comparison
 
+### Tax Accounting - Q1 2026
+
+| Epic ID | Title | Stories | SP | Status | Sprint | Routes |
+|---------|-------|---------|---:|--------|--------|--------|
+| Epic 66-FE | Tax & VAT Accounting Integration | 7 | 35 | ✅ Complete (7/7) | Sprint 10 | `/settings/tax`, `/dashboard` |
+
+**Epic 66-FE**: ✅ Complete (2026-02-23) - 7/7 stories complete (35/35 SP)
+- Integrates backend-calculated tax metrics (USN 6%, USN 15%, manual rate)
+- Full НДС (VAT) support: vatPayer toggle, rates 0%/5%/20%/22%
+- New tax settings page at `/settings/tax` (income tax + НДС)
+- Dashboard tax card refactored to use backend data (replaces local calculations)
+- Net profit after ALL taxes (income tax + НДС) as final P&L metric
+- P&L waterfall: Revenue → НДС → Revenue excl VAT → COGS → Expenses → Tax → Net
+
 **UX Wireframes Completed** (2026-01-31):
 - `docs/wireframes/dashboard-kpi-cards.md` - 8 KPI cards layout
 - `docs/wireframes/dashboard-daily-breakdown.md` - Daily charts (Variant D: Sparklines + Main Chart)
@@ -123,6 +137,7 @@
 **Settings**:
 - `/settings/notifications` - Telegram settings (Epic 34)
 - `/settings/tariffs` - Tariff settings admin (Epic 52, Admin only)
+- `/settings/tax` - Tax system configuration (Epic 66-FE) ✅
 
 **Q1 2026 Routes** (complete):
 - `/orders` - FBS Orders list & history (Epic 40-FE) ✅
@@ -434,6 +449,34 @@
 
 ---
 
+### Epic 66-FE: Tax Accounting Integration (Налоговый учёт)
+
+**File**: `docs/epics/epic-66-fe-tax-accounting.md`
+**Backend**: Epic 72 (complete)
+**Priority**: P0 (Revenue Impact)
+
+| Story | Title | SP | Status | Priority |
+|-------|-------|---:|--------|----------|
+| 66.1-FE | Types & API Layer (Tax + VAT) | 4 | ✅ Complete | P0 |
+| 66.2-FE | Tax Settings Hooks | 3 | ✅ Complete | P0 |
+| 66.3-FE | Tax & VAT Settings Page | 7 | ✅ Complete | P0 |
+| 66.4-FE | Finance Summary Tax Integration | 4 | ✅ Complete | P0 |
+| 66.5-FE | Dashboard Tax Card (Backend Data) | 6 | ✅ Complete | P0 |
+| 66.6-FE | Net Profit After Tax Display | 7 | ✅ Complete | P1 |
+| 66.7-FE | Tax Warning & Empty States | 4 | ✅ Complete | P1 |
+
+**Implementation Phases**:
+- Phase 1 (Foundation): 66.1 → 66.2 (types, API, hooks)
+- Phase 2 (Settings): 66.3 (tax settings page)
+- Phase 3 (Dashboard): 66.4 → 66.5 (finance-summary pipeline → TaxCard refactor)
+- Phase 4 (Polish): 66.6, 66.7 (net profit card, warning states)
+
+**Dependencies**: Backend Epic 72 ✅ | Existing: Epic 61-FE hooks, Epic 62-FE components, Epic 63-FE grid
+
+**Out of Scope**: Per-SKU tax metrics, tax audit trail UI, manual backfill
+
+---
+
 ## Legacy Epic Details
 
 For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
@@ -493,6 +536,43 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 ---
 
 ## Changelog
+
+### 2026-02-23 (Epic 66-FE: Complete 7/7)
+- **Story 66.7 complete**: TaxWarningBanner + pre-tax annotations on 4 profit cards
+- Created `TaxWarningBanner.tsx` with sessionStorage dismissal, role="alert", CTA to /settings/tax
+- Added `showPreTaxLabel` prop to PayoutCard, GrossProfitCard, OperatingProfitCard, MarginCard
+- Integrated TaxWarningBanner into DashboardContent
+- 8 TDD tests for TaxWarningBanner, 73/73 total Epic 66 tests passing
+- **Epic 66-FE complete**: 7/7 stories (35/35 SP), 21/21 frontend epics done
+
+### 2026-02-23 (Epic 66-FE: 6/7 Stories Implemented)
+- **Stories 66.1→66.6 complete** (31/35 SP) via TDD orchestration with parallel sub-agents
+- Story 66.1: Types + API layer (TaxSystem, VatRate, TaxMetrics, Cabinet API)
+- Story 66.2: TanStack Query hooks (useCabinetTaxSettings, useUpdateTaxSettings)
+- Story 66.3: Tax settings page (`/settings/tax`) with RadioGroup + VAT checkbox
+- Story 66.4: Tax aggregation in finance-summary pipeline (aggregateTaxMetrics)
+- Story 66.5: TaxCard refactored to backend data (removed local calculateTax)
+- Story 66.6: NetProfitCard + tax-display-helpers + ProfitBreakdownPopover tax rows
+- Grid integration: TaxCard + NetProfitCard added to DashboardMetricsGrid (18→20 cards)
+- 80/80 tests passing, 0 TypeScript errors
+
+### 2026-02-23 (Epic 66-FE Rescoped with НДС/VAT)
+- **Epic 66-FE rescoped** from 28 SP → 35 SP (7 stories)
+- НДС (VAT) support added: Backend Task-50 complete (vatPayer, vatRate, vat_output, vat_payable, revenue_excl_vat, net_profit_after_all_tax)
+- Tax settings page expanded with НДС section (+2 SP)
+- Net profit card uses net_profit_after_all_tax when НДС configured (+2 SP)
+- TaxCard shows НДС badge + tooltip (+1 SP)
+- Types & API include VAT fields (+1 SP), Finance summary aggregation includes VAT (+1 SP)
+- Backend Requests #155 and #156 resolved (2026-02-23)
+
+### 2026-02-22 (Epic 66-FE Created)
+- **Epic 66-FE Tax Accounting Integration created** (7 stories, 28 SP)
+- Backend Epic 72 provides tax calculations (USN 6%, USN 15%, manual rate)
+- Covers: tax settings page, dashboard tax card refactor, net profit after tax
+- НДС (VAT) deferred — Backend Request #155 created
+- New route: `/settings/tax`
+- Total epics: 21 (20 complete, 1 ready)
+- Total stories: 153
 
 ### 2026-01-31 (Epic 63-FE Complete)
 - **Epic 63-FE Dashboard Business Logic Completion - COMPLETE** (12 stories, 36 SP):
@@ -624,6 +704,7 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 | Epic 61-FE | `docs/epics/epic-61-fe-dashboard-data-integration.md` |
 | Epic 62-FE | `docs/epics/epic-62-fe-dashboard-presentation.md` |
 | Epic 63-FE | `docs/epics/epic-63-fe-dashboard-business-logic.md` |
+| Epic 66-FE | `docs/epics/epic-66-fe-tax-accounting.md` |
 | Story Files | `docs/stories/epic-{N}/story-{N}.{M}-*.md` |
 | Backend APIs | `../test-api/*.http` |
 | Routes Code | `src/lib/routes.ts` |
