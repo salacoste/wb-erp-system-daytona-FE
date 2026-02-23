@@ -97,6 +97,12 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
     '#FFC107', // Amber - Эквайринг
   ]
 
+  /** Data source hints for specific expense categories */
+  const DATA_SOURCE_HINTS: Record<string, string> = {
+    Хранение: 'Из финотчёта WB',
+    'WB.Продвижение': 'Удержания за продвижение из финотчёта WB',
+  }
+
   // Custom tooltip component
   const CustomTooltip = ({
     active,
@@ -107,6 +113,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
   }) => {
     if (active && payload && payload.length > 0) {
       const data = payload[0].payload as ExpenseItem
+      const sourceHint = DATA_SOURCE_HINTS[data.category]
       return (
         <div className="rounded-lg border bg-white p-3 shadow-md">
           <p className="font-semibold text-gray-900">{data.category}</p>
@@ -118,6 +125,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               Доля: <span className="font-medium">{data.percentage.toFixed(1)}%</span>
             </p>
           )}
+          {sourceHint && <p className="text-xs text-gray-400 mt-1 italic">{sourceHint}</p>}
         </div>
       )
     }

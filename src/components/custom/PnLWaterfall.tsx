@@ -397,8 +397,8 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                 value={data.storage_cost}
                 isNegative
                 indent={1}
-                tooltip="Плата за хранение товаров на складах WB.
-                        Зависит от объёма товара и срока хранения.
+                tooltip="Плата за хранение товаров на складах WB (из финотчёта WB).
+                        Финальная сумма за период. Может отличаться на 1-3% от данных API платного хранения.
                         Норма: 1-3% от продаж. Выше 5% — избыточные остатки!"
                 formula="Хранение = Тариф × Объём × Дни"
                 percentOfRevenue={storagePct}
@@ -501,9 +501,9 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                       isNegative
                       indent={2}
                       showZero={false}
-                      tooltip="Расходы на рекламу через WB.Продвижение.
-                              Это внутренняя рекламная площадка Wildberries
-                              для продвижения товаров в поиске и каталоге."
+                      tooltip="Удержания WB за услуги продвижения из финансового отчёта.
+                              Отличается от расхода на кампании в рекламном кабинете (API рекламы).
+                              Это фактические списания за продвижение в поиске и каталоге."
                       formula="Оказание услуг «WB Продвижение»"
                       percentOfRevenue={
                         data.wb_promotion_cost && revenueBase > 0

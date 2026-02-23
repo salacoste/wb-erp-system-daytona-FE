@@ -10,7 +10,7 @@
 
 'use client'
 
-import { Megaphone, Info } from 'lucide-react'
+import { Megaphone, Info, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
@@ -147,8 +147,24 @@ export function AdvertisingCard({
         )}
         <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
           {roas != null && (
-            <span className={cn('text-xs font-medium', getRoasColor(roas))}>
+            <span
+              className={cn('text-xs font-medium flex items-center gap-0.5', getRoasColor(roas))}
+            >
               ROAS: {roas.toFixed(1)}x
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="inline-flex" aria-label="О ROAS">
+                    <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent size="lg">
+                  <p>
+                    ROAS — рентабельность рекламы. Выручка от рекламных кампаний &divide; расход на
+                    кампании (данные из рекламного кабинета WB). Отличается от sale_gross &divide;
+                    wb_promotion из финотчёта.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </span>
           )}
           {roas != null && drr != null && (
@@ -157,9 +173,21 @@ export function AdvertisingCard({
             </span>
           )}
           {drr != null && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 flex items-center gap-0.5">
               ДРР: {formatPercentage(drr)}
               {showDrrz && drrz != null && ` · ДРРз: ${formatPercentage(drrz)}`}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="inline-flex" aria-label="О ДРР">
+                    <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent size="md">
+                  <p>
+                    ДРР — доля рекламных расходов в чистых продажах. ДРРз — доля в заказах по РРЦ.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </span>
           )}
         </div>

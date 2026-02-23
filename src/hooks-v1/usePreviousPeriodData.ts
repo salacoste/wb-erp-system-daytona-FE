@@ -87,6 +87,8 @@ export function usePreviousPeriodData(
         s?.operating_profit_analytical ?? st?.operating_profit_analytical ?? null,
       grossMarginPct: s?.gross_margin_pct ?? st?.gross_margin_pct ?? null,
       operatingMarginPct: s?.operating_margin_pct ?? st?.operating_margin_pct ?? null,
+      // Epic 66-FE: Tax metrics for comparison
+      taxMetrics: st?.tax ?? null,
       // Legacy fields for backward compatibility
       ordersCogs: null,
       salesAmount: s?.wb_sales_gross ?? st?.wb_sales_gross_total ?? null,
