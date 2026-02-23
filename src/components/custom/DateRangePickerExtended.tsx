@@ -129,7 +129,7 @@ export function DateRangePickerExtended({
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-auto p-4" align="start" role="dialog">
+        <PopoverContent className="w-auto min-w-[580px] p-4" align="start" role="dialog">
           {/* Preset buttons */}
           <div className="mb-4">
             <span className="text-sm text-muted-foreground mb-2 block">Быстрый выбор:</span>
@@ -157,6 +157,7 @@ export function DateRangePickerExtended({
               onSelect={handleCalendarSelect}
               numberOfMonths={2}
               locale={ru}
+              className="[--cell-size:2.5rem]"
               disabled={{
                 after: today,
                 before: minDate,
