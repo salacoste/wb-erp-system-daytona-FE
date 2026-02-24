@@ -13,6 +13,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, cleanup, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { format, subDays } from 'date-fns'
 
 // Mock API client
@@ -47,7 +48,9 @@ const createQueryWrapper = () => {
     },
   })
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>{children}</TooltipProvider>
+    </QueryClientProvider>
   )
 }
 
@@ -334,7 +337,11 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />
+          <TooltipProvider>
+            <AdvertisingDashboardWidget
+              dateRange={{ from: dates.recentFrom, to: dates.recentTo }}
+            />
+          </TooltipProvider>
         </QueryClientProvider>
       )
 
@@ -358,7 +365,11 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />
+          <TooltipProvider>
+            <AdvertisingDashboardWidget
+              dateRange={{ from: dates.recentFrom, to: dates.recentTo }}
+            />
+          </TooltipProvider>
         </QueryClientProvider>
       )
 
@@ -442,7 +453,11 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
             })
           }
         >
-          <AdvertisingDashboardWidget dateRange={{ from: dates.recentFrom, to: dates.recentTo }} />
+          <TooltipProvider>
+            <AdvertisingDashboardWidget
+              dateRange={{ from: dates.recentFrom, to: dates.recentTo }}
+            />
+          </TooltipProvider>
         </QueryClientProvider>
       )
 

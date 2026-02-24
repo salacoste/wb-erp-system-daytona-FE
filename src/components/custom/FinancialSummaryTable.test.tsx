@@ -60,7 +60,7 @@ describe('FinancialSummaryTable', () => {
 
     // Check revenue section (Updated labels per component refactoring)
     expect(screen.getByText('Доходы')).toBeInTheDocument()
-    expect(screen.getByText('Чистые продажи (NET)')).toBeInTheDocument()
+    expect(screen.getByText('Продажи (розница)')).toBeInTheDocument()
 
     // Check specific values in revenue section
     expect(screen.getAllByText('1 000 000,00 ₽').length).toBeGreaterThan(0)
@@ -75,15 +75,17 @@ describe('FinancialSummaryTable', () => {
   })
 
   it('should render comparison mode with two columns', () => {
-    render(<FinancialSummaryTable summary={mockSummary} comparisonSummary={mockComparisonSummary} />)
+    render(
+      <FinancialSummaryTable summary={mockSummary} comparisonSummary={mockComparisonSummary} />
+    )
 
     // Check comparison headers appear in all tables
     const allHeaders = screen.getAllByText('Значение')
     expect(allHeaders.length).toBeGreaterThan(0)
-    
+
     const comparisonHeaders = screen.getAllByText('Сравнение')
     expect(comparisonHeaders.length).toBeGreaterThan(0)
-    
+
     const changeHeaders = screen.getAllByText('Изменение')
     expect(changeHeaders.length).toBeGreaterThan(0)
 
@@ -101,7 +103,9 @@ describe('FinancialSummaryTable', () => {
   })
 
   it('should display change indicators in comparison mode', () => {
-    render(<FinancialSummaryTable summary={mockSummary} comparisonSummary={mockComparisonSummary} />)
+    render(
+      <FinancialSummaryTable summary={mockSummary} comparisonSummary={mockComparisonSummary} />
+    )
 
     // Revenue increased (positive change) - check for green color class
     // The percentage text may vary by locale, so we check for the color instead
@@ -110,7 +114,7 @@ describe('FinancialSummaryTable', () => {
 
     // Verify that change indicators are present (they contain percentage)
     const changeCells = document.querySelectorAll('td')
-    const hasChangeIndicator = Array.from(changeCells).some((cell) => {
+    const hasChangeIndicator = Array.from(changeCells).some(cell => {
       const text = cell.textContent || ''
       return text.includes('%') && (text.includes('+') || text.includes('20'))
     })
@@ -139,7 +143,7 @@ describe('FinancialSummaryTable', () => {
     // Check payout card has special styling
     const payoutCards = document.querySelectorAll('.border-2.border-blue-500')
     expect(payoutCards.length).toBeGreaterThan(0)
-    
+
     // Check that "Итого к оплате" is within the highlighted card
     const payoutText = screen.getAllByText('Итого к оплате')[0]
     const payoutCard = payoutText.closest('.border-2')
@@ -170,7 +174,7 @@ describe('FinancialSummaryTable', () => {
 
     // Verify that negative change indicators are present
     const changeCells = document.querySelectorAll('td')
-    const hasNegativeChange = Array.from(changeCells).some((cell) => {
+    const hasNegativeChange = Array.from(changeCells).some(cell => {
       const text = cell.textContent || ''
       return text.includes('%') && (text.includes('-') || text.includes('20'))
     })

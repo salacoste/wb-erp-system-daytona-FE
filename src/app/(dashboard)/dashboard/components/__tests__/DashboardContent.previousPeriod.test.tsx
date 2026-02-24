@@ -198,6 +198,7 @@ vi.mock('@/components/custom/dashboard', () => ({
   )),
   DailyBreakdownSection: () => <div data-testid="daily-breakdown">Daily Breakdown</div>,
   IncompleteWeekBanner: () => null,
+  TaxWarningBanner: () => null,
 }))
 
 // =============================================================================

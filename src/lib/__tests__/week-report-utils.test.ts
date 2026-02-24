@@ -18,23 +18,23 @@ import {
 
 describe('week-report-utils', () => {
   describe('getWeeklyReportExpectedDate', () => {
-    it('returns Tuesday after week ends for 2026-W05', () => {
+    it('returns Monday after week ends for 2026-W05', () => {
       const result = getWeeklyReportExpectedDate('2026-W05')
 
       // Week 2026-W05 ends on Sunday Feb 1, 2026
-      // Next Tuesday is Feb 3, 2026
+      // Next Monday is Feb 2, 2026
       expect(result.getFullYear()).toBe(2026)
       expect(result.getMonth()).toBe(1) // February (0-indexed)
-      expect(result.getDate()).toBe(3) // Tuesday Feb 3
-      expect(result.getDay()).toBe(2) // Tuesday = 2
+      expect(result.getDate()).toBe(2) // Monday Feb 2
+      expect(result.getDay()).toBe(1) // Monday = 1
     })
 
-    it('returns Tuesday after week ends for 2026-W01', () => {
+    it('returns Monday after week ends for 2026-W01', () => {
       const result = getWeeklyReportExpectedDate('2026-W01')
 
       // Week 2026-W01 ends on Sunday Jan 4, 2026
-      // Next Tuesday is Jan 6, 2026
-      expect(result.getDay()).toBe(2) // Tuesday
+      // Next Monday is Jan 5, 2026
+      expect(result.getDay()).toBe(1) // Monday
     })
   })
 

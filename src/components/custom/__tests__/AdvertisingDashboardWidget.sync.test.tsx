@@ -19,6 +19,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, cleanup, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 // Mock API client
 vi.mock('@/lib/api-client', () => ({
@@ -64,7 +65,9 @@ const createQueryWrapper = () => {
     },
   })
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>{children}</TooltipProvider>
+    </QueryClientProvider>
   )
 }
 
@@ -133,7 +136,9 @@ describe('AdvertisingDashboardWidget Sync - Story 60.6-FE', () => {
             })
           }
         >
-          <AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-26' }} />
+          <TooltipProvider>
+            <AdvertisingDashboardWidget dateRange={{ from: '2026-01-20', to: '2026-01-26' }} />
+          </TooltipProvider>
         </QueryClientProvider>
       )
 
@@ -342,7 +347,9 @@ describe('AdvertisingDashboardWidget Sync - Story 60.6-FE', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <AdvertisingDashboardWidget dateRange={{ from: '2026-01-27', to: '2026-02-02' }} />
+          <TooltipProvider>
+            <AdvertisingDashboardWidget dateRange={{ from: '2026-01-27', to: '2026-02-02' }} />
+          </TooltipProvider>
         </QueryClientProvider>
       )
 
@@ -460,7 +467,9 @@ describe('integration with DashboardPeriodContext', () => {
           })
         }
       >
-        <AdvertisingDashboardWidget dateRange={dateRange2} />
+        <TooltipProvider>
+          <AdvertisingDashboardWidget dateRange={dateRange2} />
+        </TooltipProvider>
       </QueryClientProvider>
     )
 
@@ -484,7 +493,9 @@ describe('integration with DashboardPeriodContext', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <AdvertisingDashboardWidget dateRange={weekDateRange} hideLocalSelector />
+        <TooltipProvider>
+          <AdvertisingDashboardWidget dateRange={weekDateRange} hideLocalSelector />
+        </TooltipProvider>
       </QueryClientProvider>
     )
 

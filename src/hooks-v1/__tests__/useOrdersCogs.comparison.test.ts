@@ -38,14 +38,17 @@ import { apiClient } from '@/lib/api-client'
  * Current period COGS response (Week 2026-W05)
  */
 const mockCurrentPeriodResponse = {
-  total_orders: 250,
+  totalOrders: 250,
   total_amount: 100000,
   cogs_total: 35818,
   gross_profit: 64182,
   margin_pct: 64.18,
   cogs_coverage_pct: 85,
   orders_with_cogs: 213,
-  by_status: { complete: 200, cancel: 30, pending: 20 },
+  statusBreakdown: [
+    { status: 'complete', count: 200 },
+    { status: 'cancel', count: 30 },
+  ],
   by_day_with_cogs: [],
 }
 
@@ -53,14 +56,17 @@ const mockCurrentPeriodResponse = {
  * Previous period COGS response (Week 2026-W04)
  */
 const mockPreviousPeriodResponse = {
-  total_orders: 280,
+  totalOrders: 280,
   total_amount: 116077.27,
   cogs_total: 43890,
   gross_profit: 72187.27,
   margin_pct: 62.19,
   cogs_coverage_pct: 80,
   orders_with_cogs: 224,
-  by_status: { complete: 230, cancel: 35, pending: 15 },
+  statusBreakdown: [
+    { status: 'complete', count: 230 },
+    { status: 'cancel', count: 35 },
+  ],
   by_day_with_cogs: [],
 }
 
@@ -68,14 +74,14 @@ const mockPreviousPeriodResponse = {
  * Empty response for missing data scenario
  */
 const mockEmptyResponse = {
-  total_orders: 0,
+  totalOrders: 0,
   total_amount: 0,
   cogs_total: 0,
   gross_profit: 0,
   margin_pct: 0,
   cogs_coverage_pct: 0,
   orders_with_cogs: 0,
-  by_status: { complete: 0, cancel: 0, pending: 0 },
+  statusBreakdown: [],
   by_day_with_cogs: [],
 }
 
