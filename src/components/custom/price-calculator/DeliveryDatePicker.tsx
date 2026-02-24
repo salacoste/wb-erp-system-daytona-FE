@@ -27,7 +27,11 @@ import {
   type NormalizedCoefficient,
 } from '@/lib/coefficient-utils'
 import { cn } from '@/lib/utils'
-import type { BoxTypeCoefficients, BoxType, DailyCoefficient } from '@/hooks/useAcceptanceCoefficients'
+import type {
+  BoxTypeCoefficients,
+  BoxType,
+  DailyCoefficient,
+} from '@/hooks/useAcceptanceCoefficients'
 import type { SupplyDateTariffs } from '@/lib/tariff-system-utils'
 
 /** Box type icons mapping */
@@ -103,9 +107,9 @@ export function DeliveryDatePicker({
   // Get coefficients for selected box type, or fallback to legacy coefficients
   const activeCoefficients: NormalizedCoefficient[] = useMemo(() => {
     if (byBoxType.length > 0) {
-      const boxData = byBoxType.find((b) => b.boxType === selectedBoxType)
+      const boxData = byBoxType.find(b => b.boxType === selectedBoxType)
       if (boxData) {
-        return boxData.dailyCoefficients.map((c) => ({
+        return boxData.dailyCoefficients.map(c => ({
           date: c.date,
           coefficient: c.coefficient,
           status: getCoefficientStatus(c.coefficient),
@@ -122,7 +126,7 @@ export function DeliveryDatePicker({
   // Get current coefficient for selected date
   const selectedCoefficient = useMemo(() => {
     if (!selectedDate || !activeCoefficients.length) return null
-    return activeCoefficients.find((c) => c.date === selectedDate)
+    return activeCoefficients.find(c => c.date === selectedDate)
   }, [selectedDate, activeCoefficients])
 
   // Determine default date if none selected
@@ -130,7 +134,7 @@ export function DeliveryDatePicker({
     if (selectedDate) return selectedDate
 
     const tomorrow = getTomorrowDate()
-    const tomorrowCoeff = activeCoefficients.find((c) => c.date === tomorrow)
+    const tomorrowCoeff = activeCoefficients.find(c => c.date === tomorrow)
     if (tomorrowCoeff && tomorrowCoeff.isAvailable) {
       return tomorrow
     }
@@ -142,7 +146,7 @@ export function DeliveryDatePicker({
   // Check if any dates are available (use isAvailable flag, not coefficient value)
   // coefficient=0 with isAvailable=true means FREE slot (no markup)
   const hasAvailableDates = useMemo(() => {
-    return activeCoefficients.some((c) => c.isAvailable)
+    return activeCoefficients.some(c => c.isAvailable)
   }, [activeCoefficients])
 
   // Check if we have multiple box types to show tabs
@@ -174,14 +178,38 @@ export function DeliveryDatePicker({
       !selectedDate &&
       activeCoefficients.length > 0
     ) {
-      const coeff = activeCoefficients.find((c) => c.date === effectiveDate)
+      const coeff = activeCoefficients.find(c => c.date === effectiveDate)
       if (coeff) {
-        console.info('[DeliveryDatePicker] Auto-selecting date:', effectiveDate, 'coefficient:', coeff.coefficient)
+        console.info(
+          '[DeliveryDatePicker] Auto-selecting date:',
+          effectiveDate,
+          'coefficient:',
+          coeff.coefficient
+        )
         handleDateSelect(effectiveDate, coeff.coefficient)
         hasNotifiedAutoSelect.current = true
       }
     }
   }, [effectiveDate, selectedDate, activeCoefficients, handleDateSelect])
+
+  // Sync coefficient when selectedDate is already set (e.g. from preset) and coefficients load
+  // Without this, acceptanceCoefficient stays at default 1.0 when preset loads a date
+  const hasNotifiedPresetSync = useRef(false)
+  useEffect(() => {
+    if (!hasNotifiedPresetSync.current && selectedDate && activeCoefficients.length > 0) {
+      const coeff = activeCoefficients.find(c => c.date === selectedDate)
+      if (coeff) {
+        console.info(
+          '[DeliveryDatePicker] Syncing preset date coefficient:',
+          selectedDate,
+          'coefficient:',
+          coeff.coefficient
+        )
+        handleDateSelect(selectedDate, coeff.coefficient)
+        hasNotifiedPresetSync.current = true
+      }
+    }
+  }, [selectedDate, activeCoefficients, handleDateSelect])
 
   if (isLoading) {
     return <DeliveryDatePickerSkeleton label={label} />
@@ -260,10 +288,10 @@ export function DeliveryDatePicker({
               />
             ) : (
               <div className="text-sm text-yellow-700 bg-yellow-50 p-2 rounded">
-                Нет доступных дат для типа «{byBoxType.find((b) => b.boxType === selectedBoxType)?.label}»
+                Нет доступных дат для типа «
+                {byBoxType.find(b => b.boxType === selectedBoxType)?.label}»
               </div>
             )}
-
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -282,16 +310,18 @@ function BoxTypeTabs({
   onBoxTypeChange: (boxType: BoxType) => void
 }) {
   return (
-    <Tabs value={selectedBoxType} onValueChange={(v) => onBoxTypeChange(v as BoxType)}>
+    <Tabs value={selectedBoxType} onValueChange={v => onBoxTypeChange(v as BoxType)}>
       <TabsList className="w-full grid grid-cols-3 h-8">
-        {boxTypes.map((bt) => {
+        {boxTypes.map(bt => {
           const Icon = BOX_TYPE_ICONS[bt.boxType]
-          const availableDays = bt.dailyCoefficients.filter((c) => c.isAvailable).length
+          const availableDays = bt.dailyCoefficients.filter(c => c.isAvailable).length
           return (
             <TabsTrigger key={bt.boxType} value={bt.boxType} className="text-xs gap-1 px-2">
               <Icon className="h-3 w-3" />
               <span className="hidden sm:inline">{bt.label}</span>
-              <span className="sm:hidden">{bt.boxType === 'boxes' ? 'Кор' : bt.boxType === 'pallets' ? 'Пал' : 'Сейф'}</span>
+              <span className="sm:hidden">
+                {bt.boxType === 'boxes' ? 'Кор' : bt.boxType === 'pallets' ? 'Пал' : 'Сейф'}
+              </span>
               <span className="text-muted-foreground">({availableDays})</span>
             </TabsTrigger>
           )
@@ -327,7 +357,10 @@ function DeliveryDateHelpPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button type="button" className="text-muted-foreground hover:text-foreground transition-colors">
+        <button
+          type="button"
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
           <HelpCircle className="h-4 w-4" />
           <span className="sr-only">Справка по дате сдачи</span>
         </button>
@@ -337,35 +370,58 @@ function DeliveryDateHelpPopover() {
           <div>
             <h4 className="font-semibold mb-1">📅 Дата сдачи товара</h4>
             <p className="text-muted-foreground">
-              Выберите дату, когда планируете сдать товар на склад WB.
-              От даты зависит коэффициент логистики.
+              Выберите дату, когда планируете сдать товар на склад WB. От даты зависит коэффициент
+              логистики.
             </p>
           </div>
 
           <div>
             <h4 className="font-semibold mb-1">📦 Типы поставки</h4>
             <ul className="text-muted-foreground space-y-1">
-              <li><strong>Коробы</strong> — стандартная поставка в коробках</li>
-              <li><strong>Монопалеты</strong> — поставка на палетах</li>
-              <li><strong>Суперсейф</strong> — безопасная упаковка</li>
+              <li>
+                <strong>Коробы</strong> — стандартная поставка в коробках
+              </li>
+              <li>
+                <strong>Монопалеты</strong> — поставка на палетах
+              </li>
+              <li>
+                <strong>Суперсейф</strong> — безопасная упаковка
+              </li>
             </ul>
-            <p className="text-muted-foreground mt-1">Число в скобках — количество доступных дней.</p>
+            <p className="text-muted-foreground mt-1">
+              Число в скобках — количество доступных дней.
+            </p>
           </div>
 
           <div>
             <h4 className="font-semibold mb-1">🎨 Цвета коэффициентов приёмки</h4>
             <ul className="text-muted-foreground space-y-0.5">
-              <li><span className="inline-block w-3 h-3 rounded bg-green-200 mr-1" />≤1.0 — базовый тариф</li>
-              <li><span className="inline-block w-3 h-3 rounded bg-yellow-200 mr-1" />1.0-1.5 — повышенный</li>
-              <li><span className="inline-block w-3 h-3 rounded bg-orange-200 mr-1" />1.5-2.0 — высокий</li>
-              <li><span className="inline-block w-3 h-3 rounded bg-red-200 mr-1" />&gt;2.0 — пиковый</li>
-              <li><span className="inline-block w-3 h-3 rounded bg-gray-200 mr-1" />н/д — недоступно</li>
+              <li>
+                <span className="inline-block w-3 h-3 rounded bg-green-200 mr-1" />
+                ≤1.0 — базовый тариф
+              </li>
+              <li>
+                <span className="inline-block w-3 h-3 rounded bg-yellow-200 mr-1" />
+                1.0-1.5 — повышенный
+              </li>
+              <li>
+                <span className="inline-block w-3 h-3 rounded bg-orange-200 mr-1" />
+                1.5-2.0 — высокий
+              </li>
+              <li>
+                <span className="inline-block w-3 h-3 rounded bg-red-200 mr-1" />
+                &gt;2.0 — пиковый
+              </li>
+              <li>
+                <span className="inline-block w-3 h-3 rounded bg-gray-200 mr-1" />
+                н/д — недоступно
+              </li>
             </ul>
           </div>
 
           <div className="pt-2 border-t text-xs text-muted-foreground">
-            💡 Коэффициент приёмки умножается на базовый тариф приёмки товара на склад.
-            Например, ×1.5 означает +50% к стоимости приёмки.
+            💡 Коэффициент приёмки умножается на базовый тариф приёмки товара на склад. Например,
+            ×1.5 означает +50% к стоимости приёмки.
           </div>
         </div>
       </PopoverContent>

@@ -233,6 +233,12 @@ describe('DeliveryDatePicker', () => {
       const onDateSelect = vi.fn()
       render(<DeliveryDatePicker {...defaultProps} onDateSelect={onDateSelect} />)
 
+      // Wait for the initial preset sync effect to fire, then clear mock
+      await waitFor(() => {
+        // Component auto-syncs preset date coefficient on mount
+      })
+      onDateSelect.mockClear()
+
       // Expand calendar
       const trigger = screen.getByRole('button', { name: /выбрать дату/i })
       await userEvent.click(trigger)
@@ -248,7 +254,7 @@ describe('DeliveryDatePicker', () => {
         await userEvent.click(day28Cell)
       }
 
-      // Should not be called for unavailable date
+      // Should not be called for unavailable date (after clearing the initial sync call)
       expect(onDateSelect).not.toHaveBeenCalled()
     })
   })

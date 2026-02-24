@@ -32,7 +32,12 @@ import { useCommissions } from '@/hooks/useCommissions'
 import { usePriceCalculatorPreset } from './usePriceCalculatorPreset'
 import { PresetIndicator } from './PresetIndicator'
 import { PresetActions } from './PresetActions'
-import type { PriceCalculatorRequest, TwoLevelPricingFormData, TaxType, CategoryHierarchy } from '@/types/price-calculator'
+import type {
+  PriceCalculatorRequest,
+  TwoLevelPricingFormData,
+  TaxType,
+  CategoryHierarchy,
+} from '@/types/price-calculator'
 import type { CategoryCommission } from '@/types/tariffs'
 import type { ProductWithDimensions } from '@/types/product'
 import { type FormData, defaultFormValues } from './usePriceCalculatorForm'
@@ -80,11 +85,19 @@ export function PriceCalculatorForm({
   // Story 44.44: Store preset nm_id until product data loads from API
   const [presetNmId, setPresetNmId] = useState<string | null>(null)
 
-  const { handleSubmit, reset, setValue, getValues, register, formState: { isValid, errors }, control } =
-    useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
+  const {
+    handleSubmit,
+    reset,
+    setValue,
+    getValues,
+    register,
+    formState: { isValid, errors },
+    control,
+  } = useForm<FormData>({ defaultValues: defaultFormValues, mode: 'onChange' })
 
   // Story 44.44: Preset Save/Load hook
-  const { hasPreset, isPresetLoaded, loadPreset, savePreset, clearPreset } = usePriceCalculatorPreset()
+  const { hasPreset, isPresetLoaded, loadPreset, savePreset, clearPreset } =
+    usePriceCalculatorPreset()
 
   // Story 44.XX: Load global tariff settings for acceptance rates
   // Fallback to defaults if API fails (500 error handling)
@@ -96,7 +109,10 @@ export function PriceCalculatorForm({
   // Log tariff settings error but continue with defaults
   useEffect(() => {
     if (tariffSettingsError) {
-      console.warn('[PriceCalculator] Tariff settings API error, using defaults:', tariffSettingsError)
+      console.warn(
+        '[PriceCalculator] Tariff settings API error, using defaults:',
+        tariffSettingsError
+      )
     }
   }, [tariffSettingsError])
 
@@ -118,16 +134,20 @@ export function PriceCalculatorForm({
       if (!commissionsData?.commissions) return null
 
       // Match by subjectID (primary) and optionally parentID
-      const result = commissionsData.commissions.find(
-        (c) => c.subjectID === hierarchy.subject_id &&
-               (hierarchy.parent_id === null || c.parentID === hierarchy.parent_id)
-      ) ?? null
+      const result =
+        commissionsData.commissions.find(
+          c =>
+            c.subjectID === hierarchy.subject_id &&
+            (hierarchy.parent_id === null || c.parentID === hierarchy.parent_id)
+        ) ?? null
 
       // Debug: Log category lookup result
       console.info('[PriceCalculatorForm] findCategoryByHierarchy:', {
         hierarchy,
         found: result ? `${result.parentName} → ${result.subjectName}` : 'not found',
-        commission: result ? `FBO: ${result.paidStorageKgvp}% / FBS: ${result.kgvpMarketplace}%` : 'N/A',
+        commission: result
+          ? `FBO: ${result.paidStorageKgvp}% / FBS: ${result.kgvpMarketplace}%`
+          : 'N/A',
       })
 
       return result
@@ -137,8 +157,13 @@ export function PriceCalculatorForm({
 
   // Auto-fill hook for dimensions and category (Story 44.26b)
   const {
-    dimensionAutoFill, categoryAutoFill, handleProductSelect,
-    markDimensionsModified, restoreDimensions, productHasDimensions, productHasCategory,
+    dimensionAutoFill,
+    categoryAutoFill,
+    handleProductSelect,
+    markDimensionsModified,
+    restoreDimensions,
+    productHasDimensions,
+    productHasCategory,
   } = useProductAutoFill({ setValue, setSelectedCategory, findCategoryByHierarchy })
 
   // Watch form values
@@ -161,12 +186,18 @@ export function PriceCalculatorForm({
   // Story 44.XX: Added logistics auto-fill and acceptance cost calculation
   // Story 44.44: Added initialWarehouseId for preset restoration
   const {
-    warehouseId, dailyStorageCost,
-    logisticsForwardRub, isLogisticsAutoFilled,
-    logisticsReverseRub, isLogisticsReverseAutoFilled,
+    warehouseId,
+    dailyStorageCost,
+    logisticsForwardRub,
+    isLogisticsAutoFilled,
+    logisticsReverseRub,
+    isLogisticsReverseAutoFilled,
     acceptanceCost,
-    handleWarehouseChange, setWarehouseById, handleStorageRubChange,
-    handleLogisticsForwardChange, handleLogisticsReverseChange,
+    handleWarehouseChange,
+    setWarehouseById,
+    handleStorageRubChange,
+    handleLogisticsForwardChange,
+    handleLogisticsReverseChange,
     handleDeliveryDateChange,
     // Story 44.40: Two Tariff Systems
     tariffSystem,
@@ -183,7 +214,9 @@ export function PriceCalculatorForm({
   })
 
   useEffect(() => {
-    return () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current) }
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
+    }
   }, [])
 
   // Story 44.44: Load preset on mount (AC2)
@@ -232,51 +265,68 @@ export function PriceCalculatorForm({
   }, [boxType, fulfillmentType, setValue])
 
   // Story 44.XX: Auto-fill acceptance cost when calculated
+  // Always sync value including 0 for free acceptance (coefficient=0 / "Бесплатно")
   useEffect(() => {
-    if (acceptanceCost.perUnitCost > 0) {
-      setValue('acceptance_cost', acceptanceCost.perUnitCost)
-    }
+    setValue('acceptance_cost', acceptanceCost.perUnitCost)
   }, [acceptanceCost.perUnitCost, setValue])
 
   // Story 44.19: Propagate SPP changes to parent for results display
   // Story 44.18: Sync SPP value with form field for API/calculations
-  const handleSppChange = useCallback((value: number) => {
-    setSppValue(value)
-    setValue('spp_pct', value)
-    onSppChange?.(value)
-  }, [onSppChange, setValue])
+  const handleSppChange = useCallback(
+    (value: number) => {
+      setSppValue(value)
+      setValue('spp_pct', value)
+      onSppChange?.(value)
+    },
+    [onSppChange, setValue]
+  )
 
   // Story 44.18: Sync DRR value with form fields for API request and two-level pricing
   // Both drr_pct (for TwoLevelPricingFormData) and advertising_pct (for API) need to be updated
-  const handleDrrChange = useCallback((value: number) => {
-    setDrrValue(value)
-    setValue('drr_pct', value)
-    setValue('advertising_pct', value)
-  }, [setValue])
+  const handleDrrChange = useCallback(
+    (value: number) => {
+      setDrrValue(value)
+      setValue('drr_pct', value)
+      setValue('advertising_pct', value)
+    },
+    [setValue]
+  )
 
   // Story 44.XX: Sync tax rate with form field for calculations
-  const handleTaxRateChange = useCallback((value: number) => {
-    setTaxRate(value)
-    setValue('tax_rate_pct', value)
-  }, [setValue])
+  const handleTaxRateChange = useCallback(
+    (value: number) => {
+      setTaxRate(value)
+      setValue('tax_rate_pct', value)
+    },
+    [setValue]
+  )
 
   // Story 44.XX: Sync tax type with form field for calculations
-  const handleTaxTypeChange = useCallback((value: TaxType) => {
-    setTaxType(value)
-    setValue('tax_type', value)
-  }, [setValue])
+  const handleTaxTypeChange = useCallback(
+    (value: TaxType) => {
+      setTaxType(value)
+      setValue('tax_type', value)
+    },
+    [setValue]
+  )
 
   // Story 44.XX: Sync VAT payer status with form field for calculations
-  const handleVatPayerChange = useCallback((isPayer: boolean) => {
-    setIsVatPayer(isPayer)
-    setValue('is_vat_payer', isPayer)
-  }, [setValue])
+  const handleVatPayerChange = useCallback(
+    (isPayer: boolean) => {
+      setIsVatPayer(isPayer)
+      setValue('is_vat_payer', isPayer)
+    },
+    [setValue]
+  )
 
   // Story 44.XX: Sync VAT rate with form field for calculations
-  const handleVatRateChange = useCallback((rate: number) => {
-    setVatRate(rate)
-    setValue('vat_pct', rate)
-  }, [setValue])
+  const handleVatRateChange = useCallback(
+    (rate: number) => {
+      setVatRate(rate)
+      setValue('vat_pct', rate)
+    },
+    [setValue]
+  )
 
   // Story 44.20: Propagate commission changes to parent for two-level pricing
   // Story 44.16: Get commission based on fulfillment type
@@ -303,11 +353,14 @@ export function PriceCalculatorForm({
     }
   }, [selectedCategory, fulfillmentType, onCommissionChange, setValue])
 
-  const performCalculation = useCallback((data: FormData) => {
-    if (!isValid || isFormEmpty(data)) return
-    onFormDataChange?.(toTwoLevelFormData(data))
-    onSubmit(toApiRequest(data))
-  }, [isValid, onSubmit, onFormDataChange])
+  const performCalculation = useCallback(
+    (data: FormData) => {
+      if (!isValid || isFormEmpty(data)) return
+      onFormDataChange?.(toTwoLevelFormData(data))
+      onSubmit(toApiRequest(data))
+    },
+    [isValid, onSubmit, onFormDataChange]
+  )
 
   const onReset = useCallback(() => {
     if (hasResults) setShowResetConfirm(true)
@@ -368,7 +421,7 @@ export function PriceCalculatorForm({
             <FulfillmentTypeSelector
               value={fulfillmentType}
               disabled={disabled}
-              onChange={(type) => setValue('fulfillment_type', type, { shouldValidate: true })}
+              onChange={type => setValue('fulfillment_type', type, { shouldValidate: true })}
             />
             {/* Warehouse & Coefficients - Story 44.27 */}
             {/* Story 44.40: Pass tariff system data for SUPPLY/INVENTORY display */}
@@ -388,19 +441,21 @@ export function PriceCalculatorForm({
               <>
                 <BoxTypeSelector
                   value={boxType}
-                  onChange={(value) => setValue('box_type', value, { shouldValidate: true })}
+                  onChange={value => setValue('box_type', value, { shouldValidate: true })}
                   disabled={disabled}
                 />
                 {/* Story 44.38: Units per package for acceptance cost division */}
                 <UnitsPerPackageInput
                   value={unitsPerPackage}
-                  onValueChange={(value) => setValue('units_per_package', value, { shouldValidate: true })}
+                  onValueChange={value =>
+                    setValue('units_per_package', value, { shouldValidate: true })
+                  }
                   boxType={boxType}
                   disabled={disabled}
                 />
                 <TurnoverDaysInput
                   value={turnoverDays}
-                  onChange={(value) => setValue('turnover_days', value, { shouldValidate: true })}
+                  onChange={value => setValue('turnover_days', value, { shouldValidate: true })}
                   dailyStorageCost={dailyStorageCost}
                   onStorageRubChange={handleStorageRubChange}
                   disabled={disabled}
@@ -410,13 +465,15 @@ export function PriceCalculatorForm({
             {/* Story 44.32: Weight threshold (both FBO and FBS) */}
             <WeightThresholdCheckbox
               checked={weightExceeds25kg}
-              onChange={(checked) => setValue('weight_exceeds_25kg', checked, { shouldValidate: true })}
+              onChange={checked =>
+                setValue('weight_exceeds_25kg', checked, { shouldValidate: true })
+              }
               disabled={disabled}
             />
             {/* Story 44.32: Localization index (both FBO and FBS) */}
             <LocalizationIndexInput
               value={localizationIndex}
-              onChange={(value) => setValue('localization_index', value, { shouldValidate: true })}
+              onChange={value => setValue('localization_index', value, { shouldValidate: true })}
               warehouseId={warehouseId}
               disabled={disabled}
             />
@@ -519,7 +576,11 @@ export function PriceCalculatorForm({
           </form>
         </CardContent>
       </Card>
-      <ResetConfirmDialog open={showResetConfirm} onOpenChange={setShowResetConfirm} onConfirm={confirmReset} />
+      <ResetConfirmDialog
+        open={showResetConfirm}
+        onOpenChange={setShowResetConfirm}
+        onConfirm={confirmReset}
+      />
     </>
   )
 }
