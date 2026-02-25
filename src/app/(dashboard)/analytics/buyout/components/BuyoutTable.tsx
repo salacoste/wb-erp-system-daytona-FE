@@ -1,9 +1,4 @@
-/**
- * Buyout Per-SKU Table
- * Epic 69: Table with confidence badges, trend arrows, sorting
- * Includes return reason columns from Epic 71 data
- */
-
+/** Buyout Per-SKU Table — Epic 69/71: sorting, confidence badges, return reasons */
 'use client'
 
 import { useMemo, useState } from 'react'
@@ -20,13 +15,16 @@ import {
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import type {
-  BuyoutSource,
-  BuyoutBySkuParams,
-  TrendDirection,
-  BuyoutConfidence,
-} from '@/types/analytics-epics-68-71'
+import { AlertCircle } from 'lucide-react'
+import type { BuyoutSource } from '@/types/analytics-epics-68-71'
+import {
+  SortField,
+  ariaSort,
+  ReasonCell,
+  TrendIndicator,
+  ConfidenceBadge,
+  SortBtn,
+} from './buyout-table-cells'
 
 interface BuyoutTableProps {
   from: string
@@ -38,12 +36,6 @@ interface ProductInfo {
   saName: string
   brand: string
   vendorCode: string
-}
-
-type SortField = NonNullable<BuyoutBySkuParams['sort']>
-
-function ariaSort(field: SortField, currentSort: SortField, order: 'asc' | 'desc') {
-  return field === currentSort ? (`${order}ending` as const) : ('none' as const)
 }
 
 export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
@@ -60,10 +52,7 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
     offset,
   })
 
-  // Fetch products for name/brand/vendor_code enrichment
   const { data: productsData } = useProducts({ limit: 200 })
-
-  // Build nmId -> product info lookup map
   const productsMap = useMemo(() => {
     const map = new Map<number, ProductInfo>()
     for (const p of productsData?.products ?? []) {
@@ -181,8 +170,6 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
           </TableBody>
         </Table>
       </div>
-
-      {/* Pagination */}
       {pagination && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
@@ -209,73 +196,5 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
         </div>
       )}
     </div>
-  )
-}
-
-function ReasonCell({ count, color }: { count?: number; color: string }) {
-  if (!count) return <TableCell className="text-muted-foreground">—</TableCell>
-  return <TableCell className={`font-medium ${color}`}>{count}</TableCell>
-}
-
-function TrendIndicator({ trend, delta }: { trend?: TrendDirection; delta?: number }) {
-  if (!trend || trend === 'stable') {
-    return <Minus className="h-4 w-4 text-muted-foreground" />
-  }
-
-  const isDown = trend === 'down'
-  const Icon = isDown ? TrendingDown : TrendingUp
-  const color = isDown ? 'text-red-500' : 'text-green-500'
-  const sign = isDown ? '' : '+'
-
-  return (
-    <span className={`flex items-center gap-1 text-sm ${color}`}>
-      <Icon className="h-4 w-4" />
-      {delta != null && (
-        <span>
-          {sign}
-          {delta.toFixed(1)}
-        </span>
-      )}
-    </span>
-  )
-}
-
-function ConfidenceBadge({ confidence }: { confidence?: BuyoutConfidence }) {
-  if (!confidence || confidence === 'high') return null
-
-  if (confidence === 'medium') {
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600">
-        Мало данных
-      </span>
-    )
-  }
-
-  return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-yellow-50 text-yellow-700">
-      Недостаточно данных
-    </span>
-  )
-}
-
-function SortBtn({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-1 hover:text-foreground transition-colors"
-    >
-      {children}
-      <ArrowUpDown
-        className={`h-3.5 w-3.5 ${active ? 'text-foreground' : 'text-muted-foreground/50'}`}
-      />
-    </button>
   )
 }

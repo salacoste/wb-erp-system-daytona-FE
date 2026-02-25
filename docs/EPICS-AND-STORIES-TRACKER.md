@@ -3,9 +3,9 @@
 > **Source of Truth** for all frontend epic statuses, sprint planning, and story tracking.
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
-**Last Updated**: 2026-02-23
-**Total Epics**: 21 (21 complete)
-**Total Stories**: 153 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE)
+**Last Updated**: 2026-02-25
+**Total Epics**: 22 (21 complete + 1 in validation)
+**Total Stories**: 160 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE + 7 Epic 69-FE)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## Epic Overview
 
-### Completed Epics (20)
+### Completed Epics (21)
 
 | Epic ID | Title | Stories | Status | Key Routes |
 |---------|-------|---------|--------|------------|
@@ -60,6 +60,7 @@
 | Epic 61-FE | Dashboard Data Integration | 17 | ✅ | `/dashboard` |
 | Epic 62-FE | Dashboard UI/UX Presentation | 10 | ✅ | `/dashboard` |
 | Epic 63-FE | Dashboard Business Logic | 12 | ✅ | `/dashboard` |
+| Epic 69-FE | Buyout Rate Analytics UI | 7 | ✅ (6/7, tests planned) | `/analytics/buyout` |
 
 ### New Epics (3) - Q1 2026 (3 complete)
 
@@ -94,6 +95,24 @@
 - Dashboard tax card refactored to use backend data (replaces local calculations)
 - Net profit after ALL taxes (income tax + НДС) as final P&L metric
 - P&L waterfall: Revenue → НДС → Revenue excl VAT → COGS → Expenses → Tax → Net
+
+### Analytics Extensions - Q1 2026
+
+| Epic ID | Title | Stories | SP | Status | Completed |
+|---------|-------|---------|---:|--------|-----------|
+| Epic 69-FE | Buyout Rate Analytics UI | 7 | 28 | ✅ Complete (6/7 stories, tests planned) | 2026-02-25 |
+
+**Epic 69-FE**: ✅ Complete (2026-02-25) - 6/7 stories complete (25/28 SP), Story 69.7 (tests) planned
+- Buyout rate analytics: per-SKU breakdown table + summary widget
+- Data source transparency UX (weekly report vs orders API badge)
+- Edge case handling: empty weeks, no data states, loading skeletons
+- Route: `/analytics/buyout` (pending route registration)
+
+> **Note — Epics 68-FE, 70-FE, 71-FE**: Pending formal documentation — code exists, needs spec & validation.
+> - Epic 68-FE: Funnel Analytics UI
+> - Epic 70-FE: Conversion Analytics UI
+> - Epic 71-FE: Returns Analytics UI
+> - Reference: Backend Request #151
 
 **UX Wireframes Completed** (2026-01-31):
 - `docs/wireframes/dashboard-kpi-cards.md` - 8 KPI cards layout
@@ -133,6 +152,7 @@
 - `/analytics/unit-economics` - Unit economics (Epic 5)
 - `/analytics/liquidity` - Liquidity analysis (Epic 7)
 - `/analytics/advertising` - Advertising ROAS (Epic 33)
+- `/analytics/buyout` - Buyout Rate Analytics (Epic 69-FE) ✅
 
 **Settings**:
 - `/settings/notifications` - Telegram settings (Epic 34)
@@ -477,6 +497,36 @@
 
 ---
 
+### Epic 69-FE: Buyout Rate Analytics UI
+
+**File**: `docs/epics/epic-69-fe-buyout-rate-analytics.md` (pending)
+**Backend**: Existing endpoints — `/v1/analytics/weekly/finance-summary` + `/v1/fulfillment/summary`
+**Priority**: P1 (Analytics Enhancement)
+**Status**: ✅ Complete (6/7 stories, 25/28 SP) — Story 69.7 tests planned
+
+| Story | Title | SP | Status |
+|-------|-------|----|--------|
+| 69.1-FE | Types & API Layer | 3 | ✅ Complete |
+| 69.2-FE | TanStack Query Hooks | 3 | ✅ Complete |
+| 69.3-FE | Buyout Summary Widget | 5 | ✅ Complete |
+| 69.4-FE | Per-SKU Buyout Table | 8 | ✅ Complete |
+| 69.5-FE | Page Scaffold & Routing | 3 | ✅ Complete |
+| 69.6-FE | Data Source UX & Edge Cases | 3 | ✅ Complete |
+| 69.7-FE | Unit & Integration Tests | 3 | 📋 Planned |
+
+**Key Features**:
+- Buyout rate summary widget (overall % + trend vs previous period)
+- Per-SKU breakdown table with sortable columns (orders, buyouts, rate, revenue impact)
+- Data source transparency: weekly report badge vs orders API badge with tooltip explanation
+- Edge case handling: empty weeks, no-data states, loading skeletons, partial data warnings
+- Route: `/analytics/buyout` (pending registration in `src/lib/routes.ts`)
+
+**Dependencies**: Epic 61-FE hooks, finance-summary API | Backend Request #151
+
+**Out of Scope**: Per-SKU COGS impact on buyout, forecasting, return-adjusted buyout
+
+---
+
 ## Legacy Epic Details
 
 For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
@@ -536,6 +586,16 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 ---
 
 ## Changelog
+
+### 2026-02-25 (Epic 69-FE: Buyout Rate Analytics UI — 6/7 Complete)
+- **Epic 69-FE created**: Buyout Rate Analytics UI (7 stories, 28 SP)
+- Stories 69.1–69.6 complete (25/28 SP): types, hooks, summary widget, per-SKU table, page scaffold, data source UX
+- Story 69.7 (Unit & Integration Tests) planned
+- Route `/analytics/buyout` implemented (pending route registration)
+- Data source transparency UX: weekly report vs orders API badge
+- **Epics 68-FE, 70-FE, 71-FE noted**: code exists, pending formal spec & validation (Backend Request #151)
+- Total epics: 22 (21 complete + 1 in validation)
+- Total stories: 160
 
 ### 2026-02-23 (Epic 66-FE: Complete 7/7)
 - **Story 66.7 complete**: TaxWarningBanner + pre-tax annotations on 4 profit cards
@@ -705,6 +765,7 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 | Epic 62-FE | `docs/epics/epic-62-fe-dashboard-presentation.md` |
 | Epic 63-FE | `docs/epics/epic-63-fe-dashboard-business-logic.md` |
 | Epic 66-FE | `docs/epics/epic-66-fe-tax-accounting.md` |
+| Epic 69-FE | `docs/epics/epic-69-fe-buyout-rate-analytics.md` (pending) |
 | Story Files | `docs/stories/epic-{N}/story-{N}.{M}-*.md` |
 | Backend APIs | `../test-api/*.http` |
 | Routes Code | `src/lib/routes.ts` |

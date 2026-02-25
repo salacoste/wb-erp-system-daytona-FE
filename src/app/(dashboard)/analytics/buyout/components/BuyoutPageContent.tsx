@@ -11,6 +11,13 @@ import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExte
 import { useFulfillmentSummary } from '@/hooks/useFulfillment'
 import type { DateRange } from '@/types/date-range'
 import type { BuyoutSource } from '@/types/analytics-epics-68-71'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { BuyoutSummaryWidget } from './BuyoutSummaryWidget'
 import { BuyoutTable } from './BuyoutTable'
 
@@ -60,18 +67,18 @@ export function BuyoutPageContent() {
           placeholder="Выберите период"
           id="buyout-date-range"
         />
-        <select
-          value={source}
-          onChange={e => setSource(e.target.value as BuyoutSource)}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-          aria-label="Источник данных"
-        >
-          {SOURCE_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={source} onValueChange={val => setSource(val as BuyoutSource)}>
+          <SelectTrigger className="w-[200px]" aria-label="Источник данных">
+            <SelectValue placeholder="Источник данных" />
+          </SelectTrigger>
+          <SelectContent>
+            {SOURCE_OPTIONS.map(opt => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Summary widget */}
