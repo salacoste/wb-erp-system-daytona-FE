@@ -122,9 +122,9 @@ describe('TaxSettingsForm (Story 66.3-FE)', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('radio', { name: /0%.*экспорт/i })).toBeInTheDocument()
-      expect(screen.getByRole('radio', { name: /5%/i })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /^5%/i })).toBeInTheDocument()
       expect(screen.getByRole('radio', { name: /20%.*стандартная/i })).toBeInTheDocument()
-      expect(screen.getByRole('radio', { name: /22%/i })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /^22%/i })).toBeInTheDocument()
     })
   })
 
@@ -169,7 +169,10 @@ describe('TaxSettingsForm (Story 66.3-FE)', () => {
     await user.click(screen.getByRole('button', { name: /сохранить/i }))
 
     await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(expect.objectContaining({ taxSystem: 'usn6' }))
+      expect(mockMutate).toHaveBeenCalledWith(
+        expect.objectContaining({ taxSystem: 'usn6' }),
+        expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) })
+      )
     })
   })
 

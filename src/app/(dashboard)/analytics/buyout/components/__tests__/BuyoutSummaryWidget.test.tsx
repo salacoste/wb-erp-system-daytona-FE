@@ -1,0 +1,129 @@
+/**
+ * Integration tests for BuyoutSummaryWidget
+ * Story 69.7: Buyout analytics component tests
+ * Epic 69: Buyout Rate per-SKU analytics (Frontend)
+ */
+
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { screen } from '@testing-library/react'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import { BuyoutSummaryWidget } from '../BuyoutSummaryWidget'
+import type { BuyoutSummaryResponse } from '@/types/analytics-buyout'
+import type { ReturnBreakdown } from '@/types/fulfillment'
+
+vi.mock('@/hooks/use-buyout-analytics', () => ({
+  useBuyoutSummary: vi.fn(),
+}))
+
+import { useBuyoutSummary } from '@/hooks/use-buyout-analytics'
+const mockUseBuyoutSummary = vi.mocked(useBuyoutSummary)
+
+const defaultProps = { from: '2025-12-01', to: '2025-12-31', source: 'blended' as const }
+
+const mockSummary: BuyoutSummaryResponse = {
+  overallBuyoutRatePct: 78.5,
+  overallReturnRatePct: 21.5,
+  totalSalesCount: 1200,
+  totalReturnsCount: 258,
+  skuCount: 45,
+  topDecliners: [
+    { nmId: 111222, buyoutRatePct: 52, trendDelta: -8 },
+    { nmId: 333444, buyoutRatePct: 61, trendDelta: -5 },
+  ],
+  period: { from: '2025-12-01', to: '2025-12-31' },
+  source: 'blended',
+  confidence: 'high',
+}
+
+const mockBreakdown: ReturnBreakdown = {
+  cancelBeforeShipment: 40,
+  refusalAtPvz: 30,
+  returnAfterReceipt: 20,
+  total: 90,
+  classificationCoverage: 85,
+}
+
+function hookReturn(overrides: Record<string, unknown> = {}) {
+  return { data: undefined, isLoading: false, isError: false, ...overrides } as ReturnType<
+    typeof useBuyoutSummary
+  >
+}
+
+describe('BuyoutSummaryWidget', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('shows loading skeleton while fetching', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ isLoading: true }))
+    const { container } = renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    // Skeleton has h-40 w-full classes
+    const skeleton = container.querySelector('[class*="h-40"]')
+    expect(skeleton).toBeInTheDocument()
+  })
+
+  it('shows error alert when fetch fails', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ isError: true }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText('Не удалось загрузить сводку выкупов')).toBeInTheDocument()
+  })
+
+  it('returns null when data is undefined', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: undefined }))
+    const { container } = renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(container.firstChild).toBeNull()
+  })
+
+  it('renders buyout percentage and return percentage', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText('78.5% выкуп')).toBeInTheDocument()
+    expect(screen.getByText('21.5% возвраты')).toBeInTheDocument()
+  })
+
+  it('renders progress bar with correct width', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    const { container } = renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    const bar = container.querySelector('.bg-green-500')
+    expect(bar).toHaveStyle({ width: '78.5%' })
+  })
+
+  it('shows total returns count and sales count', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    // Russian locale uses non-breaking space: 1 200 / 258
+    expect(screen.getByText(/258/)).toBeInTheDocument()
+    expect(screen.getByText(/1[\s\u00a0]?200/)).toBeInTheDocument()
+  })
+
+  it('shows SKU count when available', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText(/45 SKU/)).toBeInTheDocument()
+  })
+
+  it('shows top decliners section', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText('Снижение выкупа')).toBeInTheDocument()
+    expect(screen.getByText('#111222')).toBeInTheDocument()
+    expect(screen.getByText('#333444')).toBeInTheDocument()
+    expect(screen.getByText(/52%/)).toBeInTheDocument()
+  })
+
+  it('shows return breakdown bar when provided', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} returnBreakdown={mockBreakdown} />)
+    expect(screen.getByText('Причины возвратов (FBS)')).toBeInTheDocument()
+    expect(screen.getByText(/До отправки: 40/)).toBeInTheDocument()
+    expect(screen.getByText(/Отказ на ПВЗ: 30/)).toBeInTheDocument()
+    expect(screen.getByText(/После получения: 20/)).toBeInTheDocument()
+    expect(screen.getByText(/Покрытие классификации: 85%/)).toBeInTheDocument()
+  })
+
+  it('hides return breakdown when null', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} returnBreakdown={null} />)
+    expect(screen.queryByText('Причины возвратов (FBS)')).not.toBeInTheDocument()
+  })
+})
