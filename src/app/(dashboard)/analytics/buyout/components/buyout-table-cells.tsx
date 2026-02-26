@@ -4,11 +4,7 @@
 
 import { ArrowUpDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { TableCell } from '@/components/ui/table'
-import type {
-  BuyoutBySkuParams,
-  TrendDirection,
-  BuyoutConfidence,
-} from '@/types/analytics-buyout'
+import type { BuyoutBySkuParams, TrendDirection, BuyoutConfidence } from '@/types/analytics-buyout'
 
 export type SortField = NonNullable<BuyoutBySkuParams['sort']>
 
@@ -17,7 +13,8 @@ export function ariaSort(field: SortField, currentSort: SortField, order: 'asc' 
 }
 
 export function ReasonCell({ count, color }: { count?: number; color: string }) {
-  if (!count) return <TableCell className="text-muted-foreground">—</TableCell>
+  // Fix #3: treat 0 as valid data, not as missing
+  if (count == null) return <TableCell className="text-muted-foreground">—</TableCell>
   return <TableCell className={`font-medium ${color}`}>{count}</TableCell>
 }
 
