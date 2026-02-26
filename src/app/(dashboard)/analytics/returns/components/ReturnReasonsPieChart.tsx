@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
-import type { ReturnCategoryItem } from '@/types/analytics-epics-68-71'
+import type { ReturnCategoryItem } from '@/types/analytics-returns'
 
 interface ReturnReasonsPieChartProps {
   from?: string

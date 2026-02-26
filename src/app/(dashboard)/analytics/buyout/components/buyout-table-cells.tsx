@@ -8,7 +8,7 @@ import type {
   BuyoutBySkuParams,
   TrendDirection,
   BuyoutConfidence,
-} from '@/types/analytics-epics-68-71'
+} from '@/types/analytics-buyout'
 
 export type SortField = NonNullable<BuyoutBySkuParams['sort']>
 

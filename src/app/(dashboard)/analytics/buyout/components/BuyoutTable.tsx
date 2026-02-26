@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
-import type { BuyoutSource } from '@/types/analytics-epics-68-71'
+import type { BuyoutSource } from '@/types/analytics-buyout'
 import {
   SortField,
   ariaSort,

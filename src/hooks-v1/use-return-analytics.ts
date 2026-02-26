@@ -10,7 +10,7 @@ import {
   returnQueryKeys,
   RETURN_CACHE,
 } from '@/lib/api/return-analytics'
-import type { ReturnsBySkuParams } from '@/types/analytics-epics-68-71'
+import type { ReturnsBySkuParams } from '@/types/analytics-returns'
 
 /** Aggregated return reasons by category (for pie chart) */
 export function useReturnReasons(from?: string, to?: string) {

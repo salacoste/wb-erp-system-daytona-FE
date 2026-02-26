@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, TrendingDown } from 'lucide-react'
-import type { BuyoutSource } from '@/types/analytics-epics-68-71'
+import type { BuyoutSource } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
 
 interface BuyoutSummaryWidgetProps {

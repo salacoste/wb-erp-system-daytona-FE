@@ -5,7 +5,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
-import type { FunnelParams, FunnelResponse, FunnelSyncStatus } from '@/types/analytics-epics-68-71'
+import type { FunnelParams, FunnelResponse, FunnelSyncStatus } from '@/types/analytics-funnel'
 
 /**
  * Per-SKU funnel data or time series (groupBy=day)

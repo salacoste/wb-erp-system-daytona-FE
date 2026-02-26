@@ -10,7 +10,7 @@ import type {
   ReturnReasonsResponse,
   BySkuReturnResponse,
   ReturnsBySkuParams,
-} from '@/types/analytics-epics-68-71'
+} from '@/types/analytics-returns'
 
 /**
  * Aggregated return reasons by category (for pie chart)

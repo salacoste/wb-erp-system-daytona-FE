@@ -10,7 +10,7 @@ import {
   funnelQueryKeys,
   FUNNEL_CACHE,
 } from '@/lib/api/funnel-analytics'
-import type { FunnelParams } from '@/types/analytics-epics-68-71'
+import type { FunnelParams } from '@/types/analytics-funnel'
 
 /** Per-SKU funnel data with pagination and sorting */
 export function useFunnelData(from: string, to: string, params?: Partial<FunnelParams>) {

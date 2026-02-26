@@ -10,7 +10,7 @@ import type {
   BySkuBuyoutResponse,
   BuyoutSummaryParams,
   BuyoutSummaryResponse,
-} from '@/types/analytics-epics-68-71'
+} from '@/types/analytics-buyout'
 
 /**
  * Per-SKU buyout rates with trend and confidence

@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ArrowUpDown, AlertCircle } from 'lucide-react'
-import type { FunnelProductItem, FunnelParams } from '@/types/analytics-epics-68-71'
+import type { FunnelProductItem, FunnelParams } from '@/types/analytics-funnel'
 
 interface FunnelTableProps {
   from: string

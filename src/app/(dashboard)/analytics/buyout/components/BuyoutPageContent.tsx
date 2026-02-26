@@ -10,7 +10,7 @@ import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { useFulfillmentSummary } from '@/hooks/useFulfillment'
 import type { DateRange } from '@/types/date-range'
-import type { BuyoutSource } from '@/types/analytics-epics-68-71'
+import type { BuyoutSource } from '@/types/analytics-buyout'
 import {
   Select,
   SelectContent,

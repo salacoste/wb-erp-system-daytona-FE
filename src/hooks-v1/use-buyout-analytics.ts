@@ -10,7 +10,7 @@ import {
   buyoutQueryKeys,
   BUYOUT_CACHE,
 } from '@/lib/api/buyout-analytics'
-import type { BuyoutBySkuParams, BuyoutSource } from '@/types/analytics-epics-68-71'
+import type { BuyoutBySkuParams, BuyoutSource } from '@/types/analytics-buyout'
 
 /** Per-SKU buyout rates with trend/confidence */
 export function useBuyoutBySku(from: string, to: string, params?: Partial<BuyoutBySkuParams>) {

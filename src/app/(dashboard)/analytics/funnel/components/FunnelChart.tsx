@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
-import type { FunnelDayItem } from '@/types/analytics-epics-68-71'
+import type { FunnelDayItem } from '@/types/analytics-funnel'
 
 interface FunnelChartProps {
   from: string
