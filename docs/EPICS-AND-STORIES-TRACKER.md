@@ -3,9 +3,9 @@
 > **Source of Truth** for all frontend epic statuses, sprint planning, and story tracking.
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
-**Last Updated**: 2026-02-25
-**Total Epics**: 22 (21 complete + 1 in validation)
-**Total Stories**: 160 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE + 7 Epic 69-FE)
+**Last Updated**: 2026-02-27
+**Total Epics**: 23 (21 complete + 1 in validation + 1 ready)
+**Total Stories**: 166 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE + 7 Epic 69-FE + 6 Epic 70-FE)
 
 ---
 
@@ -108,11 +108,32 @@
 - Edge case handling: empty weeks, no data states, loading skeletons
 - Route: `/analytics/buyout` (pending route registration)
 
-> **Note — Epics 68-FE, 70-FE, 71-FE**: Pending formal documentation — code exists, needs spec & validation.
+> **Note — Epics 68-FE, 71-FE**: Pending formal documentation — code exists, needs spec & validation.
 > - Epic 68-FE: Funnel Analytics UI
-> - Epic 70-FE: Conversion Analytics UI
 > - Epic 71-FE: Returns Analytics UI
 > - Reference: Backend Request #151
+
+### Validation Fixes - Q1 2026
+
+| Epic ID | Title | Stories | SP | Status | Sprint | Source |
+|---------|-------|---------|---:|--------|--------|--------|
+| Epic 70-FE | Frontend Validation Fixes | 6 | 13 | 📋 Ready for Dev | Sprint 12 | `docs/FRONTEND-VALIDATION-REPORT.md` |
+
+**Epic 70-FE**: 📋 Ready for Dev (2026-02-27) - 6 stories (4 frontend, 2 backend requests)
+- Source: Full 23-page browser validation against Backend API (16 discrepancies found)
+- Group A (D-1,D-2,D-4): summary_total vs summary_rus fallback mixing RUS+EAEU data
+- Group B (D-5,D-16): Misleading profit tooltips/labels on Dashboard & PnLWaterfall
+- Group C (D-12,D-14): Backend issues — funnel buyouts=0, liquidity 500 error
+- Group D (D-7,D-9,D-13): Margin calculation bugs, NaN display
+
+| Story | Title | SP | Status | Group |
+|-------|-------|----|--------|-------|
+| 70.1-FE | Fix summary_total vs summary_rus fallback | 3 | 📋 Ready | A |
+| 70.2-FE | Clarify profit definitions and tooltips | 3 | 📋 Ready | B |
+| 70.3-FE | Fix margin calculations (weighted avg) | 2 | 📋 Ready | D |
+| 70.4-FE | Fix NaN guard in supply planning | 1 | 📋 Ready | D |
+| 70.5-FE | [Backend] Funnel buyout data JOIN | 2 | ❌ Blocked | C |
+| 70.6-FE | [Backend] Liquidity API param alignment | 2 | ❌ Blocked | C |
 
 **UX Wireframes Completed** (2026-01-31):
 - `docs/wireframes/dashboard-kpi-cards.md` - 8 KPI cards layout
