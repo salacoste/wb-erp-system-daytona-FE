@@ -12,8 +12,22 @@ export function ariaSort(field: SortField, currentSort: SortField, order: 'asc' 
   return field === currentSort ? (`${order}ending` as const) : ('none' as const)
 }
 
-export function ReasonCell({ count, color }: { count?: number; color: string }) {
-  // Fix #3: treat 0 as valid data, not as missing
+export function ReasonCell({
+  count,
+  color,
+  estimated,
+}: {
+  count?: number
+  color: string
+  estimated?: boolean
+}) {
+  // FBO: categories unavailable, show indicator instead of misleading 0
+  if (estimated)
+    return (
+      <TableCell className="text-muted-foreground" title="FBO — разбивка по категориям недоступна">
+        ~
+      </TableCell>
+    )
   if (count == null) return <TableCell className="text-muted-foreground">—</TableCell>
   return <TableCell className={`font-medium ${color}`}>{count}</TableCell>
 }

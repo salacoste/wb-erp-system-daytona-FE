@@ -118,11 +118,12 @@ describe('BuyoutTable', () => {
     expect(screen.getByText('50.0%')).toBeInTheDocument()
   })
 
-  it('shows product info from useProducts enrichment', () => {
+  it('shows product info from backend + products enrichment', () => {
     mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
     renderWithProviders(<BuyoutTable {...defaultProps} />)
-    // Product 100500 should show enriched vendor_code and name
-    expect(screen.getByText('VC-100')).toBeInTheDocument()
+    // Артикул: backend supplierArticle takes priority over products vendorCode
+    expect(screen.getByText('ART-001')).toBeInTheDocument()
+    // Товар: products sa_name takes priority over backend productName
     expect(screen.getByText('Полное название товара')).toBeInTheDocument()
   })
 

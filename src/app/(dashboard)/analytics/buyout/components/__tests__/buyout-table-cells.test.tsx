@@ -55,13 +55,26 @@ describe('ReasonCell', () => {
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 
-  it('shows dash when count is 0', () => {
+  it('shows zero when count is 0 (valid data, not missing)', () => {
     render(
       <TableWrapper>
         <ReasonCell count={0} color="text-red-500" />
       </TableWrapper>
     )
-    expect(screen.getByText('—')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
+  })
+
+  it('shows tilde with title when estimated (FBO)', () => {
+    render(
+      <TableWrapper>
+        <ReasonCell count={0} color="text-blue-500" estimated />
+      </TableWrapper>
+    )
+    expect(screen.getByText('~')).toBeInTheDocument()
+    expect(screen.getByText('~').closest('td')).toHaveAttribute(
+      'title',
+      expect.stringContaining('FBO')
+    )
   })
 
   it('shows count with color class when count is present', () => {

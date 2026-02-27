@@ -140,24 +140,40 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
             {items.map(item => {
               const product = productsMap.get(item.nmId)
               const rb = item.returnBreakdown
+              const isEstimated = rb?.estimated === true
               return (
                 <TableRow key={item.nmId}>
                   <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
                   <TableCell className="text-sm font-medium">
-                    {product?.vendorCode || '—'}
+                    {item.supplierArticle || product?.vendorCode || '—'}
                   </TableCell>
-                  <TableCell className="text-sm max-w-48 truncate" title={product?.saName}>
+                  <TableCell
+                    className="text-sm max-w-48 truncate"
+                    title={product?.saName || item.productName || undefined}
+                  >
                     {product?.saName || item.productName || '—'}
                   </TableCell>
-                  <TableCell className="text-sm">{product?.brand || item.brand || '—'}</TableCell>
+                  <TableCell className="text-sm">{item.brand || product?.brand || '—'}</TableCell>
                   <TableCell>{item.salesCount.toLocaleString('ru-RU')}</TableCell>
                   <TableCell>{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
                   <TableCell className="font-medium">
                     {item.buyoutRatePct != null ? `${item.buyoutRatePct.toFixed(1)}%` : '—'}
                   </TableCell>
-                  <ReasonCell count={rb?.cancelBeforeShipment} color="text-blue-600" />
-                  <ReasonCell count={rb?.refusalAtPvz} color="text-orange-600" />
-                  <ReasonCell count={rb?.returnAfterReceipt} color="text-red-600" />
+                  <ReasonCell
+                    count={rb?.cancelBeforeShipment}
+                    color="text-blue-600"
+                    estimated={isEstimated}
+                  />
+                  <ReasonCell
+                    count={rb?.refusalAtPvz}
+                    color="text-orange-600"
+                    estimated={isEstimated}
+                  />
+                  <ReasonCell
+                    count={rb?.returnAfterReceipt}
+                    color="text-red-600"
+                    estimated={isEstimated}
+                  />
                   <TableCell>
                     <TrendIndicator trend={item.trend} delta={item.trendDelta} />
                   </TableCell>

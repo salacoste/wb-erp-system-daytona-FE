@@ -23,12 +23,14 @@ export interface BySkuBuyoutItem {
   trend?: TrendDirection
   trendDelta?: number
   previousBuyoutRatePct?: number | null
-  /** Return breakdown from return_classifications (FBS only), joined by backend */
+  /** Return breakdown: FBS has real categories, FBO only has total (estimated=true) */
   returnBreakdown?: {
     cancelBeforeShipment: number
     refusalAtPvz: number
     returnAfterReceipt: number
     total: number
+    /** true = FBO data, categories unavailable; false = FBS, categories are real */
+    estimated?: boolean
   } | null
 }
 
