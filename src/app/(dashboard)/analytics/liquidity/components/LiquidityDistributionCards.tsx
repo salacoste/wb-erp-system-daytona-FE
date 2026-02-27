@@ -2,11 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import type { LiquidityCategory, LiquidityDistribution } from '@/types/liquidity'
-import {
-  getLiquidityCategoryConfig,
-  formatCurrency,
-  formatPercentage,
-} from '@/lib/liquidity-utils'
+import { getLiquidityCategoryConfig, formatCurrency, formatPercentage } from '@/lib/liquidity-utils'
 import { cn } from '@/lib/utils'
 
 interface LiquidityDistributionCardsProps {
@@ -15,12 +11,7 @@ interface LiquidityDistributionCardsProps {
   onCardClick: (category: LiquidityCategory) => void
 }
 
-const CATEGORY_ORDER: LiquidityCategory[] = [
-  'highly_liquid',
-  'medium_liquid',
-  'low_liquid',
-  'illiquid',
-]
+const CATEGORY_ORDER: LiquidityCategory[] = ['highly_liquid', 'medium', 'low', 'illiquid']
 
 /**
  * 4-card distribution dashboard
@@ -34,7 +25,7 @@ export function LiquidityDistributionCards({
 }: LiquidityDistributionCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {CATEGORY_ORDER.map((category) => {
+      {CATEGORY_ORDER.map(category => {
         const item = distribution[category]
         const config = getLiquidityCategoryConfig(category)
         const isActive = activeFilter === category
@@ -46,12 +37,14 @@ export function LiquidityDistributionCards({
             className={cn(
               'cursor-pointer transition-all duration-200 hover:shadow-md',
               isActive && 'ring-2 ring-offset-2',
-              isFiltered && 'opacity-50',
+              isFiltered && 'opacity-50'
             )}
-            style={{
-              borderColor: isActive ? config.color : undefined,
-              '--tw-ring-color': config.color,
-            } as React.CSSProperties}
+            style={
+              {
+                borderColor: isActive ? config.color : undefined,
+                '--tw-ring-color': config.color,
+              } as React.CSSProperties
+            }
             onClick={() => onCardClick(category)}
           >
             <CardContent className="p-4">
@@ -59,10 +52,7 @@ export function LiquidityDistributionCards({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{config.icon}</span>
-                  <span
-                    className="text-sm font-medium"
-                    style={{ color: config.color }}
-                  >
+                  <span className="text-sm font-medium" style={{ color: config.color }}>
                     {config.label}
                   </span>
                 </div>
@@ -79,10 +69,7 @@ export function LiquidityDistributionCards({
 
               {/* Main value - percentage */}
               <div className="mb-2">
-                <span
-                  className="text-3xl font-bold"
-                  style={{ color: config.color }}
-                >
+                <span className="text-3xl font-bold" style={{ color: config.color }}>
                   {formatPercentage(item.pct)}
                 </span>
               </div>

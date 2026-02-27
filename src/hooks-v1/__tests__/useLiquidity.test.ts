@@ -292,7 +292,7 @@ describe('convenience hooks', () => {
 
   describe('useLiquidityByCategory', () => {
     it('should fetch SKUs by category', async () => {
-      const { result } = renderHookWithClient(() => useLiquidityByCategory('low_liquid'))
+      const { result } = renderHookWithClient(() => useLiquidityByCategory('low'))
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false)
@@ -366,8 +366,8 @@ describe('summary data structure', () => {
     const distribution = result.current.data?.summary.distribution
     expect(distribution).toBeDefined()
     expect(distribution?.highly_liquid).toBeDefined()
-    expect(distribution?.medium_liquid).toBeDefined()
-    expect(distribution?.low_liquid).toBeDefined()
+    expect(distribution?.medium).toBeDefined()
+    expect(distribution?.low).toBeDefined()
     expect(distribution?.illiquid).toBeDefined()
 
     // Each distribution item should have required fields

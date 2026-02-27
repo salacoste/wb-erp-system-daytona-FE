@@ -17,7 +17,7 @@ import type {
   DistributionChartData,
   TrendDataPoint,
   TrendChartData,
-} from '@/types/liquidity';
+} from '@/types/liquidity'
 
 // ============================================================================
 // Liquidity Category Helpers
@@ -32,8 +32,8 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   highly_liquid: {
     label: 'Высоколиквидный',
     labelShort: 'Ликвид.',
-    color: '#22C55E',      // Green-500
-    bgColor: '#DCFCE7',    // Green-100
+    color: '#22C55E', // Green-500
+    bgColor: '#DCFCE7', // Green-100
     bgClass: 'bg-green-500',
     textClass: 'text-white',
     icon: '🟢',
@@ -41,11 +41,11 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
     maxDays: 30,
     targetShare: '> 50%',
   },
-  medium_liquid: {
+  medium: {
     label: 'Средняя ликвидность',
     labelShort: 'Средний',
-    color: '#EAB308',      // Yellow-500
-    bgColor: '#FEF9C3',    // Yellow-100
+    color: '#EAB308', // Yellow-500
+    bgColor: '#FEF9C3', // Yellow-100
     bgClass: 'bg-yellow-500',
     textClass: 'text-white',
     icon: '🟡',
@@ -53,11 +53,11 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
     maxDays: 60,
     targetShare: '30-40%',
   },
-  low_liquid: {
+  low: {
     label: 'Низкая ликвидность',
     labelShort: 'Низкий',
-    color: '#F97316',      // Orange-500
-    bgColor: '#FED7AA',    // Orange-200
+    color: '#F97316', // Orange-500
+    bgColor: '#FED7AA', // Orange-200
     bgClass: 'bg-orange-500',
     textClass: 'text-white',
     icon: '🟠',
@@ -68,8 +68,8 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   illiquid: {
     label: 'Неликвид',
     labelShort: 'Неликвид',
-    color: '#EF4444',      // Red-500
-    bgColor: '#FEE2E2',    // Red-100
+    color: '#EF4444', // Red-500
+    bgColor: '#FEE2E2', // Red-100
     bgClass: 'bg-red-500',
     textClass: 'text-white',
     icon: '🔴',
@@ -77,71 +77,71 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
     maxDays: 999,
     targetShare: '< 5%',
   },
-} as const;
+} as const
 
 /**
  * Get display configuration for liquidity category
  */
 export function getLiquidityCategoryConfig(category: LiquidityCategory): LiquidityCategoryConfig {
-  return LIQUIDITY_CATEGORY_CONFIG[category];
+  return LIQUIDITY_CATEGORY_CONFIG[category]
 }
 
 /**
  * Get color for liquidity category (for charts)
  */
 export function getLiquidityStatusColor(category: LiquidityCategory): string {
-  return getLiquidityCategoryConfig(category).color;
+  return getLiquidityCategoryConfig(category).color
 }
 
 /**
  * Get background color for liquidity category (for badges)
  */
 export function getLiquidityStatusBgColor(category: LiquidityCategory): string {
-  return getLiquidityCategoryConfig(category).bgColor;
+  return getLiquidityCategoryConfig(category).bgColor
 }
 
 /**
  * Get full label for liquidity category
  */
 export function getLiquidityStatusLabel(category: LiquidityCategory): string {
-  return getLiquidityCategoryConfig(category).label;
+  return getLiquidityCategoryConfig(category).label
 }
 
 /**
  * Get short label for liquidity category (for table cells)
  */
 export function getLiquidityStatusLabelShort(category: LiquidityCategory): string {
-  return getLiquidityCategoryConfig(category).labelShort;
+  return getLiquidityCategoryConfig(category).labelShort
 }
 
 /**
  * Get icon emoji for liquidity category
  */
 export function getLiquidityStatusIcon(category: LiquidityCategory): string {
-  return getLiquidityCategoryConfig(category).icon;
+  return getLiquidityCategoryConfig(category).icon
 }
 
 /**
  * Get Tailwind classes for solid badge styling
  */
 export function getLiquidityBadgeClasses(category: LiquidityCategory): string {
-  const config = getLiquidityCategoryConfig(category);
-  return `${config.bgClass} ${config.textClass}`;
+  const config = getLiquidityCategoryConfig(category)
+  return `${config.bgClass} ${config.textClass}`
 }
 
 /**
  * Get target share percentage for category
  */
 export function getLiquidityTargetShare(category: LiquidityCategory): string {
-  return getLiquidityCategoryConfig(category).targetShare;
+  return getLiquidityCategoryConfig(category).targetShare
 }
 
 /**
  * Get turnover days range for category
  */
 export function getLiquidityDaysRange(category: LiquidityCategory): { min: number; max: number } {
-  const config = getLiquidityCategoryConfig(category);
-  return { min: config.minDays, max: config.maxDays };
+  const config = getLiquidityCategoryConfig(category)
+  return { min: config.minDays, max: config.maxDays }
 }
 
 // ============================================================================
@@ -176,34 +176,36 @@ export const ACTION_TYPE_CONFIG: Record<ActionType, ActionTypeConfig> = {
     color: '#EF4444',
     variant: 'destructive',
   },
-} as const;
+} as const
 
 /**
  * Get display configuration for action type
  */
 export function getActionTypeConfig(action: ActionType): ActionTypeConfig {
-  return ACTION_TYPE_CONFIG[action];
+  return ACTION_TYPE_CONFIG[action]
 }
 
 /**
  * Get full label for action type
  */
 export function getLiquidityActionLabel(action: ActionType): string {
-  return getActionTypeConfig(action).label;
+  return getActionTypeConfig(action).label
 }
 
 /**
  * Get button label for action type
  */
 export function getLiquidityActionButtonLabel(action: ActionType): string {
-  return getActionTypeConfig(action).buttonLabel;
+  return getActionTypeConfig(action).buttonLabel
 }
 
 /**
  * Get button variant for action type
  */
-export function getLiquidityActionVariant(action: ActionType): 'default' | 'destructive' | 'outline' | 'secondary' {
-  return getActionTypeConfig(action).variant;
+export function getLiquidityActionVariant(
+  action: ActionType
+): 'default' | 'destructive' | 'outline' | 'secondary' {
+  return getActionTypeConfig(action).variant
 }
 
 // ============================================================================
@@ -238,41 +240,41 @@ export const BENCHMARK_STATUS_CONFIG: Record<BenchmarkStatus, BenchmarkStatusCon
     textClass: 'text-red-600',
     icon: '🚨',
   },
-} as const;
+} as const
 
 /**
  * Get display configuration for benchmark status
  */
 export function getBenchmarkStatusConfig(status: BenchmarkStatus): BenchmarkStatusConfig {
-  return BENCHMARK_STATUS_CONFIG[status];
+  return BENCHMARK_STATUS_CONFIG[status]
 }
 
 /**
  * Get color for benchmark status
  */
 export function getBenchmarkStatusColor(status: BenchmarkStatus): string {
-  return getBenchmarkStatusConfig(status).color;
+  return getBenchmarkStatusConfig(status).color
 }
 
 /**
  * Get label for benchmark status
  */
 export function getBenchmarkStatusLabel(status: BenchmarkStatus): string {
-  return getBenchmarkStatusConfig(status).label;
+  return getBenchmarkStatusConfig(status).label
 }
 
 /**
  * Get Tailwind text class for benchmark status
  */
 export function getBenchmarkStatusTextClass(status: BenchmarkStatus): string {
-  return getBenchmarkStatusConfig(status).textClass;
+  return getBenchmarkStatusConfig(status).textClass
 }
 
 /**
  * Get icon for benchmark status
  */
 export function getBenchmarkStatusIcon(status: BenchmarkStatus): string {
-  return getBenchmarkStatusConfig(status).icon;
+  return getBenchmarkStatusConfig(status).icon
 }
 
 // ============================================================================
@@ -285,12 +287,12 @@ export function getBenchmarkStatusIcon(status: BenchmarkStatus): string {
 export function getTrendInsightColor(type: TrendInsightType): string {
   switch (type) {
     case 'improvement':
-      return '#22C55E'; // Green
+      return '#22C55E' // Green
     case 'warning':
-      return '#F97316'; // Orange
+      return '#F97316' // Orange
     case 'info':
     default:
-      return '#3B82F6'; // Blue
+      return '#3B82F6' // Blue
   }
 }
 
@@ -300,12 +302,12 @@ export function getTrendInsightColor(type: TrendInsightType): string {
 export function getTrendInsightIcon(type: TrendInsightType): string {
   switch (type) {
     case 'improvement':
-      return '📈';
+      return '📈'
     case 'warning':
-      return '⚠️';
+      return '⚠️'
     case 'info':
     default:
-      return 'ℹ️';
+      return 'ℹ️'
   }
 }
 
@@ -315,12 +317,12 @@ export function getTrendInsightIcon(type: TrendInsightType): string {
 export function getTrendInsightBgClass(type: TrendInsightType): string {
   switch (type) {
     case 'improvement':
-      return 'bg-green-50 border-green-200';
+      return 'bg-green-50 border-green-200'
     case 'warning':
-      return 'bg-orange-50 border-orange-200';
+      return 'bg-orange-50 border-orange-200'
     case 'info':
     default:
-      return 'bg-blue-50 border-blue-200';
+      return 'bg-blue-50 border-blue-200'
   }
 }
 
@@ -334,23 +336,23 @@ export function getTrendInsightBgClass(type: TrendInsightType): string {
  * @returns Formatted string (e.g., "22 дня", "145 дней")
  */
 export function formatTurnoverDays(days: number): string {
-  if (days >= 999) return 'Нет продаж';
-  if (days === 0) return '< 1 дня';
-  if (days === 1) return '1 день';
-  if (days >= 2 && days <= 4) return `${days} дня`;
-  if (days >= 5 && days <= 20) return `${days} дней`;
+  if (days >= 999) return 'Нет продаж'
+  if (days === 0) return '< 1 дня'
+  if (days === 1) return '1 день'
+  if (days >= 2 && days <= 4) return `${days} дня`
+  if (days >= 5 && days <= 20) return `${days} дней`
 
   // Handle 21, 31, etc.
-  const lastDigit = days % 10;
-  const lastTwoDigits = days % 100;
+  const lastDigit = days % 10
+  const lastTwoDigits = days % 100
 
   if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-    return `${days} дней`;
+    return `${days} дней`
   }
 
-  if (lastDigit === 1) return `${days} день`;
-  if (lastDigit >= 2 && lastDigit <= 4) return `${days} дня`;
-  return `${days} дней`;
+  if (lastDigit === 1) return `${days} день`
+  if (lastDigit >= 2 && lastDigit <= 4) return `${days} дня`
+  return `${days} дней`
 }
 
 /**
@@ -359,9 +361,9 @@ export function formatTurnoverDays(days: number): string {
  * @returns Formatted string
  */
 export function formatVelocity(velocity: number): string {
-  if (velocity === 0) return '0 шт./день';
-  if (velocity < 1) return `${velocity.toFixed(1)} шт./день`;
-  return `${Math.round(velocity)} шт./день`;
+  if (velocity === 0) return '0 шт./день'
+  if (velocity < 1) return `${velocity.toFixed(1)} шт./день`
+  return `${Math.round(velocity)} шт./день`
 }
 
 /**
@@ -370,9 +372,9 @@ export function formatVelocity(velocity: number): string {
  * @returns Warning message or null
  */
 export function formatFrozenCapitalWarning(pct: number): string | null {
-  if (pct > 10) return '🚨 Критически высокий уровень';
-  if (pct > 5) return '⚠️ Выше нормы';
-  return null;
+  if (pct > 10) return '🚨 Критически высокий уровень'
+  if (pct > 5) return '⚠️ Выше нормы'
+  return null
 }
 
 /**
@@ -381,9 +383,9 @@ export function formatFrozenCapitalWarning(pct: number): string | null {
  * @returns Status class
  */
 export function getFrozenCapitalStatusClass(pct: number): string {
-  if (pct > 10) return 'text-red-600 font-bold';
-  if (pct > 5) return 'text-orange-600 font-medium';
-  return 'text-green-600';
+  if (pct > 10) return 'text-red-600 font-bold'
+  if (pct > 5) return 'text-orange-600 font-medium'
+  return 'text-green-600'
 }
 
 /**
@@ -392,7 +394,7 @@ export function getFrozenCapitalStatusClass(pct: number): string {
  * @returns Formatted string
  */
 export function formatPercentage(value: number): string {
-  return `${value.toFixed(1)}%`;
+  return `${value.toFixed(1)}%`
 }
 
 /**
@@ -405,7 +407,7 @@ export function formatCurrency(value: number): string {
     style: 'currency',
     currency: 'RUB',
     maximumFractionDigits: 0,
-  }).format(value);
+  }).format(value)
 }
 
 /**
@@ -415,12 +417,12 @@ export function formatCurrency(value: number): string {
  */
 export function formatCompactNumber(value: number): string {
   if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M`;
+    return `${(value / 1_000_000).toFixed(1)}M`
   }
   if (value >= 1_000) {
-    return `${(value / 1_000).toFixed(0)}K`;
+    return `${(value / 1_000).toFixed(0)}K`
   }
-  return value.toString();
+  return value.toString()
 }
 
 // ============================================================================
@@ -435,16 +437,11 @@ export function formatCompactNumber(value: number): string {
 export function transformDistributionForChart(
   distribution: LiquidityDistribution
 ): DistributionChartData[] {
-  const categories: LiquidityCategory[] = [
-    'highly_liquid',
-    'medium_liquid',
-    'low_liquid',
-    'illiquid',
-  ];
+  const categories: LiquidityCategory[] = ['highly_liquid', 'medium', 'low', 'illiquid']
 
-  return categories.map((category) => {
-    const item = distribution[category];
-    const config = getLiquidityCategoryConfig(category);
+  return categories.map(category => {
+    const item = distribution[category]
+    const config = getLiquidityCategoryConfig(category)
 
     return {
       category,
@@ -453,8 +450,8 @@ export function transformDistributionForChart(
       count: item.count,
       stockValue: item.value,
       color: config.color,
-    };
-  });
+    }
+  })
 }
 
 /**
@@ -462,19 +459,17 @@ export function transformDistributionForChart(
  * @param trends - Trend data points from API
  * @returns Array of chart data points
  */
-export function transformTrendsForChart(
-  trends: TrendDataPoint[]
-): TrendChartData[] {
-  return trends.map((point) => ({
+export function transformTrendsForChart(trends: TrendDataPoint[]): TrendChartData[] {
+  return trends.map(point => ({
     date: point.date,
     dateLabel: formatDateShort(point.date),
     highly_liquid: point.distribution.highly_liquid_pct,
-    medium_liquid: point.distribution.medium_liquid_pct,
-    low_liquid: point.distribution.low_liquid_pct,
+    medium: point.distribution.medium_pct,
+    low: point.distribution.low_pct,
     illiquid: point.distribution.illiquid_pct,
     frozen_capital: point.frozen_capital,
     avg_turnover: point.avg_turnover_days,
-  }));
+  }))
 }
 
 /**
@@ -483,12 +478,22 @@ export function transformTrendsForChart(
  * @returns Short date format (e.g., "12 дек")
  */
 export function formatDateShort(dateStr: string): string {
-  const date = new Date(dateStr);
+  const date = new Date(dateStr)
   const months = [
-    'янв', 'фев', 'мар', 'апр', 'май', 'июн',
-    'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'
-  ];
-  return `${date.getDate()} ${months[date.getMonth()]}`;
+    'янв',
+    'фев',
+    'мар',
+    'апр',
+    'май',
+    'июн',
+    'июл',
+    'авг',
+    'сен',
+    'окт',
+    'ноя',
+    'дек',
+  ]
+  return `${date.getDate()} ${months[date.getMonth()]}`
 }
 
 // ============================================================================
@@ -501,7 +506,7 @@ export function formatDateShort(dateStr: string): string {
  * @returns Count of illiquid SKUs
  */
 export function getIlliquidSkuCount(summary: LiquiditySummary): number {
-  return summary.distribution.illiquid.count;
+  return summary.distribution.illiquid.count
 }
 
 /**
@@ -510,7 +515,7 @@ export function getIlliquidSkuCount(summary: LiquiditySummary): number {
  * @returns Count of SKUs needing attention
  */
 export function getAttentionNeededCount(summary: LiquiditySummary): number {
-  return summary.distribution.low_liquid.count + summary.distribution.illiquid.count;
+  return summary.distribution.low.count + summary.distribution.illiquid.count
 }
 
 /**
@@ -519,7 +524,7 @@ export function getAttentionNeededCount(summary: LiquiditySummary): number {
  * @returns True if within target
  */
 export function isFrozenCapitalHealthy(summary: LiquiditySummary): boolean {
-  return summary.frozen_capital_pct < 5;
+  return summary.frozen_capital_pct < 5
 }
 
 /**
@@ -528,7 +533,7 @@ export function isFrozenCapitalHealthy(summary: LiquiditySummary): boolean {
  * @returns True if meeting target
  */
 export function isHighlyLiquidHealthy(summary: LiquiditySummary): boolean {
-  return summary.distribution.highly_liquid.pct > 50;
+  return summary.distribution.highly_liquid.pct > 50
 }
 
 /**
@@ -541,9 +546,9 @@ export function calculatePotentialUnlock(
   summary: LiquiditySummary,
   avgDiscountPct: number = 30
 ): number {
-  const frozenValue = summary.frozen_capital;
-  const recoveryRate = (100 - avgDiscountPct) / 100;
-  return frozenValue * recoveryRate;
+  const frozenValue = summary.frozen_capital
+  const recoveryRate = (100 - avgDiscountPct) / 100
+  return frozenValue * recoveryRate
 }
 
 // ============================================================================
@@ -557,22 +562,22 @@ export function calculatePotentialUnlock(
  * @returns Recommended scenario or null
  */
 export function getRecommendedScenario(
-  scenarios: { target_days: number; suggested_discount_pct: number; is_profitable: boolean }[] | null
+  scenarios:
+    | { target_days: number; suggested_discount_pct: number; is_profitable: boolean }[]
+    | null
 ): typeof scenarios extends null ? null : NonNullable<typeof scenarios>[number] | null {
-  if (!scenarios || scenarios.length === 0) return null;
+  if (!scenarios || scenarios.length === 0) return null
 
   // Find profitable scenarios
-  const profitable = scenarios.filter((s) => s.is_profitable);
-  if (profitable.length === 0) return null;
+  const profitable = scenarios.filter(s => s.is_profitable)
+  if (profitable.length === 0) return null
 
   // Prefer 60-day target as balanced option
-  const balanced = profitable.find((s) => s.target_days === 60);
-  if (balanced) return balanced;
+  const balanced = profitable.find(s => s.target_days === 60)
+  if (balanced) return balanced
 
   // Fallback to scenario with lowest discount
-  return profitable.reduce((a, b) =>
-    a.suggested_discount_pct < b.suggested_discount_pct ? a : b
-  );
+  return profitable.reduce((a, b) => (a.suggested_discount_pct < b.suggested_discount_pct ? a : b))
 }
 
 /**
@@ -581,7 +586,7 @@ export function getRecommendedScenario(
  * @returns Formatted string (e.g., "-30%")
  */
 export function formatDiscount(pct: number): string {
-  return `-${pct}%`;
+  return `-${pct}%`
 }
 
 /**
@@ -590,9 +595,9 @@ export function formatDiscount(pct: number): string {
  * @returns Urgency label
  */
 export function getScenarioUrgencyLabel(targetDays: number): string {
-  if (targetDays <= 30) return 'Агрессивный';
-  if (targetDays <= 60) return 'Сбалансированный';
-  return 'Консервативный';
+  if (targetDays <= 30) return 'Агрессивный'
+  if (targetDays <= 60) return 'Сбалансированный'
+  return 'Консервативный'
 }
 
 /**
@@ -601,7 +606,7 @@ export function getScenarioUrgencyLabel(targetDays: number): string {
  * @returns Color hex
  */
 export function getScenarioUrgencyColor(targetDays: number): string {
-  if (targetDays <= 30) return '#EF4444'; // Red
-  if (targetDays <= 60) return '#EAB308'; // Yellow
-  return '#22C55E'; // Green
+  if (targetDays <= 30) return '#EF4444' // Red
+  if (targetDays <= 60) return '#EAB308' // Yellow
+  return '#22C55E' // Green
 }

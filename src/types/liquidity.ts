@@ -12,11 +12,11 @@
 /**
  * Liquidity classification based on turnover days
  * - highly_liquid: ≤30 days (fast movers)
- * - medium_liquid: 31-60 days (acceptable)
- * - low_liquid: 61-90 days (slow movers)
+ * - medium: 31-60 days (acceptable)
+ * - low: 61-90 days (slow movers)
  * - illiquid: >90 days (dead stock)
  */
-export type LiquidityCategory = 'highly_liquid' | 'medium_liquid' | 'low_liquid' | 'illiquid'
+export type LiquidityCategory = 'highly_liquid' | 'medium' | 'low' | 'illiquid'
 
 /**
  * Action type recommendation
@@ -157,8 +157,8 @@ export interface LiquidityDistributionItem {
  */
 export interface LiquidityDistribution {
   highly_liquid: LiquidityDistributionItem
-  medium_liquid: LiquidityDistributionItem
-  low_liquid: LiquidityDistributionItem
+  medium: LiquidityDistributionItem
+  low: LiquidityDistributionItem
   illiquid: LiquidityDistributionItem
 }
 
@@ -236,8 +236,8 @@ export interface LiquidityResponse {
  */
 export interface TrendDistribution {
   highly_liquid_pct: number
-  medium_liquid_pct: number
-  low_liquid_pct: number
+  medium_pct: number
+  low_pct: number
   illiquid_pct: number
 }
 
@@ -372,8 +372,8 @@ export interface TrendChartData {
   dateLabel: string
   /** Category percentages */
   highly_liquid: number
-  medium_liquid: number
-  low_liquid: number
+  medium: number
+  low: number
   illiquid: number
   /** Frozen capital */
   frozen_capital: number

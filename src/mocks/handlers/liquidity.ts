@@ -31,8 +31,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
  */
 function getLiquidityCategoryFromDays(days: number): LiquidityCategory {
   if (days <= 30) return 'highly_liquid'
-  if (days <= 60) return 'medium_liquid'
-  if (days <= 90) return 'low_liquid'
+  if (days <= 60) return 'medium'
+  if (days <= 90) return 'low'
   return 'illiquid'
 }
 
@@ -43,7 +43,7 @@ function generateLiquidationScenarios(
   currentPrice: number,
   cogsPerUnit: number,
   currentStock: number,
-  velocityPerDay: number,
+  velocityPerDay: number
 ): LiquidationScenario[] {
   const scenarios: LiquidationScenario[] = []
   const targetDays = [30, 60, 90]
@@ -82,9 +82,7 @@ function generateLiquidationScenarios(
 /**
  * Generate a mock liquidity item
  */
-export function generateMockLiquidityItem(
-  overrides: Partial<LiquidityItem> = {},
-): LiquidityItem {
+export function generateMockLiquidityItem(overrides: Partial<LiquidityItem> = {}): LiquidityItem {
   const turnoverDays = overrides.turnover_days ?? 45
   const category = getLiquidityCategoryFromDays(turnoverDays)
   const currentPrice = overrides.current_price ?? 1000
@@ -108,9 +106,10 @@ export function generateMockLiquidityItem(
     cogs_per_unit: cogsPerUnit,
     recommendation: overrides.recommendation ?? getRecommendation(category),
     action_type: overrides.action_type ?? getActionType(category),
-    liquidation_scenarios: category === 'illiquid'
-      ? generateLiquidationScenarios(currentPrice, cogsPerUnit, currentStock, velocityPerDay)
-      : null,
+    liquidation_scenarios:
+      category === 'illiquid'
+        ? generateLiquidationScenarios(currentPrice, cogsPerUnit, currentStock, velocityPerDay)
+        : null,
   }
 
   return item
@@ -120,9 +119,9 @@ function getRecommendation(category: LiquidityCategory): string {
   switch (category) {
     case 'highly_liquid':
       return 'Масштабируйте — инвестируйте больше'
-    case 'medium_liquid':
+    case 'medium':
       return 'Поддерживайте текущий уровень'
-    case 'low_liquid':
+    case 'low':
       return 'Рассмотрите сокращение закупок'
     case 'illiquid':
       return 'Рекомендуется ликвидация со скидкой'
@@ -133,9 +132,9 @@ function getActionType(category: LiquidityCategory): LiquidityItem['action_type'
   switch (category) {
     case 'highly_liquid':
       return 'MAXIMIZE'
-    case 'medium_liquid':
+    case 'medium':
       return 'MAINTAIN'
-    case 'low_liquid':
+    case 'low':
       return 'REDUCE'
     case 'illiquid':
       return 'LIQUIDATE'
@@ -145,16 +144,15 @@ function getActionType(category: LiquidityCategory): LiquidityItem['action_type'
 /**
  * Generate mock distribution
  */
-export function generateMockDistribution(
-  items: LiquidityItem[],
-): LiquidityDistribution {
+export function generateMockDistribution(items: LiquidityItem[]): LiquidityDistribution {
   const calcDistItem = (category: LiquidityCategory) => {
-    const categoryItems = items.filter((i) => i.liquidity_category === category)
+    const categoryItems = items.filter(i => i.liquidity_category === category)
     const totalValue = items.reduce((sum, i) => sum + i.stock_value, 0)
     const categoryValue = categoryItems.reduce((sum, i) => sum + i.stock_value, 0)
-    const avgTurnover = categoryItems.length > 0
-      ? categoryItems.reduce((sum, i) => sum + i.turnover_days, 0) / categoryItems.length
-      : 0
+    const avgTurnover =
+      categoryItems.length > 0
+        ? categoryItems.reduce((sum, i) => sum + i.turnover_days, 0) / categoryItems.length
+        : 0
 
     return {
       count: categoryItems.length,
@@ -166,8 +164,8 @@ export function generateMockDistribution(
 
   return {
     highly_liquid: calcDistItem('highly_liquid'),
-    medium_liquid: calcDistItem('medium_liquid'),
-    low_liquid: calcDistItem('low_liquid'),
+    medium: calcDistItem('medium'),
+    low: calcDistItem('low'),
     illiquid: calcDistItem('illiquid'),
   }
 }
@@ -177,7 +175,7 @@ export function generateMockDistribution(
  */
 export function generateMockBenchmarks(
   distribution: LiquidityDistribution,
-  avgTurnover: number,
+  avgTurnover: number
 ): LiquidityBenchmarks {
   const illiquidPct = distribution.illiquid.pct
   const highlyLiquidPct = distribution.highly_liquid.pct
@@ -210,9 +208,8 @@ export function generateMockBenchmarks(
  */
 export function generateMockLiquiditySummary(items: LiquidityItem[]): LiquiditySummary {
   const totalValue = items.reduce((sum, i) => sum + i.stock_value, 0)
-  const avgTurnover = items.length > 0
-    ? items.reduce((sum, i) => sum + i.turnover_days, 0) / items.length
-    : 0
+  const avgTurnover =
+    items.length > 0 ? items.reduce((sum, i) => sum + i.turnover_days, 0) / items.length : 0
   const distribution = generateMockDistribution(items)
   const frozenCapital = distribution.illiquid.value
 
@@ -247,8 +244,8 @@ export function generateMockTrends(period: number = 90): TrendDataPoint[] {
       date: date.toISOString().split('T')[0],
       distribution: {
         highly_liquid_pct: highlyLiquidPct,
-        medium_liquid_pct: 25 - progress * 3,
-        low_liquid_pct: 15 - progress * 5,
+        medium_pct: 25 - progress * 3,
+        low_pct: 15 - progress * 5,
         illiquid_pct: Math.max(2, illiquidPct),
       },
       frozen_capital: 100000 - progress * 70000,
@@ -359,7 +356,7 @@ export const liquidityHandlers = [
             message: 'Internal server error',
           },
         },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -381,7 +378,7 @@ export const liquidityHandlers = [
 
     // Apply category filter
     if (categoryFilter && categoryFilter !== 'all') {
-      items = items.filter((i) => i.liquidity_category === categoryFilter)
+      items = items.filter(i => i.liquidity_category === categoryFilter)
     }
 
     // Apply sorting
@@ -445,7 +442,7 @@ export const liquidityErrorHandlers = {
           message: 'No inventory data available',
         },
       },
-      { status: 404 },
+      { status: 404 }
     )
   }),
 
@@ -458,7 +455,7 @@ export const liquidityErrorHandlers = {
           message: 'Internal server error',
         },
       },
-      { status: 500 },
+      { status: 500 }
     )
   }),
 
@@ -471,7 +468,7 @@ export const liquidityErrorHandlers = {
           message: 'Authentication required',
         },
       },
-      { status: 401 },
+      { status: 401 }
     )
   }),
 }

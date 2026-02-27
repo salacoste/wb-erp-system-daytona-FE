@@ -209,7 +209,7 @@ export function useHighlyLiquidStock(
  * @returns Query result with filtered SKUs
  *
  * @example
- * const { data } = useLiquidityByCategory('low_liquid', {
+ * const { data } = useLiquidityByCategory('low', {
  *   sort_by: 'turnover_days',
  *   limit: 100,
  * });
