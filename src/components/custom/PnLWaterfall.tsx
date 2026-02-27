@@ -649,17 +649,16 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                   formula="COGS = Σ (Закупочная цена × Кол-во проданных)"
                   percentOfRevenue={cogsPct}
                 />
+                {/* Story 70.2-FE: Tooltip clarified — formula explicitly states К перечислению − COGS */}
                 <PnLRow
                   label="Валовая прибыль"
                   value={grossProfit}
                   isTotal
                   highlight={grossProfit && grossProfit > 0 ? 'positive' : 'negative'}
-                  tooltip="Ваш РЕАЛЬНЫЙ заработок после всех удержаний WB
-                          и вычета себестоимости товаров.
-
-                          Это деньги, которые остаются у вас после оплаты
-                          товаров поставщикам и всех комиссий маркетплейса."
-                  formula="Валовая прибыль = Payout − COGS"
+                  tooltip="Ваш РЕАЛЬНЫЙ заработок после всех удержаний WB и вычета себестоимости товаров.
+                          Это деньги, которые остаются у вас после оплаты товаров поставщикам и всех комиссий маркетплейса.
+                          Формула: К перечислению за товар − Себестоимость (COGS)"
+                  formula="Валовая прибыль = К перечислению − Себестоимость (COGS)"
                   percentOfRevenue={profitToRevenuePct}
                 />
 
@@ -759,8 +758,9 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                       <p className="text-xs mt-1">
                         Сколько рублей прибыли приносит каждый рубль, вложенный в закупку товаров.
                       </p>
+                      {/* Story 70.2-FE: Fixed ROI formula — uses payout-minus-COGS, not gross-profit/COGS */}
                       <p className="text-xs font-mono mt-2 bg-slate-100 p-1 rounded">
-                        ROI = (Валовая прибыль ÷ COGS) × 100%
+                        ROI = (Чистая выручка − COGS) ÷ COGS × 100%
                       </p>
                       <p className="text-xs mt-1 text-green-600">Норма: &gt;50%</p>
                     </TooltipContent>
@@ -784,8 +784,9 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                       <p className="text-xs mt-1">
                         Средняя валовая прибыль с каждой проданной единицы товара.
                       </p>
+                      {/* Story 70.2-FE: Fixed PPU formula — clarifies it is (payout − COGS) ÷ qty, not gross-profit label */}
                       <p className="text-xs font-mono mt-2 bg-slate-100 p-1 rounded">
-                        Прибыль/ед = Валовая прибыль ÷ Кол-во проданных
+                        Прибыль/ед = (Чистая выручка − COGS) ÷ Кол-во проданных
                       </p>
                     </TooltipContent>
                   </Tooltip>

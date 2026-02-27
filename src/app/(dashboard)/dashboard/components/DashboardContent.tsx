@@ -81,23 +81,22 @@ export function DashboardContent(): React.ReactElement {
   const cogsCoverage =
     productCount && productCount > 0 ? (inventoryWithCogs / productCount) * 100 : 0
 
-  const s = financialComparison.current?.summary_rus
-  const st = financialComparison.current?.summary_total
+  // Story 70.1-FE: Use single summary source (summary_total = consolidated RUS+EAEU)
+  const summary = financialComparison.current?.summary_total ?? null
   const fSummary = fulfillmentQuery.current?.summary
   // wb_services_cost includes wb_promotion_cost; split out promotions to AdvertisingCard
-  const rawWbServices = s?.wb_services_cost ?? st?.wb_services_cost_total
-  const rawWbPromo = s?.wb_promotion_cost ?? st?.wb_promotion_cost_total
+  const rawWbServices = summary?.wb_services_cost_total
+  const rawWbPromo = summary?.wb_promotion_cost_total
   const wbServicesExPromo = rawWbServices != null ? rawWbServices - (rawWbPromo ?? 0) : undefined
   // Use product_transactions from finance-summary (includes FBO+FBS+EAEU)
   // Fulfillment API fbo.salesCount misses FBS/EAEU sales (167 vs actual 187)
-  const salesCount = s?.product_transactions ?? st?.product_transactions ?? undefined
+  const salesCount = summary?.product_transactions ?? undefined
   const returnsCount = fSummary
     ? (fSummary.fbo.returnsCount ?? 0) + (fSummary.fbs.returnsCount ?? 0)
     : undefined
 
   const previousPeriodData = usePreviousPeriodData({
-    prevSummaryRus: financialComparison.previous?.summary_rus,
-    prevSummaryTotal: financialComparison.previous?.summary_total,
+    prevSummary: financialComparison.previous?.summary_total ?? null,
     fulfillmentPrevious: fulfillmentQuery.previous,
     advertisingPrevious: advertisingQuery.previous,
   })
@@ -139,7 +138,7 @@ export function DashboardContent(): React.ReactElement {
       {isFailed && <FailedAlert />}
       {error && !isProcessing && !isWeekNotAvailable && <ErrorAlert onRetry={handleRetry} />}
 
-      <TaxWarningBanner taxConfigured={!!st?.tax} />
+      <TaxWarningBanner taxConfigured={!!summary?.tax} />
 
       {!isWeekNotAvailable && (
         <>
@@ -149,37 +148,33 @@ export function DashboardContent(): React.ReactElement {
             ordersRevenueDiscounted={fSummary?.total.ordersRevenueDiscounted}
             salesCount={salesCount}
             returnsCount={returnsCount}
-            saleGross={s?.sale_gross ?? st?.sale_gross_total}
-            wbSalesGross={s?.wb_sales_gross ?? st?.wb_sales_gross_total}
-            wbReturnsGross={s?.wb_returns_gross ?? st?.wb_returns_gross_total}
-            commissionSales={s?.commission_sales ?? st?.commission_sales_total}
-            acquiringFee={s?.acquiring_fee ?? st?.acquiring_fee_total}
-            loyaltyFee={s?.loyalty_fee ?? st?.loyalty_fee_total}
-            penaltiesTotal={s?.penalties_total ?? st?.penalties_total}
-            wbCommissionAdj={s?.wb_commission_adj ?? st?.wb_commission_adj_total}
+            saleGross={summary?.sale_gross_total}
+            wbSalesGross={summary?.wb_sales_gross_total}
+            wbReturnsGross={summary?.wb_returns_gross_total}
+            commissionSales={summary?.commission_sales_total}
+            acquiringFee={summary?.acquiring_fee_total}
+            loyaltyFee={summary?.loyalty_fee_total}
+            penaltiesTotal={summary?.penalties_total}
+            wbCommissionAdj={summary?.wb_commission_adj_total}
             wbServicesCost={wbServicesExPromo}
-            logisticsCost={s?.logistics_cost ?? st?.logistics_cost_total}
-            payoutTotal={s?.payout_total ?? st?.payout_total}
-            storageCost={s?.storage_cost ?? st?.storage_cost_total}
-            paidAcceptanceCost={s?.paid_acceptance_cost ?? st?.paid_acceptance_cost_total}
-            cogsTotal={s?.cogs_total ?? st?.cogs_total ?? undefined}
+            logisticsCost={summary?.logistics_cost_total}
+            payoutTotal={summary?.payout_total}
+            storageCost={summary?.storage_cost_total}
+            paidAcceptanceCost={summary?.paid_acceptance_cost_total}
+            cogsTotal={summary?.cogs_total ?? undefined}
             cogsCoverage={cogsCoverage}
             productsWithCogs={inventoryWithCogs}
             totalProducts={productCount ?? 0}
             advertisingSpend={advertisingQuery.current?.summary?.total_spend}
             advertisingRoas={advertisingQuery.current?.summary?.overall_roas}
             wbPromotionCost={rawWbPromo ?? undefined}
-            grossProfit={s?.gross_profit ?? st?.gross_profit ?? undefined}
-            marginPct={s?.margin_pct ?? st?.margin_pct ?? undefined}
-            grossProfitAnalytical={
-              s?.gross_profit_analytical ?? st?.gross_profit_analytical ?? undefined
-            }
-            operatingProfitAnalytical={
-              s?.operating_profit_analytical ?? st?.operating_profit_analytical ?? undefined
-            }
-            operatingMarginPct={s?.operating_margin_pct ?? st?.operating_margin_pct ?? undefined}
-            grossMarginPct={s?.gross_margin_pct ?? st?.gross_margin_pct ?? undefined}
-            taxMetrics={st?.tax ?? null}
+            grossProfit={summary?.gross_profit ?? undefined}
+            marginPct={summary?.margin_pct ?? undefined}
+            grossProfitAnalytical={summary?.gross_profit_analytical ?? undefined}
+            operatingProfitAnalytical={summary?.operating_profit_analytical ?? undefined}
+            operatingMarginPct={summary?.operating_margin_pct ?? undefined}
+            grossMarginPct={summary?.gross_margin_pct ?? undefined}
+            taxMetrics={summary?.tax ?? null}
             previousPeriodData={previousPeriodData}
             isLoading={isLoading || productsLoading || cogsLoading}
             error={error}

@@ -12,46 +12,42 @@ import type { FulfillmentSummaryResponse } from '@/types/fulfillment'
 import type { FinanceSummary } from '@/types/finance-summary'
 
 interface UsePreviousPeriodDataParams {
-  prevSummaryRus: FinanceSummary | null | undefined
-  prevSummaryTotal: FinanceSummary | null | undefined
+  // Story 70.1-FE: Single summary source (no field-level mixing)
+  prevSummary: FinanceSummary | null | undefined
   fulfillmentPrevious: FulfillmentSummaryResponse | undefined
   advertisingPrevious: { summary?: { total_spend?: number } } | undefined
 }
 
 /**
  * Calculate previous period data for P&L dashboard comparison
+ * Story 70.1-FE: Uses single summary_total source to avoid RUS/EAEU mixing
  */
 export function usePreviousPeriodData(
   params: UsePreviousPeriodDataParams
 ): PreviousPeriodData | undefined {
-  const {
-    prevSummaryRus: s,
-    prevSummaryTotal: st,
-    fulfillmentPrevious,
-    advertisingPrevious,
-  } = params
+  const { prevSummary: s, fulfillmentPrevious, advertisingPrevious } = params
 
   return useMemo<PreviousPeriodData | undefined>(() => {
-    if (!s && !st && !fulfillmentPrevious && !advertisingPrevious) {
+    if (!s && !fulfillmentPrevious && !advertisingPrevious) {
       return undefined
     }
 
     const prevAdvertisingSpend = advertisingPrevious?.summary?.total_spend ?? null
-    const prevLogisticsCost = s?.logistics_cost ?? st?.logistics_cost_total ?? null
-    const prevStorageCost = s?.storage_cost ?? st?.storage_cost_total ?? null
-    const prevPaidAcceptance = s?.paid_acceptance_cost ?? st?.paid_acceptance_cost_total ?? null
-    const prevCogsTotal = s?.cogs_total ?? st?.cogs_total ?? null
-    const prevWbPromotionCost = s?.wb_promotion_cost ?? st?.wb_promotion_cost_total ?? null
+    const prevLogisticsCost = s?.logistics_cost_total ?? null
+    const prevStorageCost = s?.storage_cost_total ?? null
+    const prevPaidAcceptance = s?.paid_acceptance_cost_total ?? null
+    const prevCogsTotal = s?.cogs_total ?? null
+    const prevWbPromotionCost = s?.wb_promotion_cost_total ?? null
 
     // WB Commissions: sum of 6 commission/fee fields, minus wb_promotion_cost
     // (promotions shown separately in AdvertisingCard)
     const commissionFields = [
-      s?.commission_sales ?? st?.commission_sales_total,
-      s?.acquiring_fee ?? st?.acquiring_fee_total,
-      s?.loyalty_fee ?? st?.loyalty_fee_total,
-      s?.penalties_total ?? st?.penalties_total,
-      s?.wb_commission_adj ?? st?.wb_commission_adj_total,
-      s?.wb_services_cost ?? st?.wb_services_cost_total,
+      s?.commission_sales_total,
+      s?.acquiring_fee_total,
+      s?.loyalty_fee_total,
+      s?.penalties_total,
+      s?.wb_commission_adj_total,
+      s?.wb_services_cost_total,
     ]
     const hasAnyCommission = commissionFields.some(v => v != null)
     let wbCommissionsTotal: number | null = hasAnyCommission
@@ -71,30 +67,29 @@ export function usePreviousPeriodData(
     return {
       ordersAmount: fulfillmentPrevious?.summary.total.ordersRevenue ?? null,
       ordersCount: fulfillmentPrevious?.summary.total.ordersCount ?? null,
-      saleGross: s?.sale_gross ?? st?.sale_gross_total ?? null,
+      saleGross: s?.sale_gross_total ?? null,
       wbCommissionsTotal,
       logisticsCost: prevLogisticsCost,
-      payoutTotal: s?.payout_total ?? st?.payout_total ?? null,
+      payoutTotal: s?.payout_total ?? null,
       storageAcceptanceTotal,
       cogsTotal: prevCogsTotal,
       advertisingSpend: prevAdvertisingSpend,
       wbPromotionCost: prevWbPromotionCost,
-      grossProfit: s?.gross_profit ?? st?.gross_profit ?? null,
-      marginPct: s?.margin_pct ?? st?.margin_pct ?? null,
+      grossProfit: s?.gross_profit ?? null,
+      marginPct: s?.margin_pct ?? null,
       // Request #155: Analytical profit/margin
-      grossProfitAnalytical: s?.gross_profit_analytical ?? st?.gross_profit_analytical ?? null,
-      operatingProfitAnalytical:
-        s?.operating_profit_analytical ?? st?.operating_profit_analytical ?? null,
-      grossMarginPct: s?.gross_margin_pct ?? st?.gross_margin_pct ?? null,
-      operatingMarginPct: s?.operating_margin_pct ?? st?.operating_margin_pct ?? null,
+      grossProfitAnalytical: s?.gross_profit_analytical ?? null,
+      operatingProfitAnalytical: s?.operating_profit_analytical ?? null,
+      grossMarginPct: s?.gross_margin_pct ?? null,
+      operatingMarginPct: s?.operating_margin_pct ?? null,
       // Epic 66-FE: Tax metrics for comparison
-      taxMetrics: st?.tax ?? null,
+      taxMetrics: s?.tax ?? null,
       // Legacy fields for backward compatibility
       ordersCogs: null,
-      salesAmount: s?.wb_sales_gross ?? st?.wb_sales_gross_total ?? null,
+      salesAmount: s?.wb_sales_gross_total ?? null,
       salesCogs: prevCogsTotal,
       storageCost: prevStorageCost,
       theoreticalProfit: null,
     }
-  }, [s, st, fulfillmentPrevious, advertisingPrevious])
+  }, [s, fulfillmentPrevious, advertisingPrevious])
 }
