@@ -64,9 +64,12 @@ export function BuyoutSummaryWidget({
             />
           </div>
           <p className="text-xs text-muted-foreground">
-            Возвраты: {data.totalReturnsCount.toLocaleString('ru-RU')} из{' '}
+            Возвраты (FBS): {data.totalReturnsCount.toLocaleString('ru-RU')} из{' '}
             {data.totalSalesCount.toLocaleString('ru-RU')} продаж
             {data.skuCount != null && ` (${data.skuCount} SKU)`}
+          </p>
+          <p className="text-xs text-muted-foreground/70">
+            В таблице по SKU — все возвраты (FBO+FBS), включая оценочные
           </p>
         </div>
 
