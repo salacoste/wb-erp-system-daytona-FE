@@ -69,9 +69,9 @@ export default function CogsManagementPage() {
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          После назначения себестоимости маржа будет рассчитана автоматически на основе
-          данных продаж за последнюю завершённую неделю. Для товаров без продаж в этот
-          период будет показан исторический контекст за последние 12 недель.
+          После назначения себестоимости маржа будет рассчитана автоматически на основе данных
+          продаж за последнюю завершённую неделю. Для товаров без продаж в этот период будет показан
+          исторический контекст за последние 12 недель.
         </AlertDescription>
       </Alert>
 
@@ -79,9 +79,7 @@ export default function CogsManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle>Список товаров</CardTitle>
-          <CardDescription>
-            Кликните на товар для назначения себестоимости
-          </CardDescription>
+          <CardDescription>Кликните на товар для назначения себестоимости</CardDescription>
         </CardHeader>
         <CardContent>
           <ProductList
@@ -90,6 +88,7 @@ export default function CogsManagementPage() {
             showOnlyWithoutCogs={false}
             enableSelection={true}
             enableMarginDisplay={true}
+            enableStorageDisplay={true}
           />
         </CardContent>
       </Card>
@@ -146,8 +145,8 @@ export default function CogsManagementPage() {
           <div>
             <strong>4. Версионирование</strong>
             <p className="mt-1 text-blue-800">
-              История изменений себестоимости сохраняется, можно назначить новую
-              себестоимость с любой даты
+              История изменений себестоимости сохраняется, можно назначить новую себестоимость с
+              любой даты
             </p>
           </div>
         </CardContent>

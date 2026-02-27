@@ -6,7 +6,7 @@ import { format, subDays, differenceInDays, parse } from 'date-fns'
 import { Megaphone } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useAdvertisingAnalytics } from '@/hooks/useAdvertisingAnalytics'
+import { useAdvertisingAnalytics, useAdvertisingSyncStatus } from '@/hooks/useAdvertisingAnalytics'
 import type { ViewByMode, GroupByMode } from '@/types/advertising-analytics'
 import { AdvertisingPageHeader } from './components/AdvertisingPageHeader'
 import { AdvertisingFilters } from './components/AdvertisingFilters'
@@ -85,26 +85,26 @@ export default function AdvertisingAnalyticsPage() {
     return { from: fromParam, to: toParam }
   })
 
-  const [viewBy, setViewBy] = useState<ViewByMode>(() =>
-    (searchParams.get('view') as ViewByMode) || 'sku'
+  const [viewBy, setViewBy] = useState<ViewByMode>(
+    () => (searchParams.get('view') as ViewByMode) || 'sku'
   )
 
   // Epic 36: Product Card Linking - groupBy state
-  const [groupBy, setGroupBy] = useState<GroupByMode>(() =>
-    (searchParams.get('group_by') as GroupByMode) || 'sku'
+  const [groupBy, setGroupBy] = useState<GroupByMode>(
+    () => (searchParams.get('group_by') as GroupByMode) || 'sku'
   )
 
   // Sorting state (AC3: default Spend desc)
-  const [sortBy, setSortBy] = useState<SortField>(() =>
-    (searchParams.get('sort') as SortField) || 'spend'
+  const [sortBy, setSortBy] = useState<SortField>(
+    () => (searchParams.get('sort') as SortField) || 'spend'
   )
-  const [sortOrder, setSortOrder] = useState<SortOrder>(() =>
-    (searchParams.get('order') as SortOrder) || 'desc'
+  const [sortOrder, setSortOrder] = useState<SortOrder>(
+    () => (searchParams.get('order') as SortOrder) || 'desc'
   )
 
   // Filter state (AC4)
-  const [efficiencyFilter, setEfficiencyFilter] = useState<EfficiencyFilter>(() =>
-    (searchParams.get('status') as EfficiencyFilter) || 'all'
+  const [efficiencyFilter, setEfficiencyFilter] = useState<EfficiencyFilter>(
+    () => (searchParams.get('status') as EfficiencyFilter) || 'all'
   )
 
   // Pagination state (AC5)
@@ -117,8 +117,14 @@ export default function AdvertisingAnalyticsPage() {
   const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>(() => {
     const campaignsParam = searchParams.get('campaigns')
     if (!campaignsParam) return []
-    return campaignsParam.split(',').map(Number).filter((n) => !isNaN(n))
+    return campaignsParam
+      .split(',')
+      .map(Number)
+      .filter(n => !isNaN(n))
   })
+
+  // Fetch data availability bounds for date picker constraints
+  const { data: syncStatus } = useAdvertisingSyncStatus({ refetchInterval: 0 })
 
   // Fetch advertising analytics data
   const { data, isLoading, error, refetch } = useAdvertisingAnalytics({
@@ -155,7 +161,17 @@ export default function AdvertisingAnalyticsPage() {
       params.set('campaigns', selectedCampaigns.join(','))
     }
     router.replace(`?${params.toString()}`, { scroll: false })
-  }, [router, dateRange, viewBy, groupBy, sortBy, sortOrder, efficiencyFilter, page, selectedCampaigns])
+  }, [
+    router,
+    dateRange,
+    viewBy,
+    groupBy,
+    sortBy,
+    sortOrder,
+    efficiencyFilter,
+    page,
+    selectedCampaigns,
+  ])
 
   // Update URL when state changes
   useEffect(() => {
@@ -211,7 +227,7 @@ export default function AdvertisingAnalyticsPage() {
     console.log('[AdvertisingPage] handleCampaignFilterChange called:', {
       oldCampaigns: selectedCampaigns,
       newCampaigns: campaignIds,
-      stackTrace: new Error().stack
+      stackTrace: new Error().stack,
     })
     setSelectedCampaigns(campaignIds)
     setPage(1) // Reset to first page
@@ -280,7 +296,7 @@ export default function AdvertisingAnalyticsPage() {
   // IMPORTANT: Must be called before any early returns to comply with React hooks rules
   const lossCount = useMemo(() => {
     if (!data?.data) return 0
-    return data.data.filter((item) => item.efficiency_status === 'loss').length
+    return data.data.filter(item => item.efficiency_status === 'loss').length
   }, [data?.data])
 
   // Error state
@@ -292,10 +308,7 @@ export default function AdvertisingAnalyticsPage() {
         <Alert variant="destructive">
           <AlertDescription className="flex items-center justify-between">
             <span>Не удалось загрузить данные рекламной аналитики. Попробуйте позже.</span>
-            <button
-              onClick={() => refetch()}
-              className="text-sm underline hover:no-underline ml-4"
-            >
+            <button onClick={() => refetch()} className="text-sm underline hover:no-underline ml-4">
               Повторить
             </button>
           </AlertDescription>
@@ -316,13 +329,22 @@ export default function AdvertisingAnalyticsPage() {
           onDateRangeChange={handleDateRangeChange}
           viewBy={viewBy}
           onViewByChange={handleViewByChange}
+          dataAvailableFrom={syncStatus?.dataAvailableFrom}
+          dataAvailableTo={syncStatus?.dataAvailableTo}
         />
 
         <Card>
           {/* Show Campaign + Efficiency filters even in empty state */}
           <CardHeader className="flex flex-row items-end justify-between space-y-0 pb-4">
             <CardTitle className="text-lg font-semibold pb-2">
-              Детализация по {viewBy === 'sku' ? 'товарам' : viewBy === 'campaign' ? 'кампаниям' : viewBy === 'brand' ? 'брендам' : 'категориям'}
+              Детализация по{' '}
+              {viewBy === 'sku'
+                ? 'товарам'
+                : viewBy === 'campaign'
+                  ? 'кампаниям'
+                  : viewBy === 'brand'
+                    ? 'брендам'
+                    : 'категориям'}
             </CardTitle>
             <div className="flex items-end gap-3">
               <CampaignSelector
@@ -377,27 +399,26 @@ export default function AdvertisingAnalyticsPage() {
       />
 
       {/* Summary Cards: Spend, ROAS, ROI, Active Campaigns */}
-      <AdvertisingSummaryCards
-        summary={data?.summary}
-        isLoading={isLoading}
-      />
+      <AdvertisingSummaryCards summary={data?.summary} isLoading={isLoading} />
 
       {/* Epic 36: Group By Toggle (separate row above table per PO decision) */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Группировка
-        </h3>
-        <GroupByToggle
-          groupBy={groupBy}
-          onGroupByChange={handleGroupByChange}
-        />
+        <h3 className="text-sm font-medium text-muted-foreground">Группировка</h3>
+        <GroupByToggle groupBy={groupBy} onGroupByChange={handleGroupByChange} />
       </div>
 
       {/* Performance Metrics Table (Story 33.3-fe) */}
       <Card>
         <CardHeader className="flex flex-row items-end justify-between space-y-0 pb-4">
           <CardTitle className="text-lg font-semibold pb-2">
-            Детализация по {viewBy === 'sku' ? 'товарам' : viewBy === 'campaign' ? 'кампаниям' : viewBy === 'brand' ? 'брендам' : 'категориям'}
+            Детализация по{' '}
+            {viewBy === 'sku'
+              ? 'товарам'
+              : viewBy === 'campaign'
+                ? 'кампаниям'
+                : viewBy === 'brand'
+                  ? 'брендам'
+                  : 'категориям'}
           </CardTitle>
           {/* Filters: Campaign + Efficiency (Story 33.5-fe) */}
           <div className="flex items-end gap-3">
@@ -418,8 +439,16 @@ export default function AdvertisingAnalyticsPage() {
           {features.epic37MergedGroups.enabled && groupBy === 'imtId' ? (
             <MergedGroupTable
               groups={mergedGroupsData}
-              sortConfig={{ field: sortBy as 'totalSales' | 'totalRevenue' | 'organicSales' | 'totalSpend' | 'roas', direction: sortOrder }}
-              onSort={(field) => handleSortChange(field as SortField)}
+              sortConfig={{
+                field: sortBy as
+                  | 'totalSales'
+                  | 'totalRevenue'
+                  | 'organicSales'
+                  | 'totalSpend'
+                  | 'roas',
+                direction: sortOrder,
+              }}
+              onSort={field => handleSortChange(field as SortField)}
               onProductClick={handleProductClick}
             />
           ) : (

@@ -24,6 +24,7 @@ export interface ProductListProps {
   showOnlyWithoutCogs?: boolean
   enableSelection?: boolean
   enableMarginDisplay?: boolean
+  enableStorageDisplay?: boolean
 }
 
 // Default column widths for ProductList table
@@ -33,6 +34,7 @@ const DEFAULT_COLUMN_WIDTHS = {
   name: 300,
   cogs: 140,
   margin: 150,
+  storage: 110,
   actions: 100,
 }
 
@@ -48,6 +50,7 @@ export function ProductList({
   showOnlyWithoutCogs = false,
   enableSelection = false,
   enableMarginDisplay = false,
+  enableStorageDisplay = false,
 }: ProductListProps) {
   const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
@@ -60,10 +63,7 @@ export function ProductList({
   const limit = 25
 
   // Resizable column widths with localStorage persistence
-  const { widths, handleResize } = useColumnWidths(
-    'products-table',
-    DEFAULT_COLUMN_WIDTHS
-  )
+  const { widths, handleResize } = useColumnWidths('products-table', DEFAULT_COLUMN_WIDTHS)
 
   const { isPolling: isProductPolling } = useMarginPollingStore()
 
@@ -80,11 +80,13 @@ export function ProductList({
     cursor,
     limit,
     include_margin: enableMarginDisplay,
+    include_storage: enableStorageDisplay,
   })
 
   // Track pending margin products for polling
   const pendingMargin = usePendingMarginProducts(data?.products || [], enableMarginDisplay)
-  const { mutate: triggerRecalculation, isPending: isRecalculating } = useManualMarginRecalculation()
+  const { mutate: triggerRecalculation, isPending: isRecalculating } =
+    useManualMarginRecalculation()
 
   useEffect(() => {
     if (data) setIsFirstLoad(false)
@@ -98,7 +100,7 @@ export function ProductList({
   }, [])
 
   const handleFilterToggle = useCallback(() => {
-    setHasCogs((prev) => {
+    setHasCogs(prev => {
       if (prev === undefined) return false
       if (prev === false) return true
       return undefined
@@ -107,12 +109,15 @@ export function ProductList({
     setPrevCursors([])
   }, [])
 
-  const handleProductClick = useCallback((product: ProductListItem) => {
-    if (enableSelection && onProductSelect) onProductSelect(product)
-  }, [enableSelection, onProductSelect])
+  const handleProductClick = useCallback(
+    (product: ProductListItem) => {
+      if (enableSelection && onProductSelect) onProductSelect(product)
+    },
+    [enableSelection, onProductSelect]
+  )
 
   const handlePreviousPage = useCallback(() => {
-    setPrevCursors((prev) => {
+    setPrevCursors(prev => {
       if (prev.length > 0) {
         const newPrevCursors = [...prev]
         const previousCursor = newPrevCursors.pop()
@@ -125,7 +130,7 @@ export function ProductList({
 
   const handleNextPage = useCallback(() => {
     if (data?.pagination?.next_cursor) {
-      setPrevCursors((prev) => [...prev, cursor!])
+      setPrevCursors(prev => [...prev, cursor!])
       setCursor(data.pagination.next_cursor)
     }
   }, [data?.pagination?.next_cursor, cursor])
@@ -133,7 +138,8 @@ export function ProductList({
   // Computed values
   const hasPrevious = prevCursors.length > 0 || cursor !== undefined
   const hasNext = Boolean(data?.pagination?.next_cursor)
-  const filterLabel = has_cogs === undefined ? 'Все товары' : has_cogs ? 'С себестоимостью' : 'Без себестоимости'
+  const filterLabel =
+    has_cogs === undefined ? 'Все товары' : has_cogs ? 'С себестоимостью' : 'Без себестоимости'
 
   // Loading state
   if (isLoading && isFirstLoad) return <ProductLoadingSkeleton />
@@ -146,7 +152,9 @@ export function ProductList({
         <AlertDescription>
           <div className="flex items-center justify-between">
             <span>{error instanceof Error ? error.message : 'Ошибка загрузки товаров'}</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>Повторить</Button>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              Повторить
+            </Button>
           </div>
         </AlertDescription>
       </Alert>
@@ -179,9 +187,7 @@ export function ProductList({
 
       <div className="rounded-md border overflow-x-auto">
         <Table className="table-fixed" aria-label="Список товаров">
-          <caption className="sr-only">
-            Список товаров с себестоимостью и маржинальностью
-          </caption>
+          <caption className="sr-only">Список товаров с себестоимостью и маржинальностью</caption>
           <TableHeader>
             <TableRow>
               <ResizableTableHead
@@ -198,28 +204,30 @@ export function ProductList({
               >
                 Арт. поставщика
               </ResizableTableHead>
-              <ResizableTableHead
-                columnKey="name"
-                width={widths.name}
-                onResize={handleResize}
-              >
+              <ResizableTableHead columnKey="name" width={widths.name} onResize={handleResize}>
                 Название
               </ResizableTableHead>
-              <ResizableTableHead
-                columnKey="cogs"
-                width={widths.cogs}
-                onResize={handleResize}
-              >
+              <ResizableTableHead columnKey="cogs" width={widths.cogs} onResize={handleResize}>
                 Себестоимость
               </ResizableTableHead>
               <ResizableTableHead
                 columnKey="margin"
                 width={widths.margin}
                 onResize={handleResize}
-                isLast={!enableSelection}
+                isLast={!enableStorageDisplay && !enableSelection}
               >
                 Маржа
               </ResizableTableHead>
+              {enableStorageDisplay && (
+                <ResizableTableHead
+                  columnKey="storage"
+                  width={widths.storage}
+                  onResize={handleResize}
+                  isLast={!enableSelection}
+                >
+                  Хранение
+                </ResizableTableHead>
+              )}
               {enableSelection && (
                 <ResizableTableHead
                   columnKey="actions"
@@ -233,13 +241,14 @@ export function ProductList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.products.map((product) => (
+            {data.products.map(product => (
               <ProductTableRow
                 key={product.nm_id}
                 product={product}
                 isSelected={selectedProductId === product.nm_id}
                 enableSelection={enableSelection}
                 enableMarginDisplay={enableMarginDisplay}
+                enableStorageDisplay={enableStorageDisplay}
                 isPolling={isProductPolling(product.nm_id)}
                 shouldShowRetryButton={pendingMargin.shouldShowRetryButton}
                 getAffectedWeeks={pendingMargin.getAffectedWeeks}

@@ -22,6 +22,10 @@ interface AdvertisingFiltersProps {
   viewBy: ViewByMode
   /** Callback when view mode changes */
   onViewByChange: (view: ViewByMode) => void
+  /** Earliest date with advertising data (from sync status) */
+  dataAvailableFrom?: string | null
+  /** Latest date with advertising data (from sync status) */
+  dataAvailableTo?: string | null
 }
 
 /** Max allowed date range in days (AC3) */
@@ -34,6 +38,7 @@ const MAX_RANGE_DAYS = 90
  *
  * Features:
  * - Date range picker with validation (AC3)
+ * - Data availability constraints from sync status
  * - View mode toggle: SKU | Campaign | Brand | Category (AC4)
  * - Keyboard accessible (AC8)
  */
@@ -42,16 +47,12 @@ export function AdvertisingFilters({
   onDateRangeChange,
   viewBy,
   onViewByChange,
+  dataAvailableFrom,
+  dataAvailableTo,
 }: AdvertisingFiltersProps) {
   // Parse dates for validation
-  const fromDate = useMemo(
-    () => parse(dateRange.from, 'yyyy-MM-dd', new Date()),
-    [dateRange.from]
-  )
-  const toDate = useMemo(
-    () => parse(dateRange.to, 'yyyy-MM-dd', new Date()),
-    [dateRange.to]
-  )
+  const fromDate = useMemo(() => parse(dateRange.from, 'yyyy-MM-dd', new Date()), [dateRange.from])
+  const toDate = useMemo(() => parse(dateRange.to, 'yyyy-MM-dd', new Date()), [dateRange.to])
 
   // Validation: check if range exceeds max
   const rangeExceedsMax = useMemo(() => {
@@ -60,6 +61,14 @@ export function AdvertisingFilters({
 
   // Yesterday as max date (sync delay)
   const maxDateStr = format(subDays(new Date(), 1), 'yyyy-MM-dd')
+
+  // Effective min/max from data availability
+  const effectiveMinDate = dataAvailableFrom || undefined
+  const effectiveMaxDate = dataAvailableTo
+    ? dataAvailableTo < maxDateStr
+      ? dataAvailableTo
+      : maxDateStr
+    : maxDateStr
 
   // Handle from date change
   const handleFromChange = (value: string) => {
@@ -122,7 +131,8 @@ export function AdvertisingFilters({
             id="date-from"
             type="date"
             value={dateRange.from}
-            onChange={(e) => handleFromChange(e.target.value)}
+            onChange={e => handleFromChange(e.target.value)}
+            min={effectiveMinDate}
             max={dateRange.to}
             className="w-36"
             aria-label="Дата начала периода"
@@ -142,9 +152,9 @@ export function AdvertisingFilters({
             id="date-to"
             type="date"
             value={dateRange.to}
-            onChange={(e) => handleToChange(e.target.value)}
+            onChange={e => handleToChange(e.target.value)}
             min={dateRange.from}
-            max={maxDateStr}
+            max={effectiveMaxDate}
             className="w-36"
             aria-label="Дата окончания периода"
           />
@@ -152,18 +162,21 @@ export function AdvertisingFilters({
 
         {/* Range validation warning */}
         {rangeExceedsMax && (
-          <span className="text-xs text-destructive pb-2">
-            Максимум {MAX_RANGE_DAYS} дней
-          </span>
+          <span className="text-xs text-destructive pb-2">Максимум {MAX_RANGE_DAYS} дней</span>
         )}
       </div>
 
+      {/* Data availability hint */}
+      {dataAvailableFrom && (
+        <span className="text-xs text-muted-foreground pb-2">
+          Данные: с {new Date(dataAvailableFrom).toLocaleDateString('ru-RU')}
+          {dataAvailableTo && ` по ${new Date(dataAvailableTo).toLocaleDateString('ru-RU')}`}
+        </span>
+      )}
+
       {/* View Mode Toggle (AC4) */}
       <div className="ml-auto">
-        <ViewByToggle
-          viewBy={viewBy}
-          onViewByChange={onViewByChange}
-        />
+        <ViewByToggle viewBy={viewBy} onViewByChange={onViewByChange} />
       </div>
     </div>
   )

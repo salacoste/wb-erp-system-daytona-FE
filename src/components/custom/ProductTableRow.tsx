@@ -3,13 +3,9 @@
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCogs } from '@/hooks/useSingleCogsAssignment'
+import { formatCurrency } from '@/lib/utils'
 import type { ProductListItem } from '@/types/api'
 import type { ColumnWidths } from '@/hooks/useColumnWidths'
 import { ProductMarginCell } from './ProductMarginCell'
@@ -19,6 +15,7 @@ export interface ProductTableRowProps {
   isSelected: boolean
   enableSelection: boolean
   enableMarginDisplay: boolean
+  enableStorageDisplay?: boolean
   isPolling: boolean
   shouldShowRetryButton: (nmId: string) => boolean
   getAffectedWeeks: (nmId: string) => string[]
@@ -31,13 +28,14 @@ export interface ProductTableRowProps {
 /**
  * Single product row in ProductList table
  * Extracted from ProductList.tsx for better maintainability
- * Enhanced: Supports resizable column widths
+ * Enhanced: Supports resizable column widths + storage cost column (Epic 24)
  */
 export function ProductTableRow({
   product,
   isSelected,
   enableSelection,
   enableMarginDisplay,
+  enableStorageDisplay,
   isPolling,
   shouldShowRetryButton,
   getAffectedWeeks,
@@ -48,7 +46,9 @@ export function ProductTableRow({
 }: ProductTableRowProps): React.ReactElement {
   // Helper to get cell style with width
   const getCellStyle = (key: string) =>
-    columnWidths ? { width: `${columnWidths[key]}px`, minWidth: `${columnWidths[key]}px` } : undefined
+    columnWidths
+      ? { width: `${columnWidths[key]}px`, minWidth: `${columnWidths[key]}px` }
+      : undefined
 
   return (
     <TableRow
@@ -62,7 +62,10 @@ export function ProductTableRow({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-amber-50 text-amber-700 border-amber-200">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1 py-0 h-4 bg-amber-50 text-amber-700 border-amber-200"
+                  >
                     отчёт
                   </Badge>
                 </TooltipTrigger>
@@ -74,7 +77,10 @@ export function ProductTableRow({
           )}
         </div>
       </TableCell>
-      <TableCell className="font-mono text-sm truncate text-gray-600" style={getCellStyle('vendor_code')}>
+      <TableCell
+        className="font-mono text-sm truncate text-gray-600"
+        style={getCellStyle('vendor_code')}
+      >
         {product.vendor_code || '—'}
       </TableCell>
       <TableCell style={getCellStyle('name')}>
@@ -108,12 +114,39 @@ export function ProductTableRow({
           isRecalculating={isRecalculating}
         />
       </TableCell>
+      {enableStorageDisplay && (
+        <TableCell className="text-sm" style={getCellStyle('storage')}>
+          {product.storage_cost_daily_avg != null ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-purple-600">
+                    {formatCurrency(product.storage_cost_daily_avg)}/д
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">
+                    {product.storage_cost_weekly != null &&
+                      `За неделю: ${formatCurrency(product.storage_cost_weekly)}`}
+                    {product.storage_period && ` (${product.storage_period})`}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
+        </TableCell>
+      )}
       {enableSelection && (
         <TableCell style={getCellStyle('actions')}>
           <Button
             variant={isSelected ? 'default' : 'outline'}
             size="sm"
-            onClick={(e) => { e.stopPropagation(); onProductClick(product) }}
+            onClick={e => {
+              e.stopPropagation()
+              onProductClick(product)
+            }}
           >
             {isSelected ? 'Выбрано' : 'Выбрать'}
           </Button>
