@@ -1,7 +1,7 @@
 /** TaxCard -- Story 66.5-FE: Backend tax metrics display (Epic 72 / Task-50) */
 'use client'
 
-import { Receipt } from 'lucide-react'
+import { Receipt, Info } from 'lucide-react'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -100,9 +100,28 @@ export function TaxCard({
 
 function Header(): React.ReactElement {
   return (
-    <div className="flex items-center gap-2">
-      <Receipt className="h-4 w-4 text-orange-500" aria-hidden="true" />
-      <span className="text-sm font-medium text-muted-foreground">Налоги</span>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <Receipt className="h-4 w-4 text-orange-500" aria-hidden="true" />
+        <span className="text-sm font-medium text-muted-foreground">Налоги</span>
+      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            className="text-muted-foreground hover:text-foreground"
+            aria-label="Подробнее о налогах"
+          >
+            <Info className="h-4 w-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent size="lg">
+          <p style={{ whiteSpace: 'pre-line' }}>
+            {
+              'Расчётная сумма налога за выбранный период.\nРассчитывается на основе выбранной системы налогообложения в настройках:\n• УСН 6% — от выручки (sale_gross)\n• УСН 15% — от прибыли (доходы минус расходы)\n• Ручная ставка — произвольный % от выручки\nДля УСН 15% применяется правило минимального налога: если расчётный налог < 1% от выручки, начисляется 1%.\nПлательщики НДС видят дополнительно: НДС от продаж, НДС к уплате, выручку без НДС.\nСравнение с прошлым периодом инвертировано: рост налога = негативная тенденция (красный).\nНастройка: Настройки → Налоги.\nИсточник: расчёт на фронтенде из finance-summary + настройки пользователя.'
+            }
+          </p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }

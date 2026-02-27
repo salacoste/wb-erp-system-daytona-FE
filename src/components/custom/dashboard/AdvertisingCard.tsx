@@ -102,10 +102,6 @@ export function AdvertisingCard({
   // Show DRRz only when ordersRevenue is available and > 0
   const showDrrz = ordersRevenue != null && ordersRevenue > 0
 
-  const tooltipText = useFinanceSrc
-    ? 'Фактические удержания WB за продвижение (из недельного отчёта). ROAS рассчитан по данным рекламного API.'
-    : 'Расходы на рекламу по данным API Wildberries.'
-
   return (
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
@@ -127,8 +123,12 @@ export function AdvertisingCard({
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent size="md">
-              <p>{tooltipText}</p>
+            <TooltipContent size="lg">
+              <p style={{ whiteSpace: 'pre-line' }}>
+                {useFinanceSrc
+                  ? 'Расходы на продвижение — фактические удержания WB за рекламу.\nИсточник суммы: строки «Продвижение» из недельного финансового отчёта WB (wb_finance_raw).\nЭто реальные списания, которые уже учтены в «К перечислению».\nROAS и ДРР рассчитаны на основе этих данных.\nСумма может отличаться от рекламного API на ~1–3% из-за финальных корректировок WB.\nСравнение инвертировано: рост расходов = негативная тенденция (красный).\nИсточник: wb_finance_raw (reason = «Удержание», pattern ~«продвижен»).'
+                  : 'Расходы на рекламу — данные из рекламного кабинета WB (Promotion API).\nВключает все типы кампаний: поиск, каталог, авто, карточка товара.\nЭто затраты по рекламному API — могут незначительно отличаться от финального удержания в отчёте WB.\nROAS рассчитан как: выручка от рекламы ÷ расход (по данным рекламного API).\nСравнение инвертировано: рост расходов = негативная тенденция (красный).\nИсточник: advertising-analytics (adv_daily_stats).'}
+              </p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -158,10 +158,10 @@ export function AdvertisingCard({
                   </button>
                 </TooltipTrigger>
                 <TooltipContent size="lg">
-                  <p>
-                    ROAS — рентабельность рекламы. Выручка от рекламных кампаний &divide; расход на
-                    кампании (данные из рекламного кабинета WB). Отличается от sale_gross &divide;
-                    wb_promotion из финотчёта.
+                  <p style={{ whiteSpace: 'pre-line' }}>
+                    {
+                      'ROAS (Return on Ad Spend) — рентабельность рекламы.\nФормула: выручка от рекламных кампаний ÷ расход на кампании.\nДанные из рекламного кабинета WB (Promotion API) — учитывается только выручка, атрибутированная к рекламе.\nОриентиры: ≥5x — отлично (зелёный), 3–5x — нормально (жёлтый), <3x — низкая эффективность (красный).\n⚠ Отличается от «финансового ROAS» (sale_gross ÷ wb_promotion из отчёта), т.к. источники данных разные.'
+                    }
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -182,9 +182,11 @@ export function AdvertisingCard({
                     <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent size="md">
-                  <p>
-                    ДРР — доля рекламных расходов в чистых продажах. ДРРз — доля в заказах по РРЦ.
+                <TooltipContent size="lg">
+                  <p style={{ whiteSpace: 'pre-line' }}>
+                    {
+                      'ДРР (Доля Рекламных Расходов) = расход на рекламу ÷ чистые продажи (sale_gross) × 100%.\nПоказывает, какой % от выручки уходит на рекламу.\nОриентиры: <5% — экономно, 5–15% — нормально, >15% — дорого.\nДРРз = расход ÷ заказы по РРЦ (розничная цена) × 100%.\nДРРз всегда ниже ДРР, т.к. заказы по РРЦ > чистых продаж (не все заказы выкупаются + РРЦ до комиссии WB).'
+                    }
                   </p>
                 </TooltipContent>
               </Tooltip>

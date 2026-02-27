@@ -102,8 +102,12 @@ export function OperatingProfitCard({
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent size="md">
-              <p>К перечислению − Себестоимость. После всех удержаний WB.</p>
+            <TooltipContent size="lg">
+              <p style={{ whiteSpace: 'pre-line' }}>
+                {
+                  'Операционная прибыль = К перечислению − Себестоимость (COGS).\nЭто прибыль ПОСЛЕ всех удержаний WB (комиссия, логистика, хранение и т.д.).\nПоказывает реальный заработок от продаж до вычета налогов.\nЕсли отрицательная — удержания WB + себестоимость превышают вашу выручку.\n⚠ Точность зависит от покрытия COGS (при < 100% прибыль завышена).\nИсточник: расчёт из weekly_margin_fact (payout − cogs − expenses).'
+                }
+              </p>
             </TooltipContent>
           </Tooltip>
         </div>

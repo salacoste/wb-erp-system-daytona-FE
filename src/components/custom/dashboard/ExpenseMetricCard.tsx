@@ -145,8 +145,8 @@ export function ExpenseMetricCard({
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent size="md">
-              <p>{tooltip}</p>
+            <TooltipContent size="lg">
+              <p style={{ whiteSpace: 'pre-line' }}>{tooltip}</p>
             </TooltipContent>
           </Tooltip>
         </div>

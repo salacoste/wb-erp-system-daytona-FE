@@ -3,16 +3,20 @@
  * Extracted for 200-line file limit compliance (Story 65.17).
  * Epic 66-FE: Added TaxMetrics integration for tax/VAT cards.
  *
- * WB Price Chain:
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ РРЦ (ordersRevenue)                                            │
- * │   × (1 - скидка продавца)                                       │
- * │ = Цена на карточке (ordersRevenueDiscounted) ← база комиссии WB │
- * │   × (1 - комиссия WB)                                           │
- * │ = Выкупы (wbSalesGross) ← реальная выручка продавца             │
- * │   − Возвраты (wbReturnsGross)                                   │
- * │ = Продажи розница (saleGross)                                   │
- * └─────────────────────────────────────────────────────────────────┘
+ * WB Price Chain (две ценовые шкалы):
+ * ┌────────────────────────────────────────────────────────────────────┐
+ * │ РРЦ (ordersRevenue) ← полная цена каталога                       │
+ * │   × (1 − скидка продавца)                                         │
+ * │ = Цена на карточке (ordersRevenueDiscounted) ← база комиссии WB   │
+ * │                                                                    │
+ * │ Розничный уровень (retail):      Уровень поставщика (supplier):   │
+ * │   sales_gross (все продажи)        × (1 − комиссия WB)           │
+ * │   − returns_gross (все возвраты)  = wbSalesGross (Выкупы, ₽)     │
+ * │   = saleGross (Продажи розница)    − wbReturnsGross (Возвр., ₽)  │
+ * │                                   = чистая выручка поставщика     │
+ * │                                                                    │
+ * │ ⚠ saleGross ≠ wbSalesGross − wbReturnsGross (разные уровни цен!) │
+ * └────────────────────────────────────────────────────────────────────┘
  */
 
 import type { TaxMetrics } from '@/types/finance-summary'

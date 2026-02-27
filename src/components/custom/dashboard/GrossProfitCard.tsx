@@ -102,8 +102,12 @@ export function GrossProfitCard({
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent size="md">
-              <p>Выручка нетто − Себестоимость. До удержаний WB (логистика, хранение и т.д.).</p>
+            <TooltipContent size="lg">
+              <p style={{ whiteSpace: 'pre-line' }}>
+                {
+                  'Валовая прибыль = Выручка нетто − Себестоимость (COGS).\nЭто прибыль ДО удержаний WB (логистика, хранение, комиссии ещё не вычтены).\nПоказывает, насколько выгодно вы закупаете/производите товар.\nЕсли валовая прибыль отрицательная — вы продаёте дешевле, чем закупаете.\n⚠ Точность зависит от покрытия COGS (при < 100% прибыль завышена).\nИсточник: расчёт из weekly_margin_fact (revenue_net − cogs).'
+                }
+              </p>
             </TooltipContent>
           </Tooltip>
         </div>

@@ -2,10 +2,11 @@
  * Simple metric card configurations for DashboardMetricsGrid.
  * Data-driven card definitions: orders, sales, returns, net sales.
  *
- * WB Price Chain:
- * РРЦ (totalPrice) → скидка продавца → Цена на карточке → SPP скидка WB
- *                              ↑
- *                    База для комиссии WB и выплат продавцу
+ * WB Price Chain (две ценовые шкалы):
+ * РРЦ → скидка продавца → Цена на карточке (база комиссии WB)
+ *   Розничный: sales_gross − returns_gross = saleGross (Продажи розница)
+ *   Поставщик: × (1−комиссия) = wbSalesGross (Выкупы) − wbReturnsGross (Возвраты)
+ * ⚠ saleGross ≠ wbSalesGross − wbReturnsGross (разные ценовые уровни!)
  */
 
 import { ShoppingCart, TrendingUp, RotateCcw, Package } from 'lucide-react'
@@ -31,7 +32,8 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       valueColor: 'text-blue-600',
       current: p.totalOrders,
       previous: prev?.ordersCount,
-      tooltip: 'Общее количество заказов FBO и FBS за период',
+      tooltip:
+        'Сколько товаров заказали покупатели за период (FBO + FBS).\nВключает все заказы — даже те, которые ещё не выкуплены или будут отменены.\nИсточник: данные о заказах WB.',
     },
     {
       icon: ShoppingCart,
@@ -42,7 +44,7 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       current: p.ordersRevenue,
       previous: prev?.ordersAmount,
       tooltip:
-        'РРЦ — рекомендованная розничная цена, которую вы задаёте в каталоге WB. До вашей скидки.',
+        'Сумма заказов по РРЦ — рекомендованной розничной цене, которую вы устанавливаете в каталоге WB.\nЭто полная цена до вашей скидки и до комиссии WB — самая высокая из всех ценовых метрик.\nНе отражает реальную выручку — для этого смотрите «Выкупы, ₽».\nИсточник: данные о заказах WB (FBO + FBS).',
       subtitle: 'полная цена каталога',
     },
     {
@@ -54,7 +56,7 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       current: p.ordersRevenueDiscounted,
       previous: undefined,
       tooltip:
-        'Цена на карточке WB — то, что видит покупатель. База для расчёта комиссии WB и выплат вам.',
+        'Сумма заказов по цене на карточке — то, что видит покупатель на WB после вашей скидки.\nИменно эта цена является базой для расчёта комиссии WB и ваших выплат.\nЦепочка: РРЦ × (1 − ваша скидка) = цена на карточке.\nИсточник: данные о заказах WB (FBO + FBS).',
       subtitle: 'цена на карточке',
     },
     {
@@ -65,7 +67,8 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       valueColor: 'text-green-600',
       current: p.wbSalesGross,
       previous: prev?.salesAmount,
-      tooltip: 'Деньги от выкупленных товаров. Это ваша реальная выручка за вычетом комиссии WB.',
+      tooltip:
+        'Сколько WB начислил вам за выкупленные товары — уже после удержания комиссии WB (≈20–40%).\nЭто ваша реальная выручка от продаж, но до вычета логистики, хранения и других расходов.\nЦепочка: Цена на карточке × (1 − комиссия WB) = Выкупы.\n⚠ Не путать с «Продажи (розница)» — там сумма по розничной цене покупателя.\nИсточник: еженедельный финансовый отчёт WB.',
     },
     {
       icon: Package,
@@ -73,7 +76,8 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       title: 'Выкупы, шт',
       value: fmtPcs(p.salesCount),
       valueColor: 'text-green-600',
-      tooltip: 'Количество выкупленных товаров (FBO + FBS)',
+      tooltip:
+        'Количество выкупленных товаров за период.\nВключает все каналы: FBO, FBS и EAEU.\nИсточник: еженедельный финансовый отчёт WB (product_transactions).',
     },
     {
       icon: RotateCcw,
@@ -81,7 +85,8 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       title: 'Возвраты, ₽',
       value: fmtRub(p.wbReturnsGross),
       valueColor: 'text-red-600',
-      tooltip: 'Сумма возвратов из еженедельного отчёта WB',
+      tooltip:
+        'Сколько WB удержал за возвращённые товары — на том же ценовом уровне, что и «Выкупы» (уже после комиссии WB).\nРозничная стоимость возвратов выше, так как не учитывает комиссию.\nПример: покупатель вернул товар за 1000₽ по рознице → WB удержит с вас ~650₽ (за вычетом своей комиссии).\nИсточник: еженедельный финансовый отчёт WB.',
     },
     {
       icon: RotateCcw,
@@ -89,7 +94,8 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       title: 'Возвраты, шт',
       value: fmtPcs(p.returnsCount),
       valueColor: 'text-red-600',
-      tooltip: 'Количество возвращённых товаров (FBO + FBS)',
+      tooltip:
+        'Количество возвращённых товаров за период (FBO + FBS).\nИсточник: данные о заказах WB (fulfillment).',
     },
     {
       icon: TrendingUp,
@@ -99,7 +105,8 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
       valueColor: 'text-green-600',
       current: p.saleGross,
       previous: prev?.saleGross,
-      tooltip: 'Выкупы − Возвраты = ваш оборот за период.',
+      tooltip:
+        'Объём продаж по розничной цене: сколько покупатели заплатили за товары, минус стоимость возвратов.\nЭто розничная цена (то, что платит покупатель), а НЕ ваша выручка как продавца.\nФормула: Продажи по рознице − Возвраты по рознице.\n⚠ Не совпадает с «Выкупы − Возвраты»: те считаются после комиссии WB, а эта метрика — до.\nВаша реальная выручка — это «Выкупы, ₽».\nИсточник: еженедельный финансовый отчёт WB.',
     },
   ]
 }
