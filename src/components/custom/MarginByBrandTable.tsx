@@ -470,13 +470,10 @@ export function MarginByBrandTable({
           totalRevenue: data.reduce((sum, item) => sum + item.revenue_net, 0),
           totalProfit: data.reduce((sum, item) => sum + (item.operating_profit || 0), 0),
           avgMargin: (() => {
-            const withMargin = data.filter(
-              item => item.margin_pct !== undefined && item.margin_pct !== null
-            )
-            if (withMargin.length === 0) return null
-            return (
-              withMargin.reduce((sum, item) => sum + (item.margin_pct || 0), 0) / withMargin.length
-            )
+            // Story 70.3-FE (D-9): Weighted average by revenue, not simple arithmetic mean
+            const totalRevenue = data.reduce((sum, item) => sum + item.revenue_net, 0)
+            const totalProfit = data.reduce((sum, item) => sum + (item.operating_profit || 0), 0)
+            return totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : null
           })(),
         }}
         compare={comparisonTotals}
