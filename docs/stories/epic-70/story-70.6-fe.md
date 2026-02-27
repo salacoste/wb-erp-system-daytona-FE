@@ -5,9 +5,9 @@
 | Epic | 70-FE Validation Fixes |
 | Priority | P1 |
 | SP | 2 |
-| Status | 📋 Blocked (Backend) |
+| Status | ✅ Done (Backend fixed) |
 | Group | C (D-14) |
-| Backend Request | Pending |
+| Backend Request | ✅ Resolved (2026-02-27) |
 
 ## Description
 

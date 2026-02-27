@@ -5,9 +5,9 @@
 | Epic | 70-FE Validation Fixes |
 | Priority | P1 |
 | SP | 2 |
-| Status | 📋 Blocked (Backend) |
+| Status | ✅ Done (Backend fixed) |
 | Group | C (D-12) |
-| Backend Request | Pending |
+| Backend Request | ✅ Resolved (2026-02-27) |
 
 ## Description
 
@@ -85,12 +85,28 @@ interface FunnelProductItem {
 - AC4: totalConversion = buyoutCount / openCardCount (сквозная конверсия)
 - AC5: Frontend автоматически отображает данные (no frontend changes needed)
 
+## Resolution (2026-02-27)
+
+**Fixed in commit `39e47fa`** — query-time buyout enrichment for funnel API.
+
+**Approach**: Instead of relying on WB Content Analytics for buyout data (which WB API doesn't provide),
+the funnel service now enriches results at query time using `daily_sales_raw` and `orders_fbs` tables.
+
+**Live verification**:
+```
+GET /v1/analytics/funnel?from=2026-02-01&to=2026-02-27&groupBy=product
+→ summary.buyoutCount = 637 ✅ (was 0)
+→ summary.totalConversion = 18.35% ✅ (was 0%)
+→ per-SKU buyoutCount = 28-107 ✅ (was 0)
+```
+
 ## Frontend Changes Required
 
-**None** — frontend fully implemented and waiting for backend data.
+**None** — frontend fully implemented, data displays automatically after backend fix.
 
 ## References
 
 - Backend spec: `docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md`
 - Test API: `../test-api/29-funnel-analytics.http`
 - Working buyout endpoint: `/v1/analytics/buyout/by-sku`
+- Fix commit: `39e47fa feat(analytics): query-time buyout enrichment for funnel API (Epic 68)`

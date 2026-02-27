@@ -123,7 +123,7 @@
 - Source: Full 23-page browser validation against Backend API (16 discrepancies found)
 - Group A (D-1,D-2,D-4): summary_total vs summary_rus fallback mixing RUS+EAEU data
 - Group B (D-5,D-16): Misleading profit tooltips/labels on Dashboard & PnLWaterfall
-- Group C (D-12,D-14): Backend issues — funnel buyouts=0, liquidity 500 error
+- Group C (D-12,D-14): ✅ Backend issues resolved — funnel buyouts enrichment + liquidity SQL fixes
 - Group D (D-7,D-9,D-13): Margin calculation bugs, NaN display
 
 | Story | Title | SP | Status | Group |
@@ -132,8 +132,8 @@
 | 70.2-FE | Clarify profit definitions and tooltips | 3 | 📋 Ready | B |
 | 70.3-FE | Fix margin calculations (weighted avg) | 2 | 📋 Ready | D |
 | 70.4-FE | Fix NaN guard in supply planning | 1 | 📋 Ready | D |
-| 70.5-FE | [Backend] Funnel buyout data JOIN | 2 | ❌ Blocked | C |
-| 70.6-FE | [Backend] Liquidity API param alignment | 2 | ❌ Blocked | C |
+| 70.5-FE | [Backend] Funnel buyout data JOIN | 2 | ✅ Done | C |
+| 70.6-FE | [Backend] Liquidity API param alignment | 2 | ✅ Done | C |
 
 **UX Wireframes Completed** (2026-01-31):
 - `docs/wireframes/dashboard-kpi-cards.md` - 8 KPI cards layout
