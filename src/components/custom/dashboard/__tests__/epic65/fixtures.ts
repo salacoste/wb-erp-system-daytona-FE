@@ -240,6 +240,8 @@ export function createPreviousPeriodData(
     salesAmount: 1_600_000,
     salesCogs: 580_000,
     storageCost: 43_000,
+    paidAcceptanceCost: 5_000,
+    wbOtherDeductionsTotal: 2_000,
     theoreticalProfit: null,
     ...overrides,
   }
@@ -338,5 +340,7 @@ export const NULL_PREVIOUS_PERIOD: PreviousPeriodData = {
   salesAmount: null,
   salesCogs: null,
   storageCost: null,
+  paidAcceptanceCost: null,
+  wbOtherDeductionsTotal: null,
   theoreticalProfit: null,
 }

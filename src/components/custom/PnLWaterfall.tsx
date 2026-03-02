@@ -256,6 +256,29 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
   // separately in the breakdown. They may not sum exactly to totalWBDeductions due to backend
   // formula differences (toPayGoods ≠ sale_gross - commission). See payout-total.formula.ts.
 
+  // SPP Compensation: difference between sum of visible deduction lines and actual total
+  // WB pays sellers more than `gross` by partially subsidizing the SPP discount.
+  // This delta is invisible without an explicit line, making the P&L math appear broken.
+  const sumOfVisibleDeductions =
+    (data.total_commission_rub ?? 0) +
+    (data.logistics_cost ?? 0) +
+    (data.storage_cost ?? 0) +
+    (data.paid_acceptance_cost ?? 0) +
+    (data.penalties ?? 0) +
+    (data.acquiring_fee ?? 0) +
+    (data.loyalty_fee ?? 0) -
+    (data.loyalty_compensation ?? 0) +
+    (data.other_adjustments ?? 0)
+
+  // Positive value = WB compensates seller for SPP discounts (credit)
+  const sppCompensation = sumOfVisibleDeductions - totalWBDeductions
+
+  // Only show if significant (> 1 RUB)
+  const showSppCompensation = Math.abs(sppCompensation) > 1
+
+  const sppCompensationPct =
+    showSppCompensation && revenueBase > 0 ? (sppCompensation / revenueBase) * 100 : null
+
   // Percentage calculations (relative to Net Sales = 100%)
   const totalDeductionsPct = revenueBase > 0 ? (totalWBDeductions / revenueBase) * 100 : null
 
@@ -362,7 +385,7 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
             <SectionHeader
               title="2. Удержания Wildberries"
               description="Все платежи в адрес маркетплейса (вычитаются из вашей выручки)"
-              formula="Итого удержаний = Комиссия + Логистика + Хранение + Приёмка + Штрафы + Эквайринг + Лояльность − Компенсации"
+              formula="Итого удержаний = Комиссия + Логистика + Хранение + Приёмка + Штрафы + Эквайринг + Лояльность − Компенсации − Компенсация СПП"
             />
             <div className="space-y-1">
               {/* Main commission */}
@@ -568,16 +591,34 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
                 that are NOT included in total_commission_rub. See: docs/technical-debt/commission-separation.md
               */}
 
+              {/* SPP Compensation - credit from WB for subsidizing SPP discounts */}
+              {showSppCompensation && (
+                <PnLRow
+                  label="Компенсация СПП"
+                  value={sppCompensation}
+                  isPositive
+                  indent={1}
+                  highlight="positive"
+                  tooltip="Wildberries частично компенсирует продавцу скидку СПП (скидка постоянного покупателя).
+                          Покупатель видит цену со скидкой СПП, но WB платит продавцу БОЛЬШЕ,
+                          чем цена после скидки. Эта разница — компенсация СПП.
+
+                          Это ПЛЮС к вашему доходу, уменьшает итоговые удержания."
+                  formula="Компенсация СПП = SUM(net_for_pay) − SUM(gross) по продажам"
+                  percentOfRevenue={sppCompensationPct}
+                />
+              )}
+
               {/* SUBTOTAL: Total WB deductions */}
               <PnLRow
                 label="Итого удержания WB"
                 value={totalWBDeductions}
                 isSubtotal
                 isNegative
-                tooltip="Общая сумма всех удержаний Wildberries.
-                        Это все деньги, которые WB забирает из ваших продаж
-                        за свои услуги (комиссия, логистика, хранение и др.)"
-                formula="Итого = Комиссия + Логистика + Хранение + Штрафы + Эквайринг + Лояльность − Компенсации"
+                tooltip="Общая сумма всех удержаний Wildberries за вычетом компенсаций.
+                        Рассчитывается как: Продажи (розница) − К перечислению.
+                        Компенсация СПП уменьшает итоговые удержания."
+                formula="Итого = Комиссия + Логистика + Хранение + ... − Компенсация СПП"
                 percentOfRevenue={totalDeductionsPct}
               />
             </div>

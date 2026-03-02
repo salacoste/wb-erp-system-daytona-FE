@@ -59,7 +59,7 @@ export function StorageMetricCard({
   return (
     <ExpenseMetricCard
       title="Хранение"
-      tooltip="Расходы на хранение товаров на складах Wildberries."
+      tooltip="Расходы на хранение товаров на складах Wildberries за период.\n⚠ Это сумма начислений, не текущие остатки.\nТовар может быть уже продан, но начисление за период хранения остаётся.\nИсточник: недельный финансовый отчёт WB."
       icon={Warehouse}
       valueColor="text-purple-500"
       value={storageCost}

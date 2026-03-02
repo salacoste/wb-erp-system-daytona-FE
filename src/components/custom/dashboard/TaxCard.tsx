@@ -165,6 +165,7 @@ function Body({
           <span className="text-xs text-gray-400">{formatRate(taxMetrics.effective_tax_rate)}</span>
         )}
         {taxMetrics.is_minimum_rule && <MinimumRuleBadge />}
+        {taxMetrics.preliminary && <PreliminaryBadge dc={taxMetrics.data_completeness} />}
         {taxMetrics.vat_payer && taxMetrics.vat_rate != null && (
           <VatBadge taxMetrics={taxMetrics} />
         )}
@@ -175,14 +176,34 @@ function Body({
 
 function MinimumRuleBadge(): React.ReactElement {
   return (
+    <span
+      className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs font-medium text-yellow-700"
+      title="Применено правило минимального налога 1% от выручки (УСН 15%)"
+    >
+      Мин. 1%
+    </span>
+  )
+}
+
+function PreliminaryBadge({ dc }: { dc?: TaxMetrics['data_completeness'] }): React.ReactElement {
+  const missing = [
+    !dc?.hasLogistics && 'логистика',
+    !dc?.hasStorage && 'хранение',
+    !dc?.hasAcceptance && 'приёмка',
+    !dc?.hasPenalties && 'штрафы',
+  ].filter(Boolean)
+  return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs font-medium text-yellow-700">
-          Мин. 1%
+        <span className="cursor-help rounded bg-orange-100 px-1.5 py-0.5 text-xs font-medium text-orange-700">
+          Предварительно
         </span>
       </TooltipTrigger>
       <TooltipContent size="sm">
-        <p>Применено правило минимального налога 1% от выручки (УСН 15%)</p>
+        <p className="font-medium">Расчёт на основе ежедневных данных</p>
+        {missing.length > 0 && (
+          <p className="mt-0.5 text-muted-foreground">Не учтено: {missing.join(', ')}</p>
+        )}
       </TooltipContent>
     </Tooltip>
   )

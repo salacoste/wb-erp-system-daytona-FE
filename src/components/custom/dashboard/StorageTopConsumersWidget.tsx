@@ -2,12 +2,13 @@
  * Storage Top Consumers Widget - Story 63.5-FE
  * Epic 63: Dashboard Main Page (Frontend)
  * @see docs/stories/epic-63/story-63.5-fe-storage-top-consumers.md
+ * Request #156: Added warehouse stock indicators
  */
 
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Package, ArrowRight, AlertCircle, PackageX } from 'lucide-react'
+import { Package, ArrowRight, AlertCircle, PackageX, Calendar } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -134,16 +135,45 @@ function ConsumerRow({
         <RankIndicator rank={item.rank} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate">
-          {item.product_name || item.vendor_code || item.nm_id}
-        </p>
-        {item.vendor_code && item.product_name && (
-          <p className="text-xs text-muted-foreground truncate">{item.vendor_code}</p>
-        )}
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-medium truncate">
+            {item.product_name || item.vendor_code || item.nm_id}
+          </p>
+          {/* Request #156: No stock indicator */}
+          {item.has_warehouse_stock === false && (
+            <PackageX className="h-3 w-3 text-amber-600 flex-shrink-0" aria-label="Нет на складе" />
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {item.vendor_code && item.product_name && (
+            <p className="text-xs text-muted-foreground truncate">{item.vendor_code}</p>
+          )}
+          {/* Request #156: Last charge date indicator */}
+          {item.last_charge_date && (
+            <p
+              className="text-[10px] text-muted-foreground flex items-center gap-0.5"
+              title="Последняя оплата хранения"
+            >
+              <Calendar className="h-2.5 w-2.5" />
+              {new Date(item.last_charge_date).toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'short',
+              })}
+            </p>
+          )}
+        </div>
       </div>
       <div className="text-right flex-shrink-0">
         <p className="text-sm font-medium text-[#7C4DFF]">{formatCurrency(item.storage_cost)}</p>
         <p className="text-xs text-muted-foreground">{item.percent_of_total.toFixed(1)}%</p>
+        {/* Request #156: FBO/FBS storage split */}
+        {(item.storage_fbo != null || item.storage_fbs != null) && (
+          <p className="text-[10px] text-muted-foreground">
+            {item.storage_fbo != null && `FBO ${formatCurrency(item.storage_fbo)}`}
+            {item.storage_fbo != null && item.storage_fbs != null && ' · '}
+            {item.storage_fbs != null && `FBS ${formatCurrency(item.storage_fbs)}`}
+          </p>
+        )}
       </div>
       <div className="w-20 flex-shrink-0 flex justify-end">
         <StorageRatioIndicator ratio={item.storage_to_revenue_ratio ?? null} />

@@ -38,6 +38,8 @@ const ALL_NULL_PREV: PreviousPeriodData = {
   salesAmount: null,
   salesCogs: null,
   storageCost: null,
+  paidAcceptanceCost: null,
+  wbOtherDeductionsTotal: null,
   theoreticalProfit: null,
 }
 
@@ -78,6 +80,8 @@ describe('PreviousPeriodData Type Safety', () => {
       salesAmount: 80000,
       salesCogs: 40000,
       storageCost: 2000,
+      paidAcceptanceCost: 3000,
+      wbOtherDeductionsTotal: 1500,
       theoreticalProfit: 20000,
     }
     expect(data.ordersAmount).toBe(100000)

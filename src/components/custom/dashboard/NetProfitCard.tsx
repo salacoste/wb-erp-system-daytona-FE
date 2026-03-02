@@ -80,13 +80,12 @@ export function NetProfitCard({
       : 'bg-gradient-to-br from-red-50 to-white'
   const valueColor = isPositive ? 'text-green-600' : 'text-red-600'
 
-  // Title with optional pre-tax suffix
-  const title = result
-    ? `${result.label}${result.isPreTax ? ' (до налога)' : ''}`
-    : 'Чистая прибыль'
+  // Title: combined profit + margin label
+  const titleSuffix = result?.isPreTax ? ' (до налога)' : ''
+  const title = `Чистая прибыль/Марж-сть${titleSuffix}`
 
   const ariaLabel = result
-    ? `${result.label}: ${formatCurrency(result.value)}`
+    ? `${title}: ${formatCurrency(result.value)}`
     : 'Чистая прибыль: нет данных'
 
   return (
@@ -115,36 +114,38 @@ export function NetProfitCard({
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            {/* Story 70.2-FE: Clarified tooltip — explains payout-minus-COGS basis and WB deductions included */}
             <TooltipContent size="lg">
               <p style={{ whiteSpace: 'pre-line' }}>
                 {
-                  'Чистая прибыль — итоговый финансовый результат после ВСЕХ вычетов.\nРассчитана как: К перечислению − COGS. Включает все удержания WB (комиссии, логистика, хранение).\n\nКаскадный расчёт (выбирается лучший доступный):\n1. Прибыль после УСН + НДС (если плательщик НДС)\n2. Прибыль после УСН (если настроена система)\n3. К перечислению (если налоги не настроены — показывается «до налога»)\nФормула: Операционная прибыль − Налог (УСН) − НДС к уплате.\n% под суммой — рентабельность после налогов = чистая прибыль / sale_gross × 100.\nОриентиры рентабельности: >10% — хорошо (зелёный), 0–10% — средне (жёлтый), <0% — убыток (красный).\nЕсли значение отрицательное — ваш бизнес убыточен за этот период.\nНастройка налогов: Настройки → Налоги.\nИсточник: расчёт из finance-summary + налоговые настройки.'
+                  'Прибыль за вычетом всех расходов (себестоимость, логистика, хранение, штрафы, комиссия маркетплейса, реклама, налог, фф, опер. расходы и тд)\n\nМарж-сть = чистая прибыль / выручка × 100%.\nОриентиры: >10% — хорошо, 0–10% — средне, <0% — убыток.\nИсточник: finance-summary + налоговые настройки.'
                 }
               </p>
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-1">
+        <div className="mt-1 flex items-baseline gap-1">
           {result ? (
-            <span className={cn('text-xl font-bold', valueColor)}>
-              {formatCurrency(result.value)}
-            </span>
+            <>
+              <span className={cn('text-xl font-bold', valueColor)}>
+                {formatCurrency(result.value)}
+              </span>
+              {margin != null && (
+                <>
+                  <span className="text-lg font-bold text-muted-foreground">/</span>
+                  <span className={cn('text-xl font-bold', marginColorClass(margin))}>
+                    {new Intl.NumberFormat('ru-RU', {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 1,
+                    }).format(margin)}
+                    {' %'}
+                  </span>
+                </>
+              )}
+            </>
           ) : (
             <span className="text-xl font-bold text-muted-foreground">—</span>
           )}
         </div>
-        {margin != null && (
-          <div className="mt-1">
-            <span className={cn('text-sm font-medium', marginColorClass(margin))}>
-              {new Intl.NumberFormat('ru-RU', {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              }).format(margin)}
-              {' %'}
-            </span>
-          </div>
-        )}
         {comparison && (
           <div className="mt-2 flex items-center gap-2">
             <ComparisonBadge
