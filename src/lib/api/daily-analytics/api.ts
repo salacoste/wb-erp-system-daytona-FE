@@ -67,14 +67,14 @@ export async function getFinanceDailyData(_from: string, _to: string): Promise<F
 
 /**
  * Fetch advertising data with daily breakdown.
- * GET /v1/analytics/advertising?from=...&to=...
- * Backend does not return daily breakdown (no `daily` field).
+ * GET /v1/analytics/advertising?from=...&to=...&include_daily=true
+ * Request #157: Backend now returns `daily` field with per-day metrics.
  */
 export async function getAdvertisingDailyData(
   from: string,
   to: string
 ): Promise<AdvertisingDailyData[]> {
-  const searchParams = new URLSearchParams({ from, to })
+  const searchParams = new URLSearchParams({ from, to, include_daily: 'true' })
 
   console.info('[Daily Analytics] Fetching advertising daily data:', { from, to })
 
@@ -84,7 +84,7 @@ export async function getAdvertisingDailyData(
       { skipDataUnwrap: true }
     )
 
-    // Backend advertising endpoint returns items + summary, no daily breakdown
+    // Request #157: Backend returns daily breakdown with include_daily=true
     const dailyData: AdvertisingDailyData[] =
       response.daily?.map(day => ({
         date: day.date,

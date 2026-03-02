@@ -27,6 +27,11 @@ export interface StoragePeriod {
 
 /**
  * Individual SKU storage data
+ *
+ * Request #156: Important distinction:
+ * - storage_cost_total = historical charges for the period (product MAY not be on warehouse now)
+ * - total_stock = current stock level (0 = no stock in WB warehouses)
+ * - Products can have storage charges even if currently sold out (FBS products, sold items)
  */
 export interface StorageBySkuItem {
   /** WB article number */
@@ -37,7 +42,7 @@ export interface StorageBySkuItem {
   product_name: string | null
   /** Brand name */
   brand: string | null
-  /** Total storage cost for the period (₽) */
+  /** Total storage cost for the period (₽) - HISTORICAL, not current stock indicator */
   storage_cost_total: number
   /** Average daily storage cost (₽/day) */
   storage_cost_avg_daily: number
@@ -47,6 +52,18 @@ export interface StorageBySkuItem {
   warehouses: string[]
   /** Number of days stored in period */
   days_stored: number
+  /** Current stock level in WB warehouses (null = data unavailable, 0 = no stock) */
+  total_stock?: number | null
+  /** Date of last storage charge (YYYY-MM-DD, null if no charges) */
+  last_charge_date?: string | null
+  /** True if product currently has stock in WB warehouses */
+  has_warehouse_stock?: boolean
+  /** FBS storage cost for the period (₽) - Request #156 */
+  storage_fbs?: number | null
+  /** FBO storage cost for the period (₽) - Request #156 */
+  storage_fbo?: number | null
+  /** Combined FBS+FBO storage cost (₽) - Request #156 */
+  storage_cost_total_fbs_fbo?: number | null
 }
 
 /**
@@ -91,6 +108,9 @@ export interface StorageBySkuResponse {
 
 /**
  * Top consumer item with storage cost ranking
+ *
+ * Request #156: Note that storage_cost is HISTORICAL - product may not be on warehouse now.
+ * Check has_warehouse_stock to distinguish between active storage vs past charges.
  */
 export interface TopConsumerItem {
   /** Rank position (1-based) */
@@ -103,7 +123,7 @@ export interface TopConsumerItem {
   product_name: string | null
   /** Brand name */
   brand: string | null
-  /** Storage cost for the period (₽) */
+  /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator */
   storage_cost: number
   /** Percentage of total storage cost */
   percent_of_total: number
@@ -113,6 +133,18 @@ export interface TopConsumerItem {
   revenue_net?: number
   /** Storage-to-revenue ratio % (optional, null if no revenue data) */
   storage_to_revenue_ratio?: number | null
+  /** Current stock level in WB warehouses (null = data unavailable, 0 = no stock) */
+  total_stock?: number | null
+  /** Date of last storage charge (YYYY-MM-DD, null if no charges) */
+  last_charge_date?: string | null
+  /** True if product currently has stock in WB warehouses */
+  has_warehouse_stock?: boolean
+  /** FBS storage cost for the period (₽) - Request #156 */
+  storage_fbs?: number | null
+  /** FBO storage cost for the period (₽) - Request #156 */
+  storage_fbo?: number | null
+  /** Combined FBS+FBO storage cost (₽) - Request #156 */
+  storage_cost_total_fbs_fbo?: number | null
 }
 
 /**

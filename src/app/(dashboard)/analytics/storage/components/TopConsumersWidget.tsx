@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Trophy, Medal, ChevronRight, HelpCircle } from 'lucide-react'
+import { Trophy, Medal, ChevronRight, HelpCircle, PackageX, Calendar } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -175,9 +175,10 @@ export function TopConsumersWidget({
                     <TooltipTrigger asChild>
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help" />
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[220px]">
-                      <p className="text-xs">
-                        Топ товаров по расходам на хранение. Данные из API платного хранения WB.
+                    <TooltipContent side="top" className="max-w-[280px]">
+                      <p className="text-xs">Топ товаров по расходам на хранение.</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        ⚠ Это история начислений, не текущие остатки. Товар может быть уже продан.
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -211,8 +212,24 @@ export function TopConsumersWidget({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-right font-medium">
-                {formatCurrency(item.storage_cost)}
+              <TableCell className="text-right">
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className="font-medium">{formatCurrency(item.storage_cost)}</span>
+                  {/* Show last charge date if available */}
+                  {item.last_charge_date && (
+                    <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                      <Calendar className="h-2.5 w-2.5" />
+                      {new Date(item.last_charge_date).toLocaleDateString('ru-RU')}
+                    </span>
+                  )}
+                  {/* Show "No stock" indicator when has_warehouse_stock is false */}
+                  {item.has_warehouse_stock === false && (
+                    <span className="text-[10px] text-amber-600 flex items-center gap-0.5">
+                      <PackageX className="h-2.5 w-2.5" />
+                      Нет на складе
+                    </span>
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-right text-sm text-muted-foreground">
                 {item.percent_of_total.toFixed(1)}%

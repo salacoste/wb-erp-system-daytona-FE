@@ -29,6 +29,9 @@ export const mockStorageBySkuItem: StorageBySkuItem = {
   volume_avg: 0.5,
   warehouses: ['Коледино', 'Подольск'],
   days_stored: 7,
+  storage_fbo: 1100.0,
+  storage_fbs: 150.5,
+  storage_cost_total_fbs_fbo: 1250.5,
 }
 
 export const mockStorageBySkuItems: StorageBySkuItem[] = [
@@ -105,6 +108,9 @@ export const mockTopConsumerItems: TopConsumerItem[] = [
     volume: 1.2,
     revenue_net: 8000.0,
     storage_to_revenue_ratio: 26.25, // > 20% = high
+    storage_fbo: 2100.0,
+    storage_fbs: 0,
+    storage_cost_total_fbs_fbo: 2100.0,
   },
   {
     rank: 2,
@@ -117,6 +123,9 @@ export const mockTopConsumerItems: TopConsumerItem[] = [
     volume: 0.5,
     revenue_net: 10000.0,
     storage_to_revenue_ratio: 12.5, // 10-20% = medium
+    storage_fbo: 1100.0,
+    storage_fbs: 150.5,
+    storage_cost_total_fbs_fbo: 1250.5,
   },
   {
     rank: 3,

@@ -2,7 +2,15 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowUpDown, ArrowUp, ArrowDown, Search, HelpCircle } from 'lucide-react'
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  HelpCircle,
+  PackageX,
+  Calendar,
+} from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -232,10 +240,11 @@ export function StorageBySkuTable({
                       <TooltipTrigger asChild>
                         <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help flex-shrink-0" />
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-[220px]">
-                        <p className="text-xs">
-                          Стоимость хранения из API WB (ежедневные данные). Детализация по SKU и
-                          складам.
+                      <TooltipContent side="top" className="max-w-[280px]">
+                        <p className="text-xs">Сумма начислений за хранение за период.</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          ⚠ Это история начислений, не текущие остатки. Товар может быть уже
+                          продан.
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -314,7 +323,31 @@ export function StorageBySkuTable({
                   </TableCell>
                   <TableCell className="text-sm">{item.brand || '—'}</TableCell>
                   <TableCell className="font-medium">
-                    {formatCurrency(item.storage_cost_total)}
+                    <div className="flex flex-col gap-0.5">
+                      <span>{formatCurrency(item.storage_cost_total)}</span>
+                      {/* Request #156: FBO/FBS storage split */}
+                      {(item.storage_fbo != null || item.storage_fbs != null) && (
+                        <span className="text-[10px] text-muted-foreground">
+                          {item.storage_fbo != null && `FBO: ${formatCurrency(item.storage_fbo)}`}
+                          {item.storage_fbo != null && item.storage_fbs != null && ' / '}
+                          {item.storage_fbs != null && `FBS: ${formatCurrency(item.storage_fbs)}`}
+                        </span>
+                      )}
+                      {/* Show last charge date if available */}
+                      {item.last_charge_date && (
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                          <Calendar className="h-2.5 w-2.5" />
+                          {new Date(item.last_charge_date).toLocaleDateString('ru-RU')}
+                        </span>
+                      )}
+                      {/* Show "No stock" indicator when has_warehouse_stock is false */}
+                      {item.has_warehouse_stock === false && (
+                        <span className="text-[10px] text-amber-600 flex items-center gap-0.5">
+                          <PackageX className="h-2.5 w-2.5" />
+                          Нет на складе
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-sm">
                     {formatCurrency(item.storage_cost_avg_daily)}
