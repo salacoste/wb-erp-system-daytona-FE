@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | 📋 Ready for Dev |
+| Status | ✅ Complete |
 | Priority | P1 |
 | Story Points | 13 |
 | Sprint | Sprint 12 (2026-02-27) |
@@ -40,12 +40,12 @@ by design или minor, не требуют code changes.
 
 | Story | Title | SP | Status | Group |
 |-------|-------|----|--------|-------|
-| 70.1-FE | Fix summary_total vs summary_rus fallback | 3 | 📋 Ready | A |
-| 70.2-FE | Clarify profit definitions and tooltips | 3 | 📋 Ready | B |
-| 70.3-FE | Fix margin calculations (weighted avg, denominators) | 2 | 📋 Ready | D |
-| 70.4-FE | Fix NaN guard in supply planning formatter | 1 | 📋 Ready | D |
-| 70.5-FE | [Backend Request] Funnel buyout data JOIN | 2 | 📋 Blocked | C |
-| 70.6-FE | [Backend Request] Liquidity API param alignment | 2 | 📋 Blocked | C |
+| 70.1-FE | Fix summary_total vs summary_rus fallback | 3 | ✅ Done | A |
+| 70.2-FE | Clarify profit definitions and tooltips | 3 | ✅ Done | B |
+| 70.3-FE | Fix margin calculations (weighted avg, denominators) | 2 | ✅ Done | D |
+| 70.4-FE | Fix NaN guard in supply planning formatter | 1 | ✅ Done | D |
+| 70.5-FE | [Backend Request] Funnel buyout data JOIN | 2 | ✅ Done | C |
+| 70.6-FE | [Backend Request] Liquidity API param alignment | 2 | ✅ Done | C |
 
 ## Dependencies
 
