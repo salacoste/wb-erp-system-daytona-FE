@@ -26,6 +26,18 @@ export interface TaxMetrics {
   vat_payable: number | null // НДС к уплате (output - input)
   revenue_excl_vat: number | null // Выручка без НДС
   net_profit_after_all_tax: number | null // После ВСЕХ налогов
+
+  // Request #159: Preliminary tax for incomplete weeks
+  preliminary?: boolean
+  data_completeness?: {
+    revenueSource: string
+    hasLogistics: boolean
+    hasStorage: boolean
+    hasAcceptance: boolean
+    hasPenalties: boolean
+    hasCogs: boolean
+    hasAdvertising: boolean
+  }
 }
 
 export interface FinanceSummary {

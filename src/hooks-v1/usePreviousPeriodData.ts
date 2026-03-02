@@ -39,24 +39,27 @@ export function usePreviousPeriodData(
     const prevCogsTotal = s?.cogs_total ?? null
     const prevWbPromotionCost = s?.wb_promotion_cost_total ?? null
 
-    // WB Commissions: sum of 6 commission/fee fields, minus wb_promotion_cost
-    // (promotions shown separately in AdvertisingCard)
+    // WB Commissions: pure commissions/fees only (no wb_services_cost)
+    // Promotion → AdvertisingCard, Jam+Other → OtherDeductionsCard
     const commissionFields = [
       s?.commission_sales_total,
       s?.acquiring_fee_total,
       s?.loyalty_fee_total,
       s?.penalties_total,
       s?.wb_commission_adj_total,
-      s?.wb_services_cost_total,
     ]
     const hasAnyCommission = commissionFields.some(v => v != null)
-    let wbCommissionsTotal: number | null = hasAnyCommission
+    const wbCommissionsTotal: number | null = hasAnyCommission
       ? commissionFields.reduce<number>((sum, v) => sum + (v ?? 0), 0)
       : null
-    // Subtract promotion cost to avoid double-counting with AdvertisingCard
-    if (wbCommissionsTotal != null && prevWbPromotionCost != null) {
-      wbCommissionsTotal -= prevWbPromotionCost
-    }
+
+    // Other deductions: jam + other WB services (excl. promotion)
+    const prevJam = s?.wb_jam_cost_total ?? null
+    const prevOtherServices = s?.wb_other_services_cost_total ?? null
+    const wbOtherDeductionsTotal =
+      prevJam != null || prevOtherServices != null
+        ? (prevJam ?? 0) + (prevOtherServices ?? 0)
+        : null
 
     // Storage + Acceptance combined
     const storageAcceptanceTotal =
@@ -89,6 +92,8 @@ export function usePreviousPeriodData(
       salesAmount: s?.wb_sales_gross_total ?? null,
       salesCogs: prevCogsTotal,
       storageCost: prevStorageCost,
+      paidAcceptanceCost: prevPaidAcceptance,
+      wbOtherDeductionsTotal,
       theoreticalProfit: null,
     }
   }, [s, fulfillmentPrevious, advertisingPrevious])
