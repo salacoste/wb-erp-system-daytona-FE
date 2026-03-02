@@ -371,7 +371,8 @@ export const liquidityHandlers = [
         summary: generateMockLiquiditySummary([]),
         data: [],
       }
-      return HttpResponse.json({ data: emptyResponse })
+      // No { data: ... } wrapper — API module uses skipDataUnwrap: true
+      return HttpResponse.json(emptyResponse)
     }
 
     let items = [...defaultItems]
@@ -402,8 +403,8 @@ export const liquidityHandlers = [
       data: items,
     }
 
-    // Wrap in { data: ... } to match apiClient response format
-    return HttpResponse.json({ data: response })
+    // No { data: ... } wrapper — API module uses skipDataUnwrap: true
+    return HttpResponse.json(response)
   }),
 
   // GET /v1/analytics/liquidity/trends
@@ -423,8 +424,8 @@ export const liquidityHandlers = [
       insights: generateMockInsights(),
     }
 
-    // Wrap in { data: ... } to match apiClient response format
-    return HttpResponse.json({ data: response })
+    // No { data: ... } wrapper — API module uses skipDataUnwrap: true
+    return HttpResponse.json(response)
   }),
 ]
 

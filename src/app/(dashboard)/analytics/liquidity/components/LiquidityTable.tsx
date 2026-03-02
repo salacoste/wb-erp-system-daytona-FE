@@ -30,7 +30,10 @@ interface LiquidityTableProps {
   activeFilter: LiquidityCategory | null
   sortBy: 'turnover_days' | 'stock_value' | 'velocity_per_day'
   sortOrder: 'asc' | 'desc'
-  onSortChange: (field: 'turnover_days' | 'stock_value' | 'velocity_per_day', order: 'asc' | 'desc') => void
+  onSortChange: (
+    field: 'turnover_days' | 'stock_value' | 'velocity_per_day',
+    order: 'asc' | 'desc'
+  ) => void
   onClearFilter: () => void
 }
 
@@ -61,14 +64,16 @@ export function LiquidityTable({
   // Get sort icon
   const getSortIcon = (field: string) => {
     if (sortBy !== field) return <ArrowUpDown className="h-4 w-4 ml-1" />
-    return sortOrder === 'asc'
-      ? <ArrowUp className="h-4 w-4 ml-1" />
-      : <ArrowDown className="h-4 w-4 ml-1" />
+    return sortOrder === 'asc' ? (
+      <ArrowUp className="h-4 w-4 ml-1" />
+    ) : (
+      <ArrowDown className="h-4 w-4 ml-1" />
+    )
   }
 
   // Toggle row expansion
   const toggleRow = (skuId: string) => {
-    setExpandedRow(prev => prev === skuId ? null : skuId)
+    setExpandedRow(prev => (prev === skuId ? null : skuId))
   }
 
   return (
@@ -81,18 +86,13 @@ export function LiquidityTable({
               {activeFilter && (
                 <Badge variant="outline" className="ml-2">
                   {getLiquidityCategoryConfig(activeFilter).label}
-                  <button
-                    onClick={onClearFilter}
-                    className="ml-1 hover:text-destructive"
-                  >
+                  <button onClick={onClearFilter} className="ml-1 hover:text-destructive">
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               )}
             </CardTitle>
-            <span className="text-sm text-muted-foreground">
-              {data.length} товаров
-            </span>
+            <span className="text-sm text-muted-foreground">{data.length} товаров</span>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -142,10 +142,11 @@ export function LiquidityTable({
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data.map((item) => {
+                  data.map(item => {
                     const config = getLiquidityCategoryConfig(item.liquidity_category)
                     const isExpanded = expandedRow === item.sku_id
-                    const hasLiquidation = item.liquidation_scenarios && item.liquidation_scenarios.length > 0
+                    const hasLiquidation =
+                      item.liquidation_scenarios && item.liquidation_scenarios.length > 0
 
                     return (
                       <>
@@ -190,9 +191,7 @@ export function LiquidityTable({
                           <TableCell className="text-right">
                             {formatVelocity(item.velocity_per_day)}
                           </TableCell>
-                          <TableCell className="text-right">
-                            {item.current_stock_qty} шт.
-                          </TableCell>
+                          <TableCell className="text-right">{item.current_stock_qty} шт.</TableCell>
                           <TableCell className="text-right font-medium">
                             {formatCurrency(item.stock_value)}
                           </TableCell>
@@ -200,7 +199,7 @@ export function LiquidityTable({
                             <Button
                               variant={getLiquidityActionVariant(item.action_type)}
                               size="sm"
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation()
                                 if (hasLiquidation) {
                                   setPlannerItem(item)
@@ -225,11 +224,21 @@ export function LiquidityTable({
                                 <div>
                                   <h4 className="text-sm font-medium mb-2">Ценообразование</h4>
                                   <div className="space-y-1 text-sm">
-                                    <p>Цена: {formatCurrency(item.current_price)}</p>
-                                    <p>Себестоимость: {formatCurrency(item.cogs_per_unit)}</p>
-                                    <p className="text-muted-foreground">
-                                      Маржа: {formatCurrency(item.current_price - item.cogs_per_unit)}
+                                    <p>
+                                      Цена:{' '}
+                                      {item.current_price > 0 ? (
+                                        formatCurrency(item.current_price)
+                                      ) : (
+                                        <span className="text-muted-foreground">Нет данных</span>
+                                      )}
                                     </p>
+                                    <p>Себестоимость: {formatCurrency(item.cogs_per_unit)}</p>
+                                    {item.current_price > 0 && (
+                                      <p className="text-muted-foreground">
+                                        Маржа:{' '}
+                                        {formatCurrency(item.current_price - item.cogs_per_unit)}
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                                 <div>
@@ -237,9 +246,7 @@ export function LiquidityTable({
                                   <div className="space-y-1 text-sm">
                                     <p>Продано: {item.units_sold_30d} шт.</p>
                                     <p>Ср. остаток: {Math.round(item.avg_stock_qty_30d)} шт.</p>
-                                    <p className="text-muted-foreground">
-                                      SKU: {item.sku_id}
-                                    </p>
+                                    <p className="text-muted-foreground">SKU: {item.sku_id}</p>
                                   </div>
                                 </div>
                               </div>
