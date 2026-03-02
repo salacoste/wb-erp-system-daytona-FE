@@ -44,6 +44,8 @@ export interface PreviousPeriodData {
   salesAmount: number | null
   salesCogs: number | null
   storageCost: number | null
+  paidAcceptanceCost: number | null
+  wbOtherDeductionsTotal: number | null
   theoreticalProfit: number | null
   // Epic 66-FE: Tax metrics for TaxCard/NetProfitCard comparison
   taxMetrics?: TaxMetrics | null
@@ -81,6 +83,10 @@ export interface DashboardMetricsGridProps {
   advertisingRoas: number | undefined
   /** Actual WB promotion deductions from finance-summary (wb_promotion_cost) */
   wbPromotionCost?: number | undefined
+  /** WB Jam subscription cost (wb_jam_cost) */
+  wbJamCost?: number | undefined
+  /** WB other services cost — утилизация и др. (wb_other_services_cost) */
+  wbOtherServicesCost?: number | undefined
   // Прибыль
   grossProfit: number | undefined
   marginPct: number | undefined

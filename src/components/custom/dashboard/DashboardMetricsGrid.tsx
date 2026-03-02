@@ -10,6 +10,7 @@ import { WbCommissionsCard } from './WbCommissionsCard'
 import { LogisticsMetricCard } from './LogisticsMetricCard'
 import { PayoutCard } from './PayoutCard'
 import { StorageAcceptanceCard } from './StorageAcceptanceCard'
+import { PaidAcceptanceCard } from './PaidAcceptanceCard'
 import { CostsCard } from './CostsCard'
 import { AdvertisingCard } from './AdvertisingCard'
 import { GrossProfitCard } from './GrossProfitCard'
@@ -18,6 +19,7 @@ import { GrossMarginCard } from './GrossMarginCard'
 import { MarginCard } from './MarginCard'
 import { TaxCard } from './TaxCard'
 import { NetProfitCard } from './NetProfitCard'
+import { OtherDeductionsCard } from './OtherDeductionsCard'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 
 export type {
@@ -41,7 +43,6 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     loyaltyFee,
     penaltiesTotal,
     wbCommissionAdj,
-    wbServicesCost,
     logisticsCost,
     saleGross,
     payoutTotal,
@@ -54,6 +55,8 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
     advertisingSpend,
     advertisingRoas,
     wbPromotionCost,
+    wbJamCost,
+    wbOtherServicesCost,
     grossProfit,
     marginPct,
     // Request #155: Analytical profit/margin
@@ -79,6 +82,14 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
 
   return (
     <div className={cn(gridCls, className)} role="region" aria-label="Основные метрики P&L">
+      <NetProfitCard
+        taxMetrics={taxMetrics ?? null}
+        payoutTotal={payoutTotal ?? null}
+        saleGrossTotal={saleGross ?? null}
+        previousTaxMetrics={prev?.taxMetrics ?? null}
+        previousPayoutTotal={prev?.payoutTotal ?? null}
+        isLoading={false}
+      />
       {cards.map(c => (
         <SimpleMetricCard key={c.title} {...c} error={e} onRetry={onRetry} />
       ))}
@@ -88,8 +99,17 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
         loyaltyFee={loyaltyFee}
         penaltiesTotal={penaltiesTotal}
         wbCommissionAdj={wbCommissionAdj}
-        wbServicesCost={wbServicesCost}
+        wbServicesCost={undefined}
         previousTotal={prev?.wbCommissionsTotal}
+        saleGross={saleGross}
+        isLoading={false}
+        error={error}
+        onRetry={onRetry}
+      />
+      <OtherDeductionsCard
+        jamCost={wbJamCost}
+        otherServicesCost={wbOtherServicesCost}
+        previousTotal={prev?.wbOtherDeductionsTotal}
         saleGross={saleGross}
         isLoading={false}
         error={error}
@@ -105,8 +125,15 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
       />
       <StorageAcceptanceCard
         storageCost={storageCost}
+        previousTotal={prev?.storageCost}
+        saleGross={saleGross}
+        isLoading={false}
+        error={error}
+        onRetry={onRetry}
+      />
+      <PaidAcceptanceCard
         paidAcceptanceCost={paidAcceptanceCost}
-        previousTotal={prev?.storageAcceptanceTotal}
+        previousPaidAcceptanceCost={prev?.paidAcceptanceCost}
         saleGross={saleGross}
         isLoading={false}
         error={error}
@@ -184,14 +211,6 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
       <TaxCard
         taxMetrics={taxMetrics ?? null}
         previousTaxMetrics={prev?.taxMetrics ?? null}
-        isLoading={false}
-      />
-      <NetProfitCard
-        taxMetrics={taxMetrics ?? null}
-        payoutTotal={payoutTotal ?? null}
-        saleGrossTotal={saleGross ?? null}
-        previousTaxMetrics={prev?.taxMetrics ?? null}
-        previousPayoutTotal={prev?.payoutTotal ?? null}
         isLoading={false}
       />
     </div>

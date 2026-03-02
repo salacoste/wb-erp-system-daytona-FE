@@ -58,6 +58,12 @@ export type { PayoutCardProps } from './PayoutCard'
 export { StorageAcceptanceCard } from './StorageAcceptanceCard'
 export type { StorageAcceptanceCardProps } from './StorageAcceptanceCard'
 
+export { PaidAcceptanceCard } from './PaidAcceptanceCard'
+export type { PaidAcceptanceCardProps } from './PaidAcceptanceCard'
+
+export { OtherDeductionsCard } from './OtherDeductionsCard'
+export type { OtherDeductionsCardProps } from './OtherDeductionsCard'
+
 export { CostsCard } from './CostsCard'
 export type { CostsCardProps } from './CostsCard'
 
