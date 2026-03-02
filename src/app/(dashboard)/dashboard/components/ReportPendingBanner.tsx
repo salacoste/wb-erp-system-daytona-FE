@@ -36,10 +36,11 @@ export function ReportPendingBanner({
       aria-live="polite"
     >
       <Clock className="h-4 w-4 text-amber-600" />
-      <AlertTitle className="text-amber-800">Отчёт за эту неделю ещё не готов</AlertTitle>
+      <AlertTitle className="text-amber-800">Финансовый отчёт ещё не готов</AlertTitle>
       <AlertDescription className="text-amber-700">
         <p>
-          Финансовый отчёт Wildberries формируется после закрытия недели. Ожидаемая дата:{' '}
+          Данные о заказах и рекламе доступны в реальном времени. Финансовые метрики (выкупы,
+          логистика, хранение, прибыль) появятся после формирования недельного отчёта{' '}
           <span className="font-medium">~{expectedDate}</span>.
         </p>
         {latestAvailableWeek && (

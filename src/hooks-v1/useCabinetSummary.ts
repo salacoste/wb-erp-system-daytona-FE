@@ -8,18 +8,14 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type {
-  CabinetSummaryResponse,
-  CabinetSummaryParams,
-} from '@/types/analytics'
+import type { CabinetSummaryResponse, CabinetSummaryParams } from '@/types/analytics'
 
 /**
  * Query key factory for cabinet summary
  */
 const cabinetSummaryKeys = {
   all: ['analytics', 'cabinet-summary'] as const,
-  byParams: (params: CabinetSummaryParams) =>
-    [...cabinetSummaryKeys.all, params] as const,
+  byParams: (params: CabinetSummaryParams) => [...cabinetSummaryKeys.all, params] as const,
 }
 
 /**
@@ -36,7 +32,10 @@ const cabinetSummaryKeys = {
  * // Using explicit date range
  * const { data } = useCabinetSummary({ weekStart: '2025-W44', weekEnd: '2025-W47' })
  */
-export function useCabinetSummary(params: CabinetSummaryParams = {}) {
+export function useCabinetSummary(
+  params: CabinetSummaryParams = {},
+  options?: { enabled?: boolean }
+) {
   const { weeks = 4, weekStart, weekEnd } = params
 
   return useQuery({
@@ -60,6 +59,7 @@ export function useCabinetSummary(params: CabinetSummaryParams = {}) {
     },
     staleTime: 60000, // 1 minute - cabinet summary changes infrequently
     refetchOnWindowFocus: true,
+    enabled: options?.enabled !== false,
   })
 }
 

@@ -98,6 +98,8 @@ const ALL_NULL_PREV: PreviousPeriodData = {
   salesAmount: null,
   salesCogs: null,
   storageCost: null,
+  paidAcceptanceCost: null,
+  wbOtherDeductionsTotal: null,
   theoreticalProfit: null,
 }
 
