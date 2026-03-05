@@ -23,10 +23,12 @@ import {
   RotateCcw,
   ShoppingBag,
   Receipt,
+  Store,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
 import { LogoutButton } from './LogoutButton'
+import { SidebarCabinetInfo } from './SidebarCabinetInfo'
 import { useSupplyPlanning } from '@/hooks/useSupplyPlanning'
 import { getUrgentSkuCount } from '@/lib/supply-planning-utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -146,6 +148,11 @@ export function Sidebar() {
         ]
       : []),
     {
+      label: 'Кабинет', // Seller info + Jam subscription
+      href: ROUTES.SETTINGS.CABINET,
+      icon: Store,
+    },
+    {
       label: 'Налоги', // Epic 66-FE: Tax & VAT Settings
       href: ROUTES.SETTINGS.TAX,
       icon: Receipt,
@@ -164,6 +171,9 @@ export function Sidebar() {
         <div className="flex h-16 items-center border-b px-6">
           <h2 className="text-lg font-semibold text-gray-900">WB Repricer</h2>
         </div>
+
+        {/* Cabinet Info: seller name + Jam badge */}
+        <SidebarCabinetInfo />
 
         {/* Navigation Items */}
         <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">

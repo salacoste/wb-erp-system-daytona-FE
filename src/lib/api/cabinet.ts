@@ -7,7 +7,12 @@
  */
 
 import { apiClient } from '../api-client'
-import type { Cabinet, UpdateCabinetTaxRequest } from '@/types/cabinet'
+import type {
+  Cabinet,
+  UpdateCabinetTaxRequest,
+  JamStatusResponse,
+  SellerInfoResponse,
+} from '@/types/cabinet'
 
 /**
  * GET /v1/cabinets/:id
@@ -32,4 +37,21 @@ export async function updateCabinetTaxSettings(
   data: UpdateCabinetTaxRequest
 ): Promise<Cabinet> {
   return apiClient.put<Cabinet>(`/v1/cabinets/${cabinetId}`, data)
+}
+
+/**
+ * GET /v1/cabinets/:id/jam-status
+ * Detect Jam subscription tier via SDK v3.3.0 probe strategy.
+ * Backend caches result; probe calls are expensive.
+ */
+export async function getJamStatus(cabinetId: string): Promise<JamStatusResponse> {
+  return apiClient.get<JamStatusResponse>(`/v1/cabinets/${cabinetId}/jam-status`)
+}
+
+/**
+ * GET /v1/cabinets/:id/seller-info
+ * Fetch seller info from WB General API. Backend caches for 1 hour.
+ */
+export async function getSellerInfo(cabinetId: string): Promise<SellerInfoResponse> {
+  return apiClient.get<SellerInfoResponse>(`/v1/cabinets/${cabinetId}/seller-info`)
 }

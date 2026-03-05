@@ -1,0 +1,117 @@
+'use client'
+
+import { Store, Sparkles, Hash, Tag, Clock } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useSellerInfo } from '@/hooks/useSellerInfo'
+import { useJamStatus } from '@/hooks/useJamStatus'
+import { JAM_TIER_LABELS } from '@/types/cabinet'
+import type { JamTier } from '@/types/cabinet'
+import { cn } from '@/lib/utils'
+
+const JAM_TIER_STYLES: Record<JamTier, string> = {
+  none: 'bg-gray-100 text-gray-700 border-gray-200',
+  standard: 'bg-blue-50 text-blue-700 border-blue-200',
+  extended: 'bg-purple-50 text-purple-700 border-purple-200',
+}
+
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  value: React.ReactNode
+}) {
+  return (
+    <div className="flex items-start gap-3 py-2">
+      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="text-sm font-medium">{value}</p>
+      </div>
+    </div>
+  )
+}
+
+export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
+  const { data: seller, isLoading: sellerLoading, error: sellerError } = useSellerInfo(cabinetId)
+  const { data: jam, isLoading: jamLoading, error: jamError } = useJamStatus(cabinetId)
+
+  return (
+    <div className="space-y-6">
+      {/* Seller Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Store className="h-5 w-5" />
+            Информация о продавце
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {sellerLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-5 w-48" />
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-5 w-40" />
+            </div>
+          ) : sellerError ? (
+            <p className="text-sm text-destructive">Не удалось загрузить данные продавца</p>
+          ) : seller ? (
+            <div className="divide-y">
+              <InfoRow icon={Store} label="Название" value={seller.name} />
+              <InfoRow
+                icon={Hash}
+                label="SID"
+                value={seller.sid != null ? String(seller.sid) : '—'}
+              />
+              <InfoRow icon={Tag} label="Торговая марка" value={seller.tradeMark || '—'} />
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      {/* Jam Subscription */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Sparkles className="h-5 w-5" />
+            Подписка Джем
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {jamLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-6 w-36" />
+              <Skeleton className="h-5 w-52" />
+            </div>
+          ) : jamError ? (
+            <p className="text-sm text-destructive">Не удалось определить статус подписки</p>
+          ) : jam ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Badge variant="outline" className={cn('text-sm', JAM_TIER_STYLES[jam.tier])}>
+                  {JAM_TIER_LABELS[jam.tier]}
+                </Badge>
+              </div>
+              {jam.tier !== 'none' && (
+                <InfoRow
+                  icon={Tag}
+                  label="Лимит поисковых запросов"
+                  value={`${jam.searchTextsLimit} текстов на товар`}
+                />
+              )}
+              <InfoRow
+                icon={Clock}
+                label="Проверено"
+                value={new Date(jam.checkedAt).toLocaleString('ru-RU')}
+              />
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

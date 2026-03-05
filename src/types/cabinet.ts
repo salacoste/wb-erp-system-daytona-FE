@@ -105,3 +105,30 @@ export interface ApiError {
     recommendation?: string
   }>
 }
+
+// --- Jam Subscription Status (GET /v1/cabinets/:id/jam-status) ---
+
+/** Jam subscription tier detected via SDK probe strategy */
+export type JamTier = 'none' | 'standard' | 'extended'
+
+/** Russian labels for Jam subscription tiers */
+export const JAM_TIER_LABELS: Record<JamTier, string> = {
+  none: 'Нет подписки',
+  standard: 'Джем Стандарт',
+  extended: 'Джем Расширенный',
+}
+
+export interface JamStatusResponse {
+  tier: JamTier
+  searchTextsLimit: number
+  checkedAt: string
+  probeCallsMade: number
+}
+
+// --- Seller Info (GET /v1/cabinets/:id/seller-info) ---
+
+export interface SellerInfoResponse {
+  name: string
+  sid: string
+  tradeMark: string
+}

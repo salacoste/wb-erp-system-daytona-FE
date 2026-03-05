@@ -59,6 +59,7 @@ export const ROUTES = {
 
   SETTINGS: {
     ROOT: '/settings',
+    CABINET: '/settings/cabinet', // Seller info + Jam subscription status
     NOTIFICATIONS: '/settings/notifications', // Epic 34-FE: Telegram Notifications
     TARIFFS: '/settings/tariffs', // Epic 52-FE: Tariff Settings Admin (Admin only)
     BACKFILL: '/settings/backfill', // Epic 51-FE: Backfill Admin (Admin only)
@@ -106,6 +107,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard
     ROUTES.SUPPLIES.ROOT, // Epic 53-FE: Supply Management
     ROUTES.SETTINGS.ROOT,
+    ROUTES.SETTINGS.CABINET, // Seller info + Jam subscription
     ROUTES.SETTINGS.NOTIFICATIONS, // Epic 34-FE: Telegram Notifications
     ROUTES.SETTINGS.TARIFFS, // Epic 52-FE: Tariff Settings Admin (Admin only)
     ROUTES.SETTINGS.BACKFILL, // Epic 51-FE: Backfill Admin (Admin only)
