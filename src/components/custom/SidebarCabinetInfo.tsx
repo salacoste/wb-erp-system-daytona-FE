@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 const JAM_TIER_COLORS: Record<JamTier, string> = {
   none: 'bg-gray-100 text-gray-600',
   standard: 'bg-blue-100 text-blue-700',
-  extended: 'bg-purple-100 text-purple-700',
+  advanced: 'bg-purple-100 text-purple-700',
 }
 
 /**

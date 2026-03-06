@@ -2,7 +2,7 @@
  * Jam Subscription Status Hook
  * GET /v1/cabinets/:id/jam-status
  *
- * Detects Jam tier (none/standard/extended) via SDK probe.
+ * Detects Jam tier (none/standard/advanced) via SDK probe.
  * staleTime=5min because probe calls are expensive.
  */
 

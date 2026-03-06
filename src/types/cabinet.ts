@@ -109,13 +109,25 @@ export interface ApiError {
 // --- Jam Subscription Status (GET /v1/cabinets/:id/jam-status) ---
 
 /** Jam subscription tier detected via SDK probe strategy */
-export type JamTier = 'none' | 'standard' | 'extended'
+export type JamTier = 'none' | 'standard' | 'advanced'
 
 /** Russian labels for Jam subscription tiers */
 export const JAM_TIER_LABELS: Record<JamTier, string> = {
   none: 'Нет подписки',
   standard: 'Джем Стандарт',
-  extended: 'Джем Расширенный',
+  advanced: 'Джем Продвинутый',
+}
+
+/** Numeric tier levels for comparison (none < standard < advanced) */
+export const JAM_TIER_LEVEL: Record<JamTier, number> = {
+  none: 0,
+  standard: 1,
+  advanced: 2,
+}
+
+/** Check if user's Jam tier meets or exceeds the required tier */
+export function isJamTierSufficient(userTier: JamTier, requiredTier: JamTier): boolean {
+  return JAM_TIER_LEVEL[userTier] >= JAM_TIER_LEVEL[requiredTier]
 }
 
 export interface JamStatusResponse {
