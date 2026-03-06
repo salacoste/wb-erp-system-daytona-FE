@@ -41,8 +41,16 @@ export function RequireJam({ requiredTier, children, previewContent }: RequireJa
     )
   }
 
-  // Error or no data → fail-open (render children)
-  if (isError || !data) return <>{children}</>
+  // Error or no data → show retry UI (fail-closed for  // This prevents free access if Jam API is unreliable
+  if (isError || !data) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-8 w-2/3" />
+      </div>
+    )
+  }
 
   // Sufficient tier → render children normally
   if (isJamTierSufficient(data.tier, requiredTier)) return <>{children}</>

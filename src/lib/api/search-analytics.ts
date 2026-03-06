@@ -29,22 +29,10 @@ export async function getSearchByProduct(
   if (params.orderBy) sp.set('orderBy', params.orderBy)
   if (params.limit != null) sp.set('limit', String(params.limit))
 
-  console.info('[SearchAnalytics] Fetching by-product:', {
-    nmId: params.nmId,
-    from: params.from,
-    to: params.to,
-  })
-
-  const response = await apiClient.get<SearchByProductResponse>(
+  return apiClient.get<SearchByProductResponse>(
     `/v1/analytics/search/by-product?${sp.toString()}`,
     { skipDataUnwrap: true }
   )
-
-  console.info('[SearchAnalytics] by-product response:', {
-    queries: response.queries?.length,
-  })
-
-  return response
 }
 
 /**
@@ -60,18 +48,9 @@ export async function getSearchByQuery(
   sp.set('to', params.to)
   if (params.limit != null) sp.set('limit', String(params.limit))
 
-  console.info('[SearchAnalytics] Fetching by-query:', { query: params.query })
-
-  const response = await apiClient.get<SearchByQueryResponse>(
-    `/v1/analytics/search/by-query?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
-
-  console.info('[SearchAnalytics] by-query response:', {
-    products: response.products?.length,
+  return apiClient.get<SearchByQueryResponse>(`/v1/analytics/search/by-query?${sp.toString()}`, {
+    skipDataUnwrap: true,
   })
-
-  return response
 }
 
 /**

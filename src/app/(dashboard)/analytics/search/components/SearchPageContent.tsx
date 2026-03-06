@@ -24,8 +24,12 @@ function getDefaultRange(): DateRange {
   return { from, to }
 }
 
-function formatApi(date: Date): string {
-  return format(date, 'yyyy-MM-dd')
+function formatApi(date: Date | undefined): string {
+  if (date instanceof Date) {
+    return format(date, 'yyyy-MM-dd')
+  }
+  // Fallback for edge cases
+  return ''
 }
 
 export function SearchPageContent() {
