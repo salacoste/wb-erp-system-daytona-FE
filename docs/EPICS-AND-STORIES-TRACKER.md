@@ -608,6 +608,16 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 
 ## Changelog
 
+### 2026-03-06 (Marketing Analytics Audit — Request #160)
+- **Full API audit** across 4 marketing analytics domains (funnel, advertising, search, buyout)
+- **BUG-1 CRITICAL**: Jam tier naming mismatch (`backend: 'advanced'` vs `frontend: 'extended'`)
+- **4 backend bugs reported**: buyout sortOrder/sortDir mismatch, minSales not consumed, returnRate/trend sort no-op, search totalRevenue always 0
+- **5 type mismatches documented**: funnel missing sum fields, buyout missing trendPeriod, advertising missing include_daily
+- **Search Analytics (0% frontend)**: 3 backend endpoints ready (Task-139), full implementation backlog created (13 SP)
+- **New capabilities discovered**: include_daily for advertising, 3-layer ad cost analysis, search+advertising cross-reference
+- Documents updated: `MARKETING-ANALYTICS-PRODUCT-PLAN.md`, `MARKETING-ANALYTICS-ARCHITECTURE.md`
+- Backlog: `docs/request-backend/160-MARKETING-ANALYTICS-AUDIT-BACKLOG.md`
+
 ### 2026-02-25 (Epic 69-FE: Buyout Rate Analytics UI — 6/7 Complete)
 - **Epic 69-FE created**: Buyout Rate Analytics UI (7 stories, 28 SP)
 - Stories 69.1–69.6 complete (25/28 SP): types, hooks, summary widget, per-SKU table, page scaffold, data source UX
