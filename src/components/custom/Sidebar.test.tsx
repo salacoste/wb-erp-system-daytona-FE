@@ -51,9 +51,7 @@ const createTestQueryClient = () =>
 
 const renderWithQueryClient = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 describe('Sidebar', () => {
@@ -78,7 +76,7 @@ describe('Sidebar', () => {
       expect(screen.getByText('Analytics')).toBeInTheDocument()
       expect(screen.getByText('Settings')).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -91,7 +89,7 @@ describe('Sidebar', () => {
       // Active item has bg-accent class (Tailwind CSS theme class)
       expect(dashboardLink).toHaveClass('bg-accent', 'text-accent-foreground')
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -105,7 +103,7 @@ describe('Sidebar', () => {
       // Active item has bg-accent class (Tailwind CSS theme class)
       expect(cogsLink).toHaveClass('bg-accent', 'text-accent-foreground')
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -115,7 +113,7 @@ describe('Sidebar', () => {
 
       expect(screen.getByText('Logout')).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -124,12 +122,24 @@ describe('Sidebar', () => {
       renderWithQueryClient(<Sidebar />)
 
       const links = screen.getAllByRole('link')
-      links.forEach((link) => {
+      links.forEach(link => {
         expect(link).toHaveAttribute('href')
         // Links are keyboard accessible by default in Next.js
         expect(link).toBeInTheDocument()
       })
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
+  )
+
+  it(
+    'renders Search Analytics navigation item (Epic 71-FE)',
+    () => {
+      renderWithQueryClient(<Sidebar />)
+
+      const searchLink = screen.getByRole('link', { name: /Поиск/ })
+      expect(searchLink).toBeInTheDocument()
+      expect(searchLink).toHaveAttribute('href', '/analytics/search')
+    },
+    { timeout: 5000 }
   )
 })
