@@ -53,7 +53,7 @@ import {
   ArrowRight,
   ClipboardList,
 } from 'lucide-react'
-import { Filter, ShoppingBag, RotateCcw } from 'lucide-react'
+import { Filter, ShoppingBag, RotateCcw, Search } from 'lucide-react'
 import { RequireWbToken } from '@/components/custom/RequireWbToken'
 
 /**
@@ -192,6 +192,17 @@ const analyticsNavigation = {
         hoverBg: 'hover:bg-pink-100',
         borderColor: 'border-pink-200',
         badge: 'Новое',
+      },
+      {
+        href: ROUTES.ANALYTICS.SEARCH,
+        icon: Search,
+        title: 'Поисковая аналитика',
+        description: 'Поисковые запросы, позиции и заказы',
+        color: 'text-sky-600',
+        bgColor: 'bg-sky-50',
+        hoverBg: 'hover:bg-sky-100',
+        borderColor: 'border-sky-200',
+        badge: 'Джем',
       },
     ],
   },

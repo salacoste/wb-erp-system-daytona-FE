@@ -24,6 +24,7 @@ import {
   ShoppingBag,
   Receipt,
   Store,
+  Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
@@ -126,6 +127,11 @@ export function Sidebar() {
       label: 'Аналитика возвратов', // Epic 71: Return Analytics
       href: ROUTES.ANALYTICS.RETURNS,
       icon: RotateCcw,
+    },
+    {
+      label: 'Поиск', // Epic 71-FE: Search Analytics
+      href: ROUTES.ANALYTICS.SEARCH,
+      icon: Search,
     },
     {
       label: 'Мониторинг', // Epic 68-FE: Monitoring Health Dashboard
