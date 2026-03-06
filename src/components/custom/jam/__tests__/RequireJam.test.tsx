@@ -203,25 +203,28 @@ describe('RequireJam', () => {
   })
 
   describe('error state', () => {
-    it('renders children on error (fail-open)', () => {
+    it('shows skeleton on error (fail-closed)', () => {
       mockedUseJamStatus.mockReturnValue({
         data: undefined,
         isLoading: false,
         isError: true,
       } as ReturnType<typeof useJamStatus>)
 
-      renderWithWrapper(
+      const { container } = renderWithWrapper(
         <RequireJam requiredTier="standard">
           <div data-testid="content">Content</div>
         </RequireJam>
       )
 
-      expect(screen.getByTestId('content')).toBeInTheDocument()
+      // Skeleton renders on error (fail-closed behavior)
+      const skeletons = container.querySelectorAll('[class*="animate-pulse"]')
+      expect(skeletons.length).toBeGreaterThan(0)
+      expect(screen.queryByTestId('content')).not.toBeInTheDocument()
     })
   })
 
   describe('cabinetId null state', () => {
-    it('renders children when cabinetId is null (fail-open)', () => {
+    it('shows skeleton when cabinetId is null (fail-closed)', () => {
       mockUseAuthStore.mockReturnValueOnce({ cabinetId: null })
       mockedUseJamStatus.mockReturnValue({
         data: undefined,
@@ -229,13 +232,16 @@ describe('RequireJam', () => {
         isError: false,
       } as ReturnType<typeof useJamStatus>)
 
-      renderWithWrapper(
+      const { container } = renderWithWrapper(
         <RequireJam requiredTier="standard">
           <div data-testid="content">Content</div>
         </RequireJam>
       )
 
-      expect(screen.getByTestId('content')).toBeInTheDocument()
+      // Skeleton renders when no data available (fail-closed behavior)
+      const skeletons = container.querySelectorAll('[class*="animate-pulse"]')
+      expect(skeletons.length).toBeGreaterThan(0)
+      expect(screen.queryByTestId('content')).not.toBeInTheDocument()
     })
   })
 

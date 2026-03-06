@@ -13,6 +13,7 @@ import { useJamStatus } from '@/hooks/useJamStatus'
 import { useAuthStore } from '@/stores/authStore'
 import { isJamTierSufficient, JAM_TIER_LABELS } from '@/types/cabinet'
 import type { JamTier } from '@/types/cabinet'
+import { features } from '@/config/features'
 
 const JAM_TIER_COLORS: Record<JamTier, string> = {
   none: 'bg-gray-100 text-gray-600',
@@ -76,7 +77,7 @@ export function RequireJam({ requiredTier, children, previewContent }: RequireJa
           </span>
           <div>
             <Button variant="default" size="sm" asChild aria-label="Подробнее о подписке WB Джем">
-              <a href="https://seller.wildberries.ru/jam" target="_blank" rel="noopener noreferrer">
+              <a href={features.jamUrls.subscription} target="_blank" rel="noopener noreferrer">
                 Подробнее о WB Джем
               </a>
             </Button>
