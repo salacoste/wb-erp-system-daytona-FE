@@ -2,37 +2,14 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import {
-  Home,
-  Package,
-  BarChart3,
-  Settings,
-  Warehouse,
-  LayoutDashboard,
-  PackageSearch,
-  Calculator,
-  DollarSign,
-  Droplets,
-  Megaphone,
-  Bell,
-  Settings2,
-  ShoppingCart,
-  ClipboardList,
-  Activity,
-  Filter,
-  RotateCcw,
-  ShoppingBag,
-  Receipt,
-  Store,
-  Search,
-} from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { ROUTES } from '@/lib/routes'
 import { LogoutButton } from './LogoutButton'
 import { SidebarCabinetInfo } from './SidebarCabinetInfo'
 import { useSupplyPlanning } from '@/hooks/useSupplyPlanning'
 import { getUrgentSkuCount } from '@/lib/supply-planning-utils'
 import { useAuth } from '@/hooks/useAuth'
+import { NAVIGATION_ITEMS } from './sidebar-navigation'
+import type { NavigationItem } from './sidebar-navigation'
 
 /**
  * Sidebar navigation component
@@ -51,124 +28,15 @@ export function Sidebar() {
   // Check if user is admin (Owner role) for admin-only menu items (Epic 52-FE)
   const isAdmin = user?.role === 'Owner'
 
-  const navigationItems = [
-    {
-      label: 'Dashboard',
-      href: ROUTES.DASHBOARD,
-      icon: Home,
-    },
-    {
-      label: 'Заказы', // Epic 40-FE: Orders UI (WB Native Orders History)
-      href: ROUTES.ORDERS.ROOT,
-      icon: ShoppingCart,
-    },
-    {
-      label: 'COGS Management',
-      href: ROUTES.COGS.ROOT,
-      icon: Package,
-    },
-    {
-      label: 'Price Calculator', // Epic 44: Price Calculator UI
-      href: '/cogs/price-calculator',
-      icon: DollarSign,
-    },
-    {
-      label: 'Cabinet Summary', // Story 6.4-FE: Cabinet Summary Dashboard
-      href: ROUTES.ANALYTICS.DASHBOARD,
-      icon: LayoutDashboard,
-    },
-    {
-      label: 'Analytics',
-      href: ROUTES.ANALYTICS.ROOT,
-      icon: BarChart3,
-    },
-    {
-      label: 'Storage', // Epic 24: Paid Storage Analytics
-      href: ROUTES.ANALYTICS.STORAGE,
-      icon: Warehouse,
-    },
-    {
-      label: 'Планирование', // Epic 6: Supply Planning & Stockout Prevention
-      href: ROUTES.ANALYTICS.SUPPLY_PLANNING,
-      icon: PackageSearch,
-      badge: urgentCount > 0 ? urgentCount : undefined,
-    },
-    {
-      label: 'Юнит-экономика', // Epic 5: Unit Economics Analytics
-      href: ROUTES.ANALYTICS.UNIT_ECONOMICS,
-      icon: Calculator,
-    },
-    {
-      label: 'Ликвидность', // Epic 7: Liquidity Analysis
-      href: ROUTES.ANALYTICS.LIQUIDITY,
-      icon: Droplets,
-    },
-    {
-      label: 'Реклама', // Epic 33: Advertising Analytics
-      href: ROUTES.ANALYTICS.ADVERTISING,
-      icon: Megaphone,
-    },
-    {
-      label: 'Заказы FBS', // Epic 51-FE: FBS Historical Analytics
-      href: ROUTES.ANALYTICS.ORDERS,
-      icon: ClipboardList,
-    },
-    {
-      label: 'Воронка продаж', // Epic 68: Marketing Funnel Analytics
-      href: ROUTES.ANALYTICS.FUNNEL,
-      icon: Filter,
-    },
-    {
-      label: 'Аналитика выкупов', // Epic 69: Buyout Rate Analytics
-      href: ROUTES.ANALYTICS.BUYOUT,
-      icon: ShoppingBag,
-    },
-    {
-      label: 'Аналитика возвратов', // Epic 71: Return Analytics
-      href: ROUTES.ANALYTICS.RETURNS,
-      icon: RotateCcw,
-    },
-    {
-      label: 'Поиск', // Epic 71-FE: Search Analytics
-      href: ROUTES.ANALYTICS.SEARCH,
-      icon: Search,
-    },
-    {
-      label: 'Мониторинг', // Epic 68-FE: Monitoring Health Dashboard
-      href: ROUTES.MONITORING,
-      icon: Activity,
-    },
-    {
-      label: 'Уведомления', // Epic 34-FE: Telegram Notifications
-      href: ROUTES.SETTINGS.NOTIFICATIONS,
-      icon: Bell,
-    },
-    // Epic 52-FE: Tariff Settings Admin (Admin only)
-    ...(isAdmin
-      ? [
-          {
-            label: 'Тарифы',
-            href: ROUTES.SETTINGS.TARIFFS,
-            icon: Settings2,
-          },
-        ]
-      : []),
-    {
-      label: 'Кабинет', // Seller info + Jam subscription
-      href: ROUTES.SETTINGS.CABINET,
-      icon: Store,
-    },
-    {
-      label: 'Налоги', // Epic 66-FE: Tax & VAT Settings
-      href: ROUTES.SETTINGS.TAX,
-      icon: Receipt,
-    },
-    {
-      label: 'Settings',
-      href: ROUTES.SETTINGS.ROOT,
-      icon: Settings,
-    },
-  ]
+  // Build runtime navigation: filter admin items, patch dynamic badges
+  const items: NavigationItem[] = NAVIGATION_ITEMS.filter(item => !item.adminOnly || isAdmin).map(
+    item => {
+      if (item.href === '/analytics/supply-planning' && urgentCount > 0) {
+        return { ...item, badge: urgentCount }
+      }
+      return item
+    }
+  )
 
   return (
     <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-white">
@@ -183,7 +51,7 @@ export function Sidebar() {
 
         {/* Navigation Items */}
         <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
-          {navigationItems.map(item => {
+          {items.map(item => {
             const Icon = item.icon
             return (
               <Link
