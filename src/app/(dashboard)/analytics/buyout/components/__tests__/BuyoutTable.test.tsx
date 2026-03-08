@@ -5,20 +5,20 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { BuyoutTable } from '../BuyoutTable'
 import type { BySkuBuyoutResponse } from '@/types/analytics-buyout'
 
 const mockUseBuyoutBySku = vi.fn()
-const mockUseProducts = vi.fn()
+const mockApiGet = vi.fn()
 
 vi.mock('@/hooks/use-buyout-analytics', () => ({
   useBuyoutBySku: (...args: unknown[]) => mockUseBuyoutBySku(...args),
 }))
-vi.mock('@/hooks/useProducts', () => ({
-  useProducts: (...args: unknown[]) => mockUseProducts(...args),
+vi.mock('@/lib/api-client', () => ({
+  apiClient: { get: (...args: unknown[]) => mockApiGet(...args) },
 }))
 
 const defaultProps = { from: '2025-12-01', to: '2025-12-31', source: 'blended' as const }
@@ -73,7 +73,10 @@ function hookReturn(overrides: Record<string, unknown> = {}) {
 describe('BuyoutTable', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseProducts.mockReturnValue(hookReturn({ data: mockProducts }))
+    mockApiGet.mockResolvedValue({
+      products: mockProducts.products,
+      pagination: { total: mockProducts.products.length },
+    })
   })
 
   it('shows loading skeleton while fetching', () => {
@@ -118,13 +121,15 @@ describe('BuyoutTable', () => {
     expect(screen.getByText('50.0%')).toBeInTheDocument()
   })
 
-  it('shows product info from backend + products enrichment', () => {
+  it('shows product info from backend + products enrichment', async () => {
     mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
     renderWithProviders(<BuyoutTable {...defaultProps} />)
     // Артикул: backend supplierArticle takes priority over products vendorCode
     expect(screen.getByText('ART-001')).toBeInTheDocument()
-    // Товар: products sa_name takes priority over backend productName
-    expect(screen.getByText('Полное название товара')).toBeInTheDocument()
+    // Товар: products sa_name takes priority over backend productName (async enrichment)
+    await waitFor(() => {
+      expect(screen.getByText('Полное название товара')).toBeInTheDocument()
+    })
   })
 
   it('handles sort click (toggle order, reset offset)', async () => {
@@ -163,5 +168,37 @@ describe('BuyoutTable', () => {
     mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: noMore }))
     renderWithProviders(<BuyoutTable {...defaultProps} />)
     expect(screen.getByText('Далее').closest('button')).toBeDisabled()
+  })
+
+  it('calls products API with correct URL for enrichment', async () => {
+    mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
+    renderWithProviders(<BuyoutTable {...defaultProps} />)
+    await waitFor(() => {
+      expect(mockApiGet).toHaveBeenCalledWith(expect.stringContaining('/v1/products?limit=200'))
+    })
+  })
+
+  it('fetches multiple product pages via cursor pagination', async () => {
+    mockApiGet
+      .mockResolvedValueOnce({
+        products: [{ nm_id: 100500, sa_name: 'Стр1', brand: 'Б1', vendor_code: 'В1' }],
+        pagination: { total: 2, next_cursor: 'cursor_page2' },
+      })
+      .mockResolvedValueOnce({
+        products: [{ nm_id: 200600, sa_name: 'Стр2', brand: 'Б2', vendor_code: 'В2' }],
+        pagination: { total: 2 },
+      })
+    mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
+    renderWithProviders(<BuyoutTable {...defaultProps} />)
+    await waitFor(() => {
+      expect(mockApiGet).toHaveBeenCalledTimes(2)
+    })
+    // Second call should include cursor param
+    expect(mockApiGet).toHaveBeenCalledWith(expect.stringContaining('cursor=cursor_page2'))
+    // Both pages' enrichment data should be available
+    await waitFor(() => {
+      expect(screen.getByText('Стр1')).toBeInTheDocument()
+      expect(screen.getByText('Стр2')).toBeInTheDocument()
+    })
   })
 })

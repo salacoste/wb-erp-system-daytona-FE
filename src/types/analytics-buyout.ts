@@ -22,6 +22,8 @@ export interface BySkuBuyoutItem {
   confidence?: BuyoutConfidence
   trend?: TrendDirection
   trendDelta?: number
+  /** Which comparison week was used for trend calculation. null = no historical data */
+  trendPeriod?: 'week-1' | 'week-2' | 'week-3' | 'week-4' | null
   previousBuyoutRatePct?: number | null
   /** Return breakdown: FBS has real categories, FBO only has total (estimated=true) */
   returnBreakdown?: {

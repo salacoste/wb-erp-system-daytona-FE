@@ -11,8 +11,11 @@ export interface FunnelProductItem {
   openCardCount: number
   addToCartCount: number
   ordersCount: number
+  ordersSumRub: number
   buyoutCount: number
+  buyoutSumRub: number
   cancelCount: number
+  cancelSumRub: number
   cartConversion: number
   orderConversion: number
   buyoutConversion: number
@@ -27,6 +30,10 @@ export interface FunnelDayItem {
   ordersCount: number
   buyoutCount: number
   cancelCount: number
+  cartConversion: number
+  orderConversion: number
+  buyoutConversion: number
+  cancelRate: number
   totalConversion: number
 }
 

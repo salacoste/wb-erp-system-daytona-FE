@@ -1,41 +1,22 @@
 /** Buyout Per-SKU Table — Epic 69/71: sorting, confidence badges, return reasons */
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useBuyoutBySku } from '@/hooks/use-buyout-analytics'
-import { useProducts } from '@/hooks/useProducts'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { useAllProductsMap } from '@/hooks/use-all-products-map'
+import { Table, TableBody } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
 import type { BuyoutSource } from '@/types/analytics-buyout'
-import {
-  SortField,
-  ariaSort,
-  ReasonCell,
-  TrendIndicator,
-  ConfidenceBadge,
-  SortBtn,
-} from './buyout-table-cells'
+import type { SortField } from './buyout-table-cells'
+import { BuyoutTableHeader, BuyoutTableRow } from './buyout-table-columns'
 
 interface BuyoutTableProps {
   from: string
   to: string
   source: BuyoutSource
-}
-
-interface ProductInfo {
-  saName: string
-  brand: string
-  vendorCode: string
 }
 
 export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
@@ -52,18 +33,7 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
     offset,
   })
 
-  const { data: productsData } = useProducts({ limit: 200 })
-  const productsMap = useMemo(() => {
-    const map = new Map<number, ProductInfo>()
-    for (const p of productsData?.products ?? []) {
-      map.set(Number(p.nm_id), {
-        saName: p.sa_name ?? '',
-        brand: p.brand ?? '',
-        vendorCode: p.vendor_code ?? '',
-      })
-    }
-    return map
-  }, [productsData])
+  const productsMap = useAllProductsMap(!isLoading && !isError)
 
   const handleSort = (field: SortField) => {
     if (sort === field) {
@@ -102,87 +72,11 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border overflow-x-auto">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-20">nmId</TableHead>
-              <TableHead>Артикул</TableHead>
-              <TableHead>Товар</TableHead>
-              <TableHead>Бренд</TableHead>
-              <TableHead aria-sort={ariaSort('salesCount', sort, sortOrder)}>
-                <SortBtn active={sort === 'salesCount'} onClick={() => handleSort('salesCount')}>
-                  Продажи
-                </SortBtn>
-              </TableHead>
-              <TableHead title="Финансовые возвраты по отчёту WB (FBO+FBS)">Возвраты</TableHead>
-              <TableHead aria-sort={ariaSort('buyoutRate', sort, sortOrder)}>
-                <SortBtn active={sort === 'buyoutRate'} onClick={() => handleSort('buyoutRate')}>
-                  Выкуп %
-                </SortBtn>
-              </TableHead>
-              <TableHead className="text-blue-600" title="По статусам FBS-заказов">
-                До отправки
-              </TableHead>
-              <TableHead className="text-orange-600" title="По статусам FBS-заказов">
-                Отказ ПВЗ
-              </TableHead>
-              <TableHead className="text-red-600" title="По статусам FBS-заказов">
-                После получ.
-              </TableHead>
-              <TableHead aria-sort={ariaSort('trend', sort, sortOrder)}>
-                <SortBtn active={sort === 'trend'} onClick={() => handleSort('trend')}>
-                  Тренд
-                </SortBtn>
-              </TableHead>
-              <TableHead>Уверенность</TableHead>
-            </TableRow>
-          </TableHeader>
+          <BuyoutTableHeader sort={sort} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>
-            {items.map(item => {
-              const product = productsMap.get(item.nmId)
-              const rb = item.returnBreakdown
-              const isEstimated = rb?.estimated === true
-              return (
-                <TableRow key={item.nmId}>
-                  <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
-                  <TableCell className="text-sm font-medium">
-                    {item.supplierArticle || product?.vendorCode || '—'}
-                  </TableCell>
-                  <TableCell
-                    className="text-sm max-w-48 truncate"
-                    title={product?.saName || item.productName || undefined}
-                  >
-                    {product?.saName || item.productName || '—'}
-                  </TableCell>
-                  <TableCell className="text-sm">{item.brand || product?.brand || '—'}</TableCell>
-                  <TableCell>{item.salesCount.toLocaleString('ru-RU')}</TableCell>
-                  <TableCell>{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
-                  <TableCell className="font-medium">
-                    {item.buyoutRatePct != null ? `${item.buyoutRatePct.toFixed(1)}%` : '—'}
-                  </TableCell>
-                  <ReasonCell
-                    count={rb?.cancelBeforeShipment}
-                    color="text-blue-600"
-                    estimated={isEstimated}
-                  />
-                  <ReasonCell
-                    count={rb?.refusalAtPvz}
-                    color="text-orange-600"
-                    estimated={isEstimated}
-                  />
-                  <ReasonCell
-                    count={rb?.returnAfterReceipt}
-                    color="text-red-600"
-                    estimated={isEstimated}
-                  />
-                  <TableCell>
-                    <TrendIndicator trend={item.trend} delta={item.trendDelta} />
-                  </TableCell>
-                  <TableCell>
-                    <ConfidenceBadge confidence={item.confidence} />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
+            {items.map(item => (
+              <BuyoutTableRow key={item.nmId} item={item} product={productsMap.get(item.nmId)} />
+            ))}
           </TableBody>
         </Table>
       </div>
