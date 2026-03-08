@@ -24,6 +24,8 @@ import {
 import { EfficiencyAlertBanner } from './components/EfficiencyAlertBanner'
 import { CampaignSelector } from './components/CampaignSelector'
 import { MergedGroupTable } from './components/MergedGroupTable'
+import { DailyTrendChart } from './components/DailyTrendChart'
+import { MultiCampaignWarningBanner } from './components/MultiCampaignWarningBanner'
 import { features } from '@/config/features'
 // Story 37.1: Real API integration (Request #88)
 import { transformMergedGroups } from '@/lib/transformers/advertising-transformers'
@@ -138,6 +140,7 @@ export default function AdvertisingAnalyticsPage() {
     campaign_ids: selectedCampaigns.length > 0 ? selectedCampaigns : undefined,
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
+    include_daily: true, // Story 72.3: Request daily breakdown for trend chart
   })
 
   // Sync state to URL params
@@ -401,6 +404,9 @@ export default function AdvertisingAnalyticsPage() {
       {/* Summary Cards: Spend, ROAS, ROI, Active Campaigns */}
       <AdvertisingSummaryCards summary={data?.summary} isLoading={isLoading} />
 
+      {/* Story 72.3: Daily Trend Chart */}
+      <DailyTrendChart data={data?.daily ?? []} isLoading={isLoading} />
+
       {/* Epic 36: Group By Toggle (separate row above table per PO decision) */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">Группировка</h3>
@@ -452,18 +458,24 @@ export default function AdvertisingAnalyticsPage() {
               onProductClick={handleProductClick}
             />
           ) : (
-            <PerformanceMetricsTable
-              data={data?.data ?? []}
-              viewBy={viewBy}
-              isLoading={isLoading}
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-              onSortChange={handleSortChange}
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalCount={totalCount}
-              onPageChange={handlePageChange}
-            />
+            <div className="space-y-3">
+              <MultiCampaignWarningBanner
+                warningCount={data?.multiCampaignSkuWarnings?.length ?? 0}
+              />
+              <PerformanceMetricsTable
+                data={data?.data ?? []}
+                viewBy={viewBy}
+                isLoading={isLoading}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={handleSortChange}
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalCount={totalCount}
+                onPageChange={handlePageChange}
+                multiCampaignSkuWarnings={data?.multiCampaignSkuWarnings}
+              />
+            </div>
           )}
         </CardContent>
       </Card>

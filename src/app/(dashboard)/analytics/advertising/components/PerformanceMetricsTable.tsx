@@ -10,27 +10,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowUp, ArrowDown, ChevronsUpDown, ExternalLink, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { AdvertisingItem, ViewByMode } from '@/types/advertising-analytics'
+import type {
+  AdvertisingAnalyticsParams,
+  AdvertisingItem,
+  MultiCampaignSkuWarning,
+  ViewByMode,
+} from '@/types/advertising-analytics'
 import { EfficiencyBadge } from './EfficiencyBadge'
 import { MergedProductBadge } from '@/components/analytics/MergedProductBadge'
+import { MultiCampaignWarningBadge } from './MultiCampaignWarningBadge'
 
 // ============================================================================
 // Types
 // ============================================================================
 
-// Match backend API sort_by field (Request #80)
-export type SortField = 'spend' | 'revenue' | 'orders' | 'views' | 'clicks' | 'roas' | 'roi' | 'ctr' | 'cpc'
+// Derive from AdvertisingAnalyticsParams.sort_by — single source of truth (matches FunnelTable/BuyoutTable pattern)
+export type SortField = NonNullable<AdvertisingAnalyticsParams['sort_by']>
 export type SortOrder = 'asc' | 'desc'
 
 interface PerformanceMetricsTableProps {
@@ -51,6 +52,8 @@ interface PerformanceMetricsTableProps {
   totalCount: number
   /** Pagination handlers */
   onPageChange: (page: number) => void
+  /** Multi-campaign SKU warnings for profit multiplication (Story 72.4) */
+  multiCampaignSkuWarnings?: MultiCampaignSkuWarning[]
 }
 
 // ============================================================================
@@ -95,13 +98,7 @@ interface SortableHeaderProps {
   onSort: (field: SortField) => void
 }
 
-function SortableHeader({
-  label,
-  field,
-  currentSort,
-  currentOrder,
-  onSort,
-}: SortableHeaderProps) {
+function SortableHeader({ label, field, currentSort, currentOrder, onSort }: SortableHeaderProps) {
   const isSorted = currentSort === field
 
   return (
@@ -133,18 +130,42 @@ function TableSkeleton({ rows = 10 }: { rows?: number }) {
     <>
       {[...Array(rows)].map((_, i) => (
         <TableRow key={i}>
-          <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-          <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-          <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-20" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-32" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-16" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-20" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-16" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-16" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-12" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-16" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-12" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-12" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-12" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-16" />
+          </TableCell>
         </TableRow>
       ))}
     </>
@@ -178,11 +199,19 @@ export function PerformanceMetricsTable({
   pageSize,
   totalCount,
   onPageChange,
+  multiCampaignSkuWarnings,
 }: PerformanceMetricsTableProps) {
   // Calculate pagination
   const totalPages = Math.ceil(totalCount / pageSize)
   const hasNextPage = page < totalPages
   const hasPrevPage = page > 1
+
+  // Story 72.4: Build lookup map for multi-campaign SKU warnings
+  const warningMap = useMemo(() => {
+    const map = new Map<number, MultiCampaignSkuWarning>()
+    multiCampaignSkuWarnings?.forEach(w => map.set(w.nmId, w))
+    return map
+  }, [multiCampaignSkuWarnings])
 
   // Get identifier column based on view mode (AC2)
   const identifierColumn = useMemo(() => {
@@ -254,7 +283,12 @@ export function PerformanceMetricsTable({
   ) => {
     // For unknown status, show dash for profit-related fields
     if (item.efficiency_status === 'unknown') {
-      if (field === 'profit' || field === 'roas' || field === 'roi' || field === 'profit_after_ads') {
+      if (
+        field === 'profit' ||
+        field === 'roas' ||
+        field === 'roi' ||
+        field === 'profit_after_ads'
+      ) {
         return <span className="text-muted-foreground">—</span>
       }
     }
@@ -268,9 +302,7 @@ export function PerformanceMetricsTable({
     const isNegative = numValue < 0
 
     return (
-      <span className={cn(isNegative && 'text-red-600 font-medium')}>
-        {formatter(numValue)}
-      </span>
+      <span className={cn(isNegative && 'text-red-600 font-medium')}>{formatter(numValue)}</span>
     )
   }
 
@@ -299,9 +331,18 @@ export function PerformanceMetricsTable({
               <div className="space-y-2">
                 <p className="font-medium">WB API переатрибутировал продажи</p>
                 <div className="text-xs text-muted-foreground space-y-1">
-                  <p>Выручка из рекламы ({formatCurrency(item.revenue)}) больше общей выручки товара ({formatCurrency(item.total_sales)}).</p>
-                  <p className="mt-2">Причина: WB засчитывает продажи к рекламе, даже если покупка была через органический поиск после клика на объявление.</p>
-                  <p className="mt-2 font-medium">Органика = {formatCurrency(item.total_sales)} - {formatCurrency(item.revenue)} = {formatCurrency(item.organic_sales)}</p>
+                  <p>
+                    Выручка из рекламы ({formatCurrency(item.revenue)}) больше общей выручки товара
+                    ({formatCurrency(item.total_sales)}).
+                  </p>
+                  <p className="mt-2">
+                    Причина: WB засчитывает продажи к рекламе, даже если покупка была через
+                    органический поиск после клика на объявление.
+                  </p>
+                  <p className="mt-2 font-medium">
+                    Органика = {formatCurrency(item.total_sales)} - {formatCurrency(item.revenue)} ={' '}
+                    {formatCurrency(item.organic_sales)}
+                  </p>
                 </div>
               </div>
             </TooltipContent>
@@ -331,11 +372,10 @@ export function PerformanceMetricsTable({
           <TooltipContent side="left" className="max-w-xs">
             <div className="space-y-1 text-xs">
               <p className="font-medium">Общая выручка товара</p>
-              <p className="text-muted-foreground">
-                Формула: Органика + Реклама
-              </p>
+              <p className="text-muted-foreground">Формула: Органика + Реклама</p>
               <p className="mt-1">
-                {formatCurrency(item.organic_sales || 0)} + {formatCurrency(item.revenue || 0)} = {formatCurrency(item.total_sales)}
+                {formatCurrency(item.organic_sales || 0)} + {formatCurrency(item.revenue || 0)} ={' '}
+                {formatCurrency(item.total_sales)}
               </p>
             </div>
           </TooltipContent>
@@ -370,7 +410,8 @@ export function PerformanceMetricsTable({
                 Формула: Выручка из рекламы / Расход на рекламу
               </p>
               <p className="mt-1">
-                {formatCurrency(item.revenue || 0)} / {formatCurrency(item.spend || 0)} = {formatMultiplier(item.roas)}
+                {formatCurrency(item.revenue || 0)} / {formatCurrency(item.spend || 0)} ={' '}
+                {formatMultiplier(item.roas)}
               </p>
             </div>
           </TooltipContent>
@@ -396,10 +437,12 @@ export function PerformanceMetricsTable({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className={cn(
-              "cursor-help underline decoration-dotted underline-offset-4",
-              isNegative && "text-red-600 font-medium"
-            )}>
+            <span
+              className={cn(
+                'cursor-help underline decoration-dotted underline-offset-4',
+                isNegative && 'text-red-600 font-medium'
+              )}
+            >
               {formatPercent(item.roi)}
             </span>
           </TooltipTrigger>
@@ -410,7 +453,8 @@ export function PerformanceMetricsTable({
                 Формула: (Прибыль - Расход на рекламу) / Расход на рекламу
               </p>
               <p className="mt-1">
-                ({formatCurrency(item.profit || 0)} - {formatCurrency(item.spend || 0)}) / {formatCurrency(item.spend || 0)} = {formatPercent(item.roi)}
+                ({formatCurrency(item.profit || 0)} - {formatCurrency(item.spend || 0)}) /{' '}
+                {formatCurrency(item.spend || 0)} = {formatPercent(item.roi)}
               </p>
             </div>
           </TooltipContent>
@@ -441,11 +485,10 @@ export function PerformanceMetricsTable({
           <TooltipContent side="left" className="max-w-xs">
             <div className="space-y-1 text-xs">
               <p className="font-medium">Вклад органики</p>
-              <p className="text-muted-foreground">
-                Формула: Органика / Общая выручка × 100%
-              </p>
+              <p className="text-muted-foreground">Формула: Органика / Общая выручка × 100%</p>
               <p className="mt-1">
-                {formatCurrency(item.organic_sales || 0)} / {formatCurrency(item.total_sales || 0)} = {formatPercentRaw(item.organic_contribution)}
+                {formatCurrency(item.organic_sales || 0)} / {formatCurrency(item.total_sales || 0)}{' '}
+                = {formatPercentRaw(item.organic_contribution)}
               </p>
             </div>
           </TooltipContent>
@@ -568,11 +611,9 @@ export function PerformanceMetricsTable({
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((item) => (
+              data.map(item => (
                 <TableRow key={item.key}>
-                  <TableCell className="font-medium">
-                    {renderIdentifier(item)}
-                  </TableCell>
+                  <TableCell className="font-medium">{renderIdentifier(item)}</TableCell>
                   {nameColumn && (
                     <TableCell>
                       {/* Epic 36: Show merged group badge or product name */}
@@ -592,35 +633,35 @@ export function PerformanceMetricsTable({
                   <TableCell className="text-right">
                     {renderValue(item, 'spend', formatCurrency)}
                   </TableCell>
-                  <TableCell className="text-right">
-                    {renderTotalSales(item)}
-                  </TableCell>
+                  <TableCell className="text-right">{renderTotalSales(item)}</TableCell>
                   <TableCell className="text-right">
                     {renderValue(item, 'revenue', formatCurrency)}
                   </TableCell>
+                  <TableCell className="text-right">{renderOrganicSales(item)}</TableCell>
+                  <TableCell className="text-right">{renderOrganicContribution(item)}</TableCell>
                   <TableCell className="text-right">
-                    {renderOrganicSales(item)}
+                    {(() => {
+                      const warning = item.sku_id ? warningMap.get(Number(item.sku_id)) : undefined
+                      return warning ? (
+                        <div className="flex items-center justify-end gap-1">
+                          {renderValue(item, 'profit', formatCurrency)}
+                          <MultiCampaignWarningBadge
+                            campaigns={warning.campaigns}
+                            message={warning.message}
+                          />
+                        </div>
+                      ) : (
+                        renderValue(item, 'profit', formatCurrency)
+                      )
+                    })()}
                   </TableCell>
-                  <TableCell className="text-right">
-                    {renderOrganicContribution(item)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {renderValue(item, 'profit', formatCurrency)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {renderROAS(item)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {renderROI(item)}
-                  </TableCell>
+                  <TableCell className="text-right">{renderROAS(item)}</TableCell>
+                  <TableCell className="text-right">{renderROI(item)}</TableCell>
                   <TableCell className="text-right">
                     {renderValue(item, 'ctr', formatPercentRaw)}
                   </TableCell>
                   <TableCell>
-                    <EfficiencyBadge
-                      status={item.efficiency_status}
-                      showRecommendation
-                    />
+                    <EfficiencyBadge status={item.efficiency_status} showRecommendation />
                   </TableCell>
                 </TableRow>
               ))

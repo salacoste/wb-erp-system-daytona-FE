@@ -127,6 +127,7 @@ export async function getAdvertisingAnalytics(
     efficiency_filter: params.efficiency_filter ?? 'all',
     sort_by: params.sort_by ?? 'spend',
     sort_order: params.sort_order ?? 'desc',
+    include_daily: params.include_daily ?? false,
   })
 
   // Story 33.1-fe: Use skipDataUnwrap to get full response
@@ -197,6 +198,23 @@ export async function getAdvertisingAnalytics(
       conversion_rate: item.conversionRate ?? 0,
       profit_after_ads: item.profitAfterAds ?? 0,
       efficiency_status: item.efficiency?.status || 'unknown',
+    })),
+    // Request #157: Daily breakdown (present when include_daily=true)
+    daily: backendResponse.daily?.map((day: any) => ({
+      date: day.date,
+      spend: day.spend ?? 0,
+      views: day.views ?? 0,
+      clicks: day.clicks ?? 0,
+      orders: day.orders ?? 0,
+      ctr: day.ctr,
+      cpc: day.cpc,
+      revenue_attributed: day.revenueAttributed,
+    })),
+    // Story 72.4: Multi-campaign SKU warnings (auto-returned when deduplication detects overlaps)
+    multiCampaignSkuWarnings: backendResponse.multiCampaignSkuWarnings?.map((w: any) => ({
+      nmId: w.nmId,
+      campaigns: w.campaigns ?? [],
+      message: w.message ?? '',
     })),
   }
 

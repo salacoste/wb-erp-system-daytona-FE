@@ -119,9 +119,9 @@ export interface AdvertisingSummary {
   avg_ctr: number
   /** Average conversion rate (%) */
   avg_conversion_rate: number
-  /** Total number of campaigns */
+  /** @deprecated Always returns 0 from backend (Request #160, TYPE-6). Total number of campaigns */
   campaign_count: number
-  /** Number of currently active campaigns */
+  /** @deprecated Always returns 0 from backend (Request #160, TYPE-6). Number of currently active campaigns */
   active_campaigns: number
   /** Total organic sales not attributed to ads - Epic 35 */
   total_organic_sales: number
@@ -202,6 +202,43 @@ export interface AdvertisingItem {
 }
 
 /**
+ * Daily advertising metrics breakdown (Request #157).
+ * Present in response when include_daily=true.
+ */
+export interface AdvertisingDailyItem {
+  /** Date in YYYY-MM-DD format */
+  date: string
+  /** Total ad spend in rubles */
+  spend: number
+  /** Total ad impressions (views) */
+  views: number
+  /** Total ad clicks */
+  clicks: number
+  /** Orders attributed to ads */
+  orders: number
+  /** Click-through rate (optional, calculated) */
+  ctr?: number
+  /** Cost per click (optional, calculated) */
+  cpc?: number
+  /** Ad-attributed revenue (optional) */
+  revenue_attributed?: number
+}
+
+/**
+ * Warning for SKUs appearing in multiple campaigns (profit multiplication risk).
+ * Backend returns these automatically when deduplication detects overlapping campaign SKUs.
+ * @see docs/request-backend/077-multi-campaign-profit-multiplication.md
+ */
+export interface MultiCampaignSkuWarning {
+  /** WB product identifier */
+  nmId: number
+  /** Campaign IDs this product appears in */
+  campaigns: number[]
+  /** Backend-generated warning message */
+  message: string
+}
+
+/**
  * Full advertising analytics response.
  */
 export interface AdvertisingAnalyticsResponse {
@@ -211,6 +248,10 @@ export interface AdvertisingAnalyticsResponse {
   summary: AdvertisingSummary
   /** List of analytics items */
   data: AdvertisingItem[]
+  /** Daily breakdown when include_daily=true (Request #157) */
+  daily?: AdvertisingDailyItem[]
+  /** Warnings for SKUs in multiple campaigns (profit may be overstated) */
+  multiCampaignSkuWarnings?: MultiCampaignSkuWarning[]
 }
 
 // ============================================================================
@@ -511,14 +552,26 @@ export interface AdvertisingAnalyticsParams {
   campaign_ids?: number[]
   /** Filter by SKU IDs (array of strings) */
   sku_ids?: string[]
-  /** Sort field (default: 'spend') - Request #80: Full backend support */
-  sort_by?: 'spend' | 'revenue' | 'orders' | 'views' | 'clicks' | 'roas' | 'roi' | 'ctr' | 'cpc'
+  /** Sort field (default: 'spend') - Request #80: Full backend support, profit_after_ads added in Epic 72 */
+  sort_by?:
+    | 'spend'
+    | 'revenue'
+    | 'orders'
+    | 'views'
+    | 'clicks'
+    | 'roas'
+    | 'roi'
+    | 'ctr'
+    | 'cpc'
+    | 'profit_after_ads'
   /** Sort direction (default: 'desc') */
   sort_order?: 'asc' | 'desc'
   /** Maximum number of items to return */
   limit?: number
   /** Number of items to skip (offset-based pagination) */
   offset?: number
+  /** Request #157: Include daily breakdown in response */
+  include_daily?: boolean
 }
 
 /**
