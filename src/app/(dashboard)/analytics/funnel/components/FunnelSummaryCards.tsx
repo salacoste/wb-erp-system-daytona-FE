@@ -1,28 +1,120 @@
-/**
- * Funnel Summary Cards
- * Epic 68: 4 metric cards — total views, orders, buyouts, avg conversion
- */
-
+/** Funnel Summary Cards — Stories 73.2-FE (8 cards), 73.3-FE (WoW comparison) */
 'use client'
 
 import { useFunnelData } from '@/hooks/use-funnel-analytics'
+import { formatCurrency } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Eye, ShoppingCart, PackageCheck, TrendingUp } from 'lucide-react'
+import {
+  Eye,
+  ShoppingBag,
+  ShoppingCart,
+  PackageCheck,
+  Banknote,
+  ArrowRightLeft,
+  TrendingUp,
+  XCircle,
+} from 'lucide-react'
+import type { FunnelSummary } from '@/types/analytics-funnel'
+import {
+  calculatePreviousPeriod,
+  calculateFunnelDelta,
+  formatDelta,
+  getDeltaColor,
+  isInvertedMetric,
+} from './funnel-comparison-utils'
 
 interface FunnelSummaryCardsProps {
   from: string
   to: string
+  compare?: boolean
+  nmIds?: number[]
 }
 
-export function FunnelSummaryCards({ from, to }: FunnelSummaryCardsProps) {
-  // limit=1 is minimum allowed by backend; we only use summary, not items
-  const { data, isLoading } = useFunnelData(from, to, { limit: 1 })
+type SummaryKey = keyof FunnelSummary
+
+interface CardDef {
+  label: string
+  field: SummaryKey
+  icon: React.ComponentType<{ className?: string }>
+  color: string
+  format: (n: number) => string
+}
+
+const CARDS: CardDef[] = [
+  {
+    label: 'Просмотры',
+    field: 'openCardCount',
+    icon: Eye,
+    color: 'text-blue-600',
+    format: formatNumber,
+  },
+  {
+    label: 'Корзина',
+    field: 'addToCartCount',
+    icon: ShoppingBag,
+    color: 'text-amber-600',
+    format: formatNumber,
+  },
+  {
+    label: 'Заказы',
+    field: 'ordersCount',
+    icon: ShoppingCart,
+    color: 'text-orange-600',
+    format: formatNumber,
+  },
+  {
+    label: 'Выкупы',
+    field: 'buyoutCount',
+    icon: PackageCheck,
+    color: 'text-green-600',
+    format: formatNumber,
+  },
+  {
+    label: 'Сумма выкупов',
+    field: 'buyoutSumRub',
+    icon: Banknote,
+    color: 'text-emerald-600',
+    format: formatCurrency,
+  },
+  {
+    label: 'Конв. корзины',
+    field: 'cartConversion',
+    icon: ArrowRightLeft,
+    color: 'text-teal-600',
+    format: formatPercent,
+  },
+  {
+    label: 'Сквозная конверсия',
+    field: 'totalConversion',
+    icon: TrendingUp,
+    color: 'text-indigo-600',
+    format: formatPercent,
+  },
+  {
+    label: 'Отмены',
+    field: 'cancelCount',
+    icon: XCircle,
+    color: 'text-red-600',
+    format: formatNumber,
+  },
+]
+
+export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCardsProps) {
+  const filterParam = nmIds?.length ? nmIds : undefined
+  const { data, isLoading } = useFunnelData(from, to, { limit: 1, nmIds: filterParam })
+
+  const prev = compare ? calculatePreviousPeriod(from, to) : null
+  const { data: prevData, isLoading: prevLoading } = useFunnelData(
+    prev?.prevFrom ?? '',
+    prev?.prevTo ?? '',
+    { limit: 1, nmIds: filterParam }
+  )
 
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 8 }).map((_, i) => (
           <Skeleton key={i} className="h-24" />
         ))}
       </div>
@@ -30,51 +122,28 @@ export function FunnelSummaryCards({ from, to }: FunnelSummaryCardsProps) {
   }
 
   const summary = data?.summary
-
-  const cards = [
-    {
-      label: 'Просмотры',
-      value: summary?.openCardCount ?? 0,
-      icon: Eye,
-      color: 'text-blue-600',
-      format: formatNumber,
-    },
-    {
-      label: 'Заказы',
-      value: summary?.ordersCount ?? 0,
-      icon: ShoppingCart,
-      color: 'text-orange-600',
-      format: formatNumber,
-    },
-    {
-      label: 'Выкупы',
-      value: summary?.buyoutCount ?? 0,
-      icon: PackageCheck,
-      color: 'text-green-600',
-      format: formatNumber,
-    },
-    {
-      label: 'Сквозная конверсия',
-      value: summary?.totalConversion ?? 0,
-      icon: TrendingUp,
-      color: 'text-indigo-600',
-      format: formatPercent,
-    },
-  ]
+  const prevSummary = prevData?.summary
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-      {cards.map(card => {
+      {CARDS.map(card => {
         const Icon = card.icon
+        const value = summary?.[card.field] ?? 0
+        const delta =
+          compare && prevSummary ? calculateFunnelDelta(value, prevSummary[card.field]) : null
+
         return (
           <Card key={card.label}>
             <CardContent className="flex items-center gap-4 p-4">
               <div className={card.color}>
                 <Icon className="h-8 w-8" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">{card.label}</p>
-                <p className="text-2xl font-bold">{card.format(card.value)}</p>
+                <p className="text-2xl font-bold truncate">{card.format(value)}</p>
+                {compare && (
+                  <DeltaIndicator delta={delta} field={card.field} loading={prevLoading} />
+                )}
               </div>
             </CardContent>
           </Card>
@@ -84,10 +153,48 @@ export function FunnelSummaryCards({ from, to }: FunnelSummaryCardsProps) {
   )
 }
 
+function DeltaIndicator({
+  delta,
+  field,
+  loading,
+}: {
+  delta: ReturnType<typeof calculateFunnelDelta> | null
+  field: string
+  loading: boolean
+}) {
+  if (loading) return <Skeleton className="h-4 w-16 mt-0.5" />
+
+  if (!delta) {
+    return (
+      <p className="text-xs text-muted-foreground" title="Нет данных за предыдущий период">
+        —
+      </p>
+    )
+  }
+
+  if (delta.direction === 'neutral') {
+    return (
+      <p className="text-xs text-muted-foreground" title="По сравнению с предыдущим периодом">
+        {formatDelta(delta)}
+      </p>
+    )
+  }
+
+  const inverted = isInvertedMetric(field)
+  return (
+    <p
+      className={`text-xs ${getDeltaColor(delta.direction, inverted)}`}
+      title="По сравнению с предыдущим периодом"
+    >
+      {formatDelta(delta)}
+    </p>
+  )
+}
+
 function formatNumber(n: number): string {
   return n.toLocaleString('ru-RU')
 }
 
 function formatPercent(n: number): string {
-  return `${n.toFixed(1)}%`
+  return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
 }

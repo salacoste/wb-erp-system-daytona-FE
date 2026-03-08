@@ -1,51 +1,49 @@
 /**
  * Funnel Per-SKU Table
  * Epic 68: Sortable table with pagination for per-SKU funnel data
+ * Refactored in Story 73.1-FE: columns extracted to funnel-table-columns.tsx
+ * Story 73.4-FE: Added nmIds product filter prop
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useFunnelData } from '@/hooks/use-funnel-analytics'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ArrowUpDown, AlertCircle } from 'lucide-react'
-import type { FunnelProductItem, FunnelParams } from '@/types/analytics-funnel'
+import { AlertCircle } from 'lucide-react'
+import type { FunnelProductItem } from '@/types/analytics-funnel'
+import type { FunnelSortField } from './funnel-table-cells'
+import { FunnelTableHeader, FunnelTableRow } from './funnel-table-columns'
 
 interface FunnelTableProps {
   from: string
   to: string
+  nmIds?: number[]
 }
 
-type SortField = NonNullable<FunnelParams['sort']>
-
-function ariaSort(field: SortField, currentSort: SortField, currentOrder: 'asc' | 'desc') {
-  return field === currentSort ? (`${currentOrder}ending` as const) : ('none' as const)
-}
-
-export function FunnelTable({ from, to }: FunnelTableProps) {
-  const [sort, setSort] = useState<SortField>('openCardCount')
+export function FunnelTable({ from, to, nmIds }: FunnelTableProps) {
+  const [sort, setSort] = useState<FunnelSortField>('openCardCount')
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [offset, setOffset] = useState(0)
   const limit = 50
+
+  const nmIdsKey = nmIds?.join(',') ?? ''
+  useEffect(() => {
+    setOffset(0)
+  }, [nmIdsKey])
 
   const { data, isLoading, isError } = useFunnelData(from, to, {
     sort,
     order,
     limit,
     offset,
+    nmIds: nmIds?.length ? nmIds : undefined,
   })
 
-  const handleSort = (field: SortField) => {
+  const handleSort = (field: FunnelSortField) => {
     if (sort === field) {
       setOrder(prev => (prev === 'desc' ? 'asc' : 'desc'))
     } else {
@@ -84,68 +82,15 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-20">nmId</TableHead>
-              <TableHead>Артикул</TableHead>
-              <TableHead aria-sort={ariaSort('openCardCount', sort, order)}>
-                <SortButton
-                  active={sort === 'openCardCount'}
-                  onClick={() => handleSort('openCardCount')}
-                >
-                  Просмотры
-                </SortButton>
-              </TableHead>
-              <TableHead>Корзина</TableHead>
-              <TableHead aria-sort={ariaSort('ordersCount', sort, order)}>
-                <SortButton
-                  active={sort === 'ordersCount'}
-                  onClick={() => handleSort('ordersCount')}
-                >
-                  Заказы
-                </SortButton>
-              </TableHead>
-              <TableHead aria-sort={ariaSort('buyoutCount', sort, order)}>
-                <SortButton
-                  active={sort === 'buyoutCount'}
-                  onClick={() => handleSort('buyoutCount')}
-                >
-                  Выкупы
-                </SortButton>
-              </TableHead>
-              <TableHead aria-sort={ariaSort('totalConversion', sort, order)}>
-                <SortButton
-                  active={sort === 'totalConversion'}
-                  onClick={() => handleSort('totalConversion')}
-                >
-                  Конверсия
-                </SortButton>
-              </TableHead>
-              <TableHead aria-sort={ariaSort('cancelRate', sort, order)}>
-                <SortButton active={sort === 'cancelRate'} onClick={() => handleSort('cancelRate')}>
-                  Отмены
-                </SortButton>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
+          <FunnelTableHeader sort={sort} sortOrder={order} onSort={handleSort} />
           <TableBody>
             {items.map(item => (
-              <TableRow key={item.nmId}>
-                <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
-                <TableCell className="text-sm">{item.vendorCode ?? '—'}</TableCell>
-                <TableCell>{item.openCardCount.toLocaleString('ru-RU')}</TableCell>
-                <TableCell>{item.addToCartCount.toLocaleString('ru-RU')}</TableCell>
-                <TableCell>{item.ordersCount.toLocaleString('ru-RU')}</TableCell>
-                <TableCell>{item.buyoutCount.toLocaleString('ru-RU')}</TableCell>
-                <TableCell className="font-medium">{item.totalConversion.toFixed(1)}%</TableCell>
-                <TableCell className="text-red-600">{item.cancelRate.toFixed(1)}%</TableCell>
-              </TableRow>
+              <FunnelTableRow key={item.nmId} item={item} />
             ))}
           </TableBody>
         </Table>
       </div>
 
-      {/* Pagination */}
       {pagination && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
@@ -172,27 +117,5 @@ export function FunnelTable({ from, to }: FunnelTableProps) {
         </div>
       )}
     </div>
-  )
-}
-
-function SortButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-1 hover:text-foreground transition-colors"
-    >
-      {children}
-      <ArrowUpDown
-        className={`h-3.5 w-3.5 ${active ? 'text-foreground' : 'text-muted-foreground/50'}`}
-      />
-    </button>
   )
 }
