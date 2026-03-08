@@ -10,6 +10,7 @@ import { useSearchByProduct } from '@/hooks/use-search-analytics'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, Search } from 'lucide-react'
+import type { SearchQueryItem } from '@/types/search-analytics'
 import { ProductCombobox } from './ProductCombobox'
 import { SearchByProductTable } from './SearchByProductTable'
 
@@ -49,7 +50,7 @@ export function SearchByProductTab({ from, to }: SearchByProductTabProps) {
 function NoProductPlaceholder() {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-      <Search className="h-12 w-12 mb-3 opacity-40" />
+      <Search className="h-12 w-12 mb-3 opacity-40" aria-hidden="true" />
       <p className="text-sm">Выберите товар, чтобы увидеть поисковые запросы</p>
     </div>
   )
@@ -57,7 +58,7 @@ function NoProductPlaceholder() {
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="status" aria-busy="true">
       <Skeleton className="h-6 w-64" />
       <Skeleton className="h-96 w-full" />
     </div>
@@ -69,15 +70,7 @@ function QueryResults({
   totalQueries,
   nmId,
 }: {
-  queries: {
-    searchQuery: string
-    avgPosition: number
-    totalImpressions: number
-    totalClicks: number
-    avgCtr: number
-    totalOrders: number
-    totalRevenue: number
-  }[]
+  queries: SearchQueryItem[]
   totalQueries: number
   nmId: number
 }) {

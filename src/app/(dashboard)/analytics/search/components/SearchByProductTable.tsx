@@ -14,8 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { ArrowUpDown } from 'lucide-react'
 import type { SearchQueryItem } from '@/types/search-analytics'
+import { SortButton } from './SortButton'
 
 interface SearchByProductTableProps {
   queries: SearchQueryItem[]
@@ -116,27 +116,5 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
         </TableBody>
       </Table>
     </div>
-  )
-}
-
-function SortButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-1 hover:text-foreground transition-colors"
-    >
-      {children}
-      <ArrowUpDown
-        className={`h-3.5 w-3.5 ${active ? 'text-foreground' : 'text-muted-foreground/50'}`}
-      />
-    </button>
   )
 }

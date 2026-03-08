@@ -5,6 +5,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { QueryClient } from '@tanstack/react-query'
 import type { SearchByProductResponse } from '@/types/search-analytics'
@@ -14,9 +15,18 @@ vi.mock('@/hooks/use-search-analytics', () => ({
   useSearchByProduct: (...args: unknown[]) => mockUseSearchByProduct(...args),
 }))
 
-const mockUseProducts = vi.fn()
-vi.mock('@/hooks-v1/useProducts', () => ({
-  useProducts: (...args: unknown[]) => mockUseProducts(...args),
+// Mock ProductCombobox to simplify tab orchestration testing
+vi.mock('../components/ProductCombobox', () => ({
+  ProductCombobox: ({
+    onChange,
+  }: {
+    value: number | undefined
+    onChange: (v: number | undefined) => void
+  }) => (
+    <button data-testid="mock-product-select" onClick={() => onChange(12345678)}>
+      Mock Select
+    </button>
+  ),
 }))
 
 import { SearchByProductTab } from '../components/SearchByProductTab'
@@ -52,8 +62,6 @@ const mockData: SearchByProductResponse = {
 beforeEach(() => {
   vi.clearAllMocks()
   queryClient = createTestQueryClient()
-  // Default: useProducts returns empty (no search yet)
-  mockUseProducts.mockReturnValue({ data: undefined, isLoading: false })
 })
 
 function renderTab() {
@@ -73,20 +81,59 @@ describe('SearchByProductTab', () => {
     })
   })
 
-  describe('with data', () => {
-    beforeEach(() => {
-      mockUseSearchByProduct.mockReturnValue({ data: mockData, isLoading: false, isError: false })
-    })
+  describe('loading state', () => {
+    it('shows skeletons when loading after product selection', async () => {
+      const user = userEvent.setup()
+      mockUseSearchByProduct.mockReturnValue({ data: undefined, isLoading: true, isError: false })
+      const { container } = renderTab()
 
-    it('shows totalQueries count when data is present', () => {
-      // Simulate selected product by passing nmId through hook
-      // The component needs a product to be selected for data to show
-      // Since no product is selected, placeholder is shown
-      mockUseSearchByProduct.mockReturnValue({ data: undefined, isLoading: false, isError: false })
+      await user.click(screen.getByTestId('mock-product-select'))
+
+      const skeletons = container.querySelectorAll('.animate-pulse')
+      expect(skeletons.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('error state', () => {
+    it('shows destructive alert on error after product selection', async () => {
+      const user = userEvent.setup()
+      mockUseSearchByProduct.mockReturnValue({ data: undefined, isLoading: false, isError: true })
       renderTab()
+
+      await user.click(screen.getByTestId('mock-product-select'))
+
+      expect(screen.getByText(/Не удалось загрузить поисковые данные/)).toBeInTheDocument()
+    })
+  })
+
+  describe('empty state', () => {
+    it('shows empty message when no queries found', async () => {
+      const user = userEvent.setup()
+      mockUseSearchByProduct.mockReturnValue({
+        data: { ...mockData, queries: [], totalQueries: 0 },
+        isLoading: false,
+        isError: false,
+      })
+      renderTab()
+
+      await user.click(screen.getByTestId('mock-product-select'))
+
       expect(
-        screen.getByText('Выберите товар, чтобы увидеть поисковые запросы')
+        screen.getByText('Нет поисковых данных для этого товара за выбранный период')
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('data rendering', () => {
+    it('shows totalQueries count and table rows after product selection', async () => {
+      const user = userEvent.setup()
+      mockUseSearchByProduct.mockReturnValue({ data: mockData, isLoading: false, isError: false })
+      renderTab()
+
+      await user.click(screen.getByTestId('mock-product-select'))
+
+      expect(screen.getByText('платье летнее')).toBeInTheDocument()
+      expect(screen.getByText('платье красное')).toBeInTheDocument()
     })
   })
 
@@ -95,15 +142,6 @@ describe('SearchByProductTab', () => {
       mockUseSearchByProduct.mockReturnValue({ data: undefined, isLoading: false, isError: false })
       renderTab()
       expect(mockUseSearchByProduct).toHaveBeenCalledWith(undefined, '2026-03-01', '2026-03-06')
-    })
-  })
-
-  describe('product combobox renders', () => {
-    it('renders combobox trigger button', () => {
-      mockUseSearchByProduct.mockReturnValue({ data: undefined, isLoading: false, isError: false })
-      renderTab()
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
-      expect(screen.getByText('Выберите товар для анализа...')).toBeInTheDocument()
     })
   })
 })
