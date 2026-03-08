@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Search, X, Package, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useProducts } from '@/hooks-v1/useProducts'
+import { useProducts } from '@/hooks/useProducts'
 
 const SEARCH_DEBOUNCE_MS = 300
 const SEARCH_MIN_LENGTH = 2
