@@ -12,7 +12,8 @@
  */
 
 import React, { useCallback, useMemo } from 'react'
-import { Crown } from 'lucide-react'
+import { AlertTriangle, Crown } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { AdvertisingGroup } from '@/types/advertising-analytics'
 
 // Story 37.3: Tooltip components for aggregate row and ROAS column
@@ -55,8 +56,30 @@ export interface MergedGroupTableProps {
 }
 
 // ============================================================================
-// Note: Formatting utilities moved to ../utils/formatters.ts (Story 37.3)
+// Story 73.6: Negative organicSales rendering helper
 // ============================================================================
+
+/** Render organic sales value with over-attribution warning if negative */
+function renderOrganicValue(value: number): React.ReactNode {
+  if (value >= 0) return formatCurrency(value)
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex items-center gap-1 cursor-help">
+            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+            <Badge variant="outline" className="text-[0.7rem] border-amber-500 text-amber-700">
+              Переатрибуция
+            </Badge>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="left" className="text-xs">
+          Рекламная выручка превышает общие продажи ({formatCurrency(value)})
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
 
 // ============================================================================
 // Table Header Component
@@ -215,7 +238,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
         <td className={aggregateCellClasses}>
           {formatRevenueWithPercent(revenue, organicContribution)}
         </td>
-        <td className={aggregateCellClasses}>{formatCurrency(organicSales)}</td>
+        <td className={aggregateCellClasses}>{renderOrganicValue(organicSales)}</td>
         <td className={aggregateCellClasses}>{formatCurrency(spend)}</td>
         <td className={aggregateCellClasses}>{formatROAS(roas)}</td>
       </tr>
@@ -243,7 +266,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
           <td className={detailCellClasses}>
             {formatRevenueWithPercent(product.totalRevenue, product.organicContribution)}
           </td>
-          <td className={detailCellClasses}>{formatCurrency(product.organicSales)}</td>
+          <td className={detailCellClasses}>{renderOrganicValue(product.organicSales)}</td>
           <td className={detailCellClasses}>{formatCurrency(product.totalSpend)}</td>
           <td className={detailCellClasses}>{formatROAS(product.roas)}</td>
         </tr>
@@ -263,8 +286,9 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
  * - 3-tier rowspan structure (склейка indicator, aggregate row, detail rows)
  * - Sortable column headers
  * - Responsive design with horizontal scroll on mobile
- * - Crown icon (👑) marks main products
+ * - Crown icon marks main products
  * - Epic 35 integration (totalSales, organicSales, organicContribution)
+ * - Story 73.6: Negative organicSales shown with over-attribution warning
  *
  * @example
  * ```tsx

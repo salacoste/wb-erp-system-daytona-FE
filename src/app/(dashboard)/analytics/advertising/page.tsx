@@ -26,9 +26,18 @@ import { CampaignSelector } from './components/CampaignSelector'
 import { MergedGroupTable } from './components/MergedGroupTable'
 import { DailyTrendChart } from './components/DailyTrendChart'
 import { MultiCampaignWarningBanner } from './components/MultiCampaignWarningBanner'
+import { SyncGapsTimeline } from './components/SyncGapsTimeline'
+import { OverAttributionBanner } from './components/OverAttributionBanner'
+import { AdCostDiscrepancySection } from './components/AdCostDiscrepancySection'
 import { features } from '@/config/features'
 // Story 37.1: Real API integration (Request #88)
 import { transformMergedGroups } from '@/lib/transformers/advertising-transformers'
+// Story 73.6: Over-attribution filter utilities
+import {
+  countOverAttributionItems,
+  filterOutOverAttribution,
+  recomputeSummary,
+} from './utils/over-attribution-utils'
 // Story 37.5: Analytics tracking (Epic 37 QA Phase 2)
 import {
   trackAdvertisingPageView,
@@ -87,22 +96,43 @@ export default function AdvertisingAnalyticsPage() {
     return { from: fromParam, to: toParam }
   })
 
-  const [viewBy, setViewBy] = useState<ViewByMode>(
-    () => (searchParams.get('view') as ViewByMode) || 'sku'
-  )
+  // Validated URL param helpers to prevent unsafe casts
+  const validViews: ViewByMode[] = ['sku', 'campaign', 'brand', 'category']
+  const validGroupBys: GroupByMode[] = ['sku', 'imtId']
+  const validSortFields: SortField[] = [
+    'spend',
+    'revenue',
+    'orders',
+    'views',
+    'clicks',
+    'roas',
+    'roi',
+    'ctr',
+    'cpc',
+    'profit_after_ads',
+  ]
+  const validSortOrders: SortOrder[] = ['asc', 'desc']
+
+  const [viewBy, setViewBy] = useState<ViewByMode>(() => {
+    const param = searchParams.get('view')
+    return validViews.includes(param as ViewByMode) ? (param as ViewByMode) : 'sku'
+  })
 
   // Epic 36: Product Card Linking - groupBy state
-  const [groupBy, setGroupBy] = useState<GroupByMode>(
-    () => (searchParams.get('group_by') as GroupByMode) || 'sku'
-  )
+  const [groupBy, setGroupBy] = useState<GroupByMode>(() => {
+    const param = searchParams.get('group_by')
+    return validGroupBys.includes(param as GroupByMode) ? (param as GroupByMode) : 'sku'
+  })
 
   // Sorting state (AC3: default Spend desc)
-  const [sortBy, setSortBy] = useState<SortField>(
-    () => (searchParams.get('sort') as SortField) || 'spend'
-  )
-  const [sortOrder, setSortOrder] = useState<SortOrder>(
-    () => (searchParams.get('order') as SortOrder) || 'desc'
-  )
+  const [sortBy, setSortBy] = useState<SortField>(() => {
+    const param = searchParams.get('sort')
+    return validSortFields.includes(param as SortField) ? (param as SortField) : 'spend'
+  })
+  const [sortOrder, setSortOrder] = useState<SortOrder>(() => {
+    const param = searchParams.get('order')
+    return validSortOrders.includes(param as SortOrder) ? (param as SortOrder) : 'desc'
+  })
 
   // Filter state (AC4)
   const [efficiencyFilter, setEfficiencyFilter] = useState<EfficiencyFilter>(
@@ -124,6 +154,9 @@ export default function AdvertisingAnalyticsPage() {
       .map(Number)
       .filter(n => !isNaN(n))
   })
+
+  // Story 73.6: Over-attribution filter state
+  const [hideOverAttribution, setHideOverAttribution] = useState(false)
 
   // Fetch data availability bounds for date picker constraints
   const { data: syncStatus } = useAdvertisingSyncStatus({ refetchInterval: 0 })
@@ -227,11 +260,6 @@ export default function AdvertisingAnalyticsPage() {
 
   // Handle campaign filter change (Story 33.5-fe AC4)
   const handleCampaignFilterChange = (campaignIds: number[]) => {
-    console.log('[AdvertisingPage] handleCampaignFilterChange called:', {
-      oldCampaigns: selectedCampaigns,
-      newCampaigns: campaignIds,
-      stackTrace: new Error().stack,
-    })
     setSelectedCampaigns(campaignIds)
     setPage(1) // Reset to first page
   }
@@ -266,34 +294,8 @@ export default function AdvertisingAnalyticsPage() {
     setGroupBy(newMode)
   }
 
-  // Epic 37: Get merged groups data (mock or real API)
-  // Story 37.1: Transform real API response to AdvertisingGroup[] (Request #88)
-  const mergedGroupsData = useMemo(() => {
-    if (!features.epic37MergedGroups.enabled || groupBy !== 'imtId') {
-      return []
-    }
-
-    // Story 37.1: Use real API data from backend (Request #88)
-    if (!data?.data) {
-      return []
-    }
-
-    // Transform backend response to frontend AdvertisingGroup[] type
-    const transformed = transformMergedGroups(data.data)
-
-    if (features.epic37MergedGroups.debug) {
-      console.log('[Epic 37] Loaded from API:', transformed.length, 'groups')
-    }
-
-    return transformed
-  }, [groupBy, data])
-
   // Check if data exists (for summary)
   const hasData = data?.data && data.data.length > 0
-
-  // Calculate total count for pagination
-  // Note: Backend should return total_count in response, using data length as fallback
-  const totalCount = data?.data?.length ?? 0
 
   // Count loss items for alert banner (Story 33.4-fe AC4)
   // IMPORTANT: Must be called before any early returns to comply with React hooks rules
@@ -301,6 +303,48 @@ export default function AdvertisingAnalyticsPage() {
     if (!data?.data) return 0
     return data.data.filter(item => item.efficiency_status === 'loss').length
   }, [data?.data])
+
+  // Story 73.6: Count over-attribution items and compute filtered data
+  const overAttributionCount = useMemo(() => {
+    if (!data?.data) return 0
+    return countOverAttributionItems(data.data)
+  }, [data?.data])
+
+  const filteredData = useMemo(() => {
+    if (!hideOverAttribution || !data?.data) return data?.data ?? []
+    return filterOutOverAttribution(data.data)
+  }, [data?.data, hideOverAttribution])
+
+  const filteredSummary = useMemo(() => {
+    if (!hideOverAttribution || !data?.summary || !data?.data) return data?.summary
+    return recomputeSummary(filteredData, data.summary)
+  }, [data?.summary, data?.data, filteredData, hideOverAttribution])
+
+  // Calculate total count for pagination (uses filteredData to account for client-side filters)
+  const totalCount = filteredData.length
+
+  // Epic 37: Get merged groups data
+  // Story 37.1: Transform real API response to AdvertisingGroup[] (Request #88)
+  // Story 73.6: Use filteredData when over-attribution filter is active
+  const mergedGroupsData = useMemo(() => {
+    if (!features.epic37MergedGroups.enabled || groupBy !== 'imtId') {
+      return []
+    }
+
+    const sourceData = filteredData
+    if (!sourceData || sourceData.length === 0) {
+      return []
+    }
+
+    // Transform backend response to frontend AdvertisingGroup[] type
+    const transformed = transformMergedGroups(sourceData)
+
+    if (features.epic37MergedGroups.debug) {
+      console.log('[Epic 37] Loaded from API:', transformed.length, 'groups')
+    }
+
+    return transformed
+  }, [groupBy, filteredData])
 
   // Error state
   if (error) {
@@ -335,6 +379,9 @@ export default function AdvertisingAnalyticsPage() {
           dataAvailableFrom={syncStatus?.dataAvailableFrom}
           dataAvailableTo={syncStatus?.dataAvailableTo}
         />
+
+        {/* Sync Gaps Timeline — also in empty state to explain missing data */}
+        <SyncGapsTimeline from={dateRange.from} to={dateRange.to} syncStatus={syncStatus} />
 
         <Card>
           {/* Show Campaign + Efficiency filters even in empty state */}
@@ -389,6 +436,9 @@ export default function AdvertisingAnalyticsPage() {
         onViewByChange={handleViewByChange}
       />
 
+      {/* Sync Gaps Timeline (Story 73.5-FE) */}
+      <SyncGapsTimeline from={dateRange.from} to={dateRange.to} syncStatus={syncStatus} />
+
       {/* Loss Alert Banner (Story 33.4-fe AC4) */}
       <EfficiencyAlertBanner
         lossCount={lossCount}
@@ -402,10 +452,23 @@ export default function AdvertisingAnalyticsPage() {
       />
 
       {/* Summary Cards: Spend, ROAS, ROI, Active Campaigns */}
-      <AdvertisingSummaryCards summary={data?.summary} isLoading={isLoading} />
+      <AdvertisingSummaryCards summary={filteredSummary} isLoading={isLoading} />
 
       {/* Story 72.3: Daily Trend Chart */}
       <DailyTrendChart data={data?.daily ?? []} isLoading={isLoading} />
+
+      {/* Story 73.9: Three-Layer Ad Cost Discrepancy View */}
+      <AdCostDiscrepancySection
+        platformSpend={filteredSummary?.total_spend ?? null}
+        isLoading={isLoading}
+      />
+
+      {/* Story 73.6: Over-attribution warning banner with filter toggle */}
+      <OverAttributionBanner
+        count={overAttributionCount}
+        filterActive={hideOverAttribution}
+        onFilterChange={setHideOverAttribution}
+      />
 
       {/* Epic 36: Group By Toggle (separate row above table per PO decision) */}
       <div className="flex items-center justify-between">
@@ -463,7 +526,7 @@ export default function AdvertisingAnalyticsPage() {
                 warningCount={data?.multiCampaignSkuWarnings?.length ?? 0}
               />
               <PerformanceMetricsTable
-                data={data?.data ?? []}
+                data={filteredData}
                 viewBy={viewBy}
                 isLoading={isLoading}
                 sortBy={sortBy}
