@@ -5,6 +5,7 @@
  * Story 71.4-FE: Page scaffold with RequireJam gating and 3-tab layout
  * Story 71.5-FE: Date range + SearchOrdersTab
  * Story 71.6-FE: By-Product Keyword Explorer Tab
+ * Story 71.7-FE: By-Query Product Ranking Tab
  */
 
 import { useState } from 'react'
@@ -15,6 +16,7 @@ import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExte
 import type { DateRange } from '@/types/date-range'
 import { SearchOrdersTab } from './SearchOrdersTab'
 import { SearchByProductTab } from './SearchByProductTab'
+import { SearchByQueryTab } from './SearchByQueryTab'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -24,12 +26,8 @@ function getDefaultRange(): DateRange {
   return { from, to }
 }
 
-function formatApi(date: Date | undefined): string {
-  if (date instanceof Date) {
-    return format(date, 'yyyy-MM-dd')
-  }
-  // Fallback for edge cases
-  return ''
+function formatApi(date: Date): string {
+  return format(date, 'yyyy-MM-dd')
 }
 
 export function SearchPageContent() {
@@ -67,9 +65,7 @@ export function SearchPageContent() {
             <SearchByProductTab from={apiFrom} to={apiTo} />
           </TabsContent>
           <TabsContent value="by-query">
-            <p className="text-muted-foreground py-8 text-center">
-              Контент вкладки &quot;По запросам&quot; — Story 71.7
-            </p>
+            <SearchByQueryTab from={apiFrom} to={apiTo} />
           </TabsContent>
         </Tabs>
       </RequireJam>

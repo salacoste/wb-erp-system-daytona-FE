@@ -19,6 +19,16 @@ vi.mock('@/stores/authStore', () => ({
   useAuthStore: () => ({ cabinetId: 'cab-1' }),
 }))
 
+vi.mock('@/hooks/use-search-analytics', () => ({
+  useSearchOrders: () => ({ data: undefined, isLoading: false, isError: false }),
+  useSearchByProduct: () => ({ data: undefined, isLoading: false, isError: false }),
+  useSearchByQuery: () => ({ data: undefined, isLoading: false, isError: false }),
+}))
+
+vi.mock('@/hooks-v1/useProducts', () => ({
+  useProducts: () => ({ data: undefined, isLoading: false }),
+}))
+
 import { useJamStatus } from '@/hooks/useJamStatus'
 import { SearchPageContent } from '../components/SearchPageContent'
 
