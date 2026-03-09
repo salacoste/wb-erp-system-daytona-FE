@@ -1,18 +1,9 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
 import { TrendingUp, Trophy, List } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { getLastCompletedWeek } from '@/lib/margin-helpers'
-import { formatIsoWeek } from '@/lib/utils'
-import { fillMissingWeeks } from '@/lib/analytics-utils'
-import {
-  useStorageBySku,
-  useStorageTopConsumers,
-  useStorageTrends,
-} from '@/hooks/useStorageAnalytics'
+import { useStoragePageState } from './components/useStoragePageState'
 import { StoragePageHeader } from './components/StoragePageHeader'
 import { StorageFilters } from './components/StorageFilters'
 import { StorageSummaryCards } from './components/StorageSummaryCards'
@@ -33,176 +24,29 @@ import { WeekFilterBadge } from './components/WeekFilterBadge'
  * Click on chart week to filter tables to that week's data (Story 24.10).
  */
 export default function StorageAnalyticsPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
-  // Calculate default week range (last 4 weeks)
-  const lastCompletedWeek = getLastCompletedWeek()
-  const defaultFourWeeksAgo = useMemo(() => {
-    const date = new Date()
-    date.setDate(date.getDate() - 28)
-    return formatIsoWeek(date)
-  }, [])
-
-  // Initialize state from URL params or defaults - Story 24.9-FE AC3
-  const [weekStart, setWeekStart] = useState(() =>
-    searchParams.get('weekStart') || defaultFourWeeksAgo
-  )
-  const [weekEnd, setWeekEnd] = useState(() =>
-    searchParams.get('weekEnd') || lastCompletedWeek
-  )
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(() => {
-    const brands = searchParams.get('brands')
-    return brands ? brands.split(',').filter(Boolean) : []
-  })
-  const [selectedWarehouses, setSelectedWarehouses] = useState<string[]>(() => {
-    const warehouses = searchParams.get('warehouses')
-    return warehouses ? warehouses.split(',').filter(Boolean) : []
-  })
-
-  // Story 24.10: Selected week for click-to-filter interaction
-  const [selectedWeek, setSelectedWeek] = useState<string | null>(() => {
-    return searchParams.get('week') || null
-  })
-
-  // Story 24.10: Compute effective week range for filtered hooks
-  // When a specific week is selected from the chart, use that week for table/widget filtering
-  const effectiveWeekStart = selectedWeek || weekStart
-  const effectiveWeekEnd = selectedWeek || weekEnd
-
-  // Fetch unfiltered data to get available filter options
-  // This ensures we always have the full list of brands/warehouses
-  // Note: Backend max limit is 200 (SEC-001). For large catalogs, consider dedicated /filter-options endpoint
   const {
-    data: unfilteredData,
-    isLoading: isLoadingUnfiltered,
-  } = useStorageBySku(weekStart, weekEnd, {
-    limit: 200, // Backend max limit is 200
-  })
-
-  // Fetch filtered storage data for display
-  // Story 24.10: Use effectiveWeekStart/End to filter by selected week
-  const {
-    data: bySkuData,
-    isLoading: isLoadingBySku,
-    error: bySkuError,
-  } = useStorageBySku(effectiveWeekStart, effectiveWeekEnd, {
-    brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
-    warehouse: selectedWarehouses.length > 0 ? selectedWarehouses.join(',') : undefined,
-    limit: 20,
-  })
-
-  // Story 24.9: Pass brand/warehouse filters to top consumers API
-  // Story 24.10: Use effectiveWeekStart/End to filter by selected week
-  const {
-    data: topConsumersData,
-    isLoading: isLoadingTopConsumers,
-  } = useStorageTopConsumers(effectiveWeekStart, effectiveWeekEnd, {
-    limit: 5,
-    include_revenue: true,
-    brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
-    warehouse: selectedWarehouses.length > 0 ? selectedWarehouses.join(',') : undefined,
-  })
-
-  // Story 24.9: Pass brand/warehouse filters to trends API
-  const {
-    data: trendsData,
-    isLoading: isLoadingTrends,
-  } = useStorageTrends(weekStart, weekEnd, {
-    metrics: ['storage_cost'],
-    brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
-    warehouse: selectedWarehouses.length > 0 ? selectedWarehouses.join(',') : undefined,
-  })
-
-  // Extract unique brands and warehouses from unfiltered data - Story 24.9-FE
-  const availableBrands = useMemo(() => {
-    if (!unfilteredData?.data) return []
-    const brands = unfilteredData.data
-      .map(item => item.brand)
-      .filter((brand): brand is string => brand !== null && brand !== undefined)
-    return [...new Set(brands)].sort()
-  }, [unfilteredData])
-
-  const availableWarehouses = useMemo(() => {
-    if (!unfilteredData?.data) return []
-    const warehouses = unfilteredData.data
-      .flatMap(item => item.warehouses || [])
-      .filter(Boolean)
-    return [...new Set(warehouses)].sort()
-  }, [unfilteredData])
-
-  // Fill missing weeks in trends data to show complete range on chart
-  // This ensures the chart displays all weeks in the selected range,
-  // even if backend returns data only for weeks with actual storage costs
-  const filledTrendsData = useMemo(() => {
-    // Story 24.9: Debug logging for filter troubleshooting
-    console.log('[Storage Page] trendsData:', {
-      hasData: trendsData?.has_data,
-      dataLength: trendsData?.data?.length,
-      data: trendsData?.data,
-      period: trendsData?.period,
-    })
-
-    if (!trendsData?.data || trendsData.data.length === 0) return []
-    return fillMissingWeeks(trendsData.data, weekStart, weekEnd)
-  }, [trendsData?.data, weekStart, weekEnd])
-
-  // Sync state to URL params - Story 24.9-FE AC3, Story 24.10-FE
-  const updateUrlParams = useCallback((
-    newWeekStart: string,
-    newWeekEnd: string,
-    newBrands: string[],
-    newWarehouses: string[],
-    newSelectedWeek: string | null
-  ) => {
-    const params = new URLSearchParams()
-    params.set('weekStart', newWeekStart)
-    params.set('weekEnd', newWeekEnd)
-    if (newBrands.length > 0) {
-      params.set('brands', newBrands.join(','))
-    }
-    if (newWarehouses.length > 0) {
-      params.set('warehouses', newWarehouses.join(','))
-    }
-    // Story 24.10: Add selected week to URL
-    if (newSelectedWeek) {
-      params.set('week', newSelectedWeek)
-    }
-    router.replace(`?${params.toString()}`, { scroll: false })
-  }, [router])
-
-  // Update URL when filters change
-  useEffect(() => {
-    updateUrlParams(weekStart, weekEnd, selectedBrands, selectedWarehouses, selectedWeek)
-  }, [weekStart, weekEnd, selectedBrands, selectedWarehouses, selectedWeek, updateUrlParams])
-
-  // Handle filter changes
-  const handleWeekRangeChange = (start: string, end: string) => {
-    setWeekStart(start)
-    setWeekEnd(end)
-    // Story 24.10 AC4: Clear week filter when week range changes
-    setSelectedWeek(null)
-    // Note: brand/warehouse reset happens in StorageFilters component
-  }
-
-  // Story 24.10: Handle week click in trends chart
-  const handleWeekClick = (week: string) => {
-    // Toggle selection: click same week to deselect (AC4)
-    setSelectedWeek(prev => prev === week ? null : week)
-  }
-
-  // Story 24.10: Clear week filter
-  const handleClearWeekFilter = () => {
-    setSelectedWeek(null)
-  }
-
-  const handleBrandsChange = (brands: string[]) => {
-    setSelectedBrands(brands)
-  }
-
-  const handleWarehousesChange = (warehouses: string[]) => {
-    setSelectedWarehouses(warehouses)
-  }
+    weekStart,
+    weekEnd,
+    selectedBrands,
+    selectedWarehouses,
+    selectedWeek,
+    bySkuData,
+    isLoadingBySku,
+    bySkuError,
+    topConsumersData,
+    isLoadingTopConsumers,
+    filledTrendsData,
+    trendsData,
+    isLoadingTrends,
+    isLoadingUnfiltered,
+    availableBrands,
+    availableWarehouses,
+    handleWeekRangeChange,
+    handleWeekClick,
+    handleClearWeekFilter,
+    handleBrandsChange,
+    handleWarehousesChange,
+  } = useStoragePageState()
 
   // Error state
   if (bySkuError) {
@@ -212,7 +56,8 @@ export default function StorageAnalyticsPage() {
         <StoragePageHeader />
         <Alert variant="destructive">
           <AlertDescription>
-            Не удалось загрузить данные по расходам на хранение. Попробуйте выбрать другой период времени.
+            Не удалось загрузить данные по расходам на хранение. Попробуйте выбрать другой период
+            времени.
           </AlertDescription>
         </Alert>
       </div>
@@ -346,10 +191,7 @@ export default function StorageAnalyticsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <StorageBySkuTable
-            data={bySkuData?.data ?? []}
-            isLoading={isLoadingBySku}
-          />
+          <StorageBySkuTable data={bySkuData?.data ?? []} isLoading={isLoadingBySku} />
         </CardContent>
       </Card>
     </div>

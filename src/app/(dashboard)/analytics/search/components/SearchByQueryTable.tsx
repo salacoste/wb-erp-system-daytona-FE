@@ -105,7 +105,11 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
                 key={col.field}
                 aria-sort={sort === col.field ? (`${order}ending` as const) : 'none'}
               >
-                <SortButton active={sort === col.field} onClick={() => handleSort(col.field)}>
+                <SortButton
+                  active={sort === col.field}
+                  direction={sort === col.field ? order : undefined}
+                  onClick={() => handleSort(col.field)}
+                >
                   {col.label}
                 </SortButton>
               </TableHead>

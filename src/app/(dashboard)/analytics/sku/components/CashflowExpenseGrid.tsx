@@ -1,0 +1,97 @@
+/**
+ * Cabinet-level expense grid items for Cashflow section.
+ * Extracted to keep SkuCashflowSection under 200 lines.
+ */
+
+import type { CabinetLevelExpenses } from '@/hooks/useMarginAnalytics'
+
+interface ExpenseGridProps {
+  cabinetExpenses: CabinetLevelExpenses
+  pct: (value: number) => string
+}
+
+/** 6-column grid of cabinet-level expense items */
+export function CashflowExpenseGrid({ cabinetExpenses, pct }: ExpenseGridProps) {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+      <ExpenseItem label="Логистика" value={cabinetExpenses.logistics ?? 0} pct={pct} />
+
+      <StorageExpenseItem cabinetExpenses={cabinetExpenses} pct={pct} />
+
+      <ExpenseItem label="Прочие удерж." value={cabinetExpenses.other_adjustments} pct={pct} />
+
+      <ExpenseItem label="Коррект. ВВ" value={cabinetExpenses.wb_commission_adj} pct={pct} />
+
+      <ExpenseItem label="Штрафы" value={cabinetExpenses.penalties} pct={pct} />
+
+      <ExpenseItem label="Платн. приёмка" value={cabinetExpenses.paid_acceptance} pct={pct} />
+    </div>
+  )
+}
+
+/** Standard expense item cell */
+function ExpenseItem({
+  label,
+  value,
+  pct,
+}: {
+  label: string
+  value: number
+  pct: (v: number) => string
+}) {
+  return (
+    <div className="text-center p-2 bg-amber-50 rounded border border-amber-200">
+      <div className="text-xs text-amber-600">{label}</div>
+      <div className="text-sm font-bold text-amber-800">
+        {value.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
+      </div>
+      <div className="text-xs text-amber-500">{pct(value)}%</div>
+    </div>
+  )
+}
+
+/** Storage expense item with weekly report comparison (Request #67) */
+function StorageExpenseItem({
+  cabinetExpenses,
+  pct,
+}: {
+  cabinetExpenses: CabinetLevelExpenses
+  pct: (v: number) => string
+}) {
+  const hasDifference = Math.abs(cabinetExpenses.storage_difference ?? 0) > 1
+
+  return (
+    <div
+      className={`text-center p-2 rounded border ${
+        hasDifference ? 'bg-yellow-100 border-yellow-400' : 'bg-amber-50 border-amber-200'
+      }`}
+    >
+      <div className="text-xs text-amber-600">Хранение (API)</div>
+      <div className="text-sm font-bold text-amber-800">
+        {cabinetExpenses.storage.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
+      </div>
+      <div className="text-xs text-amber-500">{pct(cabinetExpenses.storage)}%</div>
+      {/* Request #67: Show weekly report storage for comparison */}
+      <div className="text-[10px] text-gray-500 mt-1 border-t border-gray-200 pt-1">
+        Отчёт:{' '}
+        {(cabinetExpenses.storage_weekly_report ?? 0).toLocaleString('ru-RU', {
+          maximumFractionDigits: 0,
+        })}{' '}
+        ₽
+        {hasDifference && (
+          <span
+            className={`ml-1 font-medium ${
+              (cabinetExpenses.storage_difference ?? 0) > 0 ? 'text-red-600' : 'text-green-600'
+            }`}
+          >
+            ({(cabinetExpenses.storage_difference ?? 0) > 0 ? '+' : ''}
+            {(cabinetExpenses.storage_difference ?? 0).toLocaleString('ru-RU', {
+              maximumFractionDigits: 0,
+            })}
+            )
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}

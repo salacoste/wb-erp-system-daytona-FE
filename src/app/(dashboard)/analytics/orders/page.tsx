@@ -24,8 +24,11 @@ import { TrendsTab } from './components/TrendsTab'
 import { SeasonalityTab } from './components/SeasonalityTab'
 import { ComparisonTab } from './components/ComparisonTab'
 
+/** Valid tab values - single source of truth for tab validation */
+const VALID_TABS = ['overview', 'trends', 'seasonality', 'comparison'] as const
+
 /** Tab type definition */
-type TabValue = 'overview' | 'trends' | 'seasonality' | 'comparison'
+type TabValue = (typeof VALID_TABS)[number]
 
 /** Default to last 30 days */
 function getDefaultDateRange(): DateRange {
@@ -65,7 +68,7 @@ export default function OrdersAnalyticsPage() {
   // Initialize active tab from URL or default to overview
   const [activeTab, setActiveTab] = useState<TabValue>(() => {
     const tabParam = searchParams.get('tab')
-    if (tabParam && ['overview', 'trends', 'seasonality', 'comparison'].includes(tabParam)) {
+    if (tabParam && (VALID_TABS as readonly string[]).includes(tabParam)) {
       return tabParam as TabValue
     }
     return 'overview'
@@ -109,7 +112,11 @@ export default function OrdersAnalyticsPage() {
       {/* Tab Navigation */}
       <Tabs
         value={activeTab}
-        onValueChange={value => setActiveTab(value as TabValue)}
+        onValueChange={value => {
+          if ((VALID_TABS as readonly string[]).includes(value)) {
+            setActiveTab(value as TabValue)
+          }
+        }}
         className="w-full"
       >
         <TabsList className="w-full grid grid-cols-4 h-11">

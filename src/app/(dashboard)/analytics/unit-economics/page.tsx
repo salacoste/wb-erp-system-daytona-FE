@@ -89,7 +89,12 @@ export default function UnitEconomicsPage() {
   }, [])
 
   const handleViewByChange = useCallback((view: string) => {
-    setViewBy(view as UnitEconomicsViewBy)
+    const VALID_VIEWS: readonly UnitEconomicsViewBy[] = ['sku', 'category', 'brand', 'total']
+    if (VALID_VIEWS.includes(view as UnitEconomicsViewBy)) {
+      setViewBy(view as UnitEconomicsViewBy)
+    } else {
+      setViewBy('sku')
+    }
   }, [])
 
   const handleRefresh = useCallback(() => {
@@ -99,7 +104,7 @@ export default function UnitEconomicsPage() {
   const handleSort = useCallback(
     (field: 'revenue' | 'net_margin_pct') => {
       if (sortBy === field) {
-        setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))
+        setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'))
       } else {
         setSortBy(field)
         setSortOrder('desc')
@@ -125,7 +130,7 @@ export default function UnitEconomicsPage() {
       'Статус',
     ]
 
-    const rows = data.data.map((item) => [
+    const rows = data.data.map(item => [
       item.sku_id,
       item.product_name,
       item.revenue,
@@ -140,7 +145,7 @@ export default function UnitEconomicsPage() {
 
     const csvContent = [
       headers.join(','),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
     ].join('\n')
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })

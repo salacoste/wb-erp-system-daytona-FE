@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * Financial Summary View (Analytics Hub)
  * Story 3.5: Financial Summary View
@@ -17,426 +19,36 @@
  * - Hover states and visual feedback
  */
 
-'use client'
-
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import {
-  useFinancialSummary,
-  useFinancialSummaryComparison,
-  useMultiWeekFinancialSummary,
-  useAvailableWeeks,
-  formatWeekDisplay,
-} from '@/hooks/useFinancialSummary'
-import { getLastCompletedWeek } from '@/lib/margin-helpers'
-import { WeekSelector, WeekComparisonSelector } from '@/components/custom/WeekSelector'
-import { MultiWeekSelector } from '@/components/custom/MultiWeekSelector'
+import { formatWeekDisplay } from '@/hooks/useFinancialSummary'
 import { FinancialSummaryTable } from '@/components/custom/FinancialSummaryTable'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ROUTES } from '@/lib/routes'
-import { cn } from '@/lib/utils'
-import {
-  Package,
-  Tags,
-  Calendar,
-  AlertCircle,
-  BarChart3,
-  RefreshCw,
-  GitCompare,
-  Warehouse,
-  PackageSearch,
-  Calculator,
-  ArrowRight,
-  ClipboardList,
-} from 'lucide-react'
-import { Filter, ShoppingBag, RotateCcw, Search } from 'lucide-react'
+import { AlertCircle, RefreshCw, GitCompare } from 'lucide-react'
 import { RequireWbToken } from '@/components/custom/RequireWbToken'
-
-/**
- * Analytics navigation configuration
- * UX: Grouped by user intent - what question are they trying to answer?
- */
-const analyticsNavigation = {
-  financial: {
-    title: 'Финансовый анализ',
-    description: 'Доходы, расходы и маржинальность',
-    items: [
-      {
-        href: ROUTES.ANALYTICS.SKU,
-        icon: Package,
-        title: 'По товарам',
-        description: 'Прибыль и маржа каждого SKU',
-        color: 'text-blue-600',
-        bgColor: 'bg-blue-50',
-        hoverBg: 'hover:bg-blue-100',
-        borderColor: 'border-blue-200',
-      },
-      {
-        href: ROUTES.ANALYTICS.BRAND,
-        icon: Tags,
-        title: 'По брендам',
-        description: 'Эффективность брендов',
-        color: 'text-emerald-600',
-        bgColor: 'bg-emerald-50',
-        hoverBg: 'hover:bg-emerald-100',
-        borderColor: 'border-emerald-200',
-      },
-      {
-        href: ROUTES.ANALYTICS.CATEGORY,
-        icon: BarChart3,
-        title: 'По категориям',
-        description: 'Сравнение категорий',
-        color: 'text-violet-600',
-        bgColor: 'bg-violet-50',
-        hoverBg: 'hover:bg-violet-100',
-        borderColor: 'border-violet-200',
-      },
-      {
-        href: ROUTES.ANALYTICS.TIME_PERIOD,
-        icon: Calendar,
-        title: 'По времени',
-        description: 'Динамика по неделям',
-        color: 'text-amber-600',
-        bgColor: 'bg-amber-50',
-        hoverBg: 'hover:bg-amber-100',
-        borderColor: 'border-amber-200',
-      },
-    ],
-  },
-  operational: {
-    title: 'Операционная аналитика',
-    description: 'Склад, поставки и затраты',
-    items: [
-      {
-        href: ROUTES.ANALYTICS.STORAGE,
-        icon: Warehouse,
-        title: 'Хранение',
-        description: 'Затраты на хранение по SKU',
-        color: 'text-slate-600',
-        bgColor: 'bg-slate-50',
-        hoverBg: 'hover:bg-slate-100',
-        borderColor: 'border-slate-200',
-      },
-      {
-        href: ROUTES.ANALYTICS.SUPPLY_PLANNING,
-        icon: PackageSearch,
-        title: 'Планирование',
-        description: 'Прогноз стокаутов',
-        color: 'text-rose-600',
-        bgColor: 'bg-rose-50',
-        hoverBg: 'hover:bg-rose-100',
-        borderColor: 'border-rose-200',
-        badge: 'Важно',
-      },
-      {
-        href: ROUTES.ANALYTICS.ORDERS,
-        icon: ClipboardList,
-        title: 'Заказы FBS',
-        description: 'Анализ заказов FBS за 365 дней',
-        color: 'text-orange-600',
-        bgColor: 'bg-orange-50',
-        hoverBg: 'hover:bg-orange-100',
-        borderColor: 'border-orange-200',
-        badge: 'Новое',
-      },
-      {
-        href: ROUTES.ANALYTICS.FUNNEL,
-        icon: Filter,
-        title: 'Воронка продаж',
-        description: 'Просмотры → корзина → заказы → выкупы',
-        color: 'text-cyan-600',
-        bgColor: 'bg-cyan-50',
-        hoverBg: 'hover:bg-cyan-100',
-        borderColor: 'border-cyan-200',
-        badge: 'Новое',
-      },
-    ],
-  },
-  strategic: {
-    title: 'Стратегический анализ',
-    description: 'Юнит-экономика и рентабельность',
-    items: [
-      {
-        href: ROUTES.ANALYTICS.UNIT_ECONOMICS,
-        icon: Calculator,
-        title: 'Юнит-экономика',
-        description: 'Структура затрат на единицу',
-        color: 'text-indigo-600',
-        bgColor: 'bg-indigo-50',
-        hoverBg: 'hover:bg-indigo-100',
-        borderColor: 'border-indigo-200',
-        badge: 'Новое',
-      },
-      {
-        href: ROUTES.ANALYTICS.BUYOUT,
-        icon: ShoppingBag,
-        title: 'Аналитика выкупов',
-        description: 'Процент выкупа и тренды по SKU',
-        color: 'text-teal-600',
-        bgColor: 'bg-teal-50',
-        hoverBg: 'hover:bg-teal-100',
-        borderColor: 'border-teal-200',
-        badge: 'Новое',
-      },
-      {
-        href: ROUTES.ANALYTICS.RETURNS,
-        icon: RotateCcw,
-        title: 'Аналитика возвратов',
-        description: 'Причины возвратов и аномалии',
-        color: 'text-pink-600',
-        bgColor: 'bg-pink-50',
-        hoverBg: 'hover:bg-pink-100',
-        borderColor: 'border-pink-200',
-        badge: 'Новое',
-      },
-      {
-        href: ROUTES.ANALYTICS.SEARCH,
-        icon: Search,
-        title: 'Поисковая аналитика',
-        description: 'Поисковые запросы, позиции и заказы',
-        color: 'text-sky-600',
-        bgColor: 'bg-sky-50',
-        hoverBg: 'hover:bg-sky-100',
-        borderColor: 'border-sky-200',
-        badge: 'Джем',
-      },
-    ],
-  },
-}
-
-/**
- * Navigation Card Component
- * UX: Large click targets, clear visual feedback, accessible
- */
-function NavigationCard({
-  href,
-  icon: Icon,
-  title,
-  description,
-  color,
-  bgColor,
-  hoverBg,
-  borderColor,
-  badge,
-  className,
-}: {
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  title: string
-  description: string
-  color: string
-  bgColor: string
-  hoverBg: string
-  borderColor: string
-  badge?: string
-  className?: string
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        'group relative flex flex-col p-4 rounded-xl border-2 transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        borderColor,
-        bgColor,
-        hoverBg,
-        'hover:shadow-md hover:scale-[1.02]',
-        className
-      )}
-    >
-      {/* Badge */}
-      {badge && (
-        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white">
-          {badge}
-        </span>
-      )}
-
-      {/* Icon */}
-      <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-3', bgColor)}>
-        <Icon className={cn('h-5 w-5', color)} />
-      </div>
-
-      {/* Content */}
-      <h3 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
-        {title}
-        <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-gray-400" />
-      </h3>
-      <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
-    </Link>
-  )
-}
-
-/**
- * Navigation item type
- */
-interface NavigationItem {
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  title: string
-  description: string
-  color: string
-  bgColor: string
-  hoverBg: string
-  borderColor: string
-  badge?: string
-}
-
-/**
- * Navigation Section Component
- */
-function NavigationSection({
-  title,
-  description,
-  items,
-}: {
-  title: string
-  description: string
-  items: NavigationItem[]
-}) {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="mb-3">
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{title}</h3>
-        <p className="text-xs text-gray-400">{description}</p>
-      </div>
-      <div
-        className={cn('grid gap-3 flex-1', items.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2')}
-      >
-        {items.map(item => (
-          <NavigationCard
-            key={item.href}
-            {...item}
-            className={items.length === 1 ? 'h-full' : ''}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-type ViewMode = 'single' | 'multi' | 'comparison'
+import { NavigationSection, analyticsNavigation } from './components/AnalyticsNavigation'
+import { AnalyticsWeekSelector } from './components/AnalyticsWeekSelector'
+import { useAnalyticsPageState } from './components/useAnalyticsPageState'
 
 export default function AnalyticsSummaryPage() {
-  const { data: availableWeeks, isLoading: isLoadingWeeks } = useAvailableWeeks()
-
-  // Get latest week or last completed week as default (Epic 19: only completed weeks have data)
-  const defaultWeek = availableWeeks?.[0]?.week || getLastCompletedWeek()
-
-  // State for week selection (default: multi-week mode)
-  const [viewMode, setViewMode] = useState<ViewMode>('multi')
-  const [selectedWeek, setSelectedWeek] = useState(defaultWeek)
-  const [selectedWeeks, setSelectedWeeks] = useState<string[]>([defaultWeek])
-  const [comparisonWeek, setComparisonWeek] = useState(
-    availableWeeks?.[1]?.week || getLastCompletedWeek()
-  )
-
-  // Update selected week when availableWeeks loads for the first time
-  // This ensures we use a week that actually has data (Epic 19: completed weeks only)
-  useEffect(() => {
-    if (availableWeeks && availableWeeks.length > 0) {
-      const firstAvailableWeek = availableWeeks[0].week
-      // Only update if selectedWeek is not in the available weeks list
-      const isSelectedWeekAvailable = availableWeeks.some(w => w.week === selectedWeek)
-      if (!isSelectedWeekAvailable) {
-        setSelectedWeek(firstAvailableWeek)
-        setSelectedWeeks([firstAvailableWeek])
-      }
-      // Also update comparison week if needed
-      const isComparisonWeekAvailable = availableWeeks.some(w => w.week === comparisonWeek)
-      if (!isComparisonWeekAvailable && availableWeeks.length > 1) {
-        setComparisonWeek(availableWeeks[1].week)
-      }
-    }
-  }, [availableWeeks, selectedWeek, comparisonWeek])
-
-  // Check if selectedWeek is in availableWeeks (to avoid 404 errors for non-existent weeks)
-  const isWeekAvailable = availableWeeks?.some(w => w.week === selectedWeek) ?? false
-
-  // Check if comparison week is available
-  const isComparisonWeekAvailable = availableWeeks?.some(w => w.week === comparisonWeek) ?? false
-
-  // Filter selectedWeeks to only include available weeks
-  const availableSelectedWeeks = selectedWeeks.filter(
-    w => availableWeeks?.some(aw => aw.week === w) ?? false
-  )
-
-  // Fetch data based on mode - only when weeks are confirmed available
-  const singleWeekQuery = useFinancialSummary(isWeekAvailable ? selectedWeek : '')
-  const multiWeekQuery = useMultiWeekFinancialSummary(
-    availableSelectedWeeks.length > 0 ? availableSelectedWeeks : []
-  )
-  const comparisonQuery = useFinancialSummaryComparison(
-    isWeekAvailable ? selectedWeek : '',
-    isComparisonWeekAvailable ? comparisonWeek : ''
-  )
-
-  // Determine loading/error states based on mode
-  // Include isLoadingWeeks to prevent 404 errors when availableWeeks hasn't loaded yet
-  const isLoading =
-    isLoadingWeeks ||
-    (viewMode === 'multi'
-      ? multiWeekQuery.isLoading
-      : viewMode === 'comparison'
-        ? comparisonQuery.isLoading
-        : singleWeekQuery.isLoading)
-
-  const isError =
-    viewMode === 'multi'
-      ? multiWeekQuery.isError
-      : viewMode === 'comparison'
-        ? comparisonQuery.isError
-        : singleWeekQuery.isError
-
-  const error =
-    viewMode === 'multi'
-      ? multiWeekQuery.error
-      : viewMode === 'comparison'
-        ? comparisonQuery.error
-        : singleWeekQuery.error
-
-  // Get summary data based on mode
-  const primarySummary =
-    viewMode === 'multi'
-      ? multiWeekQuery.data || undefined
-      : viewMode === 'comparison'
-        ? comparisonQuery.week1.data?.summary_total ||
-          comparisonQuery.week1.data?.summary_rus ||
-          undefined
-        : singleWeekQuery.data?.summary_total || singleWeekQuery.data?.summary_rus || undefined
-
-  const secondarySummary =
-    viewMode === 'comparison'
-      ? comparisonQuery.week2.data?.summary_total ||
-        comparisonQuery.week2.data?.summary_rus ||
-        undefined
-      : undefined
-
-  const handleRetry = () => {
-    if (viewMode === 'multi') {
-      multiWeekQuery.refetch()
-    } else if (viewMode === 'comparison') {
-      comparisonQuery.week1.refetch()
-      comparisonQuery.week2.refetch()
-    } else {
-      singleWeekQuery.refetch()
-    }
-  }
-
-  const cycleViewMode = () => {
-    if (viewMode === 'single') {
-      setViewMode('multi')
-      // Initialize multi-select with current single week
-      setSelectedWeeks([selectedWeek])
-    } else if (viewMode === 'multi') {
-      setViewMode('comparison')
-    } else {
-      setViewMode('single')
-    }
-  }
+  const {
+    viewMode,
+    selectedWeek,
+    selectedWeeks,
+    comparisonWeek,
+    setSelectedWeek,
+    setSelectedWeeks,
+    setComparisonWeek,
+    isLoading,
+    isError,
+    error,
+    primarySummary,
+    secondarySummary,
+    handleRetry,
+    cycleViewMode,
+  } = useAnalyticsPageState()
 
   return (
     <RequireWbToken>
@@ -488,25 +100,15 @@ export default function AnalyticsSummaryPage() {
         </div>
 
         {/* Week Selector - different UI based on view mode */}
-        {viewMode === 'single' && (
-          <WeekSelector value={selectedWeek} onChange={setSelectedWeek} label="Выберите период" />
-        )}
-        {viewMode === 'multi' && (
-          <MultiWeekSelector
-            value={selectedWeeks}
-            onChange={setSelectedWeeks}
-            label="Выберите периоды для агрегации"
-            maxSelection={12}
-          />
-        )}
-        {viewMode === 'comparison' && (
-          <WeekComparisonSelector
-            week1={selectedWeek}
-            week2={comparisonWeek}
-            onWeek1Change={setSelectedWeek}
-            onWeek2Change={setComparisonWeek}
-          />
-        )}
+        <AnalyticsWeekSelector
+          viewMode={viewMode}
+          selectedWeek={selectedWeek}
+          selectedWeeks={selectedWeeks}
+          comparisonWeek={comparisonWeek}
+          onSelectedWeekChange={setSelectedWeek}
+          onSelectedWeeksChange={setSelectedWeeks}
+          onComparisonWeekChange={setComparisonWeek}
+        />
 
         {/* Error State */}
         {isError && (

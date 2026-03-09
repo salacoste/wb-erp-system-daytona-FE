@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MultiSelectDropdown } from '@/components/custom/MultiSelectDropdown'
+import { useMemo } from 'react'
 import { getLastCompletedWeek } from '@/lib/margin-helpers'
 
 /**
@@ -44,7 +45,7 @@ export function StorageFilters({
   onBrandsChange,
   onWarehousesChange,
 }: StorageFiltersProps) {
-  const lastCompletedWeek = getLastCompletedWeek()
+  const lastCompletedWeek = useMemo(() => getLastCompletedWeek(), [])
 
   const handleWeekStartChange = (value: string) => {
     // Reset brand/warehouse filters on week range change per AC3
@@ -82,7 +83,7 @@ export function StorageFilters({
             id="week-start"
             type="week"
             value={weekStart}
-            onChange={(e) => handleWeekStartChange(e.target.value)}
+            onChange={e => handleWeekStartChange(e.target.value)}
             max={weekEnd}
             className="w-36"
           />
@@ -96,7 +97,7 @@ export function StorageFilters({
             id="week-end"
             type="week"
             value={weekEnd}
-            onChange={(e) => handleWeekEndChange(e.target.value)}
+            onChange={e => handleWeekEndChange(e.target.value)}
             min={weekStart}
             max={lastCompletedWeek}
             className="w-36"

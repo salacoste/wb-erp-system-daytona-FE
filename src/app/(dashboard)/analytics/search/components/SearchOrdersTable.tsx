@@ -57,13 +57,18 @@ export function SearchOrdersTable({ items }: SearchOrdersTableProps) {
           <TableRow>
             <TableHead>Запрос</TableHead>
             <TableHead aria-sort={sort === 'totalOrders' ? (`${order}ending` as const) : 'none'}>
-              <SortButton active={sort === 'totalOrders'} onClick={() => handleSort('totalOrders')}>
+              <SortButton
+                active={sort === 'totalOrders'}
+                direction={sort === 'totalOrders' ? order : undefined}
+                onClick={() => handleSort('totalOrders')}
+              >
                 Заказы
               </SortButton>
             </TableHead>
             <TableHead aria-sort={sort === 'totalRevenue' ? (`${order}ending` as const) : 'none'}>
               <SortButton
                 active={sort === 'totalRevenue'}
+                direction={sort === 'totalRevenue' ? order : undefined}
                 onClick={() => handleSort('totalRevenue')}
               >
                 Выручка ₽
@@ -72,6 +77,7 @@ export function SearchOrdersTable({ items }: SearchOrdersTableProps) {
             <TableHead aria-sort={sort === 'uniqueProducts' ? (`${order}ending` as const) : 'none'}>
               <SortButton
                 active={sort === 'uniqueProducts'}
+                direction={sort === 'uniqueProducts' ? order : undefined}
                 onClick={() => handleSort('uniqueProducts')}
               >
                 Товаров

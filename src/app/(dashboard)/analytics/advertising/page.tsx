@@ -1,26 +1,14 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { format, subDays, differenceInDays, parse } from 'date-fns'
-import { Megaphone } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useAdvertisingAnalytics, useAdvertisingSyncStatus } from '@/hooks/useAdvertisingAnalytics'
-import type { ViewByMode, GroupByMode } from '@/types/advertising-analytics'
+import type { SortField } from './components/PerformanceMetricsTable'
 import { AdvertisingPageHeader } from './components/AdvertisingPageHeader'
 import { AdvertisingFilters } from './components/AdvertisingFilters'
 import { GroupByToggle } from './components/GroupByToggle'
 import { AdvertisingSummaryCards } from './components/AdvertisingSummaryCards'
-import {
-  PerformanceMetricsTable,
-  type SortField,
-  type SortOrder,
-} from './components/PerformanceMetricsTable'
-import {
-  EfficiencyFilterDropdown,
-  type EfficiencyFilter,
-} from './components/EfficiencyFilterDropdown'
+import { PerformanceMetricsTable } from './components/PerformanceMetricsTable'
+import { EfficiencyFilterDropdown } from './components/EfficiencyFilterDropdown'
 import { EfficiencyAlertBanner } from './components/EfficiencyAlertBanner'
 import { CampaignSelector } from './components/CampaignSelector'
 import { MergedGroupTable } from './components/MergedGroupTable'
@@ -29,28 +17,18 @@ import { MultiCampaignWarningBanner } from './components/MultiCampaignWarningBan
 import { SyncGapsTimeline } from './components/SyncGapsTimeline'
 import { OverAttributionBanner } from './components/OverAttributionBanner'
 import { AdCostDiscrepancySection } from './components/AdCostDiscrepancySection'
+import { AdvertisingEmptyState } from './components/AdvertisingEmptyState'
 import { features } from '@/config/features'
-// Story 37.1: Real API integration (Request #88)
-import { transformMergedGroups } from '@/lib/transformers/advertising-transformers'
-// Story 73.6: Over-attribution filter utilities
-import {
-  countOverAttributionItems,
-  filterOutOverAttribution,
-  recomputeSummary,
-} from './utils/over-attribution-utils'
-// Story 37.5: Analytics tracking (Epic 37 QA Phase 2)
-import {
-  trackAdvertisingPageView,
-  trackToggleMode,
-  trackTableSort,
-  trackRowClick,
-} from '@/lib/analytics-events'
+import { useAdvertisingPageState, PAGE_SIZE } from './components/useAdvertisingPageState'
+import { useAdvertisingFilters } from './components/useAdvertisingFilters'
 
-/** Page size for table pagination (AC5) */
-const PAGE_SIZE = 25
-
-/** Max allowed date range in days */
-const MAX_RANGE_DAYS = 90
+/** Helper: viewBy label for table title */
+function viewByLabel(viewBy: string): string {
+  if (viewBy === 'sku') return 'товарам'
+  if (viewBy === 'campaign') return 'кампаниям'
+  if (viewBy === 'brand') return 'брендам'
+  return 'категориям'
+}
 
 /**
  * Advertising Analytics Page
@@ -60,302 +38,24 @@ const MAX_RANGE_DAYS = 90
  *
  * Main page for analyzing advertising performance metrics.
  * Default period: 14 days (PO decision).
- * Default view: SKU.
- * Default sort: Spend desc (highest spenders first).
+ * Default view: SKU. Default sort: Spend desc.
  */
 export default function AdvertisingAnalyticsPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const state = useAdvertisingPageState()
+  const filters = useAdvertisingFilters(state.data, state.hideOverAttribution, state.groupBy)
 
-  // Default date range: last 14 days (PO decision)
-  const defaultFromDate = useMemo(() => {
-    return format(subDays(new Date(), 14), 'yyyy-MM-dd')
-  }, [])
-
-  const defaultToDate = useMemo(() => {
-    // Yesterday (to account for sync delay)
-    return format(subDays(new Date(), 1), 'yyyy-MM-dd')
-  }, [])
-
-  // Initialize state from URL params or defaults with auto-correction
-  const [dateRange, setDateRange] = useState(() => {
-    const fromParam = searchParams.get('from') || defaultFromDate
-    const toParam = searchParams.get('to') || defaultToDate
-
-    // Auto-correct if range exceeds 90 days (keep most recent 90 days from 'to')
-    const fromDate = parse(fromParam, 'yyyy-MM-dd', new Date())
-    const toDate = parse(toParam, 'yyyy-MM-dd', new Date())
-    const daysDiff = differenceInDays(toDate, fromDate)
-
-    if (daysDiff > MAX_RANGE_DAYS) {
-      // Keep the most recent 90 days from 'to' date
-      const correctedFrom = format(subDays(toDate, MAX_RANGE_DAYS), 'yyyy-MM-dd')
-      return { from: correctedFrom, to: toParam }
-    }
-
-    return { from: fromParam, to: toParam }
-  })
-
-  // Validated URL param helpers to prevent unsafe casts
-  const validViews: ViewByMode[] = ['sku', 'campaign', 'brand', 'category']
-  const validGroupBys: GroupByMode[] = ['sku', 'imtId']
-  const validSortFields: SortField[] = [
-    'spend',
-    'revenue',
-    'orders',
-    'views',
-    'clicks',
-    'roas',
-    'roi',
-    'ctr',
-    'cpc',
-    'profit_after_ads',
-  ]
-  const validSortOrders: SortOrder[] = ['asc', 'desc']
-
-  const [viewBy, setViewBy] = useState<ViewByMode>(() => {
-    const param = searchParams.get('view')
-    return validViews.includes(param as ViewByMode) ? (param as ViewByMode) : 'sku'
-  })
-
-  // Epic 36: Product Card Linking - groupBy state
-  const [groupBy, setGroupBy] = useState<GroupByMode>(() => {
-    const param = searchParams.get('group_by')
-    return validGroupBys.includes(param as GroupByMode) ? (param as GroupByMode) : 'sku'
-  })
-
-  // Sorting state (AC3: default Spend desc)
-  const [sortBy, setSortBy] = useState<SortField>(() => {
-    const param = searchParams.get('sort')
-    return validSortFields.includes(param as SortField) ? (param as SortField) : 'spend'
-  })
-  const [sortOrder, setSortOrder] = useState<SortOrder>(() => {
-    const param = searchParams.get('order')
-    return validSortOrders.includes(param as SortOrder) ? (param as SortOrder) : 'desc'
-  })
-
-  // Filter state (AC4)
-  const [efficiencyFilter, setEfficiencyFilter] = useState<EfficiencyFilter>(
-    () => (searchParams.get('status') as EfficiencyFilter) || 'all'
-  )
-
-  // Pagination state (AC5)
-  const [page, setPage] = useState(() => {
-    const pageParam = searchParams.get('page')
-    return pageParam ? parseInt(pageParam, 10) : 1
-  })
-
-  // Campaign filter state (Story 33.5-fe AC4)
-  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>(() => {
-    const campaignsParam = searchParams.get('campaigns')
-    if (!campaignsParam) return []
-    return campaignsParam
-      .split(',')
-      .map(Number)
-      .filter(n => !isNaN(n))
-  })
-
-  // Story 73.6: Over-attribution filter state
-  const [hideOverAttribution, setHideOverAttribution] = useState(false)
-
-  // Fetch data availability bounds for date picker constraints
-  const { data: syncStatus } = useAdvertisingSyncStatus({ refetchInterval: 0 })
-
-  // Fetch advertising analytics data
-  const { data, isLoading, error, refetch } = useAdvertisingAnalytics({
-    from: dateRange.from,
-    to: dateRange.to,
-    view_by: viewBy,
-    group_by: groupBy, // Epic 36: Add grouping mode
-    sort_by: sortBy,
-    sort_order: sortOrder,
-    efficiency_filter: efficiencyFilter === 'all' ? undefined : efficiencyFilter,
-    campaign_ids: selectedCampaigns.length > 0 ? selectedCampaigns : undefined,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-    include_daily: true, // Story 72.3: Request daily breakdown for trend chart
-  })
-
-  // Sync state to URL params
-  const updateUrlParams = useCallback(() => {
-    const params = new URLSearchParams()
-    params.set('from', dateRange.from)
-    params.set('to', dateRange.to)
-    params.set('view', viewBy)
-    params.set('group_by', groupBy) // Epic 36: Add grouping mode to URL
-    params.set('sort', sortBy)
-    params.set('order', sortOrder)
-    if (efficiencyFilter !== 'all') {
-      params.set('status', efficiencyFilter)
-    }
-    if (page > 1) {
-      params.set('page', page.toString())
-    }
-    // Note: Keep URL param as 'campaigns' (singular, comma-separated) for readability
-    // API uses 'campaign_ids' (array) internally - conversion happens in useAdvertisingAnalytics
-    if (selectedCampaigns.length > 0) {
-      params.set('campaigns', selectedCampaigns.join(','))
-    }
-    router.replace(`?${params.toString()}`, { scroll: false })
-  }, [
-    router,
-    dateRange,
-    viewBy,
-    groupBy,
-    sortBy,
-    sortOrder,
-    efficiencyFilter,
-    page,
-    selectedCampaigns,
-  ])
-
-  // Update URL when state changes
-  useEffect(() => {
-    updateUrlParams()
-  }, [updateUrlParams])
-
-  // Story 37.5: Track page view on initial load and groupBy changes
-  useEffect(() => {
-    trackAdvertisingPageView(groupBy)
-  }, [groupBy])
-
-  // Handle filter changes
-  const handleDateRangeChange = (from: string, to: string) => {
-    setDateRange({ from, to })
-    setPage(1) // Reset to first page
-  }
-
-  const handleViewByChange = (view: ViewByMode) => {
-    setViewBy(view)
-    setPage(1) // Reset to first page
-  }
-
-  // Handle sort change (AC3)
-  const handleSortChange = (field: SortField) => {
-    const newOrder = sortBy === field ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'desc'
-
-    // Story 37.5: Track table sort
-    trackTableSort({
-      column: field,
-      direction: newOrder,
-      viewMode: groupBy,
-    })
-
-    if (sortBy === field) {
-      // Toggle order
-      setSortOrder(newOrder)
-    } else {
-      // New field, default to descending
-      setSortBy(field)
-      setSortOrder('desc')
-    }
-    setPage(1) // Reset to first page
-  }
-
-  // Handle filter change (AC4)
-  const handleEfficiencyFilterChange = (filter: EfficiencyFilter) => {
-    setEfficiencyFilter(filter)
-    setPage(1) // Reset to first page
-  }
-
-  // Handle campaign filter change (Story 33.5-fe AC4)
-  const handleCampaignFilterChange = (campaignIds: number[]) => {
-    setSelectedCampaigns(campaignIds)
-    setPage(1) // Reset to first page
-  }
-
-  // Handle pagination (AC5)
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage)
-  }
-
-  // Epic 37: Handle product click in merged group table
-  const handleProductClick = (nmId: number, groupId?: number | null, isMainProduct?: boolean) => {
-    // Story 37.5: Track row click
-    trackRowClick({
-      nmId,
-      groupId: groupId ?? null,
-      isMainProduct: isMainProduct ?? false,
-      viewMode: groupBy,
-    })
-
-    if (features.epic37MergedGroups.debug) {
-      console.log('[Epic 37] Product clicked:', nmId)
-    }
-    // TODO: Implement product detail view or action
-  }
-
-  // Story 37.5: Handle groupBy change with analytics tracking
-  const handleGroupByChange = (newMode: GroupByMode) => {
-    trackToggleMode({
-      mode: newMode,
-      previousMode: groupBy,
-    })
-    setGroupBy(newMode)
-  }
-
-  // Check if data exists (for summary)
-  const hasData = data?.data && data.data.length > 0
-
-  // Count loss items for alert banner (Story 33.4-fe AC4)
-  // IMPORTANT: Must be called before any early returns to comply with React hooks rules
-  const lossCount = useMemo(() => {
-    if (!data?.data) return 0
-    return data.data.filter(item => item.efficiency_status === 'loss').length
-  }, [data?.data])
-
-  // Story 73.6: Count over-attribution items and compute filtered data
-  const overAttributionCount = useMemo(() => {
-    if (!data?.data) return 0
-    return countOverAttributionItems(data.data)
-  }, [data?.data])
-
-  const filteredData = useMemo(() => {
-    if (!hideOverAttribution || !data?.data) return data?.data ?? []
-    return filterOutOverAttribution(data.data)
-  }, [data?.data, hideOverAttribution])
-
-  const filteredSummary = useMemo(() => {
-    if (!hideOverAttribution || !data?.summary || !data?.data) return data?.summary
-    return recomputeSummary(filteredData, data.summary)
-  }, [data?.summary, data?.data, filteredData, hideOverAttribution])
-
-  // Calculate total count for pagination (uses filteredData to account for client-side filters)
-  const totalCount = filteredData.length
-
-  // Epic 37: Get merged groups data
-  // Story 37.1: Transform real API response to AdvertisingGroup[] (Request #88)
-  // Story 73.6: Use filteredData when over-attribution filter is active
-  const mergedGroupsData = useMemo(() => {
-    if (!features.epic37MergedGroups.enabled || groupBy !== 'imtId') {
-      return []
-    }
-
-    const sourceData = filteredData
-    if (!sourceData || sourceData.length === 0) {
-      return []
-    }
-
-    // Transform backend response to frontend AdvertisingGroup[] type
-    const transformed = transformMergedGroups(sourceData)
-
-    if (features.epic37MergedGroups.debug) {
-      console.log('[Epic 37] Loaded from API:', transformed.length, 'groups')
-    }
-
-    return transformed
-  }, [groupBy, filteredData])
-
-  // Error state
-  if (error) {
-    console.error('Advertising analytics error:', error)
+  if (state.error) {
+    console.error('Advertising analytics error:', state.error)
     return (
       <div className="space-y-6">
         <AdvertisingPageHeader />
         <Alert variant="destructive">
           <AlertDescription className="flex items-center justify-between">
             <span>Не удалось загрузить данные рекламной аналитики. Попробуйте позже.</span>
-            <button onClick={() => refetch()} className="text-sm underline hover:no-underline ml-4">
+            <button
+              onClick={() => state.refetch()}
+              className="text-sm underline hover:no-underline ml-4"
+            >
               Повторить
             </button>
           </AlertDescription>
@@ -364,179 +64,126 @@ export default function AdvertisingAnalyticsPage() {
     )
   }
 
-  // Empty state (only show when not loading and no data at all)
-  if (!hasData && !isLoading && page === 1 && efficiencyFilter === 'all') {
+  if (
+    !filters.hasData &&
+    !state.isLoading &&
+    state.page === 1 &&
+    state.efficiencyFilter === 'all'
+  ) {
     return (
-      <div className="space-y-6">
-        <AdvertisingPageHeader />
-
-        {/* Still show filters for changing period */}
-        <AdvertisingFilters
-          dateRange={dateRange}
-          onDateRangeChange={handleDateRangeChange}
-          viewBy={viewBy}
-          onViewByChange={handleViewByChange}
-          dataAvailableFrom={syncStatus?.dataAvailableFrom}
-          dataAvailableTo={syncStatus?.dataAvailableTo}
-        />
-
-        {/* Sync Gaps Timeline — also in empty state to explain missing data */}
-        <SyncGapsTimeline from={dateRange.from} to={dateRange.to} syncStatus={syncStatus} />
-
-        <Card>
-          {/* Show Campaign + Efficiency filters even in empty state */}
-          <CardHeader className="flex flex-row items-end justify-between space-y-0 pb-4">
-            <CardTitle className="text-lg font-semibold pb-2">
-              Детализация по{' '}
-              {viewBy === 'sku'
-                ? 'товарам'
-                : viewBy === 'campaign'
-                  ? 'кампаниям'
-                  : viewBy === 'brand'
-                    ? 'брендам'
-                    : 'категориям'}
-            </CardTitle>
-            <div className="flex items-end gap-3">
-              <CampaignSelector
-                selectedIds={selectedCampaigns}
-                onSelectionChange={handleCampaignFilterChange}
-                disabled={isLoading}
-              />
-              <EfficiencyFilterDropdown
-                value={efficiencyFilter}
-                onChange={handleEfficiencyFilterChange}
-                disabled={isLoading}
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-              Нет данных за выбранный период
-            </h3>
-            <p className="text-muted-foreground mb-4 max-w-md">
-              Попробуйте выбрать другой период или проверьте, есть ли рекламные кампании
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <AdvertisingEmptyState
+        dateRange={state.dateRange}
+        viewBy={state.viewBy}
+        efficiencyFilter={state.efficiencyFilter}
+        selectedCampaigns={state.selectedCampaigns}
+        isLoading={state.isLoading}
+        syncStatus={state.syncStatus}
+        onDateRangeChange={state.handleDateRangeChange}
+        onViewByChange={state.handleViewByChange}
+        onCampaignFilterChange={state.handleCampaignFilterChange}
+        onEfficiencyFilterChange={state.handleEfficiencyFilterChange}
+      />
     )
   }
 
   return (
     <div className="space-y-6">
-      {/* Page Header with Breadcrumbs */}
       <AdvertisingPageHeader />
 
-      {/* Filters: Date Range + View Mode Toggle */}
       <AdvertisingFilters
-        dateRange={dateRange}
-        onDateRangeChange={handleDateRangeChange}
-        viewBy={viewBy}
-        onViewByChange={handleViewByChange}
+        dateRange={state.dateRange}
+        onDateRangeChange={state.handleDateRangeChange}
+        viewBy={state.viewBy}
+        onViewByChange={state.handleViewByChange}
       />
 
-      {/* Sync Gaps Timeline (Story 73.5-FE) */}
-      <SyncGapsTimeline from={dateRange.from} to={dateRange.to} syncStatus={syncStatus} />
+      <SyncGapsTimeline
+        from={state.dateRange.from}
+        to={state.dateRange.to}
+        syncStatus={state.syncStatus}
+      />
 
-      {/* Loss Alert Banner (Story 33.4-fe AC4) */}
       <EfficiencyAlertBanner
-        lossCount={lossCount}
+        lossCount={filters.lossCount}
         currentParams={{
-          from: dateRange.from,
-          to: dateRange.to,
-          view: viewBy,
-          sort: sortBy,
-          order: sortOrder,
+          from: state.dateRange.from,
+          to: state.dateRange.to,
+          view: state.viewBy,
+          sort: state.sortBy,
+          order: state.sortOrder,
         }}
       />
 
-      {/* Summary Cards: Spend, ROAS, ROI, Active Campaigns */}
-      <AdvertisingSummaryCards summary={filteredSummary} isLoading={isLoading} />
+      <AdvertisingSummaryCards summary={filters.filteredSummary} isLoading={state.isLoading} />
+      <DailyTrendChart data={state.data?.daily ?? []} isLoading={state.isLoading} />
 
-      {/* Story 72.3: Daily Trend Chart */}
-      <DailyTrendChart data={data?.daily ?? []} isLoading={isLoading} />
-
-      {/* Story 73.9: Three-Layer Ad Cost Discrepancy View */}
       <AdCostDiscrepancySection
-        platformSpend={filteredSummary?.total_spend ?? null}
-        isLoading={isLoading}
+        platformSpend={filters.filteredSummary?.total_spend ?? null}
+        isLoading={state.isLoading}
       />
 
-      {/* Story 73.6: Over-attribution warning banner with filter toggle */}
       <OverAttributionBanner
-        count={overAttributionCount}
-        filterActive={hideOverAttribution}
-        onFilterChange={setHideOverAttribution}
+        count={filters.overAttributionCount}
+        filterActive={state.hideOverAttribution}
+        onFilterChange={state.setHideOverAttribution}
       />
 
-      {/* Epic 36: Group By Toggle (separate row above table per PO decision) */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">Группировка</h3>
-        <GroupByToggle groupBy={groupBy} onGroupByChange={handleGroupByChange} />
+        <GroupByToggle groupBy={state.groupBy} onGroupByChange={state.handleGroupByChange} />
       </div>
 
-      {/* Performance Metrics Table (Story 33.3-fe) */}
       <Card>
         <CardHeader className="flex flex-row items-end justify-between space-y-0 pb-4">
           <CardTitle className="text-lg font-semibold pb-2">
-            Детализация по{' '}
-            {viewBy === 'sku'
-              ? 'товарам'
-              : viewBy === 'campaign'
-                ? 'кампаниям'
-                : viewBy === 'brand'
-                  ? 'брендам'
-                  : 'категориям'}
+            Детализация по {viewByLabel(state.viewBy)}
           </CardTitle>
-          {/* Filters: Campaign + Efficiency (Story 33.5-fe) */}
           <div className="flex items-end gap-3">
             <CampaignSelector
-              selectedIds={selectedCampaigns}
-              onSelectionChange={handleCampaignFilterChange}
-              disabled={isLoading}
+              selectedIds={state.selectedCampaigns}
+              onSelectionChange={state.handleCampaignFilterChange}
+              disabled={state.isLoading}
             />
             <EfficiencyFilterDropdown
-              value={efficiencyFilter}
-              onChange={handleEfficiencyFilterChange}
-              disabled={isLoading}
+              value={state.efficiencyFilter}
+              onChange={state.handleEfficiencyFilterChange}
+              disabled={state.isLoading}
             />
           </div>
         </CardHeader>
         <CardContent>
-          {/* Epic 37: Conditional rendering based on groupBy mode */}
-          {features.epic37MergedGroups.enabled && groupBy === 'imtId' ? (
+          {features.epic37MergedGroups.enabled && state.groupBy === 'imtId' ? (
             <MergedGroupTable
-              groups={mergedGroupsData}
+              groups={filters.mergedGroupsData}
               sortConfig={{
-                field: sortBy as
+                field: state.sortBy as
                   | 'totalSales'
                   | 'totalRevenue'
                   | 'organicSales'
                   | 'totalSpend'
                   | 'roas',
-                direction: sortOrder,
+                direction: state.sortOrder,
               }}
-              onSort={field => handleSortChange(field as SortField)}
-              onProductClick={handleProductClick}
+              onSort={field => state.handleSortChange(field as SortField)}
+              onProductClick={state.handleProductClick}
             />
           ) : (
             <div className="space-y-3">
               <MultiCampaignWarningBanner
-                warningCount={data?.multiCampaignSkuWarnings?.length ?? 0}
+                warningCount={state.data?.multiCampaignSkuWarnings?.length ?? 0}
               />
               <PerformanceMetricsTable
-                data={filteredData}
-                viewBy={viewBy}
-                isLoading={isLoading}
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-                onSortChange={handleSortChange}
-                page={page}
+                data={filters.filteredData}
+                viewBy={state.viewBy}
+                isLoading={state.isLoading}
+                sortBy={state.sortBy}
+                sortOrder={state.sortOrder}
+                onSortChange={state.handleSortChange}
+                page={state.page}
                 pageSize={PAGE_SIZE}
-                totalCount={totalCount}
-                onPageChange={handlePageChange}
-                multiCampaignSkuWarnings={data?.multiCampaignSkuWarnings}
+                totalCount={filters.totalCount}
+                onPageChange={state.handlePageChange}
+                multiCampaignSkuWarnings={state.data?.multiCampaignSkuWarnings}
               />
             </div>
           )}
