@@ -3,9 +3,9 @@
 > **Source of Truth** for all frontend epic statuses, sprint planning, and story tracking.
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
-**Last Updated**: 2026-02-28
-**Total Epics**: 23 (22 complete + 1 pending docs)
-**Total Stories**: 166 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE + 7 Epic 69-FE + 6 Epic 70-FE)
+**Last Updated**: 2026-03-09
+**Total Epics**: 27 (22 complete + 1 pending docs + 3 search/marketing complete + 1 ready)
+**Total Stories**: 198 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE + 7 Epic 69-FE + 6 Epic 70-FE + 8 Epic 71-FE + 6 Epic 72-FE + 9 Epic 73-FE + 9 Epic 74-FE)
 
 ---
 
@@ -112,6 +112,30 @@
 > - Epic 68-FE: Funnel Analytics UI
 > - Epic 71-FE: Returns Analytics UI
 > - Reference: Backend Request #151
+
+### Technical Debt - Q1 2026
+
+| Epic ID | Title | Stories | SP | Status | Source |
+|---------|-------|---------|---:|--------|--------|
+| Epic 74-FE | File Size Compliance & Code Splitting | 9 | 34 | 📋 Ready | Code review (Epics 71-73) |
+
+**Epic 74-FE**: 📋 Ready — 9 stories, 34 SP, 131 files >200 lines
+- Systematic file splitting to comply with ESLint 200-line limit
+- Stories grouped by domain: mega-components, analytics pages, hooks, lib utils, components
+- Zero functional changes — pure structural extraction
+- Spec: `docs/epics/epic-74-fe-file-size-compliance.md`
+
+| Story | Title | SP | Priority | Files |
+|-------|-------|----|----------|-------|
+| 74.1-FE | Split mega components (>500 lines) | 5 | P0 | 7 |
+| 74.2-FE | Split analytics page files (400-500 lines) | 5 | P0 | 8 |
+| 74.3-FE | Split analytics components (300-400 lines) | 3 | P1 | 8 |
+| 74.4-FE | Split hooks (>300 lines) | 5 | P1 | 10 |
+| 74.5-FE | Split lib utilities (>300 lines) | 5 | P1 | 8 |
+| 74.6-FE | Split components/custom Tier 2 (250-350 lines) | 3 | P2 | 16 |
+| 74.7-FE | Split analytics sub-components (250-320 lines) | 3 | P2 | 10 |
+| 74.8-FE | Split remaining files (200-250 lines) | 3 | P3 | 48 |
+| 74.9-FE | Validation & cleanup sweep | 2 | P1 | — |
 
 ### Validation Fixes - Q1 2026
 
