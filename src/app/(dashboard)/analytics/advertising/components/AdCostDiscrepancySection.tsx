@@ -10,7 +10,7 @@
  */
 
 import { useMemo } from 'react'
-import { useFinancialSummary } from '@/hooks-v1/financial'
+import { useFinancialSummary } from '@/hooks/financial'
 import { getLastCompletedWeek } from '@/lib/margin-helpers'
 import { AdCostDiscrepancyCard } from './AdCostDiscrepancyCard'
 import { AdCostDiscrepancyChart } from './AdCostDiscrepancyChart'
