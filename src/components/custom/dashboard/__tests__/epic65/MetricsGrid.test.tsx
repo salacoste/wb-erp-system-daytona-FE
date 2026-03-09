@@ -107,9 +107,9 @@ describe('MetricsGrid (Story 65.17)', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
-      // 8 simple + 10 complex + 2 tax cards (Epic 66-FE: TaxCard + NetProfitCard) = 20
+      // 8 simple + 12 complex + 2 tax cards (Epic 66-FE: TaxCard + NetProfitCard) = 22
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(20)
+      expect(articles.length).toBe(22)
     })
   })
 

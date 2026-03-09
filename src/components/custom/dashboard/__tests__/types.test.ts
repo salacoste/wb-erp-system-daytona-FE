@@ -3,7 +3,7 @@
  * Story: null vs undefined Standardization + P&L Restructuring
  *
  * Tests verify that Dashboard types use null for optional fields,
- * NOT undefined. Updated for P&L Narrative layout (16 fields).
+ * NOT undefined. Updated for P&L Narrative layout (18 fields).
  *
  * @see docs/briefs/dashboard-restructuring-v2.md
  */
@@ -98,10 +98,10 @@ describe('PreviousPeriodData Type Safety', () => {
     expect(data.ordersCogs).toBeNull()
   })
 
-  it('has exactly 16 fields', () => {
+  it('has exactly 18 fields', () => {
     const data: PreviousPeriodData = { ...ALL_NULL_PREV }
     const keys = Object.keys(data)
-    expect(keys).toHaveLength(16)
+    expect(keys).toHaveLength(18)
     expect(keys).toContain('ordersCount')
     expect(keys).toContain('saleGross')
     expect(keys).toContain('wbCommissionsTotal')

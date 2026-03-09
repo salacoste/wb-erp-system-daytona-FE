@@ -153,7 +153,7 @@ describe('MarginByCategoryTable', () => {
 
       const rows = container.querySelectorAll('tbody tr')
       // Category B has missing_cogs_count: 5
-      const categoryBRow = Array.from(rows).find((row) => row.textContent?.includes('Category B'))
+      const categoryBRow = Array.from(rows).find(row => row.textContent?.includes('Category B'))
       expect(categoryBRow).toHaveClass('bg-yellow-50/30')
     })
 
@@ -163,7 +163,7 @@ describe('MarginByCategoryTable', () => {
       // Use getAllByText since "75" appears in both quantity and missing COGS count
       const all75s = screen.getAllByText('75')
       expect(all75s.length).toBeGreaterThan(0)
-      
+
       // Check for the badge specifically (yellow background)
       const { container } = render(<MarginByCategoryTable data={mockCategoryData} />)
       const badges = container.querySelectorAll('.bg-yellow-100')
@@ -202,10 +202,10 @@ describe('MarginByCategoryTable', () => {
       render(<MarginByCategoryTable data={mockCategoryData} />)
 
       expect(screen.getByText('Средняя маржа')).toBeInTheDocument()
-      // Average of 35%, 20% = 27.5%
+      // Weighted average by revenue: (70000+20000+0) / (200000+100000+150000) = 20%
       // Check for percentage sign and number pattern (flexible for locale formatting)
       const summarySection = screen.getByText('Средняя маржа').closest('div')?.parentElement
-      expect(summarySection?.textContent).toMatch(/27[.,]\d+%/)
+      expect(summarySection?.textContent).toMatch(/20[.,]\d+%/)
     })
   })
 
@@ -225,7 +225,7 @@ describe('MarginByCategoryTable', () => {
       render(<MarginByCategoryTable data={mockCategoryData} onCategoryClick={handleClick} />)
 
       const buttons = screen.getAllByRole('button')
-      const externalLinkButton = buttons.find((btn) =>
+      const externalLinkButton = buttons.find(btn =>
         btn.getAttribute('aria-label')?.includes('Открыть детали категории')
       )
 
@@ -259,4 +259,3 @@ describe('MarginByCategoryTable', () => {
     })
   })
 })
-

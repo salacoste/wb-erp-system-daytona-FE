@@ -94,8 +94,8 @@ describe('NetProfitCard (Story 66.6-FE)', () => {
       saleGrossTotal: 200000,
     })
 
-    // Should show "К перечислению" label
-    expect(screen.getByText(/к перечислению/i)).toBeInTheDocument()
+    // Should show "Чистая прибыль" label with "(до налога)" suffix
+    expect(screen.getByText(/чистая прибыль/i)).toBeInTheDocument()
     // Should display 250,000 formatted value
     const card = screen.getByRole('article')
     expect(card.textContent).toMatch(/250\s?000/)

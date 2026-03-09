@@ -164,7 +164,7 @@ describe('MarginByBrandTable', () => {
 
       const rows = container.querySelectorAll('tbody tr')
       // Brand B has missing_cogs_count: 5
-      const brandBRow = Array.from(rows).find((row) => row.textContent?.includes('Brand B'))
+      const brandBRow = Array.from(rows).find(row => row.textContent?.includes('Brand B'))
       expect(brandBRow).toHaveClass('bg-yellow-50/30')
     })
 
@@ -174,7 +174,7 @@ describe('MarginByBrandTable', () => {
       // Use getAllByText since "75" appears in both quantity and missing COGS count
       const all75s = screen.getAllByText('75')
       expect(all75s.length).toBeGreaterThan(0)
-      
+
       // Check for the badge specifically (yellow background)
       const { container } = render(<MarginByBrandTable data={mockBrandData} />)
       const badges = container.querySelectorAll('.bg-yellow-100')
@@ -220,10 +220,10 @@ describe('MarginByBrandTable', () => {
       render(<MarginByBrandTable data={mockBrandData} />)
 
       expect(screen.getByText('Средняя маржа')).toBeInTheDocument()
-      // Average of 35%, 20% = 27.5%
+      // Weighted average by revenue: (70000+20000+0) / (200000+100000+150000) = 20%
       // Check for percentage sign and number pattern (flexible for locale formatting)
       const summarySection = screen.getByText('Средняя маржа').closest('div')?.parentElement
-      expect(summarySection?.textContent).toMatch(/27[.,]\d+%/)
+      expect(summarySection?.textContent).toMatch(/20[.,]\d+%/)
     })
   })
 
@@ -243,7 +243,7 @@ describe('MarginByBrandTable', () => {
       render(<MarginByBrandTable data={mockBrandData} onBrandClick={handleClick} />)
 
       const buttons = screen.getAllByRole('button')
-      const externalLinkButton = buttons.find((btn) =>
+      const externalLinkButton = buttons.find(btn =>
         btn.getAttribute('aria-label')?.includes('Открыть детали бренда')
       )
 
@@ -277,4 +277,3 @@ describe('MarginByBrandTable', () => {
     })
   })
 })
-
