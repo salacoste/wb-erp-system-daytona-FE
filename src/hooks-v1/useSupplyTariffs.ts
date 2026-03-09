@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * useSupplyTariffs Hook
  * Story 44.40-FE: Two Tariff Systems Integration
@@ -6,6 +8,8 @@
  * Fetches and caches SUPPLY system tariffs from /acceptance/coefficients/all.
  * Provides findTariffsForDate function to get tariffs for specific warehouse + date.
  *
+ * Types extracted to supply-tariffs-types.ts, helpers to supply-tariffs-helpers.ts (Epic 74).
+ *
  * @see docs/request-backend/108-two-tariff-systems-guide.md
  * @see docs/stories/epic-44/story-44.40-fe-two-tariff-systems-integration.md
  */
@@ -13,116 +17,26 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { getAllAcceptanceCoefficients } from '@/lib/api/tariffs'
-import type { AcceptanceCoefficient } from '@/types/tariffs'
 import type { SupplyDateTariffs } from '@/lib/tariff-system-utils'
-import { extractStorageTariffs } from '@/lib/tariff-extraction-utils'
+import {
+  supplyTariffsQueryKeys,
+  type UseSupplyTariffsReturn,
+  type SupplyWarehouse,
+} from './supply-tariffs-types'
+import {
+  extractSupplyWarehouses,
+  findTariffsForDateFromCoefficients,
+  findTariffsByNameFromCoefficients,
+  getTariffsByBoxTypeFromCoefficients,
+} from './supply-tariffs-helpers'
 
-/** Query keys for supply tariffs */
-export const supplyTariffsQueryKeys = {
-  all: ['tariffs', 'supply', 'all'] as const,
-}
-
-/** Warehouse type from SUPPLY system with tariffs from first coefficient */
-export interface SupplyWarehouse {
-  id: number
-  name: string
-  /** Tariffs from first available coefficient for this warehouse */
-  tariffs: {
-    deliveryBaseLiterRub: number
-    deliveryPerLiterRub: number
-    storageBaseLiterRub: number
-    storagePerLiterRub: number
-    /**
-     * Logistics coefficient for CALCULATION - always 1.0 for SUPPLY since rates are pre-multiplied.
-     * @see docs/request-backend/108-two-tariff-systems-guide.md
-     */
-    logisticsCoefficient: number
-    storageCoefficient: number
-    /**
-     * Original logistics coefficient for DISPLAY purposes (e.g., 1.65 for Krasnodar).
-     * Use this when showing coefficient to user, not for calculations.
-     */
-    displayLogisticsCoefficient?: number
-    /**
-     * Original storage coefficient for DISPLAY purposes.
-     */
-    displayStorageCoefficient?: number
-    /** True if storage tariffs are using fallback defaults (baseLiterRub was 0) */
-    usingStorageFallback?: boolean
-  }
-}
-
-/** Tariffs for a specific box type */
-export interface BoxTypeTariffs {
-  boxTypeId: number
-  boxTypeName: string
-  delivery: {
-    baseLiterRub: number
-    additionalLiterRub: number
-    coefficient: number
-  }
-  storage: {
-    baseLiterRub: number
-    additionalLiterRub: number
-    coefficient: number
-  }
-  /** True if storage uses fixed formula (Pallets) */
-  isFixedStorage: boolean
-}
-
-/** Return type for useSupplyTariffs hook */
-export interface UseSupplyTariffsReturn {
-  /** Full coefficients array from API */
-  coefficients: AcceptanceCoefficient[]
-  /** Unique warehouses extracted from SUPPLY coefficients */
-  warehouses: SupplyWarehouse[]
-  /** Find tariffs for specific warehouse and date */
-  findTariffsForDate: (warehouseId: number, date: string) => SupplyDateTariffs | null
-  /** Find tariffs by warehouse name and date (fuzzy match) */
-  findTariffsByNameAndDate: (warehouseName: string, date: string) => SupplyDateTariffs | null
-  /** Get tariffs for all box types for a warehouse (first available date) */
-  getTariffsByBoxType: (warehouseId: number) => BoxTypeTariffs[]
-  /** Loading state */
-  isLoading: boolean
-  /** Error state */
-  error: Error | null
-  /** Is data stale and refetching */
-  isRefetching: boolean
-}
-
-/**
- * Transform AcceptanceCoefficient to SupplyDateTariffs
- */
-function toSupplyDateTariffs(coeff: AcceptanceCoefficient): SupplyDateTariffs {
-  return {
-    date: coeff.date.split('T')[0], // Normalize to YYYY-MM-DD
-    warehouseId: coeff.warehouseId,
-    warehouseName: coeff.warehouseName,
-    coefficient: coeff.coefficient,
-    isAvailable: coeff.isAvailable,
-    allowUnload: coeff.allowUnload,
-    boxTypeId: coeff.boxTypeId,
-    boxTypeName: coeff.boxTypeName,
-    delivery: {
-      coefficient: coeff.delivery.coefficient,
-      baseLiterRub: coeff.delivery.baseLiterRub,
-      additionalLiterRub: coeff.delivery.additionalLiterRub,
-    },
-    storage: {
-      coefficient: coeff.storage.coefficient,
-      baseLiterRub: coeff.storage.baseLiterRub,
-      additionalLiterRub: coeff.storage.additionalLiterRub,
-    },
-    isSortingCenter: coeff.isSortingCenter,
-  }
-}
-
-/**
- * Normalize warehouse name for matching
- */
-function normalizeWarehouseName(name: string): string {
-  return name.trim().toLowerCase()
-}
+// Re-export types and query keys for backward compatibility
+export { supplyTariffsQueryKeys } from './supply-tariffs-types'
+export type {
+  UseSupplyTariffsReturn,
+  SupplyWarehouse,
+  BoxTypeTariffs,
+} from './supply-tariffs-types'
 
 /**
  * Hook to fetch and cache SUPPLY system tariffs
@@ -142,18 +56,21 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
       const response = await getAllAcceptanceCoefficients()
       console.info('[SupplyTariffs] Loaded', response.coefficients?.length || 0, 'entries')
 
-      // Debug: Log Краснодар entries to check boxTypeId and storage values
-      const krasnodarEntries = response.coefficients?.filter(c =>
-        c.warehouseName.includes('Тихорецк')
-      ).slice(0, 5)
-      if (krasnodarEntries?.length) {
-        console.info('[SupplyTariffs] DEBUG Краснодар entries:', krasnodarEntries.map(e => ({
-          date: e.date,
-          boxTypeId: e.boxTypeId,
-          boxTypeName: e.boxTypeName,
-          delivery: e.delivery,
-          storage: e.storage,
-        })))
+      // Debug: Log entries to check boxTypeId and storage values
+      const debugEntries = response.coefficients
+        ?.filter(c => c.warehouseName.includes('Тихорецк'))
+        .slice(0, 5)
+      if (debugEntries?.length) {
+        console.info(
+          '[SupplyTariffs] DEBUG entries:',
+          debugEntries.map(e => ({
+            date: e.date,
+            boxTypeId: e.boxTypeId,
+            boxTypeName: e.boxTypeName,
+            delivery: e.delivery,
+            storage: e.storage,
+          }))
+        )
       }
 
       return response.coefficients || []
@@ -166,57 +83,13 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
 
   const coefficients = useMemo(() => query.data ?? [], [query.data])
 
-  // Extract unique warehouses from SUPPLY coefficients with tariffs from first coefficient
-  const warehouses = useMemo((): SupplyWarehouse[] => {
-    if (!coefficients.length) return []
+  // Extract unique warehouses from SUPPLY coefficients
+  const warehouses = useMemo(
+    (): SupplyWarehouse[] => extractSupplyWarehouses(coefficients),
+    [coefficients]
+  )
 
-    const warehouseMap = new Map<number, AcceptanceCoefficient>()
-    // Prefer boxTypeId: 2 (Boxes) when collecting first coefficient
-    coefficients.forEach((c) => {
-      if (!warehouseMap.has(c.warehouseId)) {
-        warehouseMap.set(c.warehouseId, c)
-      } else if (c.boxTypeId === 2 && warehouseMap.get(c.warehouseId)?.boxTypeId !== 2) {
-        warehouseMap.set(c.warehouseId, c) // Prefer boxTypeId: 2
-      }
-    })
-
-    const result = Array.from(warehouseMap.values())
-      .map((c) => {
-        // Use extractStorageTariffs utility for proper fallback logic
-        // Only triggers fallback when baseLiterRub=0, NOT when additionalLiterRub=0 (Pallets)
-        const storageExtraction = extractStorageTariffs(c.storage, 'supply')
-
-        // CRITICAL: SUPPLY API returns rates ALREADY multiplied by coefficient!
-        // Example: base=46₽, coefficient=1.65 → API returns baseLiterRub=75.9 (46×1.65)
-        // So we use coefficient=1.0 for calculations to avoid double multiplication
-        // @see docs/request-backend/108-two-tariff-systems-guide.md
-        return {
-          id: c.warehouseId,
-          name: c.warehouseName,
-          tariffs: {
-            deliveryBaseLiterRub: c.delivery.baseLiterRub,
-            deliveryPerLiterRub: c.delivery.additionalLiterRub,
-            storageBaseLiterRub: storageExtraction.tariffs.baseLiterRub,
-            storagePerLiterRub: storageExtraction.tariffs.additionalLiterRub,
-            // Calculation coefficients = 1.0 (rates are pre-multiplied)
-            logisticsCoefficient: 1.0,
-            storageCoefficient: 1.0,
-            // Display coefficients = original values for UI
-            displayLogisticsCoefficient: c.delivery.coefficient,
-            displayStorageCoefficient: storageExtraction.tariffs.coefficient,
-            usingStorageFallback: storageExtraction.usingFallback,
-          },
-        }
-      })
-      .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
-
-    return result
-  }, [coefficients])
-
-  /**
-   * Find tariffs for specific warehouse ID and date
-   * Filters for default box type (boxTypeId: 2 = Boxes)
-   */
+  /** Find tariffs for specific warehouse ID and date */
   const findTariffsForDate = useCallback(
     (warehouseId: number, date: string): SupplyDateTariffs | null => {
       console.info('[findTariffsForDate] Searching:', {
@@ -225,131 +98,43 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
         coefficientsCount: coefficients.length,
       })
 
-      if (!coefficients.length) {
-        console.warn('[findTariffsForDate] No coefficients loaded!')
-        return null
-      }
+      const result = findTariffsForDateFromCoefficients(coefficients, warehouseId, date)
 
-      const normalizedDate = date.split('T')[0] // Ensure YYYY-MM-DD format
-
-      // Find matching coefficient (prefer boxTypeId: 2 = Boxes)
-      const match = coefficients.find(
-        (c) =>
-          c.warehouseId === warehouseId &&
-          c.date.split('T')[0] === normalizedDate &&
-          c.boxTypeId === 2
-      )
-
-      // Fallback: any box type for this warehouse + date
-      const fallbackMatch =
-        match ??
-        coefficients.find(
-          (c) => c.warehouseId === warehouseId && c.date.split('T')[0] === normalizedDate
-        )
-
-      if (fallbackMatch) {
+      if (result) {
         console.info('[findTariffsForDate] Found match:', {
-          warehouseId: fallbackMatch.warehouseId,
-          date: fallbackMatch.date,
-          boxTypeId: fallbackMatch.boxTypeId,
-          deliveryBase: fallbackMatch.delivery.baseLiterRub,
-          deliveryCoeff: fallbackMatch.delivery.coefficient,
+          warehouseId: result.warehouseId,
+          date: result.date,
+          boxTypeId: result.boxTypeId,
+          deliveryBase: result.delivery.baseLiterRub,
+          deliveryCoeff: result.delivery.coefficient,
         })
       } else {
-        console.warn('[findTariffsForDate] No match found for warehouse', warehouseId, 'date', normalizedDate)
-        // Log some available warehouseIds for debugging
+        const normalizedDate = date.split('T')[0]
+        console.warn(
+          '[findTariffsForDate] No match found for warehouse',
+          warehouseId,
+          'date',
+          normalizedDate
+        )
         const uniqueIds = [...new Set(coefficients.map(c => c.warehouseId))].slice(0, 10)
         console.info('[findTariffsForDate] Available warehouseIds (first 10):', uniqueIds)
       }
 
-      return fallbackMatch ? toSupplyDateTariffs(fallbackMatch) : null
+      return result
     },
     [coefficients]
   )
 
-  /**
-   * Find tariffs by warehouse name and date (fuzzy match)
-   * Used when warehouse IDs differ between systems
-   */
+  /** Find tariffs by warehouse name and date (fuzzy match) */
   const findTariffsByNameAndDate = useCallback(
-    (warehouseName: string, date: string): SupplyDateTariffs | null => {
-      if (!coefficients.length || !warehouseName) return null
-
-      const normalizedDate = date.split('T')[0]
-      const searchName = normalizeWarehouseName(warehouseName)
-
-      // Strategy 1: Exact name match
-      let match = coefficients.find(
-        (c) =>
-          normalizeWarehouseName(c.warehouseName) === searchName &&
-          c.date.split('T')[0] === normalizedDate &&
-          c.boxTypeId === 2
-      )
-
-      // Strategy 2: Name starts with search
-      if (!match) {
-        match = coefficients.find(
-          (c) =>
-            normalizeWarehouseName(c.warehouseName).startsWith(searchName) &&
-            c.date.split('T')[0] === normalizedDate &&
-            c.boxTypeId === 2
-        )
-      }
-
-      // Strategy 3: Name contains search
-      if (!match) {
-        match = coefficients.find(
-          (c) =>
-            normalizeWarehouseName(c.warehouseName).includes(searchName) &&
-            c.date.split('T')[0] === normalizedDate &&
-            c.boxTypeId === 2
-        )
-      }
-
-      return match ? toSupplyDateTariffs(match) : null
-    },
+    (warehouseName: string, date: string): SupplyDateTariffs | null =>
+      findTariffsByNameFromCoefficients(coefficients, warehouseName, date),
     [coefficients]
   )
 
-  /**
-   * Get tariffs for all available box types for a warehouse
-   * Uses first available date's data for each box type
-   */
+  /** Get tariffs for all available box types for a warehouse */
   const getTariffsByBoxType = useCallback(
-    (warehouseId: number): BoxTypeTariffs[] => {
-      if (!coefficients.length) return []
-
-      // Group by boxTypeId for this warehouse
-      const boxTypeMap = new Map<number, AcceptanceCoefficient>()
-      coefficients
-        .filter((c) => c.warehouseId === warehouseId)
-        .forEach((c) => {
-          // Keep first entry for each box type
-          if (!boxTypeMap.has(c.boxTypeId)) {
-            boxTypeMap.set(c.boxTypeId, c)
-          }
-        })
-
-      // Convert to BoxTypeTariffs array
-      return Array.from(boxTypeMap.values())
-        .map((c) => ({
-          boxTypeId: c.boxTypeId,
-          boxTypeName: c.boxTypeName,
-          delivery: {
-            baseLiterRub: c.delivery.baseLiterRub,
-            additionalLiterRub: c.delivery.additionalLiterRub,
-            coefficient: c.delivery.coefficient,
-          },
-          storage: {
-            baseLiterRub: c.storage.baseLiterRub,
-            additionalLiterRub: c.storage.additionalLiterRub,
-            coefficient: c.storage.coefficient,
-          },
-          // Pallets (boxTypeId: 5) use fixed storage formula
-          isFixedStorage: c.boxTypeId === 5,
-        }))
-        .sort((a, b) => a.boxTypeId - b.boxTypeId)
-    },
+    (warehouseId: number) => getTariffsByBoxTypeFromCoefficients(coefficients, warehouseId),
     [coefficients]
   )
 

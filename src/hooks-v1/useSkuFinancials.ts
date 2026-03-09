@@ -8,6 +8,9 @@
  * - Commission/acquiring as visibility fields (already in net_for_pay)
  * - Operating profit = grossProfit - logistics - storage - penalties - paidAcceptance
  * - Profitability classification (excellent/good/warning/critical/loss/unknown)
+ *
+ * Types extracted to sku-financials-types.ts (Epic 74)
+ * Transform functions extracted to sku-financials-transform.ts (Epic 74)
  */
 
 import { useQuery } from '@tanstack/react-query'
@@ -16,194 +19,12 @@ import type {
   SkuFinancialsQuery,
   SkuFinancialsResponse,
   SkuFinancialsSortBy,
-  SkuFinancialItem,
-  ProfitabilityStatus,
 } from '@/types/sku-financials'
+import type { BackendResponse } from './sku-financials-types'
+import { transformBackendResponse } from './sku-financials-transform'
 
-// Re-export types for convenience
+// Re-export types for convenience (backward compatibility)
 export type { SkuFinancialsQuery, SkuFinancialsResponse, SkuFinancialsSortBy }
-
-// ============================================================
-// BACKEND RESPONSE TYPES (snake_case from API)
-// ============================================================
-
-interface BackendSales {
-  quantity: number
-  revenue_gross: number
-  revenue_net: number
-}
-
-interface BackendReturns {
-  quantity: number
-  revenue_gross: number
-  revenue_net: number
-}
-
-interface BackendCogs {
-  unit_cost: number
-  total: number
-  source: string
-  valid_from: string
-}
-
-interface BackendExpenses {
-  logistics_delivery: number
-  logistics_return: number
-  logistics_total: number
-  storage: number
-  storage_source: 'paid_storage_api' | 'unavailable'
-  penalties: number
-  paid_acceptance: number
-  other_adjustments: number // Request #68
-  total_operating: number
-}
-
-interface BackendVisibility {
-  commission_sales: number
-  commission_other: number
-  commission_total: number
-  acquiring_fee: number
-  comment: string
-}
-
-interface BackendSkuItem {
-  nm_id: string
-  sa_name: string
-  brand?: string
-  category?: string
-  sales: BackendSales
-  returns: BackendReturns
-  cogs: BackendCogs | null
-  gross_profit: number | null
-  gross_margin_pct: number | null
-  expenses: BackendExpenses
-  visibility_breakdown?: BackendVisibility
-  operating_profit: number | null
-  operating_margin_pct: number | null
-  profitability_status: ProfitabilityStatus
-}
-
-interface BackendMeta {
-  week: string
-  week_start: string
-  week_end: string
-  cabinet_id: string
-  total_skus: number
-  returned_skus: number
-  generated_at: string
-  data_sources: {
-    transactions: string
-    storage: string
-    cogs: string
-  }
-  warnings?: Array<{
-    code: string
-    message: string
-    affected_skus?: string
-  }>
-}
-
-interface BackendTotals {
-  revenue_gross: number
-  revenue_net: number
-  cogs: number | null
-  gross_profit: number | null
-  logistics_cost: number
-  storage_cost: number
-  penalties: number
-  paid_acceptance: number
-  other_adjustments: number // Request #68
-  total_operating_expenses: number
-  operating_profit: number | null
-  operating_margin_pct: number | null
-  visibility_metrics: {
-    commission_total: number
-    acquiring_fee: number
-    comment: string
-  }
-}
-
-interface BackendResponse {
-  meta: BackendMeta
-  totals: BackendTotals
-  data: BackendSkuItem[]
-}
-
-// ============================================================
-// DATA TRANSFORMATION (snake_case → camelCase)
-// ============================================================
-
-/**
- * Transform backend snake_case response to frontend camelCase format
- * Maps backend DTO structure to frontend SkuFinancialItem
- */
-function transformBackendItem(item: BackendSkuItem): SkuFinancialItem {
-  const revenueNet = item.sales.revenue_net - item.returns.revenue_net
-
-  return {
-    nmId: parseInt(item.nm_id, 10),
-    productName: item.sa_name,
-    category: item.category || null,
-    brand: item.brand || null,
-    // Quantity: salesQty is RAW count (returns NOT subtracted)
-    quantity: {
-      salesQty: item.sales.quantity,
-      returnsQty: item.returns.quantity,
-    },
-    revenue: {
-      gross: item.sales.revenue_gross - item.returns.revenue_gross,
-      net: revenueNet,
-    },
-    costs: {
-      cogs: item.cogs?.total ?? null,
-      logistics: item.expenses.logistics_total,
-      storage: item.expenses.storage,
-      penalties: item.expenses.penalties,
-      paidAcceptance: item.expenses.paid_acceptance,
-      otherAdjustments: item.expenses.other_adjustments ?? 0, // Request #68
-    },
-    visibility: item.visibility_breakdown
-      ? {
-          commission: item.visibility_breakdown.commission_total,
-          acquiring: item.visibility_breakdown.acquiring_fee,
-        }
-      : undefined,
-    profit: {
-      gross: item.gross_profit ?? 0,
-      operating: item.operating_profit ?? 0,
-      operatingMarginPct: item.operating_margin_pct ?? 0,
-    },
-    profitabilityStatus: item.profitability_status,
-    missingCogs: item.cogs === null,
-  }
-}
-
-/**
- * Transform full backend response to frontend format
- * Handles error responses gracefully
- */
-function transformBackendResponse(backend: BackendResponse): SkuFinancialsResponse {
-  // Safety check: if backend response is malformed or error, throw to trigger React Query error state
-  if (!backend || !backend.meta || !backend.data) {
-    const errorResponse = backend as unknown as { error?: { message?: string } }
-    throw new Error(errorResponse?.error?.message || 'Invalid API response format')
-  }
-
-  return {
-    meta: {
-      week: backend.meta.week,
-      cabinetId: parseInt(backend.meta.cabinet_id, 10) || 0, // UUID in backend, number in frontend
-      generatedAt: backend.meta.generated_at,
-    },
-    data: backend.data.map(transformBackendItem),
-    pagination: {
-      total: backend.meta.total_skus,
-      limit: backend.meta.returned_skus,
-      offset: 0,
-      hasMore: backend.meta.returned_skus < backend.meta.total_skus,
-    },
-  }
-}
 
 /**
  * Hook to fetch complete per-SKU financial analytics
@@ -221,13 +42,6 @@ function transformBackendResponse(backend: BackendResponse): SkuFinancialsRespon
  *   sortBy: 'operatingMarginPct',
  *   order: 'asc',
  *   limit: 20,
- * });
- *
- * @example
- * // Filter specific SKUs
- * const { data, isLoading } = useSkuFinancials({
- *   week: '2025-W50',
- *   nm_ids: '148190182,148190095',
  * });
  *
  * @returns Query result with SKU financials data

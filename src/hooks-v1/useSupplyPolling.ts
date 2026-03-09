@@ -1,98 +1,33 @@
+'use client'
+
 /**
  * Hook for supply status polling and manual sync
  * Story 53.7-FE: Status Polling & Sync
  * Epic 53-FE: Supply Management UI
  *
- * Auto-polling for CLOSED/DELIVERING supplies with manual sync support.
- * Rate limited: 1 manual sync per 5 minutes.
+ * Split into multiple files for Story 74.4 (file size compliance).
+ * Constants/types in supply-polling-constants.ts, manual sync in useManualSync.ts.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getSupplies, syncSupplies, suppliesQueryKeys } from '@/lib/api/supplies'
-import type {
-  SupplyStatus,
-  SuppliesListResponse,
-  SyncSuppliesResponse,
-  SupplyStatusChange,
-} from '@/types/supplies'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { getSupplies, suppliesQueryKeys } from '@/lib/api/supplies'
+import type { SupplyStatus, SuppliesListResponse, SupplyStatusChange } from '@/types/supplies'
+import {
+  POLLING_CONFIG,
+  supplyPollingQueryKeys,
+  type UseSupplyPollingOptions,
+  type UseSupplyPollingResult,
+} from './supply-polling-constants'
 
-// =============================================================================
-// Constants
-// =============================================================================
-
-/** Polling configuration constants */
-export const POLLING_CONFIG = {
-  /** Default polling interval (30 seconds) */
-  defaultInterval: 30000,
-  /** Interval for DELIVERING status (60 seconds) */
-  deliveringInterval: 60000,
-  /** Terminal statuses - stop polling when reached */
-  terminalStatuses: ['DELIVERED', 'CANCELLED'] as SupplyStatus[],
-  /** Active statuses - poll while in these states */
-  activeStatuses: ['CLOSED', 'DELIVERING'] as SupplyStatus[],
-  /** Max polling attempts before auto-stop */
-  maxAttempts: 120,
-  /** Max consecutive errors before stopping */
-  maxConsecutiveErrors: 3,
-  /** Rate limit for manual sync (5 minutes) */
-  manualSyncRateLimitMs: 5 * 60 * 1000,
-} as const
-
-// =============================================================================
-// Query Keys
-// =============================================================================
-
-/** Query keys for supply polling */
-export const supplyPollingQueryKeys = {
-  all: ['supply-polling'] as const,
-  active: () => [...supplyPollingQueryKeys.all, 'active'] as const,
-  sync: () => [...supplyPollingQueryKeys.all, 'sync'] as const,
-}
-
-// =============================================================================
-// Types
-// =============================================================================
-
-export interface UseSupplyPollingOptions {
-  /** Enable/disable polling */
-  enabled?: boolean
-  /** Pause polling when window loses focus */
-  pauseOnBlur?: boolean
-  /** Max consecutive errors before stopping */
-  maxConsecutiveErrors?: number
-  /** Callback when status changes */
-  onStatusChange?: (change: SupplyStatusChange) => void
-}
-
-export interface UseSupplyPollingResult {
-  /** Whether polling is active */
-  isPolling: boolean
-  /** Whether polling is paused (window blur) */
-  isPaused: boolean
-  /** Current polling interval in ms */
-  currentInterval: number
-  /** Count of consecutive errors */
-  consecutiveErrors: number
-  /** List of supplies with changed status */
-  changedSupplies: SupplyStatusChange[]
-  /** Active supplies count (CLOSED/DELIVERING) */
-  activeCount: number
-  /** Last sync timestamp (formatted) */
-  lastSyncFormatted: string
-  /** Seconds until next sync */
-  nextSyncIn: number
-  /** Query error */
-  error: Error | null
-  /** Query success state */
-  isSuccess: boolean
-  /** Acknowledge and clear changed supplies */
-  acknowledgeChanges: () => void
-}
-
-// =============================================================================
-// useSupplyPolling Hook
-// =============================================================================
+// Re-exports for backward compatibility
+export { POLLING_CONFIG, supplyPollingQueryKeys } from './supply-polling-constants'
+export type {
+  UseSupplyPollingOptions,
+  UseSupplyPollingResult,
+  UseManualSyncResult,
+} from './supply-polling-constants'
+export { useManualSync } from './useManualSync'
 
 /**
  * Hook for auto-polling supply statuses
@@ -158,11 +93,9 @@ export function useSupplyPolling(options: UseSupplyPollingOptions = {}): UseSupp
       const data = query.state.data as SuppliesListResponse | undefined
       if (!data?.items) return POLLING_CONFIG.defaultInterval
 
-      // Check if any supplies are in active status
       const hasActive = data.items.some(s => POLLING_CONFIG.activeStatuses.includes(s.status))
       if (!hasActive) return false
 
-      // Use longer interval if all active are DELIVERING
       const allDelivering = data.items
         .filter(s => POLLING_CONFIG.activeStatuses.includes(s.status))
         .every(s => s.status === 'DELIVERING')
@@ -196,7 +129,6 @@ export function useSupplyPolling(options: UseSupplyPollingOptions = {}): UseSupp
 
     if (changes.length > 0) {
       setChangedSupplies(prev => [...prev, ...changes])
-      // Invalidate supplies list on status change
       queryClient.invalidateQueries({ queryKey: suppliesQueryKeys.all })
     }
 
@@ -240,94 +172,5 @@ export function useSupplyPolling(options: UseSupplyPollingOptions = {}): UseSupp
     error: query.error as Error | null,
     isSuccess: query.isSuccess,
     acknowledgeChanges,
-  }
-}
-
-// =============================================================================
-// Types for useManualSync
-// =============================================================================
-
-export interface UseManualSyncResult {
-  /** Trigger manual sync */
-  sync: () => void
-  /** Whether sync is in progress */
-  isSyncing: boolean
-  /** Whether sync can be triggered (not rate limited) */
-  canSync: boolean
-  /** Last sync timestamp */
-  lastSyncAt: Date | null
-  /** Seconds until rate limit resets */
-  rateLimitCountdown: number
-  /** Sync response data */
-  data: SyncSuppliesResponse | null
-  /** Sync error */
-  error: Error | null
-  /** Whether last sync was successful */
-  isSuccess: boolean
-  /** Whether last sync had error */
-  isError: boolean
-}
-
-// =============================================================================
-// useManualSync Hook
-// =============================================================================
-
-/**
- * Hook for manual sync with rate limiting (5 minutes)
- */
-export function useManualSync(): UseManualSyncResult {
-  const queryClient = useQueryClient()
-  const [lastSyncAt, setLastSyncAt] = useState<Date | null>(null)
-  const [rateLimitCountdown, setRateLimitCountdown] = useState(0)
-
-  // Rate limit countdown timer
-  useEffect(() => {
-    if (rateLimitCountdown <= 0) return
-
-    const interval = setInterval(() => {
-      setRateLimitCountdown(prev => Math.max(0, prev - 1))
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [rateLimitCountdown])
-
-  const mutation = useMutation({
-    mutationFn: syncSupplies,
-    onSuccess: data => {
-      const now = new Date()
-      setLastSyncAt(now)
-      setRateLimitCountdown(POLLING_CONFIG.manualSyncRateLimitMs / 1000)
-
-      // Invalidate supplies queries to refresh data
-      queryClient.invalidateQueries({ queryKey: suppliesQueryKeys.all })
-      queryClient.invalidateQueries({ queryKey: supplyPollingQueryKeys.all })
-
-      // Update individual supply caches if status changed
-      for (const change of data.statusChanges) {
-        queryClient.invalidateQueries({
-          queryKey: suppliesQueryKeys.detail(change.supplyId),
-        })
-      }
-    },
-  })
-
-  const canSync = rateLimitCountdown === 0 && !mutation.isPending
-
-  const sync = useCallback(() => {
-    if (canSync) {
-      mutation.mutate()
-    }
-  }, [canSync, mutation])
-
-  return {
-    sync,
-    isSyncing: mutation.isPending,
-    canSync,
-    lastSyncAt,
-    rateLimitCountdown,
-    data: mutation.data ?? null,
-    error: mutation.error as Error | null,
-    isSuccess: mutation.isSuccess,
-    isError: mutation.isError,
   }
 }
