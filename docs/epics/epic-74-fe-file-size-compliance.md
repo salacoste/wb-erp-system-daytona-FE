@@ -276,3 +276,54 @@ Includes remaining hooks (`useLiquidity`, `usePendingMarginProducts`, `useSanity
 - No cross-story dependencies (each story can be done independently)
 - 74.9 must run after all other stories
 - Stories can be parallelized across developers
+
+---
+
+## Completion Summary (74.9 Validation Sweep)
+
+**Date**: 2026-03-10
+**Status**: All quality gates passing
+
+### Final Metrics
+
+| Metric | Value |
+|--------|-------|
+| Total files refactored | 131 (74.1-74.8) |
+| Total extracted files created | ~110 |
+| Stories completed | 74.1 through 74.9 (74.1-74.8 refactoring, 74.9 validation) |
+| Source files >200 lines | **0** (excluding mocks, tests, ui/, types/) |
+| TypeScript errors | 0 |
+| Test failures | 0 (373 suites, 6872 assertions) |
+| ESLint violations | 0 |
+| Production build | Successful |
+| Stale comments found | 0 |
+| Orphan files from Epic 74 | 0 |
+
+### Extraction Patterns Used (Proven)
+
+| Pattern | Naming Convention | Count | Example |
+|---------|-------------------|-------|---------|
+| Hook helper extraction | `useX-utils.ts` | 23 | `useLiquidity-utils.ts` |
+| Config/constants extraction | `*-config.ts`, `*-constants.ts` | 15 | `cogs-missing-state-config.ts` |
+| Sub-component extraction | `ComponentParts.tsx` | 18 | `TaxCardBadges.tsx` |
+| API endpoint splitting | `domain-subgroup.ts` | 12 | `orders-history-api.ts` |
+| Type extraction | `*-types.ts` | 8 | `tariff-system-types.ts` |
+| Page state hooks | `use*PageState.ts` | 10 | `useOrdersPageState.ts` |
+| Barrel facade | Re-export from original | 6 | `telegram-metrics.ts` |
+| Form field extraction | `*Fields.tsx`, `*Section.tsx` | 12 | `ScheduleVersionFormFields.tsx` |
+| Helper function extraction | `*-helpers.ts` | 10 | `margin-polling-helpers.ts` |
+
+### Key Learnings
+
+1. **Barrel re-exports** only needed for files with ≥3 external consumers
+2. **'use client' directive** required on ALL extracted files that use React hooks (even if only imported from client components)
+3. **Parallel agents** (7+) effective for domain-grouped extraction but require post-validation for regressions
+4. **Agent regressions** to watch for: logging level changes (console.log→console.info), unicode character substitution, comment text changes
+5. **Headroom target**: 150-180 lines leaves safe buffer below 200-line limit
+6. **Circular dependencies** via barrel re-exports are safe with ES module live bindings (functions not called during initialization)
+
+### Boundary Risk Files (200 lines exactly)
+
+10 files sit at exactly 200 lines with zero headroom. Any future edit will require extraction. Additionally 27 files are in the 195-199 range. When modifying these files, plan to extract code first.
+
+**At 200 lines**: `dashboard-period-state.ts`, `ReturnLogisticsCalculator.tsx`, `CostBreakdownChart.tsx`, `WbHistoryTab.tsx`, `TurnoverCard.tsx`, `RecoveryPanel.tsx`, `DashboardContent.tsx`, `FunnelSummaryCards.tsx`, `SyncStatusIndicator.tsx`, `CampaignSelector.tsx`
