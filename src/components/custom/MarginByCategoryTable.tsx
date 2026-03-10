@@ -1,42 +1,26 @@
 'use client'
 
+/**
+ * Margin analysis table by category with sorting
+ * Story 4.6: Margin Analysis by Brand & Category
+ * Refactored: Epic 74, Story 74.6 — uses shared aggregated components
+ */
 import { useState, useMemo } from 'react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { MarginBadge } from './MarginDisplay'
-import { formatCogs } from '@/hooks/useSingleCogsAssignment'
-import { ArrowUp, ArrowDown, ArrowUpDown, ExternalLink, HelpCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Table, TableBody } from '@/components/ui/table'
 import type { MarginAnalyticsAggregated } from '@/types/api'
 import type { ColumnVisibility } from '@/hooks/useColumnVisibility'
-import {
-  getROIColor,
-  formatROI,
-  formatProfitPerUnit,
-  calculateROI,
-  calculateProfitPerUnit,
-} from '@/lib/analytics-utils'
 import { ComparisonSummary, PeriodTotals } from './SummaryComparison'
+import { MarginAggregatedTableHeader } from './MarginAggregatedTableHeader'
+import { MarginAggregatedTableRow } from './MarginAggregatedTableRow'
+import {
+  type AggregatedSortField,
+  type SortOrder,
+  compareAggregatedItems,
+} from './margin-aggregated-table-sorting'
 
-// Story 6.3-FE: Added roi and profit_per_unit sort fields
-// Epic 26: Added operating_profit sort field
-export type CategorySortField =
-  | 'margin_pct'
-  | 'revenue_net'
-  | 'category'
-  | 'profit'
-  | 'qty'
-  | 'roi'
-  | 'profit_per_unit'
-  | 'operating_profit'
-export type SortOrder = 'asc' | 'desc'
+// Backward-compatible re-exports
+export type CategorySortField = AggregatedSortField
+export type { SortOrder } from './margin-aggregated-table-sorting'
 
 export interface MarginByCategoryTableProps {
   data: MarginAnalyticsAggregated[]
@@ -47,37 +31,18 @@ export interface MarginByCategoryTableProps {
   comparisonTotals?: PeriodTotals | null
 }
 
-/**
- * Margin analysis table by category with sorting
- * Story 4.6: Margin Analysis by Brand & Category
- *
- * Features:
- * - Sortable columns (margin, revenue, profit, category, qty)
- * - Color-coded margin values
- * - Click to drill down to SKU level
- * - Aggregated metrics
- *
- * @example
- * <MarginByCategoryTable
- *   data={categoryData}
- *   onCategoryClick={(category) => router.push(`/analytics/sku?category=${category}`)}
- * />
- */
 export function MarginByCategoryTable({
   data,
   onCategoryClick,
   columnVisibility,
   comparisonTotals,
 }: MarginByCategoryTableProps) {
-  const [sortField, setSortField] = useState<CategorySortField>('margin_pct')
+  const [sortField, setSortField] = useState<AggregatedSortField>('margin_pct')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
-
-  // Story 6.3-FE: Default column visibility if not provided
   const showROI = columnVisibility?.roi ?? true
   const showProfitPerUnit = columnVisibility?.profit_per_unit ?? true
 
-  // Handle sort column click
-  const handleSort = (field: CategorySortField) => {
+  const handleSort = (field: AggregatedSortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
     } else {
@@ -86,90 +51,11 @@ export function MarginByCategoryTable({
     }
   }
 
-  // Sort data
-  const sortedData = useMemo(() => {
-    const sorted = [...data].sort((a, b) => {
-      let aValue: number | string = 0
-      let bValue: number | string = 0
+  const sortedData = useMemo(
+    () => [...data].sort((a, b) => compareAggregatedItems(a, b, sortField, sortOrder, 'category')),
+    [data, sortField, sortOrder]
+  )
 
-      switch (sortField) {
-        case 'margin_pct':
-          if (a.margin_pct === undefined || a.margin_pct === null) return 1
-          if (b.margin_pct === undefined || b.margin_pct === null) return -1
-          aValue = a.margin_pct
-          bValue = b.margin_pct
-          break
-        case 'revenue_net':
-          aValue = a.revenue_net
-          bValue = b.revenue_net
-          break
-        case 'profit':
-          if (a.profit === undefined || a.profit === null) return 1
-          if (b.profit === undefined || b.profit === null) return -1
-          aValue = a.profit
-          bValue = b.profit
-          break
-        case 'qty':
-          aValue = a.total_skus ?? a.qty
-          bValue = b.total_skus ?? b.qty
-          break
-        case 'category':
-          aValue = (a.category || '').toLowerCase()
-          bValue = (b.category || '').toLowerCase()
-          break
-        // Story 6.3-FE: ROI and Profit per Unit sorting
-        case 'roi': {
-          const aRoi = a.roi ?? calculateROI(a.profit, a.cogs)
-          const bRoi = b.roi ?? calculateROI(b.profit, b.cogs)
-          if (aRoi === null) return 1
-          if (bRoi === null) return -1
-          aValue = aRoi
-          bValue = bRoi
-          break
-        }
-        case 'profit_per_unit': {
-          const aPpu = a.profit_per_unit ?? calculateProfitPerUnit(a.profit, a.qty)
-          const bPpu = b.profit_per_unit ?? calculateProfitPerUnit(b.profit, b.qty)
-          if (aPpu === null) return 1
-          if (bPpu === null) return -1
-          aValue = aPpu
-          bValue = bPpu
-          break
-        }
-        // Epic 26: Operating Profit sorting
-        case 'operating_profit': {
-          if (a.operating_profit === undefined || a.operating_profit === null) return 1
-          if (b.operating_profit === undefined || b.operating_profit === null) return -1
-          aValue = a.operating_profit
-          bValue = b.operating_profit
-          break
-        }
-        default:
-          return 0
-      }
-
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
-      return 0
-    })
-
-    return sorted
-  }, [data, sortField, sortOrder])
-
-  // Render sort icon
-  const renderSortIcon = (field: CategorySortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="ml-1 h-4 w-4 text-gray-400" />
-    }
-
-    return sortOrder === 'asc' ? (
-      <ArrowUp className="ml-1 h-4 w-4 text-blue-600" />
-    ) : (
-      <ArrowDown className="ml-1 h-4 w-4 text-blue-600" />
-    )
-  }
-
-  // Empty state
   if (!data || data.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
@@ -181,286 +67,27 @@ export function MarginByCategoryTable({
   return (
     <div className="rounded-md border">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>
-              <button
-                onClick={() => handleSort('category')}
-                className="flex items-center font-medium hover:text-blue-600"
-              >
-                Категория
-                {renderSortIcon('category')}
-              </button>
-            </TableHead>
-            <TableHead className="text-right">
-              <button
-                onClick={() => handleSort('qty')}
-                className="ml-auto flex items-center font-medium hover:text-blue-600"
-              >
-                Товаров (SKU)
-                {renderSortIcon('qty')}
-              </button>
-            </TableHead>
-            <TableHead className="text-right">
-              <button
-                onClick={() => handleSort('revenue_net')}
-                className="ml-auto flex items-center font-medium hover:text-blue-600"
-              >
-                Выручка
-                {renderSortIcon('revenue_net')}
-              </button>
-            </TableHead>
-            <TableHead className="text-right">
-              <div className="flex items-center justify-end font-medium">Себестоимость</div>
-            </TableHead>
-            <TableHead className="text-right">
-              <button
-                onClick={() => handleSort('profit')}
-                className="ml-auto flex items-center font-medium hover:text-blue-600"
-              >
-                Прибыль
-                {renderSortIcon('profit')}
-              </button>
-            </TableHead>
-            <TableHead className="text-right">
-              <button
-                onClick={() => handleSort('margin_pct')}
-                className="ml-auto flex items-center font-medium hover:text-blue-600"
-              >
-                Маржа %{renderSortIcon('margin_pct')}
-              </button>
-            </TableHead>
-            {/* Story 6.3-FE: Profit per Unit column */}
-            {showProfitPerUnit && (
-              <TableHead className="text-right">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => handleSort('profit_per_unit')}
-                        className="ml-auto flex items-center font-medium hover:text-blue-600"
-                      >
-                        Прибыль/ед.
-                        <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
-                        {renderSortIcon('profit_per_unit')}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Прибыль на единицу = Прибыль ÷ Количество</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </TableHead>
-            )}
-            {/* Story 6.3-FE: ROI column */}
-            {showROI && (
-              <TableHead className="text-right">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => handleSort('roi')}
-                        className="ml-auto flex items-center font-medium hover:text-blue-600"
-                      >
-                        ROI
-                        <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
-                        {renderSortIcon('roi')}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Рентабельность инвестиций = (Прибыль ÷ COGS) × 100%</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </TableHead>
-            )}
-            {/* Epic 26: Operating Profit column */}
-            <TableHead className="text-right">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => handleSort('operating_profit')}
-                      className="ml-auto flex items-center font-medium hover:text-blue-600"
-                    >
-                      Опер. прибыль
-                      <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
-                      {renderSortIcon('operating_profit')}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Валовая прибыль минус все расходы (логистика, хранение, комиссии)</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </TableHead>
-            <TableHead className="w-[100px] text-center">
-              <div className="flex items-center justify-center font-medium">Без COGS</div>
-            </TableHead>
-            <TableHead className="w-[50px]" />
-          </TableRow>
-        </TableHeader>
+        <MarginAggregatedTableHeader
+          entityLabel="Категория"
+          sortField={sortField}
+          sortOrder={sortOrder}
+          onSort={handleSort}
+          showROI={showROI}
+          showProfitPerUnit={showProfitPerUnit}
+        />
         <TableBody>
-          {sortedData.map((item, index) => {
-            const hasCogs = item.cogs !== undefined
-            const hasMissingCogs = (item.missing_cogs_count || 0) > 0
-
-            return (
-              <TableRow
-                key={item.category || index}
-                className={cn(
-                  'cursor-pointer hover:bg-gray-50',
-                  hasMissingCogs && 'bg-yellow-50/30'
-                )}
-                onClick={() => onCategoryClick && item.category && onCategoryClick(item.category)}
-              >
-                <TableCell>
-                  <div className="max-w-md">
-                    <div className="font-medium">{item.category || '(Без категории)'}</div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  {(item.total_skus ?? item.qty).toLocaleString('ru-RU')}
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  {formatCogs(item.revenue_net)}
-                </TableCell>
-                <TableCell className="text-right">
-                  {hasCogs ? (
-                    <span className="text-gray-700">{formatCogs(item.cogs)}</span>
-                  ) : (
-                    <span className="text-xs text-gray-400">—</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  {hasCogs && item.profit !== undefined ? (
-                    <span
-                      className={cn(
-                        'font-medium',
-                        item.profit >= 0 ? 'text-green-600' : 'text-red-600'
-                      )}
-                    >
-                      {formatCogs(item.profit)}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-gray-400">—</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  <MarginBadge
-                    marginPct={item.margin_pct}
-                    missingDataReason={!hasCogs ? 'COGS_NOT_ASSIGNED' : null}
-                  />
-                </TableCell>
-                {/* Story 6.3-FE: Profit per Unit cell */}
-                {showProfitPerUnit && (
-                  <TableCell className="text-right">
-                    {hasCogs && item.profit !== undefined ? (
-                      <span
-                        className={cn(
-                          'font-medium',
-                          (item.profit_per_unit ??
-                            calculateProfitPerUnit(item.profit, item.qty)) !== null &&
-                            (item.profit_per_unit ??
-                              calculateProfitPerUnit(item.profit, item.qty))! >= 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        )}
-                      >
-                        {formatProfitPerUnit(
-                          item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty)
-                        )}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-400">—</span>
-                    )}
-                  </TableCell>
-                )}
-                {/* Story 6.3-FE: ROI cell */}
-                {showROI && (
-                  <TableCell className="text-right">
-                    {hasCogs && item.profit !== undefined ? (
-                      <span
-                        className={cn(
-                          'font-medium',
-                          getROIColor(item.roi ?? calculateROI(item.profit, item.cogs))
-                        )}
-                      >
-                        {formatROI(item.roi ?? calculateROI(item.profit, item.cogs))}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-400">—</span>
-                    )}
-                  </TableCell>
-                )}
-                {/* Epic 26: Operating Profit cell */}
-                <TableCell className="text-right">
-                  {item.operating_profit !== undefined && item.operating_profit !== null ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span
-                            className={cn(
-                              'font-medium cursor-help',
-                              item.operating_profit < 0 ? 'text-red-600' : 'text-green-600',
-                              (item.skus_with_expenses_only ?? 0) > 0 &&
-                                'underline decoration-dotted'
-                            )}
-                          >
-                            {formatCogs(item.operating_profit)}
-                            {(item.skus_with_expenses_only ?? 0) > 0 && (
-                              <span className="ml-1 text-xs">💤{item.skus_with_expenses_only}</span>
-                            )}
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="text-sm space-y-1">
-                            {item.total_expenses !== undefined && (
-                              <p>Расходы: {formatCogs(item.total_expenses)}</p>
-                            )}
-                            {item.operating_margin_pct !== null &&
-                              item.operating_margin_pct !== undefined && (
-                                <p>Опер. маржа: {item.operating_margin_pct.toFixed(2)}%</p>
-                              )}
-                            {(item.skus_with_expenses_only ?? 0) > 0 && (
-                              <p className="text-amber-500">
-                                {item.skus_with_expenses_only} SKU без продаж
-                              </p>
-                            )}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : (
-                    <span className="text-xs text-gray-400">—</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-center">
-                  {hasMissingCogs ? (
-                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800">
-                      {item.missing_cogs_count}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-gray-400">—</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {onCategoryClick && item.category && (
-                    <button
-                      onClick={e => {
-                        e.stopPropagation()
-                        onCategoryClick(item.category!)
-                      }}
-                      className="text-blue-600 hover:text-blue-800"
-                      aria-label={`Открыть детали категории ${item.category}`}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </button>
-                  )}
-                </TableCell>
-              </TableRow>
-            )
-          })}
+          {sortedData.map((item, index) => (
+            <MarginAggregatedTableRow
+              key={item.category || index}
+              rowKey={item.category || index}
+              item={item}
+              entityField="category"
+              entityFallback="(Без категории)"
+              onEntityClick={onCategoryClick}
+              showROI={showROI}
+              showProfitPerUnit={showProfitPerUnit}
+            />
+          ))}
         </TableBody>
       </Table>
 
