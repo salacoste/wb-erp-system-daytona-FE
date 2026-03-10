@@ -35,13 +35,10 @@ import {
   formatCompactCurrency,
   type MetricKey,
 } from './chart-config'
+import { LINE_CONFIG } from './daily-chart-config'
 import type { DailyMetrics } from '@/types/daily-metrics'
 
-// ============================================================================
-// Component Props
-// ============================================================================
-
-interface DailyBreakdownChartProps {
+export interface DailyBreakdownChartProps {
   /** Daily metrics data array */
   data: DailyMetrics[]
   /** Period type for X-axis labels */
@@ -56,34 +53,6 @@ interface DailyBreakdownChartProps {
   className?: string
 }
 
-// ============================================================================
-// Chart Configuration
-// ============================================================================
-
-const LINE_CONFIG = {
-  type: 'monotone' as const,
-  strokeWidth: 2,
-  dot: { r: 4, strokeWidth: 2, fill: 'white' },
-  activeDot: { r: 6, strokeWidth: 2 },
-  animationDuration: 300,
-  animationEasing: 'ease-in-out' as const,
-}
-
-// ============================================================================
-// Main Component
-// ============================================================================
-
-/**
- * Daily breakdown line chart with 8 metric series
- *
- * @example
- * <DailyBreakdownChart
- *   data={dailyMetrics}
- *   periodType="week"
- *   visibleSeries={['orders', 'sales', 'profit']}
- *   isLoading={isLoading}
- * />
- */
 export function DailyBreakdownChart({
   data,
   periodType,
@@ -92,38 +61,23 @@ export function DailyBreakdownChart({
   error,
   className,
 }: DailyBreakdownChartProps) {
-  // Check for reduced motion preference
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
 
-  // Memoize chart data transformation
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return []
     return data.map(item => ({
       ...item,
-      // Map theoreticalProfit to profit for chart
       profit: item.theoreticalProfit,
     }))
   }, [data])
 
-  // Loading state
-  if (isLoading) {
-    return <ChartLoadingSkeleton className={className} />
-  }
+  if (isLoading) return <ChartLoadingSkeleton className={className} />
+  if (error) return <ChartErrorState error={error} className={className} />
+  if (!chartData || chartData.length === 0) return <ChartEmptyState className={className} />
 
-  // Error state
-  if (error) {
-    return <ChartErrorState error={error} className={className} />
-  }
-
-  // Empty state
-  if (!chartData || chartData.length === 0) {
-    return <ChartEmptyState className={className} />
-  }
-
-  // Check for partial data
   const expectedDays = periodType === 'week' ? 7 : 28
   const hasPartialData = chartData.length < expectedDays
 
@@ -132,8 +86,6 @@ export function DailyBreakdownChart({
       {hasPartialData && (
         <ChartPartialDataWarning actualDays={chartData.length} expectedDays={expectedDays} />
       )}
-
-      {/* Chart container with accessibility */}
       <div
         role="img"
         aria-label={`График детализации по дням за ${periodType === 'week' ? 'неделю' : 'месяц'}`}
@@ -203,9 +155,3 @@ export function DailyBreakdownChart({
     </div>
   )
 }
-
-// ============================================================================
-// Exports
-// ============================================================================
-
-export type { DailyBreakdownChartProps }

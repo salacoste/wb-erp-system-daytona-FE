@@ -29,6 +29,7 @@ import {
   Store,
   Search,
   ArrowRightLeft,
+  Truck,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -78,6 +79,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Поиск', href: ROUTES.ANALYTICS.SEARCH, icon: Search },
   // Story 73.7-FE: Search + Advertising Cross-Reference
   { label: 'Кросс-анализ', href: ROUTES.ANALYTICS.CROSS_REFERENCE, icon: ArrowRightLeft },
+  // Epic 75-FE: Shipment Cost Allocation
+  { label: 'Доставка', href: ROUTES.SHIPMENTS.ROOT, icon: Truck },
   // Epic 68-FE: Monitoring Health Dashboard
   { label: 'Мониторинг', href: ROUTES.MONITORING, icon: Activity },
   // Epic 34-FE: Telegram Notifications

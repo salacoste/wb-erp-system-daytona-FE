@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { useAvailableWeeks } from '@/hooks/useFinancialSummary'
-import { formatWeekLabel, formatMonthLabel, getCurrentWeek } from '@/lib/period-helpers'
+import { formatWeekLabel, formatMonthLabel } from '@/lib/period-helpers'
 import type { PeriodType } from '@/contexts/dashboard-period-types'
 
 import {
@@ -37,100 +37,15 @@ import {
   MAX_WEEKS,
   MAX_MONTHS,
 } from './period-selector'
-
-/**
- * Parse week string to get year and week number
- * @param week - Week in "YYYY-Www" format
- * @returns { year, week } or null if invalid
- */
-function parseWeekString(week: string): { year: number; week: number } | null {
-  const match = week.match(/^(\d{4})-W(\d{2})$/)
-  if (!match) return null
-  return { year: parseInt(match[1], 10), week: parseInt(match[2], 10) }
-}
-
-/**
- * Generate week string from year and week number
- */
-function formatWeekString(year: number, week: number): string {
-  return `${year}-W${week.toString().padStart(2, '0')}`
-}
-
-/**
- * Ensure all weeks from current week down to the first week in list are included.
- * This fixes the bug where Week 5 was missing between Week 6 (current) and Week 4 (selected).
- *
- * BUG FIX: When selectedWeek is older than currentWeek, we need to fill the gap.
- * Example: currentWeek=W06, list=[W04, W03, W02...] → result=[W06, W05, W04, W03, W02...]
- */
-function ensureCurrentWeekFirst(weeks: string[]): string[] {
-  if (weeks.length === 0) return weeks
-
-  const currentWeek = getCurrentWeek()
-  const current = parseWeekString(currentWeek)
-  const firstInList = parseWeekString(weeks[0])
-
-  if (!current || !firstInList) {
-    // Fallback to simple logic if parsing fails
-    const filtered = weeks.filter(w => w !== currentWeek)
-    return [currentWeek, ...filtered]
-  }
-
-  // Generate all weeks from current down to first in list
-  const result: string[] = []
-  let year = current.year
-  let weekNum = current.week
-
-  // Calculate end point (first week in list)
-  const endYear = firstInList.year
-  const endWeek = firstInList.week
-
-  // Add weeks from current to first in list (inclusive)
-  while (year > endYear || (year === endYear && weekNum >= endWeek)) {
-    result.push(formatWeekString(year, weekNum))
-    weekNum--
-    if (weekNum < 1) {
-      year--
-      // Get ISO weeks in previous year (52 or 53)
-      const jan4 = new Date(year, 0, 4)
-      const dayOfWeek = jan4.getDay() || 7
-      const hasWeek53 = dayOfWeek === 4 || (dayOfWeek === 5 && isLeapYear(year - 1))
-      weekNum = hasWeek53 ? 53 : 52
-    }
-    // Safety limit to prevent infinite loop
-    if (result.length > 60) break
-  }
-
-  // Add remaining weeks from original list that are older
-  const resultSet = new Set(result)
-  for (const week of weeks) {
-    if (!resultSet.has(week)) {
-      result.push(week)
-    }
-  }
-
-  return result
-}
-
-/** Check if year is a leap year */
-function isLeapYear(year: number): boolean {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
-}
+import { ensureCurrentWeekFirst } from './period-selector-week-helpers'
 
 export interface DashboardPeriodSelectorProps {
-  /** Optional className for styling overrides */
   className?: string
-  /** Disable all interactions (during data loading) */
   disabled?: boolean
-  /** Show compact version without refresh button */
   compact?: boolean
-  /** Callback when period changes (for analytics tracking) */
   onPeriodChange?: (period: string, type: PeriodType) => void
 }
 
-/**
- * Unified period selector component for dashboard
- */
 export function DashboardPeriodSelector({
   className,
   disabled = false,
@@ -149,21 +64,15 @@ export function DashboardPeriodSelector({
     refresh,
   } = useDashboardPeriod()
 
-  // Fetch available weeks from backend API
   const { data: backendWeeks } = useAvailableWeeks()
-
-  // Always call hooks (Rules of Hooks)
   const generatedWeeks = useGeneratedWeeks(selectedWeek)
 
-  // Use backend weeks if available, otherwise fallback to generated weeks
-  // Always ensure current week is at the top for user selection
   const baseWeeks = backendWeeks?.map(w => w.week) || generatedWeeks
   const availableWeeks = ensureCurrentWeekFirst(baseWeeks)
 
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [relativeTime, setRelativeTime] = useState('')
 
-  // Update relative time display
   useEffect(() => {
     const updateTime = (): void => {
       setRelativeTime(formatDistanceToNow(lastRefresh, { addSuffix: false, locale: ru }))
@@ -198,9 +107,7 @@ export function DashboardPeriodSelector({
     [setMonth, onPeriodChange]
   )
 
-  if (isLoading) {
-    return <DashboardPeriodSelectorSkeleton />
-  }
+  if (isLoading) return <DashboardPeriodSelectorSkeleton />
 
   const uniqueMonths = getUniqueMonths(availableWeeks)
   const displayedWeeks = availableWeeks.slice(0, MAX_WEEKS)
@@ -211,7 +118,6 @@ export function DashboardPeriodSelector({
       data-testid="period-selector-container"
       className={cn('flex flex-col gap-3 md:flex-row md:items-center md:gap-4', className)}
     >
-      {/* Period Type Tabs */}
       <Tabs
         value={periodType}
         onValueChange={value => setPeriodType(value as PeriodType)}
@@ -228,7 +134,6 @@ export function DashboardPeriodSelector({
         </TabsList>
       </Tabs>
 
-      {/* Period Dropdown */}
       <Select
         value={periodType === 'week' ? selectedWeek : selectedMonth}
         onValueChange={periodType === 'week' ? handleWeekChange : handleMonthChange}
@@ -256,7 +161,6 @@ export function DashboardPeriodSelector({
         </SelectContent>
       </Select>
 
-      {/* Refresh Button + Last Update */}
       {!compact && (
         <div className="flex items-center gap-2">
           <Button

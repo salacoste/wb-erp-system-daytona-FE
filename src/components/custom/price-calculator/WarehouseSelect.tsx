@@ -4,41 +4,28 @@
  * WarehouseSelect Component
  * Story 44.12-FE: Warehouse Selection Dropdown
  * Story 44.40-FE: Two Tariff Systems Integration
- * Epic 44: Price Calculator UI (Frontend)
- *
- * Searchable dropdown for selecting WB warehouses from SUPPLY system
  */
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Check, ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info } from 'lucide-react'
+import { ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from '@/components/ui/command'
+import { Command, CommandInput } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useWarehouses } from '@/hooks/useWarehouses'
-import { useSupplyTariffs, type SupplyWarehouse } from '@/hooks/useSupplyTariffs'
 import { filterWarehouses, separateWarehouses } from '@/lib/warehouse-utils'
 import { WarehouseTariffsByBoxType } from './WarehouseTariffsByBoxType'
+import { WarehouseCommandList } from './WarehouseCommandList'
+import { useWarehouseSelectData } from './useWarehouseSelectData'
 import type { Warehouse } from '@/types/warehouse'
 
 export interface WarehouseSelectProps {
   value: number | null
   onChange: (warehouseId: number | null, warehouse: Warehouse | null) => void
-  /** Story 44.44: Callback to restore warehouse from preset after data loads */
   onSetWarehouseById?: (id: number, warehouses: Warehouse[]) => void
   disabled?: boolean
   error?: string
   deliveryDate?: string | null
-  /** Use SUPPLY warehouses instead of INVENTORY (default: false) */
   useSupplySource?: boolean
 }
 
@@ -53,78 +40,44 @@ export function WarehouseSelect({
 }: WarehouseSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
-  // Story 44.44: Track if preset warehouse was restored
   const presetRestoredRef = useRef(false)
 
-  // Fetch from both sources
-  const inventoryQuery = useWarehouses()
-  const supplyQuery = useSupplyTariffs()
-
-  // Convert SupplyWarehouse[] to Warehouse[] with tariffs from SUPPLY coefficients
-  // CRITICAL: Use calculation coefficients (1.0) since rates are pre-multiplied
-  // @see docs/request-backend/108-two-tariff-systems-guide.md
-  const supplyWarehouses = useMemo((): Warehouse[] => {
-    return supplyQuery.warehouses.map((sw: SupplyWarehouse) => ({
-      id: sw.id,
-      name: sw.name,
-      tariffs: {
-        deliveryBaseLiterRub: sw.tariffs.deliveryBaseLiterRub,
-        deliveryPerLiterRub: sw.tariffs.deliveryPerLiterRub,
-        storageBaseLiterRub: sw.tariffs.storageBaseLiterRub,
-        storagePerLiterRub: sw.tariffs.storagePerLiterRub,
-        // Calculation coefficients = 1.0 (rates are pre-multiplied in SUPPLY system)
-        logisticsCoefficient: sw.tariffs.logisticsCoefficient,
-        storageCoefficient: sw.tariffs.storageCoefficient,
-      },
-    }))
-  }, [supplyQuery.warehouses])
-
-  // Use SUPPLY or INVENTORY based on prop
-  const warehouses = useSupplySource ? supplyWarehouses : inventoryQuery.data
-  const isLoading = useSupplySource ? supplyQuery.isLoading : inventoryQuery.isLoading
-  const isError = useSupplySource ? !!supplyQuery.error : inventoryQuery.isError
-  const refetch = useSupplySource ? () => {} : inventoryQuery.refetch
+  const { warehouses, isLoading, isError, refetch, supplyQuery } =
+    useWarehouseSelectData(useSupplySource)
 
   // Story 44.44: Restore warehouse from preset when data loads
   useEffect(() => {
-    if (presetRestoredRef.current) return
-    if (!value || !warehouses?.length) return
-
-    // Check if warehouse with this ID exists in loaded data
-    const warehouse = warehouses.find((w) => w.id === value)
+    if (presetRestoredRef.current || !value || !warehouses?.length) return
+    const warehouse = warehouses.find(w => w.id === value)
     if (warehouse) {
       presetRestoredRef.current = true
-      // Call onChange to update WarehouseSection's selectedWarehouse state
-      // This triggers coefficient loading via useWarehouseCoefficients
-      console.info('[WarehouseSelect] Restoring warehouse from preset:', { id: value, name: warehouse.name })
+      console.info('[WarehouseSelect] Restoring warehouse from preset:', {
+        id: value,
+        name: warehouse.name,
+      })
       onChange(value, warehouse)
-      // Also call setWarehouseById for hook state sync
       onSetWarehouseById?.(value, warehouses)
     }
   }, [value, warehouses, onChange, onSetWarehouseById])
 
   const selectedWarehouse = useMemo(
-    () => warehouses?.find((w) => w.id === value) ?? null,
-    [warehouses, value],
+    () => warehouses?.find(w => w.id === value) ?? null,
+    [warehouses, value]
   )
-
   const filteredWarehouses = useMemo(
     () => filterWarehouses(warehouses ?? [], search),
-    [warehouses, search],
+    [warehouses, search]
   )
-
   const { popular, other } = useMemo(
     () => separateWarehouses(filteredWarehouses),
-    [filteredWarehouses],
+    [filteredWarehouses]
   )
 
   const handleSelect = (warehouseId: number) => {
-    const warehouse = warehouses?.find((w) => w.id === warehouseId) ?? null
-    onChange(warehouseId, warehouse)
+    onChange(warehouseId, warehouses?.find(w => w.id === warehouseId) ?? null)
     setOpen(false)
     setSearch('')
   }
-
   const handleClear = () => {
     onChange(null, null)
     setOpen(false)
@@ -133,7 +86,6 @@ export function WarehouseSelect({
 
   return (
     <div className="space-y-3">
-      {/* Header with label and tooltip */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">Склад WB</span>
         <TooltipProvider>
@@ -155,7 +107,11 @@ export function WarehouseSelect({
             role="combobox"
             aria-expanded={open}
             aria-label="Выберите склад"
-            className={cn('w-full justify-between', !value && 'text-muted-foreground', error && 'border-destructive')}
+            className={cn(
+              'w-full justify-between',
+              !value && 'text-muted-foreground',
+              error && 'border-destructive'
+            )}
             disabled={disabled || isLoading}
           >
             {isLoading ? (
@@ -174,48 +130,16 @@ export function WarehouseSelect({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-
         <PopoverContent className="w-[400px] p-0" align="start">
           <Command shouldFilter={false}>
             <CommandInput placeholder="Поиск склада..." value={search} onValueChange={setSearch} />
-            <CommandList>
-              <CommandEmpty>Склад не найден</CommandEmpty>
-
-              {popular.length > 0 && (
-                <CommandGroup heading="Популярные">
-                  {popular.map((warehouse) => (
-                    <CommandItem key={warehouse.id} value={warehouse.id.toString()} onSelect={() => handleSelect(warehouse.id)}>
-                      <Check className={cn('mr-2 h-4 w-4', value === warehouse.id ? 'opacity-100' : 'opacity-0')} />
-                      <span className="text-muted-foreground text-xs mr-2">[{warehouse.id}]</span>
-                      {warehouse.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {popular.length > 0 && other.length > 0 && <CommandSeparator />}
-
-              {other.length > 0 && (
-                <CommandGroup heading={`Все склады (${other.length})`}>
-                  {other.map((warehouse) => (
-                    <CommandItem key={warehouse.id} value={warehouse.id.toString()} onSelect={() => handleSelect(warehouse.id)}>
-                      <Check className={cn('mr-2 h-4 w-4', value === warehouse.id ? 'opacity-100' : 'opacity-0')} />
-                      <span className="text-muted-foreground text-xs mr-2">[{warehouse.id}]</span>
-                      {warehouse.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {value && (
-                <>
-                  <CommandSeparator />
-                  <CommandGroup>
-                    <CommandItem onSelect={handleClear}>Очистить выбор</CommandItem>
-                  </CommandGroup>
-                </>
-              )}
-            </CommandList>
+            <WarehouseCommandList
+              popular={popular}
+              other={other}
+              value={value}
+              onSelect={handleSelect}
+              onClear={handleClear}
+            />
           </Command>
         </PopoverContent>
       </Popover>
@@ -228,13 +152,10 @@ export function WarehouseSelect({
           </Button>
         </div>
       )}
-
       {error && <p className="text-sm text-destructive">{error}</p>}
-
       {warehouses && !isLoading && !selectedWarehouse && (
         <p className="text-xs text-muted-foreground">Найдено: {warehouses.length} складов</p>
       )}
-
       {selectedWarehouse && (
         <WarehouseTariffsByBoxType
           tariffsByBoxType={supplyQuery.getTariffsByBoxType(selectedWarehouse.id)}

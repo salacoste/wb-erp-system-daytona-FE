@@ -2,15 +2,6 @@
  * Extended Date Range Picker Component
  * Story 51.3-FE: Extended Date Range Picker Component
  * Epic 51: FBS Historical Analytics UI (365 Days)
- *
- * Features:
- * - Two calendar views (start and end date)
- * - Preset buttons (30, 90, 180, 365 days)
- * - Max 365 days validation
- * - Russian locale (months, days, date format DD.MM.YYYY)
- * - Smart aggregation suggestion
- * - Keyboard navigation and accessibility
- *
  * @see docs/stories/epic-51/story-51.3-fe-extended-date-range-picker.md
  */
 
@@ -18,12 +9,9 @@
 
 import * as React from 'react'
 import { CalendarIcon, X, Info, AlertCircle } from 'lucide-react'
-import { ru } from 'date-fns/locale'
-import { subDays } from 'date-fns'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
@@ -35,6 +23,7 @@ import {
   getPresetRange,
 } from '@/lib/date-range-utils'
 import type { DateRangePreset, DateRangePickerExtendedProps } from '@/types/date-range'
+import { PopoverBody } from './DateRangePickerPopoverContent'
 
 /** Default presets per Story 51.3-FE */
 const DEFAULT_PRESETS: DateRangePreset[] = [
@@ -44,9 +33,6 @@ const DEFAULT_PRESETS: DateRangePreset[] = [
   { label: '365 дней', days: 365 },
 ]
 
-/**
- * Extended Date Range Picker with calendar views and preset buttons
- */
 export function DateRangePickerExtended({
   value,
   onChange,
@@ -60,44 +46,26 @@ export function DateRangePickerExtended({
 }: DateRangePickerExtendedProps): React.ReactElement {
   const [isOpen, setIsOpen] = React.useState(false)
 
-  // Calculate days in range
   const daysInRange = value ? calculateDaysDiff(value.from, value.to) : 0
-
-  // Validation: check if range exceeds maxDays
   const isRangeExceeded = daysInRange > maxDays
-
-  // Get aggregation suggestion
   const aggregation = daysInRange > 0 ? getSmartAggregation(daysInRange) : null
-
-  // Determine active preset (exact match on days count)
   const activePreset = presets.find(p => p.days === daysInRange)
 
-  // Handle preset button click
   const handlePresetClick = (days: number): void => {
-    const range = getPresetRange(days)
-    onChange(range)
+    onChange(getPresetRange(days))
   }
 
-  // Handle clear button click
   const handleClear = (e: React.MouseEvent): void => {
     e.stopPropagation()
     onChange(undefined)
   }
 
-  // Handle calendar range selection
   const handleCalendarSelect = (range: { from?: Date; to?: Date } | undefined): void => {
-    if (!range || !range.from) {
-      return
-    }
-    // Only call onChange when we have both from and to dates
+    if (!range || !range.from) return
     if (range.from && range.to) {
       onChange({ from: range.from, to: range.to })
     }
   }
-
-  // Calculate disabled dates (future dates and dates > 365 days ago)
-  const today = new Date()
-  const minDate = subDays(today, maxDays)
 
   return (
     <div className={cn('relative', className)}>
@@ -128,86 +96,23 @@ export function DateRangePickerExtended({
             )}
           </Button>
         </PopoverTrigger>
-
         <PopoverContent className="w-auto min-w-[580px] p-4" align="start" role="dialog">
-          {/* Preset buttons */}
-          <div className="mb-4">
-            <span className="text-sm text-muted-foreground mb-2 block">Быстрый выбор:</span>
-            <div className="flex flex-wrap gap-2">
-              {presets.map(preset => (
-                <Button
-                  key={preset.days}
-                  variant={activePreset?.days === preset.days ? 'default' : 'outline'}
-                  size="sm"
-                  disabled={preset.days > maxDays}
-                  data-active={activePreset?.days === preset.days}
-                  onClick={() => handlePresetClick(preset.days)}
-                >
-                  {preset.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Dual calendar view */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <Calendar
-              mode="range"
-              selected={value ? { from: value.from, to: value.to } : undefined}
-              onSelect={handleCalendarSelect}
-              numberOfMonths={2}
-              locale={ru}
-              className="[--cell-size:2.5rem]"
-              disabled={{
-                after: today,
-                before: minDate,
-              }}
-              defaultMonth={value?.from ?? subDays(today, 30)}
-              aria-label="Выбор диапазона дат"
-            />
-          </div>
-
-          {/* Aggregation suggestion */}
-          {showAggregationSuggestion && aggregation && (
-            <div className="mt-4 text-sm text-muted-foreground flex items-center">
-              <Info className="mr-2 h-4 w-4" />
-              Рекомендуемая агрегация: {getAggregationLabel(aggregation)}
-            </div>
-          )}
-
-          {/* Days count display */}
-          {daysInRange > 0 && !isRangeExceeded && (
-            <div className="mt-2 text-sm text-muted-foreground">
-              Выбрано: {daysInRange} {pluralizeDays(daysInRange)}
-            </div>
-          )}
-
-          {/* Validation error */}
-          {isRangeExceeded && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Диапазон не может превышать {maxDays} {pluralizeDays(maxDays)}. Выбрано:{' '}
-                {daysInRange} {pluralizeDays(daysInRange)}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Action buttons */}
-          <div className="mt-4 flex justify-end gap-2">
-            {value && (
-              <Button variant="outline" size="sm" onClick={() => onChange(undefined)}>
-                Очистить
-              </Button>
-            )}
-            <Button size="sm" onClick={() => setIsOpen(false)}>
-              Применить
-            </Button>
-          </div>
+          <PopoverBody
+            value={value}
+            presets={presets}
+            activePreset={activePreset}
+            maxDays={maxDays}
+            daysInRange={daysInRange}
+            isRangeExceeded={isRangeExceeded}
+            showAggregationSuggestion={showAggregationSuggestion}
+            onPresetClick={handlePresetClick}
+            onCalendarSelect={handleCalendarSelect}
+            onClear={() => onChange(undefined)}
+            onClose={() => setIsOpen(false)}
+          />
         </PopoverContent>
       </Popover>
 
-      {/* External info (shown outside popover) */}
       {showAggregationSuggestion && aggregation && !isRangeExceeded && (
         <div className="mt-2 text-sm text-muted-foreground flex items-center">
           <Info className="mr-2 h-4 w-4" />
@@ -215,14 +120,12 @@ export function DateRangePickerExtended({
         </div>
       )}
 
-      {/* Days count display (shown outside popover) */}
       {daysInRange > 0 && !isRangeExceeded && (
         <div className="mt-1 text-sm text-muted-foreground">
           Выбрано: {daysInRange} {pluralizeDays(daysInRange)}
         </div>
       )}
 
-      {/* External validation error (shown outside popover) */}
       {isRangeExceeded && (
         <Alert variant="destructive" className="mt-2">
           <AlertCircle className="h-4 w-4" />

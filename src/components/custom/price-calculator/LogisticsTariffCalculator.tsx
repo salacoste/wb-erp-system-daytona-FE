@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Settings, Truck, RotateCcw, Info } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,8 +12,8 @@ import { TariffBreakdown } from './TariffBreakdown'
 import { TariffInputFields } from './TariffInputFields'
 import { AutoFillBadge } from './AutoFillBadge'
 import { cn } from '@/lib/utils'
-import { calculateLogisticsTariff, DEFAULT_BOX_TARIFFS, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
 import { TARIFF_VALIDATION } from '@/lib/logistics-tariff-constants'
+import { useLogisticsTariffHandlers } from './useLogisticsTariffHandlers'
 
 export interface LogisticsTariffCalculatorProps {
   volumeLiters: number
@@ -38,77 +37,27 @@ export function LogisticsTariffCalculator({
   disabled = false,
   isLoading = false,
 }: LogisticsTariffCalculatorProps) {
-  const [autoCalculate, setAutoCalculate] = useState(true)
-  const [showTariffInputs, setShowTariffInputs] = useState(false)
-  // Internal state for manual input - allows controlled input to work in tests
-  const [inputValue, setInputValue] = useState<string>(String(value || ''))
-
-  // Sync inputValue when value prop changes
-  useEffect(() => {
-    setInputValue(String(value || ''))
-  }, [value])
-
-  const [localTariffs, setLocalTariffs] = useState<BoxDeliveryTariffs>({
-    baseLiterRub: warehouseTariffs?.baseLiterRub ?? DEFAULT_BOX_TARIFFS.baseLiterRub,
-    additionalLiterRub: warehouseTariffs?.additionalLiterRub ?? DEFAULT_BOX_TARIFFS.additionalLiterRub,
-    coefficient: warehouseCoefficient > 0 ? warehouseCoefficient : 1.0,
+  const {
+    autoCalculate,
+    showTariffInputs,
+    setShowTariffInputs,
+    inputValue,
+    localTariffs,
+    result,
+    calculatedValue,
+    isManualOverride,
+    handleAutoCalculateChange,
+    handleRestore,
+    handleManualChange,
+    handleTariffChange,
+    handleResetTariffs,
+  } = useLogisticsTariffHandlers({
+    value,
+    onChange,
+    volumeLiters,
+    warehouseTariffs,
+    warehouseCoefficient,
   })
-
-  const effectiveTariffs: BoxDeliveryTariffs = useMemo(() => ({
-    baseLiterRub: localTariffs.baseLiterRub,
-    additionalLiterRub: localTariffs.additionalLiterRub,
-    coefficient: localTariffs.coefficient,
-  }), [localTariffs])
-
-  const result = useMemo(
-    () => calculateLogisticsTariff(volumeLiters, effectiveTariffs),
-    [volumeLiters, effectiveTariffs]
-  )
-
-  const calculatedValue = result.totalCost
-  const isManualOverride = !autoCalculate || Math.abs(value - calculatedValue) > 0.01
-
-  const handleAutoCalculateChange = useCallback((enabled: boolean) => {
-    setAutoCalculate(enabled)
-    if (enabled) {
-      onChange(calculatedValue)
-    }
-  }, [onChange, calculatedValue])
-
-  const handleRestore = useCallback(() => {
-    onChange(calculatedValue)
-    setAutoCalculate(true)
-  }, [onChange, calculatedValue])
-
-  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value
-    setInputValue(rawValue)
-    const newValue = parseFloat(rawValue) || 0
-    onChange(newValue)
-    setAutoCalculate(false)
-  }
-
-  const handleTariffChange = useCallback((field: keyof BoxDeliveryTariffs, val: number) => {
-    setLocalTariffs(prev => ({ ...prev, [field]: val }))
-    if (autoCalculate) {
-      const newTariffs = { ...localTariffs, [field]: val }
-      const newResult = calculateLogisticsTariff(volumeLiters, newTariffs)
-      onChange(newResult.totalCost)
-    }
-  }, [autoCalculate, localTariffs, volumeLiters, onChange])
-
-  const handleResetTariffs = useCallback(() => {
-    const defaultTariffs = {
-      baseLiterRub: warehouseTariffs?.baseLiterRub ?? DEFAULT_BOX_TARIFFS.baseLiterRub,
-      additionalLiterRub: warehouseTariffs?.additionalLiterRub ?? DEFAULT_BOX_TARIFFS.additionalLiterRub,
-      coefficient: warehouseCoefficient > 0 ? warehouseCoefficient : 1.0,
-    }
-    setLocalTariffs(defaultTariffs)
-    if (autoCalculate) {
-      const newResult = calculateLogisticsTariff(volumeLiters, defaultTariffs)
-      onChange(newResult.totalCost)
-    }
-  }, [warehouseTariffs, warehouseCoefficient, autoCalculate, volumeLiters, onChange])
 
   return (
     <div className="bg-cyan-50 rounded-lg p-4 border-l-4 border-l-cyan-400 space-y-4">
@@ -130,7 +79,9 @@ export function LogisticsTariffCalculator({
       )}
 
       <div className="flex items-center justify-between">
-        <Label htmlFor="auto-calc-logistics" className="text-sm">Рассчитать автоматически</Label>
+        <Label htmlFor="auto-calc-logistics" className="text-sm">
+          Рассчитать автоматически
+        </Label>
         <Switch
           id="auto-calc-logistics"
           checked={autoCalculate}
@@ -141,7 +92,9 @@ export function LogisticsTariffCalculator({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="logistics_calc_result" className="text-sm">Стоимость, ₽</Label>
+          <Label htmlFor="logistics_calc_result" className="text-sm">
+            Стоимость, ₽
+          </Label>
           <AutoFillBadge source={isManualOverride ? 'manual' : 'auto'} />
         </div>
         <div className="flex gap-2">
@@ -182,7 +135,9 @@ export function LogisticsTariffCalculator({
             type="button"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Settings className={cn('h-4 w-4 transition-transform', showTariffInputs && 'rotate-90')} />
+            <Settings
+              className={cn('h-4 w-4 transition-transform', showTariffInputs && 'rotate-90')}
+            />
             Настроить тарифы
           </button>
         </CollapsibleTrigger>

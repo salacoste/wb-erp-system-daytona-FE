@@ -17,15 +17,19 @@ import { format, startOfTomorrow } from 'date-fns'
 import { CalendarIcon, Info } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { cn } from '@/lib/utils'
 import type { TariffSettingsDto } from '@/types/tariffs-admin'
+import {
+  AcceptanceRatesSection,
+  StorageSettingsSection,
+  CommissionRatesSection,
+  NotesSection,
+} from './ScheduleVersionFormFields'
 
-// Schema for schedule form - extends base tariff settings with required date
 const scheduleFormSchema = z.object({
   effective_from: z.string().min(1, 'Выберите дату'),
   acceptanceBoxRatePerLiter: z.number().positive(),
@@ -41,13 +45,9 @@ const scheduleFormSchema = z.object({
 type ScheduleFormValues = z.infer<typeof scheduleFormSchema>
 
 export interface ScheduleVersionFormProps {
-  /** Current tariff settings for pre-filling */
   currentSettings?: TariffSettingsDto
-  /** Loading state for submit button */
   isLoading?: boolean
-  /** Disable all fields */
   disabled?: boolean
-  /** Submit handler */
   onSubmit: (values: ScheduleFormValues) => void
 }
 
@@ -79,16 +79,13 @@ export function ScheduleVersionForm({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-      {/* Info Alert */}
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          Максимум 10 запланированных версий. Версия станет активной в указанную
-          дату автоматически.
+          Максимум 10 запланированных версий. Версия станет активной в указанную дату автоматически.
         </AlertDescription>
       </Alert>
 
-      {/* Date Picker */}
       <div className="space-y-2">
         <Label htmlFor="effective_from">Дата начала действия *</Label>
         <Popover>
@@ -114,12 +111,10 @@ export function ScheduleVersionForm({
             <Calendar
               mode="single"
               selected={selectedDate ? new Date(selectedDate) : undefined}
-              onSelect={(date) => {
-                if (date) {
-                  form.setValue('effective_from', format(date, 'yyyy-MM-dd'))
-                }
+              onSelect={date => {
+                if (date) form.setValue('effective_from', format(date, 'yyyy-MM-dd'))
               }}
-              disabled={(date) => date < tomorrow}
+              disabled={date => date < tomorrow}
               locale={ru}
               initialFocus
             />
@@ -129,116 +124,15 @@ export function ScheduleVersionForm({
           Минимум: завтра ({format(tomorrow, 'dd.MM.yyyy', { locale: ru })})
         </p>
         {form.formState.errors.effective_from && (
-          <p className="text-sm text-red-500">
-            {form.formState.errors.effective_from.message}
-          </p>
+          <p className="text-sm text-red-500">{form.formState.errors.effective_from.message}</p>
         )}
       </div>
 
-      {/* Acceptance Rates */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="acceptanceBoxRatePerLiter">
-            Тариф приёмки (₽/литр)
-          </Label>
-          <Input
-            id="acceptanceBoxRatePerLiter"
-            type="number"
-            step="0.01"
-            disabled={disabled}
-            aria-label="Тариф приёмки за литр"
-            {...form.register('acceptanceBoxRatePerLiter', { valueAsNumber: true })}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="acceptancePalletRate">Тариф приёмки (₽/паллета)</Label>
-          <Input
-            id="acceptancePalletRate"
-            type="number"
-            step="0.01"
-            disabled={disabled}
-            {...form.register('acceptancePalletRate', { valueAsNumber: true })}
-          />
-        </div>
-      </div>
+      <AcceptanceRatesSection form={form} disabled={disabled} />
+      <StorageSettingsSection form={form} disabled={disabled} />
+      <CommissionRatesSection form={form} disabled={disabled} />
+      <NotesSection form={form} disabled={disabled} />
 
-      {/* Storage Settings */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="storageFreeDays">Бесплатные дни хранения</Label>
-          <Input
-            id="storageFreeDays"
-            type="number"
-            min="0"
-            disabled={disabled}
-            aria-label="Бесплатные дни"
-            {...form.register('storageFreeDays', { valueAsNumber: true })}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="fixationClothingDays">Фиксация (одежда)</Label>
-          <Input
-            id="fixationClothingDays"
-            type="number"
-            min="0"
-            disabled={disabled}
-            {...form.register('fixationClothingDays', { valueAsNumber: true })}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="fixationOtherDays">Фиксация (прочее)</Label>
-          <Input
-            id="fixationOtherDays"
-            type="number"
-            min="0"
-            disabled={disabled}
-            {...form.register('fixationOtherDays', { valueAsNumber: true })}
-          />
-        </div>
-      </div>
-
-      {/* Commission Rates */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="defaultCommissionFboPct">Комиссия FBO (%)</Label>
-          <Input
-            id="defaultCommissionFboPct"
-            type="number"
-            step="0.1"
-            min="0"
-            max="100"
-            disabled={disabled}
-            {...form.register('defaultCommissionFboPct', { valueAsNumber: true })}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="defaultCommissionFbsPct">Комиссия FBS (%)</Label>
-          <Input
-            id="defaultCommissionFbsPct"
-            type="number"
-            step="0.1"
-            min="0"
-            max="100"
-            disabled={disabled}
-            {...form.register('defaultCommissionFbsPct', { valueAsNumber: true })}
-          />
-        </div>
-      </div>
-
-      {/* Notes */}
-      <div className="space-y-2">
-        <Label htmlFor="notes">Заметки (необязательно)</Label>
-        <Input
-          id="notes"
-          type="text"
-          disabled={disabled}
-          placeholder="Причина изменения тарифов..."
-          aria-label="Заметки"
-          {...form.register('notes')}
-        />
-      </div>
-
-      {/* Submit Button */}
       <Button
         type="submit"
         disabled={!hasDate || isLoading || disabled}

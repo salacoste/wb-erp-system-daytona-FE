@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
+import { filterOptions, getButtonText } from './multi-select-helpers'
 
 /**
  * MultiSelectDropdown - Reusable multi-select filter component
@@ -20,25 +21,15 @@ import { Skeleton } from '@/components/ui/skeleton'
  * Epic 24: Paid Storage Analytics (Frontend)
  */
 export interface MultiSelectDropdownProps {
-  /** Label for the dropdown button */
   label: string
-  /** Available options to select from */
   options: string[]
-  /** Currently selected options */
   selected: string[]
-  /** Callback when selection changes */
   onChange: (selected: string[]) => void
-  /** Placeholder when nothing selected */
   placeholder?: string
-  /** Loading state */
   loading?: boolean
-  /** Disable the dropdown */
   disabled?: boolean
-  /** Show search input when more than this many options (default: 10) */
   searchThreshold?: number
-  /** Custom width class */
   className?: string
-  /** Aria label for accessibility */
   'aria-label'?: string
 }
 
@@ -57,66 +48,37 @@ export function MultiSelectDropdown({
   const [searchQuery, setSearchQuery] = React.useState('')
   const [open, setOpen] = React.useState(false)
 
-  // Filter options based on search query
-  const filteredOptions = React.useMemo(() => {
-    if (!searchQuery.trim()) return options
-    const query = searchQuery.toLowerCase()
-    return options.filter((option) => option.toLowerCase().includes(query))
-  }, [options, searchQuery])
+  const filteredOptions = React.useMemo(
+    () => filterOptions(options, searchQuery),
+    [options, searchQuery]
+  )
 
-  // Check if all options are selected
   const allSelected = selected.length === 0 || selected.length === options.length
 
-  // Handle "Select All" toggle
   const handleSelectAll = () => {
-    if (allSelected) {
-      // Already all selected, do nothing
-      return
-    }
-    onChange([])
+    if (!allSelected) onChange([])
   }
 
-  // Handle individual option toggle
   const handleOptionToggle = (option: string) => {
     if (selected.includes(option)) {
-      // Remove from selection
-      const newSelected = selected.filter((s) => s !== option)
-      onChange(newSelected)
+      onChange(selected.filter(s => s !== option))
     } else {
-      // Add to selection
       onChange([...selected, option])
     }
   }
 
-  // Clear all selections
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation()
     onChange([])
     setSearchQuery('')
   }
 
-  // Get button text based on selection
-  const getButtonText = (): string => {
-    if (selected.length === 0) {
-      return placeholder
-    }
-    if (selected.length === 1) {
-      return selected[0]
-    }
-    return `${label} (${selected.length})`
-  }
-
-  // Reset search when dropdown closes
   React.useEffect(() => {
-    if (!open) {
-      setSearchQuery('')
-    }
+    if (!open) setSearchQuery('')
   }, [open])
 
   if (loading) {
-    return (
-      <Skeleton className={cn('h-10 w-40', className)} />
-    )
+    return <Skeleton className={cn('h-10 w-40', className)} />
   }
 
   return (
@@ -133,7 +95,7 @@ export function MultiSelectDropdown({
             className
           )}
         >
-          <span className="truncate">{getButtonText()}</span>
+          <span className="truncate">{getButtonText(selected, label, placeholder)}</span>
           <div className="flex items-center gap-1">
             {selected.length > 0 && (
               <X
@@ -149,16 +111,15 @@ export function MultiSelectDropdown({
       <DropdownMenuContent
         className="w-56 max-h-[300px]"
         align="start"
-        onCloseAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={e => e.preventDefault()}
       >
-        {/* Search input for large lists */}
         {options.length > searchThreshold && (
           <>
             <div className="p-2">
               <Input
                 placeholder="Поиск..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="h-8"
                 autoFocus
               />
@@ -167,7 +128,6 @@ export function MultiSelectDropdown({
           </>
         )}
 
-        {/* Select All option */}
         <DropdownMenuCheckboxItem
           checked={allSelected}
           onCheckedChange={handleSelectAll}
@@ -178,19 +138,16 @@ export function MultiSelectDropdown({
 
         <DropdownMenuSeparator />
 
-        {/* Filtered options */}
         <div className="max-h-[200px] overflow-y-auto">
           {filteredOptions.length === 0 ? (
-            <div className="py-6 text-center text-sm text-muted-foreground">
-              Ничего не найдено
-            </div>
+            <div className="py-6 text-center text-sm text-muted-foreground">Ничего не найдено</div>
           ) : (
-            filteredOptions.map((option) => (
+            filteredOptions.map(option => (
               <DropdownMenuCheckboxItem
                 key={option}
                 checked={selected.includes(option)}
                 onCheckedChange={() => handleOptionToggle(option)}
-                onSelect={(e) => e.preventDefault()}
+                onSelect={e => e.preventDefault()}
               >
                 {option}
               </DropdownMenuCheckboxItem>
@@ -198,7 +155,6 @@ export function MultiSelectDropdown({
           )}
         </div>
 
-        {/* Selected count footer */}
         {selected.length > 0 && (
           <>
             <DropdownMenuSeparator />

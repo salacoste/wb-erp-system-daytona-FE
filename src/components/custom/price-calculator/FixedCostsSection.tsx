@@ -3,41 +3,26 @@
 import { Package } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { FixedCostField } from './FixedCostField'
+import { FixedCostLogisticsField } from './FixedCostLogisticsField'
 import { numericFieldOptions } from '@/lib/form-utils'
 import type { UseFormRegister, FieldErrors, FieldValues, Path } from 'react-hook-form'
 import type { FulfillmentType } from '@/types/price-calculator'
 
-/**
- * Props for FixedCostsSection component
- * Uses generic T to accept any form data type that includes the required fields
- */
 export interface FixedCostsSectionProps<T extends FieldValues> {
-  /** React Hook Form register function */
   register: UseFormRegister<T>
-  /** Form validation errors */
   errors: FieldErrors<T>
-  /** Disable all inputs */
   disabled?: boolean
-  /** Current fulfillment type - affects storage field visibility */
   fulfillmentType: FulfillmentType
-  /** Auto-filled logistics forward value (controlled) */
   logisticsForwardValue?: number
-  /** Whether logistics forward was auto-filled */
   isLogisticsAutoFilled?: boolean
-  /** Callback when logistics forward is manually changed */
   onLogisticsForwardChange?: (value: number) => void
-  /** Auto-filled logistics reverse value (controlled) */
   logisticsReverseValue?: number
-  /** Whether logistics reverse was auto-filled */
   isLogisticsReverseAutoFilled?: boolean
-  /** Callback when logistics reverse is manually changed */
   onLogisticsReverseChange?: (value: number) => void
 }
 
 /**
  * Fixed costs input section for price calculator
- * Includes: COGS, logistics forward/reverse, storage
- *
  * Story 44.2-FE: Input Form Component
  * Story 44.15-FE: Storage field conditional on FBO fulfillment type
  */
@@ -53,7 +38,6 @@ export function FixedCostsSection<T extends FieldValues>({
   isLogisticsReverseAutoFilled = false,
   onLogisticsReverseChange,
 }: FixedCostsSectionProps<T>) {
-  // Cast field names to Path<T> for type safety with generic forms
   const cogsField = 'cogs_rub' as Path<T>
   const packagingField = 'packaging_rub' as Path<T>
   const logisticsToMpField = 'logistics_to_mp_rub' as Path<T>
@@ -61,15 +45,8 @@ export function FixedCostsSection<T extends FieldValues>({
   const logisticsReverseField = 'logistics_reverse_rub' as Path<T>
   const storageField = 'storage_rub' as Path<T>
 
-  // Use controlled value if provided (auto-fill mode)
-  // Fix: Use >= 0 to include 0 values and prevent undefined → defined transition
-  // that causes React "uncontrolled to controlled" warning
-  const isControlled = logisticsForwardValue !== undefined
-  const isReverseControlled = logisticsReverseValue !== undefined
-
   return (
     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400">
-      {/* Story 44.30: Updated header to text-base font-semibold */}
       <div className="flex items-center gap-2 mb-4">
         <Package className="h-4 w-4 text-blue-600" aria-hidden="true" />
         <h3 className="text-base font-semibold text-blue-900">Фиксированные затраты (₽)</h3>
@@ -90,14 +67,17 @@ export function FixedCostsSection<T extends FieldValues>({
             min={0}
             placeholder="0,00"
             disabled={disabled}
-            {...register(cogsField, numericFieldOptions({
-              required: 'Себестоимость обязательна',
-              min: { value: 0, message: 'Себестоимость не может быть отрицательной' },
-            }))}
+            {...register(
+              cogsField,
+              numericFieldOptions({
+                required: 'Себестоимость обязательна',
+                min: { value: 0, message: 'Себестоимость не может быть отрицательной' },
+              })
+            )}
           />
         </FixedCostField>
 
-        {/* Story 44.52: Packaging cost */}
+        {/* Packaging cost */}
         <FixedCostField
           id="packaging_rub"
           label="Упаковка"
@@ -111,13 +91,14 @@ export function FixedCostsSection<T extends FieldValues>({
             min={0}
             placeholder="0,00"
             disabled={disabled}
-            {...register(packagingField, numericFieldOptions({
-              min: { value: 0, message: 'Не может быть отрицательным' },
-            }))}
+            {...register(
+              packagingField,
+              numericFieldOptions({ min: { value: 0, message: 'Не может быть отрицательным' } })
+            )}
           />
         </FixedCostField>
 
-        {/* Story 44.52: Logistics to marketplace cost */}
+        {/* Logistics to marketplace */}
         <FixedCostField
           id="logistics_to_mp_rub"
           label="Логистика до МП"
@@ -131,93 +112,42 @@ export function FixedCostsSection<T extends FieldValues>({
             min={0}
             placeholder="0,00"
             disabled={disabled}
-            {...register(logisticsToMpField, numericFieldOptions({
-              min: { value: 0, message: 'Не может быть отрицательным' },
-            }))}
+            {...register(
+              logisticsToMpField,
+              numericFieldOptions({ min: { value: 0, message: 'Не может быть отрицательным' } })
+            )}
           />
         </FixedCostField>
 
         {/* Logistics Forward */}
-        <FixedCostField
+        <FixedCostLogisticsField<T>
+          register={register}
+          errors={errors}
+          disabled={disabled}
           id="logistics_forward_rub"
           label="Логистика к клиенту"
+          fieldPath={logisticsForwardField}
           tooltipContent="Стоимость доставки товара от склада WB до покупателя. Зависит от объема товара и коэффициента выбранного склада."
-          showBadge={isLogisticsAutoFilled}
-          showCalculated={isControlled && (logisticsForwardValue ?? 0) > 0}
-          calculatedValue={logisticsForwardValue}
-          error={(errors.logistics_forward_rub as { message?: string })?.message}
-        >
-          {isControlled ? (
-            <Input
-              id="logistics_forward_rub"
-              type="number"
-              step="0.01"
-              min={0}
-              placeholder="0,00"
-              disabled={disabled}
-              value={logisticsForwardValue ?? ''}
-              onChange={(e) => {
-                const value = parseFloat(e.target.value) || 0
-                onLogisticsForwardChange?.(value)
-              }}
-            />
-          ) : (
-            <Input
-              id="logistics_forward_rub"
-              type="number"
-              step="0.01"
-              min={0}
-              placeholder="0,00"
-              disabled={disabled}
-              {...register(logisticsForwardField, numericFieldOptions({
-                required: 'Обязательное поле',
-                min: { value: 0, message: 'Не может быть отрицательным' },
-              }))}
-            />
-          )}
-        </FixedCostField>
+          controlledValue={logisticsForwardValue}
+          isAutoFilled={isLogisticsAutoFilled}
+          onControlledChange={onLogisticsForwardChange}
+        />
 
         {/* Logistics Reverse */}
-        <FixedCostField
+        <FixedCostLogisticsField<T>
+          register={register}
+          errors={errors}
+          disabled={disabled}
           id="logistics_reverse_rub"
           label="Логистика возврата"
+          fieldPath={logisticsReverseField}
           tooltipContent="Стоимость возврата товара от покупателя на склад WB. Формула: 50₽ (первый литр) + 25₽ за каждый дополнительный литр. Применяется с учетом процента выкупа."
-          showBadge={isLogisticsReverseAutoFilled}
-          showCalculated={isReverseControlled && (logisticsReverseValue ?? 0) > 0}
-          calculatedValue={logisticsReverseValue}
-          error={(errors.logistics_reverse_rub as { message?: string })?.message}
-        >
-          {isReverseControlled ? (
-            <Input
-              id="logistics_reverse_rub"
-              type="number"
-              step="0.01"
-              min={0}
-              placeholder="0,00"
-              disabled={disabled}
-              value={logisticsReverseValue ?? ''}
-              onChange={(e) => {
-                const value = parseFloat(e.target.value) || 0
-                onLogisticsReverseChange?.(value)
-              }}
-            />
-          ) : (
-            <Input
-              id="logistics_reverse_rub"
-              type="number"
-              step="0.01"
-              min={0}
-              placeholder="0,00"
-              disabled={disabled}
-              {...register(logisticsReverseField, numericFieldOptions({
-                required: 'Обязательное поле',
-                min: { value: 0, message: 'Не может быть отрицательным' },
-              }))}
-            />
-          )}
-        </FixedCostField>
+          controlledValue={logisticsReverseValue}
+          isAutoFilled={isLogisticsReverseAutoFilled}
+          onControlledChange={onLogisticsReverseChange}
+        />
 
-        {/* Storage - FBO only (Story 44.15) */}
+        {/* Storage - FBO only */}
         {fulfillmentType === 'FBO' && (
           <FixedCostField
             id="storage_rub"
@@ -232,9 +162,10 @@ export function FixedCostsSection<T extends FieldValues>({
               min={0}
               placeholder="0,00"
               disabled={disabled}
-              {...register(storageField, numericFieldOptions({
-                min: { value: 0, message: 'Не может быть отрицательным' },
-              }))}
+              {...register(
+                storageField,
+                numericFieldOptions({ min: { value: 0, message: 'Не может быть отрицательным' } })
+              )}
             />
           </FixedCostField>
         )}
