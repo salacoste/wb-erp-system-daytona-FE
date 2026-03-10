@@ -20,103 +20,22 @@ import { Card, CardContent } from '@/components/ui/card'
 import { DateRangePicker } from './DateRangePicker'
 import { GitCompare, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  calculatePreviousPeriod,
+  calculateSamePeriodLastYear,
+  formatPeriodDisplay,
+} from './comparison-period/comparison-period-utils'
+import type {
+  ComparisonPeriodSelectorProps,
+  ComparisonPreset,
+} from './comparison-period/comparison-period-types'
 
-/**
- * Preset comparison options
- */
-export type ComparisonPreset = 'previous' | 'same_last_year' | 'custom'
-
-export interface ComparisonPeriodSelectorProps {
-  /** Whether comparison mode is enabled */
-  enabled: boolean
-  /** Callback when comparison mode is toggled */
-  onEnabledChange: (enabled: boolean) => void
-  /** Selected comparison preset */
-  preset: ComparisonPreset
-  /** Callback when preset changes */
-  onPresetChange: (preset: ComparisonPreset) => void
-  /** Start week of comparison period (for custom) */
-  compareStart: string
-  /** End week of comparison period (for custom) */
-  compareEnd: string
-  /** Callback when comparison range changes (custom mode) */
-  onCompareRangeChange: (start: string, end: string) => void
-  /** Current period start (for calculating presets) */
-  currentPeriodStart: string
-  /** Current period end (for calculating presets) */
-  currentPeriodEnd: string
-  /** Additional CSS classes */
-  className?: string
-}
-
-/**
- * Calculate the previous period based on current period length
- * E.g., if current is W45-W47 (3 weeks), previous is W42-W44
- */
-function calculatePreviousPeriod(start: string, end: string): { start: string; end: string } {
-  // Parse ISO week format: YYYY-Www
-  const parseIsoWeek = (week: string) => {
-    const match = week.match(/(\d{4})-W(\d{2})/)
-    if (!match) return { year: 2025, week: 1 }
-    return { year: parseInt(match[1]), week: parseInt(match[2]) }
-  }
-
-  const startParsed = parseIsoWeek(start)
-  const endParsed = parseIsoWeek(end)
-
-  // Calculate period length in weeks
-  const periodLength = endParsed.week - startParsed.week + 1
-
-  // Calculate previous period end (week before current start)
-  let prevEndWeek = startParsed.week - 1
-  let prevEndYear = startParsed.year
-  if (prevEndWeek <= 0) {
-    prevEndYear -= 1
-    prevEndWeek = 52 + prevEndWeek // Handle year boundary
-  }
-
-  // Calculate previous period start
-  let prevStartWeek = prevEndWeek - periodLength + 1
-  let prevStartYear = prevEndYear
-  if (prevStartWeek <= 0) {
-    prevStartYear -= 1
-    prevStartWeek = 52 + prevStartWeek
-  }
-
-  return {
-    start: `${prevStartYear}-W${String(prevStartWeek).padStart(2, '0')}`,
-    end: `${prevEndYear}-W${String(prevEndWeek).padStart(2, '0')}`,
-  }
-}
-
-/**
- * Calculate the same period from last year
- */
-function calculateSamePeriodLastYear(start: string, end: string): { start: string; end: string } {
-  const parseIsoWeek = (week: string) => {
-    const match = week.match(/(\d{4})-W(\d{2})/)
-    if (!match) return { year: 2025, week: 1 }
-    return { year: parseInt(match[1]), week: parseInt(match[2]) }
-  }
-
-  const startParsed = parseIsoWeek(start)
-  const endParsed = parseIsoWeek(end)
-
-  return {
-    start: `${startParsed.year - 1}-W${String(startParsed.week).padStart(2, '0')}`,
-    end: `${endParsed.year - 1}-W${String(endParsed.week).padStart(2, '0')}`,
-  }
-}
-
-/**
- * Format period for display
- */
-function formatPeriodDisplay(start: string, end: string): string {
-  if (start === end) {
-    return start
-  }
-  return `${start} — ${end}`
-}
+// Re-export public types and functions for backward compatibility
+export type {
+  ComparisonPreset,
+  ComparisonPeriodSelectorProps,
+} from './comparison-period/comparison-period-types'
+export { getEffectiveComparisonPeriod } from './comparison-period/comparison-period-utils'
 
 /**
  * Comparison Period Selector
@@ -204,12 +123,12 @@ export function ComparisonPeriodSelector({
               id="comparison-mode"
               checked={enabled}
               onCheckedChange={handleEnabledChange}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             />
             <Label
               htmlFor="comparison-mode"
               className="flex items-center gap-2 cursor-pointer text-sm font-medium"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
               <GitCompare className="h-4 w-4 text-blue-600" />
               Сравнить с периодом
@@ -220,11 +139,7 @@ export function ComparisonPeriodSelector({
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Calendar className="h-4 w-4" />
               <span>{comparisonPeriodLabel}</span>
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
+              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </div>
           )}
         </div>
@@ -235,7 +150,7 @@ export function ComparisonPeriodSelector({
             {/* Preset Selector */}
             <div className="flex items-center gap-3">
               <Label className="text-sm text-gray-600 min-w-[100px]">Сравнить с:</Label>
-              <Select value={preset} onValueChange={(v) => handlePresetChange(v as ComparisonPreset)}>
+              <Select value={preset} onValueChange={v => handlePresetChange(v as ComparisonPreset)}>
                 <SelectTrigger className="w-[240px]">
                   <SelectValue />
                 </SelectTrigger>
@@ -277,23 +192,4 @@ export function ComparisonPeriodSelector({
       </CardContent>
     </Card>
   )
-}
-
-/**
- * Get effective comparison period based on preset and custom values
- */
-export function getEffectiveComparisonPeriod(
-  preset: ComparisonPreset,
-  currentStart: string,
-  currentEnd: string,
-  customStart: string,
-  customEnd: string
-): { start: string; end: string } {
-  if (preset === 'previous') {
-    return calculatePreviousPeriod(currentStart, currentEnd)
-  }
-  if (preset === 'same_last_year') {
-    return calculateSamePeriodLastYear(currentStart, currentEnd)
-  }
-  return { start: customStart, end: customEnd }
 }
