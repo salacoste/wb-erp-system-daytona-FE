@@ -1,19 +1,11 @@
 'use client'
 
-import {
-  PackageX,
-  AlertTriangle,
-  AlertCircle,
-  Clock,
-  CheckCircle,
-} from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { StockoutRisk, SupplyPlanningSummary } from '@/types/supply-planning'
-import {
-  STOCKOUT_RISK_CONFIG,
-  formatReorderValue,
-} from '@/lib/supply-planning-utils'
+import { STOCKOUT_RISK_CONFIG, formatReorderValue } from '@/lib/supply-planning-utils'
+import { LUCIDE_ICONS, getCardStyles } from './supply-risk-card-styles'
 
 /**
  * Supply Risk Cards Component
@@ -30,26 +22,13 @@ interface SupplyRiskCardsProps {
   onCardClick: (status: StockoutRisk) => void
 }
 
-// Lucide icon mapping
-const LUCIDE_ICONS = {
-  PackageX,
-  AlertTriangle,
-  AlertCircle,
-  Clock,
-  CheckCircle,
-} as const
-
 interface RiskCardData {
   status: StockoutRisk
   count: number
   potentialLoss?: number
 }
 
-export function SupplyRiskCards({
-  summary,
-  activeFilter,
-  onCardClick,
-}: SupplyRiskCardsProps) {
+export function SupplyRiskCards({ summary, activeFilter, onCardClick }: SupplyRiskCardsProps) {
   // Build card data from summary
   const cards: RiskCardData[] = [
     {
@@ -81,7 +60,7 @@ export function SupplyRiskCards({
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-      {cards.map((card) => (
+      {cards.map(card => (
         <RiskCard
           key={card.status}
           status={card.status}
@@ -103,13 +82,7 @@ interface RiskCardProps {
   onClick: () => void
 }
 
-function RiskCard({
-  status,
-  count,
-  potentialLoss,
-  isActive,
-  onClick,
-}: RiskCardProps) {
+function RiskCard({ status, count, potentialLoss, isActive, onClick }: RiskCardProps) {
   const config = STOCKOUT_RISK_CONFIG[status]
   const IconComponent = LUCIDE_ICONS[config.lucideIcon as keyof typeof LUCIDE_ICONS]
 
@@ -125,22 +98,20 @@ function RiskCard({
         cardStyles.card,
         isActive && 'ring-2 ring-offset-2'
       )}
-      style={{
-        borderColor: isActive ? config.color : undefined,
-        // Tailwind ring color via CSS custom property
-        '--tw-ring-color': isActive ? config.color : undefined,
-      } as React.CSSProperties}
+      style={
+        {
+          borderColor: isActive ? config.color : undefined,
+          // Tailwind ring color via CSS custom property
+          '--tw-ring-color': isActive ? config.color : undefined,
+        } as React.CSSProperties
+      }
       onClick={onClick}
     >
       <CardContent className="p-5">
         {/* Header: Icon + Label */}
         <div className="flex items-center gap-2 mb-3">
-          <IconComponent
-            className={cn('h-5 w-5', cardStyles.icon)}
-          />
-          <span className={cn('text-sm font-medium', cardStyles.label)}>
-            {config.label}
-          </span>
+          <IconComponent className={cn('h-5 w-5', cardStyles.icon)} />
+          <span className={cn('text-sm font-medium', cardStyles.label)}>{config.label}</span>
         </div>
 
         {/* Count */}
@@ -164,56 +135,4 @@ function RiskCard({
       </CardContent>
     </Card>
   )
-}
-
-/**
- * Get Tailwind classes for card styling based on status
- * UX Specs: Different background colors per status
- */
-function getCardStyles(status: StockoutRisk, isActive: boolean) {
-  const styles: Record<StockoutRisk, {
-    card: string
-    icon: string
-    label: string
-    count: string
-    loss: string
-  }> = {
-    out_of_stock: {
-      card: isActive ? 'bg-gray-800 border-gray-900' : 'bg-gray-100 border-gray-200',
-      icon: isActive ? 'text-white' : 'text-gray-700',
-      label: isActive ? 'text-white' : 'text-gray-700',
-      count: isActive ? 'text-white' : 'text-gray-900',
-      loss: isActive ? 'text-gray-300' : 'text-gray-600',
-    },
-    critical: {
-      card: isActive ? 'bg-red-100 border-red-300' : 'bg-red-50 border-red-200',
-      icon: 'text-red-600',
-      label: 'text-red-700',
-      count: 'text-red-900',
-      loss: 'text-red-600',
-    },
-    warning: {
-      card: isActive ? 'bg-orange-100 border-orange-300' : 'bg-orange-50 border-orange-200',
-      icon: 'text-orange-600',
-      label: 'text-orange-700',
-      count: 'text-orange-900',
-      loss: 'text-orange-600',
-    },
-    low: {
-      card: isActive ? 'bg-yellow-100 border-yellow-300' : 'bg-yellow-50 border-yellow-200',
-      icon: 'text-yellow-600',
-      label: 'text-yellow-700',
-      count: 'text-yellow-900',
-      loss: 'text-yellow-600',
-    },
-    healthy: {
-      card: isActive ? 'bg-green-100 border-green-300' : 'bg-green-50 border-green-200',
-      icon: 'text-green-600',
-      label: 'text-green-700',
-      count: 'text-green-900',
-      loss: 'text-green-600',
-    },
-  }
-
-  return styles[status]
 }

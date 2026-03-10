@@ -6,15 +6,13 @@
  * Epic 53-FE: Supply Management UI
  *
  * Dynamic route page for viewing and managing a single supply.
+ * Skeleton and error components extracted for file size compliance (Epic 74).
  */
 
 import { use, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Skeleton } from '@/components/ui/skeleton'
+import { ArrowLeft } from 'lucide-react'
 import { useSupplyDetail } from '@/hooks/useSupplyDetail'
 import { useRemoveOrders } from '@/hooks/useRemoveOrders'
 import { downloadDocument } from '@/lib/api/supplies'
@@ -24,94 +22,11 @@ import { SupplyStatusStepper } from '@/components/custom/supplies/SupplyStatusSt
 import { SupplyOrdersTable } from '@/components/custom/supplies/SupplyOrdersTable'
 import { SupplyDocumentsList } from '@/components/custom/supplies/SupplyDocumentsList'
 import { toast } from 'sonner'
+import { SupplyDetailSkeleton } from './SupplyDetailSkeleton'
+import { SupplyDetailError } from './SupplyDetailError'
 
 interface PageProps {
   params: Promise<{ id: string }>
-}
-
-/** Loading skeleton for the page */
-function SupplyDetailSkeleton() {
-  return (
-    <div className="space-y-6">
-      {/* Back link skeleton */}
-      <Skeleton className="h-5 w-32" />
-
-      {/* Header skeleton */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-6 w-24" />
-        </div>
-        <div className="flex gap-4">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-5 w-24" />
-        </div>
-      </div>
-
-      {/* Stepper skeleton */}
-      <Skeleton className="h-24 w-full" />
-
-      {/* Table skeleton */}
-      <div className="space-y-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-      </div>
-    </div>
-  )
-}
-
-/** Error state component */
-function SupplyDetailError({ error, onRetry }: { error: Error; onRetry: () => void }) {
-  const is404 = error.message?.includes('404') || error.message?.includes('not found')
-  const is403 = error.message?.includes('403') || error.message?.includes('forbidden')
-
-  if (is404) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-yellow-500" />
-        <h1 className="mb-2 text-2xl font-bold">Поставка не найдена</h1>
-        <p className="mb-6 text-gray-500">Поставка не существует или была удалена</p>
-        <Link href="/supplies">
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Вернуться к списку
-          </Button>
-        </Link>
-      </div>
-    )
-  }
-
-  if (is403) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-red-500" />
-        <h1 className="mb-2 text-2xl font-bold">Нет доступа</h1>
-        <p className="mb-6 text-gray-500">Нет доступа к этой поставке</p>
-        <Link href="/supplies">
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Вернуться к списку
-          </Button>
-        </Link>
-      </div>
-    )
-  }
-
-  return (
-    <Alert variant="destructive">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Ошибка загрузки</AlertTitle>
-      <AlertDescription className="flex items-center justify-between">
-        <span>Не удалось загрузить данные поставки</span>
-        <Button variant="outline" size="sm" onClick={onRetry}>
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Повторить
-        </Button>
-      </AlertDescription>
-    </Alert>
-  )
 }
 
 export default function SupplyDetailPage({ params }: PageProps) {

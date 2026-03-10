@@ -1,23 +1,19 @@
+'use client'
+
 /**
  * Supplies List Page
  * Story 53.2-FE: Supplies List Page
  * Epic 53-FE: Supply Management UI
  *
  * Main page for FBS supplies with filters, table, pagination.
+ * State/handlers extracted to useSuppliesPageState for file size compliance (Epic 74).
  * Reference: docs/stories/epic-53/story-53.2-fe-supplies-list-page.md
  */
 
-'use client'
-
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { format, subDays } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle } from 'lucide-react'
-import { useSupplies, useSyncSupplies } from '@/hooks/useSupplies'
-import { buildSupplyDetailRoute } from '@/lib/routes'
 import {
   SuppliesPageHeader,
   SuppliesFilters,
@@ -26,121 +22,36 @@ import {
   SuppliesLoadingSkeleton,
   CreateSupplyModal,
 } from '@/components/custom/supplies'
-import type { SupplyStatus, SuppliesSortField, SortOrder, SupplyListItem } from '@/types/supplies'
-
-/** Client-side sort for supplies (backend does not support sort params) */
-function sortSupplies(
-  items: SupplyListItem[],
-  sortBy: SuppliesSortField,
-  sortOrder: SortOrder
-): SupplyListItem[] {
-  return [...items].sort((a, b) => {
-    let cmp = 0
-    if (sortBy === 'created_at') cmp = a.createdAt.localeCompare(b.createdAt)
-    else if (sortBy === 'closed_at') cmp = (a.closedAt ?? '').localeCompare(b.closedAt ?? '')
-    else if (sortBy === 'orders_count') cmp = a.ordersCount - b.ordersCount
-    return sortOrder === 'asc' ? cmp : -cmp
-  })
-}
-
-const PAGE_SIZE = 20
-const DEFAULT_SORT: SuppliesSortField = 'created_at'
-const DEFAULT_ORDER: SortOrder = 'desc'
-
-/** Get default date range (last 30 days) */
-function getDefaultDateRange() {
-  return {
-    to: format(new Date(), 'yyyy-MM-dd'),
-    from: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
-  }
-}
+import { useSuppliesPageState } from './useSuppliesPageState'
 
 export default function SuppliesPage() {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const defaultRange = getDefaultDateRange()
-
-  // State
-  const [status, setStatus] = useState<SupplyStatus | undefined>(
-    (searchParams.get('status') as SupplyStatus) || undefined
-  )
-  const [dateFrom, setDateFrom] = useState(searchParams.get('from') || defaultRange.from)
-  const [dateTo, setDateTo] = useState(searchParams.get('to') || defaultRange.to)
-  const [sortBy, setSortBy] = useState<SuppliesSortField>(
-    (searchParams.get('sort_by') as SuppliesSortField) || DEFAULT_SORT
-  )
-  const [sortOrder, setSortOrder] = useState<SortOrder>(
-    (searchParams.get('sort_order') as SortOrder) || DEFAULT_ORDER
-  )
-  const [page, setPage] = useState(Number(searchParams.get('page')) || 1)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
-  // URL sync
-  useEffect(() => {
-    const params = new URLSearchParams()
-    if (status) params.set('status', status)
-    if (dateFrom !== defaultRange.from) params.set('from', dateFrom)
-    if (dateTo !== defaultRange.to) params.set('to', dateTo)
-    if (page > 1) params.set('page', String(page))
-    const qs = params.toString()
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
-  }, [status, dateFrom, dateTo, page, pathname, router])
-
-  // Data fetching (sort is client-side — backend does not support sort params)
-  const { data, isLoading, isError, error, refetch } = useSupplies({
+  const {
+    data,
+    sortedItems,
+    isLoading,
+    isError,
+    error,
+    refetch,
     status,
-    from: dateFrom,
-    to: dateTo,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  })
-  const sortedItems = useMemo(
-    () => sortSupplies(data?.items ?? [], sortBy, sortOrder),
-    [data?.items, sortBy, sortOrder]
-  )
-  const { mutate: triggerSync, isPending: isSyncing } = useSyncSupplies()
-
-  // Handlers
-  const handleSortChange = useCallback((field: SuppliesSortField) => {
-    setSortBy(prev => {
-      if (prev === field) {
-        setSortOrder(cur => (cur === 'asc' ? 'desc' : 'asc'))
-        return prev
-      }
-      setSortOrder('desc')
-      return field
-    })
-    setPage(1)
-  }, [])
-
-  const handleRowClick = useCallback(
-    (supply: SupplyListItem) => router.push(buildSupplyDetailRoute(supply.id)),
-    [router]
-  )
-
-  const handleClearFilters = useCallback(() => {
-    const range = getDefaultDateRange()
-    setStatus(undefined)
-    setDateFrom(range.from)
-    setDateTo(range.to)
-    setSortBy(DEFAULT_SORT)
-    setSortOrder(DEFAULT_ORDER)
-    setPage(1)
-  }, [])
-
-  // Derived state
-  const hasFilters =
-    status !== undefined || dateFrom !== defaultRange.from || dateTo !== defaultRange.to
-  const totalCount = data?.pagination?.total ?? 0
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
-  const headerProps = {
-    lastSyncAt: data?.items?.[0]?.syncedAt ?? null,
-    nextSyncAt: null,
-    isSyncing,
-    onSync: () => triggerSync(),
-    onCreateClick: () => setIsCreateModalOpen(true),
-  }
+    setStatus,
+    dateFrom,
+    setDateFrom,
+    dateTo,
+    setDateTo,
+    sortBy,
+    sortOrder,
+    page,
+    setPage,
+    totalCount,
+    totalPages,
+    isCreateModalOpen,
+    setIsCreateModalOpen,
+    handleSortChange,
+    handleRowClick,
+    handleClearFilters,
+    hasFilters,
+    headerProps,
+  } = useSuppliesPageState()
 
   // Loading
   if (isLoading && !data) {

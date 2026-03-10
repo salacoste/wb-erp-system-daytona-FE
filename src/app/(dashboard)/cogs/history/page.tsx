@@ -5,13 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { AlertCircle, ArrowLeft, Home, ChevronRight } from 'lucide-react'
+import { AlertCircle, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useCogsHistoryFull } from '@/hooks/useCogsHistoryFull'
 import { CogsHistoryMeta } from '@/components/custom/CogsHistoryMeta'
 import { CogsHistoryTable } from '@/components/custom/CogsHistoryTable'
 import { CogsHistoryPagination } from '@/components/custom/CogsHistoryPagination'
-import { useState } from 'react'
+import { Breadcrumbs } from './CogsHistoryBreadcrumbs'
+import { getPluralForm } from './cogs-history-utils'
+import { useCogsHistoryPageState } from './useCogsHistoryPageState'
 
 /**
  * COGS History Page
@@ -25,12 +27,16 @@ export default function CogsHistoryPage() {
   const searchParams = useSearchParams()
   const nmId = searchParams.get('nmId')
 
-  // State for pagination and filters
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
-  const [prevCursors, setPrevCursors] = useState<string[]>([])
-  const [includeDeleted, setIncludeDeleted] = useState(false)
-
-  const limit = 25
+  const {
+    cursor,
+    includeDeleted,
+    limit,
+    handlePreviousPage,
+    handleNextPage,
+    handleIncludeDeletedChange,
+    hasPrevious,
+    hasNext,
+  } = useCogsHistoryPageState()
 
   // Fetch COGS history
   const { data, isLoading, isError, error, refetch } = useCogsHistoryFull(nmId || undefined, {
@@ -38,52 +44,6 @@ export default function CogsHistoryPage() {
     cursor,
     include_deleted: includeDeleted,
   })
-
-  // Handle pagination
-  const handlePreviousPage = () => {
-    if (prevCursors.length > 0) {
-      const newPrevCursors = [...prevCursors]
-      const previousCursor = newPrevCursors.pop()
-      setPrevCursors(newPrevCursors)
-      setCursor(previousCursor)
-    }
-  }
-
-  const handleNextPage = () => {
-    if (data?.pagination?.cursor) {
-      setPrevCursors(cursor ? [...prevCursors, cursor] : prevCursors)
-      setCursor(data.pagination.cursor)
-    }
-  }
-
-  const handleIncludeDeletedChange = (value: boolean) => {
-    setIncludeDeleted(value)
-    setCursor(undefined)
-    setPrevCursors([])
-  }
-
-  // AC: 3 - Breadcrumb navigation
-  const Breadcrumbs = () => (
-    <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-      <Link href="/dashboard" className="flex items-center hover:text-foreground">
-        <Home className="h-4 w-4" />
-      </Link>
-      <ChevronRight className="h-4 w-4" />
-      <Link href="/cogs" className="hover:text-foreground">
-        COGS
-      </Link>
-      <ChevronRight className="h-4 w-4" />
-      <span className="text-foreground">История</span>
-      {data?.meta?.product_name && (
-        <>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground truncate max-w-[200px]">
-            {data.meta.product_name}
-          </span>
-        </>
-      )}
-    </nav>
-  )
 
   // No nmId provided
   if (!nmId) {
@@ -137,11 +97,7 @@ export default function CogsHistoryPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             <div className="flex items-center justify-between">
-              <span>
-                {error instanceof Error
-                  ? error.message
-                  : 'Ошибка загрузки истории COGS'}
-              </span>
+              <span>{error instanceof Error ? error.message : 'Ошибка загрузки истории COGS'}</span>
               <Button variant="outline" size="sm" onClick={() => refetch()}>
                 Повторить
               </Button>
@@ -162,25 +118,21 @@ export default function CogsHistoryPage() {
   if (!data?.data?.length && !isLoading) {
     return (
       <div className="space-y-6">
-        <Breadcrumbs />
+        <Breadcrumbs productName={data?.meta?.product_name} />
 
         {/* Meta card even for empty state */}
-        {data?.meta && (
-          <CogsHistoryMeta meta={data.meta} />
-        )}
+        {data?.meta && <CogsHistoryMeta meta={data.meta} />}
 
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="text-6xl mb-4">📭</div>
             <CardTitle className="mb-2">История изменений COGS пуста</CardTitle>
             <p className="text-muted-foreground text-center max-w-md">
-              Назначьте COGS товару для начала. После назначения здесь будет
-              отображаться история всех изменений себестоимости.
+              Назначьте COGS товару для начала. После назначения здесь будет отображаться история
+              всех изменений себестоимости.
             </p>
             <Button asChild className="mt-6">
-              <Link href={`/cogs?nmId=${nmId}`}>
-                Назначить COGS
-              </Link>
+              <Link href={`/cogs?nmId=${nmId}`}>Назначить COGS</Link>
             </Button>
           </CardContent>
         </Card>
@@ -188,18 +140,12 @@ export default function CogsHistoryPage() {
     )
   }
 
-  // Computed values for pagination
-  const hasPrevious = prevCursors.length > 0 || cursor !== undefined
-  const hasNext = Boolean(data?.pagination?.has_more)
-
   return (
     <div className="space-y-6">
-      <Breadcrumbs />
+      <Breadcrumbs productName={data?.meta?.product_name} />
 
       {/* AC: 2, 9, 10 - Page header with meta info */}
-      {data?.meta && (
-        <CogsHistoryMeta meta={data.meta} />
-      )}
+      {data?.meta && <CogsHistoryMeta meta={data.meta} />}
 
       {/* Main table card */}
       <Card>
@@ -207,13 +153,13 @@ export default function CogsHistoryPage() {
           <div>
             <CardTitle>История изменений</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {data?.pagination?.total || 0} {getPluralForm(data?.pagination?.total || 0, 'версия', 'версии', 'версий')}
+              {data?.pagination?.total || 0}{' '}
+              {getPluralForm(data?.pagination?.total || 0, 'версия', 'версии', 'версий')}
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
             <Link href="/cogs">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              К товарам
+              <ArrowLeft className="mr-2 h-4 w-4" />К товарам
             </Link>
           </Button>
         </CardHeader>
@@ -230,25 +176,12 @@ export default function CogsHistoryPage() {
             displayedCount={data?.data?.length || 0}
             totalCount={data?.pagination?.total || 0}
             hasPrevious={hasPrevious}
-            hasNext={hasNext}
+            hasNext={hasNext(data?.pagination)}
             onPrevious={handlePreviousPage}
-            onNext={handleNextPage}
+            onNext={() => handleNextPage(data?.pagination)}
           />
         </CardContent>
       </Card>
     </div>
   )
-}
-
-/**
- * Helper for Russian plural forms
- */
-function getPluralForm(n: number, one: string, few: string, many: string): string {
-  const mod10 = n % 10
-  const mod100 = n % 100
-
-  if (mod100 >= 11 && mod100 <= 19) return many
-  if (mod10 === 1) return one
-  if (mod10 >= 2 && mod10 <= 4) return few
-  return many
 }

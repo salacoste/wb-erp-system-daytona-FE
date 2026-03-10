@@ -10,9 +10,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { format, subDays } from 'date-fns'
+import { lazy, Suspense } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -26,10 +24,9 @@ import {
   OrdersLoadingSkeleton,
   OrdersErrorBoundary,
   OrdersSuspenseFallback,
-  type SortField,
-  type SortOrder,
 } from '@/components/custom/orders'
-import type { SupplierStatus, WbStatus, OrderFbsItem } from '@/types/orders'
+import type { SupplierStatus, WbStatus } from '@/types/orders'
+import { useOrdersPageState, PAGE_SIZE } from './useOrdersPageState'
 
 // Lazy load heavy components (Story 40.7-FE: Lazy Loading)
 const OrderDetailsModal = lazy(() =>
@@ -37,15 +34,6 @@ const OrderDetailsModal = lazy(() =>
     default: m.OrderDetailsModal,
   }))
 )
-
-const PAGE_SIZE = 25
-
-/** Get default date range (last 7 days) */
-function getDefaultDateRange() {
-  const to = format(new Date(), 'yyyy-MM-dd')
-  const from = format(subDays(new Date(), 7), 'yyyy-MM-dd')
-  return { from, to }
-}
 
 /**
  * OrdersPage - Main orders list page component
@@ -62,127 +50,24 @@ export default function OrdersPage() {
  * OrdersPageContent - Inner component wrapped by error boundary
  */
 function OrdersPageContent() {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  // Initialize state from URL params
-  const defaultRange = getDefaultDateRange()
-  const [dateFrom, setDateFrom] = useState(searchParams.get('from') || defaultRange.from)
-  const [dateTo, setDateTo] = useState(searchParams.get('to') || defaultRange.to)
-  const [supplierStatus, setSupplierStatus] = useState<SupplierStatus | null>(
-    (searchParams.get('supplier_status') as SupplierStatus) || null
-  )
-  const [wbStatus, setWbStatus] = useState<WbStatus | null>(
-    (searchParams.get('wb_status') as WbStatus) || null
-  )
-  const [searchInput, setSearchInput] = useState(searchParams.get('nm_id') || '')
-  const [search, setSearch] = useState(searchParams.get('nm_id') || '')
-  const [sortBy, setSortBy] = useState<SortField>(
-    (searchParams.get('sort_by') as SortField) || 'created_at'
-  )
-  const [sortOrder, setSortOrder] = useState<SortOrder>(
-    (searchParams.get('sort_order') as SortOrder) || 'desc'
-  )
-  const [page, setPage] = useState(Number(searchParams.get('page')) || 1)
-
-  // Modal state (Story 40.4-FE: Order Details Modal)
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-
-  // Debounce search input
-  useEffect(() => {
-    const delay = setTimeout(() => setSearch(searchInput), 500)
-    return () => clearTimeout(delay)
-  }, [searchInput])
-
-  // Sync state to URL
-  useEffect(() => {
-    const params = new URLSearchParams()
-    if (dateFrom !== defaultRange.from) params.set('from', dateFrom)
-    if (dateTo !== defaultRange.to) params.set('to', dateTo)
-    if (supplierStatus) params.set('supplier_status', supplierStatus)
-    if (wbStatus) params.set('wb_status', wbStatus)
-    if (search) params.set('nm_id', search)
-    if (sortBy !== 'created_at') params.set('sort_by', sortBy)
-    if (sortOrder !== 'desc') params.set('sort_order', sortOrder)
-    if (page > 1) params.set('page', String(page))
-
-    const queryString = params.toString()
-    const url = queryString ? `${pathname}?${queryString}` : pathname
-    router.replace(url, { scroll: false })
-  }, [
-    dateFrom,
-    dateTo,
-    supplierStatus,
-    wbStatus,
-    search,
-    sortBy,
-    sortOrder,
-    page,
-    pathname,
-    router,
-  ])
+  const state = useOrdersPageState()
 
   // Fetch orders
   const { data, isLoading, isError, error, refetch } = useOrders({
-    from: dateFrom,
-    to: dateTo,
-    supplier_status: supplierStatus || undefined,
-    wb_status: wbStatus || undefined,
-    nm_id: search ? parseInt(search, 10) : undefined,
-    sort_by: sortBy,
-    sort_order: sortOrder,
+    from: state.dateFrom,
+    to: state.dateTo,
+    supplier_status: state.supplierStatus || undefined,
+    wb_status: state.wbStatus || undefined,
+    nm_id: state.search ? parseInt(state.search, 10) : undefined,
+    sort_by: state.sortBy,
+    sort_order: state.sortOrder,
     limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
+    offset: (state.page - 1) * PAGE_SIZE,
   })
 
   // Sync status and mutation
   const { data: syncStatus } = useOrdersSyncStatus()
   const { mutate: triggerSync, isPending: isSyncing } = useOrdersSync()
-
-  // Handlers
-  const handleSortChange = useCallback((field: SortField) => {
-    setSortBy((prev: SortField) => {
-      if (prev === field) {
-        setSortOrder((current: SortOrder) => (current === 'asc' ? 'desc' : 'asc'))
-        return prev
-      }
-      setSortOrder('desc')
-      return field
-    })
-    setPage(1)
-  }, [])
-
-  const handleRowClick = useCallback((order: OrderFbsItem) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.info('[Orders] Row clicked:', order.orderId)
-    }
-    setSelectedOrderId(order.orderId)
-  }, [])
-
-  const handleCloseModal = useCallback(() => {
-    setSelectedOrderId(null)
-  }, [])
-
-  const handleClearFilters = useCallback(() => {
-    const range = getDefaultDateRange()
-    setDateFrom(range.from)
-    setDateTo(range.to)
-    setSupplierStatus(null)
-    setWbStatus(null)
-    setSearchInput('')
-    setSearch('')
-    setSortBy('created_at')
-    setSortOrder('desc')
-    setPage(1)
-  }, [])
-
-  const hasActiveFilters =
-    supplierStatus !== null ||
-    wbStatus !== null ||
-    search !== '' ||
-    dateFrom !== defaultRange.from ||
-    dateTo !== defaultRange.to
 
   // Calculate pagination
   const totalCount = data?.pagination?.total ?? 0
@@ -226,7 +111,6 @@ function OrdersPageContent() {
 
   return (
     <div className="space-y-6" data-testid="orders-page">
-      {/* Page Header */}
       <OrdersPageHeader
         lastSyncAt={syncStatus?.lastSyncAt ?? null}
         isSyncing={isSyncing}
@@ -237,33 +121,33 @@ function OrdersPageContent() {
       <Card>
         <CardContent className="pt-6">
           <OrdersFilters
-            dateFrom={dateFrom}
-            dateTo={dateTo}
-            supplierStatus={supplierStatus}
-            wbStatus={wbStatus}
-            searchValue={searchInput}
+            dateFrom={state.dateFrom}
+            dateTo={state.dateTo}
+            supplierStatus={state.supplierStatus}
+            wbStatus={state.wbStatus}
+            searchValue={state.searchInput}
             onDateFromChange={(v: string) => {
-              setDateFrom(v)
-              setPage(1)
+              state.setDateFrom(v)
+              state.setPage(1)
             }}
             onDateToChange={(v: string) => {
-              setDateTo(v)
-              setPage(1)
+              state.setDateTo(v)
+              state.setPage(1)
             }}
             onSupplierStatusChange={(v: SupplierStatus | null) => {
-              setSupplierStatus(v)
-              setPage(1)
+              state.setSupplierStatus(v)
+              state.setPage(1)
             }}
             onWbStatusChange={(v: WbStatus | null) => {
-              setWbStatus(v)
-              setPage(1)
+              state.setWbStatus(v)
+              state.setPage(1)
             }}
             onSearchChange={(v: string) => {
-              setSearchInput(v)
-              setPage(1)
+              state.setSearchInput(v)
+              state.setPage(1)
             }}
-            onClearFilters={handleClearFilters}
-            hasActiveFilters={hasActiveFilters}
+            onClearFilters={state.handleClearFilters}
+            hasActiveFilters={state.hasActiveFilters}
           />
         </CardContent>
       </Card>
@@ -271,28 +155,28 @@ function OrdersPageContent() {
       {/* Orders Table */}
       <OrdersTable
         orders={data?.items ?? []}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onSortChange={handleSortChange}
-        onRowClick={handleRowClick}
-        hasFilters={hasActiveFilters}
-        onClearFilters={handleClearFilters}
+        sortBy={state.sortBy}
+        sortOrder={state.sortOrder}
+        onSortChange={state.handleSortChange}
+        onRowClick={state.handleRowClick}
+        hasFilters={state.hasActiveFilters}
+        onClearFilters={state.handleClearFilters}
       />
 
       {/* Pagination */}
       {totalCount > 0 && (
         <OrdersPagination
-          currentPage={page}
+          currentPage={state.page}
           totalPages={totalPages}
           totalCount={totalCount}
-          onPageChange={setPage}
+          onPageChange={state.setPage}
           isLoading={isLoading}
         />
       )}
 
       {/* Order Details Modal - Lazy loaded (Story 40.7-FE) */}
       <Suspense fallback={<OrdersSuspenseFallback />}>
-        <OrderDetailsModal orderId={selectedOrderId} onClose={handleCloseModal} />
+        <OrderDetailsModal orderId={state.selectedOrderId} onClose={state.handleCloseModal} />
       </Suspense>
     </div>
   )

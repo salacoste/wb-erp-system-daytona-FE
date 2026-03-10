@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Trophy, Medal, ChevronRight, HelpCircle, PackageX, Calendar } from 'lucide-react'
+import { ChevronRight, HelpCircle, PackageX, Calendar } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -13,8 +13,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
 import type { TopConsumerItem } from '@/types/storage-analytics'
+import { RankIndicator, CostSeverityDot } from './TopConsumersWidgetParts'
+
+// Barrel re-export all public symbols from extracted parts
+export { RankIndicator, CostSeverityDot, getCostSeverity } from './TopConsumersWidgetParts'
+export type { CostSeverity } from './TopConsumersWidgetParts'
 
 /**
  * Top Consumers Widget
@@ -29,91 +33,6 @@ interface TopConsumersWidgetProps {
   isLoading?: boolean
   onViewAll?: () => void
   onProductClick?: (nmId: string) => void
-}
-
-// Cost severity thresholds per UX Decision Q10
-type CostSeverity = 'high' | 'medium' | 'low' | 'unknown'
-
-function getCostSeverity(ratio: number | null): CostSeverity {
-  if (ratio === null) return 'unknown'
-  if (ratio > 20) return 'high'
-  if (ratio > 10) return 'medium'
-  return 'low'
-}
-
-// Rank Indicator Component (UX Decision Q9)
-function RankIndicator({ rank }: { rank: number }) {
-  switch (rank) {
-    case 1:
-      return (
-        <div className="flex items-center gap-1">
-          <Trophy className="h-4 w-4 text-yellow-500" aria-label="1 место" />
-          <span className="text-sm font-medium">1</span>
-        </div>
-      )
-    case 2:
-      return (
-        <div className="flex items-center gap-1">
-          <Medal className="h-4 w-4 text-gray-400" aria-label="2 место" />
-          <span className="text-sm font-medium">2</span>
-        </div>
-      )
-    case 3:
-      return (
-        <div className="flex items-center gap-1">
-          <Medal className="h-4 w-4 text-amber-600" aria-label="3 место" />
-          <span className="text-sm font-medium">3</span>
-        </div>
-      )
-    default:
-      return <span className="text-sm text-muted-foreground ml-5">{rank}</span>
-  }
-}
-
-// Cost Severity Dot Component (UX Decision Q10)
-function CostSeverityDot({ ratio }: { ratio: number | null }) {
-  const severity = getCostSeverity(ratio)
-
-  const colors: Record<CostSeverity, string> = {
-    high: 'bg-red-500',
-    medium: 'bg-yellow-500',
-    low: 'bg-green-500',
-    unknown: 'bg-gray-300',
-  }
-
-  const labels: Record<CostSeverity, string> = {
-    high: 'Высокие затраты',
-    medium: 'Средние затраты',
-    low: 'Низкие затраты',
-    unknown: 'Нет данных',
-  }
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="flex items-center gap-2 cursor-help">
-            {ratio !== null && (
-              <span className={cn('text-sm', severity === 'high' && 'text-red-600 font-medium')}>
-                {ratio.toFixed(1)}%
-              </span>
-            )}
-            <span
-              className={cn('w-2 h-2 rounded-full flex-shrink-0', colors[severity])}
-              aria-label={labels[severity]}
-            />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="font-medium">{labels[severity]}</p>
-          <p className="text-xs text-muted-foreground max-w-[200px]">
-            Отношение затрат на хранение к выручке.
-            {severity === 'high' && ' Рекомендуется оптимизация.'}
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
 }
 
 export function TopConsumersWidget({
