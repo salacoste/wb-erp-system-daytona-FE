@@ -12,7 +12,6 @@
  * Reference: frontend/docs/stories/epic-6/story-6.5-fe-export-analytics.md
  */
 
-import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -22,21 +21,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { DateRangePicker } from '@/components/custom/DateRangePicker'
 import { ExportStatusDisplay } from '@/components/custom/ExportStatusDisplay'
-import { useExportAnalytics } from '@/hooks/useExportAnalytics'
-import { getLastCompletedWeek } from '@/lib/margin-helpers'
-import { FileSpreadsheet, FileText, Download } from 'lucide-react'
-import type { ExportType, ExportFormat } from '@/types/analytics'
+import { Download } from 'lucide-react'
+import { ExportDialogForm } from './export-dialog/ExportDialogForm'
+import { useExportDialogState } from './export-dialog/useExportDialogState'
+import type { ExportType } from '@/types/analytics'
 
 /**
  * Props for ExportDialog component
@@ -52,16 +41,6 @@ export interface ExportDialogProps {
   defaultWeekStart?: string
   /** Default week end (from page context) */
   defaultWeekEnd?: string
-}
-
-/**
- * Export type labels in Russian
- */
-const EXPORT_TYPE_LABELS: Record<ExportType, string> = {
-  'by-sku': 'По товарам (SKU)',
-  'by-brand': 'По брендам',
-  'by-category': 'По категориям',
-  'cabinet-summary': 'Сводка по кабинету',
 }
 
 /**
@@ -88,199 +67,53 @@ export function ExportDialog({
   defaultWeekStart,
   defaultWeekEnd,
 }: ExportDialogProps) {
-  const lastCompletedWeek = getLastCompletedWeek()
-
-  // Form state
-  const [type, setType] = useState<ExportType>(defaultType)
-  const [weekStart, setWeekStart] = useState(defaultWeekStart ?? lastCompletedWeek)
-  const [weekEnd, setWeekEnd] = useState(defaultWeekEnd ?? lastCompletedWeek)
-  const [format, setFormat] = useState<ExportFormat>('xlsx')
-  const [includeCogs, setIncludeCogs] = useState(true)
-
-  // Export hook
-  const {
-    createExport,
-    isCreating,
-    status,
-    reset,
-    createError,
-  } = useExportAnalytics()
-
-  // Reset form when dialog opens with new defaults
-  useEffect(() => {
-    if (open) {
-      setType(defaultType)
-      setWeekStart(defaultWeekStart ?? lastCompletedWeek)
-      setWeekEnd(defaultWeekEnd ?? lastCompletedWeek)
-      setFormat('xlsx')
-      setIncludeCogs(true)
-    }
-  }, [open, defaultType, defaultWeekStart, defaultWeekEnd, lastCompletedWeek])
-
-  // Auto-download when export completes
-  useEffect(() => {
-    if (status?.status === 'completed' && status.download_url) {
-      // Try to trigger download
-      const link = document.createElement('a')
-      link.href = status.download_url
-      link.download = ''
-      link.target = '_blank'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
-  }, [status])
-
-  // Handle export submit
-  const handleExport = () => {
-    createExport({
-      type,
-      weekStart,
-      weekEnd,
-      format,
-      includeCogs,
-    })
-  }
-
-  // Handle dialog close
-  const handleClose = () => {
-    reset()
-    onOpenChange(false)
-  }
-
-  // Handle retry
-  const handleRetry = () => {
-    reset()
-  }
-
-  // Handle date range change
-  const handleRangeChange = (newStart: string, newEnd: string) => {
-    setWeekStart(newStart)
-    setWeekEnd(newEnd)
-  }
-
-  // Determine if we're showing the form or the status
-  const showForm = !status
-  const showStatus = !!status
-  const isCompleted = status?.status === 'completed'
-  const isFailed = status?.status === 'failed'
+  const state = useExportDialogState({
+    open,
+    defaultType,
+    defaultWeekStart,
+    defaultWeekEnd,
+    onOpenChange,
+  })
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={state.handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Download className="h-5 w-5" />
             Экспорт аналитики
           </DialogTitle>
-          <DialogDescription>
-            Выберите параметры экспорта для скачивания данных
-          </DialogDescription>
+          <DialogDescription>Выберите параметры экспорта для скачивания данных</DialogDescription>
         </DialogHeader>
 
         {/* Configuration Form */}
-        {showForm && (
-          <div className="space-y-5 py-4">
-            {/* Export Type */}
-            <div className="space-y-2">
-              <Label htmlFor="export-type">Тип данных</Label>
-              <Select value={type} onValueChange={(value) => setType(value as ExportType)}>
-                <SelectTrigger id="export-type">
-                  <SelectValue placeholder="Выберите тип данных" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(EXPORT_TYPE_LABELS).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Date Range */}
-            <div className="space-y-2">
-              <DateRangePicker
-                weekStart={weekStart}
-                weekEnd={weekEnd}
-                onRangeChange={handleRangeChange}
-                maxWeeks={52}
-                showQuickSelect={true}
-              />
-            </div>
-
-            {/* Format Selection */}
-            <div className="space-y-2">
-              <Label>Формат файла</Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant={format === 'xlsx' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFormat('xlsx')}
-                  className="flex-1 gap-2"
-                >
-                  <FileSpreadsheet className="h-4 w-4" />
-                  Excel (.xlsx)
-                </Button>
-                <Button
-                  type="button"
-                  variant={format === 'csv' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFormat('csv')}
-                  className="flex-1 gap-2"
-                >
-                  <FileText className="h-4 w-4" />
-                  CSV
-                </Button>
-              </div>
-            </div>
-
-            {/* Include COGS Checkbox */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="include-cogs"
-                checked={includeCogs}
-                onCheckedChange={(checked) => setIncludeCogs(checked === true)}
-              />
-              <Label
-                htmlFor="include-cogs"
-                className="text-sm font-normal cursor-pointer"
-              >
-                Включить данные COGS (себестоимость)
-              </Label>
-            </div>
-
-            {/* Error from creation */}
-            {createError && (
-              <div className="p-3 rounded-md bg-red-50 text-red-700 text-sm">
-                {createError.message || 'Ошибка при создании экспорта'}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Export Status Display */}
-        {showStatus && (
-          <ExportStatusDisplay
-            status={status}
-            onRetry={handleRetry}
+        {state.showForm && (
+          <ExportDialogForm
+            type={state.type}
+            onTypeChange={state.setType}
+            weekStart={state.weekStart}
+            weekEnd={state.weekEnd}
+            onRangeChange={state.handleRangeChange}
+            format={state.format}
+            onFormatChange={state.setFormat}
+            includeCogs={state.includeCogs}
+            onIncludeCogsChange={state.setIncludeCogs}
+            createError={state.createError}
           />
         )}
 
+        {/* Export Status Display */}
+        {state.status && <ExportStatusDisplay status={state.status} onRetry={state.handleRetry} />}
+
         {/* Footer Actions */}
         <DialogFooter>
-          {showForm && (
+          {state.showForm && (
             <>
-              <Button variant="outline" onClick={handleClose}>
+              <Button variant="outline" onClick={state.handleClose}>
                 Отмена
               </Button>
-              <Button
-                onClick={handleExport}
-                disabled={isCreating}
-                className="gap-2"
-              >
-                {isCreating ? (
+              <Button onClick={state.handleExport} disabled={state.isCreating} className="gap-2">
+                {state.isCreating ? (
                   <>Создание...</>
                 ) : (
                   <>
@@ -292,14 +125,10 @@ export function ExportDialog({
             </>
           )}
 
-          {isCompleted && (
-            <Button onClick={handleClose}>
-              Закрыть
-            </Button>
-          )}
+          {state.isCompleted && <Button onClick={state.handleClose}>Закрыть</Button>}
 
-          {isFailed && (
-            <Button variant="outline" onClick={handleClose}>
+          {state.isFailed && (
+            <Button variant="outline" onClick={state.handleClose}>
               Закрыть
             </Button>
           )}
