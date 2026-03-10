@@ -5,23 +5,29 @@
  *
  * Business Logic (Story 44.10):
  * - base_return = forward_logistics (same tariff per WB rules)
- * - effective_return = base_return × (100 - buyback_pct) / 100
+ * - effective_return = base_return x (100 - buyback_pct) / 100
  *
  * Example:
- * - Forward logistics: 72.50 ₽
+ * - Forward logistics: 72.50 rub
  * - Buyback: 98% (typical WB value)
  * - Return rate: 100 - 98 = 2%
- * - Effective return: 72.50 × 0.02 = 1.45 ₽
+ * - Effective return: 72.50 x 0.02 = 1.45 rub
  */
+
+// Re-export legacy and display functions from extracted module
+export {
+  getReturnLogisticsBreakdown,
+  formatReturnLogisticsTooltip,
+  isHighReturnRate,
+  getReturnRateColor,
+} from './return-logistics-legacy'
+export type { LegacyReturnLogisticsBreakdown } from './return-logistics-legacy'
 
 // ============================================================================
 // Local Currency Formatter (2 decimal places for consistency)
 // ============================================================================
 
-/**
- * Format currency with exactly 2 decimal places
- * Uses Russian locale formatting (e.g., "72,50 ₽")
- */
+/** Format currency with exactly 2 decimal places (Russian locale) */
 function formatCurrencyFixed(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
@@ -53,7 +59,7 @@ export interface ReturnLogisticsResult {
 }
 
 // ============================================================================
-// Legacy Types (Backward Compatibility)
+// Legacy Types (Backward Compatibility) - kept here for import chain
 // ============================================================================
 
 /** @deprecated Use new API - Input parameters for return logistics calculation */
@@ -70,25 +76,6 @@ export interface LegacyReturnLogisticsResult {
   returnLogisticsCost: number
 }
 
-/** @deprecated Use ReturnLogisticsBreakdown - Legacy breakdown interface */
-export interface LegacyReturnLogisticsBreakdown {
-  logisticsToCustomer: number
-  buybackRate: number
-  returnRate: number
-  returnLogisticsCost: number
-  formula: string
-}
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-/** Threshold for high return rate warning (%) */
-const HIGH_RETURN_RATE_THRESHOLD = 15
-
-/** Low return rate threshold for green color (%) */
-const LOW_RETURN_RATE_THRESHOLD = 5
-
 // ============================================================================
 // Core Calculation Functions
 // ============================================================================
@@ -104,10 +91,7 @@ function roundTo(value: number, decimals: number): number {
   return Math.round(value * factor) / factor
 }
 
-/**
- * Calculates return rate from buyback rate
- * return_rate = 100 - buyback_rate (clamped to 0-100)
- */
+/** Calculates return rate from buyback rate */
 export function calculateReturnRate(buybackRate: number): number {
   const clampedBuyback = clamp(buybackRate, 0, 100)
   return 100 - clampedBuyback
@@ -117,32 +101,20 @@ export function calculateReturnRate(buybackRate: number): number {
 // Story 44.10 TDD Functions
 // ============================================================================
 
-/**
- * Calculates base return logistics (equals forward logistics per WB rules)
- * Story 44.10: base_return = forward_logistics
- */
+/** Calculates base return logistics (equals forward logistics per WB rules) */
 export function calculateBaseReturnLogistics(forwardLogistics: number): number {
   return forwardLogistics < 0 ? 0 : forwardLogistics
 }
 
-/**
- * Calculates effective return after buyback percentage
- * Story 44.10: effective_return = base_return × (100 - buyback_pct) / 100
- */
-export function calculateEffectiveReturn(
-  baseReturn: number,
-  buybackPct: number
-): number {
+/** Calculates effective return after buyback percentage */
+export function calculateEffectiveReturn(baseReturn: number, buybackPct: number): number {
   if (baseReturn < 0) return 0
   const clampedBuyback = clamp(buybackPct, 0, 100)
   const returnRatePct = 100 - clampedBuyback
   return roundTo(baseReturn * (returnRatePct / 100), 2)
 }
 
-/**
- * Checks if manual value differs significantly from calculated value
- * Story 44.10: Default threshold is 50%
- */
+/** Checks if manual value differs significantly from calculated value */
 export function hasSignificantDifference(
   manualValue: number,
   calculatedValue: number,
@@ -156,10 +128,7 @@ export function hasSignificantDifference(
   return percentDiff > thresholdPct
 }
 
-/**
- * Main calculation function for return logistics (Story 44.10 TDD API)
- * Returns complete result with breakdown for display
- */
+/** Main calculation function for return logistics (Story 44.10 TDD API) */
 export function calculateReturnLogistics(
   forwardLogistics: number,
   buybackPct: number
@@ -187,10 +156,7 @@ export function calculateReturnLogistics(
 // Legacy API (Backward Compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use calculateReturnLogistics(forwardLogistics, buybackPct) instead
- * Legacy calculation function for return logistics cost
- */
+/** @deprecated Use calculateReturnLogistics(forwardLogistics, buybackPct) instead */
 export function calculateReturnLogisticsLegacy(
   params: ReturnLogisticsParams
 ): LegacyReturnLogisticsResult {
@@ -215,75 +181,4 @@ export function calculateReturnLogisticsLegacy(
     returnRate,
     returnLogisticsCost,
   }
-}
-
-// ============================================================================
-// Display Helper Functions
-// ============================================================================
-
-/**
- * @deprecated Use calculateReturnLogistics().breakdown instead
- * Returns detailed breakdown object for tooltip/display
- */
-export function getReturnLogisticsBreakdown(
-  logisticsToCustomer: number,
-  buybackRate: number
-): LegacyReturnLogisticsBreakdown {
-  const result = calculateReturnLogisticsLegacy({ logisticsToCustomer, buybackRate })
-
-  const formula = `${result.logisticsToCustomer} × ${result.returnRate}% = ${result.returnLogisticsCost}`
-
-  return {
-    logisticsToCustomer: result.logisticsToCustomer,
-    buybackRate: result.buybackRate,
-    returnRate: result.returnRate,
-    returnLogisticsCost: result.returnLogisticsCost,
-    formula,
-  }
-}
-
-/**
- * Formats tooltip text in Russian for return logistics display
- */
-export function formatReturnLogisticsTooltip(
-  logisticsToCustomer: number,
-  buybackRate: number,
-  returnCost: number
-): string {
-  const returnRate = calculateReturnRate(buybackRate)
-
-  return [
-    `Логистика к клиенту: ${logisticsToCustomer} ₽`,
-    `Процент выкупа: ${buybackRate}%`,
-    `Процент возврата: ${returnRate}%`,
-    `Логистика возврата: ${returnCost} ₽`,
-  ].join('\n')
-}
-
-// ============================================================================
-// Status Helper Functions
-// ============================================================================
-
-/**
- * Checks if return rate is considered high (warning threshold)
- * High = return rate > 15%
- */
-export function isHighReturnRate(returnRate: number): boolean {
-  return returnRate > HIGH_RETURN_RATE_THRESHOLD
-}
-
-/**
- * Returns Tailwind color class based on return rate
- * - Green: < 5% (excellent buyback)
- * - Yellow: 5-15% (normal)
- * - Red: > 15% (high returns, warning)
- */
-export function getReturnRateColor(returnRate: number): string {
-  if (returnRate < LOW_RETURN_RATE_THRESHOLD) {
-    return 'text-green-600'
-  }
-  if (returnRate <= HIGH_RETURN_RATE_THRESHOLD) {
-    return 'text-yellow-600'
-  }
-  return 'text-red-600'
 }

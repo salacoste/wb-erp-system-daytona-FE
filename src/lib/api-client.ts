@@ -8,6 +8,7 @@ import { env } from './env'
 import { useAuthStore } from '@/stores/authStore'
 import { ApiError, type ApiRequestOptions, type ApiResponse } from '@/types/api'
 import { TelegramMetrics } from './analytics/telegram-metrics'
+import { logCogsRawResponse, logCogsProcessedResponse } from './api-client-debug'
 
 /**
  * Centralized API Client class
@@ -34,10 +35,7 @@ class ApiClient {
   /**
    * Base request method with automatic header injection
    */
-  private async request<T>(
-    endpoint: string,
-    options: ApiRequestOptions = {},
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
     const { token, cabinetId } = useAuthStore.getState()
 
     const headers: Record<string, string> = {
@@ -90,63 +88,26 @@ class ApiClient {
 
         // Don't log expected 401 errors for missing WB API token (handled gracefully in UI)
         const isExpectedWbTokenError =
-          response.status === 401 &&
-          errorMessage.includes('WB API token')
+          response.status === 401 && errorMessage.includes('WB API token')
 
         if (!isExpectedWbTokenError) {
           console.error(
             `API Error [${response.status}]:`,
-            isJson ? JSON.stringify(errorData, null, 2) : errorData,
+            isJson ? JSON.stringify(errorData, null, 2) : errorData
           )
         }
 
-        throw new ApiError(
-          errorMessage,
-          response.status,
-          errorData,
-        )
+        throw new ApiError(errorMessage, response.status, errorData)
       }
 
       if (isJson) {
         const rawData: ApiResponse<T> = await response.json()
 
-        // DEBUG: Log raw response for COGS assignment endpoint
-        if (endpoint.includes('/products/') && endpoint.includes('/cogs')) {
-          console.group('🔍 [API Client DEBUG] COGS Assignment Response')
-          console.log('Endpoint:', endpoint)
-          console.log('Raw response:', JSON.stringify(rawData, null, 2))
-          console.log('Response structure:', {
-            hasDataField: 'data' in rawData,
-            dataFieldType: typeof (rawData as Record<string, unknown>).data,
-            directFields: Object.keys(rawData as Record<string, unknown>),
-          })
-          console.groupEnd()
-        }
+        logCogsRawResponse(endpoint, rawData)
 
         // Story 24: Support skipDataUnwrap option for complex responses
-        // Some endpoints return responses with 'data' field plus other fields (period, summary, pagination)
-        // Auto-unwrapping loses those fields. Use skipDataUnwrap: true to get full response.
-        const data = options.skipDataUnwrap
-          ? (rawData as T)
-          : ((rawData.data ?? rawData) as T)
-
-        // DEBUG: Log processed data for COGS assignment
-        if (endpoint.includes('/products/') && endpoint.includes('/cogs')) {
-          console.group('🔍 [API Client DEBUG] Processed COGS Response')
-          console.log('Processed data:', JSON.stringify(data, null, 2))
-          if (typeof data === 'object' && data !== null) {
-            const productData = data as Record<string, unknown>
-            console.log('Key fields:', {
-              nm_id: productData.nm_id,
-              has_cogs: productData.has_cogs,
-              current_margin_pct: productData.current_margin_pct,
-              current_margin_pct_type: typeof productData.current_margin_pct,
-              missing_data_reason: productData.missing_data_reason,
-              cogs: productData.cogs,
-            })
-          }
-          console.groupEnd()
-        }
+        const data = options.skipDataUnwrap ? (rawData as T) : ((rawData.data ?? rawData) as T)
+        logCogsProcessedResponse(endpoint, data)
 
         return data
       }
@@ -157,8 +118,7 @@ class ApiClient {
         throw error
       }
 
-      const errorMessage =
-        error instanceof Error ? error.message : 'Network error occurred'
+      const errorMessage = error instanceof Error ? error.message : 'Network error occurred'
 
       // Track Telegram notification network errors (Epic 34-FE)
       if (endpoint.includes('/notifications/')) {
@@ -175,11 +135,7 @@ class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'GET' })
   }
 
-  async post<T>(
-    endpoint: string,
-    data?: unknown,
-    options?: ApiRequestOptions,
-  ): Promise<T> {
+  async post<T>(endpoint: string, data?: unknown, options?: ApiRequestOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
@@ -187,11 +143,7 @@ class ApiClient {
     })
   }
 
-  async put<T>(
-    endpoint: string,
-    data?: unknown,
-    options?: ApiRequestOptions,
-  ): Promise<T> {
+  async put<T>(endpoint: string, data?: unknown, options?: ApiRequestOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
@@ -199,11 +151,7 @@ class ApiClient {
     })
   }
 
-  async patch<T>(
-    endpoint: string,
-    data?: unknown,
-    options?: ApiRequestOptions,
-  ): Promise<T> {
+  async patch<T>(endpoint: string, data?: unknown, options?: ApiRequestOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PATCH',
@@ -217,4 +165,3 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient()
-

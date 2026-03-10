@@ -2,13 +2,18 @@
  * Products API module for Price Calculator
  * Story 44.26a-FE: Product Search & Delivery Date Selection
  * Backend: Epic 45 - Products Dimensions & Category API
+ *
+ * Raw types and normalization: see products-normalizer.ts
  */
 
 import { apiClient } from '@/lib/api-client'
-import type {
-  ProductsWithDimensionsResponse,
-  ProductWithDimensions,
-} from '@/types/product'
+import type { ProductsWithDimensionsResponse, ProductWithDimensions } from '@/types/product'
+import {
+  normalizeProduct,
+  type RawProduct,
+  type RawProductList,
+  type RawProductsResponse,
+} from './products-normalizer'
 
 // ============================================================================
 // Query Parameters
@@ -27,98 +32,6 @@ export interface ProductsWithDimensionsParams {
 // API Functions
 // ============================================================================
 
-/** Raw pagination from API */
-interface RawPagination {
-  next_cursor: string | null
-  has_more: boolean
-  count: number
-  total: number
-}
-
-/** Raw API response containing products array */
-interface RawProductList {
-  products: RawProduct[]
-  pagination: RawPagination
-}
-
-/** Raw API response type that may have nested data field */
-interface RawProductsResponse {
-  data?: RawProductList
-  products?: RawProduct[]
-  pagination?: RawPagination
-}
-
-/**
- * Raw product from backend API - may have different field names
- * Backend uses snake_case (nm_id) but some fields may vary
- */
-interface RawProduct {
-  // Core fields (guaranteed)
-  nm_id?: string
-  nmId?: string // Alternative naming
-  sa_name?: string
-  saName?: string // Alternative naming
-  vendor_code?: string
-  vendorCode?: string // Alternative naming
-  brand?: string
-  photo_url?: string
-  photoUrl?: string // Alternative naming
-  has_cogs?: boolean
-  hasCogs?: boolean // Alternative naming
-  cogs?: { unit_cost_rub: number; valid_from: string }
-  // Dimensions (Epic 45) - may be null even when product exists in WB
-  dimensions?: {
-    length_mm: number
-    width_mm: number
-    height_mm: number
-    volume_liters: number
-  } | null
-  // Category hierarchy (Epic 45) - may be null
-  category_hierarchy?: {
-    subject_id: number
-    subject_name: string
-    parent_id: number | null
-    parent_name: string | null
-  } | null
-  // Allow additional fields
-  [key: string]: unknown
-}
-
-/**
- * Normalize product from backend API to consistent frontend format
- * Handles both snake_case and camelCase field names
- */
-function normalizeProduct(raw: RawProduct): ProductWithDimensions {
-  // Handle nm_id (backend uses snake_case, but may have camelCase)
-  const nmId = String(raw.nm_id ?? raw.nmId ?? '')
-
-  // Handle sa_name (product name)
-  const saName = raw.sa_name ?? raw.saName ?? ''
-
-  // Handle vendor_code
-  const vendorCode = raw.vendor_code ?? raw.vendorCode ?? ''
-
-  // Handle photo_url
-  const photoUrl = raw.photo_url ?? raw.photoUrl
-
-  // Handle has_cogs
-  const hasCogs = raw.has_cogs ?? raw.hasCogs ?? false
-
-  return {
-    nm_id: nmId,
-    vendor_code: vendorCode,
-    sa_name: saName,
-    brand: raw.brand,
-    photo_url: photoUrl,
-    has_cogs: hasCogs,
-    cogs: raw.cogs,
-    // Dimensions - keep as-is (already in correct format or null)
-    dimensions: raw.dimensions ?? null,
-    // Category hierarchy - keep as-is (already in correct format or null)
-    category_hierarchy: raw.category_hierarchy ?? null,
-  }
-}
-
 /**
  * Fetch products with dimensions for Price Calculator product selection
  * Backend: GET /v1/products?include_dimensions=true
@@ -131,7 +44,7 @@ function normalizeProduct(raw: RawProduct): ProductWithDimensions {
  * - Wrapped: { data: { products: [...], pagination: {...} } }
  */
 export async function getProductsWithDimensions(
-  params: ProductsWithDimensionsParams = {},
+  params: ProductsWithDimensionsParams = {}
 ): Promise<ProductsWithDimensionsResponse> {
   const queryParams = new URLSearchParams()
 
@@ -152,7 +65,7 @@ export async function getProductsWithDimensions(
 
   const rawResponse = await apiClient.get<RawProductsResponse>(
     `/v1/products?${queryParams.toString()}`,
-    { skipDataUnwrap: true },
+    { skipDataUnwrap: true }
   )
 
   // DEBUG: Log raw API response to diagnose dimensions/category issue
@@ -209,11 +122,9 @@ export async function getProductsWithDimensions(
  * Get single product with dimensions by nm_id
  * Backend: GET /v1/products/:nmId?include_dimensions=true
  */
-export async function getProductWithDimensions(
-  nmId: string,
-): Promise<ProductWithDimensions> {
+export async function getProductWithDimensions(nmId: string): Promise<ProductWithDimensions> {
   const rawResponse = await apiClient.get<RawProduct>(
-    `/v1/products/${nmId}?include_dimensions=true`,
+    `/v1/products/${nmId}?include_dimensions=true`
   )
 
   // DEBUG: Log raw product response

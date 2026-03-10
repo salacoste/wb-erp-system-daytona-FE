@@ -3,7 +3,8 @@
  * Story 53.1-FE: TypeScript Types & API Client for Supplies
  * Epic 53-FE: Supply Management UI
  *
- * API functions for supplies list, details, orders, and document operations.
+ * API functions for supplies list, details, and order management.
+ * Document/sync operations: see supplies-documents.ts
  */
 
 import { apiClient } from '../api-client'
@@ -18,12 +19,10 @@ import type {
   RemoveOrdersRequest,
   RemoveOrdersResponse,
   CloseSupplyResponse,
-  GenerateStickersRequest,
-  GenerateStickersResponse,
-  SyncSuppliesResponse,
-  StickerFormat,
-  DocumentType,
 } from '@/types/supplies'
+
+// Barrel re-exports from extracted module (document/sync operations)
+export { generateStickers, downloadDocument, syncSupplies } from './supplies-documents'
 
 // =============================================================================
 // Query Keys Factory
@@ -170,68 +169,6 @@ export async function closeSupply(supplyId: string): Promise<CloseSupplyResponse
   const response = await apiClient.post<CloseSupplyResponse>(`/v1/supplies/${supplyId}/close`, {})
 
   console.info('[Supplies API] Supply closed:', response.closedAt)
-
-  return response
-}
-
-// =============================================================================
-// Document Operations
-// =============================================================================
-
-/**
- * Generate stickers for supply
- * POST /v1/supplies/:id/stickers
- */
-export async function generateStickers(
-  supplyId: string,
-  format: StickerFormat = 'png'
-): Promise<GenerateStickersResponse> {
-  console.info('[Supplies API] Generating stickers:', { supplyId, format })
-
-  const response = await apiClient.post<GenerateStickersResponse>(
-    `/v1/supplies/${supplyId}/stickers`,
-    { format } as GenerateStickersRequest
-  )
-
-  console.info('[Supplies API] Stickers generated:', response.document?.type)
-
-  return response
-}
-
-/**
- * Download document (returns blob)
- * GET /v1/supplies/:id/documents/:type
- */
-export async function downloadDocument(supplyId: string, docType: DocumentType): Promise<Blob> {
-  console.info('[Supplies API] Downloading document:', { supplyId, docType })
-
-  const response = await apiClient.get<Blob>(`/v1/supplies/${supplyId}/documents/${docType}`, {
-    skipDataUnwrap: true,
-  })
-
-  console.info('[Supplies API] Document downloaded')
-
-  return response
-}
-
-// =============================================================================
-// Sync Operations
-// =============================================================================
-
-/**
- * Trigger manual sync with WB
- * POST /v1/supplies/sync
- * Rate limited: 1 request per 5 minutes
- */
-export async function syncSupplies(): Promise<SyncSuppliesResponse> {
-  console.info('[Supplies API] Syncing supplies with WB')
-
-  const response = await apiClient.post<SyncSuppliesResponse>('/v1/supplies/sync', {})
-
-  console.info('[Supplies API] Sync completed:', {
-    syncedCount: response.syncedCount,
-    statusChanges: response.statusChanges?.length ?? 0,
-  })
 
   return response
 }

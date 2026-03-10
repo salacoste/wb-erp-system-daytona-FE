@@ -23,7 +23,6 @@ import {
   setISOWeek,
   setISOWeekYear,
 } from 'date-fns'
-import { ru } from 'date-fns/locale'
 
 /** Period type for week/month toggle */
 export type PeriodType = 'week' | 'month'
@@ -34,12 +33,18 @@ const WEEK_REGEX = /^(\d{4})-W(\d{2})$/
 /** Regex pattern for month format YYYY-MM */
 const MONTH_REGEX = /^(\d{4})-(\d{2})$/
 
-/**
- * Parse ISO week string to Date (Monday of that week)
- * @param week - Week in "YYYY-Www" format (e.g., "2026-W05")
- * @returns Date object for Monday of that week
- * @throws Error if invalid format
- */
+// Re-export formatting and validation from extracted module
+export {
+  isCurrentWeek,
+  formatWeekLabel,
+  isCurrentMonth,
+  formatMonthLabel,
+  formatPeriodDisplay,
+  isValidWeekFormat,
+  isValidMonthFormat,
+} from './period-helpers-format'
+
+/** Parse ISO week string to Date (Monday of that week) */
 export function parseWeek(week: string): Date {
   const match = week.match(WEEK_REGEX)
   if (!match) {
@@ -59,12 +64,7 @@ export function parseWeek(week: string): Date {
   return startOfISOWeek(date)
 }
 
-/**
- * Parse month string to Date (first day of that month)
- * @param month - Month in "YYYY-MM" format (e.g., "2026-01")
- * @returns Date object for first day of that month
- * @throws Error if invalid format
- */
+/** Parse month string to Date (first day of that month) */
 export function parseMonth(month: string): Date {
   const match = month.match(MONTH_REGEX)
   if (!match) {
@@ -161,57 +161,4 @@ export function getWeeksInMonth(month: string): string[] {
       return `${year}-W${weekNum.toString().padStart(2, '0')}`
     })
     .filter(week => getMonthFromWeek(week) === month)
-}
-
-/** Check if a week is the current (incomplete) week */
-export function isCurrentWeek(week: string): boolean {
-  return week === getCurrentWeek()
-}
-
-/** Format week for display with Russian locale */
-export function formatWeekLabel(week: string): string {
-  const match = week.match(WEEK_REGEX)
-  if (!match) throw new Error(`Invalid week format: ${week}`)
-
-  const [, yearStr, weekStr] = match
-  const weekNum = parseInt(weekStr, 10)
-  const start = getWeekStartDate(week)
-  const end = getWeekEndDate(week)
-
-  const startStr = format(start, 'd MMM', { locale: ru })
-  const endStr = format(end, 'd MMM', { locale: ru })
-
-  // Mark current (incomplete) week with indicator
-  const currentIndicator = isCurrentWeek(week) ? ' ⏳' : ''
-  return `Неделя ${weekNum}, ${yearStr} (${startStr} — ${endStr})${currentIndicator}`
-}
-
-/** Check if a month is the current (incomplete) month */
-export function isCurrentMonth(month: string): boolean {
-  return month === getCurrentMonth()
-}
-
-/** Format month for display with Russian locale */
-export function formatMonthLabel(month: string): string {
-  const date = parseMonth(month)
-  const formatted = format(date, 'LLLL yyyy', { locale: ru })
-  const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1)
-  // Mark current (incomplete) month with indicator
-  const currentIndicator = isCurrentMonth(month) ? ' ⏳' : ''
-  return `${capitalized}${currentIndicator}`
-}
-
-/** Format period for display based on type */
-export function formatPeriodDisplay(period: string, type: PeriodType): string {
-  return type === 'week' ? formatWeekLabel(period) : formatMonthLabel(period)
-}
-
-/** Validate week format */
-export function isValidWeekFormat(week: string): boolean {
-  return WEEK_REGEX.test(week)
-}
-
-/** Validate month format */
-export function isValidMonthFormat(month: string): boolean {
-  return MONTH_REGEX.test(month)
 }

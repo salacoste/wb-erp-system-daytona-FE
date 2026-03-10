@@ -16,84 +16,12 @@ import { ru } from 'date-fns/locale'
 import type { Warehouse, WarehouseTariffs } from '@/types/warehouse'
 import type { AcceptanceCoefficient } from '@/types/tariffs'
 
-// ============================================================================
-// Types
-// ============================================================================
+// Re-export types and constants from extracted module
+export type { TariffSystem, SupplyDateTariffs, ExtractedTariffs } from './tariff-system-types'
+export { DEFAULT_TARIFFS, SUPPLY_WINDOW_DAYS } from './tariff-system-types'
 
-/** Tariff system type - determines data source */
-export type TariffSystem = 'inventory' | 'supply'
-
-/** Supply date tariffs - full tariff data from SUPPLY system per date */
-export interface SupplyDateTariffs {
-  date: string
-  warehouseId: number
-  warehouseName: string
-  /** -1 = unavailable, 0 = free, ≥1 = multiplier */
-  coefficient: number
-  isAvailable: boolean
-  allowUnload: boolean
-  boxTypeId: number
-  boxTypeName: string
-  delivery: {
-    coefficient: number
-    baseLiterRub: number
-    additionalLiterRub: number
-  }
-  storage: {
-    coefficient: number
-    baseLiterRub: number
-    additionalLiterRub: number
-  }
-  isSortingCenter: boolean
-}
-
-/** Extracted tariffs from either system, normalized for calculation */
-export interface ExtractedTariffs {
-  deliveryBaseLiterRub: number
-  deliveryPerLiterRub: number
-  storageBaseLiterRub: number
-  storagePerLiterRub: number
-  /**
-   * Logistics coefficient for CALCULATION (always 1.0 for SUPPLY since rates are pre-multiplied)
-   * @see docs/request-backend/108-two-tariff-systems-guide.md
-   */
-  logisticsCoefficient: number
-  /**
-   * Storage coefficient for CALCULATION (always 1.0 for SUPPLY since rates are pre-multiplied)
-   */
-  storageCoefficient: number
-  /**
-   * Logistics coefficient for DISPLAY purposes (original from API)
-   * Use this when showing coefficient to user, not for calculations
-   */
-  displayLogisticsCoefficient: number
-  /**
-   * Storage coefficient for DISPLAY purposes (original from API)
-   */
-  displayStorageCoefficient: number
-  source: TariffSystem
-  isAvailable?: boolean
-}
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-/** Default tariffs when no data available */
-export const DEFAULT_TARIFFS: ExtractedTariffs = {
-  deliveryBaseLiterRub: 46.0,
-  deliveryPerLiterRub: 14.0,
-  storageBaseLiterRub: 0.07,
-  storagePerLiterRub: 0.05,
-  logisticsCoefficient: 1.0,
-  storageCoefficient: 1.0,
-  displayLogisticsCoefficient: 1.0,
-  displayStorageCoefficient: 1.0,
-  source: 'inventory',
-}
-
-/** SUPPLY system covers 14 days ahead */
-const SUPPLY_WINDOW_DAYS = 14
+import type { TariffSystem, SupplyDateTariffs, ExtractedTariffs } from './tariff-system-types'
+import { DEFAULT_TARIFFS, SUPPLY_WINDOW_DAYS } from './tariff-system-types'
 
 // ============================================================================
 // Core Functions
@@ -108,57 +36,35 @@ const SUPPLY_WINDOW_DAYS = 14
 export function determineTariffSystem(deliveryDate: string | null): TariffSystem {
   if (!deliveryDate) return 'inventory'
 
-  // Use parseISO for consistent date parsing (treats YYYY-MM-DD as local date)
   const today = new Date()
   const delivery = parseISO(deliveryDate)
   const diffDays = differenceInCalendarDays(delivery, today)
 
-  // Past or today: use INVENTORY (actual costs)
   if (diffDays <= 0) return 'inventory'
-
-  // 1-14 days ahead: use SUPPLY (planning rates)
   if (diffDays >= 1 && diffDays <= SUPPLY_WINDOW_DAYS) return 'supply'
-
-  // Beyond 14 days: SUPPLY doesn't cover, fallback to INVENTORY
   return 'inventory'
 }
 
 /**
  * Check if date is within SUPPLY system's 14-day window.
- *
- * @param date - Date string (ISO YYYY-MM-DD)
- * @returns true if date is 1-14 days from today (Europe/Moscow timezone)
  */
 export function isDateInSupplyWindow(date: string): boolean {
-  // Use parseISO for consistent date parsing (treats YYYY-MM-DD as local date)
   const today = new Date()
   const targetDate = parseISO(date)
   const diffDays = differenceInCalendarDays(targetDate, today)
-
   return diffDays >= 1 && diffDays <= SUPPLY_WINDOW_DAYS
 }
 
 /**
  * Extract normalized tariffs from either INVENTORY or SUPPLY system.
- *
- * @param system - Target tariff system
- * @param inventoryWarehouse - Warehouse with INVENTORY tariffs (may be null)
- * @param supplyTariffs - SUPPLY tariffs for specific date (may be null)
- * @returns Normalized tariffs for calculation
  */
 export function extractTariffs(
   system: TariffSystem,
   inventoryWarehouse: Warehouse | null,
   supplyTariffs: SupplyDateTariffs | null
 ): ExtractedTariffs {
-  // SUPPLY system requested
   if (system === 'supply') {
-    // Check if SUPPLY data is available and warehouse is accepting
     if (supplyTariffs && supplyTariffs.isAvailable && supplyTariffs.coefficient !== -1) {
-      // CRITICAL: SUPPLY API returns rates ALREADY multiplied by coefficient!
-      // Example: base=46₽, coefficient=1.65 → API returns baseLiterRub=75.9 (46×1.65)
-      // So we use coefficient=1.0 for calculations to avoid double multiplication
-      // @see docs/request-backend/108-two-tariff-systems-guide.md
       console.info('[extractTariffs] SUPPLY system: using coefficient=1.0 for calculation', {
         deliveryBase: supplyTariffs.delivery.baseLiterRub,
         originalCoeff: supplyTariffs.delivery.coefficient,
@@ -169,10 +75,8 @@ export function extractTariffs(
         deliveryPerLiterRub: supplyTariffs.delivery.additionalLiterRub,
         storageBaseLiterRub: supplyTariffs.storage.baseLiterRub,
         storagePerLiterRub: supplyTariffs.storage.additionalLiterRub,
-        // Calculation coefficients = 1.0 (rates are pre-multiplied)
         logisticsCoefficient: 1.0,
         storageCoefficient: 1.0,
-        // Display coefficients = original values for UI
         displayLogisticsCoefficient: supplyTariffs.delivery.coefficient,
         displayStorageCoefficient: supplyTariffs.storage.coefficient,
         source: 'supply',
@@ -180,29 +84,22 @@ export function extractTariffs(
       }
     }
 
-    // SUPPLY unavailable (coeff=-1): indicate unavailability, fallback to INVENTORY
     if (supplyTariffs && supplyTariffs.coefficient === -1) {
       const inventory = extractFromInventory(inventoryWarehouse)
-      return {
-        ...inventory,
-        isAvailable: false,
-      }
+      return { ...inventory, isAvailable: false }
     }
 
-    // SUPPLY data null: fallback to INVENTORY
-    console.warn('[extractTariffs] SUPPLY requested but supplyTariffs is null, falling back to INVENTORY')
+    console.warn(
+      '[extractTariffs] SUPPLY requested but supplyTariffs is null, falling back to INVENTORY'
+    )
     return extractFromInventory(inventoryWarehouse)
   }
 
-  // INVENTORY system requested
   console.info('[extractTariffs] INVENTORY system requested')
   return extractFromInventory(inventoryWarehouse)
 }
 
-/**
- * Extract tariffs from INVENTORY warehouse data.
- * INVENTORY rates are RAW (not pre-multiplied), so coefficient IS applied in calculations
- */
+/** Extract tariffs from INVENTORY warehouse data. */
 function extractFromInventory(warehouse: Warehouse | null): ExtractedTariffs {
   if (!warehouse?.tariffs) {
     return { ...DEFAULT_TARIFFS }
@@ -217,10 +114,8 @@ function extractFromInventory(warehouse: Warehouse | null): ExtractedTariffs {
     deliveryPerLiterRub: tariffs.deliveryPerLiterRub,
     storageBaseLiterRub: tariffs.storageBaseLiterRub,
     storagePerLiterRub: tariffs.storagePerLiterRub,
-    // INVENTORY rates are RAW - apply coefficient in calculations
     logisticsCoefficient: logisticsCoeff,
     storageCoefficient: storageCoeff,
-    // Display coefficients same as calculation coefficients for INVENTORY
     displayLogisticsCoefficient: logisticsCoeff,
     displayStorageCoefficient: storageCoeff,
     source: 'inventory',
@@ -231,51 +126,30 @@ function extractFromInventory(warehouse: Warehouse | null): ExtractedTariffs {
 // UI Helper Functions
 // ============================================================================
 
-/**
- * Get human-readable label for tariff system.
- *
- * @param system - Active tariff system
- * @param date - Delivery date (for SUPPLY system display)
- * @returns Localized label string
- */
+/** Get human-readable label for tariff system. */
 export function getTariffSystemLabel(system: TariffSystem, date: string | null): string {
   if (system === 'inventory') {
     return 'Текущие тарифы (Остатки)'
   }
-
   if (date) {
     const formattedDate = format(new Date(date), 'd MMM', { locale: ru })
     return `Тарифы на ${formattedDate}`
   }
-
   return 'Тарифы на дату поставки'
 }
 
-/**
- * Get badge variant for tariff system indicator.
- *
- * @param system - Active tariff system
- * @returns Badge variant: 'secondary' (gray) for inventory, 'default' (blue) for supply
- */
+/** Get badge variant for tariff system indicator. */
 export function getTariffSystemBadgeVariant(system: TariffSystem): 'secondary' | 'default' {
   return system === 'inventory' ? 'secondary' : 'default'
 }
 
-/**
- * Find SUPPLY tariffs for a specific warehouse and date.
- *
- * @param coefficients - Array of acceptance coefficients from SUPPLY API
- * @param warehouseId - Target warehouse ID
- * @param date - Target date (ISO YYYY-MM-DD)
- * @returns SupplyDateTariffs or null if not found
- */
+/** Find SUPPLY tariffs for a specific warehouse and date. */
 export function findSupplyTariffsForDate(
   coefficients: AcceptanceCoefficient[],
   warehouseId: number,
   date: string
 ): SupplyDateTariffs | null {
   const found = coefficients.find(c => c.warehouseId === warehouseId && c.date === date)
-
   if (!found) return null
 
   return {

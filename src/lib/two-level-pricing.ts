@@ -9,155 +9,15 @@
  * Reference: PRICE-CALCULATOR-REQUIREMENTS.md Section 5, Section 8
  */
 
-import type {
-  TwoLevelPricingFormData,
-  TwoLevelPricingResult,
-  TwoLevelFixedCosts,
-  TwoLevelPercentageCosts,
-  TwoLevelVariableCosts,
-  TwoLevelMargin,
-  PriceGap,
-} from '@/types/price-calculator'
+import type { TwoLevelPricingFormData, TwoLevelPricingResult } from '@/types/price-calculator'
 
-/**
- * Calculate fixed costs from form data
- * Fixed costs don't depend on selling price
- * Story 44.51: Added packaging and logistics to marketplace (divided by units_per_package)
- */
-function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevelFixedCosts {
-  const returnRate = (100 - formData.buyback_pct) / 100
-  const logisticsReverseEffective = formData.logistics_reverse_rub * returnRate
-
-  // Storage and acceptance only apply to FBO
-  const storage = formData.fulfillment_type === 'FBO' ? formData.storage_rub : 0
-  const acceptance = formData.fulfillment_type === 'FBO' ? (formData.acceptance_cost ?? 0) : 0
-
-  // Story 44.51: Packaging and logistics to MP - per box/pallet costs divided by units
-  const unitsPerPackage = Math.max(formData.units_per_package ?? 1, 1)
-  const packaging = (formData.packaging_rub ?? 0) / unitsPerPackage
-  const logisticsToMp = (formData.logistics_to_mp_rub ?? 0) / unitsPerPackage
-
-  const total =
-    formData.cogs_rub +
-    formData.logistics_forward_rub +
-    logisticsReverseEffective +
-    storage +
-    acceptance +
-    packaging +
-    logisticsToMp
-
-  return {
-    cogs: formData.cogs_rub,
-    logisticsForward: formData.logistics_forward_rub,
-    logisticsReverseEffective,
-    storage,
-    acceptance,
-    packaging,
-    logisticsToMp,
-    total,
-  }
-}
-
-/**
- * Calculate percentage costs based on recommended price
- * Story 44.XX: Added VAT support
- */
-function calculatePercentageCosts(
-  recommendedPrice: number,
-  commissionPct: number,
-  acquiringPct: number,
-  taxRatePct: number,
-  taxType: 'income' | 'profit',
-  isVatPayer: boolean,
-  vatPct: number
-): TwoLevelPercentageCosts {
-  const commissionRate = commissionPct / 100
-  const acquiringRate = acquiringPct / 100
-  const taxRate = taxType === 'income' ? taxRatePct / 100 : 0
-  const vatRate = isVatPayer ? vatPct / 100 : 0
-
-  const commissionWb = {
-    pct: commissionPct,
-    rub: recommendedPrice * commissionRate,
-  }
-
-  const acquiring = {
-    pct: acquiringPct,
-    rub: recommendedPrice * acquiringRate,
-  }
-
-  const taxIncome =
-    taxType === 'income'
-      ? { pct: taxRatePct, rub: recommendedPrice * taxRate }
-      : null
-
-  // Story 44.XX: VAT calculation (only if payer)
-  const vat = isVatPayer
-    ? { pct: vatPct, rub: recommendedPrice * vatRate }
-    : null
-
-  const totalPct = commissionPct + acquiringPct +
-    (taxType === 'income' ? taxRatePct : 0) +
-    (isVatPayer ? vatPct : 0)
-  const totalRub = commissionWb.rub + acquiring.rub + (taxIncome?.rub ?? 0) + (vat?.rub ?? 0)
-
-  return {
-    commissionWb,
-    acquiring,
-    taxIncome,
-    vat,
-    total: { pct: totalPct, rub: totalRub },
-  }
-}
-
-/**
- * Calculate variable costs (DRR) based on recommended price
- */
-function calculateVariableCosts(
-  recommendedPrice: number,
-  drrPct: number
-): TwoLevelVariableCosts {
-  const drrRate = drrPct / 100
-  const drr = { pct: drrPct, rub: recommendedPrice * drrRate }
-
-  return {
-    drr,
-    total: { pct: drrPct, rub: drr.rub },
-  }
-}
-
-/**
- * Calculate margin information
- */
-function calculateMargin(
-  recommendedPrice: number,
-  targetMarginPct: number,
-  taxRatePct: number,
-  taxType: 'income' | 'profit'
-): TwoLevelMargin {
-  const marginRate = targetMarginPct / 100
-  const grossMargin = recommendedPrice * marginRate
-
-  // For profit tax, calculate net margin after tax
-  const afterTax =
-    taxType === 'profit' ? grossMargin * (1 - taxRatePct / 100) : null
-
-  return {
-    pct: targetMarginPct,
-    rub: grossMargin,
-    afterTax,
-  }
-}
-
-/**
- * Calculate price gap between recommended and minimum prices
- */
-function calculatePriceGap(minimumPrice: number, recommendedPrice: number): PriceGap {
-  const gapRub = recommendedPrice - minimumPrice
-  const gapPct = minimumPrice > 0 ? (gapRub / minimumPrice) * 100 : 0
-
-  return { rub: gapRub, pct: gapPct }
-}
+import {
+  calculateFixedCosts,
+  calculatePercentageCosts,
+  calculateVariableCosts,
+  calculateMargin,
+  calculatePriceGap,
+} from './two-level-pricing-helpers'
 
 /**
  * Calculate two-level pricing from form data
@@ -205,13 +65,10 @@ export function calculateTwoLevelPricing(
   const vatRate = isVatPayer ? vatPct / 100 : 0
 
   // Step 3: LEVEL 1 - Minimum price (no margin, no DRR)
-  // Formula: minimum_price = fixed_costs / (1 - min_pct_rate)
-  // Note: VAT is included because WB commission is calculated on price WITH VAT
   const minPctRate = commissionRate + acquiringRate + taxRate + vatRate
   const minimumPrice = minPctRate < 1 ? fixedCosts.total / (1 - minPctRate) : 0
 
   // Step 4: LEVEL 2 - Recommended price (with margin and DRR)
-  // Formula: recommended_price = fixed_costs / (1 - total_pct_rate)
   const totalPctRate = minPctRate + drrRate + marginRate
   const recommendedPrice = totalPctRate < 1 ? fixedCosts.total / (1 - totalPctRate) : 0
 
@@ -265,25 +122,19 @@ export function getPriceGapColor(gapPct: number): string {
   return 'text-red-600'
 }
 
-/**
- * Get price gap background color for badges
- */
+/** Get price gap background color for badges */
 export function getPriceGapBgColor(gapPct: number): string {
   if (gapPct > 20) return 'bg-green-50 dark:bg-green-950'
   if (gapPct > 10) return 'bg-yellow-50 dark:bg-yellow-950'
   return 'bg-red-50 dark:bg-red-950'
 }
 
-/**
- * Check if margin is tight (risk warning threshold)
- */
+/** Check if margin is tight (risk warning threshold) */
 export function isTightMargin(gapPct: number): boolean {
   return gapPct < 10
 }
 
-/**
- * Calculate cost item as percentage of recommended price
- */
+/** Calculate cost item as percentage of recommended price */
 export function calculateCostPercentage(cost: number, price: number): number {
   if (price <= 0) return 0
   return (cost / price) * 100

@@ -56,6 +56,13 @@ export const ROUTES = {
     ROOT: '/supplies',
     DETAIL: '/supplies/[id]', // Dynamic route - use buildSupplyDetailRoute helper
   },
+  // Epic 75-FE: Shipment Cost Allocation
+  SHIPMENTS: {
+    ROOT: '/shipments',
+    BOX_TYPES: '/shipments/box-types',
+    SKU_PACKAGING: '/shipments/sku-packaging',
+  },
+
   // Epic 68-FE: Monitoring Health Dashboard
   MONITORING: '/monitoring',
 
@@ -76,6 +83,7 @@ export type RoutePath =
   | (typeof ROUTES.COGS)[keyof typeof ROUTES.COGS]
   | (typeof ROUTES.ANALYTICS)[keyof typeof ROUTES.ANALYTICS]
   | (typeof ROUTES.ORDERS)[keyof typeof ROUTES.ORDERS]
+  | (typeof ROUTES.SHIPMENTS)[keyof typeof ROUTES.SHIPMENTS]
   | (typeof ROUTES.SUPPLIES)[keyof typeof ROUTES.SUPPLIES]
   | (typeof ROUTES.SETTINGS)[keyof typeof ROUTES.SETTINGS]
   | string
@@ -109,6 +117,9 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard
+    ROUTES.SHIPMENTS.ROOT, // Epic 75-FE: Shipment Cost Allocation
+    ROUTES.SHIPMENTS.BOX_TYPES,
+    ROUTES.SHIPMENTS.SKU_PACKAGING,
     ROUTES.SUPPLIES.ROOT, // Epic 53-FE: Supply Management
     ROUTES.SETTINGS.ROOT,
     ROUTES.SETTINGS.CABINET, // Seller info + Jam subscription
