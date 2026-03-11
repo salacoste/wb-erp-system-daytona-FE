@@ -111,13 +111,12 @@ describe('useSkuPackagingByNmId', () => {
     expect(getSkuPackagingByNmId).toHaveBeenCalledWith(123456789)
   })
 
-  it('is enabled even for nmId=0 (!= null check)', async () => {
-    vi.mocked(getSkuPackagingByNmId).mockResolvedValueOnce(mockSkuPackaging[0])
+  it('is disabled for nmId=0 (guard against invalid IDs)', () => {
     const { result } = renderHook(() => useSkuPackagingByNmId(0), {
       wrapper: createQueryWrapper(queryClient),
     })
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(getSkuPackagingByNmId).toHaveBeenCalledWith(0)
+    expect(result.current.fetchStatus).toBe('idle')
+    expect(getSkuPackagingByNmId).not.toHaveBeenCalled()
   })
 })
 
