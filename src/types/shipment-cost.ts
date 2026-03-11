@@ -177,6 +177,31 @@ export interface ShipmentListResponse {
 }
 
 // ──────────────────────────────────────────────────────────────────
+// Shipment Requests & Params (Story 76.1)
+// ──────────────────────────────────────────────────────────────────
+
+export interface ShipmentCreateRequest {
+  name: string
+  deliveryMode: DeliveryMode
+  totalDeliveryCost?: number
+  palletRate?: number
+  createdBy: string
+}
+
+export interface ShipmentUpdateRequest {
+  name?: string
+  deliveryMode?: DeliveryMode
+  totalDeliveryCost?: number | null
+  palletRate?: number | null
+}
+
+export interface ShipmentListParams {
+  status?: ShipmentStatus
+  page?: number
+  limit?: number
+}
+
+// ──────────────────────────────────────────────────────────────────
 // Validation & Calculation
 // ──────────────────────────────────────────────────────────────────
 

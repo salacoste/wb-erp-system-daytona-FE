@@ -1,6 +1,6 @@
 /**
  * Shipment Cost Allocation API barrel
- * Re-exports box-types and sku-packaging API functions
+ * Re-exports box-types, sku-packaging, and shipments API functions
  */
 
 export {
@@ -18,3 +18,11 @@ export {
   bulkCreateSkuPackaging,
   deleteSkuPackaging,
 } from './sku-packaging-api'
+
+export {
+  getShipments,
+  getShipment,
+  createShipment,
+  updateShipment,
+  deleteShipment,
+} from './shipments-api'
