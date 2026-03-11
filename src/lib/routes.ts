@@ -56,9 +56,10 @@ export const ROUTES = {
     ROOT: '/supplies',
     DETAIL: '/supplies/[id]', // Dynamic route - use buildSupplyDetailRoute helper
   },
-  // Epic 75-FE: Shipment Cost Allocation
+  // Epic 75-FE / 76-FE: Shipment Cost Allocation
   SHIPMENTS: {
     ROOT: '/shipments',
+    DETAIL: '/shipments/[id]', // Dynamic route — use buildShipmentDetailRoute helper
     BOX_TYPES: '/shipments/box-types',
     SKU_PACKAGING: '/shipments/sku-packaging',
   },
@@ -154,4 +155,12 @@ export const isPublicRoute = (pathname: string): boolean => {
  */
 export const buildSupplyDetailRoute = (supplyId: string): string => {
   return `/supplies/${supplyId}`
+}
+
+/**
+ * Build shipment detail route with specific shipment ID
+ * Epic 76-FE: Shipment Planning & Cost Calculation
+ */
+export const buildShipmentDetailRoute = (shipmentId: string): string => {
+  return `/shipments/${shipmentId}`
 }

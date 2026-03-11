@@ -1,13 +1,4 @@
-/**
- * Shipment Cost Allocation domain types
- * Epic 75-FE / 76-FE: Box Types, SKU Packaging, Shipments, Cost Calculation
- * Backend: Epic 79 (23 endpoints, 229 tests)
- * Source: docs/request-backend/161-SHIPMENT-COST-ALLOCATION.md
- */
-
-// ──────────────────────────────────────────────────────────────────
-// Enums
-// ──────────────────────────────────────────────────────────────────
+/** Shipment Cost Allocation domain types — Epic 75-76-FE / Backend Epic 79 */
 
 export enum DeliveryMode {
   FIXED_VEHICLE = 'FIXED_VEHICLE',
@@ -19,7 +10,6 @@ export enum ShipmentStatus {
   CONFIRMED = 'CONFIRMED',
 }
 
-/** All 9 validation error codes from backend collect-all validation */
 export enum ValidationErrorCode {
   MISSING_COGS = 'MISSING_COGS',
   MISSING_PACKAGING = 'MISSING_PACKAGING',
@@ -31,10 +21,6 @@ export enum ValidationErrorCode {
   DUPLICATE_SKU_IN_PALLET = 'DUPLICATE_SKU_IN_PALLET',
   INVALID_BOX_COUNT = 'INVALID_BOX_COUNT',
 }
-
-// ──────────────────────────────────────────────────────────────────
-// Box Types
-// ──────────────────────────────────────────────────────────────────
 
 export interface BoxType {
   id: string
@@ -62,10 +48,6 @@ export interface BoxTypeUpdateRequest {
   widthCm?: number
   heightCm?: number
 }
-
-// ──────────────────────────────────────────────────────────────────
-// SKU Packaging
-// ──────────────────────────────────────────────────────────────────
 
 export interface SkuPackagingProduct {
   nmId: number
@@ -105,36 +87,38 @@ export interface SkuPackagingListParams {
   nmId?: number
   boxTypeId?: string
 }
-
 export interface SkuPackagingBulkRequest {
   items: SkuPackagingCreateRequest[]
 }
-
 export interface SkuPackagingBulkError {
   nmId: number
   error: string
 }
-
 export interface SkuPackagingBulkResponse {
   created: number
   updated: number
   errors: SkuPackagingBulkError[]
 }
 
-// ──────────────────────────────────────────────────────────────────
-// Shipments
-// ──────────────────────────────────────────────────────────────────
-
+export interface BoxLineCreateRequest {
+  nmId: number
+  boxCount: number
+  totalUnits?: number
+}
+export interface BoxLineUpdateRequest {
+  boxCount?: number
+  totalUnits?: number
+}
 export interface BoxLine {
   id: string
   palletId: string
   nmId: number
   boxCount: number
   totalUnits: number | null
-  unitCostRub: string | null // Decimal string, null before calculate
-  boxVolume: string | null // Decimal string, null before calculate
-  totalVolume: string | null // Decimal string, null before calculate
-  volumeShare: string | null // Decimal string, null before calculate
+  unitCostRub: string | null // Decimal, null before calculate
+  boxVolume: string | null
+  totalVolume: string | null
+  volumeShare: string | null
   allocatedDeliveryCost: string | null
   deliveryCostPerUnit: string | null
   finalCostPerUnit: string | null
@@ -175,11 +159,6 @@ export interface ShipmentListResponse {
   page: number
   limit: number
 }
-
-// ──────────────────────────────────────────────────────────────────
-// Shipment Requests & Params (Story 76.1)
-// ──────────────────────────────────────────────────────────────────
-
 export interface ShipmentCreateRequest {
   name: string
   deliveryMode: DeliveryMode
@@ -194,30 +173,28 @@ export interface ShipmentUpdateRequest {
   totalDeliveryCost?: number | null
   palletRate?: number | null
 }
-
 export interface ShipmentListParams {
   status?: ShipmentStatus
   page?: number
   limit?: number
 }
 
-// ──────────────────────────────────────────────────────────────────
-// Validation & Calculation
-// ──────────────────────────────────────────────────────────────────
-
 export interface ValidationError {
-  code: ValidationErrorCode
+  code: string // Raw backend errorCode — normalize via BACKEND_CODE_MAP before display
   message: string
   affectedIds?: string[]
 }
 
-/** /calculate response returns numbers (not Decimal strings) */
+/** /calculate response — returns numbers (not Decimal strings); validation failure throws ApiError */
+export interface CalculateShipmentResponse {
+  results: CalculationResultItem[]
+}
 export interface CalculationResultItem {
   nmId: number
   productName: string
-  unitCostRub: number // PCU — numbers from /calculate
-  deliveryCostPerUnit: number // DCU
-  finalCostPerUnit: number // FCU = PCU + DCU
+  unitCostRub: number
+  deliveryCostPerUnit: number
+  finalCostPerUnit: number
   totalUnits: number
-  finalCostLine: number // FCL = FCU × totalUnits
+  finalCostLine: number
 }

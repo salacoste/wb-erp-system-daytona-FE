@@ -1,11 +1,12 @@
 /**
  * Shipments API client
- * Epic 76-FE, Story 76.1: 5 endpoints for shipment CRUD
+ * Epic 76-FE, Stories 76.1–76.2: 7 endpoints (5 CRUD + 2 pallet)
  * Source: docs/request-backend/161-SHIPMENT-COST-ALLOCATION.md
  */
 
 import { apiClient } from '@/lib/api-client'
 import type {
+  Pallet,
   Shipment,
   ShipmentCreateRequest,
   ShipmentListParams,
@@ -21,7 +22,7 @@ export async function getShipments(params?: ShipmentListParams): Promise<Shipmen
   if (params?.limit != null) searchParams.set('limit', String(params.limit))
   const query = searchParams.toString()
   const url = query ? `/v1/shipments?${query}` : '/v1/shipments'
-  return apiClient.get<ShipmentListResponse>(url)
+  return apiClient.get<ShipmentListResponse>(url, { skipDataUnwrap: true })
 }
 
 /** GET /v1/shipments/:id */
@@ -42,4 +43,14 @@ export async function updateShipment(id: string, data: ShipmentUpdateRequest): P
 /** DELETE /v1/shipments/:id — DRAFT only, returns 204 */
 export async function deleteShipment(id: string): Promise<void> {
   await apiClient.delete(`/v1/shipments/${id}`)
+}
+
+/** POST /v1/shipments/:id/pallets — empty body, auto-numbers (Story 76.2) */
+export async function addPallet(shipmentId: string): Promise<Pallet> {
+  return apiClient.post<Pallet>(`/v1/shipments/${shipmentId}/pallets`)
+}
+
+/** DELETE /v1/shipments/:id/pallets/:palletId — 204, cascade box lines (Story 76.2) */
+export async function removePallet(shipmentId: string, palletId: string): Promise<void> {
+  await apiClient.delete(`/v1/shipments/${shipmentId}/pallets/${palletId}`)
 }

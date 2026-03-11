@@ -25,4 +25,14 @@ export {
   createShipment,
   updateShipment,
   deleteShipment,
+  addPallet,
+  removePallet,
 } from './shipments-api'
+
+export { addBoxLine, updateBoxLine, removeBoxLine } from './box-lines-api'
+
+export {
+  calculateShipment,
+  confirmShipment,
+  recalculateShipment,
+} from './shipment-calculations-api'
