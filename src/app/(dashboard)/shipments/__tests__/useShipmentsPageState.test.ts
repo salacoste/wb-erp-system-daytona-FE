@@ -24,14 +24,16 @@ const mockShipmentsData = {
   limit: 10,
 }
 
+const mockUseShipments = vi.fn().mockReturnValue({
+  data: mockShipmentsData,
+  isLoading: false,
+  isError: false,
+  error: null,
+  refetch: vi.fn(),
+})
+
 vi.mock('@/hooks/use-shipments', () => ({
-  useShipments: () => ({
-    data: mockShipmentsData,
-    isLoading: false,
-    isError: false,
-    error: null,
-    refetch: vi.fn(),
-  }),
+  useShipments: (...args: unknown[]) => mockUseShipments(...args),
 }))
 
 import { useShipmentsPageState } from '../useShipmentsPageState'
@@ -140,5 +142,19 @@ describe('useShipmentsPageState', () => {
 
     act(() => result.current.setIsCreateOpen(false))
     expect(result.current.isCreateOpen).toBe(false)
+  })
+
+  it('passes correct params to useShipments after filter and page changes', () => {
+    const { result } = renderPageState()
+    expect(mockUseShipments).toHaveBeenCalledWith({ status: undefined, page: 1, limit: 10 })
+
+    act(() => result.current.handleStatusChange(ShipmentStatus.DRAFT))
+    expect(mockUseShipments).toHaveBeenCalledWith({ status: 'DRAFT', page: 1, limit: 10 })
+
+    act(() => result.current.handlePageChange(2))
+    expect(mockUseShipments).toHaveBeenCalledWith({ status: 'DRAFT', page: 2, limit: 10 })
+
+    act(() => result.current.handleLimitChange(50))
+    expect(mockUseShipments).toHaveBeenCalledWith({ status: 'DRAFT', page: 1, limit: 50 })
   })
 })

@@ -2,48 +2,31 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PalletAccordionItem } from '../PalletAccordionItem'
-import type { Pallet } from '@/types/shipment-cost'
+import type { BoxLine, Pallet } from '@/types/shipment-cost'
+
+const nullBoxLineFields = {
+  totalUnits: null,
+  unitCostRub: null,
+  boxVolume: null,
+  totalVolume: null,
+  volumeShare: null,
+  allocatedDeliveryCost: null,
+  deliveryCostPerUnit: null,
+  finalCostPerUnit: null,
+  finalCostLine: null,
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+} as const
+
+function mockBoxLine(id: string, nmId: number, boxCount: number): BoxLine {
+  return { id, palletId: 'p-1', nmId, boxCount, ...nullBoxLineFields }
+}
 
 const mockPallet: Pallet = {
   id: 'p-1',
   shipmentId: 's-001',
   palletNumber: 1,
-  boxLines: [
-    {
-      id: 'bl-1',
-      palletId: 'p-1',
-      nmId: 123,
-      boxCount: 5,
-      totalUnits: null,
-      unitCostRub: null,
-      boxVolume: null,
-      totalVolume: null,
-      volumeShare: null,
-      allocatedDeliveryCost: null,
-      deliveryCostPerUnit: null,
-      finalCostPerUnit: null,
-      finalCostLine: null,
-      createdAt: '2026-01-01T00:00:00Z',
-      updatedAt: '2026-01-01T00:00:00Z',
-    },
-    {
-      id: 'bl-2',
-      palletId: 'p-1',
-      nmId: 456,
-      boxCount: 3,
-      totalUnits: null,
-      unitCostRub: null,
-      boxVolume: null,
-      totalVolume: null,
-      volumeShare: null,
-      allocatedDeliveryCost: null,
-      deliveryCostPerUnit: null,
-      finalCostPerUnit: null,
-      finalCostLine: null,
-      createdAt: '2026-01-01T00:00:00Z',
-      updatedAt: '2026-01-01T00:00:00Z',
-    },
-  ],
+  boxLines: [mockBoxLine('bl-1', 123, 5), mockBoxLine('bl-2', 456, 3)],
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
 }

@@ -27,19 +27,12 @@ describe('ShipmentDeleteDialog', () => {
 
   // 2.1: Trigger button renders with text and aria-label
   describe('Trigger button rendering', () => {
-    it('renders trigger button with "Удалить" text', () => {
+    it('renders trigger button with "Удалить" text and aria-label', () => {
       render(<ShipmentDeleteDialog {...defaultProps} />)
 
       const trigger = screen.getByRole('button', { name: 'Удалить отправку' })
       expect(trigger).toBeInTheDocument()
       expect(trigger).toHaveTextContent('Удалить')
-    })
-
-    it('has aria-label "Удалить отправку"', () => {
-      render(<ShipmentDeleteDialog {...defaultProps} />)
-
-      const trigger = screen.getByLabelText('Удалить отправку')
-      expect(trigger).toBeInTheDocument()
     })
   })
 
