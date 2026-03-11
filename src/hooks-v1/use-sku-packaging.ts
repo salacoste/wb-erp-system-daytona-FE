@@ -39,7 +39,7 @@ export function useSkuPackagingByNmId(nmId: number) {
   return useQuery({
     queryKey: skuPackagingQueryKeys.byNmId(nmId),
     queryFn: () => getSkuPackagingByNmId(nmId),
-    enabled: nmId != null,
+    enabled: nmId > 0,
     staleTime: 60_000,
     gcTime: 300_000,
     retry: 1,
