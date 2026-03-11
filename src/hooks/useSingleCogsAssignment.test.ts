@@ -16,6 +16,14 @@ import {
 } from './useSingleCogsAssignment'
 import type { CogsAssignmentRequest } from '@/types/cogs'
 
+/** Format Date as YYYY-MM-DD in local timezone (not UTC) */
+function toLocalDateStr(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 describe('validateCogsAssignment', () => {
   describe('unit_cost_rub validation', () => {
     it('should pass validation for valid positive number', () => {
@@ -118,8 +126,8 @@ describe('validateCogsAssignment', () => {
   })
 
   describe('valid_from validation', () => {
-    it('should pass validation for today\'s date', () => {
-      const today = new Date().toISOString().split('T')[0]
+    it("should pass validation for today's date", () => {
+      const today = toLocalDateStr(new Date())
       const cogs: CogsAssignmentRequest = {
         unit_cost_rub: 100,
         valid_from: today,
@@ -133,7 +141,7 @@ describe('validateCogsAssignment', () => {
     it('should pass validation for date 6 months ago', () => {
       const sixMonthsAgo = new Date()
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-      const dateStr = sixMonthsAgo.toISOString().split('T')[0]
+      const dateStr = toLocalDateStr(sixMonthsAgo)
 
       const cogs: CogsAssignmentRequest = {
         unit_cost_rub: 100,
@@ -158,7 +166,7 @@ describe('validateCogsAssignment', () => {
     it('should fail validation for future date', () => {
       const tomorrow = new Date()
       tomorrow.setDate(tomorrow.getDate() + 1)
-      const dateStr = tomorrow.toISOString().split('T')[0]
+      const dateStr = toLocalDateStr(tomorrow)
 
       const cogs: CogsAssignmentRequest = {
         unit_cost_rub: 100,
@@ -174,7 +182,7 @@ describe('validateCogsAssignment', () => {
       const moreThanYearAgo = new Date()
       moreThanYearAgo.setFullYear(moreThanYearAgo.getFullYear() - 1)
       moreThanYearAgo.setDate(moreThanYearAgo.getDate() - 1)
-      const dateStr = moreThanYearAgo.toISOString().split('T')[0]
+      const dateStr = toLocalDateStr(moreThanYearAgo)
 
       const cogs: CogsAssignmentRequest = {
         unit_cost_rub: 100,
@@ -278,7 +286,7 @@ describe('validateCogsAssignment', () => {
 
       const cogs: CogsAssignmentRequest = {
         unit_cost_rub: -50,
-        valid_from: tomorrow.toISOString().split('T')[0],
+        valid_from: toLocalDateStr(tomorrow),
         currency: 'INVALID',
         source: 'manual',
       }

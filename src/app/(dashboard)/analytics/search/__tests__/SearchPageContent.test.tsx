@@ -25,7 +25,7 @@ vi.mock('@/hooks/use-search-analytics', () => ({
   useSearchByQuery: () => ({ data: undefined, isLoading: false, isError: false }),
 }))
 
-vi.mock('@/hooks-v1/useProducts', () => ({
+vi.mock('@/hooks/useProducts', () => ({
   useProducts: () => ({ data: undefined, isLoading: false }),
 }))
 

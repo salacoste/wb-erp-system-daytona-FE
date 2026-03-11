@@ -9,7 +9,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle } from 'lucide-react'
-import { useSkuPackaging } from '@/hooks-v1/use-sku-packaging'
+import { useSkuPackaging } from '@/hooks/use-sku-packaging'
 import {
   ShipmentsEmptyState,
   ShipmentsTable,

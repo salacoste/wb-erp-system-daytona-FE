@@ -38,7 +38,7 @@ describe('use-box-lines hooks', () => {
     })
 
     it('propagates error when addBoxLine rejects', async () => {
-      mockAddBoxLine.mockRejectedValue(new Error('Server error'))
+      mockAddBoxLine.mockRejectedValueOnce(new Error('Server error'))
       const queryClient = createTestQueryClient()
       const { result } = renderHook(() => useAddBoxLine('s-001', 'p-1'), {
         wrapper: createQueryWrapper(queryClient),
@@ -69,7 +69,7 @@ describe('use-box-lines hooks', () => {
     })
 
     it('propagates error when updateBoxLine rejects', async () => {
-      mockUpdateBoxLine.mockRejectedValue(new Error('Update failed'))
+      mockUpdateBoxLine.mockRejectedValueOnce(new Error('Update failed'))
       const queryClient = createTestQueryClient()
       const { result } = renderHook(() => useUpdateBoxLine('s-001'), {
         wrapper: createQueryWrapper(queryClient),
@@ -99,7 +99,7 @@ describe('use-box-lines hooks', () => {
     })
 
     it('propagates error when removeBoxLine rejects', async () => {
-      mockRemoveBoxLine.mockRejectedValue(new Error('Delete failed'))
+      mockRemoveBoxLine.mockRejectedValueOnce(new Error('Delete failed'))
       const queryClient = createTestQueryClient()
       const { result } = renderHook(() => useRemoveBoxLine('s-001'), {
         wrapper: createQueryWrapper(queryClient),

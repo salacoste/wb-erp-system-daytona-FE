@@ -7,7 +7,7 @@ vi.mock('@/lib/margin-helpers', () => ({
   getLastCompletedWeek: () => '2026-W09',
 }))
 
-vi.mock('@/hooks-v1/financial', () => ({
+vi.mock('@/hooks/financial', () => ({
   useFinancialSummary: () => ({
     data: {
       summary_total: { wb_promotion_cost_total: 95_000 },
