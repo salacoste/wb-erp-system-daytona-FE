@@ -29,7 +29,7 @@ interface UseWaterfallDataResult {
 }
 
 /** Aggregate portfolio costs as weighted average percentages */
-function aggregatePortfolioCosts(
+export function aggregatePortfolioCosts(
   data: UnitEconomicsItem[],
   summary: UnitEconomicsSummary
 ): { costsPct: Record<string, number>; costsRub: Record<string, number> } {
@@ -41,6 +41,7 @@ function aggregatePortfolioCosts(
     logistics_delivery: 0,
     logistics_return: 0,
     storage: 0,
+    delivery_to_warehouse: 0,
     paid_acceptance: 0,
     penalties: 0,
     other_deductions: 0,
@@ -53,6 +54,7 @@ function aggregatePortfolioCosts(
     let totalLogisticsDelivery = 0
     let totalLogisticsReturn = 0
     let totalStorage = 0
+    let totalDeliveryToWarehouse = 0
     let totalPaidAcceptance = 0
     let totalPenalties = 0
     let totalOther = 0
@@ -65,6 +67,7 @@ function aggregatePortfolioCosts(
       totalLogisticsDelivery += item.costs_pct.logistics_delivery * weight
       totalLogisticsReturn += item.costs_pct.logistics_return * weight
       totalStorage += item.costs_pct.storage * weight
+      totalDeliveryToWarehouse += (item.costs_pct.delivery_to_warehouse ?? 0) * weight
       totalPaidAcceptance += item.costs_pct.paid_acceptance * weight
       totalPenalties += item.costs_pct.penalties * weight
       totalOther += item.costs_pct.other_deductions * weight
@@ -76,6 +79,7 @@ function aggregatePortfolioCosts(
     costsPct.logistics_delivery = totalLogisticsDelivery
     costsPct.logistics_return = totalLogisticsReturn
     costsPct.storage = totalStorage
+    costsPct.delivery_to_warehouse = totalDeliveryToWarehouse
     costsPct.paid_acceptance = totalPaidAcceptance
     costsPct.penalties = totalPenalties
     costsPct.other_deductions = totalOther

@@ -51,7 +51,7 @@ export function transformToWaterfallData(
 
   // Add each cost category (as negative)
   for (const category of COST_CATEGORIES) {
-    const value = costsRub[category.key]
+    const value = costsRub[category.key] ?? 0
     if (value > 0) {
       runningTotal -= value
       dataPoints.push({
@@ -104,11 +104,11 @@ export function getTopMarginKillers(
   costsPct: CostsPct,
   limit = 3
 ): Array<{ key: keyof CostsPct; label: string; pct: number; color: string }> {
-  const costs = COST_CATEGORIES.filter(c => costsPct[c.key] > 0)
+  const costs = COST_CATEGORIES.filter(c => (costsPct[c.key] ?? 0) > 0)
     .map(c => ({
       key: c.key,
       label: c.label,
-      pct: costsPct[c.key],
+      pct: costsPct[c.key] ?? 0,
       color: c.color,
     }))
     .sort((a, b) => b.pct - a.pct)
@@ -116,24 +116,33 @@ export function getTopMarginKillers(
   return costs.slice(0, limit)
 }
 
-/** Calculate summary health score (0-100): margin + profitable ratio + COGS coverage */
-export function calculateHealthScore(summary: UnitEconomicsSummary): number {
+/** Calculate summary health score (0-100): margin + profitable ratio + COGS coverage + delivery bonus (Story 77.5) */
+export function calculateHealthScore(
+  summary: UnitEconomicsSummary,
+  deliveryCoverageRatio?: number
+): number {
   let score = 0
 
-  // Margin component (0-40 points)
-  if (summary.avg_net_margin_pct >= 25) score += 40
-  else if (summary.avg_net_margin_pct >= 15) score += 30
-  else if (summary.avg_net_margin_pct >= 5) score += 20
-  else if (summary.avg_net_margin_pct >= 0) score += 10
+  // Margin component (0-35 points)
+  if (summary.avg_net_margin_pct >= 25) score += 35
+  else if (summary.avg_net_margin_pct >= 15) score += 26
+  else if (summary.avg_net_margin_pct >= 5) score += 18
+  else if (summary.avg_net_margin_pct >= 0) score += 9
 
-  // Profitable ratio component (0-40 points)
+  // Profitable ratio component (0-35 points)
   const profitableRatio =
     summary.sku_count > 0 ? summary.profitable_sku_count / summary.sku_count : 0
-  score += Math.round(profitableRatio * 40)
+  score += Math.round(profitableRatio * 35)
 
   // COGS coverage component (0-20 points)
   const cogsRatio = summary.sku_count > 0 ? 1 - summary.missing_cogs_count / summary.sku_count : 0
   score += Math.round(cogsRatio * 20)
+
+  // Delivery coverage bonus (0-10 points) — reward confirmed shipment cost data
+  if (deliveryCoverageRatio != null) {
+    if (deliveryCoverageRatio > 0.8) score += 10
+    else if (deliveryCoverageRatio > 0.5) score += 5
+  }
 
   return Math.min(100, Math.max(0, score))
 }

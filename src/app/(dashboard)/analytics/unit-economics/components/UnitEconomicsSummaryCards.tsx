@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  DollarSign,
-  Package,
-  Tag,
-  TrendingUp,
-  CheckCircle,
-  XCircle,
-} from 'lucide-react'
+import { DollarSign, Package, Tag, Truck, TrendingUp, CheckCircle, XCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { UnitEconomicsSummary } from '@/types/unit-economics'
@@ -29,6 +22,8 @@ import { formatCurrency, formatPercentage } from '@/lib/unit-economics-utils'
 
 interface UnitEconomicsSummaryCardsProps {
   summary: UnitEconomicsSummary
+  avgDeliveryCost?: number
+  deliverySkuCount?: number
 }
 
 interface MetricCardProps {
@@ -60,9 +55,7 @@ function MetricCard({
           <div className="flex-1 min-w-0">
             <div className="text-sm text-gray-500 mb-1">{label}</div>
             <div className="text-2xl font-bold text-gray-900 truncate">{value}</div>
-            {subtext && (
-              <div className="text-xs text-gray-400 mt-1">{subtext}</div>
-            )}
+            {subtext && <div className="text-xs text-gray-400 mt-1">{subtext}</div>}
             {trend && trendValue && (
               <div
                 className={cn(
@@ -85,14 +78,20 @@ function MetricCard({
   )
 }
 
-export function UnitEconomicsSummaryCards({ summary }: UnitEconomicsSummaryCardsProps) {
-  const profitablePercent = summary.sku_count > 0
-    ? ((summary.profitable_sku_count / summary.sku_count) * 100).toFixed(1)
-    : '0'
+export function UnitEconomicsSummaryCards({
+  summary,
+  avgDeliveryCost,
+  deliverySkuCount,
+}: UnitEconomicsSummaryCardsProps) {
+  const profitablePercent =
+    summary.sku_count > 0
+      ? ((summary.profitable_sku_count / summary.sku_count) * 100).toFixed(1)
+      : '0'
 
-  const lossPercent = summary.sku_count > 0
-    ? ((summary.loss_making_sku_count / summary.sku_count) * 100).toFixed(1)
-    : '0'
+  const lossPercent =
+    summary.sku_count > 0
+      ? ((summary.loss_making_sku_count / summary.sku_count) * 100).toFixed(1)
+      : '0'
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -107,7 +106,6 @@ export function UnitEconomicsSummaryCards({ summary }: UnitEconomicsSummaryCards
         />
       )}
 
-      {/* Total Revenue */}
       <MetricCard
         icon={DollarSign}
         iconColor="bg-red-500"
@@ -116,37 +114,66 @@ export function UnitEconomicsSummaryCards({ summary }: UnitEconomicsSummaryCards
         subtext={`${summary.sku_count} SKU`}
       />
 
-      {/* Average COGS % */}
       <MetricCard
         icon={Package}
         iconColor="bg-orange-500"
         label="COGS %"
         value={formatPercentage(summary.avg_cogs_pct)}
         trend={summary.avg_cogs_pct < 40 ? 'up' : summary.avg_cogs_pct > 50 ? 'down' : 'neutral'}
-        trendValue={summary.avg_cogs_pct < 40 ? 'Хорошо' : summary.avg_cogs_pct > 50 ? 'Высоко' : 'Норма'}
+        trendValue={
+          summary.avg_cogs_pct < 40 ? 'Хорошо' : summary.avg_cogs_pct > 50 ? 'Высоко' : 'Норма'
+        }
       />
 
-      {/* Average WB Fees % */}
       <MetricCard
         icon={Tag}
         iconColor="bg-purple-500"
         label="Комиссии WB %"
         value={formatPercentage(summary.avg_wb_fees_pct)}
-        trend={summary.avg_wb_fees_pct < 40 ? 'up' : summary.avg_wb_fees_pct > 50 ? 'down' : 'neutral'}
-        trendValue={summary.avg_wb_fees_pct < 40 ? 'Хорошо' : summary.avg_wb_fees_pct > 50 ? 'Высоко' : 'Норма'}
+        trend={
+          summary.avg_wb_fees_pct < 40 ? 'up' : summary.avg_wb_fees_pct > 50 ? 'down' : 'neutral'
+        }
+        trendValue={
+          summary.avg_wb_fees_pct < 40
+            ? 'Хорошо'
+            : summary.avg_wb_fees_pct > 50
+              ? 'Высоко'
+              : 'Норма'
+        }
       />
 
-      {/* Average Net Margin % */}
+      {/* Average delivery cost per unit — Story 77.5 */}
+      <MetricCard
+        icon={Truck}
+        iconColor="bg-cyan-500"
+        label="Ср. доставка"
+        value={avgDeliveryCost != null ? formatCurrency(avgDeliveryCost) : '—'}
+        subtext={
+          deliverySkuCount != null ? `${deliverySkuCount} SKU с подтв. отправкой` : undefined
+        }
+      />
+
       <MetricCard
         icon={TrendingUp}
         iconColor="bg-green-500"
         label="Маржа %"
         value={formatPercentage(summary.avg_net_margin_pct)}
-        trend={summary.avg_net_margin_pct >= 20 ? 'up' : summary.avg_net_margin_pct < 10 ? 'down' : 'neutral'}
-        trendValue={summary.avg_net_margin_pct >= 20 ? 'Отлично' : summary.avg_net_margin_pct < 10 ? 'Низко' : 'Норма'}
+        trend={
+          summary.avg_net_margin_pct >= 20
+            ? 'up'
+            : summary.avg_net_margin_pct < 10
+              ? 'down'
+              : 'neutral'
+        }
+        trendValue={
+          summary.avg_net_margin_pct >= 20
+            ? 'Отлично'
+            : summary.avg_net_margin_pct < 10
+              ? 'Низко'
+              : 'Норма'
+        }
       />
 
-      {/* Profitable SKUs */}
       <MetricCard
         icon={CheckCircle}
         iconColor="bg-emerald-500"
@@ -155,7 +182,6 @@ export function UnitEconomicsSummaryCards({ summary }: UnitEconomicsSummaryCards
         subtext={`(${profitablePercent}%)`}
       />
 
-      {/* Loss-making SKUs */}
       <MetricCard
         icon={XCircle}
         iconColor="bg-red-500"

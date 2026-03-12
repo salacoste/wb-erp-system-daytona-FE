@@ -30,6 +30,7 @@ export const WATERFALL_COLORS = {
   penalties: '#F44336', // Red - negative
   other_deductions: '#9E9E9E', // Gray - misc
   advertising: '#14B8A6', // Teal - marketing
+  delivery_to_warehouse: '#06B6D4', // Cyan - seller delivery cost
   profit: '#4CAF50', // Green - positive outcome
   loss: '#F44336', // Red - negative outcome
 }
@@ -41,6 +42,11 @@ const COST_CATEGORIES = [
   { key: 'logistics_delivery', label: 'Доставка', color: WATERFALL_COLORS.logistics_delivery },
   { key: 'logistics_return', label: 'Возвраты', color: WATERFALL_COLORS.logistics_return },
   { key: 'storage', label: 'Хранение', color: WATERFALL_COLORS.storage },
+  {
+    key: 'delivery_to_warehouse',
+    label: 'Доставка на склад',
+    color: WATERFALL_COLORS.delivery_to_warehouse,
+  },
   { key: 'paid_acceptance', label: 'Приёмка', color: WATERFALL_COLORS.paid_acceptance },
   { key: 'penalties', label: 'Штрафы', color: WATERFALL_COLORS.penalties },
   { key: 'other_deductions', label: 'Прочее', color: WATERFALL_COLORS.other_deductions },

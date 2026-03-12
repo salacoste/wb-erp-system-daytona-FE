@@ -31,6 +31,9 @@ export {
 
 export { addBoxLine, updateBoxLine, removeBoxLine } from './box-lines-api'
 
+export { getFcuBySku } from './fcu-aggregation-api'
+export type { FcuBySkuItem } from './fcu-aggregation-api'
+
 export {
   calculateShipment,
   confirmShipment,

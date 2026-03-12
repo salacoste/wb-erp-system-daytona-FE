@@ -23,6 +23,7 @@ export const EXPENSE_COLORS: Record<keyof CostsPct, { color: string; label: stri
   penalties: { color: '#EF4444', label: 'Штрафы' },
   other_deductions: { color: '#6B7280', label: 'Прочие' },
   advertising: { color: '#14B8A6', label: 'Реклама' },
+  delivery_to_warehouse: { color: '#06B6D4', label: 'Доставка на склад' },
 }
 
 /**

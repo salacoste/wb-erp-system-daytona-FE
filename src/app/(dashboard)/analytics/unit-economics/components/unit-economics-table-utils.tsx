@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUpDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { ArrowUpDown, ArrowUp, ArrowDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { formatPercentage } from '@/lib/unit-economics-utils'
@@ -25,16 +25,13 @@ export function MarginIndicator({ value }: { value: number }) {
   return <Minus className="h-4 w-4 text-gray-400" />
 }
 
-/** Sort icon for column headers. Active column is blue; inactive is gray. */
-export function getSortIcon(
-  field: 'revenue' | 'net_margin_pct',
-  sortBy: 'revenue' | 'net_margin_pct',
-  _sortOrder: 'asc' | 'desc'
-) {
+/** Sort icon for column headers. Active column shows direction; inactive is gray. */
+export function getSortIcon(field: string, sortBy: string, sortOrder: 'asc' | 'desc') {
   if (sortBy !== field) {
     return <ArrowUpDown className="ml-2 h-4 w-4 text-gray-400" />
   }
-  return <ArrowUpDown className={cn('ml-2 h-4 w-4', 'text-blue-500')} />
+  const Icon = sortOrder === 'asc' ? ArrowUp : ArrowDown
+  return <Icon className={cn('ml-2 h-4 w-4', 'text-blue-500')} />
 }
 
 /** Cost percentage cell with threshold-based coloring. */

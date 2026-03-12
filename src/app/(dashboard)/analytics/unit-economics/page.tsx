@@ -27,6 +27,8 @@ export default function UnitEconomicsPage() {
     sortOrder,
     selectedSku,
     data,
+    avgDeliveryCost,
+    deliverySkuCount,
     isLoading,
     error,
     dataUpdatedAt,
@@ -96,8 +98,12 @@ export default function UnitEconomicsPage() {
         lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt) : undefined}
       />
 
-      {/* Summary Cards (6 metrics) */}
-      <UnitEconomicsSummaryCards summary={data.summary} />
+      {/* Summary Cards (7 metrics — Story 77.5 added delivery) */}
+      <UnitEconomicsSummaryCards
+        summary={data.summary}
+        avgDeliveryCost={avgDeliveryCost}
+        deliverySkuCount={deliverySkuCount}
+      />
 
       {/* Waterfall Chart (Story 5.3) */}
       <UnitEconomicsWaterfall

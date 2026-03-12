@@ -123,6 +123,12 @@ export const COST_CATEGORIES: CostCategoryConfig[] = [
   { key: 'logistics_delivery', label: 'Доставка', color: '#EC4899', group: 'wb_fees' },
   { key: 'logistics_return', label: 'Возвраты', color: '#F43F5E', group: 'wb_fees' },
   { key: 'storage', label: 'Хранение', color: '#F97316', group: 'wb_fees' },
+  {
+    key: 'delivery_to_warehouse',
+    label: 'Доставка на склад',
+    color: '#06B6D4',
+    group: 'seller_costs',
+  },
   { key: 'paid_acceptance', label: 'Приёмка', color: '#EAB308', group: 'wb_fees' },
   { key: 'penalties', label: 'Штрафы', color: '#EF4444', group: 'other' },
   { key: 'other_deductions', label: 'Прочие', color: '#6B7280', group: 'other' },
