@@ -32,6 +32,15 @@ const mockCalcResponse = {
   ],
 }
 
+const mockRecalcResponse = {
+  shipmentId: 's-002',
+  status: 'CONFIRMED' as const,
+  recalculatedAt: '2026-03-10T09:00:00.000Z',
+  snapshotCount: 5,
+  previousSnapshotCount: 5,
+  totalFinalCost: 39100,
+}
+
 let queryClient: QueryClient
 beforeEach(() => {
   vi.clearAllMocks()
@@ -93,10 +102,17 @@ describe('useCalculateShipment', () => {
 })
 
 describe('useConfirmShipment', () => {
-  const mockShipment = { id: 's-001', status: 'CONFIRMED', confirmedBy: 'user@test.com' }
+  const mockConfirmResponse = {
+    shipmentId: 's-001',
+    status: 'CONFIRMED' as const,
+    confirmedAt: '2026-03-09T14:00:00.000Z',
+    confirmedBy: 'user@test.com',
+    snapshotCount: 3,
+    totalFinalCost: 38525,
+  }
 
   it('calls confirmShipment with shipmentId and confirmedBy', async () => {
-    vi.mocked(confirmShipment).mockResolvedValueOnce(mockShipment as never)
+    vi.mocked(confirmShipment).mockResolvedValueOnce(mockConfirmResponse)
     const { result } = renderHook(() => useConfirmShipment('s-001'), {
       wrapper: createQueryWrapper(queryClient),
     })
@@ -109,7 +125,7 @@ describe('useConfirmShipment', () => {
   })
 
   it('invalidates shipment queries on success', async () => {
-    vi.mocked(confirmShipment).mockResolvedValueOnce(mockShipment as never)
+    vi.mocked(confirmShipment).mockResolvedValueOnce(mockConfirmResponse)
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
     const { result } = renderHook(() => useConfirmShipment('s-001'), {
@@ -146,7 +162,7 @@ describe('useConfirmShipment', () => {
 
 describe('useRecalculateShipment', () => {
   it('calls recalculateShipment with shipmentId', async () => {
-    vi.mocked(recalculateShipment).mockResolvedValueOnce(mockCalcResponse)
+    vi.mocked(recalculateShipment).mockResolvedValueOnce(mockRecalcResponse)
     const { result } = renderHook(() => useRecalculateShipment('s-002'), {
       wrapper: createQueryWrapper(queryClient),
     })
@@ -159,7 +175,7 @@ describe('useRecalculateShipment', () => {
   })
 
   it('invalidates shipment queries on success', async () => {
-    vi.mocked(recalculateShipment).mockResolvedValueOnce(mockCalcResponse)
+    vi.mocked(recalculateShipment).mockResolvedValueOnce(mockRecalcResponse)
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
     const { result } = renderHook(() => useRecalculateShipment('s-002'), {

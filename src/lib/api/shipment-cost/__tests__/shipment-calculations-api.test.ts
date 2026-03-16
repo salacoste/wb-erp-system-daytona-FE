@@ -49,13 +49,21 @@ describe('shipment-calculations-api', () => {
 
   describe('confirmShipment', () => {
     it('calls POST /v1/shipments/:id/confirm with confirmedBy body', async () => {
-      const mockShipment = { id: 's-001', status: 'CONFIRMED', confirmedBy: 'user@test.com' }
-      vi.mocked(apiClient.post).mockResolvedValue(mockShipment)
+      const mockResponse = {
+        shipmentId: 's-001',
+        status: 'CONFIRMED' as const,
+        confirmedAt: '2026-03-09T14:00:00.000Z',
+        confirmedBy: 'user@test.com',
+        snapshotCount: 3,
+        totalFinalCost: 38525,
+      }
+      vi.mocked(apiClient.post).mockResolvedValue(mockResponse)
       const result = await confirmShipment('s-001', 'user@test.com')
       expect(apiClient.post).toHaveBeenCalledWith('/v1/shipments/s-001/confirm', {
         confirmedBy: 'user@test.com',
       })
       expect(result.status).toBe('CONFIRMED')
+      expect(result.snapshotCount).toBe(3)
     })
 
     it('propagates errors from apiClient', async () => {
@@ -66,11 +74,18 @@ describe('shipment-calculations-api', () => {
 
   describe('recalculateShipment', () => {
     it('calls POST /v1/shipments/:id/recalculate with no body', async () => {
-      const mockResponse = { results: [{ nmId: 456, finalCostPerUnit: 200 }] }
+      const mockResponse = {
+        shipmentId: 's-002',
+        status: 'CONFIRMED' as const,
+        recalculatedAt: '2026-03-10T09:00:00.000Z',
+        snapshotCount: 5,
+        previousSnapshotCount: 5,
+        totalFinalCost: 39100,
+      }
       vi.mocked(apiClient.post).mockResolvedValue(mockResponse)
       const result = await recalculateShipment('s-002')
       expect(apiClient.post).toHaveBeenCalledWith('/v1/shipments/s-002/recalculate')
-      expect(result.results[0].nmId).toBe(456)
+      expect(result.totalFinalCost).toBe(39100)
     })
 
     it('propagates errors from apiClient', async () => {
