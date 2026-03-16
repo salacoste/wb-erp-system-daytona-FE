@@ -71,9 +71,9 @@ This frontend application serves as the user interface layer for a fully functio
 - NFR5: The application shall load dashboard data within 2 seconds
 - NFR6: The application shall handle API responses with 95th percentile response time of less than 500ms
 - NFR7: The application shall maintain error rate of less than 1% for user actions
-- NFR8: The application shall implement secure token storage using httpOnly cookies or secure localStorage
+- NFR8: The application shall implement secure token storage using localStorage with Zustand persistence (Decision: localStorage chosen over httpOnly cookies for SPA compatibility with JWT + Cabinet ID header pattern)
 - NFR9: The application shall implement XSS protection measures
-- NFR10: The application shall implement CSRF protection
+- NFR10: The application shall implement CSRF protection (Note: SPA architecture with JWT Bearer tokens in Authorization header + CORS policy mitigates CSRF risk — no cookie-based session to exploit)
 - NFR11: The application shall validate and sanitize all user inputs
 - NFR12: The application shall communicate with backend API exclusively over HTTPS
 - NFR13: All source code files shall be limited to a maximum of 200 lines to optimize AI context and prevent errors
@@ -84,6 +84,9 @@ This frontend application serves as the user interface layer for a fully functio
 - NFR18: The application shall follow modular component architecture with feature-based folder organization
 - NFR19: The application shall implement proper separation between API client layer, service layer, and UI components
 - NFR20: The application shall handle authentication token refresh and expiration gracefully
+- NFR21: The application shall meet WCAG 2.1 AA accessibility standards
+- NFR22: Desktop and tablet shall be primary targets, mobile secondary
+- NFR23: The application shall implement a full testing pyramid — unit tests (60%+ coverage), integration tests (30%+), E2E tests (10%+ critical paths)
 
 ---
 

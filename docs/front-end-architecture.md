@@ -51,6 +51,8 @@
 | Language | TypeScript | 5.x (latest) | Type-safe JavaScript | Required per PRD. Ensures code quality, better IDE support, and catches errors at compile time. ES+ syntax as specified. |
 | Routing | Next.js App Router | Built-in | File-based routing system | Built into Next.js 13+. No additional library needed. Supports layouts, loading states, and error boundaries. |
 | Form Handling | React Hook Form | Latest | Form state management and validation | Industry standard for React forms. Minimal re-renders, excellent TypeScript support. Integrates well with shadcn/ui Form components. |
+| Charts | Recharts | Latest | Data visualization (expense breakdown, trends, waterfall) | Composable React charting library built on D3. Declarative API, responsive containers, excellent TypeScript support. Used across dashboard, analytics, and shipment cost features. |
+| Data Tables | TanStack Table | v8.x | Advanced sortable/filterable/paginated tables | Headless table library with full TypeScript support. Integrates with shadcn/ui table primitives. Used for products, analytics, COGS, buyout, and shipment cost tables. |
 | HTTP Client | Fetch API (native) | Native | API communication | Built into modern browsers. No additional dependency. Can be wrapped in custom API client for authentication headers. |
 | Icons | Lucide React | Latest | Icon library | Recommended by shadcn/ui. Consistent icon set, tree-shakeable, TypeScript support. |
 | Testing | Vitest + React Testing Library | Latest | Unit and component testing | Modern testing stack. Vitest is faster than Jest. React Testing Library promotes testing user behavior. |

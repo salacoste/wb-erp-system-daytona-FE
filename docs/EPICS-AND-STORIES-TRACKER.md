@@ -3,7 +3,7 @@
 > **Source of Truth** for all frontend epic statuses, sprint planning, and story tracking.
 > Referenced from `CLAUDE.md` - do not duplicate this information elsewhere.
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-13
 **Total Epics**: 27 (22 complete + 1 pending docs + 3 search/marketing complete + 1 ready)
 **Total Stories**: 198 (76 legacy + 27 Q1 2026 + 4 Epic 42-FE + 17 Epic 61-FE + 10 Epic 62-FE + 12 Epic 63-FE + 7 Epic 66-FE + 7 Epic 69-FE + 6 Epic 70-FE + 8 Epic 71-FE + 6 Epic 72-FE + 9 Epic 73-FE + 9 Epic 74-FE)
 
@@ -60,7 +60,7 @@
 | Epic 61-FE | Dashboard Data Integration | 17 | ✅ | `/dashboard` |
 | Epic 62-FE | Dashboard UI/UX Presentation | 10 | ✅ | `/dashboard` |
 | Epic 63-FE | Dashboard Business Logic | 12 | ✅ | `/dashboard` |
-| Epic 69-FE | Buyout Rate Analytics UI | 7 | ✅ (6/7, tests planned) | `/analytics/buyout` |
+| Epic 69-FE | Buyout Rate Analytics UI | 7 | ✅ | `/analytics/buyout` |
 
 ### New Epics (3) - Q1 2026 (3 complete)
 
@@ -100,9 +100,9 @@
 
 | Epic ID | Title | Stories | SP | Status | Completed |
 |---------|-------|---------|---:|--------|-----------|
-| Epic 69-FE | Buyout Rate Analytics UI | 7 | 28 | ✅ Complete (6/7 stories, tests planned) | 2026-02-25 |
+| Epic 69-FE | Buyout Rate Analytics UI | 7 | 28 | ✅ Complete | 2026-02-25 |
 
-**Epic 69-FE**: ✅ Complete (2026-02-25) - 6/7 stories complete (25/28 SP), Story 69.7 (tests) planned
+**Epic 69-FE**: ✅ Complete (2026-02-25) - 7/7 stories complete (28/28 SP)
 - Buyout rate analytics: per-SKU breakdown table + summary widget
 - Data source transparency UX (weekly report vs orders API badge)
 - Edge case handling: empty weeks, no data states, loading skeletons
@@ -547,7 +547,7 @@
 **File**: `docs/epics/epic-69-fe-buyout-rate-analytics.md` (pending)
 **Backend**: Existing endpoints — `/v1/analytics/weekly/finance-summary` + `/v1/fulfillment/summary`
 **Priority**: P1 (Analytics Enhancement)
-**Status**: ✅ Complete (6/7 stories, 25/28 SP) — Story 69.7 tests planned
+**Status**: ✅ Complete (7/7 stories, 28/28 SP)
 
 | Story | Title | SP | Status |
 |-------|-------|----|--------|
@@ -557,7 +557,7 @@
 | 69.4-FE | Per-SKU Buyout Table | 8 | ✅ Complete |
 | 69.5-FE | Page Scaffold & Routing | 3 | ✅ Complete |
 | 69.6-FE | Data Source UX & Edge Cases | 3 | ✅ Complete |
-| 69.7-FE | Unit & Integration Tests | 3 | 📋 Planned |
+| 69.7-FE | Unit & Integration Tests | 3 | ✅ Complete |
 
 **Key Features**:
 - Buyout rate summary widget (overall % + trend vs previous period)
@@ -644,8 +644,7 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 
 ### 2026-02-25 (Epic 69-FE: Buyout Rate Analytics UI — 6/7 Complete)
 - **Epic 69-FE created**: Buyout Rate Analytics UI (7 stories, 28 SP)
-- Stories 69.1–69.6 complete (25/28 SP): types, hooks, summary widget, per-SKU table, page scaffold, data source UX
-- Story 69.7 (Unit & Integration Tests) planned
+- Stories 69.1–69.7 complete (28/28 SP): types, hooks, summary widget, per-SKU table, page scaffold, data source UX, unit & integration tests
 - Route `/analytics/buyout` implemented (pending route registration)
 - Data source transparency UX: weekly report vs orders API badge
 - **Epics 68-FE, 70-FE, 71-FE noted**: code exists, pending formal spec & validation (Backend Request #151)

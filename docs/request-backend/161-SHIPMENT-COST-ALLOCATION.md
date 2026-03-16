@@ -386,7 +386,7 @@ GET /v1/sku-packaging/:nmId
 DELETE /v1/sku-packaging/:nmId
 ```
 
-**Ответ 204** (без тела) | **400** | **404** | **409** — есть ссылки в `shipment_box_lines`
+**Ответ 204** (без тела) | **400** | **404** | **409** (JSON-тело с сообщением — есть ссылки в `shipment_box_lines`)
 
 
 
@@ -430,8 +430,8 @@ POST /v1/shipments
 | `deliveryMode` | `enum` | Да | `"FIXED_VEHICLE"` или `"PER_PALLET"` |
 | `totalDeliveryCost` | `number` | XOR | Обязательно для FIXED_VEHICLE, запрещено для PER_PALLET |
 | `palletRate` | `number` | XOR | Обязательно для PER_PALLET, запрещено для FIXED_VEHICLE |
-| `createdBy` | `string` | Да | Email создателя |
-| `supplyId` | `uuid` | Нет | Связь с поставкой WB (опционально) |
+| `createdBy` | `string` | Да | Email создателя (не fallback из JWT — обязательное поле в DTO) |
+| `supplyId` | `uuid` | Нет | Метаданные: ссылка на поставку WB. Не влияет на расчёт — только для UI-связки |
 
 > **XOR-валидация**: Нельзя указать оба поля `totalDeliveryCost` и `palletRate` одновременно. Нельзя указать не то поле для выбранного режима.
 
@@ -461,7 +461,7 @@ POST /v1/shipments
 ### 6.2. Получить список поставок
 
 ```
-GET /v1/shipments?status=DRAFT&page=1&limit=20&sortBy=createdAt&sortOrder=desc
+GET /v1/shipments?status=DRAFT&page=1&limit=20
 ```
 
 | Параметр | Тип | По умолчанию | Описание |
@@ -469,8 +469,8 @@ GET /v1/shipments?status=DRAFT&page=1&limit=20&sortBy=createdAt&sortOrder=desc
 | `status` | `enum` | — | Фильтр: `DRAFT` или `CONFIRMED` |
 | `page` | `number` | `1` | Номер страницы |
 | `limit` | `number` | `20` | Элементов на странице |
-| `sortBy` | `string` | `createdAt` | Поле сортировки |
-| `sortOrder` | `string` | `desc` | `asc` или `desc` |
+
+> **Сортировка**: `createdAt DESC` (hardcoded). Параметры `sortBy`/`sortOrder` не реализованы в бэкенде.
 
 **Ответ 200:**
 
@@ -543,6 +543,8 @@ GET /v1/shipments/:id
 ```
 
 > **Обратите внимание**: все расчётные поля box line = `null` до вызова `/calculate`. После расчёта — заполнены строками (Decimal).
+
+> **Получение строк коробок**: Отдельного `GET .../box-lines` с пагинацией нет. Строки всегда вложены в `GET /v1/shipments/:id` (через `pallets[].boxLines[]`). При большом кол-ве строк загружается весь граф.
 
 **Ошибки:** `404`
 
@@ -658,7 +660,7 @@ DELETE /v1/shipments/:id/box-lines/:boxLineId
 
 **Ответ 204** | **404** | **409** (не DRAFT)
 
-
+> **Примечание**: Отдельного `GET /box-lines` эндпоинта нет. Строки коробок всегда вложены в ответ `GET /v1/shipments/:id` → `pallets[].boxLines[]`. Для получения актуального состояния строк — перезапрашивайте поставку целиком.
 
 ## 7. Расчёт стоимости (Calculate)
 
@@ -672,7 +674,7 @@ POST /v1/shipments/:id/calculate
 
 Выполняет 9 проверок валидации (см. [раздел 9](#9-обработка-ошибок-валидации)). При успехе — рассчитывает FCU для каждой строки коробки и сохраняет результат.
 
-**Ответ 201:**
+**Ответ 201** (NestJS POST default — нет `@HttpCode` override в контроллере):
 
 ```json
 {
@@ -785,6 +787,8 @@ POST /v1/shipments/:id/confirm
 - `404` — поставка не найдена
 - `409` — уже подтверждена
 
+> **Примечание о снепшотах**: Таблица `shipment_cost_snapshots` создаётся автоматически при confirm. Отдельного `GET` endpoint для чтения снепшотов **нет** — данные снепшотов (FCU, DCU, COGS на момент подтверждения) зафиксированы в расчётных полях box lines и доступны через `GET /v1/shipments/:id`. Для отображения `confirmedAt`, `confirmedBy`, `snapshotCount` используйте ответ `/confirm` или поля в `ShipmentResponseDto`.
+
 ### 8.2. Пересчитать подтверждённую поставку
 
 ```
@@ -819,6 +823,10 @@ POST /v1/shipments/:id/recalculate
 - `400` — поставка не в статусе CONFIRMED (`SHIPMENT_NOT_CONFIRMED`)
 - `403` — недостаточная роль (нужен Manager/Owner/Admin)
 - `404` — не найдена
+
+### 8.3. Чтение снепшотов
+
+> **Нет отдельного эндпоинта** для `GET /shipments/:id/snapshots`. Снепшоты (`shipment_cost_snapshots`) — внутренние аудит-записи бэкенда. Фронтенд получает результат расчёта через `GET /v1/shipments/:id` (box lines с заполненными полями) и ответы `/confirm` и `/recalculate` (`totalFinalCost`, `snapshotCount`).
 
 
 
@@ -971,7 +979,7 @@ parseDecimal(boxType.volumeCm3)?.toLocaleString('ru-RU') + ' см³'  // "96 000
 
 ### Структура экранов
 
-#### Экран 1: Справочник типов коробок (`/shipments/box-types`)
+#### Экран 1: Справочник типов коробок (`/shipments/box-types`) ✅ Маршрут совпадает с `routes.ts`
 
 - Таблица: название, размеры (Д×Ш×В), объём, статус (активен/неактивен)
 - Кнопка «Добавить тип коробки» → модальное окно с формой
@@ -979,21 +987,21 @@ parseDecimal(boxType.volumeCm3)?.toLocaleString('ru-RU') + ' см³'  // "96 000
 - Кнопка «Деактивировать» с подтверждением (проверка ссылок на бэкенде)
 - Фильтр: показать/скрыть неактивные (`?includeInactive=true`)
 
-#### Экран 2: Привязка упаковки SKU (`/shipments/sku-packaging`)
+#### Экран 2: Привязка упаковки SKU (`/shipments/sku-packaging`) ✅ Маршрут совпадает с `routes.ts`
 
 - Таблица: артикул (nmId), название товара, бренд, тип коробки, шт/коробку
 - Кнопка «Привязать товар» → форма с поиском товара + выбор типа коробки
 - Массовая привязка: загрузка списка через `/bulk` эндпоинт
 - Показывать ошибки bulk-операции inline (какие SKU не привязались и почему)
 
-#### Экран 3: Список поставок (`/shipments`)
+#### Экран 3: Список поставок (`/shipments`) ✅ Маршрут совпадает с `routes.ts`
 
 - Таблица с пагинацией: название, режим доставки, статус (бейдж DRAFT/CONFIRMED), дата создания
 - Фильтры: по статусу, сортировка по дате
 - Кнопка «Создать поставку» → форма выбора режима доставки
 - Цветовые бейджи: DRAFT = серый/синий, CONFIRMED = зелёный
 
-#### Экран 4: Детали поставки (`/shipments/:id`)
+#### Экран 4: Детали поставки (`/shipments/:id`) ✅ Маршрут совпадает с `routes.ts` (`/shipments/[id]`)
 
 Основной рабочий экран с несколькими зонами:
 

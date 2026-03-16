@@ -82,6 +82,13 @@ src/
 - **Path aliases**: Use `@/components` not `../../components`
 - **Server Components**: Default (no `'use client'` unless needed)
 - **shadcn/ui**: Never edit manually - use CLI to add components
+- **No `as` casts**: Widen types with optional fields (`?:`) or add `?? fallback` guards
+- **Error test pattern**: Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
+- **Extract at ~150 lines**: Proactively split components before hitting 200-line limit
+- **Pure functions over hook mocking**: Export testable logic as pure functions from hooks
+- **Run E2E against live app**: Verify Playwright specs against running app before marking complete
+- **Regex for locale assertions**: Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
+- **Document same-name functions**: When two modules export identically-named functions, add a distinguishing comment
 
 ### MCP-Assisted Development
 **Context7 MCP** for design patterns and examples:
