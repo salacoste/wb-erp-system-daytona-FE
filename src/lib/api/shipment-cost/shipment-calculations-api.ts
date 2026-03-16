@@ -5,7 +5,11 @@
  */
 
 import { apiClient } from '@/lib/api-client'
-import type { CalculateShipmentResponse, Shipment } from '@/types/shipment-cost'
+import type {
+  CalculateShipmentResponse,
+  ConfirmShipmentResponse,
+  RecalculateShipmentResponse,
+} from '@/types/shipment-cost'
 
 /** POST /v1/shipments/:id/calculate — no body, returns calculation results per SKU */
 export async function calculateShipment(shipmentId: string): Promise<CalculateShipmentResponse> {
@@ -13,11 +17,18 @@ export async function calculateShipment(shipmentId: string): Promise<CalculateSh
 }
 
 /** POST /v1/shipments/:id/confirm — auto-calculates then confirms, DRAFT→CONFIRMED */
-export async function confirmShipment(shipmentId: string, confirmedBy: string): Promise<Shipment> {
-  return apiClient.post<Shipment>(`/v1/shipments/${shipmentId}/confirm`, { confirmedBy })
+export async function confirmShipment(
+  shipmentId: string,
+  confirmedBy: string
+): Promise<ConfirmShipmentResponse> {
+  return apiClient.post<ConfirmShipmentResponse>(`/v1/shipments/${shipmentId}/confirm`, {
+    confirmedBy,
+  })
 }
 
 /** POST /v1/shipments/:id/recalculate — recalculates a CONFIRMED shipment with fresh COGS */
-export async function recalculateShipment(shipmentId: string): Promise<CalculateShipmentResponse> {
-  return apiClient.post<CalculateShipmentResponse>(`/v1/shipments/${shipmentId}/recalculate`)
+export async function recalculateShipment(
+  shipmentId: string
+): Promise<RecalculateShipmentResponse> {
+  return apiClient.post<RecalculateShipmentResponse>(`/v1/shipments/${shipmentId}/recalculate`)
 }

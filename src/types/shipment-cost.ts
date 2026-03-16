@@ -165,6 +165,7 @@ export interface ShipmentCreateRequest {
   totalDeliveryCost?: number
   palletRate?: number
   createdBy: string
+  supplyId?: string // Future feature: link to WB supply; no list endpoint yet
 }
 
 export interface ShipmentUpdateRequest {
@@ -197,4 +198,24 @@ export interface CalculationResultItem {
   finalCostPerUnit: number
   totalUnits: number
   finalCostLine: number
+}
+
+/** /confirm response — shortened ConfirmShipmentResponseDto, NOT full ShipmentResponseDto */
+export interface ConfirmShipmentResponse {
+  shipmentId: string
+  status: 'CONFIRMED'
+  confirmedAt: string // ISO 8601
+  confirmedBy: string
+  snapshotCount: number
+  totalFinalCost: number
+}
+
+/** /recalculate response — shortened RecalculateShipmentResponseDto */
+export interface RecalculateShipmentResponse {
+  shipmentId: string
+  status: 'CONFIRMED'
+  recalculatedAt: string // ISO 8601
+  snapshotCount: number
+  previousSnapshotCount: number
+  totalFinalCost: number
 }

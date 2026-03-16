@@ -76,6 +76,23 @@ export function ShipmentDetailHeader({
           <p className="font-medium">{formatDate(shipment.updatedAt)}</p>
         </div>
       </div>
+
+      {!isDraft && (shipment.confirmedAt || shipment.confirmedBy) && (
+        <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+          {shipment.confirmedBy && (
+            <div>
+              <span className="text-muted-foreground">Подтвердил</span>
+              <p className="font-medium">{shipment.confirmedBy}</p>
+            </div>
+          )}
+          {shipment.confirmedAt && (
+            <div>
+              <span className="text-muted-foreground">Подтверждено</span>
+              <p className="font-medium">{formatDate(shipment.confirmedAt)}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

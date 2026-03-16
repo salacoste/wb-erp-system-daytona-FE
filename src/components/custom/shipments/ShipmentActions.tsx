@@ -17,6 +17,7 @@ import {
 } from '@/hooks/use-shipment-calculations'
 import { ApiError } from '@/types/api'
 import { ROUTES } from '@/lib/routes'
+import { extractValidationErrors } from '@/lib/shipment-validation-utils'
 import {
   ShipmentStatus,
   type CalculateShipmentResponse,
@@ -31,20 +32,6 @@ interface ShipmentActionsProps {
   onCalculateStart?: () => void
   onCalculateSuccess?: (result: CalculateShipmentResponse) => void
   onCalculateError?: (errors: ValidationError[]) => void
-}
-
-/** Extract validation errors from ApiError 400 response */
-function extractValidationErrors(err: unknown): ValidationError[] | null {
-  if (!(err instanceof ApiError) || err.status !== 400) return null
-  const data = err.data as
-    | { errors?: Array<{ errorCode: string; message: string; affectedIds?: (string | number)[] }> }
-    | undefined
-  if (!data?.errors?.length) return null
-  return data.errors.map(e => ({
-    code: e.errorCode,
-    message: e.message,
-    affectedIds: e.affectedIds?.map(String),
-  }))
 }
 
 export function ShipmentActions({
@@ -120,8 +107,8 @@ export function ShipmentActions({
   async function handleRecalculate() {
     onCalculateStart?.()
     try {
-      const result = await recalculateAsync()
-      onCalculateSuccess?.(result)
+      await recalculateAsync()
+      toast.success('Пересчёт выполнен')
     } catch (err: unknown) {
       handleMutationError(err, 'Ошибка при пересчёте')
     }
