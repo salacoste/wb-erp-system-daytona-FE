@@ -58,12 +58,6 @@ export interface StorageBySkuItem {
   last_charge_date?: string | null
   /** True if product currently has stock in WB warehouses */
   has_warehouse_stock?: boolean
-  /** FBS storage cost for the period (₽) - Request #156 */
-  storage_fbs?: number | null
-  /** FBO storage cost for the period (₽) - Request #156 */
-  storage_fbo?: number | null
-  /** Combined FBS+FBO storage cost (₽) - Request #156 */
-  storage_cost_total_fbs_fbo?: number | null
 }
 
 /**
@@ -139,12 +133,6 @@ export interface TopConsumerItem {
   last_charge_date?: string | null
   /** True if product currently has stock in WB warehouses */
   has_warehouse_stock?: boolean
-  /** FBS storage cost for the period (₽) - Request #156 */
-  storage_fbs?: number | null
-  /** FBO storage cost for the period (₽) - Request #156 */
-  storage_fbo?: number | null
-  /** Combined FBS+FBO storage cost (₽) - Request #156 */
-  storage_cost_total_fbs_fbo?: number | null
 }
 
 /**
