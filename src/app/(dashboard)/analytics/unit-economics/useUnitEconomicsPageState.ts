@@ -33,7 +33,13 @@ export function deliveryNullsLastSort(
 }
 
 /** Compute avg delivery cost per unit and coverage ratio (Story 77.5). */
-export function computeDeliveryMetrics(items: UnitEconomicsItem[]) {
+export function computeDeliveryMetrics(items: UnitEconomicsItem[] | undefined) {
+  if (!items?.length)
+    return {
+      avgDeliveryCost: undefined as number | undefined,
+      deliverySkuCount: 0,
+      deliveryCoverageRatio: undefined as number | undefined,
+    }
   const revenueItems = items.filter(i => i.revenue > 0)
   const withDelivery = revenueItems.filter(
     i => i.costs_rub.delivery_to_warehouse != null && i.units_sold && i.units_sold > 0

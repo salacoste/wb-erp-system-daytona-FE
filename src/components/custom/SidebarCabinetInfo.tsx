@@ -27,7 +27,8 @@ export function SidebarCabinetInfo() {
 
   if (!cabinetId) return null
 
-  const displayName = seller?.tradeMark || seller?.name || (sellerError ? 'Кабинет' : '')
+  const sellerResolved = seller !== undefined || sellerError
+  const displayName = seller?.tradeMark || seller?.name || (sellerResolved ? 'Кабинет' : '')
   const showJamBadge = jam && jam.tier !== 'none'
 
   return (
