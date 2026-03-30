@@ -38,18 +38,18 @@ interface BatchListResponse {
  * Aggregates batch statuses into processing status
  */
 function aggregateProcessingStatus(batches: ImportBatch[]): ProcessingStatus {
-  // Find the most recent batch (or active one)
-  const activeBatch = batches.find(
-    (b) => b.status === 'in_progress' || b.status === 'pending'
-  )
-  const latestBatch = activeBatch || batches[0]
+  // Find the most recent active batch, or the latest completed, or fall back to latest overall
+  const activeBatch = batches.find(b => b.status === 'in_progress' || b.status === 'pending')
+  const completedBatch = batches.find(b => b.status === 'completed' || b.status === 'partial')
+  // Prefer active → completed → latest (don't let a stale failed batch override completed data)
+  const latestBatch = activeBatch || completedBatch || batches[0]
 
   // Calculate progress based on batch
   const progressPercent = latestBatch
-    ? latestBatch.progressPercent ??
+    ? (latestBatch.progressPercent ??
       (latestBatch.totalWeeks > 0
         ? Math.round((latestBatch.completedWeeks / latestBatch.totalWeeks) * 100)
-        : 0)
+        : 0))
     : 0
 
   // Map batch status to task status
@@ -119,9 +119,7 @@ export function useProcessingStatus() {
 
       try {
         // Get batches for this cabinet (most recent first, including active)
-        const response = await apiClient.get<BatchListResponse>(
-          '/v1/imports/historical?limit=5'
-        )
+        const response = await apiClient.get<BatchListResponse>('/v1/imports/historical?limit=5')
 
         const batches = response.batches || []
 
@@ -160,7 +158,7 @@ export function useProcessingStatus() {
       }
     },
     enabled: !!cabinetId,
-    refetchInterval: (query) => {
+    refetchInterval: query => {
       // Poll every 3 seconds while processing
       const data = query.state.data
       if (data?.status === 'processing') {
