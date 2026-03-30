@@ -6,21 +6,18 @@
  * TanStack Query hook for fetching unit economics data.
  */
 
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
-import type {
-  UnitEconomicsResponse,
-  UnitEconomicsQueryParams,
-} from '@/types/unit-economics';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { apiClient } from '@/lib/api-client'
+import { ApiError } from '@/types/api'
+import type { UnitEconomicsResponse, UnitEconomicsQueryParams } from '@/types/unit-economics'
 
 /**
  * Query keys for unit economics
  */
 export const unitEconomicsKeys = {
   all: ['unit-economics'] as const,
-  list: (params: UnitEconomicsQueryParams) =>
-    [...unitEconomicsKeys.all, 'list', params] as const,
-};
+  list: (params: UnitEconomicsQueryParams) => [...unitEconomicsKeys.all, 'list', params] as const,
+}
 
 /**
  * Fetch unit economics data from API
@@ -28,28 +25,28 @@ export const unitEconomicsKeys = {
 async function fetchUnitEconomics(
   params: UnitEconomicsQueryParams
 ): Promise<UnitEconomicsResponse> {
-  const searchParams = new URLSearchParams();
+  const searchParams = new URLSearchParams()
 
   // Required parameter
-  searchParams.set('week', params.week);
+  searchParams.set('week', params.week)
 
   // Optional parameters
   if (params.view_by) {
-    searchParams.set('view_by', params.view_by);
+    searchParams.set('view_by', params.view_by)
   }
   if (params.sort_by) {
-    searchParams.set('sort_by', params.sort_by);
+    searchParams.set('sort_by', params.sort_by)
   }
   if (params.sort_order) {
-    searchParams.set('sort_order', params.sort_order);
+    searchParams.set('sort_order', params.sort_order)
   }
   if (params.limit !== undefined) {
-    searchParams.set('limit', String(params.limit));
+    searchParams.set('limit', String(params.limit))
   }
 
   return apiClient.get<UnitEconomicsResponse>(
     `/v1/analytics/unit-economics?${searchParams.toString()}`
-  );
+  )
 }
 
 /**
@@ -58,7 +55,7 @@ async function fetchUnitEconomics(
 type UseUnitEconomicsOptions = Omit<
   UseQueryOptions<UnitEconomicsResponse, Error>,
   'queryKey' | 'queryFn'
->;
+>
 
 /**
  * useUnitEconomics Hook
@@ -87,16 +84,19 @@ export function useUnitEconomics(
     queryKey: unitEconomicsKeys.list(params),
     queryFn: () => fetchUnitEconomics(params),
     // Don't fetch without a week
-    enabled: !!params.week && (options?.enabled !== false),
+    enabled: !!params.week && options?.enabled !== false,
     // Cache for 5 minutes (data doesn't change frequently)
     staleTime: 5 * 60 * 1000,
     // Keep in cache for 30 minutes
     gcTime: 30 * 60 * 1000,
-    // Retry failed requests
-    retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    // Don't retry 404 NO_DATA_FOR_WEEK — it's expected for weeks without imported data
+    retry: (count, err) => {
+      if (err instanceof ApiError && err.status === 404) return false
+      return count < 2
+    },
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
     ...options,
-  });
+  })
 }
 
 /**
@@ -111,7 +111,7 @@ export function prefetchUnitEconomics(
     queryKey: unitEconomicsKeys.list(params),
     queryFn: () => fetchUnitEconomics(params),
     staleTime: 5 * 60 * 1000,
-  });
+  })
 }
 
 /**
@@ -123,5 +123,5 @@ export function invalidateUnitEconomics(
 ) {
   return queryClient.invalidateQueries({
     queryKey: unitEconomicsKeys.all,
-  });
+  })
 }

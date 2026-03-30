@@ -77,11 +77,16 @@ export function DashboardContent(): React.ReactElement {
   )
 
   const { data: processingStatus } = useProcessingStatus()
-  const { data: productCount, isLoading: productsLoading } = useProductsCount()
+  const {
+    data: productCount,
+    isLoading: productsLoading,
+    isError: productsError,
+  } = useProductsCount()
   const { data: productsWithCogsData, isLoading: cogsLoading } = useProductsWithCogs({ limit: 1 })
   const inventoryWithCogs = productsWithCogsData?.pagination?.total ?? 0
+  const totalProducts = productsError ? undefined : (productCount ?? 0)
   const cogsCoverage =
-    productCount && productCount > 0 ? (inventoryWithCogs / productCount) * 100 : 0
+    totalProducts && totalProducts > 0 ? (inventoryWithCogs / totalProducts) * 100 : 0
   const summary = isFinanceAvailable ? (financialComparison.current?.summary_total ?? null) : null
   const fSummary = fulfillmentQuery.current?.summary
   const salesCount = summary?.product_transactions ?? undefined
@@ -161,7 +166,7 @@ export function DashboardContent(): React.ReactElement {
         cogsTotal={summary?.cogs_total ?? undefined}
         cogsCoverage={cogsCoverage}
         productsWithCogs={inventoryWithCogs}
-        totalProducts={productCount ?? 0}
+        totalProducts={totalProducts ?? 0}
         advertisingSpend={advertisingQuery.current?.summary?.total_spend}
         advertisingRoas={advertisingQuery.current?.summary?.overall_roas}
         wbPromotionCost={summary?.wb_promotion_cost_total ?? undefined}
@@ -192,7 +197,7 @@ export function DashboardContent(): React.ReactElement {
       <TrendGraph />
       <InitialDataSummary
         cogsCoverage={cogsCoverage}
-        totalProducts={productCount ?? 0}
+        totalProducts={totalProducts ?? 0}
         productsWithCogs={inventoryWithCogs}
       />
     </div>

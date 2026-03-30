@@ -20,5 +20,6 @@ export function useSellerInfo(cabinetId: string) {
     queryFn: () => getSellerInfo(cabinetId),
     enabled: !!cabinetId,
     staleTime: 60 * 60_000,
+    retry: false, // Backend returns graceful 200 on WB SDK errors — no retry needed
   })
 }

@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
 import { renderHookWithClient } from '@/test/test-utils'
 import { useFcuBySku, fcuAggregationKeys } from '../use-fcu-aggregation'
 
@@ -9,31 +8,12 @@ vi.mock('@/lib/api/shipment-cost/fcu-aggregation-api', () => ({
 
 import { getFcuBySku } from '@/lib/api/shipment-cost/fcu-aggregation-api'
 
-const mockFcuData = [
-  {
-    nmId: 12345,
-    productName: 'Test Product',
-    latestPcu: 150.5,
-    latestDcu: 25.3,
-    latestFcu: 175.8,
-    shipmentId: 'ship-001',
-    shipmentName: 'Shipment 1',
-    confirmedAt: '2026-03-10T12:00:00Z',
-  },
-]
-
 describe('useFcuBySku', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('fetches FCU data when week is provided', async () => {
-    vi.mocked(getFcuBySku).mockResolvedValue(mockFcuData)
+  it('is disabled — endpoint not yet implemented (2026-03-30)', () => {
     const { result } = renderHookWithClient(() => useFcuBySku('2026-W10'))
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data).toEqual(mockFcuData)
-    expect(getFcuBySku).toHaveBeenCalledWith('2026-W10')
+    expect(result.current.isFetching).toBe(false)
+    expect(result.current.data).toBeUndefined()
+    expect(getFcuBySku).not.toHaveBeenCalled()
   })
 
   it('does not fetch when week is undefined', () => {
@@ -46,14 +26,6 @@ describe('useFcuBySku', () => {
     const { result } = renderHookWithClient(() => useFcuBySku(''))
     expect(result.current.isFetching).toBe(false)
     expect(getFcuBySku).not.toHaveBeenCalled()
-  })
-
-  it('handles error gracefully', async () => {
-    vi.mocked(getFcuBySku).mockRejectedValue(new Error('Not Found'))
-    const { result } = renderHookWithClient(() => useFcuBySku('2026-W10'))
-
-    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
-    expect(result.current.data).toBeUndefined()
   })
 })
 

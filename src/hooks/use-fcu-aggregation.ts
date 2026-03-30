@@ -5,7 +5,6 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
-import { getFcuBySku } from '@/lib/api/shipment-cost/fcu-aggregation-api'
 import type { FcuBySkuItem } from '@/lib/api/shipment-cost/fcu-aggregation-api'
 
 export const fcuAggregationKeys = {
@@ -15,15 +14,15 @@ export const fcuAggregationKeys = {
 
 /**
  * Fetch per-SKU FCU from latest confirmed shipment.
- * Gracefully handles 404/500 (endpoint may not be deployed yet).
+ * Backend endpoint /v1/shipment-cost/by-sku is NOT YET IMPLEMENTED (confirmed 2026-03-30).
+ * Hook disabled until backend delivers the endpoint. Returns empty array.
  */
-export function useFcuBySku(week?: string) {
+export function useFcuBySku(_week?: string) {
   return useQuery<FcuBySkuItem[], Error>({
-    queryKey: fcuAggregationKeys.bySku(week),
-    queryFn: () => getFcuBySku(week),
-    enabled: !!week,
+    queryKey: fcuAggregationKeys.bySku(_week),
+    queryFn: () => Promise.resolve([]),
+    enabled: false, // Endpoint not implemented — re-enable when backend delivers
     staleTime: 5 * 60_000,
     gcTime: 30 * 60_000,
-    retry: 1,
   })
 }

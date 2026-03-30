@@ -20,5 +20,6 @@ export function useJamStatus(cabinetId: string) {
     queryFn: () => getJamStatus(cabinetId),
     enabled: !!cabinetId,
     staleTime: 5 * 60_000,
+    retry: false, // Backend returns graceful 200 on WB SDK errors — no retry needed
   })
 }

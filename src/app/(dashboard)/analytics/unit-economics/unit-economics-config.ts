@@ -1,27 +1,37 @@
 /**
  * Unit Economics page configuration
  * Week options generation for the week selector dropdown.
+ * Uses getLastCompletedWeek() to default to a week with data.
  */
 
-/** Generate last 12 weeks for selector */
+import { getLastCompletedWeek } from '@/lib/margin-helpers'
+import { formatIsoWeek } from '@/lib/utils'
+
+/** Generate last 12 completed weeks for selector, starting from lastCompletedWeek */
 function generateWeekOptions(): Array<{ value: string; label: string }> {
+  const lastCompleted = getLastCompletedWeek()
   const options: Array<{ value: string; label: string }> = []
+
+  // Parse lastCompleted to get starting point
+  const match = lastCompleted.match(/^(\d{4})-W(\d{2})$/)
+  if (!match) return options
+
+  // Start from last completed week, go back 12 weeks
   const now = new Date()
-
-  for (let i = 1; i <= 12; i++) {
+  // Find the Monday of the last completed week
+  for (let i = 0; i < 12; i++) {
     const weekDate = new Date(now)
-    weekDate.setDate(weekDate.getDate() - i * 7)
+    // getLastCompletedWeek is either W-1 or W-2; offset from there
+    const baseOffset =
+      lastCompleted === formatIsoWeek(new Date(now.getTime() - 7 * 86400000)) ? 1 : 2
+    weekDate.setDate(weekDate.getDate() - (baseOffset + i) * 7)
 
-    // Get ISO week number
-    const startOfYear = new Date(weekDate.getFullYear(), 0, 1)
-    const days = Math.floor((weekDate.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000))
-    const weekNum = Math.ceil((days + startOfYear.getDay() + 1) / 7)
-
-    const weekStr = `${weekDate.getFullYear()}-W${String(weekNum).padStart(2, '0')}`
+    const weekStr = formatIsoWeek(weekDate)
 
     // Format date range for display
     const weekStart = new Date(weekDate)
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1)
+    const day = weekStart.getDay()
+    weekStart.setDate(weekStart.getDate() - (day === 0 ? 6 : day - 1)) // Monday
     const weekEnd = new Date(weekStart)
     weekEnd.setDate(weekEnd.getDate() + 6)
 

@@ -22,12 +22,13 @@ const JAM_TIER_COLORS: Record<JamTier, string> = {
  */
 export function SidebarCabinetInfo() {
   const cabinetId = useAuthStore(state => state.cabinetId)
-  const { data: seller } = useSellerInfo(cabinetId ?? '')
+  const { data: seller, isError: sellerError } = useSellerInfo(cabinetId ?? '')
   const { data: jam } = useJamStatus(cabinetId ?? '')
 
   if (!cabinetId) return null
 
-  const displayName = seller?.tradeMark || seller?.name
+  const displayName = seller?.tradeMark || seller?.name || (sellerError ? 'Кабинет' : '')
+  const showJamBadge = jam && jam.tier !== 'none'
 
   return (
     <Link
@@ -42,7 +43,7 @@ export function SidebarCabinetInfo() {
       ) : (
         <div className="h-4 w-28 animate-pulse rounded bg-gray-100" />
       )}
-      {jam ? (
+      {showJamBadge ? (
         <div className="mt-1.5 flex items-center gap-1.5">
           <Sparkles className="h-3 w-3 text-gray-400" />
           <span

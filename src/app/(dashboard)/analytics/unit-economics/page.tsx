@@ -3,6 +3,7 @@
 import { RefreshCw, AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { ApiError } from '@/types/api'
 import { UnitEconomicsHeader } from './components/UnitEconomicsHeader'
 import { UnitEconomicsSummaryCards } from './components/UnitEconomicsSummaryCards'
 import { UnitEconomicsTable } from './components/UnitEconomicsTable'
@@ -51,8 +52,11 @@ export default function UnitEconomicsPage() {
     isRefreshing: isLoading,
   }
 
-  // Error state
-  if (error) {
+  // 404 NO_DATA_FOR_WEEK — show empty state, not error
+  const is404 = error instanceof ApiError && error.status === 404
+
+  // Error state (non-404)
+  if (error && !is404) {
     return (
       <div className="space-y-6">
         <UnitEconomicsHeader {...headerProps} />
