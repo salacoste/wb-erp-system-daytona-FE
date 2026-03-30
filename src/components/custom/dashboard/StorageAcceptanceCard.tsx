@@ -1,6 +1,9 @@
 /**
- * Storage Card — Dashboard P&L card for storage cost only.
- * Paid acceptance is shown in a separate PaidAcceptanceCard.
+ * Storage + Acceptance Card — Секция 3: К ПЕРЕЧИСЛЕНИЮ (правая)
+ * Dashboard Restructuring: P&L Narrative
+ *
+ * Combines storage_cost + paid_acceptance_cost.
+ * Subtitle shows breakdown. Red accent. Inverted comparison.
  */
 
 'use client'
@@ -16,7 +19,7 @@ import { StandardMetricSkeleton, MetricCardError } from './MetricCardStates'
 
 export interface StorageAcceptanceCardProps {
   storageCost: number | null | undefined
-  paidAcceptanceCost?: number | null | undefined
+  paidAcceptanceCost: number | null | undefined
   previousTotal: number | null | undefined
   saleGross: number | null | undefined
   isLoading?: boolean
@@ -27,6 +30,7 @@ export interface StorageAcceptanceCardProps {
 
 export function StorageAcceptanceCard({
   storageCost,
+  paidAcceptanceCost,
   previousTotal,
   saleGross,
   isLoading = false,
@@ -38,7 +42,7 @@ export function StorageAcceptanceCard({
   if (error) {
     return (
       <MetricCardError
-        title="Хранение"
+        title="Хранение и приёмка"
         icon={Warehouse}
         error={error}
         onRetry={onRetry}
@@ -47,34 +51,36 @@ export function StorageAcceptanceCard({
     )
   }
 
-  const hasValue = storageCost != null
+  const storage = storageCost ?? 0
+  const acceptance = paidAcceptanceCost ?? 0
+  const total = storageCost != null || paidAcceptanceCost != null ? storage + acceptance : null
+  const hasValue = total != null
+
   const comparison =
-    storageCost != null && previousTotal != null && previousTotal !== 0
-      ? calculateComparison(storageCost, previousTotal, true)
+    total != null && previousTotal != null && previousTotal !== 0
+      ? calculateComparison(total, previousTotal, true)
       : null
 
   const pctOfSales =
-    storageCost != null && saleGross != null && saleGross > 0
-      ? (storageCost / saleGross) * 100
-      : null
+    total != null && saleGross != null && saleGross > 0 ? (total / saleGross) * 100 : null
 
   return (
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
-      aria-label={`Хранение: ${hasValue ? formatCurrency(storageCost) : 'нет данных'}`}
+      aria-label={`Хранение и приёмка: ${hasValue ? formatCurrency(total) : 'нет данных'}`}
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Warehouse className="h-4 w-4 text-red-500" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Хранение</span>
+            <span className="text-sm font-medium text-muted-foreground">Хранение и приёмка</span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Подробнее о хранении"
+                aria-label="Подробнее о хранении и приёмке"
               >
                 <Info className="h-4 w-4" />
               </button>
@@ -82,7 +88,7 @@ export function StorageAcceptanceCard({
             <TooltipContent size="lg">
               <p style={{ whiteSpace: 'pre-line' }}>
                 {
-                  'Расходы на хранение товаров на складах WB.\nЕжедневная плата за каждый товар (зависит от объёма и срока хранения).\nДанные из еженедельного финансового отчёта WB.\n💡 Детализация по SKU — на странице аналитики хранения.'
+                  'Сумма расходов на хранение товаров + платную приёмку на складах WB.\nХранение — ежедневная плата за каждый товар на складе (зависит от объёма и срока хранения).\nПлатная приёмка — плата за приём поставки на склад WB (не на всех складах).\nДанные из еженедельного финансового отчёта WB (финальные суммы).\n💡 Детализация по SKU — на странице аналитики хранения.'
                 }
               </p>
             </TooltipContent>
@@ -90,7 +96,7 @@ export function StorageAcceptanceCard({
         </div>
         <div className="mt-1">
           <span className="text-xl font-bold text-red-500">
-            {hasValue ? formatCurrency(storageCost) : '—'}
+            {hasValue ? formatCurrency(total) : '—'}
           </span>
         </div>
         {comparison && (
@@ -103,6 +109,16 @@ export function StorageAcceptanceCard({
             />
           </div>
         )}
+        <div className="mt-1 flex flex-wrap gap-x-2">
+          {storageCost != null && (
+            <span className="text-xs text-gray-400">Хранение {formatCurrency(storageCost)}</span>
+          )}
+          {paidAcceptanceCost != null && paidAcceptanceCost > 0 && (
+            <span className="text-xs text-gray-400">
+              Приёмка {formatCurrency(paidAcceptanceCost)}
+            </span>
+          )}
+        </div>
         {pctOfSales != null && (
           <div className="mt-0.5">
             <span className="text-xs text-gray-400">{formatPercentage(pctOfSales)} от продаж</span>

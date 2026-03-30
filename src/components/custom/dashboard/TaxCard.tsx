@@ -9,14 +9,6 @@ import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { cn, formatCurrency } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { StandardMetricSkeleton } from './MetricCardStates'
-import {
-  getTaxLabel,
-  getNominalRate,
-  formatRate,
-  MinimumRuleBadge,
-  PreliminaryBadge,
-  VatBadge,
-} from './TaxCardBadges'
 import type { TaxMetrics } from '@/types/finance-summary'
 
 export interface TaxCardProps {
@@ -24,6 +16,43 @@ export interface TaxCardProps {
   previousTaxMetrics: TaxMetrics | null
   isLoading: boolean
   className?: string
+}
+
+/** Human-readable tax system label */
+function getTaxLabel(system: string | null): string {
+  switch (system) {
+    case 'usn6':
+      return 'УСН 6%'
+    case 'usn15':
+      return 'УСН 15%'
+    case 'manual':
+      return 'Ручная ставка'
+    default:
+      return 'Не указана'
+  }
+}
+
+/** Nominal rate for a tax system (used to avoid duplicate rate display) */
+function getNominalRate(system: string | null): number | null {
+  switch (system) {
+    case 'usn6':
+      return 6
+    case 'usn15':
+      return 15
+    default:
+      return null
+  }
+}
+
+/** Format effective tax rate for display */
+function formatRate(rate: number | null): string {
+  if (rate == null) return '—'
+  return (
+    new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 1,
+    }).format(rate) + ' %'
+  )
 }
 
 export function TaxCard({
@@ -116,6 +145,7 @@ function Body({
     )
   }
 
+  // Only show separate effective rate when it differs from the system's nominal rate
   const nominalRate = getNominalRate(taxMetrics.tax_system)
   const showEffectiveRate =
     hasData &&
@@ -135,11 +165,51 @@ function Body({
           <span className="text-xs text-gray-400">{formatRate(taxMetrics.effective_tax_rate)}</span>
         )}
         {taxMetrics.is_minimum_rule && <MinimumRuleBadge />}
-        {taxMetrics.preliminary && <PreliminaryBadge dc={taxMetrics.data_completeness} />}
         {taxMetrics.vat_payer && taxMetrics.vat_rate != null && (
           <VatBadge taxMetrics={taxMetrics} />
         )}
       </div>
     </>
+  )
+}
+
+function MinimumRuleBadge(): React.ReactElement {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs font-medium text-yellow-700">
+          Мин. 1%
+        </span>
+      </TooltipTrigger>
+      <TooltipContent size="sm">
+        <p>Применено правило минимального налога 1% от выручки (УСН 15%)</p>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+function VatBadge({ taxMetrics }: { taxMetrics: TaxMetrics }): React.ReactElement {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+          НДС {taxMetrics.vat_rate}%
+        </span>
+      </TooltipTrigger>
+      <TooltipContent size="sm">
+        <p>
+          НДС от продаж:{' '}
+          {taxMetrics.vat_output != null ? formatCurrency(taxMetrics.vat_output) : '—'}
+        </p>
+        <p>
+          НДС к уплате:{' '}
+          {taxMetrics.vat_payable != null ? formatCurrency(taxMetrics.vat_payable) : '—'}
+        </p>
+        <p>
+          Выручка без НДС:{' '}
+          {taxMetrics.revenue_excl_vat != null ? formatCurrency(taxMetrics.revenue_excl_vat) : '—'}
+        </p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
