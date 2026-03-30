@@ -33,7 +33,7 @@ import { ExpenseChart } from '@/components/custom/ExpenseChart'
 import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
-import { ProcessingAlert, FailedAlert, ErrorAlert } from './DashboardAlerts'
+import { ProcessingAlert, FailedAlert, ErrorAlert, DataGapsAlert } from './DashboardAlerts'
 
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()
@@ -118,6 +118,7 @@ export function DashboardContent(): React.ReactElement {
   const isProcessing =
     !hasFinancialData && (reportStatus === 'in_progress' || reportStatus === 'pending')
   const isFailed = reportStatus === 'failed'
+  const failedBatchCount = processingStatus?.failedBatchCount ?? 0
 
   return (
     <div className="space-y-4 pb-8">
@@ -140,6 +141,7 @@ export function DashboardContent(): React.ReactElement {
       )}
       {isProcessing && <ProcessingAlert processingStatus={processingStatus} />}
       {isFailed && <FailedAlert />}
+      {!isFailed && failedBatchCount > 0 && <DataGapsAlert failedCount={failedBatchCount} />}
       {error && !isProcessing && isFinanceAvailable && <ErrorAlert onRetry={handleRetry} />}
 
       <TaxWarningBanner taxConfigured={!!effectiveTaxMetrics} />

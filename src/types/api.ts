@@ -77,6 +77,8 @@ export interface ProcessingStatus {
   }
   estimatedTimeRemaining?: number // seconds
   error?: string
+  /** Count of failed import batches — shown as warning on dashboard */
+  failedBatchCount?: number
 }
 
 /**

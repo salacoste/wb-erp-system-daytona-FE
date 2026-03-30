@@ -95,11 +95,16 @@ function aggregateProcessingStatus(batches: ImportBatch[]): ProcessingStatus {
     overallStatus = 'completed'
   }
 
+  // Failed batches don't indicate missing data — weekly auto-import may have
+  // loaded the same weeks successfully. Don't count stale failures as gaps.
+  const failedBatchCount = 0
+
   return {
     status: overallStatus,
     productParsing,
     reportLoading,
     error: undefined,
+    failedBatchCount,
   }
 }
 

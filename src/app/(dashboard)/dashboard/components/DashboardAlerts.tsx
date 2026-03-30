@@ -47,6 +47,23 @@ export function FailedAlert(): React.ReactElement {
   )
 }
 
+export interface DataGapsAlertProps {
+  failedCount: number
+}
+
+/** Warning alert for partial data gaps (failed imports exist but data is available) */
+export function DataGapsAlert({ failedCount }: DataGapsAlertProps): React.ReactElement {
+  return (
+    <Alert className="border-yellow-500 bg-yellow-50">
+      <Info className="h-4 w-4 text-yellow-600" />
+      <AlertDescription className="text-yellow-900">
+        {failedCount} {failedCount === 1 ? 'импорт завершился' : 'импортов завершились'} с ошибкой —
+        возможны пропуски данных за некоторые периоды.
+      </AlertDescription>
+    </Alert>
+  )
+}
+
 export interface ErrorAlertProps {
   onRetry: () => void
 }
