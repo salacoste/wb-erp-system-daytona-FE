@@ -166,14 +166,6 @@ function ConsumerRow({
       <div className="text-right flex-shrink-0">
         <p className="text-sm font-medium text-[#7C4DFF]">{formatCurrency(item.storage_cost)}</p>
         <p className="text-xs text-muted-foreground">{item.percent_of_total.toFixed(1)}%</p>
-        {/* Request #156: FBO/FBS storage split */}
-        {(item.storage_fbo != null || item.storage_fbs != null) && (
-          <p className="text-[10px] text-muted-foreground">
-            {item.storage_fbo != null && `FBO ${formatCurrency(item.storage_fbo)}`}
-            {item.storage_fbo != null && item.storage_fbs != null && ' · '}
-            {item.storage_fbs != null && `FBS ${formatCurrency(item.storage_fbs)}`}
-          </p>
-        )}
       </div>
       <div className="w-20 flex-shrink-0 flex justify-end">
         <StorageRatioIndicator ratio={item.storage_to_revenue_ratio ?? null} />

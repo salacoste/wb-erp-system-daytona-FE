@@ -45,6 +45,10 @@ export interface PreviousPeriodData {
   salesCogs: number | null
   storageCost: number | null
   theoreticalProfit: number | null
+  // Paid acceptance cost for PaidAcceptanceCard comparison
+  paidAcceptanceCost: number | null
+  // WB other deductions total for OtherDeductionsCard comparison
+  wbOtherDeductionsTotal: number | null
   // Epic 66-FE: Tax metrics for TaxCard/NetProfitCard comparison
   taxMetrics?: TaxMetrics | null
 }
@@ -81,6 +85,10 @@ export interface DashboardMetricsGridProps {
   advertisingRoas: number | undefined
   /** Actual WB promotion deductions from finance-summary (wb_promotion_cost) */
   wbPromotionCost?: number | undefined
+  /** WB Jam (ВБ.Джем) cost from finance-summary (wb_jam_cost) */
+  wbJamCost?: number | undefined
+  /** WB other services cost from finance-summary (wb_other_services_cost) */
+  wbOtherServicesCost?: number | undefined
   // Прибыль
   grossProfit: number | undefined
   marginPct: number | undefined

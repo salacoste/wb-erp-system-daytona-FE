@@ -103,6 +103,7 @@ export function renderGridCards(props: DashboardMetricsGridProps): React.ReactEl
       />
       <StorageAcceptanceCard
         storageCost={storageCost}
+        paidAcceptanceCost={paidAcceptanceCost}
         previousTotal={prev?.storageCost}
         saleGross={saleGross}
         isLoading={false}
