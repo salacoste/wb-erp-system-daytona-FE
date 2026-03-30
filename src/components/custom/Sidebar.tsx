@@ -40,7 +40,7 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-white">
-      <div className="flex h-full flex-col">
+      <div className="flex h-full min-h-0 flex-col">
         {/* Logo/Title */}
         <div className="flex h-16 items-center border-b px-6">
           <h2 className="text-lg font-semibold text-gray-900">WB Repricer</h2>
@@ -50,7 +50,7 @@ export function Sidebar() {
         <SidebarCabinetInfo />
 
         {/* Navigation Items */}
-        <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
+        <nav className="flex-1 overflow-y-auto space-y-1 px-3 py-4" aria-label="Main navigation">
           {items.map(item => {
             const Icon = item.icon
             return (
