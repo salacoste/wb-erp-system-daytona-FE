@@ -286,17 +286,3 @@ const stocks = await this.getLatestStocks(cabinetId); // queries inventory_snaps
 *Reporter: Frontend Team*
 *Backend Investigation: 2026-02-27*
 *Status: RESOLVED - No bug, data is correct*
-
----
-
-## Frontend Integration (2026-02-28)
-
-Backend deployed `storage_fbs`, `storage_fbo`, `storage_cost_total_fbs_fbo` fields on:
-- `/v1/analytics/storage/by-sku`
-- `/v1/analytics/storage/top-consumers`
-
-**Files changed:**
-- `src/types/storage-analytics.ts` — Added 3 optional fields to `StorageBySkuItem` and `TopConsumerItem`
-- `src/app/(dashboard)/analytics/storage/components/StorageBySkuTable.tsx` — Shows FBO/FBS split under total cost
-- `src/components/custom/dashboard/StorageTopConsumersWidget.tsx` — Shows FBO/FBS split under percentage
-- `src/test/fixtures/storage-analytics.ts` — Updated fixtures with sample FBO/FBS values

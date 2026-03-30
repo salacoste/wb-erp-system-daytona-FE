@@ -11,23 +11,18 @@ Dashboard показывает секцию "Daily Breakdown" (ежедневн�
 | Endpoint | Daily Breakdown | Status |
 |----------|-----------------|--------|
 | `/v1/analytics/orders/volume?include_cogs=true` | ✅ `by_day_with_cogs[]` | **WORKS** |
-| `/v1/analytics/orders/trends?aggregation=day` | ✅ `trends[]` with revenue, ordersCount | **WORKS** |
 | `/v1/analytics/daily/finance` | ❌ Endpoint не существует | **MISSING** |
-| `/v1/analytics/advertising?include_daily=true` | ✅ `daily[]` with spend per day | **✅ RESOLVED (2026-02-28)** |
+| `/v1/analytics/advertising` | ❌ Нет поля `daily` | **MISSING** |
 
 ---
 
 ## What Frontend Shows Now
 
 ```
-Daily Breakdown (W08, validated 2026-02-28)
-├── Orders:      ✅ Shows real data (from orders/trends?aggregation=day)
-├── Orders COGS: ✅ Shows real data (from orders/volume?include_cogs=true)
-├── Advertising:  ✅ Shows real data (from advertising?include_daily=true)
-├── Finance:     ⚠️ Shows zeros (backend not supported yet)
-├── Logistics:   ✅ Shows real data
-├── Storage:     ✅ Shows real data
-└── Theor Profit: ✅ Calculated from other series
+Daily Breakdown (W07)
+├── Orders:     ✅ Shows real data (from by_day_with_cogs)
+├── Finance:    ⚠️ Shows zeros (empty array)
+└── Advertising: ⚠️ Shows zeros (empty array)
 ```
 
 ---
@@ -137,10 +132,10 @@ export async function getFinanceDailyData(_from: string, _to: string): Promise<F
   return []
 }
 
-// Advertising - ✅ WORKS with include_daily=true (resolved 2026-02-28)
+// Advertising - currently checks for response.daily which doesn't exist
 export async function getAdvertisingDailyData(from: string, to: string): Promise<AdvertisingDailyData[]> {
-  const response = await apiClient.get(`/v1/analytics/advertising?from=${from}&to=${to}&include_daily=true`)
-  return response.daily?.map(day => ({...})) ?? []  // ✅ daily[] now returned by backend
+  const response = await apiClient.get(`/v1/analytics/advertising?from=${from}&to=${to}`)
+  return response.daily?.map(day => ({...})) ?? []  // daily is undefined!
 }
 ```
 
@@ -163,20 +158,7 @@ export async function getAdvertisingDailyData(from: string, to: string): Promise
 
 ## Summary Table
 
-| Request | Problem | Solution | Effort | Status |
-|---------|---------|----------|--------|--------|
-| **#157.1** | No finance daily | New endpoint OR extend finance-summary | Medium | ❌ OPEN |
-| **#157.2** | No advertising daily | Add `daily` field to advertising endpoint | Low | ✅ RESOLVED (2026-02-28) |
-
-## Validation Evidence (2026-02-28)
-
-**Advertising Daily** (`include_daily=true`):
-- API: `GET /v1/analytics/advertising?from=2026-02-16&to=2026-02-22&include_daily=true` → HTTP 200
-- Response: `daily[]` with 7 entries (Mon-Sun), all fields present (date, spend)
-- Frontend chart: purple Реклама line shows non-zero data for all 7 days
-- Table view: daily spend ranges from -707₽ to -1,543₽ (total -7,745₽ for W08)
-
-**Frontend Integration** (2026-02-28):
-- No code changes needed — `getAdvertisingDailyData()` already calls with `include_daily=true`
-- `AdvertisingResponse.daily` type already defined in `src/lib/api/daily-analytics/types.ts`
-- Aggregation pipeline in `src/lib/daily/aggregation.ts` maps `total_spend` to `DailyMetrics.advertising`
+| Request | Problem | Solution | Effort |
+|---------|---------|----------|--------|
+| **#157.1** | No finance daily | New endpoint OR extend finance-summary | Medium |
+| **#157.2** | No advertising daily | Add `daily` field to advertising endpoint | Low (data exists in adv_daily_stats) |
