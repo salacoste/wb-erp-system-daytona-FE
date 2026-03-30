@@ -6,6 +6,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
+import { ApiError } from '@/types/api'
 import type { ProductListResponse, ProductWithCogs } from '@/types/api'
 import {
   type ProductFilters,
@@ -27,27 +28,21 @@ export function useProducts(filters: ProductFilters = {}) {
     queryFn: async (): Promise<ProductListResponse> => {
       try {
         const params = buildProductParams(filters)
-        console.info('[Products] Fetching product list with filters:', filters)
-
-        const response = await apiClient.get<ProductListResponse>(
-          `/v1/products?${params.toString()}`
-        )
-
-        console.info('[Products] Received:', {
-          count: response.products?.length || 0,
-          pagination: response.pagination,
-        })
-
-        return response
-      } catch (error) {
-        console.error('[Products] Failed to fetch product list:', error)
-        throw error
+        return await apiClient.get<ProductListResponse>(`/v1/products?${params.toString()}`)
+      } catch (err) {
+        if (err instanceof ApiError && err.isWbTokenError) {
+          return { products: [], pagination: { total: 0, page: 1, limit: 20, totalPages: 0 } }
+        }
+        throw err
       }
     },
     staleTime: getProductsStaleTime(filters),
     gcTime: PRODUCTS_GC_TIME,
     refetchOnWindowFocus: true,
-    retry: 1,
+    retry: (count, err) => {
+      if (err instanceof ApiError && err.isWbTokenError) return false
+      return count < 1
+    },
     enabled: true,
     placeholderData: undefined,
   })
@@ -62,24 +57,20 @@ export function useProductDetail(nmId: string | undefined) {
     queryFn: async () => {
       if (!nmId) throw new Error('Product ID is required')
       try {
-        console.info(`[Products] Fetching product details for nm_id: ${nmId}`)
-        const response = await apiClient.get<ProductWithCogs>(`/v1/products/${nmId}`)
-        console.info('[Products] Product details received:', {
-          nm_id: response.nm_id,
-          has_cogs: response.has_cogs,
-          current_margin_pct: response.current_margin_pct,
-          missing_data_reason: response.missing_data_reason,
-        })
-        return response
-      } catch (error) {
-        console.error(`[Products] Failed to fetch product ${nmId}:`, error)
-        throw error
+        return await apiClient.get<ProductWithCogs>(`/v1/products/${nmId}`)
+      } catch (err) {
+        if (err instanceof ApiError && err.isWbTokenError)
+          return undefined as unknown as ProductWithCogs
+        throw err
       }
     },
     staleTime: 30000,
     gcTime: PRODUCTS_GC_TIME,
     refetchOnWindowFocus: true,
-    retry: 1,
+    retry: (count, err) => {
+      if (err instanceof ApiError && err.isWbTokenError) return false
+      return count < 1
+    },
     enabled: !!nmId,
   })
 }
@@ -100,19 +91,19 @@ export function useProductsCount() {
     queryKey: ['products', 'count'],
     queryFn: async (): Promise<number> => {
       try {
-        console.info('[Products] Fetching product count')
         const response = await apiClient.get<ProductListResponse>('/v1/products?limit=1')
-        const count = response.pagination?.total || 0
-        console.info('[Products] Total product count:', count)
-        return count
-      } catch (error) {
-        console.error('[Products] Failed to fetch product count:', error)
-        throw error
+        return response.pagination?.total || 0
+      } catch (err) {
+        if (err instanceof ApiError && err.isWbTokenError) return 0
+        throw err
       }
     },
     staleTime: PRODUCTS_COUNT_STALE_TIME,
     gcTime: PRODUCTS_GC_TIME,
     refetchOnWindowFocus: true,
-    retry: 1,
+    retry: (count, err) => {
+      if (err instanceof ApiError && err.isWbTokenError) return false
+      return count < 1
+    },
   })
 }

@@ -17,6 +17,11 @@ export class ApiError extends Error {
     super(message)
     this.name = 'ApiError'
   }
+
+  /** True when backend reports missing/invalid WB API token — expected for cabinets without token */
+  get isWbTokenError(): boolean {
+    return this.status === 401 && this.message.includes('WB API token')
+  }
 }
 
 export interface ApiRequestOptions extends RequestInit {
