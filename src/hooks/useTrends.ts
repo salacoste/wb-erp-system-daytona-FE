@@ -15,11 +15,15 @@ import type { WeeklyTrendsResponse } from '@/types/api'
 
 export interface TrendDataPoint {
   week: string
-  date: string // Formatted date for display (uses week as fallback)
-  revenue: number
-  totalPayable: number
-  /** Logistics cost for the week (Doc 122/123: logistics_cost metric) */
-  logisticsCost: number
+  revenue: number // sale_gross — выручка (продажи розница)
+  totalPayable: number // to_pay_goods — к перечислению за товар
+  payoutTotal: number // payout_total — фактически перечислено продавцу
+  logisticsCost: number // logistics_cost — логистика
+  cogsTotal: number // cogs_total — себестоимость из finance-summary
+  /** Операционная прибыль: payout_total - cogs_total */
+  operatingProfit: number | null
+  /** Эффективность бизнеса: (payout - cogs) / sale_gross * 100 */
+  efficiencyPct: number | null
 }
 
 export interface TrendData {
@@ -82,13 +86,14 @@ export function useTrends(limit = 8) {
     queryFn: async (): Promise<TrendData> => {
       try {
         // Story 3.4a: Single optimized request instead of N+1 requests
-        // Story 61.1: Use wb_sales_gross (seller revenue after WB commission), NOT sale_gross (retail price)
-        // Difference: sale_gross includes WB's ~33% commission, wb_sales_gross is actual seller earnings
-        // Doc 122/123: Added logistics_cost for expense tracking
-        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=wb_sales_gross,to_pay_goods,logistics_cost`
+        // Metrics: sale_gross (выручка), to_pay_goods (к перечислению за товар),
+        //   payout_total (фактически перечислено), logistics_cost (логистика)
+        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=sale_gross,to_pay_goods,payout_total,logistics_cost`
         console.info(`[Trends] Fetching trends (optimized): ${endpoint}`)
 
-        const response = await apiClient.get<WeeklyTrendsResponse>(endpoint)
+        const response = await apiClient.get<WeeklyTrendsResponse>(endpoint, {
+          skipDataUnwrap: true,
+        })
 
         // Handle empty data
         if (!response.data || response.data.length === 0) {
@@ -96,19 +101,49 @@ export function useTrends(limit = 8) {
           return { trends: [], period: 'weeks', summary: response.summary }
         }
 
-        // Map API response to TrendDataPoint format for backward compatibility
-        // TrendGraph component expects: { week, date, revenue, totalPayable, logisticsCost }
-        // Story 61.1: Use wb_sales_gross (seller revenue) instead of sale_gross (retail price)
-        // Doc 122/123: Include logistics_cost for expense tracking
+        // Fetch cogs_total per week from finance-summary (parallel)
+        const weeks = response.data.map(p => p.week)
+        const cogsMap = new Map<string, number>()
+        const cogsResults = await Promise.allSettled(
+          weeks.map(async week => {
+            type FsSummary = {
+              summary_total?: { cogs_total?: number }
+              data?: { summary_total?: { cogs_total?: number } }
+            }
+            const fs = await apiClient.get<FsSummary>(
+              `/v1/analytics/weekly/finance-summary?week=${week}`,
+              { skipDataUnwrap: true }
+            )
+            const cogs = fs.data?.summary_total?.cogs_total ?? fs.summary_total?.cogs_total
+            if (cogs != null) cogsMap.set(week, cogs)
+          })
+        )
+        // Log failures but don't block
+        cogsResults.forEach((r, i) => {
+          if (r.status === 'rejected') console.warn(`[Trends] COGS fetch failed for ${weeks[i]}`)
+        })
+
         const trends: TrendDataPoint[] = response.data
-          .map(point => ({
-            week: point.week,
-            date: point.week, // Use week as date (component formats it anyway)
-            revenue: point.wb_sales_gross ?? 0,
-            totalPayable: point.to_pay_goods ?? 0,
-            logisticsCost: point.logistics_cost ?? 0,
-          }))
-          .sort((a, b) => a.week.localeCompare(b.week)) // Ascending order
+          .map(point => {
+            const revenue = point.sale_gross ?? 0
+            const payout = point.payout_total ?? 0
+            const cogs = cogsMap.get(point.week) ?? 0
+            const opProfit = payout > 0 ? payout - cogs : null
+            return {
+              week: point.week,
+              revenue,
+              totalPayable: point.to_pay_goods ?? 0,
+              payoutTotal: payout,
+              logisticsCost: point.logistics_cost ?? 0,
+              cogsTotal: cogs,
+              operatingProfit: opProfit,
+              efficiencyPct:
+                revenue > 0 && opProfit != null
+                  ? Math.round((opProfit / revenue) * 1000) / 10
+                  : null,
+            }
+          })
+          .sort((a, b) => a.week.localeCompare(b.week))
 
         console.info(`[Trends] Received ${trends.length} data points in single request`)
 

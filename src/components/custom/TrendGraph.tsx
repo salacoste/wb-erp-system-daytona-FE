@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useTrends, type TrendDataPoint } from '@/hooks/useTrends'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import {
   LineChart,
   Line,
@@ -34,7 +34,17 @@ export function TrendGraph() {
     refetch()
   }
 
-  // Custom tooltip component
+  const METRIC_LABELS: Record<string, string> = {
+    revenue: 'Продажи (розница)',
+    totalPayable: 'К перечислению',
+    payoutTotal: 'Перечислено',
+    cogsTotal: 'Себестоимость',
+    operatingProfit: 'Опер. прибыль',
+    logisticsCost: 'Логистика',
+    efficiencyPct: 'Эффективность, %',
+  }
+  const PCT_METRICS = new Set(['efficiencyPct'])
+
   const CustomTooltip = ({
     active,
     payload,
@@ -46,26 +56,19 @@ export function TrendGraph() {
       const dataPoint = payload[0].payload
       return (
         <div className="rounded-lg border bg-white p-3 shadow-md">
-          <p className="font-semibold text-gray-900 mb-2">
-            {dataPoint.week} ({formatDate(dataPoint.date)})
-          </p>
+          <p className="font-semibold text-gray-900 mb-2">{dataPoint.week}</p>
           {payload.map(entry => (
             <p key={entry.dataKey} className="text-sm" style={{ color: entry.color }}>
-              {entry.dataKey === 'revenue'
-                ? 'Вайлдберриз реализовал Товар'
-                : 'К перечислению за товар'}
-              : <span className="font-medium">{formatCurrency(entry.value)}</span>
+              {METRIC_LABELS[entry.dataKey] ?? entry.dataKey}:{' '}
+              <span className="font-medium">
+                {PCT_METRICS.has(entry.dataKey) ? `${entry.value}%` : formatCurrency(entry.value)}
+              </span>
             </p>
           ))}
         </div>
       )
     }
     return null
-  }
-
-  // Format week for X-axis display (week is already in YYYY-Www format)
-  const formatWeekLabel = (week: string) => {
-    return week // Week is already in ISO format (YYYY-Www)
   }
 
   if (isLoading) {
@@ -140,36 +143,100 @@ export function TrendGraph() {
             <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
             <XAxis
               dataKey="week"
-              tickFormatter={formatWeekLabel}
+              tickFormatter={w => w.replace(/^\d{4}-/, '')}
               angle={-45}
               textAnchor="end"
               height={80}
               tick={{ fontSize: 12 }}
             />
-            <YAxis tickFormatter={value => formatCurrency(value)} tick={{ fontSize: 12 }} />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend
-              formatter={value =>
-                value === 'revenue' ? 'Вайлдберриз реализовал Товар' : 'К перечислению за товар'
-              }
+            <YAxis
+              yAxisId="left"
+              tickFormatter={value => formatCurrency(value)}
+              tick={{ fontSize: 12 }}
             />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tickFormatter={v => `${v}%`}
+              domain={[0, 100]}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend formatter={value => METRIC_LABELS[value] ?? value} />
             <Line
+              yAxisId="left"
               type="monotone"
               dataKey="revenue"
-              stroke="#2196F3"
+              stroke="#3B82F6"
               strokeWidth={2}
               name="revenue"
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
             <Line
+              yAxisId="left"
               type="monotone"
               dataKey="totalPayable"
-              stroke="#4CAF50"
+              stroke="#22C55E"
               strokeWidth={2}
               name="totalPayable"
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="payoutTotal"
+              stroke="#9CA3AF"
+              strokeWidth={1.5}
+              strokeDasharray="4 3"
+              name="payoutTotal"
+              dot={{ r: 2 }}
+              activeDot={{ r: 4 }}
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="cogsTotal"
+              stroke="#FF9800"
+              strokeWidth={1.5}
+              name="cogsTotal"
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="operatingProfit"
+              stroke="#E53935"
+              strokeWidth={2.5}
+              name="operatingProfit"
+              dot={{ r: 4, fill: '#E53935' }}
+              activeDot={{ r: 6 }}
+              connectNulls
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="logisticsCost"
+              stroke="#F59E0B"
+              strokeWidth={1.5}
+              strokeDasharray="5 5"
+              name="logisticsCost"
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="efficiencyPct"
+              stroke="#7C4DFF"
+              strokeWidth={2}
+              strokeDasharray="8 4"
+              name="efficiencyPct"
+              dot={{ r: 4, fill: '#7C4DFF' }}
+              activeDot={{ r: 6 }}
+              connectNulls
             />
           </LineChart>
         </ResponsiveContainer>
