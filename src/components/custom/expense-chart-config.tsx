@@ -1,7 +1,6 @@
 /**
- * ExpenseChart configuration, colors, and sub-components
- * Extracted from ExpenseChart.tsx for file size compliance
- * Story 3.3: Expense Breakdown Visualization
+ * ExpenseChart configuration, colors, tooltip, skeleton
+ * Redesign: horizontal bars with business context (2026-03-31)
  */
 
 'use client'
@@ -11,87 +10,106 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency } from '@/lib/utils'
 import type { ExpenseItem } from '@/hooks/useExpenses'
 
-/**
- * Color palette for expense categories
- * 2025-12-13: Updated to match PnLWaterfall/Dashboard structure + Request #56 WB Services
- */
-export const COLORS = [
-  '#9C27B0', // Purple - Комиссия WB
-  '#2196F3', // Blue - Логистика
-  '#4CAF50', // Green - Хранение
-  '#FF9800', // Orange - Платная приёмка
-  '#E53935', // Red - Штрафы
-  '#673AB7', // Deep Purple - Корректировка ВВ
-  '#E91E63', // Pink - WB.Продвижение (Request #56)
-  '#9575CD', // Light Purple - Джем (Request #56)
-  '#78909C', // Blue Grey - Прочие сервисы WB (Request #56)
-  '#607D8B', // Grey - Прочие корректировки
-  '#00BCD4', // Cyan - Комиссия лояльности
-  '#FF5722', // Deep Orange - Удержание баллов
-  '#FFC107', // Amber - Эквайринг
-]
+/** Semantic color map by category key word */
+const CATEGORY_COLORS: Record<string, string> = {
+  Комиссия: '#E53935',
+  Логистика: '#3B82F6',
+  Продвижение: '#7C4DFF',
+  Эквайринг: '#F59E0B',
+  Хранение: '#14B8A6',
+  Штрафы: '#DC2626',
+  Джем: '#8B5CF6',
+  лояльности: '#06B6D4',
+}
+const DEFAULT_COLOR = '#9CA3AF'
 
-/** Data source hints for specific expense categories */
-export const DATA_SOURCE_HINTS: Record<string, string> = {
-  Хранение: 'Из финотчёта WB',
-  'WB.Продвижение': 'Удержания за продвижение из финотчёта WB',
+/** Get semantic color for a category name */
+export function getCategoryColor(category: string): string {
+  for (const [key, color] of Object.entries(CATEGORY_COLORS)) {
+    if (category.includes(key)) return color
+  }
+  return DEFAULT_COLOR
 }
 
-/** Custom tooltip component for expense chart */
-export function ExpenseChartTooltip({
+export interface MergedExpenseItem extends ExpenseItem {
+  /** Sub-items merged into "Прочее" */
+  subItems?: ExpenseItem[]
+}
+
+/** Merge items < threshold% into "Прочее", keeping sub-items for tooltip */
+export function mergeSmallCategories(items: ExpenseItem[], thresholdPct = 1): MergedExpenseItem[] {
+  const main: MergedExpenseItem[] = []
+  const others: ExpenseItem[] = []
+  for (const item of items) {
+    if ((item.percentage ?? 0) >= thresholdPct) {
+      main.push(item)
+    } else {
+      others.push(item)
+    }
+  }
+  if (others.length > 0) {
+    const otherAmount = others.reduce((s, i) => s + i.amount, 0)
+    const otherPct = others.reduce((s, i) => s + (i.percentage ?? 0), 0)
+    main.push({ category: 'Прочее', amount: otherAmount, percentage: otherPct, subItems: others })
+  }
+  return main
+}
+
+/** Tooltip for horizontal bar hover — expands sub-items for "Прочее" */
+export function ExpenseBarTooltip({
   active,
   payload,
 }: {
   active?: boolean
-  payload?: Array<{ payload: ExpenseItem }>
+  payload?: Array<{ payload: MergedExpenseItem & { revenueShare?: number } }>
 }) {
-  if (active && payload && payload.length > 0) {
-    const data = payload[0].payload as ExpenseItem
-    const sourceHint = DATA_SOURCE_HINTS[data.category]
-    return (
-      <div className="rounded-lg border bg-white p-3 shadow-md">
-        <p className="font-semibold text-gray-900">{data.category}</p>
-        <p className="text-sm text-gray-600">
-          Сумма: <span className="font-medium">{formatCurrency(data.amount)}</span>
+  if (!active || !payload?.length) return null
+  const d = payload[0].payload
+  return (
+    <div className="rounded-lg border bg-white p-3 shadow-md min-w-[200px]">
+      <p className="font-semibold text-gray-900 mb-1">{d.category}</p>
+      <p className="text-sm text-gray-700">
+        Сумма: <span className="font-medium">{formatCurrency(d.amount)}</span>
+      </p>
+      {d.percentage != null && (
+        <p className="text-sm text-gray-500">
+          Доля расходов: <span className="font-medium">{d.percentage.toFixed(1)}%</span>
         </p>
-        {data.percentage !== undefined && (
-          <p className="text-sm text-gray-600">
-            Доля: <span className="font-medium">{data.percentage.toFixed(1)}%</span>
-          </p>
-        )}
-        {sourceHint && <p className="text-xs text-gray-400 mt-1 italic">{sourceHint}</p>}
-      </div>
-    )
-  }
-  return null
+      )}
+      {d.subItems && d.subItems.length > 0 && (
+        <div className="mt-2 border-t pt-2 space-y-1">
+          <p className="text-xs font-medium text-gray-500">Включает:</p>
+          {d.subItems.map(sub => (
+            <p key={sub.category} className="text-xs text-gray-600 flex justify-between gap-4">
+              <span>{sub.category}</span>
+              <span className="font-medium">{formatCurrency(sub.amount)}</span>
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
-/** Shimmer skeleton component for expense chart loading state */
+/** Skeleton for loading state */
 export function ExpenseChartSkeleton(): React.ReactElement {
-  const barHeights = [0.65, 0.85, 0.45, 0.75, 0.55, 0.9, 0.35]
-
   return (
     <Card aria-busy="true">
       <CardHeader>
-        <Skeleton className="h-5 w-32" aria-hidden="true" />
-        <Skeleton className="h-4 w-48 mt-1" aria-hidden="true" />
+        <Skeleton className="h-5 w-40" />
+        <div className="flex gap-4 mt-3">
+          <Skeleton className="h-12 w-28" />
+          <Skeleton className="h-12 w-28" />
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="flex items-end gap-2 h-[300px] px-4">
-          {barHeights.map((height, i) => (
-            <Skeleton
-              key={i}
-              className="flex-1 rounded-t-lg"
-              style={{ height: `${height * 100}%` }}
-              aria-hidden="true"
-            />
-          ))}
-        </div>
-        <div className="flex justify-between mt-4 px-4">
-          {barHeights.map((_, i) => (
-            <Skeleton key={i} className="h-3 w-12" aria-hidden="true" />
-          ))}
-        </div>
+        {[0.9, 0.6, 0.35, 0.2, 0.12, 0.05].map((w, i) => (
+          <div key={i} className="flex items-center gap-3 mb-3">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-6 flex-1" style={{ maxWidth: `${w * 100}%` }} />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        ))}
       </CardContent>
     </Card>
   )

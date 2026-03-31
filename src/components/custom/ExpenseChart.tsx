@@ -1,35 +1,37 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useExpenses } from '@/hooks/useExpenses'
 import { formatCurrency } from '@/lib/utils'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { RefreshCw, AlertCircle } from 'lucide-react'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  LabelList,
+} from 'recharts'
+import { RefreshCw, AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState, useEffect } from 'react'
 import { EmptyStateIllustration } from './EmptyStateIllustration'
-import { COLORS, ExpenseChartTooltip, ExpenseChartSkeleton } from './expense-chart-config'
+import {
+  getCategoryColor,
+  mergeSmallCategories,
+  ExpenseBarTooltip,
+  ExpenseChartSkeleton,
+} from './expense-chart-config'
 
 /**
- * Expense breakdown chart component
- * Story 3.3: Expense Breakdown Visualization
- *
- * @param weekOverride - Optional week to display (YYYY-Www format)
+ * Expense breakdown chart — horizontal bars with business context
+ * Redesign 2026-03-31: horizontal layout, summary header, semantic colors
  */
 export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
   const queryClient = useQueryClient()
   const { data, isLoading, error, refetch } = useExpenses(weekOverride)
-
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   const handleRetry = () => {
     queryClient.invalidateQueries({ queryKey: ['dashboard', 'expenses'] })
@@ -48,7 +50,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="flex items-center justify-between">
-              <span>Не удалось загрузить данные о расходах. Пожалуйста, попробуйте еще раз.</span>
+              <span>Не удалось загрузить данные о расходах.</span>
               <Button variant="outline" size="sm" onClick={handleRetry} className="ml-4">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Повторить
@@ -65,7 +67,6 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
       <Card>
         <CardHeader>
           <CardTitle>Разбивка расходов</CardTitle>
-          <CardDescription>Визуализация расходов по категориям</CardDescription>
         </CardHeader>
         <CardContent>
           <EmptyStateIllustration type="expenses" />
@@ -74,49 +75,63 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
     )
   }
 
+  const merged = mergeSmallCategories(data.expenses)
+  const chartData = merged.map(item => ({
+    ...item,
+    color: getCategoryColor(item.category),
+  }))
+  const chartHeight = Math.max(200, chartData.length * 44 + 20)
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Разбивка расходов</CardTitle>
-        <CardDescription>Визуализация расходов по категориям</CardDescription>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <CardTitle>Разбивка расходов</CardTitle>
+          <ExpenseSummaryBadge total={data.total} />
+        </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer
-          width="100%"
-          height={Math.max(250, data.expenses.length * 50 + 160)}
-          aria-label="Диаграмма расходов по категориям"
-        >
+        <ResponsiveContainer width="100%" height={chartHeight}>
           <BarChart
-            data={data.expenses}
-            margin={{
-              top: 20,
-              right: isMobile ? 0 : 30,
-              left: isMobile ? 0 : 20,
-              bottom: 100,
-            }}
+            layout="vertical"
+            data={chartData}
+            margin={{ top: 0, right: 90, left: 0, bottom: 0 }}
           >
-            <XAxis
-              dataKey="category"
-              angle={-45}
-              textAnchor="end"
-              height={100}
-              interval={0}
-              tick={{ fontSize: 11 }}
-            />
+            <XAxis type="number" hide />
             <YAxis
-              tickFormatter={value => formatCurrency(value)}
-              tick={{ fontSize: 12 }}
-              width={isMobile ? 60 : 80}
+              type="category"
+              dataKey="category"
+              width={130}
+              tick={{ fontSize: 13, fill: '#374151' }}
+              axisLine={false}
+              tickLine={false}
             />
-            <Tooltip content={<ExpenseChartTooltip />} />
-            <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
-              {data.expenses.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Tooltip content={<ExpenseBarTooltip />} cursor={{ fill: '#f3f4f6' }} />
+            <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={24}>
+              {chartData.map((entry, i) => (
+                <Cell key={i} fill={entry.color} />
               ))}
+              <LabelList
+                dataKey="amount"
+                position="right"
+                formatter={(v: number) => formatCurrency(v)}
+                style={{ fontSize: 12, fill: '#374151', fontWeight: 500 }}
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>
+  )
+}
+
+function ExpenseSummaryBadge({ total }: { total: number }) {
+  const isHigh = total > 100000
+  const Icon = isHigh ? TrendingUp : TrendingDown
+  return (
+    <div className="flex items-center gap-1.5 rounded-md bg-gray-100 px-2.5 py-1">
+      <Icon className={`h-3.5 w-3.5 ${isHigh ? 'text-red-500' : 'text-green-500'}`} />
+      <span className="text-sm font-semibold text-gray-800">{formatCurrency(total)}</span>
+    </div>
   )
 }
