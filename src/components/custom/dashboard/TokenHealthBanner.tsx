@@ -25,7 +25,20 @@ function getDismissedState(): DismissedState | null {
   if (typeof window === 'undefined') return null
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as DismissedState) : null
+    if (!raw) return null
+    const parsed: unknown = JSON.parse(raw)
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      'dismissed' in parsed &&
+      'errorCount' in parsed
+    ) {
+      const obj = parsed as Record<string, unknown>
+      if (typeof obj.dismissed === 'boolean' && typeof obj.errorCount === 'number') {
+        return { dismissed: obj.dismissed, errorCount: obj.errorCount }
+      }
+    }
+    return null
   } catch {
     return null
   }
@@ -54,7 +67,7 @@ export function TokenHealthBanner() {
   if (!data || data.healthy || dismissed) return null
 
   function handleDismiss() {
-    setDismissedState(data?.errorCount ?? 0)
+    setDismissedState(data.errorCount ?? 0)
     setDismissed(true)
   }
 
