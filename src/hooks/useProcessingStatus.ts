@@ -114,6 +114,7 @@ function aggregateProcessingStatus(batches: ImportBatch[]): ProcessingStatus {
 export function useProcessingStatus() {
   const { cabinetId } = useAuthStore()
   const reconciledIds = useRef(new Set<string>())
+  const failedReconcileIds = useRef(new Set<string>())
 
   return useQuery({
     queryKey: ['processing-status', cabinetId],
@@ -139,7 +140,9 @@ export function useProcessingStatus() {
         // Story 84.4: Reconcile failed batches to detect data from auto-import
         const failedBatches = batches.filter(
           b =>
-            (b.status === 'failed' || b.status === 'cancelled') && !reconciledIds.current.has(b.id)
+            (b.status === 'failed' || b.status === 'cancelled') &&
+            !reconciledIds.current.has(b.id) &&
+            !failedReconcileIds.current.has(b.id)
         )
 
         if (failedBatches.length > 0) {
@@ -150,9 +153,16 @@ export function useProcessingStatus() {
               return res
             })
           )
-          const stillFailed = reconcileResults.filter(
-            r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.reconciled)
-          ).length
+          let stillFailed = 0
+          reconcileResults.forEach((r, i) => {
+            if (r.status === 'rejected') {
+              failedReconcileIds.current.add(failedBatches[i].id)
+              stillFailed++
+            } else if (!r.value.reconciled) {
+              failedReconcileIds.current.add(failedBatches[i].id)
+              stillFailed++
+            }
+          })
           result.failedBatchCount = stillFailed
         }
 
