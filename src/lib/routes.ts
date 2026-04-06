@@ -37,6 +37,7 @@ export const ROUTES = {
     UNIT_ECONOMICS: '/analytics/unit-economics', // Epic 5: Unit Economics Analytics
     LIQUIDITY: '/analytics/liquidity', // Epic 7: Liquidity Analysis
     ADVERTISING: '/analytics/advertising', // Epic 33: Advertising Analytics
+    CAMPAIGN_DETAIL: '/analytics/advertising/campaigns', // Story 86.1: Bid Recommendations
     ORDERS: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
     FUNNEL: '/analytics/funnel', // Epic 68: Marketing Funnel Analytics
     BUYOUT: '/analytics/buyout', // Epic 69: Buyout Rate Analytics
@@ -163,4 +164,8 @@ export const buildSupplyDetailRoute = (supplyId: string): string => {
  */
 export const buildShipmentDetailRoute = (shipmentId: string): string => {
   return `/shipments/${shipmentId}`
+}
+
+export const buildCampaignDetailRoute = (advertId: number): string => {
+  return `/analytics/advertising/campaigns/${advertId}`
 }
