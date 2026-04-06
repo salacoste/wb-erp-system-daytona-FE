@@ -86,9 +86,9 @@ export function useTrends(limit = 8) {
     queryFn: async (): Promise<TrendData> => {
       try {
         // Story 3.4a: Single optimized request instead of N+1 requests
-        // Metrics: sale_gross (выручка), to_pay_goods (к перечислению за товар),
-        //   payout_total (фактически перечислено), logistics_cost (логистика)
-        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=sale_gross,to_pay_goods,payout_total,logistics_cost`
+        // Metrics: wb_sales_gross (выручка продавца), sale_gross (fallback),
+        //   to_pay_goods, payout_total, logistics_cost
+        const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=wb_sales_gross,sale_gross,to_pay_goods,payout_total,logistics_cost`
         console.info(`[Trends] Fetching trends (optimized): ${endpoint}`)
 
         const response = await apiClient.get<WeeklyTrendsResponse>(endpoint, {
@@ -125,7 +125,7 @@ export function useTrends(limit = 8) {
 
         const trends: TrendDataPoint[] = response.data
           .map(point => {
-            const revenue = point.sale_gross ?? 0
+            const revenue = point.wb_sales_gross ?? point.sale_gross ?? 0
             const payout = point.payout_total ?? 0
             const cogs = cogsMap.get(point.week) ?? 0
             const opProfit = payout > 0 ? payout - cogs : null

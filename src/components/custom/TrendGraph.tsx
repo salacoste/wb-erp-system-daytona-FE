@@ -35,7 +35,7 @@ export function TrendGraph() {
   }
 
   const METRIC_LABELS: Record<string, string> = {
-    revenue: 'Продажи (розница)',
+    revenue: 'Выручка продавца',
     totalPayable: 'К перечислению',
     payoutTotal: 'Перечислено',
     cogsTotal: 'Себестоимость',
