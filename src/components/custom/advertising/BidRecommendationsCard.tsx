@@ -21,8 +21,7 @@ interface BidRecommendationsCardProps {
 }
 
 export function BidRecommendationsCard({ cabinetId, advertId, nmId }: BidRecommendationsCardProps) {
-  // Default nmId=0 for campaign-level recommendations (if backend supports)
-  const { data, isLoading, isError } = useBidRecommendations(cabinetId, advertId, nmId ?? 0)
+  const { data, isLoading, isError } = useBidRecommendations(cabinetId, advertId, nmId)
 
   if (!nmId) {
     return (
