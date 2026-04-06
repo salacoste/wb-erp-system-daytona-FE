@@ -8,7 +8,11 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
-import { JAM_TIER_LABELS, SELLER_INFO_REASON_LABELS } from '@/types/cabinet'
+import {
+  JAM_TIER_LABELS,
+  SELLER_INFO_REASON_LABELS,
+  JAM_STATUS_REASON_LABELS,
+} from '@/types/cabinet'
 import type { JamTier } from '@/types/cabinet'
 import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
@@ -106,12 +110,21 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
             </div>
           ) : jam ? (
             <div className="space-y-4">
+              {jam.available === false && (
+                <Alert className="border-yellow-500 bg-yellow-50">
+                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-900">
+                    Статус подписки неизвестен:{' '}
+                    {(jam.reason && JAM_STATUS_REASON_LABELS[jam.reason]) ?? 'неизвестная ошибка'}
+                  </AlertDescription>
+                </Alert>
+              )}
               <div className="flex items-center gap-3">
                 <Badge variant="outline" className={cn('text-sm', JAM_TIER_STYLES[jam.tier])}>
                   {JAM_TIER_LABELS[jam.tier]}
                 </Badge>
               </div>
-              {jam.tier !== 'none' && (
+              {jam.available && jam.tier !== 'none' && (
                 <InfoRow
                   icon={Tag}
                   label="Лимит поисковых запросов"

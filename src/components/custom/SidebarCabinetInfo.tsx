@@ -35,7 +35,7 @@ export function SidebarCabinetInfo() {
       ? 'Кабинет'
       : '' // empty = still loading → show skeleton
   const showWarning = seller?.available === false
-  const showJamBadge = jam && jam.tier !== 'none'
+  const showJamBadge = jam?.available && jam.tier !== 'none'
 
   return (
     <Link

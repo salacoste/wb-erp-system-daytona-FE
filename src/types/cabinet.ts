@@ -130,11 +130,28 @@ export function isJamTierSufficient(userTier: JamTier, requiredTier: JamTier): b
   return JAM_TIER_LEVEL[userTier] >= JAM_TIER_LEVEL[requiredTier]
 }
 
+export type JamStatusReason =
+  | 'no_products'
+  | 'token_error'
+  | 'insufficient_permissions'
+  | 'timeout'
+  | 'wb_api_error'
+
+export const JAM_STATUS_REASON_LABELS: Record<JamStatusReason, string> = {
+  no_products: 'Нет товаров',
+  token_error: 'Токен невалидный',
+  insufficient_permissions: 'Недостаточно прав',
+  timeout: 'Таймаут запроса',
+  wb_api_error: 'Ошибка WB API',
+}
+
 export interface JamStatusResponse {
   tier: JamTier
+  available: boolean
   searchTextsLimit: number
   checkedAt: string
   probeCallsMade: number
+  reason?: JamStatusReason
 }
 
 // --- Seller Info (GET /v1/cabinets/:id/seller-info) ---

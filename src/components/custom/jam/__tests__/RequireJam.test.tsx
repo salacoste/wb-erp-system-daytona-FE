@@ -28,6 +28,7 @@ let queryClient: QueryClient
 
 const mockJamData: JamStatusResponse = {
   tier: 'advanced',
+  available: true,
   searchTextsLimit: 100,
   checkedAt: '2026-03-06T12:00:00.000Z',
   probeCallsMade: 2,

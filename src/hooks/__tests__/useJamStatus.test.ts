@@ -1,6 +1,7 @@
 /**
  * Tests for useJamStatus hook
  * GET /v1/cabinets/:id/jam-status
+ * Story 84.2: handle `available` field + reason
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -16,11 +17,21 @@ vi.mock('@/lib/api/cabinet', () => ({
 import { getJamStatus } from '@/lib/api/cabinet'
 import { jamStatusKeys, useJamStatus } from '../useJamStatus'
 
-const mockJamStatus: JamStatusResponse = {
+const mockJamAvailable: JamStatusResponse = {
   tier: 'standard',
+  available: true,
   searchTextsLimit: 30,
   checkedAt: '2026-03-05T12:00:00.000Z',
   probeCallsMade: 2,
+}
+
+const mockJamUnavailable: JamStatusResponse = {
+  tier: 'none',
+  available: false,
+  searchTextsLimit: 0,
+  checkedAt: '2026-03-05T12:00:00.000Z',
+  probeCallsMade: 0,
+  reason: 'token_error',
 }
 
 const mockedGet = vi.mocked(getJamStatus)
@@ -42,8 +53,8 @@ describe('jamStatusKeys', () => {
 })
 
 describe('useJamStatus', () => {
-  it('returns jam status when cabinetId is provided', async () => {
-    mockedGet.mockResolvedValueOnce(mockJamStatus)
+  it('returns jam status with available: true', async () => {
+    mockedGet.mockResolvedValueOnce(mockJamAvailable)
 
     const { result } = renderHook(() => useJamStatus('cab-1'), {
       wrapper: createQueryWrapper(queryClient),
@@ -52,8 +63,30 @@ describe('useJamStatus', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     expect(mockedGet).toHaveBeenCalledWith('cab-1')
+    expect(result.current.data?.available).toBe(true)
     expect(result.current.data?.tier).toBe('standard')
     expect(result.current.data?.searchTextsLimit).toBe(30)
+    expect(result.current.data?.reason).toBeUndefined()
+  })
+
+  it.each([
+    'no_products',
+    'token_error',
+    'insufficient_permissions',
+    'timeout',
+    'wb_api_error',
+  ] as const)('returns unavailable jam with reason: %s', async reason => {
+    mockedGet.mockResolvedValueOnce({ ...mockJamUnavailable, reason })
+
+    const { result } = renderHook(() => useJamStatus('cab-1'), {
+      wrapper: createQueryWrapper(queryClient),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(result.current.data?.available).toBe(false)
+    expect(result.current.data?.reason).toBe(reason)
+    expect(result.current.data?.tier).toBe('none')
   })
 
   it('is disabled when cabinetId is empty string', () => {
