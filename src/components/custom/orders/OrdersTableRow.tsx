@@ -16,10 +16,15 @@ import { cn, formatCurrency } from '@/lib/utils'
 import { getWbStatusConfig } from '@/lib/wb-status-mapping'
 import { OrderStatusBadge } from './OrderStatusBadge'
 import type { OrderFbsItem } from '@/types/orders'
+import type { ClientInfoItem } from '@/types/orders-client-info'
 
 interface OrdersTableRowProps {
   order: OrderFbsItem
   onClick: (order: OrderFbsItem) => void
+  /** Story 86.2: client PII for this row (Owner only) */
+  clientInfo?: ClientInfoItem
+  /** Story 86.2: render the client cell (matches parent table's column visibility) */
+  showClientColumn?: boolean
 }
 
 /**
@@ -67,7 +72,12 @@ function WbStatusBadge({ status }: { status: string }) {
 /**
  * OrdersTableRow - Single row in orders table
  */
-export function OrdersTableRow({ order, onClick }: OrdersTableRowProps) {
+export function OrdersTableRow({
+  order,
+  onClick,
+  clientInfo,
+  showClientColumn = false,
+}: OrdersTableRowProps) {
   const productName = order.productName || '—'
   const needsTruncation = productName.length > 40
 
@@ -145,6 +155,38 @@ export function OrdersTableRow({ order, onClick }: OrdersTableRowProps) {
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
         {formatDateTime(order.statusUpdatedAt)}
       </TableCell>
+
+      {/* Story 86.2: Client (PII) — Owner only */}
+      {showClientColumn && (
+        <TableCell className="w-44">
+          <ClientInfoCell info={clientInfo} />
+        </TableCell>
+      )}
     </TableRow>
+  )
+}
+
+/**
+ * Story 86.2: Renders client name + tel: link, or "—" when no PII available.
+ * Phone link uses stopPropagation so clicking it does NOT also open the row modal.
+ */
+function ClientInfoCell({ info }: { info?: ClientInfoItem }) {
+  if (!info || (!info.clientName && !info.clientPhone)) {
+    return <span className="text-muted-foreground">—</span>
+  }
+  return (
+    <div className="flex flex-col gap-0.5 text-sm">
+      {info.clientName && <span className="font-medium">{info.clientName}</span>}
+      {info.clientPhone && (
+        <a
+          href={`tel:${info.clientPhone}`}
+          className="text-primary hover:underline text-xs"
+          onClick={e => e.stopPropagation()}
+          aria-label={`Позвонить клиенту по номеру ${info.clientPhone}`}
+        >
+          {info.clientPhone}
+        </a>
+      )}
+    </div>
   )
 }

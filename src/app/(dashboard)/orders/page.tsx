@@ -10,12 +10,14 @@
 
 'use client'
 
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle } from 'lucide-react'
 import { useOrders, useOrdersSyncStatus, useOrdersSync } from '@/hooks/useOrders'
+import { useClientInfo } from '@/hooks/useClientInfo'
+import { useAuthStore } from '@/stores/authStore'
 import {
   OrdersPageHeader,
   OrdersFilters,
@@ -68,6 +70,14 @@ function OrdersPageContent() {
   // Sync status and mutation
   const { data: syncStatus } = useOrdersSyncStatus()
   const { mutate: triggerSync, isPending: isSyncing } = useOrdersSync()
+
+  // Story 86.2: Client info (PII) — Owner only, hook is no-op for other roles
+  // Selector argument intentionally named `auth` to avoid shadowing the outer
+  // `state = useOrdersPageState()` binding.
+  const userRole = useAuthStore(auth => auth.user?.role)
+  const showClientColumn = userRole === 'Owner'
+  const orderIds = useMemo(() => data?.items?.map(o => o.orderId) ?? [], [data?.items])
+  const { data: clientInfoMap } = useClientInfo(orderIds)
 
   // Calculate pagination
   const totalCount = data?.pagination?.total ?? 0
@@ -161,6 +171,8 @@ function OrdersPageContent() {
         onRowClick={state.handleRowClick}
         hasFilters={state.hasActiveFilters}
         onClearFilters={state.handleClearFilters}
+        showClientColumn={showClientColumn}
+        clientInfoMap={clientInfoMap}
       />
 
       {/* Pagination */}
