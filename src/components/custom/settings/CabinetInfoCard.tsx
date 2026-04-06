@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Store, Sparkles, Hash, Tag, Clock, AlertTriangle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -8,7 +9,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
 import { JAM_TIER_LABELS, SELLER_INFO_REASON_LABELS } from '@/types/cabinet'
-import type { JamTier, SellerInfoReason } from '@/types/cabinet'
+import type { JamTier } from '@/types/cabinet'
+import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 const JAM_TIER_STYLES: Record<JamTier, string> = {
@@ -64,9 +66,17 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
                 <Alert className="mb-4 border-yellow-500 bg-yellow-50">
                   <AlertTriangle className="h-4 w-4 text-yellow-600" />
                   <AlertDescription className="text-yellow-900">
-                    Информация о продавце недоступна:{' '}
-                    {SELLER_INFO_REASON_LABELS[seller.reason as SellerInfoReason] ??
-                      'неизвестная ошибка'}
+                    <p>
+                      Информация о продавце недоступна:{' '}
+                      {(seller.reason && SELLER_INFO_REASON_LABELS[seller.reason]) ??
+                        'неизвестная ошибка'}
+                    </p>
+                    <Link
+                      href={ROUTES.SETTINGS.CABINET}
+                      className="mt-1 inline-block text-sm font-medium text-yellow-800 underline"
+                    >
+                      Обновить токен WB
+                    </Link>
                   </AlertDescription>
                 </Alert>
               )}

@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
 import { JAM_TIER_LABELS, SELLER_INFO_REASON_LABELS } from '@/types/cabinet'
-import type { JamTier, SellerInfoReason } from '@/types/cabinet'
+import type { JamTier } from '@/types/cabinet'
 import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
@@ -52,8 +52,7 @@ export function SidebarCabinetInfo() {
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-yellow-500" />
               </TooltipTrigger>
               <TooltipContent>
-                {SELLER_INFO_REASON_LABELS[seller?.reason as SellerInfoReason] ??
-                  'Нет данных от WB'}
+                {(seller?.reason && SELLER_INFO_REASON_LABELS[seller.reason]) ?? 'Нет данных от WB'}
               </TooltipContent>
             </Tooltip>
           )}

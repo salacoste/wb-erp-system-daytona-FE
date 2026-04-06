@@ -68,19 +68,22 @@ describe('useSellerInfo', () => {
     expect(result.current.data?.reason).toBeUndefined()
   })
 
-  it('returns unavailable seller with reason', async () => {
-    mockedGet.mockResolvedValueOnce(mockSellerUnavailable)
+  it.each(['token_error', 'insufficient_permissions', 'timeout', 'wb_api_error'] as const)(
+    'returns unavailable seller with reason: %s',
+    async reason => {
+      mockedGet.mockResolvedValueOnce({ ...mockSellerUnavailable, reason })
 
-    const { result } = renderHook(() => useSellerInfo('cab-1'), {
-      wrapper: createQueryWrapper(queryClient),
-    })
+      const { result } = renderHook(() => useSellerInfo('cab-1'), {
+        wrapper: createQueryWrapper(queryClient),
+      })
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(result.current.data?.available).toBe(false)
-    expect(result.current.data?.reason).toBe('token_error')
-    expect(result.current.data?.name).toBe('')
-  })
+      expect(result.current.data?.available).toBe(false)
+      expect(result.current.data?.reason).toBe(reason)
+      expect(result.current.data?.name).toBe('')
+    }
+  )
 
   it('is disabled when cabinetId is empty string', () => {
     const { result } = renderHook(() => useSellerInfo(''), {
