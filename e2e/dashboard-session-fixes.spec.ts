@@ -67,7 +67,7 @@ test.describe('Dashboard — Trends Chart', () => {
     await expect(legend).toBeVisible()
 
     const expectedMetrics = [
-      /Продажи/,
+      /Выручка/,
       /перечислению/,
       /Перечислено/,
       /Себестоимость/,

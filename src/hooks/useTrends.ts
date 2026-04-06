@@ -15,14 +15,14 @@ import type { WeeklyTrendsResponse } from '@/types/api'
 
 export interface TrendDataPoint {
   week: string
-  revenue: number // sale_gross — выручка (продажи розница)
+  revenue: number // wb_sales_gross (fallback: sale_gross) — выручка продавца
   totalPayable: number // to_pay_goods — к перечислению за товар
   payoutTotal: number // payout_total — фактически перечислено продавцу
   logisticsCost: number // logistics_cost — логистика
   cogsTotal: number // cogs_total — себестоимость из finance-summary
   /** Операционная прибыль: payout_total - cogs_total */
   operatingProfit: number | null
-  /** Эффективность бизнеса: (payout - cogs) / sale_gross * 100 */
+  /** Эффективность бизнеса: (payout - cogs) / wb_sales_gross * 100 */
   efficiencyPct: number | null
 }
 
