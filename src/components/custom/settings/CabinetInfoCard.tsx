@@ -1,13 +1,14 @@
 'use client'
 
-import { Store, Sparkles, Hash, Tag, Clock } from 'lucide-react'
+import { Store, Sparkles, Hash, Tag, Clock, AlertTriangle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
-import { JAM_TIER_LABELS } from '@/types/cabinet'
-import type { JamTier } from '@/types/cabinet'
+import { JAM_TIER_LABELS, SELLER_INFO_REASON_LABELS } from '@/types/cabinet'
+import type { JamTier, SellerInfoReason } from '@/types/cabinet'
 import { cn } from '@/lib/utils'
 
 const JAM_TIER_STYLES: Record<JamTier, string> = {
@@ -37,8 +38,8 @@ function InfoRow({
 }
 
 export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
-  const { data: seller, isLoading: sellerLoading, error: sellerError } = useSellerInfo(cabinetId)
-  const { data: jam, isLoading: jamLoading, error: jamError } = useJamStatus(cabinetId)
+  const { data: seller, isLoading: sellerLoading } = useSellerInfo(cabinetId)
+  const { data: jam, isLoading: jamLoading } = useJamStatus(cabinetId)
 
   return (
     <div className="space-y-6">
@@ -57,18 +58,24 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-5 w-40" />
             </div>
-          ) : sellerError ? (
-            <p className="text-sm text-destructive">Не удалось загрузить данные продавца</p>
           ) : seller ? (
-            <div className="divide-y">
-              <InfoRow icon={Store} label="Название" value={seller.name} />
-              <InfoRow
-                icon={Hash}
-                label="SID"
-                value={seller.sid != null ? String(seller.sid) : '—'}
-              />
-              <InfoRow icon={Tag} label="Торговая марка" value={seller.tradeMark || '—'} />
-            </div>
+            <>
+              {seller.available === false && (
+                <Alert className="mb-4 border-yellow-500 bg-yellow-50">
+                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-900">
+                    Информация о продавце недоступна:{' '}
+                    {SELLER_INFO_REASON_LABELS[seller.reason as SellerInfoReason] ??
+                      'неизвестная ошибка'}
+                  </AlertDescription>
+                </Alert>
+              )}
+              <div className="divide-y">
+                <InfoRow icon={Store} label="Название" value={seller.name || '—'} />
+                <InfoRow icon={Hash} label="SID" value={seller.sid || '—'} />
+                <InfoRow icon={Tag} label="Торговая марка" value={seller.tradeMark || '—'} />
+              </div>
+            </>
           ) : null}
         </CardContent>
       </Card>
@@ -87,8 +94,6 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
               <Skeleton className="h-6 w-36" />
               <Skeleton className="h-5 w-52" />
             </div>
-          ) : jamError ? (
-            <p className="text-sm text-destructive">Не удалось определить статус подписки</p>
           ) : jam ? (
             <div className="space-y-4">
               <div className="flex items-center gap-3">

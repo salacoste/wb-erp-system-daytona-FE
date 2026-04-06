@@ -139,8 +139,23 @@ export interface JamStatusResponse {
 
 // --- Seller Info (GET /v1/cabinets/:id/seller-info) ---
 
+export type SellerInfoReason =
+  | 'token_error'
+  | 'insufficient_permissions'
+  | 'timeout'
+  | 'wb_api_error'
+
+export const SELLER_INFO_REASON_LABELS: Record<SellerInfoReason, string> = {
+  token_error: 'Токен невалидный',
+  insufficient_permissions: 'Недостаточно прав',
+  timeout: 'Таймаут запроса',
+  wb_api_error: 'Ошибка WB API',
+}
+
 export interface SellerInfoResponse {
   name: string
   sid: string
   tradeMark: string
+  available: boolean
+  reason?: SellerInfoReason
 }

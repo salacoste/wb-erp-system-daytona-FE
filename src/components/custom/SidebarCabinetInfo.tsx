@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { Store, Sparkles } from 'lucide-react'
+import { Store, Sparkles, AlertTriangle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/stores/authStore'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
-import { JAM_TIER_LABELS } from '@/types/cabinet'
-import type { JamTier } from '@/types/cabinet'
+import { JAM_TIER_LABELS, SELLER_INFO_REASON_LABELS } from '@/types/cabinet'
+import type { JamTier, SellerInfoReason } from '@/types/cabinet'
 import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
@@ -19,16 +20,21 @@ const JAM_TIER_COLORS: Record<JamTier, string> = {
 /**
  * Compact cabinet info block for sidebar.
  * Shows seller trademark + Jam subscription badge.
+ * Story 84.1: handles `available` field from backend graceful responses.
  */
 export function SidebarCabinetInfo() {
   const cabinetId = useAuthStore(state => state.cabinetId)
-  const { data: seller, isError: sellerError } = useSellerInfo(cabinetId ?? '')
+  const { data: seller } = useSellerInfo(cabinetId ?? '')
   const { data: jam } = useJamStatus(cabinetId ?? '')
 
   if (!cabinetId) return null
 
-  const sellerResolved = seller !== undefined || sellerError
-  const displayName = seller?.tradeMark || seller?.name || (sellerResolved ? 'Кабинет' : '')
+  const displayName = seller?.available
+    ? seller.tradeMark || seller.name || 'Кабинет'
+    : seller !== undefined
+      ? 'Кабинет'
+      : '' // empty = still loading → show skeleton
+  const showWarning = seller?.available === false
   const showJamBadge = jam && jam.tier !== 'none'
 
   return (
@@ -40,6 +46,17 @@ export function SidebarCabinetInfo() {
         <div className="flex items-center gap-2 text-sm font-medium text-gray-800">
           <Store className="h-3.5 w-3.5 shrink-0 text-gray-500" />
           <span className="truncate">{displayName}</span>
+          {showWarning && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-yellow-500" />
+              </TooltipTrigger>
+              <TooltipContent>
+                {SELLER_INFO_REASON_LABELS[seller?.reason as SellerInfoReason] ??
+                  'Нет данных от WB'}
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       ) : (
         <div className="h-4 w-28 animate-pulse rounded bg-gray-100" />
