@@ -13,7 +13,9 @@ import { apiClient } from '@/lib/api-client'
 import { getBidRecommendations } from '../bid-recommendations'
 
 describe('getBidRecommendations', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('calls correct endpoint with advertId and nmId', async () => {
     const mock = {
