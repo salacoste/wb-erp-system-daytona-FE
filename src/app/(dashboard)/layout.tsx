@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { Sidebar } from '@/components/custom/Sidebar'
 import { Navbar } from '@/components/custom/Navbar'
+import { TokenHealthBanner } from '@/components/custom/dashboard/TokenHealthBanner'
 import { ROUTES } from '@/lib/routes'
 import {
   Sheet,
@@ -174,6 +175,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <Navbar />
         </div>
+
+        <TokenHealthBanner />
 
         {/* Page Content - overscroll-contain prevents elastic scrolling artifacts */}
         <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-y-contain">

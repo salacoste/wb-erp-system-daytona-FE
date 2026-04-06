@@ -176,3 +176,15 @@ export interface SellerInfoResponse {
   available: boolean
   reason?: SellerInfoReason
 }
+
+// --- Token Health (GET /v1/cabinets/:id/token-status) ---
+
+export interface TokenHealthResponse {
+  healthy: boolean
+  lastError?: string
+  lastErrorAt?: string
+  firstErrorAt?: string
+  errorCount?: number
+  lastSuccessAt?: string
+  recommendation?: string
+}

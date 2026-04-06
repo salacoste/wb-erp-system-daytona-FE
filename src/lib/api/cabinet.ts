@@ -12,6 +12,7 @@ import type {
   UpdateCabinetTaxRequest,
   JamStatusResponse,
   SellerInfoResponse,
+  TokenHealthResponse,
 } from '@/types/cabinet'
 
 /**
@@ -54,4 +55,12 @@ export async function getJamStatus(cabinetId: string): Promise<JamStatusResponse
  */
 export async function getSellerInfo(cabinetId: string): Promise<SellerInfoResponse> {
   return apiClient.get<SellerInfoResponse>(`/v1/cabinets/${cabinetId}/seller-info`)
+}
+
+/**
+ * GET /v1/cabinets/:id/token-status
+ * Token health from Redis — lightweight, no WB API calls.
+ */
+export async function getTokenHealth(cabinetId: string): Promise<TokenHealthResponse> {
+  return apiClient.get<TokenHealthResponse>(`/v1/cabinets/${cabinetId}/token-status`)
 }
