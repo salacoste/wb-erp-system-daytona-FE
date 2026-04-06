@@ -7,8 +7,10 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
+import { useRef } from 'react'
 import { apiClient } from '@/lib/api-client'
 import { useAuthStore } from '@/stores/authStore'
+import { reconcileBatch } from '@/lib/api/imports-reconcile'
 import type { ProcessingStatus } from '@/types/api'
 
 /**
@@ -95,16 +97,13 @@ function aggregateProcessingStatus(batches: ImportBatch[]): ProcessingStatus {
     overallStatus = 'completed'
   }
 
-  // Failed batches don't indicate missing data — weekly auto-import may have
-  // loaded the same weeks successfully. Don't count stale failures as gaps.
-  const failedBatchCount = 0
-
   return {
     status: overallStatus,
     productParsing,
     reportLoading,
     error: undefined,
-    failedBatchCount,
+    // failedBatchCount injected by hook after reconcile — default 0 here
+    failedBatchCount: 0,
   }
 }
 
@@ -114,6 +113,7 @@ function aggregateProcessingStatus(batches: ImportBatch[]): ProcessingStatus {
  */
 export function useProcessingStatus() {
   const { cabinetId } = useAuthStore()
+  const reconciledIds = useRef(new Set<string>())
 
   return useQuery({
     queryKey: ['processing-status', cabinetId],
@@ -123,42 +123,46 @@ export function useProcessingStatus() {
       }
 
       try {
-        // Get batches for this cabinet (most recent first, including active)
         const response = await apiClient.get<BatchListResponse>('/v1/imports/historical?limit=5')
-
         const batches = response.batches || []
 
-        // If no batches found, check if this is a new cabinet
-        // that might not have started processing yet
         if (batches.length === 0) {
           return {
             status: 'processing',
-            productParsing: {
-              progress: 0,
-              status: 'pending',
-            },
-            reportLoading: {
-              progress: 0,
-              status: 'pending',
-            },
+            productParsing: { progress: 0, status: 'pending' },
+            reportLoading: { progress: 0, status: 'pending' },
           }
         }
 
-        return aggregateProcessingStatus(batches)
+        const result = aggregateProcessingStatus(batches)
+
+        // Story 84.4: Reconcile failed batches to detect data from auto-import
+        const failedBatches = batches.filter(
+          b =>
+            (b.status === 'failed' || b.status === 'cancelled') && !reconciledIds.current.has(b.id)
+        )
+
+        if (failedBatches.length > 0) {
+          const reconcileResults = await Promise.allSettled(
+            failedBatches.map(async b => {
+              const res = await reconcileBatch(b.id)
+              if (res.reconciled) reconciledIds.current.add(b.id)
+              return res
+            })
+          )
+          const stillFailed = reconcileResults.filter(
+            r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.reconciled)
+          ).length
+          result.failedBatchCount = stillFailed
+        }
+
+        return result
       } catch (error) {
-        // If API returns 401/403, the user might not have token configured
-        // Return a pending state instead of throwing
         console.warn('[useProcessingStatus] Error fetching batches:', error)
         return {
           status: 'processing',
-          productParsing: {
-            progress: 0,
-            status: 'pending',
-          },
-          reportLoading: {
-            progress: 0,
-            status: 'pending',
-          },
+          productParsing: { progress: 0, status: 'pending' },
+          reportLoading: { progress: 0, status: 'pending' },
         }
       }
     },
