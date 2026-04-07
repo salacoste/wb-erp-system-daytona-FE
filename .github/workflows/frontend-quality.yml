@@ -116,12 +116,76 @@ jobs:
           TZ: Europe/Moscow
 
   # =============================================================================
+  # Privacy Guard — forbid console.* in PII files (Story 86.2 / Epic 86-FE retro #7)
+  #
+  # Background: the project has a global no-console ESLint rule, but
+  # next/core-web-vitals silently disables no-console for .ts files. An ESLint
+  # override targeting PII files therefore does not actually fire. This grep
+  # check is the working enforcement layer.
+  #
+  # PII files: any file matching the documented PII glob patterns. The grep
+  # regex matches `console.method(` calls — actual function invocations, not
+  # comment text or `vi.spyOn(console, ...)` test mocking patterns.
+  #
+  # If this fails, the privacy guarantees of Story 86.2 (NFR3) have been
+  # violated. Fix by removing the console.* call. Do NOT add an exception.
+  # =============================================================================
+  privacy-guard:
+    name: Privacy Guard (no console in PII)
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan PII files for forbidden console.* calls
+        run: |
+          set -euo pipefail
+          PII_GLOBS=(
+            "src/lib/api/orders/client-info-api.ts"
+            "src/lib/api/orders/__tests__/client-info-api.test.ts"
+            "src/hooks/useClientInfo.ts"
+            "src/hooks/__tests__/useClientInfo.test.ts"
+            "src/types/orders-client-info.ts"
+            "src/components/custom/orders/__tests__/OrdersTable.client-column.test.tsx"
+          )
+          # Build the file list, skipping any that don't exist
+          EXISTING=()
+          for f in "${PII_GLOBS[@]}"; do
+            [ -f "$f" ] && EXISTING+=("$f")
+          done
+
+          if [ ${#EXISTING[@]} -eq 0 ]; then
+            echo "ℹ️  No PII files found — guard skipped"
+            exit 0
+          fi
+
+          echo "Scanning ${#EXISTING[@]} PII file(s):"
+          printf '  - %s\n' "${EXISTING[@]}"
+          echo ""
+
+          # Pattern: console.<method>( with whitespace flexibility.
+          # Excludes: vi.spyOn(console, ...) (comma after console, not period).
+          # Excludes: comment text mentioning "console.X" because the regex
+          #           requires the method name AND opening paren.
+          if grep -nE 'console\.(log|info|debug|warn|error|trace|dir|table|count|group|groupEnd|time|timeEnd|timeLog|profile|profileEnd)\s*\(' "${EXISTING[@]}"; then
+            echo ""
+            echo "::error::PRIVACY VIOLATION — forbidden console.* call found in a PII file"
+            echo "::error::PII flows must never appear in any log sink (browser DevTools, Sentry, remote logs)"
+            echo "::error::See: frontend/CLAUDE.md#known-anti-patterns and Story 86.2 NFR3"
+            exit 1
+          fi
+
+          echo "✅ No forbidden console.* calls in PII files"
+
+  # =============================================================================
   # Frontend Quality Status Summary
   # =============================================================================
   quality-status:
     name: Frontend Quality Status
     runs-on: ubuntu-latest
-    needs: [lint, type-check, test]
+    needs: [lint, type-check, test, privacy-guard]
     if: always()
 
     steps:
@@ -137,6 +201,10 @@ jobs:
           fi
           if [[ "${{ needs.test.result }}" != "success" ]]; then
             echo "❌ Frontend unit tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.privacy-guard.result }}" != "success" ]]; then
+            echo "❌ Privacy guard failed — PII files contain forbidden console.* calls"
             exit 1
           fi
           echo "✅ All frontend quality gates passed"
