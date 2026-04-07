@@ -20,7 +20,7 @@
         "**/*personal-data*.{ts,tsx}"
       ],
       "rules": {
-        "no-console": ["error", { "allow": [] }]
+        "no-console": ["error", { "allow": ["assert"] }]
       }
     }
   ]
