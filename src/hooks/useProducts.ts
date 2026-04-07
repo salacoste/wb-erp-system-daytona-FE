@@ -31,7 +31,8 @@ export function useProducts(filters: ProductFilters = {}) {
         return await apiClient.get<ProductListResponse>(`/v1/products?${params.toString()}`)
       } catch (err) {
         if (err instanceof ApiError && err.isWbTokenError) {
-          return { products: [], pagination: { total: 0, page: 1, limit: 20, totalPages: 0 } }
+          // Note: Pagination uses snake_case (`total_pages`), per src/types/cogs.ts
+          return { products: [], pagination: { total: 0, page: 1, limit: 20, total_pages: 0 } }
         }
         throw err
       }

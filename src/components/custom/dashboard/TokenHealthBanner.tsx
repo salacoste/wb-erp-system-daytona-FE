@@ -66,8 +66,15 @@ export function TokenHealthBanner() {
 
   if (!data || data.healthy || dismissed) return null
 
+  // Capture data to a non-null local so the handleDismiss closure (and the JSX
+  // below) can read it without TypeScript losing the narrow from the early return.
+  // Function declarations don't inherit narrowing from outer-scope guards, so
+  // referencing `data` directly inside `function handleDismiss` would re-widen
+  // it back to `TokenHealthResponse | undefined`. CLAUDE.md anti-pattern #2.
+  const safeData = data
+
   function handleDismiss() {
-    setDismissedState(data.errorCount ?? 0)
+    setDismissedState(safeData.errorCount ?? 0)
     setDismissed(true)
   }
 
