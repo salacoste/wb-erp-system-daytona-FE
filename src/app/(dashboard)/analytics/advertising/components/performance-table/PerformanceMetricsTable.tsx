@@ -20,7 +20,6 @@ import { Button } from '@/components/ui/button'
 import { ExternalLink } from 'lucide-react'
 import type { AdvertisingItem, MultiCampaignSkuWarning } from '@/types/advertising-analytics'
 import type { PerformanceMetricsTableProps } from './performance-table.types'
-import { buildCampaignDetailRoute } from '@/lib/routes'
 import { PerformanceTableSkeleton } from './PerformanceTableSkeleton'
 import { PerformanceTableHeader } from './PerformanceTableHeader'
 import { PerformanceTableRow } from './PerformanceTableRow'
@@ -84,21 +83,7 @@ export function PerformanceMetricsTable({
         </Link>
       )
     }
-    if (viewBy === 'campaign') {
-      // Story 86.1 Task 5: navigate to campaign detail page (bid recommendations)
-      if (item.campaign_id) {
-        return (
-          <Link
-            href={buildCampaignDetailRoute(item.campaign_id)}
-            className="text-blue-600 hover:underline flex items-center gap-1"
-          >
-            {item.campaign_id}
-            <ExternalLink className="h-3 w-3" aria-hidden="true" />
-          </Link>
-        )
-      }
-      return item.campaign_id ?? '—'
-    }
+    if (viewBy === 'campaign') return item.campaign_id
     if (viewBy === 'brand') return item.brand || '—'
     if (viewBy === 'category') return item.category || '—'
     return '—'

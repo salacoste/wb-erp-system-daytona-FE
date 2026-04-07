@@ -14,13 +14,12 @@ export const bidRecommendationsKeys = {
   byParams: (advertId: number, nmId: number) => ['bid-recommendations', advertId, nmId] as const,
 }
 
-export function useBidRecommendations(cabinetId: string, advertId: number, nmId?: number) {
-  const validNmId = nmId != null && Number.isFinite(nmId) && nmId > 0
+export function useBidRecommendations(cabinetId: string, advertId: number, nmId: number) {
   return useQuery({
-    queryKey: bidRecommendationsKeys.byParams(advertId, nmId ?? 0),
+    queryKey: bidRecommendationsKeys.byParams(advertId, nmId),
     queryFn: async () => {
       try {
-        return await getBidRecommendations(cabinetId, advertId, nmId!)
+        return await getBidRecommendations(cabinetId, advertId, nmId)
       } catch (err) {
         if (err instanceof ApiError && err.status === 429) {
           toast.error('Превышен лимит запросов. Повторите через несколько минут')
@@ -28,7 +27,7 @@ export function useBidRecommendations(cabinetId: string, advertId: number, nmId?
         throw err
       }
     },
-    enabled: !!cabinetId && Number.isFinite(advertId) && validNmId,
+    enabled: !!cabinetId && Number.isFinite(advertId) && Number.isFinite(nmId),
     staleTime: 30 * 60_000, // 30min — matches backend cache
     gcTime: 60 * 60_000,
     retry: false,

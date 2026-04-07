@@ -16,8 +16,7 @@ export async function getBidRecommendations(
   if (!Number.isFinite(advertId) || !Number.isFinite(nmId)) {
     throw new Error('advertId and nmId must be valid numbers')
   }
-  const params = new URLSearchParams({ nmId: String(nmId) })
   return apiClient.get<BidRecommendationsResponse>(
-    `/v1/cabinets/${cabinetId}/campaigns/${advertId}/bid-recommendations?${params}`
+    `/v1/cabinets/${cabinetId}/campaigns/${advertId}/bid-recommendations?nmId=${nmId}`
   )
 }
