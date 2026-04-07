@@ -14,22 +14,46 @@ import { useBidRecommendations } from '@/hooks/useBidRecommendations'
 import { formatCurrency } from '@/lib/utils'
 import type { KeywordBidRange } from '@/types/bid-recommendations'
 
+/** Module-level color map (avoids per-render allocation) */
+const BID_LEVEL_COLORS = {
+  default: 'bg-gray-50 border-gray-200',
+  blue: 'bg-blue-50 border-blue-200',
+  green: 'bg-green-50 border-green-200',
+} as const
+
+type BidLevelVariant = keyof typeof BID_LEVEL_COLORS
+
+/** Format relative cache age for "Обновлено X мин назад" indicator */
+function formatCacheAge(cachedAt?: string): string | null {
+  if (!cachedAt) return null
+  const cached = new Date(cachedAt).getTime()
+  if (!Number.isFinite(cached)) return null
+  const ageMs = Date.now() - cached
+  const ageMin = Math.floor(ageMs / 60_000)
+  if (ageMin < 1) return 'только что'
+  if (ageMin < 60) return `${ageMin} мин назад`
+  const ageHours = Math.floor(ageMin / 60)
+  return `${ageHours} ч назад`
+}
+
 interface BidRecommendationsCardProps {
+  /** Cabinet UUID — used for the API request path */
   cabinetId: string
+  /** WB advertising campaign ID (advertId in WB API) */
   advertId: number
+  /** Optional WB nomenclature ID — when absent, the card shows a "select product" empty state */
   nmId?: number
 }
 
 export function BidRecommendationsCard({ cabinetId, advertId, nmId }: BidRecommendationsCardProps) {
-  // Default nmId=0 for campaign-level recommendations (if backend supports)
-  const { data, isLoading, isError } = useBidRecommendations(cabinetId, advertId, nmId ?? 0)
+  const { data, isLoading, isError } = useBidRecommendations(cabinetId, advertId, nmId)
 
   if (!nmId) {
     return (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
+            <TrendingUp className="h-5 w-5" aria-hidden="true" />
             Рекомендации по ставкам
           </CardTitle>
         </CardHeader>
@@ -61,7 +85,7 @@ export function BidRecommendationsCard({ cabinetId, advertId, nmId }: BidRecomme
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
+            <TrendingUp className="h-5 w-5" aria-hidden="true" />
             Рекомендации по ставкам
           </CardTitle>
         </CardHeader>
@@ -76,15 +100,19 @@ export function BidRecommendationsCard({ cabinetId, advertId, nmId }: BidRecomme
   }
 
   const { recommendations, keywords } = data
+  const cacheAge = formatCacheAge(data.cachedAt)
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
+          <TrendingUp className="h-5 w-5" aria-hidden="true" />
           Рекомендации по ставкам
         </CardTitle>
-        <CardDescription>Товар: {data.nmId}</CardDescription>
+        <CardDescription>
+          Товар: {nmId}
+          {cacheAge && <span className="ml-2 text-xs">· обновлено {cacheAge}</span>}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-3 gap-4">
@@ -117,17 +145,15 @@ function BidLevel({
 }: {
   label: string
   value: number
-  variant: 'default' | 'blue' | 'green'
+  variant: BidLevelVariant
 }) {
-  const colors = {
-    default: 'bg-gray-50 border-gray-200',
-    blue: 'bg-blue-50 border-blue-200',
-    green: 'bg-green-50 border-green-200',
-  }
+  const isInvalid = !Number.isFinite(value) || value <= 0
   return (
-    <div className={`rounded-lg border p-3 ${colors[variant]}`}>
+    <div className={`rounded-lg border p-3 ${BID_LEVEL_COLORS[variant]}`}>
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-lg font-bold">{formatCurrency(value)}</p>
+      <p className="text-lg font-bold">
+        {isInvalid ? <span className="text-muted-foreground">—</span> : formatCurrency(value)}
+      </p>
     </div>
   )
 }

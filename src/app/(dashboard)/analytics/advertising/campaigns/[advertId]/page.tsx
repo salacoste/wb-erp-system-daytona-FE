@@ -5,7 +5,7 @@
  * Story 86.1: /analytics/advertising/campaigns/[advertId]
  */
 
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,8 +17,11 @@ import { BidRecommendationsCard } from '@/components/custom/advertising/BidRecom
 
 export default function CampaignDetailPage() {
   const params = useParams<{ advertId: string }>()
+  const searchParams = useSearchParams()
   const cabinetId = useAuthStore(state => state.cabinetId)
   const advertId = Number(params.advertId)
+  const nmIdParam = searchParams.get('nmId')
+  const nmId = nmIdParam ? Number(nmIdParam) : undefined
 
   if (!Number.isFinite(advertId)) {
     return (
@@ -46,7 +49,7 @@ export default function CampaignDetailPage() {
         <BackLink />
         <h1 className="text-2xl font-semibold">Кампания #{advertId}</h1>
       </div>
-      <BidRecommendationsCard cabinetId={cabinetId} advertId={advertId} />
+      <BidRecommendationsCard cabinetId={cabinetId} advertId={advertId} nmId={nmId} />
     </div>
   )
 }
