@@ -28,10 +28,41 @@ function getRequiredEnv(key: string): string {
   return value
 }
 
+/**
+ * Optional env var lookup — returns undefined when missing instead of throwing.
+ * Use for credentials of optional test fixtures (e.g., non-Owner roles) so the
+ * main test suite is not blocked when those fixtures are not configured.
+ */
+function getOptionalEnv(key: string): string | undefined {
+  const value = process.env[key]
+  return value && value.length > 0 ? value : undefined
+}
+
 export const TEST_USER = {
   email: getRequiredEnv('E2E_TEST_EMAIL'),
   password: getRequiredEnv('E2E_TEST_PASSWORD'),
 }
+
+/**
+ * Optional non-Owner test user for AC #2 role-gate verification (Story 86.2).
+ *
+ * Required env vars to enable:
+ *   E2E_MANAGER_EMAIL    — Manager-role test account email
+ *   E2E_MANAGER_PASSWORD — Manager-role test account password
+ *
+ * When either is missing, both fields are `undefined` and the related E2E tests
+ * skip gracefully via `test.skip()` (visible yellow in Playwright report).
+ *
+ * @see e2e/auth-manager.setup.ts (creates manager.json storage state)
+ * @see e2e/orders-client-info.spec.ts (consumes the storage state)
+ */
+export const TEST_MANAGER = {
+  email: getOptionalEnv('E2E_MANAGER_EMAIL'),
+  password: getOptionalEnv('E2E_MANAGER_PASSWORD'),
+}
+
+/** True only when both Manager credentials are set in the environment. */
+export const HAS_MANAGER_CREDS = Boolean(TEST_MANAGER.email && TEST_MANAGER.password)
 
 // Test cabinet data
 export const TEST_CABINET = {
