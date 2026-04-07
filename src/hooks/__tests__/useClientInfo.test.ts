@@ -12,6 +12,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { renderHookWithClient } from '@/test/test-utils'
 import { useAuthStore } from '@/stores/authStore'
+import { ApiError } from '@/types/api'
 import {
   useClientInfo,
   clientInfoQueryKeys,
@@ -239,15 +240,16 @@ describe('useClientInfo — success path', () => {
   it('propagates 503 rate limit error without retry (G2 — testarch gap)', async () => {
     // Backend test-api/03-cabinets.http documents 503 with "Rate limit exceeded. Retry after 60s"
     // for the WB Orders FBW upstream rate limit. Hook should propagate but NOT auto-retry.
-    const rateLimitError = Object.assign(new Error('Rate limit exceeded. Retry after 60s'), {
-      status: 503,
-    })
+    // Use the project's ApiError class so the mock matches what real code throws
+    // (allows downstream `if (err instanceof ApiError)` checks to work).
+    const rateLimitError = new ApiError('Rate limit exceeded. Retry after 60s', 503)
     vi.mocked(getClientInfo).mockRejectedValueOnce(rateLimitError)
 
     const { result } = renderHookWithClient(() => useClientInfo(['100']))
     await waitFor(() => expect(result.current.isError).toBe(true))
 
     expect(getClientInfo).toHaveBeenCalledTimes(1) // no retry
+    expect(result.current.error).toBeInstanceOf(ApiError)
     expect(result.current.error?.message).toContain('Rate limit')
     expect(result.current.data).toBeUndefined()
   })

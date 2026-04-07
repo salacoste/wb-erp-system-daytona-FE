@@ -7,6 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BidRecommendationsCard } from '../BidRecommendationsCard'
+import type { BidRecommendationsResponse } from '@/types/bid-recommendations'
 
 vi.mock('@/hooks/useBidRecommendations', () => ({
   useBidRecommendations: vi.fn(),
@@ -27,15 +28,33 @@ function renderCard(props: { cabinetId?: string; advertId?: number; nmId?: numbe
   )
 }
 
-// Minimal mock helper since hook return type is complex
-function mockHook(overrides: Partial<{ data: unknown; isLoading: boolean; isError: boolean }>) {
-  vi.mocked(useBidRecommendations).mockReturnValue({
+/**
+ * Minimal subset of UseQueryResult that the BidRecommendationsCard component
+ * actually consumes. The full hook return type from TanStack Query is complex
+ * and includes ~20 fields, but the card only reads { data, isLoading, isError }.
+ *
+ * This subset matches the project's "widen types instead of using `as` casts"
+ * guideline from CLAUDE.md — we declare exactly what the component needs and
+ * cast the partial mock to the broader return type at the call site.
+ */
+type HookReturn = ReturnType<typeof useBidRecommendations>
+
+interface MockHookOverrides {
+  data?: BidRecommendationsResponse | undefined
+  isLoading?: boolean
+  isError?: boolean
+}
+
+function mockHook(overrides: MockHookOverrides) {
+  // Build a minimally valid object — the cast is to a structurally compatible
+  // subset. No `any`, no eslint-disable. Card only reads these 3 fields.
+  const partial = {
     data: undefined,
     isLoading: false,
     isError: false,
     ...overrides,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any)
+  }
+  vi.mocked(useBidRecommendations).mockReturnValue(partial as unknown as HookReturn)
 }
 
 beforeEach(() => {
@@ -135,8 +154,12 @@ describe('BidRecommendationsCard', () => {
     })
 
     it('hides keyword section when keywords field is omitted', () => {
-      const { keywords: _omit, ...withoutKeywords } = successData
-      void _omit
+      // Construct a response without `keywords` field instead of destructuring-and-discarding
+      const withoutKeywords: BidRecommendationsResponse = {
+        advertId: successData.advertId,
+        nmId: successData.nmId,
+        recommendations: successData.recommendations,
+      }
       mockHook({ data: withoutKeywords })
       renderCard({ nmId: 456 })
 
@@ -195,8 +218,13 @@ describe('BidRecommendationsCard', () => {
     })
 
     it('omits cache age indicator when cachedAt is missing', () => {
-      const { cachedAt: _omit, ...withoutCache } = { ...successData, cachedAt: undefined }
-      void _omit
+      // Explicitly construct a response without cachedAt
+      const withoutCache: BidRecommendationsResponse = {
+        advertId: successData.advertId,
+        nmId: successData.nmId,
+        recommendations: successData.recommendations,
+        keywords: successData.keywords,
+      }
       mockHook({ data: withoutCache })
       renderCard({ nmId: 456 })
 

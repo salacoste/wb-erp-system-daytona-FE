@@ -10,6 +10,7 @@ vi.mock('@/lib/api-client', () => ({
 }))
 
 import { apiClient } from '@/lib/api-client'
+import { ApiError } from '@/types/api'
 import { getClientInfo, CLIENT_INFO_MAX_BATCH } from '../client-info-api'
 
 beforeEach(() => {
@@ -83,13 +84,21 @@ describe('getClientInfo', () => {
   })
 
   it('propagates 503 error with status field intact (G3 — testarch gap)', async () => {
-    // Backend test-api/03-cabinets.http example #15f: 503 with retry guidance
-    const rateLimitError = Object.assign(new Error('Rate limit exceeded. Retry after 60s'), {
-      status: 503,
-    })
+    // Backend test-api/03-cabinets.http example #15f: 503 with retry guidance.
+    // Use the project's ApiError class so the mock matches what real apiClient throws.
+    const rateLimitError = new ApiError('Rate limit exceeded. Retry after 60s', 503)
     vi.mocked(apiClient.get).mockRejectedValueOnce(rateLimitError)
 
-    await expect(getClientInfo('cab-1', ['123'])).rejects.toMatchObject({
+    // Single call — capture the rejection and assert all properties on the same value
+    let caught: unknown = null
+    try {
+      await getClientInfo('cab-1', ['123'])
+    } catch (err) {
+      caught = err
+    }
+
+    expect(caught).toBeInstanceOf(ApiError)
+    expect(caught).toMatchObject({
       message: expect.stringContaining('Rate limit'),
       status: 503,
     })

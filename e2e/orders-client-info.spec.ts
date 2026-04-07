@@ -41,6 +41,27 @@ async function captureClientInfoRequests(
 }
 
 /**
+ * Deterministic wait for the client-info API request to complete.
+ * Replaces all `page.waitForTimeout(N)` calls per the test-quality framework's
+ * "No Hard Waits" rule. Use BEFORE navigating to /orders so the response is
+ * captured even if the request fires immediately on mount.
+ *
+ * Returns null when the request does not fire within the timeout (e.g., the
+ * fixture has no orders, or the user is not Owner). Caller can then use
+ * `test.skip()` to mark the test as skipped instead of conditionally returning.
+ */
+async function waitForClientInfoResponseOrNull(page: Page, timeoutMs = 5000) {
+  try {
+    return await page.waitForResponse(
+      response => CLIENT_INFO_ENDPOINT_PATTERN.test(response.url()) && response.status() === 200,
+      { timeout: timeoutMs }
+    )
+  } catch {
+    return null // No response within timeout — fixture has no DBW orders
+  }
+}
+
+/**
  * Sweep both browser storages for any string containing the given substrings.
  * Returns the list of (storage, key, value) leaks found — empty array means clean.
  */
@@ -105,44 +126,55 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     test('should render phone as a tel: link with aria-label when client info is available', async ({
       page,
     }) => {
-      // Wait for any client info to load
-      await page.waitForTimeout(2000)
+      // Deterministic wait for client-info response (no hard waits)
+      const responsePromise = waitForClientInfoResponseOrNull(page)
+      await page.reload()
+      await responsePromise
 
-      // Find any phone link in the orders table — graceful skip if no DBW orders in fixture
-      const phoneLink = page.getByRole('link', { name: /Позвонить клиенту/i }).first()
-      const linkCount = await page.getByRole('link', { name: /Позвонить клиенту/i }).count()
+      // Use Playwright's auto-waiting locator-based count check
+      const phoneLinkLocator = page.getByRole('link', { name: /Позвонить клиенту/i })
+      const linkCount = await phoneLinkLocator.count()
 
-      if (linkCount === 0) {
-        test.info().annotations.push({
-          type: 'note',
-          description: 'No DBW orders with client info in test fixture — phone link test skipped',
-        })
-        return
-      }
+      // Visible-fixture skip — appears in CI report as "skipped" instead of silently passing
+      test.skip(
+        linkCount === 0,
+        'No DBW orders with client info in test fixture — needs API seeding (M2 backlog)'
+      )
 
+      const phoneLink = phoneLinkLocator.first()
       await expect(phoneLink).toBeVisible()
       const href = await phoneLink.getAttribute('href')
       expect(href).toMatch(/^tel:/)
     })
 
     test('should render "—" placeholder for orders without client info', async ({ page }) => {
-      // Most non-DBW orders should show the dash. Look for at least one in the Клиент column.
-      // We scope the search to the table to avoid matching dashes elsewhere on the page.
-      await page.waitForTimeout(2000)
+      // Deterministic wait for the table to render with client-info data
+      const responsePromise = waitForClientInfoResponseOrNull(page)
+      await page.reload()
+      await responsePromise
+
+      // Scope the search to the table to avoid matching dashes elsewhere on the page.
       const table = page.getByRole('table').first()
       const dashes = table.getByText('—', { exact: true })
+      // The dash placeholder must render for at least one row in the seeded fixture
+      // (most orders are not DBW). If the entire fixture has client info for every
+      // order, this test would skip — surface that as visible skip rather than pass.
       const dashCount = await dashes.count()
-      // Either the table has dashes (non-DBW orders) OR all visible orders have client info
-      // — both states are valid; test asserts the rendering doesn't crash.
-      expect(dashCount).toBeGreaterThanOrEqual(0)
+      test.skip(
+        dashCount === 0,
+        'All orders in fixture have client info — cannot verify "—" placeholder'
+      )
+      expect(dashCount).toBeGreaterThan(0)
     })
   })
 
   test.describe('AC #4 + #5: Privacy guardrails — PII never persisted to browser storage', () => {
     test.beforeEach(async ({ page }) => {
+      // Intercept the client-info request BEFORE navigation, then await it
+      const responsePromise = waitForClientInfoResponseOrNull(page)
       await page.goto(ORDERS_ROUTE)
       await page.waitForLoadState('networkidle')
-      await page.waitForTimeout(2000) // let client-info request settle
+      await responsePromise // deterministic wait, no hard sleep
     })
 
     test('should NOT persist any rendered client name to localStorage or sessionStorage', async ({
@@ -162,13 +194,11 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
         return names
       })
 
-      if (visibleNames.length === 0) {
-        test.info().annotations.push({
-          type: 'note',
-          description: 'No client names visible in fixture — storage sweep skipped',
-        })
-        return
-      }
+      // Visible-skip if no client info in fixture
+      test.skip(
+        visibleNames.length === 0,
+        'No client names visible in fixture — needs API seeding (M2 backlog)'
+      )
 
       // For each visible name, sweep both storages
       const leaks = await sweepBrowserStorageForPii(page, visibleNames)
@@ -184,13 +214,10 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
         return Array.from(links).map(a => (a.getAttribute('href') ?? '').replace(/^tel:/, ''))
       })
 
-      if (phones.length === 0) {
-        test.info().annotations.push({
-          type: 'note',
-          description: 'No phone links visible in fixture — phone storage sweep skipped',
-        })
-        return
-      }
+      test.skip(
+        phones.length === 0,
+        'No phone links visible in fixture — needs API seeding (M2 backlog)'
+      )
 
       const leaks = await sweepBrowserStorageForPii(page, phones)
       expect(
@@ -210,18 +237,21 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
           .filter(t => t.length > 0 && t.length < 50 && !t.includes('₽'))
       })
 
+      test.skip(
+        visibleNames.length === 0,
+        'No PII to verify eviction — needs API seeding (M2 backlog)'
+      )
+
       // Navigate away — this unmounts the orders page and should evict TanStack Query cache
       await page.goto('/dashboard')
       await page.waitForLoadState('networkidle')
 
       // Sweep storages — none of the previously visible PII should remain
-      if (visibleNames.length > 0) {
-        const leaks = await sweepBrowserStorageForPii(page, visibleNames)
-        expect(
-          leaks,
-          `PII persisted after navigation away from /orders: ${JSON.stringify(leaks)}`
-        ).toHaveLength(0)
-      }
+      const leaks = await sweepBrowserStorageForPii(page, visibleNames)
+      expect(
+        leaks,
+        `PII persisted after navigation away from /orders: ${JSON.stringify(leaks)}`
+      ).toHaveLength(0)
     })
   })
 
@@ -229,38 +259,30 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     test('should not open the order detail modal when clicking the phone link (stopPropagation)', async ({
       page,
     }) => {
+      // Deterministic wait — no hard sleep
+      const responsePromise = waitForClientInfoResponseOrNull(page)
       await page.goto(ORDERS_ROUTE)
       await page.waitForLoadState('networkidle')
-      await page.waitForTimeout(2000)
+      await responsePromise
 
-      const phoneLink = page.getByRole('link', { name: /Позвонить клиенту/i }).first()
-      const linkCount = await page.getByRole('link', { name: /Позвонить клиенту/i }).count()
-
-      if (linkCount === 0) {
-        test.info().annotations.push({
-          type: 'note',
-          description: 'No phone links in fixture — stopPropagation test skipped',
-        })
-        return
-      }
+      const phoneLinkLocator = page.getByRole('link', { name: /Позвонить клиенту/i })
+      const linkCount = await phoneLinkLocator.count()
+      test.skip(linkCount === 0, 'No phone links in fixture — needs API seeding (M2 backlog)')
 
       // Block the tel: navigation so jsdom-style protocol errors don't fire
       await page.route('tel:**', route => route.abort())
 
-      // Click the phone link — modal should NOT open
-      await phoneLink.click({ noWaitAfter: true }).catch(() => {
-        // Click may throw because tel: navigation was aborted — that's expected
-      })
+      const phoneLink = phoneLinkLocator.first()
+      // Click the phone link — modal should NOT open. The .catch() here is justified
+      // because aborting tel: navigation legitimately throws an exception in jsdom mode
+      // (a known platform quirk). This is NOT control flow — it handles a specific
+      // exception type that is expected and unrelated to the assertion below.
+      await phoneLink.click({ noWaitAfter: true }).catch(() => {})
 
-      // Order detail modal should not be visible
-      const modal = page.getByRole('dialog')
-      await expect(modal)
-        .toHaveCount(0, { timeout: 1000 })
-        .catch(async () => {
-          // If modal does exist (e.g., from a different feature), check it's not the order modal
-          const orderModal = page.locator('[data-testid="order-detail-modal"]')
-          await expect(orderModal).not.toBeVisible()
-        })
+      // Specifically assert the order detail modal did not open. Replaces the previous
+      // try/catch flow control which was hiding real failures (M3 fix from test-review).
+      const orderModal = page.locator('[data-testid="order-detail-modal"]')
+      await expect(orderModal).not.toBeVisible()
     })
   })
 
@@ -307,13 +329,10 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       const cabinetId = process.env.E2E_CABINET_ID ?? ''
       const token = process.env.E2E_MANAGER_TOKEN ?? ''
 
-      if (!cabinetId || !token) {
-        test.info().annotations.push({
-          type: 'note',
-          description: 'E2E_CABINET_ID or E2E_MANAGER_TOKEN missing — skipping API-level check',
-        })
-        return
-      }
+      test.skip(
+        !cabinetId || !token,
+        'E2E_CABINET_ID or E2E_MANAGER_TOKEN missing — set in .env.e2e to enable API-level check'
+      )
 
       const response = await request.get(
         `${baseUrl}/v1/cabinets/${cabinetId}/orders/client-info?orderIds=1`,
@@ -341,10 +360,11 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
    */
   test.describe('G4: Privacy regression sentinel (canary)', () => {
     test('should not leak any rendered PII across navigation cycles', async ({ page }) => {
-      // 1. Land on orders, capture visible PII
+      // 1. Land on orders with deterministic wait for the PII payload
+      const responsePromise = waitForClientInfoResponseOrNull(page)
       await page.goto(ORDERS_ROUTE)
       await page.waitForLoadState('networkidle')
-      await page.waitForTimeout(2000)
+      await responsePromise
 
       const visiblePii = await page.evaluate(() => {
         const cells = Array.from(document.querySelectorAll('td'))
@@ -357,36 +377,32 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       })
 
       const allNeedles = [...visiblePii.phones, ...visiblePii.names]
-      if (allNeedles.length === 0) {
-        test.info().annotations.push({
-          type: 'note',
-          description:
-            'No PII visible in fixture — sentinel test deferred to environment with seeded DBW orders',
-        })
-        return
-      }
+      // Visible-skip when fixture has no PII to verify (no silent pass)
+      test.skip(
+        allNeedles.length === 0,
+        'No PII visible in fixture — sentinel needs API seeding (M2 backlog)'
+      )
 
-      // 2. Navigate through several pages to exercise unmount/mount cycles
-      const navigationCycle = ['/dashboard', '/products', ORDERS_ROUTE, '/dashboard']
+      // 2. Navigate through several pages to exercise unmount/mount cycles.
+      // Routes are well-known and asserted to exist — no try/catch around navigation.
+      const navigationCycle = ['/dashboard', ORDERS_ROUTE, '/dashboard'] as const
       for (const route of navigationCycle) {
-        await page.goto(route).catch(() => {
-          // Some routes may not exist in all test environments — graceful skip
-        })
-        await page.waitForLoadState('networkidle').catch(() => {})
-        await page.waitForTimeout(500)
+        await page.goto(route)
+        await page.waitForLoadState('networkidle') // deterministic wait, no sleep
       }
 
       // 3. Final storage sweep — none of the originally captured PII should remain
       const leaks = await sweepBrowserStorageForPii(page, allNeedles)
 
-      if (leaks.length > 0) {
-        const summary = leaks
-          .map(l => `[${l.storage}] ${l.key.slice(0, 50)} → contains PII`)
-          .join('\n')
-        throw new Error(
-          `PRIVACY REGRESSION SENTINEL FAILED — ${leaks.length} PII leak(s) detected:\n${summary}\n\nThis means a recent change introduced PII persistence. Investigate before merging.`
-        )
-      }
+      // Build a clear failure message if any leak is detected. Using expect(...).toEqual([])
+      // gives a clean diff in the report instead of a thrown Error which is harder to read.
+      const leakSummary = leaks
+        .map(l => `[${l.storage}] ${l.key.slice(0, 50)} → contains PII`)
+        .join('\n')
+      expect(
+        leaks,
+        `PRIVACY REGRESSION SENTINEL FAILED — ${leaks.length} PII leak(s) detected:\n${leakSummary}\n\nA recent change introduced PII persistence. Investigate before merging.`
+      ).toEqual([])
     })
   })
 })
