@@ -21,7 +21,9 @@ const mockFcuData = [
   },
 ]
 
-beforeEach(() => vi.clearAllMocks())
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 describe('useFcuBySku', () => {
   it('fetches FCU data when week is provided', async () => {
