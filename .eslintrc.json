@@ -9,6 +9,20 @@
     "@typescript-eslint/no-explicit-any": "warn",
     "max-lines-per-file": ["error", 200],
     "no-console": ["warn", { "allow": ["warn", "error"] }]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/client-info*.{ts,tsx}",
+        "**/useClientInfo*.{ts,tsx}",
+        "**/orders-client-info*.{ts,tsx}",
+        "**/*pii*.{ts,tsx}",
+        "**/*personal-data*.{ts,tsx}"
+      ],
+      "rules": {
+        "no-console": ["error", { "allow": [] }]
+      }
+    }
+  ]
 }
 
