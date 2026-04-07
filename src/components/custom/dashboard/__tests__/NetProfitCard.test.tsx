@@ -94,12 +94,8 @@ describe('NetProfitCard (Story 66.6-FE)', () => {
       saleGrossTotal: 200000,
     })
 
-    // When taxMetrics is null, getNetProfit() returns label='К перечислению' with
-    // isPreTax=true. The component renders "К перечислению (до налога)" — NOT
-    // "Чистая прибыль (до налога)". This is intentional honest UX per
-    // src/lib/tax-display-helpers.ts — calling pre-tax payout "Чистая прибыль"
-    // would be misleading because tax has not been deducted.
-    expect(screen.getByText(/к перечислению/i)).toBeInTheDocument()
+    // Should show "Чистая прибыль" label with "(до налога)" suffix
+    expect(screen.getByText(/чистая прибыль/i)).toBeInTheDocument()
     // Should display 250,000 formatted value
     const card = screen.getByRole('article')
     expect(card.textContent).toMatch(/250\s?000/)

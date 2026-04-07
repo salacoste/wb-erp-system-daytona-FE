@@ -21,9 +21,6 @@ vi.mock('recharts', () => ({
     <div data-testid="responsive-container">{children}</div>
   ),
   Cell: () => <div data-testid="cell" />,
-  // Added 2026-04-07: redesigned ExpenseChart imports LabelList; without this
-  // mock the success-state tests crash with "Element type is invalid: undefined".
-  LabelList: () => <div data-testid="label-list" />,
 }))
 
 describe('ExpenseChart', () => {
@@ -74,11 +71,9 @@ describe('ExpenseChart', () => {
 
     render(<ExpenseChart />, { wrapper })
 
-    // Updated 2026-04-07: redesigned card no longer renders a CardDescription —
-    // the title is paired with an ExpenseSummaryBadge instead. Only the title
-    // and bar chart container remain in the success state header.
     await waitFor(() => {
       expect(screen.getByText('Разбивка расходов')).toBeInTheDocument()
+      expect(screen.getByText('Визуализация расходов по категориям')).toBeInTheDocument()
     })
 
     expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
@@ -115,12 +110,10 @@ describe('ExpenseChart', () => {
 
     render(<ExpenseChart />, { wrapper })
 
-    // Updated 2026-04-07: redesigned error Alert uses a shorter message
-    // "Не удалось загрузить данные о расходах." (without the trailing
-    // "Пожалуйста, попробуйте еще раз." sentence). The retry button is now
-    // inline within the AlertDescription's flex container.
     await waitFor(() => {
-      expect(screen.getByText('Не удалось загрузить данные о расходах.')).toBeInTheDocument()
+      expect(
+        screen.getByText('Не удалось загрузить данные о расходах. Пожалуйста, попробуйте еще раз.')
+      ).toBeInTheDocument()
       expect(screen.getByText('Повторить')).toBeInTheDocument()
     })
   })

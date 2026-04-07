@@ -105,11 +105,6 @@ export function ShipmentActions({
   }
 
   async function handleRecalculate() {
-    // Note: onCalculateSuccess accepts CalculateShipmentResponse (per-SKU results),
-    // but recalculateAsync returns RecalculateShipmentResponse (summary only —
-    // no per-SKU breakdown). The two endpoint shapes are intentionally different
-    // per src/types/shipment-cost.ts. Recalc flows trigger TanStack Query cache
-    // invalidation in the hook itself; no callback propagation needed here.
     onCalculateStart?.()
     try {
       await recalculateAsync()

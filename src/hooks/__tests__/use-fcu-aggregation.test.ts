@@ -17,14 +17,11 @@ const mockFcuData = [
     latestDcu: 25.3,
     latestFcu: 175.8,
     shipmentId: 'ship-001',
-    shipmentName: 'Test Shipment 2026-03-10',
     confirmedAt: '2026-03-10T12:00:00Z',
   },
 ]
 
-beforeEach(() => {
-  vi.clearAllMocks()
-})
+beforeEach(() => vi.clearAllMocks())
 
 describe('useFcuBySku', () => {
   it('fetches FCU data when week is provided', async () => {

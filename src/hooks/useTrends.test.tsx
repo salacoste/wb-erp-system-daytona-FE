@@ -34,17 +34,14 @@ describe('useTrends', () => {
     vi.clearAllMocks()
   })
 
-  describe('Story 3.4a: Trends endpoint + COGS fetch', () => {
-    it('calls trends endpoint once + finance-summary per week for COGS', async () => {
-      // Story 3.4a originally optimized to 1 call. Story 70.2-FE (operating profit /
-      // efficiency metrics) extended the hook to also fetch per-week cogs_total from
-      // finance-summary in parallel. For N weeks: 1 trends call + N finance-summary calls.
+  describe('Story 3.4a: Single Endpoint Optimization', () => {
+    it('makes only one API call to /v1/analytics/weekly/trends', async () => {
       const mockResponse: WeeklyTrendsResponse = {
         period: { from: '2025-W44', to: '2025-W46', weeks_count: 3 },
         data: [
-          { week: '2025-W44', wb_sales_gross: 80000, to_pay_goods: 40000 },
-          { week: '2025-W45', wb_sales_gross: 100000, to_pay_goods: 50000 },
-          { week: '2025-W46', wb_sales_gross: 120000, to_pay_goods: 60000 },
+          { week: '2025-W44', sale_gross: 80000, to_pay_goods: 40000 },
+          { week: '2025-W45', sale_gross: 100000, to_pay_goods: 50000 },
+          { week: '2025-W46', sale_gross: 120000, to_pay_goods: 60000 },
         ],
         summary: {
           sale_gross: { min: 80000, max: 120000, avg: 100000, trend: '+50.0%' },
@@ -52,44 +49,21 @@ describe('useTrends', () => {
         },
       }
 
-      // First call returns trends; subsequent calls return per-week finance-summary
-      vi.mocked(apiClient.get).mockImplementation(async (url: string) => {
-        if (url.includes('/trends')) return mockResponse
-        if (url.includes('/finance-summary')) {
-          return { summary_total: { cogs_total: 25000 } }
-        }
-        return {}
-      })
+      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
       const { result } = renderHook(() => useTrends(3), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      // Total: 1 trends + 3 finance-summary = 4 calls
-      expect(apiClient.get).toHaveBeenCalledTimes(4)
+      // Should make exactly ONE API call (optimized)
+      expect(apiClient.get).toHaveBeenCalledTimes(1)
 
-      // First call must be to /trends with the documented metrics list
-      // (Story 61.1: wb_sales_gross is the seller revenue source; sale_gross is fallback)
-      expect(apiClient.get).toHaveBeenNthCalledWith(
-        1,
+      // Should call the trends endpoint with correct parameters
+      // Story 61.1: Use wb_sales_gross (seller revenue after WB commission), NOT sale_gross
+      expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringMatching(
-          /\/v1\/analytics\/weekly\/trends\?from=.*&to=.*&metrics=wb_sales_gross,sale_gross,to_pay_goods,payout_total,logistics_cost/
-        ),
-        expect.any(Object)
-      )
-
-      // Subsequent 3 calls must hit finance-summary, one per week
-      const allCalls = vi.mocked(apiClient.get).mock.calls
-      const financeSummaryCalls = allCalls.filter(
-        ([url]) => typeof url === 'string' && url.includes('/finance-summary')
-      )
-      expect(financeSummaryCalls).toHaveLength(3)
-      expect(financeSummaryCalls.map(([url]) => url)).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining('week=2025-W44'),
-          expect.stringContaining('week=2025-W45'),
-          expect.stringContaining('week=2025-W46'),
-        ])
+          /\/v1\/analytics\/weekly\/trends\?from=.*&to=.*&metrics=wb_sales_gross,to_pay_goods/
+        )
       )
     })
 
@@ -266,13 +240,10 @@ describe('useTrends', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      // TrendDataPoint has no `date` field — the test author misremembered the
-      // shape. The hook produces { week, revenue, totalPayable, payoutTotal,
-      // logisticsCost, cogsTotal, operatingProfit, efficiencyPct }. See sibling
-      // file useTrends.test.ts and CLAUDE.md anti-patterns for the same fix.
       expect(result.current.data?.trends[0]).toMatchObject({
         week: '2025-W46',
-        revenue: 150000, // Mapped from wb_sales_gross
+        date: '2025-W46', // Uses week as date
+        revenue: 150000, // Mapped from sale_gross
         totalPayable: 75000, // Mapped from to_pay_goods
       })
     })

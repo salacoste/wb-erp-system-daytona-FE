@@ -14,9 +14,7 @@ import { apiClient } from '@/lib/api-client'
 import { reconcileBatch } from '../imports-reconcile'
 
 describe('reconcileBatch', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
+  beforeEach(() => vi.clearAllMocks())
 
   it('calls POST /v1/imports/historical/:id/reconcile', async () => {
     const mock = { reconciled: true, newStatus: 'completed', weeksWithData: 1 }

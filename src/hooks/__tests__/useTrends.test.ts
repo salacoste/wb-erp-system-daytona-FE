@@ -177,42 +177,31 @@ describe('TrendDataPoint type structure (AC2)', () => {
     // This is a type-level test - verifies the interface is correct
     const point: TrendDataPoint = {
       week: '2026-W05',
+      date: '2026-W05',
       revenue: 100000, // Should come from wb_sales_gross
       totalPayable: 80000, // Should come from to_pay_goods
-      payoutTotal: 75000, // payout_total — фактически перечислено
       logisticsCost: 5000, // Doc 122/123: logistics_cost metric
-      cogsTotal: 40000, // cogs_total — себестоимость
-      operatingProfit: 35000, // payout - cogs
-      efficiencyPct: 35.0, // (payout - cogs) / wb_sales_gross * 100
     }
 
     expect(point.week).toBeDefined()
+    expect(point.date).toBeDefined()
     expect(point.revenue).toBeDefined()
     expect(point.totalPayable).toBeDefined()
-    expect(point.payoutTotal).toBeDefined()
     expect(point.logisticsCost).toBeDefined()
-    expect(point.cogsTotal).toBeDefined()
-    expect(point.operatingProfit).toBeDefined()
-    expect(point.efficiencyPct).toBeDefined()
   })
 
   it('should use numeric types for financial values', () => {
     const point: TrendDataPoint = {
       week: '2026-W05',
+      date: '2026-W05',
       revenue: 100000.5,
       totalPayable: 80000.25,
-      payoutTotal: 75000.5,
       logisticsCost: 5000.75, // Doc 122/123: logistics_cost metric
-      cogsTotal: 40000.0,
-      operatingProfit: 35000.5,
-      efficiencyPct: 35.0,
     }
 
     expect(typeof point.revenue).toBe('number')
     expect(typeof point.totalPayable).toBe('number')
-    expect(typeof point.payoutTotal).toBe('number')
     expect(typeof point.logisticsCost).toBe('number')
-    expect(typeof point.cogsTotal).toBe('number')
   })
 })
 
