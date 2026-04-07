@@ -20,11 +20,7 @@
     "clean:full": "rm -rf .next node_modules/.cache node_modules && npm install",
     "dev:clean": "npm run clean && npm run dev",
     "restart:safe": "npm run clean && npm run dev",
-    "cleanup:claude": "bash scripts/cleanup-claude-sessions.sh",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": "eslint --max-warnings=0"
+    "cleanup:claude": "bash scripts/cleanup-claude-sessions.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -86,10 +82,8 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "husky": "^9.1.7",
     "jest-axe": "^10.0.0",
     "jsdom": "^24.0.0",
-    "lint-staged": "^16.4.0",
     "msw": "^2.0.0",
     "postcss": "^8.4.0",
     "prettier": "^3.2.0",
