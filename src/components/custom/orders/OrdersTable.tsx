@@ -15,7 +15,6 @@ import { cn } from '@/lib/utils'
 import { OrdersTableRow } from './OrdersTableRow'
 import { OrdersEmptyState } from './OrdersEmptyState'
 import type { OrderFbsItem } from '@/types/orders'
-import type { ClientInfoMap } from '@/types/orders-client-info'
 
 /** Sortable fields matching API */
 export type SortField = 'created_at' | 'status_updated_at' | 'price' | 'sale_price'
@@ -29,10 +28,6 @@ interface OrdersTableProps {
   onRowClick: (order: OrderFbsItem) => void
   hasFilters?: boolean
   onClearFilters?: () => void
-  /** Story 86.2: client PII map (Owner only) */
-  clientInfoMap?: ClientInfoMap
-  /** Story 86.2: render the "Клиент" column (true only for Owner) */
-  showClientColumn?: boolean
 }
 
 /** Column definitions */
@@ -88,14 +83,6 @@ function SortIndicator({
   )
 }
 
-/** Story 86.2: Client column appended for Owner only */
-const CLIENT_COLUMN = {
-  key: 'client',
-  label: 'Клиент',
-  sortable: false,
-  width: 'w-44',
-} as const
-
 /**
  * OrdersTable - Data table for orders list
  */
@@ -107,23 +94,18 @@ export function OrdersTable({
   onRowClick,
   hasFilters,
   onClearFilters,
-  clientInfoMap,
-  showClientColumn = false,
 }: OrdersTableProps) {
   // Empty state
   if (orders.length === 0) {
     return <OrdersEmptyState hasFilters={hasFilters} onClearFilters={onClearFilters} />
   }
 
-  // Story 86.2: append "Клиент" column for Owner only
-  const columns = showClientColumn ? [...COLUMNS, CLIENT_COLUMN] : COLUMNS
-
   return (
     <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map(col => (
+            {COLUMNS.map(col => (
               <TableHead
                 key={col.key}
                 className={cn(col.width, col.sortable && 'cursor-pointer select-none')}
@@ -153,13 +135,7 @@ export function OrdersTable({
         </TableHeader>
         <TableBody>
           {orders.map(order => (
-            <OrdersTableRow
-              key={order.orderId}
-              order={order}
-              onClick={onRowClick}
-              clientInfo={showClientColumn ? clientInfoMap?.[order.orderId] : undefined}
-              showClientColumn={showClientColumn}
-            />
+            <OrdersTableRow key={order.orderId} order={order} onClick={onRowClick} />
           ))}
         </TableBody>
       </Table>
