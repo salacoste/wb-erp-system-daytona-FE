@@ -189,10 +189,24 @@ describe('ShipmentActions', () => {
       expect(screen.queryByText('Удалить')).not.toBeInTheDocument()
     })
 
-    it('calls recalculate and propagates results', async () => {
+    it('calls recalculate and shows success toast (no per-SKU propagation)', async () => {
+      // Recalc returns RecalculateShipmentResponse (summary only), NOT
+      // CalculateShipmentResponse (per-SKU results). The two endpoint shapes are
+      // intentionally different per src/types/shipment-cost.ts:213. The
+      // onCalculateSuccess callback is shaped for the calc flow's per-SKU response
+      // and is NOT invoked from the recalc flow. Cache invalidation is handled
+      // by useRecalculateShipment's mutation hook itself.
       const onStart = vi.fn()
       const onSuccess = vi.fn()
-      const mockResult = { results: [{ nmId: 2 }] }
+      // Mock returns the actual RecalculateShipmentResponse shape (summary fields)
+      const mockResult = {
+        shipmentId: 's-001',
+        status: 'CONFIRMED' as const,
+        recalculatedAt: '2026-01-03T00:00:00Z',
+        snapshotCount: 5,
+        previousSnapshotCount: 5,
+        totalFinalCost: 12345,
+      }
       mockRecalculateAsync.mockResolvedValueOnce(mockResult)
 
       renderActions(confirmedShipment, {
@@ -201,8 +215,13 @@ describe('ShipmentActions', () => {
       })
 
       await userEvent.click(screen.getByText('Пересчитать'))
+
+      // onCalculateStart is invoked, the recalc mutation runs, and the success
+      // toast is shown. onCalculateSuccess is NOT invoked (different response shape).
       expect(onStart).toHaveBeenCalled()
-      expect(onSuccess).toHaveBeenCalledWith(mockResult)
+      expect(mockRecalculateAsync).toHaveBeenCalled()
+      expect(toast.success).toHaveBeenCalledWith('Пересчёт выполнен')
+      expect(onSuccess).not.toHaveBeenCalled()
     })
   })
 })

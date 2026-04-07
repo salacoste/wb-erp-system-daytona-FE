@@ -114,7 +114,10 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               <LabelList
                 dataKey="amount"
                 position="right"
-                formatter={(v: number) => formatCurrency(v)}
+                // Recharts' LabelFormatter signature is (value: RenderableText) where
+                // RenderableText is a union including string | number | undefined.
+                // Guard the type before formatting; non-numeric values render as empty.
+                formatter={(v: unknown) => (typeof v === 'number' ? formatCurrency(v) : '')}
                 style={{ fontSize: 12, fill: '#374151', fontWeight: 500 }}
               />
             </Bar>
