@@ -11,10 +11,13 @@
  * @see _bmad-output/implementation-artifacts/86-2-client-info-pii.md
  */
 
+import { existsSync } from 'node:fs'
 import { test, expect, type Page, type Request } from '@playwright/test'
+import { HAS_MANAGER_CREDS } from './fixtures/test-data'
 
 const ORDERS_ROUTE = '/orders'
 const CLIENT_INFO_ENDPOINT_PATTERN = /\/v1\/cabinets\/[^/]+\/orders\/client-info/
+const MANAGER_AUTH_FILE = 'e2e/.auth/manager.json'
 
 /**
  * Capture all requests matching the client-info endpoint while running `action`.
@@ -287,42 +290,69 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
   })
 
   /**
-   * G1 (testarch): Non-Owner E2E coverage (AC #2) — scaffolded skip block
+   * G1 (testarch): Non-Owner E2E coverage (AC #2)
    *
-   * These tests are SKIPPED until a non-Owner test user is provisioned.
-   * To enable:
-   * 1. Add to `e2e/fixtures/test-data.ts`:
-   *      export const TEST_MANAGER = {
-   *        email: getRequiredEnv('E2E_MANAGER_EMAIL'),
-   *        password: getRequiredEnv('E2E_MANAGER_PASSWORD'),
-   *      }
-   * 2. Create `e2e/auth-manager.setup.ts` mirroring `auth.setup.ts` but using
-   *    TEST_MANAGER and writing to `e2e/.auth/manager.json`.
-   * 3. Wire the new setup project in `playwright.config.ts`.
-   * 4. Remove the `.skip` from this describe block.
+   * Activated 2026-04-07 — these tests now run when E2E_MANAGER_EMAIL and
+   * E2E_MANAGER_PASSWORD are set in `.env.e2e`. When credentials are missing,
+   * the entire describe block skips visibly (yellow in CI report) instead
+   * of silently passing.
+   *
+   * Architecture note: rather than `test.use({ storageState })` at the
+   * describe level (which is evaluated at file-load time and fails hard if
+   * the file doesn't exist), each test creates a fresh browser context with
+   * the manager storage state at runtime. This makes the spec robust whether
+   * or not the Manager fixture has been provisioned.
+   *
+   * @see e2e/fixtures/test-data.ts → TEST_MANAGER, HAS_MANAGER_CREDS
+   * @see e2e/auth-manager.setup.ts (creates manager.json)
    */
-  test.describe.skip('AC #2: Non-Owner role gate (requires manager fixture)', () => {
-    test.use({ storageState: 'e2e/.auth/manager.json' })
+  test.describe('AC #2: Non-Owner role gate', () => {
+    // Skip the entire describe when Manager credentials are not configured.
+    // This is visible as yellow "skipped" in the Playwright report — never
+    // a silent green pass, per CLAUDE.md anti-pattern #6.
+    test.skip(
+      !HAS_MANAGER_CREDS,
+      'E2E_MANAGER_EMAIL / E2E_MANAGER_PASSWORD not set — non-Owner tests deferred until fixture is provisioned'
+    )
 
-    test('should NOT render the "Клиент" column for Manager role', async ({ page }) => {
-      await page.goto(ORDERS_ROUTE)
-      await page.waitForLoadState('networkidle')
+    // Belt-and-suspenders: also skip if the auth-manager.setup.ts didn't
+    // produce manager.json (e.g., login failed). Without this guard, every
+    // test would fail with "ENOENT" when newContext tries to load the file.
+    test.skip(
+      !existsSync(MANAGER_AUTH_FILE),
+      `${MANAGER_AUTH_FILE} not generated — check that auth-manager.setup.ts ran successfully`
+    )
 
-      const header = page.getByRole('columnheader', { name: /Клиент/i })
-      await expect(header).toHaveCount(0)
-    })
-
-    test('should NOT fire any client-info API request for Manager role', async ({ page }) => {
-      const requests = await captureClientInfoRequests(page, async () => {
+    test('should NOT render the "Клиент" column for Manager role', async ({ browser }) => {
+      const context = await browser.newContext({ storageState: MANAGER_AUTH_FILE })
+      const page = await context.newPage()
+      try {
         await page.goto(ORDERS_ROUTE)
         await page.waitForLoadState('networkidle')
-      })
 
-      expect(requests).toHaveLength(0)
+        const header = page.getByRole('columnheader', { name: /Клиент/i })
+        await expect(header).toHaveCount(0)
+      } finally {
+        await context.close()
+      }
+    })
+
+    test('should NOT fire any client-info API request for Manager role', async ({ browser }) => {
+      const context = await browser.newContext({ storageState: MANAGER_AUTH_FILE })
+      const page = await context.newPage()
+      try {
+        const requests = await captureClientInfoRequests(page, async () => {
+          await page.goto(ORDERS_ROUTE)
+          await page.waitForLoadState('networkidle')
+        })
+        expect(requests).toHaveLength(0)
+      } finally {
+        await context.close()
+      }
     })
 
     test('should return 403 if a Manager directly hits the client-info endpoint', async ({
-      request,
+      playwright,
     }) => {
       // Defense-in-depth check: even if frontend gate is bypassed, backend @Roles enforces Owner
       const baseUrl = process.env.E2E_API_URL ?? 'http://localhost:3000'
@@ -334,17 +364,23 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
         'E2E_CABINET_ID or E2E_MANAGER_TOKEN missing — set in .env.e2e to enable API-level check'
       )
 
-      const response = await request.get(
-        `${baseUrl}/v1/cabinets/${cabinetId}/orders/client-info?orderIds=1`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-Cabinet-Id': cabinetId,
-          },
-        }
-      )
-
-      expect(response.status()).toBe(403)
+      // Use a fresh APIRequestContext (not the Owner-authenticated one) so
+      // the Authorization header below is the only credential in the request.
+      const apiContext = await playwright.request.newContext()
+      try {
+        const response = await apiContext.get(
+          `${baseUrl}/v1/cabinets/${cabinetId}/orders/client-info?orderIds=1`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'X-Cabinet-Id': cabinetId,
+            },
+          }
+        )
+        expect(response.status()).toBe(403)
+      } finally {
+        await apiContext.dispose()
+      }
     })
   })
 
