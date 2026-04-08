@@ -421,10 +421,21 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
 
       // 2. Navigate through several pages to exercise unmount/mount cycles.
       // Routes are well-known and asserted to exist — no try/catch around navigation.
-      const navigationCycle = ['/dashboard', ORDERS_ROUTE, '/dashboard'] as const
-      for (const route of navigationCycle) {
-        await page.goto(route)
-        await page.waitForLoadState('networkidle') // deterministic wait, no sleep
+      //
+      // We deliberately do NOT use `waitForLoadState('networkidle')` here — the
+      // dashboard runs many background queries (margin polling, chart data,
+      // dev-tools telemetry) that never let the network go idle within the
+      // test timeout. Instead, we wait for `domcontentloaded` (React has
+      // mounted, the previous page has unmounted) plus a stable landmark on
+      // each route to confirm the navigation actually completed.
+      const navigationCycle = [
+        { route: '/dashboard', landmark: page.getByRole('heading', { name: /Dashboard/i }) },
+        { route: ORDERS_ROUTE, landmark: page.getByRole('table').first() },
+        { route: '/dashboard', landmark: page.getByRole('heading', { name: /Dashboard/i }) },
+      ] as const
+      for (const { route, landmark } of navigationCycle) {
+        await page.goto(route, { waitUntil: 'domcontentloaded' })
+        await expect(landmark).toBeVisible({ timeout: 10000 })
       }
 
       // 3. Final storage sweep — none of the originally captured PII should remain
