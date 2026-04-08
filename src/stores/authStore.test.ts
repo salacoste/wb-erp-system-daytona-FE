@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { useAuthStore } from './authStore'
 import type { User } from '@/types/auth'
 
@@ -125,5 +125,64 @@ describe('authStore', () => {
   // Note: Persistence to localStorage is handled by Zustand persist middleware
   // and is tested implicitly through the store's behavior. Direct localStorage
   // testing is complex due to async persistence timing.
-})
 
+  // Backend ↔ frontend role-case bridge — see `normalizeUser` in authStore.ts.
+  // Backend's UserRole enum emits lowercase values; the frontend type and every
+  // role comparison expects capitalized variants. These tests lock in the
+  // single-boundary normalization so no future regression slips through.
+  describe('role case normalization', () => {
+    it('normalizes lowercase role from backend on setUser', () => {
+      // Cast through unknown because the type forbids lowercase, but the
+      // actual API payload (verified against /v1/auth/login) returns lowercase.
+      const backendUser = {
+        id: '1',
+        email: 'test@test.com',
+        role: 'owner',
+        cabinet_ids: ['c1'],
+      } as unknown as User
+
+      useAuthStore.getState().setUser(backendUser)
+
+      expect(useAuthStore.getState().user?.role).toBe('Owner')
+    })
+
+    it('normalizes lowercase role on login', () => {
+      const backendUser = {
+        id: '1',
+        email: 'test@test.com',
+        role: 'manager',
+        cabinet_ids: ['c1'],
+      } as unknown as User
+
+      useAuthStore.getState().login(backendUser, 'token')
+
+      expect(useAuthStore.getState().user?.role).toBe('Manager')
+    })
+
+    it('normalizes lowercase role on refreshToken when user is provided', () => {
+      const backendUser = {
+        id: '1',
+        email: 'test@test.com',
+        role: 'analyst',
+        cabinet_ids: ['c1'],
+      } as unknown as User
+
+      useAuthStore.getState().refreshToken('new-token', backendUser)
+
+      expect(useAuthStore.getState().user?.role).toBe('Analyst')
+    })
+
+    it('passes through already-canonical capitalized roles unchanged', () => {
+      const canonicalUser: User = {
+        id: '1',
+        email: 'test@test.com',
+        role: 'Owner',
+        cabinet_ids: ['c1'],
+      }
+
+      useAuthStore.getState().setUser(canonicalUser)
+
+      expect(useAuthStore.getState().user?.role).toBe('Owner')
+    })
+  })
+})
