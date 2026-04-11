@@ -18,19 +18,28 @@ import { getDayOfWeek } from './day-utils'
 /**
  * Calculate daily theoretical profit.
  *
- * Formula: orders - ordersCogs - advertising - logistics - storage
+ * Formula: sales - salesCogs - advertising - logistics - storage - penalties - paidAcceptance - commission
  *
- * @param input - Object with orders, ordersCogs, advertising, logistics, storage
+ * Uses `sales` (Выкупы / revenueGross from finance daily) as the base,
+ * NOT `orders` (order volume from orders API) — sales reflect actual
+ * settled revenue from the WB weekly report.
+ *
+ * @param input - All cost components for a single day
  * @returns Calculated theoretical profit (can be negative for loss)
  */
 export function calculateDailyTheoreticalProfit(input: TheoreticalProfitInput): number {
-  const orders = input.orders ?? 0
-  const ordersCogs = input.ordersCogs ?? 0
+  const sales = input.sales ?? 0
+  const salesCogs = input.salesCogs ?? 0
   const advertising = input.advertising ?? 0
   const logistics = input.logistics ?? 0
   const storage = input.storage ?? 0
+  const penalties = input.penalties ?? 0
+  const paidAcceptance = input.paidAcceptance ?? 0
+  const commission = input.commission ?? 0
 
-  return orders - ordersCogs - advertising - logistics - storage
+  return (
+    sales - salesCogs - advertising - logistics - storage - penalties - paidAcceptance - commission
+  )
 }
 
 /**
@@ -88,16 +97,22 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
       advertising,
       logistics: finance?.logistics_cost ?? 0,
       storage: finance?.storage_cost ?? 0,
+      penalties: finance?.penalties ?? 0,
+      paidAcceptance: finance?.paid_acceptance ?? 0,
+      commission: finance?.commission ?? 0,
       theoreticalProfit: 0,
     }
 
     // Calculate theoretical profit
     metrics.theoreticalProfit = calculateDailyTheoreticalProfit({
-      orders: metrics.orders,
-      ordersCogs: metrics.ordersCogs,
+      sales: metrics.sales,
+      salesCogs: metrics.salesCogs,
       advertising: metrics.advertising,
       logistics: metrics.logistics,
       storage: metrics.storage,
+      penalties: metrics.penalties,
+      paidAcceptance: metrics.paidAcceptance,
+      commission: metrics.commission,
     })
 
     result.push(metrics)

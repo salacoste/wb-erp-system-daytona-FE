@@ -35,7 +35,7 @@ export interface DailyMetrics {
   ordersCogs: number
   /** Sales amount in rubles (Выкупы / wb_sales_gross) */
   sales: number
-  /** COGS for sales in rubles (from finance-summary) */
+  /** COGS for sales in rubles (from finance daily) */
   salesCogs: number
   /** Advertising spend in rubles (Рекламные затраты) */
   advertising: number
@@ -43,7 +43,13 @@ export interface DailyMetrics {
   logistics: number
   /** Storage cost in rubles (Хранение) */
   storage: number
-  /** Theoretical profit: orders - ordersCogs - advertising - logistics - storage */
+  /** Penalties in rubles (Штрафы) */
+  penalties: number
+  /** Paid acceptance in rubles (Платная приёмка) */
+  paidAcceptance: number
+  /** WB commission in rubles (Комиссия WB) */
+  commission: number
+  /** Theoretical profit: sales - salesCogs - logistics - storage - penalties - paidAcceptance - commission - advertising */
   theoreticalProfit: number
 }
 
@@ -66,20 +72,34 @@ export interface OrdersDailyData {
 }
 
 /**
- * Raw finance daily data from Finance Summary API.
- * GET /v1/analytics/weekly/finance-summary (with daily breakdown)
+ * Raw finance daily data from Finance Daily API.
+ * GET /v1/analytics/daily/finance?from=...&to=...
  */
 export interface FinanceDailyData {
   /** Date in YYYY-MM-DD format */
   date: string
-  /** Gross sales amount (Выкупы) */
+  /** Gross sales amount — Выкупы (= sale_gross from weekly report) */
   wb_sales_gross: number
-  /** Total COGS for sales */
+  /** Net payout — К перечислению (after all deductions) */
+  revenue_net: number
+  /** Total COGS for sales (0 if COGS not assigned) */
   cogs_total: number
   /** Logistics cost */
   logistics_cost: number
   /** Storage cost */
   storage_cost: number
+  /** Penalties — Штрафы */
+  penalties: number
+  /** Paid acceptance — Платная приёмка */
+  paid_acceptance: number
+  /** WB commission — Комиссия WB */
+  commission: number
+  /** Returns amount in rubles */
+  returns: number
+  /** Returns count */
+  returns_count: number
+  /** Sales count */
+  sales_count: number
 }
 
 /**
@@ -158,14 +178,20 @@ export interface AggregateDailyMetricsInput {
  * Input for calculateDailyTheoreticalProfit function.
  */
 export interface TheoreticalProfitInput {
-  /** Total order amount */
-  orders: number
-  /** COGS for orders */
-  ordersCogs: number
+  /** Gross sales (Выкупы) — base revenue for profit calculation */
+  sales: number
+  /** COGS */
+  salesCogs: number
   /** Advertising spend */
   advertising: number
   /** Logistics cost */
   logistics: number
   /** Storage cost */
   storage: number
+  /** Penalties */
+  penalties: number
+  /** Paid acceptance */
+  paidAcceptance: number
+  /** WB commission */
+  commission: number
 }

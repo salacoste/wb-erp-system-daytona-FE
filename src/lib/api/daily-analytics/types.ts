@@ -60,36 +60,3 @@ export interface OrdersTrendsResponse {
     daysIncluded: number
   }
 }
-
-/**
- * Backend response for finance summary with daily breakdown.
- */
-export interface FinanceSummaryResponse {
-  summary: {
-    total_revenue: number
-    total_cogs: number
-    total_logistics: number
-    total_storage: number
-  }
-  daily?: Array<{
-    date: string
-    wb_sales_gross: number
-    cogs_total: number
-    logistics_cost: number
-    storage_cost: number
-  }>
-}
-
-/**
- * Backend response for advertising analytics.
- */
-export interface AdvertisingResponse {
-  summary: {
-    totalSpend: number
-    totalRevenue: number
-  }
-  daily?: Array<{
-    date: string
-    spend: number
-  }>
-}

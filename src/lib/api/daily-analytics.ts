@@ -16,8 +16,6 @@ export {
   dailyAnalyticsQueryKeys,
   // Types
   type OrdersVolumeResponse,
-  type FinanceSummaryResponse,
-  type AdvertisingResponse,
   // API functions
   getOrdersDailyData,
   getFinanceDailyData,

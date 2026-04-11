@@ -119,6 +119,9 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
     advertising: 0,
     logistics: 0,
     storage: 0,
+    penalties: 0,
+    paidAcceptance: 0,
+    commission: 0,
     theoreticalProfit: 0,
   }
 
@@ -133,6 +136,9 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
       advertising: acc.advertising + day.advertising,
       logistics: acc.logistics + day.logistics,
       storage: acc.storage + day.storage,
+      penalties: acc.penalties + day.penalties,
+      paidAcceptance: acc.paidAcceptance + day.paidAcceptance,
+      commission: acc.commission + day.commission,
       theoreticalProfit: acc.theoreticalProfit + day.theoreticalProfit,
     }),
     initial

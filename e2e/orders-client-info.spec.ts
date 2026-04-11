@@ -14,10 +14,14 @@
 import { existsSync } from 'node:fs'
 import { test, expect, type Page, type Request } from '@playwright/test'
 import { HAS_MANAGER_CREDS } from './fixtures/test-data'
+import { seedDbwOrder, cleanupDbwOrder, type DbwSeedData } from './fixtures/dbw-order-seed'
 
 const ORDERS_ROUTE = '/orders'
 const CLIENT_INFO_ENDPOINT_PATTERN = /\/v1\/cabinets\/[^/]+\/orders\/client-info/
 const MANAGER_AUTH_FILE = 'e2e/.auth/manager.json'
+
+/** Seeded DBW order — set in beforeAll, cleaned up in afterAll. */
+let seedData: DbwSeedData | null = null
 
 /**
  * Capture all requests matching the client-info endpoint while running `action`.
@@ -92,6 +96,21 @@ async function sweepBrowserStorageForPii(
 }
 
 test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', () => {
+  // Seed a DBW order with known PII so tests that verify phone links,
+  // client names, and storage sweeps have deterministic data to work with.
+  // The endpoint is dev-only (404 in production); when unavailable the
+  // tests fall back to the existing visible-skip pattern.
+  test.beforeAll(async () => {
+    seedData = await seedDbwOrder()
+  })
+
+  test.afterAll(async () => {
+    if (seedData) {
+      await cleanupDbwOrder(seedData.orderId)
+      seedData = null
+    }
+  })
+
   test.describe('AC #1: Owner role — column visible', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ORDERS_ROUTE)
@@ -141,7 +160,7 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       // Visible-fixture skip — appears in CI report as "skipped" instead of silently passing
       test.skip(
         linkCount === 0,
-        'No DBW orders with client info in test fixture — needs API seeding (M2 backlog)'
+        'No DBW orders with client info in test fixture — seed endpoint may be unavailable'
       )
 
       const phoneLink = phoneLinkLocator.first()
@@ -200,7 +219,7 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       // Visible-skip if no client info in fixture
       test.skip(
         visibleNames.length === 0,
-        'No client names visible in fixture — needs API seeding (M2 backlog)'
+        'No client names visible in fixture — seed endpoint may be unavailable'
       )
 
       // For each visible name, sweep both storages
@@ -219,7 +238,7 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
 
       test.skip(
         phones.length === 0,
-        'No phone links visible in fixture — needs API seeding (M2 backlog)'
+        'No phone links visible in fixture — seed endpoint may be unavailable'
       )
 
       const leaks = await sweepBrowserStorageForPii(page, phones)
@@ -242,7 +261,7 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
 
       test.skip(
         visibleNames.length === 0,
-        'No PII to verify eviction — needs API seeding (M2 backlog)'
+        'No PII to verify eviction — seed endpoint may be unavailable'
       )
 
       // Navigate away — this unmounts the orders page and should evict TanStack Query cache
@@ -270,7 +289,7 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
 
       const phoneLinkLocator = page.getByRole('link', { name: /Позвонить клиенту/i })
       const linkCount = await phoneLinkLocator.count()
-      test.skip(linkCount === 0, 'No phone links in fixture — needs API seeding (M2 backlog)')
+      test.skip(linkCount === 0, 'No phone links in fixture — seed endpoint may be unavailable')
 
       // Block the tel: navigation so jsdom-style protocol errors don't fire
       await page.route('tel:**', route => route.abort())
@@ -416,7 +435,7 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       // Visible-skip when fixture has no PII to verify (no silent pass)
       test.skip(
         allNeedles.length === 0,
-        'No PII visible in fixture — sentinel needs API seeding (M2 backlog)'
+        'No PII visible in fixture — sentinel seed endpoint may be unavailable'
       )
 
       // 2. Navigate through several pages to exercise unmount/mount cycles.

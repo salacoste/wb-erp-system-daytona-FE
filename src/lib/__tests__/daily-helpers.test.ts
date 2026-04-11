@@ -132,6 +132,9 @@ describe('Story 61.9-FE: createEmptyDailyMetrics', () => {
     expect(result.advertising).toBe(0)
     expect(result.logistics).toBe(0)
     expect(result.storage).toBe(0)
+    expect(result.penalties).toBe(0)
+    expect(result.paidAcceptance).toBe(0)
+    expect(result.commission).toBe(0)
     expect(result.theoreticalProfit).toBe(0)
   })
 
@@ -279,13 +282,16 @@ describe('Story 61.9-FE: fillMissingDays', () => {
 
 describe('Story 61.9-FE: calculateDailyTheoreticalProfit', () => {
   describe('basic calculation', () => {
-    it('should calculate: orders - ordersCogs - advertising - logistics - storage', () => {
+    it('should calculate: sales - salesCogs - advertising - logistics - storage - penalties - paidAcceptance - commission', () => {
       const input = {
-        orders: 100000,
-        ordersCogs: 50000,
+        sales: 100000,
+        salesCogs: 50000,
         advertising: 10000,
         logistics: 5000,
         storage: 5000,
+        penalties: 0,
+        paidAcceptance: 0,
+        commission: 0,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
@@ -296,24 +302,30 @@ describe('Story 61.9-FE: calculateDailyTheoreticalProfit', () => {
 
     it('should return zero when all inputs are zero', () => {
       const input = {
-        orders: 0,
-        ordersCogs: 0,
+        sales: 0,
+        salesCogs: 0,
         advertising: 0,
         logistics: 0,
         storage: 0,
+        penalties: 0,
+        paidAcceptance: 0,
+        commission: 0,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
       expect(result).toBe(0)
     })
 
-    it('should return negative profit when costs exceed orders', () => {
+    it('should return negative profit when costs exceed sales', () => {
       const input = {
-        orders: 50000,
-        ordersCogs: 40000,
+        sales: 50000,
+        salesCogs: 40000,
         advertising: 15000,
         logistics: 5000,
         storage: 5000,
+        penalties: 0,
+        paidAcceptance: 0,
+        commission: 0,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
@@ -321,16 +333,37 @@ describe('Story 61.9-FE: calculateDailyTheoreticalProfit', () => {
       // 50000 - 40000 - 15000 - 5000 - 5000 = -15000
       expect(result).toBe(-15000)
     })
+
+    it('should subtract penalties, paidAcceptance, and commission', () => {
+      const input = {
+        sales: 100000,
+        salesCogs: 30000,
+        advertising: 5000,
+        logistics: 3000,
+        storage: 1000,
+        penalties: 500,
+        paidAcceptance: 200,
+        commission: 10000,
+      }
+
+      const result = calculateDailyTheoreticalProfit(input)
+
+      // 100000 - 30000 - 5000 - 3000 - 1000 - 500 - 200 - 10000 = 50300
+      expect(result).toBe(50300)
+    })
   })
 
   describe('null/undefined handling', () => {
-    it('should treat undefined orders as 0', () => {
+    it('should treat undefined sales as 0', () => {
       const input = {
-        orders: undefined as unknown as number,
-        ordersCogs: 1000,
+        sales: undefined as unknown as number,
+        salesCogs: 1000,
         advertising: 500,
         logistics: 200,
         storage: 100,
+        penalties: 0,
+        paidAcceptance: 0,
+        commission: 0,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
@@ -339,24 +372,30 @@ describe('Story 61.9-FE: calculateDailyTheoreticalProfit', () => {
 
     it('should treat null costs as 0', () => {
       const input = {
-        orders: 10000,
-        ordersCogs: null as unknown as number,
+        sales: 10000,
+        salesCogs: null as unknown as number,
         advertising: null as unknown as number,
         logistics: null as unknown as number,
         storage: null as unknown as number,
+        penalties: null as unknown as number,
+        paidAcceptance: null as unknown as number,
+        commission: null as unknown as number,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
-      expect(result).toBe(10000) // 10000 - 0 - 0 - 0 - 0
+      expect(result).toBe(10000) // 10000 - 0s
     })
 
     it('should not produce NaN with mixed null/undefined', () => {
       const input = {
-        orders: 5000,
-        ordersCogs: undefined as unknown as number,
+        sales: 5000,
+        salesCogs: undefined as unknown as number,
         advertising: null as unknown as number,
         logistics: 1000,
         storage: undefined as unknown as number,
+        penalties: 0,
+        paidAcceptance: 0,
+        commission: 0,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
@@ -368,11 +407,14 @@ describe('Story 61.9-FE: calculateDailyTheoreticalProfit', () => {
   describe('large numbers', () => {
     it('should handle realistic business values (millions)', () => {
       const input = {
-        orders: 50_000_000, // 50M rubles
-        ordersCogs: 25_000_000,
+        sales: 50_000_000, // 50M rubles
+        salesCogs: 25_000_000,
         advertising: 5_000_000,
         logistics: 3_000_000,
         storage: 2_000_000,
+        penalties: 0,
+        paidAcceptance: 0,
+        commission: 0,
       }
 
       const result = calculateDailyTheoreticalProfit(input)
@@ -410,9 +452,16 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         {
           date: '2026-01-26',
           wb_sales_gross: 40000,
+          revenue_net: 0,
           cogs_total: 20000,
           logistics_cost: 3000,
           storage_cost: 1500,
+          penalties: 0,
+          paid_acceptance: 0,
+          commission: 0,
+          returns: 0,
+          returns_count: 0,
+          sales_count: 0,
         },
       ]
 
@@ -452,9 +501,16 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         {
           date: '2026-01-26',
           wb_sales_gross: 80000,
+          revenue_net: 0,
           cogs_total: 40000,
           logistics_cost: 5000,
           storage_cost: 2000,
+          penalties: 0,
+          paid_acceptance: 0,
+          commission: 0,
+          returns: 0,
+          returns_count: 0,
+          sales_count: 0,
         },
       ]
       const advertisingData: AdvertisingDailyData[] = [{ date: '2026-01-26', total_spend: 8000 }]
@@ -482,9 +538,16 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         {
           date: '2026-01-26',
           wb_sales_gross: 50000,
+          revenue_net: 0,
           cogs_total: 25000,
           logistics_cost: 3000,
           storage_cost: 1500,
+          penalties: 0,
+          paid_acceptance: 0,
+          commission: 0,
+          returns: 0,
+          returns_count: 0,
+          sales_count: 0,
         },
       ]
 
@@ -521,9 +584,16 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         {
           date: '2026-01-27',
           wb_sales_gross: 40000,
+          revenue_net: 0,
           cogs_total: 20000,
           logistics_cost: 2000,
           storage_cost: 1000,
+          penalties: 0,
+          paid_acceptance: 0,
+          commission: 0,
+          returns: 0,
+          returns_count: 0,
+          sales_count: 0,
         },
       ]
 
@@ -549,9 +619,16 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         {
           date: '2026-01-26',
           wb_sales_gross: 80000,
+          revenue_net: 0,
           cogs_total: 40000,
           logistics_cost: 5000,
           storage_cost: 2000,
+          penalties: 0,
+          paid_acceptance: 0,
+          commission: 0,
+          returns: 0,
+          returns_count: 0,
+          sales_count: 0,
         },
       ]
       const advertisingData: AdvertisingDailyData[] = [{ date: '2026-01-26', total_spend: 8000 }]
@@ -563,9 +640,9 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         ordersCogs: 50000, // COGS for orders
       })
 
-      // theoreticalProfit = orders - ordersCogs - advertising - logistics - storage
-      // 100000 - 50000 - 8000 - 5000 - 2000 = 35000
-      expect(result[0].theoreticalProfit).toBe(35000)
+      // theoreticalProfit = sales - salesCogs - advertising - logistics - storage - penalties - paidAcceptance - commission
+      // 80000 - 40000 - 8000 - 5000 - 2000 - 0 - 0 - 0 = 25000
+      expect(result[0].theoreticalProfit).toBe(25000)
     })
   })
 

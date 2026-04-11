@@ -45,6 +45,9 @@ export function createEmptyDailyMetrics(dateStr: string): DailyMetrics {
     advertising: 0,
     logistics: 0,
     storage: 0,
+    penalties: 0,
+    paidAcceptance: 0,
+    commission: 0,
     theoreticalProfit: 0,
   }
 }
