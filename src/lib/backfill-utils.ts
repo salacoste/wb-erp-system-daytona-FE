@@ -95,6 +95,13 @@ const STATUS_CONFIG: Record<
     textColor: 'text-gray-700',
     progressColor: 'bg-gray-400',
   },
+  not_started: {
+    label: 'Не начат',
+    color: 'gray',
+    bgColor: 'bg-gray-100',
+    textColor: 'text-gray-500',
+    progressColor: 'bg-gray-300',
+  },
   pending: {
     label: 'В очереди',
     color: 'yellow',

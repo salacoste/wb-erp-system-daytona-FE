@@ -23,11 +23,13 @@ interface SearchOrdersTableProps {
 
 type SortField = 'totalOrders' | 'totalRevenue' | 'uniqueProducts'
 
-function formatNumber(n: number): string {
+function formatNumber(n: number | undefined | null): string {
+  if (n == null) return '—'
   return n.toLocaleString('ru-RU')
 }
 
-function formatCurrency(n: number): string {
+function formatCurrency(n: number | undefined | null): string {
+  if (n == null) return '—'
   return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ₽`
 }
 
