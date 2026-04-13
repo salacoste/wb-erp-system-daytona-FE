@@ -26,8 +26,10 @@ export interface NetProfitCardProps {
   taxMetrics: TaxMetrics | null
   payoutTotal: number | null
   saleGrossTotal: number | null
+  operatingProfit?: number | null
   previousTaxMetrics: TaxMetrics | null
   previousPayoutTotal: number | null
+  previousOperatingProfit?: number | null
   isLoading: boolean
   className?: string
 }
@@ -43,24 +45,28 @@ export function NetProfitCard({
   taxMetrics,
   payoutTotal,
   saleGrossTotal,
+  operatingProfit,
   previousTaxMetrics,
   previousPayoutTotal,
+  previousOperatingProfit,
   isLoading,
   className,
 }: NetProfitCardProps): React.ReactElement {
   if (isLoading) return <HighlightedMetricSkeleton className={className} />
 
   // No data at all
-  const hasData = payoutTotal != null || taxMetrics != null
+  const hasData = payoutTotal != null || taxMetrics != null || operatingProfit != null
 
-  // Current period
-  const result = hasData ? getNetProfit(taxMetrics, payoutTotal ?? 0) : null
+  // Current period — Story 87.1-FE: pass operatingProfit to fix hierarchy inversion
+  const result = hasData ? getNetProfit(taxMetrics, payoutTotal ?? 0, operatingProfit) : null
   const margin =
     result != null ? calculateAfterTaxMargin(result.value, taxMetrics, saleGrossTotal) : null
 
   // Previous period comparison
   const prevHasData = previousPayoutTotal != null || previousTaxMetrics != null
-  const prevResult = prevHasData ? getNetProfit(previousTaxMetrics, previousPayoutTotal ?? 0) : null
+  const prevResult = prevHasData
+    ? getNetProfit(previousTaxMetrics, previousPayoutTotal ?? 0, previousOperatingProfit)
+    : null
   const comparison =
     result && prevResult && prevResult.value !== 0
       ? calculateComparison(result.value, prevResult.value, false)

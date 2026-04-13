@@ -33,7 +33,7 @@ export function FunnelProductFilter({ from, to, value, onChange }: FunnelProduct
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
 
-  const { data, isLoading } = useFunnelData(from, to, { limit: 1000 })
+  const { data, isLoading } = useFunnelData(from, to, { limit: 500 })
 
   const products: ProductOption[] = useMemo(() => {
     const items = (data?.items ?? []) as FunnelProductItem[]

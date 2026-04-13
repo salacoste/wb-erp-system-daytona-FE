@@ -64,8 +64,10 @@ export function renderGridCards(props: DashboardMetricsGridProps): React.ReactEl
         taxMetrics={taxMetrics ?? null}
         payoutTotal={payoutTotal ?? null}
         saleGrossTotal={saleGross ?? null}
+        operatingProfit={operatingProfitAnalytical ?? grossProfit ?? null}
         previousTaxMetrics={prev?.taxMetrics ?? null}
         previousPayoutTotal={prev?.payoutTotal ?? null}
+        previousOperatingProfit={prev?.operatingProfitAnalytical ?? prev?.grossProfit ?? null}
         isLoading={false}
       />
       {cards.map(c => (

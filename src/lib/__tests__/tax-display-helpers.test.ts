@@ -43,11 +43,41 @@ function createTaxMetrics(overrides?: Partial<TaxMetrics>): TaxMetrics {
 // =============================================================================
 
 describe('getNetProfit (Story 66.6-FE)', () => {
-  it('returns payout_total when tax is null', () => {
+  it('returns payout_total when tax is null and no operatingProfit', () => {
     const result = getNetProfit(null, 250000)
 
     expect(result.value).toBe(250000)
     expect(result.label).toBe('К перечислению')
+    expect(result.isPreTax).toBe(true)
+  })
+
+  // Story 87.1-FE: operatingProfit cascade
+  it('returns operatingProfit when tax is null and operatingProfit provided', () => {
+    const result = getNetProfit(null, 250000, 65000)
+
+    expect(result.value).toBe(65000)
+    expect(result.label).toBe('Операционная прибыль (до налога)')
+    expect(result.isPreTax).toBe(true)
+  })
+
+  it('prefers tax-adjusted profit over operatingProfit when tax configured', () => {
+    const tax = createTaxMetrics({ net_profit_after_tax: 85000 })
+    const result = getNetProfit(tax, 250000, 65000)
+
+    expect(result.value).toBe(85000)
+    expect(result.label).toBe('Чистая прибыль')
+    expect(result.isPreTax).toBe(false)
+  })
+
+  it('falls back to operatingProfit when tax fields are null', () => {
+    const tax = createTaxMetrics({
+      net_profit_after_tax: null,
+      net_profit_after_all_tax: null,
+    })
+    const result = getNetProfit(tax, 250000, 65000)
+
+    expect(result.value).toBe(65000)
+    expect(result.label).toBe('Операционная прибыль (до налога)')
     expect(result.isPreTax).toBe(true)
   })
 
