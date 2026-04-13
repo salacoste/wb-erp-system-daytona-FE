@@ -124,7 +124,7 @@ export function DailyMetricsTable({ data, periodType, isLoading, error }: DailyM
         aria-label={`Таблица метрик за ${periodType === 'week' ? 'неделю' : 'месяц'}`}
         tabIndex={0}
       >
-        <Table className="min-w-[900px]" aria-label="Детализация по дням">
+        <Table className="min-w-[1200px]" aria-label="Детализация по дням">
           <DailyMetricsTableHeader
             columns={COLUMNS}
             sortKey={sortKey}

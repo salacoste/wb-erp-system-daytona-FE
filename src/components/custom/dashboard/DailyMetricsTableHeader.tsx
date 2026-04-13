@@ -10,8 +10,9 @@
  * @see docs/stories/epic-62/story-62.8-fe-daily-metrics-table.md
  */
 
-import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
+import { ChevronUp, ChevronDown, ChevronsUpDown, Info } from 'lucide-react'
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { SortDirection } from '@/hooks/useSortableTable'
 import type { ColumnDef } from './table-columns'
@@ -90,6 +91,21 @@ export function DailyMetricsTableHeader({
               className={cn('flex items-center gap-1', column.align === 'right' && 'justify-end')}
             >
               <span>{column.label}</span>
+              {column.tooltip && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info
+                        className="h-3 w-3 text-gray-400 cursor-help"
+                        aria-label={column.tooltip}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="text-xs">{column.tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               {column.sortable && (
                 <SortIndicator
                   columnKey={column.key}

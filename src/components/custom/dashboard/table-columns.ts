@@ -44,24 +44,66 @@ export interface ColumnDef {
   align: 'left' | 'right'
   /** Enable sorting for this column */
   sortable: boolean
-  /** Show negative prefix for expense columns */
-  negativePrefix?: boolean
-  /** Colorize based on value sign (profit column) */
+  /** Expense column — positive cost displayed in gray text (no sign prefix) */
+  isExpense?: boolean
+  /** Colorize based on value sign (green positive, red negative) */
   colorize?: boolean
+  /** Optional tooltip text on column header */
+  tooltip?: string
 }
 
-/** Table column definitions — simplified P&L view (4 columns) */
+/** Table column definitions — full daily P&L view */
 export const COLUMNS: ColumnDef[] = [
   { key: 'date', label: 'Дата', width: '100px', align: 'left', sortable: true },
-  { key: 'ordersCount', label: 'Заказы, шт', width: '110px', align: 'right', sortable: true },
-  { key: 'orders', label: 'Сумма заказов', width: '140px', align: 'right', sortable: true },
+  {
+    key: 'ordersCount',
+    label: 'Заказы, шт',
+    width: '110px',
+    align: 'right',
+    sortable: true,
+    tooltip: 'Только заказы FBS (по дням). Общее кол-во FBO+FBS см. в карточке «Заказы».',
+  },
+  { key: 'orders', label: 'Сумма заказов', width: '130px', align: 'right', sortable: true },
+  { key: 'sales', label: 'Выкупы', width: '120px', align: 'right', sortable: true },
   {
     key: 'advertising',
     label: 'Реклама',
-    width: '120px',
+    width: '110px',
     align: 'right',
     sortable: true,
-    negativePrefix: true,
+    isExpense: true,
+  },
+  {
+    key: 'logistics',
+    label: 'Логистика',
+    width: '110px',
+    align: 'right',
+    sortable: true,
+    isExpense: true,
+  },
+  {
+    key: 'storage',
+    label: 'Хранение',
+    width: '100px',
+    align: 'right',
+    sortable: true,
+    isExpense: true,
+  },
+  {
+    key: 'commission',
+    label: 'Комиссия',
+    width: '110px',
+    align: 'right',
+    sortable: true,
+    isExpense: true,
+  },
+  {
+    key: 'theoreticalProfit',
+    label: 'Теор.прибыль',
+    width: '130px',
+    align: 'right',
+    sortable: true,
+    colorize: true,
   },
 ]
 
@@ -81,13 +123,8 @@ export function formatCellValue(row: DailyMetrics, column: ColumnDef): string {
     return new Intl.NumberFormat('ru-RU').format(Math.round(value))
   }
 
-  const formatted = formatCurrency(Math.abs(value))
-
-  if (column.negativePrefix && value !== 0) {
-    return `-${formatted}`
-  }
-
-  return formatted
+  // Math.abs as safety net — costs should be positive from backend
+  return formatCurrency(Math.abs(value))
 }
 
 /**

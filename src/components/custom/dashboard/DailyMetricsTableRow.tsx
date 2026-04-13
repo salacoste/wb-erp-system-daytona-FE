@@ -32,7 +32,7 @@ function getCellColor(column: ColumnDef, value: number): string | undefined {
     if (value > 0) return 'text-green-500'
     if (value < 0) return 'text-red-500'
   }
-  if (column.negativePrefix) {
+  if (column.isExpense) {
     return 'text-gray-500'
   }
   return undefined
