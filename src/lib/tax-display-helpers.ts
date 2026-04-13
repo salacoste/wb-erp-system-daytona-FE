@@ -4,7 +4,7 @@
  * Epic 66-FE: Tax & Accounting Frontend
  *
  * Cascading fallback logic for net profit display:
- *   net_profit_after_all_tax (VAT+income) -> net_profit_after_tax (income only) -> payoutTotal
+ *   net_profit_after_all_tax (VAT+income) -> net_profit_after_tax (income only) -> operatingProfit (pre-tax) -> payoutTotal
  *
  * Margin uses revenue_excl_vat for VAT payers, sale_gross_total otherwise.
  *
