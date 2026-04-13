@@ -10,6 +10,7 @@
 import { apiClient } from '@/lib/api-client'
 import type {
   BackfillStatusResponse,
+  BackfillCabinetStatus,
   StartBackfillRequest,
   StartBackfillResponse,
   BackfillActionResponse,
@@ -28,15 +29,43 @@ const BASE_URL = '/v1/admin/backfill'
  * @returns Array of cabinet backfill statuses
  */
 export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
-  console.info('[Backfill] Fetching status for all cabinets')
-
-  const response = await apiClient.get<BackfillStatusResponse>(`${BASE_URL}/status`, {
+  const raw = await apiClient.get<Record<string, unknown>[]>(`${BASE_URL}/status`, {
     skipDataUnwrap: true,
   })
 
-  console.info('[Backfill] Status fetched:', { cabinetCount: response?.length ?? 0 })
-
-  return response
+  // Backend returns camelCase (cabinetId, reportsStatus, analyticsStatus, overallProgress)
+  // but frontend type uses snake_case (cabinet_id, status, progress). Normalize here.
+  return (raw ?? []).map(item => ({
+    cabinet_id: (item.cabinetId ?? item.cabinet_id ?? '') as string,
+    cabinet_name: (item.cabinetName ?? item.cabinet_name ?? '') as string,
+    status: (item.reportsStatus ??
+      item.status ??
+      'not_started') as string as BackfillCabinetStatus['status'],
+    data_source: (item.dataSource ??
+      item.data_source ??
+      'none') as string as BackfillCabinetStatus['data_source'],
+    oldest_available_date: (item.oldestAvailableDate ?? item.oldest_available_date ?? null) as
+      | string
+      | null,
+    newest_available_date: (item.newestAvailableDate ?? item.newest_available_date ?? null) as
+      | string
+      | null,
+    progress:
+      (item.progress as BackfillCabinetStatus['progress']) ??
+      (item.overallProgress != null
+        ? {
+            percentage: Number(item.overallProgress),
+            estimated_remaining_seconds: null,
+            total_days: 0,
+            completed_days: 0,
+            current_date: null,
+          }
+        : null),
+    last_error: (item.lastError ?? item.last_error ?? null) as string | null,
+    started_at: (item.startedAt ?? item.started_at ?? null) as string | null,
+    completed_at: (item.completedAt ?? item.completed_at ?? null) as string | null,
+    updated_at: (item.updatedAt ?? item.updated_at ?? new Date().toISOString()) as string,
+  }))
 }
 
 // ============================================================================
