@@ -9,14 +9,38 @@
 
 import { apiClient } from '@/lib/api-client'
 import type {
+  BackfillStatus,
   BackfillStatusResponse,
   BackfillCabinetStatus,
   StartBackfillRequest,
   StartBackfillResponse,
   BackfillActionResponse,
+  DataSource,
 } from '@/types/backfill'
 
 const BASE_URL = '/v1/admin/backfill'
+
+const VALID_STATUSES = new Set<BackfillStatus>([
+  'idle',
+  'not_started',
+  'pending',
+  'in_progress',
+  'completed',
+  'failed',
+  'paused',
+])
+
+function toBackfillStatus(raw: unknown): BackfillStatus {
+  const s = String(raw ?? '')
+  return VALID_STATUSES.has(s as BackfillStatus) ? (s as BackfillStatus) : 'not_started'
+}
+
+const VALID_SOURCES = new Set<DataSource>(['api', 'report', 'none'])
+
+function toDataSource(raw: unknown): DataSource {
+  const s = String(raw ?? '')
+  return VALID_SOURCES.has(s as DataSource) ? (s as DataSource) : 'none'
+}
 
 // ============================================================================
 // Query Functions
@@ -38,12 +62,8 @@ export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
   return (raw ?? []).map(item => ({
     cabinet_id: (item.cabinetId ?? item.cabinet_id ?? '') as string,
     cabinet_name: (item.cabinetName ?? item.cabinet_name ?? '') as string,
-    status: (item.reportsStatus ??
-      item.status ??
-      'not_started') as string as BackfillCabinetStatus['status'],
-    data_source: (item.dataSource ??
-      item.data_source ??
-      'none') as string as BackfillCabinetStatus['data_source'],
+    status: toBackfillStatus(item.reportsStatus ?? item.status),
+    data_source: toDataSource(item.dataSource ?? item.data_source),
     oldest_available_date: (item.oldestAvailableDate ?? item.oldest_available_date ?? null) as
       | string
       | null,
@@ -64,7 +84,7 @@ export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
     last_error: (item.lastError ?? item.last_error ?? null) as string | null,
     started_at: (item.startedAt ?? item.started_at ?? null) as string | null,
     completed_at: (item.completedAt ?? item.completed_at ?? null) as string | null,
-    updated_at: (item.updatedAt ?? item.updated_at ?? new Date().toISOString()) as string,
+    updated_at: (item.updatedAt ?? item.updated_at ?? '') as string,
   }))
 }
 
@@ -80,21 +100,7 @@ export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
  * @returns Start response with estimated duration
  */
 export async function startBackfill(request: StartBackfillRequest): Promise<StartBackfillResponse> {
-  console.info('[Backfill] Starting backfill:', {
-    cabinetId: request.cabinet_id,
-    fromDate: request.from_date ?? 'default',
-    toDate: request.to_date ?? 'today',
-  })
-
-  const response = await apiClient.post<StartBackfillResponse>(`${BASE_URL}/start`, request)
-
-  console.info('[Backfill] Started:', {
-    cabinetId: response.cabinet_id,
-    status: response.status,
-    estimatedMinutes: response.estimated_duration_minutes,
-  })
-
-  return response
+  return apiClient.post<StartBackfillResponse>(`${BASE_URL}/start`, request)
 }
 
 /**
@@ -105,15 +111,9 @@ export async function startBackfill(request: StartBackfillRequest): Promise<Star
  * @returns Action response with new status
  */
 export async function pauseBackfill(cabinetId: string): Promise<BackfillActionResponse> {
-  console.info('[Backfill] Pausing:', { cabinetId })
-
-  const response = await apiClient.post<BackfillActionResponse>(`${BASE_URL}/pause`, {
+  return apiClient.post<BackfillActionResponse>(`${BASE_URL}/pause`, {
     cabinet_id: cabinetId,
   })
-
-  console.info('[Backfill] Paused:', { cabinetId, status: response.status })
-
-  return response
 }
 
 /**
@@ -124,15 +124,9 @@ export async function pauseBackfill(cabinetId: string): Promise<BackfillActionRe
  * @returns Action response with new status
  */
 export async function resumeBackfill(cabinetId: string): Promise<BackfillActionResponse> {
-  console.info('[Backfill] Resuming:', { cabinetId })
-
-  const response = await apiClient.post<BackfillActionResponse>(`${BASE_URL}/resume`, {
+  return apiClient.post<BackfillActionResponse>(`${BASE_URL}/resume`, {
     cabinet_id: cabinetId,
   })
-
-  console.info('[Backfill] Resumed:', { cabinetId, status: response.status })
-
-  return response
 }
 
 // ============================================================================

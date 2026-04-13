@@ -18,7 +18,9 @@ export function isBackfillActive(status: BackfillStatus): boolean {
 
 /** Check if backfill can be started */
 export function canStartBackfill(status: BackfillStatus): boolean {
-  return status === 'idle' || status === 'completed' || status === 'failed'
+  return (
+    status === 'idle' || status === 'not_started' || status === 'completed' || status === 'failed'
+  )
 }
 
 /** Check if backfill can be paused */

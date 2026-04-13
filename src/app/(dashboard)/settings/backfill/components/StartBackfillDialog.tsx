@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import type { BackfillCabinetStatus, StartBackfillRequest } from '@/types/backfill'
+import { canStartBackfill } from '@/lib/backfill-utils'
 
 interface StartBackfillDialogProps {
   cabinets: BackfillCabinetStatus[]
@@ -50,9 +51,7 @@ export function StartBackfillDialog({
   const [selectedCabinetId, setSelectedCabinetId] = useState<string>('')
 
   // Filter cabinets that can start backfill
-  const availableCabinets = cabinets.filter(
-    c => c.status === 'idle' || c.status === 'completed' || c.status === 'failed'
-  )
+  const availableCabinets = cabinets.filter(c => canStartBackfill(c.status))
 
   const handleStart = () => {
     if (!selectedCabinetId) return
