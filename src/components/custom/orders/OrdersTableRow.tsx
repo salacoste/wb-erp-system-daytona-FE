@@ -10,13 +10,25 @@
 'use client'
 
 import Link from 'next/link'
+import { AlertTriangle } from 'lucide-react'
 import { TableRow, TableCell } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatCurrency } from '@/lib/utils'
 import { getWbStatusConfig } from '@/lib/wb-status-mapping'
 import { OrderStatusBadge } from './OrderStatusBadge'
+import { ClientInfoCell } from './ClientInfoCell'
 import type { OrderFbsItem } from '@/types/orders'
 import type { ClientInfoItem } from '@/types/orders-client-info'
+
+/**
+ * Detect anomalous salePrice > price inversion from WB data.
+ * Threshold chosen at 1.2x — legitimate price adjustments (e.g., currency rounding,
+ * promo stacking) stay under this; observed bad data (order 4909080943) was 27x.
+ * See docs/request-backend/165-ORDERS-PRICE-SALEPRICE-INVERSION.md for backend tracking.
+ */
+function isPriceInverted(price: number, salePrice: number): boolean {
+  return price > 0 && salePrice > price * 1.2
+}
 
 interface OrdersTableRowProps {
   order: OrderFbsItem
@@ -133,8 +145,33 @@ export function OrdersTableRow({
       {/* Price */}
       <TableCell className="text-right">{formatCurrency(order.price)}</TableCell>
 
-      {/* Sale Price */}
-      <TableCell className="text-right">{formatCurrency(order.salePrice)}</TableCell>
+      {/* Sale Price — Story 87.3-FE: anomaly indicator when salePrice > price * 1.2 */}
+      <TableCell className="text-right">
+        {isPriceInverted(order.price, order.salePrice) ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex items-center gap-1 cursor-help">
+                  {formatCurrency(order.salePrice)}
+                  <AlertTriangle
+                    className="h-3.5 w-3.5 text-amber-500"
+                    aria-label={`Аномалия: цена продажи выше оригинальной цены в ${(order.salePrice / order.price).toFixed(1)} раз. Возможна ошибка данных на стороне WB.`}
+                  />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs text-xs">
+                  Аномалия: цена продажи выше оригинальной цены в{' '}
+                  {(order.salePrice / order.price).toFixed(1)} раз. Возможна ошибка данных на
+                  стороне WB.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          formatCurrency(order.salePrice)
+        )}
+      </TableCell>
 
       {/* Supplier Status */}
       <TableCell>
@@ -163,30 +200,5 @@ export function OrdersTableRow({
         </TableCell>
       )}
     </TableRow>
-  )
-}
-
-/**
- * Story 86.2: Renders client name + tel: link, or "—" when no PII available.
- * Phone link uses stopPropagation so clicking it does NOT also open the row modal.
- */
-function ClientInfoCell({ info }: { info?: ClientInfoItem }) {
-  if (!info || (!info.clientName && !info.clientPhone)) {
-    return <span className="text-muted-foreground">—</span>
-  }
-  return (
-    <div className="flex flex-col gap-0.5 text-sm">
-      {info.clientName && <span className="font-medium">{info.clientName}</span>}
-      {info.clientPhone && (
-        <a
-          href={`tel:${info.clientPhone}`}
-          className="text-primary hover:underline text-xs"
-          onClick={e => e.stopPropagation()}
-          aria-label={`Позвонить клиенту по номеру ${info.clientPhone}`}
-        >
-          {info.clientPhone}
-        </a>
-      )}
-    </div>
   )
 }

@@ -48,13 +48,7 @@ export interface SkuFinancialsQuery {
  * - loss: < 0%
  * - unknown: No COGS assigned
  */
-export type ProfitabilityStatus =
-  | 'excellent'
-  | 'good'
-  | 'warning'
-  | 'critical'
-  | 'loss'
-  | 'unknown'
+export type ProfitabilityStatus = 'excellent' | 'good' | 'warning' | 'critical' | 'loss' | 'unknown'
 
 /**
  * Color mapping for profitability status (Tailwind classes)
@@ -141,12 +135,12 @@ export interface SkuFinancialVisibility {
 }
 
 export interface SkuFinancialProfit {
-  /** Gross profit = revenue.net - costs.cogs */
-  gross: number
-  /** Operating profit = gross - logistics - storage - penalties - paidAcceptance */
-  operating: number
-  /** Operating margin percentage */
-  operatingMarginPct: number
+  /** Gross profit = revenue.net - costs.cogs. Null when COGS is not assigned. */
+  gross: number | null
+  /** Operating profit = gross - logistics - storage - penalties - paidAcceptance. Null when COGS missing. */
+  operating: number | null
+  /** Operating margin percentage. Null when COGS missing. */
+  operatingMarginPct: number | null
 }
 
 export interface SkuFinancialItem {
@@ -215,5 +209,11 @@ export function getProfitabilityLabel(status: ProfitabilityStatus): string {
  * Request #68: Now includes otherAdjustments
  */
 export function getTotalOperatingExpenses(costs: SkuFinancialCosts): number {
-  return costs.logistics + costs.storage + costs.penalties + costs.paidAcceptance + costs.otherAdjustments
+  return (
+    costs.logistics +
+    costs.storage +
+    costs.penalties +
+    costs.paidAcceptance +
+    costs.otherAdjustments
+  )
 }

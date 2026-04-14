@@ -44,10 +44,13 @@ export function transformBackendItem(item: BackendSkuItem): SkuFinancialItem {
           acquiring: item.visibility_breakdown.acquiring_fee,
         }
       : undefined,
+    // Story 87.3-FE: preserve null when COGS is missing so UI can show "—"
+    // instead of misleading "0 ₽". Downstream aggregators must coerce at
+    // callsite (e.g., `profit.operating ?? 0` only when summing).
     profit: {
-      gross: item.gross_profit ?? 0,
-      operating: item.operating_profit ?? 0,
-      operatingMarginPct: item.operating_margin_pct ?? 0,
+      gross: item.gross_profit ?? null,
+      operating: item.operating_profit ?? null,
+      operatingMarginPct: item.operating_margin_pct ?? null,
     },
     profitabilityStatus: item.profitability_status,
     missingCogs: item.cogs === null,

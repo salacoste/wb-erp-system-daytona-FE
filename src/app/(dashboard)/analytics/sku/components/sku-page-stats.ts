@@ -36,7 +36,7 @@ export function calculateSkuPageStats(
   // Story 70.3-FE (D-7): Use revenue_net as denominator (same as table footer)
   const avgMargin = (() => {
     if (withCogsItems.length === 0) return null
-    const totalProfit = withCogsItems.reduce((sum, item) => sum + item.profit.operating, 0)
+    const totalProfit = withCogsItems.reduce((sum, item) => sum + (item.profit.operating ?? 0), 0)
     const totalRevenue = withCogsItems.reduce((sum, item) => sum + item.revenue.net, 0)
     return totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : null
   })()
@@ -50,6 +50,6 @@ export function calculateSkuPageStats(
     totalRevenue: cabinetExpenses
       ? cabinetExpenses.sales_gross - (cabinetExpenses.returns_gross ?? 0)
       : skuData.reduce((sum, item) => sum + item.revenue.gross, 0),
-    totalProfit: withCogsItems.reduce((sum, item) => sum + item.profit.operating, 0),
+    totalProfit: withCogsItems.reduce((sum, item) => sum + (item.profit.operating ?? 0), 0),
   }
 }

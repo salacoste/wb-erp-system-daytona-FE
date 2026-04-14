@@ -80,10 +80,14 @@ export function SkuFinancialsTable({
     const totalReturnsQty = data.reduce((sum, item) => sum + item.quantity.returnsQty, 0)
     const totalRevenue = data.reduce((sum, item) => sum + item.revenue.net, 0)
     const totalCogs = data.reduce((sum, item) => sum + (item.costs.cogs ?? 0), 0)
-    const totalGrossProfit = data.reduce((sum, item) => sum + item.profit.gross, 0)
+    // Story 87.3-FE: profit.gross/operating are null when COGS missing — coerce for aggregation only
+    const totalGrossProfit = data.reduce((sum, item) => sum + (item.profit.gross ?? 0), 0)
     const totalExpenses = data.reduce((sum, item) => sum + getTotalOperatingExpenses(item.costs), 0)
-    const totalOperatingProfit = data.reduce((sum, item) => sum + item.profit.operating, 0)
+    const totalOperatingProfit = data.reduce((sum, item) => sum + (item.profit.operating ?? 0), 0)
     const avgMargin = totalRevenue > 0 ? (totalOperatingProfit / totalRevenue) * 100 : 0
+
+    // Story 87.3-FE: track COGS coverage for footnote
+    const rowsWithCogs = data.filter(item => !item.missingCogs).length
 
     return {
       count: data.length,
@@ -95,6 +99,8 @@ export function SkuFinancialsTable({
       expenses: totalExpenses,
       operatingProfit: totalOperatingProfit,
       avgMargin,
+      rowsWithCogs,
+      totalRows: data.length,
     }
   }, [data])
 

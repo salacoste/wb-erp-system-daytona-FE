@@ -18,9 +18,15 @@ export interface Totals {
   expenses: number
   operatingProfit: number
   avgMargin: number
+  /** Story 87.3-FE: rows with assigned COGS (for "X из Y" footnote) */
+  rowsWithCogs: number
+  /** Story 87.3-FE: total rows including missing-COGS (for footnote denominator) */
+  totalRows: number
 }
 
 export function SummaryFooter({ totals }: { totals: Totals }) {
+  const showCogsFootnote = totals.totalRows > 0 && totals.rowsWithCogs < totals.totalRows
+
   return (
     <div className="border-t bg-gray-50 px-4 py-3">
       <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -60,6 +66,12 @@ export function SummaryFooter({ totals }: { totals: Totals }) {
           </span>
         </div>
       </div>
+      {showCogsFootnote && (
+        <p className="mt-2 text-xs text-amber-700">
+          ⚠ COGS назначен для {totals.rowsWithCogs} из {totals.totalRows} товаров. Прибыль
+          посчитана только по товарам с COGS.
+        </p>
+      )}
     </div>
   )
 }

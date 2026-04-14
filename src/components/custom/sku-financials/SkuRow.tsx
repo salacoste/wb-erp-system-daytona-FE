@@ -74,9 +74,22 @@ export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowPro
         )}
       </TableCell>
       <TableCell className="text-right">
-        <span className={cn('font-medium', getValueColorClass(item.profit.operating))}>
-          {formatCurrency(item.profit.operating)}
-        </span>
+        {item.missingCogs || item.profit.operating === null ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="text-gray-400 cursor-help">—</span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-sm">Нет COGS — прибыль не рассчитана</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <span className={cn('font-medium', getValueColorClass(item.profit.operating))}>
+            {formatCurrency(item.profit.operating)}
+          </span>
+        )}
       </TableCell>
       <TableCell className="text-right">
         <ProfitabilityBadge
