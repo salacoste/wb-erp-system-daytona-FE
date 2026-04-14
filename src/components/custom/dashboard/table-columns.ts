@@ -112,6 +112,8 @@ export const COLUMNS: ColumnDef[] = [
  */
 export function formatCellValue(row: DailyMetrics, column: ColumnDef): string {
   if (column.key === 'date') {
+    // Totals row uses literal 'Итого' with dayOfWeek=0 — return as-is to avoid "NaN" from invalid Date
+    if (row.dayOfWeek === 0) return row.date
     return formatDayWithDate(row.date, row.dayOfWeek)
   }
 

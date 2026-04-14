@@ -60,63 +60,69 @@ export function DailyMetricsTableHeader({
   onSort,
 }: DailyMetricsTableHeaderProps) {
   return (
-    <TableHeader className="sticky top-0 z-10 bg-gray-50">
-      <TableRow className="border-b-2 border-gray-200 hover:bg-gray-50">
-        {columns.map(column => (
-          <TableHead
-            key={column.key}
-            scope="col"
-            role="columnheader"
-            aria-sort={
-              column.sortable ? getAriaSort(column.key, sortKey, sortDirection) : undefined
-            }
-            aria-label={column.sortable ? `${column.label}, нажмите для сортировки` : column.label}
-            style={{ width: column.width, minWidth: column.width }}
-            className={cn(
-              'h-12 px-4 text-[13px] font-semibold text-gray-700 whitespace-nowrap',
-              column.align === 'right' ? 'text-right' : 'text-left',
-              column.key === 'date' && 'sticky left-0 bg-gray-50 z-20',
-              column.sortable && 'cursor-pointer select-none hover:bg-gray-100'
-            )}
-            onClick={() => column.sortable && onSort(column.key)}
-            onKeyDown={e => {
-              if (column.sortable && (e.key === 'Enter' || e.key === ' ')) {
-                e.preventDefault()
-                onSort(column.key)
+    <TooltipProvider>
+      <TableHeader className="sticky top-0 z-10 bg-gray-50">
+        <TableRow className="border-b-2 border-gray-200 hover:bg-gray-50">
+          {columns.map(column => (
+            <TableHead
+              key={column.key}
+              scope="col"
+              role="columnheader"
+              aria-sort={
+                column.sortable ? getAriaSort(column.key, sortKey, sortDirection) : undefined
               }
-            }}
-            tabIndex={column.sortable ? 0 : undefined}
-          >
-            <div
-              className={cn('flex items-center gap-1', column.align === 'right' && 'justify-end')}
+              aria-label={
+                column.sortable ? `${column.label}, нажмите для сортировки` : column.label
+              }
+              style={{ width: column.width, minWidth: column.width }}
+              className={cn(
+                'h-12 px-4 text-[13px] font-semibold text-gray-700 whitespace-nowrap',
+                column.align === 'right' ? 'text-right' : 'text-left',
+                column.key === 'date' && 'sticky left-0 bg-gray-50 z-20',
+                column.sortable && 'cursor-pointer select-none hover:bg-gray-100'
+              )}
+              onClick={() => column.sortable && onSort(column.key)}
+              onKeyDown={e => {
+                if (column.sortable && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault()
+                  onSort(column.key)
+                }
+              }}
+              tabIndex={column.sortable ? 0 : undefined}
             >
-              <span>{column.label}</span>
-              {column.tooltip && (
-                <TooltipProvider>
+              <div
+                className={cn('flex items-center gap-1', column.align === 'right' && 'justify-end')}
+              >
+                <span>{column.label}</span>
+                {column.tooltip && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info
-                        className="h-3 w-3 text-gray-400 cursor-help"
+                      <button
+                        type="button"
                         aria-label={column.tooltip}
-                      />
+                        onClick={e => e.stopPropagation()}
+                        className="inline-flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
+                      >
+                        <Info className="h-3 w-3" aria-hidden="true" />
+                      </button>
                     </TooltipTrigger>
                     <TooltipContent side="top" className="max-w-xs">
                       <p className="text-xs">{column.tooltip}</p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
-              )}
-              {column.sortable && (
-                <SortIndicator
-                  columnKey={column.key}
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              )}
-            </div>
-          </TableHead>
-        ))}
-      </TableRow>
-    </TableHeader>
+                )}
+                {column.sortable && (
+                  <SortIndicator
+                    columnKey={column.key}
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                  />
+                )}
+              </div>
+            </TableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
+    </TooltipProvider>
   )
 }
