@@ -12,7 +12,12 @@
 
 import type { ClientInfoItem } from '@/types/orders-client-info'
 
-export function ClientInfoCell({ info }: { info?: ClientInfoItem }) {
+interface ClientInfoCellProps {
+  /** PII for the order (undefined when backend returned no client info for this orderId) */
+  info?: ClientInfoItem
+}
+
+export function ClientInfoCell({ info }: ClientInfoCellProps) {
   if (!info || (!info.clientName && !info.clientPhone)) {
     return <span className="text-muted-foreground">—</span>
   }

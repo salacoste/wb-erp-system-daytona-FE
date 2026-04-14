@@ -16,7 +16,7 @@ function makeBackendItem(overrides: Partial<BackendSkuItem> = {}): BackendSkuIte
     brand: 'brand',
     sales: { quantity: 10, revenue_gross: 10000, revenue_net: 9000 },
     returns: { quantity: 1, revenue_gross: 1000, revenue_net: 900 },
-    cogs: { total: 4000 },
+    cogs: { unit_cost: 400, total: 4000, source: 'manual', valid_from: '2026-01-01' },
     expenses: {
       logistics_total: 500,
       storage: 100,
@@ -52,7 +52,7 @@ describe('transformBackendItem — Story 87.3-FE null preservation', () => {
   })
 
   it('sets missingCogs=true when cogs is null', () => {
-    const item = makeBackendItem({ cogs: null as unknown as { total: number } })
+    const item = makeBackendItem({ cogs: null })
     const result = transformBackendItem(item)
     expect(result.missingCogs).toBe(true)
     expect(result.costs.cogs).toBe(null)
