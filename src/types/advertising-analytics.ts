@@ -305,16 +305,22 @@ export interface Campaign {
 }
 
 /**
+ * Campaigns response metadata — extracted as named interface for
+ * consistency with AdvertisingMeta (Story 88.1-FE code review).
+ */
+export interface CampaignsMeta {
+  /** Total number of campaigns */
+  total_count: number
+  /** Number of active campaigns */
+  active_count: number
+}
+
+/**
  * Campaigns list response.
  */
 export interface CampaignsResponse {
   /** Response metadata */
-  meta: {
-    /** Total number of campaigns */
-    total_count: number
-    /** Number of active campaigns */
-    active_count: number
-  }
+  meta: CampaignsMeta
   /** List of campaigns */
   data: Campaign[]
 }

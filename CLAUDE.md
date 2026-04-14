@@ -89,6 +89,7 @@ src/
 - **Run E2E against live app**: Verify Playwright specs against running app before marking complete
 - **Regex for locale assertions**: Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
 - **Document same-name functions**: When two modules export identically-named functions, add a distinguishing comment
+- **No `TODO` in production code**: Use `PENDING BACKEND:` for backend-blocked work (linked to a `docs/request-backend/*.md` file), `FUTURE:` for post-MVP enhancements, or a ticket link. The bare `TODO` marker should never remain in committed source — it implies "someone on this team should do this soon" and accumulates silently. Grep `src/ --include="*.ts" --include="*.tsx" | grep -v test` for `TODO|FIXME` should return zero lines.
 
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
