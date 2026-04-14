@@ -1,7 +1,4 @@
-import type {
-  PriceCalculatorRequest,
-  TwoLevelPricingFormData,
-} from '@/types/price-calculator'
+import type { PriceCalculatorRequest, TwoLevelPricingFormData } from '@/types/price-calculator'
 import type { FormData } from './usePriceCalculatorForm'
 
 /**
@@ -77,8 +74,8 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
  * Story 44.37: Remove unsupported fields from API request
  * These fields are used for frontend display and calculations only.
  * Backend API (Epic 43) does not yet support these fields.
- * TODO: Re-enable when backend implements support
- *       (see docs/request-backend/100-epic-44-open-issues-consolidated.md)
+ * PENDING BACKEND: Re-enable when backend implements support
+ *                  (see docs/request-backend/100-epic-44-open-issues-consolidated.md)
  *
  * Removed fields (Story 44.27 - Warehouse Integration):
  * - warehouse_id

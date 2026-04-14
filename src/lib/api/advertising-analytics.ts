@@ -114,7 +114,6 @@ export async function getAdvertisingCampaigns(
   // Adapt backend format to frontend format (Campaign interface from types/advertising-analytics.ts:194)
   const response: CampaignsResponse = {
     meta: {
-      cabinet_id: '', // TODO: Get from auth context
       total_count: backendResponse.total,
       active_count: backendResponse.campaigns.filter(c => c.status === 9).length,
     },

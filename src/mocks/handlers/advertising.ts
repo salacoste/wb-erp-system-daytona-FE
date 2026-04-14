@@ -28,8 +28,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
  */
 export const mockAdvertisingSummary: AdvertisingSummary = {
   total_spend: 125000,
-  total_sales: 600000,  // Epic 35: Total sales (organic + ad)
-  total_revenue: 450000,  // Ad-attributed revenue only
+  total_sales: 600000, // Epic 35: Total sales (organic + ad)
+  total_revenue: 450000, // Ad-attributed revenue only
   total_profit: 85000,
   overall_roas: 3.6,
   overall_roi: 0.46,
@@ -38,8 +38,8 @@ export const mockAdvertisingSummary: AdvertisingSummary = {
   campaign_count: 10,
   active_campaigns: 8,
   // Epic 35: Organic vs advertising split
-  total_organic_sales: 150000,  // 600000 - 450000
-  avg_organic_contribution: 25,  // 25% average organic contribution (backend returns percentage, not decimal)
+  total_organic_sales: 150000, // 600000 - 450000
+  avg_organic_contribution: 25, // 25% average organic contribution (backend returns percentage, not decimal)
 }
 
 /**
@@ -68,12 +68,12 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
     clicks: 300,
     orders: 45,
     spend: 5000,
-    total_sales: 35000,  // Epic 35: Total sales (organic + ad)
-    revenue: 27000,  // Ad-attributed revenue only
+    total_sales: 35000, // Epic 35: Total sales (organic + ad)
+    revenue: 27000, // Ad-attributed revenue only
     profit: 6500,
     // Epic 35: Organic split
-    organic_sales: 8000,  // 35000 - 27000
-    organic_contribution: 22.9,  // 22.9% organic (backend returns percentage)
+    organic_sales: 8000, // 35000 - 27000
+    organic_contribution: 22.9, // 22.9% organic (backend returns percentage)
     roas: 5.4,
     roi: 1.3,
     ctr: 3.0,
@@ -91,11 +91,11 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
     clicks: 200,
     orders: 30,
     spend: 4000,
-    total_sales: 20000,  // Epic 35: Total sales
-    revenue: 15000,  // Ad-attributed revenue
+    total_sales: 20000, // Epic 35: Total sales
+    revenue: 15000, // Ad-attributed revenue
     profit: 4000,
-    organic_sales: 5000,  // 25% organic
-    organic_contribution: 25,  // 25% organic (backend returns percentage)
+    organic_sales: 5000, // 25% organic
+    organic_contribution: 25, // 25% organic (backend returns percentage)
     roas: 3.75,
     roi: 0.75,
     ctr: 2.5,
@@ -113,11 +113,11 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
     clicks: 100,
     orders: 12,
     spend: 3000,
-    total_sales: 10000,  // Epic 35: Total sales
-    revenue: 7500,  // Ad-attributed revenue
+    total_sales: 10000, // Epic 35: Total sales
+    revenue: 7500, // Ad-attributed revenue
     profit: 2000,
-    organic_sales: 2500,  // 25% organic
-    organic_contribution: 25,  // Backend returns percentage
+    organic_sales: 2500, // 25% organic
+    organic_contribution: 25, // Backend returns percentage
     roas: 2.5,
     roi: 0.33,
     ctr: 2.0,
@@ -135,11 +135,11 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
     clicks: 50,
     orders: 5,
     spend: 2500,
-    total_sales: 5000,  // Epic 35: Total sales
-    revenue: 3750,  // Ad-attributed revenue
+    total_sales: 5000, // Epic 35: Total sales
+    revenue: 3750, // Ad-attributed revenue
     profit: 1000,
-    organic_sales: 1250,  // 25% organic
-    organic_contribution: 25,  // Backend returns percentage
+    organic_sales: 1250, // 25% organic
+    organic_contribution: 25, // Backend returns percentage
     roas: 1.5,
     roi: 0.1,
     ctr: 1.67,
@@ -157,11 +157,11 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
     clicks: 30,
     orders: 2,
     spend: 2000,
-    total_sales: 2000,  // Epic 35: Total sales
-    revenue: 1500,  // Ad-attributed revenue
+    total_sales: 2000, // Epic 35: Total sales
+    revenue: 1500, // Ad-attributed revenue
     profit: 500,
-    organic_sales: 500,  // 25% organic
-    organic_contribution: 25,  // Backend returns percentage
+    organic_sales: 500, // 25% organic
+    organic_contribution: 25, // Backend returns percentage
     roas: 0.75,
     roi: -0.25,
     ctr: 1.5,
@@ -179,11 +179,11 @@ export const mockAdvertisingItems: AdvertisingItem[] = [
     clicks: 20,
     orders: 3,
     spend: 1000,
-    total_sales: 3000,  // Epic 35: Total sales
-    revenue: 2500,  // Ad-attributed revenue
+    total_sales: 3000, // Epic 35: Total sales
+    revenue: 2500, // Ad-attributed revenue
     profit: 0,
-    organic_sales: 500,  // 16.7% organic
-    organic_contribution: 16.7,  // Backend returns percentage
+    organic_sales: 500, // 16.7% organic
+    organic_contribution: 16.7, // Backend returns percentage
     roas: 0,
     roi: 0,
     ctr: 2.0,
@@ -242,7 +242,7 @@ export const mockCampaigns: Campaign[] = [
     daily_budget: 5000,
     nm_ids: ['123456', '234567'],
     sku_count: 2,
-    placements: null,  // Legacy campaign (type 8) - no placement data
+    placements: null, // Legacy campaign (type 8) - no placement data
   },
   {
     campaign_id: 1002,
@@ -260,7 +260,7 @@ export const mockCampaigns: Campaign[] = [
     placements: {
       search: true,
       recommendations: false,
-    },  // Type 9 campaign - search only
+    }, // Type 9 campaign - search only
   },
   {
     campaign_id: 1003,
@@ -275,7 +275,7 @@ export const mockCampaigns: Campaign[] = [
     daily_budget: 2000,
     nm_ids: ['456789', '567890'],
     sku_count: 2,
-    placements: null,  // Legacy campaign (type 8) - no placement data
+    placements: null, // Legacy campaign (type 8) - no placement data
   },
   {
     campaign_id: 1004,
@@ -294,7 +294,7 @@ export const mockCampaigns: Campaign[] = [
       search: false,
       recommendations: true,
       carousel: true,
-    },  // Type 9 campaign - recommendations + carousel (showcase focus)
+    }, // Type 9 campaign - recommendations + carousel (showcase focus)
   },
 ]
 
@@ -303,9 +303,8 @@ export const mockCampaigns: Campaign[] = [
  */
 export const mockCampaignsResponse: CampaignsResponse = {
   meta: {
-    cabinet_id: 'test-cabinet-id',
     total_count: 4,
-    active_count: 3,  // campaigns 1001, 1002, 1004 are active (status 9)
+    active_count: 3, // campaigns 1001, 1002, 1004 are active (status 9)
   },
   data: mockCampaigns,
 }
@@ -348,11 +347,11 @@ export const advertisingHandlers = [
 
     // Apply efficiency filter if provided
     if (efficiencyFilter && efficiencyFilter !== 'all') {
-      items = items.filter((item) => item.efficiency_status === efficiencyFilter)
+      items = items.filter(item => item.efficiency_status === efficiencyFilter)
     }
 
     // Convert frontend format to backend format (camelCase)
-    const backendItems = items.map((item) => ({
+    const backendItems = items.map(item => ({
       key: `sku:${item.sku_id}`,
       nmId: parseInt(item.sku_id || '0'),
       label: item.product_name,
@@ -407,7 +406,7 @@ export const advertisingHandlers = [
   http.get(`${API_BASE_URL}/v1/analytics/advertising/campaigns`, () => {
     // Backend format (matching real WB API response)
     const backendResponse = {
-      campaigns: mockCampaigns.map((campaign) => ({
+      campaigns: mockCampaigns.map(campaign => ({
         id: `campaign-${campaign.campaign_id}`,
         advertId: campaign.campaign_id,
         name: campaign.name || '',
@@ -415,7 +414,7 @@ export const advertisingHandlers = [
         typeLabel: campaign.type_name?.toLowerCase() || 'unknown',
         status: campaign.status,
         statusLabel: campaign.status_name?.toLowerCase() || 'unknown',
-        nmIds: campaign.nm_ids?.map((id) => parseInt(id)) || [],
+        nmIds: campaign.nm_ids?.map(id => parseInt(id)) || [],
         productsCount: campaign.sku_count || campaign.nm_ids?.length || 0,
         budget: null,
         dailyBudget: campaign.daily_budget || 0,

@@ -310,8 +310,6 @@ export interface Campaign {
 export interface CampaignsResponse {
   /** Response metadata */
   meta: {
-    /** Cabinet identifier */
-    cabinet_id: string
     /** Total number of campaigns */
     total_count: number
     /** Number of active campaigns */
