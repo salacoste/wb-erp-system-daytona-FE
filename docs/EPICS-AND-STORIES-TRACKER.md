@@ -108,9 +108,11 @@
 - Edge case handling: empty weeks, no data states, loading skeletons
 - Route: `/analytics/buyout` (pending route registration)
 
-> **Note — Epics 68-FE, 71-FE**: Pending formal documentation — code exists, needs spec & validation.
-> - Epic 68-FE: Funnel Analytics UI
-> - Epic 71-FE: Returns Analytics UI
+> **Note — Epics 68-FE, 69-FE, 70-FE (Returns), 71-FE**: Retroactive specs added by Story 88.5-FE (2026-04-15).
+> - Epic 68-FE (Funnel Analytics): [`docs/epics/epic-68-fe-funnel-analytics.md`](epics/epic-68-fe-funnel-analytics.md)
+> - Epic 69-FE (Buyout Rate): [`docs/epics/epic-69-fe-buyout-rate-analytics.md`](epics/epic-69-fe-buyout-rate-analytics.md)
+> - Epic 70-FE (Returns Analytics): [`docs/epics/epic-70-fe-returns-analytics.md`](epics/epic-70-fe-returns-analytics.md) — note: number reused; original Epic 70 was "Frontend Validation Fixes"
+> - Epic 71-FE (Search Analytics): [`docs/epics/epic-71-fe-search-analytics.md`](epics/epic-71-fe-search-analytics.md) — note: BE #151 labels search-adjacent endpoints as Epic 71 for Returns; frontend canonicalizes Search as Epic 71
 > - Reference: Backend Request #151
 
 ### Technical Debt - Q1 2026
@@ -544,7 +546,7 @@
 
 ### Epic 69-FE: Buyout Rate Analytics UI
 
-**File**: `docs/epics/epic-69-fe-buyout-rate-analytics.md` (pending)
+**File**: [`docs/epics/epic-69-fe-buyout-rate-analytics.md`](epics/epic-69-fe-buyout-rate-analytics.md) ✅ (retroactive spec added by Story 88.5-FE, 2026-04-15)
 **Backend**: Existing endpoints — `/v1/analytics/weekly/finance-summary` + `/v1/fulfillment/summary`
 **Priority**: P1 (Analytics Enhancement)
 **Status**: ✅ Complete (7/7 stories, 28/28 SP)
@@ -647,7 +649,7 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 - Stories 69.1–69.7 complete (28/28 SP): types, hooks, summary widget, per-SKU table, page scaffold, data source UX, unit & integration tests
 - Route `/analytics/buyout` implemented (pending route registration)
 - Data source transparency UX: weekly report vs orders API badge
-- **Epics 68-FE, 70-FE, 71-FE noted**: code exists, pending formal spec & validation (Backend Request #151)
+- **Epics 68-FE, 70-FE, 71-FE noted**: code exists; was pending formal spec & validation (Backend Request #151) — RESOLVED 2026-04-15 by Story 88.5-FE (see retroactive specs under `docs/epics/`)
 - Total epics: 22 (21 complete + 1 in validation)
 - Total stories: 160
 
@@ -819,7 +821,10 @@ For completed epics (1-6, 24, 33-34, 36-37, 44, 52), see:
 | Epic 62-FE | `docs/epics/epic-62-fe-dashboard-presentation.md` |
 | Epic 63-FE | `docs/epics/epic-63-fe-dashboard-business-logic.md` |
 | Epic 66-FE | `docs/epics/epic-66-fe-tax-accounting.md` |
-| Epic 69-FE | `docs/epics/epic-69-fe-buyout-rate-analytics.md` (pending) |
+| Epic 68-FE | `docs/epics/epic-68-fe-funnel-analytics.md` |
+| Epic 69-FE | `docs/epics/epic-69-fe-buyout-rate-analytics.md` |
+| Epic 70-FE (Returns) | `docs/epics/epic-70-fe-returns-analytics.md` |
+| Epic 71-FE | `docs/epics/epic-71-fe-search-analytics.md` |
 | Story Files | `docs/stories/epic-{N}/story-{N}.{M}-*.md` |
 | Backend APIs | `../test-api/*.http` |
 | Routes Code | `src/lib/routes.ts` |

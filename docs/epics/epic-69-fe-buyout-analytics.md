@@ -1,3 +1,5 @@
+> **Superseded by** [`epic-69-fe-buyout-rate-analytics.md`](./epic-69-fe-buyout-rate-analytics.md) — canonical spec added by Story 88.5-FE (2026-04-15). This file is preserved as a historical reference.
+
 # Epic 69-FE: Аналитика выкупов (Buyout Rate Analytics)
 
 | Field | Value |

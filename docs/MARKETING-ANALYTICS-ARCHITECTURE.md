@@ -31,7 +31,7 @@ Technical architecture for search analytics, unified product analytics, and mark
 |------|-------|------|---------------|--------|
 | Funnel | `/analytics/funnel` | Epic 68 | `/v1/analytics/funnel` | Fully functional |
 | Buyout | `/analytics/buyout` | Epic 69 | `/v1/analytics/buyout/by-sku`, `/summary` | Fully functional |
-| Returns | `/analytics/returns` | Epic 71 | `/v1/analytics/returns/reasons`, `/by-sku` | Fully functional |
+| Returns | `/analytics/returns` | Epic 70-FE (BE #151 labels as Epic 71; frontend canonicalized to 70-FE via Story 88.5) | `/v1/analytics/returns/reasons`, `/by-sku` | Fully functional |
 | Advertising | `/analytics/advertising` | Epic 33/35/36 | `/v1/analytics/advertising`, `/campaigns`, `/sync-status` | Fully functional |
 
 ### 1.2 Existing Frontend Layer Inventory

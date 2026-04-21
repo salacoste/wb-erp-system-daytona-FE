@@ -20,9 +20,9 @@ The WB Repricer frontend has a strong foundation of marketing analytics features
 | Page | Route | Epic | Status | Backend API | Key Features |
 |------|-------|------|--------|-------------|--------------|
 | **Advertising ROAS** | `/analytics/advertising` | Epic 33-FE | Complete | `GET /v1/analytics/advertising/*` | Performance table, ROAS/ROI metrics, campaign selector, efficiency filter, merged groups (Epic 37) |
-| **Marketing Funnel** | `/analytics/funnel` | Epic 68-FE | Complete (code exists, pending formal spec) | `GET /v1/analytics/funnel`, `/funnel/sync-status`, `/funnel/summary`, `/funnel/by-sku` | Funnel chart (views->cart->orders->buyouts->cancels), per-SKU table, time series, sync status |
-| **Buyout Analytics** | `/analytics/buyout` | Epic 69-FE | Complete (6/7 stories) | `GET /v1/analytics/buyout/by-sku`, `/buyout/summary` | Per-SKU buyout rates, trend tracking, confidence scoring, return breakdown, top decliners |
-| **Return Analytics** | `/analytics/returns` | Epic 71-FE | Complete (code exists, pending formal spec) | `GET /v1/analytics/returns/reasons`, `/returns/reasons/by-sku` | Return reasons pie chart, per-SKU anomaly detection, category breakdown (cancel/refusal/return) |
+| **Marketing Funnel** | `/analytics/funnel` | Epic 68-FE | Complete — spec: [`epic-68-fe-funnel-analytics.md`](epics/epic-68-fe-funnel-analytics.md) | `GET /v1/analytics/funnel`, `/funnel/sync-status`, `/funnel/summary`, `/funnel/by-sku` | Funnel chart (views->cart->orders->buyouts->cancels), per-SKU table, time series, sync status |
+| **Buyout Analytics** | `/analytics/buyout` | Epic 69-FE | Complete (7/7 stories) — spec: [`epic-69-fe-buyout-rate-analytics.md`](epics/epic-69-fe-buyout-rate-analytics.md) | `GET /v1/analytics/buyout/by-sku`, `/buyout/summary` | Per-SKU buyout rates, trend tracking, confidence scoring, return breakdown, top decliners |
+| **Return Analytics** | `/analytics/returns` | Epic 70-FE | Complete — spec: [`epic-70-fe-returns-analytics.md`](epics/epic-70-fe-returns-analytics.md) (BE #151 labels as "Epic 71"; frontend canonicalized to Epic 70-FE per Story 88.5) | `GET /v1/analytics/returns/reasons`, `/returns/reasons/by-sku` | Return reasons pie chart, per-SKU anomaly detection, category breakdown (cancel/refusal/return) |
 
 ### 1.2 Existing Frontend Infrastructure (IMPLEMENTED)
 
