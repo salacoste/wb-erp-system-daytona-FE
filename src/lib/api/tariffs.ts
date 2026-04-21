@@ -18,6 +18,13 @@ import type {
   AcceptanceCoefficientsResponse,
   TariffSettings,
 } from '@/types/tariffs'
+// Story 89.1-FE: Boundary normalizers absorb SDK version drift at the API boundary
+import {
+  normalizeCommissionsResponse,
+  normalizeWarehousesResponse,
+  normalizeAcceptanceCoefficientsResponse,
+  normalizeTariffSettings,
+} from './tariffs-normalizer'
 
 // Barrel re-exports from extracted module (box tariff helpers)
 export {
@@ -46,7 +53,8 @@ export {
 export async function getCommissions(): Promise<CommissionsResponse> {
   console.info('[Tariffs] Fetching category commissions')
 
-  const response = await apiClient.get<CommissionsResponse>('/v1/tariffs/commissions')
+  const raw = await apiClient.get<unknown>('/v1/tariffs/commissions')
+  const response = normalizeCommissionsResponse(raw)
 
   console.info('[Tariffs] Loaded', response.meta.total, 'categories', {
     cached: response.meta.cached,
@@ -67,7 +75,8 @@ export async function getCommissions(): Promise<CommissionsResponse> {
 export async function getWarehouses(): Promise<WarehousesResponse> {
   console.info('[Tariffs] Fetching warehouses')
 
-  const response = await apiClient.get<WarehousesResponse>('/v1/tariffs/warehouses')
+  const raw = await apiClient.get<unknown>('/v1/tariffs/warehouses')
+  const response = normalizeWarehousesResponse(raw)
 
   console.info('[Tariffs] Loaded', response.warehouses.length, 'warehouses')
 
@@ -90,9 +99,10 @@ export async function getAcceptanceCoefficients(
 ): Promise<AcceptanceCoefficientsResponse> {
   console.info('[Tariffs] Fetching acceptance coefficients for warehouse', warehouseId)
 
-  const response = await apiClient.get<AcceptanceCoefficientsResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/tariffs/acceptance/coefficients?warehouseId=${warehouseId}`
   )
+  const response = normalizeAcceptanceCoefficientsResponse(raw)
 
   console.info('[Tariffs] Loaded', response.coefficients.length, 'coefficients', {
     available: response.meta.available,
@@ -115,9 +125,8 @@ export async function getAcceptanceCoefficients(
 export async function getAllAcceptanceCoefficients(): Promise<AcceptanceCoefficientsResponse> {
   console.info('[Tariffs] Fetching ALL acceptance coefficients')
 
-  const response = await apiClient.get<AcceptanceCoefficientsResponse>(
-    '/v1/tariffs/acceptance/coefficients/all'
-  )
+  const raw = await apiClient.get<unknown>('/v1/tariffs/acceptance/coefficients/all')
+  const response = normalizeAcceptanceCoefficientsResponse(raw)
 
   console.info(
     '[Tariffs] Loaded',
@@ -140,7 +149,8 @@ export async function getAllAcceptanceCoefficients(): Promise<AcceptanceCoeffici
 export async function getTariffSettings(): Promise<TariffSettings> {
   console.info('[Tariffs] Fetching tariff settings')
 
-  const response = await apiClient.get<TariffSettings>('/v1/tariffs/settings')
+  const raw = await apiClient.get<unknown>('/v1/tariffs/settings')
+  const response = normalizeTariffSettings(raw)
 
   console.info('[Tariffs] Loaded tariff settings', {
     fboCommission: response.default_commission_fbo_pct,

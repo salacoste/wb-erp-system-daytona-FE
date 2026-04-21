@@ -16,6 +16,12 @@ import type {
   FbsCompareParams,
   CompareResponse,
 } from '@/types/fbs-analytics'
+// Story 89.1-FE: Boundary normalizers absorb nullability + field-name drift
+import {
+  normalizeTrendsResponse,
+  normalizeSeasonalResponse,
+  normalizeCompareResponse,
+} from './fbs-analytics-normalizer'
 
 // Barrel re-exports from extracted module (backfill admin operations)
 export {
@@ -47,10 +53,11 @@ export async function getFbsTrends(params: FbsTrendsParams): Promise<TrendsRespo
     aggregation: params.aggregation ?? 'day',
   })
 
-  const response = await apiClient.get<TrendsResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/orders/trends?${searchParams.toString()}`,
     { skipDataUnwrap: true }
   )
+  const response = normalizeTrendsResponse(raw)
 
   console.info('[FBS Analytics] Trends response:', {
     dataPoints: response.trends?.length ?? 0,
@@ -79,7 +86,8 @@ export async function getFbsSeasonal(params?: FbsSeasonalParams): Promise<Season
     ? `/v1/analytics/orders/seasonal?${queryStr}`
     : '/v1/analytics/orders/seasonal'
 
-  const response = await apiClient.get<SeasonalResponse>(url, { skipDataUnwrap: true })
+  const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
+  const response = normalizeSeasonalResponse(raw)
 
   console.info('[FBS Analytics] Seasonal response:', {
     hasMonthly: !!response.patterns?.monthly,
@@ -106,10 +114,11 @@ export async function getFbsCompare(params: FbsCompareParams): Promise<CompareRe
     period2: `${params.period2From} - ${params.period2To}`,
   })
 
-  const response = await apiClient.get<CompareResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/orders/compare?${searchParams.toString()}`,
     { skipDataUnwrap: true }
   )
+  const response = normalizeCompareResponse(raw)
 
   console.info('[FBS Analytics] Comparison response:', {
     ordersChange: response.comparison?.ordersChangePercent ?? 0,

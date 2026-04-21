@@ -12,6 +12,12 @@ import type {
   WbHistoryResponse,
   FullHistoryResponse,
 } from '@/types/orders-history'
+// Story 89.1-FE: Boundary normalizers absorb field-name drift across history variants
+import {
+  normalizeLocalHistoryResponse,
+  normalizeWbHistoryResponse,
+  normalizeFullHistoryResponse,
+} from './orders-history-normalizer'
 
 // ============================================================================
 // Order History APIs
@@ -20,46 +26,40 @@ import type {
 /**
  * Get local status history for order
  * GET /v1/orders/:orderId/history
- *
- * @param orderId - WB Order ID
- * @returns Local status history with current status and summary
  */
 export async function getOrderHistory(orderId: string): Promise<LocalHistoryResponse> {
   console.info('[Orders API] Fetching local history:', orderId)
 
-  return apiClient.get<LocalHistoryResponse>(`/v1/orders/${orderId}/history`, {
+  const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}/history`, {
     skipDataUnwrap: true,
   })
+  return normalizeLocalHistoryResponse(raw)
 }
 
 /**
  * Get WB native status history for order
  * GET /v1/orders/:orderId/wb-history
- *
- * @param orderId - WB Order ID
- * @returns WB native status history with 40+ detailed status codes
  */
 export async function getWbHistory(orderId: string): Promise<WbHistoryResponse> {
   console.info('[Orders API] Fetching WB history:', orderId)
 
-  return apiClient.get<WbHistoryResponse>(`/v1/orders/${orderId}/wb-history`, {
+  const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}/wb-history`, {
     skipDataUnwrap: true,
   })
+  return normalizeWbHistoryResponse(raw)
 }
 
 /**
  * Get merged full history (local + WB native)
  * GET /v1/orders/:orderId/full-history
- *
- * @param orderId - WB Order ID
- * @returns Merged history sorted by timestamp with source discriminator
  */
 export async function getFullHistory(orderId: string): Promise<FullHistoryResponse> {
   console.info('[Orders API] Fetching full history:', orderId)
 
-  return apiClient.get<FullHistoryResponse>(`/v1/orders/${orderId}/full-history`, {
+  const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}/full-history`, {
     skipDataUnwrap: true,
   })
+  return normalizeFullHistoryResponse(raw)
 }
 
 // ============================================================================

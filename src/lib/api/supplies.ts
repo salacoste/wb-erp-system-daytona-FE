@@ -20,6 +20,8 @@ import type {
   RemoveOrdersResponse,
   CloseSupplyResponse,
 } from '@/types/supplies'
+// Story 89.1-FE: Boundary normalizers absorb SDK version drift
+import { normalizeSuppliesListResponse, normalizeSupplyDetailResponse } from './supplies-normalizer'
 
 // Barrel re-exports from extracted module (document/sync operations)
 export { generateStickers, downloadDocument, syncSupplies } from './supplies-documents'
@@ -70,9 +72,8 @@ export async function getSupplies(params: SuppliesListParams = {}): Promise<Supp
 
   console.info('[Supplies API] Fetching supplies:', params)
 
-  const response = await apiClient.get<SuppliesListResponse>(url, {
-    skipDataUnwrap: true,
-  })
+  const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
+  const response = normalizeSuppliesListResponse(raw)
 
   console.info('[Supplies API] Supplies response:', {
     count: response.items?.length ?? 0,
@@ -89,9 +90,8 @@ export async function getSupplies(params: SuppliesListParams = {}): Promise<Supp
 export async function getSupply(supplyId: string): Promise<SupplyDetailResponse> {
   console.info('[Supplies API] Fetching supply:', supplyId)
 
-  return apiClient.get<SupplyDetailResponse>(`/v1/supplies/${supplyId}`, {
-    skipDataUnwrap: true,
-  })
+  const raw = await apiClient.get<unknown>(`/v1/supplies/${supplyId}`, { skipDataUnwrap: true })
+  return normalizeSupplyDetailResponse(raw)
 }
 
 // =============================================================================

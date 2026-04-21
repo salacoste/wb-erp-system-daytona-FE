@@ -14,24 +14,25 @@ import type {
   SellerInfoResponse,
   TokenHealthResponse,
 } from '@/types/cabinet'
+// Story 89.1-FE: Boundary normalizers — Jam tier falls back to 'unknown' for new tiers
+import {
+  normalizeCabinetResponse,
+  normalizeJamStatusResponse,
+  normalizeSellerInfoResponse,
+  normalizeTokenHealthResponse,
+} from './cabinet-normalizer'
 
 /**
  * GET /v1/cabinets/:id
  * Fetch cabinet details including tax and VAT settings.
  */
 export async function getCabinetTaxSettings(cabinetId: string): Promise<Cabinet> {
-  return apiClient.get<Cabinet>(`/v1/cabinets/${cabinetId}`)
+  const raw = await apiClient.get<unknown>(`/v1/cabinets/${cabinetId}`)
+  return normalizeCabinetResponse(raw)
 }
 
 /**
- * PUT /v1/cabinets/:id
- * Update cabinet tax + VAT settings.
- *
- * Backend validation:
- * - taxSystem='manual' → taxRate required (0-100)
- * - taxSystem='usn6'/'usn15' → taxRate auto-cleared
- * - vatPayer=true → vatRate required (0, 5, 20, 22)
- * - vatPayer=false → vatRate auto-cleared
+ * PUT /v1/cabinets/:id — mutation, remains passthrough (shape controlled by request body)
  */
 export async function updateCabinetTaxSettings(
   cabinetId: string,
@@ -43,10 +44,10 @@ export async function updateCabinetTaxSettings(
 /**
  * GET /v1/cabinets/:id/jam-status
  * Detect Jam subscription tier via SDK v3.3.0 probe strategy.
- * Backend caches result; probe calls are expensive.
  */
 export async function getJamStatus(cabinetId: string): Promise<JamStatusResponse> {
-  return apiClient.get<JamStatusResponse>(`/v1/cabinets/${cabinetId}/jam-status`)
+  const raw = await apiClient.get<unknown>(`/v1/cabinets/${cabinetId}/jam-status`)
+  return normalizeJamStatusResponse(raw)
 }
 
 /**
@@ -54,7 +55,8 @@ export async function getJamStatus(cabinetId: string): Promise<JamStatusResponse
  * Fetch seller info from WB General API. Backend caches for 1 hour.
  */
 export async function getSellerInfo(cabinetId: string): Promise<SellerInfoResponse> {
-  return apiClient.get<SellerInfoResponse>(`/v1/cabinets/${cabinetId}/seller-info`)
+  const raw = await apiClient.get<unknown>(`/v1/cabinets/${cabinetId}/seller-info`)
+  return normalizeSellerInfoResponse(raw)
 }
 
 /**
@@ -62,5 +64,6 @@ export async function getSellerInfo(cabinetId: string): Promise<SellerInfoRespon
  * Token health from Redis — lightweight, no WB API calls.
  */
 export async function getTokenHealth(cabinetId: string): Promise<TokenHealthResponse> {
-  return apiClient.get<TokenHealthResponse>(`/v1/cabinets/${cabinetId}/token-status`)
+  const raw = await apiClient.get<unknown>(`/v1/cabinets/${cabinetId}/token-status`)
+  return normalizeTokenHealthResponse(raw)
 }
