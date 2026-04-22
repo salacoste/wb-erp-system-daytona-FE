@@ -56,6 +56,10 @@ export interface GridPipeline {
   totalFailures: number
   avgDurationMs: number | null
   totalRowsProcessed: number | null
+  // Story 91.3-FE: Backend Epics 89-93 — error rate fields
+  errorRate: number // 0-1, proportion of completed tasks with errors
+  tasksWithErrors: number // count of tasks with errors
+  totalResultErrors: number // total error count across those tasks
   cells: HeatmapCell[]
 }
 

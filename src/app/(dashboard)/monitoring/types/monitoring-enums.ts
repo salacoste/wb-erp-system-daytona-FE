@@ -40,6 +40,10 @@ export interface DashboardPipeline {
   lastSuccessAt: string | null
   dataLagMinutes: number | null
   successRate24h: number
+  // Story 91.3-FE: Backend Epics 89-93 — error rate fields
+  errorRate: number // 0-1
+  tasksWithErrors: number
+  totalResultErrors: number
 }
 
 export interface DashboardTelegram {

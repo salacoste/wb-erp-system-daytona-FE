@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
+import { AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { DashboardPipeline, PipelineCategory, PipelineStatus } from '../types/monitoring'
 
@@ -92,23 +93,54 @@ export function PipelineStatusGrid({ pipelines, isLoading }: PipelineStatusGridP
 }
 
 function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
-  const { displayName, status, lastSuccessAt, successRate24h } = pipeline
+  const {
+    displayName,
+    status,
+    lastSuccessAt,
+    successRate24h,
+    errorRate,
+    tasksWithErrors,
+    totalResultErrors,
+  } = pipeline
   const label = STATUS_LABELS[status]
   const colorClass = STATUS_COLORS[status]
   const rate = Math.round(successRate24h * 100)
+  // Gate on >= 1% to avoid showing "0%" badge for tiny error rates (e.g., 0.004 → rounds to 0)
+  const hasErrors = errorRate >= 0.01
 
   return (
     <Card className="p-3" role="article" aria-label={`${displayName}: ${label}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="truncate text-sm font-medium">{displayName}</span>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge className={cn('shrink-0 whitespace-nowrap', colorClass)}>{label}</Badge>
-          </TooltipTrigger>
-          <TooltipContent size="sm">
-            <p>Статус: {label}</p>
-          </TooltipContent>
-        </Tooltip>
+        <div className="flex items-center gap-1.5">
+          {/* Story 91.3-FE: amber error-rate indicator when errorRate > 0 */}
+          {hasErrors && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge
+                  variant="outline"
+                  className="shrink-0 border-amber-500 text-amber-700 text-xs px-1.5"
+                >
+                  <AlertTriangle className="h-3 w-3 mr-0.5" />
+                  {Math.round(errorRate * 100)}%
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent size="sm">
+                <p>
+                  {tasksWithErrors} задач с ошибками ({totalResultErrors} ошибок всего)
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge className={cn('shrink-0 whitespace-nowrap', colorClass)}>{label}</Badge>
+            </TooltipTrigger>
+            <TooltipContent size="sm">
+              <p>Статус: {label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
       <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
