@@ -91,6 +91,64 @@ src/
 - **Document same-name functions**: When two modules export identically-named functions, add a distinguishing comment
 - **No `TODO` in production code**: Use `PENDING BACKEND:` for backend-blocked work (linked to a `docs/request-backend/*.md` file), `FUTURE:` for post-MVP enhancements, or a ticket link. The bare `TODO` marker should never remain in committed source — it implies "someone on this team should do this soon" and accumulates silently. Grep `src/ --include="*.ts" --include="*.tsx" | grep -v test` for `TODO|FIXME` should return zero lines.
 
+### Defensive Frontend Principle (Story 89.4-FE, from Epic 87-FE retro)
+
+**The principle:** Frontend never silently transforms data it doesn't own — it **indicates**. When an anomaly is detected in backend-sourced data, render a warning indicator, preserve the raw value, and file a backend ticket. Do NOT "fix" the display by swapping fields, coercing nulls, or clamping values — that erases evidence of the real bug.
+
+**What counts as "data you don't own":**
+- Any field from a backend API response.
+- Any field computed server-side (e.g., `netProfit`, `totalOperatingProfit`, `operatingProfit`).
+- Any field sourced from the WB SDK via the backend proxy.
+- **Counterexample**: data the frontend itself computes (local aggregations, UI state, derived totals from already-normalized inputs) — you own that; transform it freely.
+
+**Four anomaly categories you'll encounter:**
+
+| Anomaly | ❌ Don't | ✅ Do |
+|---|---|---|
+| Field inversion / swap (e.g., `salePrice > price × 1.2` — threshold avoids false positives on legitimate adjustments) | Silently swap in the transform. | Render a warning icon + tooltip near the cell; keep raw values visible. |
+| `null` where a number is expected (e.g., `cogs: null`) | `?? 0` in the transform. | Preserve null end-to-end, render `—`, add a footnote. *(See anti-pattern #8.)* |
+| Impossible negative value (e.g., `organicSales: -1200`) | `Math.max(0, value)`. | Show the raw value + a warning. |
+| Missing / empty response | Fall back to stale cache silently. | Render a distinct empty-state with a link to the related backend ticket. |
+
+**Concrete illustration** (matches the `❌ BAD / ✅ GOOD` style of adjacent anti-patterns):
+
+```typescript
+// ❌ BAD — silently "fixes" the backend anomaly, evidence erased
+function transform(raw: { price: number; salePrice: number }) {
+  if (raw.salePrice > raw.price * 1.2) {
+    return { price: raw.salePrice, salePrice: raw.price } // swapped
+  }
+  return raw
+}
+
+// ✅ GOOD — raw values preserved, anomaly surfaced via a flag consumers can render
+function transform(raw: { price: number; salePrice: number }) {
+  const anomalous = raw.salePrice > raw.price * 1.2
+  return { ...raw, anomalous } // UI renders AlertTriangle + tooltip when anomalous
+}
+// Cite backend ticket in a comment near the detector:
+// // PENDING BACKEND: request #165 — price/salePrice inversion
+```
+
+**"Show an indicator" recipe:**
+- Icon: `lucide-react` `AlertTriangle` — amber for advisory, red for blocking.
+- Tooltip: one sentence explaining the anomaly (template: `` `Аномалия: <what> в <ratio> раз. Возможна ошибка данных на стороне WB.` ``; real example lives in `src/components/custom/orders/OrdersTableRow.tsx`).
+- Footnote: `<p className="text-xs text-amber-700 mt-2">…</p>` near tables.
+- Link: include a code comment pointing to the ticket: `// PENDING BACKEND: request #NNN — <one-line>`.
+
+**"File a backend ticket" recipe:**
+- Create `docs/request-backend/NNN-SHORT-DESCRIPTION.md` (next sequential number — grep the folder first).
+- Follow the existing format: Problem → Root Cause → Impact → Fix Scope → Reproduction → Resolution.
+- Cross-reference the ticket in any PR or story that surfaces the anomaly.
+
+**Canonical worked example — orders price inversion:**
+Story 87.3-FE found backend occasionally returning `price < salePrice` (field inversion). Rather than swapping them in the API transform, the team rendered an `AlertTriangle` warning in the orders table and filed `docs/request-backend/165-ORDERS-PRICE-SALEPRICE-INVERSION.md`. Raw values stayed visible; the bug is now traceable, and the backend fix will remove the indicator naturally. See also `DailyCogsGapFootnote` (Story 88.2-FE) for the null-COGS equivalent.
+
+**Related CLAUDE.md references:**
+- **Anti-pattern #8 (null-vs-zero)** — a specific case of this principle applied to nullable money/ratio fields.
+- **Boundary Normalizer Pattern** — the shape-drift flavor: normalize at the boundary, preserve null, never paper over mismatches.
+- **`PENDING BACKEND:` convention** — anomaly-indicator code should always carry a `// PENDING BACKEND: request #NNN` comment so the indicator and the ticket stay linked.
+
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
 These patterns were repeatedly hit across recent stories. Each one is a known footgun — recognize them on sight and refuse to write or merge them.
@@ -252,6 +310,84 @@ await responsePromise // deterministic wait
 
 For navigation cycles use `waitForLoadState('networkidle')` instead of `waitForTimeout`.
 
+#### 8. `?? 0` on nullable money/ratio fields lies about the data
+
+When a backend field can legitimately be `null` (meaning "unknown" — e.g., ROAS when there is no ad spend, COGS when not yet assigned, profit when cost is unknown), do NOT collapse it to `0` in the transform layer. "Zero" and "unknown" have different user-facing meanings, and the user cannot recover the distinction from a rendered `0 ₽`.
+
+**Bad** (Story 87.3 / 88.2 pattern — silently misleads the user):
+```ts
+// Transform layer — at the API → frontend boundary
+profit: { operating: item.operating_profit ?? 0 } // type lies: number
+revenue: item.revenue ?? 0                        // null becomes "no sales" instead of "no data"
+overall_roas: backend.avgRoas ?? 0                // null (no spend) becomes "0.0x ROAS"
+```
+
+**Good** (null preserved through types; display layer renders `—`):
+```ts
+// Transform layer — preserve null, widen the type
+profit: { operating: item.operating_profit ?? null } // type: number | null
+revenue: item.revenue ?? null
+
+// Display layer — formatter or explicit guard renders em dash
+<span>{item.revenue == null ? '—' : formatCurrency(item.revenue)}</span>
+
+// Aggregation callsites — coerce with comment so next dev doesn't "fix" it back upstream
+const totalProfit = items.reduce(
+  (sum, i) => sum + (i.profit.operating ?? 0), // aggregation — null treated as 0, intentional
+  0
+)
+```
+
+**Scope rule — when null matters vs when zero is fine:**
+- ✅ Money values (`revenue`, `cogs`, `profit`, `spend`) — always "null means unknown."
+- ✅ Ratios (`roas`, `roi`, `margin_pct`) — always "null means unknown" (division undefined).
+- ✅ Per-unit metrics (unit cost, expected profit per unit) — same.
+- ❌ Counts (`orderCount`, `salesCount`, `views`, `clicks`) — 0 is legitimate, `?? 0` is fine.
+- ❌ Pagination (`total`, `limit`, `offset`) — 0 is legitimate.
+- ❌ Accumulator seeds (`{ total: 0 }` at start of `reduce`) — 0 is legitimate.
+
+**Escalation pattern** — when any row in an aggregate has null, disclose the gap to the user with a footnote:
+```tsx
+<p className="text-xs text-amber-700 mt-2">
+  * COGS неизвестна для {N} дн. — теор. прибыль за эти дни рассчитана без учёта себестоимости.
+</p>
+```
+
+See Story 87.3-FE (SKU profit) and Story 88.2-FE (ROAS, daily COGS) for the canonical fix pattern.
+
+#### 9. `waitForLoadState('networkidle')` on background-polling pages
+
+Dashboard / analytics pages run continuous background queries (margin polling, chart refetch intervals, TanStack Query focus-refetch, dev-mode telemetry, React DevTools heartbeat). `networkidle` requires **500ms of zero network activity** — a window that never opens within a 30s Playwright test budget. Tests hang to timeout, the real assertion never runs, and real regressions hide behind the timeout failure.
+
+**Bad** (hits the 30s test timeout on any dashboard page):
+```typescript
+await page.goto('/dashboard')
+await page.waitForLoadState('networkidle') // never settles — test hangs
+await expect(metricsCard).toBeVisible()
+```
+
+**Good** (deterministic, <15s on same page):
+```typescript
+await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
+await expect(metricsCard).toBeVisible({ timeout: 10000 })
+```
+
+**Why this works:** `domcontentloaded` fires once React has mounted and the previous page has unmounted. The `expect(landmark).toBeVisible()` then waits for the thing you actually want to test — a stable landmark like `[role="region"][aria-label="Основные метрики"]` — rather than for "the network to go quiet" (a proxy signal that's wrong on polling pages).
+
+**When `waitForResponse` is the right tool** — for tests that assert "user action triggered this specific API call," observe the network directly:
+```typescript
+await Promise.all([
+  page.waitForResponse(resp =>
+    /\/v1\/analytics\/weekly\/finance/.test(resp.url()) && resp.status() === 200
+  ),
+  weekDropdown.click(),
+])
+```
+
+**When `waitForTimeout(N)` IS acceptable** — short (≤300ms) CSS transitions where no DOM event exists. Always annotate: `// intentional animation delay — 300ms CSS transition, no DOM signal`. Never use `waitForTimeout` as a data-wait substitute.
+
+See Story 86.2-FE (`e2e/orders-client-info.spec.ts:441-458`) and Story 88.3-FE for canonical migrations.
+
 ### MCP-Assisted Development
 **Context7 MCP** for design patterns and examples:
 - `/creativetimofficial/ui` - Design patterns (DO NOT INSTALL, use for inspiration)
@@ -265,6 +401,87 @@ For navigation cycles use `waitForLoadState('networkidle')` instead of `waitForT
 
 ### API Client (`src/lib/api-client.ts`)
 Auto-injects `Authorization: Bearer {token}` and `X-Cabinet-Id: {cabinetId}`. Auto-unwraps `{ data: ... }` responses.
+
+### Boundary Normalizer Pattern
+
+Every endpoint response that crosses the backend→frontend boundary MUST be transformed into a frontend-canonical shape at the API client layer. **Raw backend shapes never reach components or hooks.**
+
+**Why this matters.** Backend and frontend evolve independently. Three separate bugs (Stories 84.1, 87.2, 87.3 / 88.2) each shipped because a transform was missing or silently collapsed a mismatch:
+
+| Story | Drift | Silent collapse |
+|---|---|---|
+| 84.1 | Role case: backend `'owner'` vs frontend `'Owner'` | Role-gated features broke |
+| 87.2 | Field naming: backend `cabinetId`/`reportsStatus` (camelCase) vs frontend `cabinet_id`/`status` (snake_case) | Backfill admin crashed on unknown `'not_started'` status |
+| 87.3 / 88.2 | Nullability: backend `null` meaning "unknown" | `?? 0` in transform collapsed "unknown" into "zero" — misleading `0 ₽` / `0.0x ROAS` cells |
+
+Each of these cost meaningful diagnostic cycles. The code looked correct, the types compiled, but the boundary silently papered over a mismatch.
+
+**Naming conventions** (pick one consistently per module):
+- `normalize<Name>Response(raw: unknown): <Name>Response` — preferred for top-level endpoint responses.
+- `to<Type>(raw: unknown): <Type>` — preferred for scalar/enum coercion (e.g., `toBackfillStatus`, `toDataSource`).
+- `normalize<Name>(raw: Raw<Name>): <Name>` — per-item normalization inside a list response.
+
+**When to use** (checklist):
+- ✅ Role/enum case mismatches (`'owner'` vs `'Owner'`)
+- ✅ snake_case ↔ camelCase between contracts
+- ✅ Nullability where backend `null` semantically means "unknown" (see anti-pattern #8)
+- ✅ Date strings ↔ `Date` objects (never leave raw strings in `Date`-typed fields)
+- ✅ Discriminated unions with new backend variants (fall through to a `'unknown'` sentinel)
+
+**Canonical examples** (read these first when adding a new endpoint):
+
+Example 1 — role-case bridging in a state store (`src/stores/authStore.ts:23-35`):
+```typescript
+const ROLE_CASE_MAP: Record<string, User['role']> = {
+  owner: 'Owner', manager: 'Manager', analyst: 'Analyst', service: 'Service',
+}
+
+function normalizeUser(user: User): User {
+  const incoming = user.role as unknown as string
+  const canonical = ROLE_CASE_MAP[incoming.toLowerCase()] ?? user.role
+  if (canonical === user.role) return user
+  return { ...user, role: canonical }
+}
+// All entry points (setUser, login, refreshToken, persisted-state migration)
+// route the user through normalizeUser — single source of truth.
+```
+
+Example 2 — inline transform with scalar coercers (`src/lib/api/backfill.ts:33-89`):
+```typescript
+function toBackfillStatus(raw: unknown): BackfillStatus {
+  const s = String(raw ?? '')
+  return VALID_STATUSES.has(s as BackfillStatus) ? (s as BackfillStatus) : 'not_started'
+}
+function toDataSource(raw: unknown): DataSource { /* same pattern */ }
+
+export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
+  const raw = await apiClient.get<Record<string, unknown>[]>(`${BASE_URL}/status`, {
+    skipDataUnwrap: true,
+  })
+  // Backend: camelCase (cabinetId, reportsStatus, overallProgress)
+  // Frontend: snake_case (cabinet_id, status, progress). Normalize here.
+  return (raw ?? []).map(item => ({
+    // Dual-lookup (`item.cabinetId ?? item.cabinet_id`) is deliberate — it absorbs a
+    // rolling backend rename without a breaking frontend change. When the backend
+    // stabilizes on one casing, drop the fallback branch; until then the normalizer
+    // is the hinge that keeps both contracts valid simultaneously.
+    cabinet_id: (item.cabinetId ?? item.cabinet_id ?? '') as string,
+    status: toBackfillStatus(item.reportsStatus ?? item.status),
+    data_source: toDataSource(item.dataSource ?? item.data_source),
+    // ...repeat dual-lookup for every field (full code at src/lib/api/backfill.ts:55-89)
+  }))
+}
+```
+
+**Anti-patterns to avoid:**
+- ❌ `apiClient.get<BackendShape>(...)` followed by direct return — the TYPE lies; runtime shape is whatever the backend sent.
+- ❌ `response as FrontendShape` cast to paper over a mismatch — use a normalizer, not an assertion.
+- ❌ Duplicating normalization at multiple call sites — put it in the API module, one place.
+- ❌ Conditional normalization (`if (response.cabinetId) { ... } else { ... }`) — always normalize unconditionally so the transform is proof, not a guess.
+
+**Testing requirement.** Every normalizer MUST have at least 1 unit test exercising the nullability / case / variant edge cases. Reference: `src/stores/authStore.test.ts` for `normalizeUser`. Without the test, a silent regression can drop into the transform as easily as it can into a consumer.
+
+**Cross-reference.** The three diagnostic case studies this pattern prevents: Story 84.1 (role case), Story 87.2 (backfill camelCase → snake_case), Story 87.3 + 88.2 (null vs zero). The Story 88.4 audit at `_bmad-output/planning-artifacts/boundary-normalizer-audit-2026-04-15.md` classifies every file in `src/lib/api/` by normalizer presence.
 
 ### TanStack Query (`src/hooks/`)
 ```typescript
@@ -592,6 +809,14 @@ git commit -m "feat: implement story X.Y"
 Email: test@test.com
 Password: Russia23!
 ```
+
+---
+
+## Comment Policy
+
+**Test scripts**: Create temporary test scripts in `scripts/` folder, delete after testing.
+
+**Doc-link validation**: Run `npm run check:docs` before committing doc updates — catches broken source citations of the form `` `src/path.ts:N` `` (Story 89.3-FE).
 
 ---
 
