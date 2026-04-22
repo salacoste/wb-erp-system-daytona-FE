@@ -1,7 +1,8 @@
 /**
- * Types for Epic 71: Return Analytics
+ * Types for Epic 70-FE: Returns Analytics
  * Split from analytics-epics-68-71.ts for 200-line limit
- * Reference: docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md
+ * Reference: docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md (labels these as Epic 71)
+ * Canonical spec: docs/epics/epic-70-fe-returns-analytics.md
  */
 
 import type { TrendDirection } from './analytics-buyout'

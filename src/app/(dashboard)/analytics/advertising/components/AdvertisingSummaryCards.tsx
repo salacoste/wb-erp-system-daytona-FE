@@ -110,17 +110,20 @@ export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSumma
     {
       id: 'roas',
       label: 'Общий ROAS',
-      value: `${summary.overall_roas.toFixed(1)}x`,
+      // Story 88.2-FE: null when totalSpend = 0 (division undefined) — render as "—"
+      value: summary.overall_roas != null ? `${summary.overall_roas.toFixed(1)}x` : '—',
       icon: TrendingUp,
-      colorClass: getRoasColor(summary.overall_roas),
+      colorClass:
+        summary.overall_roas != null ? getRoasColor(summary.overall_roas) : 'text-gray-400',
       tooltip: 'Выручка от рекламы \u00F7 расход на кампании. Данные из рекламного кабинета WB.',
     },
     {
       id: 'roi',
       label: 'Общий ROI',
-      value: formatPercent(summary.overall_roi),
+      // Story 88.2-FE: null when totalSpend = 0
+      value: summary.overall_roi != null ? formatPercent(summary.overall_roi) : '—',
       icon: Percent,
-      colorClass: getRoiColor(summary.overall_roi),
+      colorClass: summary.overall_roi != null ? getRoiColor(summary.overall_roi) : 'text-gray-400',
       tooltip:
         '(Прибыль \u2212 расход на рекламу) \u00F7 расход \u00D7 100%. Прибыль из маржинальной аналитики.',
     },

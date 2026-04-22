@@ -1,6 +1,7 @@
 /**
  * Returns Page orchestrator
- * Epic 71: Return Analytics
+ * Epic 70-FE: Returns Analytics
+ * See docs/epics/epic-70-fe-returns-analytics.md (Numbering History for rename trail).
  */
 
 'use client'

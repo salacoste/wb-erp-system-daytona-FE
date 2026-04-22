@@ -11,7 +11,6 @@ function makeSearchItem(overrides: Partial<SearchOrderItem> = {}): SearchOrderIt
   return {
     key: 100,
     totalOrders: 10,
-    totalRevenue: 0,
     vendorCode: 'VC-100',
     uniqueQueries: 5,
     ...overrides,

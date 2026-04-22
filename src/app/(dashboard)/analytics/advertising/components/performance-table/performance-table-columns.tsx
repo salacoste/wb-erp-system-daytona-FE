@@ -90,16 +90,17 @@ export function renderOrganicSales(item: AdvertisingItem) {
               <p className="font-medium">WB API переатрибутировал продажи</p>
               <div className="text-xs text-muted-foreground space-y-1">
                 <p>
-                  Выручка из рекламы ({formatCurrency(item.revenue)}) больше общей выручки товара (
-                  {formatCurrency(item.total_sales)}).
+                  {/* Over-attribution branch — revenue > total_sales, so revenue is not null here. `?? 0` is defensive. */}
+                  Выручка из рекламы ({formatCurrency(item.revenue ?? 0)}) больше общей выручки
+                  товара ({formatCurrency(item.total_sales)}).
                 </p>
                 <p className="mt-2">
                   Причина: WB засчитывает продажи к рекламе, даже если покупка была через
                   органический поиск после клика на объявление.
                 </p>
                 <p className="mt-2 font-medium">
-                  Органика = {formatCurrency(item.total_sales)} - {formatCurrency(item.revenue)} ={' '}
-                  {formatCurrency(item.organic_sales)}
+                  Органика = {formatCurrency(item.total_sales)} -{' '}
+                  {formatCurrency(item.revenue ?? 0)} = {formatCurrency(item.organic_sales)}
                 </p>
               </div>
             </div>

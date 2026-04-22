@@ -113,11 +113,12 @@ describe('recomputeSummary', () => {
     expect(result.campaign_count).toBe(5)
   })
 
-  it('handles zero spend (roas = 0, roi = 0)', () => {
+  // Story 88.2-FE: when spend = 0, ROAS/ROI are null ("undefined division"), not 0
+  it('handles zero spend (roas = null, roi = null)', () => {
     const items = [makeItem({ spend: 0, revenue: 100, total_sales: 200, organic_sales: 100 })]
     const result = recomputeSummary(items, baseSummary)
-    expect(result.overall_roas).toBe(0)
-    expect(result.overall_roi).toBe(0)
+    expect(result.overall_roas).toBeNull()
+    expect(result.overall_roi).toBeNull()
   })
 
   it('handles zero sales (organic_contribution = 0)', () => {
@@ -131,7 +132,8 @@ describe('recomputeSummary', () => {
     expect(result.total_spend).toBe(0)
     expect(result.total_revenue).toBe(0)
     expect(result.total_sales).toBe(0)
-    expect(result.overall_roas).toBe(0)
+    // Story 88.2-FE: empty items → spend=0 → ROAS is null (undefined division)
+    expect(result.overall_roas).toBeNull()
     expect(result.avg_organic_contribution).toBe(0)
   })
 })

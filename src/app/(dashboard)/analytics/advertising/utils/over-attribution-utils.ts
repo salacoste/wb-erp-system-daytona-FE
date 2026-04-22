@@ -17,13 +17,15 @@ export function recomputeSummary(
   items: AdvertisingItem[],
   original: AdvertisingSummary
 ): AdvertisingSummary {
+  // Story 88.2-FE: revenue/profit may be null ("unknown"). Coerce to 0 at aggregation callsite.
   const total_spend = items.reduce((s, i) => s + i.spend, 0)
-  const total_revenue = items.reduce((s, i) => s + i.revenue, 0)
+  const total_revenue = items.reduce((s, i) => s + (i.revenue ?? 0), 0)
   const total_sales = items.reduce((s, i) => s + i.total_sales, 0)
-  const total_profit = items.reduce((s, i) => s + i.profit, 0)
+  const total_profit = items.reduce((s, i) => s + (i.profit ?? 0), 0)
   const total_organic_sales = items.reduce((s, i) => s + i.organic_sales, 0)
-  const overall_roas = total_spend > 0 ? total_revenue / total_spend : 0
-  const overall_roi = total_spend > 0 ? (total_profit - total_spend) / total_spend : 0
+  // Story 88.2-FE: null when total_spend = 0 (division undefined), not 0
+  const overall_roas = total_spend > 0 ? total_revenue / total_spend : null
+  const overall_roi = total_spend > 0 ? (total_profit - total_spend) / total_spend : null
   const avg_organic_contribution = total_sales > 0 ? (total_organic_sales / total_sales) * 100 : 0
 
   return {

@@ -1,6 +1,6 @@
 /**
  * Returns Summary Cards
- * Epic 71: Total returns, return rate, classification coverage
+ * Epic 70-FE: Total returns, return rate, classification coverage
  */
 
 'use client'

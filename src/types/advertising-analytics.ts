@@ -111,10 +111,10 @@ export interface AdvertisingSummary {
   total_revenue: number
   /** Total profit after ad costs in rubles */
   total_profit: number
-  /** Overall Return on Ad Spend (revenue / spend) */
-  overall_roas: number
-  /** Overall Return on Investment ((profit - spend) / spend) */
-  overall_roi: number
+  /** Overall Return on Ad Spend (revenue / spend). Null when totalSpend = 0 (division undefined). */
+  overall_roas: number | null
+  /** Overall Return on Investment ((profit - spend) / spend). Null when totalSpend = 0. */
+  overall_roi: number | null
   /** Average click-through rate (%) */
   avg_ctr: number
   /** Average conversion rate (%) */
@@ -171,10 +171,10 @@ export interface AdvertisingItem {
   spend: number
   /** Total sales from all sources (organic + ad) - Epic 35 */
   total_sales: number
-  /** Revenue attributed to ads only in rubles */
-  revenue: number
-  /** Profit before ad costs in rubles */
-  profit: number
+  /** Revenue attributed to ads only in rubles. Null when backend has no attribution data for this SKU. */
+  revenue: number | null
+  /** Profit before ad costs in rubles. Null when COGS missing (can't compute profit). */
+  profit: number | null
 
   // Epic 35: Organic vs advertising split
   /** Organic sales not attributed to ads (totalSales - revenue) - Epic 35 */
@@ -183,10 +183,10 @@ export interface AdvertisingItem {
   organic_contribution: number
 
   // Calculated metrics
-  /** Return on Ad Spend (revenue / spend) */
-  roas: number
-  /** Return on Investment ((profit - spend) / spend) */
-  roi: number
+  /** Return on Ad Spend (revenue / spend). Null when spend = 0 or backend has no data. */
+  roas: number | null
+  /** Return on Investment ((profit - spend) / spend). Null when spend = 0 or profit unknown. */
+  roi: number | null
   /** Click-through rate (clicks / views * 100) */
   ctr: number
   /** Cost per click (spend / clicks) */

@@ -22,11 +22,7 @@ import {
   useAdvertisingSyncStatus,
   advertisingQueryKeys,
 } from '../useAdvertisingAnalytics'
-import {
-  renderHookWithClient,
-  setupMockAuth,
-  clearMockAuth,
-} from '@/test/test-utils'
+import { renderHookWithClient, setupMockAuth, clearMockAuth } from '@/test/test-utils'
 import type { AdvertisingAnalyticsParams } from '@/types/advertising-analytics'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
@@ -105,7 +101,7 @@ describe('useAdvertisingAnalytics', () => {
 
       // All items should have excellent status
       if (result.current.data?.data && result.current.data.data.length > 0) {
-        result.current.data.data.forEach((item) => {
+        result.current.data.data.forEach(item => {
           expect(item.efficiency_status).toBe('excellent')
         })
       }
@@ -235,7 +231,7 @@ describe('useAdvertisingCampaigns', () => {
     expect(campaigns.length).toBeGreaterThan(0)
 
     // Each campaign should have required fields
-    campaigns.forEach((campaign) => {
+    campaigns.forEach(campaign => {
       expect(campaign.campaign_id).toBeDefined()
       expect(campaign.name).toBeDefined()
       expect(campaign.status).toBeDefined()
@@ -415,13 +411,14 @@ describe('Epic 35: Organic Sales Calculation Edge Cases', () => {
     expect(item1.total_sales).toBe(80000)
     expect(item1.revenue).toBe(50000)
     expect(item1.organic_sales).toBe(30000)
-    expect(item1.organic_sales).toBe(item1.total_sales - item1.revenue) // ✅ Formula validation
+    // Story 88.2-FE: revenue is `number | null`; asserted non-null above, `?? 0` is type-narrowing
+    expect(item1.organic_sales).toBe(item1.total_sales - (item1.revenue ?? 0))
 
     const item2 = result.current.data!.data[1]
     expect(item2.total_sales).toBe(70000)
     expect(item2.revenue).toBe(40000)
     expect(item2.organic_sales).toBe(30000)
-    expect(item2.organic_sales).toBe(item2.total_sales - item2.revenue) // ✅ Formula validation
+    expect(item2.organic_sales).toBe(item2.total_sales - (item2.revenue ?? 0))
   })
 
   it('should handle negative organic sales when WB API over-attributes', async () => {
@@ -501,7 +498,8 @@ describe('Epic 35: Organic Sales Calculation Edge Cases', () => {
     expect(item.total_sales).toBe(20000)
     expect(item.revenue).toBe(28000)
     expect(item.organic_sales).toBe(-8000) // Negative organic sales is valid
-    expect(item.organic_sales).toBe(item.total_sales - item.revenue) // Formula still holds
+    // Story 88.2-FE: revenue is `number | null`; asserted non-null above, `?? 0` is type-narrowing
+    expect(item.organic_sales).toBe(item.total_sales - (item.revenue ?? 0)) // Formula still holds
     expect(item.organic_contribution).toBe(-40.0) // Negative % is valid
 
     // Verify summary also handles negative correctly

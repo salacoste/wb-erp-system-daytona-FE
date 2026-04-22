@@ -1,6 +1,9 @@
 /**
  * Return Analytics API Client
- * Epic 71: Return reasons & per-SKU breakdown with anomaly detection
+ * Epic 70-FE: Return reasons & per-SKU breakdown with anomaly detection
+ *
+ * Note: Backend Request #151 labels these endpoints as "Epic 71" — frontend canonicalizes to Epic 70-FE.
+ * See docs/epics/epic-70-fe-returns-analytics.md (Numbering History) for the rename trail.
  *
  * Auth: X-Cabinet-Id header (auto-injected by apiClient)
  */
