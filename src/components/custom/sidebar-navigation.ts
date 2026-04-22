@@ -30,6 +30,7 @@ import {
   Search,
   ArrowRightLeft,
   Truck,
+  CreditCard,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -73,8 +74,10 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Воронка продаж', href: ROUTES.ANALYTICS.FUNNEL, icon: Filter },
   // Epic 69: Buyout Rate Analytics
   { label: 'Аналитика выкупов', href: ROUTES.ANALYTICS.BUYOUT, icon: ShoppingBag },
-  // Epic 71: Return Analytics
+  // Epic 70-FE: Returns Analytics
   { label: 'Аналитика возвратов', href: ROUTES.ANALYTICS.RETURNS, icon: RotateCcw },
+  // Epic 90-FE: Acquiring Cost Reports
+  { label: 'Эквайринг', href: ROUTES.ANALYTICS.ACQUIRING, icon: CreditCard },
   // Epic 71-FE: Search Analytics
   { label: 'Поиск', href: ROUTES.ANALYTICS.SEARCH, icon: Search },
   // Story 73.7-FE: Search + Advertising Cross-Reference

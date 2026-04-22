@@ -1,0 +1,78 @@
+/**
+ * E2E Tests: Acquiring Analytics
+ * Story 90.2-FE: Acquiring Reports List Page
+ *
+ * Uses domcontentloaded + landmark waits (CLAUDE.md anti-pattern #9 — not networkidle).
+ * Auth state loaded from e2e/.auth/user.json via playwright.config.ts.
+ */
+
+import { test, expect } from '@playwright/test'
+import { TIMEOUTS } from './fixtures/test-data'
+
+const ACQUIRING_URL = '/analytics/acquiring'
+const PAGE_LANDMARK = '[data-testid="acquiring-page"]'
+const SIDEBAR_LINK_TEXT = 'Эквайринг'
+
+test.describe('Acquiring Analytics Page (Story 90.2-FE)', () => {
+  test.beforeEach(async ({ page }) => {
+    // Story 88.3-FE pattern: domcontentloaded, not networkidle (CLAUDE.md #9)
+    await page.goto(ACQUIRING_URL, { waitUntil: 'domcontentloaded' })
+  })
+
+  test('navigates to /analytics/acquiring and shows page landmark + header', async ({ page }) => {
+    // Wait for the page landmark (data-testid set on root container)
+    await expect(page.locator(PAGE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    // Header text present
+    await expect(page.getByRole('heading', { name: 'Аналитика эквайринга' })).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+  })
+
+  test('sidebar contains Эквайринг link pointing to /analytics/acquiring', async ({ page }) => {
+    // Navigate to a different page first so we can find the sidebar link
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
+
+    const sidebarLink = page.getByRole('link', { name: SIDEBAR_LINK_TEXT })
+    await expect(sidebarLink).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    // Click it and verify navigation
+    await sidebarLink.click()
+    await expect(page.locator(PAGE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.navigation })
+  })
+
+  test('date picker opens when clicked', async ({ page }) => {
+    await expect(page.locator(PAGE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    // Find the date picker trigger by its id (set in AcquiringPageContent)
+    const trigger = page.locator('#acquiring-date-range, [id*="date-range"]').first()
+    await expect(trigger).toBeVisible()
+    await trigger.click()
+
+    // Calendar popover should open as a dialog or with role="grid" (Radix DayPicker)
+    const popoverOrCalendar = page.locator('[role="dialog"], [role="grid"]').first()
+    await expect(popoverOrCalendar).toBeVisible({ timeout: 3000 })
+
+    // Close the picker
+    await page.keyboard.press('Escape')
+  })
+
+  test('empty state message visible when API returns no data', async ({ page }) => {
+    // Mock the API to return empty data
+    await page.route('**/v1/analytics/acquiring/reports**', route => {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [], cachedAt: '' }),
+      })
+    })
+
+    await page.goto(ACQUIRING_URL, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator(PAGE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    // Empty state text should appear
+    await expect(page.getByText(/Отчёты за выбранный период не найдены/)).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+  })
+})
