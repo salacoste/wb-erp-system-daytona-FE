@@ -21,13 +21,7 @@ interface SearchByQueryTableProps {
   products: SearchProductItem[]
 }
 
-type SortField =
-  | 'avgPosition'
-  | 'totalImpressions'
-  | 'totalClicks'
-  | 'avgCtr'
-  | 'totalOrders'
-  | 'totalRevenue'
+type SortField = 'avgPosition' | 'totalImpressions' | 'totalClicks' | 'avgCtr' | 'totalOrders'
 
 function formatNumber(n: number): string {
   return n.toLocaleString('ru-RU')
@@ -41,9 +35,7 @@ function formatPercent(n: number): string {
   return `${n.toFixed(1)}%`
 }
 
-function formatCurrency(n: number): string {
-  return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ₽`
-}
+// Story 91.1-FE: formatCurrency removed — was only used by the deleted 'Выручка ₽' column
 
 const BADGE_BASE = 'inline-flex rounded-full px-2 py-0.5 text-xs font-medium'
 
@@ -59,7 +51,6 @@ const COLUMNS: { label: string; field: SortField }[] = [
   { label: 'Клики', field: 'totalClicks' },
   { label: 'CTR %', field: 'avgCtr' },
   { label: 'Заказы', field: 'totalOrders' },
-  { label: 'Выручка ₽', field: 'totalRevenue' },
 ]
 
 export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
@@ -87,8 +78,6 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
         return formatDecimal(value)
       case 'avgCtr':
         return formatPercent(value)
-      case 'totalRevenue':
-        return formatCurrency(value)
       default:
         return formatNumber(value)
     }

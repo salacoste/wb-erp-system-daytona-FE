@@ -1,6 +1,7 @@
 /**
  * Tests for SearchOrdersTable
  * Story 71.5-FE: Search Orders Tab
+ * Story 91.1-FE: totalRevenue column removed
  */
 
 import { describe, it, expect } from 'vitest'
@@ -9,10 +10,11 @@ import userEvent from '@testing-library/user-event'
 import type { SearchOrderItem } from '@/types/search-analytics'
 import { SearchOrdersTable } from '../components/SearchOrdersTable'
 
+// Story 91.1-FE: totalRevenue removed from SearchOrderItem
 const mockItems: SearchOrderItem[] = [
-  { key: 'платье', totalOrders: 50, totalRevenue: 250000, uniqueProducts: 5 },
-  { key: 'куртка', totalOrders: 30, totalRevenue: 180000, uniqueProducts: 3 },
-  { key: 'обувь', totalOrders: 70, totalRevenue: 350000, uniqueProducts: 8 },
+  { key: 'платье', totalOrders: 50, uniqueProducts: 10 },
+  { key: 'куртка', totalOrders: 30, uniqueProducts: 5 },
+  { key: 'обувь', totalOrders: 70, uniqueProducts: 15 },
 ]
 
 describe('SearchOrdersTable', () => {
@@ -23,11 +25,11 @@ describe('SearchOrdersTable', () => {
     expect(screen.getByText('обувь')).toBeInTheDocument()
   })
 
-  it('renders 4 column headers', () => {
+  // Story 91.1-FE: was 4 headers, now 3 (Выручка ₽ removed)
+  it('renders 3 column headers', () => {
     render(<SearchOrdersTable items={mockItems} />)
     expect(screen.getByText('Запрос')).toBeInTheDocument()
     expect(screen.getByText('Заказы')).toBeInTheDocument()
-    expect(screen.getByText('Выручка ₽')).toBeInTheDocument()
     expect(screen.getByText('Товаров')).toBeInTheDocument()
   })
 
@@ -36,9 +38,7 @@ describe('SearchOrdersTable', () => {
     const rows = screen.getAllByRole('row')
     // First data row (index 1, after header) should be highest totalOrders = 70 (обувь)
     expect(rows[1]).toHaveTextContent('обувь')
-    // Second data row should be 50 (платье)
     expect(rows[2]).toHaveTextContent('платье')
-    // Third data row should be 30 (куртка)
     expect(rows[3]).toHaveTextContent('куртка')
   })
 
@@ -59,16 +59,17 @@ describe('SearchOrdersTable', () => {
     expect(rows[1]).toHaveTextContent('куртка')
   })
 
+  // Story 91.1-FE: replaced revenue sort test with uniqueProducts sort test
   it('clicking different header sorts by that column desc', async () => {
     const user = userEvent.setup()
     render(<SearchOrdersTable items={mockItems} />)
 
-    // Click "Выручка ₽" header
-    const revenueButton = screen.getByText('Выручка ₽')
-    await user.click(revenueButton)
+    // Click "Товаров" header
+    const productsButton = screen.getByText('Товаров')
+    await user.click(productsButton)
 
-    // Sorted by totalRevenue desc → обувь (350000), платье (250000), куртка (180000)
     const rows = screen.getAllByRole('row')
+    // Sorted by uniqueProducts desc: обувь(15) > платье(10) > куртка(5)
     expect(rows[1]).toHaveTextContent('обувь')
     expect(rows[2]).toHaveTextContent('платье')
     expect(rows[3]).toHaveTextContent('куртка')

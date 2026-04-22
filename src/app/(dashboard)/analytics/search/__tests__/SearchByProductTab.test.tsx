@@ -44,7 +44,6 @@ const mockData: SearchByProductResponse = {
       totalClicks: 200,
       avgCtr: 4.0,
       totalOrders: 15,
-      totalRevenue: 0,
     },
     {
       searchQuery: 'платье красное',
@@ -53,7 +52,6 @@ const mockData: SearchByProductResponse = {
       totalClicks: 350,
       avgCtr: 4.4,
       totalOrders: 25,
-      totalRevenue: 0,
     },
   ],
   totalQueries: 2,

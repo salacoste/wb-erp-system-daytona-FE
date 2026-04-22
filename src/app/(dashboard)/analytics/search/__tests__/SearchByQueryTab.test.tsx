@@ -31,7 +31,6 @@ const mockData: SearchByQueryResponse = {
       totalClicks: 200,
       avgCtr: 4.0,
       totalOrders: 15,
-      totalRevenue: 0,
     },
     {
       nmId: 22222222,
@@ -41,7 +40,6 @@ const mockData: SearchByQueryResponse = {
       totalClicks: 350,
       avgCtr: 4.4,
       totalOrders: 25,
-      totalRevenue: 0,
     },
   ],
   totalProducts: 2,

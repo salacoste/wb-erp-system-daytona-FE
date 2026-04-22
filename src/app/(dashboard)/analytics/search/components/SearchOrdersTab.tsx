@@ -9,7 +9,8 @@ import { useSearchOrders } from '@/hooks/use-search-analytics'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ShoppingCart, DollarSign, Percent, AlertCircle } from 'lucide-react'
+// Story 91.1-FE: DollarSign removed — was only used by the deleted 'Выручка от поиска' card
+import { ShoppingCart, Percent, AlertCircle } from 'lucide-react'
 import type { SearchOrdersSummary } from '@/types/search-analytics'
 import { SearchOrdersTable } from './SearchOrdersTable'
 
@@ -23,10 +24,7 @@ function formatNumber(n: number | undefined | null): string {
   return n.toLocaleString('ru-RU')
 }
 
-function formatCurrency(n: number | undefined | null): string {
-  if (n == null) return '—'
-  return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ₽`
-}
+// Story 91.1-FE: formatCurrency removed — was only used by the deleted revenue summary card
 
 function formatPercent(n: number | undefined | null): string {
   if (n == null) return '—'
@@ -93,13 +91,7 @@ function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
       color: 'text-blue-600',
       fmt: formatNumber,
     },
-    {
-      label: 'Выручка от поиска',
-      value: summary.totalSearchRevenue,
-      icon: DollarSign,
-      color: 'text-green-600',
-      fmt: formatCurrency,
-    },
+    // Story 91.1-FE: 'Выручка от поиска' card removed — backend dropped totalSearchRevenue
     {
       label: 'Доля поисковых заказов',
       value: summary.searchOrderShare,

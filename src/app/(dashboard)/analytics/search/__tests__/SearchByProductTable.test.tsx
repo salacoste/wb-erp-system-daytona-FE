@@ -17,7 +17,6 @@ const mockQueries: SearchQueryItem[] = [
     totalClicks: 200,
     avgCtr: 4.0,
     totalOrders: 15,
-    totalRevenue: 0,
   },
   {
     searchQuery: 'платье красное',
@@ -26,7 +25,6 @@ const mockQueries: SearchQueryItem[] = [
     totalClicks: 350,
     avgCtr: 4.4,
     totalOrders: 25,
-    totalRevenue: 0,
   },
   {
     searchQuery: 'платье вечернее',
@@ -35,12 +33,12 @@ const mockQueries: SearchQueryItem[] = [
     totalClicks: 100,
     avgCtr: 3.3,
     totalOrders: 8,
-    totalRevenue: 0,
   },
 ]
 
 describe('SearchByProductTable', () => {
-  it('renders 7 column headers', () => {
+  // Story 91.1-FE: 'Выручка ₽' column removed (was 7, now 6)
+  it('renders 6 column headers', () => {
     render(<SearchByProductTable queries={mockQueries} />)
     expect(screen.getByText('Запрос')).toBeInTheDocument()
     expect(screen.getByText('Ср. позиция')).toBeInTheDocument()
@@ -48,7 +46,6 @@ describe('SearchByProductTable', () => {
     expect(screen.getByText('Клики')).toBeInTheDocument()
     expect(screen.getByText('CTR %')).toBeInTheDocument()
     expect(screen.getByText('Заказы')).toBeInTheDocument()
-    expect(screen.getByText('Выручка ₽')).toBeInTheDocument()
   })
 
   it('renders query items in rows', () => {

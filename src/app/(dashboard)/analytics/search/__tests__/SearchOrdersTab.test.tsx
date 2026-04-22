@@ -22,10 +22,13 @@ const mockData: SearchOrdersResponse = {
   period: { from: '2026-03-01', to: '2026-03-06' },
   groupBy: 'query',
   items: [
-    { key: 'платье', totalOrders: 50, totalRevenue: 250000, uniqueProducts: 5 },
-    { key: 'куртка', totalOrders: 30, totalRevenue: 180000, uniqueProducts: 3 },
+    { key: 'платье', totalOrders: 50, uniqueProducts: 10 },
+    { key: 'куртка', totalOrders: 30, uniqueProducts: 5 },
   ],
-  summary: { totalSearchOrders: 80, totalSearchRevenue: 430000, searchOrderShare: 12.5 },
+  summary: {
+    totalSearchOrders: 150,
+    searchOrderShare: 42.5,
+  },
 }
 
 beforeEach(() => {
@@ -45,18 +48,17 @@ describe('SearchOrdersTab', () => {
       mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })
     })
 
-    it('renders 3 summary cards with correct labels', () => {
+    // Story 91.1-FE: revenue card removed (was 3 cards, now 2)
+    it('renders 2 summary cards with correct labels', () => {
       renderTab()
       expect(screen.getByText('Поисковые заказы')).toBeInTheDocument()
-      expect(screen.getByText('Выручка от поиска')).toBeInTheDocument()
       expect(screen.getByText('Доля поисковых заказов')).toBeInTheDocument()
     })
 
     it('renders summary values formatted correctly', () => {
       renderTab()
-      expect(screen.getByText('80')).toBeInTheDocument()
-      expect(screen.getByText('430 000 ₽')).toBeInTheDocument()
-      expect(screen.getByText('12.5%')).toBeInTheDocument()
+      expect(screen.getByText(/150/)).toBeInTheDocument()
+      expect(screen.getByText(/42[.,]5/)).toBeInTheDocument()
     })
   })
 
@@ -65,11 +67,11 @@ describe('SearchOrdersTab', () => {
       mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })
     })
 
-    it('renders table with 4 column headers', () => {
+    // Story 91.1-FE: revenue column removed (was 4 headers, now 3)
+    it('renders table with 3 column headers', () => {
       renderTab()
       expect(screen.getByText('Запрос')).toBeInTheDocument()
       expect(screen.getByText('Заказы')).toBeInTheDocument()
-      expect(screen.getByText('Выручка ₽')).toBeInTheDocument()
       expect(screen.getByText('Товаров')).toBeInTheDocument()
     })
 

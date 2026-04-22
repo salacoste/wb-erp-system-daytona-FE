@@ -21,16 +21,12 @@ interface SearchOrdersTableProps {
   items: SearchOrderItem[]
 }
 
-type SortField = 'totalOrders' | 'totalRevenue' | 'uniqueProducts'
+// Story 91.1-FE: 'totalRevenue' removed from SortField — backend dropped the field
+type SortField = 'totalOrders' | 'uniqueProducts'
 
 function formatNumber(n: number | undefined | null): string {
   if (n == null) return '—'
   return n.toLocaleString('ru-RU')
-}
-
-function formatCurrency(n: number | undefined | null): string {
-  if (n == null) return '—'
-  return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ₽`
 }
 
 export function SearchOrdersTable({ items }: SearchOrdersTableProps) {
@@ -67,15 +63,6 @@ export function SearchOrdersTable({ items }: SearchOrdersTableProps) {
                 Заказы
               </SortButton>
             </TableHead>
-            <TableHead aria-sort={sort === 'totalRevenue' ? (`${order}ending` as const) : 'none'}>
-              <SortButton
-                active={sort === 'totalRevenue'}
-                direction={sort === 'totalRevenue' ? order : undefined}
-                onClick={() => handleSort('totalRevenue')}
-              >
-                Выручка ₽
-              </SortButton>
-            </TableHead>
             <TableHead aria-sort={sort === 'uniqueProducts' ? (`${order}ending` as const) : 'none'}>
               <SortButton
                 active={sort === 'uniqueProducts'}
@@ -92,7 +79,6 @@ export function SearchOrdersTable({ items }: SearchOrdersTableProps) {
             <TableRow key={`${String(item.key)}-${i}`}>
               <TableCell className="font-medium">{String(item.key)}</TableCell>
               <TableCell>{formatNumber(item.totalOrders)}</TableCell>
-              <TableCell>{formatCurrency(item.totalRevenue)}</TableCell>
               <TableCell>{formatNumber(item.uniqueProducts ?? 0)}</TableCell>
             </TableRow>
           ))}

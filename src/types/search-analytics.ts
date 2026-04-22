@@ -11,13 +11,13 @@
 
 // --- Enum / Union Types ---
 
+// Story 91.1-FE: 'totalRevenue' removed — backend no longer supports it (WB never returned real data)
 export type SearchOrderBy =
   | 'totalImpressions'
   | 'totalClicks'
   | 'avgPosition'
   | 'avgCtr'
   | 'totalOrders'
-  | 'totalRevenue'
 
 export type SearchOrdersGroupBy = 'query' | 'product' | 'day'
 
@@ -45,8 +45,7 @@ export interface SearchQueryItem {
   totalClicks: number
   avgCtr: number
   totalOrders: number
-  /** Backend hardcodes revenue: 0 in sync processor — handle gracefully in UI */
-  totalRevenue: number
+  // Story 91.1-FE: totalRevenue removed (WB never returned real data; backend dropped the field)
 }
 
 export interface SearchByProductResponse {
@@ -73,8 +72,7 @@ export interface SearchProductItem {
   totalClicks: number
   avgCtr: number
   totalOrders: number
-  /** Backend hardcodes revenue: 0 in sync processor — handle gracefully in UI */
-  totalRevenue: number
+  // Story 91.1-FE: totalRevenue removed
 }
 
 export interface SearchByQueryResponse {
@@ -97,7 +95,7 @@ export interface SearchOrderItem {
   /** query text (groupBy=query), nmId as number (groupBy=product), or date string (groupBy=day) */
   key: string | number
   totalOrders: number
-  totalRevenue: number
+  // Story 91.1-FE: totalRevenue removed
   /** Present when groupBy='product' */
   vendorCode?: string | null
   /** Present when groupBy='query' or groupBy='day' */
@@ -108,7 +106,7 @@ export interface SearchOrderItem {
 
 export interface SearchOrdersSummary {
   totalSearchOrders: number
-  totalSearchRevenue: number
+  // Story 91.1-FE: totalSearchRevenue removed
   searchOrderShare: number
 }
 

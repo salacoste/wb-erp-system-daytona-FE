@@ -18,7 +18,6 @@ const mockProducts: SearchProductItem[] = [
     totalClicks: 200,
     avgCtr: 4.0,
     totalOrders: 15,
-    totalRevenue: 0,
   },
   {
     nmId: 22222222,
@@ -28,7 +27,6 @@ const mockProducts: SearchProductItem[] = [
     totalClicks: 350,
     avgCtr: 4.4,
     totalOrders: 25,
-    totalRevenue: 0,
   },
   {
     nmId: 33333333,
@@ -38,12 +36,12 @@ const mockProducts: SearchProductItem[] = [
     totalClicks: 100,
     avgCtr: 3.3,
     totalOrders: 8,
-    totalRevenue: 0,
   },
 ]
 
 describe('SearchByQueryTable', () => {
-  it('renders 7 column headers', () => {
+  // Story 91.1-FE: 'Выручка ₽' column removed (was 7, now 6)
+  it('renders 6 column headers', () => {
     render(<SearchByQueryTable products={mockProducts} />)
     expect(screen.getByText('Артикул')).toBeInTheDocument()
     expect(screen.getByText('Ср. позиция')).toBeInTheDocument()
@@ -51,7 +49,6 @@ describe('SearchByQueryTable', () => {
     expect(screen.getByText('Клики')).toBeInTheDocument()
     expect(screen.getByText('CTR %')).toBeInTheDocument()
     expect(screen.getByText('Заказы')).toBeInTheDocument()
-    expect(screen.getByText('Выручка ₽')).toBeInTheDocument()
   })
 
   it('renders product items with nmId and vendorCode', () => {
