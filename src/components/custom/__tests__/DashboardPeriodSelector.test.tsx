@@ -102,10 +102,15 @@ describe('Story 60.2-FE: AC1 - Period Type Toggle', () => {
 describe('Story 60.2-FE: AC2 - Week Dropdown', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-29T10:00:00Z'))
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue())
   })
 
-  afterEach(() => cleanup())
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
 
   it('shows week dropdown when periodType is week', () => {
     render(<DashboardPeriodSelector />)
@@ -114,7 +119,8 @@ describe('Story 60.2-FE: AC2 - Week Dropdown', () => {
 
   it('displays available weeks in dropdown', async () => {
     render(<DashboardPeriodSelector />)
-    const user = userEvent.setup()
+    // userEvent v14 hangs under fake timers unless advanceTimers is wired (Story 89.5 review M-1).
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     await user.click(screen.getByRole('combobox'))
     // Multiple elements match (trigger + dropdown), use getAllByText
     expect(screen.getAllByText(/Неделя 5, 2026/).length).toBeGreaterThanOrEqual(1)
@@ -125,7 +131,7 @@ describe('Story 60.2-FE: AC2 - Week Dropdown', () => {
     const setWeek = vi.fn()
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ setWeek }))
     render(<DashboardPeriodSelector />)
-    const user = userEvent.setup()
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText(/Неделя 4, 2026/))
     expect(setWeek).toHaveBeenCalledWith('2026-W04')
@@ -140,7 +146,8 @@ describe('Story 60.2-FE: AC4 - Refresh Button', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-01-29T10:05:00Z'))
+    // Aligned with AC2 + Callback Props describes on the fixture anchor (10:00:00Z).
+    vi.setSystemTime(new Date('2026-01-29T10:00:00Z'))
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue())
   })
 
@@ -253,15 +260,21 @@ describe('Story 60.2-FE: AC10 - ARIA Labels', () => {
 describe('Story 60.2-FE: Callback Props', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-29T10:00:00Z'))
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue())
   })
 
-  afterEach(() => cleanup())
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
 
   it('calls onPeriodChange when week is selected', async () => {
     const onPeriodChange = vi.fn()
     render(<DashboardPeriodSelector onPeriodChange={onPeriodChange} />)
-    const user = userEvent.setup()
+    // userEvent v14 hangs under fake timers unless advanceTimers is wired (Story 89.5 review M-1).
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText(/Неделя 4, 2026/))
     expect(onPeriodChange).toHaveBeenCalledWith('2026-W04', 'week')
