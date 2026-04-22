@@ -83,6 +83,7 @@ export function SalesCogsMetricCard({
       className={cn('min-h-[100px] transition-shadow hover:shadow-md', className)}
       role="article"
       aria-label={ariaLabel}
+      data-testid="metric-card"
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">

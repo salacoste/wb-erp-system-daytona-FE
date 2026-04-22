@@ -72,6 +72,7 @@ export function OtherDeductionsCard({
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
+      data-testid="metric-card"
       aria-label={`Прочие удержания: ${total != null ? formatCurrency(total) : 'нет данных'}`}
     >
       <CardContent className="p-3">

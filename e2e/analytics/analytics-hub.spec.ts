@@ -17,9 +17,10 @@ const ORDERS_ANALYTICS_ROUTE = '/analytics/orders'
 
 test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(ANALYTICS_HUB_ROUTE)
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(1000)
+    // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle — see CLAUDE.md #9).
+    await page.goto(ANALYTICS_HUB_ROUTE, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('main')).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 })
   })
 
   test.describe('Hub Page Structure', () => {
@@ -83,13 +84,11 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
 
       if (await fbsOrdersCard.isVisible()) {
         await fbsOrdersCard.click()
-        await page.waitForLoadState('networkidle')
-
-        // Verify navigation to orders analytics page
-        await expect(page).toHaveURL(/\/analytics\/orders/)
+        // Story 88.3-FE: assert URL directly (click triggers client-side nav; networkidle not needed)
+        await expect(page).toHaveURL(/\/analytics\/orders/, { timeout: 10000 })
       } else {
         // If card not found, try direct navigation
-        await page.goto(ORDERS_ANALYTICS_ROUTE)
+        await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
         await expect(page).toHaveURL(/\/analytics\/orders/)
       }
     })
@@ -188,10 +187,8 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
         // Focus and press Enter
         await fbsOrdersCard.focus()
         await page.keyboard.press('Enter')
-        await page.waitForLoadState('networkidle')
-
-        // Should navigate
-        await expect(page).toHaveURL(/\/analytics\/orders/)
+        // Story 88.3-FE: assert URL directly (not networkidle)
+        await expect(page).toHaveURL(/\/analytics\/orders/, { timeout: 10000 })
       }
     })
   })
@@ -199,8 +196,9 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
   test.describe('Responsive Layout', () => {
     test('should display cards in grid on desktop', async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 800 })
-      await page.goto(ANALYTICS_HUB_ROUTE)
-      await page.waitForLoadState('networkidle')
+      // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+      await page.goto(ANALYTICS_HUB_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('main')).toBeVisible({ timeout: 10000 })
 
       // Cards should be in a grid layout
       const cardsContainer = page.locator('[class*="grid"]').first()
@@ -216,11 +214,9 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
 
     test('should stack cards on mobile', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(ANALYTICS_HUB_ROUTE)
-      await page.waitForLoadState('networkidle')
-
-      // Page should be visible and functional
-      await expect(page.locator('main')).toBeVisible()
+      // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+      await page.goto(ANALYTICS_HUB_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('main')).toBeVisible({ timeout: 10000 })
 
       // Cards should still be accessible
       const navLinks = page.locator('a[href*="/analytics/"]')

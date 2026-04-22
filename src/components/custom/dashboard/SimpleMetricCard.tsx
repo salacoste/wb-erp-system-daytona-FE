@@ -76,6 +76,7 @@ export function SimpleMetricCard({
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
       aria-label={`${title}: ${value}`}
+      data-testid="metric-card"
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">

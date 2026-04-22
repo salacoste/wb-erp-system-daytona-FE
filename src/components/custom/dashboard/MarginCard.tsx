@@ -88,6 +88,7 @@ export function MarginCard({
         className
       )}
       role="article"
+      data-testid="metric-card"
       aria-label={`Операционная маржа: ${canShow ? `${marginPct!.toFixed(1)}%` : 'нет данных'}`}
     >
       <CardContent className="p-3">

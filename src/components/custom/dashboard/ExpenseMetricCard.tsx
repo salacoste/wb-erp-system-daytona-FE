@@ -128,6 +128,7 @@ export function ExpenseMetricCard({
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
       aria-label={`${title}: ${value != null ? formatCurrency(value) : 'нет данных'}`}
+      data-testid="metric-card"
     >
       <CardContent className="p-3">
         {/* Header */}

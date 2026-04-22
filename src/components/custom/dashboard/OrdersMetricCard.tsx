@@ -113,6 +113,7 @@ export function OrdersMetricCard({
       )}
       role="article"
       aria-label={ariaValue}
+      data-testid="metric-card"
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">

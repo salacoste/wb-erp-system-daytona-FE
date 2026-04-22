@@ -82,7 +82,7 @@ export interface DashboardMetricsGridProps {
   productsWithCogs: number
   totalProducts: number
   advertisingSpend: number | undefined
-  advertisingRoas: number | undefined
+  advertisingRoas: number | null | undefined
   /** Actual WB promotion deductions from finance-summary (wb_promotion_cost) */
   wbPromotionCost?: number | undefined
   /** WB Jam (ВБ.Джем) cost from finance-summary (wb_jam_cost) */

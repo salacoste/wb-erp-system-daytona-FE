@@ -60,6 +60,7 @@ export function PaidAcceptanceCard({
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
+      data-testid="metric-card"
       aria-label={`Плат. приемка: ${hasValue ? formatCurrency(cost) : 'нет данных'}`}
     >
       <CardContent className="p-3">

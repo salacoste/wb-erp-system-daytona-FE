@@ -68,6 +68,7 @@ export function StorageAcceptanceCard({
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
+      data-testid="metric-card"
       aria-label={`Хранение и приёмка: ${hasValue ? formatCurrency(total) : 'нет данных'}`}
     >
       <CardContent className="p-3">

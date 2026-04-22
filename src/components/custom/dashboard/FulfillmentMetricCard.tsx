@@ -82,6 +82,7 @@ export function FulfillmentMetricCard({
         'hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-ring'
       )}
       aria-label={`Заказы FBO/FBS: всего ${totalOrders} заказов`}
+      data-testid="metric-card"
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">

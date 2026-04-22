@@ -13,8 +13,11 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 test.describe('Margin Analytics', () => {
   test.describe('Story 4.5: Margin Analysis by SKU', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(ROUTES.analytics.sku)
-      await page.waitForLoadState('networkidle')
+      // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle — see CLAUDE.md #9).
+      await page.goto(ROUTES.analytics.sku, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('displays SKU analytics page', async ({ page }) => {
@@ -25,14 +28,16 @@ test.describe('Margin Analytics', () => {
 
     test('has week selector or week display', async ({ page }) => {
       // Week selector or static week display
-      const weekSelector = page.locator('#week-selector, [id$="-selector"], button[role="combobox"], select')
+      const weekSelector = page.locator(
+        '#week-selector, [id$="-selector"], button[role="combobox"], select'
+      )
       const skeleton = page.locator('[class*="skeleton"]')
       const weekText = page.locator('text=/W\\d{1,2}|неделя|week/i')
 
       // Either selector, loading, or week text visible
-      const hasSelector = await weekSelector.count() > 0
-      const hasSkeleton = await skeleton.count() > 0
-      const hasWeekText = await weekText.count() > 0
+      const hasSelector = (await weekSelector.count()) > 0
+      const hasSkeleton = (await skeleton.count()) > 0
+      const hasWeekText = (await weekText.count()) > 0
 
       // Page should have some week indication or be loading
       expect(hasSelector || hasSkeleton || hasWeekText || true).toBeTruthy()
@@ -45,7 +50,8 @@ test.describe('Margin Analytics', () => {
       await expect(page.locator('body')).toBeVisible()
 
       // Any of: table, cards, list, empty state, loading
-      const hasContent = await page.locator('table, [class*="card"], [class*="skeleton"]').count() > 0
+      const hasContent =
+        (await page.locator('table, [class*="card"], [class*="skeleton"]').count()) > 0
 
       expect(hasContent || true).toBeTruthy()
     })
@@ -62,21 +68,21 @@ test.describe('Margin Analytics', () => {
 
     test('page is functional with URL filter', async ({ page }) => {
       // Filter can be applied via URL params (?nm_id=xxx)
-      await page.goto(`${ROUTES.analytics.sku}?nm_id=173589742`)
-      await page.waitForLoadState('networkidle')
-
-      // Page should be functional - either showing filtered results or all data
-      await expect(page.locator('body')).toBeVisible()
+      await page.goto(`${ROUTES.analytics.sku}?nm_id=173589742`, { waitUntil: 'domcontentloaded' })
+      // Story 88.3-FE: landmark wait (not networkidle)
+      await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('shows summary statistics', async ({ page }) => {
       // Summary section
       const summary = page.locator('[class*="summary"], [class*="stats"]')
-      const hasSummary = await summary.count() > 0
+      const hasSummary = (await summary.count()) > 0
 
       // Or inline stats
       const stats = page.locator('text=/итого|total|средн|avg/i')
-      const hasStats = await stats.count() > 0
+      const hasStats = (await stats.count()) > 0
 
       expect(hasSummary || hasStats || true).toBeTruthy()
     })
@@ -84,8 +90,11 @@ test.describe('Margin Analytics', () => {
 
   test.describe('Story 4.6: Margin Analysis by Brand', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(ROUTES.analytics.brand)
-      await page.waitForLoadState('networkidle')
+      // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+      await page.goto(ROUTES.analytics.brand, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('displays brand analytics page', async ({ page }) => {
@@ -98,11 +107,11 @@ test.describe('Margin Analytics', () => {
 
       // Table with brand data
       const table = page.locator('table')
-      const hasTable = await table.count() > 0
+      const hasTable = (await table.count()) > 0
 
       // Or cards/list view
       const brandCards = page.locator('[class*="brand"], [class*="card"]')
-      const hasCards = await brandCards.count() > 0
+      const hasCards = (await brandCards.count()) > 0
 
       expect(hasTable || hasCards || true).toBeTruthy()
     })
@@ -123,8 +132,11 @@ test.describe('Margin Analytics', () => {
 
   test.describe('Story 4.6: Margin Analysis by Category', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(ROUTES.analytics.category)
-      await page.waitForLoadState('networkidle')
+      // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+      await page.goto(ROUTES.analytics.category, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('displays category analytics page', async ({ page }) => {
@@ -137,11 +149,11 @@ test.describe('Margin Analytics', () => {
 
       // Table with category data
       const table = page.locator('table')
-      const hasTable = await table.count() > 0
+      const hasTable = (await table.count()) > 0
 
       // Or tree/hierarchical view
       const categoryTree = page.locator('[class*="tree"], [class*="category"]')
-      const hasTree = await categoryTree.count() > 0
+      const hasTree = (await categoryTree.count()) > 0
 
       expect(hasTable || hasTree || true).toBeTruthy()
     })
@@ -149,14 +161,18 @@ test.describe('Margin Analytics', () => {
 
   test.describe('Story 4.7: Margin Analysis by Time Period', () => {
     test.beforeEach(async ({ page }) => {
-      // Time period analytics page (not "trends")
-      await page.goto(ROUTES.analytics.timePeriod)
-      await page.waitForLoadState('networkidle')
+      // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+      await page.goto(ROUTES.analytics.timePeriod, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('displays time period analytics page', async ({ page }) => {
       // Heading says "Анализ маржинальности по времени"
-      const heading = page.locator('h1, h2').filter({ hasText: /анализ|маржинальност|времени|time|period|period/i })
+      const heading = page
+        .locator('h1, h2')
+        .filter({ hasText: /анализ|маржинальност|времени|time|period|period/i })
       await expect(heading.first()).toBeVisible({ timeout: TIMEOUTS.navigation })
     })
 
@@ -165,11 +181,11 @@ test.describe('Margin Analytics', () => {
 
       // Chart container
       const chart = page.locator('[class*="chart"], svg[class*="recharts"]')
-      const hasChart = await chart.count() > 0
+      const hasChart = (await chart.count()) > 0
 
       // Or empty state
       const emptyState = page.locator('text=/нет данных|no data/i')
-      const hasEmpty = await emptyState.count() > 0
+      const hasEmpty = (await emptyState.count()) > 0
 
       expect(hasChart || hasEmpty).toBeTruthy()
     })
@@ -179,11 +195,11 @@ test.describe('Margin Analytics', () => {
 
       // Week labels on chart
       const weekLabels = page.locator('text=/W\\d{1,2}/')
-      const hasWeekLabels = await weekLabels.count() > 0
+      const hasWeekLabels = (await weekLabels.count()) > 0
 
       // Or date labels
       const dateLabels = page.locator('text=/\\d{2}\\.\\d{2}/')
-      const hasDateLabels = await dateLabels.count() > 0
+      const hasDateLabels = (await dateLabels.count()) > 0
 
       expect(hasWeekLabels || hasDateLabels || true).toBeTruthy()
     })
@@ -191,7 +207,7 @@ test.describe('Margin Analytics', () => {
     test('can select time period', async ({ page }) => {
       // Period selector
       const periodSelector = page.locator('select, [class*="period"], button:has-text("недел")')
-      const hasSelector = await periodSelector.count() > 0
+      const hasSelector = (await periodSelector.count()) > 0
 
       expect(hasSelector || true).toBeTruthy()
     })
@@ -201,11 +217,11 @@ test.describe('Margin Analytics', () => {
 
       // Line chart elements
       const trendLine = page.locator('path[class*="line"], [class*="recharts-line"]')
-      const hasLine = await trendLine.count() > 0
+      const hasLine = (await trendLine.count()) > 0
 
       // Or bar chart
       const bars = page.locator('rect[class*="bar"], [class*="recharts-bar"]')
-      const hasBars = await bars.count() > 0
+      const hasBars = (await bars.count()) > 0
 
       expect(hasLine || hasBars || true).toBeTruthy()
     })
@@ -217,7 +233,7 @@ test.describe('Margin Analytics', () => {
 
       // Navigate to brand
       const brandLink = page.locator('a[href*="brand"], button:has-text("Бренд")')
-      if (await brandLink.count() > 0) {
+      if ((await brandLink.count()) > 0) {
         await brandLink.first().click()
         await expect(page).toHaveURL(/brand/)
       }
@@ -243,7 +259,7 @@ test.describe('Margin Analytics', () => {
   test.describe('Error States', () => {
     test('handles no data gracefully', async ({ page }) => {
       // Mock empty response
-      await page.route('**/analytics/**', (route) => {
+      await page.route('**/analytics/**', route => {
         route.fulfill({
           status: 200,
           body: JSON.stringify({ data: [], pagination: { total: 0 } }),
@@ -258,7 +274,7 @@ test.describe('Margin Analytics', () => {
     })
 
     test('handles API error gracefully', async ({ page }) => {
-      await page.route('**/analytics/**', (route) => {
+      await page.route('**/analytics/**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: 'Internal Server Error' }),

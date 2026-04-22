@@ -66,6 +66,7 @@ export function OrdersCogsMetricCard({
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
       aria-label={`COGS по заказам: ${!hasNoCogs ? formatCurrency(cogsTotal!) : 'не заполнен'}`}
+      data-testid="metric-card"
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">

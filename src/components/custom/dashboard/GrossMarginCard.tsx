@@ -89,6 +89,7 @@ export function GrossMarginCard({
         className
       )}
       role="article"
+      data-testid="metric-card"
       aria-label={`Валовая маржа: ${canShow ? `${grossMarginPct!.toFixed(1)}%` : 'нет данных'}`}
     >
       <CardContent className="p-3">

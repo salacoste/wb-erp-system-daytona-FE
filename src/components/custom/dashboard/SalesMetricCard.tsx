@@ -97,6 +97,7 @@ export function SalesMetricCard({
       )}
       role="article"
       aria-label={ariaValue}
+      data-testid="metric-card"
     >
       <CardContent className="p-3">
         {/* Header: Icon + Title + Info */}

@@ -9,8 +9,8 @@
  * Data-testid selectors for dashboard metric components
  */
 export const DASHBOARD_METRICS_SELECTORS = {
-  // Metric Cards Grid
-  metricsGrid: '[role="region"][aria-label="Основные метрики"]',
+  // Metric Cards Grid — Story 88.3-FE: match actual DOM label ("Основные метрики P&L"), not legacy "Основные метрики"
+  metricsGrid: '[role="region"][aria-label="Основные метрики P&L"]',
   metricCard: '[data-testid="metric-card"]',
   metricCardSkeleton: '[data-testid="metric-card-skeleton"]',
   metricValue: '[data-testid="metric-value"]',
@@ -57,7 +57,9 @@ export const DASHBOARD_METRICS_SELECTORS = {
   partialDataWarning: '[data-testid="partial-data-warning"]',
 
   // Loading States
-  loadingSkeleton: '[class*="skeleton"]',
+  // Story 88.3-FE: prefer the metric-card skeleton testid over a broad `[class*="skeleton"]`
+  // (which would also match Tailwind utilities, Avatar skeletons, etc. on unrelated pages).
+  loadingSkeleton: '[data-testid="metric-card-skeleton"]',
   chartLoadingSkeleton: '[data-testid="chart-loading-skeleton"]',
 
   // Profit Breakdown Popover

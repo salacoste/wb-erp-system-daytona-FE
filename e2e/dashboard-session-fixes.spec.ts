@@ -10,8 +10,10 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Dashboard — Sidebar', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/dashboard')
-    await page.waitForLoadState('networkidle')
+    // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+    // Dashboard's background queries never let the network idle within the test timeout.
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({ timeout: 10000 })
   })
 
   test('shows seller trademark in sidebar', async ({ page }) => {
@@ -44,8 +46,9 @@ test.describe('Dashboard — Sidebar', () => {
 
 test.describe('Dashboard — Trends Chart', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/dashboard?week=2026-W12&type=week')
-    await page.waitForLoadState('networkidle')
+    // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+    await page.goto('/dashboard?week=2026-W12&type=week', { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({ timeout: 10000 })
   })
 
   test('renders trends chart with data (not empty state)', async ({ page }) => {
@@ -84,8 +87,10 @@ test.describe('Dashboard — Trends Chart', () => {
     const trendsCard = page.locator('text=Тренды ключевых метрик')
     await trendsCard.scrollIntoViewIfNeeded()
 
-    // Verify chart rendered (has SVG lines)
+    // Story 88.3-FE: wait for chart legend to render before counting items
+    // (previously the implicit networkidle wait happened to cover this; now explicit).
     const legendItems = page.locator('.recharts-legend-item')
+    await expect(legendItems.first()).toBeVisible({ timeout: 10000 })
     const count = await legendItems.count()
     expect(count).toBeGreaterThanOrEqual(5)
 
@@ -102,8 +107,9 @@ test.describe('Dashboard — Trends Chart', () => {
 
 test.describe('Dashboard — Expense Chart', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/dashboard?week=2026-W12&type=week')
-    await page.waitForLoadState('networkidle')
+    // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+    await page.goto('/dashboard?week=2026-W12&type=week', { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({ timeout: 10000 })
   })
 
   test('renders horizontal expense bars', async ({ page }) => {
@@ -160,8 +166,9 @@ test.describe('Dashboard — Expense Chart', () => {
 
 test.describe('Dashboard — Processing Status', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/dashboard?week=2026-W12&type=week')
-    await page.waitForLoadState('networkidle')
+    // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+    await page.goto('/dashboard?week=2026-W12&type=week', { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({ timeout: 10000 })
   })
 
   test('no false FailedAlert when data exists', async ({ page }) => {
@@ -179,8 +186,9 @@ test.describe('Dashboard — Processing Status', () => {
 
 test.describe('Unit Economics — Default Week', () => {
   test('defaults to last completed week (not current)', async ({ page }) => {
-    await page.goto('/analytics/unit-economics')
-    await page.waitForLoadState('networkidle')
+    // Story 88.3-FE: domcontentloaded + landmark wait (not networkidle).
+    await page.goto('/analytics/unit-economics', { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({ timeout: 10000 })
 
     // Should NOT show current incomplete week (W14 as of 2026-03-31)
     // Should show a completed week
