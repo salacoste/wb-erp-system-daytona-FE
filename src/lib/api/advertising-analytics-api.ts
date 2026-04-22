@@ -79,9 +79,13 @@ export async function getAdvertisingAnalytics(
   })
 
   // Story 33.1-fe: Use skipDataUnwrap to get full response
-  const backendResponse = await apiClient.get<any>(`/v1/analytics/advertising?${queryParams}`, {
-    skipDataUnwrap: true,
-  })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend response shape is untyped; adapter normalizes below
+  const backendResponse = await apiClient.get<Record<string, unknown>>(
+    `/v1/analytics/advertising?${queryParams}`,
+    {
+      skipDataUnwrap: true,
+    }
+  )
 
   // ADAPTER: Backend returns different format (camelCase, "items" instead of "data")
   // Adapt backend response to match frontend types
@@ -101,8 +105,9 @@ export async function getAdvertisingAnalytics(
       total_sales: backendResponse.summary?.totalSales ?? 0,
       total_revenue: backendResponse.summary?.totalRevenue ?? 0,
       total_profit: backendResponse.summary?.totalProfit ?? 0,
+      // Story 88.2-FE: null when totalSpend = 0 (division undefined) — not 0
       overall_roas: backendResponse.summary?.avgRoas ?? null,
-      overall_roi: backendResponse.summary?.avgRoi ?? 0,
+      overall_roi: backendResponse.summary?.avgRoi ?? null,
       avg_ctr: backendResponse.summary?.avgCtr ?? 0,
       avg_conversion_rate: backendResponse.summary?.avgConversionRate ?? 0,
       campaign_count: backendResponse.summary?.campaignCount ?? 0,
@@ -111,6 +116,7 @@ export async function getAdvertisingAnalytics(
       total_organic_sales: backendResponse.summary?.totalOrganicSales ?? 0,
       avg_organic_contribution: backendResponse.summary?.avgOrganicContribution ?? 0,
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend item shape is dynamic per view_by mode
     data: (backendResponse.items || []).map((item: any, index: number) => ({
       // Use backend's unique key as identifier (e.g., "sku:270937054", "campaign:12345")
       key: item.key || `item-${index}`,
@@ -118,6 +124,7 @@ export async function getAdvertisingAnalytics(
       // Epic 36: Product Card Linking fields
       type: item.type, // 'merged_group' | 'individual' | undefined
       imtId: item.imtId ?? null, // number | null
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- merged product shape from backend
       mergedProducts: item.mergedProducts?.map((p: any) => ({
         nmId: p.nmId,
         vendorCode: p.vendorCode,
@@ -134,13 +141,14 @@ export async function getAdvertisingAnalytics(
       spend: item.spend ?? 0,
       // Epic 35: Backend now returns totalSales (hybrid query: completed weeks + current week)
       total_sales: item.totalSales ?? 0,
-      revenue: item.revenue ?? 0,
-      profit: item.profit ?? 0,
+      // Story 88.2-FE: preserve null — "unknown" and "zero" are distinct states
+      revenue: item.revenue ?? null,
+      profit: item.profit ?? null,
       // Epic 35: Organic vs advertising split
       organic_sales: item.organicSales ?? 0,
       organic_contribution: item.organicContribution ?? 0,
-      roas: item.roas ?? 0,
-      roi: item.roi ?? 0,
+      roas: item.roas ?? null,
+      roi: item.roi ?? null,
       ctr: item.ctr ?? 0,
       cpc: item.cpc ?? 0,
       conversion_rate: item.conversionRate ?? 0,
@@ -148,6 +156,7 @@ export async function getAdvertisingAnalytics(
       efficiency_status: item.efficiency?.status || 'unknown',
     })),
     // Request #157: Daily breakdown (present when include_daily=true)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- daily breakdown shape from backend
     daily: backendResponse.daily?.map((day: any) => ({
       date: day.date,
       spend: day.spend ?? 0,
@@ -159,6 +168,7 @@ export async function getAdvertisingAnalytics(
       revenue_attributed: day.revenueAttributed,
     })),
     // Story 72.4: Multi-campaign SKU warnings (auto-returned when deduplication detects overlaps)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- warning shape from backend
     multiCampaignSkuWarnings: backendResponse.multiCampaignSkuWarnings?.map((w: any) => ({
       nmId: w.nmId,
       campaigns: w.campaigns ?? [],
