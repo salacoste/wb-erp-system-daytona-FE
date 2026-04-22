@@ -92,6 +92,7 @@ export function TheoreticalProfitCard({
         className
       )}
       role="article"
+      data-testid="metric-card"
       aria-label={`Теоретическая прибыль: ${value != null && isComplete ? formatCurrency(value) : 'нет данных'}`}
     >
       <CardContent className="p-3">

@@ -20,6 +20,7 @@ import { ViewToggle } from './ViewToggle'
 import { DailyBreakdownChart } from './DailyBreakdownChart'
 import { DailyMetricsTable } from './DailyMetricsTable'
 import { MetricLegend } from './MetricLegend'
+import { DailyCogsGapFootnote } from './DailyCogsGapFootnote'
 
 export interface DailyBreakdownSectionProps {
   /** Additional CSS classes */
@@ -105,6 +106,9 @@ export function DailyBreakdownSection({ className }: DailyBreakdownSectionProps)
           </div>
         )}
       </div>
+
+      {/* Story 88.2-FE: disclosure when any day has unknown COGS */}
+      {!isLoading && !error && data && <DailyCogsGapFootnote data={data} />}
     </section>
   )
 }

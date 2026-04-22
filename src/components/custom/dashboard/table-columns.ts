@@ -117,7 +117,9 @@ export function formatCellValue(row: DailyMetrics, column: ColumnDef): string {
     return formatDayWithDate(row.date, row.dayOfWeek)
   }
 
-  const value = row[column.key as keyof DailyMetrics] as number
+  const value = row[column.key as keyof DailyMetrics]
+  // Story 88.2-FE: null ("unknown") renders as em dash, distinct from "-"/"0"
+  if (value === null) return '—'
   if (typeof value !== 'number') return '-'
 
   // ordersCount is integer — format without currency symbol
@@ -169,9 +171,11 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
       ...acc,
       orders: acc.orders + day.orders,
       ordersCount: acc.ordersCount + day.ordersCount,
-      ordersCogs: acc.ordersCogs + day.ordersCogs,
+      // Story 88.2-FE: null days are skipped — totals row shows the "known" total only.
+      // Display layer surfaces gap via footnote (AC-4).
+      ordersCogs: (acc.ordersCogs ?? 0) + (day.ordersCogs ?? 0),
       sales: acc.sales + day.sales,
-      salesCogs: acc.salesCogs + day.salesCogs,
+      salesCogs: (acc.salesCogs ?? 0) + (day.salesCogs ?? 0),
       advertising: acc.advertising + day.advertising,
       logistics: acc.logistics + day.logistics,
       storage: acc.storage + day.storage,

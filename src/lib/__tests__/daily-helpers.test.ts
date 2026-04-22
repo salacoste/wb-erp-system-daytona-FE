@@ -462,6 +462,8 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           returns: 0,
           returns_count: 0,
           sales_count: 0,
+      advertising_spend: 0,
+      net_profit: null,
         },
       ]
 
@@ -511,6 +513,8 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           returns: 0,
           returns_count: 0,
           sales_count: 0,
+      advertising_spend: 0,
+      net_profit: null,
         },
       ]
       const advertisingData: AdvertisingDailyData[] = [{ date: '2026-01-26', total_spend: 8000 }]
@@ -548,6 +552,8 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           returns: 0,
           returns_count: 0,
           sales_count: 0,
+      advertising_spend: 0,
+      net_profit: null,
         },
       ]
 
@@ -594,6 +600,8 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           returns: 0,
           returns_count: 0,
           sales_count: 0,
+      advertising_spend: 0,
+      net_profit: null,
         },
       ]
 
@@ -629,6 +637,8 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           returns: 0,
           returns_count: 0,
           sales_count: 0,
+      advertising_spend: 0,
+      net_profit: null,
         },
       ]
       const advertisingData: AdvertisingDailyData[] = [{ date: '2026-01-26', total_spend: 8000 }]

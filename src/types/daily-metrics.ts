@@ -31,12 +31,12 @@ export interface DailyMetrics {
   orders: number
   /** Number of orders (Заказы шт) */
   ordersCount: number
-  /** COGS for orders in rubles */
-  ordersCogs: number
+  /** COGS for orders in rubles. Story 88.2-FE: null = "unknown" (COGS not yet assigned for this day's SKUs). 0 = legitimate zero cost. */
+  ordersCogs: number | null
   /** Sales amount in rubles (Выкупы / wb_sales_gross) */
   sales: number
-  /** COGS for sales in rubles (from finance daily) */
-  salesCogs: number
+  /** COGS for sales in rubles (from finance daily). Story 88.2-FE: null = "unknown". 0 = legitimate zero cost. */
+  salesCogs: number | null
   /** Advertising spend in rubles (Рекламные затраты) */
   advertising: number
   /** Logistics cost in rubles (Логистика) */
@@ -82,8 +82,8 @@ export interface FinanceDailyData {
   wb_sales_gross: number
   /** Net payout — К перечислению (after all deductions) */
   revenue_net: number
-  /** Total COGS for sales (0 if COGS not assigned) */
-  cogs_total: number
+  /** Total COGS for sales. Story 88.2-FE: null = no COGS data for this day. 0 = legitimate zero cost. */
+  cogs_total: number | null
   /** Logistics cost */
   logistics_cost: number
   /** Storage cost */
@@ -100,6 +100,10 @@ export interface FinanceDailyData {
   returns_count: number
   /** Sales count */
   sales_count: number
+  /** Story 91.2-FE: Advertising spend from adv_daily_stats. 0 = no ads. */
+  advertising_spend: number
+  /** Story 91.2-FE: Server-computed net profit (operatingProfit - advertisingSpend). Null when COGS unknown. */
+  net_profit: number | null
 }
 
 /**
@@ -121,8 +125,8 @@ export interface AdvertisingDailyData {
 export interface OrdersCogsDailyData {
   /** Date in YYYY-MM-DD format */
   date: string
-  /** COGS for orders on this day */
-  cogs: number
+  /** COGS for orders on this day. Story 88.2-FE: null = COGS not assigned for any SKU ordered on this day. */
+  cogs: number | null
 }
 
 // ============================================================================
@@ -175,23 +179,7 @@ export interface AggregateDailyMetricsInput {
 }
 
 /**
- * Input for calculateDailyTheoreticalProfit function.
+ * @deprecated Story 91.2-FE: Use server netProfit instead. Kept for fallback calc.
+ * Moved inline to src/lib/daily/aggregation.ts to keep this file under 200 lines.
  */
-export interface TheoreticalProfitInput {
-  /** Gross sales (Выкупы) — base revenue for profit calculation */
-  sales: number
-  /** COGS */
-  salesCogs: number
-  /** Advertising spend */
-  advertising: number
-  /** Logistics cost */
-  logistics: number
-  /** Storage cost */
-  storage: number
-  /** Penalties */
-  penalties: number
-  /** Paid acceptance */
-  paidAcceptance: number
-  /** WB commission */
-  commission: number
-}
+export type { TheoreticalProfitInput } from '@/lib/daily/aggregation'

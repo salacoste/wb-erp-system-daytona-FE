@@ -11,24 +11,39 @@ import type {
   FinanceDailyData,
   AdvertisingDailyData,
   AggregateDailyMetricsInput,
-  TheoreticalProfitInput,
 } from '@/types/daily-metrics'
 import { getDayOfWeek } from './day-utils'
 
 /**
- * Calculate daily theoretical profit.
+ * @deprecated Story 91.2-FE: Use server netProfit instead. Kept for fallback calc.
+ * Extracted from daily-metrics.ts to keep that file under 200 lines.
+ */
+export interface TheoreticalProfitInput {
+  sales: number
+  salesCogs: number | null
+  advertising: number
+  logistics: number
+  storage: number
+  penalties: number
+  paidAcceptance: number
+  commission: number
+}
+
+/**
+ * Calculate daily theoretical profit (client-side).
+ *
+ * @deprecated Story 91.2-FE: Use server `netProfit` from GET /v1/analytics/daily/finance instead.
+ * Kept as fallback for: (a) cached pre-rollout responses, (b) null netProfit when COGS unknown.
+ * Remove once backend netProfit is verified stable in production.
  *
  * Formula: sales - salesCogs - advertising - logistics - storage - penalties - paidAcceptance - commission
- *
- * Uses `sales` (Выкупы / revenueGross from finance daily) as the base,
- * NOT `orders` (order volume from orders API) — sales reflect actual
- * settled revenue from the WB weekly report.
  *
  * @param input - All cost components for a single day
  * @returns Calculated theoretical profit (can be negative for loss)
  */
 export function calculateDailyTheoreticalProfit(input: TheoreticalProfitInput): number {
   const sales = input.sales ?? 0
+  // aggregation — null treated as 0, intentional. Display sites must show "—" for null salesCogs.
   const salesCogs = input.salesCogs ?? 0
   const advertising = input.advertising ?? 0
   const logistics = input.logistics ?? 0
@@ -71,7 +86,8 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
     advertisingData.map(d => [d.date, d])
   )
   // Per-day COGS map from orders/volume?include_cogs=true (Request #138)
-  const cogsMap = new Map<string, number>(ordersCogsByDay.map(d => [d.date, d.cogs]))
+  // Story 88.2-FE: values may be null ("unknown" — COGS not assigned)
+  const cogsMap = new Map<string, number | null>(ordersCogsByDay.map(d => [d.date, d.cogs]))
 
   // Build aggregated result
   const result: DailyMetrics[] = []
@@ -83,8 +99,35 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
     const ordersCount = ordersEntry?.total_orders ?? 0
     const finance = financeMap.get(date)
     const advertising = advertisingMap.get(date)?.total_spend ?? 0
-    // Per-day COGS from cogsMap, fallback to legacy single value
-    const dayCogs = cogsMap.get(date) ?? ordersCogs
+    // Story 88.2-FE: preserve null for per-day COGS.
+    // If cogsMap has the date: use its value (may be null).
+    // If cogsMap doesn't: fall back to legacy single value.
+    // Note: `ordersCogs = 0` is the destructuring default — unset vs explicit-0 are indistinguishable
+    // here; we treat 0 as "no legacy COGS provided" → null. Callers wanting "zero cost" must pass
+    // ordersCogsByDay instead (the legacy ordersCogs param is deprecated).
+    const dayCogs: number | null = cogsMap.has(date)
+      ? (cogsMap.get(date) ?? null)
+      : ordersCogs > 0
+        ? ordersCogs
+        : null
+
+    // Story 88.2-FE: data-gap detection for debugging
+    const financeCogs = finance?.cogs_total ?? null
+    if (
+      dayCogs == null &&
+      financeCogs == null &&
+      (orders > 0 || (finance?.wb_sales_gross ?? 0) > 0)
+    ) {
+      console.warn(
+        `[DailyAggregation] Data gap: date=${date} has activity (orders=${orders}, sales=${finance?.wb_sales_gross ?? 0}) but both ordersCogs and salesCogs are null.`
+      )
+    }
+
+    // Story 91.2-FE: prefer finance-sourced advertising_spend when it's > 0 (real data from backend).
+    // advertising_spend=0 in old responses means "field absent, not zero ad spend" — fall back to separate API.
+    // advertising_spend > 0 always means real data (independent of net_profit nullability).
+    const financeAd = finance?.advertising_spend ?? 0
+    const effectiveAdvertising = financeAd > 0 ? financeAd : advertising
 
     const metrics: DailyMetrics = {
       date,
@@ -93,8 +136,8 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
       ordersCount,
       ordersCogs: dayCogs,
       sales: finance?.wb_sales_gross ?? 0,
-      salesCogs: finance?.cogs_total ?? 0,
-      advertising,
+      salesCogs: financeCogs,
+      advertising: effectiveAdvertising,
       logistics: finance?.logistics_cost ?? 0,
       storage: finance?.storage_cost ?? 0,
       penalties: finance?.penalties ?? 0,
@@ -103,17 +146,23 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
       theoreticalProfit: 0,
     }
 
-    // Calculate theoretical profit
-    metrics.theoreticalProfit = calculateDailyTheoreticalProfit({
-      sales: metrics.sales,
-      salesCogs: metrics.salesCogs,
-      advertising: metrics.advertising,
-      logistics: metrics.logistics,
-      storage: metrics.storage,
-      penalties: metrics.penalties,
-      paidAcceptance: metrics.paidAcceptance,
-      commission: metrics.commission,
-    })
+    // Story 91.2-FE: server-first profit — use backend's netProfit when available,
+    // fall back to client-side calc for null netProfit or cached pre-rollout responses
+    const serverNetProfit = finance?.net_profit
+    if (serverNetProfit != null) {
+      metrics.theoreticalProfit = serverNetProfit
+    } else {
+      metrics.theoreticalProfit = calculateDailyTheoreticalProfit({
+        sales: metrics.sales,
+        salesCogs: metrics.salesCogs,
+        advertising: metrics.advertising,
+        logistics: metrics.logistics,
+        storage: metrics.storage,
+        penalties: metrics.penalties,
+        paidAcceptance: metrics.paidAcceptance,
+        commission: metrics.commission,
+      })
+    }
 
     result.push(metrics)
   })

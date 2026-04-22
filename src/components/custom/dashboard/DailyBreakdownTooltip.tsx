@@ -49,16 +49,19 @@ const METRIC_ORDER: MetricKey[] = [
 // ============================================================================
 
 /**
- * Get metric value from data point
- * Maps 'profit' key to 'theoreticalProfit' in DailyMetrics
+ * Get metric value from data point.
+ * Maps 'profit' key to 'theoreticalProfit' in DailyMetrics.
+ * Story 88.2-FE: returns null for nullable fields (ordersCogs, salesCogs) when unknown —
+ * display layer renders "—" to distinguish "unknown" from "zero".
  */
-function getMetricValue(dataPoint: DailyMetrics, metricKey: MetricKey): number {
+function getMetricValue(dataPoint: DailyMetrics, metricKey: MetricKey): number | null {
   if (metricKey === 'profit') {
     return dataPoint.theoreticalProfit ?? 0
   }
   // For other keys, access directly (they exist on DailyMetrics)
   const value =
     dataPoint[metricKey as keyof Omit<DailyMetrics, 'date' | 'dayOfWeek' | 'theoreticalProfit'>]
+  if (value === null) return null
   return typeof value === 'number' ? value : 0
 }
 
@@ -107,7 +110,7 @@ export function DailyBreakdownTooltip({
 
 interface TooltipMetricRowProps {
   metricKey: MetricKey
-  value: number
+  value: number | null
 }
 
 function TooltipMetricRow({ metricKey, value }: TooltipMetricRowProps) {
@@ -126,7 +129,10 @@ function TooltipMetricRow({ metricKey, value }: TooltipMetricRowProps) {
         )}
         <span className="text-gray-600">{label}</span>
       </span>
-      <span className="font-medium tabular-nums">{formatCurrency(value)}</span>
+      <span className="font-medium tabular-nums">
+        {/* Story 88.2-FE: null → "—" distinguishes unknown from zero */}
+        {value === null ? '—' : formatCurrency(value)}
+      </span>
     </div>
   )
 }

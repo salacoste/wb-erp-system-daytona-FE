@@ -50,9 +50,10 @@ interface FinanceDailyResponseItem {
   revenueGross: number
   revenueNet: number
   returns: number
-  cogsTotal: number
-  grossProfit: number
-  marginPct: number
+  // Story 88.2-FE: backend sends null when no COGS assigned for this day
+  cogsTotal: number | null
+  grossProfit: number | null
+  marginPct: number | null
   logistics: number
   storage: number
   penalties: number
@@ -60,6 +61,10 @@ interface FinanceDailyResponseItem {
   commission: number
   salesCount: number
   returnsCount: number
+  // Story 91.2-FE: Backend Epics 89-93 additions
+  // operatingProfit also sent by backend but not consumed — netProfit is the post-ads metric we use
+  advertisingSpend: number // ad spend from adv_daily_stats (0 if no ads)
+  netProfit: number | null // operatingProfit - advertisingSpend (null when COGS unknown)
 }
 
 /**
@@ -77,7 +82,8 @@ export async function getFinanceDailyData(from: string, to: string): Promise<Fin
       date: item.date,
       wb_sales_gross: item.revenueGross ?? 0,
       revenue_net: item.revenueNet ?? 0,
-      cogs_total: item.cogsTotal ?? 0,
+      // Story 88.2-FE: preserve null — "unknown COGS" and "zero COGS" are distinct states
+      cogs_total: item.cogsTotal ?? null,
       logistics_cost: item.logistics ?? 0,
       storage_cost: item.storage ?? 0,
       penalties: item.penalties ?? 0,
@@ -86,6 +92,9 @@ export async function getFinanceDailyData(from: string, to: string): Promise<Fin
       returns: item.returns ?? 0,
       returns_count: item.returnsCount ?? 0,
       sales_count: item.salesCount ?? 0,
+      // Story 91.2-FE: new fields from backend Epics 89-93
+      advertising_spend: item.advertisingSpend ?? 0, // 0 = no ads (legitimate zero)
+      net_profit: item.netProfit ?? null, // null-preserving per CLAUDE.md anti-pattern #8
     }))
   } catch {
     return []
@@ -134,8 +143,9 @@ export async function getAdvertisingDailyData(
  * Backend response shape for GET /v1/analytics/orders/volume?include_cogs=true.
  */
 interface OrdersVolumeWithCogsResponse {
-  cogs_total?: number
-  by_day_with_cogs?: Array<{ date: string; cogs: number }>
+  cogs_total?: number | null
+  // Story 88.2-FE: backend sends null when no COGS assigned for SKUs ordered on this day
+  by_day_with_cogs?: Array<{ date: string; cogs: number | null }>
 }
 
 /**
@@ -156,7 +166,8 @@ export async function getOrdersCogsDailyData(
 
     return (raw.by_day_with_cogs ?? []).map(d => ({
       date: d.date,
-      cogs: d.cogs ?? 0,
+      // Story 88.2-FE: preserve null — COGS not assigned ≠ zero cost
+      cogs: d.cogs ?? null,
     }))
   } catch {
     return []
