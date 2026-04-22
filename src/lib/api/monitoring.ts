@@ -5,6 +5,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { qs } from './query-string'
 import type {
   MonitoringDashboard,
   PipelineHealthGrid,
@@ -28,17 +29,6 @@ export const monitoringQueryKeys = {
     ['monitoring', 'health-reports', cabinetId, days] as const,
   healthReport: (cabinetId: string, date: string) =>
     ['monitoring', 'health-report', cabinetId, date] as const,
-}
-
-// --- Helper ---
-
-function qs(params: Record<string, string | number | undefined>): string {
-  const sp = new URLSearchParams()
-  for (const [k, v] of Object.entries(params)) {
-    if (v !== undefined && v !== '') sp.set(k, String(v))
-  }
-  const str = sp.toString()
-  return str ? `?${str}` : ''
 }
 
 // --- Dashboard ---
