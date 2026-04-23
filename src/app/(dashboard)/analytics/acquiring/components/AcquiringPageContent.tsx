@@ -6,6 +6,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { format, subDays } from 'date-fns'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
@@ -13,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useAcquiringReports } from '@/hooks/use-acquiring-reports'
+import { ROUTES } from '@/lib/routes'
 import type { DateRange } from '@/types/date-range'
 import { AcquiringSummaryCards } from './AcquiringSummaryCards'
 import { AcquiringReportsTable } from './AcquiringReportsTable'
@@ -61,11 +63,14 @@ export function AcquiringPageContent() {
           placeholder="Выберите период"
           id="acquiring-date-range"
         />
+        <Button variant="outline" size="sm" asChild>
+          <Link href={ROUTES.ANALYTICS.ACQUIRING_PERIOD}>Детализация за период</Link>
+        </Button>
       </div>
 
       {/* Body state machine — showSkeleton/showFullError distinguish first-load from refetch */}
       {showSkeleton ? (
-        <div className="space-y-4">
+        <div className="space-y-4" role="status" aria-busy="true" aria-label="Загрузка данных">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
