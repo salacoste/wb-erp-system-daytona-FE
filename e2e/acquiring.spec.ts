@@ -1,12 +1,14 @@
 /**
  * E2E Tests: Acquiring Analytics
  * Story 90.2-FE: Acquiring Reports List Page
+ * Story 90.5-FE: Accessibility scans for all 3 Acquiring pages (AC-2)
  *
  * Uses domcontentloaded + landmark waits (CLAUDE.md anti-pattern #9 — not networkidle).
  * Auth state loaded from e2e/.auth/user.json via playwright.config.ts.
  */
 
 import { test, expect } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const ACQUIRING_URL = '/analytics/acquiring'
@@ -74,5 +76,112 @@ test.describe('Acquiring Analytics Page (Story 90.2-FE)', () => {
     await expect(page.getByText(/Отчёты за выбранный период не найдены/)).toBeVisible({
       timeout: TIMEOUTS.api,
     })
+  })
+})
+
+test.describe('Acquiring Report Detail Page (Story 90.3-FE)', () => {
+  test('navigates directly to report detail page and shows landmark + header', async ({ page }) => {
+    await page.goto('/analytics/acquiring/reports/12345', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-report-detail')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+    await expect(page.getByText('Отчёт #12345')).toBeVisible({ timeout: TIMEOUTS.navigation })
+  })
+
+  test('back button from detail page returns to acquiring list', async ({ page }) => {
+    await page.goto('/analytics/acquiring/reports/12345', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-report-detail')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+    await page.getByText('Назад к отчётам').click()
+    await expect(page).toHaveURL(/\/analytics\/acquiring$/)
+    await expect(page.getByTestId('acquiring-page')).toBeVisible({ timeout: TIMEOUTS.navigation })
+  })
+})
+
+test.describe('Acquiring Period Detail Page (Story 90.4-FE)', () => {
+  test('navigates directly to period detail page and shows landmark + header', async ({ page }) => {
+    // domcontentloaded — not networkidle (CLAUDE.md anti-pattern #9)
+    await page.goto('/analytics/acquiring/period', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-period-detail')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+    await expect(page.getByText('Эквайринг за период')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+  })
+
+  test('"Детализация за период" link from list navigates to period view', async ({ page }) => {
+    await page.goto('/analytics/acquiring', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-page')).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    await page.getByRole('link', { name: 'Детализация за период' }).click()
+
+    await expect(page).toHaveURL(/\/analytics\/acquiring\/period$/)
+    await expect(page.getByTestId('acquiring-period-detail')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+  })
+})
+
+// ============================================================================
+// Accessibility: Story 90.5-FE AC-2
+// axe-core scans for all 3 Acquiring pages.
+// Pattern mirrors dashboard-metrics.spec.ts: filter critical/serious violations,
+// exclude known Radix UI aria-valid-attr-value limitation (Tabs).
+// ============================================================================
+
+test.describe('Accessibility — Acquiring pages (Story 90.5-FE)', () => {
+  test('acquiring list page has no critical accessibility violations', async ({ page }) => {
+    await page.goto('/analytics/acquiring', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-page')).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast']) // dynamic colors may vary
+      .analyze()
+
+    const criticalViolations = results.violations.filter(
+      v => (v.impact === 'critical' || v.impact === 'serious') && v.id !== 'aria-valid-attr-value' // known Radix UI Tabs limitation
+    )
+    expect(criticalViolations).toHaveLength(0)
+  })
+
+  test('acquiring report detail page has no critical accessibility violations', async ({
+    page,
+  }) => {
+    await page.goto('/analytics/acquiring/reports/12345', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-report-detail')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast'])
+      .analyze()
+
+    const criticalViolations = results.violations.filter(
+      v => (v.impact === 'critical' || v.impact === 'serious') && v.id !== 'aria-valid-attr-value' // known Radix UI Tabs limitation
+    )
+    expect(criticalViolations).toHaveLength(0)
+  })
+
+  test('acquiring period detail page has no critical accessibility violations', async ({
+    page,
+  }) => {
+    await page.goto('/analytics/acquiring/period', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-period-detail')).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
+
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast'])
+      .analyze()
+
+    const criticalViolations = results.violations.filter(
+      v => (v.impact === 'critical' || v.impact === 'serious') && v.id !== 'aria-valid-attr-value' // known Radix UI Tabs limitation
+    )
+    expect(criticalViolations).toHaveLength(0)
   })
 })
