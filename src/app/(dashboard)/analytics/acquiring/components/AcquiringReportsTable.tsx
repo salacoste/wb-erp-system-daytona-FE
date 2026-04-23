@@ -9,7 +9,8 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react'
+import Link from 'next/link'
+import { ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -19,8 +20,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { AnomalyVatIndicator } from './shared/AnomalyVatIndicator'
 import type { AcquiringReportListItem } from '@/types/acquiring-analytics'
 
 type SortField = 'reportId' | 'dateFrom' | 'createDate' | 'acquiringFeeSum' | 'acquiringFeeVatSum'
@@ -110,13 +111,6 @@ export function AcquiringReportsTable({ items }: AcquiringReportsTableProps) {
         </TableHeader>
         <TableBody>
           {sorted.map(item => {
-            // PENDING BACKEND: if VAT > fee pattern recurs at scale, file docs/request-backend/NNN-*.md
-            // (Defensive Frontend Principle — Story 89.4 canonical example).
-            const hasAnomaly =
-              item.acquiringFeeSum != null &&
-              item.acquiringFeeVatSum != null &&
-              item.acquiringFeeVatSum > item.acquiringFeeSum
-
             return (
               <TableRow key={item.reportId}>
                 <TableCell className="font-mono text-sm">{item.reportId}</TableCell>
@@ -131,50 +125,12 @@ export function AcquiringReportsTable({ items }: AcquiringReportsTableProps) {
                 </TableCell>
                 <TableCell className="text-sm">
                   {item.acquiringFeeVatSum == null ? '—' : formatCurrency(item.acquiringFeeVatSum)}
-                  {hasAnomaly &&
-                    item.acquiringFeeSum != null &&
-                    item.acquiringFeeVatSum != null &&
-                    (() => {
-                      // Guard-capture: both values confirmed non-null above (CLAUDE.md anti-pattern #2)
-                      const fee = item.acquiringFeeSum
-                      const vat = item.acquiringFeeVatSum
-                      return (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AlertTriangle
-                              className="h-4 w-4 text-amber-500 inline-block ml-2"
-                              aria-label="Аномалия: НДС выше суммы комиссии"
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-xs max-w-xs">
-                              НДС ({formatCurrency(vat)}) выше суммы комиссии ({formatCurrency(fee)}
-                              ) — возможная ошибка данных на стороне WB.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )
-                    })()}
+                  <AnomalyVatIndicator fee={item.acquiringFeeSum} vat={item.acquiringFeeVatSum} />
                 </TableCell>
                 <TableCell>
-                  {/* Story 90.3 will wire this to /analytics/acquiring/reports/[id] */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled
-                        aria-label="Детали отчёта — доступно в Story 90.3"
-                      >
-                        Детали
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-xs">
-                        Детализация отчёта будет доступна после завершения Story 90.3-FE.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href={`/analytics/acquiring/reports/${item.reportId}`}>Детали</Link>
+                  </Button>
                 </TableCell>
               </TableRow>
             )
