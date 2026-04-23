@@ -5,27 +5,24 @@
  * Null-vs-zero discipline (CLAUDE.md anti-pattern #8):
  * money fields are excluded from sum when null (not coerced to 0).
  * A footnote is shown when any item was excluded.
+ *
+ * Story 90.3: pluralizeReports extracted to shared src/lib/russian-plural.ts.
+ * Kept as a re-export so existing imports from this file continue to work.
  */
 
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { pluralize, REPORT_FORMS } from '@/lib/russian-plural'
 import type { AcquiringReportListItem } from '@/types/acquiring-analytics'
 
 /**
- * Russian count-based pluralization for "отчёт" noun.
- * Rules: 1 → "отчёт", 2-4 → "отчёта", 5-20 → "отчётов", then repeats by last digit.
- * Review fix H-1 (Story 90.2 code review).
+ * Re-export for backward compatibility with Story 90.2's test file that imports
+ * pluralizeReports directly from this module.
  */
 export function pluralizeReports(n: number): string {
-  const abs = Math.abs(n)
-  const lastTwo = abs % 100
-  if (lastTwo >= 11 && lastTwo <= 14) return 'отчётов'
-  const lastDigit = abs % 10
-  if (lastDigit === 1) return 'отчёт'
-  if (lastDigit >= 2 && lastDigit <= 4) return 'отчёта'
-  return 'отчётов'
+  return pluralize(REPORT_FORMS, n)
 }
 
 interface AcquiringSummaryCardsProps {
@@ -76,8 +73,8 @@ export function AcquiringSummaryCards({ items }: AcquiringSummaryCardsProps) {
           <p className="text-2xl font-bold">{formatCurrency(totalFees)}</p>
           {nullCountFees > 0 && (
             <p className="text-xs text-amber-700 mt-2">
-              * Сумма не включает {nullCountFees} {pluralizeReports(nullCountFees)} с неизвестными
-              данными.
+              * Сумма не включает {nullCountFees} {pluralize(REPORT_FORMS, nullCountFees)} с
+              неизвестными данными.
             </p>
           )}
         </CardContent>
@@ -92,8 +89,8 @@ export function AcquiringSummaryCards({ items }: AcquiringSummaryCardsProps) {
           <p className="text-2xl font-bold">{formatCurrency(totalVat)}</p>
           {nullCountVat > 0 && (
             <p className="text-xs text-amber-700 mt-2">
-              * Сумма не включает {nullCountVat} {pluralizeReports(nullCountVat)} с неизвестными
-              данными.
+              * Сумма не включает {nullCountVat} {pluralize(REPORT_FORMS, nullCountVat)} с
+              неизвестными данными.
             </p>
           )}
         </CardContent>
