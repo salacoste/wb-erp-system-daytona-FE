@@ -23,6 +23,8 @@ function makeDay(overrides: Partial<DailyMetrics> = {}): DailyMetrics {
     paidAcceptance: 0,
     commission: 0,
     theoreticalProfit: 0,
+    salesCount: 0,
+    returnsCount: 0,
     ...overrides,
   }
 }

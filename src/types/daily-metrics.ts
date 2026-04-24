@@ -51,6 +51,14 @@ export interface DailyMetrics {
   commission: number
   /** Theoretical profit: sales - salesCogs - logistics - storage - penalties - paidAcceptance - commission - advertising */
   theoreticalProfit: number
+  /** Story 92.4 H-3 fix: count of completed sales from finance.sales_count.
+   * Integer count (NOT currency). Carried through aggregation for the Monitor weekly chart.
+   * 0 = legitimate zero (no sales that day). */
+  salesCount: number
+  /** Story 92.4 H-3 fix: count of returns from finance.returns_count.
+   * Integer count (NOT currency). Carried through aggregation for the Monitor weekly chart.
+   * 0 = legitimate zero (no returns that day). */
+  returnsCount: number
 }
 
 // ============================================================================

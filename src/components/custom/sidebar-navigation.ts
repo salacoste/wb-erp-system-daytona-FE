@@ -31,6 +31,7 @@ import {
   ArrowRightLeft,
   Truck,
   CreditCard,
+  Gauge,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -86,6 +87,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Доставка', href: ROUTES.SHIPMENTS.ROOT, icon: Truck },
   // Epic 68-FE: Monitoring Health Dashboard
   { label: 'Мониторинг', href: ROUTES.MONITORING, icon: Activity },
+  // Epic 92-FE: Monitor Dashboard (business KPI surface)
+  { label: 'Монитор', href: ROUTES.MONITOR, icon: Gauge },
   // Epic 34-FE: Telegram Notifications
   { label: 'Уведомления', href: ROUTES.SETTINGS.NOTIFICATIONS, icon: Bell },
   // Epic 52-FE: Tariff Settings Admin (Admin only)

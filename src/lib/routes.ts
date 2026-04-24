@@ -69,6 +69,8 @@ export const ROUTES = {
 
   // Epic 68-FE: Monitoring Health Dashboard
   MONITORING: '/monitoring',
+  // Epic 92-FE: Monitor Dashboard (business KPI surface — distinct from /monitoring ops surface)
+  MONITOR: '/monitor',
 
   SETTINGS: {
     ROOT: '/settings',
@@ -123,6 +125,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard
+    ROUTES.MONITOR, // Epic 92-FE: Monitor Dashboard
     ROUTES.SHIPMENTS.ROOT, // Epic 75-FE: Shipment Cost Allocation
     ROUTES.SHIPMENTS.BOX_TYPES,
     ROUTES.SHIPMENTS.SKU_PACKAGING,
