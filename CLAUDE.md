@@ -511,6 +511,8 @@ Files: `src/lib/margin-helpers.ts`, `src/hooks/*-polling.ts`
 
 These 4 patterns emerged from Epic 92-FE's retrospective (`_bmad-output/implementation-artifacts/epic-92-fe-retro-2026-04-24.md`, Insights #2/#3/#6/#7) and were tribal knowledge scattered across 6 story files. Codifying them here makes them grep-and-cite-able at PR review time — the same standard as `### Boundary Normalizer Pattern`. The retro contains the full diagnostic history; this section contains the enforceable house rules.
 
+(Insight #8 — the "mirrors X — keep in sync" middle-ground pattern for deferred rule-of-two extractions — is a tactical pattern already documented across retros; Story 93.1's extraction convention is the canonical example. Not re-documented here to avoid duplication.)
+
 *Retro artifacts live under `_bmad-output/implementation-artifacts/` (gitignored — local to the author's filesystem; not distributed with the repo).*
 
 #### Pattern 1: Parallel-hook + independent-state-machine orchestration
@@ -522,40 +524,27 @@ These 4 patterns emerged from Epic 92-FE's retrospective (`_bmad-output/implemen
 **Shape** (adapted from `MonitorPageContent.tsx`):
 ```typescript
 export function MonitorPageContent() {
-  const { data, isLoading, isError, refetch } = useMonitorSummary()
-
-  // M-1 fix: memoize fetch-window params — prevents refetch storm on every render.
-  // Story 92.4: independent parallel hook — chart failure does NOT hide KPI cards.
-  const { weekFrom, weekTo } = useMemo(() => {
-    const t = new Date()
-    return { weekFrom: format(subDays(t, 6), 'yyyy-MM-dd'), weekTo: format(t, 'yyyy-MM-dd') }
-  }, [])
+  const { data, isLoading, isError } = useMonitorSummary()
+  // Memoize — prevents refetch storm on every render.
+  const { weekFrom, weekTo } = useMemo(() => ({ weekFrom: format(subDays(new Date(), 6), 'yyyy-MM-dd'), weekTo: format(new Date(), 'yyyy-MM-dd') }), [])
   const dailyQuery = useDailyMetrics({ from: weekFrom, to: weekTo, mode: 'week' })
-  const dailyData = dailyQuery.data ?? []  // ?? [] — empty array is a valid render; see Pattern 3 empty-fixture contract
-
-  // Story 92.5: parallel 24h pipeline window — independent state machine.
+  const dailyData = dailyQuery.data ?? []  // ?? [] — empty array is valid; see Pattern 3 empty-fixture contract
   const { pipelineFrom, pipelineTo } = useMemo(() => { /* same memoization pattern */ }, [])
   const pipelineQuery = usePipelineGrid({ from: pipelineFrom, to: pipelineTo, resolution: 'day' })
-
-  const hasData = !!data
-  const showSkeleton = isLoading && !hasData
-  const showFullError = isError && !isLoading && !hasData  // belt-and-braces: no flicker during retry
-
+  const hasData = !!data; const showSkeleton = isLoading && !hasData; const showFullError = isError && !isLoading && !hasData
+  if (showSkeleton) return <Skeleton />
+  if (showFullError) return <Alert>{/* error alert with retry */}</Alert>
+  if (!hasData) return null
   return (
     <>
-      {showSkeleton ? <Skeleton /* props */ /> : showFullError ? <Alert variant="destructive" /* props */ /> : hasData ? (
-        <>
-          {/* Primary blocks — render when hasData */}
-          <MonitorKpiCards kpi={data.kpi} />
-          <MonitorMetricsTable periods={data.periods} />
-          {/* Supplementary widget — independent 3-branch: skeleton / error / data */}
-          {dailyQuery.isLoading && !dailyQuery.data && <Skeleton /* props */ />}
-          {dailyQuery.isError  && !dailyQuery.data && <ErrorChip /* props */ onRetry={dailyQuery.refetch} />}
-          {dailyQuery.data && <MonitorWeeklyChart data={dailyData} />}
-          {/* Story 92.5: pipeline — same 3-branch pattern */}
-          {pipelineQuery.data && <MonitorPipelineHealth pipelines={pipelineQuery.data.pipelines} />}
-        </>
-      ) : null}
+      {/* Primary blocks — render when hasData */}
+      <MonitorKpiCards kpi={data.kpi} />
+      <MonitorMetricsTable periods={data.periods} />
+      {/* Supplementary — independent 3-branch: skeleton / error / data */}
+      {dailyQuery.isLoading && !dailyQuery.data && <Skeleton />}
+      {dailyQuery.isError  && !dailyQuery.data && <RetryButton onClick={dailyQuery.refetch} />}
+      {dailyQuery.data && <MonitorWeeklyChart data={dailyData} />}
+      {pipelineQuery.data && <MonitorPipelineHealth pipelines={pipelineQuery.data.pipelines} />}
     </>
   )
 }
@@ -569,7 +558,7 @@ const { data: pipeline } = usePipelineGrid(/* params */)
 if (!summary || !pipeline) return <ErrorPage />  // one failure kills the whole page
 ```
 
-**Cross-reference**: Story 92.4-FE (introduced pattern), Story 92.5-FE (copy with buyout gauge + pipeline), Story 92.6-FE (E2E coverage of graceful degradation per hook).
+**Cross-reference.** Story 92.4-FE (introduced pattern), Story 92.5-FE (copy with buyout gauge + pipeline), Story 92.6-FE (E2E coverage of graceful degradation per hook).
 
 **Testing requirement**: E2E coverage MUST include graceful-degradation paths (primary success + supplementary failure, and vice versa). See `e2e/monitor.spec.ts` Error states describe block for canonical examples.
 
@@ -589,7 +578,7 @@ Recharts lowers dev cost for complex interactive charts but raises test cost: js
 
 **When you MUST use recharts** — pre-plan the jsdom mock strategy in the test file setup before writing the component. See Story 92.4-FE's retro for the `LineChart`/`Line`/`XAxis` mock template. Do not discover the mock requirement at test-writing time.
 
-**Cross-reference**: Story 92.4-FE (recharts jsdom pain diagnosis), Story 92.5-FE (raw SVG chosen to avoid it).
+**Cross-reference.** Story 92.4-FE (recharts jsdom pain diagnosis), Story 92.5-FE (raw SVG chosen to avoid it).
 
 ---
 
@@ -621,7 +610,7 @@ export function emptyDailyMetrics(): DailyMetrics[]         { return [] }
 4. E2E fixture wrapper at `e2e/fixtures/<domain>-fixtures.ts` with `page.route` handlers (if E2E spec is planned)
 5. At least one unit test in the first downstream test file imports from the shared-fixture module — proves the wiring before the module accumulates consumers
 
-**Cross-reference**: Story 92.6-FE (retroactive extraction that motivated this rule), Epic 92 retro AI #5. Fixtures should consume the normalized types produced by the `### Boundary Normalizer Pattern` — never raw backend shapes.
+**Cross-reference.** Story 92.6-FE (retroactive extraction that motivated this rule), Epic 92 retro AI #5 (shared-fixture module should be seeded in Story 1 of any new-domain epic, not retroactively). Fixtures should consume the normalized types produced by the `### Boundary Normalizer Pattern` — never raw backend shapes.
 
 **Testing requirement**: the shared-fixture module MUST have ≥1 test consuming it in the first downstream test file (proves the wiring). Without this, regressions slip silently into fixture factories.
 
@@ -635,15 +624,16 @@ export function emptyDailyMetrics(): DailyMetrics[]         { return [] }
 
 - **Story 92.4-FE H-3 structural fix** — spec listed 3 chart lines sourced from `DailyMetrics.salesCount` / `DailyMetrics.returnsCount`. Those fields didn't exist on the `DailyMetrics` type (`src/types/daily-metrics.ts`) **at spec-handoff time** (they were added later as the H-3 structural fix). The primary dev silently adapted to 2 chart lines; review caught the structural drift and flagged it as a hard review issue → required upstream type extension + aggregation change to restore the intended 3-line chart. Had the spec author grepped `src/types/daily-metrics.ts` for `salesCount` / `returnsCount` before handoff, the structural work would have been scoped into Story 92.4-FE upfront and the review round-trip avoided.
 
-- **Epic 91-FE Story 91.2-FE ghost field** — spec added `operatingProfit: number` to `FinanceDailyResponseItem` based on "backend already sends it." Grep for `operatingProfit` across `src/types/` = 0 call sites. Review caught it; field removed with an explanatory comment linking to the backend ticket.
+- **Epic 91-FE Story 91.2-FE sent-but-not-consumed field** — spec added `operatingProfit: number` to `FinanceDailyResponseItem` (`src/lib/api/daily-analytics/api.ts:48`) on the premise that "backend already sends it since Epics 89-91." The field exists in multiple consumer locations (`src/types/daily-metrics.ts`, `src/components/custom/sku-financials/`), but no consumer actually mapped it in the PR. Review caught it; field kept with a comment documenting "received but unmapped" status. Grep-for-new-field-USAGE (not existence) is the discipline: `grep -rn 'operatingProfit' src/components/ src/hooks/` would have shown no NEW consumer in the PR diff.
 
 **Handoff checklist** (run before marking `ready-for-dev`):
 1. For every `<filename>.ts:<field>` citation in the spec, run `grep -n '<field>' <filename>.ts`.
 2. Confirm: field exists, type matches spec's assumption, nullability matches spec's handling (`number | null` vs `number` — see `### Known Anti-Patterns` #8 for why nullability mismatches bite).
 3. If any confirmation fails, fix the spec or file a structural-work task BEFORE handoff — do not leave discovery to the executor.
 4. Cite the grep results in the spec's "Pre-flight" section so the executor knows verification happened.
+5. For new field ADDITIONS, also grep consumer directories (`src/components/`, `src/hooks/`) for planned usage — no consumers = candidate sent-but-not-consumed duplication.
 
-**Cross-reference**: Story 92.4-FE retro H-3, Epic 91-FE retro "What Didn't Go Well" #2, Story 93.3-FE (spec-grep surfaced that 2 of 3 target sites were already documented → downscoped the story before a single line of code was written — the rule working in the positive direction).
+**Cross-reference.** Story 92.4-FE retro H-3 (spec cited chart lines sourced from `DailyMetrics.salesCount`/`returnsCount`, which didn't exist at handoff time; caught in review as a structural fix requiring upstream type extension + aggregation change), Epic 91-FE retro "What Didn't Go Well" #2, Story 93.3-FE (spec-grep surfaced that 2 of 3 target sites were already documented → downscoped the story before a single line of code was written — the rule working in the positive direction).
 
 ---
 
