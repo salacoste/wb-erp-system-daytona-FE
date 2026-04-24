@@ -13,6 +13,11 @@
  * Weekly chart (Story 92.4) runs a SEPARATE hook call (useDailyMetrics) in parallel.
  * Pipeline health (Story 92.5) runs a SEPARATE hook call (usePipelineGrid) in parallel.
  * Both are decoupled — KPI cards + metrics table remain visible if either fails.
+ *
+ * Auto-refresh cadences (do NOT change without coordinating backend TTLs):
+ * - useMonitorSummary   → 5 min  (backend caches 10 min; refresh < TTL so cards stay warm)
+ * - useDailyMetrics     → tanstack-query default (staleTime 60s per global QueryClient)
+ * - usePipelineGrid     → 30s current-period / 120s historical (smart per use-pipeline-grid.ts:14-16)
  */
 
 'use client'

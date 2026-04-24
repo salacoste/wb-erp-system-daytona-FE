@@ -14,6 +14,11 @@ import type { UseQueryResult } from '@tanstack/react-query'
 import type { MonitorSummaryResponse, MonitorKpi } from '../../types/monitor-summary'
 import type { PipelineHealthGrid } from '@/app/(dashboard)/monitoring/types/monitoring'
 import type { DailyMetrics } from '@/types/daily-metrics'
+import {
+  emptyPipelineGrid,
+  emptyMonitorSummary,
+  emptyDailyMetrics,
+} from '@/test/fixtures/monitor-empty'
 
 // Mock hooks before component import (hoisting requirement)
 const mockUseMonitorSummary = vi.fn()
@@ -152,13 +157,61 @@ describe('MonitorPageContent', () => {
     expect(screen.queryByText('Всего артикулов')).not.toBeInTheDocument()
   })
 
+  // Story 92.6-FE AC-7: orchestrator empty-success path — all hooks return success+empty
+  it('renders all 5 blocks gracefully when every hook returns empty success', () => {
+    // M-8 fix: shared fixture factories replace ~40 lines of inline shape construction.
+    // emptyMonitorSummary / emptyPipelineGrid / emptyDailyMetrics live in
+    // src/test/fixtures/monitor-empty.ts — single source of truth for both unit + E2E tests.
+    mockUseMonitorSummary.mockReturnValue({
+      data: emptyMonitorSummary(),
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    } as unknown as UseQueryResult<MonitorSummaryResponse>)
+
+    // data=[] is truthy so the chart branch fires (not skeleton/error) → "Нет данных" state
+    mockUseDailyMetrics.mockReturnValue({
+      data: emptyDailyMetrics(),
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    } as unknown as UseQueryResult<DailyMetrics[]>)
+
+    // H-4 fix + M-8 fix: full PipelineHealthGrid shape from shared fixture (no `as unknown as`)
+    mockUsePipelineGrid.mockReturnValue({
+      data: emptyPipelineGrid(),
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    } as unknown as UseQueryResult<PipelineHealthGrid>)
+
+    renderWithProviders(<MonitorPageContent />)
+
+    // All 5 block testids must be in the document — no crash, no error alert
+    expect(screen.getByTestId('monitor-page')).toBeInTheDocument()
+    expect(screen.getByTestId('table-metrics-4-periods')).toBeInTheDocument()
+    expect(screen.getByTestId('monitor-weekly-chart')).toBeInTheDocument()
+    expect(screen.getByTestId('monitor-buyout-gauge')).toBeInTheDocument()
+    expect(screen.getByTestId('monitor-pipeline-health')).toBeInTheDocument()
+
+    // No error alerts — empty success is not an error state
+    expect(screen.queryByText(/Не удалось загрузить/i)).not.toBeInTheDocument()
+
+    // Chart shows empty-state message (data=[])
+    expect(screen.getByText('Нет данных за последние 7 дней')).toBeInTheDocument()
+
+    // Pipeline shows all-healthy message (pipelines=[])
+    expect(screen.getByText('Все пайплайны работают исправно')).toBeInTheDocument()
+  })
+
   // H-5 review fix: verify gauge + pipeline panel render when all hooks succeed
   it('renders gauge and pipeline panel when monitor-summary and pipeline hooks both succeed', () => {
     mockSuccess(baseResponse)
 
     // Pipeline hook returns success with empty pipelines array
+    // H-4 fix: full PipelineHealthGrid shape from shared fixture (no `as unknown as` shortcut)
     mockUsePipelineGrid.mockReturnValue({
-      data: { pipelines: [], generatedAt: '2026-04-24T10:00:00Z' } as unknown as PipelineHealthGrid,
+      data: emptyPipelineGrid(),
       isLoading: false,
       isError: false,
       refetch: vi.fn(),
