@@ -92,7 +92,8 @@ function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
     )
   }
 
-  // Gate >= 0.01 mirrors PipelineStatusGrid.tsx:108
+  // Gate on >= 1% to avoid showing "0%" badge for tiny fractional error rates.
+  // @see Story 91.3-FE — threshold origin; mirrors PipelineStatusGrid.tsx (keep in sync).
   const hasErrors = errorRate >= 0.01
 
   return (

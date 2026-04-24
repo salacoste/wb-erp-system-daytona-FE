@@ -130,6 +130,7 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
     // Story 91.2-FE: prefer finance-sourced advertising_spend when it's > 0 (real data from backend).
     // advertising_spend=0 in old responses means "field absent, not zero ad spend" — fall back to separate API.
     // advertising_spend > 0 always means real data (independent of net_profit nullability).
+    // @see Story 91.2-FE — advertising_spend field-absent-vs-zero ambiguity; backend ticket docs/request-backend/144-ISSUE-1-ADVERTISING-SPEND-DISCREPANCY.md.
     const financeAd = finance?.advertising_spend ?? 0
     const effectiveAdvertising = financeAd > 0 ? financeAd : advertising
 

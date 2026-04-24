@@ -91,7 +91,8 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
   const label = STATUS_LABELS[status]
   const colorClass = STATUS_COLORS[status]
   const rate = Math.round(successRate24h * 100)
-  // Gate on >= 1% to avoid showing "0%" badge for tiny error rates (e.g., 0.004 → rounds to 0)
+  // Gate on >= 1% to avoid showing "0%" badge for tiny error rates (e.g., 0.004 → rounds to 0).
+  // @see Story 91.3-FE — errorRate threshold origin (review-time cutoff for tiny fractional rates).
   const hasErrors = errorRate >= 0.01
 
   return (
