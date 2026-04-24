@@ -116,6 +116,7 @@ export const ROUTES = {
   login: '/login',
   register: '/register',
   dashboard: '/dashboard',
+  monitor: '/monitor', // Epic 92-FE
   onboarding: {
     cabinet: '/cabinet', // (onboarding)/cabinet/page.tsx
     token: '/wb-token', // (onboarding)/wb-token/page.tsx

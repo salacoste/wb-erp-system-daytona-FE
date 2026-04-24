@@ -164,6 +164,9 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
     paidAcceptance: 0,
     commission: 0,
     theoreticalProfit: 0,
+    // Story 92.4 H-3 fix: counts, 0 is legitimate (anti-pattern #8 — not nullable)
+    salesCount: 0,
+    returnsCount: 0,
   }
 
   return data.reduce(
