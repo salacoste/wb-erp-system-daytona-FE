@@ -13,10 +13,12 @@ import type {
   AggregateDailyMetricsInput,
 } from '@/types/daily-metrics'
 import { getDayOfWeek } from './day-utils'
+import { compareServerClientProfit, logDiscrepancy } from './server-client-discrepancy'
 
 /**
  * @deprecated Story 91.2-FE: Use server netProfit instead. Kept for fallback calc.
  * Extracted from daily-metrics.ts to keep that file under 200 lines.
+ * @see Story 93.2-FE — src/lib/daily/server-client-discrepancy.ts
  */
 export interface TheoreticalProfitInput {
   sales: number
@@ -34,7 +36,9 @@ export interface TheoreticalProfitInput {
  *
  * @deprecated Story 91.2-FE: Use server `netProfit` from GET /v1/analytics/daily/finance instead.
  * Kept as fallback for: (a) cached pre-rollout responses, (b) null netProfit when COGS unknown.
- * Remove once backend netProfit is verified stable in production.
+ * Remove after Story 93.2-FE's discrepancy telemetry confirms zero beyondThreshold
+ * events across a representative production window. Decision tracked in Epic 93-FE retro.
+ * @see Story 93.2-FE — src/lib/daily/server-client-discrepancy.ts
  *
  * Formula: sales - salesCogs - advertising - logistics - storage - penalties - paidAcceptance - commission
  *
@@ -144,24 +148,34 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
       paidAcceptance: finance?.paid_acceptance ?? 0,
       commission: finance?.commission ?? 0,
       theoreticalProfit: 0,
+      // Story 92.4 H-3: integer counts from FinanceDailyData, carried for the Monitor weekly chart.
+      // Counts default to 0 when backend omits — 0 is a legitimate count (no sales/returns that day).
+      salesCount: finance?.sales_count ?? 0,
+      returnsCount: finance?.returns_count ?? 0,
     }
 
-    // Story 91.2-FE: server-first profit — use backend's netProfit when available,
-    // fall back to client-side calc for null netProfit or cached pre-rollout responses
+    // Story 93.2-FE: both values computed when possible, server wins, divergence logged.
+    // Replaces Story 91.2-FE's server-first-only branch.
+    // @see Story 93.2-FE — src/lib/daily/server-client-discrepancy.ts
     const serverNetProfit = finance?.net_profit
+    const clientValue = calculateDailyTheoreticalProfit({
+      sales: metrics.sales,
+      salesCogs: metrics.salesCogs,
+      advertising: metrics.advertising,
+      logistics: metrics.logistics,
+      storage: metrics.storage,
+      penalties: metrics.penalties,
+      paidAcceptance: metrics.paidAcceptance,
+      commission: metrics.commission,
+    })
+
     if (serverNetProfit != null) {
+      // Server wins — but log divergence for removal-decision telemetry.
+      const d = compareServerClientProfit(metrics.date, serverNetProfit, clientValue)
+      logDiscrepancy(d)
       metrics.theoreticalProfit = serverNetProfit
     } else {
-      metrics.theoreticalProfit = calculateDailyTheoreticalProfit({
-        sales: metrics.sales,
-        salesCogs: metrics.salesCogs,
-        advertising: metrics.advertising,
-        logistics: metrics.logistics,
-        storage: metrics.storage,
-        penalties: metrics.penalties,
-        paidAcceptance: metrics.paidAcceptance,
-        commission: metrics.commission,
-      })
+      metrics.theoreticalProfit = clientValue
     }
 
     result.push(metrics)
