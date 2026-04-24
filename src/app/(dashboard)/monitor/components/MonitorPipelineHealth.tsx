@@ -8,8 +8,8 @@
  *   Empty state — All healthy: green checkmark + confirmation message
  *
  * Pure presenter — caller owns loading/error states and passes GridPipeline[].
- * Reuses STATUS_COLORS/STATUS_LABELS from monitor-pipeline-utils (mirrored from
- * PipelineStatusGrid.tsx — keep in sync on status model changes).
+ * Reuses STATUS_COLORS/STATUS_LABELS re-exported from ./monitor-pipeline-utils
+ * (originating in @/lib/monitoring-constants per Story 93.1).
  *
  * Error-rate gate: >= 0.01 to match PipelineStatusGrid.tsx:108 precedent.
  */

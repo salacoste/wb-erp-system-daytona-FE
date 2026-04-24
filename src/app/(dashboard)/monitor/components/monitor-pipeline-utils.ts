@@ -2,13 +2,10 @@
  * Monitor Pipeline Utilities — Epic 92-FE Story 92.5
  * Helpers for Block 4 (Buyout Gauge) and Block 5 (Pipeline Health).
  *
- * STATUS_COLORS / STATUS_LABELS mirror PipelineStatusGrid.tsx:30-44 from
- * src/app/(dashboard)/monitoring/components/PipelineStatusGrid.tsx.
- * // Mirrors PipelineStatusGrid.tsx — keep in sync; extract to shared module
- * // in a later refactor if this drifts with status model changes.
+ * STATUS_COLORS/STATUS_LABELS re-exported from @/lib/monitoring-constants (Story 93.1 extraction).
  */
 
-import type { GridPipeline, PipelineStatus } from '@/app/(dashboard)/monitoring/types/monitoring'
+import type { GridPipeline } from '@/app/(dashboard)/monitoring/types/monitoring'
 
 // ---------------------------------------------------------------------------
 // Block 4: Buyout Gauge helpers
@@ -78,23 +75,7 @@ export function formatRelativeTime(isoDate: string | null): string {
 }
 
 // ---------------------------------------------------------------------------
-// Status display constants — mirrored from PipelineStatusGrid.tsx:30-44
-// Mirrors PipelineStatusGrid.tsx — keep in sync; extract to shared module
-// in a later refactor if this drifts with status model changes.
+// Status display constants — re-exported from @/lib/monitoring-constants (Story 93.1)
 // ---------------------------------------------------------------------------
 
-export const STATUS_COLORS: Record<PipelineStatus, string> = {
-  healthy: 'bg-green-500 text-white',
-  warning: 'bg-yellow-500 text-white',
-  critical: 'bg-red-500 text-white',
-  stale: 'bg-gray-500 text-white',
-  no_data: 'bg-gray-300 text-gray-700',
-}
-
-export const STATUS_LABELS: Record<PipelineStatus, string> = {
-  healthy: '✓ Работает',
-  warning: '⚠ Задержка',
-  critical: '✕ Критично',
-  stale: '◷ Устарело',
-  no_data: '— Нет данных',
-}
+export { STATUS_COLORS, STATUS_LABELS } from '@/lib/monitoring-constants'

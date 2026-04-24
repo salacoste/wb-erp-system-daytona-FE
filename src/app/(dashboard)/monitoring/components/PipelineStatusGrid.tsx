@@ -2,6 +2,7 @@
  * PipelineStatusGrid — Grid of 11 pipeline cards grouped by category
  * Epic 68-FE (Story 68.2)
  * Pattern: Categorized grid with status badges, accessible text+icon labels
+ * @see Story 93.1-FE — STATUS_COLORS/STATUS_LABELS extracted to @/lib/monitoring-constants
  */
 
 'use client'
@@ -12,7 +13,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { DashboardPipeline, PipelineCategory, PipelineStatus } from '../types/monitoring'
+import { STATUS_COLORS, STATUS_LABELS } from '@/lib/monitoring-constants'
+import type { DashboardPipeline, PipelineCategory } from '../types/monitoring'
 
 interface PipelineStatusGridProps {
   pipelines: DashboardPipeline[] | undefined
@@ -25,22 +27,6 @@ const STATUS_ORDER: Record<string, number> = {
   stale: 2,
   healthy: 3,
   no_data: 4,
-}
-
-const STATUS_COLORS: Record<PipelineStatus, string> = {
-  healthy: 'bg-green-500 text-white',
-  warning: 'bg-yellow-500 text-white',
-  critical: 'bg-red-500 text-white',
-  stale: 'bg-gray-500 text-white',
-  no_data: 'bg-gray-300 text-gray-700',
-}
-
-const STATUS_LABELS: Record<PipelineStatus, string> = {
-  healthy: '✓ Работает',
-  warning: '⚠ Задержка',
-  critical: '✕ Критично',
-  stale: '◷ Устарело',
-  no_data: '— Нет данных',
 }
 
 const CATEGORY_TITLES: Record<PipelineCategory, string> = {
