@@ -219,7 +219,7 @@ The same caveat applies to `npm run check:docs -- --update-baseline` — prefer
 | 12 | src/hooks-v1/use-search-analytics.ts:44-54 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:239 | file not found (hooks-v1 legacy) |
 | 13 | src/types/search-analytics.ts:87-120 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:240 | line 120 > file has 118 lines |
 
-**Related.** `### Known Anti-Patterns` (immediately below) for citation hygiene in code review; `### Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)` (below) § Pattern 4 for spec-grep discipline at story-author handoff time — the same "search before assuming" habit applied to source citations.
+**Related.** `### Accepted Baselines` (immediately below) — per-gate baseline state for type-check, lint, test, and check:docs. `### Known Anti-Patterns` (below) for citation hygiene in code review; `### Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)` (below) § Pattern 4 for spec-grep discipline at story-author handoff time — the same "search before assuming" habit applied to source citations.
 
 ### Accepted Baselines
 
@@ -227,10 +227,10 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 | Quality gate | Command | Baseline | Source / location |
 |---|---|---|---|
-| Doc citations | `bash scripts/check-doc-citations.sh` | 13 broken | `scripts/.check-docs-baseline.txt` (auto-validated, Story 94.1-FE) |
-| TypeScript | `npm run type-check` | 20 errors, all in `src/lib/api/advertising-analytics-api.ts` | manual baseline (this section); root cause: destructuring `{}` cast workaround from Story 91-era SDK type drift |
-| ESLint | `npm run lint` | 0 errors, 0 warnings | clean — any output is a regression |
-| Vitest | `npm test -- --run` | 7000 passing, 676 skipped, 0 failed | as of Epic 93 close + Story 94.1 |
+| Doc citations | `bash scripts/check-doc-citations.sh` | 13 broken | Source: `scripts/.check-docs-baseline.txt` (auto-validated, Story 94.1-FE). |
+| TypeScript | `npm run type-check` | 20 errors, all in `src/lib/api/advertising-analytics-api.ts` | Source: this section (manual). Provenance: Story 91-era SDK type-drift workaround (destructuring `{}` cast). |
+| ESLint | `npm run lint` | 0 errors, 0 warnings | Source: this section (manual). Notes: any error or warning is a regression. |
+| Vitest | `npm test -- --run` | ≥ 7000 passing, 676 skipped, 0 failed (floor — see drift rule) | Source: this section (manual). Provenance: as of Epic 93 close + Story 94.1. |
 
 **Drift discipline (manual for type-check / lint / test; automated for check:docs).** Each story closes only when EVERY quality gate's output matches its documented baseline. Comparison rules per gate:
 
@@ -241,7 +241,7 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 **When to update.** When a story legitimately changes a baseline (e.g., the SDK drift is fixed → 20 type errors drop to 0; a new story adds 12 valid tests → 7000 passing becomes 7012), update this section in the same PR. Treat the section like Story 93.5's 13-citation table: source-of-truth (may temporarily lag reality between gate-affecting commits).
 
-**Related.** `### Doc-citation validation (above)` — the automated counterpart for one of these gates. `### Known Anti-Patterns` (below) — citation-hygiene context for the citation-tracking gate.
+**Related.** `### Doc-citation validation` (above) — the automated counterpart for one of these gates. `### Known Anti-Patterns` (below) — citation-hygiene context for the citation-tracking gate.
 
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
