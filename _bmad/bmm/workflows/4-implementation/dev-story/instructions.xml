@@ -336,6 +336,7 @@
       - End-to-end tests for critical flows added when story demands them
       - All tests pass (no regressions, new tests successful)
       - Code quality checks pass (linting, static analysis if configured)
+      - Two adversarial code-review passes completed in fresh contexts; ALL findings (1st pass + 2nd pass) fixed before commit. Single-pass review is insufficient — see Story 94.3-FE for empirical case studies (Stories 93.4 / 94.1 / 94.2 each shipped 2nd-pass-found findings as post-merge follow-up commits).
       - File List includes every new/modified/deleted file (relative paths)
       - Dev Agent Record contains implementation notes
       - Change Log includes summary of changes
@@ -368,6 +369,8 @@
     <action if="regression failures exist">HALT - Fix regression issues before completing</action>
     <action if="File List is incomplete">HALT - Update File List with all changed files</action>
     <action if="definition-of-done validation fails">HALT - Address DoD failures before completing</action>
+    <action>BEFORE flipping Status to done: confirm TWO adversarial code-review passes have run in fresh contexts. Evaluation recipe: count `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-headings under the story's Dev Agent Record (1st-pass and 2nd-pass each produce one). Required: at least TWO such sub-headings. If only one exists, HALT and run code-review workflow a second time in a fresh context. The two passes find different defect classes (1st = structural/correctness; 2nd = narrative/factual/style drift). See Story 94.3-FE.</action>
+    <action if="fewer than 2 review-fix sub-headings present">HALT - Run code-review workflow a second time in a fresh context before flipping Status to done. See Story 94.3-FE.</action>
   </step>
 
   <step n="10" goal="Completion communication and user support">

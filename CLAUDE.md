@@ -243,6 +243,16 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 **Related.** `### Doc-citation validation` (above) — the automated counterpart for one of these gates. `### Known Anti-Patterns` (below) — citation-hygiene context for the citation-tracking gate.
 
+### Two-pass review discipline
+
+**Rule (Story 94.3-FE).** Every story closes only after TWO adversarial code-review passes in fresh contexts — once for the initial review, once in a new context for the second adversarial pass. **Both passes complete BEFORE flipping `Status: review → done` AND BEFORE any commit.** First pass typically catches structural/correctness defects; second pass typically catches narrative/factual/style drift. The two passes find DIFFERENT defect classes; neither replaces the other.
+
+**Empirical evidence + enforcement.** Stories 93.4 / 94.1 / 94.2 each shipped 2nd-pass-found findings as POST-MERGE follow-up commits when the 2nd pass happened after-not-before commit. The follow-up commits resolved real attestation-class defects. The `dev-story` workflow Step 9 has a HALT condition for single-pass commits; the `code-review` workflow at `_bmad/bmm/workflows/4-implementation/code-review/instructions.xml` has a top-level `<critical>` mandate to run at-least-twice per story. Both are LLM-interpreted at run-time.
+
+**Marker convention.** Each review pass produces one `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading under the story file's Dev Agent Record (e.g., `### Post-1st-pass-review fixes (2026-04-25)`, `### Post-2nd-pass-review fixes (2026-04-25)`). Two such sub-headings is the structural marker that both passes ran. **For human reviewers**: when reviewing a PR labelled `review`, verify the story file's Dev Agent Record contains TWO of these sub-headings before approving. If only one exists, request a 2nd-pass review.
+
+**Related.** `### Accepted Baselines` (above) — quality-gate baselines per gate. `### Doc-citation validation` (above) — automated counterpart for the citation gate.
+
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
 These patterns were repeatedly hit across recent stories. Each one is a known footgun — recognize them on sight and refuse to write or merge them.
