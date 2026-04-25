@@ -149,6 +149,55 @@ Story 87.3-FE found backend occasionally returning `price < salePrice` (field in
 - **Boundary Normalizer Pattern** — the shape-drift flavor: normalize at the boundary, preserve null, never paper over mismatches.
 - **`PENDING BACKEND:` convention** — anomaly-indicator code should always carry a `// PENDING BACKEND: request #NNN` comment so the indicator and the ticket stay linked.
 
+### Doc-citation validation (`npm run check:docs`)
+
+**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE — scans `CLAUDE.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Self-test mode: `bash scripts/check-doc-citations.sh --self-test`. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself (6 self-tests).
+
+**How to read the output.** Canonical structure (exit 1 on broken, 0 on clean):
+
+```
+Scanned: CLAUDE.md, docs, _bmad-output, backlog/docs, backlog/tasks
+Total citations: <N>
+Broken: <M>
+FAIL: <M> broken citation(s).      # or: OK: all citations resolve.
+```
+
+`Total` is a point-in-time count — not a diff between runs. `Broken` is the subset that failed to resolve. Per-broken-citation detail is emitted **before** the summary block — read from the top to find each offending citation, its location, and its reason.
+
+The validator does NOT diff across runs. Delta-awareness is a manual baseline-read exercise until a dedicated automation story (tracked as Action Item AI-1 in Story 93.5-FE).
+
+> **Demonstrative bad-citation exclusions.** When a story's own spec needs to embed citation
+> examples (e.g., a 13-row baseline table or a doc-link validator's own self-test
+> documentation), add the spec file to `scripts/check-doc-citations.sh` EXCLUDE_PATHS rather
+> than trying to escape the citations with backtick wrappers (which doesn't work — see the
+> script's CITATION_REGEX header comment). Precedents in the EXCLUDE_PATHS list are
+> Story 89-3-FE and Story 93-5-FE.
+
+**Accepted baseline: 13 broken citations** (the count, not the date, is the gate; update this section's table when the count drifts). All 13 are pre-existing historical references in already-shipped docs/stories. Rewriting the historical docs would require re-opening closed stories — not actionable. Citations in the table below are plain text (no backticks) so the validator does not re-scan them.
+
+| # | Citation (plain text — no backticks to prevent re-scan) | Cited in | Reason |
+|---|---|---|---|
+| 1 | src/hooks/useExpenses.ts:116-122 | docs/BACKEND-CHANGES-COMPATIBILITY-REPORT.md:226 | line 122 > file has 111 lines |
+| 2 | src/hooks-v1/useMarginTrends.ts:70 | docs/VALIDATION-PLAN.md:189 | file not found (hooks-v1 legacy) |
+| 3 | src/hooks/useFinancialSummary.ts:72 | docs/stories/epic-60/INTEGRATION-ACCEPTANCE-CHECKLIST.md:232 | line 72 > file has 30 lines |
+| 4 | src/components/notifications/TelegramBindingModal.tsx:216 | docs/DEV-HANDOFF-EPIC-34-FE.md:184 | line 216 > file has 95 lines |
+| 5 | src/analytics/weekly-analytics.service.ts:357-399 | docs/BUG-FIX-MARGIN-NOT-DISPLAYED.md:244 | file not found |
+| 6 | src/products/products.service.ts:210-259 | docs/BUG-FIX-MARGIN-NOT-DISPLAYED.md:307 | file not found |
+| 7 | src/products/products.service.ts:83-182 | docs/BUG-FIX-MARGIN-NOT-DISPLAYED.md:308 | file not found |
+| 8 | src/app/(dashboard)/settings/notifications/page.tsx:160 | _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:88 | line 160 > file has 144 lines |
+| 9 | src/app/(dashboard)/settings/notifications/page.tsx:160 | _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:198 | line 160 > file has 144 lines |
+| 10 | src/hooks-v1/use-search-analytics.ts:44-54 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:80 | file not found (hooks-v1 legacy) |
+| 11 | src/types/search-analytics.ts:115-120 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:81 | line 120 > file has 118 lines |
+| 12 | src/hooks-v1/use-search-analytics.ts:44-54 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:239 | file not found (hooks-v1 legacy) |
+| 13 | src/types/search-analytics.ts:87-120 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:240 | line 120 > file has 118 lines |
+
+**Drift-reading discipline** (manual; automation is follow-up Story AI-1):
+- `Broken === 13` → no new drift from this story → proceed.
+- `Broken > 13` → new broken citation introduced. Compare the per-broken list against the baseline table rows 1–13 to identify the entry not in the table. Fix (update the cited line range or remove the citation) before closing the story.
+- `Broken < 13` → something in the baseline was resolved (file restored, line range became valid). Rare. Update this section's table in the PR that resolved it.
+
+**Related.** `### Known Anti-Patterns` (immediately below) for citation hygiene in code review; `### Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)` (below) § Pattern 4 for spec-grep discipline at story-author handoff time — the same "search before assuming" habit applied to source citations.
+
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
 These patterns were repeatedly hit across recent stories. Each one is a known footgun — recognize them on sight and refuse to write or merge them.

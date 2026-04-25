@@ -28,10 +28,11 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 #   `src/foo.tsx:42-55`
 #   `src/app/(dashboard)/foo.ts:1-10`
 # ------------------------------------------------------------------------------
-# Known scope limitation (M-1 review fix): citations inside DOUBLE backticks
-# (``src/foo.ts:42``) or fenced ```code blocks``` are NOT matched. Canonical
-# style uses single backticks; double-backtick cites can be promoted to
-# single-backtick if needed or converted to plain quotes.
+# Citation scope: any single-backtick `src/...` substring is matched, INCLUDING
+# substrings embedded inside double-backtick wrappers (``src/foo.ts:42`` is
+# matched as the inner `src/foo.ts:42`). Fenced ``` code blocks ``` are
+# similarly matched. To exclude demonstrative bad citations from validation,
+# add the file to EXCLUDE_PATHS below — DO NOT rely on backtick wrapping.
 CITATION_REGEX='`src/[A-Za-z0-9_/()\.\-]+\.(ts|tsx|js|jsx):[0-9]+(-[0-9]+)?`'
 
 # ------------------------------------------------------------------------------
@@ -56,6 +57,8 @@ SCAN_PATHS=(
 EXCLUDE_PATHS=(
   "docs/request-backend"
   "_bmad-output/implementation-artifacts/89-3-fe-doc-link-validator-script.md"
+  # 93-5-fe-*: this story's spec embeds the 13-citation baseline table by design (mirrors 89-3 precedent).
+  "_bmad-output/implementation-artifacts/93-5-fe-check-docs-signal-quality-investigation.md"
 )
 
 # ------------------------------------------------------------------------------
