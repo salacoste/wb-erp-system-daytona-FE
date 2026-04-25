@@ -151,7 +151,7 @@ Story 87.3-FE found backend occasionally returning `price < salePrice` (field in
 
 ### Doc-citation validation (`npm run check:docs`)
 
-**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE — scans `CLAUDE.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Self-test mode: `bash scripts/check-doc-citations.sh --self-test`. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself (6 self-tests).
+**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE — scans `CLAUDE.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Self-test mode: `bash scripts/check-doc-citations.sh --self-test`. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself (11 self-tests as of Story 94.1-FE).
 
 **How to read the output.** Canonical structure (exit 1 on broken, 0 on clean):
 
@@ -164,7 +164,29 @@ FAIL: <M> broken citation(s).      # or: OK: all citations resolve.
 
 `Total` is a point-in-time count — not a diff between runs. `Broken` is the subset that failed to resolve. Per-broken-citation detail is emitted **before** the summary block — read from the top to find each offending citation, its location, and its reason.
 
-The validator does NOT diff across runs. Delta-awareness is a manual baseline-read exercise until a dedicated automation story (tracked as Action Item AI-1 in Story 93.5-FE).
+**Drift discipline (automated since Story 94.1-FE).** The validator now compares
+broken citations against `scripts/.check-docs-baseline.txt` and exits 0 only on
+exact match. Mismatch emits explicit `NEW broken citations (N)` and `RESOLVED
+broken citations (M)` enumeration so you immediately see what changed. **Read
+the exit code, not the count** — the count is always reported but no longer the
+gate.
+
+**Updating the baseline.** When legitimate citation churn lands (e.g., a story
+restores a previously-missing file or removes a stale doc), run
+`bash scripts/check-doc-citations.sh --update-baseline` to regenerate
+`scripts/.check-docs-baseline.txt` with the new accepted state. Commit the
+updated baseline file alongside the story's other changes. **Note**: invoke via
+bash directly, not `npm run check:docs -- --update-baseline` — see exit-code
+caveat below.
+
+**Exit-code caveat (H-2 review fix).** Bash pipes capture only the LAST
+command's exit code by default — `npm run check:docs | tail -10` returns 0 even
+if the validator returned 1. To check the gate reliably:
+- Run bare: `npm run check:docs` (no pipe).
+- Or pipefail-aware: `set -o pipefail; npm run check:docs | tail -10`.
+- Or invoke the script directly: `bash scripts/check-doc-citations.sh`.
+The same caveat applies to `npm run check:docs -- --update-baseline` — prefer
+`bash scripts/check-doc-citations.sh --update-baseline` for the flag invocation.
 
 > **Demonstrative bad-citation exclusions.** When a story's own spec needs to embed citation
 > examples (e.g., a 13-row baseline table or a doc-link validator's own self-test
@@ -173,7 +195,11 @@ The validator does NOT diff across runs. Delta-awareness is a manual baseline-re
 > script's CITATION_REGEX header comment). Precedents in the EXCLUDE_PATHS list are
 > Story 89-3-FE and Story 93-5-FE.
 
-**Accepted baseline: 13 broken citations** (the count, not the date, is the gate; update this section's table when the count drifts). All 13 are pre-existing historical references in already-shipped docs/stories. Rewriting the historical docs would require re-opening closed stories — not actionable. Citations in the table below are plain text (no backticks) so the validator does not re-scan them.
+**Accepted baseline: 13 broken citations.** All 13 are pre-existing historical references in already-shipped docs/stories. Rewriting the historical docs would require re-opening closed stories — not actionable. Citations in the table below are plain text (no backticks) so the validator does not re-scan them.
+
+> **Source of truth**: `scripts/.check-docs-baseline.txt`. The table below is
+> a snapshot for reading convenience and may lag after baseline updates. Run
+> `cat scripts/.check-docs-baseline.txt` for the current authoritative list.
 
 | # | Citation (plain text — no backticks to prevent re-scan) | Cited in | Reason |
 |---|---|---|---|
@@ -190,11 +216,6 @@ The validator does NOT diff across runs. Delta-awareness is a manual baseline-re
 | 11 | src/types/search-analytics.ts:115-120 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:81 | line 120 > file has 118 lines |
 | 12 | src/hooks-v1/use-search-analytics.ts:44-54 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:239 | file not found (hooks-v1 legacy) |
 | 13 | src/types/search-analytics.ts:87-120 | _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:240 | line 120 > file has 118 lines |
-
-**Drift-reading discipline** (manual; automation is follow-up Story AI-1):
-- `Broken === 13` → no new drift from this story → proceed.
-- `Broken > 13` → new broken citation introduced. Compare the per-broken list against the baseline table rows 1–13 to identify the entry not in the table. Fix (update the cited line range or remove the citation) before closing the story.
-- `Broken < 13` → something in the baseline was resolved (file restored, line range became valid). Rare. Update this section's table in the PR that resolved it.
 
 **Related.** `### Known Anti-Patterns` (immediately below) for citation hygiene in code review; `### Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)` (below) § Pattern 4 for spec-grep discipline at story-author handoff time — the same "search before assuming" habit applied to source citations.
 
