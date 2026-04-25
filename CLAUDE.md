@@ -251,6 +251,8 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 **Marker convention.** Each review pass produces one `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading under the story file's Dev Agent Record (e.g., `### Post-1st-pass-review fixes (2026-04-25)`, `### Post-2nd-pass-review fixes (2026-04-25)`). Two such sub-headings is the structural marker that both passes ran. **For human reviewers**: when reviewing a PR labelled `review`, verify the story file's Dev Agent Record contains TWO of these sub-headings before approving. If only one exists, request a 2nd-pass review.
 
+**Story Change Log Lessons (Story 94.4-FE).** Every story's final Change Log row (flipping `Status: review → done`) must include a `**Lessons:**` sub-line with **1-3 single-sentence pattern observations**, each **≤120 chars**, specific to that story (not generic). Format: `**Lessons:** (1) <pattern>. (2) <pattern>. (3) <pattern>.`. Reference Story-NN.M-FE markers where natural. **For human reviewers**: verify the final row has `**Lessons:**` (each ≤120 chars, max 3) before approving. Earlier rows (creation, intermediate fixes, post-Nth-pass-review blocks) DO NOT require Lessons. Full template at `_bmad/bmm/workflows/4-implementation/create-story/template.md` § Change Log.
+
 **Related.** `### Accepted Baselines` (above) — quality-gate baselines per gate. `### Doc-citation validation` (above) — automated counterpart for the citation gate.
 
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)

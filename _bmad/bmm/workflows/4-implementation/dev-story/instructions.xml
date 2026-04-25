@@ -325,6 +325,7 @@
     <action>Run the full regression suite (do not skip)</action>
     <action>Confirm File List includes every changed file</action>
     <action>Execute enhanced definition-of-done validation</action>
+    <action>Append a final Change Log row capturing 1-3 Lessons (patterns this story exposed). Format: `| YYYY-MM-DD | Implementation complete. &lt;summary&gt;. **Lessons:** (1) &lt;pattern&gt;. (2) &lt;pattern&gt;. (3) &lt;pattern&gt;. Status: review → done. |`. Lessons MUST be specific to THIS story's patterns — not generic advice. Reference Story-NN.M-FE markers where possible. See Story 94.4-FE for convention origin.</action>
     <action>Update the story Status to: "review"</action>
 
     <!-- Enhanced Definition of Done Validation -->
@@ -369,6 +370,7 @@
     <action if="regression failures exist">HALT - Fix regression issues before completing</action>
     <action if="File List is incomplete">HALT - Update File List with all changed files</action>
     <action if="definition-of-done validation fails">HALT - Address DoD failures before completing</action>
+    <action if="final Change Log row missing Lessons sub-line">HALT - Add a `**Lessons:**` sub-line capturing 1-3 patterns this story exposed (≤120 chars each, max 3 total) before flipping Status to done. See Story 94.4-FE for convention.</action>
     <action>BEFORE flipping Status to done: confirm TWO adversarial code-review passes have run in fresh contexts. Evaluation recipe: count `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-headings under the story's Dev Agent Record (1st-pass and 2nd-pass each produce one). Required: at least TWO such sub-headings. If only one exists, HALT and run code-review workflow a second time in a fresh context. The two passes find different defect classes (1st = structural/correctness; 2nd = narrative/factual/style drift). See Story 94.3-FE.</action>
     <action if="fewer than 2 review-fix sub-headings present">HALT - Run code-review workflow a second time in a fresh context before flipping Status to done. See Story 94.3-FE.</action>
   </step>
