@@ -151,7 +151,7 @@ Story 87.3-FE found backend occasionally returning `price < salePrice` (field in
 
 ### Doc-citation validation (`npm run check:docs`)
 
-**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE — scans `CLAUDE.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Self-test mode: `bash scripts/check-doc-citations.sh --self-test`. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself (11 self-tests as of Story 94.1-FE).
+**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE — scans `CLAUDE.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself.
 
 **How to read the output.** Canonical structure (exit 1 on broken, 0 on clean):
 
@@ -179,9 +179,11 @@ updated baseline file alongside the story's other changes. **Note**: invoke via
 bash directly, not `npm run check:docs -- --update-baseline` — see exit-code
 caveat below.
 
-**Exit-code caveat (H-2 review fix).** Bash pipes capture only the LAST
-command's exit code by default — `npm run check:docs | tail -10` returns 0 even
-if the validator returned 1. To check the gate reliably:
+**Exit-code caveat (H-2 review fix).** Bash pipes — any pipe, whether
+through `npm run`-wrapped or invoked bare — capture only the LAST command's
+exit code by default. So `npm run check:docs | tail -10` returns 0 even if
+the validator returned 1; the bug is the pipe, not the npm wrapper. To check
+the gate reliably:
 - Run bare: `npm run check:docs` (no pipe).
 - Or pipefail-aware: `set -o pipefail; npm run check:docs | tail -10`.
 - Or invoke the script directly: `bash scripts/check-doc-citations.sh`.

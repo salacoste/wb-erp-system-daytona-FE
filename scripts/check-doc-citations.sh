@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Doc-Link Validator — Story 89.3-FE
+# Doc-Link Validator — Stories 89.3-FE (origin), 94.1-FE (baseline tracking)
 #
 # Scans CLAUDE.md + docs/ + _bmad-output/ + backlog/ for backtick-wrapped source
 # citations of the form `src/path/to/file.ts:N` or `src/path/to/file.ts:N-M`
@@ -148,13 +148,15 @@ EOF
 
 # ------------------------------------------------------------------------------
 # collect_broken_entries — shared citation-scanning helper (H-3 review fix).
-#   Expects: cwd already set to repo root, existing_paths array populated.
+#   $1     = "verbose" to emit [BROKEN] detail blocks to stdout; "" for silent.
+#   $2..   = existing scan paths (positional args — L-NEW-1 fix: was dynamic scope).
 #   Populates globals: BROKEN_ENTRIES (array), TOTAL_CITATIONS, BROKEN_COUNT.
 #   The caller is responsible for any printing of [BROKEN] detail lines.
-#   $1 = "verbose" to emit [BROKEN] detail blocks to stdout; "" for silent.
 # ------------------------------------------------------------------------------
 collect_broken_entries() {
   local verbose="${1:-}"
+  shift
+  local existing_paths=("$@")
 
   TOTAL_CITATIONS=0
   BROKEN_COUNT=0
@@ -271,7 +273,7 @@ run_validator() {
   fi
 
   # Collect broken entries with verbose [BROKEN] output (H-3: shared helper).
-  collect_broken_entries "verbose"
+  collect_broken_entries "verbose" "${existing_paths[@]}"
 
   if [[ "$TOTAL_CITATIONS" -eq 0 ]]; then
     # Format as comma-separated globs to match AC-2 spec output (L-2 review fix).
@@ -322,7 +324,7 @@ run_update_baseline() {
   done
 
   # Collect broken entries silently (H-3: shared helper eliminates duplication).
-  collect_broken_entries ""
+  collect_broken_entries "" "${existing_paths[@]}"
 
   # Load existing baseline for comparison summary.
   local old_baseline_sorted=""
@@ -581,12 +583,13 @@ EOF
 # test10 baseline
 src/fake/gone1.ts:42 | file not found
 EOF
-  # Temporarily override BASELINE_FILE for update logic.
-  local orig_baseline="$BASELINE_FILE"
-  BASELINE_FILE="$t10_scratch/scripts/.check-docs-baseline.txt"
+  # Subshell isolates BASELINE_FILE override; outer state unaffected by errors inside (L-NEW-2 fix).
   local t10_out t10_exit
   set +e
-  t10_out=$(run_update_baseline "$t10_scratch" 2>&1)
+  t10_out=$(
+    BASELINE_FILE="$t10_scratch/scripts/.check-docs-baseline.txt"
+    run_update_baseline "$t10_scratch" 2>&1
+  )
   t10_exit=$?
   set -e
   # Count non-comment, non-blank lines in updated baseline (L-3: awk over grep -c).
@@ -605,7 +608,6 @@ EOF
     echo "     output: $t10_out"
     fail=$((fail + 1))
   fi
-  BASELINE_FILE="$orig_baseline"
   rm -rf "$t10_scratch"
 
   # ---------------------------------------------------------------------------
