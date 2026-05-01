@@ -83,7 +83,8 @@ function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
   const label = STATUS_LABELS[status]
 
   // AC-9: defensive guard — errorRate > 1 is impossible per backend spec (proportion 0–1).
-  // PENDING BACKEND: request #167 — pipeline errorRate out of range (> 1)
+  // Backend resolved in Request #167 (commit c9ba2187, 2026-04-30) — server now clamps
+  // errorRate to [0, 1]. Defensive guard kept per CLAUDE.md § Defensive Frontend Principle.
   const isErrorRateOutOfRange = errorRate > 1
   if (isErrorRateOutOfRange) {
     console.warn(

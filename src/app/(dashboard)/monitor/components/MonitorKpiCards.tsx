@@ -29,8 +29,9 @@ export function MonitorKpiCards({ kpi }: MonitorKpiCardsProps) {
   // Guard-capture pattern (CLAUDE.md anti-pattern #2): detect anomaly without ! assertion.
   const safeTotal = kpi.totalProducts
   const safeWithCogs = kpi.productsWithCogs
-  // PENDING BACKEND: filing request if productsWithCogs > totalProducts recurs —
-  // this indicates a data integrity issue on the WB side or backend aggregation bug.
+  // Backend resolved via INNER JOIN fix (Story 105.3, commit 9f4817a2, 2026-04-30) —
+  // productsWithCogs is now guaranteed ≤ totalProducts. Defensive guard kept per
+  // CLAUDE.md § Defensive Frontend Principle.
   const hasCogsAnomaly = safeWithCogs > safeTotal
 
   return (
