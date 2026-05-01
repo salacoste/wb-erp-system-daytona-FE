@@ -84,9 +84,11 @@ If output is non-empty: backend bug confirmed.
 
 ## Resolution
 
-- [ ] Backend team confirms `errorRate` is always in `[0, 1]` (or identifies the bug)
-- [ ] Backend-side validation/clamping deployed
-- [ ] Frontend anomaly indicator can remain (harmless when not triggered) or be removed after confirmed fix
+- [x] Backend team confirms `errorRate` is always in `[0, 1]` (or identifies the bug) — confirmed 2026-04-30 in backend status report.
+- [x] Backend-side validation/clamping deployed — backend commit `c9ba2187 fix(monitoring): clamp pipeline errorRate to [0, 1] range (Request #167)`.
+- [x] Frontend anomaly indicator KEPT per CLAUDE.md § Defensive Frontend Principle (Story 89.4-FE) — defense-in-depth even after backend fix. Story 95.1-FE removed the `PENDING BACKEND` marker at `MonitorPipelineHealth.tsx:86` while preserving the `isErrorRateOutOfRange` guard + AlertTriangle render.
+
+**Closed 2026-04-30** — backend commit `c9ba2187`. Frontend Story 95.1-FE coordinated removal of the `PENDING BACKEND` marker at `MonitorPipelineHealth.tsx:86`; defensive guard retained per CLAUDE.md § Defensive Frontend Principle.
 
 ---
 

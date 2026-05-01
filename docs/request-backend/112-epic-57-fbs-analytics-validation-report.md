@@ -517,3 +517,14 @@ GET /v1/analytics/orders/enhanced
 **Validator**: Claude Code (Documentation Validator Agent)
 **Validation Date**: 2026-01-30
 **Task ID**: #22
+
+---
+
+## Resolution
+
+- [x] **Closed 2026-04-30** as outdated per backend status report.
+- [x] Backend confirmed: REST API endpoints existed all along; this validation report flagged a documentation/discoverability gap, not a missing implementation. Endpoints documented in `docs/API-PATHS-REFERENCE.md` (parent repo).
+- [x] No frontend artifact to clean (this was a backend implementation-validation report, not a frontend-blocking ticket).
+- [x] Document retained as historical artifact (Epic 57-era validation methodology reference).
+
+**Note**: This report's "Critical Finding: Missing REST API Layer" was based on incomplete information at the 2026-01-30 validation date. Backend's 2026-04-30 status report confirmed the endpoints existed and the gap was in documentation discoverability, not implementation.

@@ -52,3 +52,14 @@ When `return_classifications` has records but `wb_finance_raw` does not, adjust 
 ## Frontend Status
 
 Frontend displays data correctly from both APIs. No frontend changes needed — this is a backend data reconciliation issue.
+
+---
+
+## Resolution
+
+- [x] **Partial closure 2026-04-30** per backend status report.
+- [x] Backend confirmed: WB Returns API is not exposed in the WB SDK; this is an EXTERNAL blocker (Wildberries platform constraint), not a backend implementation gap.
+- [ ] Full data reconciliation pending: requires either (a) WB SDK to expose Returns API, OR (b) alternative data source for return classification.
+- [x] Frontend status (above) unchanged — frontend displays data correctly from both APIs.
+
+**Status**: PARTIAL — closed for backend-side action; remains pending on WB platform/SDK external evolution.

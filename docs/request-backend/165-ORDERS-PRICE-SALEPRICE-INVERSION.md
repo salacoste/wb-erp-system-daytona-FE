@@ -87,10 +87,12 @@ Expected output (current state):
 
 ## Resolution
 
-- [ ] Backend team confirms root cause
-- [ ] Writer sanity check deployed
-- [ ] Backfill completed for affected orders
-- [ ] Frontend mitigation can be removed (optional — icon is harmless when no rows trigger the threshold)
+- [x] Backend team confirms root cause — confirmed 2026-04-30 in backend status report.
+- [x] Writer sanity check deployed — backend confirmed in 2026-04-30 status report (no specific commit hash provided).
+- [ ] Backfill completed for affected orders — not explicitly confirmed in 2026-04-30 status report; pending verification.
+- [ ] Frontend mitigation NOT removed — kept per CLAUDE.md § Defensive Frontend Principle (Story 89.4-FE). Indicator at `OrdersTableRow.tsx` is defense-in-depth; harmless when no rows trigger.
+
+**Closed 2026-04-30** — backend marked closed in status report (no specific commit hash provided; backend writer sanity check deployed). Frontend mitigation retained per CLAUDE.md § Defensive Frontend Principle. Backfill confirmation pending.
 
 ---
 
