@@ -20,11 +20,29 @@ const baseCosts = {
   penalties: 0.5,
   other_deductions: 1,
   advertising: 3,
+  delivery_to_warehouse: null, // Story 96.4-FE: nullable typing
 }
 
 function makeUeResponse(items: Partial<UnitEconomicsResponse['data'][0]>[]): UnitEconomicsResponse {
   return {
-    meta: { week: '2026-W10', cabinet_id: 'c1', view_by: 'sku', generated_at: '' },
+    meta: {
+      week: '2026-W10',
+      cabinet_id: 'c1',
+      view_by: 'sku',
+      generated_at: '',
+      cost_category_order: [
+        'cogs',
+        'delivery_to_warehouse',
+        'commission',
+        'logistics_delivery',
+        'logistics_return',
+        'storage',
+        'paid_acceptance',
+        'penalties',
+        'other_deductions',
+        'advertising',
+      ],
+    },
     summary: {
       total_revenue: 1000,
       total_net_profit: 100,

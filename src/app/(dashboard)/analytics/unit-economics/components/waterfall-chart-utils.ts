@@ -35,7 +35,16 @@ export const WATERFALL_COLORS = {
   loss: '#F44336', // Red - negative outcome
 }
 
-/** Cost categories configuration for waterfall chart bars */
+/**
+ * Cost categories configuration for waterfall chart bars.
+ * Indexed by `key` for runtime lookup of label + color when ordering is
+ * driven externally (e.g., by `meta.cost_category_order` from backend).
+ *
+ * The array order below is the FALLBACK order — used only when the backend
+ * does not provide `cost_category_order` in the response meta. Real ordering
+ * for production cabinets comes from the backend (per request-backend/173 § F4)
+ * via `transformToWaterfallData(..., categoryOrder)`. Story 96.3-FE.
+ */
 const COST_CATEGORIES = [
   { key: 'cogs', label: 'COGS', color: WATERFALL_COLORS.cogs },
   { key: 'commission', label: 'Комиссия', color: WATERFALL_COLORS.commission },
@@ -53,15 +62,30 @@ const COST_CATEGORIES = [
   { key: 'advertising', label: 'Реклама', color: WATERFALL_COLORS.advertising },
 ]
 
+/** Lookup table: category key → { label, color }. Built from COST_CATEGORIES. */
+const COST_CATEGORY_BY_KEY: Record<string, { label: string; color: string }> = Object.fromEntries(
+  COST_CATEGORIES.map(c => [c.key, { label: c.label, color: c.color }])
+)
+
 /**
  * Transform revenue + cost data into waterfall chart data points.
  * Revenue bar starts at 100%, each cost deducts from the running total,
  * and the final bar shows remaining profit/loss.
+ *
+ * @param revenue - Total revenue (RUB) for the period.
+ * @param costsPct - Cost percentages by category key.
+ * @param costsRub - Cost absolute values (RUB) by category key.
+ * @param categoryOrder - Optional ordered list of category keys driving bar
+ *   sequence. When absent or empty, falls back to the hardcoded `COST_CATEGORIES`
+ *   order with a `console.warn` (per CLAUDE.md `### Defensive Frontend Principle`,
+ *   making backend regressions visible to dev-tools watchers without breaking UX).
+ *   Story 96.3-FE.
  */
 export function transformToWaterfallData(
   revenue: number,
   costsPct: Record<string, number>,
-  costsRub: Record<string, number>
+  costsRub: Record<string, number>,
+  categoryOrder?: string[]
 ): WaterfallChartDataPoint[] {
   const dataPoints: WaterfallChartDataPoint[] = []
   let runningTotal = 100 // Start at 100%
@@ -79,10 +103,30 @@ export function transformToWaterfallData(
     absoluteValue: revenue,
   })
 
-  // Cost categories (deductions)
-  for (const cat of COST_CATEGORIES) {
-    const pct = costsPct[cat.key] || 0
-    const rub = costsRub[cat.key] || 0
+  // Resolve effective ordering: backend-driven if provided + non-empty, else fallback.
+  // Defensive: backend may rename or omit the field on regression — preserve UX,
+  // surface in dev tools via console.warn (per CLAUDE.md ### Defensive Frontend Principle).
+  let effectiveOrder: string[]
+  if (categoryOrder && categoryOrder.length > 0) {
+    effectiveOrder = categoryOrder
+  } else {
+    effectiveOrder = COST_CATEGORIES.map(c => c.key)
+    console.warn(
+      '[unit-economics] meta.cost_category_order missing — using hardcoded fallback order. Backend response may be malformed.'
+    )
+  }
+
+  // Cost categories (deductions) — iterate in effectiveOrder, look up label+color by key.
+  for (const key of effectiveOrder) {
+    const cat = COST_CATEGORY_BY_KEY[key]
+    if (!cat) {
+      // Backend introduced a category the frontend doesn't know how to render — skip.
+      // (Not a defect; backwards-compatible additive changes from backend should not break UX.)
+      continue
+    }
+
+    const pct = costsPct[key] || 0
+    const rub = costsRub[key] || 0
 
     if (pct > 0.5) {
       // Only show if > 0.5%

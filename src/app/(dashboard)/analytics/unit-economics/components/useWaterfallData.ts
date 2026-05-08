@@ -20,6 +20,12 @@ interface UseWaterfallDataParams {
   data: UnitEconomicsItem[]
   summary: UnitEconomicsSummary
   selectedSku?: string
+  /**
+   * Cost-category ordering driven by backend `meta.cost_category_order`.
+   * When absent or empty, `transformToWaterfallData` falls back to the
+   * hardcoded order with `console.warn` (Story 96.3-FE).
+   */
+  categoryOrder?: string[]
 }
 
 interface UseWaterfallDataResult {
@@ -67,6 +73,8 @@ export function aggregatePortfolioCosts(
       totalLogisticsDelivery += item.costs_pct.logistics_delivery * weight
       totalLogisticsReturn += item.costs_pct.logistics_return * weight
       totalStorage += item.costs_pct.storage * weight
+      // aggregation seed — null treated as 0 for weighted-average computation, intentional
+      // per CLAUDE.md anti-pattern #8 ("Counts/aggregator seeds — 0 is legitimate"). Story 96.4-FE.
       totalDeliveryToWarehouse += (item.costs_pct.delivery_to_warehouse ?? 0) * weight
       totalPaidAcceptance += item.costs_pct.paid_acceptance * weight
       totalPenalties += item.costs_pct.penalties * weight
@@ -103,6 +111,7 @@ export function useWaterfallData({
   data,
   summary,
   selectedSku,
+  categoryOrder,
 }: UseWaterfallDataParams): UseWaterfallDataResult {
   const selectedItem = useMemo(() => {
     if (selectedSku) {
@@ -116,13 +125,14 @@ export function useWaterfallData({
       return transformToWaterfallData(
         selectedItem.revenue,
         selectedItem.costs_pct as unknown as Record<string, number>,
-        selectedItem.costs_rub as unknown as Record<string, number>
+        selectedItem.costs_rub as unknown as Record<string, number>,
+        categoryOrder
       )
     }
 
     const { costsPct, costsRub } = aggregatePortfolioCosts(data, summary)
-    return transformToWaterfallData(summary.total_revenue, costsPct, costsRub)
-  }, [data, summary, selectedItem])
+    return transformToWaterfallData(summary.total_revenue, costsPct, costsRub, categoryOrder)
+  }, [data, summary, selectedItem, categoryOrder])
 
   const legendItems = useMemo(() => {
     const items = waterfallData

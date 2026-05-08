@@ -109,12 +109,13 @@ export default function UnitEconomicsPage() {
         deliverySkuCount={deliverySkuCount}
       />
 
-      {/* Waterfall Chart (Story 5.3) */}
+      {/* Waterfall Chart (Story 5.3); backend-driven order via meta.cost_category_order (Story 96.3-FE) */}
       <UnitEconomicsWaterfall
         data={data.data}
         summary={data.summary}
         selectedSku={selectedSku}
         onSelectSku={setSelectedSku}
+        categoryOrder={data.meta.cost_category_order}
       />
 
       {/* Data Table */}

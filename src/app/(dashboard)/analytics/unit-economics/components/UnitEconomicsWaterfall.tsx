@@ -38,6 +38,12 @@ interface UnitEconomicsWaterfallProps {
   summary: UnitEconomicsSummary
   selectedSku?: string
   onSelectSku?: (skuId: string | undefined) => void
+  /**
+   * Backend-driven cost-category ordering from `response.meta.cost_category_order`.
+   * Threaded through to `transformToWaterfallData`. When absent, hook falls back
+   * to hardcoded order with `console.warn` (Story 96.3-FE).
+   */
+  categoryOrder?: string[]
 }
 
 export function UnitEconomicsWaterfall({
@@ -45,6 +51,7 @@ export function UnitEconomicsWaterfall({
   summary,
   selectedSku,
   onSelectSku,
+  categoryOrder,
 }: UnitEconomicsWaterfallProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -52,6 +59,7 @@ export function UnitEconomicsWaterfall({
     data,
     summary,
     selectedSku,
+    categoryOrder,
   })
 
   // Chart title
