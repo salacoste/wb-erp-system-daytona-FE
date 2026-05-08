@@ -14,6 +14,7 @@ const baseCosts = {
   penalties: 0.5,
   other_deductions: 1,
   advertising: 3,
+  delivery_to_warehouse: null, // Story 96.4-FE: nullable typing
 }
 
 function makeItem(overrides: Partial<UnitEconomicsItem> = {}): UnitEconomicsItem {

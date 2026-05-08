@@ -12,7 +12,7 @@ import {
 } from '@/lib/unit-economics-utils'
 
 describe('delivery_to_warehouse type extensions', () => {
-  it('CostsPct accepts delivery_to_warehouse as optional', () => {
+  it('CostsPct accepts delivery_to_warehouse as a number value (post Story 96.4-FE: required nullable, not optional)', () => {
     const withDelivery: CostsPct = {
       cogs: 30,
       commission: 10,
@@ -28,8 +28,8 @@ describe('delivery_to_warehouse type extensions', () => {
     expect(withDelivery.delivery_to_warehouse).toBe(4.2)
   })
 
-  it('CostsPct works without delivery_to_warehouse', () => {
-    const without: CostsPct = {
+  it('CostsPct accepts null delivery_to_warehouse (Story 96.4-FE: nullable, not optional)', () => {
+    const withNullDelivery: CostsPct = {
       cogs: 30,
       commission: 10,
       logistics_delivery: 8,
@@ -39,11 +39,12 @@ describe('delivery_to_warehouse type extensions', () => {
       penalties: 0.5,
       other_deductions: 1,
       advertising: 3,
+      delivery_to_warehouse: null,
     }
-    expect(without.delivery_to_warehouse).toBeUndefined()
+    expect(withNullDelivery.delivery_to_warehouse).toBeNull()
   })
 
-  it('CostsRub accepts delivery_to_warehouse as optional', () => {
+  it('CostsRub accepts delivery_to_warehouse as a number value (post Story 96.4-FE: required nullable, not optional)', () => {
     const withDelivery: CostsRub = {
       cogs: 300,
       commission: 100,
@@ -108,6 +109,7 @@ describe('transformToWaterfallData with delivery_to_warehouse', () => {
     penalties: 0.5,
     other_deductions: 1,
     advertising: 3,
+    delivery_to_warehouse: null, // Story 96.4-FE: nullable typing
   }
   const baseCostsRub: CostsRub = {
     cogs: 300,
@@ -119,6 +121,7 @@ describe('transformToWaterfallData with delivery_to_warehouse', () => {
     penalties: 5,
     other_deductions: 10,
     advertising: 30,
+    delivery_to_warehouse: null, // Story 96.4-FE: nullable typing
   }
 
   it('includes delivery_to_warehouse bar when present and > 0', () => {
