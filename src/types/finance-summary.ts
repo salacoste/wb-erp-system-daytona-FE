@@ -2,9 +2,13 @@
  * Finance Summary Types
  * Story 60.4-FE: Connect Dashboard to Period State
  * Epic 66-FE: Added TaxMetrics interface (Story 66.1)
+ * Story 96.1-FE: tax_system tightened from `string | null` to `TaxSystem | null`
+ *               for compile-time enum enforcement (request-backend/173 § F1).
  *
  * Types for weekly financial summary data from backend API.
  */
+
+import type { TaxSystem } from './cabinet'
 
 /**
  * Tax + VAT metrics from backend (Epic 72 + Task-50).
@@ -15,7 +19,12 @@ export interface TaxMetrics {
   tax_amount: number | null
   tax_base: number | null
   effective_tax_rate: number | null
-  tax_system: string | null // 'usn6' | 'usn15' | 'manual'
+  /**
+   * Income tax system. See {@link TaxSystem} from cabinet.ts.
+   * Backend confirms `'usn6' | 'usn15' | 'manual'` per request-backend/173 § F1.
+   * Hardened from loose `string | null` to typed union in Story 96.1-FE.
+   */
+  tax_system: TaxSystem | null
   is_minimum_rule: boolean
   net_profit_after_tax: number | null
 
@@ -70,8 +79,19 @@ export interface FinanceSummary {
   loyalty_points_withheld?: number // Удержание баллов лояльности (legacy)
   loyalty_compensation_total?: number // Компенсация лояльности - from summary_total
   loyalty_compensation?: number // Компенсация лояльности - from summary_rus/eaeu (legacy)
-  acquiring_fee_total?: number // Эквайринг - from summary_total
+  acquiring_fee_total?: number // Эквайринг - from summary_total (legacy Epic 26-era)
   acquiring_fee?: number // Эквайринг - from summary_rus/eaeu (legacy)
+  /**
+   * Acquiring cost (4th expense slice). Per request-backend/169 § 2.1 — new canonical field
+   * added by Epic 101. Coexists with legacy `acquiring_fee_total`/`acquiring_fee` until backend
+   * deprecates them. `null` = no acquiring data available (graceful degradation).
+   *
+   * Backend uses the SAME field name `acquiring_total` across summary_total, summary_rus, and
+   * summary_eaeu scopes (verified empirically 2026-05-08). No `_total` / `_combined` variant —
+   * unlike `retail_price_total` which has a separate `retail_price_total_combined` for
+   * summary_total scope.
+   */
+  acquiring_total?: number | null
   commission_sales_total?: number // Комиссия продаж - from summary_total
   commission_sales?: number // Комиссия продаж - from summary_rus/eaeu (legacy)
   other_adjustments_net_total?: number // Прочие корректировки - from summary_total
@@ -96,7 +116,22 @@ export interface FinanceSummary {
   wb_returns_gross?: number
 
   // Request #58: Retail Price Total
+  /**
+   * Sum of YOUR catalog prices BEFORE WB discounts (per-region scope: summary_rus / summary_eaeu).
+   * Per request-backend/169 § 2.2 — funnel-base-cost field for sales-funnel visualization
+   * (`SalesFunnelSection.tsx` first level "РРЦ"). Distinct from `sales_gross` (post-discount price).
+   * Backend NAME differs from summary_total scope, which uses `retail_price_total_combined`.
+   */
   retail_price_total?: number
+  /**
+   * ⚠️ MISNAMED — does NOT correspond to any backend field.
+   * Backend uses `retail_price_total_combined` (NOT `_total_total`) for summary_total scope —
+   * verified empirically 2026-05-08 (Story 96.7 4th-pass U-1 finding). Consumers reading this
+   * field always get `undefined`; the existing `?? summary.retail_price_total` fallback in
+   * `SalesFunnelSection.tsx` masks the bug for summary_rus/eaeu data but renders 0 for
+   * summary_total scope. Filed as Epic 97-FE candidate to rename → `retail_price_total_combined`
+   * + remove from this type.
+   */
   retail_price_total_total?: number
 
   // Request #44 / Story 25.2: COGS Section

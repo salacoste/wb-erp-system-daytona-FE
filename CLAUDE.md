@@ -230,14 +230,14 @@ Each story closes only when EVERY quality gate's output matches its documented b
 | Doc citations | `bash scripts/check-doc-citations.sh` | 13 broken | Source: `scripts/.check-docs-baseline.txt` (auto-validated, Story 94.1-FE). |
 | TypeScript | `npm run type-check` | 20 errors, all in `src/lib/api/advertising-analytics-api.ts` | Source: this section (manual). Provenance: Story 91-era SDK type-drift workaround (destructuring `{}` cast). |
 | ESLint | `npm run lint` | 0 errors, 0 warnings | Source: this section (manual). Notes: any error or warning is a regression. |
-| Vitest | `npm test -- --run` | ≥ 7000 passing, 676 skipped, 0 failed (floor — see drift rule) | Source: this section (manual). Provenance: as of Epic 93 close + Story 94.1. |
+| Vitest | `npm test -- --run` | ≥ 7019 passing, 676 skipped, 0 failed (floor — see drift rule) | Source: this section (manual). Provenance: as of Epic 93 close + Story 94.1; ratcheted +2 by Story 96.2-FE (`view_by` type-safety tests); ratcheted +12 by Story 96.1-FE (6 `usePreliminaryTax` hook + 6 `tax-analytics` API client tests); ratcheted +5 by Story 96.3-FE (`transformToWaterfallData` categoryOrder tests). |
 
 **Drift discipline (manual for type-check / lint / test; automated for check:docs).** Each story closes only when EVERY quality gate's output matches its documented baseline. Comparison rules per gate:
 
 - **check:docs**: automated set-diff against `scripts/.check-docs-baseline.txt` (Story 94.1-FE). Exit code is the gate.
 - **type-check**: count must equal 20 AND the file scope must equal `src/lib/api/advertising-analytics-api.ts`. New errors anywhere else, or additional errors in that file beyond 20, are regressions. The 20 will drop when the SDK type drift is resolved (out of scope for now — see § "When to update").
 - **lint**: count must equal 0. Any warning OR error is a regression.
-- **test**: passing count must equal 7000 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
+- **test**: passing count must equal 7019 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
 
 **When to update.** When a story legitimately changes a baseline (e.g., the SDK drift is fixed → 20 type errors drop to 0; a new story adds 12 valid tests → 7000 passing becomes 7012), update this section in the same PR. Treat the section like Story 93.5's 13-citation table: source-of-truth (may temporarily lag reality between gate-affecting commits).
 
