@@ -86,6 +86,13 @@ export interface CabinetSummaryTotals {
   loyalty_compensation?: number | null // Компенсация лояльности
   other_adjustments?: number | null // Прочие корректировки
   commission?: number | null // Комиссия из margin_fact
+  /**
+   * WB.Promotion + Dzham costs extracted from corrections via bonus_type_name pattern matching.
+   * Distinct from `commission` (which is from `weekly_margin_fact`). Per request-backend/173 § I1.
+   * IMPORTANT: do NOT double-count against `total_commission_rub` — `commission_other` is supplemental.
+   * Nullable: `null` when cabinet has no correction-type costs for the period.
+   */
+  commission_other?: number | null
   total_expenses?: number | null // Общие операционные расходы
   operating_profit?: number | null // Операционная прибыль (может быть отрицательной!)
   operating_margin_pct?: number | null // Операционная маржа %
@@ -163,8 +170,9 @@ export interface CabinetSummaryPeriod {
 }
 
 /**
- * Full cabinet summary response from API
- * GET /v1/analytics/cabinet-summary
+ * Full cabinet summary response from API.
+ * Endpoint: `GET /v1/analytics/weekly/cabinet-summary` (path includes `weekly/`
+ * prefix per backend canonical contract — request-backend/173 § Quick Reference).
  */
 export interface CabinetSummaryResponse {
   summary: {
