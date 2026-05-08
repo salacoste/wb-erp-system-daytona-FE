@@ -9,63 +9,64 @@
  * - Error handling
  * - Query parameter handling
  * - Cache behavior
+ *
+ * Story 96.2-FE: `view_by` is now REQUIRED in UnitEconomicsQueryParams.
+ * All test fixtures now pass `view_by: 'sku'` explicitly per backend DTO at
+ * src/analytics/dto/query/unit-economics-query.dto.ts:30 (request-backend/173).
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { waitFor } from '@testing-library/react';
-import { server } from '@/mocks/server';
-import { http, HttpResponse } from 'msw';
-import {
-  useUnitEconomics,
-  unitEconomicsKeys,
-  invalidateUnitEconomics,
-} from '../useUnitEconomics';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { waitFor } from '@testing-library/react'
+import { server } from '@/mocks/server'
+import { http, HttpResponse } from 'msw'
+import { useUnitEconomics, unitEconomicsKeys, invalidateUnitEconomics } from '../useUnitEconomics'
 import {
   renderHookWithClient,
   createTestQueryClient,
   setupMockAuth,
   clearMockAuth,
-} from '@/test/test-utils';
+} from '@/test/test-utils'
 // Mock data exports available for component tests:
 // import { mockUnitEconomicsResponse, mockEmptyUnitEconomicsResponse } from '@/mocks/handlers/unit-economics';
-import type { UnitEconomicsQueryParams } from '@/types/unit-economics';
+import type { UnitEconomicsQueryParams } from '@/types/unit-economics'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
 describe('useUnitEconomics', () => {
   beforeEach(() => {
-    setupMockAuth();
-  });
+    setupMockAuth()
+  })
 
   afterEach(() => {
-    clearMockAuth();
-    vi.clearAllMocks();
-  });
+    clearMockAuth()
+    vi.clearAllMocks()
+  })
 
   describe('successful data fetching', () => {
-    it('should fetch unit economics data with required week parameter', async () => {
+    it('should fetch unit economics data with required parameters (week + view_by)', async () => {
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       // Initially loading
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.data).toBeUndefined();
+      expect(result.current.isLoading).toBe(true)
+      expect(result.current.data).toBeUndefined()
 
       // Wait for data
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+        expect(result.current.isLoading).toBe(false)
+      })
 
       // Verify data structure
-      expect(result.current.data).toBeDefined();
-      expect(result.current.data?.meta.week).toBe('2025-W50');
-      expect(result.current.data?.summary).toBeDefined();
-      expect(result.current.data?.data).toBeInstanceOf(Array);
-      expect(result.current.error).toBeNull();
-    });
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data?.meta.week).toBe('2025-W50')
+      expect(result.current.data?.summary).toBeDefined()
+      expect(result.current.data?.data).toBeInstanceOf(Array)
+      expect(result.current.error).toBeNull()
+    })
 
     it('should fetch data with all optional parameters', async () => {
       const params: UnitEconomicsQueryParams = {
@@ -74,128 +75,132 @@ describe('useUnitEconomics', () => {
         sort_by: 'net_margin_pct',
         sort_order: 'asc',
         limit: 50,
-      };
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+        expect(result.current.isLoading).toBe(false)
+      })
 
-      expect(result.current.data).toBeDefined();
-      expect(result.current.data?.meta.view_by).toBe('brand');
-    });
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data?.meta.view_by).toBe('brand')
+    })
 
     it('should handle empty data response', async () => {
       // Use special 'empty' week to trigger empty response
       const params: UnitEconomicsQueryParams = {
         week: 'empty',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+        expect(result.current.isLoading).toBe(false)
+      })
 
-      expect(result.current.data).toBeDefined();
-      expect(result.current.data?.data).toHaveLength(0);
-      expect(result.current.data?.summary.sku_count).toBe(0);
-    });
-  });
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data?.data).toHaveLength(0)
+      expect(result.current.data?.summary.sku_count).toBe(0)
+    })
+  })
 
   describe('loading states', () => {
     it('should show loading state while fetching', async () => {
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       // Check initial loading state
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.isFetching).toBe(true);
-      expect(result.current.isPending).toBe(true);
-      expect(result.current.data).toBeUndefined();
+      expect(result.current.isLoading).toBe(true)
+      expect(result.current.isFetching).toBe(true)
+      expect(result.current.isPending).toBe(true)
+      expect(result.current.data).toBeUndefined()
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-    });
+        expect(result.current.isLoading).toBe(false)
+      })
+    })
 
     it('should not fetch when week is empty', async () => {
       const params: UnitEconomicsQueryParams = {
         week: '',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       // Should not be loading (enabled: false)
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.isFetching).toBe(false);
-      expect(result.current.data).toBeUndefined();
-    });
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.isFetching).toBe(false)
+      expect(result.current.data).toBeUndefined()
+    })
 
     it('should respect enabled option', async () => {
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() =>
-        useUnitEconomics(params, { enabled: false })
-      );
+      const { result } = renderHookWithClient(() => useUnitEconomics(params, { enabled: false }))
 
       // Should not fetch when disabled
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.isFetching).toBe(false);
-      expect(result.current.data).toBeUndefined();
-    });
-  });
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.isFetching).toBe(false)
+      expect(result.current.data).toBeUndefined()
+    })
+  })
 
   describe('error handling', () => {
     it('should handle API errors', async () => {
       // Use special 'error' week to trigger error response
       const params: UnitEconomicsQueryParams = {
         week: 'error',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       // Wait for error state (may take a moment due to internal processing)
       await waitFor(
         () => {
-          expect(result.current.isError).toBe(true);
+          expect(result.current.isError).toBe(true)
         },
         { timeout: 5000 }
-      );
+      )
 
-      expect(result.current.error).toBeDefined();
-      expect(result.current.data).toBeUndefined();
-    });
+      expect(result.current.error).toBeDefined()
+      expect(result.current.data).toBeUndefined()
+    })
 
     it('should handle network errors', async () => {
       // Override handler to simulate network error
       server.use(
         http.get(`${API_BASE_URL}/v1/analytics/unit-economics`, () => {
-          return HttpResponse.error();
+          return HttpResponse.error()
         })
-      );
+      )
 
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       await waitFor(
         () => {
-          expect(result.current.isError).toBe(true);
+          expect(result.current.isError).toBe(true)
         },
         { timeout: 5000 }
-      );
+      )
 
-      expect(result.current.error).toBeDefined();
-    });
+      expect(result.current.error).toBeDefined()
+    })
 
     it('should handle validation errors (missing week)', async () => {
       // Override handler to return validation error
@@ -210,162 +215,191 @@ describe('useUnitEconomics', () => {
               },
             },
             { status: 400 }
-          );
+          )
         })
-      );
+      )
 
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50', // Will still send but handler returns error
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       await waitFor(
         () => {
-          expect(result.current.isError).toBe(true);
+          expect(result.current.isError).toBe(true)
         },
         { timeout: 5000 }
-      );
+      )
 
-      expect(result.current.error).toBeDefined();
-    });
-  });
+      expect(result.current.error).toBeDefined()
+    })
+  })
 
   describe('query keys', () => {
     it('should generate correct query keys', () => {
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
         view_by: 'sku',
-      };
+      }
 
-      const keys = unitEconomicsKeys.list(params);
+      const keys = unitEconomicsKeys.list(params)
 
-      expect(keys).toEqual(['unit-economics', 'list', params]);
-    });
+      expect(keys).toEqual(['unit-economics', 'list', params])
+    })
 
     it('should have consistent base key', () => {
-      expect(unitEconomicsKeys.all).toEqual(['unit-economics']);
-    });
-  });
+      expect(unitEconomicsKeys.all).toEqual(['unit-economics'])
+    })
+  })
 
   describe('cache behavior', () => {
     it('should cache data between renders', async () => {
-      const queryClient = createTestQueryClient();
+      const queryClient = createTestQueryClient()
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
       // First render
-      const { result, rerender } = renderHookWithClient(
-        () => useUnitEconomics(params),
-        { queryClient }
-      );
+      const { result, rerender } = renderHookWithClient(() => useUnitEconomics(params), {
+        queryClient,
+      })
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+        expect(result.current.isLoading).toBe(false)
+      })
 
-      const firstData = result.current.data;
+      const firstData = result.current.data
 
       // Rerender should use cached data
-      rerender();
+      rerender()
 
-      expect(result.current.data).toBe(firstData);
-      expect(result.current.isLoading).toBe(false);
-    });
+      expect(result.current.data).toBe(firstData)
+      expect(result.current.isLoading).toBe(false)
+    })
 
     it('should invalidate cache correctly', async () => {
-      const queryClient = createTestQueryClient();
+      const queryClient = createTestQueryClient()
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(
-        () => useUnitEconomics(params),
-        { queryClient }
-      );
+      const { result } = renderHookWithClient(() => useUnitEconomics(params), { queryClient })
 
       await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-      });
+        expect(result.current.isSuccess).toBe(true)
+      })
 
       // Verify data exists before invalidation
-      expect(result.current.data).toBeDefined();
+      expect(result.current.data).toBeDefined()
 
       // Invalidate cache - this marks queries as stale and triggers refetch
-      await invalidateUnitEconomics(queryClient);
+      await invalidateUnitEconomics(queryClient)
 
       // After invalidation, the query refetches - wait for success again
       await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-      });
+        expect(result.current.isSuccess).toBe(true)
+      })
 
       // Data should still be valid after refetch
-      expect(result.current.data?.meta.week).toBe('2025-W50');
-    });
-  });
+      expect(result.current.data?.meta.week).toBe('2025-W50')
+    })
+  })
 
   describe('refetch behavior', () => {
     it('should refetch data on manual trigger', async () => {
       const params: UnitEconomicsQueryParams = {
         week: '2025-W50',
-      };
+        view_by: 'sku',
+      }
 
-      const { result } = renderHookWithClient(() => useUnitEconomics(params));
+      const { result } = renderHookWithClient(() => useUnitEconomics(params))
 
       await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-      });
+        expect(result.current.isSuccess).toBe(true)
+      })
 
       // Trigger refetch
-      await result.current.refetch();
+      await result.current.refetch()
 
       // Data should still be present after refetch
-      expect(result.current.data).toBeDefined();
+      expect(result.current.data).toBeDefined()
       // Verify it's still valid data
-      expect(result.current.data?.meta.week).toBe('2025-W50');
-    });
-  });
+      expect(result.current.data?.meta.week).toBe('2025-W50')
+    })
+  })
 
   describe('parameter changes', () => {
     it('should refetch when week changes', async () => {
-      const queryClient = createTestQueryClient();
-      let week = '2025-W50';
+      const queryClient = createTestQueryClient()
+      let week = '2025-W50'
 
       const { result, rerender } = renderHookWithClient(
-        () => useUnitEconomics({ week }),
+        () => useUnitEconomics({ week, view_by: 'sku' }),
         { queryClient }
-      );
+      )
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+        expect(result.current.isLoading).toBe(false)
+      })
 
-      expect(result.current.data?.meta.week).toBe('2025-W50');
+      expect(result.current.data?.meta.week).toBe('2025-W50')
 
       // Change week
-      week = '2025-W49';
-      rerender();
+      week = '2025-W49'
+      rerender()
 
       await waitFor(() => {
-        expect(result.current.data?.meta.week).toBe('2025-W49');
-      });
-    });
-  });
-});
+        expect(result.current.data?.meta.week).toBe('2025-W49')
+      })
+    })
+  })
+
+  // Story 96.2-FE: type-safety hardening — view_by is REQUIRED at the type level.
+  // Compile-time test: omitting view_by must produce a TypeScript error.
+  // The @ts-expect-error directive will FAIL the build if the omission is NOT a type error,
+  // which is exactly what we want — the test guards against future regression of the
+  // `view_by?:` (optional) annotation. See Story 96.2-FE Dev Notes for rationale.
+  describe('view_by type-safety (Story 96.2-FE)', () => {
+    it('should require view_by at the TypeScript type level (compile-time check)', () => {
+      // @ts-expect-error - omitting view_by MUST be a type error per Story 96.2-FE hardening
+      const invalidParams: UnitEconomicsQueryParams = {
+        week: '2025-W50',
+        // view_by intentionally omitted — TS must reject this
+      }
+      // Runtime sanity: keep test functional. The structural check is
+      // handled by the @ts-expect-error directive at build time.
+      expect(invalidParams.week).toBe('2025-W50')
+    })
+
+    it('should accept all 4 valid view_by enum values (regression guard for UnitEconomicsViewBy)', () => {
+      // Regression guard: if a value is dropped from the UnitEconomicsViewBy union,
+      // the corresponding line below fails to compile. The runtime assertions are
+      // a secondary smoke check — the primary defect this test catches is type-level.
+      const skuParams: UnitEconomicsQueryParams = { week: '2025-W50', view_by: 'sku' }
+      const categoryParams: UnitEconomicsQueryParams = { week: '2025-W50', view_by: 'category' }
+      const brandParams: UnitEconomicsQueryParams = { week: '2025-W50', view_by: 'brand' }
+      const totalParams: UnitEconomicsQueryParams = { week: '2025-W50', view_by: 'total' }
+
+      expect(skuParams.view_by).toBe('sku')
+      expect(categoryParams.view_by).toBe('category')
+      expect(brandParams.view_by).toBe('brand')
+      expect(totalParams.view_by).toBe('total')
+    })
+  })
+})
 
 describe('unitEconomicsKeys', () => {
   it('should have correct structure', () => {
-    expect(unitEconomicsKeys.all).toEqual(['unit-economics']);
+    expect(unitEconomicsKeys.all).toEqual(['unit-economics'])
 
     const params: UnitEconomicsQueryParams = {
       week: '2025-W50',
       view_by: 'sku',
-    };
-    expect(unitEconomicsKeys.list(params)).toEqual([
-      'unit-economics',
-      'list',
-      params,
-    ]);
-  });
-});
+    }
+    expect(unitEconomicsKeys.list(params)).toEqual(['unit-economics', 'list', params])
+  })
+})

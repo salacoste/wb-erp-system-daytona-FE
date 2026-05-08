@@ -40,8 +40,13 @@ export type UnitEconomicsSortBy = 'revenue' | 'net_margin_pct' | 'cogs_pct' | 't
 export interface UnitEconomicsQueryParams {
   /** ISO week (e.g., "2025-W50") - required */
   week: string
-  /** Aggregation level */
-  view_by?: UnitEconomicsViewBy
+  /**
+   * Aggregation level. REQUIRED for full meta+summary response per backend
+   * DTO UnitEconomicsQueryDto.view_by (request-backend/173 § F3).
+   * Omitting yields partial response (no meta, no summary).
+   * Hardened from optional to required in Story 96.2-FE.
+   */
+  view_by: UnitEconomicsViewBy
   /** Sort field */
   sort_by?: UnitEconomicsSortBy
   /** Sort order */
@@ -76,8 +81,15 @@ export interface CostsPct {
   other_deductions: number
   /** Advertising % (future) */
   advertising: number
-  /** Delivery to warehouse % (seller cost, from shipment cost allocation) */
-  delivery_to_warehouse?: number
+  /**
+   * Delivery to warehouse % (seller cost, from shipment cost allocation).
+   * NULLABLE per backend request-backend/173 § F5
+   * (`null` = no confirmed shipments for this SKU/week).
+   * Hardened from optional `?: number` to nullable `: number | null`
+   * in Story 96.4-FE — `null` and `undefined` are not interchangeable
+   * (anti-pattern #8 + Defensive Frontend Principle).
+   */
+  delivery_to_warehouse: number | null
 }
 
 /**
@@ -102,8 +114,15 @@ export interface CostsRub {
   other_deductions: number
   /** Advertising ₽ */
   advertising: number
-  /** Delivery to warehouse ₽ (seller cost, from shipment cost allocation) */
-  delivery_to_warehouse?: number
+  /**
+   * Delivery to warehouse ₽ (seller cost, from shipment cost allocation).
+   * NULLABLE per backend request-backend/173 § F5
+   * (`null` = no confirmed shipments for this SKU/week).
+   * Hardened from optional `?: number` to nullable `: number | null`
+   * in Story 96.4-FE — `null` and `undefined` are not interchangeable
+   * (anti-pattern #8 + Defensive Frontend Principle).
+   */
+  delivery_to_warehouse: number | null
 }
 
 /**
@@ -182,6 +201,13 @@ export interface UnitEconomicsMeta {
   view_by: UnitEconomicsViewBy
   /** When response was generated */
   generated_at: string
+  /**
+   * Ordered list of cost-category keys driving waterfall chart ordering.
+   * Per request-backend/173 § F4. Frontend uses this array as authoritative;
+   * falls back to hardcoded order with `console.warn` if response omits the field.
+   * Added in Story 96.3-FE.
+   */
+  cost_category_order?: string[]
 }
 
 /**

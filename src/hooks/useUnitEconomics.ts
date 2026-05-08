@@ -27,13 +27,11 @@ async function fetchUnitEconomics(
 ): Promise<UnitEconomicsResponse> {
   const searchParams = new URLSearchParams()
 
-  // Required parameter
+  // Required parameters (week + view_by per backend DTO; Story 96.2-FE)
   searchParams.set('week', params.week)
+  searchParams.set('view_by', params.view_by)
 
   // Optional parameters
-  if (params.view_by) {
-    searchParams.set('view_by', params.view_by)
-  }
   if (params.sort_by) {
     searchParams.set('sort_by', params.sort_by)
   }
