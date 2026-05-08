@@ -4,6 +4,15 @@
  * Shows: other_adjustments total + WB.Promotion, Jam, Other services sub-rows.
  * Request #56: WB Services Breakdown (inside other_adjustments).
  * Extracted from DeductionsSection.tsx — pure structural refactor.
+ *
+ * Source-field cross-reference: this component reads `data.other_adjustments` (sum of
+ * all "прочие" items in `weekly_margin_fact`). The same total is also available via
+ * `data.commission_other` per request-backend/173 § I1 — backend extracts the latter
+ * from `corrections.bonus_type_name` matching (WB.Продвижение + Джем). The two sources
+ * are expected to be near-equivalent in normal operation; consumers choose
+ * `other_adjustments` for backwards-compat with Request #56-era code. Switch to
+ * `commission_other` if backend ever diverges them (e.g., when `bonus_type_name`
+ * adds new categories not reflected in `other_adjustments`).
  */
 
 'use client'
