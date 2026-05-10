@@ -47,6 +47,8 @@ CITATION_REGEX='`src/[A-Za-z0-9_/()\.\-]+\.(ts|tsx|js|jsx):[0-9]+(-[0-9]+)?`'
 # ------------------------------------------------------------------------------
 SCAN_PATHS=(
   "CLAUDE.md"
+  "CLAUDE-PATTERNS.md"
+  "CLAUDE-ANTI-PATTERNS.md"
   "docs"
   "_bmad-output"
   "backlog/docs"
