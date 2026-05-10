@@ -42,8 +42,6 @@ export function isFormEmpty(data: FormData): boolean {
 
 /**
  * Convert form data to TwoLevelPricingFormData for two-level pricing calculation
- * Story 44.XX: Added acceptance_cost for FBO acceptance fees
- * Story 44.XX: Added VAT support (is_vat_payer, vat_pct)
  */
 export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
   return {
@@ -53,14 +51,14 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
     logistics_reverse_rub: data.logistics_reverse_rub,
     buyback_pct: data.buyback_pct,
     storage_rub: data.fulfillment_type === 'FBS' ? 0 : data.storage_rub,
-    // Story 44.XX: Pass acceptance cost for FBO (0 for FBS)
+    // Acceptance cost for FBO (0 for FBS)
     acceptance_cost: data.fulfillment_type === 'FBO' ? data.acceptance_cost : 0,
     acquiring_pct: data.acquiring_pct,
     drr_pct: data.drr_pct,
     target_margin_pct: data.target_margin_pct,
     tax_rate_pct: data.tax_rate_pct,
     tax_type: data.tax_type,
-    // Story 44.XX: VAT configuration (ОСН payers)
+    // VAT configuration (ОСН payers)
     is_vat_payer: data.is_vat_payer,
     vat_pct: data.vat_pct,
     spp_pct: data.spp_pct,
@@ -68,26 +66,14 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
 }
 
 /**
- * Convert form data to PriceCalculatorRequest for API submission
- * Note: fulfillment_type is used internally for UI logic only, not sent to API
+ * Convert form data to PriceCalculatorRequest for API submission.
+ * Note: fulfillment_type is used internally for UI logic only, not sent to API.
  *
- * Story 44.37: Remove unsupported fields from API request
- * These fields are used for frontend display and calculations only.
- * Backend API (Epic 43) does not yet support these fields.
- * PENDING BACKEND: Re-enable when backend implements support
- *                  (see docs/request-backend/100-epic-44-open-issues-consolidated.md)
- *
- * Removed fields (Story 44.27 - Warehouse Integration):
- * - warehouse_id
- * - logistics_coefficient
- * - storage_coefficient
- * - delivery_date
- *
- * Removed fields (Story 44.32 - Missing Fields):
- * - weight_exceeds_25kg
- * - localization_index
- *
- * Story 44.36 removes: box_type, turnover_days
+ * Frontend-only fields excluded from API request by design (request #100 resolved):
+ * - warehouse_id, logistics_coefficient, storage_coefficient, delivery_date
+ * - weight_exceeds_25kg, localization_index
+ * - box_type, turnover_days
+ * See src/types/price-calculator.ts for @frontend-only annotations.
  */
 export function toApiRequest(data: FormData): PriceCalculatorRequest {
   const baseRequest: PriceCalculatorRequest = {
@@ -104,14 +90,7 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
     ...(data.nm_id !== undefined && { overrides: { nm_id: String(data.nm_id) } }),
   }
 
-  // Story 44.37: REMOVED - Backend does not support these fields yet
-  // Warehouse & Coefficients (Story 44.27):
-  // - warehouse_id, logistics_coefficient, storage_coefficient, delivery_date
-  // Additional fields (Story 44.32):
-  // - weight_exceeds_25kg, localization_index
-
-  // Story 44.36: REMOVED - Backend does not support these fields yet
-  // - box_type, turnover_days
+  // Frontend-only fields — computed locally, not sent to backend API.
 
   return baseRequest
 }

@@ -28,7 +28,7 @@ export interface FormData {
   tax_rate_pct: number
   tax_type: TaxType
   storage_rub: number
-  /** Story 44.XX: Whether seller is VAT payer (плательщик НДС) */
+  /** Whether seller is VAT payer (плательщик НДС) */
   is_vat_payer: boolean
   /** VAT rate percentage (0, 10, 20) - only applies if is_vat_payer */
   vat_pct: number
@@ -62,7 +62,7 @@ export interface FormData {
   turnover_days: number
   /** Story 44.38: Units per package for acceptance cost division (default: 1) */
   units_per_package: number
-  /** Story 44.XX: Calculated acceptance cost per unit (auto-filled from tariffs) */
+  /** Calculated acceptance cost per unit (auto-filled from tariffs) */
   acceptance_cost: number
   /** Story 44.50: Packaging cost per box/pallet (seller's cost before delivery to WB) */
   packaging_rub: number
@@ -94,9 +94,9 @@ export const defaultFormValues: FormData = {
   tax_rate_pct: 6,
   tax_type: 'income',
   storage_rub: 0,
-  /** Story 44.XX: Default to non-VAT payer (УСН by default) */
+  /** Default to non-VAT payer (УСН by default) */
   is_vat_payer: false,
-  /** Story 44.XX: Default VAT rate 20% (used when is_vat_payer = true) */
+  /** Default VAT rate 20% (used when is_vat_payer = true) */
   vat_pct: 20,
   acquiring_pct: 1.8,
   commission_pct: undefined,
@@ -123,7 +123,7 @@ export const defaultFormValues: FormData = {
   turnover_days: 20,
   /** Story 44.38: Units per package default (single unit) */
   units_per_package: 1,
-  /** Story 44.XX: Acceptance cost default (0 until calculated) */
+  /** Acceptance cost default (0 until calculated) */
   acceptance_cost: 0,
   /** Story 44.50: Packaging cost default (0 - optional field) */
   packaging_rub: 0,

@@ -1,6 +1,6 @@
 /**
  * Unit Tests for acceptance-cost-utils
- * Story 44.XX-FE: Acceptance Cost Calculation
+ * Acceptance Cost Calculation
  * Epic 44: Price Calculator UI (Frontend)
  *
  * Tests:

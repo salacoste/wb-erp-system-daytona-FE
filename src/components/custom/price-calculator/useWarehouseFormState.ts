@@ -21,7 +21,7 @@ import { useWarehouseHandlers } from './warehouse-form-handlers'
 /**
  * Hook for managing warehouse-related form state
  * Story 44.27-FE: Warehouse & Coefficients Integration
- * Story 44.XX: Simplified storage - dailyStorageCost for TurnoverDaysInput
+ * Simplified storage - dailyStorageCost for TurnoverDaysInput
  */
 export type { UseWarehouseFormStateProps, UseWarehouseFormStateReturn }
 
@@ -47,7 +47,6 @@ export function useWarehouseFormState({
   // Story 44.44: Sync warehouseId when initialWarehouseId changes
   useEffect(() => {
     if (initialWarehouseId && warehouseId !== initialWarehouseId) {
-      console.info('[useWarehouseFormState] Syncing warehouseId from preset:', initialWarehouseId)
       setWarehouseId(initialWarehouseId)
     }
   }, [initialWarehouseId, warehouseId])
@@ -59,14 +58,7 @@ export function useWarehouseFormState({
 
   // Story 44.40: Effective tariffs from active system (MUST be before cost calculations)
   const effectiveTariffs = useMemo(() => {
-    const result = extractTariffs(tariffSystem, selectedWarehouse, supplyTariffs)
-    console.info('[useWarehouseFormState] effectiveTariffs:', {
-      tariffSystem,
-      hasSupplyTariffs: !!supplyTariffs,
-      logisticsCoefficient: result.logisticsCoefficient,
-      source: result.source,
-    })
-    return result
+    return extractTariffs(tariffSystem, selectedWarehouse, supplyTariffs)
   }, [tariffSystem, selectedWarehouse, supplyTariffs])
 
   const dailyStorageCost = useMemo(

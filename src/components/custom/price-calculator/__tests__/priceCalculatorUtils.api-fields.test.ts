@@ -488,7 +488,7 @@ describe('API Request Snapshot', () => {
       spp_pct: 10,
       tax_rate_pct: 6,
       tax_type: 'income',
-      is_vat_payer: true, // Story 44.XX: VAT payer status
+      is_vat_payer: true, // VAT payer status
       storage_rub: 50,
       vat_pct: 20,
       acquiring_pct: 2,
@@ -507,7 +507,7 @@ describe('API Request Snapshot', () => {
       localization_index: 1.5,
       turnover_days: 45, // Should NOT be in API request
       units_per_package: 10, // Story 44.38: Should NOT be in API request
-      acceptance_cost: 5.5, // Story 44.XX: Should NOT be in API request
+      acceptance_cost: 5.5, // Should NOT be in API request
       packaging_rub: 100, // Story 44.50: Should NOT be in API request
       logistics_to_mp_rub: 500, // Story 44.50: Should NOT be in API request
     }

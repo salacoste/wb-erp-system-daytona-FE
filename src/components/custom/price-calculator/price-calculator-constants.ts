@@ -1,6 +1,6 @@
 /**
  * Constants for Price Calculator form
- * Story 44.XX: Default acceptance tariff rates, used when API fails
+ * Default acceptance tariff rates, used when API fails
  * Extracted from PriceCalculatorForm.tsx for modularity (Story 74.1)
  */
 

@@ -338,7 +338,7 @@ describe('DeliveryDatePicker', () => {
     it('handles empty coefficients array with API error', () => {
       render(<DeliveryDatePicker {...defaultProps} coefficients={[]} />)
 
-      // Story 44.XX: Empty coefficients = API error (should always return data)
+      // Empty coefficients = API error (should always return data)
       expect(screen.getByText(/API не вернул данные/i)).toBeInTheDocument()
     })
 

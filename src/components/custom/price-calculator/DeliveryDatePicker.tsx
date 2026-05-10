@@ -86,7 +86,7 @@ export function DeliveryDatePicker({
     return <DeliveryDatePickerError message={error} label={label} />
   }
 
-  // Story 44.XX: Show error when API returns no data (should always return coefficients)
+  // Show error when API returns no data (should always return coefficients)
   if (hasNoApiData) {
     return (
       <DeliveryDatePickerError

@@ -45,7 +45,7 @@ export interface CoefficientFieldProps {
   max?: number
   /** Step increment */
   step?: number
-  /** Story 44.XX: Lock field when warehouse is selected */
+  /** Lock field when warehouse is selected */
   isWarehouseLocked?: boolean
 }
 
@@ -73,7 +73,7 @@ export function CoefficientField({
 
   const canRestore = source === 'manual' && originalValue !== undefined
 
-  // Story 44.XX: Disable input when warehouse is selected and value is auto-filled
+  // Disable input when warehouse is selected and value is auto-filled
   const isLocked = isWarehouseLocked && source === 'auto'
   const effectiveDisabled = disabled || isLocked
 
@@ -124,7 +124,7 @@ export function CoefficientField({
         )}
       </div>
 
-      {/* Story 44.XX: Show warehouse coefficient source note */}
+      {/* Show warehouse coefficient source note */}
       {isLocked && (
         <p className="text-xs text-muted-foreground">
           Используются коэффициенты склада WB

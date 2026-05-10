@@ -478,7 +478,7 @@ describe('denormalizeCoefficient Extended', () => {
 // ============================================================================
 
 describe('calculateWithDefaultTariffs Extended', () => {
-  // Story 44.XX: Updated to match correct API values (46/14 instead of 48/5)
+  // Updated to match correct API values (46/14 instead of 48/5)
   it('uses default tariffs (46/14/1.0) correctly for 1L', () => {
     const result = calculateWithDefaultTariffs(1.0)
     expect(result.totalCost).toBe(46.0)
@@ -513,7 +513,7 @@ describe('calculateWithDefaultTariffs Extended', () => {
 // ============================================================================
 
 describe('DEFAULT_BOX_TARIFFS Values', () => {
-  // Story 44.XX: Updated to match correct API values (46/14 instead of 48/5)
+  // Updated to match correct API values (46/14 instead of 48/5)
   it('baseLiterRub is 46 (matches WB API)', () => {
     expect(DEFAULT_BOX_TARIFFS.baseLiterRub).toBe(46)
   })

@@ -1,6 +1,6 @@
 /**
  * Acceptance Cost Calculation Utilities
- * Story 44.XX-FE: Acceptance Cost Calculation
+ * Acceptance Cost Calculation
  * Story 44.42-FE: Updated to use BoxTypeId
  *
  * WB Paid Acceptance Formula:
