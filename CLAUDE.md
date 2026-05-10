@@ -93,70 +93,20 @@ src/
 
 ### Defensive Frontend Principle (Story 89.4-FE, from Epic 87-FE retro)
 
-**The principle:** Frontend never silently transforms data it doesn't own — it **indicates**. When an anomaly is detected in backend-sourced data, render a warning indicator, preserve the raw value, and file a backend ticket. Do NOT "fix" the display by swapping fields, coercing nulls, or clamping values — that erases evidence of the real bug.
+> **Full text**: [`CLAUDE-PATTERNS.md` § Defensive Frontend Principle](./CLAUDE-PATTERNS.md#defensive-frontend-principle-story-894-fe-from-epic-87-fe-retro)
 
-**What counts as "data you don't own":**
-- Any field from a backend API response.
-- Any field computed server-side (e.g., `netProfit`, `totalOperatingProfit`, `operatingProfit`).
-- Any field sourced from the WB SDK via the backend proxy.
-- **Counterexample**: data the frontend itself computes (local aggregations, UI state, derived totals from already-normalized inputs) — you own that; transform it freely.
+**TL;DR**: Frontend never silently transforms data it doesn't own — it **indicates**. Detect anomaly → render warning + preserve raw value + file a backend ticket. Never swap fields, coerce nulls, or clamp values to "fix" backend bugs — that erases evidence.
 
-**Four anomaly categories you'll encounter:**
-
-| Anomaly | ❌ Don't | ✅ Do |
-|---|---|---|
-| Field inversion / swap (e.g., `salePrice > price × 1.2` — threshold avoids false positives on legitimate adjustments) | Silently swap in the transform. | Render a warning icon + tooltip near the cell; keep raw values visible. |
-| `null` where a number is expected (e.g., `cogs: null`) | `?? 0` in the transform. | Preserve null end-to-end, render `—`, add a footnote. *(See anti-pattern #8.)* |
-| Impossible negative value (e.g., `organicSales: -1200`) | `Math.max(0, value)`. | Show the raw value + a warning. |
-| Missing / empty response | Fall back to stale cache silently. | Render a distinct empty-state with a link to the related backend ticket. |
-
-**Concrete illustration** (matches the `❌ BAD / ✅ GOOD` style of adjacent anti-patterns):
-
-```typescript
-// ❌ BAD — silently "fixes" the backend anomaly, evidence erased
-function transform(raw: { price: number; salePrice: number }) {
-  if (raw.salePrice > raw.price * 1.2) {
-    return { price: raw.salePrice, salePrice: raw.price } // swapped
-  }
-  return raw
-}
-
-// ✅ GOOD — raw values preserved, anomaly surfaced via a flag consumers can render
-function transform(raw: { price: number; salePrice: number }) {
-  const anomalous = raw.salePrice > raw.price * 1.2
-  return { ...raw, anomalous } // UI renders AlertTriangle + tooltip when anomalous
-}
-// Cite backend ticket in a comment near the detector:
-// // PENDING BACKEND: request #165 — price/salePrice inversion
-```
-
-**"Show an indicator" recipe:**
-- Icon: `lucide-react` `AlertTriangle` — amber for advisory, red for blocking.
-- Tooltip: one sentence explaining the anomaly (template: `` `Аномалия: <what> в <ratio> раз. Возможна ошибка данных на стороне WB.` ``; real example lives in `src/components/custom/orders/OrdersTableRow.tsx`).
-- Footnote: `<p className="text-xs text-amber-700 mt-2">…</p>` near tables.
-- Link: include a code comment pointing to the ticket: `// PENDING BACKEND: request #NNN — <one-line>`.
-
-**"File a backend ticket" recipe:**
-- Create `docs/request-backend/NNN-SHORT-DESCRIPTION.md` (next sequential number — grep the folder first).
-- Follow the existing format: Problem → Root Cause → Impact → Fix Scope → Reproduction → Resolution.
-- Cross-reference the ticket in any PR or story that surfaces the anomaly.
-
-**Canonical worked example — orders price inversion:**
-Story 87.3-FE found backend occasionally returning `price < salePrice` (field inversion). Rather than swapping them in the API transform, the team rendered an `AlertTriangle` warning in the orders table and filed `docs/request-backend/165-ORDERS-PRICE-SALEPRICE-INVERSION.md`. Raw values stayed visible; the bug is now traceable, and the backend fix will remove the indicator naturally. See also `DailyCogsGapFootnote` (Story 88.2-FE) for the null-COGS equivalent.
-
-**Related CLAUDE.md references:**
-- **Anti-pattern #8 (null-vs-zero)** — a specific case of this principle applied to nullable money/ratio fields.
-- **Boundary Normalizer Pattern** — the shape-drift flavor: normalize at the boundary, preserve null, never paper over mismatches.
-- **`PENDING BACKEND:` convention** — anomaly-indicator code should always carry a `// PENDING BACKEND: request #NNN` comment so the indicator and the ticket stay linked.
+Four anomaly categories: field inversion, null-where-number-expected, impossible negatives, missing/empty. Each has a "show an indicator" recipe + canonical example (orders price inversion → request #165 + `AlertTriangle`). Related: anti-pattern #8 (null-vs-zero), Boundary Normalizer Pattern, `PENDING BACKEND:` comment convention.
 
 ### Doc-citation validation (`npm run check:docs`)
 
-**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE — scans `CLAUDE.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself.
+**What it does.** `scripts/check-doc-citations.sh` — shipped in Story 89.3-FE; coverage extended to root-level `CLAUDE-*.md` shards after the CLAUDE.md size split — scans `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/` for backtick-wrapped source citations of the form `` `src/path.ts:N` `` or `` `src/path.ts:N-M` `` and fails if any don't resolve. Two failure modes: (1) file not found, (2) line number exceeds the file's line count. Run `bash scripts/check-doc-citations.sh --self-test` to validate the validator itself.
 
 **How to read the output.** Canonical structure (exit 1 on broken, 0 on clean):
 
 ```
-Scanned: CLAUDE.md, docs, _bmad-output, backlog/docs, backlog/tasks
+Scanned: CLAUDE.md, CLAUDE-PATTERNS.md, CLAUDE-ANTI-PATTERNS.md, docs, _bmad-output, backlog/docs, backlog/tasks
 Total citations: <N>
 Broken: <M>
 FAIL: <M> broken citation(s).      # or: OK: all citations resolve.
@@ -230,14 +180,14 @@ Each story closes only when EVERY quality gate's output matches its documented b
 | Doc citations | `bash scripts/check-doc-citations.sh` | 13 broken | Source: `scripts/.check-docs-baseline.txt` (auto-validated, Story 94.1-FE). |
 | TypeScript | `npm run type-check` | 20 errors, all in `src/lib/api/advertising-analytics-api.ts` | Source: this section (manual). Provenance: Story 91-era SDK type-drift workaround (destructuring `{}` cast). |
 | ESLint | `npm run lint` | 0 errors, 0 warnings | Source: this section (manual). Notes: any error or warning is a regression. |
-| Vitest | `npm test -- --run` | ≥ 7019 passing, 676 skipped, 0 failed (floor — see drift rule) | Source: this section (manual). Provenance: as of Epic 93 close + Story 94.1; ratcheted +2 by Story 96.2-FE (`view_by` type-safety tests); ratcheted +12 by Story 96.1-FE (6 `usePreliminaryTax` hook + 6 `tax-analytics` API client tests); ratcheted +5 by Story 96.3-FE (`transformToWaterfallData` categoryOrder tests). |
+| Vitest | `npm test -- --run` | ≥ 7244 passing, 676 skipped, 0 failed (floor — see drift rule) | Source: this section (manual). Provenance: as of Epic 93 close + Story 94.1; ratcheted +2 by Story 96.2-FE (`view_by` type-safety tests); ratcheted +12 by Story 96.1-FE (6 `usePreliminaryTax` hook + 6 `tax-analytics` API client tests); ratcheted +5 by Story 96.3-FE (`transformToWaterfallData` categoryOrder tests); ratcheted +4 by Story 96.9-FE (acquiring 503-banner + Pattern 3 fixture tests); ratcheted +6 by Story 96.9-FE review fixes (6 direct unit tests for `getAcquiringRateLimit`); ratcheted +16 by Story 96.9-FE 3rd-pass review fixes (12 api-client Retry-After validation tests + 4 fixture consumer wiring tests); ratcheted +7 by Story 96.10-FE (3 × 10-category invariant tests + 4 × FCU/DCU per-row rendering tests); ratcheted +2 by Story 96.10-FE 1st-pass review fixes (L-1 mixed-null fixture + L-2 null-DCU merge early-return coverage); ratcheted +1 by Story 96.10-FE 2nd-pass review fixes (M2-2 merge early-return propagation test); ratcheted +30 by Story 96.11-FE (FBS stock breakdown views — boundary normalizer + Pattern 3 fixtures + 3 section components); ratcheted +1 by Story 96.11-FE 1st-pass review fixes (H-1 shareOfTotalPct null-preservation test); ratcheted +7 by Story 96.11-FE 2nd-pass review fixes (H2-1 cabinet-isolation tests ×6 + L2-1 future-date clock-skew test ×1); ratcheted +35 by Story 96.12-FE (FBS export normalizer + polling hook + button component + Pattern 3 fixture tests + cabinet-isolation tests); ratcheted +5 by Story 96.12-FE 1st-pass review fixes (M-2 string-retryAfter body-fallback tests ×4 + H-2 ready-with-null-url defensive-frontend test ×1); ratcheted +2 by Story 96.12-FE 2nd-pass review fixes (H2-1 retry-cycle test + M2-2 cabinet-switch test); ratcheted +24 by Story 96.13-FE (FBS enhanced normalizer + 5 section components + Pattern 3 fixtures); ratcheted +5 by Story 96.13-FE 1st-pass review fixes (H-1 scale + M-1 returnRate card + M-2 funnel inversion + M-3 RegionalTooltip direct + L-1 funnel a11y + e2e TIMEOUTS.api fix); ratcheted +8 by Story 96.13-FE 2nd-pass review fixes (H2-1 formatPercentage integration test + H2-2 funnel threshold near-miss + no-dash design-intent + M2-3 exact-count uniform across section tests + M2-5 hook cabinet-isolation tests ×4); ratcheted +30 by Story 96.14-FE (buyout reconciliation normalizer + AnomalyIndicator + ReconciliationTable + page orchestrator + Pattern 3 fixtures); ratcheted +7 by Story 96.14-FE 1st-pass review fixes (H-1 cabinet-switch + M-2 hook cabinet-isolation tests + M-3 unknown-source indicator + M-1 nmId=0 validation + M-4 header full-form + L-1 scoped button assertion + L-2 React.memo); ratcheted +6 by Story 96.14-FE 2nd-pass review fixes (H2-1 real hook tests with renderHook + QueryClient wrapper replacing fake factory-only tests + L2-2 stale-banner parity test for no-anomalies branch); ratcheted +18 by Story 96.15-FE (BuyoutSource widening + SourceBadge component + fixture extension + ReconciliationTable SourceBadge integration); ratcheted +4 by Story 96.15-FE 1st-pass review fixes (H-1 "Комбинированный" label unification + M-3 'unknown' source variant + L-1 scoped testid tests); ratcheted +2 by Story 96.15-FE 2nd-pass review fixes (H2-1 BuyoutSummaryWidget 'unknown' footnote test × 2 new assertions); ratcheted +1 by Story 96.16-FE (NaN-guard regression test for `isPriceInverted` after #165 closure-citation comment swap); ratcheted +3 by Story 96.16-FE 1st-pass review fixes (L-1 symmetric salePrice-NaN guard + Number.POSITIVE_INFINITY guard + exact-1.2x boundary `>` predicate test) — floor bumped 7239 → 7243 per H-2 review fix; ratcheted +1 by Story 96.16-FE 2nd-pass review fixes (H2-2 positive-side just-above-1.2× boundary companion test pinning both sides of the strict inequality) — floor bumped 7243 → 7244 per H2-2 review fix. |
 
 **Drift discipline (manual for type-check / lint / test; automated for check:docs).** Each story closes only when EVERY quality gate's output matches its documented baseline. Comparison rules per gate:
 
 - **check:docs**: automated set-diff against `scripts/.check-docs-baseline.txt` (Story 94.1-FE). Exit code is the gate.
 - **type-check**: count must equal 20 AND the file scope must equal `src/lib/api/advertising-analytics-api.ts`. New errors anywhere else, or additional errors in that file beyond 20, are regressions. The 20 will drop when the SDK type drift is resolved (out of scope for now — see § "When to update").
 - **lint**: count must equal 0. Any warning OR error is a regression.
-- **test**: passing count must equal 7019 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
+- **test**: passing count must equal 7239 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
 
 **When to update.** When a story legitimately changes a baseline (e.g., the SDK drift is fixed → 20 type errors drop to 0; a new story adds 12 valid tests → 7000 passing becomes 7012), update this section in the same PR. Treat the section like Story 93.5's 13-citation table: source-of-truth (may temporarily lag reality between gate-affecting commits).
 
@@ -249,6 +199,8 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 **Empirical evidence + enforcement.** Stories 93.4 / 94.1 / 94.2 each shipped 2nd-pass-found findings as POST-MERGE follow-up commits when the 2nd pass happened after-not-before commit. The follow-up commits resolved real attestation-class defects. The `dev-story` workflow Step 9 has a HALT condition for single-pass commits; the `code-review` workflow at `_bmad/bmm/workflows/4-implementation/code-review/instructions.xml` has a top-level `<critical>` mandate to run at-least-twice per story. Both are LLM-interpreted at run-time.
 
+**Why this is structurally permanent (Story 97.4-FE, Epic 97-FE A-4 codification).** The 2-pass discipline is not a transient countermeasure to be retired once authors "get better" — it is a structural property of human/LLM authoring. **Empirical chain length**: 13+ documented recurrences across 16+ stories of Epics 94-96 (canonical breakdown via authoritative source method `grep -n "Fix-block propagation discipline" CLAUDE-PATTERNS.md` → L289: 11+ table rows in Pattern 4 § Fix-block propagation discipline empirical-evidence table + 2 self-referential manifestations from Story 97.1-FE = 13+; extended further by Story 97.2-FE's 2 self-referential manifestations to **15+ at this codification**). Per-story drilldown: Story 97.1-FE itself produced 16 findings (9 1st-pass + 7 2nd-pass — see `_bmad-output/implementation-artifacts/97-1-fe-pattern-4-fix-block-propagation-discipline.md` Post-Nth-pass-review fixes); Story 97.2-FE produced 12 findings (6 + 6 — see `_bmad-output/implementation-artifacts/97-2-fe-pattern-4-authoritative-source-citation-discipline.md`). **Disambiguation note**: per-pass instances count once per chain regardless of finding count; "+2 per story" in the recurrence-count math means "1st-pass instance + 2nd-pass instance = 2", NOT the 16 / 12 finding totals — those are finding-density measures. Empirically verified via `grep -c "^### Post-1st-pass-review fixes\|^### Post-2nd-pass-review fixes"` on each story file → 2 headings each ⇒ 2 instances each ⇒ +4 total chain-extension across 97.1 + 97.2. **Disambiguation** (per Story 97.1-FE 1st-pass M-4 finding): the *recurrence count* (defect-class observations, 13+ as cited above) is distinct from the **25-consecutive-story validation streak** (consecutive stories with 2-pass discipline applied without breakdown — 24 reported in Epic 96-FE retro § S-1 + 1 from Story 97.1-FE = 25; extended further by Story 97.2-FE to 26, and again by Story 97.4-FE itself — the very story shipping this paragraph held the streak through both review passes — to **27 at codification close**). Both metrics confirm the discipline is operating; conflating them is itself a propagation defect. **Why the chain has never broken**: the rule catches the rule's own violation on first attempt — by design, not failure. Authors writing rules ABOUT defect prevention systematically miss occurrences when applying those rules to their own work; multi-pass adversarial review with FRESH context is the only reliable countermeasure (see Story 95.3's "I proactively re-scanned" empirical case in CLAUDE-PATTERNS.md Pattern 4 § Fix-block propagation discipline — even explicit author claim of self-policing failed). **Action implication**: never trust author discipline alone for attestation-class invariants (numerical counts, prose-state propagation, exact-quoted citations, file paths, line numbers, tracking-status assumptions). Always run the 2-pass discipline; never short-circuit. Stories 97.1-FE + 97.2-FE — both purpose-built to codify these very disciplines — together produced 28 attestation-class findings across 4 review passes (2 stories × 2 passes each), validating the meta-pattern at compounded scale. Cross-references: Epic 94-FE retro § A-4 (origin); Epic 95-FE retro § A-4 (1st carry-forward); Epic 96-FE retro § A-4 (2nd carry-forward — escalated to mandatory).
+
 **Marker convention.** Each review pass produces one `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading under the story file's Dev Agent Record (e.g., `### Post-1st-pass-review fixes (2026-04-25)`, `### Post-2nd-pass-review fixes (2026-04-25)`). Two such sub-headings is the structural marker that both passes ran. **For human reviewers**: when reviewing a PR labelled `review`, verify the story file's Dev Agent Record contains TWO of these sub-headings before approving. If only one exists, request a 2nd-pass review.
 
 **Story Change Log Lessons (Story 94.4-FE).** Every story's final Change Log row (flipping `Status: review → done`) must include a `**Lessons:**` sub-line with **1-3 single-sentence pattern observations**, each **≤120 chars**, specific to that story (not generic). Format: `**Lessons:** (1) <pattern>. (2) <pattern>. (3) <pattern>.`. Reference Story-NN.M-FE markers where natural. **For human reviewers**: verify the final row has `**Lessons:**` (each ≤120 chars, max 3) before approving. Earlier rows (creation, intermediate fixes, post-Nth-pass-review blocks) DO NOT require Lessons. Full template at `_bmad/bmm/workflows/4-implementation/create-story/template.md` § Change Log.
@@ -257,242 +209,22 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
-These patterns were repeatedly hit across recent stories. Each one is a known footgun — recognize them on sight and refuse to write or merge them.
+> **Full text + code examples**: [`CLAUDE-ANTI-PATTERNS.md`](./CLAUDE-ANTI-PATTERNS.md)
 
-#### 1. `beforeEach(() => vi.clearAllMocks())` triggers TS2322
+Recognize on sight, refuse to write or merge. Numbered list (referenced as "anti-pattern #N" elsewhere in this file):
 
-**Symptom:**
-```
-Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'
-```
+1. **`beforeEach(() => vi.clearAllMocks())` triggers TS2322** — use block body, not arrow expression.
+2. **Non-null assertion (`!`) inside async closures** — capture to a non-null local with a runtime guard at top of `queryFn`.
+3. **Faking `ApiError` with `Object.assign(new Error(), { status })`** — use real `ApiError` constructor, otherwise `instanceof` checks miss the mock.
+4. **`as any` in mock helpers for complex library types** — declare a subset interface, bridge with `as unknown as <ReturnType>`.
+5. **Variable shadowing in Zustand selectors** — name selector params after the store (`auth =>`), not the outer `state` binding.
+6. **Silent E2E test skips that pass green** — use `test.skip(condition, reason)`, not early `return`.
+7. **Hard waits (`page.waitForTimeout(N)`) in E2E specs** — intercept with `waitForResponse` before navigate.
+8. **`?? 0` on nullable money/ratio fields lies about the data** — preserve `null`, render `—`. Counts/pagination still allow `?? 0`.
+9. **`waitForLoadState('networkidle')` on background-polling pages** — never settles on dashboards; use `waitUntil: 'domcontentloaded'` + element-presence assertions.
 
-**Cause:** Arrow expression body returns `vi.clearAllMocks()`'s return value (`VitestUtils`), which Vitest's `beforeEach` callback contract rejects.
+Open `CLAUDE-ANTI-PATTERNS.md` for ❌ BAD / ✅ GOOD code blocks, scope rules, and canonical Story references.
 
-**Fix:** Use a block body so the return type is `void`:
-```typescript
-// ❌ BAD
-beforeEach(() => vi.clearAllMocks())
-
-// ✅ GOOD
-beforeEach(() => {
-  vi.clearAllMocks()
-})
-```
-
-#### 2. Non-null assertion (`!`) inside async closures
-
-When you have a hook that guards on a value via `enabled: ... cabinetId != null`, the `queryFn` closure still sees `cabinetId` as `string | null`. Using `cabinetId!` to bypass this is the same anti-pattern as `as` casts — it disables type safety for the sake of shorthand.
-
-```typescript
-// ❌ BAD — TypeScript can't see the enabled guard
-queryFn: async () => {
-  const response = await getClientInfo(cabinetId!, orderIds)
-  return buildClientInfoMap([response])
-},
-enabled: isOwner && cabinetId != null && orderIds.length > 0,
-```
-
-**Fix:** Capture to a non-null local with a runtime guard at the top of the closure. The runtime check is unreachable in normal flow (because of `enabled`) but prevents future refactors from silently breaking the invariant:
-
-```typescript
-// ✅ GOOD
-queryFn: async () => {
-  if (!cabinetId) return {} // unreachable in normal flow, but defensive
-  const safeCabinetId = cabinetId
-  const response = await getClientInfo(safeCabinetId, orderIds)
-  return buildClientInfoMap([response])
-},
-enabled: isOwner && cabinetId != null && orderIds.length > 0,
-```
-
-#### 3. Faking `ApiError` with `Object.assign(new Error(), { status })`
-
-When mocking error responses in hook/API tests, do NOT shortcut with `Object.assign`. The result is a plain `Error` with a `status` property — code that does `if (err instanceof ApiError)` will not match it, so the mock doesn't exercise the real code path.
-
-```typescript
-// ❌ BAD
-const rateLimitError = Object.assign(new Error('Rate limit exceeded'), { status: 503 })
-vi.mocked(getClientInfo).mockRejectedValueOnce(rateLimitError)
-
-// ✅ GOOD
-import { ApiError } from '@/types/api'
-const rateLimitError = new ApiError('Rate limit exceeded', 503)
-vi.mocked(getClientInfo).mockRejectedValueOnce(rateLimitError)
-
-// Bonus: lock down the constructor in the assertion
-expect(result.current.error).toBeInstanceOf(ApiError)
-```
-
-#### 4. `as any` in mock helpers for complex library types
-
-TanStack Query's `UseQueryResult` is a discriminated union with ~20 fields. Mocking it triggers the temptation to use `as any` + `eslint-disable-next-line`. Don't.
-
-```typescript
-// ❌ BAD
-function mockHook(overrides: Partial<{ data: unknown; isLoading: boolean }>) {
-  vi.mocked(useFeature).mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    ...overrides,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any)
-}
-
-// ✅ GOOD — declare the subset the consumer actually reads, then bridge with `as unknown as`
-type HookReturn = ReturnType<typeof useFeature>
-interface MockHookOverrides {
-  data?: FeatureResponse | undefined
-  isLoading?: boolean
-  isError?: boolean
-}
-function mockHook(overrides: MockHookOverrides) {
-  const partial = { data: undefined, isLoading: false, isError: false, ...overrides }
-  vi.mocked(useFeature).mockReturnValue(partial as unknown as HookReturn)
-}
-```
-
-The `as unknown as HookReturn` is the standard TypeScript escape hatch for bridging structurally compatible subsets — it acknowledges the widening explicitly without disabling the type system. No `any`, no `eslint-disable`.
-
-#### 5. Variable shadowing in Zustand selectors
-
-When the outer scope has a `state` binding, naming the selector parameter `state` shadows it confusingly:
-
-```typescript
-// ❌ CONFUSING
-function OrdersPage() {
-  const state = useOrdersPageState() // outer "state"
-  const userRole = useAuthStore(state => state.user?.role) // inner "state" shadows
-  // ...
-}
-
-// ✅ GOOD
-function OrdersPage() {
-  const state = useOrdersPageState()
-  const userRole = useAuthStore(auth => auth.user?.role)
-  // ...
-}
-```
-
-#### 6. Silent E2E test skips that pass green
-
-Playwright tests that early-return when fixture data is missing pass as **green** in CI, hiding gaps:
-
-```typescript
-// ❌ BAD — silently passes even with no real coverage
-test('should render phone link', async ({ page }) => {
-  const linkCount = await page.getByRole('link').count()
-  if (linkCount === 0) {
-    test.info().annotations.push({ type: 'note', description: 'No data, skipping' })
-    return // green pass with no assertion
-  }
-  // ... real assertions
-})
-
-// ✅ GOOD — visible yellow skip in CI report
-test('should render phone link', async ({ page }) => {
-  const linkCount = await page.getByRole('link').count()
-  test.skip(linkCount === 0, 'No data in fixture — needs API seeding (request #NNN)')
-  // ... real assertions
-})
-```
-
-#### 7. Hard waits (`page.waitForTimeout(N)`) in E2E specs
-
-Per the testarch test-quality framework:
-
-```typescript
-// ❌ BAD
-await page.goto('/orders')
-await page.waitForTimeout(2000) // arbitrary, slow, flaky
-
-// ✅ GOOD — intercept BEFORE navigate, await AFTER
-const responsePromise = page.waitForResponse(
-  resp => /\/v1\/cabinets\/[^/]+\/orders\/client-info/.test(resp.url()) && resp.status() === 200,
-  { timeout: 5000 }
-)
-await page.goto('/orders')
-await responsePromise // deterministic wait
-```
-
-For navigation cycles use `waitForLoadState('networkidle')` instead of `waitForTimeout`.
-
-#### 8. `?? 0` on nullable money/ratio fields lies about the data
-
-When a backend field can legitimately be `null` (meaning "unknown" — e.g., ROAS when there is no ad spend, COGS when not yet assigned, profit when cost is unknown), do NOT collapse it to `0` in the transform layer. "Zero" and "unknown" have different user-facing meanings, and the user cannot recover the distinction from a rendered `0 ₽`.
-
-**Bad** (Story 87.3 / 88.2 pattern — silently misleads the user):
-```ts
-// Transform layer — at the API → frontend boundary
-profit: { operating: item.operating_profit ?? 0 } // type lies: number
-revenue: item.revenue ?? 0                        // null becomes "no sales" instead of "no data"
-overall_roas: backend.avgRoas ?? 0                // null (no spend) becomes "0.0x ROAS"
-```
-
-**Good** (null preserved through types; display layer renders `—`):
-```ts
-// Transform layer — preserve null, widen the type
-profit: { operating: item.operating_profit ?? null } // type: number | null
-revenue: item.revenue ?? null
-
-// Display layer — formatter or explicit guard renders em dash
-<span>{item.revenue == null ? '—' : formatCurrency(item.revenue)}</span>
-
-// Aggregation callsites — coerce with comment so next dev doesn't "fix" it back upstream
-const totalProfit = items.reduce(
-  (sum, i) => sum + (i.profit.operating ?? 0), // aggregation — null treated as 0, intentional
-  0
-)
-```
-
-**Scope rule — when null matters vs when zero is fine:**
-- ✅ Money values (`revenue`, `cogs`, `profit`, `spend`) — always "null means unknown."
-- ✅ Ratios (`roas`, `roi`, `margin_pct`) — always "null means unknown" (division undefined).
-- ✅ Per-unit metrics (unit cost, expected profit per unit) — same.
-- ❌ Counts (`orderCount`, `salesCount`, `views`, `clicks`) — 0 is legitimate, `?? 0` is fine.
-- ❌ Pagination (`total`, `limit`, `offset`) — 0 is legitimate.
-- ❌ Accumulator seeds (`{ total: 0 }` at start of `reduce`) — 0 is legitimate.
-
-**Escalation pattern** — when any row in an aggregate has null, disclose the gap to the user with a footnote:
-```tsx
-<p className="text-xs text-amber-700 mt-2">
-  * COGS неизвестна для {N} дн. — теор. прибыль за эти дни рассчитана без учёта себестоимости.
-</p>
-```
-
-See Story 87.3-FE (SKU profit) and Story 88.2-FE (ROAS, daily COGS) for the canonical fix pattern.
-
-#### 9. `waitForLoadState('networkidle')` on background-polling pages
-
-Dashboard / analytics pages run continuous background queries (margin polling, chart refetch intervals, TanStack Query focus-refetch, dev-mode telemetry, React DevTools heartbeat). `networkidle` requires **500ms of zero network activity** — a window that never opens within a 30s Playwright test budget. Tests hang to timeout, the real assertion never runs, and real regressions hide behind the timeout failure.
-
-**Bad** (hits the 30s test timeout on any dashboard page):
-```typescript
-await page.goto('/dashboard')
-await page.waitForLoadState('networkidle') // never settles — test hangs
-await expect(metricsCard).toBeVisible()
-```
-
-**Good** (deterministic, <15s on same page):
-```typescript
-await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
-await expect(metricsCard).toBeVisible({ timeout: 10000 })
-```
-
-**Why this works:** `domcontentloaded` fires once React has mounted and the previous page has unmounted. The `expect(landmark).toBeVisible()` then waits for the thing you actually want to test — a stable landmark like `[role="region"][aria-label="Основные метрики"]` — rather than for "the network to go quiet" (a proxy signal that's wrong on polling pages).
-
-**When `waitForResponse` is the right tool** — for tests that assert "user action triggered this specific API call," observe the network directly:
-```typescript
-await Promise.all([
-  page.waitForResponse(resp =>
-    /\/v1\/analytics\/weekly\/finance/.test(resp.url()) && resp.status() === 200
-  ),
-  weekDropdown.click(),
-])
-```
-
-**When `waitForTimeout(N)` IS acceptable** — short (≤300ms) CSS transitions where no DOM event exists. Always annotate: `// intentional animation delay — 300ms CSS transition, no DOM signal`. Never use `waitForTimeout` as a data-wait substitute.
-
-See Story 86.2-FE (`e2e/orders-client-info.spec.ts:441-458`) and Story 88.3-FE for canonical migrations.
 
 ### MCP-Assisted Development
 **Context7 MCP** for design patterns and examples:
@@ -510,84 +242,13 @@ Auto-injects `Authorization: Bearer {token}` and `X-Cabinet-Id: {cabinetId}`. Au
 
 ### Boundary Normalizer Pattern
 
-Every endpoint response that crosses the backend→frontend boundary MUST be transformed into a frontend-canonical shape at the API client layer. **Raw backend shapes never reach components or hooks.**
+> **Full text + canonical examples**: [`CLAUDE-PATTERNS.md` § Boundary Normalizer Pattern](./CLAUDE-PATTERNS.md#boundary-normalizer-pattern)
 
-**Why this matters.** Backend and frontend evolve independently. Three separate bugs (Stories 84.1, 87.2, 87.3 / 88.2) each shipped because a transform was missing or silently collapsed a mismatch:
+**TL;DR**: Every backend response MUST be transformed into a frontend-canonical shape at the API client layer. **Raw backend shapes never reach components or hooks.** Three real-incident drift classes this prevents: role case (`'owner'` vs `'Owner'`, Story 84.1), snake_case ↔ camelCase (Story 87.2), nullability collapse (`?? 0` on money/ratio fields, Stories 87.3 / 88.2).
 
-| Story | Drift | Silent collapse |
-|---|---|---|
-| 84.1 | Role case: backend `'owner'` vs frontend `'Owner'` | Role-gated features broke |
-| 87.2 | Field naming: backend `cabinetId`/`reportsStatus` (camelCase) vs frontend `cabinet_id`/`status` (snake_case) | Backfill admin crashed on unknown `'not_started'` status |
-| 87.3 / 88.2 | Nullability: backend `null` meaning "unknown" | `?? 0` in transform collapsed "unknown" into "zero" — misleading `0 ₽` / `0.0x ROAS` cells |
+Naming: `normalize<Name>Response` for endpoint responses, `to<Type>` for scalar/enum coercion, `normalize<Name>` for per-item.
 
-Each of these cost meaningful diagnostic cycles. The code looked correct, the types compiled, but the boundary silently papered over a mismatch.
-
-**Naming conventions** (pick one consistently per module):
-- `normalize<Name>Response(raw: unknown): <Name>Response` — preferred for top-level endpoint responses.
-- `to<Type>(raw: unknown): <Type>` — preferred for scalar/enum coercion (e.g., `toBackfillStatus`, `toDataSource`).
-- `normalize<Name>(raw: Raw<Name>): <Name>` — per-item normalization inside a list response.
-
-**When to use** (checklist):
-- ✅ Role/enum case mismatches (`'owner'` vs `'Owner'`)
-- ✅ snake_case ↔ camelCase between contracts
-- ✅ Nullability where backend `null` semantically means "unknown" (see anti-pattern #8)
-- ✅ Date strings ↔ `Date` objects (never leave raw strings in `Date`-typed fields)
-- ✅ Discriminated unions with new backend variants (fall through to a `'unknown'` sentinel)
-
-**Canonical examples** (read these first when adding a new endpoint):
-
-Example 1 — role-case bridging in a state store (`src/stores/authStore.ts:23-35`):
-```typescript
-const ROLE_CASE_MAP: Record<string, User['role']> = {
-  owner: 'Owner', manager: 'Manager', analyst: 'Analyst', service: 'Service',
-}
-
-function normalizeUser(user: User): User {
-  const incoming = user.role as unknown as string
-  const canonical = ROLE_CASE_MAP[incoming.toLowerCase()] ?? user.role
-  if (canonical === user.role) return user
-  return { ...user, role: canonical }
-}
-// All entry points (setUser, login, refreshToken, persisted-state migration)
-// route the user through normalizeUser — single source of truth.
-```
-
-Example 2 — inline transform with scalar coercers (`src/lib/api/backfill.ts:33-89`):
-```typescript
-function toBackfillStatus(raw: unknown): BackfillStatus {
-  const s = String(raw ?? '')
-  return VALID_STATUSES.has(s as BackfillStatus) ? (s as BackfillStatus) : 'not_started'
-}
-function toDataSource(raw: unknown): DataSource { /* same pattern */ }
-
-export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
-  const raw = await apiClient.get<Record<string, unknown>[]>(`${BASE_URL}/status`, {
-    skipDataUnwrap: true,
-  })
-  // Backend: camelCase (cabinetId, reportsStatus, overallProgress)
-  // Frontend: snake_case (cabinet_id, status, progress). Normalize here.
-  return (raw ?? []).map(item => ({
-    // Dual-lookup (`item.cabinetId ?? item.cabinet_id`) is deliberate — it absorbs a
-    // rolling backend rename without a breaking frontend change. When the backend
-    // stabilizes on one casing, drop the fallback branch; until then the normalizer
-    // is the hinge that keeps both contracts valid simultaneously.
-    cabinet_id: (item.cabinetId ?? item.cabinet_id ?? '') as string,
-    status: toBackfillStatus(item.reportsStatus ?? item.status),
-    data_source: toDataSource(item.dataSource ?? item.data_source),
-    // ...repeat dual-lookup for every field (full code at src/lib/api/backfill.ts:55-89)
-  }))
-}
-```
-
-**Anti-patterns to avoid:**
-- ❌ `apiClient.get<BackendShape>(...)` followed by direct return — the TYPE lies; runtime shape is whatever the backend sent.
-- ❌ `response as FrontendShape` cast to paper over a mismatch — use a normalizer, not an assertion.
-- ❌ Duplicating normalization at multiple call sites — put it in the API module, one place.
-- ❌ Conditional normalization (`if (response.cabinetId) { ... } else { ... }`) — always normalize unconditionally so the transform is proof, not a guess.
-
-**Testing requirement.** Every normalizer MUST have at least 1 unit test exercising the nullability / case / variant edge cases. Reference: `src/stores/authStore.test.ts` for `normalizeUser`. Without the test, a silent regression can drop into the transform as easily as it can into a consumer.
-
-**Cross-reference.** The three diagnostic case studies this pattern prevents: Story 84.1 (role case), Story 87.2 (backfill camelCase → snake_case), Story 87.3 + 88.2 (null vs zero). The Story 88.4 audit at `_bmad-output/planning-artifacts/boundary-normalizer-audit-2026-04-15.md` classifies every file in `src/lib/api/` by normalizer presence.
+**Anti-patterns**: typed `apiClient.get<BackendShape>(...)` without transform (TYPE lies); `as FrontendShape` cast; duplicating normalization at multiple call sites; conditional normalization. Every normalizer needs ≥1 unit test for nullability/case/variant edges. Reference: `src/stores/authStore.test.ts` for `normalizeUser`.
 
 ### TanStack Query (`src/hooks/`)
 ```typescript
@@ -615,139 +276,16 @@ Files: `src/lib/margin-helpers.ts`, `src/hooks/*-polling.ts`
 
 ### Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)
 
-These 4 patterns emerged from Epic 92-FE's retrospective (`_bmad-output/implementation-artifacts/epic-92-fe-retro-2026-04-24.md`, Insights #2/#3/#6/#7) and were tribal knowledge scattered across 6 story files. Codifying them here makes them grep-and-cite-able at PR review time — the same standard as `### Boundary Normalizer Pattern`. The retro contains the full diagnostic history; this section contains the enforceable house rules.
+> **Full text + canonical examples**: [`CLAUDE-PATTERNS.md` § Multi-Source Orchestration](./CLAUDE-PATTERNS.md#multi-source-orchestration--visualization-patterns-epic-92-fe)
 
-(Insight #8 — the "mirrors X — keep in sync" middle-ground pattern for deferred rule-of-two extractions — is a tactical pattern already documented across retros; Story 93.1's extraction convention is the canonical example. Not re-documented here to avoid duplication.)
+Four enforceable house rules from Epic 92-FE retro:
 
-*Retro artifacts live under `_bmad-output/implementation-artifacts/` (gitignored — local to the author's filesystem; not distributed with the repo).*
+1. **Parallel-hook + independent-state-machine orchestration** — multi-source dashboards: each hook gets its own skeleton/error/data branch inside a shared `hasData` wrapper. One supplementary failure must NOT blank the page. Canonical: `src/app/(dashboard)/monitor/components/MonitorPageContent.tsx`.
+2. **Raw-SVG vs chart-library decision rule** — gauges/arcs/rings → raw SVG (trivially testable); line/bar/area/interactive charts → recharts + pre-planned `vi.mock` setup (jsdom doesn't render SVG sizes). Test-harness cost is load-bearing.
+3. **Story-1 fixture seeding for new domains** — every new-domain epic MUST create `src/test/fixtures/<domain>-empty.ts` in Story 1, alongside types + normalizer. Retroactive extraction (Story 92.6-FE) costs ~3-4× more than upfront.
+4. **Spec-grep discipline for story handoff** — story authors grep every cited field/function/type against the actual source file BEFORE marking `ready-for-dev`. Catches ghost fields (Story 92.4-FE H-3) and sent-but-not-consumed duplications (Story 91.2-FE). Includes documentation-prose verification (Story 94.5-FE), constraint precedent-grep for "no X" ACs (Story 94.7-FE), **fix-block propagation discipline** (Story 97.1-FE — after applying any fix, grep the EXACT phrase modified across all story-related files; 11+ recurrence chain across Epics 94-96 proved author intuition systematically underestimates the parallel-locations search space), and **authoritative-source-citation discipline** (Story 97.2-FE — when claiming numerical/date/state facts, prefer git-canonical sources over filesystem metadata over author memory; cite source method inline; avoids 3-instance 'weak-proxy-cited-as-canonical' chain across Epics 95-96), and **multi-tenant cabinet-isolation discipline** (Story 97.5-FE — for any new TanStack Query hook in cabinet-switching contexts, scope `queryKey` by `cabinetId` and add a 4-cabinet × cache-collision isolation suite as part of Story 1 of any new-domain epic; avoids the 4-instance Epic 96 cabinet-isolation defect class).
 
-#### Pattern 1: Parallel-hook + independent-state-machine orchestration
-
-**When to use**: multi-source dashboards where partial failure should degrade gracefully — primary data loaded + 1-2 supplementary widgets can each fail independently without blanking the page.
-
-**Canonical example**: `src/app/(dashboard)/monitor/components/MonitorPageContent.tsx` — 3 hooks (`useMonitorSummary` primary, `useDailyMetrics` + `usePipelineGrid` supplementary), each rendered through its own skeleton/error/success state machine inside a shared `hasData` wrapper.
-
-**Shape** (adapted from `MonitorPageContent.tsx`):
-```typescript
-export function MonitorPageContent() {
-  const { data, isLoading, isError } = useMonitorSummary()
-  // Memoize — prevents refetch storm on every render.
-  const { weekFrom, weekTo } = useMemo(() => ({ weekFrom: format(subDays(new Date(), 6), 'yyyy-MM-dd'), weekTo: format(new Date(), 'yyyy-MM-dd') }), [])
-  const dailyQuery = useDailyMetrics({ from: weekFrom, to: weekTo, mode: 'week' })
-  const dailyData = dailyQuery.data ?? []  // ?? [] — empty array is valid; see Pattern 3 empty-fixture contract
-  const { pipelineFrom, pipelineTo } = useMemo(() => { /* same memoization pattern */ }, [])
-  const pipelineQuery = usePipelineGrid({ from: pipelineFrom, to: pipelineTo, resolution: 'day' })
-  const hasData = !!data; const showSkeleton = isLoading && !hasData; const showFullError = isError && !isLoading && !hasData
-  if (showSkeleton) return <Skeleton />
-  if (showFullError) return <Alert>{/* error alert with retry */}</Alert>
-  if (!hasData) return null
-  return (
-    <>
-      {/* Primary blocks — render when hasData */}
-      <MonitorKpiCards kpi={data.kpi} />
-      <MonitorMetricsTable periods={data.periods} />
-      {/* Supplementary — independent 3-branch: skeleton / error / data */}
-      {dailyQuery.isLoading && !dailyQuery.data && <Skeleton />}
-      {dailyQuery.isError  && !dailyQuery.data && <RetryButton onClick={dailyQuery.refetch} />}
-      {dailyQuery.data && <MonitorWeeklyChart data={dailyData} />}
-      {pipelineQuery.data && <MonitorPipelineHealth pipelines={pipelineQuery.data.pipelines} />}
-    </>
-  )
-}
-```
-
-**Anti-pattern to avoid** (see also `### Known Anti-Patterns` for the tactical list):
-```typescript
-// ❌ BAD — full-page error when ANY hook fails; blanks KPI cards for a pipeline-health failure
-const { data: summary } = useMonitorSummary()
-const { data: pipeline } = usePipelineGrid(/* params */)
-if (!summary || !pipeline) return <ErrorPage />  // one failure kills the whole page
-```
-
-**Cross-reference.** Story 92.4-FE (introduced pattern), Story 92.5-FE (copy with buyout gauge + pipeline), Story 92.6-FE (E2E coverage of graceful degradation per hook).
-
-**Testing requirement**: E2E coverage MUST include graceful-degradation paths (primary success + supplementary failure, and vice versa). See `e2e/monitor.spec.ts` Error states describe block for canonical examples.
-
----
-
-#### Pattern 2: Raw-SVG vs chart-library decision rule
-
-Recharts lowers dev cost for complex interactive charts but raises test cost: jsdom doesn't render SVG sizes, so Recharts children (lines, axes) don't mount — unit tests require pre-planned `vi.mock` at the top of the test file. Raw SVG has more geometry upfront but is trivially testable — no mocking needed. Story 92.5-FE chose raw SVG for `MonitorBuyoutGauge` specifically to avoid Story 92.4-FE's recharts jsdom pain discovered mid-sprint. **Test-harness cost is load-bearing, not a dev-ergonomics-only choice.**
-
-**Decision rule**:
-- Semi-circular gauges, simple arcs, progress rings, small static shapes → **raw SVG**
-- Line charts, bar charts, area charts, complex interactive (zoom / pan / brush / tooltip) → **recharts** + pre-plan jsdom mocks in the test file before writing any component code
-
-**Canonical pairs**:
-- Raw SVG: `src/app/(dashboard)/monitor/components/MonitorBuyoutGauge.tsx` (Epic 92 origin) + `src/app/(dashboard)/monitoring/components/HealthScoreWidget.tsx` (Epic 68 original precedent)
-- Recharts: `src/app/(dashboard)/monitor/components/MonitorWeeklyChart.tsx` + `src/components/custom/dashboard/MonthlyPatternsChart.tsx`
-
-**When you MUST use recharts** — pre-plan the jsdom mock strategy in the test file setup before writing the component. See Story 92.4-FE's retro for the `LineChart`/`Line`/`XAxis` mock template. Do not discover the mock requirement at test-writing time.
-
-**Cross-reference.** Story 92.4-FE (recharts jsdom pain diagnosis), Story 92.5-FE (raw SVG chosen to avoid it).
-
----
-
-#### Pattern 3: Story-1 fixture seeding for new domains
-
-**The rule**: any new epic touching a new domain MUST create `src/test/fixtures/<domain>-empty.ts` alongside types + normalizer in Story 1 of the epic. Downstream stories' unit tests AND E2E fixture helpers reuse it.
-
-**Why**: retroactive extraction (what Epic 92 did in Story 92.6-FE) forces every downstream story to re-implement empty-data inline until the extraction happens. Upfront cost in Story 1 is ~30 lines; retroactive refactor is ~100+ lines across N story test files.
-
-**Canonical example**: `src/test/fixtures/monitor-empty.ts` — shared between unit tests (`src/app/(dashboard)/monitor/components/__tests__/MonitorPageContent.test.tsx`) and E2E helpers (`e2e/fixtures/monitor-fixtures.ts`). The E2E file wraps the same factories with `page.route` handlers.
-
-**Module shape** (adapted from `src/test/fixtures/monitor-empty.ts`):
-```typescript
-// Shared empty-fixture factories — consumed by unit tests AND e2e/fixtures/.
-// Convention: money/ratio fields use null (CLAUDE.md anti-pattern #8); count fields use 0.
-import type { MonitorSummaryResponse } from '@/app/(dashboard)/monitor/types/monitor-summary'
-import type { PipelineHealthGrid } from '@/app/(dashboard)/monitoring/types/monitoring-grid'
-import type { DailyMetrics } from '@/types/daily-metrics'
-
-export function emptyMonitorSummary(): MonitorSummaryResponse { /* counts=0, money=null */ }
-export function emptyPipelineGrid(): PipelineHealthGrid     { /* pipelines: [] */ }
-export function emptyDailyMetrics(): DailyMetrics[]         { return [] }
-```
-
-**Checklist for Story 1 of any new-domain epic**:
-1. Types defined in `src/types/<domain>.ts` or `src/app/(dashboard)/<domain>/types/`
-2. Normalizer defined in `src/lib/api/<domain>.ts` (`normalize<Domain>Response`)
-3. Shared-fixture module created at `src/test/fixtures/<domain>-empty.ts`
-4. E2E fixture wrapper at `e2e/fixtures/<domain>-fixtures.ts` with `page.route` handlers (if E2E spec is planned)
-5. At least one unit test in the first downstream test file imports from the shared-fixture module — proves the wiring before the module accumulates consumers
-
-**Cross-reference.** Story 92.6-FE (retroactive extraction that motivated this rule), Epic 92 retro AI #5 (shared-fixture module should be seeded in Story 1 of any new-domain epic, not retroactively). Fixtures should consume the normalized types produced by the `### Boundary Normalizer Pattern` — never raw backend shapes.
-
-**Testing requirement**: the shared-fixture module MUST have ≥1 test consuming it in the first downstream test file (proves the wiring). Without this, regressions slip silently into fixture factories.
-
----
-
-#### Pattern 4: Spec-grep discipline for story handoff
-
-**The rule**: story authors must grep every field name / function name / type name listed in the spec's `Data sources / fields consumed` section against the actual source file BEFORE marking the story `ready-for-dev`. Prevents ghost fields and stale references from reaching the executor.
-
-**Case studies**:
-
-- **Story 92.4-FE H-3 structural fix** — spec listed 3 chart lines sourced from `DailyMetrics.salesCount` / `DailyMetrics.returnsCount`. Those fields didn't exist on the `DailyMetrics` type (`src/types/daily-metrics.ts`) **at spec-handoff time** (they were added later as the H-3 structural fix). The primary dev silently adapted to 2 chart lines; review caught the structural drift and flagged it as a hard review issue → required upstream type extension + aggregation change to restore the intended 3-line chart. Had the spec author grepped `src/types/daily-metrics.ts` for `salesCount` / `returnsCount` before handoff, the structural work would have been scoped into Story 92.4-FE upfront and the review round-trip avoided.
-
-- **Epic 91-FE Story 91.2-FE sent-but-not-consumed field** — spec added `operatingProfit: number` to `FinanceDailyResponseItem` (`src/lib/api/daily-analytics/api.ts:48`) on the premise that "backend already sends it since Epics 89-91." The field exists in multiple consumer locations (`src/types/daily-metrics.ts`, `src/components/custom/sku-financials/`), but no consumer actually mapped it in the PR. Review caught it; field kept with a comment documenting "received but unmapped" status. Grep-for-new-field-USAGE (not existence) is the discipline: `grep -rn 'operatingProfit' src/components/ src/hooks/` would have shown no NEW consumer in the PR diff.
-
-**Handoff checklist** (run before marking `ready-for-dev`):
-1. For every `<filename>.ts:<field>` citation in the spec, run `grep -n '<field>' <filename>.ts`.
-2. Confirm: field exists, type matches spec's assumption, nullability matches spec's handling (`number | null` vs `number` — see `### Known Anti-Patterns` #8 for why nullability mismatches bite).
-3. If any confirmation fails, fix the spec or file a structural-work task BEFORE handoff — do not leave discovery to the executor.
-4. Cite the grep results in the spec's "Pre-flight" section so the executor knows verification happened.
-5. For new field ADDITIONS, also grep consumer directories (`src/components/`, `src/hooks/`) for planned usage — no consumers = candidate sent-but-not-consumed duplication.
-6. When the spec or any documentation prose cites "grep returns N" / "field doesn't exist" / quantitative codebase claim, run the grep at writing time and cite the count + file scope inline. Don't trust the retrospective's framing — retros are summaries, not verifications.
-7. For every Acceptance Criterion framed as "no X" (constraint — e.g., "no script modification", "no new files", "CLAUDE.md only"), grep the codebase for prior cases of X. If a precedent exists under analogous reasoning, mark the AC as DEFAULT-OVERRIDABLE; otherwise mark ABSOLUTE. Document the precedent-grep result inline in the AC so the reviewer doesn't repeat the work.
-
-**Cross-reference.** Story 92.4-FE retro H-3 (spec cited chart lines sourced from `DailyMetrics.salesCount`/`returnsCount`, which didn't exist at handoff time; caught in review as a structural fix requiring upstream type extension + aggregation change), Epic 91-FE retro "What Didn't Go Well" #2, Story 93.3-FE (spec-grep surfaced that 2 of 3 target sites were already documented → downscoped the story before a single line of code was written — the rule working in the positive direction). **See also** the **Documentation-example verification** sub-section below — extends the same grep-discipline from spec field-citations to documentation prose claims.
-
-**Documentation-example verification (Story 94.5-FE).** The Pattern 4 grep-discipline applies not only to spec field-citations but also to **documentation prose** that cites quantitative codebase state — "grep returns N", "field X doesn't exist", "no consumer mapped Y", "<file>:<line> contains Z". Authors MUST run the grep at writing time and cite the result inline; don't trust a retrospective's framing — retros are summaries, not verifications. **Canonical case study**: Story 93.4-FE's first writing (artifact `_bmad-output/implementation-artifacts/93-4-fe-codify-epic-92-patterns-in-claude-md.md:93`) claimed `operatingProfit` had "0 call sites." The empirical grep returns 60 references across 21 src/ files (`grep -rn 'operatingProfit' src --include='*.ts' --include='*.tsx'`). The 2nd-pass post-merge code-review caught the falsehood (Story 93.4-FE M-NEW-2 finding at `_bmad-output/implementation-artifacts/93-4-fe-codify-epic-92-patterns-in-claude-md.md:271`, under the "Post-merge second-review fixes" heading at line 268); corrected text now lives at `CLAUDE.md:733` with the more accurate "no consumer actually mapped it in the PR" framing. Cost: one preventable post-merge follow-up commit. Mechanic: checklist item 6 (above) is the at-handoff-time reminder; this paragraph is the read-once internalization. See also Pattern 4's two existing case studies for field-citation-time verification (the same discipline applied to specs).
-
-**Constraint precedent-grep (Story 94.7-FE).** Acceptance Criteria framed as "no X" (e.g., "no script modification", "no new files", "CLAUDE.md only", "no test changes") must be classified ABSOLUTE or DEFAULT-OVERRIDABLE at spec-authoring time. Run a precedent-grep for prior cases of X — if any prior story did X under analogous reasoning, the constraint is DEFAULT-OVERRIDABLE (reviewer may invoke the precedent to override without separate justification). Otherwise ABSOLUTE (reviewer override requires explicit justification beyond precedent). Mark the classification IN the AC. **Canonical case study**: Story 93.5-FE's spec set AC-7 *"### AC-7: No script modification"* as default (`_bmad-output/implementation-artifacts/93-5-fe-check-docs-signal-quality-investigation.md:116`). Story 89.3-FE had already added `EXCLUDE_PATHS` to `scripts/check-doc-citations.sh` (`_bmad-output/implementation-artifacts/89-3-fe-doc-link-validator-script.md:313`) for the analogous reason of filtering demonstratively-bad citations. The 89-3 precedent existed at Story 93.5 spec-authoring time; the spec author didn't grep for it. The 2nd-pass review surfaced it: M-NEW-2 (baseline-arithmetic finding) revealed the spec file's citations were double-scanned, triggering the AC-7 override decision (`_bmad-output/implementation-artifacts/93-5-fe-check-docs-signal-quality-investigation.md:249`) which invoked the 89-3 EXCLUDE_PATHS pattern; L-NEW-1 (`_bmad-output/implementation-artifacts/93-5-fe-check-docs-signal-quality-investigation.md:258`) was the downstream CLAUDE.md escape-hatch documentation step. AC-7 was overridden mid-flight + EXCLUDE_PATHS was added for the 93-5 spec file. Cost: one preventable review round-trip — the spec author had access to the precedent and could have classified AC-7 as DEFAULT-OVERRIDABLE upfront with the override-condition documented. Mechanic: checklist item 7 (above) is the at-handoff-time reminder; this paragraph is the read-once internalization. Scope: applies to ALL "no X" framings (scope-discipline ACs, file-restriction ACs, behavior-prohibition ACs) — not just script-modification.
-
----
+E2E coverage MUST exercise graceful-degradation paths (primary-success + supplementary-failure, and vice versa). See `e2e/monitor.spec.ts` Error states block.
 
 ## Critical Business Rules
 
