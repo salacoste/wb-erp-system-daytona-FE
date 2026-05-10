@@ -14,10 +14,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useAcquiringReports } from '@/hooks/use-acquiring-reports'
+import { getAcquiringRateLimit } from '@/hooks/use-acquiring-rate-limit'
 import { ROUTES } from '@/lib/routes'
 import type { DateRange } from '@/types/date-range'
 import { AcquiringSummaryCards } from './AcquiringSummaryCards'
 import { AcquiringReportsTable } from './AcquiringReportsTable'
+import { AcquiringRateLimitBanner } from './shared/AcquiringRateLimitBanner'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -37,14 +39,19 @@ export function AcquiringPageContent() {
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
-  const { data, isLoading, isError, refetch } = useAcquiringReports(apiFrom, apiTo)
+  const { data, isLoading, isError, error, refetch } = useAcquiringReports(apiFrom, apiTo)
   const items = data?.data ?? []
   const hasData = items.length > 0
 
+  // 503 rate-limit detection — Story 96.9-FE, request-backend/169 § 1.1
+  const rateLimit = getAcquiringRateLimit(error)
+
   // Show full-page skeleton ONLY on first load (no cached data yet)
   const showSkeleton = isLoading && !hasData
-  // Show big error alert ONLY when no data is available to fall back to
-  const showFullError = isError && !hasData
+  // Show rate-limit banner (503) before generic error — Defensive Frontend Principle
+  const showRateLimitBanner = rateLimit.isRateLimited && !hasData
+  // Show generic error alert ONLY when no cached data AND not a 503
+  const showFullError = isError && !hasData && !rateLimit.isRateLimited
 
   return (
     <div className="space-y-6" data-testid="acquiring-page">
@@ -68,12 +75,17 @@ export function AcquiringPageContent() {
         </Button>
       </div>
 
-      {/* Body state machine — showSkeleton/showFullError distinguish first-load from refetch */}
+      {/* Body state machine — skeleton → rate-limit banner → full-error → empty/cached */}
       {showSkeleton ? (
         <div className="space-y-4" role="status" aria-busy="true" aria-label="Загрузка данных">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
+      ) : showRateLimitBanner ? (
+        <AcquiringRateLimitBanner
+          retryAfterSeconds={rateLimit.retryAfterSeconds}
+          onRefetch={() => void refetch()}
+        />
       ) : showFullError ? (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -105,7 +117,11 @@ export function AcquiringPageContent() {
           {/* Inline refetch-error chip when we have cached data but the refetch failed */}
           {isError && hasData && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
-              <span>Не удалось обновить. Показаны кэшированные данные.</span>
+              <span>
+                {rateLimit.isRateLimited
+                  ? `WB временно недоступна — показаны кэшированные данные. Повтор через ~${rateLimit.retryAfterSeconds} сек`
+                  : 'Не удалось обновить. Показаны кэшированные данные.'}
+              </span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
               </Button>

@@ -3,10 +3,11 @@
  * Epic 90-FE Story 90.4: /analytics/acquiring/period
  *
  * State machine mirrors Story 90.3's AcquiringReportDetailPage:
- *   showSkeleton  = isLoading && !hasData   (first-load, no cached data)
- *   showFullError = isError && !hasData     (hard error, nothing to show)
- *   empty         = !isLoading && !isError && transactions.length === 0
- *   inline chip   = isError && hasData      (refetch failed, showing stale data)
+ *   showSkeleton        = isLoading && !hasData   (first-load, no cached data)
+ *   showRateLimitBanner = rateLimit.isRateLimited && !hasData
+ *   showFullError       = isError && !hasData && !rateLimit.isRateLimited  (non-503 hard error, nothing to show)
+ *   empty               = !isLoading && !isError && transactions.length === 0
+ *   inline chip         = isError && hasData      (refetch failed, showing stale data)
  *
  * Default date range: last 7 days (narrower than reports-list 30-day default —
  * period-detail is for auditing a specific week, not a month overview).
@@ -26,8 +27,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ROUTES } from '@/lib/routes'
 import { useAcquiringPeriodDetail } from '@/hooks/use-acquiring-period-detail'
+import { getAcquiringRateLimit } from '@/hooks/use-acquiring-rate-limit'
 import { AcquiringTransactionsTable } from '@/app/(dashboard)/analytics/acquiring/reports/[id]/components/AcquiringTransactionsTable'
 import { AcquiringPeriodSummary } from './AcquiringPeriodSummary'
+import { AcquiringRateLimitBanner } from '@/app/(dashboard)/analytics/acquiring/components/shared/AcquiringRateLimitBanner'
 import type { DateRange } from '@/types/date-range'
 
 function getDefaultRange(): DateRange {
@@ -49,14 +52,19 @@ export function AcquiringPeriodDetailPage() {
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
-  const { data, isLoading, isError, refetch } = useAcquiringPeriodDetail(apiFrom, apiTo)
+  const { data, isLoading, isError, error, refetch } = useAcquiringPeriodDetail(apiFrom, apiTo)
   const transactions = data?.data ?? []
   const hasData = transactions.length > 0
 
+  // 503 rate-limit detection — Story 96.9-FE, request-backend/169 § 1.1
+  const rateLimit = getAcquiringRateLimit(error)
+
   // Show full-page skeleton ONLY on first load (no cached data yet)
   const showSkeleton = isLoading && !hasData
-  // Show big error alert ONLY when no data is available to fall back to
-  const showFullError = isError && !hasData
+  // Show rate-limit banner (503) before generic error — Defensive Frontend Principle
+  const showRateLimitBanner = rateLimit.isRateLimited && !hasData
+  // Show generic error alert ONLY when no cached data AND not a 503
+  const showFullError = isError && !hasData && !rateLimit.isRateLimited
 
   return (
     <div className="space-y-6" data-testid="acquiring-period-detail">
@@ -106,12 +114,17 @@ export function AcquiringPeriodDetailPage() {
         />
       </div>
 
-      {/* Body state machine — showSkeleton/showFullError distinguish first-load from refetch */}
+      {/* Body state machine — skeleton → rate-limit banner → full-error → empty/cached */}
       {showSkeleton ? (
         <div className="space-y-4" role="status" aria-busy="true" aria-label="Загрузка транзакций">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
+      ) : showRateLimitBanner ? (
+        <AcquiringRateLimitBanner
+          retryAfterSeconds={rateLimit.retryAfterSeconds}
+          onRefetch={() => void refetch()}
+        />
       ) : showFullError ? (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -143,7 +156,11 @@ export function AcquiringPeriodDetailPage() {
           {/* Inline refetch-error chip when we have cached data but the refetch failed */}
           {isError && hasData && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
-              <span>Не удалось обновить. Показаны кэшированные данные.</span>
+              <span>
+                {rateLimit.isRateLimited
+                  ? `WB временно недоступна — показаны кэшированные данные. Повтор через ~${rateLimit.retryAfterSeconds} сек`
+                  : 'Не удалось обновить. Показаны кэшированные данные.'}
+              </span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
               </Button>

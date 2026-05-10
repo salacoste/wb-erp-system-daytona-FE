@@ -125,6 +125,86 @@ test.describe('Acquiring Period Detail Page (Story 90.4-FE)', () => {
 })
 
 // ============================================================================
+// Rate-limit resilience: Story 96.9-FE AC-4
+// Mocks GET /v1/analytics/acquiring/reports to return 503 + Retry-After: 30
+// and asserts the amber rate-limit banner is rendered with Russian copy.
+// Uses domcontentloaded + toBeVisible (not networkidle / waitForTimeout).
+// ============================================================================
+
+test.describe('Acquiring rate-limit (Story 96.9-FE)', () => {
+  test('list page shows rate-limit banner when API returns 503 + Retry-After', async ({ page }) => {
+    // Route must be registered BEFORE navigation (anti-pattern #7 — no waitForTimeout)
+    await page.route('**/v1/analytics/acquiring/reports**', route =>
+      route.fulfill({
+        status: 503,
+        headers: { 'Retry-After': '30' },
+        contentType: 'application/json',
+        body: JSON.stringify({ error: { message: 'WB rate-limited' } }),
+      })
+    )
+
+    // domcontentloaded — not networkidle (CLAUDE.md anti-pattern #9)
+    await page.goto(ACQUIRING_URL, { waitUntil: 'domcontentloaded' })
+
+    // Banner must appear (deterministic wait via toBeVisible timeout)
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+
+    // Russian copy check — regex not exact string (CLAUDE.md anti-pattern #6)
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toContainText(
+      /WB временно недоступна/
+    )
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toContainText(/30/)
+
+    // Generic destructive error must NOT appear alongside the rate-limit banner
+    await expect(page.getByText(/Не удалось загрузить отчёты/)).not.toBeVisible()
+  })
+
+  test('report detail page shows rate-limit banner when API returns 503 + Retry-After', async ({
+    page,
+  }) => {
+    await page.route('**/v1/analytics/acquiring/reports/*/detail**', route =>
+      route.fulfill({
+        status: 503,
+        headers: { 'Retry-After': '45' },
+        contentType: 'application/json',
+        body: JSON.stringify({ error: { message: 'WB rate-limited' } }),
+      })
+    )
+    await page.goto('/analytics/acquiring/reports/12345', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toContainText(
+      /WB временно недоступна/
+    )
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toContainText(/45/)
+  })
+
+  test('period detail page shows rate-limit banner when API returns 503 + Retry-After', async ({
+    page,
+  }) => {
+    await page.route('**/v1/analytics/acquiring/detail**', route =>
+      route.fulfill({
+        status: 503,
+        headers: { 'Retry-After': '60' },
+        contentType: 'application/json',
+        body: JSON.stringify({ error: { message: 'WB rate-limited' } }),
+      })
+    )
+    await page.goto('/analytics/acquiring/period', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toContainText(
+      /WB временно недоступна/
+    )
+    await expect(page.getByTestId('acquiring-rate-limit-banner')).toContainText(/60/)
+  })
+})
+
+// ============================================================================
 // Accessibility: Story 90.5-FE AC-2
 // axe-core scans for all 3 Acquiring pages.
 // Pattern mirrors dashboard-metrics.spec.ts: filter critical/serious violations,

@@ -10,8 +10,9 @@ import { formatCurrency } from '@/lib/utils'
  * Rule-of-two extraction: used in both AcquiringReportsTable (Story 90.2) and
  * AcquiringTransactionsTable (Story 90.3).
  *
- * PENDING BACKEND: if VAT > fee pattern recurs at scale, file
- * docs/request-backend/NNN-*.md ticket.
+ * Advisory: VAT > fee anomaly (Defensive Frontend Principle, Story 89.4-FE).
+ * No backend ticket filed — pattern has not recurred at scale since deployment.
+ * If frequency increases, create docs/request-backend/<NEXT_NUMBER>-vat-exceeds-fee.md.
  */
 interface AnomalyVatIndicatorProps {
   fee: number | null
