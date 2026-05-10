@@ -4,7 +4,20 @@
  * Reference: docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md
  */
 
-export type BuyoutSource = 'weekly' | 'realtime' | 'blended'
+/**
+ * Buyout/returns data source.
+ *
+ * - `'sdk_reconciliation'` — SDK-reconciled (highest fidelity, Epic 106 backend pipeline).
+ * - `'weekly'` — weekly CSV report (lower fidelity, lower latency).
+ * - `'realtime'` — live data (higher latency for SDK reconcile).
+ * - `'blended'` — mixed-source heuristic (default fallback).
+ * - `'unknown'` — fallback for unrecognized backend source values (Defensive Frontend Principle).
+ *   Parity with `BuyoutReconciliationSource` (Story 96.14). SourceBadge renders AlertTriangle.
+ *
+ * Story 96.15-FE — `'sdk_reconciliation'` added (additive; no breaking changes).
+ * Story 96.15-FE 1st-pass review fix M-3 — `'unknown'` added for Story 96.14 parity.
+ */
+export type BuyoutSource = 'weekly' | 'realtime' | 'blended' | 'sdk_reconciliation' | 'unknown'
 export type BuyoutConfidence = 'high' | 'medium' | 'low'
 export type TrendDirection = 'up' | 'down' | 'stable'
 

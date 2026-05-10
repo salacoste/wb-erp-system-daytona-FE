@@ -14,10 +14,18 @@ export interface FcuBySkuItem {
   productName: string
   /** PCU — Production Cost per Unit */
   latestPcu: number
-  /** DCU — Delivery Cost per Unit */
-  latestDcu: number
-  /** FCU — Final Cost per Unit = PCU + DCU */
-  latestFcu: number
+  /**
+   * DCU — Delivery Cost per Unit (₽/unit).
+   * null = "unknown — no confirmed shipment yet" (CLAUDE.md anti-pattern #8).
+   * Consumers MUST null-narrow before arithmetic (e.g., `dcu != null ? dcu * units : null`).
+   */
+  latestDcu: number | null
+  /**
+   * FCU — Final Cost per Unit = PCU + DCU (₽/unit).
+   * null = "unknown — no confirmed shipment yet" (CLAUDE.md anti-pattern #8).
+   * Consumers MUST null-narrow before arithmetic.
+   */
+  latestFcu: number | null
   /** UUID of the source shipment */
   shipmentId: string
   /** Human-readable shipment name (COALESCE'd to '' by backend) */

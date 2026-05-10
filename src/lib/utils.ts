@@ -39,10 +39,15 @@ export function formatPercentage(value: number): string {
 /**
  * Formats a date as DD.MM.YYYY
  * @param date - Date string or Date object
- * @returns Formatted date string (e.g., "20.01.2025")
+ * @returns Formatted date string (e.g., "20.01.2025"), or '—' for invalid input
+ *
+ * Defensive guard (Story 96.11-FE 2nd-pass M2-2): invalid date strings (empty
+ * string, malformed ISO, etc.) previously produced "NaN.NaN.NaN". Guard added
+ * so all callers benefit — not just the FBS regions consumer.
  */
 export function formatDate(date: string | Date): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(dateObj.getTime())) return '—'
   const day = dateObj.getDate().toString().padStart(2, '0')
   const month = (dateObj.getMonth() + 1).toString().padStart(2, '0')
   const year = dateObj.getFullYear()

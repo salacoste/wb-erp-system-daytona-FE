@@ -102,11 +102,14 @@ export type BoxType = 'box' | 'pallet'
 /**
  * Box type configuration
  */
-export const BOX_TYPE_CONFIG: Record<BoxType, {
-  label: string
-  description: string
-  apiId: number
-}> = {
+export const BOX_TYPE_CONFIG: Record<
+  BoxType,
+  {
+    label: string
+    description: string
+    apiId: number
+  }
+> = {
   box: {
     label: 'Короб',
     description: 'Стандартная доставка в коробе',
@@ -173,8 +176,8 @@ export interface PriceCalculatorRequest {
    * Only applies to FBO fulfillment
    *
    * @frontend-only NOT sent to API (Story 44.36)
-   * Backend does not support this field yet
-   * @todo Re-enable when backend Epic 45/46 implements support
+   * Backend supports equivalent via dimensions/volume_liters + warehouse_name.
+   * See request #171 — aspirational, frontend calculation is canonical.
    */
   box_type?: BoxType
   /**
@@ -202,8 +205,8 @@ export interface PriceCalculatorRequest {
    * @example turnover_days: 20 → 20 days average to sell
    *
    * @frontend-only NOT sent to API (Story 44.36)
-   * Backend does not support this field yet
-   * @todo Re-enable when backend Epic 45/46 implements support
+   * Backend supports equivalent via storage_days + warehouse_name.
+   * See request #171 — aspirational, frontend calculation is canonical.
    */
   turnover_days?: number
   /**
@@ -254,7 +257,7 @@ export interface PriceCalculatorRequest {
    * @example
    * delivery_type: "fbo" - WB warehouse fulfillment
    */
-  delivery_type?: "fbo" | "fbs"
+  delivery_type?: 'fbo' | 'fbs'
 
   /**
    * Story 43.7: Product dimensions for volume calculation and tariff lookup
@@ -478,7 +481,7 @@ export interface PercentageCostItem {
 
 /**
  * Percentage costs breakdown for two-level pricing
- * Story 44.XX: Added VAT support
+ * Added VAT support
  */
 export interface TwoLevelPercentageCosts {
   /** WB commission */
@@ -590,9 +593,9 @@ export interface TwoLevelPricingFormData {
   logistics_to_mp_rub?: number
   /** Story 44.50: Units per package for cost division (default: 1) */
   units_per_package?: number
-  /** Story 44.XX: Whether seller is VAT payer (плательщик НДС) */
+  /** Whether seller is VAT payer (плательщик НДС) */
   is_vat_payer?: boolean
-  /** Story 44.XX: VAT rate percentage (0, 10, 20) - only applies if is_vat_payer */
+  /** VAT rate percentage (0, 10, 20) - only applies if is_vat_payer */
   vat_pct?: number
 }
 

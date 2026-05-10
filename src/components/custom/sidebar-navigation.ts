@@ -32,6 +32,9 @@ import {
   Truck,
   CreditCard,
   Gauge,
+  Boxes,
+  BarChart2,
+  GitCompare,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -71,10 +74,19 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Реклама', href: ROUTES.ANALYTICS.ADVERTISING, icon: Megaphone },
   // Epic 51-FE: FBS Historical Analytics
   { label: 'Заказы FBS', href: ROUTES.ANALYTICS.ORDERS, icon: ClipboardList },
+  // Epic 96-FE Story 96.11: FBS Stock Breakdowns (adjacent to "Заказы FBS" — L-2 fix)
+  // Boxes icon (M2-4): distinguishes from "Storage" which uses Warehouse.
+  { label: 'Остатки FBS', href: ROUTES.ANALYTICS.FBS_STOCK, icon: Boxes },
+  // Epic 96-FE Story 96.13: FBS Enhanced Analytics aggregated view (orderStats + funnel)
+  // BarChart2 icon: visually distinct from Boxes (FBS Stock) and Warehouse (Storage).
+  { label: 'Расширенная аналитика FBS', href: ROUTES.ANALYTICS.FBS_ENHANCED, icon: BarChart2 },
   // Epic 68: Marketing Funnel Analytics
   { label: 'Воронка продаж', href: ROUTES.ANALYTICS.FUNNEL, icon: Filter },
   // Epic 69: Buyout Rate Analytics
   { label: 'Аналитика выкупов', href: ROUTES.ANALYTICS.BUYOUT, icon: ShoppingBag },
+  // Epic 96-FE Story 96.14: Buyout Reconciliation (anomaly audit — distinct from rate analytics)
+  // GitCompare icon: conveys data reconciliation / source comparison semantic.
+  { label: 'Сверка выкупов', href: ROUTES.ANALYTICS.BUYOUT_RECONCILIATION, icon: GitCompare },
   // Epic 70-FE: Returns Analytics
   { label: 'Аналитика возвратов', href: ROUTES.ANALYTICS.RETURNS, icon: RotateCcw },
   // Epic 90-FE: Acquiring Cost Reports

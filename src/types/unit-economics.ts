@@ -161,6 +161,22 @@ export interface UnitEconomicsItem {
 
   /** Whether COGS is assigned */
   has_cogs: boolean
+
+  /**
+   * Final Cost per Unit (₽/ед) from latest confirmed shipment.
+   * Sourced via FCU aggregation pipeline (Story 77.5). Spread into UnitEconomicsItem
+   * during merge at useUnitEconomicsPageState.ts (Story 96.10-FE AC-2).
+   * `null` = backend has no FCU data for this SKU yet (e.g., no confirmed shipment).
+   * `undefined` = SKU not present in FCU response (race condition or pagination cutoff).
+   * Both render as `—` in UI per CLAUDE.md anti-pattern #8.
+   */
+  latestFcu?: number | null
+  /**
+   * Delivery Cost per Unit (₽/ед) — the warehouse-delivery portion of latestFcu.
+   * Story 96.10-FE — surfaced per-SKU for tooltip on delivery_to_warehouse % column.
+   * Same nullability semantics as latestFcu.
+   */
+  latestDcu?: number | null
 }
 
 /**

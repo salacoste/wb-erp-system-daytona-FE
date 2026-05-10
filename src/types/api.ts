@@ -9,6 +9,15 @@ export interface ApiResponse<T> {
 }
 
 export class ApiError extends Error {
+  /**
+   * Retry-After header value parsed from a 503 response (seconds).
+   * Populated by api-client when the backend returns 503 with a Retry-After
+   * header (Story 96.9-FE — WB rate-limit resilience for acquiring endpoints,
+   * per request-backend/169 § 1.1). Undefined for non-503 responses or when
+   * the header is missing/non-numeric.
+   */
+  retryAfter?: number
+
   constructor(
     message: string,
     public status: number,

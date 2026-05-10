@@ -88,7 +88,9 @@ export function computeDelta(
 /**
  * Detects anomaly in a period: cogs > revenue OR margin > revenue.
  * Guard-capture pattern — no ! assertions (CLAUDE.md anti-pattern #2).
- * PENDING BACKEND: file docs/request-backend/NNN if cogs > revenue recurs frequently.
+ * Advisory: cogs > revenue can occur legitimately (e.g., loss-making periods).
+ * The anomaly indicator renders a warning; no backend ticket needed unless
+ * frequency exceeds expected thresholds across cabinets.
  */
 export function hasAnomaly(p: PeriodMetrics): boolean {
   const cogsExceeds = p.cogs != null && p.revenue != null && p.cogs > p.revenue

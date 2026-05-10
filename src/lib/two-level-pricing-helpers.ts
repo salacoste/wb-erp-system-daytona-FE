@@ -59,7 +59,7 @@ export function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevel
 
 /**
  * Calculate percentage costs based on recommended price
- * Story 44.XX: Added VAT support
+ * Added VAT support
  */
 export function calculatePercentageCosts(
   recommendedPrice: number,
@@ -88,7 +88,7 @@ export function calculatePercentageCosts(
   const taxIncome =
     taxType === 'income' ? { pct: taxRatePct, rub: recommendedPrice * taxRate } : null
 
-  // Story 44.XX: VAT calculation (only if payer)
+  // VAT calculation (only if payer)
   const vat = isVatPayer ? { pct: vatPct, rub: recommendedPrice * vatRate } : null
 
   const totalPct =
