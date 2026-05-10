@@ -1,8 +1,9 @@
 # ESLint `max-lines-per-file` rule typo (discovered Story 96.16-FE)
 
-**Status**: Open — needs follow-up story
+**Status**: Partially fixed — typo corrected, interim threshold applied
 **Discovered**: 2026-05-09 (Story 96.16-FE)
-**Severity**: Medium (silent quality-gate hole; existing files exempt from documented cap)
+**Fixed**: 2026-05-10 (typo → `max-lines`, interim max=800 with skipBlankLines+skipComments)
+**Severity**: Medium → Low (rule now active but at interim 800-line ceiling; full 200-line cap deferred)
 
 ## What's wrong
 
@@ -12,7 +13,17 @@
 "max-lines-per-file": ["error", 200],
 ```
 
-But `max-lines-per-file` is **not a real ESLint rule**. The real rule name is `max-lines` (see ESLint docs: https://eslint.org/docs/latest/rules/max-lines). ESLint silently ignores rule names it doesn't recognize, so the documented 200-line cap is non-functional.
+But `max-lines-per-file` is **not a real ESLint rule**. The real rule name is `max-lines` (see ESLint docs: https://eslint.org/docs/latest/rules/max-lines). ESLint silently ignores rule names it doesn't recognize, so the documented 200-line cap was non-functional.
+
+## Fix applied (2026-05-10)
+
+Rule renamed to `max-lines` with object form and interim ceiling:
+
+```json
+"max-lines": ["error", { "max": 800, "skipBlankLines": true, "skipComments": true }],
+```
+
+This keeps the rule active (catches new violations above 800 lines) without breaking CI on 26 existing files that exceed the documented 200-line cap. The 800 ceiling was chosen to accommodate the largest existing source file (`src/types/price-calculator.ts` at 799 lines) with a small margin.
 
 ## Evidence
 
@@ -20,21 +31,18 @@ But `max-lines-per-file` is **not a real ESLint rule**. The real rule name is `m
 - `npm run lint` returns 0/0 against this file (cap not enforced).
 - CLAUDE.md `### Critical Development Rules` documents: "**File size limit**: All source files MUST be under 200 lines (ESLint enforced)" — but ESLint is NOT actually enforcing.
 
-## Why not fix here
+## Why not fix to full 200-line cap here
 
-Story 96.16-FE is scoped to comment cleanup (single-file JSDoc swap). Fixing the ESLint typo would silently flag many existing files as 200-line violations and require either:
-- A multi-file refactor pass to bring all source files under 200 lines, OR
-- Per-file `eslint-disable-next-line max-lines` annotations as triage.
+26 non-test source files exceed 200 lines (11 are type definition files). Immediately enforcing the documented 200-line cap would break CI. The interim 800-line ceiling was chosen as a safe floor that:
+- Catches egregious new violations
+- Doesn't break CI on existing code
+- Leaves the full 200-line tightening as a deliberate follow-up
 
-Either path is a net-new initiative outside this story's scope.
+## Remaining follow-up (Epic 97-FE candidate)
 
-## Proposed follow-up
-
-File a Sprint Epic 97-FE-candidate story:
-1. Rename `.eslintrc.json` rule from `max-lines-per-file` to `max-lines`. Note: the real `max-lines` rule supports both bare-number form (`["error", 200]`) and object form (`["error", { max: 200, skipBlankLines: true, skipComments: true }]`) — choose intentionally based on whether comment lines should count toward the cap.
-2. Run `npm run lint` to enumerate all violators (likely many — every file silently exempt for unknown duration).
-3. Triage: refactor or add per-file disables with rationale (`// eslint-disable-next-line max-lines` with comment explaining why).
-4. **Update CLAUDE.md `### Critical Development Rules` § "File size limit"** — line currently states "**File size limit**: All source files MUST be under 200 lines (ESLint enforced)" but ESLint is NOT actually enforcing. Either: (a) bring all files under 200 lines and KEEP the rule (preferred), or (b) raise/relax the cap to a sustainable target and update CLAUDE.md to match.
+1. **Triage 26 violators**: refactor or add per-file `/* eslint-disable max-lines */` with rationale. 11 are `src/types/` files (data-heavy by nature) — consider a types-specific override.
+2. **Tighten threshold incrementally**: 800 → 400 → 200, one pass at a time.
+3. **Update CLAUDE.md `### Critical Development Rules` § "File size limit"** — currently states "All source files MUST be under 200 lines (ESLint enforced)" which is aspirational until the threshold reaches 200. Either bring all files under 200 lines and keep the prose, or update the documented cap to match the chosen sustainable target.
 
 ## Cross-references
 

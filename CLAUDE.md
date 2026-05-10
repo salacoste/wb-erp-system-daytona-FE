@@ -187,7 +187,7 @@ Each story closes only when EVERY quality gate's output matches its documented b
 - **check:docs**: automated set-diff against `scripts/.check-docs-baseline.txt` (Story 94.1-FE). Exit code is the gate.
 - **type-check**: count must equal 20 AND the file scope must equal `src/lib/api/advertising-analytics-api.ts`. New errors anywhere else, or additional errors in that file beyond 20, are regressions. The 20 will drop when the SDK type drift is resolved (out of scope for now — see § "When to update").
 - **lint**: count must equal 0. Any warning OR error is a regression.
-- **test**: passing count must equal 7239 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
+- **test**: passing count must equal 7244 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
 
 **When to update.** When a story legitimately changes a baseline (e.g., the SDK drift is fixed → 20 type errors drop to 0; a new story adds 12 valid tests → 7000 passing becomes 7012), update this section in the same PR. Treat the section like Story 93.5's 13-citation table: source-of-truth (may temporarily lag reality between gate-affecting commits).
 
