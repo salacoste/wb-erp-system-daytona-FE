@@ -59,7 +59,7 @@ Frontend displays data correctly from both APIs. No frontend changes needed — 
 
 - [x] **Partial closure 2026-04-30** per backend status report.
 - [x] Backend confirmed: WB Returns API is not exposed in the WB SDK; this is an EXTERNAL blocker (Wildberries platform constraint), not a backend implementation gap.
-- [ ] Full data reconciliation pending: requires either (a) WB SDK to expose Returns API, OR (b) alternative data source for return classification.
+- [x] **Full closure 2026-05-04** — SDK v3.10.0 now exposes `sdk.returns` module. Epic 106 (Story 106.3) implemented buyout-return reconciliation overlay. Epic 108 (Story 108.3) integrated `sdk.returns` directly, replacing workarounds. `source: 'sdk_reconciliation'` now overrides the previous MAX heuristic for return counts. `buyoutRatePct` and `returnRatePct` are more accurate.
 - [x] Frontend status (above) unchanged — frontend displays data correctly from both APIs.
 
-**Status**: PARTIAL — closed for backend-side action; remains pending on WB platform/SDK external evolution.
+**Status**: CLOSED — SDK v3.10.0 `sdk.returns` module resolves the external blocker; data reconciliation now active.

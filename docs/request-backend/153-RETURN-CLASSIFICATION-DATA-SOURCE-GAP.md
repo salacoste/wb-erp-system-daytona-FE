@@ -52,3 +52,13 @@ If the 63 returns are mostly FBO:
 
 If SRID linking is broken:
 - Fix the JOIN between `orders_fbs.srid` and `wb_finance_raw.srid`
+
+---
+
+## Resolution
+
+**Status**: CLOSED (Epic 106 + Epic 108, Story 108.3)
+
+**Fix**: SDK v3.10.0 added the `sdk.returns` module providing direct FBO/FBS return data access. The root cause was confirmed: the 63 returns were mostly FBO, which weren't in `orders_fbs`. Epic 106 (Story 106.2) integrated FBO return classification via SDK v3.9.3 helpers. Epic 108 (Story 108.3) consolidated `fbo_return_classification_sync` + `buyout_reconciliation_sync` into a single `returns_sync` pipeline using `sdk.returns`, achieving near-complete FBO/FBS return coverage.
+
+**Pipeline consolidation**: 18 → 17 pipelines. `returns_sync` runs daily at 06:30 MSK.

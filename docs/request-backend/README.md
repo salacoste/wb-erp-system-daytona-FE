@@ -2,7 +2,7 @@
 
 Documentation of requests from frontend team to backend team and backend team responses.
 
-**Last Updated**: 2026-02-01 | **Total Requests**: 130+ | **Active**: 4 | **Pending**: 3 | **Resolved**: 120+
+**Last Updated**: 2026-05-06 | **Total Requests**: 130+ | **Active**: 0 | **Pending**: 0 | **Resolved**: 130+
 
 ---
 
@@ -11,7 +11,7 @@ Documentation of requests from frontend team to backend team and backend team re
 | Shard | Content | Requests |
 |-------|---------|----------|
 | **[Shard 01: Recent Epics](./README-SHARD-01-recently-resolved-epics.md)** | Epic 33-36, Telegram, Advertising | #71, #73, #75-78, #85-90, #99 |
-| **[Shard 02: Pending](./README-SHARD-02-pending-financial.md)** | WB Column Rename, retail_price | #58, #61 |
+| **[Shard 02: Financial Columns](./README-SHARD-02-pending-financial.md)** | WB Column Rename, retail_price (resolved) | #58, #61 |
 | **[Shard 03: Financial](./README-SHARD-03-resolved-financial.md)** | Per-SKU, Storage, WB Dashboard | #45-51, #56-59, #62, #64 |
 | **[Shard 04: COGS & Analytics](./README-SHARD-04-cogs-analytics.md)** | Epic 5/6, COGS Management | #27-28, #31-33, #36, #40, #44 |
 | **[Shard 05: Margin & Products](./README-SHARD-05-margin-products.md)** | Margin, Products API, #01-#21 | #01-21, #25-26 |
@@ -26,23 +26,30 @@ Documentation of requests from frontend team to backend team and backend team re
 
 ### Active & Pending
 
-| Request | Title | Priority | Shard |
-|---------|-------|----------|-------|
-| #130 | Dashboard FBO Orders API (Epic 60) | HIGH | [Shard 08](./README-SHARD-08-fbs-warehouses.md) |
-| #61 | WB Column Rename (Dec 2024) | HIGH | [Shard 02](./README-SHARD-02-pending-financial.md) |
-| #58 | retail_price_total Aggregation | HIGH | [Shard 02](./README-SHARD-02-pending-financial.md) |
-| #113 | Margin Calculation Empty State | LOW | [Shard 09](./README-SHARD-09-margin-fixes.md) |
+None — all requests resolved.
 
-### Latest Resolved (2026-01-29 to 2026-01-30)
+### Latest Resolved (2026-05-04 to 2026-05-06)
 
-| Request | Title | Status | Shard |
-|---------|-------|--------|-------|
-| #120 | Backend Fixes Completed | FIXED | [Shard 09](./README-SHARD-09-margin-fixes.md) |
-| #114 | Margin Calculation FrontEnd Guide | DOCS UPDATED | [Shard 09](./README-SHARD-09-margin-fixes.md) |
-| #111 | Epic 53 - Supply Management API | COMPLETE | [Shard 08](./README-SHARD-08-fbs-warehouses.md) |
-| #110 | Epic 51 - FBS Historical Analytics | COMPLETE | [Shard 08](./README-SHARD-08-fbs-warehouses.md) |
-| #109 | Epic 40 - WB Native Status History | COMPLETE | [Shard 08](./README-SHARD-08-fbs-warehouses.md) |
-| #99 | Products Dimensions & Category API | DOCS UPDATED | [Shard 01](./README-SHARD-01-recently-resolved-epics.md) |
+| Request | Title | Status | Epic |
+|---------|-------|--------|------|
+| **#173** | **FE Validation Response (Epics 101-109)** | **RESPONDED** | Epics 107-109 |
+| **#170** | **Backend Update Epics 107-109** | **CORRECTED** | Epics 107-109 |
+| **#159** | **Preliminary Tax for Incomplete Weeks** | **IMPLEMENTED** | Story 108.6 + 109.3 |
+| #153 | FBO Return Classification Gap | CLOSED | Epic 106 + Story 108.3 |
+| #154 | Buyout/Return Data Mismatch | CLOSED | Story 108.3 (sdk.returns) |
+| #148 | Fulfillment Returns Count=0 | FIXED | Epic 106 + Story 107.8 |
+| #150 | Monitoring False Alarms | RESOLVED | Story 107.9 |
+| #158 | Stale Documentation Shards | CLOSED | Story 108.4 |
+
+### Previously Resolved (2026-04-30 to 2026-05-04)
+
+| Request | Title | Status | Epic |
+|---------|-------|--------|------|
+| #157 | Daily Finance Breakdown | IMPLEMENTED | Epic 88 |
+| #165 | Orders Price Inversion | CLOSED | Story 103.1 |
+| #58 | retail_price_total | IMPLEMENTED | Epic 104 |
+| #61 | WB Column Rename | DEPLOYED & STABLE | Dec 2024 |
+| #113 | Margin Empty State | DOCUMENTED | Not a bug |
 
 ---
 
@@ -67,6 +74,23 @@ Documentation of requests from frontend team to backend team and backend team re
 | **Epic 56** | **Historical Inventory Import** | **COMPLETE** | - |
 | **Epic 57** | **FBS Analytics Enhancement** | **COMPLETE** | - |
 | **Epic 60** | **FBO/FBS Order Analytics** | **✅ COMPLETE** | 34 SP (6 stories) |
+| **Epic 68** | **Marketing Funnel Analytics** | **COMPLETE** | - |
+| **Epic 71** | **Return Classification** | **COMPLETE** | - |
+| **Epic 80** | **SDK v3.4.0 Migration** | **COMPLETE** | - |
+| **Epic 84** | **SDK v3.5.0 Migration** | **COMPLETE** | - |
+| **Epic 86** | **Dev Workflow & Infrastructure** | **COMPLETE** | - |
+| **Epic 87** | **Frontend Integration & Test Infra** | **COMPLETE** | - |
+| **Epic 88** | **Daily Breakdown & Marketing Fixes** | **COMPLETE** | - |
+| **Epic 91** | **SDK v3.8.1 Finance Reports v1** | **COMPLETE** | - |
+| **Epic 92** | **Acquiring API & Monitor Dashboard** | **COMPLETE** | - |
+| **Epic 94** | **ML Infrastructure Foundation** | **COMPLETE** | - |
+| **Epic 95** | **Sales Forecasting Pipeline** | **COMPLETE** | - |
+| **Epic 100** | **ML Admin, Monitoring & CI** | **COMPLETE** | - |
+| **Epic 104** | **Frontend Requests & Tech Debt** | **COMPLETE** | - |
+| **Epic 106** | **FBO Return Classification** | **COMPLETE** | - |
+| **Epic 107** | **Frontend Response Fixes** | **COMPLETE** | - |
+| **Epic 108** | **SDK Returns & Tech Debt Sweep** | **COMPLETE** | - |
+| **Epic 109** | **SDK Integration Debt & Housekeeping** | **COMPLETE** | - |
 
 ---
 
@@ -88,7 +112,7 @@ Documentation of requests from frontend team to backend team and backend team re
 - **#109** [Epic 40 - WB Native Status History API](./109-epic-40-wb-native-status-history-api.md)
 - **#110** [Epic 51 - FBS Historical Analytics API](./110-epic-51-fbs-historical-analytics-api.md) - Cross-API (OrdersFBS + Reports + Analytics)
 - **#111** [Epic 53 - FBS Supply Management API](./111-epic-53-supply-management-api.md) - Supply lifecycle, stickers, documents
-- **#130** [Epic 60 - Dashboard FBO Orders API](./130-DASHBOARD-FBO-ORDERS-API.md) - FBO/FBS separation, fulfillment analytics (PENDING)
+- **#130** [Epic 60 - Dashboard FBO Orders API](./130-DASHBOARD-FBO-ORDERS-API.md) - FBO/FBS separation, fulfillment analytics (COMPLETE)
 
 ### COGS & Margin Calculation
 - **#07** [COGS/Margin Analytics includeCogs Parameter](./07-cogs-margin-analytics-includecogs-parameter.md)
@@ -191,26 +215,26 @@ See [Shard 06](./README-SHARD-06-workflow-guides.md) for full workflow details.
 
 ---
 
-## Recent Updates (2026-02-01)
+## Recent Updates (2026-05-06)
 
-### New Requests
-- **#130**: Dashboard FBO Orders API - **PENDING** (Awaiting Epic 60 backend implementation)
+### Resolved Requests (Epics 107-109)
+- **#159**: Preliminary tax for incomplete weeks — **IMPLEMENTED** (Story 108.6 + 109.3, endpoint live)
+- **#153**: FBO return classification gap — **CLOSED** (Epic 106.2 + Story 108.3)
+- **#154**: Buyout/return data mismatch — **CLOSED** (Story 108.3 sdk.returns)
+- **#148**: Fulfillment returns count — **FIXED** (Epic 106 + Story 107.8)
+- **#150**: Monitoring false alarms — **RESOLVED** (Story 107.9)
+- **#158**: Stale documentation shards — **CLOSED** (Story 108.4)
+- **#170**: Backend update report Epics 107-109 — **INFO** (this document)
 
-### Completed Fixes
-- **#120**: Margin recalculation auto-trigger - **FIXED** (COGS bulk upload now triggers margin calculation)
-- **#117**: Margin calculation investigation - **COMPLETED** (weekly_margin_fact population working)
-- **#114**: FrontEnd guide for margin calculation - **DOCUMENTED**
-- **#113**: Empty state behavior documentation - **DOCUMENTED** (Not a bug)
+### Previously Resolved (Epics 101-108)
+- **#157**: Daily finance breakdown — **IMPLEMENTED** (Epic 88)
+- **#165**: Orders price inversion — **CLOSED** (Story 103.1)
+- **#58**: retail_price_total — **IMPLEMENTED** (Epic 104, Story 104.1)
+- **#61**: WB Column Rename — **DEPLOYED & STABLE** (Dec 2024)
+- **#113**: Margin empty state — **DOCUMENTED** (not a bug)
 
-### Epic Status Updates
-- **Epic 60** (FBO/FBS Order Analytics) - **PLANNED** (34 SP, 6 stories)
-- **Epic 56** (Historical Inventory Import) - **COMPLETED** (2026-01-29)
-- **Epic 57** (FBS Analytics Enhancement) - **COMPLETED**
-- **Epic 51** (FBS Historical Analytics) - **COMPLETED**
-- **Epic 53** (FBS Supply Management) - **COMPLETED**
-
-### TypeScript Compilation
-- All TypeScript compilation errors - **FIXED**
+### All Open Requests Closed
+All 130+ frontend requests are now resolved. New requests → `docs/request-backend/` starting from **#170**.
 
 ---
 

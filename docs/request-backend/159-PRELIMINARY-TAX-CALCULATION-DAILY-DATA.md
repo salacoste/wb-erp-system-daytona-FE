@@ -1,7 +1,7 @@
 # Request #159: Предварительный расчёт налогов для незавершённых недель (Daily Data)
 
 **Date**: 2026-03-01
-**Status**: 🟡 Pending
+**Status**: ✅ IMPLEMENTED
 **Priority**: P1
 **Related**: Backend Epic 72 (Tax Accounting), Task-50 (НДС/VAT), Frontend Epic 66-FE, Request #156, #155
 **Requested By**: Frontend Team
@@ -504,19 +504,19 @@ is_minimum_rule = false
 
 ### Обязательные (MVP)
 
-- [ ] Endpoint `GET /v1/analytics/tax/preliminary?from=...&to=...` возвращает `TaxMetrics`
-- [ ] Расчёт УСН 6% на базе `orders/trends.totalRevenue`
-- [ ] Расчёт УСН 15% на базе доступных расходов (COGS + реклама)
-- [ ] Расчёт manual ставки
-- [ ] Расчёт НДС (если `vatPayer=true`)
-- [ ] Поле `preliminary: true` в ответе
-- [ ] Поле `data_completeness` с флагами доступных данных
-- [ ] Если `taxSystem === null` → возвращает `{ tax: null }`
-- [ ] 401 для неавторизованных, 403 для wrong cabinet
+- [x] Endpoint `GET /v1/analytics/tax/preliminary?from=...&to=...` возвращает `TaxMetrics`
+- [x] Расчёт УСН 6% на базе `orders/trends.totalRevenue`
+- [x] Расчёт УСН 15% на базе доступных расходов (COGS + реклама)
+- [x] Расчёт manual ставки
+- [x] Расчёт НДС (если `vatPayer=true`)
+- [x] Поле `preliminary: true` в ответе
+- [x] Поле `data_completeness` с флагами доступных данных
+- [x] Если `taxSystem === null` → возвращает `{ tax: null }`
+- [x] 401 для неавторизованных, 403 для wrong cabinet
 
 ### Желательные
 
-- [ ] `net_profit_after_tax` рассчитан если хотя бы выручка и COGS доступны
+- [x] `net_profit_after_tax` рассчитан если хотя бы выручка и COGS доступны
 - [ ] Кеширование с TTL 60s (данные daily меняются часто)
 - [ ] Экстраполяция расходов из последней завершённой недели (Вариант B из п. 5.2)
 

@@ -1,4 +1,4 @@
-# Pending Requests - Financial Features
+# Financial Column Changes — Resolved
 
 [< Back to Index](./README.md) | [< Previous: Recent Epics](./README-SHARD-01-recently-resolved-epics.md) | [Next: Resolved Financial >](./README-SHARD-03-resolved-financial.md)
 
@@ -12,7 +12,7 @@ This shard contains pending and in-progress requests related to financial featur
 
 **Date**: 2024-12-15
 **Priority**: HIGH - Breaking Change
-**Status**: CODE READY - Backward-compatible synonyms added
+**Status**: DEPLOYED & STABLE (Dec 2024)
 **Effective Date**: 2024-12-22 (WB reports)
 **Component**: Backend - Excel Import Parser
 **File**: [61-wb-column-rename-dec-2024.md](./61-wb-column-rename-dec-2024.md)
@@ -41,7 +41,7 @@ This shard contains pending and in-progress requests related to financial featur
 
 **Date**: 2025-12-14
 **Priority**: HIGH - Core Financial Feature
-**Status**: AWAITING IMPLEMENTATION
+**Status**: IMPLEMENTED (Epic 104, Story 104.1)
 **Component**: Backend - Weekly Aggregation
 **Related**: PM Request #02 (Financial Data Presentation Concept)
 **File**: [58-retail-price-total-aggregation.md](./58-retail-price-total-aggregation.md)
