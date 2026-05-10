@@ -97,7 +97,48 @@ class ApiClient {
           )
         }
 
-        throw new ApiError(errorMessage, response.status, errorData)
+        const apiError = new ApiError(errorMessage, response.status, errorData)
+        // NOTE: apiError.retryAfter is undefined by default. It is ONLY set below when the
+        // response is 503 or 429 AND a valid Retry-After header/body is present. Callers
+        // must use `error.retryAfter ?? <fallback>` — comparing with `> 0` yields false for
+        // undefined, which silently skips the value.
+        // Capture Retry-After on 503 for rate-limit banner — Story 96.9-FE, request-backend/169 § 1.1
+        // Extended to 429 for FBS export rate-limit countdown — Story 96.12-FE.
+        // Validation per code-review M-1/M-2: only positive integers in [1, 600] are honored.
+        // - HTTP RFC 7231 § 7.1.3 also allows HTTP-date format — out of scope; treated as undefined.
+        // - Negatives, decimals, whitespace-only, Infinity, and zero are all rejected so the UI
+        //   never displays "Повтор через -5 сек" / "0 сек" / "Infinity сек".
+        // 429: also check body { retryAfter: N } since backend may not set the header.
+        if (response.status === 503 || response.status === 429) {
+          const retryHeader = response.headers.get('Retry-After')
+          if (retryHeader !== null && /^\d+$/.test(retryHeader.trim())) {
+            const parsed = Number.parseInt(retryHeader.trim(), 10)
+            if (parsed >= 1 && parsed <= 600) {
+              apiError.retryAfter = parsed
+            }
+          }
+          // Fallback: parse body { retryAfter: N } when header is absent (Story 96.12-FE).
+          // M-2 fix: also accept string-typed retryAfter (e.g. "60") — some JSON APIs
+          // serialize numbers as strings. Regex /^\d+$/ rejects decimals, negatives, whitespace.
+          if (
+            apiError.retryAfter === undefined &&
+            isJson &&
+            typeof errorData === 'object' &&
+            errorData !== null
+          ) {
+            const bodyRetry = (errorData as Record<string, unknown>).retryAfter
+            let parsed: number = NaN
+            if (typeof bodyRetry === 'number') {
+              parsed = bodyRetry
+            } else if (typeof bodyRetry === 'string' && /^\d+$/.test(bodyRetry.trim())) {
+              parsed = Number.parseInt(bodyRetry.trim(), 10)
+            }
+            if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 600) {
+              apiError.retryAfter = Math.floor(parsed)
+            }
+          }
+        }
+        throw apiError
       }
 
       if (isJson) {
