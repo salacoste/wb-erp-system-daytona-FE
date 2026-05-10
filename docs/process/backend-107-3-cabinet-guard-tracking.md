@@ -1,6 +1,6 @@
 # Backend Story 107.3 — CabinetGuard Verification Tracking
 
-**Status**: Speculative tracking (open audit — see § "Where backend Story 107.3 lives" caveat below; backend-side security audit independent of frontend code)
+**Status**: Speculative tracking (open audit — see § "Where backend Story 107.3 lives — caveat per Story 96.17-FE 1st-pass review M-1" section below; backend-side security audit independent of frontend code)
 **Filed**: 2026-05-10 (per Story 96.17-FE Disposition A)
 **Frontend story**: 96.17-FE (closed as already-shipped per Story 86.2 precedent)
 **Trigger date**: 2026-06-15 (original E5 contract)
