@@ -24,7 +24,7 @@ import type { ClientInfoItem } from '@/types/orders-client-info'
  * Detect anomalous salePrice > price inversion from WB data.
  * Threshold chosen at 1.2x — legitimate price adjustments (e.g., currency rounding,
  * promo stacking) stay under this; observed bad data (order 4909080943) was 27x.
- * See docs/request-backend/165-ORDERS-PRICE-SALEPRICE-INVERSION.md for backend tracking.
+ * Backend resolved in Story 103.1 (request #170:25); guard kept for defense-in-depth per CLAUDE.md § Defensive Frontend Principle.
  *
  * Number.isFinite guards against NaN/Infinity if backend ever returns bad JSON values.
  */
