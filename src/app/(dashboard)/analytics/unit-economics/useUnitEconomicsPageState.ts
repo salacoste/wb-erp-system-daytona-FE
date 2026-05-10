@@ -70,11 +70,28 @@ export function mergeDeliveryCosts(
   const fcuMap = new Map(fcuItems.map(f => [String(f.nmId), f]))
   const merged = ueData.data.map(item => {
     const fcu = fcuMap.get(item.sku_id)
-    if (!fcu || !item.units_sold || item.revenue <= 0) return item
-    const deliveryRub = fcu.latestDcu * item.units_sold
+    // M2-2: if no FCU map entry at all, leave item unchanged (latestFcu/Dcu stay undefined per type).
+    if (!fcu) return item
+
+    // M2-2: FCU exists — ALWAYS propagate raw values regardless of arithmetic-skip conditions.
+    // This preserves the JSDoc invariant: null = backend sent null; undefined = no FCU entry at all.
+    // H-1: latestDcu is number | null — null-narrow before arithmetic (CLAUDE.md anti-pattern #8).
+    const baseItem = {
+      ...item,
+      latestFcu: fcu.latestFcu,
+      latestDcu: fcu.latestDcu,
+    }
+
+    // Skip delivery cost arithmetic when conditions are unsafe or DCU is null.
+    if (!item.units_sold || item.revenue <= 0 || fcu.latestDcu == null) {
+      return baseItem
+    }
+
+    const safeDcu = fcu.latestDcu
+    const deliveryRub = safeDcu * item.units_sold
     const deliveryPct = (deliveryRub / item.revenue) * 100
     return {
-      ...item,
+      ...baseItem,
       costs_rub: { ...item.costs_rub, delivery_to_warehouse: deliveryRub },
       costs_pct: { ...item.costs_pct, delivery_to_warehouse: deliveryPct },
     }

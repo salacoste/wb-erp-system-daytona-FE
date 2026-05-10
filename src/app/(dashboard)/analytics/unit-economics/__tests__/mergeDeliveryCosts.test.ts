@@ -134,4 +134,33 @@ describe('mergeDeliveryCosts', () => {
     expect(result.data[0].costs_rub.delivery_to_warehouse).toBe(0)
     expect(result.data[0].costs_pct.delivery_to_warehouse).toBe(0)
   })
+
+  it('M2-2 (Story 96.10 2nd-pass review): fcu exists but units_sold=0 — latestFcu/Dcu still propagated, delivery cost skipped', () => {
+    // M2-2 fix: the old early-return `if (!fcu || !units_sold || revenue<=0) return item`
+    // dropped latestFcu/Dcu when fcu existed but units_sold was 0.
+    // New shape: always spread latestFcu/Dcu when fcu entry exists; skip arithmetic only.
+    const ue = makeUeResponse([{ sku_id: '12345', revenue: 1000, units_sold: 0 }])
+    const result = mergeDeliveryCosts(ue, mockFcu)
+    // delivery cost NOT computed (units_sold=0 is unsafe for arithmetic)
+    expect(result.data[0].costs_rub.delivery_to_warehouse).toBeNull()
+    expect(result.data[0].costs_pct.delivery_to_warehouse).toBeNull()
+    // latestFcu/Dcu propagated from fcu map entry (null-vs-undefined invariant preserved)
+    expect(result.data[0].latestFcu).toBe(175)
+    expect(result.data[0].latestDcu).toBe(25)
+  })
+
+  it('L-2 (Story 96.10 1st-pass review): null DCU — propagates latestFcu/latestDcu as null, skips delivery cost computation', () => {
+    // H-1 fix: FcuBySkuItem.latestDcu is now number | null (boundary normalizer).
+    // When backend returns null DCU (no confirmed shipment data), the merge must
+    // NOT attempt arithmetic and must propagate null values end-to-end (anti-pattern #8).
+    const nullDcuFcu: FcuBySkuItem[] = [{ ...mockFcu[0], latestDcu: null, latestFcu: null }]
+    const ue = makeUeResponse([{ sku_id: '12345', revenue: 1000, units_sold: 10 }])
+    const result = mergeDeliveryCosts(ue, nullDcuFcu)
+    // delivery_to_warehouse NOT computed — stays null (preserving original unset value)
+    expect(result.data[0].costs_rub.delivery_to_warehouse).toBeNull()
+    expect(result.data[0].costs_pct.delivery_to_warehouse).toBeNull()
+    // latestFcu/latestDcu propagated as null (not undefined, not 0)
+    expect(result.data[0].latestFcu).toBeNull()
+    expect(result.data[0].latestDcu).toBeNull()
+  })
 })

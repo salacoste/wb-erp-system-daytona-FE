@@ -125,8 +125,8 @@ export function transformToWaterfallData(
       continue
     }
 
-    const pct = costsPct[key] || 0
-    const rub = costsRub[key] || 0
+    const pct = costsPct[key] ?? 0
+    const rub = costsRub[key] ?? 0
 
     if (pct > 0.5) {
       // Only show if > 0.5%
