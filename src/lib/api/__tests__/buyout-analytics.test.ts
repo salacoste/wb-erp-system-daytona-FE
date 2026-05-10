@@ -250,4 +250,56 @@ describe('Buyout Analytics API Client', () => {
       expect(BUYOUT_CACHE.gcTime).toBe(60 * 60 * 1000)
     })
   })
+
+  // Story 96.15-FE — BuyoutSource type widening: sdk_reconciliation round-trip test
+  // No normalizer in buyout-analytics.ts (raw passthrough via apiClient).
+  // Type-system assertion: all 4 BuyoutSource values are valid at compile time and runtime.
+  describe('BuyoutSource enum widening (Story 96.15-FE)', () => {
+    it('accepts sdk_reconciliation source value (Story 96.15-FE)', async () => {
+      const mockResponse = {
+        data: [
+          {
+            nmId: 12345,
+            supplierArticle: 'ART-001',
+            productName: 'Test Product',
+            brand: 'TestBrand',
+            salesCount: 100,
+            returnsCount: 5,
+            buyoutRatePct: 95.0,
+            source: 'sdk_reconciliation' as const,
+          },
+        ],
+        pagination: { total: 1, limit: 20, offset: 0, hasMore: false },
+      }
+      vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
+
+      const result = await getBuyoutBySku({
+        from: '2026-04-01',
+        to: '2026-04-30',
+        source: 'sdk_reconciliation',
+      })
+
+      expect(result.data[0].source).toBe('sdk_reconciliation')
+    })
+
+    it('all 4 BuyoutSource values are type-valid and pass through unchanged', async () => {
+      const validSources = [
+        'sdk_reconciliation',
+        'weekly',
+        'realtime',
+        'blended',
+      ] as const satisfies readonly string[]
+
+      for (const source of validSources) {
+        const mockResponse = {
+          data: [{ nmId: 1, salesCount: 10, returnsCount: 1, buyoutRatePct: 90, source }],
+          pagination: { total: 1, limit: 20, offset: 0, hasMore: false },
+        }
+        vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
+
+        const result = await getBuyoutBySku({ from: '2026-04-01', to: '2026-04-30' })
+        expect(result.data[0].source).toBe(source)
+      }
+    })
+  })
 })

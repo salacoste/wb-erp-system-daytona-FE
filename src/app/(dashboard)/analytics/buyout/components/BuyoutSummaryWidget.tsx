@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, TrendingDown } from 'lucide-react'
+import { SourceBadge } from '@/components/custom/badges/SourceBadge'
 import type { BuyoutSource } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
 
@@ -71,6 +72,20 @@ export function BuyoutSummaryWidget({
           <p className="text-xs text-muted-foreground/70">
             В таблице по SKU — все возвраты (FBO+FBS), включая оценочные
           </p>
+          {/* Story 96.15-FE: section-level source badge — summary data comes from one source */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span>Источник:</span>
+            <SourceBadge source={data.source} />
+          </div>
+          {/* H2-1 fix: Defensive Frontend Principle "show an indicator" full recipe —
+              footnote required when anomalous 'unknown' source surfaces (icon alone insufficient).
+              // PENDING BACKEND: request #169 § 1.3 — unknown source indicator */}
+          {data.source === 'unknown' && (
+            <p className="text-xs text-amber-700 mt-1">
+              * Источник данных не распознан backend&apos;ом. Возможна ошибка нормализации на
+              стороне WB API.
+            </p>
+          )}
         </div>
 
         {/* Return reasons breakdown (FBS) */}

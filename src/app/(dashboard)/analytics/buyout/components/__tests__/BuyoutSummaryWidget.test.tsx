@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { BuyoutSummaryWidget } from '../BuyoutSummaryWidget'
+import { BUYOUT_SUMMARY_UNKNOWN_RESPONSE } from '@/test/fixtures/buyout-analytics'
 import type { BuyoutSummaryResponse } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
 
@@ -125,5 +126,21 @@ describe('BuyoutSummaryWidget', () => {
     mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
     renderWithProviders(<BuyoutSummaryWidget {...defaultProps} returnBreakdown={null} />)
     expect(screen.queryByText('Причины возвратов (FBS)')).not.toBeInTheDocument()
+  })
+
+  it('H2-1: shows footnote when source === "unknown" (Defensive Frontend Principle)', () => {
+    // Uses BUYOUT_SUMMARY_UNKNOWN_RESPONSE fixture (L2-2 Pattern 3 factory)
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: BUYOUT_SUMMARY_UNKNOWN_RESPONSE }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    // SourceBadge renders the 'unknown' badge
+    expect(screen.getByTestId('source-badge-unknown')).toBeInTheDocument()
+    // H2-1 footnote: full "show an indicator" recipe — icon alone insufficient
+    expect(screen.getByText(/Источник данных не распознан/)).toBeInTheDocument()
+  })
+
+  it('H2-1: does NOT show footnote for known sources', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.queryByText(/Источник данных не распознан/)).not.toBeInTheDocument()
   })
 })
