@@ -1,3 +1,5 @@
+import type { BuyoutSource } from './analytics-buyout'
+
 /**
  * Buyout Reconciliation — TypeScript types — Epic 96-FE Story 96.14-FE
  *
@@ -25,8 +27,11 @@
  * Aliased from BuyoutSource (analytics-buyout.ts) — same 5-variant union,
  * single definition to maintain. 'unknown' is the normalizer fallback for
  * unrecognized backend values.
+ *
+ * Type alias (not re-export) — re-export syntax `export type { X as Y } from`
+ * does not create a local binding, causing TS2304 at usage sites.
  */
-export type { BuyoutSource as ReconciliationSource } from './analytics-buyout'
+export type ReconciliationSource = BuyoutSource
 
 // ---------------------------------------------------------------------------
 // Per-row item shape
