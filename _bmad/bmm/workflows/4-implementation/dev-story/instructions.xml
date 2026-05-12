@@ -293,6 +293,16 @@
       <action>Add to Dev Agent Record → Completion Notes: "✅ Resolved review finding [{{severity}}]: {{description}}"</action>
     </check>
 
+    <!-- Fix-block propagation structural prompt (Story 99.2-FE, Epic 97 A-2) -->
+    <check if="the fix modified prose, numbers, citations, quoted phrases, or attestation claims">
+      <action>Run `bash scripts/check-fix-propagation.sh "&lt;BEFORE_PHRASE&gt;" &lt;affected_files&gt;` to verify the fix propagated to ALL parallel locations</action>
+      <action if="propagation check finds untouched occurrences">Fix ALL remaining occurrences before proceeding — do NOT mark task complete</action>
+      <action if="propagation check passes (exit 0)">Note in Completion Notes: propagation verified for "&lt;BEFORE_PHRASE&gt;"</action>
+    </check>
+    <check if="the fix is purely code/logic with no prose or citation impact">
+      <action>Confirm: no propagation check needed (code-only fix)</action>
+    </check>
+
     <!-- ONLY MARK COMPLETE IF ALL VALIDATION PASS -->
     <check if="ALL validation gates pass AND tests ACTUALLY exist and pass">
       <action>ONLY THEN mark the task (and subtasks) checkbox with [x]</action>

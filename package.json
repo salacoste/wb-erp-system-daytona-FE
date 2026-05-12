@@ -17,6 +17,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css}\"",
     "check:docs": "bash scripts/check-doc-citations.sh",
+    "check:eslint-rules": "bash scripts/check-eslint-rules.sh",
     "clean": "rm -rf .next node_modules/.cache",
     "clean:full": "rm -rf .next node_modules/.cache node_modules && npm install",
     "dev:clean": "npm run clean && npm run dev",
