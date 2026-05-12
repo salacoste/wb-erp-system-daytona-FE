@@ -1,50 +1,26 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import {
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  Search,
-  HelpCircle,
-  PackageX,
-  Calendar,
-} from 'lucide-react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import type { StorageBySkuItem } from '@/types/storage-analytics'
-import { WarehouseBadges } from './WarehouseBadges'
-
 /**
- * Storage by SKU Table
+ * Storage by SKU Table — main orchestrator component.
+ * Delegates state to useStorageBySkuTable hook, header to StorageSkuTableHeader,
+ * formatters to storage-sku-table-utils.
  * Story 24.3-FE: Storage by SKU Table
- * Epic 24: Paid Storage Analytics (Frontend)
  */
 
-type SortField = 'storage_cost_total' | 'storage_cost_avg_daily' | 'volume_avg' | 'days_stored'
-type SortOrder = 'asc' | 'desc'
-
-interface StorageBySkuTableProps {
-  data: StorageBySkuItem[]
-  isLoading?: boolean
-  onProductClick?: (nmId: string) => void
-  onSortChange?: (field: SortField, order: SortOrder) => void
-  onSearch?: (query: string) => void
-}
-
-// Debounce delay for search input (ms)
-const SEARCH_DEBOUNCE_MS = 300
+import { Calendar, PackageX, Search } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
+import { WarehouseBadges } from './WarehouseBadges'
+import { StorageSkuTableHeader } from './StorageSkuTableHeader'
+import { useStorageBySkuTable } from './useStorageBySkuTable'
+import {
+  type StorageBySkuTableProps,
+  formatCurrency,
+  formatVolume,
+  SKELETON_COLUMNS,
+  SKELETON_ROWS,
+} from './storage-sku-table-utils'
 
 export function StorageBySkuTable({
   data,
@@ -53,117 +29,17 @@ export function StorageBySkuTable({
   onSortChange,
   onSearch,
 }: StorageBySkuTableProps) {
-  const router = useRouter()
-  const [sortField, setSortField] = useState<SortField>('storage_cost_total')
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const {
+    sortField,
+    sortOrder,
+    searchQuery,
+    debouncedQuery,
+    filteredAndSortedData,
+    handleSort,
+    handleRowClick,
+    handleSearchChange,
+  } = useStorageBySkuTable({ data, onProductClick, onSortChange, onSearch })
 
-  // Debounce search query to avoid filtering on every keystroke
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery)
-      onSearch?.(searchQuery)
-    }, SEARCH_DEBOUNCE_MS)
-
-    return () => clearTimeout(timer)
-  }, [searchQuery, onSearch])
-
-  // Create case-insensitive regex for filtering (like SQL LIKE %query%)
-  const createSearchRegex = useCallback((query: string): RegExp | null => {
-    if (!query.trim()) return null
-    try {
-      // Escape special regex characters and create case-insensitive pattern
-      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      return new RegExp(escaped, 'i')
-    } catch {
-      return null
-    }
-  }, [])
-
-  // Filter and sort data locally
-  const filteredAndSortedData = useMemo(() => {
-    if (!data || data.length === 0) return data
-
-    let result = [...data]
-
-    // Apply search filter with regex (like SQL LIKE %query%)
-    const regex = createSearchRegex(debouncedQuery)
-    if (regex) {
-      result = result.filter(item => {
-        // Search across multiple fields: vendor_code, nm_id, product_name, brand
-        const searchableText = [item.vendor_code, item.nm_id, item.product_name, item.brand]
-          .filter(Boolean)
-          .join(' ')
-
-        return regex.test(searchableText)
-      })
-    }
-
-    // Apply sorting
-    result.sort((a, b) => {
-      const aValue = a[sortField] ?? 0
-      const bValue = b[sortField] ?? 0
-
-      if (sortOrder === 'asc') {
-        return aValue - bValue
-      }
-      return bValue - aValue
-    })
-
-    return result
-  }, [data, debouncedQuery, sortField, sortOrder, createSearchRegex])
-
-  // Format currency
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      maximumFractionDigits: 0,
-    }).format(value)
-  }
-
-  // Format volume
-  const formatVolume = (value: number | null): string => {
-    if (value === null) return '—'
-    return `${value.toFixed(1)} л`
-  }
-
-  // Handle sort click
-  const handleSort = (field: SortField) => {
-    const newOrder = sortField === field && sortOrder === 'desc' ? 'asc' : 'desc'
-    setSortField(field)
-    setSortOrder(newOrder)
-    onSortChange?.(field, newOrder)
-  }
-
-  // Handle row click
-  const handleRowClick = (nmId: string) => {
-    if (onProductClick) {
-      onProductClick(nmId)
-    } else {
-      router.push(`/analytics/sku?nm_id=${nmId}`)
-    }
-  }
-
-  // Handle search input change (debounce is handled by useEffect)
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-  }
-
-  // Get sort icon
-  const getSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="h-4 w-4 ml-1" />
-    }
-    return sortOrder === 'desc' ? (
-      <ArrowDown className="h-4 w-4 ml-1" />
-    ) : (
-      <ArrowUp className="h-4 w-4 ml-1" />
-    )
-  }
-
-  // Loading skeleton
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -172,17 +48,17 @@ export function StorageBySkuTable({
           <Table>
             <TableHeader>
               <TableRow>
-                {[...Array(7)].map((_, i) => (
-                  <TableHead key={i}>
+                {[...Array(SKELETON_COLUMNS)].map((_, i) => (
+                  <TableCell key={i}>
                     <Skeleton className="h-4 w-20" />
-                  </TableHead>
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[...Array(5)].map((_, i) => (
+              {[...Array(SKELETON_ROWS)].map((_, i) => (
                 <TableRow key={i}>
-                  {[...Array(7)].map((_, j) => (
+                  {[...Array(SKELETON_COLUMNS)].map((_, j) => (
                     <TableCell key={j}>
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
@@ -219,88 +95,7 @@ export function StorageBySkuTable({
       {/* Table with horizontal scroll for mobile (UX Decision Q7) */}
       <div className="overflow-x-auto border rounded-lg">
         <Table className="min-w-[900px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[120px]">Артикул</TableHead>
-              <TableHead className="w-[150px]">Название</TableHead>
-              <TableHead className="w-[120px]">Бренд</TableHead>
-              <TableHead className="w-[120px]">
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="p-0 h-auto font-medium hover:bg-transparent"
-                    onClick={() => handleSort('storage_cost_total')}
-                  >
-                    Хранение
-                    {getSortIcon('storage_cost_total')}
-                  </Button>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help flex-shrink-0" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-[280px]">
-                        <p className="text-xs">Сумма начислений за хранение за период.</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          ⚠ Это история начислений, не текущие остатки. Товар может быть уже
-                          продан.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </TableHead>
-              <TableHead className="w-[100px]">
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="p-0 h-auto font-medium hover:bg-transparent"
-                    onClick={() => handleSort('storage_cost_avg_daily')}
-                  >
-                    ₽/день
-                    {getSortIcon('storage_cost_avg_daily')}
-                  </Button>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help flex-shrink-0" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-[220px]">
-                        <p className="text-xs">
-                          Средняя стоимость хранения в день за выбранный период.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </TableHead>
-              <TableHead className="w-[70px]">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-0 h-auto font-medium hover:bg-transparent"
-                  onClick={() => handleSort('volume_avg')}
-                >
-                  Объём
-                  {getSortIcon('volume_avg')}
-                </Button>
-              </TableHead>
-              <TableHead className="w-[150px]">Склады</TableHead>
-              <TableHead className="w-[60px]">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-0 h-auto font-medium hover:bg-transparent"
-                  onClick={() => handleSort('days_stored')}
-                >
-                  Дней
-                  {getSortIcon('days_stored')}
-                </Button>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
+          <StorageSkuTableHeader sortField={sortField} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>
             {filteredAndSortedData.length === 0 ? (
               <TableRow>
@@ -325,14 +120,12 @@ export function StorageBySkuTable({
                   <TableCell className="font-medium">
                     <div className="flex flex-col gap-0.5">
                       <span>{formatCurrency(item.storage_cost_total)}</span>
-                      {/* Show last charge date if available */}
                       {item.last_charge_date && (
                         <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
                           <Calendar className="h-2.5 w-2.5" />
                           {new Date(item.last_charge_date).toLocaleDateString('ru-RU')}
                         </span>
                       )}
-                      {/* Show "No stock" indicator when has_warehouse_stock is false */}
                       {item.has_warehouse_stock === false && (
                         <span className="text-[10px] text-amber-600 flex items-center gap-0.5">
                           <PackageX className="h-2.5 w-2.5" />

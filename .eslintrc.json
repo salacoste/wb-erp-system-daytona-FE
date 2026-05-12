@@ -1,4 +1,5 @@
 {
+  "_comment": "NOT the enforcement path — `next lint` is deprecated and ignores this file. Actual enforcement: root eslint.config.js (flat config). Kept for documentation/IDE integration only (Story 98.1-FE).",
   "extends": [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
@@ -7,7 +8,7 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "warn",
-    "max-lines": ["error", { "max": 800, "skipBlankLines": true, "skipComments": true }],
+    "max-lines": ["error", { "max": 200, "skipBlankLines": true, "skipComments": true }],
     "no-console": ["warn", { "allow": ["warn", "error"] }]
   },
   "overrides": [

@@ -21,7 +21,6 @@ import {
   mockErrorGenerationFailed,
 } from '@/test/fixtures/stickers'
 import { mockSupplyClosed } from '@/test/fixtures/supplies'
-import type { StickerFormat } from '@/types/supplies'
 
 // Mock API client
 vi.mock('@/lib/api-client', () => ({

@@ -1,17 +1,14 @@
-'use client'
-
 import { Trophy, Medal } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 /**
- * Extracted sub-components for TopConsumersWidget
- * Story 24.4-FE: Top Consumers Widget
- * Epic 24: Paid Storage Analytics (Frontend)
+ * Helper components for TopConsumersWidget.
+ * Story 24.4-FE: Top Consumers Widget — extracted for file-size compliance.
  */
 
 // Cost severity thresholds per UX Decision Q10
-export type CostSeverity = 'high' | 'medium' | 'low' | 'unknown'
+type CostSeverity = 'high' | 'medium' | 'low' | 'unknown'
 
 export function getCostSeverity(ratio: number | null): CostSeverity {
   if (ratio === null) return 'unknown'

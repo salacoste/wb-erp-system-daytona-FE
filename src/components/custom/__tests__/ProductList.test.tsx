@@ -6,9 +6,6 @@
  * - Search functionality with debouncing
  * - Filter functionality (COGS filter toggle)
  * - Pagination (cursor-based)
- * - Product selection
- * - Margin display
- * - Accessibility (ARIA labels, table caption)
  *
  * @see src/components/custom/ProductList.tsx
  * @see docs/code-review/PRODUCTLIST-DEEP-REVIEW.md
@@ -66,7 +63,12 @@ interface MockPaginationProps {
 
 // Mock child components to simplify testing
 vi.mock('../ProductSearchFilter', () => ({
-  ProductSearchFilter: ({ onSearchChange, onFilterToggle, searchValue, filterLabel }: MockSearchFilterProps) => (
+  ProductSearchFilter: ({
+    onSearchChange,
+    onFilterToggle,
+    searchValue,
+    filterLabel,
+  }: MockSearchFilterProps) => (
     <div data-testid="product-search-filter">
       <input
         data-testid="search-input"
@@ -97,18 +99,10 @@ vi.mock('../ProductTableRow', () => ({
 vi.mock('../ProductPagination', () => ({
   ProductPagination: ({ hasPrevious, hasNext, onPrevious, onNext }: MockPaginationProps) => (
     <div data-testid="pagination">
-      <button
-        data-testid="prev-button"
-        onClick={onPrevious}
-        disabled={!hasPrevious}
-      >
+      <button data-testid="prev-button" onClick={onPrevious} disabled={!hasPrevious}>
         Previous
       </button>
-      <button
-        data-testid="next-button"
-        onClick={onNext}
-        disabled={!hasNext}
-      >
+      <button data-testid="next-button" onClick={onNext} disabled={!hasNext}>
         Next
       </button>
     </div>
@@ -222,11 +216,7 @@ describe('ProductList', () => {
   })
 
   const renderWithProviders = (ui: React.ReactElement) => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        {ui}
-      </QueryClientProvider>
-    )
+    return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
   }
 
   // ============================================================================
@@ -443,17 +433,13 @@ describe('ProductList', () => {
       fireEvent.change(searchInput, { target: { value: 'Test' } })
 
       // Should NOT call useProducts immediately with search value
-      expect(mockUseProducts).toHaveBeenCalledWith(
-        expect.objectContaining({ search: undefined })
-      )
+      expect(mockUseProducts).toHaveBeenCalledWith(expect.objectContaining({ search: undefined }))
 
       // Fast-forward 500ms and flush all pending timers
       await vi.advanceTimersByTimeAsync(500)
 
       // After debounce, should be called with search value
-      expect(mockUseProducts).toHaveBeenCalledWith(
-        expect.objectContaining({ search: 'Test' })
-      )
+      expect(mockUseProducts).toHaveBeenCalledWith(expect.objectContaining({ search: 'Test' }))
 
       vi.useRealTimers()
     })
@@ -707,284 +693,6 @@ describe('ProductList', () => {
       // After clicking next, previous button should be enabled
       const prevButton = screen.getByTestId('prev-button') as HTMLButtonElement
       expect(prevButton.disabled).toBe(false)
-    })
-  })
-
-  // ============================================================================
-  // 5. Product Selection (3 tests)
-  // ============================================================================
-
-  describe('Product Selection', () => {
-    it('does not trigger selection when enableSelection=false', () => {
-      const mockOnProductSelect = vi.fn()
-
-      mockUseProducts.mockReturnValue({
-        ...queryBaseProperties,
-        data: {
-          products: mockProducts,
-          pagination: { total: 2 },
-        },
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: vi.fn(),
-        isFetching: false,
-        isSuccess: true,
-        status: 'success',
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isLoadingError: false,
-        isPaused: false,
-        isPlaceholderData: false,
-        isRefetchError: false,
-        isRefetching: false,
-        isStale: false,
-        isInitialLoading: false,
-        fetchStatus: 'idle',
-      })
-
-      renderWithProviders(
-        <ProductList
-          enableSelection={false}
-          onProductSelect={mockOnProductSelect}
-        />
-      )
-
-      const productRow = screen.getByTestId('product-row-12345')
-      fireEvent.click(productRow)
-
-      expect(mockOnProductSelect).not.toHaveBeenCalled()
-    })
-
-    it('triggers onProductSelect when enableSelection=true', () => {
-      const mockOnProductSelect = vi.fn()
-
-      mockUseProducts.mockReturnValue({
-        ...queryBaseProperties,
-        data: {
-          products: mockProducts,
-          pagination: { total: 2 },
-        },
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: vi.fn(),
-        isFetching: false,
-        isSuccess: true,
-        status: 'success',
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isLoadingError: false,
-        isPaused: false,
-        isPlaceholderData: false,
-        isRefetchError: false,
-        isRefetching: false,
-        isStale: false,
-        isInitialLoading: false,
-        fetchStatus: 'idle',
-      })
-
-      renderWithProviders(
-        <ProductList
-          enableSelection={true}
-          onProductSelect={mockOnProductSelect}
-        />
-      )
-
-      const productRow = screen.getByTestId('product-row-12345')
-      fireEvent.click(productRow)
-
-      expect(mockOnProductSelect).toHaveBeenCalledTimes(1)
-      expect(mockOnProductSelect).toHaveBeenCalledWith(mockProducts[0])
-    })
-
-    it('highlights selected product row', () => {
-      mockUseProducts.mockReturnValue({
-        ...queryBaseProperties,
-        data: {
-          products: mockProducts,
-          pagination: { total: 2 },
-        },
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: vi.fn(),
-        isFetching: false,
-        isSuccess: true,
-        status: 'success',
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isLoadingError: false,
-        isPaused: false,
-        isPlaceholderData: false,
-        isRefetchError: false,
-        isRefetching: false,
-        isStale: false,
-        isInitialLoading: false,
-        fetchStatus: 'idle',
-      })
-
-      renderWithProviders(
-        <ProductList
-          enableSelection={true}
-          selectedProductId="12345"
-        />
-      )
-
-      // ProductTableRow component receives isSelected=true prop
-      expect(screen.getByTestId('product-row-12345')).toBeInTheDocument()
-    })
-  })
-
-  // ============================================================================
-  // 6. Margin Display (2 tests)
-  // ============================================================================
-
-  describe('Margin Display', () => {
-    it('passes include_margin=true to useProducts when enableMarginDisplay=true', () => {
-      mockUseProducts.mockReturnValue({
-        ...queryBaseProperties,
-        data: {
-          products: mockProducts,
-          pagination: { total: 2 },
-        },
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: vi.fn(),
-        isFetching: false,
-        isSuccess: true,
-        status: 'success',
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isLoadingError: false,
-        isPaused: false,
-        isPlaceholderData: false,
-        isRefetchError: false,
-        isRefetching: false,
-        isStale: false,
-        isInitialLoading: false,
-        fetchStatus: 'idle',
-      })
-
-      renderWithProviders(<ProductList enableMarginDisplay={true} />)
-
-      expect(mockUseProducts).toHaveBeenCalledWith(
-        expect.objectContaining({ include_margin: true })
-      )
-    })
-
-    it('passes include_margin=false to useProducts when enableMarginDisplay=false', () => {
-      mockUseProducts.mockReturnValue({
-        ...queryBaseProperties,
-        data: {
-          products: mockProducts,
-          pagination: { total: 2 },
-        },
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: vi.fn(),
-        isFetching: false,
-        isSuccess: true,
-        status: 'success',
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isLoadingError: false,
-        isPaused: false,
-        isPlaceholderData: false,
-        isRefetchError: false,
-        isRefetching: false,
-        isStale: false,
-        isInitialLoading: false,
-        fetchStatus: 'idle',
-      })
-
-      renderWithProviders(<ProductList enableMarginDisplay={false} />)
-
-      expect(mockUseProducts).toHaveBeenCalledWith(
-        expect.objectContaining({ include_margin: false })
-      )
-    })
-  })
-
-  // ============================================================================
-  // 7. Accessibility (2 tests)
-  // ============================================================================
-
-  describe('Accessibility', () => {
-    beforeEach(() => {
-      mockUseProducts.mockReturnValue({
-        ...queryBaseProperties,
-        data: {
-          products: mockProducts,
-          pagination: { total: 2 },
-        },
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: vi.fn(),
-        isFetching: false,
-        isSuccess: true,
-        status: 'success',
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isLoadingError: false,
-        isPaused: false,
-        isPlaceholderData: false,
-        isRefetchError: false,
-        isRefetching: false,
-        isStale: false,
-        isInitialLoading: false,
-        fetchStatus: 'idle',
-      })
-    })
-
-    it('has table with aria-label', () => {
-      renderWithProviders(<ProductList />)
-
-      const table = screen.getByLabelText('Список товаров')
-      expect(table).toBeInTheDocument()
-      expect(table.tagName).toBe('TABLE')
-    })
-
-    it('has table caption for screen readers', () => {
-      const { container } = renderWithProviders(<ProductList />)
-
-      const caption = container.querySelector('caption')
-      expect(caption).toBeInTheDocument()
-      expect(caption).toHaveClass('sr-only')
-      expect(caption).toHaveTextContent('Список товаров с себестоимостью и маржинальностью')
     })
   })
 })

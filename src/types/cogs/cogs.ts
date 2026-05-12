@@ -1,0 +1,164 @@
+/**
+ * COGS — Core Types, Assignment & Bulk Upload
+ * Extracted from cogs.ts (Story 99.1-FE)
+ */
+
+// ============================================================================
+// COGS History Types
+// ============================================================================
+
+export interface CogsHistoryItem {
+  cogs_id: string
+  nm_id: string
+  unit_cost_rub: number
+  currency: string
+  valid_from: string
+  valid_to: string | null
+  source: 'manual' | 'import' | 'system'
+  notes: string | null
+  created_by: string
+  created_at: string
+  updated_at: string
+  is_active: boolean
+  affected_weeks: string[]
+}
+
+export interface CogsHistoryResponse {
+  data: CogsHistoryItem[]
+  meta: {
+    nm_id: string
+    product_name: string
+    current_cogs: { unit_cost_rub: number; valid_from: string } | null
+    total_versions: number
+  }
+  pagination: {
+    total: number
+    cursor: string | null
+    has_more: boolean
+  }
+}
+
+export interface VersionChainInfo {
+  isCurrentVersion: boolean
+  hasPreviousVersion: boolean
+  isOnlyVersion: boolean
+  previousVersionCost?: number
+  previousVersionDate?: string
+}
+
+// ============================================================================
+// Core COGS Types
+// ============================================================================
+
+export type MissingDataReason =
+  | 'NO_SALES_IN_PERIOD'
+  | 'COGS_NOT_ASSIGNED'
+  | 'NO_SALES_DATA'
+  | 'ANALYTICS_UNAVAILABLE'
+  | null
+
+export type MarginCalculationStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'not_found'
+  | 'failed'
+
+export interface MarginCalculationStatusResponse {
+  status: MarginCalculationStatus
+  estimated_completion?: string
+  weeks?: string[]
+  enqueued_at?: string
+  started_at?: string
+  error?: string
+}
+
+export interface CogsRecord {
+  id: string
+  unit_cost_rub: string
+  currency?: string
+  valid_from: string
+  valid_to: string | null
+  version?: number
+  source?: string
+  notes?: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface ApplicableCogs {
+  unit_cost_rub: number
+  valid_from: string
+  applies_to_week: string
+  is_same_as_current: boolean
+}
+
+// ============================================================================
+// COGS Assignment & Bulk Upload
+// ============================================================================
+
+export interface CogsAssignmentRequest {
+  unit_cost_rub: number
+  valid_from: string
+  currency?: string
+  source?: string
+  notes?: string
+}
+
+export interface BulkCogsItem {
+  nm_id: string
+  sa_name?: string
+  unit_cost_rub: number
+  valid_from: string
+  currency?: string
+  source?: string
+  notes?: string
+}
+
+export interface BulkCogsUploadRequest {
+  items?: BulkCogsItem[]
+  assignments?: BulkCogsItem[]
+}
+
+export interface BulkCogsResult {
+  nm_id: string
+  sa_name?: string
+  success: boolean
+  cogs_id?: string
+  version?: number
+  error_code?: string
+  error_message?: string
+}
+
+export interface MarginRecalculationStatus {
+  weeks: string[]
+  status: 'pending' | 'in_progress' | 'completed'
+  taskId: string
+}
+
+export interface BulkCogsUploadResponse {
+  data: {
+    succeeded: number
+    failed: number
+    results: BulkCogsResult[]
+    message: string
+    marginRecalculation?: MarginRecalculationStatus
+  }
+}
+
+export interface BulkCogsUploadResponseLegacy {
+  totalItems: number
+  createdItems: number
+  skippedItems: number
+  errors: Array<{
+    nm_id: string
+    error: string
+  }>
+}
+
+export interface CogsValidationError {
+  field: string
+  message: string
+  code?: string
+  value?: unknown
+}

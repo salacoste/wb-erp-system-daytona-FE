@@ -1,8 +1,6 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useTrends } from '@/hooks/useTrends'
 import { formatCurrency } from '@/lib/utils'
@@ -16,17 +14,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { RefreshCw, AlertCircle, TrendingUp, Info, X } from 'lucide-react'
+import { TrendingUp, Info, X } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import Link from 'next/link'
-import { EmptyStateIllustration } from './EmptyStateIllustration'
 import { METRIC_LABELS, METRIC_CHANGE_KEY, TrendTooltip } from './trend-graph-config'
+import { TrendGraphSkeleton, TrendGraphError, TrendGraphEmpty } from './TrendGraphStates'
 
-/**
- * Trend graph component for key metrics over time
- * Story 3.4 + Story 85.1: wb_sales_gross metric
- */
 export function TrendGraph() {
   const queryClient = useQueryClient()
   const { data, isLoading, error, refetch } = useTrends(8)
@@ -40,55 +34,9 @@ export function TrendGraph() {
     refetch()
   }
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Тренды ключевых метрик</CardTitle>
-          <CardDescription>Изменение метрик по неделям</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-64 w-full" />
-        </CardContent>
-      </Card>
-    )
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Тренды ключевых метрик</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="flex items-center justify-between">
-              <span>Не удалось загрузить данные трендов.</span>
-              <Button variant="outline" size="sm" onClick={handleRetry} className="ml-4">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Повторить
-              </Button>
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  if (!data || data.trends.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Тренды ключевых метрик</CardTitle>
-          <CardDescription>Изменение метрик по неделям</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <EmptyStateIllustration type="trends" />
-        </CardContent>
-      </Card>
-    )
-  }
+  if (isLoading) return <TrendGraphSkeleton />
+  if (error) return <TrendGraphError onRetry={handleRetry} />
+  if (!data || data.trends.length === 0) return <TrendGraphEmpty />
 
   return (
     <Card>

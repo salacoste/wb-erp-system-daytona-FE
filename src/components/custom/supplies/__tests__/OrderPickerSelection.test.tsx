@@ -34,7 +34,6 @@ import {
 // import { useOrderSelection } from '@/hooks/useOrderSelection'
 
 describe('OrderPickerSelection - Story 53.5-FE', () => {
-  const mockOnSelectionChange = vi.fn()
   const mockOnClearSelection = vi.fn()
 
   const defaultProps = {

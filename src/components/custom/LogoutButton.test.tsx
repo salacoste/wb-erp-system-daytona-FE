@@ -4,8 +4,6 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { LogoutButton } from './LogoutButton'
 import * as api from '@/lib/api'
-import { useAuthStore } from '@/stores/authStore'
-
 // Mock API
 vi.mock('@/lib/api', () => ({
   logoutUser: vi.fn(),
@@ -66,9 +64,7 @@ describe('LogoutButton', () => {
   it('renders logout button', () => {
     renderButton()
 
-    expect(
-      screen.getByRole('button', { name: /выйти/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /выйти/i })).toBeInTheDocument()
   })
 
   it('calls logout API and clears auth state on click', async () => {
@@ -130,11 +126,11 @@ describe('LogoutButton', () => {
   it('shows loading state during logout', async () => {
     const user = userEvent.setup()
     const mockLogoutUser = vi.mocked(api.logoutUser)
-    let resolvePromise: (value: any) => void
-    const promise = new Promise((resolve) => {
+    let resolvePromise: (value: unknown) => void
+    const promise = new Promise<unknown>(resolve => {
       resolvePromise = resolve
     })
-    mockLogoutUser.mockReturnValue(promise as Promise<any>)
+    mockLogoutUser.mockReturnValue(promise as Promise<unknown>)
 
     renderButton()
 
@@ -160,4 +156,3 @@ describe('LogoutButton', () => {
     )
   })
 })
-
