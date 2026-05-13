@@ -17,8 +17,6 @@ function makeSummary(overrides: Partial<AdvertisingSummary> = {}): AdvertisingSu
     overall_roi: 0,
     avg_ctr: 0,
     avg_conversion_rate: 0,
-    campaign_count: 0,
-    active_campaigns: 0,
     total_organic_sales: 0,
     avg_organic_contribution: 0,
     ...overrides,

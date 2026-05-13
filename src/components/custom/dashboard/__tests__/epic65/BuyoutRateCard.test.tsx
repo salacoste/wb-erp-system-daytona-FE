@@ -53,14 +53,11 @@ describe('BuyoutRateCard', () => {
       expect(card).toBeInTheDocument()
     })
 
-    it('ignores legacy salesCount/ordersCount props (P-005 fix)', () => {
-      // Even if legacy props are passed, only buyoutRate matters
-      renderWithProviders(
-        <BuyoutRateCard buyoutRate={92.5} salesCount={500} ordersCount={1000} isLoading={false} />
-      )
+    it('renders buyout rate without comparison when only current rate provided', () => {
+      renderWithProviders(<BuyoutRateCard buyoutRate={92.5} isLoading={false} />)
 
-      // Should show 92.5% (from buyoutRate), NOT 50% (from 500/1000)
       expect(screen.getByText(/92,5\s*%/)).toBeInTheDocument()
+      expect(screen.queryByText(/п\.п\./)).not.toBeInTheDocument()
     })
   })
 
@@ -195,28 +192,6 @@ describe('BuyoutRateCard', () => {
       expect(
         screen.getByRole('article', { busy: true }) || screen.getByTestId('buyout-rate-skeleton')
       ).toBeTruthy()
-    })
-  })
-
-  // ===========================================================================
-  // Backward compatibility: legacy props still accepted (no TypeScript errors)
-  // ===========================================================================
-
-  describe('backward compatibility with legacy props', () => {
-    it('accepts legacy salesCount/ordersCount without errors', () => {
-      // Legacy props are accepted but ignored for calculation
-      renderWithProviders(
-        <BuyoutRateCard
-          salesCount={850}
-          ordersCount={1000}
-          previousSalesCount={700}
-          previousOrdersCount={1000}
-          isLoading={false}
-        />
-      )
-
-      // Without buyoutRate, should show no data
-      expect(screen.getByText('\u2014')).toBeInTheDocument()
     })
   })
 })

@@ -110,8 +110,6 @@ export async function getAdvertisingAnalytics(
       overall_roi: backendResponse.summary?.avgRoi ?? null,
       avg_ctr: backendResponse.summary?.avgCtr ?? 0,
       avg_conversion_rate: backendResponse.summary?.avgConversionRate ?? 0,
-      campaign_count: backendResponse.summary?.campaignCount ?? 0,
-      active_campaigns: backendResponse.summary?.activeCampaigns ?? 0,
       // Epic 35: Organic vs advertising split
       total_organic_sales: backendResponse.summary?.totalOrganicSales ?? 0,
       avg_organic_contribution: backendResponse.summary?.avgOrganicContribution ?? 0,

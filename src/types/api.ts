@@ -58,8 +58,6 @@ export interface Task {
     | 'weekly_margin_aggregate'
     | 'weekly_sanity_check'
     | 'publish_weekly_views'
-    /** @deprecated Use recalculate_weekly_margin instead */
-    | 'enrich_cogs'
   status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'dlq' | 'cancelled'
   progress?: number // 0-100
   result?: unknown
@@ -88,20 +86,6 @@ export interface ProcessingStatus {
   error?: string
   /** Count of failed import batches — shown as warning on dashboard */
   failedBatchCount?: number
-}
-
-/**
- * Product type (legacy - use ProductWithCogs from types/cogs.ts for new code)
- * @deprecated Use ProductWithCogs or ProductListItem from types/cogs.ts instead
- */
-export interface Product {
-  nm_id: string // WB article ID
-  name: string
-  brand?: string
-  category?: string
-  cogs?: number // Cost of Goods Sold
-  cogs_version?: number
-  updated_at: string
 }
 
 /**

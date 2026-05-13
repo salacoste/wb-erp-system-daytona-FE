@@ -41,8 +41,6 @@ const baseSummary: AdvertisingSummary = {
   overall_roi: -0.4,
   avg_ctr: 5,
   avg_conversion_rate: 10,
-  campaign_count: 5,
-  active_campaigns: 3,
   avg_organic_contribution: 62.5,
 }
 
@@ -109,8 +107,8 @@ describe('recomputeSummary', () => {
   it('preserves non-aggregate fields from original summary', () => {
     const items = [makeItem({ spend: 100, revenue: 50, total_sales: 80, organic_sales: 30 })]
     const result = recomputeSummary(items, baseSummary)
-    expect(result.active_campaigns).toBe(3)
-    expect(result.campaign_count).toBe(5)
+    expect(result.avg_ctr).toBe(5)
+    expect(result.avg_conversion_rate).toBe(10)
   })
 
   // Story 88.2-FE: when spend = 0, ROAS/ROI are null ("undefined division"), not 0

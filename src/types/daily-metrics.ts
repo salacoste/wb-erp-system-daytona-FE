@@ -20,7 +20,7 @@
  * - Finance Summary API: sales, COGS, logistics, storage
  * - Advertising API: advertising spend
  *
- * Used for daily breakdown charts and theoretical profit calculation.
+ * Used for daily breakdown charts and server-provided profit metrics.
  */
 export interface DailyMetrics {
   /** Date in YYYY-MM-DD format */
@@ -49,7 +49,7 @@ export interface DailyMetrics {
   paidAcceptance: number
   /** WB commission in rubles (Комиссия WB) */
   commission: number
-  /** Theoretical profit: sales - salesCogs - logistics - storage - penalties - paidAcceptance - commission - advertising */
+  /** Server-computed net profit from finance daily API. Null (COGS unknown) → 0 per Defensive Frontend Principle (Story 100.2-FE). */
   theoreticalProfit: number
   /** Story 92.4 H-3 fix: count of completed sales from finance.sales_count.
    * Integer count (NOT currency). Carried through aggregation for the Monitor weekly chart.
@@ -161,8 +161,6 @@ export interface UseDailyMetricsOptions {
   enabled?: boolean
   /** Refetch interval in milliseconds */
   refetchInterval?: number
-  /** Orders COGS value for theoretical profit calculation */
-  ordersCogs?: number
 }
 
 // ============================================================================
@@ -182,12 +180,4 @@ export interface AggregateDailyMetricsInput {
   advertisingData: AdvertisingDailyData[]
   /** Per-day COGS from orders/volume?include_cogs=true */
   ordersCogsByDay?: OrdersCogsDailyData[]
-  /** @deprecated Use ordersCogsByDay. Single COGS value applied to all days. */
-  ordersCogs?: number
 }
-
-/**
- * @deprecated Story 91.2-FE: Use server netProfit instead. Kept for fallback calc.
- * Moved inline to src/lib/daily/aggregation.ts to keep this file under 200 lines.
- */
-export type { TheoreticalProfitInput } from '@/lib/daily/aggregation'

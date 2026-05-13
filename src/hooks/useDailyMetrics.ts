@@ -35,7 +35,7 @@ import type {
  * - Theoretical profit calculated
  *
  * @param params - Date range and mode (week/month)
- * @param options - Hook options (enabled, refetchInterval, ordersCogs)
+ * @param options - Hook options (enabled, refetchInterval)
  * @returns Query result with DailyMetrics[] data
  *
  * @example
@@ -53,20 +53,13 @@ import type {
  *   to: '2026-01-31',
  *   mode: 'month',
  * })
- *
- * @example
- * // With COGS for theoretical profit
- * const { data } = useDailyMetrics(
- *   { from: '2026-01-26', to: '2026-02-01', mode: 'week' },
- *   { ordersCogs: 50000 }
- * )
  */
 export function useDailyMetrics(
   params: UseDailyMetricsParams,
   options: UseDailyMetricsOptions = {}
 ) {
   const { from, to, mode } = params
-  const { enabled = true, refetchInterval, ordersCogs = 0 } = options
+  const { enabled = true, refetchInterval } = options
 
   return useQuery<DailyMetrics[], Error>({
     queryKey: dailyAnalyticsQueryKeys.metrics(from, to),
@@ -83,7 +76,6 @@ export function useDailyMetrics(
         financeData,
         advertisingData,
         ordersCogsByDay,
-        ordersCogs,
       })
 
       // Fill missing days with zeros
@@ -149,7 +141,7 @@ export function useInvalidateDailyMetrics() {
 export function usePrefetchDailyMetrics() {
   const queryClient = useQueryClient()
 
-  return async (from: string, to: string, ordersCogs = 0) => {
+  return async (from: string, to: string) => {
     console.info('[Daily Metrics] Prefetching daily metrics:', { from, to })
     await queryClient.prefetchQuery({
       queryKey: dailyAnalyticsQueryKeys.metrics(from, to),
@@ -163,7 +155,6 @@ export function usePrefetchDailyMetrics() {
           financeData,
           advertisingData,
           ordersCogsByDay,
-          ordersCogs,
         })
         return fillMissingDays(aggregatedData, from, to)
       },

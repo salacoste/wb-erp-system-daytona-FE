@@ -20,6 +20,5 @@ export {
   getDateRange,
   getDaysInRange,
   // Aggregation
-  calculateDailyTheoreticalProfit,
   aggregateDailyMetrics,
 } from './daily'

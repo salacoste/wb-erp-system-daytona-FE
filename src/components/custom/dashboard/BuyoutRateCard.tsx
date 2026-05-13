@@ -32,22 +32,12 @@ import { cn } from '@/lib/utils'
 /**
  * Epic 69, Story 69.7: Updated props interface.
  * Primary prop: buyoutRate (pre-calculated by backend).
- * Legacy props (salesCount, ordersCount) kept for backward compatibility
- * but are no longer used for calculation.
  */
 export interface BuyoutRateCardProps {
   /** Pre-calculated buyout rate from backend API (0-100 or null) */
   buyoutRate?: number | null | undefined
   /** Previous period buyout rate for comparison (0-100 or null) */
   previousBuyoutRate?: number | null | undefined
-  /** @deprecated Legacy prop -- no longer used for buyout rate calculation */
-  salesCount?: number | undefined
-  /** @deprecated Legacy prop -- no longer used for buyout rate calculation */
-  ordersCount?: number | undefined
-  /** @deprecated Legacy prop -- use previousBuyoutRate instead */
-  previousSalesCount?: number | undefined
-  /** @deprecated Legacy prop -- use previousBuyoutRate instead */
-  previousOrdersCount?: number | undefined
   /** Total buyout count for tooltip detail */
   buyoutCount?: number | null
   /** Total orders count for tooltip detail */
@@ -99,10 +89,6 @@ function buildTooltip(buyoutCount?: number | null, totalOrders?: number | null):
 export function BuyoutRateCard({
   buyoutRate,
   previousBuyoutRate,
-  salesCount: _salesCount,
-  ordersCount: _ordersCount,
-  previousSalesCount: _prevSales,
-  previousOrdersCount: _prevOrders,
   buyoutCount,
   totalOrders,
   isLoading = false,
@@ -134,8 +120,7 @@ export function BuyoutRateCard({
     )
   }
 
-  // Epic 69, Story 69.7: Use pre-calculated buyoutRate from backend (AC-69.7.1)
-  // Do NOT calculate salesCount/ordersCount*100 locally (P-005 fix)
+  // Use pre-calculated buyoutRate from backend (AC-69.7.1)
   const currentRate = buyoutRate ?? null
   const previousRate = previousBuyoutRate ?? null
 

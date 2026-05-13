@@ -2,8 +2,8 @@
  * Tests for daily aggregation — Story 88.2-FE null-preservation
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { aggregateDailyMetrics, calculateDailyTheoreticalProfit } from '../aggregation'
+import { describe, it, expect, vi } from 'vitest'
+import { aggregateDailyMetrics } from '../aggregation'
 import type {
   FinanceDailyData,
   OrdersDailyData,
@@ -77,46 +77,6 @@ describe('aggregateDailyMetrics — Story 88.2-FE null COGS propagation', () => 
   })
 })
 
-describe('calculateDailyTheoreticalProfit — Story 88.2-FE null salesCogs handling', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-  afterEach(() => {
-    vi.restoreAllMocks()
-  })
-
-  it('treats null salesCogs as 0 internally (best-effort estimate)', () => {
-    const result = calculateDailyTheoreticalProfit({
-      sales: 10000,
-      salesCogs: null,
-      advertising: 500,
-      logistics: 200,
-      storage: 100,
-      penalties: 0,
-      paidAcceptance: 0,
-      commission: 1000,
-    })
-    // 10000 - 0 (null→0) - 500 - 200 - 100 - 0 - 0 - 1000 = 8200
-    expect(result).toBe(8200)
-    expect(Number.isNaN(result)).toBe(false)
-  })
-
-  it('returns a number (not NaN) when every nullable field is null', () => {
-    const result = calculateDailyTheoreticalProfit({
-      sales: 5000,
-      salesCogs: null,
-      advertising: 0,
-      logistics: 0,
-      storage: 0,
-      penalties: 0,
-      paidAcceptance: 0,
-      commission: 0,
-    })
-    expect(result).toBe(5000)
-    expect(Number.isNaN(result)).toBe(false)
-  })
-})
-
 describe('aggregateDailyMetrics — Story 92.4-FE salesCount + returnsCount propagation', () => {
   const ordersData: OrdersDailyData[] = []
   const advertisingData: AdvertisingDailyData[] = []
@@ -145,21 +105,11 @@ describe('aggregateDailyMetrics — Story 92.4-FE salesCount + returnsCount prop
   })
 })
 
-describe('aggregateDailyMetrics — Story 93.2-FE discrepancy telemetry', () => {
+describe('aggregateDailyMetrics — Story 100.2-FE server netProfit exclusive use', () => {
   const ordersData: OrdersDailyData[] = []
   const advertisingData: AdvertisingDailyData[] = []
 
-  beforeEach(() => {
-    vi.stubEnv('VITEST_EXPECT_LOG', '1')
-  })
-  afterEach(() => {
-    vi.unstubAllEnvs()
-    vi.restoreAllMocks()
-  })
-
-  it('uses server netProfit and logs no warning when server and client agree', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    // net_profit=12345, client calc: 12345 - 0 - 0 - 0 - 0 - 0 - 0 - 0 = 12345
+  it('uses server netProfit when available', () => {
     const financeData: FinanceDailyData[] = [
       makeFinance({
         date: '2026-04-24',
@@ -168,50 +118,10 @@ describe('aggregateDailyMetrics — Story 93.2-FE discrepancy telemetry', () => 
       }),
     ]
     const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    // Server wins and no [NetProfitDiscrepancy] warn (values match — below threshold)
     expect(result[0].theoreticalProfit).toBe(12345)
-    const discrepancyCalls = warnSpy.mock.calls.filter(
-      args => typeof args[0] === 'string' && (args[0] as string).includes('[NetProfitDiscrepancy]')
-    )
-    expect(discrepancyCalls).toHaveLength(0)
   })
 
-  it('uses server netProfit and logs warning when values diverge beyond threshold', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    // server=12345, client calc: 20000 - 3000 - 500 - 500 - 500 - 500 - 500 - 2155 = 12345
-    // To produce divergence: set sales high so client calc ~14000 but server=12345
-    // client: 20000 - 0(salesCogs null→0) - 500 - 500 - 500 - 500 - 500 - 3455 = 14045 → diff=1700, rel=13.77%
-    const financeData: FinanceDailyData[] = [
-      makeFinance({
-        date: '2026-04-24',
-        wb_sales_gross: 20000,
-        cogs_total: null, // salesCogs=null → 0 in client calc
-        net_profit: 12345,
-        advertising_spend: 500,
-        logistics_cost: 500,
-        storage_cost: 500,
-        penalties: 500,
-        paid_acceptance: 500,
-        commission: 3455,
-      }),
-    ]
-    const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    // Server still wins
-    expect(result[0].theoreticalProfit).toBe(12345)
-    // A [NetProfitDiscrepancy] warn should have fired
-    const discrepancyCalls = warnSpy.mock.calls.filter(
-      args => typeof args[0] === 'string' && (args[0] as string).includes('[NetProfitDiscrepancy]')
-    )
-    expect(discrepancyCalls).toHaveLength(1)
-    const msg = discrepancyCalls[0][0] as string
-    expect(msg).toContain('2026-04-24')
-    expect(msg).toContain('12345.00')
-    expect(msg).toContain('14045')
-  })
-
-  it('falls back to client calc when server netProfit is null and logs no warning', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    // client calc: 10000 - 0 - 500 - 0 - 0 - 0 - 0 - 0 = 9500
+  it('sets theoreticalProfit to 0 when server netProfit is null (COGS unknown)', () => {
     const financeData: FinanceDailyData[] = [
       makeFinance({
         date: '2026-04-24',
@@ -222,11 +132,7 @@ describe('aggregateDailyMetrics — Story 93.2-FE discrepancy telemetry', () => 
       }),
     ]
     const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    expect(result[0].theoreticalProfit).toBe(9500)
-    const discrepancyCalls = warnSpy.mock.calls.filter(
-      args => typeof args[0] === 'string' && (args[0] as string).includes('[NetProfitDiscrepancy]')
-    )
-    expect(discrepancyCalls).toHaveLength(0)
+    expect(result[0].theoreticalProfit).toBe(0)
   })
 })
 
@@ -245,11 +151,10 @@ describe('aggregateDailyMetrics — Story 91.2-FE server netProfit integration',
       }),
     ]
     const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    // Should use server netProfit (4500), not client-side calc
     expect(result[0].theoreticalProfit).toBe(4500)
   })
 
-  it('falls back to client-side calc when netProfit is null', () => {
+  it('sets theoreticalProfit to 0 when netProfit is null (no client-side fallback)', () => {
     const financeData: FinanceDailyData[] = [
       makeFinance({
         date: '2026-01-01',
@@ -260,9 +165,7 @@ describe('aggregateDailyMetrics — Story 91.2-FE server netProfit integration',
       }),
     ]
     const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    // Fallback: client-side calc with salesCogs=null→0
-    // 10000 - 0 - 500 - 0 - 0 - 0 - 0 - 0 = 9500
-    expect(result[0].theoreticalProfit).toBe(9500)
+    expect(result[0].theoreticalProfit).toBe(0)
   })
 
   it('prefers finance advertisingSpend over separate advertising API', () => {

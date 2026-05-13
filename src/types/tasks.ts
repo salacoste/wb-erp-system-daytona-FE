@@ -22,8 +22,6 @@ export type TaskType =
   | 'weekly_margin_aggregate'
   | 'weekly_sanity_check'
   | 'publish_weekly_views'
-  /** @deprecated Use recalculate_weekly_margin instead */
-  | 'enrich_cogs'
 
 // =============================================================================
 // Task Status Types

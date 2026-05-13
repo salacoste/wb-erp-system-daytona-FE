@@ -12,4 +12,4 @@ export { getDayOfWeek, createEmptyDailyMetrics } from './day-utils'
 export { fillMissingDays, getDateRange, getDaysInRange } from './date-range'
 
 // Aggregation
-export { calculateDailyTheoreticalProfit, aggregateDailyMetrics } from './aggregation'
+export { aggregateDailyMetrics } from './aggregation'

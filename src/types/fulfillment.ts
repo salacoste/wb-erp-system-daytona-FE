@@ -151,9 +151,6 @@ export interface StartFulfillmentSyncRequest {
   dateTo?: string
 }
 
-/** @deprecated Use StartFulfillmentSyncRequest instead */
-export type StartSyncRequest = StartFulfillmentSyncRequest
-
 /** Response from POST /v1/admin/fulfillment/sync */
 export interface StartFulfillmentSyncResponse {
   success: boolean

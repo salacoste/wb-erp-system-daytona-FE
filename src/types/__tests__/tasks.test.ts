@@ -7,7 +7,7 @@
  * All tests are .todo() for TDD red phase.
  *
  * Types to implement:
- * - TaskType union (includes recalculate_weekly_margin, marks enrich_cogs as @deprecated)
+ * - TaskType union (includes recalculate_weekly_margin; enrich_cogs removed in Story 100.1-FE)
  * - SanityCheckResult, SanityCheckPayload
  * - MarginRecalcResult, MarginRecalcPayload
  * - WeeklyAggregateResult, WeeklyAggregatePayload
@@ -37,11 +37,7 @@ describe('TaskType Union', () => {
     it.todo('includes publish_weekly_views')
   })
 
-  describe('deprecated task types', () => {
-    it.todo('includes enrich_cogs (deprecated)')
-
-    it.todo('enrich_cogs has @deprecated JSDoc marker')
-  })
+  // enrich_cogs removed from TaskType union in Story 100.1-FE — no deprecated types remain
 
   describe('type narrowing', () => {
     it.todo('allows assignment of valid task type string')
@@ -62,7 +58,7 @@ describe('Task interface in api.ts', () => {
 
     it.todo('includes weekly_margin_aggregate')
 
-    it.todo('includes enrich_cogs with deprecation marker')
+    it.todo('enrich_cogs removed from union (Story 100.1-FE)')
   })
 })
 
@@ -232,6 +228,6 @@ describe('EnqueueTaskResponse', () => {
   describe('optional fields', () => {
     it.todo('has optional deprecated as boolean')
 
-    it.todo('deprecated is true when using enrich_cogs')
+    it.todo('deprecated field removed with enrich_cogs (Story 100.1-FE)')
   })
 })

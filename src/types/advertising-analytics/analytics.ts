@@ -12,8 +12,6 @@ export type ViewByMode = 'sku' | 'campaign' | 'brand' | 'category'
 export type GroupByMode = 'sku' | 'imtId'
 export type HealthStatus = 'healthy' | 'degraded' | 'unhealthy' | 'stale'
 
-/** @deprecated Use SyncTaskStatus instead */
-export type SyncStatus = 'success' | 'error' | 'partial'
 export type SyncTaskStatus = 'syncing' | 'completed' | 'failed' | 'idle'
 
 // ============================================================================
@@ -44,10 +42,6 @@ export interface AdvertisingSummary {
   overall_roi: number | null
   avg_ctr: number
   avg_conversion_rate: number
-  /** @deprecated Always returns 0 (Request #160, TYPE-6) */
-  campaign_count: number
-  /** @deprecated Always returns 0 (Request #160, TYPE-6) */
-  active_campaigns: number
   total_organic_sales: number
   avg_organic_contribution: number
 }

@@ -14,15 +14,6 @@
  * - Effective return: 72.50 x 0.02 = 1.45 rub
  */
 
-// Re-export legacy and display functions from extracted module
-export {
-  getReturnLogisticsBreakdown,
-  formatReturnLogisticsTooltip,
-  isHighReturnRate,
-  getReturnRateColor,
-} from './return-logistics-legacy'
-export type { LegacyReturnLogisticsBreakdown } from './return-logistics-legacy'
-
 // ============================================================================
 // Local Currency Formatter (2 decimal places for consistency)
 // ============================================================================
@@ -56,24 +47,6 @@ export interface ReturnLogisticsResult {
   buybackPct: number
   returnRatePct: number
   breakdown: ReturnLogisticsBreakdown
-}
-
-// ============================================================================
-// Legacy Types (Backward Compatibility) - kept here for import chain
-// ============================================================================
-
-/** @deprecated Use new API - Input parameters for return logistics calculation */
-export interface ReturnLogisticsParams {
-  logisticsToCustomer: number
-  buybackRate: number
-}
-
-/** @deprecated Use ReturnLogisticsResult - Legacy result interface */
-export interface LegacyReturnLogisticsResult {
-  logisticsToCustomer: number
-  buybackRate: number
-  returnRate: number
-  returnLogisticsCost: number
 }
 
 // ============================================================================
@@ -149,36 +122,5 @@ export function calculateReturnLogistics(
       returnRateDisplay: `${returnRatePct}%`,
       effectiveReturnDisplay: formatCurrencyFixed(effectiveReturn),
     },
-  }
-}
-
-// ============================================================================
-// Legacy API (Backward Compatibility)
-// ============================================================================
-
-/** @deprecated Use calculateReturnLogistics(forwardLogistics, buybackPct) instead */
-export function calculateReturnLogisticsLegacy(
-  params: ReturnLogisticsParams
-): LegacyReturnLogisticsResult {
-  const { logisticsToCustomer, buybackRate } = params
-
-  if (logisticsToCustomer < 0) {
-    return {
-      logisticsToCustomer,
-      buybackRate,
-      returnRate: calculateReturnRate(buybackRate),
-      returnLogisticsCost: 0,
-    }
-  }
-
-  const clampedBuybackRate = clamp(buybackRate, 0, 100)
-  const returnRate = calculateReturnRate(clampedBuybackRate)
-  const returnLogisticsCost = roundTo(logisticsToCustomer * (returnRate / 100), 2)
-
-  return {
-    logisticsToCustomer,
-    buybackRate: clampedBuybackRate,
-    returnRate,
-    returnLogisticsCost,
   }
 }

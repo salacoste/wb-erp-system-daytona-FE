@@ -1,12 +1,11 @@
 /**
  * @fileoverview Server/client theoretical-profit discrepancy telemetry.
- * Epic 93-FE Story 93.2: ships measurement so the deprecated
- * `calculateDailyTheoreticalProfit` fallback removal decision (Epic 91-FE AI #5,
- * carry-forward re-prioritized after Epic 92 Monitor Dashboard became second consumer)
- * rests on observed data rather than assumption.
+ * Epic 93-FE Story 93.2: discrepancy measurement for observability.
+ * Story 100.2-FE: client-side fallback removed; module retained for
+ * potential future use if server computation changes.
  *
  * @see Story 93.2-FE
- * @see _bmad-output/implementation-artifacts/epic-91-fe-retro-2026-04-21.md
+ * @see Story 100.2-FE
  */
 
 export interface Discrepancy {

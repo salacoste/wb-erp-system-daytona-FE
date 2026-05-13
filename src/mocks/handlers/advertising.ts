@@ -35,8 +35,6 @@ export const mockAdvertisingSummary: AdvertisingSummary = {
   overall_roi: 0.46,
   avg_ctr: 2.5,
   avg_conversion_rate: 4.2,
-  campaign_count: 10,
-  active_campaigns: 8,
   // Epic 35: Organic vs advertising split
   total_organic_sales: 150000, // 600000 - 450000
   avg_organic_contribution: 25, // 25% average organic contribution (backend returns percentage, not decimal)
@@ -217,8 +215,6 @@ export const mockEmptyAdvertisingResponse: AdvertisingAnalyticsResponse = {
     overall_roi: 0,
     avg_ctr: 0,
     avg_conversion_rate: 0,
-    campaign_count: 0,
-    active_campaigns: 0,
     total_organic_sales: 0,
     avg_organic_contribution: 0,
   },
@@ -383,8 +379,6 @@ export const advertisingHandlers = [
         avgRoi: mockAdvertisingSummary.overall_roi,
         avgCtr: mockAdvertisingSummary.avg_ctr,
         avgConversionRate: mockAdvertisingSummary.avg_conversion_rate,
-        campaignCount: mockAdvertisingSummary.campaign_count,
-        activeCampaigns: mockAdvertisingSummary.active_campaigns,
       },
       query: {
         cabinetId: 'test-cabinet-id',

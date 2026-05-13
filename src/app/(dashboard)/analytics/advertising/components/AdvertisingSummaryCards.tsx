@@ -1,6 +1,6 @@
 'use client'
 
-import { Wallet, TrendingUp, Percent, Target, ShoppingCart, Sprout, HelpCircle } from 'lucide-react'
+import { Wallet, TrendingUp, Percent, ShoppingCart, Sprout, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -64,7 +64,7 @@ export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSumma
   if (isLoading) {
     return (
       <div
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         aria-label="Загрузка метрик..."
       >
         {[...Array(6)].map((_, i) => (
@@ -143,20 +143,11 @@ export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSumma
             : 'text-orange-600',
       tooltip: 'Доля продаж без рекламы. При переатрибуции WB может быть <0%.',
     },
-    {
-      id: 'campaigns',
-      label: 'Активных кампаний',
-      value: summary.active_campaigns.toString(),
-      icon: Target,
-      colorClass: 'text-purple-600',
-      subtext: `из ${summary.campaign_count}`,
-      tooltip: 'Кампании со статусом «active» за выбранный период.',
-    },
   ]
 
   return (
     <div
-      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
       role="region"
       aria-label="Ключевые показатели рекламы"
     >
