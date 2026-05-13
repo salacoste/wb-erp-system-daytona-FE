@@ -18,6 +18,11 @@ src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/useMarginTrends.ts:70 | file not found
 src/hooks/useExpenses.ts:116-122 | line 122 > file has 111 lines
 src/hooks/useFinancialSummary.ts:72 | line 72 > file has 30 lines
+src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 86 lines
+src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 86 lines
+src/lib/api/advertising-analytics-api.ts:140-147 | line 147 > file has 86 lines
+src/lib/api/advertising-analytics-api.ts:88-168 | line 168 > file has 86 lines
+src/lib/api/advertising-analytics-api.ts:88-168 | line 168 > file has 86 lines
 src/lib/daily/aggregation.ts:130-134 | line 134 > file has 107 lines
 src/lib/daily/aggregation.ts:130-134 | line 134 > file has 107 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 107 lines

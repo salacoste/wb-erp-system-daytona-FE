@@ -1,14 +1,21 @@
 # Frontend Error Fixes Backlog — 2026-03-30
 
 > Источник: полный browser-аудит всех 15 страниц + ответы бекенда от 30.03.2026
+> **Triaged 2026-05-13**: All 7 fixes (F1-F7) are RESOLVED.
 
-## Сводка
+## Triage Results (2026-05-13)
 
-| Приоритет | Кол-во | Описание |
-|-----------|--------|----------|
-| High | 2 | Адаптация к новым graceful responses (seller-info, jam-status) |
-| Medium | 3 | Unit-economics 404, default week, useProductsCount fix |
-| Low | 2 | COGS empty state, dashboard widget |
+| Fix | Description | Status | Resolved By |
+|-----|-------------|--------|-------------|
+| F1 | Graceful seller-info / jam-status | RESOLVED | Epic 84-FE (Stories 84-1, 84-2) |
+| F2 | useProductsCount endpoint | RESOLVED | Uses `/v1/products?limit=1` + `pagination.total` |
+| F3 | Unit-economics 404 handling | RESOLVED | Standard empty-state pattern (Epic 87-FE) |
+| F4 | Default week = lastCompletedWeek | RESOLVED | `getLastCompletedWeek()` pattern codified |
+| F5 | Remove shipment-cost/by-sku | RESOLVED | Backend shipped endpoint; Epic 85.2-FE integrated it |
+| F6 | COGS page X-Cabinet-Id | RESOLVED | api-client.ts auto-injects header (core pattern) |
+| F7 | Dashboard COGS widget fallback | RESOLVED | Works with fixed useProductsCount (F2) |
+
+## Сводка (original)
 
 ## Обновления по ответам бекенда (30.03.2026)
 

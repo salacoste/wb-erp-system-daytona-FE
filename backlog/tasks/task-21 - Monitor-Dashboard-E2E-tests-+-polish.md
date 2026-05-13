@@ -1,7 +1,7 @@
 ---
 id: task-21
 title: 'Monitor Dashboard: E2E tests + polish'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:17'
 labels:

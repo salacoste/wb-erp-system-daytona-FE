@@ -1,7 +1,7 @@
 ---
 id: task-16
 title: 'Monitor Dashboard: Revise to single-endpoint architecture'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:16'
 updated_date: '2026-04-19 15:36'

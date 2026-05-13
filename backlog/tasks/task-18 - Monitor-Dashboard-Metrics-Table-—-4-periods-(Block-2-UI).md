@@ -1,7 +1,7 @@
 ---
 id: task-18
 title: 'Monitor Dashboard: Metrics Table — 4 periods (Block 2 UI)'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:17'
 labels:

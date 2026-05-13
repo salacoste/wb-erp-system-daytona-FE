@@ -1,7 +1,7 @@
 ---
 id: task-17
 title: 'Monitor Dashboard: KPI Cards block (Block 1 UI)'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:16'
 labels:

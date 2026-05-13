@@ -1,7 +1,7 @@
 ---
 id: task-19
 title: 'Monitor Dashboard: Weekly Chart (Block 3 UI)'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:17'
 labels:

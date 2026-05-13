@@ -290,3 +290,13 @@ development_status:
   100-2-fe-remove-theoretical-profit-fallback: done
   100-3-fe-migrate-orderscogs-remove-ad-dead-fields: done
   epic-100-fe-retrospective: done
+
+  # Epic 101-FE: Documentation & Backlog Cleanup (P3, ~5 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-101-fe.md
+  # Source: Stale docs audit — 93 top-level docs files, 7 stale backlog tasks
+  # Created: 2026-05-13
+  epic-101-fe: done
+  101-1-fe-archive-stale-documentation: done
+  101-2-fe-rewrite-epics-stories-tracker: done
+  101-3-fe-triage-backlog-mark-stale-done: done
+  epic-101-fe-retrospective: done

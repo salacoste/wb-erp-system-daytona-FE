@@ -1,7 +1,7 @@
 ---
 id: task-20
 title: 'Monitor Dashboard: Buyout Rate + Pipeline Health (Blocks 4-5 UI)'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:17'
 labels:

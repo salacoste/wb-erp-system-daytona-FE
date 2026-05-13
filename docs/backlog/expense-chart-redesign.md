@@ -32,11 +32,11 @@ Current vertical bar chart is unreadable: rotated labels, no values on bars, no 
 | Хранение | Teal | #14B8A6 |
 | Прочее | Gray | #9CA3AF |
 
-## AC
+## AC (triaged 2026-05-13)
 
-- [ ] Horizontal bars with inline labels + amount + %
-- [ ] Summary header: total, % of revenue, W-o-W badge
-- [ ] Merge <1% into "Прочее" (expandable on hover)
-- [ ] Semantic colors
-- [ ] Responsive (1024px, 768px)
-- [ ] Files < 200 lines each
+- [x] Horizontal bars with inline labels + amount + % (shipped)
+- [ ] Summary header: total, % of revenue, W-o-W badge (Epic 102-FE scope)
+- [x] Merge <1% into "Прочее" (expandable on hover) (shipped)
+- [x] Semantic colors (shipped)
+- [ ] Responsive (1024px, 768px) (Epic 102-FE scope)
+- [x] Files < 200 lines each (shipped: ExpenseChart.tsx 140 lines, expense-chart-config.tsx 116 lines)

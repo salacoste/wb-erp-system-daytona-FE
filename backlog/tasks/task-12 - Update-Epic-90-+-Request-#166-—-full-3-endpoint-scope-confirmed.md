@@ -1,7 +1,7 @@
 ---
 id: task-12
 title: 'Update Epic 90 + Request #166 — full 3-endpoint scope confirmed'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-18 15:13'
 updated_date: '2026-04-19 15:35'
