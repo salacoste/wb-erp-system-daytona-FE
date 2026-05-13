@@ -95,6 +95,37 @@ describe('normalizeBuyoutReconciliationResponse — camelCase input', () => {
 })
 
 // ---------------------------------------------------------------------------
+// Backend actual field names (buyoutCount / returnCount — Request #169)
+// ---------------------------------------------------------------------------
+
+describe('normalizeBuyoutReconciliationResponse — backend buyoutCount/returnCount fields', () => {
+  it('maps buyoutCount and returnCount from Request #169 backend shape', () => {
+    const raw = {
+      data: [
+        {
+          nmId: 777,
+          productName: 'Real backend',
+          brand: 'Test',
+          buyoutCount: 42,
+          returnCount: 7,
+          returnWithoutBuyout: 2,
+          orphanBuyout: 0,
+          returnQuantityMismatch: 1,
+          source: 'sdk_reconciliation',
+        },
+      ],
+      period: { from: '2026-05-01', to: '2026-05-13' },
+      generatedAt: '2026-05-13T06:30:00Z',
+    }
+
+    const result = normalizeBuyoutReconciliationResponse(raw)
+
+    expect(result.data[0].buyoutQuantity).toBe(42)
+    expect(result.data[0].returnQuantity).toBe(7)
+  })
+})
+
+// ---------------------------------------------------------------------------
 // Source enum coercion
 // ---------------------------------------------------------------------------
 
