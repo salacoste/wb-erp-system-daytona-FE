@@ -14,6 +14,8 @@ export interface ExpenseItem {
 export interface ExpenseBreakdown {
   expenses: ExpenseItem[]
   total: number
+  revenueShare?: number
+  previousTotal?: number
 }
 
 /**
@@ -102,9 +104,20 @@ export function addPercentages(expenses: ExpenseItem[]): ExpenseItem[] {
 /**
  * Build complete expense breakdown from summary
  */
-export function buildExpenseBreakdown(summary: FinanceSummary): ExpenseBreakdown {
+export function buildExpenseBreakdown(
+  summary: FinanceSummary,
+  previousSummary?: FinanceSummary | null
+): ExpenseBreakdown {
   const expenses = buildExpenseItems(summary)
   const total = expenses.reduce((sum, item) => sum + item.amount, 0)
   const expensesWithPercentage = addPercentages(expenses)
-  return { expenses: expensesWithPercentage, total }
+
+  const saleGross = summary.sale_gross_total ?? summary.sale_gross ?? 0
+  const revenueShare = saleGross > 0 ? (total / saleGross) * 100 : undefined
+
+  const previousTotal = previousSummary
+    ? buildExpenseItems(previousSummary).reduce((sum, item) => sum + item.amount, 0)
+    : undefined
+
+  return { expenses: expensesWithPercentage, total, revenueShare, previousTotal }
 }

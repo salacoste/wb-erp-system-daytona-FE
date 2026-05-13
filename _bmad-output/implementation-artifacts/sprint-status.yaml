@@ -300,3 +300,12 @@ development_status:
   101-2-fe-rewrite-epics-stories-tracker: done
   101-3-fe-triage-backlog-mark-stale-done: done
   epic-101-fe-retrospective: done
+
+  # Epic 102-FE: Expense Chart Redesign Completion (P3, ~3 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-102-fe.md
+  # Source: docs/backlog/expense-chart-redesign.md — 4/6 ACs done, 2 remaining
+  # Created: 2026-05-13
+  epic-102-fe: done
+  102-1-fe-add-revenue-share-wow-data: done
+  102-2-fe-add-percentage-labels-responsive-breakpoints: done
+  epic-102-fe-retrospective: done

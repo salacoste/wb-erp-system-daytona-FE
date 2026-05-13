@@ -15,7 +15,7 @@ import {
   Cell,
   LabelList,
 } from 'recharts'
-import { RefreshCw, AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
+import { RefreshCw, AlertCircle } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { EmptyStateIllustration } from './EmptyStateIllustration'
 import {
@@ -24,6 +24,7 @@ import {
   ExpenseBarTooltip,
   ExpenseChartSkeleton,
 } from './expense-chart-config'
+import { ExpenseSummaryBadge } from './expense-chart-badge'
 
 /**
  * Expense breakdown chart — horizontal bars with business context
@@ -87,7 +88,11 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <CardTitle>Разбивка расходов</CardTitle>
-          <ExpenseSummaryBadge total={data.total} />
+          <ExpenseSummaryBadge
+            total={data.total}
+            revenueShare={data.revenueShare}
+            previousTotal={data.previousTotal}
+          />
         </div>
       </CardHeader>
       <CardContent>
@@ -95,7 +100,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
           <BarChart
             layout="vertical"
             data={chartData}
-            margin={{ top: 0, right: 90, left: 0, bottom: 0 }}
+            margin={{ top: 0, right: 120, left: 0, bottom: 0 }}
           >
             <XAxis type="number" hide />
             <YAxis
@@ -105,8 +110,21 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               tick={{ fontSize: 13, fill: '#374151' }}
               axisLine={false}
               tickLine={false}
+              className="expense-chart-yaxis"
             />
-            <Tooltip content={<ExpenseBarTooltip />} cursor={{ fill: '#f3f4f6' }} />
+            <Tooltip
+              content={
+                <ExpenseBarTooltip
+                  revenueShare={data.revenueShare}
+                  wowChange={
+                    data.previousTotal != null && data.previousTotal > 0
+                      ? ((data.total - data.previousTotal) / data.previousTotal) * 100
+                      : undefined
+                  }
+                />
+              }
+              cursor={{ fill: '#f3f4f6' }}
+            />
             <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={24}>
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
@@ -114,27 +132,24 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               <LabelList
                 dataKey="amount"
                 position="right"
-                // Recharts' LabelFormatter signature is (value: RenderableText) where
-                // RenderableText is a union including string | number | undefined.
-                // Guard the type before formatting; non-numeric values render as empty.
-                formatter={(v: unknown) => (typeof v === 'number' ? formatCurrency(v) : '')}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts LabelFormatter passes (value, props, index)
+                formatter={(v: any) => (typeof v === 'number' ? formatCurrency(v) : '')}
                 style={{ fontSize: 12, fill: '#374151', fontWeight: 500 }}
               />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        <style>{`
+          @media (max-width: 1024px) {
+            .recharts-yAxis .recharts-text { font-size: 11px !important; }
+            .recharts-yAxis { width: 100px !important; }
+          }
+          @media (max-width: 768px) {
+            .recharts-yAxis .recharts-text { display: none !important; }
+            .recharts-yAxis { width: 0px !important; }
+          }
+        `}</style>
       </CardContent>
     </Card>
-  )
-}
-
-function ExpenseSummaryBadge({ total }: { total: number }) {
-  const isHigh = total > 100000
-  const Icon = isHigh ? TrendingUp : TrendingDown
-  return (
-    <div className="flex items-center gap-1.5 rounded-md bg-gray-100 px-2.5 py-1">
-      <Icon className={`h-3.5 w-3.5 ${isHigh ? 'text-red-500' : 'text-green-500'}`} />
-      <span className="text-sm font-semibold text-gray-800">{formatCurrency(total)}</span>
-    </div>
   )
 }

@@ -59,9 +59,13 @@ export function mergeSmallCategories(items: ExpenseItem[], thresholdPct = 1): Me
 export function ExpenseBarTooltip({
   active,
   payload,
+  revenueShare,
+  wowChange,
 }: {
   active?: boolean
-  payload?: Array<{ payload: MergedExpenseItem & { revenueShare?: number } }>
+  payload?: Array<{ payload: MergedExpenseItem }>
+  revenueShare?: number
+  wowChange?: number
 }) {
   if (!active || !payload?.length) return null
   const d = payload[0].payload
@@ -74,6 +78,26 @@ export function ExpenseBarTooltip({
       {d.percentage != null && (
         <p className="text-sm text-gray-500">
           Доля расходов: <span className="font-medium">{d.percentage.toFixed(1)}%</span>
+        </p>
+      )}
+      {revenueShare != null && (
+        <p className="text-sm text-gray-500">
+          % от выручки:{' '}
+          <span className="font-medium">
+            {d.percentage != null && d.percentage > 0
+              ? ((revenueShare * (d.percentage / 100)) / d.percentage).toFixed(1)
+              : '—'}
+            %
+          </span>
+        </p>
+      )}
+      {wowChange != null && (
+        <p className="text-sm text-gray-500">
+          Нedel к нед.:{' '}
+          <span className={`font-medium ${wowChange > 0 ? 'text-red-600' : 'text-green-600'}`}>
+            {wowChange > 0 ? '+' : ''}
+            {wowChange.toFixed(1)}%
+          </span>
         </p>
       )}
       {d.subItems && d.subItems.length > 0 && (

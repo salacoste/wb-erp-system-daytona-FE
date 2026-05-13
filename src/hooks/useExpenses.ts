@@ -6,10 +6,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { FinanceSummary } from './useDashboard'
-import {
-  type ExpenseBreakdown,
-  buildExpenseBreakdown,
-} from './useExpenses-utils'
+import { type ExpenseBreakdown, buildExpenseBreakdown } from './useExpenses-utils'
 
 // Re-export types for consumers
 export type { ExpenseItem, ExpenseBreakdown } from './useExpenses-utils'
@@ -46,9 +43,7 @@ export function useExpenses(weekOverride?: string) {
 
         // If weekOverride is not in available weeks, skip API call
         if (targetWeek && !weeks.includes(targetWeek)) {
-          console.info(
-            `[Expenses] Week ${targetWeek} not in available weeks, skipping`
-          )
+          console.info(`[Expenses] Week ${targetWeek} not in available weeks, skipping`)
           return { expenses: [], total: 0 }
         }
 
@@ -76,7 +71,23 @@ export function useExpenses(weekOverride?: string) {
           return { expenses: [], total: 0 }
         }
 
-        const result = buildExpenseBreakdown(summary)
+        // Fetch previous period for W-o-W comparison
+        let previousSummary: FinanceSummary | null = null
+        const currentIdx = weeks.indexOf(targetWeek)
+        if (currentIdx >= 0 && currentIdx + 1 < weeks.length) {
+          const prevWeek = weeks[currentIdx + 1]
+          try {
+            const prevResponse = await apiClient.get<{
+              summary_total: FinanceSummary | null
+              summary_rus: FinanceSummary | null
+            }>(`/v1/analytics/weekly/finance-summary?week=${prevWeek}`)
+            previousSummary = prevResponse.summary_total || prevResponse.summary_rus || null
+          } catch {
+            // Previous period unavailable — W-o-W will be undefined
+          }
+        }
+
+        const result = buildExpenseBreakdown(summary, previousSummary)
         console.info(
           `[Expenses] Found ${result.expenses.length} expense categories with total: ${result.total}`
         )
