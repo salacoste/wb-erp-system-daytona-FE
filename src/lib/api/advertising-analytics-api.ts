@@ -9,8 +9,8 @@ import { apiClient } from '../api-client'
 import type {
   AdvertisingAnalyticsParams,
   AdvertisingAnalyticsResponse,
-  ViewByMode,
 } from '@/types/advertising-analytics'
+import { normalizeAdvertisingResponse } from './advertising-analytics-normalizer'
 
 /** Localized error messages for advertising analytics API errors (AC4). */
 export const advertisingErrorMessages: Record<number, string> = {
@@ -78,110 +78,9 @@ export async function getAdvertisingAnalytics(
     include_daily: params.include_daily ?? false,
   })
 
-  // Story 33.1-fe: Use skipDataUnwrap to get full response
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend response shape is untyped; adapter normalizes below
-  const backendResponse = await apiClient.get<Record<string, unknown>>(
-    `/v1/analytics/advertising?${queryParams}`,
-    {
-      skipDataUnwrap: true,
-    }
-  )
-
-  // ADAPTER: Backend returns different format (camelCase, "items" instead of "data")
-  // Adapt backend response to match frontend types
-  const response: AdvertisingAnalyticsResponse = {
-    meta: {
-      cabinet_id: backendResponse.query?.cabinetId || 'unknown',
-      date_range: {
-        from: backendResponse.query?.from || params.from,
-        to: backendResponse.query?.to || params.to,
-      },
-      view_by: (backendResponse.query?.viewBy || params.view_by || 'sku') as ViewByMode,
-      last_sync: backendResponse.cachedAt || new Date().toISOString(),
-    },
-    summary: {
-      total_spend: backendResponse.summary?.totalSpend ?? 0,
-      // Epic 35: Backend now returns totalSales (hybrid query: completed weeks + current week)
-      total_sales: backendResponse.summary?.totalSales ?? 0,
-      total_revenue: backendResponse.summary?.totalRevenue ?? 0,
-      total_profit: backendResponse.summary?.totalProfit ?? 0,
-      // Story 88.2-FE: null when totalSpend = 0 (division undefined) — not 0
-      overall_roas: backendResponse.summary?.avgRoas ?? null,
-      overall_roi: backendResponse.summary?.avgRoi ?? null,
-      avg_ctr: backendResponse.summary?.avgCtr ?? 0,
-      avg_conversion_rate: backendResponse.summary?.avgConversionRate ?? 0,
-      // Epic 35: Organic vs advertising split
-      total_organic_sales: backendResponse.summary?.totalOrganicSales ?? 0,
-      avg_organic_contribution: backendResponse.summary?.avgOrganicContribution ?? 0,
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend item shape is dynamic per view_by mode
-    data: (backendResponse.items || []).map((item: any, index: number) => ({
-      // Use backend's unique key as identifier (e.g., "sku:270937054", "campaign:12345")
-      key: item.key || `item-${index}`,
-
-      // Epic 36: Product Card Linking fields
-      type: item.type, // 'merged_group' | 'individual' | undefined
-      imtId: item.imtId ?? null, // number | null
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- merged product shape from backend
-      mergedProducts: item.mergedProducts?.map((p: any) => ({
-        nmId: p.nmId,
-        vendorCode: p.vendorCode,
-      })),
-
-      sku_id: item.nmId?.toString(),
-      campaign_id: item.campaignId?.toString(),
-      product_name: item.label,
-      brand: item.brand,
-      category: item.category,
-      views: item.views ?? 0,
-      clicks: item.clicks ?? 0,
-      orders: item.orders ?? 0,
-      spend: item.spend ?? 0,
-      // Epic 35: Backend now returns totalSales (hybrid query: completed weeks + current week)
-      total_sales: item.totalSales ?? 0,
-      // Story 88.2-FE: preserve null — "unknown" and "zero" are distinct states
-      revenue: item.revenue ?? null,
-      profit: item.profit ?? null,
-      // Epic 35: Organic vs advertising split
-      organic_sales: item.organicSales ?? 0,
-      organic_contribution: item.organicContribution ?? 0,
-      roas: item.roas ?? null,
-      roi: item.roi ?? null,
-      ctr: item.ctr ?? 0,
-      cpc: item.cpc ?? 0,
-      conversion_rate: item.conversionRate ?? 0,
-      profit_after_ads: item.profitAfterAds ?? 0,
-      efficiency_status: item.efficiency?.status || 'unknown',
-    })),
-    // Request #157: Daily breakdown (present when include_daily=true)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- daily breakdown shape from backend
-    daily: backendResponse.daily?.map((day: any) => ({
-      date: day.date,
-      spend: day.spend ?? 0,
-      views: day.views ?? 0,
-      clicks: day.clicks ?? 0,
-      orders: day.orders ?? 0,
-      ctr: day.ctr,
-      cpc: day.cpc,
-      revenue_attributed: day.revenueAttributed,
-    })),
-    // Story 72.4: Multi-campaign SKU warnings (auto-returned when deduplication detects overlaps)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- warning shape from backend
-    multiCampaignSkuWarnings: backendResponse.multiCampaignSkuWarnings?.map((w: any) => ({
-      nmId: w.nmId,
-      campaigns: w.campaigns ?? [],
-      message: w.message ?? '',
-    })),
-  }
-
-  console.info('[Advertising Analytics] Response:', {
-    itemCount: response.data?.length ?? 0,
-    totalSpend: response.summary?.total_spend ?? 0,
-    overallRoas: response.summary?.overall_roas ?? 0,
-    viewBy: response.meta?.view_by ?? 'unknown',
-    groupBy: params.group_by ?? 'sku', // Epic 36: Log actual grouping
-    efficiencyFilter: params.efficiency_filter ?? 'all',
+  const backendResponse = await apiClient.get<unknown>(`/v1/analytics/advertising?${queryParams}`, {
+    skipDataUnwrap: true,
   })
 
-  return response
+  return normalizeAdvertisingResponse(backendResponse, params.from, params.to, params.view_by)
 }

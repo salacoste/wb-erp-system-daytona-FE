@@ -295,7 +295,7 @@
 
     <!-- Fix-block propagation structural prompt (Story 99.2-FE, Epic 97 A-2) -->
     <check if="the fix modified prose, numbers, citations, quoted phrases, or attestation claims">
-      <action>Run `bash scripts/check-fix-propagation.sh "&lt;BEFORE_PHRASE&gt;" &lt;affected_files&gt;` to verify the fix propagated to ALL parallel locations</action>
+      <action>Run `bash scripts/check-fix-propagation.sh "&lt;BEFORE_PHRASE&gt;" &lt;affected_files&gt;` (if the script exists) to verify the fix propagated to ALL parallel locations</action>
       <action if="propagation check finds untouched occurrences">Fix ALL remaining occurrences before proceeding — do NOT mark task complete</action>
       <action if="propagation check passes (exit 0)">Note in Completion Notes: propagation verified for "&lt;BEFORE_PHRASE&gt;"</action>
     </check>

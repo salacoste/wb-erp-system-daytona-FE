@@ -65,6 +65,11 @@ extract_eslintrc_rules() {
   " "$filepath" 2>/dev/null
 }
 
+# NOTE: This uses a regex heuristic to extract rule names from the flat config.
+# It may miss rules declared with double quotes or template literals, and may
+# produce false positives that the denylist below attempts to filter.  For
+# robust parsing, consider switching to a Node.js approach (require() the config,
+# iterate config.rules) similar to extract_eslintrc_rules().
 extract_flat_config_rules() {
   local filepath="$1"
   grep -oE "'([@a-z][@a-z0-9-]*/[a-z0-9-]+|[@a-z][a-z0-9-]+)'" "$filepath" \

@@ -1,0 +1,292 @@
+# generated: 2026-05-06
+# project: frontend
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Mark epic as 'in-progress' when starting work on its first story
+# - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
+
+generated: 2026-05-06
+project: frontend
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 71-FE: Search Analytics & Jam Gating (P0, 21 SP)
+  epic-71-fe: done
+  71.1-fe-fix-jam-tier-naming-search-foundation-types: done
+  71.2-fe-search-analytics-api-client-hooks: done
+  71.3-fe-requirejam-gating-component: done
+  71.4-fe-search-page-scaffold-route-registration: done
+  71.5-fe-search-orders-tab: done
+  71.6-fe-by-product-keyword-explorer-tab: done
+  71.7-fe-by-query-product-ranking-tab: done
+  71.8-fe-search-analytics-tests-polish: done
+  epic-71-fe-retrospective: done
+
+  # Epic 72-FE: Marketing Analytics Data Alignment (P1, 10 SP)
+  epic-72-fe: done
+  72.1-fe-funnel-buyout-type-alignment: done
+  72.2-fe-advertising-type-param-fixes: done
+  72.3-fe-advertising-daily-trend-charts: done
+  72.4-fe-advertising-profit-multiplication-warning: done
+  72.5-fe-buyout-table-refactor-enrichment-fix: done
+  72.6-fe-buyout-hook-migration: done
+  epic-72-fe-retrospective: done
+
+  # Epic 73-FE: Marketing Analytics Enhancements (P2-P3, 26 SP)
+  epic-73-fe: done
+  73.1-fe-funnel-table-column-refactor-brandname: done
+  73.2-fe-funnel-summary-cards-expansion: done
+  73.3-fe-funnel-wow-period-comparison: done
+  73.4-fe-funnel-product-filter-combobox: done
+  73.5-fe-advertising-sync-data-gaps-visualization: done
+  73.6-fe-advertising-negative-organicsales-handling: done
+  73.7-fe-search-advertising-cross-reference: done
+  73.8-fe-funnel-advertising-chart-overlay: done
+  73.9-fe-three-layer-ad-cost-discrepancy-view: done
+  epic-73-fe-retrospective: done
+
+  # Epic 74-FE: File Size Compliance & Code Splitting (P2, 34 SP)
+  epic-74-fe: done
+  74.1-fe-split-mega-components: done
+  74.2-fe-split-analytics-page-files: done
+  74.3-fe-split-analytics-components: done
+  74.4-fe-split-hooks: done
+  74.5-fe-split-lib-utilities: done
+  74.6-fe-split-components-custom-tier2: done
+  74.7-fe-split-analytics-sub-components: done
+  74.8-fe-split-remaining-files: done
+  74.9-fe-validation-cleanup-sweep: done
+  epic-74-fe-retrospective: done
+
+  # Epic 75-FE: Reference Data Management — Box Types & SKU Packaging (16 SP)
+  epic-75-fe: done
+  75.1-fe-foundation-types-api-client-routes-utilities: done
+  75.2-fe-box-types-crud-page: done
+  75.3-fe-sku-packaging-page-single-bulk-operations: done
+  75.4-fe-tests-polish: done
+  epic-75-fe-retrospective: done
+
+  # Epic 76-FE: Shipment Planning & Cost Calculation (24 SP)
+  epic-76-fe: done
+  76.1-fe-shipments-list-page: done
+  76.2-fe-shipment-detail-header-pallet-accordion: done
+  76.3-fe-box-line-management-pre-flight-warnings: done
+  76.4-fe-calculate-validation-error-display: done
+  76.5-fe-confirm-recalculate-readonly-view: done
+  76.6-fe-tests-polish: done
+  epic-76-fe-retrospective: done
+
+  # Epic 77-FE: Shipment Cost Dashboard Integration & Tech Debt Cleanup (15 SP)
+  epic-77-fe: done
+  77.1-fe-resolve-hooks-symlink-enable-jsx-a11y: done
+  77.2-fe-shipment-e2e-tests: done
+  77.3-fe-backend-request-fcu-aggregation-endpoint: done
+  77.4-fe-unit-economics-types-waterfall-delivery-cost: done
+  77.5-fe-dashboard-unit-economics-table-fcu-column: done
+  77.6-fe-tests-polish: done
+  epic-77-fe-retrospective: done
+
+  # Epic 84-FE: Cabinet Health & API Stability (CRITICAL, 9h)
+  epic-84-fe: done
+  84-1-seller-info-available: done
+  84-2-jam-status-available: done
+  84-3-token-health-banner: done
+  84-4-batch-reconciliation-datagaps: done
+  epic-84-fe-retrospective: done
+
+  # Epic 85-FE: Analytics Accuracy (HIGH, 2h)
+  epic-85-fe: done
+  85-1-trends-wb-sales-gross: done
+  85-2-fcu-by-sku-reenable: done
+  epic-85-fe-retrospective: done
+
+  # Epic 86-FE: Advertising & Orders New Features (LOW, 8-12h)
+  epic-86-fe: done
+  86-1-bid-recommendations-ui: done
+  86-2-client-info-pii: done
+  epic-86-fe-retrospective: done
+
+  # Epic 87-FE: Frontend Stability & Data Correctness (P1-P3, 10 SP)
+  epic-87-fe: done
+  87-1-fe-dashboard-profit-hierarchy-funnel-limit: done
+  87-2-fe-daily-breakdown-table-enhancement: done
+  87-3-fe-data-quality-polish: done
+  epic-87-fe-retrospective: done
+
+  # Epic 88-FE: Tech Debt Cleanup & Process Hardening (P2-P3, 18 SP)
+  epic-88-fe: done
+  88-1-fe-clean-source-todos: done
+  88-2-fe-null-type-audit-propagation: done
+  88-3-fe-e2e-networkidle-migration-dashboard: done
+  88-4-fe-boundary-normalizer-pattern-documentation: done
+  88-5-fe-retroactive-epic-specs-68-71-fe: done
+  epic-88-fe-retrospective: done
+
+  # Epic 89-FE: Tech Debt Follow-ups — Epic 88 Consequences (P2-P3, 12 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-89-fe.md
+  # Source: Epic 88-FE retrospective action items
+  epic-89-fe: done
+  89-1-fe-normalize-high-risk-api-endpoints: done
+  89-2-fe-fix-pre-existing-e2e-failures: done
+  89-3-fe-doc-link-validator-script: done
+  89-4-fe-defensive-frontend-claude-md: done
+  89-5-fe-dashboard-period-selector-test-fix: done
+  epic-89-fe-retrospective: done
+
+  # Epic 90-FE: Acquiring Cost Reports UI (P2, 19 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-90-fe.md
+  # Source: WB Dev API announcement 2026-04-15, backend Request #166
+  # UNBLOCKED 2026-05-06 — all 3 endpoints delivered (doc-2)
+  epic-90-fe: done
+  90-1-fe-acquiring-types-api-client-hooks: done
+  90-2-fe-acquiring-reports-list-page: done
+  90-3-fe-acquiring-report-detail-view: done
+  90-4-fe-acquiring-period-detail-view: done
+  90-5-fe-acquiring-dashboard-integration-tests: done
+  epic-90-fe-retrospective: done
+
+  # Epic 91-FE: Backend Contract Updates — Epics 89-93 Integration (P1, 10 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-91-fe.md
+  # Source: Backend Epics 89-93 changelog (doc-2)
+  # Contains P1 BREAKING CHANGE (search totalRevenue removal)
+  epic-91-fe: done
+  91-1-fe-remove-totalrevenue-search-analytics: done
+  91-2-fe-daily-finance-advertisingspend-netprofit: done
+  91-3-fe-pipeline-health-error-rate-fields: done
+  epic-91-fe-retrospective: done
+
+  # Epic 92-FE: Monitor Dashboard (P2, 16 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-92-fe.md
+  # Source: Indeepa monitor concept, backend GET /v1/analytics/monitor/summary
+  epic-92-fe: done
+  92-1-fe-monitor-types-api-hook: done
+  92-2-fe-monitor-kpi-cards-route: done
+  92-3-fe-monitor-metrics-table: done
+  92-4-fe-monitor-weekly-chart: done
+  92-5-fe-monitor-buyout-pipeline-health: done
+  92-6-fe-monitor-e2e-tests-polish: done
+  epic-92-fe-retrospective: done
+
+  # Epic 93-FE: Operational Cleanup & Pattern Codification (P3, ~9 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-93-fe.md
+  # Source: Epic 92-FE retrospective action items + Epic 91-FE carry-forward items
+  epic-93-fe: done
+  93-1-fe-extract-shared-monitoring-status-constants: done
+  93-2-fe-calculate-daily-theoretical-profit-fallback-policy: done
+  93-3-fe-document-thresholds-heuristics-inline-comments: done
+  93-4-fe-codify-epic-92-patterns-in-claude-md: done
+  93-5-fe-check-docs-signal-quality-investigation: done
+  epic-93-fe-retrospective: done
+
+  # Epic 94-FE: Process Hardening & Quality-Gate Automation (P3, ~7 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-94-fe.md
+  # Source: Epic 93-FE retrospective action items AI-1 through AI-7
+  epic-94-fe: done
+  94-1-fe-automate-check-docs-baseline-tracking: done
+  94-2-fe-codify-accepted-baselines-claude-md: done
+  94-3-fe-mandatory-2nd-pass-review-before-commit: done
+  94-4-fe-after-every-story-changelog-lessons-line: done
+  94-5-fe-documentation-example-grep-verification: done
+  94-6-fe-epic-close-cleanliness-check: done
+  94-7-fe-spec-precedent-grep-discipline: done
+  epic-94-fe-retrospective: done
+
+  # Epic 95-FE: Backend-Closed Tickets Cleanup (P3, ~3 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-95-fe.md
+  # Source: Backend status report 2026-04-30 (Backend → Frontend)
+  epic-95-fe: done
+  95-1-fe-remove-stale-pending-backend-markers: done
+  95-2-fe-update-backend-request-docs-resolution: done
+  95-3-fe-monitor-dashboard-already-shipped-notice: done
+  epic-95-fe-retrospective: done
+
+  # Epic 96-FE: Backend Epics 101-109 Frontend Integration (P1, ~22 SP expected, range [17, 28])
+  # Spec: _bmad-output/planning-artifacts/epics-96-fe.md
+  # Source: Backend Epics 101-109 coordination thread (commit d1378cc, 2026-05-06)
+  # Elicitation pass applied 2026-05-06: 12 edits (E1-E10 + N1-N2) — SP recalibration, dep-graph correction (incl. 96.2 chain), baseline-drift protocol, chrome-verification ACs, deferral triggers, mid-epic retro trigger, UX gate for 96.7, numerical-proof ACs for 96.5/96.8, ADR-3 dashboard widget deferral
+  epic-96-fe: done  # all 17 stories closed; carry-forward this-session work committed (e710525 + 06c88cd); 95 pre-existing dirty files documented as out-of-scope per Story 94.6-FE option (b)
+  96-1-fe-fix-usepreliminarytax-response-shape-enum: done
+  96-2-fe-unit-economics-query-param-view-by: done
+  96-3-fe-refactor-cost-category-order-from-meta: done
+  96-4-fe-delivery-to-warehouse-nested-location-migration: done
+  96-5-fe-commission-other-source-migration-cabinet-summary: done
+  96-6-fe-acquiring-total-4th-expense-slice-pnl-waterfall: done
+  96-7-fe-retail-price-total-sales-funnel-visualization: done
+  96-8-fe-restore-dop-servisy-wb-row-pnl-waterfall: done
+  96-9-fe-acquiring-reports-list-detail-pages: done
+  96-10-fe-delivery-to-warehouse-10th-cost-category-fcu-dcu: done
+  96-11-fe-fbs-stock-breakdown-views-groups-sizes-regions: done
+  96-12-fe-fbs-csv-export-async-polling-flow: done
+  96-13-fe-fbs-enhanced-analytics-aggregated-view: done
+  96-14-fe-buyout-reconciliation-page-anomaly-flags: done
+  96-15-fe-returns-analytics-sdk-reconciliation-overlay: done
+  96-16-fe-remove-redundant-defensive-markers-backend-closures: done
+  96-17-fe-test-only-seed-endpoint-integration-e2e-fixtures: done  # closed-via-2-pass-review (Disposition-A framing was reverted post-close per user invocation; deliverable shipped by Story 86.2); see story file. 78 cumulative attestation findings across 13 review passes on the codification series (post-3rd-pass count)
+  epic-96-fe-retrospective: done
+
+  # Epic 97-FE: Process Hardening & Pattern-Codification (P3, ~10 SP, range [7, 14])
+  # Spec: _bmad-output/planning-artifacts/epics-97-fe.md
+  # Source: Epic 96-FE retrospective action items A-1 through A-7
+  # Created: 2026-05-10. NOT yet started; epic-flip to in-progress on first story create-story.
+  epic-97-fe: done
+  97-1-fe-pattern-4-fix-block-propagation-discipline: done
+  97-2-fe-pattern-4-authoritative-source-citation-discipline: done
+  97-3-fe-api-client-rate-limit-status-code-coverage: done
+  97-4-fe-attestation-drift-chain-claude-md-meta-pattern: done
+  97-5-fe-pattern-4-multi-tenant-cabinet-isolation-discipline: done
+  97-6-fe-eslint-max-lines-typo-fix-claude-md-reconcile: done
+  97-7-fe-investigate-halt-vs-prose-guidance-compliance: done  # investigation doc + CLAUDE.md cross-reference; 2-pass review completed (1st: 1H/2M/1L, 2nd: 0H/2M/2L COMMENT); closes Epic 96-FE retro § A-7 (3rd carry-forward broken)
+  epic-97-fe-retrospective: done
+
+  # Epic 98-FE: ESLint Cap Tightening & Enforcement (P3, ~5 SP)
+  # Source: Epic 97-FE retrospective action items A-1, A-3
+  # Created: 2026-05-11
+  epic-98-fe: done
+  98-1-fe-eslint-cap-tightening-400-target: done
+  epic-98-fe-retrospective: done
+
+  # Epic 99-FE: ESLint Cap Tightening Phase 2 & HALT Scripts (P3, ~5 SP)
+  # Source: Epic 98-FE retrospective action items A-1, A-2
+  # Created: 2026-05-12
+  epic-99-fe: done
+  99-1-fe-eslint-cap-tightening-200-target: done
+  99-2-fe-halt-scripts-eslint-rule-validator-check-fix-propagation: done
+  epic-99-fe-retrospective: done
+
+  # Epic 100-FE: Dead Code & Deprecation Sweep (P3, ~7 SP)
+  # Source: Epic 99-FE retrospective — 21 deprecated annotations across 11 files
+  # Created: 2026-05-12
+  epic-100-fe: done
+  100-1-fe-delete-zero-dependency-deprecated-items: done
+  100-2-fe-remove-theoretical-profit-fallback: done
+  100-3-fe-migrate-orderscogs-remove-ad-dead-fields: done
+  epic-100-fe-retrospective: done

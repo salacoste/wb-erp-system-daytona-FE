@@ -207,7 +207,6 @@ export function createAdvertisingSummary(
     total_views: 500_000,
     total_clicks: 17_500,
     total_orders: 2_500,
-    active_campaigns: 8,
     ...overrides,
   } as AdvertisingSummary
 }

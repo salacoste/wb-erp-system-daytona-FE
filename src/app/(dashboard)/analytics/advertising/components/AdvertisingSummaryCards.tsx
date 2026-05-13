@@ -58,16 +58,16 @@ function getRoiColor(roi: number): string {
   return 'text-red-600'
 }
 
-/** Advertising Summary Cards - Story 33.2-FE, Epic 35: 6 metric cards with tooltips */
+/** Advertising Summary Cards - Story 33.2-FE, Epic 35: 5 metric cards with tooltips */
 export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSummaryCardsProps) {
-  // Loading state (Epic 35: now 6 cards)
+  // Loading state
   if (isLoading) {
     return (
       <div
         className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         aria-label="Загрузка метрик..."
       >
-        {[...Array(6)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <Card key={i}>
             <CardContent className="pt-6">
               <Skeleton className="h-4 w-28 mb-2" />

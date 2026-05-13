@@ -130,7 +130,7 @@ describe('LogoutButton', () => {
     const promise = new Promise<unknown>(resolve => {
       resolvePromise = resolve
     })
-    mockLogoutUser.mockReturnValue(promise as Promise<unknown>)
+    mockLogoutUser.mockReturnValue(promise as Promise<{ message: string }>)
 
     renderButton()
 
