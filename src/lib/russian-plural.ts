@@ -38,3 +38,6 @@ export const REPORT_FORMS = ['отчёт', 'отчёта', 'отчётов'] as 
 
 /** Plural forms for "транзакция" (transaction). */
 export const TRANSACTION_FORMS = ['транзакция', 'транзакции', 'транзакций'] as const
+
+/** Plural forms for "день" (day). */
+export const DAY_FORMS = ['день', 'дня', 'дней'] as const

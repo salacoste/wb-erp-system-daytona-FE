@@ -381,10 +381,16 @@ describe('Story 44.37-FE: API Field Mismatch Bug Fix', () => {
   })
 
   // --------------------------------------------------------------------------
-  // Combined with Story 44.36: All 8 invalid fields excluded
+  // Story 44.37: 6 invalid fields excluded
+  //
+  // NOTE (updated 2026-05-15): originally this block asserted 8 fields were
+  // excluded (including `box_type` and `turnover_days`). Story 44.42 / Phase 6
+  // commit `9afa140` extended backend support and `toApiRequest` was updated
+  // to re-include `box_type` and `turnover_days` when present. The 6 Story
+  // 44.37 fields remain excluded by `toApiRequest` and stay covered here.
   // --------------------------------------------------------------------------
-  describe('Combined: All 8 invalid fields excluded (Stories 44.36 + 44.37)', () => {
-    it('should exclude all 8 fields that backend rejects', () => {
+  describe('Story 44.37: 6 invalid fields excluded from API request', () => {
+    it('should exclude all 6 warehouse/coefficient fields that backend rejects', () => {
       const formData: FormData = {
         ...defaultFormValues,
         cogs_rub: 1000,
@@ -394,10 +400,10 @@ describe('Story 44.37-FE: API Field Mismatch Bug Fix', () => {
         buyback_pct: 95,
         advertising_pct: 5,
         storage_rub: 50,
-        // Story 44.36 fields
+        // Story 44.36 fields — now ACCEPTED by backend (Story 44.42), kept in formData to prove they don't accidentally leak alongside the rejected set
         box_type: 5,
         turnover_days: 45,
-        // Story 44.37 fields
+        // Story 44.37 fields — still REJECTED by backend
         warehouse_id: 507,
         logistics_coefficient: 1.5,
         storage_coefficient: 1.3,
@@ -408,12 +414,8 @@ describe('Story 44.37-FE: API Field Mismatch Bug Fix', () => {
 
       const request = toApiRequest(formData)
 
-      // All 8 fields should NOT be present
+      // 6 Story 44.37 fields should NOT be present
       const rejectedFields = [
-        // Story 44.36
-        'box_type',
-        'turnover_days',
-        // Story 44.37
         'warehouse_id',
         'logistics_coefficient',
         'storage_coefficient',

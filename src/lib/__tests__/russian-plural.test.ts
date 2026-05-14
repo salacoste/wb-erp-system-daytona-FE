@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { pluralize, REPORT_FORMS, TRANSACTION_FORMS } from '../russian-plural'
+import { pluralize, REPORT_FORMS, TRANSACTION_FORMS, DAY_FORMS } from '../russian-plural'
 
 describe('pluralize — REPORT_FORMS', () => {
   it('n=1 → "отчёт" (single)', () => {
@@ -71,6 +71,32 @@ describe('pluralize — TRANSACTION_FORMS', () => {
 
   it('n=21 → "транзакция" (last digit 1, not teen)', () => {
     expect(pluralize(TRANSACTION_FORMS, 21)).toBe('транзакция')
+  })
+})
+
+describe('pluralize — DAY_FORMS', () => {
+  it('n=1 → "день" (single)', () => {
+    expect(pluralize(DAY_FORMS, 1)).toBe('день')
+  })
+
+  it('n=2 → "дня" (few)', () => {
+    expect(pluralize(DAY_FORMS, 2)).toBe('дня')
+  })
+
+  it('n=7 → "дней" (many)', () => {
+    expect(pluralize(DAY_FORMS, 7)).toBe('дней')
+  })
+
+  it('n=14 → "дней" (teen exception)', () => {
+    expect(pluralize(DAY_FORMS, 14)).toBe('дней')
+  })
+
+  it('n=21 → "день" (last digit 1, not teen) — regression for Story 103.4 polish', () => {
+    expect(pluralize(DAY_FORMS, 21)).toBe('день')
+  })
+
+  it('n=28 → "дней" (many)', () => {
+    expect(pluralize(DAY_FORMS, 28)).toBe('дней')
   })
 })
 
