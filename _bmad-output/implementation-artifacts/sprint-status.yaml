@@ -325,9 +325,9 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-104-fe.md
   # Source: Backend coordination follow-up audit 2026-05-15 — confirmed /v1/analytics/daily/finance + /v1/analytics/daily/advertising live (Epic 88), FCU already integrated but needs view-mode verification
   # Created: 2026-05-15
-  epic-104-fe: backlog
-  104-1-fe-daily-finance-integration: backlog
-  104-2-fe-daily-advertising-integration: backlog
+  epic-104-fe: in-progress
+  104-1-fe-daily-finance-integration: done  # no-op: already shipped via Epic 91-FE Story 91.2 (getFinanceDailyData fully wired incl. advertising_spend + net_profit); verified api.ts:75-102, daily-metrics.ts:86-115
+  104-2-fe-daily-advertising-integration: done  # AdvertisingDailyData enriched with 8 dropped fields (views,clicks,ctr,cpc,orders,revenue,roas); getAdvertisingDailyData mapping updated; 4 new unit tests added; tsc 0e, vitest 7247 pass
   104-3-fe-fcu-10th-category-verification: backlog
   104-4-fe-tests-polish-retrospective: backlog
   epic-104-fe-retrospective: optional
