@@ -33,9 +33,9 @@ Frontend cannot create DBW orders directly:
 
 ## Backend Team Response
 
-**Status**: PENDING
-**Resolution date**: Not yet implemented
-**Summary**: Request for a test-seeding endpoint to create DBW (delivery-by-WB) orders with client PII data for E2E testing. Currently blocked because frontend cannot create DBW orders without real WB API integration. Privacy E2E tests (Story 86.2) skip gracefully when no DBW orders exist.
+**Status**: RESOLVED — Fully implemented in Stories 87.1 + 103.2
+**Resolution date**: 2026-04-28
+**Summary**: Endpoints `POST /v1/test/seed/dbw-order` and `DELETE /v1/test/seed/dbw-order/:orderId` implemented in `src/test-utils/test-seed.service.ts`. Environment-gated (development only), Owner-role required, cabinet isolation enforced. Frontend E2E fixture at `frontend/e2e/fixtures/dbw-order-seed.ts`.
 **Remaining frontend action**: E2E tests remain in graceful skip mode. Privacy guarantees verified at unit test level (12 tests).
 - The backend already has all the infrastructure to insert DBW orders into the database — the frontend just needs an authenticated endpoint to call
 

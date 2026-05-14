@@ -28,6 +28,8 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 
 **Обновление**: `PUT /v1/cabinets/:id`
 ```json
+{ "taxSystem": "usn15", "taxRate": null }
+```
 
 ---
 
@@ -36,8 +38,7 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 **Status**: RESOLVED
 **Resolution date**: 2026-02-23
 **Summary**: Epic 72 (Tax Accounting) backend complete. Tax settings integrated into cabinet model (taxSystem, taxRate, vatPayer, vatRate). Tax metrics available in finance-summary response under `summary_total.tax`. Supports USN 6%, USN 15%, manual rate, and VAT integration. Ready for frontend Epic 66-FE.
-**Remaining frontend action**: Build tax configuration UI per Epic 66-FE using endpoints documented here.{ "taxSystem": "usn15", "taxRate": null }
-```
+**Remaining frontend action**: Build tax configuration UI per Epic 66-FE using endpoints documented here.
 
 | taxSystem | Название | taxRate |
 |-----------|----------|---------|

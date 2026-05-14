@@ -43,9 +43,9 @@ Backend to confirm. Possible causes:
 
 ## Backend Team Response
 
-**Status**: PENDING (preventive, not yet observed in production)
-**Resolution date**: Open
-**Summary**: Frontend has added defensive guard for `errorRate > 1` per Defensive Frontend Principle (Story 92.5). Backend should add validation to ensure `errorRate` is always in range [0, 1] before serialization. No production incident yet - this is a preventive measure.
+**Status**: RESOLVED — Backend clamping implemented (commit `c9ba2187`, Story 93.1)
+**Resolution date**: 2026-04-30
+**Summary**: `pipeline-health-grid.service.ts:272-277` clamps errorRate to [0, 1] with logging. Frontend defensive guard retained per Defensive Frontend Principle (Story 89.4-FE). `PENDING BACKEND` marker removed in Story 95.1-FE.
 **Remaining frontend action**: Frontend amber AlertTriangle indicator already in place. Awaits backend-side validation.
 3. **Aggregation overflow**: A multi-period aggregation sums partial error rates without re-normalizing.
 

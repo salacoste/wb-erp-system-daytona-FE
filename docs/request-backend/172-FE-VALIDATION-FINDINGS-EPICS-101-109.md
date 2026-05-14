@@ -27,7 +27,7 @@ CABINET="f75836f7-c0bc-4b2c-823c-a1f3508cce8e"
 
 ## 🚨 Falsifications (5 — backend documentation contradicts actual API)
 
-### F1 -- `cabinet-summary` documented at wrong path
+### F1 — `cabinet-summary` documented at wrong path
 
 ---
 

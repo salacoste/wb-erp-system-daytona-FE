@@ -16,7 +16,19 @@
 
 ---
 
+## 1. Обзор
+
+### Бизнес-контекст
+
+| Функция | Описание | API-решение |
+|---------|----------|-------------|
+
 ### Базовый URL
+
+```
+http://localhost:3000 (development)
+https://api.your-domain.com (production)
+```
 
 ---
 
@@ -26,10 +38,6 @@
 **Resolution date**: 2026-01-31
 **Summary**: Dashboard orders API guide documented. Provides endpoints for FBS orders with daily breakdown, COGS per order, and period filtering. Uses existing `/v1/orders/fbs` and `/v1/analytics/orders/volume` endpoints.
 **Remaining frontend action**: None - use as implementation reference for dashboard orders section.
-```
-http://localhost:3000 (development)
-https://api.your-domain.com (production)
-```
 
 ---
 

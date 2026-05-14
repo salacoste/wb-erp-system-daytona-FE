@@ -36,6 +36,7 @@ Story 40.9 добавляет два новых эндпоинта для пол
 **Resolution date**: 2026-01-29
 **Summary**: Story 40.9 implemented two new endpoints for WB native status history: (1) WB Native History with 40+ status codes and duration calculations, (2) Full History merging local tracking with WB API data. Part of Epic 40 (Orders FBS Realtime Sync) - complete.
 **Remaining frontend action**: Integrate endpoints into order detail views if status timeline display is needed.
+
 ### 1. GET /v1/orders/:orderId/wb-history
 
 **Описание:** Получение истории статусов заказа напрямую из WB API. Возвращает хронологический список всех переходов с детальными WB статус-кодами (40+ возможных значений).

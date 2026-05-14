@@ -29,6 +29,7 @@ The return classification service (`return-classification.service.ts`) looks at 
 Worker log: classified=0, skipped=84, errors=0, duration=42ms
 Buyout API: totalSalesCount=5721, totalReturnsCount=63, overallBuyoutRatePct=98.9%
 Returns API: totalReturns=0, categories all 0
+```
 
 ---
 
@@ -37,7 +38,7 @@ Returns API: totalReturns=0, categories all 0
 **Status**: RESOLVED
 **Resolution date**: 2026-05-06 (confirmed in #170 backend update)
 **Summary**: Fixed in Epic 109 (SDK Returns Integration). Pipeline `return_classification_sync` now runs daily at 06:30 MSK using `sdk.returns` module. All 3 previously unclassified return types are now handled through `enrichReturnsWithType()`. FBO + FBS + finance returns unified through `ReturnsSyncProcessor`.
-**Remaining frontend action**: None - returns page should now show classified return data.```
+**Remaining frontend action**: None - returns page should now show classified return data.
 
 ## Impact
 
