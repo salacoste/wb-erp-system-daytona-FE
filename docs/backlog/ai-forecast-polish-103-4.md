@@ -72,17 +72,23 @@ For brand/cabinet, `enabled === true` unconditionally → query fires with `{ le
 
 - [x] Horizon dropdown shows correct Russian forms: "7 дней", "14 дней", "21 день", "28 дней" — shipped 2026-05-15 via `pluralize(DAY_FORMS, d)` (extended `src/lib/russian-plural.ts`)
 - [x] Predictions table column 4 header renamed from "Банд" to "Диапазон" — shipped 2026-05-15 (`ForecastTable.tsx`)
-- [ ] Brand-level renders an appropriate input/notice; or "По бренду" is removed from LEVEL_OPTIONS — **deferred (needs PM/UX decision)**
-- [ ] Cabinet-level shows informational note (no selector required) or removed — **deferred (needs PM/UX decision)**
+- [x] Brand-level removed from LEVEL_OPTIONS — shipped 2026-05-15 via Phase 3 disposition (c) (dropped pending backend brand-list endpoint; type union still permits 'brand' for future reintroduction)
+- [x] Cabinet-level kept as implicit aggregation (no selector needed — JWT-scoped) — shipped 2026-05-15 (only sku + cabinet options in LEVEL_OPTIONS)
 - [x] Empty-state copy no longer references "Epic 109" — shipped 2026-05-15 ("Нет данных прогноза. Модель ещё не обучена для этого товара. Попробуйте позже.")
 - [x] Unit tests added for DAY_FORMS in `pluralize` — shipped 2026-05-15 (6 tests: n=1, 2, 7, 14, 21, 28 — `russian-plural.test.ts`)
-- [ ] Unit tests added for level-switcher behavior (clears stale data or shows level-specific UI) — **deferred (depends on brand/cabinet selector decision)**
-- [x] No regressions in existing SKU-level happy path — verified via lint+type-check+25/25 russian-plural tests pass
+- [x] Unit tests added for level-switcher behavior — shipped 2026-05-15 via pure-function extraction (`computeForecastQueryParams` in `forecast-query-helpers.ts`; 9 tests covering sku enablement, cabinet implicit, whitespace, decimal rejection, level transitions)
+- [x] No regressions in existing SKU-level happy path — verified via lint+type-check+full-vitest 7233+ passing, 0 failed
 
 ## Status (2026-05-15)
 
-**Shipped**: Cosmetic items 1, 2, 4 — all low-risk, no UX decisions required.
-**Deferred**: Item 3 (brand/cabinet selector) — needs PM/UX decision before implementation. Three options enumerated in the Findings section above.
+**ALL 8 ACs SHIPPED**:
+- Cosmetic items (1, 2, 5, 6) — shipped in initial polish pass
+- Phase 2 follow-up fixes (2-pass review findings) — shipped via commit `2d85698`:
+  - Normalizer null-safety, cabinetId queryKey, formatDate, type-narrowing guard, removed dead `format` param, label rename, 14 new unit tests
+- Phase 3 brand selector decision (item 3, 4, 7) — shipped via Phase 3 commit:
+  - Disposition (c): dropped 'brand' from LEVEL_OPTIONS pending backend support
+  - Cabinet level kept as implicit aggregation (no selector needed)
+  - AC 7 covered by `computeForecastQueryParams` pure-function tests
 
 ## Related
 

@@ -7,6 +7,7 @@ import { ForecastMetrics } from './ForecastMetrics'
 import { useAiForecast } from '@/hooks/useAiForecast'
 import { useAuthStore } from '@/stores/authStore'
 import { isForecastLevel, type ForecastLevel } from '@/types/ai-forecast'
+import { computeForecastQueryParams } from './forecast-query-helpers'
 import { pluralize, DAY_FORMS } from '@/lib/russian-plural'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -22,9 +23,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+// 'brand' level is omitted from UI options pending backend brand-list endpoint
+// + brand-aware forecast aggregation. Type union still permits it for future
+// reintroduction. Cabinet-level is implicit aggregation (no selector needed).
 const LEVEL_OPTIONS: { value: ForecastLevel; label: string }[] = [
   { value: 'sku', label: 'По товару (SKU)' },
-  { value: 'brand', label: 'По бренду' },
   { value: 'cabinet', label: 'По кабинету' },
 ]
 
@@ -40,10 +43,8 @@ export function ForecastPageContent() {
     setNmIdInput('')
   }, [cabinetId])
 
+  const { nmId, enabled, parsedNmId } = computeForecastQueryParams(level, nmIdInput)
   const trimmed = nmIdInput.trim()
-  const parsedNmId = /^\d+$/.test(trimmed) ? Number.parseInt(trimmed, 10) : null
-  const nmId = level === 'sku' && parsedNmId ? parsedNmId : undefined
-  const enabled = level !== 'sku' || (parsedNmId !== null && parsedNmId > 0)
 
   const { data, isLoading, isError, error, refetch, isFetching } = useAiForecast(
     { nmId, level, horizonDays },
