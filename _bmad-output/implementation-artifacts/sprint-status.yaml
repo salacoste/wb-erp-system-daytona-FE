@@ -314,7 +314,7 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-103-fe.md
   # Source: Backend GET /v1/ai/forecast endpoint
   # Created: 2026-05-14
-  epic-103-fe: in-progress
+  epic-103-fe: done
   103-1-fe-types-api-client-hook: done  # 2026-05-15 visual verification (Chrome localhost:3100/analytics/forecast): fetch fires for nmId=270937054 horizon=7d → backend returns 7 predictions, normalizer transforms engine/cache/confidence correctly. Coordinator should still author formal story spec for traceability.
   103-2-fe-page-scaffold-and-route: done  # 2026-05-15 visual verification: route renders, sidebar nav entry "AI Прогноз" at /analytics/forecast (position 24), filter panel with 3 controls (Уровень/nmId/Горизонт) + empty-state alert "Введите артикул WB для получения прогноза по товару". Coordinator should still author formal story spec.
   103-3-fe-forecast-chart-and-predictions-table: done  # 2026-05-15 visual verification: model metadata cards (Движок=mindsdb, Кэш=Нет/свежий, Средняя уверенность=low) + 4-column predictions table (Дата/Прогноз продаж/Уверенность/Диапазон) populates correctly. Horizon 7→14 days re-fetches and table re-renders with 14 rows (2026-05-15→2026-05-28). Chart SVG opaque to a11y tree (normal recharts behavior). Coordinator should still author formal story spec.
