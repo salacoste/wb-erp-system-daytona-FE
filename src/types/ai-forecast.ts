@@ -9,7 +9,12 @@ export interface AiForecastParams {
   nmId?: number
   level?: ForecastLevel
   horizonDays?: number
-  format?: 'json' | 'csv'
+}
+
+export const FORECAST_LEVELS: readonly ForecastLevel[] = ['sku', 'brand', 'cabinet'] as const
+
+export function isForecastLevel(value: string): value is ForecastLevel {
+  return (FORECAST_LEVELS as readonly string[]).includes(value)
 }
 
 export interface AiForecastPrediction {

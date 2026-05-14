@@ -4,6 +4,12 @@
 > Scope: cosmetic + UX-gap items for Story 103.4-FE (`103-4-fe-tests-and-polish`)
 > Implementation file: `src/app/(dashboard)/analytics/forecast/components/ForecastPageContent.tsx`
 
+> **State note (post-fix)**: Items 1, 2, 4 below describe the **pre-fix state**
+> as originally surfaced and have since been fixed (see § Status at bottom).
+> Item 3 remains open pending PM/UX decision. File-line citations in the
+> Findings section therefore reference the state at time of surfacing, not the
+> current shipped code.
+
 ## Findings
 
 ### 1. Russian pluralization bug (cosmetic, low effort)

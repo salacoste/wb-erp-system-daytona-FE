@@ -1,6 +1,7 @@
 'use client'
 
 import { getConfidenceBand } from '@/types/ai-forecast'
+import { formatDate } from '@/lib/utils'
 
 const BAND_STYLES: Record<string, string> = {
   high: 'text-green-600 bg-green-50',
@@ -37,7 +38,7 @@ export function ForecastTable({ predictions }: { predictions: Prediction[] }) {
             const band = getConfidenceBand(p.confidence)
             return (
               <tr key={p.date} className="border-b last:border-0">
-                <td className="py-2">{p.date}</td>
+                <td className="py-2">{formatDate(p.date)}</td>
                 <td className="py-2 text-right font-mono">{p.predictedSales.toFixed(1)}</td>
                 <td className="py-2 text-right font-mono">{(p.confidence * 100).toFixed(0)}%</td>
                 <td className="py-2 text-center">

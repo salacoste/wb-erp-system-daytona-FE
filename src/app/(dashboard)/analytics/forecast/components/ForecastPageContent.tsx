@@ -6,7 +6,7 @@ import { ForecastTable } from './ForecastTable'
 import { ForecastMetrics } from './ForecastMetrics'
 import { useAiForecast } from '@/hooks/useAiForecast'
 import { useAuthStore } from '@/stores/authStore'
-import type { ForecastLevel } from '@/types/ai-forecast'
+import { isForecastLevel, type ForecastLevel } from '@/types/ai-forecast'
 import { pluralize, DAY_FORMS } from '@/lib/russian-plural'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -72,7 +72,12 @@ export function ForecastPageContent() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="level">Уровень</Label>
-              <Select value={level} onValueChange={v => setLevel(v as ForecastLevel)}>
+              <Select
+                value={level}
+                onValueChange={v => {
+                  if (isForecastLevel(v)) setLevel(v)
+                }}
+              >
                 <SelectTrigger id="level">
                   <SelectValue />
                 </SelectTrigger>
@@ -102,7 +107,7 @@ export function ForecastPageContent() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="horizon">Горизонт (дней)</Label>
+              <Label htmlFor="horizon">Горизонт, дни</Label>
               <Select value={String(horizonDays)} onValueChange={v => setHorizonDays(Number(v))}>
                 <SelectTrigger id="horizon">
                   <SelectValue />

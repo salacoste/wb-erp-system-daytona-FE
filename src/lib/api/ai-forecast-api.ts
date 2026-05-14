@@ -14,7 +14,7 @@ interface RawForecastPrediction {
 }
 
 interface RawAiForecastResponse {
-  predictions: RawForecastPrediction[]
+  predictions?: RawForecastPrediction[] | null
   modelVersion: number
   engine: string
   cached: boolean
@@ -25,7 +25,7 @@ interface RawAiForecastResponse {
 
 export function normalizeAiForecastResponse(raw: RawAiForecastResponse): AiForecastResponse {
   return {
-    predictions: raw.predictions.map(p => ({
+    predictions: (raw.predictions ?? []).map(p => ({
       date: p.forecastDate,
       predictedSales: p.predictedUnits,
       confidence: p.confidence,
