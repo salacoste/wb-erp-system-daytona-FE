@@ -66,16 +66,26 @@ export function toTwoLevelFormData(data: FormData): TwoLevelPricingFormData {
 }
 
 /**
+ * Map numeric BoxTypeId to backend string value.
+ * 2 -> 'box', 5 -> 'pallet'
+ */
+function mapBoxTypeToString(boxTypeId: number): 'box' | 'pallet' | undefined {
+  const mapping: Record<number, 'box' | 'pallet'> = { 2: 'box', 5: 'pallet' }
+  return mapping[boxTypeId]
+}
+
+/**
  * Convert form data to PriceCalculatorRequest for API submission.
  * Note: fulfillment_type is used internally for UI logic only, not sent to API.
  *
  * Frontend-only fields excluded from API request by design (request #100 resolved):
  * - warehouse_id, logistics_coefficient, storage_coefficient, delivery_date
  * - weight_exceeds_25kg, localization_index
- * - box_type, turnover_days
  * See src/types/price-calculator.ts for @frontend-only annotations.
  */
 export function toApiRequest(data: FormData): PriceCalculatorRequest {
+  const boxTypeStr = mapBoxTypeToString(data.box_type)
+
   const baseRequest: PriceCalculatorRequest = {
     target_margin_pct: data.target_margin_pct,
     cogs_rub: data.cogs_rub,
@@ -88,6 +98,8 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
     acquiring_pct: data.acquiring_pct,
     ...(data.commission_pct !== undefined && { commission_pct: data.commission_pct }),
     ...(data.nm_id !== undefined && { overrides: { nm_id: String(data.nm_id) } }),
+    ...(boxTypeStr ? { box_type: boxTypeStr } : {}),
+    ...(data.turnover_days ? { turnover_days: data.turnover_days } : {}),
   }
 
   // Frontend-only fields — computed locally, not sent to backend API.

@@ -1,24 +1,12 @@
 /**
- * TDD Tests for Story 44.36-FE: Bug Fix - API Field Mismatch (box_type, turnover_days)
+ * Tests for box_type and turnover_days API field inclusion
  *
- * These tests verify that the toApiRequest function does NOT include
- * `box_type` and `turnover_days` fields in the API request, as these
- * fields are not supported by the backend API and cause 400 Bad Request.
+ * These tests verify that the toApiRequest function INCLUDES
+ * `box_type` (as string) and `turnover_days` fields in the API request
+ * when the backend supports them.
  *
- * TDD RED PHASE: These tests WILL FAIL until the bug is fixed by removing
- * box_type and turnover_days from the toApiRequest function.
- *
- * Bug Root Cause (lines 77-82 in priceCalculatorUtils.ts):
- * ```typescript
- * if (data.fulfillment_type === 'FBO') {
- *   baseRequest.box_type = data.box_type        // REJECTED BY BACKEND
- *   baseRequest.turnover_days = data.turnover_days  // REJECTED BY BACKEND
- * }
- * ```
- *
- * Backend Error Response:
- * - "property box_type should not exist"
- * - "property turnover_days should not exist"
+ * box_type is mapped from numeric BoxTypeId (2|5|6) to string ('box'|'pallet'|'supersafe').
+ * turnover_days is passed through as a number when present.
  *
  * @see docs/stories/epic-44/story-44.36-fe-bugfix-api-field-mismatch.md
  */
@@ -85,77 +73,85 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
   // --------------------------------------------------------------------------
   // AC1: API request does NOT contain box_type field
   // --------------------------------------------------------------------------
-  describe('AC1: box_type field exclusion', () => {
-    it('should NOT include box_type in API request for FBO', () => {
+  describe('AC1: box_type field inclusion', () => {
+    it('should include box_type as string "pallet" for FBO with box_type=5', () => {
       const formData = createFboFormData({ box_type: 5 })
 
       const request = toApiRequest(formData)
 
-      expect(request).not.toHaveProperty('box_type')
+      expect(request).toHaveProperty('box_type', 'pallet')
     })
 
-    it('should NOT include box_type in API request for FBS', () => {
-      const formData = createFbsFormData()
+    it('should include box_type as string for FBS', () => {
+      const formData = createFbsFormData({ box_type: 2 })
 
       const request = toApiRequest(formData)
 
-      expect(request).not.toHaveProperty('box_type')
+      expect(request).toHaveProperty('box_type', 'box')
     })
 
-    it('should NOT include box_type with default value "box"', () => {
+    it('should include box_type as string "box" for default box_type=2', () => {
       const formData = createFboFormData({ box_type: 2 })
 
       const request = toApiRequest(formData)
 
-      expect(request).not.toHaveProperty('box_type')
+      expect(request).toHaveProperty('box_type', 'box')
     })
 
-    it('should NOT include box_type regardless of fulfillment type', () => {
+    it('should include box_type regardless of fulfillment type', () => {
       const fboRequest = toApiRequest(createFboFormData())
       const fbsRequest = toApiRequest(createFbsFormData())
 
-      expect(fboRequest).not.toHaveProperty('box_type')
-      expect(fbsRequest).not.toHaveProperty('box_type')
+      expect(fboRequest).toHaveProperty('box_type')
+      expect(fbsRequest).toHaveProperty('box_type')
     })
   })
 
   // --------------------------------------------------------------------------
   // AC2: API request does NOT contain turnover_days field
   // --------------------------------------------------------------------------
-  describe('AC2: turnover_days field exclusion', () => {
-    it('should NOT include turnover_days in API request for FBO', () => {
+  describe('AC2: turnover_days field inclusion', () => {
+    it('should include turnover_days in API request for FBO', () => {
       const formData = createFboFormData({ turnover_days: 45 })
 
       const request = toApiRequest(formData)
 
-      expect(request).not.toHaveProperty('turnover_days')
+      expect(request).toHaveProperty('turnover_days', 45)
     })
 
-    it('should NOT include turnover_days in API request for FBS', () => {
-      const formData = createFbsFormData()
+    it('should include turnover_days in API request for FBS', () => {
+      const formData = createFbsFormData({ turnover_days: 30 })
 
       const request = toApiRequest(formData)
 
-      expect(request).not.toHaveProperty('turnover_days')
+      expect(request).toHaveProperty('turnover_days', 30)
     })
 
-    it('should NOT include turnover_days with default value 20', () => {
+    it('should include turnover_days with default value 20', () => {
       const formData = createFboFormData({ turnover_days: 20 })
 
       const request = toApiRequest(formData)
 
-      expect(request).not.toHaveProperty('turnover_days')
+      expect(request).toHaveProperty('turnover_days', 20)
     })
 
-    it('should NOT include turnover_days with custom values', () => {
-      const testValues = [0, 7, 14, 30, 60, 90, 180]
+    it('should include turnover_days with custom values', () => {
+      const testValues = [7, 14, 30, 60, 90, 180]
 
       for (const days of testValues) {
         const formData = createFboFormData({ turnover_days: days })
         const request = toApiRequest(formData)
 
-        expect(request).not.toHaveProperty('turnover_days')
+        expect(request).toHaveProperty('turnover_days', days)
       }
+    })
+
+    it('should NOT include turnover_days when value is 0', () => {
+      const formData = createFboFormData({ turnover_days: 0 })
+
+      const request = toApiRequest(formData)
+
+      expect(request).not.toHaveProperty('turnover_days')
     })
   })
 
@@ -164,7 +160,7 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
   // (This is an integration test - we verify the request structure is correct)
   // --------------------------------------------------------------------------
   describe('AC3: Valid API Request Structure', () => {
-    it('should produce a valid API request without rejected fields', () => {
+    it('should produce a valid API request with box_type and turnover_days', () => {
       const formData = createFboFormData({
         box_type: 5,
         turnover_days: 45,
@@ -172,9 +168,9 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
 
       const request = toApiRequest(formData)
 
-      // Should NOT have rejected fields
-      expect(request).not.toHaveProperty('box_type')
-      expect(request).not.toHaveProperty('turnover_days')
+      // Should have box_type mapped to string and turnover_days as number
+      expect(request).toHaveProperty('box_type', 'pallet')
+      expect(request).toHaveProperty('turnover_days', 45)
 
       // Should have all required fields
       expect(request).toHaveProperty('target_margin_pct')
@@ -208,11 +204,13 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
         'delivery_date',
         'weight_exceeds_25kg',
         'localization_index',
+        'box_type',
+        'turnover_days',
         'overrides',
       ]
 
       // Rejected fields per backend API
-      const rejectedFields = ['box_type', 'turnover_days', 'fulfillment_type']
+      const rejectedFields = ['fulfillment_type']
 
       // Check no rejected fields
       for (const field of rejectedFields) {
@@ -317,7 +315,7 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
       expect(formData.turnover_days).toBe(30)
     })
 
-    it('should preserve box_type and turnover_days in form state', () => {
+    it('should preserve box_type and turnover_days in form state and API request', () => {
       const formData = createFboFormData({
         box_type: 5,
         turnover_days: 60,
@@ -327,10 +325,10 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
       expect(formData).toHaveProperty('box_type', 5)
       expect(formData).toHaveProperty('turnover_days', 60)
 
-      // But NOT sent to API
+      // AND sent to API (box_type mapped to string)
       const request = toApiRequest(formData)
-      expect(request).not.toHaveProperty('box_type')
-      expect(request).not.toHaveProperty('turnover_days')
+      expect(request).toHaveProperty('box_type', 'pallet')
+      expect(request).toHaveProperty('turnover_days', 60)
     })
   })
 
@@ -474,7 +472,7 @@ describe('priceCalculatorUtils: Non-Regression Tests', () => {
 // ============================================================================
 
 describe('API Request Snapshot', () => {
-  it('should produce expected request structure without rejected fields', () => {
+  it('should produce expected request structure with box_type and turnover_days', () => {
     const formData: FormData = {
       fulfillment_type: 'FBO',
       category_id: 123,
@@ -502,10 +500,10 @@ describe('API Request Snapshot', () => {
       logistics_coefficient: 1.2,
       storage_coefficient: 1.1,
       delivery_date: '2026-01-25',
-      box_type: 5, // Should NOT be in API request
+      box_type: 5, // Mapped to 'pallet' in API request
       weight_exceeds_25kg: true,
       localization_index: 1.5,
-      turnover_days: 45, // Should NOT be in API request
+      turnover_days: 45, // Sent to backend
       units_per_package: 10, // Story 44.38: Should NOT be in API request
       acceptance_cost: 5.5, // Should NOT be in API request
       packaging_rub: 100, // Story 44.50: Should NOT be in API request
@@ -514,10 +512,7 @@ describe('API Request Snapshot', () => {
 
     const request = toApiRequest(formData)
 
-    // Story 44.36/44.37: Verify ALL unsupported fields are NOT present
-    // These fields are kept in form state for UI but not sent to backend
-    expect(request).not.toHaveProperty('box_type')
-    expect(request).not.toHaveProperty('turnover_days')
+    // Story 44.37: Verify unsupported fields are NOT present
     expect(request).not.toHaveProperty('fulfillment_type')
     expect(request).not.toHaveProperty('warehouse_id')
     expect(request).not.toHaveProperty('logistics_coefficient')
@@ -529,7 +524,7 @@ describe('API Request Snapshot', () => {
     expect(request).not.toHaveProperty('packaging_rub') // Story 44.50
     expect(request).not.toHaveProperty('logistics_to_mp_rub') // Story 44.50
 
-    // Verify only supported fields are sent to backend
+    // Verify supported fields are sent to backend
     expect(request).toEqual({
       target_margin_pct: 20,
       cogs_rub: 1000,
@@ -541,6 +536,8 @@ describe('API Request Snapshot', () => {
       vat_pct: 20,
       acquiring_pct: 2,
       commission_pct: 8,
+      box_type: 'pallet',
+      turnover_days: 45,
       overrides: { nm_id: '147205694' },
     })
   })
