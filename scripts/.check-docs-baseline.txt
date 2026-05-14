@@ -16,7 +16,6 @@ src/components/notifications/TelegramBindingModal.tsx:216 | line 216 > file has 
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/useMarginTrends.ts:70 | file not found
-src/hooks/useExpenses.ts:116-122 | line 122 > file has 111 lines
 src/hooks/useFinancialSummary.ts:72 | line 72 > file has 30 lines
 src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 86 lines
 src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 86 lines

@@ -147,7 +147,7 @@ The same caveat applies to `npm run check:docs -- --update-baseline` — prefer
 > script's CITATION_REGEX header comment). Precedents in the EXCLUDE_PATHS list are
 > Story 89-3-FE and Story 93-5-FE.
 
-**Accepted baseline: 25 broken citations.** All 25 are pre-existing historical references in already-shipped docs/stories. Rewriting the historical docs would require re-opening closed stories — not actionable. Citations in the table below are plain text (no backticks) so the validator does not re-scan them.
+**Accepted baseline: 24 broken citations.** All 24 are pre-existing historical references in already-shipped docs/stories. Rewriting the historical docs would require re-opening closed stories — not actionable. Citations in the table below are plain text (no backticks) so the validator does not re-scan them.
 
 > **Source of truth**: `scripts/.check-docs-baseline.txt`. The table below is
 > a snapshot for reading convenience and may lag after baseline updates. Run
@@ -183,8 +183,8 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 | Quality gate | Command | Baseline | Source / location |
 |---|---|---|---|
-| Doc citations | `bash scripts/check-doc-citations.sh` | 25 broken | Source: `scripts/.check-docs-baseline.txt` (auto-validated, Story 94.1-FE). Updated Story 100.1 (7 new from daily-metrics.ts line shifts), Story 100.2 (5 resolved + 5 new from aggregation.ts/daily-metrics.ts line shifts), Story 100 post-commit (5 new from advertising-analytics-api.ts normalizer extraction). |
-| TypeScript | `npm run type-check` | 19 errors (18 in `src/lib/api/advertising-analytics-api.ts`, 1 in `src/components/custom/LogoutButton.test.tsx`) | Source: this section (manual). Provenance: 18 from Story 91-era SDK type-drift workaround (destructuring `{}` cast); 2 dead-zero field mappings removed in Story 100.3; 1 pre-existing in LogoutButton test (Promise type mismatch). |
+| Doc citations | `bash scripts/check-doc-citations.sh` | 24 broken | Source: `scripts/.check-docs-baseline.txt` (auto-validated, Story 94.1-FE). Updated Story 100.1 (7 new from daily-metrics.ts line shifts), Story 100.2 (5 resolved + 5 new from aggregation.ts/daily-metrics.ts line shifts), Story 100 post-commit (5 new from advertising-analytics-api.ts normalizer extraction), baseline 2026-05-14 (1 resolved — useExpenses.ts citation fixed). |
+| TypeScript | `npm run type-check` | 0 errors | Source: this section (manual). Provenance: 19 errors resolved — 18 advertising-analytics-api.ts fixed via Boundary Normalizer extraction (commit `e4000fa4`), 1 LogoutButton.test.tsx Promise cast fix (commit `175bfc86`). |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files | Source: this section (manual). Story 99.2-FE. |
 | ESLint | `npx eslint 'frontend/src/**/*.ts' 'frontend/src/**/*.tsx'` | 0 errors, 112 warnings (all `no-explicit-any`) | Source: this section (manual). Notes: any ERROR is a regression. Warnings are pre-existing `no-explicit-any` surfaced by Story 98.1-FE enforcement fix. `max-lines` rule enforced via root `eslint.config.js` (flat config) at cap 200 for source files, 800 for test files, with `skipBlankLines` + `skipComments` (Stories 98.1-FE, 99.1-FE). `next lint` is deprecated and does NOT load `frontend/.eslintrc.json` — enforcement is exclusively through `npx eslint` from monorepo root. 114 → 112 in Story 100.1-FE (2 warnings removed with deleted tax-calculations.ts). |
 | Vitest | `npm test -- --run` | ≥ 7205 passing, 676 skipped, 0 failed (floor — see drift rule) | Source: this section (manual). Provenance: as of Epic 93 close + Story 94.1; ratcheted upward through Epics 96-99 to 7244; floor reset to 7216 by Story 100.1-FE (28 legacy tests removed), then to 7205 by Story 100.2-FE (11 deprecated profit-fallback tests removed). |
@@ -192,7 +192,7 @@ Each story closes only when EVERY quality gate's output matches its documented b
 **Drift discipline (manual for type-check / lint / test; automated for check:docs).** Each story closes only when EVERY quality gate's output matches its documented baseline. Comparison rules per gate:
 
 - **check:docs**: automated set-diff against `scripts/.check-docs-baseline.txt` (Story 94.1-FE). Exit code is the gate.
-- **type-check**: count must equal 19 (18 in `advertising-analytics-api.ts` + 1 in `LogoutButton.test.tsx`). New errors anywhere else, or additional errors beyond these, are regressions. The 18 will drop when the SDK type drift is resolved (out of scope for now — see § "When to update").
+- **type-check**: count must equal 0. Any error is a regression. Previously 19 (resolved commit `175bfc86`).
 - **lint**: count must equal 0. Any warning OR error is a regression.
 - **test**: passing count must equal 7205 OR HIGHER (additions OK, regressions not). Failed count must equal 0. Skipped count is informational; substantial growth in skipped should be questioned but is not a hard gate.
 

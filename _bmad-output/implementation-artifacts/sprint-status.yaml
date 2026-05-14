@@ -309,3 +309,14 @@ development_status:
   102-1-fe-add-revenue-share-wow-data: done
   102-2-fe-add-percentage-labels-responsive-breakpoints: done
   epic-102-fe-retrospective: done
+
+  # Epic 103-FE: AI Sales Forecast Integration (P2, ~8 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-103-fe.md
+  # Source: Backend GET /v1/ai/forecast endpoint
+  # Created: 2026-05-14
+  epic-103-fe: in-progress
+  103-1-fe-types-api-client-hook: done  # 2026-05-15 visual verification (Chrome localhost:3100/analytics/forecast): fetch fires for nmId=270937054 horizon=7d → backend returns 7 predictions, normalizer transforms engine/cache/confidence correctly. Coordinator should still author formal story spec for traceability.
+  103-2-fe-page-scaffold-and-route: done  # 2026-05-15 visual verification: route renders, sidebar nav entry "AI Прогноз" at /analytics/forecast (position 24), filter panel with 3 controls (Уровень/nmId/Горизонт) + empty-state alert "Введите артикул WB для получения прогноза по товару". Coordinator should still author formal story spec.
+  103-3-fe-forecast-chart-and-predictions-table: done  # 2026-05-15 visual verification: model metadata cards (Движок=mindsdb, Кэш=Нет/свежий, Средняя уверенность=low) + 4-column predictions table (Дата/Прогноз продаж/Уверенность/Банд) populates correctly. Horizon 7→14 days re-fetches and table re-renders with 14 rows (2026-05-15→2026-05-28). Chart SVG opaque to a11y tree (normal recharts behavior). Coordinator should still author formal story spec.
+  103-4-fe-tests-and-polish: in-progress  # Polish spec: docs/backlog/ai-forecast-polish-103-4.md. 3/4 ACs shipped 2026-05-15 (Russian declension via pluralize+DAY_FORMS, column "Банд"→"Диапазон", empty-state copy de-leaked); 4th AC (brand/cabinet selector) deferred pending PM/UX decision. Visual verification surfaced 4 gaps: (1) "21 дней" → should be "21 день" (Russian declension bug, ForecastPageContent.tsx:112 hardcoded `{d} дней`); (2) column header "Банд" → "Полоса" or "Диапазон" (Banalicism); (3) brand-level (`level === 'brand'`) renders NO brand selector input (ForecastPageContent.tsx:88-101 only conditionalizes on `level === 'sku'`) — query fires with `nmId: undefined` and table shows stale prior SKU data; cabinet-level same; (4) empty-state alert at L154 leaks implementation detail "Epic 109" — should be user-facing message without internal epic ref.
+  epic-103-fe-retrospective: optional
