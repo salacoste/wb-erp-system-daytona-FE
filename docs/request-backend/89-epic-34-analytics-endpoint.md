@@ -48,6 +48,13 @@
 - ✅ `notifications/page.tsx` - Page view & help clicks (2 events)
 
 **Features**:
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Backend analytics endpoint for Telegram notifications monitoring was implemented, providing visibility into binding flow metrics, API errors, adoption rates, and performance data for the production Telegram notifications system (Epic 34).
+**Frontend Action**: No further action needed unless noted above.
 - ✅ SSR-safe (только в browser)
 - ✅ Batch events every 30s (reduces API load)
 - ✅ Auto-flush on page unload & tab switch

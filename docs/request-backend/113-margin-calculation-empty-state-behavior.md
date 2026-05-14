@@ -18,6 +18,13 @@ The FrontEnd team observed that Margin % fields return `null` values:
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-01-30
+**Summary**: Documented as expected behavior, not a bug. The `weekly_margin_fact` table was empty because COGS bulk upload did not trigger margin recalculation. This was subsequently fixed in Request #120 (auto-trigger on COGS upload + manual backfill for historical weeks).
+**Remaining frontend action**: Display appropriate empty state with call-to-action when margin fields return null.
+
 ## Problem Description
 
 ### FrontEnd Observation

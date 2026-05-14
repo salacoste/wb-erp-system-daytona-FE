@@ -29,6 +29,15 @@
    - Наше поле: `corrections` / `other_adjustments_net`
    - ✅ Корректно вычиталось
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2025-12-12
+**Summary**: Discovered and documented WB commission adjustment (`wb_commission_adj`) that was missing from payout calculation. The 2,153.28 RUB discrepancy was caused by this field not being subtracted. Added to payout formula in finance summary calculations.
+**Remaining frontend action**: None - payout calculation now includes commission adjustment.
+
 2. **"Корректировка Вознаграждения ВВ"**: 2,153.28₽
    - Наше поле: `commission_other` → `wb_commission_adj`
    - ❌ НЕ вычиталось из payout_total

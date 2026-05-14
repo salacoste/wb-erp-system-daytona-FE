@@ -18,8 +18,14 @@
 
 ## API Эндпоинты
 
-### Аналитика (Historical Analytics Controller)
+---
 
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-01-29
+**Summary**: Epic 51 (25 SP, 5 stories) implemented cross-API FBS historical analytics extending coverage from 30 to 365 days via 3-source aggregation (OrdersFBS API for 0-30 days, Reports API for 31-90 days, Analytics API for 91-365 days). Historical trends, seasonal analysis, and comparison endpoints delivered.
+**Remaining frontend action**: Integrate historical trends and comparison endpoints into FBS analytics pages.
 #### 1. GET /v1/analytics/orders/trends
 
 **Описание:** Исторические тренды заказов (до 365 дней)

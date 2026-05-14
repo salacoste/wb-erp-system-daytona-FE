@@ -48,6 +48,11 @@ Backend теперь отслеживает метрики для всех analy
 
 ### Story 40.6 Enhancements - Task 2: Integration Tests
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 Backend имеет integration tests для сложных запросов. Запуск:
 ```bash
 RUN_INTEGRATION_TESTS=1 npm run test:integration -- --testPathPattern=orders-analytics

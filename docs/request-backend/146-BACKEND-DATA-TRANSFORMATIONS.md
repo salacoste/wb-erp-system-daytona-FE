@@ -29,6 +29,14 @@
 
 ## 1. wb_sales_gross_total (Выкупы)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-02-01
+**Summary**: Technical reference documenting all backend data transformations applied to raw WB API data before returning to frontend. Covers 8 major transformations: sales gross total, COGS, logistics, storage, advertising, payout, margin percentage, and operating profit. Critical for frontend team to understand what calculations have already been applied.
+**Remaining frontend action**: None - use as reference to avoid double-calculating already-aggregated metrics.
 ### Источник данных WB API
 
 **Endpoint**: `GET /api/v5/supplier/reportDetailByPeriod`

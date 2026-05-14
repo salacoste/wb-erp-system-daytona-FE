@@ -285,3 +285,10 @@ curl -X POST http://localhost:3000/v1/analytics/weekly/reaggregate?week=2025-W47
 ---
 
 **Implementation completed:** 2025-12-06
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-06
+- **Summary**: WB dashboard data discrepancy was fixed. The aggregation formula was updated to use `retail_price_with_discount` for sales calculations, matching the WB Dashboard exactly. Re-aggregation is required for existing data via `POST /v1/analytics/weekly/reaggregate`. All expected metrics now match WB Dashboard values.
+- **Remaining frontend action**: None specific. Data will match WB Dashboard after re-aggregation.

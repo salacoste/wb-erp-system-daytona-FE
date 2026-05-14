@@ -442,3 +442,12 @@ Allow users to manually configure warehouses with:
 
 *Report created: 2026-01-21*
 *Last updated: 2026-01-21 14:10 (ALL ISSUES RESOLVED - Tariffs fallback implemented)*
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-01-21
+**Summary**: All 3 blocking issues fixed and deployed. (1) Warehouse search response format corrected to `{data: {warehouses, updated_at}}` wrapper. (2) Dimensions/category mapping fixed (`subjectName` -> `category`). (3) Tariffs fallback implemented when WB offices API returns empty (81 warehouses from tariffs data).
+**Remaining frontend action**: None - all issues resolved and frontend confirmed working.

@@ -396,7 +396,14 @@ describe('handleCreateCabinet', () => {
 
 ---
 
-**Дата создания:** 2025-01-12  
-**Последнее обновление:** 2025-01-12  
+**Дата создания:** 2025-01-12
+**Последнее обновление:** 2025-01-12
 **Автор:** Backend Team (James - Dev Agent)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-12
+- **Summary**: JWT token refresh on cabinet creation is fully implemented. The `POST /v1/cabinets` endpoint returns a new JWT token via the `newToken` field in the response. Frontend must call `refreshToken(response.newToken)` synchronously after successful creation.
+- **Remaining frontend action**: Implement the `createCabinet()` API function with synchronous token refresh and error handling as described in the checklist.
 

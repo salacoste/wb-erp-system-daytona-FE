@@ -28,6 +28,14 @@
 
 В текущем SDK метод `getAcceptanceCoefficients` **удалён** из `OrdersFbwModule` и **перемещён** в `TariffsModule`.
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-10
+**Summary**: Fixed two tariff endpoint errors caused by SDK v3.1.0 API changes. (1) `getAcceptanceCoefficients` migrated from `ordersFBW` to `tariffs` module. (2) `getTariffsBox` date parameter handling fixed. Same pattern as #135 products SDK rename.
+**Remaining frontend action**: None - both tariff endpoints now return 200 OK.
 ```typescript
 // СЛОМАНО (строка 118):
 const sdk = this.getSDKClient(token);

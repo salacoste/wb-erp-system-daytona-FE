@@ -36,8 +36,17 @@ Per the contract, **`salePrice <= price` must always hold**. A 27x inversion is 
 
 Backend team to confirm. Two candidate causes:
 
-1. **SDK → DB field mapping bug**: WB SDK may return fields under different names (e.g., `totalPrice` vs `convertedPrice`) and the backend writer may be assigning them to the wrong columns for a subset of orders.
+1. **SDK -> DB field mapping bug**: WB SDK may return fields under different names (e.g., `totalPrice` vs `convertedPrice`) and the backend writer may be assigning them to the wrong columns for a subset of orders.
 2. **Stale data from historical bad import**: An earlier import job may have written reversed values to the `orders` table. Only specific date ranges / specific orders are affected.
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-05-06 (confirmed in #170 backend update)
+**Summary**: Price/salePrice inversion fixed in Epic 103, Story 103.1. The field mapping was corrected for the affected order subset. Frontend defensive guard (Story 87.3) still active as precaution per Defensive Frontend Principle.
+**Remaining frontend action**: None - inversion fixed. Frontend anomaly indicator (AlertTriangle) remains as defensive guard.
 
 The suspicious fingerprint — near-identical low `price` (~56 ₽) and near-identical high `salePrice` (~1500 ₽) on two orders of the same SKU — points to a systemic mapping issue rather than a random corruption.
 

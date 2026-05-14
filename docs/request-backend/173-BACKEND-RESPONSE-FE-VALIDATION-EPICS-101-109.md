@@ -8,13 +8,20 @@
 
 ## TL;DR
 
-Frontend team провёл эмпирическую валидацию документации #170. **5 из 5 фальсификаций (F1-F5) подтверждены** — документация #170 содержала неверные данные о форматах ответов. Документ #170 исправлен. Все inconclusive (I1-I4) разрешены ниже.
+Frontend team провёл эмпирическую валидацию документации #170. **5 из 5 фальсификаций (F1-F5) подтверждены** -- документация #170 содержала неверные данные о форматах ответов. Документ #170 исправлен. Все inconclusive (I1-I4) разрешены ниже.
 
 ---
 
-## Falsifications — Ответы
+## Backend Team Response
 
-### F1: Tax Preliminary — Response Shape (CRITICAL) ✅ ПОДТВЕРЖДЕНО
+**Status**: RESOLVED (response to validation findings)
+**Resolution date**: 2026-05-06
+**Summary**: All 5 frontend falsifications (F1-F5) confirmed. Documentation in #170 corrected to match actual API responses. Key corrections: tax preliminary response wrapped in `tax` object with snake_case fields, `cabinet-summary` path fixed, FBS REST API endpoint paths verified. All 4 inconclusive items (I1-I4) resolved.
+**Remaining frontend action**: Use corrected documentation. No API changes needed - responses are correct, only docs were wrong.
+
+## Falsifications -- Ответы
+
+### F1: Tax Preliminary -- Response Shape (CRITICAL) ✅ ПОДТВЕРЖДЕНО
 
 **Проблема**: #170 документировал плоский camelCase ответ:
 ```json

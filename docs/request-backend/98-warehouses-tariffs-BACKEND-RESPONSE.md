@@ -53,6 +53,11 @@
 **NOT IMPLEMENTED (wishlist - filter client-side):**
 | Endpoint | Status | Recommendation |
 |----------|--------|----------------|
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 | `GET /v1/tariffs/commissions/category/:id` | ❌ NOT IMPLEMENTED | Use client-side filter on `/commissions` |
 | `GET /v1/tariffs/commissions/product/:nmId` | ❌ NOT IMPLEMENTED | Use Products API category + filter |
 | `GET /v1/tariffs/settings/logistics` | ❌ NOT IMPLEMENTED | Calculate client-side |

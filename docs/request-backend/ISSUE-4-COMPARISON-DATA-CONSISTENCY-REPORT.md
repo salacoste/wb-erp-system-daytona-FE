@@ -28,6 +28,14 @@ Frontend показывает для сравнения W04 vs W03:
 |---------|------------------------|---------------------------|-----------|
 | Выкупы  | 84 377,52 ₽            | 115 545,95 ₽              | -27,0%    |
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-02-01
+**Summary**: Period comparison data consistency guide for frontend. Documents correct API usage for week-over-week comparisons, field mapping between backend response and frontend display, delta calculation formulas, and ISO week handling. Includes debugging checklist.
+**Remaining frontend action**: None - use as reference for period comparison implementation.
 Однако backend API `/v1/analytics/weekly/comparison` может возвращать **другие значения**.
 
 ### Потенциальные причины несоответствия

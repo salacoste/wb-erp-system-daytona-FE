@@ -720,3 +720,12 @@ export interface AcceptanceCoefficientsResponse {
 **Created**: 2026-01-24
 **Author**: Frontend Integration Guide
 **Status**: Reference Document
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-24
+**Summary**: All 6 tariffs endpoints validated and production-ready. Formulas, TypeScript types, and calculation examples verified against backend source code and seed data. Two items noted as not yet implemented: Story 43.11 (mono-pallet storage rate) and Story 43.12 (default box storage fallback rates).
+**Remaining frontend action**: Use as reference for Price Calculator integration. Stories 43.11 and 43.12 remain draft.

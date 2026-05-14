@@ -38,6 +38,14 @@ const response = await (sdk.products as unknown as WbProductsModule).getCardsLis
 
 Также нужно обновить интерфейс `WbProductsModule` (строки 108-121) — переименовать метод `createCardsList` в `getCardsList`.
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-10
+**Summary**: Fixed SDK v3.1.0 method rename `createCardsList` -> `getCardsList` in `product-sync.service.ts`. Same pattern as the tariffs SDK migration in #136. Two files updated to use correct method name.
+**Remaining frontend action**: None - products endpoint now returns 200 OK.
 ### Файл 2: `product-imt-sync.service.ts` (строка 362)
 
 ```typescript

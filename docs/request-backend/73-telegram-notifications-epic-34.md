@@ -53,6 +53,11 @@ interface BindingCodeResponseDto {
 ```
 
 **User Flow**:
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 1. Frontend: Call `POST /v1/notifications/telegram/bind`
 2. Frontend: Show binding code + instructions OR redirect to `deep_link`
 3. User: Open Telegram, send `/start A1B2C3D4` to bot
@@ -685,3 +690,10 @@ function TestNotificationButton() {
 *Дата создания: 2025-12-24*
 *Последнее обновление: 2025-12-24*
 *Epic Status: ✅ COMPLETE (Backend + Bot Integration)*
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-24
+- **Summary**: Epic 34 (Telegram Notifications) is complete. Backend + Bot integration fully implemented with binding flow, notification preferences, rate limiting (30 msg/sec global, 1 msg/sec per-chat), quiet hours, language support (ru/en), and test notification endpoint. See also Requests #89, #90 for additional integration details.
+- **Remaining frontend action**: Create `/settings/notifications` page with Telegram binding flow (with polling), preferences panel, test notification button, and quiet hours/timezone settings.

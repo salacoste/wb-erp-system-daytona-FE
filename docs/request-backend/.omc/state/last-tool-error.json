@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"for f in 100-epic-44-open-issues-consolidated.md 101-epic-52-tariff-settings-admin-api.md 102-tariffs-base-rates-frontend-guide.md 103-documentation-validation-report-2026-01-24.md 104-tar...",
+  "error": "Exit code 1\n(eval):1: read-only variable: status",
+  "timestamp": "2026-05-14T22:40:43.083Z",
+  "retry_count": 1
+}

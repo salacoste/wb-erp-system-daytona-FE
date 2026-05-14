@@ -50,6 +50,13 @@ POST /v1/tasks/enqueue
 
 ---
 
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Epic 42 technical debt resolved. The `enrich_cogs` task is deprecated in favor of `recalculate_weekly_margin`. Frontend should use the new task type for all manual margin recalculation triggers. Backward compatibility maintained.
+**Frontend Action**: No further action needed unless noted above.
+
+---
+
 ## New/Updated Task Types
 
 ### 1. `weekly_margin_aggregate` (Story 42.2)

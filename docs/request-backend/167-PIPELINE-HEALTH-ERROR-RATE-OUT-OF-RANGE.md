@@ -38,6 +38,15 @@ The field **must** be in the range `[0, 1]`. Values > 1 are impossible per the b
 Backend to confirm. Possible causes:
 1. **Percentage vs proportion bug**: Backend computes `errorCount / totalCount * 100` and stores the percentage (e.g., `15`) rather than the proportion (`0.15`).
 2. **Division error**: Edge case where `totalCount = 0` leads to a division-by-zero producing `Infinity` or `NaN`, which serializes unexpectedly.
+
+---
+
+## Backend Team Response
+
+**Status**: PENDING (preventive, not yet observed in production)
+**Resolution date**: Open
+**Summary**: Frontend has added defensive guard for `errorRate > 1` per Defensive Frontend Principle (Story 92.5). Backend should add validation to ensure `errorRate` is always in range [0, 1] before serialization. No production incident yet - this is a preventive measure.
+**Remaining frontend action**: Frontend amber AlertTriangle indicator already in place. Awaits backend-side validation.
 3. **Aggregation overflow**: A multi-period aggregation sums partial error rates without re-normalizing.
 
 ---

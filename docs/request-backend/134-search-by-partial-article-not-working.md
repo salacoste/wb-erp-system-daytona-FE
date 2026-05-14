@@ -24,7 +24,14 @@ User reported that searching for products by partial article number (e.g., "3216
 
 ### Current Implementation (Before Fix)
 
-**File**: `src/products/products.service.ts` (lines 83-86)
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-01-29 (documented), fix applied earlier
+**Summary**: Search by partial article number fixed by implementing server-side nmId filtering. WB API's `textSearch` does not support partial nmId matching, so backend added local filtering logic to search the `nm_id` field directly.
+**Remaining frontend action**: None - partial article search now works.
 
 ```typescript
 // Search query (searches in sa_name, brand, nm_id)

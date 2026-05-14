@@ -467,3 +467,10 @@ const calculateCogsDelta = (current: WeeklyPayoutTotalDto, previous: WeeklyPayou
 - Documented need for COGS data in finance-summary endpoint
 - Specified new fields and business rules
 - Frontend implementation blocked until backend provides data
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-06
+- **Summary**: COGS fields were added to the finance-summary endpoint as part of Epic 26. The `cogs_total`, `cogs_coverage_pct`, `gross_profit`, and `margin_pct` fields are now available in weekly payout summary/total responses when COGS data exists. These fields return `null` when `weekly_margin_fact` has no aggregated data.
+- **Remaining frontend action**: Implement the COGS section in the finance summary UI using the new fields, including delta calculations for comparison mode (Story 6.2).

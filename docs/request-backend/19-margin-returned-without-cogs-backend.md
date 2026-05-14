@@ -271,3 +271,6 @@ The fix validates at the API layer (ProductsService) rather than changing margin
 
 **Status**: ✅ **RESOLVED** - Bug fixed, backend response provided, frontend can proceed with implementation.
 
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+

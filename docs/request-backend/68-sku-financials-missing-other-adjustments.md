@@ -59,6 +59,13 @@ This is a **real expense** that should be included in operating profit calculati
 
 Both endpoints should use the **same formula**:
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Added `other_adjustments` to the SKU Financials API (`/v1/analytics/sku-financials`) operating profit calculation, aligning it with the Category/Brand API formula. Both views now subtract all operating expenses (logistics, storage, penalties, paid_acceptance, other_adjustments) consistently.
+**Frontend Action**: No further action needed unless noted above.
+
 ```
 operating_profit = revenue_net - cogs - logistics - storage - penalties - paid_acceptance - other_adjustments
 ```
@@ -139,3 +146,10 @@ After fix:
 - [Request #65: Operating Margin Consistency](./65-operating-margin-consistency-category-brand.md)
 - [Request #66: Storage Source Unification](./66-storage-source-unification.md)
 - [docs/63-operating-profit-formula-clarification.md](../docs/request-backend/63-operating-profit-formula-clarification.md)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-18
+- **Summary**: The `other_adjustments` field was missing from per-SKU analytics because storage costs were not properly allocated. After the storage source unification (Request #66), `other_adjustments` now correctly excludes storage (which has its own field). SKU and category margins are now consistent (~21-22% for W50).
+- **Remaining frontend action**: Verify that SKU and category analytics pages show consistent margin percentages.

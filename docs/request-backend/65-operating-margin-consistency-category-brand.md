@@ -50,7 +50,12 @@ operating_profit_rub: Decimal;
 operating_margin_pct: Decimal | null;
 ```
 
-**Added to SQL SELECT:**
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Fixed operating margin inconsistency between SKU and Category/Brand pages. The `aggregateByCategoryForRange` and `aggregateByBrandForRange` methods were updated to include all operating expense fields (storage, penalties, paid_acceptance, acquiring, loyalty, commission, other_adjustments) and calculate true `operating_margin_pct` consistently across all views.
+**Frontend Action**: No further action needed unless noted above.
 ```sql
 -- Epic 26: Operating expenses aggregates
 COALESCE(SUM(storage_cost_rub), 0) as storage_cost_rub,
@@ -261,3 +266,10 @@ Note: Slight variations are possible due to:
 - Request #47: Epic 26 - Operating Profit & Expense Tracking
 - Request #60: Per-SKU Operational Costs
 - Request #63: Operating Profit Formula Clarification
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-18
+- **Summary**: Operating margin consistency across SKU, category, and brand aggregation levels is verified. All levels use the same `operating_profit_rub` formula. Revenue_gross is now available at category/brand level (Request #69). The `operating_margin_pct` field is consistent across all analytics endpoints.
+- **Remaining frontend action**: Use `operating_margin_pct` consistently across SKU, category, and brand analytics pages.

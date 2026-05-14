@@ -21,6 +21,13 @@
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED (validation report)
+**Resolution date**: 2026-01-25
+**Summary**: All tariff formulas validated at 100% confidence against WB SDK. Box storage, logistics, acceptance calculations, coefficient division by 100, string-to-number conversions, and fallback logic all confirmed correct. Production-ready.
+**Remaining frontend action**: None - formulas verified safe for frontend use.
+
 ## 1. Формулы с примерами расчетов
 
 ### 1.1. Хранение коробок в день (Box Storage Per Day)

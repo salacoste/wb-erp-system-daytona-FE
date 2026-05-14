@@ -48,6 +48,11 @@ X-Cabinet-Id: {CABINET_UUID}
 | `to` | string | ✅ Yes | - | Конец периода (YYYY-MM-DD) |
 | `groupBy` | string | No | `sku` | Режим группировки: `sku` или `imtId` |
 | `viewBy` | string | No | `sku` | Срез данных: `sku`, `brand`, `category` |
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 | `page` | number | No | 1 | Номер страницы |
 | `limit` | number | No | 50 | Размер страницы (max 100) |
 | `sortBy` | string | No | `spend` | Поле для сортировки |

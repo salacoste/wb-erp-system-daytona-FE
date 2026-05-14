@@ -38,6 +38,15 @@ The `weekly_margin_fact` table was **EMPTY** because:
 ### Before Fix
 ```
 2026-W03: cogs_total: null, cogs_coverage_pct: null
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-01-30
+**Summary**: Two fixes applied: (1) Code fix - auto-trigger margin recalculation on COGS bulk upload in `cogs.service.ts`. (2) Manual backfill - margin calculation enqueued for weeks W47-2025 through W04-2026, producing 834 records in `weekly_margin_fact`. The `finance-summary` endpoint now returns correct COGS and margin data.
+**Remaining frontend action**: None - data populated and auto-trigger ensures future COGS uploads generate margin data.
 2026-W04: cogs_total: null, cogs_coverage_pct: null
 ```
 

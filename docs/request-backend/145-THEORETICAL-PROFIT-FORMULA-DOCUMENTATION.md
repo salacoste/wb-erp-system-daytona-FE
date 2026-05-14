@@ -28,6 +28,14 @@
 
 ### 1.2 Расшифровка компонентов
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-02-01
+**Summary**: Comprehensive documentation of the theoretical profit formula: `Выкупы - COGS - Рекламные затраты - Логистика - Хранение`. Includes data source mapping, what is NOT included, alternative profit metrics, and business interpretation guide for CFO/business owners.
+**Remaining frontend action**: None - use as reference for profit calculations.
 | Компонент | Описание | Что означает |
 |-----------|----------|--------------|
 | **Выкупы** | Выручка продавца после комиссии WB | Фактические деньги от продаж (не розничная цена для покупателя) |

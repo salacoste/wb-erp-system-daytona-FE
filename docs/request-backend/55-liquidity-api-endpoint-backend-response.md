@@ -48,6 +48,11 @@ Epic 28 (Supply Planning)
 
 | Story | Points | Description | Status | Depends On |
 |-------|--------|-------------|--------|------------|
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 | 29.1 | 5 | Liquidity Calculation Service | Planned | Epic 28 |
 | 29.2 | 3 | Liquidation Scenario Calculator | Planned | 29.1 |
 | 29.3 | 3 | Main Liquidity Endpoint | Planned | 29.1 |

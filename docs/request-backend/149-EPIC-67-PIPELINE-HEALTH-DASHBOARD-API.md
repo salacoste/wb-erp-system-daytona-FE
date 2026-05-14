@@ -28,6 +28,14 @@ const { data: dashboard } = useQuery({
 
 ### 2. Загрузка heatmap (по навигации)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-17
+**Summary**: Epic 67 complete with 154 unit tests. 3 endpoints implemented: `/v1/monitoring/dashboard` (lightweight summary), `/v1/monitoring/pipeline-health-grid` (heatmap with 14 pipelines), `/v1/monitoring/telegram-health` (bot status). Caching, gap detection, and health scoring included.
+**Remaining frontend action**: Integrate monitoring dashboard page using provided React Query patterns.
 ```typescript
 // Тяжёлый запрос — грузить только при переходе на вкладку heatmap
 const { data: grid } = useQuery({

@@ -28,6 +28,14 @@
 | **Просмотр истории** | Выбрали период до включения синхронизации FBS |
 | **Первый запуск** | Синхронизация ещё не выполнялась |
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: Empty state UX issue resolved. Implemented empty state component with clear explanations and call-to-action button. Users now see helpful messages instead of confusing zeros. Sync can be triggered manually via `POST /v1/orders/sync` or automatically (5-min cron).
+**Remaining frontend action**: None - empty state handling implemented.
 ### 1.3 Это НЕ баг
 
 **ВАЖНО**: Отсутствие FBS-заказов за исторический период — это **ожидаемое поведение**, а не ошибка системы.

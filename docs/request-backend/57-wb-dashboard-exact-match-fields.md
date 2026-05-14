@@ -145,3 +145,10 @@ ADD COLUMN wb_returns_gross_total DECIMAL(15,2) NOT NULL DEFAULT 0;
 - `docs/API-PATHS-REFERENCE.md` - Request #57 section
 - `docs/WB-DASHBOARD-METRICS.md` - Dashboard alignment guide
 - Request #56 - WB Services breakdown (same session)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-14
+- **Summary**: Added `wb_sales_gross` and `wb_returns_gross` fields to `weekly_payout_summary` and `weekly_payout_total` tables. These fields provide exact match with WB Dashboard. Frontend fix applied in FinancialSummaryTable.tsx to compute NET = sales - returns.
+- **Remaining frontend action**: None. Fields available and frontend fix applied.

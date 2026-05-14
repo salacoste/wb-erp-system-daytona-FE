@@ -39,6 +39,15 @@ Currently the frontend computes: `returnsCount = fbo.returnsCount + fbs.returnsC
 
 No frontend workaround is possible without a backend fix, since returns count data is not available from any other API endpoint (finance-summary only has monetary values, not unit counts).
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-05-06 (confirmed in #170 backend update)
+**Summary**: Fixed in Epic 106 + Story 107.8. The fulfillment summary now returns correct return counts. The `returnsCount` and `returnsRevenue` fields are properly populated from return data aggregation. Pipeline `return_classification_sync` runs daily at 06:30 MSK.
+**Remaining frontend action**: None - fulfillment returns count now shows correct values.
+
 ## Requested Fix
 
 Populate `returnsCount`, `returnsRevenue`, and `returnRate` fields in the fulfillment summary response by querying return records from the same data source used by finance-summary.

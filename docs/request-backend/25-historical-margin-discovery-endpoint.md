@@ -226,3 +226,10 @@ X-Cabinet-Id: {cabinet_id}
 ---
 
 > **Вопрос к Backend Team**: Какой вариант (A или B) предпочтительнее с точки зрения архитектуры и производительности?
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-27
+- **Summary**: Both endpoints (products-with-sales and historical margin context) are deployed and ready for integration. Option A (dedicated endpoint) was chosen. Story 23.8 (`/v1/products/:nmId/weeks-with-sales`) and Story 23.9 (historical margin context fields in products) are complete. See the companion `-backend.md` file for full implementation details.
+- **Remaining frontend action**: Integrate the weeks-with-sales endpoint and historical margin context fields into the product detail view.

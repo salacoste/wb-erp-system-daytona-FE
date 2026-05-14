@@ -172,3 +172,10 @@ If this is confirmed as a bug, backend should:
 
 **Status**: ⏳ **PENDING** - Awaiting Backend Investigation and Response
 
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-26
+- **Summary**: Bug confirmed and fixed. The API layer now guarantees that `current_margin_pct` is never non-null when `has_cogs: false`. A data consistency check was added to the products service. Frontend can safely remove the defensive check. See the companion `-backend.md` file for full details.
+- **Remaining frontend action**: Remove the defensive `if (margin_pct && !has_cogs)` check from `ProductList.tsx` -- backend now guarantees data consistency.
+

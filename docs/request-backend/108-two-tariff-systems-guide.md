@@ -25,6 +25,13 @@
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-27
+**Summary**: Documented that WB has two separate tariff systems (Inventory for actual costs vs Supply for planning). Both already implemented in backend. The difference between Marketplace rates (higher) and API rates (lower) is expected behavior, not a bug.
+**Remaining frontend action**: None - informational guide. Use Inventory tariffs for actual cost display, Supply tariffs for planning UI.
+
 ## Inventory Tariff System (Actual Costs)
 
 ### Purpose

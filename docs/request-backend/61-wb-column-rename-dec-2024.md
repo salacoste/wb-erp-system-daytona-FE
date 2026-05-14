@@ -131,6 +131,13 @@ const EXPENSE_LABELS = {
 
 ## Backend Response
 
-**Status**: ⏳ Pending
+**Status**: RESOLVED
 
-_Backend team response will be added here after implementation._
+The WB column rename from December 2024 was addressed during the ETL pipeline normalization refactoring. The import pipeline now correctly maps renamed WB columns to the internal schema fields. All affected column mappings are documented in `docs/WB-COLUMN-RENAME-2024-12-22.md` and reflected in `CLAUDE.md` under the ETL Pipeline & Column Mapping section. Data imports since January 2025 use the correct column mappings.
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-15
+- **Summary**: WB column rename from December 2024 was handled during ETL pipeline normalization. The import pipeline maps renamed WB columns to internal schema fields correctly. Full technical documentation in `docs/WB-COLUMN-RENAME-2024-12-22.md`.
+- **Remaining frontend action**: None. Data imports work correctly with renamed columns.

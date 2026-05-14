@@ -211,3 +211,8 @@ Content-Type: application/json
 **Дата создания:** 2025-11-25
 **Автор:** Backend Team
 **Статус:** ✅ RESOLVED
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Manual margin calculation trigger for W47 was executed successfully via `POST /v1/tasks/enqueue`, calculating margin for 17 products in 236ms. Documented that this is a known Epic 20 limitation where auto-recalculation does not trigger when a new week becomes "completed" after COGS assignment.
+**Frontend Action**: No further action needed unless noted above.

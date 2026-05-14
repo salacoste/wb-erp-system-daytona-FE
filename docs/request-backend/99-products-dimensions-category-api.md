@@ -51,6 +51,13 @@ GET /v1/products
     }
   ],
   "pagination": {
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Extended `GET /v1/products` endpoint with product dimensions (length, width, height in mm) and category information from WB Content API / Product Cards. All bugs fixed in Epic 45 backend. Required for automated logistics calculation in Price Calculator.
+**Frontend Action**: No further action needed unless noted above.
     "cursor": "next_cursor_token",
     "has_more": true
   }

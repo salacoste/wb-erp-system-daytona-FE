@@ -16,6 +16,14 @@
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: Epic 60 (34 SP, 6 stories) complete. All 12 endpoints for FBO/FBS order analytics separation implemented. FBO sync runs automatically every 15 minutes. Backfill endpoint available for historical data.
+**Remaining frontend action**: Integrate FBO data into dashboard. Check sync-status before displaying data, use backfill endpoint if needed.
+---
+
 ## 1. Проблема
 
 ### Текущее состояние

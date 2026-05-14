@@ -196,3 +196,10 @@ Verified on all 13 weeks of data. Example Week W48:
 ---
 
 **Last Updated:** 2025-12-05
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-05
+- **Summary**: Separate sales and returns tracking implemented. New fields `sales_gross` and `returns_gross` added to `WeeklyPayoutSummary` and `WeeklyPayoutTotal` DTOs. Verified on all 13 weeks of data with formula `sale_gross (NET) = sales_gross - returns_gross` confirmed correct.
+- **Remaining frontend action**: Update finance summary UI to display sales and returns as separate line items with appropriate color coding (green for sales up, red for returns up).

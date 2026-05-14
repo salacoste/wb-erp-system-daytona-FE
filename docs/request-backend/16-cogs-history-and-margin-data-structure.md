@@ -588,3 +588,10 @@ Contact backend team or reference:
 **Backend Team**: James (Full Stack Developer)
 **Status**: ✅ Documentation Complete (Updated with Story 5.1 COGS History endpoint)
 
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-26
+- **Summary**: Comprehensive documentation of COGS history and margin data structure, updated to include Story 5.1 COGS History endpoint (`GET /v1/cogs/history`). Covers temporal versioning, margin calculation flow, all relevant API endpoints, and TypeScript examples. This document serves as the authoritative reference for COGS/margin data structure.
+- **Remaining frontend action**: Use this guide as the primary reference for implementing COGS history UI and margin display components.
+

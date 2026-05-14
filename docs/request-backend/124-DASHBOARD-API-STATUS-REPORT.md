@@ -260,6 +260,15 @@ GET /v1/analytics/storage/trends?weekStart=2026-W01&weekEnd=2026-W05
 
 ### Общие требования
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (status report)
+**Resolution date**: 2026-01-31
+**Summary**: API status audit confirmed all dashboard data sources exist. Frontend was looking for non-existent `/v1/analytics/sales/volume` endpoint - directed to use `/v1/analytics/weekly/finance-summary` instead. All 4 dashboard card categories (Sales, COGS, Logistics, Storage) have working endpoints.
+**Remaining frontend action**: Use the recommended endpoints listed in this report instead of searching for non-existent paths.
+
 1. **Headers**: Каждый запрос должен содержать:
    ```http
    Authorization: Bearer <JWT_TOKEN>

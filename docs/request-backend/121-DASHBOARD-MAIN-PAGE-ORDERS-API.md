@@ -16,17 +16,16 @@
 
 ---
 
-## 1. Обзор
-
-### Бизнес-контекст
-
-Дашборд должен отображать:
-- **Заказы (Orders)** — данные о заказах FBS с разбивкой по дням
-- **COGS по заказам** — себестоимость товаров в заказах
-- **Периоды**: последняя неделя (по дням), последний месяц (по дням)
-
 ### Базовый URL
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-31
+**Summary**: Dashboard orders API guide documented. Provides endpoints for FBS orders with daily breakdown, COGS per order, and period filtering. Uses existing `/v1/orders/fbs` and `/v1/analytics/orders/volume` endpoints.
+**Remaining frontend action**: None - use as implementation reference for dashboard orders section.
 ```
 http://localhost:3000 (development)
 https://api.your-domain.com (production)

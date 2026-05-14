@@ -380,8 +380,15 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 
 ---
 
-**Date Created**: 2025-01-27  
-**Status**: 🔴 **AWAITING BACKEND RESPONSE**  
-**Priority**: Medium - Blocking proper polling implementation  
+**Date Created**: 2025-01-27
+**Status**: 🔴 **AWAITING BACKEND RESPONSE**
+**Priority**: Medium - Blocking proper polling implementation
 **Next Steps**: Backend team review and guidance on polling strategy
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-27
+- **Summary**: Polling guidance provided via Request #21 (margin-calculation-status-endpoint-backend). Recommended strategy: poll `GET /v1/products?include_cogs=true` every 3-5 seconds for single products (max 30s), use product list polling for bulk operations. Background tasks complete within 10s (single) to 60s (bulk). Failed tasks trigger `missing_data_reason` update. See `21-margin-calculation-status-endpoint-backend.md` for complete guidance.
+- **Remaining frontend action**: Fix `useMarginPolling` hook restart issue and `usePendingMarginProducts` infinite loop per the documented polling strategy.
 

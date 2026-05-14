@@ -27,6 +27,17 @@ The frontend needs a lightweight aggregation endpoint that returns, for each nmI
 
 ## Proposed Endpoint
 
+---
+
+## Backend Team Response
+
+**Status**: PENDING
+**Resolution date**: Not yet implemented
+**Summary**: Request filed for a lightweight aggregation endpoint returning the latest confirmed FCU (Final Cost Unit = PCU + DCU) per SKU. Would enable a 10th cost category `delivery_to_warehouse` in the Unit Economics dashboard. Blocking Stories 77.4 and 77.5.
+**Remaining frontend action**: Awaiting backend implementation. Unit Economics dashboard currently shows 9 categories without delivery-to-warehouse.
+
+## Proposed Endpoint
+
 ```
 GET /v1/shipment-cost/by-sku
 ```

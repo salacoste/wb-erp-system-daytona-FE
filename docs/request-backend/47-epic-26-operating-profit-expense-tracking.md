@@ -398,3 +398,10 @@ Week     | Rows | Logistics  | Total Expenses | Op.Profit  | Expense-Only SKUs
   - `src/analytics/dto/response/category-analytics.dto.ts`
   - `src/analytics/dto/response/cabinet-summary-response.dto.ts`
 - **API Tests**: `test-api/05-analytics-basic.http`, `test-api/06-analytics-advanced.http`
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-06
+- **Summary**: Epic 26 (Operating Profit & Expense Tracking) is complete. All 6 acceptance criteria met. The `weekly_margin_fact` table now includes 9 expense fields (logistics, storage, paid acceptance, penalties, acquiring, loyalty, loyalty compensation, other adjustments, commission) plus calculated operating metrics. 16 weeks of historical data recalculated. SKU, Brand, Category, and Cabinet Summary endpoints all include expense breakdowns.
+- **Remaining frontend action**: Display expense breakdown and operating profit/margin in analytics dashboards. Use `operating_profit_rub` directly from API responses.

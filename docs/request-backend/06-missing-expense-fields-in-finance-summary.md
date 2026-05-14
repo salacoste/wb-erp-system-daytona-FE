@@ -326,3 +326,10 @@ See **Request #113** for complete documentation:
 - This requires a separate data aggregation pipeline (future roadmap item)
 - FrontEnd should display empty state when `cogs_total === null`
 - See `frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md` for details
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-22
+- **Summary**: All missing expense fields were added to the finance-summary endpoint. `acquiring_fee_total` and `commission_sales_total` added to the database schema and API. Commission calculation fixed so `wb_commission_adj` contains only `commission_other`. All 9 expense categories are now tracked separately. Margin fields (`cogs_total`, `gross_profit`, `margin_pct`) correctly return `null` when `weekly_margin_fact` has no aggregated data; frontend should display empty state per Request #113.
+- **Remaining frontend action**: Display complete expense breakdown using the 9 categories. Handle `null` margin fields with empty state UI per Request #113.

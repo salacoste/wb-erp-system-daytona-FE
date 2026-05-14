@@ -144,3 +144,10 @@ curl -X POST http://localhost:3000/v1/test/aggregation/trigger \
 | WB.Promotion | 32,073 | `Оказание услуг «WB Продвижение»` |
 | Джем | 18,990 | `Предоставление услуг по подписке «Джем»` |
 | **Total** | **51,063** | = other_adjustments_net |
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-16
+- **Summary**: WB services breakdown documented. The `other_adjustments_net` field already includes WB.Promotion and Jam subscription costs. New visibility fields were added to the API for displaying these as separate line items. No formula changes required -- purely informational enrichment.
+- **Remaining frontend action**: Display WB services (WB.Promotion, Jam subscription) as separate expense items in the finance summary UI.

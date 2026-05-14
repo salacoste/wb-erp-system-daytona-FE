@@ -315,3 +315,10 @@ private async enqueueMarginRecalculation(
 **Status**: ✅ Complete
 **Note**: Updated with Story 23.10 authentication requirements
 
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-26
+- **Summary**: Documented the expected behavior when COGS is assigned after a completed week. The `calculateAffectedWeeks()` function returns empty for future dates, so automatic recalculation is skipped. Two workarounds exist: (1) manual recalculation via `POST /v1/tasks/enqueue`, or (2) assign COGS with a historical date within the target week. Authentication via `validateCabinetAccess()` required (Story 23.10).
+- **Remaining frontend action**: Display guidance to users when assigning COGS with future dates -- suggest using historical dates to trigger automatic recalculation.
+

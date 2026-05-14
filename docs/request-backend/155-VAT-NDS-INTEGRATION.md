@@ -28,6 +28,15 @@ Current tax system options: `usn6`, `usn15`, `manual` — none of these model Н
 
 | Scenario | НДС Required | Common Rates |
 |----------|-------------|--------------|
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-23
+**Summary**: VAT (NDS) support added in Epic 72 Tax Accounting. Cabinet tax settings now support `vatPayer` boolean and `vatRate` field (0%, 5%, 10%, 20%). Tax calculations include VAT as separate component on top of income tax. Full frontend integration guide in Request #156.
+**Remaining frontend action**: Integrate VAT settings into cabinet configuration UI per Epic 66-FE.
 | ИП на УСН (revenue < 60M) | No | — |
 | ИП на УСН (revenue > 60M, from 2025) | Yes | 5% or 20% |
 | ООО на ОСН | Yes | 20% (standard), 0% (export) |

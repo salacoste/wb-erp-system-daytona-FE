@@ -8,6 +8,13 @@
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-26
+**Summary**: Quick reference for all 6 tariffs endpoints with field names, cache TTLs, and calculation formulas. All endpoints production-ready and validated against real data.
+**Remaining frontend action**: None - use as lookup reference during development.
+
 ## Краткая справочная таблица
 
 | Endpoint | Назначение | Ключевые поля | Кеш |

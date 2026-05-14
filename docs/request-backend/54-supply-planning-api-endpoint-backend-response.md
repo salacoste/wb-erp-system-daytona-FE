@@ -48,6 +48,11 @@ GET /v1/analytics/supply-planning
 
 ### Response Structure
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 ```json
 {
   "meta": {

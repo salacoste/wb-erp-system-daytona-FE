@@ -29,6 +29,15 @@
 
 ## 2. НОВЫЙ ENDPOINT — Tax Preliminary (#159)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (informational update)
+**Resolution date**: 2026-05-06
+**Summary**: Backend update covering Epics 107-109. 6 open frontend requests closed: #153 (return classification), #154 (buyout/return mismatch), #148 (fulfillment returns count), #150 (monitoring false alarms), #165 (price inversion), #158 (stale docs). SDK upgraded to v3.10.0 with `sdk.returns` module. New tax preliminary endpoint. All 6529+ tests passing.
+**Remaining frontend action**: Integrate tax preliminary endpoint. Verify closed issues against current frontend behavior.
+
 **Endpoint**: `GET /v1/analytics/tax/preliminary?from=YYYY-MM-DD&to=YYYY-MM-DD`
 
 Предварительный расчёт налогов для **незавершённых** недель. Раньше налоговые данные были доступны только для завершённых недель через `finance-summary`. Теперь можно получить предварительный расчёт для любой даты.

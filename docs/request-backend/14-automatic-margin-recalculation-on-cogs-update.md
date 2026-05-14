@@ -936,3 +936,10 @@ POST /v1/products/321678606/cogs { valid_from: "2025-11-24", unit_cost: 111 }  /
 **Статус:** 🔴 Awaiting Backend Implementation
 **Ожидаемое время реализации:** 1-2 sprints (8-12 hours estimated)
 **Блокирует:** Good UX for COGS management, Full adoption of Request #15
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-26
+- **Summary**: Implemented in Epic 20 (Automatic Margin Recalculation). After COGS create/update, the system automatically enqueues a background task to recalculate margin for all affected weeks. The task uses BullMQ with exponential backoff retry (3 attempts). Margin data appears in product list within 10 seconds for single assignment, 60 seconds for bulk. See the companion `-backend.md` file for the full implementation response.
+- **Remaining frontend action**: Integrate polling or optimistic UI for real-time margin status updates after COGS assignment.

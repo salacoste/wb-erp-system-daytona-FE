@@ -27,8 +27,16 @@ CABINET="f75836f7-c0bc-4b2c-823c-a1f3508cce8e"
 
 ## 🚨 Falsifications (5 — backend documentation contradicts actual API)
 
-### F1 — `cabinet-summary` documented at wrong path
+### F1 -- `cabinet-summary` documented at wrong path
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (validation report)
+**Resolution date**: 2026-05-06
+**Summary**: Frontend empirical validation of backend reports #169 + #170. Found 5 falsifications where documentation contradicted actual API responses. All 5 confirmed by backend in #173. Documentation in #170 corrected. Key findings: tax preliminary response wrapped in `tax` object with snake_case, `cabinet-summary` path corrected, FBS REST endpoints verified.
+**Remaining frontend action**: Use corrected documentation from #173 for integration work.
 **Backend claim** (#169 §2.3): *"Endpoint: `GET /v1/analytics/cabinet-summary`"*
 
 **Empirical reality**:

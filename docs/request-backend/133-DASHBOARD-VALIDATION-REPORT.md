@@ -39,6 +39,14 @@
 
 ### Расчёт процентных изменений
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (validation report)
+**Resolution date**: 2026-02-01
+**Summary**: Full dashboard data validation for week W04 - all 12 of 12 checks passed. Frontend values match backend values exactly for all metrics (Sales, COGS, Advertising, Logistics, Storage, Theoretical Profit). Week comparison also validated.
+**Remaining frontend action**: None - data integrity confirmed.
 | Метрика | Frontend Change | Calculated | Статус |
 |---------|-----------------|------------|--------|
 | Выкупы | -27.0% | -27.0% | ✅ |

@@ -29,6 +29,14 @@
 
 ### Зачем это нужно
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-03-13
+**Summary**: Epic 79 (Shipment Cost Allocation) fully implemented with 23 endpoints and 229 tests. Complete workflow: box type management, SKU packaging, shipment creation with multi-box support, cost calculation (PCU + DCU = FCU), confirmation, and recalculation. All decimal fields handled correctly.
+**Remaining frontend action**: Build shipment cost UI if needed. See also Request #162 for FCU aggregation endpoint.
 При отправке товаров на склад Wildberries продавец несёт расходы на доставку (транспорт, палетизация). Эти расходы нужно **аллоцировать** на каждую единицу товара, чтобы получить **полную себестоимость** с учётом логистики.
 
 **FCU (Final Cost per Unit)** — итоговая себестоимость единицы товара:

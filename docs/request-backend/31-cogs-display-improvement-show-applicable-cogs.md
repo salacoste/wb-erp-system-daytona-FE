@@ -141,3 +141,10 @@ function getApplicableCogs(nmId: string, week: string): CogsRecord | null {
 
 **Status**: 📋 PROPOSED
 **Estimated Effort**: 4-6 hours (backend + frontend)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-29
+- **Summary**: Implemented in the companion `-backend.md` file. The `getApplicableCogsForProducts()` method was added to `products.service.ts`, integrated into `getProductsList()` and `getProduct()`. Returns `applicable_cogs` (COGS valid for the current week's midpoint) alongside the latest COGS, with an `is_same_as_current` comparison flag. Uses the Week Midpoint Strategy (Thursday ~12:00) for temporal lookup.
+- **Remaining frontend action**: Update COGS display UI to show applicable vs. current COGS with visual indication when they differ.

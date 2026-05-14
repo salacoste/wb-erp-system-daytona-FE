@@ -740,6 +740,13 @@ async function verifyDataConsistency() {
 
 ---
 
-**Последнее обновление:** 2025-11-22  
+**Последнее обновление:** 2025-11-22
 **Статус:** ✅ Реализовано и готово к использованию
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-22
+- **Summary**: The `available-weeks` endpoint was implemented as part of Epic 2 (Story 2.7). All weeks returned by the endpoint are guaranteed to have corresponding finance-summary data. Frontend should use only weeks from this list for finance-summary queries, eliminating the previous workaround of checking individual weeks.
+- **Remaining frontend action**: Consume the `available-weeks` endpoint as the single source of truth for week selection UI.
 

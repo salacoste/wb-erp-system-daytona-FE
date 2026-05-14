@@ -669,3 +669,8 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
 
 **Статус:** ✅ Все вопросы Backend Team закрыты, рекомендации предоставлены
 
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Backend clarified the analytics API response formats (available-weeks uses object arrays, finance-summary has three summary sections with different field naming). Recommended using `weekly_payout_total` instead of `imports` for available-weeks endpoint, confirmed `report_type` is unused on finance-summary, and documented that the current formats are stable and final.
+**Frontend Action**: No further action needed unless noted above.
+

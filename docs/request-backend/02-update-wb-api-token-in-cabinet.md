@@ -616,7 +616,14 @@ describe('updateWbToken', () => {
 
 ---
 
-**Дата создания:** 2025-01-12  
-**Последнее обновление:** 2025-01-12  
+**Дата создания:** 2025-01-12
+**Последнее обновление:** 2025-01-12
 **Автор:** Backend Team (James - Dev Agent)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-12
+- **Summary**: WB API token update endpoint `PUT /v1/cabinets/:id/keys/:keyName` is fully implemented with token validation via WB API (Story 13.1). Only Owner/Manager roles can update tokens. Returns structured error codes for invalid tokens (400), auth failures (401), and forbidden access (403).
+- **Remaining frontend action**: Implement the `updateWbToken()` API function with proper error handling for all status codes.
 

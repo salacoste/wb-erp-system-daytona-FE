@@ -618,3 +618,10 @@ src/analytics/
 **Status**: ✅ **IMPLEMENTED**
 
 **Frontend Blocked On**: N/A - Endpoint implemented
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-12
+- **Summary**: Liquidity analysis endpoint (`GET /v1/analytics/liquidity`) implemented as part of Epic 29. Returns liquidity categories (highly_liquid/medium_liquid/low_liquid/illiquid), turnover days, frozen capital, and liquidation scenarios per SKU. Includes summary distribution and trends endpoint. Performance target <500ms for 100 SKUs met. See the companion `-backend-response.md` for full details.
+- **Remaining frontend action**: Implement Stories 7.1, 7.2 for liquidity analysis UI.

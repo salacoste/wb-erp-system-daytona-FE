@@ -28,6 +28,14 @@ Per the WB announcement (2026-04-15):
 
 Full docs: https://dev.wildberries.ru/docs/openapi/financial-reports-and-accounting#tag/Finansovye-otchyoty
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-05-03 (confirmed in #169 backend update)
+**Summary**: Epic 101 (Acquiring Analytics) implemented 3 endpoints: `GET /v1/analytics/acquiring/reports`, `GET /v1/analytics/acquiring/reports/:id/detail`, `GET /v1/analytics/acquiring/detail`. JWT + CabinetGuard auth, 30-min cache, rate limit resilience with 503 + Retry-After. Frontend Epic 90-FE already integrated.
+**Remaining frontend action**: None - already integrated in Epic 90-FE. Note: endpoints are at `/v1/analytics/acquiring/*` (not `/v1/acquiring/*`).
 **Note**: All 3 endpoints are `POST` (not GET) — this is the WB convention for report-generation endpoints. Request bodies carry the date-range / filter parameters.
 
 ---

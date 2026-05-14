@@ -273,3 +273,10 @@ Please provide:
 
 **Next Steps**: Awaiting backend team response to clarify expected behavior and provide guidance for frontend implementation.
 
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-26
+- **Summary**: Addressed in the companion `-backend.md` file. All scenarios where `missing_data_reason` can be null alongside `current_margin_pct: null` have been documented. The `null` + `null` case indicates calculation is in progress (Epic 20). Backend now guarantees `missing_data_reason` is set when COGS is assigned but margin is unavailable.
+- **Remaining frontend action**: Implement accurate status display using the documented scenarios -- use `has_cogs` + `missing_data_reason` combinations to show correct UI state.
+

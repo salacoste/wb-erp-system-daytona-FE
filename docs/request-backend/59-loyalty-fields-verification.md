@@ -205,3 +205,10 @@ FROM weekly_payout_summary WHERE week = '2025-W49';
 ---
 
 **Conclusion**: ✅ **100% match with WB Dashboard**. Loyalty fields are correctly handled as informational-only and do not require formula changes.
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-14
+- **Summary**: Verified that all loyalty fields (loyalty_fee, loyalty_points_withheld, loyalty_compensation) are correctly handled. They are informational-only and do not affect the payout_total calculation. 100% match with WB Dashboard confirmed across all report types.
+- **Remaining frontend action**: None. Loyalty fields can be displayed as informational data without affecting financial calculations.

@@ -584,3 +584,10 @@ Content-Type: application/json
 **Created**: 2025-11-28
 **Author**: Claude Code
 **Status**: ✅ Active Guide
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-28
+- **Summary**: Comprehensive guide documenting COGS temporal versioning strategy and margin calculation logic. Uses the Week Midpoint strategy (Thursday ~12:00) for COGS lookup. Documents the `valid_from`/`valid_to` versioning model, automatic margin recalculation triggers, and edge cases (e.g., Friday-Sunday COGS applying to the next week).
+- **Remaining frontend action**: Use this guide as the reference for implementing COGS temporal logic in the frontend.

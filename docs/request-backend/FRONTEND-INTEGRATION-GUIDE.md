@@ -48,6 +48,11 @@ export function useWarehouses() {
   return useQuery({
     queryKey: ['tariffs', 'warehouses'],
     queryFn: () => apiClient.get('/v1/tariffs/warehouses'),
+
+---
+
+## Backend Team Response
+**Status**: REFERENCE DOCUMENT — this is a living integration guide, not a request. Kept up-to-date with each relevant epic.
     // ApiClient automatically unwraps {data} wrapper
     // Returns: { warehouses: Warehouse[], updated_at: string }
     staleTime: 24 * 60 * 60 * 1000, // 24h cache

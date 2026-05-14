@@ -396,3 +396,10 @@ await api.post('/v1/cogs/bulk', {
 **Last Updated**: 2025-11-23
 **Status**: ✅ Ready for Frontend Integration
 **Backend Contact**: Backend Team
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-23
+- **Summary**: Backend response for Epic 18 COGS management. All three phases completed: Phase 1 (product catalog with `hasCogs` filter), Phase 2 (bulk upload with V2 format and partial success), Phase 3 (multi-currency support). All backend checklist items are done; remaining items are frontend implementation tasks for Stories 4.1, 4.2, and 4.3.
+- **Remaining frontend action**: Build COGS assignment form (Story 4.1), bulk upload UI (Story 4.2), and input validation (Story 4.3).

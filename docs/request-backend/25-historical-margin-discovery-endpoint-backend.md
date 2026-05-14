@@ -278,3 +278,6 @@ curl -s "http://localhost:3000/v1/analytics/weekly/product-weeks?nm_id=173589742
 ---
 
 > **Note to Frontend Team**: Both endpoints are deployed and ready for integration. The Swagger documentation includes all new fields with examples. Let us know if you need any adjustments!
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

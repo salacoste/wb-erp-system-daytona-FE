@@ -29,6 +29,15 @@
 
 The advertising analytics API contains data from:
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (documented behavior)
+**Resolution date**: 2026-01-30
+**Summary**: Confirmed NOT A BUG - empty results for date ranges before available data is correct behavior. Data starts from 2025-12-01. Frontend should check available date range via `GET /v1/analytics/advertising/sync-status` before querying.
+**Remaining frontend action**: Use sync-status endpoint to validate date range before querying advertising data.
+
 | Metric | Value |
 |--------|-------|
 | **Data Start Date** | 2025-12-01 |

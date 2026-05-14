@@ -23,11 +23,16 @@
 
 ---
 
-## 1. Обзор бизнес-требований
-
-### Потребности фронтенда
-
 | Функция | Описание | API-решение |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-31
+**Summary**: Complete API periods guide for dashboard. Covers available weeks listing, specific week queries, date range queries, period comparison, and trends. Includes HTTP examples, date format specifications, and UI implementation recommendations.
+**Remaining frontend action**: None - use as reference for dashboard period selector implementation.
 |---------|----------|-------------|
 | **Недельный вид** | Отображение данных по дням за выбранную неделю | `finance-summary?week=YYYY-Www` |
 | **Месячный вид** | Отображение данных по дням за выбранный месяц | `by-sku?weekStart=...&weekEnd=...` |

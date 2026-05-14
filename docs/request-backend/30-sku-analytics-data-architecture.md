@@ -203,3 +203,10 @@ HAS cogs_unit_cost_rub (COGS IS assigned): 7 → missing_cogs_flag=false
 ---
 
 **Last Updated**: 2025-11-28
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-28
+- **Summary**: Data architecture documentation for SKU analytics, covering how sales data flows through the system, row classification rules, and the relationship between COGS, margin, and analytics tables. This guide documents the data layer that underpins all SKU-level analytics endpoints.
+- **Remaining frontend action**: Use this as a reference when implementing SKU-level analytics components to understand data provenance and reliability.

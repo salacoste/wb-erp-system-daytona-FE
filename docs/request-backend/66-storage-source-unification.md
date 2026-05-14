@@ -48,6 +48,13 @@ const storage = Number(storageRow.storage_total);
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                      paid_storage_daily                              │
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Unified storage data source across all analytics views. Updated `getCabinetLevelExpenses` to use `paid_storage_daily` (Epic 24 Paid Storage API) instead of `wb_finance_raw`, eliminating the storage value discrepancy between SKU and Category/Brand pages.
+**Frontend Action**: No further action needed unless noted above.
 │                (Single Source of Truth - Epic 24)                    │
 └────────────────────┬────────────────────────────────────────────────┘
                      │

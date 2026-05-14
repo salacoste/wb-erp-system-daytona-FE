@@ -17,6 +17,14 @@
 
 ## Жизненный цикл поставки
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-01-29
+**Summary**: Epic 53 (26 SP, 6 stories) implemented full FBS supply management lifecycle: creation, order assignment, closure, sticker/document generation, and WB status synchronization. All REST endpoints for supply CRUD operations delivered.
+**Remaining frontend action**: Build supply management UI if needed.
 ```
 ┌─────────┐     добавить заказы     ┌────────────┐
 │  OPEN   │ ───────────────────────>│   OPEN     │

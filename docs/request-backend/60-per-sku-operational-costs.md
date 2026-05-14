@@ -177,3 +177,10 @@ SUM(penalties) ≈ summary_total.penalties_total
 
 - Epic 24: Paid Storage Analytics (уже реализовано)
 - Будущее: Integration с рекламными данными WB
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-06
+- **Summary**: Per-SKU operational costs implemented as part of Epic 26. The `weekly_margin_fact` table now includes logistics, storage, penalties, acquiring, loyalty, and other expenses per SKU. Net profit and net margin are calculated. Use `operating_profit_rub` and `operating_margin_percent` directly from the API.
+- **Remaining frontend action**: Display per-SKU expense breakdown and net profit/margin in analytics views.

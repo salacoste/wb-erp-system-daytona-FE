@@ -29,6 +29,15 @@ Raw query failed. Code: `42803`. Message: `ERROR: column "orders_fbs.created_at"
 
 PostgreSQL ошибка `42803` — столбец `orders_fbs.created_at` используется вне агрегатной функции в SQL запросе с GROUP BY. Нужно либо добавить `created_at` в GROUP BY, либо обернуть в агрегатную функцию (MIN/MAX).
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-14
+**Summary**: Fixed two issues: (1) SQL GROUP BY error in orders/trends and fulfillment/trends endpoints - `created_at` column added to GROUP BY or wrapped in MIN(). (2) Advertising data gap for daily breakdown documented as expected behavior (advertising sync runs at 04:00 MSK, data has 1-day lag).
+**Remaining frontend action**: None - daily breakdown endpoints now return 200 OK.
+
 ### Влияние
 
 Эти два эндпоинта — **единственные** в системе, которые предоставляют дневные данные с revenue:

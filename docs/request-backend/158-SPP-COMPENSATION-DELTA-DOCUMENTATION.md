@@ -28,6 +28,15 @@ This is **NOT a bug**. The delta comes from WB's SPP (скидка постоя�
 Each row in `wb_finance_raw` has two different "seller revenue" values:
 
 | WB API Field | DB Column | Backend Aggregation | Meaning |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (documentation)
+**Resolution date**: 2026-02-28
+**Summary**: The 9,652.33 RUB delta between two calculation methods for "to pay for goods" is fully explained by WB's SPP (loyalty discount) compensation mechanism. This is NOT a bug - WB compensates sellers for the SPP discount applied to buyers. Documented as informational reference.
+**Remaining frontend action**: None - informational. Use `to_pay_goods` (net_for_pay) as authoritative value.
 |---|---|---|---|
 | `retail_amount` | `gross` | `total_commission_rub = retail_price_with_discount − gross` | Product value after SPP discount |
 | `ppvz_for_pay` | `net_for_pay` | `to_pay_goods = SUM(net_for_pay)` | **Actual amount WB pays** seller |

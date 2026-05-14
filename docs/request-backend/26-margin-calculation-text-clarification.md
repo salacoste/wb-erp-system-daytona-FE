@@ -167,3 +167,10 @@ Actual Behavior:
 **Status**: ✅ Completed
 **Resolved**: 2025-11-26
 **Changes**: Frontend text updated in cogs/page.tsx and SingleCogsForm.tsx
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-26
+- **Summary**: Text clarification for margin calculation UI. Clarified the distinction between "no margin data" vs "calculation in progress" states. Frontend text was updated in `cogs/page.tsx` and `SingleCogsForm.tsx` to accurately reflect the backend states.
+- **Remaining frontend action**: None. Text updates were applied.

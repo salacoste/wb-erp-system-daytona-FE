@@ -29,6 +29,14 @@ Daily Breakdown (W07)
 
 ## Requirements
 
+---
+
+## Backend Team Response
+
+**Status**: PARTIALLY RESOLVED
+**Resolution date**: 2026-03-29
+**Summary**: Orders daily breakdown works via `/v1/analytics/orders/volume?include_cogs=true` returning `by_day_with_cogs[]`. Finance daily breakdown (`/v1/analytics/daily/finance`) and advertising daily breakdown remain as missing endpoints. Frontend currently shows zeros for finance and advertising in daily breakdown.
+**Remaining frontend action**: Finance and advertising daily breakdown endpoints still pending. Frontend shows zeros gracefully.
 ### 1. Finance Daily Breakdown
 
 **Option A: New Endpoint**

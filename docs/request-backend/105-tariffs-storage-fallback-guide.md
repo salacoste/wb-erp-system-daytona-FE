@@ -12,6 +12,8 @@
 
 ## Содержание
 
+---
+
 1. [Проблема](#проблема)
 2. [Решение: Backend Fallback](#решение-backend-fallback)
 3. [Значения по умолчанию](#значения-по-умолчанию)
@@ -746,3 +748,12 @@ const storageTariffs = {
 **Автор**: Backend Team
 **Версия**: 1.0
 **Статус**: Production Ready
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-25
+**Summary**: Backend fallback mechanism for storage tariffs documented and implemented. When warehouse-specific storage rates return 0 or null, the system falls back to hardcoded default rates (0.07 rub/L/day base + 0.05 rub/L/day additional). Guide explains when fallback activates and how frontend should handle it.
+**Remaining frontend action**: None - use as reference for graceful degradation handling.

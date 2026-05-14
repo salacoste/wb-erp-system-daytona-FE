@@ -48,6 +48,11 @@ const cursor: WbCursor = {
 
 // ✅ AFTER (correct)
 const cursor: WbCursor = {
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
   limit: 100,   // ← WB API max value
   updatedAt: '',
   nmID: 0,

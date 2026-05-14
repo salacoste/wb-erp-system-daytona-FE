@@ -417,3 +417,10 @@ export function ProductList({ enableMarginDisplay = false, ...props }) {
 **Created**: 2025-11-23
 **Author**: Frontend Team
 **Awaiting**: Backend Team Review
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-23
+- **Summary**: The `include_cogs` parameter was added to the products list endpoint. When enabled, the response includes `current_margin_pct`, `has_cogs`, `missing_data_reason`, and related COGS fields. Performance is within acceptable limits (~300ms). See the companion `-implementation-plan.md` and `-completion-summary.md` files for full details.
+- **Remaining frontend action**: Update product list hook and components to pass `include_cogs=true` and display margin data.

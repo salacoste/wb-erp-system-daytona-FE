@@ -181,3 +181,10 @@ const discountLossPct = (wbDiscount / yourPrice) * 100;
 - Request #57 - WB Dashboard Exact Match (wb_sales_gross)
 - Epic 5 - Unit Economics Analytics
 - `docs/WB-DASHBOARD-METRICS.md`
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-14
+- **Summary**: `retail_price_total` field added to `weekly_payout_summary` and `weekly_payout_total` tables. Aggregated from `wb_finance_raw` using `SUM(retail_price)` for sales. Enables display of the full pricing waterfall (your price -> WB discount -> commission -> seller gross).
+- **Remaining frontend action**: Use `retail_price_total` in Unit Economics waterfall chart to show discount loss percentage.

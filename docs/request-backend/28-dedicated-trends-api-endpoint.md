@@ -197,3 +197,10 @@ export function useMarginTrends(from: string, to: string, metrics?: string[]) {
 
 ### Frontend Integration:
 Update `useMarginTrends.ts` to use new endpoint for optimal performance.
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-27
+- **Summary**: Implemented in Story 6.6. The `GET /v1/analytics/weekly/trends` endpoint provides trend data for N weeks in a single request with dynamic metric selection and summary statistics. QA score: 92/100. ~50-70% faster than N separate requests.
+- **Remaining frontend action**: Update `useMarginTrends.ts` hook to use the new `/trends` endpoint for optimal performance.

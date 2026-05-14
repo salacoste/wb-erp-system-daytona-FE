@@ -51,6 +51,13 @@
 
 ---
 
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: 6 tariff endpoints implemented (commissions, warehouses, warehouses-with-tariffs, acceptance coefficients by warehouse, all acceptance coefficients, settings). Two WB tariff systems documented: Inventory (actual costs) for financial reports and Supply (planning) for delivery forecasting.
+**Frontend Action**: No further action needed unless noted above.
+
+---
+
 ## Summary
 
 Запрос на реализацию API для получения списка складов WB и тарифных коэффициентов (логистика + хранение) для калькулятора цен.

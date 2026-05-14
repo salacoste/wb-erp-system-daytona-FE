@@ -53,6 +53,11 @@ POST /v1/products/price-calculator
 
 ### Headers
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 | Header | Required | Description |
 |--------|----------|-------------|
 | `Authorization: Bearer <token>` | ✅ | JWT токен авторизации |

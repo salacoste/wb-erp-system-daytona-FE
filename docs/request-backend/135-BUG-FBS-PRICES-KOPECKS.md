@@ -39,6 +39,14 @@ salePrice: order.convertedPrice, // ❌ Сохраняет kopecks как rubles
 
 ### Результат
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: Fixed FBS order prices stored in kopecks without division by 100. Updated `orders-sync.service.ts` to divide `price` and `salePrice` by 100. Migration `20260201193002_bug002_fix_fbs_prices_kopecks` corrected existing data. 48 tests passing.
+**Remaining frontend action**: None - data corrected and future syncs convert correctly.
 | Поле | API значение | Ожидаемое (₽) | Сохранённое |
 |------|--------------|---------------|-------------|
 | price | 47300 kopecks | 473.00 ₽ | 47300 ₽ |

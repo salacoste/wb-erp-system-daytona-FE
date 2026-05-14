@@ -570,3 +570,10 @@ payout_total = to_pay_goods
 |------|--------|--------|
 | 2025-12-16 | Backend Team | Initial documentation |
 | 2025-12-16 | Backend Team | Added W46-W49 comparison results (100% match) |
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-16
+- **Summary**: Storage data sources compared across Paid Storage API (`paid_storage_daily`) and Weekly Reports (`weekly_payout_summary`). W46-W49 comparison shows 100% match for total storage costs. For `payout_total` calculation, use `storage_cost` from Weekly Reports as the official source matching WB Dashboard. Per-SKU breakdown uses Paid Storage API data.
+- **Remaining frontend action**: Use weekly reports for total storage display, Paid Storage API for per-SKU breakdown and trends.

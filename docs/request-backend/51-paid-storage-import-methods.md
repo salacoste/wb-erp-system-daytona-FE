@@ -409,4 +409,11 @@ curl -X GET "https://api.example.com/v1/imports/paid-storage/status" \
 - [Story 24.4: Auto Scheduler](../../../docs/stories/epic-24/story-24.4-auto-scheduler.md)
 - [API Reference: Paid Storage Import](../../../docs/API-PATHS-REFERENCE.md#paid-storage-import-epic-24)
 - [Storage API Guide](../../../docs/STORAGE-API-GUIDE.md) — SDK workflow, сравнение данных, troubleshooting
-- [Request #39: Storage Data Sources Discrepancy](./135-storage-data-sources-discrepancy.md) — анализ расхождений между источниками
+- [Request #39: Storage Data Sources Discrepancy](./135-storage-data-sources-discrepancy.md) -- анализ расхождений между источниками
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-07
+- **Summary**: Paid storage import methods fully documented and implemented. Includes manual import (`POST /v1/imports/paid-storage`), smart import (`POST /v1/imports/paid-storage/smart`), and data status endpoint (`GET /v1/imports/paid-storage/status`). Daily cron job runs at 06:00 MSK. Smart import automatically selects initial 7-day or incremental strategy.
+- **Remaining frontend action**: Integrate storage import UI with manual date selection and smart import button.

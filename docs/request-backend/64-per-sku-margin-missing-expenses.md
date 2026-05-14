@@ -203,3 +203,10 @@ SUM(commissionRub) ≈ weekly_payout_summary.total_commission_rub
 ```
 gross - commission_sales - commission_other - acquiring_fee ≈ net_for_pay (с погрешностью ≤1%)
 ```
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-18
+- **Summary**: Per-SKU expense components now available in the API as part of Epic 31. Commission, acquiring fee, and all 9 expense types are returned as separate fields in `by-sku`, `by-brand`, and `by-category` analytics endpoints. Use `operating_margin_pct` instead of `margin_pct` for the main profitability indicator. See the companion `-backend-response.md` for full details.
+- **Remaining frontend action**: Add "Commission WB" column to analytics SKU table and display expense breakdown in tooltips/expandable rows.

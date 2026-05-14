@@ -917,3 +917,10 @@ const assignCogs = async (nmId, unitCost) => {
 > **Последнее обновление**: 2025-11-26 (Sprint 1: Stories 5.1, 6.1, 6.3)
 >
 > При изменении логики backend обновите этот документ и укажите дату в шапке.
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-26
+- **Summary**: Integration guide covering all COGS and margin API endpoints, data structures, and frontend integration patterns. Sprint 1 complete (Stories 5.1, 6.1, 6.3). Documents temporal COGS lookup, margin calculation flow, and all relevant API endpoints with TypeScript examples.
+- **Remaining frontend action**: Use this guide as the comprehensive reference for COGS/margin integration across all analytics components.

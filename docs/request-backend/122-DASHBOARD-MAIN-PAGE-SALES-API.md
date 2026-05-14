@@ -28,6 +28,15 @@
 | Метрика | Описание | Источник данных |
 |---------|----------|-----------------|
 | **Выкупы (Продажи)** | Фактические продажи с разбивкой по дням | `wb_sales_gross` |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-31
+**Summary**: Dashboard sales API guide documented. Maps sales (buyouts) data to existing endpoints including `finance-summary` for weekly totals and `daily_sales_raw` for daily breakdowns. Formulas and JSON schemas provided.
+**Remaining frontend action**: None - use as implementation reference for dashboard sales section.
 | **COGS по выкупам** | Себестоимость проданных товаров | `cogs_total` |
 | **К перечислению** | Итоговая сумма от WB | `payout_total` |
 

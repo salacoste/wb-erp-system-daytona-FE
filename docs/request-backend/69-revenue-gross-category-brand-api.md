@@ -66,6 +66,13 @@ interface CategoryAnalyticsItem {
 
 ### 2. Brand Analytics Response
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Added `revenue_gross` field to Category and Brand analytics API endpoints (`/v1/analytics/weekly/by-category` and `/v1/analytics/weekly/by-brand`), enabling consistent operating margin calculation using gross revenue (before marketplace commissions) across all analytics views.
+**Frontend Action**: No further action needed unless noted above.
+
 Add `revenue_gross` field to each brand item:
 
 ```typescript
@@ -135,3 +142,10 @@ operating_margin = operating_profit / revenue_gross * 100
 
 - [Request #68: SKU Financials other_adjustments](./68-sku-financials-missing-other-adjustments.md)
 - [docs/63-operating-profit-formula-clarification.md](../63-operating-profit-formula-clarification.md)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-18
+- **Summary**: `revenue_gross` field added to category and brand analytics endpoints. All analytics pages (SKU, category, brand) now use the consistent formula `operating_margin = operating_profit / revenue_gross * 100`. Frontend pages updated to use the new field.
+- **Remaining frontend action**: None. All pages already updated.

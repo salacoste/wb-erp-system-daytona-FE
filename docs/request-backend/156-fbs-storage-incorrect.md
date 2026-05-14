@@ -28,6 +28,15 @@
 
 ```bash
 GET /v1/analytics/supply-planning?limit=100
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (documented behavior)
+**Resolution date**: 2026-03-29
+**Summary**: FBS products showing storage costs is correct behavior - WB charges storage for FBS items that have physical stock at WB warehouses (stock transferred for fulfillment). The "короба: товары ниже базы" calculation method confirms these are legitimate storage charges, not a data error. Supply-planning API shows no FBO stock because items are FBS-fulfilled but stored at WB warehouses.
+**Remaining frontend action**: None - this is expected behavior. Consider adding UI explanation that FBS items can incur storage costs at WB warehouses.
 ```
 
 **Результат:** Только 1 товар (ter-13) с `current_stock: 0`.

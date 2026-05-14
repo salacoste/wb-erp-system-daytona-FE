@@ -16,6 +16,16 @@ This document provides a comprehensive technical reference for the COGS (Cost of
 ## Table of Contents
 
 1. [Temporal Versioning Model](#1-temporal-versioning-model)
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-02-01
+**Summary**: Complete technical reference for COGS temporal versioning and margin calculation. Documents the Week Midpoint Strategy (Thursday determines COGS version), assignment algorithm, recalculation triggers, affected weeks calculation, and COGS coverage percentage. Essential for understanding COGS temporal behavior.
+**Remaining frontend action**: None - use as reference when building COGS-related UI features.
+
 2. [Week Midpoint Rule](#2-week-midpoint-rule)
 3. [COGS Assignment Algorithm](#3-cogs-assignment-algorithm)
 4. [Temporal Lookup: findCogsAtDate()](#4-temporal-lookup-findcogsatdate)

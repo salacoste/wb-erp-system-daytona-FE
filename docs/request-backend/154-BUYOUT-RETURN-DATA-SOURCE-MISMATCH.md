@@ -38,6 +38,15 @@ Compute `returnsCount` as `MAX(financial_returns, classified_returns)` to show t
 ### Option B: Tooltip/label differentiation
 Keep separate sources but clearly label them:
 - "Финансовые возвраты" (from weekly report)
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-05-06 (confirmed in #170 backend update)
+**Summary**: Fixed in Epic 109. `sdk.returns.getReturns()` unifies data from FBO + FBS + finance sources. `BuyoutReconciliationService` handles anomaly detection (return_without_buyout, orphan_buyout, return_quantity_mismatch). Temporal gap between financial and logistics returns now resolved through unified sync processor.
+**Remaining frontend action**: None - buyout and return data now consistent across endpoints.
 - "Логистические возвраты" (from FBS statuses, realtime)
 
 ### Option C: Cross-reference adjustment

@@ -559,3 +559,10 @@ Use week `2025-W03` in dev environment for testing (has mix of SKUs with/without
 **Document Version**: 1.0
 **Last Updated**: 2025-01-22
 **Status**: ✅ AVAILABLE FOR INTEGRATION
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-22
+- **Summary**: Epic 17 fully implemented and deployed. The `includeCogs` query parameter is available on all analytics endpoints (`by-sku`, `by-brand`, `by-category`, `summary`). Returns COGS, profit, margin_pct, markup_percent, and missing_cogs_flag fields when enabled. Performance validated at ~200-250ms (within 300ms target). Backward compatible -- parameter defaults to `false`.
+- **Remaining frontend action**: Integrate `includeCogs=true` in analytics API calls and display margin/profit data in dashboard components.

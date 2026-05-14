@@ -376,3 +376,10 @@ WHERE wmf.cabinet_id = $1 AND wmf.week = $4;
 - [Request #51: Paid Storage Import Methods](./51-paid-storage-import-methods.md)
 - [Request #36: Epic 24 Paid Storage Analytics API](./36-epic-24-paid-storage-analytics-api.md)
 - [API Reference: Storage Analytics](../../../docs/API-PATHS-REFERENCE.md#storage-analytics-epic-24)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-07
+- **Summary**: Storage SKU breakdown for weekly reports is available via the Epic 24 analytics endpoints. The `paid_storage_daily` table provides per-SKU storage costs that can be joined with `weekly_margin_fact` for product profitability analysis. Daily cron at 06:00 MSK ensures data freshness.
+- **Remaining frontend action**: Implement storage cost display per SKU in weekly analytics, using the paid storage API and the documented join pattern.

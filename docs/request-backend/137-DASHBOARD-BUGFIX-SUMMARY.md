@@ -39,6 +39,15 @@
 
 ### Data Availability Indicators (MEDIUM)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: Three bugs fixed: BUG-002 (FBS prices in kopecks - critical), BUG-001 (theoretical profit for incomplete data - high), and data availability indicators added (medium). All fixes deployed with tests passing.
+**Remaining frontend action**: None - all bugs fixed and validated.
+
 **Проблема**: Пользователи не понимали, какие данные доступны в реальном времени, а какие ожидают недельный отчёт.
 
 **Решение**:

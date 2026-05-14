@@ -58,6 +58,13 @@ true_operating_profit = gross_profit - logistics - storage - penalties - paid_ac
 Category API calculates `operating_profit` as:
 ```typescript
 operating_profit = revenue_net - cogs  // This is GROSS profit!
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Fixed Category/Brand APIs to return true operating profit (after all expenses including other_adjustments) instead of gross profit. Updated SQL aggregation in both range methods to subtract all operating expense components from gross profit.
+**Frontend Action**: No further action needed unless noted above.
 ```
 
 But should be:
@@ -200,3 +207,10 @@ W51+ will calculate correctly automatically — the normal margin calculation fl
 
 - [Request #68: SKU Financials other_adjustments](./68-sku-financials-missing-other-adjustments.md)
 - [Request #69: revenue_gross for Category/Brand](./69-revenue-gross-category-brand-api.md)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-18
+- **Summary**: Category and brand operating profit now uses true operating profit calculation with all 9 expense types. The W50 margin discrepancy was caused by loyalty compensation making net > gross in some edge cases. Fixed by using `operating_profit_rub` directly. W51+ calculates correctly automatically.
+- **Remaining frontend action**: None. Operating profit fields are consistent across all analytics levels.

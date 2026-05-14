@@ -36,6 +36,11 @@ const request1 = {
   buyback_pct: 98,
   advertising_pct: 5,
   storage_rub: 50
+
+---
+
+## Backend Team Response
+**Status**: REFERENCE DOCUMENT — this is a living integration guide, not a request. Kept up-to-date with each relevant epic.
 };
 
 // Auto-fill mode (warehouse + volume)

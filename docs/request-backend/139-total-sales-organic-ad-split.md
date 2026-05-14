@@ -30,6 +30,14 @@ Current Week (Monday → today)
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2025-12-25
+**Summary**: Epic 35 complete with quality score 95/100. Hybrid query architecture implemented using `wb_finance_raw` for completed weeks and `daily_sales_raw` for current week. Provides totalSales, ad-attributed revenue, organic sales, and organic contribution percentage. 35 backend tests + 62 frontend tests passing.
+**Remaining frontend action**: None - fully integrated.
+---
+
 ## API Changes
 
 ### ✅ Новые поля в ответе API

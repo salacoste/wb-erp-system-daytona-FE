@@ -28,6 +28,15 @@ Story 86.2 (Client Info PII for FBS Orders) introduced 5 critical Playwright E2E
 Frontend cannot create DBW orders directly:
 - DBW order creation requires WB API integration with a real seller account
 - Test seeding via the production order-creation flow would require fake WB credentials and a complex multi-step setup
+
+---
+
+## Backend Team Response
+
+**Status**: PENDING
+**Resolution date**: Not yet implemented
+**Summary**: Request for a test-seeding endpoint to create DBW (delivery-by-WB) orders with client PII data for E2E testing. Currently blocked because frontend cannot create DBW orders without real WB API integration. Privacy E2E tests (Story 86.2) skip gracefully when no DBW orders exist.
+**Remaining frontend action**: E2E tests remain in graceful skip mode. Privacy guarantees verified at unit test level (12 tests).
 - The backend already has all the infrastructure to insert DBW orders into the database — the frontend just needs an authenticated endpoint to call
 
 ---

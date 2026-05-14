@@ -54,6 +54,11 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 
 ---
 
+## Backend Team Response
+**Status**: REFERENCE DOCUMENT — this is a living integration guide, not a request. Kept up-to-date with each relevant epic.
+
+---
+
 #### File #114: Margin Calculation FrontEnd Quick Reference Guide
 **Path**: `/frontend/docs/request-backend/114-margin-calculation-frontend-guide.md`
 **Size**: 517 lines

@@ -38,6 +38,15 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 - ✅ Rate limiting: 1 req/min (60 second interval)
 - ✅ Redis caching for task metadata (1-hour TTL)
 - ✅ Supports task options (groupByBrand, groupBySubject, groupByWarehouse, filters)
+
+---
+
+## Backend Team Response
+
+**Status**: PARTIALLY RESOLVED
+**Resolution date**: 2026-01-30
+**Summary**: Epic 57 validation found all 3 services fully implemented (WarehouseRemainsService, FbsAnalyticsService, FbsComparisonService) but no REST API controller exposing them. Services exist but are only accessible through task queue, not direct HTTP endpoints.
+**Remaining frontend action**: Services accessible via task enqueue pattern. Direct REST endpoints not yet available.
 - ✅ Error handling for all WB API statuses (401, 404, 410, 429, 5xx)
 - ✅ Task lifecycle validation (new → processing → done/purged/canceled)
 - ✅ CSV parsing with bilingual column support

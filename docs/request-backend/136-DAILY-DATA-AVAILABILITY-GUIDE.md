@@ -28,6 +28,15 @@
 |---------|-------------|----------|
 | Количество заказов | ✅ Реальное время | Точное количество |
 | Сумма заказов | ✅ Реальное время | В рублях (корректно) |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-02-01
+**Summary**: Reference guide documenting which data is available in real-time vs only after weekly report finalization. FBO orders update every 5-60 min, FBS orders every 5 min. Financial metrics (sales, COGS, logistics, storage) only available after week completion.
+**Remaining frontend action**: Use this guide to implement appropriate loading/empty states for incomplete weeks.
 | Средний чек | ✅ Расчётное | ordersRevenue / ordersCount |
 | По складам | ✅ | Распределение по warehouseName |
 | По регионам | ✅ | Распределение по regionName |

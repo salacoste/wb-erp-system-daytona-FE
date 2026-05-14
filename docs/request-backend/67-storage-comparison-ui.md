@@ -47,6 +47,13 @@ WHERE cabinet_id = ? AND sale_dt >= ? AND sale_dt < ?
 
 **File**: `frontend/src/hooks/useMarginAnalytics.ts`
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Added `storage_weekly_report` and `storage_difference` fields to the expenses response, allowing frontend to display storage data from both sources (paid_storage_daily and wb_finance_raw) side-by-side for comparison and transparency.
+**Frontend Action**: No further action needed unless noted above.
+
 ```typescript
 export interface CabinetLevelExpenses {
   // ... existing fields ...

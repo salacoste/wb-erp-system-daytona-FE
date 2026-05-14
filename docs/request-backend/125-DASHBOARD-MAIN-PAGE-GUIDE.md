@@ -28,6 +28,15 @@
 |---|----------|----------|-----|
 | 1 | **Заказы** | Заказы FBS с разбивкой по дням | Revenue potential |
 | 2 | **COGS по заказам** | Себестоимость товаров в заказах | Cost |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-31
+**Summary**: Comprehensive dashboard main page guide combining orders, sales, expenses, and theoretical profit formula. Provides entity map, API endpoints, period handling, and quick-start query set for frontend implementation.
+**Remaining frontend action**: None - use as primary reference for dashboard implementation.
 | 3 | **Выкупы** | Фактические продажи (реализованный товар) | Revenue |
 | 4 | **COGS по выкупам** | Себестоимость проданных товаров | Cost |
 | 5 | **Рекламные затраты** | Расходы на рекламу, ROAS, органика | Expense |

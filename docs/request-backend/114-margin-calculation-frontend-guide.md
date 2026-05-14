@@ -29,6 +29,14 @@
 
 ## API Response Examples
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-30
+**Summary**: Quick troubleshooting guide for margin null states. Documented that null margins result from empty `weekly_margin_fact` table. Root cause was fixed in Request #120 - auto-trigger margin recalculation on COGS bulk upload.
+**Remaining frontend action**: None - use as quick reference when debugging null margin fields.
 ### Scenario 1: No Margin Data Available
 
 **Response**:

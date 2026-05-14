@@ -731,3 +731,10 @@ missing_cogs_count?: number;
 4. Обратитесь к backend team с конкретным файлом/строкой из этого документа
 
 **Статус Epic 17:** ✅ **COMPLETE** (все 4 истории реализованы и протестированы)
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-22
+- **Summary**: Epic 17 is complete with all 4 stories (17.1-17.4) implemented, QA-approved, and deployed. This document serves as a navigation hub linking to all integration resources including Swagger, test-api examples, and story specifications.
+- **Remaining frontend action**: Use this document as a reference guide for Epic 17 integration. Start with Swagger UI and test-api examples for the most current API specs.

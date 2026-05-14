@@ -29,6 +29,14 @@
 
 ### 1. Воронка продаж (Epic 68)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-18
+**Summary**: Epics 68-71 complete with 560+ unit tests. 8 new endpoints: funnel analytics (2), buyout analytics (2), returns analytics (2), unified product analytics (2). Funnel buyout enrichment uses query-time pattern with 30-min cache. See CLAUDE.md MEMORY for buyout data source details.
+**Remaining frontend action**: Integrate funnel, buyout, and returns pages using provided endpoint documentation.
 ```typescript
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';

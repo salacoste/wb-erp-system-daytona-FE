@@ -29,6 +29,14 @@ curl http://localhost:3000/v1/meta/version
 
 ## Why this doc exists
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (already available)
+**Resolution date**: 2026-04-08
+**Summary**: The `GET /v1/meta/version` endpoint already exists and returns version, commit SHA, build timestamp, and environment. No authentication required. Frontend can use it to verify which build PM2 is serving without SSH access.
+**Remaining frontend action**: None - endpoint available. Use `curl http://localhost:3000/v1/meta/version` for build verification.
 The 2026-04-07 frontend session report (task-178 trigger) proposed adding a "health check endpoint that returns the build version". After investigation, **the endpoint already exists** — it shipped in Story 5.1 (containerized deployments). The frontend team simply did not know to look for it.
 
 This doc fixes the awareness gap. It lives in `frontend/docs/request-backend/` (the canonical place frontend devs check for "what backend already exists") so the next session does not re-propose the same thing.

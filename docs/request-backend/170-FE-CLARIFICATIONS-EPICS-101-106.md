@@ -26,8 +26,16 @@ Backend's #169 § 1.1 now lists **3 endpoints under different path** `/v1/analyt
 
 **Question**: Are these:
 - **(a) Renamed/migrated** versions of the Epic 90 endpoints (`/v1/acquiring/*` → `/v1/analytics/acquiring/*`)? If yes, when does the old path deprecate? Migration plan?
-- **(b) New endpoints** existing alongside the Epic 90 ones (different feature)? If yes, what differentiates them — different data source, different aggregation, different consumer use case?
+- **(b) New endpoints** existing alongside the Epic 90 ones (different feature)? If yes, what differentiates them -- different data source, different aggregation, different consumer use case?
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (clarifications answered)
+**Resolution date**: 2026-05-03
+**Summary**: All 8 clarification questions answered in `170-RESPONSE-EPICS-101-106-CLARIFICATIONS.md`. Key findings: (a) Acquiring endpoints were always at `/v1/analytics/acquiring/*` - no migration needed; (b) `acquiring_total` field uses different data source than reports; (c) FBS REST API endpoints fully documented; (d) Return classification pipeline operational.
+**Remaining frontend action**: Use responses to plan Epic 96-FE integration work.
 **Impact**: Either FE migrates existing hooks (Story 90.X-shipped code) OR adds parallel hooks. Critical for Cluster 1 of Epic 96-FE planning.
 
 ---

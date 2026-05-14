@@ -48,6 +48,13 @@
 
 ### 3. Reconciliation Panel
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Orders FBS Integrity Dashboard backend is ready with health status endpoint, 6 integrity checks (duplicates, orphans, missing history, duplicate status history, invalid transitions, sync overlaps), and reconciliation panel for comparing with WB Dashboard data.
+**Frontend Action**: No further action needed unless noted above.
+
 Сравнение локальных данных с WB Dashboard.
 
 **Компоненты**:

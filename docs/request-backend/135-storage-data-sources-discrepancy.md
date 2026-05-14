@@ -28,6 +28,14 @@ Two WB API sources for storage costs show significantly different values:
 | Paid Storage API (`paid_storage_daily`) | **1,849.85₽** | 7 дней, агрегированные |
 | **Разница** | **+0.67%** | ✅ В пределах нормы (<1%) |
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (analysis complete)
+**Resolution date**: 2025-12-15
+**Summary**: Storage data sources compared - weekly report vs paid storage daily. After real data comparison for W46, difference is only 0.67% (within normal range). Both sources are valid; `paid_storage_daily` provides more granular per-SKU per-day data. System uses both as appropriate for different analytics views.
+**Remaining frontend action**: None - documented as analysis, not a bug.
 **Детализация по дням:**
 
 | Дата | Weekly Report | Paid Storage | Разница |

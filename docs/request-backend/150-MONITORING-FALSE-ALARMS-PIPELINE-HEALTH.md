@@ -38,6 +38,14 @@ The monitoring dashboard (`GET /v1/monitoring/dashboard`) reports **false critic
 
 ## Root Cause Hypothesis
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-05-06 (confirmed in #170 backend update)
+**Summary**: Fixed with StaleTaskReaperService (Post-Fix #150). The service automatically cancels stuck tasks: `in_progress` tasks exceeding `timeout_seconds * 2` are failed, `pending` tasks older than 2 hours are cancelled. This eliminates the false critical alarms that were caused by zombie tasks in the pipeline.
+**Remaining frontend action**: None - monitoring dashboard no longer generates false alarms.
 1. **Pipeline execution tracking gap**: FBO Продажи, Поставки, and FBO Заказы may not have entries in `task_execution_log` (or equivalent) because they use a different execution path not instrumented by the monitoring system.
 
 2. **Health score calculation ignores critical pipelines**: The `healthScore: 83` and `overallStatus: "healthy"` appear to be calculated from only the pipelines that DO have execution data (daily + weekly), ignoring the high-frequency ones with `null` lastSuccess.

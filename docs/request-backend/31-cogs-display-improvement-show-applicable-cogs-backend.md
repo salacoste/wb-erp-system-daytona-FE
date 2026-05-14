@@ -8,7 +8,10 @@
 
 ---
 
-## Summary
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Request to add `applicable_cogs` field to Products API showing which COGS version is actually used for the current week's margin calculation, and which COGS will take effect in future weeks. This was a frontend request for backend implementation.
+**Frontend Action**: Awaiting backend implementation confirmation. See the full document for requested API changes.
 
 Добавить поле `applicable_cogs` в ответ Products API, чтобы фронтенд мог показать:
 1. Какой COGS **реально используется** для расчёта маржи текущей недели

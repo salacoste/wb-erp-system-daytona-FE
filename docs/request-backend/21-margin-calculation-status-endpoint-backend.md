@@ -560,3 +560,6 @@ Display empty state when:
 
 See `frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md` for implementation details.
 
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+

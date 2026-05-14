@@ -48,6 +48,11 @@ Backend предоставляет полностью рабочую систе�
 
 **Current Behavior**:
 ```log
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 [DEBUG] Starting bot.launch() (non-blocking)...
 ✅ Telegram bot started in long polling mode
 Telegram bot initialized: @Kernel_crypto_bot

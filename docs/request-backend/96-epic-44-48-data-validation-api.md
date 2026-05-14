@@ -32,22 +32,13 @@ Content-Type: application/json
 
 **Response (200 OK)**:
 ```json
-{
-  "data": {
-    "week": "2025-W05",
-    "cabinet_id": "550e8400-e29b-41d4-a716-446655440000",
-    "all_passed": true,
-    "checks_run": 4,
-    "checks_passed": 4,
-    "checks_failed": 0,
-    "results": {
-      "row_balance": {
-        "passed": true,
-        "total_rows": 15000,
-        "violating_rows": 0,
-        "violation_rate": 0.0,
-        "violations": []
-      },
+
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Data validation and integrity API implemented with 4 financial sanity checks (row balance, payout total, expense coverage, COGS coverage) and FBS orders integrity checks (duplicates, orphans, missing history, invalid transitions). 221 tests passing.
+**Frontend Action**: No further action needed unless noted above.
       "alternative_reconstruction": {
         "passed": true,
         "total_rows": 15000,

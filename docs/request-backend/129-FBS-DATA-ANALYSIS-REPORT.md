@@ -28,6 +28,15 @@
 | Endpoint | Метод | Статус | Описание |
 |----------|-------|--------|----------|
 | `/v1/orders/sync` | POST | ✅ | Ручной запуск синхронизации |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: FBS infrastructure fully implemented. The "Orders = 0" issue was due to missing data synchronization, not an API bug. All tables (orders_fbs, order_status_history, supplies) exist. FBS sync runs every 5 minutes. Manual sync available via `POST /v1/orders/sync`.
+**Remaining frontend action**: Trigger initial sync if data missing. Display appropriate empty state with sync button for new users.
 | `/v1/orders/sync-status` | GET | ✅ | Статус синхронизации |
 | `/v1/orders` | GET | ✅ | Список заказов (до 90 дней) |
 | `/v1/orders/:id` | GET | ✅ | Детали заказа |

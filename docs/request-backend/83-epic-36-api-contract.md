@@ -49,6 +49,11 @@ Epic 36 **Product Card Linking** is now **100% complete** in the backend. This d
 
 ---
 
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Epic 36 Product Card Linking is 100% complete. Products table populated with imtId from WB Content API, analytics API supports `group_by=imtId` for merged card grouping, and a critical bugfix corrected WB API pagination limit (1000 to 100 cards/batch). API contract is stable and backward compatible.
+**Frontend Action**: No further action needed unless noted above.
+
 ## 🎯 Backend Implementation Summary
 
 ### Database Schema
@@ -743,3 +748,10 @@ Epic 36 frontend integration is **complete** when:
 **Document Version**: 1.0
 **Last Updated**: 2025-12-27
 **Status**: ✅ Ready for Frontend Implementation
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-27
+- **Summary**: Epic 36 API contract is complete and production-ready. All 6 stories implemented including product IMT sync, merged card grouping, and advertising analytics grouped by imtId. Fully backward compatible -- existing code works without changes. New fields only appear when `group_by=imtId` is explicitly passed.
+- **Remaining frontend action**: Implement TypeScript types, API client, React Query hook, merged group badge component, and toggle UI per the acceptance criteria.

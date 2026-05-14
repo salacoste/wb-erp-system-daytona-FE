@@ -23,7 +23,14 @@ Evidence:
 
 ---
 
-## Q2 — `acquiring_total` Field: Consistency With Acquiring Reports
+## Backend Team Response
+
+**Status**: RESOLVED (clarifications answered)
+**Resolution date**: 2026-05-03
+**Summary**: Inline answers to all 8 frontend clarification questions about Epics 101-106. Key answers: acquiring endpoints were always at `/v1/analytics/acquiring/*`, `acquiring_total` uses different data source than reports, FBS REST API fully documented, return classification operational. No migration or breaking changes needed.
+**Remaining frontend action**: Use responses to proceed with Epic 96-FE integration.
+
+## Q2 -- `acquiring_total` Field: Consistency With Acquiring Reports
 
 **Answer: Consistency is NOT guaranteed. The two values come from different data sources.**
 

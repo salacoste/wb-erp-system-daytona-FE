@@ -190,3 +190,12 @@ Response:
 
 **Подготовлено**: Claude Code (Backend Validation)
 **Дата**: 2026-02-01
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: BUG-001 (theoretical profit showing negative for incomplete weeks) fixed in frontend TheoreticalProfitCard. BUG-002 (FBS prices stored in kopecks) fixed in backend with price/100 conversion + data migration. Both validated with tests.
+**Remaining frontend action**: None - both bugs resolved.

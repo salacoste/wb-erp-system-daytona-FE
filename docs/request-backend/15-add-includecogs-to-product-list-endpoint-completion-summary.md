@@ -400,3 +400,10 @@ Contact backend team or reference:
 - Implementation Plan: `docs/request-backend/15-add-includecogs-to-product-list-endpoint-implementation-plan.md`
 - Epic 17 Documentation: `docs/stories/epic-17/`
 - E2E Tests: `test/products/products-include-cogs.e2e-spec.ts`
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-11-23
+- **Summary**: This is the completion summary for Request #15. The `include_cogs` parameter was successfully added to the products list endpoint with batch query optimization. Performance target achieved (~300ms). Fully backward compatible. E2E tests added.
+- **Remaining frontend action**: Update API client, TypeScript types, and UI components to use the new `include_cogs=true` parameter and display margin data.

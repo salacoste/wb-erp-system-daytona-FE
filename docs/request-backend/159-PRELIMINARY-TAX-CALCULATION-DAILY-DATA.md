@@ -28,6 +28,13 @@
 
 ---
 
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-05-06 (confirmed in #170 backend update)
+**Summary**: New endpoint `GET /v1/analytics/tax/preliminary?from=DATE&to=DATE` implemented. Returns preliminary tax calculation for incomplete weeks using daily order and advertising data. Supports all tax systems (USN 6%, USN 15%, manual) and VAT. Response wrapped in `tax` object with snake_case fields per frontend validation finding F1 in #172.
+**Remaining frontend action**: Integrate preliminary tax display into dashboard for current/incomplete weeks.
+
 ## 2. Текущая архитектура налогов
 
 ### 2.1 Настройки кабинета

@@ -26,6 +26,14 @@ if (!syncStatus?.isDataAvailable) {
 
 ### 2. Получение агрегированных данных
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-01
+**Summary**: Epic 60 complete guide with quick-start code examples for React Query hooks. Covers sync-status checking, aggregated data loading, FBO/FBS breakdown, and trend analysis. All 12 endpoints deployed and working.
+**Remaining frontend action**: Use quick-start patterns for dashboard FBO/FBS integration.
 ```typescript
 const { data: summary } = useQuery({
   queryKey: ['fulfillment-summary', cabinetId, from, to],

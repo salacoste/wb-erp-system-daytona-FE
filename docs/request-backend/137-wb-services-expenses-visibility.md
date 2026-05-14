@@ -28,6 +28,15 @@
 |-----------|-------------------------|---------|-------|
 | **WB.Promotion** | `LIKE '%Продвижен%'` | 18 | **800,226₽** |
 | **Джем** | `LIKE '%Джем%'` | 4 | **72,162₽** |
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (analysis complete)
+**Resolution date**: 2025-12-13
+**Summary**: Analysis of hidden WB services expenses. Found 800,226 RUB in WB.Promotion, 72,162 RUB in Jam subscription, and other services hidden in `other_adjustments_net`. Data exists in database but was not surfaced in analytics UI. Architecture document created for flexible categorization system.
+**Remaining frontend action**: Build expense breakdown UI to surface these categories when backend categorization is complete.
 | **Утилизация** | `LIKE '%утилизац%'` | 3 | 2,244₽ |
 | Минимальный платеж | `= 'Остаток по минимальному платежу'` | 4 | 4,008₽ (в commission_other → wb_commission_adj ✅) |
 

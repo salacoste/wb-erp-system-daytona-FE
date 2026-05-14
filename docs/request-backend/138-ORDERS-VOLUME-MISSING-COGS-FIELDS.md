@@ -28,6 +28,14 @@
 
 ### Что ожидает фронтенд (Story 61.4-FE)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-14
+**Summary**: Added missing COGS fields to `GET /v1/analytics/orders/volume` response. Endpoint now returns `by_day_with_cogs[]` array with COGS data alongside order volume data. Frontend card "COGS по заказам" can now display correct amounts.
+**Remaining frontend action**: None - COGS fields now available in orders/volume response.
 ```json
 {
   "total_orders": 25,

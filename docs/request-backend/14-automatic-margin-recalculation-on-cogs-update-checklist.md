@@ -234,3 +234,10 @@ When complete:
 **Date:** 2025-11-24
 **Estimated Implementation Time:** 8-12 hours
 **Priority:** High - Blocks good COGS management UX
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-01-26
+- **Summary**: All checklist items from this request were implemented as part of Epic 20. Background task auto-enqueue after COGS create/update, batch task for bulk uploads, and automatic `weekly_margin_fact` population are all working. See the companion `-backend.md` file for the complete implementation response.
+- **Remaining frontend action**: Integrate polling or optimistic UI for real-time margin status updates.

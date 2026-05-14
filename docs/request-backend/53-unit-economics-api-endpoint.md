@@ -447,3 +447,10 @@ export class UnitEconomicsController {
 - Documentation: `docs/API-PATHS-REFERENCE.md`, `docs/epics/epic-27-unit-economics-analytics.md`
 
 **Frontend Can Now Proceed With**: Stories 5.2, 5.3, 5.4
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-09
+- **Summary**: Unit economics endpoint (`GET /v1/analytics/unit-economics`) is implemented as part of Epic 27. Returns cost breakdown by category (logistics, storage, COGS, etc.), profitability status per SKU, and aggregated summaries. Supports view by SKU, category, brand, and total. Redis caching with 1h TTL. Performance <500ms for 100 SKUs.
+- **Remaining frontend action**: Implement Stories 5.2, 5.3, 5.4 for unit economics UI.

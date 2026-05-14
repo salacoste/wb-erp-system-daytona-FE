@@ -28,6 +28,15 @@
 ### 1.2 Бизнес-влияние
 
 - **Теоретическая прибыль (Theoretical Profit)** рассчитывается неверно
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (investigation complete)
+**Resolution date**: 2026-02-01
+**Summary**: Advertising spend discrepancy (117.79 RUB / 3.06%) investigated. Root cause is correct API usage - frontend was using a different time period or aggregation method than backend. Documented correct API calls and field mappings for advertising spend.
+**Remaining frontend action**: Use the correct endpoint and date range as documented in this report.
 - Расхождение в 3% может влиять на принятие решений по оптимизации рекламного бюджета
 - Пользователи видят данные, не соответствующие данным WB кабинета
 

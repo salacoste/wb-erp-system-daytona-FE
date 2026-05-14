@@ -27,6 +27,13 @@
 - Достаточно обновлять 1 раз в день (06:00 MSK)
 - Response time будет стабильнее
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED
+**Resolution**: Frontend clarification on supply planning API preferences (daily snapshot over real-time, skip in-transit for MVP, use last 4 weeks for velocity). Backend incorporated these preferences into the final implementation.
+**Frontend Action**: No further action needed unless noted above.
+
 **Acceptable**: Если WB API stocks уже интегрирован для других целей - можно использовать с кешированием 15-30 мин.
 
 ---

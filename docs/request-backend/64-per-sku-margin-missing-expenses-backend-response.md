@@ -48,6 +48,11 @@ Authorization: Bearer <token>
 X-Cabinet-Id: <cabinet-uuid>
 ```
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 ### Query Parameters
 
 | Parameter | Type | Required | Default | Description |

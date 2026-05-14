@@ -45,6 +45,11 @@
 
 ## API Endpoints
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 ### 1. Advertising Performance Metrics
 
 ```http
@@ -542,3 +547,10 @@ When querying with `from`/`to` parameters that don't overlap with this range:
 *Дата создания: 2025-12-22*
 *Последнее обновление: 2026-01-30*
 *SDK Version: daytona-wildberries-typescript-sdk v2.3.1+*
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2026-01-30
+- **Summary**: Epic 33 (Advertising Analytics) is complete with all 8 stories implemented. Provides campaign-level analytics with spend, revenue, ROAS/ROI metrics, and materialized views for performance. SDK upgraded to v2.3.1+ (now v3.10.0). Data available from 2025-12-01 onward. Empty state handling documented in Request #115.
+- **Remaining frontend action**: Integrate advertising analytics with smart date picker showing available date ranges. Handle empty state for periods outside available data.

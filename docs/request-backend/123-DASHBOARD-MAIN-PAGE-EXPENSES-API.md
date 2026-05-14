@@ -29,6 +29,14 @@
 
 ### Периоды данных
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (reference document)
+**Resolution date**: 2026-01-31
+**Summary**: Dashboard expenses API guide covering advertising, logistics, and storage costs. Maps each expense category to its backend endpoint with formulas and examples.
+**Remaining frontend action**: None - use as implementation reference for dashboard expenses section.
 - **Последняя неделя**: 7 дней, группировка по дням
 - **Последний месяц**: ~30 дней, группировка по дням/неделям
 

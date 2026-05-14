@@ -38,6 +38,15 @@
 ## 📚 Полная документация
 
 Создали для вас подробный гайд:
+
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (informational message)
+**Resolution date**: 2026-01-25
+**Summary**: Informational message to frontend team explaining the two WB tariff systems (Inventory vs Supply). This is correct behavior, not a bug. Full documentation provided in Request #108.
+**Remaining frontend action**: None - informational only.
 **`frontend/docs/request-backend/108-two-tariff-systems-guide.md`**
 
 Там всё расписано:

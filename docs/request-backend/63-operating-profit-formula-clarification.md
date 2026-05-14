@@ -196,3 +196,10 @@ total_expenses_rub = 7,392.70  -- full formula ✅
 | Какие расходы включены? | 9 типов: логистика, хранение, приёмка, штрафы, эквайринг, лояльность, комиссии, прочие |
 | Детализация per SKU доступна? | Да, все поля уже в API `/v1/analytics/weekly/by-sku` |
 | Рекомендация для frontend? | Использовать `operating_profit_rub` напрямую из API |
+
+## Backend Team Response
+
+- **Status**: RESOLVED
+- **Resolution date**: 2025-12-06
+- **Summary**: Operating profit formula documented and verified. Formula: `operating_profit = gross_profit - total_expenses` where total_expenses includes 9 types (logistics, storage, acceptance, penalties, acquiring, loyalty, commissions, other). Per-SKU detail available via `GET /v1/analytics/weekly/by-sku`. Frontend should use `operating_profit_rub` directly from API responses.
+- **Remaining frontend action**: Display operating profit and margin using API fields directly -- no client-side calculation needed.

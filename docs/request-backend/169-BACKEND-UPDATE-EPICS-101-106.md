@@ -28,6 +28,14 @@
 
 ### 1.2 FBS Analytics REST API (Epic 105)
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED (informational update)
+**Resolution date**: 2026-05-03
+**Summary**: Backend update covering Epics 101-106 (6 epics complete). 18 new/changed endpoints, 8 new response fields, 3 bug fixes. Includes: Acquiring Analytics (3 endpoints), FBS Analytics REST API, Unit Economics enhancements, Data Integrity fixes, Frontend Request implementations, and Return Classification improvements.
+**Remaining frontend action**: Integrate new endpoints per Epic 96-FE planning. See #170-FE-CLARIFICATIONS for questions about specific endpoints.
 7 endpoints — services had 60+ tests but zero REST exposure. Now fully wired.
 
 | Method | Path | Description |

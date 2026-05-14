@@ -48,6 +48,9 @@ GET /v1/analytics/unit-economics
 
 ---
 
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 ## Response Format
 
 ```json

@@ -49,6 +49,11 @@ ter-13-1: Расходы: 11,337₽, Продажи: 31,464₽ →  ROAS: 2.78  
 
 ## 📚 Документация (читать в этом порядке)
 
+---
+
+## Backend Team Response
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 ### 1. **API Contract** (обязательно к прочтению!)
 **Файл**: [`83-epic-36-api-contract.md`](./83-epic-36-api-contract.md)
 

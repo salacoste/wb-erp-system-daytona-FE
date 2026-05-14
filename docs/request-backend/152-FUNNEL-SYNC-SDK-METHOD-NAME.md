@@ -38,6 +38,14 @@ The `@ts-expect-error` cast on line 38 suppresses TypeScript errors, so this onl
 
 ## Impact
 
+---
+
+## Backend Team Response
+
+**Status**: RESOLVED
+**Resolution date**: 2026-02-19
+**Summary**: Fixed SDK method name mismatch in analytics service. All 3 methods renamed: `getProductsGroup` -> `createProductsGroup`, `getProductsProduct` -> `createProductsProduct`, `getProductsSize` -> `createProductsSize`. The `@ts-expect-error` cast that was suppressing TypeScript errors has been addressed.
+**Remaining frontend action**: None - funnel sync now processes products correctly.
 - `/analytics/funnel` page shows all zeros — no funnel data ever synced
 - `product_funnel_daily` table remains empty (0 rows)
 - Funnel sync status shows `lastSyncAt: null`
