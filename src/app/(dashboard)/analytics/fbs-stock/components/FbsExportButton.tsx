@@ -139,7 +139,7 @@ export function FbsExportButton() {
 
       if (!statusData.url) {
         // Defensive Frontend Principle: backend says ready but url is null — surface honestly.
-        // PENDING BACKEND: request #169 — status=ready with null url should not occur.
+        // Backend resolved in Epic 106 (request #169); guard kept for defense-in-depth — status=ready with null url should not occur.
         toast.error('Файл готов, но ссылка для скачивания отсутствует. Сообщите в поддержку.', {
           duration: 8_000,
         })

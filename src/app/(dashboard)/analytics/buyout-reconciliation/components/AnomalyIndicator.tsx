@@ -10,7 +10,7 @@
  *   - Tooltip explains the specific anomaly type.
  *   - tabIndex + role + aria-label for keyboard accessibility (Story 96.13 L2-2 lesson).
  *
- * PENDING BACKEND: request #169 § 1.3 — buyout reconciliation anomaly counts.
+ * Backend resolved in Epic 106 (request #169 § 1.3); guard kept for defense-in-depth.
  * Do NOT swap counts with text or hide them; preserve evidence of backend data inconsistency.
  *
  * @see src/components/custom/orders/OrdersTableRow.tsx (canonical AlertTriangle precedent — Story 87.3)

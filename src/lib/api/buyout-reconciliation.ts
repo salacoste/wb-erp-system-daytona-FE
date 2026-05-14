@@ -49,7 +49,7 @@ export const buyoutReconciliationQueryKeys = {
  * GET /v1/analytics/buyout/reconciliation?from=&to=&nmId=
  * Returns per-SKU buyout/return reconciliation data with anomaly counts for the period.
  *
- * PENDING BACKEND: request #169 § 1.3 — buyout reconciliation endpoint (Epic 106 backend).
+ * Backend resolved in Epic 106 (request #169 § 1.3); endpoint live. Normalizer kept for defense-in-depth.
  */
 export async function getBuyoutReconciliation(
   params: BuyoutReconciliationParams

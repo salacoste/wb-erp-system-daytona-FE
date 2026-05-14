@@ -12,8 +12,8 @@
  * stage, an amber AlertTriangle is shown per CLAUDE.md Defensive Frontend Principle.
  * H2-2 fix: 5% relative tolerance + minimum-2-unit floor prevents false positives from
  * backend eventually-consistency (e.g., single late-arriving event).
- * // PENDING BACKEND: file ticket if this fires in production — funnel stages should
- * // monotonically narrow (views ≥ cartAdds ≥ orders ≥ deliveries).
+ * FUTURE: if the funnel-inversion guard fires in production, file a backend ticket — funnel stages should
+ * monotonically narrow (views ≥ cartAdds ≥ orders ≥ deliveries). Pure preventive guard; no current backend dep.
  *
  * L-1 fix: SVG has role="img" + <title> for accessibility (per MonitorBuyoutGauge precedent).
  * L-2-2 fix: AlertTriangle wrapper is keyboard-accessible (tabIndex=0, role=button, aria-label).

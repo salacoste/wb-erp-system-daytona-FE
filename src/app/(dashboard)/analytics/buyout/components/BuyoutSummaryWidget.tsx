@@ -79,7 +79,8 @@ export function BuyoutSummaryWidget({
           </div>
           {/* H2-1 fix: Defensive Frontend Principle "show an indicator" full recipe —
               footnote required when anomalous 'unknown' source surfaces (icon alone insufficient).
-              // PENDING BACKEND: request #169 § 1.3 — unknown source indicator */}
+              Backend resolved in Epic 106 (request #169 § 1.3); guard kept for defense-in-depth
+              per CLAUDE.md § Defensive Frontend Principle. */}
           {data.source === 'unknown' && (
             <p className="text-xs text-amber-700 mt-1">
               * Источник данных не распознан backend&apos;ом. Возможна ошибка нормализации на

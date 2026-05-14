@@ -90,9 +90,8 @@ function normalizeReconciliationItem(raw: unknown): ReconciliationItem {
  * Normalizes the full reconciliation-endpoint envelope.
  * Input: raw `{ data: [...], period, generatedAt }` from apiClient (skipDataUnwrap: true).
  *
- * PENDING BACKEND: request #169 § 1.3 — buyout reconciliation endpoint.
- * This normalizer is pre-wired per Boundary Normalizer Pattern; backend delivers
- * data via GET /v1/analytics/buyout/reconciliation.
+ * Backend resolved in Epic 106 (request #169 § 1.3); endpoint live. Normalizer kept per Boundary Normalizer Pattern.
+ * Backend delivers data via GET /v1/analytics/buyout/reconciliation.
  */
 export function normalizeBuyoutReconciliationResponse(raw: unknown): BuyoutReconciliationResponse {
   const r = (raw ?? {}) as Record<string, unknown>

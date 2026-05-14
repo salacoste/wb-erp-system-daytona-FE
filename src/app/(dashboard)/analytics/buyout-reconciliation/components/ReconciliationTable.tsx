@@ -8,7 +8,7 @@
  * Columns: Артикул WB | Товар | Выкупов | Возвратов | Возвраты без выкупа | Сиротские выкупы |
  *          Расхождение количества | Источник
  *
- * PENDING BACKEND: request #169 § 1.3 — buyout reconciliation anomaly counts.
+ * Backend resolved in Epic 106 (request #169 § 1.3); guard kept for defense-in-depth.
  * Per CLAUDE.md Defensive Frontend Principle: raw counts preserved; AlertTriangle on count > 0.
  */
 
@@ -35,7 +35,7 @@ interface ReconciliationTableProps {
  * now enforced. Dead fallback branch removed: VALID_BUYOUT_SOURCES set was always true since
  * ReconciliationItem.source is typed BuyoutSource (all 5 variants covered by SourceBadge).
  * SourceBadge handles every BuyoutSource variant including 'unknown' with AlertTriangle.
- * // PENDING BACKEND: request #169 § 1.3 — unknown source indicator (Defensive Frontend Principle)
+ * Backend resolved in Epic 106 (request #169 § 1.3); guard kept for defense-in-depth (CLAUDE.md § Defensive Frontend Principle).
  */
 function ReconciliationSourceCell({ source }: { source: BuyoutSource }) {
   return <SourceBadge source={source} />
