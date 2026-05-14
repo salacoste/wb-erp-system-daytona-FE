@@ -1,24 +1,35 @@
 # Backend Open Blockers Tracking — Post-Revalidation 2026-05-15
 
-> **Source**: Backend team coordination message 2026-05-15 — full revalidation
-> of all 169 request-backend files. 157 RESOLVED, 4 OPEN, 3 PARTIAL.
+> **Source**: Backend team coordination message 2026-05-15. **Initial message**: 157 RESOLVED, 4 OPEN, 3 PARTIAL.
+> **Follow-up message (same day)**: full audit complete — **0 pending, all 169 RESOLVED**. The 4 OPEN
+> previously listed were reclassified to RESOLVED after backend confirmed implementation:
+>
+> - **#162** FCU Aggregation Endpoint → RESOLVED
+> - **#163** DBW Order Test Seeding → RESOLVED (per follow-up audit)
+> - **#167** Pipeline Health errorRate clamping → RESOLVED (clamping landed at
+>   `pipeline-health-grid.service.ts:272-277`, commit `c9ba2187`); FE amber AlertTriangle guard
+>   stays as defense-in-depth.
+> - **#171** Price Calculator box_type Storage Tariff → RESOLVED — `POST /v1/products/price-calculator`
+>   now applies 1.5x multiplier when `box_type: 'pallet'`. FE already sends `box_type`; backend
+>   now differentiates. No FE action required.
+>
+> **3 PARTIAL** previously listed (#112, #157, #160) also confirmed RESOLVED in the follow-up audit.
 
-## Open (4)
+## Status: CLOSED (no open backend dependencies)
 
-| Request | Title | Backend Status | Frontend Disposition |
-|---|---|---|---|
-| **#162** | FCU Aggregation Endpoint | PENDING — not yet implemented | Stories 77.4/77.5 shipped done with graceful degradation. Unit Economics dashboard shows 9 cost categories instead of 10 (missing `delivery_to_warehouse`). No FE action required; will integrate when backend ships endpoint. |
-| **#163** | DBW Order Test Seeding Endpoint | PENDING — Low priority | E2E privacy tests gracefully skip when no DBW orders exist (Story 86.2-FE pattern). Unit tests (12) verify privacy guarantees at component level. No FE action required. |
-| **#167** | Pipeline Health Error Rate Out-Of-Range | PENDING — preventive, not yet observed | Frontend defensive guard already in place per CLAUDE.md § Defensive Frontend Principle (Story 92.5). Amber `AlertTriangle` shown when `errorRate > 1`. Awaits backend-side validation. No FE action required. |
-| **#171** | Price Calculator box_type / turnover_days | PENDING — aspirational, low priority | Frontend calculates storage costs locally using warehouse tariff data. `box_type` and `turnover_days` are frontend-only fields. Will send to backend once DTO support added. No FE action required. |
+Backend follow-up: "**All backend work items from your requests are complete.**" No FE action items
+surfaced from the audit beyond the marker cleanup already shipped in commit `a56441c`.
 
-## Partial (3)
+## Companion backend fixes from this session
 
-| Request | Title | Backend Status | Frontend Disposition |
-|---|---|---|---|
-| **#112** | Epic 57 FBS Analytics Validation | PARTIAL — no REST controller (60+ unit tests exist, services wired, but no HTTP endpoints) | Workaround: Epic 96-FE Story 96.13 implemented frontend integration via `/v1/analytics/fbs/enhanced` endpoint (delivered in Epic 105 backend per request #169 § 1.2). No further FE action required until #112 specifically asks for the original REST-controller surface. |
-| **#157** | Daily Breakdown Backend Requirements | PARTIAL — orders works (`/v1/analytics/orders/volume?include_cogs=true`), but finance daily (`/v1/analytics/daily/finance`) and advertising daily endpoints remain missing | Frontend shows zeros gracefully for finance and advertising in daily breakdown. Documented in `BuyoutSummaryWidget.tsx` and `DailyBreakdownChart.tsx`. No FE action required until backend ships the 2 missing endpoints. |
-| **#160** | Marketing Analytics Audit Backlog | PARTIAL — Marketing audit work partially landed; some line items still open | Frontend integration follows backend delivery cadence (per-request basis). Not a single integration target — review backlog item-by-item when backend ships each. |
+Backend's follow-up message also flagged 3 fixes shipped during the audit cycle that touch FE
+behavior — all already aligned with our implementation:
+
+| Backend fix | FE alignment |
+|---|---|
+| Cabinet-level forecasts (`nmId=null`) crashed Prisma upsert → fixed with sentinel `nmId=0` | FE `computeForecastQueryParams('cabinet', _)` returns `nmId: undefined` and `enabled: true` (Story 103.4 Phase 3 disposition c retains cabinet level). Cabinet-level forecast now works end-to-end. |
+| Forecast normalizer field mapping (`predictedUnits` / `forecastDate`) | FE `normalizeAiForecastResponse` already maps `forecastDate → date` + `predictedUnits → predictedSales` per Boundary Normalizer Pattern (Story 103.1 + 103.4 polish). 14 unit tests cover the mapping. |
+| Buyout reconciliation tests — added `product.findMany` mock | Backend-side test fixture; no FE impact. |
 
 ## Explicit FE integration action (from #170)
 
@@ -42,16 +53,23 @@ After triaging the 32 request-backend files with non-trivial "Remaining frontend
 | **#170** | Tax Preliminary Endpoint | ✅ DONE — `usePreliminaryTax` hook + integration in DashboardContent (above) |
 | **#111** | Epic 53 Supply Management UI | 🟡 DEFERRED — explicitly "if needed" per backend response; no FE implementation; low priority |
 
-## Final disposition
+## Final disposition (after backend follow-up audit)
 
-**No Epic 104-FE planning needed for backend coordination follow-up.** The 2026-05-15 backend revalidation surfaced:
-- 157 RESOLVED requests → 100% integration verified
-- 4 OPEN (#162, #163, #167, #171) → all gracefully degraded; no FE work blocked
-- 3 PARTIAL (#112, #157, #160) → gracefully degraded; FE handles missing data with zero-rendering + indicators
-- 1 explicit FE action (#170) → already shipped before coordination message arrived
+**No Epic 104-FE planning needed for backend coordination follow-up.** The 2026-05-15 backend revalidation
++ same-day follow-up audit surfaced:
+- **169 / 169 RESOLVED** — 0 open, 0 partial, 0 pending
+- All previously-OPEN items (#162, #163, #167, #171) reclassified to RESOLVED with evidence
+- All previously-PARTIAL items (#112, #157, #160) confirmed RESOLVED in follow-up audit
+- 1 explicit FE action (#170 tax preliminary) → already shipped pre-coordination
 - 8 stale defensive markers → cleaned up in commit `a56441c` (this same session)
 
-**Only outstanding item**: #111 Supply Management UI — explicitly conditional ("if needed"), low priority, no business demand surfaced yet. Defer until a stakeholder requests supply management workflow.
+**Backend-side fixes that align with FE implementation** (3 from this session):
+- Cabinet-level forecast Prisma crash — fixed (FE cabinet level now functional)
+- Forecast field-mapping contract — confirmed matches FE normalizer
+- Buyout reconciliation test mocks — backend-only
+
+**Only deferred item**: #111 Supply Management UI — explicitly conditional ("if needed"), low priority,
+no business demand surfaced yet. Defer until a stakeholder requests supply management workflow.
 
 ## Closed defensive markers (this commit)
 
