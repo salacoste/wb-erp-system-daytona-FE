@@ -332,8 +332,28 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
 
     it('should merge advertising data into DailyMetrics', () => {
       const advertisingData: AdvertisingDailyData[] = [
-        { date: '2026-01-26', total_spend: 5000 },
-        { date: '2026-01-27', total_spend: 7000 },
+        {
+          date: '2026-01-26',
+          total_spend: 5000,
+          views: 0,
+          clicks: 0,
+          ctr: 0,
+          cpc: 0,
+          orders: 0,
+          revenue: 0,
+          roas: 0,
+        },
+        {
+          date: '2026-01-27',
+          total_spend: 7000,
+          views: 0,
+          clicks: 0,
+          ctr: 0,
+          cpc: 0,
+          orders: 0,
+          revenue: 0,
+          roas: 0,
+        },
       ]
 
       const result = aggregateDailyMetrics({
@@ -368,7 +388,19 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           net_profit: null,
         },
       ]
-      const advertisingData: AdvertisingDailyData[] = [{ date: '2026-01-26', total_spend: 8000 }]
+      const advertisingData: AdvertisingDailyData[] = [
+        {
+          date: '2026-01-26',
+          total_spend: 8000,
+          views: 0,
+          clicks: 0,
+          ctr: 0,
+          cpc: 0,
+          orders: 0,
+          revenue: 0,
+          roas: 0,
+        },
+      ]
 
       const result = aggregateDailyMetrics({
         ordersData,
@@ -492,7 +524,19 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
           net_profit: null,
         },
       ]
-      const advertisingData: AdvertisingDailyData[] = [{ date: '2026-01-26', total_spend: 8000 }]
+      const advertisingData: AdvertisingDailyData[] = [
+        {
+          date: '2026-01-26',
+          total_spend: 8000,
+          views: 0,
+          clicks: 0,
+          ctr: 0,
+          cpc: 0,
+          orders: 0,
+          revenue: 0,
+          roas: 0,
+        },
+      ]
 
       const result = aggregateDailyMetrics({
         ordersData,

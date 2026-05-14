@@ -133,6 +133,14 @@ export async function getAdvertisingDailyData(
     return (response ?? []).map(item => ({
       date: item.date,
       total_spend: item.spend ?? 0,
+      // Story 104.2-FE: expose all 8 remaining per-day fields (previously dropped)
+      views: item.views ?? 0,
+      clicks: item.clicks ?? 0,
+      ctr: item.ctr ?? 0,
+      cpc: item.cpc ?? 0,
+      orders: item.orders ?? 0,
+      revenue: item.revenue ?? 0,
+      roas: item.roas ?? 0,
     }))
   } catch {
     return []

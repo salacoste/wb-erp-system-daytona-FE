@@ -177,7 +177,18 @@ describe('aggregateDailyMetrics — Story 91.2-FE server netProfit integration',
       }),
     ]
     const advertisingDataWithDifferentValue: AdvertisingDailyData[] = [
-      { date: '2026-01-01', total_spend: 750 }, // from separate advertising API (different!)
+      // Story 104.2-FE: include all required fields; only total_spend used in this test
+      {
+        date: '2026-01-01',
+        total_spend: 750,
+        views: 0,
+        clicks: 0,
+        ctr: 0,
+        cpc: 0,
+        orders: 0,
+        revenue: 0,
+        roas: 0,
+      },
     ]
     const result = aggregateDailyMetrics({
       ordersData,

@@ -1,9 +1,10 @@
 /**
  * Tests for daily-analytics API transforms — Story 88.2-FE null-preservation
+ * + Story 104.2-FE: getAdvertisingDailyData full-field mapping
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { getFinanceDailyData, getOrdersCogsDailyData } from '../api'
+import { getFinanceDailyData, getOrdersCogsDailyData, getAdvertisingDailyData } from '../api'
 import { apiClient } from '@/lib/api-client'
 
 vi.mock('@/lib/api-client', () => ({
@@ -110,5 +111,69 @@ describe('getOrdersCogsDailyData — Story 88.2-FE null-preservation', () => {
     expect(result[0].cogs).toBeNull()
     expect(result[1].cogs).toBe(0)
     expect(result[2].cogs).toBe(1500)
+  })
+})
+
+describe('getAdvertisingDailyData — Story 104.2-FE full-field mapping', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('maps all 9 backend fields to AdvertisingDailyData', async () => {
+    vi.mocked(apiClient.get).mockResolvedValueOnce([
+      {
+        date: '2026-05-01',
+        spend: 8000,
+        views: 50000,
+        clicks: 1200,
+        ctr: 2.4,
+        cpc: 6.67,
+        orders: 45,
+        revenue: 67500,
+        roas: 8.44,
+      },
+    ])
+
+    const result = await getAdvertisingDailyData('2026-05-01', '2026-05-01')
+    expect(result).toHaveLength(1)
+    expect(result[0].date).toBe('2026-05-01')
+    expect(result[0].total_spend).toBe(8000)
+    expect(result[0].views).toBe(50000)
+    expect(result[0].clicks).toBe(1200)
+    expect(result[0].ctr).toBe(2.4)
+    expect(result[0].cpc).toBe(6.67)
+    expect(result[0].orders).toBe(45)
+    expect(result[0].revenue).toBe(67500)
+    expect(result[0].roas).toBe(8.44)
+  })
+
+  it('defaults missing numeric fields to 0', async () => {
+    vi.mocked(apiClient.get).mockResolvedValueOnce([
+      { date: '2026-05-02' }, // all fields absent
+    ])
+
+    const result = await getAdvertisingDailyData('2026-05-02', '2026-05-02')
+    expect(result[0].total_spend).toBe(0)
+    expect(result[0].views).toBe(0)
+    expect(result[0].clicks).toBe(0)
+    expect(result[0].ctr).toBe(0)
+    expect(result[0].cpc).toBe(0)
+    expect(result[0].orders).toBe(0)
+    expect(result[0].revenue).toBe(0)
+    expect(result[0].roas).toBe(0)
+  })
+
+  it('returns empty array when backend returns empty array', async () => {
+    vi.mocked(apiClient.get).mockResolvedValueOnce([])
+
+    const result = await getAdvertisingDailyData('2026-05-01', '2026-05-07')
+    expect(result).toEqual([])
+  })
+
+  it('returns empty array on fetch error', async () => {
+    vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('Network error'))
+
+    const result = await getAdvertisingDailyData('2026-05-01', '2026-05-07')
+    expect(result).toEqual([])
   })
 })

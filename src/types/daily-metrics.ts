@@ -115,14 +115,29 @@ export interface FinanceDailyData {
 }
 
 /**
- * Raw advertising daily data from Advertising API.
- * GET /v1/analytics/advertising (with daily breakdown)
+ * Raw advertising daily data from Advertising Daily API.
+ * GET /v1/analytics/daily/advertising?from=...&to=...
+ * Story 104.2-FE: enriched with all 9 per-day fields (was spend-only).
  */
 export interface AdvertisingDailyData {
   /** Date in YYYY-MM-DD format */
   date: string
-  /** Total advertising spend */
+  /** Total advertising spend in rubles (= spend from backend) */
   total_spend: number
+  /** Ad impressions (views) */
+  views: number
+  /** Ad clicks */
+  clicks: number
+  /** Click-through rate in percent (clicks / views * 100) */
+  ctr: number
+  /** Cost per click in rubles */
+  cpc: number
+  /** Orders attributed to advertising */
+  orders: number
+  /** Revenue attributed to advertising in rubles */
+  revenue: number
+  /** Return on ad spend (revenue / spend). 0 when spend = 0. */
+  roas: number
 }
 
 /**
