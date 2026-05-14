@@ -325,9 +325,9 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-104-fe.md
   # Source: Backend coordination follow-up audit 2026-05-15 — confirmed /v1/analytics/daily/finance + /v1/analytics/daily/advertising live (Epic 88), FCU already integrated but needs view-mode verification
   # Created: 2026-05-15
-  epic-104-fe: in-progress
+  epic-104-fe: done
   104-1-fe-daily-finance-integration: done  # no-op: already shipped via Epic 91-FE Story 91.2 (getFinanceDailyData fully wired incl. advertising_spend + net_profit); verified api.ts:75-102, daily-metrics.ts:86-115
   104-2-fe-daily-advertising-integration: done  # AdvertisingDailyData enriched with 8 dropped fields (views,clicks,ctr,cpc,orders,revenue,roas); getAdvertisingDailyData mapping updated; 4 new unit tests added; tsc 0e, vitest 7247 pass
   104-3-fe-fcu-10th-category-verification: done  # 2026-05-15 source-trace verification: delivery_to_warehouse IS rendered on SKU view. Located in waterfall COST_CATEGORIES list (waterfall-chart-utils.ts:48-62, position 6 of 10 total — original "10th category" framing was a triage misread; full set is COGS/Commission/Logistics-delivery/Logistics-return/Storage/Delivery-to-warehouse/Paid-acceptance/Penalties/Other-deductions/Advertising). FCU fetch correctly gated via useUnitEconomicsPageState.ts:135 `useFcuBySku(viewBy === 'sku' ? selectedWeek : undefined)`. mergeDeliveryCosts handles null DCU + missing FCU. Test coverage: mergeDeliveryCosts.test.ts (7 cases) + UnitEconomicsTableRow.fcu-dcu.test.tsx (5 cases). Brand/cabinet view modes don't show delivery_to_warehouse by design (per-SKU only metric).
-  104-4-fe-tests-polish-retrospective: backlog
-  epic-104-fe-retrospective: optional
+  104-4-fe-tests-polish-retrospective: done  # 2026-05-15 final gate sweep: ESLint 0e/112w, tsc 0e, vitest 7248p/0f (+5 from Epic 104 work), doc-citations 22 (was 24; 2 resolved as side-effect of daily-metrics.ts file growth). Retrospective: _bmad-output/implementation-artifacts/epic-104-fe-retro-2026-05-15.md. 5 action items A-1..A-5 filed targeting Anti-Pattern #8 ESLint automation, pre-flight source-trace step, cross-team verification protocol, hook heuristic tightening, advertising daily fixture factory.
+  epic-104-fe-retrospective: done
