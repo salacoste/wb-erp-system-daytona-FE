@@ -147,20 +147,48 @@ describe('getAdvertisingDailyData — Story 104.2-FE full-field mapping', () => 
     expect(result[0].roas).toBe(8.44)
   })
 
-  it('defaults missing numeric fields to 0', async () => {
+  it('defaults missing count fields to 0, preserves null for money/ratio fields', async () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce([
       { date: '2026-05-02' }, // all fields absent
     ])
 
     const result = await getAdvertisingDailyData('2026-05-02', '2026-05-02')
+    // counts → 0
     expect(result[0].total_spend).toBe(0)
     expect(result[0].views).toBe(0)
     expect(result[0].clicks).toBe(0)
-    expect(result[0].ctr).toBe(0)
-    expect(result[0].cpc).toBe(0)
     expect(result[0].orders).toBe(0)
-    expect(result[0].revenue).toBe(0)
-    expect(result[0].roas).toBe(0)
+    // money/ratio → null (Anti-Pattern #8: preserve null, render as —)
+    expect(result[0].ctr).toBeNull()
+    expect(result[0].cpc).toBeNull()
+    expect(result[0].revenue).toBeNull()
+    expect(result[0].roas).toBeNull()
+  })
+
+  it('backend null preserved for revenue/roas/cpc/ctr (Anti-Pattern #8 compliance)', async () => {
+    vi.mocked(apiClient.get).mockResolvedValueOnce([
+      {
+        date: '2026-05-03',
+        spend: 100,
+        views: 50,
+        clicks: 5,
+        orders: 1,
+        ctr: null,
+        cpc: null,
+        revenue: null,
+        roas: null,
+      },
+    ])
+
+    const result = await getAdvertisingDailyData('2026-05-03', '2026-05-03')
+    expect(result[0].total_spend).toBe(100)
+    expect(result[0].views).toBe(50)
+    expect(result[0].clicks).toBe(5)
+    expect(result[0].orders).toBe(1)
+    expect(result[0].ctr).toBeNull()
+    expect(result[0].cpc).toBeNull()
+    expect(result[0].revenue).toBeNull()
+    expect(result[0].roas).toBeNull()
   })
 
   it('returns empty array when backend returns empty array', async () => {

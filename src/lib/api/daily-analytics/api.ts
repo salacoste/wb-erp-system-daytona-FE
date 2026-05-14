@@ -103,23 +103,25 @@ export async function getFinanceDailyData(from: string, to: string): Promise<Fin
 
 /**
  * Backend response shape for GET /v1/analytics/daily/advertising.
+ * Money/ratio fields are nullable — backend may omit them for days with no ad data.
  */
 interface AdvertisingDailyResponseItem {
   date: string
-  spend: number
-  views: number
-  clicks: number
-  ctr: number
-  cpc: number
-  orders: number
-  revenue: number
-  roas: number
+  spend: number | null | undefined
+  views: number | null | undefined
+  clicks: number | null | undefined
+  ctr: number | null | undefined
+  cpc: number | null | undefined
+  orders: number | null | undefined
+  revenue: number | null | undefined
+  roas: number | null | undefined
 }
 
 /**
  * Fetch advertising daily data.
  * GET /v1/analytics/daily/advertising?from=...&to=...
- * Returns per-day spend, views, clicks, orders, revenue.
+ * Returns per-day `spend`, `views`, `clicks`, `ctr`, `cpc`, `orders`, `revenue`, `roas`
+ * (ratios/money fields preserve null per Anti-Pattern #8).
  */
 export async function getAdvertisingDailyData(
   from: string,
@@ -132,15 +134,14 @@ export async function getAdvertisingDailyData(
 
     return (response ?? []).map(item => ({
       date: item.date,
-      total_spend: item.spend ?? 0,
-      // Story 104.2-FE: expose all 8 remaining per-day fields (previously dropped)
-      views: item.views ?? 0,
-      clicks: item.clicks ?? 0,
-      ctr: item.ctr ?? 0,
-      cpc: item.cpc ?? 0,
-      orders: item.orders ?? 0,
-      revenue: item.revenue ?? 0,
-      roas: item.roas ?? 0,
+      total_spend: item.spend ?? 0, // count-like — legitimate zero
+      views: item.views ?? 0, // count
+      clicks: item.clicks ?? 0, // count
+      ctr: item.ctr ?? null, // ratio — preserve null per Anti-Pattern #8
+      cpc: item.cpc ?? null, // money — preserve null
+      orders: item.orders ?? 0, // count
+      revenue: item.revenue ?? null, // money — preserve null
+      roas: item.roas ?? null, // ratio — preserve null
     }))
   } catch {
     return []

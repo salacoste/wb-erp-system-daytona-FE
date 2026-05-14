@@ -115,29 +115,42 @@ export interface FinanceDailyData {
 }
 
 /**
- * Raw advertising daily data from Advertising Daily API.
+ * Normalized advertising daily data (frontend-canonical shape).
+ * Raw backend shape is `AdvertisingDailyResponseItem` in `api.ts`.
  * GET /v1/analytics/daily/advertising?from=...&to=...
  * Story 104.2-FE: enriched with all 9 per-day fields (was spend-only).
  */
 export interface AdvertisingDailyData {
   /** Date in YYYY-MM-DD format */
   date: string
-  /** Total advertising spend in rubles (= spend from backend) */
+  /** Total advertising spend in rubles (= spend from backend). 0 = no ads ran (legitimate zero). */
   total_spend: number
   /** Ad impressions (views) */
   views: number
   /** Ad clicks */
   clicks: number
-  /** Click-through rate in percent (clicks / views * 100) */
-  ctr: number
-  /** Cost per click in rubles */
-  cpc: number
+  /**
+   * Click-through rate in percent (clicks / views * 100).
+   * Null = backend has no data for this day (preserved per CLAUDE.md Anti-Pattern #8). Render as `—`.
+   */
+  ctr: number | null
+  /**
+   * Cost per click in rubles.
+   * Null = backend has no data for this day (preserved per CLAUDE.md Anti-Pattern #8). Render as `—`.
+   */
+  cpc: number | null
   /** Orders attributed to advertising */
   orders: number
-  /** Revenue attributed to advertising in rubles */
-  revenue: number
-  /** Return on ad spend (revenue / spend). 0 when spend = 0. */
-  roas: number
+  /**
+   * Revenue attributed to advertising in rubles.
+   * Null = backend has no data for this day (preserved per CLAUDE.md Anti-Pattern #8). Render as `—`.
+   */
+  revenue: number | null
+  /**
+   * Return on ad spend (revenue / spend).
+   * Null = backend has no data for this day (preserved per CLAUDE.md Anti-Pattern #8). Render as `—`.
+   */
+  roas: number | null
 }
 
 /**
