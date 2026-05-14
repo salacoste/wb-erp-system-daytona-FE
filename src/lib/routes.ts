@@ -49,6 +49,7 @@ export const ROUTES = {
     BUYOUT_RECONCILIATION: '/analytics/buyout-reconciliation', // Epic 96-FE Story 96.14: Buyout reconciliation audit
     SEARCH: '/analytics/search', // Epic 71-FE: Search Analytics
     CROSS_REFERENCE: '/analytics/cross-reference', // Story 73.7-FE: Search + Advertising Cross-Reference
+    FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
   },
 
   // Epic 40-FE: Orders UI (WB Native Orders History)
@@ -128,6 +129,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.BUYOUT_RECONCILIATION, // Epic 96-FE Story 96.14: Buyout reconciliation audit
     ROUTES.ANALYTICS.SEARCH, // Epic 71-FE: Search Analytics
     ROUTES.ANALYTICS.CROSS_REFERENCE, // Story 73.7-FE: Search + Advertising Cross-Reference
+    ROUTES.ANALYTICS.FORECAST, // Epic 103-FE: AI Sales Forecast
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard

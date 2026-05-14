@@ -17,6 +17,7 @@ import {
   ClipboardList,
 } from 'lucide-react'
 import { Filter, ShoppingBag, RotateCcw, Search } from 'lucide-react'
+import { Brain } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
 /**
@@ -181,6 +182,17 @@ export const analyticsNavigation = {
         hoverBg: 'hover:bg-sky-100',
         borderColor: 'border-sky-200',
         badge: 'Джем',
+      },
+      {
+        href: ROUTES.ANALYTICS.FORECAST,
+        icon: Brain,
+        title: 'AI Прогноз',
+        description: 'Прогноз продаж на основе ML',
+        color: 'text-purple-600',
+        bgColor: 'bg-purple-50',
+        hoverBg: 'hover:bg-purple-100',
+        borderColor: 'border-purple-200',
+        badge: 'ML',
       },
     ],
   },

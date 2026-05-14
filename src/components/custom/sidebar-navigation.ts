@@ -35,6 +35,7 @@ import {
   Boxes,
   BarChart2,
   GitCompare,
+  Brain,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -95,6 +96,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Поиск', href: ROUTES.ANALYTICS.SEARCH, icon: Search },
   // Story 73.7-FE: Search + Advertising Cross-Reference
   { label: 'Кросс-анализ', href: ROUTES.ANALYTICS.CROSS_REFERENCE, icon: ArrowRightLeft },
+  // Epic 103-FE: AI Sales Forecast
+  { label: 'AI Прогноз', href: ROUTES.ANALYTICS.FORECAST, icon: Brain },
   // Epic 75-FE: Shipment Cost Allocation
   { label: 'Доставка', href: ROUTES.SHIPMENTS.ROOT, icon: Truck },
   // Epic 68-FE: Monitoring Health Dashboard
