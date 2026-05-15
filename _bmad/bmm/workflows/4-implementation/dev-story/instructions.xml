@@ -305,6 +305,27 @@
     <critical>Do NOT propose to pause for review until Step 9 completion gates are satisfied</critical>
   </step>
 
+  <step n="5.5" goal="Proactive-extraction check — would this benefit from a helper?">
+    <critical>Soft check, not a hard rule. Author judgment applies.</critical>
+
+    <action>Before committing the task's source change, scan the diff for inline logic patterns matching:
+      - ≥3 lines of non-trivial branching or arithmetic
+      - Reusable across multiple call sites (current or potential)
+      - Domain logic that warrants a name (e.g., "null-preserving sum", "boundary normalizer", "money parser")
+    </action>
+
+    <check if="pattern matches AND extraction would not bloat scope">
+      <action>Consider extracting as a helper function/module before commit. Add helper module, migrate inline call site to use it, add unit tests for the helper.</action>
+      <action>Rationale: 1 commit with helper beats 2 commits (inline now, extract later). Story 106.1 inlined a non-trivial reducer; Story 107.1 extracted it — 2 stories where 1 would suffice. Per Epic 107-FE retro A-5 codification.</action>
+    </check>
+
+    <check if="pattern doesn't match OR scope expansion would be significant">
+      <action>Skip — leave as inline. Document the pattern in code comment if non-obvious.</action>
+    </check>
+
+    <note>If unsure, default to inline. Extraction is reversible (later refactor); over-extraction creates indirection without justification (KISS / YAGNI). The check is a reminder, not a forcing function.</note>
+  </step>
+
   <step n="6" goal="Author comprehensive tests">
     <action>Create unit tests for business logic and core functionality introduced/changed by the task</action>
     <action>Add integration tests for component interactions specified in story requirements</action>

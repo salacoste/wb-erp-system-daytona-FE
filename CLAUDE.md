@@ -224,6 +224,8 @@ Each story closes only when EVERY quality gate's output matches its documented b
 
 **Related.** `### Accepted Baselines` (above) — quality-gate baselines per gate. `### Doc-citation validation` (above) — automated counterpart for the citation gate.
 
+**Scope clarification (Epic 107-FE A-2 codification).** 2-pass review is **mandatory for behavior-changing source code** — any commit that modifies runtime behavior, type signatures, normalizer logic, API contracts, or test assertions falls under the discipline. **Optional (executor-with-inline-verify acceptable) for trivial process-cleanup**: doc-only files, mechanical comment sweeps (e.g., Story 106.2's rationale replacement), test wrappers around existing validation (e.g., Story 107.2's vitest wrapper around an existing shell script), and helper-extraction refactors that preserve byte-identical behavior (e.g., Story 107.1's `nullPreservingSum` extraction — verified via existing test suite). Streak counting includes both modes; the distinction is which evidence form is sufficient. **Decision rule**: if a reviewer reading the diff could plausibly miss a logic defect (i.e., the change has runtime semantics), run 2 fresh-context reviews. If the diff is mechanical/structural with byte-identical or proof-by-test-suite equivalence, executor self-verify is enough.
+
 ### Known Anti-Patterns (Captured 2026-04-07 from Epic 86-FE retro)
 
 > **Full text + code examples**: [`CLAUDE-ANTI-PATTERNS.md`](./CLAUDE-ANTI-PATTERNS.md)

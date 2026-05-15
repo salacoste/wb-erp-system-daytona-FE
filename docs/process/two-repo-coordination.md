@@ -147,6 +147,14 @@ The patterns documented here were discovered while shipping **Story 105.1-FE** (
 
 Reading either commit message standalone makes the cross-repo dependency clear via the "pairs with" line.
 
+## Known limitation: `[DELEGATION NOTICE]` hook false positives
+
+The user-config tier (`~/.claude/hooks/`) includes a delegation-notice hook that fires on Bash commands matching a heuristic for "command may modify source files." The current heuristic produces false positives on common read-only operations: `grep`, `git log`, `git status`, `git diff`, `bash scripts/check-*.sh`, etc. Each false-positive fire bloats context with a system reminder.
+
+**Status**: Carried forward as action item across Epic 104-FE, 105-FE, 106-FE, 107-FE retros. **Permanently deferred** to user-config tier (out of repo modification scope). Acknowledged as known overhead; not a project-side bug.
+
+**Workaround**: Ignore the `[DELEGATION NOTICE]` system reminders for clearly read-only commands (grep, ls, cat, find, git read commands, bash check-* scripts). Operations proceed successfully despite the notice; the heuristic just over-fires.
+
 ## Related
 
 - CLAUDE.md § Critical Development Rules (frontend repo) — referenced for commit protocol
