@@ -341,3 +341,15 @@ development_status:
   105-2-fe-preflight-source-trace-workflow: done  # 2026-05-15 commit 4e9a8bc. Added Step 4.5 "Pre-flight source-trace verification" to dev-story workflow XML — mandatory for fresh implementations (skipped for review-continuation). 3-branch logic: all SHIPPED → skip to Step 9 done-as-no-op, all UNIMPLEMENTED → proceed normally, partial → narrow scope. CLAUDE.md § Critical Development Rules cross-reference with empirical citations (Stories 103.1-3 + 104.1 + 104.3 = 5 no-op closures, ~11 SP saved Epics 103-104).
   105-3-fe-tests-polish-retrospective: done  # 2026-05-15 final gates: ESLint 0e/112w, tsc 0e, vitest 7248p/0f, doc-citations 22 (baseline), self-test 9/9 pass. Retrospective filed: _bmad-output/implementation-artifacts/epic-105-fe-retro-2026-05-15.md.
   epic-105-fe-retrospective: done
+
+  # Epic 106-FE: Triage Anti-Pattern #8 Allowlists from Story 105.1 (P3, ~2.5 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-106-fe.md
+  # Source: Epic 105-FE retrospective action item A-1
+  # Triage findings: 64 sites surveyed — 1 FIX (daily/aggregation.ts:104 net_profit), 63 KEEP (legitimate exceptions in 6 patterns), 0 REMOVE
+  # Created: 2026-05-15
+  epic-106-fe: backlog
+  106-1-fe-fix-net-profit-nullability: backlog
+  106-2-fe-update-allowlist-rationales: backlog
+  106-3-fe-document-anti-pattern-8-exceptions: backlog
+  106-4-fe-tests-polish-retrospective: backlog
+  epic-106-fe-retrospective: optional
