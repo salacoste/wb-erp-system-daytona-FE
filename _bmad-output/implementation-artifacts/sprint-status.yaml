@@ -347,8 +347,10 @@ development_status:
   # Source: Epic 105-FE retrospective action item A-1
   # Triage findings: 64 sites surveyed — 1 FIX (daily/aggregation.ts:104 net_profit), 63 KEEP (legitimate exceptions in 6 patterns), 0 REMOVE
   # Created: 2026-05-15
-  epic-106-fe: backlog
-  106-1-fe-fix-net-profit-nullability: backlog
+  epic-106-fe: in-progress
+  # 2-pass review fixes applied 2026-05-15: Fix-block propagation gap closed (createEmptyDailyMetrics + calculateTotals initial),
+  # null-preserving reducer, sort comparator null guard, connectNulls on profit Line.
+  106-1-fe-fix-net-profit-nullability: done
   106-2-fe-update-allowlist-rationales: backlog
   106-3-fe-document-anti-pattern-8-exceptions: backlog
   106-4-fe-tests-polish-retrospective: backlog

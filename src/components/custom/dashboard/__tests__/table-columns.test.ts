@@ -198,7 +198,8 @@ describe('calculateTotals', () => {
     expect(totals.orders).toBe(0)
     expect(totals.sales).toBe(0)
     expect(totals.commission).toBe(0)
-    expect(totals.theoreticalProfit).toBe(0)
+    // Story 106.1-FE: no days → no COGS data → profit unknown (null, not 0)
+    expect(totals.theoreticalProfit).toBe(null)
   })
 })
 

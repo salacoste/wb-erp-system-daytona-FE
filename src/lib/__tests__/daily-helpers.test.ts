@@ -133,7 +133,8 @@ describe('Story 61.9-FE: createEmptyDailyMetrics', () => {
     expect(result.penalties).toBe(0)
     expect(result.paidAcceptance).toBe(0)
     expect(result.commission).toBe(0)
-    expect(result.theoreticalProfit).toBe(0)
+    // Story 106.1-FE: gap-filled days have no COGS data → profit unknown (null, not 0)
+    expect(result.theoreticalProfit).toBe(null)
   })
 
   it('should set correct dayOfWeek for different days', () => {
@@ -201,7 +202,8 @@ describe('Story 61.9-FE: fillMissingDays', () => {
       expect(result).toHaveLength(7)
       result.forEach(day => {
         expect(day.orders).toBe(0)
-        expect(day.theoreticalProfit).toBe(0)
+        // Story 106.1-FE: gap-filled days have no COGS data → profit unknown (null, not 0)
+        expect(day.theoreticalProfit).toBe(null)
       })
     })
   })

@@ -139,8 +139,10 @@ export function getColumnComparator(key: string): (a: DailyMetrics, b: DailyMetr
     return (a, b) => a.date.localeCompare(b.date)
   }
   return (a, b) => {
-    const aVal = a[key as keyof DailyMetrics] as number
-    const bVal = b[key as keyof DailyMetrics] as number
+    // Story 106.1-FE: cast to number|null to handle theoreticalProfit (and ordersCogs/salesCogs).
+    // Null values sort as 0 (bottom in ascending order) — avoids NaN from null arithmetic.
+    const aVal = (a[key as keyof DailyMetrics] as number | null) ?? 0
+    const bVal = (b[key as keyof DailyMetrics] as number | null) ?? 0
     return aVal - bVal
   }
 }
@@ -163,7 +165,9 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
     penalties: 0,
     paidAcceptance: 0,
     commission: 0,
-    theoreticalProfit: 0,
+    // Story 106.1-FE: null initial — if ALL days are null the total stays null (renders "—").
+    // Once any day has a real number the accumulator becomes numeric and stays that way.
+    theoreticalProfit: null,
     // Story 92.4 H-3 fix: counts, 0 is legitimate (anti-pattern #8 — not nullable)
     salesCount: 0,
     returnsCount: 0,
@@ -185,8 +189,12 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
       penalties: acc.penalties + day.penalties,
       paidAcceptance: acc.paidAcceptance + day.paidAcceptance,
       commission: acc.commission + day.commission,
-      // Story 106.1-FE: null = COGS unknown for that day — skip (same as ordersCogs/salesCogs pattern).
-      theoreticalProfit: (acc.theoreticalProfit ?? 0) + (day.theoreticalProfit ?? 0),
+      // Story 106.1-FE: null-preserving sum — stays null only while BOTH sides are null.
+      // Once any real value appears, becomes numeric for remaining days.
+      theoreticalProfit:
+        day.theoreticalProfit === null && acc.theoreticalProfit === null
+          ? null
+          : (acc.theoreticalProfit ?? 0) + (day.theoreticalProfit ?? 0),
     }),
     initial
   )

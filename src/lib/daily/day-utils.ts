@@ -28,10 +28,12 @@ export function getDayOfWeek(dateStr: string): number {
 
 /**
  * Create an empty DailyMetrics object for a given date.
- * All numeric values are initialized to zero.
+ * Most numeric values are initialized to zero. Exception: theoreticalProfit
+ * is initialized to null because gap-filled days have no COGS data, so profit
+ * is unknown — not zero (Story 106.1-FE fix-block propagation fix).
  *
  * @param dateStr - Date string in YYYY-MM-DD format
- * @returns DailyMetrics with all zeros
+ * @returns DailyMetrics with all zeros except theoreticalProfit which is null
  */
 export function createEmptyDailyMetrics(dateStr: string): DailyMetrics {
   return {
@@ -48,7 +50,7 @@ export function createEmptyDailyMetrics(dateStr: string): DailyMetrics {
     penalties: 0,
     paidAcceptance: 0,
     commission: 0,
-    theoreticalProfit: 0,
+    theoreticalProfit: null,
     salesCount: 0,
     returnsCount: 0,
   }

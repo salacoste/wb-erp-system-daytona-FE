@@ -147,6 +147,9 @@ export function DailyBreakdownChart({
                 activeDot={LINE_CONFIG.activeDot}
                 animationDuration={prefersReducedMotion ? 0 : LINE_CONFIG.animationDuration}
                 animationEasing={LINE_CONFIG.animationEasing}
+                // Story 106.1-FE: profit may be null for gap-filled days (unknown COGS).
+                // connectNulls draws through missing days — avoids jarring line breaks in 7-day chart.
+                connectNulls={series.key === 'profit'}
               />
             ))}
           </LineChart>
