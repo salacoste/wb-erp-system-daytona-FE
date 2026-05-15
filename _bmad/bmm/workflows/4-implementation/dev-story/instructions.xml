@@ -221,8 +221,61 @@
     </check>
   </step>
 
+  <step n="4.5" goal="Pre-flight source-trace verification — confirm story is actually unimplemented before coding">
+    <critical>Skip this step ONLY for review-continuation flows (review_continuation == true). For fresh implementations, this step is MANDATORY per Story 105.2-FE pre-flight discipline.</critical>
+
+    <action>For each acceptance criterion in the story, identify primary nouns: file paths, endpoint URLs, type names, function/component names mentioned in the AC text.</action>
+
+    <action>For each identified noun, run `grep -rln "<noun>" src/` (or equivalent codebase search) and inspect the top hits.</action>
+
+    <action>For each AC, determine its satisfaction state:
+      - **SHIPPED**: existing code already satisfies the AC. Note `file:line` evidence.
+      - **PARTIAL**: some sub-tasks shipped, others missing. Note which sub-tasks remain.
+      - **UNIMPLEMENTED**: no relevant existing code found. Proceed with full implementation.
+    </action>
+
+    <check if="ALL ACs are SHIPPED (no real implementation work remaining)">
+      <action>Document verification evidence in the story's Dev Agent Record section:
+        - Files inspected during verification
+        - file:line citations for each shipped AC
+        - Reason scope is no-op (e.g., "shipped via Epic NNN-FE Story NNN.N-FE — predates this story")
+      </action>
+      <action>Update story's File List with verification-only files (READ, not modified)</action>
+      <action>Skip to Step 9 (mark story done as verified, no source changes needed)</action>
+      <output>✅ **Story Pre-Flight Verified Shipped — Skipping Implementation**
+
+        Empirical source-trace shows all ACs are already satisfied by existing code.
+        Closing as no-op with verification evidence per Story 105.2-FE pre-flight discipline.
+
+        Saves duplicate work — see retro lessons: Stories 103.1-3 + 104.1 + 104.3 all closed as no-op via this pattern (~11 SP avoided in Epics 103-104).
+      </output>
+      <goto step="9" />
+    </check>
+
+    <check if="ALL ACs are UNIMPLEMENTED">
+      <action>Proceed with full implementation as planned</action>
+      <output>🚀 **Pre-Flight: No Existing Implementation Found**
+
+        All ACs require new code. Proceeding with red-green-refactor cycle.
+      </output>
+    </check>
+
+    <check if="SOME ACs are SHIPPED, some are UNIMPLEMENTED or PARTIAL">
+      <action>Document the partial state in Dev Agent Record:
+        - List ACs marked SHIPPED with file:line evidence
+        - List remaining ACs requiring implementation
+        - Narrow story scope to remaining work
+      </action>
+      <output>⚠️ **Pre-Flight: Partial Implementation Detected**
+
+        Some ACs already satisfied; remaining scope narrowed. See Dev Agent Record for details.
+      </output>
+    </check>
+  </step>
+
   <step n="5" goal="Implement task following red-green-refactor cycle">
     <critical>FOLLOW THE STORY FILE TASKS/SUBTASKS SEQUENCE EXACTLY AS WRITTEN - NO DEVIATION</critical>
+    <critical>If Step 4.5 narrowed scope, only implement the remaining (non-SHIPPED) ACs.</critical>
 
     <action>Review the current task/subtask from the story file - this is your authoritative implementation guide</action>
     <action>Plan implementation following red-green-refactor cycle</action>

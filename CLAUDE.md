@@ -91,6 +91,14 @@ src/
 - **Document same-name functions**: When two modules export identically-named functions, add a distinguishing comment
 - **No `TODO` in production code**: Use `PENDING BACKEND:` for backend-blocked work (linked to a `docs/request-backend/*.md` file), `FUTURE:` for post-MVP enhancements, or a ticket link. The bare `TODO` marker should never remain in committed source — it implies "someone on this team should do this soon" and accumulates silently. Grep `src/ --include="*.ts" --include="*.tsx" | grep -v test` for `TODO|FIXME` should return zero lines.
 
+### Pre-flight source-trace verification (Story 105.2-FE)
+
+**Rule**: Before implementing any story, grep the codebase for the story's AC nouns (file paths, endpoint URLs, type names, function/component names). If hits exist, READ those files and verify whether the AC is already satisfied. If ALL ACs are SHIPPED, close the story as no-op with verification evidence — skip implementation.
+
+**Empirical wins**: Stories 103.1, 103.2, 103.3, 104.1, 104.3 all closed as no-op via this pattern — ~11 SP of duplicate work avoided in Epics 103-104 alone. The dev-story workflow Step 4.5 enforces this as a mandatory pre-flight step for fresh implementations (skipped for review-continuation flows).
+
+**Why this works**: Backend coordination messages describe "what's available" not "what FE needs to do." Request files in `docs/request-backend/` often pre-date the FE work that incorporated them. Without verification, authors re-implement shipped features.
+
 ### Defensive Frontend Principle (Story 89.4-FE, from Epic 87-FE retro)
 
 > **Full text**: [`CLAUDE-PATTERNS.md` § Defensive Frontend Principle](./CLAUDE-PATTERNS.md#defensive-frontend-principle-story-894-fe-from-epic-87-fe-retro)
