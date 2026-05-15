@@ -49,8 +49,8 @@ export interface DailyMetrics {
   paidAcceptance: number
   /** WB commission in rubles (Комиссия WB) */
   commission: number
-  /** Server-computed net profit from finance daily API. Null (COGS unknown) → 0 per Defensive Frontend Principle (Story 100.2-FE). */
-  theoreticalProfit: number
+  /** Server-computed net profit from finance daily API. Null when COGS unknown (Anti-Pattern #8 compliance — Story 106.1-FE). Display layer must render '—' for null. */
+  theoreticalProfit: number | null
   /** Story 92.4 H-3 fix: count of completed sales from finance.sales_count.
    * Integer count (NOT currency). Carried through aggregation for the Monitor weekly chart.
    * 0 = legitimate zero (no sales that day). */

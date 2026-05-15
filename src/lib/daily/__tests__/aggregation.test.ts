@@ -121,7 +121,7 @@ describe('aggregateDailyMetrics — Story 100.2-FE server netProfit exclusive us
     expect(result[0].theoreticalProfit).toBe(12345)
   })
 
-  it('sets theoreticalProfit to 0 when server netProfit is null (COGS unknown)', () => {
+  it('sets theoreticalProfit to null when server netProfit is null (COGS unknown — Story 106.1-FE)', () => {
     const financeData: FinanceDailyData[] = [
       makeFinance({
         date: '2026-04-24',
@@ -132,7 +132,7 @@ describe('aggregateDailyMetrics — Story 100.2-FE server netProfit exclusive us
       }),
     ]
     const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    expect(result[0].theoreticalProfit).toBe(0)
+    expect(result[0].theoreticalProfit).toBeNull()
   })
 })
 
@@ -154,7 +154,7 @@ describe('aggregateDailyMetrics — Story 91.2-FE server netProfit integration',
     expect(result[0].theoreticalProfit).toBe(4500)
   })
 
-  it('sets theoreticalProfit to 0 when netProfit is null (no client-side fallback)', () => {
+  it('sets theoreticalProfit to null when netProfit is null (COGS unknown — Story 106.1-FE)', () => {
     const financeData: FinanceDailyData[] = [
       makeFinance({
         date: '2026-01-01',
@@ -165,7 +165,7 @@ describe('aggregateDailyMetrics — Story 91.2-FE server netProfit integration',
       }),
     ]
     const result = aggregateDailyMetrics({ ordersData, financeData, advertisingData })
-    expect(result[0].theoreticalProfit).toBe(0)
+    expect(result[0].theoreticalProfit).toBeNull()
   })
 
   it('prefers finance advertisingSpend over separate advertising API', () => {

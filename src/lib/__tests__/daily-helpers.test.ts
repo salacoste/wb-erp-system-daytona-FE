@@ -544,8 +544,8 @@ describe('Story 61.9-FE: aggregateDailyMetrics', () => {
         advertisingData,
       })
 
-      // Story 100.2-FE: server netProfit is null → theoreticalProfit = 0 (no client-side fallback)
-      expect(result[0].theoreticalProfit).toBe(0)
+      // Story 106.1-FE: server netProfit is null → theoreticalProfit = null (Anti-Pattern #8 compliance)
+      expect(result[0].theoreticalProfit).toBeNull()
     })
   })
 

@@ -56,7 +56,7 @@ const METRIC_ORDER: MetricKey[] = [
  */
 function getMetricValue(dataPoint: DailyMetrics, metricKey: MetricKey): number | null {
   if (metricKey === 'profit') {
-    return dataPoint.theoreticalProfit ?? 0
+    return dataPoint.theoreticalProfit
   }
   // For other keys, access directly (they exist on DailyMetrics)
   const value =

@@ -185,7 +185,8 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
       penalties: acc.penalties + day.penalties,
       paidAcceptance: acc.paidAcceptance + day.paidAcceptance,
       commission: acc.commission + day.commission,
-      theoreticalProfit: acc.theoreticalProfit + day.theoreticalProfit,
+      // Story 106.1-FE: null = COGS unknown for that day — skip (same as ordersCogs/salesCogs pattern).
+      theoreticalProfit: (acc.theoreticalProfit ?? 0) + (day.theoreticalProfit ?? 0),
     }),
     initial
   )

@@ -101,8 +101,7 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
       // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: paid_acceptance null→0; missing finance treated as zero. Review in Story 105.X.
       paidAcceptance: finance?.paid_acceptance ?? 0,
       commission: finance?.commission ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: net_profit null→0; Story 88.2 Note: should be null but aggregation requires number. Review in Story 105.X.
-      theoreticalProfit: finance?.net_profit ?? 0,
+      theoreticalProfit: finance?.net_profit ?? null,
       // Story 92.4 H-3: integer counts from FinanceDailyData, carried for the Monitor weekly chart.
       // Counts default to 0 when backend omits — 0 is a legitimate count (no sales/returns that day).
       salesCount: finance?.sales_count ?? 0,
