@@ -361,9 +361,9 @@ development_status:
   # Source: Carry-forward from Epic 104/105/106 retros — nullPreservingSum helper + vitest wrapper + two-repo doc
   # Note: Hook heuristic tightening (Epic 104/105/106 A-3) deferred to user-config tier (out of repo scope)
   # Created: 2026-05-15
-  epic-107-fe: backlog
-  107-1-fe-nullpreservingsum-helper: backlog
-  107-2-fe-vitest-wrapper-anti-pattern-8-self-test: backlog
-  107-3-fe-two-repo-coordination-doc: backlog
-  107-4-fe-tests-polish-retrospective: backlog
-  epic-107-fe-retrospective: optional
+  epic-107-fe: done
+  107-1-fe-nullpreservingsum-helper: done  # 2026-05-15 commit 1f7da29. New src/lib/aggregation-helpers.ts with nullPreservingSum function + 6 unit tests. Migrated table-columns.ts:188-191 to use helper (replaced 4-line ternary). CLAUDE-PATTERNS.md AGGREGATION-REDUCE pattern updated to cite helper.
+  107-2-fe-vitest-wrapper-anti-pattern-8-self-test: done  # 2026-05-15 commit c0a62e8. New src/test/anti-pattern-8-rule.test.ts wraps shell self-test via execSync. Runs automatically in npm test. Test duration 25.5s (shells out to ESLint 9× for fixture validation). CI now catches rule-selector regressions.
+  107-3-fe-two-repo-coordination-doc: done  # 2026-05-15 commit 78bdf15. New docs/process/two-repo-coordination.md (~154 lines). Covers structure, remotes, when each repo gets commits, cross-repo sequence, 4 common pitfalls, push protocol, canonical example (Story 105.1-FE).
+  107-4-fe-tests-polish-retrospective: done  # 2026-05-15 final gates: ESLint 0e/112w, tsc 0e, vitest 7255p/0f (+7 from Story 107.1+107.2), doc-citations 22. Retrospective: epic-107-fe-retro-2026-05-15.md.
+  epic-107-fe-retrospective: done
