@@ -355,3 +355,15 @@ development_status:
   106-3-fe-document-anti-pattern-8-exceptions: done  # 2026-05-15 commit 205acd8. New CLAUDE-PATTERNS.md § Anti-Pattern #8 Exceptions section with 6 canonical patterns + canonical examples + don't-confuse-with notes. CLAUDE.md cross-references.
   106-4-fe-tests-polish-retrospective: done  # 2026-05-15 final gates: ESLint 0e/112w, tsc 0e, vitest 7248p/0f, doc-citations 22. Retrospective: epic-106-fe-retro-2026-05-15.md.
   epic-106-fe-retrospective: done
+
+  # Epic 107-FE: Process Cleanup Bundle — Carry-Forward Small Wins (P3, ~3 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-107-fe.md
+  # Source: Carry-forward from Epic 104/105/106 retros — nullPreservingSum helper + vitest wrapper + two-repo doc
+  # Note: Hook heuristic tightening (Epic 104/105/106 A-3) deferred to user-config tier (out of repo scope)
+  # Created: 2026-05-15
+  epic-107-fe: backlog
+  107-1-fe-nullpreservingsum-helper: backlog
+  107-2-fe-vitest-wrapper-anti-pattern-8-self-test: backlog
+  107-3-fe-two-repo-coordination-doc: backlog
+  107-4-fe-tests-polish-retrospective: backlog
+  epic-107-fe-retrospective: optional
