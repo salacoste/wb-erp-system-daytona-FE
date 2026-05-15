@@ -29,11 +29,14 @@ export function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevel
 
   // Storage and acceptance only apply to FBO
   const storage = formData.fulfillment_type === 'FBO' ? formData.storage_rub : 0
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: acceptance_cost null→0; 0 = no acceptance cost (FBO without acceptance fee). Review in Story 105.X.
   const acceptance = formData.fulfillment_type === 'FBO' ? (formData.acceptance_cost ?? 0) : 0
 
   // Story 44.51: Packaging and logistics to MP - per box/pallet costs divided by units
   const unitsPerPackage = Math.max(formData.units_per_package ?? 1, 1)
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: packaging_rub/logistics_to_mp_rub null→0; 0 means no packaging/logistics cost entered. Review in Story 105.X.
   const packaging = (formData.packaging_rub ?? 0) / unitsPerPackage
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
   const logisticsToMp = (formData.logistics_to_mp_rub ?? 0) / unitsPerPackage
 
   const total =
@@ -96,6 +99,7 @@ export function calculatePercentageCosts(
     acquiringPct +
     (taxType === 'income' ? taxRatePct : 0) +
     (isVatPayer ? vatPct : 0)
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: taxIncome.rub/vat.rub null→0; null means "tax type not applicable", 0 is correct arithmetic identity. Review in Story 105.X.
   const totalRub = commissionWb.rub + acquiring.rub + (taxIncome?.rub ?? 0) + (vat?.rub ?? 0)
 
   return {

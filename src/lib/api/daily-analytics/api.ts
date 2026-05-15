@@ -80,13 +80,16 @@ export async function getFinanceDailyData(from: string, to: string): Promise<Fin
 
     return (response ?? []).map(item => ({
       date: item.date,
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: wb_sales_gross/revenue_net null→0 in daily normalizer; backend may omit on partial days. Review in Story 105.X.
       wb_sales_gross: item.revenueGross ?? 0,
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
       revenue_net: item.revenueNet ?? 0,
       // Story 88.2-FE: preserve null — "unknown COGS" and "zero COGS" are distinct states
       cogs_total: item.cogsTotal ?? null,
       logistics_cost: item.logistics ?? 0,
       storage_cost: item.storage ?? 0,
       penalties: item.penalties ?? 0,
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: paid_acceptance null→0; backend omits field when no paid acceptance that day. Review in Story 105.X.
       paid_acceptance: item.paidAcceptance ?? 0,
       commission: item.commission ?? 0,
       returns: item.returns ?? 0,
@@ -134,7 +137,8 @@ export async function getAdvertisingDailyData(
 
     return (response ?? []).map(item => ({
       date: item.date,
-      total_spend: item.spend ?? 0, // count-like — legitimate zero
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: total_spend null→0; 0 = no advertising spend that day (legitimate zero per CLAUDE.md). Review in Story 105.X.
+      total_spend: item.spend ?? 0,
       views: item.views ?? 0, // count
       clicks: item.clicks ?? 0, // count
       ctr: item.ctr ?? null, // ratio — preserve null per Anti-Pattern #8

@@ -51,7 +51,9 @@ export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> 
     geoName: w.federal_district || undefined,
     logistics: {
       coefficient: w.tariffs?.fbo?.logistics_coefficient ?? 1.0,
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: delivery_base_rub/delivery_liter_rub null→0 in tariff normalizer; 0 means "no tariff data" (warehouse may not serve FBO). Review in Story 105.X.
       baseLiterRub: w.tariffs?.fbo?.delivery_base_rub ?? 0,
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
       additionalLiterRub: w.tariffs?.fbo?.delivery_liter_rub ?? 0,
     },
     storage: {

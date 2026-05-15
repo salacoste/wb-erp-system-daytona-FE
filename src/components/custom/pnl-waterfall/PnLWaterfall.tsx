@@ -68,13 +68,20 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
   const totalWBDeductions = revenueBase - sellerPayout
 
   // SPP Compensation: difference between sum of visible deduction lines and actual total
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: all deduction fields null→0 for arithmetic sum; nulls treated as absent. Review in Story 105.X.
   const sumOfVisibleDeductions =
+    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
     (data.total_commission_rub ?? 0) +
+    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
     (data.logistics_cost ?? 0) +
+    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
     (data.storage_cost ?? 0) +
+    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
     (data.paid_acceptance_cost ?? 0) +
     (data.penalties ?? 0) +
+    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
     (data.acquiring_fee ?? 0) +
+    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
     (data.loyalty_fee ?? 0) -
     (data.loyalty_compensation ?? 0) +
     (data.other_adjustments ?? 0)

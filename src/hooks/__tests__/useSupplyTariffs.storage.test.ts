@@ -433,7 +433,9 @@ describe('useSupplyTariffs - Storage Tariff Extraction', () => {
 
       // Storage cost for 1L: baseLiterRub * coefficient
       // 41.25 * 1.65 = 68.0625 ≈ 68.06 ₽/день
-      const dailyStorageCost = (tariffs?.storage.baseLiterRub ?? 0) * (tariffs?.storage.coefficient ?? 1)
+      // PRE-EXISTING: baseLiterRub null→0 in test calc; asserted non-zero below. Review in Story 105.X.
+      const dailyStorageCost =
+        (tariffs?.storage.baseLiterRub ?? 0) * (tariffs?.storage.coefficient ?? 1) // eslint-disable-line no-restricted-syntax
 
       expect(dailyStorageCost).toBeCloseTo(68.06, 1)
       expect(dailyStorageCost).not.toBe(0) // Critical: must NOT be 0
@@ -569,7 +571,9 @@ describe('useSupplyTariffs - Fallback Indicator', () => {
 
     // New feature: tariffs should include usingFallback indicator
     // This test will fail until the feature is implemented
-    expect((warehouse?.tariffs as { usingStorageFallback?: boolean })?.usingStorageFallback).toBe(true)
+    expect((warehouse?.tariffs as { usingStorageFallback?: boolean })?.usingStorageFallback).toBe(
+      true
+    )
   })
 
   it('should NOT set usingStorageFallback when storage rates are valid', async () => {
@@ -589,6 +593,8 @@ describe('useSupplyTariffs - Fallback Indicator', () => {
     const warehouse = result.current.warehouses.find(w => w.id === 206236)
 
     // Should NOT use fallback for valid rates
-    expect((warehouse?.tariffs as { usingStorageFallback?: boolean })?.usingStorageFallback).toBeFalsy()
+    expect(
+      (warehouse?.tariffs as { usingStorageFallback?: boolean })?.usingStorageFallback
+    ).toBeFalsy()
   })
 })

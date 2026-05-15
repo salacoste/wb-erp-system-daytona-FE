@@ -229,7 +229,7 @@ Recognize on sight, refuse to write or merge. Numbered list (referenced as "anti
 5. **Variable shadowing in Zustand selectors** — name selector params after the store (`auth =>`), not the outer `state` binding.
 6. **Silent E2E test skips that pass green** — use `test.skip(condition, reason)`, not early `return`.
 7. **Hard waits (`page.waitForTimeout(N)`) in E2E specs** — intercept with `waitForResponse` before navigate.
-8. **`?? 0` on nullable money/ratio fields lies about the data** — preserve `null`, render `—`. Counts/pagination still allow `?? 0`.
+8. **`?? 0` on nullable money/ratio fields lies about the data** — preserve `null`, render `—`. Counts/pagination still allow `?? 0`. **ESLint enforced as of Story 105.1-FE** (`no-restricted-syntax` rule in `eslint.config.js`). New code cannot introduce new violations. Pre-existing violations are marked with `eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING — review in Story 105.X follow-up.` Self-test: `bash scripts/test-anti-pattern-8-rule.sh`.
 9. **`waitForLoadState('networkidle')` on background-polling pages** — never settles on dashboards; use `waitUntil: 'domcontentloaded'` + element-presence assertions.
 
 Open `CLAUDE-ANTI-PATTERNS.md` for ❌ BAD / ✅ GOOD code blocks, scope rules, and canonical Story references.

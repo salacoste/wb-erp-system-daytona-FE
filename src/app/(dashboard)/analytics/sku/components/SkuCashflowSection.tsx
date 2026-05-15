@@ -54,10 +54,13 @@ export function SkuCashflowSection({ cabinetExpenses, isLoading }: SkuCashflowSe
 /** Inner content rendered when data is available */
 function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExpenses }) {
   const salesGross = cabinetExpenses.sales_gross || 1
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: returns_gross null→0 for net sales calc; component renders known non-null value. Review in Story 105.X.
   const returnsGross = cabinetExpenses.returns_gross ?? 0
   const netSales = salesGross - returnsGross
   const netProfit = cabinetExpenses.gross_profit_sku - cabinetExpenses.total
   const pct = (value: number) => ((value / salesGross) * 100).toFixed(1)
+  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: acquiring_fee null→0 for display; renders 0₽ row which is acceptable. Review in Story 105.X.
+  const acquiringFee = cabinetExpenses.acquiring_fee ?? 0
 
   return (
     <div className="space-y-3">
@@ -103,13 +106,8 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
       </CashflowRow>
 
       {/* Acquiring */}
-      <CashflowRow
-        variant="negative"
-        symbol="−"
-        label="Эквайринг"
-        value={fmtRub(cabinetExpenses.acquiring_fee ?? 0)}
-      >
-        <PctBadge value={cabinetExpenses.acquiring_fee ?? 0} pct={pct} />
+      <CashflowRow variant="negative" symbol="−" label="Эквайринг" value={fmtRub(acquiringFee)}>
+        <PctBadge value={acquiringFee} pct={pct} />
       </CashflowRow>
 
       {/* COGS */}

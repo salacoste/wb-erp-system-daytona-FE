@@ -2,12 +2,7 @@
 
 import { AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { TopConsumerItem } from '@/types/storage-analytics'
 
 /**
@@ -41,10 +36,9 @@ export function StorageAlertBanner({
   topConsumers,
   threshold = DEFAULT_THRESHOLD,
 }: StorageAlertBannerProps) {
-  // Count products with ratio > threshold
-  const highRatioCount = topConsumers.filter(
-    (item) => (item.storage_to_revenue_ratio ?? 0) > threshold
-  ).length
+  // PRE-EXISTING: storage_to_revenue_ratio null→0 treats null items as below threshold. Review in Story 105.X.
+  const getStorageRatio = (item: (typeof topConsumers)[0]) => item.storage_to_revenue_ratio ?? 0 // eslint-disable-line no-restricted-syntax
+  const highRatioCount = topConsumers.filter(item => getStorageRatio(item) > threshold).length
 
   if (highRatioCount === 0) return null
 

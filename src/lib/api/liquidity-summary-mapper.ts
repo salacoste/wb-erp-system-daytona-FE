@@ -132,6 +132,7 @@ function mapSummary(
     total_sku_count: totalSkus,
     frozen_capital: totalFrozen,
     frozen_capital_pct:
+      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: frozen_capital_pct null→0 fallback when inventory=0; 0% is accurate when no inventory. Review in Story 105.X.
       totalInv > 0 ? (totalFrozen / totalInv) * 100 : (raw.frozen_capital_pct ?? 0),
     avg_turnover_days: raw.avg_turnover_days ?? avgTurnoverDays(items),
     distribution,

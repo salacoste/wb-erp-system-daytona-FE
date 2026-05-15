@@ -132,8 +132,10 @@ export function useTrends(limit = 8) {
             return {
               week: point.week,
               revenue,
+              // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: to_pay_goods/logistics_cost null→0 in trends normalizer; treated as absent week data. Review in Story 105.X.
               totalPayable: point.to_pay_goods ?? 0,
               payoutTotal: payout,
+              // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
               logisticsCost: point.logistics_cost ?? 0,
               cogsTotal: cogs,
               operatingProfit: opProfit,

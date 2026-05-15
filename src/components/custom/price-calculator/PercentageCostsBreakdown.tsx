@@ -52,14 +52,19 @@ export function PercentageCostsBreakdown({ costs }: PercentageCostsBreakdownProp
 
         {/* Acquiring */}
         <div className="flex justify-between">
-          <span>{lastItem === 'acquiring' ? '└─' : '├─'} Эквайринг ({costs.acquiring.pct}%)</span>
+          <span>
+            {lastItem === 'acquiring' ? '└─' : '├─'} Эквайринг ({costs.acquiring.pct}%)
+          </span>
           <span className="w-24 text-right">{formatCurrency(costs.acquiring.rub)}</span>
         </div>
 
         {/* Income Tax (if applicable) */}
         {hasTaxIncome && (
           <div className="flex justify-between">
-            <span>{lastItem === 'taxIncome' ? '└─' : '├─'} Налог с выручки ({costs.taxIncome?.pct}%)</span>
+            <span>
+              {lastItem === 'taxIncome' ? '└─' : '├─'} Налог с выручки ({costs.taxIncome?.pct}%)
+            </span>
+            {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: taxIncome.rub null→0 in price calculator display; renders 0₽ when tax absent. Review in Story 105.X. */}
             <span className="w-24 text-right">{formatCurrency(costs.taxIncome?.rub ?? 0)}</span>
           </div>
         )}
@@ -68,6 +73,7 @@ export function PercentageCostsBreakdown({ costs }: PercentageCostsBreakdownProp
         {hasVat && (
           <div className="flex justify-between">
             <span>└─ НДС ({costs.vat?.pct}%)</span>
+            {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: vat.rub null→0 in price calculator; renders 0₽ when VAT absent. Review in Story 105.X. */}
             <span className="w-24 text-right">{formatCurrency(costs.vat?.rub ?? 0)}</span>
           </div>
         )}
