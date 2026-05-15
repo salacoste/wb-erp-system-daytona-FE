@@ -422,3 +422,107 @@ Acceptance Criteria framed as "no X" (e.g., "no script modification", "no new fi
 **Cross-reference.** Stories 96.11-FE Post-2nd-pass-review fixes H2-1; 96.12-FE Post-2nd-pass-review fixes M2-2; 96.13-FE Post-2nd-pass-review fixes M2-5; 96.14-FE Post-2nd-pass-review fixes M-2 + H2-1; Epic 96-FE retro § A-5 (action item that produced this codification); Epic 96-FE retro § S-3 (the 4-of-7 empirical evidence breakdown); **Pattern 4 § Authoritative-source-citation discipline** sub-section (Story 97.2-FE codification — locate via `grep -n "^#### Authoritative-source-citation" CLAUDE-PATTERNS.md`); **Pattern 4 § Fix-block propagation discipline** sub-section (Story 97.1-FE codification — locate via `grep -n "^#### Fix-block propagation" CLAUDE-PATTERNS.md`). Section-name-only citations preferred over `:N` line numbers per Story 97.3-FE L2-1 lesson — line numbers shift recursively as CLAUDE-PATTERNS.md grows (verified empirically: Story 97.3 insertion shifted Pattern 4 sub-sections by 33 lines; Story 97.5's own insertion appended ~39 lines AT END of Pattern 4 — earlier sub-section line numbers UNCHANGED, but future codifications inserting in the middle WOULD shift downstream sub-sections).
 
 **Related.** This discipline is sibling to all Pattern 4 sub-sections — together they form the attestation discipline cluster the 2-pass review process (CLAUDE.md § Two-pass review discipline § "Why this is structurally permanent") catches. Cabinet-isolation specifically targets **multi-tenant cache-collision** as a sub-class of attestation drift: the author's mental model of the query (`[domain, params]`) and the runtime reality (cache-keyed by query-key tuple) drift when `cabinetId` is omitted; only cabinet-switching scenarios surface it.
+
+## Anti-Pattern #8 Exceptions (Story 106.3-FE, from Epic 105-FE + 106-FE)
+
+**Background**: CLAUDE.md § Known Anti-Patterns #8 says `?? 0` on money/ratio fields lies — preserve `null`, render `—`. Story 105.1-FE added an ESLint rule that flags this. Story 106-FE triaged the 64 pre-existing allowlists and found that 63 of 64 are LEGITIMATE exceptions — the `?? 0` is correct semantically. This section codifies the 6 patterns where `?? 0` is justified, so future authors can classify their use case before adding an `eslint-disable-next-line no-restricted-syntax` comment.
+
+**Format for the allowlist comment**:
+```typescript
+// eslint-disable-next-line no-restricted-syntax -- <PATTERN-NAME>: <one-line specific rationale>
+```
+
+### Pattern: BACKEND-CONTRACT-NON-NULL
+
+**Trigger**: The backend service explicitly types the field as `number` (not nullable). Verified by reading the response DTO at the source, the test-api/*.http example, or the controller signature.
+
+**Canonical example**: `src/app/(dashboard)/analytics/shared/calculate-margin-stats.ts:25`
+```typescript
+// eslint-disable-next-line no-restricted-syntax -- BACKEND-CONTRACT-NON-NULL: CabinetExpenses.sales_gross is typed number in /v1/finance/cabinet-expenses response
+revenue: data.sales_gross ?? 0,
+```
+
+**Anti-pattern (don't confuse)**: If the backend response shape declares the field optional (`field?: number`) or explicitly nullable (`field: number | null`), this pattern does NOT apply. Use the genuine null-preservation pattern from CLAUDE.md Anti-Pattern #8.
+
+### Pattern: SEMANTIC-ZERO
+
+**Trigger**: 0 is the legitimate "no activity" value for this field. The distinction `null = unknown` vs `0 = no activity` collapses for this specific field because both mean the same thing operationally.
+
+**Canonical example**: `src/lib/daily/aggregation.ts:59` (advertising spend on a day with no ads)
+```typescript
+// eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: total_spend 0 = no ads ran that day (Story 91.2-FE)
+advertising: advertising?.total_spend ?? 0,
+```
+
+Also `src/components/custom/price-calculator/PriceCalculatorResults.tsx:74` (`vat_pct: 0` = non-VAT payer in RU tax classification).
+
+**Anti-pattern (don't confuse)**: `revenue: 0` is NOT a semantic-zero (it could mean "ad ran but generated no revenue" OR "we don't have attribution data" — distinct states). The pattern requires that the field's domain *cannot* distinguish the two.
+
+### Pattern: AGGREGATION-REDUCE
+
+**Trigger**: A `reduce`/`fold` operation summing values across items (weeks, days, SKUs). Null per item = no contribution to the sum. The reducer's output is a single aggregate value where null per item is correctly elided.
+
+**Canonical example**: `src/app/(dashboard)/analytics/advertising/utils/over-attribution-utils.ts:22-25`
+```typescript
+const totalRevenue = items.reduce(
+  // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: revenue null per week = no data; treated as 0 contribution to sum (Story 88.2-FE)
+  (sum, item) => sum + (item.revenue ?? 0),
+  0
+)
+```
+
+**Anti-pattern (don't confuse)**: If the aggregate is itself displayed AND the "all items null" case should render as `—` (not `0`), the AGGREGATION-REDUCE pattern is insufficient — preserve null upward using a smarter reducer (see `src/components/custom/dashboard/table-columns.ts:188-191` for the null-preserving accumulator pattern Story 106.1-FE established).
+
+### Pattern: DISPLAY-GUARD
+
+**Trigger**: Null = absent line item, but the row is rendered for visual consistency (table layout, breakdown chart, structured comparison). Value of `0` in the rendered cell is the intended UX.
+
+**Canonical example**: `src/components/custom/pnl-waterfall/OtherAdjustmentsRows.tsx:52`
+```typescript
+// eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: wb_promotion_cost null = absent; visibility guard checks > 0
+{(deductions?.wb_promotion_cost ?? 0) > 0 && (
+  <Row label="WB Продвижение" value={deductions.wb_promotion_cost} />
+)}
+```
+
+**Anti-pattern (don't confuse)**: If the cell would render the literal "0₽" to the user (vs being hidden/skipped), the user sees fake "zero data" when the true state is "unknown." Use a `—` render guard instead.
+
+### Pattern: DEBUG-LOG
+
+**Trigger**: Field used only in `console.log` / debug output / boolean checks — never rendered to user-facing UI. Null→0 collapse in log strings is harmless.
+
+**Canonical example**: `src/lib/daily/aggregation.ts:73`
+```typescript
+// eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: wb_sales_gross used only in boolean check; not user-visible
+if ((finance?.wb_sales_gross ?? 0) > 0) {
+  console.debug('[daily] day has sales:', { date, sales: finance.wb_sales_gross })
+}
+```
+
+**Anti-pattern (don't confuse)**: If the boolean check determines whether to RENDER a UI element (vs whether to LOG), the result is user-visible behavior — not DEBUG-LOG. Use DISPLAY-GUARD pattern instead.
+
+### Pattern: TEST-ASSERTION
+
+**Trigger**: A TypeScript type guard earlier in scope narrows the field to non-null, but TypeScript doesn't propagate the narrowing into the assertion expression. `?? 0` is compiler-appeasement, not runtime fallback.
+
+**Canonical example**: `src/hooks/__tests__/useAdvertisingAnalytics.test.ts:415`
+```typescript
+// At line 410: expect(result.current.data?.revenue).toBeGreaterThan(0)  // already narrows to non-null
+// At line 415: but TypeScript still wants:
+// eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: revenue asserted non-null above via type guard; ?? 0 is compiler-only
+expect(result.current.data!.revenue ?? 0).toBe(1000)
+```
+
+**Anti-pattern (don't confuse)**: If the test is asserting behavior on a real null case (not narrowing), the `?? 0` IS a real fallback and the test is wrong. Use `.toBeNull()` instead.
+
+### Process: classifying a new allowlist
+
+When you encounter a new `?? 0` violation that the ESLint rule flags:
+
+1. **Read the backend contract** for the field. Is it explicitly `number` (BACKEND-CONTRACT-NON-NULL)? Or `number | null`?
+2. **If `number | null`**: can `0` and `null` be operationally distinguished? If NO → SEMANTIC-ZERO. If YES → see below.
+3. **What's the code doing?** Reduce/fold → AGGREGATION-REDUCE. Rendering a row → DISPLAY-GUARD. Logging → DEBUG-LOG. Test assertion → TEST-ASSERTION.
+4. **If none of the patterns fit**: the violation is a REAL Anti-Pattern #8 — convert to `?? null` and widen the type. Add a display `—` guard at the consumer.
+5. Use the comment format: `// eslint-disable-next-line no-restricted-syntax -- <PATTERN-NAME>: <one-line rationale specific to this field>`.
+
+**Cross-reference**: CLAUDE.md § Known Anti-Patterns #8 (the underlying anti-pattern this section provides exceptions to); Story 105.1-FE (ESLint rule); Story 106.1-FE (canonical "real violation fix" example: net_profit nullability); Story 106.2-FE (sweep that established the 6-pattern taxonomy); Epic 106-FE retrospective.
