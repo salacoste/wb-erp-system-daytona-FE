@@ -471,7 +471,7 @@ const totalRevenue = items.reduce(
 )
 ```
 
-**Anti-pattern (don't confuse)**: If the aggregate is itself displayed AND the "all items null" case should render as `—` (not `0`), the AGGREGATION-REDUCE pattern is insufficient — preserve null upward using a smarter reducer (see `src/components/custom/dashboard/table-columns.ts:188-191` for the null-preserving accumulator pattern Story 106.1-FE established).
+**Anti-pattern (don't confuse)**: If the aggregate is itself displayed AND the "all items null" case should render as `—` (not `0`), the AGGREGATION-REDUCE pattern is insufficient — use `nullPreservingSum` from `src/lib/aggregation-helpers.ts` (Story 107.1-FE; canonical use site: `table-columns.ts` calculateTotals reducer).
 
 ### Pattern: DISPLAY-GUARD
 

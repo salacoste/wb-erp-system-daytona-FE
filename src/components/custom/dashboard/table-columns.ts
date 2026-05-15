@@ -7,6 +7,7 @@
  * @see docs/stories/epic-62/story-62.8-fe-daily-metrics-table.md
  */
 
+import { nullPreservingSum } from '@/lib/aggregation-helpers'
 import { formatCurrency } from '@/lib/utils'
 import type { DailyMetrics } from '@/types/daily-metrics'
 
@@ -190,11 +191,8 @@ export function calculateTotals(data: DailyMetrics[]): DailyMetrics {
       paidAcceptance: acc.paidAcceptance + day.paidAcceptance,
       commission: acc.commission + day.commission,
       // Story 106.1-FE: null-preserving sum — stays null only while BOTH sides are null.
-      // Once any real value appears, becomes numeric for remaining days.
-      theoreticalProfit:
-        day.theoreticalProfit === null && acc.theoreticalProfit === null
-          ? null
-          : (acc.theoreticalProfit ?? 0) + (day.theoreticalProfit ?? 0),
+      // Story 107.1-FE: extracted to nullPreservingSum helper.
+      theoreticalProfit: nullPreservingSum(acc.theoreticalProfit, day.theoreticalProfit),
     }),
     initial
   )
