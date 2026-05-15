@@ -48,10 +48,10 @@ export function calculateSkuPageStats(
     avgMargin,
     // Use cabinet-level sales_gross for consistency
     totalRevenue: cabinetExpenses
-      ? // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: returns_gross null→0 for net revenue calc. Review in Story 105.X.
+      ? // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: returns_gross 0 = no returns; net revenue calculation
         cabinetExpenses.sales_gross - (cabinetExpenses.returns_gross ?? 0)
       : skuData.reduce((sum, item) => sum + item.revenue.gross, 0),
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: profit.operating null→0 for profit sum in reduce. Review in Story 105.X.
+    // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: profit.operating null = no contribution to weekly sum
     totalProfit: withCogsItems.reduce((sum, item) => sum + (item.profit.operating ?? 0), 0),
   }
 }

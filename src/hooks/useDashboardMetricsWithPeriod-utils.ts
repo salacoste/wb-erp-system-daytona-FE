@@ -75,9 +75,9 @@ export async function fetchMonthlyMetrics(month: string): Promise<DashboardMetri
     weeklyResults.forEach(result => {
       if (result.status === 'fulfilled' && result.value) {
         aggregatedTotalPayable += result.value.totalPayable ?? 0
-        // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: revenue/grossProfit null→0 in weekly aggregation reduce. Review in Story 105.X.
+        // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: revenue null per week = no contribution to weekly sum
         aggregatedRevenue += result.value.revenue ?? 0
-        // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+        // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: grossProfit null per week = no contribution to weekly sum
         aggregatedGrossProfit += result.value.grossProfit ?? 0
       }
     })

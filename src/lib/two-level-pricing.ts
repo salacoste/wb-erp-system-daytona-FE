@@ -61,7 +61,7 @@ export function calculateTwoLevelPricing(
 
   // VAT handling - only if seller is VAT payer (ОСН)
   const isVatPayer = formData.is_vat_payer ?? false
-  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: vat_pct null→0; 0 means "no VAT" which is the correct default for non-VAT payers. Review in Story 105.X.
+  // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: vat_pct 0 = non-VAT payer (RU tax default; backend contract null)
   const vatPct = formData.vat_pct ?? 0
   const vatRate = isVatPayer ? vatPct / 100 : 0
 

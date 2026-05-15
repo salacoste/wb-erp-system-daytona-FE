@@ -91,7 +91,7 @@ export function renderOrganicSales(item: AdvertisingItem) {
               <div className="text-xs text-muted-foreground space-y-1">
                 <p>
                   {/* Over-attribution branch — revenue > total_sales, so revenue is not null here. `?? 0` is defensive. */}
-                  {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: revenue is non-null in this branch (revenue > total_sales guard above). Review in Story 105.X. */}
+                  {/* eslint-disable-next-line no-restricted-syntax -- BACKEND-CONTRACT-NON-NULL: revenue guarded non-null by prior `revenue > total_sales` check */}
                   Выручка из рекламы ({formatCurrency(item.revenue ?? 0)}) больше общей выручки
                   товара ({formatCurrency(item.total_sales)}).
                 </p>
@@ -101,7 +101,7 @@ export function renderOrganicSales(item: AdvertisingItem) {
                 </p>
                 <p className="mt-2 font-medium">
                   Органика = {formatCurrency(item.total_sales)} -{' '}
-                  {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: revenue non-null in over-attribution branch. Review in Story 105.X. */}
+                  {/* eslint-disable-next-line no-restricted-syntax -- BACKEND-CONTRACT-NON-NULL: revenue is non-null in over-attribution branch */}
                   {formatCurrency(item.revenue ?? 0)} = {formatCurrency(item.organic_sales)}
                 </p>
               </div>

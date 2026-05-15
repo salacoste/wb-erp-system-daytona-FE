@@ -206,9 +206,9 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         expect(result.current.current).toBeDefined()
       })
 
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: test assertion; logistics_cost null→0 for delta calculation. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: logistics_cost delta calc (null→0 in comparison test setup)
       const currentLogistics = result.current.current?.summary_total?.logistics_cost ?? 0
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+      // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: logistics_cost delta calc (null→0 in comparison test setup)
       const previousLogistics = result.current.previous?.summary_total?.logistics_cost ?? 0
 
       // Delta: 17566.04 - 20000 = -2433.96 (logistics decreased - good!)
@@ -273,7 +273,7 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         expect(result.current.previous).toBeDefined()
       })
 
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: test assertion; storage_cost null→0/1 for pct change calc. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: storage_cost 0 inventory → 0% (test setup, not production logic)
       const currentStorage = result.current.current?.summary_total?.storage_cost ?? 0
       const previousStorage = result.current.previous?.summary_total?.storage_cost ?? 1
 

@@ -433,9 +433,9 @@ describe('useSupplyTariffs - Storage Tariff Extraction', () => {
 
       // Storage cost for 1L: baseLiterRub * coefficient
       // 41.25 * 1.65 = 68.0625 ≈ 68.06 ₽/день
-      // PRE-EXISTING: baseLiterRub null→0 in test calc; asserted non-zero below. Review in Story 105.X.
       const dailyStorageCost =
-        (tariffs?.storage.baseLiterRub ?? 0) * (tariffs?.storage.coefficient ?? 1) // eslint-disable-line no-restricted-syntax
+        // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: TypeScript guard above narrows to non-null; the ?? 0 is for compiler not runtime
+        (tariffs?.storage.baseLiterRub ?? 0) * (tariffs?.storage.coefficient ?? 1)
 
       expect(dailyStorageCost).toBeCloseTo(68.06, 1)
       expect(dailyStorageCost).not.toBe(0) // Critical: must NOT be 0

@@ -36,8 +36,8 @@ export function StorageAlertBanner({
   topConsumers,
   threshold = DEFAULT_THRESHOLD,
 }: StorageAlertBannerProps) {
-  // PRE-EXISTING: storage_to_revenue_ratio null→0 treats null items as below threshold. Review in Story 105.X.
-  const getStorageRatio = (item: (typeof topConsumers)[0]) => item.storage_to_revenue_ratio ?? 0 // eslint-disable-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: storage_to_revenue_ratio null = no ratio data; treats null items as below threshold
+  const getStorageRatio = (item: (typeof topConsumers)[0]) => item.storage_to_revenue_ratio ?? 0
   const highRatioCount = topConsumers.filter(item => getStorageRatio(item) > threshold).length
 
   if (highRatioCount === 0) return null

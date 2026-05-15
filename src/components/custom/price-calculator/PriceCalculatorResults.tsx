@@ -69,9 +69,9 @@ export function PriceCalculatorResults({
     return {
       commissionPct,
       acquiringPct: formData.acquiring_pct ?? 1.5,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: drr_pct null→0; 0 means "no DRR" which is semantically correct. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: drr_pct 0% = no DRR (legitimate semantic — non-DRR products)
       drrPct: formData.drr_pct ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: vat_pct null→0; 0 means "no VAT" which is semantically correct. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: vat_pct 0% = non-VAT payer (legitimate RU tax classification)
       vatPct: formData.is_vat_payer ? (formData.vat_pct ?? 0) : 0,
     }
   }, [formData, commissionPct])

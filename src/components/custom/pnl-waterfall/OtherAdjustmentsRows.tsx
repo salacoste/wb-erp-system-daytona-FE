@@ -49,7 +49,7 @@ export function OtherAdjustmentsRows({
 
       {/* Request #56: WB Services Breakdown (inside other_adjustments) */}
       {/* WB.Продвижение (реклама) */}
-      {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: wb_promotion_cost null→0 for visibility guard; null treated as absent. Review in Story 105.X. */}
+      {/* eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: wb_promotion_cost null = absent; visibility guard checks > 0 */}
       {(data.wb_promotion_cost ?? 0) > 0 && (
         <PnLRow
           label="→ WB.Продвижение"
@@ -70,7 +70,7 @@ export function OtherAdjustmentsRows({
       )}
 
       {/* Джем (подписка) */}
-      {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: wb_jam_cost null→0 for visibility guard. Review in Story 105.X. */}
+      {/* eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: wb_jam_cost null = absent; visibility guard checks > 0 */}
       {(data.wb_jam_cost ?? 0) > 0 && (
         <PnLRow
           label="→ Джем"
@@ -89,7 +89,7 @@ export function OtherAdjustmentsRows({
       )}
 
       {/* Прочие сервисы WB (утилизация и др.) */}
-      {/* eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: wb_other_services_cost null→0 for visibility guard. Review in Story 105.X. */}
+      {/* eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: wb_other_services_cost null = absent; visibility guard checks > 0 */}
       {(data.wb_other_services_cost ?? 0) > 0 && (
         <PnLRow
           label="→ Прочие сервисы WB"

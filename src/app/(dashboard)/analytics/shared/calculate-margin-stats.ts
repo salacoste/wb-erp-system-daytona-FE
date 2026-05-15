@@ -22,16 +22,16 @@ export function calculateMarginStats(
   cabinetExpenses: CabinetExpenses | null | undefined
 ): MarginStats {
   const totalProfit = data.reduce((sum, item) => sum + (item.operating_profit || 0), 0)
-  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: sales_gross/returns_gross used as arithmetic base; null→0 degrades gracefully. Review in Story 105.X.
+  // eslint-disable-next-line no-restricted-syntax -- BACKEND-CONTRACT-NON-NULL: CabinetExpenses.sales_gross is typed number in /v1/finance/cabinet-expenses response
   const salesGross = cabinetExpenses?.sales_gross ?? 0
-  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: returns_gross null→0 treats missing returns as zero for margin calc. Review in Story 105.X.
+  // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: returns_gross 0 = no returns this period (legitimate semantic value)
   const returnsGross = cabinetExpenses?.returns_gross ?? 0
   const netSalesGross = salesGross - returnsGross
 
   return {
     total: data.length,
     totalRevenue: cabinetExpenses
-      ? // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: returns_gross null→0 for net revenue calc. Review in Story 105.X.
+      ? // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: returns_gross 0 = no returns; net revenue = sales - 0 returns
         cabinetExpenses.sales_gross - (cabinetExpenses.returns_gross ?? 0)
       : data.reduce((sum, item) => sum + (item.revenue_gross || item.revenue_net), 0),
     totalProfit,

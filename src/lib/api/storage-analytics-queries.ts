@@ -113,7 +113,7 @@ export async function getStorageTopConsumers(
   const response = normalizeTopConsumersResponse(rawResponse)
   console.info('[Storage Analytics] Top consumers response:', {
     count: response.top_consumers?.length ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: total_storage_cost null→0 in debug log only; not rendered to user. Review in Story 105.X.
+    // eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: total_storage_cost used only in console.log; not user-visible
     totalCost: response.total_storage_cost ?? 0,
   })
 

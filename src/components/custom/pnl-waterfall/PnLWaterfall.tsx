@@ -68,20 +68,20 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
   const totalWBDeductions = revenueBase - sellerPayout
 
   // SPP Compensation: difference between sum of visible deduction lines and actual total
-  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: all deduction fields null→0 for arithmetic sum; nulls treated as absent. Review in Story 105.X.
+  // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
   const sumOfVisibleDeductions =
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
     (data.total_commission_rub ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
     (data.logistics_cost ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
     (data.storage_cost ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
     (data.paid_acceptance_cost ?? 0) +
     (data.penalties ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
     (data.acquiring_fee ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
     (data.loyalty_fee ?? 0) -
     (data.loyalty_compensation ?? 0) +
     (data.other_adjustments ?? 0)

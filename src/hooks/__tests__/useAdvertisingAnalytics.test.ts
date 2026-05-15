@@ -412,14 +412,14 @@ describe('Epic 35: Organic Sales Calculation Edge Cases', () => {
     expect(item1.revenue).toBe(50000)
     expect(item1.organic_sales).toBe(30000)
     // Story 88.2-FE: revenue is `number | null`; asserted non-null above, `?? 0` is type-narrowing
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: test assertion; revenue asserted non-null above. Review in Story 105.X.
+    // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: revenue asserted non-null above via type guard; ?? 0 is compiler-only
     expect(item1.organic_sales).toBe(item1.total_sales - (item1.revenue ?? 0))
 
     const item2 = result.current.data!.data[1]
     expect(item2.total_sales).toBe(70000)
     expect(item2.revenue).toBe(40000)
     expect(item2.organic_sales).toBe(30000)
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: test assertion; revenue asserted non-null above. Review in Story 105.X.
+    // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: revenue asserted non-null above via type guard; ?? 0 is compiler-only
     expect(item2.organic_sales).toBe(item2.total_sales - (item2.revenue ?? 0))
   })
 
@@ -501,7 +501,7 @@ describe('Epic 35: Organic Sales Calculation Edge Cases', () => {
     expect(item.revenue).toBe(28000)
     expect(item.organic_sales).toBe(-8000) // Negative organic sales is valid
     // Story 88.2-FE: revenue is `number | null`; asserted non-null above, `?? 0` is type-narrowing
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: test assertion; revenue asserted non-null above. Review in Story 105.X.
+    // eslint-disable-next-line no-restricted-syntax -- TEST-ASSERTION: revenue asserted non-null above via type guard; ?? 0 is compiler-only
     expect(item.organic_sales).toBe(item.total_sales - (item.revenue ?? 0)) // Formula still holds
     expect(item.organic_contribution).toBe(-40.0) // Negative % is valid
 

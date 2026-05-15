@@ -64,10 +64,10 @@ export function mergeSearchAndAdData(
       vendorCode: search?.vendorCode ?? ad?.sku_id ?? null,
       totalOrders: search?.totalOrders ?? 0,
       uniqueQueries: search?.uniqueQueries ?? null,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: adSpend null→0 in cross-reference aggregation. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: adSpend null = no ads ran = 0 contribution to cross-reference sum
       adSpend: ad?.spend ?? 0,
       adClicks: ad?.clicks ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: adRevenue null→0 in cross-reference aggregation. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: adRevenue null = no ads ran = 0 contribution to cross-reference sum
       adRevenue: ad?.revenue ?? 0,
       channel: inSearch && inAd ? 'both' : inSearch ? 'organic' : 'ad',
     })

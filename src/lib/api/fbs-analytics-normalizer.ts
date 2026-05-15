@@ -22,7 +22,7 @@ export function normalizeTrendsResponse(raw: unknown): TrendsResponse {
         date: String(d.date ?? ''),
         ordersCount: Number(d.ordersCount ?? d.orders_count ?? 0),
         // Type says `number` (not nullable); coerce null→0. See comment at file top.
-        // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: revenue null→0 per type contract at file top (FBS daily backend guarantees number). Review in Story 105.X.
+        // eslint-disable-next-line no-restricted-syntax -- BACKEND-CONTRACT-NON-NULL: FBS daily service types revenue as number (non-null)
         revenue: Number(d.revenue ?? 0),
         cancellations: Number(d.cancellations ?? 0),
         returns: Number(d.returns ?? 0),

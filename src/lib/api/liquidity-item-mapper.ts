@@ -72,9 +72,9 @@ export function mapLiquidationScenarios(scenarios: any): LiquidationScenario[] |
       velocity_multiplier: s.velocity_multiplier ?? 1,
       suggested_discount_pct: s.suggested_discount_pct ?? discountPct,
       new_price: s.new_price ?? s.price_after_discount ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: expected_revenue/profit null→0 in liquidation scenario; 0 means no expected value. Review in Story 105.X.
+      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: expected_revenue 0 = no liquidation scenario active
       expected_revenue: s.expected_revenue ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING (continuation)
+      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: expected_profit 0 = no liquidation scenario active
       expected_profit: s.expected_profit ?? 0,
       is_profitable: s.is_profitable ?? false,
     })
@@ -102,7 +102,7 @@ export function mapItem(raw: Record<string, any>): LiquidityItem {
     velocity_per_day: avgDailySales,
     turnover_days: raw.turnover_days ?? 0,
     liquidity_category: status as LiquidityCategory,
-    // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: current_price null→0 in liquidity item; backend may omit price for unlisted items. Review in Story 105.X.
+    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: current_price 0 = unlisted item (backend omits price)
     current_price: raw.current_price ?? 0,
     cogs_per_unit: unitCost,
     recommendation: raw.recommendation ?? deriveRecommendation(status),

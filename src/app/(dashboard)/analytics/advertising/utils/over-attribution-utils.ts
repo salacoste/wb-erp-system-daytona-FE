@@ -19,10 +19,10 @@ export function recomputeSummary(
 ): AdvertisingSummary {
   // Story 88.2-FE: revenue/profit may be null ("unknown"). Coerce to 0 at aggregation callsite.
   const total_spend = items.reduce((s, i) => s + i.spend, 0)
-  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: reduce aggregation treats null revenue as 0 by design (Story 88.2). Review in Story 105.X.
+  // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: revenue null per week = no data; treated as 0 contribution to sum (Story 88.2-FE)
   const total_revenue = items.reduce((s, i) => s + (i.revenue ?? 0), 0)
   const total_sales = items.reduce((s, i) => s + i.total_sales, 0)
-  // eslint-disable-next-line no-restricted-syntax -- PRE-EXISTING: reduce aggregation treats null profit as 0 by design (Story 88.2). Review in Story 105.X.
+  // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: profit null per week = no data; treated as 0 contribution to sum (Story 88.2-FE)
   const total_profit = items.reduce((s, i) => s + (i.profit ?? 0), 0)
   const total_organic_sales = items.reduce((s, i) => s + i.organic_sales, 0)
   // Story 88.2-FE: null when total_spend = 0 (division undefined), not 0
