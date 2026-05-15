@@ -331,3 +331,13 @@ development_status:
   104-3-fe-fcu-10th-category-verification: done  # 2026-05-15 source-trace verification: delivery_to_warehouse IS rendered on SKU view. Located in waterfall COST_CATEGORIES list (waterfall-chart-utils.ts:48-62, position 6 of 10 total — original "10th category" framing was a triage misread; full set is COGS/Commission/Logistics-delivery/Logistics-return/Storage/Delivery-to-warehouse/Paid-acceptance/Penalties/Other-deductions/Advertising). FCU fetch correctly gated via useUnitEconomicsPageState.ts:135 `useFcuBySku(viewBy === 'sku' ? selectedWeek : undefined)`. mergeDeliveryCosts handles null DCU + missing FCU. Test coverage: mergeDeliveryCosts.test.ts (7 cases) + UnitEconomicsTableRow.fcu-dcu.test.tsx (5 cases). Brand/cabinet view modes don't show delivery_to_warehouse by design (per-SKU only metric).
   104-4-fe-tests-polish-retrospective: done  # 2026-05-15 final gate sweep: ESLint 0e/112w, tsc 0e, vitest 7248p/0f (+5 from Epic 104 work), doc-citations 22 (was 24; 2 resolved as side-effect of daily-metrics.ts file growth). Retrospective: _bmad-output/implementation-artifacts/epic-104-fe-retro-2026-05-15.md. 5 action items A-1..A-5 filed targeting Anti-Pattern #8 ESLint automation, pre-flight source-trace step, cross-team verification protocol, hook heuristic tightening, advertising daily fixture factory.
   epic-104-fe-retrospective: done
+
+  # Epic 105-FE: Process-Tooling Automation — Anti-Pattern #8 Lint + Pre-Flight Verification (P2, ~5 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-105-fe.md
+  # Source: Epic 104-FE retrospective action items A-1 (ESLint Anti-Pattern #8 rule) + A-2 (pre-flight source-trace step)
+  # Created: 2026-05-15
+  epic-105-fe: backlog
+  105-1-fe-eslint-anti-pattern-8-rule: backlog
+  105-2-fe-preflight-source-trace-workflow: backlog
+  105-3-fe-tests-polish-retrospective: backlog
+  epic-105-fe-retrospective: optional
