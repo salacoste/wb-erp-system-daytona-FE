@@ -336,8 +336,8 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-105-fe.md
   # Source: Epic 104-FE retrospective action items A-1 (ESLint Anti-Pattern #8 rule) + A-2 (pre-flight source-trace step)
   # Created: 2026-05-15
-  epic-105-fe: backlog
-  105-1-fe-eslint-anti-pattern-8-rule: backlog
-  105-2-fe-preflight-source-trace-workflow: backlog
-  105-3-fe-tests-polish-retrospective: backlog
-  epic-105-fe-retrospective: optional
+  epic-105-fe: done
+  105-1-fe-eslint-anti-pattern-8-rule: done  # 2026-05-15 commits 43c11001 (parent eslint.config.js rule) + 2be4835 (frontend allowlists). 4-selector no-restricted-syntax rule covering money/ratio root names (revenue, profit, cost, spend, roas, margin, price, payment, fee, tax, cpc, cpm, ctr) + suffix patterns (_rub, _usd, _pct, _amount, _price, _cost, _profit, _revenue, _spend, _margin, _fee, _rate, _share, _ratio). Counts (views, clicks, orders, length, count) NOT flagged. 66 pre-existing violations allowlisted with eslint-disable-next-line + "PRE-EXISTING — review in Story 105.X follow-up" rationale across 25 files. Self-test scripts/test-anti-pattern-8-rule.sh — 9 fixtures (6 positive + 3 negative), all pass.
+  105-2-fe-preflight-source-trace-workflow: done  # 2026-05-15 commit 4e9a8bc. Added Step 4.5 "Pre-flight source-trace verification" to dev-story workflow XML — mandatory for fresh implementations (skipped for review-continuation). 3-branch logic: all SHIPPED → skip to Step 9 done-as-no-op, all UNIMPLEMENTED → proceed normally, partial → narrow scope. CLAUDE.md § Critical Development Rules cross-reference with empirical citations (Stories 103.1-3 + 104.1 + 104.3 = 5 no-op closures, ~11 SP saved Epics 103-104).
+  105-3-fe-tests-polish-retrospective: done  # 2026-05-15 final gates: ESLint 0e/112w, tsc 0e, vitest 7248p/0f, doc-citations 22 (baseline), self-test 9/9 pass. Retrospective filed: _bmad-output/implementation-artifacts/epic-105-fe-retro-2026-05-15.md.
+  epic-105-fe-retrospective: done
