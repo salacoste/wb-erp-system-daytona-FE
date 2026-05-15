@@ -347,11 +347,11 @@ development_status:
   # Source: Epic 105-FE retrospective action item A-1
   # Triage findings: 64 sites surveyed — 1 FIX (daily/aggregation.ts:104 net_profit), 63 KEEP (legitimate exceptions in 6 patterns), 0 REMOVE
   # Created: 2026-05-15
-  epic-106-fe: in-progress
+  epic-106-fe: done
   # 2-pass review fixes applied 2026-05-15: Fix-block propagation gap closed (createEmptyDailyMetrics + calculateTotals initial),
   # null-preserving reducer, sort comparator null guard, connectNulls on profit Line.
-  106-1-fe-fix-net-profit-nullability: done
-  106-2-fe-update-allowlist-rationales: backlog
-  106-3-fe-document-anti-pattern-8-exceptions: backlog
-  106-4-fe-tests-polish-retrospective: backlog
-  epic-106-fe-retrospective: optional
+  106-1-fe-fix-net-profit-nullability: done  # 2026-05-15 commits 2218b34 (impl) + 1916202 (2-pass review fixes). theoreticalProfit widened to number | null end-to-end.
+  106-2-fe-update-allowlist-rationales: done  # 2026-05-15 commit 8cf9fc5. 65 rationales replaced across 25 files with 6 canonical pattern names. Distribution: SEMANTIC-ZERO 30, DISPLAY-GUARD 12, AGGREGATION-REDUCE 10, TEST-ASSERTION 7, BACKEND-CONTRACT-NON-NULL 4, DEBUG-LOG 3.
+  106-3-fe-document-anti-pattern-8-exceptions: done  # 2026-05-15 commit 205acd8. New CLAUDE-PATTERNS.md § Anti-Pattern #8 Exceptions section with 6 canonical patterns + canonical examples + don't-confuse-with notes. CLAUDE.md cross-references.
+  106-4-fe-tests-polish-retrospective: done  # 2026-05-15 final gates: ESLint 0e/112w, tsc 0e, vitest 7248p/0f, doc-citations 22. Retrospective: epic-106-fe-retro-2026-05-15.md.
+  epic-106-fe-retrospective: done
