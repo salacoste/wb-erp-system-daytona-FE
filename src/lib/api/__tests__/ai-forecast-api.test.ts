@@ -23,10 +23,17 @@ describe('normalizeAiForecastResponse', () => {
 
     const normalized = normalizeAiForecastResponse(raw)
 
-    expect(normalized.predictions).toEqual([
-      { date: '2026-05-15', predictedSales: 2.5, confidence: 0.42 },
-      { date: '2026-05-16', predictedSales: 3.0, confidence: 0.85 },
-    ])
+    // Story 108.1-FE: use objectContaining — prediction shape now has additional optional fields
+    expect(normalized.predictions[0]).toMatchObject({
+      date: '2026-05-15',
+      predictedSales: 2.5,
+      confidence: 0.42,
+    })
+    expect(normalized.predictions[1]).toMatchObject({
+      date: '2026-05-16',
+      predictedSales: 3.0,
+      confidence: 0.85,
+    })
   })
 
   it('passes through scalar fields (modelVersion, engine, cached, generatedAt)', () => {
@@ -61,7 +68,9 @@ describe('normalizeAiForecastResponse', () => {
     expect(normalized.rollbackNotice).toBeNull()
   })
 
-  it('preserves provided explanation/rollbackNotice strings', () => {
+  it('preserves explanation string and structured rollbackNotice object (Story 108.1-FE)', () => {
+    // Story 108.1-FE: rollbackNotice is now a structured object, not a plain string.
+    // Legacy string rollbackNotice values collapse to null (normalizer guards this).
     const raw = {
       predictions: [],
       modelVersion: 1,
@@ -69,13 +78,21 @@ describe('normalizeAiForecastResponse', () => {
       cached: false,
       generatedAt: '2026-05-15T00:00:00Z',
       explanation: 'Confidence intervals trained on 90 days of history',
-      rollbackNotice: 'Model rolled back from v8 to v7 due to drift',
+      rollbackNotice: {
+        previousVersion: 8,
+        rollbackDate: '2026-05-15',
+        reason: 'Model rolled back from v8 to v7 due to drift',
+      },
     }
 
     const normalized = normalizeAiForecastResponse(raw)
 
     expect(normalized.explanation).toBe('Confidence intervals trained on 90 days of history')
-    expect(normalized.rollbackNotice).toBe('Model rolled back from v8 to v7 due to drift')
+    expect(normalized.rollbackNotice).toEqual({
+      previousVersion: 8,
+      rollbackDate: '2026-05-15',
+      reason: 'Model rolled back from v8 to v7 due to drift',
+    })
   })
 
   // Defensive Frontend Principle: backend may return null/undefined predictions

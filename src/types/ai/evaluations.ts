@@ -1,0 +1,60 @@
+/**
+ * AI Evaluation + SKU Accuracy types — frontend-canonical shapes
+ * Endpoints: GET /v1/ai/evaluations, GET /v1/ai/evaluations/sku-accuracy
+ * Source: docs/AI-FRONTEND-INTEGRATION-GUIDE.md § Forecast Accuracy (Evaluations)
+ */
+
+export interface EvaluationEntry {
+  forecastId: string
+  /** null for cabinet-level evaluations */
+  nmId: number | null
+  /** Predicted units sold — count, semantic-zero OK */
+  predictedUnits: number
+  /** Actual units sold — count, semantic-zero OK */
+  actualUnits: number
+  /** Mean Absolute Percentage Error for units — null when not yet evaluated */
+  mapeUnits: number | null
+  /** Mean Absolute Percentage Error for revenue — null when not yet evaluated */
+  mapeRevenue: number | null
+}
+
+export interface AiEvaluationListResponse {
+  evaluations: EvaluationEntry[]
+  /** Aggregate cabinet-level MAPE — null when not yet evaluated */
+  cabinetMape: number | null
+  /** ISO datetime of last evaluation run — null when never evaluated */
+  evaluatedAt: string | null
+  /** Number of unique SKUs evaluated — count, semantic-zero OK */
+  skuCount: number
+}
+
+export interface SkuAccuracyHistoryEntry {
+  evaluationDate: string
+  /** Predicted units — count, semantic-zero OK */
+  predictedUnits: number
+  /** Actual units — count, semantic-zero OK */
+  actualUnits: number
+  /** AI MAPE for this period — null when not yet evaluated */
+  mapeUnits: number | null
+  /** Naive baseline MAPE for comparison — null when not available */
+  naiveMape: number | null
+}
+
+export interface SkuAccuracyEntry {
+  nmId: number
+  vendorCode: string | null
+  history: SkuAccuracyHistoryEntry[]
+  /** Average AI MAPE across all evaluations — null when no evaluations yet */
+  avgAiMape: number | null
+  /** Average naive MAPE across all evaluations — null when no evaluations yet */
+  avgNaiveMape: number | null
+  /**
+   * AI accuracy percentage vs naive baseline — null when not calculable.
+   * Positive = AI beats naive; negative = AI worse than naive.
+   */
+  aiAccuracyPercent: number | null
+}
+
+export interface SkuAccuracyListResponse {
+  skuAccuracies: SkuAccuracyEntry[]
+}

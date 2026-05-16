@@ -184,7 +184,10 @@ export function ForecastPageContent() {
           {data.rollbackNotice && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>Откат модели: {data.rollbackNotice}</AlertDescription>
+              <AlertDescription>
+                Откат модели: {data.rollbackNotice.reason} (v{data.rollbackNotice.previousVersion} →
+                откат {data.rollbackNotice.rollbackDate})
+              </AlertDescription>
             </Alert>
           )}
         </>

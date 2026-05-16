@@ -1,43 +1,23 @@
 /**
- * AI Sales Forecast — frontend-canonical types
- * Endpoint: GET /v1/ai/forecast
+ * AI Forecast types — backward-compatible re-export barrel.
+ * Story 108.1-FE: Types moved to src/types/ai/ subdirectory.
+ * Existing consumers (Epic 103/104 hooks + components) continue to import from here.
  */
 
-export type ForecastLevel = 'sku' | 'brand' | 'cabinet'
+export type {
+  ForecastLevel,
+  AiForecastParams,
+  AiForecastPrediction,
+  RollbackNotice,
+  AiForecastResponse,
+  ConfidenceBand,
+  ModelType,
+} from './ai/forecast'
 
-export interface AiForecastParams {
-  nmId?: number
-  level?: ForecastLevel
-  horizonDays?: number
-}
-
-export const FORECAST_LEVELS: readonly ForecastLevel[] = ['sku', 'brand', 'cabinet'] as const
-
-export function isForecastLevel(value: string): value is ForecastLevel {
-  return (FORECAST_LEVELS as readonly string[]).includes(value)
-}
-
-export interface AiForecastPrediction {
-  date: string
-  predictedSales: number
-  confidence: number
-}
-
-export interface AiForecastResponse {
-  predictions: AiForecastPrediction[]
-  modelVersion: number
-  engine: string
-  cached: boolean
-  generatedAt: string
-  explanation: string | null
-  rollbackNotice: string | null
-}
-
-/** Confidence band classification */
-export type ConfidenceBand = 'high' | 'medium' | 'low'
-
-export function getConfidenceBand(confidence: number): ConfidenceBand {
-  if (confidence >= 0.7) return 'high'
-  if (confidence >= 0.4) return 'medium'
-  return 'low'
-}
+export {
+  FORECAST_LEVELS,
+  isForecastLevel,
+  getConfidenceBand,
+  MODEL_TYPES,
+  isModelType,
+} from './ai/forecast'

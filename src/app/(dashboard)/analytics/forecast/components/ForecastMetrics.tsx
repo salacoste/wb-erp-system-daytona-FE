@@ -5,8 +5,11 @@ import type { AiForecastResponse } from '@/types/ai-forecast'
 import { Card, CardContent } from '@/components/ui/card'
 
 export function ForecastMetrics({ data }: { data: AiForecastResponse }) {
+  const confidenceValues = data.predictions.filter(p => p.confidence != null)
   const avgConfidence =
-    data.predictions.reduce((s, p) => s + p.confidence, 0) / data.predictions.length
+    confidenceValues.length > 0
+      ? confidenceValues.reduce((s, p) => s + (p.confidence ?? 0), 0) / confidenceValues.length
+      : 0
 
   const metrics = [
     { label: 'Движок', value: data.engine, sub: `v${data.modelVersion}` },

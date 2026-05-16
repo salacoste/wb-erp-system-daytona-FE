@@ -18,7 +18,8 @@ const BAND_LABELS: Record<string, string> = {
 interface Prediction {
   date: string
   predictedSales: number
-  confidence: number
+  /** null when backend omits — rendered as em-dash */
+  confidence: number | null
 }
 
 export function ForecastTable({ predictions }: { predictions: Prediction[] }) {
@@ -35,12 +36,14 @@ export function ForecastTable({ predictions }: { predictions: Prediction[] }) {
         </thead>
         <tbody>
           {predictions.map(p => {
-            const band = getConfidenceBand(p.confidence)
+            const band = p.confidence != null ? getConfidenceBand(p.confidence) : 'low'
             return (
               <tr key={p.date} className="border-b last:border-0">
                 <td className="py-2">{formatDate(p.date)}</td>
                 <td className="py-2 text-right font-mono">{p.predictedSales.toFixed(1)}</td>
-                <td className="py-2 text-right font-mono">{(p.confidence * 100).toFixed(0)}%</td>
+                <td className="py-2 text-right font-mono">
+                  {p.confidence != null ? `${(p.confidence * 100).toFixed(0)}%` : '—'}
+                </td>
                 <td className="py-2 text-center">
                   <span
                     className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${BAND_STYLES[band]}`}
