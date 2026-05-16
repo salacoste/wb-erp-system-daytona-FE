@@ -26,10 +26,20 @@ export function normalizeAiStatusResponse(raw: RawAiStatusResponse): AiStatusRes
   // (Epic 108 spec mandates 'ready' as the safe fallback — 'collecting' would hide content).
   const readinessLevel = isReadinessLevel(rawLevel) ? rawLevel : 'ready'
 
+  // Defensive: backend does not include weeksRequired in its response contract
+  // (see docs/request-backend/174-ai-status-weeks-required-missing.md).
+  // Preserve null so the UI can render defensively (no "X из 0" nonsense).
+  const weeksRequired = raw.weeksRequired != null ? raw.weeksRequired : null
+  if (weeksRequired === null) {
+    // Surface missing contract field in DevTools so the backend gap is visible.
+    // eslint-disable-next-line no-console
+    console.warn('[ai/status] weeksRequired absent from backend response', raw)
+  }
+
   return {
     readinessLevel,
     weeksCollected: raw.weeksCollected ?? 0,
-    weeksRequired: raw.weeksRequired ?? 0,
+    weeksRequired,
     progressPct: raw.progressPct ?? null,
     missingRequirements: raw.missingRequirements ?? [],
     estimatedActivationDate: raw.estimatedActivationDate ?? null,

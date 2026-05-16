@@ -27,8 +27,12 @@ export interface AiStatusResponse {
   readinessLevel: ReadinessLevel
   /** Weeks of data collected so far — count, semantic-zero OK */
   weeksCollected: number
-  /** Weeks required before AI activates — count, semantic-zero OK */
-  weeksRequired: number
+  /**
+   * Weeks required before AI activates — null when backend omits the field.
+   * Render defensively: show collected count only when this is null.
+   * See docs/request-backend/174-ai-status-weeks-required-missing.md
+   */
+  weeksRequired: number | null
   /** Progress 0-100 — ratio field, null when backend omits */
   progressPct: number | null
   /** Human-readable list of unmet prerequisites e.g. "COGS coverage < 90%" */

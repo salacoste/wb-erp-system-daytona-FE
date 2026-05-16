@@ -2,9 +2,10 @@
  * AI Status normalizer tests — Story 108.1-FE
  * Covers readiness level guard, null preservation for ratio fields,
  * count fields with semantic-zero, and unknown enum fallback.
+ * Polish F-1: weeksRequired preserved as null (not coalesced to 0) when absent.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { normalizeAiStatusResponse } from '../status'
 
 describe('normalizeAiStatusResponse', () => {
@@ -42,12 +43,30 @@ describe('normalizeAiStatusResponse', () => {
     expect(result.cogsCoveragePct).toBe(85.5)
   })
 
-  it('uses semantic-zero for count fields when missing', () => {
+  it('uses semantic-zero for weeksCollected/skuCount/orderCount when missing', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     const result = normalizeAiStatusResponse({ readinessLevel: 'collecting' })
     expect(result.weeksCollected).toBe(0)
-    expect(result.weeksRequired).toBe(0)
     expect(result.skuCount).toBe(0)
     expect(result.orderCount).toBe(0)
+    spy.mockRestore()
+  })
+
+  it('preserves null for weeksRequired when backend omits field (F-1 defensive fix)', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const result = normalizeAiStatusResponse({ readinessLevel: 'collecting' })
+    expect(result.weeksRequired).toBeNull()
+    // console.warn must fire so DevTools surfaces the contract gap
+    expect(spy).toHaveBeenCalledWith(
+      '[ai/status] weeksRequired absent from backend response',
+      expect.any(Object)
+    )
+    spy.mockRestore()
+  })
+
+  it('preserves weeksRequired when backend provides a valid value', () => {
+    const result = normalizeAiStatusResponse({ readinessLevel: 'collecting', weeksRequired: 12 })
+    expect(result.weeksRequired).toBe(12)
   })
 
   it('preserves null for estimatedActivationDate when backend omits', () => {

@@ -41,3 +41,6 @@ export const TRANSACTION_FORMS = ['транзакция', 'транзакции'
 
 /** Plural forms for "день" (day). */
 export const DAY_FORMS = ['день', 'дня', 'дней'] as const
+
+/** Plural forms for "неделя" (week). */
+export const WEEK_FORMS = ['неделя', 'недели', 'недель'] as const
