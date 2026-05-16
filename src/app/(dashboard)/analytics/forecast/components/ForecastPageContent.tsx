@@ -1,37 +1,26 @@
 'use client'
 
+/**
+ * Forecast page orchestrator — composes header, params, and results sections.
+ * Story 108.2-FE: added AI health badge, preferences toggle, and aiEnabled gate.
+ */
 import { useState, useEffect } from 'react'
-import { Brain, RefreshCw, AlertTriangle, TrendingUp } from 'lucide-react'
+import { RefreshCw, AlertTriangle, TrendingUp } from 'lucide-react'
 import { ForecastTable } from './ForecastTable'
 import { ForecastMetrics } from './ForecastMetrics'
+import { ForecastPageHeader } from './ForecastPageHeader'
+import { ForecastParamsCard } from './ForecastParamsCard'
+import { AiEngineStatusBadge } from './AiEngineStatusBadge'
+import { AiPreferencesToggle } from './AiPreferencesToggle'
 import { useAiForecast } from '@/hooks/useAiForecast'
+import { useAiPreferences } from '@/hooks/useAiPreferences'
 import { useAuthStore } from '@/stores/authStore'
-import { isForecastLevel, type ForecastLevel } from '@/types/ai-forecast'
+import { type ForecastLevel } from '@/types/ai-forecast'
 import { computeForecastQueryParams } from './forecast-query-helpers'
-import { pluralize, DAY_FORMS } from '@/lib/russian-plural'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-
-// 'brand' level is omitted from UI options pending backend brand-list endpoint
-// + brand-aware forecast aggregation. Type union still permits it for future
-// reintroduction. Cabinet-level is implicit aggregation (no selector needed).
-const LEVEL_OPTIONS: { value: ForecastLevel; label: string }[] = [
-  { value: 'sku', label: 'По товару (SKU)' },
-  { value: 'cabinet', label: 'По кабинету' },
-]
-
-const HORIZON_OPTIONS = [7, 14, 21, 28]
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export function ForecastPageContent() {
   const [nmIdInput, setNmIdInput] = useState('')
@@ -43,95 +32,54 @@ export function ForecastPageContent() {
     setNmIdInput('')
   }, [cabinetId])
 
+  const { data: prefs } = useAiPreferences()
+  // Default true while loading — avoids flash of disabled state
+  const aiEnabled = prefs?.aiEnabled !== false
+
   const { nmId, enabled, parsedNmId } = computeForecastQueryParams(level, nmIdInput)
-  const trimmed = nmIdInput.trim()
 
   const { data, isLoading, isError, error, refetch, isFetching } = useAiForecast(
     { nmId, level, horizonDays },
-    enabled
+    enabled && aiEnabled
   )
 
   const hasData = !!data?.predictions?.length
 
+  const header = (
+    <ForecastPageHeader>
+      <AiEngineStatusBadge />
+      <AiPreferencesToggle />
+    </ForecastPageHeader>
+  )
+
+  // Short-circuit when AI is disabled — show empty state with re-enable toggle
+  if (!aiEnabled) {
+    return (
+      <div className="space-y-6 p-6">
+        {header}
+        <Alert>
+          <AlertTitle>AI прогнозы отключены</AlertTitle>
+          <AlertDescription>
+            Включите AI прогнозы с помощью переключателя выше, чтобы получать прогнозы продаж.
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center gap-3">
-        <Brain className="h-8 w-8 text-purple-600" />
-        <div>
-          <h1 className="text-2xl font-bold">AI Прогноз продаж</h1>
-          <p className="text-sm text-muted-foreground">
-            Прогноз на основе машинного обучения (MindsDB)
-          </p>
-        </div>
-      </div>
+      {header}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Параметры прогноза</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="level">Уровень</Label>
-              <Select
-                value={level}
-                onValueChange={v => {
-                  if (isForecastLevel(v)) setLevel(v)
-                }}
-              >
-                <SelectTrigger id="level">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {LEVEL_OPTIONS.map(opt => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {level === 'sku' && (
-              <div className="space-y-2">
-                <Label htmlFor="nmId">Артикул WB (nmId)</Label>
-                <Input
-                  id="nmId"
-                  placeholder="Например: 270937054"
-                  value={nmIdInput}
-                  onChange={e => setNmIdInput(e.target.value)}
-                />
-                {trimmed && !parsedNmId && (
-                  <p className="text-xs text-destructive">Введите числовой артикул</p>
-                )}
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="horizon">Горизонт, дни</Label>
-              <Select value={String(horizonDays)} onValueChange={v => setHorizonDays(Number(v))}>
-                <SelectTrigger id="horizon">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {HORIZON_OPTIONS.map(d => (
-                    <SelectItem key={d} value={String(d)}>
-                      {d} {pluralize(DAY_FORMS, d)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {level === 'sku' && !enabled && (
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>Введите артикул WB для получения прогноза по товару</AlertDescription>
-        </Alert>
-      )}
+      <ForecastParamsCard
+        level={level}
+        nmIdInput={nmIdInput}
+        horizonDays={horizonDays}
+        parsedNmId={parsedNmId}
+        onLevelChange={setLevel}
+        onNmIdChange={setNmIdInput}
+        onHorizonChange={setHorizonDays}
+      />
 
       {(isLoading || isFetching) && !hasData && (
         <Card>
@@ -156,7 +104,6 @@ export function ForecastPageContent() {
 
       {enabled && !isLoading && !isFetching && !isError && !hasData && (
         <Alert>
-          <Brain className="h-4 w-4" />
           <AlertDescription>
             Нет данных прогноза. Модель ещё не обучена для этого товара. Попробуйте позже.
           </AlertDescription>
