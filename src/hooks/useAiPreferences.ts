@@ -24,22 +24,25 @@ export function useAiPreferences() {
   })
 }
 
+interface UpdateAiPreferencesContext {
+  previous: AiPreferences | undefined
+}
+
 export function useUpdateAiPreferences() {
   const cabinetId = useAuthStore(s => s.cabinetId)
   const queryClient = useQueryClient()
-  return useMutation<AiPreferences, Error, AiPreferences>({
+  return useMutation<AiPreferences, Error, Partial<AiPreferences>, UpdateAiPreferencesContext>({
     mutationFn: body => patchAiPreferences(body),
     onMutate: async newPrefs => {
       const key = aiPreferencesKeys.byCabinet(cabinetId)
       await queryClient.cancelQueries({ queryKey: key })
       const previous = queryClient.getQueryData<AiPreferences>(key)
-      queryClient.setQueryData(key, newPrefs)
+      queryClient.setQueryData(key, { ...previous, ...newPrefs })
       return { previous }
     },
     onError: (_err, _vars, context) => {
-      const ctx = context as { previous?: AiPreferences } | undefined
-      if (ctx?.previous) {
-        queryClient.setQueryData(aiPreferencesKeys.byCabinet(cabinetId), ctx.previous)
+      if (context?.previous) {
+        queryClient.setQueryData(aiPreferencesKeys.byCabinet(cabinetId), context.previous)
       }
     },
     onSettled: () => {

@@ -8,6 +8,7 @@
  * Story 108.2-FE.
  */
 import { toast } from 'sonner'
+import { AlertTriangle } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,9 +17,12 @@ import { useAiPreferences, useUpdateAiPreferences } from '@/hooks/useAiPreferenc
 // ── View ────────────────────────────────────────────────────────────────────
 
 export interface AiPreferencesToggleViewProps {
+  /** Default-true while loading (undefined means not yet fetched). */
   aiEnabled: boolean
   isPending: boolean
   isLoading: boolean
+  isError: boolean
+  hasData: boolean
   onToggle: (enabled: boolean) => void
 }
 
@@ -26,10 +30,22 @@ export function AiPreferencesToggleView({
   aiEnabled,
   isPending,
   isLoading,
+  isError,
+  hasData,
   onToggle,
 }: AiPreferencesToggleViewProps) {
   if (isLoading) {
     return <Skeleton className="h-6 w-36" />
+  }
+
+  // Defensive Frontend Principle: if GET failed and no cached data, indicate — don't silently show "off".
+  if (isError && !hasData) {
+    return (
+      <div className="flex items-center gap-1 text-amber-600 text-sm">
+        <AlertTriangle className="h-4 w-4" />
+        <span>Не удалось загрузить настройку</span>
+      </div>
+    )
   }
 
   return (
@@ -51,8 +67,11 @@ export function AiPreferencesToggleView({
 // ── Container ───────────────────────────────────────────────────────────────
 
 export function AiPreferencesToggle() {
-  const { data, isLoading } = useAiPreferences()
+  const { data, isLoading, isError } = useAiPreferences()
   const { mutate, isPending } = useUpdateAiPreferences()
+
+  // Default true while loading — consistent with ForecastPageContent's aiEnabled derivation.
+  const aiEnabled = data?.aiEnabled !== false
 
   function handleToggle(enabled: boolean) {
     mutate(
@@ -67,9 +86,11 @@ export function AiPreferencesToggle() {
 
   return (
     <AiPreferencesToggleView
-      aiEnabled={data?.aiEnabled ?? false}
+      aiEnabled={aiEnabled}
       isPending={isPending}
       isLoading={isLoading}
+      isError={isError}
+      hasData={!!data}
       onToggle={handleToggle}
     />
   )

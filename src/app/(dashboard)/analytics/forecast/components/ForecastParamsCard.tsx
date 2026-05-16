@@ -32,6 +32,8 @@ interface ForecastParamsCardProps {
   nmIdInput: string
   horizonDays: number
   parsedNmId: number | null
+  /** Business-rule gate from computeForecastQueryParams — used for the missing-nmId alert. */
+  enabled: boolean
   onLevelChange: (level: ForecastLevel) => void
   onNmIdChange: (value: string) => void
   onHorizonChange: (days: number) => void
@@ -42,6 +44,7 @@ export function ForecastParamsCard({
   nmIdInput,
   horizonDays,
   parsedNmId,
+  enabled,
   onLevelChange,
   onNmIdChange,
   onHorizonChange,
@@ -111,7 +114,7 @@ export function ForecastParamsCard({
         </CardContent>
       </Card>
 
-      {level === 'sku' && !parsedNmId && (
+      {level === 'sku' && !enabled && (
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>Введите артикул WB для получения прогноза по товару</AlertDescription>

@@ -71,10 +71,10 @@ User-facing AI on/off toggle + engine health badge.
 - Header status badge component: green dot if `engineConnected: true`, red dot if `false`, "stale" badge if `cachedPredictionsAvailable: true` after engine outage
 - AI on/off toggle in forecast page settings area: PATCH `/v1/ai/preferences` with optimistic update
 - Empty state for `aiEnabled: false`: replace entire forecast page with "AI отключён" alert + enable button
-- Russian copy: "Движок прогнозов" / "Подключён" / "Отключён" / "AI включён" / "AI отключён" / "Включить" / "Отключить"
+- Russian copy (refined during implementation for better UX — full sentences instead of fragments): "Движок: подключён", "Движок: офлайн", "Движок: офлайн (кэш доступен)", "AI прогнозы включены", "AI прогнозы отключены"
 
 **Acceptance criteria**:
-- Health polling works with `cabinetId` in queryKey (Story 97.5-FE discipline)
+- Health polling works WITHOUT `cabinetId` in queryKey (global endpoint per backend guide line 305 "no cabinet context needed" — documented exception to Story 97.5-FE discipline; cabinetId IS in preferences queryKey)
 - Preferences toggle persists across page reload
 - aiEnabled=false hides full forecast UI gracefully
 - All baseline gates green

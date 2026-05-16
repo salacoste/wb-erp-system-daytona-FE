@@ -58,15 +58,4 @@ describe('useAiHealth', () => {
     await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
     expect(result.current.error?.message).toBe('network error')
   })
-
-  it('hook config has refetchInterval 30000 and staleTime 15000', () => {
-    // Verify via the query observer options by inspecting the hook source constants.
-    // This is a structural guard — if the constants change the test fails.
-    const EXPECTED_REFETCH_INTERVAL = 30_000
-    const EXPECTED_STALE_TIME = 15_000
-    // Re-import to confirm the exported hook uses these values
-    // (checked by reading the hook's actual query options in integration below)
-    expect(EXPECTED_REFETCH_INTERVAL).toBe(30_000)
-    expect(EXPECTED_STALE_TIME).toBe(15_000)
-  })
 })

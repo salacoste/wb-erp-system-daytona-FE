@@ -76,6 +76,7 @@ export function ForecastPageContent() {
         nmIdInput={nmIdInput}
         horizonDays={horizonDays}
         parsedNmId={parsedNmId}
+        enabled={enabled}
         onLevelChange={setLevel}
         onNmIdChange={setNmIdInput}
         onHorizonChange={setHorizonDays}
