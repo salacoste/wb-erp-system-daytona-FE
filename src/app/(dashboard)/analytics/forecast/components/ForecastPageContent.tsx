@@ -3,6 +3,7 @@
 /**
  * Forecast page orchestrator — composes header, params, and results sections.
  * Story 108.2-FE: added AI health badge, preferences toggle, and aiEnabled gate.
+ * Story 108.3-FE: added readiness state machine routing via useAiStatus + resolveReadinessRoute.
  */
 import { useState, useEffect } from 'react'
 import { RefreshCw, AlertTriangle, TrendingUp } from 'lucide-react'
@@ -12,8 +13,12 @@ import { ForecastPageHeader } from './ForecastPageHeader'
 import { ForecastParamsCard } from './ForecastParamsCard'
 import { AiEngineStatusBadge } from './AiEngineStatusBadge'
 import { AiPreferencesToggle } from './AiPreferencesToggle'
+import { CollectingProgressTracker } from './CollectingProgressTracker'
+import { SneakPreviewSection } from './SneakPreviewSection'
+import { resolveReadinessRoute } from './readiness-router'
 import { useAiForecast } from '@/hooks/useAiForecast'
 import { useAiPreferences } from '@/hooks/useAiPreferences'
+import { useAiStatus } from '@/hooks/useAiStatus'
 import { useAuthStore } from '@/stores/authStore'
 import { type ForecastLevel } from '@/types/ai-forecast'
 import { computeForecastQueryParams } from './forecast-query-helpers'
@@ -43,6 +48,10 @@ export function ForecastPageContent() {
     enabled && aiEnabled
   )
 
+  // Readiness state machine — Pattern 1 (Epic 92-FE): supplementary failure must NOT blank page
+  const aiStatus = useAiStatus()
+  const readinessRoute = resolveReadinessRoute(aiStatus.data?.readinessLevel, aiStatus.isError)
+
   const hasData = !!data?.predictions?.length
 
   const header = (
@@ -67,6 +76,27 @@ export function ForecastPageContent() {
     )
   }
 
+  // Collecting state: replace forecast UI with progress tracker
+  if (readinessRoute === 'collecting' && aiStatus.data) {
+    return (
+      <div className="space-y-6 p-6">
+        {header}
+        <CollectingProgressTracker status={aiStatus.data} />
+      </div>
+    )
+  }
+
+  // Sneak-preview state: replace forecast UI with low-confidence preview
+  if (readinessRoute === 'sneak_preview' && aiStatus.data) {
+    return (
+      <div className="space-y-6 p-6">
+        {header}
+        <SneakPreviewSection status={aiStatus.data} />
+      </div>
+    )
+  }
+
+  // Ready state (or status loading/error — defensive default): full forecast dashboard
   return (
     <div className="space-y-6 p-6">
       {header}
