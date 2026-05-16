@@ -382,9 +382,19 @@ development_status:
   108-6-fe-tests-polish-retrospective: done  # 2026-05-16 final gates: ESLint 0e/112w, tsc 0e, vitest 7405p/0f (+200 from Epic 108 work), doc-citations 22 (baseline). Retrospective: epic-108-fe-retro-2026-05-16.md. 5 action items A-1..A-5 filed (apply foundation to Epic 109.1, visual UAT pending, scripted count helper, a11y lint rule for icons, AI module architecture doc).
   epic-108-fe-retrospective: done
 
-  # Epic 109-FE: AI Forecast Enrichment + Model Management (P2, ~10 SP) — placeholder, depends on Epic 108
-  # Scope: modelType selector (7 types), naiveBaseline/aiVsNaive/explanation/rollbackNotice, forecast chart with confidence band, model list, training trigger + polling, performance detail
+  # Epic 109-FE: AI Forecast Enrichment + Model Management (P2, ~10 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-109-fe.md (created 2026-05-16)
+  # Source: Backend AI Frontend Integration Guide § 2-3 + Epic 108-FE retro A-1/A-3/A-4/A-5
+  # Foundation: Epic 108-FE (16 endpoints types/fetchers/hooks, 7 UI components, MODEL_TYPES enum already defined)
+  # Created: 2026-05-16
   epic-109-fe: backlog
+  109-1-fe-model-type-selector-enriched-fields: backlog  # ~2 SP — ModelTypeSelector (7 Russian-labeled types), naiveBaseline/aiVsNaive/explanation/predictedRevenue display in ForecastTable, rollbackNotice already from Epic 103
+  109-2-fe-forecast-chart-confidence-band: backlog  # ~2 SP — recharts ComposedChart: Area (confidence band) + Line (naiveBaseline dashed) + Line (predictedUnits solid), Russian tooltip, Pattern 2 jsdom mock
+  109-3-fe-model-list-section: backlog  # ~2 SP — useAiModels hook, ModelListSection with status badges (active/training/degraded/retired), MAPE column, click to drill-down
+  109-4-fe-model-training-trigger-polling: backlog  # ~2 SP — useTrainAiModel mutation, TrainModelButton with 5s polling, 422/429/202 error states (insufficient data, rate limit, duplicate)
+  109-5-fe-model-performance-detail-mape-trend: backlog  # ~1.5 SP — useModelPerformance hook, drift status badge (improving/stable/degrading), MAPE trend recharts, previous version comparison
+  109-6-fe-tests-polish-retrospective: backlog  # ~1 SP — final gates + Epic 108 retro A-3 (commit-count script) + A-4 (a11y ESLint rule) + A-5 (AI module architecture doc) + retrospective
+  epic-109-fe-retrospective: optional
 
   # Epic 110-FE: AI Evaluations + Feedback + CSV Export (P2, ~6 SP) — placeholder, depends on Epic 108 + 109
   # Scope: evaluations list, SKU accuracy comparison (AI vs naive), thumbs feedback, CSV export buttons
