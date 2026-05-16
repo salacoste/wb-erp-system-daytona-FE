@@ -373,14 +373,14 @@ development_status:
   # Source: Backend docs/AI-FRONTEND-INTEGRATION-GUIDE.md (2026-05-16) — 16 endpoints, 3 readiness states, 7 model types. Current FE uses only 1 of 16.
   # Phased roadmap: Epic 108 foundation → 109 forecast enrichment → 110 evaluations → 111 admin (role-gated)
   # Created: 2026-05-16
-  epic-108-fe: backlog
-  108-1-fe-expand-types-api-client-16-endpoints: backlog
-  108-2-fe-health-preferences-hooks-ui: backlog
-  108-3-fe-readiness-state-machine: backlog
-  108-4-fe-collecting-state-ui-trends: backlog
-  108-5-fe-sneak-preview-state-ui: backlog
-  108-6-fe-tests-polish-retrospective: backlog
-  epic-108-fe-retrospective: optional
+  epic-108-fe: done
+  108-1-fe-expand-types-api-client-16-endpoints: done  # 2026-05-16 commits bb8b27e (impl: 109 tests, 16 endpoints types+fetchers+normalizers, src/types/ai/ + src/lib/api/ai/ subdirectories with backward-compat barrels) + 6eccb36 (2-pass review fixes: confidence scale 0-100→0-1, readiness fallback to 'ready', admin tests, as-cast removal, legacy string rollbackNotice handling)
+  108-2-fe-health-preferences-hooks-ui: done  # 2026-05-16 commits d15b164 (useAiHealth+useAiPreferences+mutation, AiEngineStatusBadge, AiPreferencesToggle, ForecastPageHeader+ForecastParamsCard extractions, ForecastPageContent 197→144 lines) + 1485fb3 (2-pass fixes: useMutation 4th generic+as-cast removed, loading-state aligned, vacuous test deleted, isError handling, ForecastParamsCard test added)
+  108-3-fe-readiness-state-machine: done  # 2026-05-16 commits 1d1270e (useAiStatus with 60s conditional polling + resolveReadinessRoute pure helper + 2 placeholder components for 108.4/108.5 + 3-branch routing in ForecastPageContent at 175 lines) + 9425693 (2-pass fixes: aiEnabled threaded to useAiStatus, internal-identifier leaks removed, progressPct null guard, ReadinessRoute type duplicate removed, shouldPollAiStatus extracted as pure function, vacuous tests replaced)
+  108-4-fe-collecting-state-ui-trends: done  # 2026-05-16 commits 9daa910 (combined with 108.5: useAiTrends hook + TopSkusTable view/container + CollectingProgressTracker full UI with progress bar, missing requirements, COGS warning, activation date) + 8f1fa89 (2-pass fix: Топ-5 sub-heading added, progressPct AP#8 rationale comment, Название column deviation documented)
+  108-5-fe-sneak-preview-state-ui: done  # 2026-05-16 commit 9daa910 (combined with 108.4: useAiSneakPreview hook + SneakPreviewSection full UI with disclaimer + SKU table + trend icons) + 8f1fa89 (2-pass fix HIGH: WCAG 2.1 AA TrendIcon→TrendIndicator with visible Russian text "Растёт/Стабильно/Снижается" + aria-label, Название column deviation documented)
+  108-6-fe-tests-polish-retrospective: done  # 2026-05-16 final gates: ESLint 0e/112w, tsc 0e, vitest 7405p/0f (+200 from Epic 108 work), doc-citations 22 (baseline). Retrospective: epic-108-fe-retro-2026-05-16.md. 5 action items A-1..A-5 filed (apply foundation to Epic 109.1, visual UAT pending, scripted count helper, a11y lint rule for icons, AI module architecture doc).
+  epic-108-fe-retrospective: done
 
   # Epic 109-FE: AI Forecast Enrichment + Model Management (P2, ~10 SP) — placeholder, depends on Epic 108
   # Scope: modelType selector (7 types), naiveBaseline/aiVsNaive/explanation/rollbackNotice, forecast chart with confidence band, model list, training trigger + polling, performance detail
