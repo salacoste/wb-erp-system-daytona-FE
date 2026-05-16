@@ -20,9 +20,9 @@ import { useAiForecast } from '@/hooks/useAiForecast'
 import { useAiPreferences } from '@/hooks/useAiPreferences'
 import { useAiStatus } from '@/hooks/useAiStatus'
 import { useAuthStore } from '@/stores/authStore'
-import { type ForecastLevel } from '@/types/ai-forecast'
+import { type ForecastLevel, type ModelType } from '@/types/ai-forecast'
 import { computeForecastQueryParams } from './forecast-query-helpers'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -31,10 +31,12 @@ export function ForecastPageContent() {
   const [nmIdInput, setNmIdInput] = useState('')
   const [level, setLevel] = useState<ForecastLevel>('sku')
   const [horizonDays, setHorizonDays] = useState(7)
+  const [modelType, setModelType] = useState<ModelType>('sales_forecast')
 
   const cabinetId = useAuthStore(s => s.cabinetId)
   useEffect(() => {
     setNmIdInput('')
+    setModelType('sales_forecast')
   }, [cabinetId])
 
   const { data: prefs } = useAiPreferences()
@@ -44,7 +46,7 @@ export function ForecastPageContent() {
   const { nmId, enabled, parsedNmId } = computeForecastQueryParams(level, nmIdInput)
 
   const { data, isLoading, isError, error, refetch, isFetching } = useAiForecast(
-    { nmId, level, horizonDays },
+    { nmId, level, horizonDays, modelType },
     enabled && aiEnabled
   )
 
@@ -108,9 +110,11 @@ export function ForecastPageContent() {
         horizonDays={horizonDays}
         parsedNmId={parsedNmId}
         enabled={enabled}
+        modelType={modelType}
         onLevelChange={setLevel}
         onNmIdChange={setNmIdInput}
         onHorizonChange={setHorizonDays}
+        onModelTypeChange={setModelType}
       />
 
       {(isLoading || isFetching) && !hasData && (
@@ -146,15 +150,20 @@ export function ForecastPageContent() {
         <>
           <ForecastMetrics data={data} />
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <TrendingUp className="h-5 w-5" />
-                Прогноз продаж
-              </CardTitle>
-              <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-                <RefreshCw className={`mr-1 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
-                Обновить
-              </Button>
+            <CardHeader className="flex flex-col gap-2">
+              <div className="flex flex-row items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <TrendingUp className="h-5 w-5" />
+                  Прогноз продаж
+                </CardTitle>
+                <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+                  <RefreshCw className={`mr-1 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+                  Обновить
+                </Button>
+              </div>
+              {data.explanation ? (
+                <CardDescription className="line-clamp-3">{data.explanation}</CardDescription>
+              ) : null}
             </CardHeader>
             <CardContent>
               <ForecastTable predictions={data.predictions} />

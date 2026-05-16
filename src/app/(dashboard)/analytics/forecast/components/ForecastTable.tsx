@@ -1,7 +1,12 @@
 'use client'
 
-import { getConfidenceBand } from '@/types/ai-forecast'
-import { formatDate } from '@/lib/utils'
+/**
+ * ForecastTable — renders prediction rows with enriched columns.
+ * Story 109.1-FE: added naiveBaseline, aiVsNaive, predictedRevenue columns.
+ * Column order: Дата → Прогноз продаж → Базовая оценка → AI vs базовая → Прогноз выручки → Уверенность → Диапазон
+ */
+import { getConfidenceBand, type AiForecastPrediction } from '@/types/ai-forecast'
+import { formatDate, formatCurrency } from '@/lib/utils'
 
 const BAND_STYLES: Record<string, string> = {
   high: 'text-green-600 bg-green-50',
@@ -15,14 +20,21 @@ const BAND_LABELS: Record<string, string> = {
   low: 'Низкая',
 }
 
-interface Prediction {
-  date: string
-  predictedSales: number
-  /** null when backend omits — rendered as em-dash */
-  confidence: number | null
+/**
+ * Returns Tailwind color class for aiVsNaive delta string.
+ * Exported for direct unit testing (pure-function discipline, Epic 89-FE lesson).
+ * '+...' → green-600, '-...' → red-600, null/other → muted-foreground.
+ */
+export function getAiVsNaiveColor(
+  value: string | null
+): 'text-green-600' | 'text-red-600' | 'text-muted-foreground' {
+  if (value === null) return 'text-muted-foreground'
+  if (value.startsWith('+')) return 'text-green-600'
+  if (value.startsWith('-')) return 'text-red-600'
+  return 'text-muted-foreground'
 }
 
-export function ForecastTable({ predictions }: { predictions: Prediction[] }) {
+export function ForecastTable({ predictions }: { predictions: AiForecastPrediction[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -30,6 +42,9 @@ export function ForecastTable({ predictions }: { predictions: Prediction[] }) {
           <tr className="border-b">
             <th className="py-2 text-left font-medium">Дата</th>
             <th className="py-2 text-right font-medium">Прогноз продаж</th>
+            <th className="py-2 text-right font-medium">Базовая оценка</th>
+            <th className="py-2 text-right font-medium">AI vs базовая</th>
+            <th className="py-2 text-right font-medium">Прогноз выручки</th>
             <th className="py-2 text-right font-medium">Уверенность</th>
             <th className="py-2 text-center font-medium">Диапазон</th>
           </tr>
@@ -37,10 +52,20 @@ export function ForecastTable({ predictions }: { predictions: Prediction[] }) {
         <tbody>
           {predictions.map(p => {
             const band = p.confidence != null ? getConfidenceBand(p.confidence) : 'low'
+            const aiVsNaiveColor = getAiVsNaiveColor(p.aiVsNaive)
             return (
               <tr key={p.date} className="border-b last:border-0">
                 <td className="py-2">{formatDate(p.date)}</td>
                 <td className="py-2 text-right font-mono">{p.predictedSales.toFixed(1)}</td>
+                <td className="py-2 text-right font-mono">
+                  {p.naiveBaseline != null ? formatCurrency(p.naiveBaseline) : '—'}
+                </td>
+                <td className={`py-2 text-right font-mono ${aiVsNaiveColor}`}>
+                  {p.aiVsNaive ?? '—'}
+                </td>
+                <td className="py-2 text-right font-mono">
+                  {p.predictedRevenue != null ? formatCurrency(p.predictedRevenue) : '—'}
+                </td>
                 <td className="py-2 text-right font-mono">
                   {p.confidence != null ? `${(p.confidence * 100).toFixed(0)}%` : '—'}
                 </td>

@@ -1,12 +1,12 @@
 'use client'
 
 /**
- * Forecast parameters card — level, nmId, horizon selectors.
+ * Forecast parameters card — level, nmId, horizon, modelType selectors.
  * Extracted from ForecastPageContent to keep it under 200-line ESLint cap.
- * Story 108.2-FE.
+ * Story 108.2-FE. Story 109.1-FE: added modelType selector as 4th filter.
  */
 import { AlertTriangle } from 'lucide-react'
-import { isForecastLevel, type ForecastLevel } from '@/types/ai-forecast'
+import { isForecastLevel, type ForecastLevel, type ModelType } from '@/types/ai-forecast'
 import { pluralize, DAY_FORMS } from '@/lib/russian-plural'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { ModelTypeSelector } from './ModelTypeSelector'
 
 const LEVEL_OPTIONS: { value: ForecastLevel; label: string }[] = [
   { value: 'sku', label: 'По товару (SKU)' },
@@ -34,9 +35,11 @@ interface ForecastParamsCardProps {
   parsedNmId: number | null
   /** Business-rule gate from computeForecastQueryParams — used for the missing-nmId alert. */
   enabled: boolean
+  modelType: ModelType
   onLevelChange: (level: ForecastLevel) => void
   onNmIdChange: (value: string) => void
   onHorizonChange: (days: number) => void
+  onModelTypeChange: (v: ModelType) => void
 }
 
 export function ForecastParamsCard({
@@ -45,9 +48,11 @@ export function ForecastParamsCard({
   horizonDays,
   parsedNmId,
   enabled,
+  modelType,
   onLevelChange,
   onNmIdChange,
   onHorizonChange,
+  onModelTypeChange,
 }: ForecastParamsCardProps) {
   const trimmed = nmIdInput.trim()
 
@@ -58,7 +63,7 @@ export function ForecastParamsCard({
           <CardTitle className="text-base">Параметры прогноза</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
               <Label htmlFor="level">Уровень</Label>
               <Select
@@ -110,6 +115,8 @@ export function ForecastParamsCard({
                 </SelectContent>
               </Select>
             </div>
+
+            <ModelTypeSelector value={modelType} onValueChange={onModelTypeChange} />
           </div>
         </CardContent>
       </Card>

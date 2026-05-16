@@ -17,6 +17,7 @@ export const aiForecastKeys = {
       params.level ?? 'sku',
       params.nmId,
       params.horizonDays,
+      params.modelType ?? 'sales_forecast',
     ] as const,
 }
 

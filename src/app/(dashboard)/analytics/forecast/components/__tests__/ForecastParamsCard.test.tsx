@@ -1,5 +1,6 @@
 /**
  * ForecastParamsCard Tests — Story 108.2-FE (Fix 9: 2-pass review addition).
+ * Story 109.1-FE: extended with modelType selector assertions.
  * Tests the pure presentational component directly.
  */
 import React from 'react'
@@ -7,11 +8,13 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ForecastParamsCard } from '../ForecastParamsCard'
 
-/** Shared no-op handlers. */
+/** Shared no-op handlers + default modelType. */
 const noop = {
+  modelType: 'sales_forecast' as const,
   onLevelChange: vi.fn(),
   onNmIdChange: vi.fn(),
   onHorizonChange: vi.fn(),
+  onModelTypeChange: vi.fn(),
 }
 
 describe('ForecastParamsCard', () => {
@@ -58,5 +61,34 @@ describe('ForecastParamsCard', () => {
     )
     expect(screen.queryByLabelText(/Артикул WB/)).toBeNull()
     expect(screen.queryByText(/Введите артикул WB/)).toBeNull()
+  })
+
+  // Story 109.1-FE: ModelTypeSelector integration tests
+  it('renders "Тип модели" selector label for SKU level', () => {
+    render(
+      React.createElement(ForecastParamsCard, {
+        level: 'sku',
+        nmIdInput: '',
+        horizonDays: 7,
+        parsedNmId: null,
+        enabled: true,
+        ...noop,
+      })
+    )
+    expect(screen.getByText('Тип модели')).toBeTruthy()
+  })
+
+  it('renders "Тип модели" selector label for cabinet level (not gated by level)', () => {
+    render(
+      React.createElement(ForecastParamsCard, {
+        level: 'cabinet',
+        nmIdInput: '',
+        horizonDays: 7,
+        parsedNmId: null,
+        enabled: true,
+        ...noop,
+      })
+    )
+    expect(screen.getByText('Тип модели')).toBeTruthy()
   })
 })
