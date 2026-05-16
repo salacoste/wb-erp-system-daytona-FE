@@ -7,18 +7,19 @@
  */
 import type { ReadinessLevel } from '@/types/ai/status'
 
-export type ReadinessRoute = 'collecting' | 'sneak_preview' | 'ready'
-
 /**
  * Determine which readiness-state UI to render.
- * Defaults to 'ready' on loading/error to avoid blanking the page.
- * (Pattern 1, Epic 92-FE: independent state-machine orchestration —
- * supplementary fetch failure must NOT blank the existing forecast UI.)
+ *
+ * Defensive fallback to 'ready' for both undefined (loading/error) AND isError states.
+ * Layer 2 of 2: normalizer (src/lib/api/ai/status.ts) guards backend enum drift;
+ * this guards TanStack Query loading/error states where data is undefined.
+ * Per epic spec — "don't blank the page on status failures" (Pattern 1, Epic 92-FE:
+ * supplementary fetch failure must NOT blank the existing forecast UI).
  */
 export function resolveReadinessRoute(
   level: ReadinessLevel | undefined,
   isError: boolean
-): ReadinessRoute {
+): ReadinessLevel {
   if (isError || level === undefined) return 'ready'
   return level
 }

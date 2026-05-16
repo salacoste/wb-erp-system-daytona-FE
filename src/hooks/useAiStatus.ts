@@ -16,20 +16,29 @@ export const aiStatusKeys = {
   byCabinet: (cabinetId: string | null) => ['ai', 'status', cabinetId] as const,
 } as const
 
-export function useAiStatus() {
+/**
+ * Extracted for direct unit testing (pure functions over hook mocking, CLAUDE.md discipline).
+ * Returns false (stop polling) when ready; 60s interval otherwise.
+ * Handles undefined data (initial fetch / error state) by continuing to poll.
+ */
+export function shouldPollAiStatus(query: { state: { data?: AiStatusResponse } }): false | number {
+  return query.state.data?.readinessLevel === 'ready' ? false : 60_000
+}
+
+/**
+ * @param enabled - Pass false to suppress polling when AI is disabled (e.g. aiEnabled === false).
+ *   Hook call must remain above early returns per Rules of Hooks — only the enabled flag changes.
+ */
+export function useAiStatus(enabled = true) {
   const cabinetId = useAuthStore(s => s.cabinetId)
   return useQuery<AiStatusResponse, Error>({
     queryKey: aiStatusKeys.byCabinet(cabinetId),
     queryFn: getAiStatus,
     // TanStack Query v5: refetchInterval callback receives the query object
-    // Poll every 60s ONLY when not ready (data unlikely to change once ready)
-    refetchInterval: query => {
-      const data = query.state.data
-      return data?.readinessLevel === 'ready' ? false : 60_000
-    },
+    refetchInterval: shouldPollAiStatus,
     staleTime: 30_000,
     gcTime: 5 * 60_000,
-    enabled: !!cabinetId,
+    enabled: !!cabinetId && enabled,
     retry: 1,
   })
 }

@@ -49,7 +49,8 @@ export function ForecastPageContent() {
   )
 
   // Readiness state machine — Pattern 1 (Epic 92-FE): supplementary failure must NOT blank page
-  const aiStatus = useAiStatus()
+  // Pass aiEnabled so hook doesn't poll /v1/ai/status every 60s when AI is disabled
+  const aiStatus = useAiStatus(aiEnabled)
   const readinessRoute = resolveReadinessRoute(aiStatus.data?.readinessLevel, aiStatus.isError)
 
   const hasData = !!data?.predictions?.length

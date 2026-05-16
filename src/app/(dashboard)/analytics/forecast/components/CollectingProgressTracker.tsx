@@ -23,11 +23,11 @@ export function CollectingProgressTracker({ status }: Props) {
             <h2 className="text-lg font-semibold">Сбор данных для AI</h2>
             <p className="text-sm text-muted-foreground">
               Собрано {status.weeksCollected} из {status.weeksRequired} недель (
-              {status.progressPct ?? 0}% готовности).
+              {status.progressPct != null ? `${status.progressPct}%` : '—'} готовности).
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
               {/* Story 108.4-FE: add full progress bar + missing requirements + estimated activation + top SKUs */}
-              Подробности появятся после реализации Story 108.4-FE.
+              Подробности появятся в ближайшем обновлении.
             </p>
           </div>
         </div>

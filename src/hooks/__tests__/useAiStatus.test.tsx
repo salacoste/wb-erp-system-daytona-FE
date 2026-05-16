@@ -5,20 +5,19 @@
  * Tests:
  * - queryKey includes cabinetId (cabinet-isolation discipline, Story 97.5-FE)
  * - Fetches status data successfully
- * - refetchInterval: returns false when readinessLevel === 'ready' (polling stops)
- * - refetchInterval: returns 60000 when readinessLevel !== 'ready' (collecting/sneak_preview)
+ * - shouldPollAiStatus: returns false when ready, 60000 otherwise (direct pure-function tests)
  * - Disabled when cabinetId is null
+ * - Disabled when enabled param is false (AI feature disabled)
  */
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useAiStatus, aiStatusKeys } from '../useAiStatus'
+import { useAiStatus, aiStatusKeys, shouldPollAiStatus } from '../useAiStatus'
 import * as aiStatusApi from '@/lib/api/ai/status'
 import type { AiStatusResponse } from '@/types/ai/status'
 
 vi.mock('@/lib/api/ai/status')
-vi.mock('@/stores/authStore')
 
 const mockGetAiStatus = vi.mocked(aiStatusApi.getAiStatus)
 
@@ -121,34 +120,35 @@ describe('useAiStatus', () => {
     expect(mockGetAiStatus).not.toHaveBeenCalled()
   })
 
-  it('stops polling when readinessLevel is ready (returns false)', async () => {
-    mockGetAiStatus.mockResolvedValue(readyStatus)
+  it('does not fetch when enabled param is false (AI feature disabled)', async () => {
+    mockGetAiStatus.mockResolvedValueOnce(readyStatus)
 
-    const { result } = renderHook(() => useAiStatus(), { wrapper: createWrapper() })
+    const { result } = renderHook(() => useAiStatus(false), { wrapper: createWrapper() })
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.isPending).toBe(true)
+    expect(result.current.isFetching).toBe(false)
+    expect(mockGetAiStatus).not.toHaveBeenCalled()
+  })
+})
 
-    // Extract refetchInterval from the hook's internals by inspecting the query config
-    // We verify the behavior by checking that the function would return false for ready state
-    // via the resolveReadinessRoute pattern (unit-level verification of the callback logic)
-    expect(result.current.data?.readinessLevel).toBe('ready')
+describe('shouldPollAiStatus', () => {
+  it('returns false when readinessLevel is ready (stop polling)', () => {
+    const query = { state: { data: readyStatus } }
+    expect(shouldPollAiStatus(query)).toBe(false)
   })
 
-  it('polls every 60s when readinessLevel is collecting', async () => {
-    mockGetAiStatus.mockResolvedValue(collectingStatus)
-
-    const { result } = renderHook(() => useAiStatus(), { wrapper: createWrapper() })
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.readinessLevel).toBe('collecting')
+  it('returns 60000 when readinessLevel is collecting', () => {
+    const query = { state: { data: collectingStatus } }
+    expect(shouldPollAiStatus(query)).toBe(60_000)
   })
 
-  it('polls every 60s when readinessLevel is sneak_preview', async () => {
-    mockGetAiStatus.mockResolvedValue(sneakPreviewStatus)
+  it('returns 60000 when readinessLevel is sneak_preview', () => {
+    const query = { state: { data: sneakPreviewStatus } }
+    expect(shouldPollAiStatus(query)).toBe(60_000)
+  })
 
-    const { result } = renderHook(() => useAiStatus(), { wrapper: createWrapper() })
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.readinessLevel).toBe('sneak_preview')
+  it('returns 60000 when data is undefined (initial fetch / error state)', () => {
+    const query = { state: { data: undefined } }
+    expect(shouldPollAiStatus(query)).toBe(60_000)
   })
 })

@@ -23,7 +23,7 @@ const mockStatus: AiStatusResponse = {
 describe('SneakPreviewSection', () => {
   it('renders sneak-preview disclaimer heading', () => {
     render(<SneakPreviewSection status={mockStatus} />)
-    expect(screen.getByText('AI Sneak Preview — низкая уверенность')).toBeInTheDocument()
+    expect(screen.getByText('AI: предварительный прогноз — низкая уверенность')).toBeInTheDocument()
   })
 
   it('renders collected weeks and required weeks from status', () => {

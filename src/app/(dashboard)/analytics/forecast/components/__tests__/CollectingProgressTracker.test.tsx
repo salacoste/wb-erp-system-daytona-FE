@@ -32,9 +32,9 @@ describe('CollectingProgressTracker', () => {
     expect(screen.getByText('Сбор данных для AI')).toBeInTheDocument()
   })
 
-  it('renders progressPct as 0 when null', () => {
+  it('renders em-dash when progressPct is null (preserve evidence, Defensive Frontend Principle)', () => {
     const statusNullPct: AiStatusResponse = { ...mockStatus, progressPct: null }
     render(<CollectingProgressTracker status={statusNullPct} />)
-    expect(screen.getByText(/0% готовности/)).toBeInTheDocument()
+    expect(screen.getByText(/— готовности/)).toBeInTheDocument()
   })
 })

@@ -18,14 +18,14 @@ export function SneakPreviewSection({ status }: Props) {
     <Alert>
       <AlertTriangle className="h-4 w-4" />
       <AlertDescription>
-        <p className="font-semibold">AI Sneak Preview — низкая уверенность</p>
+        <p className="font-semibold">AI: предварительный прогноз — низкая уверенность</p>
         <p className="text-xs mt-1">
           Собрано {status.weeksCollected} недель. Полная AI активируется при достижении{' '}
           {status.weeksRequired} недель.
         </p>
         <p className="text-xs mt-1 text-muted-foreground">
           {/* Story 108.5-FE: add sneak-preview table with SKU forecasts, trend arrows, range */}
-          Прогнозы появятся после реализации Story 108.5-FE.
+          Прогнозы появятся в ближайшем обновлении.
         </p>
       </AlertDescription>
     </Alert>
