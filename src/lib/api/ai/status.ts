@@ -22,8 +22,9 @@ interface RawAiStatusResponse {
 
 export function normalizeAiStatusResponse(raw: RawAiStatusResponse): AiStatusResponse {
   const rawLevel = raw.readinessLevel ?? ''
-  // Defensive: unknown readiness level falls back to 'collecting' (Story 108.3-FE guard)
-  const readinessLevel = isReadinessLevel(rawLevel) ? rawLevel : 'collecting'
+  // Defensive: unknown readiness level falls back to 'ready' so the page is never blanked
+  // (Epic 108 spec mandates 'ready' as the safe fallback — 'collecting' would hide content).
+  const readinessLevel = isReadinessLevel(rawLevel) ? rawLevel : 'ready'
 
   return {
     readinessLevel,

@@ -36,8 +36,9 @@ export {
   normalizeSkuAccuracyListResponse,
   getSkuAccuracy,
 } from './evaluations'
+export type { EvaluationParams } from './evaluations'
 
-// System (GET|PATCH /v1/ai/health, /preferences, POST /feedback, PATCH /anomalies/:id/resolve)
+// System (GET /v1/ai/health, GET|PATCH /v1/ai/preferences, POST /v1/ai/feedback, PATCH /v1/ai/anomalies/:id/resolve)
 export {
   normalizeAiHealthResponse,
   getAiHealth,

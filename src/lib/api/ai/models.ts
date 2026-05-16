@@ -25,7 +25,7 @@ interface RawAiModelMetrics {
   dataPointsCount?: number | null
 }
 
-interface RawAiModel {
+export interface RawAiModel {
   id?: string | null
   modelType?: string | null
   engine?: string | null

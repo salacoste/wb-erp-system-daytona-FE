@@ -10,10 +10,10 @@ import type {
   AdminModelListResponse,
   ModelRollbackRequest,
 } from '@/types/ai/admin'
-import { normalizeAiModelListResponse } from './models'
+import { normalizeAiModelListResponse, RawAiModel } from './models'
 
 interface RawAdminModelListResponse {
-  models?: unknown[] | null
+  models?: RawAiModel[] | null
   total?: number | null
   page?: number | null
   limit?: number | null
@@ -23,7 +23,7 @@ export function normalizeAdminModelListResponse(
   raw: RawAdminModelListResponse
 ): AdminModelListResponse {
   // Re-use model normalizer for the models array
-  const base = normalizeAiModelListResponse({ models: raw.models as never })
+  const base = normalizeAiModelListResponse({ models: raw.models })
   return {
     models: base.models,
     total: raw.total ?? 0,

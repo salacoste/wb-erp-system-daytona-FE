@@ -9,11 +9,12 @@ import { describe, it, expect } from 'vitest'
 import { normalizeAiForecastResponse } from '../ai-forecast-api'
 
 describe('normalizeAiForecastResponse', () => {
-  it('renames forecastDate → date and predictedUnits → predictedSales', () => {
+  it('renames forecastDate → date and predictedUnits → predictedSales, normalizes confidence 0-100→0-1', () => {
+    // Backend sends confidence as 0-100; normalizer divides by 100 at the boundary.
     const raw = {
       predictions: [
-        { forecastDate: '2026-05-15', predictedUnits: 2.5, confidence: 0.42 },
-        { forecastDate: '2026-05-16', predictedUnits: 3.0, confidence: 0.85 },
+        { forecastDate: '2026-05-15', predictedUnits: 2.5, confidence: 42 },
+        { forecastDate: '2026-05-16', predictedUnits: 3.0, confidence: 85 },
       ],
       modelVersion: 7,
       engine: 'mindsdb',
@@ -70,7 +71,8 @@ describe('normalizeAiForecastResponse', () => {
 
   it('preserves explanation string and structured rollbackNotice object (Story 108.1-FE)', () => {
     // Story 108.1-FE: rollbackNotice is now a structured object, not a plain string.
-    // Legacy string rollbackNotice values collapse to null (normalizer guards this).
+    // Legacy string rollbackNotice values are wrapped into { previousVersion:0, rollbackDate:'', reason: <string> }
+    // (Defensive Frontend Principle — Fix 5: data is preserved, not silently dropped).
     const raw = {
       predictions: [],
       modelVersion: 1,

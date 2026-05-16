@@ -29,7 +29,7 @@ export interface AiForecastPrediction {
   predictedSales: number
   /** Revenue prediction — null when backend doesn't provide (non-revenue models) */
   predictedRevenue: number | null
-  /** Confidence score 0-100 — null when backend omits */
+  /** Confidence score 0-1 (frontend-canonical form; backend sends 0-100, normalized at boundary). null when backend omits */
   confidence: number | null
   nmId?: number
   vendorCode?: string
@@ -59,7 +59,7 @@ export interface AiForecastResponse {
   rollbackNotice: RollbackNotice | null
 }
 
-/** Confidence band classification based on 0-100 scale */
+/** Confidence band classification based on 0-1 canonical scale */
 export type ConfidenceBand = 'high' | 'medium' | 'low'
 
 export function getConfidenceBand(confidence: number): ConfidenceBand {

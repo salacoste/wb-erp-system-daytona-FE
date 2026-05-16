@@ -18,12 +18,12 @@ describe('normalizeAiStatusResponse', () => {
     expect(normalizeAiStatusResponse({ readinessLevel: 'ready' }).readinessLevel).toBe('ready')
   })
 
-  it('falls back to "collecting" for unknown readiness level', () => {
+  it('falls back to "ready" for unknown readiness level (Fix 2: spec mandates ready to avoid blanking page)', () => {
     expect(normalizeAiStatusResponse({ readinessLevel: 'unknown_state' }).readinessLevel).toBe(
-      'collecting'
+      'ready'
     )
-    expect(normalizeAiStatusResponse({ readinessLevel: null }).readinessLevel).toBe('collecting')
-    expect(normalizeAiStatusResponse({}).readinessLevel).toBe('collecting')
+    expect(normalizeAiStatusResponse({ readinessLevel: null }).readinessLevel).toBe('ready')
+    expect(normalizeAiStatusResponse({}).readinessLevel).toBe('ready')
   })
 
   it('preserves null for ratio fields (progressPct, cogsCoveragePct)', () => {

@@ -1,10 +1,11 @@
 /**
  * AI Forecast normalizer tests — Story 108.1-FE
  * Covers extended prediction fields (predictedRevenue, naiveBaseline, aiVsNaive,
- * forecastId, horizonDays) and structured rollbackNotice shape.
+ * forecastId, horizonDays), structured rollbackNotice shape, confidence 0-100→0-1
+ * boundary normalization, and legacy string rollbackNotice wrapping.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { normalizeAiForecastResponse } from '../forecast'
 
 describe('normalizeAiForecastResponse — extended fields', () => {
@@ -24,6 +25,14 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].predictedSales).toBe(42.5)
   })
 
+  it('normalizes confidence from backend 0-100 to canonical 0-1 (Fix 1)', () => {
+    const result = normalizeAiForecastResponse({
+      ...base,
+      predictions: [{ forecastDate: '2026-05-17', predictedUnits: 42.5, confidence: 82 }],
+    })
+    expect(result.predictions[0].confidence).toBeCloseTo(0.82)
+  })
+
   it('preserves nullable money fields as null when missing', () => {
     const result = normalizeAiForecastResponse({
       ...base,
@@ -35,7 +44,7 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].aiVsNaive).toBeNull()
   })
 
-  it('passes through extended prediction fields when present', () => {
+  it('passes through extended prediction fields when present (confidence normalized to 0-1)', () => {
     const result = normalizeAiForecastResponse({
       ...base,
       predictions: [
@@ -57,7 +66,8 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(p.predictedRevenue).toBe(5000)
     expect(p.naiveBaseline).toBe(4500)
     expect(p.aiVsNaive).toBe('+11.1%')
-    expect(p.confidence).toBe(78)
+    // Backend 78 → normalized 0.78
+    expect(p.confidence).toBeCloseTo(0.78)
     expect(p.nmId).toBe(12345)
     expect(p.vendorCode).toBe('SKU-001')
     expect(p.forecastId).toBe('uuid-abc')
@@ -81,13 +91,38 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     })
   })
 
-  it('collapses legacy string rollbackNotice to null', () => {
-    const result = normalizeAiForecastResponse({
-      ...base,
-      predictions: [],
-      rollbackNotice: 'some string value',
+  describe('legacy string rollbackNotice — Fix 5 (Defensive Frontend Principle)', () => {
+    beforeEach(() => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     })
-    expect(result.rollbackNotice).toBeNull()
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('wraps legacy string rollbackNotice into structured object preserving raw string as reason', () => {
+      const result = normalizeAiForecastResponse({
+        ...base,
+        predictions: [],
+        rollbackNotice: 'rolled back due to MAPE spike',
+      })
+      expect(result.rollbackNotice).toEqual({
+        previousVersion: 0,
+        rollbackDate: '',
+        reason: 'rolled back due to MAPE spike',
+      })
+    })
+
+    it('emits console.warn when legacy string rollbackNotice is received', () => {
+      normalizeAiForecastResponse({
+        ...base,
+        predictions: [],
+        rollbackNotice: 'some string value',
+      })
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Legacy string rollbackNotice received')
+      )
+    })
   })
 
   it('handles null/missing predictions defensively', () => {

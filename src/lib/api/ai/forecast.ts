@@ -46,7 +46,8 @@ function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
     horizonDays: p.horizonDays ?? 0,
     predictedSales: p.predictedUnits,
     predictedRevenue: p.predictedRevenue ?? null,
-    confidence: p.confidence ?? null,
+    // Backend sends 0-100; normalize to 0-1 at boundary (Boundary Normalizer Pattern)
+    confidence: typeof p.confidence === 'number' ? p.confidence / 100 : null,
     nmId: p.nmId,
     vendorCode: p.vendorCode,
     naiveBaseline: p.naiveBaseline ?? null,
@@ -56,12 +57,16 @@ function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
 }
 
 export function normalizeAiForecastResponse(raw: RawAiForecastResponse): AiForecastResponse {
-  // rollbackNotice may be a string (legacy) or structured object
+  // rollbackNotice may be a string (legacy) or structured object.
+  // Defensive Frontend Principle: preserve the string as reason rather than dropping data silently.
   const rollback =
     raw.rollbackNotice == null
       ? null
       : typeof raw.rollbackNotice === 'string'
-        ? null
+        ? (console.warn(
+            '[ai-forecast] Legacy string rollbackNotice received, expected structured object. Wrapping into reason field.'
+          ),
+          { previousVersion: 0, rollbackDate: '', reason: raw.rollbackNotice })
         : {
             previousVersion: raw.rollbackNotice.previousVersion,
             rollbackDate: raw.rollbackNotice.rollbackDate,
