@@ -1,33 +1,126 @@
 'use client'
 
+/**
+ * SneakPreviewSection — full sneak-preview state UI with disclaimer,
+ * low-confidence SKU forecasts, trend icons, and 7-day range.
+ *
+ * Story 108.5-FE (expanded from 108.3 placeholder).
+ */
+import { AlertTriangle, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertTriangle } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent } from '@/components/ui/card'
+import { useAiSneakPreview } from '@/hooks/useAiSneakPreview'
 import type { AiStatusResponse } from '@/types/ai/status'
+import type { SneakPreviewSkuForecast, TrendDirection } from '@/types/ai/trends-sneak'
 
 interface Props {
   status: AiStatusResponse
 }
 
-/**
- * Placeholder for Story 108.5-FE — sneak-preview state UI.
- * Story 108.3-FE provides minimal scaffold; Story 108.5 fills in low-confidence
- * forecasts from /v1/ai/sneak-preview, disclaimer, trend arrows.
- */
-export function SneakPreviewSection({ status }: Props) {
+// ── Trend icon helper ─────────────────────────────────────────────────────────
+
+function TrendIcon({ trend }: { trend: TrendDirection }) {
+  if (trend === 'up') return <TrendingUp className="h-4 w-4 text-green-600" />
+  if (trend === 'down') return <TrendingDown className="h-4 w-4 text-red-600" />
+  return <Minus className="h-4 w-4 text-muted-foreground" />
+}
+
+// ── Pure view — exported for direct unit testing ──────────────────────────────
+
+interface SneakPreviewTableViewProps {
+  skuForecasts: SneakPreviewSkuForecast[]
+}
+
+export function SneakPreviewTableView({ skuForecasts }: SneakPreviewTableViewProps) {
+  if (skuForecasts.length === 0) {
+    return <p className="text-sm text-muted-foreground">Нет данных</p>
+  }
+
   return (
-    <Alert>
-      <AlertTriangle className="h-4 w-4" />
-      <AlertDescription>
-        <p className="font-semibold">AI: предварительный прогноз — низкая уверенность</p>
-        <p className="text-xs mt-1">
-          Собрано {status.weeksCollected} недель. Полная AI активируется при достижении{' '}
-          {status.weeksRequired} недель.
-        </p>
-        <p className="text-xs mt-1 text-muted-foreground">
-          {/* Story 108.5-FE: add sneak-preview table with SKU forecasts, trend arrows, range */}
-          Прогнозы появятся в ближайшем обновлении.
-        </p>
-      </AlertDescription>
-    </Alert>
+    <table className="w-full text-sm">
+      <thead>
+        <tr className="border-b text-left text-muted-foreground">
+          <th className="py-2 pr-4 font-medium">Артикул</th>
+          <th className="py-2 pr-4 font-medium">Название</th>
+          <th className="py-2 pr-4 font-medium text-right">Среднее/день</th>
+          <th className="py-2 pr-4 font-medium text-center">Тренд</th>
+          <th className="py-2 font-medium text-right">Диапазон 7 дней</th>
+        </tr>
+      </thead>
+      <tbody>
+        {skuForecasts.map(sku => (
+          <tr key={sku.nmId} className="border-b last:border-0">
+            <td className="py-2 pr-4 font-mono">{sku.nmId}</td>
+            <td className="py-2 pr-4 text-muted-foreground">{sku.vendorCode ?? '—'}</td>
+            <td className="py-2 pr-4 text-right font-mono">
+              {sku.avgPerDay != null ? sku.avgPerDay.toFixed(1) : '—'}
+            </td>
+            <td className="py-2 pr-4 flex justify-center">
+              <TrendIcon trend={sku.trend} />
+            </td>
+            <td className="py-2 text-right font-mono">
+              {sku.estimatedRange.low != null && sku.estimatedRange.high != null
+                ? `${sku.estimatedRange.low.toFixed(0)} – ${sku.estimatedRange.high.toFixed(0)}`
+                : '—'}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+// ── Container ─────────────────────────────────────────────────────────────────
+
+export function SneakPreviewSection({ status }: Props) {
+  const { weeksCollected, weeksRequired } = status
+  const { data, isLoading, isError } = useAiSneakPreview()
+
+  const disclaimer = data?.disclaimer || 'Низкая уверенность — сбор данных продолжается'
+
+  return (
+    <div className="space-y-4">
+      {/* Disclaimer — always visible */}
+      <Alert>
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          <p className="font-semibold">AI: предварительный прогноз — низкая уверенность</p>
+          <p className="text-xs mt-1">{disclaimer}</p>
+        </AlertDescription>
+      </Alert>
+
+      <Card>
+        <CardContent className="pt-6 space-y-4">
+          {/* Status block */}
+          <p className="text-sm text-muted-foreground">
+            Собрано {weeksCollected} недель. Полная AI активируется при достижении {weeksRequired}{' '}
+            недель.
+          </p>
+
+          {/* Forecast table */}
+          <h3 className="text-base font-semibold">Предварительный прогноз — топ SKU</h3>
+
+          {isLoading && (
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+          )}
+
+          {isError && (
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>Не удалось загрузить прогнозы</AlertDescription>
+            </Alert>
+          )}
+
+          {!isLoading && !isError && (
+            <SneakPreviewTableView skuForecasts={data?.skuForecasts ?? []} />
+          )}
+        </CardContent>
+      </Card>
+    </div>
   )
 }
