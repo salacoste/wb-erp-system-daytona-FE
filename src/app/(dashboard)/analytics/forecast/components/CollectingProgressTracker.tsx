@@ -43,6 +43,11 @@ export function CollectingProgressTracker({ status }: Props) {
 
           {/* Progress bar */}
           <div className="space-y-1">
+            {/* DISPLAY-GUARD (CLAUDE-PATTERNS.md § Anti-Pattern #8 Exceptions):
+                Progress component requires numeric value prop; null rendered as
+                — in adjacent text below. Per Story 105.1-FE ESLint rule, progressPct
+                doesn't match the regex (camelCase, not _pct suffix), but inline
+                comment documents the rationale for future readers. */}
             <Progress value={progressPct ?? 0} className="h-2" />
             <p className="text-sm text-muted-foreground">
               {progressPct != null ? `${progressPct}%` : '—'} готовности
@@ -101,6 +106,9 @@ export function CollectingProgressTracker({ status }: Props) {
       <Card>
         <CardContent className="pt-6 space-y-3">
           <h3 className="text-base font-semibold">Что вы можете делать сейчас</h3>
+          {/* Spec line 114 mandates "Топ-5 SKU по объёму" sub-heading (in addition
+              to the wrapper heading above). 2-pass review fix. */}
+          <h4 className="text-sm font-medium text-muted-foreground">Топ-5 SKU по объёму</h4>
           <TopSkusTable />
         </CardContent>
       </Card>

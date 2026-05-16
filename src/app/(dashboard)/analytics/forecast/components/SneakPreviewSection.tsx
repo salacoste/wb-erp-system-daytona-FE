@@ -18,12 +18,26 @@ interface Props {
   status: AiStatusResponse
 }
 
-// ── Trend icon helper ─────────────────────────────────────────────────────────
+// ── Trend indicator (icon + Russian label) ───────────────────────────────────
+// Fix from 2-pass review (HIGH): per epic spec line 134 + WCAG 2.1 AA, trends
+// must have visible Russian text label AND aria-label. Icon-only fails both.
 
-function TrendIcon({ trend }: { trend: TrendDirection }) {
-  if (trend === 'up') return <TrendingUp className="h-4 w-4 text-green-600" />
-  if (trend === 'down') return <TrendingDown className="h-4 w-4 text-red-600" />
-  return <Minus className="h-4 w-4 text-muted-foreground" />
+const TREND_LABELS: Record<TrendDirection, string> = {
+  up: 'Растёт',
+  stable: 'Стабильно',
+  down: 'Снижается',
+}
+
+function TrendIndicator({ trend }: { trend: TrendDirection }) {
+  const label = TREND_LABELS[trend]
+  return (
+    <span className="inline-flex items-center gap-1" aria-label={label}>
+      {trend === 'up' && <TrendingUp className="h-4 w-4 text-green-600" aria-hidden="true" />}
+      {trend === 'down' && <TrendingDown className="h-4 w-4 text-red-600" aria-hidden="true" />}
+      {trend === 'stable' && <Minus className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
+      <span className="text-xs">{label}</span>
+    </span>
+  )
 }
 
 // ── Pure view — exported for direct unit testing ──────────────────────────────
@@ -57,7 +71,7 @@ export function SneakPreviewTableView({ skuForecasts }: SneakPreviewTableViewPro
               {sku.avgPerDay != null ? sku.avgPerDay.toFixed(1) : '—'}
             </td>
             <td className="py-2 pr-4 flex justify-center">
-              <TrendIcon trend={sku.trend} />
+              <TrendIndicator trend={sku.trend} />
             </td>
             <td className="py-2 text-right font-mono">
               {sku.estimatedRange.low != null && sku.estimatedRange.high != null

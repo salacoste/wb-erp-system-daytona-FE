@@ -23,6 +23,9 @@ export function TopSkusTableView({ data }: TopSkusTableViewProps) {
     return <p className="text-sm text-muted-foreground">Пока нет данных по SKU</p>
   }
 
+  // Note: backend guide wireframe (line 55-57) shows 3 columns; we add 4th
+  // (Название/vendorCode) for UX — nmId alone is opaque to sellers who think
+  // in product names. Same pattern in SneakPreviewSection. 2-pass review fix.
   return (
     <table className="w-full text-sm">
       <thead>
