@@ -367,3 +367,29 @@ development_status:
   107-3-fe-two-repo-coordination-doc: done  # 2026-05-15 commit 78bdf15. New docs/process/two-repo-coordination.md (~154 lines). Covers structure, remotes, when each repo gets commits, cross-repo sequence, 4 common pitfalls, push protocol, canonical example (Story 105.1-FE).
   107-4-fe-tests-polish-retrospective: done  # 2026-05-15 final gates: ESLint 0e/112w, tsc 0e, vitest 7255p/0f (+7 from Story 107.1+107.2), doc-citations 22. Retrospective: epic-107-fe-retro-2026-05-15.md.
   epic-107-fe-retrospective: done
+
+  # Epic 108-FE: AI Foundation + Readiness States (P1, ~10 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-108-fe.md
+  # Source: Backend docs/AI-FRONTEND-INTEGRATION-GUIDE.md (2026-05-16) — 16 endpoints, 3 readiness states, 7 model types. Current FE uses only 1 of 16.
+  # Phased roadmap: Epic 108 foundation → 109 forecast enrichment → 110 evaluations → 111 admin (role-gated)
+  # Created: 2026-05-16
+  epic-108-fe: backlog
+  108-1-fe-expand-types-api-client-16-endpoints: backlog
+  108-2-fe-health-preferences-hooks-ui: backlog
+  108-3-fe-readiness-state-machine: backlog
+  108-4-fe-collecting-state-ui-trends: backlog
+  108-5-fe-sneak-preview-state-ui: backlog
+  108-6-fe-tests-polish-retrospective: backlog
+  epic-108-fe-retrospective: optional
+
+  # Epic 109-FE: AI Forecast Enrichment + Model Management (P2, ~10 SP) — placeholder, depends on Epic 108
+  # Scope: modelType selector (7 types), naiveBaseline/aiVsNaive/explanation/rollbackNotice, forecast chart with confidence band, model list, training trigger + polling, performance detail
+  epic-109-fe: backlog
+
+  # Epic 110-FE: AI Evaluations + Feedback + CSV Export (P2, ~6 SP) — placeholder, depends on Epic 108 + 109
+  # Scope: evaluations list, SKU accuracy comparison (AI vs naive), thumbs feedback, CSV export buttons
+  epic-110-fe: backlog
+
+  # Epic 111-FE: AI Admin Features (P3, ~4 SP, role-gated) — placeholder, depends on Epic 108
+  # Scope: anomaly resolution, model rollback admin UI (Owner role only)
+  epic-111-fe: backlog
