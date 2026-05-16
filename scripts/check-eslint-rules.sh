@@ -65,18 +65,27 @@ extract_eslintrc_rules() {
   " "$filepath" 2>/dev/null
 }
 
-# NOTE: This uses a regex heuristic to extract rule names from the flat config.
-# It may miss rules declared with double quotes or template literals, and may
-# produce false positives that the denylist below attempts to filter.  For
-# robust parsing, consider switching to a Node.js approach (require() the config,
-# iterate config.rules) similar to extract_eslintrc_rules().
+# Extracts rule names from a flat ESLint config (eslint.config.js) by requiring
+# it via Node.js and iterating config.rules keys — NOT by regex on source text.
+# This avoids false positives from string literals inside rule message fields
+# (e.g., the AP#8 no-restricted-syntax messages contain 'unknown' and 'zero').
+# Story 109.1-FE: fixed regex-heuristic parser that mis-parsed message strings.
 extract_flat_config_rules() {
   local filepath="$1"
-  grep -oE "'([@a-z][@a-z0-9-]*/[a-z0-9-]+|[@a-z][a-z0-9-]+)'" "$filepath" \
-    | tr -d "'" \
-    | grep -vE '^(error|warn|off|module|sourceType|latest|browser|node|jest|dist|commonjs|@typescript-eslint)$' \
-    | grep -vE '/(parser|eslint-plugin)$' \
-    | sort -u || true
+  node -e "
+    const raw = require(process.argv[1]);
+    const cfgArr = Array.isArray(raw) ? raw
+      : (raw && raw.default ? (Array.isArray(raw.default) ? raw.default : [raw.default])
+      : [raw]);
+    const seen = new Set();
+    for (const c of cfgArr) {
+      if (c && c.rules) {
+        for (const r of Object.keys(c.rules)) {
+          if (!seen.has(r)) { seen.add(r); console.log(r); }
+        }
+      }
+    }
+  " "$filepath" 2>/dev/null | sort -u || true
 }
 
 self_test() {
@@ -153,6 +162,75 @@ self_test() {
     ((pass++))
   else
     echo "  [FAIL] Test 6: invalid argument should exit 2 with error (got exit $rc)"
+    ((fail++))
+  fi
+
+  # Test 7: flat-config rule-message strings must NOT be treated as rule names
+  # Regression guard for Story 109.1-FE: the old regex parser mis-parsed
+  # 'unknown' and 'zero' out of no-restricted-syntax message: "...null means
+  # 'unknown', not 'zero'..." and flagged them as unknown rule names.
+  local tmp_flat
+  tmp_flat=$(mktemp /tmp/eslint-test-XXXXXX.js)
+  cat > "$tmp_flat" <<'JSEOF'
+module.exports = [
+  {
+    rules: {
+      'no-restricted-syntax': ['error', {
+        selector: 'SomeNode',
+        message: "the word 'unknown' and 'zero' should not trip the rule extractor",
+      }],
+      'max-lines': ['error', { max: 200 }],
+    },
+  },
+];
+JSEOF
+  local t7_extracted
+  t7_extracted=$(extract_flat_config_rules "$tmp_flat")
+  rm -f "$tmp_flat"
+  local t7_fail=0
+  if echo "$t7_extracted" | grep -qx "unknown"; then
+    echo "  [FAIL] Test 7: 'unknown' from message string was mis-parsed as a rule name"
+    t7_fail=1
+  fi
+  if echo "$t7_extracted" | grep -qx "zero"; then
+    echo "  [FAIL] Test 7: 'zero' from message string was mis-parsed as a rule name"
+    t7_fail=1
+  fi
+  if ! echo "$t7_extracted" | grep -qx "no-restricted-syntax"; then
+    echo "  [FAIL] Test 7: 'no-restricted-syntax' rule key was not extracted"
+    t7_fail=1
+  fi
+  if ! echo "$t7_extracted" | grep -qx "max-lines"; then
+    echo "  [FAIL] Test 7: 'max-lines' rule key was not extracted"
+    t7_fail=1
+  fi
+  if [[ $t7_fail -eq 0 ]]; then
+    echo "  [PASS] Test 7: message-string words not mis-parsed as rule names (AP#8 regression guard)"
+    ((pass++))
+  else
+    ((fail++))
+  fi
+
+  # Test 8: real typo in flat config must still be detected
+  local tmp_typo
+  tmp_typo=$(mktemp /tmp/eslint-test-XXXXXX.js)
+  cat > "$tmp_typo" <<'JSEOF'
+module.exports = [
+  {
+    rules: {
+      'max-lines-typo': 'error',
+    },
+  },
+];
+JSEOF
+  local t8_extracted
+  t8_extracted=$(extract_flat_config_rules "$tmp_typo")
+  rm -f "$tmp_typo"
+  if echo "$t8_extracted" | grep -qx "max-lines-typo"; then
+    echo "  [PASS] Test 8: real typo rule 'max-lines-typo' is still detected by extractor"
+    ((pass++))
+  else
+    echo "  [FAIL] Test 8: extractor failed to emit 'max-lines-typo' — typo detection broken"
     ((fail++))
   fi
 
