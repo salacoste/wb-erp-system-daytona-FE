@@ -1,11 +1,13 @@
 /**
- * ModelListSection tests — Story 109.3-FE.
+ * ModelListSection tests — Story 109.3-FE + Story 109.4-FE.
  * Covers: STATUS_BADGE_CONFIG labels, ENGINE_LABELS, loading/error/empty states,
  * happy-path columns + badges + MAPE null, row click + keyboard navigation.
+ * Story 109.4-FE additions: 7th column header, TrainModelButton per row,
+ * button click does NOT trigger row navigation.
  */
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ModelListSection } from '../ModelListSection'
 import {
   STATUS_BADGE_CONFIG,
@@ -37,6 +39,13 @@ vi.mock('next/link', () => ({
 
 vi.mock('@/hooks/useAiModels', () => ({
   useAiModels: vi.fn(),
+}))
+
+// Mock TrainModelButton — renders a simple button so we can test propagation
+// without pulling in useTrainAiModel and its auth/query dependencies.
+vi.mock('../TrainModelButton', () => ({
+  TrainModelButton: ({ modelType }: { modelType: string }) =>
+    React.createElement('button', { 'data-testid': `train-${modelType}` }, 'Обучить'),
 }))
 
 import { useAiModels } from '@/hooks/useAiModels'
@@ -187,7 +196,7 @@ describe('ModelListSection — happy path', () => {
     } as unknown as ReturnType<typeof useAiModels>)
   })
 
-  it('renders all 6 column headers', () => {
+  it('renders all 7 column headers (Story 109.4-FE adds "Действия")', () => {
     renderSection()
     expect(screen.getByText('Тип')).toBeTruthy()
     expect(screen.getByText('Движок')).toBeTruthy()
@@ -195,12 +204,13 @@ describe('ModelListSection — happy path', () => {
     expect(screen.getByText('Статус')).toBeTruthy()
     expect(screen.getByText('MAPE')).toBeTruthy()
     expect(screen.getByText('Обучен')).toBeTruthy()
+    expect(screen.getByText('Действия')).toBeTruthy()
   })
 
-  it('renders 2 data rows', () => {
-    renderSection()
-    // Each row has a role="button"
-    const rows = screen.getAllByRole('button')
+  it('renders 2 data rows (tr[role=button])', () => {
+    const { container } = renderSection()
+    // Use DOM query to target only TableRow elements (not TrainModelButton mock buttons).
+    const rows = container.querySelectorAll('tr[role="button"]')
     expect(rows).toHaveLength(2)
   })
 
@@ -277,23 +287,100 @@ describe('ModelListSection — row navigation', () => {
   })
 
   it('click navigates to /analytics/models/{id}/performance', () => {
-    renderSection()
-    const row = screen.getByRole('button')
+    const { container } = renderSection()
+    // Target the TableRow (role=button) not the TrainModelButton inside it.
+    const row = container.querySelector('tr[role="button"]')!
     fireEvent.click(row)
     expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
   })
 
   it('Enter key navigates to /analytics/models/{id}/performance', () => {
-    renderSection()
-    const row = screen.getByRole('button')
+    const { container } = renderSection()
+    const row = container.querySelector('tr[role="button"]')!
     fireEvent.keyDown(row, { key: 'Enter' })
     expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
   })
 
   it('Space key navigates to /analytics/models/{id}/performance', () => {
-    renderSection()
-    const row = screen.getByRole('button')
+    const { container } = renderSection()
+    const row = container.querySelector('tr[role="button"]')!
     fireEvent.keyDown(row, { key: ' ' })
     expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
+  })
+})
+
+// ── Story 109.4-FE: AC-5 polling integration tests (F-4 fix) ─────────────────
+
+describe('ModelListSection — polling activation (Story 109.4-FE AC-5)', () => {
+  it('calls useAiModels with polling: true after data with training model is loaded', async () => {
+    mockUseAiModels.mockClear()
+    mockUseAiModels.mockReturnValue({
+      data: { models: [modelActive, modelTraining] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAiModels>)
+    renderSection()
+    // After the useEffect fires, second render should call with polling: true
+    await waitFor(() => {
+      expect(mockUseAiModels).toHaveBeenCalledWith({ polling: true })
+    })
+  })
+
+  it('calls useAiModels with polling: false (and NEVER true) when no model is training', async () => {
+    mockUseAiModels.mockClear()
+    mockUseAiModels.mockReturnValue({
+      data: { models: [modelActive] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAiModels>)
+    renderSection()
+    // Post-2nd-pass F-2: the weaker assertion `toHaveBeenCalledWith({ polling: false })`
+    // alone passes by virtue of the initial useState(false) value — even if the entire
+    // useEffect block (or the isAnyTraining computation) is broken. Strengthen with
+    // a negative assertion to actually cover the derivation logic.
+    await waitFor(() => {
+      expect(mockUseAiModels).toHaveBeenCalledWith({ polling: false })
+    })
+    expect(mockUseAiModels).not.toHaveBeenCalledWith({ polling: true })
+  })
+})
+
+// ── Story 109.4-FE: AC-6 integration tests ───────────────────────────────────
+
+describe('ModelListSection — 7th Actions column (Story 109.4-FE)', () => {
+  beforeEach(() => {
+    mockUseAiModels.mockReturnValue({
+      data: { models: [modelActive, modelTraining] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAiModels>)
+  })
+
+  it('renders 7 column headers including "Действия"', () => {
+    renderSection()
+    expect(screen.getByText('Тип')).toBeTruthy()
+    expect(screen.getByText('Движок')).toBeTruthy()
+    expect(screen.getByText('Версия')).toBeTruthy()
+    expect(screen.getByText('Статус')).toBeTruthy()
+    expect(screen.getByText('MAPE')).toBeTruthy()
+    expect(screen.getByText('Обучен')).toBeTruthy()
+    expect(screen.getByText('Действия')).toBeTruthy()
+  })
+
+  it('each row has a TrainModelButton (Обучить button via mock)', () => {
+    renderSection()
+    // Mock renders data-testid="train-{modelType}" per row.
+    expect(screen.getByTestId('train-sales_forecast')).toBeTruthy()
+    expect(screen.getByTestId('train-demand_forecast')).toBeTruthy()
+  })
+
+  it('clicking the TrainModelButton does NOT call router.push (propagation stopped)', () => {
+    renderSection()
+    const trainBtn = screen.getByTestId('train-sales_forecast')
+    fireEvent.click(trainBtn)
+    expect(mockPush).not.toHaveBeenCalled()
   })
 })

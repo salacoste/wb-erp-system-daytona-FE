@@ -186,3 +186,14 @@ export const buildShipmentDetailRoute = (shipmentId: string): string => {
 export const buildCampaignDetailRoute = (advertId: number): string => {
   return `/analytics/advertising/campaigns/${advertId}`
 }
+
+/**
+ * Build model performance detail route.
+ * Story 109.5-FE: dynamic route /analytics/models/[id]/performance.
+ * Function-style helper (not ROUTES entry) because ROUTES.ANALYTICS is `as const`
+ * and only accepts string-literal values — matches buildSupplyDetailRoute / buildCampaignDetailRoute precedent.
+ * Renamed buildModelPerformanceRoute (F-6: aligns with buildSupplyDetailRoute / buildCampaignDetailRoute naming).
+ */
+export const buildModelPerformanceRoute = (modelId: string): string => {
+  return `${ROUTES.ANALYTICS.MODELS}/${modelId}/performance`
+}

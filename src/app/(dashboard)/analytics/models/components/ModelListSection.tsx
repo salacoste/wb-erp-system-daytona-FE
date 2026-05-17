@@ -4,14 +4,15 @@
  * ModelListSection — table of ML models for the current cabinet.
  * Route: /analytics/models
  * Story 109.3-FE: 6-column table with status badges, row navigation, 3 UI states.
- * Story 109.4 will add a "Действия" (Train) column — layout accommodates extension.
+ * Story 109.4-FE: added 7th "Действия" column with per-row TrainModelButton + polling.
  */
 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAiModels } from '@/hooks/useAiModels'
 import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
-import { ROUTES } from '@/lib/routes'
+import { ROUTES, buildModelPerformanceRoute } from '@/lib/routes'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -30,10 +31,21 @@ import {
   formatMape,
   formatTrainedAt,
 } from './model-list-helpers'
+import { TrainModelButton } from './TrainModelButton'
 
 export function ModelListSection() {
   const router = useRouter()
-  const { data, isLoading, isError, error } = useAiModels()
+
+  // AC-5: poll only when any model is 'training'.
+  // shouldPoll is derived from data after each fetch and stored in state so the
+  // polling-on/off transition is explicit and testable (F-1 fix: replaces useRef pattern).
+  const [shouldPoll, setShouldPoll] = useState(false)
+  const { data, isLoading, isError, error } = useAiModels({ polling: shouldPoll })
+
+  useEffect(() => {
+    const isAnyTraining = data?.models?.some(m => m.status === 'training') ?? false
+    setShouldPoll(isAnyTraining)
+  }, [data])
 
   if (isLoading) {
     return (
@@ -91,12 +103,13 @@ export function ModelListSection() {
                 <TableHead>Статус</TableHead>
                 <TableHead>MAPE</TableHead>
                 <TableHead>Обучен</TableHead>
+                <TableHead>Действия</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.models.map(model => {
                 const badge = STATUS_BADGE_CONFIG[model.status]
-                const dest = `${ROUTES.ANALYTICS.MODELS}/${model.id}/performance`
+                const dest = buildModelPerformanceRoute(model.id)
                 return (
                   <TableRow
                     key={model.id}
@@ -127,6 +140,20 @@ export function ModelListSection() {
                     </TableCell>
                     <TableCell>{formatMape(model.metrics.mape)}</TableCell>
                     <TableCell>{formatTrainedAt(model.trainedAt)}</TableCell>
+                    {/* AC-6: wrapper div stops click/keyboard propagation so the Train button
+                        does not trigger the row's navigation handler. */}
+                    <TableCell>
+                      <div
+                        role="none"
+                        onClick={e => e.stopPropagation()}
+                        onKeyDown={e => e.stopPropagation()}
+                      >
+                        <TrainModelButton
+                          modelType={model.modelType}
+                          currentStatus={model.status}
+                        />
+                      </div>
+                    </TableCell>
                   </TableRow>
                 )
               })}
