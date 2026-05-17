@@ -50,6 +50,7 @@ export const ROUTES = {
     SEARCH: '/analytics/search', // Epic 71-FE: Search Analytics
     CROSS_REFERENCE: '/analytics/cross-reference', // Story 73.7-FE: Search + Advertising Cross-Reference
     FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
+    MODELS: '/analytics/models', // Epic 109-FE: AI Model Management
   },
 
   // Epic 40-FE: Orders UI (WB Native Orders History)
@@ -130,6 +131,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.SEARCH, // Epic 71-FE: Search Analytics
     ROUTES.ANALYTICS.CROSS_REFERENCE, // Story 73.7-FE: Search + Advertising Cross-Reference
     ROUTES.ANALYTICS.FORECAST, // Epic 103-FE: AI Sales Forecast
+    ROUTES.ANALYTICS.MODELS, // Epic 109-FE: AI Model Management
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard

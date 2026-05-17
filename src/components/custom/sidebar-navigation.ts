@@ -36,6 +36,7 @@ import {
   BarChart2,
   GitCompare,
   Brain,
+  Cpu,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -98,6 +99,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Кросс-анализ', href: ROUTES.ANALYTICS.CROSS_REFERENCE, icon: ArrowRightLeft },
   // Epic 103-FE: AI Sales Forecast
   { label: 'AI Прогноз', href: ROUTES.ANALYTICS.FORECAST, icon: Brain },
+  // Epic 109-FE: AI Model Management
+  { label: 'Модели AI', href: ROUTES.ANALYTICS.MODELS, icon: Cpu },
   // Epic 75-FE: Shipment Cost Allocation
   { label: 'Доставка', href: ROUTES.SHIPMENTS.ROOT, icon: Truck },
   // Epic 68-FE: Monitoring Health Dashboard

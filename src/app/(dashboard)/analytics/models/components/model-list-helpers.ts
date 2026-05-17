@@ -1,0 +1,65 @@
+/**
+ * Pure helper functions for ModelListSection.
+ * Extracted per proactive-extraction discipline (Story 99.2-FE) — testable without React render.
+ * Story 109.3-FE.
+ */
+
+import type { ModelEngine, ModelStatus } from '@/types/ai/models'
+import { formatDate } from '@/lib/utils'
+
+/** Capitalised engine display names per backend integration guide convention. */
+export const ENGINE_LABELS: Record<ModelEngine, string> = {
+  mindsdb: 'MindsDB',
+  prophet: 'Prophet',
+}
+
+/**
+ * Status badge configuration — colour + Russian label.
+ * Exported for direct unit testing (pure-function discipline, Epic 89-FE lesson).
+ * WCAG 2.1 AA: text label is the accessible name; colour is supplementary (Epic 108-FE retro § C-3).
+ */
+export const STATUS_BADGE_CONFIG: Record<
+  ModelStatus,
+  { className: string; label: string; pulse: boolean }
+> = {
+  active: {
+    className: 'border-transparent bg-green-100 text-green-800',
+    label: 'Активна',
+    pulse: false,
+  },
+  training: {
+    className: 'border-transparent bg-blue-100 text-blue-800',
+    label: 'Обучается',
+    pulse: true,
+  },
+  degraded: {
+    className: 'border-transparent bg-amber-100 text-amber-800',
+    label: 'Деградировала',
+    pulse: false,
+  },
+  retired: {
+    className: 'border-transparent bg-gray-100 text-gray-600',
+    label: 'Снята',
+    pulse: false,
+  },
+}
+
+/**
+ * Format MAPE value for display.
+ * Backend sends 0-100 scale (e.g. 12 = 12% MAPE).
+ * Anti-Pattern #8 compliance: null → '—', never '0%'.
+ * Source: docs/AI-FRONTEND-INTEGRATION-GUIDE.md ("MAPE degraded from 12% to 45%").
+ */
+export function formatMape(mape: number | null): string {
+  if (mape === null) return '—'
+  return `${mape.toFixed(1)}%`
+}
+
+/**
+ * Format trainedAt date for display.
+ * undefined (never trained) → '—'.
+ */
+export function formatTrainedAt(trainedAt: string | undefined): string {
+  if (trainedAt === undefined) return '—'
+  return formatDate(trainedAt)
+}

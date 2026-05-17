@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { RefreshCw, AlertTriangle, TrendingUp } from 'lucide-react'
 import { ForecastTable } from './ForecastTable'
 import { ForecastMetrics } from './ForecastMetrics'
+import { ForecastChart } from './ForecastChart'
 import { ForecastPageHeader } from './ForecastPageHeader'
 import { ForecastParamsCard } from './ForecastParamsCard'
 import { AiEngineStatusBadge } from './AiEngineStatusBadge'
@@ -149,6 +150,7 @@ export function ForecastPageContent() {
       {hasData && (
         <>
           <ForecastMetrics data={data} />
+          <ForecastChart predictions={data.predictions} />
           <Card>
             <CardHeader className="flex flex-col gap-2">
               <div className="flex flex-row items-center justify-between">
