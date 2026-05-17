@@ -387,18 +387,27 @@ development_status:
   # Source: Backend AI Frontend Integration Guide § 2-3 + Epic 108-FE retro A-1/A-3/A-4/A-5
   # Foundation: Epic 108-FE (16 endpoints types/fetchers/hooks, 7 UI components, MODEL_TYPES enum already defined)
   # Created: 2026-05-16
-  epic-109-fe: in-progress  # 2026-05-17 — first story Story 109.1 contexted via create-story workflow
+  epic-109-fe: done  # 2026-05-17 — all 6 stories complete; Epic 109-FE retrospective filed; 2-pass review streak 50+
   109-1-fe-model-type-selector-enriched-fields: done  # 2026-05-17 implementation + 2-pass adversarial review complete: 37 net new tests (7405→7442 passing), 0 type errors, 0 ESLint errors / 112 warnings (baseline), 22 broken doc citations (baseline match). 1st pass: 2 MEDIUM tautological tests (fixed). 2nd pass: 1 HIGH regression-test gap for AC-5/AC-6 (fixed — created ForecastPageContent.test.tsx with 5 tests). 45+ consecutive-story 2-pass streak preserved. Story file: _bmad-output/implementation-artifacts/109-1-fe-model-type-selector-enriched-fields.md
-  109-2-fe-forecast-chart-confidence-band: backlog  # ~2 SP — recharts ComposedChart: Area (confidence band) + Line (naiveBaseline dashed) + Line (predictedUnits solid), Russian tooltip, Pattern 2 jsdom mock
-  109-3-fe-model-list-section: backlog  # ~2 SP — useAiModels hook, ModelListSection with status badges (active/training/degraded/retired), MAPE column, click to drill-down
-  109-4-fe-model-training-trigger-polling: backlog  # ~2 SP — useTrainAiModel mutation, TrainModelButton with 5s polling, 422/429/202 error states (insufficient data, rate limit, duplicate)
-  109-5-fe-model-performance-detail-mape-trend: backlog  # ~1.5 SP — useModelPerformance hook, drift status badge (improving/stable/degrading), MAPE trend recharts, previous version comparison
-  109-6-fe-tests-polish-retrospective: backlog  # ~1 SP — final gates + Epic 108 retro A-3 (commit-count script) + A-4 (a11y ESLint rule) + A-5 (AI module architecture doc) + retrospective
-  epic-109-fe-retrospective: optional
+  109-2-fe-forecast-chart-confidence-band: done  # 2026-05-17 implementation + 2-pass adversarial review complete: 22 net new tests (7451→7473 passing), 0 type errors, 0 ESLint errors / 112 warnings (baseline), 22 broken doc citations (baseline). 1st pass: 1 HIGH (AC-8 tooltip-label tests) + 3 MEDIUM + 7 LOW — all fixed. 2nd pass: 1 MEDIUM (Lessons line) + 5 LOW — fixed/deferred. 46+ consecutive-story 2-pass streak preserved. Story file: _bmad-output/implementation-artifacts/109-2-fe-forecast-chart-confidence-band.md
+  109-3-fe-model-list-section: done  # 2026-05-17 implementation + 2-pass adversarial review complete: 30 net new tests (7473→7503 passing), 0 type errors, 0 ESLint errors / 112 warnings (baseline), 22 broken doc citations (baseline). 1st pass: 3 MEDIUM (test-coverage gaps) + 3 LOW — M-1/M-2/M-3 fixed. 2nd pass: caught 1st-pass attestation drift (F-1) + sibling-test propagation gap (F-2) — fixed. 47+ consecutive-story 2-pass streak preserved. Story file: _bmad-output/implementation-artifacts/109-3-fe-model-list-section.md
+  109-4-fe-model-training-trigger-polling: done  # 2026-05-17 implementation + 2-pass adversarial review complete: 36 net new tests (7503→7539 passing), 0 type errors, 0 ESLint errors / 112 warnings (baseline), 22 broken doc citations (baseline). 1st pass: 1 HIGH (useRef polling deviation) + 4 MEDIUM + 2 LOW — all fixed. 2nd pass: 2 MEDIUM (predicate unsoundness + tautological polling test from 1st-pass fixes) + 1 LOW (File List drift) — fixed. 48+ consecutive-story 2-pass streak preserved. Story file: _bmad-output/implementation-artifacts/109-4-fe-model-training-trigger-polling.md
+  109-5-fe-model-performance-detail-mape-trend: done  # 2026-05-17 implementation + 2-pass adversarial review complete: 46 net new tests (7539→7585 passing), 0 type errors, 0 ESLint errors / 112 warnings (baseline), 22 broken doc citations (baseline). 1st pass: 1 CRITICAL (raw English status not Badge) + 2 HIGH (getCurrentMape sort, non-null assertions) + 8 MEDIUM + 5 LOW — 14 addressed, 2 LOW deferred. 2nd pass: 1 MEDIUM (F-10 chain-defect, useAiModels.isError) + 3 LOW — all addressed. 49+ consecutive-story 2-pass streak preserved. Resolves Story 109.3 row-click 404. Story file: _bmad-output/implementation-artifacts/109-5-fe-model-performance-detail-mape-trend.md
+  109-6-fe-tests-polish-retrospective: done  # 2026-05-17 2-pass adversarial review complete (APPROVE AFTER FIXES); F-1–F-8,F-10 applied; all 7 quality gates green; 50+ consecutive-story 2-pass streak preserved
+  epic-109-fe-retrospective: done  # 2026-05-17 epic-109-fe-retro-2026-05-17.md filed (204 lines); all carry-forward items from Epic 108 closed or explicitly tracked in Epic 110
 
-  # Epic 110-FE: AI Evaluations + Feedback + CSV Export (P2, ~6 SP) — placeholder, depends on Epic 108 + 109
-  # Scope: evaluations list, SKU accuracy comparison (AI vs naive), thumbs feedback, CSV export buttons
-  epic-110-fe: backlog
+  # Epic 110-FE: AI Evaluations + Feedback + CSV Export (P2, ~6 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-110-fe.md (created 2026-05-17)
+  # Source: Epic 109-FE retrospective § Action Items A-1..A-5 + Story 108.1 evaluations stubs
+  # Foundation: Epic 108 types/fetchers, Epic 109 hooks/components/architecture-doc all shipped
+  # Created: 2026-05-17
+  epic-110-fe: in-progress  # 2026-05-17 — first story Story 110.1 contexted via create-story workflow
+  110-1-fe-a11y-ratchet-routes-preregistration: in-progress  # 2026-05-17 dev-story workflow started — executor delegated for implementation
+  110-2-fe-evaluations-list-page: backlog  # ~2 SP — useAiEvaluations hook + EvaluationsList component at /analytics/models/[id]/evaluations route, AP#8 compliance, cabinet-isolation
+  110-3-fe-sku-accuracy-table: backlog  # ~1.5 SP — useAiSkuAccuracy hook + SkuAccuracyTable sortable by MAPE, sub-page or tab decision in spec
+  110-4-fe-thumbs-feedback-mutation: backlog  # ~0.5 SP — useAiFeedback mutation + FeedbackButtons on ForecastTable + EvaluationsList rows, WCAG aria-labels for thumbs icons
+  110-5-fe-csv-export-retrospective: backlog  # ~0.5 SP — exportEvaluationsToCsv pure helper + ExportCsvButton on EvaluationsList + SkuAccuracyTable + Epic 110 retrospective + sprint-status close-out
+  epic-110-fe-retrospective: optional
 
   # Epic 111-FE: AI Admin Features (P3, ~4 SP, role-gated) — placeholder, depends on Epic 108
   # Scope: anomaly resolution, model rollback admin UI (Owner role only)
