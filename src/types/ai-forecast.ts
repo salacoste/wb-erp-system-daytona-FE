@@ -20,4 +20,5 @@ export {
   getConfidenceBand,
   MODEL_TYPES,
   isModelType,
+  MODEL_TYPE_LABELS,
 } from './ai/forecast'

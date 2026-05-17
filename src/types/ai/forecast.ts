@@ -94,3 +94,19 @@ export const MODEL_TYPES: readonly ModelType[] = [
 export function isModelType(value: string): value is ModelType {
   return (MODEL_TYPES as readonly string[]).includes(value)
 }
+
+/**
+ * Russian labels for each model type.
+ * Extracted here (from ModelTypeSelector.tsx) in Story 109.3-FE so both
+ * Forecast (109.1) and Models (109.3) features share a single source of truth.
+ * Exported for direct unit testing (pure-function discipline, Epic 89-FE lesson).
+ */
+export const MODEL_TYPE_LABELS: Record<ModelType, string> = {
+  sales_forecast: 'Прогноз продаж',
+  daily_revenue_forecast: 'Прогноз выручки (день)',
+  search_conversion_forecast: 'Конверсия в поиске',
+  weekly_margin_forecast: 'Маржинальность (неделя)',
+  funnel_stage_prediction: 'Конверсия воронки',
+  demand_forecast: 'Прогноз спроса',
+  stockout_risk: 'Риск out-of-stock',
+}

@@ -4,8 +4,9 @@
  * ModelTypeSelector — shadcn/ui Select for AI model type.
  * Story 109.1-FE: 7 ML model options with Russian labels.
  * WCAG 2.1 AA: Label htmlFor associates with SelectTrigger id (Story 108.2-FE pattern).
+ * Story 109.3-FE: MODEL_TYPE_LABELS extracted to src/types/ai/forecast.ts (shared source).
  */
-import { MODEL_TYPES, isModelType, type ModelType } from '@/types/ai-forecast'
+import { MODEL_TYPES, MODEL_TYPE_LABELS, isModelType, type ModelType } from '@/types/ai/forecast'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -15,19 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-/**
- * Russian labels for each model type.
- * Exported for direct unit testing (pure-function discipline, Epic 89-FE lesson).
- */
-export const MODEL_TYPE_LABELS: Record<ModelType, string> = {
-  sales_forecast: 'Прогноз продаж',
-  daily_revenue_forecast: 'Прогноз выручки (день)',
-  search_conversion_forecast: 'Конверсия в поиске',
-  weekly_margin_forecast: 'Маржинальность (неделя)',
-  funnel_stage_prediction: 'Конверсия воронки',
-  demand_forecast: 'Прогноз спроса',
-  stockout_risk: 'Риск out-of-stock',
-}
+export { MODEL_TYPE_LABELS }
 
 interface ModelTypeSelectorProps {
   value: ModelType
