@@ -2,7 +2,7 @@
 
 Documentation of requests from frontend team to backend team and backend team responses.
 
-**Last Updated**: 2026-05-06 | **Total Requests**: 130+ | **Active**: 0 | **Pending**: 0 | **Resolved**: 130+
+**Last Updated**: 2026-05-15 | **Total Requests**: 130+ | **Active**: 0 | **Pending**: 0 | **Resolved**: 130+
 
 ---
 
@@ -215,9 +215,19 @@ See [Shard 06](./README-SHARD-06-workflow-guides.md) for full workflow details.
 
 ---
 
-## Recent Updates (2026-05-06)
+## Recent Updates (2026-05-15)
 
-### Resolved Requests (Epics 107-109)
+### Validation Sweep — All 169 Files Confirmed Resolved
+Full audit of all 169 files in `docs/request-backend/`. Results: 157 resolved, 6 reference docs, 6 guides. Zero pending items.
+
+- **#162**: FCU Aggregation Endpoint — confirmed RESOLVED (endpoint live at `GET /v1/shipment-cost/by-sku`)
+- **#163**: DBW Order Test Seeding — confirmed RESOLVED (Stories 87.1 + 103.2)
+- **#167**: Pipeline Health errorRate Out of Range — confirmed RESOLVED (commit `c9ba2187`, Story 93.1)
+- **#171**: box_type Storage Tariff — IMPLEMENTED (pallet storage = 1.5x box at `price-calculator.service.ts`)
+- **#112**: Epic 57 FBS Analytics — confirmed RESOLVED (REST API existed in `fbs-analytics.controller.ts`)
+- **#160**: Marketing Analytics Audit — backend-side RESOLVED (all 4 bugs fixed)
+
+### Previously Resolved (2026-05-04 to 2026-05-06)
 - **#159**: Preliminary tax for incomplete weeks — **IMPLEMENTED** (Story 108.6 + 109.3, endpoint live)
 - **#153**: FBO return classification gap — **CLOSED** (Epic 106.2 + Story 108.3)
 - **#154**: Buyout/return data mismatch — **CLOSED** (Story 108.3 sdk.returns)
