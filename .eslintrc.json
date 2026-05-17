@@ -9,7 +9,8 @@
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "warn",
     "max-lines": ["error", { "max": 200, "skipBlankLines": true, "skipComments": true }],
-    "no-console": ["warn", { "allow": ["warn", "error"] }]
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "jsx-a11y/control-has-associated-label": "error"
   },
   "overrides": [
     {

@@ -50,6 +50,10 @@ load_known_rules() {
       process.stdout.write([...linter.getRules().keys()].join('\n'));
     " 2>/dev/null)
   fi
+  # Note: Story 109.6-FE F-1 added jsx-a11y plugin to the monorepo-root eslint.config.js
+  # (flat config, enforcement path). --print-config now natively includes jsx-a11y rules.
+  # The prior augmentation block (direct require of jsx-a11y plugin) was removed in
+  # Story 109.6-FE F-2 post-1st-pass-review — it is no longer needed.
   echo "$rules"
 }
 
