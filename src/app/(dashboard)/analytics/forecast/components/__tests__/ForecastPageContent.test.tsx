@@ -50,6 +50,9 @@ vi.mock('../ForecastMetrics', () => ({
 vi.mock('../ForecastTable', () => ({
   ForecastTable: () => React.createElement('div', { 'data-testid': 'table' }),
 }))
+vi.mock('../ForecastChart', () => ({
+  ForecastChart: () => React.createElement('div', { 'data-testid': 'forecast-chart' }),
+}))
 
 import { useAiForecast } from '@/hooks/useAiForecast'
 
