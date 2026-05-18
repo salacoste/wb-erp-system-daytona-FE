@@ -70,6 +70,7 @@ vi.mock('../ProductSearchFilter', () => ({
     filterLabel,
   }: MockSearchFilterProps) => (
     <div data-testid="product-search-filter">
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- stripped-down mock fixture; real ProductSearchFilter has aria-label */}
       <input
         data-testid="search-input"
         value={searchValue}

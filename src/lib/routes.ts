@@ -197,3 +197,19 @@ export const buildCampaignDetailRoute = (advertId: number): string => {
 export const buildModelPerformanceRoute = (modelId: string): string => {
   return `${ROUTES.ANALYTICS.MODELS}/${modelId}/performance`
 }
+
+/**
+ * Build model evaluations list route.
+ * Story 110.1-FE: pre-registered for Epic 110 evaluations feature (Story 110.2 destination).
+ * Arrow-function style — matches buildModelPerformanceRoute / buildCampaignDetailRoute precedent.
+ */
+export const buildModelEvaluationsRoute = (modelId: string): string =>
+  `${ROUTES.ANALYTICS.MODELS}/${modelId}/evaluations`
+
+/**
+ * Build model SKU accuracy table route.
+ * Story 110.1-FE: pre-registered for Epic 110 evaluations feature (Story 110.3 destination).
+ * Arrow-function style — matches buildModelPerformanceRoute / buildCampaignDetailRoute precedent.
+ */
+export const buildModelSkuAccuracyRoute = (modelId: string): string =>
+  `${ROUTES.ANALYTICS.MODELS}/${modelId}/evaluations/sku-accuracy`

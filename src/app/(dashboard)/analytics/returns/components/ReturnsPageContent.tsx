@@ -56,8 +56,9 @@ export function ReturnsPageContent() {
             checked={anomalyOnly}
             onChange={e => setAnomalyOnly(e.target.checked)}
             className="rounded border-gray-300"
+            aria-labelledby="returns-anomaly-label"
           />
-          Только проблемные
+          <span id="returns-anomaly-label">Только проблемные</span>
         </label>
       </div>
 

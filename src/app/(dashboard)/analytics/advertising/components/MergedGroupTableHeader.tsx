@@ -57,6 +57,7 @@ export function MergedGroupTableHeader({ sortConfig, onSort }: MergedGroupTableH
           Расход{renderSortIcon('totalSpend')}
         </th>
         {/* Story 37.3 AC 20: ROAS column with tooltip */}
+        {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- TooltipProvider wraps visible "ROAS" text; rule's text-detection misses tooltip children. Keyboard sort affordance is a pre-existing defect tracked at docs/polish/keyboard-sort-headers.md (filed Story 110.1-FE 2nd-pass F-2). */}
         <th className={`${headerClass} ${sortableClass} text-right`} onClick={handleSortRoas}>
           <TooltipProvider>
             <Tooltip>

@@ -53,11 +53,13 @@ const MIN_VISIBLE = 3
 /** Custom switch toggle using native checkbox with role="switch" */
 function WidgetToggle({
   id,
+  labelId,
   checked,
   disabled,
   onChange,
 }: {
   id: string
+  labelId: string
   checked: boolean
   disabled: boolean
   onChange: () => void
@@ -67,6 +69,7 @@ function WidgetToggle({
       type="checkbox"
       role="switch"
       id={id}
+      aria-labelledby={labelId}
       checked={checked}
       disabled={disabled}
       onChange={onChange}
@@ -110,11 +113,16 @@ export function WidgetSettingsSheet() {
 
             return (
               <div key={id} className="flex items-center justify-between py-1">
-                <label htmlFor={`widget-toggle-${id}`} className="text-sm font-medium leading-none">
+                <label
+                  id={`widget-label-${id}`}
+                  htmlFor={`widget-toggle-${id}`}
+                  className="text-sm font-medium leading-none"
+                >
                   {WIDGET_LABELS[id]}
                 </label>
                 <WidgetToggle
                   id={`widget-toggle-${id}`}
+                  labelId={`widget-label-${id}`}
                   checked={isChecked}
                   disabled={isDisabled}
                   onChange={() => toggleWidget(id)}

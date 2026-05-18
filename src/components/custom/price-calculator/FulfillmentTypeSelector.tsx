@@ -2,12 +2,7 @@
 
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { FulfillmentType } from '@/types/price-calculator'
@@ -68,12 +63,12 @@ export function FulfillmentTypeSelector({
             </TooltipTrigger>
             <TooltipContent side="right" className="max-w-xs">
               <p className="mb-2">
-                <strong>FBO</strong> — товар хранится на складе WB. Ниже комиссия,
-                но есть расходы на хранение и приёмку.
+                <strong>FBO</strong> — товар хранится на складе WB. Ниже комиссия, но есть расходы
+                на хранение и приёмку.
               </p>
               <p>
-                <strong>FBS</strong> — товар у продавца, отгрузка по заказу.
-                Выше комиссия (+3-4%), но нет расходов на хранение.
+                <strong>FBS</strong> — товар у продавца, отгрузка по заказу. Выше комиссия (+3-4%),
+                но нет расходов на хранение.
               </p>
             </TooltipContent>
           </Tooltip>
@@ -89,6 +84,7 @@ export function FulfillmentTypeSelector({
         <button
           type="button"
           role="radio"
+          aria-label="FBO — Товар на складе WB"
           aria-checked={value === 'FBO'}
           onClick={() => !disabled && onChange('FBO')}
           disabled={disabled}
@@ -103,9 +99,7 @@ export function FulfillmentTypeSelector({
         >
           <div className="text-center">
             <div className="font-semibold">FBO</div>
-            <div className="text-xs text-muted-foreground mt-0.5">
-              Товар на складе WB
-            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">Товар на складе WB</div>
           </div>
         </button>
 
@@ -113,6 +107,11 @@ export function FulfillmentTypeSelector({
         <button
           type="button"
           role="radio"
+          aria-label={
+            commissionDiff !== undefined && commissionDiff > 0
+              ? `FBS — Товар у продавца, +${commissionDiff.toFixed(1)}% к комиссии`
+              : 'FBS — Товар у продавца'
+          }
           aria-checked={value === 'FBS'}
           onClick={() => !disabled && onChange('FBS')}
           disabled={disabled}
@@ -134,9 +133,7 @@ export function FulfillmentTypeSelector({
                 </Badge>
               )}
             </div>
-            <div className="text-xs text-muted-foreground mt-0.5">
-              Товар у продавца
-            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">Товар у продавца</div>
           </div>
         </button>
       </div>

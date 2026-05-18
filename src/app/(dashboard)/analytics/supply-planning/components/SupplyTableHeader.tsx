@@ -39,8 +39,8 @@ export function SupplyTableHeader({ sortField, sortOrder, onSort }: SupplyTableH
   return (
     <thead className="bg-gray-100 sticky top-0 z-10">
       <tr>
-        {/* Expand chevron column */}
-        <th className="w-10 px-2 py-3"></th>
+        {/* Expand chevron column — purely visual spacer; row-expand affordance is on the row itself */}
+        <th className="w-10 px-2 py-3" aria-hidden="true"></th>
 
         {/* Status */}
         <th

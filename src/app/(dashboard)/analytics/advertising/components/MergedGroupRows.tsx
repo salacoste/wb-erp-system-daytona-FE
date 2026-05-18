@@ -132,11 +132,14 @@ export function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps)
         {/* Story 37.4 AC 19-20, 25: Sticky on tablet/mobile */}
         <td
           className={`${aggregateCellClasses} text-left ${!hasSingleProduct ? 'md:sticky md:left-[150px] md:z-10 md:bg-gray-100' : 'md:sticky md:left-0 md:z-10 md:bg-gray-100'}`}
+          aria-label={`Группа склейки ${group.imtId}`}
         >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="cursor-help">ГРУППА #{group.imtId}</span>
+                <span className="cursor-help" aria-hidden="true">
+                  ГРУППА #{group.imtId}
+                </span>
               </TooltipTrigger>
               <TooltipContent size="sm">Сумма всех товаров в склейке</TooltipContent>
             </Tooltip>

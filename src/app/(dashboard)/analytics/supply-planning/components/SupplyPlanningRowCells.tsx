@@ -32,7 +32,7 @@ export function StatusCell({ item }: CellProps) {
   const statusConfig = STOCKOUT_RISK_CONFIG[stockoutRisk]
 
   return (
-    <td className="px-4 py-3 text-center">
+    <td className="px-4 py-3 text-center" aria-label={statusConfig?.label ?? 'Неизвестно'}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -58,11 +58,11 @@ export function StatusCell({ item }: CellProps) {
 /** Product name cell with truncation tooltip */
 export function ProductNameCell({ item }: CellProps) {
   return (
-    <td className="px-4 py-3">
+    <td className="px-4 py-3" aria-label={item.product_name}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="text-sm text-gray-900 truncate block max-w-[200px]">
+            <span className="text-sm text-gray-900 truncate block max-w-[200px]" aria-hidden="true">
               {item.product_name}
             </span>
           </TooltipTrigger>
@@ -90,7 +90,10 @@ export function StockCell({ item }: CellProps) {
     ) : null
 
   return (
-    <td className="px-4 py-3 text-right">
+    <td
+      className="px-4 py-3 text-right"
+      aria-label={`Остаток: ${formatStockQty(item.current_stock)} шт`}
+    >
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

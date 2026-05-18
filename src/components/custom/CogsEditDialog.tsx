@@ -125,7 +125,9 @@ export function CogsEditDialog({ open, onOpenChange, record, onSuccess }: CogsEd
 
           <div className="space-y-2">
             <div className="flex justify-between">
-              <Label htmlFor="notes">Примечание</Label>
+              <Label id="notes-label" htmlFor="notes">
+                Примечание
+              </Label>
               {notes.length > 800 && (
                 <span
                   className={cn(
@@ -139,6 +141,7 @@ export function CogsEditDialog({ open, onOpenChange, record, onSuccess }: CogsEd
             </div>
             <textarea
               id="notes"
+              aria-labelledby="notes-label"
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               maxLength={1000}
               rows={3}

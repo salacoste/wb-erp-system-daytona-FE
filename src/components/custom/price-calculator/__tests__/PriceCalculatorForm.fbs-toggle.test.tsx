@@ -36,9 +36,7 @@ const createTestQueryClient = () =>
 
 const renderWithProviders = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 // Mock sub-components to isolate the form component behavior
@@ -46,6 +44,7 @@ const renderWithProviders = (ui: React.ReactElement) => {
 vi.mock('../MarginSlider', () => ({
   MarginSlider: ({ name }: { name: string }) => (
     <div data-testid={`slider-${name}`}>
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- stripped-down mock fixture; real MarginSlider has labeled input */}
       <input type="number" data-testid={`input-${name}`} />
     </div>
   ),
@@ -54,13 +53,18 @@ vi.mock('../MarginSlider', () => ({
 vi.mock('../BuybackSlider', () => ({
   BuybackSlider: ({ name }: { name: string }) => (
     <div data-testid={`slider-${name}`}>
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- stripped-down mock fixture; real BuybackSlider has labeled input */}
       <input type="number" data-testid={`input-${name}`} />
     </div>
   ),
 }))
 
 vi.mock('../FieldTooltip', () => ({
-  FieldTooltip: () => <button type="button" aria-label="Show tooltip">?</button>,
+  FieldTooltip: () => (
+    <button type="button" aria-label="Show tooltip">
+      ?
+    </button>
+  ),
 }))
 
 vi.mock('../ProductSearchSelect', () => ({
@@ -205,12 +209,13 @@ describe('Story 44.35-FE: FBO/FBS Toggle Does Not Crash', () => {
       })
 
       // Check console.error was not called with hooks-related errors
-      const hookErrors = consoleErrorSpy.mock.calls.filter(
-        (call: unknown[]) => call.some((arg: unknown) =>
-          typeof arg === 'string' &&
-          (arg.includes('Rendered fewer hooks than expected') ||
-           arg.includes('Rendered more hooks than expected') ||
-           arg.includes('Rules of Hooks'))
+      const hookErrors = consoleErrorSpy.mock.calls.filter((call: unknown[]) =>
+        call.some(
+          (arg: unknown) =>
+            typeof arg === 'string' &&
+            (arg.includes('Rendered fewer hooks than expected') ||
+              arg.includes('Rendered more hooks than expected') ||
+              arg.includes('Rules of Hooks'))
         )
       )
       expect(hookErrors).toHaveLength(0)
@@ -311,10 +316,8 @@ describe('Story 44.35-FE: FBO/FBS Toggle Does Not Crash', () => {
       })
 
       // No console errors
-      const hookErrors = consoleErrorSpy.mock.calls.filter(
-        (call: unknown[]) => call.some((arg: unknown) =>
-          typeof arg === 'string' && arg.includes('hooks')
-        )
+      const hookErrors = consoleErrorSpy.mock.calls.filter((call: unknown[]) =>
+        call.some((arg: unknown) => typeof arg === 'string' && arg.includes('hooks'))
       )
       expect(hookErrors).toHaveLength(0)
     })
@@ -458,17 +461,13 @@ describe('Story 44.35-FE: Edge Cases', () => {
   })
 
   it('should handle component remount without hooks errors', async () => {
-    const { unmount } = renderWithProviders(
-      <PriceCalculatorForm onSubmit={mockOnSubmit} />
-    )
+    const { unmount } = renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
     // Unmount
     unmount()
 
     // Remount
-    const { getByTestId } = renderWithProviders(
-      <PriceCalculatorForm onSubmit={mockOnSubmit} />
-    )
+    const { getByTestId } = renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
     expect(getByTestId('price-calculator-form')).toBeInTheDocument()
   })

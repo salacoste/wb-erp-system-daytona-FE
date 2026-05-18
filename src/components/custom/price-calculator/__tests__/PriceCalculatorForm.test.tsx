@@ -12,16 +12,9 @@ import { PriceCalculatorForm } from '../PriceCalculatorForm'
 
 // Mock the sub-components that use React Query or complex logic
 vi.mock('../MarginSlider', () => ({
-  MarginSlider: ({
-    name,
-    error,
-    unit,
-  }: {
-    name: string
-    error?: string
-    unit: string
-  }) => (
+  MarginSlider: ({ name, error, unit }: { name: string; error?: string; unit: string }) => (
     <div data-testid={`slider-${name}`}>
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- stripped-down mock fixture; real MarginSlider has labeled input */}
       <input type="number" data-testid={`input-${name}`} />
       <span>{unit}</span>
       {error && <span className="error">{error}</span>}
@@ -31,16 +24,9 @@ vi.mock('../MarginSlider', () => ({
 
 // Story 44.30: Mock BuybackSlider (new component without margin zones)
 vi.mock('../BuybackSlider', () => ({
-  BuybackSlider: ({
-    name,
-    error,
-    unit,
-  }: {
-    name: string
-    error?: string
-    unit: string
-  }) => (
+  BuybackSlider: ({ name, error, unit }: { name: string; error?: string; unit: string }) => (
     <div data-testid={`slider-${name}`}>
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- stripped-down mock fixture; real BuybackSlider has labeled input */}
       <input type="number" data-testid={`input-${name}`} />
       <span>{unit}</span>
       {error && <span className="error">{error}</span>}
@@ -57,11 +43,7 @@ vi.mock('../FieldTooltip', () => ({
 }))
 
 vi.mock('../ProductSearchSelect', () => ({
-  ProductSearchSelect: ({
-    onProductSelect,
-  }: {
-    onProductSelect?: (p: unknown) => void
-  }) => (
+  ProductSearchSelect: ({ onProductSelect }: { onProductSelect?: (p: unknown) => void }) => (
     <div data-testid="product-search-select">
       <button type="button" onClick={() => onProductSelect?.({ nmId: 123 })}>
         Выбрать товар
@@ -71,15 +53,11 @@ vi.mock('../ProductSearchSelect', () => ({
 }))
 
 vi.mock('../CategorySelector', () => ({
-  CategorySelector: () => (
-    <div data-testid="category-selector">Category Selector Mock</div>
-  ),
+  CategorySelector: () => <div data-testid="category-selector">Category Selector Mock</div>,
 }))
 
 vi.mock('../WarehouseSection', () => ({
-  WarehouseSection: () => (
-    <div data-testid="warehouse-section">Warehouse Section Mock</div>
-  ),
+  WarehouseSection: () => <div data-testid="warehouse-section">Warehouse Section Mock</div>,
 }))
 
 vi.mock('../FulfillmentTypeSelector', () => ({
@@ -89,9 +67,7 @@ vi.mock('../FulfillmentTypeSelector', () => ({
 }))
 
 vi.mock('../DimensionInputSection', () => ({
-  DimensionInputSection: () => (
-    <div data-testid="dimension-input-section">Dimensions Mock</div>
-  ),
+  DimensionInputSection: () => <div data-testid="dimension-input-section">Dimensions Mock</div>,
 }))
 
 vi.mock('../AutoFillWarning', () => ({
@@ -99,9 +75,7 @@ vi.mock('../AutoFillWarning', () => ({
 }))
 
 vi.mock('../TaxConfigurationSection', () => ({
-  TaxConfigurationSection: () => (
-    <div data-testid="tax-configuration-section">Tax Config Mock</div>
-  ),
+  TaxConfigurationSection: () => <div data-testid="tax-configuration-section">Tax Config Mock</div>,
 }))
 
 vi.mock('@/hooks/useProductAutoFill', () => ({
@@ -155,9 +129,7 @@ describe('PriceCalculatorForm', () => {
       renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
       expect(
-        screen.getByText(
-          /Рассчитайте оптимальную цену на основе затрат и желаемой маржи/
-        )
+        screen.getByText(/Рассчитайте оптимальную цену на основе затрат и желаемой маржи/)
       ).toBeInTheDocument()
     })
 
@@ -207,9 +179,7 @@ describe('PriceCalculatorForm', () => {
 
   describe('Story 44.5: Auto-calculation', () => {
     it('shows calculating indicator during loading', () => {
-      renderWithProviders(
-        <PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />
-      )
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />)
 
       // Check for loading text (Russian: Расчёт...) - may appear multiple times
       const loadingElements = screen.getAllByText('Расчёт...')
@@ -217,9 +187,7 @@ describe('PriceCalculatorForm', () => {
     })
 
     it('triggers reset confirmation when results exist', async () => {
-      renderWithProviders(
-        <PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={true} />
-      )
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={true} />)
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
       await userEvent.click(resetButton)
@@ -231,17 +199,13 @@ describe('PriceCalculatorForm', () => {
     })
 
     it('resets immediately when no results', async () => {
-      renderWithProviders(
-        <PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={false} />
-      )
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} hasResults={false} />)
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
       await userEvent.click(resetButton)
 
       // Should NOT show confirmation dialog
-      expect(
-        screen.queryByText(/Подтверждение сброса/i)
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText(/Подтверждение сброса/i)).not.toBeInTheDocument()
     })
   })
 
@@ -249,23 +213,17 @@ describe('PriceCalculatorForm', () => {
     it('renders Calculate button in Russian', () => {
       renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      expect(
-        screen.getByRole('button', { name: /рассчитать цену/i })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /рассчитать цену/i })).toBeInTheDocument()
     })
 
     it('renders Reset button in Russian', () => {
       renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
-      expect(
-        screen.getByRole('button', { name: /сбросить/i })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /сбросить/i })).toBeInTheDocument()
     })
 
     it('shows loading state on Calculate button', () => {
-      renderWithProviders(
-        <PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />
-      )
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} loading={true} />)
 
       // When loading, shows "Расчёт..." instead of "Рассчитать цену" - may appear multiple times
       const loadingElements = screen.getAllByText('Расчёт...')
@@ -273,9 +231,7 @@ describe('PriceCalculatorForm', () => {
     })
 
     it('disables Calculate button when disabled prop is true', () => {
-      renderWithProviders(
-        <PriceCalculatorForm onSubmit={mockOnSubmit} disabled={true} />
-      )
+      renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} disabled={true} />)
 
       const calculateBtn = screen.getByRole('button', {
         name: /рассчитать цену/i,
@@ -290,9 +246,7 @@ describe('PriceCalculatorForm', () => {
 
       expect(screen.getByText('Калькулятор цены')).toBeInTheDocument()
       expect(
-        screen.getByText(
-          /Рассчитайте оптимальную цену на основе затрат и желаемой маржи/
-        )
+        screen.getByText(/Рассчитайте оптимальную цену на основе затрат и желаемой маржи/)
       ).toBeInTheDocument()
     })
 
@@ -317,18 +271,13 @@ describe('PriceCalculatorForm', () => {
       const calculateBtn = screen.getByRole('button', {
         name: /рассчитать цену/i,
       })
-      expect(calculateBtn).toHaveAttribute(
-        'title',
-        'Нажмите Enter для расчёта'
-      )
+      expect(calculateBtn).toHaveAttribute('title', 'Нажмите Enter для расчёта')
     })
   })
 
   describe('Responsive Layout', () => {
     it('renders in responsive grid structure', () => {
-      const { container } = renderWithProviders(
-        <PriceCalculatorForm onSubmit={mockOnSubmit} />
-      )
+      const { container } = renderWithProviders(<PriceCalculatorForm onSubmit={mockOnSubmit} />)
 
       // Check for form element
       const form = container.querySelector('form')
