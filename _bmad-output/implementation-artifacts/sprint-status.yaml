@@ -402,8 +402,8 @@ development_status:
   # Foundation: Epic 108 types/fetchers, Epic 109 hooks/components/architecture-doc all shipped
   # Created: 2026-05-17
   epic-110-fe: in-progress  # 2026-05-17 — first story Story 110.1 contexted via create-story workflow
-  110-1-fe-a11y-ratchet-routes-preregistration: in-progress  # 2026-05-17 dev-story workflow started — executor delegated for implementation
-  110-2-fe-evaluations-list-page: backlog  # ~2 SP — useAiEvaluations hook + EvaluationsList component at /analytics/models/[id]/evaluations route, AP#8 compliance, cabinet-isolation
+  110-1-fe-a11y-ratchet-routes-preregistration: done  # 2026-05-17 implementation + 2-pass review complete: 17 jsx-a11y violations fixed, rule warn→error, CLAUDE.md 129→112, 2 route helpers + 6 tests. Final test count 7591. 51+ consecutive-story 2-pass streak preserved.
+  110-2-fe-evaluations-list-page: done  # 2026-05-18 closed: 2-pass adversarial review complete (8 1st-pass + 8 2nd-pass findings, all resolved — different defect classes per discipline). Backend `?modelId=` filter shipped mid-story unblocked F-1 CRITICAL. Final gates: ESLint 0E/112w, type-check 0, vitest 7637 passing (+46 from 7591 floor), check-docs 22 broken (baseline). Streak: 52+ consecutive 2-pass stories.
   110-3-fe-sku-accuracy-table: backlog  # ~1.5 SP — useAiSkuAccuracy hook + SkuAccuracyTable sortable by MAPE, sub-page or tab decision in spec
   110-4-fe-thumbs-feedback-mutation: backlog  # ~0.5 SP — useAiFeedback mutation + FeedbackButtons on ForecastTable + EvaluationsList rows, WCAG aria-labels for thumbs icons
   110-5-fe-csv-export-retrospective: backlog  # ~0.5 SP — exportEvaluationsToCsv pure helper + ExportCsvButton on EvaluationsList + SkuAccuracyTable + Epic 110 retrospective + sprint-status close-out

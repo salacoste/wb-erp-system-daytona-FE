@@ -1,0 +1,137 @@
+'use client'
+
+/**
+ * EvaluationsTable — sortable 6-column table of evaluation entries.
+ * Extracted from EvaluationsList.tsx for file-size discipline (Story 110.2-FE).
+ * Story 110.1 jsx-a11y ratchet: all interactive controls have aria-label at write-time.
+ *
+ * 2nd-pass F-6: aria-sort on <TableHead> per WAI-ARIA; button aria-label simplified to action-only.
+ * 2nd-pass F-1: "Дата" cell renders formatDate(evaluationDate) per-row; forecastId in tooltip (full id).
+ * 2nd-pass F-3: TooltipTrigger child stops click propagation to prevent nested-interactive violation.
+ * FUTURE: forecastDate / horizonDays / predictedRevenue / actualRevenue available on EvaluationEntry
+ * — surface in Story 110.3 (SKU accuracy) when per-SKU drill-down lands.
+ */
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { formatDate } from '@/lib/utils'
+import { formatNumber } from '@/lib/fbs-analytics-formatters'
+import { sortEvaluationsByMape, formatMapeDisplay } from './evaluations-list-helpers'
+import type { SortColumn, SortDirection } from './evaluations-list-helpers'
+import type { EvaluationEntry } from '@/types/ai/evaluations'
+
+interface EvaluationsTableProps {
+  entries: EvaluationEntry[]
+  sortCol: SortColumn
+  sortDir: SortDirection
+  onSortClick: (col: SortColumn) => void
+  onRowClick: (nmId: number | null) => void
+}
+
+export function EvaluationsTable({
+  entries,
+  sortCol,
+  sortDir,
+  onSortClick,
+  onRowClick,
+}: EvaluationsTableProps) {
+  const sorted = sortEvaluationsByMape(entries, sortCol, sortDir)
+
+  return (
+    <TooltipProvider>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Дата</TableHead>
+            <TableHead>Артикул</TableHead>
+            <TableHead>Прогноз (ед.)</TableHead>
+            <TableHead>Факт (ед.)</TableHead>
+            {/* F-6: aria-sort on <TableHead> per WAI-ARIA; button label simplified to action-only */}
+            <TableHead
+              aria-sort={
+                sortCol === 'mapeUnits' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'
+              }
+            >
+              <button
+                type="button"
+                onClick={() => onSortClick('mapeUnits')}
+                aria-label="Сортировать по MAPE единиц"
+                className="flex items-center gap-1 hover:text-foreground"
+              >
+                MAPE (ед.)
+                {sortCol === 'mapeUnits' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+              </button>
+            </TableHead>
+            <TableHead
+              aria-sort={
+                sortCol === 'mapeRevenue'
+                  ? sortDir === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none'
+              }
+            >
+              <button
+                type="button"
+                onClick={() => onSortClick('mapeRevenue')}
+                aria-label="Сортировать по MAPE выручки"
+                className="flex items-center gap-1 hover:text-foreground"
+              >
+                MAPE (₽)
+                {sortCol === 'mapeRevenue' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+              </button>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sorted.map(entry => (
+            <TableRow
+              key={entry.forecastId}
+              onClick={() => onRowClick(entry.nmId)}
+              className={entry.nmId !== null ? 'cursor-pointer hover:bg-muted/50' : ''}
+              role={entry.nmId !== null ? 'button' : undefined}
+              aria-label={
+                entry.nmId !== null ? `Перейти к детализации по артикулу ${entry.nmId}` : undefined
+              }
+            >
+              {/* F-1: Дата cell shows per-row evaluationDate; forecastId moved to tooltip (full id) */}
+              {/* F-3: stopPropagation on tooltip trigger prevents nested-interactive conflict */}
+              <TableCell>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span
+                      className="cursor-help underline decoration-dotted"
+                      onClick={e => e.stopPropagation()}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') e.stopPropagation()
+                      }}
+                    >
+                      {formatDate(new Date(entry.evaluationDate))}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Прогноз ID: {entry.forecastId}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TableCell>
+              <TableCell>
+                {entry.nmId !== null ? formatNumber(entry.nmId) : 'По кабинету'}
+              </TableCell>
+              <TableCell>{formatNumber(entry.predictedUnits)}</TableCell>
+              <TableCell>{formatNumber(entry.actualUnits)}</TableCell>
+              <TableCell>{formatMapeDisplay(entry.mapeUnits)}</TableCell>
+              <TableCell>{formatMapeDisplay(entry.mapeRevenue)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TooltipProvider>
+  )
+}

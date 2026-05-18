@@ -10,8 +10,9 @@ import Link from 'next/link'
 import { useModelPerformance } from '@/hooks/useModelPerformance'
 import { useAiModels } from '@/hooks/useAiModels'
 import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
-import { ROUTES } from '@/lib/routes'
+import { ROUTES, buildModelEvaluationsRoute } from '@/lib/routes'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -33,7 +34,7 @@ import {
   sortMapeTrendDesc,
 } from './model-performance-helpers'
 import { STATUS_BADGE_CONFIG } from '../../../components/model-list-helpers'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatPercentage } from '@/lib/utils'
 
 // Re-export pure helpers for direct unit testing (pure-function discipline, Story 99.2-FE).
 export { DRIFT_BADGE_CONFIG, DRIFT_NULL_CONFIG, getMapeDeltaColor, formatMapeDelta, getCurrentMape }
@@ -130,7 +131,12 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
     <div className="space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle>Производительность модели</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>Производительность модели</CardTitle>
+            <Button asChild variant="outline" size="sm">
+              <Link href={buildModelEvaluationsRoute(modelId)}>Подробные оценки</Link>
+            </Button>
+          </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
             <span>{MODEL_TYPE_LABELS[model.modelType]}</span>
             <span>v{model.version}</span>
@@ -150,9 +156,9 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
           {prevMetrics != null && model.version > 0 && (
             <p className="text-sm">
               Сравнение с v{model.version - 1}: MAPE{' '}
-              {prevMape != null ? `${prevMape.toFixed(1)}%` : '—'}
+              {prevMape != null ? formatPercentage(prevMape) : '—'}
               {' → '}
-              {currentMape != null ? `${currentMape.toFixed(1)}%` : '—'}
+              {currentMape != null ? formatPercentage(currentMape) : '—'}
               {deltaStr != null && (
                 <span className={`ml-1 font-medium ${deltaColor}`}>({deltaStr})</span>
               )}
@@ -184,7 +190,7 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
                   <TableRow key={entry.evaluationDate}>
                     <TableCell>{formatDate(entry.evaluationDate)}</TableCell>
                     <TableCell>
-                      {entry.cabinetMape != null ? `${entry.cabinetMape.toFixed(1)}%` : '—'}
+                      {entry.cabinetMape != null ? formatPercentage(entry.cabinetMape) : '—'}
                     </TableCell>
                     <TableCell>{entry.skuCount}</TableCell>
                   </TableRow>

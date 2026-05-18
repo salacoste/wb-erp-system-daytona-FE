@@ -385,9 +385,10 @@ describe('ModelPerformanceDetail', () => {
     })
     render(<ModelPerformanceDetail modelId="model-1" />)
     // The comparison <p> contains "Сравнение с v1" and both MAPE values inline.
+    // F-5 (2nd-pass): formatPercentage uses Russian locale (comma decimal) — use regex not exact string.
     const comparisonPara = screen.getByText(/Сравнение с v1/)
-    expect(comparisonPara.textContent).toContain('14.0%')
-    expect(comparisonPara.textContent).toContain('12.5%')
+    expect(comparisonPara.textContent).toMatch(/14[,.]0\s*%/)
+    expect(comparisonPara.textContent).toMatch(/12[,.]5\s*%/)
   })
 
   it('previous-version comparison hidden when prevMetrics absent', () => {
@@ -500,5 +501,14 @@ describe('ModelPerformanceDetail', () => {
     )
     render(<ModelPerformanceDetail modelId="model-1" />)
     expect(screen.queryByText(/Сравнение с v/)).toBeNull()
+  })
+
+  it('AC-7 (Story 110.2): "Подробные оценки" button renders with correct href', () => {
+    setup()
+    render(<ModelPerformanceDetail modelId="model-1" />)
+    const link = screen.getByRole('link', { name: 'Подробные оценки' })
+    expect(link).toBeTruthy()
+    expect(link.getAttribute('href')).toContain('model-1')
+    expect(link.getAttribute('href')).toContain('evaluations')
   })
 })

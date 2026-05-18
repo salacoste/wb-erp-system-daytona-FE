@@ -6,16 +6,28 @@
 
 export interface EvaluationEntry {
   forecastId: string
+  /** Model ID that produced this forecast — always present per backend ship (Story 110.2-FE F-1) */
+  modelId: string
   /** null for cabinet-level evaluations */
   nmId: number | null
+  /** ISO date of the forecast horizon start — always present */
+  forecastDate: string
+  /** Number of days in the forecast horizon */
+  horizonDays: number
   /** Predicted units sold — count, semantic-zero OK */
   predictedUnits: number
   /** Actual units sold — count, semantic-zero OK */
   actualUnits: number
+  /** Predicted revenue — AP#8: never ?? 0 in money context; semantic-zero OK for forecast */
+  predictedRevenue: number
+  /** Actual revenue — semantic-zero OK for fact */
+  actualRevenue: number
   /** Mean Absolute Percentage Error for units — null when not yet evaluated */
   mapeUnits: number | null
   /** Mean Absolute Percentage Error for revenue — null when not yet evaluated */
   mapeRevenue: number | null
+  /** ISO date when this entry was evaluated */
+  evaluationDate: string
 }
 
 export interface AiEvaluationListResponse {

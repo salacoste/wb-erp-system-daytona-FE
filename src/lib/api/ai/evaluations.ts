@@ -15,13 +15,21 @@ import type {
 
 // ── Evaluation List ──────────────────────────────────────────────────────────
 
+// Raw shape from backend — all fields optional/nullable for defensive normalization.
+// 6 new fields shipped with ?modelId= filter (Story 110.2-FE F-1).
 interface RawEvaluationEntry {
   forecastId?: string | null
+  modelId?: string | null
   nmId?: number | null
+  forecastDate?: string | null
+  horizonDays?: number | null
   predictedUnits?: number | null
   actualUnits?: number | null
+  predictedRevenue?: number | null
+  actualRevenue?: number | null
   mapeUnits?: number | null
   mapeRevenue?: number | null
+  evaluationDate?: string | null
 }
 
 interface RawAiEvaluationListResponse {
@@ -34,11 +42,17 @@ interface RawAiEvaluationListResponse {
 function normalizeEvaluationEntry(raw: RawEvaluationEntry): EvaluationEntry {
   return {
     forecastId: raw.forecastId ?? '',
+    modelId: raw.modelId ?? '',
     nmId: raw.nmId ?? null,
+    forecastDate: raw.forecastDate ?? '',
+    horizonDays: raw.horizonDays ?? 0,
     predictedUnits: raw.predictedUnits ?? 0,
     actualUnits: raw.actualUnits ?? 0,
+    predictedRevenue: raw.predictedRevenue ?? 0,
+    actualRevenue: raw.actualRevenue ?? 0,
     mapeUnits: raw.mapeUnits ?? null,
     mapeRevenue: raw.mapeRevenue ?? null,
+    evaluationDate: raw.evaluationDate ?? '',
   }
 }
 
@@ -54,12 +68,15 @@ export function normalizeAiEvaluationListResponse(
 }
 
 export interface EvaluationParams {
+  /** Filter by model UUID — backend ships ?modelId= filter (Story 110.2-FE F-1) */
+  modelId?: string
   from?: string
   to?: string
 }
 
 export async function getEvaluations(params?: EvaluationParams): Promise<AiEvaluationListResponse> {
   const queryParams = new URLSearchParams()
+  if (params?.modelId) queryParams.set('modelId', params.modelId)
   if (params?.from) queryParams.set('from', params.from)
   if (params?.to) queryParams.set('to', params.to)
   const qs = queryParams.toString()
