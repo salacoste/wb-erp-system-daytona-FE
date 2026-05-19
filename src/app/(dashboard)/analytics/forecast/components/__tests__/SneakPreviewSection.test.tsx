@@ -120,6 +120,18 @@ describe('SneakPreviewSection', () => {
     wrap(<SneakPreviewSection status={mockStatus} />)
     expect(screen.getByText('Нет данных')).toBeInTheDocument()
   })
+
+  it('renders fallback text when weeksRequired is null', () => {
+    const statusNoRequired = { ...mockStatus, weeksRequired: null as unknown as number }
+    wrap(<SneakPreviewSection status={statusNoRequired} />)
+    expect(screen.getByText(/при сборе достаточного количества данных/)).toBeInTheDocument()
+  })
+
+  it('renders fallback text when weeksRequired is 0', () => {
+    const statusZero = { ...mockStatus, weeksRequired: 0 }
+    wrap(<SneakPreviewSection status={statusZero} />)
+    expect(screen.getByText(/при сборе достаточного количества данных/)).toBeInTheDocument()
+  })
 })
 
 // ── Pure view tests (no hook mocking needed) ──────────────────────────────────

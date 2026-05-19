@@ -155,6 +155,25 @@ describe('ForecastPageContent — AC-6 (rollbackNotice Alert regression lock)', 
     expect(screen.getByText(/2025-01-15/)).toBeTruthy()
   })
 
+  it('renders legacy rollbackNotice (v0 + empty date) as reason-only text', () => {
+    vi.mocked(useAiForecast).mockReturnValue({
+      ...baseForecastResult,
+      data: {
+        ...baseForecastResult.data,
+        rollbackNotice: {
+          previousVersion: 0,
+          rollbackDate: '',
+          reason: 'Модель откачена по техническим причинам',
+        },
+      },
+    } as unknown as ReturnType<typeof useAiForecast>)
+
+    renderPage()
+    expect(screen.getByText(/Откат модели: Модель откачена по техническим причинам$/)).toBeTruthy()
+    // Must NOT render nonsensical "v0 → откат " text
+    expect(screen.queryByText(/v0/)).toBeNull()
+  })
+
   it('does NOT render rollbackNotice Alert when null', () => {
     vi.mocked(useAiForecast).mockReturnValue({
       ...baseForecastResult,

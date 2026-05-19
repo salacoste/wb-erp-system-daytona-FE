@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
 import { useAiSneakPreview } from '@/hooks/useAiSneakPreview'
 import type { AiStatusResponse } from '@/types/ai/status'
+import { pluralize, WEEK_FORMS } from '@/lib/russian-plural'
 import type { SneakPreviewSkuForecast, TrendDirection } from '@/types/ai/trends-sneak'
 
 interface Props {
@@ -108,8 +109,10 @@ export function SneakPreviewSection({ status }: Props) {
         <CardContent className="pt-6 space-y-4">
           {/* Status block */}
           <p className="text-sm text-muted-foreground">
-            Собрано {weeksCollected} недель. Полная AI активируется при достижении {weeksRequired}{' '}
-            недель.
+            Собрано {weeksCollected} {pluralize(WEEK_FORMS, weeksCollected)}.
+            {weeksRequired != null && weeksRequired > 0
+              ? ` Полная AI активируется при достижении ${weeksRequired} ${pluralize(WEEK_FORMS, weeksRequired)}.`
+              : ' Полная AI активируется при сборе достаточного количества данных.'}
           </p>
 
           {/* Forecast table */}
