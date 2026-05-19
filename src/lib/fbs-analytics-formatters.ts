@@ -111,17 +111,11 @@ export function formatTooltipDate(dateStr: string): string {
 }
 
 /**
- * Format large numbers with Russian grouping (space separator)
- *
- * @param value - Number to format
- * @returns Formatted string
- *
- * @example
- * formatNumber(1234567) // '1 234 567'
+ * Format large numbers with Russian grouping (space separator).
+ * Re-exported from @/lib/utils for backward compatibility.
+ * Canonical definition: src/lib/utils.ts (Story 110.5-FE F-3).
  */
-export function formatNumber(value: number): string {
-  return new Intl.NumberFormat('ru-RU').format(Math.round(value))
-}
+export { formatNumber } from './utils'
 
 /**
  * Format percentage for display

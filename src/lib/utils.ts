@@ -110,6 +110,16 @@ export function removeAuthCookie(): void {
 }
 
 /**
+ * Formats a number with Russian grouping (space separator), rounded to integer.
+ * Use for counts and quantities. NOT for opaque IDs (use String(id) instead).
+ * @param value - The numeric value to format
+ * @returns Formatted string (e.g., "1 234 567")
+ */
+export function formatNumber(value: number): string {
+  return new Intl.NumberFormat('ru-RU').format(Math.round(value))
+}
+
+/**
  * Story 4.9: Formats weeks since last sale with proper Russian pluralization
  * @param weeks - Number of weeks since last sale
  * @returns Formatted string (e.g., "1 неделю назад", "3 недели назад", "5 недель назад")
