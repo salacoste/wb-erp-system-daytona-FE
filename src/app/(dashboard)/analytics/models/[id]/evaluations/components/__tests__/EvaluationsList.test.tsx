@@ -1,19 +1,35 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // ── Mock hooks ──────────────────────────────────────────────────────────────
 vi.mock('@/hooks/useAiModels')
 vi.mock('@/hooks/useAiEvaluations')
+// Story 110.4-FE: FeedbackButtons (inside EvaluationsTable) needs these mocks
+vi.mock('@/lib/api/ai/system')
+vi.mock('@/stores/authStore')
 
 const mockPush = vi.fn()
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mockPush }) }))
 
 import * as useAiModelsMod from '@/hooks/useAiModels'
 import * as useAiEvaluationsMod from '@/hooks/useAiEvaluations'
+import * as systemApi from '@/lib/api/ai/system'
+import * as authStore from '@/stores/authStore'
 
 const mockUseAiModels = vi.mocked(useAiModelsMod.useAiModels)
 const mockUseAiEvaluations = vi.mocked(useAiEvaluationsMod.useAiEvaluations)
+const mockPostFeedback = vi.mocked(systemApi.postFeedback)
+const mockUseAuthStore = vi.mocked(authStore.useAuthStore)
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { retry: false } },
+  })
+  return ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+}
 
 import { EvaluationsList } from '../EvaluationsList'
 import { sortEvaluationsByMape, formatMapeDisplay } from '../evaluations-list-helpers'
@@ -192,6 +208,10 @@ describe('EvaluationsList', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockPush.mockReset()
+    // Story 110.4-FE: FeedbackButtons needs auth + api mocks (rendered inside EvaluationsTable)
+    mockPostFeedback.mockResolvedValue(undefined)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseAuthStore.mockImplementation((selector: any) => selector({ cabinetId: 'cab-1' }))
   })
 
   it('renders Skeleton when loading', () => {
@@ -199,7 +219,7 @@ describe('EvaluationsList', () => {
       { isLoading: true, data: undefined, isSuccess: false, status: 'pending' },
       { isLoading: true, data: undefined, isSuccess: false, status: 'pending' }
     )
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     // F-5: unique testid per skeleton container (no collision with other skeleton instances)
     expect(screen.getByTestId('evaluations-skeleton')).toBeTruthy()
   })
@@ -212,7 +232,7 @@ describe('EvaluationsList', () => {
       data: undefined,
       error: new Error('Network unreachable'),
     })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Ошибка загрузки списка моделей/)).toBeTruthy()
     expect(screen.getByText(/Network unreachable/)).toBeTruthy()
     // Negative: must NOT silently show model-not-found (F-17 state-precedence)
@@ -230,14 +250,14 @@ describe('EvaluationsList', () => {
         error: new Error('Eval fetch failed'),
       }
     )
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Ошибка загрузки оценок модели/)).toBeTruthy()
     expect(screen.getByText(/Eval fetch failed/)).toBeTruthy()
   })
 
   it('model-not-found: renders Alert with link to MODELS list', () => {
     setup({ data: makeModelList({ models: [] }) })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Модель не найдена/)).toBeTruthy()
     const link = screen.getByRole('link', { name: /Вернуться к списку моделей/ })
     expect(link.getAttribute('href')).toBe(ROUTES.ANALYTICS.MODELS)
@@ -245,13 +265,13 @@ describe('EvaluationsList', () => {
 
   it('empty evaluations: renders non-destructive Alert', () => {
     setup({}, { data: makeEvalData({ evaluations: [] }) })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Нет оценок этой модели/)).toBeTruthy()
   })
 
   it('happy path: header renders modelType label + version + status badge', () => {
     setup()
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('Оценки точности модели')).toBeTruthy()
     expect(screen.getByText('Прогноз продаж')).toBeTruthy()
     expect(screen.getByText('v3')).toBeTruthy()
@@ -260,7 +280,7 @@ describe('EvaluationsList', () => {
 
   it('happy path: aggregate summary cards show correct values', () => {
     setup()
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     // cabinetMape = 15.2 → formatPercentage(15.2)
     expect(screen.getByText('Средняя точность (MAPE)')).toBeTruthy()
     expect(screen.getByText('Последняя оценка')).toBeTruthy()
@@ -271,7 +291,7 @@ describe('EvaluationsList', () => {
 
   it('AP#8: cabinetMape null renders em-dash not 0', () => {
     setup({}, { data: makeEvalData({ cabinetMape: null, evaluations: [] }) })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     // The MAPE summary card should render '—'
     const cards = screen.getAllByText('—')
     expect(cards.length).toBeGreaterThanOrEqual(1)
@@ -279,14 +299,14 @@ describe('EvaluationsList', () => {
 
   it('AP#8: evaluatedAt null renders em-dash', () => {
     setup({}, { data: makeEvalData({ evaluatedAt: null, evaluations: [] }) })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     const dashes = screen.getAllByText('—')
     expect(dashes.length).toBeGreaterThanOrEqual(1)
   })
 
   it('happy path: 6 column headers render', () => {
     setup()
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     // F-7: header must be "Дата" (spec verbatim), not "Дата / ID прогноза"
     expect(screen.getByText('Дата')).toBeTruthy()
     expect(screen.getByText('Артикул')).toBeTruthy()
@@ -299,7 +319,7 @@ describe('EvaluationsList', () => {
 
   it('nmId null renders "По кабинету"', () => {
     setup()
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('По кабинету')).toBeTruthy()
   })
 
@@ -314,7 +334,7 @@ describe('EvaluationsList', () => {
       mapeRevenue: null,
     }
     setup({}, { data: makeEvalData({ evaluations: [nullMapeEntry] }) })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     const dashes = screen.getAllByText('—')
     // Both mapeUnits and mapeRevenue null → 2 dashes in the table
     expect(dashes.length).toBeGreaterThanOrEqual(2)
@@ -324,7 +344,9 @@ describe('EvaluationsList', () => {
     // skuEntry mapeUnits=11.1, cabinetEntry mapeUnits=4.0
     // ASC default: cabinetEntry (4.0) first, skuEntry (11.1) second
     setup()
-    const { container } = render(<EvaluationsList modelId="model-1" />)
+    const { container } = render(<EvaluationsList modelId="model-1" />, {
+      wrapper: createWrapper(),
+    })
     const sortBtn = screen.getByRole('button', { name: /Сортировать по MAPE единиц/ })
 
     // Default asc → shows ↑
@@ -359,7 +381,7 @@ describe('EvaluationsList', () => {
 
   it('row navigation: click on non-null nmId calls router.push with expected URL', () => {
     setup()
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     // Find the row for nmId=12345 (skuEntry)
     const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
     fireEvent.click(skuRow)
@@ -369,7 +391,7 @@ describe('EvaluationsList', () => {
 
   it('row navigation: cabinet-level row (nmId null) does NOT navigate', () => {
     setup({}, { data: makeEvalData({ evaluations: [cabinetEntry] }) })
-    render(<EvaluationsList modelId="model-1" />)
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     // Cabinet row has no role=button and no aria-label for navigation
     expect(screen.queryByRole('button', { name: /Перейти к детализации/ })).toBeNull()
     // Clicking it should not push

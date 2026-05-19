@@ -3,10 +3,12 @@
 /**
  * ForecastTable — renders prediction rows with enriched columns.
  * Story 109.1-FE: added naiveBaseline, aiVsNaive, predictedRevenue columns.
- * Column order: Дата → Прогноз продаж → Базовая оценка → AI vs базовая → Прогноз выручки → Уверенность → Диапазон
+ * Story 110.4-FE: added Оценка column with FeedbackButtons (forecastId optional per AC 6).
+ * Column order: Дата → Прогноз продаж → Базовая оценка → AI vs базовая → Прогноз выручки → Уверенность → Диапазон → Оценка
  */
 import { getConfidenceBand, type AiForecastPrediction } from '@/types/ai-forecast'
 import { formatDate, formatCurrency } from '@/lib/utils'
+import { FeedbackButtons } from '@/components/custom/ai/FeedbackButtons'
 
 const BAND_STYLES: Record<string, string> = {
   high: 'text-green-600 bg-green-50',
@@ -34,7 +36,13 @@ export function getAiVsNaiveColor(
   return 'text-muted-foreground'
 }
 
-export function ForecastTable({ predictions }: { predictions: AiForecastPrediction[] }) {
+interface ForecastTableProps {
+  predictions: AiForecastPrediction[]
+  /** Optional — when provided, feedback submission invalidates model cache (AC 6) */
+  modelId?: string
+}
+
+export function ForecastTable({ predictions, modelId }: ForecastTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -47,6 +55,7 @@ export function ForecastTable({ predictions }: { predictions: AiForecastPredicti
             <th className="py-2 text-right font-medium">Прогноз выручки</th>
             <th className="py-2 text-right font-medium">Уверенность</th>
             <th className="py-2 text-center font-medium">Диапазон</th>
+            <th className="py-2 text-center font-medium">Оценка</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +84,11 @@ export function ForecastTable({ predictions }: { predictions: AiForecastPredicti
                   >
                     {BAND_LABELS[band]}
                   </span>
+                </td>
+                <td className="py-2 text-center">
+                  {p.forecastId ? (
+                    <FeedbackButtons forecastId={p.forecastId} modelId={modelId} />
+                  ) : null}
                 </td>
               </tr>
             )

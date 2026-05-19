@@ -1,15 +1,34 @@
 /**
  * EvaluationsTable isolated unit tests — F-6 (Story 110.2-FE 1st-pass review).
+ * Story 110.4-FE: added Оценка column tests + QueryClient wrapper for FeedbackButtons.
  * 2nd-pass updates:
  *   F-1: "Дата" cell now shows formatDate(evaluationDate); forecastId hash test updated.
  *   F-3: tooltip trigger stopPropagation test — onRowClick NOT called when tooltip clicked.
  *   F-6: aria-sort assertions on TableHead instead of aria-label direction suffix.
  */
 import React from 'react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { EvaluationsTable } from '../EvaluationsTable'
 import type { EvaluationEntry } from '@/types/ai/evaluations'
+import * as systemApi from '@/lib/api/ai/system'
+import * as authStore from '@/stores/authStore'
+
+vi.mock('@/lib/api/ai/system')
+vi.mock('@/stores/authStore')
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { retry: false } },
+  })
+  return ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+}
+
+function renderTable(props: React.ComponentProps<typeof EvaluationsTable>) {
+  return render(<EvaluationsTable {...props} />, { wrapper: createWrapper() })
+}
 
 const skuEntry: EvaluationEntry = {
   forecastId: 'forecast-abc-12345678',
@@ -56,7 +75,7 @@ const cabinetEntry: EvaluationEntry = {
   evaluationDate: '2026-05-17',
 }
 
-const defaultProps = {
+const defaultProps: React.ComponentProps<typeof EvaluationsTable> = {
   entries: [skuEntry],
   sortCol: 'mapeUnits' as const,
   sortDir: 'asc' as const,
@@ -64,9 +83,18 @@ const defaultProps = {
   onRowClick: vi.fn(),
 }
 
+beforeEach(() => {
+  vi.clearAllMocks()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vi.mocked(authStore.useAuthStore).mockImplementation((selector: any) =>
+    selector({ cabinetId: 'cab-1' })
+  )
+  vi.mocked(systemApi.postFeedback).mockResolvedValue(undefined)
+})
+
 describe('EvaluationsTable', () => {
   it('renders empty table body when entries is empty', () => {
-    render(<EvaluationsTable {...defaultProps} entries={[]} />)
+    renderTable({ ...defaultProps, entries: [] })
     // Headers still render
     expect(screen.getByText('Дата')).toBeTruthy()
     // No data rows (only header row)
@@ -74,25 +102,26 @@ describe('EvaluationsTable', () => {
     expect(rows).toHaveLength(1) // header row only
   })
 
-  it('renders all 6 column headers', () => {
-    render(<EvaluationsTable {...defaultProps} />)
+  it('renders all 7 column headers (Story 110.4-FE: Оценка added)', () => {
+    renderTable(defaultProps)
     expect(screen.getByText('Дата')).toBeTruthy()
     expect(screen.getByText('Артикул')).toBeTruthy()
     expect(screen.getByText('Прогноз (ед.)')).toBeTruthy()
     expect(screen.getByText('Факт (ед.)')).toBeTruthy()
     expect(screen.getByRole('button', { name: /Сортировать по MAPE единиц/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: /Сортировать по MAPE выручки/ })).toBeTruthy()
+    expect(screen.getByText('Оценка')).toBeTruthy()
   })
 
   it('F-1: Дата cell renders formatDate(evaluationDate) in DD.MM.YYYY format', () => {
-    render(<EvaluationsTable {...defaultProps} />)
+    renderTable(defaultProps)
     // evaluationDate '2026-05-17' → formatDate → '17.05.2026'
     expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}/)).toBeTruthy()
     expect(screen.getByText('17.05.2026')).toBeTruthy()
   })
 
   it('F-1: tooltip shows full forecastId (Прогноз ID), not a short hash', () => {
-    render(<EvaluationsTable {...defaultProps} />)
+    renderTable(defaultProps)
     // The date span is the TooltipTrigger — forecastId hash no longer in visible text
     const fullText = document.body.textContent ?? ''
     // Full id should NOT appear in visible text (it's in tooltip content, not rendered by default)
@@ -101,28 +130,26 @@ describe('EvaluationsTable', () => {
     expect(fullText).toContain('17.05.2026')
   })
 
-  it('renders nmId with formatNumber (Russian locale) for SKU entry', () => {
-    render(<EvaluationsTable {...defaultProps} />)
-    // formatNumber(12345) → '12 345' with ru-RU non-breaking space (U+00A0)
-    // Use regex to match regardless of space type
-    const cell = screen.getByText(/12[\s ]?345/)
-    expect(cell).toBeTruthy()
+  it('F-8: renders nmId as raw string (not formatNumber) for copy-paste semantics', () => {
+    renderTable(defaultProps)
+    // String(12345) → '12345' — no non-breaking-space separator
+    expect(screen.getByText('12345')).toBeTruthy()
   })
 
   it('renders "По кабинету" for cabinet-level entry (nmId null)', () => {
-    render(<EvaluationsTable {...defaultProps} entries={[cabinetEntry]} />)
+    renderTable({ ...defaultProps, entries: [cabinetEntry] })
     expect(screen.getByText('По кабинету')).toBeTruthy()
   })
 
   it('AP#8: null mapeUnits renders em-dash not 0', () => {
-    render(<EvaluationsTable {...defaultProps} entries={[nullMapeEntry]} />)
+    renderTable({ ...defaultProps, entries: [nullMapeEntry] })
     const dashes = screen.getAllByText('—')
     // Both mapeUnits and mapeRevenue are null → 2 em-dashes
     expect(dashes.length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders Russian locale percentage for non-null MAPE (F-2: no English dot)', () => {
-    render(<EvaluationsTable {...defaultProps} />)
+    renderTable(defaultProps)
     // formatMapeDisplay(11.1) via formatPercentage → Russian locale "11,1 %" not "11.1%"
     // Verify the English dot format does NOT appear in the document
     const fullText = document.body.textContent ?? ''
@@ -133,46 +160,46 @@ describe('EvaluationsTable', () => {
 
   it('click on mapeUnits sort button fires onSortClick with mapeUnits', () => {
     const onSortClick = vi.fn()
-    render(<EvaluationsTable {...defaultProps} onSortClick={onSortClick} />)
+    renderTable({ ...defaultProps, onSortClick })
     fireEvent.click(screen.getByRole('button', { name: /Сортировать по MAPE единиц/ }))
     expect(onSortClick).toHaveBeenCalledWith('mapeUnits')
   })
 
   it('click on mapeRevenue sort button fires onSortClick with mapeRevenue', () => {
     const onSortClick = vi.fn()
-    render(<EvaluationsTable {...defaultProps} onSortClick={onSortClick} />)
+    renderTable({ ...defaultProps, onSortClick })
     fireEvent.click(screen.getByRole('button', { name: /Сортировать по MAPE выручки/ }))
     expect(onSortClick).toHaveBeenCalledWith('mapeRevenue')
   })
 
   it('click on SKU row fires onRowClick with nmId', () => {
     const onRowClick = vi.fn()
-    render(<EvaluationsTable {...defaultProps} onRowClick={onRowClick} />)
+    renderTable({ ...defaultProps, onRowClick })
     const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
     fireEvent.click(skuRow)
     expect(onRowClick).toHaveBeenCalledWith(12345)
   })
 
   it('click on cabinet row fires onRowClick with null (non-interactive)', () => {
-    render(<EvaluationsTable {...defaultProps} entries={[cabinetEntry]} onRowClick={vi.fn()} />)
+    renderTable({ ...defaultProps, entries: [cabinetEntry], onRowClick: vi.fn() })
     // Cabinet row has no role=button
     expect(screen.queryByRole('button', { name: /Перейти к детализации/ })).toBeNull()
   })
 
   it('sort indicator ↑ shown when sortCol matches and sortDir is asc', () => {
-    render(<EvaluationsTable {...defaultProps} sortCol="mapeUnits" sortDir="asc" />)
+    renderTable({ ...defaultProps, sortCol: 'mapeUnits', sortDir: 'asc' })
     const btn = screen.getByRole('button', { name: /Сортировать по MAPE единиц/ })
     expect(btn.textContent).toContain('↑')
   })
 
   it('sort indicator ↓ shown when sortCol matches and sortDir is desc', () => {
-    render(<EvaluationsTable {...defaultProps} sortCol="mapeUnits" sortDir="desc" />)
+    renderTable({ ...defaultProps, sortCol: 'mapeUnits', sortDir: 'desc' })
     const btn = screen.getByRole('button', { name: /Сортировать по MAPE единиц/ })
     expect(btn.textContent).toContain('↓')
   })
 
   it('no sort indicator on mapeUnits button when sorting by mapeRevenue', () => {
-    render(<EvaluationsTable {...defaultProps} sortCol="mapeRevenue" sortDir="asc" />)
+    renderTable({ ...defaultProps, sortCol: 'mapeRevenue', sortDir: 'asc' })
     const btn = screen.getByRole('button', { name: /Сортировать по MAPE единиц/ })
     expect(btn.textContent).not.toContain('↑')
     expect(btn.textContent).not.toContain('↓')
@@ -180,9 +207,7 @@ describe('EvaluationsTable', () => {
 
   // F-6: aria-sort attribute tests on TableHead
   it('F-6: active sortCol=mapeUnits asc → aria-sort="ascending" on mapeUnits head', () => {
-    const { container } = render(
-      <EvaluationsTable {...defaultProps} sortCol="mapeUnits" sortDir="asc" />
-    )
+    const { container } = renderTable({ ...defaultProps, sortCol: 'mapeUnits', sortDir: 'asc' })
     const heads = container.querySelectorAll('th[aria-sort]')
     const ascending = Array.from(heads).find(h => h.getAttribute('aria-sort') === 'ascending')
     expect(ascending).toBeTruthy()
@@ -190,9 +215,7 @@ describe('EvaluationsTable', () => {
   })
 
   it('F-6: active sortCol=mapeUnits desc → aria-sort="descending" on mapeUnits head', () => {
-    const { container } = render(
-      <EvaluationsTable {...defaultProps} sortCol="mapeUnits" sortDir="desc" />
-    )
+    const { container } = renderTable({ ...defaultProps, sortCol: 'mapeUnits', sortDir: 'desc' })
     const heads = container.querySelectorAll('th[aria-sort]')
     const descending = Array.from(heads).find(h => h.getAttribute('aria-sort') === 'descending')
     expect(descending).toBeTruthy()
@@ -200,9 +223,7 @@ describe('EvaluationsTable', () => {
   })
 
   it('F-6: inactive column gets aria-sort="none"', () => {
-    const { container } = render(
-      <EvaluationsTable {...defaultProps} sortCol="mapeUnits" sortDir="asc" />
-    )
+    const { container } = renderTable({ ...defaultProps, sortCol: 'mapeUnits', sortDir: 'asc' })
     const heads = container.querySelectorAll('th[aria-sort]')
     const noneHeads = Array.from(heads).filter(h => h.getAttribute('aria-sort') === 'none')
     // mapeRevenue column should be "none" when mapeUnits is active
@@ -210,14 +231,59 @@ describe('EvaluationsTable', () => {
     expect(noneHeads.some(h => h.textContent?.includes('MAPE (₽)'))).toBe(true)
   })
 
+  // F-1: keyboard activation on row-button (propagation fix from Story 110.3-FE review)
+  it('F-1: Enter key on SKU row fires onRowClick (keyboard accessibility)', () => {
+    const onRowClick = vi.fn()
+    renderTable({ ...defaultProps, onRowClick })
+    const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
+    fireEvent.keyDown(skuRow, { key: 'Enter', code: 'Enter' })
+    expect(onRowClick).toHaveBeenCalledWith(12345)
+  })
+
+  it('F-1: Space key on SKU row fires onRowClick (keyboard accessibility)', () => {
+    const onRowClick = vi.fn()
+    renderTable({ ...defaultProps, onRowClick })
+    const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
+    fireEvent.keyDown(skuRow, { key: ' ', code: 'Space' })
+    expect(onRowClick).toHaveBeenCalledWith(12345)
+  })
+
   // F-3: stopPropagation — clicking tooltip trigger does NOT fire onRowClick
   it('F-3: click on date tooltip trigger does NOT call onRowClick (stopPropagation)', () => {
     const onRowClick = vi.fn()
-    render(<EvaluationsTable {...defaultProps} onRowClick={onRowClick} />)
+    renderTable({ ...defaultProps, onRowClick })
     // The date span is the TooltipTrigger child — click it directly
     const dateSpan = screen.getByText('17.05.2026')
     fireEvent.click(dateSpan)
     // stopPropagation prevents bubbling to the TableRow onClick
+    expect(onRowClick).not.toHaveBeenCalled()
+  })
+
+  // Story 110.4-FE: Оценка column + FeedbackButtons stopPropagation
+  it('Story 110.4: renders feedback buttons in each row', () => {
+    renderTable(defaultProps)
+    expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Бесполезный прогноз' })).toBeTruthy()
+  })
+
+  it('Story 110.4: feedback buttons have correct aria-labels (WCAG)', () => {
+    renderTable(defaultProps)
+    expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toHaveAttribute(
+      'aria-label',
+      'Полезный прогноз'
+    )
+    expect(screen.getByRole('button', { name: 'Бесполезный прогноз' })).toHaveAttribute(
+      'aria-label',
+      'Бесполезный прогноз'
+    )
+  })
+
+  it('Story 110.4: click on feedback button does NOT trigger onRowClick (stopPropagation)', () => {
+    const onRowClick = vi.fn()
+    renderTable({ ...defaultProps, onRowClick })
+    const thumbsUp = screen.getByRole('button', { name: 'Полезный прогноз' })
+    fireEvent.click(thumbsUp)
+    // FeedbackButtons.onClick calls e.stopPropagation() first — row navigation must NOT fire
     expect(onRowClick).not.toHaveBeenCalled()
   })
 })

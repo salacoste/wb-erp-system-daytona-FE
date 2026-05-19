@@ -4,6 +4,7 @@
  * EvaluationsTable — sortable 6-column table of evaluation entries.
  * Extracted from EvaluationsList.tsx for file-size discipline (Story 110.2-FE).
  * Story 110.1 jsx-a11y ratchet: all interactive controls have aria-label at write-time.
+ * Story 110.4-FE: added Оценка column with FeedbackButtons per-row.
  *
  * 2nd-pass F-6: aria-sort on <TableHead> per WAI-ARIA; button aria-label simplified to action-only.
  * 2nd-pass F-1: "Дата" cell renders formatDate(evaluationDate) per-row; forecastId in tooltip (full id).
@@ -26,6 +27,7 @@ import { formatNumber } from '@/lib/fbs-analytics-formatters'
 import { sortEvaluationsByMape, formatMapeDisplay } from './evaluations-list-helpers'
 import type { SortColumn, SortDirection } from './evaluations-list-helpers'
 import type { EvaluationEntry } from '@/types/ai/evaluations'
+import { FeedbackButtons } from '@/components/custom/ai/FeedbackButtons'
 
 interface EvaluationsTableProps {
   entries: EvaluationEntry[]
@@ -33,6 +35,8 @@ interface EvaluationsTableProps {
   sortDir: SortDirection
   onSortClick: (col: SortColumn) => void
   onRowClick: (nmId: number | null) => void
+  /** Optional — when provided, feedback submission invalidates model cache (Story 110.4-FE AC 2) */
+  modelId?: string
 }
 
 export function EvaluationsTable({
@@ -41,6 +45,7 @@ export function EvaluationsTable({
   sortDir,
   onSortClick,
   onRowClick,
+  modelId,
 }: EvaluationsTableProps) {
   const sorted = sortEvaluationsByMape(entries, sortCol, sortDir)
 
@@ -88,6 +93,8 @@ export function EvaluationsTable({
                 {sortCol === 'mapeRevenue' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
               </button>
             </TableHead>
+            {/* Story 110.4-FE: Оценка column for thumbs feedback */}
+            <TableHead>Оценка</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -95,6 +102,17 @@ export function EvaluationsTable({
             <TableRow
               key={entry.forecastId}
               onClick={() => onRowClick(entry.nmId)}
+              onKeyDown={
+                entry.nmId !== null
+                  ? e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onRowClick(entry.nmId)
+                      }
+                    }
+                  : undefined
+              }
+              tabIndex={entry.nmId !== null ? 0 : undefined}
               className={entry.nmId !== null ? 'cursor-pointer hover:bg-muted/50' : ''}
               role={entry.nmId !== null ? 'button' : undefined}
               aria-label={
@@ -121,13 +139,16 @@ export function EvaluationsTable({
                   </TooltipContent>
                 </Tooltip>
               </TableCell>
-              <TableCell>
-                {entry.nmId !== null ? formatNumber(entry.nmId) : 'По кабинету'}
-              </TableCell>
+              {/* F-8: nmId is an opaque identifier — String() preserves copy-paste semantics; formatNumber adds non-breaking spaces */}
+              <TableCell>{entry.nmId !== null ? String(entry.nmId) : 'По кабинету'}</TableCell>
               <TableCell>{formatNumber(entry.predictedUnits)}</TableCell>
               <TableCell>{formatNumber(entry.actualUnits)}</TableCell>
               <TableCell>{formatMapeDisplay(entry.mapeUnits)}</TableCell>
               <TableCell>{formatMapeDisplay(entry.mapeRevenue)}</TableCell>
+              {/* Story 110.4-FE: FeedbackButtons — stopPropagation is inside FeedbackButtons onClick (F-3 discipline) */}
+              <TableCell>
+                <FeedbackButtons forecastId={entry.forecastId} modelId={modelId} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
