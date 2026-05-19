@@ -244,3 +244,34 @@ await Promise.all([
 **When `waitForTimeout(N)` IS acceptable** — short (≤300ms) CSS transitions where no DOM event exists. Always annotate: `// intentional animation delay — 300ms CSS transition, no DOM signal`. Never use `waitForTimeout` as a data-wait substitute.
 
 See Story 86.2-FE (`e2e/orders-client-info.spec.ts:441-458`) and Story 88.3-FE for canonical migrations.
+
+### 10. `formatNumber(opaqueId)` mangles search-key copy-paste
+
+Passing an opaque numeric identifier (nmId, productId, forecastId-as-number, modelId-as-number) through `formatNumber()` inserts Russian-locale non-breaking spaces (` `) as digit-group separators. The rendered string `12 345` looks correct but is NOT copy-paste safe — pasting it into a WB search box or filter field returns no results because the field expects the raw digits `12345`.
+
+```tsx
+// ❌ BAD — formatNumber inserts non-breaking spaces; rendered as "12 345"
+<TableCell>{formatNumber(entry.nmId)}</TableCell>
+
+// ❌ BAD — same defect via explicit locale option
+<TableCell>{entry.nmId.toLocaleString('ru-RU')}</TableCell>
+```
+
+```tsx
+// ✅ GOOD — String(id) preserves raw digits; rendered as "12345", safe for search-key copy-paste
+<TableCell>{String(entry.nmId)}</TableCell>
+
+// ✅ GOOD — alternative explicit conversion
+<TableCell>{`${entry.nmId}`}</TableCell>
+```
+
+**Scope rule — opaque IDs vs counts/quantities/money:**
+- ✅ Opaque numeric identifiers (nmId, productId, forecastId-as-number, modelId-as-number) — always use `String(id)`.
+- ✅ Any field described as "article", "WB ID", or "SKU code" in the data model — always `String(id)`.
+- ❌ Quantities and counts (`orderCount`, `salesCount`, `units`) — `formatNumber()` is correct.
+- ❌ Money values (`revenue`, `profit`, `spend`) — `formatCurrency()` is correct.
+- ❌ Percentage / ratio metrics — `formatPercentage()` is correct.
+
+The key diagnostic question: "Would inserting this value into a WB search field (or URL param) be broken by a space character?" If yes → `String(id)`.
+
+See Story 110.3-FE F-8 (canonical finding: nmId column in SearchAnalyticsTable); propagated to Story 110.2-FE EvaluationsTable + Story 110.5-FE CSV export helpers per Story 97.1-FE fix-block propagation discipline.
