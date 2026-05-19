@@ -92,6 +92,8 @@ interface RawSkuAccuracyHistoryEntry {
   evaluationDate?: string | null
   predictedUnits?: number | null
   actualUnits?: number | null
+  /** Naive baseline predicted units — distinct from naiveMape (percentage); AP#8 null preserved (F-1 3rd-pass) */
+  naiveBaseline?: number | null
   mapeUnits?: number | null
   naiveMape?: number | null
 }
@@ -103,6 +105,10 @@ interface RawSkuAccuracyEntry {
   avgAiMape?: number | null
   avgNaiveMape?: number | null
   aiAccuracyPercent?: number | null
+  /** Backend field: naiveAccuracyPercent (test-api/99-ai.http:77, Task 2 Story 110.3-FE) */
+  naiveAccuracyPercent?: number | null
+  /** Backend field: evaluationCount — count, semantic-zero OK (Task 2 Story 110.3-FE) */
+  evaluationCount?: number | null
 }
 
 interface RawSkuAccuracyListResponse {
@@ -116,6 +122,8 @@ function normalizeSkuAccuracyHistoryEntry(
     evaluationDate: raw.evaluationDate ?? '',
     predictedUnits: raw.predictedUnits ?? 0,
     actualUnits: raw.actualUnits ?? 0,
+    // AP#8: naiveBaseline is a units field (not count) — null preserved, not coerced to 0
+    naiveBaseline: raw.naiveBaseline ?? null,
     mapeUnits: raw.mapeUnits ?? null,
     naiveMape: raw.naiveMape ?? null,
   }
@@ -123,27 +131,49 @@ function normalizeSkuAccuracyHistoryEntry(
 
 function normalizeSkuAccuracyEntry(raw: RawSkuAccuracyEntry): SkuAccuracyEntry {
   return {
-    nmId: raw.nmId ?? 0,
+    // F-1: ?? null (not ?? 0) — null nmId is meaningless for the table and gets filtered by caller
+    nmId: raw.nmId ?? null,
     vendorCode: raw.vendorCode ?? null,
     history: (raw.history ?? []).map(normalizeSkuAccuracyHistoryEntry),
     avgAiMape: raw.avgAiMape ?? null,
     avgNaiveMape: raw.avgNaiveMape ?? null,
     aiAccuracyPercent: raw.aiAccuracyPercent ?? null,
+    naiveAccuracyPercent: raw.naiveAccuracyPercent ?? null,
+    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: count field, zero is a valid sentinel
+    evaluationCount: raw.evaluationCount ?? 0,
   }
 }
 
 export function normalizeSkuAccuracyListResponse(
   raw: RawSkuAccuracyListResponse
 ): SkuAccuracyListResponse {
-  return {
-    skuAccuracies: (raw.skuAccuracies ?? []).map(normalizeSkuAccuracyEntry),
-  }
+  // F-1: filter out entries with null nmId — they are malformed backend rows with no identity.
+  // normalizeSkuAccuracyEntry returns nmId: null when raw.nmId is absent; those rows are dropped here.
+  const entries = (raw.skuAccuracies ?? [])
+    .map(normalizeSkuAccuracyEntry)
+    .filter((e): e is SkuAccuracyEntry & { nmId: number } => e.nmId !== null)
+  return { skuAccuracies: entries }
 }
 
-export async function getSkuAccuracy(format?: 'json' | 'csv'): Promise<SkuAccuracyListResponse> {
-  const qs = format ? `?format=${format}` : ''
+export interface SkuAccuracyParams {
+  /** Filter by model UUID — backend filter pending (#166); frontend sends now, backend ignores until shipped */
+  modelId: string
+  /** Filter to a single SKU — backend filter pending (#166); frontend sends now, backend ignores until shipped.
+   *  Accepts number | null | undefined; null and undefined both omit the URL param (F-7). */
+  nmId?: number | null
+  format?: 'json' | 'csv'
+}
+
+// PENDING BACKEND: #166 — backend currently ignores modelId/nmId query params (cabinet-wide response).
+// Once shipped, these filters will scope the response. See docs/request-backend/166-ai-sku-accuracy-modelid-nmid-filter.md
+export async function getSkuAccuracy(params: SkuAccuracyParams): Promise<SkuAccuracyListResponse> {
+  const queryParams = new URLSearchParams()
+  queryParams.set('modelId', params.modelId)
+  // F-7: treat null and undefined identically — both omit the nmId URL param
+  if (params.nmId != null) queryParams.set('nmId', String(params.nmId))
+  if (params.format) queryParams.set('format', params.format)
   const raw = await apiClient.get<RawSkuAccuracyListResponse>(
-    `/v1/ai/evaluations/sku-accuracy${qs}`
+    `/v1/ai/evaluations/sku-accuracy?${queryParams.toString()}`
   )
   return normalizeSkuAccuracyListResponse(raw)
 }

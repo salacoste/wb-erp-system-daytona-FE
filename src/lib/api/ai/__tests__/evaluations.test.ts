@@ -1,11 +1,91 @@
 /**
- * AI Evaluations normalizer tests — Story 108.1-FE
+ * AI Evaluations normalizer tests — Story 108.1-FE, extended Story 110.3-FE (Tasks 1 & 2)
  * Covers null preservation for mape/accuracy ratio fields,
  * count field semantic-zeros, and empty array defaults.
+ * Task 1: getSkuAccuracy URL param tests (modelId, nmId threaded to URL).
+ * Task 2: naiveAccuracyPercent + evaluationCount normalizer tests.
  */
 
-import { describe, it, expect } from 'vitest'
-import { normalizeAiEvaluationListResponse, normalizeSkuAccuracyListResponse } from '../evaluations'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import {
+  normalizeAiEvaluationListResponse,
+  normalizeSkuAccuracyListResponse,
+  getSkuAccuracy,
+} from '../evaluations'
+import * as apiClientModule from '@/lib/api-client'
+
+vi.mock('@/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+  },
+}))
+
+const mockApiClient = vi.mocked(apiClientModule.apiClient)
+
+// ── Task 1: getSkuAccuracy URL params ────────────────────────────────────────
+
+describe('getSkuAccuracy URL params (Task 1 — Story 110.3-FE)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockApiClient.get.mockResolvedValue({ skuAccuracies: [] })
+  })
+
+  it('includes modelId as query param', async () => {
+    await getSkuAccuracy({ modelId: 'model-abc' })
+    expect(mockApiClient.get).toHaveBeenCalledWith(expect.stringContaining('modelId=model-abc'))
+  })
+
+  it('includes nmId as query param when provided', async () => {
+    await getSkuAccuracy({ modelId: 'model-abc', nmId: 12345 })
+    const url: string = mockApiClient.get.mock.calls[0][0]
+    expect(url).toContain('modelId=model-abc')
+    expect(url).toContain('nmId=12345')
+  })
+
+  it('omits nmId from query params when not provided', async () => {
+    await getSkuAccuracy({ modelId: 'model-abc' })
+    const url: string = mockApiClient.get.mock.calls[0][0]
+    expect(url).not.toContain('nmId=')
+  })
+
+  it('includes format param when provided', async () => {
+    await getSkuAccuracy({ modelId: 'model-abc', format: 'csv' })
+    expect(mockApiClient.get).toHaveBeenCalledWith(expect.stringContaining('format=csv'))
+  })
+})
+
+// ── Task 2: naiveAccuracyPercent + evaluationCount normalizer ────────────────
+
+describe('normalizeSkuAccuracyListResponse — Task 2 new fields (Story 110.3-FE)', () => {
+  it('preserves null for naiveAccuracyPercent (ratio field — AP#8)', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [{ nmId: 1, history: [] }],
+    })
+    expect(result.skuAccuracies[0].naiveAccuracyPercent).toBeNull()
+  })
+
+  it('passes through non-null naiveAccuracyPercent', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [{ nmId: 1, history: [], naiveAccuracyPercent: 81.7 }],
+    })
+    expect(result.skuAccuracies[0].naiveAccuracyPercent).toBe(81.7)
+  })
+
+  it('uses semantic-zero for evaluationCount when missing (SEMANTIC-ZERO)', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [{ nmId: 1, history: [] }],
+    })
+    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: count assertion in test
+    expect(result.skuAccuracies[0].evaluationCount).toBe(0)
+  })
+
+  it('passes through non-zero evaluationCount', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [{ nmId: 1, history: [], evaluationCount: 6 }],
+    })
+    expect(result.skuAccuracies[0].evaluationCount).toBe(6)
+  })
+})
 
 describe('normalizeAiEvaluationListResponse', () => {
   it('defaults evaluations to empty array when null', () => {
@@ -92,6 +172,38 @@ describe('normalizeSkuAccuracyListResponse', () => {
     expect(result.skuAccuracies[0].history[0].naiveMape).toBeNull()
   })
 
+  // 3rd-pass F-1: naiveBaseline (units, distinct from naiveMape percentage) — AP#8 null preserved
+  it('preserves null for naiveBaseline when missing (AP#8 units field)', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [
+        {
+          nmId: 1,
+          history: [{ evaluationDate: '2026-05-01', predictedUnits: 10, actualUnits: 9 }],
+        },
+      ],
+    })
+    expect(result.skuAccuracies[0].history[0].naiveBaseline).toBeNull()
+  })
+
+  it('passes through non-null naiveBaseline (round-trip)', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [
+        {
+          nmId: 1,
+          history: [
+            {
+              evaluationDate: '2026-05-01',
+              predictedUnits: 50,
+              actualUnits: 48,
+              naiveBaseline: 38.2,
+            },
+          ],
+        },
+      ],
+    })
+    expect(result.skuAccuracies[0].history[0].naiveBaseline).toBe(38.2)
+  })
+
   it('passes through positive aiAccuracyPercent (AI beats naive)', () => {
     const result = normalizeSkuAccuracyListResponse({
       skuAccuracies: [
@@ -106,5 +218,26 @@ describe('normalizeSkuAccuracyListResponse', () => {
       skuAccuracies: [{ nmId: 1, history: [], aiAccuracyPercent: -12.3 }],
     })
     expect(result.skuAccuracies[0].aiAccuracyPercent).toBe(-12.3)
+  })
+
+  // F-1: null nmId rows must be filtered out of the list response (cache-poisoning guard)
+  it('F-1: filters out entries with null nmId (malformed backend rows)', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [
+        { nmId: null, history: [] },
+        { nmId: 42, history: [] },
+        { history: [] }, // nmId undefined → also null → also filtered
+      ],
+    })
+    expect(result.skuAccuracies).toHaveLength(1)
+    expect(result.skuAccuracies[0].nmId).toBe(42)
+  })
+
+  it('F-1: valid entry with positive nmId passes through filter', () => {
+    const result = normalizeSkuAccuracyListResponse({
+      skuAccuracies: [{ nmId: 12345678, history: [] }],
+    })
+    expect(result.skuAccuracies).toHaveLength(1)
+    expect(result.skuAccuracies[0].nmId).toBe(12345678)
   })
 })

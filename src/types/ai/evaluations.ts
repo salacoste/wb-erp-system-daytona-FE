@@ -46,6 +46,12 @@ export interface SkuAccuracyHistoryEntry {
   predictedUnits: number
   /** Actual units — count, semantic-zero OK */
   actualUnits: number
+  /**
+   * Naive baseline predicted units — AP#8: units field, null preserved when not available.
+   * Distinct from naiveMape (which is a percentage). Backend field: naiveBaseline (test-api/99-ai.http:91).
+   * UI rendering deferred (3rd-pass F-1 post-close fix).
+   */
+  naiveBaseline: number | null
   /** AI MAPE for this period — null when not yet evaluated */
   mapeUnits: number | null
   /** Naive baseline MAPE for comparison — null when not available */
@@ -53,7 +59,8 @@ export interface SkuAccuracyHistoryEntry {
 }
 
 export interface SkuAccuracyEntry {
-  nmId: number
+  /** Null when backend row has no nmId (filtered out of list response; should not reach UI) */
+  nmId: number | null
   vendorCode: string | null
   history: SkuAccuracyHistoryEntry[]
   /** Average AI MAPE across all evaluations — null when no evaluations yet */
@@ -65,6 +72,16 @@ export interface SkuAccuracyEntry {
    * Positive = AI beats naive; negative = AI worse than naive.
    */
   aiAccuracyPercent: number | null
+  /**
+   * Naive baseline accuracy percentage — null when not calculable.
+   * Backend field: naiveAccuracyPercent (test-api/99-ai.http:77, Story 110.3-FE Task 2).
+   */
+  naiveAccuracyPercent: number | null
+  /**
+   * Total evaluation count for this SKU — count field, semantic-zero OK.
+   * Backend field: evaluationCount (test-api/99-ai.http:77, Story 110.3-FE Task 2).
+   */
+  evaluationCount: number
 }
 
 export interface SkuAccuracyListResponse {
