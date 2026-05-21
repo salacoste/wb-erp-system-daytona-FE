@@ -38,7 +38,8 @@ export {
 } from './evaluations'
 export type { EvaluationParams } from './evaluations'
 
-// System (GET /v1/ai/health, GET|PATCH /v1/ai/preferences, POST /v1/ai/feedback, PATCH /v1/ai/anomalies/:id/resolve)
+// System (GET /v1/ai/health, GET|PATCH /v1/ai/preferences, POST /v1/ai/feedback,
+//         PATCH /v1/ai/anomalies/:id/resolve, GET /v1/ai/anomalies [stub #167])
 export {
   normalizeAiHealthResponse,
   getAiHealth,
@@ -47,7 +48,9 @@ export {
   patchAiPreferences,
   postFeedback,
   patchAnomalyResolve,
+  getAnomalies,
 } from './system'
+export type { GetAnomaliesParams } from './system'
 
 // Admin (GET /v1/ai/admin/models, PATCH /v1/ai/admin/models/:id/rollback)
 export { normalizeAdminModelListResponse, getAdminModels, patchModelRollback } from './admin'
