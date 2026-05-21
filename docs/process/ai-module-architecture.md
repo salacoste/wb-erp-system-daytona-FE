@@ -73,6 +73,111 @@ export const aiHealthKeys = {
 
 Failure to scope by `cabinetId` causes stale data when the user switches cabinets — a production defect class with 4 prior instances in Epic 96 [[97.5-FE]].
 
+---
+
+## TanStack Query invalidation scoping decision tree
+
+**Updated**: 2026-05-20 — Story 112.4-FE (Epic 111-FE retro A-4 action item)
+
+When a mutation succeeds, choosing the right `invalidateQueries` scope balances correctness (stale
+data refresh) vs. performance (avoiding unnecessary refetches). This decision tree applies to ALL
+mutations in the AI module. Cabinet-scoping (Story 97.5-FE rule) is orthogonal — it is ALWAYS
+required regardless of which level you choose.
+
+### Decision Tree
+
+```
+Mutation succeeded. What should I invalidate?
+│
+├─ Does this mutation affect ALL AI subdomains simultaneously?
+│  (e.g., a "reset all AI data" admin action that wipes models + evaluations + preferences)
+│  YES → Level 1: ['ai']  ← DEFAULT: AVOID. See anti-pattern below.
+│  NO  ↓
+│
+├─ Does this mutation affect ONE domain (evaluations, models, preferences, etc.)?
+│  YES → Level 2: ['ai', domain, cabinetId]  ← STANDARD choice for domain-local mutations
+│  NO  ↓
+│
+└─ Does this mutation affect a single entity within a domain (specific forecastId, modelId)?
+   YES → Level 3: ['ai', domain, cabinetId, 'detail', entityId]  ← narrow, per-entity cache
+```
+
+### Level 1 — `['ai']` root invalidation
+
+**Use**: Only when a single mutation may affect ALL AI subdomains simultaneously.
+
+**Default: AVOID.** Root invalidation scopes into every AI cache prefix, including hooks that
+have nothing to do with the mutation: `useAiHealth`, `useAiStatus`, `useAiTrends`,
+`useAiSneakPreview`, `useAiPreferences`, `useAiForecast`, `useAiModels`, `useAiEvaluations`,
+`useAiSkuAccuracy` — 9 sibling caches refetch unnecessarily (Story 110.4-FE F-1 lesson on
+prefix scope-creep).
+
+```typescript
+// Level 1 — rarely correct; cite why all 9 sibling caches must refresh
+await queryClient.invalidateQueries({ queryKey: ['ai'] })
+// COMMENT: invalidating root because <explicit reason why all AI subdomains are stale>
+```
+
+### Level 2 — `['ai', domain, cabinetId]` domain-local invalidation
+
+**Use**: Standard choice for mutations that affect one domain only.
+
+Canonical examples from Epic 110–112:
+
+```typescript
+// feedback POST → evaluations cache only (Story 110.4-FE F-1: narrow scoping)
+await queryClient.invalidateQueries({
+  queryKey: ['ai', 'evaluations', cabinetId],
+})
+
+// model rollback → models cache for this cabinet
+// (Story 112.1-FE F-2: intentional over-invalidation acceptable when documented in code)
+await queryClient.invalidateQueries({
+  queryKey: ['ai', 'models', cabinetId],
+  // NOTE: intentionally invalidates the full models list (not just the rolled-back model's
+  // detail) because the list status badge must update immediately after rollback.
+})
+
+// AI preferences toggle → preferences cache only (Story 112.2-FE AC-4: narrow invalidation default per spec)
+await queryClient.invalidateQueries({
+  queryKey: ['ai', 'preferences', cabinetId],
+})
+```
+
+### Level 3 — `['ai', domain, cabinetId, 'detail', entityId]` per-entity invalidation
+
+**Use**: For mutations that affect a single known entity and no other cache entries need refreshing.
+
+```typescript
+// Hypothetical: feedback on a specific forecastId only (if query shape supports it)
+await queryClient.invalidateQueries({
+  queryKey: ['ai', 'evaluations', cabinetId, 'detail', forecastId],
+})
+```
+
+### Cabinet-scoping reminder
+
+All Level 2 and Level 3 invalidations MUST include `cabinetId` (Story 97.5-FE rule). Omitting it
+invalidates the same domain across ALL cabinets the user has visited in this session — a
+cross-cabinet cache pollution defect.
+
+```typescript
+// Wrong — invalidates evaluations for every cabinet in cache
+await queryClient.invalidateQueries({ queryKey: ['ai', 'evaluations'] })
+
+// Correct — scoped to the active cabinet
+await queryClient.invalidateQueries({ queryKey: ['ai', 'evaluations', cabinetId] })
+```
+
+### Closing rule
+
+**When in doubt, scope NARROWLY. Over-invalidation is reversible (causes extra refetches, degrades
+performance); cache-stale-after-mutation bugs are user-visible (shows outdated data, breaks trust).**
+Over-invalidation that is intentional and narrow (e.g., Story 112.1-FE F-2 rollback invalidating
+the full models list) is acceptable when documented with a comment explaining the intent.
+
+---
+
 ### Polling Intervals
 
 | Hook | Interval | Stop condition | Story |

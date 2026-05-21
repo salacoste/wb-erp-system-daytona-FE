@@ -5,25 +5,20 @@
  * Story 110.2-FE: dual-hook (useAiModels + useAiEvaluations), sortable table,
  * state-precedence chain: loading → list-error → model-not-found → evaluations-error → happy.
  * Table extracted to EvaluationsTable.tsx; sort helpers in evaluations-list-helpers.ts.
+ * Header extracted to EvaluationsHeaderCard.tsx (Story 112.4-FE, A-5).
  */
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAiModels } from '@/hooks/useAiModels'
 import { useAiEvaluations } from '@/hooks/useAiEvaluations'
-import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
 import { ROUTES, buildModelSkuAccuracyRoute } from '@/lib/routes'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { STATUS_BADGE_CONFIG } from '../../../components/model-list-helpers'
-import { formatDate, formatPercentage } from '@/lib/utils'
-import { formatNumber } from '@/lib/fbs-analytics-formatters'
+import { Card, CardContent } from '@/components/ui/card'
 import { EvaluationsTable } from './EvaluationsTable'
-import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
-import { exportEvaluationsToCsv } from '@/lib/csv/evaluations-csv-export'
+import { EvaluationsHeaderCard } from './EvaluationsHeaderCard'
 import type { SortColumn, SortDirection } from './evaluations-list-helpers'
 
 interface EvaluationsListProps {
@@ -106,20 +101,7 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
     )
   }
 
-  const statusBadge = STATUS_BADGE_CONFIG[model.status]
   const evaluations = evalData?.evaluations ?? []
-  const cabinetMape = evalData?.cabinetMape ?? null
-  const evaluatedAt = evalData?.evaluatedAt ?? null
-  const skuCount = evalData?.skuCount ?? 0
-
-  const csvFileName = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10)
-    return `evaluations-${modelId}-${evaluatedAt?.slice(0, 10) ?? today}.csv`
-  }, [modelId, evaluatedAt])
-  const csvContent = useMemo(
-    () => exportEvaluationsToCsv(evaluations, { evaluatedAt }),
-    [evaluations, evaluatedAt]
-  )
 
   function handleSortClick(col: SortColumn) {
     if (sortCol === col) {
@@ -137,45 +119,7 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
 
   return (
     <div className="space-y-6 p-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Оценки точности модели</CardTitle>
-            <ExportCsvButton
-              csvContent={csvContent}
-              fileName={csvFileName}
-              disabled={evaluations.length === 0}
-            />
-          </div>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-            <span>{MODEL_TYPE_LABELS[model.modelType]}</span>
-            <span>v{model.version}</span>
-            <Badge variant="outline" className={statusBadge.className}>
-              {statusBadge.label}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-lg border p-4">
-              <p className="text-sm text-muted-foreground">Средняя точность (MAPE)</p>
-              <p className="text-2xl font-semibold mt-1">
-                {cabinetMape !== null ? formatPercentage(cabinetMape) : '—'}
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-sm text-muted-foreground">Последняя оценка</p>
-              <p className="text-2xl font-semibold mt-1">
-                {evaluatedAt !== null ? formatDate(evaluatedAt) : '—'}
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-sm text-muted-foreground">SKU оценено</p>
-              <p className="text-2xl font-semibold mt-1">{formatNumber(skuCount)}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <EvaluationsHeaderCard model={model} data={evalData} modelId={modelId} />
 
       {evaluations.length === 0 ? (
         <Alert>
