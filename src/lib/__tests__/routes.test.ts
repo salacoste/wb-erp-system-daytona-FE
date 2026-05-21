@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { buildModelEvaluationsRoute, buildModelSkuAccuracyRoute } from '../routes'
+import { buildModelEvaluationsRoute, buildModelSkuAccuracyRoute, ROUTES } from '../routes'
 
 describe('buildModelEvaluationsRoute', () => {
   it('returns correct evaluations URL for a given model id', () => {
@@ -41,5 +41,19 @@ describe('buildModelSkuAccuracyRoute', () => {
     expect(buildModelSkuAccuracyRoute('model_v2.0')).toBe(
       '/analytics/models/model_v2.0/evaluations/sku-accuracy'
     )
+  })
+})
+
+describe('ROUTES.ANALYTICS.AI_ADMIN (Story 112.1-FE + 112.2-FE + 112.3-FE)', () => {
+  it('MODELS constant has correct path', () => {
+    expect(ROUTES.ANALYTICS.AI_ADMIN.MODELS).toBe('/analytics/ai-admin/models')
+  })
+
+  it('PREFERENCES constant has correct path (Story 112.2-FE)', () => {
+    expect(ROUTES.ANALYTICS.AI_ADMIN.PREFERENCES).toBe('/analytics/ai-admin/preferences')
+  })
+
+  it('ANOMALIES constant has correct path (Story 112.3-FE)', () => {
+    expect(ROUTES.ANALYTICS.AI_ADMIN.ANOMALIES).toBe('/analytics/ai-admin/anomalies')
   })
 })

@@ -42,6 +42,17 @@ export const STATUS_BADGE_CONFIG: Record<
     label: 'Снята',
     pulse: false,
   },
+  // F-10: statuses added to ModelStatus union — provide badge config for public model list.
+  rolled_back: {
+    className: 'border-transparent bg-gray-100 text-gray-600',
+    label: 'Откачена',
+    pulse: false,
+  },
+  failed: {
+    className: 'border-transparent bg-red-100 text-red-800',
+    label: 'Ошибка',
+    pulse: false,
+  },
 }
 
 /**

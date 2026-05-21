@@ -51,6 +51,12 @@ export const ROUTES = {
     CROSS_REFERENCE: '/analytics/cross-reference', // Story 73.7-FE: Search + Advertising Cross-Reference
     FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
     MODELS: '/analytics/models', // Epic 109-FE: AI Model Management
+    // Epic 112-FE: AI Admin (Owner-only cross-cabinet management)
+    AI_ADMIN: {
+      MODELS: '/analytics/ai-admin/models', // Story 112.1-FE: Model rollback admin UI
+      PREFERENCES: '/analytics/ai-admin/preferences', // Story 112.2-FE: Master aiEnabled toggle
+      ANOMALIES: '/analytics/ai-admin/anomalies', // Story 112.3-FE: Anomaly resolution (Owner/Manager)
+    },
   },
 
   // Epic 40-FE: Orders UI (WB Native Orders History)
@@ -93,6 +99,7 @@ export type RoutePath =
   | (typeof ROUTES.ONBOARDING)[keyof typeof ROUTES.ONBOARDING]
   | (typeof ROUTES.COGS)[keyof typeof ROUTES.COGS]
   | (typeof ROUTES.ANALYTICS)[keyof typeof ROUTES.ANALYTICS]
+  | (typeof ROUTES.ANALYTICS.AI_ADMIN)[keyof typeof ROUTES.ANALYTICS.AI_ADMIN]
   | (typeof ROUTES.ORDERS)[keyof typeof ROUTES.ORDERS]
   | (typeof ROUTES.SHIPMENTS)[keyof typeof ROUTES.SHIPMENTS]
   | (typeof ROUTES.SUPPLIES)[keyof typeof ROUTES.SUPPLIES]
@@ -132,6 +139,9 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.CROSS_REFERENCE, // Story 73.7-FE: Search + Advertising Cross-Reference
     ROUTES.ANALYTICS.FORECAST, // Epic 103-FE: AI Sales Forecast
     ROUTES.ANALYTICS.MODELS, // Epic 109-FE: AI Model Management
+    ROUTES.ANALYTICS.AI_ADMIN.MODELS, // Epic 112-FE: AI Admin Model Rollback (Owner only)
+    ROUTES.ANALYTICS.AI_ADMIN.PREFERENCES, // Story 112.2-FE: AI Preferences toggle (Owner only)
+    ROUTES.ANALYTICS.AI_ADMIN.ANOMALIES, // Story 112.3-FE: Anomaly Resolution (Owner/Manager)
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard

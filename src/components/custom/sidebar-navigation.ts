@@ -37,6 +37,7 @@ import {
   GitCompare,
   Brain,
   Cpu,
+  AlertTriangle,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -101,6 +102,29 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'AI Прогноз', href: ROUTES.ANALYTICS.FORECAST, icon: Brain },
   // Epic 109-FE: AI Model Management
   { label: 'Модели AI', href: ROUTES.ANALYTICS.MODELS, icon: Cpu },
+  // Epic 112-FE: AI Admin — Owner-only model rollback (Story 112.1-FE)
+  {
+    label: 'Управление моделями',
+    href: ROUTES.ANALYTICS.AI_ADMIN.MODELS,
+    icon: Settings2,
+    adminOnly: true,
+  },
+  // Epic 112-FE: AI Admin — Owner-only preferences / master aiEnabled toggle (Story 112.2-FE)
+  {
+    label: 'Настройки AI',
+    href: ROUTES.ANALYTICS.AI_ADMIN.PREFERENCES,
+    icon: Settings2,
+    adminOnly: true,
+  },
+  // Epic 112-FE: AI Admin — anomaly resolution (Story 112.3-FE).
+  // adminOnly hides from non-Owner sidebar; Manager access enforced at hook+component level
+  // (direct-URL access works for Managers — component-level guard passes Owner OR Manager).
+  {
+    label: 'Разрешение аномалий',
+    href: ROUTES.ANALYTICS.AI_ADMIN.ANOMALIES,
+    icon: AlertTriangle,
+    adminOnly: true,
+  },
   // Epic 75-FE: Shipment Cost Allocation
   { label: 'Доставка', href: ROUTES.SHIPMENTS.ROOT, icon: Truck },
   // Epic 68-FE: Monitoring Health Dashboard

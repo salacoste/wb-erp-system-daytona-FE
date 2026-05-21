@@ -9,7 +9,9 @@ import type { ModelType } from './forecast'
 
 export type ModelEngine = 'prophet' | 'mindsdb'
 
-export type ModelStatus = 'active' | 'training' | 'degraded' | 'retired'
+// F-10: 'rolled_back' and 'failed' added — present in admin API responses and
+// required for rollback-blocked-status logic in AdminModelsTable.
+export type ModelStatus = 'active' | 'training' | 'degraded' | 'retired' | 'rolled_back' | 'failed'
 
 /**
  * Drift direction for model performance over time.
