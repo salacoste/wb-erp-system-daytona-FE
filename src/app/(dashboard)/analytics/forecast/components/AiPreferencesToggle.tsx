@@ -12,7 +12,8 @@ import { AlertTriangle } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAiPreferences, useUpdateAiPreferences } from '@/hooks/useAiPreferences'
+import { useAiPreferences } from '@/hooks/useAiPreferences'
+import { useUpdateAiPreferences } from '@/hooks/useUpdateAiPreferences'
 
 // ── View ────────────────────────────────────────────────────────────────────
 

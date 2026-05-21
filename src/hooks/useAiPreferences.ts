@@ -1,52 +1,34 @@
 /**
- * AI Preferences (on/off toggle) — GET and PATCH.
- * Story 108.2-FE.
- * Cabinet-isolation (Story 97.5-FE): preferences are per-cabinet,
- * so queryKey INCLUDES cabinetId.
+ * TanStack Query hook for AI Preferences (master aiEnabled toggle).
+ * GET /v1/ai/preferences — Owner-only (cabinet-scoped per Story 97.5-FE).
+ * Story 112.2-FE Task 1.
+ *
+ * QueryKey: ['ai', 'preferences', cabinetId] — scoped per cabinet-isolation discipline.
+ * enabled: !!cabinetId && user?.role === 'Owner' — dual-gate per Story 112.1 F-3.
  */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAiPreferences, patchAiPreferences } from '@/lib/api/ai/system'
+
+import { useQuery } from '@tanstack/react-query'
+import { getAiPreferences } from '@/lib/api/ai/system'
 import { useAuthStore } from '@/stores/authStore'
 import type { AiPreferences } from '@/types/ai/system'
 
 export const aiPreferencesKeys = {
+  // cabinetId scoping per CLAUDE.md Pattern 4 § Multi-tenant cabinet-isolation discipline (Story 97.5-FE).
+  // Name: byCabinet — factory takes cabinetId input, returns per-cabinet key (not all-cabinets).
   byCabinet: (cabinetId: string | null) => ['ai', 'preferences', cabinetId] as const,
-} as const
+}
 
 export function useAiPreferences() {
   const cabinetId = useAuthStore(s => s.cabinetId)
-  return useQuery<AiPreferences, Error>({
+  const user = useAuthStore(s => s.user)
+
+  return useQuery<AiPreferences>({
     queryKey: aiPreferencesKeys.byCabinet(cabinetId),
-    queryFn: getAiPreferences,
-    staleTime: 5 * 60_000,
-    gcTime: 10 * 60_000,
-    enabled: !!cabinetId,
-  })
-}
-
-interface UpdateAiPreferencesContext {
-  previous: AiPreferences | undefined
-}
-
-export function useUpdateAiPreferences() {
-  const cabinetId = useAuthStore(s => s.cabinetId)
-  const queryClient = useQueryClient()
-  return useMutation<AiPreferences, Error, Partial<AiPreferences>, UpdateAiPreferencesContext>({
-    mutationFn: body => patchAiPreferences(body),
-    onMutate: async newPrefs => {
-      const key = aiPreferencesKeys.byCabinet(cabinetId)
-      await queryClient.cancelQueries({ queryKey: key })
-      const previous = queryClient.getQueryData<AiPreferences>(key)
-      queryClient.setQueryData(key, { ...previous, ...newPrefs })
-      return { previous }
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(aiPreferencesKeys.byCabinet(cabinetId), context.previous)
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: aiPreferencesKeys.byCabinet(cabinetId) })
-    },
+    queryFn: () => getAiPreferences(),
+    // Dual-gate: cabinetId required AND Owner role required (Story 112.1 F-3 precedent).
+    enabled: !!cabinetId && user?.role === 'Owner',
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
   })
 }
