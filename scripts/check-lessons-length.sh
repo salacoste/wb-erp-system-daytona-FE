@@ -11,6 +11,13 @@
 # because it over-counts Cyrillic (2 bytes per char) relative to the ≤120 spec
 # intent. Resolution documented in Story 111.1-FE F-1/F-2 fix batch.
 #
+# Scan-latest semantic (Story 112.5-FE, 2026-05-21): when a story file has multiple
+# `review → done` + `**Lessons:**` rows in its Change Log, ONLY the latest (last in
+# file order — equivalent to chronologically newest per APPEND-ONLY closed-story
+# convention) is validated. This supports the disclosure-row pattern where post-close
+# drift is corrected via NEW rows without violating APPEND-ONLY by editing prior
+# content. Files with exactly ONE close row continue to validate identically.
+#
 # NOTE: This validator scans `_bmad-output/implementation-artifacts/*.md` which is
 # typically gitignored. This makes the validator LOCAL-ONLY DEV TOOLING — not a CI gate.
 # Run `npm run check:lessons` locally before flipping a story to `done`. Do NOT
@@ -61,37 +68,25 @@ LINES_CHECKED=0
 # ------------------------------------------------------------------------------
 # KNOWN_CARRYOVER_ALLOWLIST — stories with Lessons that exceed the 120-char cap
 # but predate the Story 94.4-FE convention (codified 2026-04-25) being enforced
-# by this validator. These stories are tracked as Epic 111-FE follow-up cleanup
-# targets; trimming them retroactively is deferred to avoid attestation churn on
-# closed stories.
+# by this validator.
 #
-# All 16 entries were verified as genuine violations (confirmed by removing the
-# former date-gate and re-scanning the corpus — Story 111.1-FE F-1 fix).
-# Each story closed on or after 2026-04-25, so they post-date the rule's origin
-# but predate this validator's existence.
+# Emptied by Story 112.5-FE on 2026-05-21 — all 16 entries received APPEND-ONLY
+# disclosure rows with new ≤120-char Lessons lines (per APPEND-ONLY closed-story
+# Change Log convention, Story 111.1-FE F-2). The validator's scan-latest semantic
+# (Story 112.5-FE Task 1) now sees only the disclosure row's compliant Lessons.
+# Original over-cap Lessons remain intact in each file's Change Log per APPEND-ONLY.
 # ------------------------------------------------------------------------------
-KNOWN_CARRYOVER_ALLOWLIST=(
-  "96-1-fe-fix-usepreliminarytax-response-shape-enum.md"
-  "96-12-fe-fbs-csv-export-async-polling-flow.md"
-  "96-16-fe-remove-redundant-defensive-markers-backend-closures.md"
-  "96-17-fe-test-only-seed-endpoint-integration-e2e-fixtures.md"
-  "96-2-fe-unit-economics-query-param-view-by.md"
-  "97-1-fe-pattern-4-fix-block-propagation-discipline.md"
-  "97-2-fe-pattern-4-authoritative-source-citation-discipline.md"
-  "97-3-fe-api-client-rate-limit-status-code-coverage.md"
-  "97-4-fe-attestation-drift-chain-claude-md-meta-pattern.md"
-  "97-5-fe-pattern-4-multi-tenant-cabinet-isolation-discipline.md"
-  "98-1-fe-eslint-cap-tightening-400-target.md"
-  "109-1-fe-model-type-selector-enriched-fields.md"
-  "109-2-fe-forecast-chart-confidence-band.md"
-  "109-3-fe-model-list-section.md"
-  "109-4-fe-model-training-trigger-polling.md"
-  "109-5-fe-model-performance-detail-mape-trend.md"
-)
+# Emptied by Story 112.5-FE on 2026-05-21 — all 16 entries received APPEND-ONLY disclosure
+# rows with new ≤120-char Lessons lines + validator scan-latest update (Task 1 of Story 112.5).
+# Original over-cap Lessons remain intact in each file's Change Log per APPEND-ONLY convention;
+# the validator's scan-latest semantic now sees only the disclosure row's compliant Lessons.
+KNOWN_CARRYOVER_ALLOWLIST=()
 
 is_in_allowlist() {
   local basename="$1"
-  for entry in "${KNOWN_CARRYOVER_ALLOWLIST[@]}"; do
+  # Guard against empty-array expansion with set -u (bash nounset).
+  # "${arr[@]+"${arr[@]}"}" is the canonical pattern: expands to nothing when arr is empty.
+  for entry in "${KNOWN_CARRYOVER_ALLOWLIST[@]+"${KNOWN_CARRYOVER_ALLOWLIST[@]}"}"; do
     if [[ "$entry" == "$basename" ]]; then
       return 0
     fi
@@ -151,11 +146,18 @@ if not date_m:
     # No parseable real date (e.g., template placeholder "YYYY-MM-DD") — skip silently.
     sys.exit(0)
 
-m = re.search(r'\*\*Lessons:\*\*\s*(.*)', line)
-if not m:
+# Story 112.5-FE F-1 fix: take content after the LAST **Lessons:** on the line.
+# Some close rows contain narrative quotes of **Lessons:** in the change description body
+# (e.g., 96-14 describes "L2-1 `**Lessons:**` sub-line removed from implementation-complete row").
+# The REAL Lessons content is the TRAILING occurrence. Prior implementation used re.search,
+# which matched the FIRST occurrence and surfaced the narrative quote — triggering
+# "malformed Lessons row" WARN for 96-14. rfind on the literal marker resolves this
+# (Story 112.5-FE 1st-pass F-1, validated by Test 23 in test-check-lessons-length.sh).
+last_marker_pos = line.rfind('**Lessons:**')
+if last_marker_pos < 0:
     sys.exit(0)
 
-raw = m.group(1)
+raw = line[last_marker_pos + len('**Lessons:**'):].strip()
 raw = re.sub(r'\s*\|\s*$', '', raw)          # strip trailing table-cell "|"
 raw = re.sub(r'[. ]*Status:.*$', '', raw)    # strip ". Status: review → done" suffix
 raw = raw.strip()
@@ -219,6 +221,8 @@ ENDPY
 # ------------------------------------------------------------------------------
 # scan_file FILE
 # Scans a single file for Lessons lines on close-rows.
+# Scan-latest semantic (Story 112.5-FE): only the LAST matching close row per
+# file is validated. Earlier rows are skipped (historical context, not gate input).
 
 scan_file() {
   local file="$1"
@@ -248,6 +252,8 @@ scan_file() {
 
   local linenum=0
   local line
+  local last_match_linenum=0
+  local last_match_line=""
 
   while IFS= read -r line || [[ -n "$line" ]]; do
     linenum=$((linenum + 1))
@@ -261,10 +267,17 @@ scan_file() {
     if printf '%s' "$line" | grep -q '^\s*|' && \
        printf '%s' "$line" | grep -qF 'review → done' && \
        printf '%s' "$line" | grep -qF '**Lessons:**'; then
-      extract_lessons_from_line "$file" "$linenum" "$line"
+      last_match_linenum=$linenum
+      last_match_line="$line"
     fi
 
   done < "$file"
+
+  # Only validate the LATEST close row per file (Story 112.5-FE scan-latest semantic).
+  # Files with exactly one close row behave identically to pre-112.5 behavior.
+  if [[ $last_match_linenum -gt 0 ]]; then
+    extract_lessons_from_line "$file" "$last_match_linenum" "$last_match_line"
+  fi
 }
 
 # ------------------------------------------------------------------------------

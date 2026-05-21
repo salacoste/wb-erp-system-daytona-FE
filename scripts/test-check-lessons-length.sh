@@ -343,17 +343,16 @@ FILE17="$(make_story_file_malformed_missing_period "edge_malformed_missing_perio
 assert_exit_with_stderr 0 "Missing period before (2) marker → exit 0 + stderr WARN (markers > parts)" "$FILE17" "malformed"
 
 echo ""
-echo "--- F-1: allowlist self-test — story in allowlist → exit 0 + stderr WARN ---"
+echo "--- Test 18 (Story 112.5-FE updated): empty allowlist — formerly-allowlisted story validates normally ---"
 
-# Test 18: A story file whose basename is in KNOWN_CARRYOVER_ALLOWLIST should exit 0
-# with a stderr WARN (not exit 1), even if its lessons exceed the cap.
-# This test places a violating lesson content in a file named after one of the
-# allowlisted basenames to confirm the allowlist gate fires before the validator.
-LESSON_OVER="$(printf '%.0sa' {1..130})"  # 130 chars — would normally trigger exit 1
+# Test 18: A story file whose basename was formerly in KNOWN_CARRYOVER_ALLOWLIST.
+# As of Story 112.5-FE, the allowlist is empty — the file is scanned normally.
+# Its lesson is 130 chars → exit 1 (validator enforces cap normally, no allowlist bypass).
+LESSON_OVER="$(printf '%.0sa' {1..130})"  # 130 chars — over cap
 ALLOWLISTED_BASENAME="96-1-fe-fix-usepreliminarytax-response-shape-enum.md"
 ALLOWLISTED_FILE="$TMPDIR_LESSONS/$ALLOWLISTED_BASENAME"
 cat > "$ALLOWLISTED_FILE" <<EOF
-# Story test fixture — allowlisted story with over-cap lesson
+# Story test fixture — formerly-allowlisted story with over-cap lesson (allowlist now empty)
 Status: done
 
 ## Change Log
@@ -362,7 +361,85 @@ Status: done
 |---|---|
 | 2026-05-08 | Implementation complete. Status: review → done. **Lessons:** (1) ${LESSON_OVER}. |
 EOF
-assert_exit_with_stderr 0 "Allowlisted story with 130-char lesson → exit 0 + stderr WARN (allowlist)" "$ALLOWLISTED_FILE" "KNOWN_CARRYOVER_ALLOWLIST"
+assert_exit 1 "Formerly-allowlisted story with 130-char lesson → exit 1 (allowlist now empty, Story 112.5-FE)" "$ALLOWLISTED_FILE"
+
+# ------------------------------------------------------------------------------
+echo ""
+echo "--- Scan-latest semantic (Story 112.5-FE): multi-close-row files ---"
+
+# Helper: make_story_file_multi_close FILENAME LESSON1 LESSON2
+# Creates a temp file with TWO close rows: first row uses LESSON1, second uses LESSON2.
+# The scan-latest validator should ONLY check the SECOND (latest) row.
+make_story_file_multi_close() {
+  local filename="$1"
+  local lesson1="$2"
+  local lesson2="$3"
+  local filepath="$TMPDIR_LESSONS/$filename"
+
+  cat > "$filepath" <<EOF
+# Story test fixture — multi-close-row (disclosure-row pattern)
+Status: done
+
+## Change Log
+
+| Date | Change |
+|---|---|
+| 2026-05-01 | Story created. |
+| 2026-05-08 | Implementation complete. Status: review → done. **Lessons:** $lesson1 |
+| 2026-05-21 | Disclosure row (Story 112.5-FE). Status: review → done. **Lessons:** $lesson2 |
+EOF
+
+  printf '%s' "$filepath"
+}
+
+# Test 19: Multi-close-row file: latest row in-cap, prior row over-cap → exit 0.
+# Scan-latest should see only the SECOND row's (in-cap) lesson and pass.
+LESSON_OVER_130="$(printf '%.0sa' {1..130})"   # 130 chars — over cap
+LESSON_OK_80="$(printf '%.0sa' {1..80})"        # 80 chars — in cap
+FILE19="$(make_story_file_multi_close "multi_latest_ok_prior_over.md" \
+  "(1) ${LESSON_OVER_130}." \
+  "(1) ${LESSON_OK_80}.")"
+assert_exit 0 "Multi-row: latest in-cap (80c), prior over-cap (130c) → exit 0 (scan-latest)" "$FILE19"
+
+# Test 20: Multi-close-row file: latest row over-cap, prior row in-cap → exit 1.
+# Scan-latest should see the SECOND row's (over-cap) lesson and fail.
+# Violation should be reported on the LATEST row's line number only.
+FILE20="$(make_story_file_multi_close "multi_latest_over_prior_ok.md" \
+  "(1) ${LESSON_OK_80}." \
+  "(1) ${LESSON_OVER_130}.")"
+assert_exit 1 "Multi-row: latest over-cap (130c), prior in-cap (80c) → exit 1 (scan-latest, violation on latest)" "$FILE20"
+
+# Test 21: Single-close-row file (legacy): in-cap → exit 0 (regression guard).
+# Files with exactly one close row must behave identically to pre-112.5 behavior.
+FILE21="$(make_story_file "single_legacy_ok.md" "(1) ${LESSON_OK_80}.")"
+assert_exit 0 "Single-row legacy: in-cap (80c) → exit 0 (regression guard)" "$FILE21"
+
+# Test 22: Single-close-row file (legacy): over-cap → exit 1 (regression guard).
+# Files with exactly one close row must behave identically to pre-112.5 behavior.
+FILE22="$(make_story_file "single_legacy_over.md" "(1) ${LESSON_OVER_130}.")"
+assert_exit 1 "Single-row legacy: over-cap (130c) → exit 1 (regression guard)" "$FILE22"
+
+echo ""
+echo "--- F-1 fix (Story 112.5-FE): narrative-quoted **Lessons:** in close-row body ---"
+
+# Test 23: Close-row where the change description body contains a narrative reference to
+# **Lessons:** BEFORE the real Lessons content. This is the 96-14 pattern:
+#   "... L2-1 `**Lessons:**` sub-line removed ... Status: review → done. **Lessons:** (1) Real. (2) Also real."
+# Before F-1 fix: re.search matched the FIRST **Lessons:** (narrative, no (N) markers) → WARN.
+# After F-1 fix: rfind picks the LAST **Lessons:** (real content) → validates correctly → exit 0.
+FILE23="$TMPDIR_LESSONS/narrative_quoted_lessons.md"
+cat > "$FILE23" <<'EOF'
+# Story test fixture — narrative-quoted **Lessons:** in close-row body (96-14 pattern)
+Status: done
+
+## Change Log
+
+| Date | Change |
+|---|---|
+| 2026-05-08 | Story created. |
+| 2026-05-08 | Fix applied: L2-1 `**Lessons:**` sub-line removed from implementation row per convention. Status: review → done. **Lessons:** (1) Real lesson one, under cap. (2) Real lesson two, also under cap. |
+EOF
+assert_exit 0 "Narrative-quoted **Lessons:** in body → rfind extracts trailing real Lessons, exit 0 (F-1 fix)" "$FILE23"
 
 # ------------------------------------------------------------------------------
 echo ""
