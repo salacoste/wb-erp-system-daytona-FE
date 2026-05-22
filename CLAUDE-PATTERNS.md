@@ -185,6 +185,58 @@ export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
 
 **Related.** This discipline is sibling to the Boundary Normalizer Pattern's main rule ("transform raw backend shapes at the API client layer"): both target API-LAYER coverage at the boundary, but the main pattern handles SHAPE coverage (field-name casing, nullability) while this discipline handles ERROR-PATH coverage (rate-limit retryAfter handling). Together they specify the full Boundary Normalizer contract.
 
+### Anti-pattern: UI sentinels in backend response types (Story 113.1-FE, Epic 112-FE retro § A-5)
+
+**Rule**: backend response types — any type representing an API response over the wire — MUST NEVER include UI-only sentinel values. UI sentinels like `'all'` (filter no-op), `'__loading__'`, `'__error__'`, `'__empty__'` belong in frontend-only filter/state types, kept separate from boundary-crossing response types.
+
+**Why**: the backend doesn't know about the frontend's filter UI. Including `'all'` in a backend response type couples the wire contract to a UI implementation detail. At boundary-normalizer time, this forces one of two equally-broken outcomes:
+- **(a) Invent the value** to satisfy the type, even though no real backend response will ever contain it
+- **(b) Acknowledge the type is over-wide**, which means it's lying about what the wire format can contain
+
+Both outcomes degrade the boundary normalizer's value as a contract-enforcement point.
+
+**Canonical example (Story 112.3-FE 4th-pass F-3)**:
+
+❌ BAD (over-wide response type couples backend contract to UI sentinel):
+```ts
+// src/types/ai/system.ts
+export type AnomalyStatus = 'pending' | 'resolved';
+export interface AnomalyListResponse {
+  anomalies: AnomalyEntry[];
+  total: number;
+  status?: AnomalyStatus | 'all';  // 'all' is a UI filter sentinel — backend will never echo this
+}
+```
+
+✅ GOOD (UI sentinel lives in frontend-only filter type):
+```ts
+// src/types/ai/system.ts (boundary types — backend wire shape only)
+export type AnomalyStatus = 'pending' | 'resolved';
+export interface AnomalyListResponse {
+  anomalies: AnomalyEntry[];
+  total: number;
+  status?: AnomalyStatus;  // narrow — only what backend actually echoes
+}
+
+// src/app/(dashboard)/.../anomalies/components/anomalies-helpers.ts (UI-only types)
+import type { AnomalyStatus } from '@/types/ai/system';
+export type AnomalyFilter = AnomalyStatus | 'all';  // UI filter sentinel; never crosses the boundary
+```
+
+The UI's filter dropdown uses `AnomalyFilter`. When constructing the query params, translate `'all'` → omit `status` query param entirely:
+
+```ts
+const queryParams = useMemo(() => ({
+  status: statusFilter === 'all' ? undefined : statusFilter,
+  page: currentPage,
+  limit: PAGE_SIZE,
+}), [statusFilter, currentPage]);
+```
+
+**Detection rule**: when a frontend filter type's union includes a non-backend-enum sentinel (the "no filter applied" or "loading" case), grep for that sentinel in the boundary response type — if it appears, refactor by extracting a separate UI-only type. Anti-pattern frequency: caught in Story 112.3-FE 4th-pass after 3 prior reviewers accepted the over-wide type; cross-cutting type-relationship defects evade single-file review.
+
+**Related**: § Boundary Normalizer Pattern (parent section, this entire section); Anti-Pattern #8 (null-vs-zero — similar class of "boundary contract lying about wire format"); Story 110.4-FE F-1 narrow invalidation (analogous "scope-creep at the boundary" pattern for TanStack Query queryKeys).
+
 ---
 
 ## Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)
