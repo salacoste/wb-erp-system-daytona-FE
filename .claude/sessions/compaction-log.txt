@@ -225,3 +225,10 @@
 [2026-05-15 00:49:11] Context compaction triggered
 [2026-05-15 01:46:56] Context compaction triggered
 [2026-05-15 02:11:04] Context compaction triggered
+[2026-05-18 00:43:53] Context compaction triggered
+[2026-05-18 00:44:52] Context compaction triggered
+[2026-05-18 00:45:21] Context compaction triggered
+[2026-05-18 00:46:37] Context compaction triggered
+[2026-05-18 01:45:11] Context compaction triggered
+[2026-05-20 21:18:36] Context compaction triggered
+[2026-05-24 13:32:53] Context compaction triggered
