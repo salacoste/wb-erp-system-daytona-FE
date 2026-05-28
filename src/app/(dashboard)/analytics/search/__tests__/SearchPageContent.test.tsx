@@ -16,7 +16,18 @@ vi.mock('@/hooks/useJamStatus', () => ({
 }))
 
 vi.mock('@/stores/authStore', () => ({
-  useAuthStore: () => ({ cabinetId: 'cab-1' }),
+  // Dual-form: RequireJam destructures `useAuthStore()` (object) while SearchSellerBadge
+  // calls `useAuthStore(auth => auth.cabinetId)` (selected value). Honour both.
+  useAuthStore: vi.fn((selector?: (s: { cabinetId: string }) => unknown) => {
+    const state = { cabinetId: 'cab-1' }
+    return selector ? selector(state) : state
+  }),
+}))
+
+// Story 117.3-FE: header now renders SearchSellerBadge → stub the hook so the page
+// tests stay deterministic and don't fire a real seller-info fetch.
+vi.mock('@/hooks/useSellerInfo', () => ({
+  useSellerInfo: () => ({ data: undefined }),
 }))
 
 vi.mock('@/hooks/use-search-analytics', () => ({

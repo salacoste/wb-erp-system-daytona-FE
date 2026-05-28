@@ -6,6 +6,7 @@
  * Story 71.5-FE: Date range + SearchOrdersTab
  * Story 71.6-FE: By-Product Keyword Explorer Tab
  * Story 71.7-FE: By-Query Product Ranking Tab
+ * Story 117.3-FE: Seller profile badge in page header
  */
 
 import { useState } from 'react'
@@ -17,6 +18,7 @@ import type { DateRange } from '@/types/date-range'
 import { SearchOrdersTab } from './SearchOrdersTab'
 import { SearchByProductTab } from './SearchByProductTab'
 import { SearchByQueryTab } from './SearchByQueryTab'
+import { SearchSellerBadge } from './SearchSellerBadge'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -41,6 +43,9 @@ export function SearchPageContent() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Поисковая аналитика</h1>
         <p className="text-muted-foreground mt-1">Анализ поисковых запросов, позиций и заказов</p>
+        <div className="mt-2">
+          <SearchSellerBadge />
+        </div>
       </div>
 
       <DateRangePickerExtended
