@@ -354,6 +354,8 @@ useJamStatus() → gate check → useSearchByProduct() / useSearchByQuery() / us
 
 ## Appendix A: Backend API Response Shapes
 
+> **⚠️ Revenue fields are NOT returned by the live backend (verified Story 117.2-FE, 2026-05-28).** The `totalRevenue` (per-row) and `totalSearchRevenue` (summary) fields shown in the example JSON below are **aspirational/illustrative — the live `/v1/analytics/search/*` endpoints do NOT return them.** Live verification against a real cabinet (Test Cabinet, 60-day range) confirmed `GET /v1/analytics/search/orders` returns a summary of only `{ totalSearchOrders, searchOrderShare }` and items of only `{ key, totalOrders, uniqueProducts }` — no revenue. This matches Story 91.1-FE's removal of revenue from the frontend types ("WB never returned real data; backend dropped the field"). **Do not build revenue columns/cards against these endpoints** — the Wildberries organic-search API does not provide per-query revenue. (Separately, `by-product` + `by-query` currently return `INTERNAL_SERVER_ERROR` for this cabinet — a distinct backend defect, NOT a revenue signal; flag via a `docs/request-backend/*.md` ticket.) The example shapes below are retained for historical reference only; treat the revenue lines as stale.
+
 ### Search By Product Response
 ```json
 {

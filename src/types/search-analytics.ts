@@ -11,7 +11,7 @@
 
 // --- Enum / Union Types ---
 
-// Story 91.1-FE: 'totalRevenue' removed — backend no longer supports it (WB never returned real data)
+// Story 91.1-FE removed 'totalRevenue' (WB never returned real data); Story 117.2-FE (2026-05-28) live-verified the backend still returns none (Branch A) — keep removed; don't re-add without fresh backend evidence.
 export type SearchOrderBy =
   | 'totalImpressions'
   | 'totalClicks'
