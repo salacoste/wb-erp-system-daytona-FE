@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"git add CLAUDE.md _bmad-output/implementation-artifacts/sprint-status.yaml && git commit -m \\\"$(cat <<'EOF'\\ndocs(claude): Epic 116-FE close — A-2/A-3/A-5 codifications + dual-mechanism ca...",
-  "error": "Exit code 1\nThe following paths are ignored by one of your .gitignore files:\n_bmad-output\nhint: Use -f if you really want to add them.\nhint: Turn this message off by running\nhint: \"git config advice.addIgnoredFile false\"",
-  "timestamp": "2026-05-24T14:25:26.976Z",
+  "tool_input_preview": "{\"command\":\"grep -rn \\\"TooltipProvider\\\" --include=\\\"*.tsx\\\" /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/components/custom/Sidebar.tsx /Users/r2d2/Documents/Code_Projects/w...",
+  "error": "Exit code 2",
+  "timestamp": "2026-05-28T01:47:12.942Z",
   "retry_count": 1
 }
