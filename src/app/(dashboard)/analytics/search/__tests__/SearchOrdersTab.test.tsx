@@ -72,7 +72,14 @@ describe('SearchOrdersTab (orchestrator)', () => {
     expect(container.querySelector('.recharts-responsive-container')).toBeTruthy()
     // Overview present
     expect(screen.getByText('Поисковые заказы')).toBeInTheDocument()
-    expect(screen.getByText('платье')).toBeInTheDocument()
+    // Story 117.4-FE: 'платье' now appears in BOTH the overview table AND the
+    // TopKeywordsByOrdersCard top-N list (3rd sibling, TanStack dedupes the
+    // shared query-cache key). toHaveLength(2) makes the colocation explicit
+    // (Pass-1 L-2 cleanup: getAllByText already throws on 0; .length>0 was
+    // tautological — exact count documents intent).
+    expect(screen.getAllByText('платье')).toHaveLength(2)
+    // Story 117.4-FE: top-keywords widget mounted as a 3rd sibling
+    expect(screen.getByText('Топ-запросы по заказам')).toBeInTheDocument()
   })
 
   it('keeps the overview table when the CHART fetch fails (Pattern 1 graceful degradation)', () => {
@@ -83,12 +90,14 @@ describe('SearchOrdersTab (orchestrator)', () => {
     renderTab()
     // Chart shows its contained error...
     expect(screen.getByText('Не удалось загрузить динамику поисковых заказов')).toBeInTheDocument()
-    // ...but the table is NOT blanked
-    expect(screen.getByText('платье')).toBeInTheDocument()
+    // ...but the table is NOT blanked. Story 117.4-FE: top-keywords widget
+    // also renders here since it shares the same successful query cache,
+    // hence 'платье' appears twice (overview + widget).
+    expect(screen.getAllByText('платье')).toHaveLength(2)
     expect(screen.getByText('Поисковые заказы')).toBeInTheDocument()
   })
 
-  it('keeps the chart when the OVERVIEW fetch fails (reverse direction)', () => {
+  it('keeps the chart + shows widget error chrome when the OVERVIEW fetch fails (reverse direction)', () => {
     mockByGroupBy(
       { data: dayData, isLoading: false, isError: false }, // chart day-fetch ok
       { data: undefined, isLoading: false, isError: true } // overview query-fetch fails
@@ -99,5 +108,11 @@ describe('SearchOrdersTab (orchestrator)', () => {
     // ...but the chart is NOT blanked
     expect(container.querySelector('.recharts-responsive-container')).toBeTruthy()
     expect(screen.getByText('Динамика поисковых заказов по дням')).toBeInTheDocument()
+    // Story 117.4-FE Pass-1 M-2 + L-3: widget shares the same failing query
+    // cache → renders its OWN error chrome (CardShell + ERROR message) rather
+    // than vanishing. Verifies the Pass-1 H-1 fix and prevents a future
+    // regression that re-introduces the silent-null behavior.
+    expect(screen.getByText('Топ-запросы по заказам')).toBeInTheDocument()
+    expect(screen.getByText('Не удалось загрузить топ-запросы')).toBeInTheDocument()
   })
 })

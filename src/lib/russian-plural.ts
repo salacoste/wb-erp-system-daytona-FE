@@ -44,3 +44,6 @@ export const DAY_FORMS = ['день', 'дня', 'дней'] as const
 
 /** Plural forms for "неделя" (week). */
 export const WEEK_FORMS = ['неделя', 'недели', 'недель'] as const
+
+/** Plural forms for "товар" (product). Story 117.4-FE. */
+export const PRODUCT_FORMS = ['товар', 'товара', 'товаров'] as const
