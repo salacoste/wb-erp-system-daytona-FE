@@ -1,6 +1,11 @@
 /**
- * Tests for SearchOrdersTab
- * Story 71.5-FE: Search Orders Tab
+ * Tests for SearchOrdersTab (orchestrator)
+ * Story 117.1-FE: tab now orchestrates two INDEPENDENT state machines (Pattern 1):
+ *   - SearchOrdersChart (groupBy='day')
+ *   - SearchOrdersOverview (groupBy='query')
+ * These tests assert both mount together AND that one source failing does NOT
+ * blank the other (graceful degradation). Component-level behavior is covered by
+ * SearchOrdersChart.test.tsx + SearchOrdersOverview.test.tsx.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -18,17 +23,30 @@ import { SearchOrdersTab } from '../components/SearchOrdersTab'
 
 let queryClient: QueryClient
 
-const mockData: SearchOrdersResponse = {
-  period: { from: '2026-03-01', to: '2026-03-06' },
+const queryData: SearchOrdersResponse = {
+  period: { from: '2026-03-01', to: '2026-03-03' },
   groupBy: 'query',
+  items: [{ key: 'платье', totalOrders: 50, uniqueProducts: 10 }],
+  summary: { totalSearchOrders: 150, searchOrderShare: 42.5 },
+}
+
+const dayData: SearchOrdersResponse = {
+  period: { from: '2026-03-01', to: '2026-03-03' },
+  groupBy: 'day',
   items: [
-    { key: 'платье', totalOrders: 50, uniqueProducts: 10 },
-    { key: 'куртка', totalOrders: 30, uniqueProducts: 5 },
+    { key: '2026-03-01', totalOrders: 50, uniqueQueries: 20 },
+    { key: '2026-03-02', totalOrders: 65, uniqueQueries: 24 },
   ],
-  summary: {
-    totalSearchOrders: 150,
-    searchOrderShare: 42.5,
-  },
+  summary: { totalSearchOrders: 115, searchOrderShare: 38.0 },
+}
+
+type HookResult = { data: SearchOrdersResponse | undefined; isLoading: boolean; isError: boolean }
+
+/** groupBy-aware mock: chart (day) vs overview (query) resolve independently. */
+function mockByGroupBy(day: HookResult, query: HookResult) {
+  mockUseSearchOrders.mockImplementation((_from, _to, params?: { groupBy?: string }) =>
+    params?.groupBy === 'day' ? day : query
+  )
 }
 
 beforeEach(() => {
@@ -37,104 +55,49 @@ beforeEach(() => {
 })
 
 function renderTab() {
-  return render(<SearchOrdersTab from="2026-03-01" to="2026-03-06" />, {
+  return render(<SearchOrdersTab from="2026-03-01" to="2026-03-03" />, {
     wrapper: createQueryWrapper(queryClient),
   })
 }
 
-describe('SearchOrdersTab', () => {
-  describe('summary cards', () => {
-    beforeEach(() => {
-      mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })
-    })
-
-    // Story 91.1-FE: revenue card removed (was 3 cards, now 2)
-    it('renders 2 summary cards with correct labels', () => {
-      renderTab()
-      expect(screen.getByText('Поисковые заказы')).toBeInTheDocument()
-      expect(screen.getByText('Доля поисковых заказов')).toBeInTheDocument()
-    })
-
-    it('renders summary values formatted correctly', () => {
-      renderTab()
-      expect(screen.getByText(/150/)).toBeInTheDocument()
-      expect(screen.getByText(/42[.,]5/)).toBeInTheDocument()
-    })
+describe('SearchOrdersTab (orchestrator)', () => {
+  it('mounts both the chart and the overview when both sources succeed', () => {
+    mockByGroupBy(
+      { data: dayData, isLoading: false, isError: false },
+      { data: queryData, isLoading: false, isError: false }
+    )
+    const { container } = renderTab()
+    // Chart present
+    expect(screen.getByText('Динамика поисковых заказов по дням')).toBeInTheDocument()
+    expect(container.querySelector('.recharts-responsive-container')).toBeTruthy()
+    // Overview present
+    expect(screen.getByText('Поисковые заказы')).toBeInTheDocument()
+    expect(screen.getByText('платье')).toBeInTheDocument()
   })
 
-  describe('table rendering', () => {
-    beforeEach(() => {
-      mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })
-    })
-
-    // Story 91.1-FE: revenue column removed (was 4 headers, now 3)
-    it('renders table with 3 column headers', () => {
-      renderTab()
-      expect(screen.getByText('Запрос')).toBeInTheDocument()
-      expect(screen.getByText('Заказы')).toBeInTheDocument()
-      expect(screen.getByText('Товаров')).toBeInTheDocument()
-    })
-
-    it('renders items in table rows', () => {
-      renderTab()
-      expect(screen.getByText('платье')).toBeInTheDocument()
-      expect(screen.getByText('куртка')).toBeInTheDocument()
-    })
+  it('keeps the overview table when the CHART fetch fails (Pattern 1 graceful degradation)', () => {
+    mockByGroupBy(
+      { data: undefined, isLoading: false, isError: true }, // chart day-fetch fails
+      { data: queryData, isLoading: false, isError: false } // overview query-fetch ok
+    )
+    renderTab()
+    // Chart shows its contained error...
+    expect(screen.getByText('Не удалось загрузить динамику поисковых заказов')).toBeInTheDocument()
+    // ...but the table is NOT blanked
+    expect(screen.getByText('платье')).toBeInTheDocument()
+    expect(screen.getByText('Поисковые заказы')).toBeInTheDocument()
   })
 
-  describe('loading state', () => {
-    it('shows skeletons when loading', () => {
-      mockUseSearchOrders.mockReturnValue({ data: undefined, isLoading: true, isError: false })
-      const { container } = renderTab()
-      const skeletons = container.querySelectorAll(
-        '[class*="animate-pulse"], [data-slot="skeleton"]'
-      )
-      expect(skeletons.length).toBeGreaterThan(0)
-    })
-  })
-
-  describe('empty state', () => {
-    it('shows empty message when no items', () => {
-      mockUseSearchOrders.mockReturnValue({
-        data: { ...mockData, items: [] },
-        isLoading: false,
-        isError: false,
-      })
-      renderTab()
-      expect(screen.getByText('Нет данных за выбранный период')).toBeInTheDocument()
-    })
-  })
-
-  describe('error state', () => {
-    it('shows destructive alert on error', () => {
-      mockUseSearchOrders.mockReturnValue({ data: undefined, isLoading: false, isError: true })
-      renderTab()
-      expect(screen.getByText(/Не удалось загрузить данные поисковых заказов/)).toBeInTheDocument()
-    })
-  })
-
-  describe('missing summary', () => {
-    it('renders table without summary cards when summary is undefined', () => {
-      mockUseSearchOrders.mockReturnValue({
-        data: { ...mockData, summary: undefined },
-        isLoading: false,
-        isError: false,
-      })
-      renderTab()
-      // Table items still render
-      expect(screen.getByText('платье')).toBeInTheDocument()
-      // Summary card labels should NOT be present
-      expect(screen.queryByText('Поисковые заказы')).not.toBeInTheDocument()
-    })
-  })
-
-  describe('hook params', () => {
-    it('calls useSearchOrders with correct params', () => {
-      mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })
-      renderTab()
-      expect(mockUseSearchOrders).toHaveBeenCalledWith('2026-03-01', '2026-03-06', {
-        groupBy: 'query',
-      })
-    })
+  it('keeps the chart when the OVERVIEW fetch fails (reverse direction)', () => {
+    mockByGroupBy(
+      { data: dayData, isLoading: false, isError: false }, // chart day-fetch ok
+      { data: undefined, isLoading: false, isError: true } // overview query-fetch fails
+    )
+    const { container } = renderTab()
+    // Overview shows its contained error...
+    expect(screen.getByText(/Не удалось загрузить данные поисковых заказов/)).toBeInTheDocument()
+    // ...but the chart is NOT blanked
+    expect(container.querySelector('.recharts-responsive-container')).toBeTruthy()
+    expect(screen.getByText('Динамика поисковых заказов по дням')).toBeInTheDocument()
   })
 })
