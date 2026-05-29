@@ -39,6 +39,10 @@ const ERROR = 'Не удалось загрузить топ-запросы'
  * unlike Story 117.1-FE's `toChartRows` which COERCES via `String(...)` because
  * the chart X-axis is purely visual. Both stances are correct in their context.
  *
+ * Defense-in-depth — Story 119.1-FE normalizer at API layer
+ * (src/lib/api/search-analytics-normalizer.ts) now absorbs the same case; this
+ * filter is redundant-but-harmless post-119.1, kept for component-level resilience.
+ *
  * Sort is stable per the ECMAScript 2019 spec (V8, SpiderMonkey, JSC all comply);
  * we rely on engine-level stability rather than decorate-sort-undecorate ceremony
  * (Story 117.4-FE Pass-1 M-3 simplification).

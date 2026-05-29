@@ -40,6 +40,11 @@ export function mergeSearchAndAdData(
 ): CrossReferenceItem[] {
   const searchMap = new Map<number, SearchOrderItem>()
   for (const item of searchItems) {
+    // Defense-in-depth: post-Story-119.1-FE the search-analytics normalizer
+    // coerces numeric keys to strings before they reach here. This typeof
+    // branch is now dead in production but retained as a safety net for any
+    // boundary-bypass path (consistent with Story 119.1-FE defense-in-depth
+    // convention).
     const nmId = typeof item.key === 'number' ? item.key : parseInt(String(item.key), 10)
     if (!isNaN(nmId)) searchMap.set(nmId, item)
   }

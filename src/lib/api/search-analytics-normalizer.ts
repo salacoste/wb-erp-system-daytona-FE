@@ -1,0 +1,209 @@
+/**
+ * Search Analytics Boundary Normalizers — Story 119.1-FE
+ * Closes Epic 117-FE retro § A-3 + Story 117.1-FE F-1 follow-up.
+ * Absorbs backend shape drift for search-by-product, search-by-query, search-orders.
+ *
+ * Key-drift absorption (central reason this exists): SearchOrderItem.key may be
+ * string | number | null | undefined at runtime. normalizeSearchOrderItem DROPS
+ * items with key == null and COERCES numeric keys to string — unifying both
+ * Story 117.1-FE `toChartRows` (coerce) and Story 117.4-FE `pickTopByOrders`
+ * (filter) stances at the boundary. Boolean/object/array keys → drop.
+ *
+ * Type-narrowing decision (do NOT narrow SearchOrderItem.key string|number → string):
+ * normalizer guarantees the runtime invariant; type stays declarative of source-of-
+ * truth shape. Preserves consumer optionality + avoids breaking 117.1/117.4
+ * signatures. Component-level defense-in-depth guards STAY in place — redundant
+ * post-119.1 but survive if the boundary guard is ever bypassed.
+ *
+ * Defensive Frontend (CLAUDE-PATTERNS.md): searchOrderShare > 100 (observed
+ * 394.23 per Story 117.2-FE) is PRESERVED, not clamped. PENDING BACKEND:
+ * Request #176 (filed via Story 119.1-FE 1st-pass F-9 — covers both the
+ * `key` shape contract and the >100% share anomaly; cross-links Request #175
+ * which explicitly disclaims this scope per its line 40).
+ *
+ * AP#8 split (active rule, not forward-looking): Ratio/money fields preserve
+ * null via `toNullableNumber`; counts use `?? 0` via `toCount` per the AP#8
+ * counts exception. `searchOrderShare` is the first ratio field (widened to
+ * `number | null` in Story 119.1-FE 1st-pass F-2); future schema additions
+ * follow this split.
+ *
+ * Canonical structural twin: src/lib/api/cabinet-normalizer.ts (Story 89.1-FE).
+ */
+
+import type {
+  SearchByProductResponse,
+  SearchByQueryResponse,
+  SearchOrderItem,
+  SearchOrdersGroupBy,
+  SearchOrdersResponse,
+  SearchProductItem,
+  SearchQueryItem,
+} from '@/types/search-analytics'
+
+const VALID_GROUP_BY = new Set<SearchOrdersGroupBy>(['query', 'product', 'day'])
+
+// FUTURE: Epic 120-FE Story 1 (or Epic 119-FE Story 5) — extract toCount /
+// toNullableNumber / toStringOrNull / asRecord to a shared
+// src/lib/api/normalizer-helpers.ts module; migrate 7 existing normalizers
+// (cabinet, monitor-summary, acquiring, buyout-reconciliation, fbs-stock,
+// fbs-enhanced, advertising-analytics, search-analytics). Precedent: Story
+// 107.1-FE `nullPreservingSum`. Deferred from Story 119.1-FE 1st-pass F-6
+// (reuse) — outside this story's focused scope.
+
+function toCount(raw: unknown): number {
+  const n = Number(raw ?? 0)
+  return Number.isFinite(n) ? n : 0
+}
+
+// Story 119.1-FE F-2 (AP#8): ratio/money normalizer — preserves null instead
+// of coercing to 0; non-finite → null (never collapse null and known-zero).
+function toNullableNumber(raw: unknown): number | null {
+  if (raw == null) return null
+  const n = Number(raw)
+  return Number.isFinite(n) ? n : null
+}
+
+// Story 119.1-FE F-4 (Defensive Frontend): string fields reject non-string
+// inputs — `String({})` produces "[object Object]"; null lets the UI render '—'.
+function toStringOrNull(raw: unknown): string | null {
+  return typeof raw === 'string' ? raw : null
+}
+
+function toGroupBy(raw: unknown): SearchOrdersGroupBy {
+  const s = String(raw ?? 'query') as SearchOrdersGroupBy
+  return VALID_GROUP_BY.has(s) ? s : 'query'
+}
+
+// --- Per-item normalizers --------------------------------------------------
+
+export function normalizeSearchQueryItem(raw: unknown): SearchQueryItem {
+  const r = (raw ?? {}) as Record<string, unknown>
+  return {
+    searchQuery: String(r.searchQuery ?? ''),
+    avgPosition: toCount(r.avgPosition),
+    totalImpressions: toCount(r.totalImpressions),
+    totalClicks: toCount(r.totalClicks),
+    avgCtr: toCount(r.avgCtr),
+    totalOrders: toCount(r.totalOrders),
+  }
+}
+
+export function normalizeSearchProductItem(raw: unknown): SearchProductItem {
+  const r = (raw ?? {}) as Record<string, unknown>
+  // vendorCode canonicalized via toStringOrNull (Story 119.1-FE 1st-pass F-4):
+  // undefined → null, null preserved (null-vs-zero rule), non-string → null
+  // (Defensive Frontend — reject garbage rather than coerce to "[object Object]").
+  return {
+    nmId: toCount(r.nmId),
+    vendorCode: toStringOrNull(r.vendorCode),
+    avgPosition: toCount(r.avgPosition),
+    totalImpressions: toCount(r.totalImpressions),
+    totalClicks: toCount(r.totalClicks),
+    avgCtr: toCount(r.avgCtr),
+    totalOrders: toCount(r.totalOrders),
+  }
+}
+
+/**
+ * normalizeSearchOrderItem — returns null when the item is un-renderable.
+ * The consumer (normalizeSearchOrdersResponse) filters nulls out of the array.
+ *
+ * Type returned uses `key: string | number` (declarative source-of-truth shape per
+ * AC-7) but the runtime value is always a string post-normalize.
+ */
+export function normalizeSearchOrderItem(raw: unknown): SearchOrderItem | null {
+  if (raw == null || typeof raw !== 'object') return null
+  const r = raw as Record<string, unknown>
+  const k = r.key
+
+  // Null/undefined → drop (Story 117.4-FE filter stance).
+  if (k == null) return null
+
+  // Coerce number → string (Story 117.1-FE coerce stance); pass string through.
+  // Defensive: drop any other type (boolean, object, array, symbol, ...).
+  let key: string
+  if (typeof k === 'number') key = String(k)
+  else if (typeof k === 'string') key = k
+  else return null
+
+  const item: SearchOrderItem = {
+    key,
+    totalOrders: toCount(r.totalOrders),
+  }
+
+  // Optional fields — preserve presence; canonicalize undefined → omit (NOT null)
+  // so the optional-property semantics in the type stay intact for consumers.
+  // Story 119.1-FE F-4: vendorCode rejects non-string via toStringOrNull.
+  if (r.vendorCode !== undefined) {
+    item.vendorCode = toStringOrNull(r.vendorCode)
+  }
+  if (r.uniqueProducts !== undefined) {
+    item.uniqueProducts = toCount(r.uniqueProducts)
+  }
+  if (r.uniqueQueries !== undefined) {
+    item.uniqueQueries = toCount(r.uniqueQueries)
+  }
+  return item
+}
+
+// --- Per-endpoint normalizers ---------------------------------------------
+
+export function normalizeSearchByProductResponse(raw: unknown): SearchByProductResponse {
+  const r = (raw ?? {}) as Record<string, unknown>
+  const period = (r.period ?? {}) as Record<string, unknown>
+  const queries = Array.isArray(r.queries) ? r.queries : []
+  return {
+    nmId: toCount(r.nmId),
+    period: {
+      from: String(period.from ?? ''),
+      to: String(period.to ?? ''),
+    },
+    queries: queries.map(normalizeSearchQueryItem),
+    totalQueries: toCount(r.totalQueries),
+  }
+}
+
+export function normalizeSearchByQueryResponse(raw: unknown): SearchByQueryResponse {
+  const r = (raw ?? {}) as Record<string, unknown>
+  const period = (r.period ?? {}) as Record<string, unknown>
+  const products = Array.isArray(r.products) ? r.products : []
+  return {
+    query: String(r.query ?? ''),
+    period: {
+      from: String(period.from ?? ''),
+      to: String(period.to ?? ''),
+    },
+    products: products.map(normalizeSearchProductItem),
+    totalProducts: toCount(r.totalProducts),
+  }
+}
+
+export function normalizeSearchOrdersResponse(raw: unknown): SearchOrdersResponse {
+  const r = (raw ?? {}) as Record<string, unknown>
+  const period = (r.period ?? {}) as Record<string, unknown>
+  const rawItems = Array.isArray(r.items) ? r.items : []
+  // Filter out items that normalizeSearchOrderItem dropped (returned null).
+  const items = rawItems
+    .map(normalizeSearchOrderItem)
+    .filter((it): it is SearchOrderItem => it !== null)
+  const summary = (r.summary ?? {}) as Record<string, unknown>
+  return {
+    period: {
+      from: String(period.from ?? ''),
+      to: String(period.to ?? ''),
+    },
+    groupBy: toGroupBy(r.groupBy),
+    items,
+    summary: {
+      totalSearchOrders: toCount(summary.totalSearchOrders),
+      // PENDING BACKEND: Request #176 (filed via Story 119.1-FE 1st-pass F-9;
+      // covers `key` shape + >100% share anomaly observed 394.23 per Story
+      // 117.2-FE; cross-links Request #175 which disclaims this scope per
+      // its line 40). Backend may return >100 — preserve raw per Defensive
+      // Frontend; UI decides whether to render a warning.
+      // Story 119.1-FE 1st-pass F-2 (AP#8): toNullableNumber, NOT toCount —
+      // null preserved (UI renders '—'); 0 means "known zero".
+      searchOrderShare: toNullableNumber(summary.searchOrderShare),
+    },
+  }
+}

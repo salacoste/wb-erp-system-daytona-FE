@@ -11,7 +11,7 @@
 
 // --- Enum / Union Types ---
 
-// Story 91.1-FE removed 'totalRevenue' (WB never returned real data); Story 117.2-FE (2026-05-28) live-verified the backend still returns none (Branch A) — keep removed; don't re-add without fresh backend evidence.
+// Story 91.1-FE removed 'totalRevenue' (WB never returned real data); Story 117.2-FE (2026-05-28) live-verified the backend still returns none (Branch A) — keep removed; don't re-add without fresh backend evidence. Story 119.1-FE (2026-05-29) attached Boundary Normalizer at API layer (src/lib/api/search-analytics-normalizer.ts) — shape drift absorbed once at the boundary, consumers receive frontend-canonical shapes.
 export type SearchOrderBy =
   | 'totalImpressions'
   | 'totalClicks'
@@ -106,8 +106,8 @@ export interface SearchOrderItem {
 
 export interface SearchOrdersSummary {
   totalSearchOrders: number
-  // Story 91.1-FE: totalSearchRevenue removed
-  searchOrderShare: number
+  // Story 91.1-FE: totalSearchRevenue removed. Story 119.1-FE 1st-pass F-2: widened to `number | null` per AP#8 (UI renders '—')
+  searchOrderShare: number | null
 }
 
 export interface SearchOrdersResponse {

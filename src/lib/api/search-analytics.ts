@@ -2,6 +2,11 @@
  * Search Analytics API Client
  * Epic 71-FE: Search Analytics & Jam Gating
  * Backend endpoints: Task-139 (complete)
+ *
+ * Boundary Normalizer Pattern (Story 119.1-FE): every endpoint routes through
+ * the search-analytics-normalizer so raw backend shapes never reach hooks or
+ * components. `apiClient.get<unknown>` signals "don't trust the shape; the
+ * normalizer enforces it". See src/lib/api/search-analytics-normalizer.ts.
  */
 
 import { apiClient } from '@/lib/api-client'
@@ -13,6 +18,11 @@ import type {
   SearchOrdersParams,
   SearchOrdersResponse,
 } from '@/types/search-analytics'
+import {
+  normalizeSearchByProductResponse,
+  normalizeSearchByQueryResponse,
+  normalizeSearchOrdersResponse,
+} from './search-analytics-normalizer'
 
 /**
  * Queries driving traffic to a product
@@ -29,10 +39,10 @@ export async function getSearchByProduct(
   if (params.orderBy) sp.set('orderBy', params.orderBy)
   if (params.limit != null) sp.set('limit', String(params.limit))
 
-  return apiClient.get<SearchByProductResponse>(
-    `/v1/analytics/search/by-product?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
+  const raw = await apiClient.get<unknown>(`/v1/analytics/search/by-product?${sp.toString()}`, {
+    skipDataUnwrap: true,
+  })
+  return normalizeSearchByProductResponse(raw)
 }
 
 /**
@@ -48,9 +58,10 @@ export async function getSearchByQuery(
   sp.set('to', params.to)
   if (params.limit != null) sp.set('limit', String(params.limit))
 
-  return apiClient.get<SearchByQueryResponse>(`/v1/analytics/search/by-query?${sp.toString()}`, {
+  const raw = await apiClient.get<unknown>(`/v1/analytics/search/by-query?${sp.toString()}`, {
     skipDataUnwrap: true,
   })
+  return normalizeSearchByQueryResponse(raw)
 }
 
 /**
@@ -64,18 +75,28 @@ export async function getSearchOrders(params: SearchOrdersParams): Promise<Searc
   if (params.groupBy) sp.set('groupBy', params.groupBy)
   if (params.limit != null) sp.set('limit', String(params.limit))
 
-  console.info('[SearchAnalytics] Fetching orders:', {
-    groupBy: params.groupBy ?? 'query',
+  // Story 119.1-FE 1st-pass F-7: gate hot-path console writes behind NODE_ENV
+  // check (preserve debug aid for dev/test; silent in production).
+  if (process.env.NODE_ENV !== 'production') {
+    console.info('[SearchAnalytics] Fetching orders:', {
+      groupBy: params.groupBy ?? 'query',
+    })
+  }
+
+  const raw = await apiClient.get<unknown>(`/v1/analytics/search/orders?${sp.toString()}`, {
+    skipDataUnwrap: true,
   })
 
-  const response = await apiClient.get<SearchOrdersResponse>(
-    `/v1/analytics/search/orders?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
+  const response = normalizeSearchOrdersResponse(raw)
 
-  console.info('[SearchAnalytics] orders response:', {
-    items: response.items?.length,
-  })
+  // Story 119.1-FE: log post-normalize count so the debug line reflects what
+  // consumers actually receive (Story 117.1-FE added the original log).
+  // 1st-pass F-7: same NODE_ENV gate as above.
+  if (process.env.NODE_ENV !== 'production') {
+    console.info('[SearchAnalytics] orders response:', {
+      items: response.items.length,
+    })
+  }
 
   return response
 }

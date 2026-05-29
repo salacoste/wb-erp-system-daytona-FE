@@ -56,9 +56,10 @@ export function formatDayTick(value: string): string {
   // datetime ("2026-03-01T00:00:00") falls through rather than yielding a garbage
   // "01T00:00:00.03" label (Story 117.1-FE 3rd-pass F-5).
   if (parts.length === 3 && /^\d{2}$/.test(parts[2])) return `${parts[2]}.${parts[1]}`
-  // Defensive (Story 117.1-FE 2nd-pass F-1): compact numeric YYYYMMDD keys —
-  // backend normally emits ISO strings, but coercion (F-1 1st-pass) lets numeric
-  // keys through, so format them too rather than render a raw 8-digit integer.
+  // Post-Story-119.1-FE: normalizer at the API boundary coerces numeric keys to
+  // strings before reaching here; the regex below still handles 8-digit YYYYMMDD
+  // strings defensively for any boundary-bypass path (defense-in-depth per
+  // Story 119.1-FE).
   if (/^\d{8}$/.test(value)) return `${value.slice(6, 8)}.${value.slice(4, 6)}`
   return value
 }
@@ -66,16 +67,15 @@ export function formatDayTick(value: string): string {
 /**
  * Map day-grouped SearchOrderItem[] to chart rows. In groupBy='day' mode the item
  * `key` is the date string, but the type is `string | number`; we COERCE via
- * String() rather than filter on typeof (F-1, Story 117.1-FE 1st-pass): there is
- * no Boundary Normalizer on this endpoint, so a typeof filter would fail-closed
- * and silently hide real data if the backend ever emits numeric day keys.
- * We DO drop items whose key is null/undefined (2nd-pass F-3): those are genuinely
- * unplottable (no X position) and `String(null)` would fabricate a "null" label —
- * dropping a truly-invalid row is correct, unlike dropping a renderable numeric key.
- * `totalOrders` is numeric-coerced via `Number(...) || 0` (3rd-pass F-2): the same
- * no-normalizer reasoning that drives `key` coercion applies to the plotted field —
- * a string "50" would otherwise reach recharts' numeric Y-axis and mis-scale the
- * line. `|| 0` also covers null (counts exception, Anti-Pattern #8).
+ * String() rather than filter on typeof (Story 117.1-FE 1st-pass F-1 origin).
+ * We DO drop items whose key is null/undefined: `String(null)` would fabricate
+ * a "null" axis label. `totalOrders` is numeric-coerced via `Number(...) || 0`
+ * (3rd-pass F-2): a string "50" would otherwise reach recharts' numeric Y-axis
+ * and mis-scale the line. `|| 0` also covers null (counts exception, AP#8).
+ *
+ * Boundary Normalizer attached at API layer per Story 119.1-FE
+ * (src/lib/api/search-analytics-normalizer.ts) — this coerce remains as
+ * defense-in-depth (CLAUDE.md § Defense-in-depth convention).
  */
 export function toChartRows(items: SearchOrderItem[]): ChartRow[] {
   return items

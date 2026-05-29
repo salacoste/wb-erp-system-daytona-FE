@@ -39,7 +39,7 @@ describe('Search Analytics API Client', () => {
           totalClicks: 50,
           avgCtr: 5.0,
           totalOrders: 10,
-          totalRevenue: 0,
+          // Story 119.1-FE: removed legacy totalRevenue field (Story 91.1-FE) — normalizer drops it
         },
       ],
       totalQueries: 1,
@@ -120,7 +120,7 @@ describe('Search Analytics API Client', () => {
           totalClicks: 150,
           avgCtr: 7.5,
           totalOrders: 30,
-          totalRevenue: 0,
+          // Story 119.1-FE: removed legacy totalRevenue field (Story 91.1-FE) — normalizer drops it
         },
       ],
       totalProducts: 1,
@@ -195,13 +195,13 @@ describe('Search Analytics API Client', () => {
         {
           key: 'кроссовки мужские',
           totalOrders: 50,
-          totalRevenue: 0,
+          // Story 119.1-FE: removed legacy totalRevenue field (Story 91.1-FE) — normalizer drops it
           uniqueProducts: 12,
         },
       ],
       summary: {
         totalSearchOrders: 500,
-        totalSearchRevenue: 0,
+        // Story 119.1-FE: removed legacy totalSearchRevenue field (Story 91.1-FE) — normalizer drops it
         searchOrderShare: 35.2,
       },
     }
