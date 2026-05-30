@@ -4,6 +4,10 @@
  * Reference: docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md
  */
 
+/** Story 119.2-FE: per-SKU top search query enrichment from backend funnel response */
+// prettier-ignore
+export type TopSearchQuery = { query: string; impressions: number; clicks: number; orders: number }
+
 export interface FunnelProductItem {
   nmId: number
   vendorCode?: string
@@ -21,6 +25,7 @@ export interface FunnelProductItem {
   buyoutConversion: number
   cancelRate: number
   totalConversion: number
+  topSearchQueries?: TopSearchQuery[]
 }
 
 export interface FunnelDayItem {

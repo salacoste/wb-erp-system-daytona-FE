@@ -30,10 +30,15 @@ vi.mock('@/hooks/useSellerInfo', () => ({
   useSellerInfo: () => ({ data: undefined }),
 }))
 
+// Story 119.2-FE Pass-2 P2-5: useSearchByQuery converted to `vi.fn` so the
+// initialQuery auto-search test can capture its call arguments. A future
+// refactor that pre-fills the input but forgets to seed `debouncedQuery` would
+// pass the value-match assertion while silently breaking auto-search; this
+// call-capture is the load-bearing regression guard.
 vi.mock('@/hooks/use-search-analytics', () => ({
-  useSearchOrders: () => ({ data: undefined, isLoading: false, isError: false }),
-  useSearchByProduct: () => ({ data: undefined, isLoading: false, isError: false }),
-  useSearchByQuery: () => ({ data: undefined, isLoading: false, isError: false }),
+  useSearchOrders: vi.fn(() => ({ data: undefined, isLoading: false, isError: false })),
+  useSearchByProduct: vi.fn(() => ({ data: undefined, isLoading: false, isError: false })),
+  useSearchByQuery: vi.fn(() => ({ data: undefined, isLoading: false, isError: false })),
 }))
 
 vi.mock('@/hooks/useProducts', () => ({
@@ -41,9 +46,11 @@ vi.mock('@/hooks/useProducts', () => ({
 }))
 
 import { useJamStatus } from '@/hooks/useJamStatus'
+import { useSearchByQuery } from '@/hooks/use-search-analytics'
 import { SearchPageContent } from '../components/SearchPageContent'
 
 const mockedUseJamStatus = vi.mocked(useJamStatus)
+const mockedUseSearchByQuery = vi.mocked(useSearchByQuery)
 let queryClient: QueryClient
 
 const mockJamData: JamStatusResponse = {
@@ -59,8 +66,8 @@ beforeEach(() => {
   queryClient = createTestQueryClient()
 })
 
-function renderPage() {
-  return render(<SearchPageContent />, {
+function renderPage(props?: { initialQuery?: string }) {
+  return render(<SearchPageContent initialQuery={props?.initialQuery} />, {
     wrapper: createQueryWrapper(queryClient),
   })
 }
@@ -111,6 +118,46 @@ describe('SearchPageContent', () => {
       await user.click(byProductTab)
       expect(byProductTab).toHaveAttribute('aria-selected', 'true')
       expect(screen.getByRole('tab', { name: 'Заказы' })).toHaveAttribute('aria-selected', 'false')
+    })
+  })
+
+  describe('initialQuery prop (Story 119.2-FE Pass-1 F-1)', () => {
+    beforeEach(() => {
+      mockedUseJamStatus.mockReturnValue({
+        data: mockJamData,
+        isLoading: false,
+        isError: false,
+      } as ReturnType<typeof useJamStatus>)
+    })
+
+    it('defaults to by-query tab and pre-populates input when initialQuery is provided', () => {
+      renderPage({ initialQuery: 'жидкая изолента' })
+      const byQueryTab = screen.getByRole('tab', { name: 'По запросам' })
+      expect(byQueryTab).toHaveAttribute('aria-selected', 'true')
+      const input = screen.getByLabelText('Поисковый запрос')
+      expect(input).toHaveValue('жидкая изолента')
+    })
+
+    it('falls back to the orders tab when initialQuery is undefined', () => {
+      renderPage()
+      const ordersTab = screen.getByRole('tab', { name: 'Заказы' })
+      expect(ordersTab).toHaveAttribute('aria-selected', 'true')
+    })
+
+    it('falls back to the orders tab when initialQuery is the empty string', () => {
+      renderPage({ initialQuery: '' })
+      const ordersTab = screen.getByRole('tab', { name: 'Заказы' })
+      expect(ordersTab).toHaveAttribute('aria-selected', 'true')
+    })
+
+    it('auto-fires search with seeded query — not just pre-populates input (Pass-2 P2-5)', () => {
+      // P2-5: assert useSearchByQuery is CALLED with the seeded query, not just
+      // that the input value matches. A future refactor that pre-fills the
+      // input but forgets to seed `debouncedQuery` would pass value-match
+      // assertions while silently breaking auto-search; this guards the wiring.
+      renderPage({ initialQuery: 'жидкая изолента' })
+      const calledQueries = mockedUseSearchByQuery.mock.calls.map(args => args[0])
+      expect(calledQueries).toContain('жидкая изолента')
     })
   })
 

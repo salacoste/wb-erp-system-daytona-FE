@@ -3,6 +3,8 @@
 /**
  * Search By Query Tab - Search input + product ranking orchestrator
  * Story 71.7-FE: By-Query Product Ranking Tab
+ * Story 119.2-FE Pass-1 F-1: optional `initialQuery` seeds both the visible input
+ * and the debounced query so the funnel cross-page link auto-fires the search.
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react'
@@ -20,12 +22,31 @@ const MIN_QUERY_LENGTH = 2
 interface SearchByQueryTabProps {
   from: string
   to: string
+  /** Story 119.2-FE Pass-1 F-1: when set (via Search page `?query=` URL param),
+   * seeds the input and immediately triggers the search (no manual typing required). */
+  initialQuery?: string
 }
 
-export function SearchByQueryTab({ from, to }: SearchByQueryTabProps) {
-  const [queryInput, setQueryInput] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
+export function SearchByQueryTab({ from, to, initialQuery }: SearchByQueryTabProps) {
+  const seed = typeof initialQuery === 'string' ? initialQuery : ''
+  const [queryInput, setQueryInput] = useState(seed)
+  const [debouncedQuery, setDebouncedQuery] = useState(seed.trim())
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  /**
+   * Story 119.2-FE Pass-2 P2-4: reseed state when `initialQuery` prop changes
+   * after mount. Without this, a user already on the Search page who clicks a
+   * SECOND funnel query link (URL changes to ?query=термостойкая but component
+   * doesn't remount) sees stale input value from the FIRST click. Effect only
+   * fires on prop-change, not on user typing (which mutates queryInput directly).
+   */
+  useEffect(() => {
+    if (typeof initialQuery === 'string') {
+      setQueryInput(initialQuery)
+      setDebouncedQuery(initialQuery.trim())
+    }
+    // Intentionally only depend on initialQuery — see comment above
+  }, [initialQuery])
 
   const shouldFetch = debouncedQuery.length >= MIN_QUERY_LENGTH
   const { data, isLoading, isError } = useSearchByQuery(shouldFetch ? debouncedQuery : '', from, to)

@@ -7,6 +7,9 @@
  * Story 71.6-FE: By-Product Keyword Explorer Tab
  * Story 71.7-FE: By-Query Product Ranking Tab
  * Story 117.3-FE: Seller profile badge in page header
+ * Story 119.2-FE Pass-1 F-1: optional `initialQuery` from `?query=` URL param —
+ * when present, defaults to the by-query tab and pre-populates the query input
+ * (closes the silent-drop on Funnel "Топ поисковых запросов" cross-page links).
  */
 
 import { useState } from 'react'
@@ -32,11 +35,20 @@ function formatApi(date: Date): string {
   return format(date, 'yyyy-MM-dd')
 }
 
-export function SearchPageContent() {
+interface SearchPageContentProps {
+  /** Story 119.2-FE Pass-1 F-1: when provided (via `?query=` URL param), the
+   * by-query tab is the default and the query input is pre-populated. */
+  initialQuery?: string
+}
+
+export function SearchPageContent({ initialQuery }: SearchPageContentProps = {}) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
 
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
+
+  const hasInitialQuery = typeof initialQuery === 'string' && initialQuery.length > 0
+  const defaultTab = hasInitialQuery ? 'by-query' : 'orders'
 
   return (
     <div className="space-y-6">
@@ -57,7 +69,7 @@ export function SearchPageContent() {
       />
 
       <RequireJam requiredTier="standard">
-        <Tabs defaultValue="orders">
+        <Tabs defaultValue={defaultTab}>
           <TabsList>
             <TabsTrigger value="orders">Заказы</TabsTrigger>
             <TabsTrigger value="by-product">По товарам</TabsTrigger>
@@ -70,7 +82,7 @@ export function SearchPageContent() {
             <SearchByProductTab from={apiFrom} to={apiTo} />
           </TabsContent>
           <TabsContent value="by-query">
-            <SearchByQueryTab from={apiFrom} to={apiTo} />
+            <SearchByQueryTab from={apiFrom} to={apiTo} initialQuery={initialQuery} />
           </TabsContent>
         </Tabs>
       </RequireJam>
