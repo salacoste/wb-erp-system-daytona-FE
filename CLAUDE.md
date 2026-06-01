@@ -123,6 +123,10 @@ Four anomaly categories: field inversion, null-where-number-expected, impossible
 
 `scripts/check-eslint-rules.sh` (Story 99.2-FE) validates every rule name in `.eslintrc.json` + `eslint.config.js` is recognized by ESLint (via `eslint --print-config`), catching silent disablement from typos (e.g. `max-lines-per-file` vs `max-lines`). Run after editing either config. Self-test: `bash scripts/check-eslint-rules.sh --self-test`.
 
+### Next.js 15 async-params validation (`npm run check:next-params`)
+
+`scripts/check-next-async-params.sh` (Epic 119-FE retro A-1) flags any `params`/`searchParams` prop on an App Router `page.tsx`/`layout.tsx` that is NOT typed `Promise<...>`. Next.js 15 requires these props to be Promises and awaited — a synchronous type passes `tsc --noEmit` but **fails `next build` route typegen** (the gate gap that caused Story 119.2-FE Pass-2 P2-1 CRITICAL). Run this for any story touching App Router page/layout signatures; `tsc` alone does not catch it. Escape hatch: `// next-async-params-allow: <reason>` on the line. Self-test: `bash scripts/check-next-async-params.sh --self-test`.
+
 ### Accepted Baselines
 
 Each story closes only when EVERY quality gate matches its baseline. Current accepted state:
@@ -132,6 +136,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | Doc citations | `bash scripts/check-doc-citations.sh` | 22 broken (auto set-diff vs `.check-docs-baseline.txt`) |
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
+| Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
 | ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 112 warnings (all `no-explicit-any`) |
 | Vitest | `npm test -- --run` | ≥ 7205 passing, 676 skipped, 0 failed (floor) |
 
@@ -208,7 +213,6 @@ Recognize on sight, refuse to write or merge. Numbered list (referenced as "anti
 8. **`?? 0` on nullable money/ratio fields lies about the data** — preserve `null`, render `—`. Counts/pagination still allow `?? 0`. **ESLint enforced as of Story 105.1-FE** (`no-restricted-syntax` rule in `eslint.config.js`). New code cannot introduce new violations. Story 106-FE triaged 64 pre-existing allowlists: 1 was a real violation (fixed in Story 106.1, `daily/aggregation.ts:104` net_profit) and 63 are legitimate exceptions classified into 6 canonical patterns documented in **[`CLAUDE-PATTERNS.md` § Anti-Pattern #8 Exceptions](./CLAUDE-PATTERNS.md#anti-pattern-8-exceptions-story-1063-fe-from-epic-105-fe--106-fe)** (BACKEND-CONTRACT-NON-NULL / SEMANTIC-ZERO / AGGREGATION-REDUCE / DISPLAY-GUARD / DEBUG-LOG / TEST-ASSERTION). Allowlist comment format: `// eslint-disable-next-line no-restricted-syntax -- <PATTERN-NAME>: <specific rationale>`. Self-test: `bash scripts/test-anti-pattern-8-rule.sh`.
 9. **`waitForLoadState('networkidle')` on background-polling pages** — never settles on dashboards; use `waitUntil: 'domcontentloaded'` + element-presence assertions.
 10. **`formatNumber(opaqueId)` mangles search-key copy-paste** — use `String(id)` for opaque numeric IDs (nmId, productId). Canonical: Story 110.3-FE F-8.
-11. **Next.js 15 server-component `searchParams`/`params` typed synchronously** — must be `Promise`-wrapped + `await`ed; `tsc` passes but `next build` typegen fails. Run `next build` (not just `type-check`) when changing App Router page/layout signatures. Canonical: Story 119.2-FE P2-1.
 
 Open `CLAUDE-ANTI-PATTERNS.md` for ❌ BAD / ✅ GOOD code blocks, scope rules, and canonical Story references.
 

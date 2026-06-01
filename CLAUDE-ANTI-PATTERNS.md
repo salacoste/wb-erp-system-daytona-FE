@@ -275,35 +275,3 @@ Passing an opaque numeric identifier (nmId, productId, forecastId-as-number, mod
 The key diagnostic question: "Would inserting this value into a WB search field (or URL param) be broken by a space character?" If yes → `String(id)`.
 
 See Story 110.3-FE F-8 (canonical finding: nmId column in SearchAnalyticsTable); propagated to Story 110.2-FE EvaluationsTable + Story 110.5-FE CSV export helpers per Story 97.1-FE fix-block propagation discipline.
-
-### 11. Next.js 15 server-component `searchParams`/`params` typed synchronously
-
-In Next.js 15, `searchParams` and `params` on App Router server pages/layouts are **`Promise`-wrapped** and must be `await`ed. A synchronous type declaration **passes `npm run type-check` (tsc) but fails `next build` typegen** — the production build generates `.next/types/**` route validators that require the `Promise` shape, so the gap is invisible to the local gate and only surfaces in CI/prod builds.
-
-```tsx
-// ❌ BAD — synchronous searchParams; tsc passes, `next build` typegen REJECTS
-export default function SearchPage({ searchParams }: { searchParams?: { query?: string } }) {
-  const query = searchParams?.query ?? ''
-  // ...
-}
-```
-
-```tsx
-// ✅ GOOD — async component + Promise-wrapped param + await + array guard
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ query?: string | string[] }>
-}) {
-  const params = await searchParams
-  const raw = params?.query
-  const query = Array.isArray(raw) ? (raw[0] ?? '') : (raw ?? '')
-  // ...
-}
-```
-
-**Gate-gap rule (same class as #9):** `tsc` does NOT exercise Next.js route-type generation. Any story touching App Router page/layout signatures (`searchParams`, `params`, server-component props) MUST run `next build` (or Next.js typegen) as part of verification — `npm run type-check` alone is necessary but not sufficient.
-
-The key diagnostic question: "Does this change a server-page/layout prop signature?" If yes → run `next build`, not just `tsc`.
-
-See Story 119.2-FE Pass-2 P2-1 (canonical: Search page deep-link wiring); adjacent routes `supplies/[id]/page.tsx`, `analytics/models/[id]/evaluations`, `analytics/acquiring/reports/[id]` confirm the async-`Promise` pattern. Codified at N=1 by R2d2 direction (Epic 119-FE retro A-1, ahead of the retro's "2nd recurrence" threshold) given the gate-gap blast radius.
