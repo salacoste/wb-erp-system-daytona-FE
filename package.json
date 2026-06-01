@@ -19,6 +19,7 @@
     "check:docs": "bash scripts/check-doc-citations.sh",
     "check:eslint-rules": "bash scripts/check-eslint-rules.sh",
     "check:lessons": "bash scripts/check-lessons-length.sh",
+    "check:next-params": "bash scripts/check-next-async-params.sh",
     "clean": "rm -rf .next node_modules/.cache",
     "clean:full": "rm -rf .next node_modules/.cache node_modules && npm install",
     "dev:clean": "npm run clean && npm run dev",
