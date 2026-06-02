@@ -11,8 +11,20 @@
 /** Seller-side order status (Статус продавца) */
 export type SupplierStatus = 'new' | 'confirm' | 'complete' | 'cancel'
 
-/** WB-side order status (Статус WB) */
-export type WbStatus = 'waiting' | 'sorted' | 'sold' | 'canceled' | 'canceled_by_client' | 'defect'
+/**
+ * WB-side order status (Статус WB).
+ * Validation F-11: ready_for_pickup (~11% of live orders) + declined_by_client
+ * (~2%) were absent → rendered as raw machine codes + un-filterable.
+ */
+export type WbStatus =
+  | 'waiting'
+  | 'sorted'
+  | 'sold'
+  | 'ready_for_pickup'
+  | 'canceled'
+  | 'canceled_by_client'
+  | 'declined_by_client'
+  | 'defect'
 
 // --- Order Item Types ---
 

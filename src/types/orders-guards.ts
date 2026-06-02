@@ -20,15 +20,30 @@ import type {
 /** Valid supplier status values */
 const VALID_SUPPLIER_STATUSES: readonly SupplierStatus[] = ['new', 'confirm', 'complete', 'cancel']
 
-/** Valid WB status values */
-const VALID_WB_STATUSES: readonly WbStatus[] = [
+/**
+ * Valid WB status values — MUST stay in sync with the WbStatus union (orders.ts).
+ * Validation F-11 review F1: ready_for_pickup + declined_by_client were added to
+ * the union but omitted here, so isValidWbStatus() silently rejected ~13% of live
+ * statuses. The `satisfies` check below makes any future union/array drift a
+ * compile error.
+ */
+const VALID_WB_STATUSES = [
   'waiting',
   'sorted',
   'sold',
+  'ready_for_pickup',
   'canceled',
   'canceled_by_client',
+  'declined_by_client',
   'defect',
-]
+] as const satisfies readonly WbStatus[]
+
+// Compile-time completeness: errors if a WbStatus union member is missing from
+// VALID_WB_STATUSES above (the gap that F-11 review F1 caught). `satisfies` alone
+// only rejects INVALID entries; this rejects MISSING ones too.
+type _WbStatusesMissingFromGuard = Exclude<WbStatus, (typeof VALID_WB_STATUSES)[number]>
+const _wbStatusGuardComplete: _WbStatusesMissingFromGuard extends never ? true : never = true
+void _wbStatusGuardComplete
 
 /**
  * Check if value is a valid SupplierStatus

@@ -56,12 +56,22 @@ const SUPPLIER_STATUS_OPTIONS: Array<{ value: SupplierStatus; label: string }> =
   { value: 'cancel', label: 'Отменён' },
 ]
 
-/** WB status options for dropdown */
+/**
+ * WB status options for dropdown — completed to cover the full WbStatus union
+ * (Validation F-11). ready_for_pickup (~11% live) + declined_by_client (~2%) +
+ * canceled_by_client (~13%) + defect were previously un-filterable. The F-11
+ * additions' labels mirror WB_STATUS_CONFIG; the pre-existing short labels
+ * (e.g. "Ожидает") are kept for backward compatibility.
+ */
 const WB_STATUS_OPTIONS: Array<{ value: WbStatus; label: string }> = [
   { value: 'waiting', label: 'Ожидает' },
   { value: 'sorted', label: 'Отсортирован' },
+  { value: 'ready_for_pickup', label: 'Готов к выдаче' },
   { value: 'sold', label: 'Продан' },
   { value: 'canceled', label: 'Отменён' },
+  { value: 'canceled_by_client', label: 'Отменён клиентом' },
+  { value: 'declined_by_client', label: 'Отказ при получении' },
+  { value: 'defect', label: 'Брак' },
 ]
 
 /**

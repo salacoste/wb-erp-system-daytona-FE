@@ -37,7 +37,18 @@ const WB_STATUS_CONFIG_DELIVERY: Record<string, WbStatusConfig> = {
     isFinal: false,
     sortOrder: 42,
   },
-  // === Cancellations (6) ===
+  // Validation F-11: live backend emits `ready_for_pickup` (~11% of orders) but
+  // it was missing here → rendered as a raw code. WB "готов к выдаче" delivery state.
+  ready_for_pickup: {
+    label: 'Готов к выдаче',
+    labelEn: 'Ready for pickup',
+    category: 'delivery',
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    isFinal: false,
+    sortOrder: 43,
+  },
+  // === Cancellations (7) ===
   canceled: {
     label: 'Отменён',
     labelEn: 'Canceled',
@@ -73,6 +84,22 @@ const WB_STATUS_CONFIG_DELIVERY: Record<string, WbStatusConfig> = {
     bgColor: 'bg-red-50',
     isFinal: true,
     sortOrder: 53,
+  },
+  // Validation F-11: live backend emits `declined_by_client` (client refusal at
+  // pickup; backend groups it with canceled_by_client as "cancel/refusal" per
+  // return-classification.service.ts:493). Was missing → rendered as raw code.
+  // isFinal:false — backend FINAL_WB_STATUSES (orders-sync.service.ts) does NOT
+  // include declined_by_client (it keeps polling it), so the FE must not show a
+  // "final" checkmark (review F3). Label "Отказ при получении" disambiguates it
+  // from canceled_by_client "Отменён клиентом" (review F5).
+  declined_by_client: {
+    label: 'Отказ при получении',
+    labelEn: 'Declined by client',
+    category: 'cancellation',
+    color: 'text-red-500',
+    bgColor: 'bg-red-50',
+    isFinal: false,
+    sortOrder: 56,
   },
   canceled_by_wb: {
     label: 'Отменён WB',
