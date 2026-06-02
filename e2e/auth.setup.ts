@@ -28,13 +28,13 @@ setup('authenticate', async ({ page }) => {
   await page.locator('button[type="submit"]').click()
 
   // Wait for navigation away from login page
-  await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 })
+  await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 30000 })
 
-  // Wait for page to stabilize
-  await page.waitForLoadState('networkidle')
-
-  // Verify we're logged in - should see sidebar or dashboard content
-  await expect(page.locator('main').first()).toBeVisible({ timeout: 10000 })
+  // Stabilize by waiting for the dashboard shell to render. NOT networkidle —
+  // the dashboard runs background polling (TanStack Query refetchInterval), so
+  // networkidle never settles and the setup times out (anti-pattern #9 applied
+  // to the setup file itself; found during funnel E2E work, validation F-4).
+  await expect(page.locator('main').first()).toBeVisible({ timeout: 15000 })
 
   // Save authentication state
   await page.context().storageState({ path: authFile })
