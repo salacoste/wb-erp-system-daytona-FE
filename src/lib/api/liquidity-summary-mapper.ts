@@ -47,14 +47,37 @@ function mapDistribution(
     }
   }
 
+  // liquidity iter-60: the backend `liquidity_breakdown` ships only {count, capital} per
+  // category — NO `pct`, NO `avg_turnover_days`. The old `?? 0` made every distribution card
+  // render a "0 %" headline + "0 дней" (and skewed computeBenchmarks → wrong 'warning' status
+  // when all capital is illiquid). Derive both from data already present, keeping the SAME
+  // semantic as makeDefault + the `pct` type doc ("% of total inventory value") + the
+  // computeBenchmarks thresholds + the targetShare labels — all of which are CAPITAL-share:
+  //   pct = this category's capital / total capital across categories.
+  // (Capital-share is correct here: e.g. illiquid 100% surfaces "all frozen capital is dead
+  // stock"; highly_liquid 0% means those SKUs tie up no capital — both honest, not fabricated.)
+  // avg_turnover_days is derived from this category's items; note that derivation is
+  // items-page-scoped and reads 0 if no items for the category are in the returned page.
+  // Backend-provided pct/turnover still win if ever sent.
+  const totalCapital = Object.values(breakdown).reduce(
+    (sum: number, e: any) => sum + (e?.capital ?? e?.value ?? 0),
+    0
+  )
   const mapCat = (cat: LiquidityCategory): LiquidityDistributionItem => {
     const entry = breakdown[cat]
     if (entry && typeof entry === 'object') {
+      const value = entry.capital ?? entry.value ?? 0
+      const catItems = items.filter(i => i.liquidity_category === cat)
       return {
         count: entry.count ?? entry.sku_count ?? 0,
-        value: entry.capital ?? entry.value ?? 0,
-        pct: entry.pct ?? entry.percentage ?? 0,
-        avg_turnover_days: entry.avg_turnover_days ?? entry.avg_turnover ?? 0,
+        value,
+        pct: entry.pct ?? entry.percentage ?? (totalCapital > 0 ? (value / totalCapital) * 100 : 0),
+        avg_turnover_days:
+          entry.avg_turnover_days ??
+          entry.avg_turnover ??
+          (catItems.length > 0
+            ? Math.round(catItems.reduce((s, i) => s + i.turnover_days, 0) / catItems.length)
+            : 0),
       }
     }
     return makeDefault(cat)
