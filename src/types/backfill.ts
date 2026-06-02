@@ -56,7 +56,14 @@ export interface BackfillError {
 export interface BackfillCabinetStatus {
   cabinet_id: string
   cabinet_name: string
+  /** Reports backfill status (backend `reportsStatus`). */
   status: BackfillStatus
+  /**
+   * Analytics backfill status (backend `analyticsStatus`). Validation F-29:
+   * the backend tracks reports + analytics backfill separately; this was
+   * previously dropped by the normalizer so the table showed only reports.
+   */
+  analytics_status: BackfillStatus
   data_source: DataSource
   oldest_available_date: string | null
   newest_available_date: string | null

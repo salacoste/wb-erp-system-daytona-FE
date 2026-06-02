@@ -63,6 +63,8 @@ export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
     cabinet_id: (item.cabinetId ?? item.cabinet_id ?? '') as string,
     cabinet_name: (item.cabinetName ?? item.cabinet_name ?? '') as string,
     status: toBackfillStatus(item.reportsStatus ?? item.status),
+    // F-29: surface the separately-tracked analytics backfill status (was dropped).
+    analytics_status: toBackfillStatus(item.analyticsStatus ?? item.analytics_status),
     data_source: toDataSource(item.dataSource ?? item.data_source),
     oldest_available_date: (item.oldestAvailableDate ?? item.oldest_available_date ?? null) as
       | string

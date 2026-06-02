@@ -114,11 +114,30 @@ export function BackfillStatusTable({
           {cabinets.map(cabinet => (
             <TableRow
               key={cabinet.cabinet_id}
-              className={cabinet.status === 'failed' ? 'bg-red-50' : undefined}
+              // F-29: highlight on EITHER backfill failing so an analytics-only
+              // failure isn't visually swallowed. PENDING BACKEND: retry/error
+              // detail is reports-only today (single overallProgress/errors/start
+              // endpoint) — per-status retry needs backend support.
+              className={
+                cabinet.status === 'failed' || cabinet.analytics_status === 'failed'
+                  ? 'bg-red-50'
+                  : undefined
+              }
             >
               <TableCell className="font-medium">{cabinet.cabinet_name}</TableCell>
+              {/* F-29: reports + analytics backfill are tracked separately by the
+                  backend; show both instead of only reports. */}
               <TableCell>
-                <StatusBadge status={cabinet.status} />
+                <div className="flex flex-col gap-1">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    Отчёты:
+                    <StatusBadge status={cabinet.status} />
+                  </span>
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    Аналитика:
+                    <StatusBadge status={cabinet.analytics_status} />
+                  </span>
+                </div>
               </TableCell>
               <TableCell>
                 <BackfillProgressBar
