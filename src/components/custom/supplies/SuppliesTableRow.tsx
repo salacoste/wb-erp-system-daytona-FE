@@ -70,7 +70,14 @@ export function SuppliesTableRow({ supply, onClick }: SuppliesTableRowProps) {
 
       <TableCell className="text-right tabular-nums">{supply.ordersCount}</TableCell>
 
-      <TableCell className="text-right tabular-nums">{formatCurrency(supply.totalValue)}</TableCell>
+      {/* iter-68: the backend list endpoint does NOT send `totalValue` (select has totalItems, not
+          value) — formatCurrency(undefined) rendered "NaN ₽". Guard → "—" until the backend
+          provides it (phantom FE field). */}
+      <TableCell className="text-right tabular-nums">
+        {typeof supply.totalValue === 'number' && Number.isFinite(supply.totalValue)
+          ? formatCurrency(supply.totalValue)
+          : '—'}
+      </TableCell>
 
       <TableCell>{formatDateTime(supply.createdAt)}</TableCell>
 

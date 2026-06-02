@@ -196,6 +196,64 @@ describe('supplies-normalizer', () => {
     expect(result.id).toBe('WB-123')
     expect(result.createdAt).toBe('2026-01-01')
   })
+
+  // iter-68: the LIVE backend returns the detail NESTED as { supply: {...}, orders, documents }
+  // (supply.service.ts getSupplyById). The old normalizer read flat r.id/r.status → blank header +
+  // status 'unknown'. This pins the flatten so the detail page renders the real supply.
+  it('flattens the NESTED backend detail shape { supply, orders, documents }', () => {
+    const raw = {
+      supply: {
+        id: 'WB-777',
+        wbSupplyId: 'WB-GUID-777',
+        name: 'Поставка №777',
+        status: 'OPEN',
+        ordersCount: 3,
+        totalItems: 12,
+        createdAt: '2026-05-01T10:00:00Z',
+        closedAt: null,
+      },
+      orders: [
+        {
+          orderId: 5124,
+          nmId: 90,
+          article: 'SKU-1',
+          salePrice: 988,
+          supplierStatus: 'sold',
+          addedAt: '2026-05-02',
+        },
+        {
+          orderId: 5125,
+          nmId: 91,
+          article: 'SKU-2',
+          salePrice: 500,
+          supplierStatus: 'new',
+          addedAt: '2026-05-03',
+        },
+      ],
+      documents: [
+        { id: 'd1', docType: 'act', format: 'pdf', generatedAt: '2026-05-04', fileSize: 2048 },
+      ],
+    }
+    const result = normalizeSupplyDetailResponse(raw) as unknown as Record<string, unknown>
+    expect(result.id).toBe('WB-777') // was '' (read flat r.id → undefined)
+    expect(result.status).toBe('OPEN') // was 'unknown'
+    expect(result.wbSupplyId).toBe('WB-GUID-777')
+    expect(result.name).toBe('Поставка №777')
+    expect(result.ordersCount).toBe(3)
+    expect(result.createdAt).toBe('2026-05-01T10:00:00Z')
+    expect((result as { supply?: unknown }).supply).toBeUndefined() // no stray nested key
+    // orders mapped: backend `article` → FE `vendorCode`, productName → null
+    const orders = result.orders as Array<Record<string, unknown>>
+    expect(orders).toHaveLength(2)
+    expect(orders[0].vendorCode).toBe('SKU-1')
+    expect(orders[0].productName).toBeNull()
+    expect(orders[0].orderId).toBe('5124')
+    expect(orders[0].salePrice).toBe(988)
+    // documents mapped: backend `docType`/`fileSize` → FE `type`/`sizeBytes`
+    const docs = result.documents as Array<Record<string, unknown>>
+    expect(docs[0].type).toBe('act')
+    expect(docs[0].sizeBytes).toBe(2048)
+  })
 })
 
 // ============================================================================

@@ -75,8 +75,10 @@ export interface SupplyListItem {
   status: SupplyStatus
   /** Number of orders in supply */
   ordersCount: number
-  /** Total value of orders in rubles */
-  totalValue: number
+  /** Total value of orders in rubles. OPTIONAL — the backend list/detail endpoints do NOT compute
+   *  this (select returns totalItems, not value); rendered as "—" until backend provides it
+   *  (iter-68, request #194). */
+  totalValue?: number
   /** Creation timestamp */
   createdAt: string
   /** Closure timestamp (null if not closed) */
