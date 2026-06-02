@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Info, History, ChevronRight } from 'lucide-react'
 import { isCogsAfterLastCompletedWeek, getLastCompletedWeek } from '@/lib/margin-helpers'
-import { cn, formatWeeksAgoShort } from '@/lib/utils'
+import { cn, formatWeeksAgoShort, formatPercentage } from '@/lib/utils'
 import type { ProductListItem } from '@/types/api'
 
 /**
@@ -104,7 +104,7 @@ export function COGSNotAssignedContext({
               <span
                 className={cn('font-semibold', getMarginColorClass(product.last_sales_margin_pct))}
               >
-                {product.last_sales_margin_pct.toFixed(2)}%
+                {formatPercentage(product.last_sales_margin_pct)}
               </span>
             </>
           )}

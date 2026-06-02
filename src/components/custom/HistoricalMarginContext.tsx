@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Info, History, ChevronRight } from 'lucide-react'
-import { cn, formatWeeksAgoShort } from '@/lib/utils'
+import { cn, formatWeeksAgoShort, formatPercentage } from '@/lib/utils'
 
 /**
  * Story 4.9: Historical Margin Context Component Props
@@ -98,7 +98,7 @@ export function HistoricalMarginContext({
             <>
               <span className="text-muted-foreground"> • </span>
               <span className={cn('font-semibold', getMarginColorClass(lastSalesMarginPct))}>
-                {lastSalesMarginPct.toFixed(2)}%
+                {formatPercentage(lastSalesMarginPct)}
               </span>
             </>
           )}
@@ -108,9 +108,7 @@ export function HistoricalMarginContext({
           <span className="text-muted-foreground">{formatWeeksAgoShort(weeksSinceLastSale)}</span>
         </div>
       ) : (
-        <div className="mt-1 text-xs text-muted-foreground">
-          Нет продаж за последние 12 недель
-        </div>
+        <div className="mt-1 text-xs text-muted-foreground">Нет продаж за последние 12 недель</div>
       )}
 
       {/* History Link - PO Decision Q3: Same tab navigation */}

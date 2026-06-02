@@ -38,7 +38,8 @@ describe('HistoricalMarginContext', () => {
 
     it('renders margin percentage with positive value in green', () => {
       render(<HistoricalMarginContext {...defaultProps} />)
-      const marginText = screen.getByText('92.32%')
+      // iter-66: Russian locale "92,32 %" (comma + NBSP), was "92.32%" dot-locale.
+      const marginText = screen.getByText(/92,32\s%/)
       expect(marginText).toBeInTheDocument()
       expect(marginText).toHaveClass('text-green-600')
     })
@@ -93,7 +94,7 @@ describe('HistoricalMarginContext', () => {
 
     it('renders margin percentage with negative value in red', () => {
       render(<HistoricalMarginContext {...negativeMarginProps} />)
-      const marginText = screen.getByText('-5.23%')
+      const marginText = screen.getByText(/-5,23\s%/)
       expect(marginText).toBeInTheDocument()
       expect(marginText).toHaveClass('text-red-600')
     })
@@ -107,7 +108,8 @@ describe('HistoricalMarginContext', () => {
 
     it('renders margin percentage with zero value in gray', () => {
       render(<HistoricalMarginContext {...zeroMarginProps} />)
-      const marginText = screen.getByText('0.00%')
+      // iter-66: zero margin now "0,0 %" (formatPercentage min 1 decimal), was "0.00%".
+      const marginText = screen.getByText(/0,0\s%/)
       expect(marginText).toBeInTheDocument()
       expect(marginText).toHaveClass('text-gray-500')
     })
@@ -123,7 +125,8 @@ describe('HistoricalMarginContext', () => {
       render(<HistoricalMarginContext {...disabledMarginProps} />)
       expect(screen.getByText('W44')).toBeInTheDocument()
       expect(screen.getByText(/5 шт/)).toBeInTheDocument()
-      expect(screen.queryByText('92.32%')).not.toBeInTheDocument()
+      // iter-66: assert the margin (now rendered "92,32 %") is hidden when display is disabled.
+      expect(screen.queryByText(/92,32/)).not.toBeInTheDocument()
     })
 
     it('still renders history link', () => {

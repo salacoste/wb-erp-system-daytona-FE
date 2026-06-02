@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Loader2 } from 'lucide-react'
 import { MissingDataReasonDisplay } from './product-margin-cell/MissingDataReasonDisplay'
 import { CalculationInProgressDisplay } from './product-margin-cell/CalculationInProgressDisplay'
+import { formatPercentage } from '@/lib/utils'
 import type { ProductListItem } from '@/types/api'
 
 export interface ProductMarginCellProps {
@@ -89,7 +90,7 @@ export function ProductMarginCell({
 
     return (
       <span className={`text-sm font-medium ${marginColor}`}>
-        {product.current_margin_pct!.toFixed(1)}%
+        {formatPercentage(product.current_margin_pct!)}
       </span>
     )
   }
