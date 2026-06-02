@@ -163,12 +163,18 @@ describe('getMapeDeltaColor', () => {
 })
 
 describe('formatMapeDelta', () => {
-  it('returns formatted string with sign for positive delta', () => {
-    expect(formatMapeDelta(10.0, 14.0)).toBe('+4.0%')
+  it('returns Russian-locale string with + sign for positive delta', () => {
+    // formatPercentage → comma+NBSP ("4,0 %"); regex per locale-assertion rule
+    expect(formatMapeDelta(10.0, 14.0)).toMatch(/\+4,0\s%/)
   })
 
-  it('returns formatted string with minus for negative delta', () => {
-    expect(formatMapeDelta(14.0, 10.0)).toBe('-4.0%')
+  it('returns Russian-locale string with minus for negative delta', () => {
+    // Intl ru-RU uses ASCII hyphen '-' (U+002D); char class [-−] is robust to U+2212
+    expect(formatMapeDelta(14.0, 10.0)).toMatch(/[-−]4,0\s%/)
+  })
+
+  it('returns Russian-locale "0,0 %" with no + sign for zero delta', () => {
+    expect(formatMapeDelta(12.5, 12.5)).toMatch(/^0,0\s%/)
   })
 
   it('returns null when prevMape is null (AP#8 compliance)', () => {
@@ -240,7 +246,8 @@ describe('MapeTrendTooltip', () => {
     ]
     render(<MapeTrendTooltip active={true} payload={payload} />)
     expect(screen.getByText(/Дата:/)).toBeTruthy()
-    expect(screen.getByText(/MAPE: 12.4%/)).toBeTruthy()
+    // formatPercentage → Russian comma+NBSP locale ("12,4 %"); regex per locale-assertion rule
+    expect(screen.getByText(/MAPE: 12,4\s%/)).toBeTruthy()
     expect(screen.getByText(/SKU: 500/)).toBeTruthy()
   })
 

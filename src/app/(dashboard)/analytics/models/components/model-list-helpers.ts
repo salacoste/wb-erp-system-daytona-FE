@@ -5,7 +5,7 @@
  */
 
 import type { ModelEngine, ModelStatus } from '@/types/ai/models'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatPercentage } from '@/lib/utils'
 
 /** Capitalised engine display names per backend integration guide convention. */
 export const ENGINE_LABELS: Record<ModelEngine, string> = {
@@ -64,16 +64,23 @@ export const STATUS_BADGE_CONFIG: Record<
 
 /**
  * Format MAPE value for display.
- * Backend sends 0-100 scale (e.g. 12 = 12% MAPE).
+ * Backend sends 0-100 magnitude (e.g. 12 = 12% MAPE); formatPercentage divides by 100.
  * Anti-Pattern #8 compliance: null → '—', never '0%'.
  * Source: docs/AI-FRONTEND-INTEGRATION-GUIDE.md ("MAPE degraded from 12% to 45%").
+ *
+ * 0-guard field-semantics (do NOT generalise to the evaluations page):
+ *   - model-level `metrics.mape` → 0 is the #185 train-time un-evaluated SENTINEL
+ *     (a real 0.0% MAPE is statistically implausible), so guard 0 → '—' here.
+ *   - shadow-eval cabinetMape / per-eval MAPE → 0 is a real measurement, so those
+ *     renders guard null only (see EvaluationsHeaderCard / ModelPerformanceDetail).
  */
 export function formatMape(mape: number | null): string {
   // F-39: backend hardcodes mape:0 as a placeholder for un-evaluated models (see #185).
   // A real 0.0% MAPE is statistically impossible, so 0 means "not evaluated" → '—'
-  // (rendering "0.0%" would imply a perfect model). Treat 0 like null.
+  // (rendering "0,0 %" would imply a perfect model). Treat 0 like null.
   if (mape === null || mape === 0) return '—'
-  return `${mape.toFixed(1)}%`
+  // 0-100 magnitude → formatPercentage (Russian comma+NBSP "12,4 %"); not dot-locale.
+  return formatPercentage(mape)
 }
 
 /**

@@ -73,6 +73,9 @@ export function EvaluationsHeaderCard({ model, data, modelId }: EvaluationsHeade
           <div className="rounded-lg border p-4">
             <p className="text-sm text-muted-foreground">Средняя точность (MAPE)</p>
             <p className="text-2xl font-semibold mt-1">
+              {/* cabinetMape is the SHADOW-EVAL average across this model's evaluations
+                  (null when un-evaluated — NOT the model-level metrics.mape:0 #185 sentinel),
+                  so a 0 here is a real (if implausible) measurement: guard null only, never 0. */}
               {cabinetMape !== null ? formatPercentage(cabinetMape) : '—'}
             </p>
           </div>

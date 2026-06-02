@@ -297,6 +297,14 @@ describe('EvaluationsList', () => {
     expect(cards.length).toBeGreaterThanOrEqual(1)
   })
 
+  it('cabinetMape 0 renders "0,0 %" — shadow-eval avg, a real (implausible) value, NOT the #185 sentinel', () => {
+    setup({}, { data: makeEvalData({ cabinetMape: 0, evaluations: [] }) })
+    render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
+    // cabinetMape is the shadow-eval average (null when un-evaluated, never the model-level
+    // metrics.mape:0 sentinel), so a real 0 must render as "0,0 %", not be hidden as "—".
+    expect(screen.getByText(/0,0\s%/)).toBeTruthy()
+  })
+
   it('AP#8: evaluatedAt null renders em-dash', () => {
     setup({}, { data: makeEvalData({ evaluatedAt: null, evaluations: [] }) })
     render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })

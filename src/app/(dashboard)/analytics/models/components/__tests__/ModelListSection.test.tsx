@@ -111,8 +111,8 @@ describe('formatMape', () => {
   it('null → —  (AP#8: null means unknown, not zero)', () => {
     expect(formatMape(null)).toBe('—')
   })
-  it('12.4 → 12.4% (0-100 scale, no ×100)', () => {
-    expect(formatMape(12.4)).toBe('12.4%')
+  it('12.4 → 12,4 % (0-100 scale, no ×100; Russian comma+NBSP locale)', () => {
+    expect(formatMape(12.4)).toMatch(/^12,4\s%/)
   })
   it('0 → — (F-39: backend hardcodes mape:0 for un-evaluated models — not a perfect score)', () => {
     expect(formatMape(0)).toBe('—')
@@ -225,8 +225,8 @@ describe('ModelListSection — happy path', () => {
 
   it('MAPE non-null renders value without ×100 (post-1st-pass M-2)', () => {
     renderSection()
-    // modelActive.metrics.mape = 12.4 → '12.4%' (0-100 scale confirmed)
-    expect(screen.getByText('12.4%')).toBeTruthy()
+    // modelActive.metrics.mape = 12.4 → '12,4 %' (0-100 scale; Russian locale comma+NBSP)
+    expect(screen.getByText(/12,4\s%/)).toBeTruthy()
   })
 
   it('trainedAt valid date renders DD.MM.YYYY (post-1st-pass M-1/M-2)', () => {

@@ -4,6 +4,7 @@
  * Story 109.5-FE.
  */
 
+import { formatPercentage } from '@/lib/utils'
 import type { DriftStatus } from '@/types/ai/models'
 
 /** Drift badge config — colour + Russian label per AC-4. Exported for direct unit testing. */
@@ -55,8 +56,9 @@ export function getMapeDeltaColor(
 export function formatMapeDelta(prev: number | null, current: number | null): string | null {
   if (prev === null || current === null) return null
   const delta = current - prev
-  const sign = delta > 0 ? '+' : ''
-  return `${sign}${delta.toFixed(1)}%`
+  // formatPercentage renders Russian comma+NBSP locale (e.g. "4,0 %"); the '+' prefix
+  // is added only for strictly-positive deltas (Intl already adds '-' for negatives).
+  return (delta > 0 ? '+' : '') + formatPercentage(delta)
 }
 
 /**

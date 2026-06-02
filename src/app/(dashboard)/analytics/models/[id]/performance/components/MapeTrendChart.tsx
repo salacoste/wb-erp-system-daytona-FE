@@ -16,7 +16,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatPercentage } from '@/lib/utils'
 import { formatMapeTick } from './model-performance-helpers'
 import type { MapeTrendEntry } from '@/types/ai/models'
 
@@ -32,7 +32,7 @@ export function MapeTrendTooltip({ active, payload }: MapeTrendTooltipProps) {
   return (
     <div className="rounded border border-border bg-background px-3 py-2 shadow-sm text-sm space-y-1">
       <p className="font-medium">Дата: {formatDate(entry.evaluationDate)}</p>
-      <p>MAPE: {entry.cabinetMape != null ? `${entry.cabinetMape.toFixed(1)}%` : '—'}</p>
+      <p>MAPE: {entry.cabinetMape != null ? formatPercentage(entry.cabinetMape) : '—'}</p>
       <p>SKU: {entry.skuCount}</p>
     </div>
   )
