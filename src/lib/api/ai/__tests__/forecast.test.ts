@@ -1,12 +1,14 @@
 /**
  * AI Forecast normalizer tests — Story 108.1-FE
  * Covers extended prediction fields (predictedRevenue, naiveBaseline, aiVsNaive,
- * forecastId, horizonDays), structured rollbackNotice shape, confidence 0-100→0-1
- * boundary normalization, and legacy string rollbackNotice wrapping.
+ * forecastId, horizonDays), structured rollbackNotice shape, confidence
+ * magnitude-detection normalization (F-17: backend scale is inconsistent —
+ * percentage >1 vs probability ≤1 both map to 0-1), and legacy string rollbackNotice wrapping.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { normalizeAiForecastResponse } from '../forecast'
+import { getConfidenceBand } from '@/types/ai-forecast'
 
 describe('normalizeAiForecastResponse — extended fields', () => {
   const base = {
@@ -25,12 +27,75 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].predictedSales).toBe(42.5)
   })
 
-  it('normalizes confidence from backend 0-100 to canonical 0-1 (Fix 1)', () => {
+  it('normalizes a percentage-scale (>1) confidence to 0-1 (e.g. 82 → 0.82)', () => {
     const result = normalizeAiForecastResponse({
       ...base,
       predictions: [{ forecastDate: '2026-05-17', predictedUnits: 42.5, confidence: 82 }],
     })
     expect(result.predictions[0].confidence).toBeCloseTo(0.82)
+  })
+
+  // Validation F-17: live backend emits 0-1 already (prophet ~0.80). The old
+  // blanket /100 collapsed these to ~0.8% → all forecasts showed "low" band.
+  it('preserves an already-0-1 confidence verbatim (live-reality regression guard)', () => {
+    const result = normalizeAiForecastResponse({
+      ...base,
+      predictions: [{ forecastDate: '2026-05-17', predictedUnits: 42.5, confidence: 0.797 }],
+    })
+    expect(result.predictions[0].confidence).toBeCloseTo(0.797)
+  })
+
+  it('clamps out-of-range confidence to [0,1]', () => {
+    const r = normalizeAiForecastResponse({
+      ...base,
+      predictions: [
+        { forecastDate: '2026-05-17', predictedUnits: 1, confidence: 150 },
+        { forecastDate: '2026-05-18', predictedUnits: 1, confidence: -0.5 },
+      ],
+    })
+    expect(r.predictions[0].confidence).toBe(1)
+    expect(r.predictions[1].confidence).toBe(0)
+  })
+
+  it('keeps exactly 1.0 as 1.0 (0-1 upper bound — boundary is strict >1, not >=1)', () => {
+    const r = normalizeAiForecastResponse({
+      ...base,
+      predictions: [{ forecastDate: '2026-05-17', predictedUnits: 1, confidence: 1 }],
+    })
+    expect(r.predictions[0].confidence).toBe(1)
+  })
+
+  it('treats just-above-1 as percentage scale (1.0001 → ~0.01)', () => {
+    const r = normalizeAiForecastResponse({
+      ...base,
+      predictions: [{ forecastDate: '2026-05-17', predictedUnits: 1, confidence: 1.0001 }],
+    })
+    expect(r.predictions[0].confidence).toBeCloseTo(0.010001)
+  })
+
+  it('non-finite confidence (NaN/Infinity) → null', () => {
+    const r = normalizeAiForecastResponse({
+      ...base,
+      predictions: [
+        { forecastDate: '2026-05-17', predictedUnits: 1, confidence: NaN },
+        { forecastDate: '2026-05-18', predictedUnits: 1, confidence: Infinity },
+      ],
+    })
+    expect(r.predictions[0].confidence).toBeNull()
+    expect(r.predictions[1].confidence).toBeNull()
+  })
+
+  // F-17 user-visible regression guard: the live 0.797 must land in 'high', not
+  // 'low' (the old /100 made it 0.008 → always 'low'). This is the test that
+  // would have caught the original bug end-to-end (normalizer → band).
+  it('a live 0-1 confidence (0.797) normalizes to the "high" band, not "low"', () => {
+    const r = normalizeAiForecastResponse({
+      ...base,
+      predictions: [{ forecastDate: '2026-05-17', predictedUnits: 42.5, confidence: 0.797 }],
+    })
+    const c = r.predictions[0].confidence
+    expect(c).not.toBeNull()
+    expect(getConfidenceBand(c as number)).toBe('high')
   })
 
   it('preserves nullable money fields as null when missing', () => {

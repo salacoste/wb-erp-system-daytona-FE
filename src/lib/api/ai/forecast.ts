@@ -40,14 +40,35 @@ interface RawAiForecastResponse {
   rollbackNotice?: RawRollbackNotice | string | null
 }
 
+/**
+ * Validation F-17: the backend confidence scale is INCONSISTENT — the DTO
+ * (prediction.dto.ts) documents 0-100 (example 82.5), but the live engines emit
+ * 0-1 (prophet ~0.80, BASELINE_FALLBACK_CONFIDENCE = 0.3). A blanket `/100`
+ * collapsed real 0-1 values to ~0.8% (all forecasts showed "low" band + giant
+ * confidence bands). Detect by magnitude — >1 is a percentage (0-100), ≤1 is a
+ * probability (0-1) — so BOTH scales normalize to canonical 0-1. Clamp to [0,1].
+ * The whole FE pipeline (ForecastTable `confidence*100`, getConfidenceBand,
+ * chart `1−confidence` band) expects 0-1.
+ *
+ * Known ambiguity: a 0-100 value of exactly 1.0 (1%) is indistinguishable from a
+ * 0-1 value of 1.0 (100%) and is treated as 100% — acceptable because live engines
+ * emit 0-1 and the `>1` branch is effectively dead for them.
+ * PENDING BACKEND: Request #180 — once the backend guarantees a single scale
+ * (and fixes the stale 0-100 DTO doc), drop this heuristic for a plain clamp.
+ */
+function scaleConfidence(raw: unknown): number | null {
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) return null
+  const v = raw > 1 ? raw / 100 : raw
+  return Math.min(1, Math.max(0, v))
+}
+
 function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
   return {
     date: p.forecastDate,
     horizonDays: p.horizonDays ?? 0,
     predictedSales: p.predictedUnits,
     predictedRevenue: p.predictedRevenue ?? null,
-    // Backend sends 0-100; normalize to 0-1 at boundary (Boundary Normalizer Pattern)
-    confidence: typeof p.confidence === 'number' ? p.confidence / 100 : null,
+    confidence: scaleConfidence(p.confidence),
     nmId: p.nmId,
     vendorCode: p.vendorCode,
     naiveBaseline: p.naiveBaseline ?? null,

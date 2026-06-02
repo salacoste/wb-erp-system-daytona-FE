@@ -9,8 +9,9 @@ import { describe, it, expect } from 'vitest'
 import { normalizeAiForecastResponse } from '../ai-forecast-api'
 
 describe('normalizeAiForecastResponse', () => {
-  it('renames forecastDate → date and predictedUnits → predictedSales, normalizes confidence 0-100→0-1', () => {
-    // Backend sends confidence as 0-100; normalizer divides by 100 at the boundary.
+  it('renames forecastDate → date and predictedUnits → predictedSales, scales percentage-form confidence to 0-1', () => {
+    // F-17: confidence uses magnitude detection (>1 → /100). 42/85 are >1 so they
+    // map to 0.42/0.85; live 0-1 values pass through. See scaleConfidence + Request #180.
     const raw = {
       predictions: [
         { forecastDate: '2026-05-15', predictedUnits: 2.5, confidence: 42 },
