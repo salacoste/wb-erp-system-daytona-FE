@@ -62,8 +62,10 @@ export function useWarehouseFormState({
   }, [tariffSystem, selectedWarehouse, supplyTariffs])
 
   const dailyStorageCost = useMemo(
-    () => calculateDailyStorage(effectiveTariffs, volumeLiters),
-    [effectiveTariffs, volumeLiters]
+    // price-calc DEFECT-1: thread boxType so Pallets (5) use the fixed volume-independent storage
+    // formula (was defaulting to Boxes → overstated pallet storage > 1 L, inflating the price).
+    () => calculateDailyStorage(effectiveTariffs, volumeLiters, boxType),
+    [effectiveTariffs, volumeLiters, boxType]
   )
   const logisticsForwardRub = useMemo(
     () => calculateLogisticsForward(effectiveTariffs, volumeLiters),

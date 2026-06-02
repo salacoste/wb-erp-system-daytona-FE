@@ -24,17 +24,23 @@ export function calculateVolumeLiters(lengthCm: number, widthCm: number, heightC
   return (lengthCm * widthCm * heightCm) / 1000
 }
 
-/** Calculate daily storage cost from effective tariffs and volume */
+/**
+ * Calculate daily storage cost from effective tariffs and volume.
+ * `boxType` is REQUIRED and threaded into calculateDailyStorageCost — Pallets (boxType=5) use a
+ * VOLUME-INDEPENDENT fixed formula (base × coefficient), so omitting it (defaulting to Boxes=2)
+ * overstates pallet storage for products > 1 L and inflates the recommended price.
+ */
 export function calculateDailyStorage(
   effectiveTariffs: ExtractedTariffs,
-  volumeLiters: number
+  volumeLiters: number,
+  boxType: BoxTypeId
 ): number {
   const tariff = {
     basePerDayRub: effectiveTariffs.storageBaseLiterRub,
     perLiterPerDayRub: effectiveTariffs.storagePerLiterRub,
     coefficient: effectiveTariffs.storageCoefficient,
   }
-  return calculateDailyStorageCost(volumeLiters, tariff)
+  return calculateDailyStorageCost(volumeLiters, tariff, boxType)
 }
 
 /** Calculate logistics forward cost from effective tariffs and volume */
