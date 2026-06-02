@@ -108,6 +108,11 @@ export interface SearchOrdersSummary {
   totalSearchOrders: number
   // Story 91.1-FE: totalSearchRevenue removed. Story 119.1-FE 1st-pass F-2: widened to `number | null` per AP#8 (UI renders '—')
   searchOrderShare: number | null
+  // Story 111.6 AC8 (Request #176 Problem B): backend flags a >100% share — WB
+  // attributes one order to several queries (same ROOT CAUSE as funnel
+  // buyoutConversion>100%; F-6 introduces the preserve+indicate UI treatment for it,
+  // which funnel does not yet have). Preserve + INDICATE per Defensive Frontend (don't clamp).
+  searchOrderShareInflated?: boolean
 }
 
 export interface SearchOrdersResponse {

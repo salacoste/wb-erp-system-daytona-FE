@@ -50,7 +50,9 @@ export function emptySearchOrdersResponse(
     period: { from: '', to: '' },
     groupBy: 'query',
     items: [],
-    summary: { totalSearchOrders: 0, searchOrderShare: null },
+    // searchOrderShareInflated: false keeps this fixture normalize-stable (the
+    // normalizer always emits the boolean per F-6 / Request #176 resolution).
+    summary: { totalSearchOrders: 0, searchOrderShare: null, searchOrderShareInflated: false },
     ...overrides,
   }
 }

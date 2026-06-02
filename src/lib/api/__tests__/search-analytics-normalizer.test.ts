@@ -176,6 +176,37 @@ describe('normalizeSearchOrdersResponse', () => {
     // to null (unknown). Asserting 0 here was the pre-F-2 contract.
     expect(r.summary.searchOrderShare).toBeNull()
   })
+
+  // F-6 (validation-tracker; Request #176 resolved): preserve the inflation flag
+  it('preserves searchOrderShareInflated=true for a >100% share', () => {
+    const r = normalizeSearchOrdersResponse({
+      period: { from: '2026-05-01', to: '2026-06-02' },
+      groupBy: 'query',
+      items: [],
+      summary: { totalSearchOrders: 10, searchOrderShare: 176.38, searchOrderShareInflated: true },
+    })
+    expect(r.summary.searchOrderShare).toBe(176.38)
+    expect(r.summary.searchOrderShareInflated).toBe(true)
+  })
+
+  it('searchOrderShareInflated defaults to false when absent or non-boolean', () => {
+    const absent = normalizeSearchOrdersResponse({ summary: { searchOrderShare: 12.5 } })
+    expect(absent.summary.searchOrderShareInflated).toBe(false)
+    const garbage = normalizeSearchOrdersResponse({
+      summary: { searchOrderShare: 12.5, searchOrderShareInflated: 'yes' },
+    })
+    expect(garbage.summary.searchOrderShareInflated).toBe(false)
+  })
+
+  // Normalizer preserves both fields independently; the COMPONENT gates the
+  // indicator on share != null so a (null, true) shape never renders "— ⚠" (F-6 review P2-2).
+  it('preserves the (share=null, inflated=true) shape verbatim — gating is the UI layer', () => {
+    const r = normalizeSearchOrdersResponse({
+      summary: { searchOrderShare: null, searchOrderShareInflated: true },
+    })
+    expect(r.summary.searchOrderShare).toBeNull()
+    expect(r.summary.searchOrderShareInflated).toBe(true)
+  })
 })
 
 // --- normalizeSearchQueryItem ---------------------------------------------

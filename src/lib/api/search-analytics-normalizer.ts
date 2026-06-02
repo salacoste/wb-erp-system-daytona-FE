@@ -16,10 +16,11 @@
  * post-119.1 but survive if the boundary guard is ever bypassed.
  *
  * Defensive Frontend (CLAUDE-PATTERNS.md): searchOrderShare > 100 (observed
- * 394.23 per Story 117.2-FE) is PRESERVED, not clamped. PENDING BACKEND:
- * Request #176 (filed via Story 119.1-FE 1st-pass F-9 — covers both the
- * `key` shape contract and the >100% share anomaly; cross-links Request #175
- * which explicitly disclaims this scope per its line 40).
+ * 394.23 per Story 117.2-FE, 176.38 live) is PRESERVED, not clamped. Request
+ * #176 RESOLVED: the >100% share flag `searchOrderShareInflated` landed in
+ * Story 111.6 AC8 (Problem B), the `key` string-shape contract in Story 111.7
+ * (Problem A); both cross-link Request #175 which disclaims this scope (its
+ * line 40). F-6 consumes the flag to render an Info indicator.
  *
  * AP#8 split (active rule, not forward-looking): Ratio/money fields preserve
  * null via `toNullableNumber`; counts use `?? 0` via `toCount` per the AP#8
@@ -196,14 +197,14 @@ export function normalizeSearchOrdersResponse(raw: unknown): SearchOrdersRespons
     items,
     summary: {
       totalSearchOrders: toCount(summary.totalSearchOrders),
-      // PENDING BACKEND: Request #176 (filed via Story 119.1-FE 1st-pass F-9;
-      // covers `key` shape + >100% share anomaly observed 394.23 per Story
-      // 117.2-FE; cross-links Request #175 which disclaims this scope per
-      // its line 40). Backend may return >100 — preserve raw per Defensive
-      // Frontend; UI decides whether to render a warning.
-      // Story 119.1-FE 1st-pass F-2 (AP#8): toNullableNumber, NOT toCount —
-      // null preserved (UI renders '—'); 0 means "known zero".
+      // Request #176 RESOLVED: >100% share is real (WB multi-attributes one order
+      // across queries; observed 176.38/394.23). Preserve raw per Defensive
+      // Frontend; AP#8 toNullableNumber (null→'—', 0=known zero).
       searchOrderShare: toNullableNumber(summary.searchOrderShare),
+      // searchOrderShareInflated flag = Story 111.6 AC8 (Problem B). `=== true`
+      // matches the funnel-normalizer hasMore boolean coercion (absent → false).
+      // Preserved so the UI shows an Info indicator instead of silently misleading.
+      searchOrderShareInflated: summary.searchOrderShareInflated === true,
     },
   }
 }

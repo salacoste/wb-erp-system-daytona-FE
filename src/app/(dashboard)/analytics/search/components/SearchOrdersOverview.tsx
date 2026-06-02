@@ -13,9 +13,19 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 // Story 91.1-FE: DollarSign removed — was only used by the deleted 'Выручка от поиска' card
-import { ShoppingCart, Percent, AlertCircle } from 'lucide-react'
+import { ShoppingCart, Percent, AlertCircle, Info } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { SearchOrdersSummary } from '@/types/search-analytics'
 import { SearchOrdersTable } from './SearchOrdersTable'
+
+// F-6 (Request #176 / Story 111.6 AC8): a >100% search-order share is EXPECTED —
+// WB attributes one order to several search queries (an interaction rate, "by
+// design" per the backend). So this is an Info affordance, NOT a warning; the raw
+// value is preserved (never clamped) per the Defensive Frontend Principle.
+// Single source of truth for tooltip + aria-label (per OrdersTableRow.tsx #165 convention).
+const INFLATED_SHARE_MESSAGE =
+  'Доля >100% — это норма: WB засчитывает один заказ нескольким поисковым запросам ' +
+  '(показатель интенсивности поиска). Значение показано как есть, без округления.'
 
 interface SearchOrdersOverviewProps {
   from: string
@@ -89,6 +99,7 @@ function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
       icon: ShoppingCart,
       color: 'text-blue-600',
       fmt: formatNumber,
+      inflated: false,
     },
     // Story 91.1-FE: 'Выручка от поиска' card removed — backend dropped totalSearchRevenue
     {
@@ -97,6 +108,9 @@ function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
       icon: Percent,
       color: 'text-orange-600',
       fmt: formatPercent,
+      // F-6 (#176 resolved): >100% means WB multi-attributed the order across
+      // queries — preserve the raw value + flag it, never clamp (Defensive Frontend).
+      inflated: summary.searchOrderShareInflated === true,
     },
   ]
 
@@ -113,7 +127,28 @@ function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{card.label}</p>
-                <p className="text-2xl font-bold">{card.fmt(card.value)}</p>
+                <p className="flex items-center gap-1.5 text-2xl font-bold">
+                  {card.fmt(card.value)}
+                  {/* F-6: only when the flag is set AND a real >100% value is shown
+                      (never a warning next to '—'). Info affordance — expected, not error. */}
+                  {card.inflated && card.value != null && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span
+                            className="inline-flex cursor-help text-muted-foreground"
+                            aria-label={INFLATED_SHARE_MESSAGE}
+                          >
+                            <Info className="h-4 w-4" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          {INFLATED_SHARE_MESSAGE}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </p>
               </div>
             </CardContent>
           </Card>

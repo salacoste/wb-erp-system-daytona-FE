@@ -64,6 +64,44 @@ describe('SearchOrdersOverview', () => {
     })
   })
 
+  // F-6 (Request #176 / Story 111.6 AC8): >100% share inflation Info indicator
+  describe('inflation indicator', () => {
+    function withSummary(summary: SearchOrdersResponse['summary']) {
+      mockUseSearchOrders.mockReturnValue({
+        data: { ...mockData, summary },
+        isLoading: false,
+        isError: false,
+      })
+    }
+
+    it('shows the Info indicator for a >100% inflated share, preserving the raw value', () => {
+      withSummary({
+        totalSearchOrders: 10,
+        searchOrderShare: 176.38,
+        searchOrderShareInflated: true,
+      })
+      renderOverview()
+      expect(screen.getByLabelText(/WB засчитывает один заказ/)).toBeInTheDocument()
+      expect(screen.getByText(/176[.,]4/)).toBeInTheDocument() // raw, not clamped
+    })
+
+    it('hides the indicator when not inflated', () => {
+      withSummary({
+        totalSearchOrders: 10,
+        searchOrderShare: 42.5,
+        searchOrderShareInflated: false,
+      })
+      renderOverview()
+      expect(screen.queryByLabelText(/WB засчитывает один заказ/)).not.toBeInTheDocument()
+    })
+
+    it('hides the indicator when share is null even if inflated=true (no warning next to —)', () => {
+      withSummary({ totalSearchOrders: 0, searchOrderShare: null, searchOrderShareInflated: true })
+      renderOverview()
+      expect(screen.queryByLabelText(/WB засчитывает один заказ/)).not.toBeInTheDocument()
+    })
+  })
+
   describe('table rendering', () => {
     beforeEach(() => {
       mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })

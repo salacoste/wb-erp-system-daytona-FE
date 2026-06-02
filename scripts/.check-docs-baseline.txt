@@ -29,5 +29,3 @@ src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
 src/lib/daily/aggregation.ts:155 | line 155 > file has 116 lines
 src/products/products.service.ts:210-259 | file not found
 src/products/products.service.ts:83-182 | file not found
-src/types/search-analytics.ts:115-120 | line 120 > file has 118 lines
-src/types/search-analytics.ts:87-120 | line 120 > file has 118 lines
