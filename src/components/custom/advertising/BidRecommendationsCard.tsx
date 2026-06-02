@@ -163,11 +163,14 @@ function KeywordRow({ data }: { data: KeywordBidRange }) {
     <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 text-sm">
       <span className="truncate font-medium">{data.keyword}</span>
       <div className="flex items-center gap-2">
+        {/* iter-70: guard ≤0 → "—" (consistent with BidLevel) so an absent reach tier (normalized
+            to 0) shows "—" not a misleading "0 ₽" (anti-pattern #8). */}
         <span className="text-muted-foreground">
-          {formatCurrency(data.minBid)} — {formatCurrency(data.maxBid)}
+          {data.minBid > 0 ? formatCurrency(data.minBid) : '—'} —{' '}
+          {data.maxBid > 0 ? formatCurrency(data.maxBid) : '—'}
         </span>
         <Badge variant="outline" className="text-xs">
-          {formatCurrency(data.recommendedBid)}
+          {data.recommendedBid > 0 ? formatCurrency(data.recommendedBid) : '—'}
         </Badge>
       </div>
     </div>
