@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAiModels } from '@/hooks/useAiModels'
-import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
+import { getModelTypeLabel } from '@/types/ai/forecast'
 import { ROUTES, buildModelPerformanceRoute } from '@/lib/routes'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -124,7 +124,7 @@ export function ModelListSection() {
                       }
                     }}
                   >
-                    <TableCell>{MODEL_TYPE_LABELS[model.modelType]}</TableCell>
+                    <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
                     <TableCell>{ENGINE_LABELS[model.engine]}</TableCell>
                     <TableCell>v{model.version}</TableCell>
                     <TableCell>

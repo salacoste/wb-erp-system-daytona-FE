@@ -4,35 +4,30 @@
  */
 
 import { formatPercentage } from '@/lib/utils'
-import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
+import {
+  MODEL_TYPE_LABELS,
+  MANAGEMENT_MODEL_TYPE_LABELS,
+  getModelTypeLabel,
+} from '@/types/ai/forecast'
 import type { AiModel } from '@/types/ai/models'
 
 export type SortCol = 'version' | 'mape' | 'createdAt'
 export type SortDir = 'asc' | 'desc'
 
 /**
- * Russian labels for the model types the admin endpoint returns (Validation F-40).
- * The admin table lists models of ALL types (anomaly_detection, return_prediction, …),
- * which is a wider set than the forecast-page ModelType union — so this is a dedicated,
- * string-keyed map (NOT the forecast ModelType union, to avoid polluting the forecast
- * model-type selector). Unknown types fall back to the raw value via getModelTypeLabel.
+ * Russian labels for every model type the admin endpoint returns (forecast union + management
+ * types like anomaly_detection / return_prediction / *_daily).
+ * iter-64: the management labels + getModelTypeLabel were consolidated into the canonical
+ * @/types/ai/forecast (this file previously duplicated them + a same-named getModelTypeLabel with
+ * a divergent fallback). ADMIN_MODEL_TYPE_LABELS is now the spread of both canonical maps, and
+ * getModelTypeLabel is re-exported (single source of truth; identical raw fallback for unknowns).
  */
 export const ADMIN_MODEL_TYPE_LABELS: Record<string, string> = {
-  // Shared forecast types reuse the canonical labels (single source of truth — so the
-  // same model shows the SAME Russian label on the public /analytics/models page and here).
   ...MODEL_TYPE_LABELS,
-  // Admin-only types (not in the forecast ModelType union / public selector):
-  sales_forecast_daily: 'Прогноз продаж (день)',
-  return_prediction: 'Прогноз возвратов',
-  return_prediction_daily: 'Прогноз возвратов (день)',
-  anomaly_detection: 'Детекция аномалий',
-  anomaly_detection_daily: 'Детекция аномалий (день)',
+  ...MANAGEMENT_MODEL_TYPE_LABELS,
 }
 
-/** Localized model-type label; falls back to the raw backend value for unknown types. */
-export function getModelTypeLabel(modelType: string): string {
-  return ADMIN_MODEL_TYPE_LABELS[modelType] ?? modelType
-}
+export { getModelTypeLabel }
 
 export const STATUS_LABELS: Record<string, string> = {
   active: 'Активна',

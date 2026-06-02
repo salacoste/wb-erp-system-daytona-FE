@@ -9,7 +9,7 @@
 import Link from 'next/link'
 import { useModelPerformance } from '@/hooks/useModelPerformance'
 import { useAiModels } from '@/hooks/useAiModels'
-import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
+import { getModelTypeLabel } from '@/types/ai/forecast'
 import { ROUTES, buildModelEvaluationsRoute } from '@/lib/routes'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -138,7 +138,7 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
             </Button>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-            <span>{MODEL_TYPE_LABELS[model.modelType]}</span>
+            <span>{getModelTypeLabel(model.modelType)}</span>
             <span>v{model.version}</span>
             <Badge variant="outline" className={statusBadge.className}>
               {statusBadge.label}

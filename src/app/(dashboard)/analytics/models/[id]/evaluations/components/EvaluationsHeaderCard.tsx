@@ -11,7 +11,7 @@
 import { useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
+import { getModelTypeLabel } from '@/types/ai/forecast'
 import { STATUS_BADGE_CONFIG } from '../../../components/model-list-helpers'
 import { formatDate, formatPercentage } from '@/lib/utils'
 import { formatNumber } from '@/lib/fbs-analytics-formatters'
@@ -61,7 +61,7 @@ export function EvaluationsHeaderCard({ model, data, modelId }: EvaluationsHeade
           />
         </div>
         <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-          <span>{MODEL_TYPE_LABELS[model.modelType]}</span>
+          <span>{getModelTypeLabel(model.modelType)}</span>
           <span>v{model.version}</span>
           <Badge variant="outline" className={statusBadge.className}>
             {statusBadge.label}

@@ -110,3 +110,34 @@ export const MODEL_TYPE_LABELS: Record<ModelType, string> = {
   demand_forecast: 'Прогноз спроса',
   stockout_risk: 'Риск out-of-stock',
 }
+
+/**
+ * Management/admin model types the backend serves on /v1/ai/models that are NOT forecast-selectable,
+ * so they are intentionally ABSENT from ModelType/MODEL_TYPES (which feed the forecast
+ * ModelTypeSelector). Labels follow the same "_daily → (день)" convention as MODEL_TYPE_LABELS.
+ * iter-64: live cabinet served 7/15 model rows of these types (return_prediction, anomaly_detection,
+ * *_daily) — indexing MODEL_TYPE_LABELS directly rendered `undefined` in the "Тип" column.
+ */
+export const MANAGEMENT_MODEL_TYPE_LABELS: Record<string, string> = {
+  return_prediction: 'Прогноз возвратов',
+  return_prediction_daily: 'Прогноз возвратов (день)',
+  anomaly_detection: 'Детекция аномалий',
+  anomaly_detection_daily: 'Детекция аномалий (день)',
+  sales_forecast_daily: 'Прогноз продаж (день)',
+}
+
+/**
+ * CANONICAL Russian display label for ANY backend model type (forecast-selectable OR management).
+ * The /analytics/models + /ai-admin/models tables receive management types the forecast ModelType
+ * union doesn't cover; the prior `MODEL_TYPE_LABELS[modelType]` indexing rendered `undefined`.
+ * Falls back to the RAW backend value for a genuinely unknown future type — honest, never
+ * `undefined` (matches the established Story 112.1-FE admin contract; ai-admin re-exports this).
+ * Exported for direct unit testing (pure-function discipline).
+ */
+export function getModelTypeLabel(modelType: string): string {
+  return (
+    MODEL_TYPE_LABELS[modelType as ModelType] ??
+    MANAGEMENT_MODEL_TYPE_LABELS[modelType] ??
+    modelType
+  )
+}
