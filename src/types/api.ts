@@ -216,6 +216,9 @@ export type {
   BulkCogsUploadRequest,
   BulkCogsUploadResponse,
   BulkCogsUploadResponseLegacy,
+  BulkCogsResultSummary, // Validation F-34: canonical normalized bulk-COGS result
+  BulkCogsResult,
+  MarginRecalculationStatus,
   CogsValidationError,
   MissingDataReason,
   MarginAnalyticsSku,

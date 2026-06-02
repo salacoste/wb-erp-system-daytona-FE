@@ -8,7 +8,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useBulkCogsAssignment } from '../useBulkCogsAssignment'
 import { createQueryWrapper } from '@/test/utils/test-utils'
-import type { BulkCogsUploadResponse } from '@/types/cogs'
+import type { BulkCogsUploadResponse, BulkCogsUploadResponseLegacy } from '@/types/cogs'
 
 // Mock API client
 vi.mock('@/lib/api-client', () => ({
@@ -45,6 +45,67 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
   })
 
   // ==========================================================================
+  // F-34: the REAL backend shape today is the LEGACY { totalItems, createdItems,
+  // skippedItems, errors } (the endpoint ignores ?format=v2). This pins that the
+  // hook normalizes it correctly through the full pipeline (the other tests mock
+  // the v2-wrapped shape, which exercises the normalizer's defensive descent).
+  // ==========================================================================
+  describe('F-34 legacy backend shape (real production path)', () => {
+    it('normalizes the legacy { createdItems/skippedItems/errors } shape to the flat summary', async () => {
+      const legacy = {
+        totalItems: 2,
+        createdItems: 2,
+        skippedItems: 0,
+        errors: [],
+      } as unknown as BulkCogsUploadResponseLegacy
+
+      vi.mocked(apiClient.post).mockResolvedValue(legacy)
+
+      const { result } = renderHook(() => useBulkCogsAssignment(), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await act(async () => {
+        await result.current.mutate({ items: mockItems })
+      })
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(result.current.data?.succeeded).toBe(2)
+      expect(result.current.data?.failed).toBe(0)
+      // marginRecalculation is v2-only — undefined on the legacy path (per #186).
+      expect(result.current.data?.marginRecalculation).toBeUndefined()
+    })
+
+    it('maps legacy errors[] to results with success:false (failed-item retry source)', async () => {
+      const legacy = {
+        totalItems: 2,
+        createdItems: 1,
+        skippedItems: 1,
+        errors: [{ nm_id: '12345678', error: 'duplicate valid_from' }],
+      } as unknown as BulkCogsUploadResponseLegacy
+
+      vi.mocked(apiClient.post).mockResolvedValue(legacy)
+
+      const { result } = renderHook(() => useBulkCogsAssignment(), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await act(async () => {
+        await result.current.mutate({ items: mockItems })
+      })
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(result.current.data?.succeeded).toBe(1)
+      expect(result.current.data?.failed).toBe(1)
+      expect(result.current.data?.results).toEqual([
+        { nm_id: '12345678', success: false, error_message: 'duplicate valid_from' },
+      ])
+    })
+  })
+
+  // ==========================================================================
   // Margin Recalculation Field Tests (Request #118/119)
   // ==========================================================================
 
@@ -76,7 +137,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation).toEqual({
+      expect(result.current.data?.marginRecalculation).toEqual({
         weeks: ['2026-W03', '2026-W04'],
         status: 'pending',
         taskId: 'task_abc123',
@@ -106,7 +167,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation).toBeUndefined()
+      expect(result.current.data?.marginRecalculation).toBeUndefined()
     })
 
     it('should log marginRecalculation info to console', async () => {
@@ -208,8 +269,8 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       // Should still work with old format
-      expect(result.current.data?.data.succeeded).toBe(3)
-      expect(result.current.data?.data.marginRecalculation).toBeUndefined()
+      expect(result.current.data?.succeeded).toBe(3)
+      expect(result.current.data?.marginRecalculation).toBeUndefined()
     })
   })
 
@@ -245,7 +306,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation?.status).toBe('pending')
+      expect(result.current.data?.marginRecalculation?.status).toBe('pending')
     })
 
     it('should handle "in_progress" status', async () => {
@@ -275,7 +336,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation?.status).toBe('in_progress')
+      expect(result.current.data?.marginRecalculation?.status).toBe('in_progress')
     })
 
     it('should handle "completed" status', async () => {
@@ -305,7 +366,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation?.status).toBe('completed')
+      expect(result.current.data?.marginRecalculation?.status).toBe('completed')
     })
   })
 
@@ -341,7 +402,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation?.weeks).toEqual(['2026-W03'])
+      expect(result.current.data?.marginRecalculation?.weeks).toEqual(['2026-W03'])
     })
 
     it('should handle multiple weeks in weeks array', async () => {
@@ -371,7 +432,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation?.weeks).toEqual([
+      expect(result.current.data?.marginRecalculation?.weeks).toEqual([
         '2026-W03',
         '2026-W04',
         '2026-W05',
@@ -405,7 +466,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.data.marginRecalculation?.weeks).toEqual([])
+      expect(result.current.data?.marginRecalculation?.weeks).toEqual([])
     })
   })
 })

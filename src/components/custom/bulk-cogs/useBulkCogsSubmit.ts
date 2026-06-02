@@ -63,9 +63,10 @@ export function useBulkCogsSubmit({
         { items },
         {
           onSuccess: response => {
-            if (!response || typeof response !== 'object' || !('data' in response)) return
-            const bulkResponse = response as { data: { succeeded: number; failed: number } }
-            const { succeeded, failed } = bulkResponse.data
+            // F-34: response is the normalized BulkCogsResultSummary (fields top-level,
+            // not under `.data`).
+            if (!response || typeof response !== 'object' || !('succeeded' in response)) return
+            const { succeeded, failed } = response as { succeeded: number; failed: number }
 
             onPreviewClose()
             onShowResults()
@@ -105,7 +106,7 @@ export function useBulkCogsSubmit({
 
   const handleRetry = useCallback(() => {
     if (!resultData) return
-    const failedNmIds = resultData.data.results.filter(r => !r.success).map(r => r.nm_id)
+    const failedNmIds = resultData.results.filter(r => !r.success).map(r => r.nm_id)
     onSetSelection(failedNmIds)
     toast.info('Выбраны только неудачные товары', {
       description: `Повторная попытка для ${failedNmIds.length} товаров`,

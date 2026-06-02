@@ -6,7 +6,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type { BulkCogsUploadRequest, BulkCogsUploadResponse, BulkCogsItem } from '@/types/api'
+import type { BulkCogsUploadRequest, BulkCogsResultSummary, BulkCogsItem } from '@/types/api'
+import { normalizeBulkCogsResponse } from '@/lib/api/bulk-cogs-normalizer'
 
 // Re-export utils for consumers
 export { validateBulkCogsAssignment, createBulkCogsItems } from './useBulkCogsAssignment-utils'
@@ -22,7 +23,7 @@ export function useBulkCogsAssignment() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (params: BulkCogsAssignmentParams): Promise<BulkCogsUploadResponse> => {
+    mutationFn: async (params: BulkCogsAssignmentParams): Promise<BulkCogsResultSummary> => {
       const { items } = params
 
       try {
@@ -39,18 +40,19 @@ export function useBulkCogsAssignment() {
           sample_item: items[0],
         })
 
-        const response = await apiClient.post<BulkCogsUploadResponse>(
-          '/v1/products/cogs/bulk?format=v2',
-          request
-        )
+        // F-34: the endpoint returns the legacy { totalItems, createdItems, … } shape
+        // today (not v2), so normalize BOTH shapes to the canonical summary. The old
+        // `response.data.succeeded` read crashed on the legacy result (TypeError).
+        const response = await apiClient.post<unknown>('/v1/products/cogs/bulk?format=v2', request)
+        const summary = normalizeBulkCogsResponse(response)
 
         console.info('[Bulk COGS Assignment] Response:', {
-          succeeded: response.data.succeeded,
-          failed: response.data.failed,
+          succeeded: summary.succeeded,
+          failed: summary.failed,
           total: items.length,
         })
 
-        return response
+        return summary
       } catch (error) {
         console.error('[Bulk COGS Assignment] Failed:', error)
         throw error
@@ -61,7 +63,7 @@ export function useBulkCogsAssignment() {
       queryClient.invalidateQueries({ queryKey: ['analytics'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
 
-      const { succeeded, failed, results, marginRecalculation } = data.data
+      const { succeeded, failed, results, marginRecalculation } = data
 
       console.log(`✅ Bulk COGS assignment completed:`)
       console.log(`   Succeeded: ${succeeded}/${variables.items.length}`)

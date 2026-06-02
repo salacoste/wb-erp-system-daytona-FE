@@ -146,6 +146,21 @@ export interface BulkCogsUploadResponse {
   }
 }
 
+/**
+ * Canonical frontend bulk-COGS result summary. Validation F-34:
+ * `normalizeBulkCogsResponse` maps BOTH the legacy `{ totalItems, createdItems,
+ * skippedItems, errors }` shape (what `/v1/products/cogs/bulk` actually returns today)
+ * AND the v2 `{ succeeded, failed, results, message, marginRecalculation }` shape into
+ * this single canonical shape, so hooks/components never touch raw backend shapes.
+ */
+export interface BulkCogsResultSummary {
+  succeeded: number
+  failed: number
+  results: BulkCogsResult[]
+  message: string
+  marginRecalculation?: MarginRecalculationStatus
+}
+
 export interface BulkCogsUploadResponseLegacy {
   totalItems: number
   createdItems: number

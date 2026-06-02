@@ -13,7 +13,10 @@ import { getPollingStrategy } from '@/lib/margin-helpers'
 import { useMarginPollingStore } from '@/stores/marginPollingStore'
 import type { ProductListItem } from '@/types/cogs'
 import type { BulkCogsAssignmentParams } from './useBulkCogsAssignment'
-import { isMarginCalculationComplete, extractSampleIds } from './useBulkCogsAssignmentWithPolling-utils'
+import {
+  isMarginCalculationComplete,
+  extractSampleIds,
+} from './useBulkCogsAssignmentWithPolling-utils'
 
 /**
  * Hook that combines bulk COGS assignment with automatic margin polling
@@ -51,7 +54,10 @@ export function useBulkCogsAssignmentWithPolling() {
         const sampleProducts = response.products.filter(p => sampleNmIds.includes(p.nm_id))
 
         if (isMarginCalculationComplete(sampleProducts)) {
-          if (intervalId) { clearInterval(intervalId); intervalId = null }
+          if (intervalId) {
+            clearInterval(intervalId)
+            intervalId = null
+          }
           setIsPolling(false)
           setPollingAttempts(0)
           sampleNmIds.forEach(nmId => removePollingProduct(nmId))
@@ -69,7 +75,10 @@ export function useBulkCogsAssignmentWithPolling() {
         }
 
         if (attemptCount >= pollingStrategy.maxAttempts) {
-          if (intervalId) { clearInterval(intervalId); intervalId = null }
+          if (intervalId) {
+            clearInterval(intervalId)
+            intervalId = null
+          }
           setIsPolling(false)
           setPollingAttempts(0)
           setPollingTimeout(true)
@@ -110,13 +119,15 @@ export function useBulkCogsAssignmentWithPolling() {
   ) => {
     assignmentMutation.mutate(params, {
       onSuccess: response => {
-        const { succeeded, failed, marginRecalculation } = response.data
+        // F-34: `response` is the normalized BulkCogsResultSummary (fields are top-level,
+        // not under `.data` — the base hook now normalizes legacy + v2 shapes).
+        const { succeeded, failed, marginRecalculation } = response
         toast.success('Себестоимость назначена', {
           description: `Успешно: ${succeeded}, Ошибок: ${failed}`,
         })
 
         if (succeeded > 0 && marginRecalculation) {
-          const successfulItems = extractSampleIds(response.data.results)
+          const successfulItems = extractSampleIds(response.results)
           if (successfulItems.length > 0) {
             const estimatedSeconds = Math.round(pollingStrategy.estimatedTime / 1000)
             const weeksText =

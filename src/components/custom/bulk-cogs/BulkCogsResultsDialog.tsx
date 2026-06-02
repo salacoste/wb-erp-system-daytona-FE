@@ -26,13 +26,13 @@ interface ResultItem {
   error_code?: string
 }
 
+// F-34: flattened to match the canonical BulkCogsResultSummary (fields top-level, not
+// nested under `.data`). Structurally accepts BulkCogsResultSummary.
 interface ResultData {
-  data: {
-    succeeded: number
-    failed: number
-    results: ResultItem[]
-    marginRecalculation?: MarginRecalculation
-  }
+  succeeded: number
+  failed: number
+  results: ResultItem[]
+  marginRecalculation?: MarginRecalculation
 }
 
 interface PollingStrategy {
@@ -76,7 +76,7 @@ export function BulkCogsResultsDialog({
         {resultData && (
           <div className="space-y-4">
             {/* Margin Recalculation Status (Request #118/119) */}
-            {resultData.data.marginRecalculation && (
+            {resultData.marginRecalculation && (
               <Alert variant="default" className="border-blue-200 bg-blue-50">
                 <AlertCircle className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-900">
@@ -85,11 +85,11 @@ export function BulkCogsResultsDialog({
                     <div>
                       Статус:{' '}
                       <span className="font-medium">
-                        {getStatusText(resultData.data.marginRecalculation.status)}
+                        {getStatusText(resultData.marginRecalculation.status)}
                       </span>
                     </div>
-                    {resultData.data.marginRecalculation.weeks.length > 0 && (
-                      <div>Недели: {resultData.data.marginRecalculation.weeks.join(', ')}</div>
+                    {resultData.marginRecalculation.weeks.length > 0 && (
+                      <div>Недели: {resultData.marginRecalculation.weeks.join(', ')}</div>
                     )}
                   </div>
                 </AlertDescription>
@@ -97,7 +97,7 @@ export function BulkCogsResultsDialog({
             )}
 
             {/* No Margin Recalculation Warning */}
-            {resultData.data.succeeded > 0 && !resultData.data.marginRecalculation && (
+            {resultData.succeeded > 0 && !resultData.marginRecalculation && (
               <Alert variant="default" className="border-yellow-200 bg-yellow-50">
                 <AlertCircle className="h-4 w-4 text-yellow-600" />
                 <AlertDescription className="text-yellow-900">
@@ -111,14 +111,14 @@ export function BulkCogsResultsDialog({
             )}
 
             {/* Margin Calculation Status */}
-            {isPolling && resultData.data.succeeded > 0 && (
+            {isPolling && resultData.succeeded > 0 && (
               <MarginCalculationStatus
                 isPolling={isPolling}
                 attempts={pollingAttempts}
                 maxAttempts={pollingStrategy.maxAttempts}
                 estimatedTime={pollingStrategy.estimatedTime}
                 isBulk={true}
-                bulkCount={resultData.data.succeeded}
+                bulkCount={resultData.succeeded}
               />
             )}
 
@@ -139,9 +139,7 @@ export function BulkCogsResultsDialog({
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
                   <div className="text-sm font-medium text-green-900">Успешно</div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-green-900">
-                  {resultData.data.succeeded}
-                </div>
+                <div className="mt-2 text-2xl font-bold text-green-900">{resultData.succeeded}</div>
               </div>
 
               <div className="rounded-lg border border-red-200 bg-red-50 p-4">
@@ -149,18 +147,18 @@ export function BulkCogsResultsDialog({
                   <XCircle className="h-5 w-5 text-red-600" />
                   <div className="text-sm font-medium text-red-900">Ошибок</div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-red-900">{resultData.data.failed}</div>
+                <div className="mt-2 text-2xl font-bold text-red-900">{resultData.failed}</div>
               </div>
             </div>
 
             {/* Failed Items */}
-            {resultData.data.failed > 0 && (
+            {resultData.failed > 0 && (
               <div>
                 <div className="mb-2 text-sm font-medium text-gray-900">Не удалось обновить:</div>
                 <div className="max-h-64 overflow-y-auto rounded-lg border">
                   <Table>
                     <TableBody>
-                      {resultData.data.results
+                      {resultData.results
                         .filter(r => !r.success)
                         .map(result => (
                           <TableRow key={result.nm_id}>
@@ -179,7 +177,7 @@ export function BulkCogsResultsDialog({
         )}
 
         <DialogFooter>
-          {resultData && resultData.data.failed > 0 && (
+          {resultData && resultData.failed > 0 && (
             <Button variant="outline" onClick={onRetry}>
               Повторить для неудачных
             </Button>
