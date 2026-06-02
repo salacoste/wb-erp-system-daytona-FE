@@ -36,6 +36,8 @@ export function normalizeBulkCogsResponse(raw: unknown): BulkCogsResultSummary {
     return {
       succeeded: toCount(o.succeeded),
       failed: toCount(o.failed),
+      // PENDING BACKEND: #186 — v2 not shipped yet. When it lands, replace this blind cast with an
+      // explicit map (esp. `nm_id: String(r.nm_id)` — backend item nm_id is a NUMBER → AP#10 risk).
       results: Array.isArray(o.results) ? (o.results as BulkCogsResult[]) : [],
       message: typeof o.message === 'string' ? o.message : '',
       marginRecalculation:
@@ -43,18 +45,33 @@ export function normalizeBulkCogsResponse(raw: unknown): BulkCogsResultSummary {
     }
   }
 
-  // Legacy shape: { totalItems, createdItems, skippedItems, errors[{ nm_id, error }] }.
+  // Legacy shape: { totalItems, createdItems, skippedItems, errors[] }.
+  // iter-69: the live backend error items are `{ index, nmId, code, message }` (camelCase) —
+  // confirmed in cogs.service.ts `result.errors.push`. The old map read `e.nm_id`/`e.error`
+  // (never present) → every failed-item row rendered a BLANK nmId + empty message. Read both the
+  // real camelCase fields and the legacy snake fallbacks.
   // errors[] enumerates only FAILED items → map to results with success:false (the
   // retry-failed-only UX filters on !success). Succeeded items aren't enumerated by the
   // legacy shape, so `results` carries failures only; `succeeded` is the count.
   const errors = Array.isArray(o.errors) ? (o.errors as Array<Record<string, unknown>>) : []
   return {
     succeeded: toCount(o.createdItems),
-    failed: toCount(o.skippedItems),
+    // iter-69: the backend NEVER increments `skippedItems` on this path (it stays 0); failed items
+    // are enumerated in `errors[]`. The old `failed: skippedItems` was therefore always 0, which
+    // gated the dialog's failed-items table + retry button (failed>0) shut — so the mapped error
+    // rows never rendered and partial failures showed a green "success" toast. Mirror the backend's
+    // canonical v2 formula (cogs.service.ts:1019): failed = skippedItems + errors.length.
+    failed: toCount(o.skippedItems) + errors.length,
     results: errors.map(e => ({
-      nm_id: String(e.nm_id ?? ''),
+      nm_id: String(e.nmId ?? e.nm_id ?? ''),
       success: false,
-      error_message: typeof e.error === 'string' ? e.error : undefined,
+      error_code: typeof e.code === 'string' ? e.code : undefined,
+      error_message:
+        typeof e.message === 'string'
+          ? e.message
+          : typeof e.error === 'string'
+            ? e.error
+            : undefined,
     })),
     message: '',
     marginRecalculation: undefined,

@@ -81,7 +81,8 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
       const legacy = {
         totalItems: 2,
         createdItems: 1,
-        skippedItems: 1,
+        // iter-69: backend never increments skippedItems; `failed` derives from errors.length.
+        skippedItems: 0,
         errors: [{ nm_id: '12345678', error: 'duplicate valid_from' }],
       } as unknown as BulkCogsUploadResponseLegacy
 

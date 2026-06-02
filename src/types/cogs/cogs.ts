@@ -164,10 +164,15 @@ export interface BulkCogsResultSummary {
 export interface BulkCogsUploadResponseLegacy {
   totalItems: number
   createdItems: number
+  /** Backend NEVER increments skippedItems on this path (stays 0); `failed` derives from
+   *  errors.length (iter-69). */
   skippedItems: number
+  /** Real backend error-item shape (camelCase) — confirmed cogs.service.ts result.errors.push. */
   errors: Array<{
-    nm_id: string
-    error: string
+    index: number
+    nmId: number
+    code: string
+    message: string
   }>
 }
 

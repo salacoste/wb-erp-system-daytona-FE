@@ -9,22 +9,51 @@ import { describe, it, expect } from 'vitest'
 import { normalizeBulkCogsResponse } from '../bulk-cogs-normalizer'
 
 describe('normalizeBulkCogsResponse', () => {
-  it('maps the LEGACY shape (createdItems→succeeded, skippedItems→failed, errors→results)', () => {
+  // iter-69: pin the REAL live backend error-item shape `{ index, nmId, code, message }` (camelCase,
+  // per cogs.service.ts). The old normalizer + fixture used `{ nm_id, error }` which the backend
+  // never sends → failed-item rows rendered blank nmId + empty message. Now the camelCase fields map.
+  it('maps the LEGACY shape with the real backend error items { index, nmId, code, message }', () => {
     const res = normalizeBulkCogsResponse({
       totalItems: 3,
       createdItems: 2,
-      skippedItems: 1,
-      errors: [{ nm_id: '12345', error: 'duplicate valid_from' }],
+      skippedItems: 0, // backend never increments skippedItems — failed derives from errors[]
+      errors: [{ index: 0, nmId: '12345', code: 'CREATE_ERROR', message: 'duplicate valid_from' }],
     })
     expect(res.succeeded).toBe(2)
-    expect(res.failed).toBe(1)
+    expect(res.failed).toBe(1) // errors.length (was always 0 from skippedItems → gated rows shut)
     expect(res.results).toHaveLength(1)
     expect(res.results[0]).toMatchObject({
-      nm_id: '12345',
+      nm_id: '12345', // was '' (read e.nm_id; backend sends nmId)
       success: false,
-      error_message: 'duplicate valid_from',
+      error_code: 'CREATE_ERROR',
+      error_message: 'duplicate valid_from', // was undefined (read e.error; backend sends message)
     })
     expect(res.marginRecalculation).toBeUndefined()
+  })
+
+  // iter-69: `failed` MUST count the errors[] (skippedItems is always 0 from the backend). With >1
+  // error, `failed` must equal errors.length so the dialog's failed table + retry button appear.
+  it('derives `failed` from errors.length (multiple failures), not skippedItems', () => {
+    const res = normalizeBulkCogsResponse({
+      totalItems: 3,
+      createdItems: 1,
+      skippedItems: 0,
+      errors: [
+        { index: 1, nmId: '111', code: 'CREATE_ERROR', message: 'e1' },
+        { index: 2, nmId: '222', code: 'CREATE_ERROR', message: 'e2' },
+      ],
+    })
+    expect(res.failed).toBe(2) // was 0 (skippedItems) → dialog never showed the 2 failed rows
+    expect(res.results).toHaveLength(2)
+  })
+
+  it('also accepts legacy snake_case error items { nm_id, error } (backward-compat fallback)', () => {
+    const res = normalizeBulkCogsResponse({
+      createdItems: 0,
+      skippedItems: 0,
+      errors: [{ nm_id: '999', error: 'not found' }],
+    })
+    expect(res.results[0]).toMatchObject({ nm_id: '999', error_message: 'not found' })
   })
 
   it('passes through the v2 shape (succeeded/failed/results/message/marginRecalculation)', () => {
@@ -55,12 +84,12 @@ describe('normalizeBulkCogsResponse', () => {
       data: {
         totalItems: 2,
         createdItems: 1,
-        skippedItems: 1,
+        skippedItems: 0,
         errors: [{ nm_id: 'x', error: 'e' }],
       },
     })
     expect(res.succeeded).toBe(1)
-    expect(res.failed).toBe(1)
+    expect(res.failed).toBe(1) // errors.length
     expect(res.results).toHaveLength(1)
   })
 
