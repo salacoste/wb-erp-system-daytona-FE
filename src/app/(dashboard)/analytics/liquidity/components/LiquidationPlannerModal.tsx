@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, X, Clock, TrendingDown, DollarSign } from 'lucide-react'
+import { TrendingDown, DollarSign } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -8,18 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { LiquidityItem } from '@/types/liquidity'
-import {
-  formatCurrency,
-  formatDiscount,
-  getScenarioUrgencyLabel,
-  getScenarioUrgencyColor,
-  getRecommendedScenario,
-} from '@/lib/liquidity-utils'
-import { cn } from '@/lib/utils'
+import { formatCurrency, formatDiscount, getRecommendedScenario } from '@/lib/liquidity-utils'
+import { LiquidationScenarioCard } from './LiquidationScenarioCard'
 
 interface LiquidationPlannerModalProps {
   item: LiquidityItem
@@ -32,11 +24,7 @@ interface LiquidationPlannerModalProps {
  * Shows 3 scenarios with discount recommendations
  * Story 7.3: Liquidation Planner
  */
-export function LiquidationPlannerModal({
-  item,
-  open,
-  onClose,
-}: LiquidationPlannerModalProps) {
+export function LiquidationPlannerModal({ item, open, onClose }: LiquidationPlannerModalProps) {
   const scenarios = item.liquidation_scenarios || []
   const recommended = getRecommendedScenario(scenarios)
 
@@ -88,92 +76,15 @@ export function LiquidationPlannerModal({
             </p>
           ) : (
             <div className="grid gap-4">
-              {scenarios.map((scenario) => {
-                const isRecommended = recommended?.target_days === scenario.target_days
-                const urgencyColor = getScenarioUrgencyColor(scenario.target_days)
-
-                return (
-                  <Card
-                    key={scenario.target_days}
-                    className={cn(
-                      'transition-all',
-                      isRecommended && 'ring-2 ring-blue-500 shadow-md'
-                    )}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <Clock
-                            className="h-5 w-5"
-                            style={{ color: urgencyColor }}
-                          />
-                          <div>
-                            <p className="font-medium">
-                              Продать за {scenario.target_days} дней
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {getScenarioUrgencyLabel(scenario.target_days)}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {isRecommended && (
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                              Рекомендуем
-                            </Badge>
-                          )}
-                          {scenario.is_profitable ? (
-                            <Badge variant="secondary" className="bg-green-100 text-green-700">
-                              <Check className="h-3 w-3 mr-1" />
-                              Прибыльно
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary" className="bg-red-100 text-red-700">
-                              <X className="h-3 w-3 mr-1" />
-                              Убыток
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Скидка</p>
-                          <p className="text-lg font-bold text-red-600">
-                            {formatDiscount(scenario.suggested_discount_pct)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Новая цена</p>
-                          <p className="text-lg font-bold">
-                            {formatCurrency(scenario.new_price)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Выручка</p>
-                          <p className="text-lg font-bold">
-                            {formatCurrency(scenario.expected_revenue)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Прибыль</p>
-                          <p className={cn(
-                            'text-lg font-bold',
-                            scenario.expected_profit >= 0 ? 'text-green-600' : 'text-red-600'
-                          )}>
-                            {formatCurrency(scenario.expected_profit)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 text-xs text-muted-foreground">
-                        Требуемая скорость: {scenario.required_velocity.toFixed(1)} шт./день
-                        (×{scenario.velocity_multiplier.toFixed(1)} от текущей)
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
+              {scenarios.map(scenario => (
+                <LiquidationScenarioCard
+                  key={scenario.suggested_discount_pct}
+                  scenario={scenario}
+                  isRecommended={
+                    recommended?.suggested_discount_pct === scenario.suggested_discount_pct
+                  }
+                />
+              ))}
             </div>
           )}
         </div>

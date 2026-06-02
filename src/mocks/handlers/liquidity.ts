@@ -19,6 +19,7 @@ import type {
   TrendDataPoint,
   TrendInsight,
 } from '@/types/liquidity'
+import { mapLiquidationScenarios } from '@/lib/api/liquidity-item-mapper'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
@@ -37,46 +38,31 @@ function getLiquidityCategoryFromDays(days: number): LiquidityCategory {
 }
 
 /**
- * Generate liquidation scenarios for illiquid items
+ * Generate liquidation scenarios for illiquid items.
+ *
+ * Emits the LIVE backend OBJECT shape — {full_price, discount_20pct, discount_50pct}
+ * keyed objects of {discountPct (fraction), recovery (RUB), daysToClear} — then routes
+ * it through the production mapper (mapLiquidationScenarios' OBJECT branch) so the fixture
+ * exercises the real code path the live backend drives, not the stale rich-array shape.
+ * recovery mirrors backend liquidation-calculator: full = stock*cost, 20% = *0.8, 50% = *0.5.
+ * Backend omits new_price/expected_profit/is_profitable/velocity → mapper yields null → FE "—".
  */
 function generateLiquidationScenarios(
-  currentPrice: number,
   cogsPerUnit: number,
   currentStock: number,
   velocityPerDay: number
-): LiquidationScenario[] {
-  const scenarios: LiquidationScenario[] = []
-  const targetDays = [30, 60, 90]
+): LiquidationScenario[] | null {
+  // daysToClear from velocity; 999 (∞ sentinel) when item has no movement.
+  const daysToClear = velocityPerDay > 0 ? Math.round(currentStock / velocityPerDay) : 999
+  const baseRecovery = currentStock * cogsPerUnit
 
-  for (const target of targetDays) {
-    const requiredVelocity = currentStock / target
-    const velocityMultiplier = velocityPerDay > 0 ? requiredVelocity / velocityPerDay : 5
-
-    // Simplified elasticity-based discount
-    let discountPct: number
-    if (velocityMultiplier <= 1.5) discountPct = 15
-    else if (velocityMultiplier <= 2.5) discountPct = 25
-    else if (velocityMultiplier <= 4) discountPct = 35
-    else discountPct = 40
-
-    const newPrice = currentPrice * (1 - discountPct / 100)
-    const expectedRevenue = currentStock * newPrice
-    const totalCogs = currentStock * cogsPerUnit
-    const expectedProfit = expectedRevenue - totalCogs
-
-    scenarios.push({
-      target_days: target,
-      required_velocity: requiredVelocity,
-      velocity_multiplier: velocityMultiplier,
-      suggested_discount_pct: discountPct,
-      new_price: newPrice,
-      expected_revenue: expectedRevenue,
-      expected_profit: expectedProfit,
-      is_profitable: newPrice > cogsPerUnit,
-    })
+  const backendShape = {
+    full_price: { discountPct: 0, recovery: Math.round(baseRecovery), daysToClear },
+    discount_20pct: { discountPct: 0.2, recovery: Math.round(baseRecovery * 0.8), daysToClear },
+    discount_50pct: { discountPct: 0.5, recovery: Math.round(baseRecovery * 0.5), daysToClear },
   }
 
-  return scenarios
+  return mapLiquidationScenarios(backendShape)
 }
 
 /**
@@ -108,7 +94,7 @@ export function generateMockLiquidityItem(overrides: Partial<LiquidityItem> = {}
     action_type: overrides.action_type ?? getActionType(category),
     liquidation_scenarios:
       category === 'illiquid'
-        ? generateLiquidationScenarios(currentPrice, cogsPerUnit, currentStock, velocityPerDay)
+        ? generateLiquidationScenarios(cogsPerUnit, currentStock, velocityPerDay)
         : null,
   }
 

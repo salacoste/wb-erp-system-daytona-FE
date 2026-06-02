@@ -59,24 +59,29 @@ export function mapLiquidationScenarios(scenarios: any): LiquidationScenario[] |
   const result: LiquidationScenario[] = []
   const entries: [string, any][] = Object.entries(scenarios)
 
+  // Real backend object shape is {discountPct (fraction), recovery (RUB), daysToClear}.
+  // Backend OMITS profit/new_price/velocity/is_profitable → mapped to null (FE renders "—",
+  // Defensive Frontend Principle: indicate unknown, do not invent zeros/false-loss).
   for (const [key, scenario] of entries) {
     if (!scenario || typeof scenario !== 'object') continue
 
     const s = scenario as Record<string, any>
-    const discountPct =
+    const keyPct =
       key === 'full_price' ? 0 : key === 'discount_20pct' ? 20 : key === 'discount_50pct' ? 50 : 0
 
     result.push({
-      target_days: s.target_days ?? s.target_turnover_days ?? 30,
-      required_velocity: s.required_velocity ?? s.required_daily_sales ?? 0,
-      velocity_multiplier: s.velocity_multiplier ?? 1,
-      suggested_discount_pct: s.suggested_discount_pct ?? discountPct,
-      new_price: s.new_price ?? s.price_after_discount ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: expected_revenue 0 = no liquidation scenario active
-      expected_revenue: s.expected_revenue ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: expected_profit 0 = no liquidation scenario active
-      expected_profit: s.expected_profit ?? 0,
-      is_profitable: s.is_profitable ?? false,
+      target_days:
+        typeof s.daysToClear === 'number'
+          ? s.daysToClear
+          : (s.target_days ?? s.target_turnover_days ?? keyPct),
+      required_velocity: s.required_velocity ?? s.required_daily_sales ?? null,
+      velocity_multiplier: s.velocity_multiplier ?? null,
+      suggested_discount_pct:
+        typeof s.discountPct === 'number' ? Math.round(s.discountPct * 100) : keyPct,
+      new_price: s.new_price ?? s.price_after_discount ?? null,
+      expected_revenue: typeof s.recovery === 'number' ? s.recovery : (s.expected_revenue ?? null),
+      expected_profit: s.expected_profit ?? null,
+      is_profitable: typeof s.is_profitable === 'boolean' ? s.is_profitable : null,
     })
   }
 

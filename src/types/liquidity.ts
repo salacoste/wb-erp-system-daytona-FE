@@ -76,22 +76,22 @@ export interface LiquidityTrendsQueryParams {
  * Calculates ROI for different discount levels
  */
 export interface LiquidationScenario {
-  /** Target turnover days */
+  /** Target turnover days (mapped from backend daysToClear) */
   target_days: number
-  /** Required daily velocity to achieve target */
-  required_velocity: number
-  /** Multiplier needed vs current velocity */
-  velocity_multiplier: number
-  /** Suggested discount percentage */
+  /** Required daily velocity to achieve target (null when backend omits) */
+  required_velocity: number | null
+  /** Multiplier needed vs current velocity (null when backend omits) */
+  velocity_multiplier: number | null
+  /** Suggested discount percentage (mapped from backend discountPct fraction) */
   suggested_discount_pct: number
-  /** New price after discount */
-  new_price: number
-  /** Expected revenue if all stock sells */
-  expected_revenue: number
-  /** Expected profit after COGS */
-  expected_profit: number
-  /** Is this scenario profitable? */
-  is_profitable: boolean
+  /** New price after discount (null when backend omits) */
+  new_price: number | null
+  /** Expected revenue if all stock sells; backend recovery maps here (null when backend omits) */
+  expected_revenue: number | null
+  /** Expected profit after COGS (null when backend omits) */
+  expected_profit: number | null
+  /** Is this scenario profitable? (null when backend omits) */
+  is_profitable: boolean | null
 }
 
 /**
