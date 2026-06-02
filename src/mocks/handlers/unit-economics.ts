@@ -237,11 +237,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 /**
  * Unit Economics API handlers for MSW
  *
- * Note: Backend returns responses without wrapper (meta, summary, data at top level).
- * The apiClient extracts `response.data` if present, so we use `items` instead of `data`
- * to avoid unwrapping issues, OR we wrap in { data: response } format.
- *
- * Based on backend pattern, we wrap the full response in a `data` field.
+ * F-43: the real backend returns the wrapper { meta, summary, data } DIRECTLY (no outer
+ * { data } envelope), and the hook reads it via `skipDataUnwrap: true`. Do NOT wrap mock
+ * responses in `{ data: response }` — that double-wrap masked the permanent empty-state
+ * bug (the hook read `data.data` on the apiClient-unwrapped array → undefined).
  */
 export const unitEconomicsHandlers = [
   /**
@@ -275,8 +274,8 @@ export const unitEconomicsHandlers = [
 
     // Check for special test week that triggers empty response
     if (week === 'empty') {
-      // Wrap in data field for apiClient compatibility
-      return HttpResponse.json({ data: mockEmptyUnitEconomicsResponse })
+      // F-43: real backend returns the wrapper directly (no outer { data }).
+      return HttpResponse.json(mockEmptyUnitEconomicsResponse)
     }
 
     // Check for special test week that triggers error
@@ -317,9 +316,10 @@ export const unitEconomicsHandlers = [
       data: items,
     }
 
-    // Wrap in data field for apiClient compatibility
-    // apiClient extracts response.data automatically
-    return HttpResponse.json({ data: response })
+    // F-43: the real backend returns the wrapper { meta, summary, data } DIRECTLY (no
+    // outer { data } envelope), and the hook reads it via skipDataUnwrap. The old
+    // `{ data: response }` double-wrap masked the production double-unwrap bug.
+    return HttpResponse.json(response)
   }),
 ]
 
@@ -353,14 +353,12 @@ export const unitEconomicsSlowHandlers = [
     // Simulate slow network
     await delay(2000)
 
-    // Wrap in data field for apiClient compatibility
+    // F-43: real backend returns the wrapper directly (no outer { data }).
     return HttpResponse.json({
-      data: {
-        ...mockUnitEconomicsResponse,
-        meta: {
-          ...mockUnitEconomicsResponse.meta,
-          week: week || '2025-W50',
-        },
+      ...mockUnitEconomicsResponse,
+      meta: {
+        ...mockUnitEconomicsResponse.meta,
+        week: week || '2025-W50',
       },
     })
   }),

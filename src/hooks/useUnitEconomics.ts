@@ -9,6 +9,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { ApiError } from '@/types/api'
+import { normalizeUnitEconomicsResponse } from '@/lib/api/unit-economics-normalizer'
 import type { UnitEconomicsResponse, UnitEconomicsQueryParams } from '@/types/unit-economics'
 
 /**
@@ -42,9 +43,18 @@ async function fetchUnitEconomics(
     searchParams.set('limit', String(params.limit))
   }
 
-  return apiClient.get<UnitEconomicsResponse>(
-    `/v1/analytics/unit-economics?${searchParams.toString()}`
-  )
+  // Validation F-43: this endpoint returns the full wrapper { meta, summary, data } and
+  // the page reads all three siblings (data.data, data.summary, data.meta). apiClient's
+  // default `{ data }` unwrap would return ONLY the inner array → the page's `!data.data`
+  // guard was always true → permanent empty state despite real items. skipDataUnwrap keeps
+  // the wrapper. (Same double-unwrap class as F-30/F-32/F-36/F-41.)
+  // F-43: also normalize backend item field names (quantity_sold→units_sold,
+  // missing_cogs→has_cogs) so components never see the raw shape.
+  return apiClient
+    .get<UnitEconomicsResponse>(`/v1/analytics/unit-economics?${searchParams.toString()}`, {
+      skipDataUnwrap: true,
+    })
+    .then(normalizeUnitEconomicsResponse)
 }
 
 /**
