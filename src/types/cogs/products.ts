@@ -69,6 +69,13 @@ export interface Pagination {
 export interface ProductListResponse {
   products: ProductListItem[]
   pagination: Pagination
+  /**
+   * FE-only flag (not a backend field): set true when the list had to be re-fetched without
+   * `include_cogs` because the backend 500s on `include_cogs=true` without `has_cogs`
+   * (request #190). Signals the UI to show '—' for margin and suppress the (futile) margin
+   * polling. Auto-recovers on the next refetch (stale cache / remount) once #190 is fixed.
+   */
+  marginUnavailable?: boolean
 }
 
 // ============================================================================

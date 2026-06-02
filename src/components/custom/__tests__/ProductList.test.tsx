@@ -52,6 +52,7 @@ interface MockTableRowProps {
   product: { nm_id: string; vendor_code: string; name: string }
   onProductClick: (product: unknown) => void
   enableSelection: boolean
+  enableMarginDisplay?: boolean
 }
 
 interface MockPaginationProps {
@@ -85,9 +86,15 @@ vi.mock('../ProductSearchFilter', () => ({
 }))
 
 vi.mock('../ProductTableRow', () => ({
-  ProductTableRow: ({ product, onProductClick, enableSelection }: MockTableRowProps) => (
+  ProductTableRow: ({
+    product,
+    onProductClick,
+    enableSelection,
+    enableMarginDisplay,
+  }: MockTableRowProps) => (
     <tr
       data-testid={`product-row-${product.nm_id}`}
+      data-margin-display={String(enableMarginDisplay)}
       onClick={() => enableSelection && onProductClick(product)}
     >
       <td>{product.nm_id}</td>
@@ -327,6 +334,50 @@ describe('ProductList', () => {
       renderWithProviders(<ProductList />)
 
       expect(screen.getByTestId('product-empty-state')).toBeInTheDocument()
+    })
+
+    it('request #190: shows the degraded banner and suppresses margin polling when marginUnavailable', () => {
+      mockUseProducts.mockReturnValue({
+        ...queryBaseProperties,
+        data: {
+          products: mockProducts,
+          pagination: { total: mockProducts.length },
+          marginUnavailable: true,
+        },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isFetching: false,
+        isSuccess: true,
+        status: 'success',
+        dataUpdatedAt: Date.now(),
+        errorUpdatedAt: 0,
+        failureCount: 0,
+        failureReason: null,
+        errorUpdateCount: 0,
+        isFetched: true,
+        isFetchedAfterMount: true,
+        isLoadingError: false,
+        isPaused: false,
+        isPlaceholderData: false,
+        isRefetchError: false,
+        isRefetching: false,
+        isStale: false,
+        isInitialLoading: false,
+        fetchStatus: 'idle',
+      })
+
+      renderWithProviders(<ProductList enableMarginDisplay={true} />)
+
+      // Honest degraded indicator renders, and products still show (not an empty error page).
+      expect(screen.getByText(/Маржа временно недоступна/)).toBeInTheDocument()
+      const row = screen.getByTestId('product-row-12345')
+      expect(row).toBeInTheDocument()
+      // effectiveMarginDisplay (false) is forwarded to the row → margin cell shows '—', not pending.
+      expect(row).toHaveAttribute('data-margin-display', 'false')
+      // Polling is gated off the effective (degraded) margin flag, NOT the raw prop → no churn.
+      expect(mockUsePendingMarginProducts).toHaveBeenCalledWith(expect.any(Array), false)
     })
 
     it('renders product list when data is available', () => {

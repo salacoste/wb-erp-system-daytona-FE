@@ -15,6 +15,8 @@ export interface ProductTableRowProps {
   isSelected: boolean
   enableSelection: boolean
   enableMarginDisplay: boolean
+  /** Request #190: margin server-degraded — forwarded to ProductMarginCell to suppress its hint. */
+  marginUnavailable?: boolean
   enableStorageDisplay?: boolean
   isPolling: boolean
   shouldShowRetryButton: (nmId: string) => boolean
@@ -35,6 +37,7 @@ export function ProductTableRow({
   isSelected,
   enableSelection,
   enableMarginDisplay,
+  marginUnavailable,
   enableStorageDisplay,
   isPolling,
   shouldShowRetryButton,
@@ -107,6 +110,7 @@ export function ProductTableRow({
         <ProductMarginCell
           product={product}
           enableMarginDisplay={enableMarginDisplay}
+          marginUnavailable={marginUnavailable}
           isPolling={isPolling}
           shouldShowRetryButton={shouldShowRetryButton}
           getAffectedWeeks={getAffectedWeeks}

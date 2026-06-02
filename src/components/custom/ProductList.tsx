@@ -69,7 +69,13 @@ export function ProductList({
     include_storage: enableStorageDisplay,
   })
 
-  const pendingMargin = usePendingMarginProducts(data?.products || [], enableMarginDisplay)
+  // Request #190: when the list had to fall back without margin (backend 500 on include_cogs),
+  // suppress margin display + the futile polling so the page degrades to products-without-margin
+  // instead of an empty errored list. Auto-recovers once the backend is fixed.
+  const marginUnavailable = data?.marginUnavailable === true
+  const effectiveMarginDisplay = enableMarginDisplay && !marginUnavailable
+
+  const pendingMargin = usePendingMarginProducts(data?.products || [], effectiveMarginDisplay)
   const { mutate: triggerRecalculation, isPending: isRecalculating } =
     useManualMarginRecalculation()
 
@@ -119,6 +125,16 @@ export function ProductList({
         filterLabel={handlers.filterLabel}
         onFilterToggle={handlers.handleFilterToggle}
       />
+      {marginUnavailable && (
+        // Request #190: honest degraded-mode indicator (Defensive Frontend Principle).
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Маржа временно недоступна из-за ошибки сервера — товары показаны без маржи. Откройте
+            карточку товара или вкладку «С себестоимостью», чтобы увидеть маржу.
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="rounded-md border overflow-x-auto">
         <Table className="table-fixed" aria-label="Список товаров">
           <caption className="sr-only">Список товаров с себестоимостью и маржинальностью</caption>
@@ -135,7 +151,8 @@ export function ProductList({
                 product={product}
                 isSelected={selectedProductId === product.nm_id}
                 enableSelection={enableSelection}
-                enableMarginDisplay={enableMarginDisplay}
+                enableMarginDisplay={effectiveMarginDisplay}
+                marginUnavailable={marginUnavailable}
                 enableStorageDisplay={enableStorageDisplay}
                 isPolling={isProductPolling(product.nm_id)}
                 shouldShowRetryButton={pendingMargin.shouldShowRetryButton}

@@ -34,6 +34,26 @@ export function useProducts(filters: ProductFilters = {}) {
           // Note: Pagination uses snake_case (`total_pages`), per src/types/cogs.ts
           return { products: [], pagination: { total: 0, page: 1, limit: 20, total_pages: 0 } }
         }
+        // Defensive fallback (request #190): the backend 500s on `include_cogs=true` when
+        // `has_cogs` is absent (the "Все товары" tab), which made the whole product list error
+        // out. Retry once WITHOUT margin (drop `include_cogs`; keep `include_storage`, which is
+        // unaffected) so products still render, and flag `marginUnavailable` so the UI shows '—'
+        // and suppresses the now-futile margin polling. Auto-recovers once #190 is fixed.
+        // 500 specifically: that is the backend's signature for the missing-has_cogs join bug;
+        // 503/429 (rate-limit) are handled by the api-client retry and must NOT be absorbed here.
+        if (err instanceof ApiError && err.status === 500 && filters.include_margin) {
+          try {
+            const fallbackParams = buildProductParams({ ...filters, include_margin: false })
+            const fallback = await apiClient.get<ProductListResponse>(
+              `/v1/products?${fallbackParams.toString()}`
+            )
+            return { ...fallback, marginUnavailable: true }
+          } catch {
+            // The fallback ALSO failed (genuine outage) — rethrow the ORIGINAL 500 so TanStack's
+            // retry/error path sees the real error, not a transient fallback error.
+            throw err
+          }
+        }
         throw err
       }
     },

@@ -9,6 +9,11 @@ import type { ProductListItem } from '@/types/api'
 export interface ProductMarginCellProps {
   product: ProductListItem
   enableMarginDisplay: boolean
+  /**
+   * Request #190: true when margin is unavailable due to a backend error (not a user choice).
+   * Suppresses the "(в карточке)" hint so the cell doesn't contradict the page's degraded banner.
+   */
+  marginUnavailable?: boolean
   isPolling: boolean
   shouldShowRetryButton: (nmId: string) => boolean
   getAffectedWeeks: (nmId: string) => string[]
@@ -30,6 +35,7 @@ export interface ProductMarginCellProps {
 export function ProductMarginCell({
   product,
   enableMarginDisplay,
+  marginUnavailable = false,
   isPolling,
   shouldShowRetryButton,
   getAffectedWeeks,
@@ -50,11 +56,14 @@ export function ProductMarginCell({
   }
 
   if (!enableMarginDisplay) {
-    // Default: show hint that margin is available in product detail
+    // Default: show hint that margin is available in product detail.
+    // Request #190: when margin is server-degraded (marginUnavailable), suppress the hint —
+    // the page-level banner already explains the server error, and "Включите отображение маржи"
+    // would contradict it (margin display IS on; the backend failed).
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-400">—</span>
-        {product.has_cogs && (
+        {product.has_cogs && !marginUnavailable && (
           <span
             className="text-xs text-gray-400"
             title="Включите отображение маржи или откройте карточку товара"
