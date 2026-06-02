@@ -20,6 +20,7 @@ import {
 import { formatDate } from '@/lib/utils'
 import {
   formatMapeDisplay,
+  getModelTypeLabel,
   STATUS_LABELS,
   STATUS_VARIANTS,
   type SortCol,
@@ -115,7 +116,9 @@ export function AdminModelsTable({
             <TableRow key={model.id}>
               {/* AP#10: opaque ID via String() — never formatNumber */}
               <TableCell>{String(model.id)}</TableCell>
-              <TableCell>{model.modelType}</TableCell>
+              {/* F-40: localized label (admin endpoint returns 10 model types as raw
+                  snake_case); unknown types fall back to the raw value. */}
+              <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
               <TableCell>v{model.version}</TableCell>
               <TableCell>
                 <Badge variant={STATUS_VARIANTS[model.status] ?? 'outline'}>
