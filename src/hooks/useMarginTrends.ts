@@ -8,7 +8,8 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type { MarginTrendPoint, MarginTrendsResponse } from '@/types/api'
+import type { MarginTrendPoint } from '@/types/api'
+import { normalizeMarginTrendsResponse } from '@/lib/api/margin-trends-normalizer'
 
 /**
  * Query parameters for margin trends endpoint
@@ -70,11 +71,14 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
         const endpoint = `/v1/analytics/weekly/margin-trends?${queryParams.toString()}`
         console.info(`[MarginTrends] Fetching margin trends: ${endpoint}`)
 
-        // API returns MarginTrendsResponse { data: MarginTrendPoint[], pagination?, message? }
-        const response = await apiClient.get<MarginTrendsResponse>(endpoint)
+        // Validation F-30: apiClient auto-unwraps the `{ data }` envelope, so at runtime
+        // this resolves to a bare MarginTrendPoint[] — the old `response.data` read
+        // undefined on that array → empty chart in prod. The boundary normalizer converts
+        // the raw shape (unwrapped array OR `{ data: [...] }` wrapper) to canonical points.
+        const response = await apiClient.get<unknown>(endpoint)
 
-        // Extract data array from response
-        const trends = response.data || []
+        // Copy before sort so we never mutate the cached/frozen TanStack Query reference.
+        const trends = [...normalizeMarginTrendsResponse(response)]
 
         console.info(`[MarginTrends] Received ${trends.length} data points`)
 

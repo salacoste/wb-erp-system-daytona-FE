@@ -25,6 +25,11 @@ vi.mock('@/lib/api-client', () => ({
 }))
 
 const createWrapper = () => {
+  // NOTE: this retry:false is only the QueryClient *default*. Empirically the per-query
+  // retry:1 set inside useMarginTrends still fires here (verified by the 400/generic
+  // error tests needing two mocks before isError settles), so error-path tests that
+  // THROW must mock N+1 rejections (N = hook retry). Tests whose queryFn catches and
+  // returns (e.g. the 404 path) resolve without a retry — one mock suffices there.
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
@@ -86,6 +91,40 @@ describe('useMarginTrends', () => {
         margin_pct: 35.5,
         revenue_net: 125000.5,
       })
+    })
+
+    // Validation F-30: apiClient auto-unwraps the `{ data }` envelope, so at runtime
+    // the queryFn receives MarginTrendPoint[] directly — NOT { data: [...] }. The old
+    // `response.data || []` read undefined on that array → empty chart in prod. This
+    // pins the real (unwrapped-array) shape; it would fail before the Array.isArray fix.
+    it('handles the apiClient-unwrapped array shape (real prod path)', async () => {
+      // Full 10-field shape matching MarginTrendPoint (the tooltip renders qty/
+      // missing_cogs_count, so the fixture must carry them — review F-30 pass).
+      const unwrapped = [
+        {
+          week: '2026-W11',
+          week_start_date: '2026-03-08',
+          week_end_date: '2026-03-14',
+          margin_pct: 6.2,
+          revenue_net: 415775.61,
+          cogs: 390000,
+          profit: 25775.61,
+          qty: 780,
+          sku_count: 27,
+          missing_cogs_count: 0,
+        },
+      ]
+
+      vi.mocked(apiClient.get).mockResolvedValueOnce(unwrapped)
+
+      const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+        wrapper: createWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(result.current.data).toHaveLength(1)
+      expect(result.current.data?.[0]).toMatchObject({ week: '2026-W11', margin_pct: 6.2 })
     })
 
     it('sorts data chronologically (oldest to newest)', async () => {
@@ -192,9 +231,12 @@ describe('useMarginTrends', () => {
 
   describe('error handling', () => {
     it('returns empty array for 404 errors', async () => {
-      const error = new Error('Not Found') as any
+      const error = new Error('Not Found') as Error & { response?: { status: number } }
       error.response = { status: 404 }
 
+      // Only ONE mock here (unlike the 400/generic tests): the 404 branch is caught
+      // INSIDE queryFn and returns [] — TanStack Query sees a success, so it never
+      // retries. The "mock N+1 rejections" note on createWrapper does NOT apply.
       vi.mocked(apiClient.get).mockRejectedValueOnce(error)
 
       const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
@@ -206,13 +248,19 @@ describe('useMarginTrends', () => {
     })
 
     it('throws error for 400 bad request', async () => {
-      const error = new Error('Bad Request') as any
+      const error = new Error('Bad Request') as Error & {
+        response?: { status: number; data?: { error?: { message?: string } } }
+      }
       error.response = {
         status: 400,
         data: { error: { message: 'Invalid week range' } },
       }
 
-      vi.mocked(apiClient.get).mockRejectedValueOnce(error)
+      // The hook sets retry:1, so the queryFn runs twice on failure — reject BOTH
+      // calls (initial + retry) so the query settles to error for the right reason.
+      // (Previously only the 1st call was mocked; the retry's undefined return happened
+      // to throw on `response.data`, masking this — see Validation F-30.)
+      vi.mocked(apiClient.get).mockRejectedValueOnce(error).mockRejectedValueOnce(error)
 
       const { result } = renderHook(
         () => useMarginTrends({ weeks: 12 }), // Valid weeks parameter
@@ -224,7 +272,9 @@ describe('useMarginTrends', () => {
     })
 
     it('handles generic API errors', async () => {
-      vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('Network Error'))
+      // retry:1 → reject both the initial call and the retry (see F-30 note above).
+      const netErr = new Error('Network Error')
+      vi.mocked(apiClient.get).mockRejectedValueOnce(netErr).mockRejectedValueOnce(netErr)
 
       const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
         wrapper: createWrapper(),
@@ -238,7 +288,7 @@ describe('useMarginTrends', () => {
   describe('parameter validation', () => {
     it('throws error when neither weeks nor weekStart/weekEnd provided', () => {
       expect(() => {
-        renderHook(() => useMarginTrends({} as any), { wrapper: createWrapper() })
+        renderHook(() => useMarginTrends({}), { wrapper: createWrapper() })
       }).toThrow('useMarginTrends: Must provide either')
     })
 
@@ -255,7 +305,7 @@ describe('useMarginTrends', () => {
       // Hook throws error when parameters are invalid, so we need to catch it
       expect(() => {
         renderHook(
-          () => useMarginTrends({ weekStart: '2025-W40' } as any), // Missing weekEnd
+          () => useMarginTrends({ weekStart: '2025-W40' }), // Missing weekEnd
           { wrapper: createWrapper() }
         )
       }).toThrow('useMarginTrends: Must provide either')

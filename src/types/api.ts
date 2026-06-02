@@ -127,18 +127,9 @@ export interface MarginTrendPoint {
   missing_cogs_count: number
 }
 
-/**
- * Margin Trends Response
- * GET /v1/analytics/weekly/margin-trends
- */
-export interface MarginTrendsResponse {
-  data: MarginTrendPoint[]
-  pagination?: {
-    total: number
-    has_next: boolean
-  }
-  message?: string
-}
+// NOTE (Validation F-30): the former `MarginTrendsResponse` wrapper interface was removed
+// — apiClient auto-unwraps the `{ data }` envelope, so the margin-trends boundary normalizer
+// (src/lib/api/margin-trends-normalizer.ts) works off `unknown` and returns MarginTrendPoint[].
 
 /**
  * Dedicated Trends API (Story 6.6 / Story 3.4a)
