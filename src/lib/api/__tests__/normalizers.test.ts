@@ -284,6 +284,23 @@ describe('cabinet-normalizer', () => {
     expect(result.vatRate).toBe(20)
   })
 
+  it('F-42: taxSystem null/unset/invalid → null (NOT "none"); valid values pass through', () => {
+    // Backend sends taxSystem:null when unset — must stay null so the radio shows
+    // "Не настроена" instead of matching no option (blank).
+    expect(normalizeCabinetResponse({ id: 'c', name: 'N', taxSystem: null }).taxSystem).toBeNull()
+    expect(normalizeCabinetResponse({ id: 'c', name: 'N' }).taxSystem).toBeNull()
+    expect(normalizeCabinetResponse({ id: 'c', name: 'N', taxSystem: 'none' }).taxSystem).toBeNull()
+    expect(
+      normalizeCabinetResponse({ id: 'c', name: 'N', taxSystem: 'bogus' }).taxSystem
+    ).toBeNull()
+    expect(normalizeCabinetResponse({ id: 'c', name: 'N', taxSystem: 'usn15' }).taxSystem).toBe(
+      'usn15'
+    )
+    expect(normalizeCabinetResponse({ id: 'c', name: 'N', tax_system: 'manual' }).taxSystem).toBe(
+      'manual'
+    )
+  })
+
   it('normalizes jam status with unknown tier fallback', () => {
     const result = normalizeJamStatusResponse({ tier: 'super_new_tier', available: true })
     expect(result.tier).toBe('unknown')

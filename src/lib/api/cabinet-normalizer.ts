@@ -11,6 +11,7 @@ import type {
   Cabinet,
   JamStatusResponse,
   SellerInfoResponse,
+  TaxSystem,
   TokenHealthResponse,
 } from '@/types/cabinet'
 
@@ -22,13 +23,23 @@ function toJamTier(raw: unknown): string {
   return VALID_JAM_TIERS.has(s) ? s : 'unknown'
 }
 
+// Must match TaxSystem union in src/types/cabinet.ts:7. F-42: the backend sends
+// taxSystem:null when the seller hasn't configured it; the old String(... ?? 'none')
+// produced 'none' (not a valid TaxSystem) → the radio group matched no option and
+// rendered blank. Preserve null (→ "Не настроена" selected) and reject unknown values.
+const VALID_TAX_SYSTEMS = new Set<TaxSystem>(['usn6', 'usn15', 'manual'])
+
+function toTaxSystem(raw: unknown): TaxSystem | null {
+  return VALID_TAX_SYSTEMS.has(raw as TaxSystem) ? (raw as TaxSystem) : null
+}
+
 export function normalizeCabinetResponse(raw: unknown): Cabinet {
   const r = (raw ?? {}) as Record<string, unknown>
   return {
     ...r,
     id: String(r.id ?? ''),
     name: String(r.name ?? ''),
-    taxSystem: String(r.taxSystem ?? r.tax_system ?? 'none'),
+    taxSystem: toTaxSystem(r.taxSystem ?? r.tax_system),
     taxRate: r.taxRate != null ? Number(r.taxRate) : r.tax_rate != null ? Number(r.tax_rate) : null,
     vatPayer: Boolean(r.vatPayer ?? r.vat_payer ?? false),
     vatRate: r.vatRate != null ? Number(r.vatRate) : r.vat_rate != null ? Number(r.vat_rate) : null,

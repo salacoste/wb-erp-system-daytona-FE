@@ -32,13 +32,17 @@ export async function getCabinetTaxSettings(cabinetId: string): Promise<Cabinet>
 }
 
 /**
- * PUT /v1/cabinets/:id — mutation, remains passthrough (shape controlled by request body)
+ * PUT /v1/cabinets/:id — update tax/VAT settings.
+ * F-42: normalize the echoed cabinet too (if the backend returns one) so a consumer
+ * reading the mutation result gets the same canonical shape as the GET path — e.g.
+ * taxSystem:null stays null instead of leaking the raw 'none'/snake_case shape.
  */
 export async function updateCabinetTaxSettings(
   cabinetId: string,
   data: UpdateCabinetTaxRequest
 ): Promise<Cabinet> {
-  return apiClient.put<Cabinet>(`/v1/cabinets/${cabinetId}`, data)
+  const raw = await apiClient.put<unknown>(`/v1/cabinets/${cabinetId}`, data)
+  return normalizeCabinetResponse(raw)
 }
 
 /**
