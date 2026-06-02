@@ -66,8 +66,12 @@ export function ForecastTable({ predictions, modelId }: ForecastTableProps) {
               <tr key={p.date} className="border-b last:border-0">
                 <td className="py-2">{formatDate(p.date)}</td>
                 <td className="py-2 text-right font-mono">{p.predictedSales.toFixed(1)}</td>
+                {/* iter-78: naiveBaseline is UNITS, not currency — the backend assigns it
+                    directly to predictedUnits (ai-forecast.service.ts:109) and groups it with
+                    the units columns in CSV export. Render as units (matching "Прогноз продаж"),
+                    NOT formatCurrency (was "0,99 ₽" for a 0.99-units/day baseline). */}
                 <td className="py-2 text-right font-mono">
-                  {p.naiveBaseline != null ? formatCurrency(p.naiveBaseline) : '—'}
+                  {p.naiveBaseline != null ? p.naiveBaseline.toFixed(1) : '—'}
                 </td>
                 <td className={`py-2 text-right font-mono ${aiVsNaiveColor}`}>
                   {p.aiVsNaive ?? '—'}

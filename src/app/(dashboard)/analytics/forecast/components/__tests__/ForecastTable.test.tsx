@@ -69,7 +69,8 @@ const basePrediction: AiForecastPrediction = {
   predictedSales: 42,
   predictedRevenue: 125000,
   confidence: 0.85,
-  naiveBaseline: 35500,
+  // iter-78: naiveBaseline is UNITS (same scale as predictedSales), not currency.
+  naiveBaseline: 38.5,
   aiVsNaive: '+12.3%',
 }
 
@@ -104,11 +105,12 @@ describe('ForecastTable', () => {
     expect(headers[7].textContent).toBe('Оценка')
   })
 
-  it('renders naiveBaseline value when non-null (currency with ₽)', () => {
+  it('renders naiveBaseline as UNITS (not currency) — matches predictedSales scale', () => {
     renderTable([basePrediction])
-    // formatCurrency uses Russian locale — match ₽ suffix (CLAUDE.md regex-for-locale rule)
-    const cell = screen.getAllByText(/₽/)
-    expect(cell.length).toBeGreaterThanOrEqual(1)
+    // iter-78: naiveBaseline is units (backend assigns it to predictedUnits), rendered .toFixed(1)
+    expect(screen.getByText('38.5')).toBeTruthy()
+    // only predictedRevenue carries ₽ now — naiveBaseline must NOT
+    expect(screen.getAllByText(/₽/)).toHaveLength(1)
   })
 
   it('renders naiveBaseline as "—" when null', () => {
@@ -125,9 +127,9 @@ describe('ForecastTable', () => {
 
   it('renders predictedRevenue as currency when non-null', () => {
     renderTable([basePrediction])
-    // Both naiveBaseline and predictedRevenue now render ₽ — use getAllByText
+    // iter-78: only predictedRevenue renders ₽ now (naiveBaseline is units)
     const cells = screen.getAllByText(/₽/)
-    expect(cells.length).toBeGreaterThanOrEqual(2)
+    expect(cells).toHaveLength(1)
   })
 
   it('renders predictedRevenue as "—" when null (Anti-Pattern #8 compliance)', () => {
