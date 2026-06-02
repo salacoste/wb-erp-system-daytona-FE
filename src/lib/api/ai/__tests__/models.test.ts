@@ -11,6 +11,44 @@ describe('normalizeAiModelListResponse', () => {
   it('defaults models to empty array when null', () => {
     expect(normalizeAiModelListResponse({ models: null }).models).toEqual([])
     expect(normalizeAiModelListResponse({}).models).toEqual([])
+    expect(normalizeAiModelListResponse(null).models).toEqual([])
+  })
+
+  // F-39: the REAL backend returns a BARE array (apiClient passes it through). The old
+  // `raw.models` read undefined on an array → empty pages. This pins the prod shape.
+  it('normalizes a bare array of models (real /v1/ai/models prod shape)', () => {
+    const result = normalizeAiModelListResponse([
+      {
+        id: 'm1',
+        modelType: 'sales_forecast',
+        engine: 'prophet',
+        version: 1,
+        status: 'active',
+        metrics: { mape: 12.5, dataPointsCount: 500 },
+      },
+    ])
+    expect(result.models).toHaveLength(1)
+    expect(result.models[0].id).toBe('m1')
+  })
+
+  // F-39: status is validated at the boundary — 'deprecated' (live) passes through,
+  // an unknown status falls back to 'retired' so STATUS_BADGE_CONFIG[status] never crashes.
+  it('keeps a known status (deprecated) and coerces an unknown status to retired', () => {
+    const base = {
+      id: 'm',
+      modelType: 'sales_forecast',
+      engine: 'prophet',
+      version: 1,
+      metrics: {},
+    }
+    expect(normalizeAiModelListResponse([{ ...base, status: 'deprecated' }]).models[0].status).toBe(
+      'deprecated'
+    )
+    expect(
+      normalizeAiModelListResponse([
+        { ...base, status: 'some_future_status' },
+      ] as unknown as Parameters<typeof normalizeAiModelListResponse>[0]).models[0].status
+    ).toBe('retired')
   })
 
   it('preserves null for mape (ratio field — not yet evaluated)', () => {

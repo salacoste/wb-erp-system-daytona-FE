@@ -87,6 +87,9 @@ describe('STATUS_BADGE_CONFIG', () => {
   it('retired → Снята', () => {
     expect(STATUS_BADGE_CONFIG.retired.label).toBe('Снята')
   })
+  it('deprecated → Устарела (F-39: live status — missing entry crashed the list)', () => {
+    expect(STATUS_BADGE_CONFIG.deprecated.label).toBe('Устарела')
+  })
   it('training has pulse=true, others do not', () => {
     expect(STATUS_BADGE_CONFIG.training.pulse).toBe(true)
     expect(STATUS_BADGE_CONFIG.active.pulse).toBe(false)
@@ -111,8 +114,8 @@ describe('formatMape', () => {
   it('12.4 → 12.4% (0-100 scale, no ×100)', () => {
     expect(formatMape(12.4)).toBe('12.4%')
   })
-  it('0 → 0.0% (perfect accuracy)', () => {
-    expect(formatMape(0)).toBe('0.0%')
+  it('0 → — (F-39: backend hardcodes mape:0 for un-evaluated models — not a perfect score)', () => {
+    expect(formatMape(0)).toBe('—')
   })
 })
 

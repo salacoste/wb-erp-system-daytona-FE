@@ -53,6 +53,13 @@ export const STATUS_BADGE_CONFIG: Record<
     label: 'Ошибка',
     pulse: false,
   },
+  // F-39: 'deprecated' is returned live by GET /v1/ai/models — without an entry the
+  // Record lookup was undefined → crash. Grey "Устарела" badge.
+  deprecated: {
+    className: 'border-transparent bg-gray-100 text-gray-600',
+    label: 'Устарела',
+    pulse: false,
+  },
 }
 
 /**
@@ -62,7 +69,10 @@ export const STATUS_BADGE_CONFIG: Record<
  * Source: docs/AI-FRONTEND-INTEGRATION-GUIDE.md ("MAPE degraded from 12% to 45%").
  */
 export function formatMape(mape: number | null): string {
-  if (mape === null) return '—'
+  // F-39: backend hardcodes mape:0 as a placeholder for un-evaluated models (see #185).
+  // A real 0.0% MAPE is statistically impossible, so 0 means "not evaluated" → '—'
+  // (rendering "0.0%" would imply a perfect model). Treat 0 like null.
+  if (mape === null || mape === 0) return '—'
   return `${mape.toFixed(1)}%`
 }
 

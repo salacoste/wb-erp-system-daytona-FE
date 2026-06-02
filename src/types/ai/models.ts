@@ -11,7 +11,16 @@ export type ModelEngine = 'prophet' | 'mindsdb'
 
 // F-10: 'rolled_back' and 'failed' added — present in admin API responses and
 // required for rollback-blocked-status logic in AdminModelsTable.
-export type ModelStatus = 'active' | 'training' | 'degraded' | 'retired' | 'rolled_back' | 'failed'
+// F-39: 'deprecated' added — GET /v1/ai/models returns it live; without it the
+// STATUS_BADGE_CONFIG lookup was undefined → TypeError crash on the model list.
+export type ModelStatus =
+  | 'active'
+  | 'training'
+  | 'degraded'
+  | 'retired'
+  | 'rolled_back'
+  | 'failed'
+  | 'deprecated'
 
 /**
  * Drift direction for model performance over time.

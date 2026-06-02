@@ -27,7 +27,14 @@ import {
 } from './admin-models-helpers'
 
 /** F-10: statuses for which rollback makes no sense / backend will reject. */
-const ROLLBACK_BLOCKED_STATUSES = new Set(['training', 'rolled_back', 'failed', 'retired'])
+// F-39: 'deprecated' (live status) is rollback-blocked like 'retired' — same end-of-life semantics.
+const ROLLBACK_BLOCKED_STATUSES = new Set([
+  'training',
+  'rolled_back',
+  'failed',
+  'retired',
+  'deprecated',
+])
 import type { AiModel } from '@/types/ai/models'
 
 interface SortableHeadProps {

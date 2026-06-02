@@ -18,6 +18,8 @@ export const STATUS_LABELS: Record<string, string> = {
   // Must match RollbackDialog success toast text.
   rolled_back: 'Откачена',
   failed: 'Ошибка',
+  // F-39: 'deprecated' is returned live by /v1/ai/models — label it like the public table.
+  deprecated: 'Устарела',
 }
 
 export const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> =
@@ -28,6 +30,7 @@ export const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destruct
     retired: 'outline',
     rolled_back: 'outline',
     failed: 'destructive',
+    deprecated: 'outline',
   }
 
 export const STATUS_OPTIONS = [

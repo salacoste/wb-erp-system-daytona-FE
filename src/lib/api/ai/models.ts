@@ -10,6 +10,7 @@ import type {
   AiModel,
   AiModelListResponse,
   AiModelMetrics,
+  ModelStatus,
   ModelTrainRequest,
   ModelTrainResponse,
   ModelPerformanceResponse,
@@ -43,13 +44,28 @@ function normalizeModelMetrics(raw: RawAiModelMetrics | null | undefined): AiMod
   }
 }
 
+// F-39: validate status at the boundary — an unknown status (backend adds a new one
+// before the FE ships) would otherwise pass the `as` cast and crash STATUS_BADGE_CONFIG[status]
+// (undefined.className). Unknown → 'retired' (a safe, badge-mapped fallback).
+const VALID_MODEL_STATUSES = new Set<ModelStatus>([
+  'active',
+  'training',
+  'degraded',
+  'retired',
+  'rolled_back',
+  'failed',
+  'deprecated',
+])
+
 function normalizeAiModel(raw: RawAiModel): AiModel {
   return {
     id: raw.id ?? '',
     modelType: (raw.modelType ?? 'sales_forecast') as ModelType,
     engine: (raw.engine ?? 'prophet') as AiModel['engine'],
     version: raw.version ?? 0,
-    status: (raw.status ?? 'retired') as AiModel['status'],
+    status: VALID_MODEL_STATUSES.has(raw.status as ModelStatus)
+      ? (raw.status as ModelStatus)
+      : 'retired',
     metrics: normalizeModelMetrics(raw.metrics),
     trainingDataRange: raw.trainingDataRange ?? undefined,
     trainedAt: raw.trainedAt ?? undefined,
@@ -60,14 +76,24 @@ interface RawAiModelListResponse {
   models?: RawAiModel[] | null
 }
 
-export function normalizeAiModelListResponse(raw: RawAiModelListResponse): AiModelListResponse {
+/**
+ * Validation F-39: GET /v1/ai/models returns a BARE array of models (not a
+ * { models: [...] } wrapper), and apiClient passes it through (no `data` key). The old
+ * `raw.models ?? []` read `.models` on that array → undefined → [] → the /analytics/models
+ * list + model [id]/evaluations + [id]/performance pages were permanently empty / "model
+ * not found". Accept both the bare array (prod) and the wrapper (defensive).
+ */
+export function normalizeAiModelListResponse(
+  raw: RawAiModelListResponse | RawAiModel[] | null | undefined
+): AiModelListResponse {
+  const models = Array.isArray(raw) ? raw : (raw?.models ?? [])
   return {
-    models: (raw.models ?? []).map(normalizeAiModel),
+    models: models.map(normalizeAiModel),
   }
 }
 
 export async function getAiModels(): Promise<AiModelListResponse> {
-  const raw = await apiClient.get<RawAiModelListResponse>('/v1/ai/models')
+  const raw = await apiClient.get<RawAiModel[]>('/v1/ai/models')
   return normalizeAiModelListResponse(raw)
 }
 
