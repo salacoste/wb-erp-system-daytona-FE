@@ -23,6 +23,8 @@ import {
   getDeltaColor,
   isInvertedMetric,
 } from './funnel-comparison-utils'
+import { isFunnelConversionAnomalous } from './funnel-anomaly'
+import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 
 interface FunnelSummaryCardsProps {
   from: string
@@ -131,6 +133,10 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
         const value = summary?.[card.field] ?? 0
         const delta =
           compare && prevSummary ? calculateFunnelDelta(value, prevSummary[card.field]) : null
+        // Defensive Frontend Principle (#191): the totalConversion card may show an
+        // impossible >100% value — indicate it (preserve the raw value, never clamp).
+        const anomalous =
+          card.field === 'totalConversion' && !!summary && isFunnelConversionAnomalous(summary)
 
         return (
           <Card key={card.label}>
@@ -140,7 +146,11 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
               </div>
               <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">{card.label}</p>
-                <p className="text-2xl font-bold truncate">{card.format(value)}</p>
+                <p className="flex items-center gap-1.5 text-2xl font-bold">
+                  {/* truncate the value only — never clip the anomaly indicator */}
+                  <span className="truncate">{card.format(value)}</span>
+                  {anomalous && <FunnelAnomalyIndicator />}
+                </p>
                 {compare && (
                   <DeltaIndicator delta={delta} field={card.field} loading={prevLoading} />
                 )}

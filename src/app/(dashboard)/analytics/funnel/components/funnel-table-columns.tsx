@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { FunnelProductItem, TopSearchQuery } from '@/types/analytics-funnel'
 import { type FunnelSortField, ariaSort, SortBtn } from './funnel-table-cells'
+import { isFunnelConversionAnomalous } from './funnel-anomaly'
+import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { ROUTES } from '@/lib/routes'
 
 /**
@@ -138,11 +140,15 @@ export function FunnelTableRow({ item }: FunnelTableRowProps) {
       <TableCell>{item.ordersCount.toLocaleString('ru-RU')}</TableCell>
       <TableCell>{item.buyoutCount.toLocaleString('ru-RU')}</TableCell>
       <TableCell className="font-medium">
-        {item.totalConversion.toLocaleString('ru-RU', {
-          minimumFractionDigits: 1,
-          maximumFractionDigits: 1,
-        })}
-        %
+        {/* Defensive Frontend Principle (#191): preserve the raw conversion value;
+            flag it with a warning when it's impossible (>100% or buyout>orders). */}
+        <span className="inline-flex items-center gap-1.5">
+          {item.totalConversion.toLocaleString('ru-RU', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}
+          %{isFunnelConversionAnomalous(item) && <FunnelAnomalyIndicator />}
+        </span>
       </TableCell>
       <TableCell className="text-red-600">
         {item.cancelRate.toLocaleString('ru-RU', {

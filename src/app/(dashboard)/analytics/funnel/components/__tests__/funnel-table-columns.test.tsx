@@ -266,3 +266,31 @@ describe('FunnelTableRow — top search queries cell', () => {
     expect(within(lastCellOfRow()).getByRole('link')).toHaveTextContent('q1')
   })
 })
+
+// Defensive Frontend Principle (#191): impossible conversions are flagged + preserved.
+describe('FunnelTableRow — conversion anomaly indicator (#191)', () => {
+  const ANOMALY_LABEL = /Невозможное значение конверсии/
+
+  it('renders the AlertTriangle warning AND the raw value for an anomalous SKU', () => {
+    const item = makeFunnelProductItem({
+      ordersCount: 65,
+      buyoutCount: 1428,
+      totalConversion: 288.48,
+    })
+    renderRow(item)
+    expect(screen.getByLabelText(ANOMALY_LABEL)).toBeInTheDocument()
+    // Raw value MUST still be visible (never clamped/hidden).
+    expect(screen.getByRole('row')).toHaveTextContent('288,5%')
+  })
+
+  it('does NOT render the warning for a normal SKU', () => {
+    const item = makeFunnelProductItem({
+      ordersCount: 140,
+      buyoutCount: 90,
+      totalConversion: 42,
+    })
+    renderRow(item)
+    expect(screen.queryByLabelText(ANOMALY_LABEL)).not.toBeInTheDocument()
+    expect(screen.getByRole('row')).toHaveTextContent('42,0%')
+  })
+})
