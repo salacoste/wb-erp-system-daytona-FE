@@ -27,7 +27,12 @@ export function recomputeSummary(
   const total_organic_sales = items.reduce((s, i) => s + i.organic_sales, 0)
   // Story 88.2-FE: null when total_spend = 0 (division undefined), not 0
   const overall_roas = total_spend > 0 ? total_revenue / total_spend : null
-  const overall_roi = total_spend > 0 ? (total_profit - total_spend) / total_spend : null
+  // iter-61: emit overall_roi in PERCENT units (× 100) to match the backend contract
+  // (normalizer maps backend `avgRoi` — already percent — into `overall_roi`). Both this
+  // recompute path (over-attribution filter ON) and the backend path feed the SAME
+  // AdvertisingSummaryCards `formatPercent`, which expects percent; without × 100 the recompute
+  // path rendered ROI 100× too small (e.g. -0.667 → "-0,7 %" instead of "-66,7 %").
+  const overall_roi = total_spend > 0 ? ((total_profit - total_spend) / total_spend) * 100 : null
   const avg_organic_contribution = total_sales > 0 ? (total_organic_sales / total_sales) * 100 : 0
 
   return {

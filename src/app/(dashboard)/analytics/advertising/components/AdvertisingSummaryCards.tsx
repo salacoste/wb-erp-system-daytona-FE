@@ -30,10 +30,17 @@ function formatCurrency(value: number): string {
 }
 
 /**
- * Format percentage value
+ * Format an ROI percentage (Russian locale).
+ * iter-61: `overall_roi` is already in percent units (live e.g. -136.67), so the old
+ * `value * 100` rendered it 100× too large ("-13667.0%"). Intl `style:'percent'` multiplies
+ * by 100, so format `value / 100` to show the percent as-is ("-136,7 %").
  */
 function formatPercent(value: number): string {
-  return `${(value * 100).toFixed(1)}%`
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(value / 100)
 }
 
 /**
@@ -132,7 +139,9 @@ export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSumma
       label: 'Доля органики',
       value:
         summary.avg_organic_contribution >= 0
-          ? `${summary.avg_organic_contribution.toFixed(1)}%`
+          ? // iter-61: was `${value.toFixed(1)}%` (dot-locale). avg_organic_contribution is
+            // percent units \u2014 reuse formatPercent (Russian locale, magnitude unchanged).
+            formatPercent(summary.avg_organic_contribution)
           : '\u2014',
       icon: Sprout,
       colorClass:

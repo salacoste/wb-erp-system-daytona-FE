@@ -100,7 +100,10 @@ describe('recomputeSummary', () => {
     expect(result.total_profit).toBe(1000)
     expect(result.total_organic_sales).toBe(1800)
     expect(result.overall_roas).toBeCloseTo(2000 / 3000, 5)
-    expect(result.overall_roi).toBeCloseTo((1000 - 3000) / 3000, 5)
+    // iter-61: overall_roi is emitted in PERCENT units (× 100) to match the backend contract
+    // (avgRoi is percent) and the AdvertisingSummaryCards formatPercent consumer. -66.67%, not -0.667.
+    expect(result.overall_roi).toBeCloseTo(((1000 - 3000) / 3000) * 100, 5)
+    expect(result.overall_roi).toBeCloseTo(-66.667, 2)
     expect(result.avg_organic_contribution).toBeCloseTo((1800 / 3800) * 100, 5)
   })
 
