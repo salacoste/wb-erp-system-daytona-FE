@@ -112,24 +112,36 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
   },
 }
 
+/**
+ * Validation F-47: guarded efficiency-config accessor. `efficiency_status` is backend-
+ * provided (item.efficiency_status), so an out-of-union value (enum drift — the F-39 crash
+ * class, where the backend sent a status the FE union lacked) would make
+ * `efficiencyConfig[status]` undefined → a TypeError on `.icon`/`.textColor`/`.label`. Fall
+ * back to the 'unknown' config for any unrecognized status. Accepts a plain string so the
+ * runtime value (not just the typed union) is guarded.
+ */
+export function getEfficiencyConfig(status: string): EfficiencyConfig {
+  return efficiencyConfig[status as EfficiencyStatus] ?? efficiencyConfig.unknown
+}
+
 /** Get efficiency status color class for inline text styling */
 export function getEfficiencyColor(status: EfficiencyStatus): string {
-  return efficiencyConfig[status].textColor
+  return getEfficiencyConfig(status).textColor
 }
 
 /** Get efficiency status label */
 export function getEfficiencyLabel(status: EfficiencyStatus): string {
-  return efficiencyConfig[status].label
+  return getEfficiencyConfig(status).label
 }
 
 /** Get efficiency status icon component */
 export function getEfficiencyIcon(status: EfficiencyStatus): LucideIcon {
-  return efficiencyConfig[status].icon
+  return getEfficiencyConfig(status).icon
 }
 
 /** Get efficiency status recommendation */
 export function getEfficiencyRecommendation(status: EfficiencyStatus): string {
-  return efficiencyConfig[status].recommendation
+  return getEfficiencyConfig(status).recommendation
 }
 
 /** Check if status requires attention (poor, loss, or unknown) */

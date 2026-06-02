@@ -13,6 +13,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import {
   efficiencyConfig,
+  getEfficiencyConfig,
   getEfficiencyColor,
   getEfficiencyLabel,
   getEfficiencyIcon,
@@ -39,7 +40,7 @@ const ALL_STATUSES: EfficiencyStatus[] = [
 
 describe('efficiencyConfig', () => {
   it('should have configuration for all efficiency statuses', () => {
-    ALL_STATUSES.forEach((status) => {
+    ALL_STATUSES.forEach(status => {
       expect(efficiencyConfig[status]).toBeDefined()
       expect(efficiencyConfig[status].label).toBeTruthy()
       expect(efficiencyConfig[status].icon).toBeDefined()
@@ -80,9 +81,26 @@ describe('efficiencyConfig', () => {
   })
 })
 
+describe('getEfficiencyConfig — F-47 guarded accessor', () => {
+  it('returns the matching config for every known status', () => {
+    ;(['excellent', 'good', 'moderate', 'poor', 'loss', 'unknown'] as const).forEach(s => {
+      expect(getEfficiencyConfig(s)).toBe(efficiencyConfig[s])
+    })
+  })
+
+  it('falls back to the unknown config for an out-of-union backend value (no crash)', () => {
+    // enum drift (F-39 class): backend sends a status the FE union lacks.
+    expect(getEfficiencyConfig('critical')).toBe(efficiencyConfig.unknown)
+    expect(getEfficiencyConfig('')).toBe(efficiencyConfig.unknown)
+    // the returned config is always a real object → .icon/.textColor/.label never throw
+    expect(getEfficiencyConfig('totally_new').icon).toBeDefined()
+    expect(getEfficiencyConfig('totally_new').textColor).toBeTruthy()
+  })
+})
+
 describe('getEfficiencyColor', () => {
   it('should return text color class for each status', () => {
-    ALL_STATUSES.forEach((status) => {
+    ALL_STATUSES.forEach(status => {
       const color = getEfficiencyColor(status)
       expect(color).toBe(efficiencyConfig[status].textColor)
       expect(color).toContain('text-')
@@ -92,7 +110,7 @@ describe('getEfficiencyColor', () => {
 
 describe('getEfficiencyLabel', () => {
   it('should return Russian label for each status', () => {
-    ALL_STATUSES.forEach((status) => {
+    ALL_STATUSES.forEach(status => {
       const label = getEfficiencyLabel(status)
       expect(label).toBe(efficiencyConfig[status].label)
     })
@@ -101,7 +119,7 @@ describe('getEfficiencyLabel', () => {
 
 describe('getEfficiencyIcon', () => {
   it('should return icon component for each status', () => {
-    ALL_STATUSES.forEach((status) => {
+    ALL_STATUSES.forEach(status => {
       const icon = getEfficiencyIcon(status)
       expect(icon).toBe(efficiencyConfig[status].icon)
       // Lucide icons are ForwardRef components (objects with render function)
@@ -113,7 +131,7 @@ describe('getEfficiencyIcon', () => {
 
 describe('getEfficiencyRecommendation', () => {
   it('should return Russian recommendation for each status', () => {
-    ALL_STATUSES.forEach((status) => {
+    ALL_STATUSES.forEach(status => {
       const recommendation = getEfficiencyRecommendation(status)
       expect(recommendation).toBe(efficiencyConfig[status].recommendation)
       expect(recommendation.length).toBeGreaterThan(0)

@@ -1,15 +1,10 @@
 'use client'
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { EfficiencyStatus } from '@/types/advertising-analytics'
-import { efficiencyConfig } from '@/lib/efficiency-utils'
+import { efficiencyConfig, getEfficiencyConfig } from '@/lib/efficiency-utils'
 
 // Re-export config for backward compatibility with EfficiencyFilterDropdown
 export { efficiencyConfig }
@@ -46,7 +41,9 @@ export function EfficiencyBadge({
   showIcon = true,
   className,
 }: EfficiencyBadgeProps) {
-  const config = efficiencyConfig[status]
+  // F-47: guarded lookup — an out-of-union backend efficiency_status falls back to 'unknown'
+  // instead of crashing on config.icon (the F-39 enum-crash class).
+  const config = getEfficiencyConfig(status)
   const Icon = config.icon
 
   return (
@@ -63,12 +60,7 @@ export function EfficiencyBadge({
             )}
             aria-label={`Статус эффективности: ${config.label}`}
           >
-            {showIcon && (
-              <Icon
-                className={cn('h-3 w-3', config.iconColor)}
-                aria-hidden="true"
-              />
-            )}
+            {showIcon && <Icon className={cn('h-3 w-3', config.iconColor)} aria-hidden="true" />}
             {config.label}
           </Badge>
         </TooltipTrigger>
@@ -77,9 +69,7 @@ export function EfficiencyBadge({
             <p className="font-medium">{config.label}</p>
             <p className="text-xs text-muted-foreground">{config.description}</p>
             {showRecommendation && (
-              <p className="text-xs text-blue-600 mt-1">
-                💡 {config.recommendation}
-              </p>
+              <p className="text-xs text-blue-600 mt-1">💡 {config.recommendation}</p>
             )}
           </div>
         </TooltipContent>
@@ -92,12 +82,12 @@ export function EfficiencyBadge({
  * Get efficiency status color class for inline text styling
  */
 export function getEfficiencyColor(status: EfficiencyStatus): string {
-  return efficiencyConfig[status].textColor
+  return getEfficiencyConfig(status).textColor
 }
 
 /**
  * Get efficiency status label
  */
 export function getEfficiencyLabel(status: EfficiencyStatus): string {
-  return efficiencyConfig[status].label
+  return getEfficiencyConfig(status).label
 }
