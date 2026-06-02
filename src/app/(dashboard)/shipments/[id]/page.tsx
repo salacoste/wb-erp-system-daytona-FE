@@ -40,7 +40,11 @@ export default function ShipmentDetailPage() {
   }
 
   function handleCalculateSuccess(result: CalculateShipmentResponse) {
-    setCalcResults(result.results)
+    // iter-65 (request #193 §2): the live backend returns `{ pallets: [{ lines }] }`, NOT the
+    // documented `{ results }` envelope — so `result.results` is undefined, which previously
+    // crashed CalculationResults (undefined.length). Coerce to [] to keep the state a valid array
+    // (graceful empty-state) until the backend aligns the envelope.
+    setCalcResults(Array.isArray(result.results) ? result.results : [])
     setValidationErrors([])
   }
 

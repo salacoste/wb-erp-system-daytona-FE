@@ -18,11 +18,13 @@ import { formatCurrency } from '@/lib/utils'
 import type { CalculationResultItem } from '@/types/shipment-cost'
 
 interface CalculationResultsProps {
-  results: CalculationResultItem[]
+  // iter-65: typed nullable for defense-in-depth — the calculate envelope (#193 §2) may omit
+  // `results` at runtime; the boundary in page.tsx coerces to [], and this guard backs it up.
+  results: CalculationResultItem[] | undefined
 }
 
 export function CalculationResults({ results }: CalculationResultsProps) {
-  if (!results.length) return null
+  if (!results?.length) return null
 
   const totalCost = results.reduce((sum, r) => sum + r.finalCostLine, 0)
 
