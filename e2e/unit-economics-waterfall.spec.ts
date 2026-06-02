@@ -26,33 +26,63 @@ test.describe('Unit Economics waterfall — F-44 Y-axis clipping', () => {
     const rows = page.locator('tbody tr')
     await expect(rows.first()).toBeVisible({ timeout: 20_000 })
 
+    // The table is paginated + defaults to revenue-desc, so cogs>100% (loss-making) SKUs may sit
+    // below the first page. COGS% itself isn't sortable, but Маржа % (net_margin_pct) is — and
+    // cogs>100% ⟹ negative margin, so sorting margin ASCENDING surfaces the loss-makers onto the
+    // first page deterministically (independent of which week the page defaults to).
+    const marginHeader = page.locator('th', { hasText: 'Маржа' }).first()
+    await marginHeader.click() // → sort net_margin_pct desc (profitable first)
+    await marginHeader.click() // → toggle to asc (most negative / loss first)
+
     // COGS% is the 4th column (0-based td index 3): sku_id | name | revenue | COGS% | ...
-    // Parse the Russian-locale percentage ("133,3 %") → 133.3 and pick the row with the HIGHEST
-    // COGS% > 100 — the deepest negative domain gives the most unambiguous negative tick.
-    const rowCount = await rows.count()
-    let targetIdx = -1
-    let targetCogs = 100
-    for (let i = 0; i < rowCount; i++) {
-      const cogsText = await rows.nth(i).locator('td').nth(3).innerText()
-      const num = parseFloat(
-        cogsText
-          .replace(/\s/g, '')
-          .replace(/[^\d,.-]/g, '')
-          .replace(',', '.')
-      )
-      if (Number.isFinite(num) && num > targetCogs) {
-        targetIdx = i
-        targetCogs = num
+    // Scan visible rows for the HIGHEST COGS% > 100 (deepest negative domain = clearest tick).
+    // Russian-locale percentage ("133,3 %") → 133.3.
+    const findMaxCogsRow = async (): Promise<{ idx: number; cogs: number }> => {
+      const rowCount = await rows.count()
+      let idx = -1
+      let cogs = 100
+      for (let i = 0; i < rowCount; i++) {
+        const text = await rows.nth(i).locator('td').nth(3).innerText()
+        const num = parseFloat(
+          text
+            .replace(/\s/g, '')
+            .replace(/[^\d,.-]/g, '')
+            .replace(',', '.')
+        )
+        if (Number.isFinite(num) && num > cogs) {
+          idx = i
+          cogs = num
+        }
       }
+      return { idx, cogs }
     }
 
+    // Poll while the margin-sort re-fetch lands; skip cleanly (no false-green) if this week's
+    // data genuinely has no cogs>100% SKU even after sorting loss-makers to the top.
+    let target = { idx: -1, cogs: 100 }
+    let found = false
+    try {
+      await expect
+        .poll(
+          async () => {
+            target = await findMaxCogsRow()
+            return target.idx !== -1
+          },
+          { timeout: 8_000 }
+        )
+        .toBe(true)
+      found = true
+    } catch {
+      found = false
+    }
     test.skip(
-      targetIdx === -1,
-      'No SKU with cogs_pct>100% on the loaded week — F-44 condition not reproducible with current live data'
+      !found,
+      'No SKU with cogs_pct>100% in the data even after sorting by margin — F-44 condition not reproducible this week'
     )
+    const targetCogs = target.cogs
 
     // Select that SKU → the "Структура затрат" waterfall re-renders for its breakdown.
-    await rows.nth(targetIdx).click()
+    await rows.nth(target.idx).click()
 
     // The Y-axis must now include a negative tick (dynamic domain extends below 0%).
     // expect.poll retries while recharts re-renders the axis — no hard wait.
