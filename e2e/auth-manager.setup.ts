@@ -46,10 +46,13 @@ setup('authenticate as manager (non-Owner)', async ({ page }) => {
 
   // Wait for navigation away from login page
   await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 30_000 })
-  await page.waitForLoadState('networkidle')
 
-  // Sanity check: dashboard shell should be visible (Manager has read access to most pages)
-  await expect(page.locator('main').first()).toBeVisible({ timeout: 10_000 })
+  // Stabilize by waiting for the dashboard shell to render. NOT networkidle — the dashboard
+  // background-polls (TanStack Query), so networkidle never settles and the setup times out
+  // (anti-pattern #9 applied to the setup file itself; validation F-4 fixed the same bug in
+  // auth.setup.ts but this Manager setup, added later for Story 86.2, reintroduced it → it
+  // failed every run and BLOCKED the whole chromium project via the setup dependency).
+  await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
 
   // Save authentication state for downstream tests
   await page.context().storageState({ path: managerAuthFile })
