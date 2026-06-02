@@ -4,10 +4,11 @@
  * Epic 52-FE: Story 52-FE.4 - Audit Log Viewer
  */
 
-import { FileText, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { FileText, RefreshCcw, ChevronLeft, ChevronRight, Lock } from 'lucide-react'
 import { TableRow, TableCell } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { isForbiddenError } from '@/types/api'
 
 /**
  * Format datetime for audit timestamp
@@ -52,7 +53,22 @@ export function EmptyState() {
   )
 }
 
-export function ErrorState({ onRetry }: { onRetry: () => void }) {
+export function ErrorState({ onRetry, error }: { onRetry: () => void; error?: Error | null }) {
+  // F-21: for these Admin-only endpoints a 403 is overwhelmingly a missing-role
+  // denial, so show a permission message and suppress the futile retry. Copy says
+  // "системным администраторам" because the cabinet Owner (highest FE role) still
+  // lacks this backend Admin role — see docs/request-backend/183.
+  if (isForbiddenError(error)) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <Lock className="text-muted-foreground mb-4 h-8 w-8" />
+        <h3 className="text-lg font-medium text-gray-900">Доступно только администраторам</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          Журнал изменений тарифов доступен только системным администраторам.
+        </p>
+      </div>
+    )
+  }
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="text-red-500 mb-4">&#9888;&#65039;</div>

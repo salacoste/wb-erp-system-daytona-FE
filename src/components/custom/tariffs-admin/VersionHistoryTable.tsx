@@ -7,7 +7,7 @@
 // ============================================================================
 
 import { useState } from 'react'
-import { Trash2, ClipboardList, RefreshCcw } from 'lucide-react'
+import { Trash2, ClipboardList, RefreshCcw, Lock } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTariffVersionHistory } from '@/hooks/useTariffVersionHistory'
+import { isForbiddenError } from '@/types/api'
 import { VersionStatusBadge } from './VersionStatusBadge'
 import { DeleteVersionDialog } from './DeleteVersionDialog'
 import { formatDate } from '@/lib/utils'
@@ -75,9 +76,7 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <ClipboardList className="h-12 w-12 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-medium text-gray-900">
-        История версий пуста
-      </h3>
+      <h3 className="text-lg font-medium text-gray-900">История версий пуста</h3>
       <p className="text-sm text-muted-foreground mt-1">
         Создайте первую версию тарифов или запланируйте изменения.
       </p>
@@ -90,16 +89,31 @@ function EmptyState() {
  */
 interface ErrorStateProps {
   onRetry: () => void
+  error?: Error | null
 }
 
-function ErrorState({ onRetry }: ErrorStateProps) {
+function ErrorState({ onRetry, error }: ErrorStateProps) {
+  // F-21: for these Admin-only endpoints a 403 is overwhelmingly a missing-role
+  // denial (not a transient/session error), so show a permission message and
+  // suppress the futile retry. Copy says "системным администраторам" because the
+  // cabinet Owner (the highest FE role) still lacks this backend Admin role —
+  // see docs/request-backend/183 for the Owner-vs-Admin authz-model gap.
+  if (isForbiddenError(error)) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <Lock className="text-muted-foreground mb-4 h-8 w-8" />
+        <h3 className="text-lg font-medium text-gray-900">Доступно только администраторам</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          История версий тарифов доступна только системным администраторам.
+        </p>
+      </div>
+    )
+  }
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="text-red-500 mb-4">⚠️</div>
       <h3 className="text-lg font-medium text-gray-900">Ошибка загрузки</h3>
-      <p className="text-sm text-muted-foreground mt-1 mb-4">
-        Не удалось загрузить историю версий
-      </p>
+      <p className="text-sm text-muted-foreground mt-1 mb-4">Не удалось загрузить историю версий</p>
       <Button variant="outline" onClick={onRetry}>
         <RefreshCcw className="h-4 w-4 mr-2" />
         Повторить
@@ -113,10 +127,8 @@ function ErrorState({ onRetry }: ErrorStateProps) {
  * Displays all tariff versions with their status and allows deletion of scheduled versions
  */
 export function VersionHistoryTable() {
-  const { data, isLoading, isError, refetch } = useTariffVersionHistory()
-  const [versionToDelete, setVersionToDelete] = useState<TariffVersion | null>(
-    null
-  )
+  const { data, isLoading, isError, error, refetch } = useTariffVersionHistory()
+  const [versionToDelete, setVersionToDelete] = useState<TariffVersion | null>(null)
 
   return (
     <Card>
@@ -124,11 +136,9 @@ export function VersionHistoryTable() {
         <CardTitle>История версий тарифов</CardTitle>
       </CardHeader>
       <CardContent>
-        {isError && <ErrorState onRetry={refetch} />}
+        {isError && <ErrorState onRetry={refetch} error={error} />}
 
-        {!isError && !isLoading && (!data || data.length === 0) && (
-          <EmptyState />
-        )}
+        {!isError && !isLoading && (!data || data.length === 0) && <EmptyState />}
 
         {!isError && (isLoading || (data && data.length > 0)) && (
           <Table>
@@ -147,25 +157,19 @@ export function VersionHistoryTable() {
             <TableBody>
               {isLoading && <TableSkeleton />}
               {!isLoading &&
-                data?.map((version) => (
+                data?.map(version => (
                   <TableRow key={version.id}>
                     <TableCell>{formatDate(version.effective_from)}</TableCell>
                     <TableCell>
-                      {version.effective_until
-                        ? formatDate(version.effective_until)
-                        : '—'}
+                      {version.effective_until ? formatDate(version.effective_until) : '—'}
                     </TableCell>
                     <TableCell>
                       <VersionStatusBadge status={version.status} />
                     </TableCell>
                     <TableCell>{formatSource(version.source)}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">
-                      {version.notes || '—'}
-                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">{version.notes || '—'}</TableCell>
                     <TableCell>{formatDateTime(version.created_at)}</TableCell>
-                    <TableCell className="truncate">
-                      {version.updated_by}
-                    </TableCell>
+                    <TableCell className="truncate">{version.updated_by}</TableCell>
                     <TableCell>
                       {version.status === 'scheduled' && (
                         <Button

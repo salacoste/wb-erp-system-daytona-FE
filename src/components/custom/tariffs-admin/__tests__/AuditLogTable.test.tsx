@@ -104,9 +104,7 @@ function createTestQueryClient(): QueryClient {
 
 function renderWithProviders(ui: React.ReactElement) {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 describe('AuditLogTable', () => {
@@ -355,9 +353,7 @@ describe('AuditLogTable', () => {
       await user.click(nextButton)
 
       await waitFor(() => {
-        expect(mockUseTariffAuditLog).toHaveBeenCalledWith(
-          expect.objectContaining({ page: 2 })
-        )
+        expect(mockUseTariffAuditLog).toHaveBeenCalledWith(expect.objectContaining({ page: 2 }))
       })
     })
   })
@@ -622,6 +618,27 @@ describe('AuditLogTable', () => {
         const retryButton = screen.getByRole('button', { name: /повторить/i })
         expect(retryButton).toBeInTheDocument()
       })
+    })
+  })
+
+  // Validation F-21: a 403 (Admin-only audit endpoint) renders a permission
+  // message with NO retry; any other error keeps the generic load error + retry.
+  describe('F-21: 403 permission state', () => {
+    it('renders the permission message and no retry button on a 403', async () => {
+      const { ApiError } = await import('@/types/api')
+      mockUseTariffAuditLog.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isError: true,
+        error: new ApiError('Forbidden', 403),
+        refetch: vi.fn(),
+      } as unknown as ReturnType<typeof useTariffAuditLog>)
+      const { AuditLogTable } = await import('../AuditLogTable')
+      renderWithProviders(<AuditLogTable />)
+      await waitFor(() => {
+        expect(screen.getByText(/только администраторам/i)).toBeInTheDocument()
+      })
+      expect(screen.queryByRole('button', { name: /повторить/i })).not.toBeInTheDocument()
     })
   })
 })

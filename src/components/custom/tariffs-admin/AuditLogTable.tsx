@@ -38,7 +38,7 @@ export function AuditLogTable() {
   const [page, setPage] = useState(1)
   const [fieldFilter, setFieldFilter] = useState('')
 
-  const { data, isLoading, isError, refetch } = useTariffAuditLog({
+  const { data, isLoading, isError, error, refetch } = useTariffAuditLog({
     page,
     limit: ITEMS_PER_PAGE,
     field_name: fieldFilter || undefined,
@@ -63,7 +63,7 @@ export function AuditLogTable() {
           />
         </div>
 
-        {isError && <ErrorState onRetry={refetch} />}
+        {isError && <ErrorState onRetry={refetch} error={error} />}
 
         {!isError && !isLoading && (!data?.data || data.data.length === 0) && <EmptyState />}
 

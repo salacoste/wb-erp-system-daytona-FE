@@ -69,9 +69,7 @@ function createTestQueryClient(): QueryClient {
 
 function renderWithProviders(ui: React.ReactElement) {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 describe('VersionHistoryTable', () => {
@@ -320,9 +318,7 @@ describe('VersionHistoryTable', () => {
 
         // Should show confirmation dialog
         await waitFor(() => {
-          expect(
-            screen.getByText(/подтвердите удаление/i)
-          ).toBeInTheDocument()
+          expect(screen.getByText(/подтвердите удаление/i)).toBeInTheDocument()
         })
       }
     })
@@ -359,9 +355,7 @@ describe('VersionHistoryTable', () => {
       renderWithProviders(<VersionHistoryTable />)
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/создайте первую версию/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/создайте первую версию/i)).toBeInTheDocument()
       })
     })
   })
@@ -467,6 +461,43 @@ describe('VersionHistoryTable', () => {
         expect(screen.getByText('Статус')).toBeInTheDocument()
         expect(screen.getByText('Источник')).toBeInTheDocument()
       })
+    })
+  })
+
+  // Validation F-21: a 403 (Admin-only endpoint) renders a permission message
+  // with NO retry; any other error keeps the generic load error + retry.
+  describe('F-21: 403 permission state', () => {
+    it('renders the permission message and no retry button on a 403', async () => {
+      const { ApiError } = await import('@/types/api')
+      mockUseTariffVersionHistory.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isError: true,
+        error: new ApiError('Forbidden', 403),
+        refetch: vi.fn(),
+      } as unknown as ReturnType<typeof useTariffVersionHistory>)
+      const { VersionHistoryTable } = await import('../VersionHistoryTable')
+      renderWithProviders(<VersionHistoryTable />)
+      await waitFor(() => {
+        expect(screen.getByText(/только администраторам/i)).toBeInTheDocument()
+      })
+      expect(screen.queryByRole('button', { name: /повторить/i })).not.toBeInTheDocument()
+    })
+
+    it('renders the generic error WITH retry on a non-403 error', async () => {
+      mockUseTariffVersionHistory.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isError: true,
+        error: new Error('boom'),
+        refetch: vi.fn(),
+      } as unknown as ReturnType<typeof useTariffVersionHistory>)
+      const { VersionHistoryTable } = await import('../VersionHistoryTable')
+      renderWithProviders(<VersionHistoryTable />)
+      await waitFor(() => {
+        expect(screen.getByText('Ошибка загрузки')).toBeInTheDocument()
+      })
+      expect(screen.getByRole('button', { name: /повторить/i })).toBeInTheDocument()
     })
   })
 })

@@ -33,6 +33,17 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * True when an error is an HTTP 403 (Forbidden) — an EXPECTED permission state,
+ * not a load failure. Lets UI render a "you lack the role" message + suppress the
+ * retry affordance (retrying a permission denial never succeeds). Validation F-21:
+ * tariff history/audit are Admin-only; an Owner hitting them should see a permission
+ * message, not a generic "Ошибка загрузки".
+ */
+export function isForbiddenError(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 403
+}
+
 export interface ApiRequestOptions extends RequestInit {
   skipAuth?: boolean
   skipCabinetId?: boolean
