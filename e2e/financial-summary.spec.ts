@@ -31,18 +31,13 @@ test.describe('Financial Summary', () => {
     })
 
     test('has week selector', async ({ page }) => {
-      // Week selector component - uses Radix UI Select with id="week-selector"
-      // or shows loading skeleton while loading weeks
-      const weekSelector = page.locator(
-        '#week-selector, [id$="-selector"], button[role="combobox"]'
-      )
-      const skeleton = page.locator('[class*="skeleton"]')
-
-      // Either selector is visible or loading
-      const hasSelector = (await weekSelector.count()) > 0
-      const hasSkeleton = (await skeleton.count()) > 0
-
-      expect(hasSelector || hasSkeleton).toBeTruthy()
+      // The WeekSelector renders a Radix Select trigger (button[role="combobox"]) once the
+      // available-weeks query resolves. The beforeEach domcontentloaded wait does NOT block on
+      // that data, so WAIT for the control to appear rather than snapshot-checking (which raced
+      // the data load — the bug exposed when networkidle was removed in F-53).
+      await expect(page.locator('button[role="combobox"]').first()).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('can change selected week', async ({ page }) => {
