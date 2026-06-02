@@ -84,11 +84,20 @@ export function useWarehouseFormState({
     [boxType, volumeLiters, acceptanceCoefficient, unitsPerPackage, acceptanceTariff]
   )
 
-  // Auto-fill logistics when calculated value changes
+  // price-calc DEFECT-2 (iter-57): auto-fill forward logistics whenever a warehouse is
+  // selected and the volume is known — applying the computed value INCLUDING a legitimate 0.
+  // FBS "Маркетплейс" warehouses have a real FBO logistics rate of 0; the old
+  // `logisticsForwardRub > 0` guard dropped that 0, leaving a stale rate from a previously
+  // selected FBO warehouse on the form (selection-order-dependent wrong logistics). Gating on
+  // `selectedWarehouse && volumeLiters > 0` keeps auto-fill suppressed until both exist, then
+  // writes the correct value (0 for FBS). calculateLogisticsForward already returns 0 when
+  // volumeLiters <= 0, so volume is the right "is there anything to apply" signal.
+  const isLogisticsAutoFillable =
+    !isLogisticsManuallySet && selectedWarehouse !== null && volumeLiters > 0
+
   useEffect(() => {
-    if (!isLogisticsManuallySet && logisticsForwardRub > 0)
-      setValue('logistics_forward_rub', logisticsForwardRub)
-  }, [logisticsForwardRub, isLogisticsManuallySet, setValue])
+    if (isLogisticsAutoFillable) setValue('logistics_forward_rub', logisticsForwardRub)
+  }, [isLogisticsAutoFillable, logisticsForwardRub, setValue])
   useEffect(() => {
     if (!isLogisticsReverseManuallySet && logisticsReverseRub > 0)
       setValue('logistics_reverse_rub', logisticsReverseRub)
@@ -113,7 +122,9 @@ export function useWarehouseFormState({
     storageRub,
     volumeLiters,
     logisticsForwardRub,
-    isLogisticsAutoFilled: !isLogisticsManuallySet && logisticsForwardRub > 0,
+    // True even when the auto-filled value is a legitimate 0 (FBS warehouse) — the field WAS
+    // auto-filled, so the UI badge should reflect that (DEFECT-2).
+    isLogisticsAutoFilled: isLogisticsAutoFillable,
     logisticsReverseRub,
     isLogisticsReverseAutoFilled: !isLogisticsReverseManuallySet && logisticsReverseRub > 0,
     acceptanceCoefficient,

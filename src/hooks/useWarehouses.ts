@@ -43,9 +43,10 @@ const TARIFF_DEFAULTS = {
 
 /**
  * Transform WarehouseWithTariffs to Warehouse format
- * Maps the correct API response structure to frontend Warehouse type
+ * Maps the correct API response structure to frontend Warehouse type.
+ * Exported for unit testing (pure-function-over-hook-mocking convention).
  */
-function transformToWarehouse(w: WarehouseWithTariffs): Warehouse {
+export function transformToWarehouse(w: WarehouseWithTariffs): Warehouse {
   // Use FBO tariffs for Price Calculator (FBO = товар на складе WB)
   const fboTariffs = w.tariffs?.fbo
   const storageTariffs = w.tariffs?.storage
@@ -54,13 +55,28 @@ function transformToWarehouse(w: WarehouseWithTariffs): Warehouse {
     id: w.id,
     name: w.name,
     tariffs: {
-      // Delivery tariffs from FBO (correct rates ~46₽ base, ~5-14₽ per liter)
-      // Use || to fallback when API returns 0 (which is falsy but not null/undefined)
-      deliveryBaseLiterRub: fboTariffs?.delivery_base_rub || TARIFF_DEFAULTS.deliveryBaseLiterRub,
-      deliveryPerLiterRub: fboTariffs?.delivery_liter_rub || TARIFF_DEFAULTS.deliveryPerLiterRub,
-      logisticsCoefficient: fboTariffs?.logistics_coefficient || TARIFF_DEFAULTS.logisticsCoefficient,
-      // Storage tariffs (correct rates ~0.07₽/day base)
-      // IMPORTANT: Use || instead of ?? because API may return 0 for missing storage data
+      // price-calc DEFECT-2 (iter-57): the FBO DELIVERY rate must preserve a real 0.
+      // FBS "Маркетплейс" warehouses (~29% of pickable warehouses) carry a real FBO
+      // delivery rate of 0 — the seller ships the goods, so WB charges no FBO box logistics.
+      // The old `fboTariffs?.delivery_base_rub || TARIFF_DEFAULTS.x` treated that real 0 as
+      // falsy and substituted 46₽/14₽ → +102₽/unit bogus forward logistics inflated the
+      // recommended price (anti-pattern #8: a real 0 is data we don't own — preserve it,
+      // never fabricate). A block-presence guard defaults only when the whole fbo block is
+      // absent; per the declared contract (types/warehouse.ts) a present block's fields are
+      // non-nullable numbers.
+      deliveryBaseLiterRub: fboTariffs
+        ? fboTariffs.delivery_base_rub
+        : TARIFF_DEFAULTS.deliveryBaseLiterRub,
+      deliveryPerLiterRub: fboTariffs
+        ? fboTariffs.delivery_liter_rub
+        : TARIFF_DEFAULTS.deliveryPerLiterRub,
+      // Coefficient + storage keep the original `||` default: there is NO evidence the
+      // backend emits a legitimate 0 here (FBO logistics_coefficient is always ≥1; storage
+      // base is a real per-day rate), and the prior author used 0→default deliberately for
+      // storage. Narrowing the fix to the one field proven wrong (delivery) avoids an
+      // unverified storage behavior change (verify-before-fix).
+      logisticsCoefficient:
+        fboTariffs?.logistics_coefficient || TARIFF_DEFAULTS.logisticsCoefficient,
       storageBaseLiterRub: storageTariffs?.base_per_day_rub || TARIFF_DEFAULTS.storageBaseLiterRub,
       storagePerLiterRub: storageTariffs?.liter_per_day_rub || TARIFF_DEFAULTS.storagePerLiterRub,
       storageCoefficient: storageTariffs?.coefficient || TARIFF_DEFAULTS.storageCoefficient,
@@ -78,7 +94,7 @@ async function fetchWarehouses(): Promise<Warehouse[]> {
 
   const warehouses = warehouseList
     .map(transformToWarehouse)
-    .filter((w) => w.id > 0)
+    .filter(w => w.id > 0)
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 
   console.info('[Warehouses] Loaded', warehouses.length, 'warehouses with tariffs')
