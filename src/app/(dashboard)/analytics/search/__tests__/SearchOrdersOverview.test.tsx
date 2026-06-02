@@ -112,6 +112,68 @@ describe('SearchOrdersOverview', () => {
     })
   })
 
+  // Story 111.8-FE: deduplicated ≤100% share as the primary figure, raw >100%
+  // preserved as subtext (Defensive Frontend — never drop the raw value).
+  describe('deduplicated share', () => {
+    function withSummary(summary: SearchOrdersResponse['summary']) {
+      mockUseSearchOrders.mockReturnValue({
+        data: { ...mockData, summary },
+        isLoading: false,
+        isError: false,
+      })
+    }
+
+    it('shows the dedup ≤100% share as primary + the raw >100% as subtext (no inflated Info on primary)', () => {
+      withSummary({
+        totalSearchOrders: 7593,
+        totalSearchOrdersDeduplicated: 3679,
+        searchOrderShare: 193.7,
+        searchOrderShareDeduplicated: 93.85,
+        searchOrderShareInflated: true,
+        searchOrderShareDeduplicatedInflated: false,
+      })
+      renderOverview()
+      // primary sane figure (Intl rounds 93.85 → "93,8 %" — half-even on the float repr)
+      expect(screen.getByText(/93,8\s%/)).toBeInTheDocument()
+      // raw multi-attributed value preserved in subtext
+      const subtext = screen.getByText(/мультиатрибуцией/)
+      expect(subtext).toBeInTheDocument()
+      expect(subtext.textContent ?? '').toMatch(/193,7\s%/)
+      // the Info tooltip still explains the raw value (attached to subtext)
+      expect(screen.getByLabelText(/WB засчитывает один заказ/)).toBeInTheDocument()
+    })
+
+    it('shows the Info indicator on the dedup primary too when the dedup share is flagged inflated', () => {
+      // Defensive guard: dedup is normally ≤100%/false, but if the backend ever flags it
+      // inflated, the primary must carry the indicator — never a >100% primary with no affordance.
+      withSummary({
+        totalSearchOrders: 7593,
+        totalSearchOrdersDeduplicated: 3679,
+        searchOrderShare: 193.7,
+        searchOrderShareDeduplicated: 120.5,
+        searchOrderShareInflated: true,
+        searchOrderShareDeduplicatedInflated: true,
+      })
+      renderOverview()
+      // both the primary (dedup, now flagged) and the subtext (raw) carry the Info affordance
+      expect(screen.getAllByLabelText(/WB засчитывает один заказ/)).toHaveLength(2)
+    })
+
+    it('falls back to the raw inflated share when dedup is null (current behavior)', () => {
+      withSummary({
+        totalSearchOrders: 10,
+        searchOrderShare: 193.7,
+        searchOrderShareDeduplicated: null,
+        searchOrderShareInflated: true,
+      })
+      renderOverview()
+      expect(screen.getByText(/193,7\s%/)).toBeInTheDocument()
+      expect(screen.getByLabelText(/WB засчитывает один заказ/)).toBeInTheDocument()
+      // no dedup subtext
+      expect(screen.queryByText(/мультиатрибуцией/)).not.toBeInTheDocument()
+    })
+  })
+
   describe('table rendering', () => {
     beforeEach(() => {
       mockUseSearchOrders.mockReturnValue({ data: mockData, isLoading: false, isError: false })

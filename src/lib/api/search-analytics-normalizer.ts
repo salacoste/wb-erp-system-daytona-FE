@@ -205,6 +205,12 @@ export function normalizeSearchOrdersResponse(raw: unknown): SearchOrdersRespons
       // matches the funnel-normalizer hasMore boolean coercion (absent → false).
       // Preserved so the UI shows an Info indicator instead of silently misleading.
       searchOrderShareInflated: summary.searchOrderShareInflated === true,
+      // Story 111.8: backend de-duplicates WB multi-attribution → a sane ≤100%
+      // share. toNullableNumber leaves it null on older builds that omit the
+      // field — the component uses null to fall back to the raw inflated value.
+      totalSearchOrdersDeduplicated: toCount(summary.totalSearchOrdersDeduplicated),
+      searchOrderShareDeduplicated: toNullableNumber(summary.searchOrderShareDeduplicated),
+      searchOrderShareDeduplicatedInflated: summary.searchOrderShareDeduplicatedInflated === true,
     },
   }
 }

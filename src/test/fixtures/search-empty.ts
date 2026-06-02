@@ -52,7 +52,15 @@ export function emptySearchOrdersResponse(
     items: [],
     // searchOrderShareInflated: false keeps this fixture normalize-stable (the
     // normalizer always emits the boolean per F-6 / Request #176 resolution).
-    summary: { totalSearchOrders: 0, searchOrderShare: null, searchOrderShareInflated: false },
+    // Story 111.8: dedup fields are likewise always emitted (count→0, share→null, flag→false).
+    summary: {
+      totalSearchOrders: 0,
+      searchOrderShare: null,
+      searchOrderShareInflated: false,
+      totalSearchOrdersDeduplicated: 0,
+      searchOrderShareDeduplicated: null,
+      searchOrderShareDeduplicatedInflated: false,
+    },
     ...overrides,
   }
 }

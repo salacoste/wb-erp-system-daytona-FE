@@ -13,10 +13,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 // Story 91.1-FE: DollarSign removed — was only used by the deleted 'Выручка от поиска' card
-import { ShoppingCart, Percent, AlertCircle, Info } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { ShoppingCart, AlertCircle } from 'lucide-react'
 import type { SearchOrdersSummary } from '@/types/search-analytics'
 import { SearchOrdersTable } from './SearchOrdersTable'
+import { SearchShareCard } from './SearchShareCard'
 
 // F-6 (Request #176 / Story 111.6 AC8): a >100% search-order share is EXPECTED —
 // WB attributes one order to several search queries (an interaction rate, "by
@@ -99,68 +99,27 @@ export function SearchOrdersOverview({ from, to }: SearchOrdersOverviewProps) {
 }
 
 function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
-  const cards = [
-    {
-      label: 'Поисковые заказы',
-      value: summary.totalSearchOrders,
-      icon: ShoppingCart,
-      color: 'text-blue-600',
-      fmt: formatNumber,
-      inflated: false,
-    },
-    // Story 91.1-FE: 'Выручка от поиска' card removed — backend dropped totalSearchRevenue
-    {
-      label: 'Доля поисковых заказов',
-      value: summary.searchOrderShare,
-      icon: Percent,
-      color: 'text-orange-600',
-      fmt: formatPercent,
-      // F-6 (#176 resolved): >100% means WB multi-attributed the order across
-      // queries — preserve the raw value + flag it, never clamp (Defensive Frontend).
-      inflated: summary.searchOrderShareInflated === true,
-    },
-  ]
-
-  // 2 cards since Story 91.1-FE removed the revenue card; grid-cols-2 avoids an empty 3rd column
+  // 2 cards since Story 91.1-FE removed the revenue card; grid-cols-2 avoids an empty 3rd column.
+  // Story 111.8-FE: the share card now needs deduplicated-vs-raw branching + subtext, which the
+  // old generic cards.map couldn't express — rendered explicitly via SearchShareCard instead.
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {cards.map(card => {
-        const Icon = card.icon
-        return (
-          <Card key={card.label}>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className={card.color} aria-hidden="true">
-                <Icon className="h-8 w-8" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{card.label}</p>
-                <p className="flex items-center gap-1.5 text-2xl font-bold">
-                  {card.fmt(card.value)}
-                  {/* F-6: only when the flag is set AND a real >100% value is shown
-                      (never a warning next to '—'). Info affordance — expected, not error. */}
-                  {card.inflated && card.value != null && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span
-                            className="inline-flex cursor-help text-muted-foreground"
-                            aria-label={INFLATED_SHARE_MESSAGE}
-                          >
-                            <Info className="h-4 w-4" />
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          {INFLATED_SHARE_MESSAGE}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )
-      })}
+      <Card>
+        <CardContent className="flex items-center gap-4 p-4">
+          <div className="text-blue-600" aria-hidden="true">
+            <ShoppingCart className="h-8 w-8" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Поисковые заказы</p>
+            <p className="text-2xl font-bold">{formatNumber(summary.totalSearchOrders)}</p>
+          </div>
+        </CardContent>
+      </Card>
+      <SearchShareCard
+        summary={summary}
+        formatPercent={formatPercent}
+        inflatedMessage={INFLATED_SHARE_MESSAGE}
+      />
     </div>
   )
 }

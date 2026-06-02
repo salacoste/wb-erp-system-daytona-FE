@@ -113,6 +113,11 @@ export interface SearchOrdersSummary {
   // buyoutConversion>100%; F-6 introduces the preserve+indicate UI treatment for it,
   // which funnel does not yet have). Preserve + INDICATE per Defensive Frontend (don't clamp).
   searchOrderShareInflated?: boolean
+  /** Story 111.8: orders attributed to search after de-duplicating multi-attribution (≤100%). */
+  totalSearchOrdersDeduplicated?: number
+  /** The real ≤100% search-order share (deduplicated). null when backend omits it (older builds). */
+  searchOrderShareDeduplicated?: number | null
+  searchOrderShareDeduplicatedInflated?: boolean
 }
 
 export interface SearchOrdersResponse {

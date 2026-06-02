@@ -207,6 +207,45 @@ describe('normalizeSearchOrdersResponse', () => {
     expect(r.summary.searchOrderShare).toBeNull()
     expect(r.summary.searchOrderShareInflated).toBe(true)
   })
+
+  // Story 111.8: backend now returns a SANE ≤100% deduplicated share alongside the
+  // raw >100% multi-attributed one. The normalizer must surface all three dedup
+  // fields (this FAILS on the old normalizer that dropped them).
+  it('maps the deduplicated fields from the live summary shape (Story 111.8)', () => {
+    const r = normalizeSearchOrdersResponse({
+      period: { from: '2026-05-01', to: '2026-06-02' },
+      groupBy: 'query',
+      items: [],
+      summary: {
+        totalSearchOrders: 7593,
+        totalSearchOrdersDeduplicated: 3679,
+        searchOrderShare: 193.7,
+        searchOrderShareDeduplicated: 93.85,
+        searchOrderShareInflated: true,
+        searchOrderShareDeduplicatedInflated: false,
+      },
+    })
+    expect(r.summary.totalSearchOrdersDeduplicated).toBe(3679)
+    expect(r.summary.searchOrderShareDeduplicated).toBe(93.85)
+    expect(r.summary.searchOrderShareDeduplicatedInflated).toBe(false)
+    // raw values still preserved (Defensive Frontend — never drop)
+    expect(r.summary.searchOrderShare).toBe(193.7)
+    expect(r.summary.searchOrderShareInflated).toBe(true)
+  })
+
+  // Older backend omits the dedup fields → deduplicated share must be null so the
+  // component falls back to the raw inflated value.
+  it('yields searchOrderShareDeduplicated: null for an OLD summary without dedup fields', () => {
+    const r = normalizeSearchOrdersResponse({
+      period: { from: '2026-05-01', to: '2026-06-02' },
+      groupBy: 'query',
+      items: [],
+      summary: { totalSearchOrders: 150, searchOrderShare: 42.5 },
+    })
+    expect(r.summary.searchOrderShareDeduplicated).toBeNull()
+    expect(r.summary.totalSearchOrdersDeduplicated).toBe(0)
+    expect(r.summary.searchOrderShareDeduplicatedInflated).toBe(false)
+  })
 })
 
 // --- normalizeSearchQueryItem ---------------------------------------------
