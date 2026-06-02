@@ -6,6 +6,7 @@
 
 import { apiClient } from '../api-client'
 import { qs } from './query-string'
+import { normalizeRecoveryStatusResponse } from './recovery-normalizer'
 import type {
   MonitoringDashboard,
   PipelineHealthGrid,
@@ -62,7 +63,11 @@ export async function getTelegramHealth(cabinetId: string, days = 7): Promise<Te
 // --- Recovery Status ---
 
 export async function getRecoveryStatus(cabinetId: string): Promise<RecoveryStatusResponse> {
-  return apiClient.get<RecoveryStatusResponse>(`/v1/monitoring/recovery-status${qs({ cabinetId })}`)
+  // F-41: backend returns { success, data: [...] } → apiClient unwraps to a bare array →
+  // the panel's `data.tasks` was undefined. Normalize back to { cabinetId, tasks } and
+  // fill the canonical displayName (backend omits it). See request #187.
+  const raw = await apiClient.get<unknown>(`/v1/monitoring/recovery-status${qs({ cabinetId })}`)
+  return normalizeRecoveryStatusResponse(raw, cabinetId)
 }
 
 // --- Trigger Recovery ---

@@ -5,6 +5,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { normalizeRecoveryStatusResponse } from '@/lib/api/recovery-normalizer'
 import type {
   MonitoringDashboard,
   PipelineHealthGrid,
@@ -47,8 +48,12 @@ export async function getTelegramHealth(cabinetId: string, days = 7): Promise<Te
 
 /** Recovery status for all task types */
 export async function getRecoveryStatus(cabinetId: string): Promise<RecoveryStatusResponse> {
+  // F-41: backend returns { success, data: [...] } → apiClient unwraps to a bare array.
+  // Normalize back to { cabinetId, tasks } (mirrors the flat monitoring.ts variant) so this
+  // parallel module copy can't silently re-introduce the empty Recovery tab. See #187.
   const params = new URLSearchParams({ cabinetId })
-  return apiClient.get(`/v1/monitoring/recovery-status?${params}`)
+  const raw = await apiClient.get<unknown>(`/v1/monitoring/recovery-status?${params}`)
+  return normalizeRecoveryStatusResponse(raw, cabinetId)
 }
 
 /** Trigger manual recovery */

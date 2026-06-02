@@ -92,7 +92,10 @@ export function RecoveryPanel({ enabled }: { enabled: boolean }) {
                   </Badge>
                 </TableCell>
                 <TableCell className="tabular-nums">
-                  {t.totalAttempts}/{t.maxRetries}
+                  {/* F-41: backend omits maxRetries (#187) — show just the attempt count
+                      rather than "N/undefined" until the field is provided. */}
+                  {t.totalAttempts}
+                  {t.maxRetries != null ? `/${t.maxRetries}` : ''}
                 </TableCell>
                 <TableCell className="text-xs text-muted-foreground">
                   {fmtDate(t.lastAttempt)}
@@ -173,15 +176,23 @@ function Confirm({
 }
 
 function Tip({ task }: { task: RecoveryTask }) {
+  // F-41: the backend omits maxWindowDays/maxRetries/cooldownMinutes (#187). Hide the
+  // tooltip entirely rather than render "undefined дн." until the fields are provided.
+  if (task.maxWindowDays == null && task.maxRetries == null && task.cooldownMinutes == null) {
+    return null
+  }
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <HelpCircle className="h-3.5 w-3.5 shrink-0 cursor-help text-muted-foreground" />
       </TooltipTrigger>
       <TooltipContent size="md">
+        {/* F-41: guard each field — #187 may deliver them one at a time; never render
+            "undefined". The early-return above hides the Tip when ALL three are absent. */}
         <p>
-          Макс. период: {task.maxWindowDays} дн., макс. попыток: {task.maxRetries}, пауза:{' '}
-          {task.cooldownMinutes} мин
+          {task.maxWindowDays != null && `Макс. период: ${task.maxWindowDays} дн. `}
+          {task.maxRetries != null && `Макс. попыток: ${task.maxRetries} `}
+          {task.cooldownMinutes != null && `Пауза: ${task.cooldownMinutes} мин`}
         </p>
       </TooltipContent>
     </Tooltip>

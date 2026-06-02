@@ -14,11 +14,14 @@ export interface RecoveryTask {
   displayName: string
   lastAttempt: string | null
   totalAttempts: number
-  maxRetries: number
   status: RecoveryStatus
   canRetry: boolean
-  cooldownMinutes: number
-  maxWindowDays: number
+  // F-41: the backend recovery-status response omits these per-task-type config fields
+  // (only taskType/status/lastAttempt/totalAttempts/canRetry are sent — request #187).
+  // Optional until #187 lands; RecoveryPanel degrades gracefully when absent.
+  maxRetries?: number
+  cooldownMinutes?: number
+  maxWindowDays?: number
 }
 
 export interface RecoveryStatusResponse {
