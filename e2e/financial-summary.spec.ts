@@ -13,27 +13,34 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
  */
 test.describe('Financial Summary', () => {
   test.beforeEach(async ({ page }) => {
-    // Main analytics page serves as the financial summary
-    await page.goto(ROUTES.analytics.main)
-    await page.waitForLoadState('networkidle')
+    // Main analytics page serves as the financial summary.
+    await page.goto(ROUTES.analytics.main, { waitUntil: 'domcontentloaded' })
+    // NOT networkidle — the analytics page background-polls (TanStack Query) so it never
+    // settles → beforeEach times out at 60s and fails EVERY test (anti-pattern #9; validation
+    // F-53, same class F-4/F-52 fixed in the setup files). Wait for the page shell instead.
+    await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
   })
 
   test.describe('Story 3.5: Financial Summary View', () => {
     test('displays analytics page', async ({ page }) => {
       // Page heading - may say "Аналитика", "Финансы", "Summary", etc.
-      const heading = page.locator('h1, h2').filter({ hasText: /финанс|summary|итог|аналитик|analytic|обзор|overview/i })
+      const heading = page
+        .locator('h1, h2')
+        .filter({ hasText: /финанс|summary|итог|аналитик|analytic|обзор|overview/i })
       await expect(heading.first()).toBeVisible({ timeout: TIMEOUTS.navigation })
     })
 
     test('has week selector', async ({ page }) => {
       // Week selector component - uses Radix UI Select with id="week-selector"
       // or shows loading skeleton while loading weeks
-      const weekSelector = page.locator('#week-selector, [id$="-selector"], button[role="combobox"]')
+      const weekSelector = page.locator(
+        '#week-selector, [id$="-selector"], button[role="combobox"]'
+      )
       const skeleton = page.locator('[class*="skeleton"]')
 
       // Either selector is visible or loading
-      const hasSelector = await weekSelector.count() > 0
-      const hasSkeleton = await skeleton.count() > 0
+      const hasSelector = (await weekSelector.count()) > 0
+      const hasSkeleton = (await skeleton.count()) > 0
 
       expect(hasSelector || hasSkeleton).toBeTruthy()
     })
@@ -54,11 +61,11 @@ test.describe('Financial Summary', () => {
     test('displays period comparison', async ({ page }) => {
       // Comparison section (side-by-side weeks)
       const comparisonSection = page.locator('[class*="comparison"], [class*="period"]')
-      const hasComparison = await comparisonSection.count() > 0
+      const hasComparison = (await comparisonSection.count()) > 0
 
       // Or two week columns
       const weekColumns = page.locator('[class*="week-column"], [class*="col"]')
-      const hasColumns = await weekColumns.count() >= 2
+      const hasColumns = (await weekColumns.count()) >= 2
 
       expect(hasComparison || hasColumns || true).toBeTruthy()
     })
@@ -70,7 +77,10 @@ test.describe('Financial Summary', () => {
       await expect(page.locator('body')).toBeVisible()
 
       // Should have some content (table, cards, loading, or empty state)
-      const hasContent = await page.locator('table, [class*="card"], [class*="skeleton"], [class*="alert"]').count() > 0
+      const hasContent =
+        (await page
+          .locator('table, [class*="card"], [class*="skeleton"], [class*="alert"]')
+          .count()) > 0
 
       expect(hasContent || true).toBeTruthy()
     })
@@ -80,7 +90,7 @@ test.describe('Financial Summary', () => {
 
       // Expense section
       const expenseSection = page.locator('text=/расход|expense|логистик|storage/i')
-      const hasExpense = await expenseSection.count() > 0
+      const hasExpense = (await expenseSection.count()) > 0
 
       expect(hasExpense || true).toBeTruthy()
     })
@@ -90,7 +100,7 @@ test.describe('Financial Summary', () => {
 
       // Adjustments section
       const adjustmentsSection = page.locator('text=/корректир|adjust|штраф|penalty/i')
-      const hasAdjustments = await adjustmentsSection.count() > 0
+      const hasAdjustments = (await adjustmentsSection.count()) > 0
 
       expect(hasAdjustments || true).toBeTruthy()
     })
@@ -100,7 +110,7 @@ test.describe('Financial Summary', () => {
 
       // Payout section
       const payoutSection = page.locator('text=/итого|payout|к оплате|перечисл/i')
-      const hasPayout = await payoutSection.count() > 0
+      const hasPayout = (await payoutSection.count()) > 0
 
       expect(hasPayout || true).toBeTruthy()
     })
@@ -120,7 +130,7 @@ test.describe('Financial Summary', () => {
 
       // Currency-formatted values
       const currencyValues = page.locator('text=/[\\d\\s]+₽/')
-      const hasCurrency = await currencyValues.count() > 0
+      const hasCurrency = (await currencyValues.count()) > 0
 
       expect(hasCurrency || true).toBeTruthy()
     })
@@ -128,11 +138,11 @@ test.describe('Financial Summary', () => {
     test('has navigation cards to detailed analytics', async ({ page }) => {
       // Navigation cards/links
       const navCards = page.locator('[class*="card"] a, a[class*="card"], [class*="nav-card"]')
-      const hasCards = await navCards.count() > 0
+      const hasCards = (await navCards.count()) > 0
 
       // Or links to analytics pages
       const analyticsLinks = page.locator('a[href*="analytics"], a[href*="sku"], a[href*="brand"]')
-      const hasLinks = await analyticsLinks.count() > 0
+      const hasLinks = (await analyticsLinks.count()) > 0
 
       expect(hasCards || hasLinks || true).toBeTruthy()
     })
@@ -140,7 +150,7 @@ test.describe('Financial Summary', () => {
     test('can navigate to SKU analytics', async ({ page }) => {
       const skuLink = page.locator('a[href*="sku"], button:has-text("SKU"), a:has-text("товар")')
 
-      if (await skuLink.count() > 0) {
+      if ((await skuLink.count()) > 0) {
         await skuLink.first().click()
         await expect(page).toHaveURL(/sku|analytics/, { timeout: TIMEOUTS.navigation })
       }
@@ -174,15 +184,16 @@ test.describe('Financial Summary', () => {
   test.describe('Data Loading', () => {
     test('page handles data loading', async ({ page }) => {
       // Reload to trigger loading
-      await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      // NOT networkidle (anti-pattern #9, F-53) — wait for the page shell to re-render.
+      await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
 
       // Page should be functional after loading
       await expect(page.locator('body')).toBeVisible()
     })
 
     test('handles empty data', async ({ page }) => {
-      await page.route('**/finance-summary**', (route) => {
+      await page.route('**/finance-summary**', route => {
         route.fulfill({
           status: 200,
           body: JSON.stringify({ data: null }),
@@ -197,7 +208,7 @@ test.describe('Financial Summary', () => {
     })
 
     test('handles API error', async ({ page }) => {
-      await page.route('**/finance-summary**', (route) => {
+      await page.route('**/finance-summary**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: 'Server Error' }),
@@ -215,7 +226,7 @@ test.describe('Financial Summary', () => {
   test.describe('Accessibility', () => {
     test('has proper heading structure', async ({ page }) => {
       const h1 = page.locator('h1')
-      const hasH1 = await h1.count() > 0
+      const hasH1 = (await h1.count()) > 0
 
       expect(hasH1).toBeTruthy()
     })
@@ -223,7 +234,7 @@ test.describe('Financial Summary', () => {
     test('tables have headers', async ({ page }) => {
       const tables = page.locator('table')
 
-      if (await tables.count() > 0) {
+      if ((await tables.count()) > 0) {
         const tableHeaders = page.locator('th')
         expect(await tableHeaders.count()).toBeGreaterThan(0)
       }
@@ -236,7 +247,7 @@ test.describe('Financial Summary', () => {
 
       // Should have focused element
       const focusedElement = page.locator(':focus')
-      const hasFocus = await focusedElement.count() > 0
+      const hasFocus = (await focusedElement.count()) > 0
 
       expect(hasFocus).toBeTruthy()
     })
