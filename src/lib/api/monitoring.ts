@@ -56,8 +56,9 @@ export async function getPipelineHealthGrid(
 
 // --- Telegram Health ---
 
-export async function getTelegramHealth(cabinetId: string, days = 7): Promise<TelegramHealth> {
-  return apiClient.get<TelegramHealth>(`/v1/monitoring/telegram-health${qs({ cabinetId, days })}`)
+export async function getTelegramHealth(cabinetId: string): Promise<TelegramHealth> {
+  // Live backend rejects 'days' (HTTP 400 "property days should not exist") — strict DTO validation; send only cabinetId. (Contract drift vs #149, which documented days as optional.)
+  return apiClient.get<TelegramHealth>(`/v1/monitoring/telegram-health${qs({ cabinetId })}`)
 }
 
 // --- Recovery Status ---

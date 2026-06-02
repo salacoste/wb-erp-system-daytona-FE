@@ -39,8 +39,9 @@ export async function getPipelineHealthGrid(
 }
 
 /** Telegram health details (120s cache) */
-export async function getTelegramHealth(cabinetId: string, days = 7): Promise<TelegramHealth> {
-  const params = new URLSearchParams({ cabinetId, days: String(days) })
+export async function getTelegramHealth(cabinetId: string): Promise<TelegramHealth> {
+  // Live backend rejects 'days' (HTTP 400 "property days should not exist") — send only cabinetId.
+  const params = new URLSearchParams({ cabinetId })
   return apiClient.get(`/v1/monitoring/telegram-health?${params}`)
 }
 

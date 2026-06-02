@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useTelegramHealth } from '../hooks/use-telegram-health'
 import type { BotStatus, TelegramDelivery } from '../types/monitoring'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatPercentage } from '@/lib/utils'
 import {
   EventBreakdownTable,
   FailuresSection,
@@ -116,7 +116,8 @@ function DeliveryStatsSection({ delivery }: { delivery: TelegramDelivery }) {
     { label: 'Ошибки', value: delivery.totalFailed, warn: delivery.totalFailed > 0 },
     { label: 'Rate-limited', value: delivery.totalRateLimited },
     { label: 'Тихие часы', value: delivery.totalSkippedQuietHours },
-    { label: 'Доставка', value: `${delivery.deliveryRate.toFixed(1)}%` },
+    // deliveryRate is a 0-1 ratio (request #149); render via comma+NBSP formatter (×100)
+    { label: 'Доставка', value: formatPercentage(delivery.deliveryRate * 100) },
     { label: 'Ср. время, мс', value: delivery.avgDeliveryMs?.toFixed(0) ?? '—' },
   ]
 

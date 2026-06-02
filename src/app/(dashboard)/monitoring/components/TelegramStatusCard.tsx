@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { formatPercentage } from '@/lib/utils'
 import type { DashboardTelegram, BotStatus } from '../types/monitoring'
 
 interface TelegramStatusCardProps {
@@ -62,8 +63,13 @@ export function TelegramStatusCard({ telegram, isLoading }: TelegramStatusCardPr
 
 /** Delivery rate + failure count metrics row */
 function StatusMetrics({ deliveryRate, failures }: { deliveryRate: number; failures: number }) {
+  // deliveryRate is a 0-1 ratio (request #149); gate on 0-1 scale, render via comma+NBSP formatter
   const rateColor =
-    deliveryRate >= 95 ? 'text-green-600' : deliveryRate >= 80 ? 'text-yellow-600' : 'text-red-600'
+    deliveryRate >= 0.95
+      ? 'text-green-600'
+      : deliveryRate >= 0.8
+        ? 'text-yellow-600'
+        : 'text-red-600'
 
   return (
     <div className="flex items-end gap-6">
@@ -71,9 +77,9 @@ function StatusMetrics({ deliveryRate, failures }: { deliveryRate: number; failu
         <p className="text-xs text-muted-foreground">Доставка (7 дн.)</p>
         <p
           className={`text-lg font-bold ${rateColor}`}
-          aria-label={`Процент доставки за 7 дней: ${deliveryRate}%`}
+          aria-label={`Процент доставки за 7 дней: ${formatPercentage(deliveryRate * 100)}`}
         >
-          {deliveryRate.toFixed(1)}%
+          {formatPercentage(deliveryRate * 100)}
         </p>
       </div>
       <div>

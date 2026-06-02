@@ -17,12 +17,12 @@ const TELEGRAM_CACHE = {
   retry: 1,
 } as const
 
-export function useTelegramHealth(enabled = true, days = 7) {
+export function useTelegramHealth(enabled = true) {
   const cabinetId = useAuthStore(state => state.cabinetId)
 
   return useQuery<TelegramHealth>({
     queryKey: monitoringQueryKeys.telegram(cabinetId ?? ''),
-    queryFn: () => getTelegramHealth(cabinetId!, days),
+    queryFn: () => getTelegramHealth(cabinetId!),
     enabled: enabled && !!cabinetId,
     ...TELEGRAM_CACHE,
   })
