@@ -45,6 +45,31 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].confidence).toBeCloseTo(0.797)
   })
 
+  // Validation F-45: the engine returns predictedRevenue:0 as a placeholder for EVERY
+  // prediction (units are real ~700 while revenue is 0). Map 0 → null so the table renders
+  // '—' (unknown) instead of a misleading "0 ₽" (AP#8). A real non-zero revenue passes through.
+  it('maps placeholder predictedRevenue:0 → null; keeps a real value', () => {
+    const r = normalizeAiForecastResponse({
+      ...base,
+      predictions: [
+        { forecastDate: '2026-05-17', predictedUnits: 739, predictedRevenue: 0, confidence: 0.79 },
+        {
+          forecastDate: '2026-05-18',
+          predictedUnits: 700,
+          predictedRevenue: 145811.61,
+          confidence: 0.78,
+        },
+        { forecastDate: '2026-05-19', predictedUnits: 1, predictedRevenue: NaN, confidence: 0.7 },
+        { forecastDate: '2026-05-20', predictedUnits: 1, predictedRevenue: null, confidence: 0.7 },
+      ],
+    })
+    expect(r.predictions[0].predictedRevenue).toBeNull()
+    expect(r.predictions[1].predictedRevenue).toBe(145811.61)
+    // NaN/Infinity (parse failures) and explicit null → null, never garbage "NaN ₽".
+    expect(r.predictions[2].predictedRevenue).toBeNull()
+    expect(r.predictions[3].predictedRevenue).toBeNull()
+  })
+
   it('clamps out-of-range confidence to [0,1]', () => {
     const r = normalizeAiForecastResponse({
       ...base,

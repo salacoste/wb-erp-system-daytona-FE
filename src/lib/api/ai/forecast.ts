@@ -67,7 +67,20 @@ function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
     date: p.forecastDate,
     horizonDays: p.horizonDays ?? 0,
     predictedSales: p.predictedUnits,
-    predictedRevenue: p.predictedRevenue ?? null,
+    // Validation F-45: the forecast engine does not compute revenue yet — it returns
+    // predictedRevenue:0 as a placeholder for EVERY prediction (units are real ~700 while
+    // revenue is 0). Map 0 (and NaN/Infinity) → null so the table renders '—' (unknown)
+    // instead of a misleading "0 ₽" (AP#8: 0 masks an uncomputed value; same as F-39
+    // mape:0). A genuine zero-units→zero-revenue also maps to '—' (the backend can't
+    // distinguish placeholder-0 from computed-0).
+    // PENDING BACKEND: docs/request-backend/188-AI-FORECAST-REVENUE-NOT-COMPUTED.md —
+    // ask the engine to compute revenue (or emit null, not 0, when uncomputed).
+    predictedRevenue:
+      typeof p.predictedRevenue === 'number' &&
+      Number.isFinite(p.predictedRevenue) &&
+      p.predictedRevenue !== 0
+        ? p.predictedRevenue
+        : null,
     confidence: scaleConfidence(p.confidence),
     nmId: p.nmId,
     vendorCode: p.vendorCode,
