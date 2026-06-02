@@ -169,13 +169,33 @@ export function getCostCategoryConfig(key: keyof CostsPct): CostCategoryConfig |
   return COST_CATEGORIES.find(c => c.key === key)
 }
 
-/** Format percentage value */
+/**
+ * Format percentage value in Russian locale (e.g. 15.5 → "15,5 %").
+ * iter-58: was `${value.toFixed(1)}%` → "15.5%" (dot decimal, no space) — a Russian-locale
+ * violation (frontend/CLAUDE.md: formatPercentage(15.5) → "15,5 %"). `value` is already in
+ * percent units (0-100), matching the canonical `@/lib/utils` formatPercentage domain; we
+ * format with Intl `style:'percent'` over value/100 to get the comma decimal + NBSP separator.
+ * NOTE: kept as a local copy (not a re-export of `@/lib/utils` formatPercentage) ON PURPOSE —
+ * this one pins min=max=decimals (default exactly 1 decimal) for right-aligned table-column
+ * alignment, whereas the canonical allows 1-2 decimals. Do NOT "harmonize" by re-exporting.
+ */
 export function formatPercentage(value: number, decimals = 1): string {
-  return `${value.toFixed(decimals)}%`
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'percent',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value / 100)
 }
 
 /**
- * Format currency value in RUB
+ * Format currency value in RUB (whole rubles — maxFractionDigits:0 is a deliberate
+ * declutter choice for this page, distinct from the canonical `@/lib/utils` formatCurrency).
+ *
+ * FUTURE (iter-58 deferred — needs a product decision): `value === 0 → '—'` masks a GENUINE
+ * 0₽ as "no data" (anti-pattern #8-adjacent). `item.revenue` (UnitEconomicsTableRow.tsx) and
+ * `summary.total_revenue`/`total_your_price` (UnitEconomicsSummaryCards.tsx) flow here UNGUARDED,
+ * so a real zero-sales SKU renders "—" indistinguishable from missing. Resolve the UX question
+ * (show "0 ₽" vs "—" vs row-suppress) before changing — entangled with the whole-ruble design.
  */
 export function formatCurrency(value: number): string {
   if (value === 0) return '—'
