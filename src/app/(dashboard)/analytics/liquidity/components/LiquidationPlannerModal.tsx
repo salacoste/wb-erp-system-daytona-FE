@@ -65,7 +65,12 @@ export function LiquidationPlannerModal({
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Текущая цена</p>
-            <p className="font-medium">{formatCurrency(item.current_price)}</p>
+            {/* Validation F-5: backend omits current_price → mapper sets 0 as a
+                "no price" sentinel. Render '—' for unknown (consistent with
+                LiquidityExpandedRow:30), never a misleading "0 ₽". */}
+            <p className="font-medium">
+              {item.current_price > 0 ? formatCurrency(item.current_price) : '—'}
+            </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Оборот сейчас</p>
