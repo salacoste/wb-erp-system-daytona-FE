@@ -30,15 +30,25 @@ describe('getSkuAccuracy URL params (Task 1 — Story 110.3-FE)', () => {
     mockApiClient.get.mockResolvedValue({ skuAccuracies: [] })
   })
 
-  it('includes modelId as query param', async () => {
+  // iter-63: the backend whitelist REJECTS an unknown `modelId` query param with HTTP 400
+  // ("modelId should not exist"), so modelId MUST NOT be sent until #166 ships server-side scoping.
+  // modelId remains in the params type (used for cache-key scoping in useAiSkuAccuracy), just not in the URL.
+  it('does NOT send modelId as a query param (backend rejects it — #166)', async () => {
     await getSkuAccuracy({ modelId: 'model-abc' })
-    expect(mockApiClient.get).toHaveBeenCalledWith(expect.stringContaining('modelId=model-abc'))
+    const url: string = mockApiClient.get.mock.calls[0][0]
+    expect(url).not.toContain('modelId')
   })
 
-  it('includes nmId as query param when provided', async () => {
+  it('sends a clean URL with no query string when only modelId is given', async () => {
+    await getSkuAccuracy({ modelId: 'model-abc' })
+    const url: string = mockApiClient.get.mock.calls[0][0]
+    expect(url).toBe('/v1/ai/evaluations/sku-accuracy')
+  })
+
+  it('includes nmId as query param when provided (backend accepts nmId)', async () => {
     await getSkuAccuracy({ modelId: 'model-abc', nmId: 12345 })
     const url: string = mockApiClient.get.mock.calls[0][0]
-    expect(url).toContain('modelId=model-abc')
+    expect(url).not.toContain('modelId')
     expect(url).toContain('nmId=12345')
   })
 

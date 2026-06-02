@@ -35,6 +35,17 @@ export function SkuAccuracyOverview({ modelId }: SkuAccuracyOverviewProps) {
     }
   }
 
+  // iter-63: derive entries + CSV memos BEFORE the early returns below. These useMemo hooks
+  // previously sat AFTER the isLoading/isError returns — once the page actually loaded data
+  // (after the modelId-400 fix) the render reached them, changing the hook count vs the
+  // loading render → "Rendered more hooks than during the previous render" crash (Rules of Hooks).
+  const entries = data?.skuAccuracies ?? []
+  const csvFileName = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10)
+    return `sku-accuracy-${modelId}-${today}.csv`
+  }, [modelId])
+  const csvContent = useMemo(() => exportSkuAccuracyToCsv(entries), [entries])
+
   // State-precedence chain (Story 109.5-FE F-17): loading → error → empty → happy
   if (isLoading) {
     return (
@@ -57,13 +68,6 @@ export function SkuAccuracyOverview({ modelId }: SkuAccuracyOverviewProps) {
       </div>
     )
   }
-
-  const entries = data?.skuAccuracies ?? []
-  const csvFileName = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10)
-    return `sku-accuracy-${modelId}-${today}.csv`
-  }, [modelId])
-  const csvContent = useMemo(() => exportSkuAccuracyToCsv(entries), [entries])
 
   if (entries.length === 0) {
     return (

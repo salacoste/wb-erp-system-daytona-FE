@@ -3,7 +3,9 @@
  * GET /v1/ai/evaluations/sku-accuracy
  * Story 110.3-FE Task 3: cabinet-scoped queryKey per Story 97.5-FE cabinet-isolation discipline.
  * No polling — evaluation data is stable within a session.
- * PENDING BACKEND: #166 — modelId/nmId sent as query params; backend currently ignores them.
+ * PENDING BACKEND: #166 — modelId is NOT sent as a query param (the backend whitelist 400-rejects
+ * an unknown `modelId`); it is kept only for cabinet+model cache-key scoping. nmId IS sent (accepted).
+ * The response is cabinet-wide (all models) until #166 ships server-side model-scoping.
  */
 
 import { useQuery } from '@tanstack/react-query'
