@@ -154,7 +154,17 @@ export function getReorderStatusColor(status: ReorderStatus): string {
  * Velocity trend display configuration
  * UX Specs by Sally (UX Expert) - 2025-12-12
  */
-export const VELOCITY_TREND_CONFIG = {
+// 'no_data' is excluded: it has no renderable trend display (Defensive Frontend — indicate, don't fabricate).
+export const VELOCITY_TREND_CONFIG: Record<
+  Exclude<VelocityTrend, 'no_data'>,
+  {
+    label: string
+    icon: string
+    color: string
+    textClass: string
+    lucideIcon: string
+  }
+> = {
   growing: {
     label: 'Растёт',
     icon: '↗️',
@@ -178,8 +188,8 @@ export const VELOCITY_TREND_CONFIG = {
   },
 } as const
 
-/** Get display info for velocity trend */
-export function getVelocityTrendInfo(trend: VelocityTrend): {
+/** Get display info for a renderable velocity trend ('no_data' has no display — handle at call site). */
+export function getVelocityTrendInfo(trend: Exclude<VelocityTrend, 'no_data'>): {
   label: string
   icon: string
   color: string

@@ -20,6 +20,7 @@ import {
   formatStockoutDate,
   VELOCITY_TREND_CONFIG,
 } from '@/lib/supply-planning-utils'
+import { TrendIndicator, SupplyDetailTrendSection } from './SupplyDetailTrendSection'
 
 // ============================================================================
 // Types
@@ -27,8 +28,9 @@ import {
 
 interface LeftColumnProps {
   item: SupplyPlanningItem
-  trendConfig: (typeof VELOCITY_TREND_CONFIG)[VelocityTrend]
-  TrendIcon: React.ComponentType<{ className?: string }>
+  // null = backend velocity_trend 'no_data'/null (insufficient sales history) → indicate, never fabricate.
+  trendConfig: (typeof VELOCITY_TREND_CONFIG)[Exclude<VelocityTrend, 'no_data'>] | null
+  TrendIcon: React.ComponentType<{ className?: string }> | null
 }
 
 // ============================================================================
@@ -72,7 +74,7 @@ export function SupplyDetailLeftColumn({ item, trendConfig, TrendIcon }: LeftCol
             <dt className="text-gray-600">Скорость продаж:</dt>
             <dd className="font-medium text-gray-900 flex items-center gap-1">
               {formatVelocity(item.avg_daily_sales)} шт/день
-              <TrendIcon className={cn('h-3 w-3', trendConfig?.textClass ?? 'text-gray-500')} />
+              <TrendIndicator trendConfig={trendConfig} TrendIcon={TrendIcon} className="h-3 w-3" />
             </dd>
           </div>
           <div className="flex justify-between">
@@ -95,40 +97,8 @@ export function SupplyDetailLeftColumn({ item, trendConfig, TrendIcon }: LeftCol
         </dl>
       </section>
 
-      {/* Velocity Trend */}
-      <section className="bg-white rounded-lg border p-4">
-        <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
-          <TrendIcon className="h-4 w-4" />
-          Тренд скорости продаж
-        </h4>
-        <div className="flex items-center gap-3">
-          <div
-            className={cn(
-              'flex items-center gap-2 text-lg font-bold',
-              trendConfig?.textClass ?? 'text-gray-500'
-            )}
-          >
-            <TrendIcon className="h-5 w-5" />
-            {trendConfig?.label ?? 'Стабильно'}
-          </div>
-          <span className="text-sm text-gray-500">(за последние 14 дней)</span>
-        </div>
-        {/* Simple sparkline placeholder */}
-        <div className="mt-3 flex items-end gap-0.5 h-8">
-          {[3, 4, 5, 4, 6, 7, 5, 6, 8, 7, 9, 8, 10, 9].map((h, i) => (
-            <div
-              key={i}
-              className={cn(
-                'flex-1 rounded-t',
-                i >= 12
-                  ? (trendConfig?.textClass ?? 'text-gray-500').replace('text-', 'bg-')
-                  : 'bg-gray-300'
-              )}
-              style={{ height: `${h * 10}%` }}
-            />
-          ))}
-        </div>
-      </section>
+      {/* Velocity Trend — honest "Нет данных" for no_data/null (Defensive Frontend). */}
+      <SupplyDetailTrendSection trendConfig={trendConfig} TrendIcon={TrendIcon} />
 
       {/* Warehouse Distribution */}
       {item.warehouses.length > 0 && (

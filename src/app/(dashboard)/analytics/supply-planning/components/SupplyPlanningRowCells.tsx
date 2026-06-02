@@ -118,17 +118,38 @@ export function StockCell({ item }: CellProps) {
 
 /** Velocity cell with trend icon */
 export function VelocityCell({ item }: CellProps) {
-  const velocityTrend =
-    item.velocity_trend && item.velocity_trend in TREND_ICONS ? item.velocity_trend : 'stable'
-  const TrendIcon = TREND_ICONS[velocityTrend]
-  const trendConfig = VELOCITY_TREND_CONFIG[velocityTrend]
+  const trend = item.velocity_trend
+  // Only growing/stable/declining are renderable trends; no_data/null → no fabricated icon.
+  const isKnownTrend = trend != null && trend !== 'no_data' && trend in TREND_ICONS
+  const TrendIcon = isKnownTrend ? TREND_ICONS[trend] : null
+  const trendConfig = isKnownTrend ? VELOCITY_TREND_CONFIG[trend] : null
 
   return (
     <td className="px-4 py-3 text-right hidden lg:table-cell">
       <span className="text-sm text-gray-900 flex items-center justify-end gap-1">
         {formatVelocity(item.avg_daily_sales)}
         <span className="text-gray-400 text-xs">шт/д</span>
-        <TrendIcon className={cn('h-3 w-3', trendConfig?.textClass ?? 'text-gray-500')} />
+        {TrendIcon ? (
+          <TrendIcon className={cn('h-3 w-3', trendConfig?.textClass ?? 'text-gray-500')} />
+        ) : (
+          // Defensive Frontend: backend velocity_trend 'no_data'/null → indicate unknown,
+          // never the Minus icon (which means a real 'stable' trend).
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className="cursor-help text-gray-300 text-xs"
+                  aria-label="Нет данных о тренде продаж"
+                >
+                  —
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                Недостаточно данных о продажах для определения тренда
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </span>
     </td>
   )

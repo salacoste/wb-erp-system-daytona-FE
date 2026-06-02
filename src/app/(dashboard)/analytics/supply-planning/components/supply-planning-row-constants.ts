@@ -29,7 +29,11 @@ export const STATUS_ICONS: Record<StockoutRisk, React.ComponentType<{ className?
 }
 
 // Velocity trend icon mapping
-export const TREND_ICONS: Record<VelocityTrend, React.ComponentType<{ className?: string }>> = {
+// 'no_data' is excluded: it's not a renderable trend (Defensive Frontend — indicate, don't fabricate).
+export const TREND_ICONS: Record<
+  Exclude<VelocityTrend, 'no_data'>,
+  React.ComponentType<{ className?: string }>
+> = {
   growing: TrendingUp,
   stable: Minus,
   declining: TrendingDown,

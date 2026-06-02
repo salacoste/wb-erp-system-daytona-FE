@@ -36,7 +36,11 @@ interface SupplyPlanningDetailProps {
 }
 
 // Velocity trend icons
-const TREND_ICONS: Record<VelocityTrend, React.ComponentType<{ className?: string }>> = {
+// 'no_data' is excluded: not a renderable trend (Defensive Frontend — indicate, don't fabricate).
+const TREND_ICONS: Record<
+  Exclude<VelocityTrend, 'no_data'>,
+  React.ComponentType<{ className?: string }>
+> = {
   growing: TrendingUp,
   stable: Minus,
   declining: TrendingDown,
@@ -48,12 +52,16 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
     item.stockout_risk && item.stockout_risk in STOCKOUT_RISK_CONFIG
       ? item.stockout_risk
       : 'healthy'
-  const velocityTrend =
-    item.velocity_trend && item.velocity_trend in TREND_ICONS ? item.velocity_trend : 'stable'
+  // Defensive Frontend: 'no_data'/null is NOT a renderable trend — pass it through as null
+  // so the detail panel indicates "Нет данных" (mirroring the row cell), never a fabricated
+  // 'stable' label + Minus icon + upward sparkline.
+  const rawTrend = item.velocity_trend
+  const isKnownTrend = rawTrend != null && rawTrend !== 'no_data' && rawTrend in TREND_ICONS
+  const velocityTrend = isKnownTrend ? rawTrend : null
 
   const statusConfig = STOCKOUT_RISK_CONFIG[stockoutRisk]
-  const trendConfig = VELOCITY_TREND_CONFIG[velocityTrend]
-  const TrendIcon = TREND_ICONS[velocityTrend]
+  const trendConfig = velocityTrend !== null ? VELOCITY_TREND_CONFIG[velocityTrend] : null
+  const TrendIcon = velocityTrend !== null ? TREND_ICONS[velocityTrend] : null
 
   // Generate 7-day forecast
   const forecast = useMemo(() => calculateForecast(item), [item])
