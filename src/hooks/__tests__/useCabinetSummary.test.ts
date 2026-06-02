@@ -18,7 +18,7 @@ vi.mock('@/lib/api-client', () => ({
   },
 }))
 
-const mockApiClient = apiClient as any
+const mockApiClient = vi.mocked(apiClient)
 
 // Mock response data
 const mockCabinetSummary: CabinetSummaryResponse = {
@@ -47,6 +47,10 @@ const mockCabinetSummary: CabinetSummaryResponse = {
       operating_profit: 483000,
       operating_margin_pct: 32.2,
       skus_with_expenses_only: 5,
+      // Request #56: normalizer populates these flat fields (null when no breakdown).
+      wb_promotion_cost: null,
+      wb_jam_cost: null,
+      wb_other_services_cost: null,
     },
     products: {
       total: 100,
@@ -138,10 +142,9 @@ describe('useCabinetSummary', () => {
     it('should call API with weekStart/weekEnd when both provided', async () => {
       mockApiClient.get.mockResolvedValue(mockCabinetSummary)
 
-      renderHook(
-        () => useCabinetSummary({ weekStart: '2025-W40', weekEnd: '2025-W47' }),
-        { wrapper: createWrapper() }
-      )
+      renderHook(() => useCabinetSummary({ weekStart: '2025-W40', weekEnd: '2025-W47' }), {
+        wrapper: createWrapper(),
+      })
 
       await waitFor(() => {
         expect(mockApiClient.get).toHaveBeenCalledWith(
@@ -187,6 +190,35 @@ describe('useCabinetSummary', () => {
       expect(result.current.data?.summary.totals.revenue_net).toBe(1500000)
       expect(result.current.data?.top_products).toHaveLength(1)
       expect(result.current.data?.top_brands).toHaveLength(1)
+    })
+
+    it('should normalize wb_services_breakdown into flat wb_*_cost fields (Request #56)', async () => {
+      const withBreakdown: CabinetSummaryResponse = {
+        ...mockCabinetSummary,
+        summary: {
+          ...mockCabinetSummary.summary,
+          totals: {
+            ...mockCabinetSummary.summary.totals,
+            wb_promotion_cost: undefined,
+            wb_jam_cost: undefined,
+            wb_other_services_cost: undefined,
+            wb_services_breakdown: { promotion: 199149, jam: 22990, other: 456 },
+          },
+        },
+      }
+      mockApiClient.get.mockResolvedValue(withBreakdown)
+
+      const { result } = renderHook(() => useCabinetSummary(), {
+        wrapper: createWrapper(),
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.data?.summary.totals.wb_promotion_cost).toBe(199149)
+      expect(result.current.data?.summary.totals.wb_jam_cost).toBe(22990)
+      expect(result.current.data?.summary.totals.wb_other_services_cost).toBe(456)
     })
 
     it('should handle API errors', async () => {

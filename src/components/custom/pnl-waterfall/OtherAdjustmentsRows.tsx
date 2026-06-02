@@ -43,7 +43,7 @@ export function OtherAdjustmentsRows({
         indent={1}
         tooltip="Общая сумма прочих корректировок и удержаний WB.
                 Ниже показана детализация по типам сервисов."
-        formula="Прочие = WB.Продвижение + Джем + Прочие сервисы"
+        formula="Прочие включает: WB.Продвижение + Джем + Прочие сервисы (и иные корректировки WB)"
         percentOfRevenue={otherAdjustmentsPct}
       />
 

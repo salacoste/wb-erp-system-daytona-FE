@@ -8,6 +8,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
+import { normalizeCabinetSummaryResponse } from '@/lib/api/cabinet-summary-normalizer'
 import type { CabinetSummaryResponse, CabinetSummaryParams } from '@/types/analytics'
 
 /**
@@ -53,9 +54,12 @@ export function useCabinetSummary(
 
       // Story 6.4: Path is /v1/analytics/weekly/cabinet-summary
       // Controller: WeeklyAnalyticsController with prefix 'v1/analytics/weekly'
-      return apiClient.get<CabinetSummaryResponse>(
+      // Request #56: normalize wb_services_breakdown {promotion,jam,other} → flat
+      // wb_*_cost fields the P&L waterfall reads (Boundary Normalizer Pattern).
+      const raw = await apiClient.get<CabinetSummaryResponse>(
         `/v1/analytics/weekly/cabinet-summary?${queryParams.toString()}`
       )
+      return normalizeCabinetSummaryResponse(raw)
     },
     staleTime: 60000, // 1 minute - cabinet summary changes infrequently
     refetchOnWindowFocus: true,

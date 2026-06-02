@@ -104,6 +104,13 @@ export interface CabinetSummaryTotals {
   wb_promotion_cost?: number | null // WB.Продвижение (реклама)
   wb_jam_cost?: number | null // Джем (подписка)
   wb_other_services_cost?: number | null // Прочие сервисы WB (утилизация и др.)
+  /** Request #56: backend sends the breakdown as an object (NOT the flat wb_*_cost fields).
+   *  normalizeCabinetSummaryResponse maps it into wb_promotion_cost/wb_jam_cost/wb_other_services_cost. */
+  wb_services_breakdown?: {
+    promotion?: number | null
+    jam?: number | null
+    other?: number | null
+  } | null
 }
 
 /**
