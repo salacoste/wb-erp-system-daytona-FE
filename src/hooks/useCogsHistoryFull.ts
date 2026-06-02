@@ -92,9 +92,8 @@ export function analyzeVersionChain(
 
   // Find previous version (next in chronologically sorted order)
   const currentIndex = sortedByDate.findIndex(i => i.cogs_id === item.cogs_id)
-  const previousVersion = currentIndex < sortedByDate.length - 1
-    ? sortedByDate[currentIndex + 1]
-    : undefined
+  const previousVersion =
+    currentIndex < sortedByDate.length - 1 ? sortedByDate[currentIndex + 1] : undefined
 
   return {
     isCurrentVersion,
@@ -144,10 +143,7 @@ export interface UseCogsHistoryOptions {
  * @example
  * const { data, isLoading, isError } = useCogsHistoryFull('321678606', { limit: 25 });
  */
-export function useCogsHistoryFull(
-  nmId: string | undefined,
-  options: UseCogsHistoryOptions = {}
-) {
+export function useCogsHistoryFull(nmId: string | undefined, options: UseCogsHistoryOptions = {}) {
   const { limit = 25, cursor, include_deleted = false } = options
 
   return useQuery({
@@ -171,8 +167,15 @@ export function useCogsHistoryFull(
         if (cursor) params.set('cursor', cursor)
         if (include_deleted) params.set('include_deleted', 'true')
 
+        // Validation F-36: this endpoint returns the full wrapper { data, meta,
+        // pagination } and the page reads all three siblings (data.meta.product_name,
+        // data.pagination.total, …). apiClient's default `{ data }` unwrap would return
+        // ONLY the inner array → data.meta/data.pagination undefined → the /cogs/history
+        // page rendered its empty state even when versions exist. skipDataUnwrap keeps
+        // the wrapper. (Same double-unwrap class as F-30/F-32.)
         const response = await apiClient.get<CogsHistoryResponse>(
-          `/v1/cogs/history?${params.toString()}`
+          `/v1/cogs/history?${params.toString()}`,
+          { skipDataUnwrap: true }
         )
 
         console.info('[COGS History Full] Response received:', {
