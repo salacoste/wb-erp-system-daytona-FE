@@ -33,6 +33,32 @@ function toStr(raw: unknown): string {
   return raw == null ? '' : String(raw)
 }
 
+// F-50: the normalizer is the AUTHORITATIVE guard for efficiency_status (Boundary
+// Normalizer Pattern) — sanitize any out-of-union backend value to 'unknown' here so the
+// EfficiencyBadge guard (F-47) is defense-in-depth, and the typed helpers isAttentionRequired/
+// isLossStatus can trust their input instead of silently classifying a drift value as false.
+const VALID_EFFICIENCY_STATUSES = new Set([
+  'excellent',
+  'good',
+  'moderate',
+  'poor',
+  'loss',
+  'unknown',
+])
+
+function toEfficiencyStatus(raw: unknown): AdvertisingItem['efficiency_status'] {
+  const s = toStr(raw)
+  if (s !== '' && !VALID_EFFICIENCY_STATUSES.has(s)) {
+    // F-50: indicate the anomaly rather than silently masking a backend contract drift
+    // (Defensive Frontend Principle). Empty/missing is the legitimate "no data" case (no warn).
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[AdvertisingNormalizer] unknown efficiency_status "${s}" from backend → 'unknown' (file a backend ticket if it persists)`
+    )
+  }
+  return (VALID_EFFICIENCY_STATUSES.has(s) ? s : 'unknown') as AdvertisingItem['efficiency_status']
+}
+
 function toNullableNum(raw: unknown): number | null {
   if (raw == null) return null
   const n = Number(raw)
@@ -96,7 +122,7 @@ function normalizeItem(item: unknown, index: number): AdvertisingItem {
     cpc: toNum(d.cpc),
     conversion_rate: toNum(d.conversionRate),
     profit_after_ads: toNum(d.profitAfterAds),
-    efficiency_status: (toStr(eff.status) || 'unknown') as AdvertisingItem['efficiency_status'],
+    efficiency_status: toEfficiencyStatus(eff.status),
   }
 }
 

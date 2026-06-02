@@ -8,6 +8,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { normalizeAdvertisingResponse } from '../advertising-analytics-normalizer'
+import { efficiencyConfig } from '@/lib/efficiency-utils'
 
 // ---------------------------------------------------------------------------
 // Full response — happy path
@@ -146,6 +147,44 @@ describe('normalizeAdvertisingResponse', () => {
     expect(result.summary.overall_roi).toBeNull()
   })
 
+  it('F-50: sanitizes efficiency_status — out-of-union backend value → unknown; valid passes', () => {
+    const raw = {
+      items: [
+        { key: 'a', nmId: 1, efficiency: { status: 'excellent' } },
+        { key: 'b', nmId: 2, efficiency: { status: 'critical' } }, // not in the FE union
+        { key: 'c', nmId: 3, efficiency: { status: 'moderate' } },
+        { key: 'd', nmId: 4, efficiency: { status: null } },
+      ],
+      summary: {},
+    }
+    const result = normalizeAdvertisingResponse(raw, '2025-12-01', '2025-12-21')
+    expect(result.data[0].efficiency_status).toBe('excellent')
+    // 'critical' is not in EfficiencyStatus → sanitized to 'unknown' at the boundary
+    expect(result.data[1].efficiency_status).toBe('unknown')
+    expect(result.data[2].efficiency_status).toBe('moderate')
+    expect(result.data[3].efficiency_status).toBe('unknown')
+  })
+
+  // F-50 drift guard: efficiencyConfig is a Record<EfficiencyStatus> (TS-exhaustive vs the
+  // union), so its keys ARE the valid set. Asserting each key passes through (not collapsed
+  // to 'unknown') fails if VALID_EFFICIENCY_STATUSES ever drifts out of sync with the union.
+  it('F-50: accepts every efficiencyConfig key (drift guard) + empty/undefined → unknown', () => {
+    for (const status of Object.keys(efficiencyConfig)) {
+      const raw = { items: [{ key: 'k', nmId: 1, efficiency: { status } }], summary: {} }
+      expect(normalizeAdvertisingResponse(raw, 'a', 'b').data[0].efficiency_status).toBe(status)
+    }
+    const empties = {
+      items: [
+        { key: 'e', nmId: 1, efficiency: { status: '' } },
+        { key: 'u', nmId: 2, efficiency: { status: undefined } },
+        { key: 'm', nmId: 3 }, // efficiency key missing entirely
+      ],
+      summary: {},
+    }
+    const r = normalizeAdvertisingResponse(empties, 'a', 'b')
+    expect(r.data.map(i => i.efficiency_status)).toEqual(['unknown', 'unknown', 'unknown'])
+  })
+
   it('treats undefined nullable fields as null', () => {
     const raw = {
       items: [{ nmId: 100 }],
@@ -168,9 +207,7 @@ describe('normalizeAdvertisingResponse', () => {
 
   it('toNum: NaN and non-numeric coerce to 0', () => {
     const raw = {
-      items: [
-        { views: NaN, clicks: 'not-a-number', spend: undefined },
-      ],
+      items: [{ views: NaN, clicks: 'not-a-number', spend: undefined }],
       summary: {},
     }
 

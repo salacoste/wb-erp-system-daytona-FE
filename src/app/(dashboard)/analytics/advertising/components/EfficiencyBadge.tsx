@@ -4,10 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { EfficiencyStatus } from '@/types/advertising-analytics'
-import { efficiencyConfig, getEfficiencyConfig } from '@/lib/efficiency-utils'
-
-// Re-export config for backward compatibility with EfficiencyFilterDropdown
-export { efficiencyConfig }
+import { getEfficiencyConfig } from '@/lib/efficiency-utils'
 
 /**
  * Props for EfficiencyBadge component
@@ -78,16 +75,6 @@ export function EfficiencyBadge({
   )
 }
 
-/**
- * Get efficiency status color class for inline text styling
- */
-export function getEfficiencyColor(status: EfficiencyStatus): string {
-  return getEfficiencyConfig(status).textColor
-}
-
-/**
- * Get efficiency status label
- */
-export function getEfficiencyLabel(status: EfficiencyStatus): string {
-  return getEfficiencyConfig(status).label
-}
+// F-50: removed the duplicate getEfficiencyColor/getEfficiencyLabel that shadowed the
+// canonical ones in @/lib/efficiency-utils (they were dead — no importer). Use the lib
+// versions (both route through the guarded getEfficiencyConfig).

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import type { EfficiencyStatus } from '@/types/advertising-analytics'
-import { efficiencyConfig } from './EfficiencyBadge'
+import { efficiencyConfig } from '@/lib/efficiency-utils'
 
 /** Filter value type - all statuses plus 'all' option */
 export type EfficiencyFilter = EfficiencyStatus | 'all'
@@ -56,7 +56,7 @@ export function EfficiencyFilterDropdown({
       </Label>
       <Select
         value={value}
-        onValueChange={(v) => onChange(v as EfficiencyFilter)}
+        onValueChange={v => onChange(v as EfficiencyFilter)}
         disabled={disabled}
       >
         <SelectTrigger
@@ -67,7 +67,7 @@ export function EfficiencyFilterDropdown({
           <SelectValue placeholder="Все статусы" />
         </SelectTrigger>
         <SelectContent>
-          {filterOptions.map((option) => (
+          {filterOptions.map(option => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
