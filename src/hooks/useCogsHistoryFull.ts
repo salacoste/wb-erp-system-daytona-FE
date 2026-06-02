@@ -10,6 +10,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { CogsHistoryResponse, CogsHistoryItem, VersionChainInfo } from '@/types/cogs'
+import { normalizeCogsHistoryResponse } from '@/lib/api/cogs-history-normalizer'
 
 /**
  * Formats date to Russian locale (dd.mm.yyyy)
@@ -31,7 +32,9 @@ export function formatDateRu(dateString: string | null | undefined): string {
 }
 
 /**
- * Formats currency to Russian locale with RUB symbol
+ * Formats currency to Russian locale with RUB symbol.
+ * NOTE: distinct from the same-named `formatCurrencyRu` in `cogs-edit-helpers.ts` — this
+ * display variant guards null/undefined (→ '—'); the helper variant expects a valid number.
  * @example formatCurrencyRu(1250.5) -> '1 250,50 ₽'
  */
 export function formatCurrencyRu(value: number | null | undefined): string {
@@ -186,7 +189,10 @@ export function useCogsHistoryFull(nmId: string | undefined, options: UseCogsHis
           product_name: response.meta?.product_name,
         })
 
-        return response
+        // F-37: coerce the string-typed `unit_cost_rub` ("500") to a number at the
+        // boundary so no component sees a string (fixes CogsEditDialog's number-vs-string
+        // strict-compare; aligns runtime with the `number` type).
+        return normalizeCogsHistoryResponse(response)
       } catch (error) {
         console.error(`[COGS History Full] Failed to fetch for ${nmId}:`, error)
         throw error

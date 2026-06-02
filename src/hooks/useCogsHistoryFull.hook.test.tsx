@@ -24,12 +24,15 @@ const createWrapper = () => {
   )
 }
 
-const fullWrapper: CogsHistoryResponse = {
+// Cast the whole fixture: it deliberately carries STRING unit_cost_rub (the real wire
+// shape) which the typed interface declares as number — the normalizer coerces it.
+const fullWrapper = {
   data: [
     {
       cogs_id: 'c1',
       nm_id: '906010371',
-      unit_cost_rub: 500,
+      // F-37: backend sends this as a STRING — the hook's normalizer must coerce it.
+      unit_cost_rub: '500',
       valid_from: '2026-05-01',
       valid_to: null,
       source: 'manual',
@@ -39,7 +42,7 @@ const fullWrapper: CogsHistoryResponse = {
   meta: {
     nm_id: '906010371',
     product_name: 'Эмаль корректор',
-    current_cogs: { unit_cost_rub: 500, valid_from: '2026-05-01' },
+    current_cogs: { unit_cost_rub: '500', valid_from: '2026-05-01' },
     total_versions: 2,
   },
   pagination: { total: 2, cursor: null, has_more: false },
@@ -68,5 +71,11 @@ describe('useCogsHistoryFull — F-36 skipDataUnwrap', () => {
     expect(result.current.data?.data).toHaveLength(1)
     expect(result.current.data?.meta?.product_name).toBe('Эмаль корректор')
     expect(result.current.data?.pagination?.total).toBe(2)
+
+    // F-37 wiring gate: the STRING "500" fixture must exit as a NUMBER (normalizer ran).
+    // Removing the normalizeCogsHistoryResponse() call from the hook fails these.
+    expect(result.current.data?.data[0].unit_cost_rub).toBe(500)
+    expect(typeof result.current.data?.data[0].unit_cost_rub).toBe('number')
+    expect(result.current.data?.meta?.current_cogs?.unit_cost_rub).toBe(500)
   })
 })

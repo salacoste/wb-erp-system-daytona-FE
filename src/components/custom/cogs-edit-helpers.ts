@@ -17,7 +17,11 @@ export function formatDateRu(dateStr: string): string {
   }
 }
 
-/** Format currency to Russian locale with RUB symbol */
+/**
+ * Format currency to Russian locale with RUB symbol (form variant — expects a valid number).
+ * NOTE: distinct from the same-named `formatCurrencyRu` in `useCogsHistoryFull.ts`, which
+ * additionally guards null/undefined for display.
+ */
 export function formatCurrencyRu(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
