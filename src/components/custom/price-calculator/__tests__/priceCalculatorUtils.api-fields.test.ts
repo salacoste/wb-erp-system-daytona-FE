@@ -281,11 +281,20 @@ describe('Story 44.36-FE: API Field Mismatch Bug Fix', () => {
       expect(request.storage_rub).toBe(0)
     })
 
-    it('should include vat_pct in request', () => {
-      const formData = createValidFormData({ vat_pct: 20 })
+    it('sends vat_pct when is_vat_payer is true', () => {
+      const formData = createValidFormData({ vat_pct: 20, is_vat_payer: true })
       const request = toApiRequest(formData)
 
       expect(request.vat_pct).toBe(20)
+    })
+
+    // iter-71: the backend has no is_vat_payer flag — it applies any vat_pct it receives. For a
+    // non-VAT (УСН) seller the FE must send 0, else the chart price inflates ~19% vs the headline.
+    it('gates vat_pct to 0 when is_vat_payer is false (УСН default persona)', () => {
+      const formData = createValidFormData({ vat_pct: 20, is_vat_payer: false })
+      const request = toApiRequest(formData)
+
+      expect(request.vat_pct).toBe(0)
     })
 
     it('should include acquiring_pct in request', () => {

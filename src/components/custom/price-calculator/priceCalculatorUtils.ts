@@ -94,7 +94,11 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
     buyback_pct: data.buyback_pct,
     advertising_pct: data.advertising_pct,
     storage_rub: data.fulfillment_type === 'FBS' ? 0 : data.storage_rub,
-    vat_pct: data.vat_pct,
+    // iter-71: gate VAT on is_vat_payer (mirror of two-level-pricing.ts:66). The backend has no
+    // is_vat_payer flag — it applies whatever vat_pct it receives. Sending the raw 20% to a
+    // non-VAT (УСН, the default persona) seller made the "Структура цены" chart price diverge from
+    // the headline by the full VAT segment (~19%). Send 0 when not a VAT payer.
+    vat_pct: data.is_vat_payer ? data.vat_pct : 0,
     acquiring_pct: data.acquiring_pct,
     ...(data.commission_pct !== undefined && { commission_pct: data.commission_pct }),
     ...(data.nm_id !== undefined && { overrides: { nm_id: String(data.nm_id) } }),
