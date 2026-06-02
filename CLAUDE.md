@@ -127,6 +127,10 @@ Four anomaly categories: field inversion, null-where-number-expected, impossible
 
 `scripts/check-next-async-params.sh` (Epic 119-FE retro A-1) flags any `params`/`searchParams` prop on an App Router `page.tsx`/`layout.tsx` that is NOT typed `Promise<...>`. Next.js 15 requires these props to be Promises and awaited — a synchronous type passes `tsc --noEmit` but **fails `next build` route typegen** (the gate gap that caused Story 119.2-FE Pass-2 P2-1 CRITICAL). Run this for any story touching App Router page/layout signatures; `tsc` alone does not catch it. Escape hatch: `// next-async-params-allow: <reason>` on the line. Self-test: `bash scripts/check-next-async-params.sh --self-test`.
 
+### Dot-locale percent ratchet (`npm run check:locale-percent`)
+
+`scripts/check-locale-percent.sh` (iter-67) bans NEW dot-locale percent rendering. The Russian-locale rule requires `"15,5 %"` (comma + NBSP) but inline `` `${value.toFixed(N)}%` `` / `value.toFixed(N) + '%'` renders `"15.5%"`. Use **`formatPercentage`** (default 1-2 decimals) or **`formatPercentageInt`** (whole percents → `"75 %"`) from `@/lib/utils`. It's a **ratchet, not 0-tolerance**: ~108 pre-existing sites are allowed via a baseline COUNT (`scripts/.locale-percent-baseline.txt`); the gate fails only when the count INCREASES. When a story migrates sites the count drops — the gate prints "ratchet down" and you MUST lower the baseline in the same commit. Escape hatch: `// locale-percent-allow: <reason>` (recharts axis ticks, CSV-export numerics, aria spoken text). Self-test: `bash scripts/check-locale-percent.sh --self-test`. Full plan: `docs/process/dot-locale-percent-consolidation-proposal.md`.
+
 ### Accepted Baselines
 
 Each story closes only when EVERY quality gate matches its baseline. Current accepted state:
@@ -137,6 +141,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
+| Dot-locale percent | `bash scripts/check-locale-percent.sh` | 108 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating) |
 | ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 112 warnings (all `no-explicit-any`) |
 | Vitest | `npm test -- --run` | ≥ 7205 passing, 676 skipped, 0 failed (floor) |
 

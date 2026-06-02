@@ -25,7 +25,8 @@
     "dev:clean": "npm run clean && npm run dev",
     "restart:safe": "npm run clean && npm run dev",
     "cleanup:claude": "bash scripts/cleanup-claude-sessions.sh",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:locale-percent": "bash scripts/check-locale-percent.sh"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --max-warnings=0"

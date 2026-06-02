@@ -24,16 +24,29 @@ export function formatCurrency(value: number): string {
 }
 
 /**
- * Formats a number as percentage
- * @param value - The numeric value to format (0-100)
- * @returns Formatted percentage string (e.g., "15,5 %")
+ * Formats a number as percentage in Russian locale (comma decimal + NBSP, e.g. "15,5 %").
+ * @param value - The numeric value to format (already in percent units, 0-100; signed OK)
+ * @param decimals - Optional FIXED decimal places. Omit for the default 1-2 decimals
+ *   (minimumFractionDigits:1, maximumFractionDigits:2). Pass 0 for whole percents ("75 %").
+ * @returns Formatted percentage string
  */
-export function formatPercentage(value: number): string {
+export function formatPercentage(value: number, decimals?: number): string {
   return new Intl.NumberFormat('ru-RU', {
     style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: decimals ?? 1,
+    maximumFractionDigits: decimals ?? 2,
   }).format(value / 100)
+}
+
+/**
+ * Whole-percent Russian-locale variant (no decimals → "75 %", half-up rounding so 33.27→"33 %",
+ * 33.7→"34 %"), for coverage/CTR/share displays that intentionally show integer percents.
+ * Use instead of `${value.toFixed(0)}%` (dot-locale).
+ * iter-67: the zero-decimal helper the locale-percent consolidation needs (see
+ * docs/process/dot-locale-percent-consolidation-proposal.md).
+ */
+export function formatPercentageInt(value: number): string {
+  return formatPercentage(value, 0)
 }
 
 /**

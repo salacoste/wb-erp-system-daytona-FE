@@ -14,6 +14,10 @@ The codebase renders percentages two ways:
 - **Dot-locale (wrong)**: inline `` `${value.toFixed(N)}%` `` / `value.toFixed(N) + '%'` → `"15.5%"`
   (dot decimal, no separator).
 
+> **Count note (iter-67):** the gate baseline is **108** occurrences (106 template-form + 2 concat-form,
+> counting occurrences not lines, broader regex). The "107" below was the iter-66 measurement under a
+> narrower single-digit regex — both are correct for their measurement method; 108 is authoritative.
+
 **Scale (measured iter-66):** ~**107 dot-locale percent sites across ~73 non-test source files**
 (`grep -rEn "toFixed\([0-9]\)\}%" src` = 105 + 2 concat-form). Examples span monitor, monitoring,
 forecast, models, storage, buyout, returns, funnel, sku, dashboard top-tables, ProductMarginCell,

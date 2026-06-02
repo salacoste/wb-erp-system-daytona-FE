@@ -5,7 +5,15 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { formatWeeksAgo, formatWeeksAgoShort, formatCurrency, formatPercentage, formatDate, formatIsoWeek } from './utils'
+import {
+  formatWeeksAgo,
+  formatWeeksAgoShort,
+  formatCurrency,
+  formatPercentage,
+  formatPercentageInt,
+  formatDate,
+  formatIsoWeek,
+} from './utils'
 
 describe('formatWeeksAgo', () => {
   it('returns empty string for null', () => {
@@ -141,6 +149,31 @@ describe('formatPercentage', () => {
     const result = formatPercentage(0)
     expect(result).toContain('0')
     expect(result).toContain('%')
+  })
+
+  // iter-67: locale-percent consolidation helpers.
+  it('uses comma decimal + a separated percent sign (Russian locale, not dot)', () => {
+    const result = formatPercentage(15.5)
+    expect(result).toMatch(/15,5\s%/)
+    expect(result).not.toMatch(/15\.5/)
+  })
+
+  it('honours an explicit fixed decimals argument', () => {
+    expect(formatPercentage(15.5, 0)).toMatch(/16\s%/) // rounds to whole
+    expect(formatPercentage(15, 0)).toMatch(/15\s%/)
+    expect(formatPercentage(15.5, 0)).not.toMatch(/,/) // no decimal separator at 0 places
+  })
+})
+
+describe('formatPercentageInt', () => {
+  it('renders a whole percent with no decimals (Russian locale)', () => {
+    expect(formatPercentageInt(75)).toMatch(/75\s%/)
+    expect(formatPercentageInt(75)).not.toMatch(/,/)
+    expect(formatPercentageInt(100)).toMatch(/100\s%/)
+  })
+
+  it('rounds fractional input to a whole percent', () => {
+    expect(formatPercentageInt(33.27)).toMatch(/33\s%/)
   })
 })
 
