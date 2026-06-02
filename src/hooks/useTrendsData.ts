@@ -73,7 +73,12 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 
       const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=${metrics}&include_summary=true`
 
-      const response = await apiClient.get<WeeklyTrendsResponse>(endpoint)
+      // Validation F-32: this endpoint returns the FULL wrapper { period, data, summary }
+      // and the hook needs all three siblings. apiClient's default `{ data }` unwrap would
+      // return ONLY the inner array (discarding period+summary) AND make `response.data`
+      // undefined → the Historical Trends section rendered empty. skipDataUnwrap keeps the
+      // wrapper so the sibling fields survive. (Same double-unwrap class as F-30.)
+      const response = await apiClient.get<WeeklyTrendsResponse>(endpoint, { skipDataUnwrap: true })
 
       return {
         data: response.data || [],

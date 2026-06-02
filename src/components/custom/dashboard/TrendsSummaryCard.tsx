@@ -36,10 +36,22 @@ export interface TrendsSummaryCardProps {
  * Format value based on type
  */
 function formatValue(value: number, format: 'currency' | 'percentage'): string {
+  // Guard non-finite (NaN/Infinity, or a null slipping past the type) → render — (AP#8).
+  if (!Number.isFinite(value)) return '—'
   if (format === 'percentage') {
     return `${value.toFixed(1).replace('.', ',')}%`
   }
   return formatCurrency(value)
+}
+
+/**
+ * Render the "(W47)" week suffix — only when a week label is present. The backend
+ * trends summary has no min_week/max_week, so callers pass week:'' (Validation F-32);
+ * formatWeekLabel('') is '' and we must NOT render an empty "()".
+ */
+function weekSuffix(week: string): string {
+  const label = formatWeekLabel(week)
+  return label ? ` (${label})` : ''
 }
 
 /**
@@ -84,13 +96,15 @@ export function TrendsSummaryCard({
         <div className="flex justify-between">
           <span>min:</span>
           <span className="font-medium text-foreground">
-            {formatValue(min.value, format)} ({formatWeekLabel(min.week)})
+            {formatValue(min.value, format)}
+            {weekSuffix(min.week)}
           </span>
         </div>
         <div className="flex justify-between">
           <span>max:</span>
           <span className="font-medium text-foreground">
-            {formatValue(max.value, format)} ({formatWeekLabel(max.week)})
+            {formatValue(max.value, format)}
+            {weekSuffix(max.week)}
           </span>
         </div>
         <div className="flex justify-between">
