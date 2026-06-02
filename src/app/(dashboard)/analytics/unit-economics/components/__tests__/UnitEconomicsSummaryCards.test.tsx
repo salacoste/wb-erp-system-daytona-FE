@@ -75,4 +75,14 @@ describe('UnitEconomicsSummaryCards — core cards', () => {
     expect(screen.getByText('Прибыльные')).toBeInTheDocument()
     expect(screen.getByText('Убыточные')).toBeInTheDocument()
   })
+
+  // iter-62: pin the profitable/loss sub-label share in Russian locale (8/10 → "(80,0 %)",
+  // 2/10 → "(20,0 %)") — was "(80.0%)" dot-locale (the codepath the iter-58 fix missed).
+  it('renders profitable/loss SKU share sub-labels in Russian locale (comma, not dot)', () => {
+    render(<UnitEconomicsSummaryCards summary={baseSummary} />)
+    expect(screen.getByText(/\(80,0\s%\)/)).toBeInTheDocument()
+    expect(screen.getByText(/\(20,0\s%\)/)).toBeInTheDocument()
+    expect(screen.queryByText(/80\.0%/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/20\.0%/)).not.toBeInTheDocument()
+  })
 })

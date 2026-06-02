@@ -25,14 +25,15 @@ describe('OverlapSummaryCards', () => {
     expect(screen.getByText('3')).toBeInTheDocument()
   })
 
-  it('displays percentage of total', () => {
+  it('displays percentage of total in Russian locale (comma, not dot)', () => {
     render(<OverlapSummaryCards summary={summary} />)
-    // 10/18 = 55.6%
-    expect(screen.getByText('55.6% от всех')).toBeInTheDocument()
-    // 5/18 = 27.8%
-    expect(screen.getByText('27.8% от всех')).toBeInTheDocument()
-    // 3/18 = 16.7%
-    expect(screen.getByText('16.7% от всех')).toBeInTheDocument()
+    // iter-62: Russian locale "55,6 %" (comma + NBSP), not "55.6%". Regex per the
+    // locale-assertion convention; \s matches the NBSP separator.
+    expect(screen.getByText(/55,6\s%\sот всех/)).toBeInTheDocument() // 10/18
+    expect(screen.getByText(/27,8\s%\sот всех/)).toBeInTheDocument() // 5/18
+    expect(screen.getByText(/16,7\s%\sот всех/)).toBeInTheDocument() // 3/18
+    // guard against the old dot form silently returning
+    expect(screen.queryByText(/55\.6%/)).not.toBeInTheDocument()
   })
 
   it('handles zero total gracefully', () => {
@@ -40,7 +41,7 @@ describe('OverlapSummaryCards', () => {
     render(<OverlapSummaryCards summary={empty} />)
     const zeros = screen.getAllByText('0')
     expect(zeros).toHaveLength(3)
-    const pcts = screen.getAllByText('0% от всех')
+    const pcts = screen.getAllByText(/0,0\s%\sот всех/)
     expect(pcts).toHaveLength(3)
   })
 })

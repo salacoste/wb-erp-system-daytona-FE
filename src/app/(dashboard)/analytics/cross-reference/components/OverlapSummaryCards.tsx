@@ -13,9 +13,16 @@ interface OverlapSummaryCardsProps {
   summary: OverlapSummary
 }
 
+// iter-62: Russian locale — was `${(...).toFixed(1)}%` → "87.5%" (dot, no separator).
+// Inline Intl style:'percent' over value/100, pinned to 1 decimal to preserve the original
+// precision (the canonical @/lib/utils formatPercentage allows 2 decimals → "55,56 %").
 function pct(count: number, total: number): string {
-  if (total === 0) return '0%'
-  return `${((count / total) * 100).toFixed(1)}%`
+  const value = total === 0 ? 0 : (count / total) * 100
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(value / 100)
 }
 
 export function OverlapSummaryCards({ summary }: OverlapSummaryCardsProps) {

@@ -83,15 +83,19 @@ export function UnitEconomicsSummaryCards({
   avgDeliveryCost,
   deliverySkuCount,
 }: UnitEconomicsSummaryCardsProps) {
+  // iter-62: render these sub-label shares in Russian locale via formatPercentage (was
+  // `${(...).toFixed(1)}%` → "25.0%" dot-locale, the codepath the iter-58 fix missed). The ratio
+  // is count/count×100 = percent units, matching formatPercentage's domain. The returned string
+  // already includes " %", so the JSX below drops its literal `%`.
   const profitablePercent =
     summary.sku_count > 0
-      ? ((summary.profitable_sku_count / summary.sku_count) * 100).toFixed(1)
-      : '0'
+      ? formatPercentage((summary.profitable_sku_count / summary.sku_count) * 100)
+      : formatPercentage(0)
 
   const lossPercent =
     summary.sku_count > 0
-      ? ((summary.loss_making_sku_count / summary.sku_count) * 100).toFixed(1)
-      : '0'
+      ? formatPercentage((summary.loss_making_sku_count / summary.sku_count) * 100)
+      : formatPercentage(0)
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -179,7 +183,7 @@ export function UnitEconomicsSummaryCards({
         iconColor="bg-emerald-500"
         label="Прибыльные"
         value={`${summary.profitable_sku_count} SKU`}
-        subtext={`(${profitablePercent}%)`}
+        subtext={`(${profitablePercent})`}
       />
 
       <MetricCard
@@ -187,7 +191,7 @@ export function UnitEconomicsSummaryCards({
         iconColor="bg-red-500"
         label="Убыточные"
         value={`${summary.loss_making_sku_count} SKU`}
-        subtext={`(${lossPercent}%)`}
+        subtext={`(${lossPercent})`}
       />
     </div>
   )
