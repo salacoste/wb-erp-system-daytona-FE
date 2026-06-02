@@ -39,9 +39,16 @@ function formatNumber(n: number | undefined | null): string {
 
 // Story 91.1-FE: formatCurrency removed — was only used by the deleted revenue summary card
 
+// iter-59: Russian locale — was `${n.toFixed(1)}%` → "188.6%" (dot, no separator), violating
+// the documented rule (frontend/CLAUDE.md: "15,5 %"). `n` is already in percent units (0-100,
+// e.g. searchOrderShare 188.55, avgCtr 11.9), so Intl style:'percent' over n/100 yields "188,6 %".
 function formatPercent(n: number | undefined | null): string {
   if (n == null) return '—'
-  return `${n.toFixed(1)}%`
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(n / 100)
 }
 
 export function SearchOrdersOverview({ from, to }: SearchOrdersOverviewProps) {

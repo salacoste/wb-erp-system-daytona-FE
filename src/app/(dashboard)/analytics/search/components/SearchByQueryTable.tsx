@@ -31,8 +31,14 @@ function formatDecimal(n: number): string {
   return n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 }
 
+// iter-59: Russian locale (was "11.9%" dot/no-space). `n` is percent units (0-100, e.g. avgCtr),
+// matching formatDecimal's ru-RU idiom above. Intl style:'percent' over n/100 → "11,9 %".
 function formatPercent(n: number): string {
-  return `${n.toFixed(1)}%`
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(n / 100)
 }
 
 // Story 91.1-FE: formatCurrency removed — was only used by the deleted 'Выручка ₽' column

@@ -62,6 +62,16 @@ describe('SearchOrdersOverview', () => {
       expect(screen.getByText(/150/)).toBeInTheDocument()
       expect(screen.getByText(/42[.,]5/)).toBeInTheDocument()
     })
+
+    // iter-59: pin the Russian-locale percent — share must render "42,5 %" (comma + separator),
+    // NOT the old "42.5%" (dot, glued). The loose `/42[.,]5/` above can't catch the dot regression.
+    it('formats the order-share percent in Russian locale (comma, not dot)', () => {
+      renderOverview()
+      const share = screen.getByText(/42,5/)
+      expect(share).toBeInTheDocument()
+      expect(share.textContent ?? '').not.toMatch(/42\.5/)
+      expect(share.textContent ?? '').toMatch(/42,5\s%/) // \s matches the NBSP separator
+    })
   })
 
   // F-6 (Request #176 / Story 111.6 AC8): >100% share inflation Info indicator

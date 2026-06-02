@@ -61,6 +61,14 @@ describe('SearchByQueryTable', () => {
     expect(screen.getByText('ART-003')).toBeInTheDocument()
   })
 
+  // iter-59: pin the Russian-locale CTR % (avgCtr 4.0 → "4,0 %", comma + separator, NOT "4.0%").
+  it('formats CTR % in Russian locale (comma, not dot)', () => {
+    render(<SearchByQueryTable products={mockProducts} />)
+    const ctr = screen.getByText(/4,0\s%/)
+    expect(ctr).toBeInTheDocument()
+    expect(ctr.textContent ?? '').not.toMatch(/4\.0/)
+  })
+
   it('default sort is avgPosition ascending', () => {
     render(<SearchByQueryTable products={mockProducts} />)
     const rows = screen.getAllByRole('row')
