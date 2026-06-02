@@ -163,3 +163,34 @@ export function transformToWaterfallData(
 
   return dataPoints
 }
+
+/**
+ * F-44: compute the YAxis domain so the chart never clips a bar.
+ *
+ * The bars are stacked as a transparent `start` series + a visible `value` series, so each
+ * bar's vertical extent is [start, start + value]. A hardcoded [0, 100] domain is WRONG when
+ * COGS exceeds revenue (live: 14/32 SKUs at week 2026-W22 had cogs_pct > 100 %, e.g. 133 %):
+ * the COGS bar's `start` goes negative (100 − 133 = −33) and a deep loss bar can exceed 100,
+ * so the clipped chart UNDERSTATES the loss — a Defensive-Frontend / data-correctness defect.
+ *
+ * Returns a domain that always includes 0..100 (so a normal profit case is unchanged) and is
+ * widened outward to a tidy 20 %-grid bound whenever a bar extends below 0 or above 100.
+ *
+ * `max` takes max(start + value, value) so the domain is robust to BOTH recharts stacking
+ * models for a negative transparent base: the documented d3 `stackOffsetNone` (floating bar →
+ * top = start + value) AND a sign-separated stack (positive value renders 0→value → top =
+ * value). We could not confirm 3.4.1's exact behavior in jsdom, so we bound for both — never
+ * clipping either way, at the cost of a little extra headroom in the floating case.
+ */
+export function computeWaterfallYDomain(data: WaterfallChartDataPoint[]): [number, number] {
+  let min = 0
+  let max = 100
+  for (const p of data) {
+    min = Math.min(min, p.start)
+    max = Math.max(max, p.start + p.value, p.value)
+  }
+  // Round outward to a 20 % grid so the percentage axis ticks stay readable.
+  const niceMin = Math.floor(min / 20) * 20
+  const niceMax = Math.ceil(max / 20) * 20
+  return [niceMin, niceMax]
+}

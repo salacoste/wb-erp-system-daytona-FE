@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { transformToWaterfallData, WATERFALL_COLORS } from '../waterfall-chart-utils'
+import {
+  transformToWaterfallData,
+  WATERFALL_COLORS,
+  computeWaterfallYDomain,
+} from '../waterfall-chart-utils'
 import { aggregatePortfolioCosts } from '../useWaterfallData'
 import type { UnitEconomicsItem, UnitEconomicsSummary } from '@/types/unit-economics'
 
@@ -281,6 +285,113 @@ describe('transformToWaterfallData — categoryOrder (Story 96.3-FE)', () => {
 
     // delivery_to_warehouse at 0.3% should be omitted; cogs + commission remain.
     expect(costNames).toEqual(['COGS', 'Комиссия'])
+  })
+})
+
+// ============================================================================
+// F-44: dynamic Y-axis domain so COGS>100% / deep-loss bars are not clipped.
+// Live (week 2026-W22): 14/32 SKUs had cogs_pct > 100 % (e.g. 133 %), which makes
+// the COGS bar's `start` negative and was clipped by the old hardcoded [0, 100].
+// ============================================================================
+
+describe('computeWaterfallYDomain (F-44)', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('returns [0, 100] for empty data', () => {
+    expect(computeWaterfallYDomain([])).toEqual([0, 100])
+  })
+
+  it('stays [0, 100] for a normal profit case (all bars within 0..100)', () => {
+    const data = transformToWaterfallData(1000, chartCostsPct, chartCostsRub)
+    expect(computeWaterfallYDomain(data)).toEqual([0, 100])
+  })
+
+  it('extends BELOW zero when COGS exceeds revenue (live 133% case)', () => {
+    // cogs bar start = 100 - 133 = -33 → grid floor → -40.
+    // max takes max(start+value=100, value=133) = 133 → ceil(133/20)*20 = 140 (robust-to-both
+    // recharts stacking models: sign-separated would render the value bar 0→133).
+    const data = transformToWaterfallData(1000, { cogs: 133 }, { cogs: 1330 })
+    const [min, max] = computeWaterfallYDomain(data)
+    expect(min).toBe(-40)
+    expect(max).toBe(140)
+    // Regression: the most-negative bar start must be inside the domain (was clipped at 0).
+    const minStart = Math.min(...data.map(p => p.start))
+    expect(min).toBeLessThanOrEqual(minStart)
+  })
+
+  it('extends ABOVE 100 when a deep loss bar exceeds 100% (cogs 250%)', () => {
+    const data = transformToWaterfallData(1000, { cogs: 250 }, { cogs: 2500 })
+    const [min, max] = computeWaterfallYDomain(data)
+    // max = max over points of max(start+value, value): COGS value=250 is the largest → 250 →
+    // ceil(250/20)*20 = 260. COGS start=-150 → floor → -160 drives min.
+    expect(max).toBe(260)
+    expect(min).toBe(-160)
+    // The hardcoded toBe(260) above is the PRIMARY regression guard. This relational line
+    // intentionally mirrors the implementation loop to document the never-clip invariant under
+    // EITHER stacking model — it catches a future change that drops Math.ceil but keeps the loop.
+    const maxTop = Math.max(...data.map(p => Math.max(p.start + p.value, p.value)))
+    expect(max).toBeGreaterThanOrEqual(maxTop)
+  })
+
+  it('captures a negative bar from a LATER cost (not just COGS) — loop scans every point', () => {
+    // COGS 80% (bar start=20, positive) then commission 40% drives runningTotal negative:
+    // commission bar start = 20 - 40 = -20. The min must come from this 2nd bar, proving the
+    // domain loop visits all points (guards against a future `min = min(0, data[0].start)` regression).
+    const data = transformToWaterfallData(
+      1000,
+      { cogs: 80, commission: 40 },
+      { cogs: 800, commission: 400 }
+    )
+    const [min] = computeWaterfallYDomain(data)
+    expect(min).toBe(-20)
+    expect(min).toBeLessThanOrEqual(Math.min(...data.map(p => p.start)))
+  })
+
+  it('expands for the PORTFOLIO (all-SKUs) path when aggregated COGS exceeds 100%', () => {
+    // Portfolio view runs aggregatePortfolioCosts → transformToWaterfallData → computeWaterfallYDomain.
+    // A high-COGS item pushes the revenue-weighted portfolio cogs_pct > 100 → domain must expand.
+    const items = [
+      makeItem({ sku_id: 'A', revenue: 1000, costs_pct: { ...itemCosts, cogs: 130 } }),
+      makeItem({ sku_id: 'B', revenue: 1000, costs_pct: { ...itemCosts, cogs: 130 } }),
+    ]
+    const { costsPct, costsRub } = aggregatePortfolioCosts(items, baseSummary)
+    const data = transformToWaterfallData(2000, costsPct, costsRub)
+    const [min, max] = computeWaterfallYDomain(data)
+    expect(min).toBeLessThan(0) // cogs bar start = 100 - 130 = -30 → below zero
+    expect(max).toBeGreaterThanOrEqual(100)
+  })
+
+  it('rounds outward to a 20% grid', () => {
+    const domain = computeWaterfallYDomain([
+      {
+        name: 'x',
+        value: 5,
+        start: -11,
+        end: -6,
+        fill: '',
+        isProfit: false,
+        isRevenue: false,
+        percentage: 5,
+        absoluteValue: 0,
+      },
+      {
+        name: 'y',
+        value: 7,
+        start: 104,
+        end: 111,
+        fill: '',
+        isProfit: false,
+        isRevenue: false,
+        percentage: 7,
+        absoluteValue: 0,
+      },
+    ])
+    expect(domain).toEqual([-20, 120]) // floor(-11/20)*20=-20 ; ceil(111/20)*20=120
   })
 })
 

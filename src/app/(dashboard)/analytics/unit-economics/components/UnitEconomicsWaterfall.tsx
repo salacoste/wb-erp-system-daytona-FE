@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils'
 import type { UnitEconomicsItem, UnitEconomicsSummary } from '@/types/unit-economics'
 import { CustomTooltip, WaterfallLegend } from './WaterfallTooltip'
 import { useWaterfallData } from './useWaterfallData'
+import { computeWaterfallYDomain } from './waterfall-chart-utils'
 
 /**
  * Unit Economics Waterfall Chart
@@ -61,6 +62,9 @@ export function UnitEconomicsWaterfall({
     selectedSku,
     categoryOrder,
   })
+
+  // F-44: dynamic Y-domain so COGS>100% / deep-loss bars aren't clipped (was hardcoded [0,100]).
+  const yDomain = computeWaterfallYDomain(waterfallData)
 
   // Chart title
   const chartTitle = selectedItem
@@ -133,7 +137,7 @@ export function UnitEconomicsWaterfall({
                 height={60}
               />
               <YAxis
-                domain={[0, 100]}
+                domain={yDomain}
                 tickFormatter={value => `${value}%`}
                 tick={{ fontSize: 11 }}
                 tickLine={false}
