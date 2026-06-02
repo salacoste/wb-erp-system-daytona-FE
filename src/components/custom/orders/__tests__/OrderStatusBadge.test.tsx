@@ -13,11 +13,12 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-
-// ============================================================================
-// TDD: Component will be created in implementation
-// import { OrderStatusBadge } from '../OrderStatusBadge'
-// ============================================================================
+import {
+  OrderStatusBadge,
+  getSupplierStatusConfig,
+  getSupplierStatusLabel,
+} from '../OrderStatusBadge'
+import type { SupplierStatus } from '@/types/orders'
 
 /**
  * Expected Supplier Status Configuration (from Story 40.3-FE spec)
@@ -37,10 +38,16 @@ describe('OrderStatusBadge', () => {
   // ============================================================================
 
   describe('Status Labels', () => {
-    it.todo('renders "Новый" for new status')
-    it.todo('renders "Подтверждён" for confirm status')
-    it.todo('renders "Выполнен" for complete status')
-    it.todo('renders "Отменён" for cancel status')
+    const cases: Array<[SupplierStatus, string]> = [
+      ['new', 'Новый'],
+      ['confirm', 'Подтверждён'],
+      ['complete', 'Выполнен'],
+      ['cancel', 'Отменён'],
+    ]
+    it.each(cases)('renders Russian label for %s status', (status, label) => {
+      render(<OrderStatusBadge status={status} />)
+      expect(screen.getByText(label)).toBeInTheDocument()
+    })
   })
 
   // ============================================================================
@@ -73,12 +80,43 @@ describe('OrderStatusBadge', () => {
   // 3. Unknown Status Fallback Tests
   // ============================================================================
 
-  describe('Unknown Status Fallback', () => {
-    it.todo('renders status code as label for unknown status')
-    it.todo('applies gray styling for unknown status')
-    it.todo('does not crash on null status')
-    it.todo('does not crash on undefined status')
-    it.todo('handles empty string status')
+  // F-49: enum-drift guard — an out-of-union backend supplier status must not crash
+  // (SUPPLIER_STATUS_CONFIG[status].label was a latent TypeError) and must surface the raw
+  // value in neutral grey (Defensive Frontend Principle: indicate, don't mislabel).
+  describe('Unknown Status Fallback (F-49)', () => {
+    // Cast through unknown: simulating backend enum-drift the SupplierStatus type forbids.
+    const drift = 'deprecated' as unknown as SupplierStatus
+
+    it('renders the raw status code as label for an unknown status', () => {
+      render(<OrderStatusBadge status={drift} />)
+      expect(screen.getByText('deprecated')).toBeInTheDocument()
+    })
+
+    it('applies neutral grey styling for an unknown status', () => {
+      const config = getSupplierStatusConfig(drift)
+      expect(config).toEqual({
+        label: 'deprecated',
+        color: 'text-gray-700',
+        bgColor: 'bg-gray-50',
+      })
+    })
+
+    it('getSupplierStatusLabel echoes the raw value for an unknown status', () => {
+      expect(getSupplierStatusLabel(drift)).toBe('deprecated')
+    })
+
+    it('does not crash on empty string status', () => {
+      expect(() => getSupplierStatusConfig('' as unknown as SupplierStatus)).not.toThrow()
+      expect(getSupplierStatusConfig('' as unknown as SupplierStatus).label).toBe('')
+    })
+
+    it('still resolves known statuses through the guard', () => {
+      expect(getSupplierStatusConfig('complete')).toEqual({
+        label: 'Выполнен',
+        color: 'text-green-700',
+        bgColor: 'bg-green-50',
+      })
+    })
   })
 
   // ============================================================================

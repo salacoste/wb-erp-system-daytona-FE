@@ -27,24 +27,39 @@ const SUPPLIER_STATUS_CONFIG: Record<
 }
 
 /**
- * Get supplier status configuration
+ * Get supplier status configuration.
+ * F-49: guard against backend enum-drift — the FBS supplier status is backend-provided; an
+ * out-of-union value (the F-39 crash class) would make SUPPLIER_STATUS_CONFIG[status]
+ * undefined → TypeError on .label. Param widened to `string` so the runtime value is
+ * guarded; unknown → a neutral grey config that surfaces the raw status (Defensive Frontend
+ * Principle: indicate the unrecognized value, don't crash or mislabel it).
  */
-export function getSupplierStatusConfig(status: SupplierStatus) {
-  return SUPPLIER_STATUS_CONFIG[status]
+export function getSupplierStatusConfig(status: string): {
+  label: string
+  color: string
+  bgColor: string
+} {
+  return (
+    SUPPLIER_STATUS_CONFIG[status as SupplierStatus] ?? {
+      label: status,
+      color: 'text-gray-700',
+      bgColor: 'bg-gray-50',
+    }
+  )
 }
 
 /**
  * Get supplier status label
  */
 export function getSupplierStatusLabel(status: SupplierStatus): string {
-  return SUPPLIER_STATUS_CONFIG[status].label
+  return getSupplierStatusConfig(status).label
 }
 
 /**
  * OrderStatusBadge - Displays supplier status as a colored badge
  */
 export function OrderStatusBadge({ status, className }: OrderStatusBadgeProps) {
-  const config = SUPPLIER_STATUS_CONFIG[status]
+  const config = getSupplierStatusConfig(status)
 
   return (
     <span

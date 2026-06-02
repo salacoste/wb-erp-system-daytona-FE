@@ -70,31 +70,58 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
 } as const
 
 /**
- * Get profitability status config
+ * Neutral sentinel config for an unrecognized profitability status (F-49).
+ * Deliberately NOT one of the five real margin bands — a drifted value must render in neutral
+ * grey, visually distinct from 'warning' (yellow "Внимание", 5-15 % band), so it INDICATES the
+ * anomaly rather than MISLABELLING it as a real band (Defensive Frontend Principle). Mirrors the
+ * grey raw-value fallback in OrderStatusBadge's getSupplierStatusConfig.
  */
-export function getProfitabilityConfig(status: ProfitabilityStatus): ProfitabilityStatusConfig {
-  return PROFITABILITY_STATUS_CONFIG[status]
+export const UNKNOWN_PROFITABILITY_CONFIG: ProfitabilityStatusConfig = {
+  label: 'Неизвестно',
+  labelShort: 'Неизв.',
+  color: '#6B7280', // gray-500
+  bgColor: '#F3F4F6', // gray-100
+  bgClass: 'bg-gray-400',
+  textClass: 'text-white',
+  icon: '⚪',
+  // Sentinel — NOT a real band. These bounds are placeholders only; consumers must not use
+  // them for range-membership checks (getStatusFromMargin owns margin→status mapping).
+  minMargin: 0,
+  maxMargin: 0,
+}
+
+/**
+ * Get profitability status config.
+ * F-49: guard against backend enum-drift. profitability_status is backend-provided; an
+ * out-of-union value (the F-39 crash class) would make PROFITABILITY_STATUS_CONFIG[status]
+ * undefined → TypeError on .color/.label/.bgClass. Param widened to `string` so the runtime
+ * value (not just the typed union) is guarded — the `as ProfitabilityStatus` cast only satisfies
+ * the Record index signature; `?? UNKNOWN_PROFITABILITY_CONFIG` is what actually handles the
+ * undefined miss. Unknown → neutral grey sentinel (see above), never a real margin band.
+ */
+export function getProfitabilityConfig(status: string): ProfitabilityStatusConfig {
+  return PROFITABILITY_STATUS_CONFIG[status as ProfitabilityStatus] ?? UNKNOWN_PROFITABILITY_CONFIG
 }
 
 /**
  * Get profitability color
  */
 export function getProfitabilityColor(status: ProfitabilityStatus): string {
-  return PROFITABILITY_STATUS_CONFIG[status].color
+  return getProfitabilityConfig(status).color
 }
 
 /**
  * Get profitability label
  */
 export function getProfitabilityLabel(status: ProfitabilityStatus): string {
-  return PROFITABILITY_STATUS_CONFIG[status].label
+  return getProfitabilityConfig(status).label
 }
 
 /**
  * Get profitability badge classes
  */
 export function getProfitabilityBadgeClasses(status: ProfitabilityStatus): string {
-  const config = PROFITABILITY_STATUS_CONFIG[status]
+  const config = getProfitabilityConfig(status)
   return `${config.bgClass} ${config.textClass}`
 }
 
@@ -102,7 +129,7 @@ export function getProfitabilityBadgeClasses(status: ProfitabilityStatus): strin
  * Get profitability background class only
  */
 export function getProfitabilityBgClass(status: ProfitabilityStatus): string {
-  return PROFITABILITY_STATUS_CONFIG[status].bgClass
+  return getProfitabilityConfig(status).bgClass
 }
 
 /**
