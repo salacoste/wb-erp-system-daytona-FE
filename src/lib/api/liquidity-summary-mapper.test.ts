@@ -83,6 +83,22 @@ describe('mapBackendResponse — distribution pct derived from capital (iter-60)
     expect(Number.isNaN(distribution.illiquid.pct)).toBe(false)
   })
 
+  it('treats summary avg_turnover_days: 0 (no-sales cabinet) as missing → item-derived avg, NOT 0', () => {
+    // Backend sends 0 for a no-sales cabinet where every item is turnover_days: 999 ("Нет продаж").
+    // The old `raw.avg_turnover_days ?? ...` kept 0 → "< 1 дня" (false instant-turnover). The fix
+    // falls back to the item-derived avg (all-999 → 999 → "Нет продаж", correct).
+    const noSales = {
+      ...backendShaped,
+      data: [
+        { sku_id: '1', liquidity_status: 'illiquid', turnover_days: 999, frozen_capital: 100000 },
+        { sku_id: '2', liquidity_status: 'illiquid', turnover_days: 999, frozen_capital: 100000 },
+      ],
+    }
+    const { summary } = mapBackendResponse(noSales)
+    expect(summary.avg_turnover_days).toBe(999)
+    expect(summary.avg_turnover_days).not.toBe(0)
+  })
+
   it('prefers an explicit backend pct/avg_turnover when present', () => {
     const withPct = {
       ...backendShaped,

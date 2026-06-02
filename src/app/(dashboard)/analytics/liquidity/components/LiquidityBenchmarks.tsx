@@ -3,12 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import type { LiquidityBenchmarks as LiquidityBenchmarksType } from '@/types/liquidity'
-import {
-  getBenchmarkStatusConfig,
-  formatPercentage,
-  formatTurnoverDays,
-} from '@/lib/liquidity-utils'
-import { cn } from '@/lib/utils'
+import { getBenchmarkStatusConfig, formatTurnoverDays } from '@/lib/liquidity-utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 interface LiquidityBenchmarksProps {
   benchmarks: LiquidityBenchmarksType
@@ -23,9 +19,18 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
   const statusConfig = getBenchmarkStatusConfig(benchmarks.overall_status)
 
   // Calculate progress percentages for visualization
-  const turnoverProgress = Math.min(100, (benchmarks.target_avg_turnover / benchmarks.your_avg_turnover) * 100)
-  const highlyLiquidProgress = Math.min(100, (benchmarks.highly_liquid_pct / benchmarks.target_highly_liquid_pct) * 100)
-  const illiquidProgress = Math.min(100, ((benchmarks.target_illiquid_pct + 1) / (benchmarks.illiquid_pct + 1)) * 100)
+  const turnoverProgress =
+    benchmarks.your_avg_turnover > 0
+      ? Math.min(100, (benchmarks.target_avg_turnover / benchmarks.your_avg_turnover) * 100)
+      : 0
+  const highlyLiquidProgress = Math.min(
+    100,
+    (benchmarks.highly_liquid_pct / benchmarks.target_highly_liquid_pct) * 100
+  )
+  const illiquidProgress = Math.min(
+    100,
+    ((benchmarks.target_illiquid_pct + 1) / (benchmarks.illiquid_pct + 1)) * 100
+  )
 
   return (
     <Card>
@@ -51,15 +56,17 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
             <span className="text-muted-foreground">Средний оборот</span>
             <div className="flex items-center gap-4">
               <span>
-                <span className="font-medium">{formatTurnoverDays(benchmarks.your_avg_turnover)}</span>
-                <span className="text-muted-foreground"> / цель: {formatTurnoverDays(benchmarks.target_avg_turnover)}</span>
+                <span className="font-medium">
+                  {formatTurnoverDays(benchmarks.your_avg_turnover)}
+                </span>
+                <span className="text-muted-foreground">
+                  {' '}
+                  / цель: {formatTurnoverDays(benchmarks.target_avg_turnover)}
+                </span>
               </span>
             </div>
           </div>
-          <Progress
-            value={turnoverProgress}
-            className="h-2"
-          />
+          <Progress value={turnoverProgress} className="h-2" />
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Быстрее = лучше</span>
             <span>Отрасль: {formatTurnoverDays(benchmarks.industry_avg_turnover)}</span>
@@ -72,15 +79,20 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
             <span className="text-muted-foreground">Доля высоколиквидных</span>
             <div className="flex items-center gap-4">
               <span>
-                <span className={cn(
-                  'font-medium',
-                  benchmarks.highly_liquid_pct >= benchmarks.target_highly_liquid_pct
-                    ? 'text-green-600'
-                    : 'text-orange-600'
-                )}>
+                <span
+                  className={cn(
+                    'font-medium',
+                    benchmarks.highly_liquid_pct >= benchmarks.target_highly_liquid_pct
+                      ? 'text-green-600'
+                      : 'text-orange-600'
+                  )}
+                >
                   {formatPercentage(benchmarks.highly_liquid_pct)}
                 </span>
-                <span className="text-muted-foreground"> / цель: {formatPercentage(benchmarks.target_highly_liquid_pct)}</span>
+                <span className="text-muted-foreground">
+                  {' '}
+                  / цель: {formatPercentage(benchmarks.target_highly_liquid_pct)}
+                </span>
               </span>
             </div>
           </div>
@@ -104,15 +116,20 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
             <span className="text-muted-foreground">Доля неликвида</span>
             <div className="flex items-center gap-4">
               <span>
-                <span className={cn(
-                  'font-medium',
-                  benchmarks.illiquid_pct <= benchmarks.target_illiquid_pct
-                    ? 'text-green-600'
-                    : 'text-red-600'
-                )}>
+                <span
+                  className={cn(
+                    'font-medium',
+                    benchmarks.illiquid_pct <= benchmarks.target_illiquid_pct
+                      ? 'text-green-600'
+                      : 'text-red-600'
+                  )}
+                >
                   {formatPercentage(benchmarks.illiquid_pct)}
                 </span>
-                <span className="text-muted-foreground"> / цель: {formatPercentage(benchmarks.target_illiquid_pct)}</span>
+                <span className="text-muted-foreground">
+                  {' '}
+                  / цель: {formatPercentage(benchmarks.target_illiquid_pct)}
+                </span>
               </span>
             </div>
           </div>

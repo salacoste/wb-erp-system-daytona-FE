@@ -47,7 +47,6 @@ export {
   formatVelocity,
   formatFrozenCapitalWarning,
   getFrozenCapitalStatusClass,
-  formatPercentage,
   formatCurrency,
   formatCompactNumber,
   transformDistributionForChart,

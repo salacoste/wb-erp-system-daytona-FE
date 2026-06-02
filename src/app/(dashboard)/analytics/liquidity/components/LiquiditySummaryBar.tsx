@@ -5,12 +5,11 @@ import { Wallet, Package, Clock, TrendingDown } from 'lucide-react'
 import type { LiquiditySummary } from '@/types/liquidity'
 import {
   formatCurrency,
-  formatPercentage,
   formatTurnoverDays,
   formatFrozenCapitalWarning,
   getFrozenCapitalStatusClass,
 } from '@/lib/liquidity-utils'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 interface LiquiditySummaryBarProps {
   summary: LiquiditySummary
@@ -48,9 +47,7 @@ export function LiquiditySummaryBar({ summary }: LiquiditySummaryBarProps) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Артикулов</p>
-              <p className="text-lg font-semibold">
-                {summary.total_sku_count}
-              </p>
+              <p className="text-lg font-semibold">{summary.total_sku_count}</p>
             </div>
           </div>
 
@@ -74,15 +71,18 @@ export function LiquiditySummaryBar({ summary }: LiquiditySummaryBarProps) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Замороженный капитал</p>
-              <p className={cn('text-lg font-semibold', getFrozenCapitalStatusClass(summary.frozen_capital_pct))}>
+              <p
+                className={cn(
+                  'text-lg font-semibold',
+                  getFrozenCapitalStatusClass(summary.frozen_capital_pct)
+                )}
+              >
                 {formatCurrency(summary.frozen_capital)}
                 <span className="text-sm font-normal ml-1">
                   ({formatPercentage(summary.frozen_capital_pct)})
                 </span>
               </p>
-              {frozenWarning && (
-                <p className="text-xs text-red-600">{frozenWarning}</p>
-              )}
+              {frozenWarning && <p className="text-xs text-red-600">{frozenWarning}</p>}
             </div>
           </div>
         </div>

@@ -68,11 +68,6 @@ export function getFrozenCapitalStatusClass(pct: number): string {
   return 'text-green-600'
 }
 
-/** Format percentage for display */
-export function formatPercentage(value: number): string {
-  return `${value.toFixed(1)}%`
-}
-
 /** Format currency value */
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('ru-RU', {

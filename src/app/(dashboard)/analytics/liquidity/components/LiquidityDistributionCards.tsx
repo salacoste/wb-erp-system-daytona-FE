@@ -2,8 +2,8 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import type { LiquidityCategory, LiquidityDistribution } from '@/types/liquidity'
-import { getLiquidityCategoryConfig, formatCurrency, formatPercentage } from '@/lib/liquidity-utils'
-import { cn } from '@/lib/utils'
+import { getLiquidityCategoryConfig, formatCurrency } from '@/lib/liquidity-utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 interface LiquidityDistributionCardsProps {
   distribution: LiquidityDistribution

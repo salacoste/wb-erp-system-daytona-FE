@@ -157,7 +157,13 @@ function mapSummary(
     frozen_capital_pct:
       // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: frozen_capital_pct 0 = inventory=0 (can't freeze nothing)
       totalInv > 0 ? (totalFrozen / totalInv) * 100 : (raw.frozen_capital_pct ?? 0),
-    avg_turnover_days: raw.avg_turnover_days ?? avgTurnoverDays(items),
+    // Backend sends avg_turnover_days: 0 for no-sales cabinets; 0 renders "< 1 дня"
+    // (false instant-turnover), so treat a non-positive value as missing and prefer the
+    // item-derived avg (all-999 items → 999 → formatTurnoverDays → "Нет продаж", correct).
+    avg_turnover_days:
+      typeof raw.avg_turnover_days === 'number' && raw.avg_turnover_days > 0
+        ? raw.avg_turnover_days
+        : avgTurnoverDays(items),
     distribution,
     benchmarks: raw.benchmarks ?? computeBenchmarks(distribution, items),
   }
