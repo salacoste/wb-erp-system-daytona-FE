@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatReorderValue } from '../supply-planning-utils'
+import { formatReorderValue, formatDaysUntilStockout } from '../supply-planning-utils'
 
 /**
  * Unit tests for formatReorderValue function
@@ -44,5 +44,29 @@ describe('formatReorderValue', () => {
     const result = formatReorderValue(1234567)
     expect(result).toMatch(/1\s?234\s?567/)
     expect(result).toContain('₽')
+  })
+})
+
+/**
+ * Unit tests for formatDaysUntilStockout — sentinel handling + Russian plural grammar.
+ * The 999 "never stocks out" sentinel must render "∞" (not a raw number), null → "Нет данных",
+ * 0 → "Сегодня".
+ */
+describe('formatDaysUntilStockout', () => {
+  it('handles the sentinel and edge values', () => {
+    expect(formatDaysUntilStockout(null)).toBe('Нет данных')
+    expect(formatDaysUntilStockout(0)).toBe('Сегодня')
+    expect(formatDaysUntilStockout(999)).toBe('∞')
+    expect(formatDaysUntilStockout(1000)).toBe('∞')
+  })
+
+  it('applies Russian plural grammar by last digit', () => {
+    expect(formatDaysUntilStockout(1)).toBe('1 день')
+    expect(formatDaysUntilStockout(2)).toBe('2 дня')
+    expect(formatDaysUntilStockout(5)).toBe('5 дней')
+    expect(formatDaysUntilStockout(11)).toBe('11 дней') // teens always "дней"
+    expect(formatDaysUntilStockout(21)).toBe('21 день')
+    expect(formatDaysUntilStockout(22)).toBe('22 дня')
+    expect(formatDaysUntilStockout(25)).toBe('25 дней')
   })
 })

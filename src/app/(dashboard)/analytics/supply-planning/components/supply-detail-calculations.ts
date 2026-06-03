@@ -7,7 +7,11 @@
  */
 
 import type { SupplyPlanningItem } from '@/types/supply-planning'
-import { formatVelocity, formatReorderValue } from '@/lib/supply-planning-utils'
+import {
+  formatVelocity,
+  formatReorderValue,
+  formatDaysUntilStockout,
+} from '@/lib/supply-planning-utils'
 
 // ============================================================================
 // Types
@@ -92,7 +96,7 @@ SKU: ${item.sku_id}
 Остаток: ${item.current_stock} шт
 В пути: ${item.in_transit} шт
 Скорость продаж: ${formatVelocity(item.avg_daily_sales)} шт/день
-Дней до стокаута: ${item.days_until_stockout ?? 'N/A'}
+Дней до стокаута: ${formatDaysUntilStockout(item.days_until_stockout)}
 Рекомендация к заказу: ${item.reorder_quantity} шт
 Сумма заказа: ${formatReorderValue(item.reorder_value)}
   `.trim()
