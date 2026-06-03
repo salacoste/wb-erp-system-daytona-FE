@@ -93,14 +93,16 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
   const rate = Math.round(successRate24h * 100)
   // Gate on >= 1% to avoid showing "0%" badge for tiny error rates (e.g., 0.004 → rounds to 0).
   // @see Story 91.3-FE — errorRate threshold origin (review-time cutoff for tiny fractional rates).
-  const hasErrors = errorRate >= 0.01
+  // iter-89: errorRate is OPTIONAL — the live /dashboard endpoint omits it (only the grid endpoint
+  // sends it; request #201). `?? 0` keeps the badge hidden (not `undefined >= 0.01`) until it lands.
+  const hasErrors = (errorRate ?? 0) >= 0.01
 
   return (
     <Card className="p-3" role="article" aria-label={`${displayName}: ${label}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="truncate text-sm font-medium">{displayName}</span>
         <div className="flex items-center gap-1.5">
-          {/* Story 91.3-FE: amber error-rate indicator when errorRate > 0 */}
+          {/* Story 91.3-FE: amber error-rate indicator when errorRate >= 1% (sub-1% gated out) */}
           {hasErrors && (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -109,12 +111,12 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
                   className="shrink-0 border-amber-500 text-amber-700 text-xs px-1.5"
                 >
                   <AlertTriangle className="h-3 w-3 mr-0.5" />
-                  {Math.round(errorRate * 100)}%
+                  {Math.round((errorRate ?? 0) * 100)}%
                 </Badge>
               </TooltipTrigger>
               <TooltipContent size="sm">
                 <p>
-                  {tasksWithErrors} задач с ошибками ({totalResultErrors} ошибок всего)
+                  {tasksWithErrors ?? 0} задач с ошибками ({totalResultErrors ?? 0} ошибок всего)
                 </p>
               </TooltipContent>
             </Tooltip>
