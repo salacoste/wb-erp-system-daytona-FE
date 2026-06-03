@@ -78,8 +78,8 @@ describe('BuyoutSummaryWidget', () => {
   it('renders buyout percentage and return percentage', () => {
     mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
     renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
-    expect(screen.getByText('78.5% выкуп')).toBeInTheDocument()
-    expect(screen.getByText('21.5% возвраты')).toBeInTheDocument()
+    expect(screen.getByText(/78,5\s+%\s+выкуп/)).toBeInTheDocument()
+    expect(screen.getByText(/21,5\s+%\s+возвраты/)).toBeInTheDocument()
   })
 
   // AP#8 + Defensive Frontend: backend returns null rates for a no-sales period (undefined ratio).
@@ -98,7 +98,7 @@ describe('BuyoutSummaryWidget', () => {
     renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
     expect(screen.getByText('Нет данных о выкупах за выбранный период')).toBeInTheDocument()
     // The misleading "0.0% выкуп" / 0%-green bar must NOT appear
-    expect(screen.queryByText('0.0% выкуп')).not.toBeInTheDocument()
+    expect(screen.queryByText(/0,0\s+%\s+выкуп/)).not.toBeInTheDocument()
   })
 
   it('renders "— возвраты" when only the return rate is null', () => {
@@ -109,7 +109,7 @@ describe('BuyoutSummaryWidget', () => {
     }
     mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: partial }))
     renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
-    expect(screen.getByText('95.0% выкуп')).toBeInTheDocument()
+    expect(screen.getByText(/95,0\s+%\s+выкуп/)).toBeInTheDocument()
     expect(screen.getByText('— возвраты')).toBeInTheDocument()
   })
 
@@ -155,7 +155,7 @@ describe('BuyoutSummaryWidget', () => {
     expect(screen.getByText('Снижение выкупа')).toBeInTheDocument()
     expect(screen.getByText('#111222')).toBeInTheDocument()
     expect(screen.getByText('#333444')).toBeInTheDocument()
-    expect(screen.getByText(/52%/)).toBeInTheDocument()
+    expect(screen.getByText(/52\s+%/)).toBeInTheDocument()
     // Regression: a decline (trendDelta=-8) must render WITH its minus sign.
     // Prior code used Math.abs() + an inverted prefix → "(8 п.п.)" (sign stripped).
     // Exact-match targets the inner red span ("(-8 п.п.)"); the parent's direct
@@ -171,7 +171,7 @@ describe('BuyoutSummaryWidget', () => {
     expect(screen.getByText(/До отправки: 40/)).toBeInTheDocument()
     expect(screen.getByText(/Отказ на ПВЗ: 30/)).toBeInTheDocument()
     expect(screen.getByText(/После получения: 20/)).toBeInTheDocument()
-    expect(screen.getByText(/Покрытие классификации: 85%/)).toBeInTheDocument()
+    expect(screen.getByText(/Покрытие классификации: 85\s+%/)).toBeInTheDocument()
   })
 
   it('hides return breakdown when null', () => {

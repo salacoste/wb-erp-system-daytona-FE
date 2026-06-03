@@ -3,6 +3,7 @@
 'use client'
 
 import { TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { formatPercentage } from '@/lib/utils'
 import type { BySkuBuyoutItem } from '@/types/analytics-buyout'
 import type { ProductInfo } from '@/hooks/use-all-products-map'
 import {
@@ -86,7 +87,7 @@ export function BuyoutTableRow({ item, product }: BuyoutTableRowProps) {
       <TableCell>{item.salesCount.toLocaleString('ru-RU')}</TableCell>
       <TableCell>{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
       <TableCell className="font-medium">
-        {item.buyoutRatePct != null ? `${item.buyoutRatePct.toFixed(1)}%` : '—'}
+        {item.buyoutRatePct != null ? formatPercentage(item.buyoutRatePct) : '—'}
       </TableCell>
       <ReasonCell count={rb?.cancelBeforeShipment} color="text-blue-600" estimated={isEstimated} />
       <ReasonCell count={rb?.refusalAtPvz} color="text-orange-600" estimated={isEstimated} />

@@ -117,8 +117,9 @@ describe('BuyoutTable', () => {
     renderWithProviders(<BuyoutTable {...defaultProps} />)
     expect(screen.getByText('100500')).toBeInTheDocument()
     expect(screen.getByText('200600')).toBeInTheDocument()
-    expect(screen.getByText('85.0%')).toBeInTheDocument()
-    expect(screen.getByText('50.0%')).toBeInTheDocument()
+    // Russian locale via formatPercentage → "85,0 %" (comma + NBSP)
+    expect(screen.getByText(/85,0\s+%/)).toBeInTheDocument()
+    expect(screen.getByText(/50,0\s+%/)).toBeInTheDocument()
   })
 
   it('shows product info from backend + products enrichment', async () => {

@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, TrendingDown } from 'lucide-react'
 import { SourceBadge } from '@/components/custom/badges/SourceBadge'
-import { formatPercentage } from '@/lib/utils'
+import { formatPercentage, formatPercentageInt } from '@/lib/utils'
 import type { BuyoutSource } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
 
@@ -63,9 +63,9 @@ export function BuyoutSummaryWidget({
           {buyoutPct != null ? (
             <>
               <div className="flex justify-between text-sm">
-                <span className="font-medium">{buyoutPct.toFixed(1)}% выкуп</span>
+                <span className="font-medium">{formatPercentage(buyoutPct)} выкуп</span>
                 <span className="text-muted-foreground">
-                  {returnPct != null ? `${returnPct.toFixed(1)}% возвраты` : '— возвраты'}
+                  {returnPct != null ? `${formatPercentage(returnPct)} возвраты` : '— возвраты'}
                 </span>
               </div>
               <div className="h-3 rounded-full bg-red-100 overflow-hidden">
@@ -135,7 +135,7 @@ export function BuyoutSummaryWidget({
                 >
                   <span className="font-mono text-xs">#{d.nmId}</span>
                   <span>
-                    {d.buyoutRatePct != null ? `${d.buyoutRatePct.toFixed(0)}%` : '—'}
+                    {d.buyoutRatePct != null ? formatPercentageInt(d.buyoutRatePct) : '—'}
                     <span className="text-red-500 ml-1">
                       {/* Show the signed delta — the number carries its own minus for a
                           decline, matching TrendIndicator (buyout-table-cells.tsx:43).
@@ -188,7 +188,7 @@ function ReturnBreakdownBar({ breakdown }: { breakdown: ReturnBreakdown }) {
       </div>
       {breakdown.classificationCoverage < 100 && (
         <p className="text-xs text-muted-foreground">
-          Покрытие классификации: {breakdown.classificationCoverage}%
+          Покрытие классификации: {formatPercentageInt(breakdown.classificationCoverage)}
         </p>
       )}
     </div>
