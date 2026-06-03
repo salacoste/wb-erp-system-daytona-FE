@@ -143,19 +143,22 @@ export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSumma
     {
       id: 'organic_contribution',
       label: 'Доля органики',
-      value:
-        summary.avg_organic_contribution >= 0
-          ? // iter-61: was `${value.toFixed(1)}%` (dot-locale). avg_organic_contribution is
-            // percent units \u2014 reuse formatPercent (Russian locale, magnitude unchanged).
-            formatPercent(summary.avg_organic_contribution)
-          : '\u2014',
+      // avg_organic_contribution is in percent units; WB re-attribution can drive it below
+      // zero (see tooltip). Render the real value via formatPercent (Russian locale) \u2014 masking
+      // a real negative as a dash erased a meaningful signal (Defensive Frontend: indicate,
+      // don't hide). Missing is coerced to 0 by the normalizer, so there is no no-data case.
+      value: formatPercent(summary.avg_organic_contribution),
       icon: Sprout,
       colorClass:
-        summary.avg_organic_contribution >= 50
-          ? 'text-green-600'
-          : summary.avg_organic_contribution >= 20
-            ? 'text-yellow-600'
-            : 'text-orange-600',
+        summary.avg_organic_contribution < 0
+          ? // a negative organic share is a WB re-attribution anomaly — flag red, not orange
+            // (orange = low-but-positive). Mirrors getRoiColor's `< 0 → red` branch.
+            'text-red-600'
+          : summary.avg_organic_contribution >= 50
+            ? 'text-green-600'
+            : summary.avg_organic_contribution >= 20
+              ? 'text-yellow-600'
+              : 'text-orange-600',
       tooltip: 'Доля продаж без рекламы. При переатрибуции WB может быть <0%.',
     },
   ]

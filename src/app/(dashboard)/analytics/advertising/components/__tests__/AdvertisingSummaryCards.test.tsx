@@ -91,4 +91,34 @@ describe('AdvertisingSummaryCards — Story 88.2-FE null ROAS/ROI', () => {
     const card = getCardByLabel('Общий ROI')
     expect(card.textContent).toContain('—')
   })
+
+  // The "Доля органики" tooltip states WB re-attribution can drive the value <0%.
+  // Regression: the prior `>= 0 ? format : '—'` masked that real negative as a dash,
+  // contradicting its own tooltip and erasing a real signal (Defensive Frontend).
+  it('renders a negative organic contribution instead of masking it as "—"', () => {
+    const summary = makeSummary({ avg_organic_contribution: -5 })
+    render(<AdvertisingSummaryCards summary={summary} isLoading={false} />)
+    const card = getCardByLabel('Доля органики')
+    expect(card.textContent).toMatch(/[-−]5,0\s*%/)
+    expect(card.textContent).not.toContain('—')
+    // a negative share is an anomaly — flagged red, not orange (the low-but-positive color)
+    expect(card.querySelector('[aria-label]')?.className).toContain('text-red-600')
+  })
+
+  it('renders a normal positive organic contribution in Russian locale', () => {
+    const summary = makeSummary({ avg_organic_contribution: 92.45 })
+    render(<AdvertisingSummaryCards summary={summary} isLoading={false} />)
+    const card = getCardByLabel('Доля органики')
+    expect(card.textContent).toMatch(/92,5\s*%/)
+  })
+
+  // 0 is the normalizer's missing-value representation — it must render as a real "0,0 %",
+  // never masked as "—" (guards against a future overcorrection like `!== 0 ? … : '—'`).
+  it('renders "0,0 %" for a zero organic contribution (0 is real, not masked)', () => {
+    const summary = makeSummary({ avg_organic_contribution: 0 })
+    render(<AdvertisingSummaryCards summary={summary} isLoading={false} />)
+    const card = getCardByLabel('Доля органики')
+    expect(card.textContent).toMatch(/0,0\s*%/)
+    expect(card.textContent).not.toContain('—')
+  })
 })
