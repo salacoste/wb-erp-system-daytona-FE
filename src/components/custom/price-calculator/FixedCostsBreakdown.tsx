@@ -1,6 +1,6 @@
 'use client'
 
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import { calculateCostPercentage } from '@/lib/two-level-pricing'
 import type { TwoLevelFixedCosts, FulfillmentType } from '@/types/price-calculator'
 
@@ -73,7 +73,7 @@ export function FixedCostsBreakdown({
           <span>├─ Себестоимость (COGS)</span>
           <span className="flex gap-4">
             <span className="w-16 text-right">{formatCurrency(costs.cogs)}</span>
-            <span className="w-12 text-right text-xs">{cogsPct.toFixed(1)}%</span>
+            <span className="w-12 text-right text-xs">{formatPercentage(cogsPct, 1)}</span>
           </span>
         </div>
 
@@ -83,7 +83,7 @@ export function FixedCostsBreakdown({
             <span>├─ Упаковка</span>
             <span className="flex gap-4">
               <span className="w-16 text-right">{formatCurrency(costs.packaging)}</span>
-              <span className="w-12 text-right text-xs">{packagingPct.toFixed(1)}%</span>
+              <span className="w-12 text-right text-xs">{formatPercentage(packagingPct, 1)}</span>
             </span>
           </div>
         )}
@@ -94,7 +94,7 @@ export function FixedCostsBreakdown({
             <span>├─ Логистика до МП</span>
             <span className="flex gap-4">
               <span className="w-16 text-right">{formatCurrency(costs.logisticsToMp)}</span>
-              <span className="w-12 text-right text-xs">{logisticsToMpPct.toFixed(1)}%</span>
+              <span className="w-12 text-right text-xs">{formatPercentage(logisticsToMpPct, 1)}</span>
             </span>
           </div>
         )}
@@ -104,7 +104,7 @@ export function FixedCostsBreakdown({
           <span>├─ Логистика (прямая)</span>
           <span className="flex gap-4">
             <span className="w-16 text-right">{formatCurrency(costs.logisticsForward)}</span>
-            <span className="w-12 text-right text-xs">{logisticsFwdPct.toFixed(1)}%</span>
+            <span className="w-12 text-right text-xs">{formatPercentage(logisticsFwdPct, 1)}</span>
           </span>
         </div>
 
@@ -115,7 +115,7 @@ export function FixedCostsBreakdown({
             <span className="w-16 text-right">
               {formatCurrency(costs.logisticsReverseEffective)}
             </span>
-            <span className="w-12 text-right text-xs">{logisticsRevPct.toFixed(1)}%</span>
+            <span className="w-12 text-right text-xs">{formatPercentage(logisticsRevPct, 1)}</span>
           </span>
         </div>
 
@@ -125,7 +125,7 @@ export function FixedCostsBreakdown({
             <span>├─ Хранение</span>
             <span className="flex gap-4">
               <span className="w-16 text-right">{formatCurrency(costs.storage)}</span>
-              <span className="w-12 text-right text-xs">{storagePct.toFixed(1)}%</span>
+              <span className="w-12 text-right text-xs">{formatPercentage(storagePct, 1)}</span>
             </span>
           </div>
         )}
@@ -137,7 +137,7 @@ export function FixedCostsBreakdown({
               <span>└─ Приёмка</span>
               <span className="flex gap-4">
                 <span className="w-16 text-right">{formatCurrency(costs.acceptance)}</span>
-                <span className="w-12 text-right text-xs">{acceptancePct.toFixed(1)}%</span>
+                <span className="w-12 text-right text-xs">{formatPercentage(acceptancePct, 1)}</span>
               </span>
             </div>
             {/* Show per-unit breakdown when multiple units per package */}
@@ -155,7 +155,7 @@ export function FixedCostsBreakdown({
         <span>Итого фиксированные</span>
         <span className="flex gap-4">
           <span className="w-16 text-right">{formatCurrency(costs.total)}</span>
-          <span className="w-12 text-right text-xs">{totalPct.toFixed(1)}%</span>
+          <span className="w-12 text-right text-xs">{formatPercentage(totalPct, 1)}</span>
         </span>
       </div>
     </div>
