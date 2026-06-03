@@ -241,4 +241,18 @@ describe('exportUnitEconomicsCsv', () => {
     exportUnitEconomicsCsv(makeUeResponse([{ sku_id: '100' }]), '2026-W10')
     expect(capturedCsv).toContain('"—"')
   })
+
+  it('prepends a UTF-8 BOM so Excel (RU/Windows) detects UTF-8, not CP1251', () => {
+    exportUnitEconomicsCsv(makeUeResponse([{ sku_id: '100' }]), '2026-W10')
+    expect(capturedCsv.charCodeAt(0)).toBe(0xfeff)
+    expect(capturedCsv).toContain('Выручка') // Cyrillic header intact after the BOM
+  })
+
+  it('neutralizes a formula-injection product_name (OWASP CSV injection)', () => {
+    const data = makeUeResponse([{ sku_id: '100', product_name: '=HYPERLINK("http://x")' }])
+    exportUnitEconomicsCsv(data, '2026-W10')
+    // the leading "=" is defanged with a "'" so Excel does not evaluate it
+    expect(capturedCsv).toContain('"\'=HYPERLINK')
+    expect(capturedCsv).not.toContain('"=HYPERLINK')
+  })
 })

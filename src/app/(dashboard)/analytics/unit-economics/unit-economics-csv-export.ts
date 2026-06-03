@@ -1,21 +1,37 @@
 import type { UnitEconomicsResponse } from '@/types/unit-economics'
+import { prefixUtf8Bom } from '@/lib/csv/csv-helpers'
 
-/** Export unit economics data to CSV file (Story 5.2 + Story 77.4 delivery column). */
-export function exportUnitEconomicsCsv(data: UnitEconomicsResponse, selectedWeek: string) {
-  const headers = [
-    'SKU',
-    'Название',
-    'Выручка',
-    'COGS %',
-    'Комиссия %',
-    'Логистика %',
-    'Хранение %',
-    'Доставка на склад %',
-    'Маржа %',
-    'Прибыль',
-    'Статус',
-  ]
+const CSV_HEADERS = [
+  'SKU',
+  'Название',
+  'Выручка',
+  'COGS %',
+  'Комиссия %',
+  'Логистика %',
+  'Хранение %',
+  'Доставка на склад %',
+  'Маржа %',
+  'Прибыль',
+  'Статус',
+]
 
+/**
+ * Encode one CSV cell:
+ *  - OWASP CSV-injection: defang a leading formula trigger (= + - @ TAB CR LF) with a `'`
+ *    prefix so a hostile product name like `=HYPERLINK(...)` can't execute when opened in Excel.
+ *  - RFC 4180: double embedded `"` then wrap (an unescaped `"` in a product name would shift
+ *    every following column).
+ * NOTE: mirrors supply-table-export's encodeCsvCell — see queued consolidation into
+ * lib/csv/csv-helpers once the Epic-113 evaluations-csv WIP lands.
+ */
+function encodeCsvCell(value: unknown): string {
+  let s = value == null ? '' : String(value)
+  if (/^[=+\-@\t\r\n]/.test(s)) s = `'${s}`
+  return `"${s.replace(/"/g, '""')}"`
+}
+
+/** Build the unit-economics CSV content (pure, testable — no DOM/Blob side effects). */
+export function buildUnitEconomicsCsv(data: UnitEconomicsResponse): string {
   const rows = data.data.map(item => [
     item.sku_id,
     item.product_name,
@@ -32,12 +48,19 @@ export function exportUnitEconomicsCsv(data: UnitEconomicsResponse, selectedWeek
     item.profitability_status,
   ])
 
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+  return [
+    CSV_HEADERS.map(encodeCsvCell).join(','),
+    ...rows.map(row => row.map(encodeCsvCell).join(',')),
   ].join('\n')
+}
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+/** Export unit economics data to CSV file (Story 5.2 + Story 77.4 delivery column). */
+export function exportUnitEconomicsCsv(data: UnitEconomicsResponse, selectedWeek: string) {
+  // prefixUtf8Bom: Excel on Windows (RU locale) needs the BOM to detect UTF-8, else the
+  // Cyrillic headers + product names render as mojibake on double-click open.
+  const blob = new Blob([prefixUtf8Bom(buildUnitEconomicsCsv(data))], {
+    type: 'text/csv;charset=utf-8;',
+  })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
