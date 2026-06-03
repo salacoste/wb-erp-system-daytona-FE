@@ -51,6 +51,11 @@ export function DataCompletenessTable({ data, isLoading }: DataCompletenessTable
   if (isLoading) return <DataCompletenessSkeleton />
   if (!data) return null
 
+  // getOverallPercent([]) returns 0 as an empty-array guard — NOT a measured 0%. When the
+  // backend sends no per-source rows (live: dashboard.dataCompleteness = {overallHealth:'healthy',
+  // tables:[]}), rendering "0% — Все данные загружены" + a 0% bar is self-contradictory. Show the
+  // truthful health label alone and drop the misleading bar/empty table when there are no rows.
+  const hasTables = data.tables.length > 0
   const percent = getOverallPercent(data.tables)
   const health = HEALTH_CONFIG[data.overallHealth] ?? HEALTH_CONFIG.critical
   const sorted = sortByCompleteness(data.tables)
@@ -66,43 +71,51 @@ export function DataCompletenessTable({ data, isLoading }: DataCompletenessTable
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">Полнота данных</span>
           <span className={health.className}>
-            {percent}% — {health.label}
+            {hasTables ? `${percent}% — ${health.label}` : health.label}
           </span>
         </div>
-        <Progress
-          value={percent}
-          className={`h-2.5 ${health.barClass}`}
-          aria-label={`Полнота данных: ${percent}%`}
-        />
+        {hasTables ? (
+          <Progress
+            value={percent}
+            className={`h-2.5 ${health.barClass}`}
+            aria-label={`Полнота данных: ${percent}%`}
+          />
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            Детализация по источникам недоступна за период
+          </p>
+        )}
       </div>
 
-      {/* Per-source table */}
-      <Table>
-        <TableCaption>Состояние источников данных</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-8" />
-            <TableHead>Источник</TableHead>
-            <TableHead className="w-48">Полнота</TableHead>
-            <TableHead className="w-24 text-right">Статус</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sorted.map(row => {
-            const tableDetail = detail?.completeness.find(c => c.table === row.table)
-            return (
-              <CompletenessRow
-                key={row.table}
-                row={row}
-                detail={tableDetail}
-                isExpanded={expandedTable === row.table}
-                onToggle={() => toggleRow(row.table)}
-                isLoadingDetail={expandedTable === row.table && !detail}
-              />
-            )
-          })}
-        </TableBody>
-      </Table>
+      {/* Per-source table — omitted when the backend sends no rows (avoids an empty table) */}
+      {hasTables && (
+        <Table>
+          <TableCaption>Состояние источников данных</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8" />
+              <TableHead>Источник</TableHead>
+              <TableHead className="w-48">Полнота</TableHead>
+              <TableHead className="w-24 text-right">Статус</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sorted.map(row => {
+              const tableDetail = detail?.completeness.find(c => c.table === row.table)
+              return (
+                <CompletenessRow
+                  key={row.table}
+                  row={row}
+                  detail={tableDetail}
+                  isExpanded={expandedTable === row.table}
+                  onToggle={() => toggleRow(row.table)}
+                  isLoadingDetail={expandedTable === row.table && !detail}
+                />
+              )
+            })}
+          </TableBody>
+        </Table>
+      )}
     </div>
   )
 }

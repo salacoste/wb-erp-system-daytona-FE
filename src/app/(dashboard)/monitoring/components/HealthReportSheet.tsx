@@ -17,6 +17,7 @@ import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { healthReportSuccessCount } from './health-report-utils'
 import type { HealthReportDetail, OverallStatus } from '../types/monitoring'
 
 interface HealthReportSheetProps {
@@ -85,7 +86,10 @@ export function HealthReportSheet({ date, open, onOpenChange }: HealthReportShee
 function SheetBody({ report }: { report: HealthReportDetail }) {
   const { issues, recommendations, summary } = report
   const completenessAvg = summary.dataCompletenessAvg ?? 0
-  const successCount = summary.tasksExecuted - summary.tasksFailed
+  // tasksExecuted IS the success count (backend: success.length) — see health-report-utils.
+  // The old `tasksExecuted − tasksFailed` wrongly subtracted failures from an already-success
+  // count (live: showed 3 when 5 tasks succeeded). Do NOT subtract.
+  const successCount = healthReportSuccessCount(summary)
   return (
     <div className="mt-6 space-y-5">
       <section aria-label="Выполнение задач">
