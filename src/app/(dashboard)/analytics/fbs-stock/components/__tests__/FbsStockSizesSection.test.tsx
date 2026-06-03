@@ -99,4 +99,26 @@ describe('FbsStockSizesSection (Story 96.11-FE)', () => {
     // nm_id filter input should always be rendered
     expect(screen.getByPlaceholderText(/Артикул WB/)).toBeInTheDocument()
   })
+
+  it('renders non-null daysOfCover with Russian comma decimal ("12,5", not "12.5")', () => {
+    const populatedResponse = {
+      ...emptyFbsStockSizesResponse(),
+      data: {
+        sizes: [
+          {
+            size: 'M',
+            nmId: 654321,
+            skuCount: 3,
+            stockUnits: 20,
+            averageDailyOutgoing: 2,
+            daysOfCover: 12.5,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockSizesSection />)
+    expect(screen.getByText('12,5')).toBeInTheDocument()
+    expect(screen.queryByText('12.5')).not.toBeInTheDocument()
+  })
 })

@@ -99,4 +99,26 @@ describe('FbsStockGroupsSection (Story 96.11-FE)', () => {
     const dashes = screen.getAllByText('—')
     expect(dashes.length).toBeGreaterThanOrEqual(2) // stockValue + daysOfCover
   })
+
+  it('renders non-null daysOfCover with Russian comma decimal ("12,5", not "12.5")', () => {
+    const populatedResponse = {
+      ...emptyFbsStockGroupsResponse(),
+      data: {
+        groups: [
+          {
+            groupName: 'Обувь',
+            skuCount: 5,
+            stockUnits: 30,
+            stockValue: 1000,
+            averageDailyOutgoing: 2,
+            daysOfCover: 12.5,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockGroupsSection />)
+    expect(screen.getByText('12,5')).toBeInTheDocument()
+    expect(screen.queryByText('12.5')).not.toBeInTheDocument()
+  })
 })

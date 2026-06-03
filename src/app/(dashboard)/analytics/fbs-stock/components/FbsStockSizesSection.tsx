@@ -153,7 +153,10 @@ export function FbsStockSizesSection() {
                       {item.averageDailyOutgoing}
                     </TableCell>
                     <TableCell className="text-right text-sm">
-                      {item.daysOfCover == null ? '—' : item.daysOfCover.toFixed(1)}
+                      {/* Russian locale: comma decimal ("12,5"), not "12.5" */}
+                      {item.daysOfCover == null
+                        ? '—'
+                        : item.daysOfCover.toFixed(1).replace('.', ',')}
                     </TableCell>
                   </TableRow>
                 ))}
