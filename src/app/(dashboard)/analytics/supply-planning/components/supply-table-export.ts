@@ -18,6 +18,22 @@ const CSV_HEADERS = [
  * stocks out" sentinel exports as-is). A null exports as an EMPTY cell — not English "N/A",
  * which leaked into this Russian-locale export.
  */
+/**
+ * Encode one CSV cell:
+ *  - null/undefined → empty cell.
+ *  - OWASP CSV-injection: neutralize a leading formula trigger (= + - @ tab CR) by prefixing
+ *    `'` so a hostile product name like `=HYPERLINK(...)` can't execute when opened in Excel.
+ *    No legitimate column here starts with those chars (numbers are non-negative, the enum/
+ *    ids don't), so this is safe.
+ *  - RFC 4180: escape embedded double-quotes by doubling, then wrap in quotes (an unescaped `"`
+ *    in a product name previously shifted every following column).
+ */
+function encodeCsvCell(value: unknown): string {
+  let s = value == null ? '' : String(value)
+  if (/^[=+\-@\t\r\n]/.test(s)) s = `'${s}`
+  return `"${s.replace(/"/g, '""')}"`
+}
+
 export function buildSupplyTableCsv(data: SupplyPlanningItem[]): string {
   const rows = data.map(item => [
     item.stockout_risk,
@@ -31,9 +47,10 @@ export function buildSupplyTableCsv(data: SupplyPlanningItem[]): string {
     item.reorder_value,
   ])
 
-  return [CSV_HEADERS.join(','), ...rows.map(row => row.map(cell => `"${cell}"`).join(','))].join(
-    '\n'
-  )
+  return [
+    CSV_HEADERS.map(encodeCsvCell).join(','),
+    ...rows.map(row => row.map(encodeCsvCell).join(',')),
+  ].join('\n')
 }
 
 /**
@@ -43,7 +60,9 @@ export function buildSupplyTableCsv(data: SupplyPlanningItem[]): string {
 export function exportSupplyTableCSV(data: SupplyPlanningItem[]) {
   const csvContent = buildSupplyTableCsv(data)
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  // Prepend a UTF-8 BOM so Excel on Windows (RU locale) detects UTF-8 instead of CP1251 —
+  // without it the Cyrillic headers + product names render as mojibake on double-click open.
+  const blob = new Blob(['\uFEFF', csvContent], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url

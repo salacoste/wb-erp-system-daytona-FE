@@ -49,4 +49,30 @@ describe('buildSupplyTableCsv', () => {
     const csv = buildSupplyTableCsv([makeItem()])
     expect(csv.split('\n')[0]).toContain('Дней до стокаута')
   })
+
+  it('escapes an embedded double-quote in product_name (RFC 4180 doubling)', () => {
+    const csv = buildSupplyTableCsv([makeItem({ product_name: 'Товар "X" L' })])
+    // product_name is column index 2; the inner quotes are doubled, the cell stays one field
+    expect(csv.split('\n')[1].split(',')[2]).toBe('"Товар ""X"" L"')
+  })
+
+  it('neutralizes a formula-injection product_name by prefixing a quote (OWASP)', () => {
+    const csv = buildSupplyTableCsv([makeItem({ product_name: '=HYPERLINK("http://x")' })])
+    const cell = csv.split('\n')[1]
+    // the leading "=" must be defanged with a "'" so Excel does not evaluate it
+    expect(cell).toContain('"\'=HYPERLINK')
+    expect(cell).not.toContain('"=HYPERLINK')
+  })
+
+  it('neutralizes other formula triggers (+ - @) at the start of a cell', () => {
+    for (const trig of ['+1', '-1+2', '@SUM']) {
+      const csv = buildSupplyTableCsv([makeItem({ product_name: trig })])
+      expect(csv.split('\n')[1].split(',')[2]).toBe(`"'${trig}"`)
+    }
+  })
+
+  // NOTE: the UTF-8 BOM lives in exportSupplyTableCSV's Blob (`['﻿', csvContent]`), the
+  // DOM/download path — not in buildSupplyTableCsv (the BOM is a file-encoding concern, not
+  // CSV content). It's intentionally NOT asserted here: jsdom does not implement
+  // URL.createObjectURL, so a download-path smoke test would be fragile. Verified by reading.
 })
