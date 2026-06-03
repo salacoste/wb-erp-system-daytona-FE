@@ -29,7 +29,19 @@ The FE `fbs-stock-normalizer.ts` and `FbsStockGroupItem`/`FbsStockSizeItem` type
 So even after fixing the envelope, every FE column except `groupName` would render `0`/`—` — the backend serves a **quantity-breakdown** shape (total / in-orders / available) while the FE was designed for a **stock-summary** shape (SKU count / stock value / days-of-cover).
 
 ### Also: regions endpoint 500
-`GET /v1/analytics/fbs/stock/regions` reportedly returns HTTP 500 (to re-confirm).
+`GET /v1/analytics/fbs/stock/regions` returns HTTP 500. **RE-CONFIRMED 2026-06-03** (iter-97):
+`INTERNAL_SERVER_ERROR`, trace_id `285ea784-d251-47ce-a210-9bf63e2ff77f`, no params (latest-snapshot
+semantics). The FE `FbsStockRegionsSection` degrades gracefully (independent state machine → error
+state, retry 1) — no fabrication — but the section is non-functional until the 500 is fixed.
+
+### Re-confirmation 2026-06-03 (iter-97) — blocker still current
+- `GET /v1/analytics/fbs/stock/groups?from=2026-05-01&to=2026-05-28` → HTTP 200, STILL the
+  quantity-breakdown envelope: top-level `{ items, summary, period }` (no `data` wrapper); item keys
+  `[groupId, groupName, totalQuantity, quantityInOrders, quantityAvailable, warehouses]` (e.g.
+  `{groupId:148188881, groupName:"Product 148188881", totalQuantity:1872, quantityInOrders:0,
+  quantityAvailable:1872, warehouses:[]}`). Unchanged from the original finding — the FE normalizer's
+  `r.data.groups` read still yields `[]` → empty table despite live data. The contract decision
+  (option 1 backend-adds-fields vs option 2 FE-redesigns-to-quantity-shape) is still outstanding.
 
 ## Requested resolution (needs a decision)
 
