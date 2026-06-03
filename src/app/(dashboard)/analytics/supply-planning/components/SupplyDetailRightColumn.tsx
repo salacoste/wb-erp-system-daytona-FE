@@ -17,7 +17,11 @@ import Link from 'next/link'
 import { ROUTES } from '@/lib/routes'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
 import type { ForecastDay } from './supply-detail-calculations'
-import { formatStockQty, formatReorderValue } from '@/lib/supply-planning-utils'
+import {
+  formatStockQty,
+  formatReorderValue,
+  formatPlanningHorizon,
+} from '@/lib/supply-planning-utils'
 
 // ============================================================================
 // Types
@@ -83,9 +87,7 @@ export function SupplyDetailRightColumn({ item, forecast, totalPotentialLoss }: 
           <div className="flex justify-between">
             <dt className="text-gray-600">Горизонт планирования:</dt>
             <dd className="font-medium text-gray-900">
-              {item.safety_stock_units > 0
-                ? `${Math.round(item.safety_stock_units / item.avg_daily_sales)} дней`
-                : '—'}
+              {formatPlanningHorizon(item.safety_stock_units, item.avg_daily_sales)}
             </dd>
           </div>
           <div className="flex justify-between">

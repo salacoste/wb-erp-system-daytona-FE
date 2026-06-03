@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { formatReorderValue, formatDaysUntilStockout } from '../supply-planning-utils'
+import {
+  formatReorderValue,
+  formatDaysUntilStockout,
+  formatPlanningHorizon,
+} from '../supply-planning-utils'
 
 /**
  * Unit tests for formatReorderValue function
@@ -68,5 +72,34 @@ describe('formatDaysUntilStockout', () => {
     expect(formatDaysUntilStockout(21)).toBe('21 день')
     expect(formatDaysUntilStockout(22)).toBe('22 дня')
     expect(formatDaysUntilStockout(25)).toBe('25 дней')
+  })
+})
+
+/**
+ * iter-125: formatPlanningHorizon guards the safety-stock ÷ velocity division. The inline
+ * `safety_stock_units / avg_daily_sales` rendered the literal "Infinity дней" for a no-sales
+ * item (avg_daily_sales === 0) that still had a safety buffer.
+ */
+describe('formatPlanningHorizon', () => {
+  it('returns "—" when there is no safety stock', () => {
+    expect(formatPlanningHorizon(0, 5)).toBe('—')
+    expect(formatPlanningHorizon(-3, 5)).toBe('—')
+  })
+
+  it('returns "∞" (not "Infinity дней") when there is no sales velocity', () => {
+    expect(formatPlanningHorizon(14, 0)).toBe('∞')
+    expect(formatPlanningHorizon(14, -1)).toBe('∞')
+    expect(formatPlanningHorizon(14, 0)).not.toContain('Infinity')
+  })
+
+  it('computes rounded days when both stock and velocity are positive', () => {
+    expect(formatPlanningHorizon(20, 4)).toBe('5 дней') // 20/4 = 5
+    expect(formatPlanningHorizon(10, 3)).toBe('3 дней') // round(3.33) = 3
+    expect(formatPlanningHorizon(7, 0.5)).toBe('14 дней') // slow mover (<1/day) → large but finite
+  })
+
+  it('returns "—" for non-finite inputs (NaN/Infinity, not expected from backend)', () => {
+    expect(formatPlanningHorizon(NaN, 5)).toBe('—')
+    expect(formatPlanningHorizon(14, NaN)).toBe('—')
   })
 })
