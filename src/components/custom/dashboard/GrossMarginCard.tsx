@@ -24,21 +24,29 @@ export interface GrossMarginCardProps {
   className?: string
 }
 
+// iter-120: same profit-vs-loss fix as MarginCard — the <30% band was a single red, painting a
+// positive-but-low gross margin (e.g. +20%) identically to a LOSS (e.g. −10%, possible when
+// COGS > net revenue). Per the Defensive Frontend Principle, split into 0–30% orange ("низкая
+// наценка") and <0% red ("убыток"). Text uses -600 to match this card's green/yellow/red text
+// shades (top-table-utils uses -500); borders -500, backgrounds -50, per the card's palette.
 function getMarginColor(pct: number): string {
   if (pct >= 50) return 'text-green-600'
   if (pct >= 30) return 'text-yellow-600'
+  if (pct >= 0) return 'text-orange-600'
   return 'text-red-600'
 }
 
 function getMarginBorder(pct: number): string {
   if (pct >= 50) return 'border-green-500'
   if (pct >= 30) return 'border-yellow-500'
+  if (pct >= 0) return 'border-orange-500'
   return 'border-red-500'
 }
 
 function getMarginBg(pct: number): string {
   if (pct >= 50) return 'bg-gradient-to-br from-green-50 to-white'
   if (pct >= 30) return 'bg-gradient-to-br from-yellow-50 to-white'
+  if (pct >= 0) return 'bg-gradient-to-br from-orange-50 to-white'
   return 'bg-gradient-to-br from-red-50 to-white'
 }
 
@@ -112,7 +120,7 @@ export function GrossMarginCard({
             <TooltipContent size="lg">
               <p style={{ whiteSpace: 'pre-line' }}>
                 {
-                  'Валовая маржа = (Выручка нетто − Себестоимость) / Выручка нетто × 100%.\nПоказывает, какой % от выручки остаётся после вычета себестоимости, но ДО удержаний WB.\nОриентиры: ≥ 50% — отлично, 30–50% — нормально, < 30% — низкая наценка.\nСравнение в п.п. (процентных пунктах): например, 56% → 50% = −6 п.п.\n⚠ Точность зависит от покрытия COGS.\nИсточник: расчёт из weekly_margin_fact (взвешенная по выручке SKU).'
+                  'Валовая маржа = (Выручка нетто − Себестоимость) / Выручка нетто × 100%.\nПоказывает, какой % от выручки остаётся после вычета себестоимости, но ДО удержаний WB.\nОриентиры: ≥ 50% — отлично, 30–50% — нормально, 0–30% — низкая наценка, < 0% — убыток.\nСравнение в п.п. (процентных пунктах): например, 56% → 50% = −6 п.п.\n⚠ Точность зависит от покрытия COGS.\nИсточник: расчёт из weekly_margin_fact (взвешенная по выручке SKU).'
                 }
               </p>
             </TooltipContent>

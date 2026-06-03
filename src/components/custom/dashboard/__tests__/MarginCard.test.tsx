@@ -49,3 +49,58 @@ describe('MarginCard — Russian locale', () => {
     ).toBeInTheDocument()
   })
 })
+
+// iter-120: a thin-but-POSITIVE operating margin must be visually distinct from a LOSS.
+// Previously both 0–15% and <0% were red (profit painted identically to loss).
+describe('MarginCard — profit-vs-loss color bands (iter-120)', () => {
+  it('colors a thin-but-positive margin orange (низкая), not the loss red', () => {
+    render(
+      <TooltipProvider>
+        <MarginCard marginPct={10} previousMarginPct={null} cogsCoverage={100} />
+      </TooltipProvider>
+    )
+    expect(screen.getByText(/10,0\s+%/)).toHaveClass('text-orange-600')
+    const card = screen.getByTestId('metric-card')
+    expect(card).toHaveClass('border-orange-500')
+    expect(card).toHaveClass('from-orange-50')
+  })
+
+  it('colors a negative margin red (убыток) — never confused with a thin profit', () => {
+    render(
+      <TooltipProvider>
+        <MarginCard marginPct={-10} previousMarginPct={null} cogsCoverage={100} />
+      </TooltipProvider>
+    )
+    // hyphen-first in the class = unambiguously literal; covers both ASCII '-' and U+2212 '−'
+    expect(screen.getByText(/[-−]10,0\s+%/)).toHaveClass('text-red-600')
+    const card = screen.getByTestId('metric-card')
+    expect(card).toHaveClass('border-red-500')
+    expect(card).toHaveClass('from-red-50')
+  })
+
+  it('colors exactly 0% orange — the boundary belongs to the profit (non-loss) side', () => {
+    render(
+      <TooltipProvider>
+        <MarginCard marginPct={0} previousMarginPct={null} cogsCoverage={100} />
+      </TooltipProvider>
+    )
+    expect(screen.getByText(/0,0\s+%/)).toHaveClass('text-orange-600')
+    expect(screen.getByTestId('metric-card')).toHaveClass('border-orange-500')
+  })
+
+  it('keeps the unchanged bands: ≥30 green, 15–30 yellow', () => {
+    const { unmount } = render(
+      <TooltipProvider>
+        <MarginCard marginPct={35} previousMarginPct={null} cogsCoverage={100} />
+      </TooltipProvider>
+    )
+    expect(screen.getByText(/35,0\s+%/)).toHaveClass('text-green-600')
+    unmount()
+    render(
+      <TooltipProvider>
+        <MarginCard marginPct={20} previousMarginPct={null} cogsCoverage={100} />
+      </TooltipProvider>
+    )
+    expect(screen.getByText(/20,0\s+%/)).toHaveClass('text-yellow-600')
+  })
+})

@@ -52,3 +52,35 @@ describe('GrossMarginCard — Russian locale', () => {
     expect(screen.getByRole('article', { name: /Валовая маржа: 25,0\s+%/ })).toBeInTheDocument()
   })
 })
+
+// iter-120: a positive-but-low gross margin must be visually distinct from a LOSS.
+// Previously both 0–30% and <0% were red (positive markup painted identically to loss).
+describe('GrossMarginCard — profit-vs-loss color bands (iter-120)', () => {
+  it('colors a positive-but-low gross margin orange (низкая наценка), not the loss red', () => {
+    renderCard({ grossMarginPct: 20, previousGrossMarginPct: null })
+    expect(screen.getByText(/20,0\s+%/)).toHaveClass('text-orange-600')
+    expect(screen.getByTestId('metric-card')).toHaveClass('border-orange-500')
+    expect(screen.getByTestId('metric-card')).toHaveClass('from-orange-50')
+  })
+
+  it('colors a negative gross margin red (убыток) — never confused with a positive markup', () => {
+    renderCard({ grossMarginPct: -10, previousGrossMarginPct: null })
+    // hyphen-first = unambiguously literal; covers ASCII '-' and U+2212 '−'
+    expect(screen.getByText(/[-−]10,0\s+%/)).toHaveClass('text-red-600')
+    expect(screen.getByTestId('metric-card')).toHaveClass('border-red-500')
+    expect(screen.getByTestId('metric-card')).toHaveClass('from-red-50')
+  })
+
+  it('colors exactly 0% orange — the boundary belongs to the profit (non-loss) side', () => {
+    renderCard({ grossMarginPct: 0, previousGrossMarginPct: null })
+    expect(screen.getByText(/0,0\s+%/)).toHaveClass('text-orange-600')
+  })
+
+  it('keeps the unchanged bands: ≥50 green, 30–50 yellow', () => {
+    const { unmount } = renderCard({ grossMarginPct: 55, previousGrossMarginPct: null })
+    expect(screen.getByText(/55,0\s+%/)).toHaveClass('text-green-600')
+    unmount()
+    renderCard({ grossMarginPct: 35, previousGrossMarginPct: null })
+    expect(screen.getByText(/35,0\s+%/)).toHaveClass('text-yellow-600')
+  })
+})

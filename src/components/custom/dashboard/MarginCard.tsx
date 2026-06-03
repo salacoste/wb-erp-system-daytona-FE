@@ -25,21 +25,30 @@ export interface MarginCardProps {
   className?: string
 }
 
+// iter-120: the <15% band was a single red, painting a thin-but-PROFITABLE operating margin
+// (e.g. +10%) identically to an actual LOSS (e.g. −10%). Per the Defensive Frontend Principle
+// (never visually misrepresent data), a profit must be distinct from a loss. Split into
+// 0–15% orange ("низкая") and <0% red ("убыток"), matching the realized-margin BANDS already
+// used by top-table-utils.getMarginColor (TopProducts/TopBrands). Text uses -600 to match this
+// card's green/yellow/red text shades (top-table uses -500); borders -500, backgrounds -50.
 function getMarginColor(pct: number): string {
   if (pct >= 30) return 'text-green-600'
   if (pct >= 15) return 'text-yellow-600'
+  if (pct >= 0) return 'text-orange-600'
   return 'text-red-600'
 }
 
 function getMarginBorder(pct: number): string {
   if (pct >= 30) return 'border-green-500'
   if (pct >= 15) return 'border-yellow-500'
+  if (pct >= 0) return 'border-orange-500'
   return 'border-red-500'
 }
 
 function getMarginBg(pct: number): string {
   if (pct >= 30) return 'bg-gradient-to-br from-green-50 to-white'
   if (pct >= 15) return 'bg-gradient-to-br from-yellow-50 to-white'
+  if (pct >= 0) return 'bg-gradient-to-br from-orange-50 to-white'
   return 'bg-gradient-to-br from-red-50 to-white'
 }
 
@@ -116,7 +125,7 @@ export function MarginCard({
             <TooltipContent size="lg">
               <p style={{ whiteSpace: 'pre-line' }}>
                 {
-                  'Операционная маржа = (К перечислению − Себестоимость) / Выручка нетто × 100%.\nПоказывает, какой % от выручки остаётся после ВСЕХ удержаний WB и себестоимости.\nЭто ваша реальная рентабельность продаж (до налогов).\nОриентиры: ≥ 30% — отлично, 15–30% — нормально, < 15% — низкая рентабельность.\nСравнение в п.п. (процентных пунктах).\n⚠ Точность зависит от покрытия COGS.\nИсточник: расчёт из weekly_margin_fact.'
+                  'Операционная маржа = (К перечислению − Себестоимость) / Выручка нетто × 100%.\nПоказывает, какой % от выручки остаётся после ВСЕХ удержаний WB и себестоимости.\nЭто ваша реальная рентабельность продаж (до налогов).\nОриентиры: ≥ 30% — отлично, 15–30% — нормально, 0–15% — низкая рентабельность, < 0% — убыток.\nСравнение в п.п. (процентных пунктах).\n⚠ Точность зависит от покрытия COGS.\nИсточник: расчёт из weekly_margin_fact.'
                 }
               </p>
             </TooltipContent>
