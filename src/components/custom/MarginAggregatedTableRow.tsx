@@ -7,7 +7,7 @@
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { ExternalLink } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { MarginBadge } from './MarginDisplay'
 import { formatCogs } from '@/hooks/useSingleCogsAssignment'
 import {
@@ -143,7 +143,7 @@ export function MarginAggregatedTableRow({
                   )}
                   {item.operating_margin_pct !== null &&
                     item.operating_margin_pct !== undefined && (
-                      <p>Опер. маржа: {item.operating_margin_pct.toFixed(2)}%</p>
+                      <p>Опер. маржа: {formatPercentage(item.operating_margin_pct, 2)}</p>
                     )}
                   {(item.skus_with_expenses_only ?? 0) > 0 && (
                     <p className="text-amber-500">{item.skus_with_expenses_only} SKU без продаж</p>

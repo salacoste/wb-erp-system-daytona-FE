@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp } from 'lucide-react'
+import { formatPercentage } from '@/lib/utils'
 
 export interface MarginStats {
   total: number
@@ -46,7 +47,7 @@ export function MarginSummaryCards({
         <CardContent>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-bold text-gray-900">
-              {stats.avgMargin !== null ? `${stats.avgMargin.toFixed(2)}%` : '—'}
+              {stats.avgMargin !== null ? formatPercentage(stats.avgMargin, 2) : '—'}
             </span>
             <span className="text-sm text-gray-500">операционная маржа</span>
           </div>

@@ -7,6 +7,7 @@
 import { DateRangePicker } from '@/components/custom/DateRangePicker'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp } from 'lucide-react'
+import { formatPercentage } from '@/lib/utils'
 import type { SkuPageStats } from './sku-page-stats'
 
 interface SkuFilterSectionProps {
@@ -56,7 +57,7 @@ export function SkuFilterSection({
               <div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold text-gray-900">
-                    {stats.avgMargin !== null ? `${stats.avgMargin.toFixed(1)}%` : '—'}
+                    {stats.avgMargin !== null ? formatPercentage(stats.avgMargin, 1) : '—'}
                   </span>
                   <span className="text-sm text-gray-500">операционная маржа</span>
                 </div>
@@ -94,7 +95,9 @@ export function SkuFilterSection({
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Охват:</span>
                     <span className="font-semibold text-blue-600">
-                      {((stats.withCogs / stats.total) * 100).toFixed(1)}%
+                      {stats.total > 0
+                        ? formatPercentage((stats.withCogs / stats.total) * 100, 1)
+                        : '—'}
                     </span>
                   </div>
                 </div>
