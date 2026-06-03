@@ -54,6 +54,22 @@ describe('FbsFunnelSection (Story 96.13-FE)', () => {
     expect(screen.queryByTestId('fbs-funnel-inversion-warning')).not.toBeInTheDocument()
   })
 
+  it('renders stage-over-stage conversion in Russian locale ("20,0 %", not "20.0%")', () => {
+    renderWithProviders(
+      <FbsFunnelSection
+        funnelData={{
+          productViews: 10000,
+          cartAdds: 2000, // cartAdds/productViews = 20% → "20,0 %" (comma + NBSP)
+          orders: 100,
+          deliveries: 80,
+        }}
+      />
+    )
+    expect(screen.getByText(/20,0\s*%\s*от предыдущего/)).toBeInTheDocument()
+    // No dot-locale percent leaks through
+    expect(screen.queryByText(/20\.0\s*%/)).not.toBeInTheDocument()
+  })
+
   it('shows AlertTriangle inversion warning when funnel stage widens beyond threshold (H2-2 fix)', () => {
     // productViews: 100, cartAdds: 200 — 100% over threshold (>>5%), definitely anomalous
     renderWithProviders(

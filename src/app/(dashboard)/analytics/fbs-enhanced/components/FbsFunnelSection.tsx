@@ -26,6 +26,7 @@
 import { AlertTriangle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { CHART_COLORS } from '@/lib/chart-colors'
+import { formatPercentage } from '@/lib/utils'
 import type { FbsFunnelData } from '@/types/fbs-enhanced'
 
 interface FbsFunnelSectionProps {
@@ -62,8 +63,9 @@ const MAX_TOP_WIDTH = SVG_WIDTH * 0.9 // widest stage at 90% of SVG width
 const MIN_BOTTOM_WIDTH = SVG_WIDTH * 0.2 // narrowest stage at 20%
 
 function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)} млн`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)} тыс`
+  // Russian locale: comma decimal ("10,0 тыс"/"1,2 млн"), not "10.0 тыс".
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace('.', ',')} млн`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace('.', ',')} тыс`
   return String(n)
 }
 
@@ -202,7 +204,10 @@ export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
                   </p>
                   {i > 0 && stages[i - 1].value > 0 && (
                     <p className="text-xs text-muted-foreground">
-                      {((stage.value / stages[i - 1].value) * 100).toFixed(1)}% от предыдущего
+                      {/* Russian locale: comma + NBSP ("37,5 %"), not "37.5%". Guard above ensures
+                          the denominator > 0. formatPercentage re-divides by 100, so pass ×100. */}
+                      {formatPercentage((stage.value / stages[i - 1].value) * 100, 1)} от
+                      предыдущего
                     </p>
                   )}
                 </div>
