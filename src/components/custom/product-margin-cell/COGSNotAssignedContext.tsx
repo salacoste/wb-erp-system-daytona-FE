@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Info, History, ChevronRight } from 'lucide-react'
 import { isCogsAfterLastCompletedWeek, getLastCompletedWeek } from '@/lib/margin-helpers'
 import { cn, formatWeeksAgoShort, formatPercentage } from '@/lib/utils'
+import { formatCogs } from '@/hooks/useSingleCogsAssignment-utils'
 import type { ProductListItem } from '@/types/api'
 
 /**
@@ -76,12 +77,14 @@ export function COGSNotAssignedContext({
         (product.applicable_cogs && !product.applicable_cogs.is_same_as_current ? (
           <div
             className="flex items-center gap-1.5 text-xs text-blue-600"
-            title={`COGS ${product.applicable_cogs.unit_cost_rub}₽ действует с ${product.applicable_cogs.valid_from.split('T')[0]}`}
+            title={`COGS ${formatCogs(product.applicable_cogs.unit_cost_rub)} действует с ${product.applicable_cogs.valid_from.split('T')[0]}`}
           >
             <Info className="h-3 w-3" aria-hidden="true" />
             <span>
+              {/* formatCogs: Russian locale + ₽, and parseFloats the backend's string unit_cost_rub
+                  (the embedded product cogs is NOT boundary-normalized — raw "500" → "500,00 ₽"). */}
               COGS для {product.applicable_cogs.applies_to_week}:{' '}
-              {product.applicable_cogs.unit_cost_rub}₽
+              {formatCogs(product.applicable_cogs.unit_cost_rub)}
             </span>
           </div>
         ) : !product.applicable_cogs ? (
