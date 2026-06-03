@@ -22,7 +22,7 @@
 import { AlertTriangle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { getBuyoutColor } from './monitor-pipeline-utils'
 
 interface MonitorBuyoutGaugeProps {
@@ -112,7 +112,7 @@ export function MonitorBuyoutGauge({ buyoutRatePercent: rate }: MonitorBuyoutGau
             )}
             aria-hidden="true"
           >
-            {rate == null ? '—' : `${rate}%`}
+            {rate == null ? '—' : formatPercentage(rate)}
           </span>
         </div>
 

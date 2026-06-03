@@ -16,8 +16,8 @@ describe('MonitorBuyoutGauge', () => {
   it('renders numeric value "93%" and "Отличный" band label when buyoutRatePercent=93', () => {
     renderWithProviders(<MonitorBuyoutGauge buyoutRatePercent={93} />)
 
-    // Center text shows rate with % symbol
-    expect(screen.getByText('93%')).toBeInTheDocument()
+    // Center text shows rate with % symbol (Russian locale: comma + NBSP, 1 decimal)
+    expect(screen.getByText(/93,0\s+%/)).toBeInTheDocument()
     // Band label for >= 90
     expect(screen.getByText('Отличный')).toBeInTheDocument()
     // Card title
@@ -54,7 +54,7 @@ describe('MonitorBuyoutGauge', () => {
   it('renders "Низкий" band label for rate below 70', () => {
     renderWithProviders(<MonitorBuyoutGauge buyoutRatePercent={50} />)
 
-    expect(screen.getByText('50%')).toBeInTheDocument()
+    expect(screen.getByText(/50,0\s+%/)).toBeInTheDocument()
     expect(screen.getByText('Низкий')).toBeInTheDocument()
   })
 
@@ -73,7 +73,7 @@ describe('MonitorBuyoutGauge', () => {
     renderWithProviders(<MonitorBuyoutGauge buyoutRatePercent={150} />)
 
     // Raw value displayed (not clamped) — Defensive Frontend Principle: raw values preserved
-    expect(screen.getByText('150%')).toBeInTheDocument()
+    expect(screen.getByText(/150,0\s+%/)).toBeInTheDocument()
 
     // Anomaly indicator visible
     expect(screen.getByText('Аномальное значение')).toBeInTheDocument()
@@ -86,8 +86,8 @@ describe('MonitorBuyoutGauge', () => {
   it('shows AlertTriangle anomaly indicator and preserves raw value -5 in aria-valuenow', () => {
     renderWithProviders(<MonitorBuyoutGauge buyoutRatePercent={-5} />)
 
-    // Raw negative value displayed
-    expect(screen.getByText('-5%')).toBeInTheDocument()
+    // Raw negative value displayed (locale minus may be hyphen or U+2212)
+    expect(screen.getByText(/[-−]5,0\s+%/)).toBeInTheDocument()
 
     // Anomaly indicator visible
     expect(screen.getByText('Аномальное значение')).toBeInTheDocument()
