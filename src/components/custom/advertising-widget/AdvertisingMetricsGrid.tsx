@@ -2,8 +2,12 @@
 
 import { HelpCircle } from 'lucide-react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-import { formatCurrency, getRoasColorClass } from './advertising-widget-helpers'
+import { cn, formatPercentageInt } from '@/lib/utils'
+import {
+  formatCurrency,
+  getRoasColorClass,
+  getOrganicContributionColorClass,
+} from './advertising-widget-helpers'
 
 // ============================================================================
 // Types
@@ -63,9 +67,14 @@ export function AdvertisingMetricsGrid({ summary }: AdvertisingMetricsGridProps)
             </TooltipContent>
           </Tooltip>
         </p>
-        <p className="text-lg font-bold text-green-600">
+        <p
+          className={cn(
+            'text-lg font-bold',
+            getOrganicContributionColorClass(summary.avg_organic_contribution)
+          )}
+        >
           {summary.avg_organic_contribution != null
-            ? `${summary.avg_organic_contribution.toFixed(0)}%`
+            ? formatPercentageInt(summary.avg_organic_contribution)
             : '—'}
         </p>
       </div>
