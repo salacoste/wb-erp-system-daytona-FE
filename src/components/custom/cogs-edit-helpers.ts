@@ -18,11 +18,14 @@ export function formatDateRu(dateStr: string): string {
 }
 
 /**
- * Format currency to Russian locale with RUB symbol (form variant — expects a valid number).
+ * Format currency to Russian locale with RUB symbol.
  * NOTE: distinct from the same-named `formatCurrencyRu` in `useCogsHistoryFull.ts`, which
  * additionally guards null/undefined for display.
  */
 export function formatCurrencyRu(value: number): string {
+  // CogsEditDialog feeds record.unit_cost_rub here, which the cogs-history normalizer maps to NaN
+  // for an invalid/missing backend cost (honest sentinel, NOT 0 — anti-pattern #8). Render "—".
+  if (!Number.isFinite(value)) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

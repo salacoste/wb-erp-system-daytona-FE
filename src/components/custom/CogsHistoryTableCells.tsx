@@ -40,6 +40,9 @@ export function formatDate(dateStr: string | null): string {
 
 /** Format currency to Russian locale (AC: 4) */
 export function formatCurrency(value: number): string {
+  // The cogs-history normalizer maps an invalid/missing backend cost to NaN as its honest
+  // "invalid" sentinel (NOT 0 — anti-pattern #8). Surface that as "—", never "не число ₽".
+  if (!Number.isFinite(value)) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',
