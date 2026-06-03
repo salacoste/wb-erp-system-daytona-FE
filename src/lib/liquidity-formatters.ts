@@ -23,22 +23,27 @@ import { getLiquidityCategoryConfig } from './liquidity-category-config'
  * @returns Formatted string (e.g., "22 дня", "145 дней")
  */
 export function formatTurnoverDays(days: number): string {
+  // 999 is the backend "never sells" sentinel — match it on the RAW value, BEFORE rounding,
+  // so a real fractional slow-mover (e.g. 998.6) renders as its day count, not the sentinel.
   if (days >= 999) return 'Нет продаж'
-  if (days === 0) return '< 1 дня'
-  if (days === 1) return '1 день'
-  if (days >= 2 && days <= 4) return `${days} дня`
-  if (days >= 5 && days <= 20) return `${days} дней`
+  // Round to whole days: avg_turnover_days is a category/summary AVERAGE and can be fractional,
+  // which previously leaked dot-decimals (e.g. "22.5 дня"). Integer inputs are unaffected.
+  const d = Math.round(days)
+  if (d === 0) return '< 1 дня'
+  if (d === 1) return '1 день'
+  if (d >= 2 && d <= 4) return `${d} дня`
+  if (d >= 5 && d <= 20) return `${d} дней`
 
-  const lastDigit = days % 10
-  const lastTwoDigits = days % 100
+  const lastDigit = d % 10
+  const lastTwoDigits = d % 100
 
   if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-    return `${days} дней`
+    return `${d} дней`
   }
 
-  if (lastDigit === 1) return `${days} день`
-  if (lastDigit >= 2 && lastDigit <= 4) return `${days} дня`
-  return `${days} дней`
+  if (lastDigit === 1) return `${d} день`
+  if (lastDigit >= 2 && lastDigit <= 4) return `${d} дня`
+  return `${d} дней`
 }
 
 /**
