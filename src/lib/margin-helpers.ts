@@ -7,22 +7,51 @@
 import { formatIsoWeek } from './utils'
 
 /**
+ * Returns a Date whose LOCAL fields (getDay/getHours/getDate/getFullYear) reflect the current
+ * Europe/Moscow wall-clock, regardless of the browser's timezone.
+ *
+ * The last-completed-week rule (day-of-week + the 12:00 cutoff) is defined in Moscow time to match
+ * the backend IsoWeekService. Reading now.getDay()/getHours() in the BROWSER's local tz silently
+ * picks the wrong week boundary for any non-Moscow user (e.g. at Tue 11:30 MSK the backend says W-2,
+ * but a Yekaterinburg client at local 13:30 would compute W-1) — desyncing the COGS-version
+ * applicability warning, the manual-recalc target, and every dashboard widget that derives its
+ * target week from getLastCompletedWeek. Moscow is permanently UTC+3 (Russia abolished DST in 2014),
+ * so a fixed +3h shift is exact.
+ */
+function nowInMoscow(): Date {
+  const now = new Date()
+  // Shift the UTC instant by +3h, then read its UTC fields (= Moscow wall-clock) and rebuild as a
+  // LOCAL date so downstream getDay()/getHours()/setDate()/formatIsoWeek all operate on Moscow time.
+  const shifted = new Date(now.getTime() + 3 * 60 * 60 * 1000)
+  return new Date(
+    shifted.getUTCFullYear(),
+    shifted.getUTCMonth(),
+    shifted.getUTCDate(),
+    shifted.getUTCHours(),
+    shifted.getUTCMinutes(),
+    shifted.getUTCSeconds(),
+    shifted.getUTCMilliseconds()
+  )
+}
+
+/**
  * Calculate the last completed week based on day of week and time
  * Backend uses this week for margin calculation in product list
  * because current week is not yet completed (report forms at week end)
  *
- * Logic (matching backend IsoWeekService.getLastCompletedWeek(conservative: true)):
+ * Logic (matching backend IsoWeekService.getLastCompletedWeek(conservative: true)),
+ * evaluated in Europe/Moscow time (see nowInMoscow):
  * - Monday: W-2 (2 weeks ago, data not ready)
- * - Tuesday before 12:00: W-2 (conservative, data may not be ready)
- * - Tuesday after 12:00: W-1 (past week, data should be ready)
+ * - Tuesday before 12:00 MSK: W-2 (conservative, data may not be ready)
+ * - Tuesday after 12:00 MSK: W-1 (past week, data should be ready)
  * - Wednesday-Sunday: W-1 (past week, data should be ready)
  *
  * @returns ISO week string for last completed week (e.g., "2025-W46")
  */
 export function getLastCompletedWeek(): string {
-  const now = new Date()
-  const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const hours = now.getHours()
+  const now = nowInMoscow()
+  const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday (Moscow)
+  const hours = now.getHours() // Moscow hour
 
   // Monday (1) or Tuesday (2) before 12:00 → use 2 weeks ago
   if (dayOfWeek === 1 || (dayOfWeek === 2 && hours < 12)) {

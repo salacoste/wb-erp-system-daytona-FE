@@ -9,6 +9,8 @@ import {
   estimateCalculationTime,
   getPollingStrategy,
   getLastCompletedWeek,
+  getWeekEndDate,
+  getWeekMidpointDate,
   isCogsAfterLastCompletedWeek,
 } from './margin-helpers'
 import { formatIsoWeek } from './utils'
@@ -77,7 +79,7 @@ describe('margin-helpers', () => {
       const weeks = calculateAffectedWeeks(dateStr)
 
       expect(Array.isArray(weeks)).toBe(true)
-      weeks.forEach((week) => {
+      weeks.forEach(week => {
         expect(week).toMatch(/^\d{4}-W\d{2}$/) // ISO week format
       })
     })
@@ -119,26 +121,25 @@ describe('margin-helpers', () => {
     })
 
     it('should return 30 seconds for 6 weeks', () => {
-      const weeks = [
-        '2025-W01',
-        '2025-W02',
-        '2025-W03',
-        '2025-W04',
-        '2025-W05',
-        '2025-W06',
-      ]
+      const weeks = ['2025-W01', '2025-W02', '2025-W03', '2025-W04', '2025-W05', '2025-W06']
       const time = estimateCalculationTime(weeks)
       expect(time).toBe(30000) // 6 weeks * 5 seconds = 30 seconds
     })
 
     it('should clamp to maximum 60 seconds', () => {
-      const weeks = Array.from({ length: 20 }, (_, i) => `2025-W${(i + 1).toString().padStart(2, '0')}`)
+      const weeks = Array.from(
+        { length: 20 },
+        (_, i) => `2025-W${(i + 1).toString().padStart(2, '0')}`
+      )
       const time = estimateCalculationTime(weeks)
       expect(time).toBe(60000) // 20 weeks * 5 = 100, but clamped to 60 seconds
     })
 
     it('should handle 12 weeks (60 seconds max)', () => {
-      const weeks = Array.from({ length: 12 }, (_, i) => `2025-W${(i + 1).toString().padStart(2, '0')}`)
+      const weeks = Array.from(
+        { length: 12 },
+        (_, i) => `2025-W${(i + 1).toString().padStart(2, '0')}`
+      )
       const time = estimateCalculationTime(weeks)
       expect(time).toBe(60000) // 12 weeks * 5 = 60 seconds (at max)
     })
@@ -223,7 +224,7 @@ describe('margin-helpers', () => {
     it('should return ISO week string based on day of week and time', () => {
       const lastWeek = getLastCompletedWeek()
       expect(lastWeek).toMatch(/^\d{4}-W\d{2}$/)
-      
+
       // Verify it's a valid ISO week format
       const [year, week] = lastWeek.split('-W')
       expect(parseInt(year)).toBeGreaterThan(2020)
@@ -233,40 +234,36 @@ describe('margin-helpers', () => {
 
     it('should return W-2 on Monday', () => {
       vi.useFakeTimers()
-      // Set to Monday, 10:00
-      vi.setSystemTime(new Date('2025-11-24T10:00:00Z')) // Monday
-      
+      vi.setSystemTime(new Date('2025-11-24T10:00:00Z')) // Monday 13:00 MSK
+
       const lastWeek = getLastCompletedWeek()
-      const now = new Date()
-      const twoWeeksAgo = new Date(now)
-      twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
-      const expectedWeek = formatIsoWeek(twoWeeksAgo)
-      
+      // Monday → W-2 = Moscow date (Nov 24) minus 14 days = Nov 10. Use a FIXED Moscow-anchored
+      // date (not machine-local new Date()) so the expectation is timezone-independent — production
+      // now reads Moscow time, so a local-tz reference would diverge on far-east machines (UTC+14).
+      const expectedWeek = formatIsoWeek(new Date(2025, 10, 10))
+
       expect(lastWeek).toBe(expectedWeek)
-      
+
       vi.useRealTimers()
     })
 
     it('should return W-1 on Wednesday', () => {
       vi.useFakeTimers()
-      // Set to Wednesday, 10:00
-      vi.setSystemTime(new Date('2025-11-26T10:00:00Z')) // Wednesday
-      
+      vi.setSystemTime(new Date('2025-11-26T10:00:00Z')) // Wednesday 13:00 MSK
+
       const lastWeek = getLastCompletedWeek()
-      const now = new Date()
-      const oneWeekAgo = new Date(now)
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-      const expectedWeek = formatIsoWeek(oneWeekAgo)
-      
+      // Wednesday → W-1 = Moscow date (Nov 26) minus 7 days = Nov 19 (fixed, tz-independent).
+      const expectedWeek = formatIsoWeek(new Date(2025, 10, 19))
+
       expect(lastWeek).toBe(expectedWeek)
-      
+
       vi.useRealTimers()
     })
   })
 
   describe('isCogsAfterLastCompletedWeek', () => {
     beforeEach(() => {
-      // Mock current date to 2025-11-24 (Sunday)
+      // Mock current date to 2025-11-24 (Monday), 12:00 UTC = 15:00 MSK
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2025-11-24T12:00:00Z'))
     })
@@ -323,3 +320,65 @@ describe('getLastCompletedWeek', () => {
   })
 })
 
+// Moscow-timezone contract (machine-tz-independent). The last-completed-week rule is defined in
+// Europe/Moscow; these assertions pin the boundaries to Moscow wall-clock (UTC+3), so they fail on
+// the prior browser-local-tz implementation when the test machine is not Moscow time.
+describe('getLastCompletedWeek — Europe/Moscow boundaries', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('flips the Tuesday W-2→W-1 cutoff at 12:00 MSK (= 09:00 UTC), not local noon', () => {
+    vi.useFakeTimers()
+    // 2025-11-25 is a Tuesday. 08:59:59Z = 11:59:59 MSK (< 12:00 → W-2).
+    vi.setSystemTime(new Date('2025-11-25T08:59:59Z'))
+    const beforeNoonMsk = getLastCompletedWeek()
+    // 09:00:00Z = 12:00:00 MSK (>= 12:00 → W-1).
+    vi.setSystemTime(new Date('2025-11-25T09:00:00Z'))
+    const atNoonMsk = getLastCompletedWeek()
+    // The cutoff is Moscow noon: the two straddling instants land in different weeks.
+    // (Old local-tz code on a non-MSK machine would treat both as the same side → equal.)
+    expect(beforeNoonMsk).not.toBe(atNoonMsk)
+    expect(beforeNoonMsk).toMatch(/^\d{4}-W\d{2}$/)
+    expect(atNoonMsk).toMatch(/^\d{4}-W\d{2}$/)
+  })
+
+  it('treats a late-Sunday-UTC instant as Moscow Monday (date boundary is Moscow, not UTC/local)', () => {
+    vi.useFakeTimers()
+    // 2025-11-23T22:00:00Z = Sunday 22:00 UTC = Monday 01:00 MSK → Moscow says Monday → W-2.
+    vi.setSystemTime(new Date('2025-11-23T22:00:00Z'))
+    const lateSundayUtc = getLastCompletedWeek()
+    // A plainly-Monday-MSK instant of the same Moscow calendar day (Nov 24) → same W-2 week.
+    vi.setSystemTime(new Date('2025-11-24T06:00:00Z')) // Mon 09:00 MSK
+    const mondayMsk = getLastCompletedWeek()
+    expect(lateSundayUtc).toBe(mondayMsk)
+  })
+})
+
+describe('getWeekEndDate / getWeekMidpointDate', () => {
+  it('getWeekEndDate returns a Sunday (end of ISO week)', () => {
+    expect(getWeekEndDate('2025-W47').getDay()).toBe(0) // 0 = Sunday
+  })
+
+  it('getWeekMidpointDate returns the Thursday of the week (end - 3 days)', () => {
+    const end = getWeekEndDate('2025-W47')
+    const mid = getWeekMidpointDate('2025-W47')
+    expect(mid.getDay()).toBe(4) // 4 = Thursday
+    // Thursday is exactly 3 calendar days before Sunday.
+    const diffDays = Math.round((end.getTime() - mid.getTime()) / (24 * 60 * 60 * 1000))
+    expect(diffDays).toBe(3)
+    expect(mid.getTime()).toBeLessThan(end.getTime())
+  })
+
+  it('both produce a consistent Sunday/Thursday pair across several weeks (W01 + W53 edges)', () => {
+    for (const w of ['2025-W01', '2025-W26', '2026-W01', '2020-W53']) {
+      expect(getWeekEndDate(w).getDay()).toBe(0)
+      expect(getWeekMidpointDate(w).getDay()).toBe(4)
+    }
+  })
+
+  it('throws on an invalid ISO-week format', () => {
+    expect(() => getWeekEndDate('2025-47')).toThrow(/Invalid ISO week format/)
+    expect(() => getWeekEndDate('garbage')).toThrow(/Invalid ISO week format/)
+  })
+})
