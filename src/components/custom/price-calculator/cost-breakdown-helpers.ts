@@ -40,6 +40,7 @@ export const CHART_COLORS = {
   advertising: '#f97316', // orange
   vat: '#ef4444', // red
   margin: '#10b981', // emerald
+  fixed: '#64748b', // slate — base cost (COGS + logistics + storage)
 } as const
 
 /** Minimum visual width in pixels for any non-zero segment (#7) */
@@ -80,8 +81,32 @@ export function buildChartSegments(
 
   const toPct = (rub: number): number => (rub / recommendedPrice) * 100
 
+  // Fixed-cost base = price minus all percentage segments (commission, acquiring,
+  // advertising, vat) and margin. Equals backend `fixed_total` (COGS + logistics +
+  // storage) by construction, so the chart reconciles to 100% of the price.
+  const fixedRub =
+    recommendedPrice -
+    (breakdown.commission_wb +
+      breakdown.acquiring +
+      breakdown.advertising +
+      breakdown.vat +
+      breakdown.margin)
+
   // Cost segments (excluding margin)
   const costSegments: ChartSegment[] = [
+    {
+      key: 'fixed',
+      // Names all three components of fixed_total (the segment is usually the largest, ~50-63%);
+      // "Себестоимость и логистика" alone hid that storage is folded in.
+      label: 'Себестоимость, логистика, хранение',
+      pct: toPct(fixedRub),
+      // The `.filter(s => s.pct > 0)` below drops a degenerate ≤0 remainder; the `> 0 ? : 0`
+      // here is belt-and-suspenders so a filtered-out row never carries a negative rub.
+      rub: fixedRub > 0 ? fixedRub : 0,
+      color: CHART_COLORS.fixed,
+      isMargin: false,
+      inputPct: 0,
+    },
     {
       key: 'commission_wb',
       label: buildLabel('Комиссия WB', params.commissionPct),
