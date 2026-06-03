@@ -72,8 +72,10 @@ export interface TariffSettingsDto {
 
   // Storage (3 fields) - non-negative integers
   storageFreeDays: number
-  fixationClothingDays: number
-  fixationOtherDays: number
+  // Backend OMITS these from GET /v1/tariffs/settings — optional so the read
+  // normalizer leaves them undefined and the form default fires (request #101).
+  fixationClothingDays?: number
+  fixationOtherDays?: number
 
   // FBS-specific (4+ fields)
   fbsUsesFboLogisticsRates: boolean

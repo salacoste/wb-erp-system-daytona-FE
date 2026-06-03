@@ -5,6 +5,7 @@
 // ============================================================================
 
 import { apiClient } from '../api-client'
+import { normalizeTariffSettingsResponse } from './tariffs-settings-normalizer'
 import type {
   TariffSettingsDto,
   UpdateTariffSettingsDto,
@@ -27,7 +28,8 @@ const BASE_URL = '/v1/tariffs/settings'
  * @returns Current tariff settings
  */
 export async function getTariffSettings(): Promise<TariffSettingsDto> {
-  return apiClient.get<TariffSettingsDto>(BASE_URL)
+  const raw = await apiClient.get<unknown>(BASE_URL)
+  return normalizeTariffSettingsResponse(raw)
 }
 
 /**
@@ -37,10 +39,9 @@ export async function getTariffSettings(): Promise<TariffSettingsDto> {
  * @returns Array of tariff versions with status (scheduled/active/expired)
  */
 export async function getTariffVersionHistory(): Promise<TariffVersion[]> {
-  const response = await apiClient.get<{ data: TariffVersion[] }>(
-    `${BASE_URL}/history`,
-    { skipDataUnwrap: true }
-  )
+  const response = await apiClient.get<{ data: TariffVersion[] }>(`${BASE_URL}/history`, {
+    skipDataUnwrap: true,
+  })
   return response.data
 }
 
@@ -67,10 +68,9 @@ export async function getTariffAuditLog(
   }
 
   const query = searchParams.toString()
-  return apiClient.get<TariffAuditResponse>(
-    `${BASE_URL}/audit${query ? `?${query}` : ''}`,
-    { skipDataUnwrap: true }
-  )
+  return apiClient.get<TariffAuditResponse>(`${BASE_URL}/audit${query ? `?${query}` : ''}`, {
+    skipDataUnwrap: true,
+  })
 }
 
 // ============================================================================
@@ -85,9 +85,7 @@ export async function getTariffAuditLog(
  * @param data - Complete tariff settings
  * @returns Updated tariff settings
  */
-export async function putTariffSettings(
-  data: TariffSettingsDto
-): Promise<TariffSettingsDto> {
+export async function putTariffSettings(data: TariffSettingsDto): Promise<TariffSettingsDto> {
   return apiClient.put<TariffSettingsDto>(BASE_URL, data)
 }
 
