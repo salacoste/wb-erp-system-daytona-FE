@@ -15,8 +15,10 @@
  * Скорость обработки по измерению
  */
 export interface VelocityBreakdown {
-  avgConfirmation: number
-  avgCompletion: number
+  // iter-90: nullable — the live velocity endpoint returns avgCompletion: null when the mean
+  // can't be computed (no completed orders in the window). null = "no data", NOT 0 minutes.
+  avgConfirmation: number | null
+  avgCompletion: number | null
 }
 
 /**
@@ -24,10 +26,13 @@ export interface VelocityBreakdown {
  * Метрики скорости обработки заказов
  */
 export interface VelocityMetricsResponse {
-  /** Average confirmation time (minutes) */
-  avgConfirmationTimeMinutes: number
-  /** Average completion time (minutes) */
-  avgCompletionTimeMinutes: number
+  /** Average confirmation time (minutes). null when the backend can't compute a mean — render "—". */
+  avgConfirmationTimeMinutes: number | null
+  /** Average completion time (minutes). null when the backend can't compute a mean (live-observed) — render "—". */
+  avgCompletionTimeMinutes: number | null
+  // Percentiles stay non-null (backend computes them from the distribution even when the mean is
+  // null). CAVEAT: for an empty window (totalOrders=0) the backend emits 0, so PercentilesSection
+  // can show "P50: 0 мин" — a latent semantic-zero fabrication. FUTURE: guard on totalOrders===0.
   /** 50th percentile confirmation (minutes) */
   p50ConfirmationMinutes: number
   /** 95th percentile confirmation (minutes) */

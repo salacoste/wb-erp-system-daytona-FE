@@ -39,13 +39,22 @@ function VelocityMetricCard({
   testIdPrefix,
 }: {
   label: string
-  minutes: number
+  minutes: number | null
   type: 'confirm' | 'complete'
   testIdPrefix: string
 }) {
+  // iter-90: null avg time (backend can't compute a mean) → "—" / "Нет данных" in neutral gray,
+  // NOT formatDuration(null)="0 мин" colour-coded green "Быстро" (a fabricated instant-completion
+  // metric). Each `minutes == null ?` narrows the false branch to number for the helpers.
+  const display = minutes == null ? '—' : formatDuration(minutes)
+  const statusLabel = minutes == null ? 'Нет данных' : getVelocityStatusLabel(minutes, type)
+  const ariaTime = minutes == null ? 'нет данных' : formatDuration(minutes)
   const colorClass =
-    type === 'confirm' ? getConfirmationTimeColor(minutes) : getCompletionTimeColor(minutes)
-  const statusLabel = getVelocityStatusLabel(minutes, type)
+    minutes == null
+      ? 'text-gray-400'
+      : type === 'confirm'
+        ? getConfirmationTimeColor(minutes)
+        : getCompletionTimeColor(minutes)
 
   return (
     <div
@@ -56,9 +65,9 @@ function VelocityMetricCard({
       <span
         className={cn('text-2xl font-bold', colorClass)}
         data-testid={`${testIdPrefix}-value`}
-        aria-label={`Среднее время ${label.toLowerCase()}: ${formatDuration(minutes)}`}
+        aria-label={`Среднее время ${label.toLowerCase()}: ${ariaTime}`}
       >
-        {formatDuration(minutes)}
+        {display}
       </span>
       <span className={cn('text-xs', colorClass)}>{statusLabel}</span>
     </div>

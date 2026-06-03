@@ -18,10 +18,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-// =============================================================================
-// TDD: Component will be created in implementation
-// import { VelocityMetricsWidget } from '../VelocityMetricsWidget'
-// =============================================================================
+import { VelocityMetricsWidget } from '@/components/custom/orders/analytics/VelocityMetricsWidget'
 
 import {
   mockVelocityMetricsFast,
@@ -36,6 +33,58 @@ import {
 describe('VelocityMetricsWidget', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  // iter-90: the live velocity endpoint returns avgCompletionTimeMinutes: null when it can't
+  // compute a mean. The card must render "—"/"Нет данных" (neutral), NOT formatDuration(null)=
+  // "0 мин" colour-coded green "Быстро" (a fabricated instant-completion metric).
+  describe('Null average time handling', () => {
+    it('renders "—" and "Нет данных" (not "0 мин"/green) when avgCompletionTimeMinutes is null', () => {
+      render(
+        <VelocityMetricsWidget
+          data={{ ...mockVelocityMetricsFast, avgCompletionTimeMinutes: null }}
+        />
+      )
+      const value = screen.getByTestId('completion-time-value')
+      expect(value).toHaveTextContent('—')
+      expect(value).not.toHaveTextContent('0 мин')
+      expect(value).toHaveClass('text-gray-400')
+      expect(value).not.toHaveClass('text-green-600')
+      expect(screen.getByText('Нет данных')).toBeInTheDocument()
+    })
+
+    it('still renders the confirmation card normally when only completion is null', () => {
+      render(
+        <VelocityMetricsWidget
+          data={{ ...mockVelocityMetricsFast, avgCompletionTimeMinutes: null }}
+        />
+      )
+      // mockVelocityMetricsFast.avgConfirmationTimeMinutes = 25 → "25 мин"
+      expect(screen.getByTestId('confirmation-time-value')).toHaveTextContent('25 мин')
+    })
+
+    // Symmetric: the confirm card uses getConfirmationTimeColor (the other helper branch).
+    it('renders "—" for the confirmation card when avgConfirmationTimeMinutes is null', () => {
+      render(
+        <VelocityMetricsWidget
+          data={{ ...mockVelocityMetricsFast, avgConfirmationTimeMinutes: null }}
+        />
+      )
+      const value = screen.getByTestId('confirmation-time-value')
+      expect(value).toHaveTextContent('—')
+      expect(value).toHaveClass('text-gray-400')
+      expect(value).not.toHaveClass('text-green-600')
+    })
+
+    // A real 0 (mean computable as 0) must stay "0 мин" — distinct from null ("no data").
+    it('renders a real 0 as "0 мин" (not "—")', () => {
+      render(
+        <VelocityMetricsWidget data={{ ...mockVelocityMetricsFast, avgCompletionTimeMinutes: 0 }} />
+      )
+      const value = screen.getByTestId('completion-time-value')
+      expect(value).toHaveTextContent('0 мин')
+      expect(value).not.toHaveTextContent('—')
+    })
   })
 
   // ===========================================================================
