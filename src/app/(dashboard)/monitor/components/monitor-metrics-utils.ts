@@ -6,6 +6,7 @@
  * Rule-of-two: if Story 92.4 also needs computeDelta, keep here (already extracted).
  */
 
+import { formatPercentage } from '@/lib/utils'
 import type { MonitorSummaryResponse, PeriodMetrics } from '../types/monitor-summary'
 
 export type Direction = 'higher-is-better' | 'higher-is-worse'
@@ -79,7 +80,7 @@ export function computeDelta(
     (direction === 'higher-is-better' && change >= 0) ||
     (direction === 'higher-is-worse' && change < 0)
   return {
-    label: `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`,
+    label: `${change >= 0 ? '+' : ''}${formatPercentage(change, 1)}`,
     arrow,
     colorClass: improving ? 'text-green-600' : 'text-red-600',
   }

@@ -23,6 +23,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { getDataCompleteness } from '@/lib/api/monitoring/api'
 import { monitoringQueryKeys } from '@/lib/api/monitoring/query-keys'
 import type { DashboardDataCompleteness, DataCompletenessDetail } from '../types/monitoring'
+import { formatPercentageInt } from '@/lib/utils'
 import { HEALTH_CONFIG, getOverallPercent, sortByCompleteness } from './data-completeness-constants'
 import { CompletenessRow } from './CompletenessRow'
 
@@ -57,6 +58,7 @@ export function DataCompletenessTable({ data, isLoading }: DataCompletenessTable
   // truthful health label alone and drop the misleading bar/empty table when there are no rows.
   const hasTables = data.tables.length > 0
   const percent = getOverallPercent(data.tables)
+  const percentStr = formatPercentageInt(percent)
   const health = HEALTH_CONFIG[data.overallHealth] ?? HEALTH_CONFIG.critical
   const sorted = sortByCompleteness(data.tables)
 
@@ -71,14 +73,14 @@ export function DataCompletenessTable({ data, isLoading }: DataCompletenessTable
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">Полнота данных</span>
           <span className={health.className}>
-            {hasTables ? `${percent}% — ${health.label}` : health.label}
+            {hasTables ? `${percentStr} — ${health.label}` : health.label}
           </span>
         </div>
         {hasTables ? (
           <Progress
             value={percent}
             className={`h-2.5 ${health.barClass}`}
-            aria-label={`Полнота данных: ${percent}%`}
+            aria-label={`Полнота данных: ${percentStr}`}
           />
         ) : (
           <p className="text-xs text-muted-foreground">

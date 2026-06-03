@@ -6,7 +6,7 @@ import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatPercentage } from '@/lib/utils'
+import { formatPercentage, formatPercentageInt } from '@/lib/utils'
 import { usePipelineGrid } from '../hooks/use-pipeline-grid'
 import { HeatmapCellComponent } from './HeatmapCell'
 import type { GridParams } from '../types/monitoring'
@@ -69,7 +69,7 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
     <div className="space-y-4">
       {/* Summary bar */}
       <div className="flex flex-wrap gap-4 rounded-lg border bg-muted/30 p-3 text-sm">
-        <SummaryItem label="Здоровье" value={`${summary.healthScore}%`} />
+        <SummaryItem label="Здоровье" value={formatPercentageInt(summary.healthScore)} />
         <SummaryItem label="Выполнений" value={summary.totalExecutions.toLocaleString('ru-RU')} />
         <SummaryItem label="Ошибок" value={summary.totalFailures.toLocaleString('ru-RU')} />
         {/* successRate is a 0-1 ratio (#149:243) — scale to percent before formatting */}

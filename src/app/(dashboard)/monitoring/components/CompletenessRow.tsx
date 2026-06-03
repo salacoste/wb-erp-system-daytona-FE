@@ -15,6 +15,7 @@ import type {
   DataCompletenessTable as DataCompletenessRowType,
   TableCompletenessDetail,
 } from '../types/monitoring'
+import { formatPercentageInt } from '@/lib/utils'
 import { COMPLETENESS_BADGE } from './data-completeness-constants'
 
 // --- Props ---
@@ -37,6 +38,7 @@ export function CompletenessRow({
   isLoadingDetail,
 }: CompletenessRowProps) {
   const pct = Math.round(row.completenessRatio * 100)
+  const pctStr = formatPercentageInt(pct)
   const badge = COMPLETENESS_BADGE[row.status] ?? COMPLETENESS_BADGE.critical
 
   return (
@@ -67,9 +69,9 @@ export function CompletenessRow({
             <Progress
               value={pct}
               className="h-2 flex-1"
-              aria-label={`${row.displayName}: ${pct}%`}
+              aria-label={`${row.displayName}: ${pctStr}`}
             />
-            <span className="w-10 text-right text-xs text-muted-foreground">{pct}%</span>
+            <span className="w-10 text-right text-xs text-muted-foreground">{pctStr}</span>
           </div>
         </TableCell>
         <TableCell className="text-right">

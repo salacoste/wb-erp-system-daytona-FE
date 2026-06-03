@@ -27,8 +27,8 @@ describe('DataCompletenessTable — empty-tables guard (no fabricated 0%)', () =
       ],
     }
     renderWithProviders(<DataCompletenessTable data={data} isLoading={false} />)
-    // (1 + 0.9) / 2 = 0.95 → 95%
-    expect(screen.getByText(/95% — Все данные загружены/)).toBeInTheDocument()
+    // (1 + 0.9) / 2 = 0.95 → 95 % (locale-formatted)
+    expect(screen.getByText(/95\s%\s—\sВсе данные загружены/)).toBeInTheDocument()
     expect(screen.getByText('Состояние источников данных')).toBeInTheDocument()
   })
 })

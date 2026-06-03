@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import { healthReportSuccessCount } from './health-report-utils'
 import type { HealthReportDetail, OverallStatus } from '../types/monitoring'
 
@@ -69,7 +69,7 @@ export function HealthReportSheet({ date, open, onOpenChange }: HealthReportShee
             <div className="text-sm text-muted-foreground">
               {st ? (
                 <Badge className={cn('mt-1', st.cls)}>
-                  {st.label} — {report?.summary.dataCompletenessAvg ?? 0}%
+                  {st.label} — {formatPercentageInt(report?.summary.dataCompletenessAvg ?? 0)}
                 </Badge>
               ) : (
                 'Загрузка данных...'
@@ -105,8 +105,11 @@ function SheetBody({ report }: { report: HealthReportDetail }) {
         <h4 className="mb-2 text-sm font-semibold">Полнота данных</h4>
         <div className="flex items-center gap-3">
           <Progress value={completenessAvg} className="h-2.5 flex-1" />
-          <span className="text-sm font-medium" aria-label={`${completenessAvg}% полноты данных`}>
-            {completenessAvg}%
+          <span
+            className="text-sm font-medium"
+            aria-label={`${formatPercentageInt(completenessAvg)} полноты данных`}
+          >
+            {formatPercentageInt(completenessAvg)}
           </span>
         </div>
         {/* Per-table breakdown */}
@@ -116,7 +119,7 @@ function SheetBody({ report }: { report: HealthReportDetail }) {
               <li key={table} className="flex items-center justify-between">
                 <span>{table}</span>
                 <span className={info.status === 'critical' ? 'text-red-500' : ''}>
-                  {Math.round(info.ratio * 100)}%
+                  {formatPercentageInt(info.ratio * 100)}
                   {info.missingCount > 0 && ` (${info.missingCount} пробелов)`}
                 </span>
               </li>

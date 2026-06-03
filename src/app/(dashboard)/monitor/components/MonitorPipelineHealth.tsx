@@ -20,7 +20,7 @@ import { AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import type { GridPipeline } from '@/app/(dashboard)/monitoring/types/monitoring'
 import {
   getMostRecentRecalc,
@@ -121,7 +121,7 @@ function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
                 className="border-amber-500 text-amber-700 text-xs px-1.5 cursor-help"
               >
                 <AlertTriangle className="h-3 w-3 mr-0.5" />
-                {Math.round(Math.min(errorRate, 1) * 100)}%
+                {formatPercentageInt(Math.min(errorRate, 1) * 100)}
               </Badge>
             </TooltipTrigger>
             <TooltipContent size="sm">

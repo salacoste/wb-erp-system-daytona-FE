@@ -83,7 +83,7 @@ describe('MonitorPipelineHealth', () => {
     expect(screen.getByText('✕ Критично')).toBeInTheDocument()
 
     // Error rate badge visible (errorRate=0.15 >= 0.01 → shows 15%)
-    expect(screen.getByText('15%')).toBeInTheDocument()
+    expect(screen.getByText(/15\s%/)).toBeInTheDocument() // locale: "15 %" (comma+NBSP)
 
     // The healthy pipeline is NOT in the unhealthy list section (it's only in Row A)
     expect(screen.queryByText('✓ Работает')).not.toBeInTheDocument()
@@ -112,8 +112,8 @@ describe('MonitorPipelineHealth', () => {
     const user = userEvent.setup()
     renderWithProviders(<MonitorPipelineHealth pipelines={[healthy, critical]} />)
 
-    // The error-rate badge shows "15%" for errorRate=0.15
-    const errorBadge = screen.getByText('15%')
+    // The error-rate badge shows "15 %" for errorRate=0.15 (locale-formatted)
+    const errorBadge = screen.getByText(/15\s%/) // locale: "15 %" (comma+NBSP)
     await user.hover(errorBadge)
 
     // Tooltip content: tasksWithErrors=45, totalResultErrors=52
@@ -133,7 +133,7 @@ describe('MonitorPipelineHealth', () => {
     }
     renderWithProviders(<MonitorPipelineHealth pipelines={[zeroErrorCounts]} />)
 
-    const errorBadge = screen.getByText('5%')
+    const errorBadge = screen.getByText(/\b5\s%/) // locale: "5 %" (comma+NBSP)
     await user.hover(errorBadge)
 
     const nodes = await screen.findAllByText('Ошибки выполнения')
@@ -158,8 +158,8 @@ describe('MonitorPipelineHealth', () => {
     // Pipeline row is present in unhealthy section
     expect(screen.getByText('Пайплайн с аномалией')).toBeInTheDocument()
 
-    // Error rate badge shows clamped value: Math.round(Math.min(1.5, 1) * 100) = 100%
-    expect(screen.getByText('100%')).toBeInTheDocument()
+    // Error rate badge shows clamped value: formatPercentageInt(Math.min(1.5, 1) * 100) = "100 %"
+    expect(screen.getByText(/100\s%/)).toBeInTheDocument() // locale: "100 %" (comma+NBSP)
 
     // Status badge still present
     expect(screen.getByText('✕ Критично')).toBeInTheDocument()

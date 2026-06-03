@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertTriangle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import { STATUS_COLORS, STATUS_LABELS } from '@/lib/monitoring-constants'
 import type { DashboardPipeline, PipelineCategory } from '../types/monitoring'
 
@@ -91,6 +91,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
   const label = STATUS_LABELS[status]
   const colorClass = STATUS_COLORS[status]
   const rate = Math.round(successRate24h * 100)
+  const ratePct = formatPercentageInt(rate)
   // Gate on >= 1% to avoid showing "0%" badge for tiny error rates (e.g., 0.004 → rounds to 0).
   // @see Story 91.3-FE — errorRate threshold origin (review-time cutoff for tiny fractional rates).
   // iter-89: errorRate is OPTIONAL — the live /dashboard endpoint omits it (only the grid endpoint
@@ -134,7 +135,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
 
       <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
         <span>{formatRelativeTime(lastSuccessAt)}</span>
-        <span aria-label={`Успешность за 24ч: ${rate}%`}>{rate}%</span>
+        <span aria-label={`Успешность за 24ч: ${ratePct}`}>{ratePct}</span>
       </div>
 
       {/* Mini progress bar for successRate24h */}
@@ -144,7 +145,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
         aria-valuenow={rate}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`Успешность выполнения: ${rate}%`}
+        aria-label={`Успешность выполнения: ${ratePct}`}
       >
         <div
           className={cn(
