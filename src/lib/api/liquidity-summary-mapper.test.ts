@@ -115,3 +115,51 @@ describe('mapBackendResponse — distribution pct derived from capital (iter-60)
     expect(distribution.highly_liquid.avg_turnover_days).toBe(7)
   })
 })
+
+describe('mapBackendResponse — avgTurnoverDays excludes the "never sells" (>=999) sentinel (iter-124)', () => {
+  // Averaging the ∞-sentinel with real day-counts produced a misleading midpoint that hid dead
+  // stock and inflated the headline turnover. Average only items that actually turn over.
+  const mixed = {
+    meta: { cabinet_id: 'cab-2', analysis_period_days: 30 },
+    summary: {
+      total_skus: 3,
+      total_frozen_capital: 300000,
+      avg_turnover_days: 0, // forces item-derived avg (no-breakdown → makeDefault category path)
+    },
+    data: [
+      { sku_id: '1', liquidity_status: 'highly_liquid', turnover_days: 20, frozen_capital: 100000 },
+      { sku_id: '2', liquidity_status: 'illiquid', turnover_days: 120, frozen_capital: 100000 },
+      { sku_id: '3', liquidity_status: 'illiquid', turnover_days: 999, frozen_capital: 100000 },
+    ],
+  }
+
+  it('excludes 999 from the OVERALL summary avg (mean of sellers, not pulled toward 999)', () => {
+    const { summary } = mapBackendResponse(mixed)
+    // sellers 20+120 = 140/2 = 70; including 999 would give round((20+120+999)/3)=380
+    expect(summary.avg_turnover_days).toBe(70)
+    expect(summary.avg_turnover_days).not.toBe(380)
+    // the benchmark "your_avg_turnover" uses the same helper → also sentinel-free
+    expect(summary.benchmarks.your_avg_turnover).toBe(70)
+  })
+
+  it('excludes 999 from the ILLIQUID category card avg (only category that holds 999s)', () => {
+    const { distribution } = mapBackendResponse(mixed).summary
+    // illiquid sellers: just 120 (999 excluded); including 999 → round((120+999)/2)=560
+    expect(distribution.illiquid.avg_turnover_days).toBe(120)
+    expect(distribution.illiquid.avg_turnover_days).not.toBe(560)
+  })
+
+  it('still returns 999 ("Нет продаж") when EVERY item in scope is a no-sales sentinel', () => {
+    const allDead = {
+      ...mixed,
+      data: [
+        { sku_id: '1', liquidity_status: 'illiquid', turnover_days: 999, frozen_capital: 100000 },
+        { sku_id: '2', liquidity_status: 'illiquid', turnover_days: 999, frozen_capital: 100000 },
+      ],
+    }
+    const { summary } = mapBackendResponse(allDead)
+    expect(summary.avg_turnover_days).toBe(999)
+    expect(summary.distribution.illiquid.avg_turnover_days).toBe(999)
+    expect(summary.benchmarks.your_avg_turnover).toBe(999)
+  })
+})

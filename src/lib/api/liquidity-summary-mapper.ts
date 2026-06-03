@@ -31,10 +31,7 @@ function mapDistribution(
       count: catItems.length,
       value: catValue,
       pct: totalValue > 0 ? (catValue / totalValue) * 100 : 0,
-      avg_turnover_days:
-        catItems.length > 0
-          ? Math.round(catItems.reduce((s, i) => s + i.turnover_days, 0) / catItems.length)
-          : 0,
+      avg_turnover_days: avgTurnoverDays(catItems),
     }
   }
 
@@ -73,11 +70,7 @@ function mapDistribution(
         value,
         pct: entry.pct ?? entry.percentage ?? (totalCapital > 0 ? (value / totalCapital) * 100 : 0),
         avg_turnover_days:
-          entry.avg_turnover_days ??
-          entry.avg_turnover ??
-          (catItems.length > 0
-            ? Math.round(catItems.reduce((s, i) => s + i.turnover_days, 0) / catItems.length)
-            : 0),
+          entry.avg_turnover_days ?? entry.avg_turnover ?? avgTurnoverDays(catItems),
       }
     }
     return makeDefault(cat)
@@ -91,11 +84,26 @@ function mapDistribution(
   }
 }
 
-/** Average turnover days from items (reused by computeBenchmarks + mapSummary) */
+/**
+ * Average turnover days from items, EXCLUDING the "never sells" sentinel (turnover_days >= 999).
+ * Averaging an ∞-sentinel with real day-counts yields a meaningless midpoint (e.g. [120, 999] →
+ * 560 "дней") that hides dead stock and inflates the headline turnover. Average only items that
+ * actually turn over; if NONE sell (all >= 999), return 999 so formatTurnoverDays renders
+ * "Нет продаж" (preserves the all-no-sales behavior). Empty → 0.
+ * Reused by category cards (mapDistribution), computeBenchmarks, and mapSummary.
+ *
+ * NOTE: mapItem defaults a missing backend `turnover_days` to 0 (LiquidityItem.turnover_days is
+ * non-nullable `number`), so such items count as "selling" with 0 days and pull the mean down.
+ * That is the pre-existing item-mapper contract; this filter just makes it load-bearing here.
+ * FUTURE: the illiquid card's single avg understates dead stock when only a minority sell
+ * (e.g. [120, 999, 999] → 120, no "2 без продаж" signal) — surface a no_sales_count on
+ * LiquidityDistributionItem so the UI can render "120 дней (2 без продаж)".
+ */
 function avgTurnoverDays(items: LiquidityItem[]): number {
-  return items.length > 0
-    ? Math.round(items.reduce((s, i) => s + i.turnover_days, 0) / items.length)
-    : 0
+  if (items.length === 0) return 0
+  const selling = items.filter(i => i.turnover_days < 999)
+  if (selling.length === 0) return 999
+  return Math.round(selling.reduce((s, i) => s + i.turnover_days, 0) / selling.length)
 }
 
 /** Compute benchmarks from distribution data (hardcoded targets per spec) */
