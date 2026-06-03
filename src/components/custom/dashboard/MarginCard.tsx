@@ -10,7 +10,7 @@
 import { Percent, Info, AlertTriangle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { HighlightedMetricSkeleton, MetricCardError } from './MetricCardStates'
 
 export interface MarginCardProps {
@@ -45,7 +45,9 @@ function getMarginBg(pct: number): string {
 
 function formatPp(diff: number): string {
   const sign = diff > 0 ? '+' : ''
-  return `${sign}${diff.toFixed(1)} п.п.`
+  // Russian locale: comma decimal ("+1,5 п.п.", not "+1.5 п.п."). Not %-suffixed, so the
+  // dot-locale-percent ratchet doesn't catch it — guarded by the card's own test instead.
+  return `${sign}${diff.toFixed(1).replace('.', ',')} п.п.`
 }
 
 export function MarginCard({
@@ -89,7 +91,7 @@ export function MarginCard({
       )}
       role="article"
       data-testid="metric-card"
-      aria-label={`Операционная маржа: ${canShow ? `${marginPct!.toFixed(1)}%` : 'нет данных'}`}
+      aria-label={`Операционная маржа: ${canShow ? formatPercentage(marginPct!, 1) : 'нет данных'}`}
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
@@ -123,7 +125,7 @@ export function MarginCard({
         <div className="mt-1">
           {canShow ? (
             <span className={cn('text-xl font-bold', getMarginColor(marginPct!))}>
-              {marginPct!.toFixed(1)}%
+              {formatPercentage(marginPct!, 1)}
             </span>
           ) : (
             <span className="text-xl font-bold text-muted-foreground">—</span>
@@ -140,7 +142,7 @@ export function MarginCard({
               {formatPp(diff)}
             </span>
             <span className="ml-1 text-xs text-muted-foreground">
-              vs {previousMarginPct!.toFixed(1)}%
+              vs {formatPercentage(previousMarginPct!, 1)}
             </span>
           </div>
         )}
