@@ -47,4 +47,10 @@ describe('AdvertisingMetricsGrid — organic contribution', () => {
     const el = screen.getByText('—')
     expect(el.classList.contains('text-muted-foreground')).toBe(true)
   })
+
+  it('renders ROAS with Russian comma decimal (formatRoas), not dot', () => {
+    renderGrid({ total_sales: 1000, avg_organic_contribution: 50, overall_roas: 2.5 })
+    expect(screen.getByText('2,5x')).toBeInTheDocument()
+    expect(screen.queryByText('2.5x')).not.toBeInTheDocument()
+  })
 })

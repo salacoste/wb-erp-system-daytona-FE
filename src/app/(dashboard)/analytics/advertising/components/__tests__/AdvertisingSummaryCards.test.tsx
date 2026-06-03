@@ -68,21 +68,23 @@ describe('AdvertisingSummaryCards — Story 88.2-FE null ROAS/ROI', () => {
     render(<AdvertisingSummaryCards summary={summary} isLoading={false} />)
     const card = getCardByLabel('Общий ROAS')
     expect(card.textContent).toContain('—')
-    expect(card.textContent).not.toContain('0.0x')
+    // null short-circuits before formatRoas — guard against a regression that fabricates
+    // formatRoas(0) = "0,0x" on the null path instead of rendering "—".
+    expect(card.textContent).not.toContain('0,0x')
   })
 
-  it('renders "0.0x" (legitimate zero) when overall_roas is 0 — distinct from null', () => {
+  it('renders "0,0x" (legitimate zero) when overall_roas is 0 — distinct from null', () => {
     const summary = makeSummary({ overall_roas: 0 })
     render(<AdvertisingSummaryCards summary={summary} isLoading={false} />)
     const card = getCardByLabel('Общий ROAS')
-    expect(card.textContent).toContain('0.0x')
+    expect(card.textContent).toContain('0,0x')
   })
 
-  it('renders "2.5x" (non-null number) as baseline', () => {
+  it('renders "2,5x" (non-null number) as baseline', () => {
     const summary = makeSummary({ overall_roas: 2.5 })
     render(<AdvertisingSummaryCards summary={summary} isLoading={false} />)
     const card = getCardByLabel('Общий ROAS')
-    expect(card.textContent).toContain('2.5x')
+    expect(card.textContent).toContain('2,5x')
   })
 
   it('renders "—" and does not crash when overall_roi is null', () => {

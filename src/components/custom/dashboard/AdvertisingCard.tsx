@@ -13,7 +13,7 @@
 import { Megaphone, Info, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentage, formatRoas } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { TrendIndicator } from '@/components/custom/TrendIndicator'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
@@ -150,7 +150,7 @@ export function AdvertisingCard({
             <span
               className={cn('text-xs font-medium flex items-center gap-0.5', getRoasColor(roas))}
             >
-              ROAS: {roas.toFixed(1)}x
+              ROAS: {formatRoas(roas)}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button type="button" className="inline-flex" aria-label="О ROAS">

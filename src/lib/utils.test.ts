@@ -11,6 +11,7 @@ import {
   formatCurrency,
   formatPercentage,
   formatPercentageInt,
+  formatRoas,
   formatDate,
   formatIsoWeek,
 } from './utils'
@@ -174,6 +175,26 @@ describe('formatPercentageInt', () => {
 
   it('rounds fractional input to a whole percent', () => {
     expect(formatPercentageInt(33.27)).toMatch(/33\s%/)
+  })
+})
+
+describe('formatRoas', () => {
+  it('formats a ROAS multiplier with Russian comma decimal and x suffix', () => {
+    expect(formatRoas(2.5)).toBe('2,5x')
+    expect(formatRoas(13.2)).toBe('13,2x')
+  })
+
+  it('renders a legitimate zero as "0,0x" (distinct from a null "—")', () => {
+    expect(formatRoas(0)).toBe('0,0x')
+  })
+
+  it('rounds to one decimal (same as toFixed(1)) and never emits a dot', () => {
+    expect(formatRoas(0.05)).toBe('0,1x')
+    expect(formatRoas(2.5)).not.toContain('.')
+  })
+
+  it('preserves the sign for a negative ROAS', () => {
+    expect(formatRoas(-1.5)).toBe('-1,5x')
   })
 })
 

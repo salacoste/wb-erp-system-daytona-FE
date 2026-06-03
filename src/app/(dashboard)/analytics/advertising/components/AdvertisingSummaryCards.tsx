@@ -4,7 +4,7 @@ import { Wallet, TrendingUp, Percent, ShoppingCart, Sprout, HelpCircle } from 'l
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatRoas } from '@/lib/utils'
 import type { AdvertisingSummary } from '@/types/advertising-analytics'
 
 /**
@@ -47,7 +47,7 @@ function formatPercent(value: number): string {
  * Get color class for ROAS value
  * Based on efficiency thresholds from Story 33.4-fe
  */
-// roas is a raw MULTIPLIER (e.g. 38.8×, rendered "38.8x"), NOT a percent — thresholds are
+// roas is a raw MULTIPLIER (e.g. 38.8×, rendered "38,8x" via formatRoas), NOT a percent — thresholds are
 // multipliers (≥3× green, ≥2× yellow, ≥1× orange, <1× loss-making red). Exported + tested so a
 // future units refactor can't silently re-introduce the fraction-vs-percent trap getRoiColor had.
 export function getRoasColor(roas: number): string {
@@ -124,7 +124,7 @@ export function AdvertisingSummaryCards({ summary, isLoading }: AdvertisingSumma
       id: 'roas',
       label: 'Общий ROAS',
       // Story 88.2-FE: null when totalSpend = 0 (division undefined) — render as "—"
-      value: summary.overall_roas != null ? `${summary.overall_roas.toFixed(1)}x` : '—',
+      value: summary.overall_roas != null ? formatRoas(summary.overall_roas) : '—',
       icon: TrendingUp,
       colorClass:
         summary.overall_roas != null ? getRoasColor(summary.overall_roas) : 'text-gray-400',

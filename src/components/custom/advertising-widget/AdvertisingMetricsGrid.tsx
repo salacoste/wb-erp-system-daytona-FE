@@ -2,7 +2,7 @@
 
 import { HelpCircle } from 'lucide-react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { cn, formatPercentageInt } from '@/lib/utils'
+import { cn, formatPercentageInt, formatRoas } from '@/lib/utils'
 import {
   formatCurrency,
   getRoasColorClass,
@@ -98,7 +98,7 @@ export function AdvertisingMetricsGrid({ summary }: AdvertisingMetricsGridProps)
           </Tooltip>
         </p>
         <p className={cn('text-lg font-bold', getRoasColorClass(summary.overall_roas))}>
-          {summary.overall_roas != null ? `${summary.overall_roas.toFixed(1)}x` : '—'}
+          {summary.overall_roas != null ? formatRoas(summary.overall_roas) : '—'}
         </p>
       </div>
     </div>
