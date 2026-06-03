@@ -38,6 +38,12 @@ export function AcquiringReportDetailSummary({ transactions }: AcquiringReportDe
     }
   }
 
+  // Anti-pattern #8 at the AGGREGATE level: when transactions exist but EVERY one is null (data
+  // still pending — backend returns null, not 0), the sum stays 0 and would render a fabricated
+  // "0 ₽" headline. Show "—" instead. The empty case stays "0 ₽" (genuine SEMANTIC-ZERO).
+  const allFeesNull = transactions.length > 0 && nullCountFees === transactions.length
+  const allVatNull = transactions.length > 0 && nullCountVat === transactions.length
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {/* Всего комиссий */}
@@ -48,7 +54,7 @@ export function AcquiringReportDetailSummary({ transactions }: AcquiringReportDe
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{formatCurrency(totalFees)}</p>
+          <p className="text-2xl font-bold">{allFeesNull ? '—' : formatCurrency(totalFees)}</p>
           {nullCountFees > 0 && (
             <p className="text-xs text-amber-700 mt-2">
               * Сумма не включает {nullCountFees} {pluralize(TRANSACTION_FORMS, nullCountFees)} с
@@ -64,7 +70,7 @@ export function AcquiringReportDetailSummary({ transactions }: AcquiringReportDe
           <CardTitle className="text-sm font-medium text-muted-foreground">Всего НДС</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{formatCurrency(totalVat)}</p>
+          <p className="text-2xl font-bold">{allVatNull ? '—' : formatCurrency(totalVat)}</p>
           {nullCountVat > 0 && (
             <p className="text-xs text-amber-700 mt-2">
               * Сумма не включает {nullCountVat} {pluralize(TRANSACTION_FORMS, nullCountVat)} с

@@ -49,6 +49,14 @@ export function AcquiringSummaryCards({ items }: AcquiringSummaryCardsProps) {
     }
   }
 
+  // Anti-pattern #8 at the AGGREGATE level: when items exist but EVERY one is null (e.g. all
+  // reports still generating — backend returns null, not 0 — request-backend/166), the sum stays 0
+  // and would render a fabricated "0 ₽" headline that reads as "acquiring was free". Show "—"
+  // instead. The empty-items case stays "0 ₽" (genuine zero: no reports → no fees, a SEMANTIC-ZERO,
+  // not unknown). Tables already preserve null per-row.
+  const allFeesNull = items.length > 0 && nullCountFees === items.length
+  const allVatNull = items.length > 0 && nullCountVat === items.length
+
   // Period: min dateFrom → max dateTo
   let periodFrom: string | null = null
   let periodTo: string | null = null
@@ -70,7 +78,7 @@ export function AcquiringSummaryCards({ items }: AcquiringSummaryCardsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{formatCurrency(totalFees)}</p>
+          <p className="text-2xl font-bold">{allFeesNull ? '—' : formatCurrency(totalFees)}</p>
           {nullCountFees > 0 && (
             <p className="text-xs text-amber-700 mt-2">
               * Сумма не включает {nullCountFees} {pluralize(REPORT_FORMS, nullCountFees)} с
@@ -86,7 +94,7 @@ export function AcquiringSummaryCards({ items }: AcquiringSummaryCardsProps) {
           <CardTitle className="text-sm font-medium text-muted-foreground">Всего НДС</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{formatCurrency(totalVat)}</p>
+          <p className="text-2xl font-bold">{allVatNull ? '—' : formatCurrency(totalVat)}</p>
           {nullCountVat > 0 && (
             <p className="text-xs text-amber-700 mt-2">
               * Сумма не включает {nullCountVat} {pluralize(REPORT_FORMS, nullCountVat)} с

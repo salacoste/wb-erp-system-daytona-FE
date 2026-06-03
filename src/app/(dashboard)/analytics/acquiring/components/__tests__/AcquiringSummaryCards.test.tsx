@@ -155,4 +155,20 @@ describe('AcquiringSummaryCards', () => {
     // min dateFrom = 2026-01-01 → 01.01.2026, max dateTo = 2026-04-30 → 30.04.2026
     expect(screen.getByText(/01\.01\.2026.*—.*30\.04\.2026/)).toBeInTheDocument()
   })
+
+  it('renders "—" (not a fabricated "0 ₽") when every item has null money — all-null aggregate (anti-pattern #8)', () => {
+    const items = [
+      makeItem({ reportId: 1, acquiringFeeSum: null, acquiringFeeVatSum: null }),
+      makeItem({ reportId: 2, acquiringFeeSum: null, acquiringFeeVatSum: null }),
+    ]
+    render(<AcquiringSummaryCards items={items} />)
+    // Both money headlines (fee + VAT) show "—"; the period card has dates (not "—"), so exactly 2.
+    expect(screen.getAllByText('—')).toHaveLength(2)
+    // No fabricated zero-rouble headline anywhere.
+    expect(screen.queryByText(/0[\s ]?₽/)).not.toBeInTheDocument()
+    // Footnote still discloses the excluded reports (one per money card).
+    expect(
+      screen.getAllByText(/не включает 2 отчёта с неизвестными/).length
+    ).toBeGreaterThanOrEqual(1)
+  })
 })

@@ -86,4 +86,16 @@ describe('AcquiringReportDetailSummary', () => {
     render(<AcquiringReportDetailSummary transactions={transactions} />)
     expect(screen.getByText(/не включает 5 транзакций с неизвестными/)).toBeInTheDocument()
   })
+
+  it('renders "—" (not a fabricated "0 ₽") when every transaction has null money — all-null aggregate (anti-pattern #8)', () => {
+    const transactions = [
+      makeTransaction({ rrdId: 1, acquiringFee: null, acquiringFeeVat: null }),
+      makeTransaction({ rrdId: 2, acquiringFee: null, acquiringFeeVat: null, srid: 'SR-002' }),
+    ]
+    render(<AcquiringReportDetailSummary transactions={transactions} />)
+    // Both money headlines (fee + VAT) show "—" (this view has no period-date card).
+    expect(screen.getAllByText('—')).toHaveLength(2)
+    // Count still shows the total.
+    expect(screen.getByText('2')).toBeInTheDocument()
+  })
 })
