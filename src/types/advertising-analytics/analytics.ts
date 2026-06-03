@@ -67,10 +67,14 @@ export interface AdvertisingItem {
   organic_contribution: number
   roas: number | null
   roi: number | null
-  ctr: number
-  cpc: number
-  conversion_rate: number
-  profit_after_ads: number
+  /** CTR % — null when unmeasured (no impressions), rendered "—" not 0 % (anti-pattern #8). */
+  ctr: number | null
+  /** Cost-per-click ₽ — null when unmeasured (no clicks); "—" not 0 ₽ (anti-pattern #8). */
+  cpc: number | null
+  /** Conversion % — null when unmeasured, rendered "—" not 0 % (anti-pattern #8). */
+  conversion_rate: number | null
+  /** Profit after ad spend — null when profit is unknown (no COGS); rendered "—" not 0 ₽. */
+  profit_after_ads: number | null
   efficiency_status: EfficiencyStatus
 }
 

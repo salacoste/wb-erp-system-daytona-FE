@@ -130,6 +130,10 @@ describe('normalizeAdvertisingResponse', () => {
           profit: null,
           roas: null,
           roi: null,
+          ctr: null,
+          cpc: null,
+          conversionRate: null,
+          profitAfterAds: null,
           efficiency: { status: null },
         },
       ],
@@ -143,6 +147,11 @@ describe('normalizeAdvertisingResponse', () => {
     expect(item.profit).toBeNull()
     expect(item.roas).toBeNull()
     expect(item.roi).toBeNull()
+    // iter-130: rates + derived money preserve null (NOT 0) so renderValue shows "—" not "0 %"/"0 ₽"
+    expect(item.ctr).toBeNull()
+    expect(item.cpc).toBeNull()
+    expect(item.conversion_rate).toBeNull()
+    expect(item.profit_after_ads).toBeNull()
     expect(result.summary.overall_roas).toBeNull()
     expect(result.summary.overall_roi).toBeNull()
   })

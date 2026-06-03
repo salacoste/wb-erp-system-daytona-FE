@@ -118,10 +118,13 @@ function normalizeItem(item: unknown, index: number): AdvertisingItem {
     organic_contribution: toNum(d.organicContribution),
     roas: toNullableNum(d.roas),
     roi: toNullableNum(d.roi),
-    ctr: toNum(d.ctr),
-    cpc: toNum(d.cpc),
-    conversion_rate: toNum(d.conversionRate),
-    profit_after_ads: toNum(d.profitAfterAds),
+    // iter-130: rates/derived-money preserve null (NOT toNum's 0) — renderValue already renders
+    // these as "—" for null (perf-table-columns lines 23/29), but toNum was defeating that guard
+    // by coercing to 0 at the boundary (false "0 %"/"0 ₽"). Matches sibling revenue/profit/roas/roi.
+    ctr: toNullableNum(d.ctr),
+    cpc: toNullableNum(d.cpc),
+    conversion_rate: toNullableNum(d.conversionRate),
+    profit_after_ads: toNullableNum(d.profitAfterAds),
     efficiency_status: toEfficiencyStatus(eff.status),
   }
 }
