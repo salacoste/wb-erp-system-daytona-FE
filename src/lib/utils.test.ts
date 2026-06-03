@@ -199,36 +199,51 @@ describe('formatDate', () => {
 })
 
 describe('formatIsoWeek', () => {
+  // iter-86: tightened from lenient regexes to exact assertions. The date-fns implementation is
+  // deterministic (no timezone jitter), so these mid-year dates have one correct ISO week each.
   it('formats Date object to ISO week', () => {
-    // January 20, 2025 is in week 4 of 2025
-    const date = new Date(2025, 0, 20)
-    expect(formatIsoWeek(date)).toMatch(/2025-W0[34]/)
+    // January 20, 2025 (Monday) is in ISO week 4 of 2025
+    expect(formatIsoWeek(new Date(2025, 0, 20))).toBe('2025-W04')
   })
 
   it('formats date string to ISO week', () => {
-    const result = formatIsoWeek('2025-01-20')
-    expect(result).toMatch(/2025-W0[34]/)
+    expect(formatIsoWeek('2025-01-20')).toBe('2025-W04')
   })
 
   it('pads single digit week numbers', () => {
-    // January 6, 2025 is in week 2
-    const date = new Date(2025, 0, 6)
-    expect(formatIsoWeek(date)).toMatch(/2025-W0[12]/)
+    // January 6, 2025 (Monday) is in ISO week 2
+    expect(formatIsoWeek(new Date(2025, 0, 6))).toBe('2025-W02')
   })
 
   it('handles week 1 of new year', () => {
-    // January 1, 2025 is Wednesday, week 1
-    const date = new Date(2025, 0, 1)
-    expect(formatIsoWeek(date)).toMatch(/2025-W01|2024-W5[23]/)
+    // January 1, 2025 is Wednesday — ISO week 1 of 2025
+    expect(formatIsoWeek(new Date(2025, 0, 1))).toBe('2025-W01')
   })
 
-  it('handles last week of year', () => {
-    // December 29, 2025 is a Monday
-    // Note: Current implementation uses calendar year, not ISO year
-    // This test documents actual behavior (not necessarily ISO-correct)
-    const date = new Date(2025, 11, 29)
-    const result = formatIsoWeek(date)
-    // Returns 2025-W01 (calendar year 2025, week 1 of ISO year)
-    expect(result).toMatch(/2025-W0?1/)
+  it('returns the "—" sentinel for an invalid date (no "NaN-WNaN")', () => {
+    expect(formatIsoWeek('not-a-date')).toBe('—')
+    expect(formatIsoWeek('')).toBe('—')
+  })
+
+  // iter-86: year-boundary correctness — formatIsoWeek must emit the ISO-week-YEAR, not the
+  // calendar year. These days belong to the NEXT/PRIOR ISO year; the old getFullYear() code
+  // returned the wrong year + a nonexistent week (e.g. "2024-W01").
+  it('uses the ISO-week-year at the end of the calendar year (Dec 29 2025 → 2026-W01)', () => {
+    // Monday 2025-12-29 is in the ISO week whose Thursday is 2026-01-01 → ISO year 2026, week 1.
+    expect(formatIsoWeek(new Date(2025, 11, 29))).toBe('2026-W01')
+  })
+
+  it('uses the ISO-week-year at the start of the calendar year (Dec 30 2024 → 2025-W01)', () => {
+    expect(formatIsoWeek(new Date(2024, 11, 30))).toBe('2025-W01')
+  })
+
+  it('belongs to the PRIOR ISO year for early-January days (Jan 1 2023 → 2022-W52)', () => {
+    // Sunday 2023-01-01 is in ISO week 2022-W52 (its Thursday is 2022-12-29).
+    expect(formatIsoWeek(new Date(2023, 0, 1))).toBe('2022-W52')
+  })
+
+  it('handles an ISO W53 year boundary (Jan 1 2021 → 2020-W53)', () => {
+    // Friday 2021-01-01 is in ISO week 2020-W53 (its Thursday is 2020-12-31).
+    expect(formatIsoWeek(new Date(2021, 0, 1))).toBe('2020-W53')
   })
 })

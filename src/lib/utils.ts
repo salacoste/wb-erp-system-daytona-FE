@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { getISOWeek, getISOWeekYear } from 'date-fns'
 
 /**
  * Utility function to merge Tailwind CSS classes
@@ -70,19 +71,19 @@ export function formatDate(date: string | Date): string {
 /**
  * Formats a date as ISO week (YYYY-Www)
  * @param date - Date string or Date object
- * @returns Formatted ISO week string (e.g., "2025-W03")
+ * @returns Formatted ISO week string (e.g., "2025-W03"), or '—' for invalid input
  */
 export function formatIsoWeek(date: string | Date): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
-  const year = dateObj.getFullYear()
-
-  // Calculate ISO week number
-  const d = new Date(Date.UTC(year, dateObj.getMonth(), dateObj.getDate()))
-  const dayNum = d.getUTCDay() || 7
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum)
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
-  const weekNo = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
-
+  // Defensive guard mirroring formatDate (above): bad input previously yielded "NaN-WNaN"
+  // (getISOWeek/getISOWeekYear return NaN on an Invalid Date). Indicate, don't emit garbage.
+  if (isNaN(dateObj.getTime())) return '—'
+  // iter-86: use the ISO-week-YEAR (NOT the calendar getFullYear()) paired with the ISO week
+  // number — both from date-fns so they share one basis. The old code hard-coded getFullYear(),
+  // so at year boundaries it emitted the wrong year + a nonexistent week (2024-12-30 → "2024-W01"
+  // instead of ISO "2025-W01"), silently corrupting getLastCompletedWeek → COGS → margin once/year.
+  const year = getISOWeekYear(dateObj)
+  const weekNo = getISOWeek(dateObj)
   return `${year}-W${weekNo.toString().padStart(2, '0')}`
 }
 
