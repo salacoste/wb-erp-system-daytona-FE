@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatRoas } from '@/lib/utils'
+import { getRoasColorClass } from '@/lib/efficiency-utils'
 import type { AdvertisingSummary } from '@/types/advertising-analytics'
 
 /**
@@ -44,17 +45,23 @@ function formatPercent(value: number): string {
 }
 
 /**
- * Get color class for ROAS value
- * Based on efficiency thresholds from Story 33.4-fe
+ * Get color class for ROAS value.
+ *
+ * iter-119: delegates to the canonical 5-band getRoasColorClass in efficiency-utils so this
+ * page, the dashboard AdvertisingCard, and the advertising widget all agree. Previously this
+ * had a local ≥3-green scheme (Story 33.4-FE) that diverged from the canonical bands.
+ *
+ * roas is a raw MULTIPLIER (e.g. 38.8×, rendered "38,8x" via formatRoas), NOT a percent.
+ * Still exported + tested so a future units refactor can't silently re-introduce the
+ * fraction-vs-percent trap getRoiColor had.
+ *
+ * Signature stays `number` (not the delegate's `number | null | undefined`) by design: this
+ * page guards null at the call site, rendering 'text-gray-400' for a missing ROAS rather than
+ * the delegate's muted no-data branch. Keeping the param non-null preserves that call-site
+ * contract (the muted branch is for the unguarded widget/card callers).
  */
-// roas is a raw MULTIPLIER (e.g. 38.8×, rendered "38,8x" via formatRoas), NOT a percent — thresholds are
-// multipliers (≥3× green, ≥2× yellow, ≥1× orange, <1× loss-making red). Exported + tested so a
-// future units refactor can't silently re-introduce the fraction-vs-percent trap getRoiColor had.
 export function getRoasColor(roas: number): string {
-  if (roas >= 3.0) return 'text-green-600'
-  if (roas >= 2.0) return 'text-yellow-600'
-  if (roas >= 1.0) return 'text-orange-600'
-  return 'text-red-600'
+  return getRoasColorClass(roas)
 }
 
 /**

@@ -21,11 +21,15 @@ describe('getRoiColor — percent-domain thresholds', () => {
 })
 
 // getRoasColor takes a raw MULTIPLIER (not percent) — guard against a future units regression.
-describe('getRoasColor — multiplier-domain thresholds', () => {
+// iter-119: delegates to the canonical 5-band getRoasColorClass (efficiency-utils), so 3–5×
+// is now emerald ("Хорошо"), distinct from ≥5× green ("Отлично"). Mid-band values asserted here;
+// exact-boundary inclusivity (5.0/3.0/2.0/1.0/0.0) is pinned in efficiency-utils.test.ts.
+describe('getRoasColor — canonical 5-band multiplier thresholds', () => {
   it('colours by ROAS multiplier', () => {
-    expect(getRoasColor(3.5)).toBe('text-green-600') // ≥3×
-    expect(getRoasColor(2.5)).toBe('text-yellow-600') // 2-3×
-    expect(getRoasColor(1.5)).toBe('text-orange-600') // 1-2×
+    expect(getRoasColor(5.5)).toBe('text-green-600') // ≥5× excellent
+    expect(getRoasColor(3.5)).toBe('text-emerald-600') // 3-5× good
+    expect(getRoasColor(2.5)).toBe('text-yellow-600') // 2-3× moderate
+    expect(getRoasColor(1.5)).toBe('text-orange-600') // 1-2× poor
     expect(getRoasColor(0.5)).toBe('text-red-600') // <1× loss-making
   })
 })

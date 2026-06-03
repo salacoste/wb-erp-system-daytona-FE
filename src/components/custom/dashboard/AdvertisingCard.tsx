@@ -14,6 +14,7 @@ import { Megaphone, Info, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatCurrency, formatPercentage, formatRoas } from '@/lib/utils'
+import { getRoasColorClass } from '@/lib/efficiency-utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { TrendIndicator } from '@/components/custom/TrendIndicator'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
@@ -34,12 +35,6 @@ export interface AdvertisingCardProps {
   error?: Error | null
   onRetry?: () => void
   className?: string
-}
-
-function getRoasColor(roas: number): string {
-  if (roas >= 5) return 'text-green-600'
-  if (roas >= 3) return 'text-yellow-600'
-  return 'text-red-600'
 }
 
 /** DRR = totalSpend / saleGross * 100 (% of net sales) */
@@ -148,7 +143,10 @@ export function AdvertisingCard({
         <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
           {roas != null && (
             <span
-              className={cn('text-xs font-medium flex items-center gap-0.5', getRoasColor(roas))}
+              className={cn(
+                'text-xs font-medium flex items-center gap-0.5',
+                getRoasColorClass(roas)
+              )}
             >
               ROAS: {formatRoas(roas)}
               <Tooltip>
@@ -160,7 +158,7 @@ export function AdvertisingCard({
                 <TooltipContent size="lg">
                   <p style={{ whiteSpace: 'pre-line' }}>
                     {
-                      'ROAS (Return on Ad Spend) — рентабельность рекламы.\nФормула: выручка от рекламных кампаний ÷ расход на кампании.\nДанные из рекламного кабинета WB (Promotion API) — учитывается только выручка, атрибутированная к рекламе.\nОриентиры: ≥5x — отлично (зелёный), 3–5x — нормально (жёлтый), <3x — низкая эффективность (красный).\n⚠ Отличается от «финансового ROAS» (sale_gross ÷ wb_promotion из отчёта), т.к. источники данных разные.'
+                      'ROAS (Return on Ad Spend) — рентабельность рекламы.\nФормула: выручка от рекламных кампаний ÷ расход на кампании.\nДанные из рекламного кабинета WB (Promotion API) — учитывается только выручка, атрибутированная к рекламе.\nОриентиры: ≥5x — отлично (зелёный), 3–5x — хорошо, 2–3x — умеренно, 1–2x — слабо, <1x — убыток (красный).\n⚠ Отличается от «финансового ROAS» (sale_gross ÷ wb_promotion из отчёта), т.к. источники данных разные.'
                     }
                   </p>
                 </TooltipContent>

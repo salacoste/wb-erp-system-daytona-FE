@@ -124,6 +124,32 @@ export function getEfficiencyConfig(status: string): EfficiencyConfig {
   return efficiencyConfig[status as EfficiencyStatus] ?? efficiencyConfig.unknown
 }
 
+/**
+ * Canonical ROAS → inline-text-color mapping. Single source of truth so the dashboard
+ * AdvertisingCard, the advertising widget, and the analytics advertising page agree
+ * (iter-119: resolved a 3-way threshold divergence where ROAS=4 rendered green on the
+ * analytics page but yellow on the dashboard card).
+ *
+ * `roas` is a raw MULTIPLIER (e.g. 4.2×, rendered "4,2x" via formatRoas), NOT a percent.
+ * Bands + colors mirror efficiencyConfig (the documented business logic, "colors per AC2"):
+ *   ≥5  Отлично  → green    (excellent)
+ *   3–5 Хорошо   → emerald  (good)
+ *   2–3 Умеренно → yellow   (moderate)
+ *   1–2 Слабо    → orange   (poor)
+ *   <1  Убыток   → red      (loss)
+ * Derived from each band's `iconColor` (the -600 inline shade, NOT the -800 badge textColor)
+ * so the mapping stays in lockstep with the config. null/NaN → muted, so callers may pass an
+ * unguarded value.
+ */
+export function getRoasColorClass(roas: number | null | undefined): string {
+  if (roas == null || isNaN(roas)) return 'text-muted-foreground'
+  if (roas >= 5.0) return efficiencyConfig.excellent.iconColor
+  if (roas >= 3.0) return efficiencyConfig.good.iconColor
+  if (roas >= 2.0) return efficiencyConfig.moderate.iconColor
+  if (roas >= 1.0) return efficiencyConfig.poor.iconColor
+  return efficiencyConfig.loss.iconColor
+}
+
 /** Get efficiency status color class for inline text styling */
 export function getEfficiencyColor(status: EfficiencyStatus): string {
   return getEfficiencyConfig(status).textColor

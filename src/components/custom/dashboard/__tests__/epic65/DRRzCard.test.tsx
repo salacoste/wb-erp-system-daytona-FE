@@ -212,3 +212,23 @@ describe('AdvertisingCard — DRRz (Story 65.4)', () => {
     })
   })
 })
+
+// ===========================================================================
+// iter-119: ROAS color — canonical 5-band (was a local ≥5-green/<3-red scheme)
+// ===========================================================================
+describe('AdvertisingCard — ROAS color (iter-119 canonical 5-band)', () => {
+  it('colors a 3–5× ROAS as emerald ("good"), the only band whose card color changed', () => {
+    renderWithProviders(
+      <AdvertisingCard
+        totalSpend={75_000}
+        roas={4.0}
+        previousSpend={70_000}
+        saleGross={1_500_000}
+        ordersRevenue={5_000_000}
+        isLoading={false}
+      />
+    )
+    // Pre-iter-119 the card colored 3–5× yellow; canonical maps it to emerald (Хорошо).
+    expect(screen.getByText(/ROAS:/)).toHaveClass('text-emerald-600')
+  })
+})

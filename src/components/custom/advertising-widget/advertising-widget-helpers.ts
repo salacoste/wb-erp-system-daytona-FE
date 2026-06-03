@@ -59,19 +59,11 @@ export function formatCurrency(value: number | undefined | null): string {
 }
 
 /**
- * Get ROAS color class based on value.
- * - >= 3.0: Green (excellent)
- * - >= 2.0: Yellow (good)
- * - >= 1.0: Orange (break-even)
- * - < 1.0: Red (loss)
+ * Re-export the canonical ROAS color mapping (5-band, mirrors efficiencyConfig) so the
+ * widget agrees with the dashboard card and the analytics page. iter-119: the widget
+ * previously had its own ≥3-green scheme that diverged from the canonical bands.
  */
-export function getRoasColorClass(roas: number | undefined | null): string {
-  if (roas == null || isNaN(roas)) return 'text-muted-foreground'
-  if (roas >= 3.0) return 'text-green-600'
-  if (roas >= 2.0) return 'text-yellow-600'
-  if (roas >= 1.0) return 'text-orange-600'
-  return 'text-red-600'
-}
+export { getRoasColorClass } from '@/lib/efficiency-utils'
 
 /**
  * Get organic-contribution color class (value in percent units, 0-100).
