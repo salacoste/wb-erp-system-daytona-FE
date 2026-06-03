@@ -10,17 +10,19 @@
 import type {
   Cabinet,
   JamStatusResponse,
+  JamTier,
   SellerInfoResponse,
   TaxSystem,
   TokenHealthResponse,
 } from '@/types/cabinet'
 
-// Must match JamTier union in src/types/cabinet.ts:112
-const VALID_JAM_TIERS = new Set(['none', 'standard', 'advanced'])
-
-function toJamTier(raw: unknown): string {
+// Coerce a backend tier to a JamTier. Unrecognised/missing → 'unknown' (a real JamTier member —
+// see src/types/cabinet.ts — rendered as an amber "Неизвестный тариф" badge). The literal
+// comparisons narrow `s` to the union, so this returns JamTier with no `as` cast.
+function toJamTier(raw: unknown): JamTier {
   const s = String(raw ?? 'unknown').toLowerCase()
-  return VALID_JAM_TIERS.has(s) ? s : 'unknown'
+  if (s === 'none' || s === 'standard' || s === 'advanced') return s
+  return 'unknown'
 }
 
 // Must match TaxSystem union in src/types/cabinet.ts:7. F-42: the backend sends

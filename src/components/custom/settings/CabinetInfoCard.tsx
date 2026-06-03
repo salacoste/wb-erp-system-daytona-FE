@@ -21,6 +21,8 @@ const JAM_TIER_STYLES: Record<JamTier, string> = {
   none: 'bg-gray-100 text-gray-700 border-gray-200',
   standard: 'bg-blue-50 text-blue-700 border-blue-200',
   advanced: 'bg-purple-50 text-purple-700 border-purple-200',
+  // amber = "indicate the anomaly" (Defensive Frontend) — an unrecognised backend tier
+  unknown: 'bg-amber-50 text-amber-700 border-amber-200',
 }
 
 function InfoRow({

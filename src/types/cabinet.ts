@@ -108,21 +108,29 @@ export interface ApiError {
 
 // --- Jam Subscription Status (GET /v1/cabinets/:id/jam-status) ---
 
-/** Jam subscription tier detected via SDK probe strategy */
-export type JamTier = 'none' | 'standard' | 'advanced'
+/**
+ * Jam subscription tier detected via SDK probe strategy.
+ * 'unknown' = the backend returned a tier the FE doesn't recognise; `toJamTier`
+ * (cabinet-normalizer) already coerces unrecognised values to 'unknown', so it MUST be a member
+ * here — otherwise the label/style/level maps render a blank, unstyled badge (Defensive Frontend).
+ */
+export type JamTier = 'none' | 'standard' | 'advanced' | 'unknown'
 
 /** Russian labels for Jam subscription tiers */
 export const JAM_TIER_LABELS: Record<JamTier, string> = {
   none: 'Нет подписки',
   standard: 'Джем Стандарт',
   advanced: 'Джем Продвинутый',
+  unknown: 'Неизвестный тариф',
 }
 
-/** Numeric tier levels for comparison (none < standard < advanced) */
+/** Numeric tier levels for comparison (none < standard < advanced). 'unknown' = 0 (fail closed:
+ *  an unrecognised tier never satisfies a standard/advanced gate). */
 export const JAM_TIER_LEVEL: Record<JamTier, number> = {
   none: 0,
   standard: 1,
   advanced: 2,
+  unknown: 0,
 }
 
 /** Check if user's Jam tier meets or exceeds the required tier */

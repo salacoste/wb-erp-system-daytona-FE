@@ -15,6 +15,7 @@ const JAM_TIER_COLORS: Record<JamTier, string> = {
   none: 'bg-gray-100 text-gray-600',
   standard: 'bg-blue-100 text-blue-700',
   advanced: 'bg-purple-100 text-purple-700',
+  unknown: 'bg-amber-100 text-amber-700', // indicate an unrecognised backend tier
 }
 
 /**
