@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, TrendingDown } from 'lucide-react'
 import { SourceBadge } from '@/components/custom/badges/SourceBadge'
+import { formatPercentage } from '@/lib/utils'
 import type { BuyoutSource } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
 
@@ -42,8 +43,13 @@ export function BuyoutSummaryWidget({
 
   if (!data) return null
 
-  const buyoutPct = data.overallBuyoutRatePct ?? 0
-  const returnPct = data.overallReturnRatePct ?? 0
+  // AP#8 + Defensive Frontend: the backend returns null buyout/return rate when there are no
+  // sales in the period (the ratio is undefined, NOT a 0% buyout). `?? 0` rendered "0.0% выкуп"
+  // with a 0%-green progress bar — a false catastrophic signal (0% buyout = every order returned).
+  // Preserve null and show a "no data" state instead. Live-verified: empty period → null/null;
+  // period with sales → real numbers (e.g. 98.42 / 1.58).
+  const buyoutPct = data.overallBuyoutRatePct
+  const returnPct = data.overallReturnRatePct
   const decliners = data.topDecliners ?? []
 
   return (
@@ -52,18 +58,38 @@ export function BuyoutSummaryWidget({
         <CardTitle className="text-base">Процент выкупа</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Progress bar */}
+        {/* Progress bar — only when a real rate exists (buyoutPct != null narrows to number) */}
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="font-medium">{buyoutPct.toFixed(1)}% выкуп</span>
-            <span className="text-muted-foreground">{returnPct.toFixed(1)}% возвраты</span>
-          </div>
-          <div className="h-3 rounded-full bg-red-100 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-green-500 transition-all"
-              style={{ width: `${Math.min(buyoutPct, 100)}%` }}
-            />
-          </div>
+          {buyoutPct != null ? (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="font-medium">{buyoutPct.toFixed(1)}% выкуп</span>
+                <span className="text-muted-foreground">
+                  {returnPct != null ? `${returnPct.toFixed(1)}% возвраты` : '— возвраты'}
+                </span>
+              </div>
+              <div className="h-3 rounded-full bg-red-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-green-500 transition-all"
+                  style={{ width: `${Math.min(buyoutPct, 100)}%` }}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Нет данных о выкупах за выбранный период
+              </p>
+              {/* Defensive Frontend: buyout & return share the totalSalesCount denominator, so
+                  they are normally null together. If the backend ever sends a return rate WITHOUT
+                  a buyout rate, indicate it rather than silently dropping the value. */}
+              {returnPct != null && (
+                <p className="mt-1 text-xs text-amber-700">
+                  Возвраты: {formatPercentage(returnPct)} (процент выкупа недоступен)
+                </p>
+              )}
+            </>
+          )}
           <p className="text-xs text-muted-foreground">
             Возвраты (FBS): {data.totalReturnsCount.toLocaleString('ru-RU')} из{' '}
             {data.totalSalesCount.toLocaleString('ru-RU')} продаж

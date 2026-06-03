@@ -82,6 +82,52 @@ describe('BuyoutSummaryWidget', () => {
     expect(screen.getByText('21.5% возвраты')).toBeInTheDocument()
   })
 
+  // AP#8 + Defensive Frontend: backend returns null rates for a no-sales period (undefined ratio).
+  // `?? 0` previously rendered "0.0% выкуп" — a false catastrophic signal. Must show "no data".
+  it('shows a "no data" state (not 0.0% выкуп) when rates are null', () => {
+    const empty: BuyoutSummaryResponse = {
+      ...mockSummary,
+      overallBuyoutRatePct: null,
+      overallReturnRatePct: null,
+      totalSalesCount: 0,
+      totalReturnsCount: 0,
+      skuCount: 0,
+      topDecliners: [],
+    }
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: empty }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText('Нет данных о выкупах за выбранный период')).toBeInTheDocument()
+    // The misleading "0.0% выкуп" / 0%-green bar must NOT appear
+    expect(screen.queryByText('0.0% выкуп')).not.toBeInTheDocument()
+  })
+
+  it('renders "— возвраты" when only the return rate is null', () => {
+    const partial: BuyoutSummaryResponse = {
+      ...mockSummary,
+      overallBuyoutRatePct: 95,
+      overallReturnRatePct: null,
+    }
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: partial }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText('95.0% выкуп')).toBeInTheDocument()
+    expect(screen.getByText('— возвраты')).toBeInTheDocument()
+  })
+
+  // Defensive Frontend: the (contractually-impossible) buyout=null / return=non-null state must
+  // INDICATE the orphan return rate, not silently drop it. Russian-locale via formatPercentage.
+  it('surfaces an anomalous return rate when buyout is null but return is present', () => {
+    const anomalous: BuyoutSummaryResponse = {
+      ...mockSummary,
+      overallBuyoutRatePct: null,
+      overallReturnRatePct: 5.2,
+    }
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: anomalous }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    expect(screen.getByText('Нет данных о выкупах за выбранный период')).toBeInTheDocument()
+    expect(screen.getByText(/процент выкупа недоступен/)).toBeInTheDocument()
+    expect(screen.getByText(/5,2\s%/)).toBeInTheDocument()
+  })
+
   it('renders progress bar with correct width', () => {
     mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
     const { container } = renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
