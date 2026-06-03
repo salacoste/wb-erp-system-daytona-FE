@@ -16,7 +16,9 @@ export interface CrossReferenceItem {
   uniqueQueries: number | null
   adSpend: number
   adClicks: number
-  adRevenue: number
+  /** Ad-attributed revenue. null when ads RAN but WB returned no revenue (unknown) — rendered
+   *  "—", NOT 0 (anti-pattern #8). 0 means a genuinely organic row (no ads → no ad-revenue). */
+  adRevenue: number | null
   channel: Channel
 }
 
@@ -69,11 +71,12 @@ export function mergeSearchAndAdData(
       vendorCode: search?.vendorCode ?? ad?.sku_id ?? null,
       totalOrders: search?.totalOrders ?? 0,
       uniqueQueries: search?.uniqueQueries ?? null,
-      // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: adSpend null = no ads ran = 0 contribution to cross-reference sum
+      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: organic row (no ad item) → ad spend is genuinely 0, not unknown (AdvertisingItem.spend is non-null, so only the ad?-undefined branch fires)
       adSpend: ad?.spend ?? 0,
       adClicks: ad?.clicks ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: adRevenue null = no ads ran = 0 contribution to cross-reference sum
-      adRevenue: ad?.revenue ?? 0,
+      // adRevenue is DISPLAYED per row (not aggregated), so preserve null: ad ran but WB returned
+      // no revenue → null → "—" (anti-pattern #8). Organic rows (no ad item) → genuine 0.
+      adRevenue: ad ? ad.revenue : 0,
       channel: inSearch && inAd ? 'both' : inSearch ? 'organic' : 'ad',
     })
   }
@@ -101,7 +104,8 @@ export function computeOverlapSummary(items: CrossReferenceItem[]): OverlapSumma
  * Uses Intl currency style so the ₽ is preceded by a NON-breaking space (it must not wrap to
  * a new line) — the prior template `${...} ₽` used a regular U+0020 space.
  */
-export function fmtCurrency(n: number): string {
+export function fmtCurrency(n: number | null): string {
+  if (n == null) return '—' // unknown (e.g. ad-attributed revenue not returned) — not "0 ₽"
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

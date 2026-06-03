@@ -49,6 +49,11 @@ export function CrossReferenceTable({ items }: CrossReferenceTableProps) {
     copy.sort((a, b) => {
       const av = a[sortField]
       const bv = b[sortField]
+      // nulls last regardless of direction (uniqueQueries + adRevenue are nullable "—" rows):
+      // an unknown value must not pin itself arbitrarily among real numbers when its column sorts.
+      if (av == null && bv == null) return 0
+      if (av == null) return 1
+      if (bv == null) return -1
       if (typeof av === 'number' && typeof bv === 'number') return sortAsc ? av - bv : bv - av
       return 0
     })

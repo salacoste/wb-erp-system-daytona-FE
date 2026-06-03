@@ -37,7 +37,9 @@ function makeAdItem(overrides: Partial<AdvertisingItem> = {}): AdvertisingItem {
     roi: -0.5,
     conversion_rate: 10,
     profit_after_ads: -700,
-    efficiency_status: 'profitable',
+    // iter-129: 'profitable' is NOT a valid EfficiencyStatus (the `as` cast masked it). roi -0.5 /
+    // profit_after_ads -700 are negative → 'loss' is the contract-valid, semantically-correct value.
+    efficiency_status: 'loss',
     ...overrides,
   } as AdvertisingItem
 }
@@ -65,6 +67,18 @@ describe('mergeSearchAndAdData', () => {
     expect(result[0].nmId).toBe(200)
     expect(result[0].adSpend).toBe(500)
     expect(result[0].adClicks).toBe(50)
+  })
+
+  it('preserves null adRevenue when an ad ran but revenue is unknown; 0 for organic (iter-129)', () => {
+    // ad ran but WB returned no revenue → null (rendered "—"), NOT a fabricated 0 ₽
+    const adNull = mergeSearchAndAdData([], [makeAdItem({ key: 'sku:400', revenue: null })])
+    expect(adNull[0].adRevenue).toBeNull()
+    // ad ran with a real revenue → preserved
+    const adNum = mergeSearchAndAdData([], [makeAdItem({ key: 'sku:401', revenue: 5000 })])
+    expect(adNum[0].adRevenue).toBe(5000)
+    // organic row (no ad item) → genuine 0 ad-revenue (a known zero, not unknown)
+    const organic = mergeSearchAndAdData([makeSearchItem({ key: 500 })], [])
+    expect(organic[0].adRevenue).toBe(0)
   })
 
   it('classifies both-channel items when nmId matches', () => {
@@ -208,5 +222,9 @@ describe('fmtCurrency', () => {
     expect(neg).toContain('₽')
     expect(neg).toMatch(/[\u00a0\u202f]₽/)
     expect(neg).not.toContain(' ₽')
+  })
+
+  it('renders "—" for null (unknown), not "0 ₽" (iter-129)', () => {
+    expect(fmtCurrency(null)).toBe('—')
   })
 })
