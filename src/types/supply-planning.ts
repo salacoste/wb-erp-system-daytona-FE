@@ -55,7 +55,13 @@ export type SupplyPlanningShowOnly = 'all' | 'stockout_risk' | 'reorder_needed'
  * Query parameters for GET /v1/analytics/supply-planning
  */
 export interface SupplyPlanningQueryParams {
-  /** Reference week for velocity calculation (ISO week, e.g., "2025-W50") */
+  /**
+   * Reference week (ISO, e.g. "2025-W50"). NOTE: the REAL backend has no `week` param and
+   * rejects it with 400 ("week should not exist") — it computes velocity from the current
+   * stock snapshot over `velocity_weeks`. No production caller passes `week`, so it is never
+   * sent in practice; it is retained only because the MSW mock overloads `week` as a test
+   * control channel ('empty'/'error') — see docs/request-backend (iter-112). Do NOT pass it.
+   */
   week?: string
   /** Weeks for average velocity calculation (1-13, default: 4) */
   velocity_weeks?: number
