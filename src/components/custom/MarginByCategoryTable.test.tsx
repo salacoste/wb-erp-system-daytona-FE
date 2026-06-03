@@ -205,7 +205,8 @@ describe('MarginByCategoryTable', () => {
       // Weighted average by revenue: (70000+20000+0) / (200000+100000+150000) = 20%
       // Check for percentage sign and number pattern (flexible for locale formatting)
       const summarySection = screen.getByText('Средняя маржа').closest('div')?.parentElement
-      expect(summarySection?.textContent).toMatch(/20[.,]\d+%/)
+      // comma-only (ru-RU) — locks the locale so a dot-regression fails
+      expect(summarySection?.textContent).toMatch(/20,\d+\s*%/)
     })
   })
 

@@ -7,7 +7,7 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react'
 
 /**
@@ -75,11 +75,7 @@ function DeltaDisplay({
   const isGood = inverse ? !isPositive : isPositive
   const isNeutral = Math.abs(percent) < 0.5
 
-  const colorClass = isNeutral
-    ? 'text-gray-500'
-    : isGood
-    ? 'text-green-600'
-    : 'text-red-600'
+  const colorClass = isNeutral ? 'text-gray-500' : isGood ? 'text-green-600' : 'text-red-600'
 
   const Icon = isNeutral ? Minus : isPositive ? ArrowUp : ArrowDown
 
@@ -92,7 +88,8 @@ function DeltaDisplay({
           : `${Math.abs(value).toFixed(1)} п.п.`}
       </span>
       <span className="text-gray-400">
-        ({percent >= 0 ? '+' : ''}{percent.toFixed(1)}%)
+        ({percent >= 0 ? '+' : ''}
+        {formatPercentage(percent, 1)})
       </span>
     </div>
   )
@@ -110,11 +107,7 @@ function DeltaDisplay({
  *   compare={{ totalRevenue: 450000, totalProfit: 60000, avgMargin: 13.3, itemCount: 95 }}
  * />
  */
-export function ComparisonSummary({
-  current,
-  compare,
-  className,
-}: ComparisonSummaryProps) {
+export function ComparisonSummary({ current, compare, className }: ComparisonSummaryProps) {
   const hasComparison = compare !== null && compare !== undefined
 
   // Calculate deltas if comparison available
@@ -124,9 +117,10 @@ export function ComparisonSummary({
   const profitDelta = hasComparison
     ? calculateDelta(current.totalProfit, compare.totalProfit)
     : null
-  const marginDelta = hasComparison && current.avgMargin !== null && compare.avgMargin !== null
-    ? { value: current.avgMargin - compare.avgMargin, percent: 0 }
-    : null
+  const marginDelta =
+    hasComparison && current.avgMargin !== null && compare.avgMargin !== null
+      ? { value: current.avgMargin - compare.avgMargin, percent: 0 }
+      : null
 
   return (
     <div className={cn('border-t bg-gray-50 p-4', className)}>
@@ -162,18 +156,16 @@ export function ComparisonSummary({
         {/* Total Profit */}
         <div>
           <div className="text-gray-600">Общая прибыль</div>
-          <div className={cn(
-            'text-lg font-semibold',
-            current.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
-          )}>
+          <div
+            className={cn(
+              'text-lg font-semibold',
+              current.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
+            )}
+          >
             {formatCurrency(current.totalProfit)}
           </div>
           {profitDelta && (
-            <DeltaDisplay
-              value={profitDelta.value}
-              percent={profitDelta.percent}
-              type="currency"
-            />
+            <DeltaDisplay value={profitDelta.value} percent={profitDelta.percent} type="currency" />
           )}
         </div>
 
@@ -181,15 +173,9 @@ export function ComparisonSummary({
         <div>
           <div className="text-gray-600">Средняя маржа</div>
           <div className="text-lg font-semibold text-gray-900">
-            {current.avgMargin !== null ? `${current.avgMargin.toFixed(2)}%` : '—'}
+            {current.avgMargin !== null ? formatPercentage(current.avgMargin, 2) : '—'}
           </div>
-          {marginDelta && (
-            <DeltaDisplay
-              value={marginDelta.value}
-              percent={0}
-              type="percent"
-            />
-          )}
+          {marginDelta && <DeltaDisplay value={marginDelta.value} percent={0} type="percent" />}
         </div>
       </div>
     </div>

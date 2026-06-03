@@ -5,7 +5,7 @@
  */
 
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 export type DeltaType = 'absolute' | 'percentage'
 
@@ -14,7 +14,7 @@ export function formatDeltaValue(value: number, type: DeltaType): string {
   const sign = value > 0 ? '+' : ''
 
   if (type === 'percentage') {
-    return `${sign}${value.toFixed(1)}%`
+    return `${sign}${formatPercentage(value, 1)}`
   }
 
   return `${sign}${new Intl.NumberFormat('ru-RU', {
@@ -75,7 +75,7 @@ export function DeltaBadge({ value, className }: DeltaBadgeProps) {
       )}
     >
       {sign}
-      {value.toFixed(1)}%
+      {formatPercentage(value, 1)}
     </span>
   )
 }

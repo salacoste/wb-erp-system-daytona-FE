@@ -11,18 +11,18 @@ describe('DeltaIndicator', () => {
   describe('Value formatting', () => {
     it('should format positive percentage with + sign', () => {
       render(<DeltaIndicator value={12.5} type="percentage" />)
-      expect(screen.getByText('+12.5%')).toBeInTheDocument()
+      expect(screen.getByText(/\+12,5\s*%/)).toBeInTheDocument()
     })
 
     it('should format negative percentage', () => {
       render(<DeltaIndicator value={-5.6} type="percentage" />)
-      expect(screen.getByText('-5.6%')).toBeInTheDocument()
+      expect(screen.getByText(/-5,6\s*%/)).toBeInTheDocument()
     })
 
     it('should format zero percentage', () => {
       render(<DeltaIndicator value={0} type="percentage" />)
       // Zero doesn't get + sign
-      expect(screen.getByText('0.0%')).toBeInTheDocument()
+      expect(screen.getByText(/0,0\s*%/)).toBeInTheDocument()
     })
 
     it('should format positive absolute value as currency', () => {
@@ -116,7 +116,7 @@ describe('DeltaIndicator', () => {
   describe('Accessibility', () => {
     it('should have accessible label', () => {
       render(<DeltaIndicator value={15.5} type="percentage" />)
-      expect(screen.getByLabelText(/изменение: \+15.5%/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/изменение:\s*\+15,5\s*%/i)).toBeInTheDocument()
     })
   })
 })
@@ -124,20 +124,20 @@ describe('DeltaIndicator', () => {
 describe('DeltaBadge', () => {
   it('should render positive badge with green background', () => {
     render(<DeltaBadge value={12.5} />)
-    const badge = screen.getByText('+12.5%')
+    const badge = screen.getByText(/\+12,5\s*%/)
     expect(badge).toHaveClass('bg-green-100', 'text-green-700')
   })
 
   it('should render negative badge with red background', () => {
     render(<DeltaBadge value={-5.6} />)
-    const badge = screen.getByText('-5.6%')
+    const badge = screen.getByText(/-5,6\s*%/)
     expect(badge).toHaveClass('bg-red-100', 'text-red-700')
   })
 
   it('should render zero badge with gray background', () => {
     render(<DeltaBadge value={0} />)
     // Zero doesn't get + sign in badge
-    const badge = screen.getByText('0.0%')
+    const badge = screen.getByText(/0,0\s*%/)
     expect(badge).toHaveClass('bg-gray-100', 'text-gray-500')
   })
 
