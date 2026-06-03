@@ -2,7 +2,11 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import type { LiquidityCategory, LiquidityDistribution } from '@/types/liquidity'
-import { getLiquidityCategoryConfig, formatCurrency } from '@/lib/liquidity-utils'
+import {
+  getLiquidityCategoryConfig,
+  formatCurrency,
+  formatTurnoverDays,
+} from '@/lib/liquidity-utils'
 import { cn, formatPercentage } from '@/lib/utils'
 
 interface LiquidityDistributionCardsProps {
@@ -82,7 +86,7 @@ export function LiquidityDistributionCards({
 
               {/* Average turnover days */}
               <div className="mt-2 text-xs text-muted-foreground">
-                Ср. оборот: {item.avg_turnover_days} дней
+                Ср. оборот: {formatTurnoverDays(item.avg_turnover_days)}
               </div>
             </CardContent>
           </Card>

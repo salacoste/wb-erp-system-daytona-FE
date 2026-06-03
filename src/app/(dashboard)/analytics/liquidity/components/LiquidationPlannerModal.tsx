@@ -10,7 +10,12 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import type { LiquidityItem } from '@/types/liquidity'
-import { formatCurrency, formatDiscount, getRecommendedScenario } from '@/lib/liquidity-utils'
+import {
+  formatCurrency,
+  formatDiscount,
+  formatTurnoverDays,
+  getRecommendedScenario,
+} from '@/lib/liquidity-utils'
 import { LiquidationScenarioCard } from './LiquidationScenarioCard'
 
 interface LiquidationPlannerModalProps {
@@ -62,7 +67,7 @@ export function LiquidationPlannerModal({ item, open, onClose }: LiquidationPlan
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Оборот сейчас</p>
-            <p className="font-medium text-red-600">{item.turnover_days} дней</p>
+            <p className="font-medium text-red-600">{formatTurnoverDays(item.turnover_days)}</p>
           </div>
         </div>
 
