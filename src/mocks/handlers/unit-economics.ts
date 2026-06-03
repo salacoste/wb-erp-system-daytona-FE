@@ -118,22 +118,24 @@ function generateMockItem(index: number, prefix = 'SKU'): UnitEconomicsItem {
 /**
  * Generate mock summary from items
  */
-function generateMockSummary(items: UnitEconomicsItem[]): UnitEconomicsSummary {
+export function generateMockSummary(items: UnitEconomicsItem[]): UnitEconomicsSummary {
   const total_revenue = items.reduce((sum, item) => sum + item.revenue, 0)
   const total_net_profit = items.reduce((sum, item) => sum + item.net_profit, 0)
-  const avg_cogs_pct = items.reduce((sum, item) => sum + item.costs_pct.cogs, 0) / items.length
-  const avg_wb_fees_pct =
-    items.reduce(
-      (sum, item) =>
-        sum +
-        item.costs_pct.commission +
-        item.costs_pct.logistics_delivery +
-        item.costs_pct.logistics_return +
-        item.costs_pct.storage,
-      0
-    ) / items.length
-  const avg_net_margin_pct =
-    items.reduce((sum, item) => sum + item.net_margin_pct, 0) / items.length
+  // iter-131: REVENUE-WEIGHT the displayed portfolio averages (was a simple per-SKU mean). A tiny
+  // -100%-margin SKU dragged the headline far below the true portfolio margin — and the simple-mean
+  // avg_net_margin_pct could even CONTRADICT total_net_profit/total_revenue. Derive net margin from
+  // the totals; weight cost shares by revenue (matches the backend + aggregatePortfolioCosts).
+  const wPct = (fn: (i: UnitEconomicsItem) => number) =>
+    total_revenue > 0 ? items.reduce((sum, i) => sum + fn(i) * i.revenue, 0) / total_revenue : 0
+  const avg_cogs_pct = wPct(i => i.costs_pct.cogs)
+  const avg_wb_fees_pct = wPct(
+    i =>
+      i.costs_pct.commission +
+      i.costs_pct.logistics_delivery +
+      i.costs_pct.logistics_return +
+      i.costs_pct.storage
+  )
+  const avg_net_margin_pct = total_revenue > 0 ? (total_net_profit / total_revenue) * 100 : 0
 
   return {
     total_revenue,
