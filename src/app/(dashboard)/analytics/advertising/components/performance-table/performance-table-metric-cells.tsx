@@ -62,16 +62,21 @@ export function renderOrganicContribution(item: AdvertisingItem) {
     return <span className="text-muted-foreground">—</span>
   }
 
-  // Negative or zero - edge case
-  if (item.organic_contribution < 0) {
-    return <span className="text-muted-foreground">—</span>
-  }
+  // WB re-attribution can drive organic contribution <0% — a real value, not no-data.
+  // Indicate it in red (mirroring renderROI above) instead of masking it as "—"
+  // (Defensive Frontend: indicate, don't hide; consistent with AdvertisingSummaryCards).
+  const isNegative = item.organic_contribution < 0
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-help underline decoration-dotted underline-offset-4">
+          <span
+            className={cn(
+              'cursor-help underline decoration-dotted underline-offset-4',
+              isNegative && 'text-red-600 font-medium'
+            )}
+          >
             {formatPercentRaw(item.organic_contribution)}
           </span>
         </TooltipTrigger>
