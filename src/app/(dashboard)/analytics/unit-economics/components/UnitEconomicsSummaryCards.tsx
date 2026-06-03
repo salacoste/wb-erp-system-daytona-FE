@@ -32,8 +32,15 @@ interface MetricCardProps {
   label: string
   value: string
   subtext?: string
+  /**
+   * Direction semantics are metric-relative: for the margin card 'up' = high (good) margin;
+   * for COST cards (COGS/fees) 'up' = low (good) cost. A future card passing both `trend` and
+   * `valueClassName` must derive the value color with the metric's own threshold direction.
+   */
   trend?: 'up' | 'down' | 'neutral'
   trendValue?: string
+  /** Optional color for the headline value (default gray-900). Used to flag a loss-making margin. */
+  valueClassName?: string
 }
 
 function MetricCard({
@@ -44,6 +51,7 @@ function MetricCard({
   subtext,
   trend,
   trendValue,
+  valueClassName,
 }: MetricCardProps) {
   return (
     <Card className="min-h-[120px] hover:shadow-sm transition-shadow">
@@ -54,7 +62,9 @@ function MetricCard({
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm text-gray-500 mb-1">{label}</div>
-            <div className="text-2xl font-bold text-gray-900 truncate">{value}</div>
+            <div className={cn('text-2xl font-bold truncate', valueClassName ?? 'text-gray-900')}>
+              {value}
+            </div>
             {subtext && <div className="text-xs text-gray-400 mt-1">{subtext}</div>}
             {trend && trendValue && (
               <div
@@ -96,6 +106,16 @@ export function UnitEconomicsSummaryCards({
     summary.sku_count > 0
       ? formatPercentage((summary.loss_making_sku_count / summary.sku_count) * 100)
       : formatPercentage(0)
+
+  // Color the headline margin value by health, matching the per-SKU table (>=20 green,
+  // <10 red, else neutral) + this card's own trend thresholds — so a loss-making margin
+  // (e.g. −31,2 %) reads red instead of neutral gray. Other cards keep the default gray.
+  const marginValueColor =
+    summary.avg_net_margin_pct >= 20
+      ? 'text-green-600'
+      : summary.avg_net_margin_pct < 10
+        ? 'text-red-600'
+        : 'text-gray-900'
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -162,6 +182,7 @@ export function UnitEconomicsSummaryCards({
         iconColor="bg-green-500"
         label="Маржа %"
         value={formatPercentage(summary.avg_net_margin_pct)}
+        valueClassName={marginValueColor}
         trend={
           summary.avg_net_margin_pct >= 20
             ? 'up'
