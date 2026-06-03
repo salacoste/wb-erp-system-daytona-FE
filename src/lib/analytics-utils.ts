@@ -102,6 +102,23 @@ export function calculateStorageDiscrepancy(
   }
 }
 
+/**
+ * True when the paid-storage API total diverges from the weekly report beyond the canonical
+ * tolerance (getDiscrepancyStatus: >= 3%). Single source of truth for the "Расхождение" warning
+ * shown by StorageComparisonCard + CashflowExpenseGrid (iter-126).
+ *
+ * Replaces a flat `Math.abs(storage_difference) > 1` (1 ₽) absolute check that over-flagged
+ * large-storage cabinets (a 2% diff on 100 000 ₽ tripped the warning despite Request #52 saying
+ * <3% is expected variance, no action). A null/zero weekly report → false (no baseline to compare
+ * against — the difference is unknown, not a divergence).
+ */
+export function isStorageDivergent(storageApi: number, weeklyReport: number | null): boolean {
+  if (weeklyReport == null || weeklyReport <= 0) return false
+  // arg order is intentionally (weekly, api): weeklyReport is calculateStorageDiscrepancy's
+  // `officialCost` baseline, storageApi its `skuTotalCost` → percent = |weekly−api|/weekly (#52).
+  return calculateStorageDiscrepancy(weeklyReport, storageApi).status !== 'ok'
+}
+
 /** Format discrepancy for display (e.g., "26.18 ₽ (1.4%)") */
 export function formatDiscrepancy(discrepancy: StorageDiscrepancy): string {
   const formattedAmount = new Intl.NumberFormat('ru-RU', {

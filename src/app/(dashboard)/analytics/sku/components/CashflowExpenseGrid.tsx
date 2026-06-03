@@ -4,6 +4,7 @@
  */
 
 import type { CabinetLevelExpenses } from '@/hooks/useMarginAnalytics'
+import { isStorageDivergent } from '@/lib/analytics-utils'
 
 interface ExpenseGridProps {
   cabinetExpenses: CabinetLevelExpenses
@@ -58,7 +59,13 @@ function StorageExpenseItem({
   cabinetExpenses: CabinetLevelExpenses
   pct: (v: number) => string
 }) {
-  const hasDifference = Math.abs(cabinetExpenses.storage_difference ?? 0) > 1
+  // iter-126: canonical 3% tolerance (analytics-utils), not a flat >1 ₽ which over-flagged
+  // large-storage cabinets (a 2% diff on 100 000 ₽ tripped the warning despite Request #52
+  // saying <3% is expected variance). null weekly → no warning.
+  const hasDifference = isStorageDivergent(
+    cabinetExpenses.storage,
+    cabinetExpenses.storage_weekly_report
+  )
 
   return (
     <div
