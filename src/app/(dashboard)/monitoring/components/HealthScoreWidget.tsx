@@ -6,8 +6,10 @@
 
 'use client'
 
+import { AlertTriangle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { DashboardSystem } from '../types/monitoring'
 
@@ -59,7 +61,12 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
   const color = getScoreColor(score)
   const statusText = getStatusText(score)
   const statusClass = getStatusColorClass(score)
-  const fillLength = (score / 100) * ARC_LENGTH
+  // Clamp the arc fill to [0,100] for out-of-range inputs; display the raw score + an anomaly
+  // indicator. Mirrors the AC-9 hardening in MonitorBuyoutGauge (this widget was its source but
+  // never received the clamp — backend calculateHealthScore clamps the LOWER bound only).
+  const isOutOfRange = score > 100 || score < 0
+  const safeScore = Math.max(0, Math.min(100, score))
+  const fillLength = (safeScore / 100) * ARC_LENGTH
   const path = arcPath()
 
   return (
@@ -111,6 +118,21 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
 
         {/* Status text */}
         <p className={cn('mt-2 text-center text-sm font-medium', statusClass)}>{statusText}</p>
+
+        {/* Out-of-range anomaly indicator (mirrors MonitorBuyoutGauge AC-9) */}
+        {isOutOfRange && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="mt-1 inline-flex items-center gap-1 text-xs text-amber-600 cursor-help">
+                <AlertTriangle className="h-3 w-3" />
+                Аномальное значение
+              </span>
+            </TooltipTrigger>
+            <TooltipContent size="sm">
+              <p>Аномалия: индекс вне диапазона 0-100</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
 
         {/* Alert count badge */}
         {alerts > 0 && (
