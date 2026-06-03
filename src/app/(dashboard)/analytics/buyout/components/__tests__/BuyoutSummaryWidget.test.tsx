@@ -156,6 +156,12 @@ describe('BuyoutSummaryWidget', () => {
     expect(screen.getByText('#111222')).toBeInTheDocument()
     expect(screen.getByText('#333444')).toBeInTheDocument()
     expect(screen.getByText(/52%/)).toBeInTheDocument()
+    // Regression: a decline (trendDelta=-8) must render WITH its minus sign.
+    // Prior code used Math.abs() + an inverted prefix → "(8 п.п.)" (sign stripped).
+    // Exact-match targets the inner red span ("(-8 п.п.)"); the parent's direct
+    // text node is just "52%", so no multiple-element clash.
+    expect(screen.getByText('(-8 п.п.)')).toBeInTheDocument()
+    expect(screen.getByText('(-5 п.п.)')).toBeInTheDocument()
   })
 
   it('shows return breakdown bar when provided', () => {

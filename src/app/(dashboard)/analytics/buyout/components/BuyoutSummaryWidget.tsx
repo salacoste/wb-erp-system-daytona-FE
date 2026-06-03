@@ -137,8 +137,12 @@ export function BuyoutSummaryWidget({
                   <span>
                     {d.buyoutRatePct != null ? `${d.buyoutRatePct.toFixed(0)}%` : '—'}
                     <span className="text-red-500 ml-1">
-                      ({d.trendDelta < 0 ? '' : '-'}
-                      {Math.abs(d.trendDelta).toFixed(0)} п.п.)
+                      {/* Show the signed delta — the number carries its own minus for a
+                          decline, matching TrendIndicator (buyout-table-cells.tsx:43).
+                          Prior code used Math.abs() + an inverted prefix, so a -1.36 decline
+                          rendered "(1 п.п.)" (sign lost) and a gain rendered "(-2 п.п.)". */}
+                      ({d.trendDelta < 0 ? '' : '+'}
+                      {d.trendDelta.toFixed(0)} п.п.)
                     </span>
                   </span>
                 </div>
