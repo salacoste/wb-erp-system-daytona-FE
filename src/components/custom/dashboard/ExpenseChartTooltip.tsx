@@ -9,7 +9,7 @@
 
 'use client'
 
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { ExpenseChartDataItem } from './expense-chart-config'
 
 interface ExpenseChartTooltipProps {
@@ -32,7 +32,7 @@ export function ExpenseChartTooltip({ active, payload }: ExpenseChartTooltipProp
         Сумма: <span className="font-medium">{formatCurrency(data.value)}</span>
       </p>
       <p className="text-sm text-gray-600">
-        Доля: <span className="font-medium">{data.percentage.toFixed(1)}%</span>
+        Доля: <span className="font-medium">{formatPercentage(data.percentage, 1)}</span>
       </p>
     </div>
   )
