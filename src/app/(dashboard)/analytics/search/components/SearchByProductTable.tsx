@@ -33,7 +33,8 @@ function formatDecimal(n: number): string {
 
 // iter-59: Russian locale (was "11.9%" dot/no-space). `n` is percent units (0-100, e.g. avgCtr),
 // matching formatDecimal's ru-RU idiom above. Intl style:'percent' over n/100 → "11,9 %".
-function formatPercent(n: number): string {
+function formatPercent(n: number | null): string {
+  if (n == null) return '—' // rate unknown (no data) — NOT "0 %" (anti-pattern #8)
   return new Intl.NumberFormat('ru-RU', {
     style: 'percent',
     minimumFractionDigits: 1,
@@ -66,19 +67,21 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
   }
 
   const sorted = [...queries].sort((a, b) => {
+    // avgCtr is number | null; `?? 0` keeps the sort arithmetic NaN-free. Null CTRs sort as 0
+    // (accepted AP#8 sort exception) though they DISPLAY as "—" — do not "fix" with -Infinity.
     const aVal = Number(a[sort] ?? 0)
     const bVal = Number(b[sort] ?? 0)
     return order === 'desc' ? bVal - aVal : aVal - bVal
   })
 
-  const formatCell = (field: SortField, value: number): string => {
+  const formatCell = (field: SortField, value: number | null): string => {
     switch (field) {
       case 'avgPosition':
-        return formatDecimal(value)
+        return formatDecimal(value ?? 0) // toCount-sourced (never null); ?? 0 = type-safety only
       case 'avgCtr':
-        return formatPercent(value)
+        return formatPercent(value) // rate: null → "—"
       default:
-        return formatNumber(value)
+        return formatNumber(value ?? 0)
     }
   }
 

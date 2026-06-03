@@ -84,7 +84,7 @@ export function normalizeSearchQueryItem(raw: unknown): SearchQueryItem {
     avgPosition: toCount(r.avgPosition),
     totalImpressions: toCount(r.totalImpressions),
     totalClicks: toCount(r.totalClicks),
-    avgCtr: toCount(r.avgCtr),
+    avgCtr: toNullableNumber(r.avgCtr), // rate → preserve null (NOT toCount's ?? 0), per the AP#8 split
     totalOrders: toCount(r.totalOrders),
   }
 }
@@ -100,7 +100,7 @@ export function normalizeSearchProductItem(raw: unknown): SearchProductItem {
     avgPosition: toCount(r.avgPosition),
     totalImpressions: toCount(r.totalImpressions),
     totalClicks: toCount(r.totalClicks),
-    avgCtr: toCount(r.avgCtr),
+    avgCtr: toNullableNumber(r.avgCtr), // rate → preserve null (NOT toCount's ?? 0), per the AP#8 split
     totalOrders: toCount(r.totalOrders),
   }
 }

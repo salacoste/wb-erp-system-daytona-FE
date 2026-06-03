@@ -133,4 +133,25 @@ describe('SearchByQueryTable', () => {
     const redBadge = rows[3].querySelector('.bg-red-100')
     expect(redBadge).toBeInTheDocument()
   })
+
+  it('renders "—" for a null avgCtr (unknown rate), not "0,0 %" (iter-128)', () => {
+    render(
+      <SearchByQueryTable
+        products={[
+          {
+            nmId: 99999999,
+            vendorCode: 'ART-099',
+            avgPosition: 5,
+            totalImpressions: 100,
+            totalClicks: 10,
+            avgCtr: null,
+            totalOrders: 2,
+          },
+        ]}
+      />
+    )
+    // CTR is the only percent column; null → "—" (the only em-dash, vendorCode is set)
+    expect(screen.getByText('—')).toBeInTheDocument()
+    expect(screen.queryByText(/0,0\s*%/)).not.toBeInTheDocument()
+  })
 })

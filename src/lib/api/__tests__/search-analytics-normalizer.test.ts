@@ -263,13 +263,16 @@ describe('normalizeSearchQueryItem', () => {
     expect(r.searchQuery).toBe('foo')
     expect(r.totalImpressions).toBe(1000)
     expect(r.totalOrders).toBe(7)
+    expect(r.avgCtr).toBe(5) // real rate passes through
   })
 
-  it('all counts undefined → 0', () => {
+  it('all counts undefined → 0, but avgCtr (a rate) → null (NOT 0) per AP#8 (iter-128)', () => {
     const r = normalizeSearchQueryItem({ searchQuery: 'foo' })
     expect(r.totalImpressions).toBe(0)
     expect(r.totalClicks).toBe(0)
     expect(r.totalOrders).toBe(0)
+    // rate is UNKNOWN when missing — null (rendered "—"), not a fabricated 0% ("zero engagement")
+    expect(r.avgCtr).toBeNull()
   })
 })
 
@@ -286,6 +289,11 @@ describe('normalizeSearchProductItem', () => {
     expect(r.nmId).toBe(12345)
     expect(r.vendorCode).toBe('VC-1')
     expect(r.totalImpressions).toBe(500)
+  })
+
+  it('avgCtr (rate) → null when missing (NOT 0), real value preserved (iter-128)', () => {
+    expect(normalizeSearchProductItem({ nmId: 1 }).avgCtr).toBeNull()
+    expect(normalizeSearchProductItem({ nmId: 1, avgCtr: 3.3 }).avgCtr).toBe(3.3)
   })
 
   it('vendorCode: undefined canonicalized to null', () => {

@@ -103,4 +103,23 @@ describe('SearchByProductTable', () => {
     expect(rows[2]).toHaveTextContent('платье летнее')
     expect(rows[3]).toHaveTextContent('платье вечернее')
   })
+
+  it('renders "—" for a null avgCtr (unknown rate), not "0,0 %" (iter-128)', () => {
+    render(
+      <SearchByProductTable
+        queries={[
+          {
+            searchQuery: 'тест',
+            avgPosition: 10,
+            totalImpressions: 100,
+            totalClicks: 5,
+            avgCtr: null,
+            totalOrders: 1,
+          },
+        ]}
+      />
+    )
+    expect(screen.getByText('—')).toBeInTheDocument() // CTR is the only percent column
+    expect(screen.queryByText(/0,0\s*%/)).not.toBeInTheDocument()
+  })
 })

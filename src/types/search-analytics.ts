@@ -43,7 +43,9 @@ export interface SearchQueryItem {
   avgPosition: number
   totalImpressions: number
   totalClicks: number
-  avgCtr: number
+  /** CTR % (0-100). null when not measured/available — rendered "—", NOT 0 (anti-pattern #8:
+   *  a fabricated 0 reads as "zero engagement"; mirrors searchOrderShare's toNullableNumber). */
+  avgCtr: number | null
   totalOrders: number
   // Story 91.1-FE: totalRevenue removed (WB never returned real data; backend dropped the field)
 }
@@ -70,7 +72,9 @@ export interface SearchProductItem {
   avgPosition: number
   totalImpressions: number
   totalClicks: number
-  avgCtr: number
+  /** CTR % (0-100). null when not measured/available — rendered "—", NOT 0 (anti-pattern #8:
+   *  a fabricated 0 reads as "zero engagement"; mirrors searchOrderShare's toNullableNumber). */
+  avgCtr: number | null
   totalOrders: number
   // Story 91.1-FE: totalRevenue removed
 }
