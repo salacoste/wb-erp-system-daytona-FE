@@ -47,7 +47,10 @@ function formatPercent(value: number): string {
  * Get color class for ROAS value
  * Based on efficiency thresholds from Story 33.4-fe
  */
-function getRoasColor(roas: number): string {
+// roas is a raw MULTIPLIER (e.g. 38.8×, rendered "38.8x"), NOT a percent — thresholds are
+// multipliers (≥3× green, ≥2× yellow, ≥1× orange, <1× loss-making red). Exported + tested so a
+// future units refactor can't silently re-introduce the fraction-vs-percent trap getRoiColor had.
+export function getRoasColor(roas: number): string {
   if (roas >= 3.0) return 'text-green-600'
   if (roas >= 2.0) return 'text-yellow-600'
   if (roas >= 1.0) return 'text-orange-600'
@@ -55,12 +58,15 @@ function getRoasColor(roas: number): string {
 }
 
 /**
- * Get color class for ROI value
- * Based on efficiency thresholds from Story 33.4-fe
+ * Get color class for ROI value. `roi` is in PERCENT units (same value formatPercent renders,
+ * e.g. 30 = 30%), so the thresholds are percents — green ≥50%, yellow ≥20%, orange ≥0, red <0
+ * (Story 33.4-FE "ROI 50-100% green / 20-50% yellow"). iter-84: the thresholds were FRACTIONS
+ * (0.5/0.2) applied to a percent-domain value, so any ROI ≥0.5% showed green (a 30% ROI green,
+ * a 1% ROI green) — the colour no longer distinguished ROI health. ×100 to the percent domain.
  */
-function getRoiColor(roi: number): string {
-  if (roi >= 0.5) return 'text-green-600'
-  if (roi >= 0.2) return 'text-yellow-600'
+export function getRoiColor(roi: number): string {
+  if (roi >= 50) return 'text-green-600'
+  if (roi >= 20) return 'text-yellow-600'
   if (roi >= 0) return 'text-orange-600'
   return 'text-red-600'
 }

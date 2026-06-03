@@ -4,8 +4,31 @@
 
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { AdvertisingSummaryCards } from '../AdvertisingSummaryCards'
+import { AdvertisingSummaryCards, getRoiColor, getRoasColor } from '../AdvertisingSummaryCards'
 import type { AdvertisingSummary } from '@/types/advertising-analytics'
+
+// iter-84: getRoiColor receives ROI in PERCENT units (e.g. 30 = 30%). Thresholds must be percents
+// (green ≥50, yellow ≥20, orange ≥0, red <0). The old fraction thresholds (0.5/0.2) made any
+// ROI ≥0.5% green — a 30% ROI green, a 1% ROI green. These cases FAIL on the old thresholds.
+describe('getRoiColor — percent-domain thresholds', () => {
+  it('colours by percent magnitude, not fraction', () => {
+    expect(getRoiColor(75)).toBe('text-green-600') // ≥50%
+    expect(getRoiColor(30)).toBe('text-yellow-600') // 20-50% (was green under 0.5 fraction)
+    expect(getRoiColor(10)).toBe('text-orange-600') // 0-20% (was green under 0.5 fraction)
+    expect(getRoiColor(0)).toBe('text-orange-600')
+    expect(getRoiColor(-5)).toBe('text-red-600')
+  })
+})
+
+// getRoasColor takes a raw MULTIPLIER (not percent) — guard against a future units regression.
+describe('getRoasColor — multiplier-domain thresholds', () => {
+  it('colours by ROAS multiplier', () => {
+    expect(getRoasColor(3.5)).toBe('text-green-600') // ≥3×
+    expect(getRoasColor(2.5)).toBe('text-yellow-600') // 2-3×
+    expect(getRoasColor(1.5)).toBe('text-orange-600') // 1-2×
+    expect(getRoasColor(0.5)).toBe('text-red-600') // <1× loss-making
+  })
+})
 
 function makeSummary(overrides: Partial<AdvertisingSummary> = {}): AdvertisingSummary {
   return {
