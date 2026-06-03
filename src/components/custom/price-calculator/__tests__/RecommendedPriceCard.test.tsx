@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { RecommendedPriceCard } from '../RecommendedPriceCard'
 import { mockPriceCalculatorResponse } from '@/test/fixtures/price-calculator'
 
@@ -54,7 +54,9 @@ describe('RecommendedPriceCard', () => {
     })
 
     it('shows alert icon in error state', () => {
-      const { container } = render(<RecommendedPriceCard data={null} error={new Error('Test error')} />)
+      const { container } = render(
+        <RecommendedPriceCard data={null} error={new Error('Test error')} />
+      )
 
       const icon = container.querySelector('svg')
       expect(icon).toBeInTheDocument()
@@ -96,7 +98,10 @@ describe('RecommendedPriceCard', () => {
     it('displays target margin percentage', () => {
       render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      expect(screen.getByText(/20%/)).toBeInTheDocument()
+      // Both target (20%) and actual (20%) format to "20,00 %" in this fixture,
+      // so scope the assertion to the target-margin row to stay unambiguous.
+      const targetRow = screen.getByTestId('target-margin-row')
+      expect(within(targetRow).getByText(/20,00\s+%/)).toBeInTheDocument()
     })
 
     it('displays actual margin amount', () => {

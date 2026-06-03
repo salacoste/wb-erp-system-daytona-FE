@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Copy, CheckCircle2, AlertCircle } from 'lucide-react'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import { useState } from 'react'
 import type { PriceCalculatorResponse } from '@/types/price-calculator'
 
@@ -55,15 +55,13 @@ export function RecommendedPriceCard({
   // Loading state
   if (loading) {
     return (
-    <Card>
-      <CardContent className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-pulse text-2xl text-muted-foreground">
-            Расчёт...
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-pulse text-2xl text-muted-foreground">Расчёт...</div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -79,7 +77,7 @@ export function RecommendedPriceCard({
             </p>
           </div>
         </CardContent>
-    </Card>
+      </Card>
     )
   }
 
@@ -107,12 +105,7 @@ export function RecommendedPriceCard({
 
         {/* Copy Button */}
         <div className="flex justify-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={handleCopy} className="gap-2">
             {copied ? (
               <>
                 <CheckCircle2 className="h-4 w-4" />
@@ -129,9 +122,11 @@ export function RecommendedPriceCard({
 
         {/* Margin Info */}
         <div className="pt-4 border-t space-y-2">
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-sm" data-testid="target-margin-row">
             <span className="text-muted-foreground">Целевая маржа:</span>
-            <span className="font-medium">{data.result.target_margin_pct}%</span>
+            <span className="font-medium">
+              {formatPercentage(data.result.target_margin_pct, 2)}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Фактическая маржа:</span>
@@ -146,7 +141,8 @@ export function RecommendedPriceCard({
                       : 'text-red-600'
               }`}
             >
-              {actual_margin_pct.toFixed(2)}% ({formatCurrency(data.result.actual_margin_rub)})
+              {formatPercentage(actual_margin_pct, 2)} (
+              {formatCurrency(data.result.actual_margin_rub)})
             </span>
           </div>
         </div>

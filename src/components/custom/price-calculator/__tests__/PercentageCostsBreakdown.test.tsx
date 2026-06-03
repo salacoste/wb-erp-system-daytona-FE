@@ -25,35 +25,35 @@ describe('PercentageCostsBreakdown', () => {
       const costs = createMockCosts(15)
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/Комиссия WB \(15%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Комиссия WB \(15,0\s+%\)/)).toBeInTheDocument()
     })
 
     it('should display 29.5% commission correctly (typical FBO for some categories)', () => {
       const costs = createMockCosts(29.5)
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/Комиссия WB \(29\.5%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Комиссия WB \(29,5\s+%\)/)).toBeInTheDocument()
     })
 
     it('should display 33% commission correctly (typical FBS for some categories)', () => {
       const costs = createMockCosts(33)
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/Комиссия WB \(33%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Комиссия WB \(33,0\s+%\)/)).toBeInTheDocument()
     })
 
     it('should display acquiring percentage correctly', () => {
       const costs = createMockCosts(15)
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/Эквайринг \(1\.8%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Эквайринг \(1,8\s+%\)/)).toBeInTheDocument()
     })
 
     it('should display tax percentage correctly for income tax', () => {
       const costs = createMockCosts(15)
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/Налог с выручки \(6%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Налог с выручки \(6,0\s+%\)/)).toBeInTheDocument()
     })
   })
 
@@ -70,7 +70,7 @@ describe('PercentageCostsBreakdown', () => {
       render(<PercentageCostsBreakdown costs={costs} />)
 
       // 15 + 1.8 + 6 = 22.8%
-      expect(screen.getByText(/Итого процентные \(22\.8%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Итого процентные \(22,8\s+%\)/)).toBeInTheDocument()
     })
   })
 
@@ -100,7 +100,7 @@ describe('PercentageCostsBreakdown', () => {
       }
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/НДС \(5%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/НДС \(5,0\s+%\)/)).toBeInTheDocument()
     })
 
     it('should not show VAT line when vat is null', () => {
@@ -126,7 +126,7 @@ describe('PercentageCostsBreakdown', () => {
       }
       render(<PercentageCostsBreakdown costs={costs} />)
 
-      expect(screen.getByText(/НДС \(20%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/НДС \(20,0\s+%\)/)).toBeInTheDocument()
     })
 
     it('should include VAT in total calculation', () => {
@@ -140,7 +140,7 @@ describe('PercentageCostsBreakdown', () => {
       render(<PercentageCostsBreakdown costs={costs} />)
 
       // Total should be 42.3%
-      expect(screen.getByText(/Итого процентные \(42\.3%\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Итого процентные \(42,3\s+%\)/)).toBeInTheDocument()
     })
   })
 })

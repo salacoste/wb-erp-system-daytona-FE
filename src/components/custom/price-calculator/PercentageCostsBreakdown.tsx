@@ -1,6 +1,6 @@
 'use client'
 
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { TwoLevelPercentageCosts } from '@/types/price-calculator'
 
 /**
@@ -46,42 +46,42 @@ export function PercentageCostsBreakdown({ costs }: PercentageCostsBreakdownProp
       <div className="space-y-1 text-sm text-muted-foreground">
         {/* WB Commission */}
         <div className="flex justify-between">
-          <span>├─ Комиссия WB ({costs.commissionWb.pct}%)</span>
+          <span>├─ Комиссия WB ({formatPercentage(costs.commissionWb.pct, 1)})</span>
           <span className="w-24 text-right">{formatCurrency(costs.commissionWb.rub)}</span>
         </div>
 
         {/* Acquiring */}
         <div className="flex justify-between">
           <span>
-            {lastItem === 'acquiring' ? '└─' : '├─'} Эквайринг ({costs.acquiring.pct}%)
+            {lastItem === 'acquiring' ? '└─' : '├─'} Эквайринг (
+            {formatPercentage(costs.acquiring.pct, 1)})
           </span>
           <span className="w-24 text-right">{formatCurrency(costs.acquiring.rub)}</span>
         </div>
 
         {/* Income Tax (if applicable) */}
-        {hasTaxIncome && (
+        {costs.taxIncome && (
           <div className="flex justify-between">
             <span>
-              {lastItem === 'taxIncome' ? '└─' : '├─'} Налог с выручки ({costs.taxIncome?.pct}%)
+              {lastItem === 'taxIncome' ? '└─' : '├─'} Налог с выручки (
+              {formatPercentage(costs.taxIncome.pct, 1)})
             </span>
-            {/* eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: taxIncome.rub null = no tax applicable; renders 0₽ in breakdown row */}
-            <span className="w-24 text-right">{formatCurrency(costs.taxIncome?.rub ?? 0)}</span>
+            <span className="w-24 text-right">{formatCurrency(costs.taxIncome.rub)}</span>
           </div>
         )}
 
         {/* VAT (if applicable) */}
-        {hasVat && (
+        {costs.vat && (
           <div className="flex justify-between">
-            <span>└─ НДС ({costs.vat?.pct}%)</span>
-            {/* eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: vat.rub null = VAT not applicable; renders 0₽ in breakdown row */}
-            <span className="w-24 text-right">{formatCurrency(costs.vat?.rub ?? 0)}</span>
+            <span>└─ НДС ({formatPercentage(costs.vat.pct, 1)})</span>
+            <span className="w-24 text-right">{formatCurrency(costs.vat.rub)}</span>
           </div>
         )}
       </div>
 
       {/* Subtotal */}
       <div className="flex justify-between pt-1 border-t border-dashed text-sm font-medium">
-        <span>Итого процентные ({costs.total.pct.toFixed(1)}%)</span>
+        <span>Итого процентные ({formatPercentage(costs.total.pct, 1)})</span>
         <span className="w-24 text-right">{formatCurrency(costs.total.rub)}</span>
       </div>
     </div>

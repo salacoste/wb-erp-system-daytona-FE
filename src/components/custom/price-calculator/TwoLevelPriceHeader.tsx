@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
 import { isTightMargin } from '@/lib/two-level-pricing'
 import type { PriceGap } from '@/types/price-calculator'
 import { AlertTriangle, TrendingUp } from 'lucide-react'
@@ -148,7 +148,7 @@ export function TwoLevelPriceHeader({
               <GapIcon className="h-4 w-4" aria-hidden="true" />
               <span>Запас прибыльности:</span>
               <span className="font-medium ml-auto">
-                +{formatCurrency(priceGap.rub)} (+{priceGap.pct.toFixed(1)}%)
+                +{formatCurrency(priceGap.rub)} (+{formatPercentage(priceGap.pct, 1)})
               </span>
             </div>
             {showTightMarginWarning && (
