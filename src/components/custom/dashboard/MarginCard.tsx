@@ -10,7 +10,7 @@
 import { Percent, Info, AlertTriangle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatPercentage } from '@/lib/utils'
+import { cn, formatPercentage, formatPercentagePoints } from '@/lib/utils'
 import { HighlightedMetricSkeleton, MetricCardError } from './MetricCardStates'
 
 export interface MarginCardProps {
@@ -50,13 +50,6 @@ function getMarginBg(pct: number): string {
   if (pct >= 15) return 'bg-gradient-to-br from-yellow-50 to-white'
   if (pct >= 0) return 'bg-gradient-to-br from-orange-50 to-white'
   return 'bg-gradient-to-br from-red-50 to-white'
-}
-
-function formatPp(diff: number): string {
-  const sign = diff > 0 ? '+' : ''
-  // Russian locale: comma decimal ("+1,5 п.п.", not "+1.5 п.п."). Not %-suffixed, so the
-  // dot-locale-percent ratchet doesn't catch it — guarded by the card's own test instead.
-  return `${sign}${diff.toFixed(1).replace('.', ',')} п.п.`
 }
 
 export function MarginCard({
@@ -148,7 +141,7 @@ export function MarginCard({
                 diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
               )}
             >
-              {formatPp(diff)}
+              {formatPercentagePoints(diff)}
             </span>
             <span className="ml-1 text-xs text-muted-foreground">
               vs {formatPercentage(previousMarginPct!, 1)}

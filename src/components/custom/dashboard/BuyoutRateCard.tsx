@@ -27,7 +27,7 @@ import { ShoppingBag } from 'lucide-react'
 import { BaseMetricCard } from '@/components/custom/dashboard/BaseMetricCard'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentagePoints } from '@/lib/utils'
 
 /**
  * Epic 69, Story 69.7: Updated props interface.
@@ -55,16 +55,6 @@ export interface BuyoutRateCardProps {
 function getValueColor(rate: number): string {
   if (rate >= 80) return 'text-green-600'
   return 'text-red-600'
-}
-
-/** Format percentage point difference with sign and Russian locale */
-function formatPp(diff: number): string {
-  const sign = diff > 0 ? '+' : ''
-  const formatted = new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(Math.abs(diff))
-  return `${sign}${diff < 0 ? '-' : ''}${formatted} п.п.`
 }
 
 /** Color class for the pp comparison */
@@ -130,7 +120,9 @@ export function BuyoutRateCard({
   // Build the pp subtitle element for the BaseMetricCard slot
   const ppSubtitle =
     ppDiff != null ? (
-      <span className={cn('text-sm font-medium', getPpColor(ppDiff))}>{formatPp(ppDiff)}</span>
+      <span className={cn('text-sm font-medium', getPpColor(ppDiff))}>
+        {formatPercentagePoints(ppDiff)}
+      </span>
     ) : null
 
   // Epic 69, AC-69.7.2: Tooltip with buyout details

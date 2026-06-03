@@ -97,6 +97,20 @@ export function formatRoas(value: number): string {
 }
 
 /**
+ * Formats a percentage-points (п.п.) delta with an explicit sign for gains.
+ * Used for margin/gross-margin period-over-period comparisons (a difference of two
+ * percentages is in п.п., NOT %). Russian locale: comma decimal ("+1,5 п.п.", not "+1.5 п.п.").
+ * Not %-suffixed, so the dot-locale-percent ratchet doesn't catch it — guarded by unit test.
+ * Extracted from MarginCard/GrossMarginCard (were byte-identical duplicates) to remove drift risk.
+ * @param diff - Difference in percentage points
+ * @returns Formatted string (e.g., "+1,5 п.п.", "-2,0 п.п.", "0,0 п.п.")
+ */
+export function formatPercentagePoints(diff: number): string {
+  const sign = diff > 0 ? '+' : ''
+  return `${sign}${diff.toFixed(1).replace('.', ',')} п.п.`
+}
+
+/**
  * Cookie management utilities for authentication
  * Middleware runs on server and cannot access localStorage, so we use cookies
  */

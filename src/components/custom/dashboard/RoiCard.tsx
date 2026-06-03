@@ -16,7 +16,7 @@ import { TrendingUp, Info } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentagePoints } from '@/lib/utils'
 import { ROUTES } from '@/lib/routes'
 
 export interface RoiCardProps {
@@ -39,13 +39,6 @@ function getRoiColor(roi: number): string {
 function formatRoi(value: number): string {
   const formatted = value.toFixed(1).replace('.', ',')
   return `${formatted}%`
-}
-
-/** Format percentage-point diff with sign: "+3,2 п.п." or "-1,5 п.п." */
-function formatPp(diff: number): string {
-  const sign = diff > 0 ? '+' : ''
-  const formatted = diff.toFixed(1).replace('.', ',')
-  return `${sign}${formatted} п.п.`
 }
 
 /** Calculate ROI; returns null if inputs are invalid */
@@ -140,7 +133,7 @@ export function RoiCard({
                 diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
               )}
             >
-              {formatPp(diff)}
+              {formatPercentagePoints(diff)}
             </span>
           </div>
         )}

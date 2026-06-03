@@ -12,6 +12,7 @@ import {
   formatPercentage,
   formatPercentageInt,
   formatRoas,
+  formatPercentagePoints,
   formatDate,
   formatIsoWeek,
 } from './utils'
@@ -195,6 +196,33 @@ describe('formatRoas', () => {
 
   it('preserves the sign for a negative ROAS', () => {
     expect(formatRoas(-1.5)).toBe('-1,5x')
+  })
+})
+
+describe('formatPercentagePoints', () => {
+  it('prepends an explicit "+" for a positive (gain) delta', () => {
+    expect(formatPercentagePoints(1.5)).toBe('+1,5 п.п.')
+    expect(formatPercentagePoints(12.3)).toBe('+12,3 п.п.')
+  })
+
+  it('uses the intrinsic "-" for a negative (loss) delta, with no extra "+"', () => {
+    expect(formatPercentagePoints(-2)).toBe('-2,0 п.п.')
+    expect(formatPercentagePoints(-0.4)).toBe('-0,4 п.п.')
+  })
+
+  it('renders an exact-zero delta as "0,0 п.п." (no sign)', () => {
+    expect(formatPercentagePoints(0)).toBe('0,0 п.п.')
+  })
+
+  it('uses a Russian comma decimal in the numeric portion (not a dot like "3.7")', () => {
+    // NB: the " п.п." suffix itself contains dots, so assert on the number, not the whole string.
+    expect(formatPercentagePoints(3.7)).toContain('3,7')
+    expect(formatPercentagePoints(3.7)).not.toContain('3.7')
+  })
+
+  it('rounds to one decimal place (toFixed(1) semantics)', () => {
+    expect(formatPercentagePoints(1.04)).toBe('+1,0 п.п.')
+    expect(formatPercentagePoints(1.05)).toBe('+1,1 п.п.')
   })
 })
 
