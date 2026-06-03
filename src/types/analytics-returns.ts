@@ -39,7 +39,10 @@ export interface BySkuReturnItem {
   /** Number of sales for this SKU (Story 71.7 — used for returnRate calculation) */
   salesCount?: number
   totalReturns: number
-  returnRate: number
+  /** Return rate % (0-100). null when sales data is unavailable to compute it (e.g. the raw-record
+   *  aggregation path has no salesCount) — rendered "—", NOT 0 (anti-pattern #8; 0 would colour
+   *  green/healthy and hide a high-return SKU). Matches fbs-enhanced's returnRate: number | null. */
+  returnRate: number | null
   cancelBeforeShipment: number
   refusalAtPvz: number
   returnAfterReceipt: number

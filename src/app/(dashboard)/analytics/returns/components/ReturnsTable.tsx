@@ -165,7 +165,11 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
   )
 }
 
-function ReturnRateCell({ rate }: { rate: number }) {
+export function ReturnRateCell({ rate }: { rate: number | null }) {
+  // null = rate unknown (no sales data to compute it). Render "—" neutral, NOT 0/green —
+  // a fabricated 0 would falsely signal a healthy SKU (iter-127, anti-pattern #8).
+  if (rate == null) return <span className="font-medium text-muted-foreground">—</span>
+
   let color = 'text-green-600'
   if (rate > 50) color = 'text-red-600'
   else if (rate >= 20) color = 'text-yellow-600'

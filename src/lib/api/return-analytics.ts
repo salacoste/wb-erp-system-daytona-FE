@@ -106,8 +106,8 @@ export async function getReturnsBySku(params: {
   return raw as BySkuReturnResponse
 }
 
-/** Aggregate raw classification records into per-SKU summary */
-function aggregateRawRecords(
+/** Aggregate raw classification records into per-SKU summary. Exported for unit testing (iter-127). */
+export function aggregateRawRecords(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   records: Array<{ nmId: number; returnCategory: string; [k: string]: any }>
 ) {
@@ -124,7 +124,9 @@ function aggregateRawRecords(
     productName: '',
     brand: '',
     totalReturns: counts.cancel + counts.refusal + counts.receipt,
-    returnRate: 0,
+    // null, NOT 0: raw return records carry no salesCount, so the rate is UNKNOWN here. 0 would
+    // render green/"healthy" and hide a high-return SKU (iter-127, anti-pattern #8). Rendered "—".
+    returnRate: null,
     cancelBeforeShipment: counts.cancel,
     refusalAtPvz: counts.refusal,
     returnAfterReceipt: counts.receipt,
