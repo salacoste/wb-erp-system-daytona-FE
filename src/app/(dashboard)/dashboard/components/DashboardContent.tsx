@@ -115,8 +115,13 @@ export function DashboardContent(): React.ReactElement {
     void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all })
   }
   const reportStatus = processingStatus?.reportLoading?.status
+  // A terminal 'no_data' state still carries reportLoading.status: 'pending', but
+  // polling has STOPPED (empty-cabinet / no historical batches). Guard against it so
+  // the processing alert doesn't get stuck visible forever for a genuinely-empty cabinet.
   const isProcessing =
-    !hasFinancialData && (reportStatus === 'in_progress' || reportStatus === 'pending')
+    processingStatus?.status !== 'no_data' &&
+    !hasFinancialData &&
+    (reportStatus === 'in_progress' || reportStatus === 'pending')
   const isFailed = reportStatus === 'failed'
   const failedBatchCount = processingStatus?.failedBatchCount ?? 0
 

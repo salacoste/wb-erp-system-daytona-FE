@@ -51,13 +51,13 @@ describe('ProcessingStatus', () => {
         data: undefined,
         isLoading: true,
         error: null,
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
       expect(screen.getByText(/проверка статуса обработки/i)).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -79,18 +79,16 @@ describe('ProcessingStatus', () => {
         },
         isLoading: false,
         error: null,
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
       expect(screen.getByText(/парсинг продуктов/i)).toBeInTheDocument()
-      expect(
-        screen.getAllByText(/загрузка финансовых отчетов/i)[0],
-      ).toBeInTheDocument()
+      expect(screen.getAllByText(/загрузка финансовых отчетов/i)[0]).toBeInTheDocument()
       expect(screen.getByText('45%')).toBeInTheDocument()
       expect(screen.getByText('30%')).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -112,23 +110,21 @@ describe('ProcessingStatus', () => {
         },
         isLoading: false,
         error: null,
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
-      expect(
-        screen.getByText(/обработка завершена/i),
-      ).toBeInTheDocument()
+      expect(screen.getByText(/обработка завершена/i)).toBeInTheDocument()
 
       // Wait for redirect (2 seconds delay in component)
       await waitFor(
         () => {
           expect(mockPush).toHaveBeenCalledWith('/dashboard')
         },
-        { timeout: 5000 },
+        { timeout: 5000 }
       )
     },
-    { timeout: 10000 },
+    { timeout: 10000 }
   )
 
   it(
@@ -151,17 +147,15 @@ describe('ProcessingStatus', () => {
         },
         isLoading: false,
         error: null,
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
       expect(screen.getByText(/ошибка обработки/i)).toBeInTheDocument()
       expect(screen.getByText(/processing failed/i)).toBeInTheDocument()
-      expect(
-        screen.getByRole('button', { name: /повторить попытку/i }),
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /повторить попытку/i })).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -171,16 +165,14 @@ describe('ProcessingStatus', () => {
         data: undefined,
         isLoading: false,
         error: new Error('Network error'),
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
       expect(screen.getByText(/ошибка загрузки статуса/i)).toBeInTheDocument()
-      expect(
-        screen.getByRole('button', { name: /обновить страницу/i }),
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /обновить страницу/i })).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -190,13 +182,43 @@ describe('ProcessingStatus', () => {
         data: undefined,
         isLoading: false,
         error: null,
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
       expect(screen.getByText(/статус не найден/i)).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
+  )
+
+  it(
+    'renders no_data CTA and navigates to dashboard on click without auto-redirect',
+    async () => {
+      const { fireEvent } = await import('@testing-library/react')
+      vi.mocked(useProcessingStatus).mockReturnValue({
+        data: {
+          status: 'no_data',
+          productParsing: { progress: 0, status: 'pending' },
+          reportLoading: { progress: 0, status: 'pending' },
+        },
+        isLoading: false,
+        error: null,
+      } as unknown as ReturnType<typeof useProcessingStatus>)
+
+      renderComponent()
+
+      const cta = screen.getByRole('button', { name: /перейти к дашборду/i })
+      expect(cta).toBeInTheDocument()
+      // Neutral copy — must NOT assert "up to date" as fact (Defensive Frontend Principle)
+      expect(screen.getByText(/возможно, данные уже актуальны/i)).toBeInTheDocument()
+
+      // No auto-redirect on mount for no_data
+      expect(mockPush).not.toHaveBeenCalled()
+
+      fireEvent.click(cta)
+      expect(mockPush).toHaveBeenCalledWith('/dashboard')
+    },
+    { timeout: 5000 }
   )
 
   it(
@@ -218,18 +240,17 @@ describe('ProcessingStatus', () => {
         },
         isLoading: false,
         error: null,
-      } as any)
+      } as unknown as ReturnType<typeof useProcessingStatus>)
 
       renderComponent()
 
       expect(
-        screen.getByText(/парсинг исторических данных за 3 месяца выполняется/i),
+        screen.getByText(/парсинг исторических данных за 3 месяца выполняется/i)
       ).toBeInTheDocument()
       expect(
-        screen.getByText(/загрузка финансовых отчетов за 3 месяца ожидает начала/i),
+        screen.getByText(/загрузка финансовых отчетов за 3 месяца ожидает начала/i)
       ).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 })
-

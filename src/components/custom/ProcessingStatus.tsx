@@ -9,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/routes'
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
+import { ProcessingNoData } from './ProcessingNoData'
 
 /**
  * Processing status component for onboarding flow
@@ -54,11 +55,7 @@ export function ProcessingStatus() {
         <AlertDescription>
           Не удалось загрузить статус обработки. Пожалуйста, обновите страницу.
         </AlertDescription>
-        <Button
-          variant="outline"
-          className="mt-4"
-          onClick={() => window.location.reload()}
-        >
+        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
           Обновить страницу
         </Button>
       </Alert>
@@ -75,6 +72,12 @@ export function ProcessingStatus() {
         </AlertDescription>
       </Alert>
     )
+  }
+
+  // Terminal "nothing to import" state — no batches enqueued within the poll cap.
+  // Manual CTA only (no auto-redirect); see ProcessingNoData for copy rationale.
+  if (status.status === 'no_data') {
+    return <ProcessingNoData />
   }
 
   const getStatusIcon = (taskStatus: string) => {
@@ -121,16 +124,10 @@ export function ProcessingStatus() {
               'Произошла ошибка при обработке данных. Пожалуйста, попробуйте позже или обратитесь в поддержку.'}
           </AlertDescription>
           <div className="mt-4 flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => window.location.reload()}
-            >
+            <Button variant="outline" onClick={() => window.location.reload()}>
               Повторить попытку
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push(ROUTES.DASHBOARD)}
-            >
+            <Button variant="outline" onClick={() => router.push(ROUTES.DASHBOARD)}>
               Перейти на главную
             </Button>
           </div>
@@ -141,8 +138,7 @@ export function ProcessingStatus() {
         <CardHeader>
           <CardTitle>Статус обработки данных</CardTitle>
           <CardDescription>
-            Система обрабатывает ваши данные Wildberries. Это может занять
-            несколько минут.
+            Система обрабатывает ваши данные Wildberries. Это может занять несколько минут.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -161,7 +157,7 @@ export function ProcessingStatus() {
             <p className="text-sm text-muted-foreground">
               {getStatusText(
                 status.productParsing.status,
-                'Парсинг исторических данных за 3 месяца',
+                'Парсинг исторических данных за 3 месяца'
               )}
             </p>
           </div>
@@ -181,7 +177,7 @@ export function ProcessingStatus() {
             <p className="text-sm text-muted-foreground">
               {getStatusText(
                 status.reportLoading.status,
-                'Загрузка финансовых отчетов за 3 месяца',
+                'Загрузка финансовых отчетов за 3 месяца'
               )}
             </p>
           </div>
@@ -190,4 +186,3 @@ export function ProcessingStatus() {
     </div>
   )
 }
-

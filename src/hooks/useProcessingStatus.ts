@@ -36,6 +36,41 @@ interface BatchListResponse {
   total: number
 }
 
+// After this many consecutive empty-batch polls (~60s at 3s/poll), stop polling
+// and surface a terminal "no_data" state instead of spinning forever. This covers
+// already-up-to-date cabinets and best-effort enqueues that never fired.
+//
+// The historical import is a BACKEND-ASYNC side-effect of saving the WB token
+// (WbTokenForm only calls updateWbToken + router.push — there is NO synchronous FE
+// enqueue). A slow backend batch-creation (queue backlog / WB API latency) can
+// legitimately exceed 30s, so a longer grace window avoids truncating a slow real
+// import; the recoverable CTA + neutral copy bound the downside if we're wrong.
+// Exported so tests couple to this source of truth rather than hardcoding the cap.
+export const MAX_EMPTY_POLLS = 20
+
+/**
+ * Pure predicate for the query refetchInterval — extracted so the load-bearing
+ * "stop polling on terminal status" ordering can be unit-tested directly.
+ *
+ * MUST check terminal statuses FIRST: a terminal 'no_data' still carries
+ * reportLoading.status: 'pending', which would otherwise re-trigger the
+ * in-progress poll below and spin forever.
+ */
+export function getRefetchInterval(data: ProcessingStatus | undefined): number | false {
+  if (data?.status === 'no_data' || data?.status === 'completed' || data?.status === 'failed') {
+    return false
+  }
+  // Poll every 3 seconds while processing
+  if (data?.status === 'processing') {
+    return 3000
+  }
+  // Also poll if still in progress
+  if (data?.reportLoading?.status === 'in_progress' || data?.reportLoading?.status === 'pending') {
+    return 3000
+  }
+  return false
+}
+
 /**
  * Aggregates batch statuses into processing status
  */
@@ -115,6 +150,7 @@ export function useProcessingStatus() {
   const { cabinetId } = useAuthStore()
   const reconciledIds = useRef(new Set<string>())
   const failedReconcileIds = useRef(new Set<string>())
+  const emptyPollsRef = useRef(0)
 
   return useQuery({
     queryKey: ['processing-status', cabinetId],
@@ -128,12 +164,26 @@ export function useProcessingStatus() {
         const batches = response.batches || []
 
         if (batches.length === 0) {
+          emptyPollsRef.current += 1
+          // After the cap, surface a terminal "no_data" state so the onboarding
+          // /processing page stops polling forever (already-up-to-date cabinet
+          // or a best-effort enqueue that never fired).
+          if (emptyPollsRef.current >= MAX_EMPTY_POLLS) {
+            return {
+              status: 'no_data',
+              productParsing: { progress: 0, status: 'pending' },
+              reportLoading: { progress: 0, status: 'pending' },
+            }
+          }
           return {
             status: 'processing',
             productParsing: { progress: 0, status: 'pending' },
             reportLoading: { progress: 0, status: 'pending' },
           }
         }
+
+        // A batch arrived — reset the empty-poll counter so normal flow resumes.
+        emptyPollsRef.current = 0
 
         const result = aggregateProcessingStatus(batches)
 
@@ -177,22 +227,7 @@ export function useProcessingStatus() {
       }
     },
     enabled: !!cabinetId,
-    refetchInterval: query => {
-      // Poll every 3 seconds while processing
-      const data = query.state.data
-      if (data?.status === 'processing') {
-        return 3000
-      }
-      // Also poll if still in progress
-      if (
-        data?.reportLoading?.status === 'in_progress' ||
-        data?.reportLoading?.status === 'pending'
-      ) {
-        return 3000
-      }
-      // Stop polling when completed or failed
-      return false
-    },
+    refetchInterval: query => getRefetchInterval(query.state.data),
     retry: 1, // Retry once on error
   })
 }

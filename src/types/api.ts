@@ -82,7 +82,7 @@ export interface Task {
  * Aggregated from multiple tasks
  */
 export interface ProcessingStatus {
-  status: 'processing' | 'completed' | 'failed'
+  status: 'processing' | 'completed' | 'failed' | 'no_data'
   productParsing: {
     progress: number // 0-100
     status: string
