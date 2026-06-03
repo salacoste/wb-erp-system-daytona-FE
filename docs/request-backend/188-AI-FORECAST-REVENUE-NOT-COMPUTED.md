@@ -40,3 +40,30 @@ price), or (b) emit `predictedRevenue: null` when it's not computed, so the FE c
 ## Evidence
 - Live: `/v1/ai/forecast` predictions all have `predictedRevenue: 0`, `predictedUnits` > 0.
 - FE: `frontend/src/lib/api/ai/forecast.ts` normalizePrediction (0→null map); `ForecastTable.tsx:76`.
+
+---
+
+## Related sibling — `confidence: 0` placeholder (added 2026-06-03, iter-98)
+
+Same "uncomputed AI metric serialized as a 0 placeholder" class as the revenue issue above.
+
+**Live-verified** `GET /v1/ai/forecast?nmId=321678606&modelType=daily_revenue_forecast`: every
+prediction has `confidence: 0` (EXACTLY 0, all 7 rows) alongside `predictedUnits: null` and a real
+`predictedRevenue`. So a revenue-target model emits `confidence: 0` as a "not computed" placeholder
+(a real confidence is a float like 0.78, never exactly 0 across every row).
+
+**FE impact (today):** `scaleConfidence` (forecast.ts) returns `0` (not null) for `confidence: 0`,
+so the forecast table renders **"0%"** confidence + a red **"Низкая"** (low) band, and ForecastMetrics
+shows **"0% / low"** average — a fabricated low-confidence reading where confidence is actually
+unknown. (Note: the downstream null-guards are partial — the "Диапазон" band defaults `null → 'low'`
+and the avg defaults `→ 0`, so even a null wouldn't fully render "—" without two extra guards.)
+
+**Requested fix (backend):** emit `confidence: null` (not 0) when confidence is genuinely uncomputed
+— mirroring the revenue ask above — so the FE shows "—" (unknown).
+
+**FE-side stopgap (PENDING — deferred):** map `scaleConfidence(0) → null` + complete the two
+downstream guards (ForecastTable band `null → '—'`, ForecastMetrics avg `null → '—'`), mirroring the
+existing `predictedRevenue: 0 → null` convention. NOT YET APPLIED: `forecast.ts` + the forecast
+components had ACTIVE uncommitted Epic-113 WIP at the time of discovery (iter-98); applying the
+stopgap then would have clobbered that work. To be applied by the Epic-113 owner or a follow-up tick
+once the WIP commits.
