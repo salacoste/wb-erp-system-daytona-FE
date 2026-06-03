@@ -96,9 +96,18 @@ export function computeOverlapSummary(items: CrossReferenceItem[]): OverlapSumma
   return { organicOnly, adOnly, both, total: items.length }
 }
 
-/** Format number as Russian currency string */
+/**
+ * Format number as Russian currency string (whole rubles).
+ * Uses Intl currency style so the ₽ is preceded by a NON-breaking space (it must not wrap to
+ * a new line) — the prior template `${...} ₽` used a regular U+0020 space.
+ */
 export function fmtCurrency(n: number): string {
-  return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ₽`
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(n)
 }
 
 /** Format number with Russian locale separators */

@@ -3,6 +3,7 @@ import {
   mergeSearchAndAdData,
   computeOverlapSummary,
   getTopWastedSpend,
+  fmtCurrency,
 } from '../cross-reference-utils'
 import type { SearchOrderItem } from '@/types/search-analytics'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
@@ -181,5 +182,31 @@ describe('getTopWastedSpend', () => {
     expect(top[0].adSpend).toBe(3000)
     expect(top[1].adSpend).toBe(1500)
     expect(top[2].adSpend).toBe(500)
+  })
+})
+
+describe('fmtCurrency', () => {
+  it('formats whole rubles with a NON-breaking space before ₽ (never a regular U+0020)', () => {
+    const s = fmtCurrency(1234567)
+    expect(s).toContain('₽')
+    expect(s).toMatch(/1\s234\s567/) // NBSP thousands separators
+    // regression: the ₽ must NOT be preceded by a regular space (it would wrap to a new line)
+    expect(s).not.toContain(' ₽')
+    // NBSP (U+00A0) or narrow NBSP (U+202F) before ₽, per Intl currency style
+    expect(s).toMatch(/[\u00a0\u202f]₽/)
+    // thousands separators must also be non-breaking (no regular space between digits)
+    expect(s).not.toMatch(/\d \d/)
+  })
+
+  it('renders no decimals (whole rubles)', () => {
+    expect(fmtCurrency(1234.56)).not.toMatch(/[.,]\d/)
+  })
+
+  it('handles zero and negative amounts with a non-breaking space before ₽', () => {
+    expect(fmtCurrency(0)).toMatch(/^0[\u00a0\u202f]₽$/)
+    const neg = fmtCurrency(-500)
+    expect(neg).toContain('₽')
+    expect(neg).toMatch(/[\u00a0\u202f]₽/)
+    expect(neg).not.toContain(' ₽')
   })
 })
