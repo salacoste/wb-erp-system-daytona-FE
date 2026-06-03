@@ -7,15 +7,18 @@
  * @see frontend/docs/stories/epic-36/story-36.5-fe-testing-documentation.md
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 test.describe('Epic 36: Product Card Linking (Склейки)', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to advertising analytics page
     await page.goto('/analytics/advertising')
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle')
+    // Anti-pattern #9: the advertising page background-polls (sync-status badge + TanStack
+    // Query), so networkidle never reliably settles. Wait for the groupBy toggle to render.
+    await expect(page.getByRole('button', { name: /По артикулам/i })).toBeVisible({
+      timeout: 30000,
+    })
   })
 
   /**
@@ -33,14 +36,15 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     // Check default URL param
     await expect(page).toHaveURL(/group_by=sku/)
 
-    // Click "По склейкам"
-    await imtIdButton.click()
-
-    // Wait for API response
-    await page.waitForResponse(response =>
-      response.url().includes('/v1/analytics/advertising') &&
-      response.url().includes('group_by=imtId')
+    // Register the response listener BEFORE clicking — on a warm localhost the response can
+    // arrive before a post-click waitForResponse attaches (action-before-wait race → 30s timeout).
+    const imtResp = page.waitForResponse(
+      response =>
+        response.url().includes('/v1/analytics/advertising') &&
+        response.url().includes('group_by=imtId')
     )
+    await imtIdButton.click()
+    await imtResp
 
     // Check toggle state updated
     await expect(skuButton).toHaveAttribute('aria-pressed', 'false')
@@ -49,13 +53,13 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     // Check URL updated
     await expect(page).toHaveURL(/group_by=imtId/)
 
-    // Switch back to SKU
+    // Switch back to SKU. Do NOT wait for a network response here: sku data was already
+    // fetched on initial load and is fresh in the TanStack cache, so toggling back is a cache
+    // hit with NO new request (waiting for one would hang). Assert URL + toggle state instead.
     await skuButton.click()
-    await page.waitForResponse(response =>
-      response.url().includes('group_by=sku')
-    )
-
     await expect(page).toHaveURL(/group_by=sku/)
+    await expect(skuButton).toHaveAttribute('aria-pressed', 'true')
+    await expect(imtIdButton).toHaveAttribute('aria-pressed', 'false')
   })
 
   /**
@@ -63,12 +67,14 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
    * AC: Table shows merged groups, badge appears, tooltip works
    */
   test('should display merged groups with badge and tooltip', async ({ page }) => {
-    // Switch to merged groups view
+    // Switch to merged groups view (wait for the imtId fetch, then the table to render)
     const imtIdButton = page.getByRole('button', { name: /По склейкам/i })
+    const imtResp = page.waitForResponse(
+      r => r.url().includes('/v1/analytics/advertising') && r.url().includes('group_by=imtId')
+    )
     await imtIdButton.click()
-
-    // Wait for data to load
-    await page.waitForSelector('table tbody tr', { timeout: 10000 })
+    await imtResp
+    await expect(page.locator('table')).toBeVisible()
 
     // Look for merged group badge (if data has merged groups)
     const badges = page.locator('text=/🔗 Склейка \\(\\d+\\)/')
@@ -87,11 +93,9 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
       await expect(page.getByText(/Товары в группе/i)).toBeVisible()
       await expect(page.getByText(/Рекламные затраты основной карточки/i)).toBeVisible()
     } else {
-      // No merged groups in current data - verify individual products display
-      const tableRows = page.locator('table tbody tr')
-      await expect(tableRows.first()).toBeVisible()
-
-      // Should NOT have any badges
+      // No merged groups for this cabinet — the склейки table renders its header with an empty
+      // body (valid: nothing to merge). Verify the table is present and shows no склейка badges.
+      await expect(page.locator('table')).toBeVisible()
       await expect(page.locator('text=/🔗 Склейка/')).toHaveCount(0)
     }
   })
@@ -101,19 +105,14 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
    * AC: Page refresh preserves groupBy state
    */
   test('should persist groupBy state in URL across page refresh', async ({ page }) => {
-    // Switch to merged groups
+    // Switch to merged groups (wait for the URL to reflect the new state, not networkidle #9)
     await page.getByRole('button', { name: /По склейкам/i }).click()
-    await page.waitForLoadState('networkidle')
+    await expect(page).toHaveURL(/group_by=imtId/)
 
-    // Verify URL contains group_by=imtId
-    const url = page.url()
-    expect(url).toContain('group_by=imtId')
-
-    // Refresh page
+    // Refresh page — the toggle re-renders from the URL param (group_by=imtId)
     await page.reload()
-    await page.waitForLoadState('networkidle')
 
-    // Check state persisted
+    // Check state persisted after reload
     await expect(page).toHaveURL(/group_by=imtId/)
     const imtIdButton = page.getByRole('button', { name: /По склейкам/i })
     await expect(imtIdButton).toHaveAttribute('aria-pressed', 'true')
@@ -127,9 +126,12 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     // Test in SKU mode (default)
     await testEpic33Features(page)
 
-    // Switch to merged groups mode
+    // Switch to merged groups mode (wait for the imtId refetch, not networkidle #9)
+    const imtResp = page.waitForResponse(
+      r => r.url().includes('/v1/analytics/advertising') && r.url().includes('group_by=imtId')
+    )
     await page.getByRole('button', { name: /По склейкам/i }).click()
-    await page.waitForLoadState('networkidle')
+    await imtResp
 
     // Test Epic 33 features still work
     await testEpic33Features(page)
@@ -143,9 +145,9 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     // Set mobile viewport (iPhone 12)
     await page.setViewportSize({ width: 390, height: 844 })
 
-    // Reload to apply responsive styles
+    // Reload to apply responsive styles (the toggle-visible assertions below gate readiness;
+    // no networkidle #9 needed)
     await page.reload()
-    await page.waitForLoadState('networkidle')
 
     // Toggle should be visible
     const skuButton = page.getByRole('button', { name: /По артикулам/i })
@@ -158,9 +160,10 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     const table = page.locator('table')
     await expect(table).toBeVisible()
 
-    // Toggle should work on mobile
-    await imtIdButton.tap()
-    await page.waitForLoadState('networkidle')
+    // Toggle should work on mobile. Use click (not tap — the chromium project doesn't enable
+    // hasTouch); it exercises the same handler at the mobile viewport. toHaveURL auto-waits for
+    // the router.replace that syncs group_by.
+    await imtIdButton.click()
     await expect(page).toHaveURL(/group_by=imtId/)
   })
 })
@@ -168,21 +171,25 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
 /**
  * Helper: Test Epic 33 features (filters, sorting, pagination)
  */
-async function testEpic33Features(page: any) {
-  // Check filters panel exists
-  await expect(page.getByText(/Период/i)).toBeVisible()
+async function testEpic33Features(page: Page) {
+  // Check filters panel exists. There is no literal "Период" label — the date range is two
+  // textboxes ("Дата начала периода" / "Дата окончания периода").
+  await expect(page.getByRole('textbox', { name: /Дата начала периода/i })).toBeVisible()
 
   // Check table exists
   await expect(page.locator('table')).toBeVisible()
 
-  // Check summary cards exist
-  await expect(page.getByText(/Рекламные затраты/i)).toBeVisible()
-  await expect(page.getByText(/ROAS/i)).toBeVisible()
+  // Check summary cards exist. Actual card labels are "Всего продаж" / "Общий ROAS" / "Общий
+  // ROI" / "Расходы" (NOT "Рекламные затраты"). These strings also recur as column headers, so
+  // scope to the first match to avoid a strict-mode violation.
+  await expect(page.getByText(/Всего продаж/i).first()).toBeVisible()
+  await expect(page.getByText(/Общий ROAS/i).first()).toBeVisible()
 
-  // Check sorting works (click on Spend column header)
+  // Check sorting works (click the Spend column header). Don't wait for a network response —
+  // a repeat sort can be served from the TanStack cache; just assert the table stays rendered.
   const spendHeader = page.getByRole('columnheader', { name: /Spend|Затраты/i })
-  if (await spendHeader.count() > 0) {
-    await spendHeader.click()
-    await page.waitForLoadState('networkidle')
+  if ((await spendHeader.count()) > 0) {
+    await spendHeader.first().click()
+    await expect(page.locator('table')).toBeVisible()
   }
 }
