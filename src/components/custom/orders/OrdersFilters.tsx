@@ -57,21 +57,21 @@ const SUPPLIER_STATUS_OPTIONS: Array<{ value: SupplierStatus; label: string }> =
 ]
 
 /**
- * WB status options for dropdown — completed to cover the full WbStatus union
- * (Validation F-11). ready_for_pickup (~11% live) + declined_by_client (~2%) +
- * canceled_by_client (~13%) + defect were previously un-filterable. The F-11
- * additions' labels mirror WB_STATUS_CONFIG; the pre-existing short labels
- * (e.g. "Ожидает") are kept for backward compatibility.
+ * WB status filter options — restricted to the FOUR values the backend `wb_status` query
+ * validator accepts. The full WbStatus union has 8 members (rendered as row badges via
+ * WB_STATUS_CONFIG), but `GET /v1/orders?wb_status=<x>` returns HTTP 400 for the other 4
+ * (ready_for_pickup / canceled_by_client / declined_by_client / defect) — selecting them
+ * blanked the whole table. The earlier F-11 change added them as filter options before
+ * confirming the server accepted them.
+ *
+ * PENDING BACKEND: #200 — once the backend widens the `wb_status` filter enum to match the
+ * response enum, restore the other 4 options here (they're still valid WbStatus values).
  */
-const WB_STATUS_OPTIONS: Array<{ value: WbStatus; label: string }> = [
+export const WB_STATUS_OPTIONS: Array<{ value: WbStatus; label: string }> = [
   { value: 'waiting', label: 'Ожидает' },
   { value: 'sorted', label: 'Отсортирован' },
-  { value: 'ready_for_pickup', label: 'Готов к выдаче' },
   { value: 'sold', label: 'Продан' },
   { value: 'canceled', label: 'Отменён' },
-  { value: 'canceled_by_client', label: 'Отменён клиентом' },
-  { value: 'declined_by_client', label: 'Отказ при получении' },
-  { value: 'defect', label: 'Брак' },
 ]
 
 /**

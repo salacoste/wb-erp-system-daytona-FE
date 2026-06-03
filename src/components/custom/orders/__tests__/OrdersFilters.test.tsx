@@ -17,6 +17,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { WB_STATUS_OPTIONS } from '../OrdersFilters'
 
 // ============================================================================
 // TDD: Component will be created in implementation
@@ -175,6 +176,29 @@ describe('OrdersFilters', () => {
       expect(screen).toBeDefined()
       expect(waitFor).toBeDefined()
       expect(userEvent).toBeDefined()
+    })
+  })
+
+  // iter-82 / #200: the wb_status filter is restricted to the 4 backend-accepted values.
+  // The other 4 WbStatus members (ready_for_pickup/canceled_by_client/declined_by_client/defect)
+  // 400 the list endpoint and blanked the table, so they are excluded from the filter until the
+  // backend widens the query enum.
+  describe('WB status filter options (backend-accepted enum only — #200)', () => {
+    it('offers ONLY the 4 backend-accepted wb_status values', () => {
+      const values = WB_STATUS_OPTIONS.map(o => o.value)
+      expect(values).toEqual(['waiting', 'sorted', 'sold', 'canceled'])
+    })
+
+    it('excludes the backend-rejected statuses that 400 the list endpoint', () => {
+      const values = WB_STATUS_OPTIONS.map(o => o.value)
+      for (const rejected of [
+        'ready_for_pickup',
+        'canceled_by_client',
+        'declined_by_client',
+        'defect',
+      ]) {
+        expect(values).not.toContain(rejected)
+      }
     })
   })
 })

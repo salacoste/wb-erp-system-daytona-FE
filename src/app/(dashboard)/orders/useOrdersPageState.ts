@@ -13,6 +13,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { format, subDays } from 'date-fns'
 import type { SupplierStatus, WbStatus, OrderFbsItem } from '@/types/orders'
 import type { SortField, SortOrder } from '@/components/custom/orders'
+import { WB_STATUS_OPTIONS } from '@/components/custom/orders/OrdersFilters'
 
 export const PAGE_SIZE = 25
 
@@ -35,8 +36,12 @@ export function useOrdersPageState() {
   const [supplierStatus, setSupplierStatus] = useState<SupplierStatus | null>(
     (searchParams.get('supplier_status') as SupplierStatus) || null
   )
+  // #200: hydrate wb_status from the URL only if it's a backend-accepted filter value. An
+  // unsupported deep-linked status (e.g. canceled_by_client) would 400 the list endpoint and
+  // blank the table — the same defect the dropdown restriction guards against. Drop it to null.
+  const urlWbStatus = searchParams.get('wb_status')
   const [wbStatus, setWbStatus] = useState<WbStatus | null>(
-    (searchParams.get('wb_status') as WbStatus) || null
+    WB_STATUS_OPTIONS.some(o => o.value === urlWbStatus) ? (urlWbStatus as WbStatus) : null
   )
   const [searchInput, setSearchInput] = useState(searchParams.get('nm_id') || '')
   const [search, setSearch] = useState(searchParams.get('nm_id') || '')
