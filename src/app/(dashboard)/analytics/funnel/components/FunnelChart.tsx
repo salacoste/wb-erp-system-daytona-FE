@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
+import { formatPercentage } from '@/lib/utils'
 import type { FunnelDayItem } from '@/types/analytics-funnel'
 
 interface FunnelChartProps {
@@ -79,8 +80,9 @@ export function FunnelChart({ from, to }: FunnelChartProps) {
                   <Bar value={day.ordersCount} max={maxViews} color="bg-orange-400" />
                   <Bar value={day.buyoutCount} max={maxViews} color="bg-green-400" />
                 </div>
-                <span className="w-12 text-right text-muted-foreground">
-                  {day.totalConversion.toFixed(1)}%
+                <span className="w-14 text-right text-muted-foreground">
+                  {/* iter-92: Russian locale — formatPercentage → "12,1 %" (was .toFixed(1)% → "12.1%") */}
+                  {formatPercentage(day.totalConversion)}
                 </span>
               </div>
             ))}
