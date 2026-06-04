@@ -18,7 +18,7 @@ test.describe('Unit Economics Analytics', () => {
   test.describe('Story 5.4: Happy Path Tests', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.unitEconomics)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
     })
 
     test('AC-6: displays Unit Economics page with correct heading', async ({ page }) => {
@@ -41,11 +41,11 @@ test.describe('Unit Economics Analytics', () => {
     test('AC-7: has week selector', async ({ page }) => {
       // Week selector component
       const weekSelector = page.locator('select, button[role="combobox"], [class*="select"]')
-      const hasSelector = await weekSelector.count() > 0
+      const hasSelector = (await weekSelector.count()) > 0
 
       // Or week text display
       const weekText = page.locator('text=/W\\d{1,2}|2025-W/')
-      const hasWeekText = await weekText.count() > 0
+      const hasWeekText = (await weekText.count()) > 0
 
       expect(hasSelector || hasWeekText).toBeTruthy()
     })
@@ -78,7 +78,7 @@ test.describe('Unit Economics Analytics', () => {
 
       // Table should be visible
       const table = page.locator('table')
-      const hasTable = await table.count() > 0
+      const hasTable = (await table.count()) > 0
 
       if (hasTable) {
         // Table headers should exist
@@ -89,7 +89,7 @@ test.describe('Unit Economics Analytics', () => {
         // At least some expected columns
         const expectedColumns = ['Артикул', 'Название', 'Выручка', 'Маржа', 'COGS']
         for (const col of expectedColumns.slice(0, 2)) {
-          const hasCol = await page.locator(`th:has-text("${col}")`).count() > 0
+          const hasCol = (await page.locator(`th:has-text("${col}")`).count()) > 0
           // At least one column should match
           if (hasCol) {
             expect(hasCol).toBeTruthy()
@@ -126,12 +126,14 @@ test.describe('Unit Economics Analytics', () => {
       await page.waitForTimeout(2000)
 
       // Waterfall chart container
-      const chartSection = page.locator('[class*="recharts"], svg, [class*="waterfall"], [class*="chart"]')
-      const hasChart = await chartSection.count() > 0
+      const chartSection = page.locator(
+        '[class*="recharts"], svg, [class*="waterfall"], [class*="chart"]'
+      )
+      const hasChart = (await chartSection.count()) > 0
 
       // Or collapsible chart section
       const chartHeader = page.locator('text=/водопад|waterfall|cost breakdown/i')
-      const hasChartHeader = await chartHeader.count() > 0
+      const hasChartHeader = (await chartHeader.count()) > 0
 
       expect(hasChart || hasChartHeader || true).toBeTruthy()
     })
@@ -141,11 +143,11 @@ test.describe('Unit Economics Analytics', () => {
 
       // Profitability badges
       const badges = page.locator('[class*="badge"]')
-      const hasBadges = await badges.count() > 0
+      const hasBadges = (await badges.count()) > 0
 
       // Or status text
       const statusText = page.locator('text=/отлично|хорошо|warning|critical|loss|excellent|good/i')
-      const hasStatusText = await statusText.count() > 0
+      const hasStatusText = (await statusText.count()) > 0
 
       expect(hasBadges || hasStatusText || true).toBeTruthy()
     })
@@ -156,14 +158,16 @@ test.describe('Unit Economics Analytics', () => {
         has: page.locator('svg'),
       })
 
-      const hasRefresh = await refreshBtn.count() > 0
+      const hasRefresh = (await refreshBtn.count()) > 0
       expect(hasRefresh).toBeTruthy()
     })
 
     test('has export button', async ({ page }) => {
       // Export/download button
-      const exportBtn = page.locator('button:has-text("Экспорт"), button:has-text("CSV"), button:has-text("Export")')
-      const hasExport = await exportBtn.count() > 0
+      const exportBtn = page.locator(
+        'button:has-text("Экспорт"), button:has-text("CSV"), button:has-text("Export")'
+      )
+      const hasExport = (await exportBtn.count()) > 0
 
       // Export functionality exists
       expect(hasExport || true).toBeTruthy()
@@ -173,7 +177,7 @@ test.describe('Unit Economics Analytics', () => {
   test.describe('Story 5.4: Table Interactions', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.unitEconomics)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
       await page.waitForTimeout(2000)
     })
 
@@ -193,12 +197,14 @@ test.describe('Unit Economics Analytics', () => {
     test('pagination controls work when visible', async ({ page }) => {
       // Pagination may only appear with many items
       const pagination = page.locator('[class*="pagination"], button:has-text("/")')
-      const hasPagination = await pagination.count() > 0
+      const hasPagination = (await pagination.count()) > 0
 
       if (hasPagination) {
         // Next page button
-        const nextBtn = page.locator('button').filter({ has: page.locator('svg[class*="chevron-right"]') })
-        if (await nextBtn.isVisible() && await nextBtn.isEnabled()) {
+        const nextBtn = page
+          .locator('button')
+          .filter({ has: page.locator('svg[class*="chevron-right"]') })
+        if ((await nextBtn.isVisible()) && (await nextBtn.isEnabled())) {
           await nextBtn.click()
           await page.waitForTimeout(500)
           await expect(page.locator('body')).toBeVisible()
@@ -212,7 +218,7 @@ test.describe('Unit Economics Analytics', () => {
 
       if (await tableContainer.isVisible()) {
         // Scroll down
-        await tableContainer.evaluate((el) => {
+        await tableContainer.evaluate(el => {
           el.scrollTop = 200
         })
         await page.waitForTimeout(300)
@@ -227,21 +233,21 @@ test.describe('Unit Economics Analytics', () => {
   test.describe('Story 5.4: Loading & Error States', () => {
     test('shows loading state while fetching data', async ({ page }) => {
       // Intercept API to delay response
-      await page.route('**/unit-economics**', async (route) => {
-        await new Promise((r) => setTimeout(r, 1000))
+      await page.route('**/unit-economics**', async route => {
+        await new Promise(r => setTimeout(r, 1000))
         await route.continue()
       })
 
       await page.goto(ROUTES.analytics.unitEconomics)
 
       // Page loads and shows content
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
       await expect(page.locator('body')).toBeVisible()
     })
 
     test('AC-3: handles API error gracefully', async ({ page }) => {
       // Mock 500 error
-      await page.route('**/unit-economics**', (route) => {
+      await page.route('**/unit-economics**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: { code: 'INTERNAL', message: 'Server error' } }),
@@ -257,13 +263,18 @@ test.describe('Unit Economics Analytics', () => {
 
     test('AC-3: shows empty state for no data', async ({ page }) => {
       // Mock empty response
-      await page.route('**/unit-economics**', (route) => {
+      await page.route('**/unit-economics**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
             data: {
-              meta: { week: '2025-W01', cabinet_id: 'test', view_by: 'sku', generated_at: new Date().toISOString() },
+              meta: {
+                week: '2025-W01',
+                cabinet_id: 'test',
+                view_by: 'sku',
+                generated_at: new Date().toISOString(),
+              },
               summary: {
                 total_revenue: 0,
                 total_net_profit: 0,
@@ -291,7 +302,7 @@ test.describe('Unit Economics Analytics', () => {
     test('retry button works after error', async ({ page }) => {
       let callCount = 0
 
-      await page.route('**/unit-economics**', (route) => {
+      await page.route('**/unit-economics**', route => {
         callCount++
         if (callCount === 1) {
           // First call fails
@@ -323,14 +334,14 @@ test.describe('Unit Economics Analytics', () => {
   test.describe('Story 5.4: Navigation & Integration', () => {
     test('can navigate to Unit Economics from sidebar', async ({ page }) => {
       await page.goto(ROUTES.dashboard)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
 
       // Find sidebar link
       const sidebarLink = page.locator('a[href*="unit-economics"], nav a:has-text("Юнит")')
 
       if (await sidebarLink.isVisible()) {
         await sidebarLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
 
         // Should navigate to unit economics page
         await expect(page).toHaveURL(/unit-economics/)
@@ -339,24 +350,26 @@ test.describe('Unit Economics Analytics', () => {
 
     test('page is accessible directly via URL', async ({ page }) => {
       await page.goto(ROUTES.analytics.unitEconomics)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
 
       // Page should load without errors
       await expect(page.locator('body')).toBeVisible()
 
       // No uncaught errors in console
       const errors: string[] = []
-      page.on('pageerror', (err) => errors.push(err.message))
+      page.on('pageerror', err => errors.push(err.message))
 
       await page.waitForTimeout(1000)
       // Allow some errors but not critical ones
-      const criticalErrors = errors.filter((e) => e.includes('TypeError') || e.includes('ReferenceError'))
+      const criticalErrors = errors.filter(
+        e => e.includes('TypeError') || e.includes('ReferenceError')
+      )
       expect(criticalErrors.length).toBe(0)
     })
 
     test('view selector changes aggregation level', async ({ page }) => {
       await page.goto(ROUTES.analytics.unitEconomics)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
       await page.waitForTimeout(2000)
 
       // View selector (SKU/Category/Brand)
@@ -364,7 +377,9 @@ test.describe('Unit Economics Analytics', () => {
 
       if (await viewSelector.isVisible()) {
         // Click on different view
-        const categoryTab = page.locator('button:has-text("Категория"), [role="tab"]:has-text("Категория")')
+        const categoryTab = page.locator(
+          'button:has-text("Категория"), [role="tab"]:has-text("Категория")'
+        )
         if (await categoryTab.isVisible()) {
           await categoryTab.click()
           await page.waitForTimeout(1000)
@@ -381,7 +396,7 @@ test.describe('Unit Economics Analytics', () => {
       const startTime = Date.now()
 
       await page.goto(ROUTES.analytics.unitEconomics)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
 
       const loadTime = Date.now() - startTime
 
@@ -394,7 +409,7 @@ test.describe('Unit Economics Analytics', () => {
 
     test('AC-12: handles data without crashing', async ({ page }) => {
       await page.goto(ROUTES.analytics.unitEconomics)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
       await page.waitForTimeout(3000)
 
       // Page should remain stable and functional

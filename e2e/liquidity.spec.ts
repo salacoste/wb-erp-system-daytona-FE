@@ -19,12 +19,14 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Happy Path Tests', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
     })
 
     test('AC-6: displays Liquidity page with correct heading', async ({ page }) => {
       // Page heading should contain "Ликвидность" or similar
-      const heading = page.locator('h1, h2').filter({ hasText: /ликвидность|liquidity|оборачиваемость/i })
+      const heading = page
+        .locator('h1, h2')
+        .filter({ hasText: /ликвидность|liquidity|оборачиваемость/i })
       await expect(heading.first()).toBeVisible({ timeout: TIMEOUTS.navigation })
     })
 
@@ -65,12 +67,14 @@ test.describe('Liquidity Analysis', () => {
       await page.waitForTimeout(2000)
 
       // Metrics bar or summary section
-      const metricsSection = page.locator('[class*="metric"], [class*="stat"], [class*="summary"], [class*="bar"]')
-      const hasMetrics = await metricsSection.count() > 0
+      const metricsSection = page.locator(
+        '[class*="metric"], [class*="stat"], [class*="summary"], [class*="bar"]'
+      )
+      const hasMetrics = (await metricsSection.count()) > 0
 
       // Or text with key metrics (turnover, capital, etc.)
       const metricsText = page.locator('text=/оборот|turnover|капитал|capital|дней|days/i')
-      const hasMetricsText = await metricsText.count() > 0
+      const hasMetricsText = (await metricsText.count()) > 0
 
       expect(hasMetrics || hasMetricsText || true).toBeTruthy()
     })
@@ -79,12 +83,14 @@ test.describe('Liquidity Analysis', () => {
       await page.waitForTimeout(2000)
 
       // Benchmarks section with comparison data
-      const benchmarksSection = page.locator('text=/benchmark|эталон|сравнение|целев|target|отрасл|industry/i')
-      const hasBenchmarks = await benchmarksSection.count() > 0
+      const benchmarksSection = page.locator(
+        'text=/benchmark|эталон|сравнение|целев|target|отрасл|industry/i'
+      )
+      const hasBenchmarks = (await benchmarksSection.count()) > 0
 
       // Or progress bars/comparison indicators
       const progressBars = page.locator('[class*="progress"]')
-      const hasProgress = await progressBars.count() > 0
+      const hasProgress = (await progressBars.count()) > 0
 
       expect(hasBenchmarks || hasProgress || true).toBeTruthy()
     })
@@ -94,7 +100,7 @@ test.describe('Liquidity Analysis', () => {
 
       // Table should be visible
       const table = page.locator('table')
-      const hasTable = await table.count() > 0
+      const hasTable = (await table.count()) > 0
 
       if (hasTable) {
         // Table headers should exist
@@ -105,7 +111,7 @@ test.describe('Liquidity Analysis', () => {
         // At least some expected columns
         const expectedColumns = ['Артикул', 'Товар', 'Остаток', 'Оборачиваемость', 'Категория']
         for (const col of expectedColumns.slice(0, 2)) {
-          const hasCol = await page.locator(`th:has-text("${col}")`).count() > 0
+          const hasCol = (await page.locator(`th:has-text("${col}")`).count()) > 0
           if (hasCol) {
             expect(hasCol).toBeTruthy()
             break
@@ -142,11 +148,11 @@ test.describe('Liquidity Analysis', () => {
 
       // Status badges in cards or table
       const badges = page.locator('[class*="badge"]')
-      const hasBadges = await badges.count() > 0
+      const hasBadges = (await badges.count()) > 0
 
       // Or status text
       const statusText = page.locator('text=/высоколиквид|неликвид|liquidity|оборачиваемость/i')
-      const hasStatusText = await statusText.count() > 0
+      const hasStatusText = (await statusText.count()) > 0
 
       expect(hasBadges || hasStatusText || true).toBeTruthy()
     })
@@ -157,7 +163,7 @@ test.describe('Liquidity Analysis', () => {
         has: page.locator('svg'),
       })
 
-      const hasRefresh = await refreshBtn.count() > 0
+      const hasRefresh = (await refreshBtn.count()) > 0
       expect(hasRefresh).toBeTruthy()
     })
 
@@ -166,7 +172,7 @@ test.describe('Liquidity Analysis', () => {
 
       // Frozen capital text
       const frozenCapitalText = page.locator('text=/заморож|frozen|капитал|capital|₽|руб/i')
-      const hasFrozenCapital = await frozenCapitalText.count() > 0
+      const hasFrozenCapital = (await frozenCapitalText.count()) > 0
 
       expect(hasFrozenCapital || true).toBeTruthy()
     })
@@ -175,15 +181,18 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Distribution Card Interactions', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(2000)
     })
 
     test('AC-8: clicking distribution card filters table', async ({ page }) => {
       // Find clickable distribution card
-      const card = page.locator('[class*="card"]').filter({
-        has: page.locator('text=/неликвид|illiquid|высоко/i'),
-      }).first()
+      const card = page
+        .locator('[class*="card"]')
+        .filter({
+          has: page.locator('text=/неликвид|illiquid|высоко/i'),
+        })
+        .first()
 
       if (await card.isVisible()) {
         await card.click()
@@ -217,17 +226,17 @@ test.describe('Liquidity Analysis', () => {
       const cardCount = await cards.count()
 
       if (cardCount > 0) {
-        // At least one card should contain a number
-        const cardWithNumber = page.locator('[class*="card"]:has-text(/\\d+/)')
-        const hasNumber = await cardWithNumber.count() > 0
-        expect(hasNumber || true).toBeTruthy()
+        // At least one card shows a number (category counts). Valid Playwright regex filter — the old
+        // `:has-text(/\d+/)` CSS form is invalid syntax and THREW (assertion was also a tautology).
+        const cardWithNumber = cards.filter({ hasText: /\d+/ })
+        expect(await cardWithNumber.count()).toBeGreaterThan(0)
       }
     })
 
     test('cards show percentage distribution', async ({ page }) => {
       // Cards should show percentage
       const percentText = page.locator('text=/%/')
-      const hasPercent = await percentText.count() > 0
+      const hasPercent = (await percentText.count()) > 0
 
       expect(hasPercent || true).toBeTruthy()
     })
@@ -236,7 +245,7 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Table Interactions', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(2000)
     })
 
@@ -253,7 +262,9 @@ test.describe('Liquidity Analysis', () => {
 
         // Modal or expanded content may appear - verify page handles it
         const modal = page.locator('[role="dialog"], [class*="modal"], [class*="sheet"]')
-        const liquidationInfo = page.locator('text=/ликвидац|liquidat|сценарий|scenario|скидк|discount/i')
+        const liquidationInfo = page.locator(
+          'text=/ликвидац|liquidat|сценарий|scenario|скидк|discount/i'
+        )
 
         // Either modal or liquidation info should be present, or page remains stable
         expect((await modal.count()) >= 0 || (await liquidationInfo.count()) >= 0).toBeTruthy()
@@ -262,9 +273,12 @@ test.describe('Liquidity Analysis', () => {
 
     test('AC-11: liquidation planner shows scenarios', async ({ page }) => {
       // Click on illiquid item row (if available)
-      const illiquidRow = page.locator('tbody tr').filter({
-        has: page.locator('text=/неликвид|illiquid|низкол/i'),
-      }).first()
+      const illiquidRow = page
+        .locator('tbody tr')
+        .filter({
+          has: page.locator('text=/неликвид|illiquid|низкол/i'),
+        })
+        .first()
 
       if (await illiquidRow.isVisible()) {
         await illiquidRow.click()
@@ -272,7 +286,7 @@ test.describe('Liquidity Analysis', () => {
 
         // Look for scenario text (30 days, 60 days, 90 days)
         const scenarioText = page.locator('text=/30.*дн|60.*дн|90.*дн|days/i')
-        const hasScenarios = await scenarioText.count() > 0
+        const hasScenarios = (await scenarioText.count()) > 0
 
         expect(hasScenarios || true).toBeTruthy()
       }
@@ -280,9 +294,12 @@ test.describe('Liquidity Analysis', () => {
 
     test('AC-11: liquidation planner shows ROI calculations', async ({ page }) => {
       // Find row with liquidation planner button
-      const plannerBtn = page.locator('button').filter({
-        hasText: /ликвидац|план|planner/i,
-      }).first()
+      const plannerBtn = page
+        .locator('button')
+        .filter({
+          hasText: /ликвидац|план|planner/i,
+        })
+        .first()
 
       if (await plannerBtn.isVisible()) {
         await plannerBtn.click()
@@ -290,7 +307,7 @@ test.describe('Liquidity Analysis', () => {
 
         // Look for ROI or revenue text
         const roiText = page.locator('text=/ROI|выручка|revenue|прибыль|profit|₽/i')
-        const hasRoi = await roiText.count() > 0
+        const hasRoi = (await roiText.count()) > 0
 
         expect(hasRoi || true).toBeTruthy()
       }
@@ -299,12 +316,14 @@ test.describe('Liquidity Analysis', () => {
     test('pagination controls work when visible', async ({ page }) => {
       // Pagination may only appear with many items
       const pagination = page.locator('[class*="pagination"], button:has-text("/")')
-      const hasPagination = await pagination.count() > 0
+      const hasPagination = (await pagination.count()) > 0
 
       if (hasPagination) {
         // Next page button
-        const nextBtn = page.locator('button').filter({ has: page.locator('svg[class*="chevron-right"]') })
-        if (await nextBtn.isVisible() && await nextBtn.isEnabled()) {
+        const nextBtn = page
+          .locator('button')
+          .filter({ has: page.locator('svg[class*="chevron-right"]') })
+        if ((await nextBtn.isVisible()) && (await nextBtn.isEnabled())) {
           await nextBtn.click()
           await page.waitForTimeout(500)
           await expect(page.locator('body')).toBeVisible()
@@ -318,7 +337,7 @@ test.describe('Liquidity Analysis', () => {
 
       if (await tableContainer.isVisible()) {
         // Scroll down
-        await tableContainer.evaluate((el) => {
+        await tableContainer.evaluate(el => {
           el.scrollTop = 200
         })
         await page.waitForTimeout(300)
@@ -331,7 +350,9 @@ test.describe('Liquidity Analysis', () => {
 
     test('AC-12: search by SKU works', async ({ page }) => {
       // Find search input
-      const searchInput = page.locator('input[type="search"], input[placeholder*="поиск"], input[placeholder*="search"]')
+      const searchInput = page.locator(
+        'input[type="search"], input[placeholder*="поиск"], input[placeholder*="search"]'
+      )
 
       if (await searchInput.isVisible()) {
         await searchInput.fill('SKU-001')
@@ -346,30 +367,34 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Benchmarks & Trends', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(2000)
     })
 
     test('AC-9: benchmarks show comparison with targets', async ({ page }) => {
       // Look for benchmark comparison elements
       const benchmarkSection = page.locator('text=/ваш.*vs|vs.*целев|your.*target|сравнение/i')
-      const hasBenchmark = await benchmarkSection.count() > 0
+      const hasBenchmark = (await benchmarkSection.count()) > 0
 
       // Or progress bars with comparison
       const progressBars = page.locator('[class*="progress"]')
-      const hasProgress = await progressBars.count() > 0
+      const hasProgress = (await progressBars.count()) > 0
 
       expect(hasBenchmark || hasProgress || true).toBeTruthy()
     })
 
     test('AC-9: shows overall health status', async ({ page }) => {
       // Look for health status indicator
-      const statusIndicator = page.locator('text=/отлично|хорошо|внимание|критич|excellent|good|warning|critical/i')
-      const hasStatus = await statusIndicator.count() > 0
+      const statusIndicator = page.locator(
+        'text=/отлично|хорошо|внимание|критич|excellent|good|warning|critical/i'
+      )
+      const hasStatus = (await statusIndicator.count()) > 0
 
       // Or color-coded status
-      const coloredStatus = page.locator('[class*="green"], [class*="yellow"], [class*="red"], [class*="success"], [class*="warning"], [class*="error"]')
-      const hasColored = await coloredStatus.count() > 0
+      const coloredStatus = page.locator(
+        '[class*="green"], [class*="yellow"], [class*="red"], [class*="success"], [class*="warning"], [class*="error"]'
+      )
+      const hasColored = (await coloredStatus.count()) > 0
 
       expect(hasStatus || hasColored || true).toBeTruthy()
     })
@@ -377,7 +402,7 @@ test.describe('Liquidity Analysis', () => {
     test('benchmarks show industry comparison', async ({ page }) => {
       // Look for industry average text
       const industryText = page.locator('text=/отрасл|industry|рынок|market|средн.*по/i')
-      const hasIndustry = await industryText.count() > 0
+      const hasIndustry = (await industryText.count()) > 0
 
       expect(hasIndustry || true).toBeTruthy()
     })
@@ -386,21 +411,21 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Loading & Error States', () => {
     test('shows loading state while fetching data', async ({ page }) => {
       // Intercept API to delay response
-      await page.route('**/liquidity**', async (route) => {
-        await new Promise((r) => setTimeout(r, 1000))
+      await page.route('**/liquidity**', async route => {
+        await new Promise(r => setTimeout(r, 1000))
         await route.continue()
       })
 
       await page.goto(ROUTES.analytics.liquidity)
 
       // Page loads and shows content
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await expect(page.locator('body')).toBeVisible()
     })
 
     test('AC-5: handles API error gracefully', async ({ page }) => {
       // Mock 500 error
-      await page.route('**/liquidity**', (route) => {
+      await page.route('**/liquidity**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: { code: 'INTERNAL', message: 'Server error' } }),
@@ -416,7 +441,7 @@ test.describe('Liquidity Analysis', () => {
 
     test('AC-5: shows empty state for no data', async ({ page }) => {
       // Mock empty response
-      await page.route('**/liquidity**', (route) => {
+      await page.route('**/liquidity**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -460,7 +485,7 @@ test.describe('Liquidity Analysis', () => {
     test('retry button works after error', async ({ page }) => {
       let callCount = 0
 
-      await page.route('**/liquidity**', (route) => {
+      await page.route('**/liquidity**', route => {
         callCount++
         if (callCount === 1) {
           // First call fails
@@ -492,7 +517,7 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Edge Cases', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(2000)
     })
 
@@ -523,14 +548,14 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Navigation & Integration', () => {
     test('can navigate to Liquidity from sidebar', async ({ page }) => {
       await page.goto(ROUTES.dashboard)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Find sidebar link
       const sidebarLink = page.locator('a[href*="liquidity"], nav a:has-text("Ликвидность")')
 
       if (await sidebarLink.isVisible()) {
         await sidebarLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Should navigate to liquidity page
         await expect(page).toHaveURL(/liquidity/)
@@ -539,30 +564,32 @@ test.describe('Liquidity Analysis', () => {
 
     test('page is accessible directly via URL', async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Page should load without errors
       await expect(page.locator('body')).toBeVisible()
 
       // No uncaught errors in console
       const errors: string[] = []
-      page.on('pageerror', (err) => errors.push(err.message))
+      page.on('pageerror', err => errors.push(err.message))
 
       await page.waitForTimeout(1000)
       // Allow some errors but not critical ones
-      const criticalErrors = errors.filter((e) => e.includes('TypeError') || e.includes('ReferenceError'))
+      const criticalErrors = errors.filter(
+        e => e.includes('TypeError') || e.includes('ReferenceError')
+      )
       expect(criticalErrors.length).toBe(0)
     })
 
     test('navigation between analytics pages works', async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Navigate to Unit Economics
       const unitEconLink = page.locator('a[href*="unit-economics"]')
       if (await unitEconLink.isVisible()) {
         await unitEconLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
         await expect(page).toHaveURL(/unit-economics/)
       }
 
@@ -570,7 +597,7 @@ test.describe('Liquidity Analysis', () => {
       const liquidityLink = page.locator('a[href*="liquidity"]')
       if (await liquidityLink.isVisible()) {
         await liquidityLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
         await expect(page).toHaveURL(/liquidity/)
       }
     })
@@ -581,7 +608,7 @@ test.describe('Liquidity Analysis', () => {
       const startTime = Date.now()
 
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       const loadTime = Date.now() - startTime
 
@@ -594,7 +621,7 @@ test.describe('Liquidity Analysis', () => {
 
     test('AC-13: handles data without crashing', async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(3000)
 
       // Page should remain stable and functional
@@ -604,13 +631,16 @@ test.describe('Liquidity Analysis', () => {
 
     test('AC-14: data updates without page refresh', async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(2000)
 
       // Find refresh button and click it
-      const refreshBtn = page.locator('button').filter({
-        has: page.locator('svg[class*="refresh"]'),
-      }).first()
+      const refreshBtn = page
+        .locator('button')
+        .filter({
+          has: page.locator('svg[class*="refresh"]'),
+        })
+        .first()
 
       if (await refreshBtn.isVisible()) {
         await refreshBtn.click()
@@ -625,17 +655,21 @@ test.describe('Liquidity Analysis', () => {
   test.describe('Story 7.4: Liquidation Modal', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await page.waitForTimeout(2000)
     })
 
     test('AC-11: modal opens on planner button click', async ({ page }) => {
       // Find planner button in table row
-      const plannerBtn = page.locator('button').filter({
-        has: page.locator('svg'),
-      }).filter({
-        hasText: /план|planner/i,
-      }).first()
+      const plannerBtn = page
+        .locator('button')
+        .filter({
+          has: page.locator('svg'),
+        })
+        .filter({
+          hasText: /план|planner/i,
+        })
+        .first()
 
       // Or any expand button in illiquid rows
       const expandBtn = page.locator('tbody tr button').first()
@@ -653,24 +687,20 @@ test.describe('Liquidity Analysis', () => {
     })
 
     test('AC-11: modal can be closed', async ({ page }) => {
-      // Find and click expand/planner button
+      // Open the planner modal via the first row button.
       const expandBtn = page.locator('tbody tr button').first()
 
       if (await expandBtn.isVisible()) {
         await expandBtn.click()
         await page.waitForTimeout(500)
 
-        // Find close button
-        const closeBtn = page.locator('button').filter({
-          has: page.locator('svg[class*="x"], svg[class*="close"]'),
-        }).first()
-
-        if (await closeBtn.isVisible()) {
-          await closeBtn.click()
-          await page.waitForTimeout(300)
-
-          // Page should still be functional
-          await expect(page.locator('body')).toBeVisible()
+        // If a dialog opened, close it via Escape (Radix Dialog default) and assert it actually
+        // hides — robust vs clicking the animating X button, which timed out, and meaningful vs the
+        // old tautological body-visible check.
+        const dialog = page.getByRole('dialog')
+        if (await dialog.isVisible().catch(() => false)) {
+          await page.keyboard.press('Escape')
+          await expect(dialog).toBeHidden({ timeout: TIMEOUTS.api })
         }
       }
     })
@@ -702,7 +732,7 @@ test.describe('Liquidity Analysis', () => {
 
         // Look for discount text
         const discountText = page.locator('text=/скидк|discount|%/i')
-        const hasDiscount = await discountText.count() > 0
+        const hasDiscount = (await discountText.count()) > 0
 
         expect(hasDiscount || true).toBeTruthy()
       }
