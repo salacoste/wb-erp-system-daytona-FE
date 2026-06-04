@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/table'
 import type { SearchQueryItem } from '@/types/search-analytics'
 import { SortButton } from './SortButton'
+import { formatDecimal } from '@/lib/utils'
 
 interface SearchByProductTableProps {
   queries: SearchQueryItem[]
@@ -27,12 +28,8 @@ function formatNumber(n: number): string {
   return n.toLocaleString('ru-RU')
 }
 
-function formatDecimal(n: number): string {
-  return n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-}
-
 // iter-59: Russian locale (was "11.9%" dot/no-space). `n` is percent units (0-100, e.g. avgCtr),
-// matching formatDecimal's ru-RU idiom above. Intl style:'percent' over n/100 → "11,9 %".
+// matching the canonical formatDecimal ru-RU idiom (@/lib/utils). Intl style:'percent' over n/100 → "11,9 %".
 function formatPercent(n: number | null): string {
   if (n == null) return '—' // rate unknown (no data) — NOT "0 %" (anti-pattern #8)
   return new Intl.NumberFormat('ru-RU', {
