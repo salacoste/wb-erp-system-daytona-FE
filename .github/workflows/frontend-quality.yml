@@ -3,14 +3,18 @@
 # CI guard for the Next.js frontend (this repo: salacoste/wb-erp-system-daytona-FE).
 # Runs on every push to main/develop. Uses self-hosted runner on VPS (43.131.5.136).
 #
-# Migrated from GitHub-hosted (ubuntu-latest) to self-hosted runner to avoid
-# GitHub Actions billing limits on the free tier. The VPS has Node.js 20, npm,
-# git, and swap pre-configured.
+# Architecture: SINGLE JOB with sequential steps. The VPS has 2 vCPU / 2 GB RAM + 2 GB swap.
+# Parallel jobs would each run npm ci (869 packages) and exhaust memory.
+# Sequential steps share one node_modules install and stay within RAM budget.
+#
+# Key Node.js memory settings:
+#   - tsc: --max-old-space-size=1536 (type-check is memory-hungry)
+#   - vitest: default heap (tests are lighter)
 #
 # See:
 #   - CLAUDE.md (Critical Development Rules — Mandatory section)
-#   - .eslintrc.json (documentation/IDE only — actual enforcement: eslint.config.js)
-#   - _bmad-output/test-artifacts/test-review.md
+#   - eslint.config.js (flat config — the enforcement path)
+#   - .eslintrc.json (documentation/IDE integration only)
 
 name: Frontend Quality Gates
 
@@ -25,13 +29,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # =============================================================================
-  # Lint — ESLint via flat config (eslint.config.js), max 112 warnings allowed
-  # =============================================================================
-  lint:
-    name: Lint
+  quality:
+    name: Quality Gates
     runs-on: self-hosted
-    timeout-minutes: 5
+    timeout-minutes: 15
+
+    env:
+      NODE_ENV: test
+      TZ: Europe/Moscow
 
     steps:
       - name: Checkout code
@@ -40,60 +45,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # ── Step 1: ESLint (flat config) ──────────────────────────────────────
       - name: Run ESLint
         run: npm run lint
 
-  # =============================================================================
-  # Type Check — TypeScript strict mode, zero errors tolerated
-  # =============================================================================
-  type-check:
-    name: Type Check
-    runs-on: self-hosted
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm ci
-
+      # ── Step 2: TypeScript type-check ─────────────────────────────────────
+      # tsc --noEmit needs ~1.2 GB heap on this codebase. The VPS has 2 GB RAM
+      # + 2 GB swap, so --max-old-space-size=1536 fits comfortably.
       - name: Run TypeScript type-check
-        run: npm run type-check
+        run: node --max-old-space-size=1536 ./node_modules/.bin/tsc --noEmit
 
-  # =============================================================================
-  # Unit Tests — Vitest in CI mode (no watch)
-  # =============================================================================
-  test:
-    name: Unit Tests
-    runs-on: self-hosted
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm ci
-
+      # ── Step 3: Unit Tests (Vitest) ───────────────────────────────────────
       - name: Run Vitest unit tests
         run: npm test -- --run --reporter=default
-        env:
-          NODE_ENV: test
-          TZ: Europe/Moscow
 
-  # =============================================================================
-  # Privacy Guard — forbid console.* in PII files (Story 86.2 / Epic 86-FE retro #7)
-  # =============================================================================
-  privacy-guard:
-    name: Privacy Guard (no console in PII)
-    runs-on: self-hosted
-    timeout-minutes: 2
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      # ── Step 4: Privacy Guard ─────────────────────────────────────────────
+      # Forbid console.* in PII files (Story 86.2 / Epic 86-FE retro #7)
       - name: Scan PII files for forbidden console.* calls
         run: |
           set -euo pipefail
@@ -117,44 +84,11 @@ jobs:
 
           echo "Scanning ${#EXISTING[@]} PII file(s):"
           printf '  - %s\n' "${EXISTING[@]}"
-          echo ""
 
           if grep -nE 'console\.(log|info|debug|warn|error|trace|dir|table|count|group|groupEnd|time|timeEnd|timeLog|profile|profileEnd)\s*\(' "${EXISTING[@]}"; then
             echo ""
             echo "::error::PRIVACY VIOLATION — forbidden console.* call found in a PII file"
-            echo "::error::PII flows must never appear in any log sink (browser DevTools, Sentry, remote logs)"
-            echo "::error::See: frontend/CLAUDE.md#known-anti-patterns and Story 86.2 NFR3"
             exit 1
           fi
 
           echo "✅ No forbidden console.* calls in PII files"
-
-  # =============================================================================
-  # Frontend Quality Status Summary
-  # =============================================================================
-  quality-status:
-    name: Frontend Quality Status
-    runs-on: self-hosted
-    needs: [lint, type-check, test, privacy-guard]
-    if: always()
-
-    steps:
-      - name: Check all frontend quality gates passed
-        run: |
-          if [[ "${{ needs.lint.result }}" != "success" ]]; then
-            echo "❌ Frontend lint failed"
-            exit 1
-          fi
-          if [[ "${{ needs.type-check.result }}" != "success" ]]; then
-            echo "❌ Frontend type-check failed"
-            exit 1
-          fi
-          if [[ "${{ needs.test.result }}" != "success" ]]; then
-            echo "❌ Frontend unit tests failed"
-            exit 1
-          fi
-          if [[ "${{ needs.privacy-guard.result }}" != "success" ]]; then
-            echo "❌ Privacy guard failed — PII files contain forbidden console.* calls"
-            exit 1
-          fi
-          echo "✅ All frontend quality gates passed"
