@@ -10,7 +10,7 @@
 
 import { format } from 'date-fns'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatDecimal } from '@/lib/utils'
 import { formatNumber, formatPercentValue } from '@/lib/fbs-analytics-utils'
 import type { CompareResponse } from '@/types/fbs-analytics'
 
@@ -34,7 +34,9 @@ function DeltaIndicator({ value, suffix = '' }: { value: number; suffix?: string
   const isPositive = value > 0
   // Comma decimal (Russian locale), not dot. Backend sends Infinity for a change from a zero
   // baseline (e.g. a new seller's prior period had 0 orders/revenue) → render ∞, never "Infinity".
-  const magnitude = Number.isFinite(value) ? Math.abs(value).toFixed(1).replace('.', ',') : '∞'
+  // canonical formatDecimal (comma; ≥1000 also gets NBSP grouping). Keep the ∞ guard — never pass
+  // Infinity to formatDecimal (sign is the literal +/− below; magnitude is the abs value).
+  const magnitude = Number.isFinite(value) ? formatDecimal(Math.abs(value)) : '∞'
   return (
     <span className={cn('flex items-center', isPositive ? 'text-green-600' : 'text-red-500')}>
       {isPositive ? (
