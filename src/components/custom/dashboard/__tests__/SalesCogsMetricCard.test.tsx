@@ -148,7 +148,7 @@ describe('SalesCogsMetricCard', () => {
       // Should show value and coverage text
       const cardText = screen.getByRole('article').textContent
       expect(cardText).toMatch(/85.*000/)
-      expect(cardText).toMatch(/74.*74|100%/)
+      expect(cardText).toMatch(/74.*74|100\s%/) // ru-RU: "100 %" (NBSP); was dead "100%" branch
 
       // Should NOT have yellow warning
       expect(document.querySelector('.bg-yellow-100')).not.toBeInTheDocument()
@@ -227,8 +227,8 @@ describe('SalesCogsMetricCard', () => {
       )
 
       const cardText = screen.getByRole('article').textContent
-      // Should show percentage (92.5% or 92%)
-      expect(cardText).toMatch(/92.*%|93%/)
+      // formatPercentageInt(92.5) → "93 %" (Intl half-up, NBSP); was "93%" (Math.round)
+      expect(cardText).toMatch(/9[23]\s%/)
     })
 
     it('shows warning icon when coverage < 100%', () => {

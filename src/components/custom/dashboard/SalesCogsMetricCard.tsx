@@ -12,7 +12,7 @@ import { Package, Info, AlertTriangle, ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
-import { formatCurrency, cn } from '@/lib/utils'
+import { formatCurrency, cn, formatPercentageInt } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { ROUTES } from '@/lib/routes'
 import { StandardMetricSkeleton, MetricCardError } from './MetricCardStates'
@@ -31,7 +31,8 @@ export interface SalesCogsMetricCardProps {
 }
 
 const fmtNum = (v: number) => new Intl.NumberFormat('ru-RU').format(Math.round(v))
-const fmtPct = (v: number) => `${Math.round(v)}%`
+// cogsCoverage is percent-units 0-100; whole-percent display (was `${Math.round(v)}%`) → ru-RU "74 %"
+const fmtPct = (v: number) => formatPercentageInt(v)
 
 export function SalesCogsMetricCard({
   cogsTotal,
