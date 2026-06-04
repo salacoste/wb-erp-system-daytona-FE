@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 import { FieldTooltip } from './FieldTooltip'
+import { formatPercentageInt } from '@/lib/utils'
 
 /**
  * Props for SppInput component
@@ -43,12 +44,7 @@ export interface SppInputProps {
  *   onChange={(value) => setSppPct(value)}
  * />
  */
-export function SppInput({
-  value,
-  onChange,
-  disabled = false,
-  error,
-}: SppInputProps) {
+export function SppInput({ value, onChange, disabled = false, error }: SppInputProps) {
   // Handle slider change
   const handleSliderChange = (values: number[]) => {
     onChange(values[0])
@@ -108,7 +104,7 @@ export function SppInput({
       {/* Help text when SPP > 0 */}
       {value > 0 && (
         <p className="text-xs text-muted-foreground" data-testid="spp-help-text">
-          Покупатель увидит цену со скидкой {value}%
+          Покупатель увидит цену со скидкой {formatPercentageInt(value)}
         </p>
       )}
 

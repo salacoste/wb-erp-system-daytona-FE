@@ -66,7 +66,7 @@ describe('SppInput', () => {
       render(<SppInput value={10} onChange={mockOnChange} />)
 
       expect(screen.getByTestId('spp-help-text')).toBeInTheDocument()
-      expect(screen.getByText('Покупатель увидит цену со скидкой 10%')).toBeInTheDocument()
+      expect(screen.getByText(/Покупатель увидит цену со скидкой 10\s%/)).toBeInTheDocument() // ru-RU NBSP
     })
 
     it('should not show help text when SPP = 0', () => {

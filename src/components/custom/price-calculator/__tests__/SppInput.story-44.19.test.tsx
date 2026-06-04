@@ -109,7 +109,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         render(<SppInput value={10} onChange={mockOnChange} />)
 
         expect(screen.getByTestId('spp-help-text')).toBeInTheDocument()
-        expect(screen.getByText('Покупатель увидит цену со скидкой 10%')).toBeInTheDocument()
+        expect(screen.getByText(/Покупатель увидит цену со скидкой 10\s%/)).toBeInTheDocument() // ru-RU NBSP
       })
 
       it('should not show help text when SPP = 0', () => {
@@ -121,11 +121,11 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
       it('should update help text when SPP changes', () => {
         const { rerender } = render(<SppInput value={10} onChange={mockOnChange} />)
 
-        expect(screen.getByText('Покупатель увидит цену со скидкой 10%')).toBeInTheDocument()
+        expect(screen.getByText(/Покупатель увидит цену со скидкой 10\s%/)).toBeInTheDocument() // ru-RU NBSP
 
         rerender(<SppInput value={15} onChange={mockOnChange} />)
 
-        expect(screen.getByText('Покупатель увидит цену со скидкой 15%')).toBeInTheDocument()
+        expect(screen.getByText(/Покупатель увидит цену со скидкой 15\s%/)).toBeInTheDocument() // ru-RU NBSP
       })
     })
 
@@ -239,7 +239,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
         const input = screen.getByTestId('spp-input')
         expect(input).toHaveValue(30)
-        expect(screen.getByText('Покупатель увидит цену со скидкой 30%')).toBeInTheDocument()
+        expect(screen.getByText(/Покупатель увидит цену со скидкой 30\s%/)).toBeInTheDocument() // ru-RU NBSP
       })
 
       it('should handle decimal SPP values', () => {
