@@ -37,6 +37,7 @@ import type {
   FunnelDayItem,
   FunnelProductItem,
   FunnelResponse,
+  FunnelResponseMeta,
   FunnelSummary,
   FunnelSyncStatus,
   TopSearchQuery,
@@ -137,6 +138,34 @@ function normalizeFunnelSummary(raw: unknown): FunnelSummary {
 }
 
 /**
+ * normalizeFunnelMeta — Epic 114.5. The `meta` field is optional on the backend
+ * contract (absent on older/cached responses), so return undefined when raw.meta
+ * is missing or not an object — callers then OMIT the key (preserve optional-property
+ * semantics). When present, coerce defensively: booleans via strict `=== true`,
+ * source labels + period strings via toOptionalString (fallback '' to keep the
+ * required string shape), lastSyncAt as genuinely-nullable string.
+ */
+function normalizeFunnelMeta(raw: unknown): FunnelResponseMeta | undefined {
+  if (!raw || typeof raw !== 'object') return undefined
+  const m = asRecord(raw)
+  const dataSource = asRecord(m.dataSource)
+  const syncedPeriod = asRecord(m.syncedPeriod)
+  return {
+    totalConversionApproximate: m.totalConversionApproximate === true,
+    dataSource: {
+      funnel: toOptionalString(dataSource.funnel) ?? '',
+      buyout: toOptionalString(dataSource.buyout) ?? '',
+    },
+    syncedPeriod: {
+      from: toOptionalString(syncedPeriod.from) ?? '',
+      to: toOptionalString(syncedPeriod.to) ?? '',
+      // genuinely nullable: preserve null (never synced); non-string → null.
+      lastSyncAt: typeof syncedPeriod.lastSyncAt === 'string' ? syncedPeriod.lastSyncAt : null,
+    },
+  }
+}
+
+/**
  * @param groupBy request intent — routes the whole homogeneous items array.
  *   'day' → FunnelDayItem; 'product' (default) → FunnelProductItem.
  */
@@ -151,7 +180,7 @@ export function normalizeFunnelResponse(
   const normalizeItem: (raw: unknown) => FunnelProductItem | FunnelDayItem =
     groupBy === 'day' ? normalizeFunnelDayItem : normalizeFunnelProductItem
   const pagination = asRecord(r.pagination)
-  return {
+  const response: FunnelResponse = {
     items: rawItems.map(normalizeItem),
     summary: normalizeFunnelSummary(r.summary),
     pagination: {
@@ -161,6 +190,10 @@ export function normalizeFunnelResponse(
       hasMore: pagination.hasMore === true,
     },
   }
+  // Epic 114.5: omit meta entirely when absent (optional contract field).
+  const meta = normalizeFunnelMeta(r.meta)
+  if (meta !== undefined) response.meta = meta
+  return response
 }
 
 export function normalizeFunnelSyncStatus(raw: unknown): FunnelSyncStatus {

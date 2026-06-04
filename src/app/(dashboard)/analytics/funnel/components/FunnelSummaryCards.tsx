@@ -25,6 +25,7 @@ import {
 } from './funnel-comparison-utils'
 import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
+import { formatNumber, formatPercent } from './funnel-summary-formatters'
 
 interface FunnelSummaryCardsProps {
   from: string
@@ -125,6 +126,9 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
 
   const summary = data?.summary
   const prevSummary = prevData?.summary
+  // Epic 114.5: backend flags totalConversion as an approximate cross-source ratio
+  // (buyout from WB Product Data API, openCard from the funnel snapshot).
+  const totalConversionApproximate = data?.meta?.totalConversionApproximate === true
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -137,6 +141,8 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
         // impossible >100% value — indicate it (preserve the raw value, never clamp).
         const anomalous =
           card.field === 'totalConversion' && !!summary && isFunnelConversionAnomalous(summary)
+        // Epic 114.5: prefix totalConversion with "≈" + tooltip when cross-source approximate.
+        const approximate = card.field === 'totalConversion' && totalConversionApproximate
 
         return (
           <Card key={card.label}>
@@ -148,7 +154,17 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
                 <p className="text-sm text-muted-foreground">{card.label}</p>
                 <p className="flex items-center gap-1.5 text-2xl font-bold">
                   {/* truncate the value only — never clip the anomaly indicator */}
-                  <span className="truncate">{card.format(value)}</span>
+                  <span
+                    className="truncate"
+                    title={
+                      approximate
+                        ? 'Приблизительно: показатель смешивает данные из разных источников (выкупы — WB Product Data API, открытия карточки — воронка)'
+                        : undefined
+                    }
+                  >
+                    {approximate ? '≈ ' : ''}
+                    {card.format(value)}
+                  </span>
                   {anomalous && <FunnelAnomalyIndicator />}
                 </p>
                 {compare && (
@@ -199,12 +215,4 @@ function DeltaIndicator({
       {formatDelta(delta)}
     </p>
   )
-}
-
-function formatNumber(n: number): string {
-  return n.toLocaleString('ru-RU')
-}
-
-function formatPercent(n: number): string {
-  return `${n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
 }

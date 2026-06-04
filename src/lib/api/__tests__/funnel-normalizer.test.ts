@@ -213,6 +213,41 @@ describe('normalizeFunnelResponse', () => {
     expect(r.summary.openCardCount).toBe(0)
     expect(r.pagination.total).toBe(0)
   })
+
+  // Epic 114.5: optional cross-source approximation meta
+  it('normalizes meta when present and well-formed', () => {
+    const r = normalizeFunnelResponse({
+      items: [],
+      meta: {
+        totalConversionApproximate: true,
+        dataSource: { funnel: 'product_funnel_daily', buyout: 'wb-product-data-api-v2' },
+        syncedPeriod: { from: '2026-05-01', to: '2026-05-07', lastSyncAt: '2026-05-07T10:00:00Z' },
+      },
+    })
+    expect(r.meta).toEqual({
+      totalConversionApproximate: true,
+      dataSource: { funnel: 'product_funnel_daily', buyout: 'wb-product-data-api-v2' },
+      syncedPeriod: { from: '2026-05-01', to: '2026-05-07', lastSyncAt: '2026-05-07T10:00:00Z' },
+    })
+  })
+
+  it('omits meta entirely when absent', () => {
+    expect('meta' in normalizeFunnelResponse({ items: [] })).toBe(false)
+    expect('meta' in normalizeFunnelResponse(null)).toBe(false)
+  })
+
+  it('meta booleans/strings coerced defensively (strict bool, null lastSyncAt)', () => {
+    const r = normalizeFunnelResponse({
+      meta: {
+        totalConversionApproximate: 'true', // non-strict → false
+        dataSource: { funnel: 42, buyout: undefined }, // non-string → ''
+        syncedPeriod: { from: '2026-05-01', to: '2026-05-07', lastSyncAt: 0 }, // non-string → null
+      },
+    })
+    expect(r.meta?.totalConversionApproximate).toBe(false)
+    expect(r.meta?.dataSource).toEqual({ funnel: '', buyout: '' })
+    expect(r.meta?.syncedPeriod.lastSyncAt).toBeNull()
+  })
 })
 
 // --- normalizeFunnelSyncStatus --------------------------------------------
