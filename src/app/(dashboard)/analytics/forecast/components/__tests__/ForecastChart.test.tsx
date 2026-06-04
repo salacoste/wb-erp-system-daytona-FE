@@ -124,16 +124,16 @@ describe('formatConfidence', () => {
     expect(formatConfidence(null)).toBe('—')
   })
 
-  it('0.85 → "85%"', () => {
-    expect(formatConfidence(0.85)).toBe('85%')
+  it('0.85 → "85 %" (ru-RU comma+NBSP; exact U+00A0)', () => {
+    expect(formatConfidence(0.85)).toBe(`85${String.fromCharCode(0xa0)}%`)
   })
 
-  it('1.0 → "100%"', () => {
-    expect(formatConfidence(1.0)).toBe('100%')
+  it('1.0 → "100 %"', () => {
+    expect(formatConfidence(1.0)).toMatch(/^100\s%$/)
   })
 
-  it('0 → "0%"', () => {
-    expect(formatConfidence(0)).toBe('0%')
+  it('0 → "0 %"', () => {
+    expect(formatConfidence(0)).toMatch(/^0\s%$/)
   })
 })
 
@@ -236,7 +236,7 @@ describe('ForecastChartTooltip', () => {
     // Values: predictedSales rounded, naiveBaseline rounded, confidence as %, band as "lower–upper"
     expect(screen.getByText(/42/)).toBeTruthy()
     expect(screen.getByText(/35/)).toBeTruthy()
-    expect(screen.getByText(/85%/)).toBeTruthy()
+    expect(screen.getByText(/85\s%/)).toBeTruthy() // ru-RU: "85 %" (NBSP); was dot-locale /85%/
     expect(screen.getByText(/38–46/)).toBeTruthy()
   })
 

@@ -4,7 +4,7 @@
  * Extracted proactively to keep ForecastChart.tsx ≤150 lines (200-line ESLint cap).
  */
 import { type AiForecastPrediction } from '@/types/ai-forecast'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatPercentageInt } from '@/lib/utils'
 
 /**
  * Computes the lower/upper bounds of the confidence band for a single forecast row.
@@ -89,10 +89,12 @@ export function transformPredictionsForChart(
   })
 }
 
-/** Formats confidence (0-1 scale) as "85%" or "—" for null */
+/** Formats confidence (0-1 scale) as "85 %" (ru-RU, NBSP) or "—" for null. Visible tooltip text
+ *  in ForecastChart — was dot-locale `${Math.round(value * 100)}%` (a gate-blind site: the
+ *  locale-percent gate only matches the toFixed form, not Math.round). */
 export function formatConfidence(value: number | null): string {
   if (value === null) return '—'
-  return `${Math.round(value * 100)}%`
+  return formatPercentageInt(value * 100)
 }
 
 /**
