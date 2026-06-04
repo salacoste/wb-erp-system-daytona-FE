@@ -5,6 +5,8 @@ import { RefreshCw, AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useLiquidity } from '@/hooks/useLiquidity'
+import { mapLiquiditySortToApi, sortLiquidityItems } from '@/lib/liquidity-utils'
+import type { LiquidityUiSortField } from '@/lib/liquidity-utils'
 import type { LiquidityCategory, LiquidityQueryParams } from '@/types/liquidity'
 import { LiquidityHeader } from './components/LiquidityHeader'
 import { LiquidityDistributionCards } from './components/LiquidityDistributionCards'
@@ -25,15 +27,15 @@ import { LiquidityTable } from './components/LiquidityTable'
 export default function LiquidityPage() {
   // Filter state
   const [activeFilter, setActiveFilter] = useState<LiquidityCategory | null>(null)
-  const [sortBy, setSortBy] = useState<'turnover_days' | 'stock_value' | 'velocity_per_day'>(
-    'turnover_days'
-  )
+  const [sortBy, setSortBy] = useState<LiquidityUiSortField>('turnover_days')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
-  // Build query params
+  // Build query params. The table's UI sort columns (stock_value, velocity_per_day) are NOT in the
+  // backend LiquiditySortByEnum — sending them 400s and blanks the page. Map to a valid enum here;
+  // the chosen column is applied client-side below via sortLiquidityItems.
   const queryParams: LiquidityQueryParams = {
     category_filter: activeFilter || 'all',
-    sort_by: sortBy,
+    sort_by: mapLiquiditySortToApi(sortBy),
     sort_order: sortOrder,
     limit: 200,
   }
@@ -55,13 +57,10 @@ export default function LiquidityPage() {
   }, [refetch])
 
   // Handle sort change
-  const handleSortChange = useCallback(
-    (field: 'turnover_days' | 'stock_value' | 'velocity_per_day', order: 'asc' | 'desc') => {
-      setSortBy(field)
-      setSortOrder(order)
-    },
-    []
-  )
+  const handleSortChange = useCallback((field: LiquidityUiSortField, order: 'asc' | 'desc') => {
+    setSortBy(field)
+    setSortOrder(order)
+  }, [])
 
   // Error state
   if (error) {
@@ -103,10 +102,12 @@ export default function LiquidityPage() {
     )
   }
 
-  // Filter data by active category
+  // Filter data by active category, then sort client-side by the chosen UI column (the backend
+  // can't sort stock_value/velocity_per_day — see queryParams above). Operates on the ≤200 rows.
   const filteredData = activeFilter
     ? data.data.filter(item => item.liquidity_category === activeFilter)
     : data.data
+  const sortedData = sortLiquidityItems(filteredData, sortBy, sortOrder)
 
   return (
     <div className="space-y-6">
@@ -132,7 +133,7 @@ export default function LiquidityPage() {
 
       {/* Table Section - Story 7.3 */}
       <LiquidityTable
-        data={filteredData}
+        data={sortedData}
         activeFilter={activeFilter}
         sortBy={sortBy}
         sortOrder={sortOrder}

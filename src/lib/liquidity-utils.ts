@@ -54,6 +54,9 @@ export {
   formatDateShort,
 } from './liquidity-formatters'
 
+export { mapLiquiditySortToApi, sortLiquidityItems } from './liquidity-sort'
+export type { LiquidityUiSortField } from './liquidity-sort'
+
 // ============================================================================
 // Summary Calculation Helpers
 // ============================================================================

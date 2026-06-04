@@ -368,11 +368,26 @@ export const liquidityHandlers = [
       items = items.filter(i => i.liquidity_category === categoryFilter)
     }
 
-    // Apply sorting
+    // Apply sorting. sort_by is a backend LiquiditySortByEnum value, whose names differ from the
+    // FE LiquidityItem field names — map before indexing (else frozen_capital/current_stock index
+    // undefined → NaN sort). Mirrors the real backend's field semantics.
+    const SORT_FIELD_MAP: Record<string, keyof LiquidityItem> = {
+      frozen_capital: 'stock_value',
+      turnover_days: 'turnover_days',
+      current_stock: 'current_stock_qty',
+      product_name: 'product_name',
+    }
+    const sortKey = SORT_FIELD_MAP[sortBy] ?? 'turnover_days'
     items.sort((a, b) => {
-      const aVal = a[sortBy as keyof LiquidityItem] as number
-      const bVal = b[sortBy as keyof LiquidityItem] as number
-      return sortOrder === 'asc' ? aVal - bVal : bVal - aVal
+      const av = a[sortKey]
+      const bv = b[sortKey]
+      if (typeof av === 'string' || typeof bv === 'string') {
+        const cmp = String(av).localeCompare(String(bv))
+        return sortOrder === 'asc' ? cmp : -cmp
+      }
+      const an = typeof av === 'number' ? av : 0
+      const bn = typeof bv === 'number' ? bv : 0
+      return sortOrder === 'asc' ? an - bn : bn - an
     })
 
     // Apply limit

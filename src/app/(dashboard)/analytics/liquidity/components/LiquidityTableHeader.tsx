@@ -2,8 +2,10 @@
 
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import type { LiquidityUiSortField } from '@/lib/liquidity-utils'
 
-export type LiquiditySortField = 'turnover_days' | 'stock_value' | 'velocity_per_day'
+// Single source of truth lives in liquidity-sort.ts; alias preserves this module's consumer name.
+export type LiquiditySortField = LiquidityUiSortField
 
 interface LiquidityTableHeaderProps {
   sortBy: LiquiditySortField

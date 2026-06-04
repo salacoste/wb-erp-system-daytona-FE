@@ -65,7 +65,7 @@ describe('useLiquidity', () => {
     it('should fetch data with custom parameters', async () => {
       const params: LiquidityQueryParams = {
         category_filter: 'illiquid',
-        sort_by: 'stock_value',
+        sort_by: 'frozen_capital', // backend LiquiditySortByEnum value (was 'stock_value' → 400)
         sort_order: 'desc',
         limit: 50,
       }

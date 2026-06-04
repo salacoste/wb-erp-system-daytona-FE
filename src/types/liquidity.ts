@@ -51,8 +51,12 @@ export type TrendInsightType = 'improvement' | 'warning' | 'info'
 export interface LiquidityQueryParams {
   /** Filter by liquidity category */
   category_filter?: LiquidityCategory | 'all'
-  /** Sort field */
-  sort_by?: 'turnover_days' | 'stock_value' | 'velocity_per_day' | 'frozen_capital'
+  /**
+   * Sort field — MUST match backend LiquiditySortByEnum (liquidity-query.dto.ts). Sending any
+   * other value (e.g. the table's stock_value / velocity_per_day UI columns) 400s the request and
+   * blanks the page. Use mapLiquiditySortToApi() to translate UI columns to these values.
+   */
+  sort_by?: 'frozen_capital' | 'turnover_days' | 'current_stock' | 'product_name'
   /** Sort order */
   sort_order?: 'asc' | 'desc'
   /** Max results (1-500, default: 100) */
