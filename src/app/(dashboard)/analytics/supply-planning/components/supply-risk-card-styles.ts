@@ -20,7 +20,6 @@ export interface CardStyleSet {
   icon: string
   label: string
   count: string
-  loss: string
 }
 
 /**
@@ -34,35 +33,30 @@ export function getCardStyles(status: StockoutRisk, isActive: boolean): CardStyl
       icon: isActive ? 'text-white' : 'text-gray-700',
       label: isActive ? 'text-white' : 'text-gray-700',
       count: isActive ? 'text-white' : 'text-gray-900',
-      loss: isActive ? 'text-gray-300' : 'text-gray-600',
     },
     critical: {
       card: isActive ? 'bg-red-100 border-red-300' : 'bg-red-50 border-red-200',
       icon: 'text-red-600',
       label: 'text-red-700',
       count: 'text-red-900',
-      loss: 'text-red-600',
     },
     warning: {
       card: isActive ? 'bg-orange-100 border-orange-300' : 'bg-orange-50 border-orange-200',
       icon: 'text-orange-600',
       label: 'text-orange-700',
       count: 'text-orange-900',
-      loss: 'text-orange-600',
     },
     low: {
       card: isActive ? 'bg-yellow-100 border-yellow-300' : 'bg-yellow-50 border-yellow-200',
       icon: 'text-yellow-600',
       label: 'text-yellow-700',
       count: 'text-yellow-900',
-      loss: 'text-yellow-600',
     },
     healthy: {
       card: isActive ? 'bg-green-100 border-green-300' : 'bg-green-50 border-green-200',
       icon: 'text-green-600',
       label: 'text-green-700',
       count: 'text-green-900',
-      loss: 'text-green-600',
     },
   }
 

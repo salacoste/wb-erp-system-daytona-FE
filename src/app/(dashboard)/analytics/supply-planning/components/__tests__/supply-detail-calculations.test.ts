@@ -9,7 +9,11 @@
 
 import { describe, it, expect } from 'vitest'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
-import { buildCopyInfo } from '../supply-detail-calculations'
+import {
+  buildCopyInfo,
+  calculateForecast,
+  calculateTotalLostUnits,
+} from '../supply-detail-calculations'
 
 function makeItem(overrides: Partial<SupplyPlanningItem> = {}): SupplyPlanningItem {
   return {
@@ -45,5 +49,49 @@ describe('buildCopyInfo — days until stockout', () => {
     expect(buildCopyInfo(makeItem({ days_until_stockout: 1 }))).toContain(
       'Дней до стокаута: 1 день'
     )
+  })
+})
+
+describe('calculateForecast / calculateTotalLostUnits — lost UNITS, not a fabricated ₽', () => {
+  it('reports zero lost units when stock covers the whole 7-day horizon', () => {
+    const forecast = calculateForecast(makeItem({ current_stock: 100, avg_daily_sales: 5 }))
+    expect(forecast).toHaveLength(7)
+    expect(forecast.every(d => d.lostUnits === 0 && !d.isStockout)).toBe(true)
+    expect(calculateTotalLostUnits(forecast)).toBe(0)
+  })
+
+  it('sums unmet demand in UNITS once stock runs out (no price multiplier)', () => {
+    // stock 10, sells 5/day: depletes exactly end of day 2; days 3-7 each lose the full 5 units.
+    const forecast = calculateForecast(makeItem({ current_stock: 10, avg_daily_sales: 5 }))
+    const total = calculateTotalLostUnits(forecast)
+    expect(total).toBe(25) // 5 stockout days × 5 units — a UNIT count, not 25×fabricated-price
+    // Sanity: the value is small (units), never inflated by a ~1000₽ / cogs×2.5 markup.
+    expect(total).toBeLessThan(1000)
+  })
+
+  it('counts only the unmet portion on the first stockout day', () => {
+    // stock 12, sells 5/day: day 3 starts with 2 → loses 3; days 4-7 lose 5 each = 3 + 20 = 23.
+    const forecast = calculateForecast(makeItem({ current_stock: 12, avg_daily_sales: 5 }))
+    expect(calculateTotalLostUnits(forecast)).toBe(23)
+  })
+
+  it('reports no lost units when there are no sales (avg_daily_sales = 0)', () => {
+    const forecast = calculateForecast(makeItem({ current_stock: 10, avg_daily_sales: 0 }))
+    expect(forecast.every(d => d.lostUnits === 0 && !d.isStockout)).toBe(true)
+    expect(calculateTotalLostUnits(forecast)).toBe(0)
+  })
+
+  it('does not fabricate losses from COGS — lost units are independent of cogs_per_unit', () => {
+    const withCogs = calculateTotalLostUnits(
+      calculateForecast(
+        makeItem({ current_stock: 10, avg_daily_sales: 5, has_cogs: true, cogs_per_unit: 999 })
+      )
+    )
+    const withoutCogs = calculateTotalLostUnits(
+      calculateForecast(
+        makeItem({ current_stock: 10, avg_daily_sales: 5, has_cogs: false, cogs_per_unit: null })
+      )
+    )
+    expect(withCogs).toBe(withoutCogs) // 25 either way — COGS no longer leaks into the figure
   })
 })

@@ -4,7 +4,7 @@ import { CheckCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { StockoutRisk, SupplyPlanningSummary } from '@/types/supply-planning'
-import { STOCKOUT_RISK_CONFIG, formatReorderValue } from '@/lib/supply-planning-utils'
+import { STOCKOUT_RISK_CONFIG } from '@/lib/supply-planning-utils'
 import { LUCIDE_ICONS, getCardStyles } from './supply-risk-card-styles'
 
 /**
@@ -25,36 +25,33 @@ interface SupplyRiskCardsProps {
 interface RiskCardData {
   status: StockoutRisk
   count: number
-  potentialLoss?: number
 }
 
 export function SupplyRiskCards({ summary, activeFilter, onCardClick }: SupplyRiskCardsProps) {
   // Build card data from summary
   const cards: RiskCardData[] = [
+    // The "Потери: X ₽" line was removed from every card: it was total_reorder_value × an arbitrary
+    // 0.2–0.3, mislabelling a fraction of reorder COST as a loss — fabricated (Defensive Frontend
+    // Principle). The cards now show counts only. See request-backend/203.
     {
       status: 'out_of_stock',
       count: summary.out_of_stock_count,
-      // No potential loss for out_of_stock - already lost
     },
     {
       status: 'critical',
       count: summary.stockout_critical,
-      potentialLoss: summary.total_reorder_value * 0.3, // Estimate 30% critical
     },
     {
       status: 'warning',
       count: summary.stockout_warning,
-      potentialLoss: summary.total_reorder_value * 0.25, // Estimate 25% warning
     },
     {
       status: 'low',
       count: summary.stockout_low,
-      potentialLoss: summary.total_reorder_value * 0.2, // Estimate 20% low
     },
     {
       status: 'healthy',
       count: summary.healthy_stock,
-      // No potential loss for healthy stock
     },
   ]
 
@@ -65,7 +62,6 @@ export function SupplyRiskCards({ summary, activeFilter, onCardClick }: SupplyRi
           key={card.status}
           status={card.status}
           count={card.count}
-          potentialLoss={card.potentialLoss}
           isActive={activeFilter === card.status}
           onClick={() => onCardClick(card.status)}
         />
@@ -77,12 +73,11 @@ export function SupplyRiskCards({ summary, activeFilter, onCardClick }: SupplyRi
 interface RiskCardProps {
   status: StockoutRisk
   count: number
-  potentialLoss?: number
   isActive: boolean
   onClick: () => void
 }
 
-function RiskCard({ status, count, potentialLoss, isActive, onClick }: RiskCardProps) {
+function RiskCard({ status, count, isActive, onClick }: RiskCardProps) {
   const config = STOCKOUT_RISK_CONFIG[status]
   const IconComponent = LUCIDE_ICONS[config.lucideIcon as keyof typeof LUCIDE_ICONS]
 
@@ -118,13 +113,6 @@ function RiskCard({ status, count, potentialLoss, isActive, onClick }: RiskCardP
         <div className={cn('text-3xl font-bold mb-1', cardStyles.count)}>
           {count} <span className="text-lg font-normal">SKU</span>
         </div>
-
-        {/* Potential Loss (if applicable) */}
-        {potentialLoss !== undefined && potentialLoss > 0 && (
-          <div className={cn('text-sm', cardStyles.loss)}>
-            Потери: {formatReorderValue(potentialLoss)}
-          </div>
-        )}
 
         {/* Active indicator */}
         {isActive && (

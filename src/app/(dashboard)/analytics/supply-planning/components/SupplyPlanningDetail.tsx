@@ -12,7 +12,7 @@ import {
 } from '@/lib/supply-planning-utils'
 import {
   calculateForecast,
-  calculateTotalPotentialLoss,
+  calculateTotalLostUnits,
   buildCopyInfo,
 } from './supply-detail-calculations'
 import { SupplyDetailLeftColumn } from './SupplyDetailLeftColumn'
@@ -66,8 +66,8 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
   // Generate 7-day forecast
   const forecast = useMemo(() => calculateForecast(item), [item])
 
-  // Calculate total potential losses
-  const totalPotentialLoss = calculateTotalPotentialLoss(forecast)
+  // Total lost sales units over the forecast horizon (honest, backend-derived — not a ₽ figure)
+  const totalLostUnits = calculateTotalLostUnits(forecast)
 
   // Copy info to clipboard
   const handleCopyInfo = () => {
@@ -117,11 +117,7 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
         <SupplyDetailLeftColumn item={item} trendConfig={trendConfig} TrendIcon={TrendIcon} />
 
         {/* Right Column */}
-        <SupplyDetailRightColumn
-          item={item}
-          forecast={forecast}
-          totalPotentialLoss={totalPotentialLoss}
-        />
+        <SupplyDetailRightColumn item={item} forecast={forecast} totalLostUnits={totalLostUnits} />
       </div>
 
       {/* Action Buttons */}

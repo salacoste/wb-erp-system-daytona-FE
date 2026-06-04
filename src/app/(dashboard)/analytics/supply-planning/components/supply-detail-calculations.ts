@@ -3,7 +3,7 @@
  * Story 6.3: Stockout Table & Detail Panel
  *
  * Pure utility functions for 7-day forecast generation,
- * potential loss calculation, and clipboard text building.
+ * lost-units calculation, and clipboard text building.
  */
 
 import type { SupplyPlanningItem } from '@/types/supply-planning'
@@ -24,7 +24,9 @@ export interface ForecastDay {
   sales: number
   stockEnd: number
   isStockout: boolean
-  potentialLoss: number
+  /** Unmet demand (units) on a stockout day = sales the stock couldn't cover. Honest,
+   *  backend-derived — NOT a ₽ figure (the backend provides no selling price). */
+  lostUnits: number
 }
 
 // ============================================================================
@@ -33,17 +35,13 @@ export interface ForecastDay {
 
 /**
  * Generate 7-day stock forecast based on current stock and daily sales velocity.
- * Each day consumes avg_daily_sales units; stockout triggers potential loss calc.
+ * Each day consumes avg_daily_sales units; a stockout day accrues lost sales units (unmet demand).
  */
 export function calculateForecast(item: SupplyPlanningItem): ForecastDay[] {
   const days: ForecastDay[] = []
 
   let currentStock = item.current_stock
   const dailySales = item.avg_daily_sales
-  const avgPrice =
-    item.has_cogs && item.cogs_per_unit
-      ? item.cogs_per_unit * 2.5 // Approximate retail price
-      : 1000 // Default assumption
 
   for (let i = 1; i <= 7; i++) {
     const date = new Date()
@@ -57,7 +55,7 @@ export function calculateForecast(item: SupplyPlanningItem): ForecastDay[] {
     const sales = Math.round(dailySales)
     const stockEnd = Math.max(0, stockStart - sales)
     const isStockout = stockEnd === 0 && stockStart < sales
-    const potentialLoss = isStockout ? Math.round((sales - stockStart) * avgPrice) : 0
+    const lostUnits = isStockout ? sales - stockStart : 0
 
     days.push({
       day: i,
@@ -66,7 +64,7 @@ export function calculateForecast(item: SupplyPlanningItem): ForecastDay[] {
       sales,
       stockEnd,
       isStockout,
-      potentialLoss,
+      lostUnits,
     })
 
     currentStock = stockEnd
@@ -76,10 +74,10 @@ export function calculateForecast(item: SupplyPlanningItem): ForecastDay[] {
 }
 
 /**
- * Sum potential losses across all forecast days.
+ * Sum lost sales units across all forecast days (total unmet demand over the horizon).
  */
-export function calculateTotalPotentialLoss(forecast: ForecastDay[]): number {
-  return forecast.reduce((sum, day) => sum + day.potentialLoss, 0)
+export function calculateTotalLostUnits(forecast: ForecastDay[]): number {
+  return forecast.reduce((sum, day) => sum + day.lostUnits, 0)
 }
 
 // ============================================================================

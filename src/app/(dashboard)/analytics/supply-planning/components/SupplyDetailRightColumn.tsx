@@ -12,7 +12,7 @@
 
 import { Calendar, ShoppingCart, CircleHelp } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatNumber } from '@/lib/utils'
 import Link from 'next/link'
 import { ROUTES } from '@/lib/routes'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
@@ -30,14 +30,14 @@ import {
 interface RightColumnProps {
   item: SupplyPlanningItem
   forecast: ForecastDay[]
-  totalPotentialLoss: number
+  totalLostUnits: number
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function SupplyDetailRightColumn({ item, forecast, totalPotentialLoss }: RightColumnProps) {
+export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: RightColumnProps) {
   return (
     <div className="space-y-6">
       {/* 7-Day Forecast */}
@@ -68,10 +68,12 @@ export function SupplyDetailRightColumn({ item, forecast, totalPotentialLoss }: 
               </span>
             </div>
           ))}
-          {totalPotentialLoss > 0 && (
+          {totalLostUnits > 0 && (
             <div className="mt-3 pt-3 border-t flex justify-between font-bold text-red-600">
               <span>Потенциальные потери (7 дней):</span>
-              <span>{formatReorderValue(totalPotentialLoss)}</span>
+              {/* Lost SALES UNITS — honest, backend-derived. NOT a ₽ figure: the backend provides
+                  no selling price, so any ₽ "loss" would be fabricated (Defensive Frontend Principle). */}
+              <span>≈ {formatNumber(totalLostUnits)} шт упущенных продаж</span>
             </div>
           )}
         </div>
@@ -123,18 +125,9 @@ export function SupplyDetailRightColumn({ item, forecast, totalPotentialLoss }: 
                 {formatStockQty(item.reorder_quantity)} = {formatReorderValue(item.reorder_value)}
               </dd>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-600">Ожид. выручка:</dt>
-              <dd className="font-medium text-gray-900">
-                ~{formatReorderValue(item.reorder_value * 2.5)}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-600">Ожид. прибыль:</dt>
-              <dd className="font-medium text-green-600">
-                ~{formatReorderValue(item.reorder_value * 1.5)} (60%)
-              </dd>
-            </div>
+            {/* "Ожид. выручка/прибыль" rows removed: they multiplied reorder_value by a fabricated
+                2.5×/1.5× markup (the backend provides no selling price) — fabricated financials
+                presented as authoritative (Defensive Frontend Principle). See request-backend/203. */}
           </dl>
         ) : (
           <div className="flex items-center gap-2 text-gray-400">
