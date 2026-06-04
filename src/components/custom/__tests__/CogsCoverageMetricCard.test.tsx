@@ -62,19 +62,26 @@ describe('CogsCoverageMetricCard', () => {
     it('should display percentage in badge', () => {
       renderCard({ productsWithCogs: 90, totalProducts: 100, coverage: 90 })
 
-      expect(screen.getByText('90%')).toBeInTheDocument()
+      expect(screen.getByText(/90\s%/)).toBeInTheDocument()
     })
 
     it('should round percentage to integer', () => {
       renderCard({ productsWithCogs: 33, totalProducts: 100, coverage: 33.333 })
 
-      expect(screen.getByText('33%')).toBeInTheDocument()
+      // \s matches the NBSP that ru-RU Intl emits before "%" (formatPercentageInt → "33 %")
+      expect(screen.getByText(/33\s%/)).toBeInTheDocument()
+    })
+
+    it('should round .5 fractions half-up (Intl, e.g. 33,5 → "34 %")', () => {
+      renderCard({ productsWithCogs: 34, totalProducts: 100, coverage: 33.5 })
+
+      expect(screen.getByText(/34\s%/)).toBeInTheDocument()
     })
 
     it('should display "Полное покрытие" at 100%', () => {
       renderCard({ productsWithCogs: 100, totalProducts: 100, coverage: 100 })
 
-      expect(screen.getByText('100%')).toBeInTheDocument()
+      expect(screen.getByText(/100\s%/)).toBeInTheDocument()
       expect(screen.getByText('Полное покрытие')).toBeInTheDocument()
     })
 
@@ -89,21 +96,21 @@ describe('CogsCoverageMetricCard', () => {
     it('should use green badge for 100% coverage', () => {
       renderCard({ productsWithCogs: 100, totalProducts: 100, coverage: 100 })
 
-      const badge = screen.getByText('100%')
+      const badge = screen.getByText(/100\s%/)
       expect(badge).toHaveClass('bg-green-100')
     })
 
     it('should use yellow badge for 50-99% coverage', () => {
       renderCard({ productsWithCogs: 75, totalProducts: 100, coverage: 75 })
 
-      const badge = screen.getByText('75%')
+      const badge = screen.getByText(/75\s%/)
       expect(badge).toHaveClass('bg-yellow-100')
     })
 
     it('should use red badge for < 50% coverage', () => {
       renderCard({ productsWithCogs: 25, totalProducts: 100, coverage: 25 })
 
-      const badge = screen.getByText('25%')
+      const badge = screen.getByText(/25\s%/)
       expect(badge).toHaveClass('bg-red-100')
     })
   })
@@ -172,7 +179,7 @@ describe('CogsCoverageMetricCard', () => {
         error: 'Ошибка загрузки',
       })
 
-      expect(screen.queryByText('50%')).not.toBeInTheDocument()
+      expect(screen.queryByText(/50\s%/)).not.toBeInTheDocument()
     })
   })
 

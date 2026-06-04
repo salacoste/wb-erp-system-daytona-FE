@@ -17,7 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Info } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 
 export interface CogsCoverageMetricCardProps {
   /** Number of products with COGS assigned */
@@ -142,7 +142,7 @@ export function CogsCoverageMetricCard({
               variant={getBadgeVariant(coverageValue)}
               className={getBadgeClass(coverageValue)}
             >
-              {coverageValue.toFixed(0)}%
+              {formatPercentageInt(coverageValue)}
             </Badge>
             <span className="text-sm text-muted-foreground">
               {coverageValue >= 100 ? 'Полное покрытие' : 'товаров с COGS'}
