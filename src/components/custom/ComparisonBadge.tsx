@@ -11,7 +11,7 @@
 'use client'
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import type { TrendDirection } from '@/lib/comparison-helpers'
 
 export interface ComparisonBadgeProps {
@@ -37,12 +37,11 @@ const COLOR_MAP: Record<TrendDirection, string> = {
  * Uses Russian locale with comma as decimal separator
  */
 function formatBadgePercentage(value: number): string {
+  // value is percent-units (e.g. 10.5 → "10,5 %"). formatPercentage adds the NBSP + comma and
+  // emits the minus for negatives; we prepend "+" for positives. Was comma-WITHOUT-NBSP
+  // (`Intl.format(abs) + '%'` → "10,5%") — a gate-blind Russian-locale violation.
   const sign = value > 0 ? '+' : ''
-  const formatted = new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(Math.abs(value))
-  return `${sign}${value < 0 ? '-' : ''}${formatted}%`
+  return `${sign}${formatPercentage(value, 1)}`
 }
 
 /**

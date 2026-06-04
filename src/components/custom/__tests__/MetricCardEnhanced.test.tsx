@@ -156,7 +156,7 @@ describe('Story 60.3-FE: AC2 - Positive Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 110, previousValue: 100 })} />
       )
       // ((110 - 100) / 100) * 100 = 10%
-      expect(screen.getByText(/\+10,0%/)).toBeInTheDocument()
+      expect(screen.getByText(/\+10,0\s%/)).toBeInTheDocument() // ru-RU: NBSP before %
     })
 
     it('shows green trend indicator for positive change', () => {
@@ -203,7 +203,7 @@ describe('Story 60.3-FE: AC2 - Negative Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 90, previousValue: 100 })} />
       )
       // ((90 - 100) / 100) * 100 = -10%
-      expect(screen.getByText(/-10,0%/)).toBeInTheDocument()
+      expect(screen.getByText(/[-−]10,0\s%/)).toBeInTheDocument() // ru-RU: NBSP; ASCII or Unicode minus
     })
 
     it('shows red trend indicator for negative change', () => {
@@ -620,18 +620,18 @@ describe('Story 60.3-FE: ComparisonBadge Component', () => {
   describe('percentage display', () => {
     it('shows positive percentage with plus sign', () => {
       renderWithTooltip(<ComparisonBadge percentageChange={10} direction="positive" />)
-      expect(screen.getByText('+10,0%')).toBeInTheDocument()
+      expect(screen.getByText(/^\+10,0\s%$/)).toBeInTheDocument() // ru-RU: NBSP before %
     })
 
     it('shows negative percentage with minus sign', () => {
       renderWithTooltip(<ComparisonBadge percentageChange={-10} direction="negative" />)
-      expect(screen.getByText('-10,0%')).toBeInTheDocument()
+      expect(screen.getByText(/^[-−]10,0\s%$/)).toBeInTheDocument() // ru-RU: NBSP; ASCII/Unicode minus
     })
 
     it('shows zero percentage for neutral', () => {
       renderWithTooltip(<ComparisonBadge percentageChange={0} direction="neutral" />)
       // Zero percentage shows without plus sign
-      expect(screen.getByText('0,0%')).toBeInTheDocument()
+      expect(screen.getByText(/^0,0\s%$/)).toBeInTheDocument() // ru-RU: NBSP before %
     })
   })
 
