@@ -8,14 +8,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { TrendingUp, TrendingDown, Minus, HelpCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import type { TrendDirection } from '@/types/analytics'
 
 /**
@@ -64,7 +59,7 @@ function formatValue(value: number | null | undefined, format: KPIFormat): strin
       }).format(value)
 
     case 'percent':
-      return `${value.toFixed(1)}%`
+      return formatPercentage(value, 1)
 
     case 'number':
       return new Intl.NumberFormat('ru-RU').format(value)
@@ -159,18 +154,13 @@ export function KPICard({
           <Skeleton className="h-8 w-24" />
         ) : (
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-gray-900">
-              {formatValue(value, format)}
-            </span>
+            <span className="text-2xl font-bold text-gray-900">{formatValue(value, format)}</span>
             {trendIcon && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span
-                      className={cn(
-                        'inline-flex items-center transition-colors',
-                        trendColor
-                      )}
+                      className={cn('inline-flex items-center transition-colors', trendColor)}
                       role="img"
                       aria-label={`Тренд: ${trend}`}
                     >

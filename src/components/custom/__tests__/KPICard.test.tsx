@@ -20,7 +20,7 @@ describe('KPICard', () => {
     it('should format percent values correctly', () => {
       render(<KPICard title="Margin" value={45.67} format="percent" />)
 
-      expect(screen.getByText('45.7%')).toBeInTheDocument()
+      expect(screen.getByText(/45,7\s%/)).toBeInTheDocument() // ru-RU: comma + NBSP
     })
 
     it('should format number values correctly', () => {
