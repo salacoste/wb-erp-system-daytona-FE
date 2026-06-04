@@ -4,6 +4,11 @@
  * Extracted from analytics-utils.ts (Story 74.5)
  */
 
+// Canonical Russian-locale percent formatter (comma decimal + NBSP, e.g. "15,5 %").
+// iter-70: formatROI was the dot-locale form (no comma, no NBSP) → migrated to canonical
+// (dot-locale percent consolidation — see docs/process/dot-locale-percent-consolidation-proposal.md).
+import { formatPercentage } from '@/lib/utils'
+
 /**
  * Get color class for ROI value
  * Story 6.3-FE: Color coding based on ROI thresholds
@@ -52,10 +57,15 @@ export function formatProfitPerUnit(value: number | null | undefined): string {
   return `${formatted}/ед.`
 }
 
-/** Format ROI percentage value */
+/**
+ * Format an ROI percent-units value in Russian locale (comma decimal + NBSP, fixed 1 decimal;
+ * e.g. 25 → "25,0 %"). Callers MUST pass percent-units (0-100 scale): both calculateROI
+ * ((profit/cogs)*100) and the backend `roi` field use this scale — NOT a 0-1 ratio.
+ * null/undefined → em dash (anti-pattern #8: a missing ROI is unknown, not 0).
+ */
 export function formatROI(value: number | null | undefined): string {
   if (value === null || value === undefined) return '—'
-  return `${value.toFixed(1)}%`
+  return formatPercentage(value, 1)
 }
 
 /**
