@@ -92,17 +92,11 @@ export function useSyncSupplies() {
 
   return useMutation({
     mutationFn: syncSupplies,
-    onSuccess: data => {
-      // Invalidate supplies list to refresh statuses
+    onSuccess: () => {
+      // /sync is async (202, fire-and-forget): it only enqueues a job. Invalidate so the list
+      // refetches; real status changes surface via that refetch + polling, NOT in the response.
       queryClient.invalidateQueries({ queryKey: suppliesQueryKeys.all })
-
-      if (data.statusChanges.length > 0) {
-        toast.success(
-          `Синхронизировано ${data.syncedCount} поставок, ${data.statusChanges.length} изменений статуса`
-        )
-      } else {
-        toast.info('Статусы поставок актуальны')
-      }
+      toast.success('Синхронизация запущена. Статусы обновятся автоматически.')
     },
     onError: error => {
       const errorMsg = error instanceof Error ? error.message : 'Ошибка синхронизации'

@@ -13,30 +13,20 @@ import type { SyncSuppliesResponse, SuppliesErrorResponse } from '@/types/suppli
 // =============================================================================
 
 export const mockSyncSuppliesResponse: SyncSuppliesResponse = {
-  syncedCount: 5,
-  statusChanges: [
-    { supplyId: 'supply-002', oldStatus: 'CLOSED', newStatus: 'DELIVERING' },
-    { supplyId: 'supply-003', oldStatus: 'DELIVERING', newStatus: 'DELIVERED' },
-  ],
-  errors: [],
-  nextSyncAt: '2026-01-15T12:35:00.000Z',
+  jobId: 'sync-job-err-001',
+  message: 'Sync job queued',
 }
 
 export const mockSyncSuppliesResponseNoChanges: SyncSuppliesResponse = {
-  syncedCount: 10,
-  statusChanges: [],
-  errors: [],
-  nextSyncAt: '2026-01-15T12:35:00.000Z',
+  jobId: 'sync-job-err-002',
+  message: 'Sync job queued',
 }
 
+// Sync is async (202, fire-and-forget): the response never carries per-supply errors — those
+// surface later via polling. Kept as a valid enqueue response for import-compatibility.
 export const mockSyncSuppliesResponseWithErrors: SyncSuppliesResponse = {
-  syncedCount: 8,
-  statusChanges: [{ supplyId: 'supply-002', oldStatus: 'CLOSED', newStatus: 'DELIVERING' }],
-  errors: [
-    { supplyId: 'supply-007', error: 'WB API timeout' },
-    { supplyId: 'supply-008', error: 'Supply not found in WB' },
-  ],
-  nextSyncAt: '2026-01-15T12:35:00.000Z',
+  jobId: 'sync-job-err-003',
+  message: 'Sync job queued',
 }
 
 // =============================================================================

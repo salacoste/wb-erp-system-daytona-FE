@@ -160,15 +160,14 @@ export const mockAddOrdersRequest: AddOrdersRequest = {
 }
 
 export const mockAddOrdersResponse: AddOrdersResponse = {
-  addedCount: 3,
-  failures: [],
-  totalOrdersCount: 8,
+  added: 3,
+  failed: 0,
 }
 
 export const mockAddOrdersResponsePartial: AddOrdersResponse = {
-  addedCount: 2,
-  failures: [{ orderId: 'order-003', reason: 'Order already in another supply' }],
-  totalOrdersCount: 7,
+  added: 2,
+  failed: 1,
+  errors: ['Order order-003 failed: already in another supply'],
 }
 
 export const mockRemoveOrdersRequest: RemoveOrdersRequest = { orderIds: ['order-001'] }

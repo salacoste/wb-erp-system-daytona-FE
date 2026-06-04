@@ -416,7 +416,7 @@ describe('SuppliesPage', () => {
 
       expect(mockSuppliesListResponse.items).toHaveLength(5)
       expect(mockSuppliesListResponseEmpty.items).toHaveLength(0)
-      expect(mockSyncSuppliesResponse.syncedCount).toBe(10)
+      expect(mockSyncSuppliesResponse.jobId).toBe('sync-job-001')
 
       expect(renderPage).toBeDefined()
       expect(queryClient).toBeDefined()

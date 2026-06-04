@@ -127,8 +127,8 @@ export async function addOrders(supplyId: string, orderIds: string[]): Promise<A
   } as AddOrdersRequest)
 
   console.info('[Supplies API] Orders added:', {
-    addedCount: response.addedCount,
-    failures: response.failures?.length ?? 0,
+    added: response.added,
+    failed: response.failed,
   })
 
   return response

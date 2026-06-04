@@ -38,21 +38,16 @@ export function useManualSync(): UseManualSyncResult {
 
   const mutation = useMutation({
     mutationFn: syncSupplies,
-    onSuccess: data => {
+    onSuccess: () => {
       const now = new Date()
       setLastSyncAt(now)
       setRateLimitCountdown(POLLING_CONFIG.manualSyncRateLimitMs / 1000)
 
-      // Invalidate supplies queries to refresh data
+      // /sync is async (202): the response carries only { jobId, message }, no status changes.
+      // Invalidate the list + polling queries; the refetch (and useSupplyPolling's own list-diff)
+      // surfaces real per-supply status changes — there's nothing to iterate here.
       queryClient.invalidateQueries({ queryKey: suppliesQueryKeys.all })
       queryClient.invalidateQueries({ queryKey: supplyPollingQueryKeys.all })
-
-      // Update individual supply caches if status changed
-      for (const change of data.statusChanges) {
-        queryClient.invalidateQueries({
-          queryKey: suppliesQueryKeys.detail(change.supplyId),
-        })
-      }
     },
   })
 

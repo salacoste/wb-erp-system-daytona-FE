@@ -66,12 +66,10 @@ export async function downloadDocument(supplyId: string, docType: DocumentType):
 export async function syncSupplies(): Promise<SyncSuppliesResponse> {
   console.info('[Supplies API] Syncing supplies with WB')
 
+  // Async enqueue (HTTP 202): backend returns { jobId, message } — NOT a synchronous result.
   const response = await apiClient.post<SyncSuppliesResponse>('/v1/supplies/sync', {})
 
-  console.info('[Supplies API] Sync completed:', {
-    syncedCount: response.syncedCount,
-    statusChanges: response.statusChanges?.length ?? 0,
-  })
+  console.info('[Supplies API] Sync job enqueued:', { jobId: response.jobId })
 
   return response
 }

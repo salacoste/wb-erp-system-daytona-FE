@@ -276,21 +276,14 @@ export const mockErrorRateLimit: SuppliesErrorResponse = {
 import type { SyncSuppliesResponse } from '@/types/supplies'
 
 export const mockSyncSuppliesResponse: SyncSuppliesResponse = {
-  syncedCount: 10,
-  statusChanges: [
-    { supplyId: 'supply-002', oldStatus: 'CLOSED', newStatus: 'DELIVERING' },
-    { supplyId: 'supply-003', oldStatus: 'DELIVERING', newStatus: 'DELIVERED' },
-  ],
-  errors: [],
-  nextSyncAt: '2026-01-15T13:05:00.000Z',
+  jobId: 'sync-job-001',
+  message: 'Sync job queued',
 }
 
-/** Mock response for sync with no changes */
+/** Mock response for sync (async enqueue — no synchronous changes in the response) */
 export const mockSyncSuppliesResponseNoChanges: SyncSuppliesResponse = {
-  syncedCount: 5,
-  statusChanges: [],
-  errors: [],
-  nextSyncAt: '2026-01-15T13:05:00.000Z',
+  jobId: 'sync-job-002',
+  message: 'Sync job queued',
 }
 
 // =============================================================================

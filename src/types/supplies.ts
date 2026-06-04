@@ -161,17 +161,14 @@ export interface AddOrdersRequest {
   orderIds: string[]
 }
 
-/** Failure info for add orders */
-export interface AddOrderFailure {
-  orderId: string
-  reason: string
-}
-
-/** Response from adding orders */
+/** Response from adding orders — matches backend AddOrdersResultDto verbatim (no normalizer). */
 export interface AddOrdersResponse {
-  addedCount: number
-  failures: AddOrderFailure[]
-  totalOrdersCount: number
+  /** Number of orders successfully added */
+  added: number
+  /** Number of orders that failed to add */
+  failed: number
+  /** Error messages for failed orders (present only on partial/total failure) */
+  errors?: string[]
 }
 
 /** Request to remove orders from a supply */
@@ -211,18 +208,14 @@ export interface SupplyStatusChange {
   newStatus: SupplyStatus
 }
 
-/** Sync error info */
-export interface SyncError {
-  supplyId: string
-  error: string
-}
-
-/** Response from syncing supplies */
+/**
+ * Response from triggering supply sync — matches backend TriggerSyncResponseDto.
+ * POST /v1/supplies/sync is ASYNC (HTTP 202, fire-and-forget): it only enqueues a job.
+ * Real status changes arrive later via polling/cache invalidation, NOT in this response.
+ */
 export interface SyncSuppliesResponse {
-  syncedCount: number
-  statusChanges: SupplyStatusChange[]
-  errors: SyncError[]
-  nextSyncAt: string
+  jobId: string
+  message: string
 }
 
 // =============================================================================

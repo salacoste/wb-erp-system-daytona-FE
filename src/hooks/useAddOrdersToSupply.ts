@@ -65,8 +65,10 @@ export function useAddOrdersToSupply(supplyId: string, options: UseAddOrdersToSu
     },
 
     onSuccess: data => {
-      const { addedCount, failures } = data
-      const failedCount = failures?.length ?? 0
+      // Backend AddOrdersResultDto: { added, failed, errors? } — read those, not the old fictional
+      // { addedCount, failures } (which were undefined → no toast / drawer never closed).
+      const addedCount = data.added
+      const failedCount = data.failed
 
       // Invalidate caches
       queryClient.invalidateQueries({ queryKey: suppliesQueryKeys.detail(supplyId) })
