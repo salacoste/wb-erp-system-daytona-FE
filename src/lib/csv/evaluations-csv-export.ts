@@ -34,7 +34,8 @@ function entryToRow(entry: EvaluationEntry): string[] {
     entry.nmId !== null ? String(entry.nmId) : '—',
     formatNumber(entry.predictedUnits),
     formatNumber(entry.actualUnits),
-    formatCurrency(entry.predictedRevenue),
+    // AP#8 / Epic 113 I1: predictedRevenue is null for unit-target models → em-dash, never 0
+    entry.predictedRevenue !== null ? formatCurrency(entry.predictedRevenue) : '—',
     formatCurrency(entry.actualRevenue),
     // AP#8: null MAPE → em-dash, never 0
     entry.mapeUnits !== null ? formatPercentage(entry.mapeUnits) : '—',

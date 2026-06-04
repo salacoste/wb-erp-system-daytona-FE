@@ -89,6 +89,17 @@ const predictionWithForecastId: AiForecastPrediction = {
   forecastId: 'fc-uuid-abc',
 }
 
+// Epic 113 I1: revenue-target models (daily_revenue_forecast) send predictedSales:null.
+const revenueModelPrediction: AiForecastPrediction = {
+  date: '2025-01-22',
+  horizonDays: 7,
+  predictedSales: null,
+  predictedRevenue: 145811.61,
+  confidence: 0.8,
+  naiveBaseline: null,
+  aiVsNaive: null,
+}
+
 describe('ForecastTable', () => {
   it('renders all 8 column headers in correct order (Story 110.4-FE: Оценка added)', () => {
     renderTable([basePrediction])
@@ -142,6 +153,18 @@ describe('ForecastTable', () => {
   it('confidence null renders "—" not 0%', () => {
     renderTable([nullablePrediction])
     expect(screen.queryByText('0%')).toBeNull()
+  })
+
+  // Epic 113 I1: revenue-target model (daily_revenue_forecast) sends predictedSales:null.
+  // Must render '—' in the "Прогноз продаж" column, NOT crash on null.toFixed(1).
+  it('renders predictedSales as "—" when null (revenue-target model) without crashing', () => {
+    expect(() => renderTable([revenueModelPrediction])).not.toThrow()
+    // predictedSales null → '—' in the units column; revenue still renders as currency
+    const dashes = screen.getAllByText('—')
+    expect(dashes.length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText(/₽/)).toHaveLength(1)
+    // never a fabricated "0.0" units value
+    expect(screen.queryByText('0.0')).toBeNull()
   })
 
   it('renders Прогноз выручки column header even when all rows have null predictedRevenue', () => {

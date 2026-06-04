@@ -48,7 +48,8 @@ function normalizeEvaluationEntry(raw: RawEvaluationEntry): EvaluationEntry {
     horizonDays: raw.horizonDays ?? 0,
     predictedUnits: raw.predictedUnits ?? 0,
     actualUnits: raw.actualUnits ?? 0,
-    predictedRevenue: raw.predictedRevenue ?? 0,
+    // Epic 113 I1 / anti-pattern #8: money field — preserve NULL (revenue-target absent), never ?? 0.
+    predictedRevenue: raw.predictedRevenue ?? null,
     actualRevenue: raw.actualRevenue ?? 0,
     mapeUnits: raw.mapeUnits ?? null,
     mapeRevenue: raw.mapeRevenue ?? null,

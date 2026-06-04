@@ -94,6 +94,13 @@ describe('getForecastBand', () => {
     expect(result.upper).toBe(0)
   })
 
+  // Epic 113 I1: revenue-target model sends predictedUnits:null → no units band.
+  it('predictedUnits = null → both bounds null (no units band, no NaN)', () => {
+    const result = getForecastBand(null, 0.8)
+    expect(result.lower).toBeNull()
+    expect(result.upper).toBeNull()
+  })
+
   it('negative predictedUnits → degenerate flat band (lower = upper = predictedUnits)', () => {
     const result = getForecastBand(-50, 0.7)
     expect(result.lower).toBe(-50)

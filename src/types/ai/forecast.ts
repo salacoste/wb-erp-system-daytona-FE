@@ -25,8 +25,13 @@ export interface AiForecastPrediction {
   /** Frontend alias for backend forecastDate */
   date: string
   horizonDays: number
-  /** Frontend alias for backend predictedUnits */
-  predictedSales: number
+  /**
+   * Frontend alias for backend predictedUnits.
+   * null for revenue-target models (e.g. daily_revenue_forecast) — Epic 113 I1 made
+   * MlForecast.predictedUnits nullable so a non-units-target model emits NULL here
+   * (real value flows through predictedRevenue instead). Consumers MUST null-guard.
+   */
+  predictedSales: number | null
   /** Revenue prediction — null when backend doesn't provide (non-revenue models) */
   predictedRevenue: number | null
   /** Confidence score 0-1 (frontend-canonical form; backend sends 0-100, normalized at boundary). null when backend omits */

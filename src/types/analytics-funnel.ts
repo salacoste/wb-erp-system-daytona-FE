@@ -65,10 +65,23 @@ export interface FunnelPagination {
   hasMore: boolean
 }
 
+/**
+ * Epic 114.5: funnel response metadata. Flags totalConversion (= buyout / openCard)
+ * as an approximate CROSS-SOURCE ratio (buyout from WB Product Data API v2, openCard
+ * from product_funnel_daily) and surfaces the feeding data sources + synced period.
+ * Optional — absent on older/cached backend responses.
+ */
+export interface FunnelResponseMeta {
+  totalConversionApproximate: boolean
+  dataSource: { funnel: string; buyout: string }
+  syncedPeriod: { from: string; to: string; lastSyncAt: string | null }
+}
+
 export interface FunnelResponse {
   items: (FunnelProductItem | FunnelDayItem)[]
   summary: FunnelSummary
   pagination: FunnelPagination
+  meta?: FunnelResponseMeta
 }
 
 export interface FunnelSyncStatus {

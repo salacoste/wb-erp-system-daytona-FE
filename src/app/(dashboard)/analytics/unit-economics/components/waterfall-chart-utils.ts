@@ -146,7 +146,13 @@ export function transformToWaterfallData(
     }
   }
 
-  // Profit/Loss bar (from 0 to remaining)
+  // Profit/Loss bar (from 0 to remaining).
+  // NOTE (Epic 114.2): this is a DISPLAY-ONLY residual of the visual cost decomposition
+  // (revenue 100% − Σ visible cost bars, incl. commission/acquiring as cost categories). It is
+  // INTENTIONALLY different from the API `net_profit` field, which is the canonical operating_profit
+  // (commission/acquiring/loyalty are already netted out of revenue_net, so they are NOT re-subtracted
+  // there). The waterfall answers "where does net revenue go" (cost structure); the summary cards/table
+  // show the canonical profit. Do not "reconcile" the two — they measure different things by design.
   const profitPct = runningTotal
   const profitRub = revenue * (profitPct / 100)
   dataPoints.push({

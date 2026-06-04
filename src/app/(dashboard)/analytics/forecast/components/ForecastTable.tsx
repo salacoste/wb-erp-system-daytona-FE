@@ -65,7 +65,11 @@ export function ForecastTable({ predictions, modelId }: ForecastTableProps) {
             return (
               <tr key={p.date} className="border-b last:border-0">
                 <td className="py-2">{formatDate(p.date)}</td>
-                <td className="py-2 text-right font-mono">{p.predictedSales.toFixed(1)}</td>
+                {/* Epic 113 I1: predictedSales is null for revenue-target models
+                    (daily_revenue_forecast) — null-guard to render '—', NOT crash on .toFixed. */}
+                <td className="py-2 text-right font-mono">
+                  {p.predictedSales != null ? p.predictedSales.toFixed(1) : '—'}
+                </td>
                 {/* iter-78: naiveBaseline is UNITS, not currency — the backend assigns it
                     directly to predictedUnits (ai-forecast.service.ts:109) and groups it with
                     the units columns in CSV export. Render as units (matching "Прогноз продаж"),

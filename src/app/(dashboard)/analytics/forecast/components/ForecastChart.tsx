@@ -49,7 +49,8 @@ export function ForecastChartTooltip({ active, payload }: ForecastChartTooltipPr
   return (
     <div className="rounded border border-border bg-background px-3 py-2 shadow-sm text-sm space-y-1">
       <p className="font-medium">Дата: {formatDate(row.date)}</p>
-      <p>Прогноз (AI): {Math.round(row.predictedSales)}</p>
+      {/* Epic 113 I1: predictedSales is null for revenue-target models → '—', not Math.round(null)=0 */}
+      <p>Прогноз (AI): {row.predictedSales != null ? Math.round(row.predictedSales) : '—'}</p>
       <p>Базовая оценка: {row.naiveBaseline != null ? Math.round(row.naiveBaseline) : '—'}</p>
       <p>Уверенность: {formatConfidence(row.confidence)}</p>
       <p>Диапазон: {formatBandRange(row.bandLower, row.bandUpper)}</p>
@@ -129,13 +130,16 @@ export function ForecastChart({ predictions }: ForecastChartProps) {
                 dot={false}
                 connectNulls={false}
               />
-              {/* Layer 3 (top): AI prediction — solid brand red */}
+              {/* Layer 3 (top): AI prediction — solid brand red.
+                  connectNulls={false}: revenue-target models (Epic 113 I1) send null
+                  predictedSales → skip those points (no flat-0 line, no NaN). */}
               <Line
                 type="monotone"
                 dataKey="predictedSales"
                 stroke="#E53935"
                 strokeWidth={2.5}
                 dot={false}
+                connectNulls={false}
                 activeDot={{ r: 4, fill: '#E53935' }}
               />
             </ComposedChart>

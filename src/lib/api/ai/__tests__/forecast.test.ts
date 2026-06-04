@@ -27,6 +27,25 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].predictedSales).toBe(42.5)
   })
 
+  // Epic 113 I1: revenue-target models (daily_revenue_forecast) send predictedUnits:null.
+  // Preserve null (AP#8 — never coerce to 0, which fabricates a "0 units" forecast).
+  it('maps predictedUnits:null → predictedSales:null (revenue-target model)', () => {
+    const result = normalizeAiForecastResponse({
+      ...base,
+      predictions: [
+        {
+          forecastDate: '2026-05-17',
+          predictedUnits: null,
+          predictedRevenue: 145811.61,
+          confidence: 0.8,
+        },
+      ],
+    })
+    expect(result.predictions[0].predictedSales).toBeNull()
+    // real revenue still flows through
+    expect(result.predictions[0].predictedRevenue).toBe(145811.61)
+  })
+
   it('normalizes a percentage-scale (>1) confidence to 0-1 (e.g. 82 → 0.82)', () => {
     const result = normalizeAiForecastResponse({
       ...base,

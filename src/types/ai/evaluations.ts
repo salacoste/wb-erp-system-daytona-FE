@@ -18,8 +18,8 @@ export interface EvaluationEntry {
   predictedUnits: number
   /** Actual units sold — count, semantic-zero OK */
   actualUnits: number
-  /** Predicted revenue — AP#8: never ?? 0 in money context; semantic-zero OK for forecast */
-  predictedRevenue: number
+  /** Predicted revenue (RUB) — null for unit-target models (Epic 113 I1); AP#8: never ?? 0 in money context */
+  predictedRevenue: number | null
   /** Actual revenue — semantic-zero OK for fact */
   actualRevenue: number
   /** Mean Absolute Percentage Error for units — null when not yet evaluated */

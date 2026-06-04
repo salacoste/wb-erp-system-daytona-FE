@@ -14,7 +14,7 @@ import type {
 interface RawForecastPrediction {
   forecastDate: string
   horizonDays?: number
-  predictedUnits: number
+  predictedUnits: number | null
   predictedRevenue?: number | null
   confidence?: number | null
   nmId?: number
@@ -66,15 +66,20 @@ function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
   return {
     date: p.forecastDate,
     horizonDays: p.horizonDays ?? 0,
-    predictedSales: p.predictedUnits,
-    // Validation F-45: the forecast engine does not compute revenue yet — it returns
-    // predictedRevenue:0 as a placeholder for EVERY prediction (units are real ~700 while
-    // revenue is 0). Map 0 (and NaN/Infinity) → null so the table renders '—' (unknown)
-    // instead of a misleading "0 ₽" (AP#8: 0 masks an uncomputed value; same as F-39
-    // mape:0). A genuine zero-units→zero-revenue also maps to '—' (the backend can't
-    // distinguish placeholder-0 from computed-0).
+    // Epic 113 I1: backend now sends predictedUnits:null for revenue-target models
+    // (e.g. daily_revenue_forecast — MlForecast.predictedUnits became nullable, the
+    // non-units-target dimension is NULL). Preserve null (AP#8: never coerce to 0,
+    // which would fabricate a "0 units/day" forecast). Consumers null-guard the render.
+    predictedSales: p.predictedUnits ?? null,
+    // Validation F-45 (updated Epic 113 I1): revenue-target models now emit REAL
+    // predictedRevenue (no longer an always-0 placeholder for every row). The 0→null
+    // mapping below is kept because (a) units-target models still send predictedRevenue:0
+    // as a placeholder, and (b) the backend can't distinguish a placeholder-0 from a
+    // genuine computed-0 — both render '—' (unknown) rather than a misleading "0 ₽"
+    // (AP#8: 0 masks an uncomputed value; same as F-39 mape:0). NaN/Infinity also → null.
     // PENDING BACKEND: docs/request-backend/188-AI-FORECAST-REVENUE-NOT-COMPUTED.md —
-    // ask the engine to compute revenue (or emit null, not 0, when uncomputed).
+    // ask the engine to emit null (not 0) when revenue is genuinely uncomputed, so the
+    // remaining placeholder-0 ambiguity disappears.
     predictedRevenue:
       typeof p.predictedRevenue === 'number' &&
       Number.isFinite(p.predictedRevenue) &&

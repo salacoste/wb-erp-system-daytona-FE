@@ -15,13 +15,19 @@ import { formatDate } from '@/lib/utils'
  *
  * Edge cases:
  * - confidence === null → treat as 0 (low confidence) → spread = 1 × predictedUnits
+ * - predictedUnits === null → no units series (revenue-target model, Epic 113 I1) → no band
  * - predictedUnits === 0 → both bounds = 0
  * - negative predictedUnits → degenerate flat band (lower = upper = predictedUnits)
  */
 export function getForecastBand(
-  predictedUnits: number,
+  predictedUnits: number | null,
   confidence: number | null
-): { lower: number; upper: number } {
+): { lower: number | null; upper: number | null } {
+  // Epic 113 I1: revenue-target models send predictedUnits:null → no units band.
+  // Emit null bounds so the recharts Area series skips the point (no NaN, no flat 0 band).
+  if (predictedUnits === null) {
+    return { lower: null, upper: null }
+  }
   // Negative predictedUnits → degenerate flat band (not expected from backend)
   if (predictedUnits < 0) {
     return { lower: predictedUnits, upper: predictedUnits }
@@ -46,11 +52,13 @@ export interface ForecastChartRow {
   date: string
   /** Formatted date label for x-axis (DD.MM) */
   dateLabel: string
-  predictedSales: number
+  /** null for revenue-target models (Epic 113 I1) → recharts skips the units Line point */
+  predictedSales: number | null
   naiveBaseline: number | null
   confidence: number | null
-  bandLower: number
-  bandUpper: number
+  /** null when predictedSales is null (no units band) */
+  bandLower: number | null
+  bandUpper: number | null
 }
 
 /**
@@ -70,7 +78,9 @@ export function transformPredictionsForChart(
     return {
       date: p.date,
       dateLabel,
-      predictedSales: Math.round(p.predictedSales),
+      // Epic 113 I1: null predictedSales (revenue-target model) stays null →
+      // recharts Line skips the point instead of plotting NaN/Math.round(null)=0.
+      predictedSales: p.predictedSales !== null ? Math.round(p.predictedSales) : null,
       naiveBaseline: p.naiveBaseline !== null ? Math.round(p.naiveBaseline) : null,
       confidence: p.confidence,
       bandLower: lower,
@@ -85,7 +95,11 @@ export function formatConfidence(value: number | null): string {
   return `${Math.round(value * 100)}%`
 }
 
-/** Formats a band range as "lower–upper" with em-dash (U+2013) */
-export function formatBandRange(lower: number, upper: number): string {
+/**
+ * Formats a band range as "lower–upper" with en-dash (U+2013).
+ * Epic 113 I1: null bounds (revenue-target model, no units band) render '—'.
+ */
+export function formatBandRange(lower: number | null, upper: number | null): string {
+  if (lower === null || upper === null) return '—'
   return `${Math.round(lower)}–${Math.round(upper)}`
 }
