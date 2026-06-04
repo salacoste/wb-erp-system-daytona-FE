@@ -4,7 +4,7 @@
  * Reference: docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md
  */
 
-import { formatCurrency, formatDate, formatPercentage } from '@/lib/utils'
+import { formatCurrency, formatDate, formatDecimal, formatPercentage } from '@/lib/utils'
 
 /** Raw coefficient from WB API (integer: 100 = 1.0) */
 export interface RawCoefficient {
@@ -185,9 +185,9 @@ export function calculateCoefficientImpact(
   }
 }
 
-/** Format coefficient for display */
+/** Format coefficient for display (Russian comma decimal, e.g. "1,25") */
 export function formatCoefficient(coefficient: number): string {
-  return coefficient.toFixed(2)
+  return formatDecimal(coefficient, 2)
 }
 
 /** Format date for coefficient display (Russian locale) */

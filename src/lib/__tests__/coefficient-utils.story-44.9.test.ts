@@ -558,19 +558,19 @@ describe('normalizeCoefficients', () => {
 
 describe('formatCoefficient', () => {
   it('formats coefficient with 2 decimal places', () => {
-    expect(formatCoefficient(1.0)).toBe('1.00')
-    expect(formatCoefficient(1.25)).toBe('1.25')
-    expect(formatCoefficient(1.5)).toBe('1.50')
+    expect(formatCoefficient(1.0)).toBe('1,00')
+    expect(formatCoefficient(1.25)).toBe('1,25')
+    expect(formatCoefficient(1.5)).toBe('1,50')
   })
 
   it('handles small values', () => {
-    expect(formatCoefficient(0)).toBe('0.00')
-    expect(formatCoefficient(0.5)).toBe('0.50')
+    expect(formatCoefficient(0)).toBe('0,00')
+    expect(formatCoefficient(0.5)).toBe('0,50')
   })
 
   it('handles large values', () => {
-    expect(formatCoefficient(3.5)).toBe('3.50')
-    expect(formatCoefficient(10.0)).toBe('10.00')
+    expect(formatCoefficient(3.5)).toBe('3,50')
+    expect(formatCoefficient(10.0)).toBe('10,00')
   })
 })
 

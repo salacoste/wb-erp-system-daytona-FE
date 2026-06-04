@@ -48,27 +48,27 @@ describe('AC2: Coefficient Value Display', () => {
   describe('coefficient formatting', () => {
     it('displays coefficient with 2 decimal places (1.25)', () => {
       renderComponent({ coefficient: 1.25 })
-      expect(screen.getByText('1.25')).toBeInTheDocument()
+      expect(screen.getByText('1,25')).toBeInTheDocument()
     })
 
     it('displays coefficient 1.00 correctly', () => {
       renderComponent({ coefficient: 1.0 })
-      expect(screen.getByText('1.00')).toBeInTheDocument()
+      expect(screen.getByText('1,00')).toBeInTheDocument()
     })
 
     it('displays coefficient 1.50 correctly', () => {
       renderComponent({ coefficient: 1.5 })
-      expect(screen.getByText('1.50')).toBeInTheDocument()
+      expect(screen.getByText('1,50')).toBeInTheDocument()
     })
 
     it('displays coefficient 2.00 correctly', () => {
       renderComponent({ coefficient: 2.0 })
-      expect(screen.getByText('2.00')).toBeInTheDocument()
+      expect(screen.getByText('2,00')).toBeInTheDocument()
     })
 
     it('displays high coefficient 3.50 correctly', () => {
       renderComponent({ coefficient: 3.5 })
-      expect(screen.getByText('3.50')).toBeInTheDocument()
+      expect(screen.getByText('3,50')).toBeInTheDocument()
     })
   })
 
@@ -313,7 +313,7 @@ describe('Layout and Styling', () => {
 
   it('coefficient value has font-medium weight', () => {
     renderComponent()
-    const coefficientValue = screen.getByText('1.25')
+    const coefficientValue = screen.getByText('1,25')
     expect(coefficientValue).toHaveClass('font-medium')
   })
 
@@ -332,19 +332,19 @@ describe('Edge Cases', () => {
   it('handles coefficient of exactly 0 (FREE slot)', () => {
     // coefficient = 0 means FREE acceptance, treated as base
     renderComponent({ coefficient: 0 })
-    expect(screen.getByText('0.00')).toBeInTheDocument()
+    expect(screen.getByText('0,00')).toBeInTheDocument()
     expect(screen.getByText('Базовый')).toBeInTheDocument()
   })
 
   it('handles very high coefficient (10.0)', () => {
     renderComponent({ coefficient: 10.0 })
-    expect(screen.getByText('10.00')).toBeInTheDocument()
+    expect(screen.getByText('10,00')).toBeInTheDocument()
     expect(screen.getByText('Пиковый')).toBeInTheDocument()
   })
 
   it('handles fractional coefficient (1.333)', () => {
     renderComponent({ coefficient: 1.333 })
-    expect(screen.getByText('1.33')).toBeInTheDocument()
+    expect(screen.getByText('1,33')).toBeInTheDocument()
   })
 
   it('handles boundary coefficient 1.0 as base', () => {
@@ -382,7 +382,7 @@ describe('Accessibility', () => {
 
   it('coefficient value is readable by screen readers', () => {
     renderComponent({ coefficient: 1.25 })
-    const value = screen.getByText('1.25')
+    const value = screen.getByText('1,25')
     expect(value).toBeInTheDocument()
     // Should not be hidden from screen readers
     expect(value).not.toHaveAttribute('aria-hidden', 'true')
@@ -409,18 +409,12 @@ describe('Accessibility', () => {
 describe('Props Validation', () => {
   it('renders with minimum required props', () => {
     render(<CoefficientDisplay coefficient={1.0} source="auto" />)
-    expect(screen.getByText('1.00')).toBeInTheDocument()
+    expect(screen.getByText('1,00')).toBeInTheDocument()
   })
 
   it('handles all optional props together', () => {
-    render(
-      <CoefficientDisplay
-        coefficient={1.25}
-        source="auto"
-        effectiveDate="2026-01-20"
-      />
-    )
-    expect(screen.getByText('1.25')).toBeInTheDocument()
+    render(<CoefficientDisplay coefficient={1.25} source="auto" effectiveDate="2026-01-20" />)
+    expect(screen.getByText('1,25')).toBeInTheDocument()
     expect(screen.getByText('Автозаполнено')).toBeInTheDocument()
     expect(screen.getByText(/Действует с:/)).toBeInTheDocument()
   })

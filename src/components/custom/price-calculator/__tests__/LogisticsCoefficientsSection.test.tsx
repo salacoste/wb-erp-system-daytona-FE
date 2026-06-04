@@ -63,7 +63,7 @@ describe('LogisticsCoefficientsSection', () => {
       render(<LogisticsCoefficientsSection {...defaultProps} />)
 
       // Should show coefficient in header
-      expect(screen.getByText(/Коэффициент: 1\.25/)).toBeInTheDocument()
+      expect(screen.getByText(/Коэффициент: 1,25/)).toBeInTheDocument()
     })
 
     it('shows percentage increase in collapsed header for elevated coefficients', () => {
@@ -126,8 +126,8 @@ describe('LogisticsCoefficientsSection', () => {
       // Expand section
       fireEvent.click(screen.getByRole('button'))
 
-      // Should show formatted coefficient
-      expect(screen.getByText('1.25')).toBeInTheDocument()
+      // Should show formatted coefficient (Russian comma)
+      expect(screen.getByText('1,25')).toBeInTheDocument()
     })
 
     it('shows "Базовый" badge (green) for coefficient 1.00', () => {
@@ -436,7 +436,7 @@ describe('LogisticsCoefficientsSection', () => {
 
       // Should show "Пиковый" badge
       expect(screen.getByText('Пиковый')).toBeInTheDocument()
-      expect(screen.getByText('3.50')).toBeInTheDocument()
+      expect(screen.getByText('3,50')).toBeInTheDocument()
     })
 
     it('handles empty rawCoefficients array', () => {

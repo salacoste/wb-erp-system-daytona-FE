@@ -152,10 +152,10 @@ describe('CoefficientCalendar', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
       // Multiple cells can have same coefficient, use getAllByText
-      const baseCells = screen.getAllByText('1.00')
+      const baseCells = screen.getAllByText('1,00')
       expect(baseCells.length).toBeGreaterThan(0)
-      expect(screen.getByText('1.25')).toBeInTheDocument()
-      expect(screen.getByText('2.25')).toBeInTheDocument()
+      expect(screen.getByText('1,25')).toBeInTheDocument()
+      expect(screen.getByText('2,25')).toBeInTheDocument()
     })
 
     it('displays "--" for unavailable dates', () => {
@@ -172,9 +172,7 @@ describe('CoefficientCalendar', () => {
 
   describe('selection', () => {
     it('highlights selected date with ring styling', () => {
-      render(
-        <CoefficientCalendar {...defaultProps} selectedDate="2026-01-23" />
-      )
+      render(<CoefficientCalendar {...defaultProps} selectedDate="2026-01-23" />)
 
       const cells = screen.getAllByRole('gridcell')
       const selectedCell = cells[1]
@@ -216,11 +214,7 @@ describe('CoefficientCalendar', () => {
 
     it('shows cursor-pointer on available cells when selectable', () => {
       render(
-        <CoefficientCalendar
-          {...defaultProps}
-          onDateSelect={vi.fn()}
-          selectedDate="2026-01-22"
-        />
+        <CoefficientCalendar {...defaultProps} onDateSelect={vi.fn()} selectedDate="2026-01-22" />
       )
 
       const cells = screen.getAllByRole('gridcell')
@@ -230,11 +224,7 @@ describe('CoefficientCalendar', () => {
 
     it('shows cursor-not-allowed on unavailable cells', () => {
       render(
-        <CoefficientCalendar
-          {...defaultProps}
-          onDateSelect={vi.fn()}
-          selectedDate="2026-01-22"
-        />
+        <CoefficientCalendar {...defaultProps} onDateSelect={vi.fn()} selectedDate="2026-01-22" />
       )
 
       const cells = screen.getAllByRole('gridcell')
@@ -325,11 +315,7 @@ describe('CoefficientCalendar', () => {
 
     it('navigates down with ArrowDown', async () => {
       render(
-        <CoefficientCalendar
-          {...defaultProps}
-          onDateSelect={vi.fn()}
-          selectedDate="2026-01-22"
-        />
+        <CoefficientCalendar {...defaultProps} onDateSelect={vi.fn()} selectedDate="2026-01-22" />
       )
 
       const cells = screen.getAllByRole('gridcell')
@@ -343,11 +329,7 @@ describe('CoefficientCalendar', () => {
 
     it('navigates up with ArrowUp', async () => {
       render(
-        <CoefficientCalendar
-          {...defaultProps}
-          onDateSelect={vi.fn()}
-          selectedDate="2026-01-22"
-        />
+        <CoefficientCalendar {...defaultProps} onDateSelect={vi.fn()} selectedDate="2026-01-22" />
       )
 
       const cells = screen.getAllByRole('gridcell')
@@ -373,9 +355,7 @@ describe('CoefficientCalendar', () => {
     it('has proper aria-label on grid', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
-      expect(
-        screen.getByRole('grid', { name: /календарь коэффициентов/i })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('grid', { name: /календарь коэффициентов/i })).toBeInTheDocument()
     })
 
     it('cells have aria-label with date and coefficient info', () => {
@@ -389,9 +369,7 @@ describe('CoefficientCalendar', () => {
     })
 
     it('cells have aria-selected attribute', () => {
-      render(
-        <CoefficientCalendar {...defaultProps} selectedDate="2026-01-23" />
-      )
+      render(<CoefficientCalendar {...defaultProps} selectedDate="2026-01-23" />)
 
       const cells = screen.getAllByRole('gridcell')
       const selectedCell = cells[1]
