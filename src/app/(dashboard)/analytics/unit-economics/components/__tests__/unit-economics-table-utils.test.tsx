@@ -47,10 +47,17 @@ describe('MarginIndicator', () => {
     const { container } = render(<MarginIndicator value={15} />)
     expect(container.querySelector('.text-gray-400')).toBeTruthy()
   })
+
+  it('shows neutral Minus for null margin (unknown), never green/red (anti-pattern #8)', () => {
+    const { container } = render(<MarginIndicator value={null} />)
+    expect(container.querySelector('.text-gray-400')).toBeTruthy()
+    expect(container.querySelector('.text-green-500')).toBeNull()
+    expect(container.querySelector('.text-red-500')).toBeNull()
+  })
 })
 
 describe('CostCell', () => {
-  function renderCell(value: number, highThreshold: number, medThreshold?: number) {
+  function renderCell(value: number | null, highThreshold: number, medThreshold?: number) {
     return render(
       <Table>
         <TableBody>
@@ -75,5 +82,13 @@ describe('CostCell', () => {
   it('shows gray for value below thresholds', () => {
     const { container } = renderCell(20, 40, 30)
     expect(container.querySelector('.text-gray-700')).toBeTruthy()
+  })
+
+  it('renders "—" + neutral for null cost % (no COGS), never a fabricated "0,0 %"', () => {
+    const { container } = renderCell(null, 40, 30)
+    expect(container.textContent).toContain('—')
+    expect(container.textContent).not.toMatch(/0,0\s*%/)
+    expect(container.querySelector('.text-gray-700')).toBeTruthy()
+    expect(container.querySelector('.text-red-600')).toBeNull()
   })
 })

@@ -14,12 +14,13 @@ import { formatPercentage } from '@/lib/unit-economics-utils'
 
 export const PAGE_SIZE_OPTIONS = [25, 50, 100] as const
 
-/** Margin trend indicator: >= 20% green up, < 10% red down, otherwise neutral. */
-export function MarginIndicator({ value }: { value: number }) {
-  if (value >= 20) {
+/** Margin trend indicator: >= 20% green up, < 10% red down, otherwise neutral. Null margin → neutral. */
+export function MarginIndicator({ value }: { value: number | null }) {
+  // null (unknown margin: no COGS / zero revenue) → neutral, never green/red (anti-pattern #8 / rule 2).
+  if (value != null && value >= 20) {
     return <TrendingUp className="h-4 w-4 text-green-500" />
   }
-  if (value < 10) {
+  if (value != null && value < 10) {
     return <TrendingDown className="h-4 w-4 text-red-500" />
   }
   return <Minus className="h-4 w-4 text-gray-400" />
@@ -40,18 +41,19 @@ export function CostCell({
   highThreshold,
   medThreshold,
 }: {
-  value: number
+  value: number | null
   highThreshold: number
   medThreshold?: number
 }) {
   const med = medThreshold ?? highThreshold
+  // null (unknown cost %: no COGS) → neutral styling + "—" via formatPercentage (rules 1+2).
   return (
     <TableCell className="text-right">
       <span
         className={cn(
-          value > highThreshold && 'text-red-600 font-medium',
-          value > med && value <= highThreshold && 'text-orange-600',
-          value <= med && 'text-gray-700'
+          value != null && value > highThreshold && 'text-red-600 font-medium',
+          value != null && value > med && value <= highThreshold && 'text-orange-600',
+          (value == null || value <= med) && 'text-gray-700'
         )}
       >
         {formatPercentage(value)}

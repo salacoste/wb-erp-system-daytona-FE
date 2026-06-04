@@ -42,7 +42,8 @@ export function aggregatePortfolioCosts(
   const totalRevenue = summary.total_revenue
 
   const costsPct: Record<string, number> = {
-    cogs: summary.avg_cogs_pct,
+    // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null avg_cogs_pct (no COGS / zero revenue) contributes 0 to the total
+    cogs: summary.avg_cogs_pct ?? 0,
     commission: 0,
     logistics_delivery: 0,
     logistics_return: 0,
@@ -68,7 +69,8 @@ export function aggregatePortfolioCosts(
 
     for (const item of data) {
       const weight = item.revenue / totalRevenue
-      totalCogs += item.costs_pct.cogs * weight
+      // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null cogs (no COGS / zero revenue) contributes 0 to the total
+      totalCogs += (item.costs_pct.cogs ?? 0) * weight
       totalCommission += item.costs_pct.commission * weight
       totalLogisticsDelivery += item.costs_pct.logistics_delivery * weight
       totalLogisticsReturn += item.costs_pct.logistics_return * weight

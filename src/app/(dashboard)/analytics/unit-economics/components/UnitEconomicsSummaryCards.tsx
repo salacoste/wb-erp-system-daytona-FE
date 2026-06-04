@@ -110,10 +110,11 @@ export function UnitEconomicsSummaryCards({
   // Color the headline margin value by health, matching the per-SKU table (>=20 green,
   // <10 red, else neutral) + this card's own trend thresholds — so a loss-making margin
   // (e.g. −31,2 %) reads red instead of neutral gray. Other cards keep the default gray.
+  // null margin (no COGS / zero revenue) → neutral, never green/red (rule 2 / anti-pattern #8).
   const marginValueColor =
-    summary.avg_net_margin_pct >= 20
+    summary.avg_net_margin_pct != null && summary.avg_net_margin_pct >= 20
       ? 'text-green-600'
-      : summary.avg_net_margin_pct < 10
+      : summary.avg_net_margin_pct != null && summary.avg_net_margin_pct < 10
         ? 'text-red-600'
         : 'text-gray-900'
 
@@ -143,9 +144,19 @@ export function UnitEconomicsSummaryCards({
         iconColor="bg-orange-500"
         label="COGS %"
         value={formatPercentage(summary.avg_cogs_pct)}
-        trend={summary.avg_cogs_pct < 40 ? 'up' : summary.avg_cogs_pct > 50 ? 'down' : 'neutral'}
+        trend={
+          summary.avg_cogs_pct != null && summary.avg_cogs_pct < 40
+            ? 'up'
+            : summary.avg_cogs_pct != null && summary.avg_cogs_pct > 50
+              ? 'down'
+              : 'neutral'
+        }
         trendValue={
-          summary.avg_cogs_pct < 40 ? 'Хорошо' : summary.avg_cogs_pct > 50 ? 'Высоко' : 'Норма'
+          summary.avg_cogs_pct != null && summary.avg_cogs_pct < 40
+            ? 'Хорошо'
+            : summary.avg_cogs_pct != null && summary.avg_cogs_pct > 50
+              ? 'Высоко'
+              : 'Норма'
         }
       />
 
@@ -184,16 +195,16 @@ export function UnitEconomicsSummaryCards({
         value={formatPercentage(summary.avg_net_margin_pct)}
         valueClassName={marginValueColor}
         trend={
-          summary.avg_net_margin_pct >= 20
+          summary.avg_net_margin_pct != null && summary.avg_net_margin_pct >= 20
             ? 'up'
-            : summary.avg_net_margin_pct < 10
+            : summary.avg_net_margin_pct != null && summary.avg_net_margin_pct < 10
               ? 'down'
               : 'neutral'
         }
         trendValue={
-          summary.avg_net_margin_pct >= 20
+          summary.avg_net_margin_pct != null && summary.avg_net_margin_pct >= 20
             ? 'Отлично'
-            : summary.avg_net_margin_pct < 10
+            : summary.avg_net_margin_pct != null && summary.avg_net_margin_pct < 10
               ? 'Низко'
               : 'Норма'
         }

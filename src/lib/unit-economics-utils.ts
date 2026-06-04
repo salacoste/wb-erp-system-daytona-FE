@@ -124,10 +124,12 @@ export function calculateHealthScore(
   let score = 0
 
   // Margin component (0-35 points)
-  if (summary.avg_net_margin_pct >= 25) score += 35
-  else if (summary.avg_net_margin_pct >= 15) score += 26
-  else if (summary.avg_net_margin_pct >= 5) score += 18
-  else if (summary.avg_net_margin_pct >= 0) score += 9
+  // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null avg_net_margin_pct (no COGS / zero revenue) contributes 0 to the total
+  const avgNetMarginPct = summary.avg_net_margin_pct ?? 0
+  if (avgNetMarginPct >= 25) score += 35
+  else if (avgNetMarginPct >= 15) score += 26
+  else if (avgNetMarginPct >= 5) score += 18
+  else if (avgNetMarginPct >= 0) score += 9
 
   // Profitable ratio component (0-35 points)
   const profitableRatio =
@@ -165,13 +167,17 @@ export function sortByProfitability(
   items: UnitEconomicsItem[],
   order: 'worst_first' | 'best_first' = 'worst_first'
 ): UnitEconomicsItem[] {
-  const sorted = [...items].sort((a, b) => a.net_margin_pct - b.net_margin_pct)
+  // null margin sorts last — mirrors backend unit-economics.service.ts:656 (valA = a.net_margin_pct ?? -Infinity).
+  const sorted = [...items].sort(
+    (a, b) => (a.net_margin_pct ?? -Infinity) - (b.net_margin_pct ?? -Infinity)
+  )
   return order === 'best_first' ? sorted.reverse() : sorted
 }
 
 /** Filter loss-making products */
 export function filterLossMaking(items: UnitEconomicsItem[]): UnitEconomicsItem[] {
-  return items.filter(item => item.net_margin_pct < 0)
+  // null margin is "unknown", not loss-making — excluded (rule 2 neutral branch).
+  return items.filter(item => item.net_margin_pct != null && item.net_margin_pct < 0)
 }
 
 /** Filter products without COGS */

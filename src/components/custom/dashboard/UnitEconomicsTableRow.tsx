@@ -52,12 +52,12 @@ export function UnitEconomicsTableRowComponent({ item }: UnitEconomicsTableRowPr
 
       {/* COGS % */}
       <TableCell className="text-right">
-        {item.has_cogs ? formatPercentage(item.costs_pct.cogs) : '—'}
+        {item.has_cogs && item.costs_pct.cogs != null ? formatPercentage(item.costs_pct.cogs) : '—'}
       </TableCell>
 
       {/* Margin % */}
       <TableCell className="text-right">
-        {item.has_cogs ? formatPercentage(item.net_margin_pct) : '—'}
+        {item.has_cogs && item.net_margin_pct != null ? formatPercentage(item.net_margin_pct) : '—'}
       </TableCell>
 
       {/* Net Profit */}

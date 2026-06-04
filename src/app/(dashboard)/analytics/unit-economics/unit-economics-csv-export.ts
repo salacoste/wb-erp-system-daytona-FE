@@ -36,14 +36,15 @@ export function buildUnitEconomicsCsv(data: UnitEconomicsResponse): string {
     item.sku_id,
     item.product_name,
     item.revenue,
-    item.costs_pct.cogs.toFixed(1),
+    // null COGS % (no COGS assigned) → "—", matching the delivery_to_warehouse convention below (rule 5).
+    item.costs_pct.cogs != null ? item.costs_pct.cogs.toFixed(1) : '—',
     item.costs_pct.commission.toFixed(1),
     (item.costs_pct.logistics_delivery + item.costs_pct.logistics_return).toFixed(1),
     item.costs_pct.storage.toFixed(1),
     item.costs_pct.delivery_to_warehouse != null
       ? item.costs_pct.delivery_to_warehouse.toFixed(1)
       : '—',
-    item.net_margin_pct.toFixed(1),
+    item.net_margin_pct != null ? item.net_margin_pct.toFixed(1) : '—',
     item.net_profit,
     item.profitability_status,
   ])

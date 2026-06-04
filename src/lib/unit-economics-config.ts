@@ -179,7 +179,11 @@ export function getCostCategoryConfig(key: keyof CostsPct): CostCategoryConfig |
  * this one pins min=max=decimals (default exactly 1 decimal) for right-aligned table-column
  * alignment, whereas the canonical allows 1-2 decimals. Do NOT "harmonize" by re-exporting.
  */
-export function formatPercentage(value: number, decimals = 1): string {
+export function formatPercentage(value: number | null | undefined, decimals = 1): string {
+  // Anti-pattern #8: null/undefined ratio (backend sends net_margin_pct/cogs/avg_* as null when
+  // revenue=0 or COGS is unassigned) must render "—", never a fabricated "0,0 %". Intl.format(null)
+  // would otherwise coerce null→0. A real 0 still renders "0,0 %".
+  if (value == null || !Number.isFinite(value)) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'percent',
     minimumFractionDigits: decimals,

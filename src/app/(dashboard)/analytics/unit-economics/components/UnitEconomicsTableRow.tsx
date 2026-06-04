@@ -125,9 +125,12 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
           <span
             className={cn(
               'font-medium',
-              item.net_margin_pct >= 20 && 'text-green-600',
-              item.net_margin_pct >= 10 && item.net_margin_pct < 20 && 'text-gray-700',
-              item.net_margin_pct < 10 && 'text-red-600'
+              // null (unknown margin) → neutral, never green/red (rule 2 / anti-pattern #8).
+              item.net_margin_pct != null && item.net_margin_pct >= 20 && 'text-green-600',
+              (item.net_margin_pct == null ||
+                (item.net_margin_pct >= 10 && item.net_margin_pct < 20)) &&
+                'text-gray-700',
+              item.net_margin_pct != null && item.net_margin_pct < 10 && 'text-red-600'
             )}
           >
             {formatPercentage(item.net_margin_pct)}

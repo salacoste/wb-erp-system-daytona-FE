@@ -63,8 +63,8 @@ export interface UnitEconomicsQueryParams {
  * Cost percentages breakdown (% of revenue)
  */
 export interface CostsPct {
-  /** Cost of Goods Sold % */
-  cogs: number
+  /** Cost of Goods Sold % — `null` when COGS is unassigned (backend sends null; render "—"). */
+  cogs: number | null
   /** WB Commission % */
   commission: number
   /** Logistics (delivery to customer) % */
@@ -149,8 +149,8 @@ export interface UnitEconomicsItem {
 
   /** Total costs as % of revenue */
   total_costs_pct: number
-  /** Net margin as % of revenue */
-  net_margin_pct: number
+  /** Net margin as % of revenue — `null` when revenue = 0 (backend sends null; render "—"). */
+  net_margin_pct: number | null
   /** Net profit in ₽ */
   net_profit: number
 
@@ -189,12 +189,12 @@ export interface UnitEconomicsSummary {
   total_net_profit: number
   /** Request #58: Total YOUR price before WB discounts (optional - from weekly_payout_summary) */
   total_your_price?: number
-  /** Average COGS % */
-  avg_cogs_pct: number
+  /** Average COGS % — `null` when no item has COGS (backend sends null; render "—"). */
+  avg_cogs_pct: number | null
   /** Average WB fees (commission + logistics + storage) % */
   avg_wb_fees_pct: number
-  /** Average net margin % */
-  avg_net_margin_pct: number
+  /** Average net margin % — `null` when total revenue = 0 (backend sends null; render "—"). */
+  avg_net_margin_pct: number | null
   /** Total SKUs analyzed */
   sku_count: number
   /** SKUs with positive margin */

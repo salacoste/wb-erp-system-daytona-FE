@@ -53,7 +53,8 @@ function generateMockCostsPct(_revenue: number): CostsPct {
  */
 function generateMockCostsRub(revenue: number, pct: CostsPct): CostsRub {
   return {
-    cogs: Math.round((revenue * pct.cogs) / 100),
+    // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null cogs (no COGS / zero revenue) contributes 0 to the total
+    cogs: Math.round((revenue * (pct.cogs ?? 0)) / 100),
     commission: Math.round((revenue * pct.commission) / 100),
     logistics_delivery: Math.round((revenue * pct.logistics_delivery) / 100),
     logistics_return: Math.round((revenue * pct.logistics_return) / 100),
@@ -82,11 +83,17 @@ function getProfitabilityStatus(marginPct: number): ProfitabilityStatus {
  */
 function generateMockItem(index: number, prefix = 'SKU'): UnitEconomicsItem {
   const revenue = Math.round(10000 + Math.random() * 90000) // 10k-100k
+  const has_cogs = Math.random() > 0.2 // 80% have COGS
   const costs_pct = generateMockCostsPct(revenue)
+  // Backend sends costs_pct.cogs = null when COGS is unassigned — mirror it so MSW-backed tests
+  // exercise the "—" render path (not a fabricated "0,0 %"). net_margin_pct stays numeric: the
+  // backend nulls it only at revenue=0, not at no-COGS.
+  if (!has_cogs) costs_pct.cogs = null
   const costs_rub = generateMockCostsRub(revenue, costs_pct)
 
   const total_costs_pct =
-    costs_pct.cogs +
+    // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null cogs (no COGS / zero revenue) contributes 0 to the total
+    (costs_pct.cogs ?? 0) +
     costs_pct.commission +
     costs_pct.logistics_delivery +
     costs_pct.logistics_return +
@@ -111,7 +118,7 @@ function generateMockItem(index: number, prefix = 'SKU'): UnitEconomicsItem {
     net_margin_pct: Math.round(net_margin_pct * 10) / 10,
     net_profit,
     profitability_status: getProfitabilityStatus(net_margin_pct),
-    has_cogs: Math.random() > 0.2, // 80% have COGS
+    has_cogs,
   }
 }
 
@@ -127,7 +134,8 @@ export function generateMockSummary(items: UnitEconomicsItem[]): UnitEconomicsSu
   // the totals; weight cost shares by revenue (matches the backend + aggregatePortfolioCosts).
   const wPct = (fn: (i: UnitEconomicsItem) => number) =>
     total_revenue > 0 ? items.reduce((sum, i) => sum + fn(i) * i.revenue, 0) / total_revenue : 0
-  const avg_cogs_pct = wPct(i => i.costs_pct.cogs)
+  // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null cogs (no COGS / zero revenue) contributes 0 to the total
+  const avg_cogs_pct = wPct(i => i.costs_pct.cogs ?? 0)
   const avg_wb_fees_pct = wPct(
     i =>
       i.costs_pct.commission +
@@ -144,8 +152,10 @@ export function generateMockSummary(items: UnitEconomicsItem[]): UnitEconomicsSu
     avg_wb_fees_pct: Math.round(avg_wb_fees_pct * 10) / 10,
     avg_net_margin_pct: Math.round(avg_net_margin_pct * 10) / 10,
     sku_count: items.length,
-    profitable_sku_count: items.filter(i => i.net_margin_pct > 0).length,
-    loss_making_sku_count: items.filter(i => i.net_margin_pct <= 0).length,
+    profitable_sku_count: items.filter(i => i.net_margin_pct != null && i.net_margin_pct > 0)
+      .length,
+    loss_making_sku_count: items.filter(i => i.net_margin_pct != null && i.net_margin_pct < 0)
+      .length,
     missing_cogs_count: items.filter(i => !i.has_cogs).length,
   }
 }
@@ -216,9 +226,10 @@ export const mockEmptyUnitEconomicsResponse: UnitEconomicsResponse = {
   summary: {
     total_revenue: 0,
     total_net_profit: 0,
-    avg_cogs_pct: 0,
+    // Backend returns null (not 0) for these averages on an empty/zero-revenue result.
+    avg_cogs_pct: null,
     avg_wb_fees_pct: 0,
-    avg_net_margin_pct: 0,
+    avg_net_margin_pct: null,
     sku_count: 0,
     profitable_sku_count: 0,
     loss_making_sku_count: 0,
@@ -298,8 +309,9 @@ export const unitEconomicsHandlers = [
 
     // Apply sorting
     items.sort((a, b) => {
-      const fieldA = sortBy === 'revenue' ? a.revenue : a.net_margin_pct
-      const fieldB = sortBy === 'revenue' ? b.revenue : b.net_margin_pct
+      // null margin sorts last via -Infinity (rule 4), mirroring backend unit-economics.service.ts:656.
+      const fieldA = sortBy === 'revenue' ? a.revenue : (a.net_margin_pct ?? -Infinity)
+      const fieldB = sortBy === 'revenue' ? b.revenue : (b.net_margin_pct ?? -Infinity)
       return sortOrder === 'desc' ? fieldB - fieldA : fieldA - fieldB
     })
 
