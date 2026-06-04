@@ -158,7 +158,7 @@ describe('calculateLogisticsTariff', () => {
 
     it('generates correct additional display for multi-liter', () => {
       const result = calculateLogisticsTariff(3.0, standardTariffs)
-      expect(result.breakdown.additionalDisplay).toBe('2.0 л × 5 ₽ = 10.00 ₽')
+      expect(result.breakdown.additionalDisplay).toBe('2,0 л × 5 ₽ = 10,00 ₽')
     })
 
     it('generates correct additional display for 1L (no additional)', () => {
@@ -168,7 +168,7 @@ describe('calculateLogisticsTariff', () => {
 
     it('generates correct coefficient display', () => {
       const result = calculateLogisticsTariff(3.0, koledino125)
-      expect(result.breakdown.coefficientDisplay).toBe('×1.25')
+      expect(result.breakdown.coefficientDisplay).toBe('×1,25')
     })
   })
 })

@@ -1,12 +1,8 @@
 /**
  * Unit tests for logistics-tariff-helpers (price-calculator) — regression coverage added iter-137.
  *
- * Pure tariff math + display-string builders. Tests pin current behavior.
- *
- * ⚠️ FLAGGED (not fixed here — coverage tick is test-only): createBreakdown renders DOT-locale in
- * coefficientDisplay ("×1.00") and additionalDisplay ("2.0 л … 28.00 ₽") — should be Russian comma
- * ("×1,00", "28,00 ₽"). Gate-blind (no `%`). FE-owned display strings → a future behavior-change fix
- * tick (2-pass). volumeDisplay (comma) + totalDisplay (formatCurrency) are already locale-correct.
+ * Pure tariff math + display-string builders. createBreakdown's display strings now use the canonical
+ * formatDecimal (iter-138 fix) → Russian comma in coefficientDisplay/additionalDisplay/volumeDisplay.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -87,10 +83,9 @@ describe('createBreakdown', () => {
     expect(b.totalDisplay).toBe(formatCurrency(74)) // formatCurrency — correct (comma + NBSP)
   })
 
-  it('renders the additional-liters branch (pins CURRENT dot-locale — see file-header flag)', () => {
+  it('renders the additional-liters branch with Russian comma decimals (iter-138 fix)', () => {
     const b = createBreakdown(3, 46, 2, 14, 1.0, 74)
-    // ⚠️ KNOWN dot-locale (flagged for a future fix tick): should be "2,0 л … 28,00 ₽" and "×1,00"
-    expect(b.additionalDisplay).toBe('2.0 л × 14 ₽ = 28.00 ₽')
-    expect(b.coefficientDisplay).toBe('×1.00')
+    expect(b.additionalDisplay).toBe('2,0 л × 14 ₽ = 28,00 ₽')
+    expect(b.coefficientDisplay).toBe('×1,00')
   })
 })

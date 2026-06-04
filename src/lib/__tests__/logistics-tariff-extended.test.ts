@@ -196,7 +196,7 @@ describe('Coefficient Edge Cases', () => {
 // ============================================================================
 
 describe('Rounding Precision', () => {
-  it('rounds down correctly (banker\'s rounding not used)', () => {
+  it("rounds down correctly (banker's rounding not used)", () => {
     const tariffs: BoxDeliveryTariffs = {
       baseLiterRub: 47,
       additionalLiterRub: 7,
@@ -215,7 +215,7 @@ describe('Rounding Precision', () => {
     }
     // 100 * 1.005 = 100.5 → 100.50
     const result = calculateLogisticsTariff(1, tariffs)
-    expect(result.totalCost).toBe(100.50)
+    expect(result.totalCost).toBe(100.5)
   })
 
   it('handles very small decimal differences', () => {
@@ -300,33 +300,33 @@ describe('Breakdown Formatting', () => {
 
     it('formats additional liters calculation for 3L', () => {
       const result = calculateLogisticsTariff(3.0, standardTariffs)
-      // Should show: "2.0 л × 5 ₽ = 10.00 ₽"
-      expect(result.breakdown.additionalDisplay).toMatch(/2.*л.*×.*5.*₽.*=.*10.*₽/)
+      // Should show: "2,0 л × 5 ₽ = 10,00 ₽" (Russian comma, iter-138)
+      expect(result.breakdown.additionalDisplay).toBe('2,0 л × 5 ₽ = 10,00 ₽')
     })
 
     it('handles fractional additional liters', () => {
       const result = calculateLogisticsTariff(2.5, standardTariffs)
-      // 1.5 additional liters × 5 = 7.5
-      expect(result.breakdown.additionalDisplay).toMatch(/1\.5.*л.*×.*5.*₽.*=.*7\.50.*₽/)
+      // 1.5 additional liters × 5 = 7.5 → "1,5 л × 5 ₽ = 7,50 ₽" (Russian comma, iter-138)
+      expect(result.breakdown.additionalDisplay).toBe('1,5 л × 5 ₽ = 7,50 ₽')
     })
   })
 
   describe('Coefficient Display', () => {
-    it('shows ×1.00 for coefficient 1.0', () => {
+    it('shows ×1,00 for coefficient 1.0', () => {
       const result = calculateLogisticsTariff(3, standardTariffs)
-      expect(result.breakdown.coefficientDisplay).toBe('×1.00')
+      expect(result.breakdown.coefficientDisplay).toBe('×1,00')
     })
 
-    it('shows ×1.25 for coefficient 1.25', () => {
+    it('shows ×1,25 for coefficient 1.25', () => {
       const tariffs = { ...standardTariffs, coefficient: 1.25 }
       const result = calculateLogisticsTariff(3, tariffs)
-      expect(result.breakdown.coefficientDisplay).toBe('×1.25')
+      expect(result.breakdown.coefficientDisplay).toBe('×1,25')
     })
 
-    it('shows ×0.50 for coefficient 0.5', () => {
+    it('shows ×0,50 for coefficient 0.5', () => {
       const tariffs = { ...standardTariffs, coefficient: 0.5 }
       const result = calculateLogisticsTariff(3, tariffs)
-      expect(result.breakdown.coefficientDisplay).toBe('×0.50')
+      expect(result.breakdown.coefficientDisplay).toBe('×0,50')
     })
   })
 

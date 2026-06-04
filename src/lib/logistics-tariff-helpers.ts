@@ -9,7 +9,7 @@
  * Reference: docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md
  */
 
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatDecimal } from '@/lib/utils'
 
 // ============================================================================
 // Types
@@ -91,13 +91,13 @@ export function createBreakdown(
 ): LogisticsTariffBreakdown {
   const additionalCost = additionalLiters * additionalRate
   return {
-    volumeDisplay: `${volume.toFixed(2).replace('.', ',')} л`,
+    volumeDisplay: `${formatDecimal(volume, 2)} л`,
     baseRateDisplay: `${baseCost} ₽ (первый литр)`,
     additionalDisplay:
       additionalLiters > 0
-        ? `${additionalLiters.toFixed(1)} л × ${additionalRate} ₽ = ${additionalCost.toFixed(2)} ₽`
+        ? `${formatDecimal(additionalLiters, 1)} л × ${additionalRate} ₽ = ${formatDecimal(additionalCost, 2)} ₽`
         : 'Нет доп. литров',
-    coefficientDisplay: `×${coefficient.toFixed(2)}`,
+    coefficientDisplay: `×${formatDecimal(coefficient, 2)}`,
     totalDisplay: formatCurrency(total),
   }
 }
