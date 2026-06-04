@@ -19,8 +19,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 // =============================================================================
-// TDD: Component will be created in implementation
-// import { SlaComplianceWidget } from '../SlaComplianceWidget'
+import { SlaComplianceWidget } from '../analytics/SlaComplianceWidget'
 // =============================================================================
 
 import {
@@ -41,13 +40,13 @@ describe('SlaComplianceWidget', () => {
   // ===========================================================================
 
   describe('SLA Percentage Display', () => {
-    it.todo('displays confirmation SLA compliance percentage')
-    // render(<SlaComplianceWidget data={mockSlaMetricsExcellent} />)
-    // expect(screen.getByText('98.5%')).toBeInTheDocument()
-
-    it.todo('displays completion SLA compliance percentage')
-    // render(<SlaComplianceWidget data={mockSlaMetricsExcellent} />)
-    // expect(screen.getByText('96.2%')).toBeInTheDocument()
+    // iter-87: implemented (component exists). Visible values use Russian locale (comma + NBSP);
+    // \s matches the NBSP. The aria-label intentionally keeps dot-locale (spoken-text exception).
+    it('displays confirmation + completion SLA percentages in Russian locale', () => {
+      render(<SlaComplianceWidget data={mockSlaMetricsExcellent} />)
+      expect(screen.getByText(/98,5\s%/)).toBeInTheDocument() // confirmation (was "98.5%")
+      expect(screen.getByText(/96,2\s%/)).toBeInTheDocument() // completion (was "96.2%")
+    })
 
     it.todo('displays "Подтверждение" label for confirmation metric')
     // render(<SlaComplianceWidget data={mockSlaMetricsExcellent} />)
@@ -64,7 +63,7 @@ describe('SlaComplianceWidget', () => {
     it.todo('rounds percentage to one decimal place')
     // const data = { ...mockSlaMetricsExcellent, confirmationCompliancePercent: 95.567 }
     // render(<SlaComplianceWidget data={data} />)
-    // expect(screen.getByText('95.6%')).toBeInTheDocument()
+    // expect(screen.getByText(/95,6\s%/)).toBeInTheDocument() // ru-RU: comma + NBSP
   })
 
   // ===========================================================================
@@ -209,7 +208,7 @@ describe('SlaComplianceWidget', () => {
 
     it.todo('hides actual content during loading')
     // render(<SlaComplianceWidget data={mockSlaMetricsExcellent} isLoading={true} />)
-    // expect(screen.queryByText('98.5%')).not.toBeInTheDocument()
+    // expect(screen.queryByText(/98,5\s%/)).not.toBeInTheDocument() // ru-RU: comma + NBSP
 
     it.todo('shows widget title even during loading')
     // render(<SlaComplianceWidget data={undefined} isLoading={true} />)

@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { getSlaStatusColor, getSlaStatusBgColor, getSlaStatusLabel } from '@/lib/analytics-utils'
 import type { SlaMetricsResponse } from '@/types/orders-analytics'
 
@@ -53,12 +53,16 @@ function SlaMetricCard({
       data-testid={`${testIdPrefix}-card`}
     >
       <span className="text-sm text-gray-600">{label}</span>
+      {/* aria-label intentionally keeps the dot-locale toFixed form: spoken text is a genuine
+          exception (a comma decimal can confuse screen-reader number parsing) per
+          dot-locale-consolidation-proposal §4 — it stays counted in the gate baseline, NOT a
+          locale-percent-allow exemption. The VISIBLE value below uses formatPercentage. */}
       <span
         className={cn('text-3xl font-bold', colorClass)}
         data-testid={`${testIdPrefix}-value`}
         aria-label={`${label}: ${percent.toFixed(1)}%`}
       >
-        {percent.toFixed(1)}%
+        {formatPercentage(percent, 1)}
       </span>
       <div className="mt-1 flex items-center gap-1" data-testid={`${testIdPrefix}-status-icon`}>
         {getStatusIcon(percent)}
