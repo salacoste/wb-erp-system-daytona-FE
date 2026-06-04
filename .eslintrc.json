@@ -1,5 +1,4 @@
 {
-  "_comment": "NOT the enforcement path — `next lint` is deprecated and ignores this file. Actual enforcement: root eslint.config.js (flat config). Kept for documentation/IDE integration only (Story 98.1-FE).",
   "extends": [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",

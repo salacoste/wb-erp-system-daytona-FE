@@ -1,19 +1,16 @@
 # Frontend Quality Gates Pipeline
 #
 # CI guard for the Next.js frontend (this repo: salacoste/wb-erp-system-daytona-FE).
-# Runs on every PR plus on direct pushes to main/develop. Catches regressions in
-# TypeScript types, ESLint rules, and Vitest unit tests BEFORE they merge.
+# Runs on every push to main/develop. Uses self-hosted runner on VPS (43.131.5.136).
 #
-# Was added 2026-04-07 to close a gap discovered during the testarch test-review
-# sprint: this repo had ZERO CI coverage before today. Type-check / lint / test
-# regressions were silently passing PRs because the only existing CI lived in
-# the backend monorepo (wb-erp-system-daytona) which only runs backend NestJS
-# checks.
+# Migrated from GitHub-hosted (ubuntu-latest) to self-hosted runner to avoid
+# GitHub Actions billing limits on the free tier. The VPS has Node.js 20, npm,
+# git, and swap pre-configured.
 #
 # See:
 #   - CLAUDE.md (Critical Development Rules — Mandatory section)
+#   - .eslintrc.json (documentation/IDE only — actual enforcement: eslint.config.js)
 #   - _bmad-output/test-artifacts/test-review.md
-#   - _bmad-output/implementation-artifacts/epic-86-fe-retro-2026-04-07.md
 
 name: Frontend Quality Gates
 
@@ -29,22 +26,16 @@ concurrency:
 
 jobs:
   # =============================================================================
-  # Lint — ESLint with zero warnings tolerated
+  # Lint — ESLint via flat config (eslint.config.js), max 112 warnings allowed
   # =============================================================================
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 5
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.11.0'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -52,32 +43,17 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      # Note: `npm run format:check` is intentionally disabled here as of
-      # 2026-04-07. The repository has 363 files with accumulated format drift
-      # that pre-date this CI workflow. Enabling format:check now would fail
-      # the very first run on every PR. Cleanup is filed as a separate backlog
-      # item — once `npm run format` has been run + committed, re-enable this
-      # check by uncommenting the lines below:
-      # - name: Check Prettier formatting
-      #   run: npm run format:check
-
   # =============================================================================
   # Type Check — TypeScript strict mode, zero errors tolerated
   # =============================================================================
   type-check:
     name: Type Check
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 5
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.11.0'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -90,26 +66,17 @@ jobs:
   # =============================================================================
   test:
     name: Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.11.0'
-          cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
 
       - name: Run Vitest unit tests
-        # `npm test` runs Vitest in interactive watch mode by default. The `--`
-        # passes through to vitest itself; `--run` forces single-run CI mode.
-        # `--reporter=default` ensures the GitHub Actions log is readable.
         run: npm test -- --run --reporter=default
         env:
           NODE_ENV: test
@@ -117,22 +84,10 @@ jobs:
 
   # =============================================================================
   # Privacy Guard — forbid console.* in PII files (Story 86.2 / Epic 86-FE retro #7)
-  #
-  # Background: the project has a global no-console ESLint rule, but
-  # next/core-web-vitals silently disables no-console for .ts files. An ESLint
-  # override targeting PII files therefore does not actually fire. This grep
-  # check is the working enforcement layer.
-  #
-  # PII files: any file matching the documented PII glob patterns. The grep
-  # regex matches `console.method(` calls — actual function invocations, not
-  # comment text or `vi.spyOn(console, ...)` test mocking patterns.
-  #
-  # If this fails, the privacy guarantees of Story 86.2 (NFR3) have been
-  # violated. Fix by removing the console.* call. Do NOT add an exception.
   # =============================================================================
   privacy-guard:
     name: Privacy Guard (no console in PII)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
 
     steps:
@@ -150,7 +105,6 @@ jobs:
             "src/types/orders-client-info.ts"
             "src/components/custom/orders/__tests__/OrdersTable.client-column.test.tsx"
           )
-          # Build the file list, skipping any that don't exist
           EXISTING=()
           for f in "${PII_GLOBS[@]}"; do
             [ -f "$f" ] && EXISTING+=("$f")
@@ -165,10 +119,6 @@ jobs:
           printf '  - %s\n' "${EXISTING[@]}"
           echo ""
 
-          # Pattern: console.<method>( with whitespace flexibility.
-          # Excludes: vi.spyOn(console, ...) (comma after console, not period).
-          # Excludes: comment text mentioning "console.X" because the regex
-          #           requires the method name AND opening paren.
           if grep -nE 'console\.(log|info|debug|warn|error|trace|dir|table|count|group|groupEnd|time|timeEnd|timeLog|profile|profileEnd)\s*\(' "${EXISTING[@]}"; then
             echo ""
             echo "::error::PRIVACY VIOLATION — forbidden console.* call found in a PII file"
@@ -184,7 +134,7 @@ jobs:
   # =============================================================================
   quality-status:
     name: Frontend Quality Status
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [lint, type-check, test, privacy-guard]
     if: always()
 
