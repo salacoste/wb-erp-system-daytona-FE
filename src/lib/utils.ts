@@ -75,7 +75,8 @@ export function formatDate(date: string | Date): string {
  * are Europe/Moscow). Returns '—' for invalid input. (formatDate is date-only; this adds time.)
  * @param date - Date string (UTC ISO) or Date object
  */
-export function formatDateTime(date: string | Date): string {
+export function formatDateTime(date: string | Date | null | undefined): string {
+  if (date == null) return '—'
   const dateObj = typeof date === 'string' ? new Date(date) : date
   if (isNaN(dateObj.getTime())) return '—'
   return new Intl.DateTimeFormat('ru-RU', {

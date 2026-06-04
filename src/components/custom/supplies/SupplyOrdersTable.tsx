@@ -20,7 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { RemoveOrderDialog } from './RemoveOrderDialog'
 import type { SupplyOrder, SupplyStatus } from '@/types/supplies'
 
@@ -130,12 +130,7 @@ export function SupplyOrdersTable({
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {(() => {
-                        const date = new Date(order.addedAt)
-                        const hours = date.getHours().toString().padStart(2, '0')
-                        const minutes = date.getMinutes().toString().padStart(2, '0')
-                        return `${formatDate(date)} ${hours}:${minutes}`
-                      })()}
+                      {formatDateTime(order.addedAt)}
                     </TableCell>
                     {canRemove && (
                       <TableCell>

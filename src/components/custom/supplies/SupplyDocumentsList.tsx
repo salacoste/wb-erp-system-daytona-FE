@@ -10,7 +10,7 @@
 
 import { FileText, Download, Loader2, File } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { formatDate } from '@/lib/utils'
+import { formatDateTime } from '@/lib/utils'
 import type { SupplyDocument, DocumentType } from '@/types/supplies'
 
 interface SupplyDocumentsListProps {
@@ -87,13 +87,7 @@ export function SupplyDocumentsList({
                 <div>
                   <p className="font-medium text-gray-900">{label}</p>
                   <p className="text-sm text-gray-500">
-                    {formatFileSize(doc.sizeBytes)} &middot;{' '}
-                    {(() => {
-                      const date = new Date(doc.generatedAt)
-                      const hours = date.getHours().toString().padStart(2, '0')
-                      const minutes = date.getMinutes().toString().padStart(2, '0')
-                      return `${formatDate(date)} ${hours}:${minutes}`
-                    })()}
+                    {formatFileSize(doc.sizeBytes)} &middot; {formatDateTime(doc.generatedAt)}
                   </p>
                 </div>
               </div>

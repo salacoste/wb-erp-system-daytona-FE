@@ -259,9 +259,11 @@ describe('formatDateTime', () => {
     expect(formatDateTime('2025-01-20T22:30:00Z')).toBe('21.01.2025, 01:30')
   })
 
-  it('returns "—" for invalid input (no "NaN.NaN.NaN")', () => {
+  it('returns "—" for invalid / null / undefined input (no "NaN.NaN.NaN", no 1970 epoch)', () => {
     expect(formatDateTime('not-a-date')).toBe('—')
     expect(formatDateTime('')).toBe('—')
+    expect(formatDateTime(null)).toBe('—')
+    expect(formatDateTime(undefined)).toBe('—')
   })
 })
 

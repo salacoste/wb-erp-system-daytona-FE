@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { SupplyStatusBadge } from './SupplyStatusBadge'
-import { formatDate } from '@/lib/utils'
+import { formatDateTime } from '@/lib/utils'
 import type { Supply, SupplyStatus } from '@/types/supplies'
 
 interface SupplyHeaderProps {
@@ -26,15 +26,6 @@ interface SupplyHeaderProps {
 }
 
 /** Format date for display */
-function formatDisplayDate(dateString: string | null): string {
-  if (!dateString) return '—'
-  const date = new Date(dateString)
-  const dateStr = formatDate(date)
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${dateStr} ${hours}:${minutes}`
-}
-
 /** Get informational message based on status */
 function getStatusMessage(status: SupplyStatus): string | null {
   switch (status) {
@@ -76,7 +67,7 @@ export function SupplyHeader({
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" aria-hidden="true" />
-              <span>Создана: {formatDisplayDate(createdAt)}</span>
+              <span>Создана: {formatDateTime(createdAt)}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Package className="h-4 w-4" aria-hidden="true" />
@@ -85,7 +76,7 @@ export function SupplyHeader({
             {closedAt && (
               <div className="flex items-center gap-1.5">
                 <Lock className="h-4 w-4" aria-hidden="true" />
-                <span>Закрыта: {formatDisplayDate(closedAt)}</span>
+                <span>Закрыта: {formatDateTime(closedAt)}</span>
               </div>
             )}
           </div>
