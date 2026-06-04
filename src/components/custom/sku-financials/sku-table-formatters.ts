@@ -3,6 +3,8 @@
  * Extracted from SkuFinancialsTable.tsx — pure formatting helpers
  */
 
+import { formatPercentage } from '@/lib/utils'
+
 /**
  * Format currency in Russian locale
  */
@@ -21,7 +23,8 @@ export function formatCurrency(value: number | null): string {
  */
 export function formatPercent(value: number | null): string {
   if (value === null) return '—'
-  return value.toFixed(1) + '%'
+  // Russian locale: comma + NBSP ("15,5 %"). value is a 0-100 percent; formatPercentage divides by 100.
+  return formatPercentage(value, 1)
 }
 
 /**

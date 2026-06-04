@@ -8,7 +8,7 @@
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import type { ProfitabilityStatus } from '@/types/sku-financials'
 import { getProfitabilityBadgeClass, getProfitabilityLabel } from '@/types/sku-financials'
 
@@ -26,13 +26,15 @@ export function ProfitabilityBadge({ status, marginPct }: ProfitabilityBadgeProp
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge className={cn('cursor-help', colorClass)}>
-            {marginPct !== null ? `${marginPct.toFixed(1)}%` : label}
+            {marginPct !== null ? formatPercentage(marginPct, 1) : label}
           </Badge>
         </TooltipTrigger>
         <TooltipContent>
           <p className="font-medium">{label}</p>
           {marginPct !== null && (
-            <p className="text-xs text-gray-400">Операционная маржа: {marginPct.toFixed(2)}%</p>
+            <p className="text-xs text-gray-400">
+              Операционная маржа: {formatPercentage(marginPct, 2)}
+            </p>
           )}
         </TooltipContent>
       </Tooltip>
