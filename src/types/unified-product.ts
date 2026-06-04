@@ -1,9 +1,9 @@
 /**
- * Unified Product Analytics — domain types (Stories 120.5 + 120.6-FE).
+ * Unified Product Analytics — domain types (Stories 120.5 + 120.6 + 120.7-FE).
  *
  * Marketing Plan §3.3 "Product Analytics Page". Story 120.5 shipped the
- * route shell; Story 120.6 extends the types with the verified data contract
- * from GET /v1/analytics/product/:nmId/unified (Request #177 RESOLVED 2026-06-02).
+ * route shell; Story 120.6 the /unified data; Story 120.7 adds organic-share
+ * and incremental-roas endpoint types (all Request #177 RESOLVED 2026-06-02).
  *
  * AP#8 split: counts → number (SEMANTIC-ZERO, ?? 0 OK); ratios/rates/money →
  * number | null (nullable-unknown, renders '—'). Backend returns conversions
@@ -145,4 +145,57 @@ export interface UnifiedProductData {
  */
 export interface UnifiedProductShell {
   nmId: string
+}
+
+// ============================================================
+// Organic-Share (Story 120.7 — GET /organic-share)
+// CorrelationResult[] — per-day organic/paid cart split
+// ============================================================
+
+/** Confidence level for cart estimation (orders-based). */
+export type CorrelationConfidence = 'high' | 'medium' | 'low'
+
+/** Per-campaign cart estimate within a correlation day. */
+export interface CampaignCartEstimate {
+  advertId: number
+  adOrders: number
+  spend: number
+  estimatedAdCart: number | null
+}
+
+/** Single day correlation result — organic vs ad-attributed cart. */
+export interface CorrelationDayItem {
+  date: string
+  nmId: string
+  adOrders: number
+  /** AP#8: null when funnel has <10 orders (low confidence). */
+  estimatedAdCart: number | null
+  organicCart: number
+  confidence: CorrelationConfidence
+  campaigns: CampaignCartEstimate[]
+}
+
+// ============================================================
+// Incremental ROAS (Story 120.7 — GET /incremental-roas)
+// ============================================================
+
+/** iROAS effectiveness interpretation — thresholds from Story 70.4 AC-5. */
+export type RoasInterpretation = 'highly_effective' | 'effective' | 'marginal' | 'ineffective'
+
+/** Incremental ROAS result for a single nmId over a period. */
+export interface IncrementalRoasData {
+  nmId: string
+  period: { from: string; to: string }
+  totalRevenue: number
+  estimatedOrganicRevenue: number
+  adSpend: number
+  incrementalRevenue: number
+  /** AP#8: null when adSpend=0 (cannot divide by zero). */
+  iROAS: number | null
+  /** AP#8: null when iROAS is null. */
+  interpretation: RoasInterpretation | null
+  /** AP#8: null when no organic baseline exists. */
+  organicCannibalizationPct: number | null
+  totalOrders: number
+  estimatedOrganicOrders: number
 }

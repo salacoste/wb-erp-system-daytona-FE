@@ -1,12 +1,16 @@
 /**
- * Tests for Unified Product Analytics Boundary Normalizer — Story 120.6-FE.
+ * Tests for Unified Product Analytics Boundary Normalizer — Stories 120.6 + 120.7-FE.
  *
  * Covers: nullability edges, AP#8 coercion, nmId string coercion (AP#10),
- * missing sub-sections, empty arrays, non-string dates.
+ * missing sub-sections, empty arrays, non-string dates, organic-share + iROAS.
  */
 
 import { describe, it, expect } from 'vitest'
-import { normalizeUnifiedProductResponse } from '@/lib/api/unified-product-normalizer'
+import {
+  normalizeUnifiedProductResponse,
+  normalizeOrganicShareResponse,
+  normalizeIncrementalRoasResponse,
+} from '@/lib/api/unified-product-normalizer'
 
 const FULL_BACKEND_RESPONSE = {
   nmId: 887604577,
@@ -153,5 +157,120 @@ describe('normalizeUnifiedProductResponse', () => {
     }
     const result = normalizeUnifiedProductResponse(raw)
     expect(result.funnel.dates[0].date).toBe('')
+  })
+})
+
+// ============================================================
+// Organic-Share normalizer tests (Story 120.7)
+// ============================================================
+
+describe('normalizeOrganicShareResponse', () => {
+  it('normalizes a CorrelationResult[] with campaigns', () => {
+    const raw = [
+      {
+        date: '2026-06-01',
+        nmId: 887604577,
+        adOrders: 10,
+        estimatedAdCart: 25.5,
+        organicCart: 40,
+        confidence: 'high',
+        campaigns: [{ advertId: 1001, adOrders: 5, spend: 3000, estimatedAdCart: 12 }],
+      },
+    ]
+    const result = normalizeOrganicShareResponse(raw)
+    expect(result).toHaveLength(1)
+    expect(result[0].nmId).toBe('887604577')
+    expect(result[0].adOrders).toBe(10)
+    expect(result[0].estimatedAdCart).toBe(25.5)
+    expect(result[0].confidence).toBe('high')
+    expect(result[0].campaigns).toHaveLength(1)
+    expect(result[0].campaigns[0].advertId).toBe(1001)
+  })
+
+  it('returns empty array for non-array input', () => {
+    expect(normalizeOrganicShareResponse(null)).toEqual([])
+    expect(normalizeOrganicShareResponse({})).toEqual([])
+  })
+
+  it('defaults confidence to "low" for invalid values', () => {
+    const raw = [
+      { date: '2026-06-01', nmId: 1, adOrders: 0, organicCart: 0, confidence: 'unknown' },
+    ]
+    const result = normalizeOrganicShareResponse(raw)
+    expect(result[0].confidence).toBe('low')
+  })
+
+  it('coerces null estimatedAdCart to null (AP#8)', () => {
+    const raw = [
+      { date: '2026-06-01', nmId: 1, adOrders: 0, organicCart: 0, estimatedAdCart: null },
+    ]
+    const result = normalizeOrganicShareResponse(raw)
+    expect(result[0].estimatedAdCart).toBeNull()
+  })
+})
+
+// ============================================================
+// Incremental ROAS normalizer tests (Story 120.7)
+// ============================================================
+
+describe('normalizeIncrementalRoasResponse', () => {
+  it('normalizes a full IncrementalRoasResult', () => {
+    const raw = {
+      nmId: 887604577,
+      period: { from: '2026-06-01', to: '2026-06-07' },
+      totalRevenue: 150000,
+      estimatedOrganicRevenue: 90000,
+      adSpend: 30000,
+      incrementalRevenue: 60000,
+      iROAS: 2.0,
+      interpretation: 'effective',
+      organicCannibalizationPct: 60.0,
+      totalOrders: 500,
+      estimatedOrganicOrders: 300,
+    }
+    const result = normalizeIncrementalRoasResponse(raw)
+    expect(result.nmId).toBe('887604577')
+    expect(result.iROAS).toBe(2.0)
+    expect(result.interpretation).toBe('effective')
+    expect(result.organicCannibalizationPct).toBe(60.0)
+    expect(result.totalOrders).toBe(500)
+  })
+
+  it('handles null iROAS + interpretation when adSpend is 0', () => {
+    const raw = {
+      nmId: 1,
+      period: { from: '2026-06-01', to: '2026-06-07' },
+      totalRevenue: 0,
+      estimatedOrganicRevenue: 0,
+      adSpend: 0,
+      incrementalRevenue: 0,
+      iROAS: null,
+      interpretation: null,
+      organicCannibalizationPct: null,
+      totalOrders: 0,
+      estimatedOrganicOrders: 0,
+    }
+    const result = normalizeIncrementalRoasResponse(raw)
+    expect(result.iROAS).toBeNull()
+    expect(result.interpretation).toBeNull()
+    expect(result.organicCannibalizationPct).toBeNull()
+  })
+
+  it('defaults invalid interpretation to null', () => {
+    const raw = {
+      nmId: 1,
+      period: { from: '', to: '' },
+      totalRevenue: 0,
+      estimatedOrganicRevenue: 0,
+      adSpend: 0,
+      incrementalRevenue: 0,
+      iROAS: null,
+      interpretation: 'great',
+      organicCannibalizationPct: null,
+      totalOrders: 0,
+      estimatedOrganicOrders: 0,
+    }
+    const result = normalizeIncrementalRoasResponse(raw)
+    expect(result.interpretation).toBeNull()
   })
 })

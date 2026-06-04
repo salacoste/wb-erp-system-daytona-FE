@@ -9,10 +9,20 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { emptyUnifiedProductData } from '@/test/fixtures/unified-product-empty'
 
-// Mock the data hook — the server page renders the client component which uses it
+// Mock all 3 data hooks — the server page renders the client component which uses them
 vi.mock('@/hooks/use-unified-product-analytics', () => ({
   useUnifiedProductAnalytics: vi.fn().mockReturnValue({
     data: emptyUnifiedProductData(),
+    isLoading: false,
+    isError: false,
+  }),
+  useOrganicShare: vi.fn().mockReturnValue({
+    data: [],
+    isLoading: false,
+    isError: false,
+  }),
+  useIncrementalRoas: vi.fn().mockReturnValue({
+    data: null,
     isLoading: false,
     isError: false,
   }),

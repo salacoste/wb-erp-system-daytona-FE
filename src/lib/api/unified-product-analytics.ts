@@ -1,7 +1,7 @@
 /**
- * Unified Product Analytics API Client — Story 120.6-FE.
+ * Unified Product Analytics API Client — Stories 120.6 + 120.7-FE.
  *
- * Fetches GET /v1/analytics/product/:nmId/unified and normalizes via
+ * Fetches all 3 product analytics endpoints and normalizes via
  * Boundary Normalizer Pattern. Follows funnel-analytics.ts convention.
  *
  * Request #177 RESOLVED (2026-06-02): routes live, HTTP 200.
@@ -9,11 +9,19 @@
  */
 
 import { apiClient } from '@/lib/api-client'
-import { normalizeUnifiedProductResponse } from '@/lib/api/unified-product-normalizer'
-import type { UnifiedProductData } from '@/types/unified-product'
+import {
+  normalizeUnifiedProductResponse,
+  normalizeOrganicShareResponse,
+  normalizeIncrementalRoasResponse,
+} from '@/lib/api/unified-product-normalizer'
+import type {
+  UnifiedProductData,
+  CorrelationDayItem,
+  IncrementalRoasData,
+} from '@/types/unified-product'
 
 // ============================================================
-// API function
+// Shared params
 // ============================================================
 
 export interface UnifiedProductParams {
@@ -21,6 +29,10 @@ export interface UnifiedProductParams {
   from: string
   to: string
 }
+
+// ============================================================
+// GET /unified (Story 120.6)
+// ============================================================
 
 /** GET /v1/analytics/product/:nmId/unified */
 export async function getUnifiedProductAnalytics(
@@ -39,12 +51,54 @@ export async function getUnifiedProductAnalytics(
 }
 
 // ============================================================
+// GET /organic-share (Story 120.7)
+// ============================================================
+
+/** GET /v1/analytics/product/:nmId/organic-share → CorrelationResult[] */
+export async function getOrganicShare(params: UnifiedProductParams): Promise<CorrelationDayItem[]> {
+  const sp = new URLSearchParams()
+  sp.set('from', params.from)
+  sp.set('to', params.to)
+
+  const raw = await apiClient.get<unknown>(
+    `/v1/analytics/product/${params.nmId}/organic-share?${sp.toString()}`,
+    { skipDataUnwrap: true }
+  )
+
+  return normalizeOrganicShareResponse(raw)
+}
+
+// ============================================================
+// GET /incremental-roas (Story 120.7)
+// ============================================================
+
+/** GET /v1/analytics/product/:nmId/incremental-roas → IncrementalRoasResult */
+export async function getIncrementalRoas(
+  params: UnifiedProductParams
+): Promise<IncrementalRoasData> {
+  const sp = new URLSearchParams()
+  sp.set('from', params.from)
+  sp.set('to', params.to)
+
+  const raw = await apiClient.get<unknown>(
+    `/v1/analytics/product/${params.nmId}/incremental-roas?${sp.toString()}`,
+    { skipDataUnwrap: true }
+  )
+
+  return normalizeIncrementalRoasResponse(raw)
+}
+
+// ============================================================
 // Query Keys Factory
 // ============================================================
 
 export const unifiedProductQueryKeys = {
   all: ['unified-product-analytics'] as const,
   data: (params: UnifiedProductParams) => [...unifiedProductQueryKeys.all, 'data', params] as const,
+  organicShare: (params: UnifiedProductParams) =>
+    [...unifiedProductQueryKeys.all, 'organic-share', params] as const,
+  incrementalRoas: (params: UnifiedProductParams) =>
+    [...unifiedProductQueryKeys.all, 'incremental-roas', params] as const,
 }
 
 // ============================================================

@@ -2,9 +2,9 @@
 
 /**
  * ProductAnalyticsContent — client shell for the Unified Product Analytics page
- * (Stories 120.5 + 120.6-FE). Renders the product header + data-driven tabs.
- * Overview tab shows real /unified data; other tabs remain placeholders
- * until Story 120.7 wires organic-share + incremental-roas.
+ * (Stories 120.5 + 120.6 + 120.7-FE). Renders the product header + data-driven tabs.
+ * Overview/Advertising/Organic tabs show real data from /unified, /organic-share,
+ * and /incremental-roas. Funnel tab remains placeholder (FUTURE).
  */
 
 import Link from 'next/link'
@@ -17,36 +17,41 @@ import {
   UNIFIED_PRODUCT_TAB_LABELS,
   type UnifiedProductTab,
 } from '@/types/unified-product'
-import { useUnifiedProductAnalytics } from '@/hooks/use-unified-product-analytics'
+import {
+  useUnifiedProductAnalytics,
+  useOrganicShare,
+  useIncrementalRoas,
+} from '@/hooks/use-unified-product-analytics'
 import { ProductTabPlaceholder } from './ProductTabPlaceholder'
 import { ProductOverviewTab } from './ProductOverviewTab'
+import { AdvertisingTab } from './AdvertisingTab'
+import { OrganicTab } from './OrganicTab'
 
 interface ProductAnalyticsContentProps {
   nmId: string
 }
 
-// Default to the first tab in display order (single source of truth — no drift if reordered)
 const DEFAULT_TAB: UnifiedProductTab = UNIFIED_PRODUCT_TABS[0]
 
 export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) {
-  // Default date range: last 2 completed weeks (Monday-based ISO week logic).
-  // Hardcoded for initial wiring — a week selector will be added in 120.7.
+  // Default date range — will be replaced by week selector (FUTURE)
   const from = '2026-05-19'
   const to = '2026-06-01'
+  const hookParams = { nmId, from, to }
 
-  const { data, isLoading, isError } = useUnifiedProductAnalytics({ nmId, from, to })
+  const unified = useUnifiedProductAnalytics(hookParams)
+  const organicShare = useOrganicShare(hookParams)
+  const iroas = useIncrementalRoas(hookParams)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        {/* asChild renders a single <a> styled as a button — avoids nested <a><button> (WCAG 4.1.2) */}
         <Button asChild variant="ghost" size="sm">
           <Link href={ROUTES.ANALYTICS.ROOT}>
             <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
             Назад к аналитике
           </Link>
         </Button>
-        {/* nmId is an opaque ID — String(), never formatNumber (AP#10) */}
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
           Аналитика товара #{String(nmId)}
         </h1>
@@ -62,27 +67,44 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         </TabsList>
         {UNIFIED_PRODUCT_TABS.map(tab => (
           <TabsContent key={tab} value={tab}>
-            {tab === 'overview' ? (
-              renderOverviewTab()
-            ) : (
-              <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS[tab]} />
-            )}
+            {renderTab(tab)}
           </TabsContent>
         ))}
       </Tabs>
     </div>
   )
 
-  function renderOverviewTab() {
-    if (isLoading) return <OverviewSkeleton />
-    if (isError || !data) {
-      return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.overview} />
+  function renderTab(tab: UnifiedProductTab) {
+    switch (tab) {
+      case 'overview':
+        if (unified.isLoading) return <OverviewSkeleton />
+        if (unified.isError || !unified.data) {
+          return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.overview} />
+        }
+        return <ProductOverviewTab data={unified.data} />
+
+      case 'advertising':
+        if (unified.isLoading) return <OverviewSkeleton />
+        if (unified.isError || !unified.data) {
+          return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.advertising} />
+        }
+        return (
+          <AdvertisingTab
+            totals={unified.data.advertising.totals}
+            campaigns={unified.data.advertising.campaigns}
+          />
+        )
+
+      case 'organic':
+        if (organicShare.isLoading || iroas.isLoading) return <OverviewSkeleton />
+        return <OrganicTab correlation={organicShare.data ?? []} iroas={iroas.data ?? null} />
+
+      default:
+        return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS[tab]} />
     }
-    return <ProductOverviewTab data={data} />
   }
 }
 
-/** Minimal skeleton — 4 KPI cards shimmering. */
 function OverviewSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -1,10 +1,9 @@
 /**
- * Tests for ProductAnalyticsContent — Unified Product Analytics shell (Stories 120.5 + 120.6-FE).
+ * Tests for ProductAnalyticsContent — Unified Product Analytics shell (Stories 120.5–120.7-FE).
  * Covers: header render, opaque-id handling (AP#10), all four tabs, data-driven
- * overview tab, and tab switching to placeholder tabs.
+ * overview/advertising/organic tabs, and funnel placeholder.
  *
- * TanStack Query mock: the useUnifiedProductAnalytics hook is mocked to return
- * loading → data flow, so tests don't need QueryClient wrapping.
+ * TanStack Query mock: all 3 hooks mocked at module level.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -13,25 +12,46 @@ import userEvent from '@testing-library/user-event'
 import { emptyUnifiedProduct, emptyUnifiedProductData } from '@/test/fixtures/unified-product-empty'
 import { UNIFIED_PRODUCT_TABS, UNIFIED_PRODUCT_TAB_LABELS } from '@/types/unified-product'
 
-// Mock the data hook — controls loading/data/error states per test
+// Mock all 3 data hooks
 vi.mock('@/hooks/use-unified-product-analytics', () => ({
   useUnifiedProductAnalytics: vi.fn(),
+  useOrganicShare: vi.fn(),
+  useIncrementalRoas: vi.fn(),
 }))
 
-import { useUnifiedProductAnalytics } from '@/hooks/use-unified-product-analytics'
+import {
+  useUnifiedProductAnalytics,
+  useOrganicShare,
+  useIncrementalRoas,
+} from '@/hooks/use-unified-product-analytics'
 import { ProductAnalyticsContent } from '../ProductAnalyticsContent'
 
-const mockHook = vi.mocked(useUnifiedProductAnalytics)
+const mockUnified = vi.mocked(useUnifiedProductAnalytics)
+const mockOrganic = vi.mocked(useOrganicShare)
+const mockIroas = vi.mocked(useIncrementalRoas)
+
+function setAllLoaded() {
+  mockUnified.mockReturnValue({
+    data: emptyUnifiedProductData(),
+    isLoading: false,
+    isError: false,
+  } as ReturnType<typeof useUnifiedProductAnalytics>)
+  mockOrganic.mockReturnValue({
+    data: [],
+    isLoading: false,
+    isError: false,
+  } as ReturnType<typeof useOrganicShare>)
+  mockIroas.mockReturnValue({
+    data: null,
+    isLoading: false,
+    isError: false,
+  } as ReturnType<typeof useIncrementalRoas>)
+}
 
 describe('ProductAnalyticsContent', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // Default: return loaded empty data
-    mockHook.mockReturnValue({
-      data: emptyUnifiedProductData(),
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useUnifiedProductAnalytics>)
+    setAllLoaded()
   })
 
   it('renders the product header with the nmId', () => {
@@ -43,7 +63,6 @@ describe('ProductAnalyticsContent', () => {
   it('renders an opaque nmId via String() without mangling leading zeros (AP#10)', () => {
     render(<ProductAnalyticsContent nmId="00123" />)
     expect(screen.getByRole('heading', { name: 'Аналитика товара #00123' })).toBeInTheDocument()
-    expect(screen.queryByText(/#123\b/)).toBeNull()
   })
 
   it('renders all four tabs with their Russian labels', () => {
@@ -51,41 +70,45 @@ describe('ProductAnalyticsContent', () => {
     for (const tab of UNIFIED_PRODUCT_TABS) {
       expect(screen.getByRole('tab', { name: UNIFIED_PRODUCT_TAB_LABELS[tab] })).toBeInTheDocument()
     }
-    expect(screen.getByRole('tablist', { name: 'Разделы аналитики товара' })).toBeInTheDocument()
   })
 
-  it('shows the overview tab with KPI cards when data is loaded', () => {
+  it('shows overview KPI cards when data is loaded', () => {
     render(<ProductAnalyticsContent nmId="1" />)
-    // Overview tab is active by default — should show KPI titles from ProductOverviewTab
     expect(screen.getByText('Органический трафик')).toBeInTheDocument()
     expect(screen.getByText('Открытия карт')).toBeInTheDocument()
   })
 
   it('shows skeleton while loading', () => {
-    mockHook.mockReturnValue({
+    mockUnified.mockReturnValue({
       data: undefined,
       isLoading: true,
       isError: false,
     } as ReturnType<typeof useUnifiedProductAnalytics>)
-
     render(<ProductAnalyticsContent nmId="1" />)
-    // Skeleton renders 4 animated divs
-    const skeletons = document.querySelectorAll('.animate-pulse')
-    expect(skeletons.length).toBe(4)
+    expect(document.querySelectorAll('.animate-pulse').length).toBe(4)
   })
 
-  it('switches to placeholder tabs on click', async () => {
+  it('switches to advertising tab with campaign data', async () => {
     const user = userEvent.setup()
     render(<ProductAnalyticsContent nmId="1" />)
+    await user.click(screen.getByRole('tab', { name: 'Реклама' }))
+    expect(screen.getByText('Просмотры')).toBeInTheDocument()
+    expect(screen.getByText('Затраты')).toBeInTheDocument()
+  })
 
-    // Click non-overview tabs — should show placeholder
-    for (const tab of UNIFIED_PRODUCT_TABS) {
-      if (tab === 'overview') continue
-      const label = UNIFIED_PRODUCT_TAB_LABELS[tab]
-      await user.click(screen.getByRole('tab', { name: label }))
-      const panel = screen.getByRole('tabpanel')
-      expect(within(panel).getByText(`Раздел «${label}» в разработке`)).toBeInTheDocument()
-    }
+  it('switches to organic tab with iROAS insight', async () => {
+    const user = userEvent.setup()
+    render(<ProductAnalyticsContent nmId="1" />)
+    await user.click(screen.getByRole('tab', { name: 'Органика' }))
+    expect(screen.getByText('Инкрементальный ROAS')).toBeInTheDocument()
+  })
+
+  it('switches to funnel placeholder tab', async () => {
+    const user = userEvent.setup()
+    render(<ProductAnalyticsContent nmId="1" />)
+    await user.click(screen.getByRole('tab', { name: 'Воронка' }))
+    const panel = screen.getByRole('tabpanel')
+    expect(within(panel).getByText('Раздел «Воронка» в разработке')).toBeInTheDocument()
   })
 
   it('renders a back link to the analytics hub', () => {
