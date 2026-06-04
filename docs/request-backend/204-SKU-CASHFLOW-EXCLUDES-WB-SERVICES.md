@@ -1,13 +1,23 @@
-# 204 — SKU cashflow net profit OVERSTATED: omits WB-services (Продвижение/Джем)
+# 204 — SKU cashflow net profit "omits WB-services" — RESOLVED: NOT A DEFECT (false alarm)
 
-**Status**: PENDING — needs product/backend decision on the cashflow profit-completeness model
-**Severity**: HIGH (net-profit headline overstated; can flip a loss to a green profit on ad-active cabinets)
-**Found**: iter-141 audit of `/analytics/sku` "Полный Cashflow" card, verified against backend source.
-**Endpoint**: the cabinet-level-expenses source feeding `CabinetLevelExpenses` (cabinet-expenses.service.ts)
+**Status**: RESOLVED / WITHDRAWN (iter-145) — DEFECT 1 was a false alarm; net profit is correct. No backend change needed.
+**Severity**: ~~HIGH~~ → none (DEFECT 1 dismissed). DEFECT 2 below is a minor display-reconciliation note only.
+**Found**: iter-141 audit of `/analytics/sku` "Полный Cashflow"; **re-verified against backend SQL in iter-145**.
 
-## Problem (DEFECT 1)
+## ⚠️ RESOLUTION (iter-145): DEFECT 1 is NOT a defect — do NOT "fold wb_services into total"
 
-The "Полный Cashflow" card's **ЧИСТАЯ ПРИБЫЛЬ** and **ИТОГО общекабинетные расходы** exclude WB-services deductions (WB.Продвижение + Джем + прочие сервисы WB), so net profit is **overstated** by that amount — often the single largest deduction for advertising-active sellers.
+The original claim (net profit overstated because `total` omits `wb_services_cost`) is **WRONG**. Verified against `cabinet-expenses.service.ts`:
+- Line 79: `other_adjustments = SUM(ABS(corrections) + ABS(other_adjustments))` — the `other_adjustments` field **includes `ABS(corrections)`**.
+- Lines 178-193: `wb_services_cost = SUM(ABS(corrections))` for `reason='Удержание'` WB-services rows — the **same `corrections`**.
+- Therefore **`wb_services_cost ⊂ other_adjustments`**, and `total = storage + other_adjustments + …` (line 250) **already includes WB-services**. `netProfit = gross_profit_sku − total` is **correct** — no overstatement.
+
+The iter-141 audit was misled by `total` not *literally listing* `wb_services_cost` as a separate term; it's a SUBSET of the `other_adjustments` term (both derive from `corrections`). The dashboard (iter-144) has the identical `wb_services_cost ⊂ other_adjustments_net` relationship — it merely *displays* promotion/jam as separate lines (subtracting them from an "other-adjustments-remaining" line to avoid double-DISPLAY). The sku-cashflow lumps them into the `other_adjustments` line — a **display-granularity** difference, NOT a correctness bug. **Folding `wb_services_cost` into `total` would DOUBLE-COUNT it.**
+
+(Optional FE polish, not required: break promotion/jam out as their own lines in the sku-cashflow grid for parity with the dashboard, subtracting them from the displayed other-adjustments line — purely cosmetic, no net-profit change.)
+
+## ~~Problem (DEFECT 1)~~ — withdrawn (see RESOLUTION above)
+
+~~The "Полный Cashflow" card's ЧИСТАЯ ПРИБЫЛЬ and ИТОГО exclude WB-services…~~ — incorrect; WB-services are included via `other_adjustments`.
 
 ### Verified against backend source
 
