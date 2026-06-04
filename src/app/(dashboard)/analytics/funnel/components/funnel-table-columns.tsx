@@ -9,27 +9,11 @@ import { type FunnelSortField, ariaSort, SortBtn } from './funnel-table-cells'
 import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { ROUTES } from '@/lib/routes'
+import { truncateQuery } from '@/lib/string-utils'
 
 /**
- * Story 119.2-FE: truncate Cyrillic-aware query strings using Array.from for code-point counting.
- * Returns the original string if it fits, otherwise truncated + ellipsis.
- */
-export function truncateQuery(q: string, maxChars = 24): string {
-  const chars = Array.from(q)
-  if (chars.length <= maxChars) return q
-  return chars.slice(0, maxChars).join('') + '…'
-}
-
-// EPIC-120 RETIRE: when src/lib/api/funnel-analytics-normalizer.ts is shipped
-// (Epic 120-FE), retire filterValidQueries + the em-dash fallback at TopSearchQueriesCell.
-// This component-level Boundary Normalizer is defense-in-depth absorbing a missing
-// API-layer normalizer. Per Story 119.1 retro defense-in-depth retirement criterion
-// + Story 119.2 Pass-1 F-6.
-/**
- * Story 119.2-FE: filter raw topSearchQueries to entries with non-empty string `query`.
- * Defensive against backend shape drift (null entries, missing query field, non-string
- * query, empty-string query — F-9 closes the empty-string gap that would otherwise
- * render an empty <Link>).
+ * Story 120.1-FE: filter raw topSearchQueries to entries with non-empty string `query`.
+ * Retained as component-level defense-in-depth per Story 119.2 Pass-1 F-6.
  */
 export function filterValidQueries(raw: TopSearchQuery[] | null | undefined): TopSearchQuery[] {
   if (!Array.isArray(raw)) return []

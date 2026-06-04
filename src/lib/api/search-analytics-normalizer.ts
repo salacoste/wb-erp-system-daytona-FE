@@ -40,35 +40,9 @@ import type {
   SearchProductItem,
   SearchQueryItem,
 } from '@/types/search-analytics'
+import { toCount, toNullableNumber, toStringOrNull } from '@/lib/api/normalizer-helpers'
 
 const VALID_GROUP_BY = new Set<SearchOrdersGroupBy>(['query', 'product', 'day'])
-
-// FUTURE: Epic 120-FE Story 1 (or Epic 119-FE Story 5) — extract toCount /
-// toNullableNumber / toStringOrNull / asRecord to a shared
-// src/lib/api/normalizer-helpers.ts module; migrate 7 existing normalizers
-// (cabinet, monitor-summary, acquiring, buyout-reconciliation, fbs-stock,
-// fbs-enhanced, advertising-analytics, search-analytics). Precedent: Story
-// 107.1-FE `nullPreservingSum`. Deferred from Story 119.1-FE 1st-pass F-6
-// (reuse) — outside this story's focused scope.
-
-function toCount(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-// Story 119.1-FE F-2 (AP#8): ratio/money normalizer — preserves null instead
-// of coercing to 0; non-finite → null (never collapse null and known-zero).
-function toNullableNumber(raw: unknown): number | null {
-  if (raw == null) return null
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
-// Story 119.1-FE F-4 (Defensive Frontend): string fields reject non-string
-// inputs — `String({})` produces "[object Object]"; null lets the UI render '—'.
-function toStringOrNull(raw: unknown): string | null {
-  return typeof raw === 'string' ? raw : null
-}
 
 function toGroupBy(raw: unknown): SearchOrdersGroupBy {
   const s = String(raw ?? 'query') as SearchOrdersGroupBy

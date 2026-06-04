@@ -27,29 +27,7 @@ import type {
   AcquiringDetailResponse,
 } from '@/types/acquiring-analytics'
 
-// ---------------------------------------------------------------------------
-// Private scalar helpers
-// ---------------------------------------------------------------------------
-
-/** Converts to number | null. Rejects null, undefined, and NaN via Number.isFinite. */
-function toNumberOrNull(raw: unknown): number | null {
-  if (raw == null) return null
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
-/** Converts to number (count / ID). Returns 0 on missing or non-finite input. */
-function toCount(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-// Returns '' for null/undefined (strings are always present per backend contract).
-// Named `toStringOrEmpty` (not `toStringOrEmpty`) to avoid naming collision with
-// Story 92.1's monitor-summary-normalizer helper which DOES return string | null.
-function toStringOrEmpty(raw: unknown): string {
-  return raw == null ? '' : String(raw)
-}
+import { toCount, toNullableNumber, toStr } from '@/lib/api/normalizer-helpers'
 
 // ---------------------------------------------------------------------------
 // Private item normalizers
@@ -65,13 +43,13 @@ function normalizeReportListItem(raw: unknown): AcquiringReportListItem {
   const d = (raw ?? {}) as Record<string, unknown>
   return {
     reportId: toCount(d.reportId ?? d.report_id),
-    sellerFinanceName: toStringOrEmpty(d.sellerFinanceName ?? d.seller_finance_name),
-    dateFrom: toStringOrEmpty(d.dateFrom ?? d.date_from),
-    dateTo: toStringOrEmpty(d.dateTo ?? d.date_to),
-    createDate: toStringOrEmpty(d.createDate ?? d.create_date),
-    currency: toStringOrEmpty(d.currency),
-    acquiringFeeSum: toNumberOrNull(d.acquiringFeeSum ?? d.acquiring_fee_sum),
-    acquiringFeeVatSum: toNumberOrNull(d.acquiringFeeVatSum ?? d.acquiring_fee_vat_sum),
+    sellerFinanceName: toStr(d.sellerFinanceName ?? d.seller_finance_name),
+    dateFrom: toStr(d.dateFrom ?? d.date_from),
+    dateTo: toStr(d.dateTo ?? d.date_to),
+    createDate: toStr(d.createDate ?? d.create_date),
+    currency: toStr(d.currency),
+    acquiringFeeSum: toNullableNumber(d.acquiringFeeSum ?? d.acquiring_fee_sum),
+    acquiringFeeVatSum: toNullableNumber(d.acquiringFeeVatSum ?? d.acquiring_fee_vat_sum),
   }
 }
 
@@ -84,16 +62,16 @@ function normalizeReportDetailItem(raw: unknown): AcquiringReportDetailItem {
   return {
     rrdId: toCount(d.rrdId ?? d.rrd_id),
     reportId: toCount(d.reportId ?? d.report_id),
-    acqDate: toStringOrEmpty(d.acqDate ?? d.acq_date),
-    acquiringBank: toStringOrEmpty(d.acquiringBank ?? d.acquiring_bank),
-    saleDate: toStringOrEmpty(d.saleDate ?? d.sale_date),
-    srid: toStringOrEmpty(d.srid),
-    docTypeName: toStringOrEmpty(d.docTypeName ?? d.doc_type_name),
+    acqDate: toStr(d.acqDate ?? d.acq_date),
+    acquiringBank: toStr(d.acquiringBank ?? d.acquiring_bank),
+    saleDate: toStr(d.saleDate ?? d.sale_date),
+    srid: toStr(d.srid),
+    docTypeName: toStr(d.docTypeName ?? d.doc_type_name),
     nmId: toCount(d.nmId ?? d.nm_id),
-    retailAmount: toNumberOrNull(d.retailAmount ?? d.retail_amount),
-    acquiringFee: toNumberOrNull(d.acquiringFee ?? d.acquiring_fee),
-    acquiringFeeVat: toNumberOrNull(d.acquiringFeeVat ?? d.acquiring_fee_vat),
-    currency: toStringOrEmpty(d.currency),
+    retailAmount: toNullableNumber(d.retailAmount ?? d.retail_amount),
+    acquiringFee: toNullableNumber(d.acquiringFee ?? d.acquiring_fee),
+    acquiringFeeVat: toNullableNumber(d.acquiringFeeVat ?? d.acquiring_fee_vat),
+    currency: toStr(d.currency),
   }
 }
 
@@ -110,7 +88,7 @@ export function normalizeAcquiringListResponse(raw: unknown): AcquiringListRespo
   const items = Array.isArray(r.data) ? r.data : []
   return {
     data: items.map(normalizeReportListItem),
-    cachedAt: toStringOrEmpty(r.cachedAt ?? r.cached_at),
+    cachedAt: toStr(r.cachedAt ?? r.cached_at),
   }
 }
 
@@ -123,6 +101,6 @@ export function normalizeAcquiringDetailResponse(raw: unknown): AcquiringDetailR
   const items = Array.isArray(r.data) ? r.data : []
   return {
     data: items.map(normalizeReportDetailItem),
-    cachedAt: toStringOrEmpty(r.cachedAt ?? r.cached_at),
+    cachedAt: toStr(r.cachedAt ?? r.cached_at),
   }
 }

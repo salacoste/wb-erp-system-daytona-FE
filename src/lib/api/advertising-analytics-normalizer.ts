@@ -19,19 +19,11 @@ import type {
   MultiCampaignSkuWarning,
   ViewByMode,
 } from '@/types/advertising-analytics'
+import { toCount, toNullableNumber, toStr } from '@/lib/api/normalizer-helpers'
 
 // ---------------------------------------------------------------------------
 // Private scalar helpers
 // ---------------------------------------------------------------------------
-
-function toNum(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-function toStr(raw: unknown): string {
-  return raw == null ? '' : String(raw)
-}
 
 // F-50: the normalizer is the AUTHORITATIVE guard for efficiency_status (Boundary
 // Normalizer Pattern) — sanitize any out-of-union backend value to 'unknown' here so the
@@ -59,12 +51,6 @@ function toEfficiencyStatus(raw: unknown): AdvertisingItem['efficiency_status'] 
   return (VALID_EFFICIENCY_STATUSES.has(s) ? s : 'unknown') as AdvertisingItem['efficiency_status']
 }
 
-function toNullableNum(raw: unknown): number | null {
-  if (raw == null) return null
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
 function toNumArr(raw: unknown): number[] {
   return Array.isArray(raw) ? raw.map(Number) : []
 }
@@ -76,16 +62,16 @@ function toNumArr(raw: unknown): number[] {
 function normalizeSummary(raw: unknown): AdvertisingSummary {
   const s = (raw ?? {}) as Record<string, unknown>
   return {
-    total_spend: toNum(s.totalSpend),
-    total_sales: toNum(s.totalSales),
-    total_revenue: toNum(s.totalRevenue),
-    total_profit: toNum(s.totalProfit),
-    overall_roas: toNullableNum(s.avgRoas),
-    overall_roi: toNullableNum(s.avgRoi),
-    avg_ctr: toNum(s.avgCtr),
-    avg_conversion_rate: toNum(s.avgConversionRate),
-    total_organic_sales: toNum(s.totalOrganicSales),
-    avg_organic_contribution: toNum(s.avgOrganicContribution),
+    total_spend: toCount(s.totalSpend),
+    total_sales: toCount(s.totalSales),
+    total_revenue: toCount(s.totalRevenue),
+    total_profit: toCount(s.totalProfit),
+    overall_roas: toNullableNumber(s.avgRoas),
+    overall_roi: toNullableNumber(s.avgRoi),
+    avg_ctr: toCount(s.avgCtr),
+    avg_conversion_rate: toCount(s.avgConversionRate),
+    total_organic_sales: toCount(s.totalOrganicSales),
+    avg_organic_contribution: toCount(s.avgOrganicContribution),
   }
 }
 
@@ -107,24 +93,24 @@ function normalizeItem(item: unknown, index: number): AdvertisingItem {
     product_name: toStr(d.label) || undefined,
     brand: toStr(d.brand) || undefined,
     category: toStr(d.category) || undefined,
-    views: toNum(d.views),
-    clicks: toNum(d.clicks),
-    orders: toNum(d.orders),
-    spend: toNum(d.spend),
-    total_sales: toNum(d.totalSales),
-    revenue: toNullableNum(d.revenue),
-    profit: toNullableNum(d.profit),
-    organic_sales: toNum(d.organicSales),
-    organic_contribution: toNum(d.organicContribution),
-    roas: toNullableNum(d.roas),
-    roi: toNullableNum(d.roi),
+    views: toCount(d.views),
+    clicks: toCount(d.clicks),
+    orders: toCount(d.orders),
+    spend: toCount(d.spend),
+    total_sales: toCount(d.totalSales),
+    revenue: toNullableNumber(d.revenue),
+    profit: toNullableNumber(d.profit),
+    organic_sales: toCount(d.organicSales),
+    organic_contribution: toCount(d.organicContribution),
+    roas: toNullableNumber(d.roas),
+    roi: toNullableNumber(d.roi),
     // iter-130: rates/derived-money preserve null (NOT toNum's 0) — renderValue already renders
     // these as "—" for null (perf-table-columns lines 23/29), but toNum was defeating that guard
     // by coercing to 0 at the boundary (false "0 %"/"0 ₽"). Matches sibling revenue/profit/roas/roi.
-    ctr: toNullableNum(d.ctr),
-    cpc: toNullableNum(d.cpc),
-    conversion_rate: toNullableNum(d.conversionRate),
-    profit_after_ads: toNullableNum(d.profitAfterAds),
+    ctr: toNullableNumber(d.ctr),
+    cpc: toNullableNumber(d.cpc),
+    conversion_rate: toNullableNumber(d.conversionRate),
+    profit_after_ads: toNullableNumber(d.profitAfterAds),
     efficiency_status: toEfficiencyStatus(eff.status),
   }
 }
@@ -133,13 +119,13 @@ function normalizeDaily(day: unknown): AdvertisingDailyItem {
   const d = (day ?? {}) as Record<string, unknown>
   return {
     date: toStr(d.date),
-    spend: toNum(d.spend),
-    views: toNum(d.views),
-    clicks: toNum(d.clicks),
-    orders: toNum(d.orders),
-    ctr: toNullableNum(d.ctr) ?? undefined,
-    cpc: toNullableNum(d.cpc) ?? undefined,
-    revenue_attributed: toNullableNum(d.revenueAttributed) ?? undefined,
+    spend: toCount(d.spend),
+    views: toCount(d.views),
+    clicks: toCount(d.clicks),
+    orders: toCount(d.orders),
+    ctr: toNullableNumber(d.ctr) ?? undefined,
+    cpc: toNullableNumber(d.cpc) ?? undefined,
+    revenue_attributed: toNullableNumber(d.revenueAttributed) ?? undefined,
   }
 }
 

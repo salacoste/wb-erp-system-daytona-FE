@@ -42,39 +42,21 @@ import type {
   FunnelSyncStatus,
   TopSearchQuery,
 } from '@/types/analytics-funnel'
-
-function asRecord(raw: unknown): Record<string, unknown> {
-  return raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {}
-}
-
-// SEMANTIC-ZERO numeric coercion (see file header AP#8 disposition): null /
-// missing / non-finite → 0, the known empty-state value for funnel metrics.
-function toNum(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-// Optional string field: undefined stays undefined (preserve optional-property
-// semantics); non-string garbage → undefined (Defensive Frontend — never coerce
-// {} to "[object Object]"). Mirrors 119.1 toStringOrNull but omits rather than
-// nulls, because vendorCode/brandName are optional (`?:`) not nullable on these types.
-function toOptionalString(raw: unknown): string | undefined {
-  return typeof raw === 'string' ? raw : undefined
-}
+import { asRecord, toCount, toOptionalString } from '@/lib/api/normalizer-helpers'
 
 // The 10 metric fields shared by product and day items.
 function normalizeSharedMetrics(r: Record<string, unknown>) {
   return {
-    openCardCount: toNum(r.openCardCount),
-    addToCartCount: toNum(r.addToCartCount),
-    ordersCount: toNum(r.ordersCount),
-    buyoutCount: toNum(r.buyoutCount),
-    cancelCount: toNum(r.cancelCount),
-    cartConversion: toNum(r.cartConversion),
-    orderConversion: toNum(r.orderConversion),
-    buyoutConversion: toNum(r.buyoutConversion),
-    cancelRate: toNum(r.cancelRate),
-    totalConversion: toNum(r.totalConversion),
+    openCardCount: toCount(r.openCardCount),
+    addToCartCount: toCount(r.addToCartCount),
+    ordersCount: toCount(r.ordersCount),
+    buyoutCount: toCount(r.buyoutCount),
+    cancelCount: toCount(r.cancelCount),
+    cartConversion: toCount(r.cartConversion),
+    orderConversion: toCount(r.orderConversion),
+    buyoutConversion: toCount(r.buyoutConversion),
+    cancelRate: toCount(r.cancelRate),
+    totalConversion: toCount(r.totalConversion),
   }
 }
 
@@ -88,9 +70,9 @@ export function normalizeTopSearchQuery(raw: unknown): TopSearchQuery | null {
   if (typeof r.query !== 'string' || r.query.trim() === '') return null
   return {
     query: r.query,
-    impressions: toNum(r.impressions),
-    clicks: toNum(r.clicks),
-    orders: toNum(r.orders),
+    impressions: toCount(r.impressions),
+    clicks: toCount(r.clicks),
+    orders: toCount(r.orders),
   }
 }
 
@@ -98,10 +80,10 @@ export function normalizeFunnelProductItem(raw: unknown): FunnelProductItem {
   const r = asRecord(raw)
   // Product-unique fields here; the 10 shared count/ratio fields come from the spread.
   const item: FunnelProductItem = {
-    nmId: toNum(r.nmId),
-    ordersSumRub: toNum(r.ordersSumRub),
-    buyoutSumRub: toNum(r.buyoutSumRub),
-    cancelSumRub: toNum(r.cancelSumRub),
+    nmId: toCount(r.nmId),
+    ordersSumRub: toCount(r.ordersSumRub),
+    buyoutSumRub: toCount(r.buyoutSumRub),
+    cancelSumRub: toCount(r.cancelSumRub),
     ...normalizeSharedMetrics(r),
   }
   const vendorCode = toOptionalString(r.vendorCode)
@@ -130,9 +112,9 @@ export function normalizeFunnelDayItem(raw: unknown): FunnelDayItem {
 function normalizeFunnelSummary(raw: unknown): FunnelSummary {
   const r = asRecord(raw)
   return {
-    ordersSumRub: toNum(r.ordersSumRub),
-    buyoutSumRub: toNum(r.buyoutSumRub),
-    cancelSumRub: toNum(r.cancelSumRub),
+    ordersSumRub: toCount(r.ordersSumRub),
+    buyoutSumRub: toCount(r.buyoutSumRub),
+    cancelSumRub: toCount(r.cancelSumRub),
     ...normalizeSharedMetrics(r),
   }
 }
@@ -184,9 +166,9 @@ export function normalizeFunnelResponse(
     items: rawItems.map(normalizeItem),
     summary: normalizeFunnelSummary(r.summary),
     pagination: {
-      total: toNum(pagination.total),
-      limit: toNum(pagination.limit),
-      offset: toNum(pagination.offset),
+      total: toCount(pagination.total),
+      limit: toCount(pagination.limit),
+      offset: toCount(pagination.offset),
       hasMore: pagination.hasMore === true,
     },
   }
@@ -202,7 +184,7 @@ export function normalizeFunnelSyncStatus(raw: unknown): FunnelSyncStatus {
     // lastSyncAt is genuinely nullable (never synced) — preserve null, do NOT
     // coerce to '' (would render as a bogus empty timestamp). Non-string → null.
     lastSyncAt: typeof r.lastSyncAt === 'string' ? r.lastSyncAt : null,
-    recordsCount: toNum(r.recordsCount),
-    productsCount: toNum(r.productsCount),
+    recordsCount: toCount(r.recordsCount),
+    productsCount: toCount(r.productsCount),
   }
 }

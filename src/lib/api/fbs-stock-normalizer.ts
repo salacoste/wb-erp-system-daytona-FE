@@ -29,27 +29,7 @@ import type {
   FbsStockPeriod,
 } from '@/types/fbs-stock'
 
-// ---------------------------------------------------------------------------
-// Private scalar helpers
-// ---------------------------------------------------------------------------
-
-/** Converts to number | null. Rejects null, undefined, and NaN via Number.isFinite. */
-function toNumberOrNull(raw: unknown): number | null {
-  if (raw == null) return null
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
-/** Converts to number (count / ID). Returns 0 on missing or non-finite input. */
-function toCount(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-/** Returns '' for null/undefined. Named to avoid collision with other normalizer helpers. */
-function toStr(raw: unknown): string {
-  return raw == null ? '' : String(raw)
-}
+import { toCount, toNullableNumber, toStr } from '@/lib/api/normalizer-helpers'
 
 // ---------------------------------------------------------------------------
 // Private period normalizer
@@ -77,9 +57,9 @@ function normalizeGroupItem(raw: unknown): FbsStockGroupItem {
     groupName: toStr(d.groupName ?? d.group_name),
     skuCount: toCount(d.skuCount ?? d.sku_count),
     stockUnits: toCount(d.stockUnits ?? d.stock_units),
-    stockValue: toNumberOrNull(d.stockValue ?? d.stock_value),
+    stockValue: toNullableNumber(d.stockValue ?? d.stock_value),
     averageDailyOutgoing: toCount(d.averageDailyOutgoing ?? d.average_daily_outgoing),
-    daysOfCover: toNumberOrNull(d.daysOfCover ?? d.days_of_cover),
+    daysOfCover: toNullableNumber(d.daysOfCover ?? d.days_of_cover),
   }
 }
 
@@ -95,7 +75,7 @@ function normalizeSizeItem(raw: unknown): FbsStockSizeItem {
     skuCount: toCount(d.skuCount ?? d.sku_count),
     stockUnits: toCount(d.stockUnits ?? d.stock_units),
     averageDailyOutgoing: toCount(d.averageDailyOutgoing ?? d.average_daily_outgoing),
-    daysOfCover: toNumberOrNull(d.daysOfCover ?? d.days_of_cover),
+    daysOfCover: toNullableNumber(d.daysOfCover ?? d.days_of_cover),
   }
 }
 
@@ -109,8 +89,8 @@ function normalizeRegionItem(raw: unknown): FbsStockRegionItem {
     regionName: toStr(d.regionName ?? d.region_name),
     warehouseCount: toCount(d.warehouseCount ?? d.warehouse_count),
     stockUnits: toCount(d.stockUnits ?? d.stock_units),
-    stockValue: toNumberOrNull(d.stockValue ?? d.stock_value),
-    shareOfTotalPct: toNumberOrNull(d.shareOfTotalPct ?? d.share_of_total_pct),
+    stockValue: toNullableNumber(d.stockValue ?? d.stock_value),
+    shareOfTotalPct: toNullableNumber(d.shareOfTotalPct ?? d.share_of_total_pct),
   }
 }
 

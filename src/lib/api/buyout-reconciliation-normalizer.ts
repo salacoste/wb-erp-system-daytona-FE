@@ -23,20 +23,7 @@ import type {
   ReconciliationSource,
 } from '@/types/buyout-reconciliation'
 
-// ---------------------------------------------------------------------------
-// Private scalar helpers
-// ---------------------------------------------------------------------------
-
-/** Converts to number (count / ID). Returns 0 on missing or non-finite input. */
-function toCount(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-/** Returns '' for null/undefined. */
-function toStr(raw: unknown): string {
-  return raw == null ? '' : String(raw)
-}
+import { toCount, toStr } from '@/lib/api/normalizer-helpers'
 
 // ---------------------------------------------------------------------------
 // Source enum coercion

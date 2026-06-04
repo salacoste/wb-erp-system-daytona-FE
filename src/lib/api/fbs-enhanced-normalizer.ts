@@ -29,27 +29,7 @@ import type {
   FbsEnhancedResponse,
 } from '@/types/fbs-enhanced'
 
-// ---------------------------------------------------------------------------
-// Private scalar helpers
-// ---------------------------------------------------------------------------
-
-/** Converts to number | null. Rejects null, undefined, and NaN via Number.isFinite. */
-function toNumberOrNull(raw: unknown): number | null {
-  if (raw == null) return null
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
-/** Converts to number (count). Returns 0 on missing or non-finite input. */
-function toCount(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-/** Returns '' for null/undefined. */
-function toStr(raw: unknown): string {
-  return raw == null ? '' : String(raw)
-}
+import { toCount, toNullableNumber, toStr } from '@/lib/api/normalizer-helpers'
 
 // ---------------------------------------------------------------------------
 // Private section normalizers
@@ -61,9 +41,9 @@ function normalizeOrderStats(raw: unknown): FbsOrderStats {
     totalOrders: toCount(d.totalOrders ?? d.total_orders),
     deliveredOrders: toCount(d.deliveredOrders ?? d.delivered_orders),
     returnedOrders: toCount(d.returnedOrders ?? d.returned_orders),
-    buyoutRate: toNumberOrNull(d.buyoutRate ?? d.buyout_rate),
-    returnRate: toNumberOrNull(d.returnRate ?? d.return_rate),
-    averageOrderValue: toNumberOrNull(d.averageOrderValue ?? d.average_order_value),
+    buyoutRate: toNullableNumber(d.buyoutRate ?? d.buyout_rate),
+    returnRate: toNullableNumber(d.returnRate ?? d.return_rate),
+    averageOrderValue: toNullableNumber(d.averageOrderValue ?? d.average_order_value),
   }
 }
 
@@ -74,7 +54,7 @@ function normalizeStockAnalytics(raw: unknown): FbsStockAnalytics {
     totalUnits: toCount(d.totalUnits ?? d.total_units),
     lowStockSkus: toCount(d.lowStockSkus ?? d.low_stock_skus),
     outOfStockSkus: toCount(d.outOfStockSkus ?? d.out_of_stock_skus),
-    avgDaysOfCover: toNumberOrNull(d.avgDaysOfCover ?? d.avg_days_of_cover),
+    avgDaysOfCover: toNullableNumber(d.avgDaysOfCover ?? d.avg_days_of_cover),
   }
 }
 
@@ -82,17 +62,17 @@ function normalizeRegionalDataItem(raw: unknown): FbsRegionalDataItem {
   const d = (raw ?? {}) as Record<string, unknown>
   return {
     regionName: toStr(d.regionName ?? d.region_name),
-    orderShare: toNumberOrNull(d.orderShare ?? d.order_share),
-    stockShare: toNumberOrNull(d.stockShare ?? d.stock_share),
+    orderShare: toNullableNumber(d.orderShare ?? d.order_share),
+    stockShare: toNullableNumber(d.stockShare ?? d.stock_share),
   }
 }
 
 function normalizeCalculatedMetrics(raw: unknown): FbsCalculatedMetrics {
   const d = (raw ?? {}) as Record<string, unknown>
   return {
-    turnoverRate: toNumberOrNull(d.turnoverRate ?? d.turnover_rate),
-    stockCoverageDays: toNumberOrNull(d.stockCoverageDays ?? d.stock_coverage_days),
-    ordersPerProduct: toNumberOrNull(d.ordersPerProduct ?? d.orders_per_product),
+    turnoverRate: toNullableNumber(d.turnoverRate ?? d.turnover_rate),
+    stockCoverageDays: toNullableNumber(d.stockCoverageDays ?? d.stock_coverage_days),
+    ordersPerProduct: toNullableNumber(d.ordersPerProduct ?? d.orders_per_product),
   }
 }
 

@@ -21,6 +21,7 @@ import type {
   FbsExportStatusResponse,
   FbsExportStatus,
 } from '@/types/fbs-export'
+import { toStringOrNull, toStr } from '@/lib/api/normalizer-helpers'
 
 // ---------------------------------------------------------------------------
 // Private scalar helpers
@@ -43,19 +44,6 @@ function toExportStatus(raw: unknown): FbsExportStatus {
   return VALID_EXPORT_STATUSES.has(s as FbsExportStatus) ? (s as FbsExportStatus) : 'queued'
 }
 
-/** Returns '' for null/undefined/non-string values. */
-function toStringOrEmpty(v: unknown): string {
-  return typeof v === 'string' ? v : ''
-}
-
-/**
- * Returns the string value if non-empty, otherwise null.
- * Per anti-pattern #8: null preserves "not yet available" semantic.
- */
-function toStringOrNull(v: unknown): string | null {
-  return typeof v === 'string' && v.length > 0 ? v : null
-}
-
 // ---------------------------------------------------------------------------
 // Exported normalizers
 // ---------------------------------------------------------------------------
@@ -67,7 +55,7 @@ function toStringOrNull(v: unknown): string | null {
 export function normalizeFbsExportTriggerResponse(raw: unknown): FbsExportTriggerResponse {
   const r = (raw ?? {}) as Record<string, unknown>
   return {
-    exportId: toStringOrEmpty(r.exportId ?? r.export_id),
+    exportId: toStr(r.exportId ?? r.export_id),
     status: toExportStatus(r.status),
   }
 }
@@ -80,7 +68,7 @@ export function normalizeFbsExportTriggerResponse(raw: unknown): FbsExportTrigge
 export function normalizeFbsExportStatusResponse(raw: unknown): FbsExportStatusResponse {
   const r = (raw ?? {}) as Record<string, unknown>
   return {
-    exportId: toStringOrEmpty(r.exportId ?? r.export_id),
+    exportId: toStr(r.exportId ?? r.export_id),
     status: toExportStatus(r.status),
     url: toStringOrNull(r.url),
     expiresAt: toStringOrNull(r.expiresAt ?? r.expires_at),

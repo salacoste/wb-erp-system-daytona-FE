@@ -13,16 +13,7 @@
  */
 
 import type { MarginTrendPoint } from '@/types/api'
-
-/** Coerce to a finite number; counts/guaranteed-denominator fields → 0 fallback. */
-function toCount(value: unknown): number {
-  return typeof value === 'number' && Number.isFinite(value) ? value : 0
-}
-
-/** Coerce to a finite number OR null — for money/ratio fields (anti-pattern #8: never `?? 0`). */
-function toNullableMoney(value: unknown): number | null {
-  return typeof value === 'number' && Number.isFinite(value) ? value : null
-}
+import { toCount, toNullableNumber } from '@/lib/api/normalizer-helpers'
 
 /**
  * Normalize one raw point into the frontend-canonical MarginTrendPoint.
@@ -36,13 +27,13 @@ export function normalizeMarginTrendPoint(raw: Record<string, unknown>): MarginT
     week_start_date: String(raw.week_start_date ?? ''),
     week_end_date: String(raw.week_end_date ?? ''),
     // Null-aware: null when all SKUs in the week are missing COGS (real backend semantic).
-    margin_pct: toNullableMoney(raw.margin_pct),
+    margin_pct: toNullableNumber(raw.margin_pct),
     // revenue_net is the margin denominator (margin_pct = (revenue_net - cogs)/revenue_net),
     // so the backend always emits it even when cogs/margin are null — BACKEND-CONTRACT-NON-NULL.
     // The 0 fallback is therefore unreachable for valid responses, not a silent money-coerce.
     revenue_net: toCount(raw.revenue_net),
-    cogs: toNullableMoney(raw.cogs),
-    profit: toNullableMoney(raw.profit),
+    cogs: toNullableNumber(raw.cogs),
+    profit: toNullableNumber(raw.profit),
     // Counts — `?? 0` is legitimate here (anti-pattern #8 allows counts).
     qty: toCount(raw.qty),
     sku_count: toCount(raw.sku_count),

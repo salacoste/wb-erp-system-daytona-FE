@@ -15,11 +15,7 @@
  */
 
 import type { BulkCogsResultSummary, BulkCogsResult, MarginRecalculationStatus } from '@/types/api'
-
-/** Coerce to a finite count → 0 fallback (anti-pattern #8 allows `?? 0` on counts). */
-function toCount(value: unknown): number {
-  return typeof value === 'number' && Number.isFinite(value) ? value : 0
-}
+import { toCount } from '@/lib/api/normalizer-helpers'
 
 /**
  * Normalize the bulk-COGS upload response (v2 OR legacy) into BulkCogsResultSummary.

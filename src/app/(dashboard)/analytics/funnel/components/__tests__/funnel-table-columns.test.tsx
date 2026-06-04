@@ -26,12 +26,8 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { Table, TableBody } from '@/components/ui/table'
-import {
-  FunnelTableHeader,
-  FunnelTableRow,
-  truncateQuery,
-  filterValidQueries,
-} from '../funnel-table-columns'
+import { FunnelTableHeader, FunnelTableRow, filterValidQueries } from '../funnel-table-columns'
+import { truncateQuery } from '@/lib/string-utils'
 import type { FunnelProductItem, TopSearchQuery } from '@/types/analytics-funnel'
 import {
   emptyFunnelResponse,

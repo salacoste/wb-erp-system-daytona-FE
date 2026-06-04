@@ -15,31 +15,18 @@ import type {
   MonitorKpi,
 } from '@/app/(dashboard)/monitor/types/monitor-summary'
 
-function toNumberOrNull(raw: unknown): number | null {
-  if (raw == null) return null
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
-function toCount(raw: unknown): number {
-  const n = Number(raw ?? 0)
-  return Number.isFinite(n) ? n : 0
-}
-
-function toStringOrNull(raw: unknown): string | null {
-  return raw == null ? null : String(raw)
-}
+import { toCount, toNullableNumber, toStringOrNull } from '@/lib/api/normalizer-helpers'
 
 function normalizePeriodMetrics(raw: unknown): PeriodMetrics {
   const d = (raw ?? {}) as Record<string, unknown>
   return {
     salesCount: toCount(d.salesCount ?? d.sales_count),
     returnsCount: toCount(d.returnsCount ?? d.returns_count),
-    revenue: toNumberOrNull(d.revenue),
-    cogs: toNumberOrNull(d.cogs),
-    expenses: toNumberOrNull(d.expenses),
-    advertisingSpend: toNumberOrNull(d.advertisingSpend ?? d.advertising_spend),
-    margin: toNumberOrNull(d.margin),
+    revenue: toNullableNumber(d.revenue),
+    cogs: toNullableNumber(d.cogs),
+    expenses: toNullableNumber(d.expenses),
+    advertisingSpend: toNullableNumber(d.advertisingSpend ?? d.advertising_spend),
+    margin: toNullableNumber(d.margin),
   }
 }
 
@@ -48,8 +35,8 @@ function normalizeMonitorKpi(raw: unknown): MonitorKpi {
   return {
     totalProducts: toCount(d.totalProducts ?? d.total_products),
     productsWithCogs: toCount(d.productsWithCogs ?? d.products_with_cogs),
-    cogsCoveragePercent: toNumberOrNull(d.cogsCoveragePercent ?? d.cogs_coverage_percent),
-    buyoutRatePercent: toNumberOrNull(d.buyoutRatePercent ?? d.buyout_rate_percent),
+    cogsCoveragePercent: toNullableNumber(d.cogsCoveragePercent ?? d.cogs_coverage_percent),
+    buyoutRatePercent: toNullableNumber(d.buyoutRatePercent ?? d.buyout_rate_percent),
     lastSyncAt: toStringOrNull(d.lastSyncAt ?? d.last_sync_at),
   }
 }
