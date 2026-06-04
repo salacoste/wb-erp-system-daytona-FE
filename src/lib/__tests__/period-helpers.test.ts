@@ -11,7 +11,7 @@
  * @see docs/epics/epic-61-fe-dashboard-data-integration.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   getWeeksInMonth,
   getMonthFromWeek,
@@ -21,6 +21,8 @@ import {
   getWeekEndDate,
   getMonthStartDate,
   getMonthEndDate,
+  getCurrentWeek,
+  getCurrentMonth,
 } from '../period-helpers'
 
 // =============================================================================
@@ -576,5 +578,42 @@ describe('Story 61.7-FE: dateToIsoWeek (new function)', () => {
   describe('round-trip consistency', () => {
     it.todo('dateToIsoWeek(parseWeek(week)) returns same week for any day in week')
     // All 7 days in a week should return the same ISO week string
+  })
+})
+
+// =============================================================================
+// getCurrentWeek / getCurrentMonth — Europe/Moscow anchoring (2026-06-04 fix)
+// Both previously used browser-local `new Date()`, desyncing the period selector from
+// getLastCompletedWeek (which is Moscow-anchored). These boundary instants prove the fix:
+// the UTC wall-clock is still in the OLD week/month while Moscow (+3h) has rolled into the
+// NEW one — the helpers must return the MOSCOW value. (nowInMoscow is tz-independent by
+// construction, so the expected values hold regardless of the machine TZ; on a UTC runner a
+// revert to `new Date()` would return the OLD week/month and fail these assertions.)
+// =============================================================================
+
+describe('getCurrentWeek / getCurrentMonth — Moscow anchoring', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('getCurrentWeek returns the Moscow week across a Sun→Mon week boundary', () => {
+    vi.useFakeTimers()
+    // Sun 2025-01-05 22:30 UTC = Mon 2025-01-06 01:30 MSK. ISO: Jan 5 → W01, Jan 6 → W02.
+    vi.setSystemTime(new Date('2025-01-05T22:30:00Z'))
+    expect(getCurrentWeek()).toBe('2025-W02') // Moscow (Mon W02), NOT UTC-local (Sun W01)
+  })
+
+  it('getCurrentMonth returns the Moscow month across a Jan→Feb boundary', () => {
+    vi.useFakeTimers()
+    // Fri 2025-01-31 22:30 UTC = Sat 2025-02-01 01:30 MSK.
+    vi.setSystemTime(new Date('2025-01-31T22:30:00Z'))
+    expect(getCurrentMonth()).toBe('2025-02') // Moscow (Feb), NOT UTC-local (Jan)
+  })
+
+  it('mid-day instants are unaffected (same week/month in both zones)', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-03-12T09:00:00Z')) // Wed 12:00 MSK
+    expect(getCurrentWeek()).toBe('2025-W11')
+    expect(getCurrentMonth()).toBe('2025-03')
   })
 })

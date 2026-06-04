@@ -23,6 +23,7 @@ import {
   setISOWeek,
   setISOWeekYear,
 } from 'date-fns'
+import { nowInMoscow } from './margin-helpers'
 
 /** Period type for week/month toggle */
 export type PeriodType = 'week' | 'month'
@@ -100,9 +101,9 @@ export function getMonthEndDate(month: string): Date {
   return endOfMonth(parseMonth(month))
 }
 
-/** Get current ISO week */
+/** Get current ISO week (Europe/Moscow — matches getLastCompletedWeek's anchor, not browser tz) */
 export function getCurrentWeek(): string {
-  const now = new Date()
+  const now = nowInMoscow()
   const weekNum = getISOWeek(now)
   const year = getISOWeekYear(now)
   return `${year}-W${weekNum.toString().padStart(2, '0')}`
@@ -117,9 +118,9 @@ export function getPreviousWeek(week: string): string {
   return `${year}-W${weekNum.toString().padStart(2, '0')}`
 }
 
-/** Get current month */
+/** Get current month (Europe/Moscow — consistent with getCurrentWeek's anchor, not browser tz) */
 export function getCurrentMonth(): string {
-  return format(new Date(), 'yyyy-MM')
+  return format(nowInMoscow(), 'yyyy-MM')
 }
 
 /** Get previous month */

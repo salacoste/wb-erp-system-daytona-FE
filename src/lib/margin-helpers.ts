@@ -18,7 +18,9 @@ import { formatIsoWeek } from './utils'
  * target week from getLastCompletedWeek. Moscow is permanently UTC+3 (Russia abolished DST in 2014),
  * so a fixed +3h shift is exact.
  */
-function nowInMoscow(): Date {
+// Exported so period-helpers' getCurrentWeek/getCurrentMonth share the same Moscow anchor as
+// getLastCompletedWeek — otherwise "current week/month" used local tz, desyncing the period selector.
+export function nowInMoscow(): Date {
   const now = new Date()
   // Shift the UTC instant by +3h, then read its UTC fields (= Moscow wall-clock) and rebuild as a
   // LOCAL date so downstream getDay()/getHours()/setDate()/formatIsoWeek all operate on Moscow time.
