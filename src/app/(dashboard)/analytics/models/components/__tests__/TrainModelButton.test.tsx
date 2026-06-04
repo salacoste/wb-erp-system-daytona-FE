@@ -211,7 +211,10 @@ describe('TrainModelButton — error states', () => {
     })
 
     const statusEl = screen.getByRole('status')
-    expect(statusEl.textContent).toBe('Недостаточно данных: собрано 8/12 нед., покрытие COGS 75%')
+    // textContent preserves the real U+00A0 NBSP (no getByText normalization) → "75 %"
+    expect(statusEl.textContent).toBe(
+      `Недостаточно данных: собрано 8/12 нед., покрытие COGS 75${String.fromCharCode(0xa0)}%`
+    )
     expect(statusEl.className).toContain('text-destructive')
   })
 

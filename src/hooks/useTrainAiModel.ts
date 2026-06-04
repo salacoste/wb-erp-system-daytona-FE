@@ -8,6 +8,7 @@
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postModelTrain } from '@/lib/api/ai/models'
+import { formatPercentageInt } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
 import { aiModelsKeys } from '@/hooks/useAiModels'
 import type { ModelTrainResponse } from '@/types/ai/models'
@@ -67,7 +68,8 @@ export function parseTrainErrorMessage(error: unknown): TrainErrorResult {
       const body = error.data
       return {
         code: 'INSUFFICIENT_DATA',
-        message: `Недостаточно данных: собрано ${body.weeksCollected}/${body.weeksRequired} нед., покрытие COGS ${body.cogsCoveragePct}%`,
+        // formatPercentageInt already includes the "%" (Intl style:'percent') — do NOT append another
+        message: `Недостаточно данных: собрано ${body.weeksCollected}/${body.weeksRequired} нед., покрытие COGS ${formatPercentageInt(body.cogsCoveragePct)}`,
         details: body,
       }
     }

@@ -51,7 +51,10 @@ describe('parseTrainErrorMessage', () => {
     const err = new ApiError('Insufficient data', 422, body)
     const result = parseTrainErrorMessage(err)
     expect(result.code).toBe('INSUFFICIENT_DATA')
-    expect(result.message).toBe('Недостаточно данных: собрано 8/12 нед., покрытие COGS 75%')
+    // ru-RU: formatPercentageInt emits "75 %" with a real U+00A0 NBSP (not normalized here)
+    expect(result.message).toBe(
+      `Недостаточно данных: собрано 8/12 нед., покрытие COGS 75${String.fromCharCode(0xa0)}%`
+    )
     expect(result.details).toEqual(body)
   })
 
