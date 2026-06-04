@@ -119,17 +119,6 @@ export function isStorageDivergent(storageApi: number, weeklyReport: number | nu
   return calculateStorageDiscrepancy(weeklyReport, storageApi).status !== 'ok'
 }
 
-/** Format discrepancy for display (e.g., "26.18 ₽ (1.4%)") */
-export function formatDiscrepancy(discrepancy: StorageDiscrepancy): string {
-  const formattedAmount = new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 2,
-  }).format(discrepancy.amount)
-
-  return `${formattedAmount} (${discrepancy.percent.toFixed(1)}%)`
-}
-
 /** Get CSS color class for discrepancy status badge */
 export function getDiscrepancyColor(status: DiscrepancyStatus): string {
   switch (status) {
