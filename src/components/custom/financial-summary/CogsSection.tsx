@@ -4,6 +4,7 @@
  */
 
 import type { FinanceSummary } from '@/hooks/useDashboard'
+import { formatPercentage, formatPercentagePoints } from '@/lib/utils'
 import {
   Table,
   TableBody,
@@ -113,7 +114,7 @@ function CogsCoverageRow({
       <TableCell className="font-medium">Покрытие COGS</TableCell>
       <TableCell className="text-right">
         {summary.cogs_coverage_pct !== null && summary.cogs_coverage_pct !== undefined
-          ? `${summary.cogs_coverage_pct.toFixed(1)}%`
+          ? formatPercentage(summary.cogs_coverage_pct, 1)
           : '\u2014'}
       </TableCell>
       {isComparison && (
@@ -121,7 +122,7 @@ function CogsCoverageRow({
           <TableCell className="text-right">
             {comparisonSummary?.cogs_coverage_pct !== null &&
             comparisonSummary?.cogs_coverage_pct !== undefined
-              ? `${comparisonSummary.cogs_coverage_pct.toFixed(1)}%`
+              ? formatPercentage(comparisonSummary.cogs_coverage_pct, 1)
               : '\u2014'}
           </TableCell>
           <TableCell className="text-right">
@@ -138,9 +139,11 @@ function CogsCoverageRow({
                       : 'text-gray-500'
                 }
               >
-                {summary.cogs_coverage_pct > comparisonSummary.cogs_coverage_pct ? '+' : ''}
-                {(summary.cogs_coverage_pct - comparisonSummary.cogs_coverage_pct).toFixed(1)}
-                pp
+                {/* canonical pp-delta: comma + Russian "п.п." + built-in sign (was dot-locale
+                    "+2.5pp"). formatPercentagePoints handles the sign; manual prefix removed. */}
+                {formatPercentagePoints(
+                  summary.cogs_coverage_pct - comparisonSummary.cogs_coverage_pct
+                )}
               </span>
             ) : (
               <span className="text-gray-400">{'\u2014'}</span>

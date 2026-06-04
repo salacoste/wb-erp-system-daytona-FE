@@ -5,6 +5,7 @@
 
 import { calculateChange } from '@/hooks/useFinancialSummary'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { formatPercentage } from '@/lib/utils'
 
 export function ChangeIndicator({
   current,
@@ -45,7 +46,7 @@ export function ChangeIndicator({
       <Icon className="h-4 w-4" />
       <span>
         {change.percentage > 0 ? '+' : ''}
-        {change.percentage.toFixed(1)}%
+        {formatPercentage(change.percentage, 1)}
       </span>
     </div>
   )
