@@ -36,9 +36,7 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
     })
 
     it('should persist selection during form editing', () => {
-      const { rerender } = render(
-        <FulfillmentTypeSelector value="FBO" onChange={mockOnChange} />
-      )
+      const { rerender } = render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} />)
 
       const fboButton = screen.getByRole('radio', { name: /FBO/i })
       expect(fboButton).toHaveAttribute('aria-checked', 'true')
@@ -106,37 +104,19 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
 
   describe('AC3: Commission Rate Impact', () => {
     it('should display commission difference badge when provided', () => {
-      render(
-        <FulfillmentTypeSelector
-          value="FBO"
-          onChange={mockOnChange}
-          commissionDiff={3.5}
-        />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} commissionDiff={3.5} />)
 
-      expect(screen.getByText('+3.5%')).toBeInTheDocument()
+      expect(screen.getByText(/\+3,5\s%/)).toBeInTheDocument() // ru-RU: comma + NBSP
     })
 
     it('should not display commission badge when diff is 0', () => {
-      render(
-        <FulfillmentTypeSelector
-          value="FBO"
-          onChange={mockOnChange}
-          commissionDiff={0}
-        />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} commissionDiff={0} />)
 
-      expect(screen.queryByText('+0.0%')).not.toBeInTheDocument()
+      expect(screen.queryByText(/\+0,0\s%/)).not.toBeInTheDocument()
     })
 
     it('should not display commission badge when diff is negative', () => {
-      render(
-        <FulfillmentTypeSelector
-          value="FBO"
-          onChange={mockOnChange}
-          commissionDiff={-1}
-        />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} commissionDiff={-1} />)
 
       expect(screen.queryByText(/-1/)).not.toBeInTheDocument()
     })
@@ -144,27 +124,17 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
     it('should update commission display when fulfillment type changes', async () => {
       const user = userEvent.setup()
       const { rerender } = render(
-        <FulfillmentTypeSelector
-          value="FBO"
-          onChange={mockOnChange}
-          commissionDiff={3}
-        />
+        <FulfillmentTypeSelector value="FBO" onChange={mockOnChange} commissionDiff={3} />
       )
 
-      expect(screen.getByText('+3.0%')).toBeInTheDocument()
+      expect(screen.getByText(/\+3,0\s%/)).toBeInTheDocument() // ru-RU: comma + NBSP
 
       // Simulate type change through parent
       await user.click(screen.getByRole('radio', { name: /FBS/i }))
       expect(mockOnChange).toHaveBeenCalledWith('FBS')
 
       // Parent would update commission diff
-      rerender(
-        <FulfillmentTypeSelector
-          value="FBS"
-          onChange={mockOnChange}
-          commissionDiff={0}
-        />
-      )
+      rerender(<FulfillmentTypeSelector value="FBS" onChange={mockOnChange} commissionDiff={0} />)
     })
   })
 
@@ -191,9 +161,7 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
 
   describe('AC5: Form State Integration', () => {
     it('should store value as FulfillmentType union type', () => {
-      const { rerender } = render(
-        <FulfillmentTypeSelector value="FBO" onChange={mockOnChange} />
-      )
+      const { rerender } = render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} />)
 
       // TypeScript enforces the type, but we verify the value
       const fboButton = screen.getByRole('radio', { name: /FBO/i })
@@ -271,9 +239,7 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
 
   describe('Disabled State', () => {
     it('should disable both buttons when disabled prop is true', () => {
-      render(
-        <FulfillmentTypeSelector value="FBO" onChange={mockOnChange} disabled />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} disabled />)
 
       const fboButton = screen.getByRole('radio', { name: /FBO/i })
       const fbsButton = screen.getByRole('radio', { name: /FBS/i })
@@ -284,18 +250,14 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
 
     it('should not call onChange when disabled', async () => {
       const user = userEvent.setup()
-      render(
-        <FulfillmentTypeSelector value="FBO" onChange={mockOnChange} disabled />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} disabled />)
 
       await user.click(screen.getByRole('radio', { name: /FBS/i }))
       expect(mockOnChange).not.toHaveBeenCalled()
     })
 
     it('should apply disabled styling (opacity)', () => {
-      render(
-        <FulfillmentTypeSelector value="FBO" onChange={mockOnChange} disabled />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} disabled />)
 
       const fboButton = screen.getByRole('radio', { name: /FBO/i })
       expect(fboButton).toHaveClass('opacity-50')
@@ -322,15 +284,9 @@ describe('Story 44.15: FBO/FBS Fulfillment Type Selection', () => {
 
     it('should handle commission diff edge cases', () => {
       // Very large commission diff
-      render(
-        <FulfillmentTypeSelector
-          value="FBO"
-          onChange={mockOnChange}
-          commissionDiff={10.5}
-        />
-      )
+      render(<FulfillmentTypeSelector value="FBO" onChange={mockOnChange} commissionDiff={10.5} />)
 
-      expect(screen.getByText('+10.5%')).toBeInTheDocument()
+      expect(screen.getByText(/\+10,5\s%/)).toBeInTheDocument() // ru-RU: comma + NBSP
     })
   })
 })

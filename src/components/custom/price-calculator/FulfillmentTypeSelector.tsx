@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { HelpCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import type { FulfillmentType } from '@/types/price-calculator'
 
 /**
@@ -107,6 +107,9 @@ export function FulfillmentTypeSelector({
         <button
           type="button"
           role="radio"
+          // locale-percent-allow: aria spoken text — comma decimal can confuse screen-reader
+          // number parsing (genuine exception per dot-locale-consolidation-proposal §4; the
+          // VISIBLE Badge at ~line 132 uses formatPercentage). Mirrors StatusLegend.tsx:75.
           aria-label={
             commissionDiff !== undefined && commissionDiff > 0
               ? `FBS — Товар у продавца, +${commissionDiff.toFixed(1)}% к комиссии`
@@ -129,7 +132,7 @@ export function FulfillmentTypeSelector({
               <span className="font-semibold">FBS</span>
               {commissionDiff !== undefined && commissionDiff > 0 && (
                 <Badge variant="outline" className="text-xs py-0 px-1.5">
-                  +{commissionDiff.toFixed(1)}%
+                  +{formatPercentage(commissionDiff, 1)}
                 </Badge>
               )}
             </div>

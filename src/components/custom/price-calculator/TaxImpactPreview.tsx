@@ -1,6 +1,6 @@
 'use client'
 
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { TaxType } from '@/types/price-calculator'
 
 export interface TaxImpactPreviewProps {
@@ -32,7 +32,9 @@ export function TaxImpactPreview({
         <span className="font-medium">
           {formatCurrency(calculatedTaxAmount)}
           {taxType === 'income' && taxPctOfPrice > 0 && (
-            <span className="text-muted-foreground ml-1">({taxPctOfPrice.toFixed(1)}%)</span>
+            <span className="text-muted-foreground ml-1">
+              ({formatPercentage(taxPctOfPrice, 1)})
+            </span>
           )}
         </span>
       </div>
