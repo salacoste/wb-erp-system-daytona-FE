@@ -35,13 +35,7 @@ import {
  * All acceptance status types for comprehensive testing
  * From Story AC1: Badge variants based on coefficient value
  */
-const ALL_STATUSES: AcceptanceStatus[] = [
-  'unavailable',
-  'free',
-  'standard',
-  'elevated',
-  'high',
-]
+const ALL_STATUSES: AcceptanceStatus[] = ['unavailable', 'free', 'standard', 'elevated', 'high']
 
 /**
  * Coefficient → Status mapping test cases
@@ -53,7 +47,7 @@ const STATUS_TEST_CASES = [
   { coefficient: 1, expectedStatus: 'standard' },
   { coefficient: 1.01, expectedStatus: 'elevated' },
   { coefficient: 1.25, expectedStatus: 'elevated' },
-  { coefficient: 1.50, expectedStatus: 'elevated' },
+  { coefficient: 1.5, expectedStatus: 'elevated' },
   { coefficient: 1.51, expectedStatus: 'high' },
   { coefficient: 1.65, expectedStatus: 'high' },
   { coefficient: 2.0, expectedStatus: 'high' },
@@ -93,7 +87,7 @@ const PERCENTAGE_TEST_CASES = [
 
 describe('ACCEPTANCE_STATUS_CONFIG', () => {
   it('should have configuration for all acceptance statuses', () => {
-    ALL_STATUSES.forEach((status) => {
+    ALL_STATUSES.forEach(status => {
       expect(ACCEPTANCE_STATUS_CONFIG[status]).toBeDefined()
       expect(ACCEPTANCE_STATUS_CONFIG[status].label).toBeTruthy()
       expect(ACCEPTANCE_STATUS_CONFIG[status].description).toBeTruthy()
@@ -128,13 +122,9 @@ describe('ACCEPTANCE_STATUS_CONFIG', () => {
   })
 
   it('should have descriptions in Russian', () => {
-    expect(ACCEPTANCE_STATUS_CONFIG.unavailable.description).toContain(
-      'невозможна'
-    )
+    expect(ACCEPTANCE_STATUS_CONFIG.unavailable.description).toContain('невозможна')
     expect(ACCEPTANCE_STATUS_CONFIG.free.description).toContain('Бесплатная')
-    expect(ACCEPTANCE_STATUS_CONFIG.standard.description).toContain(
-      'Стандартная'
-    )
+    expect(ACCEPTANCE_STATUS_CONFIG.standard.description).toContain('Стандартная')
     expect(ACCEPTANCE_STATUS_CONFIG.elevated.description).toContain('увеличена')
     expect(ACCEPTANCE_STATUS_CONFIG.high.description).toContain('Высокая')
   })
@@ -156,9 +146,7 @@ describe('getAcceptanceStatus', () => {
 
   describe('Edge cases', () => {
     it('should treat undefined coefficient as unavailable', () => {
-      expect(getAcceptanceStatus(undefined as unknown as number)).toBe(
-        'unavailable'
-      )
+      expect(getAcceptanceStatus(undefined as unknown as number)).toBe('unavailable')
     })
 
     it('should treat null coefficient as unavailable', () => {
@@ -253,7 +241,7 @@ describe('getAcceptanceStatusInfo', () => {
       expect(info.coefficient).toBe(1.25)
       expect(info.label).toBe('×1.25')
       expect(info.description).toContain('увеличена')
-      expect(info.description).toContain('25%')
+      expect(info.description).toMatch(/25\s%/) // ru-RU NBSP
       expect(info.color).toBe('warning')
       expect(info.icon).toBe('⚠️')
       expect(info.percentageIncrease).toBe(25)
@@ -266,7 +254,7 @@ describe('getAcceptanceStatusInfo', () => {
       expect(info.coefficient).toBe(1.65)
       expect(info.label).toBe('×1.65')
       expect(info.description).toContain('Высокая')
-      expect(info.description).toContain('65%')
+      expect(info.description).toMatch(/65\s%/) // ru-RU NBSP
       expect(info.color).toBe('high')
       expect(info.icon).toBe('🔴')
       expect(info.percentageIncrease).toBe(65)
@@ -290,12 +278,12 @@ describe('getAcceptanceStatusInfo', () => {
   describe('Percentage increase in description', () => {
     it('should include correct percentage in elevated description', () => {
       const info = getAcceptanceStatusInfo(1.25)
-      expect(info.description).toMatch(/25%/)
+      expect(info.description).toMatch(/25\s%/) // ru-RU NBSP
     })
 
     it('should include correct percentage in high description', () => {
       const info = getAcceptanceStatusInfo(1.65)
-      expect(info.description).toMatch(/65%/)
+      expect(info.description).toMatch(/65\s%/) // ru-RU NBSP
     })
 
     it('should round percentage to nearest integer', () => {
@@ -465,9 +453,8 @@ describe('Type Safety', () => {
     expect(typeof info.description).toBe('string')
     expect(typeof info.color).toBe('string')
     expect(typeof info.icon).toBe('string')
-    expect(
-      info.percentageIncrease === null ||
-        typeof info.percentageIncrease === 'number'
-    ).toBe(true)
+    expect(info.percentageIncrease === null || typeof info.percentageIncrease === 'number').toBe(
+      true
+    )
   })
 })

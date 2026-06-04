@@ -23,6 +23,7 @@ export {
 } from './acceptance-status-config'
 
 import { ACCEPTANCE_STATUS_CONFIG, calculatePercentageIncrease } from './acceptance-status-config'
+import { formatPercentageInt } from '@/lib/utils'
 
 // ============================================================================
 // Status Determination Functions
@@ -92,10 +93,11 @@ export function getAcceptanceStatusInfo(coefficient: number): AcceptanceStatusIn
     label = `×${coefficient.toFixed(2)}`
     // Include percentage in description
     if (percentageIncrease !== null) {
+      // percentageIncrease = Math.round((coef-1)*100) → integer percent-units → formatPercentageInt (NBSP), no *100
       description =
         status === 'elevated'
-          ? `Стоимость приёмки увеличена на ${percentageIncrease}%`
-          : `Высокая стоимость приёмки (+${percentageIncrease}%)`
+          ? `Стоимость приёмки увеличена на ${formatPercentageInt(percentageIncrease)}`
+          : `Высокая стоимость приёмки (+${formatPercentageInt(percentageIncrease)})`
     }
   }
 

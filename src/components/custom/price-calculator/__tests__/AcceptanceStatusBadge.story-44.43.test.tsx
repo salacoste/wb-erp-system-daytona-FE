@@ -121,7 +121,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
     })
 
     describe('AC1.4: Badge icons per status', () => {
-      it.each(AC1_BADGE_VARIANTS.filter((v) => v.icon !== ''))(
+      it.each(AC1_BADGE_VARIANTS.filter(v => v.icon !== ''))(
         'should render "$icon" icon for coefficient $coefficient',
         ({ coefficient, icon }) => {
           render(<AcceptanceStatusBadge coefficient={coefficient} />)
@@ -265,7 +265,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       })
 
       it('should show yellow for 1.26-1.50 (moderate increase)', () => {
-        render(<AcceptanceStatusBadge coefficient={1.40} />)
+        render(<AcceptanceStatusBadge coefficient={1.4} />)
 
         const badge = screen.getByTestId('acceptance-status-badge')
         expect(badge).toHaveClass('bg-yellow-100')
@@ -288,7 +288,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
 
         await waitFor(() => {
           // Story AC5: "Повышенная стоимость приёмки (+{pct}%)"
-          const percentTexts = screen.getAllByText(/65%/)
+          const percentTexts = screen.getAllByText(/65\s%/)
           expect(percentTexts.length).toBeGreaterThanOrEqual(1)
         })
       })
@@ -301,7 +301,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
 
         await waitFor(() => {
           // (1.25 - 1) * 100 = 25%
-          const percentTexts = screen.getAllByText(/25%/)
+          const percentTexts = screen.getAllByText(/25\s%/)
           expect(percentTexts.length).toBeGreaterThanOrEqual(1)
         })
       })
@@ -334,7 +334,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
 
         await waitFor(() => {
           // Story AC6: "Стоимость увеличена на 65%"
-          const increaseTexts = screen.getAllByText(/65%/)
+          const increaseTexts = screen.getAllByText(/65\s%/)
           expect(increaseTexts.length).toBeGreaterThanOrEqual(1)
         })
       })
@@ -361,9 +361,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         await user.hover(screen.getByText('×1.20'))
 
         await waitFor(() => {
-          expect(
-            screen.queryByText(/дату с меньшим коэффициентом/i)
-          ).not.toBeInTheDocument()
+          expect(screen.queryByText(/дату с меньшим коэффициентом/i)).not.toBeInTheDocument()
         })
       })
     })
@@ -485,9 +483,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
 
   describe('Edge Cases & Invariants', () => {
     it('should treat undefined coefficient as unavailable', () => {
-      render(
-        <AcceptanceStatusBadge coefficient={undefined as unknown as number} />
-      )
+      render(<AcceptanceStatusBadge coefficient={undefined as unknown as number} />)
 
       expect(screen.getByText('Недоступно')).toBeInTheDocument()
     })
@@ -521,9 +517,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
     })
 
     it('should apply custom className', () => {
-      render(
-        <AcceptanceStatusBadge coefficient={1} className="my-custom-class" />
-      )
+      render(<AcceptanceStatusBadge coefficient={1} className="my-custom-class" />)
 
       const badge = screen.getByTestId('acceptance-status-badge')
       expect(badge).toHaveClass('my-custom-class')

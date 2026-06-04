@@ -193,7 +193,7 @@ describe('AcceptanceStatusBadge', () => {
       await waitFor(() => {
         // Story AC5: Tooltip: "Повышенная стоимость приёмки (+{pct}%)"
         // Radix renders tooltip content twice (visible + accessible hidden)
-        const percentTexts = screen.getAllByText(/65%/)
+        const percentTexts = screen.getAllByText(/65\s%/) // ru-RU NBSP
         expect(percentTexts.length).toBeGreaterThanOrEqual(1)
       })
     })
@@ -221,9 +221,7 @@ describe('AcceptanceStatusBadge', () => {
       await user.hover(badge)
 
       await waitFor(() => {
-        expect(
-          screen.queryByText(/дату с меньшим коэффициентом/i)
-        ).not.toBeInTheDocument()
+        expect(screen.queryByText(/дату с меньшим коэффициентом/i)).not.toBeInTheDocument()
       })
     })
 
@@ -297,9 +295,7 @@ describe('AcceptanceStatusBadge', () => {
 
   describe('Custom className', () => {
     it('applies custom className to badge', () => {
-      render(
-        <AcceptanceStatusBadge coefficient={1} className="custom-test-class" />
-      )
+      render(<AcceptanceStatusBadge coefficient={1} className="custom-test-class" />)
 
       const badge = screen.getByText('Стандартно').closest('[class*="bg-"]')
       expect(badge).toHaveClass('custom-test-class')
@@ -356,17 +352,13 @@ describe('AcceptanceStatusBadge', () => {
     it('has proper data-testid for testing', () => {
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      expect(
-        screen.getByTestId('acceptance-status-badge')
-      ).toBeInTheDocument()
+      expect(screen.getByTestId('acceptance-status-badge')).toBeInTheDocument()
     })
   })
 
   describe('Edge cases', () => {
     it('handles undefined coefficient as unavailable', () => {
-      render(
-        <AcceptanceStatusBadge coefficient={undefined as unknown as number} />
-      )
+      render(<AcceptanceStatusBadge coefficient={undefined as unknown as number} />)
 
       expect(screen.getByText('Недоступно')).toBeInTheDocument()
     })
@@ -414,9 +406,7 @@ describe('AcceptanceStatusBadge', () => {
     it('icon is rendered before label text', () => {
       render(<AcceptanceStatusBadge coefficient={0} />)
 
-      const badge = screen.getByText('Бесплатно')
-        .closest('[class*="bg-"]')!
-        .textContent!
+      const badge = screen.getByText('Бесплатно').closest('[class*="bg-"]')!.textContent!
 
       // Icon (✅) should come before label (Бесплатно)
       const iconIndex = badge.indexOf('✅')
@@ -458,9 +448,7 @@ describe('AcceptanceStatusBadge - Calendar Integration Support', () => {
     ]
 
     testCases.forEach(({ coefficient, expectedBorder }) => {
-      const { unmount } = render(
-        <AcceptanceStatusBadge coefficient={coefficient} />
-      )
+      const { unmount } = render(<AcceptanceStatusBadge coefficient={coefficient} />)
       const badge = screen.getByTestId('acceptance-status-badge')
       expect(badge).toHaveClass(expectedBorder)
       unmount()
