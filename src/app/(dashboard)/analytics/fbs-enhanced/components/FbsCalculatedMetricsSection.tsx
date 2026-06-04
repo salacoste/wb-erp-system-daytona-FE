@@ -11,6 +11,7 @@
 import { TrendingUp, Calendar, BarChart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { FbsCalculatedMetrics } from '@/types/fbs-enhanced'
+import { formatDecimal } from '@/lib/utils'
 
 interface FbsCalculatedMetricsSectionProps {
   calculatedMetrics: FbsCalculatedMetrics | null | undefined
@@ -57,7 +58,9 @@ export function FbsCalculatedMetricsSection({
         <KpiCard
           title="Оборачиваемость"
           value={
-            calculatedMetrics.turnoverRate == null ? '—' : calculatedMetrics.turnoverRate.toFixed(2)
+            calculatedMetrics.turnoverRate == null
+              ? '—'
+              : formatDecimal(calculatedMetrics.turnoverRate, 2)
           }
           subtitle="раз за период"
           icon={<TrendingUp className="h-4 w-4" />}
@@ -67,7 +70,7 @@ export function FbsCalculatedMetricsSection({
           value={
             calculatedMetrics.stockCoverageDays == null
               ? '—'
-              : calculatedMetrics.stockCoverageDays.toFixed(1)
+              : formatDecimal(calculatedMetrics.stockCoverageDays, 1)
           }
           subtitle="при текущем темпе продаж"
           icon={<Calendar className="h-4 w-4" />}
@@ -77,7 +80,7 @@ export function FbsCalculatedMetricsSection({
           value={
             calculatedMetrics.ordersPerProduct == null
               ? '—'
-              : calculatedMetrics.ordersPerProduct.toFixed(2)
+              : formatDecimal(calculatedMetrics.ordersPerProduct, 2)
           }
           subtitle="в среднем за период"
           icon={<BarChart className="h-4 w-4" />}

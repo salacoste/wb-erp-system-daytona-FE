@@ -39,8 +39,8 @@ describe('FbsCalculatedMetricsSection (Story 96.13-FE)', () => {
         }}
       />
     )
-    expect(screen.getByText('2.50')).toBeInTheDocument()
-    expect(screen.getByText('30.0')).toBeInTheDocument()
-    expect(screen.getByText('1.80')).toBeInTheDocument()
+    expect(screen.getByText('2,50')).toBeInTheDocument() // ru-RU comma (formatDecimal)
+    expect(screen.getByText('30,0')).toBeInTheDocument()
+    expect(screen.getByText('1,80')).toBeInTheDocument()
   })
 })
