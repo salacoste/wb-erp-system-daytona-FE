@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { TwoLevelVariableCosts } from '@/types/price-calculator'
 
 /**
@@ -40,7 +40,8 @@ export function VariableCostsBreakdown({ costs }: VariableCostsBreakdownProps) {
       {/* Cost Line Items */}
       <div className="space-y-1 text-sm text-muted-foreground">
         <div className="flex justify-between items-center">
-          <span>└─ DRR Реклама ({costs.drr.pct}%)</span>
+          {/* drr.pct = DRR slider value (step 0.5 → fractional) → formatPercentage(_, 1), not Int */}
+          <span>└─ DRR Реклама ({formatPercentage(costs.drr.pct, 1)})</span>
           <span className="w-24 text-right">{formatCurrency(costs.drr.rub)}</span>
         </div>
       </div>

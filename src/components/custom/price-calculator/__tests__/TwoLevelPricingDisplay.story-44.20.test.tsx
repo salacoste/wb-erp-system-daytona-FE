@@ -271,7 +271,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
     it('should show DRR advertising with percentage and amount', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      expect(screen.getByText(/DRR.*5%/)).toBeInTheDocument()
+      expect(screen.getByText(/DRR.*5,0\s%/)).toBeInTheDocument() // ru-RU: "5,0 %" (NBSP, 1 decimal)
     })
 
     it('should show note "Не включено в минимальную цену"', () => {
