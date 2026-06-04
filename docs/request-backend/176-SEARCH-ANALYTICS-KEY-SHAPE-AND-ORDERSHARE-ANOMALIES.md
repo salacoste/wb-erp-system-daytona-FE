@@ -3,7 +3,11 @@
 **Discovered**: Story 117.1-FE F-1 (key drift) + Story 117.2-FE Side-observation (`searchOrderShare: 394.23`)
 **Filed by**: Story 119.1-FE 1st-pass F-9 (formalizing the previously-informal tracking)
 **Severity**: P2 — non-blocking; FE has Boundary Normalizer absorption (Story 119.1-FE) and Defensive Frontend preservation in place. Worth fixing for data correctness + contract clarity.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (backend, Story 111.7 — 2026-06-01)
+
+> **Resolution summary (Story 111.7):**
+> - **Problem A (key contract)** — FIXED. `groupBy=product` now serializes `key` as a string (`String(nmId)`); null/empty query keys and `nm_id = 0` rows are dropped server-side; `groupBy=day` already emitted ISO `YYYY-MM-DD`. The `key` field is now a string in every mode. Verified live (cabinet `f75836f7…`, all 3 modes HTTP 200, all keys `str`). OpenAPI + Swagger docstrings updated (`SearchOrdersByProductItemDto.key: string`, response `items` contract verbalized).
+> - **Problem B (`searchOrderShare > 100`)** — already resolved in Story 111.6 AC8: a machine-readable `searchOrderShareInflated` boolean accompanies `searchOrderShare`, and both the field docstring and service comment document that WB Search Analytics multi-attributes a single order across queries (same precedent as funnel `buyoutConversion > 100%`). The value is best read as a "search query interaction rate". Order-level true-attribution is tracked as Story 111.8. No bounds-clamp/rename applied — kept raw + flagged, by design.
 **Related**: Request #175 (the `by-product` / `by-query` 500s — explicitly disclaims this ticket's scope per its line 40).
 
 ---

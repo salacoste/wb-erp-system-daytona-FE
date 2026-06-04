@@ -3,7 +3,7 @@
 **Originated by**: Marketing Plan §3.3 + Epic 70-FE Stories 70.3/70.4/70.6 (services implemented but routes never registered; Pass-1 F-2 disambiguation: this Request didn't DISCOVER the gap — Marketing Plan §3.3 already documented it; this Request FILES the explicit fulfillment of that documented need)
 **Filed by**: Story 119.4-FE Task 1 — `_bmad-output/implementation-artifacts/119-4-fe-file-backend-request-177-unified-product-analytics.md` (OPTIONAL doc-only micro per Epic 119-FE spec; 1-pass review floor)
 **Severity**: P1 — non-blocking for current Epic 119 close, but BLOCKS Marketing Plan §3.3 (estimated 6-7 FE stories, ~35 SP across "Product Analytics Page" + "Organic vs Paid Split" + "Incremental ROAS" sub-features) until resolved. Should be implemented before any Epic 120/121 stories that consume §3.3 features.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-02 — UnifiedProductAnalyticsController created; 3 routes /v1/analytics/product/:nmId/{unified,organic-share,incremental-roas} live, HTTP 200, thin pass-through to existing Epic-70 services)
 **Related**: Marketing Plan §3.3 (`docs/MARKETING-ANALYTICS-PRODUCT-PLAN.md` Feature 3.3), Epic 70-FE Stories 70.3 / 70.4 / 70.6 (where the underlying services were implemented but not route-exposed), Request #176 (Story 119.1-FE F-9; canonical template — this Request mirrors its shape), Request #178 (Story 119.3-FE; canonical content-depth template), Story 119.1-FE F-9 (the repurposing of original Request #176 for search-analytics anomalies that left the #177 slot empty until this story occupies it).
 
 ---

@@ -2,7 +2,7 @@
 
 **Discovered**: Story 117.2-FE live verification (2026-05-28)
 **Severity**: Medium (two of three search-analytics endpoints non-functional)
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (verified 2026-06-02 — Story 111.6: by-product/by-query no longer 500, now 400 validation)
 
 ## Problem
 

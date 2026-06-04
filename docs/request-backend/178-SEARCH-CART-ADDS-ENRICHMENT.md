@@ -3,7 +3,7 @@
 **Discovered**: Story 119.3-FE — Search-to-Cart Conversion metric (Marketing Plan §3.4 row 2)
 **Filed by**: Story 119.3-FE Task 2 Branch C (predicted-and-confirmed: field absent in backend)
 **Severity**: P2 — non-blocking; FE has Defensive Frontend Principle in place for "field absent" (renders nothing; no `0%` for unknown data). Worth shipping to unlock Marketing Plan §3.4 row 2 ("Search-to-Cart Conversion") which is currently a conceptual-only feature.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-02, option 1): additive `searchCartAdds` field added to by-query + by-product items (= WB addToCart, sourced from existing total_clicks; non-breaking, totalClicks retained). Live 200, searchCartAdds==totalClicks verified. Breaking rename (option 2) remains a future cleanup (a-i-33).
 **Related**: Request #176 (Story 119.1-FE F-9; canonical template for this ticket — search-analytics contract-clarity ticket), Marketing Plan §3.4 row 2 (now banner-flagged absent), Story 117.2-FE Branch A precedent (aspirational-docs-vs-live-reality discovery), Story 119.2-FE Branch C precedent (predicted-A/B-actual-C inversion for funnel enrichment).
 
 ---

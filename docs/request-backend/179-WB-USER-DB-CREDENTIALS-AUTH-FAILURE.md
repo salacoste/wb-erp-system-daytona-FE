@@ -3,7 +3,7 @@
 **Discovered**: Story 119.3-FE Task 1 live-verification attempt — 2026-05-30 11:21-11:22 UTC
 **Filed by**: Story 119.3-FE Pass-1 F-5 cross-discovery (per Story 117.2-FE precedent for side-discoveries becoming independent backend tickets — Story 117.2-FE spun off Request #175 for separate by-product/by-query 500s)
 **Severity**: **P0 — production blocker** if reproduced on prod env (currently affects local dev env). Every `Authorization: Bearer`-gated endpoint fails when this surfaces because `POST /v1/auth/login` is the gate.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (verified 2026-06-02 — login works; wb_user auth OK)
 **Related**: Story 119.3-FE (workaround: backend-source-of-truth grep substituted for live verification — see story file § Live Verification Evidence + Request #178)
 
 ---
