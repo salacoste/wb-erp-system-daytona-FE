@@ -10,7 +10,7 @@ import {
   getScenarioUrgencyLabel,
   getScenarioUrgencyColor,
 } from '@/lib/liquidity-utils'
-import { cn } from '@/lib/utils'
+import { cn, formatDecimal } from '@/lib/utils'
 
 interface LiquidationScenarioCardProps {
   scenario: LiquidationScenario
@@ -118,9 +118,9 @@ export function LiquidationScenarioCard({ scenario, isRecommended }: Liquidation
             <>Требуемая скорость: —</>
           ) : (
             <>
-              Требуемая скорость: {scenario.required_velocity.toFixed(1)} шт./день
+              Требуемая скорость: {formatDecimal(scenario.required_velocity)} шт./день
               {scenario.velocity_multiplier != null && (
-                <> (×{scenario.velocity_multiplier.toFixed(1)} от текущей)</>
+                <> (×{formatDecimal(scenario.velocity_multiplier)} от текущей)</>
               )}
             </>
           )}

@@ -169,6 +169,24 @@ export function formatNumber(value: number): string {
 }
 
 /**
+ * Formats a FRACTIONAL number with Russian locale (comma decimal), fixed decimal places.
+ * For bare unitless decimals (rates, velocities, multipliers) — NOT percents (use formatPercentage)
+ * or currency (formatCurrency). No NBSP unless thousands-grouping applies. Replaces ad-hoc
+ * `value.toFixed(n)` (dot-locale) and `.toFixed(n).replace('.', ',')` patterns.
+ * Rounding is Intl halfExpand (e.g. 1.45 → "1,5"), unlike toFixed's FP half-to-even.
+ * @param value - The numeric value to format
+ * @param decimals - Exact number of fraction digits (default 1)
+ * @returns Formatted string (e.g., "12,5"; whole numbers keep the trailing zero → "2,0";
+ *   values ≥1000 get NBSP thousands-grouping → "1 234,5")
+ */
+export function formatDecimal(value: number, decimals = 1): string {
+  return value.toLocaleString('ru-RU', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  })
+}
+
+/**
  * Story 4.9: Formats weeks since last sale with proper Russian pluralization
  * @param weeks - Number of weeks since last sale
  * @returns Formatted string (e.g., "1 неделю назад", "3 недели назад", "5 недель назад")

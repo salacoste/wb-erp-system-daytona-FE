@@ -64,6 +64,31 @@ describe('LiquidationScenarioCard', () => {
     })
   })
 
+  describe('velocity (Russian-locale comma decimal)', () => {
+    it('renders non-null velocity + multiplier with comma decimals (formatDecimal)', () => {
+      // text is interpolation-split across nodes → assert via container.textContent
+      const { container } = render(
+        <LiquidationScenarioCard
+          scenario={makeScenario({ required_velocity: 12.5, velocity_multiplier: 1.5 })}
+          isRecommended={false}
+        />
+      )
+      expect(container.textContent).toContain('Требуемая скорость: 12,5 шт./день')
+      expect(container.textContent).toContain('×1,5')
+    })
+
+    it('renders velocity WITHOUT the multiplier sub-fragment when velocity_multiplier is null', () => {
+      const { container } = render(
+        <LiquidationScenarioCard
+          scenario={makeScenario({ required_velocity: 5, velocity_multiplier: null })}
+          isRecommended={false}
+        />
+      )
+      expect(container.textContent).toContain('Требуемая скорость: 5,0 шт./день')
+      expect(container.textContent).not.toContain('от текущей')
+    })
+  })
+
   describe('is_profitable badge', () => {
     it('renders green "Прибыльно" badge when is_profitable is true', () => {
       render(
