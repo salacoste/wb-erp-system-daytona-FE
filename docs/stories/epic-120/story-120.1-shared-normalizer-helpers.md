@@ -2,7 +2,7 @@
 
 **Epic**: 120-FE (Marketing Analytics Expansion)
 **Track**: C (Tech-Debt Carry-Forwards)
-**Status**: in-progress
+**Status**: done
 **SP**: 3
 **Assignee**: BMad Master
 
@@ -48,4 +48,5 @@ Extract duplicated normalizer helper functions (`toCount`, `toNullableNumber`, `
 
 | Date | Status | Notes |
 |------|--------|-------|
-| 2026-06-04 | in-progress | Started implementation |
+| 2026-06-04 | done | Shared helpers extracted, 11 normalizers migrated, 8,648 tests passing |
+| **Lessons:** (1) toCount(-0) preserves -0 (Number.isFinite passes it) — don't test withtoBe (2) asRecord on arrays returns indexed Record, not {} — test property access not deep equality (3) cabinet-normalizer had no matching private helpers — verify before migrating |
