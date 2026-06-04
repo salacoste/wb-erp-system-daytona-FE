@@ -14,6 +14,7 @@ import {
   formatRoas,
   formatPercentagePoints,
   formatDate,
+  formatDateTime,
   formatIsoWeek,
 } from './utils'
 
@@ -244,6 +245,23 @@ describe('formatDate', () => {
   it('handles end of year dates', () => {
     const date = new Date(2025, 11, 31) // December 31, 2025
     expect(formatDate(date)).toBe('31.12.2025')
+  })
+})
+
+describe('formatDateTime', () => {
+  it('formats a UTC timestamp in Europe/Moscow (UTC+3) as "DD.MM.YYYY, HH:mm"', () => {
+    // 10:30 UTC → 13:30 MSK. Timezone is pinned in the helper, so this is machine-tz-independent.
+    expect(formatDateTime('2025-01-20T10:30:00Z')).toBe('20.01.2025, 13:30')
+  })
+
+  it('rolls over to the next Moscow day for a late-UTC time', () => {
+    // 22:30 UTC → 01:30 MSK the next calendar day.
+    expect(formatDateTime('2025-01-20T22:30:00Z')).toBe('21.01.2025, 01:30')
+  })
+
+  it('returns "—" for invalid input (no "NaN.NaN.NaN")', () => {
+    expect(formatDateTime('not-a-date')).toBe('—')
+    expect(formatDateTime('')).toBe('—')
   })
 })
 

@@ -121,7 +121,10 @@ export default function BackfillAdminPage() {
     }
   }
 
-  const lastUpdated = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('ru-RU') : null
+  // Europe/Moscow freshness stamp (project rule: all times are Moscow, not browser-local).
+  const lastUpdated = dataUpdatedAt
+    ? new Date(dataUpdatedAt).toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow' })
+    : null
 
   return (
     <main className="min-h-screen bg-gray-50">

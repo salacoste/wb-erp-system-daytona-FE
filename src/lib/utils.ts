@@ -69,6 +69,26 @@ export function formatDate(date: string | Date): string {
 }
 
 /**
+ * Formats a date+time in Europe/Moscow (the project's canonical business timezone) as
+ * "DD.MM.YYYY, HH:mm". Use for DISPLAYED timestamps (created_at, updated_at, event times) so a
+ * non-Moscow viewer sees Moscow wall-clock, not their browser-local tz (project rule: all times
+ * are Europe/Moscow). Returns '—' for invalid input. (formatDate is date-only; this adds time.)
+ * @param date - Date string (UTC ISO) or Date object
+ */
+export function formatDateTime(date: string | Date): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(dateObj.getTime())) return '—'
+  return new Intl.DateTimeFormat('ru-RU', {
+    timeZone: 'Europe/Moscow',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(dateObj)
+}
+
+/**
  * Formats a date as ISO week (YYYY-Www)
  * @param date - Date string or Date object
  * @returns Formatted ISO week string (e.g., "2025-W03"), or '—' for invalid input
