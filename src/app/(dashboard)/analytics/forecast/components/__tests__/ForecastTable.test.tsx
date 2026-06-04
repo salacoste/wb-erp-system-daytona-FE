@@ -136,6 +136,11 @@ describe('ForecastTable', () => {
     expect(screen.getByText('+12.3%')).toBeTruthy()
   })
 
+  it('renders confidence as a Russian-locale percent (comma + NBSP)', () => {
+    renderTable([basePrediction]) // confidence 0.85 → "85 %" (was dot-locale "85%"); \s matches NBSP
+    expect(screen.getByText(/85\s%/)).toBeTruthy()
+  })
+
   it('renders predictedRevenue as currency when non-null', () => {
     renderTable([basePrediction])
     // iter-78: only predictedRevenue renders ₽ now (naiveBaseline is units)
@@ -150,9 +155,11 @@ describe('ForecastTable', () => {
     expect(screen.queryByText(/0 ₽/)).toBeNull()
   })
 
-  it('confidence null renders "—" not 0%', () => {
+  it('confidence null renders "—" not 0% (anti-pattern #8)', () => {
     renderTable([nullablePrediction])
-    expect(screen.queryByText('0%')).toBeNull()
+    expect(screen.queryByText('0%')).toBeNull() // legacy dot form
+    expect(screen.queryByText(/0\s%/)).toBeNull() // new ru-RU form must not appear either
+    expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(1) // dash IS rendered
   })
 
   // Epic 113 I1: revenue-target model (daily_revenue_forecast) sends predictedSales:null.

@@ -3,6 +3,7 @@
 import { getConfidenceBand } from '@/types/ai-forecast'
 import type { AiForecastResponse } from '@/types/ai-forecast'
 import { Card, CardContent } from '@/components/ui/card'
+import { formatPercentageInt } from '@/lib/utils'
 
 export function ForecastMetrics({ data }: { data: AiForecastResponse }) {
   const confidenceValues = data.predictions.filter(p => p.confidence != null)
@@ -21,7 +22,7 @@ export function ForecastMetrics({ data }: { data: AiForecastResponse }) {
     },
     {
       label: 'Средняя уверенность',
-      value: `${(avgConfidence * 100).toFixed(0)}%`,
+      value: formatPercentageInt(avgConfidence * 100),
       sub: getConfidenceBand(avgConfidence),
     },
   ]

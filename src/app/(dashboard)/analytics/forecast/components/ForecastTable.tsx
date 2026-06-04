@@ -7,7 +7,7 @@
  * Column order: Дата → Прогноз продаж → Базовая оценка → AI vs базовая → Прогноз выручки → Уверенность → Диапазон → Оценка
  */
 import { getConfidenceBand, type AiForecastPrediction } from '@/types/ai-forecast'
-import { formatDate, formatCurrency } from '@/lib/utils'
+import { formatDate, formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { FeedbackButtons } from '@/components/custom/ai/FeedbackButtons'
 
 const BAND_STYLES: Record<string, string> = {
@@ -84,7 +84,7 @@ export function ForecastTable({ predictions, modelId }: ForecastTableProps) {
                   {p.predictedRevenue != null ? formatCurrency(p.predictedRevenue) : '—'}
                 </td>
                 <td className="py-2 text-right font-mono">
-                  {p.confidence != null ? `${(p.confidence * 100).toFixed(0)}%` : '—'}
+                  {p.confidence != null ? formatPercentageInt(p.confidence * 100) : '—'}
                 </td>
                 <td className="py-2 text-center">
                   <span
