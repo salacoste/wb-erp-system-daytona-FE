@@ -71,7 +71,7 @@ describe('CollectingProgressTracker', () => {
 
   it('renders progress percentage', () => {
     wrap(<CollectingProgressTracker status={base} />)
-    expect(screen.getByText(/33% готовности/)).toBeInTheDocument()
+    expect(screen.getByText(/33\s% готовности/)).toBeInTheDocument() // ru-RU: "33 %" (NBSP)
   })
 
   it('renders em-dash when progressPct is null (preserve evidence, Defensive Frontend Principle)', () => {
@@ -123,7 +123,7 @@ describe('CollectingProgressTracker', () => {
 
   it('renders COGS warning when coverage < 90%', () => {
     wrap(<CollectingProgressTracker status={{ ...base, cogsCoveragePct: 75 }} />)
-    expect(screen.getByText(/Покрытие COGS: 75% \(нужно ≥90%\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Покрытие COGS: 75\s% \(нужно ≥90%\)/)).toBeInTheDocument() // "75 %" (NBSP)
   })
 
   it('does not render COGS warning when coverage >= 90%', () => {

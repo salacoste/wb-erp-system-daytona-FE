@@ -13,7 +13,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { TopSkusTable } from './TopSkusTable'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatPercentageInt } from '@/lib/utils'
 import { pluralize, WEEK_FORMS } from '@/lib/russian-plural'
 import type { AiStatusResponse } from '@/types/ai/status'
 
@@ -65,7 +65,7 @@ export function CollectingProgressTracker({ status }: Props) {
                 comment documents the rationale for future readers. */}
             <Progress value={progressPct ?? 0} className="h-2" />
             <p className="text-sm text-muted-foreground">
-              {progressPct != null ? `${progressPct}%` : '—'} готовности
+              {progressPct != null ? formatPercentageInt(progressPct) : '—'} готовности
             </p>
           </div>
 
@@ -104,7 +104,9 @@ export function CollectingProgressTracker({ status }: Props) {
           {cogsCoveragePct != null && cogsCoveragePct < 90 && (
             <Alert>
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>Покрытие COGS: {cogsCoveragePct}% (нужно ≥90%)</AlertDescription>
+              <AlertDescription>
+                Покрытие COGS: {formatPercentageInt(cogsCoveragePct)} (нужно ≥90%)
+              </AlertDescription>
             </Alert>
           )}
 
