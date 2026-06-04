@@ -8,7 +8,7 @@
  * @see docs/stories/epic-60/story-60.3-fe-enhanced-metric-card.md
  */
 
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 
 /**
  * Trend direction for comparison indicators
@@ -43,12 +43,11 @@ const NEUTRAL_THRESHOLD = 0.1
  * @returns Formatted string with sign and Russian decimal separator
  */
 function formatPercentageForComparison(value: number): string {
+  // value is percent-units (e.g. 10.5 → "10,5 %"). formatPercentage adds the NBSP + comma and
+  // emits the minus for negatives; we prepend "+" for non-negatives (0 → "+0,0 %"). Was
+  // comma-WITHOUT-NBSP (`Intl.format(abs) + '%'` → "10,5%") — a gate-blind ru-locale violation.
   const sign = value >= 0 ? '+' : ''
-  const formatted = new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(Math.abs(value))
-  return `${sign}${value < 0 ? '-' : ''}${formatted}%`
+  return `${sign}${formatPercentage(value, 1)}`
 }
 
 /**

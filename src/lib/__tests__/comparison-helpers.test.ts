@@ -228,19 +228,19 @@ describe('Story 60.3-FE: ComparisonResult shape', () => {
 
 describe('Story 60.3-FE: Russian Formatting', () => {
   describe('percentage formatting', () => {
-    it('formats +10% as "+10,0%"', () => {
+    it('formats +10% as "+10,0 %" (ru-RU NBSP)', () => {
       const result = calculateComparison(110, 100)
-      expect(result?.formattedPercentage).toBe('+10,0%')
+      expect(result?.formattedPercentage).toMatch(/^\+10,0\s%$/) // ru-RU: comma + NBSP
     })
 
-    it('formats -5.2% as "-5,2%"', () => {
+    it('formats -5.2% as "-5,2 %" (ru-RU NBSP)', () => {
       const result = calculateComparison(94.8, 100)
-      expect(result?.formattedPercentage).toBe('-5,2%')
+      expect(result?.formattedPercentage).toMatch(/^[-−]5,2\s%$/) // ru-RU: NBSP; ASCII/Unicode minus
     })
 
-    it('formats 0% as "0,0%"', () => {
+    it('formats 0% as "+0,0 %" (sign-preserving zero, ru-RU NBSP)', () => {
       const result = calculateComparison(100, 100)
-      expect(result?.formattedPercentage).toBe('+0,0%')
+      expect(result?.formattedPercentage).toMatch(/^\+0,0\s%$/) // ru-RU: comma + NBSP
     })
   })
 
