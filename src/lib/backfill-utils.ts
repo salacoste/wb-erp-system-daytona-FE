@@ -6,6 +6,7 @@
  */
 
 import type { BackfillStatus, BackfillProgress, BackfillStatusConfig } from '@/types/backfill'
+import { formatPercentage } from '@/lib/utils'
 
 // ============================================================================
 // Status Check Functions (AC5)
@@ -56,7 +57,7 @@ export function canRetry(cabinet: { status: BackfillStatus }): boolean {
 export function formatBackfillProgress(progress: BackfillProgress | null): string {
   if (!progress) return 'Нет данных'
   const { completed_days, total_days, percentage } = progress
-  return `${completed_days} / ${total_days} дней (${percentage.toFixed(1)}%)`
+  return `${completed_days} / ${total_days} дней (${formatPercentage(percentage, 1)})`
 }
 
 /** Format estimated time remaining */
