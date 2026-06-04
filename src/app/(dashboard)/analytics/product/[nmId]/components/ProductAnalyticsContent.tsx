@@ -2,9 +2,9 @@
 
 /**
  * ProductAnalyticsContent — client shell for the Unified Product Analytics page
- * (Story 120.5-FE). Renders the product header + Overview/Funnel/Advertising/
- * Organic tab layout. Tab bodies are backend-pending placeholders until Stories
- * 120.6/120.7 wire the data (VERIFY-FIRST, gated on Request #177).
+ * (Stories 120.5 + 120.6-FE). Renders the product header + data-driven tabs.
+ * Overview tab shows real /unified data; other tabs remain placeholders
+ * until Story 120.7 wires organic-share + incremental-roas.
  */
 
 import Link from 'next/link'
@@ -17,7 +17,9 @@ import {
   UNIFIED_PRODUCT_TAB_LABELS,
   type UnifiedProductTab,
 } from '@/types/unified-product'
+import { useUnifiedProductAnalytics } from '@/hooks/use-unified-product-analytics'
 import { ProductTabPlaceholder } from './ProductTabPlaceholder'
+import { ProductOverviewTab } from './ProductOverviewTab'
 
 interface ProductAnalyticsContentProps {
   nmId: string
@@ -27,6 +29,13 @@ interface ProductAnalyticsContentProps {
 const DEFAULT_TAB: UnifiedProductTab = UNIFIED_PRODUCT_TABS[0]
 
 export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) {
+  // Default date range: last 2 completed weeks (Monday-based ISO week logic).
+  // Hardcoded for initial wiring — a week selector will be added in 120.7.
+  const from = '2026-05-19'
+  const to = '2026-06-01'
+
+  const { data, isLoading, isError } = useUnifiedProductAnalytics({ nmId, from, to })
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -53,10 +62,33 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         </TabsList>
         {UNIFIED_PRODUCT_TABS.map(tab => (
           <TabsContent key={tab} value={tab}>
-            <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS[tab]} />
+            {tab === 'overview' ? (
+              renderOverviewTab()
+            ) : (
+              <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS[tab]} />
+            )}
           </TabsContent>
         ))}
       </Tabs>
+    </div>
+  )
+
+  function renderOverviewTab() {
+    if (isLoading) return <OverviewSkeleton />
+    if (isError || !data) {
+      return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.overview} />
+    }
+    return <ProductOverviewTab data={data} />
+  }
+}
+
+/** Minimal skeleton — 4 KPI cards shimmering. */
+function OverviewSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
+      ))}
     </div>
   )
 }
