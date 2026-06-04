@@ -301,7 +301,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       // Margin section shows "МАРЖА" text and percentage in separate badge
       expect(screen.getByText('МАРЖА')).toBeInTheDocument()
       // Use getAllByText since there may be multiple 20% elements (margin badge, summary footer, etc.)
-      expect(screen.getAllByText(/20%/).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/20,0\s%/).length).toBeGreaterThan(0) // ru-RU margin "20,0 %"
     })
 
     it('should show margin amount in rubles', () => {
@@ -464,7 +464,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} result={highMarginResult} />)
 
       // Should show high profitability indicator (multiple 55% may exist, use getAllByText)
-      expect(screen.getAllByText(/55%/).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/55,0\s%/).length).toBeGreaterThan(0) // ru-RU margin "55,0 %"
     })
 
     it('should handle FBS mode correctly (no storage/acceptance)', () => {

@@ -161,7 +161,7 @@ describe('TwoLevelPricingDisplay', () => {
 
       // Margin section shows "МАРЖА" text and percentage in badge
       expect(screen.getByText('МАРЖА')).toBeInTheDocument()
-      expect(screen.getByText(/17%/)).toBeInTheDocument()
+      expect(screen.getByText(/17,0\s%/)).toBeInTheDocument() // ru-RU: margin "17,0 %" (1 decimal, NBSP)
     })
   })
 
@@ -186,7 +186,7 @@ describe('TwoLevelPricingDisplay', () => {
 
       // Margin section shows "МАРЖА" text and percentage badge
       expect(screen.getByText('МАРЖА')).toBeInTheDocument()
-      expect(screen.getByText(/17%/)).toBeInTheDocument()
+      expect(screen.getByText(/17,0\s%/)).toBeInTheDocument() // ru-RU: margin "17,0 %" (1 decimal, NBSP)
     })
   })
 
