@@ -84,3 +84,18 @@ describe('SalesFunnelSection — COGS null handling (anti-pattern #8)', () => {
     expect(cogsLine.textContent).not.toMatch(/\d/) // never a fabricated 0,00 ₽
   })
 })
+
+describe('SalesFunnelSection — Russian-locale percent format', () => {
+  it('renders percentages as "20,0 %"/"80 %" (comma + space), never dot-locale "20.0%"', () => {
+    // retailPrice 1 000 000, salesGross 800 000 → discount 20 % ; "Цена на карточке" = 80 % от РРЦ.
+    render(<SalesFunnelSection summary={summaryTotalShape()} isComparison={false} />)
+
+    // Decimal arrow: formatPercentage(20, 1) → "20,0 %" (comma decimal, NBSP before %).
+    // \s+ (not \s*) so a regression to dot-locale "20.0%" (no space) FAILS this assertion.
+    expect(screen.getByText(/Ваша скидка:.*20,0\s+%/)).toBeInTheDocument()
+    // Whole-percent label: formatPercentageInt(80) → "80 %". \s+ rejects integer dot-locale "80%".
+    expect(screen.getByText(/80\s+%\s+от РРЦ/)).toBeInTheDocument()
+    // No dot-locale anywhere in the funnel (e.g. "20.0%").
+    expect(screen.queryByText(/\d+\.\d+%/)).not.toBeInTheDocument()
+  })
+})

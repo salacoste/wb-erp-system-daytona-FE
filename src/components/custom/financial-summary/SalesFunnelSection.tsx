@@ -6,6 +6,7 @@
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from './financial-summary-formatters'
+import { formatPercentage, formatPercentageInt } from '@/lib/utils'
 import { FunnelLevel, FunnelArrow, FunnelProfitLevel } from './FunnelParts'
 
 interface SalesFunnelSectionProps {
@@ -61,7 +62,9 @@ export function SalesFunnelSection({
   const compSalesGross = comparisonSummary?.sales_gross_total ?? comparisonSummary?.sales_gross ?? 0
   const compSaleGross = comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross ?? 0
 
-  const pctOf = (v: number) => `${retailPrice > 0 ? ((v / retailPrice) * 100).toFixed(0) : 0}%`
+  // Russian locale: "85 %" (NBSP + space), not dot-locale "85%". formatPercentageInt takes 0-100.
+  const pctOf = (v: number) =>
+    retailPrice > 0 ? formatPercentageInt((v / retailPrice) * 100) : formatPercentageInt(0)
 
   return (
     <Card className="border-2 border-indigo-300">
@@ -77,12 +80,12 @@ export function SalesFunnelSection({
             title="РРЦ (каталог)"
             subtitle="Ваша цена в каталоге WB"
             value={retailPrice}
-            pctLabel="100%"
+            pctLabel="100 %"
             colorScheme="indigo"
             comparisonValue={isComparison && compRetailPrice > 0 ? compRetailPrice : undefined}
           />
           <FunnelArrow
-            text={`Ваша скидка: \u2212${formatCurrency(wbDiscount)} (${wbDiscountPct.toFixed(1)}%)`}
+            text={`Ваша скидка: \u2212${formatCurrency(wbDiscount)} (${formatPercentage(wbDiscountPct, 1)})`}
             colorClass="text-orange-600"
           />
           <FunnelLevel
@@ -95,7 +98,7 @@ export function SalesFunnelSection({
           />
           {returnsGross > 0 && (
             <FunnelArrow
-              text={`Возвраты: \u2212${formatCurrency(returnsGross)} (${returnsPct.toFixed(1)}%)`}
+              text={`Возвраты: \u2212${formatCurrency(returnsGross)} (${formatPercentage(returnsPct, 1)})`}
               colorClass="text-red-600"
             />
           )}
@@ -108,7 +111,7 @@ export function SalesFunnelSection({
             comparisonValue={isComparison && compSaleGross > 0 ? compSaleGross : undefined}
           />
           <FunnelArrow
-            text={`Удержания WB: \u2212${formatCurrency(wbDeductions)} (${wbDeductionsPct.toFixed(1)}% от оборота)`}
+            text={`Удержания WB: \u2212${formatCurrency(wbDeductions)} (${formatPercentage(wbDeductionsPct, 1)} от оборота)`}
             colorClass="text-gray-600"
           />
           <FunnelLevel

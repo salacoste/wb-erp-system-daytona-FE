@@ -6,6 +6,7 @@
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import { ArrowDown } from 'lucide-react'
 import { formatCurrency } from './financial-summary-formatters'
+import { formatPercentage } from '@/lib/utils'
 
 const COLOR_MAP = {
   indigo: { bg: 'bg-indigo-100', title: 'text-indigo-900', sub: 'text-indigo-600' },
@@ -93,7 +94,7 @@ export function FunnelProfitLevel({
           <div className="text-right">
             <div className="text-xl font-bold text-emerald-900">{formatCurrency(grossProfit)}</div>
             <div className="text-sm text-emerald-600">
-              Маржа: {payoutTotal > 0 ? ((grossProfit / payoutTotal) * 100).toFixed(1) : 0}%
+              Маржа: {formatPercentage(payoutTotal > 0 ? (grossProfit / payoutTotal) * 100 : 0, 1)}
             </div>
           </div>
         </div>
