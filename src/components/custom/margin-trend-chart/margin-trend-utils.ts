@@ -27,10 +27,13 @@ export function formatWeekLabel(week: string): string {
 }
 
 /**
- * Format margin percentage for Y-axis
+ * Format margin percentage for the recharts Y-axis tick.
+ * Genuine dot-locale exception (NOT migrated to formatPercentage): recharts axis-tick formatters
+ * stay a plain terse string — per dot-locale-consolidation-proposal §4. Used as
+ * <YAxis tickFormatter={formatMarginAxis} /> in MarginTrendChart.
  */
 export function formatMarginAxis(value: number): string {
-  return `${value.toFixed(0)}%`
+  return `${value.toFixed(0)}%` // locale-percent-allow: recharts Y-axis tick (terse plain string)
 }
 
 /**

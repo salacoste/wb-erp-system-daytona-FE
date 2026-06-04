@@ -141,7 +141,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
-| Dot-locale percent | `bash scripts/check-locale-percent.sh` | 24 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating; started at ~108 in iter-67) |
+| Dot-locale percent | `bash scripts/check-locale-percent.sh` | 23 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
 | ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 112 warnings (all `no-explicit-any`) |
 | Vitest | `npm test -- --run` | ≥ 7205 passing, 676 skipped, 0 failed (floor) |
 
