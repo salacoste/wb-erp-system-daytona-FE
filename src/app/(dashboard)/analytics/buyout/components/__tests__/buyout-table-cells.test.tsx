@@ -128,12 +128,12 @@ describe('TrendIndicator', () => {
 
   it('shows delta with + sign for up trend', () => {
     render(<TrendIndicator trend="up" delta={5.3} />)
-    expect(screen.getByText('+5.3')).toBeInTheDocument()
+    expect(screen.getByText('+5,3')).toBeInTheDocument() // ru-RU comma decimal
   })
 
   it('shows delta without + sign for down trend', () => {
     render(<TrendIndicator trend="down" delta={-2.1} />)
-    expect(screen.getByText('-2.1')).toBeInTheDocument()
+    expect(screen.getByText('-2,1')).toBeInTheDocument() // ru-RU comma decimal
   })
 
   it('does not show delta when not provided', () => {
@@ -144,7 +144,13 @@ describe('TrendIndicator', () => {
 
   it('formats delta to 1 decimal place', () => {
     render(<TrendIndicator trend="up" delta={3.456} />)
-    expect(screen.getByText('+3.5')).toBeInTheDocument()
+    expect(screen.getByText('+3,5')).toBeInTheDocument() // ru-RU comma decimal (3.456 → "3,5")
+  })
+
+  it('uses Intl halfExpand rounding at .x5 (5.35 → "5,4"; differs from toFixed "5,3" — display-only)', () => {
+    // documents the intentional rounding shift from toFixed FP-half-to-even to Intl halfExpand
+    render(<TrendIndicator trend="up" delta={5.35} />)
+    expect(screen.getByText('+5,4')).toBeInTheDocument()
   })
 })
 

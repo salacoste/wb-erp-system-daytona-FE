@@ -48,7 +48,12 @@ export function TrendIndicator({ trend, delta }: { trend?: TrendDirection; delta
       {delta != null && (
         <span>
           {sign}
-          {delta.toFixed(1)}
+          {/* ru-RU comma decimal (bare pp delta; unit is in the column header, custom sign above).
+              toFixed(1) rendered dot-locale "5.3"; toLocaleString → "5,3". No NBSP (plain number;
+              pp deltas are bounded ~0-100 so no thousands-grouping NBSP). Rounding shifts from
+              toFixed's FP half-to-even to Intl halfExpand at .x5 (5.35→"5,4"): display-only, more
+              correct — consistent with this session's percent migrations. */}
+          {delta.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
         </span>
       )}
     </span>
