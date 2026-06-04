@@ -167,8 +167,9 @@ describe('PnLWaterfall Zero Margin/Gross Profit - TDD Tests', () => {
       // Look for the margin indicator section
       expect(screen.getByText(/Валовая маржа/)).toBeInTheDocument()
       // Verify zero percentage is displayed (not dash)
-      // Use getAllByText since 0.0% may appear in multiple places
-      const zeroPercentages = screen.getAllByText(/0[,.]0%/)
+      // Use getAllByText since "0,0 %" may appear in multiple places.
+      // iter-72: now Russian-locale "0,0 %" (comma + NBSP) via formatPercentage; `\s` matches the NBSP.
+      const zeroPercentages = screen.getAllByText(/0,0\s%/)
       expect(zeroPercentages.length).toBeGreaterThan(0)
     })
 

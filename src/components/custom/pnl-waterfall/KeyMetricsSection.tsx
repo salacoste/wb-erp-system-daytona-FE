@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Info } from 'lucide-react'
 import { SectionHeader } from './PnLSectionHeader'
 import { formatCurrency } from './pnl-formatters'
+import { formatPercentageInt } from '@/lib/utils'
 import type { KeyMetricsSectionProps } from './pnl-types'
 
 export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
@@ -24,7 +25,7 @@ export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
         {/* ROI */}
         <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
           <div className="text-2xl font-bold text-blue-700">
-            {data.roi !== null ? `${data.roi.toFixed(0)}%` : '—'}
+            {data.roi !== null ? formatPercentageInt(data.roi) : '—'}
           </div>
           <div className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
             ROI

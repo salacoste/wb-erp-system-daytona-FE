@@ -9,7 +9,7 @@
 'use client'
 
 import { TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import { SectionHeader } from './PnLSectionHeader'
 import { PnLRow } from './PnLRow'
 import { formatPercent } from './pnl-formatters'
@@ -124,7 +124,8 @@ export function GrossProfitSection({
                   />
                 </div>
                 <span className="text-sm font-medium text-amber-700">
-                  {products.coverage_pct.toFixed(0)}% ({products.with_cogs}/{products.total})
+                  {formatPercentageInt(products.coverage_pct)} ({products.with_cogs}/
+                  {products.total})
                 </span>
               </div>
             </div>

@@ -9,7 +9,7 @@
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { HelpCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { formatCurrency, formatPercent } from './pnl-formatters'
 
 export interface PnLRowProps {
@@ -108,7 +108,10 @@ export const PnLRow = ({
         >
           {percentOfRevenue !== null && percentOfRevenue !== undefined
             ? isPositive
-              ? `−${Math.abs(percentOfRevenue).toFixed(1)}%`
+              ? // U+2212 typographic minus (matches formatCurrency); Math.abs keeps Intl from
+                // emitting its own ASCII hyphen. The else-branch's negatives render with an ASCII
+                // hyphen via formatPercent — a pre-existing split, preserved (not introduced here).
+                `−${formatPercentage(Math.abs(percentOfRevenue), 1)}`
               : formatPercent(percentOfRevenue)
             : '\u00A0'}
         </span>
