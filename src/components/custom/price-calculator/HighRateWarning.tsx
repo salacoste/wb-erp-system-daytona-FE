@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertTriangle } from 'lucide-react'
+import { formatPercentage, formatPercentageInt } from '@/lib/utils'
 import type { TwoLevelPricingResult } from '@/types/price-calculator'
 
 /**
@@ -93,21 +94,17 @@ export function HighRateWarning({ result, drrPct, marginPct }: HighRateWarningPr
 
   // Format top contributors string for critical alert
   const contributorsText = topContributors
-    .map(c => `${c.label} ${c.pct.toFixed(0)}%`)
+    .map(c => `${c.label} ${formatPercentageInt(c.pct)}`)
     .join(', ')
 
   if (isCritical) {
     return (
       <Alert variant="destructive" data-testid="high-rate-warning-critical">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Критически высокая ставка: {totalPctRate.toFixed(1)}%</AlertTitle>
+        <AlertTitle>Критически высокая ставка: {formatPercentage(totalPctRate, 1)}</AlertTitle>
         <AlertDescription>
-          <p>
-            Рекомендованная цена может быть нереалистичной для рынка.
-          </p>
-          <p className="mt-1 text-xs">
-            Основные статьи: {contributorsText}
-          </p>
+          <p>Рекомендованная цена может быть нереалистичной для рынка.</p>
+          <p className="mt-1 text-xs">Основные статьи: {contributorsText}</p>
           <p className="mt-1 text-xs">
             Рекомендуем уменьшить маржу или проверить комиссию категории.
           </p>
@@ -119,10 +116,11 @@ export function HighRateWarning({ result, drrPct, marginPct }: HighRateWarningPr
   return (
     <Alert variant="warning" data-testid="high-rate-warning">
       <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Высокая суммарная ставка: {totalPctRate.toFixed(1)}%</AlertTitle>
+      <AlertTitle>Высокая суммарная ставка: {formatPercentage(totalPctRate, 1)}</AlertTitle>
       <AlertDescription>
         <p>
-          При такой ставке только {remainingPct.toFixed(1)}% от цены покрывает фиксированные затраты.
+          При такой ставке только {formatPercentage(remainingPct, 1)} от цены покрывает
+          фиксированные затраты.
         </p>
         <p className="mt-1 text-xs">
           Рекомендуем проверить комиссию категории или уменьшить маржу/DRR.
