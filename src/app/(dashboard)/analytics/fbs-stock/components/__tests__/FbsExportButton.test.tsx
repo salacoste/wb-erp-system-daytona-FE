@@ -370,6 +370,11 @@ describe('FbsExportButton', () => {
 
     await user.click(screen.getByTestId('fbs-export-button'))
 
+    // Wait for countdown to actually start before unmounting
+    await waitFor(() => {
+      expect(screen.getByTestId('fbs-export-button')).toBeDisabled()
+    })
+
     // Countdown started — now unmount
     unmount()
 
