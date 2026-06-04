@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation'
 import { Package, Info, AlertTriangle, ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { ROUTES } from '@/lib/routes'
@@ -141,7 +141,7 @@ export function CostsCard({
             <div className="mt-1 flex items-center gap-1">
               {cogsCoverage < 100 && <AlertTriangle className="h-3 w-3 text-yellow-500" />}
               <span className={cn('text-xs', getCoverageColor(cogsCoverage))}>
-                Покрытие: {Math.round(cogsCoverage)}%
+                Покрытие: {formatPercentageInt(cogsCoverage)}
               </span>
               <span className="text-xs text-gray-400">
                 ({fmtNum(productsWithCogs)} из {fmtNum(totalProducts)})

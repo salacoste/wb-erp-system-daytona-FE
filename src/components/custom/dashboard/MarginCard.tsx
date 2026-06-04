@@ -10,7 +10,7 @@
 import { Percent, Info, AlertTriangle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatPercentage, formatPercentagePoints } from '@/lib/utils'
+import { cn, formatPercentage, formatPercentageInt, formatPercentagePoints } from '@/lib/utils'
 import { HighlightedMetricSkeleton, MetricCardError } from './MetricCardStates'
 
 export interface MarginCardProps {
@@ -151,7 +151,7 @@ export function MarginCard({
         {cogsCoverage < 100 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
             <AlertTriangle className="h-3 w-3 shrink-0" />
-            <span>Покрытие COGS: {Math.round(cogsCoverage)}%</span>
+            <span>Покрытие COGS: {formatPercentageInt(cogsCoverage)}</span>
             {onAssignCogs && (
               <button
                 onClick={onAssignCogs}

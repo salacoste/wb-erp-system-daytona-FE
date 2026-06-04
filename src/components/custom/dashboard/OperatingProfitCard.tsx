@@ -10,7 +10,7 @@
 import { TrendingUp, Info, AlertTriangle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { HighlightedMetricSkeleton, MetricCardError } from './MetricCardStates'
@@ -132,7 +132,7 @@ export function OperatingProfitCard({
         {cogsCoverage < 100 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
             <AlertTriangle className="h-3 w-3 shrink-0" />
-            <span>Покрытие COGS: {Math.round(cogsCoverage)}%</span>
+            <span>Покрытие COGS: {formatPercentageInt(cogsCoverage)}</span>
             {onAssignCogs && (
               <button
                 onClick={onAssignCogs}
