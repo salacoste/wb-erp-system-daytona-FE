@@ -79,7 +79,9 @@ export function FunnelProfitLevel({
         <ArrowDown className="h-5 w-5" />
         <span className="text-sm">
           {'Себестоимость (COGS): \u2212'}
-          {formatCurrency(summary.cogs_total ?? 0)}
+          {/* Anti-pattern #8: cogs_total is `number | null` (backend sends null when no COGS data).
+              formatCurrency renders '—' for null — do NOT `?? 0`, which fabricates a false 0,00 ₽. */}
+          {formatCurrency(summary.cogs_total)}
         </span>
       </div>
       <div className="p-4 bg-emerald-100 rounded-lg border-2 border-emerald-400">

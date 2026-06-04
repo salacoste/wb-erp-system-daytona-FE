@@ -69,3 +69,18 @@ describe('SalesFunnelSection — retail-price source resolution', () => {
     expect(screen.queryByText(/(^|[^0-9])999([^0-9]|$)/)).not.toBeInTheDocument()
   })
 })
+
+describe('SalesFunnelSection — COGS null handling (anti-pattern #8)', () => {
+  it('renders "—" for COGS when cogs_total is null (must NOT fabricate 0,00 ₽)', () => {
+    // FunnelProfitLevel renders when gross_profit is non-null; cogs_total is computed
+    // independently and may be null. The COGS line must show "—", never a false 0,00 ₽.
+    const withNullCogs = summaryTotalShape({ gross_profit: 16_400, cogs_total: null })
+    render(<SalesFunnelSection summary={withNullCogs} isComparison={false} />)
+
+    // The profit level rendered, so the COGS line is present. Its currency slot must be the
+    // em-dash "—" (formatCurrency(null)), NOT a fabricated number — no digit follows the label.
+    const cogsLine = screen.getByText(/Себестоимость \(COGS\)/)
+    expect(cogsLine).toHaveTextContent('—') // — null sentinel
+    expect(cogsLine.textContent).not.toMatch(/\d/) // never a fabricated 0,00 ₽
+  })
+})
