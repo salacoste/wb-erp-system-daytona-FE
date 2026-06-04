@@ -30,22 +30,23 @@ const mockUnified = vi.mocked(useUnifiedProductAnalytics)
 const mockOrganic = vi.mocked(useOrganicShare)
 const mockIroas = vi.mocked(useIncrementalRoas)
 
+// Minimal mock shape — bridge via unknown to avoid missing TanStack Query observer fields (AP#4)
 function setAllLoaded() {
   mockUnified.mockReturnValue({
     data: emptyUnifiedProductData(),
     isLoading: false,
     isError: false,
-  } as ReturnType<typeof useUnifiedProductAnalytics>)
+  } as unknown as ReturnType<typeof useUnifiedProductAnalytics>)
   mockOrganic.mockReturnValue({
     data: [],
     isLoading: false,
     isError: false,
-  } as ReturnType<typeof useOrganicShare>)
+  } as unknown as ReturnType<typeof useOrganicShare>)
   mockIroas.mockReturnValue({
     data: null,
     isLoading: false,
     isError: false,
-  } as ReturnType<typeof useIncrementalRoas>)
+  } as unknown as ReturnType<typeof useIncrementalRoas>)
 }
 
 describe('ProductAnalyticsContent', () => {
@@ -83,7 +84,7 @@ describe('ProductAnalyticsContent', () => {
       data: undefined,
       isLoading: true,
       isError: false,
-    } as ReturnType<typeof useUnifiedProductAnalytics>)
+    } as unknown as ReturnType<typeof useUnifiedProductAnalytics>)
     render(<ProductAnalyticsContent nmId="1" />)
     expect(document.querySelectorAll('.animate-pulse').length).toBe(4)
   })
