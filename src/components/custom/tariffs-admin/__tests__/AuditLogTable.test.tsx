@@ -169,8 +169,8 @@ describe('AuditLogTable', () => {
       renderWithProviders(<AuditLogTable />)
 
       await waitFor(() => {
-        // 2026-01-22T10:00:00.000Z -> 22.01.26 13:00 (Moscow +3)
-        expect(screen.getByText(/22\.01\.26/)).toBeInTheDocument()
+        // 2026-01-22T10:00:00.000Z -> 22.01.2026, 13:00 (Moscow +3, shared formatDateTime)
+        expect(screen.getByText(/22\.01\.2026/)).toBeInTheDocument()
       })
     })
 

@@ -122,7 +122,7 @@ describe('OrderModalHeader', () => {
       render(<OrderModalHeader order={mockOrderDetails} />)
 
       expect(screen.getByText(/создан:/i)).toBeInTheDocument()
-      expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}/)).toBeInTheDocument()
+      expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}[,\s]+\d{2}:\d{2}/)).toBeInTheDocument()
     })
 
     it('shows "Создан:" label before the date', () => {

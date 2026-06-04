@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { AlertTriangle } from 'lucide-react'
 import { TableRow, TableCell } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatDateTime } from '@/lib/utils'
 import { getWbStatusConfig } from '@/lib/wb-status-mapping'
 import { OrderStatusBadge } from './OrderStatusBadge'
 import { ClientInfoCell } from './ClientInfoCell'
@@ -47,20 +47,6 @@ interface OrdersTableRowProps {
   clientInfo?: ClientInfoItem
   /** Story 86.2: render the client cell (matches parent table's column visibility) */
   showClientColumn?: boolean
-}
-
-/**
- * Format date as "dd.MM.yyyy HH:mm"
- */
-function formatDateTime(dateStr: string): string {
-  const date = new Date(dateStr)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-
-  return `${day}.${month}.${year} ${hours}:${minutes}`
 }
 
 /**

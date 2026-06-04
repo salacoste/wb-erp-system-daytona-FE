@@ -10,9 +10,8 @@
 
 import { Package } from 'lucide-react'
 import type { OrderFbsDetails } from '@/types/orders'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDateTime, cn } from '@/lib/utils'
 import { getWbStatusConfig } from '@/lib/wb-status-mapping'
-import { cn } from '@/lib/utils'
 
 export interface OrderModalHeaderProps {
   order: OrderFbsDetails
@@ -94,15 +93,4 @@ export function OrderModalHeader({ order }: OrderModalHeaderProps) {
       </div>
     </div>
   )
-}
-
-/**
- * Format date as DD.MM.YYYY HH:mm
- */
-function formatDateTime(isoDate: string): string {
-  const date = new Date(isoDate)
-  const day = formatDate(date)
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day} ${hours}:${minutes}`
 }

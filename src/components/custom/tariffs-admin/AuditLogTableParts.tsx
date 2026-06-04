@@ -10,21 +10,6 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { isForbiddenError } from '@/types/api'
 
-/**
- * Format datetime for audit timestamp
- * @param dateString - ISO date string from API
- * @returns Formatted date string DD.MM.YY HH:mm
- */
-export function formatAuditDateTime(dateString: string): string {
-  const date = new Date(dateString)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear().toString().slice(-2)
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day}.${month}.${year} ${hours}:${minutes}`
-}
-
 export function TableSkeleton() {
   return (
     <>

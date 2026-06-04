@@ -20,13 +20,8 @@ import { useTariffAuditLog } from '@/hooks/useTariffAuditLog'
 import { AuditFieldFilter, getFieldLabel } from './AuditFieldFilter'
 import { AuditActionBadge } from './AuditActionBadge'
 import { AuditValueDisplay } from './AuditValueDisplay'
-import {
-  formatAuditDateTime,
-  TableSkeleton,
-  EmptyState,
-  ErrorState,
-  PaginationControls,
-} from './AuditLogTableParts'
+import { formatDateTime } from '@/lib/utils'
+import { TableSkeleton, EmptyState, ErrorState, PaginationControls } from './AuditLogTableParts'
 
 const ITEMS_PER_PAGE = 50
 
@@ -86,9 +81,7 @@ export function AuditLogTable() {
                 {!isLoading &&
                   data?.data.map(entry => (
                     <TableRow key={entry.id}>
-                      <TableCell className="text-xs">
-                        {formatAuditDateTime(entry.created_at)}
-                      </TableCell>
+                      <TableCell className="text-xs">{formatDateTime(entry.created_at)}</TableCell>
                       <TableCell className="truncate max-w-[150px]" title={entry.user_email}>
                         {entry.user_email}
                       </TableCell>
