@@ -18,6 +18,7 @@ import { toast } from 'sonner'
 import { useSingleCogsAssignment } from './useSingleCogsAssignment'
 import { useMarginPollingWithQuery } from './useMarginPollingWithQuery'
 import { getPollingStrategy, type PollingConfig } from '@/lib/margin-helpers'
+import { formatPercentage } from '@/lib/utils'
 import { useMarginPollingStore } from '@/stores/marginPollingStore'
 import { usePollingHandlers, invalidateProductQueries } from './useCogsMutationHandlers'
 import type { SingleCogsAssignmentParams } from './useSingleCogsAssignment'
@@ -116,7 +117,7 @@ export function useSingleCogsAssignmentWithPolling() {
         if (marginPct != null && typeof marginPct === 'number' && Number.isFinite(marginPct)) {
           console.log('[Polling Hook] Margin available immediately, skipping polling')
           toast.success('Маржа рассчитана', {
-            description: `Маржинальность: ${marginPct.toFixed(2)}%`,
+            description: `Маржинальность: ${formatPercentage(marginPct, 2)}`,
           })
           invalidateProductQueries(queryClient, params.nmId)
           options?.onSuccess?.(response)

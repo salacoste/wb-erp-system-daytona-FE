@@ -37,10 +37,7 @@ export function useSingleCogsAssignment() {
           source: cogs.source,
         })
 
-        const response = await apiClient.post<ProductWithCogs>(
-          `/v1/products/${nmId}/cogs`,
-          cogs
-        )
+        const response = await apiClient.post<ProductWithCogs>(`/v1/products/${nmId}/cogs`, cogs)
 
         console.info('[COGS Assignment] COGS assigned successfully:', {
           nm_id: response.nm_id,
@@ -64,7 +61,7 @@ export function useSingleCogsAssignment() {
 
       const marginPct = data.current_margin_pct
       if (marginPct != null && typeof marginPct === 'number' && Number.isFinite(marginPct)) {
-        console.info(`[COGS Assignment] Margin: ${marginPct.toFixed(2)}%`)
+        console.info(`[COGS Assignment] Margin: ${marginPct.toFixed(2)}%`) // locale-percent-allow: debug log (not user-facing)
       } else if (data.missing_data_reason) {
         console.info(`[COGS Assignment] Margin: Not available (${data.missing_data_reason})`)
       }

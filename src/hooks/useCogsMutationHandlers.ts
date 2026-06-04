@@ -11,6 +11,7 @@
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useQueryClient, type QueryClient } from '@tanstack/react-query'
+import { formatPercentage } from '@/lib/utils'
 
 /**
  * Invalidate and refetch all product-related queries
@@ -54,7 +55,7 @@ export function usePollingHandlers(
     (marginPct: number) => {
       const marginText =
         marginPct != null && typeof marginPct === 'number'
-          ? `${marginPct.toFixed(2)}%`
+          ? formatPercentage(marginPct, 2)
           : 'рассчитана'
 
       toast.success('Маржа рассчитана', {
