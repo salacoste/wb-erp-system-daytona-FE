@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/table'
 import { useFbsStockSizes } from '@/hooks/use-fbs-stock-sizes'
 import type { DateRange } from '@/types/date-range'
+import { formatDecimal } from '@/lib/utils'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -153,10 +154,9 @@ export function FbsStockSizesSection() {
                       {item.averageDailyOutgoing}
                     </TableCell>
                     <TableCell className="text-right text-sm">
-                      {/* Russian locale: comma decimal ("12,5"), not "12.5" */}
-                      {item.daysOfCover == null
-                        ? '—'
-                        : item.daysOfCover.toFixed(1).replace('.', ',')}
+                      {/* Russian locale comma decimal via canonical formatDecimal (≥1000 also gets
+                          NBSP grouping, which the old toFixed().replace did not). */}
+                      {item.daysOfCover == null ? '—' : formatDecimal(item.daysOfCover)}
                     </TableCell>
                   </TableRow>
                 ))}

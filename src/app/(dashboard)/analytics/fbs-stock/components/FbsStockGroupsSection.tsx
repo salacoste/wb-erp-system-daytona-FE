@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatDecimal } from '@/lib/utils'
 import { useFbsStockGroups } from '@/hooks/use-fbs-stock-groups'
 import type { DateRange } from '@/types/date-range'
 
@@ -130,9 +130,7 @@ export function FbsStockGroupsSection() {
                     </TableCell>
                     <TableCell className="text-right text-sm">
                       {/* Russian locale: comma decimal ("12,5"), not "12.5" */}
-                      {item.daysOfCover == null
-                        ? '—'
-                        : item.daysOfCover.toFixed(1).replace('.', ',')}
+                      {item.daysOfCover == null ? '—' : formatDecimal(item.daysOfCover)}
                     </TableCell>
                   </TableRow>
                 ))}
