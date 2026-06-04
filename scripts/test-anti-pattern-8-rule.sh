@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMPDIR_AP8="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR_AP8"' EXIT
 
@@ -15,7 +15,8 @@ FAIL=0
 
 run_eslint() {
   local file="$1"
-  # Run ESLint from monorepo root so the flat config picks up the frontend block.
+  # Run ESLint from frontend dir so it picks up frontend/eslint.config.js (flat config).
+  # The frontend flat config omits parserOptions.project to avoid OOM on low-memory CI.
   # Suppress @typescript-eslint/no-unused-vars — only care about no-restricted-syntax.
   cd "$ROOT" && npx eslint "$file" 2>&1 | grep "no-restricted-syntax" || true
 }
@@ -27,7 +28,7 @@ assert_fires() {
   # Wrap in a no-unused-vars suppression so only our rule fires.
   printf '/* eslint-disable @typescript-eslint/no-unused-vars */\n%s\n' "$code" > "$tmpfile"
   # Copy into frontend/src so the eslint flat-config frontend block matches.
-  local srcfile="$ROOT/frontend/src/_ap8_test_tmp_${label}.tsx"
+  local srcfile="$ROOT/src/_ap8_test_tmp_${label}.tsx"
   cp "$tmpfile" "$srcfile"
   local out
   out=$(run_eslint "$srcfile")
@@ -47,7 +48,7 @@ assert_silent() {
   local code="$2"
   local tmpfile="$TMPDIR_AP8/neg_${label}.tsx"
   printf '/* eslint-disable @typescript-eslint/no-unused-vars */\n%s\n' "$code" > "$tmpfile"
-  local srcfile="$ROOT/frontend/src/_ap8_test_tmp_${label}.tsx"
+  local srcfile="$ROOT/src/_ap8_test_tmp_${label}.tsx"
   cp "$tmpfile" "$srcfile"
   local out
   out=$(run_eslint "$srcfile")

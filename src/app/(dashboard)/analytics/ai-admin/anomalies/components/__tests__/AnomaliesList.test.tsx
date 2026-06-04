@@ -227,28 +227,25 @@ describe('AnomaliesList — STUB_PENDING_BACKEND_167=false (backend shipped)', (
   beforeEach(() => {
     vi.resetModules()
     // Override helpers to flip the stub flag off
-    vi.doMock(
-      '/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/app/(dashboard)/analytics/ai-admin/anomalies/components/anomalies-helpers',
-      () => ({
-        STUB_PENDING_BACKEND_167: false,
-        RESOLUTION_CAUSE_LABELS: {
-          seasonal: 'Сезонный фактор',
-          pricing_error: 'Ошибка ценообразования',
-          quality_issue: 'Проблема качества товара',
-          tariff_change: 'Изменение тарифов',
-          category_reclassification: 'Реклассификация категории',
-          other: 'Прочее',
-        },
-        RESOLUTION_CAUSES: [
-          'seasonal',
-          'pricing_error',
-          'quality_issue',
-          'tariff_change',
-          'category_reclassification',
-          'other',
-        ],
-      })
-    )
+    vi.doMock('../anomalies-helpers', () => ({
+      STUB_PENDING_BACKEND_167: false,
+      RESOLUTION_CAUSE_LABELS: {
+        seasonal: 'Сезонный фактор',
+        pricing_error: 'Ошибка ценообразования',
+        quality_issue: 'Проблема качества товара',
+        tariff_change: 'Изменение тарифов',
+        category_reclassification: 'Реклассификация категории',
+        other: 'Прочее',
+      },
+      RESOLUTION_CAUSES: [
+        'seasonal',
+        'pricing_error',
+        'quality_issue',
+        'tariff_change',
+        'category_reclassification',
+        'other',
+      ],
+    }))
     vi.doMock('@/lib/api/ai/system', () => ({
       getAnomalies: vi.fn().mockResolvedValue(anomalyData),
       patchAnomalyResolve: vi.fn().mockResolvedValue(undefined),

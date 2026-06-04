@@ -119,9 +119,12 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
     it('should format price gap as "X ₽ (+Y%)"', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      // Gap is 843.87 ₽ (+26.3%)
-      expect(screen.getByText(/843/)).toBeInTheDocument()
-      expect(screen.getByText(/26\.3/)).toBeInTheDocument()
+      // Scope to price-gap-indicator to avoid matching prices in other sections
+      const gapIndicator = screen.getByTestId('price-gap-indicator')
+      // Gap is 843.87 ₽ (+26.3%). Russian locale renders comma decimal + NBSP
+      // before % (formatCurrency/formatPercentage), e.g. "+843,87 ₽ (+26,3 %)".
+      expect(within(gapIndicator).getByText(/843/)).toBeInTheDocument()
+      expect(within(gapIndicator).getByText(/26[.,]3/)).toBeInTheDocument()
     })
 
     it('should show green indicator for gap > 20%', () => {
@@ -223,19 +226,23 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
     it('should show WB commission with percentage and amount', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      expect(screen.getByText(/Комиссия WB.*25%/)).toBeInTheDocument()
+      // Russian locale: formatPercentage(25, 1) → "25,0 %" (comma + NBSP before %)
+      // Use [.,] to handle both comma (ru-RU) and dot (fallback) decimal separators
+      expect(screen.getByText(/Комиссия WB.*25[.,]0/)).toBeInTheDocument()
     })
 
     it('should show acquiring fee with percentage and amount', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      expect(screen.getByText(/Эквайринг.*2%/)).toBeInTheDocument()
+      // Russian locale: formatPercentage(2, 1) → "2,0 %" (comma + NBSP before %)
+      expect(screen.getByText(/Эквайринг.*2[.,]0/)).toBeInTheDocument()
     })
 
     it('should show income tax when tax type is income', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
-      expect(screen.getByText(/Налог с выручки.*6%/)).toBeInTheDocument()
+      // Russian locale: formatPercentage(6, 1) → "6,0 %" (comma + NBSP before %)
+      expect(screen.getByText(/Налог с выручки.*6[.,]0/)).toBeInTheDocument()
     })
 
     it('should not show income tax in percentage breakdown when tax type is profit', () => {
@@ -250,7 +257,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} result={profitTaxResult} taxType="profit" />)
 
       // Tax type profit should not show income tax in percentage costs section
-      expect(screen.queryByText(/Налог с выручки.*6%/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Налог с выручки.*6,0/)).not.toBeInTheDocument()
     })
   })
 

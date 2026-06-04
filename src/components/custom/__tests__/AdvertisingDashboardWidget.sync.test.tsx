@@ -319,11 +319,16 @@ describe('AdvertisingDashboardWidget Sync - Story 60.6-FE', () => {
         wrapper: createQueryWrapper(),
       })
 
-      await waitFor(() => {
-        expect(screen.getByText(/500/)).toBeInTheDocument() // sales formatted
-        expect(screen.getByText(/72%/)).toBeInTheDocument() // organic share
-        expect(screen.getByText(/4\.0x/)).toBeInTheDocument() // ROAS (3.99 rounds to 4.0)
-      })
+      await waitFor(
+        () => {
+          expect(screen.getByText(/500/)).toBeInTheDocument() // sales formatted
+          // Russian locale: formatPercentageInt(72) → "72 %" (NBSP before %)
+          expect(screen.getByText(/72\s*%/)).toBeInTheDocument() // organic share
+          // Russian locale: formatRoas(3.99) → "4,0x" (comma decimal)
+          expect(screen.getByText(/4[.,]0x/)).toBeInTheDocument() // ROAS (3.99 rounds to 4.0)
+        },
+        { timeout: 5000 }
+      )
     })
 
     it('should show loading state while fetching', () => {

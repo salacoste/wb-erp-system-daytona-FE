@@ -462,11 +462,15 @@ describe('Story 60.6-FE: AdvertisingEmptyState Integration', () => {
       )
 
       // 4. Check data is now shown
-      await waitFor(() => {
-        expect(screen.queryByTestId('advertising-empty-state')).not.toBeInTheDocument()
-        expect(screen.getByTestId('advertising-widget')).toBeInTheDocument()
-        expect(screen.getByText(/4\.0x/)).toBeInTheDocument() // ROAS value
-      })
+      await waitFor(
+        () => {
+          expect(screen.queryByTestId('advertising-empty-state')).not.toBeInTheDocument()
+          expect(screen.getByTestId('advertising-widget')).toBeInTheDocument()
+          // Russian locale: formatRoas(3.99) → "4,0x" (comma decimal)
+          expect(screen.getByText(/4[.,]0x/)).toBeInTheDocument() // ROAS value
+        },
+        { timeout: 5000 }
+      )
     })
   })
 })
