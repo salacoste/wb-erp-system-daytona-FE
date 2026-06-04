@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
+import { formatPercentage } from '@/lib/utils'
 import type { ReturnCategoryItem } from '@/types/analytics-returns'
 
 interface ReturnReasonsPieChartProps {
@@ -92,7 +93,7 @@ function StackedBar({ categories }: { categories: ReturnCategoryItem[] }) {
           key={cat.category}
           className={`${CATEGORY_COLORS[cat.category] ?? 'bg-gray-400'} transition-all`}
           style={{ width: `${Math.max(cat.percentage, 1)}%` }}
-          title={`${cat.displayName}: ${cat.percentage.toFixed(1)}%`}
+          title={`${cat.displayName}: ${formatPercentage(cat.percentage, 1)}`}
         />
       ))}
     </div>
@@ -110,7 +111,7 @@ function CategoryRow({ item }: { item: ReturnCategoryItem }) {
         <span>{item.displayName}</span>
       </div>
       <div className="flex items-center gap-3">
-        <span className={`font-medium ${textColor}`}>{item.percentage.toFixed(1)}%</span>
+        <span className={`font-medium ${textColor}`}>{formatPercentage(item.percentage, 1)}</span>
         <span className="text-muted-foreground">({item.count})</span>
         <TrendBadge trend={item.trend} delta={item.trendDelta} />
       </div>
@@ -128,7 +129,12 @@ function TrendBadge({ trend, delta }: { trend: string; delta: number }) {
   return (
     <span className={`text-xs ${color}`}>
       {arrow}
-      {Math.abs(delta).toFixed(1)}
+      {/* Russian locale: comma decimal (was dot-locale toFixed). Bare pp delta — no "%"/unit,
+          so the locale-percent gate doesn't track it; fixed here for same-row consistency. */}
+      {Math.abs(delta).toLocaleString('ru-RU', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}
     </span>
   )
 }

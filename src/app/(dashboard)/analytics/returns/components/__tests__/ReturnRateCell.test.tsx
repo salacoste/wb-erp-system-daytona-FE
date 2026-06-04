@@ -17,14 +17,14 @@ describe('ReturnRateCell', () => {
 
   it('colours a genuine 0% green (not the same as unknown)', () => {
     render(<ReturnRateCell rate={0} />)
-    const el = screen.getByText('0.0%')
+    const el = screen.getByText(/0,0\s%/) // \s matches the NBSP separator
     expect(el.className).toContain('text-green-600')
   })
 
   it('colours high rates yellow (>=20) and red (>50)', () => {
     const { rerender } = render(<ReturnRateCell rate={20} />)
-    expect(screen.getByText('20.0%').className).toContain('text-yellow-600')
+    expect(screen.getByText(/20,0\s%/).className).toContain('text-yellow-600')
     rerender(<ReturnRateCell rate={51} />)
-    expect(screen.getByText('51.0%').className).toContain('text-red-600')
+    expect(screen.getByText(/51,0\s%/).className).toContain('text-red-600')
   })
 })

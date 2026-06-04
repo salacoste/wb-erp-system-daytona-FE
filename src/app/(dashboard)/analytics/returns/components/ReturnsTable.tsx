@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, AlertTriangle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 interface ReturnsTableProps {
   from?: string
@@ -174,5 +174,5 @@ export function ReturnRateCell({ rate }: { rate: number | null }) {
   if (rate > 50) color = 'text-red-600'
   else if (rate >= 20) color = 'text-yellow-600'
 
-  return <span className={`font-medium ${color}`}>{rate.toFixed(1)}%</span>
+  return <span className={`font-medium ${color}`}>{formatPercentage(rate, 1)}</span>
 }
