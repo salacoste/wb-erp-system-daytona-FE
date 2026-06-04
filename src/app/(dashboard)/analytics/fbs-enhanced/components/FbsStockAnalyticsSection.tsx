@@ -11,6 +11,7 @@
 import { Package, Boxes, AlertTriangle, XCircle, Clock } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { FbsStockAnalytics } from '@/types/fbs-enhanced'
+import { formatDecimal } from '@/lib/utils'
 
 interface FbsStockAnalyticsSectionProps {
   stockAnalytics: FbsStockAnalytics | null | undefined
@@ -85,7 +86,9 @@ export function FbsStockAnalyticsSection({ stockAnalytics }: FbsStockAnalyticsSe
         <KpiCard
           title="Дней покрытия (ср.)"
           value={
-            stockAnalytics.avgDaysOfCover == null ? '—' : stockAnalytics.avgDaysOfCover.toFixed(1)
+            stockAnalytics.avgDaysOfCover == null
+              ? '—'
+              : formatDecimal(stockAnalytics.avgDaysOfCover)
           }
           icon={<Clock className="h-4 w-4" />}
         />
