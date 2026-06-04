@@ -11,6 +11,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, RefreshCw, Info } from 'lucide-react'
+import { formatPercentageInt } from '@/lib/utils'
 
 export interface ProcessingAlertProps {
   processingStatus?: { reportLoading?: { progress?: number } }
@@ -26,7 +27,9 @@ export function ProcessingAlert({ processingStatus }: ProcessingAlertProps): Rea
         <p>
           Финансовые отчеты обрабатываются. Метрики появятся после завершения.
           {processingStatus?.reportLoading?.progress !== undefined && (
-            <span className="ml-2">Прогресс: {processingStatus.reportLoading.progress}%</span>
+            <span className="ml-2">
+              Прогресс: {formatPercentageInt(processingStatus.reportLoading.progress)}
+            </span>
           )}
         </p>
       </AlertDescription>

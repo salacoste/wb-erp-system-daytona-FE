@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/routes'
+import { formatPercentageInt } from '@/lib/utils'
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 import { ProcessingNoData } from './ProcessingNoData'
 
@@ -150,7 +151,7 @@ export function ProcessingStatus() {
                 <span className="font-medium">Парсинг продуктов</span>
               </div>
               <span className="text-sm text-muted-foreground">
-                {status.productParsing.progress}%
+                {formatPercentageInt(status.productParsing.progress)}
               </span>
             </div>
             <Progress value={status.productParsing.progress} className="h-2" />
@@ -170,7 +171,7 @@ export function ProcessingStatus() {
                 <span className="font-medium">Загрузка финансовых отчетов</span>
               </div>
               <span className="text-sm text-muted-foreground">
-                {status.reportLoading.progress}%
+                {formatPercentageInt(status.reportLoading.progress)}
               </span>
             </div>
             <Progress value={status.reportLoading.progress} className="h-2" />

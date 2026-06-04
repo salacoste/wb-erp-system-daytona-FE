@@ -85,8 +85,8 @@ describe('ProcessingStatus', () => {
 
       expect(screen.getByText(/парсинг продуктов/i)).toBeInTheDocument()
       expect(screen.getAllByText(/загрузка финансовых отчетов/i)[0]).toBeInTheDocument()
-      expect(screen.getByText('45%')).toBeInTheDocument()
-      expect(screen.getByText('30%')).toBeInTheDocument()
+      expect(screen.getByText(/^45\s%$/)).toBeInTheDocument() // ru-RU: "45 %" (NBSP); anchored
+      expect(screen.getByText(/^30\s%$/)).toBeInTheDocument()
     },
     { timeout: 5000 }
   )
