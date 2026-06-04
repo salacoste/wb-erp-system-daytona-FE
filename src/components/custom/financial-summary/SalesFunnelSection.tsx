@@ -19,12 +19,26 @@ export function SalesFunnelSection({
   comparisonSummary,
   isComparison,
 }: SalesFunnelSectionProps) {
-  // Only show when retail_price_total is available (Request #58)
-  if (!(summary.retail_price_total_total || summary.retail_price_total)) {
+  // Only show when a retail-price base is available (Request #58). retail_price_total_combined is
+  // the field the backend emits at summary_total scope (the default view); retail_price_total is
+  // the per-region (rus/eaeu) name. The legacy retail_price_total_total is a ghost field (always
+  // undefined) kept only as a defensive fallback. Reading combined FIRST fixes the funnel card
+  // being hidden on the default summary_total view (verified vs backend finance-mapping.service.ts:271).
+  if (
+    !(
+      summary.retail_price_total_combined ||
+      summary.retail_price_total_total ||
+      summary.retail_price_total
+    )
+  ) {
     return null
   }
 
-  const retailPrice = summary.retail_price_total_total ?? summary.retail_price_total ?? 0
+  const retailPrice =
+    summary.retail_price_total_combined ??
+    summary.retail_price_total_total ??
+    summary.retail_price_total ??
+    0
   const salesGross = summary.sales_gross_total ?? summary.sales_gross ?? 0
   const saleGross = summary.sale_gross_total ?? summary.sale_gross ?? 0
   const payoutTotal = summary.payout_total ?? 0
@@ -40,7 +54,10 @@ export function SalesFunnelSection({
   const wbDeductionsPct = saleGross > 0 ? (wbDeductions / saleGross) * 100 : 0
 
   const compRetailPrice =
-    comparisonSummary?.retail_price_total_total ?? comparisonSummary?.retail_price_total ?? 0
+    comparisonSummary?.retail_price_total_combined ??
+    comparisonSummary?.retail_price_total_total ??
+    comparisonSummary?.retail_price_total ??
+    0
   const compSalesGross = comparisonSummary?.sales_gross_total ?? comparisonSummary?.sales_gross ?? 0
   const compSaleGross = comparisonSummary?.sale_gross_total ?? comparisonSummary?.sale_gross ?? 0
 

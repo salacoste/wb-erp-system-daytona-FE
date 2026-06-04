@@ -124,13 +124,22 @@ export interface FinanceSummary {
    */
   retail_price_total?: number
   /**
-   * ⚠️ MISNAMED — does NOT correspond to any backend field.
-   * Backend uses `retail_price_total_combined` (NOT `_total_total`) for summary_total scope —
-   * verified empirically 2026-05-08 (Story 96.7 4th-pass U-1 finding). Consumers reading this
-   * field always get `undefined`; the existing `?? summary.retail_price_total` fallback in
-   * `SalesFunnelSection.tsx` masks the bug for summary_rus/eaeu data but renders 0 for
-   * summary_total scope. Filed as Epic 97-FE candidate to rename → `retail_price_total_combined`
-   * + remove from this type.
+   * Sum of catalog prices BEFORE WB discounts at the **summary_total** scope — the funnel "РРЦ"
+   * base for the combined RUS+EAEU view. This is the field the backend ACTUALLY emits at
+   * summary_total (`finance-mapping.service.ts:271` → `retail_price_total_combined`), verified
+   * against backend source 2026-06-04. `SalesFunnelSection` reads this FIRST so the "Воронка
+   * продаж" card renders on the default `summary_total` view (previously hidden — see ghost field
+   * below). Per-region scopes use `retail_price_total` instead.
+   */
+  retail_price_total_combined?: number
+  /**
+   * ⚠️ GHOST FIELD — does NOT correspond to any backend field (no `_total_total` exists).
+   * Verified empirically 2026-05-08 and against backend source 2026-06-04. Reading it always
+   * yields `undefined`. Superseded by `retail_price_total_combined` above, which
+   * `SalesFunnelSection.tsx` now reads as the primary summary_total source (the earlier
+   * `?? retail_price_total` fallback only worked for summary_rus/eaeu, leaving the funnel card
+   * HIDDEN on the default summary_total view). Retained as a harmless defensive fallback; safe to
+   * remove once no consumer references it.
    */
   retail_price_total_total?: number
 

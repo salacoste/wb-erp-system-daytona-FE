@@ -397,3 +397,52 @@ describe('Margin Formula Verification', () => {
     expect(wrongMargin).toBeCloseTo(31.38, 1)
   })
 })
+
+// ============================================================================
+// retail_price_total_combined preservation across multi-week aggregation
+// Regression for the 2026-06-04 fix: the summary_total-scope retail-price field must be summed,
+// else SalesFunnelSection re-hides the "Воронка продаж" card on aggregated (month) views.
+// ============================================================================
+
+describe('aggregateFinanceSummaries — retail_price_total_combined (summary_total scope)', () => {
+  it('sums retail_price_total_combined across weeks so the funnel base survives month aggregation', () => {
+    const w1: FinanceSummary = {
+      week: '2025-W01',
+      retail_price_total_combined: 600_000,
+      payout_total: 0,
+      penalties_total: 0,
+    }
+    const w2: FinanceSummary = {
+      week: '2025-W02',
+      retail_price_total_combined: 400_000,
+      payout_total: 0,
+      penalties_total: 0,
+    }
+
+    const agg = aggregateFinanceSummaries([w1, w2])
+
+    expect(agg).not.toBeNull()
+    // 600k + 400k — present (not dropped) so the funnel "РРЦ" guard stays truthy.
+    expect(agg?.retail_price_total_combined).toBe(1_000_000)
+  })
+
+  it('omits retail_price_total_combined only when no week has it (per-region-only data)', () => {
+    const w1: FinanceSummary = {
+      week: '2025-W01',
+      retail_price_total: 300_000,
+      payout_total: 0,
+      penalties_total: 0,
+    }
+    const w2: FinanceSummary = {
+      week: '2025-W02',
+      retail_price_total: 200_000,
+      payout_total: 0,
+      penalties_total: 0,
+    }
+
+    const agg = aggregateFinanceSummaries([w1, w2])
+
+    expect(agg?.retail_price_total_combined).toBeUndefined()
+    expect(agg?.retail_price_total).toBe(500_000)
+  })
+})

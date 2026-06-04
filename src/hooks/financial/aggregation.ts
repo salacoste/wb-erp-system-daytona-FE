@@ -118,6 +118,11 @@ export function aggregateFinanceSummaries(summaries: FinanceSummary[]): FinanceS
     'wb_sales_gross',
     'wb_returns_gross_total',
     'wb_returns_gross',
+    // retail_price_total_combined = summary_total scope (default view); retail_price_total =
+    // per-region scope. Both must be summed so SalesFunnelSection's "РРЦ" base survives multi-week
+    // aggregation — omitting combined re-hides the funnel on aggregated summary_total views
+    // (2026-06-04 fix; the trailing _total_total is a ghost field kept only as a dead no-op).
+    'retail_price_total_combined',
     'retail_price_total',
     'retail_price_total_total',
     'cogs_total',
