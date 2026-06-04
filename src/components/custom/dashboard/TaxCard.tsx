@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { StandardMetricSkeleton } from './MetricCardStates'
 import type { TaxMetrics } from '@/types/finance-summary'
@@ -193,7 +193,7 @@ function VatBadge({ taxMetrics }: { taxMetrics: TaxMetrics }): React.ReactElemen
     <Tooltip>
       <TooltipTrigger asChild>
         <span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">
-          НДС {taxMetrics.vat_rate}%
+          НДС {taxMetrics.vat_rate == null ? '—' : formatPercentageInt(taxMetrics.vat_rate)}
         </span>
       </TooltipTrigger>
       <TooltipContent size="sm">

@@ -106,6 +106,15 @@ describe('TaxCard (Story 66.5-FE — Backend Data)', () => {
     expect(screen.getByText(/НДС\s*20\s*%/)).toBeInTheDocument()
   })
 
+  it('6b: vat_rate=0 renders the badge (== null guard, not falsy — 0 is a valid rate)', () => {
+    renderTaxCard({
+      taxMetrics: createTaxMetrics({ vat_payer: true, vat_rate: 0 }),
+      previousTaxMetrics: null,
+      isLoading: false,
+    })
+    expect(screen.getByText(/НДС\s*0\s*%/)).toBeInTheDocument()
+  })
+
   it('7: hides НДС badge when vat_payer is false', () => {
     renderTaxCard({
       taxMetrics: createTaxMetrics({ vat_payer: false }),
