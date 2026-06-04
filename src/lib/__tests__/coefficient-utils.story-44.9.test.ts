@@ -382,13 +382,13 @@ describe('calculateCoefficientImpact', () => {
 
     it('formats percent with % symbol', () => {
       const impact = calculateCoefficientImpact(100, 1.25)
-      expect(impact.percentDisplay).toBe('+25.0%')
+      expect(impact.percentDisplay).toMatch(/^\+25,0\s%$/) // ru-RU: comma + NBSP
     })
 
     it('shows 0 ₽ for no increase', () => {
       const impact = calculateCoefficientImpact(100, 1.0)
       expect(impact.increaseDisplay).toBe('0 ₽')
-      expect(impact.percentDisplay).toBe('0%')
+      expect(impact.percentDisplay).toMatch(/^0,0\s%$/) // ru-RU: "0,0 %" (was "0%")
     })
   })
 })
@@ -621,7 +621,9 @@ describe('formatDateLongRu', () => {
     expect(formatted).toContain('21')
     expect(formatted).toContain('2026')
     // Check for Russian month name pattern
-    expect(formatted).toMatch(/января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря/)
+    expect(formatted).toMatch(
+      /января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря/
+    )
   })
 })
 
@@ -731,6 +733,6 @@ describe('integration: coefficient workflow', () => {
 
     expect(impact.increase).toBe(14.5)
     expect(impact.percentIncrease).toBe(25)
-    expect(impact.percentDisplay).toBe('+25.0%')
+    expect(impact.percentDisplay).toMatch(/^\+25,0\s%$/) // ru-RU: comma + NBSP
   })
 })

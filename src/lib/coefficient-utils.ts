@@ -4,7 +4,7 @@
  * Reference: docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md
  */
 
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, formatPercentage } from '@/lib/utils'
 
 /** Raw coefficient from WB API (integer: 100 = 1.0) */
 export interface RawCoefficient {
@@ -48,11 +48,56 @@ export interface CoefficientImpact {
 
 /** 5-level status config: base 0-1.0 (0=FREE), elevated 1.01-1.5, high 1.51-2.0, peak >2.0, unavailable <0 */
 export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientStatusConfig> = {
-  base: { status: 'base', label: 'Базовый', color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-700', borderColor: 'border-green-300', minValue: 0, maxValue: 1.0 },
-  elevated: { status: 'elevated', label: 'Повышенный', color: 'yellow', bgColor: 'bg-yellow-100', textColor: 'text-yellow-700', borderColor: 'border-yellow-300', minValue: 1.01, maxValue: 1.5 },
-  high: { status: 'high', label: 'Высокий', color: 'orange', bgColor: 'bg-orange-100', textColor: 'text-orange-700', borderColor: 'border-orange-300', minValue: 1.51, maxValue: 2.0 },
-  peak: { status: 'peak', label: 'Пиковый', color: 'red', bgColor: 'bg-red-100', textColor: 'text-red-700', borderColor: 'border-red-300', minValue: 2.01, maxValue: Infinity },
-  unavailable: { status: 'unavailable', label: 'Недоступно', color: 'gray', bgColor: 'bg-gray-100', textColor: 'text-gray-400', borderColor: 'border-gray-300', minValue: -Infinity, maxValue: -0.01 },
+  base: {
+    status: 'base',
+    label: 'Базовый',
+    color: 'green',
+    bgColor: 'bg-green-100',
+    textColor: 'text-green-700',
+    borderColor: 'border-green-300',
+    minValue: 0,
+    maxValue: 1.0,
+  },
+  elevated: {
+    status: 'elevated',
+    label: 'Повышенный',
+    color: 'yellow',
+    bgColor: 'bg-yellow-100',
+    textColor: 'text-yellow-700',
+    borderColor: 'border-yellow-300',
+    minValue: 1.01,
+    maxValue: 1.5,
+  },
+  high: {
+    status: 'high',
+    label: 'Высокий',
+    color: 'orange',
+    bgColor: 'bg-orange-100',
+    textColor: 'text-orange-700',
+    borderColor: 'border-orange-300',
+    minValue: 1.51,
+    maxValue: 2.0,
+  },
+  peak: {
+    status: 'peak',
+    label: 'Пиковый',
+    color: 'red',
+    bgColor: 'bg-red-100',
+    textColor: 'text-red-700',
+    borderColor: 'border-red-300',
+    minValue: 2.01,
+    maxValue: Infinity,
+  },
+  unavailable: {
+    status: 'unavailable',
+    label: 'Недоступно',
+    color: 'gray',
+    bgColor: 'bg-gray-100',
+    textColor: 'text-gray-400',
+    borderColor: 'border-gray-300',
+    minValue: -Infinity,
+    maxValue: -0.01,
+  },
 }
 
 /** Normalize coefficient from API: 100 → 1.0 */
@@ -84,7 +129,7 @@ export function getCoefficientStatusConfig(coefficient: number): CoefficientStat
 
 /** Normalize array of coefficients from API response */
 export function normalizeCoefficients(raw: RawCoefficient[]): NormalizedCoefficient[] {
-  return raw.map((item) => {
+  return raw.map(item => {
     const normalized = normalizeCoefficient(item.coefficient)
     // isAvailable defaults to coefficient >= 0 if not provided
     const isAvailable = item.isAvailable ?? item.coefficient >= 0
@@ -98,14 +143,19 @@ export function normalizeCoefficients(raw: RawCoefficient[]): NormalizedCoeffici
 }
 
 /** Get today's coefficient from array */
-export function getTodayCoefficient(coefficients: NormalizedCoefficient[]): NormalizedCoefficient | null {
+export function getTodayCoefficient(
+  coefficients: NormalizedCoefficient[]
+): NormalizedCoefficient | null {
   const today = new Date().toISOString().split('T')[0]
-  return coefficients.find((c) => c.date === today) ?? coefficients[0] ?? null
+  return coefficients.find(c => c.date === today) ?? coefficients[0] ?? null
 }
 
 /** Get coefficient for a specific date */
-export function getCoefficientForDate(coefficients: NormalizedCoefficient[], date: string): NormalizedCoefficient | null {
-  return coefficients.find((c) => c.date === date) ?? null
+export function getCoefficientForDate(
+  coefficients: NormalizedCoefficient[],
+  date: string
+): NormalizedCoefficient | null {
+  return coefficients.find(c => c.date === date) ?? null
 }
 
 /** Calculate cost increase from coefficient */
@@ -118,7 +168,7 @@ export function calculateCoefficientImpact(
       increase: 0,
       percentIncrease: 0,
       increaseDisplay: '0 ₽',
-      percentDisplay: '0%',
+      percentDisplay: formatPercentage(0, 1), // "0,0 %" (ru-RU), consistent with the +N,N % branch
     }
   }
 
@@ -130,7 +180,8 @@ export function calculateCoefficientImpact(
     increase: Math.round(increase * 100) / 100,
     percentIncrease: Math.round(percentIncrease * 10) / 10,
     increaseDisplay: `+${formatCurrency(increase)}`,
-    percentDisplay: `+${percentIncrease.toFixed(1)}%`,
+    // percentIncrease > 0 here (guard returns early for coefficient <= 1), so '+' never doubles.
+    percentDisplay: `+${formatPercentage(percentIncrease, 1)}`,
   }
 }
 
@@ -169,7 +220,9 @@ export function getTomorrowDate(): string {
 }
 
 /** Get first available date from coefficients - Story 44.26a-FE */
-export function getFirstAvailableDate(coefficients: NormalizedCoefficient[]): NormalizedCoefficient | null {
+export function getFirstAvailableDate(
+  coefficients: NormalizedCoefficient[]
+): NormalizedCoefficient | null {
   // Use isAvailable flag: coefficient=0 with isAvailable=true means FREE slot
-  return coefficients.find((c) => c.isAvailable) ?? null
+  return coefficients.find(c => c.isAvailable) ?? null
 }

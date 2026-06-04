@@ -70,7 +70,7 @@ describe('LogisticsCoefficientsSection', () => {
       render(<LogisticsCoefficientsSection {...defaultProps} coefficient={1.25} />)
 
       // Header should show +25% for coefficient 1.25
-      expect(screen.getByText(/\+25\.0%/)).toBeInTheDocument()
+      expect(screen.getByText(/\+25,0\s%/)).toBeInTheDocument()
     })
 
     it('shows "(базовый)" for coefficient 1.0', () => {
@@ -106,12 +106,7 @@ describe('LogisticsCoefficientsSection', () => {
     })
 
     it('shows effective date when provided', () => {
-      render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          effectiveDate="2026-01-20"
-        />
-      )
+      render(<LogisticsCoefficientsSection {...defaultProps} effectiveDate="2026-01-20" />)
 
       // Expand the section
       fireEvent.click(screen.getByRole('button'))
@@ -187,9 +182,9 @@ describe('LogisticsCoefficientsSection', () => {
       fireEvent.click(screen.getByRole('button'))
 
       // Info icon should be present for tooltip
-      const infoIcon = screen.getByRole('button').parentElement?.parentElement?.querySelector(
-        '[class*="cursor-help"]'
-      )
+      const infoIcon = screen
+        .getByRole('button')
+        .parentElement?.parentElement?.querySelector('[class*="cursor-help"]')
       expect(infoIcon).toBeInTheDocument()
     })
   })
@@ -201,10 +196,7 @@ describe('LogisticsCoefficientsSection', () => {
   describe('AC3: 14-Day Coefficient Calendar', () => {
     it('renders calendar when rawCoefficients are provided', () => {
       render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          rawCoefficients={rawCoefficientsFixture}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} rawCoefficients={rawCoefficientsFixture} />
       )
 
       // Expand section
@@ -226,10 +218,7 @@ describe('LogisticsCoefficientsSection', () => {
 
     it('shows color-coded coefficient cells in calendar', () => {
       render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          rawCoefficients={rawCoefficientsFixture}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} rawCoefficients={rawCoefficientsFixture} />
       )
 
       // Expand section
@@ -252,11 +241,7 @@ describe('LogisticsCoefficientsSection', () => {
   describe('AC4: Cost Impact Calculation', () => {
     it('shows cost increase when coefficient > 1', () => {
       render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          coefficient={1.25}
-          baseLogisticsCost={58}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} coefficient={1.25} baseLogisticsCost={58} />
       )
 
       // Expand section
@@ -270,11 +255,7 @@ describe('LogisticsCoefficientsSection', () => {
 
     it('does not show cost increase when coefficient is 1.0', () => {
       render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          coefficient={1.0}
-          baseLogisticsCost={58}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} coefficient={1.0} baseLogisticsCost={58} />
       )
 
       // Expand section
@@ -286,18 +267,14 @@ describe('LogisticsCoefficientsSection', () => {
 
     it('calculates percentage increase correctly', () => {
       render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          coefficient={1.5}
-          baseLogisticsCost={100}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} coefficient={1.5} baseLogisticsCost={100} />
       )
 
       // Expand section
       fireEvent.click(screen.getByRole('button'))
 
       // 50% increase (appears in both header and cost impact section)
-      const percentageMatches = screen.getAllByText(/\+50\.0%/)
+      const percentageMatches = screen.getAllByText(/\+50,0\s%/)
       expect(percentageMatches.length).toBeGreaterThanOrEqual(1)
     })
 
@@ -314,20 +291,16 @@ describe('LogisticsCoefficientsSection', () => {
       fireEvent.click(screen.getByRole('button'))
 
       // Initial: 25% increase (appears in both header and cost impact section)
-      const initialMatches = screen.getAllByText(/\+25\.0%/)
+      const initialMatches = screen.getAllByText(/\+25,0\s%/)
       expect(initialMatches.length).toBeGreaterThanOrEqual(1)
 
       // Update coefficient to 1.5
       rerender(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          coefficient={1.5}
-          baseLogisticsCost={100}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} coefficient={1.5} baseLogisticsCost={100} />
       )
 
       // Updated: 50% increase (appears in both header and cost impact section)
-      const updatedMatches = screen.getAllByText(/\+50\.0%/)
+      const updatedMatches = screen.getAllByText(/\+50,0\s%/)
       expect(updatedMatches.length).toBeGreaterThanOrEqual(1)
     })
   })
@@ -403,37 +376,20 @@ describe('LogisticsCoefficientsSection', () => {
 
   describe('AC7: No Warehouse Selected', () => {
     it('shows info notice when no warehouse selected', () => {
-      render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          warehouseId={null}
-        />
-      )
+      render(<LogisticsCoefficientsSection {...defaultProps} warehouseId={null} />)
 
-      expect(
-        screen.getByText('Выберите склад для отображения коэффициента')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Выберите склад для отображения коэффициента')).toBeInTheDocument()
     })
 
     it('does not show collapsible section when no warehouse', () => {
-      render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          warehouseId={null}
-        />
-      )
+      render(<LogisticsCoefficientsSection {...defaultProps} warehouseId={null} />)
 
       // Should not show the collapsible trigger
       expect(screen.queryByText(/Коэффициент:/)).not.toBeInTheDocument()
     })
 
     it('shows info icon with blue styling', () => {
-      render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          warehouseId={null}
-        />
-      )
+      render(<LogisticsCoefficientsSection {...defaultProps} warehouseId={null} />)
 
       // Should have Alert component with blue styling
       const alert = screen.getByRole('alert')
@@ -484,12 +440,7 @@ describe('LogisticsCoefficientsSection', () => {
     })
 
     it('handles empty rawCoefficients array', () => {
-      render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          rawCoefficients={[]}
-        />
-      )
+      render(<LogisticsCoefficientsSection {...defaultProps} rawCoefficients={[]} />)
 
       // Expand section
       fireEvent.click(screen.getByRole('button'))
@@ -500,11 +451,7 @@ describe('LogisticsCoefficientsSection', () => {
 
     it('handles zero base logistics cost', () => {
       render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          coefficient={1.25}
-          baseLogisticsCost={0}
-        />
+        <LogisticsCoefficientsSection {...defaultProps} coefficient={1.25} baseLogisticsCost={0} />
       )
 
       // Expand section
@@ -556,12 +503,7 @@ describe('LogisticsCoefficientsSection', () => {
     })
 
     it('info alert has alert role for no warehouse state', () => {
-      render(
-        <LogisticsCoefficientsSection
-          {...defaultProps}
-          warehouseId={null}
-        />
-      )
+      render(<LogisticsCoefficientsSection {...defaultProps} warehouseId={null} />)
 
       expect(screen.getByRole('alert')).toBeInTheDocument()
     })
