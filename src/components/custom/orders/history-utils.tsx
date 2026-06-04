@@ -16,19 +16,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 // ============================================================================
 
 /**
- * Format ISO timestamp to Russian date format: DD.MM.YYYY HH:mm
- */
-export function formatHistoryTimestamp(isoDate: string): string {
-  const date = new Date(isoDate)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day}.${month}.${year} ${hours}:${minutes}`
-}
-
-/**
  * Format duration in minutes to human readable Russian format
  * @example formatDuration(90) => "1 ч 30 мин"
  * @example formatDuration(1500) => "1 д 1 ч"

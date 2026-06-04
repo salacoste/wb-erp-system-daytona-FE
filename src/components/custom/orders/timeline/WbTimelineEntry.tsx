@@ -30,7 +30,8 @@ import {
 } from '@/lib/wb-status-mapping'
 import { WbStatusBadge } from './WbStatusBadge'
 import { DurationDisplay } from './DurationDisplay'
-import { formatHistoryTimestamp, groupWbEntriesByCategory } from './timeline-utils'
+import { groupWbEntriesByCategory } from './timeline-utils'
+import { formatDateTime } from '@/lib/utils'
 
 const CATEGORY_ICONS: Record<WbStatusCategory, React.ComponentType<{ className?: string }>> = {
   creation: Plus,
@@ -54,7 +55,7 @@ export function WbTimelineEntry({
 }) {
   const statusConfig = getWbStatusConfig(entry.wbStatusCode)
   const isFinal = isWbStatusFinal(entry.wbStatusCode)
-  const timestamp = formatHistoryTimestamp(entry.wbStatusChangedAt)
+  const timestamp = formatDateTime(entry.wbStatusChangedAt)
   const duration = entry.durationMinutes
 
   return (

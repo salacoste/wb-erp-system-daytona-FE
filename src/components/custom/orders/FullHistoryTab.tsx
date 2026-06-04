@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getWbStatusLabel, getWbStatusConfig } from '@/lib/wb-status-mapping'
-import { cn } from '@/lib/utils'
+import { cn, formatDateTime } from '@/lib/utils'
 
 export interface FullHistoryTabProps {
   data: FullHistoryResponse | undefined
@@ -73,7 +73,7 @@ interface FullHistoryTimelineEntryProps {
 
 function FullHistoryTimelineEntry({ entry, isLast }: FullHistoryTimelineEntryProps) {
   const isWb = entry.source === 'wb_native'
-  const timestamp = formatHistoryTimestamp(entry.timestamp)
+  const timestamp = formatDateTime(entry.timestamp)
 
   return (
     <div className="flex gap-3 py-2">
@@ -170,14 +170,4 @@ function EmptyState({ message }: { message: string }) {
       <p>{message}</p>
     </div>
   )
-}
-
-function formatHistoryTimestamp(isoDate: string): string {
-  const date = new Date(isoDate)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day}.${month}.${year} ${hours}:${minutes}`
 }

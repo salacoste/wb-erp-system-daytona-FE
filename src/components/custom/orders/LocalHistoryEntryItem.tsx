@@ -11,8 +11,8 @@
 import { Clock } from 'lucide-react'
 import type { LocalHistoryResponse, LocalHistoryEntry } from '@/types/orders-history'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
-import { formatHistoryTimestamp, formatDuration } from './history-utils'
+import { cn, formatDateTime } from '@/lib/utils'
+import { formatDuration } from './history-utils'
 
 // --- Summary & Current Status ---
 
@@ -32,10 +32,8 @@ export function SummarySection({ summary, totalDuration }: SummarySectionProps) 
         </>
       )}
       <div className="mt-1 text-xs text-muted-foreground">
-        Создан: {formatHistoryTimestamp(summary.createdAt)}
-        {summary.completedAt && (
-          <span> | Завершён: {formatHistoryTimestamp(summary.completedAt)}</span>
-        )}
+        Создан: {formatDateTime(summary.createdAt)}
+        {summary.completedAt && <span> | Завершён: {formatDateTime(summary.completedAt)}</span>}
       </div>
     </div>
   )
@@ -66,7 +64,7 @@ interface LocalHistoryTimelineEntryProps {
 }
 
 export function LocalHistoryTimelineEntry({ entry, isLast }: LocalHistoryTimelineEntryProps) {
-  const timestamp = formatHistoryTimestamp(entry.changedAt)
+  const timestamp = formatDateTime(entry.changedAt)
   const duration = entry.durationMinutes ? formatDuration(entry.durationMinutes) : null
 
   return (

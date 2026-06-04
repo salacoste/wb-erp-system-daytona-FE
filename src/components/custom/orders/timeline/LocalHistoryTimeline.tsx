@@ -12,12 +12,12 @@
 
 import { Clock, User } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
+import { cn, formatDateTime } from '@/lib/utils'
 import type { LocalHistoryEntry } from '@/types/orders-history'
 import { TimelineEmptyState } from './TimelineEmptyState'
 import { TimelineSummary } from './TimelineSummary'
 import { DurationDisplay } from './DurationDisplay'
-import { formatHistoryTimestamp, sortEntriesChronologically } from './timeline-utils'
+import { sortEntriesChronologically } from './timeline-utils'
 
 export interface LocalHistoryTimelineProps {
   /** Local history entries */
@@ -94,7 +94,7 @@ function LocalTimelineEntry({
   isLast: boolean
   compact: boolean
 }) {
-  const timestamp = formatHistoryTimestamp(entry.changedAt)
+  const timestamp = formatDateTime(entry.changedAt)
   const isFinalStatus =
     entry.newSupplierStatus === 'complete' || entry.newSupplierStatus === 'cancel'
 

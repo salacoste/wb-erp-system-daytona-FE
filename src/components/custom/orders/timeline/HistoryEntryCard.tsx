@@ -8,13 +8,12 @@
  * @see docs/stories/epic-40/story-40.5-fe-history-timeline-components.md#AC4
  */
 
-import { cn } from '@/lib/utils'
+import { cn, formatDateTime } from '@/lib/utils'
 import type { FullHistoryEntry } from '@/types/orders-history'
 import { getWbStatusConfig } from '@/lib/wb-status-mapping'
 import { HistorySourceBadge } from './HistorySourceBadge'
 import { DurationDisplay } from './DurationDisplay'
 import { WbStatusBadge } from './WbStatusBadge'
-import { formatHistoryTimestamp } from './timeline-utils'
 
 export interface HistoryEntryCardProps {
   /** Full history entry (WB or local) */
@@ -40,7 +39,7 @@ export function HistoryEntryCard({
   className,
 }: HistoryEntryCardProps) {
   const isWb = entry.source === 'wb_native'
-  const timestamp = formatHistoryTimestamp(entry.timestamp)
+  const timestamp = formatDateTime(entry.timestamp)
 
   return (
     <div className={cn('flex gap-3 py-2', className)}>

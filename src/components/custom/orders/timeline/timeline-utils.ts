@@ -11,19 +11,6 @@ import type { WbStatusCategory } from '@/lib/wb-status-mapping'
 import { getWbStatusCategory } from '@/lib/wb-status-mapping'
 
 /**
- * Format ISO timestamp to Russian date format: DD.MM.YYYY HH:mm
- */
-export function formatHistoryTimestamp(isoDate: string): string {
-  const date = new Date(isoDate)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day}.${month}.${year} ${hours}:${minutes}`
-}
-
-/**
  * Calculate duration between two entries in minutes
  */
 export function calculateDurationBetween(

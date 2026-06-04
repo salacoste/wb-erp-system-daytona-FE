@@ -8,10 +8,9 @@
  * @see docs/stories/epic-40/story-40.5-fe-history-timeline-components.md#AC7
  */
 
-import { cn } from '@/lib/utils'
+import { cn, formatDateTime } from '@/lib/utils'
 import { formatDuration } from '@/lib/duration-utils'
 import { getWbStatusLabel } from '@/lib/wb-status-mapping'
-import { formatHistoryTimestamp } from './timeline-utils'
 
 export type TimelineSummaryVariant = 'full' | 'wb' | 'local'
 
@@ -74,8 +73,7 @@ function FullSummaryContent({ data }: { data: FullSummaryData }) {
         <>
           <span className="hidden sm:inline text-muted-foreground">|</span>
           <span className="hidden sm:inline">
-            Период: {formatHistoryTimestamp(data.firstTimestamp)} —{' '}
-            {formatHistoryTimestamp(data.lastTimestamp)}
+            Период: {formatDateTime(data.firstTimestamp)} — {formatDateTime(data.lastTimestamp)}
           </span>
         </>
       )}
@@ -110,11 +108,11 @@ function LocalSummaryContent({ data }: { data: LocalSummaryData }) {
     <div className="flex flex-wrap gap-x-4 gap-y-1">
       <span className="font-medium">Переходов: {data.totalTransitions}</span>
       <span className="text-muted-foreground">|</span>
-      <span>Создан: {formatHistoryTimestamp(data.createdAt)}</span>
+      <span>Создан: {formatDateTime(data.createdAt)}</span>
       {data.completedAt ? (
         <>
           <span className="text-muted-foreground">|</span>
-          <span>Завершён: {formatHistoryTimestamp(data.completedAt)}</span>
+          <span>Завершён: {formatDateTime(data.completedAt)}</span>
         </>
       ) : (
         <>

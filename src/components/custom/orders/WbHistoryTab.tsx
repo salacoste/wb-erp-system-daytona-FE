@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getWbStatusConfig, getWbStatusLabel } from '@/lib/wb-status-mapping'
-import { cn } from '@/lib/utils'
+import { cn, formatDateTime } from '@/lib/utils'
 
 export interface WbHistoryTabProps {
   data: WbHistoryResponse | undefined
@@ -86,7 +86,7 @@ interface WbHistoryTimelineEntryProps {
 
 function WbHistoryTimelineEntry({ entry, isLast }: WbHistoryTimelineEntryProps) {
   const statusConfig = getWbStatusConfig(entry.wbStatusCode)
-  const timestamp = formatHistoryTimestamp(entry.wbStatusChangedAt)
+  const timestamp = formatDateTime(entry.wbStatusChangedAt)
   const duration = entry.durationMinutes ? formatDuration(entry.durationMinutes) : null
 
   return (
@@ -173,16 +173,6 @@ function EmptyState({ message }: { message: string }) {
       <p>{message}</p>
     </div>
   )
-}
-
-function formatHistoryTimestamp(isoDate: string): string {
-  const date = new Date(isoDate)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day}.${month}.${year} ${hours}:${minutes}`
 }
 
 function formatDuration(minutes: number): string {
