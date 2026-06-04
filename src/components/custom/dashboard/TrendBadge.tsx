@@ -12,7 +12,7 @@
 'use client'
 
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 export interface TrendBadgeProps {
   /** Trend percentage (positive = increase, negative = decrease) */
@@ -67,7 +67,7 @@ export function TrendBadge({ trend, invertColors = false, className }: TrendBadg
       <Icon className="h-4 w-4" />
       <span>
         Тренд: {sign}
-        {trend.toFixed(1)}%
+        {formatPercentage(trend, 1)}
       </span>
     </div>
   )

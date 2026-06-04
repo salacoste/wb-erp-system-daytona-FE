@@ -240,7 +240,7 @@ describe('StorageTrendsWidget - Data Display', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
     // TrendBadge should show trend value
-    expect(screen.getByText(/Тренд:.*12\.5%/)).toBeInTheDocument()
+    expect(screen.getByText(/Тренд:.*12,5\s*%/)).toBeInTheDocument()
   })
 
   it('displays summary stats when showSummary is true (default)', () => {
@@ -287,7 +287,7 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
     // TrendBadge with invertColors should show red for positive (increase in costs)
-    const trendBadge = screen.getByText(/Тренд:.*12\.5%/).closest('div')
+    const trendBadge = screen.getByText(/Тренд:.*12,5\s*%/).closest('div')
     expect(trendBadge).toHaveClass('text-red-600')
     expect(trendBadge).toHaveClass('bg-red-50')
   })
@@ -308,7 +308,9 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
     // TrendBadge with invertColors should show green for negative (decrease in costs)
-    const trendBadge = screen.getByText(/Тренд:.*-8\.5%/).closest('div')
+    // Negative renders with a leading minus (ASCII hyphen or Intl U+2212 depending on ICU) — require
+    // it so a sign-flip regression is caught, but tolerate either character.
+    const trendBadge = screen.getByText(/Тренд:.*[-−]8,5\s*%/).closest('div')
     expect(trendBadge).toHaveClass('text-green-600')
     expect(trendBadge).toHaveClass('bg-green-50')
   })
@@ -329,7 +331,7 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
     // TrendBadge should show gray for zero trend
-    const trendBadge = screen.getByText(/Тренд:.*0\.0%/).closest('div')
+    const trendBadge = screen.getByText(/Тренд:.*0,0\s*%/).closest('div')
     expect(trendBadge).toHaveClass('text-gray-600')
     expect(trendBadge).toHaveClass('bg-gray-50')
   })
@@ -341,8 +343,8 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
 
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
-    // Should show +12.5%
-    expect(screen.getByText(/Тренд:.*\+12\.5%/)).toBeInTheDocument()
+    // Should show +12,5 % (Russian locale: comma + NBSP)
+    expect(screen.getByText(/Тренд:.*\+12,5\s*%/)).toBeInTheDocument()
   })
 })
 

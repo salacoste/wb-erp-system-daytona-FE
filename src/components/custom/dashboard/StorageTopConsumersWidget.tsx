@@ -12,7 +12,7 @@ import { Package, ArrowRight, PackageX, Calendar } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useStorageTopConsumers } from '@/hooks/useStorageAnalytics'
-import { formatCurrency, cn } from '@/lib/utils'
+import { formatCurrency, formatPercentage, cn } from '@/lib/utils'
 import { RankIndicator } from './RankIndicator'
 import { StorageRatioIndicator } from './StorageRatioIndicator'
 import { LoadingSkeleton, EmptyState, ErrorState } from './StorageTopConsumersStates'
@@ -165,7 +165,9 @@ function ConsumerRow({
       </div>
       <div className="text-right flex-shrink-0">
         <p className="text-sm font-medium text-[#7C4DFF]">{formatCurrency(item.storage_cost)}</p>
-        <p className="text-xs text-muted-foreground">{item.percent_of_total.toFixed(1)}%</p>
+        <p className="text-xs text-muted-foreground">
+          {formatPercentage(item.percent_of_total, 1)}
+        </p>
       </div>
       <div className="w-20 flex-shrink-0 flex justify-end">
         <StorageRatioIndicator ratio={item.storage_to_revenue_ratio ?? null} />

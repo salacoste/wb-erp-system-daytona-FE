@@ -9,6 +9,7 @@
 
 'use client'
 
+import { formatPercentage } from '@/lib/utils'
 import type { ExpenseChartDataItem } from './expense-chart-config'
 
 interface ExpenseChartLegendProps {
@@ -29,7 +30,7 @@ export function ExpenseChartLegend({ data }: ExpenseChartLegendProps) {
             aria-hidden="true"
           />
           <span className="text-muted-foreground">
-            {item.name}: {item.percentage.toFixed(1)}%
+            {item.name}: {formatPercentage(item.percentage, 1)}
           </span>
         </div>
       ))}

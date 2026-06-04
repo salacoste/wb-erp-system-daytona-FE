@@ -11,7 +11,7 @@
  * @see docs/stories/epic-63/story-63.7-fe-orders-status-breakdown.md
  */
 
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import {
   getStatusLabel,
   getStatusColor,
@@ -72,6 +72,7 @@ export function StatusLegend({
               isClickable && 'cursor-pointer hover:bg-gray-50 rounded px-1 -mx-1',
               !isClickable && 'cursor-default'
             )}
+            // locale-percent-allow: aria spoken text (visible text uses formatPercentage; line 89)
             aria-label={`${label}: ${item.count} заказов (${item.percentage.toFixed(1)}%)`}
           >
             {/* Color indicator */}
@@ -86,7 +87,7 @@ export function StatusLegend({
               <span className="font-medium text-gray-900">
                 {item.count.toLocaleString('ru-RU')}
               </span>
-              <span className="text-gray-500">({item.percentage.toFixed(1)}%)</span>
+              <span className="text-gray-500">({formatPercentage(item.percentage, 1)})</span>
             </span>
           </button>
         )
