@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useEffect, useState } from 'react'
+import { formatPercentageInt } from '@/lib/utils'
 
 interface ResultsSkeletonProps {
   /** Estimated calculation duration in ms (default 1500) */
@@ -19,7 +20,7 @@ export function ResultsSkeleton({ estimatedDuration = 1500 }: ResultsSkeletonPro
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress((prev) => {
+      setProgress(prev => {
         if (prev >= 95) return 95 // Don't hit 100 until actual load
         return prev + 100 / (estimatedDuration / 100)
       })
@@ -57,7 +58,9 @@ export function ResultsSkeleton({ estimatedDuration = 1500 }: ResultsSkeletonPro
         <div className="space-y-2">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Расчёт...</span>
-            <span>{Math.round(progress)}%</span>
+            {/* cosmetic calc animation (fractional internal state) — whole-percent display, ≡ the old
+                Math.round; transient sub-second skeleton so no "live-indicator" 1-decimal concern */}
+            <span>{formatPercentageInt(progress)}</span>
           </div>
           <Progress value={progress} className="h-1" />
         </div>
