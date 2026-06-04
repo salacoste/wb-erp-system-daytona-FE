@@ -27,6 +27,7 @@ function makeItem(velocity_trend: VelocityTrend | null): SupplyPlanningItem {
     reorder_value: 0,
     cogs_per_unit: null,
     has_cogs: false,
+    selling_price: null,
     warehouses: [],
   }
 }

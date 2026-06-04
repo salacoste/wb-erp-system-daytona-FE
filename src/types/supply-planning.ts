@@ -150,6 +150,12 @@ export interface SupplyPlanningItem {
   /** Whether COGS is assigned */
   has_cogs: boolean
 
+  /**
+   * Request #203: Average retail selling price in RUB (last 8 weeks).
+   * Null when no sales data exists for this SKU.
+   */
+  selling_price: number | null
+
   // Warehouse breakdown
   /** Stock by warehouse */
   warehouses: WarehouseStock[]

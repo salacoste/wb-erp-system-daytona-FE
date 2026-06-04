@@ -52,6 +52,7 @@ export function generateMockSupplyPlanningItem(
     reorder_value: overrides.reorder_value ?? 70000,
     cogs_per_unit: overrides.cogs_per_unit ?? 500,
     has_cogs: overrides.has_cogs ?? true,
+    selling_price: overrides.selling_price ?? 1250,
     warehouses: overrides.warehouses ?? [
       { name: 'Коледино', stock: Math.round(currentStock * 0.6) },
       { name: 'Электросталь', stock: Math.round(currentStock * 0.4) },
