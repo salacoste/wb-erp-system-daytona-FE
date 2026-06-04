@@ -4,6 +4,11 @@
  * Extracted: Epic 74, Story 74.6
  */
 
+// Canonical Russian-locale percent formatter (comma decimal + NBSP, e.g. "15,5 %").
+// iter-69: formatPercent was the dot-locale form (no comma, no NBSP) → migrated to canonical
+// (dot-locale percent consolidation — see docs/process/dot-locale-percent-consolidation-proposal.md).
+import { formatPercentage } from '@/lib/utils'
+
 /** Format currency value in Russian locale */
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
@@ -13,10 +18,13 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
-/** Format percentage value */
+/**
+ * Format a percent-units value (0-100 scale, e.g. margin_pct/contribution_pct) in Russian locale.
+ * null → em dash (anti-pattern #8: a missing ratio is unknown, not 0). Fixed 1 decimal.
+ */
 export function formatPercent(value: number | null): string {
-  if (value === null) return '\u2014'
-  return `${value.toFixed(1)}%`
+  if (value === null) return '—'
+  return formatPercentage(value, 1)
 }
 
 /** Get margin color class based on value */

@@ -104,8 +104,8 @@ describe('TopBrandsTable', () => {
     it('should format margin as percentage', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
-      expect(screen.getByText('30.0%')).toBeInTheDocument()
-      expect(screen.getByText('20.0%')).toBeInTheDocument()
+      expect(screen.getByText('30,0 %')).toBeInTheDocument()
+      expect(screen.getByText('20,0 %')).toBeInTheDocument()
     })
 
     it('should show dash for null profit', () => {
@@ -147,11 +147,11 @@ describe('TopBrandsTable', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
       // High margin (30%) should be green
-      const highMargin = screen.getByText('30.0%')
+      const highMargin = screen.getByText('30,0 %')
       expect(highMargin).toHaveClass('text-green-600')
 
       // Negative margin should be red
-      const negativeMargin = screen.getByText('-5.0%')
+      const negativeMargin = screen.getByText('-5,0 %')
       expect(negativeMargin).toHaveClass('text-red-600')
     })
   })
