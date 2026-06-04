@@ -42,7 +42,7 @@ describe('SyncGapsTimeline', () => {
     fireEvent.click(screen.getByRole('button'))
 
     expect(screen.getByText(/Синхронизировано 3 из 3 дней/)).toBeInTheDocument()
-    expect(screen.getByText(/100%/)).toBeInTheDocument()
+    expect(screen.getByText(/100\s%/)).toBeInTheDocument() // ru-RU NBSP
   })
 
   it('changes toggle text to "Скрыть покрытие данных" after click', () => {

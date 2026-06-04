@@ -10,10 +10,7 @@ import { StorageAlertBanner } from '../StorageAlertBanner'
 import type { TopConsumerItem } from '@/types/storage-analytics'
 
 // Helper to create mock consumer items
-function createConsumer(
-  nmId: string,
-  ratio: number | null
-): TopConsumerItem {
+function createConsumer(nmId: string, ratio: number | null): TopConsumerItem {
   return {
     rank: 1,
     nm_id: nmId,
@@ -30,7 +27,7 @@ function createConsumer(
 describe('StorageAlertBanner', () => {
   it('hides when highRatioCount = 0', () => {
     const consumers = [
-      createConsumer('1', 5),  // < 20
+      createConsumer('1', 5), // < 20
       createConsumer('2', 15), // < 20
       createConsumer('3', null),
     ]
@@ -70,66 +67,49 @@ describe('StorageAlertBanner', () => {
     })
 
     it('pluralizes correctly for 2 (товара)', () => {
-      const consumers = [
-        createConsumer('1', 25),
-        createConsumer('2', 30),
-      ]
+      const consumers = [createConsumer('1', 25), createConsumer('2', 30)]
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/2 товара/)).toBeInTheDocument()
     })
 
     it('pluralizes correctly for 3 (товара)', () => {
-      const consumers = [
-        createConsumer('1', 25),
-        createConsumer('2', 30),
-        createConsumer('3', 35),
-      ]
+      const consumers = [createConsumer('1', 25), createConsumer('2', 30), createConsumer('3', 35)]
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/3 товара/)).toBeInTheDocument()
     })
 
     it('pluralizes correctly for 4 (товара)', () => {
-      const consumers = Array.from({ length: 4 }, (_, i) =>
-        createConsumer(String(i), 25)
-      )
+      const consumers = Array.from({ length: 4 }, (_, i) => createConsumer(String(i), 25))
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/4 товара/)).toBeInTheDocument()
     })
 
     it('pluralizes correctly for 5 (товаров)', () => {
-      const consumers = Array.from({ length: 5 }, (_, i) =>
-        createConsumer(String(i), 25)
-      )
+      const consumers = Array.from({ length: 5 }, (_, i) => createConsumer(String(i), 25))
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/5 товаров/)).toBeInTheDocument()
     })
 
     it('pluralizes correctly for 11 (товаров) - special case', () => {
-      const consumers = Array.from({ length: 11 }, (_, i) =>
-        createConsumer(String(i), 25)
-      )
+      const consumers = Array.from({ length: 11 }, (_, i) => createConsumer(String(i), 25))
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/11 товаров/)).toBeInTheDocument()
     })
 
     it('pluralizes correctly for 21 (товар) - special case', () => {
-      const consumers = Array.from({ length: 21 }, (_, i) =>
-        createConsumer(String(i), 25)
-      )
+      const consumers = Array.from({ length: 21 }, (_, i) => createConsumer(String(i), 25))
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/21 товар/)).toBeInTheDocument()
     })
 
     it('pluralizes correctly for 22 (товара)', () => {
-      const consumers = Array.from({ length: 22 }, (_, i) =>
-        createConsumer(String(i), 25)
-      )
+      const consumers = Array.from({ length: 22 }, (_, i) => createConsumer(String(i), 25))
 
       render(<StorageAlertBanner topConsumers={consumers} />)
       expect(screen.getByText(/22 товара/)).toBeInTheDocument()
@@ -140,24 +120,24 @@ describe('StorageAlertBanner', () => {
     const consumers = [createConsumer('1', 25)]
 
     render(<StorageAlertBanner topConsumers={consumers} />)
-    expect(screen.getByText(/> 20%/)).toBeInTheDocument()
+    expect(screen.getByText(/> 20\s%/)).toBeInTheDocument() // ru-RU NBSP
   })
 
   it('respects custom threshold prop', () => {
     const consumers = [
       createConsumer('1', 15), // > 10 custom threshold
-      createConsumer('2', 8),  // < 10 custom threshold
+      createConsumer('2', 8), // < 10 custom threshold
     ]
 
     render(<StorageAlertBanner topConsumers={consumers} threshold={10} />)
     expect(screen.getByText(/1 товар/)).toBeInTheDocument()
-    expect(screen.getByText(/> 10%/)).toBeInTheDocument()
+    expect(screen.getByText(/> 10\s%/)).toBeInTheDocument() // ru-RU NBSP
   })
 
   it('treats null ratios as 0', () => {
     const consumers = [
       createConsumer('1', null), // Should be treated as 0
-      createConsumer('2', 25),   // > 20
+      createConsumer('2', 25), // > 20
     ]
 
     render(<StorageAlertBanner topConsumers={consumers} />)

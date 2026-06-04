@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AlertTriangle, Info, ArrowRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import { getCoverageLevel, COVERAGE_CONFIG } from './cogs-missing-state-config'
 
 export interface CogsMissingStateProps {
@@ -120,7 +120,7 @@ export function CogsMissingState({
                 {config.badgeText}
               </Badge>
               <span className="text-xs text-muted-foreground" data-testid="coverage-text">
-                {Math.round(calculatedCoverage)}% покрытия
+                {formatPercentageInt(calculatedCoverage)} покрытия
                 {totalProducts > 0 &&
                   remainingProducts > 0 &&
                   ` (${remainingProducts} товаров без COGS)`}

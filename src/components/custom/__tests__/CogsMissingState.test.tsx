@@ -56,7 +56,7 @@ describe('CogsMissingState Component', () => {
 
     it('should calculate coverage from productsWithCogs and totalProducts', () => {
       render(<CogsMissingState productsWithCogs={25} totalProducts={100} />)
-      expect(screen.getByTestId('coverage-text')).toHaveTextContent('25% покрытия')
+      expect(screen.getByTestId('coverage-text')).toHaveTextContent(/25\s% покрытия/) // ru-RU NBSP
     })
   })
 
@@ -337,7 +337,7 @@ describe('CogsMissingState Component', () => {
   describe('Coverage Text Display', () => {
     it('should show percentage coverage', () => {
       render(<CogsMissingState productsWithCogs={25} totalProducts={100} coverage={25} />)
-      expect(screen.getByTestId('coverage-text')).toHaveTextContent('25% покрытия')
+      expect(screen.getByTestId('coverage-text')).toHaveTextContent(/25\s% покрытия/) // ru-RU NBSP
     })
 
     it('should show remaining products count when not all have COGS', () => {
@@ -348,13 +348,13 @@ describe('CogsMissingState Component', () => {
     it('should not show remaining count when totalProducts is 0', () => {
       render(<CogsMissingState productsWithCogs={0} totalProducts={0} coverage={0} />)
       const coverageText = screen.getByTestId('coverage-text')
-      expect(coverageText).toHaveTextContent('0% покрытия')
+      expect(coverageText).toHaveTextContent(/0\s% покрытия/) // ru-RU NBSP
       expect(coverageText).not.toHaveTextContent('товаров без COGS')
     })
 
     it('should round coverage percentage', () => {
       render(<CogsMissingState productsWithCogs={33} totalProducts={100} coverage={33.33} />)
-      expect(screen.getByTestId('coverage-text')).toHaveTextContent('33% покрытия')
+      expect(screen.getByTestId('coverage-text')).toHaveTextContent(/33\s% покрытия/) // ru-RU NBSP
     })
   })
 
@@ -371,7 +371,7 @@ describe('CogsMissingState Component', () => {
     it('should handle undefined props with defaults', () => {
       render(<CogsMissingState />)
       expect(screen.getByTestId('cogs-missing-state')).toBeInTheDocument()
-      expect(screen.getByTestId('coverage-text')).toHaveTextContent('0% покрытия')
+      expect(screen.getByTestId('coverage-text')).toHaveTextContent(/0\s% покрытия/) // ru-RU NBSP
     })
 
     it('should apply custom className', () => {

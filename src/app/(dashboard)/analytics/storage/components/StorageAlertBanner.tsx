@@ -4,6 +4,7 @@ import { AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { TopConsumerItem } from '@/types/storage-analytics'
+import { formatPercentageInt } from '@/lib/utils'
 
 /**
  * Storage Alert Banner Component
@@ -50,7 +51,7 @@ export function StorageAlertBanner({
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
               {highRatioCount} {pluralize(highRatioCount, 'товар', 'товара', 'товаров')} с
-              соотношением хранение/выручка &gt; {threshold}%
+              соотношением хранение/выручка &gt; {formatPercentageInt(threshold)}
             </AlertDescription>
           </Alert>
         </TooltipTrigger>

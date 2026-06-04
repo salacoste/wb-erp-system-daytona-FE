@@ -90,7 +90,7 @@ describe('CogsMissingState Integration', () => {
 
       // Should show coverage information
       expect(screen.getByTestId('cogs-missing-state')).toBeInTheDocument()
-      expect(screen.getByText(/25%/)).toBeInTheDocument()
+      expect(screen.getByText(/25\s%/)).toBeInTheDocument() // ru-RU NBSP
       expect(screen.getByText(/75 товаров без COGS/)).toBeInTheDocument()
     })
 

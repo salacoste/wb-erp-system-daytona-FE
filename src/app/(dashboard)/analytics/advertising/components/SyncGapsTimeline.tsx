@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { format, parseISO } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import type { SyncStatusResponse } from '@/types/advertising-analytics'
 import { deriveDayStatuses, calculateCoverage, type DayStatusType } from '../utils/sync-gaps-utils'
 
@@ -87,7 +87,8 @@ export function SyncGapsTimeline({ from, to, syncStatus }: SyncGapsTimelineProps
             </TooltipProvider>
 
             <p className={cn('text-xs', coverageColor)}>
-              Синхронизировано {coverage.synced} из {coverage.total} дней ({coverage.percent}%)
+              Синхронизировано {coverage.synced} из {coverage.total} дней (
+              {formatPercentageInt(coverage.percent)})
             </p>
           </div>
         ) : (
