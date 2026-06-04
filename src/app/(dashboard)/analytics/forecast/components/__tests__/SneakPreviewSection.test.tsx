@@ -151,8 +151,8 @@ describe('SneakPreviewTableView', () => {
 
   it('renders avgPerDay with one decimal place', () => {
     render(<SneakPreviewTableView skuForecasts={mockSneakData.skuForecasts} />)
-    expect(screen.getByText('3.2')).toBeInTheDocument()
-    expect(screen.getByText('1.0')).toBeInTheDocument()
+    expect(screen.getByText('3,2')).toBeInTheDocument() // ru-RU comma (formatDecimal)
+    expect(screen.getByText('1,0')).toBeInTheDocument()
   })
 
   it('renders em-dash for null avgPerDay', () => {

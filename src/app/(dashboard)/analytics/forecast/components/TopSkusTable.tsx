@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAiTrends } from '@/hooks/useAiTrends'
 import type { TopSkuEntry } from '@/types/ai/trends-sneak'
+import { formatDecimal } from '@/lib/utils'
 
 // ── Pure view — exported for direct unit testing ──────────────────────────────
 
@@ -42,7 +43,7 @@ export function TopSkusTableView({ data }: TopSkusTableViewProps) {
             <td className="py-2 pr-4 font-mono">{sku.nmId}</td>
             <td className="py-2 pr-4 text-muted-foreground">{sku.vendorCode ?? '—'}</td>
             <td className="py-2 pr-4 text-right font-mono">
-              {sku.avgPerDay != null ? sku.avgPerDay.toFixed(1) : '—'}
+              {sku.avgPerDay != null ? formatDecimal(sku.avgPerDay) : '—'}
             </td>
             <td className="py-2 text-right font-mono">
               {sku.weeklyVolume != null ? sku.weeklyVolume : '—'}

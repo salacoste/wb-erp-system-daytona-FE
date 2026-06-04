@@ -13,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useAiSneakPreview } from '@/hooks/useAiSneakPreview'
 import type { AiStatusResponse } from '@/types/ai/status'
 import { pluralize, WEEK_FORMS } from '@/lib/russian-plural'
+import { formatDecimal } from '@/lib/utils'
 import type { SneakPreviewSkuForecast, TrendDirection } from '@/types/ai/trends-sneak'
 
 interface Props {
@@ -69,7 +70,7 @@ export function SneakPreviewTableView({ skuForecasts }: SneakPreviewTableViewPro
             <td className="py-2 pr-4 font-mono">{sku.nmId}</td>
             <td className="py-2 pr-4 text-muted-foreground">{sku.vendorCode ?? '—'}</td>
             <td className="py-2 pr-4 text-right font-mono">
-              {sku.avgPerDay != null ? sku.avgPerDay.toFixed(1) : '—'}
+              {sku.avgPerDay != null ? formatDecimal(sku.avgPerDay) : '—'}
             </td>
             <td className="py-2 pr-4 flex justify-center">
               <TrendIndicator trend={sku.trend} />

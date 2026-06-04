@@ -47,7 +47,7 @@ describe('TopSkusTableView', () => {
 
   it('renders avgPerDay with one decimal place', () => {
     render(<TopSkusTableView data={mockSkus} />)
-    expect(screen.getByText('5.3')).toBeInTheDocument()
+    expect(screen.getByText('5,3')).toBeInTheDocument() // ru-RU comma (formatDecimal)
   })
 
   it('renders weeklyVolume count', () => {
