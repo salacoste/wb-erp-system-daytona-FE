@@ -53,6 +53,16 @@ export function SkuCashflowSection({ cabinetExpenses, isLoading }: SkuCashflowSe
 
 /** Inner content rendered when data is available */
 function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExpenses }) {
+  // No sales → every "% of revenue" is undefined (the `|| 1` safe-divide would otherwise fabricate
+  // absurd badges like "Логистика 50000 %" over a 0 ₽ baseline). Show an honest empty-state instead.
+  if (cabinetExpenses.sales_gross <= 0) {
+    return (
+      <div className="py-6 text-center text-sm text-gray-500">
+        Нет продаж за период — структура cashflow в процентах недоступна.
+      </div>
+    )
+  }
+
   const salesGross = cabinetExpenses.sales_gross || 1
   // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: returns_gross 0 = no returns for net sales display
   const returnsGross = cabinetExpenses.returns_gross ?? 0
