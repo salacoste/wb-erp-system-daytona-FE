@@ -115,10 +115,10 @@ describe('TaxPresetGrid', () => {
       )
 
       // Check rate+type descriptions
-      expect(screen.getAllByText('6% с выручки').length).toBe(2) // USN and Self-employed
-      expect(screen.getByText('15% с прибыли')).toBeInTheDocument()
-      expect(screen.getByText('13% с прибыли')).toBeInTheDocument()
-      expect(screen.getByText('20% с прибыли')).toBeInTheDocument()
+      expect(screen.getAllByText(/6\s% с выручки/).length).toBe(2) // ru-RU NBSP; USN + Self-employed
+      expect(screen.getByText(/15\s% с прибыли/)).toBeInTheDocument()
+      expect(screen.getByText(/13\s% с прибыли/)).toBeInTheDocument()
+      expect(screen.getByText(/20\s% с прибыли/)).toBeInTheDocument()
     })
   })
 

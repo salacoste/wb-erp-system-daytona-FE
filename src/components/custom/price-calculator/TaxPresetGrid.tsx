@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ChevronDown, ExternalLink } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentageInt } from '@/lib/utils'
 import { TAX_PRESETS } from './tax-presets'
 import type { TaxType, TaxPreset } from '@/types/price-calculator'
 
@@ -50,14 +50,12 @@ export function TaxPresetGrid({
           data-testid="tax-presets-trigger"
         >
           Популярные налоговые режимы
-          <ChevronDown
-            className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')}
-          />
+          <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="mt-2" data-testid="tax-presets-content">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {TAX_PRESETS.map((preset) => {
+          {TAX_PRESETS.map(preset => {
             const isActive = preset.rate === taxRate && preset.type === taxType
 
             return (
@@ -74,7 +72,8 @@ export function TaxPresetGrid({
                 <div className="text-left">
                   <div className="font-medium">{preset.name}</div>
                   <div className="text-xs text-muted-foreground">
-                    {preset.rate}% {preset.type === 'income' ? 'с выручки' : 'с прибыли'}
+                    {formatPercentageInt(preset.rate)}{' '}
+                    {preset.type === 'income' ? 'с выручки' : 'с прибыли'}
                   </div>
                 </div>
               </Button>
