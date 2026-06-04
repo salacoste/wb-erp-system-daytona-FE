@@ -9,7 +9,8 @@
  * @see docs/stories/epic-51/story-51.5-fe-trends-summary-cards.md
  */
 
-import { describe, it } from 'vitest'
+import { describe, it, expect } from 'vitest'
+import { buildDeltaTooltip } from '../TrendsSummaryCards'
 
 // ============================================================================
 // Imports to be used when implementing tests
@@ -305,6 +306,31 @@ describe('TrendsSummaryCards - Animation', () => {
   it.todo('should respect prefers-reduced-motion')
 
   it.todo('should not animate during initial server render')
+})
+
+// iter-79: pure-function coverage for the delta tooltip locale (extracted from the 4 inline
+// deltaTooltip props). Implements the previously-todo "format delta as percentage" case. `\s`
+// matches the NBSP; `[-−]` tolerates ASCII hyphen (current ICU) or the Unicode minus on other ICU.
+describe('buildDeltaTooltip', () => {
+  it('formats a positive delta with a leading + and comma+NBSP percent', () => {
+    expect(buildDeltaTooltip(15.5)).toMatch(/: \+15,5\s%$/)
+  })
+
+  it('formats a negative delta with a minus and no +', () => {
+    expect(buildDeltaTooltip(-8.5)).toMatch(/: [-−]8,5\s%$/)
+  })
+
+  it('formats a zero delta with no sign', () => {
+    expect(buildDeltaTooltip(0)).toMatch(/: 0,0\s%$/)
+  })
+
+  it('returns undefined when delta is undefined (no tooltip)', () => {
+    expect(buildDeltaTooltip(undefined)).toBeUndefined()
+  })
+
+  it('never produces the dot-locale form', () => {
+    expect(buildDeltaTooltip(15.5)).not.toContain('15.5%')
+  })
 })
 
 // Suppress fixture warnings

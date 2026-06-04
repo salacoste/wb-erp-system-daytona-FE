@@ -13,8 +13,7 @@
 import { ShoppingCart, Banknote, TrendingUp, XCircle } from 'lucide-react'
 import { SummaryCard } from './SummaryCard'
 import { formatNumber, formatPercentValue } from '@/lib/fbs-analytics-utils'
-import { formatCurrency } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { formatCurrency, formatPercentage, cn } from '@/lib/utils'
 
 // ============================================================================
 // Types
@@ -86,6 +85,16 @@ function formatAvgDaily(value: number): string {
   }).format(value)
 }
 
+/**
+ * Build the visible "change vs previous period" tooltip in Russian locale (comma + NBSP; '+'
+ * prefix for positive, Intl minus for negative; nothing for 0). Exported pure function so the
+ * locale format is unit-testable without the hover-gated tooltip render. iter-79.
+ */
+export function buildDeltaTooltip(delta: number | undefined): string | undefined {
+  if (delta === undefined) return undefined
+  return `Изменение к предыдущему периоду: ${delta > 0 ? '+' : ''}${formatPercentage(delta, 1)}`
+}
+
 // ============================================================================
 // Component
 // ============================================================================
@@ -130,11 +139,7 @@ export function TrendsSummaryCards({
         icon={<ShoppingCart className="h-5 w-5" />}
         iconColor="blue"
         delta={summary.ordersDelta}
-        deltaTooltip={
-          summary.ordersDelta !== undefined
-            ? `Изменение к предыдущему периоду: ${summary.ordersDelta > 0 ? '+' : ''}${summary.ordersDelta.toFixed(1)}%`
-            : undefined
-        }
+        deltaTooltip={buildDeltaTooltip(summary.ordersDelta)}
         isLoading={isLoading}
         aria-label={`Всего заказов: ${formatNumber(summary.totalOrders)} ${periodLabel}`}
       />
@@ -147,11 +152,7 @@ export function TrendsSummaryCards({
         icon={<Banknote className="h-5 w-5" />}
         iconColor="green"
         delta={summary.revenueDelta}
-        deltaTooltip={
-          summary.revenueDelta !== undefined
-            ? `Изменение к предыдущему периоду: ${summary.revenueDelta > 0 ? '+' : ''}${summary.revenueDelta.toFixed(1)}%`
-            : undefined
-        }
+        deltaTooltip={buildDeltaTooltip(summary.revenueDelta)}
         isLoading={isLoading}
         aria-label={`Общая выручка: ${formatCurrency(summary.totalRevenue)} ${periodLabel}`}
       />
@@ -164,11 +165,7 @@ export function TrendsSummaryCards({
         icon={<TrendingUp className="h-5 w-5" />}
         iconColor="purple"
         delta={summary.avgDailyDelta}
-        deltaTooltip={
-          summary.avgDailyDelta !== undefined
-            ? `Изменение к предыдущему периоду: ${summary.avgDailyDelta > 0 ? '+' : ''}${summary.avgDailyDelta.toFixed(1)}%`
-            : undefined
-        }
+        deltaTooltip={buildDeltaTooltip(summary.avgDailyDelta)}
         isLoading={isLoading}
         aria-label={`Среднее в день: ${formatAvgDaily(summary.avgDailyOrders)} заказов`}
       />
@@ -182,11 +179,7 @@ export function TrendsSummaryCards({
         iconColor={getCancellationColor(summary.cancellationRate)}
         delta={summary.cancellationDelta}
         deltaInverse // Negative is good for cancellation rate
-        deltaTooltip={
-          summary.cancellationDelta !== undefined
-            ? `Изменение к предыдущему периоду: ${summary.cancellationDelta > 0 ? '+' : ''}${summary.cancellationDelta.toFixed(1)}%`
-            : undefined
-        }
+        deltaTooltip={buildDeltaTooltip(summary.cancellationDelta)}
         isLoading={isLoading}
         aria-label={`Процент отмен: ${formatPercentValue(summary.cancellationRate)}`}
       />
