@@ -7,6 +7,7 @@
  */
 
 import type { AggregationType, BackfillStatus } from '@/types/fbs-analytics'
+import { formatPercentageInt } from '@/lib/utils'
 
 // Re-export chart/formatting utilities from extracted module
 export type { MetricVisibility } from './fbs-analytics-formatters'
@@ -82,11 +83,13 @@ export function getDataSourceLabel(source: string): string {
  * @returns Отформатированная строка с процентом
  *
  * @example
- * formatSeasonalIndex(0.72) // '72%'
- * formatSeasonalIndex(0.15) // '15%'
+ * formatSeasonalIndex(0.72) // '72 %'
+ * formatSeasonalIndex(0.15) // '15 %'
  */
 export function formatSeasonalIndex(index: number): string {
-  return `${Math.round(index * 100)}%`
+  // index is a 0-1 ratio → ×100 to percent units. formatPercentageInt gives the
+  // Russian-locale whole percent ("72 %", NBSP); the old `${Math.round(...)}%` had no NBSP.
+  return formatPercentageInt(index * 100)
 }
 
 /**

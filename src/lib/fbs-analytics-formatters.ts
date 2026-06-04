@@ -121,16 +121,18 @@ export { formatNumber } from './utils'
  * Format percentage for display
  *
  * @param value - Percentage value (0-100)
- * @returns Formatted percentage string
+ * @returns Formatted percentage string (Russian locale: comma decimal + NBSP before %)
  *
  * @example
- * formatPercentValue(6.67) // '6,67%'
+ * formatPercentValue(6.67) // '6,67 %'
  */
 export function formatPercentValue(value: number): string {
-  return (
-    new Intl.NumberFormat('ru-RU', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(value) + '%'
-  )
+  // Russian-locale rule: NBSP before "%". `style: 'percent'` (÷100 internally) emits the
+  // NBSP automatically; the old `Intl.format(value) + '%'` produced "6,67%" (no NBSP).
+  // Keep min 0 / max 2 decimals so whole percents render "5 %" not "5,0 %".
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'percent',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(value / 100)
 }
