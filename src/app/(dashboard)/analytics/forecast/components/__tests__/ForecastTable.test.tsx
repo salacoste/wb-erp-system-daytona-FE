@@ -119,7 +119,7 @@ describe('ForecastTable', () => {
   it('renders naiveBaseline as UNITS (not currency) — matches predictedSales scale', () => {
     renderTable([basePrediction])
     // iter-78: naiveBaseline is units (backend assigns it to predictedUnits), rendered .toFixed(1)
-    expect(screen.getByText('38.5')).toBeTruthy()
+    expect(screen.getByText('38,5')).toBeTruthy() // ru-RU comma (formatDecimal)
     // only predictedRevenue carries ₽ now — naiveBaseline must NOT
     expect(screen.getAllByText(/₽/)).toHaveLength(1)
   })

@@ -7,7 +7,7 @@
  * Column order: Дата → Прогноз продаж → Базовая оценка → AI vs базовая → Прогноз выручки → Уверенность → Диапазон → Оценка
  */
 import { getConfidenceBand, type AiForecastPrediction } from '@/types/ai-forecast'
-import { formatDate, formatCurrency, formatPercentageInt } from '@/lib/utils'
+import { formatDate, formatCurrency, formatPercentageInt, formatDecimal } from '@/lib/utils'
 import { FeedbackButtons } from '@/components/custom/ai/FeedbackButtons'
 
 const BAND_STYLES: Record<string, string> = {
@@ -68,14 +68,14 @@ export function ForecastTable({ predictions, modelId }: ForecastTableProps) {
                 {/* Epic 113 I1: predictedSales is null for revenue-target models
                     (daily_revenue_forecast) — null-guard to render '—', NOT crash on .toFixed. */}
                 <td className="py-2 text-right font-mono">
-                  {p.predictedSales != null ? p.predictedSales.toFixed(1) : '—'}
+                  {p.predictedSales != null ? formatDecimal(p.predictedSales) : '—'}
                 </td>
                 {/* iter-78: naiveBaseline is UNITS, not currency — the backend assigns it
                     directly to predictedUnits (ai-forecast.service.ts:109) and groups it with
                     the units columns in CSV export. Render as units (matching "Прогноз продаж"),
                     NOT formatCurrency (was "0,99 ₽" for a 0.99-units/day baseline). */}
                 <td className="py-2 text-right font-mono">
-                  {p.naiveBaseline != null ? p.naiveBaseline.toFixed(1) : '—'}
+                  {p.naiveBaseline != null ? formatDecimal(p.naiveBaseline) : '—'}
                 </td>
                 <td className={`py-2 text-right font-mono ${aiVsNaiveColor}`}>
                   {p.aiVsNaive ?? '—'}
