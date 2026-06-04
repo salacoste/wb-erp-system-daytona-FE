@@ -14,13 +14,16 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ReturnLogisticsBreakdown } from './ReturnLogisticsBreakdown'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { calculateReturnLogistics, hasSignificantDifference } from '@/lib/return-logistics-utils'
 
 /** Format currency with 2 decimal places (Russian locale: "72,50 ₽") */
 function formatCurrencyFixed(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
-    style: 'currency', currency: 'RUB', minimumFractionDigits: 2, maximumFractionDigits: 2,
+    style: 'currency',
+    currency: 'RUB',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value)
 }
 
@@ -72,8 +75,7 @@ export function ReturnLogisticsCalculator({
 
   // Check if manual value differs significantly from calculated (>50%)
   const calculatedBaseReturn = isNaN(forwardLogistics) ? 0 : forwardLogistics
-  const showWarning =
-    !autoCalculate && hasSignificantDifference(value, calculatedBaseReturn, 50)
+  const showWarning = !autoCalculate && hasSignificantDifference(value, calculatedBaseReturn, 50)
 
   // Handle toggle change
   const handleAutoCalculateChange = (checked: boolean): void => {
@@ -143,10 +145,7 @@ export function ReturnLogisticsCalculator({
             value={displayValue}
             onChange={handleInputChange}
             disabled={disabled || autoCalculate}
-            className={cn(
-              'flex-1 focus-visible:ring',
-              autoCalculate && 'bg-muted'
-            )}
+            className={cn('flex-1 focus-visible:ring', autoCalculate && 'bg-muted')}
             min="0"
             step="0.01"
             aria-label="Логистика обратная"
@@ -181,7 +180,7 @@ export function ReturnLogisticsCalculator({
       {/* Effective return display */}
       <div className="flex justify-between items-center text-sm py-2 bg-muted/50 rounded px-3">
         <span className="text-muted-foreground">
-          {`Эффективная обратная (с учётом buyback ${buybackPct}%):`}
+          {`Эффективная обратная (с учётом buyback ${formatPercentage(buybackPct, 1)}):`}
         </span>
         <span
           className={cn(

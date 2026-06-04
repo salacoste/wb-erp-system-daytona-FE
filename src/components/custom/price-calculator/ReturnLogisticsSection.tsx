@@ -10,15 +10,21 @@ import { Switch } from '@/components/ui/switch'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FieldTooltip } from './FieldTooltip'
 import { ReturnLogisticsBreakdown } from './ReturnLogisticsBreakdown'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
 import { calculateReturnLogistics, hasSignificantDifference } from '@/lib/return-logistics-utils'
 
 /** Auto-fill badge indicator */
 function AutoFillBadge({ source }: { source: 'auto' | 'manual' }) {
   return (
-    <Badge variant="outline" className={cn('text-xs',
-      source === 'auto' ? 'bg-green-50 text-green-700 border-green-300' : 'bg-gray-50 text-gray-600'
-    )}>
+    <Badge
+      variant="outline"
+      className={cn(
+        'text-xs',
+        source === 'auto'
+          ? 'bg-green-50 text-green-700 border-green-300'
+          : 'bg-gray-50 text-gray-600'
+      )}
+    >
       {source === 'auto' ? 'Автозаполнено' : 'Вручную'}
     </Badge>
   )
@@ -67,8 +73,7 @@ export function ReturnLogisticsSection({
   }, [autoCalculate, result.baseReturn, value, onChange])
 
   // Check if manual value differs significantly (>50%)
-  const manualDiffWarning =
-    !autoCalculate && hasSignificantDifference(value, result.baseReturn, 50)
+  const manualDiffWarning = !autoCalculate && hasSignificantDifference(value, result.baseReturn, 50)
 
   const handleAutoCalculateChange = (enabled: boolean) => {
     setAutoCalculate(enabled)
@@ -100,7 +105,9 @@ export function ReturnLogisticsSection({
 
       {/* Auto-calculate toggle */}
       <div className="flex items-center justify-between">
-        <Label htmlFor="auto-calc-return" className="text-sm">Рассчитать автоматически</Label>
+        <Label htmlFor="auto-calc-return" className="text-sm">
+          Рассчитать автоматически
+        </Label>
         <Switch
           id="auto-calc-return"
           checked={autoCalculate}
@@ -112,7 +119,9 @@ export function ReturnLogisticsSection({
       {/* Input field (base return) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="logistics_reverse_calc" className="text-sm">Логистика обратная (базовая), ₽</Label>
+          <Label htmlFor="logistics_reverse_calc" className="text-sm">
+            Логистика обратная (базовая), ₽
+          </Label>
           <AutoFillBadge source={autoCalculate ? 'auto' : 'manual'} />
         </div>
         <div className="flex gap-2">
@@ -155,11 +164,9 @@ export function ReturnLogisticsSection({
       {/* Effective return display */}
       <div className="flex justify-between items-center text-sm py-2 bg-orange-100/50 rounded px-3">
         <span className="text-muted-foreground">
-          Эффективная обратная (buyback {buybackPct}%):
+          Эффективная обратная (buyback {formatPercentage(buybackPct, 1)}):
         </span>
-        <span className="font-medium text-primary">
-          {formatCurrency(result.effectiveReturn)}
-        </span>
+        <span className="font-medium text-primary">{formatCurrency(result.effectiveReturn)}</span>
       </div>
 
       {/* Breakdown section */}

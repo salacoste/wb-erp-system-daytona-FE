@@ -155,7 +155,7 @@ describe('Story 44.10: AC2 - Calculate Effective Return with Buyback', () => {
     renderComponent({ forwardLogistics: 72.5, buybackPct: 98 })
 
     // Should show "Эффективная обратная (с учётом buyback 98%):"
-    expect(screen.getByText(/buyback.*98%/i)).toBeInTheDocument()
+    expect(screen.getByText(/buyback.*98,0\s%/i)).toBeInTheDocument() // ru-RU: "98,0 %" (NBSP)
   })
 
   it('should update effective return when buyback changes', async () => {
@@ -169,11 +169,7 @@ describe('Story 44.10: AC2 - Calculate Effective Return with Buyback', () => {
 
     // Change buyback to 95%
     rerender(
-      <ReturnLogisticsCalculator
-        {...defaultProps}
-        forwardLogistics={72.5}
-        buybackPct={95}
-      />
+      <ReturnLogisticsCalculator {...defaultProps} forwardLogistics={72.5} buybackPct={95} />
     )
 
     // New effective: 72.50 × 0.05 = 3.625 ≈ 3.63 ₽
@@ -262,13 +258,7 @@ describe('Story 44.10: AC3 - Breakdown Display', () => {
     await user.click(trigger)
 
     // Change buyback
-    rerender(
-      <ReturnLogisticsCalculator
-        {...defaultProps}
-        forwardLogistics={100}
-        buybackPct={95}
-      />
-    )
+    rerender(<ReturnLogisticsCalculator {...defaultProps} forwardLogistics={100} buybackPct={95} />)
 
     await waitFor(() => {
       // Should show updated values (5% appears in multiple places)
@@ -424,9 +414,7 @@ describe('Story 44.10: AC4 - Manual Override Option', () => {
   it('should hide restore button when auto-calculate is ON', () => {
     renderComponent({ autoCalculate: true })
 
-    expect(
-      screen.queryByRole('button', { name: /восстановить/i })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /восстановить/i })).not.toBeInTheDocument()
   })
 })
 
@@ -548,9 +536,7 @@ describe('Story 44.10: Disabled State', () => {
   it('should hide restore button when disabled', () => {
     renderComponent({ disabled: true, autoCalculate: false })
 
-    expect(
-      screen.queryByRole('button', { name: /восстановить/i })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /восстановить/i })).not.toBeInTheDocument()
   })
 })
 
