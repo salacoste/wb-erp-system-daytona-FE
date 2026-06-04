@@ -166,6 +166,15 @@ describe('formatPercentage', () => {
     expect(formatPercentage(15, 0)).toMatch(/15\s%/)
     expect(formatPercentage(15.5, 0)).not.toMatch(/,/) // no decimal separator at 0 places
   })
+
+  // decimals=1 pins BOTH min and max fraction digits to 1 — the exact path advertising's
+  // formatRevenueWithPercent depends on (iter-68). Guards against a future change to the
+  // `decimals ?? N` defaults silently dropping the trailing zero.
+  it('pins a fixed single decimal (trailing zero kept) when decimals=1', () => {
+    expect(formatPercentage(71.2, 1)).toMatch(/71,2\s%/)
+    expect(formatPercentage(100, 1)).toMatch(/100,0\s%/)
+    expect(formatPercentage(29, 1)).toMatch(/29,0\s%/)
+  })
 })
 
 describe('formatPercentageInt', () => {

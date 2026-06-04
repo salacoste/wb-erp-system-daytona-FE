@@ -2,10 +2,17 @@
  * Formatting Utilities - Epic 37 Story 37.3
  *
  * Display formatting functions for aggregate metrics in merged product groups.
- * All formatters use Russian locale (ru-RU) with ₽ currency symbol.
+ * Currency/percent formatters use Russian locale (ru-RU, ₽). Exception: formatROAS returns a
+ * bare en-locale decimal ("0.90") — ROAS is a unitless multiplier, not a currency/percent.
  *
  * @see frontend/docs/stories/epic-37/story-37.3-aggregate-metrics-display.BMAD.md
  */
+
+// Canonical Russian-locale percent formatter (comma decimal + NBSP before "%", e.g. "71,2 %").
+// Replaced a former LOCAL dot-locale `formatPercentage` shadow (same name, opposite output:
+// rendered "71.2%" — no comma, no NBSP) that reached users via formatRevenueWithPercent in
+// MergedGroupRows. The local shadow was deleted; @/lib/utils is the canonical source of truth.
+import { formatPercentage } from '@/lib/utils'
 
 // Memoized Intl.NumberFormat instance for currency formatting
 // Creating once and reusing provides ~5-10% performance improvement for high-volume formatting
@@ -14,7 +21,7 @@ const currencyFormatter = new Intl.NumberFormat('ru-RU', {
   currency: 'RUB',
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
-});
+})
 
 /**
  * Format currency value with Russian locale
@@ -33,25 +40,7 @@ const currencyFormatter = new Intl.NumberFormat('ru-RU', {
  * formatCurrency(-500);       // Returns: "-500 ₽"
  */
 export function formatCurrency(value: number): string {
-  return currencyFormatter.format(value);
-}
-
-/**
- * Format percentage with specified decimal places
- *
- * @param value - Percentage value (0-100 scale)
- * @param decimals - Number of decimal places (default: 1)
- * @returns Formatted percentage string with % symbol
- *
- * @example
- * formatPercentage(71.24, 1);  // Returns: "71.2%"
- * formatPercentage(29.0, 1);   // Returns: "29.0%"
- * formatPercentage(100, 0);    // Returns: "100%"
- * formatPercentage(0, 1);      // Returns: "0.0%"
- */
-export function formatPercentage(value: number, decimals = 1): string {
-  const formatted = value.toFixed(decimals);
-  return formatted + '%';
+  return currencyFormatter.format(value)
 }
 
 /**
@@ -59,21 +48,24 @@ export function formatPercentage(value: number, decimals = 1): string {
  *
  * Combines currency formatting with percentage display:
  * - Revenue formatted with Russian locale and ₽ symbol
- * - Percentage shown in parentheses with 1 decimal place
+ * - Percentage shown in parentheses, Russian locale (comma decimal + NBSP, fixed 1 decimal)
  *
  * @param revenue - Revenue amount
  * @param percentage - Organic contribution percentage (0-100)
  * @returns Formatted string: "revenue (percentage)"
  *
  * @example
- * formatRevenueWithPercent(10234, 29.0);  // Returns: "10 234 ₽ (29.0%)"
- * formatRevenueWithPercent(35570, 71.2);  // Returns: "35 570 ₽ (71.2%)"
- * formatRevenueWithPercent(0, 0);         // Returns: "0 ₽ (0.0%)"
+ * // (spaces shown below are U+00A0 NBSP at runtime — both thousands-sep and pre-"%")
+ * formatRevenueWithPercent(10234, 29.0);  // Returns: "10 234 ₽ (29,0 %)"
+ * formatRevenueWithPercent(35570, 71.2);  // Returns: "35 570 ₽ (71,2 %)"
+ * formatRevenueWithPercent(0, 0);         // Returns: "0 ₽ (0,0 %)"
  */
 export function formatRevenueWithPercent(revenue: number, percentage: number): string {
-  const formattedRevenue = formatCurrency(revenue);
-  const formattedPercentage = formatPercentage(percentage);
-  return formattedRevenue + ' (' + formattedPercentage + ')';
+  const formattedRevenue = formatCurrency(revenue)
+  // decimals=1 preserves the original fixed-1-decimal output ("71,2 %", "100,0 %"),
+  // now via the canonical comma+NBSP formatter instead of the old dot-locale shadow.
+  const formattedPercentage = formatPercentage(percentage, 1)
+  return formattedRevenue + ' (' + formattedPercentage + ')'
 }
 
 /**
@@ -95,9 +87,9 @@ export function formatRevenueWithPercent(revenue: number, percentage: number): s
 export function formatROAS(roas: number | null | undefined): string {
   // Edge case: No spend → return em dash
   if (roas === null || roas === undefined) {
-    return '—';
+    return '—'
   }
 
   // Normal case: Format with 2 decimal places
-  return roas.toFixed(2);
+  return roas.toFixed(2)
 }
