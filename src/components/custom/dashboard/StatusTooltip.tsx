@@ -12,6 +12,7 @@
  */
 
 import { getStatusLabel, type OrderStatus } from '@/lib/orders-status-config'
+import { formatPercentage } from '@/lib/utils'
 
 interface StatusPayload {
   status: OrderStatus
@@ -41,7 +42,6 @@ export function StatusTooltip({ active, payload }: StatusTooltipProps) {
 
   const label = getStatusLabel(data.status)
   const formattedCount = data.count.toLocaleString('ru-RU')
-  const formattedPercent = data.percentage.toFixed(1)
 
   return (
     <div className="rounded-lg border bg-white p-3 shadow-lg">
@@ -49,7 +49,8 @@ export function StatusTooltip({ active, payload }: StatusTooltipProps) {
       <p className="mt-1 text-sm text-gray-600">
         <span className="font-semibold">{formattedCount}</span> заказов
       </p>
-      <p className="text-sm text-gray-500">{formattedPercent}%</p>
+      {/* percentage is percent-units 0-100, fractional (1 decimal) → formatPercentage(_, 1) → "80,0 %" */}
+      <p className="text-sm text-gray-500">{formatPercentage(data.percentage, 1)}</p>
     </div>
   )
 }
