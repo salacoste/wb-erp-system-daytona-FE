@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentage, formatPercentageInt } from '@/lib/utils'
 import { isTightMargin } from '@/lib/two-level-pricing'
 import type { PriceGap } from '@/types/price-calculator'
 import { AlertTriangle, TrendingUp } from 'lucide-react'
@@ -116,13 +116,11 @@ export function TwoLevelPriceHeader({
           </span>
           <span className="text-2xl font-normal text-primary/70">₽</span>
         </div>
-        <div className="text-xs text-muted-foreground mt-2">
-          с учётом маржи и рекламы
-        </div>
+        <div className="text-xs text-muted-foreground mt-2">с учётом маржи и рекламы</div>
       </div>
 
       {/* Customer Price (if SPP > 0) */}
-      {showCustomerPrice && customerPrice && (
+      {showCustomerPrice && customerPrice && sppPct != null && (
         <div className="p-4 border rounded-lg">
           <div className="text-sm text-muted-foreground uppercase tracking-wide">
             Цена для покупателя
@@ -132,7 +130,7 @@ export function TwoLevelPriceHeader({
               {formatCurrency(customerPrice)}
             </span>
             <Badge variant="secondary" className="text-xs">
-              СПП -{sppPct}%
+              СПП -{formatPercentageInt(sppPct)}
             </Badge>
           </div>
         </div>

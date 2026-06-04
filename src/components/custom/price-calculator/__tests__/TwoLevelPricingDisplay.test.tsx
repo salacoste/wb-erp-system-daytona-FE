@@ -178,7 +178,7 @@ describe('TwoLevelPricingDisplay', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
       // SPP badge should show in customer price
-      expect(screen.getByText('СПП -10%')).toBeInTheDocument()
+      expect(screen.getByText(/СПП -10\s%/)).toBeInTheDocument() // ru-RU NBSP
     })
 
     it('passes tax info to MarginSection', () => {

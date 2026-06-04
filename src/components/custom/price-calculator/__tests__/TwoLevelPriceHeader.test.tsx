@@ -228,7 +228,7 @@ describe('TwoLevelPriceHeader', () => {
 
         expect(screen.getByTestId('customer-price')).toBeInTheDocument()
         expect(screen.getByText('Цена для покупателя')).toBeInTheDocument()
-        expect(screen.getByText('СПП -10%')).toBeInTheDocument()
+        expect(screen.getByText(/СПП -10\s%/)).toBeInTheDocument() // ru-RU NBSP
       })
 
       it('does not render customer price when SPP = 0', () => {

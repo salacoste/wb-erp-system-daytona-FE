@@ -83,7 +83,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       // Use header section to avoid duplicate matches with footer
       const header = screen.getByTestId('two-level-price-header')
       expect(within(header).getByText(/Цена для покупателя/i)).toBeInTheDocument()
-      expect(screen.getByText(/СПП -10%/)).toBeInTheDocument()
+      expect(screen.getByText(/СПП -10\s%/)).toBeInTheDocument() // ru-RU NBSP
     })
 
     it('should not show customer price when SPP = 0', () => {

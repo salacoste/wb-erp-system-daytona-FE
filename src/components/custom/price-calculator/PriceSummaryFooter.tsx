@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { Copy, CheckCircle2 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 
@@ -62,15 +62,10 @@ export function PriceSummaryFooter({
   const showCustomerPrice = Boolean(customerPrice && customerPrice > 0 && sppPct && sppPct > 0)
 
   return (
-    <div
-      className="border-t-2 border-double pt-4 space-y-2"
-      data-testid="price-summary-footer"
-    >
+    <div className="border-t-2 border-double pt-4 space-y-2" data-testid="price-summary-footer">
       {/* Minimum Price Row */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">
-          МИНИМАЛЬНАЯ ЦЕНА (пол)
-        </span>
+        <span className="text-sm text-muted-foreground">МИНИМАЛЬНАЯ ЦЕНА (пол)</span>
         <div className="flex items-center gap-2">
           <span className="font-medium" data-testid="summary-minimum-price">
             {formatCurrency(minimumPrice)}
@@ -87,10 +82,7 @@ export function PriceSummaryFooter({
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">РЕКОМЕНДУЕМАЯ ЦЕНА</span>
         <div className="flex items-center gap-2">
-          <span
-            className="font-bold text-primary"
-            data-testid="summary-recommended-price"
-          >
+          <span className="font-bold text-primary" data-testid="summary-recommended-price">
             {formatCurrency(recommendedPrice)}
           </span>
           <CopyButton
@@ -102,10 +94,10 @@ export function PriceSummaryFooter({
       </div>
 
       {/* Customer Price Row (if SPP > 0) */}
-      {showCustomerPrice && customerPrice && (
+      {showCustomerPrice && customerPrice && sppPct != null && (
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
-            ЦЕНА ДЛЯ ПОКУПАТЕЛЯ (СПП {sppPct}%)
+            ЦЕНА ДЛЯ ПОКУПАТЕЛЯ (СПП {formatPercentageInt(sppPct)})
           </span>
           <div className="flex items-center gap-2">
             <span className="font-medium" data-testid="summary-customer-price">
@@ -137,20 +129,12 @@ function CopyButton({ onClick, copied, label }: CopyButtonProps) {
     <Button
       variant="ghost"
       size="icon"
-      className={cn(
-        'h-6 w-6 transition-all duration-200',
-        copied && 'scale-110 text-green-600'
-      )}
+      className={cn('h-6 w-6 transition-all duration-200', copied && 'scale-110 text-green-600')}
       onClick={onClick}
       aria-label={label}
     >
       {copied ? (
-        <CheckCircle2
-          className={cn(
-            'h-3.5 w-3.5',
-            'animate-in zoom-in-50 duration-200'
-          )}
-        />
+        <CheckCircle2 className={cn('h-3.5 w-3.5', 'animate-in zoom-in-50 duration-200')} />
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}

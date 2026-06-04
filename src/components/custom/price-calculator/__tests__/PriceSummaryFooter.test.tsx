@@ -22,9 +22,7 @@ describe('PriceSummaryFooter', () => {
     it('should render minimum price label in Russian', () => {
       render(<PriceSummaryFooter {...defaultProps} />)
 
-      expect(
-        screen.getByText('МИНИМАЛЬНАЯ ЦЕНА (пол)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('МИНИМАЛЬНАЯ ЦЕНА (пол)')).toBeInTheDocument()
     })
 
     it('should render recommended price label in Russian', () => {
@@ -58,53 +56,29 @@ describe('PriceSummaryFooter', () => {
 
   describe('Customer Price Display', () => {
     it('should render customer price when SPP > 0', () => {
-      render(
-        <PriceSummaryFooter
-          {...defaultProps}
-          customerPrice={1095.65}
-          sppPct={10}
-        />
-      )
+      render(<PriceSummaryFooter {...defaultProps} customerPrice={1095.65} sppPct={10} />)
 
-      expect(
-        screen.getByText(/ЦЕНА ДЛЯ ПОКУПАТЕЛЯ/)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/ЦЕНА ДЛЯ ПОКУПАТЕЛЯ/)).toBeInTheDocument()
       expect(screen.getByTestId('summary-customer-price')).toBeInTheDocument()
     })
 
     it('should NOT render customer price when SPP = 0', () => {
-      render(
-        <PriceSummaryFooter
-          {...defaultProps}
-          customerPrice={1217.39}
-          sppPct={0}
-        />
-      )
+      render(<PriceSummaryFooter {...defaultProps} customerPrice={1217.39} sppPct={0} />)
 
-      expect(
-        screen.queryByText(/ЦЕНА ДЛЯ ПОКУПАТЕЛЯ/)
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText(/ЦЕНА ДЛЯ ПОКУПАТЕЛЯ/)).not.toBeInTheDocument()
     })
 
     it('should NOT render customer price when customerPrice is not provided', () => {
       render(<PriceSummaryFooter {...defaultProps} />)
 
-      expect(
-        screen.queryByText(/ЦЕНА ДЛЯ ПОКУПАТЕЛЯ/)
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText(/ЦЕНА ДЛЯ ПОКУПАТЕЛЯ/)).not.toBeInTheDocument()
     })
 
     it('should display SPP percentage in customer price label', () => {
-      render(
-        <PriceSummaryFooter
-          {...defaultProps}
-          customerPrice={1095.65}
-          sppPct={10}
-        />
-      )
+      render(<PriceSummaryFooter {...defaultProps} customerPrice={1095.65} sppPct={10} />)
 
       expect(
-        screen.getByText(/СПП 10%/)
+        screen.getByText(/СПП 10\s%/) // ru-RU NBSP
       ).toBeInTheDocument()
     })
   })
@@ -129,13 +103,7 @@ describe('PriceSummaryFooter', () => {
     })
 
     it('should render copy button for customer price when SPP > 0', () => {
-      render(
-        <PriceSummaryFooter
-          {...defaultProps}
-          customerPrice={1095.65}
-          sppPct={10}
-        />
-      )
+      render(<PriceSummaryFooter {...defaultProps} customerPrice={1095.65} sppPct={10} />)
 
       const copyButton = screen.getByRole('button', {
         name: 'Копировать цену для покупателя',
@@ -159,9 +127,7 @@ describe('PriceSummaryFooter', () => {
     })
 
     it('should have double border on top', () => {
-      const { container } = render(
-        <PriceSummaryFooter {...defaultProps} />
-      )
+      const { container } = render(<PriceSummaryFooter {...defaultProps} />)
 
       const footer = container.querySelector('.border-double')
       expect(footer).toBeInTheDocument()
@@ -180,7 +146,7 @@ describe('PriceSummaryFooter', () => {
       render(<PriceSummaryFooter {...defaultProps} />)
 
       const copyButtons = screen.getAllByRole('button')
-      copyButtons.forEach((button) => {
+      copyButtons.forEach(button => {
         expect(button).toHaveAttribute('aria-label')
       })
     })
