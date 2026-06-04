@@ -1,6 +1,6 @@
 # Proposal: end the dot-locale-percent whack-a-mole (consolidation + lint gate)
 
-**Status**: PROPOSED (candidate story)
+**Status**: ✅ ADOPTED & COMPLETED (2026-06-04) — see [Outcome](#outcome-2026-06-04) below
 **Raised**: 2026-06-02, validation iter-66 (both adversarial review passes converged on this)
 **Class**: systemic Russian-locale-formatting debt
 
@@ -62,3 +62,33 @@ helper directly). Getting this wrong is a 100× error (cf. iter-61 advertising R
 
 Page-by-page has negative ROI at 107 sites. The lint rule is the load-bearing deliverable: it
 converts an unbounded recurring-defect stream into a bounded one-time migration + a permanent gate.
+
+## Outcome (2026-06-04)
+
+The proposal was adopted and the migration is **complete**. What shipped:
+
+1. **Gate** (the load-bearing deliverable): `scripts/check-locale-percent.sh` + a COUNT baseline
+   `scripts/.locale-percent-baseline.txt` — a ratchet that fails on any NEW dot-locale percent and
+   must be lowered (same commit) when sites migrate. Mirrors the anti-pattern #8 playbook as proposed.
+2. **Helpers**: `formatPercentageInt` (zero-decimal `"75 %"`) was added alongside the existing
+   `formatPercentage` (1-2 decimals). A canonical `formatDecimal(value, decimals=1)` was later added
+   for the adjacent **bare-decimal** class (Russian comma on plain numbers without `%`/`₽`), replacing
+   ad-hoc `toFixed(n).replace('.',',')` and duplicate local helpers — all in `src/lib/utils.ts`.
+3. **Baseline ratcheted 108 → 11.** The remaining 11 are the permanent floor — ~6 demonstrative
+   citations in docs/comments, plus the documented aria-label spoken-text exceptions, plus the deferred
+   `ExpenseBarTooltip` site (a separate latent math bug, not a pure locale migration) — totalling 11.
+4. **Both streams cleared:** the gate-TRACKED `.toFixed(N)%` sites (ratcheted to floor) AND the
+   gate-BLIND sites the regex never saw — raw `{x}%` JSX, `Math.round(x)%`, split-line
+   `toFixed`+`'%'`, and comma-without-NBSP `Intl.format()+'%'`.
+5. **Exceptions honored exactly as predicted** (NOT migrated): aria-label spoken text, recharts
+   axis-tick formatters, CSV-export numerics, debug/log strings.
+6. **The ×100 trap held:** every migration verified the field's scale (0-100 percent-units → pass
+   straight; 0-1 ratio → `* 100`) and precision (slider step / integer source → Int; fractional →
+   N decimals) before swapping — no 100× regressions introduced.
+
+**Not closed by this initiative (need product/owner decisions, tracked separately):** three unconsumed
+dead-code components surfaced during the sweep (`OrdersCogsMetricCard`, `ProductStorageInfo`,
+`WarehouseTariffDisplay` — delete vs keep-as-API); `AuditValueDisplay` (whether admin audit-echo values
+should be locale-formatted or shown raw); the `ExpenseBarTooltip` math bug; and one backend-owned display
+string the FE cannot fix per the Defensive Frontend Principle — filed as backend request
+`docs/request-backend/208-FORECAST-AIVSNAIVE-DOT-LOCALE.md` (forecast `aiVsNaive`).
