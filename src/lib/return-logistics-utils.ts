@@ -14,6 +14,8 @@
  * - Effective return: 72.50 x 0.02 = 1.45 rub
  */
 
+import { formatPercentage } from '@/lib/utils'
+
 // ============================================================================
 // Local Currency Formatter (2 decimal places for consistency)
 // ============================================================================
@@ -118,8 +120,10 @@ export function calculateReturnLogistics(
     returnRatePct,
     breakdown: {
       baseReturnDisplay: formatCurrencyFixed(baseReturn),
-      buybackDisplay: `${clampedBuyback}%`,
-      returnRateDisplay: `${returnRatePct}%`,
+      // buyback is fractional-capable (e.g. 98.5 → returnRate 1.5) → formatPercentage(_, 1) (NBSP),
+      // consistent with ReturnLogisticsCalculator/Section; NO *100 (already percent-units 0-100)
+      buybackDisplay: formatPercentage(clampedBuyback, 1),
+      returnRateDisplay: formatPercentage(returnRatePct, 1),
       effectiveReturnDisplay: formatCurrencyFixed(effectiveReturn),
     },
   }

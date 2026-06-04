@@ -227,14 +227,14 @@ describe('Story 44.10: calculateReturnLogistics', () => {
 
     it('should format buybackDisplay as percentage', () => {
       const result = calculateReturnLogistics(72.5, 98)
-      // Should be formatted like "98%"
-      expect(result.breakdown.buybackDisplay).toBe('98%')
+      // Should be formatted like "98,0 %" (ru-RU comma + NBSP, 1 decimal)
+      expect(result.breakdown.buybackDisplay).toMatch(/^98,0\s%$/)
     })
 
     it('should format returnRateDisplay as percentage', () => {
       const result = calculateReturnLogistics(72.5, 98)
-      // Should be formatted like "2%"
-      expect(result.breakdown.returnRateDisplay).toBe('2%')
+      // Should be formatted like "2,0 %" (ru-RU comma + NBSP, 1 decimal)
+      expect(result.breakdown.returnRateDisplay).toMatch(/^2,0\s%$/)
     })
 
     it('should format effectiveReturnDisplay as currency', () => {
@@ -343,8 +343,8 @@ describe('Story 44.10: Type Exports', () => {
       returnRatePct: 2,
       breakdown: {
         baseReturnDisplay: '72,50 ₽',
-        buybackDisplay: '98%',
-        returnRateDisplay: '2%',
+        buybackDisplay: '98,0 %',
+        returnRateDisplay: '2,0 %',
         effectiveReturnDisplay: '1,45 ₽',
       },
     }
@@ -359,8 +359,8 @@ describe('Story 44.10: Type Exports', () => {
   it('should export ReturnLogisticsBreakdown type with display fields', () => {
     const breakdown: ReturnLogisticsBreakdown = {
       baseReturnDisplay: '72,50 ₽',
-      buybackDisplay: '98%',
-      returnRateDisplay: '2%',
+      buybackDisplay: '98,0 %',
+      returnRateDisplay: '2,0 %',
       effectiveReturnDisplay: '1,45 ₽',
     }
 
@@ -390,7 +390,7 @@ describe('Story 44.10: Integration Scenarios', () => {
     expect(result.returnRatePct).toBe(2)
 
     // Breakdown formatted for display
-    expect(result.breakdown.returnRateDisplay).toBe('2%')
+    expect(result.breakdown.returnRateDisplay).toMatch(/^2,0\s%$/) // ru-RU NBSP, 1 decimal
   })
 
   it('should handle premium seller scenario (high buyback)', () => {

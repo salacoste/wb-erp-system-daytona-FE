@@ -38,8 +38,8 @@ const standardResult: ReturnLogisticsResult = {
   returnRatePct: 2,
   breakdown: {
     baseReturnDisplay: '72,50 ₽',
-    buybackDisplay: '98%',
-    returnRateDisplay: '2%',
+    buybackDisplay: '98,0 %',
+    returnRateDisplay: '2,0 %',
     effectiveReturnDisplay: '1,45 ₽',
   },
 }
@@ -54,8 +54,8 @@ const fullBuybackResult: ReturnLogisticsResult = {
   returnRatePct: 0,
   breakdown: {
     baseReturnDisplay: '72,50 ₽',
-    buybackDisplay: '100%',
-    returnRateDisplay: '0%',
+    buybackDisplay: '100,0 %',
+    returnRateDisplay: '0,0 %',
     effectiveReturnDisplay: '0,00 ₽',
   },
 }
@@ -70,8 +70,8 @@ const noBuybackResult: ReturnLogisticsResult = {
   returnRatePct: 100,
   breakdown: {
     baseReturnDisplay: '72,50 ₽',
-    buybackDisplay: '0%',
-    returnRateDisplay: '100%',
+    buybackDisplay: '0,0 %',
+    returnRateDisplay: '100,0 %',
     effectiveReturnDisplay: '72,50 ₽',
   },
 }
@@ -170,7 +170,7 @@ describe('Story 44.10: ReturnLogisticsBreakdown - Content Display', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/buyback.*выкуп/i)).toBeInTheDocument()
-      expect(screen.getByText('98%')).toBeInTheDocument()
+      expect(screen.getByText(/^98,0\s%$/)).toBeInTheDocument() // ru-RU NBSP; anchored
     })
   })
 
@@ -182,7 +182,7 @@ describe('Story 44.10: ReturnLogisticsBreakdown - Content Display', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/процент возврата/i)).toBeInTheDocument()
-      expect(screen.getByText('2%')).toBeInTheDocument()
+      expect(screen.getByText(/^2,0\s%$/)).toBeInTheDocument() // ru-RU NBSP; anchored
     })
   })
 
@@ -259,8 +259,8 @@ describe('Story 44.10: ReturnLogisticsBreakdown - Edge Cases', () => {
     await user.click(screen.getByText(/показать расчёт/i))
 
     await waitFor(() => {
-      expect(screen.getByText('100%')).toBeInTheDocument()
-      expect(screen.getByText('0%')).toBeInTheDocument() // return rate
+      expect(screen.getByText(/^100,0\s%$/)).toBeInTheDocument() // ru-RU NBSP; anchored (≠ "0,0 %")
+      expect(screen.getByText(/^0,0\s%$/)).toBeInTheDocument() // ru-RU NBSP; anchored (≠ "100,0 %") // return rate
     })
   })
 
@@ -271,8 +271,8 @@ describe('Story 44.10: ReturnLogisticsBreakdown - Edge Cases', () => {
     await user.click(screen.getByText(/показать расчёт/i))
 
     await waitFor(() => {
-      expect(screen.getByText('0%')).toBeInTheDocument()
-      expect(screen.getByText('100%')).toBeInTheDocument() // return rate
+      expect(screen.getByText(/^0,0\s%$/)).toBeInTheDocument() // ru-RU NBSP; anchored (≠ "100,0 %")
+      expect(screen.getByText(/^100,0\s%$/)).toBeInTheDocument() // ru-RU NBSP; anchored (≠ "0,0 %") // return rate
     })
   })
 
@@ -285,8 +285,8 @@ describe('Story 44.10: ReturnLogisticsBreakdown - Edge Cases', () => {
       returnRatePct: 2,
       breakdown: {
         baseReturnDisplay: '9 999,99 ₽',
-        buybackDisplay: '98%',
-        returnRateDisplay: '2%',
+        buybackDisplay: '98,0 %',
+        returnRateDisplay: '2,0 %',
         effectiveReturnDisplay: '199,99 ₽',
       },
     }

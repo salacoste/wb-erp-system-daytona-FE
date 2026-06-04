@@ -224,7 +224,7 @@ describe('Story 44.10: AC3 - Breakdown Display', () => {
 
       // Step 2: Buyback percentage (may appear in multiple places)
       expect(screen.getByText(/buyback.*выкуп/i)).toBeInTheDocument()
-      const buybackElements = screen.getAllByText(/98%/)
+      const buybackElements = screen.getAllByText(/98,0\s%/) // ru-RU NBSP, 1 decimal
       expect(buybackElements.length).toBeGreaterThanOrEqual(1)
 
       // Step 3: Effective return (should be in breakdown)
@@ -242,7 +242,7 @@ describe('Story 44.10: AC3 - Breakdown Display', () => {
     await waitFor(() => {
       // Return rate = 100 - 98 = 2%
       expect(screen.getByText(/процент возврата:/i)).toBeInTheDocument()
-      expect(screen.getByText(/2%/)).toBeInTheDocument()
+      expect(screen.getByText(/2,0\s%/)).toBeInTheDocument() // ru-RU NBSP, 1 decimal
     })
   })
 
@@ -261,9 +261,9 @@ describe('Story 44.10: AC3 - Breakdown Display', () => {
     rerender(<ReturnLogisticsCalculator {...defaultProps} forwardLogistics={100} buybackPct={95} />)
 
     await waitFor(() => {
-      // Should show updated values (5% appears in multiple places)
-      const returnRateElements = screen.getAllByText(/5%/)
-      expect(returnRateElements.length).toBeGreaterThanOrEqual(1)
+      // return rate = 100 - 95 = 5; anchored to target the standalone returnRate span
+      // ("95,0 %" buyback CONTAINS substring "5,0 %", so an unanchored match would be ambiguous)
+      expect(screen.getByText(/^5,0\s%$/)).toBeInTheDocument() // ru-RU NBSP, 1 decimal
     })
   })
 })
