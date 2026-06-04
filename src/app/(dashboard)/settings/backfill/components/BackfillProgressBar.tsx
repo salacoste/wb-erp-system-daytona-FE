@@ -8,7 +8,7 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import type { BackfillStatus } from '@/types/backfill'
 import { getProgressColorClass } from '@/lib/backfill-utils'
 
@@ -59,7 +59,10 @@ export function BackfillProgressBar({
       </div>
       {showText && (
         <span className="min-w-[3rem] text-sm font-medium text-gray-700" aria-hidden="true">
-          {progress}%
+          {/* visible % → ru-RU 1 decimal ("75,0 %", NBSP). 1 decimal (NOT Int) keeps a LIVE
+              in-progress value honest: Int would round 99.7→"100 %" while the bar isn't full and
+              status is still in_progress. aria-label keeps dot-locale (§4); CSS width uses raw. */}
+          {formatPercentage(progress, 1)}
         </span>
       )}
     </div>
