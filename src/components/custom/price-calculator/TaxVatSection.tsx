@@ -3,6 +3,7 @@
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { FieldTooltip } from './FieldTooltip'
+import { formatPercentageInt } from '@/lib/utils'
 
 /** Common VAT rates in Russia (including 5% for small business, 22% for special categories) */
 const VAT_RATES = [0, 5, 10, 20, 22] as const
@@ -64,7 +65,7 @@ export function TaxVatSection({
                 className="h-7 px-2"
                 data-testid={`vat-rate-${rate}`}
               >
-                {rate}%
+                {formatPercentageInt(rate)}
               </Button>
             ))}
           </div>
