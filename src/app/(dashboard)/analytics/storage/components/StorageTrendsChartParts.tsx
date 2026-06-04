@@ -9,7 +9,7 @@
  */
 
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import type { StorageTrendPoint, MetricSummary } from '@/types/storage-analytics'
 import { CHART_COLORS, formatCurrency, formatWeekShort } from './storage-trends-config'
 
@@ -33,8 +33,11 @@ export function TrendBadge({ trend }: { trend: number }) {
     >
       <Icon className="h-4 w-4" />
       <span>
+        {/* Sign contract: '+' is prepended ONLY for positive trend; formatPercentage emits the
+            minus sign for negatives itself (U+002D on current ICU; "-5,0 %"), and nothing for 0
+            ("0,0 %"). Do not also enable signDisplay on formatPercentage or positives → "++5,0 %". */}
         {isPositive ? '+' : ''}
-        {trend.toFixed(1)}%
+        {formatPercentage(trend, 1)}
       </span>
     </div>
   )

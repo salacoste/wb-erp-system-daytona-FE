@@ -142,20 +142,15 @@ describe('TopConsumersWidget', () => {
     it('shows percent of total', () => {
       render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
-      // First item has 49.5%
-      expect(screen.getByText('49.5%')).toBeInTheDocument()
+      // First item has 49,5 % (Russian locale: comma + NBSP; \s matches the NBSP)
+      expect(screen.getByText(/49,5\s%/)).toBeInTheDocument()
     })
   })
 
   describe('interactions', () => {
     it('calls onProductClick when row is clicked', () => {
       const onProductClick = vi.fn()
-      render(
-        <TopConsumersWidget
-          data={mockTopConsumerItems}
-          onProductClick={onProductClick}
-        />
-      )
+      render(<TopConsumersWidget data={mockTopConsumerItems} onProductClick={onProductClick} />)
 
       const rows = screen.getAllByRole('row')
       // Click on first data row (index 1, since index 0 is header)
@@ -166,12 +161,7 @@ describe('TopConsumersWidget', () => {
 
     it('shows View All button when onViewAll is provided', () => {
       const onViewAll = vi.fn()
-      render(
-        <TopConsumersWidget
-          data={mockTopConsumerItems}
-          onViewAll={onViewAll}
-        />
-      )
+      render(<TopConsumersWidget data={mockTopConsumerItems} onViewAll={onViewAll} />)
 
       const viewAllButton = screen.getByText('Показать все')
       expect(viewAllButton).toBeInTheDocument()
@@ -179,12 +169,7 @@ describe('TopConsumersWidget', () => {
 
     it('calls onViewAll when button is clicked', () => {
       const onViewAll = vi.fn()
-      render(
-        <TopConsumersWidget
-          data={mockTopConsumerItems}
-          onViewAll={onViewAll}
-        />
-      )
+      render(<TopConsumersWidget data={mockTopConsumerItems} onViewAll={onViewAll} />)
 
       fireEvent.click(screen.getByText('Показать все'))
       expect(onViewAll).toHaveBeenCalled()

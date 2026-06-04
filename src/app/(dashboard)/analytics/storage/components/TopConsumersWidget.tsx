@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { TopConsumerItem } from '@/types/storage-analytics'
 import { RankIndicator, CostSeverityDot } from './TopConsumersHelpers'
+import { formatPercentage } from '@/lib/utils'
 
 /**
  * Top Consumers Widget
@@ -147,9 +148,12 @@ export function TopConsumersWidget({
                 </div>
               </TableCell>
               <TableCell className="text-right text-sm text-muted-foreground">
-                {item.percent_of_total.toFixed(1)}%
+                {formatPercentage(item.percent_of_total, 1)}
               </TableCell>
               <TableCell className="text-right">
+                {/* storage_to_revenue_ratio is optional (undefined when revenue data is absent);
+                    coerce undefined→null for CostSeverityDot's `number | null` prop. NOT `?? 0`
+                    (anti-pattern #8: a missing ratio is unknown, rendered "Нет данных", not 0). */}
                 <CostSeverityDot ratio={item.storage_to_revenue_ratio ?? null} />
               </TableCell>
             </TableRow>

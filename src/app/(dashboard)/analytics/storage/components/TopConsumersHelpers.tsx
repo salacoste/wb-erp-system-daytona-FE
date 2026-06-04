@@ -1,6 +1,6 @@
 import { Trophy, Medal } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 /**
  * Helper components for TopConsumersWidget.
@@ -71,7 +71,7 @@ export function CostSeverityDot({ ratio }: { ratio: number | null }) {
           <div className="flex items-center gap-2 cursor-help">
             {ratio !== null && (
               <span className={cn('text-sm', severity === 'high' && 'text-red-600 font-medium')}>
-                {ratio.toFixed(1)}%
+                {formatPercentage(ratio, 1)}
               </span>
             )}
             <span
