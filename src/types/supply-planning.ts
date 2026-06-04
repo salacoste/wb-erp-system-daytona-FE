@@ -137,8 +137,12 @@ export interface SupplyPlanningItem {
   reorder_quantity: number
   /** Reorder urgency status */
   reorder_status: ReorderStatus
-  /** Reorder value in RUB (reorder_quantity * cogs) */
-  reorder_value: number
+  /**
+   * Reorder value in RUB (reorder_quantity × cogs). OPTIONAL — backend omits it (sends undefined)
+   * when COGS is unassigned (supply-planning.service.ts:290,312). Render "—"; never sort/sum it
+   * without an undefined guard (anti-pattern #8 / NaN-sort).
+   */
+  reorder_value?: number
 
   // Cost data
   /** COGS per unit (null if not assigned) */

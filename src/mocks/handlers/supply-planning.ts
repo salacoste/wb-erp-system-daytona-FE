@@ -25,7 +25,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
  * Updated to match SupplyPlanningItem type (Epic 28)
  */
 export function generateMockSupplyPlanningItem(
-  overrides: Partial<SupplyPlanningItem> = {},
+  overrides: Partial<SupplyPlanningItem> = {}
 ): SupplyPlanningItem {
   const daysUntilStockout = overrides.days_until_stockout ?? 15
   const stockoutRisk = getStockoutRiskFromDays(daysUntilStockout ?? 15)
@@ -75,19 +75,20 @@ function getStockoutRiskFromDays(days: number): StockoutRisk {
  * Updated to match SupplyPlanningSummary type (Epic 28)
  */
 export function generateMockSupplyPlanningSummary(
-  items: SupplyPlanningItem[],
+  items: SupplyPlanningItem[]
 ): SupplyPlanningSummary {
   return {
     total_skus: items.length,
-    out_of_stock_count: items.filter((i) => i.stockout_risk === 'out_of_stock').length,
-    stockout_critical: items.filter((i) => i.stockout_risk === 'critical').length,
-    stockout_warning: items.filter((i) => i.stockout_risk === 'warning').length,
-    stockout_low: items.filter((i) => i.stockout_risk === 'low').length,
-    healthy_stock: items.filter((i) => i.stockout_risk === 'healthy').length,
-    reorder_urgent: items.filter((i) => i.reorder_status === 'urgent').length,
-    reorder_soon: items.filter((i) => i.reorder_status === 'soon').length,
+    out_of_stock_count: items.filter(i => i.stockout_risk === 'out_of_stock').length,
+    stockout_critical: items.filter(i => i.stockout_risk === 'critical').length,
+    stockout_warning: items.filter(i => i.stockout_risk === 'warning').length,
+    stockout_low: items.filter(i => i.stockout_risk === 'low').length,
+    healthy_stock: items.filter(i => i.stockout_risk === 'healthy').length,
+    reorder_urgent: items.filter(i => i.reorder_status === 'urgent').length,
+    reorder_soon: items.filter(i => i.reorder_status === 'soon').length,
     total_in_transit_units: items.reduce((sum, i) => sum + i.in_transit, 0),
-    total_reorder_value: items.reduce((sum, i) => sum + i.reorder_value, 0),
+    // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: undefined reorder_value (no COGS) contributes 0 to the total (matches backend supply-planning.service.ts:554)
+    total_reorder_value: items.reduce((sum, i) => sum + (i.reorder_value ?? 0), 0),
   }
 }
 
@@ -241,7 +242,7 @@ export const supplyPlanningHandlers = [
             message: 'Internal server error',
           },
         },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -249,13 +250,13 @@ export const supplyPlanningHandlers = [
     let filteredItems = [...mockSupplyPlanningItems]
 
     if (showOnly === 'stockout_risk') {
-      filteredItems = filteredItems.filter((item) =>
-        ['out_of_stock', 'critical', 'warning'].includes(item.stockout_risk),
+      filteredItems = filteredItems.filter(item =>
+        ['out_of_stock', 'critical', 'warning'].includes(item.stockout_risk)
       )
     } else if (showOnly === 'reorder_needed') {
       // Filter items that need reordering (urgent or soon status)
       filteredItems = filteredItems.filter(
-        (item) => item.reorder_status === 'urgent' || item.reorder_status === 'soon',
+        item => item.reorder_status === 'urgent' || item.reorder_status === 'soon'
       )
     }
 
@@ -307,7 +308,7 @@ export const slowSupplyPlanningHandler = http.get(
   async () => {
     await delay(2000)
     return HttpResponse.json(mockSupplyPlanningResponse)
-  },
+  }
 )
 
 /**
@@ -323,9 +324,9 @@ export const unauthorizedSupplyPlanningHandler = http.get(
           message: 'Authentication required',
         },
       },
-      { status: 401 },
+      { status: 401 }
     )
-  },
+  }
 )
 
 /**
@@ -341,9 +342,9 @@ export const forbiddenSupplyPlanningHandler = http.get(
           message: 'Access denied to this cabinet',
         },
       },
-      { status: 403 },
+      { status: 403 }
     )
-  },
+  }
 )
 
 /**
@@ -359,9 +360,9 @@ export const notFoundSupplyPlanningHandler = http.get(
           message: 'Cabinet not found',
         },
       },
-      { status: 404 },
+      { status: 404 }
     )
-  },
+  }
 )
 
 /**
@@ -371,5 +372,5 @@ export const networkErrorSupplyPlanningHandler = http.get(
   `${API_BASE_URL}/v1/analytics/supply-planning`,
   () => {
     return HttpResponse.error()
-  },
+  }
 )

@@ -79,10 +79,12 @@ export function formatStockQty(qty: number): string {
 }
 
 /**
- * Format reorder value in RUB
+ * Format reorder value in RUB. Accepts null/undefined (backend omits reorder_value when COGS is
+ * unassigned) → "—", never a fabricated "0 ₽" (anti-pattern #8). A real 0 also renders "—" here
+ * (a 0 reorder value means nothing to reorder — by design for this column).
  */
-export function formatReorderValue(value: number): string {
-  if (!Number.isFinite(value) || value === 0) return '—'
+export function formatReorderValue(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value) || value === 0) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

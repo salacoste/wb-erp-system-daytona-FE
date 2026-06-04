@@ -94,7 +94,9 @@ export function useSupplyTableFilters(data: SupplyPlanningItem[]) {
           comparison = a.reorder_quantity - b.reorder_quantity
           break
         case 'reorder_value':
-          comparison = a.reorder_value - b.reorder_value
+          // reorder_value is undefined when COGS is unassigned — coalesce so the subtraction never
+          // yields NaN (which scrambles the sort). Unknown values sort last (mirrors days_until_stockout above).
+          comparison = (a.reorder_value ?? -Infinity) - (b.reorder_value ?? -Infinity)
           break
       }
 
