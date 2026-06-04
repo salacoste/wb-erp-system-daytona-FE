@@ -1,137 +1,91 @@
 /**
- * TDD Tests for Supplies Helper Functions
- * Story 53.1-FE: TypeScript Types & API Client for Supplies
- * Epic 53-FE: Supply Management UI
+ * Tests for supply status helper functions (src/types/supplies.ts).
  *
- * Tests validate getSupplyStatusConfig, getSupplyStatusLabel, isSupplyFinal, etc.
- * All tests are in .todo() state for TDD.
+ * Implemented from the original TDD skeleton (iter-160): getSupplyStatusConfig, getSupplyStatusLabel,
+ * isSupplyFinal, canModifySupply, canGenerateStickers — with the status-honesty fallback (unknown →
+ * neutral "Неизвестно", never masquerading as OPEN).
  */
 
-import { describe, it } from 'vitest'
+import { describe, it, expect } from 'vitest'
+import type { SupplyStatus } from '@/types/supplies'
+import {
+  SUPPLY_STATUS_CONFIG,
+  getSupplyStatusConfig,
+  getSupplyStatusLabel,
+  isSupplyFinal,
+  canModifySupply,
+  canGenerateStickers,
+} from '@/types/supplies'
 
-// =============================================================================
-// SECTION 1: getSupplyStatusConfig() Helper Tests
-// =============================================================================
+const STATUSES: SupplyStatus[] = ['OPEN', 'CLOSED', 'DELIVERING', 'DELIVERED', 'CANCELLED']
+// Cast for defensive-fallback inputs (anti-pattern #4): exercising out-of-enum values.
+const UNKNOWN = 'UNKNOWN' as SupplyStatus
 
-describe('getSupplyStatusConfig() Helper', () => {
-  describe('valid status input', () => {
-    it.todo('should return config for OPEN status')
-    it.todo('should return config for CLOSED status')
-    it.todo('should return config for DELIVERING status')
-    it.todo('should return config for DELIVERED status')
-    it.todo('should return config for CANCELLED status')
+describe('getSupplyStatusConfig', () => {
+  it('returns the config for each valid status', () => {
+    for (const s of STATUSES) {
+      expect(getSupplyStatusConfig(s)).toBe(SUPPLY_STATUS_CONFIG[s])
+    }
   })
-
-  describe('return value structure', () => {
-    it.todo('should return object with label property')
-    it.todo('should return object with color property')
-    it.todo('should return object with bgColor property')
-    it.todo('should return object with icon property')
+  it('every config has label/color/bgColor/icon', () => {
+    for (const s of STATUSES) {
+      const cfg = getSupplyStatusConfig(s)
+      expect(cfg.label).toBeTruthy()
+      expect(cfg.color).toBeTruthy()
+      expect(cfg.bgColor).toBeTruthy()
+      expect(cfg.icon).toBeTruthy()
+    }
   })
-
-  describe('fallback behavior', () => {
-    it.todo('should return the neutral "Неизвестно" fallback config for unknown status')
-    it.todo('should handle null input gracefully')
-    it.todo('should handle undefined input gracefully')
-  })
-})
-
-// =============================================================================
-// SECTION 2: getSupplyStatusLabel() Helper Tests
-// =============================================================================
-
-describe('getSupplyStatusLabel() Helper', () => {
-  describe('valid status input', () => {
-    it.todo('should return "Открыта" for OPEN status')
-    it.todo('should return "Закрыта" for CLOSED status')
-    it.todo('should return "В пути" for DELIVERING status')
-    it.todo('should return "Доставлена" for DELIVERED status')
-    it.todo('should return "Отменена" for CANCELLED status')
-  })
-
-  describe('return type', () => {
-    it.todo('should always return string')
-  })
-
-  describe('fallback behavior', () => {
-    it.todo('should return "Неизвестно" for unknown status')
+  it('falls back to neutral "Неизвестно" for unknown / null / undefined (status-honesty, not OPEN)', () => {
+    const fallback = {
+      label: 'Неизвестно',
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-50',
+      icon: 'HelpCircle',
+    }
+    expect(getSupplyStatusConfig(UNKNOWN)).toEqual(fallback)
+    expect(getSupplyStatusConfig(null as unknown as SupplyStatus)).toEqual(fallback)
+    expect(getSupplyStatusConfig(undefined as unknown as SupplyStatus)).toEqual(fallback)
   })
 })
 
-// =============================================================================
-// SECTION 3: isSupplyFinal() Helper Tests
-// =============================================================================
-
-describe('isSupplyFinal() Helper', () => {
-  describe('non-final statuses', () => {
-    it.todo('should return false for OPEN status')
-    it.todo('should return false for CLOSED status')
-    it.todo('should return false for DELIVERING status')
+describe('getSupplyStatusLabel', () => {
+  it('returns the Russian label for each status', () => {
+    expect(getSupplyStatusLabel('OPEN')).toBe('Открыта')
+    expect(getSupplyStatusLabel('CLOSED')).toBe('Закрыта')
+    expect(getSupplyStatusLabel('DELIVERING')).toBe('В пути')
+    expect(getSupplyStatusLabel('DELIVERED')).toBe('Доставлена')
+    expect(getSupplyStatusLabel('CANCELLED')).toBe('Отменена')
   })
-
-  describe('final statuses', () => {
-    it.todo('should return true for DELIVERED status')
-    it.todo('should return true for CANCELLED status')
-  })
-
-  describe('return type', () => {
-    it.todo('should always return boolean')
-  })
-
-  describe('business logic validation', () => {
-    it.todo('should identify final states correctly for UI state machine')
-    it.todo('should match supply lifecycle specification')
+  it('returns "Неизвестно" for an unknown status', () => {
+    expect(getSupplyStatusLabel(UNKNOWN)).toBe('Неизвестно')
   })
 })
 
-// =============================================================================
-// SECTION 4: canModifySupply() Helper Tests
-// =============================================================================
-
-describe('canModifySupply() Helper', () => {
-  describe('modifiable status', () => {
-    it.todo('should return true for OPEN status')
-  })
-
-  describe('non-modifiable statuses', () => {
-    it.todo('should return false for CLOSED status')
-    it.todo('should return false for DELIVERING status')
-    it.todo('should return false for DELIVERED status')
-    it.todo('should return false for CANCELLED status')
-  })
-
-  describe('return type', () => {
-    it.todo('should always return boolean')
-  })
-
-  describe('business logic validation', () => {
-    it.todo('should allow add/remove orders only for OPEN')
-    it.todo('should match supply lifecycle specification')
+describe('isSupplyFinal', () => {
+  it('is true only for DELIVERED and CANCELLED', () => {
+    expect(isSupplyFinal('DELIVERED')).toBe(true)
+    expect(isSupplyFinal('CANCELLED')).toBe(true)
+    expect(isSupplyFinal('OPEN')).toBe(false)
+    expect(isSupplyFinal('CLOSED')).toBe(false)
+    expect(isSupplyFinal('DELIVERING')).toBe(false)
   })
 })
 
-// =============================================================================
-// SECTION 5: canGenerateStickers() Helper Tests
-// =============================================================================
-
-describe('canGenerateStickers() Helper', () => {
-  describe('sticker generation allowed', () => {
-    it.todo('should return true for CLOSED status')
+describe('canModifySupply', () => {
+  it('is true only for OPEN', () => {
+    expect(canModifySupply('OPEN')).toBe(true)
+    for (const s of ['CLOSED', 'DELIVERING', 'DELIVERED', 'CANCELLED'] as SupplyStatus[]) {
+      expect(canModifySupply(s)).toBe(false)
+    }
   })
+})
 
-  describe('sticker generation not allowed', () => {
-    it.todo('should return false for OPEN status')
-    it.todo('should return false for DELIVERING status')
-    it.todo('should return false for DELIVERED status')
-    it.todo('should return false for CANCELLED status')
-  })
-
-  describe('return type', () => {
-    it.todo('should always return boolean')
-  })
-
-  describe('business logic validation', () => {
-    it.todo('should only allow stickers for CLOSED supplies')
-    it.todo('should match supply lifecycle specification')
+describe('canGenerateStickers', () => {
+  it('is true only for CLOSED', () => {
+    expect(canGenerateStickers('CLOSED')).toBe(true)
+    for (const s of ['OPEN', 'DELIVERING', 'DELIVERED', 'CANCELLED'] as SupplyStatus[]) {
+      expect(canGenerateStickers(s)).toBe(false)
+    }
   })
 })
