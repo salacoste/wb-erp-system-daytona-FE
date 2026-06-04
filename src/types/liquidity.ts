@@ -115,8 +115,12 @@ export interface LiquidityItem {
   current_stock_qty: number
   /** Average stock quantity over 30 days */
   avg_stock_qty_30d: number
-  /** Stock value in ₽ (current_stock × COGS) */
-  stock_value: number
+  /**
+   * Stock value in ₽ (current_stock × COGS) = backend `frozen_capital`. `null` when COGS is
+   * unassigned (backend sends `frozen_capital: null`) — render "—", never a fabricated "0 ₽"
+   * (anti-pattern #8).
+   */
+  stock_value: number | null
 
   /** Units sold in last 30 days */
   units_sold_30d: number

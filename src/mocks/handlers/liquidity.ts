@@ -133,8 +133,8 @@ function getActionType(category: LiquidityCategory): LiquidityItem['action_type'
 export function generateMockDistribution(items: LiquidityItem[]): LiquidityDistribution {
   const calcDistItem = (category: LiquidityCategory) => {
     const categoryItems = items.filter(i => i.liquidity_category === category)
-    const totalValue = items.reduce((sum, i) => sum + i.stock_value, 0)
-    const categoryValue = categoryItems.reduce((sum, i) => sum + i.stock_value, 0)
+    const totalValue = items.reduce((sum, i) => sum + (i.stock_value ?? 0), 0)
+    const categoryValue = categoryItems.reduce((sum, i) => sum + (i.stock_value ?? 0), 0)
     const avgTurnover =
       categoryItems.length > 0
         ? categoryItems.reduce((sum, i) => sum + i.turnover_days, 0) / categoryItems.length
@@ -193,7 +193,7 @@ export function generateMockBenchmarks(
  * Generate mock liquidity summary
  */
 export function generateMockLiquiditySummary(items: LiquidityItem[]): LiquiditySummary {
-  const totalValue = items.reduce((sum, i) => sum + i.stock_value, 0)
+  const totalValue = items.reduce((sum, i) => sum + (i.stock_value ?? 0), 0)
   const avgTurnover =
     items.length > 0 ? items.reduce((sum, i) => sum + i.turnover_days, 0) / items.length : 0
   const distribution = generateMockDistribution(items)

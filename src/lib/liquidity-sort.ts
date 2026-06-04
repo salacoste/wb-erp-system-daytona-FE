@@ -23,8 +23,9 @@ type LiquidityApiSortField = NonNullable<LiquidityQueryParams['sort_by']>
 /**
  * Map a UI sort column to a backend-accepted `sort_by`, never emitting a value the
  * `@IsEnum` validator rejects.
- * - `stock_value` → `frozen_capital` (same metric: COGS-based value of stock on hand; note it is
- *   0 when COGS is unknown, so a stock_value sort clusters no-COGS items together)
+ * - `stock_value` → `frozen_capital` (same metric: COGS-based value of stock on hand; it is `null`
+ *   when COGS is unknown, coerced to 0 by sortLiquidityItems, so a stock_value sort clusters
+ *   no-COGS items together)
  * - `velocity_per_day` → `turnover_days` (no backend velocity sort; pick a sensible page, then
  *   sort velocity client-side via {@link sortLiquidityItems})
  * - `turnover_days` → `turnover_days`

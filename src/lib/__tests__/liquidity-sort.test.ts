@@ -95,4 +95,20 @@ describe('sortLiquidityItems', () => {
     const order = sortLiquidityItems(withNaN, 'velocity_per_day', 'desc').map(i => i.sku_id)
     expect(order).toEqual(['y', 'x']) // 5 before 0 (NaN→0)
   })
+
+  it('treats null stock_value as 0 (COGS-less items cluster together)', () => {
+    // stock_value is number | null (null = COGS unassigned) — must coerce to 0, never crash.
+    const withNull = [
+      makeItem({ sku_id: 'a', stock_value: null }),
+      makeItem({ sku_id: 'b', stock_value: 500 }),
+    ]
+    expect(sortLiquidityItems(withNull, 'stock_value', 'desc').map(i => i.sku_id)).toEqual([
+      'b',
+      'a',
+    ])
+    expect(sortLiquidityItems(withNull, 'stock_value', 'asc').map(i => i.sku_id)).toEqual([
+      'a',
+      'b',
+    ])
+  })
 })

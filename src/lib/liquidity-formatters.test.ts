@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { formatTurnoverDays } from './liquidity-formatters'
+import { formatTurnoverDays, formatCurrency } from './liquidity-formatters'
 
 describe('formatTurnoverDays', () => {
   it('maps the 999 sentinel (and above) to "Нет продаж"', () => {
@@ -48,5 +48,23 @@ describe('formatTurnoverDays', () => {
     for (const v of [22.5, 14.6, 7.7, 100.25]) {
       expect(formatTurnoverDays(v)).not.toMatch(/[.,]\d/)
     }
+  })
+})
+
+describe('formatCurrency', () => {
+  it('renders "—" for null/undefined/non-finite — never a fabricated "0 ₽" (anti-pattern #8)', () => {
+    expect(formatCurrency(null)).toBe('—')
+    expect(formatCurrency(undefined)).toBe('—')
+    expect(formatCurrency(Number.NaN)).toBe('—')
+    expect(formatCurrency(Number.POSITIVE_INFINITY)).toBe('—')
+  })
+
+  it('still renders a real 0 as "0 ₽" (a genuine zero is not "unknown")', () => {
+    expect(formatCurrency(0)).toMatch(/0\s*₽/)
+  })
+
+  it('formats a positive value in Russian locale with the ₽ symbol', () => {
+    const out = formatCurrency(1000)
+    expect(out).toMatch(/1\s*000\s*₽/) // NBSP grouping
   })
 })

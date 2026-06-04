@@ -18,6 +18,15 @@ import { mapItem } from './liquidity-item-mapper'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/**
+ * Sum `stock_value` across items for inventory totals. stock_value is `number | null` (null = COGS
+ * unassigned); an unknown value can only contribute 0 to a SUM, so we coalesce here in one place.
+ */
+function sumStockValue(items: LiquidityItem[]): number {
+  // eslint-disable-next-line no-restricted-syntax -- AGGREGATION-REDUCE: null stock_value (no COGS) contributes 0 to an inventory total
+  return items.reduce((sum, i) => sum + (i.stock_value ?? 0), 0)
+}
+
 /** Map backend distribution (liquidity_breakdown) to frontend LiquidityDistribution */
 function mapDistribution(
   breakdown: Record<string, any> | undefined,
@@ -25,8 +34,8 @@ function mapDistribution(
 ): LiquidityDistribution {
   const makeDefault = (cat: LiquidityCategory): LiquidityDistributionItem => {
     const catItems = items.filter(i => i.liquidity_category === cat)
-    const totalValue = items.reduce((sum, i) => sum + i.stock_value, 0)
-    const catValue = catItems.reduce((sum, i) => sum + i.stock_value, 0)
+    const totalValue = sumStockValue(items)
+    const catValue = sumStockValue(catItems)
     return {
       count: catItems.length,
       value: catValue,
@@ -137,10 +146,8 @@ function mapSummary(
   items: LiquidityItem[]
 ): LiquiditySummary {
   if (!raw) {
-    const totalValue = items.reduce((sum, i) => sum + i.stock_value, 0)
-    const frozen = items
-      .filter(i => i.liquidity_category === 'illiquid')
-      .reduce((sum, i) => sum + i.stock_value, 0)
+    const totalValue = sumStockValue(items)
+    const frozen = sumStockValue(items.filter(i => i.liquidity_category === 'illiquid'))
     const distribution = mapDistribution(undefined, items)
     return {
       total_inventory_value: totalValue,
@@ -156,7 +163,7 @@ function mapSummary(
   const distribution = mapDistribution(raw.liquidity_breakdown ?? raw.distribution, items)
   const totalSkus = raw.total_skus ?? raw.total_sku_count ?? items.length
   const totalFrozen = raw.total_frozen_capital ?? raw.frozen_capital ?? 0
-  const totalInv = raw.total_inventory_value ?? items.reduce((sum, i) => sum + i.stock_value, 0)
+  const totalInv = raw.total_inventory_value ?? sumStockValue(items)
 
   return {
     total_inventory_value: totalInv,

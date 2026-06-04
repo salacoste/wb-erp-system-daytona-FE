@@ -102,7 +102,10 @@ export function mapItem(raw: Record<string, any>): LiquidityItem {
     brand: raw.brand ?? '',
     current_stock_qty: currentStock,
     avg_stock_qty_30d: raw.avg_stock_qty_30d ?? currentStock,
-    stock_value: raw.frozen_capital ?? raw.stock_value ?? currentStock * unitCost,
+    // frozen_capital is null when COGS is unassigned. Only derive a value when we actually have a
+    // unit cost; otherwise preserve null so the UI shows "—", not a fabricated "0 ₽" (anti-pattern #8).
+    stock_value:
+      raw.frozen_capital ?? raw.stock_value ?? (unitCost > 0 ? currentStock * unitCost : null),
     units_sold_30d: raw.units_sold_30d ?? Math.round(avgDailySales * 30),
     velocity_per_day: avgDailySales,
     turnover_days: raw.turnover_days ?? 0,

@@ -73,8 +73,13 @@ export function getFrozenCapitalStatusClass(pct: number): string {
   return 'text-green-600'
 }
 
-/** Format currency value */
-export function formatCurrency(value: number): string {
+/**
+ * Format currency value. Null/undefined/non-finite → "—" (anti-pattern #8: never fabricate a
+ * "0 ₽" for an unknown money value — e.g. stock_value when COGS is unassigned). A real 0 still
+ * renders "0 ₽". Note Intl.format(null) would otherwise coerce null to 0 ("0 ₽"), hence the guard.
+ */
+export function formatCurrency(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

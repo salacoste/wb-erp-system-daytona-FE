@@ -40,4 +40,13 @@ describe('LiquidationPlannerModal — turnover days', () => {
     )
     expect(screen.getByText('22 дня')).toBeInTheDocument()
   })
+
+  it('renders "—" in the Стоимость slot when stock_value is null (anti-pattern #8, no "0 ₽")', () => {
+    // COGS-unassigned items have stock_value === null — the slot must show "—", not a fabricated 0.
+    render(
+      <LiquidationPlannerModal item={makeItem({ stock_value: null })} open onClose={() => {}} />
+    )
+    const label = screen.getByText('Стоимость')
+    expect(label.nextElementSibling).toHaveTextContent('—')
+  })
 })
