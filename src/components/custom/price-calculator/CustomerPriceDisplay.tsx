@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { Store, User } from 'lucide-react'
 
 /**
@@ -50,9 +50,7 @@ export function CustomerPriceDisplay({
   return (
     <Card className={className} data-testid="customer-price-display">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base font-medium">
-          Цена для покупателя (СПП)
-        </CardTitle>
+        <CardTitle className="text-base font-medium">Цена для покупателя (СПП)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Seller receives */}
@@ -68,13 +66,8 @@ export function CustomerPriceDisplay({
 
         {/* WB discount row */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">
-            Скидка WB (-{sppPct}%):
-          </span>
-          <span
-            className="text-green-600 font-medium"
-            data-testid="wb-discount-amount"
-          >
+          <span className="text-muted-foreground">Скидка WB (-{formatPercentageInt(sppPct)}):</span>
+          <span className="text-green-600 font-medium" data-testid="wb-discount-amount">
             -{formatCurrency(discountAmount)}
           </span>
         </div>
@@ -89,22 +82,18 @@ export function CustomerPriceDisplay({
             <span className="font-medium">Цена для покупателя:</span>
           </div>
           <div className="flex items-center gap-2">
-            <span
-              className="text-lg font-bold text-primary"
-              data-testid="customer-price"
-            >
+            <span className="text-lg font-bold text-primary" data-testid="customer-price">
               {formatCurrency(customerPrice)}
             </span>
             <Badge variant="secondary" className="text-xs">
-              -{sppPct}%
+              -{formatPercentageInt(sppPct)}
             </Badge>
           </div>
         </div>
 
         {/* Info note */}
         <p className="text-xs text-muted-foreground pt-2">
-          СПП — скидка WB за их счёт. Вы получаете полную сумму{' '}
-          {formatCurrency(recommendedPrice)}
+          СПП — скидка WB за их счёт. Вы получаете полную сумму {formatCurrency(recommendedPrice)}
         </p>
       </CardContent>
     </Card>

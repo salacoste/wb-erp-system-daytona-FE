@@ -19,25 +19,19 @@ describe('CustomerPriceDisplay', () => {
     it('should not render when SPP = 0', () => {
       render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={0} />)
 
-      expect(
-        screen.queryByTestId('customer-price-display')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('customer-price-display')).not.toBeInTheDocument()
     })
 
     it('should not render when SPP < 0', () => {
       render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={-5} />)
 
-      expect(
-        screen.queryByTestId('customer-price-display')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('customer-price-display')).not.toBeInTheDocument()
     })
 
     it('should not render when recommended price is 0', () => {
       render(<CustomerPriceDisplay recommendedPrice={0} sppPct={10} />)
 
-      expect(
-        screen.queryByTestId('customer-price-display')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('customer-price-display')).not.toBeInTheDocument()
     })
   })
 
@@ -81,9 +75,7 @@ describe('CustomerPriceDisplay', () => {
     it('should display seller price label in Russian', () => {
       render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
-      expect(
-        screen.getByText('Ваша цена (получаете вы):')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Ваша цена (получаете вы):')).toBeInTheDocument()
     })
 
     it('should display customer price label in Russian', () => {
@@ -95,15 +87,19 @@ describe('CustomerPriceDisplay', () => {
     it('should display WB discount label with percentage', () => {
       render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
-      expect(screen.getByText('Скидка WB (-10%):')).toBeInTheDocument()
+      expect(screen.getByText(/Скидка WB \(-10\s%\):/)).toBeInTheDocument() // ru-RU NBSP
+    })
+
+    it('should display the SPP discount badge with NBSP percent', () => {
+      render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
+      // Both the Badge and the "Скидка WB (…)" label render "-10 %" (NBSP) — ≥2 elements
+      expect(screen.getAllByText(/-10\s%/).length).toBeGreaterThanOrEqual(2)
     })
 
     it('should display SPP explanation note', () => {
       render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
-      expect(
-        screen.getByText(/СПП — скидка WB за их счёт/i)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/СПП — скидка WB за их счёт/i)).toBeInTheDocument()
     })
   })
 
@@ -161,11 +157,7 @@ describe('CustomerPriceDisplay', () => {
   describe('Custom className', () => {
     it('should apply custom className', () => {
       render(
-        <CustomerPriceDisplay
-          recommendedPrice={4057.87}
-          sppPct={10}
-          className="custom-class"
-        />
+        <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} className="custom-class" />
       )
 
       const card = screen.getByTestId('customer-price-display')

@@ -71,9 +71,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
       it('should display label "СПП (Скидка постоянного покупателя)"', () => {
         render(<SppInput value={0} onChange={mockOnChange} />)
 
-        expect(
-          screen.getByText('СПП (Скидка постоянного покупателя)')
-        ).toBeInTheDocument()
+        expect(screen.getByText('СПП (Скидка постоянного покупателя)')).toBeInTheDocument()
       })
 
       it('should have tooltip explaining SPP', async () => {
@@ -86,9 +84,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         await waitFor(() => {
           // Tooltip should explain that SPP is provided by WB
           // Radix may render multiple copies of tooltip content, use getAllByText
-          const texts = screen.getAllByText(
-            /WB предоставляет покупателям за свой счёт/i
-          )
+          const texts = screen.getAllByText(/WB предоставляет покупателям за свой счёт/i)
           expect(texts.length).toBeGreaterThan(0)
         })
       })
@@ -102,9 +98,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
         await waitFor(() => {
           // Radix may render multiple copies of tooltip content, use getAllByText
-          const texts = screen.getAllByText(
-            /Вы получаете полную сумму без учёта СПП/i
-          )
+          const texts = screen.getAllByText(/Вы получаете полную сумму без учёта СПП/i)
           expect(texts.length).toBeGreaterThan(0)
         })
       })
@@ -115,9 +109,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         render(<SppInput value={10} onChange={mockOnChange} />)
 
         expect(screen.getByTestId('spp-help-text')).toBeInTheDocument()
-        expect(
-          screen.getByText('Покупатель увидит цену со скидкой 10%')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Покупатель увидит цену со скидкой 10%')).toBeInTheDocument()
       })
 
       it('should not show help text when SPP = 0', () => {
@@ -127,19 +119,13 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
       })
 
       it('should update help text when SPP changes', () => {
-        const { rerender } = render(
-          <SppInput value={10} onChange={mockOnChange} />
-        )
+        const { rerender } = render(<SppInput value={10} onChange={mockOnChange} />)
 
-        expect(
-          screen.getByText('Покупатель увидит цену со скидкой 10%')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Покупатель увидит цену со скидкой 10%')).toBeInTheDocument()
 
         rerender(<SppInput value={15} onChange={mockOnChange} />)
 
-        expect(
-          screen.getByText('Покупатель увидит цену со скидкой 15%')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Покупатель увидит цену со скидкой 15%')).toBeInTheDocument()
       })
     })
 
@@ -164,7 +150,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         await user.type(input, '35')
 
         const calls = mockOnChange.mock.calls
-        const validCalls = calls.filter((call) => call[0] <= 30)
+        const validCalls = calls.filter(call => call[0] <= 30)
         expect(validCalls.length).toBe(calls.length)
       })
 
@@ -177,14 +163,12 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
         await user.type(input, '-5')
 
         const calls = mockOnChange.mock.calls
-        const validCalls = calls.filter((call) => call[0] >= 0)
+        const validCalls = calls.filter(call => call[0] >= 0)
         expect(validCalls.length).toBe(calls.length)
       })
 
       it('should be a controlled component', () => {
-        const { rerender } = render(
-          <SppInput value={5} onChange={mockOnChange} />
-        )
+        const { rerender } = render(<SppInput value={5} onChange={mockOnChange} />)
 
         expect(screen.getByTestId('spp-input')).toHaveValue(5)
 
@@ -195,18 +179,10 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
     describe('Error State', () => {
       it('should display error message when provided', () => {
-        render(
-          <SppInput
-            value={0}
-            onChange={mockOnChange}
-            error="СПП не может превышать 30%"
-          />
-        )
+        render(<SppInput value={0} onChange={mockOnChange} error="СПП не может превышать 30%" />)
 
         expect(screen.getByTestId('spp-error')).toBeInTheDocument()
-        expect(
-          screen.getByText('СПП не может превышать 30%')
-        ).toBeInTheDocument()
+        expect(screen.getByText('СПП не может превышать 30%')).toBeInTheDocument()
       })
 
       it('should not display error when not provided', () => {
@@ -263,9 +239,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
         const input = screen.getByTestId('spp-input')
         expect(input).toHaveValue(30)
-        expect(
-          screen.getByText('Покупатель увидит цену со скидкой 30%')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Покупатель увидит цену со скидкой 30%')).toBeInTheDocument()
       })
 
       it('should handle decimal SPP values', () => {
@@ -280,25 +254,19 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
   describe('CustomerPriceDisplay Component', () => {
     describe('AC3: Customer Price Display', () => {
       it('should show customer price when SPP > 0', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         expect(screen.getByText('Цена для покупателя:')).toBeInTheDocument()
       })
 
       it('should not render when SPP = 0', () => {
-        const { container } = render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={0} />
-        )
+        const { container } = render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={0} />)
 
         expect(container.firstChild).toBeNull()
       })
 
       it('should calculate customer price correctly', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // 4057.87 * 0.90 = 3652.08 (rounded)
         // Check for the calculated price in any format
@@ -306,21 +274,17 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
       })
 
       it('should show SPP badge with percentage', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // Badge displays the SPP percentage - check for exactly one badge element
-        const badges = screen.getAllByText(/-10%/)
+        const badges = screen.getAllByText(/-10\s%/) // ru-RU NBSP
         expect(badges.length).toBeGreaterThanOrEqual(1)
       })
     })
 
     describe('AC4: Price Comparison', () => {
       it('should show seller price (what seller receives)', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         expect(screen.getByText(/Ваша цена/)).toBeInTheDocument()
         // Use testId for precise matching (price appears in multiple places)
@@ -330,25 +294,19 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
       })
 
       it('should show customer price (what customer sees)', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         expect(screen.getByText('Цена для покупателя:')).toBeInTheDocument()
       })
 
       it('should indicate seller receives full price', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         expect(screen.getByText(/получаете вы/i)).toBeInTheDocument()
       })
 
       it('should show WB discount amount', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // Discount = 4057.87 * 0.10 = 405.79
         // Check via testId for precise matching
@@ -360,39 +318,31 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
     describe('Edge Cases', () => {
       it('should handle SPP = 1% (minimum non-zero)', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={1000} sppPct={1} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={1000} sppPct={1} />)
 
         // Customer price = 1000 * 0.99 = 990
         expect(screen.getByText(/990/)).toBeInTheDocument()
       })
 
       it('should handle SPP = 30% (maximum)', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={1000} sppPct={30} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={1000} sppPct={30} />)
 
         // Customer price = 1000 * 0.70 = 700
         expect(screen.getByText(/700/)).toBeInTheDocument()
         // Badge displays -30%, also appears in "Скидка WB (-30%):" label
-        const badges = screen.getAllByText(/-30%/)
+        const badges = screen.getAllByText(/-30\s%/) // ru-RU NBSP
         expect(badges.length).toBeGreaterThanOrEqual(1)
       })
 
       it('should handle very high recommended price', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={999999.99} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={999999.99} sppPct={10} />)
 
         // Should render without errors
         expect(screen.getByText('Цена для покупателя:')).toBeInTheDocument()
       })
 
       it('should handle very low recommended price', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={10} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={10} sppPct={10} />)
 
         // Customer price = 10 * 0.90 = 9
         expect(screen.getByText('Цена для покупателя:')).toBeInTheDocument()
@@ -401,9 +351,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
     describe('Accessibility', () => {
       it('should have Store icon for seller price', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // Check for Store icon presence (via lucide-react)
         const storeSection = screen.getByText(/Ваша цена/).closest('div')
@@ -411,21 +359,15 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
       })
 
       it('should have User icon for customer price', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // Check for User icon presence (via lucide-react)
-        const userSection = screen
-          .getByText('Цена для покупателя:')
-          .closest('div')
+        const userSection = screen.getByText('Цена для покупателя:').closest('div')
         expect(userSection).toBeInTheDocument()
       })
 
       it('should have sufficient color contrast for price display', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // Visual test - verified through manual accessibility audit
         expect(screen.getByText('Цена для покупателя:')).toBeInTheDocument()
@@ -434,9 +376,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
     describe('Responsive Layout', () => {
       it('should render in a Card container', () => {
-        render(
-          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />
-        )
+        render(<CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} />)
 
         // Check for Card wrapper via testId
         expect(screen.getByTestId('customer-price-display')).toBeInTheDocument()
@@ -444,11 +384,7 @@ describe('Story 44.19: SPP Display (Customer Price)', () => {
 
       it('should support custom className', () => {
         const { container } = render(
-          <CustomerPriceDisplay
-            recommendedPrice={4057.87}
-            sppPct={10}
-            className="custom-class"
-          />
+          <CustomerPriceDisplay recommendedPrice={4057.87} sppPct={10} className="custom-class" />
         )
 
         expect(container.firstChild).toHaveClass('custom-class')
