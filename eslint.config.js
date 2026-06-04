@@ -22,7 +22,10 @@ module.exports = [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: './tsconfig.json',
+        // NOTE: 'project' intentionally omitted for CI on low-memory VPS.
+        // With project: './tsconfig.json', ESLint loads the full TS program
+        // into memory (~1.2 GB) and OOMs on a 2 GB RAM machine. The rules
+        // in this config don't require type-aware linting, so it's safe to omit.
         sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
