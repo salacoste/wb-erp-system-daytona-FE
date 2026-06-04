@@ -31,6 +31,7 @@ import { RequireWbToken } from '@/components/custom/RequireWbToken'
 import { NavigationSection, analyticsNavigation } from './components/AnalyticsNavigation'
 import { AnalyticsWeekSelector } from './components/AnalyticsWeekSelector'
 import { useAnalyticsPageState } from './components/useAnalyticsPageState'
+import { SearchPerformanceWidget } from './components/SearchPerformanceWidget'
 
 export default function AnalyticsSummaryPage() {
   const {
@@ -79,13 +80,17 @@ export default function AnalyticsSummaryPage() {
         {/* Quick Navigation - UX: Primary action area at top */}
         <Card className="border-none shadow-none bg-gray-50/50">
           <CardContent className="p-4">
-            <div className="grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-4">
               <NavigationSection {...analyticsNavigation.financial} />
               <NavigationSection {...analyticsNavigation.operational} />
+              <NavigationSection {...analyticsNavigation.marketing} />
               <NavigationSection {...analyticsNavigation.strategic} />
             </div>
           </CardContent>
         </Card>
+
+        {/* Story 120.3-FE: Search Performance mini-widget (marketing quick stats) */}
+        {selectedWeek && <SearchPerformanceWidget from={selectedWeek} to={selectedWeek} />}
 
         {/* Divider with title */}
         <div className="relative">
