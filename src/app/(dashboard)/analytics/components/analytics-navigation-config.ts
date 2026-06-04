@@ -1,10 +1,6 @@
 'use client'
 
-/**
- * Analytics Navigation Configuration
- * Extracted from analytics/page.tsx - pure structural refactoring
- * Navigation config data and types for the analytics hub
- */
+/** Analytics Navigation Configuration — grouped by user intent (Story 120.2-FE restructured) */
 
 import {
   Package,
@@ -15,14 +11,15 @@ import {
   PackageSearch,
   Calculator,
   ClipboardList,
+  Filter,
+  ShoppingBag,
+  RotateCcw,
+  Search,
+  Megaphone,
+  Brain,
 } from 'lucide-react'
-import { Filter, ShoppingBag, RotateCcw, Search } from 'lucide-react'
-import { Brain } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
-/**
- * Navigation item type
- */
 export interface NavigationItem {
   href: string
   icon: React.ComponentType<{ className?: string }>
@@ -35,10 +32,6 @@ export interface NavigationItem {
   badge?: string
 }
 
-/**
- * Analytics navigation configuration
- * UX: Grouped by user intent - what question are they trying to answer?
- */
 export const analyticsNavigation = {
   financial: {
     title: 'Финансовый анализ',
@@ -122,6 +115,13 @@ export const analyticsNavigation = {
         borderColor: 'border-orange-200',
         badge: 'Новое',
       },
+    ],
+  },
+  // Story 120.2-FE: Marketing & SEO group
+  marketing: {
+    title: 'Маркетинг и SEO',
+    description: 'Воронка, реклама, поиск и аналитика',
+    items: [
       {
         href: ROUTES.ANALYTICS.FUNNEL,
         icon: Filter,
@@ -131,46 +131,16 @@ export const analyticsNavigation = {
         bgColor: 'bg-cyan-50',
         hoverBg: 'hover:bg-cyan-100',
         borderColor: 'border-cyan-200',
-        badge: 'Новое',
-      },
-    ],
-  },
-  strategic: {
-    title: 'Стратегический анализ',
-    description: 'Юнит-экономика и рентабельность',
-    items: [
-      {
-        href: ROUTES.ANALYTICS.UNIT_ECONOMICS,
-        icon: Calculator,
-        title: 'Юнит-экономика',
-        description: 'Структура затрат на единицу',
-        color: 'text-indigo-600',
-        bgColor: 'bg-indigo-50',
-        hoverBg: 'hover:bg-indigo-100',
-        borderColor: 'border-indigo-200',
-        badge: 'Новое',
       },
       {
-        href: ROUTES.ANALYTICS.BUYOUT,
-        icon: ShoppingBag,
-        title: 'Аналитика выкупов',
-        description: 'Процент выкупа и тренды по SKU',
-        color: 'text-teal-600',
-        bgColor: 'bg-teal-50',
-        hoverBg: 'hover:bg-teal-100',
-        borderColor: 'border-teal-200',
-        badge: 'Новое',
-      },
-      {
-        href: ROUTES.ANALYTICS.RETURNS,
-        icon: RotateCcw,
-        title: 'Аналитика возвратов',
-        description: 'Причины возвратов и аномалии',
-        color: 'text-pink-600',
-        bgColor: 'bg-pink-50',
-        hoverBg: 'hover:bg-pink-100',
-        borderColor: 'border-pink-200',
-        badge: 'Новое',
+        href: ROUTES.ANALYTICS.ADVERTISING,
+        icon: Megaphone,
+        title: 'Реклама',
+        description: 'Кампании, ROAS и эффективность',
+        color: 'text-amber-600',
+        bgColor: 'bg-amber-50',
+        hoverBg: 'hover:bg-amber-100',
+        borderColor: 'border-amber-200',
       },
       {
         href: ROUTES.ANALYTICS.SEARCH,
@@ -181,7 +151,42 @@ export const analyticsNavigation = {
         bgColor: 'bg-sky-50',
         hoverBg: 'hover:bg-sky-100',
         borderColor: 'border-sky-200',
-        badge: 'Джем',
+      },
+      {
+        href: ROUTES.ANALYTICS.BUYOUT,
+        icon: ShoppingBag,
+        title: 'Аналитика выкупов',
+        description: 'Процент выкупа и тренды по SKU',
+        color: 'text-teal-600',
+        bgColor: 'bg-teal-50',
+        hoverBg: 'hover:bg-teal-100',
+        borderColor: 'border-teal-200',
+      },
+      {
+        href: ROUTES.ANALYTICS.RETURNS,
+        icon: RotateCcw,
+        title: 'Аналитика возвратов',
+        description: 'Причины возвратов и аномалии',
+        color: 'text-pink-600',
+        bgColor: 'bg-pink-50',
+        hoverBg: 'hover:bg-pink-100',
+        borderColor: 'border-pink-200',
+      },
+    ],
+  },
+  strategic: {
+    title: 'Стратегический анализ',
+    description: 'Юнит-экономика и AI прогнозы',
+    items: [
+      {
+        href: ROUTES.ANALYTICS.UNIT_ECONOMICS,
+        icon: Calculator,
+        title: 'Юнит-экономика',
+        description: 'Структура затрат на единицу',
+        color: 'text-indigo-600',
+        bgColor: 'bg-indigo-50',
+        hoverBg: 'hover:bg-indigo-100',
+        borderColor: 'border-indigo-200',
       },
       {
         href: ROUTES.ANALYTICS.FORECAST,
