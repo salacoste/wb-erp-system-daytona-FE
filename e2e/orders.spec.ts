@@ -72,7 +72,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to orders page (requires authentication via setup)
     await page.goto(ORDERS_ROUTES.orders)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
   })
 
   test.describe('Page Navigation & Load', () => {
@@ -88,7 +88,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
     test.skip('should navigate to Orders from sidebar', async ({ page }) => {
       // TODO: Implement when sidebar navigation is added
       await page.goto(ROUTES.dashboard)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       const ordersLink = page.locator('a[href*="orders"], a:has-text("Заказы")')
       await ordersLink.click()
@@ -169,7 +169,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       // Select "Last 7 days" preset
       await page.click('text=Последние 7 дней')
 
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await expect(page.locator('table tbody tr')).not.toHaveCount(0)
     })
 
@@ -183,7 +183,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
         await statusFilter.click()
         await page.click('text=Доставлен')
 
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
         // Verify only delivered orders shown
       }
     })
@@ -197,7 +197,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       if (await searchInput.isVisible()) {
         await searchInput.fill('12345678')
         await page.waitForTimeout(500) // Debounce
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Verify filtered results
       }
@@ -215,7 +215,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
 
       if (await resetButton.isVisible()) {
         await resetButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
       }
     })
   })
@@ -226,7 +226,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       const dateHeader = page.locator('th:has-text("Дата"), [data-testid="date-header"]')
       await dateHeader.click()
 
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Verify sort indicator
       await expect(dateHeader.locator('[class*="sort"], svg')).toBeVisible()
@@ -237,7 +237,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       const statusHeader = page.locator('th:has-text("Статус")')
       await statusHeader.click()
 
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
     })
 
     test.skip('should sort by price column', async ({ page }) => {
@@ -245,7 +245,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       const priceHeader = page.locator('th:has-text("Сумма"), th:has-text("Цена")')
       await priceHeader.click()
 
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
     })
 
     test.skip('should toggle sort direction on second click', async ({ page }) => {
@@ -253,10 +253,10 @@ test.describe('Orders Page - Epic 40-FE', () => {
       const dateHeader = page.locator('th:has-text("Дата")')
 
       await dateHeader.click()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       await dateHeader.click()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Verify sort direction changed
     })
@@ -436,7 +436,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       await dateRangePicker.click()
       await page.click('text=Последние 30 дней')
 
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       // Verify analytics widgets updated
     })
   })
@@ -499,7 +499,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
 
       if (await nextButton.isEnabled()) {
         await nextButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
       }
     })
 
@@ -509,7 +509,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
 
       if (await prevButton.isEnabled()) {
         await prevButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
       }
     })
 
@@ -520,7 +520,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       if (await pageSizeSelector.isVisible()) {
         await pageSizeSelector.click()
         await page.click('text=50')
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
       }
     })
   })
@@ -536,7 +536,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       if (await searchInput.isVisible()) {
         await searchInput.fill('nonexistent-order-99999999999')
         await page.waitForTimeout(500)
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         await expect(page.getByText(/Заказы не найдены|Нет заказов/i)).toBeVisible()
       }
@@ -555,7 +555,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
 
       if (await clearFiltersButton.isVisible()) {
         await clearFiltersButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
       }
     })
   })
@@ -633,7 +633,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       const retryButton = page.locator('button:has-text("Повторить")')
       if (await retryButton.isVisible()) {
         await retryButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
       }
     })
   })
@@ -644,7 +644,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       // AC1: Mobile responsive behavior tested
       await page.setViewportSize({ width: 375, height: 667 })
       await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       await expect(page.locator('body')).toBeVisible()
 
@@ -672,7 +672,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       // TODO: Implement horizontal scroll test
       await page.setViewportSize({ width: 375, height: 667 })
       await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       const tableWrapper = page
         .locator('div')
@@ -689,7 +689,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       // TODO: Implement mobile modal test
       await page.setViewportSize({ width: 375, height: 667 })
       await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       const orderRow = page.locator('tbody tr:first-child, [data-testid="order-card"]:first-child')
 
@@ -711,7 +711,7 @@ test.describe('Orders Page - Epic 40-FE', () => {
       // TODO: Implement mobile analytics test
       await page.setViewportSize({ width: 375, height: 667 })
       await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Widgets may be stacked vertically or collapsed
       const widgets = page.locator('[data-testid*="widget"]')

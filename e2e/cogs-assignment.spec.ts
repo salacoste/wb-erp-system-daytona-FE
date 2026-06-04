@@ -14,15 +14,15 @@ import { ROUTES, SELECTORS, TIMEOUTS, TEST_PRODUCTS } from './fixtures/test-data
 test.describe('COGS Assignment', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.cogs)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
   })
 
   test.describe('Story 4.1: Product List Display', () => {
     test('displays product list', async ({ page }) => {
       // Product list container
-      const productList = page.locator(SELECTORS.productList).or(
-        page.locator('table, [class*="product-list"], [class*="table"]')
-      )
+      const productList = page
+        .locator(SELECTORS.productList)
+        .or(page.locator('table, [class*="product-list"], [class*="table"]'))
 
       await expect(productList.first()).toBeVisible({ timeout: TIMEOUTS.api })
     })
@@ -32,9 +32,9 @@ test.describe('COGS Assignment', () => {
       await page.waitForTimeout(2000)
 
       // Product rows
-      const productRows = page.locator(SELECTORS.productRow).or(
-        page.locator('tr[data-testid], tbody tr, [class*="product-row"]')
-      )
+      const productRows = page
+        .locator(SELECTORS.productRow)
+        .or(page.locator('tr[data-testid], tbody tr, [class*="product-row"]'))
 
       const rowCount = await productRows.count()
 
@@ -45,7 +45,7 @@ test.describe('COGS Assignment', () => {
         await expect(firstRow).toBeVisible()
 
         // Should show nm_id or product name
-        const hasProductInfo = await firstRow.locator('text=/\\d{6,}|товар|product/i').count() > 0
+        const hasProductInfo = (await firstRow.locator('text=/\\d{6,}|товар|product/i').count()) > 0
         expect(hasProductInfo).toBeTruthy()
       } else {
         // Empty state
@@ -56,15 +56,19 @@ test.describe('COGS Assignment', () => {
 
     test('has search or filter functionality', async ({ page }) => {
       // Search input (may not exist on all pages)
-      const searchInput = page.locator(SELECTORS.filterInput).or(
-        page.locator('input[placeholder*="поиск"], input[placeholder*="search"], input[type="search"]')
-      )
+      const searchInput = page
+        .locator(SELECTORS.filterInput)
+        .or(
+          page.locator(
+            'input[placeholder*="поиск"], input[placeholder*="search"], input[type="search"]'
+          )
+        )
 
-      const hasSearch = await searchInput.count() > 0
+      const hasSearch = (await searchInput.count()) > 0
 
       // Or has filter buttons/dropdowns
       const filterElements = page.locator('select, [class*="filter"], button:has-text("Фильтр")')
-      const hasFilter = await filterElements.count() > 0
+      const hasFilter = (await filterElements.count()) > 0
 
       // Search/filter is optional - page is still functional without it
       expect(hasSearch || hasFilter || true).toBeTruthy()
@@ -73,9 +77,11 @@ test.describe('COGS Assignment', () => {
     test('has pagination controls', async ({ page }) => {
       // Pagination
       const pagination = page.locator('[class*="pagination"], nav[aria-label*="pagination"]')
-      const pageButtons = page.locator('button:has-text("Далее"), button:has-text("Next"), [aria-label*="page"]')
+      const pageButtons = page.locator(
+        'button:has-text("Далее"), button:has-text("Next"), [aria-label*="page"]'
+      )
 
-      const hasPagination = await pagination.count() > 0 || await pageButtons.count() > 0
+      const hasPagination = (await pagination.count()) > 0 || (await pageButtons.count()) > 0
 
       // May not have pagination if few products - either way is valid
       expect(hasPagination || true).toBeTruthy()
@@ -85,7 +91,7 @@ test.describe('COGS Assignment', () => {
       // Filter buttons or dropdown
       const filterControls = page.locator('button:has-text("COGS"), select, [class*="filter"]')
 
-      const hasFilters = await filterControls.count() > 0
+      const hasFilters = (await filterControls.count()) > 0
       expect(hasFilters).toBeTruthy()
     })
   })
@@ -101,7 +107,9 @@ test.describe('COGS Assignment', () => {
 
       if (rowCount > 0) {
         // Click on first product or its assign button
-        const assignButton = productRows.first().locator('button:has-text("COGS"), button:has-text("Назначить")')
+        const assignButton = productRows
+          .first()
+          .locator('button:has-text("COGS"), button:has-text("Назначить")')
         const buttonCount = await assignButton.count()
 
         if (buttonCount > 0) {
@@ -116,19 +124,23 @@ test.describe('COGS Assignment', () => {
 
     test('displays COGS input field', async ({ page }) => {
       // COGS input (may be inline or in modal)
-      const cogsInput = page.locator(SELECTORS.cogsInput).or(
-        page.locator('input[name*="cogs"], input[placeholder*="себестоимость"], input[type="number"]')
-      )
+      const cogsInput = page
+        .locator(SELECTORS.cogsInput)
+        .or(
+          page.locator(
+            'input[name*="cogs"], input[placeholder*="себестоимость"], input[type="number"]'
+          )
+        )
 
       // May need to click a row first
       const productRows = page.locator('tbody tr')
-      if (await productRows.count() > 0) {
+      if ((await productRows.count()) > 0) {
         await productRows.first().click()
         await page.waitForTimeout(500)
       }
 
       // Check if input is visible somewhere on page
-      const hasInput = await cogsInput.count() > 0
+      const hasInput = (await cogsInput.count()) > 0
       // Product list should be accessible - input may or may not be visible
       expect(hasInput || true).toBeTruthy()
     })
@@ -140,11 +152,11 @@ test.describe('COGS Assignment', () => {
         // Enter invalid value (negative)
         await cogsInput.fill('-100')
 
-        const submitButton = page.locator(SELECTORS.assignCogsButton).or(
-          page.locator('button[type="submit"], button:has-text("Сохранить")')
-        )
+        const submitButton = page
+          .locator(SELECTORS.assignCogsButton)
+          .or(page.locator('button[type="submit"], button:has-text("Сохранить")'))
 
-        if (await submitButton.count() > 0) {
+        if ((await submitButton.count()) > 0) {
           await submitButton.first().click()
 
           // Should show validation error
@@ -163,7 +175,9 @@ test.describe('COGS Assignment', () => {
         // Enter valid COGS value
         await cogsInput.fill(TEST_PRODUCTS.withCogs.cogs.toString())
 
-        const submitButton = page.locator('button[type="submit"], button:has-text("Сохранить")').first()
+        const submitButton = page
+          .locator('button[type="submit"], button:has-text("Сохранить")')
+          .first()
 
         if (await submitButton.isVisible()) {
           await submitButton.click()
@@ -182,15 +196,15 @@ test.describe('COGS Assignment', () => {
   test.describe('Story 4.8: Margin Calculation & Polling', () => {
     test('shows margin after COGS assignment', async ({ page }) => {
       // Margin display
-      const marginDisplay = page.locator(SELECTORS.marginDisplay).or(
-        page.locator('text=/%|маржа|margin/i')
-      )
+      const marginDisplay = page
+        .locator(SELECTORS.marginDisplay)
+        .or(page.locator('text=/%|маржа|margin/i'))
 
       // May not be visible if no COGS assigned
-      const hasMargin = await marginDisplay.count() > 0
+      const hasMargin = (await marginDisplay.count()) > 0
 
       // Page is functional - margin display is optional
-      expect(hasMargin || await page.locator('body').isVisible()).toBeTruthy()
+      expect(hasMargin || (await page.locator('body').isVisible())).toBeTruthy()
     })
 
     test('displays loading state during margin calculation', async ({ page }) => {
@@ -207,37 +221,39 @@ test.describe('COGS Assignment', () => {
       const statusIndicator = page.locator('[class*="status"], [class*="badge"]')
 
       // Page should be functional - status indicator is optional
-      const hasStatus = await statusIndicator.count() > 0
-      expect(hasStatus || await page.locator('body').isVisible()).toBeTruthy()
+      const hasStatus = (await statusIndicator.count()) > 0
+      expect(hasStatus || (await page.locator('body').isVisible())).toBeTruthy()
     })
   })
 
   test.describe('Bulk COGS Assignment', () => {
     test('has bulk assignment option', async ({ page }) => {
       // Bulk assignment button or tab
-      const bulkOption = page.locator('button:has-text("Массов"), button:has-text("Bulk"), [class*="bulk"]')
+      const bulkOption = page.locator(
+        'button:has-text("Массов"), button:has-text("Bulk"), [class*="bulk"]'
+      )
 
-      const hasBulkOption = await bulkOption.count() > 0
+      const hasBulkOption = (await bulkOption.count()) > 0
 
       // May not have bulk option on all views - either way is valid
-      expect(hasBulkOption || await page.locator('body').isVisible()).toBeTruthy()
+      expect(hasBulkOption || (await page.locator('body').isVisible())).toBeTruthy()
     })
 
     test('can upload CSV file', async ({ page }) => {
       // File input
       const fileInput = page.locator('input[type="file"]')
 
-      const hasFileUpload = await fileInput.count() > 0
+      const hasFileUpload = (await fileInput.count()) > 0
 
       // File upload may be hidden or in different section - either way is valid
-      expect(hasFileUpload || await page.locator('body').isVisible()).toBeTruthy()
+      expect(hasFileUpload || (await page.locator('body').isVisible())).toBeTruthy()
     })
   })
 
   test.describe('Error Handling', () => {
     test('handles API errors gracefully', async ({ page }) => {
       // Try to trigger an error state
-      await page.route('**/products**', (route) => {
+      await page.route('**/products**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: 'Internal Server Error' }),
@@ -255,8 +271,8 @@ test.describe('COGS Assignment', () => {
 
     test('handles network timeout', async ({ page }) => {
       // Simulate slow network
-      await page.route('**/products**', async (route) => {
-        await new Promise((resolve) => setTimeout(resolve, 5000))
+      await page.route('**/products**', async route => {
+        await new Promise(resolve => setTimeout(resolve, 5000))
         route.continue()
       })
 
