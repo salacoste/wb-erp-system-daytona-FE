@@ -43,10 +43,16 @@ describe('ComparisonTable — Infinity delta (zero-baseline period)', () => {
     expect(screen.getAllByText(/∞/).length).toBeGreaterThan(0)
   })
 
-  it('renders a finite change percent normally (no ∞)', () => {
+  it('renders a finite change percent in Russian locale (+25,0 %, comma + space — not dot-locale)', () => {
     render(<ComparisonTable data={makeData({ revenueChangePercent: 25 })} />)
-    // The finite revenue delta renders "+25.0%"; still no "Infinity" leak anywhere.
-    expect(screen.getByText(/\+25\.0%/)).toBeInTheDocument()
+    // "+25,0 %" — comma decimal + NBSP before %. \s requires the space; the dot form "+25.0%" must NOT appear.
+    expect(screen.getByText(/\+25,0\s+%/)).toBeInTheDocument()
+    expect(screen.queryByText(/25\.0%/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Infinity/)).not.toBeInTheDocument()
+  })
+
+  it('renders a negative delta with a leading minus and comma decimal', () => {
+    render(<ComparisonTable data={makeData({ revenueChangePercent: -12.4 })} />)
+    expect(screen.getByText(/−12,4\s+%/)).toBeInTheDocument() // U+2212 minus, comma decimal
   })
 })

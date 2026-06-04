@@ -20,15 +20,21 @@ interface ComparisonTableProps {
 
 /** Delta indicator component */
 function DeltaIndicator({ value, suffix = '' }: { value: number; suffix?: string }) {
+  // Russian locale: NBSP before "%" ("5,3 %"); " п.п." already carries its own leading space.
+  const renderedSuffix = suffix === '%' ? ' %' : suffix
+
   if (value === 0) {
     return (
       <span className="flex items-center text-muted-foreground">
-        <Minus className="h-4 w-4 mr-1" />0{suffix}
+        <Minus className="h-4 w-4 mr-1" />0{renderedSuffix}
       </span>
     )
   }
 
   const isPositive = value > 0
+  // Comma decimal (Russian locale), not dot. Backend sends Infinity for a change from a zero
+  // baseline (e.g. a new seller's prior period had 0 orders/revenue) → render ∞, never "Infinity".
+  const magnitude = Number.isFinite(value) ? Math.abs(value).toFixed(1).replace('.', ',') : '∞'
   return (
     <span className={cn('flex items-center', isPositive ? 'text-green-600' : 'text-red-500')}>
       {isPositive ? (
@@ -36,11 +42,9 @@ function DeltaIndicator({ value, suffix = '' }: { value: number; suffix?: string
       ) : (
         <TrendingDown className="h-4 w-4 mr-1" />
       )}
-      {isPositive ? '+' : ''}
-      {/* Backend sends Infinity for a change from a zero baseline (e.g. a new seller's prior period
-          had 0 orders/revenue). Render ∞, never the raw JS "Infinity" string. */}
-      {Number.isFinite(value) ? value.toFixed(1) : '∞'}
-      {suffix}
+      {isPositive ? '+' : '−'}
+      {magnitude}
+      {renderedSuffix}
     </span>
   )
 }
