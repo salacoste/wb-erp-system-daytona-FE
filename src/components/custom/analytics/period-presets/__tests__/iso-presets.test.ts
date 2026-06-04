@@ -15,6 +15,9 @@ import {
   quarterToIsoWeekRange,
   getMoMPreset,
   getQoQPreset,
+  getYoYPreset,
+  calculateIsoWeekPresetPeriods,
+  dateRangeToIsoWeekRange,
 } from '../iso-presets'
 
 describe('getWeeksInCalendarMonth (Thursday-rule, month 0-indexed)', () => {
@@ -64,5 +67,35 @@ describe('MoM / QoQ presets (today-dependent → structure-asserted)', () => {
   it('getQoQPreset returns two distinct period strings', () => {
     const { period1, period2 } = getQoQPreset()
     expect(period1).not.toBe(period2)
+  })
+  it('getYoYPreset returns prev-year vs current week + a weekMismatch flag', () => {
+    const r = getYoYPreset()
+    expect(r.period1).not.toBe(r.period2)
+    expect(typeof r.weekMismatch).toBe('boolean')
+  })
+})
+
+describe('calculateIsoWeekPresetPeriods', () => {
+  it('dispatches mom/qoq/yoy to distinct-period presets', () => {
+    for (const preset of ['mom', 'qoq', 'yoy'] as const) {
+      const { period1, period2 } = calculateIsoWeekPresetPeriods(preset)
+      expect(period1).not.toBe(period2)
+    }
+  })
+  it('returns empty periods for "custom" (deterministic)', () => {
+    expect(calculateIsoWeekPresetPeriods('custom')).toEqual({ period1: '', period2: '' })
+  })
+})
+
+describe('dateRangeToIsoWeekRange', () => {
+  it('returns a single week when from/to land in the same ISO week', () => {
+    expect(
+      dateRangeToIsoWeekRange({ from: '2026-01-12T12:00:00', to: '2026-01-12T12:00:00' })
+    ).toBe('2026-W03')
+  })
+  it('builds a range across weeks (node-verified: Jan12 W03 → Jan25 W04)', () => {
+    expect(
+      dateRangeToIsoWeekRange({ from: '2026-01-12T12:00:00', to: '2026-01-25T12:00:00' })
+    ).toBe('2026-W03:W04')
   })
 })
