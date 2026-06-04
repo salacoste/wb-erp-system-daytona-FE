@@ -8,7 +8,7 @@
  * exact NBSP byte.
  */
 import { describe, it, expect } from 'vitest'
-import { formatPercentage } from './unit-economics-config'
+import { formatPercentage, formatMargin } from './unit-economics-config'
 
 describe('unit-economics formatPercentage — Russian locale', () => {
   it('uses a comma decimal separator, not a dot', () => {
@@ -34,5 +34,22 @@ describe('unit-economics formatPercentage — Russian locale', () => {
 
   it('respects the decimals argument', () => {
     expect(formatPercentage(7.198, 2)).toMatch(/7,20\s%/)
+  })
+})
+
+// iter-83: formatMargin migrated from `${sign}${marginPct.toFixed(1)}%` to the in-file
+// formatPercentage. Pin the sign contract + locale so the dot form / a double-sign cannot return.
+describe('unit-economics formatMargin — Russian locale + sign', () => {
+  it('positive margin: leading + and comma+NBSP percent', () => {
+    expect(formatMargin(15.5).text).toMatch(/^\+15,5\s%$/)
+  })
+
+  it('negative margin: Intl minus only, no double sign', () => {
+    expect(formatMargin(-15.5).text).toMatch(/^[-−]15,5\s%$/)
+    expect(formatMargin(-15.5).text).not.toMatch(/^[+\-−]{2}/) // no "+-"/"−−"
+  })
+
+  it('zero margin: no sign prefix', () => {
+    expect(formatMargin(0).text).toMatch(/^0,0\s%$/)
   })
 })

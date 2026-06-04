@@ -177,7 +177,8 @@ export function getCostCategoryConfig(key: keyof CostsPct): CostCategoryConfig |
  * format with Intl `style:'percent'` over value/100 to get the comma decimal + NBSP separator.
  * NOTE: kept as a local copy (not a re-export of `@/lib/utils` formatPercentage) ON PURPOSE —
  * this one pins min=max=decimals (default exactly 1 decimal) for right-aligned table-column
- * alignment, whereas the canonical allows 1-2 decimals. Do NOT "harmonize" by re-exporting.
+ * alignment, whereas the canonical allows 1-2 decimals. It ALSO adds a null/undefined/non-finite
+ * guard (→ '—') absent from the canonical (which takes a non-nullable number). Do NOT "harmonize".
  */
 export function formatPercentage(value: number | null | undefined, decimals = 1): string {
   // Anti-pattern #8: null/undefined ratio (backend sends net_margin_pct/cogs/avg_* as null when
@@ -229,7 +230,9 @@ export function formatCompactNumber(value: number): string {
  */
 export function formatMargin(marginPct: number): { text: string; className: string } {
   const sign = marginPct > 0 ? '+' : ''
-  const text = `${sign}${marginPct.toFixed(1)}%`
+  // Russian locale via the in-file formatPercentage (comma + NBSP); '+' prefix for positives,
+  // Intl emits the minus for negatives, none for 0. Was the dot-locale toFixed-then-percent form.
+  const text = `${sign}${formatPercentage(marginPct, 1)}`
 
   if (marginPct >= 25) return { text, className: 'text-green-600' }
   if (marginPct >= 15) return { text, className: 'text-lime-600' }
