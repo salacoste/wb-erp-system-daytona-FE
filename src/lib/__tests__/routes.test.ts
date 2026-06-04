@@ -6,7 +6,13 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { buildModelEvaluationsRoute, buildModelSkuAccuracyRoute, ROUTES } from '../routes'
+import {
+  buildModelEvaluationsRoute,
+  buildModelSkuAccuracyRoute,
+  buildProductAnalyticsRoute,
+  isProtectedRoute,
+  ROUTES,
+} from '../routes'
 
 describe('buildModelEvaluationsRoute', () => {
   it('returns correct evaluations URL for a given model id', () => {
@@ -41,6 +47,26 @@ describe('buildModelSkuAccuracyRoute', () => {
     expect(buildModelSkuAccuracyRoute('model_v2.0')).toBe(
       '/analytics/models/model_v2.0/evaluations/sku-accuracy'
     )
+  })
+})
+
+describe('buildProductAnalyticsRoute (Story 120.5-FE)', () => {
+  it('returns the product analytics URL for a given nmId', () => {
+    expect(buildProductAnalyticsRoute('887604577')).toBe('/analytics/product/887604577')
+  })
+
+  it('preserves leading zeros verbatim (opaque ID, AP#10)', () => {
+    expect(buildProductAnalyticsRoute('00123')).toBe('/analytics/product/00123')
+  })
+
+  it('matches ROUTES.ANALYTICS.PRODUCT base', () => {
+    expect(buildProductAnalyticsRoute('1').startsWith(ROUTES.ANALYTICS.PRODUCT)).toBe(true)
+  })
+})
+
+describe('isProtectedRoute for the dynamic product route (Story 120.5-FE)', () => {
+  it('treats /analytics/product/[nmId] as protected', () => {
+    expect(isProtectedRoute(buildProductAnalyticsRoute('887604577'))).toBe(true)
   })
 })
 

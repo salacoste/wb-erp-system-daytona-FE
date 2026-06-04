@@ -51,6 +51,7 @@ export const ROUTES = {
     CROSS_REFERENCE: '/analytics/cross-reference', // Story 73.7-FE: Search + Advertising Cross-Reference
     FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
     MODELS: '/analytics/models', // Epic 109-FE: AI Model Management
+    PRODUCT: '/analytics/product', // Epic 120-FE Story 120.5: Unified Product Analytics (dynamic /[nmId] — use buildProductAnalyticsRoute)
     // Epic 112-FE: AI Admin (Owner-only cross-cabinet management)
     AI_ADMIN: {
       MODELS: '/analytics/ai-admin/models', // Story 112.1-FE: Model rollback admin UI
@@ -223,3 +224,14 @@ export const buildModelEvaluationsRoute = (modelId: string): string =>
  */
 export const buildModelSkuAccuracyRoute = (modelId: string): string =>
   `${ROUTES.ANALYTICS.MODELS}/${modelId}/evaluations/sku-accuracy`
+
+/**
+ * Build Unified Product Analytics route for a given nmId.
+ * Epic 120-FE Story 120.5: dynamic route /analytics/product/[nmId].
+ * nmId is an opaque ID — typed `string` so the AP#10 "never formatNumber / never
+ * lose precision" contract is enforced at the call boundary (callers with a
+ * numeric nmId must String() it explicitly). Matches the opaque-ID sibling
+ * precedent buildModelPerformanceRoute / buildShipmentDetailRoute (string-typed).
+ */
+export const buildProductAnalyticsRoute = (nmId: string): string =>
+  `${ROUTES.ANALYTICS.PRODUCT}/${nmId}`
