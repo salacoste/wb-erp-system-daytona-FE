@@ -10,6 +10,7 @@
  */
 
 import type { LiquiditySummary } from '@/types/liquidity'
+import { formatPercentageInt } from '@/lib/utils'
 
 // Barrel re-exports — preserve consumer API
 export {
@@ -112,9 +113,13 @@ export function getRecommendedScenario(
   return profitable.reduce((a, b) => (a.suggested_discount_pct < b.suggested_discount_pct ? a : b))
 }
 
-/** Format discount percentage for display (e.g., "-30%") */
+/**
+ * Format discount percentage for display (e.g., "-30 %").
+ * suggested_discount_pct is a whole-percent discount (integer in the backend contract) → Int + NBSP;
+ * the literal "-" prefix marks it as a discount (magnitude formatted positive).
+ */
 export function formatDiscount(pct: number): string {
-  return `-${pct}%`
+  return `-${formatPercentageInt(pct)}`
 }
 
 /** Get scenario urgency label based on target days */
