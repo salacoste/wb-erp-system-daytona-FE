@@ -137,7 +137,12 @@ test.describe('Acquiring rate-limit (Story 96.9-FE)', () => {
     await page.route('**/v1/analytics/acquiring/reports**', route =>
       route.fulfill({
         status: 503,
-        headers: { 'Retry-After': '30' },
+        // Access-Control-Expose-Headers is REQUIRED for the cross-origin (3100→3000) browser fetch
+        // to READ Retry-After. Without it the browser hides the non-CORS-safelisted header from JS,
+        // api-client's parse is unreachable, and the banner silently falls back to ~60 сек. The dev +
+        // prod backend CORS config (src/main.ts) sets no exposedHeaders — gap tracked in
+        // request-backend/206. This mock encodes the contract the backend MUST satisfy.
+        headers: { 'Retry-After': '30', 'Access-Control-Expose-Headers': 'Retry-After' },
         contentType: 'application/json',
         body: JSON.stringify({ error: { message: 'WB rate-limited' } }),
       })
@@ -167,7 +172,8 @@ test.describe('Acquiring rate-limit (Story 96.9-FE)', () => {
     await page.route('**/v1/analytics/acquiring/reports/*/detail**', route =>
       route.fulfill({
         status: 503,
-        headers: { 'Retry-After': '45' },
+        // See list-page test above: cross-origin fetch needs the expose header to read Retry-After.
+        headers: { 'Retry-After': '45', 'Access-Control-Expose-Headers': 'Retry-After' },
         contentType: 'application/json',
         body: JSON.stringify({ error: { message: 'WB rate-limited' } }),
       })
@@ -188,7 +194,10 @@ test.describe('Acquiring rate-limit (Story 96.9-FE)', () => {
     await page.route('**/v1/analytics/acquiring/detail**', route =>
       route.fulfill({
         status: 503,
-        headers: { 'Retry-After': '60' },
+        // Expose header required cross-origin (see list-page test). NOTE: 60 == the api-client
+        // fallback, so before this fix this test FALSE-PASSED even with Retry-After hidden — the
+        // banner showed the fallback, not the parsed header. The expose header makes it a true assertion.
+        headers: { 'Retry-After': '60', 'Access-Control-Expose-Headers': 'Retry-After' },
         contentType: 'application/json',
         body: JSON.stringify({ error: { message: 'WB rate-limited' } }),
       })
