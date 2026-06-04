@@ -160,15 +160,6 @@ export function getRiskDistributionData(summary: SupplyPlanningSummary): RiskDis
   return data.filter(d => d.count > 0)
 }
 
-/**
- * Calculate percentage for risk category
- */
-export function getRiskPercentage(count: number, total: number): string {
-  if (total === 0) return '0%'
-  const pct = (count / total) * 100
-  return `${pct.toFixed(1)}%`
-}
-
 // ============================================================================
 // Sorting & Filtering Helpers
 // ============================================================================
