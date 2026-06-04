@@ -15,6 +15,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { SupplyStatusBadge } from '../SupplyStatusBadge'
+import type { SupplyStatus as RealSupplyStatus } from '@/types/supplies'
 
 // SupplyStatus type will be implemented in Story 53.1-FE
 // For TDD, we define the expected type inline
@@ -163,7 +165,7 @@ describe('SupplyStatusBadge', () => {
   describe('Edge Cases', () => {
     it.todo('handles unknown status gracefully')
 
-    it.todo('falls back to OPEN config for invalid status')
+    it.todo('falls back to a neutral "Неизвестно" config for an invalid status')
 
     it.todo('does not crash with null status')
 
@@ -232,6 +234,22 @@ describe('SupplyStatusBadge', () => {
         expect(EXPECTED_STATUS_CONFIG[status].bgClass).toBeDefined()
         expect(EXPECTED_STATUS_CONFIG[status].icon).toBeDefined()
       })
+    })
+  })
+
+  // Active render tests against the REAL component (status-honesty fallback).
+  describe('unknown-status fallback (rendered)', () => {
+    it('renders a neutral "Неизвестно" badge for an unrecognized status, NOT green-washed "Открыта"', () => {
+      // Cast an out-of-enum value: the normalizer can emit 'unknown' / a future WB status outside
+      // the SupplyStatus union, and the badge must not masquerade it as OPEN.
+      render(<SupplyStatusBadge status={'FUTURE_WB_STATUS' as RealSupplyStatus} />)
+      expect(screen.getByText('Неизвестно')).toBeInTheDocument()
+      expect(screen.queryByText('Открыта')).not.toBeInTheDocument()
+    })
+
+    it('still renders the correct label for a known status', () => {
+      render(<SupplyStatusBadge status="DELIVERED" />)
+      expect(screen.getByText('Доставлена')).toBeInTheDocument()
     })
   })
 })

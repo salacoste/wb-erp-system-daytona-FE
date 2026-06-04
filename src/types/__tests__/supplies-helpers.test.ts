@@ -30,7 +30,7 @@ describe('getSupplyStatusConfig() Helper', () => {
   })
 
   describe('fallback behavior', () => {
-    it.todo('should return OPEN config for unknown status')
+    it.todo('should return the neutral "Неизвестно" fallback config for unknown status')
     it.todo('should handle null input gracefully')
     it.todo('should handle undefined input gracefully')
   })
@@ -54,7 +54,7 @@ describe('getSupplyStatusLabel() Helper', () => {
   })
 
   describe('fallback behavior', () => {
-    it.todo('should return "Открыта" for unknown status')
+    it.todo('should return "Неизвестно" for unknown status')
   })
 })
 

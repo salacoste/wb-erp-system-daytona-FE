@@ -14,6 +14,7 @@ import {
   Truck,
   CheckCircle,
   XCircle,
+  HelpCircle,
   type LucideIcon,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -68,6 +69,17 @@ const STATUS_CONFIG: Record<
   },
 }
 
+// Neutral fallback for an unrecognized/out-of-enum status (e.g. a future WB status, or the
+// normalizer's 'unknown' sentinel). Status-honesty: an unknown lifecycle state must NOT
+// masquerade as the blue "Открыта" (OPEN, implies editable) — show a gray "Неизвестно".
+const FALLBACK_CONFIG = {
+  label: 'Неизвестно',
+  color: 'text-gray-600',
+  bgColor: 'bg-gray-50',
+  borderColor: 'border-gray-200',
+  Icon: HelpCircle,
+}
+
 interface SupplyStatusBadgeProps {
   status: SupplyStatus
   size?: 'sm' | 'default' | 'lg'
@@ -88,7 +100,7 @@ export function SupplyStatusBadge({
   showIcon = true,
   className,
 }: SupplyStatusBadgeProps) {
-  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.OPEN
+  const config = STATUS_CONFIG[status] ?? FALLBACK_CONFIG
   const { label, color, bgColor, borderColor, Icon } = config
 
   const sizeClasses = {

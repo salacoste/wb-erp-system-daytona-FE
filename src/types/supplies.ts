@@ -279,9 +279,20 @@ export const SUPPLY_STATUS_CONFIG: Record<SupplyStatus, SupplyStatusConfig> = {
 // Helper Functions
 // =============================================================================
 
+/**
+ * Neutral fallback for an unrecognized/out-of-enum status (status-honesty): an unknown
+ * lifecycle state must not masquerade as the blue "Открыта" (OPEN, implies editable).
+ */
+const SUPPLY_STATUS_FALLBACK_CONFIG: SupplyStatusConfig = {
+  label: 'Неизвестно',
+  color: 'text-gray-600',
+  bgColor: 'bg-gray-50',
+  icon: 'HelpCircle',
+}
+
 /** Get status configuration for a given status */
 export function getSupplyStatusConfig(status: SupplyStatus): SupplyStatusConfig {
-  return SUPPLY_STATUS_CONFIG[status] ?? SUPPLY_STATUS_CONFIG.OPEN
+  return SUPPLY_STATUS_CONFIG[status] ?? SUPPLY_STATUS_FALLBACK_CONFIG
 }
 
 /** Get status label in Russian */
