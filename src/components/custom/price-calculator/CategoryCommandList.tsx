@@ -3,7 +3,7 @@
 import { Check } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { MAX_VISIBLE_RESULTS, HIGH_COMMISSION_THRESHOLD } from './category-selector-constants'
 import type { CategoryCommission } from '@/types/tariffs'
 
@@ -49,7 +49,7 @@ export function CategoryCommandList({
               <Check className={cn('mr-2 h-4 w-4', isSelected ? 'opacity-100' : 'opacity-0')} />
               <span className="flex-1 truncate">{formatCategoryName(category)}</span>
               <Badge variant={isHigh ? 'destructive' : 'secondary'} className="ml-2 shrink-0">
-                {commissionPct}%
+                {formatPercentage(commissionPct, 1)}
               </Badge>
             </CommandItem>
           )

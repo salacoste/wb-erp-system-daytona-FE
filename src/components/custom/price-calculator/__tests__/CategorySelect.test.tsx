@@ -123,27 +123,17 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
   // =========================================================================
   describe('AC1: Category Combobox Component', () => {
     it('renders dropdown with placeholder text', () => {
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       expect(screen.getByText('Выберите категорию...')).toBeInTheDocument()
     })
 
     it('renders combobox with correct ARIA role', () => {
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       expect(screen.getByRole('combobox')).toBeInTheDocument()
     })
@@ -172,7 +162,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
       )
 
       // FBO commission for Скрабы is 32.5%
-      expect(screen.getByText('32.5%')).toBeInTheDocument()
+      expect(screen.getByText(/^32,5\s%$/)).toBeInTheDocument()
     })
   })
 
@@ -182,14 +172,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
   describe('AC2: Search/Filter Functionality', () => {
     it('filters categories by parent category name', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -206,14 +191,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
 
     it('filters categories by sub-category name', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -229,14 +209,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
 
     it('performs case-insensitive search (Russian locale)', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -252,14 +227,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
 
     it('shows empty message when no categories match search', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -287,28 +257,24 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
       }))
 
       mockUseCommissions.mockReturnValue({
-        data: { commissions: manyCategories, meta: { total: 60, cached: true, cache_ttl_seconds: 86400, fetched_at: '' } },
+        data: {
+          commissions: manyCategories,
+          meta: { total: 60, cached: true, cache_ttl_seconds: 86400, fetched_at: '' },
+        },
         isLoading: false,
         error: null,
         refetch: vi.fn(),
       } as unknown as ReturnType<typeof useCommissions>)
 
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/Показаны первые 50 результатов/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/Показаны первые 50 результатов/i)).toBeInTheDocument()
       })
     })
   })
@@ -328,7 +294,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
       )
 
       // Скрабы FBO = 32.5%
-      expect(screen.getByText('32.5%')).toBeInTheDocument()
+      expect(screen.getByText(/^32,5\s%$/)).toBeInTheDocument()
     })
 
     it('shows FBS commission when FBS fulfillment type selected', () => {
@@ -342,7 +308,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
       )
 
       // Скрабы FBS = 35.5%
-      expect(screen.getByText('35.5%')).toBeInTheDocument()
+      expect(screen.getByText(/^35,5\s%$/)).toBeInTheDocument()
     })
 
     it('shows destructive badge variant for high commission (>25%)', () => {
@@ -355,7 +321,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
         { wrapper: createWrapper() }
       )
 
-      const badge = screen.getByText('32.5%')
+      const badge = screen.getByText(/^32,5\s%$/)
       expect(badge).toHaveClass('bg-destructive')
     })
 
@@ -369,7 +335,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
         { wrapper: createWrapper() }
       )
 
-      const badge = screen.getByText('15%')
+      const badge = screen.getByText(/^15,0\s%$/) // ru-RU NBSP, 1 decimal
       expect(badge).toHaveClass('bg-secondary')
     })
   })
@@ -446,14 +412,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
         refetch: vi.fn(),
       } as unknown as ReturnType<typeof useCommissions>)
 
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       // Should show label even during loading
       expect(screen.getByText('Категория товара')).toBeInTheDocument()
@@ -467,14 +428,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
         refetch: vi.fn(),
       } as unknown as ReturnType<typeof useCommissions>)
 
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       expect(screen.getByText('Ошибка загрузки категорий')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Повторить' })).toBeInTheDocument()
@@ -490,14 +446,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
       } as unknown as ReturnType<typeof useCommissions>)
 
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('button', { name: 'Повторить' }))
       expect(mockRefetch).toHaveBeenCalled()
@@ -509,31 +460,18 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
   // =========================================================================
   describe('Accessibility', () => {
     it('has correct aria-label on combobox', () => {
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
-      expect(screen.getByRole('combobox')).toHaveAttribute(
-        'aria-label',
-        'Выбрать категорию товара'
-      )
+      expect(screen.getByRole('combobox')).toHaveAttribute('aria-label', 'Выбрать категорию товара')
     })
 
     it('has aria-expanded attribute that updates on open/close', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       const combobox = screen.getByRole('combobox')
       expect(combobox).toHaveAttribute('aria-expanded', 'false')
@@ -546,14 +484,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
 
     it('supports keyboard navigation - Enter to open', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       const combobox = screen.getByRole('combobox')
       combobox.focus()
@@ -566,12 +499,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
 
     it('disables combobox when disabled prop is true', () => {
       render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-          disabled
-        />,
+        <CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" disabled />,
         { wrapper: createWrapper() }
       )
 
@@ -594,9 +522,7 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
         { wrapper: createWrapper() }
       )
 
-      expect(
-        screen.getByText('Категория обязательна для расчёта')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Категория обязательна для расчёта')).toBeInTheDocument()
     })
 
     it('applies destructive border style on error', () => {
@@ -620,14 +546,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
   describe('Selection Callback', () => {
     it('calls onChange with selected category object', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       await waitFor(() => {
@@ -648,14 +569,9 @@ describe('CategorySelect - Story 44.16 TDD Tests', () => {
 
     it('closes dropdown after selection', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       await waitFor(() => {

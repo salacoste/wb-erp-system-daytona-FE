@@ -104,28 +104,18 @@ describe('Story 44.16: Category Selection with Search', () => {
 
   describe('AC1: Category Combobox Component', () => {
     it('should render searchable combobox for category selection', () => {
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       expect(screen.getByRole('combobox')).toBeInTheDocument()
     })
 
     it('should display "parentName -> subjectName" format in dropdown', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       await waitFor(() => {
@@ -136,52 +126,39 @@ describe('Story 44.16: Category Selection with Search', () => {
 
     it('should display commission % preview for each option', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       await waitFor(() => {
         // FBO commission for Одежда→Платья and Одежда→Юбки is 25% (2 items)
-        expect(screen.getAllByText('25%').length).toBeGreaterThanOrEqual(1)
+        expect(screen.getAllByText(/25,0\s%/).length).toBeGreaterThanOrEqual(1) // ru-RU NBSP, 1 decimal
         // FBO commission for Электроника→Смартфоны is 15%
-        expect(screen.getByText('15%')).toBeInTheDocument()
+        expect(screen.getByText(/^15,0\s%$/)).toBeInTheDocument()
       })
     })
 
     it('should display placeholder "Выберите категорию..."', () => {
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       expect(screen.getByText('Выберите категорию...')).toBeInTheDocument()
     })
 
     it('should handle up to 7346 categories efficiently', async () => {
       // Generate mock data similar to production
-      const manyCategories: CategoryCommission[] = Array.from(
-        { length: 100 },
-        (_, i) => ({
-          parentID: i,
-          parentName: `Parent ${i}`,
-          subjectID: i * 10,
-          subjectName: `Subject ${i}`,
-          paidStorageKgvp: 15 + (i % 10),
-          kgvpMarketplace: 18 + (i % 10),
-          kgvpSupplier: 8,
-          kgvpSupplierExpress: 4,
-        })
-      )
+      const manyCategories: CategoryCommission[] = Array.from({ length: 100 }, (_, i) => ({
+        parentID: i,
+        parentName: `Parent ${i}`,
+        subjectID: i * 10,
+        subjectName: `Subject ${i}`,
+        paidStorageKgvp: 15 + (i % 10),
+        kgvpMarketplace: 18 + (i % 10),
+        kgvpSupplier: 8,
+        kgvpSupplierExpress: 4,
+      }))
 
       mockUseCommissions.mockReturnValue({
         data: {
@@ -194,14 +171,9 @@ describe('Story 44.16: Category Selection with Search', () => {
       } as unknown as ReturnType<typeof useCommissions>)
 
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
 
@@ -215,14 +187,9 @@ describe('Story 44.16: Category Selection with Search', () => {
   describe('AC2: Search/Filter Functionality', () => {
     it('should search by parent category name (partial match)', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -236,14 +203,9 @@ describe('Story 44.16: Category Selection with Search', () => {
 
     it('should search by sub-category name (partial match)', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -256,14 +218,9 @@ describe('Story 44.16: Category Selection with Search', () => {
 
     it('should be case-insensitive search (Russian locale)', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -276,19 +233,16 @@ describe('Story 44.16: Category Selection with Search', () => {
 
     it('should show max 50 results with "Уточните поиск" message', async () => {
       // Generate more than 50 matching categories
-      const manyCategories: CategoryCommission[] = Array.from(
-        { length: 60 },
-        (_, i) => ({
-          parentID: i,
-          parentName: 'Одежда',
-          subjectID: i * 10,
-          subjectName: `Тип ${i}`,
-          paidStorageKgvp: 25,
-          kgvpMarketplace: 28,
-          kgvpSupplier: 10,
-          kgvpSupplierExpress: 5,
-        })
-      )
+      const manyCategories: CategoryCommission[] = Array.from({ length: 60 }, (_, i) => ({
+        parentID: i,
+        parentName: 'Одежда',
+        subjectID: i * 10,
+        subjectName: `Тип ${i}`,
+        paidStorageKgvp: 25,
+        kgvpMarketplace: 28,
+        kgvpSupplier: 10,
+        kgvpSupplierExpress: 5,
+      }))
 
       mockUseCommissions.mockReturnValue({
         data: {
@@ -301,14 +255,9 @@ describe('Story 44.16: Category Selection with Search', () => {
       } as unknown as ReturnType<typeof useCommissions>)
 
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -321,14 +270,9 @@ describe('Story 44.16: Category Selection with Search', () => {
 
     it('should show "Категории не найдены" when no results', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       const searchInput = await screen.findByPlaceholderText('Поиск категории...')
@@ -352,7 +296,7 @@ describe('Story 44.16: Category Selection with Search', () => {
       )
 
       // paidStorageKgvp = 25% for FBO
-      expect(screen.getByText('25%')).toBeInTheDocument()
+      expect(screen.getByText(/^25,0\s%$/)).toBeInTheDocument()
     })
 
     it('should show FBS commission % when FBS selected', () => {
@@ -366,7 +310,7 @@ describe('Story 44.16: Category Selection with Search', () => {
       )
 
       // kgvpMarketplace = 28% for FBS
-      expect(screen.getByText('28%')).toBeInTheDocument()
+      expect(screen.getByText(/^28,0\s%$/)).toBeInTheDocument()
     })
 
     it('should color-code high commission (>25%) with warning', () => {
@@ -379,7 +323,7 @@ describe('Story 44.16: Category Selection with Search', () => {
         { wrapper: createWrapper() }
       )
 
-      const badge = screen.getByText('30%')
+      const badge = screen.getByText(/^30,0\s%$/)
       expect(badge).toHaveClass('bg-destructive')
     })
 
@@ -393,7 +337,7 @@ describe('Story 44.16: Category Selection with Search', () => {
         { wrapper: createWrapper() }
       )
 
-      const badge = screen.getByText('15%')
+      const badge = screen.getByText(/^15,0\s%$/)
       expect(badge).toHaveClass('bg-secondary')
     })
   })
@@ -422,7 +366,7 @@ describe('Story 44.16: Category Selection with Search', () => {
         { wrapper: createWrapper() }
       )
 
-      expect(screen.getByText('25%')).toBeInTheDocument()
+      expect(screen.getByText(/^25,0\s%$/)).toBeInTheDocument()
     })
 
     it('should show clear button "Очистить выбор"', () => {
@@ -463,14 +407,9 @@ describe('Story 44.16: Category Selection with Search', () => {
         refetch: vi.fn(),
       } as unknown as ReturnType<typeof useCommissions>)
 
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       // Loading state should show label but combobox might be disabled/loading
       expect(screen.getByText('Категория товара')).toBeInTheDocument()
@@ -485,14 +424,9 @@ describe('Story 44.16: Category Selection with Search', () => {
         refetch: mockRefetch,
       } as unknown as ReturnType<typeof useCommissions>)
 
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       expect(screen.getByText('Ошибка загрузки категорий')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Повторить' })).toBeInTheDocument()
@@ -508,14 +442,9 @@ describe('Story 44.16: Category Selection with Search', () => {
         refetch: mockRefetch,
       } as unknown as ReturnType<typeof useCommissions>)
 
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('button', { name: 'Повторить' }))
       expect(mockRefetch).toHaveBeenCalled()
@@ -525,14 +454,9 @@ describe('Story 44.16: Category Selection with Search', () => {
   describe('AC6: Form State Integration', () => {
     it('should call onChange with full category object on selection', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       await user.click(screen.getByRole('combobox'))
       await waitFor(() => {
@@ -561,31 +485,18 @@ describe('Story 44.16: Category Selection with Search', () => {
 
   describe('Accessibility', () => {
     it('should have aria-label on combobox', () => {
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
-      expect(screen.getByRole('combobox')).toHaveAttribute(
-        'aria-label',
-        'Выбрать категорию товара'
-      )
+      expect(screen.getByRole('combobox')).toHaveAttribute('aria-label', 'Выбрать категорию товара')
     })
 
     it('should have aria-expanded attribute', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       const combobox = screen.getByRole('combobox')
       expect(combobox).toHaveAttribute('aria-expanded', 'false')
@@ -598,14 +509,9 @@ describe('Story 44.16: Category Selection with Search', () => {
 
     it('should support keyboard navigation', async () => {
       const user = userEvent.setup()
-      render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" />, {
+        wrapper: createWrapper(),
+      })
 
       const combobox = screen.getByRole('combobox')
       await user.click(combobox)
@@ -621,12 +527,7 @@ describe('Story 44.16: Category Selection with Search', () => {
   describe('Disabled State', () => {
     it('should disable combobox when disabled prop is true', () => {
       render(
-        <CategorySelector
-          value={null}
-          onChange={mockOnChange}
-          fulfillmentType="FBO"
-          disabled
-        />,
+        <CategorySelector value={null} onChange={mockOnChange} fulfillmentType="FBO" disabled />,
         { wrapper: createWrapper() }
       )
 

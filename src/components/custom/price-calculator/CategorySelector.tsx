@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { ChevronsUpDown, X, Lock } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { useCommissions } from '@/hooks/useCommissions'
 import { FieldTooltip } from './FieldTooltip'
 import { AutoFillBadge } from './AutoFillBadge'
@@ -135,7 +135,11 @@ export function CategorySelector({
                   variant={isHighCommission ? 'destructive' : 'secondary'}
                   className="ml-auto shrink-0"
                 >
-                  {selectedCommission}%
+                  {/* value is narrowed truthy here → getCommissionPct returns a number. KGVP can be
+                      FRACTIONAL (e.g. 32.5) → formatPercentage(_, 1), NOT Int (would round 32.5→33).
+                      WB KGVP is ≤1 decimal in practice, so 1 decimal is lossless here.
+                      Using value (not selectedCommission) avoids the number|null type. */}
+                  {formatPercentage(getCommissionPct(value), 1)}
                 </Badge>
                 {isLocked && (
                   <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" aria-hidden="true" />
@@ -168,7 +172,8 @@ export function CategorySelector({
 
       {value && (
         <p className="text-xs text-muted-foreground">
-          FBO: {value.paidStorageKgvp}% &bull; FBS: {value.kgvpMarketplace}%
+          FBO: {formatPercentage(value.paidStorageKgvp, 1)} &bull; FBS:{' '}
+          {formatPercentage(value.kgvpMarketplace, 1)}
         </p>
       )}
       {value && !effectiveDisabled && (
