@@ -37,7 +37,9 @@ function DeltaIndicator({ value, suffix = '' }: { value: number; suffix?: string
         <TrendingDown className="h-4 w-4 mr-1" />
       )}
       {isPositive ? '+' : ''}
-      {value.toFixed(1)}
+      {/* Backend sends Infinity for a change from a zero baseline (e.g. a new seller's prior period
+          had 0 orders/revenue). Render ∞, never the raw JS "Infinity" string. */}
+      {Number.isFinite(value) ? value.toFixed(1) : '∞'}
       {suffix}
     </span>
   )
