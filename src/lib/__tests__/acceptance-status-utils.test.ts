@@ -61,10 +61,10 @@ const STATUS_TEST_CASES = [
 const FORMAT_TEST_CASES = [
   { coefficient: -1, expected: 'Н/Д' },
   { coefficient: 0, expected: 'Бесплатно' },
-  { coefficient: 1, expected: '×1.00' },
-  { coefficient: 1.25, expected: '×1.25' },
-  { coefficient: 1.65, expected: '×1.65' },
-  { coefficient: 2.5, expected: '×2.50' },
+  { coefficient: 1, expected: '×1,00' },
+  { coefficient: 1.25, expected: '×1,25' },
+  { coefficient: 1.65, expected: '×1,65' },
+  { coefficient: 2.5, expected: '×2,50' },
 ] as const
 
 /**
@@ -239,7 +239,7 @@ describe('getAcceptanceStatusInfo', () => {
 
       expect(info.status).toBe('elevated')
       expect(info.coefficient).toBe(1.25)
-      expect(info.label).toBe('×1.25')
+      expect(info.label).toBe('×1,25')
       expect(info.description).toContain('увеличена')
       expect(info.description).toMatch(/25\s%/) // ru-RU NBSP
       expect(info.color).toBe('warning')
@@ -252,7 +252,7 @@ describe('getAcceptanceStatusInfo', () => {
 
       expect(info.status).toBe('high')
       expect(info.coefficient).toBe(1.65)
-      expect(info.label).toBe('×1.65')
+      expect(info.label).toBe('×1,65')
       expect(info.description).toContain('Высокая')
       expect(info.description).toMatch(/65\s%/) // ru-RU NBSP
       expect(info.color).toBe('high')
@@ -263,15 +263,15 @@ describe('getAcceptanceStatusInfo', () => {
 
   describe('Dynamic label generation', () => {
     it('should format elevated coefficient label as ×{value}', () => {
-      expect(getAcceptanceStatusInfo(1.25).label).toBe('×1.25')
-      expect(getAcceptanceStatusInfo(1.33).label).toBe('×1.33')
-      expect(getAcceptanceStatusInfo(1.5).label).toBe('×1.50')
+      expect(getAcceptanceStatusInfo(1.25).label).toBe('×1,25')
+      expect(getAcceptanceStatusInfo(1.33).label).toBe('×1,33')
+      expect(getAcceptanceStatusInfo(1.5).label).toBe('×1,50')
     })
 
     it('should format high coefficient label as ×{value}', () => {
-      expect(getAcceptanceStatusInfo(1.65).label).toBe('×1.65')
-      expect(getAcceptanceStatusInfo(2.0).label).toBe('×2.00')
-      expect(getAcceptanceStatusInfo(2.5).label).toBe('×2.50')
+      expect(getAcceptanceStatusInfo(1.65).label).toBe('×1,65')
+      expect(getAcceptanceStatusInfo(2.0).label).toBe('×2,00')
+      expect(getAcceptanceStatusInfo(2.5).label).toBe('×2,50')
     })
   })
 
@@ -323,14 +323,14 @@ describe('formatCoefficient', () => {
 
   describe('Decimal precision', () => {
     it('should always show 2 decimal places for multipliers', () => {
-      expect(formatCoefficient(1.1)).toBe('×1.10')
-      expect(formatCoefficient(2)).toBe('×2.00')
-      expect(formatCoefficient(1.999)).toBe('×2.00')
+      expect(formatCoefficient(1.1)).toBe('×1,10')
+      expect(formatCoefficient(2)).toBe('×2,00')
+      expect(formatCoefficient(1.999)).toBe('×2,00')
     })
 
     it('should round to 2 decimal places', () => {
-      expect(formatCoefficient(1.666)).toBe('×1.67')
-      expect(formatCoefficient(1.334)).toBe('×1.33')
+      expect(formatCoefficient(1.666)).toBe('×1,67')
+      expect(formatCoefficient(1.334)).toBe('×1,33')
     })
   })
 })

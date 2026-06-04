@@ -54,7 +54,7 @@ const AC1_BADGE_VARIANTS = [
   },
   {
     coefficient: 1.25,
-    label: '×1.25',
+    label: '×1,25',
     color: 'warning',
     bgClass: 'bg-yellow-100',
     textClass: 'text-yellow-700',
@@ -64,7 +64,7 @@ const AC1_BADGE_VARIANTS = [
   },
   {
     coefficient: 1.65,
-    label: '×1.65',
+    label: '×1,65',
     color: 'high',
     bgClass: 'bg-orange-100',
     textClass: 'text-orange-700',
@@ -91,7 +91,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       it('should accept coefficient prop', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        expect(screen.getByText('×1.65')).toBeInTheDocument()
+        expect(screen.getByText('×1,65')).toBeInTheDocument()
       })
     })
 
@@ -140,31 +140,31 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       })
     })
 
-    describe('AC1.5: Format coefficient as "×1.65" (not "165%")', () => {
+    describe('AC1.5: Format coefficient as "×1,65" (not "165%")', () => {
       it('should format elevated coefficient as ×{value}', () => {
         render(<AcceptanceStatusBadge coefficient={1.25} />)
 
-        expect(screen.getByText('×1.25')).toBeInTheDocument()
+        expect(screen.getByText('×1,25')).toBeInTheDocument()
         expect(screen.queryByText('125%')).not.toBeInTheDocument()
       })
 
       it('should format high coefficient as ×{value}', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        expect(screen.getByText('×1.65')).toBeInTheDocument()
+        expect(screen.getByText('×1,65')).toBeInTheDocument()
         expect(screen.queryByText('165%')).not.toBeInTheDocument()
       })
 
       it('should show 2 decimal places for coefficients', () => {
         render(<AcceptanceStatusBadge coefficient={1.5} />)
 
-        expect(screen.getByText('×1.50')).toBeInTheDocument()
+        expect(screen.getByText('×1,50')).toBeInTheDocument()
       })
 
       it('should round to 2 decimal places', () => {
         render(<AcceptanceStatusBadge coefficient={1.666} />)
 
-        expect(screen.getByText('×1.67')).toBeInTheDocument()
+        expect(screen.getByText('×1,67')).toBeInTheDocument()
       })
     })
   })
@@ -252,7 +252,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       it('should show multiplier badge "×{value}"', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        expect(screen.getByText('×1.65')).toBeInTheDocument()
+        expect(screen.getByText('×1,65')).toBeInTheDocument()
       })
     })
 
@@ -284,7 +284,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         const user = userEvent.setup()
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        await user.hover(screen.getByText('×1.65'))
+        await user.hover(screen.getByText('×1,65'))
 
         await waitFor(() => {
           // Story AC5: "Повышенная стоимость приёмки (+{pct}%)"
@@ -297,7 +297,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         const user = userEvent.setup()
         render(<AcceptanceStatusBadge coefficient={1.25} />)
 
-        await user.hover(screen.getByText('×1.25'))
+        await user.hover(screen.getByText('×1,25'))
 
         await waitFor(() => {
           // (1.25 - 1) * 100 = 25%
@@ -318,7 +318,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         const user = userEvent.setup()
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        await user.hover(screen.getByText('×1.65'))
+        await user.hover(screen.getByText('×1,65'))
 
         await waitFor(() => {
           const titleTexts = screen.getAllByText(/Коэффициент приёмки/)
@@ -330,7 +330,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         const user = userEvent.setup()
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        await user.hover(screen.getByText('×1.65'))
+        await user.hover(screen.getByText('×1,65'))
 
         await waitFor(() => {
           // Story AC6: "Стоимость увеличена на 65%"
@@ -345,7 +345,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         const user = userEvent.setup()
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-        await user.hover(screen.getByText('×1.65'))
+        await user.hover(screen.getByText('×1,65'))
 
         await waitFor(() => {
           // Story AC6: "Рекомендация: выберите дату с меньшим коэффициентом"
@@ -358,7 +358,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         const user = userEvent.setup()
         render(<AcceptanceStatusBadge coefficient={1.2} />)
 
-        await user.hover(screen.getByText('×1.20'))
+        await user.hover(screen.getByText('×1,20'))
 
         await waitFor(() => {
           expect(screen.queryByText(/дату с меньшим коэффициентом/i)).not.toBeInTheDocument()
@@ -370,7 +370,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       it('should not show tooltip when showTooltip=false', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} showTooltip={false} />)
 
-        expect(screen.getByText('×1.65')).toBeInTheDocument()
+        expect(screen.getByText('×1,65')).toBeInTheDocument()
         // No tooltip trigger should be present
         expect(screen.queryByRole('button')).not.toBeInTheDocument()
       })
@@ -394,7 +394,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
         const badge = screen.getByTestId('acceptance-status-badge')
-        expect(badge.getAttribute('aria-label')).toContain('1.65')
+        expect(badge.getAttribute('aria-label')).toContain('1,65')
       })
 
       it('should include status description in aria-label', () => {
@@ -424,14 +424,14 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         render(<AcceptanceStatusBadge coefficient={1.25} />)
 
         expect(screen.getByText('⚠️')).toBeInTheDocument()
-        expect(screen.getByText('×1.25')).toBeInTheDocument()
+        expect(screen.getByText('×1,25')).toBeInTheDocument()
       })
 
       it('should have both icon and text for high', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
         expect(screen.getByText('🔴')).toBeInTheDocument()
-        expect(screen.getByText('×1.65')).toBeInTheDocument()
+        expect(screen.getByText('×1,65')).toBeInTheDocument()
       })
     })
 
@@ -491,7 +491,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
     it('should handle very high coefficients (2.5)', () => {
       render(<AcceptanceStatusBadge coefficient={2.5} />)
 
-      expect(screen.getByText('×2.50')).toBeInTheDocument()
+      expect(screen.getByText('×2,50')).toBeInTheDocument()
       const badge = screen.getByTestId('acceptance-status-badge')
       expect(badge).toHaveClass('bg-orange-100') // high status
     })
@@ -499,7 +499,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
     it('should handle very high coefficients (10)', () => {
       render(<AcceptanceStatusBadge coefficient={10} />)
 
-      expect(screen.getByText('×10.00')).toBeInTheDocument()
+      expect(screen.getByText('×10,00')).toBeInTheDocument()
     })
 
     it('should handle boundary coefficient 1.50 as elevated', () => {

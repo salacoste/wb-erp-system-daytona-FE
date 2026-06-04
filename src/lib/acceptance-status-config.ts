@@ -17,6 +17,7 @@
  */
 
 import type { AcceptanceStatus, AcceptanceStatusConfig } from '@/types/acceptance'
+import { formatDecimal } from '@/lib/utils'
 
 // ============================================================================
 // Status Configuration (Story AC1)
@@ -72,8 +73,8 @@ export const ACCEPTANCE_STATUS_CONFIG: Record<AcceptanceStatus, AcceptanceStatus
  * @example
  * formatCoefficient(-1)   // "Н/Д"
  * formatCoefficient(0)    // "Бесплатно"
- * formatCoefficient(1)    // "x1.00"
- * formatCoefficient(1.65) // "x1.65"
+ * formatCoefficient(1)    // "×1,00"
+ * formatCoefficient(1.65) // "×1,65"
  */
 export function formatCoefficient(coefficient: number): string {
   // Handle invalid values
@@ -91,8 +92,8 @@ export function formatCoefficient(coefficient: number): string {
     return 'Бесплатно'
   }
 
-  // Standard and elevated/high - format as multiplier
-  return `×${coefficient.toFixed(2)}`
+  // Standard and elevated/high - format as multiplier (Russian comma, e.g. "×1,65")
+  return `×${formatDecimal(coefficient, 2)}`
 }
 
 /**

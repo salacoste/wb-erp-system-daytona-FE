@@ -55,7 +55,7 @@ const BADGE_TEST_CASES = [
   },
   {
     coefficient: 1.25,
-    expectedLabel: '×1.25',
+    expectedLabel: '×1,25',
     expectedColor: 'warning',
     colorClass: 'text-yellow-700',
     bgClass: 'bg-yellow-100',
@@ -63,7 +63,7 @@ const BADGE_TEST_CASES = [
   },
   {
     coefficient: 1.65,
-    expectedLabel: '×1.65',
+    expectedLabel: '×1,65',
     expectedColor: 'high',
     colorClass: 'text-orange-700',
     bgClass: 'bg-orange-100',
@@ -118,7 +118,7 @@ describe('AcceptanceStatusBadge', () => {
     it('renders elevated badge with yellow (warning) color', () => {
       render(<AcceptanceStatusBadge coefficient={1.25} />)
 
-      const badge = screen.getByText('×1.25').closest('[class*="bg-"]')
+      const badge = screen.getByText('×1,25').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-yellow-100')
       expect(badge).toHaveClass('text-yellow-700')
       expect(badge).toHaveClass('border-yellow-200')
@@ -127,7 +127,7 @@ describe('AcceptanceStatusBadge', () => {
     it('renders high badge with orange (high) color', () => {
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      const badge = screen.getByText('×1.65').closest('[class*="bg-"]')
+      const badge = screen.getByText('×1,65').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-orange-100')
       expect(badge).toHaveClass('text-orange-700')
       expect(badge).toHaveClass('border-orange-200')
@@ -160,7 +160,7 @@ describe('AcceptanceStatusBadge', () => {
       const user = userEvent.setup()
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      const badge = screen.getByText('×1.65')
+      const badge = screen.getByText('×1,65')
       await user.hover(badge)
 
       await waitFor(() => {
@@ -172,13 +172,13 @@ describe('AcceptanceStatusBadge', () => {
       const user = userEvent.setup()
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      const badge = screen.getByText('×1.65')
+      const badge = screen.getByText('×1,65')
       await user.hover(badge)
 
       await waitFor(() => {
         // Radix renders tooltip content twice (visible + accessible hidden)
         // Use getAllByText to handle this known behavior
-        const tooltipTexts = screen.getAllByText(/Коэффициент приёмки:.*×1\.65/i)
+        const tooltipTexts = screen.getAllByText(/Коэффициент приёмки:.*×1,65/i)
         expect(tooltipTexts.length).toBeGreaterThanOrEqual(1)
       })
     })
@@ -187,7 +187,7 @@ describe('AcceptanceStatusBadge', () => {
       const user = userEvent.setup()
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      const badge = screen.getByText('×1.65')
+      const badge = screen.getByText('×1,65')
       await user.hover(badge)
 
       await waitFor(() => {
@@ -202,7 +202,7 @@ describe('AcceptanceStatusBadge', () => {
       const user = userEvent.setup()
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      const badge = screen.getByText('×1.65')
+      const badge = screen.getByText('×1,65')
       await user.hover(badge)
 
       await waitFor(() => {
@@ -217,7 +217,7 @@ describe('AcceptanceStatusBadge', () => {
       const user = userEvent.setup()
       render(<AcceptanceStatusBadge coefficient={1.2} />)
 
-      const badge = screen.getByText('×1.20')
+      const badge = screen.getByText('×1,20')
       await user.hover(badge)
 
       await waitFor(() => {
@@ -229,7 +229,7 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.65} showTooltip={false} />)
 
       // Badge should render without tooltip wrapper
-      expect(screen.getByText('×1.65')).toBeInTheDocument()
+      expect(screen.getByText('×1,65')).toBeInTheDocument()
       // No tooltip trigger should be present
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
@@ -306,9 +306,9 @@ describe('AcceptanceStatusBadge', () => {
     it('has aria-label with full status description', () => {
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
-      const badge = screen.getByText('×1.65').closest('[aria-label]')
+      const badge = screen.getByText('×1,65').closest('[aria-label]')
       expect(badge).toHaveAttribute('aria-label')
-      expect(badge?.getAttribute('aria-label')).toContain('1.65')
+      expect(badge?.getAttribute('aria-label')).toContain('1,65')
     })
 
     it('provides accessible name for unavailable status', () => {
@@ -338,7 +338,7 @@ describe('AcceptanceStatusBadge', () => {
       const badge = screen.getByTestId('acceptance-status-badge')
       expect(badge).toHaveAttribute('aria-label')
       // Badge should be able to receive focus (has tabindex via TooltipTrigger)
-      expect(badge.getAttribute('aria-label')).toContain('1.65')
+      expect(badge.getAttribute('aria-label')).toContain('1,65')
     })
 
     it('color is not sole indicator - icon and text present', () => {
@@ -346,7 +346,7 @@ describe('AcceptanceStatusBadge', () => {
 
       // Both icon and text should be present
       expect(screen.getByText('🔴')).toBeInTheDocument()
-      expect(screen.getByText('×1.65')).toBeInTheDocument()
+      expect(screen.getByText('×1,65')).toBeInTheDocument()
     })
 
     it('has proper data-testid for testing', () => {
@@ -366,9 +366,9 @@ describe('AcceptanceStatusBadge', () => {
     it('handles very high coefficients', () => {
       render(<AcceptanceStatusBadge coefficient={10} />)
 
-      expect(screen.getByText('×10.00')).toBeInTheDocument()
+      expect(screen.getByText('×10,00')).toBeInTheDocument()
       // Should be high status (orange)
-      const badge = screen.getByText('×10.00').closest('[class*="bg-"]')
+      const badge = screen.getByText('×10,00').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-orange-100')
     })
 
@@ -376,20 +376,20 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.666} />)
 
       // Should round to 2 decimal places
-      expect(screen.getByText('×1.67')).toBeInTheDocument()
+      expect(screen.getByText('×1,67')).toBeInTheDocument()
     })
 
     it('handles coefficient at boundary 1.50 as elevated', () => {
       render(<AcceptanceStatusBadge coefficient={1.5} />)
 
-      const badge = screen.getByText('×1.50').closest('[class*="bg-"]')
+      const badge = screen.getByText('×1,50').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-yellow-100') // elevated = warning = yellow
     })
 
     it('handles coefficient at boundary 1.51 as high', () => {
       render(<AcceptanceStatusBadge coefficient={1.51} />)
 
-      const badge = screen.getByText('×1.51').closest('[class*="bg-"]')
+      const badge = screen.getByText('×1,51').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-orange-100') // high = orange
     })
   })

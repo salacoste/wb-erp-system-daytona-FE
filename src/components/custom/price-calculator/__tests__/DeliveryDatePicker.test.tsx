@@ -93,7 +93,7 @@ describe('DeliveryDatePicker', () => {
 
       // Component uses abbreviated "Коэфф. приёмки:" label
       expect(screen.getByText(/коэфф.*приёмки/i)).toBeInTheDocument()
-      expect(screen.getByText(/×1.25/i)).toBeInTheDocument()
+      expect(screen.getByText(/×1,25/i)).toBeInTheDocument()
     })
 
     it('shows API error when no coefficients provided', () => {

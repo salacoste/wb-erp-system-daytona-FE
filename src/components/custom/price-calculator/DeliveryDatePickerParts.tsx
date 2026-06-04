@@ -110,7 +110,7 @@ export function DeliveryDateHelpPopover() {
           <CoefficientColorLegend />
 
           <div className="pt-2 border-t text-xs text-muted-foreground">
-            Коэффициент приёмки умножается на базовый тариф приёмки товара на склад. Например, ×1.5
+            Коэффициент приёмки умножается на базовый тариф приёмки товара на склад. Например, ×1,5
             означает +50% к стоимости приёмки.
           </div>
         </div>

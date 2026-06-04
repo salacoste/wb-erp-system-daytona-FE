@@ -10,20 +10,12 @@
  *
  * @example
  * <AcceptanceStatusBadge coefficient={1.65} />
- * // Renders: [🔴 ×1.65] with orange background and tooltip
+ * // Renders: [🔴 ×1,65] with orange background and tooltip
  */
 
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import {
-  getAcceptanceStatusInfo,
-  formatCoefficient,
-} from '@/lib/acceptance-status-utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { getAcceptanceStatusInfo, formatCoefficient } from '@/lib/acceptance-status-utils'
 import { cn } from '@/lib/utils'
 
 // ============================================================================
@@ -88,11 +80,7 @@ export function AcceptanceStatusBadge({
   const badge = (
     <Badge
       variant="outline"
-      className={cn(
-        COLOR_CLASSES[info.color],
-        SIZE_CLASSES[size],
-        className
-      )}
+      className={cn(COLOR_CLASSES[info.color], SIZE_CLASSES[size], className)}
       aria-label={ariaLabel}
       data-testid="acceptance-status-badge"
     >
@@ -113,9 +101,7 @@ export function AcceptanceStatusBadge({
         <TooltipTrigger asChild>{badge}</TooltipTrigger>
         <TooltipContent className="max-w-xs" size="md">
           <div className="space-y-1">
-            <p className="font-medium">
-              Коэффициент приёмки: {formatCoefficient(coefficient)}
-            </p>
+            <p className="font-medium">Коэффициент приёмки: {formatCoefficient(coefficient)}</p>
             <p className="text-sm text-muted-foreground">{info.description}</p>
             {info.percentageIncrease && info.percentageIncrease > 25 && (
               <p className="text-sm text-amber-600">

@@ -23,7 +23,7 @@ export {
 } from './acceptance-status-config'
 
 import { ACCEPTANCE_STATUS_CONFIG, calculatePercentageIncrease } from './acceptance-status-config'
-import { formatPercentageInt } from '@/lib/utils'
+import { formatDecimal, formatPercentageInt } from '@/lib/utils'
 
 // ============================================================================
 // Status Determination Functions
@@ -89,8 +89,8 @@ export function getAcceptanceStatusInfo(coefficient: number): AcceptanceStatusIn
   let description = config.description
 
   if (status === 'elevated' || status === 'high') {
-    // Format as "x1.65" for elevated/high statuses
-    label = `×${coefficient.toFixed(2)}`
+    // Format as "×1,65" (Russian comma) for elevated/high statuses
+    label = `×${formatDecimal(coefficient, 2)}`
     // Include percentage in description
     if (percentageIncrease !== null) {
       // percentageIncrease = Math.round((coef-1)*100) → integer percent-units → formatPercentageInt (NBSP), no *100
