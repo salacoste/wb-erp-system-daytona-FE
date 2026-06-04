@@ -89,6 +89,11 @@ describe('formatCurrencyRu', () => {
     expect(result).toBe('—')
   })
 
+  it('should return dash for NaN / Infinity (normalizer sentinel), not "не число ₽"', () => {
+    expect(formatCurrencyRu(NaN)).toBe('—')
+    expect(formatCurrencyRu(Infinity)).toBe('—')
+  })
+
   it('should handle negative numbers', () => {
     const result = formatCurrencyRu(-100)
     expect(result).toMatch(/-100,00/)
@@ -198,9 +203,7 @@ describe('formatWeeksCount', () => {
 })
 
 describe('analyzeVersionChain', () => {
-  const createMockItem = (
-    overrides: Partial<CogsHistoryItem> = {}
-  ): CogsHistoryItem => ({
+  const createMockItem = (overrides: Partial<CogsHistoryItem> = {}): CogsHistoryItem => ({
     cogs_id: 'cogs-1',
     nm_id: '12345678',
     unit_cost_rub: 100,

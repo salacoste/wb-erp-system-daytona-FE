@@ -39,6 +39,10 @@ export function formatDateRu(dateString: string | null | undefined): string {
  */
 export function formatCurrencyRu(value: number | null | undefined): string {
   if (value === null || value === undefined) return '—'
+  // NaN is the cogs-history normalizer's "invalid cost" sentinel (anti-pattern #8). Intl.format(NaN)
+  // does NOT throw (it returns "не число ₽"), so the try/catch below can't catch it — guard explicitly.
+  // (Matches the sibling formatters fixed in iter-136; closes the drift that left this copy unguarded.)
+  if (!Number.isFinite(value)) return '—'
   try {
     return new Intl.NumberFormat('ru-RU', {
       style: 'currency',
