@@ -14,6 +14,7 @@ import { Warehouse as WarehouseIcon, Loader2 } from 'lucide-react'
 import { WarehouseSelect } from './WarehouseSelect'
 import { CoefficientField } from './CoefficientField'
 import { DeliveryDatePicker } from './DeliveryDatePicker'
+import { formatDecimal } from '@/lib/utils'
 import { RateLimitWarning } from './RateLimitWarning'
 import { CoefficientsLoadingSkeleton } from './CoefficientsLoadingSkeleton'
 import { useWarehouseCoefficients } from '@/hooks/useWarehouseCoefficients'
@@ -167,7 +168,7 @@ export function WarehouseSection({
             {effectiveTariffs.displayLogisticsCoefficient !== 1.0 && (
               <span className="font-semibold text-blue-600">
                 {' '}
-                x{effectiveTariffs.displayLogisticsCoefficient.toFixed(2)}
+                x{formatDecimal(effectiveTariffs.displayLogisticsCoefficient, 2)}
               </span>
             )}
             . Дополнительная настройка коэффициентов не требуется.

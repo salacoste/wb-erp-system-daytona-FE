@@ -14,6 +14,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WarehouseSection } from '../WarehouseSection'
 import type { Warehouse } from '@/types/warehouse'
+import { DEFAULT_TARIFFS } from '@/lib/tariff-system-types'
 
 // Mock scrollIntoView for JSDOM compatibility
 beforeAll(() => {
@@ -692,5 +693,15 @@ describe('Story 44.27: Accessibility', () => {
     // Header text should have good contrast
     const header = screen.getByText('Склад и хранение')
     expect(header).toHaveClass('text-purple-900')
+  })
+
+  it('renders the logistics coefficient with ru-RU comma decimal (x1,50, not x1.50)', () => {
+    renderWarehouseSection({
+      warehouseId: 507,
+      tariffSystem: 'supply',
+      effectiveTariffs: { ...DEFAULT_TARIFFS, source: 'supply', displayLogisticsCoefficient: 1.5 },
+    })
+    // anchored to the coefficient <span> ("x1,50"), not the surrounding <p> sentence
+    expect(screen.getByText(/^x1,50$/)).toBeInTheDocument()
   })
 })
