@@ -1,7 +1,7 @@
 'use client'
 
 import { TrendingDown, TrendingUp } from 'lucide-react'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 
 export function ExpenseSummaryBadge({
   total,
@@ -25,7 +25,9 @@ export function ExpenseSummaryBadge({
       {revenueShare != null && (
         <div className="flex items-center gap-1 rounded-md bg-gray-50 px-2 py-1">
           <span className="text-xs text-gray-500">% от выручки:</span>
-          <span className="text-xs font-semibold text-gray-700">{revenueShare.toFixed(1)}%</span>
+          <span className="text-xs font-semibold text-gray-700">
+            {formatPercentage(revenueShare, 1)}
+          </span>
         </div>
       )}
       {wowChange != null && (
@@ -45,7 +47,7 @@ export function ExpenseSummaryBadge({
             }`}
           >
             {wowChange > 0 ? '+' : ''}
-            {wowChange.toFixed(1)}%
+            {formatPercentage(wowChange, 1)}
           </span>
         </div>
       )}
