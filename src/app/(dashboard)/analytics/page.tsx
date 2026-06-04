@@ -32,6 +32,7 @@ import { NavigationSection, analyticsNavigation } from './components/AnalyticsNa
 import { AnalyticsWeekSelector } from './components/AnalyticsWeekSelector'
 import { useAnalyticsPageState } from './components/useAnalyticsPageState'
 import { SearchPerformanceWidget } from './components/SearchPerformanceWidget'
+import { MarketingKpiCard } from './components/MarketingKpiCard'
 
 export default function AnalyticsSummaryPage() {
   const {
@@ -90,7 +91,16 @@ export default function AnalyticsSummaryPage() {
         </Card>
 
         {/* Story 120.3-FE: Search Performance mini-widget (marketing quick stats) */}
-        {selectedWeek && <SearchPerformanceWidget from={selectedWeek} to={selectedWeek} />}
+        {/* Story 120.4-FE: Marketing Summary KPI card (organic search orders %, top keywords) */}
+        {/* Pattern 1 graceful degradation: each widget self-fetches and renders null on its own
+            error/empty source. If only one degrades, the grid shows a single column — intentional;
+            a supplementary failure must never blank the hub (Epic 92-FE). */}
+        {selectedWeek && (
+          <div className="grid gap-4 lg:grid-cols-2">
+            <SearchPerformanceWidget from={selectedWeek} to={selectedWeek} />
+            <MarketingKpiCard from={selectedWeek} to={selectedWeek} />
+          </div>
+        )}
 
         {/* Divider with title */}
         <div className="relative">
