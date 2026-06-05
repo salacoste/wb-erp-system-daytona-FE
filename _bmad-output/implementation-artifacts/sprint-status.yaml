@@ -515,7 +515,10 @@ development_status:
   # Epic 121-FE: Advertising + Search Cross-Analysis (Marketing Plan §3.6)
   # Spec: _bmad-output/planning-artifacts/epics-121-fe.md
   # Revised: 3 stories (~13 SP), Story 121.1 DEFERRED (WB API no keyword-level ad spend)
-  epic-121-fe: in-progress  # 2026-06-05 — Stories 121.2 (product scatter), 121.3 (cannibalization), 121.4 (tests). 121.1 DEFERRED.
+  epic-121-fe: done  # 2026-06-05 ALL 3 active stories done (121.2 scatter, 121.3 cannibalization, 121.4 tests). Story 121.1 DEFERRED (WB API limitation — no per-keyword ad spend). 9371 tests passing, 0 failed. 10 commits this session.
+  121-2-fe-product-level-position-spend-scatter: done  # 2026-06-05 commit f5e4b459. Extended CrossReferenceItem with organicContribution from advertising analytics. New ProductScatterChart (X=organic contribution %, Y=ad spend, 4 quadrant labels). Tab switching on /analytics/cross-reference (По каналам / По продуктам). classifyCannibalization utility (high/medium/low). Updated AnomalyEntry type with full backend fields. 5 new tests for classifyCannibalization. 0 TypeScript errors. 35 cross-reference + 63 anomaly tests passing.
+  121-3-fe-cannibalization-dashboard: done  # 2026-06-05 commit 14125e4a. CannibalizationSection: identifies products with high organic contribution + high ad spend. Risk table (high >70%, medium 40-70%). Summary banner with count + overspend. Wired into advertising page (198 lines, under cap). Uses existing AdvertisingItem data, no new API calls.
+  121-4-fe-tests-e2e-polish: done  # 2026-06-05 commit 86a0f6bd. CannibalizationSection tests (9 passing). Full quality gates: type-check 0 errors (pre-existing orders-history anomaly excluded), ESLint 0E/100w, Vitest 9371 passing 0 failed, all files under 200 lines.
 
   # Ad-hoc feature additions (2026-06-05, not part of a formal epic)
   # Three new analytics domains: types, API clients, boundary normalizers, TanStack Query hooks, page routes, components
