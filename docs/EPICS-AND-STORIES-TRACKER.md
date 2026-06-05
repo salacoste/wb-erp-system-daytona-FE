@@ -236,6 +236,9 @@ Source: `src/lib/routes.ts`
 | `/analytics/fbs-enhanced` | FBS enhanced analytics | 96-FE |
 | `/analytics/buyout-reconciliation` | Buyout reconciliation audit | 96-FE |
 | `/analytics/product/[nmId]` | Unified product analytics | 120-FE |
+| `/analytics/alerts` | Alert rules & notification history | 121-FE |
+| `/analytics/pricing` | Price recommendations | 121-FE |
+| `/analytics/reorder` | Warehouse reorder dashboard | 121-FE |
 
 ### Orders & Shipments
 
@@ -276,6 +279,7 @@ Chronological log, newest first. Sprint-status source: `_bmad-output/implementat
 |------|------|---------|---------|
 | 2026-06-05 | 120-FE | Marketing Analytics Expansion: Hub redesign, Product Analytics, organic/paid split, iROAS | 7 |
 | 2026-06-05 | — | Tech debt: Request #186 (bulk COGS v2), Request #203 (selling_price), Epic 121 scope | — |
+| 2026-06-05 | — | New domains: alerts, price-recommendations, reorder dashboard (33 files, +2212 lines) | — |
 | 2026-05-13 | 101-FE | Documentation & backlog cleanup | 1+ (in-progress) |
 | 2026-05-12 | 100-FE | Dead code & deprecation sweep (21 deprecated items removed) | 3 |
 | 2026-05-12 | 99-FE | ESLint cap 200-line target + HALT scripts (rule validator, propagation checker) | 2 |
