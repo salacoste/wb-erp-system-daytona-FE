@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Cross-Reference Page Content — Story 73.7-FE
+ * Cross-Reference Page Content — Story 73.7-FE + Story 121.2-FE
  * Merges search orders (groupBy=product) + advertising (view_by=sku) client-side
  */
 
@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useSearchOrders } from '@/hooks/use-search-analytics'
 import { useAdvertisingAnalytics } from '@/hooks/advertising/hooks'
 import {
@@ -24,6 +25,7 @@ import { OverlapSummaryCards } from './OverlapSummaryCards'
 import { CrossReferenceTable } from './CrossReferenceTable'
 import { InsightsCards } from './InsightsCards'
 import { OrganicVsAdScatter } from './OrganicVsAdScatter'
+import { ProductScatterChart } from './ProductScatterChart'
 import type { DateRange } from '@/types/date-range'
 
 function getDefaultRange(): DateRange {
@@ -95,7 +97,18 @@ export function CrossReferencePageContent() {
           <div className="space-y-6">
             <OverlapSummaryCards summary={overlapSummary} />
             <InsightsCards items={topWastedSpend} />
-            <OrganicVsAdScatter items={mergedData} />
+            <Tabs defaultValue="channel">
+              <TabsList>
+                <TabsTrigger value="channel">По каналам</TabsTrigger>
+                <TabsTrigger value="product">По продуктам</TabsTrigger>
+              </TabsList>
+              <TabsContent value="channel" className="mt-4">
+                <OrganicVsAdScatter items={mergedData} />
+              </TabsContent>
+              <TabsContent value="product" className="mt-4">
+                <ProductScatterChart items={mergedData} />
+              </TabsContent>
+            </Tabs>
             <CrossReferenceTable items={mergedData} />
           </div>
         )}

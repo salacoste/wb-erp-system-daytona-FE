@@ -28,6 +28,15 @@ const mockAnomaly: AnomalyEntry = {
   triggeredAt: '2026-05-15T10:23:00Z',
   status: 'pending',
   cabinetId: 'cab-123',
+  vendorCode: null,
+  severity: 'critical',
+  value: 15,
+  baselineValue: 10,
+  deviationPct: 50,
+  rootCauseHint: null,
+  resolvedAt: null,
+  resolutionCause: null,
+  resolutionNote: null,
 }
 
 function createWrapper() {

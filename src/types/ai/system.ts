@@ -75,6 +75,16 @@ export interface AnomalyEntry {
   status: AnomalyStatus
   cabinetId: string
   modelId?: string
+  /** Vendor code (артикул). null when backend has no vendor code for this nmId. */
+  vendorCode: string | null
+  severity: string
+  value: number
+  baselineValue: number
+  deviationPct: number
+  rootCauseHint: string | null
+  resolvedAt: string | null
+  resolutionCause: string | null
+  resolutionNote: string | null
 }
 
 /**

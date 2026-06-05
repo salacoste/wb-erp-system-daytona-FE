@@ -12,6 +12,7 @@ function makeItem(overrides: Partial<CrossReferenceItem> = {}): CrossReferenceIt
     adSpend: 2000,
     adClicks: 50,
     adRevenue: 800,
+    organicContribution: 30,
     channel: 'both',
     ...overrides,
   }

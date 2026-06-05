@@ -16,6 +16,7 @@ function makeItem(o: Partial<CrossReferenceItem> = {}): CrossReferenceItem {
     adSpend: 100,
     adClicks: 10,
     adRevenue: 500,
+    organicContribution: 25,
     channel: 'both',
     ...o,
   }
@@ -31,8 +32,6 @@ describe('CrossReferenceTable — null adRevenue', () => {
 
   it('renders a real adRevenue as currency', () => {
     render(<CrossReferenceTable items={[makeItem({ adRevenue: 1234 })]} />)
-    expect(
-      screen.getByText((t) => t.includes('234') && t.includes('₽'))
-    ).toBeInTheDocument() // adRevenue 1234 → "1 234 ₽" (NBSP-agnostic match)
+    expect(screen.getByText(t => t.includes('234') && t.includes('₽'))).toBeInTheDocument() // adRevenue 1234 → "1 234 ₽" (NBSP-agnostic match)
   })
 })
