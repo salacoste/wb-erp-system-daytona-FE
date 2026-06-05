@@ -71,47 +71,115 @@ describe('normalizeAiPreferences', () => {
   })
 })
 
-// ── getAnomalies stub — F-10 (Story 112.3-FE 1st-pass review) ─────────────────
+// ── getAnomalies — PENDING BACKEND #167 (Story 112.3-FE) ─────────────────────
+// The function does real API calls; we mock apiClient to test normalization.
 
+import { vi } from 'vitest'
 import { getAnomalies } from '../system'
 
-describe('getAnomalies stub (PENDING BACKEND #167)', () => {
-  it('echoes page param when provided', async () => {
+vi.mock('../../../api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+  },
+}))
+
+import { apiClient } from '../../../api-client'
+const mockGet = vi.mocked(apiClient.get)
+
+describe('getAnomalies (PENDING BACKEND #167)', () => {
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('maps offset/limit to page correctly', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [],
+      total: 0,
+      limit: 50,
+      offset: 100,
+    })
     const result = await getAnomalies({ page: 3, limit: 50 })
     expect(result.page).toBe(3)
     expect(result.limit).toBe(50)
   })
 
-  it('defaults page to 1 and limit to 20 when no params given', async () => {
+  it('defaults page to 1 when offset is 0', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [],
+      total: 0,
+      limit: 20,
+      offset: 0,
+    })
     const result = await getAnomalies()
     expect(result.page).toBe(1)
     expect(result.limit).toBe(20)
   })
 
-  it('defaults page to 1 and limit to 20 when params is undefined', async () => {
+  it('defaults page to 1 when called with undefined params', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [],
+      total: 0,
+      limit: 20,
+      offset: 0,
+    })
     const result = await getAnomalies(undefined)
     expect(result.page).toBe(1)
     expect(result.limit).toBe(20)
   })
 
-  it('always returns empty anomalies array and total 0 (stub mode)', async () => {
+  it('normalizes items with null vendorCode/resolvedAt', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [
+        {
+          id: 'a-1',
+          nmId: null,
+          vendorCode: null,
+          anomalyType: 'margin_drop',
+          severity: 'critical',
+          value: -15.5,
+          baselineValue: 10.2,
+          deviationPct: -251,
+          rootCauseHint: null,
+          status: 'pending',
+          detectedAt: '2026-06-01T00:00:00Z',
+          resolvedAt: null,
+          resolutionCause: null,
+          resolutionNote: null,
+        },
+      ],
+      total: 1,
+      limit: 10,
+      offset: 10,
+    })
     const result = await getAnomalies({ page: 2, limit: 10 })
-    expect(result.anomalies).toEqual([])
-    expect(result.total).toBe(0)
+    expect(result.total).toBe(1)
+    expect(result.page).toBe(2)
+    expect(result.anomalies).toHaveLength(1)
+    expect(result.anomalies[0].vendorCode).toBeNull()
+    expect(result.anomalies[0].resolvedAt).toBeNull()
+    expect(result.anomalies[0].nmId).toBe(0) // SEMANTIC-ZERO per normalizer-helpers
   })
 
-  it('echoes only page when limit is absent', async () => {
-    const result = await getAnomalies({ page: 5 })
-    expect(result.page).toBe(5)
-    expect(result.limit).toBe(20)
-  })
-
-  it('echoes status param when provided (F-3, Story 112.3-FE 3rd-pass)', async () => {
+  it('echoes status param when provided (F-3)', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [],
+      total: 0,
+      limit: 20,
+      offset: 0,
+    })
     const result = await getAnomalies({ status: 'resolved' })
     expect(result.status).toBe('resolved')
+    // Verify the query string included status
+    expect(mockGet).toHaveBeenCalledWith(expect.stringContaining('status=resolved'))
   })
 
   it('status is undefined when not provided', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [],
+      total: 0,
+      limit: 20,
+      offset: 0,
+    })
     const result = await getAnomalies({ page: 1 })
     expect(result.status).toBeUndefined()
   })

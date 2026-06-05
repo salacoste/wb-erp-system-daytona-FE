@@ -84,18 +84,65 @@ export interface GetAnomaliesParams {
 
 /**
  * GET /v1/ai/anomalies — paginated anomaly list.
- * PENDING BACKEND: #167 — currently returns empty stub until endpoint ships.
- * Stub echoes pagination params so future tests can validate page/limit handling.
- * When backend lands: replace body with apiClient.get('/v1/ai/anomalies', { params }) call.
+ * Backend request #167.
  * Story 112.3-FE.
  */
 export async function getAnomalies(params?: GetAnomaliesParams): Promise<AnomalyListResponse> {
-  // PENDING BACKEND: #167 — replace with real API call when GET /v1/ai/anomalies ships.
+  const sp = new URLSearchParams()
+  if (params?.status) sp.set('status', params.status)
+  if (params?.limit) sp.set('limit', String(params.limit))
+  if (params?.page && params.page > 1) {
+    const limit = params.limit ?? 20
+    sp.set('offset', String((params.page - 1) * limit))
+  }
+  const qs = sp.toString()
+  const endpoint = `/v1/ai/anomalies${qs ? `?${qs}` : ''}`
+
+  const raw = await apiClient.get<{
+    items: Array<{
+      id: string
+      nmId: number | null
+      vendorCode: string | null
+      anomalyType: string
+      severity: string
+      value: number
+      baselineValue: number
+      deviationPct: number
+      rootCauseHint: string | null
+      status: string
+      detectedAt: string
+      resolvedAt: string | null
+      resolutionCause: string | null
+      resolutionNote: string | null
+    }>
+    total: number
+    limit: number
+    offset: number
+  }>(endpoint)
+
+  const page = Math.floor(raw.offset / raw.limit) + 1
+
   return {
-    anomalies: [],
-    total: 0,
-    page: params?.page ?? 1,
-    limit: params?.limit ?? 20,
-    status: params?.status, // echo for future test parity; backend will confirm server-side filtering
+    anomalies: raw.items.map(item => ({
+      id: item.id,
+      nmId: item.nmId ?? 0,
+      anomalyType: item.anomalyType,
+      triggeredAt: item.detectedAt,
+      status: (item.status === 'resolved' ? 'resolved' : 'pending') as AnomalyStatus,
+      cabinetId: '',
+      vendorCode: item.vendorCode,
+      severity: item.severity,
+      value: item.value,
+      baselineValue: item.baselineValue,
+      deviationPct: item.deviationPct,
+      rootCauseHint: item.rootCauseHint,
+      resolvedAt: item.resolvedAt,
+      resolutionCause: item.resolutionCause,
+      resolutionNote: item.resolutionNote,
+    })),
+    total: raw.total,
+    page,
+    limit: raw.limit,
+    status: params?.status,
   }
 }
