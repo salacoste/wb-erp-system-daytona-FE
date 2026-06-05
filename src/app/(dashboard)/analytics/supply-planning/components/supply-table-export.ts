@@ -10,6 +10,7 @@ const CSV_HEADERS = [
   'Дней до стокаута',
   'Рекомендация (шт)',
   'Сумма заказа (₽)',
+  'Цена продажи (₽)',
 ]
 
 /**
@@ -45,6 +46,7 @@ export function buildSupplyTableCsv(data: SupplyPlanningItem[]): string {
     item.days_until_stockout ?? '',
     item.reorder_quantity,
     item.reorder_value,
+    item.selling_price,
   ])
 
   return [

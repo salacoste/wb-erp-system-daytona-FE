@@ -71,9 +71,14 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
           {totalLostUnits > 0 && (
             <div className="mt-3 pt-3 border-t flex justify-between font-bold text-red-600">
               <span>Потенциальные потери (7 дней):</span>
-              {/* Lost SALES UNITS — honest, backend-derived. NOT a ₽ figure: the backend provides
-                  no selling price, so any ₽ "loss" would be fabricated (Defensive Frontend Principle). */}
-              <span>≈ {formatNumber(totalLostUnits)} шт упущенных продаж</span>
+              <div className="text-right space-y-0.5">
+                <span>≈ {formatNumber(totalLostUnits)} шт упущенных продаж</span>
+                {item.selling_price != null && (
+                  <span className="block text-sm">
+                    ≈ {formatReorderValue(totalLostUnits * item.selling_price)}
+                  </span>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -125,9 +130,34 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
                 {formatStockQty(item.reorder_quantity)} = {formatReorderValue(item.reorder_value)}
               </dd>
             </div>
-            {/* "Ожид. выручка/прибыль" rows removed: they multiplied reorder_value by a fabricated
-                2.5×/1.5× markup (the backend provides no selling price) — fabricated financials
-                presented as authoritative (Defensive Frontend Principle). See request-backend/203. */}
+            {/* Expected revenue/profit — Request #203: uses real selling_price from backend. */}
+            {item.selling_price != null &&
+              item.cogs_per_unit != null &&
+              item.reorder_quantity > 0 &&
+              (() => {
+                const profit = item.reorder_quantity * (item.selling_price - item.cogs_per_unit)
+                return (
+                  <>
+                    <div className="flex justify-between pt-2 border-t">
+                      <dt className="text-gray-600">Ожид. выручка</dt>
+                      <dd className="font-medium">
+                        {formatReorderValue(item.reorder_quantity * item.selling_price)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-gray-600">Ожид. прибыль</dt>
+                      <dd
+                        className={cn(
+                          'font-medium',
+                          profit >= 0 ? 'text-green-600' : 'text-red-600'
+                        )}
+                      >
+                        {formatReorderValue(profit)}
+                      </dd>
+                    </div>
+                  </>
+                )
+              })()}
           </dl>
         ) : (
           <div className="flex items-center gap-2 text-gray-400">

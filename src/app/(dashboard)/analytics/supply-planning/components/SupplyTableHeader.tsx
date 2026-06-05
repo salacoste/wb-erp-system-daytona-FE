@@ -145,6 +145,17 @@ export function SupplyTableHeader({ sortField, sortOrder, onSort }: SupplyTableH
           </div>
         </th>
 
+        {/* Selling Price — Request #203 */}
+        <th
+          className="w-[120px] px-4 py-3 text-right cursor-pointer hover:bg-gray-200 transition-colors hidden xl:table-cell"
+          onClick={() => onSort('selling_price')}
+        >
+          <div className="flex items-center justify-end gap-1 text-xs font-semibold text-gray-600 uppercase tracking-wide">
+            Цена
+            <SortIndicator field="selling_price" sortField={sortField} sortOrder={sortOrder} />
+          </div>
+        </th>
+
         {/* Action */}
         <th className="w-[140px] px-4 py-3 text-center">
           <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">

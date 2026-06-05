@@ -12,6 +12,7 @@ import {
   StockCell,
   VelocityCell,
   DaysUntilStockoutCell,
+  SellingPriceCell,
   ActionCell,
 } from './SupplyPlanningRowCells'
 
@@ -89,13 +90,15 @@ export function SupplyPlanningRow({ item, isExpanded, onToggleExpand }: SupplyPl
           </span>
         </td>
 
+        <SellingPriceCell item={item} />
+
         <ActionCell item={item} />
       </tr>
 
       {/* Expanded Detail Panel */}
       {isExpanded && (
         <tr>
-          <td colSpan={11} className="p-0">
+          <td colSpan={12} className="p-0">
             <SupplyPlanningDetail item={item} />
           </td>
         </tr>

@@ -13,6 +13,7 @@ export type SortField =
   | 'days_until_stockout'
   | 'reorder_quantity'
   | 'reorder_value'
+  | 'selling_price'
 
 export type SortOrder = 'asc' | 'desc'
 
@@ -97,6 +98,10 @@ export function useSupplyTableFilters(data: SupplyPlanningItem[]) {
           // reorder_value is undefined when COGS is unassigned — coalesce so the subtraction never
           // yields NaN (which scrambles the sort). Unknown values sort last (mirrors days_until_stockout above).
           comparison = (a.reorder_value ?? -Infinity) - (b.reorder_value ?? -Infinity)
+          break
+        case 'selling_price':
+          // selling_price is null when no sales data — nulls sort last.
+          comparison = (a.selling_price ?? -Infinity) - (b.selling_price ?? -Infinity)
           break
       }
 

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
 import {
   formatDaysUntilStockout,
+  formatReorderValue,
   formatStockQty,
   formatVelocity,
   STOCKOUT_RISK_CONFIG,
@@ -170,6 +171,17 @@ export function DaysUntilStockoutCell({ item }: CellProps) {
         )}
       >
         {formatDaysUntilStockout(item.days_until_stockout)}
+      </span>
+    </td>
+  )
+}
+
+/** Selling price cell — avg retail price (Request #203). Null when no sales data. */
+export function SellingPriceCell({ item }: CellProps) {
+  return (
+    <td className="px-4 py-3 text-right hidden xl:table-cell">
+      <span className="text-sm text-gray-900">
+        {item.selling_price != null ? formatReorderValue(item.selling_price) : '—'}
       </span>
     </td>
   )

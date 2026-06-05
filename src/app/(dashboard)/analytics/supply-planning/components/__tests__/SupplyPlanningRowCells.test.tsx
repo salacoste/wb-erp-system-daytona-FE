@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import type { SupplyPlanningItem, VelocityTrend } from '@/types/supply-planning'
-import { VelocityCell } from '../SupplyPlanningRowCells'
+import { VelocityCell, SellingPriceCell } from '../SupplyPlanningRowCells'
 
 /**
  * VelocityCell — Defensive Frontend: backend velocity_trend 'no_data'/null must
@@ -27,7 +27,7 @@ function makeItem(velocity_trend: VelocityTrend | null): SupplyPlanningItem {
     reorder_value: 0,
     cogs_per_unit: null,
     has_cogs: false,
-    selling_price: null,
+    selling_price: 1250,
     warehouses: [],
   }
 }
@@ -75,5 +75,41 @@ describe('VelocityCell', () => {
 
     expect(container.querySelector('.lucide-minus')).not.toBeNull()
     expect(queryByLabelText(/Нет данных о тренде/)).toBeNull()
+  })
+})
+
+describe('SellingPriceCell', () => {
+  it('renders formatted price when selling_price is present', () => {
+    const item = makeItem(null)
+    const { container } = renderWithProviders(
+      <table>
+        <tbody>
+          <tr>
+            <SellingPriceCell item={item} />
+          </tr>
+        </tbody>
+      </table>
+    )
+    // makeItem sets selling_price: 1250 — should render as Russian-locale RUB
+    const cell = container.querySelector('td')
+    expect(cell?.textContent).toContain('1')
+    expect(cell?.textContent).toContain('250')
+    // Must not render the em-dash for null
+    expect(cell?.textContent).not.toBe('—')
+  })
+
+  it('renders em-dash when selling_price is null', () => {
+    const item = { ...makeItem(null), selling_price: null as number | null }
+    const { container } = renderWithProviders(
+      <table>
+        <tbody>
+          <tr>
+            <SellingPriceCell item={item} />
+          </tr>
+        </tbody>
+      </table>
+    )
+    const cell = container.querySelector('td')
+    expect(cell?.textContent).toBe('—')
   })
 })
