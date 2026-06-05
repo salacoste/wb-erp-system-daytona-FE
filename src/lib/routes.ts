@@ -47,8 +47,11 @@ export const ROUTES = {
     FBS_STOCK: '/analytics/fbs-stock', // Epic 96-FE Story 96.11: FBS Stock Breakdowns
     FBS_ENHANCED: '/analytics/fbs-enhanced', // Epic 96-FE Story 96.13: FBS Enhanced Analytics aggregated view
     BUYOUT_RECONCILIATION: '/analytics/buyout-reconciliation', // Epic 96-FE Story 96.14: Buyout reconciliation audit
+    REORDER: '/analytics/reorder', // Reorder Dashboard — warehouse replenishment recommendations
     SEARCH: '/analytics/search', // Epic 71-FE: Search Analytics
     CROSS_REFERENCE: '/analytics/cross-reference', // Story 73.7-FE: Search + Advertising Cross-Reference
+    ALERTS: '/analytics/alerts', // Alerts Dashboard — notification rules & history
+    PRICING: '/analytics/pricing', // Epic 121: Price Recommendations
     FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
     MODELS: '/analytics/models', // Epic 109-FE: AI Model Management
     PRODUCT: '/analytics/product', // Epic 120-FE Story 120.5: Unified Product Analytics (dynamic /[nmId] — use buildProductAnalyticsRoute)
@@ -136,8 +139,11 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.FBS_STOCK, // Epic 96-FE Story 96.11: FBS Stock Breakdowns
     ROUTES.ANALYTICS.FBS_ENHANCED, // Epic 96-FE Story 96.13: FBS Enhanced Analytics
     ROUTES.ANALYTICS.BUYOUT_RECONCILIATION, // Epic 96-FE Story 96.14: Buyout reconciliation audit
+    ROUTES.ANALYTICS.REORDER, // Reorder Dashboard
     ROUTES.ANALYTICS.SEARCH, // Epic 71-FE: Search Analytics
     ROUTES.ANALYTICS.CROSS_REFERENCE, // Story 73.7-FE: Search + Advertising Cross-Reference
+    ROUTES.ANALYTICS.ALERTS, // Alerts Dashboard
+    ROUTES.ANALYTICS.PRICING, // Epic 121: Price Recommendations
     ROUTES.ANALYTICS.FORECAST, // Epic 103-FE: AI Sales Forecast
     ROUTES.ANALYTICS.MODELS, // Epic 109-FE: AI Model Management
     ROUTES.ANALYTICS.AI_ADMIN.MODELS, // Epic 112-FE: AI Admin Model Rollback (Owner only)

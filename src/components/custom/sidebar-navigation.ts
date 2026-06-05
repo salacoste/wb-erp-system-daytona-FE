@@ -38,6 +38,7 @@ import {
   Brain,
   Cpu,
   AlertTriangle,
+  Tag,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -69,6 +70,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Storage', href: ROUTES.ANALYTICS.STORAGE, icon: Warehouse },
   // Epic 6: Supply Planning & Stockout Prevention
   { label: 'Планирование', href: ROUTES.ANALYTICS.SUPPLY_PLANNING, icon: PackageSearch },
+  // Reorder Dashboard — warehouse replenishment recommendations
+  { label: 'Пополнение склада', href: ROUTES.ANALYTICS.REORDER, icon: Package },
   // Epic 5: Unit Economics Analytics
   { label: 'Юнит-экономика', href: ROUTES.ANALYTICS.UNIT_ECONOMICS, icon: Calculator },
   // Epic 7: Liquidity Analysis
@@ -100,6 +103,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Кросс-анализ', href: ROUTES.ANALYTICS.CROSS_REFERENCE, icon: ArrowRightLeft },
   // Epic 103-FE: AI Sales Forecast
   { label: 'AI Прогноз', href: ROUTES.ANALYTICS.FORECAST, icon: Brain },
+  // Epic 121: Price Recommendations
+  { label: 'Рекомендации по ценам', href: ROUTES.ANALYTICS.PRICING, icon: Tag },
   // Epic 109-FE: AI Model Management
   { label: 'Модели AI', href: ROUTES.ANALYTICS.MODELS, icon: Cpu },
   // Epic 112-FE: AI Admin — Owner-only model rollback (Story 112.1-FE)
@@ -131,6 +136,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Мониторинг', href: ROUTES.MONITORING, icon: Activity },
   // Epic 92-FE: Monitor Dashboard (business KPI surface)
   { label: 'Монитор', href: ROUTES.MONITOR, icon: Gauge },
+  // Alerts Dashboard — notification rules, history, summary KPIs
+  { label: 'Центр уведомлений', href: ROUTES.ANALYTICS.ALERTS, icon: Bell },
   // Epic 34-FE: Telegram Notifications
   { label: 'Уведомления', href: ROUTES.SETTINGS.NOTIFICATIONS, icon: Bell },
   // Epic 52-FE: Tariff Settings Admin (Admin only)

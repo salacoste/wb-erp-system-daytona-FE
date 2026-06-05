@@ -1,0 +1,135 @@
+'use client'
+
+/**
+ * Alert rules list with enable/disable toggle and severity badges
+ */
+
+import { BellOff, Trash2 } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useUpdateAlertRule, useDeleteAlertRule } from '@/hooks/useAlerts'
+import type { AlertRule, AlertSeverity } from '@/types/alerts'
+
+const severityColors: Record<AlertSeverity, string> = {
+  critical: 'bg-red-100 text-red-800',
+  warning: 'bg-yellow-100 text-yellow-800',
+  info: 'bg-blue-100 text-blue-800',
+}
+
+const severityLabels: Record<AlertSeverity, string> = {
+  critical: 'Критический',
+  warning: 'Внимание',
+  info: 'Информация',
+}
+
+interface AlertRulesListProps {
+  rules: AlertRule[] | undefined
+  isLoading: boolean
+}
+
+export function AlertRulesList({ rules, isLoading }: AlertRulesListProps) {
+  const updateRule = useUpdateAlertRule()
+  const deleteRule = useDeleteAlertRule()
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Правила оповещений</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!rules || rules.length === 0) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+          <BellOff className="h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold text-muted-foreground mb-2">Нет правил</h3>
+          <p className="text-sm text-muted-foreground">
+            Создайте первое правило оповещения для автоматического мониторинга
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Правила оповещений ({rules.length})</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {rules.map(rule => (
+          <RuleRow
+            key={rule.id}
+            rule={rule}
+            onToggle={enabled => updateRule.mutate({ id: rule.id, payload: { enabled } })}
+            onDelete={() => deleteRule.mutate(rule.id)}
+            isToggling={updateRule.isPending}
+            isDeleting={deleteRule.isPending}
+          />
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
+
+function RuleRow({
+  rule,
+  onToggle,
+  onDelete,
+  isToggling,
+  isDeleting,
+}: {
+  rule: AlertRule
+  onToggle: (enabled: boolean) => void
+  onDelete: () => void
+  isToggling: boolean
+  isDeleting: boolean
+}) {
+  const VALID_SEVERITIES: AlertSeverity[] = ['critical', 'warning', 'info']
+  const severity: AlertSeverity = VALID_SEVERITIES.includes(rule.severity as AlertSeverity)
+    ? (rule.severity as AlertSeverity)
+    : 'info'
+  return (
+    <div className="flex items-center justify-between rounded-lg border p-4">
+      <div className="flex items-center gap-3">
+        <Switch
+          checked={rule.enabled}
+          onCheckedChange={onToggle}
+          disabled={isToggling}
+          aria-label={`Переключить правило ${rule.label ?? rule.alertType}`}
+        />
+        <div>
+          <p className="font-medium">{rule.label ?? rule.alertType}</p>
+          <p className="text-sm text-muted-foreground">{rule.alertType}</p>
+        </div>
+        <Badge className={severityColors[severity]} variant="outline">
+          {severityLabels[severity]}
+        </Badge>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">{rule.cooldownMinutes} мин</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onDelete}
+          disabled={isDeleting}
+          aria-label={`Удалить правило ${rule.label ?? rule.alertType}`}
+        >
+          <Trash2 className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </div>
+    </div>
+  )
+}
