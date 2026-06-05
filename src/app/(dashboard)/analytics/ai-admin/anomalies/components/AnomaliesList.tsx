@@ -34,7 +34,6 @@ import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/lib/routes'
 import { formatDate } from '@/lib/utils'
 import { ResolveAnomalyDialog } from './ResolveAnomalyDialog'
-import { ManualResolveForm } from './ManualResolveForm'
 import { STUB_PENDING_BACKEND_167 } from './anomalies-helpers'
 import type { AnomalyFilter } from './anomalies-helpers'
 import type { AnomalyEntry } from '@/types/ai/system'
@@ -101,8 +100,8 @@ export function AnomaliesList() {
         </p>
       </div>
 
-      {/* Backend-pending Alert + manual fallback form */}
-      {STUB_PENDING_BACKEND_167 && <ManualResolveForm />}
+      {/* Backend-pending Alert (stub disabled — live API active per #167) */}
+      {STUB_PENDING_BACKEND_167 && <p className="text-sm text-muted-foreground">Загрузка…</p>}
 
       {/* Status filter */}
       <div className="flex items-center gap-3">
