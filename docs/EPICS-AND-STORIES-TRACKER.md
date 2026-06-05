@@ -4,10 +4,10 @@
 > Referenced from `CLAUDE.md` -- do not duplicate this information elsewhere.
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
-**Last Updated**: 2026-05-13
-**Total Epics**: 58 unique (55 done, 1 moved, 2 merged as duplicates)
-**Total Stories**: 200+ (129 in sprint-status.yaml Epics 71-101 + 76 legacy Epics 1-69)
-**Project Status**: Production Ready, 7205+ tests passing, 30 consecutive epics closed (71-100)
+**Last Updated**: 2026-06-05
+**Total Epics**: 60 unique (57 done, 1 moved, 2 merged as duplicates)
+**Total Stories**: 207+ (136 in sprint-status.yaml Epics 71-120 + 76 legacy Epics 1-69)
+**Project Status**: Production Ready, 9115+ tests passing, 33 consecutive epics closed (71-120)
 
 ---
 
@@ -118,6 +118,19 @@
 | 99-FE | ESLint Cap Tightening Phase 2 & HALT Scripts | 2 | DONE | (200-line cap, HALT scripts) |
 | 100-FE | Dead Code & Deprecation Sweep | 3 | DONE | (deprecated removals) |
 
+### Marketing Analytics (Epics 71-74, 117-120)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 71-FE | Search Analytics & Jam Gating | 8 | DONE | `/analytics/search` |
+| 72-FE | Marketing Analytics Data Alignment | 6 | DONE | (data fixes) |
+| 73-FE | Marketing Analytics Enhancements | 9 | DONE | `/analytics/cross-reference` |
+| 74-FE | File Size Compliance & Code Splitting | 9 | DONE | (structural) |
+| 117-FE | Search Funnel Dashboard Integration | 2 | DONE | `/analytics/funnel` |
+| 118-FE | Funnel Enhanced Daily Insights | 2 | DONE | `/analytics/funnel` |
+| 119-FE | Funnel Search Attribution & Conversion | 3 | DONE | `/analytics/funnel`, `/analytics/search` |
+| 120-FE | Marketing Analytics Expansion | 7 | DONE | `/analytics/product/[nmId]`, hub redesign |
+
 ### Active (Epic 101)
 
 | Epic | Title | Stories | Status | Key Routes |
@@ -182,6 +195,7 @@ Source: `src/lib/routes.ts`
 | `/analytics/fbs-stock` | FBS stock breakdowns | 96-FE |
 | `/analytics/fbs-enhanced` | FBS enhanced analytics | 96-FE |
 | `/analytics/buyout-reconciliation` | Buyout reconciliation audit | 96-FE |
+| `/analytics/product/[nmId]` | Unified product analytics | 120-FE |
 
 ### Orders & Shipments
 
@@ -220,6 +234,8 @@ Chronological log, newest first. Sprint-status source: `_bmad-output/implementat
 
 | Date | Epic | Summary | Stories |
 |------|------|---------|---------|
+| 2026-06-05 | 120-FE | Marketing Analytics Expansion: Hub redesign, Product Analytics, organic/paid split, iROAS | 7 |
+| 2026-06-05 | — | Tech debt: Request #186 (bulk COGS v2), Request #203 (selling_price), Epic 121 scope | — |
 | 2026-05-13 | 101-FE | Documentation & backlog cleanup | 1+ (in-progress) |
 | 2026-05-12 | 100-FE | Dead code & deprecation sweep (21 deprecated items removed) | 3 |
 | 2026-05-12 | 99-FE | ESLint cap 200-line target + HALT scripts (rule validator, propagation checker) | 2 |
