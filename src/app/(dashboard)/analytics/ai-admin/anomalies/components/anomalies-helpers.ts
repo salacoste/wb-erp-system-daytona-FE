@@ -24,7 +24,7 @@ export const RESOLUTION_CAUSE_LABELS: Record<ResolutionCause, string> = {
 export const RESOLUTION_CAUSES = Object.keys(RESOLUTION_CAUSE_LABELS) as ResolutionCause[]
 
 /**
- * PENDING BACKEND: #167 — flip to false when GET /v1/ai/anomalies ships.
- * Enables backend-pending Alert + manual paste-ID resolution form.
+ * Request #167 shipped: GET /v1/ai/anomalies now returns paginated anomaly list.
+ * Flipped to false — live anomaly table + real resolution flow active.
  */
-export const STUB_PENDING_BACKEND_167 = true
+export const STUB_PENDING_BACKEND_167 = false

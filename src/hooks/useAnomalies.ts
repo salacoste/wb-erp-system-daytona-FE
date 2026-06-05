@@ -1,6 +1,6 @@
 /**
  * TanStack Query hook for AI anomaly list (Owner or Manager role only).
- * GET /v1/ai/anomalies — PENDING BACKEND: #167 (stub returns empty list).
+ * GET /v1/ai/anomalies — Request #167 shipped; real paginated endpoint.
  * Story 112.3-FE: dual-role gate (Owner OR Manager) per AC-3/AC-6.
  * Cabinet-scoped queryKey per Story 97.5-FE discipline.
  */

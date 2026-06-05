@@ -94,26 +94,6 @@ describe('AnomaliesList', () => {
     await waitFor(() => expect(screen.getByText('Разрешение аномалий')).toBeInTheDocument())
   })
 
-  it('shows backend-pending Alert when STUB_PENDING_BACKEND_167 is true', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseAuthStore.mockImplementation((selector: any) =>
-      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
-    )
-    renderList()
-    await waitFor(() =>
-      expect(screen.getByText(/Эндпоинт \/v1\/ai\/anomalies ещё не реализован/)).toBeInTheDocument()
-    )
-  })
-
-  it('shows manual resolution form when backend pending', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseAuthStore.mockImplementation((selector: any) =>
-      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
-    )
-    renderList()
-    await waitFor(() => expect(screen.getByText('Разрешить аномалию по ID')).toBeInTheDocument())
-  })
-
   it('shows empty state when anomalies array is empty', async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseAuthStore.mockImplementation((selector: any) =>
@@ -194,8 +174,7 @@ describe('AnomaliesList', () => {
       selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
     )
     renderList()
-    // Both the manual form submit AND the table row button have text "Разрешить"
-    // when STUB_PENDING_BACKEND_167=true. Use getAllByRole — at least one must be present.
+    // Table row "Разрешить" button per anomaly (STUB_PENDING_BACKEND_167=false — live mode).
     await waitFor(() => {
       const buttons = screen.getAllByRole('button', { name: 'Разрешить' })
       expect(buttons.length).toBeGreaterThanOrEqual(1)
