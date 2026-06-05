@@ -526,3 +526,9 @@ development_status:
   ad-hoc-cross-reference-scatter: done  # 2026-06-05 committed c7045e3b. Epic 121 Story 121.2: Recharts ScatterChart on /analytics/cross-reference (X=totalOrders Y=adSpend Z=adClicks, color by channel). 135 lines.
   ad-hoc-request-186-wiring: done  # 2026-06-05 committed 7d8b1c92. Aligned MarginRecalculationStatus type with actual backend v2 shape ({triggered, affectedWeeks, taskUuid}). 8 files.
   ad-hoc-request-203-selling-price: done  # 2026-06-05 committed 7e01339c. Wired selling_price into Supply Planning: table cell, detail panel revenue/profit, CSV export. 7 files.
+
+  # Epic 122-FE: Product Analytics Funnel + Price Recommendation History
+  epic-122-fe: done  # 2026-06-06 ALL stories done (122.1 funnel tab, 122.2 price history, 122.3 E2E). 9504 tests passing, 0 failed.
+  122.1-fe-product-analytics-funnel-tab: done  # 2026-06-06 committed 16312c77
+  122.2-fe-price-recommendation-history: done  # 2026-06-06 committed 16312c77
+  122.3-fe-product-analytics-e2e: done  # 2026-06-06 committed 1e8e48b8
