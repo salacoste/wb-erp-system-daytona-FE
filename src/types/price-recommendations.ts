@@ -1,6 +1,7 @@
 /**
  * Price Recommendations Types
  * Epic 121 Phase 1: Per-SKU price recommendation engine
+ * Story 122.2-FE: price history types
  */
 
 export interface PriceRecommendation {
@@ -31,4 +32,22 @@ export interface PriceRecommendationsParams {
   gap_filter?: string
   sort?: string
   cursor?: string
+}
+
+/** Single weekly data point for price recommendation history (Story 122.2-FE). */
+export interface PriceRecommendationHistoryPoint {
+  weekStart: string
+  lastPrice: number | null
+  recommendedPrice: number | null
+  breakEvenPrice: number | null
+  marginAtCurrentPct: number | null
+  marginAtRecPct: number | null
+  gap: number | null
+  gapPct: number | null
+  targetMarginPct: number
+  recomputationCount: number
+}
+
+export interface PriceRecommendationHistoryParams {
+  limit?: number
 }

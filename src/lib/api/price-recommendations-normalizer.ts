@@ -8,6 +8,7 @@ import { toCount, toNullableNumber, toStringOrNull, toStr, asRecord } from './no
 import type {
   PriceRecommendation,
   PriceRecommendationsResponse,
+  PriceRecommendationHistoryPoint,
 } from '@/types/price-recommendations'
 
 function toItem(raw: unknown): PriceRecommendation {
@@ -43,4 +44,31 @@ export function normalizePriceRecommendationsResponse(raw: unknown): PriceRecomm
 /** Normalize single price recommendation (GET /v1/products/price-recommendations/{nmId}) */
 export function normalizePriceRecommendation(raw: unknown): PriceRecommendation {
   return toItem(raw)
+}
+
+function toHistoryRow(raw: unknown): PriceRecommendationHistoryPoint {
+  const r = asRecord(raw)
+  return {
+    weekStart: toStr(r.weekStart),
+    lastPrice: toNullableNumber(r.lastPrice),
+    recommendedPrice: toNullableNumber(r.recommendedPrice),
+    breakEvenPrice: toNullableNumber(r.breakEvenPrice),
+    marginAtCurrentPct: toNullableNumber(r.marginAtCurrentPct),
+    marginAtRecPct: toNullableNumber(r.marginAtRecPct),
+    gap: toNullableNumber(r.gap),
+    gapPct: toNullableNumber(r.gapPct),
+    targetMarginPct: toNullableNumber(r.targetMarginPct) ?? 0,
+    recomputationCount: toCount(r.recomputationCount),
+  }
+}
+
+/**
+ * Normalize GET /v1/products/price-recommendations/{nmId}/history response.
+ * Backend returns DESC order; reverses to ASC for chart continuity.
+ */
+export function normalizePriceRecommendationHistory(
+  raw: unknown
+): PriceRecommendationHistoryPoint[] {
+  if (!Array.isArray(raw)) return []
+  return raw.map(toHistoryRow).reverse()
 }

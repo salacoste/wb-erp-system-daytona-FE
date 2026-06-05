@@ -20,6 +20,7 @@ import type { PriceRecommendation } from '@/types/price-recommendations'
 interface PricingTableProps {
   items: PriceRecommendation[]
   isLoading: boolean
+  onRowClick?: (nmId: number) => void
 }
 
 /** Color-coded gap cell: green=above target, red=below, neutral=exact */
@@ -60,7 +61,7 @@ function TableSkeleton() {
   )
 }
 
-export function PricingTable({ items, isLoading }: PricingTableProps) {
+export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps) {
   if (isLoading) return <TableSkeleton />
 
   if (items.length === 0) {
@@ -87,7 +88,11 @@ export function PricingTable({ items, isLoading }: PricingTableProps) {
       </TableHeader>
       <TableBody>
         {items.map(item => (
-          <TableRow key={item.id}>
+          <TableRow
+            key={item.id}
+            className={onRowClick ? 'cursor-pointer hover:bg-muted/50' : undefined}
+            onClick={() => onRowClick?.(item.nmId)}
+          >
             <TableCell className="font-mono text-sm">
               {item.vendorCode ?? String(item.nmId)}
             </TableCell>

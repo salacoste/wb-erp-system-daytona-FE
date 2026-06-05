@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   normalizePriceRecommendationsResponse,
   normalizePriceRecommendation,
+  normalizePriceRecommendationHistory,
 } from '../price-recommendations-normalizer'
 import type { PriceRecommendation } from '@/types/price-recommendations'
 
@@ -276,5 +277,76 @@ describe('normalizePriceRecommendation', () => {
 
     expect(result.id).toBe('')
     expect(result.nmId).toBe(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// normalizePriceRecommendationHistory (Story 122.2-FE)
+// ---------------------------------------------------------------------------
+
+function rawHistoryRow(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    weekStart: '2026-05-26',
+    lastPrice: 2500,
+    recommendedPrice: 2250,
+    breakEvenPrice: 1800,
+    marginAtCurrentPct: 15.5,
+    marginAtRecPct: 20,
+    gap: 250,
+    gapPct: 11.1,
+    targetMarginPct: 20,
+    recomputationCount: 3,
+    ...overrides,
+  }
+}
+
+describe('normalizePriceRecommendationHistory', () => {
+  it('maps well-formed array and reverses to ASC order', () => {
+    const raw = [
+      rawHistoryRow({ weekStart: '2026-05-26' }),
+      rawHistoryRow({ weekStart: '2026-05-19', lastPrice: 2550 }),
+    ]
+    const result = normalizePriceRecommendationHistory(raw)
+
+    expect(result).toHaveLength(2)
+    expect(result[0].weekStart).toBe('2026-05-19')
+    expect(result[1].weekStart).toBe('2026-05-26')
+  })
+
+  it('preserves null on nullable fields', () => {
+    const raw = [rawHistoryRow({ lastPrice: null, marginAtCurrentPct: null, gap: null })]
+    const result = normalizePriceRecommendationHistory(raw)
+
+    expect(result[0].lastPrice).toBeNull()
+    expect(result[0].marginAtCurrentPct).toBeNull()
+    expect(result[0].gap).toBeNull()
+  })
+
+  it('defaults targetMarginPct and recomputationCount to 0', () => {
+    const raw = [rawHistoryRow({ targetMarginPct: undefined, recomputationCount: undefined })]
+    const result = normalizePriceRecommendationHistory(raw)
+
+    expect(result[0].targetMarginPct).toBe(0)
+    expect(result[0].recomputationCount).toBe(0)
+  })
+
+  it('returns empty array for null input', () => {
+    expect(normalizePriceRecommendationHistory(null)).toEqual([])
+  })
+
+  it('returns empty array for undefined input', () => {
+    expect(normalizePriceRecommendationHistory(undefined)).toEqual([])
+  })
+
+  it('returns empty array for non-array input', () => {
+    expect(normalizePriceRecommendationHistory('bad')).toEqual([])
+    expect(normalizePriceRecommendationHistory(42)).toEqual([])
+  })
+
+  it('coerces non-string weekStart to empty string', () => {
+    const raw = [rawHistoryRow({ weekStart: 12345 })]
+    const result = normalizePriceRecommendationHistory(raw)
+    // toStr returns '' for non-string input
+    expect(result[0].weekStart).toBe('')
   })
 })

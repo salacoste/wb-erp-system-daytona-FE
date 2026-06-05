@@ -3,8 +3,8 @@
 /**
  * ProductAnalyticsContent — client shell for the Unified Product Analytics page
  * (Stories 120.5 + 120.6 + 120.7-FE). Renders the product header + data-driven tabs.
- * Overview/Advertising/Organic tabs show real data from /unified, /organic-share,
- * and /incremental-roas. Funnel tab remains placeholder (FUTURE).
+ * Overview/Funnel/Advertising/Organic tabs show real data from /unified, /organic-share,
+ * and /incremental-roas. Funnel tab shipped in Story 122.1-FE.
  */
 
 import Link from 'next/link'
@@ -24,6 +24,7 @@ import {
 } from '@/hooks/use-unified-product-analytics'
 import { ProductTabPlaceholder } from './ProductTabPlaceholder'
 import { ProductOverviewTab } from './ProductOverviewTab'
+import { FunnelTab } from './FunnelTab'
 import { AdvertisingTab } from './AdvertisingTab'
 import { OrganicTab } from './OrganicTab'
 
@@ -82,6 +83,13 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
           return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.overview} />
         }
         return <ProductOverviewTab data={unified.data} />
+
+      case 'funnel':
+        if (unified.isLoading) return <OverviewSkeleton />
+        if (unified.isError || !unified.data) {
+          return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.funnel} />
+        }
+        return <FunnelTab dates={unified.data.funnel.dates} totals={unified.data.funnel.totals} />
 
       case 'advertising':
         if (unified.isLoading) return <OverviewSkeleton />

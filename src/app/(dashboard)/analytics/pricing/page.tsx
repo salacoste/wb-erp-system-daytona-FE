@@ -3,8 +3,10 @@
 /**
  * Price Recommendations Page
  * Epic 121 Phase 1: Per-SKU price recommendation engine
+ * Story 122.2-FE: price history sheet integration
  */
 
+import { useState, useCallback } from 'react'
 import { List } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -13,9 +15,23 @@ import { PricingPageHeader } from './components/PricingPageHeader'
 import { PricingFilters } from './components/PricingFilters'
 import { PricingSummaryCards } from './components/PricingSummaryCards'
 import { PricingTable } from './components/PricingTable'
+import { PriceHistorySheet } from './components/PriceHistorySheet'
 
 export default function PricingPage() {
   const state = usePricingPageState()
+  const [historyNmId, setHistoryNmId] = useState<number | null>(null)
+  const [historyVendorCode, setHistoryVendorCode] = useState<string | null>(null)
+  const [historyOpen, setHistoryOpen] = useState(false)
+
+  const handleRowClick = useCallback(
+    (nmId: number) => {
+      const item = state.items.find(i => i.nmId === nmId)
+      setHistoryVendorCode(item?.vendorCode ?? null)
+      setHistoryNmId(nmId)
+      setHistoryOpen(true)
+    },
+    [state.items]
+  )
 
   if (state.isError) {
     return (
@@ -56,9 +72,20 @@ export default function PricingPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <PricingTable items={state.items} isLoading={state.isLoading} />
+          <PricingTable
+            items={state.items}
+            isLoading={state.isLoading}
+            onRowClick={handleRowClick}
+          />
         </CardContent>
       </Card>
+
+      <PriceHistorySheet
+        nmId={historyNmId}
+        vendorCode={historyVendorCode}
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+      />
     </div>
   )
 }

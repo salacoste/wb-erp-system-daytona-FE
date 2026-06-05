@@ -1,17 +1,21 @@
 /**
  * Price Recommendations API Client
  * Epic 121 Phase 1: Per-SKU price recommendation engine
+ * Story 122.2-FE: history endpoint
  */
 
 import { apiClient } from '../api-client'
 import {
   normalizePriceRecommendationsResponse,
   normalizePriceRecommendation,
+  normalizePriceRecommendationHistory,
 } from './price-recommendations-normalizer'
 import type {
   PriceRecommendation,
   PriceRecommendationsParams,
   PriceRecommendationsResponse,
+  PriceRecommendationHistoryPoint,
+  PriceRecommendationHistoryParams,
 } from '@/types/price-recommendations'
 
 const BASE = '/v1/products/price-recommendations'
@@ -49,4 +53,18 @@ export async function getPriceRecommendation(nmId: number): Promise<PriceRecomme
 /** POST /v1/products/price-recommendations/refresh — trigger recomputation */
 export async function refreshPriceRecommendations(): Promise<{ message: string }> {
   return apiClient.post<{ message: string }>(`${BASE}/refresh`)
+}
+
+/** GET /v1/products/price-recommendations/{nmId}/history — weekly price history (Story 122.2) */
+export async function getPriceRecommendationHistory(
+  nmId: number,
+  params: PriceRecommendationHistoryParams = {}
+): Promise<PriceRecommendationHistoryPoint[]> {
+  const sp = new URLSearchParams()
+  if (params.limit) sp.set('limit', String(params.limit))
+  const qs = sp.toString()
+  const raw = await apiClient.get<unknown>(`${BASE}/${nmId}/history${qs ? `?${qs}` : ''}`, {
+    skipDataUnwrap: true,
+  })
+  return normalizePriceRecommendationHistory(raw)
 }

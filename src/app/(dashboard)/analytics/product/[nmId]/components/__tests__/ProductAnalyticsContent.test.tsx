@@ -1,13 +1,13 @@
 /**
  * Tests for ProductAnalyticsContent — Unified Product Analytics shell (Stories 120.5–120.7-FE).
  * Covers: header render, opaque-id handling (AP#10), all four tabs, data-driven
- * overview/advertising/organic tabs, and funnel placeholder.
+ * overview/advertising/organic tabs, and funnel tab with real data (Story 122.1-FE).
  *
  * TanStack Query mock: all 3 hooks mocked at module level.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { emptyUnifiedProduct, emptyUnifiedProductData } from '@/test/fixtures/unified-product-empty'
 import { UNIFIED_PRODUCT_TABS, UNIFIED_PRODUCT_TAB_LABELS } from '@/types/unified-product'
@@ -104,12 +104,13 @@ describe('ProductAnalyticsContent', () => {
     expect(screen.getByText('Инкрементальный ROAS')).toBeInTheDocument()
   })
 
-  it('switches to funnel placeholder tab', async () => {
+  it('switches to funnel tab with real KPI cards (Story 122.1-FE)', async () => {
     const user = userEvent.setup()
     render(<ProductAnalyticsContent nmId="1" />)
     await user.click(screen.getByRole('tab', { name: 'Воронка' }))
-    const panel = screen.getByRole('tabpanel')
-    expect(within(panel).getByText('Раздел «Воронка» в разработке')).toBeInTheDocument()
+    // Funnel tab now renders real KPI cards from FunnelTotals
+    expect(screen.getByText('Просмотры')).toBeInTheDocument()
+    expect(screen.getByText('Сквозная конверсия')).toBeInTheDocument()
   })
 
   it('renders a back link to the analytics hub', () => {
