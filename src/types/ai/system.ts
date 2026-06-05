@@ -53,8 +53,7 @@ export interface AnomalyResolveRequest {
 }
 
 // ── Anomaly List (Story 112.3-FE) ─────────────────────────────────────────────
-// PENDING BACKEND: #167 — GET /v1/ai/anomalies list endpoint not yet shipped.
-// Types ready; fetcher stub in src/lib/api/ai/system.ts returns empty list until backend ships.
+// Backend #167 shipped: GET /v1/ai/anomalies with status/severity/anomalyType filters + pagination.
 
 /**
  * Resolution status of an anomaly record.
@@ -82,9 +81,8 @@ export interface AnomalyEntry {
  * Paginated response from GET /v1/ai/anomalies.
  * Story 112.3-FE, backend request #167.
  * `total`, `page`, `limit` are semantic counts — AP#8 exception (AGGREGATION-REDUCE / SEMANTIC-ZERO).
- * `status` echoes the filter param applied server-side — optional until backend ships (#167).
+ * `status` echoes the filter param applied server-side.
  * UI-only sentinel `'all'` lives in `AnomalyFilter` (anomalies-helpers.ts) per Boundary Normalizer Pattern.
- * PENDING BACKEND: #167 will return status filter echo to confirm server-side filtering was applied.
  */
 export interface AnomalyListResponse {
   anomalies: AnomalyEntry[]
@@ -94,7 +92,7 @@ export interface AnomalyListResponse {
   /**
    * Echoed filter status from server (mirrors `params.status` when filter applied).
    * UI-only sentinel `'all'` lives in `AnomalyFilter` in anomalies-helpers.ts — never echoed by server.
-   * PENDING BACKEND: #167 — server will echo undefined when no filter applied.
+   * Server echoes undefined when no filter applied.
    */
   status?: AnomalyStatus
 }
