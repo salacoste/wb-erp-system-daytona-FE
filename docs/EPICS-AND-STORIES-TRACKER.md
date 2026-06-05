@@ -118,6 +118,43 @@
 | 99-FE | ESLint Cap Tightening Phase 2 & HALT Scripts | 2 | DONE | (200-line cap, HALT scripts) |
 | 100-FE | Dead Code & Deprecation Sweep | 3 | DONE | (deprecated removals) |
 
+### Documentation & Cleanup (Epics 101-102)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 101-FE | Documentation & Backlog Cleanup | 3 | DONE | (archive, tracker rewrite, backlog triage) |
+| 102-FE | Expense Chart Redesign Completion | 2 | DONE | `/analytics/funnel` (expense chart) |
+
+### AI/ML Integration (Epics 103, 108-112)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 103-FE | AI Sales Forecast Integration | 4 | DONE | `/analytics/forecast` |
+| 108-FE | AI Foundation + Readiness States | 6 | DONE | `/analytics/forecast` (16 endpoints) |
+| 109-FE | AI Forecast Enrichment + Model Management | 6 | DONE | `/analytics/models`, `/analytics/models/[id]` |
+| 110-FE | AI Evaluations + Feedback + CSV Export | 5 | DONE | `/analytics/models/[id]/evaluations` |
+| 111-FE | Epic 110 Carry-Forward (Scope-Cut) | 1 | DONE | (AP#10 rule, lessons-length validator) |
+| 112-FE | AI Admin Features + Epic 110 Carry-Overs | 5 | DONE | `/analytics/ai-admin/*` |
+
+### Backend Coordination & Automation (Epics 104-107)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 104-FE | Backend Coordination — Daily Breakdown + FCU | 4 | DONE | (daily finance/advertising, unit economics) |
+| 105-FE | Process-Tooling — Anti-Pattern #8 Lint + Pre-Flight | 3 | DONE | (ESLint rule, dev-story workflow) |
+| 106-FE | Triage Anti-Pattern #8 Allowlists | 4 | DONE | (net_profit fix, pattern docs) |
+| 107-FE | Process Cleanup Bundle — Carry-Forward Small Wins | 4 | DONE | (nullPreservingSum, vitest wrapper) |
+
+### Discipline Codification (Epics 113-116, 118)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 113-FE | Multi-pass Triggers Codification | 2 | DONE | (Trigger 4 meta-claim escalation) |
+| 114-FE | Multi-pass Discipline Refinement | 1 | DONE | (Trigger 4 MANDATORY promotion) |
+| 115-FE | User-Invoked 4th-Pass Codification | 1 | DONE | (4th-pass record, deferral disposition) |
+| 116-FE | Discipline Codification Refinements | 1 | DONE | (blanket qualifier, default 4-pass) |
+| 118-FE | Codification Discipline Refinements (Epic 116 Carry-Forward) | 1 | DONE | (YAML drift, dual-attestation) |
+
 ### Marketing Analytics (Epics 71-74, 117-120)
 
 | Epic | Title | Stories | Status | Key Routes |
@@ -126,12 +163,15 @@
 | 72-FE | Marketing Analytics Data Alignment | 6 | DONE | (data fixes) |
 | 73-FE | Marketing Analytics Enhancements | 9 | DONE | `/analytics/cross-reference` |
 | 74-FE | File Size Compliance & Code Splitting | 9 | DONE | (structural) |
-| 117-FE | Search Funnel Dashboard Integration | 2 | DONE | `/analytics/funnel` |
-| 118-FE | Funnel Enhanced Daily Insights | 2 | DONE | `/analytics/funnel` |
-| 119-FE | Funnel Search Attribution & Conversion | 3 | DONE | `/analytics/funnel`, `/analytics/search` |
+| 117-FE | Search Analytics Enhancements (Gap Closure) | 4 | DONE | `/analytics/search` |
+| 119-FE | Funnel Search Attribution + Marketing §3.4 | 4 | DONE | `/analytics/funnel`, `/analytics/search` |
 | 120-FE | Marketing Analytics Expansion | 7 | DONE | `/analytics/product/[nmId]`, hub redesign |
 
-### Active (Epic 101)
+### Active
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| (none) | — | — | — | — |
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
