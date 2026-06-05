@@ -18,6 +18,7 @@ import { SyncGapsTimeline } from './components/SyncGapsTimeline'
 import { OverAttributionBanner } from './components/OverAttributionBanner'
 import { AdCostDiscrepancySection } from './components/AdCostDiscrepancySection'
 import { AdvertisingEmptyState } from './components/AdvertisingEmptyState'
+import { CannibalizationSection } from './components/CannibalizationSection'
 import { features } from '@/config/features'
 import { useAdvertisingPageState, PAGE_SIZE } from './components/useAdvertisingPageState'
 import { useAdvertisingFilters } from './components/useAdvertisingFilters'
@@ -115,6 +116,9 @@ export default function AdvertisingAnalyticsPage() {
       />
 
       <AdvertisingSummaryCards summary={filters.filteredSummary} isLoading={state.isLoading} />
+
+      <CannibalizationSection items={filters.filteredData} isLoading={state.isLoading} />
+
       <DailyTrendChart data={state.data?.daily ?? []} isLoading={state.isLoading} />
 
       <AdCostDiscrepancySection
