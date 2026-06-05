@@ -86,15 +86,18 @@ describe('Storage Analytics Hooks', () => {
     it('fetches storage data for given week range', async () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockStorageBySkuResponse)
 
-      const { result } = renderHook(
-        () => useStorageBySku('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageBySku('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data).toEqual(mockStorageBySkuResponse)
+      expect(result.current.data?.period).toEqual(mockStorageBySkuResponse.period)
       expect(result.current.data?.data).toHaveLength(3)
+      expect(result.current.data?.data[0].nm_id).toBe('147205694')
+      expect(result.current.data?.data[0].storage_cost_total).toBe(1250.5)
+      expect(result.current.data?.summary).toEqual(mockStorageBySkuResponse.summary)
+      expect(result.current.data?.has_data).toBe(true)
     })
 
     it('passes brand filter to API', async () => {
@@ -109,7 +112,7 @@ describe('Storage Analytics Hooks', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('brand=RepairPro'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -125,7 +128,7 @@ describe('Storage Analytics Hooks', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('warehouse='),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -141,7 +144,7 @@ describe('Storage Analytics Hooks', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('cursor=abc123'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -150,10 +153,9 @@ describe('Storage Analytics Hooks', () => {
         () => new Promise(() => {}) // Never resolves
       )
 
-      const { result } = renderHook(
-        () => useStorageBySku('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageBySku('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       expect(result.current.isLoading).toBe(true)
       expect(result.current.data).toBeUndefined()
@@ -163,10 +165,9 @@ describe('Storage Analytics Hooks', () => {
       // Mock to reject on all calls (including retries)
       vi.mocked(apiClient.get).mockRejectedValue(new Error('API Error'))
 
-      const { result } = renderHook(
-        () => useStorageBySku('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageBySku('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isError).toBe(true), {
         timeout: 5000,
@@ -189,10 +190,9 @@ describe('Storage Analytics Hooks', () => {
     it('handles empty data response', async () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockEmptyStorageBySkuResponse)
 
-      const { result } = renderHook(
-        () => useStorageBySku('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageBySku('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -209,10 +209,9 @@ describe('Storage Analytics Hooks', () => {
     it('fetches top consumers for given week range', async () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockTopConsumersResponse)
 
-      const { result } = renderHook(
-        () => useStorageTopConsumers('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageTopConsumers('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -232,7 +231,7 @@ describe('Storage Analytics Hooks', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('limit=10'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -248,7 +247,7 @@ describe('Storage Analytics Hooks', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('include_revenue=true'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -256,10 +255,9 @@ describe('Storage Analytics Hooks', () => {
       // Mock to reject on all calls (including retries)
       vi.mocked(apiClient.get).mockRejectedValue(new Error('Network Error'))
 
-      const { result } = renderHook(
-        () => useStorageTopConsumers('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageTopConsumers('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isError).toBe(true), {
         timeout: 5000,
@@ -277,10 +275,9 @@ describe('Storage Analytics Hooks', () => {
     it('fetches trends for given week range', async () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockStorageTrendsResponse)
 
-      const { result } = renderHook(
-        () => useStorageTrends('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageTrends('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -303,7 +300,7 @@ describe('Storage Analytics Hooks', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('nm_id=147205694'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -320,17 +317,16 @@ describe('Storage Analytics Hooks', () => {
       // URL encoding may encode commas, so check both parts are present
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringMatching(/metrics=.*storage_cost.*volume|metrics=.*volume.*storage_cost/),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
     it('handles null data points in response', async () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockStorageTrendsResponse)
 
-      const { result } = renderHook(
-        () => useStorageTrends('2025-W44', '2025-W47'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useStorageTrends('2025-W44', '2025-W47'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -349,19 +345,18 @@ describe('Storage Analytics Hooks', () => {
       vi.mocked(apiClient.post).mockResolvedValueOnce(mockPaidStorageImportResponse)
 
       const onSuccess = vi.fn()
-      const { result } = renderHook(
-        () => usePaidStorageImport({ onSuccess }),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePaidStorageImport({ onSuccess }), {
+        wrapper: createQueryWrapper(),
+      })
 
       result.current.mutate({ dateFrom: '2025-11-18', dateTo: '2025-11-24' })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(apiClient.post).toHaveBeenCalledWith(
-        '/v1/imports/paid-storage',
-        { date_from: '2025-11-18', date_to: '2025-11-24' }
-      )
+      expect(apiClient.post).toHaveBeenCalledWith('/v1/imports/paid-storage', {
+        date_from: '2025-11-18',
+        date_to: '2025-11-24',
+      })
       expect(onSuccess).toHaveBeenCalledWith(mockPaidStorageImportResponse)
     })
 
@@ -370,10 +365,9 @@ describe('Storage Analytics Hooks', () => {
       vi.mocked(apiClient.post).mockRejectedValueOnce(error)
 
       const onError = vi.fn()
-      const { result } = renderHook(
-        () => usePaidStorageImport({ onError }),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePaidStorageImport({ onError }), {
+        wrapper: createQueryWrapper(),
+      })
 
       result.current.mutate({ dateFrom: '2025-11-18', dateTo: '2025-11-24' })
 
@@ -387,10 +381,7 @@ describe('Storage Analytics Hooks', () => {
         () => new Promise(() => {}) // Never resolves
       )
 
-      const { result } = renderHook(
-        () => usePaidStorageImport(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePaidStorageImport(), { wrapper: createQueryWrapper() })
 
       result.current.mutate({ dateFrom: '2025-11-18', dateTo: '2025-11-24' })
 
@@ -407,10 +398,9 @@ describe('Storage Analytics Hooks', () => {
     it('fetches import status for given importId', async () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockImportStatusCompleted)
 
-      const { result } = renderHook(
-        () => useImportStatus('import-uuid-12345'),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useImportStatus('import-uuid-12345'), {
+        wrapper: createQueryWrapper(),
+      })
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -419,10 +409,7 @@ describe('Storage Analytics Hooks', () => {
     })
 
     it('does not fetch when importId is null', () => {
-      const { result } = renderHook(
-        () => useImportStatus(null),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => useImportStatus(null), { wrapper: createQueryWrapper() })
 
       expect(apiClient.get).not.toHaveBeenCalled()
       expect(result.current.isPending).toBe(true)

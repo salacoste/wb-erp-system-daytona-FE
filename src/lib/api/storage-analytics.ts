@@ -11,11 +11,8 @@
 
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
-import type {
-  PaidStorageImportRequest,
-  PaidStorageImportResponse,
-  ImportStatusResponse,
-} from '@/types/storage-analytics'
+import { normalizeImportStatusResponse } from './storage-import-normalizer'
+import type { PaidStorageImportRequest, PaidStorageImportResponse } from '@/types/storage-analytics'
 
 // Barrel re-exports — preserve consumer API
 export {
@@ -62,7 +59,7 @@ export async function triggerPaidStorageImport(
  * Get import job status
  * GET /v1/imports/{id}
  */
-export async function getImportStatus(importId: string): Promise<ImportStatusResponse> {
-  const response = await apiClient.get<ImportStatusResponse>(`/v1/imports/${importId}`)
-  return response
+export async function getImportStatus(importId: string) {
+  const raw = await apiClient.get<unknown>(`/v1/imports/${importId}`)
+  return normalizeImportStatusResponse(raw)
 }

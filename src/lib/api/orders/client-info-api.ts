@@ -9,6 +9,7 @@
  */
 
 import { apiClient } from '../../api-client'
+import { normalizeClientInfoResponse } from '../client-info-normalizer'
 import type { ClientInfoResponse } from '@/types/orders-client-info'
 
 /** Backend cap — single-batch contract; chunking is the hook's responsibility. */
@@ -36,12 +37,11 @@ export async function getClientInfo(
     throw new Error(`Maximum ${CLIENT_INFO_MAX_BATCH} orderIds per request`)
   }
   // Backend expects comma-separated query string parameter.
-  // encodeURIComponent on cabinetId is defense-in-depth: cabinetIds are UUIDs and
-  // do not require encoding, but a malformed value should not break URL parsing.
   const params = new URLSearchParams({ orderIds: orderIds.join(',') })
   // skipDataUnwrap because backend returns a bare array, not { data: [...] }
-  return apiClient.get<ClientInfoResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/cabinets/${encodeURIComponent(cabinetId)}/orders/client-info?${params}`,
     { skipDataUnwrap: true }
   )
+  return normalizeClientInfoResponse(raw)
 }

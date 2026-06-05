@@ -7,19 +7,14 @@
 
 import { apiClient } from '@/lib/api-client'
 import { logger } from '@/lib/logger'
-import type { BoxTariffsResponse, BoxTariffItem, WarehouseWithTariffs } from '@/types/warehouse'
+import {
+  normalizeBoxTariffsResponse,
+  normalizeWarehousesWithTariffsResponse,
+} from './tariffs-box-normalizer'
+import type { WarehousesWithTariffsResponse } from './tariffs-box-normalizer'
 
-// ============================================================================
-// Types
-// ============================================================================
-
-/**
- * Response from GET /v1/tariffs/warehouses-with-tariffs
- */
-export interface WarehousesWithTariffsResponse {
-  warehouses: WarehouseWithTariffs[]
-  updated_at?: string
-}
+// Re-export the type for consumers
+export type { WarehousesWithTariffsResponse }
 
 // ============================================================================
 // API Functions
@@ -37,44 +32,16 @@ export interface WarehousesWithTariffsResponse {
  * @param date - Optional date in YYYY-MM-DD format (defaults to today)
  * @returns Box tariffs with coefficients for all warehouses
  */
-export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> {
+export async function getBoxTariffs(date?: string) {
   const params = date ? `?date=${date}` : ''
   logger.debug('[Tariffs] Fetching box tariffs', { date: date || 'today' })
 
-  // Use warehouses-with-tariffs endpoint and transform to BoxTariffsResponse
-  const response = await apiClient.get<WarehousesWithTariffsResponse>(
-    `/v1/tariffs/warehouses-with-tariffs${params}`
-  )
+  const raw = await apiClient.get<unknown>(`/v1/tariffs/warehouses-with-tariffs${params}`)
 
-  // Transform WarehouseWithTariffs[] to BoxTariffItem[]
-  const tariffs: BoxTariffItem[] = (response.warehouses || []).map(w => ({
-    warehouseName: w.name,
-    geoName: w.federal_district || undefined,
-    logistics: {
-      coefficient: w.tariffs?.fbo?.logistics_coefficient ?? 1.0,
-      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: delivery_base/liter_rub 0 = warehouse doesn't serve FBO (no tariff)
-      baseLiterRub: w.tariffs?.fbo?.delivery_base_rub ?? 0,
-      // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: delivery_base/liter_rub 0 = warehouse doesn't serve FBO (no tariff)
-      additionalLiterRub: w.tariffs?.fbo?.delivery_liter_rub ?? 0,
-    },
-    storage: {
-      // IMPORTANT: Use || instead of ?? because API may return 0 for missing storage data
-      coefficient: w.tariffs?.storage?.coefficient || 1.0,
-      baseLiterRub: w.tariffs?.storage?.base_per_day_rub || 0,
-      additionalLiterRub: w.tariffs?.storage?.liter_per_day_rub || 0,
-    },
-  }))
+  const result = normalizeBoxTariffsResponse(raw, date)
+  logger.debug('[Tariffs] Loaded', result.tariffs.length, 'box tariffs')
 
-  logger.debug('[Tariffs] Loaded', tariffs.length, 'box tariffs')
-
-  return {
-    tariffs,
-    meta: {
-      date: date || new Date().toISOString().split('T')[0],
-      cached: true,
-      cache_ttl_seconds: 3600,
-    },
-  }
+  return result
 }
 
 /**
@@ -94,10 +61,11 @@ export async function getWarehousesWithTariffs(
   const effectiveDate = date || new Date().toISOString().split('T')[0]
   logger.debug('[Tariffs] Fetching warehouses with tariffs', { date: effectiveDate })
 
-  const response = await apiClient.get<WarehousesWithTariffsResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/tariffs/warehouses-with-tariffs?date=${effectiveDate}`
   )
 
+  const response = normalizeWarehousesWithTariffsResponse(raw)
   logger.debug('[Tariffs] Loaded', response.warehouses?.length || 0, 'warehouses with tariffs')
 
   return response

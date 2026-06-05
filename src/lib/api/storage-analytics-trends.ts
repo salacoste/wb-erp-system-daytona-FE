@@ -3,23 +3,20 @@
  * Story 24.1-FE: TypeScript Types & API Client
  * Extracted from storage-analytics.ts (Story 74.5)
  *
- * Contains: getStorageTrends, getStorageSummary + normalizers
+ * Contains: getStorageTrends, getStorageSummary
  */
 
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
 import { buildQueryString } from './storage-analytics-queries'
-import type {
-  StorageTrendsParams,
-  StorageTrendsResponse,
-  StorageSummaryParams,
-  StorageSummaryResponse,
-} from '@/types/storage-analytics'
+import {
+  normalizeStorageTrendsResponse,
+  normalizeStorageSummaryResponse,
+} from './storage-trends-normalizer'
+import type { StorageTrendsParams, StorageSummaryParams } from '@/types/storage-analytics'
 
 /** Get storage cost trends over time — GET /v1/analytics/storage/trends */
-export async function getStorageTrends(
-  params: StorageTrendsParams
-): Promise<StorageTrendsResponse> {
+export async function getStorageTrends(params: StorageTrendsParams) {
   const { weekStart, weekEnd, ...rest } = params
   const queryParams = buildQueryString({ weekStart, weekEnd, ...rest })
 
@@ -33,10 +30,9 @@ export async function getStorageTrends(
     queryString: queryParams,
   })
 
-  const rawResponse = await apiClient.get<StorageTrendsResponse | unknown>(
-    `/v1/analytics/storage/trends?${queryParams}`,
-    { skipDataUnwrap: true }
-  )
+  const rawResponse = await apiClient.get<unknown>(`/v1/analytics/storage/trends?${queryParams}`, {
+    skipDataUnwrap: true,
+  })
 
   const response = normalizeStorageTrendsResponse(rawResponse, weekStart, weekEnd)
   logger.debug('[Storage Analytics] Trends response:', {
@@ -49,39 +45,8 @@ export async function getStorageTrends(
   return response
 }
 
-/** Normalize API response to proper StorageTrendsResponse structure */
-function normalizeStorageTrendsResponse(
-  rawResponse: unknown,
-  weekStart: string,
-  weekEnd: string
-): StorageTrendsResponse {
-  if (typeof rawResponse === 'object' && rawResponse !== null && 'data' in rawResponse) {
-    return rawResponse as StorageTrendsResponse
-  }
-
-  if (Array.isArray(rawResponse)) {
-    return {
-      period: { from: weekStart, to: weekEnd, days_count: 0 },
-      nm_id: null,
-      data: rawResponse,
-      summary: undefined,
-      has_data: rawResponse.length > 0,
-    }
-  }
-
-  return {
-    period: { from: weekStart, to: weekEnd, days_count: 0 },
-    nm_id: null,
-    data: [],
-    summary: undefined,
-    has_data: false,
-  }
-}
-
 /** Get storage summary — GET /v1/analytics/storage/summary */
-export async function getStorageSummary(
-  params: StorageSummaryParams
-): Promise<StorageSummaryResponse> {
+export async function getStorageSummary(params: StorageSummaryParams) {
   const queryParams = buildQueryString({
     dateFrom: params.dateFrom,
     dateTo: params.dateTo,
@@ -92,10 +57,9 @@ export async function getStorageSummary(
     dateTo: params.dateTo,
   })
 
-  const rawResponse = await apiClient.get<StorageSummaryResponse | unknown>(
-    `/v1/analytics/storage/summary?${queryParams}`,
-    { skipDataUnwrap: true }
-  )
+  const rawResponse = await apiClient.get<unknown>(`/v1/analytics/storage/summary?${queryParams}`, {
+    skipDataUnwrap: true,
+  })
 
   const response = normalizeStorageSummaryResponse(rawResponse)
   logger.debug('[Storage Analytics] Summary response:', {
@@ -104,44 +68,4 @@ export async function getStorageSummary(
   })
 
   return response
-}
-
-/** Normalize API response to proper StorageSummaryResponse structure */
-function normalizeStorageSummaryResponse(rawResponse: unknown): StorageSummaryResponse {
-  if (typeof rawResponse === 'object' && rawResponse !== null && 'data' in rawResponse) {
-    return rawResponse as StorageSummaryResponse
-  }
-
-  if (typeof rawResponse === 'object' && rawResponse !== null) {
-    const response = rawResponse as Record<string, unknown>
-    return {
-      data: (response.data as StorageSummaryResponse['data']) ?? {
-        totalCost: 0,
-        uniqueSkus: 0,
-        totalVolume: 0,
-        daysCount: 0,
-        avgCostPerSku: 0,
-        dateFrom: '',
-        dateTo: '',
-      },
-      period: (response.period as StorageSummaryResponse['period']) ?? {
-        from: '',
-        to: '',
-        days_count: 0,
-      },
-    }
-  }
-
-  return {
-    data: {
-      totalCost: 0,
-      uniqueSkus: 0,
-      totalVolume: 0,
-      daysCount: 0,
-      avgCostPerSku: 0,
-      dateFrom: '',
-      dateTo: '',
-    },
-    period: { from: '', to: '', days_count: 0 },
-  }
 }

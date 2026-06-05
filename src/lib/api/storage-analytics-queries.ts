@@ -8,12 +8,11 @@
 
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
-import type {
-  StorageBySkuParams,
-  StorageBySkuResponse,
-  StorageTopConsumersParams,
-  TopConsumersResponse,
-} from '@/types/storage-analytics'
+import {
+  normalizeStorageBySkuResponse,
+  normalizeTopConsumersResponse,
+} from './storage-queries-normalizer'
+import type { StorageBySkuParams, StorageTopConsumersParams } from '@/types/storage-analytics'
 
 /**
  * Build query string from params object
@@ -38,16 +37,15 @@ export function buildQueryString(params: Record<string, unknown>): string {
 }
 
 /** Get storage analytics by SKU — GET /v1/analytics/storage/by-sku */
-export async function getStorageBySku(params: StorageBySkuParams): Promise<StorageBySkuResponse> {
+export async function getStorageBySku(params: StorageBySkuParams) {
   const { weekStart, weekEnd, ...rest } = params
   const queryParams = buildQueryString({ weekStart, weekEnd, ...rest })
 
   logger.debug('[Storage Analytics] Fetching by SKU:', { weekStart, weekEnd, filters: rest })
 
-  const rawResponse = await apiClient.get<StorageBySkuResponse | unknown>(
-    `/v1/analytics/storage/by-sku?${queryParams}`,
-    { skipDataUnwrap: true }
-  )
+  const rawResponse = await apiClient.get<unknown>(`/v1/analytics/storage/by-sku?${queryParams}`, {
+    skipDataUnwrap: true,
+  })
 
   const response = normalizeStorageBySkuResponse(rawResponse, weekStart, weekEnd)
   logger.debug('[Storage Analytics] By SKU response:', {
@@ -59,43 +57,8 @@ export async function getStorageBySku(params: StorageBySkuParams): Promise<Stora
   return response
 }
 
-/** Normalize API response to proper StorageBySkuResponse structure */
-function normalizeStorageBySkuResponse(
-  rawResponse: unknown,
-  weekStart: string,
-  weekEnd: string
-): StorageBySkuResponse {
-  if (typeof rawResponse === 'object' && rawResponse !== null && 'data' in rawResponse) {
-    return rawResponse as StorageBySkuResponse
-  }
-
-  if (Array.isArray(rawResponse)) {
-    return {
-      period: { from: weekStart, to: weekEnd, days_count: 0 },
-      data: rawResponse,
-      summary: {
-        total_storage_cost: 0,
-        products_count: rawResponse.length,
-        avg_cost_per_product: 0,
-      },
-      pagination: { total: rawResponse.length, cursor: null, has_more: false },
-      has_data: rawResponse.length > 0,
-    }
-  }
-
-  return {
-    period: { from: weekStart, to: weekEnd, days_count: 0 },
-    data: [],
-    summary: { total_storage_cost: 0, products_count: 0, avg_cost_per_product: 0 },
-    pagination: { total: 0, cursor: null, has_more: false },
-    has_data: false,
-  }
-}
-
 /** Get top storage consumers — GET /v1/analytics/storage/top-consumers */
-export async function getStorageTopConsumers(
-  params: StorageTopConsumersParams
-): Promise<TopConsumersResponse> {
+export async function getStorageTopConsumers(params: StorageTopConsumersParams) {
   const { weekStart, weekEnd, ...rest } = params
   const queryParams = buildQueryString({ weekStart, weekEnd, ...rest })
 
@@ -106,7 +69,7 @@ export async function getStorageTopConsumers(
     includeRevenue: rest.include_revenue ?? false,
   })
 
-  const rawResponse = await apiClient.get<TopConsumersResponse | unknown>(
+  const rawResponse = await apiClient.get<unknown>(
     `/v1/analytics/storage/top-consumers?${queryParams}`,
     { skipDataUnwrap: true }
   )
@@ -114,39 +77,9 @@ export async function getStorageTopConsumers(
   const response = normalizeTopConsumersResponse(rawResponse)
   logger.debug('[Storage Analytics] Top consumers response:', {
     count: response.top_consumers?.length ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: total_storage_cost used only in console.log; not user-visible
+    // eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: total_storage_cost used only in console.log
     totalCost: response.total_storage_cost ?? 0,
   })
 
   return response
-}
-
-/** Normalize API response to proper TopConsumersResponse structure */
-function normalizeTopConsumersResponse(rawResponse: unknown): TopConsumersResponse {
-  if (typeof rawResponse === 'object' && rawResponse !== null && 'top_consumers' in rawResponse) {
-    return rawResponse as TopConsumersResponse
-  }
-
-  if (typeof rawResponse === 'object' && rawResponse !== null) {
-    const response = rawResponse as Record<string, unknown>
-    if ('period' in response) {
-      return {
-        period: (response.period as { from: string; to: string; days_count: number }) ?? {
-          from: '',
-          to: '',
-          days_count: 0,
-        },
-        top_consumers: (response.top_consumers as TopConsumersResponse['top_consumers']) ?? [],
-        total_storage_cost: (response.total_storage_cost as number) ?? 0,
-        has_data: (response.has_data as boolean) ?? false,
-      }
-    }
-  }
-
-  return {
-    period: { from: '', to: '', days_count: 0 },
-    top_consumers: [],
-    total_storage_cost: 0,
-    has_data: false,
-  }
 }

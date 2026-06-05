@@ -65,15 +65,15 @@ describe('Storage Analytics API Client', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/storage/by-sku?'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('weekStart=2025-W44'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('weekEnd=2025-W47'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -110,8 +110,12 @@ describe('Storage Analytics API Client', () => {
         weekEnd: '2025-W47',
       })
 
-      expect(result).toEqual(mockResponse)
+      expect(result.period).toEqual(mockResponse.period)
       expect(result.data).toHaveLength(1)
+      expect(result.data[0].nm_id).toBe('147205694')
+      expect(result.data[0].storage_cost_total).toBe(1500.5)
+      expect(result.summary).toEqual(mockResponse.summary)
+      expect(result.pagination).toEqual(mockResponse.pagination)
       expect(result.has_data).toBe(true)
     })
 
@@ -125,8 +129,10 @@ describe('Storage Analytics API Client', () => {
         weekEnd: '2025-W47',
       })
 
-      // Should reconstruct response structure
-      expect(result.data).toEqual(dataArray)
+      // Should reconstruct response structure (normalizer adds default fields)
+      expect(result.data).toHaveLength(dataArray.length)
+      expect(result.data[0].nm_id).toBe('147205694')
+      expect(result.data[0].storage_cost_total).toBe(1500.5)
       expect(result.period.from).toBe('2025-W44')
       expect(result.period.to).toBe('2025-W47')
       expect(result.has_data).toBe(true)
@@ -178,7 +184,7 @@ describe('Storage Analytics API Client', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/storage/top-consumers?'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -237,7 +243,7 @@ describe('Storage Analytics API Client', () => {
 
       expect(apiClient.get).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/storage/trends?'),
-        expect.objectContaining({ skipDataUnwrap: true }),
+        expect.objectContaining({ skipDataUnwrap: true })
       )
     })
 
@@ -313,13 +319,10 @@ describe('Storage Analytics API Client', () => {
         dateTo: '2025-11-24',
       })
 
-      expect(apiClient.post).toHaveBeenCalledWith(
-        '/v1/imports/paid-storage',
-        {
-          date_from: '2025-11-18',
-          date_to: '2025-11-24',
-        },
-      )
+      expect(apiClient.post).toHaveBeenCalledWith('/v1/imports/paid-storage', {
+        date_from: '2025-11-18',
+        date_to: '2025-11-24',
+      })
     })
 
     it('returns import response with id and status', async () => {
