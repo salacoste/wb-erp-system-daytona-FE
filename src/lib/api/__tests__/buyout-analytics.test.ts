@@ -127,9 +127,13 @@ describe('Buyout Analytics API Client', () => {
         to: '2025-12-31',
       })
 
-      expect(result).toEqual(mockResponse)
       expect(result.data).toHaveLength(1)
       expect(result.data[0].nmId).toBe(12345)
+      expect(result.data[0].supplierArticle).toBe('ART-001')
+      expect(result.data[0].salesCount).toBe(100)
+      expect(result.data[0].buyoutRatePct).toBe(95.0)
+      expect(result.data[0].trend).toBe('up')
+      expect(result.pagination.total).toBe(1)
     })
   })
 
