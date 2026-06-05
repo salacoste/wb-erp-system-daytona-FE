@@ -6,6 +6,12 @@
 
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
+import {
+  normalizeFulfillmentSummaryResponse,
+  normalizeFulfillmentTrendsResponse,
+  normalizeFulfillmentSyncStatusResponse,
+  normalizeFulfillmentProductsResponse,
+} from './fulfillment-normalizer'
 import type {
   FulfillmentSummaryResponse,
   FulfillmentTrendsResponse,
@@ -60,10 +66,11 @@ export async function getFulfillmentSummary(
 
   logger.debug('[Fulfillment] Fetching summary:', params)
 
-  return apiClient.get<FulfillmentSummaryResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/fulfillment/summary?${searchParams.toString()}`,
     { skipDataUnwrap: true }
   )
+  return normalizeFulfillmentSummaryResponse(raw)
 }
 
 /**
@@ -87,10 +94,11 @@ export async function getFulfillmentTrends(
 
   logger.debug('[Fulfillment] Fetching trends:', params)
 
-  return apiClient.get<FulfillmentTrendsResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/fulfillment/trends?${searchParams.toString()}`,
     { skipDataUnwrap: true }
   )
+  return normalizeFulfillmentTrendsResponse(raw)
 }
 
 /**
@@ -100,9 +108,10 @@ export async function getFulfillmentTrends(
 export async function getFulfillmentSyncStatus(): Promise<FulfillmentSyncStatusResponse> {
   logger.debug('[Fulfillment] Checking sync status')
 
-  return apiClient.get<FulfillmentSyncStatusResponse>('/v1/analytics/fulfillment/sync-status', {
+  const raw = await apiClient.get<unknown>('/v1/analytics/fulfillment/sync-status', {
     skipDataUnwrap: true,
   })
+  return normalizeFulfillmentSyncStatusResponse(raw)
 }
 
 /**
@@ -129,10 +138,11 @@ export async function getFulfillmentProducts(
 
   logger.debug('[Fulfillment] Fetching products:', params)
 
-  return apiClient.get<FulfillmentProductsResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/fulfillment/products?${searchParams.toString()}`,
     { skipDataUnwrap: true }
   )
+  return normalizeFulfillmentProductsResponse(raw)
 }
 
 /**

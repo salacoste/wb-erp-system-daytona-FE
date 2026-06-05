@@ -6,6 +6,10 @@
 // ============================================================================
 
 import { apiClient } from '../api-client'
+import {
+  normalizeBindingStatusResponse,
+  normalizeNotificationPreferencesResponse,
+} from './notifications-normalizer'
 import type {
   BindingCodeResponseDto,
   BindingStatusResponseDto,
@@ -30,10 +34,7 @@ import type {
 export async function startTelegramBinding(
   params?: StartBindingRequestDto
 ): Promise<BindingCodeResponseDto> {
-  return apiClient.post<BindingCodeResponseDto>(
-    '/v1/notifications/telegram/bind',
-    params || {}
-  )
+  return apiClient.post<BindingCodeResponseDto>('/v1/notifications/telegram/bind', params || {})
 }
 
 /**
@@ -43,9 +44,8 @@ export async function startTelegramBinding(
  * @returns Current binding status with username if bound
  */
 export async function getBindingStatus(): Promise<BindingStatusResponseDto> {
-  return apiClient.get<BindingStatusResponseDto>(
-    '/v1/notifications/telegram/status'
-  )
+  const raw = await apiClient.get<unknown>('/v1/notifications/telegram/status')
+  return normalizeBindingStatusResponse(raw)
 }
 
 /**
@@ -69,9 +69,8 @@ export async function unbindTelegram(): Promise<void> {
  * @returns Complete notification preferences for current cabinet
  */
 export async function getNotificationPreferences(): Promise<NotificationPreferencesResponseDto> {
-  return apiClient.get<NotificationPreferencesResponseDto>(
-    '/v1/notifications/preferences'
-  )
+  const raw = await apiClient.get<unknown>('/v1/notifications/preferences')
+  return normalizeNotificationPreferencesResponse(raw)
 }
 
 /**
@@ -104,8 +103,5 @@ export async function updateNotificationPreferences(
 export async function sendTestNotification(
   params?: SendTestNotificationRequestDto
 ): Promise<TestNotificationResponseDto> {
-  return apiClient.post<TestNotificationResponseDto>(
-    '/v1/notifications/test',
-    params || {}
-  )
+  return apiClient.post<TestNotificationResponseDto>('/v1/notifications/test', params || {})
 }

@@ -7,6 +7,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { normalizePreliminaryTaxResponse } from './tax-analytics-normalizer'
 import type { TaxMetrics } from '@/types/finance-summary'
 
 export interface PreliminaryTaxResponse {
@@ -19,7 +20,6 @@ export const preliminaryTaxQueryKeys = {
 }
 
 export async function getPreliminaryTax(from: string, to: string): Promise<PreliminaryTaxResponse> {
-  return apiClient.get<PreliminaryTaxResponse>(
-    `/v1/analytics/tax/preliminary?from=${from}&to=${to}`
-  )
+  const raw = await apiClient.get<unknown>(`/v1/analytics/tax/preliminary?from=${from}&to=${to}`)
+  return normalizePreliminaryTaxResponse(raw)
 }

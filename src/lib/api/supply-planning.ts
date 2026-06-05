@@ -6,10 +6,8 @@
  */
 
 import { apiClient } from '../api-client'
-import type {
-  SupplyPlanningQueryParams,
-  SupplyPlanningResponse,
-} from '@/types/supply-planning'
+import { normalizeSupplyPlanningResponse } from './supply-planning-normalizer'
+import type { SupplyPlanningQueryParams, SupplyPlanningResponse } from '@/types/supply-planning'
 
 /**
  * Fetch supply planning analytics data
@@ -49,5 +47,6 @@ export async function getSupplyPlanning(
   const endpoint = `/v1/analytics/supply-planning${queryString ? `?${queryString}` : ''}`
 
   // skipDataUnwrap: true to preserve meta, summary, data structure
-  return apiClient.get<SupplyPlanningResponse>(endpoint, { skipDataUnwrap: true })
+  const raw = await apiClient.get<unknown>(endpoint, { skipDataUnwrap: true })
+  return normalizeSupplyPlanningResponse(raw)
 }

@@ -19,6 +19,7 @@ import {
   normalizeWbHistoryResponse,
   normalizeFullHistoryResponse,
 } from './orders-history-normalizer'
+import { normalizeSyncStatusResponse } from './orders-sync-normalizer'
 
 // ============================================================================
 // Order History APIs
@@ -112,5 +113,6 @@ export async function triggerOrdersBackfill(params: BackfillParams): Promise<Bac
  * @returns Current sync configuration and last/next sync timestamps
  */
 export async function getOrdersSyncStatus(): Promise<SyncStatusResponse> {
-  return apiClient.get<SyncStatusResponse>('/v1/orders/sync-status')
+  const raw = await apiClient.get<unknown>('/v1/orders/sync-status')
+  return normalizeSyncStatusResponse(raw)
 }

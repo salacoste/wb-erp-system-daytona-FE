@@ -7,6 +7,13 @@
 import { apiClient } from '../api-client'
 import { qs } from './query-string'
 import { normalizeRecoveryStatusResponse } from './recovery-normalizer'
+import {
+  normalizeMonitoringDashboardResponse,
+  normalizeHealthReportsResponse,
+  normalizeHealthReportDetailResponse,
+} from './monitoring-normalizer'
+import { normalizePipelineHealthGridResponse } from './monitoring-grid-normalizer'
+import { normalizeTelegramHealthResponse } from './monitoring-telegram-normalizer'
 import type {
   MonitoringDashboard,
   PipelineHealthGrid,
@@ -35,7 +42,8 @@ export const monitoringQueryKeys = {
 // --- Dashboard ---
 
 export async function getMonitoringDashboard(cabinetId: string): Promise<MonitoringDashboard> {
-  return apiClient.get<MonitoringDashboard>(`/v1/monitoring/dashboard${qs({ cabinetId })}`)
+  const raw = await apiClient.get<unknown>(`/v1/monitoring/dashboard${qs({ cabinetId })}`)
+  return normalizeMonitoringDashboardResponse(raw)
 }
 
 // --- Pipeline Health Grid ---
@@ -44,7 +52,7 @@ export async function getPipelineHealthGrid(
   cabinetId: string,
   params: GridParams = {}
 ): Promise<PipelineHealthGrid> {
-  return apiClient.get<PipelineHealthGrid>(
+  const raw = await apiClient.get<unknown>(
     `/v1/monitoring/pipeline-health-grid${qs({
       cabinetId,
       from: params.from,
@@ -52,13 +60,15 @@ export async function getPipelineHealthGrid(
       resolution: params.resolution,
     })}`
   )
+  return normalizePipelineHealthGridResponse(raw)
 }
 
 // --- Telegram Health ---
 
 export async function getTelegramHealth(cabinetId: string): Promise<TelegramHealth> {
   // Live backend rejects 'days' (HTTP 400 "property days should not exist") — strict DTO validation; send only cabinetId. (Contract drift vs #149, which documented days as optional.)
-  return apiClient.get<TelegramHealth>(`/v1/monitoring/telegram-health${qs({ cabinetId })}`)
+  const raw = await apiClient.get<unknown>(`/v1/monitoring/telegram-health${qs({ cabinetId })}`)
+  return normalizeTelegramHealthResponse(raw)
 }
 
 // --- Recovery Status ---
@@ -98,9 +108,10 @@ export async function getHealthReports(
   cabinetId: string,
   days: number
 ): Promise<HealthReportSummary[]> {
-  return apiClient.get<HealthReportSummary[]>(
+  const raw = await apiClient.get<unknown>(
     `/v1/monitoring/health-reports${qs({ cabinetId, days })}`
   )
+  return normalizeHealthReportsResponse(raw)
 }
 
 // --- Health Report (single day detail) ---
@@ -109,5 +120,6 @@ export async function getHealthReport(
   cabinetId: string,
   date: string
 ): Promise<HealthReportDetail> {
-  return apiClient.get<HealthReportDetail>(`/v1/monitoring/health-report${qs({ cabinetId, date })}`)
+  const raw = await apiClient.get<unknown>(`/v1/monitoring/health-report${qs({ cabinetId, date })}`)
+  return normalizeHealthReportDetailResponse(raw)
 }
