@@ -1,8 +1,9 @@
 # Epic 121-FE: Advertising + Search Cross-Analysis (Marketing Plan §3.6)
 
-**Status**: backlog
+**Status**: ready-for-dev
 **Priority**: P2
 **Created**: 2026-06-05
+**Revised**: 2026-06-05 (BMad Master — reduced scope, deferred keyword-level to future)
 **Source**: Marketing Analytics Product Plan §3.6 + Epic 120-FE retro carry-forward
 **Spec author**: BMad Master (auto-generated from product plan + codebase audit)
 
@@ -20,79 +21,61 @@ Marketing Plan §3.6 defines three sub-features for ad/search cross-analysis. Af
 
 **Revised scope (2026-06-05)**: Keyword-level overlap analysis is **PENDING BACKEND** (need per-keyword ad spend endpoint). Available work: product-level scatter plot + cannibalization dashboard.
 
-**Revised scope**: 4 stories, ~18 SP (reduced from original ~25 SP due to Epic 120.7 iROAS already covering per-product cannibalization).
+**Revised scope (2026-06-05)**: 3 stories, ~13 SP. Keyword-level overlap (Story 121.1) **DEFERRED** — WB API does not expose per-keyword ad spend. Product-level scatter + cannibalization dashboard are fully buildable with existing endpoints.
 
 ---
 
 ## Stories
 
-### Track A: Cross-Reference Enhancement (2 stories, ~10 SP)
+### Story 121.1-FE: Keyword Overlap Analysis — DEFERRED
 
-#### Story 121.1-FE: Keyword Overlap Analysis (~5 SP)
+**Status**: DEFERRED — requires per-keyword ad spend endpoint that WB API does not provide.
+**Rationale**: Advertising endpoint returns spend aggregated per SKU/campaign, NOT per keyword. No WB Promotion API endpoint exposes search-term-level ad spend. Requires new backend data pipeline (search-term reports) that doesn't exist in WB API.
+**Action**: File `docs/request-backend/209-CROSS-ANALYSIS-KEYWORD-AD-SPEND.md` requesting keyword-level ad reporting. Revisit when/if WB API adds this capability.
 
-**Route**: `/analytics/cross-reference` (existing page, new tab/section)
+### Story 121.2-FE: Product-Level Position-Spend Scatter (~5 SP)
 
-**Scope**:
-- Add "Overlap" tab to existing cross-reference page
-- Query: match keywords from `search/by-query` against keywords from advertising campaign data
-- Show overlap table: keyword | organic position | ad spend | organic clicks | ad clicks | overlap status (duplicated / organic-only / ad-only)
-- Highlight "duplicated" keywords where seller pays for ads that already rank organically
-- Summary card: X% of ad spend is on keywords with organic position ≤ 10
-
-**Backend**: Uses existing `GET /v1/analytics/search/by-query` + advertising campaign data. No new endpoints needed.
-
-**ACs**:
-1. "Overlap" tab renders on `/analytics/cross-reference`
-2. Table shows keyword + organic position + ad spend + overlap status
-3. "Duplicated" keywords highlighted (organic position ≤ 10 AND ad spend > 0)
-4. Summary card shows potential savings estimate
-5. Null-safe: no organic data → "Нет данных" indicator
-6. Responsive, 200-line file limit, Russian locale
-
-#### Story 121.2-FE: Position-Spend Scatter Plot (~5 SP)
-
-**Route**: `/analytics/cross-reference` (same tab or separate section)
+**Route**: `/analytics/cross-reference` (existing page, existing scatter chart + new product-level view)
 
 **Scope**:
-- Scatter plot: X-axis = organic search position, Y-axis = ad spend
-- Each point = one keyword
-- Quadrant labels: "Over-investing" (low position, high spend), "Sweet spot" (high position, moderate spend), etc.
-- Tooltip on hover: keyword details
-- Use recharts ScatterChart (established pattern from other analytics pages)
+- Enhance existing ad-hoc ScatterChart (X=totalOrders, Y=adSpend) with product-level correlation view
+- Join advertising data (spend per nmId) with search analytics (organic position per query per nmId)
+- Four quadrant labels: "Over-investing" (low position, high spend), "Sweet spot" (high position, moderate spend), "Organic strong" (high position, low spend), "Opportunity" (low position, low spend)
+- Tooltip: product name + vendor code + spend + top organic position
+- Tab switch between existing channel-scatter and new product-scatter views
 
-**Backend**: Same endpoints as 121.1 — client-side correlation computation.
+**Backend**: Uses existing `GET /v1/analytics/advertising` (spend per nmId) + `GET /v1/analytics/search/by-product` (organic position per nmId). Client-side correlation computation. No new endpoints needed.
 
 **ACs**:
-1. Scatter chart renders with position (X) vs spend (Y)
-2. Four quadrant labels visible
-3. Tooltip shows keyword + position + spend on hover
-4. Handles edge cases: zero spend, no organic data
-5. 200-line file limit
+1. "По продуктам" tab renders on `/analytics/cross-reference`
+2. Scatter chart shows X=organic position, Y=ad spend, each point = one product
+3. Four quadrant labels visible
+4. Tooltip shows product details on hover
+5. Null-safe: no organic data → point excluded with count indicator
+6. 200-line file limit, Russian locale, Boundary Normalizer Pattern
 
-### Track B: Aggregate Cannibalization (1 story, ~5 SP)
-
-#### Story 121.3-FE: Cannibalization Dashboard (~5 SP)
+### Story 121.3-FE: Cannibalization Dashboard (~5 SP)
 
 **Route**: `/analytics/advertising` (new section/tab on existing page) OR hub widget
 
 **Scope**:
-- Aggregate iROAS + cannibalization data from Epic 120.7 across products
-- Brand/category-level cannibalization summary
-- "Products to review" table: products with organicCannibalizationPct > 70% AND ad spend > threshold
+- Aggregate advertising data to identify cannibalization: products where `organicContribution` is high AND `spend` is high
+- "Products to review" table: nmId | vendorCode | spend | organicContribution | dependencyLevel | iROAS | cannibalization risk
+- Risk categories: High (organicContribution > 70% AND spend > threshold), Medium, Low
 - Hub widget: "Potential over-spend" count on Analytics Hub
+- Cross-link to individual product analytics page (Epic 120)
 
-**Backend**: Uses `GET /v1/analytics/product/:nmId/organic-share` + `incremental-roas` per product. Needs aggregation strategy (either client-side batch or request a new summary endpoint).
-
-**Risk**: Per-product endpoint requires N calls for N products. May need a `PENDING BACKEND:` marker requesting an aggregate endpoint.
+**Backend**: Uses existing `GET /v1/analytics/advertising` (spend + organicContribution per nmId). No new endpoints needed. Client-side risk computation.
 
 **ACs**:
-1. Table of products with high cannibalization (organicCannibalizationPct > 70%)
-2. Brand-level aggregation if data permits
-3. "Potential over-spend" metric
-4. Link to individual product analytics page (cross-link from Epic 120)
-5. Null-safe rendering for missing data
+1. "Каннибализация" tab/section renders on advertising page
+2. Table shows products with cannibalization metrics
+3. Risk categories color-coded (high=red, medium=yellow, low=green)
+4. Hub widget shows "Potential over-spend" product count
+5. Cross-links to `/analytics/product/[nmId]` for individual analysis
+6. Null-safe rendering, 200-line file limit, Russian locale
 
-### Track C: Polish + Tests (1 story, ~3 SP)
+### Track B: Polish + Tests (1 story, ~3 SP)
 
 #### Story 121.4-FE: Tests, E2E, and Cross-Link Polish (~3 SP)
 
@@ -108,10 +91,10 @@ Marketing Plan §3.6 defines three sub-features for ad/search cross-analysis. Af
 
 | Dependency | Status | Notes |
 |------------|--------|-------|
-| Search by-query API | ✅ Done (Epic 71) | `GET /v1/analytics/search/by-query` |
-| Advertising campaign data | ✅ Done (Epic 33) | Per-campaign metrics available |
+| Search by-product API | ✅ Done (Epic 71) | `GET /v1/analytics/search/by-product` |
+| Advertising analytics API | ✅ Done (Epic 33/35) | Per-SKU spend + organicContribution available |
 | Organic share / iROAS | ✅ Done (Epic 120.7) | Per-product endpoints live |
-| Aggregate cannibalization endpoint | ⚠️ May need backend | 121.3 may need `PENDING BACKEND:` |
+| Keyword-level ad spend | ❌ NOT AVAILABLE | WB API does not expose per-keyword ad spend — Story 121.1 DEFERRED |
 
 ---
 
@@ -120,3 +103,4 @@ Marketing Plan §3.6 defines three sub-features for ad/search cross-analysis. Af
 - Competitive keyword intelligence (§3.7) — no API support
 - Automated marketing recommendations (§3.8) — future AI feature
 - Per-product cannibalization detail (already done in Epic 120.7)
+- **Keyword-level ad/search overlap** (Story 121.1) — DEFERRED, WB API limitation
