@@ -4,7 +4,7 @@
  * AnomaliesList — Owner/Manager-gated anomaly resolution page content.
  * Story 112.3-FE Task 4.
  * State-precedence chain: hydration skeleton → role-denied → loading →
- *   backend-pending + manual form → list-error → empty → happy table.
+ *   list-error → empty → happy table.
  */
 
 import { useState } from 'react'
@@ -34,8 +34,6 @@ import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/lib/routes'
 import { formatDate } from '@/lib/utils'
 import { ResolveAnomalyDialog } from './ResolveAnomalyDialog'
-import { ManualResolveForm } from './ManualResolveForm'
-import { STUB_PENDING_BACKEND_167 } from './anomalies-helpers'
 import type { AnomalyFilter } from './anomalies-helpers'
 import type { AnomalyEntry } from '@/types/ai/system'
 
@@ -101,9 +99,6 @@ export function AnomaliesList() {
         </p>
       </div>
 
-      {/* Backend-pending Alert + manual fallback form */}
-      {STUB_PENDING_BACKEND_167 && <ManualResolveForm />}
-
       {/* Status filter */}
       <div className="flex items-center gap-3">
         <Label htmlFor="status-filter">Статус:</Label>
@@ -161,11 +156,8 @@ export function AnomaliesList() {
         </Table>
       )}
 
-      {/* Pagination total — always shown when not in stub mode (even when total=0 after filter).
-          Hidden in stub mode: stub always returns total=0 so the count is misleading. */}
-      {data && !STUB_PENDING_BACKEND_167 && (
-        <p className="text-xs text-muted-foreground">Всего: {data.total}</p>
-      )}
+      {/* Pagination total */}
+      {data && <p className="text-xs text-muted-foreground">Всего: {data.total}</p>}
 
       <ResolveAnomalyDialog
         anomaly={dialogTarget}
