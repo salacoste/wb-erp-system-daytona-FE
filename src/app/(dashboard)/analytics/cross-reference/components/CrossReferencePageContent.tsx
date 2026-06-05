@@ -23,6 +23,7 @@ import {
 import { OverlapSummaryCards } from './OverlapSummaryCards'
 import { CrossReferenceTable } from './CrossReferenceTable'
 import { InsightsCards } from './InsightsCards'
+import { OrganicVsAdScatter } from './OrganicVsAdScatter'
 import type { DateRange } from '@/types/date-range'
 
 function getDefaultRange(): DateRange {
@@ -94,6 +95,7 @@ export function CrossReferencePageContent() {
           <div className="space-y-6">
             <OverlapSummaryCards summary={overlapSummary} />
             <InsightsCards items={topWastedSpend} />
+            <OrganicVsAdScatter items={mergedData} />
             <CrossReferenceTable items={mergedData} />
           </div>
         )}
