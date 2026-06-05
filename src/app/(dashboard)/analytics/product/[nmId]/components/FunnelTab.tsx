@@ -110,7 +110,7 @@ export function FunnelTab({ dates, totals }: FunnelTabProps) {
                 <YAxis yAxisId="pct" orientation="right" tick={{ fontSize: 12 }} unit="%" />
                 <Tooltip
                   formatter={(value: number, name: string) => {
-                    if (name === 'Конверсия') return [`${value.toFixed(1)} %`, name]
+                    if (name === 'Конверсия') return [formatPercentage(value), name]
                     return [formatNumber(value), name]
                   }}
                 />

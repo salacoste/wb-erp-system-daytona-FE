@@ -21,6 +21,7 @@ import {
 } from 'recharts'
 import type { CrossReferenceItem } from '../utils/cross-reference-utils'
 import { fmtCurrency } from '../utils/cross-reference-utils'
+import { formatPercentage } from '@/lib/utils'
 
 interface ProductScatterChartProps {
   items: CrossReferenceItem[]
@@ -72,7 +73,7 @@ function CustomTooltip({
     <div className="rounded-md border bg-white px-3 py-2 text-sm shadow-md space-y-1">
       <p className="font-semibold">{d.vendorCode || d.nmId}</p>
       <p>
-        Органика: <span className="font-medium">{d.organicContribution.toFixed(1)} %</span>
+        Органика: <span className="font-medium">{formatPercentage(d.organicContribution)}</span>
       </p>
       <p>
         Расход: <span className="font-medium">{fmtCurrency(d.adSpend)}</span>
