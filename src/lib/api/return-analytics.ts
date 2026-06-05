@@ -9,6 +9,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type {
   ReturnReasonsResponse,
   BySkuReturnResponse,
@@ -29,14 +30,14 @@ export async function getReturnReasons(
   if (to) sp.set('to', to)
   if (locale) sp.set('locale', locale)
 
-  console.info('[Returns] Fetching reasons:', { from, to, locale: locale ?? 'ru' })
+  logger.debug('[Returns] Fetching reasons:', { from, to, locale: locale ?? 'ru' })
 
   const response = await apiClient.get<ReturnReasonsResponse>(
     `/v1/analytics/returns/reasons?${sp.toString()}`,
     { skipDataUnwrap: true }
   )
 
-  console.info('[Returns] Reasons response:', {
+  logger.debug('[Returns] Reasons response:', {
     totalReturns: response.summary?.totalReturns ?? 0,
     categories: response.byCategory?.length ?? 0,
   })
@@ -72,7 +73,7 @@ export async function getReturnsBySku(params: {
   if (params.limit != null) sp.set('limit', String(params.limit))
   if (params.cursor) sp.set('cursor', params.cursor)
 
-  console.info('[Returns] Fetching by-sku:', {
+  logger.debug('[Returns] Fetching by-sku:', {
     from: params.from,
     to: params.to,
     anomalyOnly: params.anomalyOnly ?? false,
@@ -88,7 +89,7 @@ export async function getReturnsBySku(params: {
 
   if (isRaw) {
     const aggregated = aggregateRawRecords(items)
-    console.info('[Returns] by-sku (raw→aggregated):', {
+    logger.debug('[Returns] by-sku (raw→aggregated):', {
       rawRecords: items.length,
       aggregatedSkus: aggregated.length,
     })
@@ -99,7 +100,7 @@ export async function getReturnsBySku(params: {
     }
   }
 
-  console.info('[Returns] by-sku (pre-aggregated):', {
+  logger.debug('[Returns] by-sku (pre-aggregated):', {
     items: items.length,
     totalSkus: raw.summary?.totalSkus ?? 0,
   })

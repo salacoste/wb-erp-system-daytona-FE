@@ -7,6 +7,7 @@ import type { AdvertisingItem } from '@/types/advertising-analytics'
 function makeItem(overrides: Partial<AdvertisingItem> = {}): AdvertisingItem {
   return {
     key: 'sku:12345',
+    imtId: 12345,
     views: 100,
     clicks: 10,
     orders: 5,

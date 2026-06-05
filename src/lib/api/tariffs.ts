@@ -12,6 +12,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type {
   CommissionsResponse,
   WarehousesResponse,
@@ -51,12 +52,12 @@ export {
  * // => { commissions: [...], meta: { total: 7346, cached: true } }
  */
 export async function getCommissions(): Promise<CommissionsResponse> {
-  console.info('[Tariffs] Fetching category commissions')
+  logger.debug('[Tariffs] Fetching category commissions')
 
   const raw = await apiClient.get<unknown>('/v1/tariffs/commissions')
   const response = normalizeCommissionsResponse(raw)
 
-  console.info('[Tariffs] Loaded', response.meta.total, 'categories', {
+  logger.debug('[Tariffs] Loaded', response.meta.total, 'categories', {
     cached: response.meta.cached,
   })
 
@@ -73,12 +74,12 @@ export async function getCommissions(): Promise<CommissionsResponse> {
  * @returns Array of warehouses with metadata
  */
 export async function getWarehouses(): Promise<WarehousesResponse> {
-  console.info('[Tariffs] Fetching warehouses')
+  logger.debug('[Tariffs] Fetching warehouses')
 
   const raw = await apiClient.get<unknown>('/v1/tariffs/warehouses')
   const response = normalizeWarehousesResponse(raw)
 
-  console.info('[Tariffs] Loaded', response.warehouses.length, 'warehouses')
+  logger.debug('[Tariffs] Loaded', response.warehouses.length, 'warehouses')
 
   return response
 }
@@ -97,14 +98,14 @@ export async function getWarehouses(): Promise<WarehousesResponse> {
 export async function getAcceptanceCoefficients(
   warehouseId: number
 ): Promise<AcceptanceCoefficientsResponse> {
-  console.info('[Tariffs] Fetching acceptance coefficients for warehouse', warehouseId)
+  logger.debug('[Tariffs] Fetching acceptance coefficients for warehouse', warehouseId)
 
   const raw = await apiClient.get<unknown>(
     `/v1/tariffs/acceptance/coefficients?warehouseId=${warehouseId}`
   )
   const response = normalizeAcceptanceCoefficientsResponse(raw)
 
-  console.info('[Tariffs] Loaded', response.coefficients.length, 'coefficients', {
+  logger.debug('[Tariffs] Loaded', response.coefficients.length, 'coefficients', {
     available: response.meta.available,
     unavailable: response.meta.unavailable,
   })
@@ -123,12 +124,12 @@ export async function getAcceptanceCoefficients(
  * @returns All acceptance coefficients with real warehouse IDs
  */
 export async function getAllAcceptanceCoefficients(): Promise<AcceptanceCoefficientsResponse> {
-  console.info('[Tariffs] Fetching ALL acceptance coefficients')
+  logger.debug('[Tariffs] Fetching ALL acceptance coefficients')
 
   const raw = await apiClient.get<unknown>('/v1/tariffs/acceptance/coefficients/all')
   const response = normalizeAcceptanceCoefficientsResponse(raw)
 
-  console.info(
+  logger.debug(
     '[Tariffs] Loaded',
     response.coefficients?.length || 0,
     'coefficients for all warehouses'
@@ -147,12 +148,12 @@ export async function getAllAcceptanceCoefficients(): Promise<AcceptanceCoeffici
  * @returns Global tariff settings with volume tiers and rates
  */
 export async function getTariffSettings(): Promise<TariffSettings> {
-  console.info('[Tariffs] Fetching tariff settings')
+  logger.debug('[Tariffs] Fetching tariff settings')
 
   const raw = await apiClient.get<unknown>('/v1/tariffs/settings')
   const response = normalizeTariffSettings(raw)
 
-  console.info('[Tariffs] Loaded tariff settings', {
+  logger.debug('[Tariffs] Loaded tariff settings', {
     fboCommission: response.default_commission_fbo_pct,
     fbsCommission: response.default_commission_fbs_pct,
     effectiveFrom: response.effective_from,

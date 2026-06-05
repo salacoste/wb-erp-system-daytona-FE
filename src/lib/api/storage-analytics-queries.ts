@@ -7,6 +7,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   StorageBySkuParams,
   StorageBySkuResponse,
@@ -41,7 +42,7 @@ export async function getStorageBySku(params: StorageBySkuParams): Promise<Stora
   const { weekStart, weekEnd, ...rest } = params
   const queryParams = buildQueryString({ weekStart, weekEnd, ...rest })
 
-  console.info('[Storage Analytics] Fetching by SKU:', { weekStart, weekEnd, filters: rest })
+  logger.debug('[Storage Analytics] Fetching by SKU:', { weekStart, weekEnd, filters: rest })
 
   const rawResponse = await apiClient.get<StorageBySkuResponse | unknown>(
     `/v1/analytics/storage/by-sku?${queryParams}`,
@@ -49,7 +50,7 @@ export async function getStorageBySku(params: StorageBySkuParams): Promise<Stora
   )
 
   const response = normalizeStorageBySkuResponse(rawResponse, weekStart, weekEnd)
-  console.info('[Storage Analytics] By SKU response:', {
+  logger.debug('[Storage Analytics] By SKU response:', {
     count: response.data?.length ?? 0,
     total: response.pagination?.total ?? 0,
     hasMore: response.pagination?.has_more ?? false,
@@ -98,7 +99,7 @@ export async function getStorageTopConsumers(
   const { weekStart, weekEnd, ...rest } = params
   const queryParams = buildQueryString({ weekStart, weekEnd, ...rest })
 
-  console.info('[Storage Analytics] Fetching top consumers:', {
+  logger.debug('[Storage Analytics] Fetching top consumers:', {
     weekStart,
     weekEnd,
     limit: rest.limit ?? 5,
@@ -111,7 +112,7 @@ export async function getStorageTopConsumers(
   )
 
   const response = normalizeTopConsumersResponse(rawResponse)
-  console.info('[Storage Analytics] Top consumers response:', {
+  logger.debug('[Storage Analytics] Top consumers response:', {
     count: response.top_consumers?.length ?? 0,
     // eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: total_storage_cost used only in console.log; not user-visible
     totalCost: response.total_storage_cost ?? 0,

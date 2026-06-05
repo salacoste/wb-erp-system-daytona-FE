@@ -11,6 +11,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   CampaignsParams,
   CampaignsResponse,
@@ -68,7 +69,7 @@ export async function getAdvertisingCampaigns(
     ? `/v1/analytics/advertising/campaigns?${queryParams}`
     : '/v1/analytics/advertising/campaigns'
 
-  console.info('[Advertising Analytics] Fetching campaigns:', {
+  logger.debug('[Advertising Analytics] Fetching campaigns:', {
     status: params?.status ?? 'all',
     type: params?.type ?? 'all',
     search: params?.search ?? '',
@@ -134,7 +135,7 @@ export async function getAdvertisingCampaigns(
     })),
   }
 
-  console.info('[Advertising Analytics] Campaigns response:', {
+  logger.debug('[Advertising Analytics] Campaigns response:', {
     totalCount: response.meta.total_count,
     activeCount: response.meta.active_count,
     returnedCount: response.data.length,
@@ -158,13 +159,13 @@ export async function getAdvertisingCampaigns(
  * const status = await getAdvertisingSyncStatus();
  *
  * if (status.health_status === 'healthy') {
- *   console.log('Данные актуальны');
+ *   logger.debug('Данные актуальны');
  * } else if (status.health_status === 'stale') {
- *   console.log('Нет синхронизации более 26 часов');
+ *   logger.debug('Нет синхронизации более 26 часов');
  * }
  */
 export async function getAdvertisingSyncStatus(): Promise<SyncStatusResponse> {
-  console.info('[Advertising Analytics] Fetching sync status')
+  logger.debug('[Advertising Analytics] Fetching sync status')
 
   // Story 33.1-fe: Use skipDataUnwrap to get full response
   const response = await apiClient.get<SyncStatusResponse>(
@@ -172,7 +173,7 @@ export async function getAdvertisingSyncStatus(): Promise<SyncStatusResponse> {
     { skipDataUnwrap: true }
   )
 
-  console.info('[Advertising Analytics] Sync status:', {
+  logger.debug('[Advertising Analytics] Sync status:', {
     status: response.status,
     lastSyncAt: response.lastSyncAt ?? 'never',
     campaignsSynced: response.campaignsSynced,

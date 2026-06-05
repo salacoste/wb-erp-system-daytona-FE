@@ -6,6 +6,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type {
   BackfillStatusResponse,
   StartBackfillRequest,
@@ -24,14 +25,14 @@ import type {
 export async function getBackfillStatus(cabinetId?: string): Promise<BackfillStatusResponse> {
   const queryParams = cabinetId ? `?cabinetId=${cabinetId}` : ''
 
-  console.info('[FBS Analytics] Fetching backfill status:', { cabinetId: cabinetId ?? 'all' })
+  logger.debug('[FBS Analytics] Fetching backfill status:', { cabinetId: cabinetId ?? 'all' })
 
   const response = await apiClient.get<BackfillStatusResponse>(
     `/v1/admin/backfill/status${queryParams}`,
     { skipDataUnwrap: true }
   )
 
-  console.info('[FBS Analytics] Backfill status:', { cabinetCount: response?.length ?? 0 })
+  logger.debug('[FBS Analytics] Backfill status:', { cabinetCount: response?.length ?? 0 })
 
   return response
 }
@@ -41,14 +42,14 @@ export async function getBackfillStatus(cabinetId?: string): Promise<BackfillSta
  * POST /v1/admin/backfill/start
  */
 export async function startBackfill(request: StartBackfillRequest): Promise<StartBackfillResponse> {
-  console.info('[FBS Analytics] Starting backfill:', {
+  logger.debug('[FBS Analytics] Starting backfill:', {
     cabinetId: request.cabinetId ?? 'all',
     dataSource: request.dataSource,
   })
 
   const response = await apiClient.post<StartBackfillResponse>('/v1/admin/backfill/start', request)
 
-  console.info('[FBS Analytics] Backfill started:', {
+  logger.debug('[FBS Analytics] Backfill started:', {
     jobCount: response.jobCount,
     success: response.success,
   })
@@ -61,7 +62,7 @@ export async function startBackfill(request: StartBackfillRequest): Promise<Star
  * POST /v1/admin/backfill/pause
  */
 export async function pauseBackfill(cabinetId: string): Promise<BackfillActionResponse> {
-  console.info('[FBS Analytics] Pausing backfill:', { cabinetId })
+  logger.debug('[FBS Analytics] Pausing backfill:', { cabinetId })
   return apiClient.post<BackfillActionResponse>('/v1/admin/backfill/pause', { cabinetId })
 }
 
@@ -70,7 +71,7 @@ export async function pauseBackfill(cabinetId: string): Promise<BackfillActionRe
  * POST /v1/admin/backfill/resume
  */
 export async function resumeBackfill(cabinetId: string): Promise<BackfillActionResponse> {
-  console.info('[FBS Analytics] Resuming backfill:', { cabinetId })
+  logger.debug('[FBS Analytics] Resuming backfill:', { cabinetId })
   return apiClient.post<BackfillActionResponse>('/v1/admin/backfill/resume', { cabinetId })
 }
 

@@ -7,6 +7,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import { buildQueryString } from './storage-analytics-queries'
 import type {
   StorageTrendsParams,
@@ -22,7 +23,7 @@ export async function getStorageTrends(
   const { weekStart, weekEnd, ...rest } = params
   const queryParams = buildQueryString({ weekStart, weekEnd, ...rest })
 
-  console.info('[Storage Analytics] Fetching trends:', {
+  logger.debug('[Storage Analytics] Fetching trends:', {
     weekStart,
     weekEnd,
     nmId: rest.nm_id ?? 'all',
@@ -38,7 +39,7 @@ export async function getStorageTrends(
   )
 
   const response = normalizeStorageTrendsResponse(rawResponse, weekStart, weekEnd)
-  console.info('[Storage Analytics] Trends response:', {
+  logger.debug('[Storage Analytics] Trends response:', {
     dataPoints: response.data?.length ?? 0,
     hasSummary: !!response.summary,
     hasData: response.has_data,
@@ -86,7 +87,7 @@ export async function getStorageSummary(
     dateTo: params.dateTo,
   })
 
-  console.info('[Storage Analytics] Fetching summary:', {
+  logger.debug('[Storage Analytics] Fetching summary:', {
     dateFrom: params.dateFrom,
     dateTo: params.dateTo,
   })
@@ -97,7 +98,7 @@ export async function getStorageSummary(
   )
 
   const response = normalizeStorageSummaryResponse(rawResponse)
-  console.info('[Storage Analytics] Summary response:', {
+  logger.debug('[Storage Analytics] Summary response:', {
     totalCost: response.data?.totalCost ?? 0,
     uniqueSkus: response.data?.uniqueSkus ?? 0,
   })

@@ -98,7 +98,7 @@ export function PeriodComparisonCard({
 
   const formattedCurrent = formatValue(currentValue, format)
   const formattedPrevious = formatValue(previousValue, format)
-  const ariaLabel = `${title}: ${formattedCurrent}${delta ? `, изменение ${delta.percent >= 0 ? '+' : ''}${delta.percent.toFixed(1)}%` : ''}`
+  const ariaLabel = `${title}: ${formattedCurrent}${delta ? `, изменение ${delta.percent >= 0 ? '+' : ''}${(delta.percent ?? 0).toFixed(1)}%` : ''}`
 
   return (
     <Card

@@ -1,6 +1,6 @@
 # Backend Request #190 — `/v1/products?include_cogs=true` returns 500 unless `has_cogs` is set — breaks the main COGS page
 
-**Status:** Open
+**Status:** Fixed (commit 0146ff06, 2026-06-03) — integer type cast in trends-analytics getLastSalesWeekForProducts
 **Filed:** 2026-06-02 (frontend validation campaign, iter-53)
 **Severity:** **CRITICAL** (the default view of the COGS-management page renders an empty, errored product list)
 **Endpoint:** `GET /v1/products`

@@ -8,6 +8,8 @@
  */
 
 import { apiClient } from '../api-client'
+import { normalizeOrdersResponse } from './orders-normalizer'
+import { logger } from '@/lib/logger'
 import type { OrdersListParams, OrdersListResponse, OrderFbsDetails } from '@/types/orders'
 
 // Barrel re-exports from extracted module (history, sync, backfill)
@@ -58,15 +60,17 @@ export async function getOrders(params: OrdersListParams = {}): Promise<OrdersLi
   const queryString = buildQueryString(params)
   const url = queryString ? `/v1/orders?${queryString}` : '/v1/orders'
 
-  console.info('[Orders API] Fetching orders:', params)
+  logger.debug('[Orders API] Fetching orders:', params)
 
-  const response = await apiClient.get<OrdersListResponse>(url, {
+  const raw = await apiClient.get<unknown>(url, {
     skipDataUnwrap: true,
   })
 
-  console.info('[Orders API] Orders response:', {
-    count: response.items?.length ?? 0,
-    total: response.pagination?.total ?? 0,
+  const response = normalizeOrdersResponse(raw)
+
+  logger.debug('[Orders API] Orders response:', {
+    count: response.items.length,
+    total: response.pagination.total,
   })
 
   return response
@@ -80,7 +84,7 @@ export async function getOrders(params: OrdersListParams = {}): Promise<OrdersLi
  * @returns Extended order details with address and brief history
  */
 export async function getOrderById(orderId: string): Promise<OrderFbsDetails> {
-  console.info('[Orders API] Fetching order:', orderId)
+  logger.debug('[Orders API] Fetching order:', orderId)
 
   return apiClient.get<OrderFbsDetails>(`/v1/orders/${orderId}`)
 }

@@ -5,6 +5,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   FulfillmentSummaryResponse,
   FulfillmentTrendsResponse,
@@ -57,7 +58,7 @@ export async function getFulfillmentSummary(
     to: params.to,
   })
 
-  console.info('[Fulfillment] Fetching summary:', params)
+  logger.debug('[Fulfillment] Fetching summary:', params)
 
   return apiClient.get<FulfillmentSummaryResponse>(
     `/v1/analytics/fulfillment/summary?${searchParams.toString()}`,
@@ -84,7 +85,7 @@ export async function getFulfillmentTrends(
     searchParams.set('metric', params.metric)
   }
 
-  console.info('[Fulfillment] Fetching trends:', params)
+  logger.debug('[Fulfillment] Fetching trends:', params)
 
   return apiClient.get<FulfillmentTrendsResponse>(
     `/v1/analytics/fulfillment/trends?${searchParams.toString()}`,
@@ -97,7 +98,7 @@ export async function getFulfillmentTrends(
  * GET /v1/analytics/fulfillment/sync-status
  */
 export async function getFulfillmentSyncStatus(): Promise<FulfillmentSyncStatusResponse> {
-  console.info('[Fulfillment] Checking sync status')
+  logger.debug('[Fulfillment] Checking sync status')
 
   return apiClient.get<FulfillmentSyncStatusResponse>('/v1/analytics/fulfillment/sync-status', {
     skipDataUnwrap: true,
@@ -126,7 +127,7 @@ export async function getFulfillmentProducts(
     searchParams.set('sort', params.sort)
   }
 
-  console.info('[Fulfillment] Fetching products:', params)
+  logger.debug('[Fulfillment] Fetching products:', params)
 
   return apiClient.get<FulfillmentProductsResponse>(
     `/v1/analytics/fulfillment/products?${searchParams.toString()}`,
@@ -141,7 +142,7 @@ export async function getFulfillmentProducts(
 export async function startFulfillmentSync(
   data: StartFulfillmentSyncRequest
 ): Promise<StartFulfillmentSyncResponse> {
-  console.info('[Fulfillment] Starting sync:', data)
+  logger.debug('[Fulfillment] Starting sync:', data)
 
   return apiClient.post<StartFulfillmentSyncResponse>('/v1/admin/fulfillment/sync', data, {
     skipDataUnwrap: true,

@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { AlertTriangle, TrendingDown } from 'lucide-react'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 
 interface CannibalizationSectionProps {
   items: AdvertisingItem[]
@@ -123,7 +123,7 @@ export function CannibalizationSection({ items, isLoading }: CannibalizationSect
                     <td className="py-2 pr-4 font-mono text-xs">{product.nmId}</td>
                     <td className="py-2 pr-4 text-right">{formatCurrency(product.spend)}</td>
                     <td className="py-2 pr-4 text-right">
-                      {product.organicContribution.toFixed(1)} %
+                      {formatPercentage(product.organicContribution)}
                     </td>
                     <td className="py-2 pr-4 text-right">{formatCurrency(product.organicSales)}</td>
                     <td className="py-2">

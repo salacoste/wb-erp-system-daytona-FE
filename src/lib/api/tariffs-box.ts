@@ -6,6 +6,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type { BoxTariffsResponse, BoxTariffItem, WarehouseWithTariffs } from '@/types/warehouse'
 
 // ============================================================================
@@ -38,7 +39,7 @@ export interface WarehousesWithTariffsResponse {
  */
 export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> {
   const params = date ? `?date=${date}` : ''
-  console.info('[Tariffs] Fetching box tariffs', { date: date || 'today' })
+  logger.debug('[Tariffs] Fetching box tariffs', { date: date || 'today' })
 
   // Use warehouses-with-tariffs endpoint and transform to BoxTariffsResponse
   const response = await apiClient.get<WarehousesWithTariffsResponse>(
@@ -64,7 +65,7 @@ export async function getBoxTariffs(date?: string): Promise<BoxTariffsResponse> 
     },
   }))
 
-  console.info('[Tariffs] Loaded', tariffs.length, 'box tariffs')
+  logger.debug('[Tariffs] Loaded', tariffs.length, 'box tariffs')
 
   return {
     tariffs,
@@ -91,13 +92,13 @@ export async function getWarehousesWithTariffs(
 ): Promise<WarehousesWithTariffsResponse> {
   // Backend requires date param (forwarded to WB API tariffs/box)
   const effectiveDate = date || new Date().toISOString().split('T')[0]
-  console.info('[Tariffs] Fetching warehouses with tariffs', { date: effectiveDate })
+  logger.debug('[Tariffs] Fetching warehouses with tariffs', { date: effectiveDate })
 
   const response = await apiClient.get<WarehousesWithTariffsResponse>(
     `/v1/tariffs/warehouses-with-tariffs?date=${effectiveDate}`
   )
 
-  console.info('[Tariffs] Loaded', response.warehouses?.length || 0, 'warehouses with tariffs')
+  logger.debug('[Tariffs] Loaded', response.warehouses?.length || 0, 'warehouses with tariffs')
 
   return response
 }

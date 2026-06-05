@@ -7,7 +7,7 @@
 
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { ExpenseItem } from '@/hooks/useExpenses'
 
 /** Semantic color map by category key word */
@@ -77,7 +77,7 @@ export function ExpenseBarTooltip({
       </p>
       {d.percentage != null && (
         <p className="text-sm text-gray-500">
-          Доля расходов: <span className="font-medium">{d.percentage.toFixed(1)}%</span>
+          Доля расходов: <span className="font-medium">{formatPercentage(d.percentage)}</span>
         </p>
       )}
       {revenueShare != null && (
@@ -96,7 +96,7 @@ export function ExpenseBarTooltip({
           Нedel к нед.:{' '}
           <span className={`font-medium ${wowChange > 0 ? 'text-red-600' : 'text-green-600'}`}>
             {wowChange > 0 ? '+' : ''}
-            {wowChange.toFixed(1)}%
+            {formatPercentage(wowChange)}
           </span>
         </p>
       )}

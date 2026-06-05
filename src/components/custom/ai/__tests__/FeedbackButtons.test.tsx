@@ -230,7 +230,7 @@ describe('FeedbackButtons', () => {
   })
 
   it('error state auto-resets to idle after 5s', async () => {
-    vi.useFakeTimers()
+    vi.useFakeTimers({ shouldAdvanceTime: true })
     mockPostFeedback.mockRejectedValueOnce(new ApiError('Internal Server Error', 500))
 
     renderButtons()

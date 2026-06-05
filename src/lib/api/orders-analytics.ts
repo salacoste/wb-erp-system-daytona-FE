@@ -7,6 +7,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   VelocityMetricsParams,
   VelocityMetricsResponse,
@@ -55,7 +56,7 @@ export async function getVelocityMetrics(
 ): Promise<VelocityMetricsResponse> {
   const queryString = buildQueryString(params)
 
-  console.info('[Orders Analytics] Fetching velocity metrics:', params)
+  logger.debug('[Orders Analytics] Fetching velocity metrics:', params)
 
   return apiClient.get<VelocityMetricsResponse>(`/v1/analytics/orders/velocity?${queryString}`, {
     skipDataUnwrap: true,
@@ -77,7 +78,7 @@ export async function getSlaMetrics(params: SlaMetricsParams): Promise<SlaMetric
   const queryString = buildQueryString(params)
   const url = queryString ? `/v1/analytics/orders/sla?${queryString}` : '/v1/analytics/orders/sla'
 
-  console.info('[Orders Analytics] Fetching SLA metrics:', params)
+  logger.debug('[Orders Analytics] Fetching SLA metrics:', params)
 
   return apiClient.get<SlaMetricsResponse>(url, { skipDataUnwrap: true })
 }
@@ -98,7 +99,7 @@ export async function getVolumeMetrics(
 ): Promise<VolumeMetricsResponse> {
   const queryString = buildQueryString(params)
 
-  console.info('[Orders Analytics] Fetching volume metrics:', params)
+  logger.debug('[Orders Analytics] Fetching volume metrics:', params)
 
   return apiClient.get<VolumeMetricsResponse>(`/v1/analytics/orders/volume?${queryString}`, {
     skipDataUnwrap: true,

@@ -10,6 +10,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   PaidStorageImportRequest,
   PaidStorageImportResponse,
@@ -38,7 +39,7 @@ export { getStorageTrends, getStorageSummary } from './storage-analytics-trends'
 export async function triggerPaidStorageImport(
   request: PaidStorageImportRequest
 ): Promise<PaidStorageImportResponse> {
-  console.info('[Storage Analytics] Triggering import:', {
+  logger.debug('[Storage Analytics] Triggering import:', {
     dateFrom: request.dateFrom,
     dateTo: request.dateTo,
   })
@@ -48,7 +49,7 @@ export async function triggerPaidStorageImport(
     date_to: request.dateTo,
   })
 
-  console.info('[Storage Analytics] Import triggered:', {
+  logger.debug('[Storage Analytics] Import triggered:', {
     importId: response.import_id,
     status: response.status,
     estimatedTime: response.estimated_time_sec,

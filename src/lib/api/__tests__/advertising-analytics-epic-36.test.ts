@@ -11,6 +11,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getAdvertisingAnalytics } from '../advertising-analytics'
 import { apiClient } from '../../api-client'
+import { logger } from '@/lib/logger'
 
 // Mock the API client
 vi.mock('../../api-client', () => ({
@@ -19,8 +20,15 @@ vi.mock('../../api-client', () => ({
   },
 }))
 
-// Mock console.info to reduce test noise
-vi.spyOn(console, 'info').mockImplementation(() => {})
+// Mock logger (source uses logger.debug, not console.info)
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+}))
 
 describe('Advertising Analytics API Client - Epic 36', () => {
   beforeEach(() => {
@@ -89,7 +97,6 @@ describe('Advertising Analytics API Client - Epic 36', () => {
     })
 
     it('includes group_by in console logging', async () => {
-      const mockConsoleInfo = vi.spyOn(console, 'info')
       vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
 
       await getAdvertisingAnalytics({
@@ -98,11 +105,11 @@ describe('Advertising Analytics API Client - Epic 36', () => {
         group_by: 'imtId',
       })
 
-      expect(mockConsoleInfo).toHaveBeenCalledWith(
+      expect(vi.mocked(logger).debug).toHaveBeenCalledWith(
         '[Advertising Analytics] Fetching analytics:',
         expect.objectContaining({
           group_by: 'imtId',
-        }),
+        })
       )
     })
   })

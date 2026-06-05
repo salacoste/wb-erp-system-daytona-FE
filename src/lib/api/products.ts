@@ -7,6 +7,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type { ProductsWithDimensionsResponse, ProductWithDimensions } from '@/types/product'
 import {
   normalizeProduct,
@@ -69,7 +70,7 @@ export async function getProductsWithDimensions(
   )
 
   // DEBUG: Log raw API response to diagnose dimensions/category issue
-  console.log('[Products API] Raw response structure:', {
+  logger.debug('[Products API] Raw response structure:', {
     hasData: !!rawResponse.data,
     hasProducts: !!rawResponse.products,
     rawKeys: Object.keys(rawResponse),
@@ -103,11 +104,11 @@ export async function getProductsWithDimensions(
   if (response.products.length > 0) {
     const firstProduct = response.products[0]
     const rawFirstProduct = unwrappedResponse.products[0]
-    console.log('[Products API] First product BEFORE normalization:', {
+    logger.debug('[Products API] First product BEFORE normalization:', {
       ...rawFirstProduct,
       _allKeys: Object.keys(rawFirstProduct || {}),
     })
-    console.log('[Products API] First product AFTER normalization:', {
+    logger.debug('[Products API] First product AFTER normalization:', {
       nm_id: firstProduct.nm_id,
       sa_name: firstProduct.sa_name,
       dimensions: firstProduct.dimensions,
@@ -128,7 +129,7 @@ export async function getProductWithDimensions(nmId: string): Promise<ProductWit
   )
 
   // DEBUG: Log raw product response
-  console.log('[Products API] Single product raw response:', {
+  logger.debug('[Products API] Single product raw response:', {
     nm_id: rawResponse.nm_id,
     dimensions: rawResponse.dimensions,
     category_hierarchy: rawResponse.category_hierarchy,
@@ -138,7 +139,7 @@ export async function getProductWithDimensions(nmId: string): Promise<ProductWit
   // Normalize to ensure consistent field names
   const normalized = normalizeProduct(rawResponse)
 
-  console.log('[Products API] Single product normalized:', {
+  logger.debug('[Products API] Single product normalized:', {
     nm_id: normalized.nm_id,
     dimensions: normalized.dimensions,
     category_hierarchy: normalized.category_hierarchy,

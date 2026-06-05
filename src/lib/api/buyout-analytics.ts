@@ -5,6 +5,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type {
   BuyoutBySkuParams,
   BySkuBuyoutResponse,
@@ -30,7 +31,7 @@ export async function getBuyoutBySku(params: BuyoutBySkuParams): Promise<BySkuBu
   if (params.limit != null) sp.set('limit', String(params.limit))
   if (params.offset != null) sp.set('offset', String(params.offset))
 
-  console.info('[Buyout] Fetching by-sku:', {
+  logger.debug('[Buyout] Fetching by-sku:', {
     from: params.from,
     to: params.to,
     source: params.source ?? 'blended',
@@ -41,7 +42,7 @@ export async function getBuyoutBySku(params: BuyoutBySkuParams): Promise<BySkuBu
     { skipDataUnwrap: true }
   )
 
-  console.info('[Buyout] by-sku response:', {
+  logger.debug('[Buyout] by-sku response:', {
     items: response.data?.length ?? 0,
     total: response.pagination?.total ?? 0,
   })
@@ -61,14 +62,14 @@ export async function getBuyoutSummary(
   sp.set('to', params.to)
   if (params.source) sp.set('source', params.source)
 
-  console.info('[Buyout] Fetching summary:', { from: params.from, to: params.to })
+  logger.debug('[Buyout] Fetching summary:', { from: params.from, to: params.to })
 
   const response = await apiClient.get<BuyoutSummaryResponse>(
     `/v1/analytics/buyout/summary?${sp.toString()}`,
     { skipDataUnwrap: true }
   )
 
-  console.info('[Buyout] Summary response:', {
+  logger.debug('[Buyout] Summary response:', {
     buyoutRate: response.overallBuyoutRatePct,
     skuCount: response.skuCount,
   })

@@ -4,7 +4,6 @@ import {
   computeOverlapSummary,
   getTopWastedSpend,
   fmtCurrency,
-  classifyCannibalization,
 } from '../cross-reference-utils'
 import type { SearchOrderItem } from '@/types/search-analytics'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
@@ -227,45 +226,5 @@ describe('fmtCurrency', () => {
 
   it('renders "—" for null (unknown), not "0 ₽" (iter-129)', () => {
     expect(fmtCurrency(null)).toBe('—')
-  })
-})
-
-describe('classifyCannibalization (Story 121.2-FE)', () => {
-  function makeItem(o: { organicContribution?: number | null; adSpend?: number } = {}) {
-    return {
-      nmId: 1,
-      vendorCode: null,
-      totalOrders: 10,
-      uniqueQueries: null,
-      adSpend: o.adSpend ?? 1000,
-      adClicks: 50,
-      adRevenue: null,
-      organicContribution: o.organicContribution ?? null,
-      channel: 'both' as const,
-    }
-  }
-
-  it('returns "high" when organicContribution > 70% and spend > 0', () => {
-    expect(classifyCannibalization(makeItem({ organicContribution: 85, adSpend: 500 }))).toBe(
-      'high'
-    )
-  })
-
-  it('returns "medium" when organicContribution is 40-70% and spend > 0', () => {
-    expect(classifyCannibalization(makeItem({ organicContribution: 55, adSpend: 200 }))).toBe(
-      'medium'
-    )
-  })
-
-  it('returns "low" when organicContribution <= 40% and spend > 0', () => {
-    expect(classifyCannibalization(makeItem({ organicContribution: 20, adSpend: 300 }))).toBe('low')
-  })
-
-  it('returns "low" when organicContribution is null (no ad data)', () => {
-    expect(classifyCannibalization(makeItem({ organicContribution: null }))).toBe('low')
-  })
-
-  it('returns "low" when spend is 0 (organic-only product)', () => {
-    expect(classifyCannibalization(makeItem({ organicContribution: 80, adSpend: 0 }))).toBe('low')
   })
 })

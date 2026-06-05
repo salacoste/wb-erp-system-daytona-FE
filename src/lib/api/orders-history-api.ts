@@ -6,6 +6,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type { TriggerSyncResponse, SyncStatusResponse } from '@/types/orders'
 import type {
   LocalHistoryResponse,
@@ -28,7 +29,7 @@ import {
  * GET /v1/orders/:orderId/history
  */
 export async function getOrderHistory(orderId: string): Promise<LocalHistoryResponse> {
-  console.info('[Orders API] Fetching local history:', orderId)
+  logger.debug('[Orders API] Fetching local history:', orderId)
 
   const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}/history`, {
     skipDataUnwrap: true,
@@ -41,7 +42,7 @@ export async function getOrderHistory(orderId: string): Promise<LocalHistoryResp
  * GET /v1/orders/:orderId/wb-history
  */
 export async function getWbHistory(orderId: string): Promise<WbHistoryResponse> {
-  console.info('[Orders API] Fetching WB history:', orderId)
+  logger.debug('[Orders API] Fetching WB history:', orderId)
 
   const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}/wb-history`, {
     skipDataUnwrap: true,
@@ -54,7 +55,7 @@ export async function getWbHistory(orderId: string): Promise<WbHistoryResponse> 
  * GET /v1/orders/:orderId/full-history
  */
 export async function getFullHistory(orderId: string): Promise<FullHistoryResponse> {
-  console.info('[Orders API] Fetching full history:', orderId)
+  logger.debug('[Orders API] Fetching full history:', orderId)
 
   const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}/full-history`, {
     skipDataUnwrap: true,
@@ -73,7 +74,7 @@ export async function getFullHistory(orderId: string): Promise<FullHistoryRespon
  * @returns Job info with ID for status polling
  */
 export async function triggerOrdersSync(): Promise<TriggerSyncResponse> {
-  console.info('[Orders API] Triggering sync')
+  logger.debug('[Orders API] Triggering sync')
 
   return apiClient.post<TriggerSyncResponse>('/v1/orders/sync', {})
 }
@@ -99,7 +100,7 @@ export interface BackfillResponse {
  * Issue #2: FBS Orders Empty State - allows loading historical data
  */
 export async function triggerOrdersBackfill(params: BackfillParams): Promise<BackfillResponse> {
-  console.info('[Orders API] Triggering backfill:', params)
+  logger.debug('[Orders API] Triggering backfill:', params)
 
   return apiClient.post<BackfillResponse>('/v1/orders/backfill', params)
 }

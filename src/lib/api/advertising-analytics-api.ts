@@ -6,6 +6,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   AdvertisingAnalyticsParams,
   AdvertisingAnalyticsResponse,
@@ -67,7 +68,7 @@ export async function getAdvertisingAnalytics(
   // Request #76: Backend now supports efficiency_filter (server-side filtering)
   const queryParams = buildQueryString({ ...params })
 
-  console.info('[Advertising Analytics] Fetching analytics:', {
+  logger.debug('[Advertising Analytics] Fetching analytics:', {
     from: params.from,
     to: params.to,
     view_by: params.view_by ?? 'sku',

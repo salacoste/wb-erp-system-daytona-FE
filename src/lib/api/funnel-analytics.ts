@@ -5,6 +5,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import { normalizeFunnelResponse, normalizeFunnelSyncStatus } from '@/lib/api/funnel-normalizer'
 import type { FunnelParams, FunnelResponse, FunnelSyncStatus } from '@/types/analytics-funnel'
 
@@ -24,7 +25,7 @@ export async function getFunnelData(params: FunnelParams): Promise<FunnelRespons
   if (params.limit != null) sp.set('limit', String(params.limit))
   if (params.offset != null) sp.set('offset', String(params.offset))
 
-  console.info('[Funnel] Fetching:', { from: params.from, to: params.to, groupBy: params.groupBy })
+  logger.debug('[Funnel] Fetching:', { from: params.from, to: params.to, groupBy: params.groupBy })
 
   // Boundary Normalizer Pattern: fetch as unknown, normalize to canonical shape.
   // Raw backend shape never reaches the hook/components (Epic 119-FE retro A-3).
@@ -34,7 +35,7 @@ export async function getFunnelData(params: FunnelParams): Promise<FunnelRespons
   // Route the items union by request intent (groupBy), not per-item date-sniffing.
   const response = normalizeFunnelResponse(raw, params.groupBy ?? 'product')
 
-  console.info('[Funnel] Response:', {
+  logger.debug('[Funnel] Response:', {
     items: response.items.length,
     total: response.pagination.total,
   })
@@ -47,7 +48,7 @@ export async function getFunnelData(params: FunnelParams): Promise<FunnelRespons
  * GET /v1/analytics/funnel/sync-status
  */
 export async function getFunnelSyncStatus(): Promise<FunnelSyncStatus> {
-  console.info('[Funnel] Fetching sync status')
+  logger.debug('[Funnel] Fetching sync status')
   const raw = await apiClient.get<unknown>('/v1/analytics/funnel/sync-status', {
     skipDataUnwrap: true,
   })

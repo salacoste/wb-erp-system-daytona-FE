@@ -22,3 +22,9 @@ export const RESOLUTION_CAUSE_LABELS: Record<ResolutionCause, string> = {
 }
 
 export const RESOLUTION_CAUSES = Object.keys(RESOLUTION_CAUSE_LABELS) as ResolutionCause[]
+
+/**
+ * Request #167 shipped: GET /v1/ai/anomalies now returns paginated anomaly list.
+ * Flipped to false — live anomaly table + real resolution flow active.
+ */
+export const STUB_PENDING_BACKEND_167 = false

@@ -14,7 +14,12 @@
 import { existsSync } from 'node:fs'
 import { test, expect, type Page, type Request } from '@playwright/test'
 import { HAS_MANAGER_CREDS } from './fixtures/test-data'
-import { seedDbwOrder, cleanupDbwOrder, type DbwSeedData } from './fixtures/dbw-order-seed'
+import {
+  seedDbwOrder,
+  cleanupDbwOrder,
+  SEED_CLIENT,
+  type DbwSeedData,
+} from './fixtures/dbw-order-seed'
 
 const ORDERS_ROUTE = '/orders'
 const CLIENT_INFO_ENDPOINT_PATTERN = /\/v1\/cabinets\/[^/]+\/orders\/client-info/
@@ -96,10 +101,9 @@ async function sweepBrowserStorageForPii(
 }
 
 test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', () => {
-  // Seed a DBW order with known PII so tests that verify phone links,
-  // client names, and storage sweeps have deterministic data to work with.
-  // The endpoint is dev-only (404 in production); when unavailable the
-  // tests fall back to the existing visible-skip pattern.
+  // Seed a DBW order with known PII via POST /v1/test/seed/dbw-order (dev-only).
+  // When seeding succeeds, the tests below assert deterministically — no skips.
+  // When seeding fails (production, endpoint down), the entire block skips visibly.
   test.beforeAll(async () => {
     seedData = await seedDbwOrder()
   })
@@ -110,6 +114,10 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       seedData = null
     }
   })
+
+  // Gate the entire seed-dependent suite: if the dev-only endpoint is unavailable
+  // (production, backend down), skip visibly rather than failing every assertion.
+  test.skip(!seedData, 'DBW order seed endpoint unavailable — tests require dev backend')
 
   test.describe('AC #1: Owner role — column visible', () => {
     test.beforeEach(async ({ page }) => {
@@ -148,22 +156,12 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     test('should render phone as a tel: link with aria-label when client info is available', async ({
       page,
     }) => {
-      // Deterministic wait for client-info response (no hard waits)
       const responsePromise = waitForClientInfoResponseOrNull(page)
       await page.reload()
       await responsePromise
 
-      // Use Playwright's auto-waiting locator-based count check
-      const phoneLinkLocator = page.getByRole('link', { name: /Позвонить клиенту/i })
-      const linkCount = await phoneLinkLocator.count()
-
-      // Visible-fixture skip — appears in CI report as "skipped" instead of silently passing
-      test.skip(
-        linkCount === 0,
-        'No DBW orders with client info in test fixture — seed endpoint may be unavailable'
-      )
-
-      const phoneLink = phoneLinkLocator.first()
+      // Seed succeeded — the phone link must be visible (no skip)
+      const phoneLink = page.getByRole('link', { name: /Позвонить клиенту/i }).first()
       await expect(phoneLink).toBeVisible()
       const href = await phoneLink.getAttribute('href')
       expect(href).toMatch(/^tel:/)
@@ -176,17 +174,11 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       await responsePromise
 
       // Scope the search to the table to avoid matching dashes elsewhere on the page.
+      // Most orders in the test DB are not DBW, so at least one row should show "—".
+      // The seeded DBW order has client info; non-DBW orders show the placeholder.
       const table = page.getByRole('table').first()
       const dashes = table.getByText('—', { exact: true })
-      // The dash placeholder must render for at least one row in the seeded fixture
-      // (most orders are not DBW). If the entire fixture has client info for every
-      // order, this test would skip — surface that as visible skip rather than pass.
-      const dashCount = await dashes.count()
-      test.skip(
-        dashCount === 0,
-        'All orders in fixture have client info — cannot verify "—" placeholder'
-      )
-      expect(dashCount).toBeGreaterThan(0)
+      await expect(dashes.first()).toBeVisible()
     })
   })
 
@@ -202,46 +194,18 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     test('should NOT persist any rendered client name to localStorage or sessionStorage', async ({
       page,
     }) => {
-      // Read all visible client names from the table
-      const visibleNames = await page.evaluate(() => {
-        const cells = document.querySelectorAll('td')
-        const names: string[] = []
-        cells.forEach(cell => {
-          // Heuristic: client names are short non-empty strings in cells with no children except span
-          const text = cell.textContent?.trim() ?? ''
-          if (text && text.length > 0 && text.length < 50 && !text.includes('₽')) {
-            names.push(text)
-          }
-        })
-        return names
-      })
-
-      // Visible-skip if no client info in fixture
-      test.skip(
-        visibleNames.length === 0,
-        'No client names visible in fixture — seed endpoint may be unavailable'
-      )
-
-      // For each visible name, sweep both storages
-      const leaks = await sweepBrowserStorageForPii(page, visibleNames)
+      // Sweep for the seeded client name — deterministic, no skip
+      const needles = [SEED_CLIENT.clientName]
+      const leaks = await sweepBrowserStorageForPii(page, needles)
       expect(leaks, `PII leak detected in browser storage: ${JSON.stringify(leaks)}`).toHaveLength(
         0
       )
     })
 
     test('should NOT persist phone numbers (tel: links) to browser storage', async ({ page }) => {
-      // Extract all phone numbers from tel: links
-      const phones = await page.evaluate(() => {
-        const links = document.querySelectorAll('a[href^="tel:"]')
-        return Array.from(links).map(a => (a.getAttribute('href') ?? '').replace(/^tel:/, ''))
-      })
-
-      test.skip(
-        phones.length === 0,
-        'No phone links visible in fixture — seed endpoint may be unavailable'
-      )
-
-      const leaks = await sweepBrowserStorageForPii(page, phones)
+      // Sweep for the seeded client phone — deterministic, no skip
+      const needles = [SEED_CLIENT.clientPhone]
+      const leaks = await sweepBrowserStorageForPii(page, needles)
       expect(
         leaks,
         `Phone leak detected in browser storage: ${JSON.stringify(leaks)}`
@@ -251,25 +215,13 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     test('should clean PII from in-memory cache after navigating away (gcTime: 0)', async ({
       page,
     }) => {
-      // Capture visible PII before navigating away
-      const visibleNames = await page.evaluate(() => {
-        const cells = document.querySelectorAll('td')
-        return Array.from(cells)
-          .map(c => c.textContent?.trim() ?? '')
-          .filter(t => t.length > 0 && t.length < 50 && !t.includes('₽'))
-      })
-
-      test.skip(
-        visibleNames.length === 0,
-        'No PII to verify eviction — seed endpoint may be unavailable'
-      )
-
       // Navigate away — this unmounts the orders page and should evict TanStack Query cache
       await page.goto('/dashboard')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
-      // Sweep storages — none of the previously visible PII should remain
-      const leaks = await sweepBrowserStorageForPii(page, visibleNames)
+      // Sweep storages for the seeded PII — none should remain after navigation
+      const needles = [SEED_CLIENT.clientName, SEED_CLIENT.clientPhone]
+      const leaks = await sweepBrowserStorageForPii(page, needles)
       expect(
         leaks,
         `PII persisted after navigation away from /orders: ${JSON.stringify(leaks)}`
@@ -288,13 +240,13 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       await responsePromise
 
       const phoneLinkLocator = page.getByRole('link', { name: /Позвонить клиенту/i })
-      const linkCount = await phoneLinkLocator.count()
-      test.skip(linkCount === 0, 'No phone links in fixture — seed endpoint may be unavailable')
 
       // Block the tel: navigation so jsdom-style protocol errors don't fire
       await page.route('tel:**', route => route.abort())
 
+      // Seed succeeded — phone link must be visible (no skip)
       const phoneLink = phoneLinkLocator.first()
+      await expect(phoneLink).toBeVisible()
       // Click the phone link — modal should NOT open. The .catch() here is justified
       // because aborting tel: navigation legitimately throws an exception in jsdom mode
       // (a known platform quirk). This is NOT control flow — it handles a specific
@@ -418,25 +370,11 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       // 1. Land on orders with deterministic wait for the PII payload
       const responsePromise = waitForClientInfoResponseOrNull(page)
       await page.goto(ORDERS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
       await responsePromise
 
-      const visiblePii = await page.evaluate(() => {
-        const cells = Array.from(document.querySelectorAll('td'))
-        const phoneLinks = Array.from(document.querySelectorAll('a[href^="tel:"]'))
-        const phones = phoneLinks.map(a => (a.getAttribute('href') ?? '').replace(/^tel:/, ''))
-        const names = cells
-          .map(c => c.textContent?.trim() ?? '')
-          .filter(t => t.length > 1 && t.length < 50 && !t.includes('₽') && !/^\d+$/.test(t))
-        return { phones, names }
-      })
-
-      const allNeedles = [...visiblePii.phones, ...visiblePii.names]
-      // Visible-skip when fixture has no PII to verify (no silent pass)
-      test.skip(
-        allNeedles.length === 0,
-        'No PII visible in fixture — sentinel seed endpoint may be unavailable'
-      )
+      // Use seeded PII directly — deterministic, no skip
+      const allNeedles = [SEED_CLIENT.clientName, SEED_CLIENT.clientPhone]
 
       // 2. Navigate through several pages to exercise unmount/mount cycles.
       // Routes are well-known and asserted to exist — no try/catch around navigation.

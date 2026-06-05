@@ -12,6 +12,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   OrdersVolumeParams,
   OrdersVolumeResponse,
@@ -49,7 +50,7 @@ export async function getOrdersVolume(params: OrdersVolumeParams): Promise<Order
     searchParams.set('aggregation', params.aggregation)
   }
 
-  console.info('[Orders Volume] Fetching orders volume:', params)
+  logger.debug('[Orders Volume] Fetching orders volume:', params)
 
   return apiClient.get<OrdersVolumeResponse>(
     `/v1/analytics/orders/volume?${searchParams.toString()}`,
@@ -118,7 +119,7 @@ export async function getSeasonalPatterns(
     ? `/v1/analytics/orders/seasonal?${queryString}`
     : '/v1/analytics/orders/seasonal'
 
-  console.info('[Seasonal Patterns] Fetching patterns:', params)
+  logger.debug('[Seasonal Patterns] Fetching patterns:', params)
 
   return apiClient.get<SeasonalPatternsResponse>(url, { skipDataUnwrap: true })
 }

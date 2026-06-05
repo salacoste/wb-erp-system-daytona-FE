@@ -8,6 +8,7 @@
  */
 
 import { apiClient } from '../api-client'
+import { logger } from '@/lib/logger'
 import type {
   SuppliesListParams,
   SuppliesListResponse,
@@ -70,12 +71,12 @@ export async function getSupplies(params: SuppliesListParams = {}): Promise<Supp
   const queryString = buildQueryString(params)
   const url = queryString ? `/v1/supplies?${queryString}` : '/v1/supplies'
 
-  console.info('[Supplies API] Fetching supplies:', params)
+  logger.debug('[Supplies API] Fetching supplies:', params)
 
   const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
   const response = normalizeSuppliesListResponse(raw)
 
-  console.info('[Supplies API] Supplies response:', {
+  logger.debug('[Supplies API] Supplies response:', {
     count: response.items?.length ?? 0,
     total: response.pagination?.total ?? 0,
   })
@@ -88,7 +89,7 @@ export async function getSupplies(params: SuppliesListParams = {}): Promise<Supp
  * GET /v1/supplies/:id
  */
 export async function getSupply(supplyId: string): Promise<SupplyDetailResponse> {
-  console.info('[Supplies API] Fetching supply:', supplyId)
+  logger.debug('[Supplies API] Fetching supply:', supplyId)
 
   const raw = await apiClient.get<unknown>(`/v1/supplies/${supplyId}`, { skipDataUnwrap: true })
   return normalizeSupplyDetailResponse(raw)
@@ -103,11 +104,11 @@ export async function getSupply(supplyId: string): Promise<SupplyDetailResponse>
  * POST /v1/supplies
  */
 export async function createSupply(data: CreateSupplyRequest = {}): Promise<CreateSupplyResponse> {
-  console.info('[Supplies API] Creating supply:', data)
+  logger.debug('[Supplies API] Creating supply:', data)
 
   const response = await apiClient.post<CreateSupplyResponse>('/v1/supplies', data)
 
-  console.info('[Supplies API] Supply created:', response.id)
+  logger.debug('[Supplies API] Supply created:', response.id)
 
   return response
 }
@@ -117,7 +118,7 @@ export async function createSupply(data: CreateSupplyRequest = {}): Promise<Crea
  * POST /v1/supplies/:id/orders
  */
 export async function addOrders(supplyId: string, orderIds: string[]): Promise<AddOrdersResponse> {
-  console.info('[Supplies API] Adding orders:', {
+  logger.debug('[Supplies API] Adding orders:', {
     supplyId,
     orderCount: orderIds.length,
   })
@@ -126,7 +127,7 @@ export async function addOrders(supplyId: string, orderIds: string[]): Promise<A
     orderIds,
   } as AddOrdersRequest)
 
-  console.info('[Supplies API] Orders added:', {
+  logger.debug('[Supplies API] Orders added:', {
     added: response.added,
     failed: response.failed,
   })
@@ -143,7 +144,7 @@ export async function removeOrders(
   supplyId: string,
   orderIds: string[]
 ): Promise<RemoveOrdersResponse> {
-  console.info('[Supplies API] Removing orders:', {
+  logger.debug('[Supplies API] Removing orders:', {
     supplyId,
     orderCount: orderIds.length,
   })
@@ -154,7 +155,7 @@ export async function removeOrders(
     { orderIds } as RemoveOrdersRequest
   )
 
-  console.info('[Supplies API] Orders removed:', response.removedCount)
+  logger.debug('[Supplies API] Orders removed:', response.removedCount)
 
   return response
 }
@@ -164,11 +165,11 @@ export async function removeOrders(
  * POST /v1/supplies/:id/close
  */
 export async function closeSupply(supplyId: string): Promise<CloseSupplyResponse> {
-  console.info('[Supplies API] Closing supply:', supplyId)
+  logger.debug('[Supplies API] Closing supply:', supplyId)
 
   const response = await apiClient.post<CloseSupplyResponse>(`/v1/supplies/${supplyId}/close`, {})
 
-  console.info('[Supplies API] Supply closed:', response.closedAt)
+  logger.debug('[Supplies API] Supply closed:', response.closedAt)
 
   return response
 }

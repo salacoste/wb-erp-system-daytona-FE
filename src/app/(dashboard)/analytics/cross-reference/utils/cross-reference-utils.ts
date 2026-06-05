@@ -1,5 +1,5 @@
 /**
- * Cross-Reference Utilities — Story 73.7-FE + Story 121.2-FE
+ * Cross-Reference Utilities — Story 73.7-FE
  * Merge search orders (groupBy=product) with advertising analytics (view_by=sku)
  * Join on nmId client-side. No backend cross-reference endpoint.
  */
@@ -8,9 +8,6 @@ import type { SearchOrderItem } from '@/types/search-analytics'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
 
 export type Channel = 'organic' | 'ad' | 'both'
-
-/** Cannibalization risk level based on organic contribution + ad spend. */
-export type CannibalizationRisk = 'high' | 'medium' | 'low'
 
 export interface CrossReferenceItem {
   nmId: number
@@ -22,10 +19,9 @@ export interface CrossReferenceItem {
   /** Ad-attributed revenue. null when ads RAN but WB returned no revenue (unknown) — rendered
    *  "—", NOT 0 (anti-pattern #8). 0 means a genuinely organic row (no ads → no ad-revenue). */
   adRevenue: number | null
-  /** Organic contribution percentage from advertising analytics — ratio 0..100.
-   * null when no advertising data for this product (pure organic). Story 121.2-FE. */
-  organicContribution: number | null
   channel: Channel
+  /** Percentage of orders attributed to organic search (vs ads). null when not computed. */
+  organicContribution?: number | null
 }
 
 export interface OverlapSummary {
@@ -83,9 +79,6 @@ export function mergeSearchAndAdData(
       // adRevenue is DISPLAYED per row (not aggregated), so preserve null: ad ran but WB returned
       // no revenue → null → "—" (anti-pattern #8). Organic rows (no ad item) → genuine 0.
       adRevenue: ad ? ad.revenue : 0,
-      // organicContribution: null when no advertising data (pure organic), 0..100 when ads present.
-      // Preserves null per anti-pattern #8 — organic contribution is a ratio, not a count.
-      organicContribution: ad ? ad.organic_contribution : null,
       channel: inSearch && inAd ? 'both' : inSearch ? 'organic' : 'ad',
     })
   }
@@ -134,18 +127,4 @@ export function getTopWastedSpend(items: CrossReferenceItem[], limit = 5): Cross
     .filter(item => item.channel === 'both' && item.adSpend > 0)
     .sort((a, b) => b.adSpend - a.adSpend)
     .slice(0, limit)
-}
-
-/**
- * Classify cannibalization risk for a product.
- * Story 121.2-FE / 121.3-FE.
- * High: organicContribution > 70% AND spend > 0 → paying for ads on organically strong products.
- * Medium: organicContribution 40–70% AND spend > 0 → balanced but worth monitoring.
- * Low: everything else (ad-only, organic-only, or low organic contribution).
- */
-export function classifyCannibalization(item: CrossReferenceItem): CannibalizationRisk {
-  if (item.organicContribution == null || item.adSpend <= 0) return 'low'
-  if (item.organicContribution > 70) return 'high'
-  if (item.organicContribution > 40) return 'medium'
-  return 'low'
 }

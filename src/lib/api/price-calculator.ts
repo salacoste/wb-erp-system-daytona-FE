@@ -6,10 +6,8 @@
  */
 
 import { apiClient } from '@/lib/api-client'
-import type {
-  PriceCalculatorRequest,
-  PriceCalculatorResponse,
-} from '@/types/price-calculator'
+import { logger } from '@/lib/logger'
+import type { PriceCalculatorRequest, PriceCalculatorResponse } from '@/types/price-calculator'
 
 /**
  * Calculate optimal selling price based on target margin
@@ -35,9 +33,9 @@ import type {
  * // => { result: { recommended_price: 2500, actual_margin_pct: 20.5, ... }, ... }
  */
 export async function calculatePrice(
-  request: PriceCalculatorRequest,
+  request: PriceCalculatorRequest
 ): Promise<PriceCalculatorResponse> {
-  console.info('[Price Calculator] Calculating price:', {
+  logger.debug('[Price Calculator] Calculating price:', {
     targetMargin: request.target_margin_pct,
     cogs: request.cogs_rub,
     logistics: request.logistics_forward_rub + request.logistics_reverse_rub,
@@ -45,10 +43,10 @@ export async function calculatePrice(
 
   const response = await apiClient.post<PriceCalculatorResponse>(
     '/v1/products/price-calculator',
-    request,
+    request
   )
 
-  console.info('[Price Calculator] Calculation result:', {
+  logger.debug('[Price Calculator] Calculation result:', {
     recommendedPrice: response.result?.recommended_price,
     actualMargin: response.result?.actual_margin_pct,
     warnings: response.warnings?.length ?? 0,

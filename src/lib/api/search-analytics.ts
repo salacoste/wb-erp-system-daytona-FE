@@ -10,6 +10,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type {
   SearchByProductParams,
   SearchByProductResponse,
@@ -78,7 +79,7 @@ export async function getSearchOrders(params: SearchOrdersParams): Promise<Searc
   // Story 119.1-FE 1st-pass F-7: gate hot-path console writes behind NODE_ENV
   // check (preserve debug aid for dev/test; silent in production).
   if (process.env.NODE_ENV !== 'production') {
-    console.info('[SearchAnalytics] Fetching orders:', {
+    logger.debug('[SearchAnalytics] Fetching orders:', {
       groupBy: params.groupBy ?? 'query',
     })
   }
@@ -91,12 +92,9 @@ export async function getSearchOrders(params: SearchOrdersParams): Promise<Searc
 
   // Story 119.1-FE: log post-normalize count so the debug line reflects what
   // consumers actually receive (Story 117.1-FE added the original log).
-  // 1st-pass F-7: same NODE_ENV gate as above.
-  if (process.env.NODE_ENV !== 'production') {
-    console.info('[SearchAnalytics] orders response:', {
-      items: response.items.length,
-    })
-  }
+  logger.debug('[SearchAnalytics] orders response:', {
+    items: response.items.length,
+  })
 
   return response
 }

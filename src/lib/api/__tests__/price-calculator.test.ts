@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { calculatePrice } from '../price-calculator'
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type { PriceCalculatorRequest } from '@/types/price-calculator'
 import {
   mockPriceCalculatorRequest,
@@ -23,8 +24,14 @@ vi.mock('@/lib/api-client', () => ({
   },
 }))
 
-// Mock console.info to reduce test noise
-vi.spyOn(console, 'info').mockImplementation(() => {})
+// Mock logger (source uses logger.debug, not console.info directly)
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+  },
+}))
 
 describe('Price Calculator API Client', () => {
   beforeEach(() => {
@@ -123,7 +130,7 @@ describe('Price Calculator API Client', () => {
 
       await calculatePrice(mockPriceCalculatorRequest)
 
-      expect(console.info).toHaveBeenCalledWith(
+      expect(vi.mocked(logger.debug)).toHaveBeenCalledWith(
         '[Price Calculator] Calculating price:',
         expect.objectContaining({
           targetMargin: 20.0,
@@ -137,7 +144,7 @@ describe('Price Calculator API Client', () => {
 
       await calculatePrice(mockPriceCalculatorRequest)
 
-      expect(console.info).toHaveBeenCalledWith(
+      expect(vi.mocked(logger.debug)).toHaveBeenCalledWith(
         '[Price Calculator] Calculation result:',
         expect.objectContaining({
           recommendedPrice: 2500.0,
@@ -151,7 +158,7 @@ describe('Price Calculator API Client', () => {
 
       await calculatePrice(mockPriceCalculatorRequest)
 
-      expect(console.info).toHaveBeenCalledWith(
+      expect(vi.mocked(logger.debug)).toHaveBeenCalledWith(
         '[Price Calculator] Calculation result:',
         expect.objectContaining({
           warnings: 2,
@@ -163,18 +170,14 @@ describe('Price Calculator API Client', () => {
       const networkError = new Error('Network error')
       vi.mocked(apiClient.post).mockRejectedValue(networkError)
 
-      await expect(calculatePrice(mockPriceCalculatorRequest)).rejects.toThrow(
-        'Network error'
-      )
+      await expect(calculatePrice(mockPriceCalculatorRequest)).rejects.toThrow('Network error')
     })
 
     it('propagates API errors from backend', async () => {
       const apiError = new Error('VALIDATION_ERROR: Invalid input')
       vi.mocked(apiClient.post).mockRejectedValue(apiError)
 
-      await expect(calculatePrice(mockPriceCalculatorRequest)).rejects.toThrow(
-        'Invalid input'
-      )
+      await expect(calculatePrice(mockPriceCalculatorRequest)).rejects.toThrow('Invalid input')
     })
   })
 

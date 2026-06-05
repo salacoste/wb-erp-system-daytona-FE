@@ -8,6 +8,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type {
   FbsTrendsParams,
   TrendsResponse,
@@ -47,7 +48,7 @@ export async function getFbsTrends(params: FbsTrendsParams): Promise<TrendsRespo
   if (params.aggregation) searchParams.set('aggregation', params.aggregation)
   if (params.metrics?.length) searchParams.set('metrics', params.metrics.join(','))
 
-  console.info('[FBS Analytics] Fetching trends:', {
+  logger.debug('[FBS Analytics] Fetching trends:', {
     from: params.from,
     to: params.to,
     aggregation: params.aggregation ?? 'day',
@@ -59,7 +60,7 @@ export async function getFbsTrends(params: FbsTrendsParams): Promise<TrendsRespo
   )
   const response = normalizeTrendsResponse(raw)
 
-  console.info('[FBS Analytics] Trends response:', {
+  logger.debug('[FBS Analytics] Trends response:', {
     dataPoints: response.trends?.length ?? 0,
     period: response.period?.daysIncluded ?? 0,
   })
@@ -76,7 +77,7 @@ export async function getFbsSeasonal(params?: FbsSeasonalParams): Promise<Season
   if (params?.months) searchParams.set('months', params.months.toString())
   if (params?.view) searchParams.set('view', params.view)
 
-  console.info('[FBS Analytics] Fetching seasonal patterns:', {
+  logger.debug('[FBS Analytics] Fetching seasonal patterns:', {
     months: params?.months ?? 12,
     view: params?.view ?? 'all',
   })
@@ -89,7 +90,7 @@ export async function getFbsSeasonal(params?: FbsSeasonalParams): Promise<Season
   const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
   const response = normalizeSeasonalResponse(raw)
 
-  console.info('[FBS Analytics] Seasonal response:', {
+  logger.debug('[FBS Analytics] Seasonal response:', {
     hasMonthly: !!response.patterns?.monthly,
     hasWeekday: !!response.patterns?.weekday,
     hasQuarterly: !!response.patterns?.quarterly,
@@ -109,7 +110,7 @@ export async function getFbsCompare(params: FbsCompareParams): Promise<CompareRe
   searchParams.set('period2_from', params.period2From)
   searchParams.set('period2_to', params.period2To)
 
-  console.info('[FBS Analytics] Fetching comparison:', {
+  logger.debug('[FBS Analytics] Fetching comparison:', {
     period1: `${params.period1From} - ${params.period1To}`,
     period2: `${params.period2From} - ${params.period2To}`,
   })
@@ -120,7 +121,7 @@ export async function getFbsCompare(params: FbsCompareParams): Promise<CompareRe
   )
   const response = normalizeCompareResponse(raw)
 
-  console.info('[FBS Analytics] Comparison response:', {
+  logger.debug('[FBS Analytics] Comparison response:', {
     ordersChange: response.comparison?.ordersChangePercent ?? 0,
     revenueChange: response.comparison?.revenueChangePercent ?? 0,
   })

@@ -48,9 +48,7 @@ function createTestQueryClient(): QueryClient {
 
 function renderWithProviders(ui: React.ReactElement) {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 // Mock return value type for useAuth (extends base for page needs)
@@ -94,10 +92,13 @@ describe('TariffSettingsPage', () => {
       const { default: TariffSettingsPage } = await import('../page')
       renderWithProviders(<TariffSettingsPage />)
 
-      // Assert: Should redirect to dashboard
-      await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/dashboard')
-      })
+      // Assert: Redirect is synchronous — no waitFor needed
+      await waitFor(
+        () => {
+          expect(mockPush).toHaveBeenCalledWith('/dashboard')
+        },
+        { timeout: 5000 }
+      )
     })
 
     it('should redirect Analyst users to dashboard', async () => {
@@ -134,9 +135,7 @@ describe('TariffSettingsPage', () => {
 
       // Should render page title
       await waitFor(() => {
-        expect(
-          screen.getByRole('heading', { name: /управление тарифами/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: /управление тарифами/i })).toBeInTheDocument()
       })
     })
   })
@@ -158,19 +157,13 @@ describe('TariffSettingsPage', () => {
 
       await waitFor(() => {
         // Tab 1: "Текущие настройки"
-        expect(
-          screen.getByRole('tab', { name: /текущие настройки/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /текущие настройки/i })).toBeInTheDocument()
 
         // Tab 2: "История версий"
-        expect(
-          screen.getByRole('tab', { name: /история версий/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /история версий/i })).toBeInTheDocument()
 
         // Tab 3: "Журнал изменений"
-        expect(
-          screen.getByRole('tab', { name: /журнал изменений/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /журнал изменений/i })).toBeInTheDocument()
       })
     })
 
@@ -192,9 +185,7 @@ describe('TariffSettingsPage', () => {
       renderWithProviders(<TariffSettingsPage />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('tab', { name: /история версий/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /история версий/i })).toBeInTheDocument()
       })
 
       const historyTab = screen.getByRole('tab', { name: /история версий/i })
@@ -209,9 +200,7 @@ describe('TariffSettingsPage', () => {
       renderWithProviders(<TariffSettingsPage />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('tab', { name: /журнал изменений/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /журнал изменений/i })).toBeInTheDocument()
       })
 
       const auditTab = screen.getByRole('tab', { name: /журнал изменений/i })
@@ -260,8 +249,7 @@ describe('TariffSettingsPage', () => {
       // Should show skeleton elements or redirect
       await waitFor(() => {
         // Either shows skeleton or redirects to login
-        const hasSkeletons =
-          document.querySelectorAll('[data-testid="skeleton"]').length > 0
+        const hasSkeletons = document.querySelectorAll('[data-testid="skeleton"]').length > 0
         const wasRedirected = mockPush.mock.calls.length > 0
         expect(hasSkeletons || wasRedirected).toBe(true)
       })
@@ -281,9 +269,7 @@ describe('TariffSettingsPage', () => {
 
       await waitFor(() => {
         // Should render actual content, not skeleton
-        expect(
-          screen.getByRole('heading', { name: /управление тарифами/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: /управление тарифами/i })).toBeInTheDocument()
       })
     })
   })
@@ -304,9 +290,7 @@ describe('TariffSettingsPage', () => {
       renderWithProviders(<TariffSettingsPage />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('heading', { name: /управление тарифами/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: /управление тарифами/i })).toBeInTheDocument()
       })
     })
 
@@ -315,9 +299,7 @@ describe('TariffSettingsPage', () => {
       renderWithProviders(<TariffSettingsPage />)
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/настройки глобальных тарифов wildberries/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/настройки глобальных тарифов wildberries/i)).toBeInTheDocument()
       })
     })
   })

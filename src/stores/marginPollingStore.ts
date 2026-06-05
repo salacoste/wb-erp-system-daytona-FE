@@ -27,24 +27,17 @@ export const useMarginPollingStore = create<MarginPollingState>((set, get) => ({
   pollingProducts: new Set<string>(),
 
   addPollingProduct: (nmId: string) => {
-    set((state) => {
+    set(state => {
       const newSet = new Set(state.pollingProducts)
       newSet.add(nmId)
-      console.log(`🔍 [Polling Store] Adding product ${nmId} to polling:`, {
-        pollingProducts: Array.from(newSet),
-      })
       return { pollingProducts: newSet }
     })
   },
 
   removePollingProduct: (nmId: string) => {
-    set((state) => {
+    set(state => {
       const newSet = new Set(state.pollingProducts)
-      const wasRemoved = newSet.delete(nmId)
-      console.log(`🔍 [Polling Store] Removing product ${nmId} from polling:`, {
-        wasRemoved,
-        remainingProducts: Array.from(newSet),
-      })
+      newSet.delete(nmId)
       return { pollingProducts: newSet }
     })
   },
@@ -57,4 +50,3 @@ export const useMarginPollingStore = create<MarginPollingState>((set, get) => ({
     set({ pollingProducts: new Set() })
   },
 }))
-

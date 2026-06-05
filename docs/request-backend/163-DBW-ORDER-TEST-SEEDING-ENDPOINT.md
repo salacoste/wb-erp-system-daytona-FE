@@ -36,7 +36,7 @@ Frontend cannot create DBW orders directly:
 **Status**: RESOLVED — Fully implemented in Stories 87.1 + 103.2
 **Resolution date**: 2026-04-28
 **Summary**: Endpoints `POST /v1/test/seed/dbw-order` and `DELETE /v1/test/seed/dbw-order/:orderId` implemented in `src/test-utils/test-seed.service.ts`. Environment-gated (development only), Owner-role required, cabinet isolation enforced. Frontend E2E fixture at `frontend/e2e/fixtures/dbw-order-seed.ts`.
-**Remaining frontend action**: E2E tests remain in graceful skip mode. Privacy guarantees verified at unit test level (12 tests).
+**Frontend wiring**: E2E tests now use deterministic seeding — 7 seed-dependent `test.skip` calls replaced with direct assertions gated by a single describe-level skip when the endpoint is unavailable (production). All 5 privacy E2E tests run deterministically when the dev backend is available.
 - The backend already has all the infrastructure to insert DBW orders into the database — the frontend just needs an authenticated endpoint to call
 
 ---

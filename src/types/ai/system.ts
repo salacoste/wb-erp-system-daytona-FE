@@ -69,19 +69,18 @@ export type AnomalyStatus = 'pending' | 'resolved'
 export interface AnomalyEntry {
   id: string
   nmId: number
+  vendorCode: string | null
   forecastId?: string
   anomalyType: string
-  triggeredAt: string
-  status: AnomalyStatus
-  cabinetId: string
-  modelId?: string
-  /** Vendor code (артикул). null when backend has no vendor code for this nmId. */
-  vendorCode: string | null
   severity: string
   value: number
   baselineValue: number
   deviationPct: number
   rootCauseHint: string | null
+  triggeredAt: string
+  status: AnomalyStatus
+  cabinetId: string
+  modelId?: string
   resolvedAt: string | null
   resolutionCause: string | null
   resolutionNote: string | null
