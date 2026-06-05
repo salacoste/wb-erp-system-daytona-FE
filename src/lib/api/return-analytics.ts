@@ -10,6 +10,7 @@
 
 import { apiClient } from '@/lib/api-client'
 import { logger } from '@/lib/logger'
+import { normalizeReturnReasonsResponse } from './return-analytics-normalizer'
 import type {
   ReturnReasonsResponse,
   BySkuReturnResponse,
@@ -32,14 +33,14 @@ export async function getReturnReasons(
 
   logger.debug('[Returns] Fetching reasons:', { from, to, locale: locale ?? 'ru' })
 
-  const response = await apiClient.get<ReturnReasonsResponse>(
-    `/v1/analytics/returns/reasons?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
+  const raw = await apiClient.get<unknown>(`/v1/analytics/returns/reasons?${sp.toString()}`, {
+    skipDataUnwrap: true,
+  })
+  const response = normalizeReturnReasonsResponse(raw)
 
   logger.debug('[Returns] Reasons response:', {
-    totalReturns: response.summary?.totalReturns ?? 0,
-    categories: response.byCategory?.length ?? 0,
+    totalReturns: response.summary.totalReturns,
+    categories: response.byCategory.length,
   })
 
   return response

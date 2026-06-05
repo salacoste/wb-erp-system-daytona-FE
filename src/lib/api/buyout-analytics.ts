@@ -6,6 +6,10 @@
 
 import { apiClient } from '@/lib/api-client'
 import { logger } from '@/lib/logger'
+import {
+  normalizeBySkuBuyoutResponse,
+  normalizeBuyoutSummaryResponse,
+} from './buyout-analytics-normalizer'
 import type {
   BuyoutBySkuParams,
   BySkuBuyoutResponse,
@@ -37,14 +41,14 @@ export async function getBuyoutBySku(params: BuyoutBySkuParams): Promise<BySkuBu
     source: params.source ?? 'blended',
   })
 
-  const response = await apiClient.get<BySkuBuyoutResponse>(
-    `/v1/analytics/buyout/by-sku?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
+  const raw = await apiClient.get<unknown>(`/v1/analytics/buyout/by-sku?${sp.toString()}`, {
+    skipDataUnwrap: true,
+  })
+  const response = normalizeBySkuBuyoutResponse(raw)
 
   logger.debug('[Buyout] by-sku response:', {
-    items: response.data?.length ?? 0,
-    total: response.pagination?.total ?? 0,
+    items: response.data.length,
+    total: response.pagination.total,
   })
 
   return response
@@ -64,10 +68,10 @@ export async function getBuyoutSummary(
 
   logger.debug('[Buyout] Fetching summary:', { from: params.from, to: params.to })
 
-  const response = await apiClient.get<BuyoutSummaryResponse>(
-    `/v1/analytics/buyout/summary?${sp.toString()}`,
-    { skipDataUnwrap: true }
-  )
+  const raw = await apiClient.get<unknown>(`/v1/analytics/buyout/summary?${sp.toString()}`, {
+    skipDataUnwrap: true,
+  })
+  const response = normalizeBuyoutSummaryResponse(raw)
 
   logger.debug('[Buyout] Summary response:', {
     buyoutRate: response.overallBuyoutRatePct,

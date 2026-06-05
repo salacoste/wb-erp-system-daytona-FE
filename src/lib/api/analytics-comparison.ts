@@ -10,6 +10,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { normalizeComparisonResponse } from './analytics-comparison-normalizer'
 import type {
   ComparisonParams,
   ComparisonResponse,
@@ -55,9 +56,10 @@ export async function getAnalyticsComparison(
     searchParams.set('groupBy', params.groupBy)
   }
 
-  return apiClient.get<ComparisonResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/weekly/comparison?${searchParams.toString()}`
   )
+  return normalizeComparisonResponse(raw)
 }
 
 // ============================================================================

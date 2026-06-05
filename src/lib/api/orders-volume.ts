@@ -13,6 +13,10 @@
 
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
+import {
+  normalizeOrdersVolumeResponse,
+  normalizeSeasonalPatternsResponse,
+} from './orders-volume-normalizer'
 import type {
   OrdersVolumeParams,
   OrdersVolumeResponse,
@@ -52,10 +56,11 @@ export async function getOrdersVolume(params: OrdersVolumeParams): Promise<Order
 
   logger.debug('[Orders Volume] Fetching orders volume:', params)
 
-  return apiClient.get<OrdersVolumeResponse>(
+  const raw = await apiClient.get<unknown>(
     `/v1/analytics/orders/volume?${searchParams.toString()}`,
     { skipDataUnwrap: true }
   )
+  return normalizeOrdersVolumeResponse(raw)
 }
 
 // =============================================================================
@@ -121,5 +126,6 @@ export async function getSeasonalPatterns(
 
   logger.debug('[Seasonal Patterns] Fetching patterns:', params)
 
-  return apiClient.get<SeasonalPatternsResponse>(url, { skipDataUnwrap: true })
+  const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
+  return normalizeSeasonalPatternsResponse(raw)
 }

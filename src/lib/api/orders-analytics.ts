@@ -8,6 +8,11 @@
 
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
+import {
+  normalizeVelocityMetricsResponse,
+  normalizeSlaMetricsResponse,
+  normalizeVolumeMetricsResponse,
+} from './orders-analytics-normalizer'
 import type {
   VelocityMetricsParams,
   VelocityMetricsResponse,
@@ -58,9 +63,10 @@ export async function getVelocityMetrics(
 
   logger.debug('[Orders Analytics] Fetching velocity metrics:', params)
 
-  return apiClient.get<VelocityMetricsResponse>(`/v1/analytics/orders/velocity?${queryString}`, {
+  const raw = await apiClient.get<unknown>(`/v1/analytics/orders/velocity?${queryString}`, {
     skipDataUnwrap: true,
   })
+  return normalizeVelocityMetricsResponse(raw)
 }
 
 // ============================================================================
@@ -80,7 +86,8 @@ export async function getSlaMetrics(params: SlaMetricsParams): Promise<SlaMetric
 
   logger.debug('[Orders Analytics] Fetching SLA metrics:', params)
 
-  return apiClient.get<SlaMetricsResponse>(url, { skipDataUnwrap: true })
+  const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
+  return normalizeSlaMetricsResponse(raw)
 }
 
 // ============================================================================
@@ -101,9 +108,10 @@ export async function getVolumeMetrics(
 
   logger.debug('[Orders Analytics] Fetching volume metrics:', params)
 
-  return apiClient.get<VolumeMetricsResponse>(`/v1/analytics/orders/volume?${queryString}`, {
+  const raw = await apiClient.get<unknown>(`/v1/analytics/orders/volume?${queryString}`, {
     skipDataUnwrap: true,
   })
+  return normalizeVolumeMetricsResponse(raw)
 }
 
 // ============================================================================
