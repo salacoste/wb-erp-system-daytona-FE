@@ -119,9 +119,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'COGS assigned successfully',
           marginRecalculation: {
-            weeks: ['2026-W03', '2026-W04'],
-            status: 'pending',
-            taskId: 'task_abc123',
+            triggered: true,
+            affectedWeeks: ['2026-W03', '2026-W04'],
+            taskUuid: 'task_abc123',
           },
         },
       }
@@ -139,9 +139,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(result.current.data?.marginRecalculation).toEqual({
-        weeks: ['2026-W03', '2026-W04'],
-        status: 'pending',
-        taskId: 'task_abc123',
+        triggered: true,
+        affectedWeeks: ['2026-W03', '2026-W04'],
+        taskUuid: 'task_abc123',
       })
     })
 
@@ -181,9 +181,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'COGS assigned successfully',
           marginRecalculation: {
-            weeks: ['2026-W03'],
-            status: 'in_progress',
-            taskId: 'task_xyz789',
+            triggered: true,
+            affectedWeeks: ['2026-W03'],
+            taskUuid: 'task_xyz789',
           },
         },
       }
@@ -202,9 +202,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       // Check that console.log was called with margin recalculation info
       expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Margin Recalculation:'))
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Status: in_progress'))
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Triggered: true'))
       expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Weeks: 2026-W03'))
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Task ID: task_xyz789'))
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Task UUID: task_xyz789'))
 
       consoleLogSpy.mockRestore()
     })
@@ -288,9 +288,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'Success',
           marginRecalculation: {
-            weeks: ['2026-W03'],
-            status: 'pending',
-            taskId: 'task_pending',
+            triggered: true,
+            affectedWeeks: ['2026-W03'],
+            taskUuid: 'task_pending',
           },
         },
       }
@@ -307,7 +307,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.marginRecalculation?.status).toBe('pending')
+      expect(result.current.data?.marginRecalculation?.triggered).toBe(true)
     })
 
     it('should handle "in_progress" status', async () => {
@@ -318,9 +318,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'Success',
           marginRecalculation: {
-            weeks: ['2026-W03', '2026-W04'],
-            status: 'in_progress',
-            taskId: 'task_progress',
+            triggered: true,
+            affectedWeeks: ['2026-W03', '2026-W04'],
+            taskUuid: 'task_progress',
           },
         },
       }
@@ -337,7 +337,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.marginRecalculation?.status).toBe('in_progress')
+      expect(result.current.data?.marginRecalculation?.triggered).toBe(true)
     })
 
     it('should handle "completed" status', async () => {
@@ -348,9 +348,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'Success',
           marginRecalculation: {
-            weeks: ['2026-W03'],
-            status: 'completed',
-            taskId: 'task_completed',
+            triggered: true,
+            affectedWeeks: ['2026-W03'],
+            taskUuid: 'task_completed',
           },
         },
       }
@@ -367,7 +367,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.marginRecalculation?.status).toBe('completed')
+      expect(result.current.data?.marginRecalculation?.triggered).toBe(true)
     })
   })
 
@@ -384,9 +384,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'Success',
           marginRecalculation: {
-            weeks: ['2026-W03'],
-            status: 'pending',
-            taskId: 'task_single_week',
+            triggered: true,
+            affectedWeeks: ['2026-W03'],
+            taskUuid: 'task_single_week',
           },
         },
       }
@@ -403,7 +403,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.marginRecalculation?.weeks).toEqual(['2026-W03'])
+      expect(result.current.data?.marginRecalculation?.affectedWeeks).toEqual(['2026-W03'])
     })
 
     it('should handle multiple weeks in weeks array', async () => {
@@ -414,9 +414,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'Success',
           marginRecalculation: {
-            weeks: ['2026-W03', '2026-W04', '2026-W05'],
-            status: 'pending',
-            taskId: 'task_multiple_weeks',
+            triggered: true,
+            affectedWeeks: ['2026-W03', '2026-W04', '2026-W05'],
+            taskUuid: 'task_multiple_weeks',
           },
         },
       }
@@ -433,7 +433,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.marginRecalculation?.weeks).toEqual([
+      expect(result.current.data?.marginRecalculation?.affectedWeeks).toEqual([
         '2026-W03',
         '2026-W04',
         '2026-W05',
@@ -448,9 +448,9 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
           results: [],
           message: 'Success',
           marginRecalculation: {
-            weeks: [],
-            status: 'pending',
-            taskId: 'task_empty_weeks',
+            triggered: true,
+            affectedWeeks: [],
+            taskUuid: 'task_empty_weeks',
           },
         },
       }
@@ -467,7 +467,7 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data?.marginRecalculation?.weeks).toEqual([])
+      expect(result.current.data?.marginRecalculation?.affectedWeeks).toEqual([])
     })
   })
 })

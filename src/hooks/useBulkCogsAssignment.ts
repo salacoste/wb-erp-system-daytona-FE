@@ -71,9 +71,9 @@ export function useBulkCogsAssignment() {
 
       if (marginRecalculation) {
         console.log(`   Margin Recalculation:`)
-        console.log(`     Status: ${marginRecalculation.status}`)
-        console.log(`     Weeks: ${marginRecalculation.weeks.join(', ')}`)
-        console.log(`     Task ID: ${marginRecalculation.taskId}`)
+        console.log(`     Triggered: ${marginRecalculation.triggered}`)
+        console.log(`     Weeks: ${marginRecalculation.affectedWeeks.join(', ')}`)
+        console.log(`     Task UUID: ${marginRecalculation.taskUuid}`)
       } else if (succeeded > 0) {
         console.log(`   Margin Recalculation: Not triggered (no sales data for uploaded COGS)`)
       }

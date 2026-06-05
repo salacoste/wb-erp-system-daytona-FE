@@ -62,13 +62,13 @@ describe('normalizeBulkCogsResponse', () => {
       failed: 0,
       results: [{ nm_id: '999', success: true, cogs_id: 'c1' }],
       message: 'ok',
-      marginRecalculation: { status: 'pending', weeks: ['2026-W22'], taskId: 't1' },
+      marginRecalculation: { triggered: true, affectedWeeks: ['2026-W22'], taskUuid: 't1' },
     })
     expect(res.succeeded).toBe(5)
     expect(res.failed).toBe(0)
     expect(res.results[0]).toMatchObject({ nm_id: '999', success: true })
     expect(res.message).toBe('ok')
-    expect(res.marginRecalculation).toMatchObject({ status: 'pending', taskId: 't1' })
+    expect(res.marginRecalculation).toMatchObject({ triggered: true, taskUuid: 't1' })
   })
 
   it('descends a surviving { data: {...} } wrapper defensively (v2 inside)', () => {

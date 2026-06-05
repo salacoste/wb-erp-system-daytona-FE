@@ -25,16 +25,3 @@ export interface BulkCogsProduct {
 
 /** Default pagination limit */
 export const BULK_COGS_PAGE_LIMIT = 50
-
-/**
- * Translate margin recalculation status to Russian
- * Request #118/119 - Backend fix for automatic margin recalculation
- */
-export function getStatusText(status: string): string {
-  const statusMap: Record<string, string> = {
-    pending: 'В очереди',
-    in_progress: 'Выполняется',
-    completed: 'Завершено',
-  }
-  return statusMap[status] || status
-}

@@ -131,8 +131,8 @@ export function useBulkCogsAssignmentWithPolling() {
           if (successfulItems.length > 0) {
             const estimatedSeconds = Math.round(pollingStrategy.estimatedTime / 1000)
             const weeksText =
-              marginRecalculation.weeks.length > 0
-                ? ` (${marginRecalculation.weeks.join(', ')})`
+              marginRecalculation.affectedWeeks.length > 0
+                ? ` (${marginRecalculation.affectedWeeks.join(', ')})`
                 : ''
             toast.info(`Расчёт маржи для ${succeeded} товаров начат...${weeksText}`, {
               description: `Ожидаемое время: ~${estimatedSeconds}с`,

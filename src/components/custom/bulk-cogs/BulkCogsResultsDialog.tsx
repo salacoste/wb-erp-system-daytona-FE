@@ -12,11 +12,11 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
 import { MarginCalculationStatus } from '../MarginCalculationStatus'
-import { getStatusText } from './bulk-cogs.types'
 
 interface MarginRecalculation {
-  status: string
-  weeks: string[]
+  triggered: boolean
+  affectedWeeks: string[]
+  taskUuid: string
 }
 
 interface ResultItem {
@@ -85,11 +85,11 @@ export function BulkCogsResultsDialog({
                     <div>
                       Статус:{' '}
                       <span className="font-medium">
-                        {getStatusText(resultData.marginRecalculation.status)}
+                        {resultData.marginRecalculation.triggered ? 'Запущен' : 'Не запущен'}
                       </span>
                     </div>
-                    {resultData.marginRecalculation.weeks.length > 0 && (
-                      <div>Недели: {resultData.marginRecalculation.weeks.join(', ')}</div>
+                    {resultData.marginRecalculation.affectedWeeks.length > 0 && (
+                      <div>Недели: {resultData.marginRecalculation.affectedWeeks.join(', ')}</div>
                     )}
                   </div>
                 </AlertDescription>

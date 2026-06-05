@@ -130,10 +130,14 @@ export interface BulkCogsResult {
   error_message?: string
 }
 
+/** Margin recalculation status from bulk COGS v2 response (Request #186). */
 export interface MarginRecalculationStatus {
-  weeks: string[]
-  status: 'pending' | 'in_progress' | 'completed'
-  taskId: string
+  /** Whether the backend enqueued a margin-batch recalculation task */
+  triggered: boolean
+  /** ISO weeks affected by the COGS assignment — used for toast UX */
+  affectedWeeks: string[]
+  /** BullMQ job ID for the margin-batch task (e.g. "margin-batch-<cabinetId>-<ts>") */
+  taskUuid: string
 }
 
 export interface BulkCogsUploadResponse {

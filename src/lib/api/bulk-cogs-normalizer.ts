@@ -1,21 +1,30 @@
 /**
- * Bulk-COGS Boundary Normalizer — Validation F-34.
+ * Bulk-COGS Boundary Normalizer — Validation F-34 + Request #186 v2.
  *
- * `POST /v1/products/cogs/bulk?format=v2` is SUPPOSED to return the v2 envelope
- * `{ data: { succeeded, failed, results[], message, marginRecalculation? } }`, but it
- * currently ignores `format=v2` and returns the LEGACY shape
- * `{ totalItems, createdItems, skippedItems, errors[] }` (backend request #186).
- * The old hook read `response.data.succeeded` on the apiClient-unwrapped result and
- * crashed with a TypeError on every upload — AFTER the server had already created the
- * COGS, so the user saw an error toast for a successful upload (duplicate-retry risk).
+ * `POST /v1/products/cogs/bulk?format=v2` returns the v2 envelope
+ * `{ data: { succeeded, failed, results[], message, marginRecalculation? } }`.
+ * The legacy shape `{ totalItems, createdItems, skippedItems, errors[] }` is also handled.
  *
  * This normalizer maps BOTH shapes to the canonical BulkCogsResultSummary so the hooks
  * never touch raw backend shapes (Boundary Normalizer Pattern). `marginRecalculation`
- * is only available from the v2 shape; on legacy it is undefined until #186 lands.
+ * is only available from the v2 shape (Request #186 resolved 2026-06-04).
  */
 
 import type { BulkCogsResultSummary, BulkCogsResult, MarginRecalculationStatus } from '@/types/api'
-import { toCount } from '@/lib/api/normalizer-helpers'
+import { toCount, toStringOrNull } from '@/lib/api/normalizer-helpers'
+
+/** Map raw backend marginRecalculation to canonical FE shape (Request #186 v2). */
+function normalizeMarginRecalculation(raw: unknown): MarginRecalculationStatus | undefined {
+  if (!raw || typeof raw !== 'object') return undefined
+  const m = raw as Record<string, unknown>
+  const triggered = typeof m.triggered === 'boolean' ? m.triggered : false
+  const affectedWeeks = Array.isArray(m.affectedWeeks)
+    ? m.affectedWeeks.filter((w): w is string => typeof w === 'string')
+    : []
+  const taskUuid = toStringOrNull(m.taskUuid)
+  if (!taskUuid) return undefined
+  return { triggered, affectedWeeks, taskUuid }
+}
 
 /**
  * Normalize the bulk-COGS upload response (v2 OR legacy) into BulkCogsResultSummary.
@@ -32,12 +41,9 @@ export function normalizeBulkCogsResponse(raw: unknown): BulkCogsResultSummary {
     return {
       succeeded: toCount(o.succeeded),
       failed: toCount(o.failed),
-      // PENDING BACKEND: #186 — v2 not shipped yet. When it lands, replace this blind cast with an
-      // explicit map (esp. `nm_id: String(r.nm_id)` — backend item nm_id is a NUMBER → AP#10 risk).
       results: Array.isArray(o.results) ? (o.results as BulkCogsResult[]) : [],
       message: typeof o.message === 'string' ? o.message : '',
-      marginRecalculation:
-        (o.marginRecalculation as MarginRecalculationStatus | undefined) ?? undefined,
+      marginRecalculation: normalizeMarginRecalculation(o.marginRecalculation),
     }
   }
 
