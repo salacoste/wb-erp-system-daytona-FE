@@ -21,7 +21,22 @@ import {
 } from '../shipments-api'
 import { DeliveryMode, ShipmentStatus } from '@/types/shipment-cost'
 
-const mockShipment = { id: 's-001', name: 'Test', status: ShipmentStatus.DRAFT }
+const mockShipment = {
+  id: 's-001',
+  cabinetId: 'cab-1',
+  name: 'Test',
+  deliveryMode: 'FIXED_VEHICLE',
+  totalDeliveryCost: null,
+  palletRate: null,
+  status: 'DRAFT',
+  createdBy: 'user@test.com',
+  confirmedBy: null,
+  confirmedAt: null,
+  supplyId: null,
+  pallets: [],
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+}
 
 describe('shipments-api', () => {
   beforeEach(() => {
@@ -30,14 +45,21 @@ describe('shipments-api', () => {
 
   describe('getShipments', () => {
     it('calls GET /v1/shipments with skipDataUnwrap by default', async () => {
-      vi.mocked(apiClient.get).mockResolvedValue({ data: [mockShipment], total: 1 })
+      vi.mocked(apiClient.get).mockResolvedValue({
+        data: [mockShipment],
+        total: 1,
+        page: 1,
+        limit: 20,
+      })
       const result = await getShipments()
       expect(apiClient.get).toHaveBeenCalledWith('/v1/shipments', { skipDataUnwrap: true })
-      expect(result.data).toEqual([mockShipment])
+      expect(result.data).toHaveLength(1)
+      expect(result.data[0].id).toBe('s-001')
+      expect(result.total).toBe(1)
     })
 
     it('appends query params when provided', async () => {
-      vi.mocked(apiClient.get).mockResolvedValue({ data: [], total: 0 })
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [], total: 0, page: 2, limit: 20 })
       await getShipments({ status: ShipmentStatus.DRAFT, page: 2, limit: 20 })
       expect(apiClient.get).toHaveBeenCalledWith('/v1/shipments?status=DRAFT&page=2&limit=20', {
         skipDataUnwrap: true,
@@ -50,7 +72,8 @@ describe('shipments-api', () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockShipment)
       const result = await getShipment('s-001')
       expect(apiClient.get).toHaveBeenCalledWith('/v1/shipments/s-001')
-      expect(result).toEqual(mockShipment)
+      expect(result.id).toBe('s-001')
+      expect(result.deliveryMode).toBe('FIXED_VEHICLE')
     })
   })
 
@@ -65,7 +88,7 @@ describe('shipments-api', () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockShipment)
       const result = await createShipment(data)
       expect(apiClient.post).toHaveBeenCalledWith('/v1/shipments', data)
-      expect(result).toEqual(mockShipment)
+      expect(result.id).toBe('s-001')
     })
   })
 
@@ -75,7 +98,7 @@ describe('shipments-api', () => {
       vi.mocked(apiClient.put).mockResolvedValue(mockShipment)
       const result = await updateShipment('s-001', data)
       expect(apiClient.put).toHaveBeenCalledWith('/v1/shipments/s-001', data)
-      expect(result).toEqual(mockShipment)
+      expect(result.id).toBe('s-001')
     })
   })
 

@@ -9,6 +9,7 @@
 
 import { apiClient } from '../api-client'
 import { normalizeOrdersResponse } from './orders-normalizer'
+import { normalizeOrderDetail } from './orders-detail-normalizer'
 import { logger } from '@/lib/logger'
 import type { OrdersListParams, OrdersListResponse, OrderFbsDetails } from '@/types/orders'
 
@@ -86,7 +87,8 @@ export async function getOrders(params: OrdersListParams = {}): Promise<OrdersLi
 export async function getOrderById(orderId: string): Promise<OrderFbsDetails> {
   logger.debug('[Orders API] Fetching order:', orderId)
 
-  return apiClient.get<OrderFbsDetails>(`/v1/orders/${orderId}`)
+  const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}`)
+  return normalizeOrderDetail(raw)
 }
 
 // ============================================================================

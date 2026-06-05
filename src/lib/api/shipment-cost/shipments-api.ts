@@ -13,6 +13,7 @@ import type {
   ShipmentListResponse,
   ShipmentUpdateRequest,
 } from '@/types/shipment-cost'
+import { normalizeShipment, normalizeShipmentListResponse } from './shipments-normalizer'
 
 /** GET /v1/shipments?status=&page=&limit= */
 export async function getShipments(params?: ShipmentListParams): Promise<ShipmentListResponse> {
@@ -22,22 +23,26 @@ export async function getShipments(params?: ShipmentListParams): Promise<Shipmen
   if (params?.limit != null) searchParams.set('limit', String(params.limit))
   const query = searchParams.toString()
   const url = query ? `/v1/shipments?${query}` : '/v1/shipments'
-  return apiClient.get<ShipmentListResponse>(url, { skipDataUnwrap: true })
+  const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
+  return normalizeShipmentListResponse(raw)
 }
 
 /** GET /v1/shipments/:id */
 export async function getShipment(id: string): Promise<Shipment> {
-  return apiClient.get<Shipment>(`/v1/shipments/${id}`)
+  const raw = await apiClient.get<unknown>(`/v1/shipments/${id}`)
+  return normalizeShipment(raw)
 }
 
 /** POST /v1/shipments */
 export async function createShipment(data: ShipmentCreateRequest): Promise<Shipment> {
-  return apiClient.post<Shipment>('/v1/shipments', data)
+  const raw = await apiClient.post<unknown>('/v1/shipments', data)
+  return normalizeShipment(raw)
 }
 
 /** PUT /v1/shipments/:id */
 export async function updateShipment(id: string, data: ShipmentUpdateRequest): Promise<Shipment> {
-  return apiClient.put<Shipment>(`/v1/shipments/${id}`, data)
+  const raw = await apiClient.put<unknown>(`/v1/shipments/${id}`, data)
+  return normalizeShipment(raw)
 }
 
 /** DELETE /v1/shipments/:id — DRAFT only, returns 204 */

@@ -23,6 +23,7 @@ import type {
   LiquidityTrendsResponse,
 } from '@/types/liquidity'
 import { mapBackendResponse } from './liquidity-summary-mapper'
+import { normalizeLiquidityTrendsResponse } from './liquidity-normalizer'
 
 // Re-export mappers for any consumers that need direct access
 export { mapBackendResponse } from './liquidity-summary-mapper'
@@ -81,5 +82,6 @@ export async function getLiquidityTrends(
   const endpoint = `/v1/analytics/liquidity/trends${queryString ? `?${queryString}` : ''}`
 
   // skipDataUnwrap: true — preserve full response structure
-  return apiClient.get<LiquidityTrendsResponse>(endpoint, { skipDataUnwrap: true })
+  const raw = await apiClient.get<unknown>(endpoint, { skipDataUnwrap: true })
+  return normalizeLiquidityTrendsResponse(raw)
 }

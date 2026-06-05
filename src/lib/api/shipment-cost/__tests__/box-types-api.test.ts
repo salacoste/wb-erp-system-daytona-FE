@@ -18,7 +18,32 @@ import {
   deactivateBoxType,
 } from '../box-types-api'
 
-const mockBoxType = { id: 'bt-001', name: 'Small', isActive: true }
+const mockBoxType = {
+  id: 'bt-001',
+  cabinetId: 'cab-1',
+  name: 'Small',
+  lengthCm: '10.0',
+  widthCm: '10.0',
+  heightCm: '10.0',
+  volumeCm3: '1000.0',
+  isActive: true,
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+}
+
+/** Expected normalized output for mockBoxType */
+const expectedNormalized = {
+  id: 'bt-001',
+  cabinetId: 'cab-1',
+  name: 'Small',
+  lengthCm: '10.0',
+  widthCm: '10.0',
+  heightCm: '10.0',
+  volumeCm3: '1000.0',
+  isActive: true,
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+}
 
 describe('box-types-api', () => {
   beforeEach(() => {
@@ -30,7 +55,7 @@ describe('box-types-api', () => {
       vi.mocked(apiClient.get).mockResolvedValue([mockBoxType])
       const result = await getBoxTypes()
       expect(apiClient.get).toHaveBeenCalledWith('/v1/box-types')
-      expect(result).toEqual([mockBoxType])
+      expect(result).toEqual([expectedNormalized])
     })
 
     it('appends ?includeInactive=true when flag is set', async () => {
@@ -45,7 +70,7 @@ describe('box-types-api', () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockBoxType)
       const result = await getBoxType('bt-001')
       expect(apiClient.get).toHaveBeenCalledWith('/v1/box-types/bt-001')
-      expect(result).toEqual(mockBoxType)
+      expect(result).toEqual(expectedNormalized)
     })
   })
 
@@ -55,7 +80,7 @@ describe('box-types-api', () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockBoxType)
       const result = await createBoxType(data as never)
       expect(apiClient.post).toHaveBeenCalledWith('/v1/box-types', data)
-      expect(result).toEqual(mockBoxType)
+      expect(result).toEqual(expectedNormalized)
     })
   })
 
@@ -65,7 +90,7 @@ describe('box-types-api', () => {
       vi.mocked(apiClient.put).mockResolvedValue(mockBoxType)
       const result = await updateBoxType('bt-001', data as never)
       expect(apiClient.put).toHaveBeenCalledWith('/v1/box-types/bt-001', data)
-      expect(result).toEqual(mockBoxType)
+      expect(result).toEqual(expectedNormalized)
     })
   })
 
@@ -74,7 +99,7 @@ describe('box-types-api', () => {
       vi.mocked(apiClient.delete).mockResolvedValue(mockBoxType)
       const result = await deactivateBoxType('bt-001')
       expect(apiClient.delete).toHaveBeenCalledWith('/v1/box-types/bt-001')
-      expect(result).toEqual(mockBoxType)
+      expect(result).toEqual(expectedNormalized)
     })
   })
 })

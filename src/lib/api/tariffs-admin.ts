@@ -6,6 +6,7 @@
 
 import { apiClient } from '../api-client'
 import { normalizeTariffSettingsResponse } from './tariffs-settings-normalizer'
+import { normalizeTariffAuditResponse } from './tariffs-admin-normalizer'
 import type {
   TariffSettingsDto,
   UpdateTariffSettingsDto,
@@ -68,9 +69,10 @@ export async function getTariffAuditLog(
   }
 
   const query = searchParams.toString()
-  return apiClient.get<TariffAuditResponse>(`${BASE_URL}/audit${query ? `?${query}` : ''}`, {
+  const raw = await apiClient.get<unknown>(`${BASE_URL}/audit${query ? `?${query}` : ''}`, {
     skipDataUnwrap: true,
   })
+  return normalizeTariffAuditResponse(raw)
 }
 
 // ============================================================================

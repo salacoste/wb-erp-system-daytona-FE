@@ -13,6 +13,7 @@ import type {
   StartBackfillResponse,
   BackfillActionResponse,
 } from '@/types/fbs-analytics'
+import { normalizeBackfillStatusResponse } from './fbs-backfill-normalizer'
 
 // ============================================================================
 // Backfill Admin API Functions (Owner Only)
@@ -27,11 +28,11 @@ export async function getBackfillStatus(cabinetId?: string): Promise<BackfillSta
 
   logger.debug('[FBS Analytics] Fetching backfill status:', { cabinetId: cabinetId ?? 'all' })
 
-  const response = await apiClient.get<BackfillStatusResponse>(
-    `/v1/admin/backfill/status${queryParams}`,
-    { skipDataUnwrap: true }
-  )
+  const raw = await apiClient.get<unknown>(`/v1/admin/backfill/status${queryParams}`, {
+    skipDataUnwrap: true,
+  })
 
+  const response = normalizeBackfillStatusResponse(raw)
   logger.debug('[FBS Analytics] Backfill status:', { cabinetCount: response?.length ?? 0 })
 
   return response

@@ -18,6 +18,10 @@ import type {
   SyncStatusResponse,
 } from '@/types/advertising-analytics'
 import { buildQueryString } from './advertising-analytics-api'
+import {
+  normalizeCampaignsResponse,
+  normalizeSyncStatusResponse,
+} from './advertising-campaigns-normalizer'
 
 // ============================================================================
 // Barrel Re-exports (preserve consumer API)
@@ -38,28 +42,8 @@ export {
  * Get list of advertising campaigns.
  * GET /v1/analytics/advertising/campaigns
  *
- * Returns campaigns for the cabinet with optional filtering.
- *
  * @param params - Optional query parameters for filtering and pagination
  * @returns Campaigns response with meta and campaign list
- *
- * @example
- * // Get all campaigns
- * const campaigns = await getAdvertisingCampaigns();
- *
- * @example
- * // Get only active campaigns
- * const activeCampaigns = await getAdvertisingCampaigns({
- *   status: '9',  // 9 = active
- * });
- *
- * @example
- * // Search by name with pagination
- * const searchResults = await getAdvertisingCampaigns({
- *   search: 'Autumn',
- *   limit: 10,
- *   offset: 0,
- * });
  */
 export async function getAdvertisingCampaigns(
   params?: CampaignsParams
@@ -77,63 +61,8 @@ export async function getAdvertisingCampaigns(
     offset: params?.offset ?? 0,
   })
 
-  // Backend format (snake_case with campaigns array)
-  interface BackendCampaignsResponse {
-    campaigns: Array<{
-      id: string
-      advertId: number
-      name: string
-      type: number
-      typeLabel: string
-      status: number
-      statusLabel: string
-      nmIds: number[]
-      productsCount: number
-      budget: number | null
-      dailyBudget: number
-      startDate: string
-      endDate: string
-      createdAt: string
-      updatedAt: string
-      placements?: {
-        // Story 33.9 - Request #79: Type 9 campaigns only
-        search: boolean
-        recommendations: boolean
-        carousel?: boolean
-      } | null
-    }>
-    total: number
-    limit: number
-    offset: number
-  }
-
-  // Story 33.1-fe: Fetch backend response
-  const backendResponse = await apiClient.get<BackendCampaignsResponse>(url, {
-    skipDataUnwrap: true,
-  })
-
-  // Adapt backend format to frontend format (Campaign interface from types/advertising-analytics.ts:194)
-  const response: CampaignsResponse = {
-    meta: {
-      total_count: backendResponse.total,
-      active_count: backendResponse.campaigns.filter(c => c.status === 9).length,
-    },
-    data: backendResponse.campaigns.map(campaign => ({
-      campaign_id: campaign.advertId,
-      name: campaign.name, // Used by sortCampaignsByStatus
-      type: campaign.type,
-      type_name: campaign.typeLabel || 'Неизвестно',
-      status: campaign.status,
-      status_name: campaign.statusLabel || 'Неизвестно',
-      created_at: campaign.createdAt,
-      start_time: campaign.startDate, // Backend returns date string (YYYY-MM-DD)
-      end_time: campaign.endDate || null,
-      daily_budget: campaign.dailyBudget,
-      nm_ids: campaign.nmIds.map(String), // Convert number[] to string[]
-      sku_count: campaign.productsCount,
-      placements: campaign.placements || null, // Story 33.9 - Request #79: Campaign placements (Type 9 only)
-    })),
-  }
+  const raw = await apiClient.get<unknown>(url, { skipDataUnwrap: true })
+  const response = normalizeCampaignsResponse(raw)
 
   logger.debug('[Advertising Analytics] Campaigns response:', {
     totalCount: response.meta.total_count,
@@ -148,30 +77,15 @@ export async function getAdvertisingCampaigns(
  * Get advertising sync status.
  * GET /v1/analytics/advertising/sync-status
  *
- * Returns the current sync health status including last sync time,
- * sync statistics, and error counts.
- *
- * Note: Backend marks sync as "stale" after 26 hours (24h daily sync + 2h buffer).
- *
  * @returns Sync status response with health status and statistics
- *
- * @example
- * const status = await getAdvertisingSyncStatus();
- *
- * if (status.health_status === 'healthy') {
- *   logger.debug('Данные актуальны');
- * } else if (status.health_status === 'stale') {
- *   logger.debug('Нет синхронизации более 26 часов');
- * }
  */
 export async function getAdvertisingSyncStatus(): Promise<SyncStatusResponse> {
   logger.debug('[Advertising Analytics] Fetching sync status')
 
-  // Story 33.1-fe: Use skipDataUnwrap to get full response
-  const response = await apiClient.get<SyncStatusResponse>(
-    '/v1/analytics/advertising/sync-status',
-    { skipDataUnwrap: true }
-  )
+  const raw = await apiClient.get<unknown>('/v1/analytics/advertising/sync-status', {
+    skipDataUnwrap: true,
+  })
+  const response = normalizeSyncStatusResponse(raw)
 
   logger.debug('[Advertising Analytics] Sync status:', {
     status: response.status,

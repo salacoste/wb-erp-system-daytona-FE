@@ -5,6 +5,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { normalizeFcuBySkuList } from './fcu-aggregation-normalizer'
 
 /** Per-SKU FCU data from the most recently confirmed shipment */
 export interface FcuBySkuItem {
@@ -42,5 +43,6 @@ export async function getFcuBySku(week?: string): Promise<FcuBySkuItem[]> {
   const url = week
     ? `/v1/shipment-cost/by-sku?week=${encodeURIComponent(week)}`
     : '/v1/shipment-cost/by-sku'
-  return apiClient.get<FcuBySkuItem[]>(url)
+  const raw = await apiClient.get<unknown>(url)
+  return normalizeFcuBySkuList(raw)
 }

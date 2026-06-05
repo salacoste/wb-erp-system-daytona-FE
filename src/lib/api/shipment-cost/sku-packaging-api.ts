@@ -12,6 +12,7 @@ import type {
   SkuPackagingCreateRequest,
   SkuPackagingListParams,
 } from '@/types/shipment-cost'
+import { normalizeSkuPackaging, normalizeSkuPackagingList } from './sku-packaging-normalizer'
 
 /** GET /v1/sku-packaging?nmId=&boxTypeId= */
 export async function getSkuPackaging(params?: SkuPackagingListParams): Promise<SkuPackaging[]> {
@@ -20,17 +21,20 @@ export async function getSkuPackaging(params?: SkuPackagingListParams): Promise<
   if (params?.boxTypeId) searchParams.set('boxTypeId', params.boxTypeId)
   const query = searchParams.toString()
   const url = query ? `/v1/sku-packaging?${query}` : '/v1/sku-packaging'
-  return apiClient.get<SkuPackaging[]>(url)
+  const raw = await apiClient.get<unknown>(url)
+  return normalizeSkuPackagingList(raw)
 }
 
 /** GET /v1/sku-packaging/:nmId */
 export async function getSkuPackagingByNmId(nmId: number): Promise<SkuPackaging> {
-  return apiClient.get<SkuPackaging>(`/v1/sku-packaging/${nmId}`)
+  const raw = await apiClient.get<unknown>(`/v1/sku-packaging/${nmId}`)
+  return normalizeSkuPackaging(raw)
 }
 
 /** POST /v1/sku-packaging */
 export async function createSkuPackaging(data: SkuPackagingCreateRequest): Promise<SkuPackaging> {
-  return apiClient.post<SkuPackaging>('/v1/sku-packaging', data)
+  const raw = await apiClient.post<unknown>('/v1/sku-packaging', data)
+  return normalizeSkuPackaging(raw)
 }
 
 /** POST /v1/sku-packaging/bulk — partial success: always returns 201 */

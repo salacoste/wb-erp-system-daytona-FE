@@ -18,7 +18,24 @@ import {
   deleteSkuPackaging,
 } from '../sku-packaging-api'
 
-const mockPackaging = { nmId: 123, boxTypeId: 'bt-001', quantity: 2 }
+const mockPackaging = {
+  nmId: 123,
+  cabinetId: 'cab-1',
+  boxTypeId: 'bt-001',
+  unitsPerBox: 2,
+  boxType: {
+    id: 'bt-001',
+    name: 'Std',
+    lengthCm: '40',
+    widthCm: '30',
+    heightCm: '20',
+    volumeCm3: '24000',
+    isActive: true,
+  },
+  product: { nmId: 123, vendorCode: 'VC-1', brand: 'Brand', subject: 'Shoes' },
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+}
 
 describe('sku-packaging-api', () => {
   beforeEach(() => {
@@ -30,7 +47,9 @@ describe('sku-packaging-api', () => {
       vi.mocked(apiClient.get).mockResolvedValue([mockPackaging])
       const result = await getSkuPackaging()
       expect(apiClient.get).toHaveBeenCalledWith('/v1/sku-packaging')
-      expect(result).toEqual([mockPackaging])
+      expect(result).toHaveLength(1)
+      expect(result[0].nmId).toBe(123)
+      expect(result[0].boxTypeId).toBe('bt-001')
     })
 
     it('appends ?nmId=123 when nmId param provided', async () => {
@@ -51,24 +70,25 @@ describe('sku-packaging-api', () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockPackaging)
       const result = await getSkuPackagingByNmId(123)
       expect(apiClient.get).toHaveBeenCalledWith('/v1/sku-packaging/123')
-      expect(result).toEqual(mockPackaging)
+      expect(result.nmId).toBe(123)
+      expect(result.boxTypeId).toBe('bt-001')
     })
   })
 
   describe('createSkuPackaging', () => {
     it('calls POST /v1/sku-packaging with data', async () => {
-      const data = { nmId: 456, boxTypeId: 'bt-002', quantity: 1 }
+      const data = { nmId: 456, boxTypeId: 'bt-002', unitsPerBox: 1 }
       vi.mocked(apiClient.post).mockResolvedValue(mockPackaging)
       const result = await createSkuPackaging(data as never)
       expect(apiClient.post).toHaveBeenCalledWith('/v1/sku-packaging', data)
-      expect(result).toEqual(mockPackaging)
+      expect(result.nmId).toBe(123)
     })
   })
 
   describe('bulkCreateSkuPackaging', () => {
     it('calls POST /v1/sku-packaging/bulk with data', async () => {
-      const data = { items: [{ nmId: 1, boxTypeId: 'bt-001', quantity: 1 }] }
-      const response = { created: 1, errors: [] }
+      const data = { items: [{ nmId: 1, boxTypeId: 'bt-001', unitsPerBox: 1 }] }
+      const response = { created: 1, updated: 0, errors: [] }
       vi.mocked(apiClient.post).mockResolvedValue(response)
       const result = await bulkCreateSkuPackaging(data as never)
       expect(apiClient.post).toHaveBeenCalledWith('/v1/sku-packaging/bulk', data)
