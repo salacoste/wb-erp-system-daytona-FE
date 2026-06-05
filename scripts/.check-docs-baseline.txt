@@ -22,6 +22,13 @@ src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 87 lines
 src/lib/api/advertising-analytics-api.ts:140-147 | line 147 > file has 87 lines
 src/lib/api/advertising-analytics-api.ts:88-168 | line 168 > file has 87 lines
 src/lib/api/advertising-analytics-api.ts:88-168 | line 168 > file has 87 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
+src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
 src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
 src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
