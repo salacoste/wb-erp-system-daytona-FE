@@ -5,6 +5,7 @@
  */
 
 import mixpanel, { type Config } from 'mixpanel-browser'
+import { logger } from './logger'
 
 // Initialize only if token is available
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN || ''
@@ -34,7 +35,7 @@ export const analytics = {
       mixpanel.track(eventName, properties)
     } else if (process.env.NODE_ENV === 'development') {
       // Log to console in dev when mixpanel is not configured
-      console.debug('[Analytics]', eventName, properties)
+      logger.debug('[Analytics]', eventName, properties)
     }
   },
 

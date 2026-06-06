@@ -1,7 +1,10 @@
 /**
  * Debug logging helpers for API client COGS responses
- * Extracted from api-client.ts for file size compliance (Epic 74)
+ * Extracted from api-client.ts for file size compliance (Epic 74).
+ * All output gated behind NODE_ENV === 'development' (tree-shaken in production).
  */
+
+const isDev = process.env.NODE_ENV === 'development'
 
 function isCogsEndpoint(endpoint: string): boolean {
   return endpoint.includes('/products/') && endpoint.includes('/cogs')
@@ -9,7 +12,7 @@ function isCogsEndpoint(endpoint: string): boolean {
 
 /** Log raw COGS assignment API response for debugging */
 export function logCogsRawResponse(endpoint: string, rawData: unknown): void {
-  if (!isCogsEndpoint(endpoint)) return
+  if (!isCogsEndpoint(endpoint) || !isDev) return
   console.group('🔍 [API Client DEBUG] COGS Assignment Response')
   console.log('Endpoint:', endpoint)
   console.log('Raw response:', JSON.stringify(rawData, null, 2))
@@ -23,7 +26,7 @@ export function logCogsRawResponse(endpoint: string, rawData: unknown): void {
 
 /** Log processed COGS assignment response for debugging */
 export function logCogsProcessedResponse(endpoint: string, data: unknown): void {
-  if (!isCogsEndpoint(endpoint)) return
+  if (!isCogsEndpoint(endpoint) || !isDev) return
   console.group('🔍 [API Client DEBUG] Processed COGS Response')
   console.log('Processed data:', JSON.stringify(data, null, 2))
   if (typeof data === 'object' && data !== null) {
