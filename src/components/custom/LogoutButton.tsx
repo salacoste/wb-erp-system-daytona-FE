@@ -7,6 +7,7 @@ import { LogOut } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { logoutUser } from '@/lib/api'
 import { useMutation } from '@tanstack/react-query'
+import { logger } from '@/lib/logger'
 
 /**
  * Logout button component
@@ -23,7 +24,7 @@ export function LogoutButton() {
         await logoutUser()
       } catch (error) {
         // Log error but continue with local logout
-        console.warn('Logout API call failed:', error)
+        logger.warn('Logout API call failed:', error)
       }
       // Always clear local state
       logout()
@@ -55,4 +56,3 @@ export function LogoutButton() {
     </Button>
   )
 }
-

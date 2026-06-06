@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
+import { logger } from '@/lib/logger'
 import type { Warehouse } from '@/types/warehouse'
 import type { FormData } from './usePriceCalculatorForm'
 import {
@@ -55,7 +56,7 @@ export function useWarehouseHandlers(deps: WarehouseHandlerDeps) {
     (id: number, warehouses: Warehouse[]) => {
       const warehouse = warehouses.find(w => w.id === id) ?? null
       if (warehouse) {
-        console.info('[useWarehouseFormState] setWarehouseById: restoring', {
+        logger.debug('[useWarehouseFormState] setWarehouseById: restoring', {
           id,
           name: warehouse.name,
         })
@@ -95,7 +96,7 @@ export function useWarehouseHandlers(deps: WarehouseHandlerDeps) {
       setValue('logistics_coefficient', coefficient)
       setAcceptanceCoefficient(coefficient)
       const newSystem = determineTariffSystem(date)
-      console.info('[useWarehouseFormState] handleDeliveryDateChange:', {
+      logger.debug('[useWarehouseFormState] handleDeliveryDateChange:', {
         date,
         newSystem,
         hasSupplyData: !!supplyData,

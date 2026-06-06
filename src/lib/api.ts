@@ -4,6 +4,7 @@
  */
 
 import { apiClient } from './api-client'
+import { logger } from '@/lib/logger'
 import type {
   RegisterRequest,
   RegisterResponse,
@@ -96,7 +97,7 @@ export async function logoutUser(): Promise<{ message: string }> {
     return await apiClient.post<{ message: string }>('/v1/auth/logout')
   } catch (error) {
     // Even if logout fails on backend, we should still clear local state
-    console.warn('Logout API call failed, but clearing local state')
+    logger.warn('Logout API call failed, but clearing local state')
     return { message: 'Logged out locally' }
   }
 }

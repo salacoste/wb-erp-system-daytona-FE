@@ -20,6 +20,7 @@ import type {
   ViewByMode,
 } from '@/types/advertising-analytics'
 import { toCount, toNullableNumber, toStr } from '@/lib/api/normalizer-helpers'
+import { logger } from '@/lib/logger'
 
 // ---------------------------------------------------------------------------
 // Private scalar helpers
@@ -43,8 +44,7 @@ function toEfficiencyStatus(raw: unknown): AdvertisingItem['efficiency_status'] 
   if (s !== '' && !VALID_EFFICIENCY_STATUSES.has(s)) {
     // F-50: indicate the anomaly rather than silently masking a backend contract drift
     // (Defensive Frontend Principle). Empty/missing is the legitimate "no data" case (no warn).
-    // eslint-disable-next-line no-console
-    console.warn(
+    logger.warn(
       `[AdvertisingNormalizer] unknown efficiency_status "${s}" from backend → 'unknown' (file a backend ticket if it persists)`
     )
   }

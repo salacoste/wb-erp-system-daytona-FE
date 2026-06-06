@@ -8,6 +8,7 @@
  */
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
+import { logger } from '@/lib/logger'
 import {
   getTomorrowDate,
   getFirstAvailableDate,
@@ -118,7 +119,7 @@ export function useDeliveryDatePickerState({
     ) {
       const coeff = activeCoefficients.find(c => c.date === effectiveDate)
       if (coeff) {
-        console.info(
+        logger.debug(
           '[DeliveryDatePicker] Auto-selecting date:',
           effectiveDate,
           'coefficient:',
@@ -137,7 +138,7 @@ export function useDeliveryDatePickerState({
     if (!hasNotifiedPresetSync.current && selectedDate && activeCoefficients.length > 0) {
       const coeff = activeCoefficients.find(c => c.date === selectedDate)
       if (coeff) {
-        console.info(
+        logger.debug(
           '[DeliveryDatePicker] Syncing preset date coefficient:',
           selectedDate,
           'coefficient:',

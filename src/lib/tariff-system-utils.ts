@@ -12,6 +12,7 @@
 
 import { format, differenceInCalendarDays, parseISO } from 'date-fns'
 import { ru } from 'date-fns/locale'
+import { logger } from '@/lib/logger'
 
 import type { Warehouse, WarehouseTariffs } from '@/types/warehouse'
 import type { AcceptanceCoefficient } from '@/types/tariffs'
@@ -65,7 +66,7 @@ export function extractTariffs(
 ): ExtractedTariffs {
   if (system === 'supply') {
     if (supplyTariffs && supplyTariffs.isAvailable && supplyTariffs.coefficient !== -1) {
-      console.info('[extractTariffs] SUPPLY system: using coefficient=1.0 for calculation', {
+      logger.debug('[extractTariffs] SUPPLY system: using coefficient=1.0 for calculation', {
         deliveryBase: supplyTariffs.delivery.baseLiterRub,
         originalCoeff: supplyTariffs.delivery.coefficient,
         calcCoeff: 1.0,
@@ -89,13 +90,13 @@ export function extractTariffs(
       return { ...inventory, isAvailable: false }
     }
 
-    console.warn(
+    logger.warn(
       '[extractTariffs] SUPPLY requested but supplyTariffs is null, falling back to INVENTORY'
     )
     return extractFromInventory(inventoryWarehouse)
   }
 
-  console.info('[extractTariffs] INVENTORY system requested')
+  logger.debug('[extractTariffs] INVENTORY system requested')
   return extractFromInventory(inventoryWarehouse)
 }
 

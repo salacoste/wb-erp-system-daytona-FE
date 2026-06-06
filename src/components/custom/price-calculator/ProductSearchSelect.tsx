@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Search, Package, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { logger } from '@/lib/logger'
 import { useProductsWithDimensions } from '@/hooks/useProductsWithDimensions'
 import { FieldTooltip } from './FieldTooltip'
 import { SelectedProductCard, ProductSearchResults } from './ProductSearchComponents'
@@ -68,10 +69,13 @@ export function ProductSearchSelect({
     if (presetRestoredRef.current) return
     if (!initialNmId || !products.length) return
 
-    const product = products.find((p) => p.nm_id === initialNmId)
+    const product = products.find(p => p.nm_id === initialNmId)
     if (product) {
       presetRestoredRef.current = true
-      console.info('[ProductSearchSelect] Restoring product from preset:', { nmId: initialNmId, name: product.sa_name })
+      logger.debug('[ProductSearchSelect] Restoring product from preset:', {
+        nmId: initialNmId,
+        name: product.sa_name,
+      })
       setSelectedProduct(product)
       onChange(product.nm_id, product)
       setDebouncedSearch('')
@@ -95,7 +99,7 @@ export function ProductSearchSelect({
       setSearchInput('')
       setDebouncedSearch('')
     },
-    [onChange],
+    [onChange]
   )
 
   const handleClear = useCallback(() => {
@@ -145,7 +149,10 @@ export function ProductSearchSelect({
               aria-expanded={open}
               aria-label="Поиск товара"
               disabled={disabled}
-              className={cn('w-full justify-between font-normal text-muted-foreground', error && 'border-destructive')}
+              className={cn(
+                'w-full justify-between font-normal text-muted-foreground',
+                error && 'border-destructive'
+              )}
             >
               <span className="flex items-center gap-2">
                 <Search className="h-4 w-4" />

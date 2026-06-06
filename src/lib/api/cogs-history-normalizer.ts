@@ -16,6 +16,7 @@
  */
 
 import type { CogsHistoryResponse, CogsHistoryItem } from '@/types/cogs'
+import { logger } from '@/lib/logger'
 
 /**
  * Coerce a string|number money value to a number. Empty-string/null/undefined → NaN
@@ -35,7 +36,7 @@ function toMoneyNumber(value: unknown): number {
 export function normalizeCogsHistoryResponse(raw: CogsHistoryResponse): CogsHistoryResponse {
   if (raw && !Array.isArray(raw.data)) {
     // Indicate rather than silently swallow a malformed shape (Defensive Frontend Principle).
-    console.warn('[F-37] normalizeCogsHistoryResponse: raw.data is not an array:', typeof raw.data)
+    logger.warn('[F-37] normalizeCogsHistoryResponse: raw.data is not an array:', typeof raw.data)
   }
   const data: CogsHistoryItem[] = Array.isArray(raw?.data)
     ? raw.data.map(item => ({ ...item, unit_cost_rub: toMoneyNumber(item?.unit_cost_rub) }))

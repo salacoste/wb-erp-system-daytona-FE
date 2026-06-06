@@ -8,7 +8,8 @@
  * @see frontend/docs/stories/epic-37/STORY-37.1-INTEGRATION-PLAN.md
  */
 
-import type { AdvertisingGroup } from '@/types/advertising-analytics';
+import type { AdvertisingGroup } from '@/types/advertising-analytics'
+import { logger } from '@/lib/logger'
 
 /**
  * Transform backend merged group response to frontend AdvertisingGroup.
@@ -19,40 +20,38 @@ import type { AdvertisingGroup } from '@/types/advertising-analytics';
  * @param backendItem - Raw backend response item
  * @returns Validated AdvertisingGroup or null if invalid
  */
-export function transformMergedGroup(
-  backendItem: unknown
-): AdvertisingGroup | null {
-  const item = backendItem as any;
+export function transformMergedGroup(backendItem: unknown): AdvertisingGroup | null {
+  const item = backendItem as any
 
   // Type guard: verify it's a merged_group or individual type
   if (item.type !== 'merged_group' && item.type !== 'individual') {
-    console.warn('[Transformer] Invalid type:', item.type);
-    return null;
+    logger.warn('[Transformer] Invalid type:', item.type)
+    return null
   }
 
   // Verify required fields exist
   if (!item.aggregateMetrics || !Array.isArray(item.products)) {
-    console.warn('[Transformer] Missing required fields:', {
+    logger.warn('[Transformer] Missing required fields:', {
       hasAggregateMetrics: !!item.aggregateMetrics,
       hasProducts: Array.isArray(item.products),
-    });
-    return null;
+    })
+    return null
   }
 
   // For merged groups, imtId is required
   if (item.type === 'merged_group' && !item.imtId) {
-    console.warn('[Transformer] merged_group requires imtId');
-    return null;
+    logger.warn('[Transformer] merged_group requires imtId')
+    return null
   }
 
   // Validate mainProduct exists
   if (!item.mainProduct?.nmId) {
-    console.warn('[Transformer] Invalid mainProduct:', item.mainProduct);
-    return null;
+    logger.warn('[Transformer] Invalid mainProduct:', item.mainProduct)
+    return null
   }
 
   // Return as-is (backend structure matches frontend)
-  return item as AdvertisingGroup;
+  return item as AdvertisingGroup
 }
 
 /**
@@ -65,19 +64,17 @@ export function transformMergedGroup(
  * const apiResponse = await getAdvertisingAnalytics({ groupBy: 'imtId' });
  * const groups = transformMergedGroups(apiResponse.data);
  */
-export function transformMergedGroups(
-  backendData: unknown[]
-): AdvertisingGroup[] {
+export function transformMergedGroups(backendData: unknown[]): AdvertisingGroup[] {
   if (!Array.isArray(backendData)) {
-    console.error('[Transformer] Expected array, got:', typeof backendData);
-    return [];
+    console.error('[Transformer] Expected array, got:', typeof backendData)
+    return []
   }
 
   const transformed = backendData
     .map(transformMergedGroup)
-    .filter((item): item is AdvertisingGroup => item !== null);
+    .filter((item): item is AdvertisingGroup => item !== null)
 
-  return transformed;
+  return transformed
 }
 
 /**
@@ -88,10 +85,8 @@ export function transformMergedGroups(
  * @param groups - Array of AdvertisingGroup items
  * @returns Only merged_group types
  */
-export function filterMergedGroupsOnly(
-  groups: AdvertisingGroup[]
-): AdvertisingGroup[] {
-  return groups.filter((group) => group.type === 'merged_group');
+export function filterMergedGroupsOnly(groups: AdvertisingGroup[]): AdvertisingGroup[] {
+  return groups.filter(group => group.type === 'merged_group')
 }
 
 /**
@@ -100,8 +95,6 @@ export function filterMergedGroupsOnly(
  * @param groups - Array of AdvertisingGroup items
  * @returns Only individual types
  */
-export function filterIndividualProductsOnly(
-  groups: AdvertisingGroup[]
-): AdvertisingGroup[] {
-  return groups.filter((group) => group.type === 'individual');
+export function filterIndividualProductsOnly(groups: AdvertisingGroup[]): AdvertisingGroup[] {
+  return groups.filter(group => group.type === 'individual')
 }

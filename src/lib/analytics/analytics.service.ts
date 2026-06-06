@@ -25,17 +25,19 @@
  * @see docs/DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended
  */
 
+import { logger } from '@/lib/logger'
+
 // ============================================================================
 // Types
 // ============================================================================
 
 export interface AnalyticsEvent {
-  timestamp: string; // ISO 8601
-  event_type: string; // e.g. "telegram_binding_started"
-  category: 'binding' | 'preferences' | 'error' | 'behavior';
-  properties: Record<string, any>; // Event-specific data
-  user_id?: string; // Optional user tracking
-  cabinet_id?: string; // Multi-tenant isolation
+  timestamp: string // ISO 8601
+  event_type: string // e.g. "telegram_binding_started"
+  category: 'binding' | 'preferences' | 'error' | 'behavior'
+  properties: Record<string, any> // Event-specific data
+  user_id?: string // Optional user tracking
+  cabinet_id?: string // Multi-tenant isolation
 }
 
 // ============================================================================
@@ -43,21 +45,21 @@ export interface AnalyticsEvent {
 // ============================================================================
 
 class AnalyticsService {
-  private events: AnalyticsEvent[] = [];
-  private batchInterval = 30000; // 30 seconds
-  private intervalId?: NodeJS.Timeout;
-  private baseUrl: string;
-  private isEnabled = false;
+  private events: AnalyticsEvent[] = []
+  private batchInterval = 30000 // 30 seconds
+  private intervalId?: NodeJS.Timeout
+  private baseUrl: string
+  private isEnabled = false
 
   constructor() {
     // SSR-safe: only initialize in browser
     if (typeof window === 'undefined') {
-      this.baseUrl = '';
-      return;
+      this.baseUrl = ''
+      return
     }
 
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    this.isEnabled = true;
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+    this.isEnabled = true
   }
 
   /**
@@ -67,17 +69,17 @@ class AnalyticsService {
    * @param event - Event to track (timestamp added automatically)
    */
   track(event: Omit<AnalyticsEvent, 'timestamp'>): void {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled) return
 
     this.events.push({
       ...event,
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Auto-flush if queue gets too large (>50 events)
     // Prevents memory buildup in long sessions
     if (this.events.length >= 50) {
-      void this.flush();
+      void this.flush()
     }
   }
 
@@ -88,10 +90,10 @@ class AnalyticsService {
    * @returns Promise<void>
    */
   async flush(): Promise<void> {
-    if (!this.isEnabled || this.events.length === 0) return;
+    if (!this.isEnabled || this.events.length === 0) return
 
-    const eventsToSend = [...this.events];
-    this.events = [];
+    const eventsToSend = [...this.events]
+    this.events = []
 
     try {
       const response = await fetch(`${this.baseUrl}/v1/analytics/events`, {
@@ -102,23 +104,23 @@ class AnalyticsService {
         body: JSON.stringify({ events: eventsToSend }),
         // Don't include credentials for analytics endpoint (no auth required)
         credentials: 'omit',
-      });
+      })
 
       if (!response.ok) {
-        console.warn(
+        logger.warn(
           `[Analytics] Failed to send events (${response.status}):`,
           await response.text()
-        );
+        )
         // Re-queue events for next batch (max 1 retry)
         if (this.events.length < 100) {
-          this.events.push(...eventsToSend);
+          this.events.push(...eventsToSend)
         }
       }
     } catch (error) {
-      console.error('[Analytics] Network error sending events:', error);
+      console.error('[Analytics] Network error sending events:', error)
       // Re-queue events for next batch (max 1 retry)
       if (this.events.length < 100) {
-        this.events.push(...eventsToSend);
+        this.events.push(...eventsToSend)
       }
     }
   }
@@ -128,27 +130,27 @@ class AnalyticsService {
    * Auto-starts when service is created
    */
   start(): void {
-    if (!this.isEnabled || this.intervalId) return;
+    if (!this.isEnabled || this.intervalId) return
 
     // Periodic flush every 30s
     this.intervalId = setInterval(() => {
-      void this.flush();
-    }, this.batchInterval);
+      void this.flush()
+    }, this.batchInterval)
 
     // Flush on page unload (before user leaves)
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', () => {
         // Synchronous flush for page unload
         // Note: Modern browsers may not wait for async flush
-        void this.flush();
-      });
+        void this.flush()
+      })
 
       // Also flush on visibility change (tab switch, minimize)
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') {
-          void this.flush();
+          void this.flush()
         }
-      });
+      })
     }
   }
 
@@ -158,17 +160,17 @@ class AnalyticsService {
    */
   stop(): void {
     if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
+      clearInterval(this.intervalId)
+      this.intervalId = undefined
     }
-    void this.flush(); // Final flush
+    void this.flush() // Final flush
   }
 
   /**
    * Get current queue size (for debugging)
    */
   getQueueSize(): number {
-    return this.events.length;
+    return this.events.length
   }
 }
 
@@ -176,9 +178,9 @@ class AnalyticsService {
 // Singleton Export
 // ============================================================================
 
-export const analyticsService = new AnalyticsService();
+export const analyticsService = new AnalyticsService()
 
 // Auto-start service when module loads (browser only)
 if (typeof window !== 'undefined') {
-  analyticsService.start();
+  analyticsService.start()
 }

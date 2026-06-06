@@ -11,6 +11,7 @@
 import { useCallback, useMemo } from 'react'
 import { useWatch, type Control } from 'react-hook-form'
 import type { UseFormSetValue } from 'react-hook-form'
+import { logger } from '@/lib/logger'
 import { useProductAutoFill } from '@/hooks/useProductAutoFill'
 import { useWarehouseFormState } from './useWarehouseFormState'
 import { useTariffSettings } from '@/hooks/useTariffSettings'
@@ -55,7 +56,7 @@ export function usePriceCalculatorData(deps: DataDeps) {
             c.subjectID === hierarchy.subject_id &&
             (hierarchy.parent_id === null || c.parentID === hierarchy.parent_id)
         ) ?? null
-      console.info('[PriceCalculatorForm] findCategoryByHierarchy:', {
+      logger.debug('[PriceCalculatorForm] findCategoryByHierarchy:', {
         hierarchy,
         found: result ? `${result.parentName} → ${result.subjectName}` : 'not found',
         commission: result

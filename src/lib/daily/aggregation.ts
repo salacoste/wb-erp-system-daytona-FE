@@ -12,6 +12,7 @@ import type {
   AdvertisingDailyData,
   AggregateDailyMetricsInput,
 } from '@/types/daily-metrics'
+import { logger } from '@/lib/logger'
 import { getDayOfWeek } from './day-utils'
 
 /**
@@ -69,7 +70,7 @@ export function aggregateDailyMetrics(params: AggregateDailyMetricsInput): Daily
       // eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: wb_sales_gross used only in boolean/debug log; not user-visible
       (orders > 0 || (finance?.wb_sales_gross ?? 0) > 0)
     ) {
-      console.warn(
+      logger.warn(
         // eslint-disable-next-line no-restricted-syntax -- DEBUG-LOG: wb_sales_gross used only in boolean/debug log; not user-visible
         `[DailyAggregation] Data gap: date=${date} has activity (orders=${orders}, sales=${finance?.wb_sales_gross ?? 0}) but both ordersCogs and salesCogs are null.`
       )

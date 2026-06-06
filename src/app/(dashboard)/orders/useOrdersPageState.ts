@@ -10,6 +10,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import { logger } from '@/lib/logger'
 import { format, subDays } from 'date-fns'
 import type { SupplierStatus, WbStatus, OrderFbsItem } from '@/types/orders'
 import type { SortField, SortOrder } from '@/components/custom/orders'
@@ -105,7 +106,7 @@ export function useOrdersPageState() {
 
   const handleRowClick = useCallback((order: OrderFbsItem) => {
     if (process.env.NODE_ENV === 'development') {
-      console.info('[Orders] Row clicked:', order.orderId)
+      logger.debug('[Orders] Row clicked:', order.orderId)
     }
     setSelectedOrderId(order.orderId)
   }, [])

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger'
+
 /**
  * Waterfall Chart Utilities
  * Story 5.3: Cost Breakdown Visualization
@@ -111,7 +113,7 @@ export function transformToWaterfallData(
     effectiveOrder = categoryOrder
   } else {
     effectiveOrder = COST_CATEGORIES.map(c => c.key)
-    console.warn(
+    logger.warn(
       '[unit-economics] meta.cost_category_order missing — using hardcoded fallback order. Backend response may be malformed.'
     )
   }

@@ -5,6 +5,7 @@
  */
 
 import { toCount, toNullableNumber } from '../normalizer-helpers'
+import { logger } from '@/lib/logger'
 import { isReadinessLevel } from '@/types/ai/status'
 import type { AiStatusResponse } from '@/types/ai/status'
 
@@ -33,8 +34,7 @@ export function normalizeAiStatusResponse(raw: unknown): AiStatusResponse {
   const weeksRequired = r.weeksRequired != null ? r.weeksRequired : null
   if (weeksRequired === null) {
     // Surface missing contract field in DevTools so the backend gap is visible.
-    // eslint-disable-next-line no-console
-    console.warn('[ai/status] weeksRequired absent from backend response', r)
+    logger.warn('[ai/status] weeksRequired absent from backend response', r)
   }
 
   return {

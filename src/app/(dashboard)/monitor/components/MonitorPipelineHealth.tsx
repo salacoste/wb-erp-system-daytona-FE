@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn, formatPercentageInt } from '@/lib/utils'
+import { logger } from '@/lib/logger'
 import type { GridPipeline } from '@/app/(dashboard)/monitoring/types/monitoring'
 import {
   getMostRecentRecalc,
@@ -87,7 +88,7 @@ function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
   // errorRate to [0, 1]. Defensive guard kept per CLAUDE.md § Defensive Frontend Principle.
   const isErrorRateOutOfRange = errorRate > 1
   if (isErrorRateOutOfRange) {
-    console.warn(
+    logger.warn(
       `[MonitorPipelineHealth] errorRate > 1 for pipeline ${pipeline.pipelineId}: ${errorRate}. ` +
         'This should not happen — backend should return proportion 0-1.'
     )

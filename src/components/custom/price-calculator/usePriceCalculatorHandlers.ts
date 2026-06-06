@@ -3,6 +3,7 @@
 /** Handlers & side effects for PriceCalculatorForm (Story 74.1) */
 
 import { useCallback, useEffect } from 'react'
+import { logger } from '@/lib/logger'
 import { isFormEmpty, toTwoLevelFormData, toApiRequest } from './priceCalculatorUtils'
 import type {
   PriceCalculatorRequest,
@@ -35,7 +36,7 @@ export function usePriceCalculatorHandlers(state: State, props: HandlerProps) {
 
   useEffect(() => {
     if (state.tariffSettingsError)
-      console.warn(
+      logger.warn(
         '[PriceCalculator] Tariff settings API error, using defaults:',
         state.tariffSettingsError
       )
@@ -91,7 +92,7 @@ export function usePriceCalculatorHandlers(state: State, props: HandlerProps) {
     const fboComm = state.selectedCategory.paidStorageKgvp
     const fbsComm = state.selectedCategory.kgvpMarketplace
     const commission = state.fulfillmentType === 'FBO' ? fboComm : fbsComm
-    console.info('[PriceCalculatorForm] Commission update:', {
+    logger.debug('[PriceCalculatorForm] Commission update:', {
       category: `${state.selectedCategory.parentName} → ${state.selectedCategory.subjectName}`,
       fulfillmentType: state.fulfillmentType,
       FBO_commission: fboComm,

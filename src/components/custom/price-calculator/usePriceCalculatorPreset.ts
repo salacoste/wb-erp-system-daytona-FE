@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { logger } from '@/lib/logger'
 import type { FormData } from './usePriceCalculatorForm'
 
 // Constants
@@ -112,7 +113,7 @@ export function usePriceCalculatorPreset(): UsePriceCalculatorPresetReturn {
       // AC5: Version migration check
       if (preset.version !== CURRENT_VERSION) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('[Preset] Version mismatch, discarding preset')
+          logger.warn('[Preset] Version mismatch, discarding preset')
         }
         localStorage.removeItem(PRESET_KEY)
         toast.warning('Формат пресета устарел, используются стандартные значения')

@@ -9,6 +9,7 @@
 
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { logger } from '@/lib/logger'
 
 /** Rate limit entry for a specific endpoint */
 export interface RateLimitEntry {
@@ -77,7 +78,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
           context,
         }
 
-        set((state) => ({
+        set(state => ({
           rateLimits: {
             ...state.rateLimits,
             [normalizedEndpoint]: entry,
@@ -85,14 +86,14 @@ export const useRateLimitStore = create<RateLimitStore>()(
         }))
 
         // Log for monitoring (AC8: Analytics & Logging)
-        console.info('[RateLimit] Rate limit detected for', normalizedEndpoint, {
+        logger.debug('[RateLimit] Rate limit detected for', normalizedEndpoint, {
           retryAfter,
           context,
           timestamp: new Date(entry.timestamp).toISOString(),
         })
       },
 
-      isRateLimited: (endpoint) => {
+      isRateLimited: endpoint => {
         const normalizedEndpoint = normalizeEndpoint(endpoint)
         const entry = get().rateLimits[normalizedEndpoint]
         if (!entry) return false
@@ -109,7 +110,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
         return isLimited
       },
 
-      getRemainingSeconds: (endpoint) => {
+      getRemainingSeconds: endpoint => {
         const normalizedEndpoint = normalizeEndpoint(endpoint)
         const entry = get().rateLimits[normalizedEndpoint]
         if (!entry) return 0
@@ -122,7 +123,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
 
       clearExpired: () => {
         const now = Date.now()
-        set((state) => {
+        set(state => {
           const cleaned = Object.entries(state.rateLimits).reduce(
             (acc, [key, entry]) => {
               const expiryTime = entry.timestamp + entry.retryAfter * 1000
@@ -131,22 +132,22 @@ export const useRateLimitStore = create<RateLimitStore>()(
               }
               return acc
             },
-            {} as Record<string, RateLimitEntry>,
+            {} as Record<string, RateLimitEntry>
           )
           return { rateLimits: cleaned }
         })
       },
 
-      clearRateLimit: (endpoint) => {
+      clearRateLimit: endpoint => {
         const normalizedEndpoint = normalizeEndpoint(endpoint)
-        set((state) => {
+        set(state => {
           const updated = { ...state.rateLimits }
           delete updated[normalizedEndpoint]
           return { rateLimits: updated }
         })
       },
 
-      getRateLimit: (endpoint) => {
+      getRateLimit: endpoint => {
         const normalizedEndpoint = normalizeEndpoint(endpoint)
         return get().rateLimits[normalizedEndpoint] || null
       },
@@ -154,15 +155,15 @@ export const useRateLimitStore = create<RateLimitStore>()(
     {
       name: 'rate-limit-storage',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ rateLimits: state.rateLimits }),
+      partialize: state => ({ rateLimits: state.rateLimits }),
       // Clean expired entries on rehydration
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => state => {
         if (state) {
           state.clearExpired()
         }
       },
-    },
-  ),
+    }
+  )
 )
 
 /**
@@ -170,7 +171,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
  * When one tab hits a rate limit, all tabs respect the cooldown
  */
 if (typeof window !== 'undefined') {
-  window.addEventListener('storage', (e) => {
+  window.addEventListener('storage', e => {
     if (e.key === 'rate-limit-storage' && e.newValue) {
       try {
         const newState = JSON.parse(e.newValue)

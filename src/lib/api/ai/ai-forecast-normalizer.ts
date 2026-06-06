@@ -5,6 +5,7 @@
  */
 
 import { toNullableNumber } from '../normalizer-helpers'
+import { logger } from '@/lib/logger'
 import type { AiForecastResponse, AiForecastPrediction } from '@/types/ai/forecast'
 
 interface RawForecastPrediction {
@@ -82,7 +83,7 @@ export function normalizeAiForecastResponse(raw: unknown): AiForecastResponse {
     r.rollbackNotice == null
       ? null
       : typeof r.rollbackNotice === 'string'
-        ? (console.warn(
+        ? (logger.warn(
             '[ai-forecast] Legacy string rollbackNotice received, expected structured object. Wrapping into reason field.'
           ),
           { previousVersion: 0, rollbackDate: '', reason: r.rollbackNotice })

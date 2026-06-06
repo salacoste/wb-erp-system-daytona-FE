@@ -44,6 +44,8 @@ export const DEFAULT_STORAGE_TARIFFS: NormalizedStorageTariffs = {
   source: 'fallback',
 }
 
+import { logger } from '@/lib/logger'
+
 // ============================================================================
 // Functions (STUB - to be implemented)
 // ============================================================================
@@ -68,7 +70,7 @@ export function extractStorageTariffs(
 ): StorageTariffExtraction {
   // Handle null/undefined/non-object responses
   if (!storageResponse || typeof storageResponse !== 'object' || Array.isArray(storageResponse)) {
-    console.warn('[StorageTariffs] Empty or invalid response, using fallback')
+    logger.warn('[StorageTariffs] Empty or invalid response, using fallback')
     return {
       tariffs: { ...DEFAULT_STORAGE_TARIFFS },
       usingFallback: true,
@@ -95,8 +97,7 @@ export function extractStorageTariffs(
         : 0
 
   // Extract coefficient: default to 1.0 if missing or 0
-  const rawCoefficient =
-    typeof storage.coefficient === 'number' ? storage.coefficient : 1.0
+  const rawCoefficient = typeof storage.coefficient === 'number' ? storage.coefficient : 1.0
   // Zero coefficient treated as 1.0 (shouldn't zero out the rate)
   // Negative coefficients (-1 means unavailable) are valid
   const coefficient = rawCoefficient === 0 ? 1.0 : rawCoefficient
@@ -104,7 +105,7 @@ export function extractStorageTariffs(
   // Apply fallback ONLY when baseLiterRub is 0
   // NOTE: additionalLiterRub = 0 is VALID for Pallets, not a fallback trigger
   if (baseLiterRub === 0) {
-    console.warn('[StorageTariffs] baseLiterRub=0, applying fallback')
+    logger.warn('[StorageTariffs] baseLiterRub=0, applying fallback')
     return {
       tariffs: {
         baseLiterRub: DEFAULT_STORAGE_TARIFFS.baseLiterRub,

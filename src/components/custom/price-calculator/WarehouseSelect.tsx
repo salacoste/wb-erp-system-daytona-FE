@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Command, CommandInput } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { logger } from '@/lib/logger'
 import { filterWarehouses, separateWarehouses } from '@/lib/warehouse-utils'
 import { WarehouseTariffsByBoxType } from './WarehouseTariffsByBoxType'
 import { WarehouseCommandList } from './WarehouseCommandList'
@@ -51,7 +52,7 @@ export function WarehouseSelect({
     const warehouse = warehouses.find(w => w.id === value)
     if (warehouse) {
       presetRestoredRef.current = true
-      console.info('[WarehouseSelect] Restoring warehouse from preset:', {
+      logger.debug('[WarehouseSelect] Restoring warehouse from preset:', {
         id: value,
         name: warehouse.name,
       })
