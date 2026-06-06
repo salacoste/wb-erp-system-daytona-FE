@@ -74,18 +74,27 @@ function VelocityMetricCard({
   )
 }
 
-/** Percentiles section */
+/** Percentiles section — hides when totalOrders===0 to avoid "P50: 0 мин" fabrication */
 function PercentilesSection({
   p50Confirm,
   p95Confirm,
   p50Complete,
   p95Complete,
+  totalOrders,
 }: {
   p50Confirm: number
   p95Confirm: number
   p50Complete: number
   p95Complete: number
+  totalOrders: number
 }) {
+  if (totalOrders === 0) {
+    return (
+      <p className="pt-2 text-sm text-muted-foreground" data-testid="percentiles-empty">
+        Недостаточно данных для перцентилей
+      </p>
+    )
+  }
   return (
     <div className="grid grid-cols-2 gap-4 pt-2 text-sm" data-testid="percentiles-content">
       <div className="space-y-1">
@@ -192,6 +201,7 @@ export function VelocityMetricsWidget({
                   p95Confirm={data.p95ConfirmationMinutes}
                   p50Complete={data.p50CompletionMinutes}
                   p95Complete={data.p95CompletionMinutes}
+                  totalOrders={data.totalOrders}
                 />
               </CollapsibleContent>
             </Collapsible>

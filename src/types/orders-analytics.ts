@@ -31,8 +31,7 @@ export interface VelocityMetricsResponse {
   /** Average completion time (minutes). null when the backend can't compute a mean (live-observed) — render "—". */
   avgCompletionTimeMinutes: number | null
   // Percentiles stay non-null (backend computes them from the distribution even when the mean is
-  // null). CAVEAT: for an empty window (totalOrders=0) the backend emits 0, so PercentilesSection
-  // can show "P50: 0 мин" — a latent semantic-zero fabrication. FUTURE: guard on totalOrders===0.
+  // null). Guard: PercentilesSection hides when totalOrders===0 to avoid "P50: 0 мин" fabrication.
   /** 50th percentile confirmation (minutes) */
   p50ConfirmationMinutes: number
   /** 95th percentile confirmation (minutes) */
