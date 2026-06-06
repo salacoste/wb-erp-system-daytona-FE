@@ -27,7 +27,7 @@ test.describe('AI Admin Pages', () => {
   // --- Anomalies page ---
 
   test('anomalies page renders heading and content area', async ({ page }) => {
-    await page.goto(ROUTES.ANALYTICS.AI_ADMIN.ANOMALIES, {
+    await page.goto(ROUTES.analytics.aiAdmin.anomalies, {
       waitUntil: 'domcontentloaded',
     })
 
@@ -44,7 +44,7 @@ test.describe('AI Admin Pages', () => {
   })
 
   test('anomalies page has correct heading hierarchy', async ({ page }) => {
-    await page.goto(ROUTES.ANALYTICS.AI_ADMIN.ANOMALIES, {
+    await page.goto(ROUTES.analytics.aiAdmin.anomalies, {
       waitUntil: 'domcontentloaded',
     })
     await expect(page.getByRole('heading', { name: 'Разрешение аномалий' })).toBeVisible({
@@ -59,7 +59,7 @@ test.describe('AI Admin Pages', () => {
   // --- Models page ---
 
   test('models page renders heading and model list or empty state', async ({ page }) => {
-    await page.goto(ROUTES.ANALYTICS.AI_ADMIN.MODELS, {
+    await page.goto(ROUTES.analytics.aiAdmin.models, {
       waitUntil: 'domcontentloaded',
     })
 
@@ -77,7 +77,7 @@ test.describe('AI Admin Pages', () => {
   })
 
   test('models page has correct heading hierarchy', async ({ page }) => {
-    await page.goto(ROUTES.ANALYTICS.AI_ADMIN.MODELS, {
+    await page.goto(ROUTES.analytics.aiAdmin.models, {
       waitUntil: 'domcontentloaded',
     })
     await expect(page.getByRole('heading', { name: 'Управление AI моделями' })).toBeVisible({
@@ -91,7 +91,7 @@ test.describe('AI Admin Pages', () => {
   // --- Forecast page ---
 
   test('forecast page renders heading and forecast content', async ({ page }) => {
-    await page.goto(ROUTES.ANALYTICS.FORECAST, {
+    await page.goto(ROUTES.analytics.forecast, {
       waitUntil: 'domcontentloaded',
     })
 
@@ -110,7 +110,7 @@ test.describe('AI Admin Pages', () => {
   })
 
   test('forecast page has correct heading hierarchy', async ({ page }) => {
-    await page.goto(ROUTES.ANALYTICS.FORECAST, {
+    await page.goto(ROUTES.analytics.forecast, {
       waitUntil: 'domcontentloaded',
     })
     await expect(page.getByRole('heading', { name: 'AI Прогноз продаж' })).toBeVisible({

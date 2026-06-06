@@ -134,6 +134,12 @@ export const ROUTES = {
     supplyPlanning: '/analytics/supply-planning', // Epic 6: Supply Planning
     liquidity: '/analytics/liquidity', // Epic 7: Liquidity Analysis
     orders: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
+    forecast: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
+    aiAdmin: {
+      anomalies: '/analytics/ai-admin/anomalies',
+      models: '/analytics/ai-admin/models',
+      preferences: '/analytics/ai-admin/preferences',
+    },
   },
   settings: {
     backfill: '/settings/backfill', // Epic 51-FE: Backfill Admin (Owner only)
