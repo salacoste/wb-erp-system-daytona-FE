@@ -70,13 +70,10 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
 } as const
 
 /**
- * Neutral sentinel config for an unrecognized profitability status (F-49).
- * Deliberately NOT one of the five real margin bands — a drifted value must render in neutral
- * grey, visually distinct from 'warning' (yellow "Внимание", 5-15 % band), so it INDICATES the
- * anomaly rather than MISLABELLING it as a real band (Defensive Frontend Principle). Mirrors the
- * grey raw-value fallback in OrderStatusBadge's getSupplierStatusConfig.
+ * Neutral sentinel config for unrecognized profitability status.
+ * Used by getProfitabilityConfig for enum-drift defense (F-49).
  */
-export const UNKNOWN_PROFITABILITY_CONFIG: ProfitabilityStatusConfig = {
+const UNKNOWN_PROFITABILITY_CONFIG: ProfitabilityStatusConfig = {
   label: 'Неизвестно',
   labelShort: 'Неизв.',
   color: '#6B7280', // gray-500
@@ -84,8 +81,6 @@ export const UNKNOWN_PROFITABILITY_CONFIG: ProfitabilityStatusConfig = {
   bgClass: 'bg-gray-400',
   textClass: 'text-white',
   icon: '⚪',
-  // Sentinel — NOT a real band. These bounds are placeholders only; consumers must not use
-  // them for range-membership checks (getStatusFromMargin owns margin→status mapping).
   minMargin: 0,
   maxMargin: 0,
 }

@@ -6,49 +6,6 @@
  * Types for cabinet summary API responses and components.
  */
 
-// ============================================
-// Epic 26: Operating Expenses Types
-// ============================================
-
-/**
- * Epic 26: Operating Expenses at SKU level
- * Fields are strings because API returns Decimal as string
- */
-export interface SkuOperatingExpenses {
-  logistics_cost_rub?: string
-  storage_cost_rub?: string
-  penalties_rub?: string
-  paid_acceptance_cost_rub?: string
-  acquiring_fee_rub?: string
-  loyalty_fee_rub?: string
-  loyalty_compensation_rub?: string
-  commission_rub?: string
-  other_adjustments_rub?: string
-  total_expenses_rub?: string
-  operating_profit_rub?: string
-  operating_margin_pct?: number | null
-  has_revenue?: boolean
-}
-
-/**
- * Epic 26: Operating Expenses at aggregated level (Brand/Category/Cabinet)
- * Fields are numbers because they are already converted
- */
-export interface AggregatedOperatingExpenses {
-  storage_cost?: number
-  penalties?: number
-  paid_acceptance_cost?: number
-  acquiring_fee?: number
-  loyalty_fee?: number
-  loyalty_compensation?: number
-  commission?: number
-  other_adjustments?: number
-  total_expenses?: number
-  operating_profit?: number
-  operating_margin_pct?: number | null
-  skus_with_expenses_only?: number
-}
-
 /**
  * Trend direction indicator for KPI metrics
  */
@@ -210,71 +167,6 @@ export interface CabinetSummaryParams {
 }
 
 // ============================================
-// Story 6.2-FE: Period Comparison Types
-// ============================================
-
-/**
- * Delta values for period comparison
- */
-export interface PeriodDelta {
-  /** Absolute change in revenue */
-  revenue_delta: number
-  /** Percentage change in revenue */
-  revenue_delta_pct: number
-  /** Absolute change in profit */
-  profit_delta: number
-  /** Percentage change in profit */
-  profit_delta_pct: number
-  /** Change in margin percentage points */
-  margin_delta_pct: number
-}
-
-/**
- * Comparison analytics item with delta values
- * Response from API when compare_to param is provided
- */
-export interface ComparisonAnalyticsItem {
-  nm_id: string
-  sa_name: string
-
-  // Current period values
-  revenue_net: number
-  profit: number | null
-  margin_pct: number | null
-  qty: number
-
-  // Comparison period values
-  compare_revenue_net: number
-  compare_profit: number | null
-  compare_margin_pct: number | null
-  compare_qty: number
-
-  // Delta calculations
-  revenue_delta: number
-  revenue_delta_pct: number
-  profit_delta: number | null
-  profit_delta_pct: number | null
-  margin_delta_pct: number | null
-}
-
-/**
- * Comparison analytics response
- */
-export interface ComparisonAnalyticsResponse {
-  data: ComparisonAnalyticsItem[]
-  meta?: {
-    current_period: {
-      start: string
-      end: string
-    }
-    comparison_period: {
-      start: string
-      end: string
-    }
-  }
-}
-
-// ============================================
 // Story 6.5-FE: Export Analytics Types
 // ============================================
 
@@ -287,11 +179,6 @@ export type ExportType = 'by-sku' | 'by-brand' | 'by-category' | 'cabinet-summar
  * Export file format options
  */
 export type ExportFormat = 'csv' | 'xlsx'
-
-/**
- * Export status enum
- */
-export type ExportStatusType = 'pending' | 'processing' | 'completed' | 'failed'
 
 /**
  * Export request parameters
@@ -336,7 +223,7 @@ export interface ExportStatus {
   /** Unique export ID */
   export_id: string
   /** Current export status */
-  status: ExportStatusType
+  status: 'pending' | 'processing' | 'completed' | 'failed'
   /** Download URL (when completed) */
   download_url?: string
   /** File size in bytes (when completed) */

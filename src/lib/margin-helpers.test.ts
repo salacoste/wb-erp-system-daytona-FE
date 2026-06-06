@@ -10,7 +10,6 @@ import {
   getPollingStrategy,
   getLastCompletedWeek,
   getWeekEndDate,
-  getWeekMidpointDate,
   isCogsAfterLastCompletedWeek,
 } from './margin-helpers'
 import { formatIsoWeek } from './utils'
@@ -355,25 +354,14 @@ describe('getLastCompletedWeek — Europe/Moscow boundaries', () => {
   })
 })
 
-describe('getWeekEndDate / getWeekMidpointDate', () => {
-  it('getWeekEndDate returns a Sunday (end of ISO week)', () => {
+describe('getWeekEndDate', () => {
+  it('returns a Sunday (end of ISO week)', () => {
     expect(getWeekEndDate('2025-W47').getDay()).toBe(0) // 0 = Sunday
   })
 
-  it('getWeekMidpointDate returns the Thursday of the week (end - 3 days)', () => {
-    const end = getWeekEndDate('2025-W47')
-    const mid = getWeekMidpointDate('2025-W47')
-    expect(mid.getDay()).toBe(4) // 4 = Thursday
-    // Thursday is exactly 3 calendar days before Sunday.
-    const diffDays = Math.round((end.getTime() - mid.getTime()) / (24 * 60 * 60 * 1000))
-    expect(diffDays).toBe(3)
-    expect(mid.getTime()).toBeLessThan(end.getTime())
-  })
-
-  it('both produce a consistent Sunday/Thursday pair across several weeks (W01 + W53 edges)', () => {
+  it('produces a consistent Sunday across several weeks (W01 + W53 edges)', () => {
     for (const w of ['2025-W01', '2025-W26', '2026-W01', '2020-W53']) {
       expect(getWeekEndDate(w).getDay()).toBe(0)
-      expect(getWeekMidpointDate(w).getDay()).toBe(4)
     }
   })
 

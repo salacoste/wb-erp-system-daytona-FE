@@ -102,24 +102,6 @@ export function getWeekEndDate(isoWeek: string): Date {
 }
 
 /**
- * Get the midpoint (Thursday) of an ISO week
- * Backend uses week midpoint for COGS temporal lookup
- * See CLAUDE.md: "COGS Temporal Lookup - Week Midpoint Strategy"
- *
- * @param isoWeek - ISO week string (e.g., "2025-W47")
- * @returns Date object for Thursday of that week
- */
-export function getWeekMidpointDate(isoWeek: string): Date {
-  // Get week start (Monday)
-  const weekEnd = getWeekEndDate(isoWeek)
-  // Midpoint is Thursday = Sunday - 3 days
-  const midpoint = new Date(weekEnd.getTime())
-  midpoint.setDate(weekEnd.getDate() - 3)
-  midpoint.setHours(23, 59, 59, 999) // End of Thursday
-  return midpoint
-}
-
-/**
  * Check if COGS valid_from date is after the last completed week's midpoint
  * If true, margin won't be available for last completed week because
  * backend uses week midpoint (Thursday) for COGS temporal lookup.
@@ -146,10 +128,13 @@ export function isCogsAfterLastCompletedWeek(validFrom: string | Date): boolean 
   }
 
   const lastCompletedWeek = getLastCompletedWeek()
-  // Use week midpoint (Thursday) instead of week end (Sunday) to match backend logic
-  const lastCompletedWeekMidpoint = getWeekMidpointDate(lastCompletedWeek)
+  // Week midpoint (Thursday) = week end (Sunday) - 3 days
+  const weekEnd = getWeekEndDate(lastCompletedWeek)
+  const midpoint = new Date(weekEnd.getTime())
+  midpoint.setDate(weekEnd.getDate() - 3)
+  midpoint.setHours(23, 59, 59, 999)
 
-  return cogsDate > lastCompletedWeekMidpoint
+  return cogsDate > midpoint
 }
 
 // Re-export polling helpers for backward compatibility (Epic 74 extraction)

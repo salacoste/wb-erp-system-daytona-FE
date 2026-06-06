@@ -10,7 +10,6 @@
 import { describe, it, expect } from 'vitest'
 import {
   PROFITABILITY_STATUS_CONFIG,
-  UNKNOWN_PROFITABILITY_CONFIG,
   getProfitabilityConfig,
   getProfitabilityColor,
   getProfitabilityLabel,
@@ -31,10 +30,13 @@ describe('unit-economics-config — getProfitabilityConfig (F-49 guard)', () => 
     const drift = 'deprecated' as unknown as ProfitabilityStatus
 
     it('falls back to the neutral sentinel (NOT a real margin band) instead of returning undefined', () => {
-      expect(getProfitabilityConfig(drift)).toBe(UNKNOWN_PROFITABILITY_CONFIG)
-      // Regression: the sentinel must be visually distinct from the real 'warning' band so a
+      const result = getProfitabilityConfig(drift)
+      // The sentinel must be visually distinct from the real 'warning' band so a
       // drifted value is indicated, not mislabelled (Defensive Frontend Principle, F-49).
-      expect(getProfitabilityConfig(drift)).not.toBe(PROFITABILITY_STATUS_CONFIG.warning)
+      expect(result).not.toBe(PROFITABILITY_STATUS_CONFIG.warning)
+      // Verify sentinel properties (neutral grey, not a real margin band)
+      expect(result.color).toBe('#6B7280')
+      expect(result.label).toBe('Неизвестно')
     })
 
     it('does not crash on the satellite getters', () => {
@@ -45,18 +47,15 @@ describe('unit-economics-config — getProfitabilityConfig (F-49 guard)', () => 
     })
 
     it('satellite getters return the neutral sentinel values', () => {
-      const s = UNKNOWN_PROFITABILITY_CONFIG
-      expect(getProfitabilityColor(drift)).toBe(s.color)
-      expect(getProfitabilityLabel(drift)).toBe(s.label)
-      expect(getProfitabilityBgClass(drift)).toBe(s.bgClass)
-      expect(getProfitabilityBadgeClasses(drift)).toBe(`${s.bgClass} ${s.textClass}`)
+      expect(getProfitabilityColor(drift)).toBe('#6B7280')
+      expect(getProfitabilityLabel(drift)).toBe('Неизвестно')
+      expect(getProfitabilityBgClass(drift)).toBe('bg-gray-400')
+      expect(getProfitabilityBadgeClasses(drift)).toBe('bg-gray-400 text-white')
     })
 
     it('handles empty string without throwing', () => {
       expect(() => getProfitabilityConfig('' as unknown as ProfitabilityStatus)).not.toThrow()
-      expect(getProfitabilityConfig('' as unknown as ProfitabilityStatus)).toBe(
-        UNKNOWN_PROFITABILITY_CONFIG
-      )
+      expect(getProfitabilityConfig('' as unknown as ProfitabilityStatus).color).toBe('#6B7280')
     })
   })
 })

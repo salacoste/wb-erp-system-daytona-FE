@@ -142,22 +142,6 @@ export function normalizeCoefficients(raw: RawCoefficient[]): NormalizedCoeffici
   })
 }
 
-/** Get today's coefficient from array */
-export function getTodayCoefficient(
-  coefficients: NormalizedCoefficient[]
-): NormalizedCoefficient | null {
-  const today = new Date().toISOString().split('T')[0]
-  return coefficients.find(c => c.date === today) ?? coefficients[0] ?? null
-}
-
-/** Get coefficient for a specific date */
-export function getCoefficientForDate(
-  coefficients: NormalizedCoefficient[],
-  date: string
-): NormalizedCoefficient | null {
-  return coefficients.find(c => c.date === date) ?? null
-}
-
 /** Calculate cost increase from coefficient */
 export function calculateCoefficientImpact(
   baseCost: number,

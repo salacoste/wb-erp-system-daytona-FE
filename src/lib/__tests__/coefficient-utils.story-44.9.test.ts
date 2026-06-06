@@ -24,7 +24,6 @@ import {
   getCoefficientStatus,
   getCoefficientStatusConfig,
   calculateCoefficientImpact,
-  getTodayCoefficient,
   normalizeCoefficients,
   formatCoefficient,
   getDayFromDate,
@@ -32,7 +31,6 @@ import {
   formatDateLongRu,
   getTomorrowDate,
   getFirstAvailableDate,
-  getCoefficientForDate,
   COEFFICIENT_STATUS_CONFIG,
   type RawCoefficient,
   type NormalizedCoefficient,
@@ -390,76 +388,6 @@ describe('calculateCoefficientImpact', () => {
       expect(impact.increaseDisplay).toBe('0 ₽')
       expect(impact.percentDisplay).toMatch(/^0,0\s%$/) // ru-RU: "0,0 %" (was "0%")
     })
-  })
-})
-
-// =============================================================================
-// getTodayCoefficient Tests
-// =============================================================================
-
-describe('getTodayCoefficient', () => {
-  beforeEach(() => {
-    // Mock Date to a fixed value for consistent testing
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-01-21T12:00:00Z'))
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
-  it('returns coefficient for today', () => {
-    const coefficients: NormalizedCoefficient[] = [
-      { date: '2026-01-20', coefficient: 1.0, status: 'base', isAvailable: true },
-      { date: '2026-01-21', coefficient: 1.25, status: 'elevated', isAvailable: true },
-      { date: '2026-01-22', coefficient: 1.5, status: 'elevated', isAvailable: true },
-    ]
-
-    const today = getTodayCoefficient(coefficients)
-    expect(today).not.toBeNull()
-    expect(today?.date).toBe('2026-01-21')
-    expect(today?.coefficient).toBe(1.25)
-  })
-
-  it('returns first coefficient if today not found', () => {
-    const coefficients: NormalizedCoefficient[] = [
-      { date: '2026-01-25', coefficient: 1.0, status: 'base', isAvailable: true },
-      { date: '2026-01-26', coefficient: 1.25, status: 'elevated', isAvailable: true },
-    ]
-
-    const result = getTodayCoefficient(coefficients)
-    expect(result?.date).toBe('2026-01-25')
-  })
-
-  it('returns null for empty array', () => {
-    expect(getTodayCoefficient([])).toBeNull()
-  })
-})
-
-// =============================================================================
-// getCoefficientForDate Tests
-// =============================================================================
-
-describe('getCoefficientForDate', () => {
-  const coefficients: NormalizedCoefficient[] = [
-    { date: '2026-01-20', coefficient: 1.0, status: 'base', isAvailable: true },
-    { date: '2026-01-21', coefficient: 1.25, status: 'elevated', isAvailable: true },
-    { date: '2026-01-22', coefficient: 1.5, status: 'elevated', isAvailable: true },
-  ]
-
-  it('returns coefficient for specific date', () => {
-    const result = getCoefficientForDate(coefficients, '2026-01-21')
-    expect(result?.coefficient).toBe(1.25)
-  })
-
-  it('returns null for date not in array', () => {
-    const result = getCoefficientForDate(coefficients, '2026-01-25')
-    expect(result).toBeNull()
-  })
-
-  it('returns null for empty array', () => {
-    const result = getCoefficientForDate([], '2026-01-21')
-    expect(result).toBeNull()
   })
 })
 
