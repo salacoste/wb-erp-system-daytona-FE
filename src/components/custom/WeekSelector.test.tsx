@@ -25,6 +25,8 @@ vi.mock('@/hooks/useFinancialSummary', () => ({
   }),
 }))
 
+type MockWeeksReturn = ReturnType<typeof useAvailableWeeks>
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -42,17 +44,45 @@ const mockWeeks = [
   { week: '2025-W03', start_date: '2025-01-20' },
 ]
 
+/** Build a typed partial mock of useAvailableWeeks return value */
+function mockWeeksHook(
+  data: typeof mockWeeks | undefined | typeof mockWeeks,
+  isLoading = false,
+  isError = false
+): MockWeeksReturn {
+  return {
+    data,
+    isLoading,
+    isError,
+    error: null,
+    isPending: isLoading,
+    isSuccess: !isLoading && !isError,
+    isFetching: false,
+    isFetched: true,
+    isPlaceholderData: false,
+    isRefetching: false,
+    isLoadingError: false,
+    isRefetchError: false,
+    failureCount: 0,
+    failureReason: null,
+    errorUpdateCount: 0,
+    isFetchedAfterMount: true,
+    isInitialLoading: isLoading,
+    dataUpdatedAt: Date.now(),
+    errorUpdatedAt: 0,
+    status: isError ? 'error' : isLoading ? 'pending' : 'success',
+    fetchStatus: 'idle',
+    refetch: vi.fn(),
+  } as unknown as MockWeeksReturn
+}
+
 describe('WeekSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should render with available weeks', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     const handleChange = vi.fn()
     render(<WeekSelector value="2025-W01" onChange={handleChange} />, {
@@ -64,11 +94,7 @@ describe('WeekSelector', () => {
   })
 
   it('should show loading state', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(undefined, true))
 
     render(<WeekSelector value="2025-W01" onChange={vi.fn()} />, {
       wrapper: createWrapper(),
@@ -80,11 +106,7 @@ describe('WeekSelector', () => {
   })
 
   it('should show error state when API fails', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(undefined, false, true))
 
     render(<WeekSelector value="2025-W01" onChange={vi.fn()} />, {
       wrapper: createWrapper(),
@@ -94,11 +116,7 @@ describe('WeekSelector', () => {
   })
 
   it('should show empty state when no weeks available', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: [],
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook([]))
 
     render(<WeekSelector value="2025-W01" onChange={vi.fn()} />, {
       wrapper: createWrapper(),
@@ -108,11 +126,7 @@ describe('WeekSelector', () => {
   })
 
   it('should call onChange when week is selected', async () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     const handleChange = vi.fn()
     render(<WeekSelector value="2025-W01" onChange={handleChange} />, {
@@ -133,11 +147,7 @@ describe('WeekSelector', () => {
   })
 
   it('should support custom label', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     render(<WeekSelector value="2025-W01" onChange={vi.fn()} label="Выберите период" />, {
       wrapper: createWrapper(),
@@ -147,11 +157,7 @@ describe('WeekSelector', () => {
   })
 
   it('should support disabled state', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     render(<WeekSelector value="2025-W01" onChange={vi.fn()} disabled />, {
       wrapper: createWrapper(),
@@ -163,11 +169,7 @@ describe('WeekSelector', () => {
   })
 
   it('should have proper accessibility attributes', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     render(<WeekSelector value="2025-W01" onChange={vi.fn()} id="custom-week-selector" />, {
       wrapper: createWrapper(),
@@ -184,11 +186,7 @@ describe('WeekComparisonSelector', () => {
   })
 
   it('should render two week selectors', () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     render(
       <WeekComparisonSelector
@@ -205,11 +203,7 @@ describe('WeekComparisonSelector', () => {
   })
 
   it('should call onWeek1Change when first week changes', async () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     const handleWeek1Change = vi.fn()
     render(
@@ -235,11 +229,7 @@ describe('WeekComparisonSelector', () => {
   })
 
   it('should call onWeek2Change when second week changes', async () => {
-    vi.mocked(useAvailableWeeks).mockReturnValue({
-      data: mockWeeks,
-      isLoading: false,
-      isError: false,
-    } as any)
+    vi.mocked(useAvailableWeeks).mockReturnValue(mockWeeksHook(mockWeeks))
 
     const handleWeek2Change = vi.fn()
     render(
@@ -264,4 +254,3 @@ describe('WeekComparisonSelector', () => {
     expect(handleWeek2Change).toHaveBeenCalledWith('2025-W03')
   })
 })
-
