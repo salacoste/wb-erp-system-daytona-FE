@@ -132,8 +132,8 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               <LabelList
                 dataKey="amount"
                 position="right"
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts LabelFormatter passes (value, props, index)
-                formatter={(v: any) => (typeof v === 'number' ? formatCurrency(v) : '')}
+                // recharts LabelFormatter passes (value, props, index)
+                formatter={(v: unknown) => (typeof v === 'number' ? formatCurrency(v) : '')}
                 style={{ fontSize: 12, fill: '#374151', fontWeight: 500 }}
               />
             </Bar>

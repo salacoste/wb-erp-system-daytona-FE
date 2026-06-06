@@ -8,7 +8,7 @@
 
 import { useState, useCallback } from 'react'
 import { mmToCm } from '@/lib/dimension-utils'
-import type { FieldValues, UseFormSetValue } from 'react-hook-form'
+import type { FieldValues, Path, UseFormSetValue } from 'react-hook-form'
 import type { ProductWithDimensions } from '@/types/product'
 import type { CategoryCommission } from '@/types/tariffs'
 import type {
@@ -66,8 +66,10 @@ export function useProductAutoFill<T extends FieldValues>({
   setSelectedCategory,
   findCategoryByHierarchy,
 }: UseProductAutoFillOptions<T>): UseProductAutoFillReturn {
-  const [dimensionAutoFill, setDimensionAutoFill] = useState<DimensionAutoFillState>(DEFAULT_DIMENSION_STATE)
-  const [categoryAutoFill, setCategoryAutoFill] = useState<CategoryAutoFillState>(DEFAULT_CATEGORY_STATE)
+  const [dimensionAutoFill, setDimensionAutoFill] =
+    useState<DimensionAutoFillState>(DEFAULT_DIMENSION_STATE)
+  const [categoryAutoFill, setCategoryAutoFill] =
+    useState<CategoryAutoFillState>(DEFAULT_CATEGORY_STATE)
   const [productHasDimensions, setProductHasDimensions] = useState(false)
   const [productHasCategory, setProductHasCategory] = useState(false)
 
@@ -89,17 +91,22 @@ export function useProductAutoFill<T extends FieldValues>({
         const heightCm = mmToCm(product.dimensions.height_mm)
         const volumeLiters = product.dimensions.volume_liters
 
-        // Set form values using type assertions for react-hook-form compatibility
+        // Set form values — Path<T> + value cast needed for generic form compatibility
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue('length_cm' as any, lengthCm as any)
+        setValue('length_cm' as Path<T>, lengthCm as any)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue('width_cm' as any, widthCm as any)
+        setValue('width_cm' as Path<T>, widthCm as any)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue('height_cm' as any, heightCm as any)
+        setValue('height_cm' as Path<T>, heightCm as any)
 
         setDimensionAutoFill({
           source: 'auto',
-          originalValues: { length_cm: lengthCm, width_cm: widthCm, height_cm: heightCm, volume_liters: volumeLiters },
+          originalValues: {
+            length_cm: lengthCm,
+            width_cm: widthCm,
+            height_cm: heightCm,
+            volume_liters: volumeLiters,
+          },
           status: 'auto',
         })
         setProductHasDimensions(true)
@@ -125,12 +132,12 @@ export function useProductAutoFill<T extends FieldValues>({
         setProductHasCategory(false)
       }
     },
-    [setValue, setSelectedCategory, findCategoryByHierarchy],
+    [setValue, setSelectedCategory, findCategoryByHierarchy]
   )
 
   const markDimensionsModified = useCallback(() => {
     if (dimensionAutoFill.source === 'auto') {
-      setDimensionAutoFill((prev) => ({ ...prev, status: 'modified' }))
+      setDimensionAutoFill(prev => ({ ...prev, status: 'modified' }))
     }
   }, [dimensionAutoFill.source])
 
@@ -138,12 +145,12 @@ export function useProductAutoFill<T extends FieldValues>({
     if (dimensionAutoFill.originalValues) {
       const { length_cm, width_cm, height_cm } = dimensionAutoFill.originalValues
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue('length_cm' as any, length_cm as any)
+      setValue('length_cm' as Path<T>, length_cm as any)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue('width_cm' as any, width_cm as any)
+      setValue('width_cm' as Path<T>, width_cm as any)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue('height_cm' as any, height_cm as any)
-      setDimensionAutoFill((prev) => ({ ...prev, status: 'auto' }))
+      setValue('height_cm' as Path<T>, height_cm as any)
+      setDimensionAutoFill(prev => ({ ...prev, status: 'auto' }))
     }
   }, [dimensionAutoFill.originalValues, setValue])
 

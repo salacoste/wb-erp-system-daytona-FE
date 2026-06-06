@@ -111,7 +111,7 @@ export async function getReturnsBySku(params: {
 /** Aggregate raw classification records into per-SKU summary. Exported for unit testing (iter-127). */
 export function aggregateRawRecords(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  records: Array<{ nmId: number; returnCategory: string; [k: string]: any }>
+  records: Array<{ nmId: number; returnCategory: string; [k: string]: unknown }>
 ) {
   const map = new Map<number, { cancel: number; refusal: number; receipt: number }>()
   for (const r of records) {
