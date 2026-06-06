@@ -28,7 +28,7 @@ const ROLE_CASE_MAP: Record<string, User['role']> = {
 }
 
 function normalizeUser(user: User): User {
-  const incoming = user.role as unknown as string
+  const incoming = user.role as string
   const canonical = ROLE_CASE_MAP[incoming.toLowerCase()] ?? user.role
   if (canonical === user.role) return user
   return { ...user, role: canonical }

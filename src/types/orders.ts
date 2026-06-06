@@ -25,6 +25,8 @@ export type WbStatus =
   | 'canceled_by_client'
   | 'declined_by_client'
   | 'defect'
+  | 'return_at_pvz'
+  | 'returned_to_seller'
 
 // --- Order Item Types ---
 

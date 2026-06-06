@@ -36,6 +36,8 @@ const VALID_WB_STATUSES = [
   'canceled_by_client',
   'declined_by_client',
   'defect',
+  'return_at_pvz',
+  'returned_to_seller',
 ] as const satisfies readonly WbStatus[]
 
 // Compile-time completeness: errors if a WbStatus union member is missing from

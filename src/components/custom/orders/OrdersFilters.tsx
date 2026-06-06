@@ -57,21 +57,20 @@ const SUPPLIER_STATUS_OPTIONS: Array<{ value: SupplierStatus; label: string }> =
 ]
 
 /**
- * WB status filter options — restricted to the FOUR values the backend `wb_status` query
- * validator accepts. The full WbStatus union has 8 members (rendered as row badges via
- * WB_STATUS_CONFIG), but `GET /v1/orders?wb_status=<x>` returns HTTP 400 for the other 4
- * (ready_for_pickup / canceled_by_client / declined_by_client / defect) — selecting them
- * blanked the whole table. The earlier F-11 change added them as filter options before
- * confirming the server accepted them.
- *
- * PENDING BACKEND: #200 — once the backend widens the `wb_status` filter enum to match the
- * response enum, restore the other 4 options here (they're still valid WbStatus values).
+ * WB status filter options — backend WbStatus enum (10 values as of Request #200 resolution).
+ * All values are accepted by `GET /v1/orders?wb_status=<x>` filter.
  */
 export const WB_STATUS_OPTIONS: Array<{ value: WbStatus; label: string }> = [
   { value: 'waiting', label: 'Ожидает' },
   { value: 'sorted', label: 'Отсортирован' },
   { value: 'sold', label: 'Продан' },
+  { value: 'ready_for_pickup', label: 'Готов к выдаче' },
   { value: 'canceled', label: 'Отменён' },
+  { value: 'canceled_by_client', label: 'Отменён клиентом' },
+  { value: 'declined_by_client', label: 'Отклонён клиентом' },
+  { value: 'defect', label: 'Брак' },
+  { value: 'return_at_pvz', label: 'Возврат в ПВЗ' },
+  { value: 'returned_to_seller', label: 'Возвращён продавцу' },
 ]
 
 /**
