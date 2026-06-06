@@ -88,6 +88,32 @@ describe('VelocityMetricsWidget', () => {
   })
 
   // ===========================================================================
+  // Percentiles totalOrders===0 guard
+  // ===========================================================================
+
+  describe('Percentiles totalOrders===0 guard', () => {
+    it('shows "Недостаточно данных" instead of fabricated "P50: 0 мин" when totalOrders=0', async () => {
+      const user = userEvent.setup()
+      render(<VelocityMetricsWidget data={mockVelocityMetricsEmpty} />)
+      // Expand percentiles section
+      const trigger = screen.getByText('P50/P95 детали')
+      await user.click(trigger)
+      // Should show the empty-state message, not fabricated percentiles
+      expect(screen.getByTestId('percentiles-empty')).toHaveTextContent('Недостаточно данных')
+      expect(screen.queryByTestId('percentiles-content')).not.toBeInTheDocument()
+    })
+
+    it('shows real percentiles when totalOrders > 0', async () => {
+      const user = userEvent.setup()
+      render(<VelocityMetricsWidget data={mockVelocityMetricsFast} />)
+      const trigger = screen.getByText('P50/P95 детали')
+      await user.click(trigger)
+      expect(screen.getByTestId('percentiles-content')).toBeInTheDocument()
+      expect(screen.queryByTestId('percentiles-empty')).not.toBeInTheDocument()
+    })
+  })
+
+  // ===========================================================================
   // 1. Average Time Display Tests (AC2)
   // ===========================================================================
 
