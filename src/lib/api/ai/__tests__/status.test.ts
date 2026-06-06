@@ -7,6 +7,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { normalizeAiStatusResponse } from '../status'
+import { logger } from '@/lib/logger'
 
 describe('normalizeAiStatusResponse', () => {
   it('passes through valid readiness levels unchanged', () => {
@@ -44,7 +45,7 @@ describe('normalizeAiStatusResponse', () => {
   })
 
   it('uses semantic-zero for weeksCollected/skuCount/orderCount when missing', () => {
-    const spy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const spy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined)
     const result = normalizeAiStatusResponse({ readinessLevel: 'collecting' })
     expect(result.weeksCollected).toBe(0)
     expect(result.skuCount).toBe(0)
@@ -53,10 +54,10 @@ describe('normalizeAiStatusResponse', () => {
   })
 
   it('preserves null for weeksRequired when backend omits field (F-1 defensive fix)', () => {
-    const spy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const spy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined)
     const result = normalizeAiStatusResponse({ readinessLevel: 'collecting' })
     expect(result.weeksRequired).toBeNull()
-    // console.warn must fire so DevTools surfaces the contract gap
+    // logger.warn must fire so DevTools surfaces the contract gap
     expect(spy).toHaveBeenCalledWith(
       '[ai/status] weeksRequired absent from backend response',
       expect.any(Object)

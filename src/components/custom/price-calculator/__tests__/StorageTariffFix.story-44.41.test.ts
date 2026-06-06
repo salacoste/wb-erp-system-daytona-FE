@@ -18,10 +18,9 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-import {
-  extractStorageTariffs,
-  DEFAULT_STORAGE_TARIFFS,
-} from '@/lib/tariff-extraction-utils'
+import { logger } from '@/lib/logger'
+
+import { extractStorageTariffs, DEFAULT_STORAGE_TARIFFS } from '@/lib/tariff-extraction-utils'
 
 // ============================================================================
 // Test Fixtures - SUPPLY System Response (Correct Source)
@@ -59,25 +58,21 @@ const mockInventoryStorage = {
   coefficient: 1.0,
 }
 
-
 // ============================================================================
 // AC1: Debug Storage Tariff Source
 // ============================================================================
 
 describe('Story 44.41: AC1 - Debug Storage Tariff Source', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
-    vi.spyOn(console, 'info').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   it('should log when using fallback due to empty response', () => {
-    const warnSpy = vi.spyOn(console, 'warn')
+    const warnSpy = vi.spyOn(logger, 'warn')
 
     extractStorageTariffs(null, 'supply')
 
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[StorageTariffs]')
-    )
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('[StorageTariffs]'))
   })
 
   it('should log exact baseLiterRub value from SUPPLY response', () => {
@@ -194,7 +189,7 @@ describe('Story 44.41: AC2 - Fix Field Name Mapping', () => {
 
 describe('Story 44.41: AC3 - Apply Backend Fallback Logic', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   describe('Fallback trigger conditions', () => {
@@ -270,13 +265,11 @@ describe('Story 44.41: AC3 - Apply Backend Fallback Logic', () => {
 
   describe('Fallback logging', () => {
     it('should log fallback activation', () => {
-      const warnSpy = vi.spyOn(console, 'warn')
+      const warnSpy = vi.spyOn(logger, 'warn')
 
       extractStorageTariffs(mockSupplyStorageZeroBase, 'supply')
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('baseLiterRub=0')
-      )
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('baseLiterRub=0'))
     })
   })
 })
@@ -308,9 +301,7 @@ describe('Story 44.41: AC4 - Verify SUPPLY System Usage', () => {
     const inventoryResult = extractStorageTariffs(mockInventoryStorage, 'inventory')
 
     // SUPPLY typically has higher rates
-    expect(supplyResult.tariffs.baseLiterRub).toBeGreaterThan(
-      inventoryResult.tariffs.baseLiterRub
-    )
+    expect(supplyResult.tariffs.baseLiterRub).toBeGreaterThan(inventoryResult.tariffs.baseLiterRub)
   })
 
   it('should pass storage tariffs correctly from SUPPLY to calculation', () => {
@@ -358,8 +349,7 @@ describe('Story 44.41: AC5 - Storage Cost Display Validation', () => {
       const volumeLiters = 3
       const additionalLiters = Math.max(0, volumeLiters - 1)
       const baseCost =
-        result.tariffs.baseLiterRub +
-        additionalLiters * result.tariffs.additionalLiterRub
+        result.tariffs.baseLiterRub + additionalLiters * result.tariffs.additionalLiterRub
       const dailyCost = baseCost * result.tariffs.coefficient
 
       expect(dailyCost).toBeCloseTo(68.06, 2)
@@ -384,8 +374,7 @@ describe('Story 44.41: AC5 - Storage Cost Display Validation', () => {
       const volumeLiters = 5
       const additionalLiters = Math.max(0, volumeLiters - 1)
       const baseCost =
-        result.tariffs.baseLiterRub +
-        additionalLiters * result.tariffs.additionalLiterRub
+        result.tariffs.baseLiterRub + additionalLiters * result.tariffs.additionalLiterRub
       const dailyCost = baseCost * result.tariffs.coefficient
 
       expect(dailyCost).toBeCloseTo(0.429, 3)
@@ -399,7 +388,7 @@ describe('Story 44.41: AC5 - Storage Cost Display Validation', () => {
 
 describe('Story 44.41: AC6 - Error State Handling', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   describe('Empty/null storage object handling', () => {
@@ -454,7 +443,7 @@ describe('Story 44.41: AC6 - Error State Handling', () => {
 
 describe('Story 44.41: Edge Cases and Invariants', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   describe('Coefficient edge cases', () => {

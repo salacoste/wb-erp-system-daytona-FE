@@ -5,6 +5,7 @@ import {
   computeWaterfallYDomain,
 } from '../waterfall-chart-utils'
 import { aggregatePortfolioCosts } from '../useWaterfallData'
+import { logger } from '@/lib/logger'
 import type { UnitEconomicsItem, UnitEconomicsSummary } from '@/types/unit-economics'
 
 const itemCosts = {
@@ -73,7 +74,7 @@ describe('transformToWaterfallData (chart-level)', () => {
   // Story 96.3-FE: silence console.warn for the legacy 3-arg call sites that intentionally
   // exercise the fallback path (categoryOrder omitted). Restore via vi.restoreAllMocks() in afterEach.
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   afterEach(() => {
@@ -153,18 +154,18 @@ describe('transformToWaterfallData — categoryOrder (Story 96.3-FE)', () => {
   // — TS reports MockInstance type mismatch). Pattern: call vi.spyOn fresh in each test that
   // needs to inspect the spy; rely on vi.restoreAllMocks() in afterEach to clean up.
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  /** Helper: get the live console.warn spy that beforeEach installed. */
+  /** Helper: get the live logger.warn spy that beforeEach installed. */
   function getWarnSpy() {
-    // console.warn is the spy reference because beforeEach replaced it.
+    // logger.warn is the spy reference because beforeEach replaced it.
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    return console.warn as ReturnType<typeof vi.fn>
+    return logger.warn as ReturnType<typeof vi.fn>
   }
 
   // Backend canonical order per request-backend/173 § F4 + empirical curl in Story 96.2.
@@ -296,7 +297,7 @@ describe('transformToWaterfallData — categoryOrder (Story 96.3-FE)', () => {
 
 describe('computeWaterfallYDomain (F-44)', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
   afterEach(() => {
     vi.restoreAllMocks()

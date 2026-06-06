@@ -9,6 +9,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { normalizeAiForecastResponse } from '../forecast'
 import { getConfidenceBand } from '@/types/ai-forecast'
+import { logger } from '@/lib/logger'
 
 describe('normalizeAiForecastResponse — extended fields', () => {
   const base = {
@@ -202,7 +203,7 @@ describe('normalizeAiForecastResponse — extended fields', () => {
 
   describe('legacy string rollbackNotice — Fix 5 (Defensive Frontend Principle)', () => {
     beforeEach(() => {
-      vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      vi.spyOn(logger, 'warn').mockImplementation(() => undefined)
     })
 
     afterEach(() => {
@@ -228,7 +229,7 @@ describe('normalizeAiForecastResponse — extended fields', () => {
         predictions: [],
         rollbackNotice: 'some string value',
       })
-      expect(console.warn).toHaveBeenCalledWith(
+      expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining('Legacy string rollbackNotice received')
       )
     })

@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useBulkCogsAssignment } from '../useBulkCogsAssignment'
 import { createQueryWrapper } from '@/test/utils/test-utils'
+import { logger } from '@/lib/logger'
 import type { BulkCogsUploadResponse, BulkCogsUploadResponseLegacy } from '@/types/cogs'
 
 // Mock API client
@@ -171,8 +172,8 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
       expect(result.current.data?.marginRecalculation).toBeUndefined()
     })
 
-    it('should log marginRecalculation info to console', async () => {
-      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    it('should log marginRecalculation info via logger', async () => {
+      const loggerDebugSpy = vi.spyOn(logger, 'debug').mockImplementation(() => {})
 
       const mockResponse: BulkCogsUploadResponse = {
         data: {
@@ -200,17 +201,17 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      // Check that console.log was called with margin recalculation info
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Margin Recalculation:'))
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Triggered: true'))
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Weeks: 2026-W03'))
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Task UUID: task_xyz789'))
+      // Check that logger.debug was called with margin recalculation info
+      expect(loggerDebugSpy).toHaveBeenCalledWith(expect.stringContaining('Margin Recalculation:'))
+      expect(loggerDebugSpy).toHaveBeenCalledWith(expect.stringContaining('Triggered: true'))
+      expect(loggerDebugSpy).toHaveBeenCalledWith(expect.stringContaining('Weeks: 2026-W03'))
+      expect(loggerDebugSpy).toHaveBeenCalledWith(expect.stringContaining('Task UUID: task_xyz789'))
 
-      consoleLogSpy.mockRestore()
+      loggerDebugSpy.mockRestore()
     })
 
     it('should log "Not triggered" message when marginRecalculation is absent with successful items', async () => {
-      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      const loggerDebugSpy = vi.spyOn(logger, 'debug').mockImplementation(() => {})
 
       const mockResponse: BulkCogsUploadResponse = {
         data: {
@@ -233,12 +234,12 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      // Check that console.log was called with "Not triggered" message
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      // Check that logger.debug was called with "Not triggered" message
+      expect(loggerDebugSpy).toHaveBeenCalledWith(
         expect.stringContaining('Margin Recalculation: Not triggered')
       )
 
-      consoleLogSpy.mockRestore()
+      loggerDebugSpy.mockRestore()
     })
   })
 

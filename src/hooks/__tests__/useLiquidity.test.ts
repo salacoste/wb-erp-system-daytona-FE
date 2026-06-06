@@ -27,6 +27,7 @@ import {
   useInvalidateLiquidityQueries,
 } from '../useLiquidity'
 import { renderHookWithClient, setupMockAuth, clearMockAuth } from '@/test/test-utils'
+import { logger } from '@/lib/logger'
 import type { LiquidityQueryParams } from '@/types/liquidity'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
@@ -333,15 +334,15 @@ describe('helper hooks', () => {
     })
 
     it('should invalidate queries when called', async () => {
-      const consoleSpy = vi.spyOn(console, 'info').mockImplementation(() => {})
+      const loggerDebugSpy = vi.spyOn(logger, 'debug').mockImplementation(() => {})
 
       const { result } = renderHookWithClient(() => useInvalidateLiquidityQueries())
 
       result.current()
 
-      expect(consoleSpy).toHaveBeenCalledWith('[Liquidity] Invalidating all liquidity queries')
+      expect(loggerDebugSpy).toHaveBeenCalledWith('[Liquidity] Invalidating all liquidity queries')
 
-      consoleSpy.mockRestore()
+      loggerDebugSpy.mockRestore()
     })
   })
 })

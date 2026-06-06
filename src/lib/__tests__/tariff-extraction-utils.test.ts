@@ -19,6 +19,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import { logger } from '@/lib/logger'
+
 // Import the utility to be created
 // NOTE: This import will fail until the utility is implemented (TDD Red Phase)
 import {
@@ -91,9 +93,9 @@ const EXPECTED_FALLBACK_TARIFFS = {
 // ============================================================================
 
 describe('extractStorageTariffs', () => {
-  // Spy on console.warn to verify logging
+  // Spy on logger.warn to verify logging
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
   })
 
   // -------------------------------------------------------------------------
@@ -238,9 +240,7 @@ describe('extractStorageTariffs', () => {
     it('should log warning when fallback is applied', () => {
       extractStorageTariffs(null, 'supply')
 
-      expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('[StorageTariffs]')
-      )
+      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('[StorageTariffs]'))
     })
 
     it('should NOT apply fallback for Pallets with additionalLiterRub = 0', () => {
@@ -280,13 +280,13 @@ describe('extractStorageTariffs', () => {
     it('should fallback to INVENTORY format when SUPPLY fields are missing', () => {
       const inventoryOnly = {
         base_per_day_rub: 0.15,
-        liter_per_day_rub: 0.10,
+        liter_per_day_rub: 0.1,
         coefficient: 1.2,
       }
       const result = extractStorageTariffs(inventoryOnly, 'supply')
 
       expect(result.tariffs.baseLiterRub).toBe(0.15)
-      expect(result.tariffs.additionalLiterRub).toBe(0.10)
+      expect(result.tariffs.additionalLiterRub).toBe(0.1)
     })
   })
 
