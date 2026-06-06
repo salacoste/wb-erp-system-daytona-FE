@@ -35,7 +35,7 @@ export interface AnalyticsEvent {
   timestamp: string // ISO 8601
   event_type: string // e.g. "telegram_binding_started"
   category: 'binding' | 'preferences' | 'error' | 'behavior'
-  properties: Record<string, any> // Event-specific data
+  properties: Record<string, unknown> // Event-specific data
   user_id?: string // Optional user tracking
   cabinet_id?: string // Multi-tenant isolation
 }

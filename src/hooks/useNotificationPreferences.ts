@@ -4,13 +4,10 @@
 // Refactored: 2025-12-30 - Use query keys factory from useTelegramBinding
 // ============================================================================
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  getNotificationPreferences,
-  updateNotificationPreferences,
-} from '@/lib/api/notifications';
-import type { UpdatePreferencesRequestDto } from '@/types/notifications';
-import { telegramQueryKeys } from './useTelegramBinding';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { getNotificationPreferences, updateNotificationPreferences } from '@/lib/api/notifications'
+import type { UpdatePreferencesRequestDto } from '@/types/notifications'
+import { telegramQueryKeys } from './useTelegramBinding'
 import { logger } from '@/lib/logger'
 
 /**
@@ -22,7 +19,7 @@ import { logger } from '@/lib/logger'
  * - Optimistic updates for better UX
  */
 export function useNotificationPreferences() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // ============================================================================
   // Preferences Query
@@ -36,55 +33,54 @@ export function useNotificationPreferences() {
     queryKey: telegramQueryKeys.preferences(),
     queryFn: getNotificationPreferences,
     staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  })
 
   // ============================================================================
   // Update Preferences Mutation
   // ============================================================================
 
   const updatePreferences = useMutation({
-    mutationFn: (updates: UpdatePreferencesRequestDto) =>
-      updateNotificationPreferences(updates),
+    mutationFn: (updates: UpdatePreferencesRequestDto) => updateNotificationPreferences(updates),
 
     // Optimistic update for instant UI feedback
-    onMutate: async (newPreferences) => {
+    onMutate: async newPreferences => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: telegramQueryKeys.preferences() });
+      await queryClient.cancelQueries({ queryKey: telegramQueryKeys.preferences() })
 
       // Snapshot previous value
-      const previousPreferences = queryClient.getQueryData(telegramQueryKeys.preferences());
+      const previousPreferences = queryClient.getQueryData(telegramQueryKeys.preferences())
 
       // Optimistically update to new value
-      queryClient.setQueryData(telegramQueryKeys.preferences(), (old: any) => ({
-        ...old,
-        ...newPreferences,
-        preferences: {
-          ...old?.preferences,
-          ...newPreferences.preferences,
-        },
-        quiet_hours: {
-          ...old?.quiet_hours,
-          ...newPreferences.quiet_hours,
-        },
-      }));
+      queryClient.setQueryData(
+        telegramQueryKeys.preferences(),
+        (old: Record<string, unknown> | undefined) => ({
+          ...old,
+          ...newPreferences,
+          preferences: {
+            ...((old?.preferences ?? {}) as Record<string, unknown>),
+            ...newPreferences.preferences,
+          },
+          quiet_hours: {
+            ...((old?.quiet_hours ?? {}) as Record<string, unknown>),
+            ...newPreferences.quiet_hours,
+          },
+        })
+      )
 
-      return { previousPreferences };
+      return { previousPreferences }
     },
 
     // On error, rollback
     onError: (err, newPreferences, context) => {
-      queryClient.setQueryData(
-        telegramQueryKeys.preferences(),
-        context?.previousPreferences
-      );
-      logger.error('Failed to update preferences:', err);
+      queryClient.setQueryData(telegramQueryKeys.preferences(), context?.previousPreferences)
+      logger.error('Failed to update preferences:', err)
     },
 
     // Always refetch after error or success
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: telegramQueryKeys.preferences() });
+      queryClient.invalidateQueries({ queryKey: telegramQueryKeys.preferences() })
     },
-  });
+  })
 
   return {
     // Data
@@ -101,5 +97,5 @@ export function useNotificationPreferences() {
 
     // Error
     updateError: updatePreferences.error,
-  };
+  }
 }

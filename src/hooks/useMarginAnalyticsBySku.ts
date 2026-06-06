@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger'
-'use client'
+;('use client')
 
 /**
  * Hook for margin analytics by SKU
@@ -15,6 +15,7 @@ import {
   MARGIN_ANALYTICS_QUERY_CONFIG,
   buildMarginAnalyticsParams,
   extractItems,
+  type RawMarginAnalyticsResponse,
 } from './margin-analytics-query-keys'
 
 /**
@@ -73,14 +74,14 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
           nmId: nmId ?? 'all',
         })
 
-        const response = await apiClient.get<any[] | { items?: any[]; data?: any[]; meta?: any }>(
+        const response = await apiClient.get<unknown[] | RawMarginAnalyticsResponse>(
           `/v1/analytics/weekly/by-sku?${params.toString()}`
         )
 
         const { items, meta } = extractItems(response)
 
         // Transform response — Request #60: Include operational costs per SKU
-        let transformedData = items.map((item: any) => mapSkuItem(item))
+        let transformedData = items.map(item => mapSkuItem(item))
 
         // Story 4.9: Client-side filtering by nm_id
         if (nmId) {
@@ -91,7 +92,10 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
           })
         }
 
-        const transformed: MarginAnalyticsSkuResponse = { data: transformedData, meta }
+        const transformed: MarginAnalyticsSkuResponse = {
+          data: transformedData,
+          meta: meta as MarginAnalyticsSkuResponse['meta'],
+        }
 
         logger.debug('[Margin Analytics] SKU analytics received:', {
           count: transformed.data.length,
@@ -109,17 +113,47 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
   })
 }
 
+/** Raw backend item shape for margin analytics by SKU */
+interface RawSkuItem {
+  nm_id: number
+  sa_name: string
+  revenue_net: number
+  total_units: number
+  cogs?: number | null
+  profit?: number | null
+  margin_pct?: number | null
+  markup_percent?: number | null
+  missing_cogs_flag?: boolean
+  profit_per_unit?: number | null
+  roi?: number | null
+  weeks_with_sales?: number
+  weeks_with_cogs?: number
+  logistics_cost?: number | null
+  storage_cost?: number | null
+  penalties?: number | null
+  paid_acceptance_cost?: number | null
+  advertising_cost?: number | null
+  total_expenses?: number | null
+  operating_profit?: number | null
+  operating_margin_pct?: number | null
+  has_revenue?: boolean
+  net_profit?: number | null
+  net_margin_pct?: number | null
+  storage_data_source?: 'paid_storage_api' | 'unavailable'
+}
+
 /** Map a single SKU API item to the frontend response shape */
-function mapSkuItem(item: any) {
+function mapSkuItem(raw: unknown) {
+  const item = raw as RawSkuItem
   return {
-    nm_id: item.nm_id,
+    nm_id: String(item.nm_id), // Anti-pattern #10: opaque numeric ID → string
     sa_name: item.sa_name,
     revenue_net: item.revenue_net,
     qty: item.total_units,
-    cogs: item.cogs,
-    profit: item.profit,
-    margin_pct: item.margin_pct,
-    markup_percent: item.markup_percent,
+    cogs: item.cogs ?? undefined,
+    profit: item.profit ?? undefined,
+    margin_pct: item.margin_pct ?? undefined,
+    markup_percent: item.markup_percent ?? undefined,
     missing_cogs_flag: item.missing_cogs_flag || false,
     // Story 6.3-FE: ROI & Profit per Unit
     profit_per_unit: item.profit_per_unit,
@@ -137,14 +171,14 @@ function mapSkuItem(item: any) {
     advertising_cost_rub: item.advertising_cost ? String(item.advertising_cost) : undefined,
     // Epic 30: Calculated totals from backend
     total_expenses_rub: item.total_expenses ? String(item.total_expenses) : undefined,
-    total_expenses: item.total_expenses,
+    total_expenses: item.total_expenses ?? undefined,
     operating_profit_rub: item.operating_profit ? String(item.operating_profit) : undefined,
-    operating_profit: item.operating_profit,
+    operating_profit: item.operating_profit ?? undefined,
     operating_margin_pct: item.operating_margin_pct,
     has_revenue: item.has_revenue,
     // Epic 30: Net profit fields
-    net_profit: item.net_profit,
-    net_margin_pct: item.net_margin_pct,
+    net_profit: item.net_profit ?? undefined,
+    net_margin_pct: item.net_margin_pct ?? undefined,
     storage_data_source: item.storage_data_source,
   }
 }

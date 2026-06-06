@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger'
-'use client'
+;('use client')
 
 /**
  * Hook for margin analytics by brand
@@ -9,12 +9,13 @@ import { logger } from '@/lib/logger'
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type { MarginAnalyticsAggregatedResponse } from '@/types/api'
+import type { MarginAnalyticsAggregated, MarginAnalyticsAggregatedResponse } from '@/types/api'
 import type { MarginAnalyticsFilters } from './margin-analytics-query-keys'
 import {
   MARGIN_ANALYTICS_QUERY_CONFIG,
   buildMarginAnalyticsParams,
   extractItems,
+  type RawMarginAnalyticsResponse,
 } from './margin-analytics-query-keys'
 
 /**
@@ -66,7 +67,7 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
           includeCogs,
         })
 
-        const response = await apiClient.get<any[] | { items?: any[]; data?: any[]; meta?: any }>(
+        const response = await apiClient.get<unknown[] | RawMarginAnalyticsResponse>(
           `/v1/analytics/weekly/by-brand?${params.toString()}`
         )
 
@@ -74,8 +75,8 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
 
         // Transform response — Epic 26: operating expenses, Request #69: revenue_gross
         const transformed: MarginAnalyticsAggregatedResponse = {
-          data: items.map((item: any) => mapBrandItem(item)),
-          meta,
+          data: items.map(item => mapBrandItem(item)),
+          meta: meta as MarginAnalyticsAggregatedResponse['meta'],
         }
 
         logger.debug('[Margin Analytics] Brand analytics received:', {
@@ -85,7 +86,7 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
 
         return transformed
       } catch (error) {
-        console.error('[Margin Analytics] Failed to fetch brand analytics:', error)
+        logger.error('[Margin Analytics] Failed to fetch brand analytics:', error)
         throw error
       }
     },
@@ -94,30 +95,57 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
   })
 }
 
+/** Raw backend item shape for margin analytics by brand */
+interface RawBrandItem {
+  brand: string
+  revenue_gross: number
+  revenue_net: number
+  total_units: number
+  total_skus: number
+  cogs: number | null
+  profit: number | null
+  margin_pct: number | null
+  markup_percent: number | null
+  missing_cogs_count: number
+  storage_cost: number | null
+  penalties: number | null
+  paid_acceptance_cost: number | null
+  acquiring_fee: number | null
+  loyalty_fee: number | null
+  loyalty_compensation: number | null
+  commission: number | null
+  other_adjustments: number | null
+  total_expenses: number | null
+  operating_profit: number | null
+  operating_margin_pct: number | null
+  skus_with_expenses_only: number
+}
+
 /** Map a single brand API item to the frontend response shape */
-function mapBrandItem(item: any) {
+function mapBrandItem(raw: unknown): MarginAnalyticsAggregated {
+  const item = raw as RawBrandItem
   return {
     brand: item.brand,
     revenue_gross: item.revenue_gross, // Request #69: already a number from Brand API
     revenue_net: item.revenue_net,
     qty: item.total_units,
     total_skus: item.total_skus, // Unique SKU count for "Товаров (SKU)" column
-    cogs: item.cogs,
-    profit: item.profit,
-    margin_pct: item.margin_pct,
-    markup_percent: item.markup_percent,
+    cogs: item.cogs ?? undefined,
+    profit: item.profit ?? undefined,
+    margin_pct: item.margin_pct ?? undefined,
+    markup_percent: item.markup_percent ?? undefined,
     missing_cogs_count: item.missing_cogs_count,
     // Epic 26: Operating expenses and profit
-    storage_cost: item.storage_cost,
-    penalties: item.penalties,
-    paid_acceptance_cost: item.paid_acceptance_cost,
-    acquiring_fee: item.acquiring_fee,
-    loyalty_fee: item.loyalty_fee,
-    loyalty_compensation: item.loyalty_compensation,
-    commission: item.commission,
-    other_adjustments: item.other_adjustments,
-    total_expenses: item.total_expenses,
-    operating_profit: item.operating_profit,
+    storage_cost: item.storage_cost ?? undefined,
+    penalties: item.penalties ?? undefined,
+    paid_acceptance_cost: item.paid_acceptance_cost ?? undefined,
+    acquiring_fee: item.acquiring_fee ?? undefined,
+    loyalty_fee: item.loyalty_fee ?? undefined,
+    loyalty_compensation: item.loyalty_compensation ?? undefined,
+    commission: item.commission ?? undefined,
+    other_adjustments: item.other_adjustments ?? undefined,
+    total_expenses: item.total_expenses ?? undefined,
+    operating_profit: item.operating_profit ?? undefined,
     operating_margin_pct: item.operating_margin_pct,
     skus_with_expenses_only: item.skus_with_expenses_only,
   }

@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger'
-'use client'
+;('use client')
 
 /**
  * Hook for margin analytics by category
@@ -15,6 +15,7 @@ import {
   MARGIN_ANALYTICS_QUERY_CONFIG,
   buildMarginAnalyticsParams,
   extractItems,
+  type RawMarginAnalyticsResponse,
 } from './margin-analytics-query-keys'
 
 /**
@@ -66,7 +67,7 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
           includeCogs,
         })
 
-        const response = await apiClient.get<any[] | { items?: any[]; data?: any[]; meta?: any }>(
+        const response = await apiClient.get<unknown[] | RawMarginAnalyticsResponse>(
           `/v1/analytics/weekly/by-category?${params.toString()}`
         )
 
@@ -74,8 +75,8 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
 
         // Transform response — Epic 26: operating expenses, Request #69: revenue_gross
         const transformed: MarginAnalyticsAggregatedResponse = {
-          data: items.map((item: any) => mapCategoryItem(item)),
-          meta,
+          data: items.map(item => mapCategoryItem(item)),
+          meta: meta as MarginAnalyticsAggregatedResponse['meta'],
         }
 
         logger.debug('[Margin Analytics] Category analytics received:', {
@@ -94,8 +95,35 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
   })
 }
 
+/** Raw backend item shape for margin analytics by category (string-prefixed _rub fields) */
+interface RawCategoryItem {
+  subject_name: string
+  revenue_gross_rub?: string
+  revenue_net_rub?: string
+  total_units: number
+  sku_count: number
+  cogs_rub?: string
+  profit_rub?: string
+  margin_pct?: number
+  markup_percent?: number
+  missing_cogs_count?: number
+  storage_cost_rub?: string
+  penalties_rub?: string
+  paid_acceptance_cost_rub?: string
+  acquiring_fee_rub?: string
+  loyalty_fee_rub?: string
+  loyalty_compensation_rub?: string
+  commission_rub?: string
+  other_adjustments_rub?: string
+  total_expenses_rub?: string
+  operating_profit_rub?: string
+  operating_margin_pct?: number | null
+  skus_with_expenses_only?: number
+}
+
 /** Map a single category API item to the frontend response shape */
-function mapCategoryItem(item: any) {
+function mapCategoryItem(raw: unknown) {
+  const item = raw as RawCategoryItem
   return {
     category: item.subject_name,
     revenue_gross: item.revenue_gross_rub ? parseFloat(item.revenue_gross_rub) : undefined,

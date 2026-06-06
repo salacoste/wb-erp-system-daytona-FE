@@ -154,10 +154,17 @@ export function buildMarginAnalyticsParams(filters: MarginAnalyticsFilters): URL
   return params
 }
 
+/** Raw paginated response shape from margin analytics endpoints */
+export interface RawMarginAnalyticsResponse {
+  items?: unknown[]
+  data?: unknown[]
+  meta?: Record<string, unknown>
+}
+
 /** Extract items array from various API response shapes */
-export function extractItems(response: any[] | { items?: any[]; data?: any[]; meta?: any }): {
-  items: any[]
-  meta: any
+export function extractItems(response: unknown[] | RawMarginAnalyticsResponse): {
+  items: unknown[]
+  meta: Record<string, unknown> | undefined
 } {
   const items = Array.isArray(response) ? response : (response.items ?? response.data ?? [])
   const meta = Array.isArray(response) ? undefined : response.meta
