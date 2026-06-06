@@ -40,12 +40,8 @@ export interface DashboardPipeline {
   lastSuccessAt: string | null
   dataLagMinutes: number | null
   successRate24h: number
-  // Story 91.3-FE: error-rate fields (Backend Epics 89-93). iter-89: the live
-  // GET /v1/monitoring/dashboard endpoint does NOT actually emit these three — they exist only on
-  // GET /v1/monitoring/pipeline-health-grid (GridPipeline). Declared OPTIONAL so the type is
-  // honest; PipelineStatusGrid guards their absence (the Overview error badge stays hidden until
-  // the backend adds them — see docs/request-backend/201). The old required typing made
-  // `errorRate >= 0.01` run as `undefined >= 0.01` (always false) — a silent footgun.
+  // REQ-201: backend dashboard endpoint may omit these fields for some pipelines.
+  // Normalizer passes them through; MonitorPipelineHealth uses ?? 0 for display.
   errorRate?: number // 0-1
   tasksWithErrors?: number
   totalResultErrors?: number

@@ -79,7 +79,11 @@ export function MonitorPipelineHealth({ pipelines }: MonitorPipelineHealthProps)
 }
 
 function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
-  const { displayName, status, errorRate, tasksWithErrors, totalResultErrors } = pipeline
+  const { displayName, status } = pipeline
+  // Backend may omit error metrics — use ?? 0 to avoid undefined comparisons (Story 91.3-FE)
+  const errorRate = pipeline.errorRate ?? 0
+  const tasksWithErrors = pipeline.tasksWithErrors ?? 0
+  const totalResultErrors = pipeline.totalResultErrors ?? 0
   const colorClass = STATUS_COLORS[status]
   const label = STATUS_LABELS[status]
 
