@@ -312,14 +312,17 @@ describe('EvaluationsList', () => {
     expect(dashes.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('happy path: 6 column headers render', () => {
+  it('happy path: column headers render including forecast columns', () => {
     setup()
     render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
-    // F-7: header must be "Дата" (spec verbatim), not "Дата / ID прогноза"
-    expect(screen.getByText('Дата')).toBeTruthy()
+    expect(screen.getByText('Дата оценки')).toBeTruthy()
+    expect(screen.getByText('Дата прогноза')).toBeTruthy()
+    expect(screen.getByText('Горизонт')).toBeTruthy()
     expect(screen.getByText('Артикул')).toBeTruthy()
     expect(screen.getByText('Прогноз (ед.)')).toBeTruthy()
     expect(screen.getByText('Факт (ед.)')).toBeTruthy()
+    expect(screen.getByText('Прогноз (₽)')).toBeTruthy()
+    expect(screen.getByText('Факт (₽)')).toBeTruthy()
     // Sort buttons
     expect(screen.getByRole('button', { name: /Сортировать по MAPE единиц/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: /Сортировать по MAPE выручки/ })).toBeTruthy()

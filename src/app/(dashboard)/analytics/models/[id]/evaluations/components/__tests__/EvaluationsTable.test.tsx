@@ -96,15 +96,17 @@ describe('EvaluationsTable', () => {
   it('renders empty table body when entries is empty', () => {
     renderTable({ ...defaultProps, entries: [] })
     // Headers still render
-    expect(screen.getByText('Дата')).toBeTruthy()
+    expect(screen.getByText('Дата оценки')).toBeTruthy()
     // No data rows (only header row)
     const rows = screen.getAllByRole('row')
     expect(rows).toHaveLength(1) // header row only
   })
 
-  it('renders all 7 column headers (Story 110.4-FE: Оценка added)', () => {
+  it('renders all column headers including forecast columns', () => {
     renderTable(defaultProps)
-    expect(screen.getByText('Дата')).toBeTruthy()
+    expect(screen.getByText('Дата оценки')).toBeTruthy()
+    expect(screen.getByText('Дата прогноза')).toBeTruthy()
+    expect(screen.getByText('Горизонт')).toBeTruthy()
     expect(screen.getByText('Артикул')).toBeTruthy()
     expect(screen.getByText('Прогноз (ед.)')).toBeTruthy()
     expect(screen.getByText('Факт (ед.)')).toBeTruthy()
@@ -113,11 +115,12 @@ describe('EvaluationsTable', () => {
     expect(screen.getByText('Оценка')).toBeTruthy()
   })
 
-  it('F-1: Дата cell renders formatDate(evaluationDate) in DD.MM.YYYY format', () => {
+  it('F-1: Дата оценки cell renders formatDate(evaluationDate) in DD.MM.YYYY format', () => {
     renderTable(defaultProps)
     // evaluationDate '2026-05-17' → formatDate → '17.05.2026'
-    expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}/)).toBeTruthy()
-    expect(screen.getByText('17.05.2026')).toBeTruthy()
+    const dates = screen.getAllByText(/\d{2}\.\d{2}\.\d{4}/)
+    expect(dates.length).toBeGreaterThanOrEqual(2) // evaluationDate + forecastDate
+    expect(screen.getAllByText('17.05.2026').length).toBeGreaterThanOrEqual(1)
   })
 
   it('F-1: tooltip shows full forecastId (Прогноз ID), not a short hash', () => {
@@ -253,8 +256,8 @@ describe('EvaluationsTable', () => {
     const onRowClick = vi.fn()
     renderTable({ ...defaultProps, onRowClick })
     // The date span is the TooltipTrigger child — click it directly
-    const dateSpan = screen.getByText('17.05.2026')
-    fireEvent.click(dateSpan)
+    const dateSpans = screen.getAllByText('17.05.2026')
+    fireEvent.click(dateSpans[0])
     // stopPropagation prevents bubbling to the TableRow onClick
     expect(onRowClick).not.toHaveBeenCalled()
   })
