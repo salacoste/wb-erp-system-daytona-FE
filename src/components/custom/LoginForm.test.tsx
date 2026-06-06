@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { LoginForm } from './LoginForm'
 import * as api from '@/lib/api'
+import type { LoginResponse } from '@/types/auth'
 import { useAuthStore } from '@/stores/authStore'
 
 // Mock API
@@ -25,14 +26,13 @@ vi.mock('next/navigation', () => ({
 const originalLocation = window.location
 
 beforeAll(() => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsdom Location is read-only; must delete+reassign for redirect tests
   delete (window as any).location
-  window.location = {
-    ...originalLocation,
-    href: '',
-  } as any
+  window.location = { ...originalLocation, href: '' } as Location
 })
 
 afterAll(() => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- restore original Location after tests
   window.location = originalLocation as any
 })
 
@@ -163,11 +163,11 @@ describe('LoginForm', () => {
   it('shows loading state during submission', async () => {
     const user = userEvent.setup()
     const mockLoginUser = vi.mocked(api.loginUser)
-    let resolvePromise: (value: any) => void
-    const promise = new Promise((resolve) => {
+    let resolvePromise: (value: LoginResponse) => void
+    const promise = new Promise<LoginResponse>(resolve => {
       resolvePromise = resolve
     })
-    mockLoginUser.mockReturnValue(promise as Promise<any>)
+    mockLoginUser.mockReturnValue(promise)
 
     renderForm()
 
@@ -288,11 +288,7 @@ describe('LoginForm', () => {
 
     await waitFor(
       () => {
-        expect(mockLogin).toHaveBeenCalledWith(
-          mockUser,
-          'fake-token',
-          'cabinet-1',
-        )
+        expect(mockLogin).toHaveBeenCalledWith(mockUser, 'fake-token', 'cabinet-1')
       },
       { timeout: 5000 }
     )
@@ -327,4 +323,3 @@ describe('LoginForm', () => {
     )
   })
 })
-

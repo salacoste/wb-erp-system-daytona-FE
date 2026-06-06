@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RegistrationForm } from './RegistrationForm'
 import * as api from '@/lib/api'
+import type { RegisterResponse } from '@/types/auth'
 
 // Mock API
 vi.mock('@/lib/api', () => ({
@@ -85,9 +86,7 @@ describe('RegistrationForm', () => {
 
     await waitFor(
       () => {
-        expect(
-          screen.getByText(/пароль должен содержать минимум 8 символов/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/пароль должен содержать минимум 8 символов/i)).toBeInTheDocument()
       },
       { timeout: 3000 }
     )
@@ -96,11 +95,11 @@ describe('RegistrationForm', () => {
   it('disables submit button during submission', async () => {
     const user = userEvent.setup()
     const mockRegisterUser = vi.mocked(api.registerUser)
-    let resolvePromise: (value: any) => void
-    const promise = new Promise((resolve) => {
+    let resolvePromise: (value: RegisterResponse) => void
+    const promise = new Promise<RegisterResponse>(resolve => {
       resolvePromise = resolve
     })
-    mockRegisterUser.mockReturnValue(promise as Promise<any>)
+    mockRegisterUser.mockReturnValue(promise)
 
     renderForm()
 
@@ -159,11 +158,11 @@ describe('RegistrationForm', () => {
   it('shows loading state during submission', async () => {
     const user = userEvent.setup()
     const mockRegisterUser = vi.mocked(api.registerUser)
-    let resolvePromise: (value: any) => void
-    const promise = new Promise((resolve) => {
+    let resolvePromise: (value: RegisterResponse) => void
+    const promise = new Promise<RegisterResponse>(resolve => {
       resolvePromise = resolve
     })
-    mockRegisterUser.mockReturnValue(promise as Promise<any>)
+    mockRegisterUser.mockReturnValue(promise)
 
     renderForm()
 
@@ -228,9 +227,7 @@ describe('RegistrationForm', () => {
     )
 
     // Verify the error message contains expected text
-    expect(toast.error).toHaveBeenCalledWith(
-      'Этот email уже зарегистрирован. Пожалуйста, войдите.'
-    )
+    expect(toast.error).toHaveBeenCalledWith('Этот email уже зарегистрирован. Пожалуйста, войдите.')
   })
 
   it('handles network errors', async () => {
@@ -248,12 +245,9 @@ describe('RegistrationForm', () => {
     await waitFor(
       () => {
         expect(mockRegisterUser).toHaveBeenCalled()
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringContaining('Ошибка регистрации')
-        )
+        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Ошибка регистрации'))
       },
       { timeout: 5000 }
     )
   })
 })
-

@@ -19,6 +19,8 @@ vi.mock('next/link', () => ({
   ),
 }))
 
+type TrendsReturn = ReturnType<typeof useTrendsModule.useTrends>
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -30,18 +32,45 @@ const createWrapper = () => {
   )
 }
 
+/** Build a typed partial mock of useTrends return value */
+function mockTrends(
+  data: useTrendsModule.TrendData | undefined,
+  isLoading = false,
+  error: Error | null = null
+): TrendsReturn {
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: vi.fn(),
+    isPending: isLoading,
+    isSuccess: !isLoading && !error,
+    isFetching: false,
+    isFetched: true,
+    isPlaceholderData: false,
+    isRefetching: false,
+    isLoadingError: !!error && !isLoading,
+    isRefetchError: false,
+    failureCount: 0,
+    failureReason: error,
+    errorUpdateCount: error ? 1 : 0,
+    isFetchedAfterMount: true,
+    isInitialLoading: isLoading,
+    isError: !!error,
+    dataUpdatedAt: Date.now(),
+    errorUpdatedAt: error ? Date.now() : 0,
+    status: error ? 'error' : isLoading ? 'pending' : 'success',
+    fetchStatus: 'idle',
+  } as unknown as TrendsReturn
+}
+
 describe('TrendGraph', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('renders loading state correctly', () => {
-    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      error: null,
-      refetch: vi.fn(),
-    } as any)
+    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue(mockTrends(undefined, true))
 
     render(<TrendGraph />, { wrapper: createWrapper() })
 
@@ -50,13 +79,9 @@ describe('TrendGraph', () => {
   })
 
   it('renders error state correctly', () => {
-    const mockRefetch = vi.fn()
-    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      error: new Error('Failed to fetch'),
-      refetch: mockRefetch,
-    } as any)
+    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue(
+      mockTrends(undefined, false, new Error('Failed to fetch'))
+    )
 
     render(<TrendGraph />, { wrapper: createWrapper() })
 
@@ -65,12 +90,9 @@ describe('TrendGraph', () => {
   })
 
   it('renders empty state when no data', () => {
-    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue({
-      data: { trends: [], period: 'weeks' },
-      isLoading: false,
-      error: null,
-      refetch: vi.fn(),
-    } as any)
+    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue(
+      mockTrends({ trends: [], period: 'weeks' })
+    )
 
     render(<TrendGraph />, { wrapper: createWrapper() })
 
@@ -99,12 +121,7 @@ describe('TrendGraph', () => {
       period: 'weeks' as const,
     }
 
-    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue({
-      data: mockTrendData,
-      isLoading: false,
-      error: null,
-      refetch: vi.fn(),
-    } as any)
+    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue(mockTrends(mockTrendData))
 
     render(<TrendGraph />, { wrapper: createWrapper() })
 
@@ -127,12 +144,7 @@ describe('TrendGraph', () => {
       period: 'weeks' as const,
     }
 
-    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue({
-      data: mockTrendData,
-      isLoading: false,
-      error: null,
-      refetch: vi.fn(),
-    } as any)
+    vi.spyOn(useTrendsModule, 'useTrends').mockReturnValue(mockTrends(mockTrendData))
 
     render(<TrendGraph />, { wrapper: createWrapper() })
 
