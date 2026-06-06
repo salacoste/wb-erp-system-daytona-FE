@@ -25,6 +25,8 @@ vi.mock('@/hooks/useMarginTrends', () => ({
 
 const { useMarginTrends } = await import('@/hooks/useMarginTrends')
 
+type TrendsHookReturn = ReturnType<typeof useMarginTrends>
+
 const mockTrendData: MarginTrendPoint[] = [
   {
     week: '2025-W45',
@@ -88,6 +90,38 @@ const createWrapper = () => {
   )
 }
 
+/** Build a typed partial mock of useMarginTrends return value */
+function mockTrendsHook(
+  data: MarginTrendPoint[] | undefined,
+  isLoading = false,
+  error: Error | null = null
+): TrendsHookReturn {
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: vi.fn(),
+    isPending: isLoading,
+    isSuccess: !isLoading && !error,
+    isFetching: false,
+    isFetched: true,
+    isPlaceholderData: false,
+    isRefetching: false,
+    isLoadingError: !!error && !isLoading,
+    isRefetchError: false,
+    failureCount: 0,
+    failureReason: error,
+    errorUpdateCount: error ? 1 : 0,
+    isFetchedAfterMount: true,
+    isInitialLoading: isLoading,
+    isError: !!error,
+    dataUpdatedAt: Date.now(),
+    errorUpdatedAt: error ? Date.now() : 0,
+    status: error ? 'error' : isLoading ? 'pending' : 'success',
+    fetchStatus: 'idle',
+  } as unknown as TrendsHookReturn
+}
+
 describe('MarginTrendChart', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -95,19 +129,9 @@ describe('MarginTrendChart', () => {
 
   describe('loading state', () => {
     it('should show skeleton when loading', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: undefined,
-        isLoading: true,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(undefined, true))
 
-      render(
-        <MarginTrendChart
-          queryParams={{ weeks: 12 }}
-        />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       // Skeleton should be rendered
       const skeleton = document.querySelector('.animate-pulse')
@@ -115,12 +139,7 @@ describe('MarginTrendChart', () => {
     })
 
     it('should display title and description while loading', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: undefined,
-        isLoading: true,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(undefined, true))
 
       render(
         <MarginTrendChart
@@ -138,78 +157,45 @@ describe('MarginTrendChart', () => {
 
   describe('error state', () => {
     it('should show error message when error occurs', () => {
-      const mockRefetch = vi.fn()
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error: new Error('Failed to fetch'),
-        refetch: mockRefetch,
-      } as any)
-
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
+      vi.mocked(useMarginTrends).mockReturnValue(
+        mockTrendsHook(undefined, false, new Error('Failed to fetch'))
       )
 
-      expect(
-        screen.getByText(/Не удалось загрузить данные трендов маржи/)
-      ).toBeInTheDocument()
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
+
+      expect(screen.getByText(/Не удалось загрузить данные трендов маржи/)).toBeInTheDocument()
     })
 
     it('should call refetch when retry button is clicked', () => {
-      const mockRefetch = vi.fn()
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error: new Error('Failed to fetch'),
-        refetch: mockRefetch,
-      } as any)
-
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
+      vi.mocked(useMarginTrends).mockReturnValue(
+        mockTrendsHook(undefined, false, new Error('Failed to fetch'))
       )
+
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       const retryButton = screen.getByText('Повторить')
       retryButton.click()
 
-      expect(mockRefetch).toHaveBeenCalled()
+      // refetch was called (fn identity set in mockTrendsHook)
+      expect(vi.mocked(useMarginTrends).mock.results[0]!.value.refetch).toHaveBeenCalled()
     })
   })
 
   describe('empty state', () => {
     it('should show empty state message when no data', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: [],
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook([]))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
-      expect(
-        screen.getByText(/Данные о трендах маржи пока недоступны/)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/Данные о трендах маржи пока недоступны/)).toBeInTheDocument()
     })
   })
 
   describe('chart rendering', () => {
     it('should render chart when data is available', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       // Chart component renders (Recharts may not render SVG in test environment)
       // But the component structure should be present
@@ -218,12 +204,7 @@ describe('MarginTrendChart', () => {
     })
 
     it('should display title and description', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
       render(
         <MarginTrendChart
@@ -241,34 +222,18 @@ describe('MarginTrendChart', () => {
 
   describe('summary statistics', () => {
     it('should display weeks count', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       expect(screen.getByText('Недель')).toBeInTheDocument()
       expect(screen.getByText('4')).toBeInTheDocument()
     })
 
     it('should calculate and display average margin', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       expect(screen.getByText('Средняя маржа')).toBeInTheDocument()
       // Average: (35.5 + 28.2 + (-5.5) + 0) / 4 = 14.55%
@@ -277,17 +242,9 @@ describe('MarginTrendChart', () => {
     })
 
     it('should display maximum margin in green', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       expect(screen.getByText('Макс. маржа')).toBeInTheDocument()
       // Max: 35.5%
@@ -296,17 +253,9 @@ describe('MarginTrendChart', () => {
     })
 
     it('should display minimum margin in red', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       expect(screen.getByText('Мин. маржа')).toBeInTheDocument()
       // Min: -5.5%
@@ -330,17 +279,9 @@ describe('MarginTrendChart', () => {
         },
       ]
 
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: noMarginData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(noMarginData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       // Should still show weeks count
       expect(screen.getByText('Недель')).toBeInTheDocument()
@@ -351,21 +292,14 @@ describe('MarginTrendChart', () => {
 
   describe('custom height', () => {
     it('should apply custom height', () => {
-      vi.mocked(useMarginTrends).mockReturnValue({
-        data: mockTrendData,
-        isLoading: false,
-        error: null,
-        refetch: vi.fn(),
-      } as any)
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
 
-      render(
-        <MarginTrendChart queryParams={{ weeks: 12 }} height={600} />,
-        { wrapper: createWrapper() }
-      )
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} height={600} />, {
+        wrapper: createWrapper(),
+      })
 
       // Component should render with custom title/description
       expect(screen.getByText('Анализ маржинальности по времени')).toBeInTheDocument()
     })
   })
 })
-
