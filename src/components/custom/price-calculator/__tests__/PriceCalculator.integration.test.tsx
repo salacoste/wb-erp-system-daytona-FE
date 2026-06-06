@@ -7,50 +7,58 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import * as React from 'react'
 
+/** Minimal prop shape shared across mock shadcn/ui components */
+interface MockUIProps {
+  children?: React.ReactNode
+  [key: string]: unknown
+}
+
 // Mock console.info
 vi.spyOn(console, 'info').mockImplementation(() => {})
 
 // Mock shadcn/ui components BEFORE importing page
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...rest }: any) => <button {...rest}>{children}</button>,
+  Button: ({ children, ...rest }: MockUIProps) => <button {...rest}>{children}</button>,
 }))
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectTrigger: ({ children }: any) => <button>{children}</button>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => (
-    <option value={value}>{children}</option>
+  Select: ({ children }: MockUIProps) => <div>{children}</div>,
+  SelectTrigger: ({ children }: MockUIProps) => <button>{children}</button>,
+  SelectValue: ({ placeholder }: MockUIProps) => <span>{placeholder}</span>,
+  SelectContent: ({ children }: MockUIProps) => <div>{children}</div>,
+  SelectItem: ({ children, value }: MockUIProps) => (
+    <option value={String(value)}>{children}</option>
   ),
 }))
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => (
-    <div style={{ display: open ? 'block' : 'none' }}>
-      {children}
-    </div>
+  Dialog: ({ children, open }: MockUIProps) => (
+    <div style={{ display: open ? 'block' : 'none' }}>{children}</div>
   ),
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  DialogContent: ({ children }: MockUIProps) => <div>{children}</div>,
+  DialogHeader: ({ children }: MockUIProps) => <div>{children}</div>,
+  DialogTitle: ({ children }: MockUIProps) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: MockUIProps) => <p>{children}</p>,
+  DialogFooter: ({ children }: MockUIProps) => <div>{children}</div>,
 }))
 
 vi.mock('@/components/ui/collapsible', () => ({
-  Collapsible: ({ children, open }: any) => (
+  Collapsible: ({ children, open }: MockUIProps) => (
     <div data-collapsible-open={open}>{children}</div>
   ),
-  CollapsibleTrigger: ({ children }: any) => children,
-  CollapsibleContent: ({ children }: any) => <div>{children}</div>,
+  CollapsibleTrigger: ({ children }: MockUIProps) => children,
+  CollapsibleContent: ({ children }: MockUIProps) => <div>{children}</div>,
 }))
 
 vi.mock('@/components/ui/slider', () => ({
-  Slider: ({ onValueChange, ...props }: any) => (
+  Slider: ({ onValueChange, ...props }: MockUIProps) => (
     <input
       type="range"
-      onChange={(e) => onValueChange([parseFloat(e.target.value)])}
+      onChange={e => {
+        if (typeof onValueChange === 'function') {
+          onValueChange([parseFloat(e.target.value)])
+        }
+      }}
       {...props}
     />
   ),
