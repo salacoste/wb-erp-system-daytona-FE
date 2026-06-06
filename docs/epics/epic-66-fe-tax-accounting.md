@@ -1,6 +1,6 @@
 # Epic 66-FE: Tax & VAT Accounting Integration (Налоговый учёт + НДС)
 
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Done (pre-flight verified 2026-06-06 — all 7 stories already implemented)
 **Priority**: P0
 **Sprint**: TBD
 **Total Points**: 35 SP

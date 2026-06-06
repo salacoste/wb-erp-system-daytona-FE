@@ -2,7 +2,7 @@
 
 **Epic ID**: Epic 52-FE
 **Backend Epic**: Epic 52 (Complete)
-**Status**: 📋 Ready for Development
+**Status**: ✅ Done (pre-flight verified 2026-06-06 — all 7 stories already implemented)
 **Priority**: Medium
 **Estimated Effort**: 7 stories, ~26 SP (~10-14 days frontend)
 **Created**: 2026-01-22

@@ -1,6 +1,6 @@
 # Epic 51-FE: FBS Historical Analytics UI (365 Days)
 
-**Status**: 📋 Ready for Dev
+**Status**: ✅ Done (pre-flight verified 2026-06-06 — all 12 stories already implemented)
 **Priority**: P2 (Enhancement)
 **Backend Epic**: Epic 51
 **Story Points**: 39 SP

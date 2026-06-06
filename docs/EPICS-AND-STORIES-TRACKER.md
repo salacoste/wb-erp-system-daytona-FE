@@ -4,10 +4,11 @@
 > Referenced from `CLAUDE.md` -- do not duplicate this information elsewhere.
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
-**Last Updated**: 2026-06-05
+**Last Updated**: 2026-06-06
 **Total Epics**: 60 unique (57 done, 1 moved, 2 merged as duplicates)
-**Total Stories**: 207+ (136 in sprint-status.yaml Epics 71-120 + 76 legacy Epics 1-69)
-**Project Status**: Production Ready, 9115+ tests passing, 33 consecutive epics closed (71-120)
+**Total Stories**: 207+ (136 in sprint-status.yaml Epics 71-122 + 76 legacy Epics 1-69)
+**Project Status**: Production Ready, 9504+ tests passing, 52 consecutive epics closed (71-122)
+**Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 
 ---
 
@@ -173,9 +174,7 @@
 |------|-------|---------|--------|------------|
 | (none) | — | — | — | — |
 
-| Epic | Title | Stories | Status | Key Routes |
-|------|-------|---------|--------|------------|
-| 101-FE | Documentation & Backlog Cleanup | 1+ | IN-PROGRESS | (this file) |
+| (none) | — | — | — | — |
 
 ---
 
@@ -239,6 +238,15 @@ Source: `src/lib/routes.ts`
 | `/analytics/alerts` | Alert rules & notification history | 121-FE |
 | `/analytics/pricing` | Price recommendations | 121-FE |
 | `/analytics/reorder` | Warehouse reorder dashboard | 121-FE |
+| `/analytics/forecast` | AI Sales Forecast | 103-FE |
+| `/analytics/models` | AI Model Management | 109-FE |
+| `/analytics/models/[id]` | AI Model Detail | 109-FE |
+| `/analytics/models/[id]/evaluations` | AI Model Evaluations | 110-FE |
+| `/analytics/models/[id]/performance` | AI Model Performance | 109-FE |
+| `/analytics/models/sku-accuracy` | AI SKU Accuracy | 110-FE |
+| `/analytics/ai-admin/anomalies` | AI Anomaly Resolution | 112-FE |
+| `/analytics/ai-admin/models` | AI Model Admin | 112-FE |
+| `/analytics/ai-admin/preferences` | AI Preferences | 112-FE |
 
 ### Orders & Shipments
 
@@ -251,6 +259,17 @@ Source: `src/lib/routes.ts`
 | `/shipments/:id` | Shipment detail | 76-FE |
 | `/shipments/box-types` | Box types CRUD | 75-FE |
 | `/shipments/sku-packaging` | SKU packaging | 75-FE |
+
+### AI & Settings
+
+| Route | Purpose | Epic |
+|-------|---------|------|
+| `/analytics/forecast` | AI Sales Forecast | 103-FE |
+| `/analytics/models` | AI Model Management | 109-FE |
+| `/analytics/ai-admin/anomalies` | AI Anomaly Resolution | 112-FE |
+| `/settings/tax` | Tax & VAT Settings | 66-FE |
+| `/settings/tariffs` | Tariff Settings Admin | 52-FE |
+| `/settings/backfill` | Backfill Admin (Owner) | 51-FE |
 
 ### Monitoring
 
