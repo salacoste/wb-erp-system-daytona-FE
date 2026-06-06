@@ -1,6 +1,6 @@
 # 207 — Liquidity sort: enum rejects FE columns; no `velocity_per_day` sort
 
-**Status**: Open — backend enhancement requested (FE already mitigated)
+**Status**: RESOLVED (2026-06-06) — Backend added velocity_per_day to LiquiditySortByEnum. Sort implemented by avgDailySales.
 **Severity**: was CRITICAL on FE (page-blanking 400) — now mitigated client-side; this ticket is the backend half
 **Discovered**: 2026-06-04 via a liquidity-page data-correctness audit
 **Area**: `GET /v1/analytics/liquidity` — `LiquiditySortByEnum`

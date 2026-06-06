@@ -1,6 +1,6 @@
 # #200 — Orders: wb_status filter enum (4 accepted) ≠ response enum (7 emitted)
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Backend now accepts all 10 WbStatus values in orders query. Frontend expanded WB_STATUS_OPTIONS to match.
 **Reported**: 2026-06-03 (iter-81 validation loop)
 **Page**: `/orders` (Epic 40-FE WB Native Orders History)
 **Severity**: CRITICAL (filtering by the 2nd-most-common status blanks the entire table)

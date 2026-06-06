@@ -3,6 +3,7 @@
 **Filed**: 2026-05-17
 **Severity**: MEDIUM
 **Affected endpoint**: `GET /v1/ai/status`
+**Status**: RESOLVED (2026-06-06) — added `weeksRequired: number` to AiStatusDto + service response
 **Discovered via**: Epic 108-FE Visual UAT (finding F-1, `docs/polish/epic-108-uat-findings-2026-05-17.md`)
 
 ---

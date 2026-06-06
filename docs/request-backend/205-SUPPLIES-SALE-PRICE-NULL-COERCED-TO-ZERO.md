@@ -1,6 +1,6 @@
 # 205 — Supplies: null sale price coerced to 0 → renders "0 ₽" (anti-pattern #8)
 
-**Status**: PENDING — backend should send `null`, not `0`, for an unknown sale price
+**Status**: RESOLVED (2026-06-06) — Backend supply.service.ts:343 now preserves null for unknown salePrice. Frontend renders "—" instead of fabricated "0".
 **Severity**: MEDIUM (a null price renders as a fabricated "0 ₽" in the supply order tables)
 **Found**: iter-143 audit of the supplies domain
 **Endpoint**: supply detail orders + order-picker (the order list feeding `SupplyOrder.salePrice`)

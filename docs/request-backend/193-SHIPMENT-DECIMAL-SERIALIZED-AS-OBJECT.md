@@ -1,6 +1,6 @@
 # 193 — Shipment-cost DECIMAL fields serialized as Decimal.js objects (not strings) + contract drift
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Backend now uses dedicated response mapper (decToString) for all Prisma Decimal fields. Frontend shim removed.
 **Severity**: CRITICAL (every numeric value on the shipment-cost feature renders 0 / "—" / crashes)
 **Filed**: 2026-06-02 (frontend validation iter-65)
 **Endpoints**: `/v1/box-types`, `/v1/sku-packaging`, `/v1/shipments`, `/v1/shipments/:id`, `POST /v1/shipments/:id/calculate`

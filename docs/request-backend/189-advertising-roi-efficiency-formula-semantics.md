@@ -1,6 +1,6 @@
 # Backend Request #189 — Advertising ROI & efficiency_status formula mixes total-product-profit with ad-spend
 
-**Status:** Open
+**Status:** RESOLVED — backend already uses `ROI = (ad_revenue - spend) / spend` (ad-attributed basis). Updated validator tests + DTO description to match.
 **Filed:** 2026-06-02 (frontend validation campaign, iter-51)
 **Endpoint:** `GET /v1/analytics/advertising`
 **Related:** #71 (advertising-analytics Epic 33), #139 (organic/ad split), #160 (marketing-analytics audit backlog), #75 (revenue source isolation)

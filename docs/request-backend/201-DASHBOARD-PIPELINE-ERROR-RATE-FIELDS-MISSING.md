@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend validation campaign (iter-89), 2026-06-03
 **Severity**: P3 — the Overview tab's per-pipeline amber error badge (Story 91.3-FE) can never fire for any pipeline. No wrong data is shown (the badge is simply absent); the status badge + 24h success-rate bar still convey health. Worth fixing to light up the intended error-rate granularity.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-06) — backend already returns fields; FE normalizer + type updated to pass them through
 
 ---
 

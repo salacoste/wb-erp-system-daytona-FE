@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend Russian-locale tech-debt campaign (bare-decimal stream), 2026-06-04
 **Severity**: P3 — minor display-locale inconsistency in one forecast-table column. No functional impact.
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — ai-baseline.service.ts now uses comma decimal separator + space before %
 
 ---
 

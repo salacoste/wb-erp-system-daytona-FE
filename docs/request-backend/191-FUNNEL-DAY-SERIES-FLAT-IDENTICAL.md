@@ -1,6 +1,6 @@
 # 191 — Funnel `groupBy=day` returns flat byte-identical daily rows (fabricated granularity)
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — backend now returns empty items + dailyGranularityAvailable=false instead of fake-flat day rows. Summary (period totals) still returned.
 **Severity**: CRITICAL (data integrity — chart shows fabricated per-day trend)
 **Filed**: 2026-06-02 (frontend validation iter-59)
 **Endpoint**: `GET /v1/analytics/funnel?groupBy=day`

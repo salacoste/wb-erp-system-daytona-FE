@@ -1,6 +1,6 @@
 # #199 — Monitor /summary 500: "invalid input syntax for type timestamp: NaN-NaN-NaN"
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Fixed in monitor-summary.service.ts: getMoscowDate now uses toLocaleDateString('en-CA') for clean YYYY-MM-DD parsing.
 **Reported**: 2026-06-03 (iter-76 validation loop)
 **Page**: `/monitor` (Epic 92-FE business KPI dashboard)
 **Severity**: CRITICAL (the entire Monitor page blanks — `useMonitorSummary` is the page's primary data source)

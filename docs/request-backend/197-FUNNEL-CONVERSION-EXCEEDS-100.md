@@ -1,6 +1,6 @@
 # #197 — Funnel: buyoutCount ≫ ordersCount → impossible >100% сквозная конверсия
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Documented as WB attribution quirk (cross-source). Backend surfaces meta.totalConversionApproximate + meta.buyoutCrossSource flags. Frontend FunnelAnomalyIndicator handles it per Defensive Frontend Principle.
 **Reported**: 2026-06-03 (iter-74 validation loop)
 **Page**: `/analytics/funnel` (Marketing Funnel, Epic 68)
 **Related**: distinct from [#191](./191-FUNNEL-DAY-SERIES-FLAT-IDENTICAL.md) (flat daily series + buyoutConversion formula) — this is the **monotonicity / >100% conversion** defect.
