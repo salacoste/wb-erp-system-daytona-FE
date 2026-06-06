@@ -15,8 +15,13 @@ import type {
   LiquidityCategory,
 } from '@/types/liquidity'
 import { mapItem } from './liquidity-item-mapper'
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type {
+  RawLiquidityBreakdown,
+  RawLiquiditySummary,
+  RawLiquidityMeta,
+  RawLiquidityBreakdownEntry,
+  RawLiquidityResponse,
+} from './liquidity-raw-types'
 
 /**
  * Sum `stock_value` across items for inventory totals. stock_value is `number | null` (null = COGS
@@ -29,7 +34,7 @@ function sumStockValue(items: LiquidityItem[]): number {
 
 /** Map backend distribution (liquidity_breakdown) to frontend LiquidityDistribution */
 function mapDistribution(
-  breakdown: Record<string, any> | undefined,
+  breakdown: RawLiquidityBreakdown | undefined,
   items: LiquidityItem[]
 ): LiquidityDistribution {
   const makeDefault = (cat: LiquidityCategory): LiquidityDistributionItem => {
@@ -54,7 +59,7 @@ function mapDistribution(
   }
 
   // liquidity iter-60: the backend `liquidity_breakdown` ships only {count, capital} per
-  // category — NO `pct`, NO `avg_turnover_days`. The old `?? 0` made every distribution card
+  // category — NO `pct`, NO `avg_turnover_days`. The old `?? 0` made every distribution cards
   // render a "0 %" headline + "0 дней" (and skewed computeBenchmarks → wrong 'warning' status
   // when all capital is illiquid). Derive both from data already present, keeping the SAME
   // semantic as makeDefault + the `pct` type doc ("% of total inventory value") + the
@@ -66,11 +71,13 @@ function mapDistribution(
   // items-page-scoped and reads 0 if no items for the category are in the returned page.
   // Backend-provided pct/turnover still win if ever sent.
   const totalCapital = Object.values(breakdown).reduce(
-    (sum: number, e: any) => sum + (e?.capital ?? e?.value ?? 0),
+    (sum, e) =>
+      sum +
+      ((e as RawLiquidityBreakdownEntry)?.capital ?? (e as RawLiquidityBreakdownEntry)?.value ?? 0),
     0
   )
   const mapCat = (cat: LiquidityCategory): LiquidityDistributionItem => {
-    const entry = breakdown[cat]
+    const entry = breakdown[cat] as RawLiquidityBreakdownEntry | undefined
     if (entry && typeof entry === 'object') {
       const value = entry.capital ?? entry.value ?? 0
       const catItems = items.filter(i => i.liquidity_category === cat)
@@ -142,7 +149,7 @@ function computeBenchmarks(
 
 /** Map backend summary to LiquiditySummary */
 function mapSummary(
-  raw: Record<string, any> | undefined,
+  raw: RawLiquiditySummary | undefined,
   items: LiquidityItem[]
 ): LiquiditySummary {
   if (!raw) {
@@ -180,12 +187,13 @@ function mapSummary(
         ? raw.avg_turnover_days
         : avgTurnoverDays(items),
     distribution,
-    benchmarks: raw.benchmarks ?? computeBenchmarks(distribution, items),
+    benchmarks:
+      (raw.benchmarks as LiquidityBenchmarks | undefined) ?? computeBenchmarks(distribution, items),
   }
 }
 
 /** Map backend meta to LiquidityMeta */
-function mapMeta(raw: Record<string, any> | undefined): LiquidityMeta {
+function mapMeta(raw: RawLiquidityMeta | undefined): LiquidityMeta {
   if (!raw) {
     return {
       cabinet_id: '',
@@ -205,8 +213,8 @@ function mapMeta(raw: Record<string, any> | undefined): LiquidityMeta {
 }
 
 /** Check if response already matches frontend types (mock/pass-through) */
-function isAlreadyMapped(raw: any): boolean {
-  if (!raw?.meta || !raw?.summary || !Array.isArray(raw?.data)) return false
+function isAlreadyMapped(raw: RawLiquidityResponse): boolean {
+  if (!raw.meta || !raw.summary || !Array.isArray(raw.data)) return false
   // Check for frontend-specific fields that backend doesn't have
   return (
     typeof raw.summary.total_sku_count === 'number' &&
@@ -220,20 +228,20 @@ function isAlreadyMapped(raw: any): boolean {
  * Map raw backend response to LiquidityResponse.
  * Handles both already-conforming (mock) and backend-shaped data.
  */
-export function mapBackendResponse(raw: any): LiquidityResponse {
+export function mapBackendResponse(raw: unknown): LiquidityResponse {
+  const response = raw as RawLiquidityResponse
+
   // If already conforms to frontend types (e.g. mock data), pass through
-  if (isAlreadyMapped(raw)) {
-    return raw as LiquidityResponse
+  if (isAlreadyMapped(response)) {
+    return response as unknown as LiquidityResponse
   }
 
-  const rawItems: any[] = Array.isArray(raw.data) ? raw.data : []
+  const rawItems = Array.isArray(response.data) ? response.data : []
   const items = rawItems.map(mapItem)
 
   return {
-    meta: mapMeta(raw.meta),
-    summary: mapSummary(raw.summary, items),
+    meta: mapMeta(response.meta),
+    summary: mapSummary(response.summary, items),
     data: items,
   }
 }
-
-/* eslint-enable @typescript-eslint/no-explicit-any */

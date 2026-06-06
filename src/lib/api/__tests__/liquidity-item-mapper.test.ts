@@ -77,22 +77,22 @@ describe('mapItem — stock_value null preservation (anti-pattern #8)', () => {
   it('preserves null stock_value when COGS is unassigned (no frozen_capital, no unit_cost)', () => {
     // Backend sends frozen_capital: null when COGS is unknown; the old mapper fabricated
     // currentStock × (unit_cost ?? 0) = 0 → a false "0 ₽". It must stay null → UI renders "—".
-    const item = mapItem({ sku_id: '1', current_stock: 10, frozen_capital: null })
+    const item = mapItem({ sku_id: 1, current_stock: 10, frozen_capital: null })
     expect(item.stock_value).toBeNull()
   })
 
   it('uses backend frozen_capital when present', () => {
-    const item = mapItem({ sku_id: '2', current_stock: 10, frozen_capital: 5000 })
+    const item = mapItem({ sku_id: 2, current_stock: 10, frozen_capital: 5000 })
     expect(item.stock_value).toBe(5000)
   })
 
   it('derives stock × unit_cost only when a real unit_cost exists', () => {
-    const item = mapItem({ sku_id: '3', current_stock: 10, frozen_capital: null, unit_cost: 50 })
+    const item = mapItem({ sku_id: 3, current_stock: 10, frozen_capital: null, unit_cost: 50 })
     expect(item.stock_value).toBe(500)
   })
 
   it('keeps a genuine frozen_capital of 0 (real zero, not unknown)', () => {
-    const item = mapItem({ sku_id: '4', current_stock: 0, frozen_capital: 0 })
+    const item = mapItem({ sku_id: 4, current_stock: 0, frozen_capital: 0 })
     expect(item.stock_value).toBe(0)
   })
 })

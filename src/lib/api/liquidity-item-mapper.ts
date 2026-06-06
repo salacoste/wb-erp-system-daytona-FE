@@ -13,8 +13,7 @@ import type {
   LiquidationScenario,
   ActionType,
 } from '@/types/liquidity'
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { RawLiquidityItem, RawLiquidationScenario } from './liquidity-raw-types'
 
 /** Derive recommendation text from liquidity status */
 export function deriveRecommendation(status: string): string {
@@ -49,23 +48,23 @@ export function deriveActionType(status: string): ActionType {
 }
 
 /** Transform backend liquidation scenarios to frontend array format */
-export function mapLiquidationScenarios(scenarios: any): LiquidationScenario[] | null {
+export function mapLiquidationScenarios(scenarios: unknown): LiquidationScenario[] | null {
   if (!scenarios) return null
 
   // Backend returns {full_price, discount_20pct, discount_50pct} objects
   // Frontend expects LiquidationScenario[] array
-  if (Array.isArray(scenarios)) return scenarios
+  if (Array.isArray(scenarios)) return scenarios as LiquidationScenario[]
 
   const result: LiquidationScenario[] = []
-  const entries: [string, any][] = Object.entries(scenarios)
+  const entries = Object.entries(scenarios as Record<string, unknown>)
 
   // Real backend object shape is {discountPct (fraction), recovery (RUB), daysToClear}.
   // Backend OMITS profit/new_price/velocity/is_profitable → mapped to null (FE renders "—",
   // Defensive Frontend Principle: indicate unknown, do not invent zeros/false-loss).
-  for (const [key, scenario] of entries) {
-    if (!scenario || typeof scenario !== 'object') continue
+  for (const [key, raw] of entries) {
+    if (!raw || typeof raw !== 'object') continue
 
-    const s = scenario as Record<string, any>
+    const s = raw as RawLiquidationScenario
     const keyPct =
       key === 'full_price' ? 0 : key === 'discount_20pct' ? 20 : key === 'discount_50pct' ? 50 : 0
 
@@ -89,7 +88,7 @@ export function mapLiquidationScenarios(scenarios: any): LiquidationScenario[] |
 }
 
 /** Map a single backend item to LiquidityItem */
-export function mapItem(raw: Record<string, any>): LiquidityItem {
+export function mapItem(raw: RawLiquidityItem): LiquidityItem {
   const status = raw.liquidity_status ?? raw.liquidity_category ?? 'medium'
   const currentStock = raw.current_stock ?? raw.current_stock_qty ?? 0
   const avgDailySales = raw.avg_daily_sales ?? raw.velocity_per_day ?? 0
@@ -114,9 +113,7 @@ export function mapItem(raw: Record<string, any>): LiquidityItem {
     current_price: raw.current_price ?? 0,
     cogs_per_unit: unitCost,
     recommendation: raw.recommendation ?? deriveRecommendation(status),
-    action_type: raw.action_type ?? deriveActionType(status),
+    action_type: (raw.action_type as ActionType) ?? deriveActionType(status),
     liquidation_scenarios: mapLiquidationScenarios(raw.liquidation_scenarios),
   }
 }
-
-/* eslint-enable @typescript-eslint/no-explicit-any */
