@@ -60,12 +60,8 @@ describe('UpdateWbTokenForm', () => {
   it('renders update token form', () => {
     renderForm()
 
-    expect(
-      screen.getByLabelText(/новый wb api токен/i),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: /обновить токен/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByLabelText(/новый wb api токен/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /обновить токен/i })).toBeInTheDocument()
   })
 
   it('validates token minimum length', async () => {
@@ -78,9 +74,7 @@ describe('UpdateWbTokenForm', () => {
 
     await waitFor(
       () => {
-        expect(
-          screen.getByText(/слишком коротким/i),
-        ).toBeInTheDocument()
+        expect(screen.getByText(/слишком коротким/i)).toBeInTheDocument()
       },
       { timeout: 3000 }
     )
@@ -99,9 +93,7 @@ describe('UpdateWbTokenForm', () => {
 
     await waitFor(
       () => {
-        expect(
-          screen.getByText(/формат токена/i),
-        ).toBeInTheDocument()
+        expect(screen.getByText(/формат токена/i)).toBeInTheDocument()
       },
       { timeout: 3000 }
     )
@@ -121,21 +113,16 @@ describe('UpdateWbTokenForm', () => {
     const tokenInput = screen.getByLabelText(/новый wb api токен/i)
     await user.clear(tokenInput)
     await user.type(tokenInput, validToken)
-    
+
     // Small delay to allow form validation
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     const submitButton = screen.getByRole('button', { name: /обновить токен/i })
     await user.click(submitButton)
 
     await waitFor(
       () => {
-        expect(mockUpdateWbToken).toHaveBeenCalledWith(
-          cabinetId,
-          keyName,
-          validToken,
-          'jwt-token',
-        )
+        expect(mockUpdateWbToken).toHaveBeenCalledWith(cabinetId, keyName, validToken, 'jwt-token')
       },
       { timeout: 5000 }
     )
@@ -144,29 +131,27 @@ describe('UpdateWbTokenForm', () => {
   it('shows loading state during submission', async () => {
     const user = userEvent.setup()
     const mockUpdateWbToken = vi.mocked(api.updateWbToken)
-    let resolvePromise: (value: any) => void
-    const promise = new Promise((resolve) => {
+    let resolvePromise: (value: Record<string, unknown>) => void
+    const promise = new Promise<Record<string, unknown>>(resolve => {
       resolvePromise = resolve
     })
-    mockUpdateWbToken.mockReturnValue(promise as Promise<any>)
+    mockUpdateWbToken.mockReturnValue(promise as unknown as ReturnType<typeof api.updateWbToken>)
 
     renderForm()
 
     const tokenInput = screen.getByLabelText(/новый wb api токен/i)
     await user.clear(tokenInput)
     await user.type(tokenInput, validToken)
-    
+
     // Small delay to allow form validation
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     const submitButton = screen.getByRole('button', { name: /обновить токен/i })
     await user.click(submitButton)
 
     await waitFor(
       () => {
-        expect(
-          screen.getByRole('button', { name: /обновление.../i }),
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /обновление.../i })).toBeInTheDocument()
         expect(screen.getByRole('button', { name: /обновление.../i })).toBeDisabled()
       },
       { timeout: 3000 }
@@ -190,19 +175,17 @@ describe('UpdateWbTokenForm', () => {
   it('handles invalid token error', async () => {
     const user = userEvent.setup()
     const mockUpdateWbToken = vi.mocked(api.updateWbToken)
-    mockUpdateWbToken.mockRejectedValue(
-      new Error('WB API token is invalid or expired'),
-    )
+    mockUpdateWbToken.mockRejectedValue(new Error('WB API token is invalid or expired'))
 
     renderForm()
 
     const tokenInput = screen.getByLabelText(/новый wb api токен/i)
     await user.clear(tokenInput)
     await user.type(tokenInput, validToken)
-    
+
     // Small delay to allow form validation
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     const submitButton = screen.getByRole('button', { name: /обновить токен/i })
     await user.click(submitButton)
 
@@ -217,27 +200,23 @@ describe('UpdateWbTokenForm', () => {
   it('handles permission error', async () => {
     const user = userEvent.setup()
     const mockUpdateWbToken = vi.mocked(api.updateWbToken)
-    mockUpdateWbToken.mockRejectedValue(
-      new Error('Insufficient permissions to update token'),
-    )
+    mockUpdateWbToken.mockRejectedValue(new Error('Insufficient permissions to update token'))
 
     renderForm()
 
     const tokenInput = screen.getByLabelText(/новый wb api токен/i)
     await user.clear(tokenInput)
     await user.type(tokenInput, validToken)
-    
+
     // Small delay to allow form validation
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     const submitButton = screen.getByRole('button', { name: /обновить токен/i })
     await user.click(submitButton)
 
     await waitFor(
       () => {
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringContaining('прав'),
-        )
+        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('прав'))
       },
       { timeout: 5000 }
     )
@@ -257,10 +236,10 @@ describe('UpdateWbTokenForm', () => {
     const tokenInput = screen.getByLabelText(/новый wb api токен/i)
     await user.clear(tokenInput)
     await user.type(tokenInput, validToken)
-    
+
     // Small delay to allow form validation
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     const submitButton = screen.getByRole('button', { name: /обновить токен/i })
     await user.click(submitButton)
 
@@ -292,21 +271,17 @@ describe('UpdateWbTokenForm', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <UpdateWbTokenForm
-          cabinetId={cabinetId}
-          keyName={keyName}
-          onSuccess={mockOnSuccess}
-        />
+        <UpdateWbTokenForm cabinetId={cabinetId} keyName={keyName} onSuccess={mockOnSuccess} />
       </QueryClientProvider>
     )
 
     const tokenInput = screen.getByLabelText(/новый wb api токен/i)
     await user.clear(tokenInput)
     await user.type(tokenInput, validToken)
-    
+
     // Small delay to allow form validation
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     const submitButton = screen.getByRole('button', { name: /обновить токен/i })
     await user.click(submitButton)
 
@@ -325,4 +300,3 @@ describe('UpdateWbTokenForm', () => {
     )
   })
 })
-

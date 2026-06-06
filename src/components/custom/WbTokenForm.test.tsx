@@ -72,11 +72,9 @@ describe('WbTokenForm', () => {
       renderForm()
 
       expect(screen.getByLabelText(/wb api токен/i)).toBeInTheDocument()
-      expect(
-        screen.getByRole('button', { name: /сохранить токен/i }),
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -93,10 +91,10 @@ describe('WbTokenForm', () => {
         () => {
           expect(screen.getByText(/слишком коротким/i)).toBeInTheDocument()
         },
-        { timeout: 3000 },
+        { timeout: 3000 }
       )
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -109,7 +107,7 @@ describe('WbTokenForm', () => {
       // Type a long token that doesn't have JWT structure (3 parts)
       await user.type(
         tokenInput,
-        'invalid-token-format-without-proper-jwt-structure-that-is-long-enough',
+        'invalid-token-format-without-proper-jwt-structure-that-is-long-enough'
       )
       await user.tab()
 
@@ -118,18 +116,15 @@ describe('WbTokenForm', () => {
           const errorText = screen.queryByText(/формат токена/i)
           if (!errorText) {
             // Try alternative error message
-            expect(
-              screen.getByText(/неверным/i) ||
-                screen.getByText(/формат/i),
-            ).toBeInTheDocument()
+            expect(screen.getByText(/неверным/i) || screen.getByText(/формат/i)).toBeInTheDocument()
           } else {
             expect(errorText).toBeInTheDocument()
           }
         },
-        { timeout: 5000 },
+        { timeout: 5000 }
       )
     },
-    { timeout: 10000 },
+    { timeout: 10000 }
   )
 
   it(
@@ -149,23 +144,19 @@ describe('WbTokenForm', () => {
       await user.clear(tokenInput)
       await user.type(tokenInput, validToken)
 
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 100))
 
       const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
       await user.click(submitButton)
 
       await waitFor(
         () => {
-          expect(mockUpdateWbToken).toHaveBeenCalledWith(
-            'cabinet-uuid',
-            'wb_api_token',
-            validToken,
-          )
+          expect(mockUpdateWbToken).toHaveBeenCalledWith('cabinet-uuid', 'wb_api_token', validToken)
         },
-        { timeout: 5000 },
+        { timeout: 5000 }
       )
     },
-    { timeout: 10000 },
+    { timeout: 10000 }
   )
 
   it(
@@ -173,11 +164,11 @@ describe('WbTokenForm', () => {
     async () => {
       const user = userEvent.setup()
       const mockUpdateWbToken = vi.mocked(updateWbToken)
-      let resolvePromise: (value: any) => void
-      const promise = new Promise((resolve) => {
+      let resolvePromise: (value: Record<string, unknown>) => void
+      const promise = new Promise<Record<string, unknown>>(resolve => {
         resolvePromise = resolve
       })
-      mockUpdateWbToken.mockReturnValue(promise as Promise<any>)
+      mockUpdateWbToken.mockReturnValue(promise as unknown as ReturnType<typeof updateWbToken>)
 
       renderForm()
 
@@ -185,19 +176,17 @@ describe('WbTokenForm', () => {
       await user.clear(tokenInput)
       await user.type(tokenInput, validToken)
 
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 100))
 
       const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
       await user.click(submitButton)
 
       await waitFor(
         () => {
-          expect(
-            screen.getByRole('button', { name: /проверка токена/i }),
-          ).toBeInTheDocument()
+          expect(screen.getByRole('button', { name: /проверка токена/i })).toBeInTheDocument()
           expect(screen.getByRole('button')).toBeDisabled()
         },
-        { timeout: 3000 },
+        { timeout: 3000 }
       )
 
       resolvePromise!({
@@ -210,10 +199,10 @@ describe('WbTokenForm', () => {
         () => {
           expect(mockUpdateWbToken).toHaveBeenCalled()
         },
-        { timeout: 3000 },
+        { timeout: 3000 }
       )
     },
-    { timeout: 10000 },
+    { timeout: 10000 }
   )
 
   it(
@@ -229,7 +218,7 @@ describe('WbTokenForm', () => {
       await user.clear(tokenInput)
       await user.type(tokenInput, validToken)
 
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 100))
 
       const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
       await user.click(submitButton)
@@ -238,10 +227,10 @@ describe('WbTokenForm', () => {
         () => {
           expect(toast.error).toHaveBeenCalled()
         },
-        { timeout: 5000 },
+        { timeout: 5000 }
       )
     },
-    { timeout: 10000 },
+    { timeout: 10000 }
   )
 
   it(
@@ -261,7 +250,7 @@ describe('WbTokenForm', () => {
       await user.clear(tokenInput)
       await user.type(tokenInput, validToken)
 
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 100))
 
       const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
       await user.click(submitButton)
@@ -270,7 +259,7 @@ describe('WbTokenForm', () => {
         () => {
           expect(mockUpdateWbToken).toHaveBeenCalled()
         },
-        { timeout: 5000 },
+        { timeout: 5000 }
       )
 
       await waitFor(
@@ -278,10 +267,10 @@ describe('WbTokenForm', () => {
           expect(mockPush).toHaveBeenCalledWith('/processing')
           expect(toast.success).toHaveBeenCalled()
         },
-        { timeout: 5000 },
+        { timeout: 5000 }
       )
     },
-    { timeout: 10000 },
+    { timeout: 10000 }
   )
 
   it(
@@ -294,11 +283,9 @@ describe('WbTokenForm', () => {
 
       renderForm()
 
-      expect(
-        screen.getByText(/кабинет не найден/i),
-      ).toBeInTheDocument()
+      expect(screen.getByText(/кабинет не найден/i)).toBeInTheDocument()
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 
   it(
@@ -309,7 +296,6 @@ describe('WbTokenForm', () => {
       const tokenInput = screen.getByLabelText(/wb api токен/i)
       expect(tokenInput).toHaveAttribute('type', 'password')
     },
-    { timeout: 5000 },
+    { timeout: 5000 }
   )
 })
-
