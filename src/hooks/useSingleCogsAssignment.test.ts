@@ -375,7 +375,9 @@ describe('getMissingDataReasonMessage', () => {
   })
 
   it('should return default message for unknown reason', () => {
-    const result = getMissingDataReasonMessage('unknown' as any)
+    const result = getMissingDataReasonMessage(
+      'unknown' as Parameters<typeof getMissingDataReasonMessage>[0]
+    )
     expect(result).toBe('Данные недоступны')
   })
 })

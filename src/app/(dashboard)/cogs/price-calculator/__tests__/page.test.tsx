@@ -7,28 +7,39 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import * as React from 'react'
 
+/** Minimal prop shape shared across mock shadcn/ui components */
+interface MockUIProps {
+  children?: React.ReactNode
+  [key: string]: unknown
+}
+
 // Mock shadcn/ui components first
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, ...props }: any) => (
-    <button type="button" onClick={onClick} disabled={disabled} {...props}>
+  Button: ({ children, onClick, disabled, ...props }: MockUIProps) => (
+    <button
+      type="button"
+      onClick={onClick as React.MouseEventHandler}
+      disabled={disabled as boolean}
+      {...props}
+    >
       {children}
     </button>
   ),
 }))
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  Select: ({ children, ...props }: MockUIProps) => <div {...props}>{children}</div>,
   SelectTrigger: ({ children }: { children: React.ReactNode }) => <button>{children}</button>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
+  SelectValue: ({ placeholder }: MockUIProps) => <span>{String(placeholder ?? '')}</span>,
   SelectContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <option value={value}>{children}</option>,
+  SelectItem: ({ children, value }: MockUIProps) => (
+    <option value={String(value)}>{children}</option>
+  ),
 }))
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open, _onOpenChange }: any) => (
-    <div style={{ display: open ? 'block' : 'none' }}>
-      {children}
-    </div>
+  Dialog: ({ children, open }: MockUIProps) => (
+    <div style={{ display: open ? 'block' : 'none' }}>{children}</div>
   ),
   DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -38,7 +49,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }))
 
 vi.mock('@/components/ui/collapsible', () => ({
-  Collapsible: ({ children, open, _onOpenChange }: any) => (
+  Collapsible: ({ children, open }: MockUIProps) => (
     <div data-collapsible-open={open}>{children}</div>
   ),
   CollapsibleTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -47,7 +58,15 @@ vi.mock('@/components/ui/collapsible', () => ({
 
 // Mock the form components
 vi.mock('@/components/custom/price-calculator/PriceCalculatorForm', () => ({
-  PriceCalculatorForm: ({ onSubmit, loading, hasResults }: { onSubmit: () => void; loading?: boolean; hasResults?: boolean }) => (
+  PriceCalculatorForm: ({
+    onSubmit,
+    loading,
+    hasResults,
+  }: {
+    onSubmit: () => void
+    loading?: boolean
+    hasResults?: boolean
+  }) => (
     <div data-testid="price-calculator-form">
       <button onClick={onSubmit} disabled={loading}>
         {loading ? 'Calculating...' : 'Calculate'}
@@ -58,7 +77,15 @@ vi.mock('@/components/custom/price-calculator/PriceCalculatorForm', () => ({
 }))
 
 vi.mock('@/components/custom/price-calculator/PriceCalculatorResults', () => ({
-  PriceCalculatorResults: ({ data, _loading, _error }: { data: unknown; _loading: boolean; _error: Error | null }) => (
+  PriceCalculatorResults: ({
+    data,
+    _loading,
+    _error,
+  }: {
+    data: unknown
+    _loading: boolean
+    _error: Error | null
+  }) => (
     <div data-testid="price-calculator-results">
       <span>Results Component</span>
       {data !== null && data !== undefined && <div data-testid="results-data">Data present</div>}

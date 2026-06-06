@@ -9,16 +9,14 @@ import { mockPriceCalculatorResponse } from '@/test/fixtures/price-calculator'
 
 // Mock the entire CostBreakdownTable component
 vi.mock('@/components/custom/price-calculator/CostBreakdownTable', () => ({
-  CostBreakdownTable: ({ data }: { data: { cost_breakdown: any } }) => (
+  CostBreakdownTable: ({ data }: { data: { cost_breakdown: Record<string, unknown> } }) => (
     <div data-testid="cost-breakdown-table">
       <div>Fixed Costs</div>
       <div>Fixed Total</div>
       <div>Percentage Costs</div>
       <div>Margin</div>
       <div>Total Costs</div>
-      {data && (
-        <div>Total Percentage</div>
-      )}
+      {data && <div>Total Percentage</div>}
     </div>
   ),
 }))

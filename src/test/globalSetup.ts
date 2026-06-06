@@ -8,7 +8,7 @@
 export function setup() {
   // Mock localStorage globally for MSW v2 cookie store
   const store: Record<string, string> = {}
-  ;(globalThis as any).localStorage = {
+  ;(globalThis as unknown as { localStorage: Storage }).localStorage = {
     getItem: (key: string) => store[key] ?? null,
     setItem: (key: string, value: string) => {
       store[key] = value
@@ -17,7 +17,7 @@ export function setup() {
       delete store[key]
     },
     clear: () => {
-      Object.keys(store).forEach((k) => delete store[k])
+      Object.keys(store).forEach(k => delete store[k])
     },
     get length() {
       return Object.keys(store).length
