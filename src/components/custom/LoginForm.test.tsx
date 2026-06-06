@@ -28,7 +28,8 @@ const originalLocation = window.location
 beforeAll(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsdom Location is read-only; must delete+reassign for redirect tests
   delete (window as any).location
-  window.location = { ...originalLocation, href: '' } as Location
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsdom Location mock for redirect tests
+  ;(window as any).location = { ...originalLocation, href: '' }
 })
 
 afterAll(() => {
