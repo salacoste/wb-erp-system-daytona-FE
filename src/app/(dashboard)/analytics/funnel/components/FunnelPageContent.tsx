@@ -61,6 +61,7 @@ export function FunnelPageContent() {
   )
 
   const funnelItems = funnelTs.data?.items as FunnelDayItem[] | undefined
+  const dailyGranularityAvailable = funnelTs.data?.meta?.dailyGranularityAvailable ?? true
   const adDaily = adQuery.data?.daily
   const mergedData = useMemo(
     () => mergeFunnelAndAdDaily(funnelItems ?? [], adDaily),
@@ -151,6 +152,7 @@ export function FunnelPageContent() {
           isError={funnelTs.isError}
           showAdOverlay={showAdOverlay}
           isAdLoading={adQuery.isLoading && showAdOverlay}
+          dailyGranularityAvailable={dailyGranularityAvailable}
         />
       )}
 

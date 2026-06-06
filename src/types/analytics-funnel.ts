@@ -73,6 +73,8 @@ export interface FunnelPagination {
  */
 export interface FunnelResponseMeta {
   totalConversionApproximate: boolean
+  /** REQ-191: when false, WB has no daily funnel breakdown — day items are empty */
+  dailyGranularityAvailable?: boolean
   dataSource: { funnel: string; buyout: string }
   syncedPeriod: { from: string; to: string; lastSyncAt: string | null }
 }

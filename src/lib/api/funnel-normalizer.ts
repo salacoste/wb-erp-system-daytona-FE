@@ -134,6 +134,7 @@ function normalizeFunnelMeta(raw: unknown): FunnelResponseMeta | undefined {
   const syncedPeriod = asRecord(m.syncedPeriod)
   return {
     totalConversionApproximate: m.totalConversionApproximate === true,
+    dailyGranularityAvailable: m.dailyGranularityAvailable === true,
     dataSource: {
       funnel: toOptionalString(dataSource.funnel) ?? '',
       buyout: toOptionalString(dataSource.buyout) ?? '',

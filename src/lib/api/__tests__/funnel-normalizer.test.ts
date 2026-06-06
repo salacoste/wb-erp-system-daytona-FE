@@ -226,6 +226,7 @@ describe('normalizeFunnelResponse', () => {
     })
     expect(r.meta).toEqual({
       totalConversionApproximate: true,
+      dailyGranularityAvailable: false, // absent in raw → strict === true → false
       dataSource: { funnel: 'product_funnel_daily', buyout: 'wb-product-data-api-v2' },
       syncedPeriod: { from: '2026-05-01', to: '2026-05-07', lastSyncAt: '2026-05-07T10:00:00Z' },
     })

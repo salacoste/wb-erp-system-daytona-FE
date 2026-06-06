@@ -38,6 +38,8 @@ interface FunnelOverlayChartProps {
   isError?: boolean
   showAdOverlay: boolean
   isAdLoading?: boolean
+  /** REQ-191: when false, WB has no daily breakdown — show "unavailable" notice */
+  dailyGranularityAvailable?: boolean
 }
 
 const BAR_CONFIG = { radius: [2, 2, 0, 0] as [number, number, number, number], maxBarSize: 24 }
@@ -55,6 +57,7 @@ export function FunnelOverlayChart({
   isError,
   showAdOverlay,
   isAdLoading,
+  dailyGranularityAvailable = true,
 }: FunnelOverlayChartProps) {
   const funnelKeys: OverlayMetricKey[] = ['openCardCount', 'ordersCount', 'buyoutCount']
   const [visibleSeries, setVisibleSeries] = useState<string[]>([...funnelKeys])
@@ -85,6 +88,17 @@ export function FunnelOverlayChart({
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>Не удалось загрузить график</AlertDescription>
+      </Alert>
+    )
+  }
+  if (!dailyGranularityAvailable) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Посуточная разбивка воронки недоступна — WB API возвращает агрегат за период, а не данные
+          по дням. Итоговые метрики воронки доступны в таблице и карточках ниже.
+        </AlertDescription>
       </Alert>
     )
   }
