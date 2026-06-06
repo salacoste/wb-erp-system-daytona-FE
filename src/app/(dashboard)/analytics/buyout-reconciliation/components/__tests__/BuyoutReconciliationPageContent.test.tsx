@@ -19,7 +19,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen, fireEvent, act } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
-import type { UseQueryResult } from '@tanstack/react-query'
+import {
+  createSuccessQueryResult,
+  createLoadingQueryResult,
+  createErrorQueryResult,
+  createMockQueryResult,
+} from '@/test/utils/query-mock'
 import type { BuyoutReconciliationResponse } from '@/types/buyout-reconciliation'
 import {
   emptyBuyoutReconciliationResponse,
@@ -43,30 +48,19 @@ vi.mock('@/stores/authStore', () => ({
 import { BuyoutReconciliationPageContent } from '../BuyoutReconciliationPageContent'
 
 function mockLoading() {
-  mockUseBuyoutReconciliation.mockReturnValue({
-    data: undefined,
-    isLoading: true,
-    isError: false,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<BuyoutReconciliationResponse>)
+  mockUseBuyoutReconciliation.mockReturnValue(
+    createLoadingQueryResult<BuyoutReconciliationResponse>()
+  )
 }
 
 function mockError() {
-  mockUseBuyoutReconciliation.mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isError: true,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<BuyoutReconciliationResponse>)
+  mockUseBuyoutReconciliation.mockReturnValue(
+    createErrorQueryResult<BuyoutReconciliationResponse>()
+  )
 }
 
 function mockSuccess(data: BuyoutReconciliationResponse) {
-  mockUseBuyoutReconciliation.mockReturnValue({
-    data,
-    isLoading: false,
-    isError: false,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<BuyoutReconciliationResponse>)
+  mockUseBuyoutReconciliation.mockReturnValue(createSuccessQueryResult(data))
 }
 
 describe('BuyoutReconciliationPageContent', () => {
@@ -147,12 +141,9 @@ describe('BuyoutReconciliationPageContent', () => {
 
   it('L2-2: stale-data banner shown in no-anomalies branch when isError && hasData', () => {
     // Simulate: refetch failed but cached no-anomaly data is present
-    mockUseBuyoutReconciliation.mockReturnValue({
-      data: noAnomalyResponse(),
-      isLoading: false,
-      isError: true,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<BuyoutReconciliationResponse>)
+    mockUseBuyoutReconciliation.mockReturnValue(
+      createMockQueryResult(noAnomalyResponse(), { isError: true })
+    )
     renderWithProviders(<BuyoutReconciliationPageContent />)
     // Green check still visible (no-anomalies state)
     expect(screen.getByText(/Аномалий не найдено за выбранный период/)).toBeInTheDocument()

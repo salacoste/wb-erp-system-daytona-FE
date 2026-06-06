@@ -10,7 +10,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
-import type { UseQueryResult } from '@tanstack/react-query'
+import {
+  createSuccessQueryResult,
+  createLoadingQueryResult,
+  createErrorQueryResult,
+} from '@/test/utils/query-mock'
 import type { MonitorSummaryResponse, MonitorKpi } from '../../types/monitor-summary'
 import type { PipelineHealthGrid } from '@/app/(dashboard)/monitoring/types/monitoring'
 import type { DailyMetrics } from '@/types/daily-metrics'
@@ -70,47 +74,26 @@ const baseResponse: MonitorSummaryResponse = {
 }
 
 function mockSuccess(data: MonitorSummaryResponse) {
-  mockUseMonitorSummary.mockReturnValue({
-    data,
-    isLoading: false,
-    isError: false,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<MonitorSummaryResponse>)
+  mockUseMonitorSummary.mockReturnValue(createSuccessQueryResult(data))
 }
 
 function mockLoading() {
-  mockUseMonitorSummary.mockReturnValue({
-    data: undefined,
-    isLoading: true,
-    isError: false,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<MonitorSummaryResponse>)
+  mockUseMonitorSummary.mockReturnValue(createLoadingQueryResult<MonitorSummaryResponse>())
 }
 
 function mockError() {
-  mockUseMonitorSummary.mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isError: true,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<MonitorSummaryResponse>)
+  mockUseMonitorSummary.mockReturnValue(createErrorQueryResult<MonitorSummaryResponse>())
 }
 
 // H-5: default idle state for parallel hooks (prevents MSW unhandled-request warnings)
 function setupParallelHookDefaults() {
-  mockUseDailyMetrics.mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isError: false,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<DailyMetrics[]>)
+  mockUseDailyMetrics.mockReturnValue(
+    createSuccessQueryResult<DailyMetrics[]>(undefined as unknown as DailyMetrics[])
+  )
 
-  mockUsePipelineGrid.mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isError: false,
-    refetch: vi.fn(),
-  } as unknown as UseQueryResult<PipelineHealthGrid>)
+  mockUsePipelineGrid.mockReturnValue(
+    createSuccessQueryResult<PipelineHealthGrid>(undefined as unknown as PipelineHealthGrid)
+  )
 }
 
 beforeEach(() => {
@@ -162,28 +145,13 @@ describe('MonitorPageContent', () => {
     // M-8 fix: shared fixture factories replace ~40 lines of inline shape construction.
     // emptyMonitorSummary / emptyPipelineGrid / emptyDailyMetrics live in
     // src/test/fixtures/monitor-empty.ts — single source of truth for both unit + E2E tests.
-    mockUseMonitorSummary.mockReturnValue({
-      data: emptyMonitorSummary(),
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<MonitorSummaryResponse>)
+    mockUseMonitorSummary.mockReturnValue(createSuccessQueryResult(emptyMonitorSummary()))
 
     // data=[] is truthy so the chart branch fires (not skeleton/error) → "Нет данных" state
-    mockUseDailyMetrics.mockReturnValue({
-      data: emptyDailyMetrics(),
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<DailyMetrics[]>)
+    mockUseDailyMetrics.mockReturnValue(createSuccessQueryResult(emptyDailyMetrics()))
 
-    // H-4 fix + M-8 fix: full PipelineHealthGrid shape from shared fixture (no `as unknown as`)
-    mockUsePipelineGrid.mockReturnValue({
-      data: emptyPipelineGrid(),
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<PipelineHealthGrid>)
+    // H-4 fix + M-8 fix: full PipelineHealthGrid shape from shared fixture
+    mockUsePipelineGrid.mockReturnValue(createSuccessQueryResult(emptyPipelineGrid()))
 
     renderWithProviders(<MonitorPageContent />)
 
@@ -209,13 +177,8 @@ describe('MonitorPageContent', () => {
     mockSuccess(baseResponse)
 
     // Pipeline hook returns success with empty pipelines array
-    // H-4 fix: full PipelineHealthGrid shape from shared fixture (no `as unknown as` shortcut)
-    mockUsePipelineGrid.mockReturnValue({
-      data: emptyPipelineGrid(),
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<PipelineHealthGrid>)
+    // H-4 fix: full PipelineHealthGrid shape from shared fixture
+    mockUsePipelineGrid.mockReturnValue(createSuccessQueryResult(emptyPipelineGrid()))
 
     renderWithProviders(<MonitorPageContent />)
 

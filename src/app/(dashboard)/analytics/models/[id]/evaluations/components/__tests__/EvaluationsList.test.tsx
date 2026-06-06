@@ -37,23 +37,9 @@ import { ROUTES } from '@/lib/routes'
 import type { AiModelListResponse } from '@/types/ai/models'
 import type { AiEvaluationListResponse, EvaluationEntry } from '@/types/ai/evaluations'
 import type { UseQueryResult } from '@tanstack/react-query'
+import { createMockQueryResult } from '@/test/utils/query-mock'
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
-
-function makeQueryResult<T>(partial: Record<string, unknown>): UseQueryResult<T, Error> {
-  return {
-    data: undefined,
-    isLoading: false,
-    isError: false,
-    error: null,
-    isSuccess: false,
-    isPending: false,
-    isFetching: false,
-    fetchStatus: 'idle',
-    status: 'pending',
-    ...partial,
-  } as unknown as UseQueryResult<T, Error>
-}
 
 const baseModel = {
   id: 'model-1',
@@ -110,24 +96,14 @@ const makeEvalData = (
 })
 
 function setup(
-  modelsPartial: Record<string, unknown> = {},
-  evalPartial: Record<string, unknown> = {}
+  modelsOverrides: Partial<UseQueryResult<AiModelListResponse, Error>> = {},
+  evalOverrides: Partial<UseQueryResult<AiEvaluationListResponse, Error>> = {}
 ) {
   mockUseAiModels.mockReturnValue(
-    makeQueryResult<AiModelListResponse>({
-      data: makeModelList(),
-      isSuccess: true,
-      status: 'success',
-      ...modelsPartial,
-    })
+    createMockQueryResult<AiModelListResponse>(makeModelList(), modelsOverrides)
   )
   mockUseAiEvaluations.mockReturnValue(
-    makeQueryResult<AiEvaluationListResponse>({
-      data: makeEvalData(),
-      isSuccess: true,
-      status: 'success',
-      ...evalPartial,
-    })
+    createMockQueryResult<AiEvaluationListResponse>(makeEvalData(), evalOverrides)
   )
 }
 
