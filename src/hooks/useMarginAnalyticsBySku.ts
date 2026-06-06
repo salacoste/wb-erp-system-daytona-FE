@@ -100,7 +100,7 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
 
         return transformed
       } catch (error) {
-        console.error('[Margin Analytics] Failed to fetch SKU analytics:', error)
+        logger.error('[Margin Analytics] Failed to fetch SKU analytics:', error)
         throw error
       }
     },

@@ -39,7 +39,7 @@ export function usePaidStorageImport(options: UsePaidStorageImportOptions = {}) 
       options.onSuccess?.(data)
     },
     onError: error => {
-      console.error('[Storage Analytics] Import failed:', error)
+      logger.error('[Storage Analytics] Import failed:', error)
       options.onError?.(error)
     },
     onSettled: () => {

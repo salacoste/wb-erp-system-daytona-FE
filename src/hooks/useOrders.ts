@@ -134,7 +134,7 @@ export function useOrdersSync(options: UseOrdersSyncOptions = {}) {
       options.onSuccess?.(data)
     },
     onError: error => {
-      console.error('[Orders] Sync failed:', error)
+      logger.error('[Orders] Sync failed:', error)
       options.onError?.(error)
     },
   })
@@ -169,7 +169,7 @@ export function useOrdersBackfill(options: UseOrdersBackfillOptions = {}) {
       options.onSuccess?.(data)
     },
     onError: error => {
-      console.error('[Orders] Backfill failed:', error)
+      logger.error('[Orders] Backfill failed:', error)
       options.onError?.(error)
     },
   })

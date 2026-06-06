@@ -4,12 +4,9 @@
 // Refactored: 2025-12-30 - Added query keys factory pattern
 // ============================================================================
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  startTelegramBinding,
-  getBindingStatus,
-  unbindTelegram,
-} from '@/lib/api/notifications';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { startTelegramBinding, getBindingStatus, unbindTelegram } from '@/lib/api/notifications'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // Query Keys Factory
@@ -30,7 +27,7 @@ export const telegramQueryKeys = {
 
   /** Key for notification preferences queries */
   preferences: () => [...telegramQueryKeys.all, 'preferences'] as const,
-};
+}
 
 // ============================================================================
 // Hook: useTelegramBinding
@@ -46,7 +43,7 @@ export const telegramQueryKeys = {
  * - Auto-stop polling when bound
  */
 export function useTelegramBinding() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // ============================================================================
   // Binding Status Query (with polling)
@@ -59,14 +56,14 @@ export function useTelegramBinding() {
   } = useQuery({
     queryKey: telegramQueryKeys.status(),
     queryFn: getBindingStatus,
-    refetchInterval: (query) => {
+    refetchInterval: query => {
       // Stop polling when bound or no binding in progress
       // React Query v5: query.state.data contains the data
-      return query.state.data?.bound ? false : 3000; // 3 seconds
+      return query.state.data?.bound ? false : 3000 // 3 seconds
     },
     refetchIntervalInBackground: true,
     staleTime: 0, // Always fresh data during polling
-  });
+  })
 
   // ============================================================================
   // Start Binding Mutation
@@ -76,12 +73,12 @@ export function useTelegramBinding() {
     mutationFn: startTelegramBinding,
     onSuccess: () => {
       // Start polling by refetching status
-      checkStatus();
+      checkStatus()
     },
-    onError: (error) => {
-      console.error('Failed to start binding:', error);
+    onError: error => {
+      logger.error('Failed to start binding:', error)
     },
-  });
+  })
 
   // ============================================================================
   // Unbind Mutation
@@ -91,13 +88,13 @@ export function useTelegramBinding() {
     mutationFn: unbindTelegram,
     onSuccess: () => {
       // Invalidate all notification-related queries
-      queryClient.invalidateQueries({ queryKey: telegramQueryKeys.status() });
-      queryClient.invalidateQueries({ queryKey: telegramQueryKeys.preferences() });
+      queryClient.invalidateQueries({ queryKey: telegramQueryKeys.status() })
+      queryClient.invalidateQueries({ queryKey: telegramQueryKeys.preferences() })
     },
-    onError: (error) => {
-      console.error('Failed to unbind Telegram:', error);
+    onError: error => {
+      logger.error('Failed to unbind Telegram:', error)
     },
-  });
+  })
 
   return {
     // Status
@@ -117,5 +114,5 @@ export function useTelegramBinding() {
     // Errors
     bindingError: startBinding.error,
     unbindError: unbind.error,
-  };
+  }
 }

@@ -15,6 +15,7 @@ import { LiquidityBenchmarks } from './components/LiquidityBenchmarks'
 import { LiquidityEmpty } from './components/LiquidityEmpty'
 import { LiquidityLoading } from './components/LiquidityLoading'
 import { LiquidityTable } from './components/LiquidityTable'
+import { logger } from '@/lib/logger'
 
 /**
  * Liquidity Analysis Page
@@ -64,7 +65,7 @@ export default function LiquidityPage() {
 
   // Error state
   if (error) {
-    console.error('Liquidity analysis error:', error)
+    logger.error('Liquidity analysis error:', error)
     return (
       <div className="space-y-6">
         <LiquidityHeader onRefresh={handleRefresh} isRefreshing={isLoading} />

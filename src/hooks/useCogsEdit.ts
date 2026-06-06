@@ -80,7 +80,7 @@ export function useCogsEdit(cogsId: string, options: UseCogsEditOptions = {}) {
     },
 
     onError: (error: ApiError) => {
-      console.error('[COGS Edit] Update failed', error)
+      logger.error('[COGS Edit] Update failed', error)
 
       const status = error.status || error.response?.status
 

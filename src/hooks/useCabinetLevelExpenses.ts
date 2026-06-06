@@ -53,7 +53,7 @@ export function useCabinetLevelExpenses(filters: { weekStart?: string; weekEnd?:
 
         return expenses
       } catch (error) {
-        console.error('[Cabinet Expenses] Failed to fetch:', error)
+        logger.error('[Cabinet Expenses] Failed to fetch:', error)
         throw error
       }
     },

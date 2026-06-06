@@ -199,7 +199,7 @@ export function useCogsHistoryFull(nmId: string | undefined, options: UseCogsHis
         // strict-compare; aligns runtime with the `number` type).
         return normalizeCogsHistoryResponse(response)
       } catch (error) {
-        console.error(`[COGS History Full] Failed to fetch for ${nmId}:`, error)
+        logger.error(`[COGS History Full] Failed to fetch for ${nmId}:`, error)
         throw error
       }
     },

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useTelegramBinding } from '@/hooks/useTelegramBinding';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // Component Props
@@ -66,7 +67,7 @@ export function UnbindConfirmationDialog({
       },
       onError: (error) => {
         toast.error('Не удалось отключить Telegram. Попробуйте ещё раз.');
-        console.error('Unbind error:', error);
+        logger.error('Unbind error:', error);
       },
     });
   };

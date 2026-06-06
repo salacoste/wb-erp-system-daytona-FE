@@ -156,7 +156,7 @@ export function useTrends(limit = 8) {
           summary: response.summary,
         }
       } catch (error) {
-        console.error('[Trends] Failed to fetch trend data:', error)
+        logger.error('[Trends] Failed to fetch trend data:', error)
 
         // Handle specific error cases
         if (error instanceof Error && 'response' in error) {
@@ -169,7 +169,7 @@ export function useTrends(limit = 8) {
 
           if (httpError.response?.status === 400) {
             const errorMessage = httpError.response.data?.message || 'Invalid request parameters'
-            console.error('[Trends] Bad request:', errorMessage)
+            logger.error('[Trends] Bad request:', errorMessage)
             // Return empty instead of throwing to avoid breaking dashboard
             return { trends: [], period: 'weeks' }
           }

@@ -21,6 +21,7 @@ import { AdvertisingEmptyState } from './components/AdvertisingEmptyState'
 import { features } from '@/config/features'
 import { useAdvertisingPageState, PAGE_SIZE } from './components/useAdvertisingPageState'
 import { useAdvertisingFilters } from './components/useAdvertisingFilters'
+import { logger } from '@/lib/logger'
 
 /** Helper: viewBy label for table title */
 function viewByLabel(viewBy: string): string {
@@ -45,7 +46,7 @@ export default function AdvertisingAnalyticsPage() {
   const filters = useAdvertisingFilters(state.data, state.hideOverAttribution, state.groupBy)
 
   if (state.error) {
-    console.error('Advertising analytics error:', state.error)
+    logger.error('Advertising analytics error:', state.error)
     return (
       <div className="space-y-6">
         <AdvertisingPageHeader />

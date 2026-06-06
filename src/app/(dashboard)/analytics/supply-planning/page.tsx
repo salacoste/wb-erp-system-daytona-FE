@@ -12,6 +12,7 @@ import { SupplyMetricsBar } from './components/SupplyMetricsBar'
 import { SupplyPlanningEmpty } from './components/SupplyPlanningEmpty'
 import { SupplyPlanningLoading } from './components/SupplyPlanningLoading'
 import { SupplyPlanningTable } from './components/SupplyPlanningTable'
+import { logger } from '@/lib/logger'
 
 /**
  * Supply Planning Analytics Page
@@ -71,7 +72,7 @@ export default function SupplyPlanningPage() {
 
   // Error state
   if (error) {
-    console.error('Supply planning error:', error)
+    logger.error('Supply planning error:', error)
     return (
       <div className="space-y-6">
         <SupplyPlanningHeader

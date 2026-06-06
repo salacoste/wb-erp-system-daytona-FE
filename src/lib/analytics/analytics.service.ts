@@ -117,7 +117,7 @@ class AnalyticsService {
         }
       }
     } catch (error) {
-      console.error('[Analytics] Network error sending events:', error)
+      logger.error('[Analytics] Network error sending events:', error)
       // Re-queue events for next batch (max 1 retry)
       if (this.events.length < 100) {
         this.events.push(...eventsToSend)

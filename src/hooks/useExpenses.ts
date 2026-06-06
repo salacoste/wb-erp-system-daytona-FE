@@ -64,7 +64,7 @@ export function useExpenses(weekOverride?: string) {
         const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 
         if (!summary) {
-          console.error('[Expenses] CRITICAL: No summary data for week', {
+          logger.error('[Expenses] CRITICAL: No summary data for week', {
             week: targetWeek,
             weekOverride,
             summaryResponse,
@@ -100,7 +100,7 @@ export function useExpenses(weekOverride?: string) {
             apiClient
               .get('/v1/analytics/weekly/available-weeks')
               .then((r: unknown) => {
-                console.error('[Expenses] CRITICAL: 404 for week from available-weeks list', {
+                logger.error('[Expenses] CRITICAL: 404 for week from available-weeks list', {
                   error: (error as Error).message,
                   availableWeeks: r,
                 })

@@ -12,6 +12,7 @@ import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { formatPercentage } from '@/lib/utils'
+import { logger } from '@/lib/logger'
 
 /**
  * Invalidate and refetch all product-related queries
@@ -33,7 +34,7 @@ export function invalidateProductQueries(queryClient: QueryClient, nmId?: string
       type: 'active',
     })
     .catch(error => {
-      console.error('[COGS Polling] Refetch error:', error)
+      logger.error('[COGS Polling] Refetch error:', error)
     })
 }
 
@@ -88,7 +89,7 @@ export function usePollingHandlers(
 
   const handlePollingError = useCallback(
     (error: Error) => {
-      console.error('[Margin Polling] Error:', error)
+      logger.error('[Margin Polling] Error:', error)
       if (pollingNmId) {
         removePollingProduct(pollingNmId)
       }

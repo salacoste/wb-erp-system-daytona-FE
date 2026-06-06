@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTelegramBinding } from '@/hooks/useTelegramBinding'
 import { TelegramMetrics } from '@/lib/analytics/telegram-metrics'
 import { toast } from 'sonner'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // Constants
@@ -81,7 +82,7 @@ export function useTelegramBindingModal({ open, onSuccess }: UseTelegramBindingM
         },
         onError: error => {
           toast.error('Не удалось создать код привязки. Попробуйте ещё раз.')
-          console.error('Binding start error:', error)
+          logger.error('Binding start error:', error)
           TelegramMetrics.bindingFailed(error instanceof Error ? error.message : 'Unknown error')
         },
       })

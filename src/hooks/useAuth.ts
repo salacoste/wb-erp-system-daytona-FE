@@ -40,7 +40,7 @@ export function useAuth() {
         return true
       } catch (error) {
         // Refresh failed, logout user
-        console.error('Token refresh failed:', error)
+        logger.error('Token refresh failed:', error)
         logout()
         router.push('/login')
         return false

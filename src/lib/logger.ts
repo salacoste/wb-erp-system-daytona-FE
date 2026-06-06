@@ -22,5 +22,10 @@ export function warn(...args: unknown[]): void {
   console.warn('[warn]', ...args)
 }
 
+/** Error-level log — always visible. */
+export function error(...args: unknown[]): void {
+  console.error('[error]', ...args)
+}
+
 /** Named export for import as object: `import { logger } from '@/lib/logger'` */
-export const logger = { debug, info, warn }
+export const logger = { debug, info, warn, error }

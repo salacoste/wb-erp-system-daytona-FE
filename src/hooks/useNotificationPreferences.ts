@@ -11,6 +11,7 @@ import {
 } from '@/lib/api/notifications';
 import type { UpdatePreferencesRequestDto } from '@/types/notifications';
 import { telegramQueryKeys } from './useTelegramBinding';
+import { logger } from '@/lib/logger'
 
 /**
  * Hook for managing notification preferences
@@ -76,7 +77,7 @@ export function useNotificationPreferences() {
         telegramQueryKeys.preferences(),
         context?.previousPreferences
       );
-      console.error('Failed to update preferences:', err);
+      logger.error('Failed to update preferences:', err);
     },
 
     // Always refetch after error or success

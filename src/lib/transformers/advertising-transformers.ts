@@ -66,7 +66,7 @@ export function transformMergedGroup(backendItem: unknown): AdvertisingGroup | n
  */
 export function transformMergedGroups(backendData: unknown[]): AdvertisingGroup[] {
   if (!Array.isArray(backendData)) {
-    console.error('[Transformer] Expected array, got:', typeof backendData)
+    logger.error('[Transformer] Expected array, got:', typeof backendData)
     return []
   }
 

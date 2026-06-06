@@ -23,6 +23,7 @@ import {
   getPendingAffectedWeeks,
   hasPendingChanged,
 } from './usePendingMarginProducts-utils'
+import { logger } from '@/lib/logger'
 
 // Re-export types for consumers
 export type { PendingProduct } from './usePendingMarginProducts-utils'
@@ -55,11 +56,11 @@ export function usePendingMarginProducts(
     if (productsKey === prevProductsKeyRef.current) return
     prevProductsKeyRef.current = productsKey
 
-    setPendingProducts((prevPending) => {
+    setPendingProducts(prevPending => {
       const now = Date.now()
       const newPending = new Map<string, PendingProduct>()
 
-      products.forEach((product) => {
+      products.forEach(product => {
         if (isProductPending(product) && product.cogs?.valid_from) {
           const existing = prevPending.get(product.nm_id)
           if (existing) {
@@ -75,7 +76,7 @@ export function usePendingMarginProducts(
       })
 
       prevPending.forEach((pending, nmId) => {
-        const product = products.find((p) => p.nm_id === nmId)
+        const product = products.find(p => p.nm_id === nmId)
         if (product && product.current_margin_pct !== null) return
         if (newPending.has(nmId)) {
           newPending.set(nmId, pending)
@@ -144,26 +145,28 @@ export function usePendingMarginProducts(
               typeof product.current_margin_pct === 'number' &&
               Number.isFinite(product.current_margin_pct)
             ) {
-              setPendingProducts((prev) => {
+              setPendingProducts(prev => {
                 const next = new Map(prev)
                 next.delete(pending.nmId)
                 return next
               })
               queryClient.invalidateQueries({ queryKey: ['products'] })
               queryClient.invalidateQueries({ queryKey: ['products', pending.nmId] })
-              queryClient.refetchQueries({
-                queryKey: ['products'],
-                exact: false,
-                type: 'active',
-              }).catch(() => {})
+              queryClient
+                .refetchQueries({
+                  queryKey: ['products'],
+                  exact: false,
+                  type: 'active',
+                })
+                .catch(() => {})
             }
           } catch (error) {
-            console.error(`[Pending Margin Polling] Error polling product ${pending.nmId}:`, error)
+            logger.error(`[Pending Margin Polling] Error polling product ${pending.nmId}:`, error)
           }
         }
         pollingIntervalRef.current = setTimeout(() => poll(), interval)
       } catch (error) {
-        console.error('[Pending Margin Polling] Error:', error)
+        logger.error('[Pending Margin Polling] Error:', error)
         pollingIntervalRef.current = setTimeout(() => poll(), interval)
       }
     }

@@ -85,7 +85,7 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
 
         return transformed
       } catch (error) {
-        console.error('[Margin Analytics] Failed to fetch category analytics:', error)
+        logger.error('[Margin Analytics] Failed to fetch category analytics:', error)
         throw error
       }
     },

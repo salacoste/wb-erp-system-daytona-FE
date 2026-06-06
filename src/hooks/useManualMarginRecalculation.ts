@@ -60,7 +60,7 @@ export function useManualMarginRecalculation() {
 
         return response
       } catch (error) {
-        console.error('[Manual Recalculation] Failed to enqueue task:', error)
+        logger.error('[Manual Recalculation] Failed to enqueue task:', error)
         throw error
       }
     },

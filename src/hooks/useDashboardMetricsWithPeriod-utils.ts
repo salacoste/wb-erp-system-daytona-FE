@@ -8,6 +8,7 @@ import type { DashboardMetrics } from '@/hooks/useDashboard'
 import type { FinanceSummary } from '@/types/finance-summary'
 import { getWeeksInMonth } from '@/lib/period-helpers'
 import { getLastCompletedWeek } from '@/lib/margin-helpers'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // Types
@@ -88,7 +89,7 @@ export async function fetchMonthlyMetrics(month: string): Promise<DashboardMetri
       grossProfit: aggregatedGrossProfit || undefined,
     }
   } catch (error) {
-    console.error('Error fetching monthly metrics:', error)
+    logger.error('Error fetching monthly metrics:', error)
     return {}
   }
 }

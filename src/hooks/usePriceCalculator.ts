@@ -61,7 +61,7 @@ export const priceCalculatorQueryKeys = {
  *   },
  *   onError: (error) => {
  *     if (error instanceof ApiError) {
- *       console.error('API Error:', error.status, error.message);
+ *       logger.error('API Error:', error.status, error.message);
  *     }
  *   },
  * });
@@ -84,7 +84,7 @@ export function usePriceCalculator(options?: {
       options?.onSuccess?.(data)
     },
     onError: error => {
-      console.error('[Price Calculator] Calculation failed:', error)
+      logger.error('[Price Calculator] Calculation failed:', error)
       options?.onError?.(error)
     },
     onSettled: () => {

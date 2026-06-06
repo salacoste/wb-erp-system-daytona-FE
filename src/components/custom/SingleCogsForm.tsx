@@ -20,6 +20,7 @@ import { SingleCogsFormActions } from './single-cogs/SingleCogsFormActions'
 import { ProductInfoCard } from './single-cogs/ProductInfoCard'
 import type { CogsAssignmentRequest } from '@/types/api'
 import type { CogsRecord } from '@/types/cogs'
+import { logger } from '@/lib/logger'
 
 /**
  * Story 23.10: Role-based access control for task enqueue
@@ -136,7 +137,7 @@ export function SingleCogsForm({
           onSuccess?.()
         },
         onError: err => {
-          console.error('COGS assignment error:', err)
+          logger.error('COGS assignment error:', err)
         },
       }
     )

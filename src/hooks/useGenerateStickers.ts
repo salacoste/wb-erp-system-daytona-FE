@@ -115,7 +115,7 @@ export function useGenerateStickers(options: UseGenerateStickersOptions = {}) {
     },
 
     onError: (error: Error, { supplyId, format }) => {
-      console.error(
+      logger.error(
         '[useGenerateStickers] Failed to generate stickers:',
         { supplyId, format },
         error

@@ -13,6 +13,7 @@ import { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertTriangle, RefreshCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { logger } from '@/lib/logger'
 
 export interface OrdersErrorBoundaryProps {
   /** Child components to wrap */
@@ -43,7 +44,7 @@ export class OrdersErrorBoundary extends Component<OrdersErrorBoundaryProps, Sta
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Log error details in development mode
     if (process.env.NODE_ENV === 'development') {
-      console.error('[Orders] Error caught by boundary:', {
+      logger.error('[Orders] Error caught by boundary:', {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,

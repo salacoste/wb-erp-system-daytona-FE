@@ -8,6 +8,7 @@ import { env } from './env'
 import { useAuthStore } from '@/stores/authStore'
 import { ApiError, type ApiRequestOptions, type ApiResponse } from '@/types/api'
 import { TelegramMetrics } from './analytics/telegram-metrics'
+import { logger } from '@/lib/logger'
 import { logCogsRawResponse, logCogsProcessedResponse } from './api-client-debug'
 
 /**
@@ -28,7 +29,7 @@ class ApiClient {
       !this.baseUrl.includes('localhost') &&
       !this.baseUrl.includes('127.0.0.1')
     ) {
-      console.error('API URL must use HTTPS in production!')
+      logger.error('API URL must use HTTPS in production!')
     }
   }
 
@@ -91,7 +92,7 @@ class ApiClient {
           response.status === 401 && errorMessage.includes('WB API token')
 
         if (!isExpectedWbTokenError) {
-          console.error(
+          logger.error(
             `API Error [${response.status}]:`,
             isJson ? JSON.stringify(errorData, null, 2) : errorData
           )
@@ -166,7 +167,7 @@ class ApiClient {
         TelegramMetrics.networkError(endpoint)
       }
 
-      console.error('Network error:', errorMessage)
+      logger.error('Network error:', errorMessage)
 
       throw new ApiError(errorMessage, 0, error)
     }

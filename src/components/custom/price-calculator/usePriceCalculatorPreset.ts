@@ -132,7 +132,7 @@ export function usePriceCalculatorPreset(): UsePriceCalculatorPresetReturn {
       return preset.data
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('[Preset] Failed to load:', error)
+        logger.error('[Preset] Failed to load:', error)
       }
       try {
         localStorage.removeItem(PRESET_KEY)
@@ -165,7 +165,7 @@ export function usePriceCalculatorPreset(): UsePriceCalculatorPresetReturn {
       toast.success('Пресет сохранён')
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('[Preset] Failed to save:', error)
+        logger.error('[Preset] Failed to save:', error)
       }
       toast.error('Не удалось сохранить пресет')
     }

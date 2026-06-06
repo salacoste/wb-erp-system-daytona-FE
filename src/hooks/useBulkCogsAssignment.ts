@@ -55,7 +55,7 @@ export function useBulkCogsAssignment() {
 
         return summary
       } catch (error) {
-        console.error('[Bulk COGS Assignment] Failed:', error)
+        logger.error('[Bulk COGS Assignment] Failed:', error)
         throw error
       }
     },
@@ -85,7 +85,7 @@ export function useBulkCogsAssignment() {
       }
     },
     onError: (error, variables) => {
-      console.error(`[Bulk COGS] Failed for ${variables.items.length} items:`, error)
+      logger.error(`[Bulk COGS] Failed for ${variables.items.length} items:`, error)
     },
   })
 }

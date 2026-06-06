@@ -127,7 +127,7 @@ export function useCreateSupply() {
     },
 
     onError: (error, _variables, context) => {
-      console.error('[useCreateSupply] Failed to create supply:', error)
+      logger.error('[useCreateSupply] Failed to create supply:', error)
 
       // Rollback optimistic update
       if (context?.previousSupplies) {

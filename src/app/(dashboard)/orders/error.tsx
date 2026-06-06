@@ -15,6 +15,7 @@ import { AlertTriangle, RefreshCcw, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ROUTES } from '@/lib/routes'
+import { logger } from '@/lib/logger'
 
 interface ErrorProps {
   error: Error & { digest?: string }
@@ -25,7 +26,7 @@ export default function OrdersError({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log error in development mode
     if (process.env.NODE_ENV === 'development') {
-      console.error('[Orders] Route error:', error)
+      logger.error('[Orders] Route error:', error)
     }
   }, [error])
 

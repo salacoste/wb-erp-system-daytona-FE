@@ -88,7 +88,7 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
 
         return trends
       } catch (error) {
-        console.error('[MarginTrends] Failed to fetch margin trends:', error)
+        logger.error('[MarginTrends] Failed to fetch margin trends:', error)
 
         if (error instanceof Error && 'response' in error) {
           const httpError = error as {
@@ -104,7 +104,7 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
           if (httpError.response?.status === 400) {
             const errorMessage =
               httpError.response.data?.error?.message || 'Invalid request parameters'
-            console.error('[MarginTrends] Bad request:', errorMessage)
+            logger.error('[MarginTrends] Bad request:', errorMessage)
             throw new Error(`Неверные параметры запроса: ${errorMessage}`)
           }
         }

@@ -25,6 +25,7 @@ import { CrossReferenceTable } from './CrossReferenceTable'
 import { InsightsCards } from './InsightsCards'
 import { OrganicVsAdScatter } from './OrganicVsAdScatter'
 import type { DateRange } from '@/types/date-range'
+import { logger } from '@/lib/logger'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -118,7 +119,7 @@ function LoadingSkeleton() {
 }
 
 function ErrorState({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
-  if (error) console.error('[CrossReference] Load error:', error)
+  if (error) logger.error('[CrossReference] Load error:', error)
   return (
     <Alert variant="destructive">
       <AlertCircle className="h-4 w-4" />

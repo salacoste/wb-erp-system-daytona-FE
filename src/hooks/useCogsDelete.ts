@@ -101,7 +101,7 @@ export function useCogsDelete(cogsId: string, options: UseCogsDeleteOptions = {}
     },
 
     onError: (error: ApiError) => {
-      console.error('[COGS Delete] Deletion failed', error)
+      logger.error('[COGS Delete] Deletion failed', error)
 
       // Handle specific HTTP status codes (AC: 15, 16, 17)
       const status = error.status || error.response?.status

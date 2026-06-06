@@ -127,7 +127,7 @@ export function useMarginPollingWithQuery(
     const wasDisabled = !prevEnabledRef.current
     if (wasDisabled && queryEnabled && !query.isFetching && query.status !== 'pending') {
       query.refetch().catch(error => {
-        console.error('[Margin Polling] Error forcing query start:', error)
+        logger.error('[Margin Polling] Error forcing query start:', error)
       })
     }
     prevEnabledRef.current = queryEnabled

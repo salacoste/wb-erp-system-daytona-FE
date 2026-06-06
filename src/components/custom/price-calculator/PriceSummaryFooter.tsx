@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { cn, formatCurrency, formatPercentageInt } from '@/lib/utils'
 import { Copy, CheckCircle2 } from 'lucide-react'
 import { useState, useCallback } from 'react'
+import { logger } from '@/lib/logger'
 
 /** Copy feedback display duration in milliseconds */
 const COPY_FEEDBACK_DURATION_MS = 2000
@@ -54,7 +55,7 @@ export function PriceSummaryFooter({
       setCopiedField(field)
       setTimeout(() => setCopiedField(null), COPY_FEEDBACK_DURATION_MS)
     } catch {
-      console.error('Failed to copy price to clipboard')
+      logger.error('Failed to copy price to clipboard')
     }
   }, [])
 

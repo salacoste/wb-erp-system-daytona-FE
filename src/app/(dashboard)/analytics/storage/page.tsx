@@ -12,6 +12,7 @@ import { TopConsumersWidget } from './components/TopConsumersWidget'
 import { StorageTrendsChart } from './components/StorageTrendsChart'
 import { StorageAlertBanner } from './components/StorageAlertBanner'
 import { WeekFilterBadge } from './components/WeekFilterBadge'
+import { logger } from '@/lib/logger'
 
 /**
  * Storage Analytics Page
@@ -50,7 +51,7 @@ export default function StorageAnalyticsPage() {
 
   // Error state
   if (bySkuError) {
-    console.error('Storage analytics error:', bySkuError)
+    logger.error('Storage analytics error:', bySkuError)
     return (
       <div className="space-y-6">
         <StoragePageHeader />

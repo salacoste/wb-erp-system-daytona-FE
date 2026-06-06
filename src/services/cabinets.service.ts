@@ -6,6 +6,7 @@
 import { createCabinet } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import type { CreateCabinetResponse } from '@/types/cabinet'
+import { logger } from '@/lib/logger'
 
 /**
  * Creates a cabinet and automatically updates JWT token in auth store.
@@ -42,7 +43,7 @@ export async function handleCreateCabinet(cabinetName: string): Promise<{
       refreshTokenInStore(response.newToken, user || undefined)
     } catch (tokenError) {
       // Критическая ошибка - токен не обновлен
-      console.error('Failed to update token after cabinet creation:', tokenError)
+      logger.error('Failed to update token after cabinet creation:', tokenError)
       throw new Error(
         'Cabinet created, but token update failed. Please refresh the page or log in again.'
       )
@@ -63,7 +64,7 @@ export async function handleCreateCabinet(cabinetName: string): Promise<{
       productsSyncTasks: response.productsSyncTasks,
     }
   } catch (error) {
-    console.error('Failed to create cabinet:', error)
+    logger.error('Failed to create cabinet:', error)
     throw error
   }
 }

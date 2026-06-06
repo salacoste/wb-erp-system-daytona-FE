@@ -58,7 +58,7 @@ export function useCogsHistory(nmId: string | undefined) {
 
         return response
       } catch (error) {
-        console.error(`[COGS History] Failed to fetch COGS history for ${nmId}:`, error)
+        logger.error(`[COGS History] Failed to fetch COGS history for ${nmId}:`, error)
         throw error
       }
     },
@@ -101,7 +101,7 @@ export function useCogsAtDate(nmId: string | undefined, date: string | undefined
 
         return cogs
       } catch (error) {
-        console.error(`[COGS History] Failed to fetch COGS at date for ${nmId}:`, error)
+        logger.error(`[COGS History] Failed to fetch COGS at date for ${nmId}:`, error)
         throw error
       }
     },

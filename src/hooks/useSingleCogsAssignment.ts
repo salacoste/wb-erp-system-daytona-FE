@@ -50,7 +50,7 @@ export function useSingleCogsAssignment() {
 
         return response
       } catch (error) {
-        console.error(`[COGS Assignment] Failed to assign COGS to product ${nmId}:`, error)
+        logger.error(`[COGS Assignment] Failed to assign COGS to product ${nmId}:`, error)
         throw error
       }
     },
@@ -68,7 +68,7 @@ export function useSingleCogsAssignment() {
       }
     },
     onError: (error, variables) => {
-      console.error(`[COGS Assignment] Failed to assign COGS to product ${variables.nmId}:`, error)
+      logger.error(`[COGS Assignment] Failed to assign COGS to product ${variables.nmId}:`, error)
     },
   })
 }

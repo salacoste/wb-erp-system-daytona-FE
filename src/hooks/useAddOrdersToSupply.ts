@@ -97,7 +97,7 @@ export function useAddOrdersToSupply(supplyId: string, options: UseAddOrdersToSu
     },
 
     onError: error => {
-      console.error('[Supply] Add orders failed:', supplyId, error)
+      logger.error('[Supply] Add orders failed:', supplyId, error)
       toast.error('Не удалось добавить заказы в поставку')
       options.onError?.(error)
     },

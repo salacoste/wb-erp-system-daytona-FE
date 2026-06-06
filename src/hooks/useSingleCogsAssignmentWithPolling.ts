@@ -88,7 +88,7 @@ export function useSingleCogsAssignmentWithPolling() {
       queryClient
         .refetchQueries({ queryKey: ['products'], exact: false, type: 'active' })
         .catch(error => {
-          console.error('[Polling Hook] Refetch error:', error)
+          logger.error('[Polling Hook] Refetch error:', error)
         })
       removePollingProduct(pollingNmId)
       setPollingConfig(null)

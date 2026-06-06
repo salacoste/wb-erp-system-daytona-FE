@@ -111,7 +111,7 @@ export function useCloseSupply(options: UseCloseSupplyOptions = {}) {
     },
 
     onError: (error: Error, supplyId) => {
-      console.error('[useCloseSupply] Failed to close supply:', supplyId, error)
+      logger.error('[useCloseSupply] Failed to close supply:', supplyId, error)
 
       // Show error toast
       const message = getErrorMessage(error)

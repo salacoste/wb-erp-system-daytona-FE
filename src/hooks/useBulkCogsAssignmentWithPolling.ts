@@ -17,6 +17,7 @@ import {
   isMarginCalculationComplete,
   extractSampleIds,
 } from './useBulkCogsAssignmentWithPolling-utils'
+import { logger } from '@/lib/logger'
 
 /**
  * Hook that combines bulk COGS assignment with automatic margin polling
@@ -70,7 +71,7 @@ export function useBulkCogsAssignmentWithPolling() {
           queryClient.invalidateQueries({ queryKey: ['dashboard'] })
           queryClient
             .refetchQueries({ queryKey: ['products'], exact: false, type: 'active' })
-            .catch(error => console.error('[Bulk COGS Assignment] Refetch error:', error))
+            .catch(error => logger.error('[Bulk COGS Assignment] Refetch error:', error))
           return
         }
 
@@ -90,7 +91,7 @@ export function useBulkCogsAssignmentWithPolling() {
           return
         }
       } catch (error) {
-        console.error('[Bulk Margin Polling] Error:', error)
+        logger.error('[Bulk Margin Polling] Error:', error)
       }
     }
 

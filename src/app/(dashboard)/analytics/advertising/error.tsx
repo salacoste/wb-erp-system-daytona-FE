@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { logger } from '@/lib/logger'
 
 /**
  * Error boundary for Advertising Analytics page
@@ -19,7 +20,7 @@ export default function AdvertisingAnalyticsError({
 }) {
   useEffect(() => {
     // Log error for monitoring
-    console.error('Advertising analytics error:', error)
+    logger.error('Advertising analytics error:', error)
   }, [error])
 
   return (

@@ -132,7 +132,7 @@ export function useDownloadDocument(options: UseDownloadDocumentOptions = {}) {
     },
 
     onError: (error: Error, { docType }) => {
-      console.error('[useDownloadDocument] Failed to download document:', docType, error)
+      logger.error('[useDownloadDocument] Failed to download document:', docType, error)
 
       const message = getErrorMessage(error)
       toast.error(message)
