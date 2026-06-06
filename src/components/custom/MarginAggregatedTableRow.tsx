@@ -40,10 +40,8 @@ export function MarginAggregatedTableRow({
 }: Props) {
   const entityValue = item[entityField]
   const hasCogs = item.cogs !== undefined
-  // PENDING BACKEND (docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md):
-  // by-brand/by-category responses omit `missing_cogs_count` even with include_cogs=true
-  // (live-verified week 2026-W22), so the "Без COGS" column + yellow row-highlight stay inert
-  // (render "—") until the backend delivers it. Guarded count (`|| 0`) keeps this graceful.
+  // Backend now returns missing_cogs_count for by-brand/by-category when include_cogs=true.
+  // Defensive guard (|| 0) preserved for cached/stale responses.
   const hasMissingCogs = (item.missing_cogs_count || 0) > 0
 
   return (
