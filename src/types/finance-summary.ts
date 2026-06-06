@@ -11,6 +11,23 @@
 import type { TaxSystem } from './cabinet'
 
 /**
+ * Logistics breakdown subcategories — Story 65.6
+ * Backend request #139: breakdown of logistics_cost by delivery type.
+ * All fields nullable for graceful degradation when backend doesn't return breakdown.
+ */
+// story-65.6: logistics breakdown
+export interface LogisticsBreakdown {
+  /** Delivery to buyer on sale (doc_type=sale) */
+  to_buyer: number | null
+  /** Delivery to buyer on cancel (doc_type=cancel) */
+  to_buyer_cancel: number | null
+  /** Return from buyer on cancel (doc_type=cancel) */
+  from_buyer_cancel: number | null
+  /** Return from buyer on return (doc_type=return) */
+  from_buyer_return: number | null
+}
+
+/**
  * Tax + VAT metrics from backend (Epic 72 + Task-50).
  * Located in summary_total.tax ONLY (summary_rus/eaeu are always null).
  */
@@ -66,6 +83,8 @@ export interface FinanceSummary {
   payout_total: number // Итого к оплате
   logistics_cost_total?: number // Логистика - from summary_total
   logistics_cost?: number // Логистика - from summary_rus/eaeu (legacy)
+  /** Story 65.6: Logistics breakdown by delivery type. Null when backend doesn't return it. */
+  logistics_breakdown?: LogisticsBreakdown | null
   storage_cost_total?: number // Хранение - from summary_total
   storage_cost?: number // Хранение - from summary_rus/eaeu (legacy)
   paid_acceptance_cost_total?: number // Платная приёмка - from summary_total
