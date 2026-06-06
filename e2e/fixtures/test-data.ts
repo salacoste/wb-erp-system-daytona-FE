@@ -124,6 +124,7 @@ export const ROUTES = {
   },
   cogs: '/cogs',
   cogsBulk: '/cogs/bulk',
+  cogsHistory: '/cogs/history',
   analytics: {
     main: '/analytics', // Main analytics page
     sku: '/analytics/sku',
@@ -133,6 +134,8 @@ export const ROUTES = {
     unitEconomics: '/analytics/unit-economics', // Epic 5: Unit Economics
     supplyPlanning: '/analytics/supply-planning', // Epic 6: Supply Planning
     liquidity: '/analytics/liquidity', // Epic 7: Liquidity Analysis
+    storage: '/analytics/storage', // Epic 24: Paid Storage Analytics
+    returns: '/analytics/returns', // Epic 70-FE: Returns Analytics
     orders: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
     forecast: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
     aiAdmin: {
