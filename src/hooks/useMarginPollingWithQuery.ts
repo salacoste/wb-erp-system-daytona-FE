@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -145,7 +146,7 @@ export function useMarginPollingWithQuery(
       const statusResponse = query.data as MarginCalculationStatusResponse
       if (statusResponse.status === 'completed') {
         const margin = marginRef.current
-        console.log('[Margin Polling] Calling onSuccess callback with margin:', margin)
+        logger.debug('[Margin Polling] Calling onSuccess callback with margin:', margin)
         onSuccessCalledRef.current = true
         onSuccessRef.current(margin)
       }

@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { FinanceSummary } from './useDashboard'
 import { type ExpenseBreakdown, buildExpenseBreakdown } from './useExpenses-utils'
+import { logger } from '@/lib/logger'
 
 // Re-export types for consumers
 export type { ExpenseItem, ExpenseBreakdown } from './useExpenses-utils'
@@ -33,7 +34,7 @@ export function useExpenses(weekOverride?: string) {
 
         // Story 2.7: Empty array = no aggregated data yet
         if (!weeks || weeks.length === 0) {
-          console.info(
+          logger.debug(
             '[Expenses] No available weeks found. Financial data may not be processed yet.'
           )
           return { expenses: [], total: 0 }
@@ -43,7 +44,7 @@ export function useExpenses(weekOverride?: string) {
 
         // If weekOverride is not in available weeks, skip API call
         if (targetWeek && !weeks.includes(targetWeek)) {
-          console.info(`[Expenses] Week ${targetWeek} not in available weeks, skipping`)
+          logger.debug(`[Expenses] Week ${targetWeek} not in available weeks, skipping`)
           return { expenses: [], total: 0 }
         }
 
@@ -51,7 +52,7 @@ export function useExpenses(weekOverride?: string) {
           targetWeek = weeks[0]
         }
 
-        console.info(`[Expenses] Fetching finance summary for week: ${targetWeek}`)
+        logger.debug(`[Expenses] Fetching finance summary for week: ${targetWeek}`)
 
         const summaryResponse = await apiClient.get<{
           summary_total: FinanceSummary | null
@@ -88,7 +89,7 @@ export function useExpenses(weekOverride?: string) {
         }
 
         const result = buildExpenseBreakdown(summary, previousSummary)
-        console.info(
+        logger.debug(
           `[Expenses] Found ${result.expenses.length} expense categories with total: ${result.total}`
         )
         return result
@@ -107,9 +108,9 @@ export function useExpenses(weekOverride?: string) {
               .catch(() => {})
           }
         }
-        console.warn('[Expenses] Expense data not available:', error)
+        logger.warn('[Expenses] Expense data not available:', error)
         if (error instanceof Error) {
-          console.warn('[Expenses] Error details:', { message: error.message, name: error.name })
+          logger.warn('[Expenses] Error details:', { message: error.message, name: error.name })
         }
         return { expenses: [], total: 0 }
       }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -26,7 +27,7 @@ export function useInvalidateStorageQueries() {
   const queryClient = useQueryClient()
 
   return () => {
-    console.info('[Storage Analytics] Invalidating all storage queries')
+    logger.debug('[Storage Analytics] Invalidating all storage queries')
     queryClient.invalidateQueries({ queryKey: storageQueryKeys.all })
   }
 }

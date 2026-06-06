@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -28,7 +29,7 @@ export function useCabinetLevelExpenses(filters: { weekStart?: string; weekEnd?:
         if (weekStart) params.append('weekStart', weekStart)
         if (weekEnd) params.append('weekEnd', weekEnd)
 
-        console.info('[Cabinet Expenses] Fetching cabinet-level expenses:', {
+        logger.debug('[Cabinet Expenses] Fetching cabinet-level expenses:', {
           weekStart,
           weekEnd,
         })
@@ -48,7 +49,7 @@ export function useCabinetLevelExpenses(filters: { weekStart?: string; weekEnd?:
             ? response.data
             : (response as CabinetLevelExpenses)
 
-        console.info('[Cabinet Expenses] Received:', expenses)
+        logger.debug('[Cabinet Expenses] Received:', expenses)
 
         return expenses
       } catch (error) {

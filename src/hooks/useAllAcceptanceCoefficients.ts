@@ -12,6 +12,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getAllAcceptanceCoefficients } from '@/lib/api/tariffs'
 import type { AcceptanceCoefficient } from '@/types/tariffs'
+import { logger } from '@/lib/logger'
 
 /** Query keys for all coefficients */
 export const allCoefficientsQueryKeys = {
@@ -80,10 +81,10 @@ export function useAllAcceptanceCoefficients() {
     queryFn: async () => {
       const response = await getAllAcceptanceCoefficients()
       const coefficients = response.coefficients || []
-      console.info('[AllCoefficients] Fetched from /all:', coefficients.length, 'coefficient entries')
+      logger.debug('[AllCoefficients] Fetched from /all:', coefficients.length, 'coefficient entries')
       if (coefficients.length > 0) {
         const uniqueNames = new Set(coefficients.map(c => c.warehouseName))
-        console.info('[AllCoefficients] Unique warehouse names:', uniqueNames.size, Array.from(uniqueNames).slice(0, 10))
+        logger.debug('[AllCoefficients] Unique warehouse names:', uniqueNames.size, Array.from(uniqueNames).slice(0, 10))
       }
       return groupCoefficients(coefficients)
     },
@@ -133,7 +134,7 @@ export function findCoefficientsByName(
   // e.g., "Владимир" matches "Владимир Воршинское"
   for (const [name, data] of grouped.byName) {
     if (normalizeWarehouseName(name).startsWith(searchName)) {
-      console.info('[Coefficients] Fuzzy match (startsWith):', warehouseName, '→', name)
+      logger.debug('[Coefficients] Fuzzy match (startsWith):', warehouseName, '→', name)
       return data
     }
   }
@@ -142,7 +143,7 @@ export function findCoefficientsByName(
   // Fallback for cases like "СЦ Коледино" matching "Коледино"
   for (const [name, data] of grouped.byName) {
     if (normalizeWarehouseName(name).includes(searchName)) {
-      console.info('[Coefficients] Fuzzy match (includes):', warehouseName, '→', name)
+      logger.debug('[Coefficients] Fuzzy match (includes):', warehouseName, '→', name)
       return data
     }
   }

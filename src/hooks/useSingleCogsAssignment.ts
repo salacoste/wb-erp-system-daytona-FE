@@ -7,6 +7,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { CogsAssignmentRequest, ProductWithCogs } from '@/types/api'
+import { logger } from '@/lib/logger'
 
 // Re-export utils for consumers
 export {
@@ -31,7 +32,7 @@ export function useSingleCogsAssignment() {
       const { nmId, cogs } = params
 
       try {
-        console.info(`[COGS Assignment] Assigning COGS to product ${nmId}:`, {
+        logger.debug(`[COGS Assignment] Assigning COGS to product ${nmId}:`, {
           unit_cost_rub: cogs.unit_cost_rub,
           valid_from: cogs.valid_from,
           source: cogs.source,
@@ -39,7 +40,7 @@ export function useSingleCogsAssignment() {
 
         const response = await apiClient.post<ProductWithCogs>(`/v1/products/${nmId}/cogs`, cogs)
 
-        console.info('[COGS Assignment] COGS assigned successfully:', {
+        logger.debug('[COGS Assignment] COGS assigned successfully:', {
           nm_id: response.nm_id,
           has_cogs: response.has_cogs,
           cogs_id: response.cogs?.id,
@@ -61,9 +62,9 @@ export function useSingleCogsAssignment() {
 
       const marginPct = data.current_margin_pct
       if (marginPct != null && typeof marginPct === 'number' && Number.isFinite(marginPct)) {
-        console.info(`[COGS Assignment] Margin: ${marginPct.toFixed(2)}%`) // locale-percent-allow: debug log (not user-facing)
+        logger.debug(`[COGS Assignment] Margin: ${marginPct.toFixed(2)}%`) // locale-percent-allow: debug log (not user-facing)
       } else if (data.missing_data_reason) {
-        console.info(`[COGS Assignment] Margin: Not available (${data.missing_data_reason})`)
+        logger.debug(`[COGS Assignment] Margin: Not available (${data.missing_data_reason})`)
       }
     },
     onError: (error, variables) => {

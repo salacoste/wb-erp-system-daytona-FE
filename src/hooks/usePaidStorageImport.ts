@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -30,7 +31,7 @@ export function usePaidStorageImport(options: UsePaidStorageImportOptions = {}) 
   return useMutation<PaidStorageImportResponse, Error, PaidStorageImportRequest>({
     mutationFn: triggerPaidStorageImport,
     onSuccess: data => {
-      console.info('[Storage Analytics] Import triggered successfully:', {
+      logger.debug('[Storage Analytics] Import triggered successfully:', {
         importId: data.import_id,
         status: data.status,
       })

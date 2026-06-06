@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -62,7 +63,7 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
       try {
         const params = buildMarginAnalyticsParams(filters)
 
-        console.info('[Margin Analytics] Fetching SKU analytics:', {
+        logger.debug('[Margin Analytics] Fetching SKU analytics:', {
           week: isRangeQuery ? `${weekStart} — ${weekEnd}` : week,
           isRangeQuery,
           isComparisonMode,
@@ -84,7 +85,7 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
         // Story 4.9: Client-side filtering by nm_id
         if (nmId) {
           transformedData = transformedData.filter(item => String(item.nm_id) === String(nmId))
-          console.info('[Margin Analytics] Filtered by nm_id:', {
+          logger.debug('[Margin Analytics] Filtered by nm_id:', {
             nmId,
             matchCount: transformedData.length,
           })
@@ -92,7 +93,7 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
 
         const transformed: MarginAnalyticsSkuResponse = { data: transformedData, meta }
 
-        console.info('[Margin Analytics] SKU analytics received:', {
+        logger.debug('[Margin Analytics] SKU analytics received:', {
           count: transformed.data.length,
           has_cogs_data: transformed.data.some(item => item.cogs !== undefined),
         })

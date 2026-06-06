@@ -10,6 +10,7 @@ import type { MutableRefObject } from 'react'
 import { ApiError } from '@/types/api'
 import type { MarginCalculationStatusResponse } from '@/types/cogs'
 import type { UseMarginPollingWithQueryOptions } from './margin-polling-types'
+import { logger } from '@/lib/logger'
 
 /** Query state shape passed by TanStack Query's refetchInterval callback */
 export interface RefetchIntervalQueryState {
@@ -62,7 +63,7 @@ export function computeRefetchInterval(
   if (query.state.status === 'error') {
     const error = query.state.error as Error
     if (error instanceof ApiError && error.status >= 500) {
-      console.warn(`[Margin Polling] Transient error (${error.status}), continuing polling`)
+      logger.warn(`[Margin Polling] Transient error (${error.status}), continuing polling`)
       attemptsRef.current += 1
       return options.strategy.interval
     }
@@ -85,14 +86,14 @@ export function computeRefetchInterval(
       attemptsRef.current += 1
     }
     if (statusResponse.status === 'completed') {
-      console.log('[Margin Polling] Status completed, stopping polling')
+      logger.debug('[Margin Polling] Status completed, stopping polling')
       return false
     }
   }
 
   // Check max attempts
   if (attemptsRef.current >= options.strategy.maxAttempts) {
-    console.log(
+    logger.debug(
       `[Margin Polling] Max attempts reached (${attemptsRef.current}/${options.strategy.maxAttempts}), stopping`
     )
     timeoutRef.current = true

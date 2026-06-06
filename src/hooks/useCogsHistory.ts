@@ -5,6 +5,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 
 export interface CogsHistoryEntry {
   id: string
@@ -44,13 +45,13 @@ export function useCogsHistory(nmId: string | undefined) {
       }
 
       try {
-        console.info(`[COGS History] Fetching COGS history for nm_id: ${nmId}`)
+        logger.debug(`[COGS History] Fetching COGS history for nm_id: ${nmId}`)
 
         const response = await apiClient.get<CogsHistoryResponse>(
           `/v1/cogs?nm_id=${nmId}&limit=100`
         )
 
-        console.info('[COGS History] COGS history received:', {
+        logger.debug('[COGS History] COGS history received:', {
           nm_id: nmId,
           versions_count: response.data?.length || 0,
         })
@@ -84,7 +85,7 @@ export function useCogsAtDate(nmId: string | undefined, date: string | undefined
       }
 
       try {
-        console.info(`[COGS History] Fetching COGS for nm_id: ${nmId} at date: ${date}`)
+        logger.debug(`[COGS History] Fetching COGS for nm_id: ${nmId} at date: ${date}`)
 
         const response = await apiClient.get<CogsHistoryResponse>(
           `/v1/cogs?nm_id=${nmId}&valid_at=${date}&limit=1`
@@ -92,7 +93,7 @@ export function useCogsAtDate(nmId: string | undefined, date: string | undefined
 
         const cogs = response.data?.[0] || null
 
-        console.info('[COGS History] COGS at date received:', {
+        logger.debug('[COGS History] COGS at date received:', {
           nm_id: nmId,
           date,
           found: !!cogs,

@@ -15,6 +15,7 @@ import type {
   ApiError,
   UseCogsEditOptions,
 } from './useCogsEdit-utils'
+import { logger } from '@/lib/logger'
 
 // Re-export types and validation utils for consumers
 export type {
@@ -44,14 +45,14 @@ export function useCogsEdit(cogsId: string, options: UseCogsEditOptions = {}) {
 
   return useMutation({
     mutationFn: async (data: UpdateCogsRecordDto): Promise<EditCogsResponse> => {
-      console.info(`[COGS Edit] Updating COGS ${cogsId}`, data)
+      logger.debug(`[COGS Edit] Updating COGS ${cogsId}`, data)
 
       const response = await apiClient.patch<EditCogsResponse>(
         `/v1/cogs/${cogsId}`,
         data
       )
 
-      console.info('[COGS Edit] Update successful', {
+      logger.debug('[COGS Edit] Update successful', {
         cogs_id: response.cogs_id,
         margin_recalculation: response.margin_recalculation.triggered,
         affected_weeks: response.margin_recalculation.affected_weeks.length,

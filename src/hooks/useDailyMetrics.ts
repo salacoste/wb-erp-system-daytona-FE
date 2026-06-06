@@ -16,6 +16,7 @@ import type {
   UseDailyMetricsParams,
   UseDailyMetricsOptions,
 } from '@/types/daily-metrics'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // Hook Implementation
@@ -81,7 +82,7 @@ export function useDailyMetrics(
       // Fill missing days with zeros
       const filledData = fillMissingDays(aggregatedData, from, to)
 
-      console.info('[Daily Metrics] Processed daily data:', {
+      logger.debug('[Daily Metrics] Processed daily data:', {
         mode,
         from,
         to,
@@ -122,7 +123,7 @@ export function useInvalidateDailyMetrics() {
   const queryClient = useQueryClient()
 
   return () => {
-    console.info('[Daily Metrics] Invalidating daily metrics queries')
+    logger.debug('[Daily Metrics] Invalidating daily metrics queries')
     queryClient.invalidateQueries({ queryKey: dailyAnalyticsQueryKeys.all })
   }
 }
@@ -142,7 +143,7 @@ export function usePrefetchDailyMetrics() {
   const queryClient = useQueryClient()
 
   return async (from: string, to: string) => {
-    console.info('[Daily Metrics] Prefetching daily metrics:', { from, to })
+    logger.debug('[Daily Metrics] Prefetching daily metrics:', { from, to })
     await queryClient.prefetchQuery({
       queryKey: dailyAnalyticsQueryKeys.metrics(from, to),
       queryFn: async () => {

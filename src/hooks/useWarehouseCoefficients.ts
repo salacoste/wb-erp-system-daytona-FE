@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -83,7 +84,7 @@ export function useWarehouseCoefficients(
     if (hasEmbedded) {
       const logCoeff = warehouse.tariffs.logisticsCoefficient!
       const storCoeff = warehouse.tariffs.storageCoefficient ?? 1.0
-      console.info('[Coefficients] Using embedded coefficients for', warehouse.name, {
+      logger.debug('[Coefficients] Using embedded coefficients for', warehouse.name, {
         logistics: logCoeff,
         storage: storCoeff,
       })

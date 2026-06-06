@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -58,7 +59,7 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
       try {
         const params = buildMarginAnalyticsParams(filters)
 
-        console.info('[Margin Analytics] Fetching brand analytics:', {
+        logger.debug('[Margin Analytics] Fetching brand analytics:', {
           week: isRangeQuery ? `${weekStart} — ${weekEnd}` : week,
           isRangeQuery,
           isComparisonMode,
@@ -77,7 +78,7 @@ export function useMarginAnalyticsByBrand(filters: MarginAnalyticsFilters) {
           meta,
         }
 
-        console.info('[Margin Analytics] Brand analytics received:', {
+        logger.debug('[Margin Analytics] Brand analytics received:', {
           count: transformed.data.length,
           hasOperatingMargin: transformed.data.some(d => d.operating_margin_pct != null),
         })

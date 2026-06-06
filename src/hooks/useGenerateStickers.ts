@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * useGenerateStickers Mutation Hook
  * Story 53.6-FE: Close Supply & Stickers
@@ -98,12 +99,12 @@ export function useGenerateStickers(options: UseGenerateStickersOptions = {}) {
 
   return useMutation({
     mutationFn: async ({ supplyId, format }: GenerateStickersParams) => {
-      console.info('[useGenerateStickers] Generating stickers:', { supplyId, format })
+      logger.debug('[useGenerateStickers] Generating stickers:', { supplyId, format })
       return generateStickers(supplyId, format)
     },
 
     onSuccess: (data, { supplyId }) => {
-      console.info('[useGenerateStickers] Stickers generated successfully:', supplyId)
+      logger.debug('[useGenerateStickers] Stickers generated successfully:', supplyId)
 
       // Invalidate supply detail to refresh documents list
       queryClient.invalidateQueries({ queryKey: suppliesQueryKeys.detail(supplyId) })

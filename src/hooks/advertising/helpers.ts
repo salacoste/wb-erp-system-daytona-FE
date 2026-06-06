@@ -12,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { getAdvertisingAnalytics } from '@/lib/api/advertising-analytics'
 import { advertisingQueryKeys } from './query-keys'
 import type { AdvertisingAnalyticsParams } from '@/types/advertising-analytics'
+import { logger } from '@/lib/logger'
 
 /**
  * Hook to invalidate all advertising queries.
@@ -27,7 +28,7 @@ export function useInvalidateAdvertisingQueries() {
   const queryClient = useQueryClient()
 
   return () => {
-    console.info('[Advertising Analytics] Invalidating all advertising queries')
+    logger.debug('[Advertising Analytics] Invalidating all advertising queries')
     queryClient.invalidateQueries({ queryKey: advertisingQueryKeys.all })
   }
 }
@@ -42,7 +43,7 @@ export function useInvalidateAnalyticsQueries() {
   const queryClient = useQueryClient()
 
   return () => {
-    console.info('[Advertising Analytics] Invalidating analytics queries')
+    logger.debug('[Advertising Analytics] Invalidating analytics queries')
     queryClient.invalidateQueries({
       queryKey: [...advertisingQueryKeys.all, 'analytics'],
     })
@@ -63,7 +64,7 @@ export function usePrefetchAdvertisingAnalytics() {
   const queryClient = useQueryClient()
 
   return (params: AdvertisingAnalyticsParams) => {
-    console.info('[Advertising Analytics] Prefetching analytics:', params)
+    logger.debug('[Advertising Analytics] Prefetching analytics:', params)
     queryClient.prefetchQuery({
       queryKey: advertisingQueryKeys.analytics(params),
       queryFn: () => getAdvertisingAnalytics(params),

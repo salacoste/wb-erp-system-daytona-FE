@@ -8,6 +8,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 import type { CogsHistoryItem, VersionChainInfo } from '@/types/cogs'
 
@@ -68,13 +69,11 @@ export function useCogsDelete(cogsId: string, options: UseCogsDeleteOptions = {}
 
   return useMutation({
     mutationFn: async (): Promise<DeleteCogsResponse> => {
-      console.info(`[COGS Delete] Deleting COGS ${cogsId}`)
+      logger.debug(`[COGS Delete] Deleting COGS ${cogsId}`)
 
-      const response = await apiClient.delete<DeleteCogsResponse>(
-        `/v1/cogs/${cogsId}`
-      )
+      const response = await apiClient.delete<DeleteCogsResponse>(`/v1/cogs/${cogsId}`)
 
-      console.info('[COGS Delete] Deletion successful', {
+      logger.debug('[COGS Delete] Deletion successful', {
         cogs_id: response.cogs_id,
         previous_version_reopened: response.previous_version_reopened,
         affected_weeks: response.margin_recalculation.affected_weeks.length,
@@ -83,15 +82,14 @@ export function useCogsDelete(cogsId: string, options: UseCogsDeleteOptions = {}
       return response
     },
 
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['cogs-history-full'] })
       queryClient.invalidateQueries({ queryKey: ['cogs-history'] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
 
       // Build description with version chain info (AC: 13, 14)
-      let description =
-        'При необходимости обратитесь к администратору для восстановления'
+      let description = 'При необходимости обратитесь к администратору для восстановления'
       if (response.previous_version_reopened) {
         description = 'Предыдущая версия COGS теперь активна. ' + description
       }
@@ -142,15 +140,12 @@ export function analyzeVersionChain(
 
   // Find previous version (valid_to === this record's valid_from)
   const previousVersion = history.find(
-    (r) =>
-      r.valid_to === record.valid_from &&
-      r.is_active &&
-      r.cogs_id !== record.cogs_id
+    r => r.valid_to === record.valid_from && r.is_active && r.cogs_id !== record.cogs_id
   )
   const hasPreviousVersion = !!previousVersion
 
   // Check if this is the only active version
-  const activeVersions = history.filter((r) => r.is_active)
+  const activeVersions = history.filter(r => r.is_active)
   const isOnlyVersion = activeVersions.length === 1
 
   return {

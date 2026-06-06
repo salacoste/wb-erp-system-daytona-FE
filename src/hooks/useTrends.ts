@@ -12,6 +12,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { WeeklyTrendsResponse } from '@/types/api'
+import { logger } from '@/lib/logger'
 
 export interface TrendDataPoint {
   week: string
@@ -89,7 +90,7 @@ export function useTrends(limit = 8) {
         // Metrics: wb_sales_gross (выручка продавца), sale_gross (fallback),
         //   to_pay_goods, payout_total, logistics_cost
         const endpoint = `/v1/analytics/weekly/trends?from=${from}&to=${to}&metrics=wb_sales_gross,sale_gross,to_pay_goods,payout_total,logistics_cost`
-        console.info(`[Trends] Fetching trends (optimized): ${endpoint}`)
+        logger.debug(`[Trends] Fetching trends (optimized): ${endpoint}`)
 
         const response = await apiClient.get<WeeklyTrendsResponse>(endpoint, {
           skipDataUnwrap: true,
@@ -97,7 +98,7 @@ export function useTrends(limit = 8) {
 
         // Handle empty data
         if (!response.data || response.data.length === 0) {
-          console.info('[Trends] No data available for requested period')
+          logger.debug('[Trends] No data available for requested period')
           return { trends: [], period: 'weeks', summary: response.summary }
         }
 
@@ -120,7 +121,7 @@ export function useTrends(limit = 8) {
         )
         // Log failures but don't block
         cogsResults.forEach((r, i) => {
-          if (r.status === 'rejected') console.warn(`[Trends] COGS fetch failed for ${weeks[i]}`)
+          if (r.status === 'rejected') logger.warn(`[Trends] COGS fetch failed for ${weeks[i]}`)
         })
 
         const trends: TrendDataPoint[] = response.data
@@ -147,7 +148,7 @@ export function useTrends(limit = 8) {
           })
           .sort((a, b) => a.week.localeCompare(b.week))
 
-        console.info(`[Trends] Received ${trends.length} data points in single request`)
+        logger.debug(`[Trends] Received ${trends.length} data points in single request`)
 
         return {
           trends,
@@ -162,7 +163,7 @@ export function useTrends(limit = 8) {
           const httpError = error as { response?: { status?: number; data?: { message?: string } } }
 
           if (httpError.response?.status === 404) {
-            console.warn('[Trends] No data available for requested time range')
+            logger.warn('[Trends] No data available for requested time range')
             return { trends: [], period: 'weeks' }
           }
 

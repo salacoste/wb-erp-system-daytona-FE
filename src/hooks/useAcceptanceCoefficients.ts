@@ -20,6 +20,7 @@ import {
   type NormalizedCoefficients,
   type UseAcceptanceCoefficientsOptions,
 } from './useAcceptanceCoefficients-utils'
+import { logger } from '@/lib/logger'
 
 // Re-export types and constants for consumers
 export {
@@ -108,7 +109,7 @@ export function useAcceptanceCoefficients(
           const errorData = apiError.data as { retryAfter?: number } | undefined
           const retryAfter = errorData?.retryAfter ?? 10
           addRateLimit(endpoint, retryAfter, `warehouseId: ${debouncedWarehouseId}`)
-          console.warn('[RateLimit] Acceptance coefficients API rate limited', {
+          logger.warn('[RateLimit] Acceptance coefficients API rate limited', {
             warehouseId: debouncedWarehouseId,
             retryAfter,
             timestamp: new Date().toISOString(),

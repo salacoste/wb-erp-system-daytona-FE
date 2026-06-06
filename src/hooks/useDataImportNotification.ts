@@ -12,6 +12,7 @@
 import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import { useAuthStore } from '@/stores/authStore'
 import type { Task } from '@/types/api'
 import {
@@ -73,7 +74,7 @@ export function useDataImportNotification(
         }
       } catch (error) {
         // Silently fail - don't break the component if task check fails
-        console.warn('Failed to check for new import:', error)
+        logger.warn('Failed to check for new import:', error)
       }
     }
 

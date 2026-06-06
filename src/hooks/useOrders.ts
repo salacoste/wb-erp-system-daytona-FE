@@ -24,6 +24,7 @@ import type {
   TriggerSyncResponse,
   SyncStatusResponse,
 } from '@/types/orders'
+import { logger } from '@/lib/logger'
 
 // Re-export query keys for external use
 export { ordersQueryKeys }
@@ -128,7 +129,7 @@ export function useOrdersSync(options: UseOrdersSyncOptions = {}) {
   return useMutation<TriggerSyncResponse, Error, void>({
     mutationFn: triggerOrdersSync,
     onSuccess: data => {
-      console.info('[Orders] Sync triggered:', data.jobId)
+      logger.debug('[Orders] Sync triggered:', data.jobId)
       queryClient.invalidateQueries({ queryKey: ordersQueryKeys.syncStatus() })
       options.onSuccess?.(data)
     },
@@ -160,7 +161,7 @@ export function useOrdersBackfill(options: UseOrdersBackfillOptions = {}) {
   return useMutation<BackfillResponse, Error, BackfillParams>({
     mutationFn: triggerOrdersBackfill,
     onSuccess: data => {
-      console.info('[Orders] Backfill triggered:', data.jobId, data.days, 'days')
+      logger.debug('[Orders] Backfill triggered:', data.jobId, data.days, 'days')
       // Invalidate orders queries after delay to allow processing
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ordersQueryKeys.all })
@@ -186,7 +187,7 @@ export function useInvalidateOrdersQueries() {
   const queryClient = useQueryClient()
 
   return () => {
-    console.info('[Orders] Invalidating all orders queries')
+    logger.debug('[Orders] Invalidating all orders queries')
     queryClient.invalidateQueries({ queryKey: ordersQueryKeys.all })
   }
 }

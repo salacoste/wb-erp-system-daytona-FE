@@ -12,6 +12,7 @@ import { apiClient } from '@/lib/api-client'
 import { useAuthStore } from '@/stores/authStore'
 import { reconcileBatch } from '@/lib/api/imports-reconcile'
 import type { ProcessingStatus } from '@/types/api'
+import { logger } from '@/lib/logger'
 
 /**
  * Batch status from API
@@ -218,7 +219,7 @@ export function useProcessingStatus() {
 
         return result
       } catch (error) {
-        console.warn('[useProcessingStatus] Error fetching batches:', error)
+        logger.warn('[useProcessingStatus] Error fetching batches:', error)
         return {
           status: 'processing',
           productParsing: { progress: 0, status: 'pending' },

@@ -18,6 +18,7 @@ import {
   SUPPLY_GC_TIME,
   SUPPLY_PREFETCH_STALE_TIME,
 } from './useSupplyPlanning-utils'
+import { logger } from '@/lib/logger'
 
 // Re-export for consumers
 export {
@@ -100,7 +101,7 @@ export function useSupplyPlanningSummary(
 export function useInvalidateSupplyPlanningQueries() {
   const queryClient = useQueryClient()
   return () => {
-    console.info('[Supply Planning] Invalidating all supply planning queries')
+    logger.debug('[Supply Planning] Invalidating all supply planning queries')
     queryClient.invalidateQueries({ queryKey: supplyPlanningQueryKeys.all })
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useCallback } from 'react'
@@ -33,7 +34,7 @@ export function useAuth() {
         } else {
           // No user available, just update token
           // This shouldn't happen, but handle gracefully
-          console.warn('Token refreshed but no user available')
+          logger.warn('Token refreshed but no user available')
           return false
         }
         return true

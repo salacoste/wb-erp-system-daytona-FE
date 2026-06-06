@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { BulkCogsUploadRequest, BulkCogsResultSummary, BulkCogsItem } from '@/types/api'
 import { normalizeBulkCogsResponse } from '@/lib/api/bulk-cogs-normalizer'
+import { logger } from '@/lib/logger'
 
 // Re-export utils for consumers
 export { validateBulkCogsAssignment, createBulkCogsItems } from './useBulkCogsAssignment-utils'
@@ -27,7 +28,7 @@ export function useBulkCogsAssignment() {
       const { items } = params
 
       try {
-        console.info(`[Bulk COGS Assignment] Assigning COGS to ${items.length} products`)
+        logger.debug(`[Bulk COGS Assignment] Assigning COGS to ${items.length} products`)
 
         if (items.length > 1000) {
           throw new Error(`Максимум 1000 товаров за один раз. Передано: ${items.length}`)
@@ -35,7 +36,7 @@ export function useBulkCogsAssignment() {
 
         const request: BulkCogsUploadRequest = { items }
 
-        console.info('[Bulk COGS Assignment] Request:', {
+        logger.debug('[Bulk COGS Assignment] Request:', {
           items_count: items.length,
           sample_item: items[0],
         })
@@ -46,7 +47,7 @@ export function useBulkCogsAssignment() {
         const response = await apiClient.post<unknown>('/v1/products/cogs/bulk?format=v2', request)
         const summary = normalizeBulkCogsResponse(response)
 
-        console.info('[Bulk COGS Assignment] Response:', {
+        logger.debug('[Bulk COGS Assignment] Response:', {
           succeeded: summary.succeeded,
           failed: summary.failed,
           total: items.length,
@@ -65,22 +66,22 @@ export function useBulkCogsAssignment() {
 
       const { succeeded, failed, results, marginRecalculation } = data
 
-      console.log(`✅ Bulk COGS assignment completed:`)
-      console.log(`   Succeeded: ${succeeded}/${variables.items.length}`)
-      console.log(`   Failed: ${failed}/${variables.items.length}`)
+      logger.debug(`✅ Bulk COGS assignment completed:`)
+      logger.debug(`   Succeeded: ${succeeded}/${variables.items.length}`)
+      logger.debug(`   Failed: ${failed}/${variables.items.length}`)
 
       if (marginRecalculation) {
-        console.log(`   Margin Recalculation:`)
-        console.log(`     Triggered: ${marginRecalculation.triggered}`)
-        console.log(`     Weeks: ${marginRecalculation.affectedWeeks.join(', ')}`)
-        console.log(`     Task UUID: ${marginRecalculation.taskUuid}`)
+        logger.debug(`   Margin Recalculation:`)
+        logger.debug(`     Triggered: ${marginRecalculation.triggered}`)
+        logger.debug(`     Weeks: ${marginRecalculation.affectedWeeks.join(', ')}`)
+        logger.debug(`     Task UUID: ${marginRecalculation.taskUuid}`)
       } else if (succeeded > 0) {
-        console.log(`   Margin Recalculation: Not triggered (no sales data for uploaded COGS)`)
+        logger.debug(`   Margin Recalculation: Not triggered (no sales data for uploaded COGS)`)
       }
 
       if (failed > 0) {
         const failedItems = results.filter(r => !r.success)
-        console.warn('[Bulk COGS] Failed items:', failedItems)
+        logger.warn('[Bulk COGS] Failed items:', failedItems)
       }
     },
     onError: (error, variables) => {

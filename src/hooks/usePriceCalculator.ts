@@ -7,11 +7,9 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { calculatePrice } from '@/lib/api/price-calculator'
+import { logger } from '@/lib/logger'
 import { ApiError } from '@/types/api'
-import type {
-  PriceCalculatorRequest,
-  PriceCalculatorResponse,
-} from '@/types/price-calculator'
+import type { PriceCalculatorRequest, PriceCalculatorResponse } from '@/types/price-calculator'
 
 /**
  * Generates a stable key for price calculator queries
@@ -77,15 +75,15 @@ export function usePriceCalculator(options?: {
 }) {
   return useMutation<PriceCalculatorResponse, ApiError, PriceCalculatorRequest>({
     mutationFn: calculatePrice,
-    onSuccess: (data) => {
-      console.info('[Price Calculator] Calculation successful:', {
+    onSuccess: data => {
+      logger.debug('[Price Calculator] Calculation successful:', {
         recommendedPrice: data.result.recommended_price,
         margin: data.result.actual_margin_pct,
         warnings: data.warnings,
       })
       options?.onSuccess?.(data)
     },
-    onError: (error) => {
+    onError: error => {
       console.error('[Price Calculator] Calculation failed:', error)
       options?.onError?.(error)
     },

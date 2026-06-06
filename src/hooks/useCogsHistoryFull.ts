@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { CogsHistoryResponse, CogsHistoryItem, VersionChainInfo } from '@/types/cogs'
 import { normalizeCogsHistoryResponse } from '@/lib/api/cogs-history-normalizer'
+import { logger } from '@/lib/logger'
 
 /**
  * Formats date to Russian locale (dd.mm.yyyy)
@@ -161,7 +162,7 @@ export function useCogsHistoryFull(nmId: string | undefined, options: UseCogsHis
       }
 
       try {
-        console.info(`[COGS History Full] Fetching COGS history for nm_id: ${nmId}`, {
+        logger.debug(`[COGS History Full] Fetching COGS history for nm_id: ${nmId}`, {
           limit,
           cursor,
           include_deleted,
@@ -185,7 +186,7 @@ export function useCogsHistoryFull(nmId: string | undefined, options: UseCogsHis
           { skipDataUnwrap: true }
         )
 
-        console.info('[COGS History Full] Response received:', {
+        logger.debug('[COGS History Full] Response received:', {
           nm_id: nmId,
           versions_count: response.data?.length || 0,
           total: response.pagination?.total,

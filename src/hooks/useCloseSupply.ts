@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * useCloseSupply Mutation Hook
  * Story 53.6-FE: Close Supply & Stickers
@@ -91,12 +92,12 @@ export function useCloseSupply(options: UseCloseSupplyOptions = {}) {
 
   return useMutation({
     mutationFn: async (supplyId: string) => {
-      console.info('[useCloseSupply] Closing supply:', supplyId)
+      logger.debug('[useCloseSupply] Closing supply:', supplyId)
       return closeSupply(supplyId)
     },
 
     onSuccess: (data, supplyId) => {
-      console.info('[useCloseSupply] Supply closed successfully:', supplyId)
+      logger.debug('[useCloseSupply] Supply closed successfully:', supplyId)
 
       // Show success toast
       toast.success('Поставка закрыта')

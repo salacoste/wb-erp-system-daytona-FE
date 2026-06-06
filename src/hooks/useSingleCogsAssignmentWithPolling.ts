@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -75,7 +76,7 @@ export function useSingleCogsAssignmentWithPolling() {
   // Handle "completed without margin" case (no sales data, COGS date mismatch)
   useEffect(() => {
     if (polling.completedWithoutMargin && pollingNmId) {
-      console.log(
+      logger.debug(
         '[Polling Hook] Polling completed without margin (no sales data or COGS date mismatch)'
       )
       toast.info('Маржа не может быть рассчитана', {
@@ -115,7 +116,7 @@ export function useSingleCogsAssignmentWithPolling() {
         // Check if margin is already available
         const marginPct = response.current_margin_pct
         if (marginPct != null && typeof marginPct === 'number' && Number.isFinite(marginPct)) {
-          console.log('[Polling Hook] Margin available immediately, skipping polling')
+          logger.debug('[Polling Hook] Margin available immediately, skipping polling')
           toast.success('Маржа рассчитана', {
             description: `Маржинальность: ${formatPercentage(marginPct, 2)}`,
           })
@@ -126,7 +127,7 @@ export function useSingleCogsAssignmentWithPolling() {
 
         // Skip polling for orphan products (not in WB API)
         if (response.is_orphan === true) {
-          console.log('[Polling Hook] Skipping polling for orphan product (not in WB API)')
+          logger.debug('[Polling Hook] Skipping polling for orphan product (not in WB API)')
           queryClient.invalidateQueries({ queryKey: ['products'] })
           queryClient.invalidateQueries({ queryKey: ['products', params.nmId] })
           options?.onSuccess?.(response)
@@ -135,7 +136,7 @@ export function useSingleCogsAssignmentWithPolling() {
 
         // Start polling if COGS assigned
         if (response.has_cogs) {
-          console.log('[Polling Hook] Starting polling for margin calculation...')
+          logger.debug('[Polling Hook] Starting polling for margin calculation...')
           const strategy = getPollingStrategy(params.cogs.valid_from, false)
           const estimatedSeconds = Math.round(strategy.estimatedTime / 1000)
           toast.info('Расчёт маржи начат...', {

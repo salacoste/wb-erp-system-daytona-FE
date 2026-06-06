@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -58,7 +59,7 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
       try {
         const params = buildMarginAnalyticsParams(filters)
 
-        console.info('[Margin Analytics] Fetching category analytics:', {
+        logger.debug('[Margin Analytics] Fetching category analytics:', {
           week: isRangeQuery ? `${weekStart} — ${weekEnd}` : week,
           isRangeQuery,
           isComparisonMode,
@@ -77,7 +78,7 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
           meta,
         }
 
-        console.info('[Margin Analytics] Category analytics received:', {
+        logger.debug('[Margin Analytics] Category analytics received:', {
           count: transformed.data.length,
           hasOperatingMargin: transformed.data.some(d => d.operating_margin_pct != null),
         })

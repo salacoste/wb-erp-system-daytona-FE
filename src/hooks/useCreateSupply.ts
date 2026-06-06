@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * useCreateSupply Mutation Hook
  * Story 53.3-FE: Create Supply Flow
@@ -119,7 +120,7 @@ export function useCreateSupply() {
     },
 
     onSuccess: data => {
-      console.info('[useCreateSupply] Supply created successfully:', data.id)
+      logger.debug('[useCreateSupply] Supply created successfully:', data.id)
 
       // Navigate to supply detail page
       router.push(`/supplies/${data.id}`)

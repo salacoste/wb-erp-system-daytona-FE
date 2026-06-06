@@ -4,6 +4,7 @@ import type { AcceptanceCoefficient } from '@/types/tariffs'
 import type { SupplyDateTariffs } from '@/lib/tariff-system-utils'
 import { extractStorageTariffs } from '@/lib/tariff-extraction-utils'
 import type { SupplyWarehouse, BoxTypeTariffs } from './supply-tariffs-types'
+import { logger } from '@/lib/logger'
 
 /** Transform AcceptanceCoefficient to SupplyDateTariffs */
 export function toSupplyDateTariffs(coeff: AcceptanceCoefficient): SupplyDateTariffs {
@@ -87,7 +88,7 @@ export function findTariffsForDateFromCoefficients(
   date: string
 ): SupplyDateTariffs | null {
   if (!coefficients.length) {
-    console.warn('[findTariffsForDate] No coefficients loaded!')
+    logger.warn('[findTariffsForDate] No coefficients loaded!')
     return null
   }
 

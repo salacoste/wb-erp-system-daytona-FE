@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
@@ -37,7 +38,7 @@ export function useColumnWidths(
         return { ...defaultWidths, ...parsed }
       }
     } catch (e) {
-      console.warn('Failed to load column widths from localStorage:', e)
+      logger.warn('Failed to load column widths from localStorage:', e)
     }
     return defaultWidths
   })
@@ -54,7 +55,7 @@ export function useColumnWidths(
       try {
         localStorage.setItem(`column-widths-${storageKey}`, JSON.stringify(widths))
       } catch (e) {
-        console.warn('Failed to save column widths to localStorage:', e)
+        logger.warn('Failed to save column widths to localStorage:', e)
       }
     }
   }, [widths, storageKey, isInitialized])
@@ -75,7 +76,7 @@ export function useColumnWidths(
     try {
       localStorage.removeItem(`column-widths-${storageKey}`)
     } catch (e) {
-      console.warn('Failed to reset column widths:', e)
+      logger.warn('Failed to reset column widths:', e)
     }
   }, [storageKey])
 

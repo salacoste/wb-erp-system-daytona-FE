@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { useAuthStore } from '@/stores/authStore'
 import { toast } from 'sonner'
+import { logger } from '@/lib/logger'
 
 export interface ManualRecalculationPayload {
   weeks: string[] // ISO weeks (e.g., ["2025-W46"])
@@ -41,7 +42,7 @@ export function useManualMarginRecalculation() {
       }
 
       try {
-        console.info('[Manual Recalculation] Triggering recalculation:', payload)
+        logger.debug('[Manual Recalculation] Triggering recalculation:', payload)
 
         const response = await apiClient.post<ManualRecalculationResponse>(
           '/v1/tasks/enqueue',
@@ -55,7 +56,7 @@ export function useManualMarginRecalculation() {
           }
         )
 
-        console.info('[Manual Recalculation] Task enqueued:', response.task_uuid)
+        logger.debug('[Manual Recalculation] Task enqueued:', response.task_uuid)
 
         return response
       } catch (error) {

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * useDownloadDocument Mutation Hook
  * Story 53.6-FE: Close Supply & Stickers
@@ -102,7 +103,7 @@ function triggerDownload(blob: Blob, filename: string): void {
 export function useDownloadDocument(options: UseDownloadDocumentOptions = {}) {
   return useMutation({
     mutationFn: async ({ supplyId, docType, format = 'png', filename }: DownloadDocumentParams) => {
-      console.info('[useDownloadDocument] Downloading document:', { supplyId, docType, format })
+      logger.debug('[useDownloadDocument] Downloading document:', { supplyId, docType, format })
 
       const blob = await downloadDocument(supplyId, docType)
 
@@ -117,7 +118,7 @@ export function useDownloadDocument(options: UseDownloadDocumentOptions = {}) {
     },
 
     onSuccess: (_data, { docType }) => {
-      console.info('[useDownloadDocument] Document downloaded successfully')
+      logger.debug('[useDownloadDocument] Document downloaded successfully')
 
       // Show success toast based on document type
       const docLabels: Record<DocumentType, string> = {

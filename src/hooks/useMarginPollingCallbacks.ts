@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -55,7 +56,7 @@ export function useMarginPollingQueryFn(nmId: string, enabled: boolean, refs: Ma
         (error instanceof Error && error.message.includes('NOT_FOUND'))
 
       if (is404Error) {
-        console.warn(
+        logger.warn(
           '[Margin Polling] margin-status endpoint not available (404), falling back to full product fetch'
         )
         statusResponse = await fetchProductMarginFallback(nmId)
@@ -94,7 +95,7 @@ async function fetchProductMarginFallback(nmId: string): Promise<MarginCalculati
     return { status: hasMargin ? 'completed' : 'pending' }
   } catch {
     // Orphan products exist in financial reports but not in WB API
-    console.warn(
+    logger.warn(
       '[Margin Polling] Fallback product fetch also failed (orphan product?), marking as completed'
     )
     return { status: 'completed' }
@@ -119,11 +120,11 @@ async function handleCompletedStatus(
     if (hasMargin) {
       marginRef.current = marginPct
       setCompletedWithoutMargin(false)
-      console.log('[Margin Polling] Margin found:', marginPct)
+      logger.debug('[Margin Polling] Margin found:', marginPct)
     } else {
       // Expected when: no sales data, COGS date after week midpoint, etc.
       setCompletedWithoutMargin(true)
-      console.log('[Margin Polling] Status completed but no margin available', {
+      logger.debug('[Margin Polling] Status completed but no margin available', {
         missingDataReason: product.missing_data_reason,
       })
     }
@@ -131,7 +132,7 @@ async function handleCompletedStatus(
   } catch {
     // Product fetch failed (orphan product case)
     setCompletedWithoutMargin(true)
-    console.log('[Margin Polling] Product fetch failed (orphan?), completed without margin')
+    logger.debug('[Margin Polling] Product fetch failed (orphan?), completed without margin')
     return statusResponse
   }
 }
@@ -146,7 +147,7 @@ function handleNotFoundStatus(
   onErrorRef: MutableRefObject<((error: Error) => void) | undefined>
 ): MarginCalculationStatusResponse {
   if (isFirstAttemptRef.current) {
-    console.log('[Margin Polling] Status: not_found on first attempt, will retry')
+    logger.debug('[Margin Polling] Status: not_found on first attempt, will retry')
     isFirstAttemptRef.current = false
     return statusResponse
   }

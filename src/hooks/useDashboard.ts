@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { isValidWeekFormat } from '@/lib/period-helpers'
 import type { FinanceSummary } from '@/types/finance-summary'
+import { logger } from '@/lib/logger'
 
 export interface DashboardMetrics {
   totalPayable?: number
@@ -90,13 +91,13 @@ export function useDashboardMetrics(options?: UseDashboardMetricsOptions) {
         // Otherwise, get latest available week first
         const latestWeek = await getLatestAvailableWeek()
         if (!latestWeek) {
-          console.info('[Dashboard] No available weeks found - data may not be processed yet')
+          logger.debug('[Dashboard] No available weeks found - data may not be processed yet')
           return {}
         }
 
         return await fetchFinanceSummaryForWeek(latestWeek)
       } catch (error) {
-        console.warn('[Dashboard] Finance summary not available:', error)
+        logger.warn('[Dashboard] Finance summary not available:', error)
         return {}
       }
     },

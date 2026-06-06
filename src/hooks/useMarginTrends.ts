@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { MarginTrendPoint } from '@/types/api'
 import { normalizeMarginTrendsResponse } from '@/lib/api/margin-trends-normalizer'
+import { logger } from '@/lib/logger'
 
 /**
  * Query parameters for margin trends endpoint
@@ -69,7 +70,7 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
         }
 
         const endpoint = `/v1/analytics/weekly/margin-trends?${queryParams.toString()}`
-        console.info(`[MarginTrends] Fetching margin trends: ${endpoint}`)
+        logger.debug(`[MarginTrends] Fetching margin trends: ${endpoint}`)
 
         // Validation F-30: apiClient auto-unwraps the `{ data }` envelope, so at runtime
         // this resolves to a bare MarginTrendPoint[] — the old `response.data` read
@@ -80,7 +81,7 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
         // Copy before sort so we never mutate the cached/frozen TanStack Query reference.
         const trends = [...normalizeMarginTrendsResponse(response)]
 
-        console.info(`[MarginTrends] Received ${trends.length} data points`)
+        logger.debug(`[MarginTrends] Received ${trends.length} data points`)
 
         // Sort by week ascending (oldest to newest for chart display)
         trends.sort((a, b) => a.week.localeCompare(b.week))
@@ -96,7 +97,7 @@ export function useMarginTrends(params: MarginTrendsQueryParams) {
 
           // Handle specific error cases
           if (httpError.response?.status === 404) {
-            console.warn('[MarginTrends] No data available for requested time range')
+            logger.warn('[MarginTrends] No data available for requested time range')
             return []
           }
 

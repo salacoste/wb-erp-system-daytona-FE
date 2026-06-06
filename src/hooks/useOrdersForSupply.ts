@@ -10,6 +10,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { OrderFbsItem, OrdersPagination } from '@/types/orders'
+import { logger } from '@/lib/logger'
 
 // =============================================================================
 // Constants
@@ -88,13 +89,13 @@ async function fetchOrdersForSupply(
   searchParams.append('sort_order', params.sort_order || 'desc')
 
   const url = `/v1/orders?${searchParams.toString()}`
-  console.info('[OrdersForSupply] Fetching:', params)
+  logger.debug('[OrdersForSupply] Fetching:', params)
 
   const response = await apiClient.get<OrdersForSupplyResponse>(url, {
     skipDataUnwrap: true,
   })
 
-  console.info('[OrdersForSupply] Response:', {
+  logger.debug('[OrdersForSupply] Response:', {
     count: response.items?.length ?? 0,
     total: response.pagination?.total ?? 0,
   })

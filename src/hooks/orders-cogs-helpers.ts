@@ -7,6 +7,7 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import { getPreviousWeek, getPreviousMonth } from '@/lib/period-helpers'
 import type {
   OrdersVolumeWithCogsResponse,
@@ -82,7 +83,7 @@ export async function getOrdersWithCogs(
     searchParams.set('include_cogs', 'true')
   }
 
-  console.info('[Orders COGS] Fetching orders with COGS:', params)
+  logger.debug('[Orders COGS] Fetching orders with COGS:', params)
 
   const raw = await apiClient.get<Record<string, unknown>>(
     `/v1/analytics/orders/volume?${searchParams.toString()}`,

@@ -24,6 +24,7 @@ import {
   PREFETCH_STALE_TIME,
   PREFETCH_TRENDS_STALE_TIME,
 } from './useLiquidity-utils'
+import { logger } from '@/lib/logger'
 
 // Re-export for consumers
 export { liquidityQueryKeys, type UseLiquidityOptions } from './useLiquidity-utils'
@@ -133,7 +134,7 @@ export function useLiquiditySummary(options: UseLiquidityOptions = {}) {
 export function useInvalidateLiquidityQueries() {
   const queryClient = useQueryClient()
   return () => {
-    console.info('[Liquidity] Invalidating all liquidity queries')
+    logger.debug('[Liquidity] Invalidating all liquidity queries')
     queryClient.invalidateQueries({ queryKey: liquidityQueryKeys.all })
   }
 }

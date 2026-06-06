@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -54,14 +55,14 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
     queryKey: supplyTariffsQueryKeys.all,
     queryFn: async () => {
       const response = await getAllAcceptanceCoefficients()
-      console.info('[SupplyTariffs] Loaded', response.coefficients?.length || 0, 'entries')
+      logger.debug('[SupplyTariffs] Loaded', response.coefficients?.length || 0, 'entries')
 
       // Debug: Log entries to check boxTypeId and storage values
       const debugEntries = response.coefficients
         ?.filter(c => c.warehouseName.includes('Тихорецк'))
         .slice(0, 5)
       if (debugEntries?.length) {
-        console.info(
+        logger.debug(
           '[SupplyTariffs] DEBUG entries:',
           debugEntries.map(e => ({
             date: e.date,
@@ -92,7 +93,7 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
   /** Find tariffs for specific warehouse ID and date */
   const findTariffsForDate = useCallback(
     (warehouseId: number, date: string): SupplyDateTariffs | null => {
-      console.info('[findTariffsForDate] Searching:', {
+      logger.debug('[findTariffsForDate] Searching:', {
         warehouseId,
         date,
         coefficientsCount: coefficients.length,
@@ -101,7 +102,7 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
       const result = findTariffsForDateFromCoefficients(coefficients, warehouseId, date)
 
       if (result) {
-        console.info('[findTariffsForDate] Found match:', {
+        logger.debug('[findTariffsForDate] Found match:', {
           warehouseId: result.warehouseId,
           date: result.date,
           boxTypeId: result.boxTypeId,
@@ -110,14 +111,14 @@ export function useSupplyTariffs(): UseSupplyTariffsReturn {
         })
       } else {
         const normalizedDate = date.split('T')[0]
-        console.warn(
+        logger.warn(
           '[findTariffsForDate] No match found for warehouse',
           warehouseId,
           'date',
           normalizedDate
         )
         const uniqueIds = [...new Set(coefficients.map(c => c.warehouseId))].slice(0, 10)
-        console.info('[findTariffsForDate] Available warehouseIds (first 10):', uniqueIds)
+        logger.debug('[findTariffsForDate] Available warehouseIds (first 10):', uniqueIds)
       }
 
       return result

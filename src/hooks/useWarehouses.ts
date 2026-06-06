@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getWarehousesWithTariffs } from '@/lib/api/tariffs'
 import type { Warehouse } from '@/types/warehouse'
 import type { WarehouseWithTariffs } from '@/types/warehouse'
+import { logger } from '@/lib/logger'
 
 /** Query keys for warehouse-related queries */
 export const warehousesQueryKeys = {
@@ -97,7 +98,7 @@ async function fetchWarehouses(): Promise<Warehouse[]> {
     .filter(w => w.id > 0)
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 
-  console.info('[Warehouses] Loaded', warehouses.length, 'warehouses with tariffs')
+  logger.debug('[Warehouses] Loaded', warehouses.length, 'warehouses with tariffs')
 
   return warehouses
 }

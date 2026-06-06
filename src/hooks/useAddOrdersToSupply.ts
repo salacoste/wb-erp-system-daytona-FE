@@ -13,6 +13,7 @@ import { suppliesQueryKeys } from '@/hooks/useSupplies'
 import { ordersQueryKeys } from '@/hooks/useOrders'
 import { ordersForSupplyQueryKeys } from '@/hooks/useOrdersForSupply'
 import type { AddOrdersResponse } from '@/types/supplies'
+import { logger } from '@/lib/logger'
 
 // =============================================================================
 // Types
@@ -60,7 +61,7 @@ export function useAddOrdersToSupply(supplyId: string, options: UseAddOrdersToSu
 
   return useMutation<AddOrdersResponse, Error, string[]>({
     mutationFn: (orderIds: string[]) => {
-      console.info('[Supply] Adding orders:', { supplyId, orderCount: orderIds.length })
+      logger.debug('[Supply] Adding orders:', { supplyId, orderCount: orderIds.length })
       return addOrders(supplyId, orderIds)
     },
 
