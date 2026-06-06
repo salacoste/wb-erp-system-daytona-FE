@@ -72,8 +72,7 @@ export function StatusLegend({
               isClickable && 'cursor-pointer hover:bg-gray-50 rounded px-1 -mx-1',
               !isClickable && 'cursor-default'
             )}
-            // locale-percent-allow: aria spoken text (visible text uses formatPercentage; line 89)
-            aria-label={`${label}: ${item.count} заказов (${item.percentage.toFixed(1)}%)`}
+            aria-label={`${label}: ${item.count} заказов (${formatPercentage(item.percentage, 1)})`}
           >
             {/* Color indicator */}
             <span

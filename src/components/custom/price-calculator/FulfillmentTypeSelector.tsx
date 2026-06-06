@@ -107,12 +107,9 @@ export function FulfillmentTypeSelector({
         <button
           type="button"
           role="radio"
-          // locale-percent-allow: aria spoken text — comma decimal can confuse screen-reader
-          // number parsing (genuine exception per dot-locale-consolidation-proposal §4; the
-          // VISIBLE Badge at ~line 132 uses formatPercentage). Mirrors StatusLegend.tsx:75.
           aria-label={
             commissionDiff !== undefined && commissionDiff > 0
-              ? `FBS — Товар у продавца, +${commissionDiff.toFixed(1)}% к комиссии`
+              ? `FBS — Товар у продавца, +${formatPercentage(commissionDiff, 1)} к комиссии`
               : 'FBS — Товар у продавца'
           }
           aria-checked={value === 'FBS'}

@@ -60,7 +60,7 @@ function SlaMetricCard({
       <span
         className={cn('text-3xl font-bold', colorClass)}
         data-testid={`${testIdPrefix}-value`}
-        aria-label={`${label}: ${percent.toFixed(1)}%`}
+        aria-label={`${label}: ${formatPercentage(percent, 1)}`}
       >
         {formatPercentage(percent, 1)}
       </span>
