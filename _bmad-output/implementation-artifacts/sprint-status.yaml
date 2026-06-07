@@ -615,7 +615,7 @@ development_status:
 
   # Epic 131-FE: Documentation Catch-Up + Retro Actions (HIGH, ~5 SP)
   # Source: Epic 124 retro A-3 (Radix jsdom patterns), A-4 (flaky test), tracker drift.
-  epic-131-fe: in-progress
+  epic-131-fe: done  # 2026-06-07 committed c60ac7da+ac86dbe7. All 3 stories done. Tracker updated, Radix patterns documented, flaky test resolved.
   131.1-fe-tracker-update: done  # 2026-06-07 committed c60ac7da. EPICS-AND-STORIES-TRACKER.md updated with Epics 121-129.
-  131.2-fe-radix-jsdom-patterns: backlog  # Document jsdom patterns for Radix UI in CLAUDE-PATTERNS.md (Retro A-3).
-  131.3-fe-flaky-test-investigation: backlog  # Investigate SupplyDocumentsList flaky test (Retro A-4).
+  131.2-fe-radix-jsdom-patterns: done  # 2026-06-07 committed ac86dbe7. New section in CLAUDE-PATTERNS.md (Dialog, Select, Tooltip, Popover, general rules).
+  131.3-fe-flaky-test-investigation: done  # 2026-06-07 resolved. SupplyDocumentsList stable 3x isolation + 1x full suite (0 failures). Flake from Epic 124 retro resolved.
