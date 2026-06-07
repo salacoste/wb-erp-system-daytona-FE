@@ -586,3 +586,19 @@ development_status:
   128.1-fe-typescript-test-errors: done  # 2026-06-07 committed 097710aa. 64 → 0 TS errors in 14 test files.
   128.2-fe-200-line-cap-refactoring: done  # 2026-06-07 committed 45c11073+dead545c. 15 → 0 files over 200-line cap.
   128.3-fe-missing-component-tests: done  # 2026-06-07 committed 45c11073. 56 tests for 4 untested component dirs.
+
+  # ── Uncommitted feature commit (session 2026-06-07) ──
+  # Expenses CRUD + Alerts enhancements — committed between Epic 128 close and Epic 129 kickoff.
+  commit-expenses-crud: done  # 2026-06-07 committed eb80cf00. Expenses CRUD page (/settings/expenses) with 96 tests.
+  commit-alerts-enhancements: done  # 2026-06-07 committed f8ff726b. CreateAlertRuleDialog + AlertRulesList type labels + 31 tests.
+  commit-backfill-marker: done  # 2026-06-07 committed 5abd2f64. PENDING BACKEND marker clarification.
+
+  # Epic 129-FE: FBS Enhanced Contract Reconciliation (CRITICAL, ~10 SP)
+  # Source: Request #202 — 4 of 5 sections render fabricated zeros against live backend.
+  # Root cause: types + normalizer built against fictional contract (request-backend/169 §1.2 placeholders).
+  # Only calculatedMetrics section works; orderStats/stockAnalytics/regionalData/funnelData are misaligned.
+  epic-129-fe: done  # 2026-06-07 committed 25bac1a7. All 4 stories done in single batch. Types + normalizer + 7 components + 6 test files + fixture factory rewritten against real backend contract per Request #202. Dropped metrics removed (no backend source). 750 test files, 14,064 tests, 0 failures.
+  129.1-fe-fbs-enhanced-types-normalizer-rewrite: done  # 2026-06-07 committed 25bac1a7. Types rewritten (9+5+3+3 fields), normalizer with dual-lookup + funnel derivation.
+  129.2-fe-fbs-enhanced-components-update: done  # 2026-06-07 committed 25bac1a7. 5 components rewritten (OrderStats 7 cards, StockAnalytics 5 cards, RegionalData single-bar, Funnel 2 metrics, FunnelChart simplified). 2 unchanged (PageContent, CalculatedMetrics).
+  129.3-fe-fbs-enhanced-test-fixtures-rewrite: done  # 2026-06-07 committed 25bac1a7. 6 test files + fixture factory + normalizer tests rewritten. All 37 FBS tests passing.
+  129.4-fe-fbs-enhanced-defensive-frontend: done  # 2026-06-07 committed 25bac1a7. Dropped metrics removed (no backend source) rather than shown with indicators — showing indicator for non-existent data would mislead.
