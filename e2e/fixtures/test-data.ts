@@ -154,6 +154,8 @@ export const ROUTES = {
     backfill: '/settings/backfill', // Epic 51-FE: Backfill Admin (Owner only)
     notifications: '/settings/notifications', // Epic 34: Telegram Notifications
     tariffs: '/settings/tariffs', // Epic 52: Tariff Settings
+    tax: '/settings/tax', // Epic 66-FE: Tax & VAT Settings
+    expenses: '/settings/expenses', // Operational Expenses Management
   },
 }
 

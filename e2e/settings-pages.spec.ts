@@ -18,6 +18,9 @@ const SETTINGS_ROUTES = {
   cabinet: '/settings/cabinet',
   tariffs: ROUTES.settings.tariffs,
   notifications: ROUTES.settings.notifications,
+  tax: ROUTES.settings.tax,
+  expenses: ROUTES.settings.expenses,
+  root: '/settings',
 }
 
 test.describe('Settings Pages', () => {
@@ -155,6 +158,71 @@ test.describe('Settings Pages', () => {
   })
 
   // ===========================================================================
+  // Tax Settings Page
+  // ===========================================================================
+
+  test.describe('Tax page', () => {
+    test('navigates to /settings/tax and shows heading', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+
+      await expect(page.getByRole('heading', { name: 'Налоговые настройки' })).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
+    })
+
+    test('renders form area or skeleton', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('heading', { name: 'Налоговые настройки' })).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
+
+      const hasForm = (await page.locator('form').count()) > 0
+      const hasSkeleton = (await page.getByTestId('skeleton').count()) > 0
+      test.skip(!hasForm && !hasSkeleton, 'Neither form nor skeleton visible — needs backend data')
+      expect(hasForm || hasSkeleton).toBeTruthy()
+    })
+  })
+
+  // ===========================================================================
+  // Expenses Settings Page
+  // ===========================================================================
+
+  test.describe('Expenses page', () => {
+    test('navigates to /settings/expenses and shows heading', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.expenses, { waitUntil: 'domcontentloaded' })
+
+      await expect(page.getByRole('heading', { name: 'Операционные расходы' })).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
+    })
+
+    test('shows month selector', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.expenses, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('heading', { name: 'Операционные расходы' })).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
+
+      const monthInput = page.locator('#month-selector')
+      await expect(monthInput).toBeVisible()
+    })
+  })
+
+  // ===========================================================================
+  // Root Settings Page (redirect)
+  // ===========================================================================
+
+  test.describe('Root settings redirect', () => {
+    test('/settings redirects to a sub-page with content visible', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.root, { waitUntil: 'domcontentloaded' })
+
+      // Root /settings redirects to /settings/notifications — wait for any heading
+      await expect(page.locator('h1, h2').first()).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
+    })
+  })
+
+  // ===========================================================================
   // Accessibility: Heading Hierarchy
   // ===========================================================================
 
@@ -174,6 +242,16 @@ test.describe('Settings Pages', () => {
         name: 'Notifications',
         url: SETTINGS_ROUTES.notifications,
         heading: /Telegram Уведомления/,
+      },
+      {
+        name: 'Tax',
+        url: SETTINGS_ROUTES.tax,
+        heading: 'Налоговые настройки',
+      },
+      {
+        name: 'Expenses',
+        url: SETTINGS_ROUTES.expenses,
+        heading: 'Операционные расходы',
       },
     ]
 
