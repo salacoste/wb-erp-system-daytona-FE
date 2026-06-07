@@ -4,10 +4,10 @@
 > Referenced from `CLAUDE.md` -- do not duplicate this information elsewhere.
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
-**Last Updated**: 2026-06-06
-**Total Epics**: 60 unique (57 done, 1 moved, 2 merged as duplicates)
-**Total Stories**: 207+ (136 in sprint-status.yaml Epics 71-122 + 76 legacy Epics 1-69)
-**Project Status**: Production Ready, 9504+ tests passing, 52 consecutive epics closed (71-122)
+**Last Updated**: 2026-06-07
+**Total Epics**: 64 unique (60 done, 1 moved, 2 merged as duplicates, 1 untracked)
+**Total Stories**: 220+ (154 in sprint-status.yaml Epics 71-129 + 76 legacy Epics 1-69)
+**Project Status**: Production Ready, 14,064+ tests passing, 56 consecutive epics closed (71-128)
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 
 ---
@@ -168,12 +168,41 @@
 | 119-FE | Funnel Search Attribution + Marketing §3.4 | 4 | DONE | `/analytics/funnel`, `/analytics/search` |
 | 120-FE | Marketing Analytics Expansion | 7 | DONE | `/analytics/product/[nmId]`, hub redesign |
 
+### Alerts & Pricing (Epic 121)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 121-FE | Alerts, Pricing & Reorder Dashboard | 3+1 | DONE | `/analytics/alerts`, `/analytics/pricing`, `/analytics/reorder` |
+
+### Quality & Maintenance (Epics 122-128)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 122-FE | Funnel Search Attribution + E2E | 3 | DONE | `/analytics/funnel` |
+| 123-FE | AI Domain Frontend Integration | 6 | DONE | `/analytics/forecast`, AI admin routes |
+| 124-FE | Test Coverage Completion (2,737 TODO Stubs) | 1 | DONE | (test infrastructure) |
+| 125-FE | Zero-Test Route Coverage | 11 | DONE | (baseline tests for 11 routes) |
+| 126-FE | Stale Markers + E2E + Edge-Case Tests | 3 | DONE | (cleanup, forecast-accuracy E2E) |
+| 127-FE | Comparison Periods + Cross-Links | 4 | DONE | buyout, returns, advertising |
+| 128-FE | TypeScript Cleanup + Source Compliance | 3 | DONE | (quality gate hardening) |
+
+### Contract Reconciliation (Epic 129)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 129-FE | FBS Enhanced Contract Reconciliation | 4 | DONE | `/analytics/fbs-enhanced` |
+
+### Operational Features (Untracked)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| (commit) | Expenses CRUD Page | 1 | DONE | `/settings/expenses` |
+| (commit) | Alerts Enhancements | 1 | DONE | `/analytics/alerts` |
+
 ### Active
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| (none) | — | — | — | — |
-
 | (none) | — | — | — | — |
 
 ---
@@ -287,6 +316,7 @@ Source: `src/lib/routes.ts`
 | `/settings/tariffs` | Tariff admin (Admin only) | 52-FE |
 | `/settings/backfill` | Backfill admin (Owner only) | 51-FE |
 | `/settings/tax` | Tax & VAT settings | 66-FE |
+| `/settings/expenses` | Operational Expenses Management | (commit) |
 
 ---
 
@@ -296,6 +326,15 @@ Chronological log, newest first. Sprint-status source: `_bmad-output/implementat
 
 | Date | Epic | Summary | Stories |
 |------|------|---------|---------|
+| 2026-06-07 | 129-FE | FBS Enhanced contract reconciliation: types + normalizer + 7 components rewritten for real backend (Request #202) | 4 |
+| 2026-06-07 | 128-FE | TypeScript cleanup: 64 TS errors → 0, 15 files >200 lines → 0, 56 tests for 4 dirs | 3 |
+| 6/7 (cont.) | 127-FE | Comparison periods on 3 pages + buyout↔returns cross-links | 4 |
+| 6/7 (cont.) | 126-FE | Stale markers removed, forecast-accuracy E2E, edge-case tests | 3 |
+| 6/7 (cont.) | 125-FE | Baseline tests for 11 routes with zero coverage | 11 |
+| 6/7 (cont.) | 124-FE | Flush 2,737 TODO stubs → 0 (largest single-session test delta, +3,663 tests) | 1 |
+| 6/7 (cont.) | 123-FE | AI domain integration: 6 stories, 7 backend requests resolved | 6 |
+| 2026-06-06 | 122-FE | Funnel search attribution + price history + E2E | 3 |
+| 2026-06-05 | 121-FE | Alerts, pricing recommendations, reorder dashboard | 3+1 |
 | 2026-06-05 | 120-FE | Marketing Analytics Expansion: Hub redesign, Product Analytics, organic/paid split, iROAS | 7 |
 | 2026-06-05 | — | Tech debt: Request #186 (bulk COGS v2), Request #203 (selling_price), Epic 121 scope | — |
 | 2026-06-05 | — | New domains: alerts, price-recommendations, reorder dashboard (33 files, +2212 lines) | — |
