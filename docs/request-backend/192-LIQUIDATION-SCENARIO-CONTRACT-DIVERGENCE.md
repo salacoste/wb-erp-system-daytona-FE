@@ -1,6 +1,6 @@
 # 192 — Liquidation-scenario contract divergence (planner shows all-zero)
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Backend `liquidation-calculator.ts` now produces all enriched fields (`newPrice`, `expectedProfit`, `isProfitable`, `requiredVelocity`, etc.)
 **Severity**: HIGH (liquidation planner renders all-0 / misleading; real recovery numbers dropped)
 **Filed**: 2026-06-02 (frontend validation iter-60)
 **Endpoint**: `GET /v1/analytics/liquidity` → `data[].liquidation_scenarios`

@@ -1,6 +1,6 @@
 # 206 — Acquiring 503 `Retry-After` is hidden cross-origin → banner always shows fallback "~60 сек"
 
-**Status**: Open — backend action required
+**Status**: RESOLVED (2026-06-06) — exposedHeaders added to CORS config (dev + prod) for Retry-After + X-RateLimit-* headers
 **Severity**: LOW (cosmetic; banner still appears and conveys "rate-limited", only the countdown number is wrong)
 **Discovered**: 2026-06-04 via Playwright runtime validation of the 3 acquiring rate-limit E2E tests
 **Area**: CORS configuration / WB rate-limit (503) responses for all 3 acquiring endpoints

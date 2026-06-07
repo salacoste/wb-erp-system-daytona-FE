@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend validation campaign (validation finding F-17), 2026-06-02
 **Severity**: P2 — non-blocking; FE has a magnitude-detection normalizer absorbing it (`src/lib/api/ai/forecast.ts` `scaleConfidence`). Worth fixing for contract clarity + to let the FE drop the heuristic.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-06) — DTO now documents 0-1 scale; engines clamp to [0,1]; confidence scale consistent everywhere
 
 ---
 

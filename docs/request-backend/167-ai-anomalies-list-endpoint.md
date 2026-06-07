@@ -1,6 +1,6 @@
 # Request #167 — Add `GET /v1/ai/anomalies` list endpoint
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — `GET /v1/ai/anomalies` endpoint now exists with `AnomalyListQueryDto` + `AnomalyListResponseDto`
 **Story**: 112.3-FE (Anomaly resolution admin UI)
 **Priority**: High — frontend ships with stub + backend-pending UX until this endpoint lands
 

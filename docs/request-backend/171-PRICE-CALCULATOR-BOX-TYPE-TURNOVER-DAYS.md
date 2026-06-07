@@ -28,7 +28,4 @@ None yet -- aspirational. Frontend will send these fields once backend adds supp
 
 ## Backend Team Response
 
-**Status**: PENDING (aspirational, low priority)
-**Resolution date**: Not yet implemented
-**Summary**: `box_type` and `turnover_days` are frontend-only fields in the price calculator. Backend does not accept or process them. Frontend calculates storage costs locally using warehouse tariff data. Backend support would enable server-side validation but is not blocking any functionality.
-**Remaining frontend action**: Continue using frontend-only calculation. Send these fields once backend adds DTO support.
+**Status**: RESOLVED (2026-06-06) — `turnover_days` now accepted in price calculator request; `box_type` remains shipment-cost module only (aspirational)

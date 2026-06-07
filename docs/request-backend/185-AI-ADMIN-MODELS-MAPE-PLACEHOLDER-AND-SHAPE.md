@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend validation campaign (validation finding F-25), 2026-06-02
 **Severity**: P3 — admin-only page (`/analytics/ai-admin/models`); MAPE column currently renders `—` for all models. That is conservatively-correct (the models ARE un-evaluated), so there's no user-facing wrong data today — but the contract has two issues worth fixing.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-06) — nested metrics.mape added to admin models response; engines emit null (not 0) for unevaluated
 
 ---
 

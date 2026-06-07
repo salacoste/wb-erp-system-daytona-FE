@@ -1,6 +1,6 @@
 # #196 — Liquidation scenarios: provide profit/price/profitability fields (or confirm recovery-only)
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Duplicate of #192; enriched profit fields (`newPrice`, `expectedProfit`, `isProfitable`, `requiredVelocity`) now present in liquidation scenarios
 **Reported**: 2026-06-02 (iter-72 validation loop)
 **Page**: `/analytics/liquidity` → Liquidation Planner modal ("Планировщик ликвидации")
 **Related**: Epic 7 (Liquidity Analysis); FE fix `109ec26` made the modal honest (renders "—" for omitted fields)

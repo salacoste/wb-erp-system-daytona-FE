@@ -1,6 +1,6 @@
 # 203 — Supply-planning: no selling-price field blocks honest revenue / profit / ₽-loss
 
-**Status**: PENDING — backend enhancement (optional, to restore ₽ views honestly)
+**Status**: RESOLVED (2026-06-06) — backend added selling_price + potential_revenue + potential_profit to SupplyPlanningItemDTO (avg sale price from last 8 weeks)
 **Severity**: MEDIUM (drove fabricated-financials removal on the FE — see below)
 **Found**: iter-140 audit of `/analytics/supply-planning`
 **Endpoint**: the supply-planning list endpoint feeding `SupplyPlanningItem`

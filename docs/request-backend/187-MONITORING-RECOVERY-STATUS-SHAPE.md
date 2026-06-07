@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend validation campaign (finding F-41), 2026-06-02
 **Severity**: P2 — the `/monitoring` Recovery tab shows "Нет задач для восстановления" (empty) despite the backend returning 6 recovery tasks; and the RecoveryPanel renders 4 task fields the response omits. FE is being hardened (envelope unwrap + FE-derived display names + graceful degradation), but the config fields need the backend.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-06) — `getRecoveryStatus()` now returns all 4 fields: `displayName`, `maxRetries`, `cooldownMinutes`, `maxWindowDays`
 
 ---
 

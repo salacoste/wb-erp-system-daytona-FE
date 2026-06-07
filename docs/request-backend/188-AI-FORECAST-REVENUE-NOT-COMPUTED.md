@@ -4,7 +4,7 @@
 **Severity**: P3 — `/analytics/forecast` revenue column shows "—" (the FE now maps the
 placeholder 0 → null). Not user-facing-wrong anymore, but the revenue forecast feature is
 effectively unavailable until the engine computes it.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-06) — `routeTarget()` correctly splits `predictedValue`→`predictedRevenue` for revenue models; non-target dimension is NULL not 0
 
 ---
 

@@ -1,6 +1,6 @@
 # #198 — Orders /compare: delta sign + base inverted (growth shown as decline)
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — Delta now uses `current - previous` convention; percent divides by previous value (explicit #198 comment in code)
 **Reported**: 2026-06-03 (iter-74 validation loop)
 **Page**: `/analytics/orders` → Comparison tab (`ComparisonTable.tsx`)
 **Severity**: CRITICAL (the Comparison tab shows the OPPOSITE trend direction to reality)

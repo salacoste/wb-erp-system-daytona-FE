@@ -1,6 +1,6 @@
 # Request #166 — Add `?modelId=` and `?nmId=` filter params to `GET /v1/ai/evaluations/sku-accuracy`
 
-**Status**: OPEN
+**Status**: RESOLVED (2026-06-06) — backend added modelId + nmId filter params to SKU accuracy endpoint
 **Story**: 110.3-FE (SKU accuracy table)
 **Priority**: High — cabinet-isolation discipline requires model-scoped responses
 

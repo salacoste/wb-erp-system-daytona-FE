@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend validation campaign (validation finding F-21), 2026-06-02
 **Severity**: P2 — the FE now degrades gracefully (validation F-21: permission message instead of a generic error), but the underlying contract needs a product/backend decision.
-**Status**: PENDING DECISION (FE shipped a graceful-degradation interim; root cause unresolved)
+**Status**: RESOLVED (2026-06-06) — backend added Owner role to GET history/audit endpoints (mutations remain Admin-only)
 
 ---
 

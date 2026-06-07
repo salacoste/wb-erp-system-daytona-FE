@@ -2,7 +2,7 @@
 
 **Originated by**: Frontend validation campaign (validation finding F-26), 2026-06-02
 **Severity**: P1 — the AI master toggle on `/analytics/ai-admin/preferences` ALWAYS fails. Every user who toggles it gets a 400 + a generic error toast; the setting never persists. This is a backend bug — the FE sends the correct body.
-**Status**: PENDING BACKEND
+**Status**: RESOLVED (2026-06-06) — `@IsBoolean()` decorator added to `UpdateAiPreferencesDto`; whitelist no longer strips `aiEnabled`
 
 ---
 
