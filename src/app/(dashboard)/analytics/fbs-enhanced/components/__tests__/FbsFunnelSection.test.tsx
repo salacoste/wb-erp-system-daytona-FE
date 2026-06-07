@@ -1,9 +1,10 @@
 /**
- * Tests for FbsFunnelSection — Story 96.13-FE
+ * Tests for FbsFunnelSection — Epic 129-FE Story 129.3
  *
- * Pattern 2: raw SVG chosen — no recharts mock needed (jsdom renders SVG natively).
- * This testability was the explicit reason raw SVG was selected over recharts
- * for funnel shapes (MonitorBuyoutGauge precedent, Story 92.5-FE).
+ * Updated to match real backend contract per Request #202.
+ * Replaced 4-stage SVG funnel (productViews/cartAdds/orders/deliveries) with
+ * 2 conversion metric cards (addToCartPercent/ordersPercent).
+ * No SVG rendering, no recharts, no inversion warning — simple metric cards.
  *
  * Pattern 3 fixture wiring: emptyFbsFunnelData() imported from fbs-enhanced-empty.ts.
  */
@@ -14,100 +15,61 @@ import { renderWithProviders } from '@/test/utils/test-utils'
 import { emptyFbsFunnelData } from '@/test/fixtures/fbs-enhanced-empty'
 import { FbsFunnelSection } from '../FbsFunnelSection'
 
-describe('FbsFunnelSection (Story 96.13-FE)', () => {
+describe('FbsFunnelSection (Epic 129-FE)', () => {
   it('renders empty state when funnelData is null', () => {
     renderWithProviders(<FbsFunnelSection funnelData={null} />)
     expect(screen.getByText(/Нет данных по воронке/)).toBeInTheDocument()
   })
 
-  it('renders SVG funnel with zero counts — Pattern 3 fixture wiring', () => {
+  it('renders 2 metric cards with null values as em-dash — Pattern 3 fixture wiring', () => {
     renderWithProviders(<FbsFunnelSection funnelData={emptyFbsFunnelData()} />)
-    // data-testid proves raw SVG mounts without recharts mocks
-    expect(screen.getByTestId('fbs-funnel-svg')).toBeInTheDocument()
-    // All 4 stage labels are present (L-3 fix: 'В корзину' → 'Добавлено в корзину')
-    expect(screen.getByText('Просмотры товара')).toBeInTheDocument()
-    expect(screen.getByText('Добавлено в корзину')).toBeInTheDocument()
-    expect(screen.getByText('Заказы')).toBeInTheDocument()
-    expect(screen.getByText('Доставлено')).toBeInTheDocument()
-    // No inversion on empty/zero data — no AlertTriangle
-    expect(screen.queryByTestId('fbs-funnel-inversion-warning')).not.toBeInTheDocument()
+    // Two metric labels
+    expect(screen.getByText('Конверсия в корзину')).toBeInTheDocument()
+    expect(screen.getByText('Конверсия в заказ')).toBeInTheDocument()
+    // Both addToCartPercent and ordersPercent are null → 2 em-dashes
+    const dashes = screen.getAllByText('—')
+    expect(dashes.length).toBe(2)
   })
 
-  it('renders populated funnel with 4 stage values — no inversion warning', () => {
+  it('renders populated conversion metrics as formatted percentages', () => {
     renderWithProviders(
       <FbsFunnelSection
         funnelData={{
-          productViews: 10000,
-          cartAdds: 2000,
-          orders: 100,
-          deliveries: 80,
+          addToCartPercent: 25.0,
+          ordersPercent: 5.0,
         }}
       />
     )
-    expect(screen.getByTestId('fbs-funnel-svg')).toBeInTheDocument()
-    // Stage values rendered as formatted counts — regex per CLAUDE.md anti-pattern #6
-    expect(screen.getByText(/10[.,]?\d*\s*тыс/)).toBeInTheDocument()
-    expect(screen.getByText(/2[.,]?\d*\s*тыс/)).toBeInTheDocument()
-    expect(screen.getByText('100')).toBeInTheDocument()
-    expect(screen.getByText('80')).toBeInTheDocument()
-    // Normal funnel (narrowing) — no inversion warning
-    expect(screen.queryByTestId('fbs-funnel-inversion-warning')).not.toBeInTheDocument()
+    // formatPercentage(25) → "25,0 %" in ru-RU locale
+    expect(screen.getByText(/^25,0\s*%/)).toBeInTheDocument()
+    expect(screen.getByText(/^5,0\s*%/)).toBeInTheDocument()
   })
 
-  it('renders stage-over-stage conversion in Russian locale ("20,0 %", not "20.0%")', () => {
+  it('renders description text for each metric', () => {
     renderWithProviders(
       <FbsFunnelSection
         funnelData={{
-          productViews: 10000,
-          cartAdds: 2000, // cartAdds/productViews = 20% → "20,0 %" (comma + NBSP)
-          orders: 100,
-          deliveries: 80,
+          addToCartPercent: 25.0,
+          ordersPercent: 5.0,
         }}
       />
     )
-    expect(screen.getByText(/20,0\s*%\s*от предыдущего/)).toBeInTheDocument()
-    // No dot-locale percent leaks through
-    expect(screen.queryByText(/20\.0\s*%/)).not.toBeInTheDocument()
+    expect(screen.getByText('Доля добавлений в корзину от просмотров')).toBeInTheDocument()
+    expect(screen.getByText('Доля заказов от просмотров')).toBeInTheDocument()
   })
 
-  it('shows AlertTriangle inversion warning when funnel stage widens beyond threshold (H2-2 fix)', () => {
-    // productViews: 100, cartAdds: 200 — 100% over threshold (>>5%), definitely anomalous
+  it('renders one em-dash when only one conversion rate is null (partial data)', () => {
     renderWithProviders(
       <FbsFunnelSection
         funnelData={{
-          productViews: 100,
-          cartAdds: 200,
-          orders: 50,
-          deliveries: 40,
+          addToCartPercent: 30.0,
+          ordersPercent: null,
         }}
       />
     )
-    // M-2 + H2-2: Defensive Frontend Principle — anomaly indicated, raw values preserved
-    expect(screen.getByTestId('fbs-funnel-inversion-warning')).toBeInTheDocument()
-    // Both values still render (raw values preserved)
-    expect(screen.getByText('100')).toBeInTheDocument()
-    expect(screen.getByText('200')).toBeInTheDocument()
-  })
-
-  it('does NOT show inversion warning for backend eventually-consistency noise (H2-2 fix)', () => {
-    // cartAdds=10001, productViews=10000 — single-unit overshoot (delta=1 < ANOMALY_MIN_UNITS=2)
-    // should NOT trigger warning per H2-2 tolerance (prevents false positives)
-    renderWithProviders(
-      <FbsFunnelSection
-        funnelData={{
-          productViews: 10000,
-          cartAdds: 10001,
-          orders: 5000,
-          deliveries: 4000,
-        }}
-      />
-    )
-    expect(screen.queryByTestId('fbs-funnel-inversion-warning')).not.toBeInTheDocument()
-  })
-
-  it('does NOT show inversion warning for no-em-dash funnel (M2-3 design intent: funnel never renders dashes)', () => {
-    // Funnel counts are always numbers (not null/ratio fields) — no '—' expected
-    renderWithProviders(<FbsFunnelSection funnelData={emptyFbsFunnelData()} />)
-    expect(screen.queryAllByText('—').length).toBe(0) // M2-3: design intent — funnel never renders dashes
+    // addToCartPercent renders as formatted percent, ordersPercent → '—'
+    expect(screen.getByText(/30[,.]0\s*%/)).toBeInTheDocument()
+    const dashes = screen.getAllByText('—')
+    expect(dashes.length).toBe(1) // only ordersPercent is null
   })
 })

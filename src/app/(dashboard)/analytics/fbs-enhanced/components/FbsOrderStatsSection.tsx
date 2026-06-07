@@ -1,8 +1,10 @@
 /**
  * FBS Order Stats Section — Section 1 of 5
- * Epic 96-FE Story 96.13: 5 KPI cards (total orders, delivered, returned, buyout rate, return rate).
- * M-1 fix: returnRate card added (was orphaned in types/normalizer but not rendered).
- * M-1 fix: averageOrderValue always rendered (null → '—' per Defensive Frontend Principle).
+ * Epic 129-FE Story 129.2: 7 KPI cards matching real backend contract per Request #202.
+ *
+ * Fields renamed: totalOrders→ordersCount, deliveredOrders→buyoutCount,
+ * returnedOrders→cancelCount, returnRate→cancelRate, averageOrderValue→avgOrderValue.
+ * New fields: ordersSumRub, addToCartPercent, ordersPercent.
  *
  * Pattern 1: independent null-state — renders empty state if orderStats slice is null.
  * Null money/ratio fields render as '—' (CLAUDE.md anti-pattern #8).
@@ -10,7 +12,7 @@
 
 'use client'
 
-import { ShoppingCart, CheckCircle, RotateCcw, TrendingUp, TrendingDown } from 'lucide-react'
+import { ShoppingCart, CheckCircle, XCircle, TrendingUp, TrendingDown, Wallet } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatPercentage, formatCurrency } from '@/lib/utils'
 import type { FbsOrderStats } from '@/types/fbs-enhanced'
@@ -39,6 +41,11 @@ function KpiCard({ title, value, icon }: KpiCardProps) {
   )
 }
 
+/** Format count with Russian locale grouping. */
+function formatCount(n: number): string {
+  return n.toLocaleString('ru-RU')
+}
+
 export function FbsOrderStatsSection({ orderStats }: FbsOrderStatsSectionProps) {
   if (orderStats == null) {
     return (
@@ -52,43 +59,43 @@ export function FbsOrderStatsSection({ orderStats }: FbsOrderStatsSectionProps) 
   return (
     <section aria-label="Статистика заказов" data-testid="fbs-order-stats-section">
       <h2 className="text-lg font-semibold mb-3">Статистика заказов</h2>
-      {/* L2-1 fix: xl:grid-cols-5 so 5th card wraps gracefully on common 1280px laptops */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
         <KpiCard
           title="Всего заказов"
-          value={String(orderStats.totalOrders)}
+          value={formatCount(orderStats.ordersCount)}
           icon={<ShoppingCart className="h-4 w-4" />}
         />
         <KpiCard
+          title="Сумма заказов"
+          value={orderStats.ordersSumRub == null ? '—' : formatCurrency(orderStats.ordersSumRub)}
+          icon={<Wallet className="h-4 w-4" />}
+        />
+        <KpiCard
           title="Доставлено"
-          value={String(orderStats.deliveredOrders)}
+          value={formatCount(orderStats.buyoutCount)}
           icon={<CheckCircle className="h-4 w-4" />}
         />
         <KpiCard
-          title="Возвращено"
-          value={String(orderStats.returnedOrders)}
-          icon={<RotateCcw className="h-4 w-4" />}
+          title="Отменено"
+          value={formatCount(orderStats.cancelCount)}
+          icon={<XCircle className="h-4 w-4" />}
         />
         <KpiCard
           title="Процент выкупа"
           value={orderStats.buyoutRate == null ? '—' : formatPercentage(orderStats.buyoutRate)}
           icon={<TrendingUp className="h-4 w-4" />}
         />
-        {/* M-1 fix: returnRate was in types/normalizer but not rendered — orphan fixed */}
         <KpiCard
-          title="Процент возвратов"
-          value={orderStats.returnRate == null ? '—' : formatPercentage(orderStats.returnRate)}
+          title="Процент отмен"
+          value={orderStats.cancelRate == null ? '—' : formatPercentage(orderStats.cancelRate)}
           icon={<TrendingDown className="h-4 w-4" />}
         />
       </div>
-      {/* M-1 fix: always render averageOrderValue row (null → '—') per Defensive Frontend
-          Principle — hidden row = silent transformation, not indication (CLAUDE.md) */}
+      {/* Average order value footer — null → '—' per Defensive Frontend Principle */}
       <p className="text-xs text-muted-foreground mt-2">
         Средний чек:{' '}
         <span>
-          {orderStats.averageOrderValue == null
-            ? '—'
-            : formatCurrency(orderStats.averageOrderValue)}
+          {orderStats.avgOrderValue == null ? '—' : formatCurrency(orderStats.avgOrderValue)}
         </span>
       </p>
     </section>

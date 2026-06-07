@@ -1,24 +1,19 @@
 /**
- * FBS Enhanced Analytics — TypeScript types — Epic 96-FE Story 96.13-FE
+ * FBS Enhanced Analytics — TypeScript types — Epic 129-FE Story 129.1
  *
- * Corresponds to backend endpoint (Epic 105 / request-backend/169 § 1.2):
- *   GET /v1/analytics/fbs/enhanced?from=&to=  → FbsEnhancedResponse
+ * Reconciled against the REAL backend response shape per Request #202.
+ * The previous version (Epic 96-FE) was built against fictional contract
+ * placeholders from request-backend/169 §1.2. Only calculatedMetrics matched.
  *
- * Backend may deliver snake_case; the Boundary Normalizer (fbs-enhanced-normalizer.ts)
- * bridges to camelCase at the API boundary. NEVER use raw backend shapes in
- * components or hooks. See CLAUDE.md § Boundary Normalizer Pattern.
+ * Verified against backend source: src/analytics/controllers/fbs-analytics.controller.ts:699-731
+ * Endpoint: GET /v1/analytics/fbs/enhanced?from=&to=
  *
  * Null-vs-zero discipline (CLAUDE.md anti-pattern #8):
- *   Ratio/money fields (buyoutRate, returnRate, averageOrderValue, avgDaysOfCover,
- *   turnoverRate, stockCoverageDays, ordersPerProduct, orderShare, stockShare)
- *   are `number | null`. null = "unknown / not yet computed".
- *   Count fields (totalOrders, deliveredOrders, returnedOrders, totalSkus,
- *   totalUnits, lowStockSkus, outOfStockSkus, productViews, cartAdds,
- *   orders, deliveries) are `number` (0 is a legitimate value).
- *   String fields (regionName) are `string` (empty string fallback in normalizer).
+ *   Ratio/money fields → `number | null`. null = "unknown / not yet computed".
+ *   Count fields → `number` (0 is a legitimate value).
  *
  * @see src/lib/api/fbs-enhanced-normalizer.ts
- * @see docs/request-backend/169-BACKEND-UPDATE-EPICS-101-106.md § 1.2
+ * @see docs/request-backend/202-FBS-ENHANCED-CONTRACT-MISMATCH.md
  */
 
 // ---------------------------------------------------------------------------
@@ -27,22 +22,24 @@
 
 /** Order statistics for the selected period */
 export interface FbsOrderStats {
-  totalOrders: number
-  deliveredOrders: number
-  returnedOrders: number
-  /**
-   * Percent points (0-100), NOT 0-1 ratio. Per request-backend/169 § 1.2 contract;
-   * verified empirically in normalizer test (Story 96.13 H-1 fix).
-   * null = unknown (no deliveries in period).
-   */
+  /** Total number of FBS orders */
+  ordersCount: number
+  /** Total revenue from FBS orders (RUB). null = unknown. */
+  ordersSumRub: number | null
+  /** Number of cancelled orders */
+  cancelCount: number
+  /** Cancel rate as percent points (0-100). null = unknown. */
+  cancelRate: number | null
+  /** Number of buyouts (successful deliveries) */
+  buyoutCount: number
+  /** Buyout rate as percent points (0-100). null = unknown. */
   buyoutRate: number | null
-  /**
-   * Percent points (0-100), NOT 0-1 ratio. Per request-backend/169 § 1.2 contract;
-   * verified empirically in normalizer test (Story 96.13 H-1 fix).
-   * null = unknown (no orders in period).
-   */
-  returnRate: number | null
-  averageOrderValue: number | null // money (RUB) — null = unknown
+  /** Average order value (RUB). null = unknown. */
+  avgOrderValue: number | null
+  /** Add-to-cart conversion rate as percent points (0-100). null = unknown. */
+  addToCartPercent: number | null
+  /** Orders conversion rate as percent points (0-100). null = unknown. */
+  ordersPercent: number | null
 }
 
 // ---------------------------------------------------------------------------
@@ -51,51 +48,43 @@ export interface FbsOrderStats {
 
 /** Stock health analytics snapshot */
 export interface FbsStockAnalytics {
-  totalSkus: number
-  totalUnits: number
-  lowStockSkus: number
-  outOfStockSkus: number
-  avgDaysOfCover: number | null // count of days — null = unknown (zero outgoing)
+  /** Total stock units across all warehouses */
+  totalStock: number
+  /** Available (not reserved) stock units */
+  availableStock: number
+  /** Reserved stock units */
+  reservedStock: number
+  /** Units currently in transit */
+  inTransit: number
+  /** Number of distinct products (SKUs) */
+  productCount: number
 }
 
 // ---------------------------------------------------------------------------
 // Section 3: Regional Data
 // ---------------------------------------------------------------------------
 
-/** One region row — order share and stock share per region */
+/** One region row — quantity and percentage per region */
 export interface FbsRegionalDataItem {
-  regionName: string
-  /**
-   * Percent points (0-100), NOT 0-1 ratio. Per request-backend/169 § 1.2 contract;
-   * verified empirically in normalizer test (Story 96.13 H-1 fix).
-   * null = unknown.
-   */
-  orderShare: number | null
-  /**
-   * Percent points (0-100), NOT 0-1 ratio. Per request-backend/169 § 1.2 contract;
-   * verified empirically in normalizer test (Story 96.13 H-1 fix).
-   * null = unknown.
-   */
-  stockShare: number | null
+  /** Region name (e.g. "Москва", "Санкт-Петербург") */
+  region: string
+  /** Quantity of orders/stock in this region */
+  quantity: number
+  /** Percentage share as percent points (0-100). null = unknown. */
+  percentage: number | null
 }
 
 // ---------------------------------------------------------------------------
-// Section 4: Calculated Metrics
+// Section 4: Calculated Metrics (UNCHANGED — matches backend)
 // ---------------------------------------------------------------------------
 
 /** Derived business metrics computed by the backend */
 export interface FbsCalculatedMetrics {
-  /**
-   * Percent points (0-100), NOT 0-1 ratio. Per request-backend/169 § 1.2 contract;
-   * verified empirically in normalizer test (Story 96.13 H-1 fix).
-   * null = unknown (zero stock).
-   */
+  /** Turnover rate as percent points (0-100). null = unknown (zero stock). */
   turnoverRate: number | null
-  stockCoverageDays: number | null // count of days — null = unknown (zero outgoing)
-  /**
-   * Ratio (orders per product unit, NOT a percentage). Per request-backend/169 § 1.2 contract.
-   * null = unknown (zero products).
-   */
+  /** Count of days of stock coverage. null = unknown (zero outgoing). */
+  stockCoverageDays: number | null
+  /** Ratio (orders per product unit). null = unknown (zero products). */
   ordersPerProduct: number | null
 }
 
@@ -103,12 +92,17 @@ export interface FbsCalculatedMetrics {
 // Section 5: Funnel Data
 // ---------------------------------------------------------------------------
 
-/** 4-stage conversion funnel: views → cart → orders → deliveries */
+/**
+ * Funnel conversion metrics.
+ * The backend sends addToCartPercent and ordersPercent in orderStats;
+ * this interface captures them for a dedicated funnel visualization.
+ * Both fields may be null if not computed.
+ */
 export interface FbsFunnelData {
-  productViews: number
-  cartAdds: number
-  orders: number
-  deliveries: number
+  /** Add-to-cart conversion rate (percent points 0-100). null = unknown. */
+  addToCartPercent: number | null
+  /** Orders conversion rate (percent points 0-100). null = unknown. */
+  ordersPercent: number | null
 }
 
 // ---------------------------------------------------------------------------

@@ -1,32 +1,20 @@
 /**
  * FBS Regional Data Section — Section 3 of 5
- * Epic 96-FE Story 96.13: bar chart — orderShare + stockShare per region.
+ * Epic 129-FE Story 129.2: single-bar chart matching real backend contract per Request #202.
  *
- * Pattern 2: recharts BarChart chosen — multi-bar region comparison is recharts' native fit.
- * Story 92.4-FE M-2 reminder: jsdom doesn't render recharts children — tests MUST mock
- * recharts at the top of the test file (before any component imports).
- * See FbsRegionalDataSection.test.tsx for the canonical recharts mock template.
+ * Fields renamed: regionName→region, orderShare→percentage.
+ * Dropped: stockShare — merged into single percentage field.
  *
- * Pattern 1: independent null/empty-state — empty regions array shows empty state without
- * affecting other sections.
+ * Pattern 2: recharts BarChart — single-bar region comparison.
+ * Pattern 1: independent null/empty-state.
  *
  * M-3 fix: RegionalTooltip exported as named export for direct unit testing.
- * L-2 fix: inline colors replaced with CHART_COLORS tokens.
  */
 
 'use client'
 
 import { useMemo } from 'react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { formatPercentage } from '@/lib/utils'
 import { CHART_COLORS } from '@/lib/chart-colors'
 import type { FbsRegionalDataItem } from '@/types/fbs-enhanced'
@@ -80,18 +68,15 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
     )
   }
 
-  // Map null shares to 0 only for chart rendering (chart library requires number);
+  // Map null percentage to 0 only for chart rendering (chart library requires number);
   // tooltip uses original value (null → '—') per anti-pattern #8.
-  // M2-2 fix: useMemo prevents array rebuild on every render (stable reference for recharts).
   const chartData = useMemo(
     () =>
       regions.map(r => ({
-        regionName: r.regionName || '—',
-        orderShare: r.orderShare ?? 0,
-        stockShare: r.stockShare ?? 0,
-        // Keep originals for tooltip null-safe display
-        _orderShareRaw: r.orderShare,
-        _stockShareRaw: r.stockShare,
+        region: r.region || '—',
+        percentage: r.percentage ?? 0,
+        // Keep original for tooltip null-safe display
+        _percentageRaw: r.percentage,
       })),
     [regions]
   )
@@ -104,7 +89,7 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
           <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 40 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis
-              dataKey="regionName"
+              dataKey="region"
               tick={{ fontSize: 11 }}
               angle={-30}
               textAnchor="end"
@@ -118,22 +103,12 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
               axisLine={false}
               tickLine={false}
             />
-            {/* M2-1 fix: component reference (not JSX element) — stable across renders, no pointer-event jitter.
-                Cast: recharts ContentType<ValueType, NameType> is narrower than our CustomTooltipProps;
-                bridge via `as unknown as` per CLAUDE.md anti-pattern #4 (structurally compatible subset). */}
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <Tooltip content={RegionalTooltip as any} />
-            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
             <Bar
-              dataKey="orderShare"
-              name="Доля заказов (%)"
+              dataKey="percentage"
+              name="Доля (%)"
               fill={CHART_COLORS.primaryRed}
-              radius={[3, 3, 0, 0]}
-            />
-            <Bar
-              dataKey="stockShare"
-              name="Доля остатков (%)"
-              fill={CHART_COLORS.primaryBlue}
               radius={[3, 3, 0, 0]}
             />
           </BarChart>

@@ -1,5 +1,9 @@
 /**
- * Tests for FbsRegionalDataSection — Story 96.13-FE
+ * Tests for FbsRegionalDataSection — Epic 129-FE Story 129.3
+ *
+ * Updated to match real backend contract per Request #202.
+ * Fields renamed: regionName→region, orderShare→percentage.
+ * Dropped: stockShare — single percentage field.
  *
  * Story 92.4-FE M-2 lesson: recharts components don't render in jsdom.
  * The vi.mock('recharts', ...) MUST be at the top of the file (before imports)
@@ -24,7 +28,6 @@ vi.mock('recharts', async () => {
     YAxis: () => null,
     CartesianGrid: () => null,
     Tooltip: () => null,
-    Legend: () => null,
   }
 })
 
@@ -35,7 +38,7 @@ import { renderWithProviders } from '@/test/utils/test-utils'
 import { emptyFbsRegionalDataItem } from '@/test/fixtures/fbs-enhanced-empty'
 import { FbsRegionalDataSection, RegionalTooltip } from '../FbsRegionalDataSection'
 
-describe('FbsRegionalDataSection (Story 96.13-FE)', () => {
+describe('FbsRegionalDataSection (Epic 129-FE)', () => {
   it('renders empty state when regionalData is empty array', () => {
     renderWithProviders(<FbsRegionalDataSection regionalData={[]} />)
     expect(screen.getByText(/Нет данных по регионам/)).toBeInTheDocument()
@@ -48,8 +51,8 @@ describe('FbsRegionalDataSection (Story 96.13-FE)', () => {
 
   it('renders bar chart when regions present — Pattern 3 fixture wiring', () => {
     const regions = [
-      { ...emptyFbsRegionalDataItem(), regionName: 'Центральный', orderShare: 45, stockShare: 40 },
-      { ...emptyFbsRegionalDataItem(), regionName: 'Сибирь', orderShare: 20, stockShare: 25 },
+      { ...emptyFbsRegionalDataItem(), region: 'Центральный', percentage: 45 },
+      { ...emptyFbsRegionalDataItem(), region: 'Сибирь', percentage: 20 },
     ]
     renderWithProviders(<FbsRegionalDataSection regionalData={regions} />)
     // Chart container rendered via mock
@@ -58,36 +61,25 @@ describe('FbsRegionalDataSection (Story 96.13-FE)', () => {
     expect(screen.getByRole('region', { name: /Региональное распределение/ })).toBeInTheDocument()
   })
 
-  it('M2-3: section renders 0 em-dashes when both shares are non-null (design intent lock)', () => {
-    // Chart section: bar chart with populated shares — no '—' in the section itself
-    // (recharts Tooltip is mocked out; no tooltip dashes rendered in jsdom)
-    const regions = [
-      { ...emptyFbsRegionalDataItem(), regionName: 'Центральный', orderShare: 45, stockShare: 40 },
-    ]
+  it('renders no em-dashes when percentage is non-null (design intent lock)', () => {
+    const regions = [{ ...emptyFbsRegionalDataItem(), region: 'Центральный', percentage: 45 }]
     renderWithProviders(<FbsRegionalDataSection regionalData={regions} />)
-    // M2-3: no em-dashes in the section when shares are non-null — locks design intent
+    // No em-dashes in the section when percentage is non-null
     expect(screen.queryAllByText('—').length).toBe(0)
   })
 })
 
-// M-3 fix: RegionalTooltip direct unit tests (exported for testing only)
-// Tooltip was previously swallowed by Bar: () => null mock — zero coverage.
-describe('RegionalTooltip (Story 96.13-FE M-3)', () => {
-  it('renders region name + 2 metric rows when payload is populated', () => {
-    const payload = [
-      { name: 'Доля заказов (%)', value: 45, color: '#E53935' },
-      { name: 'Доля остатков (%)', value: 40, color: '#3B82F6' },
-    ]
+// RegionalTooltip direct unit tests (exported for testing only)
+describe('RegionalTooltip (Epic 129-FE)', () => {
+  it('renders region name + single metric row when payload is populated', () => {
+    const payload = [{ name: 'Доля (%)', value: 45, color: '#E53935' }]
     renderWithProviders(<RegionalTooltip active={true} payload={payload} label="Центральный" />)
     expect(screen.getByText('Центральный')).toBeInTheDocument()
-    expect(screen.getByText(/Доля заказов/)).toBeInTheDocument()
-    expect(screen.getByText(/Доля остатков/)).toBeInTheDocument()
+    expect(screen.getByText(/Доля/)).toBeInTheDocument()
   })
 
   it('renders em-dash when payload value is null (anti-pattern #8 + Defensive Frontend)', () => {
-    const payload = [
-      { name: 'Доля заказов (%)', value: null as unknown as number, color: '#E53935' },
-    ]
+    const payload = [{ name: 'Доля (%)', value: null as unknown as number, color: '#E53935' }]
     renderWithProviders(<RegionalTooltip active={true} payload={payload} label="Урал" />)
     // null value → '—' per CLAUDE.md anti-pattern #8
     expect(screen.getByText(/—/)).toBeInTheDocument()

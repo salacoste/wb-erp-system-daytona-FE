@@ -1,6 +1,6 @@
 /**
  * Shared empty-fixture factories for FBS Enhanced Analytics tests.
- * Story 96.13-FE — Pattern 3 hygiene (CLAUDE.md § Multi-Source Orchestration).
+ * Epic 129-FE Story 129.3 — updated to match real backend contract per Request #202.
  *
  * Mirrors the `monitor-empty.ts` precedent (Story 92.6-FE — first canonical
  * Pattern 3 module). Consumed by both unit tests and E2E helpers.
@@ -31,42 +31,46 @@ import type {
 
 /**
  * Empty order stats — counts = 0, ratios/money = null.
- * Triggers '—' rendering for buyoutRate, returnRate, averageOrderValue.
+ * Triggers '—' rendering for buyoutRate, cancelRate, avgOrderValue,
+ * ordersSumRub, addToCartPercent, ordersPercent.
  */
 export function emptyFbsOrderStats(): FbsOrderStats {
   return {
-    totalOrders: 0,
-    deliveredOrders: 0,
-    returnedOrders: 0,
+    ordersCount: 0,
+    ordersSumRub: null, // money — null per CLAUDE.md anti-pattern #8
+    cancelCount: 0,
+    cancelRate: null, // ratio — null per CLAUDE.md anti-pattern #8
+    buyoutCount: 0,
     buyoutRate: null, // ratio — null per CLAUDE.md anti-pattern #8
-    returnRate: null, // ratio — null per CLAUDE.md anti-pattern #8
-    averageOrderValue: null, // money — null per CLAUDE.md anti-pattern #8
+    avgOrderValue: null, // money — null per CLAUDE.md anti-pattern #8
+    addToCartPercent: null, // ratio — null per CLAUDE.md anti-pattern #8
+    ordersPercent: null, // ratio — null per CLAUDE.md anti-pattern #8
   }
 }
 
 /**
- * Empty stock analytics — counts = 0, ratio = null.
- * Triggers '—' rendering for avgDaysOfCover.
+ * Empty stock analytics — all counts = 0.
+ * No ratio fields in this section (all are counts per Request #202).
  */
 export function emptyFbsStockAnalytics(): FbsStockAnalytics {
   return {
-    totalSkus: 0,
-    totalUnits: 0,
-    lowStockSkus: 0,
-    outOfStockSkus: 0,
-    avgDaysOfCover: null, // ratio — null per CLAUDE.md anti-pattern #8
+    totalStock: 0,
+    availableStock: 0,
+    reservedStock: 0,
+    inTransit: 0,
+    productCount: 0,
   }
 }
 
 /**
- * Single empty regional data item — ratios = null, string = ''.
- * Useful for testing null-rendering (orderShare → '—', stockShare → '—').
+ * Single empty regional data item — string = '', percentage = null.
+ * Useful for testing null-rendering (percentage → '—').
  */
 export function emptyFbsRegionalDataItem(): FbsRegionalDataItem {
   return {
-    regionName: '',
-    orderShare: null, // ratio — null per CLAUDE.md anti-pattern #8
-    stockShare: null, // ratio — null per CLAUDE.md anti-pattern #8
+    region: '',
+    quantity: 0,
+    percentage: null, // ratio — null per CLAUDE.md anti-pattern #8
   }
 }
 
@@ -83,15 +87,13 @@ export function emptyFbsCalculatedMetrics(): FbsCalculatedMetrics {
 }
 
 /**
- * Empty funnel data — all counts = 0.
- * Counts are 0 (legitimate zero — no views is a meaningful state).
+ * Empty funnel data — both conversion rates = null.
+ * Ratios are null per CLAUDE.md anti-pattern #8 (no data = unknown).
  */
 export function emptyFbsFunnelData(): FbsFunnelData {
   return {
-    productViews: 0,
-    cartAdds: 0,
-    orders: 0,
-    deliveries: 0,
+    addToCartPercent: null, // ratio — null per CLAUDE.md anti-pattern #8
+    ordersPercent: null, // ratio — null per CLAUDE.md anti-pattern #8
   }
 }
 
