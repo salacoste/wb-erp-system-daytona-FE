@@ -61,6 +61,7 @@ export function BuyoutTableHeader({ sort, sortOrder, onSort }: BuyoutTableHeader
           </SortBtn>
         </TableHead>
         <TableHead>Уверенность</TableHead>
+        <TableHead title="Лучшая позиция в поиске WB за период">Поиск</TableHead>
         <TableHead className="w-10" />
       </TableRow>
     </TableHeader>
@@ -70,9 +71,10 @@ export function BuyoutTableHeader({ sort, sortOrder, onSort }: BuyoutTableHeader
 interface BuyoutTableRowProps {
   item: BySkuBuyoutItem
   product: ProductInfo | undefined
+  searchPosition?: number | null
 }
 
-export function BuyoutTableRow({ item, product }: BuyoutTableRowProps) {
+export function BuyoutTableRow({ item, product, searchPosition }: BuyoutTableRowProps) {
   const rb = item.returnBreakdown
   const isEstimated = rb?.estimated === true
 
@@ -102,6 +104,26 @@ export function BuyoutTableRow({ item, product }: BuyoutTableRowProps) {
       </TableCell>
       <TableCell>
         <ConfidenceBadge confidence={item.confidence} />
+      </TableCell>
+      <TableCell
+        className="text-sm"
+        title={searchPosition != null ? `Позиция ${searchPosition} в поиске` : undefined}
+      >
+        {searchPosition != null ? (
+          <span
+            className={
+              searchPosition <= 10
+                ? 'text-green-600 font-medium'
+                : searchPosition <= 30
+                  ? 'text-yellow-600'
+                  : 'text-muted-foreground'
+            }
+          >
+            {searchPosition}
+          </span>
+        ) : (
+          '—'
+        )}
       </TableCell>
       <TableCell>
         <TooltipProvider>

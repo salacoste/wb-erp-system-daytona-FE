@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { useBuyoutBySku } from '@/hooks/use-buyout-analytics'
 import { useAllProductsMap } from '@/hooks/use-all-products-map'
+import { useSearchPositionsMap } from '@/hooks/use-search-positions-map'
 import { Table, TableBody } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -34,6 +35,15 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
   })
 
   const productsMap = useAllProductsMap(!isLoading && !isError)
+
+  // Search position enrichment: fetch best avgPosition for each SKU in parallel
+  const nmIds = data?.data?.map(item => item.nmId) ?? []
+  const searchPositionsMap = useSearchPositionsMap(
+    nmIds,
+    from,
+    to,
+    !isLoading && !isError && nmIds.length > 0
+  )
 
   const handleSort = (field: SortField) => {
     if (sort === field) {
@@ -75,7 +85,12 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
           <BuyoutTableHeader sort={sort} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>
             {items.map(item => (
-              <BuyoutTableRow key={item.nmId} item={item} product={productsMap.get(item.nmId)} />
+              <BuyoutTableRow
+                key={item.nmId}
+                item={item}
+                product={productsMap.get(item.nmId)}
+                searchPosition={searchPositionsMap.get(item.nmId)?.bestAvgPosition}
+              />
             ))}
           </TableBody>
         </Table>

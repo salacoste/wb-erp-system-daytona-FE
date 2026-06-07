@@ -17,6 +17,9 @@ const mockApiGet = vi.fn()
 vi.mock('@/hooks/use-buyout-analytics', () => ({
   useBuyoutBySku: (...args: unknown[]) => mockUseBuyoutBySku(...args),
 }))
+vi.mock('@/hooks/use-search-positions-map', () => ({
+  useSearchPositionsMap: () => new Map(),
+}))
 vi.mock('@/lib/api-client', () => ({
   apiClient: { get: (...args: unknown[]) => mockApiGet(...args) },
 }))

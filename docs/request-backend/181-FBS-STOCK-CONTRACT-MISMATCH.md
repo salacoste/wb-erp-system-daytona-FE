@@ -1,8 +1,8 @@
 # Request #181 — FBS Stock: response contract mismatch (FE renders empty/wrong)
 
 **Originated by**: Frontend validation campaign (validation finding F-18), 2026-06-02
-**Severity**: P1 — the FBS Stock page (`/analytics/fbs-stock`) groups + sizes tables render EMPTY against the live backend; the FE normalizer + types were built for a different contract than the backend serves.
-**Status**: PENDING BACKEND (needs contract reconciliation — FE cannot fix unilaterally)
+**Severity**: ~~P1~~ → RESOLVED (degraded data)
+**Status**: RESOLVED — backend commit `3925cc16` (2026-06-04) added FE-expected `{ data: { groups/sizes/regions } }` envelope alongside original shape. Tables render but with degraded metrics (skuCount=1, averageDailyOutgoing=0, daysOfCover=null, stockValue=null).
 
 ---
 
