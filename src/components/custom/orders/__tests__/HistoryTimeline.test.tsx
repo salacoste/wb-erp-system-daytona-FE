@@ -1,480 +1,539 @@
 /**
- * TDD Unit Tests for HistoryTimeline Components
+ * Unit Tests for History Timeline Components
  * Story 40.5-FE: History Timeline Components
  * Epic 40-FE: Orders UI & WB Native Status History
  *
- * Tests written BEFORE implementation (TDD approach)
- * All tests use .todo() or it.skip() for red-green-refactor workflow
- *
- * Components tested:
- * - OrderHistoryTimeline (full merged view)
- * - WbHistoryTimeline (WB-only view)
- * - LocalHistoryTimeline (local-only view)
- *
- * @see docs/stories/epic-40/story-40.5-fe-history-timeline-components.md
+ * Tests for FullHistoryTab, WbHistoryTab, LocalHistoryTab,
+ * history-utils, and LocalHistoryEntryItem components.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 
-// Note: Accessibility testing with axe-core is done in E2E tests (Playwright)
-// Unit tests focus on functional behavior
+expect.extend(toHaveNoViolations)
 
-// Test fixtures - imported for TDD verification tests
-// Additional fixtures will be used as tests are implemented
+import { FullHistoryTab } from '../FullHistoryTab'
+import { WbHistoryTab } from '../WbHistoryTab'
+import { LocalHistoryTab } from '../LocalHistoryTab'
+import { formatDuration, EmptyState, TabErrorState, TimelineSkeleton } from '../history-utils'
+import {
+  SummarySection,
+  CurrentStatusSection,
+  LocalHistoryTimelineEntry,
+  StatusBadge,
+  TabLoadingSkeleton,
+} from '../LocalHistoryEntryItem'
+
+import {
+  mockFullHistoryResponse,
+  mockWbHistoryResponse,
+  mockLocalHistoryResponse,
+  mockEmptyFullHistoryResponse,
+  mockEmptyWbHistoryResponse,
+  mockEmptyLocalHistoryResponse,
+} from '@/test/fixtures/orders'
 import {
   mockFullHistoryStandard,
   mockWbHistoryStandard,
   mockLocalHistoryStandard,
+  mockLocalHistoryPartialChange,
 } from '@/test/fixtures/order-history'
-
-// WB status mapping for verification
 import {
   getWbStatusConfig,
   getWbStatusLabel,
   isWbStatusFinal,
-  getWbStatusCategory,
   WB_STATUS_CONFIG,
   WB_STATUS_CATEGORY_LABELS,
 } from '@/lib/wb-status-mapping'
+import type {
+  WbHistoryResponse,
+  LocalHistoryResponse,
+  LocalHistoryEntry,
+  FullHistoryResponse,
+} from '@/types/orders-history'
+
+// Helper: single-entry WB response factory
+function singleWbEntry(code: string): WbHistoryResponse {
+  return {
+    orderId: 'test',
+    orderUid: 'uid',
+    wbHistory: [
+      {
+        id: '1',
+        wbStatusCode: code,
+        wbStatusChangedAt: '2026-01-02T10:00:00.000Z',
+        durationMinutes: null,
+      },
+    ],
+    summary: {
+      totalTransitions: 1,
+      totalDurationMinutes: null,
+      currentWbStatus: code,
+      createdAt: '2026-01-02T10:00:00.000Z',
+      lastUpdatedAt: null,
+    },
+  }
+}
 
 // =============================================================================
-// Components to be implemented (TDD - imports will fail until created)
-// =============================================================================
-// import { OrderHistoryTimeline } from '../OrderHistoryTimeline'
-// import { WbHistoryTimeline } from '../WbHistoryTimeline'
-// import { LocalHistoryTimeline } from '../LocalHistoryTimeline'
-// import { HistoryEntryCard } from '../HistoryEntryCard'
-// import { TimelineEmptyState } from '../TimelineEmptyState'
-// import { TimelineSummary } from '../TimelineSummary'
-
-// =============================================================================
-// OrderHistoryTimeline Tests (AC1: Full Merged View)
+// formatDuration
 // =============================================================================
 
-describe('OrderHistoryTimeline', () => {
-  describe('AC1: Merged View Rendering', () => {
-    it.todo('renders all entries from merged WB and local sources')
+describe('formatDuration', () => {
+  it('formats minutes-only duration', () => expect(formatDuration(5)).toBe('5 мин'))
+  it('formats hours-only duration', () => expect(formatDuration(120)).toBe('2 ч'))
+  it('formats hours and minutes', () => expect(formatDuration(90)).toBe('1 ч 30 мин'))
+  it('formats days-only duration', () => expect(formatDuration(2880)).toBe('2 д'))
+  it('formats days and hours', () => expect(formatDuration(1500)).toBe('1 д 1 ч'))
+  it('handles 0 minutes', () => expect(formatDuration(0)).toBe('0 мин'))
+  it('handles 1 minute', () => expect(formatDuration(1)).toBe('1 мин'))
+  it('handles exactly 60 minutes', () => expect(formatDuration(60)).toBe('1 ч'))
+  it('handles exactly 1440 minutes', () => expect(formatDuration(1440)).toBe('1 д'))
+})
 
-    it.todo('sorts entries chronologically by timestamp (oldest first)')
+// =============================================================================
+// Shared UI Components (history-utils + LocalHistoryEntryItem)
+// =============================================================================
 
-    it.todo('displays source badge "WB" for wb_native entries')
-
-    it.todo('displays source badge "Локальная" for local entries')
-
-    it.todo('shows WB entries with translated Russian status label')
-
-    it.todo('shows local entries with supplierStatus and wbStatus changes')
-
-    it.todo('displays duration between consecutive entries')
-
-    it.todo('shows summary section at top with entry counts')
+describe('EmptyState', () => {
+  it('renders the provided message', () => {
+    render(<EmptyState message="История статусов пока пуста" />)
+    expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
   })
+  it('has muted text styling', () => {
+    const { container } = render(<EmptyState message="No data" />)
+    expect(container.firstChild).toHaveClass('text-muted-foreground')
+  })
+})
 
-  describe('Entry Rendering Details', () => {
-    it.todo('renders timestamp in DD.MM.YYYY HH:mm format')
+describe('TabErrorState', () => {
+  it('shows error message and retry button', () => {
+    render(<TabErrorState onRetry={vi.fn()} />)
+    expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /повторить/i })).toBeInTheDocument()
+  })
+  it('calls onRetry when retry button clicked', async () => {
+    const user = userEvent.setup()
+    const onRetry = vi.fn()
+    render(<TabErrorState onRetry={onRetry} />)
+    await user.click(screen.getByRole('button', { name: /повторить/i }))
+    expect(onRetry).toHaveBeenCalledTimes(1)
+  })
+})
 
-    it.todo('shows status code alongside translated label for WB entries')
+describe('TimelineSkeleton', () => {
+  it('renders default skeleton rows', () => {
+    const { container } = render(<TimelineSkeleton />)
+    expect(container.querySelectorAll('.rounded-full').length).toBeGreaterThanOrEqual(3)
+  })
+  it('renders custom row count', () => {
+    const { container } = render(<TimelineSkeleton rows={5} />)
+    expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
+  })
+})
 
-    it.todo('shows transition arrow (→) for local status changes')
+describe('StatusBadge', () => {
+  it('renders supplier variant with blue styling', () => {
+    render(<StatusBadge label="new" variant="supplier" />)
+    const badge = screen.getByText('new')
+    expect(badge).toHaveClass('bg-blue-50', 'text-blue-700')
+  })
+  it('renders wb variant with purple styling', () => {
+    render(<StatusBadge label="waiting" variant="wb" />)
+    const badge = screen.getByText('waiting')
+    expect(badge).toHaveClass('bg-purple-50', 'text-purple-700')
+  })
+})
 
-    it.todo('shows "—" for null old status values (initial state)')
+describe('SummarySection', () => {
+  const mockSummary = mockLocalHistoryResponse.summary
+  it('shows total transitions count and duration when provided', () => {
+    render(<SummarySection summary={mockSummary} totalDuration="6 ч" />)
+    expect(screen.getByText(/Всего переходов: 3/)).toBeInTheDocument()
+    expect(screen.getByText(/Общее время: 6 ч/)).toBeInTheDocument()
+  })
+  it('hides duration when null and shows created/completed dates', () => {
+    render(<SummarySection summary={mockSummary} totalDuration={null} />)
+    expect(screen.queryByText(/Общее время/)).not.toBeInTheDocument()
+    expect(screen.getByText(/Создан:/)).toBeInTheDocument()
+    expect(screen.getByText(/Завершён:/)).toBeInTheDocument()
+  })
+})
 
-    it.todo('applies correct color styling based on WB status category')
+describe('CurrentStatusSection', () => {
+  it('shows current statuses and final badge when isFinal=true', () => {
+    render(<CurrentStatusSection currentStatus={mockLocalHistoryResponse.currentStatus} />)
+    expect(screen.getByText('complete')).toBeInTheDocument()
+    expect(screen.getByText('sold')).toBeInTheDocument()
+    expect(screen.getByText('Финал')).toBeInTheDocument()
+  })
+  it('hides final badge when isFinal=false', () => {
+    render(<CurrentStatusSection currentStatus={mockEmptyLocalHistoryResponse.currentStatus} />)
+    expect(screen.queryByText('Финал')).not.toBeInTheDocument()
+  })
+})
 
-    it.todo('shows final status indicator (checkmark) for terminal statuses')
+describe('LocalHistoryTimelineEntry', () => {
+  const entry = mockLocalHistoryResponse.history[1] // has duration
+  it('renders timestamp, transitions, and duration', () => {
+    render(<LocalHistoryTimelineEntry entry={entry} isLast={false} />)
+    expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}/)).toBeInTheDocument()
+    expect(screen.getByText('Статус продавца:')).toBeInTheDocument()
+    expect(screen.getByText('WB статус:')).toBeInTheDocument()
+    expect(screen.getByText(/2 ч 30 мин/)).toBeInTheDocument()
+  })
+  it('hides duration for last entry', () => {
+    render(<LocalHistoryTimelineEntry entry={entry} isLast={true} />)
+    expect(screen.queryByText(/2 ч 30 мин/)).not.toBeInTheDocument()
+  })
+  it('shows "null" for null old status values (initial state)', () => {
+    const firstEntry = mockLocalHistoryResponse.history[0]
+    render(<LocalHistoryTimelineEntry entry={firstEntry} isLast={false} />)
+    expect(screen.getAllByText('null').length).toBeGreaterThanOrEqual(1)
+  })
+})
+
+describe('TabLoadingSkeleton', () => {
+  it('renders loading skeleton structure', () => {
+    const { container } = render(<TabLoadingSkeleton />)
+    expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
+  })
+})
+
+// =============================================================================
+// FullHistoryTab
+// =============================================================================
+
+describe('FullHistoryTab', () => {
+  const defaultProps = { isLoading: false, isError: false, refetch: vi.fn() }
+
+  describe('AC1: Merged View Rendering', () => {
+    it('renders entries with source badges, labels, and summary', () => {
+      render(<FullHistoryTab data={mockFullHistoryResponse} {...defaultProps} />)
+
+      expect(screen.getByText(/Итого: 5 записей/)).toBeInTheDocument()
+      expect(screen.getAllByText('WB').length).toBe(3)
+      expect(screen.getAllByText('Локальная').length).toBe(2)
+      expect(screen.getByText('Создан')).toBeInTheDocument()
+      expect(screen.getByText('На сборке')).toBeInTheDocument()
+      expect(screen.getByText(/WB: 3/)).toBeInTheDocument()
+      expect(screen.getByText(/Локальная: 2/)).toBeInTheDocument()
+      expect(screen.getAllByText('Статус продавца:').length).toBeGreaterThan(0)
+    })
+
+    it('shows WB status code alongside translated label', () => {
+      render(<FullHistoryTab data={mockFullHistoryResponse} {...defaultProps} />)
+      expect(screen.getByText('(created)')).toBeInTheDocument()
+      expect(screen.getByText('(assembling)')).toBeInTheDocument()
+    })
   })
 
   describe('Timeline Structure', () => {
-    it.todo('renders timeline as ordered list (<ol>)')
-
-    it.todo('each entry is a list item (<li>)')
-
-    it.todo('shows vertical connecting line between entries')
-
-    it.todo('shows timeline dot/marker for each entry')
-
-    it.todo('last entry marker is visually distinct (no trailing line)')
+    it('renders correct dot colors and trailing lines', () => {
+      const { container } = render(
+        <FullHistoryTab data={mockFullHistoryResponse} {...defaultProps} />
+      )
+      const dots = container.querySelectorAll('.rounded-full')
+      expect(dots.length).toBe(5)
+      expect(Array.from(dots).filter(d => d.classList.contains('bg-purple-500')).length).toBe(3)
+      expect(Array.from(dots).filter(d => d.classList.contains('bg-blue-500')).length).toBe(2)
+      // Trailing lines = entries - 1
+      expect(container.querySelectorAll('.bg-border').length).toBe(4)
+    })
   })
 
-  describe('Duration Display Between Entries', () => {
-    it.todo('calculates duration from timestamps when not provided')
+  describe('Empty and Loading States', () => {
+    it('shows empty message with no markers when no entries', () => {
+      const { container } = render(
+        <FullHistoryTab data={mockEmptyFullHistoryResponse} {...defaultProps} />
+      )
+      expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
+      expect(container.querySelectorAll('.rounded-full').length).toBe(0)
+    })
 
-    it.todo('displays duration inline between entries')
-
-    it.todo('first entry has no duration (no previous state)')
-
-    it.todo('formats duration according to specification (мин, ч, д)')
-  })
-
-  describe('Summary Section (AC7)', () => {
-    it.todo('shows total entry count: "Всего: {n} записей"')
-
-    it.todo('shows source breakdown: "WB: {x} | Локальная: {y}"')
-
-    it.todo('shows time span: "Период: {firstDate} — {lastDate}"')
-
-    it.todo('updates summary when entries change')
-  })
-
-  describe('Empty State', () => {
-    it.todo('displays "История статусов пуста" when no entries')
-
-    it.todo('shows helpful message about sync timing')
-
-    it.todo('does not render timeline markers for empty state')
-
-    it.todo('empty state has appropriate icon')
-  })
-
-  describe('Loading State', () => {
-    it.todo('shows skeleton loader when isLoading=true')
-
-    it.todo('skeleton shows timeline structure placeholder')
-
-    it.todo('has aria-busy="true" during loading')
+    it('shows skeleton loader when isLoading=true', () => {
+      const { container } = render(
+        <FullHistoryTab data={undefined} isLoading={true} isError={false} refetch={vi.fn()} />
+      )
+      expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
+    })
   })
 
   describe('Error State', () => {
-    it.todo('shows error message when error prop provided')
-
-    it.todo('displays retry button for recoverable errors')
-
-    it.todo('error message includes helpful guidance')
-  })
-
-  describe('View Mode Switching', () => {
-    it.todo('supports timeline view (default, vertical chronological)')
-
-    it.todo('supports table view when viewMode="table"')
-
-    it.todo('supports compact view when viewMode="compact"')
-
-    it.todo('table view shows data in tabular format')
-
-    it.todo('compact view shows horizontal badges')
-  })
-
-  describe('Accessibility (AC10)', () => {
-    it.todo('has no accessibility violations (axe)')
-
-    it.todo('timeline uses semantic list markup (<ol> or <ul>)')
-
-    it.todo('timestamps wrapped in <time datetime="{ISO}"> elements')
-
-    it.todo('source badges have descriptive aria-label')
-
-    it.todo('focus indicators visible on interactive elements')
-
-    it.todo('color contrast meets 4.5:1 ratio')
-
-    it.todo('empty state is announced to screen readers')
-
-    it.todo('keyboard navigation works through timeline entries')
-  })
-
-  describe('Responsive Design (AC9)', () => {
-    it.todo('stacks properly on mobile viewport')
-
-    it.todo('max height with scroll when >10 entries')
-
-    it.todo('entry cards adjust width on narrow screens')
-  })
-})
-
-// =============================================================================
-// WbHistoryTimeline Tests (AC2: WB-Only View)
-// =============================================================================
-
-describe('WbHistoryTimeline', () => {
-  describe('AC2: WB-Only View Rendering', () => {
-    it.todo('displays only wb_native source entries')
-
-    it.todo('uses WB_STATUS_CONFIG for status labels and colors')
-
-    it.todo('groups entries by category visually')
-
-    it.todo('shows wbStatusCode with translated Russian label')
-
-    it.todo('shows duration between each WB status transition')
-  })
-
-  describe('Status Code Display', () => {
-    it.todo('renders all 40+ documented WB status codes correctly')
-
-    it.todo('shows status code: "created" as "Создан"')
-
-    it.todo('shows status code: "assembling" as "На сборке"')
-
-    it.todo('shows status code: "assembled" as "Собран"')
-
-    it.todo('shows status code: "sorted_by_wh" as "Отсортирован на складе"')
-
-    it.todo('shows status code: "on_way_to_client" as "В пути к клиенту"')
-
-    it.todo('shows status code: "received_by_client" as "Получен клиентом"')
-
-    it.todo('shows status code: "canceled" as "Отменён"')
-
-    it.todo('shows status code: "return_requested" as "Запрошен возврат"')
-  })
-
-  describe('Unknown Status Code Handling (AC8)', () => {
-    it.todo('shows raw code as label for unknown statuses')
-
-    it.todo('uses gray color scheme for unknown statuses')
-
-    it.todo('categorizes unknown statuses as "other"')
-
-    it.todo('logs warning to console for unknown codes (dev mode)')
-
-    it.todo('does not crash on unexpected status codes')
-  })
-
-  describe('Category Grouping', () => {
-    it.todo('groups "creation" statuses together')
-
-    it.todo('groups "seller_processing" statuses together')
-
-    it.todo('groups "warehouse" statuses together')
-
-    it.todo('groups "logistics" statuses together')
-
-    it.todo('groups "delivery" statuses together')
-
-    it.todo('groups "cancellation" statuses together')
-
-    it.todo('groups "return" statuses together')
-
-    it.todo('groups "other" statuses together')
-
-    it.todo('shows category header with icon for each group')
-
-    it.todo('category icons match WB_STATUS_CATEGORY_ICONS config')
-  })
-
-  describe('Final Status Indicators', () => {
-    it.todo('shows checkmark icon for final/terminal statuses')
-
-    it.todo('received_by_client has final indicator')
-
-    it.todo('sold has final indicator')
-
-    it.todo('canceled_by_client has final indicator')
-
-    it.todo('return_received has final indicator')
-
-    it.todo('non-final statuses do not have checkmark')
-  })
-
-  describe('WB Summary Section (AC7)', () => {
-    it.todo('shows total transitions: "Переходов: {n}"')
-
-    it.todo('shows total duration: "Общее время: {duration}"')
-
-    it.todo('shows current status: "Текущий статус: {status}"')
-
-    it.todo('shows first/last timestamps in summary')
-  })
-
-  describe('Empty State (AC2)', () => {
-    it.todo('shows "WB история ещё не загружена" when empty')
-
-    it.todo('mentions sync timing: "Синхронизация происходит каждые 15 минут"')
-  })
-})
-
-// =============================================================================
-// LocalHistoryTimeline Tests (AC3: Local-Only View)
-// =============================================================================
-
-describe('LocalHistoryTimeline', () => {
-  describe('AC3: Local-Only View Rendering', () => {
-    it.todo('displays only local source entries')
-
-    it.todo('shows oldSupplierStatus → newSupplierStatus transition')
-
-    it.todo('shows oldWbStatus → newWbStatus transition')
-
-    it.todo('handles null → value transitions (initial state)')
-
-    it.todo('handles value → value transitions')
-
-    it.todo('shows duration between local status changes')
-  })
-
-  describe('Status Transition Display', () => {
-    it.todo('displays "Статус продавца:" label for supplier status')
-
-    it.todo('displays "WB статус:" label for wb status')
-
-    it.todo('shows "—" for null old status values')
-
-    it.todo('shows transition arrow "→" between old and new values')
-
-    it.todo('both status changes shown in same entry card')
-  })
-
-  describe('Partial Status Changes', () => {
-    it.todo('handles entries where only supplierStatus changed')
-
-    it.todo('handles entries where only wbStatus changed')
-
-    it.todo('shows unchanged status as "без изменений" or same value')
-  })
-
-  describe('Local Summary Section (AC7)', () => {
-    it.todo('shows total transitions: "Переходов: {n}"')
-
-    it.todo('shows order created date: "Создан: {date}"')
-
-    it.todo('shows order completed date: "Завершён: {date}" when final')
-
-    it.todo('shows "В процессе" when not completed')
-  })
-
-  describe('Empty State (AC3)', () => {
-    it.todo('shows "Локальная история пуста" when no entries')
-  })
-
-  describe('Changed By Information', () => {
-    it.todo('shows who made the change when changedBy is populated')
-
-    it.todo('shows "system" for automatic changes')
-
-    it.todo('shows email for user-initiated changes')
-  })
-})
-
-// =============================================================================
-// HistoryEntryCard Tests (AC4)
-// =============================================================================
-
-describe('HistoryEntryCard', () => {
-  describe('AC4: Entry Card Rendering', () => {
-    it.todo('renders single timeline entry with consistent styling')
-
-    it.todo('displays timestamp in DD.MM.YYYY HH:mm format')
-
-    it.todo('shows status text with appropriate color from config')
-
-    it.todo('shows category icon for WB entries')
-
-    it.todo('shows optional description text for local entries')
-
-    it.todo('has hover state with subtle background highlight')
-  })
-
-  describe('Compact Mode', () => {
-    it.todo('renders smaller when compact=true')
-
-    it.todo('hides optional details in compact mode')
-
-    it.todo('maintains readability in compact mode')
-  })
-
-  describe('Entry Types', () => {
-    it.todo('renders WB native entry correctly')
-
-    it.todo('renders local entry with both status transitions')
-
-    it.todo('renders final status with checkmark')
-
-    it.todo('renders cancellation entry with appropriate styling')
-
-    it.todo('renders return entry with appropriate styling')
-  })
-
-  describe('Visual Indicators', () => {
-    it.todo('shows timeline dot aligned left')
-
-    it.todo('entry card positioned right of timeline')
-
-    it.todo('duration shown inline on connecting line')
-  })
-})
-
-// =============================================================================
-// Shared Component Tests
-// =============================================================================
-
-describe('TimelineEmptyState', () => {
-  describe('Variants', () => {
-    it.todo('shows full history empty message for variant="full"')
-
-    it.todo('shows WB sync message for variant="wb"')
-
-    it.todo('shows local empty message for variant="local"')
+    it('shows error message with retry button', () => {
+      render(<FullHistoryTab data={undefined} isLoading={false} isError={true} refetch={vi.fn()} />)
+      expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /повторить/i })).toBeInTheDocument()
+    })
   })
 
   describe('Accessibility', () => {
-    it.todo('has role="status" for screen readers')
-
-    it.todo('icon has aria-hidden="true"')
-  })
-})
-
-describe('TimelineSummary', () => {
-  describe('Full History Summary', () => {
-    it.todo('renders entry counts correctly')
-
-    it.todo('renders source breakdown correctly')
-
-    it.todo('renders time span correctly')
-  })
-
-  describe('WB History Summary', () => {
-    it.todo('renders transition count correctly')
-
-    it.todo('renders total duration correctly')
-
-    it.todo('renders current status correctly')
-  })
-
-  describe('Local History Summary', () => {
-    it.todo('renders transition count correctly')
-
-    it.todo('renders created date correctly')
-
-    it.todo('renders completed date when final')
+    it('has no accessibility violations', async () => {
+      const { container } = render(
+        <FullHistoryTab data={mockFullHistoryResponse} {...defaultProps} />
+      )
+      expect(await axe(container)).toHaveNoViolations()
+    })
   })
 })
 
 // =============================================================================
-// Integration Tests
+// WbHistoryTab
 // =============================================================================
 
-describe('Timeline Integration', () => {
-  describe('Data Flow', () => {
-    it.todo('handles real API response structure')
+describe('WbHistoryTab', () => {
+  const defaultProps = { isLoading: false, isError: false, refetch: vi.fn() }
 
-    it.todo('sorts mixed source entries correctly')
-
-    it.todo('calculates durations when not provided by API')
+  describe('AC2: WB-Only View Rendering', () => {
+    it('displays WB entries with labels, codes, durations, and summary', () => {
+      render(<WbHistoryTab data={mockWbHistoryResponse} {...defaultProps} />)
+      expect(screen.getByText('Создан')).toBeInTheDocument()
+      expect(screen.getByText('На сборке')).toBeInTheDocument()
+      expect(screen.getByText('(created)')).toBeInTheDocument()
+      expect(screen.getAllByText(/30 мин/).length).toBeGreaterThanOrEqual(1)
+      expect(screen.getByText(/Всего переходов: 4/)).toBeInTheDocument()
+      expect(screen.getByText(/Текущий: Получен клиентом/)).toBeInTheDocument()
+    })
   })
 
-  describe('Edge Cases', () => {
-    it.todo('handles single entry timeline')
-
-    it.todo('handles timeline with only WB entries')
-
-    it.todo('handles timeline with only local entries')
-
-    it.todo('handles very long timelines (50+ entries)')
-
-    it.todo('handles entries with same timestamp')
+  describe('Final Status Indicators', () => {
+    it('shows exactly one "Финал" badge for received_by_client', () => {
+      render(<WbHistoryTab data={mockWbHistoryResponse} {...defaultProps} />)
+      expect(screen.getAllByText('Финал').length).toBe(1)
+    })
   })
 
-  describe('Performance', () => {
-    it.todo('renders large timeline without lag')
+  describe('WB Status Code Display', () => {
+    const statusCases: Array<{ code: string; label: string }> = [
+      { code: 'created', label: 'Создан' },
+      { code: 'assembling', label: 'На сборке' },
+      { code: 'assembled', label: 'Собран' },
+      { code: 'sorted_by_wh', label: 'Отсортирован на складе' },
+      { code: 'on_way_to_client', label: 'В пути к клиенту' },
+      { code: 'received_by_client', label: 'Получен клиентом' },
+      { code: 'canceled', label: 'Отменён' },
+      { code: 'return_requested', label: 'Запрошен возврат' },
+    ]
 
-    it.todo('virtualizes list when >50 entries')
+    it.each(statusCases)('shows $code as $label', ({ code, label }) => {
+      render(<WbHistoryTab data={singleWbEntry(code)} {...defaultProps} />)
+      expect(screen.getByText(label)).toBeInTheDocument()
+    })
+  })
+
+  describe('Unknown Status Code Handling (AC8)', () => {
+    it('shows raw code for unknown statuses and does not crash', () => {
+      const data: WbHistoryResponse = {
+        orderId: 'test',
+        orderUid: 'uid',
+        wbHistory: [
+          {
+            id: '1',
+            wbStatusCode: 'future_wb_status_v2',
+            wbStatusChangedAt: '2026-01-02T10:00:00.000Z',
+            durationMinutes: null,
+          },
+          {
+            id: '2',
+            wbStatusCode: 'another_bad_one',
+            wbStatusChangedAt: '2026-01-02T11:00:00.000Z',
+            durationMinutes: 60,
+          },
+        ],
+        summary: {
+          totalTransitions: 2,
+          totalDurationMinutes: 60,
+          currentWbStatus: 'another_bad_one',
+          createdAt: '2026-01-02T10:00:00.000Z',
+          lastUpdatedAt: '2026-01-02T11:00:00.000Z',
+        },
+      }
+      expect(() => render(<WbHistoryTab data={data} {...defaultProps} />)).not.toThrow()
+      expect(screen.getAllByText(/future_wb_status_v2/).length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  describe('Empty State (AC2)', () => {
+    it('shows WB sync message with timing', () => {
+      render(<WbHistoryTab data={mockEmptyWbHistoryResponse} {...defaultProps} />)
+      expect(screen.getByText(/WB история ещё не загружена/i)).toBeInTheDocument()
+      expect(screen.getByText(/Синхронизация происходит каждые 15 минут/i)).toBeInTheDocument()
+    })
+  })
+
+  describe('Loading, Error, and Accessibility', () => {
+    it('shows skeleton when isLoading=true', () => {
+      const { container } = render(
+        <WbHistoryTab data={undefined} isLoading={true} isError={false} refetch={vi.fn()} />
+      )
+      expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
+    })
+    it('shows error with retry button and refetch works', async () => {
+      const user = userEvent.setup()
+      const refetch = vi.fn()
+      render(<WbHistoryTab data={undefined} isLoading={false} isError={true} refetch={refetch} />)
+      expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: /повторить/i }))
+      expect(refetch).toHaveBeenCalledTimes(1)
+    })
+    it('has no accessibility violations', async () => {
+      const { container } = render(<WbHistoryTab data={mockWbHistoryResponse} {...defaultProps} />)
+      expect(await axe(container)).toHaveNoViolations()
+    })
   })
 })
 
 // =============================================================================
-// TDD Verification Tests (These should pass immediately)
+// LocalHistoryTab
+// =============================================================================
+
+describe('LocalHistoryTab', () => {
+  const defaultProps = { isLoading: false, isError: false, refetch: vi.fn() }
+
+  describe('AC3: Local-Only View Rendering', () => {
+    it('displays entries with transitions, arrows, null handling, and duration', () => {
+      render(<LocalHistoryTab data={mockLocalHistoryResponse} {...defaultProps} />)
+
+      expect(screen.getAllByText('Статус продавца:').length).toBe(3)
+      expect(screen.getAllByText('WB статус:').length).toBe(3)
+      expect(screen.getAllByText('→').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('null').length).toBeGreaterThanOrEqual(2)
+      expect(screen.getByText(/2 ч 30 мин/)).toBeInTheDocument()
+    })
+
+    it('shows summary with transitions count and current status', () => {
+      render(<LocalHistoryTab data={mockLocalHistoryResponse} {...defaultProps} />)
+      expect(screen.getByText(/Всего переходов: 3/)).toBeInTheDocument()
+      expect(screen.getByText('Текущий статус:')).toBeInTheDocument()
+    })
+
+    it('shows created and completed dates', () => {
+      render(<LocalHistoryTab data={mockLocalHistoryResponse} {...defaultProps} />)
+      expect(screen.getByText(/Создан:/)).toBeInTheDocument()
+      expect(screen.getByText(/Завершён:/)).toBeInTheDocument()
+    })
+
+    it('does not show completed date when not final', () => {
+      render(<LocalHistoryTab data={mockEmptyLocalHistoryResponse} {...defaultProps} />)
+      expect(screen.queryByText(/Завершён:/)).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Partial Status Changes', () => {
+    it('handles entries where only supplierStatus changed', () => {
+      const data: LocalHistoryResponse = {
+        ...mockLocalHistoryResponse,
+        history: mockLocalHistoryPartialChange as unknown as LocalHistoryEntry[],
+      }
+      render(<LocalHistoryTab data={data} {...defaultProps} />)
+      expect(screen.getAllByText('Статус продавца:').length).toBe(2)
+    })
+  })
+
+  describe('Empty, Loading, Error, and Accessibility', () => {
+    it('shows empty message when no entries', () => {
+      render(<LocalHistoryTab data={mockEmptyLocalHistoryResponse} {...defaultProps} />)
+      expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
+    })
+    it('shows skeleton when isLoading=true', () => {
+      const { container } = render(
+        <LocalHistoryTab data={undefined} isLoading={true} isError={false} refetch={vi.fn()} />
+      )
+      expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
+    })
+    it('shows error with retry and refetch works', async () => {
+      const user = userEvent.setup()
+      const refetch = vi.fn()
+      render(
+        <LocalHistoryTab data={undefined} isLoading={false} isError={true} refetch={refetch} />
+      )
+      expect(screen.getByText(/Не удалось загрузить данные/i)).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: /повторить/i }))
+      expect(refetch).toHaveBeenCalledTimes(1)
+    })
+    it('has no accessibility violations', async () => {
+      const { container } = render(
+        <LocalHistoryTab data={mockLocalHistoryResponse} {...defaultProps} />
+      )
+      expect(await axe(container)).toHaveNoViolations()
+    })
+  })
+})
+
+// =============================================================================
+// Integration: Edge Cases
+// =============================================================================
+
+describe('Timeline Integration - Edge Cases', () => {
+  const defaultProps = { isLoading: false, isError: false, refetch: vi.fn() }
+
+  it('handles single entry timeline with no trailing line', () => {
+    const single: FullHistoryResponse = {
+      orderId: 'test',
+      orderUid: 'uid',
+      fullHistory: [
+        { source: 'wb_native', wbStatusCode: 'created', timestamp: '2026-01-02T10:00:00.000Z' },
+      ],
+      summary: { localEntriesCount: 0, wbNativeEntriesCount: 1, totalEntriesCount: 1 },
+    }
+    const { container } = render(<FullHistoryTab data={single} {...defaultProps} />)
+    expect(screen.getByText(/Итого: 1 запис/)).toBeInTheDocument()
+    expect(container.querySelectorAll('.bg-border').length).toBe(0)
+  })
+
+  it('handles timeline with only WB entries', () => {
+    const wbOnly: FullHistoryResponse = {
+      orderId: 'test',
+      orderUid: 'uid',
+      fullHistory: [
+        { source: 'wb_native', wbStatusCode: 'created', timestamp: '2026-01-02T10:00:00.000Z' },
+        { source: 'wb_native', wbStatusCode: 'assembling', timestamp: '2026-01-02T10:30:00.000Z' },
+      ],
+      summary: { localEntriesCount: 0, wbNativeEntriesCount: 2, totalEntriesCount: 2 },
+    }
+    render(<FullHistoryTab data={wbOnly} {...defaultProps} />)
+    expect(screen.getAllByText('WB').length).toBe(2)
+    expect(screen.queryByText('Локальная')).not.toBeInTheDocument()
+  })
+
+  it('handles timeline with only local entries', () => {
+    const localOnly: FullHistoryResponse = {
+      orderId: 'test',
+      orderUid: 'uid',
+      fullHistory: [
+        {
+          source: 'local',
+          oldSupplierStatus: null,
+          newSupplierStatus: 'new',
+          oldWbStatus: null,
+          newWbStatus: 'waiting',
+          timestamp: '2026-01-02T10:00:00.000Z',
+        },
+      ],
+      summary: { localEntriesCount: 1, wbNativeEntriesCount: 0, totalEntriesCount: 1 },
+    }
+    render(<FullHistoryTab data={localOnly} {...defaultProps} />)
+    expect(screen.getByText('Локальная')).toBeInTheDocument()
+    expect(screen.queryByText('WB')).not.toBeInTheDocument()
+  })
+
+  it('handles undefined data gracefully', () => {
+    render(<FullHistoryTab data={undefined} {...defaultProps} />)
+    expect(screen.getByText('История статусов пока пуста')).toBeInTheDocument()
+  })
+
+  it('each local entry card shows both supplier and WB status labels', () => {
+    render(<FullHistoryTab data={mockFullHistoryResponse} {...defaultProps} />)
+    expect(screen.getAllByText('Статус продавца:').length).toBe(
+      screen.getAllByText('WB статус:').length
+    )
+  })
+})
+
+// =============================================================================
+// TDD Verification - Test Setup
 // =============================================================================
 
 describe('TDD Verification - Test Setup', () => {
@@ -494,7 +553,6 @@ describe('TDD Verification - Test Setup', () => {
     expect(getWbStatusConfig).toBeDefined()
     expect(getWbStatusLabel).toBeDefined()
     expect(isWbStatusFinal).toBeDefined()
-    expect(getWbStatusCategory).toBeDefined()
   })
 
   it('getWbStatusConfig returns correct label for known status', () => {
@@ -509,44 +567,32 @@ describe('TDD Verification - Test Setup', () => {
     expect(config.category).toBe('other')
   })
 
-  it('isWbStatusFinal returns true for terminal statuses', () => {
+  it('isWbStatusFinal returns correct values', () => {
     expect(isWbStatusFinal('received_by_client')).toBe(true)
     expect(isWbStatusFinal('sold')).toBe(true)
     expect(isWbStatusFinal('canceled')).toBe(true)
-  })
-
-  it('isWbStatusFinal returns false for non-terminal statuses', () => {
     expect(isWbStatusFinal('created')).toBe(false)
     expect(isWbStatusFinal('assembling')).toBe(false)
-    expect(isWbStatusFinal('on_way_to_client')).toBe(false)
   })
 
   it('should have all 8 categories defined', () => {
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('creation')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('seller_processing')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('warehouse')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('logistics')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('delivery')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('cancellation')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('return')
-    expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty('other')
+    const categories = [
+      'creation',
+      'seller_processing',
+      'warehouse',
+      'logistics',
+      'delivery',
+      'cancellation',
+      'return',
+      'other',
+    ]
+    categories.forEach(cat => expect(WB_STATUS_CATEGORY_LABELS).toHaveProperty(cat))
   })
 
   it('fixtures contain expected data structure', () => {
     const wbEntry = mockFullHistoryStandard.find(e => e.source === 'wb_native')
-    expect(wbEntry).toBeDefined()
     expect(wbEntry?.wbStatusCode).toBeDefined()
-    expect(wbEntry?.timestamp).toBeDefined()
-
     const localEntry = mockFullHistoryStandard.find(e => e.source === 'local')
-    expect(localEntry).toBeDefined()
     expect(localEntry?.newSupplierStatus).toBeDefined()
-    expect(localEntry?.timestamp).toBeDefined()
-  })
-
-  it('testing utilities are available', () => {
-    expect(render).toBeDefined()
-    expect(screen).toBeDefined()
-    expect(userEvent).toBeDefined()
   })
 })

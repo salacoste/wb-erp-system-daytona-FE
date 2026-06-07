@@ -1,5 +1,5 @@
 /**
- * TDD Tests for SeasonalPatternsChart Component
+ * Tests for SeasonalPatternsChart Component
  * Story 51.6-FE: Seasonal Patterns
  * Epic 51-FE: FBS Historical Analytics UI (365 Days)
  *
@@ -9,380 +9,750 @@
  * @see docs/stories/epic-51/story-51.6-fe-seasonal-patterns.md
  */
 
-import { describe, it } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { SeasonalPatternsChart } from '../SeasonalPatternsChart'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import {
+  mockMonthlyPatterns,
+  mockQuarterlyPatterns,
+  mockSeasonalResponseMonthly,
+  mockSeasonalResponseAll,
+} from '@/test/fixtures/fbs-analytics'
+import type { SeasonalResponse } from '@/types/fbs-analytics'
 
 // ============================================================================
-// Imports to be used when implementing tests
+// Mock recharts (jsdom cannot render SVG dimensions)
 // ============================================================================
-// import { expect, vi, beforeEach } from 'vitest'
-// import { render, screen, waitFor } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-// import { SeasonalPatternsChart } from '../SeasonalPatternsChart'
-// import {
-//   mockMonthlyPatterns,
-//   mockWeekdayPatterns,
-//   mockQuarterlyPatterns,
-//   mockSeasonalInsights,
-//   mockSeasonalResponseAll,
-// } from '@/test/fixtures/fbs-analytics'
+
+vi.mock('recharts', () => {
+  const React = require('react')
+  return {
+    ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="responsive-container">{children}</div>
+    ),
+    BarChart: ({ children, data }: { children: React.ReactNode; data: unknown[] }) => (
+      <div data-testid="bar-chart" data-points={data?.length ?? 0}>
+        {children}
+      </div>
+    ),
+    Bar: ({
+      dataKey,
+      radius,
+      children,
+    }: {
+      dataKey: string
+      radius: number[]
+      children: React.ReactNode
+    }) => (
+      <div data-testid="bar-element" data-datakey={dataKey} data-radius={String(radius)}>
+        {children}
+      </div>
+    ),
+    XAxis: ({ dataKey }: { dataKey: string }) => (
+      <div data-testid="x-axis" data-datakey={dataKey} />
+    ),
+    YAxis: ({ tickFormatter }: { tickFormatter?: unknown }) => (
+      <div data-testid="y-axis" data-has-formatter={String(!!tickFormatter)} />
+    ),
+    CartesianGrid: ({ strokeDasharray }: { strokeDasharray: string }) => (
+      <div data-testid="cartesian-grid" data-stroke-dasharray={strokeDasharray} />
+    ),
+    Tooltip: ({ content }: { content: React.ReactNode }) => (
+      <div data-testid="recharts-tooltip">{content}</div>
+    ),
+    Cell: ({ fill }: { fill: string }) => <div data-testid="chart-cell" data-fill={fill} />,
+  }
+})
 
 // ============================================================================
-// Mock Setup (uncomment when implementing)
+// Mock useFbsSeasonal hook
 // ============================================================================
-// vi.mock('@/hooks/useFbsAnalytics', () => ({
-//   useFbsSeasonal: vi.fn(),
-// }))
+
+const mockUseFbsSeasonal = vi.fn()
+
+vi.mock('@/hooks/useFbsAnalytics', () => ({
+  useFbsSeasonal: (...args: unknown[]) => mockUseFbsSeasonal(...args),
+}))
 
 // ============================================================================
-// Test Setup (uncomment when implementing)
+// Helpers
 // ============================================================================
-// const createWrapper = () => {
-//   const queryClient = new QueryClient({
-//     defaultOptions: { queries: { retry: false } },
-//   })
-//   return ({ children }: { children: React.ReactNode }) => (
-//     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-//   )
-// }
-// beforeEach(() => {
-//   vi.clearAllMocks()
-// })
+
+function mockSuccess(data: SeasonalResponse) {
+  mockUseFbsSeasonal.mockReturnValue({ data, isLoading: false, error: null, refetch: vi.fn() })
+}
+
+function mockLoadingState() {
+  mockUseFbsSeasonal.mockReturnValue({
+    data: undefined,
+    isLoading: true,
+    error: null,
+    refetch: vi.fn(),
+  })
+}
+
+function mockErrorState() {
+  const refetch = vi.fn()
+  mockUseFbsSeasonal.mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    error: new Error('fail'),
+    refetch,
+  })
+  return { refetch }
+}
+
+function mockEmptyState() {
+  mockUseFbsSeasonal.mockReturnValue({
+    data: { patterns: {}, insights: {} },
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  })
+}
+
+function renderChart(overrides: Record<string, unknown> = {}) {
+  return renderWithProviders(<SeasonalPatternsChart months={12} height={350} {...overrides} />)
+}
+
+/** Find the Card root (has rounded-xl class) for className assertions */
+function getCardRoot() {
+  return screen.getByText('Сезонность заказов').closest('.rounded-xl')
+}
 
 // ============================================================================
-// Basic Rendering Tests (~10 tests)
+// Basic Rendering
 // ============================================================================
 
 describe('SeasonalPatternsChart - Basic Rendering', () => {
-  it.todo('should render Card component with title "Сезонность заказов"')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccess(mockSeasonalResponseMonthly)
+  })
 
-  it.todo('should render Tabs component for view switching')
+  it('should render Card with title "Сезонность заказов"', () => {
+    renderChart()
+    expect(screen.getByText('Сезонность заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should render 3 tab triggers (Месяцы, Дни недели, Кварталы)')
+  it('should render tablist for view switching', () => {
+    renderChart()
+    expect(screen.getByRole('tablist')).toBeInTheDocument()
+  })
 
-  it.todo('should render Recharts BarChart component')
+  it('should render 3 tab triggers (Месяцы, Дни недели, Кварталы)', () => {
+    renderChart()
+    expect(screen.getByRole('tab', { name: 'Месяцы' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Дни недели' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Кварталы' })).toBeInTheDocument()
+  })
 
-  it.todo('should render ResponsiveContainer for responsive sizing')
+  it('should render BarChart component', () => {
+    renderChart()
+    expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
+  })
 
-  it.todo('should render XAxis with category labels')
+  it('should render ResponsiveContainer', () => {
+    renderChart()
+    expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
+  })
 
-  it.todo('should render YAxis with numeric scale')
+  it('should render XAxis with "name" dataKey', () => {
+    renderChart()
+    expect(screen.getByTestId('x-axis').dataset.datakey).toBe('name')
+  })
 
-  it.todo('should render Bar elements for data visualization')
+  it('should render YAxis with formatter', () => {
+    renderChart()
+    expect(screen.getByTestId('y-axis').dataset.hasFormatter).toBe('true')
+  })
 
-  it.todo('should use default height of 350px')
+  it('should render Bar with "value" dataKey', () => {
+    renderChart()
+    expect(screen.getByTestId('bar-element').dataset.datakey).toBe('value')
+  })
 
-  it.todo('should accept custom className prop')
+  it('should accept custom className prop', () => {
+    renderChart({ className: 'my-class' })
+    expect(getCardRoot()?.className).toContain('my-class')
+  })
 })
 
 // ============================================================================
-// Tab Navigation Tests (~10 tests)
+// Tab Navigation
 // ============================================================================
 
 describe('SeasonalPatternsChart - Tab Navigation', () => {
-  it.todo('should default to "Месяцы" (monthly) tab')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccess(mockSeasonalResponseAll)
+  })
 
-  it.todo('should switch to "Дни недели" (weekly) tab on click')
+  it('should default to "Месяцы" tab active', () => {
+    renderChart()
+    expect(screen.getByRole('tab', { name: 'Месяцы' })).toHaveAttribute('data-state', 'active')
+  })
 
-  it.todo('should switch to "Кварталы" (quarterly) tab on click')
+  it('should switch to "Дни недели" on click', async () => {
+    renderChart()
+    const weeklyTab = screen.getByRole('tab', { name: 'Дни недели' })
+    await userEvent.setup().click(weeklyTab)
+    expect(weeklyTab).toHaveAttribute('data-state', 'active')
+  })
 
-  it.todo('should highlight active tab with primary color')
+  it('should switch to "Кварталы" on click', async () => {
+    renderChart()
+    const quarterlyTab = screen.getByRole('tab', { name: 'Кварталы' })
+    await userEvent.setup().click(quarterlyTab)
+    expect(quarterlyTab).toHaveAttribute('data-state', 'active')
+  })
 
-  it.todo('should dim inactive tabs with muted color')
+  it('should pass view and months to useFbsSeasonal', () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart()
+    expect(mockUseFbsSeasonal).toHaveBeenCalledWith(
+      expect.objectContaining({ view: 'monthly', months: 12 })
+    )
+  })
 
-  it.todo('should trigger data refetch on tab change')
+  it('should call hook with updated view on tab change', async () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    expect(mockUseFbsSeasonal).toHaveBeenCalledWith(expect.objectContaining({ view: 'weekly' }))
+  })
 
-  it.todo('should preserve selection during session')
+  it('should update chart data points when switching to weekly', async () => {
+    renderChart()
+    // Default monthly: 12 points
+    expect(screen.getByTestId('bar-chart').dataset.points).toBe('12')
 
-  it.todo('should support keyboard navigation between tabs')
+    // After clicking weekly tab: 7 points
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(screen.getByTestId('bar-chart').dataset.points).toBe('7')
+    })
+  })
 
-  it.todo('should update chart data when tab changes')
+  it('should update chart data points when switching to quarterly', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(screen.getByTestId('bar-chart').dataset.points).toBe('4')
+    })
+  })
 
-  it.todo('should show loading state while changing tabs')
+  it('should show loading state when tab changes to loading', async () => {
+    mockSuccess(mockSeasonalResponseAll)
+    renderChart()
+    expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
+    mockLoadingState()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument()
+  })
+
+  it('should support keyboard focus navigation between tabs', async () => {
+    renderChart()
+    const monthlyTab = screen.getByRole('tab', { name: 'Месяцы' })
+    monthlyTab.focus()
+    expect(document.activeElement).toBe(monthlyTab)
+    await userEvent.setup().keyboard('{ArrowRight}')
+    await waitFor(() => {
+      expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Дни недели' }))
+    })
+  })
+
+  it('should render 3 tabs inside tablist', () => {
+    renderChart()
+    expect(screen.getByRole('tablist').querySelectorAll('[role="tab"]')).toHaveLength(3)
+  })
 })
 
 // ============================================================================
-// Monthly View Tests (~12 tests)
+// Monthly View
 // ============================================================================
 
 describe('SeasonalPatternsChart - Monthly View', () => {
-  it.todo('should display 12 bars for each month')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccess(mockSeasonalResponseMonthly)
+  })
 
-  it.todo('should use Russian month names (Янв, Фев, Мар...)')
+  it('should display 12 bars for each month', () => {
+    renderChart()
+    expect(screen.getByTestId('bar-chart').dataset.points).toBe('12')
+  })
 
-  it.todo('should show avgOrders value for each month')
+  it('should map data count to fixture length', () => {
+    renderChart()
+    expect(screen.getByTestId('bar-chart').dataset.points).toBe(String(mockMonthlyPatterns.length))
+  })
 
-  it.todo('should highlight peak month with accent color')
+  it('should highlight peak month (December) with green', () => {
+    renderChart()
+    expect(screen.getAllByTestId('chart-cell').find(c => c.dataset.fill === '#22C55E')).toBeTruthy()
+  })
 
-  it.todo('should highlight low month with muted/dimmed color')
+  it('should highlight low month (July) with red', () => {
+    renderChart()
+    expect(screen.getAllByTestId('chart-cell').find(c => c.dataset.fill === '#EF4444')).toBeTruthy()
+  })
 
-  it.todo('should format Y-axis labels with Russian locale')
+  it('should render CartesianGrid with dashed stroke', () => {
+    renderChart()
+    expect(screen.getByTestId('cartesian-grid').dataset.strokeDasharray).toBe('3 3')
+  })
 
-  it.todo('should show tooltip on bar hover')
+  it('should render chart region with aria-label containing "Месяцы"', () => {
+    renderChart()
+    expect(screen.getByRole('img', { name: /График сезонности: Месяцы/ })).toBeInTheDocument()
+  })
 
-  it.todo('should display month name in tooltip header')
+  it('should handle partial month data', () => {
+    mockSuccess({
+      patterns: {
+        monthly: [
+          { month: 'January', avgOrders: 100, avgRevenue: 150000 },
+          { month: 'June', avgOrders: 80, avgRevenue: 120000 },
+        ],
+      },
+      insights: {
+        peakMonth: 'January',
+        lowMonth: 'June',
+        peakDayOfWeek: 'Monday',
+        seasonalityIndex: 0.5,
+      },
+    })
+    renderChart()
+    expect(screen.getByTestId('bar-chart').dataset.points).toBe('2')
+  })
 
-  it.todo('should display avgOrders and avgRevenue in tooltip')
+  it('should use rounded top corners on bars', () => {
+    renderChart()
+    expect(screen.getByTestId('bar-element').dataset.radius).toBe('4,4,0,0')
+  })
 
-  it.todo('should handle missing months gracefully')
+  it('should render custom tooltip', () => {
+    renderChart()
+    expect(screen.getByTestId('recharts-tooltip')).toBeInTheDocument()
+  })
 
-  it.todo('should sort bars chronologically (Jan-Dec)')
-
-  it.todo('should adjust bar width based on container width')
+  it('should render 12 cells matching data points', () => {
+    renderChart()
+    expect(screen.getAllByTestId('chart-cell')).toHaveLength(12)
+  })
 })
 
 // ============================================================================
-// Weekly (Day of Week) View Tests (~10 tests)
+// Weekly View (tested via tab switch with All data)
 // ============================================================================
 
 describe('SeasonalPatternsChart - Weekly View', () => {
-  it.todo('should display 7 bars for each day of week')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccess(mockSeasonalResponseAll)
+  })
 
-  it.todo('should use Russian day names (Вс, Пн, Вт...)')
+  it('should display 7 bars after switching to weekly tab', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(screen.getByTestId('bar-chart').dataset.points).toBe('7')
+    })
+  })
 
-  it.todo('should show avgOrders value for each day')
+  it('should highlight busiest day (Friday) with peak color', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(
+        screen.getAllByTestId('chart-cell').find(c => c.dataset.fill === '#22C55E')
+      ).toBeTruthy()
+    })
+  })
 
-  it.todo('should highlight busiest day with accent color')
+  it('should highlight slowest day (Sunday) with low color', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(
+        screen.getAllByTestId('chart-cell').find(c => c.dataset.fill === '#EF4444')
+      ).toBeTruthy()
+    })
+  })
 
-  it.todo('should start week from Monday (Russian convention)')
+  it('should use default blue for 5 non-peak/non-low days', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(
+        screen.getAllByTestId('chart-cell').filter(c => c.dataset.fill === '#3B82F6')
+      ).toHaveLength(5)
+    })
+  })
 
-  it.todo('should show tooltip with day name and value')
+  it('should render aria-label with "Дни недели" after tab switch', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(screen.getByRole('img', { name: /График сезонности: Дни недели/ })).toBeInTheDocument()
+    })
+  })
 
-  it.todo('should indicate weekend days with different styling')
+  it('should render 7 cells after switching to weekly', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(screen.getAllByTestId('chart-cell')).toHaveLength(7)
+    })
+  })
 
-  it.todo('should handle incomplete week data gracefully')
-
-  it.todo('should format values in tooltip')
-
-  it.todo('should adjust Y-axis scale based on data range')
+  it('should render tooltip for weekly view', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    expect(screen.getByTestId('recharts-tooltip')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Quarterly View Tests (~10 tests)
+// Quarterly View (tested via tab switch with All data)
 // ============================================================================
 
 describe('SeasonalPatternsChart - Quarterly View', () => {
-  it.todo('should display 4 bars for each quarter')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccess(mockSeasonalResponseAll)
+  })
 
-  it.todo('should use quarter labels (Q1, Q2, Q3, Q4)')
+  it('should display 4 bars after switching to quarterly tab', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(screen.getByTestId('bar-chart').dataset.points).toBe('4')
+    })
+  })
 
-  it.todo('should show avgOrders and avgRevenue for each quarter')
+  it('should map data points to quarter fixture count', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(screen.getByTestId('bar-chart').dataset.points).toBe(
+        String(mockQuarterlyPatterns.length)
+      )
+    })
+  })
 
-  it.todo('should highlight best performing quarter')
+  it('should highlight best quarter (Q4) with peak color', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(
+        screen.getAllByTestId('chart-cell').find(c => c.dataset.fill === '#22C55E')
+      ).toBeTruthy()
+    })
+  })
 
-  it.todo('should show tooltip with quarter details')
+  it('should highlight worst quarter (Q3) with low color', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(
+        screen.getAllByTestId('chart-cell').find(c => c.dataset.fill === '#EF4444')
+      ).toBeTruthy()
+    })
+  })
 
-  it.todo('should display quarter months range in tooltip (Янв-Мар)')
+  it('should render 4 cells matching data points', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(screen.getAllByTestId('chart-cell')).toHaveLength(4)
+    })
+  })
 
-  it.todo('should format revenue as currency in tooltip')
+  it('should render aria-label with "Кварталы" after tab switch', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(screen.getByRole('img', { name: /График сезонности: Кварталы/ })).toBeInTheDocument()
+    })
+  })
 
-  it.todo('should handle partial year data')
-
-  it.todo('should adjust bar width for 4 bars')
-
-  it.todo('should show year-over-year comparison if available')
+  it('should render tooltip for quarterly view', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    expect(screen.getByTestId('recharts-tooltip')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Insights Panel Tests (~12 tests)
-// ============================================================================
-
-describe('SeasonalPatternsChart - Insights Panel', () => {
-  it.todo('should render insights section below chart')
-
-  it.todo('should display "Лучший месяц: Декабрь" for peak month')
-
-  it.todo('should display "Слабый месяц: Июль" for low month')
-
-  it.todo('should display "Лучший день: Пятница" for peak day')
-
-  it.todo('should display seasonality index as percentage')
-
-  it.todo('should show icon indicators for insights')
-
-  it.todo('should use green color for positive insights')
-
-  it.todo('should use red/amber color for negative insights')
-
-  it.todo('should show tooltip explaining seasonality index')
-
-  it.todo('should translate month names to Russian')
-
-  it.todo('should translate day names to Russian')
-
-  it.todo('should hide insights when data is insufficient')
-})
-
-// ============================================================================
-// Loading State Tests (~6 tests)
+// Loading State
 // ============================================================================
 
 describe('SeasonalPatternsChart - Loading State', () => {
-  it.todo('should show skeleton chart during loading')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockLoadingState()
+  })
 
-  it.todo('should show skeleton tabs during loading')
+  it('should show card title during loading', () => {
+    renderChart()
+    expect(screen.getByText('Сезонность заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should skeleton match chart dimensions')
+  it('should not show chart during loading', () => {
+    renderChart()
+    expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument()
+  })
 
-  it.todo('should hide insights panel during loading')
+  it('should not show tabs during loading', () => {
+    renderChart()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+  })
 
-  it.todo('should maintain tabs clickable during loading')
+  it('should not show error during loading', () => {
+    renderChart()
+    expect(screen.queryByText('Не удалось загрузить данные сезонности.')).not.toBeInTheDocument()
+  })
 
-  it.todo('should apply animate-pulse to skeleton')
+  it('should accept custom className during loading', () => {
+    renderChart({ className: 'loading-class' })
+    expect(getCardRoot()?.className).toContain('loading-class')
+  })
 })
 
 // ============================================================================
-// Error State Tests (~8 tests)
+// Error State
 // ============================================================================
 
 describe('SeasonalPatternsChart - Error State', () => {
-  it.todo('should show error alert on fetch failure')
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-  it.todo('should display error message in Russian')
+  it('should show error alert on fetch failure', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByText('Не удалось загрузить данные сезонности.')).toBeInTheDocument()
+  })
 
-  it.todo('should show AlertCircle icon')
+  it('should render "Повторить" retry button', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByText('Повторить')).toBeInTheDocument()
+  })
 
-  it.todo('should render "Повторить" retry button')
+  it('should call refetch when retry clicked', async () => {
+    const { refetch } = mockErrorState()
+    renderChart()
+    await userEvent.setup().click(screen.getByText('Повторить'))
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
 
-  it.todo('should call refetch when retry clicked')
+  it('should hide chart on error', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument()
+  })
 
-  it.todo('should preserve selected tab on error')
+  it('should show destructive alert variant', () => {
+    mockErrorState()
+    renderChart()
+    const alertEl = screen.getByRole('alert')
+    expect(alertEl.className).toContain('destructive')
+  })
 
-  it.todo('should hide chart on error')
+  it('should render card title even on error', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByText('Сезонность заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should show destructive alert variant')
+  it('should accept custom className in error state', () => {
+    mockErrorState()
+    renderChart({ className: 'error-class' })
+    expect(getCardRoot()?.className).toContain('error-class')
+  })
 })
 
 // ============================================================================
-// Empty State Tests (~6 tests)
+// Empty State
 // ============================================================================
 
 describe('SeasonalPatternsChart - Empty State', () => {
-  it.todo('should show empty state when no data')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockEmptyState()
+  })
 
-  it.todo('should display message "Нет данных за выбранный период"')
+  it('should show "Нет данных за выбранный период"', () => {
+    renderChart()
+    expect(screen.getByText('Нет данных за выбранный период')).toBeInTheDocument()
+  })
 
-  it.todo('should hide chart bars when empty')
+  it('should hide chart when empty', () => {
+    renderChart()
+    expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument()
+  })
 
-  it.todo('should hide insights when empty')
+  it('should maintain tab navigation in empty state', () => {
+    renderChart()
+    expect(screen.getByRole('tablist')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Месяцы' })).toBeInTheDocument()
+  })
 
-  it.todo('should suggest collecting more data')
-
-  it.todo('should maintain tab navigation in empty state')
+  it('should render card title in empty state', () => {
+    renderChart()
+    expect(screen.getByText('Сезонность заказов')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Tooltip Tests (~8 tests)
-// ============================================================================
-
-describe('SeasonalPatternsChart - Tooltip', () => {
-  it.todo('should show tooltip on bar hover')
-
-  it.todo('should render custom SeasonalTooltip component')
-
-  it.todo('should format orders count')
-
-  it.todo('should format revenue as currency')
-
-  it.todo('should show comparison to average')
-
-  it.todo('should position tooltip near cursor')
-
-  it.todo('should hide tooltip on mouse leave')
-
-  it.todo('should support touch interactions')
-})
-
-// ============================================================================
-// Responsive Design Tests (~6 tests)
-// ============================================================================
-
-describe('SeasonalPatternsChart - Responsive Design', () => {
-  it.todo('should fill container width (100%)')
-
-  it.todo('should use default height of 350px')
-
-  it.todo('should respect custom height prop')
-
-  it.todo('should adjust label rotation on small screens')
-
-  it.todo('should stack insights vertically on mobile')
-
-  it.todo('should maintain touch-friendly bar width')
-})
-
-// ============================================================================
-// Accessibility Tests (~8 tests)
+// Accessibility
 // ============================================================================
 
 describe('SeasonalPatternsChart - Accessibility', () => {
-  it.todo('should have ARIA label for chart region')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccess(mockSeasonalResponseAll)
+  })
 
-  it.todo('should make tabs keyboard navigable')
+  it('should have role="img" on chart region', () => {
+    renderChart()
+    expect(screen.getByRole('img', { name: /График сезонности/ })).toBeInTheDocument()
+  })
 
-  it.todo('should announce tab selection to screen readers')
+  it('should have data-state="active" on active tab', () => {
+    renderChart()
+    expect(screen.getByRole('tab', { name: 'Месяцы' })).toHaveAttribute('data-state', 'active')
+  })
 
-  it.todo('should have aria-selected on active tab')
+  it('should have 3 tabs with proper names', () => {
+    renderChart()
+    const tabs = screen.getAllByRole('tab')
+    expect(tabs).toHaveLength(3)
+    tabs.forEach(tab => expect(tab).toHaveAttribute('role', 'tab'))
+  })
 
-  it.todo('should provide text alternatives for visual insights')
+  it('should update aria-label when switching to weekly tab', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Дни недели' }))
+    await waitFor(() => {
+      expect(screen.getByRole('img', { name: 'График сезонности: Дни недели' })).toBeInTheDocument()
+    })
+  })
 
-  it.todo('should have sufficient color contrast')
-
-  it.todo('should support aria-describedby for complex content')
-
-  it.todo('should meet WCAG 2.1 AA requirements')
+  it('should update aria-label when switching to quarterly tab', async () => {
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    await waitFor(() => {
+      expect(screen.getByRole('img', { name: 'График сезонности: Кварталы' })).toBeInTheDocument()
+    })
+  })
 })
 
 // ============================================================================
-// Animation Tests (~6 tests)
-// ============================================================================
-
-describe('SeasonalPatternsChart - Animation', () => {
-  it.todo('should animate bar entrance on data load')
-
-  it.todo('should animate bar height changes on data update')
-
-  it.todo('should animate tab content transition')
-
-  it.todo('should respect prefers-reduced-motion')
-
-  it.todo('should use consistent animation duration')
-
-  it.todo('should not animate during initial server render')
-})
-
-// ============================================================================
-// Integration Tests (~8 tests)
+// Integration
 // ============================================================================
 
 describe('SeasonalPatternsChart - Integration', () => {
-  it.todo('should integrate with useFbsSeasonal hook')
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-  it.todo('should pass months parameter to hook')
+  it('should call useFbsSeasonal hook on mount', () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart()
+    expect(mockUseFbsSeasonal).toHaveBeenCalledTimes(1)
+  })
 
-  it.todo('should pass view type to hook on tab change')
+  it('should pass months prop to hook', () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart({ months: 6 })
+    expect(mockUseFbsSeasonal).toHaveBeenCalledWith(expect.objectContaining({ months: 6 }))
+  })
 
-  it.todo('should handle hook loading state')
+  it('should pass view type to hook on tab change', async () => {
+    mockSuccess(mockSeasonalResponseAll)
+    renderChart()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Кварталы' }))
+    expect(mockUseFbsSeasonal).toHaveBeenCalledWith(expect.objectContaining({ view: 'quarterly' }))
+  })
 
-  it.todo('should handle hook error state')
+  it('should use default months=12 when not specified', () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderWithProviders(<SeasonalPatternsChart />)
+    expect(mockUseFbsSeasonal).toHaveBeenCalledWith(expect.objectContaining({ months: 12 }))
+  })
 
-  it.todo('should refetch on months prop change')
+  it('should handle all states (loading -> error -> success)', () => {
+    mockLoadingState()
+    const { unmount: u1 } = renderChart()
+    expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument()
+    u1()
 
-  it.todo('should compose with OrdersAnalyticsPage')
+    mockErrorState()
+    const { unmount: u2 } = renderChart()
+    expect(screen.getByText('Не удалось загрузить данные сезонности.')).toBeInTheDocument()
+    u2()
 
-  it.todo('should work alongside TrendsSummaryCards')
-})
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart()
+    expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
+  })
 
-// ============================================================================
-// Performance Tests (~4 tests)
-// ============================================================================
+  it('should render all chart sub-components', () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart()
+    expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
+    expect(screen.getByTestId('bar-element')).toBeInTheDocument()
+    expect(screen.getByTestId('x-axis')).toBeInTheDocument()
+    expect(screen.getByTestId('y-axis')).toBeInTheDocument()
+    expect(screen.getByTestId('cartesian-grid')).toBeInTheDocument()
+    expect(screen.getByTestId('recharts-tooltip')).toBeInTheDocument()
+    expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
+  })
 
-describe('SeasonalPatternsChart - Performance', () => {
-  it.todo('should render efficiently with 12 months data')
+  it('should handle large dataset without errors', () => {
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ]
+    mockSuccess({
+      patterns: {
+        monthly: monthNames.map(m => ({
+          month: m,
+          avgOrders: 1000 + Math.floor(Math.random() * 2000),
+          avgRevenue: 1500000,
+        })),
+      },
+      insights: {
+        peakMonth: 'December',
+        lowMonth: 'July',
+        peakDayOfWeek: 'Friday',
+        seasonalityIndex: 0.72,
+      },
+    })
+    expect(() => renderChart()).not.toThrow()
+    expect(screen.getByTestId('bar-chart').dataset.points).toBe('12')
+  })
 
-  it.todo('should memoize axis formatters')
-
-  it.todo('should not re-render on unrelated prop changes')
-
-  it.todo('should lazy load inactive tab content')
+  it('should use at most 3 distinct bar colors', () => {
+    mockSuccess(mockSeasonalResponseMonthly)
+    renderChart()
+    const fills = new Set(screen.getAllByTestId('chart-cell').map(c => c.dataset.fill))
+    expect(fills.size).toBeLessThanOrEqual(3)
+  })
 })

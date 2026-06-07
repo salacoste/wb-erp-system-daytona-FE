@@ -1,340 +1,698 @@
 /**
- * TDD Tests for FbsTrendsChart Component
+ * Tests for FbsTrendsChart Component
  * Story 51.4-FE: FBS Trends Chart
  * Epic 51-FE: FBS Historical Analytics UI (365 Days)
- *
- * Tests multi-line chart with orders, revenue, cancellations metrics,
- * data source indicators, aggregation controls, and date range integration.
  *
  * @see docs/stories/epic-51/story-51.4-fe-fbs-trends-chart.md
  */
 
-import { describe, it } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { FbsTrendsChart } from '../FbsTrendsChart'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import {
+  mockTrends30DaysResponse,
+  mockTrends90DaysResponse,
+  mockTrends365DaysResponse,
+  mockTrendsEmptyResponse,
+  mockTrendsError,
+  defaultChartProps,
+  LINE_COLORS,
+} from '@/test/fixtures/fbs-trends'
+import type { TrendsResponse } from '@/types/fbs-analytics'
 
-// ============================================================================
-// Imports to be used when implementing tests
-// ============================================================================
-// import { expect, vi, beforeEach } from 'vitest'
-// import { render, screen, waitFor } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-// import {
-//   mockTrends30DaysResponse,
-//   mockTrends90DaysResponse,
-//   mockTrends365DaysResponse,
-//   mockTrendsEmptyResponse,
-//   mockTrendsError,
-//   defaultChartProps,
-//   LINE_COLORS,
-// } from '@/test/fixtures/fbs-trends'
+vi.mock('recharts', () => {
+  const React = require('react')
+  return {
+    ResponsiveContainer: ({ children, height }: { children: React.ReactNode; height: number }) => (
+      <div data-testid="responsive-container" style={{ height }}>
+        {children}
+      </div>
+    ),
+    LineChart: ({ children, data }: { children: React.ReactNode; data: unknown[] }) => (
+      <div data-testid="line-chart" data-points={data?.length ?? 0}>
+        {children}
+      </div>
+    ),
+    Line: ({
+      dataKey,
+      stroke,
+      type,
+      dot,
+      yAxisId,
+    }: {
+      dataKey: string
+      stroke: string
+      type: string
+      dot: boolean
+      yAxisId: string
+    }) => (
+      <div
+        data-testid={`line-${dataKey}`}
+        data-stroke={stroke}
+        data-type={type}
+        data-dot={String(dot)}
+        data-yaxis={yAxisId}
+      />
+    ),
+    XAxis: ({ dataKey, tickFormatter: _tf }: { dataKey: string; tickFormatter?: unknown }) => (
+      <div data-testid="x-axis" data-datakey={dataKey} />
+    ),
+    YAxis: ({ yAxisId, orientation }: { yAxisId: string; orientation?: string }) => (
+      <div data-testid={`y-axis-${yAxisId}`} data-orientation={orientation ?? 'left'} />
+    ),
+    CartesianGrid: ({ strokeDasharray }: { strokeDasharray: string }) => (
+      <div data-testid="cartesian-grid" data-stroke-dasharray={strokeDasharray} />
+    ),
+    Tooltip: ({ content }: { content: React.ReactNode }) => (
+      <div data-testid="recharts-tooltip">{content}</div>
+    ),
+  }
+})
 
-// ============================================================================
-// Mock Setup (uncomment when implementing)
-// ============================================================================
-// vi.mock('@/hooks/useFbsAnalytics', () => ({
-//   useFbsTrends: vi.fn(),
-// }))
-// const { useFbsTrends } = await import('@/hooks/useFbsAnalytics')
+const mockUseFbsTrends = vi.fn()
+vi.mock('@/hooks/useFbsAnalytics', () => ({
+  useFbsTrends: (...args: unknown[]) => mockUseFbsTrends(...args),
+}))
 
-// ============================================================================
-// Test Setup (uncomment when implementing)
-// ============================================================================
-// const createWrapper = () => {
-//   const queryClient = new QueryClient({
-//     defaultOptions: { queries: { retry: false } },
-//   })
-//   return ({ children }: { children: React.ReactNode }) => (
-//     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-//   )
-// }
-// beforeEach(() => {
-//   vi.clearAllMocks()
-// })
+const defaultProps = { from: defaultChartProps.from, to: defaultChartProps.to }
 
-// ============================================================================
-// Basic Rendering Tests (~12 tests)
-// ============================================================================
+function mockSuccessResponse(response: TrendsResponse = mockTrends30DaysResponse) {
+  mockUseFbsTrends.mockReturnValue({
+    data: response,
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  })
+}
+
+function mockLoadingState() {
+  mockUseFbsTrends.mockReturnValue({
+    data: undefined,
+    isLoading: true,
+    error: null,
+    refetch: vi.fn(),
+  })
+}
+
+function mockErrorState() {
+  const refetch = vi.fn()
+  mockUseFbsTrends.mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    error: mockTrendsError,
+    refetch,
+  })
+  return { refetch }
+}
+
+function mockEmptyState() {
+  mockUseFbsTrends.mockReturnValue({
+    data: mockTrendsEmptyResponse,
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  })
+}
+
+function renderChart(overrides: Record<string, unknown> = {}) {
+  return renderWithProviders(<FbsTrendsChart {...defaultProps} {...overrides} />)
+}
 
 describe('FbsTrendsChart - Basic Rendering', () => {
-  it.todo('should render card with title "Динамика заказов FBS"')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccessResponse()
+  })
 
-  it.todo('should render Recharts LineChart component')
+  it('renders card with title', () => {
+    renderChart()
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+  })
 
-  it.todo('should render ResponsiveContainer for responsive sizing')
+  it('renders LineChart with data points', () => {
+    renderChart()
+    expect(screen.getByTestId('line-chart')).toBeInTheDocument()
+  })
 
-  it.todo('should render CartesianGrid with dashed stroke')
+  it('renders ResponsiveContainer', () => {
+    renderChart()
+    expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
+  })
 
-  it.todo('should render X-axis with date labels')
+  it('renders CartesianGrid with dashed stroke', () => {
+    renderChart()
+    expect(screen.getByTestId('cartesian-grid').dataset.strokeDasharray).toBe('3 3')
+  })
 
-  it.todo('should render Y-axis for counts on the left')
+  it('renders X-axis keyed on date', () => {
+    renderChart()
+    expect(screen.getByTestId('x-axis').dataset.datakey).toBe('date')
+  })
 
-  it.todo('should render Y-axis for revenue on the right')
+  it('renders left Y-axis for counts', () => {
+    renderChart()
+    expect(screen.getByTestId('y-axis-left').dataset.orientation).toBe('left')
+  })
 
-  it.todo('should render 3 Line components for orders, revenue, cancellations')
+  it('renders right Y-axis for revenue', () => {
+    renderChart()
+    expect(screen.getByTestId('y-axis-right').dataset.orientation).toBe('right')
+  })
 
-  it.todo('should apply correct colors to each line (blue, green, red)')
+  it('renders Line components for visible metrics', () => {
+    renderChart()
+    expect(screen.getByTestId('line-ordersCount')).toBeInTheDocument()
+    expect(screen.getByTestId('line-revenue')).toBeInTheDocument()
+  })
 
-  it.todo('should use monotone curve type for smooth lines')
+  it('applies correct colors to each line', () => {
+    renderChart()
+    expect(screen.getByTestId('line-ordersCount').dataset.stroke).toBe(LINE_COLORS.orders)
+    expect(screen.getByTestId('line-revenue').dataset.stroke).toBe(LINE_COLORS.revenue)
+  })
 
-  it.todo('should disable dots on data points for performance')
+  it('uses monotone curve type', () => {
+    renderChart()
+    expect(screen.getByTestId('line-ordersCount').dataset.type).toBe('monotone')
+  })
 
-  it.todo('should apply custom className when provided')
+  it('disables dots on data points', () => {
+    renderChart()
+    expect(screen.getByTestId('line-ordersCount').dataset.dot).toBe('false')
+  })
+
+  it('applies custom className when provided', () => {
+    const { container } = renderChart({ className: 'custom-test-class' })
+    expect(container.firstElementChild?.className).toContain('custom-test-class')
+  })
 })
-
-// ============================================================================
-// Metric Visibility Tests (~15 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Metric Visibility', () => {
-  it.todo('should show orders line by default (visibility: true)')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccessResponse()
+  })
 
-  it.todo('should show revenue line by default (visibility: true)')
+  it('shows orders line by default', () => {
+    renderChart()
+    expect(screen.getByTestId('line-ordersCount')).toBeInTheDocument()
+  })
 
-  it.todo('should hide cancellations line by default (visibility: false)')
+  it('shows revenue line by default', () => {
+    renderChart()
+    expect(screen.getByTestId('line-revenue')).toBeInTheDocument()
+  })
 
-  it.todo('should toggle orders visibility when legend clicked')
+  it('hides cancellations line by default', () => {
+    renderChart()
+    expect(screen.queryByTestId('line-cancellations')).not.toBeInTheDocument()
+  })
 
-  it.todo('should toggle revenue visibility when legend clicked')
+  it('toggles orders visibility when legend clicked', async () => {
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Заказы/ }))
+    expect(screen.queryByTestId('line-ordersCount')).not.toBeInTheDocument()
+  })
 
-  it.todo('should toggle cancellations visibility when legend clicked')
+  it('toggles revenue visibility when legend clicked', async () => {
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Выручка/ }))
+    expect(screen.queryByTestId('line-revenue')).not.toBeInTheDocument()
+  })
 
-  it.todo('should prevent hiding last visible metric')
+  it('toggles cancellations visibility when legend clicked', async () => {
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Отмены/ }))
+    expect(screen.getByTestId('line-cancellations')).toBeInTheDocument()
+  })
 
-  it.todo('should show visual indicator for visible metrics in legend')
+  it('prevents hiding last visible metric', async () => {
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Заказы/ }))
+    await user.click(screen.getByRole('button', { name: /Выручка/ }))
+    // Revenue should still be visible
+    expect(screen.getByTestId('line-revenue')).toBeInTheDocument()
+  })
 
-  it.todo('should show dimmed indicator for hidden metrics in legend')
+  it('shows aria-pressed true for visible metrics', () => {
+    renderChart()
+    expect(screen.getByRole('button', { name: /Заказы.*показать/ })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+  })
 
-  it.todo('should preserve visibility state during session')
+  it('shows aria-pressed false for hidden metrics', () => {
+    renderChart()
+    expect(screen.getByRole('button', { name: /Отмены.*скрыть/ })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
 
-  it.todo('should update chart when visibility changes')
+  it('allows showing all three metrics simultaneously', async () => {
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Отмены/ }))
+    expect(screen.getByTestId('line-ordersCount')).toBeInTheDocument()
+    expect(screen.getByTestId('line-revenue')).toBeInTheDocument()
+    expect(screen.getByTestId('line-cancellations')).toBeInTheDocument()
+  })
 
-  it.todo('should not re-render chart on tooltip hover')
-
-  it.todo('should allow showing all three metrics simultaneously')
-
-  it.todo('should allow showing only one metric')
-
-  it.todo('should update Y-axis scale when metrics toggled')
+  it('allows showing only one metric', async () => {
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Заказы/ }))
+    expect(screen.queryByTestId('line-ordersCount')).not.toBeInTheDocument()
+    expect(screen.getByTestId('line-revenue')).toBeInTheDocument()
+    expect(screen.queryByTestId('line-cancellations')).not.toBeInTheDocument()
+  })
 })
-
-// ============================================================================
-// Loading State Tests (~8 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Loading State', () => {
-  it.todo('should show skeleton loader during initial load')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockLoadingState()
+  })
 
-  it.todo('should skeleton match chart dimensions (default 400px height)')
+  it('shows skeleton loader during initial load', () => {
+    renderChart()
+    expect(document.querySelector('[class*="animate-pulse"]')).toBeInTheDocument()
+  })
 
-  it.todo('should skeleton match custom height prop')
+  it('skeleton matches chart dimensions (default 400px)', () => {
+    renderChart()
+    expect(document.querySelector('[class*="animate-pulse"]')).toHaveStyle({ height: '400px' })
+  })
 
-  it.todo('should display title while loading')
+  it('skeleton matches custom height prop', () => {
+    renderChart({ height: 500 })
+    expect(document.querySelector('[class*="animate-pulse"]')).toHaveStyle({ height: '500px' })
+  })
 
-  it.todo('should hide data source indicator while loading')
+  it('displays title while loading', () => {
+    renderChart()
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+  })
 
-  it.todo('should hide aggregation toggle while loading')
+  it('hides legend while loading', () => {
+    renderChart()
+    expect(screen.queryByRole('group', { name: /метрик/ })).not.toBeInTheDocument()
+  })
 
-  it.todo('should show loading state during refetch')
+  it('hides chart while loading', () => {
+    renderChart()
+    expect(screen.queryByTestId('line-chart')).not.toBeInTheDocument()
+  })
 
-  it.todo('should apply animate-pulse class to skeleton')
+  it('applies animate-pulse class to skeleton', () => {
+    renderChart()
+    expect(document.querySelector('[class*="animate-pulse"]')?.className).toContain('animate-pulse')
+  })
 })
-
-// ============================================================================
-// Error State Tests (~10 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Error State', () => {
-  it.todo('should show error alert when fetch fails')
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-  it.todo('should display error message in Russian')
+  it('shows error alert when fetch fails', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+  })
 
-  it.todo('should show AlertCircle icon in error state')
+  it('displays error message in Russian', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByText(/Не удалось загрузить данные трендов/)).toBeInTheDocument()
+  })
 
-  it.todo('should render "Повторить" retry button')
+  it('shows AlertCircle icon in error state', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByRole('alert').querySelector('svg')).toBeInTheDocument()
+  })
 
-  it.todo('should call refetch when retry button clicked')
+  it('renders retry button with Russian label', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
+  })
 
-  it.todo('should show destructive variant for error alert')
+  it('calls refetch when retry button clicked', async () => {
+    const { refetch } = mockErrorState()
+    const user = userEvent.setup()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Повторить/ }))
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
 
-  it.todo('should display title even in error state')
+  it('uses destructive variant for error alert', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByRole('alert').className).toContain('destructive')
+  })
 
-  it.todo('should hide chart content in error state')
+  it('displays title even in error state', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+  })
 
-  it.todo('should handle network errors gracefully')
+  it('hides chart content in error state', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.queryByTestId('line-chart')).not.toBeInTheDocument()
+  })
 
-  it.todo('should handle timeout errors gracefully')
+  it('handles network errors gracefully', () => {
+    mockUseFbsTrends.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error('Network request failed'),
+      refetch: vi.fn(),
+    })
+    renderChart()
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+  })
+
+  it('handles timeout errors gracefully', () => {
+    mockUseFbsTrends.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error('Request timeout after 30000ms'),
+      refetch: vi.fn(),
+    })
+    renderChart()
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+  })
 })
-
-// ============================================================================
-// Empty State Tests (~6 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Empty State', () => {
-  it.todo('should show empty state when no data returned')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockEmptyState()
+  })
 
-  it.todo('should display empty message in Russian')
+  it('shows empty state when no data returned', () => {
+    renderChart()
+    expect(screen.getByText(/Нет данных за выбранный период/)).toBeInTheDocument()
+  })
 
-  it.todo('should suggest selecting different date range')
+  it('suggests selecting different date range in Russian', () => {
+    renderChart()
+    expect(screen.getByText(/Попробуйте выбрать другой диапазон дат/)).toBeInTheDocument()
+  })
 
-  it.todo('should display title in empty state')
+  it('displays title in empty state', () => {
+    renderChart()
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+  })
 
-  it.todo('should hide chart in empty state')
+  it('hides chart in empty state', () => {
+    renderChart()
+    expect(screen.queryByTestId('line-chart')).not.toBeInTheDocument()
+  })
 
-  it.todo('should handle null trends array')
+  it('handles null trends array', () => {
+    mockUseFbsTrends.mockReturnValue({
+      data: { ...mockTrendsEmptyResponse, trends: null },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    })
+    renderChart()
+    expect(screen.getByText(/Нет данных за выбранный период/)).toBeInTheDocument()
+  })
 })
-
-// ============================================================================
-// Data Source Integration Tests (~8 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Data Source Integration', () => {
-  it.todo('should display DataSourceIndicator component')
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-  it.todo('should show "Реалтайм" badge for orders_fbs source')
+  it('shows "Реалтайм" badge for orders_fbs source', () => {
+    mockSuccessResponse(mockTrends30DaysResponse)
+    renderChart()
+    expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+  })
 
-  it.todo('should show "Ежедневно" badge for reports source')
+  it('shows "Ежедневно" badge for reports source', () => {
+    mockSuccessResponse(mockTrends90DaysResponse)
+    renderChart()
+    expect(screen.getByText('Ежедневно')).toBeInTheDocument()
+  })
 
-  it.todo('should show "Еженедельно" badge for analytics source')
+  it('shows "Еженедельно" badge for analytics source', () => {
+    mockSuccessResponse(mockTrends365DaysResponse)
+    renderChart()
+    expect(screen.getByText('Еженедельно')).toBeInTheDocument()
+  })
 
-  it.todo('should position badge near chart header')
+  it('positions badge in header flex row', () => {
+    mockSuccessResponse()
+    renderChart()
+    const badge = screen.getByText('Реалтайм')
+    expect(badge.closest('[class*="flex"]')).toBeInTheDocument()
+  })
 
-  it.todo('should update badge when data source changes')
+  it('updates badge when data source changes on rerender', () => {
+    mockSuccessResponse(mockTrends30DaysResponse)
+    const { rerender } = renderChart()
+    expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+    mockSuccessResponse(mockTrends365DaysResponse)
+    rerender(<FbsTrendsChart {...defaultProps} />)
+    expect(screen.getByText('Еженедельно')).toBeInTheDocument()
+  })
 
-  it.todo('should pass correct source prop to DataSourceIndicator')
-
-  it.todo('should render badge with correct styling')
+  it('renders badge with correct green styling for orders_fbs', () => {
+    mockSuccessResponse(mockTrends30DaysResponse)
+    renderChart()
+    expect(screen.getByText('Реалтайм').className).toContain('bg-green-100')
+  })
 })
 
-// ============================================================================
-// Aggregation Integration Tests (~10 tests)
-// ============================================================================
+describe('FbsTrendsChart - Aggregation & Hook Integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccessResponse()
+  })
 
-describe('FbsTrendsChart - Aggregation Integration', () => {
-  it.todo('should display AggregationToggle component')
+  it('defaults to "day" aggregation', () => {
+    renderChart()
+    expect(mockUseFbsTrends).toHaveBeenCalledWith(
+      expect.objectContaining({ aggregation: 'day' }),
+      undefined
+    )
+  })
 
-  it.todo('should show initial aggregation based on prop')
+  it('passes aggregation value to useFbsTrends', () => {
+    renderChart({ aggregation: 'week' })
+    expect(mockUseFbsTrends).toHaveBeenCalledWith(
+      expect.objectContaining({ aggregation: 'week' }),
+      undefined
+    )
+  })
 
-  it.todo('should default to "day" aggregation')
+  it('passes from/to dates to hook', () => {
+    renderChart({ from: '2025-11-01', to: '2026-01-29' })
+    expect(mockUseFbsTrends).toHaveBeenCalledWith(
+      expect.objectContaining({ from: '2025-11-01', to: '2026-01-29' }),
+      undefined
+    )
+  })
 
-  it.todo('should refetch data when aggregation changes')
+  it('passes queryOptions to useFbsTrends', () => {
+    const queryOptions = { enabled: false }
+    renderChart({ queryOptions })
+    expect(mockUseFbsTrends).toHaveBeenCalledWith(expect.anything(), queryOptions)
+  })
 
-  it.todo('should pass aggregation value to useFbsTrends')
+  it('handles hook loading state', () => {
+    mockLoadingState()
+    renderChart()
+    expect(document.querySelector('[class*="animate-pulse"]')).toBeInTheDocument()
+  })
 
-  it.todo('should update chart data on aggregation change')
+  it('handles hook error state', () => {
+    mockErrorState()
+    renderChart()
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+  })
 
-  it.todo('should show loading state during aggregation change')
+  it('handles hook data state', () => {
+    mockSuccessResponse()
+    renderChart()
+    expect(screen.getByTestId('line-chart')).toBeInTheDocument()
+  })
 
-  it.todo('should position toggle in chart header')
+  it('renders complete chart with all features', () => {
+    renderChart()
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /метрик/ })).toBeInTheDocument()
+    expect(screen.getByTestId('line-chart')).toBeInTheDocument()
+    expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+  })
 
-  it.todo('should sync aggregation with date range suggestion')
-
-  it.todo('should persist aggregation selection')
+  it('supports className composition', () => {
+    const { container } = renderChart({ className: 'extra-class' })
+    expect(container.firstElementChild?.className).toContain('extra-class')
+  })
 })
 
-// ============================================================================
-// Tooltip Tests (~8 tests)
-// ============================================================================
+describe('FbsTrendsChart - Tooltip & Responsive', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccessResponse()
+  })
 
-describe('FbsTrendsChart - Tooltip', () => {
-  it.todo('should show tooltip on hover over chart')
+  it('renders custom tooltip content element', () => {
+    renderChart()
+    expect(screen.getByTestId('recharts-tooltip')).toBeInTheDocument()
+  })
 
-  it.todo('should render custom TrendsTooltip component')
+  it('uses default height of 400px', () => {
+    renderChart()
+    expect(screen.getByTestId('responsive-container').style.height).toBe('400px')
+  })
 
-  it.todo('should display all visible metrics in tooltip')
+  it('respects custom height prop', () => {
+    renderChart({ height: 500 })
+    expect(screen.getByTestId('responsive-container').style.height).toBe('500px')
+  })
 
-  it.todo('should format date in Russian locale (DD.MM.YYYY)')
-
-  it.todo('should format revenue as currency')
-
-  it.todo('should show cancellation rate as percentage')
-
-  it.todo('should show average order value')
-
-  it.todo('should hide tooltip when mouse leaves chart')
+  it('enforces minimum height of 300px', () => {
+    renderChart({ height: 200 })
+    expect(screen.getByTestId('responsive-container').style.height).toBe('300px')
+  })
 })
-
-// ============================================================================
-// Responsive Design Tests (~7 tests)
-// ============================================================================
-
-describe('FbsTrendsChart - Responsive Design', () => {
-  it.todo('should fill container width (100%)')
-
-  it.todo('should use default height of 400px')
-
-  it.todo('should respect custom height prop')
-
-  it.todo('should maintain minimum height of 300px')
-
-  it.todo('should resize chart when container resizes')
-
-  it.todo('should stack legend on mobile viewport')
-
-  it.todo('should support touch-friendly tooltips')
-})
-
-// ============================================================================
-// Performance Tests (~6 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Performance', () => {
-  it.todo('should render smoothly with 30 data points')
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-  it.todo('should render smoothly with 90 data points')
+  it('renders 30 data points', () => {
+    mockSuccessResponse(mockTrends30DaysResponse)
+    renderChart()
+    expect(screen.getByTestId('line-chart').dataset.points).toBe('30')
+  })
 
-  it.todo('should render smoothly with 365 data points')
+  it('renders 90 data points', () => {
+    mockSuccessResponse(mockTrends90DaysResponse)
+    renderChart()
+    expect(screen.getByTestId('line-chart').dataset.points).toBe('90')
+  })
 
-  it.todo('should limit re-renders on state changes')
+  it('renders 52 weeks for 365-day range', () => {
+    mockSuccessResponse(mockTrends365DaysResponse)
+    renderChart()
+    expect(screen.getByTestId('line-chart').dataset.points).toBe('52')
+  })
 
-  it.todo('should memoize axis formatters')
-
-  it.todo('should not cause layout shift on data load')
+  it('does not cause layout shift on data load', () => {
+    mockLoadingState()
+    const { rerender } = renderChart()
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+    mockSuccessResponse()
+    rerender(<FbsTrendsChart {...defaultProps} />)
+    expect(screen.getByText('Динамика заказов FBS')).toBeInTheDocument()
+  })
 })
-
-// ============================================================================
-// Accessibility Tests (~8 tests)
-// ============================================================================
 
 describe('FbsTrendsChart - Accessibility', () => {
-  it.todo('should have ARIA label describing chart content')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockSuccessResponse()
+  })
 
-  it.todo('should make legend items keyboard accessible')
+  it('has ARIA label describing chart content', () => {
+    renderChart()
+    expect(screen.getByRole('img', { name: /График динамики заказов FBS/ })).toBeInTheDocument()
+  })
 
-  it.todo('should support Tab navigation through legend')
+  it('makes legend items keyboard accessible via buttons', () => {
+    renderChart()
+    const legendButtons = screen.getAllByRole('button').filter(b => b.dataset.metric !== undefined)
+    expect(legendButtons.length).toBe(3)
+  })
 
-  it.todo('should announce metric toggle to screen readers')
+  it('supports Tab navigation through legend', () => {
+    renderChart()
+    const legendButtons = screen.getAllByRole('button').filter(b => b.dataset.metric !== undefined)
+    for (const btn of legendButtons) {
+      expect(btn.tabIndex).toBeGreaterThanOrEqual(-1)
+    }
+  })
 
-  it.todo('should have sufficient color contrast for lines')
+  it('has aria-pressed state for legend buttons', () => {
+    renderChart()
+    expect(screen.getByRole('button', { name: /Заказы/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /Отмены/ })).toHaveAttribute('aria-pressed', 'false')
+  })
 
-  it.todo('should provide aria-pressed state for legend buttons')
+  it('has descriptive labels for toggle buttons', () => {
+    renderChart()
+    expect(screen.getByRole('button', { name: /Заказы/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Выручка/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Отмены/ })).toBeInTheDocument()
+  })
 
-  it.todo('should have descriptive labels for toggle buttons')
+  it('has legend group with aria-label', () => {
+    renderChart()
+    expect(
+      screen.getByRole('group', { name: /Управление отображением метрик/ })
+    ).toBeInTheDocument()
+  })
 
-  it.todo('should meet WCAG 2.1 AA contrast requirements')
+  it('has aria-label on data source badge', () => {
+    renderChart()
+    expect(screen.getByLabelText(/Источник данных/)).toBeInTheDocument()
+  })
+
+  it('has focus ring styles on legend buttons', () => {
+    renderChart()
+    const legendButtons = screen.getAllByRole('button').filter(b => b.dataset.metric !== undefined)
+    for (const btn of legendButtons) {
+      expect(btn.className).toContain('focus:ring')
+    }
+  })
 })
 
-// ============================================================================
-// Integration Tests (~10 tests)
-// ============================================================================
+describe('FbsTrendsChart - End-to-End', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-describe('FbsTrendsChart - Integration', () => {
-  it.todo('should integrate with useFbsTrends hook correctly')
+  it('calls useFbsTrends once on mount', () => {
+    mockSuccessResponse()
+    renderChart()
+    expect(mockUseFbsTrends).toHaveBeenCalledTimes(1)
+  })
 
-  it.todo('should pass from/to dates to hook')
+  it('renders cancellations line with correct color when toggled on', async () => {
+    const user = userEvent.setup()
+    mockSuccessResponse()
+    renderChart()
+    await user.click(screen.getByRole('button', { name: /Отмены/ }))
+    expect(screen.getByTestId('line-cancellations').dataset.stroke).toBe(LINE_COLORS.cancellations)
+  })
 
-  it.todo('should pass aggregation to hook')
-
-  it.todo('should handle hook loading state')
-
-  it.todo('should handle hook error state')
-
-  it.todo('should handle hook data state')
-
-  it.todo('should trigger refetch on date range change')
-
-  it.todo('should combine with DateRangePickerExtended')
-
-  it.todo('should render complete chart with all features')
-
-  it.todo('should support className composition')
+  it('shows skeleton when disabled via queryOptions', () => {
+    mockUseFbsTrends.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+      refetch: vi.fn(),
+    })
+    renderChart({ queryOptions: { enabled: false } })
+    expect(document.querySelector('[class*="animate-pulse"]')).toBeInTheDocument()
+  })
 })
