@@ -5,19 +5,22 @@
  * Central hub for alert rules management, history, and summary KPIs
  */
 
+import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AlertsPageHeader } from './components/AlertsPageHeader'
 import { AlertRulesList } from './components/AlertRulesList'
 import { AlertHistoryTable } from './components/AlertHistoryTable'
 import { AlertSummaryCards } from './components/AlertSummaryCards'
+import { CreateAlertRuleDialog } from './components/CreateAlertRuleDialog'
 import { useAlertsPageState } from './components/useAlertsPageState'
 
 export default function AlertsPage() {
   const { activeTab, setActiveTab, rules, history, summary } = useAlertsPageState()
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
 
   return (
     <div className="space-y-6">
-      <AlertsPageHeader />
+      <AlertsPageHeader onCreateRule={() => setCreateDialogOpen(true)} />
 
       <Tabs
         value={activeTab}
@@ -41,6 +44,8 @@ export default function AlertsPage() {
           <AlertHistoryTable items={history.data} isLoading={history.isLoading} />
         </TabsContent>
       </Tabs>
+
+      <CreateAlertRuleDialog isOpen={createDialogOpen} onOpenChange={setCreateDialogOpen} />
     </div>
   )
 }

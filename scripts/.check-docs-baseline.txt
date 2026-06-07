@@ -10,8 +10,13 @@
 #   1 = NEW citations introduced OR RESOLVED citations not yet baselined
 #       (output enumerates what changed)
 src/analytics/weekly-analytics.service.ts:357-399 | file not found
+src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | line 142 > file has 35 lines
+src/app/(dashboard)/dashboard/components/DashboardContent.tsx:156-162 | line 162 > file has 113 lines
+src/app/(dashboard)/dashboard/components/DashboardContent.tsx:158 | line 158 > file has 113 lines
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 144 lines
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 144 lines
+src/components/custom/orders/OrdersTableRow.tsx:134-137 | line 137 > file has 113 lines
+src/components/custom/orders/OrdersTableRow.tsx:134-137 | line 137 > file has 113 lines
 src/components/notifications/TelegramBindingModal.tsx:216 | line 216 > file has 95 lines
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found

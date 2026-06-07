@@ -5,17 +5,7 @@
  * /calculate returns native numbers (not Decimal strings) per #161 §7.1.
  */
 
-/** Raw backend response — nested pallets → lines structure */
-export interface CalculateBackendResponse {
-  shipmentId: string
-  deliveryMode: string
-  totalDeliveryCost: number
-  palletCount: number
-  results: CalculatePalletResult[]
-  totalFinalCost: number
-  calculatedAt: string
-}
-
+/** Raw backend pallet with nested lines */
 export interface CalculatePalletResult {
   palletId: string
   palletNumber: number

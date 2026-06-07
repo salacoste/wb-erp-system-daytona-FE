@@ -39,6 +39,9 @@ function extractByStatus(raw: Record<string, unknown>): {
   return byStatus
 }
 
+/** Raw backend response may use camelCase or snake_case field names */
+type RawOrdersVolumeResponse = OrdersVolumeResponse & Record<string, unknown>
+
 // =============================================================================
 // Transform Functions
 // =============================================================================
@@ -55,13 +58,12 @@ function extractByStatus(raw: Record<string, unknown>): {
  */
 export function transformToMetrics(response: OrdersVolumeResponse): OrdersVolumeMetrics {
   // Backend may return camelCase (totalOrders) or snake_case (total_orders)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const raw = response as any
+  const raw = response as RawOrdersVolumeResponse
 
   // Extract total orders with fallback for both naming conventions
-  const totalOrders = raw.totalOrders ?? raw.total_orders ?? 0
-  const totalAmount = raw.totalAmount ?? raw.total_amount ?? 0
-  const avgOrderValue = raw.avgOrderValue ?? raw.avg_order_value ?? 0
+  const totalOrders = (raw.totalOrders as number) ?? raw.total_orders ?? 0
+  const totalAmount = (raw.totalAmount as number) ?? raw.total_amount ?? 0
+  const avgOrderValue = (raw.avgOrderValue as number) ?? raw.avg_order_value ?? 0
 
   // Avoid division by zero - use 1 as divisor when total is 0
   const total = totalOrders || 1
@@ -69,9 +71,12 @@ export function transformToMetrics(response: OrdersVolumeResponse): OrdersVolume
   const byStatus = extractByStatus(raw)
 
   // Handle daily breakdown - by_day (snake_case) or dailyTrend (camelCase)
-  let dailyBreakdown = raw.by_day
-  if (!dailyBreakdown && Array.isArray(raw.dailyTrend)) {
-    dailyBreakdown = raw.dailyTrend.map((d: { date: string; count: number; amount?: number }) => ({
+  let dailyBreakdown = raw.by_day as OrdersVolumeMetrics['dailyBreakdown']
+  const dailyTrend = raw.dailyTrend as
+    | Array<{ date: string; count: number; amount?: number }>
+    | undefined
+  if (!dailyBreakdown && Array.isArray(dailyTrend)) {
+    dailyBreakdown = dailyTrend.map(d => ({
       date: d.date,
       orders: d.count,
       amount: d.amount ?? 0,
@@ -96,11 +101,10 @@ export function transformToMetrics(response: OrdersVolumeResponse): OrdersVolume
  * @returns Status breakdown for chart display
  */
 export function transformToStatusBreakdown(response: OrdersVolumeResponse): StatusBreakdownData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const raw = response as any
+  const raw = response as RawOrdersVolumeResponse
 
   // Extract total with fallback for both naming conventions
-  const total = raw.totalOrders ?? raw.total_orders ?? 0
+  const total = (raw.totalOrders as number) ?? raw.total_orders ?? 0
   const divisor = total || 1 // Avoid division by zero
 
   const byStatus = extractByStatus(raw)

@@ -21,8 +21,7 @@ import { logger } from '@/lib/logger'
  * @returns Validated AdvertisingGroup or null if invalid
  */
 export function transformMergedGroup(backendItem: unknown): AdvertisingGroup | null {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend item shape varies by type field
-  const item = backendItem as any
+  const item = backendItem as Record<string, unknown>
 
   // Type guard: verify it's a merged_group or individual type
   if (item.type !== 'merged_group' && item.type !== 'individual') {
@@ -46,13 +45,14 @@ export function transformMergedGroup(backendItem: unknown): AdvertisingGroup | n
   }
 
   // Validate mainProduct exists
-  if (!item.mainProduct?.nmId) {
-    logger.warn('[Transformer] Invalid mainProduct:', item.mainProduct)
+  const mainProduct = item.mainProduct as Record<string, unknown> | undefined
+  if (!mainProduct?.nmId) {
+    logger.warn('[Transformer] Invalid mainProduct:', mainProduct)
     return null
   }
 
   // Return as-is (backend structure matches frontend)
-  return item as AdvertisingGroup
+  return item as unknown as AdvertisingGroup
 }
 
 /**
