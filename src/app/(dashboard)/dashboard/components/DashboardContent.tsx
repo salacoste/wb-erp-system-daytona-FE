@@ -1,25 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
-import { useQueryClient } from '@tanstack/react-query'
-import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
-import {
-  useFinancialSummaryWithPeriodComparison,
-  useAvailableWeeks,
-} from '@/hooks/useFinancialSummary'
-import { useDataAvailability } from '@/hooks/useDataAvailability'
-import { useAdvertisingAnalyticsComparison } from '@/hooks/useAdvertisingAnalytics'
-import { useFulfillmentSummaryWithComparison } from '@/hooks/useFulfillment'
-import { useProcessingStatus } from '@/hooks/useProcessingStatus'
-import { useProductsCount, useProductsWithCogs } from '@/hooks/useProducts'
-import { useDataImportNotification } from '@/hooks/useDataImportNotification'
-import { usePreviousPeriodData } from '@/hooks/usePreviousPeriodData'
-import { usePreliminaryTax } from '@/hooks/usePreliminaryTax'
-import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
 import { ROUTES } from '@/lib/routes'
-import { dashboardQueryKeys } from '@/hooks/useDashboard'
 import {
   DashboardMetricsGrid,
   DailyBreakdownSection,
@@ -34,96 +17,14 @@ import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
 import { ProcessingAlert, FailedAlert, ErrorAlert, DataGapsAlert } from './DashboardAlerts'
+import { useDashboardData } from './useDashboardData'
+import { useDataImportNotification } from '@/hooks/useDataImportNotification'
 
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()
-  const queryClient = useQueryClient()
-  const { periodType, selectedWeek, selectedMonth, lastRefresh, previousWeek, previousMonth } =
-    useDashboardPeriod()
-  const selectedPeriod = periodType === 'week' ? selectedWeek : selectedMonth
+  const d = useDashboardData()
 
-  const dateRange = useMemo(
-    () => (periodType === 'week' ? weekToDateRange(selectedWeek) : monthToDateRange(selectedMonth)),
-    [periodType, selectedWeek, selectedMonth]
-  )
-  const prevDateRange = useMemo(
-    () => (periodType === 'week' ? weekToDateRange(previousWeek) : monthToDateRange(previousMonth)),
-    [periodType, previousWeek, previousMonth]
-  )
-
-  const { data: availableWeeks } = useAvailableWeeks()
-  const { isFinanceAvailable, latestAvailableWeek } = useDataAvailability(
-    periodType,
-    selectedWeek,
-    selectedMonth,
-    availableWeeks
-  )
-
-  const fulfillmentQuery = useFulfillmentSummaryWithComparison({
-    from: dateRange.from,
-    to: dateRange.to,
-    previousFrom: prevDateRange.from,
-    previousTo: prevDateRange.to,
-  })
-  const financialComparison = useFinancialSummaryWithPeriodComparison({
-    periodType,
-    period: selectedPeriod,
-    enabled: isFinanceAvailable,
-  })
-  const advertisingQuery = useAdvertisingAnalyticsComparison(
-    { from: dateRange.from, to: dateRange.to, limit: 1 },
-    { from: prevDateRange.from, to: prevDateRange.to, limit: 1 },
-    { refetchInterval: undefined }
-  )
-
-  const { data: processingStatus } = useProcessingStatus()
-  const {
-    data: productCount,
-    isLoading: productsLoading,
-    isError: productsError,
-  } = useProductsCount()
-  const { data: productsWithCogsData, isLoading: cogsLoading } = useProductsWithCogs({ limit: 1 })
-  const inventoryWithCogs = productsWithCogsData?.pagination?.total ?? 0
-  const totalProducts = productsError ? undefined : (productCount ?? 0)
-  const cogsCoverage =
-    totalProducts && totalProducts > 0 ? (inventoryWithCogs / totalProducts) * 100 : 0
-  const summary = isFinanceAvailable ? (financialComparison.current?.summary_total ?? null) : null
-  const fSummary = fulfillmentQuery.current?.summary
-  const salesCount = summary?.product_transactions ?? undefined
-  const returnsCount = fSummary
-    ? (fSummary.fbo.returnsCount ?? 0) + (fSummary.fbs.returnsCount ?? 0)
-    : undefined
-  // Request #159: Preliminary tax for incomplete weeks
-  const prelimTax = usePreliminaryTax({
-    from: dateRange.from,
-    to: dateRange.to,
-    enabled: !isFinanceAvailable,
-  })
-  const effectiveTaxMetrics = summary?.tax ?? prelimTax
-  const previousPeriodData = usePreviousPeriodData({
-    prevSummary: financialComparison.previous?.summary_total ?? null,
-    fulfillmentPrevious: fulfillmentQuery.previous,
-    advertisingPrevious: advertisingQuery.previous,
-  })
-
-  const hasFinancialData = fulfillmentQuery.current !== undefined
-  useDataImportNotification(!!hasFinancialData, fulfillmentQuery.isLoading)
-  const isLoading =
-    (isFinanceAvailable && financialComparison.isLoading) || advertisingQuery.isLoading
-  const error = (isFinanceAvailable && financialComparison.error) || null
-  const handleRetry = (): void => {
-    void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all })
-  }
-  const reportStatus = processingStatus?.reportLoading?.status
-  // A terminal 'no_data' state still carries reportLoading.status: 'pending', but
-  // polling has STOPPED (empty-cabinet / no historical batches). Guard against it so
-  // the processing alert doesn't get stuck visible forever for a genuinely-empty cabinet.
-  const isProcessing =
-    processingStatus?.status !== 'no_data' &&
-    !hasFinancialData &&
-    (reportStatus === 'in_progress' || reportStatus === 'pending')
-  const isFailed = reportStatus === 'failed'
-  const failedBatchCount = processingStatus?.failedBatchCount ?? 0
+  useDataImportNotification(!!d.hasFinancialData, d.isLoading)
 
   return (
     <div className="space-y-4 pb-8">
@@ -131,71 +32,71 @@ export function DashboardContent(): React.ReactElement {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Главная страница</h2>
           <PeriodContextLabel
-            periodType={periodType}
-            week={selectedWeek}
-            month={selectedMonth}
-            lastRefresh={lastRefresh}
+            periodType={d.periodType}
+            week={d.selectedWeek}
+            month={d.selectedMonth}
+            lastRefresh={d.lastRefresh}
           />
         </div>
         <DashboardPeriodSelector />
       </div>
 
-      <IncompleteWeekBanner period={selectedPeriod} periodType={periodType} />
-      {!isFinanceAvailable && !isProcessing && (
-        <ReportPendingBanner week={selectedWeek} latestAvailableWeek={latestAvailableWeek} />
+      <IncompleteWeekBanner period={d.selectedPeriod} periodType={d.periodType} />
+      {!d.isFinanceAvailable && !d.isProcessing && (
+        <ReportPendingBanner week={d.selectedWeek} latestAvailableWeek={d.latestAvailableWeek} />
       )}
-      {isProcessing && <ProcessingAlert processingStatus={processingStatus} />}
-      {isFailed && <FailedAlert />}
-      {!isFailed && failedBatchCount > 0 && <DataGapsAlert failedCount={failedBatchCount} />}
-      {error && !isProcessing && isFinanceAvailable && <ErrorAlert onRetry={handleRetry} />}
+      {d.isProcessing && <ProcessingAlert processingStatus={d.processingStatus} />}
+      {d.isFailed && <FailedAlert />}
+      {!d.isFailed && d.failedBatchCount > 0 && <DataGapsAlert failedCount={d.failedBatchCount} />}
+      {d.error && !d.isProcessing && d.isFinanceAvailable && <ErrorAlert onRetry={d.handleRetry} />}
 
-      <TaxWarningBanner taxConfigured={!!effectiveTaxMetrics} />
+      <TaxWarningBanner taxConfigured={!!d.effectiveTaxMetrics} />
 
       <DashboardMetricsGrid
-        totalOrders={fSummary?.total.ordersCount}
-        ordersRevenue={fSummary?.total.ordersRevenue}
-        ordersRevenueDiscounted={fSummary?.total.ordersRevenueDiscounted}
-        salesCount={salesCount}
-        returnsCount={returnsCount}
-        saleGross={summary?.sale_gross_total}
-        wbSalesGross={summary?.wb_sales_gross_total}
-        wbReturnsGross={summary?.wb_returns_gross_total}
-        commissionSales={summary?.commission_sales_total}
-        acquiringFee={summary?.acquiring_fee_total}
-        loyaltyFee={summary?.loyalty_fee_total}
-        penaltiesTotal={summary?.penalties_total}
-        wbCommissionAdj={summary?.wb_commission_adj_total}
+        totalOrders={d.fSummary?.total.ordersCount}
+        ordersRevenue={d.fSummary?.total.ordersRevenue}
+        ordersRevenueDiscounted={d.fSummary?.total.ordersRevenueDiscounted}
+        salesCount={d.salesCount}
+        returnsCount={d.returnsCount}
+        saleGross={d.summary?.sale_gross_total}
+        wbSalesGross={d.summary?.wb_sales_gross_total}
+        wbReturnsGross={d.summary?.wb_returns_gross_total}
+        commissionSales={d.summary?.commission_sales_total}
+        acquiringFee={d.summary?.acquiring_fee_total}
+        loyaltyFee={d.summary?.loyalty_fee_total}
+        penaltiesTotal={d.summary?.penalties_total}
+        wbCommissionAdj={d.summary?.wb_commission_adj_total}
         wbServicesCost={undefined}
-        logisticsCost={summary?.logistics_cost_total}
-        payoutTotal={summary?.payout_total}
-        storageCost={summary?.storage_cost_total}
-        paidAcceptanceCost={summary?.paid_acceptance_cost_total}
-        cogsTotal={summary?.cogs_total ?? undefined}
-        cogsCoverage={cogsCoverage}
-        productsWithCogs={inventoryWithCogs}
-        totalProducts={totalProducts ?? 0}
-        advertisingSpend={advertisingQuery.current?.summary?.total_spend}
-        advertisingRoas={advertisingQuery.current?.summary?.overall_roas}
-        wbPromotionCost={summary?.wb_promotion_cost_total ?? undefined}
-        wbJamCost={summary?.wb_jam_cost_total ?? undefined}
-        wbOtherServicesCost={summary?.wb_other_services_cost_total ?? undefined}
-        grossProfit={summary?.gross_profit ?? undefined}
-        marginPct={summary?.margin_pct ?? undefined}
-        grossProfitAnalytical={summary?.gross_profit_analytical ?? undefined}
-        operatingProfitAnalytical={summary?.operating_profit_analytical ?? undefined}
-        operatingMarginPct={summary?.operating_margin_pct ?? undefined}
-        grossMarginPct={summary?.gross_margin_pct ?? undefined}
-        taxMetrics={effectiveTaxMetrics ?? null}
-        previousPeriodData={previousPeriodData}
-        isLoading={isLoading || productsLoading || cogsLoading}
-        error={error}
-        onRetry={handleRetry}
+        logisticsCost={d.summary?.logistics_cost_total}
+        payoutTotal={d.summary?.payout_total}
+        storageCost={d.summary?.storage_cost_total}
+        paidAcceptanceCost={d.summary?.paid_acceptance_cost_total}
+        cogsTotal={d.summary?.cogs_total ?? undefined}
+        cogsCoverage={d.cogsCoverage}
+        productsWithCogs={d.inventoryWithCogs}
+        totalProducts={d.totalProducts ?? 0}
+        advertisingSpend={d.advertisingQuery.current?.summary?.total_spend}
+        advertisingRoas={d.advertisingQuery.current?.summary?.overall_roas}
+        wbPromotionCost={d.summary?.wb_promotion_cost_total ?? undefined}
+        wbJamCost={d.summary?.wb_jam_cost_total ?? undefined}
+        wbOtherServicesCost={d.summary?.wb_other_services_cost_total ?? undefined}
+        grossProfit={d.summary?.gross_profit ?? undefined}
+        marginPct={d.summary?.margin_pct ?? undefined}
+        grossProfitAnalytical={d.summary?.gross_profit_analytical ?? undefined}
+        operatingProfitAnalytical={d.summary?.operating_profit_analytical ?? undefined}
+        operatingMarginPct={d.summary?.operating_margin_pct ?? undefined}
+        grossMarginPct={d.summary?.gross_margin_pct ?? undefined}
+        taxMetrics={d.effectiveTaxMetrics ?? null}
+        previousPeriodData={d.previousPeriodData}
+        isLoading={d.isLoading || d.productsLoading || d.cogsLoading}
+        error={d.error}
+        onRetry={d.handleRetry}
         onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
       />
       <DailyBreakdownSection className="mt-4" />
-      <AdvertisingDashboardWidget dateRange={dateRange} hideLocalSelector />
-      <ExpenseChart weekOverride={periodType === 'week' ? selectedWeek : undefined} />
-      {fulfillmentQuery.isLoading && (
+      <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
+      <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
+      {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
           <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />
           Обновление данных...
@@ -203,9 +104,9 @@ export function DashboardContent(): React.ReactElement {
       )}
       <TrendGraph />
       <InitialDataSummary
-        cogsCoverage={cogsCoverage}
-        totalProducts={totalProducts ?? 0}
-        productsWithCogs={inventoryWithCogs}
+        cogsCoverage={d.cogsCoverage}
+        totalProducts={d.totalProducts ?? 0}
+        productsWithCogs={d.inventoryWithCogs}
       />
     </div>
   )

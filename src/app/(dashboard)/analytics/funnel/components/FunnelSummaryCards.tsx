@@ -16,16 +16,11 @@ import {
   XCircle,
 } from 'lucide-react'
 import type { FunnelSummary } from '@/types/analytics-funnel'
-import {
-  calculatePreviousPeriod,
-  calculateFunnelDelta,
-  formatDelta,
-  getDeltaColor,
-  isInvertedMetric,
-} from './funnel-comparison-utils'
+import { calculatePreviousPeriod, calculateFunnelDelta } from './funnel-comparison-utils'
 import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { formatNumber, formatPercent } from './funnel-summary-formatters'
+import { DeltaIndicator } from './FunnelDeltaIndicator'
 
 interface FunnelSummaryCardsProps {
   from: string
@@ -126,8 +121,6 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
 
   const summary = data?.summary
   const prevSummary = prevData?.summary
-  // Epic 114.5: backend flags totalConversion as an approximate cross-source ratio
-  // (buyout from WB Product Data API, openCard from the funnel snapshot).
   const totalConversionApproximate = data?.meta?.totalConversionApproximate === true
 
   return (
@@ -137,11 +130,8 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
         const value = summary?.[card.field] ?? 0
         const delta =
           compare && prevSummary ? calculateFunnelDelta(value, prevSummary[card.field]) : null
-        // Defensive Frontend Principle (#191): the totalConversion card may show an
-        // impossible >100% value — indicate it (preserve the raw value, never clamp).
         const anomalous =
           card.field === 'totalConversion' && !!summary && isFunnelConversionAnomalous(summary)
-        // Epic 114.5: prefix totalConversion with "≈" + tooltip when cross-source approximate.
         const approximate = card.field === 'totalConversion' && totalConversionApproximate
 
         return (
@@ -153,12 +143,11 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
               <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">{card.label}</p>
                 <p className="flex items-center gap-1.5 text-2xl font-bold">
-                  {/* truncate the value only — never clip the anomaly indicator */}
                   <span
                     className="truncate"
                     title={
                       approximate
-                        ? 'Приблизительно: показатель смешивает данные из разных источников (выкупы — WB Product Data API, открытия карточки — воронка)'
+                        ? 'Приблизительно: показатель смешивает данные из разных источников'
                         : undefined
                     }
                   >
@@ -176,43 +165,5 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
         )
       })}
     </div>
-  )
-}
-
-function DeltaIndicator({
-  delta,
-  field,
-  loading,
-}: {
-  delta: ReturnType<typeof calculateFunnelDelta> | null
-  field: string
-  loading: boolean
-}) {
-  if (loading) return <Skeleton className="h-4 w-16 mt-0.5" />
-
-  if (!delta) {
-    return (
-      <p className="text-xs text-muted-foreground" title="Нет данных за предыдущий период">
-        —
-      </p>
-    )
-  }
-
-  if (delta.direction === 'neutral') {
-    return (
-      <p className="text-xs text-muted-foreground" title="По сравнению с предыдущим периодом">
-        {formatDelta(delta)}
-      </p>
-    )
-  }
-
-  const inverted = isInvertedMetric(field)
-  return (
-    <p
-      className={`text-xs ${getDeltaColor(delta.direction, inverted)}`}
-      title="По сравнению с предыдущим периодом"
-    >
-      {formatDelta(delta)}
-    </p>
   )
 }

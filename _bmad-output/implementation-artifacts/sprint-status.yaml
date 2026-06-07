@@ -579,3 +579,10 @@ development_status:
   127.5-fe-returns-comparison: done  # 2026-06-07 committed 827c14a5. ComparisonPeriodSelector + delta indicators + 20 util tests.
   127.6-fe-buyout-return-crosslinks: done  # 2026-06-07 committed 827c14a5. ArrowRight links between buyout↔returns tables.
   epic-127-fe-flaky-fix: done  # 2026-06-07 FeedbackButtons fake timer race fix (stable 2x run).
+
+  # Epic 128-FE: TypeScript Cleanup + Source File Compliance + Missing Tests (P2 quality, ~10 SP)
+  # Source: Health assessment scan (64 TS errors, 15 files over 200-line cap, 12 components without tests)
+  epic-128-fe: in-progress  # 2026-06-07 kickoff. TS errors fixed. Refactoring + tests in progress.
+  128.1-fe-typescript-test-errors: done  # 2026-06-07 committed 097710aa. 64 → 0 TS errors in test files.
+  128.2-fe-200-line-cap-refactoring: in-progress  # 2026-06-07 2 agents refactoring 14 source files.
+  128.3-fe-missing-component-tests: in-progress  # 2026-06-07 1 agent adding tests for comparison-period, margin-trend, export-dialog, pnl-waterfall.

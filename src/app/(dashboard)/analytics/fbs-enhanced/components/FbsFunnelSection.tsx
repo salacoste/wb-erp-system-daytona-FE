@@ -2,101 +2,19 @@
  * FBS Funnel Section — Section 5 of 5
  * Epic 96-FE Story 96.13: 4-stage conversion funnel (views → cart → orders → deliveries).
  *
- * Pattern 2: raw SVG chosen — funnel geometry is simple trapezoids; recharts has no
- * native funnel component; raw SVG is jsdom-testable without mocks, matching the
- * MonitorBuyoutGauge precedent (Story 92.5-FE).
- *
- * Pattern 1: independent null-state — renders empty state if funnelData slice is null.
- *
- * M-2 fix: funnel inversion detection — if any stage has more events than the previous
- * stage, an amber AlertTriangle is shown per CLAUDE.md Defensive Frontend Principle.
- * H2-2 fix: 5% relative tolerance + minimum-2-unit floor prevents false positives from
- * backend eventually-consistency (e.g., single late-arriving event).
- * FUTURE: if the funnel-inversion guard fires in production, file a backend ticket — funnel stages should
- * monotonically narrow (views ≥ cartAdds ≥ orders ≥ deliveries). Pure preventive guard; no current backend dep.
- *
- * L-1 fix: SVG has role="img" + <title> for accessibility (per MonitorBuyoutGauge precedent).
- * L-2-2 fix: AlertTriangle wrapper is keyboard-accessible (tabIndex=0, role=button, aria-label).
- * L-3 fix: 'В корзину' → 'Добавлено в корзину' (past-participle convention).
- * L-2 fix: inline colors replaced with CHART_COLORS tokens.
+ * SVG geometry and stage-building logic extracted to FbsFunnelChart.tsx.
  */
 
 'use client'
 
 import { AlertTriangle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { CHART_COLORS } from '@/lib/chart-colors'
 import { formatPercentage } from '@/lib/utils'
 import type { FbsFunnelData } from '@/types/fbs-enhanced'
+import { buildStages, formatCount, getStagePoints, SVG_WIDTH, SVG_HEIGHT } from './FbsFunnelChart'
 
 interface FbsFunnelSectionProps {
   funnelData: FbsFunnelData | null | undefined
-}
-
-interface FunnelStage {
-  label: string
-  subLabel: string
-  value: number
-  color: string
-  anomalous: boolean
-}
-
-const STAGE_COLORS = [
-  CHART_COLORS.primaryRed,
-  CHART_COLORS.amber,
-  CHART_COLORS.primaryBlue,
-  CHART_COLORS.green,
-]
-
-const STAGE_LABELS: Array<{ label: string; subLabel: string }> = [
-  { label: 'Просмотры товара', subLabel: 'product_views' },
-  { label: 'Добавлено в корзину', subLabel: 'cart_adds' }, // L-3 fix: past-participle convention
-  { label: 'Заказы', subLabel: 'orders' },
-  { label: 'Доставлено', subLabel: 'deliveries' },
-]
-
-// SVG funnel geometry constants
-const SVG_WIDTH = 400
-const SVG_HEIGHT = 240
-const STAGE_HEIGHT = SVG_HEIGHT / 4 // 60px per stage
-const MAX_TOP_WIDTH = SVG_WIDTH * 0.9 // widest stage at 90% of SVG width
-const MIN_BOTTOM_WIDTH = SVG_WIDTH * 0.2 // narrowest stage at 20%
-
-function formatCount(n: number): string {
-  // Russian locale: comma decimal ("10,0 тыс"/"1,2 млн"), not "10.0 тыс".
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace('.', ',')} млн`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace('.', ',')} тыс`
-  return String(n)
-}
-
-/**
- * H2-2 fix: 5% relative tolerance + minimum-2-unit floor prevents false positives
- * from backend eventually-consistency (single late-arriving event).
- * Precedent: CLAUDE.md Defensive Frontend Principle price-inversion threshold
- * (`salePrice > price * 1.2` — 20% ratio); funnel uses tighter 5% since
- * funnel stages should strictly narrow.
- */
-const ANOMALY_THRESHOLD_PCT = 0.05 // 5% relative overshoot to tolerate rounding noise
-const ANOMALY_MIN_UNITS = 2 // absolute floor — single-unit ties are not anomalous
-
-function isAnomalous(prevValue: number, currentValue: number): boolean {
-  if (currentValue <= prevValue) return false
-  const delta = currentValue - prevValue
-  const relativeOver = prevValue > 0 ? delta / prevValue : Infinity
-  return delta > ANOMALY_MIN_UNITS && relativeOver > ANOMALY_THRESHOLD_PCT
-}
-
-/** M-2 fix: detect funnel inversion (next stage > current stage) with H2-2 tolerance */
-function buildStages(data: FbsFunnelData): FunnelStage[] {
-  const values = [data.productViews, data.cartAdds, data.orders, data.deliveries]
-  return STAGE_LABELS.map((meta, i) => ({
-    label: meta.label,
-    subLabel: meta.subLabel,
-    value: values[i],
-    color: STAGE_COLORS[i],
-    // anomalous = this stage exceeds the preceding stage beyond tolerance threshold
-    anomalous: i > 0 && isAnomalous(values[i - 1], values[i]),
-  }))
 }
 
 export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
@@ -110,8 +28,7 @@ export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
   }
 
   const stages = buildStages(funnelData)
-  const maxValue = Math.max(...stages.map(s => s.value), 1) // guard against all-zero
-  // M-2 fix: any stage inversion → show anomaly indicator near section header
+  const maxValue = Math.max(...stages.map(s => s.value), 1)
   const hasInversion = stages.some(s => s.anomalous)
 
   return (
@@ -119,7 +36,6 @@ export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
       <div className="flex items-center gap-2 mb-3">
         <h2 className="text-lg font-semibold">Воронка конверсии</h2>
         {/* M-2 fix: inversion anomaly indicator per CLAUDE.md Defensive Frontend Principle */}
-        {/* L2-2 fix: tabIndex=0 + role=button + aria-label makes tooltip keyboard-accessible */}
         {hasInversion && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -154,38 +70,15 @@ export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
             className="shrink-0"
           >
             <title>Воронка конверсии — 4 стадии</title>
-            {stages.map((stage, i) => {
-              // Each stage width proportional to value / maxValue
-              const ratio = maxValue > 0 ? stage.value / maxValue : 0
-              const stageWidth = MIN_BOTTOM_WIDTH + ratio * (MAX_TOP_WIDTH - MIN_BOTTOM_WIDTH)
-              // Trapezoid narrows slightly at bottom
-              const nextRatio =
-                i < stages.length - 1 ? stages[i + 1].value / maxValue : ratio * 0.85
-              const nextWidth = MIN_BOTTOM_WIDTH + nextRatio * (MAX_TOP_WIDTH - MIN_BOTTOM_WIDTH)
-
-              const topLeft = (SVG_WIDTH - stageWidth) / 2
-              const topRight = topLeft + stageWidth
-              const botLeft = (SVG_WIDTH - nextWidth) / 2
-              const botRight = botLeft + nextWidth
-              const y = i * STAGE_HEIGHT
-
-              const points = [
-                `${topLeft},${y}`,
-                `${topRight},${y}`,
-                `${botRight},${y + STAGE_HEIGHT - 2}`,
-                `${botLeft},${y + STAGE_HEIGHT - 2}`,
-              ].join(' ')
-
-              return (
-                <polygon
-                  key={stage.subLabel}
-                  points={points}
-                  fill={stage.color}
-                  opacity={0.85}
-                  aria-label={`${stage.label}: ${formatCount(stage.value)}`}
-                />
-              )
-            })}
+            {stages.map((stage, i) => (
+              <polygon
+                key={stage.subLabel}
+                points={getStagePoints(stage, i, stages, maxValue)}
+                fill={stage.color}
+                opacity={0.85}
+                aria-label={`${stage.label}: ${formatCount(stage.value)}`}
+              />
+            ))}
           </svg>
 
           {/* Stage labels + values */}
@@ -204,8 +97,6 @@ export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
                   </p>
                   {i > 0 && stages[i - 1].value > 0 && (
                     <p className="text-xs text-muted-foreground">
-                      {/* Russian locale: comma + NBSP ("37,5 %"), not "37.5%". Guard above ensures
-                          the denominator > 0. formatPercentage re-divides by 100, so pass ×100. */}
                       {formatPercentage((stage.value / stages[i - 1].value) * 100, 1)} от
                       предыдущего
                     </p>
