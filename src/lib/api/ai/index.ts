@@ -54,3 +54,6 @@ export type { GetAnomaliesParams } from './system'
 
 // Admin (GET /v1/ai/admin/models, PATCH /v1/ai/admin/models/:id/rollback)
 export { normalizeAdminModelListResponse, getAdminModels, patchModelRollback } from './admin'
+
+// Forecast Accuracy (GET /v1/ai/forecast-accuracy)
+export { normalizeForecastAccuracyResponse, getForecastAccuracy } from './forecast-accuracy'

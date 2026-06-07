@@ -42,6 +42,27 @@ describe('normalizeRecoveryStatusResponse — F-41', () => {
     expect(t.maxWindowDays).toBeUndefined()
   })
 
+  it('#187 resolved: passes through backend displayName + config fields', () => {
+    const enrichedItem = {
+      ...liveItem,
+      displayName: 'Синхронизация рекламных кампаний',
+      maxRetries: 5,
+      cooldownMinutes: 30,
+      maxWindowDays: 7,
+    }
+    const t = normalizeRecoveryStatusResponse([enrichedItem], 'c').tasks[0]
+    expect(t.displayName).toBe('Синхронизация рекламных кампаний')
+    expect(t.maxRetries).toBe(5)
+    expect(t.cooldownMinutes).toBe(30)
+    expect(t.maxWindowDays).toBe(7)
+  })
+
+  it('#187: falls back to FE label when backend displayName is empty/absent', () => {
+    const noName = { ...liveItem, displayName: '' }
+    const t = normalizeRecoveryStatusResponse([noName], 'c').tasks[0]
+    expect(t.displayName).toBe('Синхронизация рекламы')
+  })
+
   it('accepts the defensive { data: [...] } and { tasks: [...] } wrappers', () => {
     expect(normalizeRecoveryStatusResponse({ data: [liveItem] }, 'c').tasks).toHaveLength(1)
     expect(normalizeRecoveryStatusResponse({ tasks: [liveItem] }, 'c').tasks).toHaveLength(1)

@@ -2,8 +2,8 @@
  * AI Forecast normalizer tests — Story 108.1-FE
  * Covers extended prediction fields (predictedRevenue, naiveBaseline, aiVsNaive,
  * forecastId, horizonDays), structured rollbackNotice shape, confidence
- * magnitude-detection normalization (F-17: backend scale is inconsistent —
- * percentage >1 vs probability ≤1 both map to 0-1), and legacy string rollbackNotice wrapping.
+ * normalization (#180 resolved: backend guarantees 0-1 scale; plain clamp to [0,1]),
+ * and legacy string rollbackNotice wrapping.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -47,12 +47,13 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].predictedRevenue).toBe(145811.61)
   })
 
-  it('normalizes a percentage-scale (>1) confidence to 0-1 (e.g. 82 → 0.82)', () => {
+  // #180 resolved: backend guarantees 0-1. Values >1 are clamped to 1 (no more /100 scaling).
+  it('clamps out-of-range confidence (>1) to 1.0 (#180 resolved — backend guarantees 0-1)', () => {
     const result = normalizeAiForecastResponse({
       ...base,
       predictions: [{ forecastDate: '2026-05-17', predictedUnits: 42.5, confidence: 82 }],
     })
-    expect(result.predictions[0].confidence).toBeCloseTo(0.82)
+    expect(result.predictions[0].confidence).toBe(1)
   })
 
   // Validation F-17: live backend emits 0-1 already (prophet ~0.80). The old
@@ -110,12 +111,13 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(r.predictions[0].confidence).toBe(1)
   })
 
-  it('treats just-above-1 as percentage scale (1.0001 → ~0.01)', () => {
+  // #180 resolved: values >1 are clamped to 1, not scaled
+  it('clamps just-above-1 to 1.0 (#180 resolved — no more percentage detection)', () => {
     const r = normalizeAiForecastResponse({
       ...base,
       predictions: [{ forecastDate: '2026-05-17', predictedUnits: 1, confidence: 1.0001 }],
     })
-    expect(r.predictions[0].confidence).toBeCloseTo(0.010001)
+    expect(r.predictions[0].confidence).toBe(1)
   })
 
   it('non-finite confidence (NaN/Infinity) → null', () => {
@@ -154,7 +156,7 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(result.predictions[0].aiVsNaive).toBeNull()
   })
 
-  it('passes through extended prediction fields when present (confidence normalized to 0-1)', () => {
+  it('passes through extended prediction fields when present (confidence clamped to 0-1)', () => {
     const result = normalizeAiForecastResponse({
       ...base,
       predictions: [
@@ -164,7 +166,7 @@ describe('normalizeAiForecastResponse — extended fields', () => {
           predictedRevenue: 5000,
           naiveBaseline: 4500,
           aiVsNaive: '+11.1%',
-          confidence: 78,
+          confidence: 0.78,
           nmId: 12345,
           vendorCode: 'SKU-001',
           forecastId: 'uuid-abc',
@@ -176,7 +178,7 @@ describe('normalizeAiForecastResponse — extended fields', () => {
     expect(p.predictedRevenue).toBe(5000)
     expect(p.naiveBaseline).toBe(4500)
     expect(p.aiVsNaive).toBe('+11.1%')
-    // Backend 78 → normalized 0.78
+    // #180 resolved: backend guarantees 0-1; 0.78 passes through
     expect(p.confidence).toBeCloseTo(0.78)
     expect(p.nmId).toBe(12345)
     expect(p.vendorCode).toBe('SKU-001')

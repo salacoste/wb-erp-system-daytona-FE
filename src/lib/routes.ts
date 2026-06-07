@@ -53,6 +53,7 @@ export const ROUTES = {
     ALERTS: '/analytics/alerts', // Alerts Dashboard — notification rules & history
     PRICING: '/analytics/pricing', // Epic 121: Price Recommendations
     FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
+    FORECAST_ACCURACY: '/analytics/forecast-accuracy', // Epic 123-FE: Forecast Accuracy Dashboard
     MODELS: '/analytics/models', // Epic 109-FE: AI Model Management
     PRODUCT: '/analytics/product', // Epic 120-FE Story 120.5: Unified Product Analytics (dynamic /[nmId] — use buildProductAnalyticsRoute)
     // Epic 112-FE: AI Admin (Owner-only cross-cabinet management)
@@ -145,6 +146,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.ALERTS, // Alerts Dashboard
     ROUTES.ANALYTICS.PRICING, // Epic 121: Price Recommendations
     ROUTES.ANALYTICS.FORECAST, // Epic 103-FE: AI Sales Forecast
+    ROUTES.ANALYTICS.FORECAST_ACCURACY, // Epic 123-FE: Forecast Accuracy Dashboard
     ROUTES.ANALYTICS.MODELS, // Epic 109-FE: AI Model Management
     ROUTES.ANALYTICS.AI_ADMIN.MODELS, // Epic 112-FE: AI Admin Model Rollback (Owner only)
     ROUTES.ANALYTICS.AI_ADMIN.PREFERENCES, // Story 112.2-FE: AI Preferences toggle (Owner only)

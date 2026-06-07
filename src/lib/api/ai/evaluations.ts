@@ -38,23 +38,17 @@ export async function getEvaluations(params?: EvaluationParams): Promise<AiEvalu
 // ── SKU Accuracy ─────────────────────────────────────────────────────────────
 
 export interface SkuAccuracyParams {
-  /** Model UUID — used ONLY for cabinet+model cache-key scoping (useAiSkuAccuracy). NOT sent as a
-   *  query param: the backend whitelist REJECTS an unknown `modelId` with HTTP 400 (see getSkuAccuracy). */
+  /** Model UUID — sent as ?modelId= filter (Request #166 RESOLVED: backend now accepts + filters by it). */
   modelId: string
   /** Filter to a single SKU. Accepts number | null | undefined; null and undefined both omit the URL param (F-7). */
   nmId?: number | null
   format?: 'json' | 'csv'
 }
 
-// iter-63: the backend whitelist (forbidNonWhitelisted) REJECTS an unknown `modelId` query param with
-// HTTP 400 ("modelId should not exist") — it does NOT silently ignore it as the prior comment claimed.
-// Sending modelId broke the page entirely (permanent error state). Until #166 ships server-side
-// model-scoping we MUST omit modelId; the response is cabinet-wide (all models), which is the
-// page's already-documented interim behavior. `nmId` IS whitelisted (HTTP 200) so it is still sent.
-// PENDING BACKEND: #166 — re-add `modelId` to the query once the backend accepts + filters by it.
-// See docs/request-backend/166-ai-sku-accuracy-modelid-nmid-filter.md
 export async function getSkuAccuracy(params: SkuAccuracyParams): Promise<SkuAccuracyListResponse> {
   const queryParams = new URLSearchParams()
+  // Request #166 RESOLVED (2026-06-06): backend now accepts modelId + nmId filter params.
+  queryParams.set('modelId', params.modelId)
   // F-7: treat null and undefined identically — both omit the nmId URL param
   if (params.nmId != null) queryParams.set('nmId', String(params.nmId))
   if (params.format) queryParams.set('format', params.format)

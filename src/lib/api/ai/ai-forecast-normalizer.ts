@@ -38,15 +38,13 @@ interface RawAiForecastResponse {
 }
 
 /**
- * Validation F-17: the backend confidence scale is INCONSISTENT — the DTO
- * documents 0-100 (example 82.5), but the live engines emit 0-1. Detect by
- * magnitude — >1 is a percentage (0-100), ≤1 is a probability (0-1) — so
- * BOTH scales normalize to canonical 0-1. Clamp to [0,1].
+ * Request #180 RESOLVED (2026-06-06): backend now guarantees 0-1 confidence scale.
+ * DTO documents 0-1 range; engines clamp to [0,1]. The magnitude-detection heuristic
+ * (raw > 1 → divide by 100) is no longer needed. Plain clamp is sufficient.
  */
 function scaleConfidence(raw: unknown): number | null {
   if (typeof raw !== 'number' || !Number.isFinite(raw)) return null
-  const v = raw > 1 ? raw / 100 : raw
-  return Math.min(1, Math.max(0, v))
+  return Math.min(1, Math.max(0, raw))
 }
 
 function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
@@ -56,10 +54,9 @@ function normalizePrediction(p: RawForecastPrediction): AiForecastPrediction {
     // Epic 113 I1: backend now sends predictedUnits:null for revenue-target models.
     // Preserve null (AP#8: never coerce to 0).
     predictedSales: p.predictedUnits ?? null,
-    // Validation F-45 (updated Epic 113 I1): revenue-target models now emit REAL
-    // predictedRevenue. The 0→null mapping is kept because units-target models still
-    // send predictedRevenue:0 as a placeholder, and the backend can't distinguish
-    // placeholder-0 from genuine computed-0. NaN/Infinity also → null.
+    // Request #188 RESOLVED (2026-06-06): revenue-target models now emit real predictedRevenue.
+    // The 0→null mapping is retained because units-target models still send predictedRevenue:0
+    // as placeholder (non-target dimension). NaN/Infinity also → null (AP#8).
     predictedRevenue:
       typeof p.predictedRevenue === 'number' &&
       Number.isFinite(p.predictedRevenue) &&

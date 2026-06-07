@@ -1,11 +1,9 @@
 /**
  * TanStack Query hook for AI SKU accuracy list.
- * GET /v1/ai/evaluations/sku-accuracy
+ * GET /v1/ai/evaluations/sku-accuracy?modelId=...&nmId=...
  * Story 110.3-FE Task 3: cabinet-scoped queryKey per Story 97.5-FE cabinet-isolation discipline.
  * No polling — evaluation data is stable within a session.
- * PENDING BACKEND: #166 — modelId is NOT sent as a query param (the backend whitelist 400-rejects
- * an unknown `modelId`); it is kept only for cabinet+model cache-key scoping. nmId IS sent (accepted).
- * The response is cabinet-wide (all models) until #166 ships server-side model-scoping.
+ * Request #166 RESOLVED (2026-06-06): modelId + nmId now sent as query params for server-side filtering.
  */
 
 import { useQuery } from '@tanstack/react-query'
