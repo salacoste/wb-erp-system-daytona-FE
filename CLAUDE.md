@@ -113,7 +113,7 @@ Four anomaly categories: field inversion, null-where-number-expected, impossible
 
 **Drift gate (Story 94.1-FE).** Validator set-diffs broken citations against `scripts/.check-docs-baseline.txt` and exits 0 only on exact match (emits `NEW`/`RESOLVED` enumeration). **Read the exit code, not the count.**
 
-**Accepted baseline: 49 broken citations** — all pre-existing historical refs in shipped docs/stories (rewriting would re-open closed stories). Updated 2026-06-07 after normalizer migrations. **Source of truth**: `scripts/.check-docs-baseline.txt` (`cat` it for the authoritative list). To accept legitimate churn: `bash scripts/check-doc-citations.sh --update-baseline`, then commit the baseline alongside the story.
+**Accepted baseline: 46 broken citations** — all pre-existing historical refs in shipped docs/stories (rewriting would re-open closed stories). Updated 2026-06-08 after normalizer migrations. **Source of truth**: `scripts/.check-docs-baseline.txt` (`cat` it for the authoritative list). To accept legitimate churn: `bash scripts/check-doc-citations.sh --update-baseline`, then commit the baseline alongside the story.
 
 **Exit-code caveat.** Bash pipes capture only the LAST command's exit code, so `npm run check:docs | tail` returns 0 even on failure. Check the gate via bare `npm run check:docs` (no pipe), `set -o pipefail`, or `bash scripts/check-doc-citations.sh` directly. Same for `--update-baseline` — invoke the script directly, not the `npm run` wrapper.
 
@@ -137,13 +137,13 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 
 | Gate | Command | Baseline |
 |---|---|---|
-| Doc citations | `bash scripts/check-doc-citations.sh` | 49 broken (auto set-diff vs `.check-docs-baseline.txt`) |
+| Doc citations | `bash scripts/check-doc-citations.sh` | 46 broken (auto set-diff vs `.check-docs-baseline.txt`) |
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
-| Dot-locale percent | `bash scripts/check-locale-percent.sh` | 11 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
+| Dot-locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
 | ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 0 warnings |
-| Vitest | `npm test -- --run` | ≥ 13800 passing, 676 skipped, 0 failed (floor) |
+| Vitest | `npm test -- --run` | ≥ 14064 passing, 676 skipped, 0 failed (floor) |
 
 **Drift rules.** check:docs — exit code is the gate (automated). type-check / lint — count must equal 0; any error/warning is a regression. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` enforced via root `eslint.config.js` flat config (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated and does NOT load `.eslintrc.json` — enforcement is exclusively `npx eslint` from monorepo root. **When a story legitimately moves a baseline, update this table in the same PR.**
 

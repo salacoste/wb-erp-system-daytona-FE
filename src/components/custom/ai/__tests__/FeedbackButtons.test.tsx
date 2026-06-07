@@ -50,6 +50,7 @@ describe('FeedbackButtons', () => {
   })
 
   afterEach(() => {
+    vi.clearAllTimers() // Clear pending fake timer callbacks before restoring real timers
     vi.useRealTimers()
   })
 
