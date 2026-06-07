@@ -7,7 +7,7 @@
 
 import Link from 'next/link'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatCurrency, formatPercentageInt } from '@/lib/utils'
+import { formatCurrency, formatPercentageInt } from '@/lib/utils'
 import type { TaxMetrics } from '@/types/finance-summary'
 
 /** Human-readable tax system label */

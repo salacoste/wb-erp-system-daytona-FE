@@ -10,35 +10,13 @@
 'use client'
 
 import Link from 'next/link'
-import { AlertTriangle } from 'lucide-react'
 import { TableRow, TableCell } from '@/components/ui/table'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatCurrency, formatDateTime } from '@/lib/utils'
-import { getWbStatusConfig } from '@/lib/wb-status-mapping'
+import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { OrderStatusBadge } from './OrderStatusBadge'
 import { ClientInfoCell } from './ClientInfoCell'
+import { WbStatusBadge, SalePriceCell, ProductNameCell } from './OrdersRowHelpers'
 import type { OrderFbsItem } from '@/types/orders'
 import type { ClientInfoItem } from '@/types/orders-client-info'
-
-/**
- * Detect anomalous salePrice > price inversion from WB data.
- * Threshold chosen at 1.2x — legitimate price adjustments (e.g., currency rounding,
- * promo stacking) stay under this; observed bad data (order 4909080943) was 27x.
- * Backend resolved in Story 103.1 (request #170:25); guard kept for defense-in-depth per CLAUDE.md § Defensive Frontend Principle.
- *
- * Number.isFinite guards against NaN/Infinity if backend ever returns bad JSON values.
- */
-function isPriceInverted(price: number, salePrice: number): boolean {
-  return (
-    Number.isFinite(price) && price > 0 && Number.isFinite(salePrice) && salePrice > price * 1.2
-  )
-}
-
-/** Build the anomaly message shown in tooltip + aria-label (single source of truth). */
-function formatAnomalyMessage(price: number, salePrice: number): string {
-  const ratio = (salePrice / price).toFixed(1)
-  return `Аномалия: цена продажи выше оригинальной цены в ${ratio} раз. Возможна ошибка данных на стороне WB.`
-}
 
 interface OrdersTableRowProps {
   order: OrderFbsItem
@@ -47,34 +25,6 @@ interface OrdersTableRowProps {
   clientInfo?: ClientInfoItem
   /** Story 86.2: render the client cell (matches parent table's column visibility) */
   showClientColumn?: boolean
-}
-
-/**
- * Truncate text with ellipsis
- */
-function truncateText(text: string | null, maxLength: number): string {
-  if (!text) return '—'
-  if (text.length <= maxLength) return text
-  return text.slice(0, maxLength) + '...'
-}
-
-/**
- * WB Status Badge using wb-status-mapping
- */
-function WbStatusBadge({ status }: { status: string }) {
-  const config = getWbStatusConfig(status)
-
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-        config.color,
-        config.bgColor
-      )}
-    >
-      {config.label}
-    </span>
-  )
 }
 
 /**
@@ -87,7 +37,6 @@ export function OrdersTableRow({
   showClientColumn = false,
 }: OrdersTableRowProps) {
   const productName = order.productName || '—'
-  const needsTruncation = productName.length > 40
 
   const handleClick = () => onClick(order)
 
@@ -121,20 +70,7 @@ export function OrdersTableRow({
             {order.nmId}
           </Link>
           <span className="text-xs text-muted-foreground">{order.vendorCode}</span>
-          {needsTruncation ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="text-xs text-gray-600">{truncateText(productName, 40)}</span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">{productName}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <span className="text-xs text-gray-600">{productName}</span>
-          )}
+          <ProductNameCell productName={productName} />
         </div>
       </TableCell>
 
@@ -143,31 +79,7 @@ export function OrdersTableRow({
 
       {/* Sale Price — Story 87.3-FE: anomaly indicator when salePrice > price * 1.2 */}
       <TableCell className="text-right">
-        {isPriceInverted(order.price, order.salePrice)
-          ? (() => {
-              const anomalyMessage = formatAnomalyMessage(order.price, order.salePrice)
-              return (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        onClick={e => e.stopPropagation()}
-                        aria-label={anomalyMessage}
-                        className="inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
-                      >
-                        {formatCurrency(order.salePrice)}
-                        <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-xs">{anomalyMessage}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )
-            })()
-          : formatCurrency(order.salePrice)}
+        <SalePriceCell price={order.price} salePrice={order.salePrice} />
       </TableCell>
 
       {/* Supplier Status */}

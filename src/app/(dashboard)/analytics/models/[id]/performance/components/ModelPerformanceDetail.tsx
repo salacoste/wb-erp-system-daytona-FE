@@ -3,7 +3,7 @@
 /**
  * ModelPerformanceDetail — per-model drift status, MAPE trend chart, and evaluation table.
  * Story 109.5-FE: consumes useModelPerformance + useAiModels for header identity.
- * File-size discipline: pure helpers extracted to model-performance-helpers.ts (Story 99.2-FE).
+ * File-size discipline: evaluation table extracted to EvaluationHistoryTable.tsx.
  */
 
 import Link from 'next/link'
@@ -16,25 +16,17 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { MapeTrendChart } from './MapeTrendChart'
+import { EvaluationHistoryTable } from './EvaluationHistoryTable'
 import {
   DRIFT_BADGE_CONFIG,
   DRIFT_NULL_CONFIG,
   getMapeDeltaColor,
   formatMapeDelta,
   getCurrentMape,
-  sortMapeTrendDesc,
 } from './model-performance-helpers'
 import { STATUS_BADGE_CONFIG } from '../../../components/model-list-helpers'
-import { formatDate, formatPercentage } from '@/lib/utils'
+import { formatPercentage } from '@/lib/utils'
 
 // Re-export pure helpers for direct unit testing (pure-function discipline, Story 99.2-FE).
 export { DRIFT_BADGE_CONFIG, DRIFT_NULL_CONFIG, getMapeDeltaColor, formatMapeDelta, getCurrentMape }
@@ -52,10 +44,7 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
     error: modelsListError,
   } = useAiModels()
 
-  const isLoading = perfLoading || modelsLoading
-
-  // State precedence: loading → list-error → model-not-found → perf-error → happy.
-  if (isLoading) {
+  if (perfLoading || modelsLoading) {
     return (
       <div className="space-y-6 p-6" data-testid="skeleton">
         <Skeleton className="h-8 w-48" />
@@ -99,8 +88,7 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
       <div className="p-6">
         <Alert variant="destructive">
           <AlertDescription>
-            Ошибка загрузки производительности модели
-            {error?.message ? `: ${error.message}` : ''}
+            Ошибка загрузки производительности модели{error?.message ? `: ${error.message}` : ''}
           </AlertDescription>
         </Alert>
       </div>
@@ -109,13 +97,10 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
 
   const driftStatus = perfData?.driftStatus ?? null
   const driftConfig = driftStatus != null ? DRIFT_BADGE_CONFIG[driftStatus] : DRIFT_NULL_CONFIG
-
   const prevMetrics = perfData?.previousVersionMetrics
   const mapeTrend = perfData?.mapeTrend ?? []
   const currentMape = getCurrentMape(mapeTrend)
   const prevMape = prevMetrics?.mape ?? null
-
-  const sortedEntries = sortMapeTrendDesc(mapeTrend)
 
   // F-3: explicit null-guard instead of non-null assertions.
   const deltaStr = formatMapeDelta(prevMape, currentMape)
@@ -124,7 +109,6 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
     deltaColor = getMapeDeltaColor(currentMape - prevMape)
   }
 
-  // F-1: use STATUS_BADGE_CONFIG for localized Russian label + className.
   const statusBadge = STATUS_BADGE_CONFIG[model.status]
 
   return (
@@ -171,35 +155,7 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
       </Card>
 
       {/* Evaluation rows table — AC-7 */}
-      {mapeTrend.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>История оценок</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Дата</TableHead>
-                  <TableHead>MAPE</TableHead>
-                  <TableHead>SKU</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedEntries.map(entry => (
-                  <TableRow key={entry.evaluationDate}>
-                    <TableCell>{formatDate(entry.evaluationDate)}</TableCell>
-                    <TableCell>
-                      {entry.cabinetMape != null ? formatPercentage(entry.cabinetMape) : '—'}
-                    </TableCell>
-                    <TableCell>{entry.skuCount}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
+      <EvaluationHistoryTable mapeTrend={mapeTrend} />
     </div>
   )
 }

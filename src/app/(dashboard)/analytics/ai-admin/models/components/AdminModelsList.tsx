@@ -3,7 +3,7 @@
 /**
  * AdminModelsList — Owner-gated AI model management page content.
  * Story 112.1-FE Task 3.
- * Table extracted to AdminModelsTable; helpers in admin-models-helpers.ts.
+ * Table extracted to AdminModelsTable; pagination to AdminModelsPagination; helpers in admin-models-helpers.ts.
  * State-precedence chain: loading → error → empty → happy (Story 109.5 F-17).
  */
 
@@ -23,6 +23,7 @@ import { useAdminModels } from '@/hooks/useAdminModels'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/lib/routes'
 import { AdminModelsTable } from './AdminModelsTable'
+import { AdminModelsPagination } from './AdminModelsPagination'
 import { RollbackDialog } from './RollbackDialog'
 import {
   sortModels,
@@ -49,9 +50,7 @@ export function AdminModelsList() {
     limit: PAGE_LIMIT,
   })
 
-  // F-11: differentiate "auth not yet hydrated" (user===null, store initial state)
-  // from "explicitly non-Owner". Showing the denied Alert during initial hydration
-  // causes a page-reload flicker for legitimate Owners — render a skeleton instead.
+  // F-11: differentiate "auth not yet hydrated" from "explicitly non-Owner".
   if (user === null) {
     return (
       <div className="space-y-2" aria-label="Загрузка">
@@ -138,7 +137,6 @@ export function AdminModelsList() {
         <Alert>
           <AlertDescription>
             Нет моделей со статусом «{STATUS_LABELS[statusFilter] ?? statusFilter}».{' '}
-            {/* F-14: shadcn Button variant="link" provides focus-visible ring (WCAG 2.1 AA) */}
             <Button
               variant="link"
               size="sm"
@@ -163,32 +161,12 @@ export function AdminModelsList() {
         />
       )}
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Всего: {total}</span>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page <= 1}
-            >
-              ←
-            </Button>
-            <span>
-              Стр. {page} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
-            >
-              →
-            </Button>
-          </div>
-        </div>
-      )}
+      <AdminModelsPagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        onPageChange={setPage}
+      />
 
       {rollbackTarget && (
         <RollbackDialog

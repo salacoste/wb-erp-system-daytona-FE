@@ -5,10 +5,10 @@
 import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
 import { formatPercentage, formatPercentageInt } from '@/lib/utils'
 import { usePipelineGrid } from '../hooks/use-pipeline-grid'
 import { HeatmapCellComponent } from './HeatmapCell'
+import { SummaryItem, HeatmapSkeleton } from './PipelineHeatmapSubcomponents'
 import type { GridParams } from '../types/monitoring'
 import {
   getDefaultDateRange,
@@ -167,33 +167,6 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
             />
             <span>{item.label}</span>
           </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function SummaryItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <span className="text-muted-foreground">{label}: </span>
-      <span className="font-semibold">{value}</span>
-    </div>
-  )
-}
-
-function HeatmapSkeleton() {
-  return (
-    <div className="space-y-4" aria-busy="true">
-      <Skeleton className="h-12 w-full" />
-      <div className="flex gap-2">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-8 w-20" />
-        ))}
-      </div>
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-10 w-full" />
         ))}
       </div>
     </div>
