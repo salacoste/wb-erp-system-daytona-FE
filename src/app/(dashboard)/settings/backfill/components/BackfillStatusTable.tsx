@@ -115,8 +115,8 @@ export function BackfillStatusTable({
             <TableRow
               key={cabinet.cabinet_id}
               // F-29: highlight on EITHER backfill failing so an analytics-only
-              // failure isn't visually swallowed. FUTURE: per-status retry
-              // needs backend endpoint support (current retry is all-or-nothing).
+              // failure isn't visually swallowed. PENDING BACKEND: per-status retry
+              // endpoint needed (current retry is all-or-nothing per cabinet).
               className={
                 cabinet.status === 'failed' || cabinet.analytics_status === 'failed'
                   ? 'bg-red-50'
