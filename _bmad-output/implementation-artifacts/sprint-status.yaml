@@ -547,4 +547,10 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-124-fe.md (created 2026-06-07)
   # Source: Epic 123-FE retro action items + test stub audit (2,737 it.todo stubs across 50 files)
   # Strategy: Wave execution — 9-12 parallel executor agents per wave, ~18 stories across 5 tracks
-  epic-124-fe: in-progress  # 2026-06-07 kickoff. Wave 3 (9 agents, ~1,089 stubs) in progress. Wave 4 launching.
+  epic-124-fe: done  # 2026-06-07 ALL stubs flushed. Committed e1c057ee. 2,737 it.todo → 0. 13,533 tests passing, 0 failed. 63 files changed (+22,987/-8,833).
+  epic-124-fe-retrospective: done  # 2026-06-07 filed at _bmad-output/implementation-artifacts/epic-124-fe-retro-2026-06-07.md. 6 wins, 5 challenges, 4 insights, 2 discoveries, 5 action items.
+
+  # Epic 125-FE: Zero-Test Route Coverage — 11 Routes (P2 quality, ~15-20 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-125-fe.md (created 2026-06-07)
+  # Source: Epic 124-FE retro SD-1 (11 route dirs with zero test files)
+  epic-125-fe: in-progress  # 2026-06-07 kickoff. 11 routes, 3 stories.
