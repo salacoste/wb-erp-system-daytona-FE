@@ -48,6 +48,9 @@ export interface SearchQueryItem {
   avgCtr: number | null
   totalOrders: number
   // Story 91.1-FE: totalRevenue removed (WB never returned real data; backend dropped the field)
+  /** Request #178 (option-1 additive alias): cart additions = totalClicks under a semantic name.
+   *  WB openCard→impressions, addToCart→clicks column mislabeling (a-i-33). */
+  searchCartAdds?: number
 }
 
 export interface SearchByProductResponse {
@@ -77,6 +80,9 @@ export interface SearchProductItem {
   avgCtr: number | null
   totalOrders: number
   // Story 91.1-FE: totalRevenue removed
+  /** Request #178 (option-1 additive alias): cart additions = totalClicks under a semantic name.
+   *  WB openCard→impressions, addToCart→clicks column mislabeling (a-i-33). */
+  searchCartAdds?: number
 }
 
 export interface SearchByQueryResponse {

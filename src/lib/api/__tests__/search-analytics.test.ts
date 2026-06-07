@@ -39,6 +39,8 @@ describe('Search Analytics API Client', () => {
           totalClicks: 50,
           avgCtr: 5.0,
           totalOrders: 10,
+          // Request #178: normalizer adds searchCartAdds via toCount(undefined) → 0
+          searchCartAdds: 0,
           // Story 119.1-FE: removed legacy totalRevenue field (Story 91.1-FE) — normalizer drops it
         },
       ],

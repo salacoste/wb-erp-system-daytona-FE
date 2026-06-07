@@ -1,5 +1,9 @@
 # План исправления технического долга тестов
 
+> **ARCHIVED 2026-06-08**: This document is obsolete. All 78 failing tests and 3,799 TODO stubs
+> described below were resolved through Epics 124-128 (June 2026). Current state: 14,063+ tests
+> passing, 0 failed, 0 TODO stubs. Kept for historical reference only.
+
 **Дата анализа:** 2026-01-30
 **Версия:** 1.0
 **Ответственный:** QA Team

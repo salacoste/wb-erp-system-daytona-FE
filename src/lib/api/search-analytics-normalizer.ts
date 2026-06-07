@@ -60,6 +60,8 @@ export function normalizeSearchQueryItem(raw: unknown): SearchQueryItem {
     totalClicks: toCount(r.totalClicks),
     avgCtr: toNullableNumber(r.avgCtr), // rate → preserve null (NOT toCount's ?? 0), per the AP#8 split
     totalOrders: toCount(r.totalOrders),
+    // Request #178 (option-1): alias totalClicks under semantic name
+    searchCartAdds: toCount(r.searchCartAdds),
   }
 }
 
@@ -76,6 +78,8 @@ export function normalizeSearchProductItem(raw: unknown): SearchProductItem {
     totalClicks: toCount(r.totalClicks),
     avgCtr: toNullableNumber(r.avgCtr), // rate → preserve null (NOT toCount's ?? 0), per the AP#8 split
     totalOrders: toCount(r.totalOrders),
+    // Request #178 (option-1): alias totalClicks under semantic name
+    searchCartAdds: toCount(r.searchCartAdds),
   }
 }
 

@@ -257,6 +257,7 @@ describe('normalizeSearchQueryItem', () => {
       avgPosition: 1.5,
       totalImpressions: 1000,
       totalClicks: 50,
+      searchCartAdds: 50, // Request #178: backend mirrors totalClicks
       avgCtr: 5,
       totalOrders: 7,
     })
@@ -264,6 +265,8 @@ describe('normalizeSearchQueryItem', () => {
     expect(r.totalImpressions).toBe(1000)
     expect(r.totalOrders).toBe(7)
     expect(r.avgCtr).toBe(5) // real rate passes through
+    // Request #178: searchCartAdds mirrors totalClicks under a semantic name
+    expect(r.searchCartAdds).toBe(50)
   })
 
   it('all counts undefined → 0, but avgCtr (a rate) → null (NOT 0) per AP#8 (iter-128)', () => {
@@ -271,6 +274,8 @@ describe('normalizeSearchQueryItem', () => {
     expect(r.totalImpressions).toBe(0)
     expect(r.totalClicks).toBe(0)
     expect(r.totalOrders).toBe(0)
+    // Request #178: searchCartAdds mirrors totalClicks → 0 when absent
+    expect(r.searchCartAdds).toBe(0)
     // rate is UNKNOWN when missing — null (rendered "—"), not a fabricated 0% ("zero engagement")
     expect(r.avgCtr).toBeNull()
   })
@@ -289,6 +294,8 @@ describe('normalizeSearchProductItem', () => {
     expect(r.nmId).toBe(12345)
     expect(r.vendorCode).toBe('VC-1')
     expect(r.totalImpressions).toBe(500)
+    // Request #178: searchCartAdds defaults to 0 when absent
+    expect(r.searchCartAdds).toBe(0)
   })
 
   it('avgCtr (rate) → null when missing (NOT 0), real value preserved (iter-128)', () => {

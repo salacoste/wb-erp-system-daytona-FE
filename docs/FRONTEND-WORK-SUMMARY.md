@@ -1,17 +1,23 @@
 # Frontend Work Summary
 
 **Создан**: 2026-01-30 (Backend Integration Analysis)
-**Последнее обновление**: 2026-02-27
-**Статус**: Обновлено по фактическому состоянию кода
+**Последнее обновление**: 2026-06-08
+**Статус**: Обновлено — все эпики завершены
 
 ---
 
 ## Executive Summary
 
 **Backend Status**: ✅ 100% Complete — All endpoints production-ready
-**Frontend Status**: ✅ 22/23 эпиков завершены, 1 остаётся в бэклоге (Orders Integrity)
+**Frontend Status**: ✅ 131/131 эпиков завершены (все 60 отслеживаемых эпиков закрыты, Epics 71-131)
 
-С момента исходного анализа (2026-01-30) реализовано **12 новых эпиков** и 155+ коммитов. Все пункты из исходного Priority 1–3 либо завершены, либо заблокированы бекендом.
+С момента исходного анализа (2026-01-30) реализовано **131 эпик** и 700+ коммитов. Все пункты из исходного Priority 1–3 завершены. Остаток: 2 истории отложены до реализации бэкенда (#210 buyout daily trends, #211 returns daily trends).
+
+**Текущие метрики** (2026-06-08):
+- 14,063+ тестов (0 failed)
+- 0 TypeScript ошибок
+- 0 ESLint ошибок
+- Все quality gates зелёные
 
 ---
 
@@ -113,7 +119,8 @@
 
 ## Текущие блокеры (ожидают бекенд)
 
-**Нет активных блокеров.** Все backend-зависимости разрешены.
+**Нет активных блокеров.** Все backend-зависимости из Priority 1-3 разрешены.
+Ожидают backend: Requests #210 (buyout daily) и #211 (returns daily).
 
 ~~D-12: Funnel buyoutCount=0~~ — ✅ Исправлено бекендом (2026-02-27): query-time buyout enrichment из `daily_sales_raw` + `orders_fbs`. Commit `39e47fa`.
 
@@ -126,9 +133,28 @@
 | Приоритет | Задача | Оценка | Статус |
 |-----------|--------|--------|--------|
 | **P2** | Orders Integrity Dashboard | 8-12h | ❌ Не начато |
+| **P2** | Buyout Daily Trends (Story 127.1) | 4-6h | ⏳ Blocked: Backend Request #210 |
+| **P2** | Returns Daily Trends (Story 127.2) | 4-6h | ⏳ Blocked: Backend Request #211 |
 | **P4** | Cache Timestamps Display | 1h | ℹ️ Optional |
 
-**Итого оставшийся объём**: ~9-13 hours (без backend-зависимостей)
+---
+
+## Recent Sprint: Epics 120-131 (June 2026)
+
+| Epic | Description | Key Deliverables |
+|------|-------------|-----------------|
+| 120-FE | Marketing Hub Redesign | Hub page, product analytics, organic/paid split (7 stories) |
+| 121-FE | Alerts & Recommendations | Alert rules dialog, pricing recommendations, reorder dashboard |
+| 122-FE | Product Analytics Funnel | Funnel + price history + E2E tests |
+| 123-FE | AI Admin Polish | 6 stories, 7 backend requests resolved |
+| 124-FE | Test Coverage Flush | 2,737 TODO stubs → real tests (13,533 total) |
+| 125-FE | Zero-Test Route Coverage | 247 baseline tests for 11 uncovered routes |
+| 126-FE | Housekeeping | Stale markers, E2E, edge-case tests |
+| 127-FE | Marketing Phase 3 | Comparison periods + cross-links (+ 2 deferred) |
+| 128-FE | TypeScript Cleanup | 64 TS errors → 0, 15 over-cap files → 0 |
+| 129-FE | FBS Enhanced Reconciliation | Real backend contract rewrite (14,064 tests) |
+| 130-FE | E2E Smoke Tests | 33 E2E tests for 6 core analytics routes |
+| 131-FE | Documentation Catch-Up | Radix jsdom patterns, retro actions |
 
 ---
 
@@ -195,4 +221,4 @@
 ---
 
 **Исходный анализ**: 2026-01-30
-**Обновлено**: 2026-02-27 — по фактическому состоянию кодовой базы
+**Обновлено**: 2026-06-08 — все эпики завершены, 14,063+ тестов
