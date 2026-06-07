@@ -38,7 +38,7 @@ vi.mock('react', async () => {
       if (resource === cachedParamsPromise) {
         return { id: 'supply-001' }
       }
-      return actual.use(resource)
+      return actual.use(resource as import('react').Usable<unknown>)
     },
   }
 })

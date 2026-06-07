@@ -79,7 +79,6 @@ const mkP = (w: string, o: Partial<WeeklyTrendDataPoint> = {}): WeeklyTrendDataP
   week: w,
   wb_sales_gross: 100000,
   payout_total: 50000,
-  margin_pct: 15.5,
   logistics_cost: 8000,
   storage_cost: 3000,
   ...o,

@@ -405,31 +405,31 @@ export const mockBackfillStatusResponseEmpty: typeof mockBackfillStatusResponse 
 // =============================================================================
 
 export const mockStartBackfillRequest = {
-  cabinetId: 'cabinet-uuid-001',
-  dataSource: 'both' as const,
-  dateFrom: '2025-01-29',
-  dateTo: '2026-01-28',
-  priority: 10,
+  cabinet_id: 'cabinet-uuid-001',
+  from_date: '2025-01-29',
+  to_date: '2026-01-28',
 }
 
 export const mockStartBackfillRequestAllCabinets = {
-  dataSource: 'both' as const,
+  cabinet_id: '',
 }
 
 export const mockStartBackfillResponse = {
-  success: true,
+  cabinet_id: 'cabinet-uuid-001',
+  status: 'pending' as const,
   message: 'Backfill jobs enqueued successfully',
-  jobCount: 4,
-  jobIds: ['job-uuid-001', 'job-uuid-002', 'job-uuid-003', 'job-uuid-004'],
+  estimated_duration_minutes: 30,
 }
 
 export const mockBackfillActionResponse = {
-  success: true,
+  cabinet_id: 'cabinet-uuid-001',
+  status: 'paused' as const,
   message: 'Backfill paused successfully',
 }
 
 export const mockBackfillActionResponseResume = {
-  success: true,
+  cabinet_id: 'cabinet-uuid-001',
+  status: 'in_progress' as const,
   message: 'Backfill resumed successfully',
 }
 

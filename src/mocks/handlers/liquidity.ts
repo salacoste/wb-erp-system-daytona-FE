@@ -145,6 +145,7 @@ export function generateMockDistribution(items: LiquidityItem[]): LiquidityDistr
       value: categoryValue,
       pct: totalValue > 0 ? (categoryValue / totalValue) * 100 : 0,
       avg_turnover_days: Math.round(avgTurnover),
+      no_sales_count: categoryItems.filter(i => i.turnover_days >= 999).length,
     }
   }
 

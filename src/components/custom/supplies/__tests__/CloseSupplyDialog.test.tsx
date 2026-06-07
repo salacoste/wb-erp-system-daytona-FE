@@ -13,6 +13,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CloseSupplyDialog } from '../CloseSupplyDialog'
+import type { CloseSupplyResponse } from '@/types/supplies'
 import * as suppliesApi from '@/lib/api/supplies'
 
 // Mock the supplies API module
@@ -231,9 +232,9 @@ describe('CloseSupplyDialog', () => {
 
     it('cancel button is disabled when loading', async () => {
       // Create a promise we control to keep mutation pending
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -249,7 +250,7 @@ describe('CloseSupplyDialog', () => {
       })
 
       // Resolve to clean up
-      resolveMutation!({ status: 'CLOSED', closedAt: '2026-01-01', supplyNumber: 'WB-1' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
   })
 
@@ -271,10 +272,9 @@ describe('CloseSupplyDialog', () => {
 
     it('clicking confirm triggers close mutation', async () => {
       mockCloseSupply.mockResolvedValueOnce({
-        id: 'supply-001',
         status: 'CLOSED',
         closedAt: '2026-01-01T00:00:00Z',
-        supplyNumber: 'WB-12345',
+        message: 'Supply closed successfully',
       })
       const user = userEvent.setup()
       renderDialog()
@@ -303,9 +303,9 @@ describe('CloseSupplyDialog', () => {
 
   describe('Loading State', () => {
     it('shows loading spinner in confirm button when mutation is pending', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -321,13 +321,13 @@ describe('CloseSupplyDialog', () => {
       })
 
       // Resolve to clean up
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
 
     it('confirm button text changes during loading', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -341,13 +341,13 @@ describe('CloseSupplyDialog', () => {
         expect(screen.getByText('Закрытие...')).toBeInTheDocument()
       })
 
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
 
     it('confirm button is disabled during loading', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -364,13 +364,13 @@ describe('CloseSupplyDialog', () => {
         expect(btn).toBeDisabled()
       })
 
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
 
     it('cancel button is disabled during loading', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -384,13 +384,13 @@ describe('CloseSupplyDialog', () => {
         expect(screen.getByRole('button', { name: 'Отмена' })).toBeDisabled()
       })
 
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
 
     it('dialog cannot be closed during loading via onOpenChange', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -409,13 +409,13 @@ describe('CloseSupplyDialog', () => {
       const cancelBtn = screen.getByRole('button', { name: 'Отмена' })
       expect(cancelBtn).toBeDisabled()
 
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
 
     it('Escape key does not close dialog during loading', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -437,7 +437,7 @@ describe('CloseSupplyDialog', () => {
       // No additional onOpenChange(false) calls from Escape
       expect(onOpenChange.mock.calls.length).toBe(callsBeforeEscape)
 
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
   })
 
@@ -531,10 +531,9 @@ describe('CloseSupplyDialog', () => {
   describe('Success Behavior', () => {
     it('shows success toast on successful close', async () => {
       mockCloseSupply.mockResolvedValueOnce({
-        id: 'supply-001',
         status: 'CLOSED',
         closedAt: '2026-01-01T00:00:00Z',
-        supplyNumber: 'WB-12345',
+        message: 'Supply closed successfully',
       })
 
       const user = userEvent.setup()
@@ -550,10 +549,9 @@ describe('CloseSupplyDialog', () => {
 
     it('calls onOpenChange(false) on success', async () => {
       mockCloseSupply.mockResolvedValueOnce({
-        id: 'supply-001',
         status: 'CLOSED',
         closedAt: '2026-01-01T00:00:00Z',
-        supplyNumber: 'WB-12345',
+        message: 'Supply closed successfully',
       })
 
       const user = userEvent.setup()
@@ -569,10 +567,9 @@ describe('CloseSupplyDialog', () => {
 
     it('calls onSuccess callback when provided', async () => {
       mockCloseSupply.mockResolvedValueOnce({
-        id: 'supply-001',
         status: 'CLOSED',
         closedAt: '2026-01-01T00:00:00Z',
-        supplyNumber: 'WB-12345',
+        message: 'Supply closed successfully',
       })
 
       const onSuccess = vi.fn()
@@ -713,9 +710,9 @@ describe('CloseSupplyDialog', () => {
     })
 
     it('loading spinner is accessible during pending state', async () => {
-      let resolveMutation: (value: unknown) => void
+      let resolveMutation!: (value: import('@/types/supplies').CloseSupplyResponse) => void
       mockCloseSupply.mockReturnValue(
-        new Promise(resolve => {
+        new Promise<import('@/types/supplies').CloseSupplyResponse>(resolve => {
           resolveMutation = resolve
         })
       )
@@ -730,7 +727,7 @@ describe('CloseSupplyDialog', () => {
       const spinner = document.querySelector('.animate-spin')
       expect(spinner).toBeInTheDocument()
 
-      resolveMutation!({ status: 'CLOSED' })
+      resolveMutation({ status: 'CLOSED', closedAt: '2026-01-01', message: 'Closed' })
     })
   })
 

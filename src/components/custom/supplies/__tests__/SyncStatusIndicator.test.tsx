@@ -15,7 +15,8 @@ import { SyncStatusIndicator } from '../SyncStatusIndicator'
 // Mock date-fns to control relative time output
 const mockFormatDistanceToNow = vi.fn((_date: unknown, _opts: unknown) => '2 минуты назад')
 vi.mock('date-fns', () => ({
-  formatDistanceToNow: (...args: unknown[]) => mockFormatDistanceToNow(...args),
+  formatDistanceToNow: (...args: unknown[]) =>
+    mockFormatDistanceToNow(...(args as [unknown, unknown])),
 }))
 vi.mock('date-fns/locale', () => ({
   ru: {},

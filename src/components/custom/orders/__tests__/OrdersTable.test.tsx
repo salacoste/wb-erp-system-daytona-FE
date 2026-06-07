@@ -28,8 +28,8 @@ describe('OrdersTable', () => {
   const defaultProps = {
     orders: mockOrdersList,
     onRowClick: vi.fn(),
-    sortBy: 'created_at' as const,
-    sortOrder: 'desc' as const,
+    sortBy: 'created_at' as import('../OrdersTable').SortField,
+    sortOrder: 'desc' as import('../OrdersTable').SortOrder,
     onSortChange: vi.fn(),
   }
 
@@ -37,7 +37,17 @@ describe('OrdersTable', () => {
     vi.clearAllMocks()
   })
 
-  function renderTable(overrides: Partial<typeof defaultProps> = {}) {
+  type TableProps = {
+    orders: import('@/types/orders').OrderFbsItem[]
+    onRowClick: (order: import('@/types/orders').OrderFbsItem) => void
+    sortBy: import('../OrdersTable').SortField
+    sortOrder: import('../OrdersTable').SortOrder
+    onSortChange: (field: import('../OrdersTable').SortField) => void
+    hasFilters?: boolean
+    onClearFilters?: () => void
+  }
+
+  function renderTable(overrides: Partial<TableProps> = {}) {
     const props = { ...defaultProps, ...overrides }
     return renderWithProviders(<OrdersTable {...props} />)
   }

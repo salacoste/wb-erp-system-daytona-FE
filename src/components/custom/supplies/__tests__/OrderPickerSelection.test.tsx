@@ -139,17 +139,20 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
         refetch: vi.fn(),
         isPending: false,
         searchValue: '',
-        onSearchChange: vi.fn(),
-        statusFilter: null,
-        onStatusChange: vi.fn(),
+        onSearchChange: vi.fn<[value: string], void>(),
+        statusFilter: null as import('@/hooks/useOrdersForSupply').EligibleSupplierStatus | null,
+        onStatusChange: vi.fn<
+          [status: import('@/hooks/useOrdersForSupply').EligibleSupplierStatus | null],
+          void
+        >(),
         activeFilterCount: 0,
-        onClearFilters: vi.fn(),
+        onClearFilters: vi.fn<[], void>(),
         isNearLimit: false,
         isAtLimit: false,
-        selectedIds: new Set(),
-        onToggleOrder: vi.fn(),
-        onToggleAll: vi.fn(),
-        onClearSelection: vi.fn(),
+        selectedIds: new Set<string>(),
+        onToggleOrder: vi.fn<[orderId: string], void>(),
+        onToggleAll: vi.fn<[], void>(),
+        onClearSelection: vi.fn<[], void>(),
       }
       rerender(
         <OrderPickerContent

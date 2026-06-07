@@ -21,8 +21,8 @@ describe('OrdersFilters', () => {
   const defaultProps = {
     dateFrom: '2026-02-01',
     dateTo: '2026-02-08',
-    supplierStatus: null as string | null,
-    wbStatus: null as string | null,
+    supplierStatus: null as import('@/types/orders').SupplierStatus | null,
+    wbStatus: null as import('@/types/orders').WbStatus | null,
     searchValue: '',
     onDateFromChange: vi.fn(),
     onDateToChange: vi.fn(),

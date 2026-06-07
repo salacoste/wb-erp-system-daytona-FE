@@ -158,6 +158,8 @@ export interface LiquidityDistributionItem {
   pct: number
   /** Average turnover days in this category */
   avg_turnover_days: number
+  /** Number of SKUs with zero sales (turnover_days >= 999 sentinel) */
+  no_sales_count: number
 }
 
 /**

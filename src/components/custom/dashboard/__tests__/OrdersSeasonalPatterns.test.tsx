@@ -135,7 +135,9 @@ const em = () =>
     refetch: vi.fn(),
   })
 
-beforeEach(() => vi.clearAllMocks())
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 // 1. Basic Rendering (7 stubs -> 2 tests)
 describe('Basic Rendering', () => {

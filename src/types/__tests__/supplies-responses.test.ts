@@ -82,16 +82,6 @@ describe('SuppliesListParams Interface', () => {
       expect(typeof params.to).toBe('string')
     })
 
-    it('should allow sort_by field', () => {
-      const params: SuppliesListParams = { sort_by: 'created_at' }
-      expect(params.sort_by).toBe('created_at')
-    })
-
-    it('should allow sort_order field', () => {
-      const params: SuppliesListParams = { sort_order: 'desc' }
-      expect(params.sort_order).toBe('desc')
-    })
-
     it('should allow limit', () => {
       const params: SuppliesListParams = { limit: 50 }
       expect(params.limit).toBe(50)

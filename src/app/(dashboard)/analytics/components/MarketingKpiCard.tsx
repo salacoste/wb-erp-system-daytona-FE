@@ -56,10 +56,12 @@ export function MarketingKpiCard({ from, to }: MarketingKpiCardProps) {
   const topItem = items[0]
   const secondItem = items[1]
   const thirdItem = items[2]
-  // FUTURE: backend also returns searchOrderShareDeduplicated/totalSearchOrdersDeduplicated
-  // (≤100% multi-attribution-corrected; search-analytics.ts:121-124). We intentionally show the
-  // raw share + inflation tooltip per Defensive Frontend (preserve raw + indicate). Switch to
-  // the dedup fields here if product prefers the corrected figure.
+  // Defensive Frontend: show BOTH raw and deduplicated share.
+  // Raw share may exceed 100% due to WB multi-attribution. Deduplicated share is ≤100%.
+  // Preserve raw value + show corrected figure alongside per Defensive Frontend Principle.
+  const dedupShare = summary?.searchOrderShareDeduplicated
+  const rawShare = summary?.searchOrderShare
+  const hasDedup = dedupShare != null && rawShare != null && Math.abs(rawShare - dedupShare) > 0.5
   // A non-null-but-zero share with zero orders is not meaningful content → treat as empty.
   const hasData = (summary != null && summary.totalSearchOrders > 0) || items.length > 0
 
@@ -96,8 +98,9 @@ export function MarketingKpiCard({ from, to }: MarketingKpiCardProps) {
                         </span>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        WB может атрибутировать один заказ нескольким запросам — доля может
-                        превышать 100%
+                        {hasDedup
+                          ? `С учётом мультиатрибуции: ${displayPercent(dedupShare)} (без дублей)`
+                          : 'WB может атрибутировать один заказ нескольким запросам — доля может превышать 100%'}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

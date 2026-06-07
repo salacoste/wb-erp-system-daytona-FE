@@ -46,6 +46,7 @@ function mapDistribution(
       value: catValue,
       pct: totalValue > 0 ? (catValue / totalValue) * 100 : 0,
       avg_turnover_days: avgTurnoverDays(catItems),
+      no_sales_count: catItems.filter(i => i.turnover_days >= 999).length,
     }
   }
 
@@ -87,6 +88,7 @@ function mapDistribution(
         pct: entry.pct ?? entry.percentage ?? (totalCapital > 0 ? (value / totalCapital) * 100 : 0),
         avg_turnover_days:
           entry.avg_turnover_days ?? entry.avg_turnover ?? avgTurnoverDays(catItems),
+        no_sales_count: catItems.filter(i => i.turnover_days >= 999).length,
       }
     }
     return makeDefault(cat)
@@ -111,9 +113,7 @@ function mapDistribution(
  * NOTE: mapItem defaults a missing backend `turnover_days` to 0 (LiquidityItem.turnover_days is
  * non-nullable `number`), so such items count as "selling" with 0 days and pull the mean down.
  * That is the pre-existing item-mapper contract; this filter just makes it load-bearing here.
- * FUTURE: the illiquid card's single avg understates dead stock when only a minority sell
- * (e.g. [120, 999, 999] → 120, no "2 без продаж" signal) — surface a no_sales_count on
- * LiquidityDistributionItem so the UI can render "120 дней (2 без продаж)".
+ * no_sales_count is computed alongside and surfaces the count of zero-sales SKUs per category.
  */
 function avgTurnoverDays(items: LiquidityItem[]): number {
   if (items.length === 0) return 0

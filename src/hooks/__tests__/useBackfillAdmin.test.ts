@@ -19,6 +19,7 @@ import {
   hasActiveBackfillJobs,
   isAllBackfillCompleted,
 } from '../useBackfillAdmin'
+import type { BackfillCabinetStatus } from '@/types/backfill'
 import { backfillQueryKeys } from '@/lib/api/backfill'
 import {
   mockBackfillStatusResponse,
@@ -90,8 +91,12 @@ function createWrapperWithClient() {
   return { client, wrapper }
 }
 
-beforeEach(() => vi.clearAllMocks())
-afterEach(() => vi.restoreAllMocks())
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 // ============================================================================
 // Query Keys
@@ -220,7 +225,7 @@ describe('useBackfillStatus - Filtering', () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce(
       [mockBackfillStatusInProgress].map(normalizedStatus)
     )
-    const { result } = renderHook(() => useBackfillStatus({ cabinetId: 'cabinet-uuid-001' }), {
+    const { result } = renderHook(() => useBackfillStatus(), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -232,7 +237,7 @@ describe('useBackfillStatus - Filtering', () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce(
       [mockBackfillStatusCompleted].map(normalizedStatus)
     )
-    const { result } = renderHook(() => useBackfillStatus({ cabinetId: 'cabinet-uuid-002' }), {
+    const { result } = renderHook(() => useBackfillStatus(), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -241,16 +246,16 @@ describe('useBackfillStatus - Filtering', () => {
 
   it('returns empty array when cabinetId not found', async () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce([])
-    const { result } = renderHook(() => useBackfillStatus({ cabinetId: 'non-existent' }), {
+    const { result } = renderHook(() => useBackfillStatus(), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual([])
   })
 
-  it('fetches all when cabinetId is undefined', async () => {
+  it('fetches all when no options provided', async () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce(allNormalized())
-    const { result } = renderHook(() => useBackfillStatus({ cabinetId: undefined }), {
+    const { result } = renderHook(() => useBackfillStatus(), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -406,15 +411,14 @@ describe('useStartBackfill', () => {
     expect(body.from_date).toBeUndefined()
   })
 
-  it('returns message and jobCount on success', async () => {
+  it('returns message and estimated_duration_minutes on success', async () => {
     vi.mocked(apiClient.post).mockResolvedValueOnce(mockStartBackfillResponse)
     const { result } = renderHook(() => useStartBackfill(), { wrapper: createWrapper() })
     result.current.mutate(mockStartBackfillRequest)
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data!.message).toBe('Backfill jobs enqueued successfully')
-    expect(result.current.data!.jobCount).toBe(4)
-    expect(result.current.data!.jobIds).toHaveLength(4)
-    result.current.data!.jobIds.forEach(id => expect(typeof id).toBe('string'))
+    expect(result.current.data!.estimated_duration_minutes).toBe(30)
+    expect(result.current.data!.cabinet_id).toBe('cabinet-uuid-001')
   })
 
   it('invalidates backfill queries on success', async () => {
@@ -442,7 +446,7 @@ describe('useStartBackfill', () => {
     const { result } = renderHook(() => useStartBackfill(), { wrapper: createWrapper() })
     result.current.mutate(mockStartBackfillRequest)
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data!.success).toBe(true)
+    expect(result.current.data!.status).toBe('pending')
     expect(result.current.data!.message).toBe('Backfill jobs enqueued successfully')
   })
 
@@ -500,7 +504,7 @@ describe('usePauseBackfill', () => {
     const { result } = renderHook(() => usePauseBackfill(), { wrapper: createWrapper() })
     result.current.mutate('cabinet-uuid-001')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data!.success).toBe(true)
+    expect(result.current.data!.status).toBeTruthy()
   })
 
   it('captures error on failure', async () => {
@@ -594,7 +598,7 @@ describe('useResumeBackfill', () => {
     const { result } = renderHook(() => useResumeBackfill(), { wrapper: createWrapper() })
     result.current.mutate('cabinet-uuid-001')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data!.success).toBe(true)
+    expect(result.current.data!.status).toBeTruthy()
   })
 
   it('captures error on failure', async () => {
@@ -807,21 +811,29 @@ describe('hasActiveBackfillJobs', () => {
   it('returns true when in_progress or pending exists', () => {
     const active = [
       normalizedStatus({ ...mockBackfillStatusInProgress, reportsStatus: 'in_progress' }),
-    ]
+    ] as BackfillCabinetStatus[]
     expect(hasActiveBackfillJobs(active)).toBe(true)
   })
   it('returns false when all completed', () => {
-    expect(hasActiveBackfillJobs([mockBackfillStatusCompleted].map(normalizedStatus))).toBe(false)
+    expect(
+      hasActiveBackfillJobs(
+        [mockBackfillStatusCompleted].map(normalizedStatus) as BackfillCabinetStatus[]
+      )
+    ).toBe(false)
   })
   it('returns false for empty array', () => expect(hasActiveBackfillJobs([])).toBe(false))
 })
 
 describe('isAllBackfillCompleted', () => {
   it('returns true when all completed', () => {
-    expect(isAllBackfillCompleted([mockBackfillStatusCompleted].map(normalizedStatus))).toBe(true)
+    expect(
+      isAllBackfillCompleted(
+        [mockBackfillStatusCompleted].map(normalizedStatus) as BackfillCabinetStatus[]
+      )
+    ).toBe(true)
   })
   it('returns false when any not completed', () => {
-    expect(isAllBackfillCompleted(allNormalized())).toBe(false)
+    expect(isAllBackfillCompleted(allNormalized() as BackfillCabinetStatus[])).toBe(false)
   })
   it('returns true for empty array', () => expect(isAllBackfillCompleted([])).toBe(true))
 })

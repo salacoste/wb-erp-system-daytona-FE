@@ -460,7 +460,7 @@ describe('GenerateStickersModal', () => {
       renderWithQC(<GenerateStickersModal {...defaultProps} />, qc)
       await user.click(screen.getByRole('button', { name: /скачать/i }))
       await waitFor(() => expect(invalidateSpy).toHaveBeenCalledTimes(2))
-      const keys = invalidateSpy.mock.calls.map(c => c[0].queryKey)
+      const keys = invalidateSpy.mock.calls.map(c => c[0]!.queryKey)
       expect(keys).toContainEqual(['supplies', 'detail', 'sup_123abc'])
       expect(keys).toContainEqual(['supplies', 'documents', 'sup_123abc'])
     })

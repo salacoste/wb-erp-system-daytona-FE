@@ -12,11 +12,18 @@ import type { LiquidityDistribution } from '@/types/liquidity'
 import { LiquidityDistributionCards } from '../LiquidityDistributionCards'
 
 function makeDistribution(): LiquidityDistribution {
-  const cat = (count: number, value: number, pct: number, avg_turnover_days: number) => ({
+  const cat = (
+    count: number,
+    value: number,
+    pct: number,
+    avg_turnover_days: number,
+    no_sales_count = 0
+  ) => ({
     count,
     value,
     pct,
     avg_turnover_days,
+    no_sales_count,
   })
   return {
     highly_liquid: cat(4, 0, 9, 15),

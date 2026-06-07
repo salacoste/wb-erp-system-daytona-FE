@@ -367,7 +367,7 @@ describe('Orders Page - Lazy Loading (Story 40.7-FE)', () => {
       const LazyComponent = lazy(() => Promise.resolve({ default: () => <div>Dynamic</div> }))
       // lazy() returns a LazyComponent that defers loading
       expect(LazyComponent).toBeDefined()
-      expect(LazyComponent._payload).toBeDefined()
+      expect((LazyComponent as unknown as Record<string, unknown>)._payload).toBeDefined()
     })
 
     it('should preload timeline components on trigger', async () => {

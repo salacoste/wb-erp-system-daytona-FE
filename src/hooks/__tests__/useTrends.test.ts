@@ -69,7 +69,7 @@ const mockTrendsResponseWithCorrectField = {
     },
   ],
   summary: {
-    wb_sales_gross: {
+    sale_gross: {
       min: 100000,
       max: 140000,
       avg: 120000,
@@ -226,10 +226,10 @@ describe('useTrends - API Request Field Mapping (Story 61.1-FE)', () => {
 
       const summary = result.current.data?.summary
       expect(summary).toBeDefined()
-      expect(summary?.wb_sales_gross).toBeDefined()
-      expect(summary?.wb_sales_gross?.min).toBe(100000)
-      expect(summary?.wb_sales_gross?.max).toBe(140000)
-      expect(summary?.wb_sales_gross?.avg).toBe(120000)
+      expect(summary?.sale_gross).toBeDefined()
+      expect(summary?.sale_gross?.min).toBe(100000)
+      expect(summary?.sale_gross?.max).toBe(140000)
+      expect(summary?.sale_gross?.avg).toBe(120000)
     })
   })
 })
