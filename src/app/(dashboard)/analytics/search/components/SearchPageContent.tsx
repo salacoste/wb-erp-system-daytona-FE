@@ -2,7 +2,7 @@
 
 /**
  * Search Analytics page content
- * Story 71.4-FE: Page scaffold with RequireJam gating and 3-tab layout
+ * Story 71.4-FE: Page scaffold with RequireJam gating and 4-tab layout
  * Story 71.5-FE: Date range + SearchOrdersTab
  * Story 71.6-FE: By-Product Keyword Explorer Tab
  * Story 71.7-FE: By-Query Product Ranking Tab
@@ -21,6 +21,7 @@ import type { DateRange } from '@/types/date-range'
 import { SearchOrdersTab } from './SearchOrdersTab'
 import { SearchByProductTab } from './SearchByProductTab'
 import { SearchByQueryTab } from './SearchByQueryTab'
+import { SearchPositionTrendsTab } from './SearchPositionTrendsTab'
 import { SearchSellerBadge } from './SearchSellerBadge'
 
 function getDefaultRange(): DateRange {
@@ -74,6 +75,7 @@ export function SearchPageContent({ initialQuery }: SearchPageContentProps = {})
             <TabsTrigger value="orders">Заказы</TabsTrigger>
             <TabsTrigger value="by-product">По товарам</TabsTrigger>
             <TabsTrigger value="by-query">По запросам</TabsTrigger>
+            <TabsTrigger value="position-trends">Позиции</TabsTrigger>
           </TabsList>
           <TabsContent value="orders">
             <SearchOrdersTab from={apiFrom} to={apiTo} />
@@ -83,6 +85,9 @@ export function SearchPageContent({ initialQuery }: SearchPageContentProps = {})
           </TabsContent>
           <TabsContent value="by-query">
             <SearchByQueryTab from={apiFrom} to={apiTo} initialQuery={initialQuery} />
+          </TabsContent>
+          <TabsContent value="position-trends">
+            <SearchPositionTrendsTab />
           </TabsContent>
         </Tabs>
       </RequireJam>
