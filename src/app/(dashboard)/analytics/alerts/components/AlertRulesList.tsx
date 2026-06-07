@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUpdateAlertRule, useDeleteAlertRule } from '@/hooks/useAlerts'
+import { ALERT_TYPE_LABELS, ALERT_TYPE_DESCRIPTIONS } from '@/types/alerts'
 import type { AlertRule, AlertSeverity } from '@/types/alerts'
 
 const severityColors: Record<AlertSeverity, string> = {
@@ -111,8 +112,15 @@ function RuleRow({
           aria-label={`Переключить правило ${rule.label ?? rule.alertType}`}
         />
         <div>
-          <p className="font-medium">{rule.label ?? rule.alertType}</p>
-          <p className="text-sm text-muted-foreground">{rule.alertType}</p>
+          <p className="font-medium">
+            {rule.label ??
+              ALERT_TYPE_LABELS[rule.alertType as keyof typeof ALERT_TYPE_LABELS] ??
+              rule.alertType}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {ALERT_TYPE_DESCRIPTIONS[rule.alertType as keyof typeof ALERT_TYPE_DESCRIPTIONS] ??
+              rule.alertType}
+          </p>
         </div>
         <Badge className={severityColors[severity]} variant="outline">
           {severityLabels[severity]}
