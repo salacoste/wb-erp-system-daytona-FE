@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"npx vitest run src/app/\\\\(dashboard\\\\)/analytics/advertising/utils/__tests__/comparison-delta-utils.test.ts --reporter=verbose 2>&1\",\"timeout\":60000,\"description\":\"Run new comparison-delta...",
-  "error": "Exit code 1\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n\n RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend\n\n[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`\n(node:5068) Warning: `--localstorage-file` was provided without a valid path\n(Use `n...",
-  "timestamp": "2026-06-07T13:54:36.914Z",
+  "tool_input_preview": "{\"command\":\"ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/scripts/check-test-floor* 2>/dev/null; ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/scripts...",
+  "error": "Exit code 1\n(eval):1: no matches found: /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/scripts/check-test-floor*\n/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/scripts/count-test-changes.sh\n/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/scripts/test-anti-pattern-8-rule.sh\n/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/scripts/test-check-lessons-length.sh\n(eval):1: no matches found: /Users/r2d2/Documents/Code_Proj...",
+  "timestamp": "2026-06-07T14:04:50.202Z",
   "retry_count": 1
 }

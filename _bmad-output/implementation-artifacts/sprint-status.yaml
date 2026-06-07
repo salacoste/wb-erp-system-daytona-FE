@@ -571,4 +571,11 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-127-fe.md (created 2026-06-07)
   # Source: Epic 124-FE retro A-5 + Marketing Analytics Product Plan §4
   # Backend requests filed: #210 (buyout daily), #211 (returns daily)
-  epic-127-fe: in-progress  # 2026-06-07 kickoff. 6 stories. 127.1-127.2 blocked on backend #210/#211. 127.3-127.6 in progress.
+  epic-127-fe: done  # 2026-06-07 committed 827c14a5. Comparison periods on 3 pages + cross-links. 13,834 tests passing, 0 failed.
+  127.1-fe-buyout-time-series: deferred  # Backend #210 needed for daily granularity.
+  127.2-fe-returns-time-series: deferred  # Backend #211 needed for daily granularity.
+  127.3-fe-advertising-comparison: done  # 2026-06-07 committed 827c14a5. ComparisonPeriodSelector + delta indicators + 20 util tests.
+  127.4-fe-buyout-comparison: done  # 2026-06-07 committed 827c14a5. ComparisonPeriodSelector + delta indicators + 20 util tests.
+  127.5-fe-returns-comparison: done  # 2026-06-07 committed 827c14a5. ComparisonPeriodSelector + delta indicators + 20 util tests.
+  127.6-fe-buyout-return-crosslinks: done  # 2026-06-07 committed 827c14a5. ArrowRight links between buyout↔returns tables.
+  epic-127-fe-flaky-fix: done  # 2026-06-07 FeedbackButtons fake timer race fix (stable 2x run).
