@@ -95,6 +95,7 @@ export const ROUTES = {
     TARIFFS: '/settings/tariffs', // Epic 52-FE: Tariff Settings Admin (Admin only)
     BACKFILL: '/settings/backfill', // Epic 51-FE: Backfill Admin (Admin only)
     TAX: '/settings/tax', // Epic 66-FE: Tax & VAT Settings
+    EXPENSES: '/settings/expenses', // Operational Expenses Management
   },
 } as const
 
@@ -165,6 +166,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.SETTINGS.TARIFFS, // Epic 52-FE: Tariff Settings Admin (Admin only)
     ROUTES.SETTINGS.BACKFILL, // Epic 51-FE: Backfill Admin (Admin only)
     ROUTES.SETTINGS.TAX, // Epic 66-FE: Tax & VAT Settings
+    ROUTES.SETTINGS.EXPENSES, // Operational Expenses Management
   ]
 
   return protectedPaths.some(path => pathname.startsWith(path))

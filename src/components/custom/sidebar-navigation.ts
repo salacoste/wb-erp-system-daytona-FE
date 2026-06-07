@@ -146,5 +146,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Кабинет', href: ROUTES.SETTINGS.CABINET, icon: Store },
   // Epic 66-FE: Tax & VAT Settings
   { label: 'Налоги', href: ROUTES.SETTINGS.TAX, icon: Receipt },
+  // Operational Expenses Management
+  { label: 'Расходы', href: ROUTES.SETTINGS.EXPENSES, icon: Receipt },
   { label: 'Settings', href: ROUTES.SETTINGS.ROOT, icon: Settings },
 ]
