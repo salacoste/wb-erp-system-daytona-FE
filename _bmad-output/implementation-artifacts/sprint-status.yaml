@@ -602,3 +602,20 @@ development_status:
   129.2-fe-fbs-enhanced-components-update: done  # 2026-06-07 committed 25bac1a7. 5 components rewritten (OrderStats 7 cards, StockAnalytics 5 cards, RegionalData single-bar, Funnel 2 metrics, FunnelChart simplified). 2 unchanged (PageContent, CalculatedMetrics).
   129.3-fe-fbs-enhanced-test-fixtures-rewrite: done  # 2026-06-07 committed 25bac1a7. 6 test files + fixture factory + normalizer tests rewritten. All 37 FBS tests passing.
   129.4-fe-fbs-enhanced-defensive-frontend: done  # 2026-06-07 committed 25bac1a7. Dropped metrics removed (no backend source) rather than shown with indicators — showing indicator for non-existent data would mislead.
+
+  # Epic 130-FE: E2E Coverage for Core Analytics Routes (HIGH, ~8 SP)
+  # Source: Epic 124 retro — 6 analytics routes with pages but zero E2E specs.
+  epic-130-fe: done  # 2026-06-07 committed c60ac7da. 33 E2E tests across 6 new specs. Tracker updated with Epics 121-129.
+  130.1-fe-brand-e2e: done  # 2026-06-07 committed c60ac7da. 5 tests.
+  130.2-fe-category-e2e: done  # 2026-06-07 committed c60ac7da. 4 tests.
+  130.3-fe-storage-e2e: done  # 2026-06-07 committed c60ac7da. 4 tests.
+  130.4-fe-time-period-e2e: done  # 2026-06-07 committed c60ac7da. 8 tests.
+  130.5-fe-sku-e2e: done  # 2026-06-07 committed c60ac7da. 5 tests.
+  130.6-fe-returns-e2e: done  # 2026-06-07 committed c60ac7da. 7 tests.
+
+  # Epic 131-FE: Documentation Catch-Up + Retro Actions (HIGH, ~5 SP)
+  # Source: Epic 124 retro A-3 (Radix jsdom patterns), A-4 (flaky test), tracker drift.
+  epic-131-fe: in-progress
+  131.1-fe-tracker-update: done  # 2026-06-07 committed c60ac7da. EPICS-AND-STORIES-TRACKER.md updated with Epics 121-129.
+  131.2-fe-radix-jsdom-patterns: backlog  # Document jsdom patterns for Radix UI in CLAUDE-PATTERNS.md (Retro A-3).
+  131.3-fe-flaky-test-investigation: backlog  # Investigate SupplyDocumentsList flaky test (Retro A-4).

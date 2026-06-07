@@ -8,6 +8,7 @@ Sections:
 - [Defensive Frontend Principle](#defensive-frontend-principle-story-894-fe-from-epic-87-fe-retro)
 - [Boundary Normalizer Pattern](#boundary-normalizer-pattern)
 - [Multi-Source Orchestration & Visualization Patterns (Epic 92-FE)](#multi-source-orchestration--visualization-patterns-epic-92-fe)
+- [Radix UI jsdom Test Patterns (Epic 124-FE Retro A-3)](#radix-ui-jsdom-test-patterns-epic-124-fe-retro-a-3)
 
 ---
 
@@ -580,3 +581,105 @@ When you encounter a new `?? 0` violation that the ESLint rule flags:
 5. Use the comment format: `// eslint-disable-next-line no-restricted-syntax -- <PATTERN-NAME>: <one-line rationale specific to this field>`.
 
 **Cross-reference**: CLAUDE.md § Known Anti-Patterns #8 (the underlying anti-pattern this section provides exceptions to); Story 105.1-FE (ESLint rule); Story 106.1-FE (canonical "real violation fix" example: net_profit nullability); Story 106.2-FE (sweep that established the 6-pattern taxonomy); Epic 106-FE retrospective.
+
+---
+
+## Radix UI jsdom Test Patterns (Epic 124-FE Retro A-3)
+
+shadcn/ui components are built on Radix UI primitives. Testing them in jsdom (Vitest) requires specific patterns because Radix renders overlays, selects, and tooltips through **portals** — jsdom does not support portals, so portal content is appended to `document.body`, not the render container. Use `screen` queries (which search the entire document), never `container.querySelector`.
+
+### General Rules
+
+- Always prefer `userEvent.setup()` over `fireEvent` for user interactions (clicks, hovers, types, keyboard).
+- Portal content: don't assert within `container` — use `screen` queries.
+- Radix Select/Combobox options only exist in the DOM after trigger click + animation frame — use `findByRole('option')` or `findByText`.
+- Avoid `waitForTimeout` — use `waitFor(() => expect(...))` or `findBy*` queries.
+- Mock `sonner` toast at the top of every test file that renders a component using toast notifications:
+
+```typescript
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }))
+```
+
+### Radix Dialog
+
+Dialog renders content via a portal. Find it with `screen.getByRole('dialog')` after open. Close with Escape or overlay click.
+
+```typescript
+// ❌ BAD — container won't contain the portal content
+const { container } = render(<MyDialog open={true} />)
+expect(container.querySelector('[role="dialog"]')).toBeTruthy() // fails
+
+// ✅ GOOD — screen searches the entire document (pattern from ResolveAnomalyDialog.test.tsx)
+render(<MyDialog open={true} onOpenChange={vi.fn()} />, { wrapper: createWrapper() })
+expect(screen.getByText(/dialog title/)).toBeInTheDocument()
+
+// Close the dialog
+const dialog = screen.getByRole('dialog')
+fireEvent.keyDown(dialog, { key: 'Escape' })
+```
+
+### Radix Select (shadcn/ui Select)
+
+The trigger renders as `button[role="combobox"]`. Options appear in a portal after click. Verify selection via the trigger's text content.
+
+```typescript
+// ❌ BAD — options aren't in the DOM before trigger click
+render(<DeliveryTypeSelector {...props} />)
+expect(screen.getByText('Монопаллеты')).toBeInTheDocument() // fails
+
+// ✅ GOOD — open first, then assert (pattern from DeliveryTypeSelector.test.tsx)
+const user = userEvent.setup()
+render(<DeliveryTypeSelector {...props} />)
+
+const trigger = screen.getByRole('combobox')
+await user.click(trigger)
+
+// Options now in portal — use screen queries
+const option = screen.getByRole('option', { name: /Монопаллеты/i })
+await user.click(option)
+
+// Verify selection via trigger text
+expect(trigger).toHaveTextContent('Монопаллеты')
+```
+
+For `fireEvent`-based tests (no `userEvent`), wrap option appearance in `waitFor`:
+
+```typescript
+fireEvent.click(screen.getByRole('combobox'))
+await waitFor(() => screen.getByText('Сезонный фактор'))
+fireEvent.click(screen.getByText('Сезонный фактор'))
+```
+
+### Radix Tooltip
+
+TooltipProvider must wrap the component under test. Set `delayDuration={0}` to skip hover-delay timers. Hover via `userEvent.hover()` — NOT fireEvent.
+
+```typescript
+// ❌ BAD — no TooltipProvider, tooltip content never mounts
+render(<MyBadgeWithTooltip />)
+// Tooltip never appears
+
+// ✅ GOOD — wrap with TooltipProvider + delayDuration={0}
+// (pattern from SearchSellerBadge.test.tsx)
+import { TooltipProvider } from '@/components/ui/tooltip'
+
+function renderWithTooltip(ui: ReactElement) {
+  return render(<TooltipProvider delayDuration={0}>{ui}</TooltipProvider>)
+}
+
+renderWithTooltip(<SearchSellerBadge />)
+
+// Hover or focus the trigger
+const trigger = screen.getByRole('button', { name: /Предупреждение/ })
+await userEvent.hover(trigger) // NOT fireEvent.mouseOver
+
+// Content appears after hover
+const labels = await screen.findAllByText('Tooltip text here')
+expect(labels.length).toBeGreaterThan(0)
+```
+
+### Radix Popover
+
+Trigger renders as a button; content renders in a portal. Open with `userEvent.click(trigger)`. Content is accessible via `screen.findByRole('dialog')` or `findByText`. Close by clicking outside or pressing Escape.
+
+**Cross-reference**: CLAUDE-ANTI-PATTERNS.md #7 (hard waits in E2E — same "avoid waitForTimeout" principle applies here for unit tests); CLAUDE-ANTI-PATTERNS.md #9 (`waitForLoadState('networkidle')` — analogous "never wait for idle" pattern). Canonical test files: `src/app/(dashboard)/analytics/ai-admin/anomalies/components/__tests__/ResolveAnomalyDialog.test.tsx` (Dialog + Select), `src/components/custom/price-calculator/__tests__/DeliveryTypeSelector.test.tsx` (Select), `src/app/(dashboard)/analytics/search/__tests__/SearchSellerBadge.test.tsx` (Tooltip).
