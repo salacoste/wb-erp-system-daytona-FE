@@ -582,7 +582,7 @@ development_status:
 
   # Epic 128-FE: TypeScript Cleanup + Source File Compliance + Missing Tests (P2 quality, ~10 SP)
   # Source: Health assessment scan (64 TS errors, 15 files over 200-line cap, 12 components without tests)
-  epic-128-fe: in-progress  # 2026-06-07 kickoff. TS errors fixed. Refactoring + tests in progress.
-  128.1-fe-typescript-test-errors: done  # 2026-06-07 committed 097710aa. 64 → 0 TS errors in test files.
-  128.2-fe-200-line-cap-refactoring: in-progress  # 2026-06-07 2 agents refactoring 14 source files.
-  128.3-fe-missing-component-tests: in-progress  # 2026-06-07 1 agent adding tests for comparison-period, margin-trend, export-dialog, pnl-waterfall.
+  epic-128-fe: done  # 2026-06-07 committed 097710aa+45c11073+dead545c. All gates green.
+  128.1-fe-typescript-test-errors: done  # 2026-06-07 committed 097710aa. 64 → 0 TS errors in 14 test files.
+  128.2-fe-200-line-cap-refactoring: done  # 2026-06-07 committed 45c11073+dead545c. 15 → 0 files over 200-line cap.
+  128.3-fe-missing-component-tests: done  # 2026-06-07 committed 45c11073. 56 tests for 4 untested component dirs.
