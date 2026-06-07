@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"node -e \\\"\\nconst { execSync } = require('child_process');\\n// Check if next/navigation exports redirect\\nconst output = execSync('node -e \\\\\\\"const m = require(\\\\\\\\\\\\\\\"next/navigation\\\\\\\\...",
-  "error": "Exit code 1\n[eval]:1\nconst m = require(next/navigation); console.log(typeof m.redirect)\n                  ^\n\nReferenceError: next is not defined\n    at [eval]:1:19\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:inter...",
-  "timestamp": "2026-06-07T05:19:43.538Z",
+  "tool_input_preview": "{\"command\":\"ls jest.config.* package.json\",\"description\":\"List jest config files\"}",
+  "error": "Exit code 1\n(eval):1: no matches found: jest.config.*",
+  "timestamp": "2026-06-07T13:27:50.606Z",
   "retry_count": 1
 }

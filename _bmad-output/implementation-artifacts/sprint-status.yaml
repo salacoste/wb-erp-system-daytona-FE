@@ -553,4 +553,12 @@ development_status:
   # Epic 125-FE: Zero-Test Route Coverage — 11 Routes (P2 quality, ~15-20 SP)
   # Spec: _bmad-output/planning-artifacts/epics-125-fe.md (created 2026-06-07)
   # Source: Epic 124-FE retro SD-1 (11 route dirs with zero test files)
-  epic-125-fe: in-progress  # 2026-06-07 kickoff. 11 routes, 3 stories.
+  epic-125-fe: done  # 2026-06-07 ALL 11 routes covered. Committed 3c4b410f. 247 new tests across 11 files. 13,780 tests passing, 0 failed.
+  125.1-fe-analytics-wrapper-pages: done  # 2026-06-07 committed 3c4b410f. 5 routes: dashboard, brand, category, summary, forecast-accuracy.
+  125.2-fe-analytics-feature-pages: done  # 2026-06-07 committed 3c4b410f. 3 routes: time-period, reorder, pricing.
+  125.3-fe-settings-pages: done  # 2026-06-07 committed 3c4b410f. 3 routes: cabinet, notifications, tax.
+
+  # Epic 126-FE: Housekeeping — Stale Markers, E2E Gap, Edge-Case Tests (P2 quality, 3-5 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-126-fe.md (created 2026-06-07)
+  # Source: Epic 123/124 retros — stale PENDING BACKEND labels, missing E2E, edge-case gaps
+  epic-126-fe: in-progress  # 2026-06-07 kickoff. 4 stories.

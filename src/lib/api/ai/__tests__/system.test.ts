@@ -71,7 +71,7 @@ describe('normalizeAiPreferences', () => {
   })
 })
 
-// ── getAnomalies — PENDING BACKEND #167 (Story 112.3-FE) ─────────────────────
+// ── getAnomalies — Request #167 resolved (2026-06-06 batch) ──────────────────
 // The function does real API calls; we mock apiClient to test normalization.
 
 import { vi } from 'vitest'
@@ -86,7 +86,7 @@ vi.mock('../../../api-client', () => ({
 import { apiClient } from '../../../api-client'
 const mockGet = vi.mocked(apiClient.get)
 
-describe('getAnomalies (PENDING BACKEND #167)', () => {
+describe('getAnomalies', () => {
   afterEach(() => {
     vi.clearAllMocks()
   })

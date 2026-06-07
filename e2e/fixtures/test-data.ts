@@ -138,6 +138,7 @@ export const ROUTES = {
     returns: '/analytics/returns', // Epic 70-FE: Returns Analytics
     orders: '/analytics/orders', // Epic 51-FE: FBS Historical Analytics
     forecast: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
+    forecastAccuracy: '/analytics/forecast-accuracy', // Epic 123-FE: Forecast Accuracy Dashboard
     models: {
       list: '/analytics/models', // Epic 109-FE: AI Model Management listing
       evaluations: (id: string) => `/analytics/models/${id}/evaluations`, // Story 110.2-FE
