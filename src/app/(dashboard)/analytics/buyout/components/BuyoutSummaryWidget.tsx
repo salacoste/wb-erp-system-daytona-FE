@@ -1,6 +1,7 @@
 /**
  * Buyout Summary Widget
  * Epic 69: Progress bar with buyout/return rates + top decliners
+ * Story 127.4-FE: Added comparison period delta indicators
  */
 
 'use client'
@@ -12,14 +13,19 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, TrendingDown } from 'lucide-react'
 import { SourceBadge } from '@/components/custom/badges/SourceBadge'
 import { formatPercentage, formatPercentageInt } from '@/lib/utils'
-import type { BuyoutSource } from '@/types/analytics-buyout'
+import type { BuyoutSource, BuyoutSummaryResponse } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
+import { calculateBuyoutDelta } from './buyout-comparison-utils'
+import { DeltaTag, ReturnBreakdownBar } from './BuyoutSummarySubComponents'
 
 interface BuyoutSummaryWidgetProps {
   from: string
   to: string
   source: BuyoutSource
   returnBreakdown?: ReturnBreakdown | null
+  compareEnabled?: boolean
+  compareFrom?: string
+  compareTo?: string
 }
 
 export function BuyoutSummaryWidget({
@@ -27,8 +33,19 @@ export function BuyoutSummaryWidget({
   to,
   source,
   returnBreakdown,
+  compareEnabled,
+  compareFrom,
+  compareTo,
 }: BuyoutSummaryWidgetProps) {
   const { data, isLoading, isError } = useBuyoutSummary(from, to, source)
+
+  // Comparison period data — Story 127.4-FE
+  const hasCompare = compareEnabled && !!compareFrom && !!compareTo
+  const { data: prevData, isLoading: prevLoading } = useBuyoutSummary(
+    compareFrom ?? '',
+    compareTo ?? '',
+    source
+  )
 
   if (isLoading) return <Skeleton className="h-40 w-full" />
 
@@ -43,14 +60,18 @@ export function BuyoutSummaryWidget({
 
   if (!data) return null
 
-  // AP#8 + Defensive Frontend: the backend returns null buyout/return rate when there are no
-  // sales in the period (the ratio is undefined, NOT a 0% buyout). `?? 0` rendered "0.0% выкуп"
-  // with a 0%-green progress bar — a false catastrophic signal (0% buyout = every order returned).
-  // Preserve null and show a "no data" state instead. Live-verified: empty period → null/null;
-  // period with sales → real numbers (e.g. 98.42 / 1.58).
   const buyoutPct = data.overallBuyoutRatePct
   const returnPct = data.overallReturnRatePct
   const decliners = data.topDecliners ?? []
+
+  // Comparison deltas
+  const prevSummary: BuyoutSummaryResponse | undefined = hasCompare ? prevData : undefined
+  const buyoutDelta = calculateBuyoutDelta(buyoutPct, prevSummary?.overallBuyoutRatePct ?? null)
+  const returnDelta = calculateBuyoutDelta(returnPct, prevSummary?.overallReturnRatePct ?? null)
+  const salesDelta = calculateBuyoutDelta(
+    data.totalSalesCount,
+    prevSummary?.totalSalesCount ?? null
+  )
 
   return (
     <Card>
@@ -58,14 +79,35 @@ export function BuyoutSummaryWidget({
         <CardTitle className="text-base">Процент выкупа</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Progress bar — only when a real rate exists (buyoutPct != null narrows to number) */}
         <div className="space-y-2">
           {buyoutPct != null ? (
             <>
               <div className="flex justify-between text-sm">
-                <span className="font-medium">{formatPercentage(buyoutPct)} выкуп</span>
+                <span className="font-medium">
+                  {formatPercentage(buyoutPct)} выкуп
+                  {hasCompare && (
+                    <DeltaTag
+                      delta={buyoutDelta}
+                      field="overallBuyoutRatePct"
+                      loading={prevLoading}
+                    />
+                  )}
+                </span>
                 <span className="text-muted-foreground">
-                  {returnPct != null ? `${formatPercentage(returnPct)} возвраты` : '— возвраты'}
+                  {returnPct != null ? (
+                    <>
+                      {formatPercentage(returnPct)} возвраты
+                      {hasCompare && (
+                        <DeltaTag
+                          delta={returnDelta}
+                          field="overallReturnRatePct"
+                          loading={prevLoading}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    '— возвраты'
+                  )}
                 </span>
               </div>
               <div className="h-3 rounded-full bg-red-100 overflow-hidden">
@@ -80,9 +122,6 @@ export function BuyoutSummaryWidget({
               <p className="text-sm text-muted-foreground">
                 Нет данных о выкупах за выбранный период
               </p>
-              {/* Defensive Frontend: buyout & return share the totalSalesCount denominator, so
-                  they are normally null together. If the backend ever sends a return rate WITHOUT
-                  a buyout rate, indicate it rather than silently dropping the value. */}
               {returnPct != null && (
                 <p className="mt-1 text-xs text-amber-700">
                   Возвраты: {formatPercentage(returnPct)} (процент выкупа недоступен)
@@ -94,19 +133,17 @@ export function BuyoutSummaryWidget({
             Возвраты (FBS): {data.totalReturnsCount.toLocaleString('ru-RU')} из{' '}
             {data.totalSalesCount.toLocaleString('ru-RU')} продаж
             {data.skuCount != null && ` (${data.skuCount} SKU)`}
+            {hasCompare && (
+              <DeltaTag delta={salesDelta} field="totalSalesCount" loading={prevLoading} />
+            )}
           </p>
           <p className="text-xs text-muted-foreground/70">
             В таблице по SKU — все возвраты (FBO+FBS), включая оценочные
           </p>
-          {/* Story 96.15-FE: section-level source badge — summary data comes from one source */}
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span>Источник:</span>
             <SourceBadge source={data.source} />
           </div>
-          {/* H2-1 fix: Defensive Frontend Principle "show an indicator" full recipe —
-              footnote required when anomalous 'unknown' source surfaces (icon alone insufficient).
-              Backend resolved in Epic 106 (request #169 § 1.3); guard kept for defense-in-depth
-              per CLAUDE.md § Defensive Frontend Principle. */}
           {data.source === 'unknown' && (
             <p className="text-xs text-amber-700 mt-1">
               * Источник данных не распознан backend&apos;ом. Возможна ошибка нормализации на
@@ -115,12 +152,10 @@ export function BuyoutSummaryWidget({
           )}
         </div>
 
-        {/* Return reasons breakdown (FBS) */}
         {returnBreakdown && returnBreakdown.total > 0 && (
           <ReturnBreakdownBar breakdown={returnBreakdown} />
         )}
 
-        {/* Top decliners */}
         {decliners.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-1 text-sm font-medium text-red-600">
@@ -137,10 +172,6 @@ export function BuyoutSummaryWidget({
                   <span>
                     {d.buyoutRatePct != null ? formatPercentageInt(d.buyoutRatePct) : '—'}
                     <span className="text-red-500 ml-1">
-                      {/* Show the signed delta — the number carries its own minus for a
-                          decline, matching TrendIndicator (buyout-table-cells.tsx:43).
-                          Prior code used Math.abs() + an inverted prefix, so a -1.36 decline
-                          rendered "(1 п.п.)" (sign lost) and a gain rendered "(-2 п.п.)". */}
                       ({d.trendDelta < 0 ? '' : '+'}
                       {d.trendDelta.toFixed(0)} п.п.)
                     </span>
@@ -152,45 +183,5 @@ export function BuyoutSummaryWidget({
         )}
       </CardContent>
     </Card>
-  )
-}
-
-const REASON_COLORS = [
-  { key: 'cancelBeforeShipment', label: 'До отправки', bg: 'bg-blue-500', text: 'text-blue-600' },
-  { key: 'refusalAtPvz', label: 'Отказ на ПВЗ', bg: 'bg-orange-500', text: 'text-orange-600' },
-  { key: 'returnAfterReceipt', label: 'После получения', bg: 'bg-red-500', text: 'text-red-600' },
-] as const
-
-function ReturnBreakdownBar({ breakdown }: { breakdown: ReturnBreakdown }) {
-  const total = breakdown.total
-  const segments = REASON_COLORS.map(c => ({
-    ...c,
-    count: breakdown[c.key],
-    pct: total > 0 ? (breakdown[c.key] / total) * 100 : 0,
-  }))
-
-  return (
-    <div className="space-y-2">
-      <p className="text-sm font-medium">Причины возвратов (FBS)</p>
-      <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden flex">
-        {segments.map(s =>
-          s.pct > 0 ? (
-            <div key={s.key} className={`h-full ${s.bg}`} style={{ width: `${s.pct}%` }} />
-          ) : null
-        )}
-      </div>
-      <div className="flex gap-4 text-xs">
-        {segments.map(s => (
-          <span key={s.key} className={s.text}>
-            {s.label}: {s.count}
-          </span>
-        ))}
-      </div>
-      {breakdown.classificationCoverage < 100 && (
-        <p className="text-xs text-muted-foreground">
-          Покрытие классификации: {formatPercentageInt(breakdown.classificationCoverage)}
-        </p>
-      )}
-    </div>
   )
 }

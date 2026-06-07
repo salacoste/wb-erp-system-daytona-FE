@@ -561,4 +561,14 @@ development_status:
   # Epic 126-FE: Housekeeping — Stale Markers, E2E Gap, Edge-Case Tests (P2 quality, 3-5 SP)
   # Spec: _bmad-output/planning-artifacts/epics-126-fe.md (created 2026-06-07)
   # Source: Epic 123/124 retros — stale PENDING BACKEND labels, missing E2E, edge-case gaps
-  epic-126-fe: in-progress  # 2026-06-07 kickoff. 4 stories.
+  epic-126-fe: done  # 2026-06-07 committed 257bae13. Stale markers removed, E2E added, edge-case tests added. 13,791 tests passing, 0 failed.
+  126.1-fe-stale-pending-backend-cleanup: done  # 2026-06-07 committed 257bae13. 0 PENDING BACKEND markers remaining.
+  126.2-fe-forecast-accuracy-e2e: done  # 2026-06-07 committed 257bae13. 5 Playwright tests for /analytics/forecast-accuracy.
+  126.3-fe-scaleconfidence-edge-tests: done  # 2026-06-07 committed 257bae13. 11 edge-case tests via normalizer.
+  126.4-fe-flaky-test-investigation: done  # 2026-06-07 investigated. SupplyDocumentsList passes; actual flaky is FeedbackButtons.test.tsx (fake timer leak). Non-blocking — passes in most full-suite runs.
+
+  # Epic 127-FE: Marketing Phase 3 Gap Fixes (P1 product value, ~25 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-127-fe.md (created 2026-06-07)
+  # Source: Epic 124-FE retro A-5 + Marketing Analytics Product Plan §4
+  # Backend requests filed: #210 (buyout daily), #211 (returns daily)
+  epic-127-fe: in-progress  # 2026-06-07 kickoff. 6 stories. 127.1-127.2 blocked on backend #210/#211. 127.3-127.6 in progress.

@@ -203,13 +203,11 @@ describe('FeedbackButtons', () => {
     })
     await waitFor(() => expect(screen.getByText('Спасибо')).toBeTruthy())
 
-    act(() => {
+    await act(async () => {
       vi.advanceTimersByTime(2000)
     })
 
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
-    )
+    expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
     expect(screen.queryByText('Спасибо')).toBeNull()
   })
 
@@ -240,13 +238,11 @@ describe('FeedbackButtons', () => {
     })
     await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy())
 
-    act(() => {
+    await act(async () => {
       vi.advanceTimersByTime(5000)
     })
 
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
-    )
+    expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
@@ -295,12 +291,10 @@ describe('FeedbackButtons', () => {
     await waitFor(() => expect(screen.getByRole('status')).toBeTruthy())
 
     // Auto-reset after 2s
-    act(() => {
+    await act(async () => {
       vi.advanceTimersByTime(2001)
     })
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
-    )
+    expect(screen.getByRole('button', { name: 'Полезный прогноз' })).toBeTruthy()
     expect(screen.queryByRole('status')).toBeNull()
 
     // Second click → success indicator must appear again

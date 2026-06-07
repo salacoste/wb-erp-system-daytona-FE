@@ -6,6 +6,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useReturnsBySku } from '@/hooks/use-return-analytics'
 import { useProducts } from '@/hooks/useProducts'
 import {
@@ -19,7 +20,9 @@ import {
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, AlertTriangle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react'
+import { ROUTES } from '@/lib/routes'
 import { cn, formatPercentage } from '@/lib/utils'
 
 interface ReturnsTableProps {
@@ -106,6 +109,7 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
               <TableHead>До отправки</TableHead>
               <TableHead>Отказ ПВЗ</TableHead>
               <TableHead>После получения</TableHead>
+              <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,6 +137,22 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
                   </TableCell>
                   <TableCell className="text-muted-foreground">{item.refusalAtPvz}</TableCell>
                   <TableCell className="text-muted-foreground">{item.returnAfterReceipt}</TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link
+                            href={`${ROUTES.ANALYTICS.BUYOUT}?nmId=${String(item.nmId)}`}
+                            className="inline-flex items-center text-muted-foreground hover:text-foreground"
+                            aria-label="Перейти к аналитике выкупов"
+                          >
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>Перейти к аналитике выкупов</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
                 </TableRow>
               )
             })}

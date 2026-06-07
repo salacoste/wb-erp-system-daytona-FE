@@ -90,4 +90,61 @@ describe('ReturnsSummaryCards', () => {
     // classificationCoverage 100 → formatPercentageInt → "100 %"
     expect(screen.getByText(/100\s+%/)).toBeInTheDocument()
   })
+
+  describe('compare mode (Story 127.5-FE)', () => {
+    const prevData: ReturnReasonsResponse = {
+      summary: {
+        totalReturns: 40,
+        cancelBeforeShipment: 0,
+        refusalAtPvz: 0,
+        returnAfterReceipt: 40,
+        overallReturnRate: 1.0,
+        classificationCoverage: 95,
+      },
+      byCategory: [],
+      period: { from: '2026-04-01', to: '2026-04-30' },
+    }
+
+    it('does not show deltas when compare is false', () => {
+      mockUseReturnReasons.mockReturnValue(hookReturn({ data: mockData }))
+      renderWithProviders(<ReturnsSummaryCards from="2026-05-01" to="2026-05-30" />)
+      expect(screen.queryByText(/▲|▼|—/)).not.toBeInTheDocument()
+    })
+
+    it('shows comparison delta indicators when compareEnabled is true and prev data exists', () => {
+      // First call returns current data, second returns prev data
+      mockUseReturnReasons
+        .mockReturnValueOnce(hookReturn({ data: mockData }))
+        .mockReturnValueOnce(hookReturn({ data: prevData }))
+      renderWithProviders(
+        <ReturnsSummaryCards
+          from="2026-05-01"
+          to="2026-05-30"
+          compareEnabled={true}
+          compareFrom="2026-04-01"
+          compareTo="2026-04-30"
+        />
+      )
+      // totalReturns: 56 vs 40 = +40% → ▲
+      expect(screen.getByText(/▲\s*40,0/)).toBeInTheDocument()
+    })
+
+    it('shows dash when compareEnabled is true but no prev data', () => {
+      mockUseReturnReasons
+        .mockReturnValueOnce(hookReturn({ data: mockData }))
+        .mockReturnValueOnce(hookReturn({ data: undefined }))
+      renderWithProviders(
+        <ReturnsSummaryCards
+          from="2026-05-01"
+          to="2026-05-30"
+          compareEnabled={true}
+          compareFrom="2026-04-01"
+          compareTo="2026-04-30"
+        />
+      )
+      // Each card shows "—" when no prev data
+      const dashes = screen.getAllByText('—')
+      expect(dashes.length).toBe(3)
+    })
+  })
 })

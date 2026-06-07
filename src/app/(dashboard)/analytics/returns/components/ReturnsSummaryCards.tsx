@@ -1,6 +1,7 @@
 /**
  * Returns Summary Cards
  * Epic 70-FE: Total returns, return rate, classification coverage
+ * Story 127.5-FE: WoW comparison deltas (comparison period from page orchestrator)
  */
 
 'use client'
@@ -11,14 +12,40 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { RotateCcw, Percent, ShieldCheck, AlertCircle } from 'lucide-react'
 import { formatPercentage, formatPercentageInt } from '@/lib/utils'
+import {
+  calculateReturnsDelta,
+  formatDelta,
+  getDeltaColor,
+  isInvertedMetric,
+} from './returns-comparison-utils'
+import type { ReturnsDelta } from './returns-comparison-utils'
 
 interface ReturnsSummaryCardsProps {
   from?: string
   to?: string
+  /** Whether comparison mode is enabled (page-level state) */
+  compareEnabled?: boolean
+  /** Comparison period start date (yyyy-MM-dd) */
+  compareFrom?: string
+  /** Comparison period end date (yyyy-MM-dd) */
+  compareTo?: string
 }
 
-export function ReturnsSummaryCards({ from, to }: ReturnsSummaryCardsProps) {
+export function ReturnsSummaryCards({
+  from,
+  to,
+  compareEnabled,
+  compareFrom,
+  compareTo,
+}: ReturnsSummaryCardsProps) {
   const { data, isLoading, isError } = useReturnReasons(from, to)
+
+  // Comparison period data — period dates come from page orchestrator
+  const hasCompare = compareEnabled && !!compareFrom && !!compareTo
+  const { data: prevData, isLoading: prevLoading } = useReturnReasons(
+    hasCompare ? compareFrom : undefined,
+    hasCompare ? compareTo : undefined
+  )
 
   if (isLoading) {
     return (
@@ -53,10 +80,13 @@ export function ReturnsSummaryCards({ from, to }: ReturnsSummaryCardsProps) {
     )
   }
 
+  const prevSummary = prevData?.summary
+
   const cards = [
     {
       label: 'Всего возвратов',
       value: summary.totalReturns,
+      field: 'totalReturns' as const,
       icon: RotateCcw,
       color: 'text-red-600',
       format: (n: number) => n.toLocaleString('ru-RU'),
@@ -64,14 +94,15 @@ export function ReturnsSummaryCards({ from, to }: ReturnsSummaryCardsProps) {
     {
       label: 'Процент возвратов',
       value: summary.overallReturnRate,
+      field: 'overallReturnRate' as const,
       icon: Percent,
       color: 'text-orange-600',
-      // Preserve prior 1-decimal precision (was a dot-locale toFixed-1 percent), locale-correct.
       format: (n: number) => formatPercentage(n, 1),
     },
     {
       label: 'Покрытие классификации',
       value: summary.classificationCoverage,
+      field: 'classificationCoverage' as const,
       icon: ShieldCheck,
       color: 'text-green-600',
       format: (n: number) => formatPercentageInt(n),
@@ -82,6 +113,13 @@ export function ReturnsSummaryCards({ from, to }: ReturnsSummaryCardsProps) {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {cards.map(card => {
         const Icon = card.icon
+        const delta =
+          hasCompare && prevSummary
+            ? calculateReturnsDelta(
+                summary[card.field],
+                prevSummary[card.field as keyof typeof prevSummary] as number | null
+              )
+            : null
         return (
           <Card key={card.label}>
             <CardContent className="flex items-center gap-4 p-4">
@@ -91,11 +129,52 @@ export function ReturnsSummaryCards({ from, to }: ReturnsSummaryCardsProps) {
               <div>
                 <p className="text-sm text-muted-foreground">{card.label}</p>
                 <p className="text-2xl font-bold">{card.format(card.value)}</p>
+                {hasCompare && (
+                  <DeltaIndicator delta={delta} field={card.field} loading={prevLoading} />
+                )}
               </div>
             </CardContent>
           </Card>
         )
       })}
     </div>
+  )
+}
+
+function DeltaIndicator({
+  delta,
+  field,
+  loading,
+}: {
+  delta: ReturnsDelta | null
+  field: string
+  loading: boolean
+}) {
+  if (loading) return <Skeleton className="h-4 w-16 mt-0.5" />
+
+  if (!delta) {
+    return (
+      <p className="text-xs text-muted-foreground" title="Нет данных за предыдущий период">
+        —
+      </p>
+    )
+  }
+
+  if (delta.direction === 'neutral') {
+    return (
+      <p className="text-xs text-muted-foreground" title="По сравнению с предыдущим периодом">
+        {formatDelta(delta)}
+      </p>
+    )
+  }
+
+  const inverted = isInvertedMetric(field)
+  return (
+    <p
+      className={`text-xs ${getDeltaColor(delta.direction, inverted)}`}
+      title="По сравнению с предыдущим периодом"
+    >
+      {formatDelta(delta)}
+    </p>
   )
 }

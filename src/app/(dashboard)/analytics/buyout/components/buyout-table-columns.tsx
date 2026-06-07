@@ -2,7 +2,11 @@
 
 'use client'
 
+import Link from 'next/link'
 import { TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { ArrowRight } from 'lucide-react'
+import { ROUTES } from '@/lib/routes'
 import { formatPercentage } from '@/lib/utils'
 import type { BySkuBuyoutItem } from '@/types/analytics-buyout'
 import type { ProductInfo } from '@/hooks/use-all-products-map'
@@ -57,6 +61,7 @@ export function BuyoutTableHeader({ sort, sortOrder, onSort }: BuyoutTableHeader
           </SortBtn>
         </TableHead>
         <TableHead>Уверенность</TableHead>
+        <TableHead className="w-10" />
       </TableRow>
     </TableHeader>
   )
@@ -97,6 +102,22 @@ export function BuyoutTableRow({ item, product }: BuyoutTableRowProps) {
       </TableCell>
       <TableCell>
         <ConfidenceBadge confidence={item.confidence} />
+      </TableCell>
+      <TableCell>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href={`${ROUTES.ANALYTICS.RETURNS}?nmId=${String(item.nmId)}`}
+                className="inline-flex items-center text-muted-foreground hover:text-foreground"
+                aria-label="Перейти к аналитике возвратов"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>Перейти к аналитике возвратов</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </TableCell>
     </TableRow>
   )

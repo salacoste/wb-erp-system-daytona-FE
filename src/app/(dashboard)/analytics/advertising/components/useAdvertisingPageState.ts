@@ -9,46 +9,22 @@ import type { SortField, SortOrder } from './PerformanceMetricsTable'
 import type { EfficiencyFilter } from './EfficiencyFilterDropdown'
 import { trackAdvertisingPageView } from '@/lib/analytics-events'
 import { buildAdvertisingHandlers } from './useAdvertisingHandlers'
+import { useAdvertisingComparison } from './useAdvertisingComparison'
+import {
+  MAX_RANGE_DAYS,
+  validViews,
+  validGroupBys,
+  validSortFields,
+  validSortOrders,
+  validEfficiencyFilters,
+  parseCampaignIds,
+  validateParam,
+} from './advertising-page-state-helpers'
 
 /** Page size for table pagination (AC5) */
 export const PAGE_SIZE = 25
 
-/** Max allowed date range in days */
-const MAX_RANGE_DAYS = 90
-
-/** Validated URL param arrays */
-const validViews: ViewByMode[] = ['sku', 'campaign', 'brand', 'category']
-const validGroupBys: GroupByMode[] = ['sku', 'imtId']
-const validSortFields: SortField[] = [
-  'spend',
-  'revenue',
-  'orders',
-  'views',
-  'clicks',
-  'roas',
-  'roi',
-  'ctr',
-  'cpc',
-  'profit_after_ads',
-]
-const validSortOrders: SortOrder[] = ['asc', 'desc']
-const validEfficiencyFilters: EfficiencyFilter[] = [
-  'all',
-  'excellent',
-  'good',
-  'moderate',
-  'poor',
-  'loss',
-  'unknown',
-]
-
-/**
- * Advertising page state hook.
- * Manages all state, URL sync, data fetching, and handler wiring
- * for the advertising analytics page.
- *
- * Story 33.2-FE, Story 33.3-FE, Epic 33 (Frontend)
- */
+/** Advertising page state hook. Story 33.2-FE, Story 33.3-FE, Epic 33 (Frontend) */
 export function useAdvertisingPageState() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -69,39 +45,30 @@ export function useAdvertisingPageState() {
     return { from: fromParam, to: toParam }
   })
 
-  const [viewBy, setViewBy] = useState<ViewByMode>(() => {
-    const p = searchParams.get('view')
-    return validViews.includes(p as ViewByMode) ? (p as ViewByMode) : 'sku'
-  })
-  const [groupBy, setGroupBy] = useState<GroupByMode>(() => {
-    const p = searchParams.get('group_by')
-    return validGroupBys.includes(p as GroupByMode) ? (p as GroupByMode) : 'sku'
-  })
-  const [sortBy, setSortBy] = useState<SortField>(() => {
-    const p = searchParams.get('sort')
-    return validSortFields.includes(p as SortField) ? (p as SortField) : 'spend'
-  })
-  const [sortOrder, setSortOrder] = useState<SortOrder>(() => {
-    const p = searchParams.get('order')
-    return validSortOrders.includes(p as SortOrder) ? (p as SortOrder) : 'desc'
-  })
-  const [efficiencyFilter, setEfficiencyFilter] = useState<EfficiencyFilter>(() => {
-    const p = searchParams.get('status')
-    return validEfficiencyFilters.includes(p as EfficiencyFilter) ? (p as EfficiencyFilter) : 'all'
-  })
+  const [viewBy, setViewBy] = useState<ViewByMode>(() =>
+    validateParam(searchParams.get('view'), validViews, 'sku')
+  )
+  const [groupBy, setGroupBy] = useState<GroupByMode>(() =>
+    validateParam(searchParams.get('group_by'), validGroupBys, 'sku')
+  )
+  const [sortBy, setSortBy] = useState<SortField>(() =>
+    validateParam(searchParams.get('sort'), validSortFields, 'spend')
+  )
+  const [sortOrder, setSortOrder] = useState<SortOrder>(() =>
+    validateParam(searchParams.get('order'), validSortOrders, 'desc')
+  )
+  const [efficiencyFilter, setEfficiencyFilter] = useState<EfficiencyFilter>(() =>
+    validateParam(searchParams.get('status'), validEfficiencyFilters, 'all')
+  )
   const [page, setPage] = useState(() => {
     const p = searchParams.get('page')
     return p ? parseInt(p, 10) : 1
   })
-  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>(() => {
-    const c = searchParams.get('campaigns')
-    if (!c) return []
-    return c
-      .split(',')
-      .map(Number)
-      .filter(n => !isNaN(n))
-  })
+  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>(() =>
+    parseCampaignIds(searchParams.get('campaigns'))
+  )
   const [hideOverAttribution, setHideOverAttribution] = useState(false)
+  const [comparisonEnabled, setComparisonEnabled] = useState(false)
 
   // Data fetching
   const { data: syncStatus } = useAdvertisingSyncStatus({ refetchInterval: 0 })
@@ -119,19 +86,29 @@ export function useAdvertisingPageState() {
     include_daily: true,
   })
 
+  // Comparison period — Story 127.3-FE (extracted to useAdvertisingComparison)
+  const comparison = useAdvertisingComparison(
+    comparisonEnabled,
+    dateRange.from,
+    dateRange.to,
+    viewBy,
+    groupBy,
+    data?.summary
+  )
+
   // Sync state to URL params
   const updateUrlParams = useCallback(() => {
-    const params = new URLSearchParams()
-    params.set('from', dateRange.from)
-    params.set('to', dateRange.to)
-    params.set('view', viewBy)
-    params.set('group_by', groupBy)
-    params.set('sort', sortBy)
-    params.set('order', sortOrder)
-    if (efficiencyFilter !== 'all') params.set('status', efficiencyFilter)
-    if (page > 1) params.set('page', page.toString())
-    if (selectedCampaigns.length > 0) params.set('campaigns', selectedCampaigns.join(','))
-    router.replace(`?${params.toString()}`, { scroll: false })
+    const p = new URLSearchParams()
+    p.set('from', dateRange.from)
+    p.set('to', dateRange.to)
+    p.set('view', viewBy)
+    p.set('group_by', groupBy)
+    p.set('sort', sortBy)
+    p.set('order', sortOrder)
+    if (efficiencyFilter !== 'all') p.set('status', efficiencyFilter)
+    if (page > 1) p.set('page', page.toString())
+    if (selectedCampaigns.length > 0) p.set('campaigns', selectedCampaigns.join(','))
+    router.replace(`?${p.toString()}`, { scroll: false })
   }, [
     router,
     dateRange,
@@ -177,6 +154,9 @@ export function useAdvertisingPageState() {
     selectedCampaigns,
     hideOverAttribution,
     setHideOverAttribution,
+    comparisonEnabled,
+    setComparisonEnabled,
+    ...comparison,
     data,
     isLoading,
     error,

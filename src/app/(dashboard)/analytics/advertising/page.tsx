@@ -18,6 +18,7 @@ import { SyncGapsTimeline } from './components/SyncGapsTimeline'
 import { OverAttributionBanner } from './components/OverAttributionBanner'
 import { AdCostDiscrepancySection } from './components/AdCostDiscrepancySection'
 import { AdvertisingEmptyState } from './components/AdvertisingEmptyState'
+import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
 import { features } from '@/config/features'
 import { useAdvertisingPageState, PAGE_SIZE } from './components/useAdvertisingPageState'
 import { useAdvertisingFilters } from './components/useAdvertisingFilters'
@@ -90,20 +91,17 @@ export default function AdvertisingAnalyticsPage() {
   return (
     <div className="space-y-6">
       <AdvertisingPageHeader />
-
       <AdvertisingFilters
         dateRange={state.dateRange}
         onDateRangeChange={state.handleDateRangeChange}
         viewBy={state.viewBy}
         onViewByChange={state.handleViewByChange}
       />
-
       <SyncGapsTimeline
         from={state.dateRange.from}
         to={state.dateRange.to}
         syncStatus={state.syncStatus}
       />
-
       <EfficiencyAlertBanner
         lossCount={filters.lossCount}
         currentParams={{
@@ -114,26 +112,36 @@ export default function AdvertisingAnalyticsPage() {
           order: state.sortOrder,
         }}
       />
-
-      <AdvertisingSummaryCards summary={filters.filteredSummary} isLoading={state.isLoading} />
+      <ComparisonPeriodSelector
+        enabled={state.comparisonEnabled}
+        onEnabledChange={state.setComparisonEnabled}
+        preset={state.comparisonPreset}
+        onPresetChange={state.setComparisonPreset}
+        compareStart={state.compareStart}
+        compareEnd={state.compareEnd}
+        onCompareRangeChange={state.handleCompareRangeChange}
+        currentPeriodStart={state.dateRange.from}
+        currentPeriodEnd={state.dateRange.to}
+      />
+      <AdvertisingSummaryCards
+        summary={filters.filteredSummary}
+        isLoading={state.isLoading}
+        deltas={state.deltas}
+      />
       <DailyTrendChart data={state.data?.daily ?? []} isLoading={state.isLoading} />
-
       <AdCostDiscrepancySection
         platformSpend={filters.filteredSummary?.total_spend ?? null}
         isLoading={state.isLoading}
       />
-
       <OverAttributionBanner
         count={filters.overAttributionCount}
         filterActive={state.hideOverAttribution}
         onFilterChange={state.setHideOverAttribution}
       />
-
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">Группировка</h3>
         <GroupByToggle groupBy={state.groupBy} onGroupByChange={state.handleGroupByChange} />
       </div>
-
       <Card>
         <CardHeader className="flex flex-row items-end justify-between space-y-0 pb-4">
           <CardTitle className="text-lg font-semibold pb-2">
