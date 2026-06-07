@@ -22,7 +22,13 @@ interface SearchByQueryTableProps {
   products: SearchProductItem[]
 }
 
-type SortField = 'avgPosition' | 'totalImpressions' | 'totalClicks' | 'avgCtr' | 'totalOrders'
+type SortField =
+  | 'avgPosition'
+  | 'totalImpressions'
+  | 'totalClicks'
+  | 'avgCtr'
+  | 'searchCartAdds'
+  | 'totalOrders'
 
 function formatNumber(n: number): string {
   return n.toLocaleString('ru-RU')
@@ -54,6 +60,7 @@ const COLUMNS: { label: string; field: SortField }[] = [
   { label: 'Показы', field: 'totalImpressions' },
   { label: 'Клики', field: 'totalClicks' },
   { label: 'CTR %', field: 'avgCtr' },
+  { label: 'В корзину', field: 'searchCartAdds' },
   { label: 'Заказы', field: 'totalOrders' },
 ]
 
@@ -124,10 +131,10 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
                 <TableCell key={col.field}>
                   {col.field === 'avgPosition' ? (
                     <span className={getPositionBadgeClass(item.avgPosition)}>
-                      {formatCell(col.field, item[col.field])}
+                      {formatCell(col.field, item[col.field] ?? null)}
                     </span>
                   ) : (
-                    formatCell(col.field, item[col.field])
+                    formatCell(col.field, item[col.field] ?? null)
                   )}
                 </TableCell>
               ))}

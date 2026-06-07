@@ -22,7 +22,13 @@ interface SearchByProductTableProps {
   queries: SearchQueryItem[]
 }
 
-type SortField = 'avgPosition' | 'totalImpressions' | 'totalClicks' | 'avgCtr' | 'totalOrders'
+type SortField =
+  | 'avgPosition'
+  | 'totalImpressions'
+  | 'totalClicks'
+  | 'avgCtr'
+  | 'searchCartAdds'
+  | 'totalOrders'
 
 function formatNumber(n: number): string {
   return n.toLocaleString('ru-RU')
@@ -46,6 +52,7 @@ const COLUMNS: { label: string; field: SortField }[] = [
   { label: 'Показы', field: 'totalImpressions' },
   { label: 'Клики', field: 'totalClicks' },
   { label: 'CTR %', field: 'avgCtr' },
+  { label: 'В корзину', field: 'searchCartAdds' },
   { label: 'Заказы', field: 'totalOrders' },
   // Story 91.1-FE: 'Выручка ₽' column removed — backend dropped totalRevenue
 ]
@@ -109,7 +116,9 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
             <TableRow key={`${item.searchQuery}-${i}`}>
               <TableCell className="font-medium">{item.searchQuery}</TableCell>
               {COLUMNS.map(col => (
-                <TableCell key={col.field}>{formatCell(col.field, item[col.field])}</TableCell>
+                <TableCell key={col.field}>
+                  {formatCell(col.field, item[col.field] ?? null)}
+                </TableCell>
               ))}
             </TableRow>
           ))}

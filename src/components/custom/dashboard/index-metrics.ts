@@ -124,10 +124,6 @@ export type { EmptyStateFulfillmentProps } from './EmptyStateFulfillment'
 export { PlaceholderMetricCard } from './PlaceholderMetricCard'
 export type { PlaceholderMetricCardProps } from './PlaceholderMetricCard'
 
-// COGS by Orders Card (Story 62.3-FE)
-export { OrdersCogsMetricCard } from './OrdersCogsMetricCard'
-export type { OrdersCogsMetricCardProps } from './OrdersCogsMetricCard'
-
 // Theoretical Profit Card (Story 62.4-FE)
 export { TheoreticalProfitCard } from './TheoreticalProfitCard'
 export type { TheoreticalProfitCardProps } from './TheoreticalProfitCard'

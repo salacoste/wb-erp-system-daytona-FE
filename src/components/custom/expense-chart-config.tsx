@@ -85,15 +85,14 @@ export function ExpenseBarTooltip({
           % от выручки:{' '}
           <span className="font-medium">
             {d.percentage != null && d.percentage > 0
-              ? ((revenueShare * (d.percentage / 100)) / d.percentage).toFixed(1)
+              ? formatPercentage((d.percentage / 100) * revenueShare)
               : '—'}
-            %
           </span>
         </p>
       )}
       {wowChange != null && (
         <p className="text-sm text-gray-500">
-          Нedel к нед.:{' '}
+          К нед.:{' '}
           <span className={`font-medium ${wowChange > 0 ? 'text-red-600' : 'text-green-600'}`}>
             {wowChange > 0 ? '+' : ''}
             {formatPercentage(wowChange)}
