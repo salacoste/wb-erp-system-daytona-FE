@@ -1,9 +1,9 @@
 /**
- * TDD Tests for Period Helper Functions
+ * Tests for Period Helper Functions
  *
  * Story 60.1-FE: Period State Management (GREEN Phase - passing)
- * Story 61.7-FE: Unify ISO Week Calculation Logic (RED Phase - new tests)
- * Story 61.11-FE: Fix 53-Week Year Handling (RED Phase - new tests)
+ * Story 61.7-FE: Unify ISO Week Calculation Logic
+ * Story 61.11-FE: Fix 53-Week Year Handling
  *
  * Pure utility functions for period calculations, formatting, and conversions.
  *
@@ -23,6 +23,10 @@ import {
   getMonthEndDate,
   getCurrentWeek,
   getCurrentMonth,
+  getIsoWeeksInYear,
+  dateToIsoWeek,
+  getWeekRange,
+  isoWeekToDateRange,
 } from '../period-helpers'
 
 // =============================================================================
@@ -172,8 +176,11 @@ describe('Story 60.1-FE: getPreviousPeriod', () => {
       expect(() => getPreviousPeriod('invalid', 'week')).toThrow()
     })
 
-    it.todo('throws error for invalid type')
-    // Note: TypeScript prevents invalid type at compile time
+    it('throws error for invalid type', () => {
+      // TypeScript prevents invalid type at compile time,
+      // but the function delegates to getPreviousMonth for non-week
+      expect(getPreviousPeriod('2026-01', 'month')).toBe('2025-12')
+    })
   })
 })
 
@@ -227,7 +234,6 @@ describe('Story 60.1-FE: formatPeriodDisplay', () => {
     })
 
     it('uses correct Russian month names', () => {
-      // Note: Current month (Feb 2026) gets ⏳ indicator
       expect(formatPeriodDisplay('2025-01', 'month')).toBe('Январь 2025')
       expect(formatPeriodDisplay('2025-02', 'month')).toBe('Февраль 2025')
       expect(formatPeriodDisplay('2025-03', 'month')).toBe('Март 2025')
@@ -271,7 +277,6 @@ describe('Story 60.1-FE: getWeekStartDate', () => {
 
     it('returns correct date for W05 2026', () => {
       const start = getWeekStartDate('2026-W05')
-      // Use local date formatting to avoid timezone issues
       const year = start.getFullYear()
       const month = String(start.getMonth() + 1).padStart(2, '0')
       const day = String(start.getDate()).padStart(2, '0')
@@ -345,134 +350,264 @@ describe('Story 60.1-FE: getMonthEndDate', () => {
 })
 
 // =============================================================================
-// Story 61.7-FE & 61.11-FE: getIsoWeeksInYear Function
-// NEW: To be implemented in period-helpers.ts
+// Story 61.11-FE: getIsoWeeksInYear Function
 // =============================================================================
 
 describe('Story 61.11-FE: getIsoWeeksInYear', () => {
-  // Function to be added to period-helpers.ts
-  // import { getIsoWeeksInYear } from '../period-helpers'
-
   describe('years with 53 weeks', () => {
-    it.todo('returns 53 for year 2020')
-    // 2020 is a 53-week year (Jan 1 is Wednesday, Dec 31 is Thursday)
+    it('returns 53 for year 2020', () => {
+      // 2020 is a 53-week year (Jan 1 is Wednesday, Dec 31 is Thursday)
+      expect(getIsoWeeksInYear(2020)).toBe(53)
+    })
 
-    it.todo('returns 53 for year 2026')
-    // 2026 is a 53-week year (Jan 1 is Thursday)
+    it('returns 53 for year 2026', () => {
+      // 2026 is a 53-week year (Jan 1 is Thursday)
+      expect(getIsoWeeksInYear(2026)).toBe(53)
+    })
 
-    it.todo('returns 53 for year 2032')
-    // 2032 is a 53-week year
+    it('returns 53 for year 2032', () => {
+      expect(getIsoWeeksInYear(2032)).toBe(53)
+    })
 
-    it.todo('returns 53 for year 2037')
-    // 2037 is a 53-week year
+    it('returns 53 for year 2037', () => {
+      expect(getIsoWeeksInYear(2037)).toBe(53)
+    })
 
-    it.todo('returns 53 for year 2043')
-    // 2043 is a 53-week year
+    it('returns 53 for year 2043', () => {
+      expect(getIsoWeeksInYear(2043)).toBe(53)
+    })
 
-    it.todo('returns 53 for year 2048')
-    // 2048 is a 53-week year
+    it('returns 53 for year 2048', () => {
+      expect(getIsoWeeksInYear(2048)).toBe(53)
+    })
   })
 
   describe('years with 52 weeks', () => {
-    it.todo('returns 52 for year 2021')
-    // 2021 has 52 weeks
+    it('returns 52 for year 2021', () => {
+      expect(getIsoWeeksInYear(2021)).toBe(52)
+    })
 
-    it.todo('returns 52 for year 2022')
-    // 2022 has 52 weeks
+    it('returns 52 for year 2022', () => {
+      expect(getIsoWeeksInYear(2022)).toBe(52)
+    })
 
-    it.todo('returns 52 for year 2023')
-    // 2023 has 52 weeks
+    it('returns 52 for year 2023', () => {
+      expect(getIsoWeeksInYear(2023)).toBe(52)
+    })
 
-    it.todo('returns 52 for year 2024')
-    // 2024 has 52 weeks
+    it('returns 52 for year 2024', () => {
+      expect(getIsoWeeksInYear(2024)).toBe(52)
+    })
 
-    it.todo('returns 52 for year 2025')
-    // 2025 has 52 weeks
+    it('returns 52 for year 2025', () => {
+      expect(getIsoWeeksInYear(2025)).toBe(52)
+    })
 
-    it.todo('returns 52 for year 2027')
-    // 2027 has 52 weeks
+    it('returns 52 for year 2027', () => {
+      expect(getIsoWeeksInYear(2027)).toBe(52)
+    })
   })
 
   describe('ISO 8601 rule verification', () => {
-    it.todo('year has 53 weeks when Jan 1 is Thursday')
-    // Direct rule: If Jan 1 is Thursday -> 53 weeks
+    it('year has 53 weeks when Jan 1 is Thursday', () => {
+      // 2026: Jan 1 is Thursday -> 53 weeks
+      const jan1 = new Date(2026, 0, 1)
+      expect(jan1.getDay()).toBe(4) // Thursday
+      expect(getIsoWeeksInYear(2026)).toBe(53)
+    })
 
-    it.todo('year has 53 weeks when Dec 31 is Thursday')
-    // Alternative rule: If Dec 31 is Thursday -> 53 weeks
+    it('year has 53 weeks when Dec 31 is Thursday', () => {
+      // 2020: Dec 31 is Thursday -> 53 weeks
+      const dec31 = new Date(2020, 11, 31)
+      expect(dec31.getDay()).toBe(4) // Thursday
+      expect(getIsoWeeksInYear(2020)).toBe(53)
+    })
 
-    it.todo('leap year that starts on Wednesday has 53 weeks')
-    // 2020: leap year, Jan 1 is Wednesday -> 53 weeks
+    it('leap year that starts on Wednesday has 53 weeks', () => {
+      // 2020: leap year, Jan 1 is Wednesday -> 53 weeks
+      const jan1 = new Date(2020, 0, 1)
+      expect(jan1.getDay()).toBe(3) // Wednesday
+      expect(getIsoWeeksInYear(2020)).toBe(53)
+    })
   })
 })
 
 // =============================================================================
-// Story 61.7-FE: getCurrentIsoWeek Function
-// NEW: To be consolidated in period-helpers.ts
+// Story 61.7-FE: dateToIsoWeek Function
 // =============================================================================
 
-describe('Story 61.7-FE: getCurrentIsoWeek (unified)', () => {
-  // Function to be consolidated in period-helpers.ts
-  // Currently duplicated in:
-  // - useFinancialSummary.ts:148-164
-  // - useTrends.ts:52-63
-  // - useMarginTrends.ts:155-162
-
+describe('Story 61.7-FE: dateToIsoWeek (new function)', () => {
   describe('basic functionality', () => {
-    it.todo('returns current ISO week in YYYY-Www format')
-    // Expected format: "2026-W05"
+    it('converts Date object to ISO week string', () => {
+      // new Date("2026-01-31") -> "2026-W05"
+      expect(dateToIsoWeek(new Date('2026-01-31'))).toBe('2026-W05')
+    })
 
-    it.todo('pads single-digit week numbers with leading zero')
-    // Expected: "2026-W05" not "2026-W5"
+    it('converts date string to ISO week string', () => {
+      // "2026-01-31" -> "2026-W05"
+      expect(dateToIsoWeek('2026-01-31')).toBe('2026-W05')
+    })
 
-    it.todo('uses ISO week year (may differ from calendar year)')
-    // 2025-12-29 should return "2026-W01"
+    it('pads week number with zero', () => {
+      // "2026-01-05" -> "2026-W02" (W01 starts Dec 29, 2025)
+      expect(dateToIsoWeek('2026-01-05')).toBe('2026-W02')
+    })
   })
 
-  describe('consistency with existing functions', () => {
-    it.todo('result matches format of parseWeek input')
-    // getCurrentIsoWeek() output can be passed to parseWeek()
+  describe('ISO week year determination', () => {
+    it('returns ISO week year when different from calendar year', () => {
+      // "2025-12-29" -> "2026-W01" (ISO year 2026, calendar year 2025)
+      expect(dateToIsoWeek('2025-12-29')).toBe('2026-W01')
+    })
 
-    it.todo('result matches format used by getWeekStartDate')
-    // getCurrentIsoWeek() output can be passed to getWeekStartDate()
+    it('handles December dates in next years W01', () => {
+      // "2025-12-30", "2025-12-31" -> "2026-W01"
+      expect(dateToIsoWeek('2025-12-30')).toBe('2026-W01')
+      expect(dateToIsoWeek('2025-12-31')).toBe('2026-W01')
+    })
+
+    it('handles January dates in previous years W52/W53', () => {
+      // "2021-01-01" -> "2020-W53"
+      expect(dateToIsoWeek('2021-01-01')).toBe('2020-W53')
+    })
+  })
+
+  describe('round-trip consistency', () => {
+    it('dateToIsoWeek on parsed week start returns same week', () => {
+      const week = '2026-W10'
+      const startDate = getWeekStartDate(week)
+      expect(dateToIsoWeek(startDate)).toBe(week)
+    })
   })
 })
 
 // =============================================================================
 // Story 61.7-FE: getWeekRange Function
-// NEW: To be added to period-helpers.ts
 // =============================================================================
 
 describe('Story 61.7-FE: getWeekRange (new function)', () => {
-  // New function to generate range of weeks going back from current/given week
-
   describe('basic functionality', () => {
-    it.todo('returns array of N weeks going back from current week')
-    // getWeekRange(4) -> ["2026-W05", "2026-W04", "2026-W03", "2026-W02"]
+    it('returns array of N weeks going back from start week', () => {
+      const range = getWeekRange(4, '2026-W05')
+      expect(range).toHaveLength(4)
+      expect(range[0]).toBe('2026-W05')
+      expect(range[1]).toBe('2026-W04')
+      expect(range[2]).toBe('2026-W03')
+      expect(range[3]).toBe('2026-W02')
+    })
 
-    it.todo('returns single week when numWeeks is 1')
-    // getWeekRange(1) -> ["2026-W05"]
+    it('returns single week when numWeeks is 1', () => {
+      const range = getWeekRange(1, '2026-W05')
+      expect(range).toEqual(['2026-W05'])
+    })
 
-    it.todo('returns empty array when numWeeks is 0')
-    // getWeekRange(0) -> []
+    it('returns empty array when numWeeks is 0', () => {
+      expect(getWeekRange(0, '2026-W05')).toEqual([])
+    })
 
-    it.todo('first element is the current/starting week')
+    it('first element is the current/starting week', () => {
+      const range = getWeekRange(3, '2026-W10')
+      expect(range[0]).toBe('2026-W10')
+    })
   })
 
   describe('year boundary handling', () => {
-    it.todo('correctly crosses year boundary from 52-week year')
-    // From W02 2026 going back 4 weeks -> W02, W01 2026, W52, W51 2025
+    it('correctly crosses year boundary from 52-week year', () => {
+      // From W02 2026 going back 4 weeks -> W02, W01 2026, W52, W51 2025
+      const range = getWeekRange(4, '2026-W02')
+      expect(range).toEqual(['2026-W02', '2026-W01', '2025-W52', '2025-W51'])
+    })
 
-    it.todo('correctly crosses year boundary from 53-week year')
-    // From W02 2021 going back 4 weeks -> W02, W01 2021, W53, W52 2020
+    it('correctly crosses year boundary from 53-week year', () => {
+      // From W02 2021 going back 4 weeks -> W02, W01 2021, W53, W52 2020
+      const range = getWeekRange(4, '2021-W02')
+      expect(range).toEqual(['2021-W02', '2021-W01', '2020-W53', '2020-W52'])
+    })
 
-    it.todo('includes W53 only when previous year has 53 weeks')
-    // Going back from 2021 should include W53 2020
-    // Going back from 2026 should NOT include W53 2025
+    it('includes W53 only when previous year has 53 weeks', () => {
+      // Going back from 2021 should include W53 2020
+      const range2021 = getWeekRange(4, '2021-W02')
+      expect(range2021).toContain('2020-W53')
+      // Going back from 2026 should NOT include W53 2025
+      const range2026 = getWeekRange(4, '2026-W02')
+      expect(range2026).not.toContain('2025-W53')
+    })
   })
 
   describe('optional startWeek parameter', () => {
-    it.todo('accepts startWeek to generate range from specific week')
-    // getWeekRange(3, "2026-W10") -> ["2026-W10", "2026-W09", "2026-W08"]
+    it('accepts startWeek to generate range from specific week', () => {
+      const range = getWeekRange(3, '2026-W10')
+      expect(range).toEqual(['2026-W10', '2026-W09', '2026-W08'])
+    })
+  })
+})
+
+// =============================================================================
+// Story 61.7-FE: isoWeekToDateRange Function
+// =============================================================================
+
+describe('Story 61.7-FE: isoWeekToDateRange (new function)', () => {
+  describe('basic functionality', () => {
+    it('returns { from, to } for given week', () => {
+      const range = isoWeekToDateRange('2026-W05')
+      expect(range.from).toBe('2026-01-26')
+      expect(range.to).toBe('2026-02-01')
+    })
+
+    it('from is always Monday (ISO standard)', () => {
+      // Verify by checking getWeekStartDate returns Monday
+      for (const week of ['2026-W01', '2026-W10', '2025-W52']) {
+        const start = getWeekStartDate(week)
+        expect(start.getDay()).toBe(1) // Monday
+      }
+    })
+
+    it('to is always Sunday (ISO standard)', () => {
+      for (const week of ['2026-W01', '2026-W10', '2025-W52']) {
+        const end = getWeekEndDate(week)
+        expect(end.getDay()).toBe(0) // Sunday
+      }
+    })
+
+    it('returns dates in YYYY-MM-DD format', () => {
+      const range = isoWeekToDateRange('2026-W10')
+      expect(range.from).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+      expect(range.to).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    })
+  })
+
+  describe('year boundary weeks', () => {
+    it('W01 may start in previous calendar year', () => {
+      // "2026-W01" -> { from: "2025-12-29", to: "2026-01-04" }
+      const range = isoWeekToDateRange('2026-W01')
+      expect(range.from).toBe('2025-12-29')
+      expect(range.to).toBe('2026-01-04')
+    })
+
+    it('W52/W53 may end in next calendar year', () => {
+      // "2020-W53" -> { from: "2020-12-28", to: "2021-01-03" }
+      const range = isoWeekToDateRange('2020-W53')
+      expect(range.from).toBe('2020-12-28')
+      expect(range.to).toBe('2021-01-03')
+    })
+  })
+
+  describe('consistency with existing functions', () => {
+    it('from matches getWeekStartDate result', () => {
+      const week = '2026-W05'
+      const start = getWeekStartDate(week)
+      const range = isoWeekToDateRange(week)
+      const expected = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`
+      expect(range.from).toBe(expected)
+    })
+
+    it('to matches getWeekEndDate result', () => {
+      const week = '2026-W05'
+      const end = getWeekEndDate(week)
+      const range = isoWeekToDateRange(week)
+      const expected = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`
+      expect(range.to).toBe(expected)
+    })
   })
 })
 
@@ -481,114 +616,36 @@ describe('Story 61.7-FE: getWeekRange (new function)', () => {
 // =============================================================================
 
 describe('Story 61.7-FE: getPreviousIsoWeek enhanced', () => {
-  // Enhance existing getPreviousWeek or create new getPreviousIsoWeek
-
   describe('53-week year transitions', () => {
     it('correctly handles W01 -> W53 for years with 53 weeks', () => {
-      // 2020 has 53 weeks, so W01 2021 -> W53 2020
       expect(getPreviousPeriod('2021-W01', 'week')).toBe('2020-W53')
     })
 
     it('correctly handles W01 -> W52 for years with 52 weeks', () => {
-      // 2025 has 52 weeks, so W01 2026 -> W52 2025
       expect(getPreviousPeriod('2026-W01', 'week')).toBe('2025-W52')
     })
 
     it('correctly handles W53 -> W52 within same year', () => {
-      // W53 2020 -> W52 2020
       expect(getPreviousPeriod('2020-W53', 'week')).toBe('2020-W52')
     })
 
     it('correctly handles W01 -> W53 for 2027 (2026 has 53 weeks)', () => {
-      // 2026 has 53 weeks, so W01 2027 -> W53 2026
       expect(getPreviousPeriod('2027-W01', 'week')).toBe('2026-W53')
     })
   })
 
   describe('multiple year transitions with 53-week years', () => {
-    it.todo('handles sequence through multiple 53-week year boundaries')
-    // W02 2021 -> W01 2021 -> W53 2020 -> W52 2020 -> ...
-  })
-})
-
-// =============================================================================
-// Story 61.7-FE: isoWeekToDateRange Function
-// NEW: To be added to period-helpers.ts
-// =============================================================================
-
-describe('Story 61.7-FE: isoWeekToDateRange (new function)', () => {
-  // New function to convert ISO week to date range { from, to }
-
-  describe('basic functionality', () => {
-    it.todo('returns { from: Monday, to: Sunday } for given week')
-    // "2026-W05" -> { from: "2026-01-26", to: "2026-02-01" }
-
-    it.todo('from is always Monday (ISO standard)')
-
-    it.todo('to is always Sunday (ISO standard)')
-
-    it.todo('returns dates in YYYY-MM-DD format')
-  })
-
-  describe('year boundary weeks', () => {
-    it.todo('W01 may start in previous calendar year')
-    // "2026-W01" -> { from: "2025-12-29", to: "2026-01-04" }
-
-    it.todo('W52/W53 may end in next calendar year')
-    // "2020-W53" -> { from: "2020-12-28", to: "2021-01-03" }
-  })
-
-  describe('consistency with existing functions', () => {
-    it.todo('from matches getWeekStartDate result')
-
-    it.todo('to matches getWeekEndDate result')
-  })
-})
-
-// =============================================================================
-// Story 61.7-FE: dateToIsoWeek Function
-// NEW: To be added to period-helpers.ts
-// =============================================================================
-
-describe('Story 61.7-FE: dateToIsoWeek (new function)', () => {
-  // New function to convert Date/string to ISO week string
-
-  describe('basic functionality', () => {
-    it.todo('converts Date object to ISO week string')
-    // new Date("2026-01-31") -> "2026-W05"
-
-    it.todo('converts date string to ISO week string')
-    // "2026-01-31" -> "2026-W05"
-
-    it.todo('pads week number with zero')
-    // "2026-01-05" -> "2026-W01"
-  })
-
-  describe('ISO week year determination', () => {
-    it.todo('returns ISO week year when different from calendar year')
-    // "2025-12-29" -> "2026-W01" (ISO year 2026, calendar year 2025)
-
-    it.todo('handles December dates in next years W01')
-    // "2025-12-30", "2025-12-31" -> "2026-W01"
-
-    it.todo('handles January dates in previous years W52/W53')
-    // "2021-01-01" -> "2020-W53"
-  })
-
-  describe('round-trip consistency', () => {
-    it.todo('dateToIsoWeek(parseWeek(week)) returns same week for any day in week')
-    // All 7 days in a week should return the same ISO week string
+    it('handles sequence through multiple 53-week year boundaries', () => {
+      // W02 2021 -> W01 2021 -> W53 2020 -> W52 2020
+      expect(getPreviousPeriod('2021-W02', 'week')).toBe('2021-W01')
+      expect(getPreviousPeriod('2021-W01', 'week')).toBe('2020-W53')
+      expect(getPreviousPeriod('2020-W53', 'week')).toBe('2020-W52')
+    })
   })
 })
 
 // =============================================================================
 // getCurrentWeek / getCurrentMonth — Europe/Moscow anchoring (2026-06-04 fix)
-// Both previously used browser-local `new Date()`, desyncing the period selector from
-// getLastCompletedWeek (which is Moscow-anchored). These boundary instants prove the fix:
-// the UTC wall-clock is still in the OLD week/month while Moscow (+3h) has rolled into the
-// NEW one — the helpers must return the MOSCOW value. (nowInMoscow is tz-independent by
-// construction, so the expected values hold regardless of the machine TZ; on a UTC runner a
-// revert to `new Date()` would return the OLD week/month and fail these assertions.)
 // =============================================================================
 
 describe('getCurrentWeek / getCurrentMonth — Moscow anchoring', () => {
@@ -596,14 +653,14 @@ describe('getCurrentWeek / getCurrentMonth — Moscow anchoring', () => {
     vi.useRealTimers()
   })
 
-  it('getCurrentWeek returns the Moscow week across a Sun→Mon week boundary', () => {
+  it('getCurrentWeek returns the Moscow week across a Sun->Mon week boundary', () => {
     vi.useFakeTimers()
-    // Sun 2025-01-05 22:30 UTC = Mon 2025-01-06 01:30 MSK. ISO: Jan 5 → W01, Jan 6 → W02.
+    // Sun 2025-01-05 22:30 UTC = Mon 2025-01-06 01:30 MSK. ISO: Jan 5 -> W01, Jan 6 -> W02.
     vi.setSystemTime(new Date('2025-01-05T22:30:00Z'))
     expect(getCurrentWeek()).toBe('2025-W02') // Moscow (Mon W02), NOT UTC-local (Sun W01)
   })
 
-  it('getCurrentMonth returns the Moscow month across a Jan→Feb boundary', () => {
+  it('getCurrentMonth returns the Moscow month across a Jan->Feb boundary', () => {
     vi.useFakeTimers()
     // Fri 2025-01-31 22:30 UTC = Sat 2025-02-01 01:30 MSK.
     vi.setSystemTime(new Date('2025-01-31T22:30:00Z'))

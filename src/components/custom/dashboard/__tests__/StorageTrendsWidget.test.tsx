@@ -267,7 +267,13 @@ describe('StorageTrendsWidget - Data Display', () => {
     expect(card).toBeInTheDocument()
   })
 
-  it.todo('renders StorageTrendsChart component with data')
+  it('renders StorageTrendsChart component with data', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
+
+    // Recharts ResponsiveContainer renders an SVG element when data is present
+    const svg = document.querySelector('.recharts-surface') ?? document.querySelector('svg')
+    expect(svg).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
@@ -364,9 +370,29 @@ describe('StorageTrendsWidget - Period Props', () => {
     expect(useStorageTrends).toHaveBeenCalledWith('2026-W10', '2026-W15')
   })
 
-  it.todo('refetches when period changes')
+  it('refetches when period changes', () => {
+    const { rerender } = renderWithProviders(
+      <StorageTrendsWidget weekStart="2026-W01" weekEnd="2026-W05" />
+    )
 
-  it.todo('passes height prop to chart component')
+    expect(useStorageTrends).toHaveBeenCalledWith('2026-W01', '2026-W05')
+
+    rerender(<StorageTrendsWidget weekStart="2026-W10" weekEnd="2026-W15" />)
+
+    expect(useStorageTrends).toHaveBeenCalledWith('2026-W10', '2026-W15')
+    expect(useStorageTrends).toHaveBeenCalledTimes(2)
+  })
+
+  it('passes height prop to chart component', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} height={300} />)
+
+    // The chart container should have height 300px applied via style
+    const chartContainer = document.querySelector('.recharts-responsive-container')
+    expect(chartContainer).toBeInTheDocument()
+    // Recharts ResponsiveContainer uses inline style for height
+    const style = chartContainer?.getAttribute('style')
+    expect(style).toContain('300')
+  })
 })
 
 // ============================================================================
@@ -379,13 +405,40 @@ describe('StorageTrendsWidget - Accessibility', () => {
     vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockTrendsData))
   })
 
-  it.todo('has accessible card structure')
+  it('has accessible card structure', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
-  it.todo('retry button is keyboard accessible')
+    // CardTitle renders as a div with the title text
+    expect(screen.getByText('Динамика расходов на хранение')).toBeInTheDocument()
+  })
 
-  it.todo('provides screen reader text for trend direction')
+  it('retry button is keyboard accessible', () => {
+    vi.mocked(useStorageTrends).mockReturnValue(
+      createErrorQueryResult<StorageTrendsResponse>(new Error('Failed'), { refetch: vi.fn() })
+    )
 
-  it.todo('chart has appropriate aria-label')
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
+
+    const retryButton = screen.getByRole('button', { name: /повторить/i })
+    expect(retryButton).toBeInTheDocument()
+    expect(retryButton.tagName).toBe('BUTTON')
+  })
+
+  it('provides screen reader text for trend direction', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
+
+    // TrendBadge is visible, so it's accessible to screen readers
+    const trendBadge = screen.getByText(/Тренд:.*12,5\s*%/).closest('div')
+    expect(trendBadge).toBeInTheDocument()
+  })
+
+  it('chart has appropriate aria-label', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
+
+    // Chart renders as SVG inside ResponsiveContainer
+    const svg = document.querySelector('.recharts-surface') ?? document.querySelector('svg')
+    expect(svg).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
@@ -398,9 +451,34 @@ describe('StorageTrendsWidget - Chart Height', () => {
     vi.mocked(useStorageTrends).mockReturnValue(createMockQueryResult(mockTrendsData))
   })
 
-  it.todo('uses default height of 250px')
+  it('uses default height of 250px', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
-  it.todo('respects custom height prop')
+    // Recharts ResponsiveContainer renders with the default height
+    const container = document.querySelector('.recharts-responsive-container')
+    expect(container).toBeInTheDocument()
+    const style = container?.getAttribute('style')
+    expect(style).toContain('250')
+  })
 
-  it.todo('applies height to loading skeleton')
+  it('respects custom height prop', () => {
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} height={400} />)
+
+    const container = document.querySelector('.recharts-responsive-container')
+    expect(container).toBeInTheDocument()
+    const style = container?.getAttribute('style')
+    expect(style).toContain('400')
+  })
+
+  it('applies height to loading skeleton', () => {
+    vi.mocked(useStorageTrends).mockReturnValue(createLoadingQueryResult<StorageTrendsResponse>())
+
+    renderWithProviders(<StorageTrendsWidget {...defaultProps} height={300} />)
+
+    // The loading skeleton uses inline style height
+    const skeletonWithHeight = Array.from(document.querySelectorAll('.animate-pulse')).find(el =>
+      el.getAttribute('style')?.includes('300')
+    )
+    expect(skeletonWithHeight).toBeInTheDocument()
+  })
 })

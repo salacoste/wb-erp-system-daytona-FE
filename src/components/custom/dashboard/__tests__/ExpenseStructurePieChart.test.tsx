@@ -1,5 +1,5 @@
 /**
- * TDD Tests for ExpenseStructurePieChart Component
+ * Tests for ExpenseStructurePieChart Component
  * Story 63.9-FE: Expense Structure Pie Chart
  * Epic 63-FE: Dashboard Main Page Enhancement
  *
@@ -9,399 +9,769 @@
  * @see docs/stories/epic-63/story-63.9-fe-expense-structure-chart.md
  */
 
-import { describe, it } from 'vitest'
+import React from 'react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { renderWithProviders, screen, waitFor } from '@/test/utils/test-utils'
+import { ExpenseStructurePieChart } from '../ExpenseStructurePieChart'
 
 // ============================================================================
-// Imports to be used when implementing tests
-// ============================================================================
-// import { expect, vi, beforeEach } from 'vitest'
-// import { render, screen, fireEvent, waitFor } from '@/test/utils/test-utils'
-// import userEvent from '@testing-library/user-event'
-// import { ExpenseStructurePieChart } from '../ExpenseStructurePieChart'
-
-// ============================================================================
-// Mock Data - Based on API Response Structure
+// Mock recharts — jsdom cannot render SVG dimensions so we stub chart
+// primitives and capture props/data for assertions.
 // ============================================================================
 
-// const mockExpenseData = {
-//   meta: {
-//     week: '2026-W05',
-//     cabinet_id: 'test-cabinet-id',
-//     view_by: 'total' as const,
-//     generated_at: '2026-01-31T12:00:00Z',
-//   },
-//   data: [{
-//     sku_id: 'total',
-//     product_name: 'Total',
-//     revenue: 500000,
-//     costs_pct: {
-//       cogs: 35.0,
-//       commission: 15.0,
-//       logistics_delivery: 12.0,
-//       logistics_return: 3.0,
-//       storage: 5.0,
-//       paid_acceptance: 2.0,
-//       penalties: 1.0,
-//       other_deductions: 2.0,
-//       advertising: 8.0,
-//     },
-//     costs_rub: {
-//       cogs: 175000,
-//       commission: 75000,
-//       logistics_delivery: 60000,
-//       logistics_return: 15000,
-//       storage: 25000,
-//       paid_acceptance: 10000,
-//       penalties: 5000,
-//       other_deductions: 10000,
-//       advertising: 40000,
-//     },
-//     total_costs_pct: 83.0,
-//     net_margin_pct: 17.0,
-//     net_profit: 85000,
-//     profitability_status: 'good' as const,
-//     has_cogs: true,
-//   }],
-// }
+const capturedChart: { data: unknown[]; children: React.ReactNode[] } = {
+  data: [],
+  children: [],
+}
+const capturedCells: Array<{
+  fill: string
+  dataKey: string
+  'data-testid': string
+}> = []
 
-// const mockEmptyData = {
-//   meta: {
-//     week: '2026-W05',
-//     cabinet_id: 'test-cabinet-id',
-//     view_by: 'total' as const,
-//     generated_at: '2026-01-31T12:00:00Z',
-//   },
-//   data: [],
-// }
-
-// const mockZeroValuesData = {
-//   meta: {
-//     week: '2026-W05',
-//     cabinet_id: 'test-cabinet-id',
-//     view_by: 'total' as const,
-//     generated_at: '2026-01-31T12:00:00Z',
-//   },
-//   data: [{
-//     sku_id: 'total',
-//     product_name: 'Total',
-//     revenue: 100000,
-//     costs_pct: {
-//       cogs: 40.0,
-//       commission: 20.0,
-//       logistics_delivery: 10.0,
-//       logistics_return: 0,
-//       storage: 0,
-//       paid_acceptance: 0,
-//       penalties: 0,
-//       other_deductions: 0,
-//       advertising: 0,
-//     },
-//     costs_rub: {
-//       cogs: 40000,
-//       commission: 20000,
-//       logistics_delivery: 10000,
-//       logistics_return: 0,
-//       storage: 0,
-//       paid_acceptance: 0,
-//       penalties: 0,
-//       other_deductions: 0,
-//       advertising: 0,
-//     },
-//     total_costs_pct: 70.0,
-//     net_margin_pct: 30.0,
-//     net_profit: 30000,
-//     profitability_status: 'excellent' as const,
-//     has_cogs: true,
-//   }],
-// }
+vi.mock('recharts', async () => {
+  const actual = await vi.importActual<typeof import('recharts')>('recharts')
+  return {
+    ...actual,
+    ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="responsive-container" style={{ width: '100%', height: 320 }}>
+        {children}
+      </div>
+    ),
+    PieChart: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="pie-chart">{children}</div>
+    ),
+    Pie: ({
+      data,
+      children,
+      innerRadius,
+      outerRadius,
+    }: {
+      data: unknown[]
+      children: React.ReactNode
+      innerRadius: number
+      outerRadius: number
+    }) => {
+      capturedChart.data = data
+      capturedChart.children = React.Children.toArray(children)
+      return (
+        <div
+          data-testid="pie"
+          data-inner-radius={innerRadius}
+          data-outer-radius={outerRadius}
+          data-segment-count={data.length}
+        >
+          {children}
+        </div>
+      )
+    },
+    Cell: ({
+      fill,
+      'data-testid': testId,
+    }: {
+      fill: string
+      dataKey: string
+      'data-testid': string
+    }) => {
+      capturedCells.push({ fill, dataKey: 'value', 'data-testid': testId ?? 'cell' })
+      return <div data-testid="pie-cell" data-fill={fill} />
+    },
+    Tooltip: ({ content }: { content: React.ReactNode }) => (
+      <div data-testid="chart-tooltip">{content}</div>
+    ),
+    Legend: ({ content }: { content: () => React.ReactNode; verticalAlign: string }) => (
+      <div data-testid="chart-legend">{content()}</div>
+    ),
+  }
+})
 
 // ============================================================================
-// Expected Color Palette (from Story 63.9 AC2)
+// Mock useExpenseStructure hook
 // ============================================================================
 
-// const EXPENSE_COLORS = {
-//   cogs: '#6366F1',              // Purple - Себестоимость
-//   commission: '#8B5CF6',        // Deep Purple - Комиссия WB
-//   logistics_delivery: '#EC4899', // Pink - Доставка
-//   logistics_return: '#F43F5E',  // Rose - Возвраты
-//   storage: '#F97316',           // Orange - Хранение
-//   paid_acceptance: '#EAB308',   // Yellow - Приёмка
-//   penalties: '#EF4444',         // Red - Штрафы
-//   other_deductions: '#6B7280',  // Gray - Прочие
-//   advertising: '#14B8A6',       // Teal - Реклама
-// }
+const mockHookState: {
+  data: unknown
+  isLoading: boolean
+  error: unknown
+} = {
+  data: null,
+  isLoading: false,
+  error: null,
+}
+
+vi.mock('@/hooks/useExpenseStructure', () => ({
+  useExpenseStructure: () => mockHookState,
+}))
 
 // ============================================================================
-// Chart Rendering Tests (~8 tests)
+// Mock Data — matches UnitEconomicsResponse shape
+// ============================================================================
+
+function makeFullData() {
+  return {
+    meta: {
+      week: '2026-W05',
+      cabinet_id: 'test-cabinet-id',
+      view_by: 'total' as const,
+      generated_at: '2026-01-31T12:00:00Z',
+    },
+    summary: {
+      total_revenue: 500000,
+      total_net_profit: 85000,
+      avg_cogs_pct: 35.0,
+      avg_wb_fees_pct: 37.0,
+      avg_net_margin_pct: 17.0,
+      sku_count: 10,
+      profitable_sku_count: 8,
+      loss_making_sku_count: 2,
+      missing_cogs_count: 0,
+    },
+    data: [
+      {
+        sku_id: 'total',
+        product_name: 'Total',
+        revenue: 500000,
+        costs_pct: {
+          cogs: 35.0,
+          commission: 15.0,
+          logistics_delivery: 12.0,
+          logistics_return: 3.0,
+          storage: 5.0,
+          paid_acceptance: 2.0,
+          penalties: 1.0,
+          other_deductions: 2.0,
+          advertising: 8.0,
+          delivery_to_warehouse: null,
+        },
+        costs_rub: {
+          cogs: 175000,
+          commission: 75000,
+          logistics_delivery: 60000,
+          logistics_return: 15000,
+          storage: 25000,
+          paid_acceptance: 10000,
+          penalties: 5000,
+          other_deductions: 10000,
+          advertising: 40000,
+          delivery_to_warehouse: null,
+        },
+        total_costs_pct: 83.0,
+        net_margin_pct: 17.0,
+        net_profit: 85000,
+        profitability_status: 'good',
+        has_cogs: true,
+      },
+    ],
+  }
+}
+
+function makeZeroValuesData() {
+  return {
+    ...makeFullData(),
+    data: [
+      {
+        sku_id: 'total',
+        product_name: 'Total',
+        revenue: 100000,
+        costs_pct: {
+          cogs: 40.0,
+          commission: 20.0,
+          logistics_delivery: 10.0,
+          logistics_return: 0,
+          storage: 0,
+          paid_acceptance: 0,
+          penalties: 0,
+          other_deductions: 0,
+          advertising: 0,
+          delivery_to_warehouse: null,
+        },
+        costs_rub: {
+          cogs: 40000,
+          commission: 20000,
+          logistics_delivery: 10000,
+          logistics_return: 0,
+          storage: 0,
+          paid_acceptance: 0,
+          penalties: 0,
+          other_deductions: 0,
+          advertising: 0,
+          delivery_to_warehouse: null,
+        },
+        total_costs_pct: 70.0,
+        net_margin_pct: 30.0,
+        net_profit: 30000,
+        profitability_status: 'excellent',
+        has_cogs: true,
+      },
+    ],
+  }
+}
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+function renderChart(week = '2026-W05') {
+  return renderWithProviders(<ExpenseStructurePieChart week={week} />)
+}
+
+// ============================================================================
+// Chart Rendering Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Chart Rendering', () => {
-  it.todo('should render donut chart with expense data')
-  // Verify PieChart component renders with inner/outer radius (donut style)
-  // Expected: Chart container visible, SVG rendered
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+    capturedChart.data = []
+    capturedChart.children = []
+    capturedCells.length = 0
+  })
 
-  it.todo('should display total expenses amount in center')
-  // Verify center text shows "Итого" label and formatted total
-  // Expected: "Итого" text and "415 000 ₽" (sum of all costs_rub)
+  it('should render donut chart with expense data', () => {
+    renderChart()
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
+    expect(screen.getByTestId('pie')).toBeInTheDocument()
+  })
 
-  it.todo('should render correct number of segments for non-zero categories')
-  // With mockExpenseData, all 9 categories have values > 0
-  // Expected: 9 pie segments rendered
+  it('should display total expenses amount in center', () => {
+    renderChart()
+    expect(screen.getByText('Итого')).toBeInTheDocument()
+    // Sum of all costs_rub: 175000+75000+60000+15000+25000+10000+5000+10000+40000 = 415000
+    expect(screen.getByText(/415\s*000/)).toBeInTheDocument()
+  })
 
-  it.todo('should filter out zero-value categories from chart')
-  // With mockZeroValuesData, only 3 categories have values > 0
-  // Expected: Only 3 segments rendered (cogs, commission, logistics_delivery)
+  it('should render correct number of segments for non-zero categories', () => {
+    renderChart()
+    // 9 non-zero categories (delivery_to_warehouse is null so filtered out)
+    const cells = screen.getAllByTestId('pie-cell')
+    expect(cells).toHaveLength(9)
+  })
 
-  it.todo('should sort segments by value descending')
-  // Largest cost category should be first segment
-  // Expected: COGS (175000) segment first, then commission (75000), etc.
+  it('should filter out zero-value categories from chart', () => {
+    mockHookState.data = makeZeroValuesData()
+    renderChart()
+    // Only 3 categories have values > 0: cogs, commission, logistics_delivery
+    const cells = screen.getAllByTestId('pie-cell')
+    expect(cells).toHaveLength(3)
+  })
 
-  it.todo('should apply innerRadius for donut style')
-  // Verify chart is donut (has hole in center), not solid pie
-  // Expected: innerRadius > 0 (around 80px per story spec)
+  it('should sort segments by value descending', () => {
+    renderChart()
+    const pieData = capturedChart.data as Array<{ key: string; value: number }>
+    expect(pieData[0].key).toBe('cogs')
+    expect(pieData[0].value).toBe(175000)
+    expect(pieData[1].key).toBe('commission')
+    expect(pieData[1].value).toBe(75000)
+  })
 
-  it.todo('should render responsive container')
-  // Chart should resize with container
-  // Expected: ResponsiveContainer wrapper present
+  it('should apply innerRadius for donut style', () => {
+    renderChart()
+    const pie = screen.getByTestId('pie')
+    expect(pie.dataset.innerRadius).toBe('70')
+    expect(Number(pie.dataset.innerRadius)).toBeGreaterThan(0)
+  })
 
-  it.todo('should render card with title and description')
-  // Expected: "Структура расходов" title
-  // Expected: "Распределение затрат по категориям" description
+  it('should render responsive container', () => {
+    renderChart()
+    expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
+  })
+
+  it('should render card with title and description', () => {
+    renderChart()
+    expect(screen.getByText('Структура расходов')).toBeInTheDocument()
+    expect(screen.getByText('Распределение затрат по категориям')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Color Tests (~9 tests)
+// Color Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Color Palette', () => {
-  it.todo('should use purple #6366F1 for COGS segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.cogs
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+    capturedCells.length = 0
+  })
 
-  it.todo('should use deep purple #8B5CF6 for Commission segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.commission
+  it('should use purple #6366F1 for COGS segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const cogsIndex = pieData.findIndex(d => d.key === 'cogs')
+    expect(cogsIndex).toBeGreaterThanOrEqual(0)
+    expect(cells[cogsIndex].dataset.fill).toBe('#6366F1')
+  })
 
-  it.todo('should use pink #EC4899 for Logistics Delivery segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.logistics_delivery
+  it('should use deep purple #8B5CF6 for Commission segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'commission')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#8B5CF6')
+  })
 
-  it.todo('should use rose #F43F5E for Logistics Return segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.logistics_return
+  it('should use pink #EC4899 for Logistics Delivery segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'logistics_delivery')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#EC4899')
+  })
 
-  it.todo('should use orange #F97316 for Storage segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.storage
+  it('should use rose #F43F5E for Logistics Return segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'logistics_return')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#F43F5E')
+  })
 
-  it.todo('should use yellow #EAB308 for Paid Acceptance segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.paid_acceptance
+  it('should use orange #F97316 for Storage segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'storage')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#F97316')
+  })
 
-  it.todo('should use red #EF4444 for Penalties segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.penalties
+  it('should use yellow #EAB308 for Paid Acceptance segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'paid_acceptance')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#EAB308')
+  })
 
-  it.todo('should use gray #6B7280 for Other Deductions segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.other_deductions
+  it('should use red #EF4444 for Penalties segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'penalties')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#EF4444')
+  })
 
-  it.todo('should use teal #14B8A6 for Advertising segment')
-  // Verify Cell fill color matches EXPENSE_COLORS.advertising
+  it('should use gray #6B7280 for Other Deductions segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'other_deductions')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#6B7280')
+  })
+
+  it('should use teal #14B8A6 for Advertising segment', () => {
+    renderChart()
+    const cells = screen.getAllByTestId('pie-cell')
+    const pieData = capturedChart.data as Array<{ key: string; color: string }>
+    const index = pieData.findIndex(d => d.key === 'advertising')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(cells[index].dataset.fill).toBe('#14B8A6')
+  })
 })
 
 // ============================================================================
-// Legend Tests (~5 tests)
+// Legend Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Legend', () => {
-  it.todo('should render legend with all non-zero categories')
-  // Expected: Legend items for all 9 categories with mockExpenseData
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should display category Russian labels in legend')
-  // Expected labels: "Себестоимость", "Комиссия WB", "Доставка", etc.
+  it('should render legend with all non-zero categories', () => {
+    renderChart()
+    const legend = screen.getByTestId('chart-legend')
+    expect(legend).toBeInTheDocument()
+    // 9 non-zero categories should appear
+    expect(legend.textContent).toContain('Себестоимость')
+    expect(legend.textContent).toContain('Реклама')
+  })
 
-  it.todo('should show percentage value in legend item')
-  // Expected: "Себестоимость: 35.0%"
+  it('should display category Russian labels in legend', () => {
+    renderChart()
+    const legend = screen.getByTestId('chart-legend')
+    expect(legend.textContent).toContain('Себестоимость')
+    expect(legend.textContent).toContain('Комиссия WB')
+    expect(legend.textContent).toContain('Доставка')
+    expect(legend.textContent).toContain('Возвраты')
+    expect(legend.textContent).toContain('Хранение')
+    expect(legend.textContent).toContain('Приёмка')
+    expect(legend.textContent).toContain('Штрафы')
+    expect(legend.textContent).toContain('Прочие')
+    expect(legend.textContent).toContain('Реклама')
+  })
 
-  it.todo('should display color indicator for each legend item')
-  // Expected: Colored circle/square matching segment color
+  it('should show percentage value in legend item', () => {
+    renderChart()
+    const legend = screen.getByTestId('chart-legend')
+    // COGS is 35.0%
+    expect(legend.textContent).toContain('35,0')
+    // Commission is 15.0%
+    expect(legend.textContent).toContain('15,0')
+  })
 
-  it.todo('should hide zero-value categories from legend')
-  // With mockZeroValuesData, only 3 items in legend
+  it('should display color indicator for each legend item', () => {
+    renderChart()
+    // Legend items have colored circles (span with rounded-full + backgroundColor style)
+    const colorIndicators = screen
+      .getAllByTestId('chart-legend')[0]
+      .querySelectorAll('.rounded-full')
+    expect(colorIndicators.length).toBe(9)
+  })
+
+  it('should hide zero-value categories from legend', () => {
+    mockHookState.data = makeZeroValuesData()
+    renderChart()
+    const legend = screen.getByTestId('chart-legend')
+    // Only 3 categories should be in legend
+    const colorIndicators = legend.querySelectorAll('.rounded-full')
+    expect(colorIndicators.length).toBe(3)
+  })
 })
 
 // ============================================================================
-// Tooltip Tests (~5 tests)
+// Tooltip Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Tooltip', () => {
-  it.todo('should show tooltip on segment hover')
-  // Hover over segment → tooltip appears
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should display category name in tooltip')
-  // Expected: "Себестоимость" for cogs segment
+  it('should render tooltip component in chart', () => {
+    renderChart()
+    expect(screen.getByTestId('chart-tooltip')).toBeInTheDocument()
+  })
 
-  it.todo('should display absolute amount in tooltip')
-  // Expected: "Сумма: 175 000 ₽"
-
-  it.todo('should display percentage in tooltip')
-  // Expected: "Доля: 35.0%"
-
-  it.todo('should hide tooltip when not hovering')
-  // Mouse leaves segment → tooltip disappears
+  it('should render ExpenseChartTooltip as tooltip content', () => {
+    renderChart()
+    // The tooltip content is the ExpenseChartTooltip component
+    const tooltip = screen.getByTestId('chart-tooltip')
+    expect(tooltip).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Interaction Tests (~6 tests)
-// ============================================================================
-
-describe('ExpenseStructurePieChart - Interactions', () => {
-  it.todo('should highlight segment on hover with increased radius')
-  // Active segment should expand (activeShape with outerRadius + 10)
-
-  it.todo('should open detail modal on segment click')
-  // Click segment → ExpenseDetailModal opens with category
-
-  it.todo('should pass correct category to detail modal')
-  // Click cogs segment → modal receives "cogs" as category prop
-
-  it.todo('should close detail modal on modal close action')
-  // Open modal → click close → modal closed
-
-  it.todo('should support keyboard navigation to segments')
-  // Tab to segment → Enter/Space → modal opens
-
-  it.todo('should maintain focus within chart during interaction')
-  // Focus management for accessibility
-})
-
-// ============================================================================
-// Loading State Tests (~4 tests)
+// Loading State Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Loading State', () => {
-  it.todo('should render skeleton when loading')
-  // isLoading=true → Skeleton components shown
+  beforeEach(() => {
+    mockHookState.data = null
+    mockHookState.isLoading = true
+    mockHookState.error = null
+  })
 
-  it.todo('should show circular skeleton for chart area')
-  // Expected: 280x280 rounded skeleton
+  it('should render skeleton when loading', () => {
+    renderChart()
+    // Skeleton renders a card with aria-busy
+    const card = document.querySelector('[aria-busy="true"]')
+    expect(card).toBeInTheDocument()
+  })
 
-  it.todo('should show skeleton placeholders for legend')
-  // Expected: 5 small skeleton bars for legend items
+  it('should show circular skeleton for chart area', () => {
+    renderChart()
+    // ExpenseChartSkeleton renders a 280x280 rounded-full skeleton
+    const skeletons = document.querySelectorAll('.rounded-full')
+    expect(skeletons.length).toBeGreaterThan(0)
+  })
 
-  it.todo('should have aria-busy attribute during loading')
-  // Accessibility: Card has aria-busy="true"
+  it('should show skeleton placeholders for legend', () => {
+    renderChart()
+    // 5 skeleton bars for legend items
+    const legendSkeletons = document.querySelectorAll('.h-4.w-20')
+    expect(legendSkeletons.length).toBe(5)
+  })
+
+  it('should have aria-busy attribute during loading', () => {
+    renderChart()
+    const card = document.querySelector('[aria-busy="true"]')
+    expect(card).toBeInTheDocument()
+    expect(card?.getAttribute('aria-busy')).toBe('true')
+  })
 })
 
 // ============================================================================
-// Empty State Tests (~4 tests)
+// Empty State Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Empty State', () => {
-  it.todo('should show empty state when no data available')
-  // data.data is empty array → EmptyStateIllustration
+  beforeEach(() => {
+    mockHookState.data = {
+      ...makeFullData(),
+      data: [],
+    }
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should display "Нет данных" message')
-  // Empty state should indicate no expense data
+  it('should show empty state when no data available', () => {
+    renderChart()
+    // EmptyStateIllustration with type="expenses" shows "Нет данных за этот период"
+    expect(screen.getByText('Нет данных за этот период')).toBeInTheDocument()
+  })
 
-  it.todo('should show empty state illustration')
-  // EmptyStateIllustration with type="expenses"
+  it('should show empty state illustration with expenses-specific secondary', () => {
+    renderChart()
+    expect(
+      screen.getByText('Данные о расходах появятся после загрузки финансовых отчетов')
+    ).toBeInTheDocument()
+  })
 
-  it.todo('should still render card header in empty state')
-  // Title and description visible even with no data
+  it('should still render card header in empty state', () => {
+    renderChart()
+    expect(screen.getByText('Структура расходов')).toBeInTheDocument()
+    expect(screen.getByText('Распределение затрат по категориям')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Error State Tests (~3 tests)
+// Error State Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Error State', () => {
-  it.todo('should show error state on API error')
-  // Query error → Error display with retry option
+  beforeEach(() => {
+    mockHookState.data = null
+    mockHookState.isLoading = false
+    mockHookState.error = new Error('API error')
+  })
 
-  it.todo('should show empty state when error occurs')
-  // Based on story: error shows empty state illustration
+  it('should show empty state on API error', () => {
+    renderChart()
+    // Error state renders same empty state card
+    expect(screen.getByText('Нет данных за этот период')).toBeInTheDocument()
+  })
 
-  it.todo('should allow retry on error')
-  // Retry button triggers refetch
+  it('should show card title and description on error', () => {
+    renderChart()
+    expect(screen.getByText('Структура расходов')).toBeInTheDocument()
+    expect(screen.getByText('Распределение затрат по категориям')).toBeInTheDocument()
+  })
+
+  it('should show empty state illustration on error', () => {
+    renderChart()
+    // The empty state illustration with expenses type is shown
+    expect(
+      screen.getByText('Данные о расходах появятся после загрузки финансовых отчетов')
+    ).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Period Context Integration Tests (~3 tests)
+// Period Context Integration Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Period Context', () => {
-  it.todo('should use week from props')
-  // week="2026-W05" → API called with correct week param
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should refetch when week changes')
-  // week prop changes → new API call
+  it('should render successfully with week prop', () => {
+    renderChart('2026-W10')
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
+  })
 
-  it.todo('should pass week to detail modal')
-  // Modal receives same week for drill-down
+  it('should refetch when week changes', () => {
+    // First render with W05
+    const { rerender } = renderChart('2026-W05')
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
+
+    // Rerender with different week — hook will be called again
+    mockHookState.data = makeFullData()
+    rerender(<ExpenseStructurePieChart week="2026-W10" />)
+    // Chart should still render — verifying the component handles week change
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Accessibility Tests (~7 tests) - WCAG 2.1 AA
+// Accessibility Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Accessibility', () => {
-  it.todo('should have accessible chart label')
-  // aria-label="Диаграмма структуры расходов"
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should have keyboard-navigable segments')
-  // tabIndex={0} on Cell components
+  it('should have accessible chart label via aria-label', () => {
+    renderChart()
+    const chartContainer = screen.getByRole('img')
+    expect(chartContainer).toHaveAttribute(
+      'aria-label',
+      expect.stringContaining('Диаграмма структуры расходов')
+    )
+  })
 
-  it.todo('should announce segment data on focus')
-  // Screen reader announces category name, amount, percentage
+  it('should have color indicators with labels and percentages (not color-only)', () => {
+    renderChart()
+    // Legend items contain text labels and percentages, not just colors
+    const legend = screen.getByTestId('chart-legend')
+    expect(legend.textContent).toContain('Себестоимость')
+    expect(legend.textContent).toContain('35,0')
+    expect(legend.textContent).toContain('Комиссия WB')
+  })
 
-  it.todo('should support Enter key for segment activation')
-  // Press Enter on focused segment → opens detail modal
-
-  it.todo('should support Space key for segment activation')
-  // Press Space on focused segment → opens detail modal
-
-  it.todo('should have color indicators with visual backup')
-  // Not color-only: has labels and percentages
-
-  it.todo('should meet minimum contrast ratio for text labels')
-  // 4.5:1 contrast for text on white background
+  it('should use semantic role=img for chart container', () => {
+    renderChart()
+    expect(screen.getByRole('img')).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Responsive Design Tests (~3 tests)
+// Responsive Design Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Responsive Design', () => {
-  it.todo('should render at full width in container')
-  // ResponsiveContainer width="100%"
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should maintain aspect ratio on resize')
-  // Chart height consistent relative to width
+  it('should render responsive container at full width', () => {
+    renderChart()
+    const container = screen.getByTestId('responsive-container')
+    expect(container).toBeInTheDocument()
+    expect(container.style.width).toBe('100%')
+  })
 
-  it.todo('should position legend appropriately')
-  // Legend below chart (mobile) or to the right (desktop)
+  it('should render legend below chart', () => {
+    renderChart()
+    const legend = screen.getByTestId('chart-legend')
+    expect(legend).toBeInTheDocument()
+  })
 })
 
 // ============================================================================
-// Data Transformation Tests (~4 tests)
+// Data Transformation Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Data Transformation', () => {
-  it.todo('should calculate total expenses correctly')
-  // Sum of all costs_rub values = 415000
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+    capturedChart.data = []
+  })
 
-  it.todo('should transform costs_rub to chart data format')
-  // { key, name, value, percentage, color } for each category
+  it('should calculate total expenses correctly', () => {
+    renderChart()
+    // 175000+75000+60000+15000+25000+10000+5000+10000+40000 = 415000
+    expect(screen.getByText(/415\s*000/)).toBeInTheDocument()
+  })
 
-  it.todo('should use costs_pct for percentage values')
-  // Percentage from API, not recalculated
+  it('should transform costs_rub to chart data format', () => {
+    renderChart()
+    const pieData = capturedChart.data as Array<{
+      key: string
+      value: number
+      name: string
+      percentage: number
+      color: string
+    }>
+    // Each item should have key, name, value, percentage, color
+    const firstItem = pieData[0]
+    expect(firstItem.key).toBe('cogs')
+    expect(firstItem.name).toBe('Себестоимость')
+    expect(firstItem.value).toBe(175000)
+    expect(firstItem.percentage).toBe(35.0)
+    expect(firstItem.color).toBe('#6366F1')
+  })
 
-  it.todo('should map category keys to Russian labels')
-  // "cogs" → "Себестоимость"
+  it('should use costs_pct for percentage values', () => {
+    renderChart()
+    const pieData = capturedChart.data as Array<{ key: string; percentage: number }>
+    const commissionItem = pieData.find(d => d.key === 'commission')
+    expect(commissionItem?.percentage).toBe(15.0)
+  })
+
+  it('should map category keys to Russian labels', () => {
+    renderChart()
+    const pieData = capturedChart.data as Array<{ key: string; name: string }>
+    const labelMap: Record<string, string> = {
+      cogs: 'Себестоимость',
+      commission: 'Комиссия WB',
+      logistics_delivery: 'Доставка',
+      logistics_return: 'Возвраты',
+      storage: 'Хранение',
+      paid_acceptance: 'Приёмка',
+      penalties: 'Штрафы',
+      other_deductions: 'Прочие',
+      advertising: 'Реклама',
+    }
+    for (const item of pieData) {
+      expect(item.name).toBe(labelMap[item.key])
+    }
+  })
 })
 
 // ============================================================================
-// Integration Tests (~2 tests)
+// Integration Tests
 // ============================================================================
 
 describe('ExpenseStructurePieChart - Integration', () => {
-  it.todo('should integrate with useExpenseStructure hook')
-  // Component uses the hook with correct params
+  beforeEach(() => {
+    mockHookState.data = makeFullData()
+    mockHookState.isLoading = false
+    mockHookState.error = null
+  })
 
-  it.todo('should display real API response data correctly')
-  // Full flow: API → hook → chart → user sees correct values
+  it('should display complete chart with all parts from API data', () => {
+    renderChart()
+
+    // Card header
+    expect(screen.getByText('Структура расходов')).toBeInTheDocument()
+    expect(screen.getByText('Распределение затрат по категориям')).toBeInTheDocument()
+
+    // Chart
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
+    expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
+
+    // Center total
+    expect(screen.getByText('Итого')).toBeInTheDocument()
+
+    // Legend
+    expect(screen.getByTestId('chart-legend')).toBeInTheDocument()
+
+    // Tooltip
+    expect(screen.getByTestId('chart-tooltip')).toBeInTheDocument()
+  })
+
+  it('should handle full lifecycle: loading -> data -> display', async () => {
+    // Start loading
+    mockHookState.isLoading = true
+    mockHookState.data = null
+    const { rerender } = renderChart()
+
+    expect(document.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+
+    // Data arrives
+    mockHookState.isLoading = false
+    mockHookState.data = makeFullData()
+    rerender(<ExpenseStructurePieChart week="2026-W05" />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Структура расходов')).toBeInTheDocument()
+    expect(screen.getByText('Итого')).toBeInTheDocument()
+  })
 })

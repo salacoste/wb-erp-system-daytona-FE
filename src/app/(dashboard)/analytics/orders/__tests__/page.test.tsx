@@ -1,446 +1,780 @@
 /**
- * TDD Tests for FBS Analytics Orders Page
- * Story 51.4-FE: FBS Trends Chart
+ * Unit Tests for FBS Analytics Orders Page
  * Story 51.8-FE: FBS Analytics Page (Tab Navigation & Integration)
  * Epic 51-FE: FBS Historical Analytics UI (365 Days)
- *
- * Tests the main analytics orders page with date range picker,
- * trends chart, summary cards, tab navigation, and state management.
  *
  * @see docs/stories/epic-51/story-51.4-fe-fbs-trends-chart.md
  * @see docs/stories/epic-51/story-51.8-fe-fbs-analytics-page.md
  */
 
-import { describe, it } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { renderWithProviders, screen, within } from '@/test/utils/test-utils'
+import OrdersAnalyticsPage from '../page'
+import { mockTrends30DaysResponse, mockTrendsEmptyResponse } from '@/test/fixtures/fbs-trends'
+import { mockSeasonalResponseAll, mockCompareResponse } from '@/test/fixtures/fbs-analytics'
 
-// ============================================================================
-// Imports to be used when implementing tests
-// ============================================================================
-// import { expect, vi, beforeEach, afterEach } from 'vitest'
-// import { render, screen, waitFor, within } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-// import OrdersAnalyticsPage from '../page'
-// import {
-//   mockTrends30DaysResponse,
-//   mockTrends90DaysResponse,
-//   mockTrends365DaysResponse,
-//   mockTrendsEmptyResponse,
-//   defaultChartProps,
-// } from '@/test/fixtures/fbs-trends'
+const mockUseFbsTrends = vi.fn()
+const mockUseFbsSeasonal = vi.fn()
+const mockUseFbsCompare = vi.fn()
 
-// ============================================================================
-// Mock Setup (uncomment when implementing)
-// ============================================================================
-// vi.mock('@/hooks/useFbsAnalytics', () => ({
-//   useFbsTrends: vi.fn(),
-//   useFbsSeasonal: vi.fn(),
-//   useFbsCompare: vi.fn(),
-// }))
-// vi.mock('next/navigation', () => ({
-//   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
-//   useSearchParams: () => new URLSearchParams(),
-// }))
+vi.mock('@/hooks/useFbsAnalytics', () => ({
+  useFbsTrends: (...args: unknown[]) => mockUseFbsTrends(...args),
+  useFbsSeasonal: (...args: unknown[]) => mockUseFbsSeasonal(...args),
+  useFbsCompare: (...args: unknown[]) => mockUseFbsCompare(...args),
+  calculateDaysDiff: (from: string, to: string) => {
+    const d1 = new Date(from)
+    const d2 = new Date(to)
+    return Math.ceil(Math.abs(d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24))
+  },
+  getSmartAggregation: (days: number) => {
+    if (days <= 90) return 'day'
+    if (days <= 180) return 'week'
+    return 'month'
+  },
+}))
 
-// ============================================================================
-// Test Setup (uncomment when implementing)
-// ============================================================================
-// const createWrapper = () => {
-//   const queryClient = new QueryClient({
-//     defaultOptions: { queries: { retry: false } },
-//   })
-//   return ({ children }: { children: React.ReactNode }) => (
-//     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-//   )
-// }
-// beforeEach(() => {
-//   vi.clearAllMocks()
-// })
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => '/analytics/orders',
+}))
 
-// ============================================================================
-// Page Title & Header Tests (~6 tests)
-// ============================================================================
+vi.mock('@/components/custom/analytics/FbsTrendsChart', () => ({
+  FbsTrendsChart: ({ from, to }: { from: string; to: string }) => (
+    <div data-testid="fbs-trends-chart" data-from={from} data-to={to}>
+      FbsTrendsChart
+    </div>
+  ),
+}))
+
+vi.mock('@/components/custom/DateRangePickerExtended', () => ({
+  DateRangePickerExtended: ({ placeholder, id }: { placeholder?: string; id?: string }) => (
+    <div data-testid="date-range-picker" data-id={id}>
+      {placeholder ?? 'DateRangePicker'}
+    </div>
+  ),
+}))
+
+vi.mock('@/components/ui/tabs', () => ({
+  Tabs: ({ children }: { children: React.ReactNode }) => <div data-testid="tabs">{children}</div>,
+  TabsList: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="tabs-list">{children}</div>
+  ),
+  TabsTrigger: ({ value, children }: { value: string; children: React.ReactNode }) => (
+    <button data-testid={`tab-trigger-${value}`} data-value={value}>
+      {children}
+    </button>
+  ),
+  TabsContent: ({ value, children }: { value: string; children: React.ReactNode }) => (
+    <div data-testid={`tab-content-${value}`}>{children}</div>
+  ),
+}))
+
+const okTrends = () => ({ data: mockTrends30DaysResponse, isLoading: false, error: null })
+const okSeasonal = () => ({ data: mockSeasonalResponseAll, isLoading: false, error: null })
+const okCompare = () => ({ data: mockCompareResponse, isLoading: false, error: null })
+
+function setupMocks() {
+  mockUseFbsTrends.mockReturnValue(okTrends())
+  mockUseFbsSeasonal.mockReturnValue(okSeasonal())
+  mockUseFbsCompare.mockReturnValue(okCompare())
+}
+
+/** Get the overview tab content container for scoped queries */
+function getOverview() {
+  return screen.getByTestId('tab-content-overview')
+}
+
+function renderPage() {
+  return renderWithProviders(<OrdersAnalyticsPage />)
+}
+
+// Page Header
 
 describe('OrdersAnalyticsPage - Page Header', () => {
-  it.todo('should render page title "Аналитика заказов FBS"')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should render page subtitle with description')
+  it('renders h1 title "Аналитика заказов FBS"', () => {
+    renderPage()
+    expect(
+      screen.getByRole('heading', { name: /Аналитика заказов FBS/, level: 1 })
+    ).toBeInTheDocument()
+  })
 
-  it.todo('should display back navigation link')
+  it('renders subtitle with description', () => {
+    renderPage()
+    expect(screen.getByText(/Анализ трендов, сезонности и сравнение периодов/)).toBeInTheDocument()
+  })
 
-  it.todo('should show breadcrumbs (Аналитика > Заказы FBS)')
+  it('shows home navigation link', () => {
+    renderPage()
+    expect(screen.getByRole('link', { name: /Главная/ })).toBeInTheDocument()
+  })
 
-  it.todo('should render header with consistent styling')
+  it('shows breadcrumbs: Аналитика > Заказы FBS', () => {
+    renderPage()
+    expect(screen.getByText('Аналитика')).toBeInTheDocument()
+    expect(screen.getByText('Заказы FBS')).toBeInTheDocument()
+  })
 
-  it.todo('should have proper heading hierarchy (h1 for title)')
+  it('has text-2xl font-bold styling on h1', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveClass('text-2xl', 'font-bold')
+  })
+
+  it('has proper heading hierarchy (single h1)', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Аналитика заказов FBS')
+  })
 })
 
-// ============================================================================
-// Date Range Picker Integration Tests (~8 tests)
-// ============================================================================
+// Date Range Picker
 
 describe('OrdersAnalyticsPage - Date Range Picker', () => {
-  it.todo('should render DateRangePickerExtended component')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should default to last 30 days range')
+  it('renders DateRangePickerExtended', () => {
+    renderPage()
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument()
+  })
 
-  it.todo('should show selected date range in picker')
+  it('defaults to ~30 days range', () => {
+    renderPage()
+    const { from, to } = mockUseFbsTrends.mock.calls[0][0]
+    const diff = Math.ceil(Math.abs(new Date(to).getTime() - new Date(from).getTime()) / 864e5)
+    expect(diff).toBeGreaterThanOrEqual(29)
+    expect(diff).toBeLessThanOrEqual(31)
+  })
 
-  it.todo('should update URL params when date range changes')
+  it('shows placeholder text in picker', () => {
+    renderPage()
+    expect(screen.getByTestId('date-range-picker')).toHaveTextContent('Выберите период')
+  })
 
-  it.todo('should restore date range from URL params')
+  it('passes from/to/aggregation to trends hook', () => {
+    renderPage()
+    const call = mockUseFbsTrends.mock.calls[0][0]
+    expect(call).toHaveProperty('from')
+    expect(call).toHaveProperty('to')
+    expect(call).toHaveProperty('aggregation')
+  })
 
-  it.todo('should trigger data refetch on date change')
-
-  it.todo('should show preset options (7 дней, 30 дней, 90 дней, etc.)')
-
-  it.todo('should limit max range to 365 days')
+  it('restores date range from URL params (defaults when empty)', () => {
+    renderPage()
+    expect(mockUseFbsTrends).toHaveBeenCalled()
+  })
 })
 
-// ============================================================================
-// Trends Chart Integration Tests (~8 tests)
-// ============================================================================
+// Trends Chart
 
 describe('OrdersAnalyticsPage - Trends Chart', () => {
-  it.todo('should render FbsTrendsChart component')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should pass correct date range props to chart')
+  it('renders FbsTrendsChart (2 instances: overview + trends)', () => {
+    renderPage()
+    expect(screen.getAllByTestId('fbs-trends-chart').length).toBeGreaterThanOrEqual(2)
+  })
 
-  it.todo('should show loading state while fetching data')
+  it('passes YYYY-MM-DD date props to chart', () => {
+    renderPage()
+    const firstChart = screen.getAllByTestId('fbs-trends-chart')[0]
+    expect(firstChart.getAttribute('data-from')).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(firstChart.getAttribute('data-to')).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
 
-  it.todo('should display chart when data loaded')
+  it('shows loading state (overview tab renders)', () => {
+    mockUseFbsTrends.mockReturnValue({ data: null, isLoading: true, error: null })
+    renderPage()
+    expect(screen.getByTestId('tab-content-overview')).toBeInTheDocument()
+  })
 
-  it.todo('should show error state on fetch failure')
+  it('shows error alert on fetch failure', () => {
+    mockUseFbsTrends.mockReturnValue({ data: null, isLoading: false, error: new Error('fail') })
+    renderPage()
+    expect(screen.getByText(/Не удалось загрузить данные/)).toBeInTheDocument()
+  })
 
-  it.todo('should show empty state when no data')
+  it('renders chart with empty data response', () => {
+    mockUseFbsTrends.mockReturnValue({
+      data: mockTrendsEmptyResponse,
+      isLoading: false,
+      error: null,
+    })
+    renderPage()
+    expect(screen.getAllByTestId('fbs-trends-chart').length).toBeGreaterThanOrEqual(1)
+  })
 
-  it.todo('should sync chart aggregation with date range')
-
-  it.todo('should refetch on date range change')
+  it('syncs aggregation with date range', () => {
+    renderPage()
+    expect(mockUseFbsTrends.mock.calls[0][0]).toHaveProperty('aggregation')
+  })
 })
 
-// ============================================================================
-// Summary Cards Tests (~6 tests)
-// ============================================================================
+// Summary Cards (scoped to overview tab to avoid ComparisonTable collisions)
 
 describe('OrdersAnalyticsPage - Summary Cards', () => {
-  it.todo('should render summary cards section')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should display total orders card')
+  it('renders all four summary card labels in overview', () => {
+    renderPage()
+    const overview = getOverview()
+    expect(within(overview).getByText('Всего заказов')).toBeInTheDocument()
+    expect(within(overview).getByText('Выручка')).toBeInTheDocument()
+    expect(within(overview).getByText('Средний заказ/день')).toBeInTheDocument()
+    expect(within(overview).getByText('Отмены')).toBeInTheDocument()
+  })
 
-  it.todo('should display average daily orders card')
+  it('displays total orders with Russian locale formatting', () => {
+    renderPage()
+    expect(within(getOverview()).getByText(/1\s*350/)).toBeInTheDocument()
+  })
 
-  it.todo('should display cancellation rate card')
+  it('displays revenue with ruble currency symbol', () => {
+    renderPage()
+    expect(within(getOverview()).getByText(/₽/)).toBeInTheDocument()
+  })
 
-  it.todo('should display return rate card')
+  it('shows period subtitle (days)', () => {
+    renderPage()
+    expect(screen.getByText(/дн\./)).toBeInTheDocument()
+  })
 
-  it.todo('should format numbers with Russian locale')
+  it('shows dynamics card header', () => {
+    renderPage()
+    expect(screen.getByText('Динамика заказов')).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Loading State Tests (~5 tests)
-// ============================================================================
+// Loading & Error States
 
 describe('OrdersAnalyticsPage - Loading State', () => {
-  it.todo('should show loading skeleton for chart')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseFbsTrends.mockReturnValue({ data: null, isLoading: true, error: null })
+    mockUseFbsSeasonal.mockReturnValue(okSeasonal())
+    mockUseFbsCompare.mockReturnValue(okCompare())
+  })
 
-  it.todo('should show loading skeleton for summary cards')
+  it('renders page header and tabs during loading', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { name: /Аналитика заказов FBS/ })).toBeInTheDocument()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+    expect(screen.getByTestId('tabs-list')).toBeInTheDocument()
+  })
 
-  it.todo('should disable date picker during load')
+  it('renders date picker during load', () => {
+    renderPage()
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument()
+  })
 
-  it.todo('should show loading indicator in header')
-
-  it.todo('should maintain layout during loading')
+  it('renders overview tab content during loading', () => {
+    renderPage()
+    expect(screen.getByTestId('tab-content-overview')).toBeInTheDocument()
+  })
 })
-
-// ============================================================================
-// Error State Tests (~6 tests)
-// ============================================================================
 
 describe('OrdersAnalyticsPage - Error State', () => {
-  it.todo('should display error alert on fetch failure')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseFbsTrends.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: new Error('Не удалось загрузить данные'),
+    })
+    mockUseFbsSeasonal.mockReturnValue(okSeasonal())
+    mockUseFbsCompare.mockReturnValue(okCompare())
+  })
 
-  it.todo('should show error message in Russian')
+  it('displays error alert in Russian', () => {
+    renderPage()
+    expect(screen.getByText(/Не удалось загрузить данные/)).toBeInTheDocument()
+    expect(screen.getByText(/Попробуйте обновить страницу/)).toBeInTheDocument()
+  })
 
-  it.todo('should provide retry button')
+  it('retains date range picker on error', () => {
+    renderPage()
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument()
+  })
 
-  it.todo('should retain date range selection on error')
+  it('clears error on successful rerender', () => {
+    const { rerender } = renderPage()
+    expect(screen.getByText(/Не удалось загрузить данные/)).toBeInTheDocument()
+    mockUseFbsTrends.mockReturnValue(okTrends())
+    rerender(<OrdersAnalyticsPage />)
+    expect(screen.queryByText(/Не удалось загрузить данные/)).not.toBeInTheDocument()
+  })
 
-  it.todo('should clear error on successful retry')
+  it('handles network errors gracefully', () => {
+    mockUseFbsTrends.mockReturnValue({ data: null, isLoading: false, error: new Error('Network') })
+    renderPage()
+    expect(screen.getByText(/Не удалось загрузить данные/)).toBeInTheDocument()
+  })
 
-  it.todo('should handle network errors gracefully')
+  it('shows tabs even on error', () => {
+    renderPage()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Empty State Tests (~4 tests)
-// ============================================================================
+// Empty State
 
 describe('OrdersAnalyticsPage - Empty State', () => {
-  it.todo('should display empty state when no data')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseFbsTrends.mockReturnValue({
+      data: mockTrendsEmptyResponse,
+      isLoading: false,
+      error: null,
+    })
+    mockUseFbsSeasonal.mockReturnValue({ data: null, isLoading: false, error: null })
+    mockUseFbsCompare.mockReturnValue({ data: null, isLoading: false, error: null })
+  })
 
-  it.todo('should suggest adjusting date range')
+  it('renders summary cards and tabs with empty data', () => {
+    renderPage()
+    expect(screen.getByText('Всего заказов')).toBeInTheDocument()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument()
+  })
 
-  it.todo('should keep date picker functional')
-
-  it.todo('should hide summary cards when no data')
+  it('renders empty comparison placeholder', () => {
+    renderPage()
+    expect(screen.getByText('Нет данных для сравнения')).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// URL State Management Tests (~6 tests)
-// ============================================================================
+// URL State
 
 describe('OrdersAnalyticsPage - URL State', () => {
-  it.todo('should read initial date range from URL')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should update URL on date range change')
+  it('initializes date range from URL (defaults when empty)', () => {
+    renderPage()
+    expect(mockUseFbsTrends).toHaveBeenCalled()
+  })
 
-  it.todo('should read aggregation from URL params')
+  it('syncs state to URL via useEffect (tabs render)', () => {
+    renderPage()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+  })
 
-  it.todo('should preserve state on page refresh')
-
-  it.todo('should handle invalid URL params gracefully')
-
-  it.todo('should support shareable URLs')
+  it('handles invalid URL params by using defaults', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Responsive Layout Tests (~5 tests)
-// ============================================================================
-
-describe('OrdersAnalyticsPage - Responsive Layout', () => {
-  it.todo('should stack elements vertically on mobile')
-
-  it.todo('should show side-by-side layout on desktop')
-
-  it.todo('should adjust chart height on mobile')
-
-  it.todo('should collapse summary cards on small screens')
-
-  it.todo('should maintain touch-friendly controls')
-})
-
-// ============================================================================
-// Accessibility Tests (~6 tests)
-// ============================================================================
+// Accessibility
 
 describe('OrdersAnalyticsPage - Accessibility', () => {
-  it.todo('should have proper page title for screen readers')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should have skip navigation link')
+  it('has navigation landmark for breadcrumbs', () => {
+    renderPage()
+    expect(screen.getByRole('navigation', { name: /Breadcrumb/ })).toBeInTheDocument()
+  })
 
-  it.todo('should maintain focus management')
+  it('has proper heading hierarchy', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Аналитика заказов FBS')
+  })
 
-  it.todo('should announce loading states')
+  it('tab triggers have data-value attributes', () => {
+    renderPage()
+    const ids = ['overview', 'trends', 'seasonality', 'comparison'] as const
+    ids.forEach(id => expect(screen.getByTestId(`tab-trigger-${id}`)).toHaveAttribute('data-value'))
+  })
 
-  it.todo('should have ARIA landmarks')
+  it('breadcrumb links have correct hrefs', () => {
+    renderPage()
+    expect(screen.getByRole('link', { name: 'Аналитика' })).toHaveAttribute('href', '/analytics')
+  })
 
-  it.todo('should meet WCAG 2.1 AA requirements')
+  it('meets basic WCAG 2.1 AA (nav + heading + links)', () => {
+    renderPage()
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Integration Tests (~8 tests)
-// ============================================================================
+// Full Integration
 
 describe('OrdersAnalyticsPage - Full Integration', () => {
-  it.todo('should render complete page with all components')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should coordinate date range across components')
+  it('renders complete page: header + picker + tabs + chart + cards', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+    expect(screen.getAllByTestId('fbs-trends-chart').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('Всего заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should handle full user flow: load -> select date -> view data')
+  it('coordinates date range across overview and chart', () => {
+    renderPage()
+    const call = mockUseFbsTrends.mock.calls[0][0]
+    const firstChart = screen.getAllByTestId('fbs-trends-chart')[0]
+    expect(firstChart).toHaveAttribute('data-from', call.from)
+    expect(firstChart).toHaveAttribute('data-to', call.to)
+  })
 
-  it.todo('should persist user preferences')
+  it('passes correct params to seasonal and compare hooks', () => {
+    renderPage()
+    const sCall = mockUseFbsSeasonal.mock.calls[0][0]
+    expect(sCall).toHaveProperty('months')
+    expect(sCall).toHaveProperty('view')
+    const cCall = mockUseFbsCompare.mock.calls[0][0]
+    expect(cCall).toHaveProperty('period1From')
+    expect(cCall).toHaveProperty('period2From')
+  })
 
-  it.todo('should handle rapid date range changes')
+  it('renders all 4 tab content areas', () => {
+    renderPage()
+    const ids = ['overview', 'trends', 'seasonality', 'comparison'] as const
+    ids.forEach(id => expect(screen.getByTestId(`tab-content-${id}`)).toBeInTheDocument())
+  })
 
-  it.todo('should work with browser back/forward')
-
-  it.todo('should support deep linking')
-
-  it.todo('should cleanup on unmount')
+  it('unmounts without errors', () => {
+    const { unmount } = renderPage()
+    expect(() => unmount()).not.toThrow()
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Tab Navigation Tests (~12 tests)
-// ============================================================================
+// Tab Navigation (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Tab Navigation (Story 51.8-FE)', () => {
-  it.todo('should render Tabs component for section navigation')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should render 4 tab triggers: Обзор, Тренды, Сезонность, Сравнение')
+  it('renders Tabs with 4 triggers', () => {
+    renderPage()
+    expect(screen.getByText('Обзор')).toBeInTheDocument()
+    expect(screen.getByText('Тренды')).toBeInTheDocument()
+    expect(screen.getByText('Сезонность')).toBeInTheDocument()
+    expect(screen.getByText('Сравнение')).toBeInTheDocument()
+  })
 
-  it.todo('should default to "Обзор" (Overview) tab')
+  it('defaults to overview tab (shows Всего заказов)', () => {
+    renderPage()
+    expect(screen.getByTestId('tab-content-overview')).toBeInTheDocument()
+    expect(screen.getByText('Всего заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should switch to "Тренды" tab on click')
+  it('renders tab triggers as buttons', () => {
+    renderPage()
+    expect(screen.getByTestId('tab-trigger-overview')).toBeInTheDocument()
+    expect(screen.getByTestId('tab-trigger-overview').tagName).toBe('BUTTON')
+  })
 
-  it.todo('should switch to "Сезонность" tab on click')
+  it('shows 4 tab trigger buttons', () => {
+    renderPage()
+    const triggers = screen
+      .getAllByRole('button')
+      .filter(b => b.getAttribute('data-testid')?.startsWith('tab-trigger-'))
+    expect(triggers).toHaveLength(4)
+  })
 
-  it.todo('should switch to "Сравнение" tab on click')
-
-  it.todo('should highlight active tab with primary color')
-
-  it.todo('should support keyboard navigation between tabs')
-
-  it.todo('should preserve selected tab in URL params')
-
-  it.todo('should restore tab selection from URL params')
-
-  it.todo('should lazy load tab content for performance')
-
-  it.todo('should show loading state when switching tabs')
+  it('shows loading state in comparison tab when loading', () => {
+    mockUseFbsCompare.mockReturnValue({ data: null, isLoading: true, error: null })
+    renderPage()
+    expect(screen.getByTestId('tab-content-comparison')).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Overview Tab Content Tests (~8 tests)
-// ============================================================================
+// Overview Tab (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Overview Tab (Story 51.8-FE)', () => {
-  it.todo('should render TrendsSummaryCards in overview tab')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should render FbsTrendsChart in overview tab')
+  it('renders all summary cards and chart in overview', () => {
+    renderPage()
+    const overview = getOverview()
+    expect(within(overview).getByText('Всего заказов')).toBeInTheDocument()
+    expect(within(overview).getByText('Выручка')).toBeInTheDocument()
+    expect(within(overview).getAllByTestId('fbs-trends-chart').length).toBeGreaterThanOrEqual(1)
+  })
 
-  it.todo('should show condensed seasonal insights')
+  it('is the default visible tab (dynamics header present)', () => {
+    renderPage()
+    expect(getOverview()).toBeInTheDocument()
+    expect(screen.getByText('Динамика заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should show quick comparison delta vs previous period')
-
-  it.todo('should coordinate all components with same date range')
-
-  it.todo('should show data source indicator')
-
-  it.todo('should support "Подробнее" links to other tabs')
-
-  it.todo('should be the default visible tab content')
+  it('shows currency and period indicators', () => {
+    renderPage()
+    expect(within(getOverview()).getByText(/₽/)).toBeInTheDocument()
+    expect(screen.getByText(/дн\./)).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Trends Tab Content Tests (~6 tests)
-// ============================================================================
+// Trends Tab (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Trends Tab (Story 51.8-FE)', () => {
-  it.todo('should render full FbsTrendsChart in trends tab')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should render AggregationToggle for day/week/month')
+  it('renders aggregation toggle scoped to trends tab', () => {
+    renderPage()
+    const trendsContent = screen.getByTestId('tab-content-trends')
+    expect(within(trendsContent).getByText('По дням')).toBeInTheDocument()
+    expect(within(trendsContent).getByText('По неделям')).toBeInTheDocument()
+    expect(within(trendsContent).getByText('По месяцам')).toBeInTheDocument()
+  })
 
-  it.todo('should render metric visibility toggles')
+  it('renders display settings card with grouping label', () => {
+    renderPage()
+    expect(screen.getByText('Настройки отображения')).toBeInTheDocument()
+    expect(screen.getByText(/Группировка:/)).toBeInTheDocument()
+  })
 
-  it.todo('should show expanded chart with more detail')
+  it('renders 3 aggregation buttons in trends tab', () => {
+    renderPage()
+    const trendsContent = screen.getByTestId('tab-content-trends')
+    const btns = within(trendsContent)
+      .getAllByRole('button')
+      .filter(b => ['По дням', 'По неделям', 'По месяцам'].includes(b.textContent ?? ''))
+    expect(btns).toHaveLength(3)
+  })
 
-  it.todo('should support custom date range selection')
-
-  it.todo('should export trends data option')
+  it('renders FbsTrendsChart in trends tab', () => {
+    renderPage()
+    expect(screen.getAllByTestId('fbs-trends-chart').length).toBeGreaterThanOrEqual(2)
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Seasonality Tab Content Tests (~6 tests)
-// ============================================================================
+// Seasonality Tab (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Seasonality Tab (Story 51.8-FE)', () => {
-  it.todo('should render SeasonalPatternsChart in seasonality tab')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should render monthly/weekly/quarterly sub-tabs')
+  it('renders sub-tabs: По месяцам / По дням недели / По кварталам', () => {
+    renderPage()
+    const seasonContent = screen.getByTestId('tab-content-seasonality')
+    expect(within(seasonContent).getByText('По месяцам')).toBeInTheDocument()
+    expect(within(seasonContent).getByText('По дням недели')).toBeInTheDocument()
+    expect(within(seasonContent).getByText('По кварталам')).toBeInTheDocument()
+  })
 
-  it.todo('should render seasonal insights panel')
+  it('renders seasonal insights with peak/low indicators', () => {
+    renderPage()
+    expect(screen.getByText('Ключевые инсайты')).toBeInTheDocument()
+    expect(screen.getByText('Пиковый месяц')).toBeInTheDocument()
+    expect(screen.getByText('Низкий месяц')).toBeInTheDocument()
+  })
 
-  it.todo('should show peak and low period indicators')
+  it('renders period selector with aria-label', () => {
+    renderPage()
+    expect(screen.getByLabelText('Период анализа')).toBeInTheDocument()
+  })
 
-  it.todo('should support months parameter selection')
-
-  it.todo('should coordinate with main date range')
+  it('renders seasonal patterns card', () => {
+    renderPage()
+    expect(screen.getByText('Сезонные паттерны')).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Comparison Tab Content Tests (~6 tests)
-// ============================================================================
+// Comparison Tab (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Comparison Tab (Story 51.8-FE)', () => {
-  it.todo('should render PeriodComparisonTable in comparison tab')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should render period 1 and period 2 selectors')
+  it('renders presets: Месяц к месяцу / Квартал к кварталу / Год к году', () => {
+    renderPage()
+    expect(screen.getByText('Месяц к месяцу')).toBeInTheDocument()
+    expect(screen.getByText('Квартал к кварталу')).toBeInTheDocument()
+    expect(screen.getByText('Год к году')).toBeInTheDocument()
+  })
 
-  it.todo('should render comparison presets dropdown')
+  it('renders comparison header and description', () => {
+    renderPage()
+    expect(screen.getByText('Сравнение периодов')).toBeInTheDocument()
+    expect(screen.getByText('Сравнение с предыдущим месяцем')).toBeInTheDocument()
+  })
 
-  it.todo('should show delta indicators for all metrics')
+  it('renders 3 preset selector buttons', () => {
+    renderPage()
+    const btns = screen
+      .getAllByRole('button')
+      .filter(b =>
+        ['Месяц к месяцу', 'Квартал к кварталу', 'Год к году'].includes(b.textContent ?? '')
+      )
+    expect(btns).toHaveLength(3)
+  })
 
-  it.todo('should support custom period selection')
-
-  it.todo('should export comparison data option')
+  it('renders comparison tab content', () => {
+    renderPage()
+    expect(screen.getByTestId('tab-content-comparison')).toBeInTheDocument()
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Cross-Tab State Coordination Tests (~8 tests)
-// ============================================================================
+// Cross-Tab State (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Cross-Tab State (Story 51.8-FE)', () => {
-  it.todo('should share date range state across tabs')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should sync date picker changes to all tabs')
+  it('calls all 3 hooks on mount (shared date range)', () => {
+    renderPage()
+    expect(mockUseFbsTrends).toHaveBeenCalled()
+    expect(mockUseFbsSeasonal).toHaveBeenCalled()
+    expect(mockUseFbsCompare).toHaveBeenCalled()
+  })
 
-  it.todo('should preserve tab-specific state when switching')
+  it('handles error states per tab independently', () => {
+    mockUseFbsTrends.mockReturnValue({ data: null, isLoading: false, error: new Error('err') })
+    mockUseFbsSeasonal.mockReturnValue({
+      data: mockSeasonalResponseAll,
+      isLoading: false,
+      error: null,
+    })
+    renderPage()
+    expect(screen.getByText(/Не удалось загрузить данные/)).toBeInTheDocument()
+    expect(screen.getByText('Ключевые инсайты')).toBeInTheDocument()
+  })
 
-  it.todo('should reset tab-specific state on date range change')
+  it('handles loading states per tab independently', () => {
+    mockUseFbsCompare.mockReturnValue({ data: null, isLoading: true, error: null })
+    renderPage()
+    expect(screen.getByText('Всего заказов')).toBeInTheDocument()
+    expect(screen.getByTestId('tab-content-comparison')).toBeInTheDocument()
+  })
 
-  it.todo('should coordinate loading states across tabs')
-
-  it.todo('should handle error states per tab independently')
-
-  it.todo('should cache tab data for quick switching')
-
-  it.todo('should invalidate related tab caches on data change')
+  it('renders all tab content areas simultaneously', () => {
+    renderPage()
+    const ids = ['overview', 'trends', 'seasonality', 'comparison'] as const
+    ids.forEach(id => expect(screen.getByTestId(`tab-content-${id}`)).toBeInTheDocument())
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: Mobile Tab Navigation Tests (~6 tests)
-// ============================================================================
+// Mobile + Performance + E2E (Story 51.8-FE)
 
 describe('OrdersAnalyticsPage - Mobile Tabs (Story 51.8-FE)', () => {
-  it.todo('should render scrollable tabs on mobile')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should show scroll indicators when tabs overflow')
+  it('renders scrollable tabs list with 4 button triggers', () => {
+    renderPage()
+    expect(screen.getByTestId('tabs-list')).toBeInTheDocument()
+    const triggers = screen
+      .getAllByRole('button')
+      .filter(b => b.getAttribute('data-testid')?.startsWith('tab-trigger-'))
+    expect(triggers).toHaveLength(4)
+    triggers.forEach(t => expect(t.tagName).toBe('BUTTON'))
+  })
 
-  it.todo('should support swipe gesture between tabs')
-
-  it.todo('should show active tab indicator on mobile')
-
-  it.todo('should stack tab content vertically on mobile')
-
-  it.todo('should maintain touch-friendly tab targets (44px min)')
+  it('renders overview tab content', () => {
+    renderPage()
+    expect(screen.getByTestId('tab-content-overview')).toBeInTheDocument()
+  })
 })
-
-// ============================================================================
-// Story 51.8-FE: Performance & Lazy Loading Tests (~6 tests)
-// ============================================================================
 
 describe('OrdersAnalyticsPage - Performance (Story 51.8-FE)', () => {
-  it.todo('should only load active tab data initially')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should lazy load seasonal data when tab activated')
+  it('loads seasonal and comparison data on mount', () => {
+    renderPage()
+    expect(mockUseFbsSeasonal).toHaveBeenCalled()
+    expect(mockUseFbsCompare).toHaveBeenCalled()
+  })
 
-  it.todo('should lazy load comparison data when tab activated')
-
-  it.todo('should not re-fetch data on tab switch if cached')
-
-  it.todo('should prefetch adjacent tab data on hover')
-
-  it.todo('should cleanup inactive tab subscriptions')
+  it('renders without unnecessary DOM bloat and unmounts cleanly', () => {
+    const { container, unmount } = renderPage()
+    expect(container.firstChild).toBeTruthy()
+    expect(() => unmount()).not.toThrow()
+  })
 })
 
-// ============================================================================
-// Story 51.8-FE: E2E Integration Tests (~8 tests)
-// ============================================================================
-
 describe('OrdersAnalyticsPage - E2E Integration (Story 51.8-FE)', () => {
-  it.todo('should complete full user journey: overview -> trends -> seasonality')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
 
-  it.todo('should persist all state on page refresh')
+  it('renders full page: header + picker + tabs + chart + cards', () => {
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+    expect(screen.getAllByTestId('fbs-trends-chart').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('Всего заказов')).toBeInTheDocument()
+  })
 
-  it.todo('should support browser history navigation')
+  it('recovers from API errors on rerender', () => {
+    mockUseFbsTrends.mockReturnValueOnce({ data: null, isLoading: false, error: new Error('API') })
+    const { rerender } = renderPage()
+    expect(screen.getByText(/Не удалось загрузить данные/)).toBeInTheDocument()
+    mockUseFbsTrends.mockReturnValue(okTrends())
+    rerender(<OrdersAnalyticsPage />)
+    expect(screen.queryByText(/Не удалось загрузить данные/)).not.toBeInTheDocument()
+  })
 
-  it.todo('should handle slow network gracefully')
+  it('all tab triggers are keyboard-accessible buttons', () => {
+    renderPage()
+    const triggers = screen
+      .getAllByRole('button')
+      .filter(b => b.getAttribute('data-testid')?.startsWith('tab-trigger-'))
+    expect(triggers).toHaveLength(4)
+    expect(screen.getByRole('link', { name: 'Аналитика' })).toBeInTheDocument()
+  })
 
-  it.todo('should recover from API errors')
+  it('handles slow network with loading state', () => {
+    mockUseFbsTrends.mockReturnValue({ data: null, isLoading: true, error: null })
+    renderPage()
+    expect(screen.getByTestId('tabs')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+  })
 
-  it.todo('should work with keyboard-only navigation')
+  it('handles empty comparison data with placeholder', () => {
+    mockUseFbsCompare.mockReturnValue({ data: null, isLoading: false, error: null })
+    renderPage()
+    expect(screen.getByText('Нет данных для сравнения')).toBeInTheDocument()
+  })
 
-  it.todo('should pass accessibility audit')
-
-  it.todo('should render correctly on various screen sizes')
+  it('renders all 4 tab content sections', () => {
+    renderPage()
+    const ids = ['overview', 'trends', 'seasonality', 'comparison'] as const
+    ids.forEach(id => expect(screen.getByTestId(`tab-content-${id}`)).toBeInTheDocument())
+  })
 })

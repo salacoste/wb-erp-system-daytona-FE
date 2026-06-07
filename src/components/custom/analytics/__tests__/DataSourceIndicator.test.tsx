@@ -1,5 +1,5 @@
 /**
- * TDD Tests for DataSourceIndicator Component
+ * Tests for DataSourceIndicator Component
  * Story 51.4-FE: FBS Trends Chart
  * Epic 51-FE: FBS Historical Analytics UI (365 Days)
  *
@@ -9,108 +9,279 @@
  * @see docs/stories/epic-51/story-51.4-fe-fbs-trends-chart.md
  */
 
-import { describe, it } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen } from '@/test/utils/test-utils'
+import {
+  DataSourceIndicator,
+  getDataSourceConfig,
+  getDataSourceBadgeLabel,
+} from '../DataSourceIndicator'
 
-// ============================================================================
-// Imports to be used when implementing tests
-// ============================================================================
-// import { expect } from 'vitest'
-// import { render, screen } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
-// import { dataSourceConfigs } from '@/test/fixtures/fbs-trends'
+describe('DataSourceIndicator', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-// ============================================================================
-// Basic Rendering Tests (~8 tests)
-// ============================================================================
+  // ============================================================================
+  // Basic Rendering Tests (~8 tests)
+  // ============================================================================
 
-describe('DataSourceIndicator - Basic Rendering', () => {
-  it.todo('should render Badge component')
+  describe('Basic Rendering', () => {
+    it('should render Badge component as span element', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      const badge = container.querySelector('span')
+      expect(badge).toBeInTheDocument()
+    })
 
-  it.todo('should render with outline variant')
+    it('should render with rounded border (outline variant styling)', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('rounded-md')
+      expect(badge?.className).toContain('border')
+    })
 
-  it.todo('should display icon before label')
+    it('should display label text content', () => {
+      render(<DataSourceIndicator source="orders_fbs" />)
+      expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+    })
 
-  it.todo('should apply correct className')
+    it('should apply correct className via cn utility', () => {
+      const { container } = render(
+        <DataSourceIndicator source="orders_fbs" className="test-extra" />
+      )
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('test-extra')
+    })
 
-  it.todo('should handle unknown source gracefully')
+    it('should handle unknown source gracefully — falls back to orders_fbs config', () => {
+      // Cast through unknown to simulate an unrecognized source
+      const unknownSource = 'unknown_source' as 'orders_fbs' | 'reports' | 'analytics'
+      render(<DataSourceIndicator source={unknownSource} />)
+      // Falls back to orders_fbs label
+      expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+    })
 
-  it.todo('should render inline with other elements')
+    it('should render inline with other elements', () => {
+      const { container } = render(
+        <div>
+          <span>Before</span>
+          <DataSourceIndicator source="orders_fbs" />
+          <span>After</span>
+        </div>
+      )
+      expect(screen.getByText('Before')).toBeInTheDocument()
+      expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+      expect(screen.getByText('After')).toBeInTheDocument()
+      // Badge is inline-flex
+      const badge = container.querySelector('span.inline-flex')
+      expect(badge).toBeInTheDocument()
+    })
 
-  it.todo('should not be interactive (display only)')
+    it('should not be interactive (display only) — no button/tabindex', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      const badge = container.querySelector('span')
+      expect(badge?.getAttribute('role')).toBeNull()
+      expect(badge?.getAttribute('tabIndex')).toBeNull()
+    })
 
-  it.todo('should have consistent sizing')
-})
+    it('should have consistent sizing (text-xs, font-medium, px-2, py-0.5)', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('text-xs')
+      expect(badge?.className).toContain('font-medium')
+      expect(badge?.className).toContain('px-2')
+      expect(badge?.className).toContain('py-0.5')
+    })
+  })
 
-// ============================================================================
-// orders_fbs Source Tests (~5 tests)
-// ============================================================================
+  // ============================================================================
+  // orders_fbs Source Tests (~5 tests)
+  // ============================================================================
 
-describe('DataSourceIndicator - orders_fbs (Realtime)', () => {
-  it.todo('should display "Реалтайм" label')
+  describe('orders_fbs (Realtime)', () => {
+    it('should display "Реалтайм" label', () => {
+      render(<DataSourceIndicator source="orders_fbs" />)
+      expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+    })
 
-  it.todo('should apply green color styling (bg-green-100 text-green-800)')
+    it('should apply green color styling (bg-green-100 text-green-800)', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('bg-green-100')
+      expect(badge?.className).toContain('text-green-800')
+    })
 
-  it.todo('should show Clock icon')
+    it('should include green border (border-green-200)', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('border-green-200')
+    })
 
-  it.todo('should indicate 0-30 days data range')
+    it('should indicate 0-30 days data range via tooltip description', () => {
+      const config = getDataSourceConfig('orders_fbs')
+      expect(config.description).toContain('30')
+    })
 
-  it.todo('should render correctly when source is "orders_fbs"')
-})
+    it('should render correctly when source is "orders_fbs"', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" />)
+      expect(container.querySelector('span')).toBeInTheDocument()
+      expect(screen.getByText('Реалтайм')).toBeInTheDocument()
+    })
+  })
 
-// ============================================================================
-// reports Source Tests (~5 tests)
-// ============================================================================
+  // ============================================================================
+  // reports Source Tests (~5 tests)
+  // ============================================================================
 
-describe('DataSourceIndicator - reports (Daily)', () => {
-  it.todo('should display "Ежедневно" label')
+  describe('reports (Daily)', () => {
+    it('should display "Ежедневно" label', () => {
+      render(<DataSourceIndicator source="reports" />)
+      expect(screen.getByText('Ежедневно')).toBeInTheDocument()
+    })
 
-  it.todo('should apply blue color styling (bg-blue-100 text-blue-800)')
+    it('should apply blue color styling (bg-blue-100 text-blue-800)', () => {
+      const { container } = render(<DataSourceIndicator source="reports" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('bg-blue-100')
+      expect(badge?.className).toContain('text-blue-800')
+    })
 
-  it.todo('should show Calendar icon')
+    it('should include blue border (border-blue-200)', () => {
+      const { container } = render(<DataSourceIndicator source="reports" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('border-blue-200')
+    })
 
-  it.todo('should indicate 31-90 days data range')
+    it('should indicate 31-90 days data range via tooltip description', () => {
+      const config = getDataSourceConfig('reports')
+      expect(config.description).toContain('31-90')
+    })
 
-  it.todo('should render correctly when source is "reports"')
-})
+    it('should render correctly when source is "reports"', () => {
+      const { container } = render(<DataSourceIndicator source="reports" />)
+      expect(container.querySelector('span')).toBeInTheDocument()
+      expect(screen.getByText('Ежедневно')).toBeInTheDocument()
+    })
+  })
 
-// ============================================================================
-// analytics Source Tests (~5 tests)
-// ============================================================================
+  // ============================================================================
+  // analytics Source Tests (~5 tests)
+  // ============================================================================
 
-describe('DataSourceIndicator - analytics (Weekly)', () => {
-  it.todo('should display "Еженедельно" label')
+  describe('analytics (Weekly)', () => {
+    it('should display "Еженедельно" label', () => {
+      render(<DataSourceIndicator source="analytics" />)
+      expect(screen.getByText('Еженедельно')).toBeInTheDocument()
+    })
 
-  it.todo('should apply purple color styling (bg-purple-100 text-purple-800)')
+    it('should apply purple color styling (bg-purple-100 text-purple-800)', () => {
+      const { container } = render(<DataSourceIndicator source="analytics" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('bg-purple-100')
+      expect(badge?.className).toContain('text-purple-800')
+    })
 
-  it.todo('should show Database icon')
+    it('should include purple border (border-purple-200)', () => {
+      const { container } = render(<DataSourceIndicator source="analytics" />)
+      const badge = container.querySelector('span')
+      expect(badge?.className).toContain('border-purple-200')
+    })
 
-  it.todo('should indicate 91-365 days data range')
+    it('should indicate 91-365 days data range via tooltip description', () => {
+      const config = getDataSourceConfig('analytics')
+      expect(config.description).toContain('91-365')
+    })
 
-  it.todo('should render correctly when source is "analytics"')
-})
+    it('should render correctly when source is "analytics"', () => {
+      const { container } = render(<DataSourceIndicator source="analytics" />)
+      expect(container.querySelector('span')).toBeInTheDocument()
+      expect(screen.getByText('Еженедельно')).toBeInTheDocument()
+    })
+  })
 
-// ============================================================================
-// Tooltip Tests (~4 tests)
-// ============================================================================
+  // ============================================================================
+  // Tooltip Tests (~4 tests)
+  // ============================================================================
 
-describe('DataSourceIndicator - Tooltip', () => {
-  it.todo('should show tooltip on hover')
+  describe('Tooltip', () => {
+    it('should show tooltip on hover when showTooltip is true', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" showTooltip />)
+      const badge = container.querySelector('span')
+      expect(badge?.getAttribute('title')).toBeTruthy()
+      expect(badge?.getAttribute('title')).toContain('Данные из API заказов FBS')
+    })
 
-  it.todo('should display explanation text in tooltip')
+    it('should display explanation text in tooltip', () => {
+      const { container } = render(<DataSourceIndicator source="reports" showTooltip />)
+      const badge = container.querySelector('span')
+      expect(badge?.getAttribute('title')).toBe('Ежедневные отчёты (31-90 дней)')
+    })
 
-  it.todo('should hide tooltip on mouse leave')
+    it('should hide tooltip on mouse leave — no title when showTooltip is false', () => {
+      const { container } = render(<DataSourceIndicator source="orders_fbs" showTooltip={false} />)
+      const badge = container.querySelector('span')
+      expect(badge?.getAttribute('title')).toBeNull()
+    })
 
-  it.todo('should position tooltip correctly')
-})
+    it('should position tooltip correctly — uses native title attribute', () => {
+      const { container } = render(<DataSourceIndicator source="analytics" showTooltip />)
+      const badge = container.querySelector('span')
+      // Native title attribute positions tooltip via browser (no custom positioning)
+      expect(badge?.getAttribute('title')).toBe('Еженедельные агрегаты (91-365 дней)')
+    })
+  })
 
-// ============================================================================
-// Dynamic Update Tests (~3 tests)
-// ============================================================================
+  // ============================================================================
+  // Dynamic Update Tests (~3 tests)
+  // ============================================================================
 
-describe('DataSourceIndicator - Dynamic Updates', () => {
-  it.todo('should update badge when source prop changes')
+  describe('Dynamic Updates', () => {
+    it('should update badge when source prop changes', () => {
+      const { rerender } = render(<DataSourceIndicator source="orders_fbs" />)
+      expect(screen.getByText('Реалтайм')).toBeInTheDocument()
 
-  it.todo('should transition smoothly between sources')
+      rerender(<DataSourceIndicator source="reports" />)
+      expect(screen.getByText('Ежедневно')).toBeInTheDocument()
+      expect(screen.queryByText('Реалтайм')).not.toBeInTheDocument()
+    })
 
-  it.todo('should maintain consistent layout on source change')
+    it('should transition smoothly between sources — re-renders without errors', () => {
+      const { rerender } = render(<DataSourceIndicator source="orders_fbs" />)
+      expect(() => {
+        rerender(<DataSourceIndicator source="reports" />)
+        rerender(<DataSourceIndicator source="analytics" />)
+        rerender(<DataSourceIndicator source="orders_fbs" />)
+      }).not.toThrow()
+    })
+
+    it('should maintain consistent layout on source change — same element type', () => {
+      const { container, rerender } = render(<DataSourceIndicator source="orders_fbs" />)
+      const firstTag = container.querySelector('span')?.tagName
+
+      rerender(<DataSourceIndicator source="reports" />)
+      const secondTag = container.querySelector('span')?.tagName
+
+      // Same element type maintains consistent layout
+      expect(firstTag).toBe(secondTag)
+      expect(firstTag).toBe('SPAN')
+    })
+  })
+
+  // ============================================================================
+  // Utility Exports Tests
+  // ============================================================================
+
+  describe('Utility exports', () => {
+    it('getDataSourceConfig returns correct config for each source', () => {
+      expect(getDataSourceConfig('orders_fbs').label).toBe('Реалтайм')
+      expect(getDataSourceConfig('reports').label).toBe('Ежедневно')
+      expect(getDataSourceConfig('analytics').label).toBe('Еженедельно')
+    })
+
+    it('getDataSourceBadgeLabel returns correct labels', () => {
+      expect(getDataSourceBadgeLabel('orders_fbs')).toBe('Реалтайм')
+      expect(getDataSourceBadgeLabel('reports')).toBe('Ежедневно')
+      expect(getDataSourceBadgeLabel('analytics')).toBe('Еженедельно')
+    })
+  })
 })

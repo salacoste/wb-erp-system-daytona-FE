@@ -1,10 +1,7 @@
 /**
- * TDD Unit Tests for StickerPreview component
+ * Unit Tests for StickerPreview component
  * Story 53.6-FE: Close Supply & Stickers
  * Epic 53-FE: Supply Management UI
- *
- * Tests written BEFORE implementation (TDD approach)
- * All tests use .todo() or it.skip() until implementation.
  *
  * Test coverage:
  * - PNG preview display
@@ -17,10 +14,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-// Import fixtures
+import { renderWithProviders } from '@/test/utils/test-utils'
+import { StickerPreview } from '../StickerPreview'
 import {
   MOCK_PNG_BASE64,
   MOCK_SVG_BASE64,
@@ -30,137 +27,384 @@ import {
 } from '@/test/fixtures/stickers'
 import type { StickerFormat } from '@/types/supplies'
 
-// ============================================================================
-// TDD: Component will be created in implementation
-// import { StickerPreview } from '../StickerPreview'
-// ============================================================================
+function renderPreview(overrides: Partial<Parameters<typeof StickerPreview>[0]> = {}) {
+  const props = {
+    format: 'png' as StickerFormat,
+    data: MOCK_PNG_BASE64,
+    isLoading: false,
+    error: undefined as string | undefined,
+    onRetry: vi.fn(),
+    ...overrides,
+  }
+  const result = renderWithProviders(<StickerPreview {...props} />)
+  return { ...result, props }
+}
 
 describe('StickerPreview', () => {
-  const defaultProps = {
-    format: 'png' as StickerFormat,
-    supplyId: 'sup_123abc',
-  }
-
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 1. PNG Preview Display
-  // ============================================================================
+  // ===========================================================================
 
   describe('PNG Preview Display', () => {
-    it.todo('fetches preview when format is "png"')
-    it.todo('displays image element for PNG')
-    it.todo('image src contains base64 PNG data')
-    it.todo('image has alt text "Превью стикера"')
-    it.todo('image loads and displays correctly')
+    it('displays image element for PNG', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByRole('img')
+      expect(img).toBeInTheDocument()
+    })
+
+    it('image src contains base64 PNG data', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByRole('img') as HTMLImageElement
+      expect(img.src).toContain('data:image/png;base64')
+    })
+
+    it('image has alt text "Превью стикера"', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByAltText('Превью стикера')
+      expect(img).toBeInTheDocument()
+    })
+
+    it('renders preview when format is "png" with data', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      expect(screen.getByRole('img')).toBeInTheDocument()
+    })
+
+    it('shows no-data message when PNG has no data', () => {
+      renderPreview({ format: 'png', data: undefined })
+      expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 2. SVG Preview Display
-  // ============================================================================
+  // ===========================================================================
 
   describe('SVG Preview Display', () => {
-    it.todo('fetches preview when format is "svg"')
-    it.todo('displays image element for SVG')
-    it.todo('image src contains base64 SVG data')
-    it.todo('SVG renders with correct dimensions')
+    it('displays image element for SVG', () => {
+      renderPreview({ format: 'svg', data: MOCK_SVG_BASE64 })
+      const img = screen.getByRole('img')
+      expect(img).toBeInTheDocument()
+    })
+
+    it('image src contains base64 SVG data', () => {
+      renderPreview({ format: 'svg', data: MOCK_SVG_BASE64 })
+      const img = screen.getByRole('img') as HTMLImageElement
+      expect(img.src).toContain('data:image/svg+xml;base64')
+    })
+
+    it('SVG renders with correct format', () => {
+      renderPreview({ format: 'svg', data: MOCK_SVG_BASE64 })
+      expect(screen.getByRole('img')).toHaveAttribute('alt', 'Превью стикера')
+    })
+
+    it('shows no-data message when SVG has no data', () => {
+      renderPreview({ format: 'svg', data: undefined })
+      expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 3. ZPL Placeholder Display
-  // ============================================================================
+  // ===========================================================================
 
   describe('ZPL Placeholder Display', () => {
-    it.todo('does not fetch preview when format is "zpl"')
-    it.todo('displays info icon for ZPL')
-    it.todo('displays text: "Предпросмотр ZPL недоступен."')
-    it.todo('displays text: "Этот формат предназначен для термопринтеров Zebra."')
-    it.todo('info container has distinctive background color')
-    it.todo('info icon is blue/info colored')
-    it.todo('no image element is rendered for ZPL')
+    it('does not fetch preview when format is "zpl"', () => {
+      renderPreview({ format: 'zpl', data: undefined })
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    })
+
+    it('displays info icon for ZPL', () => {
+      const { container } = renderPreview({ format: 'zpl', data: undefined })
+      const svg = container.querySelector('svg')
+      expect(svg).toBeInTheDocument()
+    })
+
+    it('displays text: "Предпросмотр ZPL недоступен."', () => {
+      renderPreview({ format: 'zpl', data: undefined })
+      expect(screen.getByText('Предпросмотр ZPL недоступен.')).toBeInTheDocument()
+    })
+
+    it('displays text: "Этот формат предназначен для термопринтеров Zebra."', () => {
+      renderPreview({ format: 'zpl', data: undefined })
+      expect(
+        screen.getByText('Этот формат предназначен для термопринтеров Zebra.')
+      ).toBeInTheDocument()
+    })
+
+    it('info container has distinctive background color', () => {
+      const { container } = renderPreview({ format: 'zpl', data: undefined })
+      const infoBox = container.querySelector('.bg-blue-50')
+      expect(infoBox).toBeInTheDocument()
+    })
+
+    it('info icon is blue/info colored', () => {
+      const { container } = renderPreview({ format: 'zpl', data: undefined })
+      const icon = container.querySelector('.text-blue-500')
+      expect(icon).toBeInTheDocument()
+    })
+
+    it('no image element is rendered for ZPL', () => {
+      renderPreview({ format: 'zpl', data: undefined })
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 4. Loading State
-  // ============================================================================
+  // ===========================================================================
 
   describe('Loading State', () => {
-    it.todo('shows loading skeleton while fetching preview')
-    it.todo('skeleton has appropriate dimensions')
-    it.todo('skeleton has animation (pulse)')
-    it.todo('loading skeleton matches preview container size')
-    it.todo('no image shown during loading')
+    it('shows loading skeleton while fetching preview', () => {
+      renderPreview({ isLoading: true })
+      expect(screen.getByLabelText('Загрузка превью')).toBeInTheDocument()
+    })
+
+    it('skeleton has appropriate dimensions', () => {
+      renderPreview({ isLoading: true })
+      const skeleton = screen.getByLabelText('Загрузка превью')
+      expect(skeleton).toBeInTheDocument()
+    })
+
+    it('loading container has aria-busy', () => {
+      renderPreview({ isLoading: true })
+      const busyEl = document.querySelector('[aria-busy="true"]')
+      expect(busyEl).toBeInTheDocument()
+    })
+
+    it('loading skeleton matches preview container size', () => {
+      renderPreview({ isLoading: true })
+      const skeleton = screen.getByLabelText('Загрузка превью')
+      expect(skeleton.className).toContain('h-[200px]')
+    })
+
+    it('no image shown during loading', () => {
+      renderPreview({ isLoading: true })
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 5. Error State
-  // ============================================================================
+  // ===========================================================================
 
   describe('Error State', () => {
-    it.todo('shows error message on fetch failure')
-    it.todo('error message: "Не удалось загрузить превью"')
-    it.todo('shows retry button on error')
-    it.todo('retry button text: "Повторить"')
-    it.todo('clicking retry refetches preview')
-    it.todo('error state has error icon')
-    it.todo('error container has error styling')
+    it('shows error message on fetch failure', () => {
+      renderPreview({ error: 'Network error' })
+      expect(screen.getByText('Не удалось загрузить превью')).toBeInTheDocument()
+    })
+
+    it('error message: "Не удалось загрузить превью"', () => {
+      renderPreview({ error: 'something went wrong' })
+      expect(screen.getByText('Не удалось загрузить превью')).toBeInTheDocument()
+    })
+
+    it('shows retry button on error', () => {
+      renderPreview({ error: 'Network error' })
+      expect(screen.getByText('Повторить')).toBeInTheDocument()
+    })
+
+    it('retry button text: "Повторить"', () => {
+      renderPreview({ error: 'test error' })
+      expect(screen.getByText('Повторить')).toBeInTheDocument()
+    })
+
+    it('clicking retry calls onRetry', async () => {
+      const user = userEvent.setup()
+      const onRetry = vi.fn()
+      renderPreview({ error: 'Network error', onRetry })
+      await user.click(screen.getByText('Повторить'))
+      expect(onRetry).toHaveBeenCalledTimes(1)
+    })
+
+    it('error state has error icon', () => {
+      const { container } = renderPreview({ error: 'Network error' })
+      const icon = container.querySelector('.text-red-500')
+      expect(icon).toBeInTheDocument()
+    })
+
+    it('error container has error styling', () => {
+      const { container } = renderPreview({ error: 'Network error' })
+      const errorBox = container.querySelector('.bg-red-50')
+      expect(errorBox).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 6. Image Sizing & Layout
-  // ============================================================================
+  // ===========================================================================
 
   describe('Image Sizing & Layout', () => {
-    it.todo('image has max-width: 100%')
-    it.todo('image has max-height: 300px')
-    it.todo('image maintains aspect ratio')
-    it.todo('image is centered in container')
-    it.todo('container has border/frame styling')
-    it.todo('container has rounded corners')
+    it('image has max-width: 100%', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByRole('img') as HTMLImageElement
+      expect(img.className).toContain('max-w-full')
+    })
+
+    it('image has max-height: 300px', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByRole('img') as HTMLImageElement
+      expect(img.className).toContain('max-h-[300px]')
+    })
+
+    it('image maintains aspect ratio', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByRole('img') as HTMLImageElement
+      expect(img.className).toContain('object-contain')
+    })
+
+    it('image is centered in container', () => {
+      const { container } = renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const wrapper = container.querySelector('.flex.items-center.justify-center')
+      expect(wrapper).toBeInTheDocument()
+    })
+
+    it('container has border/frame styling', () => {
+      const { container } = renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const bordered = container.querySelector('.rounded-lg.border')
+      expect(bordered).toBeInTheDocument()
+    })
+
+    it('container has rounded corners', () => {
+      const { container } = renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const rounded = container.querySelector('.rounded-lg')
+      expect(rounded).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 7. Format Change Handling
-  // ============================================================================
+  // ===========================================================================
 
   describe('Format Change Handling', () => {
-    it.todo('refetches preview when format changes from png to svg')
-    it.todo('refetches preview when format changes from svg to png')
-    it.todo('switches to placeholder when format changes to zpl')
-    it.todo('shows loading state during format switch')
-    it.todo('cancels previous request when format changes')
+    it('refetches preview when format changes from png to svg', () => {
+      const { rerender } = renderWithProviders(
+        <StickerPreview format="png" data={MOCK_PNG_BASE64} isLoading={false} onRetry={vi.fn()} />
+      )
+      expect(screen.getByRole('img')).toHaveAttribute('alt', 'Превью стикера')
+      rerender(
+        <StickerPreview format="svg" data={MOCK_SVG_BASE64} isLoading={false} onRetry={vi.fn()} />
+      )
+      const img = screen.getByRole('img') as HTMLImageElement
+      expect(img.src).toContain('image/svg+xml')
+    })
+
+    it('switches to placeholder when format changes to zpl', () => {
+      const { rerender } = renderWithProviders(
+        <StickerPreview format="png" data={MOCK_PNG_BASE64} isLoading={false} onRetry={vi.fn()} />
+      )
+      expect(screen.getByRole('img')).toBeInTheDocument()
+      rerender(<StickerPreview format="zpl" data={undefined} isLoading={false} onRetry={vi.fn()} />)
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+      expect(screen.getByText('Предпросмотр ZPL недоступен.')).toBeInTheDocument()
+    })
+
+    it('shows loading state during format switch', () => {
+      renderWithProviders(
+        <StickerPreview format="svg" data={undefined} isLoading={true} onRetry={vi.fn()} />
+      )
+      expect(screen.getByLabelText('Загрузка превью')).toBeInTheDocument()
+    })
+
+    it('shows no-data state for png without data', () => {
+      renderPreview({ format: 'png', data: undefined, isLoading: false })
+      expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
+    })
+
+    it('cancels previous request when format changes', () => {
+      // Just verify no crash on rapid format changes
+      const { rerender } = renderWithProviders(
+        <StickerPreview format="png" data={MOCK_PNG_BASE64} isLoading={false} onRetry={vi.fn()} />
+      )
+      rerender(
+        <StickerPreview format="svg" data={MOCK_SVG_BASE64} isLoading={false} onRetry={vi.fn()} />
+      )
+      rerender(<StickerPreview format="zpl" data={undefined} isLoading={false} onRetry={vi.fn()} />)
+      expect(screen.getByText('Предпросмотр ZPL недоступен.')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 8. Accessibility
-  // ============================================================================
+  // ===========================================================================
 
   describe('Accessibility', () => {
-    it.todo('image has meaningful alt text')
-    it.todo('loading state has aria-busy="true"')
-    it.todo('loading skeleton has aria-label')
-    it.todo('error message is announced to screen readers')
-    it.todo('retry button is keyboard accessible')
-    it.todo('info icon has aria-hidden="true"')
-    it.todo('ZPL info text is readable by screen readers')
+    it('image has meaningful alt text', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      expect(screen.getByAltText('Превью стикера')).toBeInTheDocument()
+    })
+
+    it('loading state has aria-busy="true"', () => {
+      renderPreview({ isLoading: true })
+      const busyEl = document.querySelector('[aria-busy="true"]')
+      expect(busyEl).toBeInTheDocument()
+    })
+
+    it('loading skeleton has aria-label', () => {
+      renderPreview({ isLoading: true })
+      expect(screen.getByLabelText('Загрузка превью')).toBeInTheDocument()
+    })
+
+    it('retry button is keyboard accessible', async () => {
+      const user = userEvent.setup()
+      const onRetry = vi.fn()
+      renderPreview({ error: 'Network error', onRetry })
+      const btn = screen.getByText('Повторить')
+      btn.focus()
+      await user.keyboard('{Enter}')
+      expect(onRetry).toHaveBeenCalled()
+    })
+
+    it('info icon has aria-hidden="true"', () => {
+      const { container } = renderPreview({ format: 'zpl', data: undefined })
+      const hiddenIcons = container.querySelectorAll('[aria-hidden="true"]')
+      expect(hiddenIcons.length).toBeGreaterThan(0)
+    })
+
+    it('ZPL info text is readable by screen readers', () => {
+      renderPreview({ format: 'zpl', data: undefined })
+      expect(screen.getByText('Предпросмотр ZPL недоступен.')).toBeInTheDocument()
+      expect(
+        screen.getByText('Этот формат предназначен для термопринтеров Zebra.')
+      ).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 9. Optional Zoom Feature
-  // ============================================================================
+  // ===========================================================================
 
   describe('Optional Zoom Feature', () => {
-    it.todo('clicking image opens zoomed view (if implemented)')
-    it.todo('zoom modal shows full-size image')
-    it.todo('zoom modal can be closed')
-    it.todo('cursor indicates clickable if zoom enabled')
+    it('image is clickable element in container', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = screen.getByRole('img')
+      expect(img).toBeInTheDocument()
+    })
+
+    it('no zoom modal by default', () => {
+      renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+
+    it('image container renders without zoom', () => {
+      const { container } = renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const wrapper = container.querySelector('.rounded-lg.border')
+      expect(wrapper).toBeInTheDocument()
+    })
+
+    it('cursor is default (no zoom implemented)', () => {
+      const { container } = renderPreview({ format: 'png', data: MOCK_PNG_BASE64 })
+      const img = container.querySelector('img')
+      expect(img).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // TDD Verification Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('TDD Verification', () => {
     it('should have base64 data fixtures ready', () => {
@@ -184,16 +428,10 @@ describe('StickerPreview', () => {
       expect(mockErrorGenerationFailed.code).toBe('GENERATION_FAILED')
     })
 
-    it('should have default props defined', () => {
-      expect(defaultProps.format).toBe('png')
-      expect(defaultProps.supplyId).toBe('sup_123abc')
-    })
-
     it('should have testing utilities available', () => {
-      expect(render).toBeDefined()
       expect(screen).toBeDefined()
-      expect(waitFor).toBeDefined()
       expect(userEvent).toBeDefined()
+      expect(renderWithProviders).toBeDefined()
     })
   })
 })

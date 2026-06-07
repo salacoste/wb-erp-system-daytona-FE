@@ -118,9 +118,17 @@ describe('useTrends - API Request Field Mapping (Story 61.1-FE)', () => {
   // ==========================================================================
 
   describe('API request parameters (AC1)', () => {
-    // TDD: This test will PASS after implementing the fix
-    // Currently fails because useTrends.ts uses 'sale_gross' instead of 'wb_sales_gross'
-    it.todo('should request wb_sales_gross in metrics parameter, NOT sale_gross')
+    it('should request wb_sales_gross in metrics parameter, NOT sale_gross', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+      expect(apiCallUrl).toContain('wb_sales_gross')
+      // Verify the old wrong field is NOT the primary metric
+      expect(apiCallUrl).not.toMatch(/metrics=sale_gross[,&]/)
+    })
 
     it('should include to_pay_goods in metrics parameter', async () => {
       const { result } = renderHook(() => useTrends(5), {
@@ -132,8 +140,16 @@ describe('useTrends - API Request Field Mapping (Story 61.1-FE)', () => {
       expect(apiCallUrl).toContain('to_pay_goods')
     })
 
-    // TDD: This test will PASS after implementing the fix
-    it.todo('should use full metrics string: metrics=wb_sales_gross,to_pay_goods')
+    it('should use full metrics string: metrics=wb_sales_gross,to_pay_goods', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+      expect(apiCallUrl).toContain('metrics=wb_sales_gross')
+      expect(apiCallUrl).toContain('to_pay_goods')
+    })
   })
 
   // ==========================================================================
@@ -142,18 +158,57 @@ describe('useTrends - API Request Field Mapping (Story 61.1-FE)', () => {
   // ==========================================================================
 
   describe('data transformation (AC2, AC3)', () => {
-    // TDD: This test will PASS after implementing the fix
-    // The mock returns wb_sales_gross, but current impl reads sale_gross
-    it.todo('should map wb_sales_gross to revenue field in TrendDataPoint')
+    it('should map wb_sales_gross to revenue field in TrendDataPoint', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
 
-    // TDD: This test will PASS after implementing the fix
-    it.todo('should return all weeks in ascending order')
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
 
-    // TDD: This test will PASS after implementing the fix
-    it.todo('should include week in TrendDataPoint')
+      const trends = result.current.data?.trends ?? []
+      // First data point has wb_sales_gross=100000 in mock
+      expect(trends[0].revenue).toBe(100000)
+      // Second has wb_sales_gross=120000
+      expect(trends[1].revenue).toBe(120000)
+    })
 
-    // TDD: This test will PASS after implementing the fix
-    it.todo('should use week as date fallback')
+    it('should return all weeks in ascending order', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+      const trends = result.current.data?.trends ?? []
+      expect(trends).toHaveLength(5)
+      for (let i = 1; i < trends.length; i++) {
+        expect(trends[i].week > trends[i - 1].week).toBe(true)
+      }
+    })
+
+    it('should include week in TrendDataPoint', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+      const trends = result.current.data?.trends ?? []
+      expect(trends[0].week).toBe('2026-W01')
+      expect(trends[4].week).toBe('2026-W05')
+    })
+
+    it('should use week as date fallback', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+      const trends = result.current.data?.trends ?? []
+      // TrendDataPoint uses week string directly as the date identifier
+      expect(trends[0].week).toMatch(/^\d{4}-W\d{2}$/)
+    })
   })
 
   // ==========================================================================
@@ -162,9 +217,20 @@ describe('useTrends - API Request Field Mapping (Story 61.1-FE)', () => {
   // ==========================================================================
 
   describe('summary data', () => {
-    // TDD: Will pass after Story 61.1-FE - currently mock returns wb_sales_gross
-    // but implementation reads sale_gross
-    it.todo('should include summary statistics from API response')
+    it('should include summary statistics from API response', async () => {
+      const { result } = renderHook(() => useTrends(5), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+      const summary = result.current.data?.summary
+      expect(summary).toBeDefined()
+      expect(summary?.wb_sales_gross).toBeDefined()
+      expect(summary?.wb_sales_gross?.min).toBe(100000)
+      expect(summary?.wb_sales_gross?.max).toBe(140000)
+      expect(summary?.wb_sales_gross?.avg).toBe(120000)
+    })
   })
 })
 
@@ -428,8 +494,24 @@ describe('useTrends loading states', () => {
     expect(result.current.data).toBeUndefined()
   })
 
-  // TDD: This test depends on implementation reading wb_sales_gross
-  it.todo('should transition to loaded state with data from wb_sales_gross')
+  it('should transition to loaded state with data from wb_sales_gross', async () => {
+    server.use(
+      http.get(`${API_BASE_URL}/v1/analytics/weekly/trends`, () => {
+        return HttpResponse.json(mockTrendsResponseWithCorrectField)
+      })
+    )
+
+    const { result } = renderHook(() => useTrends(5), {
+      wrapper: createQueryWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    expect(result.current.data).toBeDefined()
+    expect(result.current.data?.trends).toHaveLength(5)
+    // Verify revenue comes from wb_sales_gross, not sale_gross
+    expect(result.current.data?.trends[0].revenue).toBe(100000)
+  })
 })
 
 // ==========================================================================
@@ -446,10 +528,60 @@ describe('data mapping validation (prevents regression)', () => {
     vi.clearAllMocks()
   })
 
-  // TDD: These tests will PASS after Story 61.1-FE implementation
-  // Currently the implementation reads sale_gross, not wb_sales_gross
+  it('should correctly map all data points using wb_sales_gross', async () => {
+    server.use(
+      http.get(`${API_BASE_URL}/v1/analytics/weekly/trends`, () => {
+        return HttpResponse.json(mockTrendsResponseWithCorrectField)
+      })
+    )
 
-  it.todo('should correctly map all data points using wb_sales_gross')
+    const { result } = renderHook(() => useTrends(5), {
+      wrapper: createQueryWrapper(),
+    })
 
-  it.todo('should handle null/undefined values gracefully for wb_sales_gross')
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    const trends = result.current.data?.trends ?? []
+    expect(trends).toHaveLength(5)
+    // Verify all 5 data points map wb_sales_gross correctly
+    expect(trends[0].revenue).toBe(100000)
+    expect(trends[1].revenue).toBe(120000)
+    expect(trends[2].revenue).toBe(110000)
+    expect(trends[3].revenue).toBe(130000)
+    expect(trends[4].revenue).toBe(140000)
+    // Verify to_pay_goods mapped to totalPayable
+    expect(trends[0].totalPayable).toBe(80000)
+    expect(trends[4].totalPayable).toBe(112000)
+  })
+
+  it('should handle null/undefined values gracefully for wb_sales_gross', async () => {
+    const responseWithNulls = {
+      period: { from: '2026-W01', to: '2026-W02', weeks_count: 2 },
+      data: [
+        { week: '2026-W01', wb_sales_gross: null, to_pay_goods: null },
+        { week: '2026-W02' }, // entirely missing fields
+      ],
+      summary: {},
+    }
+
+    server.use(
+      http.get(`${API_BASE_URL}/v1/analytics/weekly/trends`, () => {
+        return HttpResponse.json(responseWithNulls)
+      })
+    )
+
+    const { result } = renderHook(() => useTrends(2), {
+      wrapper: createQueryWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    const trends = result.current.data?.trends ?? []
+    expect(trends).toHaveLength(2)
+    // Null wb_sales_gross falls back to sale_gross, then to 0
+    expect(trends[0].revenue).toBe(0)
+    // Missing fields default to 0
+    expect(trends[1].revenue).toBe(0)
+    expect(trends[1].totalPayable).toBe(0)
+  })
 })

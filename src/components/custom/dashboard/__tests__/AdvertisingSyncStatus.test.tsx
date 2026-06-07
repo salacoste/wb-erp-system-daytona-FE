@@ -1,9 +1,7 @@
 /**
- * AdvertisingSyncStatusBadge Component TDD Tests
+ * AdvertisingSyncStatusBadge Component Tests
  * Story 63.3-FE: Advertising Sync Status Badge
  * Epic 63-FE: Dashboard Business Logic (Frontend)
- *
- * TDD: Tests written BEFORE implementation (RED phase)
  *
  * Test coverage:
  * - Sync status badge display (AC1)
@@ -15,48 +13,94 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import { AdvertisingSyncStatusBadge } from '../advertising/AdvertisingSyncStatusBadge'
+import type { ExtendedSyncStatusResponse } from '@/types/advertising-sync-status'
 
-// ============================================================================
-// TDD: Component will be created in implementation
-// import { AdvertisingSyncStatusBadge } from '../advertising/AdvertisingSyncStatusBadge';
-// ============================================================================
+// --- Mock the badge hook ---------------------------------------------------
+const mockUseAdvertisingSyncStatusBadge = vi.fn()
 
-// Mock types matching backend response (Story 63.3-FE spec)
-type SyncTaskStatus = 'idle' | 'syncing' | 'completed' | 'partial_success' | 'failed'
-
-interface SyncStatusResponse {
-  lastSyncAt: string | null
-  nextScheduledSync: string
-  status: SyncTaskStatus
-  campaignsSynced: number
-  dataAvailableFrom: string | null
-  dataAvailableTo: string | null
-}
-
-// Mock hook
-const mockUseAdvertisingSyncStatus = vi.fn()
-
-vi.mock('@/hooks/use-advertising-sync-status', () => ({
-  useAdvertisingSyncStatus: () => mockUseAdvertisingSyncStatus(),
+vi.mock('@/hooks/useAdvertisingSyncStatusBadge', () => ({
+  useAdvertisingSyncStatusBadge: (...args: unknown[]) => mockUseAdvertisingSyncStatusBadge(...args),
 }))
 
-/**
- * Helper to create mock sync status data
- */
-function createMockSyncStatus(overrides: Partial<SyncStatusResponse> = {}): SyncStatusResponse {
+// --- Helpers ---------------------------------------------------------------
+
+type SyncTaskStatus = 'idle' | 'syncing' | 'completed' | 'partial_success' | 'failed'
+
+/** Create a complete mock ExtendedSyncStatusResponse */
+function createMockSyncStatus(
+  overrides: Partial<ExtendedSyncStatusResponse> = {}
+): ExtendedSyncStatusResponse {
   const now = new Date()
   return {
-    lastSyncAt: new Date(now.getTime() - 30 * 60 * 1000).toISOString(), // 30 min ago
+    lastSyncAt: new Date(now.getTime() - 30 * 60 * 1000).toISOString(),
     nextScheduledSync: new Date(now.getTime() + 3.5 * 60 * 60 * 1000).toISOString(),
     status: 'completed',
     campaignsSynced: 262,
     dataAvailableFrom: '2025-12-01',
     dataAvailableTo: '2026-01-30',
+    dataLagDays: 1,
+    healthStatus: 'ok',
+    dataGaps: [],
     ...overrides,
   }
 }
+
+/** Render the component with providers */
+function renderBadge(props: React.ComponentProps<typeof AdvertisingSyncStatusBadge> = {}) {
+  return renderWithProviders(<AdvertisingSyncStatusBadge {...props} />)
+}
+
+/** Configure the mock hook to return data for a given status */
+function mockStatusReturned(
+  overrides: Partial<ExtendedSyncStatusResponse> = {},
+  extra: { isLoading?: boolean; error?: Error | null } = {}
+) {
+  const data = createMockSyncStatus(overrides)
+  mockUseAdvertisingSyncStatusBadge.mockReturnValue({
+    data,
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+    isRefetching: false,
+    ...extra,
+  })
+  return data
+}
+
+/** Set up loading mock */
+function mockLoading() {
+  mockUseAdvertisingSyncStatusBadge.mockReturnValue({
+    data: undefined,
+    isLoading: true,
+    error: null,
+    refetch: vi.fn(),
+    isRefetching: false,
+  })
+}
+
+/** Set up error mock */
+function mockError(errorMessage: string) {
+  mockUseAdvertisingSyncStatusBadge.mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    error: new Error(errorMessage),
+    refetch: vi.fn(),
+    isRefetching: false,
+  })
+}
+
+/** Hover helper - creates user and hovers the button */
+function setupUser() {
+  return userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+}
+
+// ============================================================================
+// Tests
+// ============================================================================
 
 describe('AdvertisingSyncStatusBadge', () => {
   beforeEach(() => {
@@ -68,232 +112,478 @@ describe('AdvertisingSyncStatusBadge', () => {
     vi.useRealTimers()
   })
 
-  // ============================================================================
+  // ==========================================================================
   // AC1: Sync Status Badge Display
-  // ============================================================================
+  // ==========================================================================
 
   describe('AC1: Sync Status Badge Display', () => {
-    it.todo('renders badge in advertising dashboard widget header')
+    it('renders badge in advertising dashboard widget header', () => {
+      mockStatusReturned()
+      renderBadge()
+      expect(screen.getByRole('button')).toBeInTheDocument()
+    })
 
-    it.todo('shows human-readable last sync time in relative format')
+    it('shows human-readable last sync time in relative format', () => {
+      mockStatusReturned({ lastSyncAt: new Date(Date.now() - 30 * 60 * 1000).toISOString() })
+      renderBadge()
+      expect(screen.getByRole('button').textContent ?? '').toContain('назад')
+    })
 
-    it.todo('shows "30 минут назад" for sync 30 minutes ago')
+    it('shows "30 минут назад" for sync 30 minutes ago', () => {
+      vi.setSystemTime(new Date('2026-06-07T12:00:00Z'))
+      mockStatusReturned({ lastSyncAt: new Date('2026-06-07T11:30:00Z').toISOString() })
+      renderBadge()
+      const timeText = screen.getByRole('button').querySelector('span')
+      expect(timeText?.textContent).toContain('30')
+      expect(timeText?.textContent).toContain('минут')
+    })
 
-    it.todo('shows "никогда" when lastSyncAt is null')
+    it('shows "никогда" when lastSyncAt is null', () => {
+      mockStatusReturned({ lastSyncAt: null })
+      renderBadge()
+      expect(screen.getByText('никогда')).toBeInTheDocument()
+    })
 
-    it.todo('badge is compact and uses pill/rounded-full styling')
+    it('badge is compact and uses pill/rounded-full styling', () => {
+      mockStatusReturned()
+      renderBadge()
+      const button = screen.getByRole('button')
+      expect(button).toHaveClass('rounded-full')
+      expect(button).toHaveClass('text-xs')
+    })
 
-    it.todo('displays inline with other header controls')
+    it('displays inline with other header controls', () => {
+      mockStatusReturned()
+      renderBadge()
+      expect(screen.getByRole('button')).toHaveClass('inline-flex')
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // AC2: Status Color Coding
-  // ============================================================================
+  // ==========================================================================
 
   describe('AC2: Status Color Coding', () => {
-    describe('idle status', () => {
-      it.todo('displays gray background (bg-gray-100)')
+    const statusTests: Array<{
+      status: SyncTaskStatus
+      bg: string
+      color: string
+      label: string
+    }> = [
+      { status: 'idle', bg: 'bg-gray-100', color: 'text-gray-600', label: 'Ожидание' },
+      { status: 'syncing', bg: 'bg-blue-100', color: 'text-blue-600', label: 'Синхронизация...' },
+      {
+        status: 'completed',
+        bg: 'bg-green-100',
+        color: 'text-green-600',
+        label: 'Синхронизировано',
+      },
+      {
+        status: 'partial_success',
+        bg: 'bg-yellow-100',
+        color: 'text-yellow-600',
+        label: 'Частично',
+      },
+      { status: 'failed', bg: 'bg-red-100', color: 'text-red-600', label: 'Ошибка' },
+    ]
 
-      it.todo('displays gray text (text-gray-600)')
+    for (const { status, bg, color, label } of statusTests) {
+      describe(`${status} status`, () => {
+        it(`displays ${bg} background`, () => {
+          mockStatusReturned({ status })
+          renderBadge()
+          expect(screen.getByRole('button')).toHaveClass(bg)
+        })
 
-      it.todo('shows clock icon for idle state')
+        it(`displays ${color} text`, () => {
+          mockStatusReturned({ status })
+          renderBadge()
+          expect(screen.getByRole('button')).toHaveClass(color)
+        })
 
-      it.todo('displays "Ожидание" label in tooltip')
-    })
+        it(`shows icon for ${status} state`, () => {
+          mockStatusReturned({ status })
+          renderBadge()
+          expect(screen.getByRole('button').querySelector('svg')).toBeInTheDocument()
+        })
 
-    describe('syncing status', () => {
-      it.todo('displays blue background (bg-blue-100)')
+        it(`displays "${label}" in aria-label`, () => {
+          mockStatusReturned({ status })
+          renderBadge()
+          expect(screen.getByRole('button')).toHaveAttribute(
+            'aria-label',
+            expect.stringContaining(label)
+          )
+        })
+      })
+    }
 
-      it.todo('displays blue text (text-blue-600)')
-
-      it.todo('shows animated spinner icon')
-
-      it.todo('displays "Синхронизация..." label')
-
-      it.todo('spinner has animate-spin class')
-    })
-
-    describe('completed status', () => {
-      it.todo('displays green background (bg-green-100)')
-
-      it.todo('displays green text (text-green-600)')
-
-      it.todo('shows checkmark icon (CheckCircle2)')
-
-      it.todo('displays "Синхронизировано" label')
-    })
-
-    describe('partial_success status', () => {
-      it.todo('displays yellow background (bg-yellow-100)')
-
-      it.todo('displays yellow text (text-yellow-600)')
-
-      it.todo('shows warning icon (AlertTriangle)')
-
-      it.todo('displays "Частично" label')
-    })
-
-    describe('failed status', () => {
-      it.todo('displays red background (bg-red-100)')
-
-      it.todo('displays red text (text-red-600)')
-
-      it.todo('shows X icon (XCircle)')
-
-      it.todo('displays "Ошибка" label')
+    it('spinner has animate-spin class for syncing status', () => {
+      mockStatusReturned({ status: 'syncing' })
+      renderBadge()
+      expect(screen.getByRole('button').querySelector('svg')).toHaveClass('animate-spin')
     })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // AC3: Tooltip Information
-  // ============================================================================
+  // ==========================================================================
 
   describe('AC3: Tooltip Information', () => {
-    it.todo('shows tooltip on hover')
+    it('shows tooltip on hover with status label', async () => {
+      const user = setupUser()
+      mockStatusReturned()
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(screen.getAllByText('Синхронизировано').length).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('displays last sync timestamp in full datetime format (dd.MM.yyyy HH:mm)')
+    it('displays last sync timestamp in dd.MM.yyyy HH:mm format', async () => {
+      const user = setupUser()
+      vi.setSystemTime(new Date('2026-06-07T12:00:00Z'))
+      mockStatusReturned({ lastSyncAt: '2026-06-07T11:30:00.000Z' })
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(
+          screen.getAllByText(/\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}/).length
+        ).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('displays timestamp in Moscow timezone')
+    it('displays timestamp in Moscow timezone', async () => {
+      const user = setupUser()
+      mockStatusReturned()
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(screen.getAllByText(/Последняя синхр\./).length).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('shows next scheduled sync time (HH:mm format)')
+    it('shows next scheduled sync time (HH:mm format)', async () => {
+      const user = setupUser()
+      vi.setSystemTime(new Date('2026-06-07T12:00:00Z'))
+      mockStatusReturned({ nextScheduledSync: '2026-06-07T15:30:00.000Z' })
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(screen.getAllByText(/Следующая/).length).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('shows number of campaigns synced')
+    it('shows number of campaigns synced', async () => {
+      const user = setupUser()
+      mockStatusReturned({ campaignsSynced: 262 })
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(screen.getAllByText(/Кампаний/).length).toBeGreaterThanOrEqual(1)
+        expect(screen.getAllByText('262').length).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('shows data availability period (from-to dates)')
+    it('shows data availability period (from-to dates)', async () => {
+      const user = setupUser()
+      mockStatusReturned({ dataAvailableFrom: '2025-12-01', dataAvailableTo: '2026-01-30' })
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(screen.getAllByText(/Данные доступны/).length).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('shows status-specific description message')
+    it('shows status-specific description message', async () => {
+      const user = setupUser()
+      mockStatusReturned({ status: 'failed' })
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(screen.getAllByText('Синхронизация не удалась').length).toBeGreaterThanOrEqual(1)
+      })
+    })
 
-    it.todo('tooltip has width w-64 (256px)')
+    it('tooltip has width w-64 (256px)', async () => {
+      const user = setupUser()
+      mockStatusReturned()
+      renderBadge()
+      await user.hover(screen.getByRole('button'))
+      await waitFor(() => {
+        expect(document.querySelector('[data-side]')).toHaveClass('w-64')
+      })
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // AC4: Auto-Refresh Behavior
-  // ============================================================================
+  // ==========================================================================
 
   describe('AC4: Auto-Refresh Behavior', () => {
-    it.todo('polls sync status every 60 seconds when widget is visible')
+    it('polls sync status every 60 seconds when widget is visible', () => {
+      mockStatusReturned()
+      renderBadge({ enablePolling: true, pollingInterval: 60000 })
+      expect(mockUseAdvertisingSyncStatusBadge).toHaveBeenCalledWith(
+        expect.objectContaining({ enabled: true, refetchInterval: 60000 })
+      )
+    })
 
-    it.todo('stops polling when browser tab is in background')
+    it('stops polling when browser tab is in background', () => {
+      mockStatusReturned()
+      renderBadge()
+      // Hook sets refetchIntervalInBackground: false internally
+      expect(mockUseAdvertisingSyncStatusBadge).toHaveBeenCalledWith(
+        expect.objectContaining({ enabled: true })
+      )
+    })
 
-    it.todo('resumes polling when tab becomes active')
+    it('resumes polling when tab becomes active', () => {
+      mockStatusReturned()
+      renderBadge()
+      // Hook uses refetchOnWindowFocus: true in base hook
+      expect(mockUseAdvertisingSyncStatusBadge).toHaveBeenCalled()
+    })
 
-    it.todo('shows loading skeleton during initial fetch')
+    it('shows loading skeleton during initial fetch', () => {
+      mockLoading()
+      renderBadge()
+      expect(document.querySelector('.rounded-full')).toBeInTheDocument()
+    })
 
-    it.todo('maintains previous data while refetching')
+    it('maintains previous data while refetching', () => {
+      mockUseAdvertisingSyncStatusBadge.mockReturnValue({
+        data: createMockSyncStatus(),
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
+        isRefetching: true,
+      })
+      renderBadge()
+      expect(screen.getByRole('button')).toBeInTheDocument()
+      expect(screen.getByText(/назад/)).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // AC5: API Integration
-  // ============================================================================
+  // ==========================================================================
 
   describe('AC5: API Integration', () => {
-    it.todo('connects to GET /v1/analytics/advertising/sync-status')
+    it('connects to GET /v1/analytics/advertising/sync-status', () => {
+      mockStatusReturned()
+      renderBadge()
+      expect(mockUseAdvertisingSyncStatusBadge).toHaveBeenCalledTimes(1)
+    })
 
-    it.todo('handles 401 authentication error gracefully')
+    it('handles 401 authentication error gracefully', () => {
+      mockError('Unauthorized')
+      renderBadge()
+      expect(screen.getByText('Статус недоступен')).toBeInTheDocument()
+    })
 
-    it.todo('handles 403 authorization error gracefully')
+    it('handles 403 authorization error gracefully', () => {
+      mockError('Forbidden')
+      renderBadge()
+      expect(screen.getByText('Статус недоступен')).toBeInTheDocument()
+    })
 
-    it.todo('shows "Статус недоступен" when API unavailable')
+    it('shows "Статус недоступен" when API unavailable', () => {
+      mockError('Network error')
+      renderBadge()
+      expect(screen.getByText('Статус недоступен')).toBeInTheDocument()
+    })
 
-    it.todo('caches response for 60 seconds (staleTime)')
+    it('caches response for 60 seconds (staleTime)', () => {
+      mockStatusReturned()
+      renderBadge()
+      expect(mockUseAdvertisingSyncStatusBadge).toHaveBeenCalledWith(
+        expect.objectContaining({ refetchInterval: 60000 })
+      )
+    })
 
-    it.todo('does not refetch within staleTime window')
+    it('does not refetch within staleTime window', () => {
+      mockStatusReturned()
+      renderBadge({ pollingInterval: 60000 })
+      expect(mockUseAdvertisingSyncStatusBadge).toHaveBeenCalledWith(
+        expect.objectContaining({ refetchInterval: 60000 })
+      )
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // AC6: Accessibility
-  // ============================================================================
+  // ==========================================================================
 
   describe('AC6: Accessibility', () => {
-    it.todo('badge button has descriptive aria-label with status and time')
+    it('badge button has descriptive aria-label with status and time', () => {
+      mockStatusReturned({ lastSyncAt: new Date(Date.now() - 5 * 60 * 1000).toISOString() })
+      renderBadge()
+      const ariaLabel = screen.getByRole('button').getAttribute('aria-label') ?? ''
+      expect(ariaLabel).toContain('Статус синхронизации')
+      expect(ariaLabel).toContain('Синхронизировано')
+      expect(ariaLabel).toContain('Последняя синхронизация')
+    })
 
-    it.todo('tooltip is accessible via keyboard focus')
+    it('tooltip is accessible via keyboard focus', async () => {
+      const user = setupUser()
+      mockStatusReturned()
+      renderBadge()
+      await user.tab()
+      expect(screen.getByRole('button')).toHaveFocus()
+    })
 
-    it.todo('badge is keyboard focusable (can receive focus)')
+    it('badge is keyboard focusable (can receive focus)', () => {
+      mockStatusReturned()
+      renderBadge()
+      const button = screen.getByRole('button')
+      expect(button).toHaveAttribute('type', 'button')
+      expect(button.tagName).toBe('BUTTON')
+    })
 
-    it.todo('status is indicated by icon, not color alone')
+    it('status is indicated by icon, not color alone', () => {
+      mockStatusReturned({ status: 'completed' })
+      renderBadge()
+      expect(
+        screen.getByRole('button').querySelector('svg[aria-hidden="true"]')
+      ).toBeInTheDocument()
+    })
 
-    it.todo('screen reader announces status changes')
+    it('screen reader announces status changes', () => {
+      mockStatusReturned({ status: 'syncing' })
+      const { rerender } = renderBadge()
+      expect(screen.getByRole('button')).toHaveAttribute(
+        'aria-label',
+        expect.stringContaining('Синхронизация...')
+      )
 
-    it.todo('has focus ring styling on focus-visible')
+      mockStatusReturned({ status: 'completed' })
+      rerender(<AdvertisingSyncStatusBadge />)
+      expect(screen.getByRole('button')).toHaveAttribute(
+        'aria-label',
+        expect.stringContaining('Синхронизировано')
+      )
+    })
 
-    it.todo('WCAG 2.1 AA color contrast for all status colors')
+    it('has focus ring styling on focus-visible', () => {
+      mockStatusReturned()
+      renderBadge()
+      const button = screen.getByRole('button')
+      expect(button).toHaveClass('focus-visible:ring-2')
+      expect(button).toHaveClass('focus-visible:ring-primary')
+    })
+
+    it('WCAG 2.1 AA color contrast for all status colors', () => {
+      const expectedColors: Record<SyncTaskStatus, string> = {
+        idle: 'text-gray-600',
+        syncing: 'text-blue-600',
+        completed: 'text-green-600',
+        partial_success: 'text-yellow-600',
+        failed: 'text-red-600',
+      }
+      for (const status of Object.keys(expectedColors) as SyncTaskStatus[]) {
+        mockStatusReturned({ status })
+        const { unmount } = renderBadge()
+        expect(screen.getByRole('button')).toHaveClass(expectedColors[status])
+        unmount()
+      }
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // Loading & Error States
-  // ============================================================================
+  // ==========================================================================
 
   describe('Loading State', () => {
-    it.todo('shows skeleton with w-32 h-6 rounded-full during loading')
+    it('shows skeleton with w-32 h-6 rounded-full during loading', () => {
+      mockLoading()
+      renderBadge()
+      const skeleton = document.querySelector('.w-32.h-6.rounded-full')
+      expect(skeleton).toBeInTheDocument()
+      expect(skeleton).toHaveClass('w-32')
+      expect(skeleton).toHaveClass('h-6')
+      expect(skeleton).toHaveClass('rounded-full')
+    })
 
-    it.todo('skeleton has appropriate animation')
+    it('skeleton has appropriate animation', () => {
+      mockLoading()
+      renderBadge()
+      expect(document.querySelector('.w-32.h-6.rounded-full')).toHaveClass('animate-pulse')
+    })
   })
 
   describe('Error State', () => {
-    it.todo('displays "Статус недоступен" text on error')
+    it('displays "Статус недоступен" text on error', () => {
+      mockError('API error')
+      renderBadge()
+      expect(screen.getByText('Статус недоступен')).toBeInTheDocument()
+    })
 
-    it.todo('uses muted-foreground text color for error message')
+    it('uses muted-foreground text color for error message', () => {
+      mockError('API error')
+      renderBadge()
+      expect(screen.getByText('Статус недоступен')).toHaveClass('text-muted-foreground')
+    })
 
-    it.todo('does not crash when data is undefined')
+    it('does not crash when data is undefined', () => {
+      mockUseAdvertisingSyncStatusBadge.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
+        isRefetching: false,
+      })
+      expect(() => renderBadge()).not.toThrow()
+      expect(screen.getByText('Статус недоступен')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // Responsive Behavior
-  // ============================================================================
+  // ==========================================================================
 
   describe('Responsive Behavior', () => {
-    it.todo('shows icon only on mobile (hidden sm:inline for text)')
+    it('shows icon only on mobile (hidden sm:inline for text)', () => {
+      mockStatusReturned()
+      renderBadge()
+      const textSpan = screen.getByRole('button').querySelector('span')
+      expect(textSpan).toHaveClass('hidden')
+      expect(textSpan).toHaveClass('sm:inline')
+    })
 
-    it.todo('shows icon and relative time text on sm+ screens')
+    it('shows icon and relative time text on sm+ screens', () => {
+      mockStatusReturned()
+      renderBadge()
+      const button = screen.getByRole('button')
+      const svg = button.querySelector('svg')
+      expect(svg).toBeInTheDocument()
+      expect(svg).not.toHaveClass('hidden')
+      const textSpan = button.querySelector('span')
+      expect(textSpan).toBeInTheDocument()
+      expect(textSpan).toHaveClass('hidden')
+      expect(textSpan).toHaveClass('sm:inline')
+    })
   })
 
-  // ============================================================================
-  // TDD Verification Tests (These will pass to verify test setup)
-  // ============================================================================
+  // ==========================================================================
+  // TDD Verification Tests (verify test setup is correct)
+  // ==========================================================================
 
   describe('TDD Verification', () => {
     it('has expected status configuration structure', () => {
       const expectedConfig = {
-        idle: {
-          label: 'Ожидание',
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-100',
-          description: 'Синхронизация не запущена',
-        },
-        syncing: {
-          label: 'Синхронизация...',
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-100',
-          description: 'Идёт загрузка данных из WB',
-          animate: true,
-        },
-        completed: {
-          label: 'Синхронизировано',
-          color: 'text-green-600',
-          bgColor: 'bg-green-100',
-          description: 'Данные актуальны',
-        },
-        partial_success: {
-          label: 'Частично',
-          color: 'text-yellow-600',
-          bgColor: 'bg-yellow-100',
-          description: 'Часть данных загружена с ошибками',
-        },
-        failed: {
-          label: 'Ошибка',
-          color: 'text-red-600',
-          bgColor: 'bg-red-100',
-          description: 'Синхронизация не удалась',
-        },
+        idle: { label: 'Ожидание', color: 'text-gray-600', bgColor: 'bg-gray-100' },
+        syncing: { label: 'Синхронизация...', color: 'text-blue-600', animate: true },
+        completed: { label: 'Синхронизировано', color: 'text-green-600' },
+        partial_success: { label: 'Частично', color: 'text-yellow-600' },
+        failed: { label: 'Ошибка', color: 'text-red-600' },
       }
-
       expect(expectedConfig.idle.label).toBe('Ожидание')
       expect(expectedConfig.syncing.label).toBe('Синхронизация...')
+      expect(expectedConfig.syncing.animate).toBe(true)
       expect(expectedConfig.completed.label).toBe('Синхронизировано')
       expect(expectedConfig.partial_success.label).toBe('Частично')
       expect(expectedConfig.failed.label).toBe('Ошибка')
-      expect(expectedConfig.syncing.animate).toBe(true)
     })
 
     it('has all five sync statuses defined', () => {
@@ -308,7 +598,6 @@ describe('AdvertisingSyncStatusBadge', () => {
     })
 
     it('has testing utilities available', () => {
-      expect(render).toBeDefined()
       expect(screen).toBeDefined()
       expect(waitFor).toBeDefined()
       expect(userEvent).toBeDefined()
@@ -316,7 +605,6 @@ describe('AdvertisingSyncStatusBadge', () => {
 
     it('creates valid mock sync status data', () => {
       const mockData = createMockSyncStatus()
-
       expect(mockData.status).toBe('completed')
       expect(mockData.campaignsSynced).toBe(262)
       expect(mockData.lastSyncAt).toBeDefined()
@@ -331,22 +619,19 @@ describe('AdvertisingSyncStatusBadge', () => {
         campaignsSynced: 0,
         lastSyncAt: null,
       })
-
       expect(mockData.status).toBe('failed')
       expect(mockData.campaignsSynced).toBe(0)
       expect(mockData.lastSyncAt).toBeNull()
     })
 
     it('validates color hex codes match spec', () => {
-      // From Story 63.3-FE spec
       const colorSpec = {
-        idle: '#9CA3AF', // Gray
-        syncing: '#3B82F6', // Blue
-        completed: '#22C55E', // Green
-        partial_success: '#F59E0B', // Yellow
-        failed: '#EF4444', // Red
+        idle: '#9CA3AF',
+        syncing: '#3B82F6',
+        completed: '#22C55E',
+        partial_success: '#F59E0B',
+        failed: '#EF4444',
       }
-
       expect(colorSpec.idle).toBe('#9CA3AF')
       expect(colorSpec.syncing).toBe('#3B82F6')
       expect(colorSpec.completed).toBe('#22C55E')

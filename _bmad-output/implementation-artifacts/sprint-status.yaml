@@ -532,3 +532,19 @@ development_status:
   122.1-fe-product-analytics-funnel-tab: done  # 2026-06-06 committed 16312c77
   122.2-fe-price-recommendation-history: done  # 2026-06-06 committed 16312c77
   122.3-fe-product-analytics-e2e: done  # 2026-06-06 committed 1e8e48b8
+
+  # Epic 123-FE: AI Feature Activation + Forecast Accuracy Dashboard
+  epic-123-fe: done  # 2026-06-07 ALL stories done (123.1-123.6). 9870 tests passing, 0 failed.
+  123.1-fe-sku-accuracy-filter: done  # 2026-06-07 committed a3882474. Activated modelId+nmId params (#166 resolved).
+  123.2-fe-confidence-normalizer: done  # 2026-06-07 committed a3882474. Simplified scaleConfidence (#180 resolved).
+  123.3-fe-revenue-confidence: done  # 2026-06-07 committed a3882474. Updated revenue comments (#188 resolved).
+  123.4-fe-forecast-accuracy-dashboard: done  # 2026-06-07 committed a3882474. New page /analytics/forecast-accuracy with MAPE/MAE/Bias cards + horizon/SKU tables.
+  123.5-fe-admin-verify: done  # 2026-06-07 committed a3882474. Verified admin MAPE (#185), preferences (#184), anomalies (#167) already correct.
+  123.6-fe-monitoring-recovery: done  # 2026-06-07 committed a3882474. Recovery panel consumes backend displayName+config (#187).
+  epic-123-fe-retrospective: done  # 2026-06-07 filed at _bmad-output/implementation-artifacts/epic-123-fe-retro-2026-06-07.md. Condensed format. 6/6 stories, 7 backend requests resolved (#166, #167, #180, #184, #185, #187, #188). 5 wins (W-1..W-6), 4 challenges (D-1..D-4), 4 insights (I-1..I-4), 2 discoveries (SD-1..SD-2), 5 action items (A-1..A-5).
+
+  # Epic 124-FE: Test Coverage Completion — Flush 2,737 TODO Stubs (P1 tech debt, ~30-40 SP)
+  # Spec: _bmad-output/planning-artifacts/epics-124-fe.md (created 2026-06-07)
+  # Source: Epic 123-FE retro action items + test stub audit (2,737 it.todo stubs across 50 files)
+  # Strategy: Wave execution — 9-12 parallel executor agents per wave, ~18 stories across 5 tracks
+  epic-124-fe: in-progress  # 2026-06-07 kickoff. Wave 3 (9 agents, ~1,089 stubs) in progress. Wave 4 launching.

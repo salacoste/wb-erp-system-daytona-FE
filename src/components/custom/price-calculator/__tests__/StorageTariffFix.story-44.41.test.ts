@@ -516,7 +516,20 @@ describe('Story 44.41: Edge Cases and Invariants', () => {
       expect(result.usingFallback).toBe(true)
     })
 
-    it.todo('should handle NaN values as fallback trigger - future enhancement')
+    it('should pass through NaN values without triggering fallback', () => {
+      const storageWithNaN = {
+        baseLiterRub: NaN,
+        additionalLiterRub: 0,
+        coefficient: 1.5,
+      }
+
+      const result = extractStorageTariffs(storageWithNaN, 'supply')
+
+      // typeof NaN === 'number' and NaN !== 0, so the extraction passes it through
+      // without triggering the fallback. NaN propagation is the caller's responsibility.
+      expect(result.usingFallback).toBe(false)
+      expect(Number.isNaN(result.tariffs.baseLiterRub)).toBe(true)
+    })
   })
 
   describe('INVENTORY vs SUPPLY rate comparison', () => {

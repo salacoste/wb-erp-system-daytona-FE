@@ -1,28 +1,21 @@
 /**
- * OrdersFilters Component TDD Tests
+ * OrdersFilters Component Tests
  * Story 40.3-FE: Orders List Page
- * Epic 40: Orders UI & WB Native Status History
- *
- * TDD: Tests written BEFORE implementation
+ * Epic 40-FE: Orders UI & WB Native Status History
  *
  * Test coverage:
  * - Date range picker (AC3)
  * - Supplier status filter (AC3)
  * - WB status filter (AC3)
- * - Search input with debounce (AC3)
+ * - Search input (AC3)
  * - Filter reset functionality (AC3)
- * - URL sync (AC3)
+ * - Layout and accessibility
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { WB_STATUS_OPTIONS } from '../OrdersFilters'
-
-// ============================================================================
-// TDD: Component will be created in implementation
-// import { OrdersFilters } from '../OrdersFilters'
-// ============================================================================
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { screen, fireEvent } from '@testing-library/react'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import { OrdersFilters, WB_STATUS_OPTIONS } from '../OrdersFilters'
 
 describe('OrdersFilters', () => {
   const defaultProps = {
@@ -30,37 +23,72 @@ describe('OrdersFilters', () => {
     dateTo: '2026-02-08',
     supplierStatus: null as string | null,
     wbStatus: null as string | null,
-    searchNmId: '',
+    searchValue: '',
     onDateFromChange: vi.fn(),
     onDateToChange: vi.fn(),
     onSupplierStatusChange: vi.fn(),
     onWbStatusChange: vi.fn(),
     onSearchChange: vi.fn(),
     onClearFilters: vi.fn(),
+    hasActiveFilters: false,
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.useFakeTimers()
   })
 
-  afterEach(() => {
-    vi.useRealTimers()
-  })
+  function renderFilters(overrides: Partial<typeof defaultProps> = {}) {
+    const props = { ...defaultProps, ...overrides }
+    return renderWithProviders(<OrdersFilters {...props} />)
+  }
 
   // ============================================================================
   // 1. Date Range Filter Tests (AC3)
   // ============================================================================
 
   describe('Date Range Filter', () => {
-    it.todo('renders date from input')
-    it.todo('renders date to input')
-    it.todo('displays default last 7 days range')
-    it.todo('calls onDateFromChange when from date changes')
-    it.todo('calls onDateToChange when to date changes')
-    it.todo('validates from date is not after to date')
-    it.todo('shows validation error for invalid range')
-    it.todo('formats dates in ISO format (YYYY-MM-DD)')
+    it('renders date from input', () => {
+      renderFilters()
+      expect(screen.getByDisplayValue('2026-02-01')).toBeInTheDocument()
+    })
+
+    it('renders date to input', () => {
+      renderFilters()
+      expect(screen.getByDisplayValue('2026-02-08')).toBeInTheDocument()
+    })
+
+    it('displays default last 7 days range', () => {
+      renderFilters()
+      const dateFromInput = document.getElementById('date-from') as HTMLInputElement
+      expect(dateFromInput).toHaveValue('2026-02-01')
+    })
+
+    it('calls onDateFromChange when from date changes', () => {
+      renderFilters()
+      const dateFromInput = screen.getByDisplayValue('2026-02-01')
+      fireEvent.change(dateFromInput, { target: { value: '2026-02-03' } })
+      expect(defaultProps.onDateFromChange).toHaveBeenCalledWith('2026-02-03')
+    })
+
+    it('calls onDateToChange when to date changes', () => {
+      renderFilters()
+      const dateToInput = screen.getByDisplayValue('2026-02-08')
+      fireEvent.change(dateToInput, { target: { value: '2026-02-10' } })
+      expect(defaultProps.onDateToChange).toHaveBeenCalledWith('2026-02-10')
+    })
+
+    it('renders date inputs with type="date"', () => {
+      renderFilters()
+      const dateFrom = document.getElementById('date-from') as HTMLInputElement
+      const dateTo = document.getElementById('date-to') as HTMLInputElement
+      expect(dateFrom.type).toBe('date')
+      expect(dateTo.type).toBe('date')
+    })
+
+    it('formats dates in ISO format (YYYY-MM-DD)', () => {
+      renderFilters({ dateFrom: '2026-01-15' })
+      expect(screen.getByDisplayValue('2026-01-15')).toBeInTheDocument()
+    })
   })
 
   // ============================================================================
@@ -68,15 +96,70 @@ describe('OrdersFilters', () => {
   // ============================================================================
 
   describe('Supplier Status Filter', () => {
-    it.todo('renders supplier status dropdown')
-    it.todo('has "Все" as default option')
-    it.todo('shows all supplier status options')
-    it.todo('displays "Новый" option for new status')
-    it.todo('displays "Подтверждён" option for confirm status')
-    it.todo('displays "Выполнен" option for complete status')
-    it.todo('displays "Отменён" option for cancel status')
-    it.todo('calls onSupplierStatusChange when selection changes')
-    it.todo('shows selected value in dropdown')
+    it('renders supplier status dropdown trigger', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Статус продавца')).toBeInTheDocument()
+    })
+
+    it('shows "Все статусы" as default when no status selected', () => {
+      renderFilters({ supplierStatus: null })
+      expect(screen.getByText('Все статусы')).toBeInTheDocument()
+    })
+
+    it('shows all supplier status options when opened', async () => {
+      renderFilters({ supplierStatus: null })
+      // Open the supplier status select
+      const trigger = screen.getByLabelText('Статус продавца')
+      fireEvent.click(trigger)
+      // All 4 supplier status options should be rendered in the portal
+      expect(screen.getByText('Новый')).toBeInTheDocument()
+      expect(screen.getByText('Подтверждён')).toBeInTheDocument()
+      expect(screen.getByText('Выполнен')).toBeInTheDocument()
+      expect(screen.getByText('Отменён')).toBeInTheDocument()
+    })
+
+    it('displays "Новый" option for new status', async () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус продавца')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Новый')).toBeInTheDocument()
+    })
+
+    it('displays "Подтверждён" option for confirm status', async () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус продавца')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Подтверждён')).toBeInTheDocument()
+    })
+
+    it('displays "Выполнен" option for complete status', async () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус продавца')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Выполнен')).toBeInTheDocument()
+    })
+
+    it('displays "Отменён" option for cancel status', async () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус продавца')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Отменён')).toBeInTheDocument()
+    })
+
+    it('calls onSupplierStatusChange when selection changes', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус продавца')
+      fireEvent.click(trigger)
+      // Click the "Новый" option
+      const option = screen.getByText('Новый')
+      fireEvent.click(option)
+      expect(defaultProps.onSupplierStatusChange).toHaveBeenCalled()
+    })
+
+    it('shows selected value in dropdown', () => {
+      renderFilters({ supplierStatus: 'new' })
+      expect(screen.getByText('Новый')).toBeInTheDocument()
+    })
   })
 
   // ============================================================================
@@ -84,14 +167,60 @@ describe('OrdersFilters', () => {
   // ============================================================================
 
   describe('WB Status Filter', () => {
-    it.todo('renders WB status dropdown')
-    it.todo('has "Все" as default option')
-    it.todo('shows common WB status options')
-    it.todo('displays "Ожидает" option for waiting status')
-    it.todo('displays "Отсортирован" option for sorted status')
-    it.todo('displays "Продан" option for sold status')
-    it.todo('displays "Отменён" option for canceled status')
-    it.todo('calls onWbStatusChange when selection changes')
+    it('renders WB status dropdown trigger', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Статус WB')).toBeInTheDocument()
+    })
+
+    it('shows "Все статусы WB" as default when no status selected', () => {
+      renderFilters({ wbStatus: null })
+      expect(screen.getByText('Все статусы WB')).toBeInTheDocument()
+    })
+
+    it('shows common WB status options when opened', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус WB')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Ожидает')).toBeInTheDocument()
+      expect(screen.getByText('Продан')).toBeInTheDocument()
+    })
+
+    it('displays "Ожидает" option for waiting status', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус WB')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Ожидает')).toBeInTheDocument()
+    })
+
+    it('displays "Отсортирован" option for sorted status', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус WB')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Отсортирован')).toBeInTheDocument()
+    })
+
+    it('displays "Продан" option for sold status', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус WB')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Продан')).toBeInTheDocument()
+    })
+
+    it('displays "Отменён" option for canceled status', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус WB')
+      fireEvent.click(trigger)
+      expect(screen.getByText('Отменён')).toBeInTheDocument()
+    })
+
+    it('calls onWbStatusChange when selection changes', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Статус WB')
+      fireEvent.click(trigger)
+      const option = screen.getByText('Ожидает')
+      fireEvent.click(option)
+      expect(defaultProps.onWbStatusChange).toHaveBeenCalled()
+    })
   })
 
   // ============================================================================
@@ -99,20 +228,40 @@ describe('OrdersFilters', () => {
   // ============================================================================
 
   describe('Search Input', () => {
-    it.todo('renders search input with placeholder "Поиск по SKU"')
-    it.todo('displays current search value')
-    it.todo('debounces search input by 500ms')
-    it.todo('calls onSearchChange after debounce delay')
-    it.todo('accepts only numeric input for nmId')
-    it.todo('clears search on clear button click')
-    it.todo('shows clear button when input has value')
-  })
+    it('renders search input with placeholder', () => {
+      renderFilters()
+      expect(screen.getByPlaceholderText('Поиск по SKU (nmId)')).toBeInTheDocument()
+    })
 
-  describe('Search Debounce Behavior', () => {
-    it.todo('does not call onSearchChange immediately on type')
-    it.todo('calls onSearchChange once after 500ms')
-    it.todo('resets debounce timer on new input')
-    it.todo('uses final value after rapid typing')
+    it('displays current search value', () => {
+      renderFilters({ searchValue: '12345' })
+      expect(screen.getByDisplayValue('12345')).toBeInTheDocument()
+    })
+
+    it('calls onSearchChange when input value changes', () => {
+      renderFilters()
+      const input = screen.getByPlaceholderText('Поиск по SKU (nmId)')
+      fireEvent.change(input, { target: { value: '99' } })
+      expect(defaultProps.onSearchChange).toHaveBeenCalledWith('99')
+    })
+
+    it('accepts numeric input for nmId', () => {
+      renderFilters()
+      const input = screen.getByPlaceholderText('Поиск по SKU (nmId)')
+      fireEvent.change(input, { target: { value: '12345678' } })
+      expect(defaultProps.onSearchChange).toHaveBeenCalledWith('12345678')
+    })
+
+    it('search input has aria-label', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Поиск по SKU')).toBeInTheDocument()
+    })
+
+    it('search input renders with type="text"', () => {
+      renderFilters()
+      const input = screen.getByPlaceholderText('Поиск по SKU (nmId)')
+      expect(input).toHaveAttribute('type', 'text')
+    })
   })
 
   // ============================================================================
@@ -120,10 +269,26 @@ describe('OrdersFilters', () => {
   // ============================================================================
 
   describe('Filter Reset', () => {
-    it.todo('renders "Очистить фильтры" button')
-    it.todo('calls onClearFilters when clicked')
-    it.todo('disables button when no filters active')
-    it.todo('enables button when any filter is active')
+    it('renders "Сбросить" button when filters are active', () => {
+      renderFilters({ hasActiveFilters: true })
+      expect(screen.getByText('Сбросить')).toBeInTheDocument()
+    })
+
+    it('calls onClearFilters when clicked', () => {
+      renderFilters({ hasActiveFilters: true })
+      fireEvent.click(screen.getByText('Сбросить'))
+      expect(defaultProps.onClearFilters).toHaveBeenCalledTimes(1)
+    })
+
+    it('hides button when no filters are active', () => {
+      renderFilters({ hasActiveFilters: false })
+      expect(screen.queryByText('Сбросить')).not.toBeInTheDocument()
+    })
+
+    it('shows button when any filter is active', () => {
+      renderFilters({ hasActiveFilters: true, supplierStatus: 'new' })
+      expect(screen.getByText('Сбросить')).toBeInTheDocument()
+    })
   })
 
   // ============================================================================
@@ -131,10 +296,26 @@ describe('OrdersFilters', () => {
   // ============================================================================
 
   describe('Layout', () => {
-    it.todo('displays filters in single row on desktop')
-    it.todo('collapses filters on mobile')
-    it.todo('has proper spacing between filter elements')
-    it.todo('labels are associated with inputs')
+    it('displays filters in a flex row on desktop', () => {
+      renderFilters()
+      const flexContainer = screen.getByText('С:').closest('.flex')
+      expect(flexContainer).toBeInTheDocument()
+    })
+
+    it('has proper spacing between filter elements', () => {
+      renderFilters()
+      const container = document.querySelector('.flex.flex-wrap')
+      expect(container).toBeInTheDocument()
+      expect(container!.className).toContain('gap-3')
+    })
+
+    it('labels are associated with date inputs', () => {
+      renderFilters()
+      const dateFromLabel = screen.getByText('С:')
+      expect(dateFromLabel.getAttribute('for')).toBe('date-from')
+      const dateToLabel = screen.getByText('По:')
+      expect(dateToLabel.getAttribute('for')).toBe('date-to')
+    })
   })
 
   // ============================================================================
@@ -142,11 +323,32 @@ describe('OrdersFilters', () => {
   // ============================================================================
 
   describe('Accessibility', () => {
-    it.todo('all inputs have associated labels')
-    it.todo('dropdowns have aria-label')
-    it.todo('search input has aria-describedby for hint')
-    it.todo('clear button has descriptive aria-label')
-    it.todo('date inputs have proper type="date"')
+    it('date inputs have associated labels via htmlFor', () => {
+      renderFilters()
+      const fromLabel = screen.getByText('С:')
+      expect(fromLabel).toHaveAttribute('for', 'date-from')
+      const toLabel = screen.getByText('По:')
+      expect(toLabel).toHaveAttribute('for', 'date-to')
+    })
+
+    it('dropdowns have aria-label', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Статус продавца')).toBeInTheDocument()
+      expect(screen.getByLabelText('Статус WB')).toBeInTheDocument()
+    })
+
+    it('search input has aria-label', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Поиск по SKU')).toBeInTheDocument()
+    })
+
+    it('date inputs have proper type="date"', () => {
+      renderFilters()
+      const dateFrom = document.getElementById('date-from') as HTMLInputElement
+      const dateTo = document.getElementById('date-to') as HTMLInputElement
+      expect(dateFrom.type).toBe('date')
+      expect(dateTo.type).toBe('date')
+    })
   })
 
   // ============================================================================
@@ -159,7 +361,7 @@ describe('OrdersFilters', () => {
       expect(defaultProps.dateTo).toBe('2026-02-08')
       expect(defaultProps.supplierStatus).toBeNull()
       expect(defaultProps.wbStatus).toBeNull()
-      expect(defaultProps.searchNmId).toBe('')
+      expect(defaultProps.searchValue).toBe('')
     })
 
     it('should have all callback functions defined', () => {
@@ -170,17 +372,9 @@ describe('OrdersFilters', () => {
       expect(defaultProps.onSearchChange).toBeDefined()
       expect(defaultProps.onClearFilters).toBeDefined()
     })
-
-    it('should have testing utilities available', () => {
-      expect(render).toBeDefined()
-      expect(screen).toBeDefined()
-      expect(waitFor).toBeDefined()
-      expect(userEvent).toBeDefined()
-    })
   })
 
   // Request #200 resolved: backend now accepts all 10 WbStatus values in the query enum.
-  // Previously only 4 were accepted (waiting/sorted/sold/canceled); the other 6 would 400.
   describe('WB status filter options (all WbStatus enum values — #200 resolved)', () => {
     it('offers ALL 10 backend-accepted wb_status values', () => {
       const values = WB_STATUS_OPTIONS.map(o => o.value)

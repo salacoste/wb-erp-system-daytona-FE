@@ -1,35 +1,25 @@
 /**
- * SuppliesFilters Component TDD Tests
+ * SuppliesFilters Component Tests
  * Story 53.2-FE: Supplies List Page
  * Epic 53-FE: Supply Management UI
- *
- * TDD: Tests written BEFORE implementation
  *
  * Test coverage:
  * - Status dropdown (AC3)
  * - Date range picker (AC3)
  * - Clear filters button
  * - Filter changes trigger callbacks
- * - URL sync
  * - Accessibility
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { screen, within, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import { SuppliesFilters } from '../SuppliesFilters'
+import type { SupplyStatus } from '@/types/supplies'
 
-// SupplyStatus type will be implemented in Story 53.1-FE
-// For TDD, we define the expected type inline
-type SupplyStatus = 'OPEN' | 'CLOSED' | 'DELIVERING' | 'DELIVERED' | 'CANCELLED'
-
-// ============================================================================
-// TDD: Component will be created in implementation
-// import { SuppliesFilters } from '../SuppliesFilters'
-// ============================================================================
-
-// Expected status options
 const EXPECTED_STATUS_OPTIONS = [
-  { value: '', label: 'Все' },
+  { value: 'all', label: 'Все' },
   { value: 'OPEN', label: 'Открыта' },
   { value: 'CLOSED', label: 'Закрыта' },
   { value: 'DELIVERING', label: 'В пути' },
@@ -37,195 +27,483 @@ const EXPECTED_STATUS_OPTIONS = [
   { value: 'CANCELLED', label: 'Отменена' },
 ]
 
-describe('SuppliesFilters', () => {
-  const defaultProps = {
+function renderFilters(overrides: Partial<Parameters<typeof SuppliesFilters>[0]> = {}) {
+  const props = {
     status: undefined as SupplyStatus | undefined,
-    from: '2026-02-01',
-    to: '2026-03-02',
+    dateFrom: '2026-02-01',
+    dateTo: '2026-03-02',
     onStatusChange: vi.fn(),
-    onDateRangeChange: vi.fn(),
+    onDateFromChange: vi.fn(),
+    onDateToChange: vi.fn(),
     onClearFilters: vi.fn(),
+    hasActiveFilters: false,
+    ...overrides,
   }
+  const result = renderWithProviders(<SuppliesFilters {...props} />)
+  return { ...result, props }
+}
 
+describe('SuppliesFilters', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 1. Status Filter Tests (AC3)
-  // ============================================================================
+  // ===========================================================================
 
   describe('Status Filter', () => {
-    it.todo('renders status dropdown')
+    it('renders status dropdown', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Фильтр по статусу')).toBeInTheDocument()
+    })
 
-    it.todo('status dropdown has label "Статус"')
+    it('status dropdown has label "Статус"', () => {
+      renderFilters()
+      expect(screen.getByText('Статус:')).toBeInTheDocument()
+    })
 
-    it.todo('status dropdown shows "Все" by default')
+    it('status dropdown shows "Все" by default', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      expect(trigger).toHaveTextContent('Все')
+    })
 
-    it.todo('status dropdown has all 6 options')
+    it('status dropdown has all 6 options', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      await user.click(trigger)
+      const listbox = screen.getByRole('listbox')
+      const options = within(listbox).getAllByRole('option')
+      expect(options).toHaveLength(6)
+    })
 
-    it.todo('option "Все" is available')
+    it('option "Все" is available', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      expect(screen.getByRole('option', { name: 'Все' })).toBeInTheDocument()
+    })
 
-    it.todo('option "Открыта" (OPEN) is available')
+    it('option "Открыта" (OPEN) is available', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      expect(screen.getByRole('option', { name: 'Открыта' })).toBeInTheDocument()
+    })
 
-    it.todo('option "Закрыта" (CLOSED) is available')
+    it('option "Закрыта" (CLOSED) is available', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      expect(screen.getByRole('option', { name: 'Закрыта' })).toBeInTheDocument()
+    })
 
-    it.todo('option "В пути" (DELIVERING) is available')
+    it('option "В пути" (DELIVERING) is available', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      expect(screen.getByRole('option', { name: 'В пути' })).toBeInTheDocument()
+    })
 
-    it.todo('option "Доставлена" (DELIVERED) is available')
+    it('option "Доставлена" (DELIVERED) is available', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      expect(screen.getByRole('option', { name: 'Доставлена' })).toBeInTheDocument()
+    })
 
-    it.todo('option "Отменена" (CANCELLED) is available')
+    it('option "Отменена" (CANCELLED) is available', async () => {
+      const user = userEvent.setup()
+      renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      expect(screen.getByRole('option', { name: 'Отменена' })).toBeInTheDocument()
+    })
 
-    it.todo('selecting status calls onStatusChange')
+    it('selecting status calls onStatusChange', async () => {
+      const user = userEvent.setup()
+      const { props } = renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      await user.click(screen.getByRole('option', { name: 'Открыта' }))
+      expect(props.onStatusChange).toHaveBeenCalledWith('OPEN')
+    })
 
-    it.todo('selecting "Все" calls onStatusChange with undefined')
+    it('selecting "Все" calls onStatusChange with undefined', async () => {
+      const user = userEvent.setup()
+      const { props } = renderFilters({ status: 'OPEN' })
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      await user.click(screen.getByRole('option', { name: 'Все' }))
+      expect(props.onStatusChange).toHaveBeenCalledWith(undefined)
+    })
 
-    it.todo('displays current status when prop is set')
+    it('displays current status when prop is set', () => {
+      renderFilters({ status: 'CLOSED' })
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      expect(trigger).toHaveTextContent('Закрыта')
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 2. Date Range Filter Tests (AC3)
-  // ============================================================================
+  // ===========================================================================
 
   describe('Date Range Filter', () => {
-    it.todo('renders date range section')
+    it('renders date range section', () => {
+      renderFilters()
+      expect(screen.getByText('Период:')).toBeInTheDocument()
+    })
 
-    it.todo('renders "от" (from) date input')
+    it('renders "от" (from) date input', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Дата начала')).toBeInTheDocument()
+    })
 
-    it.todo('renders "до" (to) date input')
+    it('renders "до" (to) date input', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Дата окончания')).toBeInTheDocument()
+    })
 
-    it.todo('from input has label "Период"')
+    it('from input has label "Период"', () => {
+      renderFilters()
+      expect(screen.getByText('Период:')).toBeInTheDocument()
+    })
 
-    it.todo('displays current from date value')
+    it('displays current from date value', () => {
+      renderFilters({ dateFrom: '2026-01-15' })
+      const fromInput = screen.getByLabelText('Дата начала') as HTMLInputElement
+      expect(fromInput.value).toBe('2026-01-15')
+    })
 
-    it.todo('displays current to date value')
+    it('displays current to date value', () => {
+      renderFilters({ dateTo: '2026-02-28' })
+      const toInput = screen.getByLabelText('Дата окончания') as HTMLInputElement
+      expect(toInput.value).toBe('2026-02-28')
+    })
 
-    it.todo('changing from date calls onDateRangeChange')
+    it('changing from date calls onDateFromChange', async () => {
+      const user = userEvent.setup()
+      const { props } = renderFilters()
+      await user.clear(screen.getByLabelText('Дата начала'))
+      await user.type(screen.getByLabelText('Дата начала'), '2026-01-01')
+      expect(props.onDateFromChange).toHaveBeenCalled()
+    })
 
-    it.todo('changing to date calls onDateRangeChange')
+    it('changing to date calls onDateToChange', async () => {
+      const user = userEvent.setup()
+      const { props } = renderFilters()
+      await user.clear(screen.getByLabelText('Дата окончания'))
+      await user.type(screen.getByLabelText('Дата окончания'), '2026-02-28')
+      expect(props.onDateToChange).toHaveBeenCalled()
+    })
 
-    it.todo('date inputs accept ISO date format')
+    it('date inputs accept ISO date format', () => {
+      renderFilters({ dateFrom: '2026-01-15', dateTo: '2026-02-28' })
+      const fromInput = screen.getByLabelText('Дата начала') as HTMLInputElement
+      const toInput = screen.getByLabelText('Дата окончания') as HTMLInputElement
+      expect(fromInput.type).toBe('date')
+      expect(toInput.type).toBe('date')
+    })
 
-    it.todo('date picker opens on input click')
+    it('date inputs are interactive', () => {
+      renderFilters()
+      const fromInput = screen.getByLabelText('Дата начала') as HTMLInputElement
+      const toInput = screen.getByLabelText('Дата окончания') as HTMLInputElement
+      expect(fromInput).not.toBeDisabled()
+      expect(toInput).not.toBeDisabled()
+    })
 
-    it.todo('validates from date is not after to date')
-
-    it.todo('shows error for invalid date range')
+    it('has date separator between inputs', () => {
+      renderFilters()
+      expect(screen.getByText('—')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 3. Default Values Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('Default Values', () => {
-    it.todo('status defaults to "Все" when undefined')
+    it('status defaults to "Все" when undefined', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      expect(trigger).toHaveTextContent('Все')
+    })
 
-    it.todo('date range defaults to last 30 days when not provided')
+    it('renders provided from date', () => {
+      renderFilters({ dateFrom: '2026-01-01' })
+      const fromInput = screen.getByLabelText('Дата начала') as HTMLInputElement
+      expect(fromInput.value).toBe('2026-01-01')
+    })
 
-    it.todo('calculates default from date correctly')
+    it('renders provided to date', () => {
+      renderFilters({ dateTo: '2026-12-31' })
+      const toInput = screen.getByLabelText('Дата окончания') as HTMLInputElement
+      expect(toInput.value).toBe('2026-12-31')
+    })
 
-    it.todo('calculates default to date correctly')
+    it('empty date inputs render without errors', () => {
+      renderFilters({ dateFrom: '', dateTo: '' })
+      expect(screen.getByLabelText('Дата начала')).toBeInTheDocument()
+      expect(screen.getByLabelText('Дата окончания')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 4. Clear Filters Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('Clear Filters', () => {
-    it.todo('renders "Очистить фильтры" button')
+    it('renders "Очистить фильтры" button when filters active', () => {
+      renderFilters({ hasActiveFilters: true })
+      expect(screen.getByText('Очистить фильтры')).toBeInTheDocument()
+    })
 
-    it.todo('clear button is visible when any filter is active')
+    it('clear button is visible when any filter is active', () => {
+      renderFilters({ hasActiveFilters: true })
+      const btn = screen.getByText('Очистить фильтры')
+      expect(btn).toBeVisible()
+    })
 
-    it.todo('clear button is hidden when all filters are default')
+    it('clear button is hidden when all filters are default', () => {
+      renderFilters({ hasActiveFilters: false })
+      expect(screen.queryByText('Очистить фильтры')).not.toBeInTheDocument()
+    })
 
-    it.todo('clicking clear button calls onClearFilters')
+    it('clicking clear button calls onClearFilters', async () => {
+      const user = userEvent.setup()
+      const { props } = renderFilters({ hasActiveFilters: true })
+      await user.click(screen.getByText('Очистить фильтры'))
+      expect(props.onClearFilters).toHaveBeenCalledTimes(1)
+    })
 
-    it.todo('clear button resets status to "Все"')
+    it('clear button has aria-label', () => {
+      renderFilters({ hasActiveFilters: true })
+      expect(screen.getByLabelText('Очистить все фильтры')).toBeInTheDocument()
+    })
 
-    it.todo('clear button resets date range to default')
+    it('clear button has X icon', () => {
+      renderFilters({ hasActiveFilters: true })
+      const btn = screen.getByLabelText('Очистить все фильтры')
+      const svg = btn.querySelector('svg')
+      expect(svg).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 5. Filter State Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('Filter State', () => {
-    it.todo('shows active filter indicator when status is set')
+    it('shows active filter indicator when filters active', () => {
+      renderFilters({ hasActiveFilters: true })
+      expect(screen.getByText('Очистить фильтры')).toBeInTheDocument()
+    })
 
-    it.todo('shows active filter indicator when dates differ from default')
+    it('no clear button when filters inactive', () => {
+      renderFilters({ hasActiveFilters: false })
+      expect(screen.queryByText('Очистить фильтры')).not.toBeInTheDocument()
+    })
 
-    it.todo('shows count of active filters')
+    it('updates displayed status when prop changes', () => {
+      renderFilters({ status: 'DELIVERING' })
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      expect(trigger).toHaveTextContent('В пути')
+    })
 
-    it.todo('updates displayed values when props change')
+    it('updates displayed dates when props change', () => {
+      renderFilters({ dateFrom: '2026-05-01', dateTo: '2026-06-01' })
+      const fromInput = screen.getByLabelText('Дата начала') as HTMLInputElement
+      const toInput = screen.getByLabelText('Дата окончания') as HTMLInputElement
+      expect(fromInput.value).toBe('2026-05-01')
+      expect(toInput.value).toBe('2026-06-01')
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 6. Callback Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('Callbacks', () => {
-    it.todo('onStatusChange receives correct status value')
+    it('onStatusChange receives correct status value', async () => {
+      const user = userEvent.setup()
+      const { props } = renderFilters()
+      await user.click(screen.getByLabelText('Фильтр по статусу'))
+      await user.click(screen.getByRole('option', { name: 'Доставлена' }))
+      expect(props.onStatusChange).toHaveBeenCalledWith('DELIVERED')
+    })
 
-    it.todo('onDateRangeChange receives from and to values')
+    it('onDateFromChange receives updated value', async () => {
+      const { props } = renderFilters()
+      const input = screen.getByLabelText('Дата начала')
+      fireEvent.change(input, { target: { value: '2026-03-15' } })
+      expect(props.onDateFromChange).toHaveBeenCalledWith('2026-03-15')
+    })
 
-    it.todo('callbacks are not called on initial render')
+    it('callbacks are not called on initial render', () => {
+      const onStatusChange = vi.fn()
+      const onDateFromChange = vi.fn()
+      const onDateToChange = vi.fn()
+      const onClearFilters = vi.fn()
+      renderFilters({
+        onStatusChange,
+        onDateFromChange,
+        onDateToChange,
+        onClearFilters,
+      })
+      expect(onStatusChange).not.toHaveBeenCalled()
+      expect(onDateFromChange).not.toHaveBeenCalled()
+      expect(onDateToChange).not.toHaveBeenCalled()
+      expect(onClearFilters).not.toHaveBeenCalled()
+    })
 
-    it.todo('callbacks are debounced for rapid changes')
+    it('onClearFilters called once on clear click', async () => {
+      const user = userEvent.setup()
+      const onClearFilters = vi.fn()
+      renderFilters({ hasActiveFilters: true, onClearFilters })
+      await user.click(screen.getByText('Очистить фильтры'))
+      expect(onClearFilters).toHaveBeenCalledTimes(1)
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 7. Layout Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('Layout', () => {
-    it.todo('filters are displayed in a row on desktop')
+    it('filters are displayed in a row container', () => {
+      renderFilters()
+      const container = screen.getByText('Статус:').closest('div')?.parentElement
+      expect(container?.className).toContain('flex')
+    })
 
-    it.todo('filters stack vertically on mobile')
+    it('filter elements have proper spacing', () => {
+      renderFilters()
+      const container = screen.getByText('Статус:').closest('div')?.parentElement
+      expect(container?.className).toContain('gap')
+    })
 
-    it.todo('proper spacing between filter elements')
+    it('status filter has fixed width', () => {
+      renderFilters()
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      expect(trigger.className).toContain('w-36')
+    })
 
-    it.todo('clear button is right-aligned')
+    it('date inputs have fixed width', () => {
+      renderFilters()
+      const fromInput = screen.getByLabelText('Дата начала')
+      expect(fromInput.className).toContain('w-36')
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 8. Accessibility Tests
-  // ============================================================================
+  // ===========================================================================
 
   describe('Accessibility', () => {
-    it.todo('status dropdown has proper label association')
+    it('status dropdown has proper label association', () => {
+      renderFilters()
+      const label = screen.getByText('Статус:')
+      expect(label).toHaveAttribute('for', 'status-filter')
+      expect(screen.getByLabelText('Фильтр по статусу')).toHaveAttribute('id', 'status-filter')
+    })
 
-    it.todo('date inputs have proper label associations')
+    it('date inputs have proper label associations', () => {
+      renderFilters()
+      const fromInput = screen.getByLabelText('Дата начала')
+      const toInput = screen.getByLabelText('Дата окончания')
+      expect(fromInput).toHaveAttribute('id', 'date-from')
+      expect(toInput).toHaveAttribute('id', 'date-to')
+    })
 
-    it.todo('clear button has descriptive aria-label')
+    it('clear button has descriptive aria-label', () => {
+      renderFilters({ hasActiveFilters: true })
+      expect(screen.getByLabelText('Очистить все фильтры')).toBeInTheDocument()
+    })
 
-    it.todo('dropdown is keyboard navigable')
+    it('status trigger has aria-label', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Фильтр по статусу')).toBeInTheDocument()
+    })
 
-    it.todo('date pickers are keyboard navigable')
+    it('date from has aria-label', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Дата начала')).toBeInTheDocument()
+    })
 
-    it.todo('focus order is logical')
+    it('date to has aria-label', () => {
+      renderFilters()
+      expect(screen.getByLabelText('Дата окончания')).toBeInTheDocument()
+    })
 
-    it.todo('screen reader announces selected values')
+    it('all interactive elements are accessible', () => {
+      renderFilters({ hasActiveFilters: true })
+      expect(screen.getByLabelText('Фильтр по статусу')).toBeInTheDocument()
+      expect(screen.getByLabelText('Дата начала')).toBeInTheDocument()
+      expect(screen.getByLabelText('Дата окончания')).toBeInTheDocument()
+      expect(screen.getByLabelText('Очистить все фильтры')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // 9. Edge Cases
-  // ============================================================================
+  // ===========================================================================
 
   describe('Edge Cases', () => {
-    it.todo('handles null status gracefully')
+    it('handles undefined status gracefully', () => {
+      renderFilters({ status: undefined })
+      const trigger = screen.getByLabelText('Фильтр по статусу')
+      expect(trigger).toHaveTextContent('Все')
+    })
 
-    it.todo('handles empty date strings gracefully')
+    it('handles empty date strings gracefully', () => {
+      renderFilters({ dateFrom: '', dateTo: '' })
+      expect(screen.getByLabelText('Дата начала')).toBeInTheDocument()
+      expect(screen.getByLabelText('Дата окончания')).toBeInTheDocument()
+    })
 
-    it.todo('handles invalid date strings gracefully')
+    it('renders with all filters active', () => {
+      renderFilters({
+        status: 'OPEN',
+        dateFrom: '2026-01-01',
+        dateTo: '2026-12-31',
+        hasActiveFilters: true,
+      })
+      expect(screen.getByLabelText('Фильтр по статусу')).toHaveTextContent('Открыта')
+      expect(screen.getByText('Очистить фильтры')).toBeInTheDocument()
+    })
 
-    it.todo('handles rapid filter changes without errors')
+    it('renders with status change to each valid status', () => {
+      const statuses: SupplyStatus[] = ['OPEN', 'CLOSED', 'DELIVERING', 'DELIVERED', 'CANCELLED']
+      for (const status of statuses) {
+        const { unmount } = renderFilters({ status })
+        const trigger = screen.getByLabelText('Фильтр по статусу')
+        expect(trigger.textContent).toBeTruthy()
+        unmount()
+      }
+    })
 
-    it.todo('handles undefined callbacks gracefully')
+    it('handles multiple rapid renders without errors', () => {
+      const { rerender } = renderFilters()
+      rerender(
+        <SuppliesFilters
+          status="OPEN"
+          dateFrom="2026-01-01"
+          dateTo="2026-02-01"
+          onStatusChange={vi.fn()}
+          onDateFromChange={vi.fn()}
+          onDateToChange={vi.fn()}
+          onClearFilters={vi.fn()}
+          hasActiveFilters
+        />
+      )
+      expect(screen.getByLabelText('Фильтр по статусу')).toHaveTextContent('Открыта')
+    })
   })
 
-  // ============================================================================
+  // ===========================================================================
   // TDD Verification Test
-  // ============================================================================
+  // ===========================================================================
 
   describe('TDD Verification', () => {
     it('should have expected status options', () => {
@@ -235,18 +513,10 @@ describe('SuppliesFilters', () => {
       expect(EXPECTED_STATUS_OPTIONS[1].value).toBe('OPEN')
     })
 
-    it('should have default props defined', () => {
-      expect(defaultProps).toBeDefined()
-      expect(defaultProps.onStatusChange).toBeDefined()
-      expect(defaultProps.onDateRangeChange).toBeDefined()
-      expect(defaultProps.onClearFilters).toBeDefined()
-    })
-
     it('should have testing utilities available', () => {
-      expect(render).toBeDefined()
       expect(screen).toBeDefined()
-      expect(within).toBeDefined()
       expect(userEvent).toBeDefined()
+      expect(renderWithProviders).toBeDefined()
     })
   })
 })

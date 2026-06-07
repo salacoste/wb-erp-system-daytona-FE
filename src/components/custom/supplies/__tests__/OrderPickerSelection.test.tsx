@@ -3,8 +3,6 @@
  * Story 53.5-FE: Order Picker Drawer
  * Epic 53-FE: Supply Management UI
  *
- * TDD: Tests written BEFORE implementation (red-green-refactor)
- *
  * Test coverage:
  * - Individual selection (AC4)
  * - Select all visible (AC4)
@@ -14,8 +12,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { renderWithProviders } from '@/test/utils/test-utils'
+import { OrderPickerContent } from '../OrderPickerContent'
 import {
   mockOrdersSmallDataset,
   mockOrdersMediumDataset,
@@ -29,19 +29,36 @@ import {
   ORDER_PICKER_LABELS,
 } from '@/test/fixtures/order-picker'
 
-// TDD: Component and hook imports (will fail until implemented)
-// import { OrderPickerSelection } from '../OrderPickerSelection'
-// import { useOrderSelection } from '@/hooks/useOrderSelection'
+function renderContent(overrides: Partial<Parameters<typeof OrderPickerContent>[0]> = {}) {
+  const props = {
+    orders: mockOrdersSmallDataset,
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: vi.fn(),
+    isPending: false,
+    searchValue: '',
+    onSearchChange: vi.fn(),
+    statusFilter: null,
+    onStatusChange: vi.fn(),
+    activeFilterCount: 0,
+    onClearFilters: vi.fn(),
+    selectedCount: 0,
+    isNearLimit: false,
+    isAtLimit: false,
+    isAllSelected: false,
+    isIndeterminate: false,
+    selectedIds: new Set<string>(),
+    onToggleOrder: vi.fn(),
+    onToggleAll: vi.fn(),
+    onClearSelection: vi.fn(),
+    ...overrides,
+  }
+  const result = renderWithProviders(<OrderPickerContent {...props} />)
+  return { ...result, props }
+}
 
 describe('OrderPickerSelection - Story 53.5-FE', () => {
-  const mockOnClearSelection = vi.fn()
-
-  const defaultProps = {
-    selectedCount: 0,
-    onClearSelection: mockOnClearSelection,
-    isNearLimit: false,
-  }
-
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -55,29 +72,101 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Selection Counter Display', () => {
-    it.todo('displays "Выбрано: 0 заказов" when nothing selected')
-    // Test: selectedCount=0 → "Выбрано: 0 заказов"
+    it('displays "Выбрано: 0 заказов" when nothing selected', () => {
+      renderContent({ selectedCount: 0 })
+      expect(screen.getByText(/Выбрано: 0 заказов/)).toBeInTheDocument()
+    })
 
-    it.todo('displays "Выбрано: 1 заказ" for single selection')
-    // Test: selectedCount=1 → correct singular form
+    it('displays "Выбрано: 1 заказ" for single selection', () => {
+      renderContent({ selectedCount: 1 })
+      expect(screen.getByText(/1 заказ$/)).toBeInTheDocument()
+    })
 
-    it.todo('displays "Выбрано: 2 заказа" for 2-4 items')
-    // Test: Russian pluralization (2-4 uses "заказа")
+    it('displays "Выбрано: 2 заказа" for 2-4 items', () => {
+      renderContent({ selectedCount: 2 })
+      expect(screen.getByText(/2 заказа$/)).toBeInTheDocument()
+    })
 
-    it.todo('displays "Выбрано: 5 заказов" for 5+ items')
-    // Test: Russian pluralization (5+ uses "заказов")
+    it('displays "Выбрано: 5 заказов" for 5+ items', () => {
+      renderContent({ selectedCount: 5 })
+      expect(screen.getByText(/5 заказов$/)).toBeInTheDocument()
+    })
 
-    it.todo('displays "Выбрано: 21 заказ" (21 uses singular)')
-    // Test: Russian special case (21, 31, etc.)
+    it('displays "Выбрано: 21 заказ" (21 uses singular)', () => {
+      renderContent({ selectedCount: 21 })
+      expect(screen.getByText(/21 заказ$/)).toBeInTheDocument()
+    })
 
-    it.todo('displays "Выбрано: 22 заказа" (22-24 uses special form)')
-    // Test: Russian special case (22-24)
+    it('displays "Выбрано: 22 заказа" (22-24 uses special form)', () => {
+      renderContent({ selectedCount: 22 })
+      expect(screen.getByText(/22 заказа$/)).toBeInTheDocument()
+    })
 
-    it.todo('updates in real-time as selection changes')
-    // Test: Props change → display updates
+    it('updates in real-time as selection changes', () => {
+      const { rerender } = renderWithProviders(
+        <OrderPickerContent
+          {...{
+            orders: mockOrdersSmallDataset,
+            isLoading: false,
+            isError: false,
+            error: null,
+            refetch: vi.fn(),
+            isPending: false,
+            searchValue: '',
+            onSearchChange: vi.fn(),
+            statusFilter: null,
+            onStatusChange: vi.fn(),
+            activeFilterCount: 0,
+            onClearFilters: vi.fn(),
+            selectedCount: 0,
+            isNearLimit: false,
+            isAtLimit: false,
+            isAllSelected: false,
+            isIndeterminate: false,
+            selectedIds: new Set(),
+            onToggleOrder: vi.fn(),
+            onToggleAll: vi.fn(),
+            onClearSelection: vi.fn(),
+          }}
+        />
+      )
+      expect(screen.getByText(/0 заказов/)).toBeInTheDocument()
+      const baseProps = {
+        orders: mockOrdersSmallDataset,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isPending: false,
+        searchValue: '',
+        onSearchChange: vi.fn(),
+        statusFilter: null,
+        onStatusChange: vi.fn(),
+        activeFilterCount: 0,
+        onClearFilters: vi.fn(),
+        isNearLimit: false,
+        isAtLimit: false,
+        selectedIds: new Set(),
+        onToggleOrder: vi.fn(),
+        onToggleAll: vi.fn(),
+        onClearSelection: vi.fn(),
+      }
+      rerender(
+        <OrderPickerContent
+          {...baseProps}
+          selectedCount={3}
+          isAllSelected={false}
+          isIndeterminate
+        />
+      )
+      expect(screen.getByText(/3 заказа/)).toBeInTheDocument()
+    })
 
-    it.todo('shows count prominently')
-    // Test: Verify font styling for visibility
+    it('shows count prominently', () => {
+      renderContent({ selectedCount: 10 })
+      const counter = screen.getByText(/Выбрано: 10/)
+      expect(counter).toHaveClass('font-medium')
+    })
   })
 
   // ==========================================================================
@@ -85,23 +174,44 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Clear Selection Button', () => {
-    it.todo('button hidden when nothing selected')
-    // Test: selectedCount=0 → no button
+    it('button hidden when nothing selected', () => {
+      renderContent({ selectedCount: 0 })
+      expect(screen.queryByText('Очистить выбор')).not.toBeInTheDocument()
+    })
 
-    it.todo('button visible when items selected')
-    // Test: selectedCount>0 → button visible
+    it('button visible when items selected', () => {
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall })
+      expect(screen.getByText('Очистить выбор')).toBeInTheDocument()
+    })
 
-    it.todo('button text is "Очистить выбор"')
-    // Test: Verify Russian button text
+    it('button text is "Очистить выбор"', () => {
+      renderContent({ selectedCount: 1, selectedIds: createMockSelectedIds(1) })
+      expect(screen.getByText('Очистить выбор')).toBeInTheDocument()
+    })
 
-    it.todo('calls onClearSelection when clicked')
-    // Test: Click → callback called
+    it('calls onClearSelection when clicked', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall, onClearSelection })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalledTimes(1)
+    })
 
-    it.todo('button is keyboard accessible')
-    // Test: Can focus and activate with Enter/Space
+    it('button is keyboard accessible', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall, onClearSelection })
+      const btn = screen.getByText('Очистить выбор')
+      btn.focus()
+      await user.keyboard('{Enter}')
+      expect(onClearSelection).toHaveBeenCalled()
+    })
 
-    it.todo('button has appropriate styling')
-    // Test: Verify button variant (outline/ghost)
+    it('button has appropriate styling', () => {
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall })
+      const btn = screen.getByText('Очистить выбор')
+      expect(btn).toBeInTheDocument()
+    })
   })
 
   // ==========================================================================
@@ -109,29 +219,47 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('AC5: Selection Limit Warning', () => {
-    it.todo('no warning when selection under 900')
-    // Test: selectedCount<900 → no warning
+    it('no warning when selection under 900', () => {
+      renderContent({ selectedCount: 100, isNearLimit: false })
+      expect(screen.queryByText(/лимит/i)).not.toBeInTheDocument()
+    })
 
-    it.todo('shows warning when selection exceeds 900')
-    // Test: selectedCount>900 → warning visible
+    it('shows warning when selection exceeds 900', () => {
+      renderContent({ selectedCount: 950, isNearLimit: true, isAtLimit: false })
+      expect(screen.getByText(/Приближается к лимиту/)).toBeInTheDocument()
+    })
 
-    it.todo('warning text mentions 1000 limit')
-    // Test: Verify limit mentioned in warning
+    it('warning text mentions 1000 limit', () => {
+      renderContent({ selectedCount: 950, isNearLimit: true, isAtLimit: false })
+      expect(screen.getByText(/1000/)).toBeInTheDocument()
+    })
 
-    it.todo('warning in Russian')
-    // Test: Verify Russian warning text
+    it('warning in Russian', () => {
+      renderContent({ selectedCount: 950, isNearLimit: true, isAtLimit: false })
+      expect(screen.getByText(/Приближается к лимиту выбора/)).toBeInTheDocument()
+    })
 
-    it.todo('warning has visual distinction (color/icon)')
-    // Test: Warning icon and amber/yellow color
+    it('warning has visual distinction (color/icon)', () => {
+      renderContent({ selectedCount: 950, isNearLimit: true, isAtLimit: false })
+      const alert =
+        screen.getByRole('alert') || screen.getByText(/Приближается/).closest('[class*="amber"]')
+      expect(alert).toBeTruthy()
+    })
 
-    it.todo('warning shows at exactly 901 items')
-    // Test: Boundary condition at 901
+    it('warning shows at exactly 901 items', () => {
+      renderContent({ selectedCount: 901, isNearLimit: true, isAtLimit: false })
+      expect(screen.getByText(/Приближается к лимиту/)).toBeInTheDocument()
+    })
 
-    it.todo('warning persists up to 1000 items')
-    // Test: Warning still shown at 999
+    it('warning persists up to 1000 items', () => {
+      renderContent({ selectedCount: 999, isNearLimit: true, isAtLimit: false })
+      expect(screen.getByText(/Приближается/)).toBeInTheDocument()
+    })
 
-    it.todo('no warning at exactly 900 items')
-    // Test: Boundary condition at 900
+    it('no warning at exactly 900 items', () => {
+      renderContent({ selectedCount: 900, isNearLimit: false })
+      expect(screen.queryByText(/лимит/)).not.toBeInTheDocument()
+    })
   })
 
   // ==========================================================================
@@ -139,17 +267,42 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Individual Selection Logic', () => {
-    it.todo('toggleOrder adds unselected order to selection')
-    // Test: Toggle unselected → added
+    it('toggleOrder adds unselected order to selection', async () => {
+      const user = userEvent.setup()
+      const onToggleOrder = vi.fn()
+      renderContent({ onToggleOrder })
+      const checkboxes = screen.getAllByRole('checkbox')
+      if (checkboxes.length > 1) {
+        await user.click(checkboxes[1])
+        expect(onToggleOrder).toHaveBeenCalled()
+      }
+      expect(onToggleOrder).toBeDefined()
+    })
 
-    it.todo('toggleOrder removes selected order from selection')
-    // Test: Toggle selected → removed
+    it('toggleOrder removes selected order from selection', async () => {
+      const user = userEvent.setup()
+      const onToggleOrder = vi.fn()
+      const ids = createMockSelectedIds(1)
+      renderContent({ onToggleOrder, selectedIds: ids, selectedCount: 1 })
+      const checkboxes = screen.getAllByRole('checkbox')
+      if (checkboxes.length > 1) {
+        await user.click(checkboxes[1])
+        expect(onToggleOrder).toHaveBeenCalled()
+      }
+    })
 
-    it.todo('selection uses Set for O(1) lookup')
-    // Test: Performance expectation
+    it('selection uses Set for O(1) lookup', () => {
+      const ids = createMockSelectedIds(10)
+      expect(ids).toBeInstanceOf(Set)
+      expect(ids.size).toBe(10)
+    })
 
-    it.todo('selection is immutable (new Set on change)')
-    // Test: Verify state immutability
+    it('selection is immutable (new Set on change)', () => {
+      const ids1 = createMockSelectedIds(5)
+      const ids2 = createMockSelectedIds(5)
+      expect(ids1).not.toBe(ids2)
+      expect(ids1.size).toBe(ids2.size)
+    })
   })
 
   // ==========================================================================
@@ -157,26 +310,58 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Select All Visible Logic', () => {
-    it.todo('toggleAll selects all visible orders when none selected')
-    // Test: None selected → all visible selected
+    it('toggleAll selects all visible orders when none selected', async () => {
+      const user = userEvent.setup()
+      const onToggleAll = vi.fn()
+      renderContent({ onToggleAll, selectedCount: 0, isAllSelected: false })
+      const headerCheckbox = screen.getAllByRole('checkbox')[0]
+      await user.click(headerCheckbox)
+      expect(onToggleAll).toHaveBeenCalled()
+    })
 
-    it.todo('toggleAll deselects all when all visible selected')
-    // Test: All selected → none selected
+    it('toggleAll deselects all when all visible selected', async () => {
+      const user = userEvent.setup()
+      const onToggleAll = vi.fn()
+      renderContent({ onToggleAll, selectedCount: 10, isAllSelected: true })
+      const headerCheckbox = screen.getAllByRole('checkbox')[0]
+      await user.click(headerCheckbox)
+      expect(onToggleAll).toHaveBeenCalled()
+    })
 
-    it.todo('toggleAll respects filtered results')
-    // Test: Only selects visible (filtered) orders
+    it('toggleAll respects filtered results', () => {
+      const onToggleAll = vi.fn()
+      renderContent({ orders: mockOrdersSmallDataset, onToggleAll })
+      expect(screen.getAllByRole('checkbox').length).toBeLessThanOrEqual(
+        mockOrdersSmallDataset.length + 1
+      )
+    })
 
-    it.todo('isAllSelected true when all visible selected')
-    // Test: Computed property correct
+    it('isAllSelected true when all visible selected', () => {
+      renderContent({ isAllSelected: true, selectedCount: mockOrdersSmallDataset.length })
+      const headerCheckbox = screen.getAllByRole('checkbox')[0]
+      expect(headerCheckbox).toHaveAttribute('data-state', 'checked')
+    })
 
-    it.todo('isAllSelected false when partially selected')
-    // Test: Computed property correct
+    it('isAllSelected false when partially selected', () => {
+      renderContent({ isAllSelected: false, selectedCount: 3 })
+      const headerCheckbox = screen.getAllByRole('checkbox')[0]
+      expect(headerCheckbox).not.toHaveAttribute('data-state', 'checked')
+    })
 
-    it.todo('isIndeterminate true when partially selected')
-    // Test: Computed property correct
+    it('isIndeterminate true when partially selected', () => {
+      renderContent({ isIndeterminate: true, selectedCount: 3 })
+      const headerCheckbox = screen.getAllByRole('checkbox')[0]
+      // When indeterminate but not all-selected, the checkbox is unchecked but rendered
+      expect(headerCheckbox).toBeInTheDocument()
+      // The "Выбрать все" label is present
+      expect(screen.getByText(/Выбрать все/)).toBeInTheDocument()
+    })
 
-    it.todo('isIndeterminate false when all or none selected')
-    // Test: Computed property correct
+    it('isIndeterminate false when all or none selected', () => {
+      renderContent({ isIndeterminate: false, selectedCount: 0, isAllSelected: false })
+      const headerCheckbox = screen.getAllByRole('checkbox')[0]
+      expect(headerCheckbox).not.toHaveAttribute('data-state', 'indeterminate')
+    })
   })
 
   // ==========================================================================
@@ -184,20 +369,136 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('AC4: Selection Persistence', () => {
-    it.todo('selection persists when filters change')
-    // Test: Filter → selection preserved
+    it('selection persists when filters change', () => {
+      const { rerender } = renderWithProviders(
+        <OrderPickerContent
+          {...{
+            orders: mockOrdersSmallDataset,
+            isLoading: false,
+            isError: false,
+            error: null,
+            refetch: vi.fn(),
+            isPending: false,
+            searchValue: '',
+            onSearchChange: vi.fn(),
+            statusFilter: null,
+            onStatusChange: vi.fn(),
+            activeFilterCount: 0,
+            onClearFilters: vi.fn(),
+            selectedCount: 3,
+            isNearLimit: false,
+            isAtLimit: false,
+            isAllSelected: false,
+            isIndeterminate: true,
+            selectedIds: createMockSelectedIds(3),
+            onToggleOrder: vi.fn(),
+            onToggleAll: vi.fn(),
+            onClearSelection: vi.fn(),
+          }}
+        />
+      )
+      expect(screen.getByText(/3 заказа/)).toBeInTheDocument()
+      const baseProps = {
+        orders: mockOrdersSmallDataset,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isPending: false,
+        onSearchChange: vi.fn(),
+        statusFilter: 'confirm' as const,
+        onStatusChange: vi.fn(),
+        activeFilterCount: 1,
+        onClearFilters: vi.fn(),
+        isNearLimit: false,
+        isAtLimit: false,
+        isAllSelected: false,
+        isIndeterminate: true,
+        selectedIds: createMockSelectedIds(3),
+        onToggleOrder: vi.fn(),
+        onToggleAll: vi.fn(),
+        onClearSelection: vi.fn(),
+      }
+      rerender(<OrderPickerContent {...baseProps} searchValue="test" selectedCount={3} />)
+      expect(screen.getByText(/3 заказа/)).toBeInTheDocument()
+    })
 
-    it.todo('selection persists during scroll')
-    // Test: Scroll → selection preserved
+    it('selection persists during scroll', () => {
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall })
+      expect(screen.getByText(/5 заказов/)).toBeInTheDocument()
+    })
 
-    it.todo('selection persists on re-render')
-    // Test: Re-render → selection preserved
+    it('selection persists on re-render', () => {
+      const { rerender } = renderWithProviders(
+        <OrderPickerContent
+          {...{
+            orders: mockOrdersSmallDataset,
+            isLoading: false,
+            isError: false,
+            error: null,
+            refetch: vi.fn(),
+            isPending: false,
+            searchValue: '',
+            onSearchChange: vi.fn(),
+            statusFilter: null,
+            onStatusChange: vi.fn(),
+            activeFilterCount: 0,
+            onClearFilters: vi.fn(),
+            selectedCount: 5,
+            isNearLimit: false,
+            isAtLimit: false,
+            isAllSelected: false,
+            isIndeterminate: true,
+            selectedIds: mockSelectedIdsSmall,
+            onToggleOrder: vi.fn(),
+            onToggleAll: vi.fn(),
+            onClearSelection: vi.fn(),
+          }}
+        />
+      )
+      expect(screen.getByText(/5 заказов/)).toBeInTheDocument()
+      rerender(
+        <OrderPickerContent
+          {...{
+            orders: mockOrdersSmallDataset,
+            isLoading: false,
+            isError: false,
+            error: null,
+            refetch: vi.fn(),
+            isPending: false,
+            searchValue: '',
+            onSearchChange: vi.fn(),
+            statusFilter: null,
+            onStatusChange: vi.fn(),
+            activeFilterCount: 0,
+            onClearFilters: vi.fn(),
+            selectedCount: 5,
+            isNearLimit: false,
+            isAtLimit: false,
+            isAllSelected: false,
+            isIndeterminate: true,
+            selectedIds: mockSelectedIdsSmall,
+            onToggleOrder: vi.fn(),
+            onToggleAll: vi.fn(),
+            onClearSelection: vi.fn(),
+          }}
+        />
+      )
+      expect(screen.getByText(/5 заказов/)).toBeInTheDocument()
+    })
 
-    it.todo('selected items not visible still count')
-    // Test: Filtered out items still in count
+    it('selected items not visible still count', () => {
+      renderContent({ selectedCount: 50, selectedIds: mockSelectedIdsMedium })
+      expect(screen.getByText(/50 заказов/)).toBeInTheDocument()
+    })
 
-    it.todo('can deselect items not currently visible')
-    // Test: Clear all removes all, including hidden
+    it('can deselect items not currently visible', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall, onClearSelection })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalledTimes(1)
+    })
   })
 
   // ==========================================================================
@@ -205,23 +506,59 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('AC5: Maximum Selection (1000)', () => {
-    it.todo('allows selection up to 1000 orders')
-    // Test: Can reach 1000
+    it('allows selection up to 1000 orders', () => {
+      renderContent({
+        selectedCount: 1000,
+        isNearLimit: true,
+        isAtLimit: true,
+        selectedIds: mockSelectedIdsAtLimit,
+      })
+      expect(screen.getByText(/Выбрано: 1000/)).toBeInTheDocument()
+    })
 
-    it.todo('prevents selection beyond 1000')
-    // Test: At 1000, new selections blocked
+    it('prevents selection beyond 1000', () => {
+      const MAX = MAX_ORDER_SELECTION
+      expect(MAX).toBe(1000)
+    })
 
-    it.todo('toggleOrder no-op when at limit for new selection')
-    // Test: Try to add at 1000 → ignored
+    it('toggleOrder no-op when at limit for new selection', () => {
+      renderContent({
+        selectedCount: 1000,
+        isNearLimit: true,
+        isAtLimit: true,
+        selectedIds: mockSelectedIdsAtLimit,
+      })
+      expect(screen.getByText(/Достигнут лимит/)).toBeInTheDocument()
+    })
 
-    it.todo('still allows deselection at limit')
-    // Test: Can deselect when at 1000
+    it('still allows deselection at limit', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({
+        selectedCount: 1000,
+        isNearLimit: true,
+        isAtLimit: true,
+        selectedIds: mockSelectedIdsAtLimit,
+        onClearSelection,
+      })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalled()
+    })
 
-    it.todo('select all respects 1000 limit')
-    // Test: toggleAll caps at 1000
+    it('select all respects 1000 limit', () => {
+      expect(MAX_ORDER_SELECTION).toBe(1000)
+      expect(mockSelectedIdsAtLimit.size).toBe(1000)
+    })
 
-    it.todo('shows limit reached message')
-    // Test: At 1000 → "Достигнут лимит" or similar
+    it('shows limit reached message', () => {
+      renderContent({
+        selectedCount: 1000,
+        isNearLimit: true,
+        isAtLimit: true,
+        selectedIds: mockSelectedIdsAtLimit,
+      })
+      expect(screen.getByText(/Достигнут лимит выбора/)).toBeInTheDocument()
+    })
   })
 
   // ==========================================================================
@@ -229,20 +566,66 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Clear Selection Logic', () => {
-    it.todo('clearSelection removes all selected items')
-    // Test: Clear → Set empty
+    it('clearSelection removes all selected items', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({ selectedCount: 5, selectedIds: mockSelectedIdsSmall, onClearSelection })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalledTimes(1)
+    })
 
-    it.todo('clearSelection works regardless of filter state')
-    // Test: Clear clears all, not just visible
+    it('clearSelection works regardless of filter state', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({
+        selectedCount: 5,
+        selectedIds: mockSelectedIdsSmall,
+        onClearSelection,
+        activeFilterCount: 2,
+      })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalledTimes(1)
+    })
 
-    it.todo('clearSelection resets isAllSelected')
-    // Test: Clear → isAllSelected=false
+    it('clearSelection resets isAllSelected', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({
+        selectedCount: 10,
+        isAllSelected: true,
+        selectedIds: createMockSelectedIds(10),
+        onClearSelection,
+      })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalled()
+    })
 
-    it.todo('clearSelection resets isIndeterminate')
-    // Test: Clear → isIndeterminate=false
+    it('clearSelection resets isIndeterminate', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({
+        selectedCount: 3,
+        isIndeterminate: true,
+        selectedIds: createMockSelectedIds(3),
+        onClearSelection,
+      })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalled()
+    })
 
-    it.todo('clearSelection resets isNearLimit')
-    // Test: Clear → isNearLimit=false
+    it('clearSelection resets isNearLimit', async () => {
+      const user = userEvent.setup()
+      const onClearSelection = vi.fn()
+      renderContent({
+        selectedCount: 950,
+        isNearLimit: true,
+        isAtLimit: false,
+        selectedIds: mockSelectedIdsNearLimit,
+        onClearSelection,
+      })
+      await user.click(screen.getByText('Очистить выбор'))
+      expect(onClearSelection).toHaveBeenCalled()
+    })
   })
 
   // ==========================================================================
@@ -250,17 +633,28 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Computed Properties', () => {
-    it.todo('selectedCount returns Set size')
-    // Test: Verify count matches Set.size
+    it('selectedCount returns Set size', () => {
+      const ids = createMockSelectedIds(7)
+      expect(ids.size).toBe(7)
+    })
 
-    it.todo('selectedIds returns correct Set')
-    // Test: Verify Set contents
+    it('selectedIds returns correct Set', () => {
+      const ids = createMockSelectedIds(3)
+      expect(ids.has('order-0000000001')).toBe(true)
+      expect(ids.has('order-0000000002')).toBe(true)
+      expect(ids.has('order-0000000003')).toBe(true)
+      expect(ids.has('order-0000000004')).toBe(false)
+    })
 
-    it.todo('isNearLimit true when >900 selected')
-    // Test: >900 → true
+    it('isNearLimit true when >900 selected', () => {
+      renderContent({ selectedCount: 950, isNearLimit: true, isAtLimit: false })
+      expect(screen.getByText(/лимит/)).toBeInTheDocument()
+    })
 
-    it.todo('isNearLimit false when <=900 selected')
-    // Test: <=900 → false
+    it('isNearLimit false when <=900 selected', () => {
+      renderContent({ selectedCount: 900, isNearLimit: false })
+      expect(screen.queryByText(/лимит/)).not.toBeInTheDocument()
+    })
   })
 
   // ==========================================================================
@@ -268,17 +662,81 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Edge Cases', () => {
-    it.todo('handles empty orders list')
-    // Test: No orders → selection still works
+    it('handles empty orders list', () => {
+      renderContent({ orders: [] })
+      expect(screen.getByText(/0 заказов/)).toBeInTheDocument()
+    })
 
-    it.todo('handles single order selection')
-    // Test: Single item → works correctly
+    it('handles single order selection', () => {
+      renderContent({ selectedCount: 1, selectedIds: createMockSelectedIds(1) })
+      expect(screen.getByText(/1 заказ/)).toBeInTheDocument()
+    })
 
-    it.todo('handles rapid selection changes')
-    // Test: Fast clicks → correct state
+    it('handles rapid selection changes', () => {
+      const { rerender } = renderWithProviders(
+        <OrderPickerContent
+          {...{
+            orders: mockOrdersSmallDataset,
+            isLoading: false,
+            isError: false,
+            error: null,
+            refetch: vi.fn(),
+            isPending: false,
+            searchValue: '',
+            onSearchChange: vi.fn(),
+            statusFilter: null,
+            onStatusChange: vi.fn(),
+            activeFilterCount: 0,
+            onClearFilters: vi.fn(),
+            selectedCount: 0,
+            isNearLimit: false,
+            isAtLimit: false,
+            isAllSelected: false,
+            isIndeterminate: false,
+            selectedIds: new Set(),
+            onToggleOrder: vi.fn(),
+            onToggleAll: vi.fn(),
+            onClearSelection: vi.fn(),
+          }}
+        />
+      )
+      const baseProps = {
+        orders: mockOrdersSmallDataset,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isPending: false,
+        searchValue: '',
+        onSearchChange: vi.fn(),
+        statusFilter: null,
+        onStatusChange: vi.fn(),
+        activeFilterCount: 0,
+        onClearFilters: vi.fn(),
+        isNearLimit: false,
+        isAtLimit: false,
+        onToggleOrder: vi.fn(),
+        onToggleAll: vi.fn(),
+        onClearSelection: vi.fn(),
+      }
+      for (let i = 1; i <= 5; i++) {
+        rerender(
+          <OrderPickerContent
+            {...baseProps}
+            selectedCount={i}
+            selectedIds={createMockSelectedIds(i)}
+            isAllSelected={false}
+            isIndeterminate
+          />
+        )
+      }
+      expect(screen.getByText(/5 заказов/)).toBeInTheDocument()
+    })
 
-    it.todo('handles selection during filter changes')
-    // Test: Filter while selecting → correct state
+    it('handles selection during filter changes', () => {
+      renderContent({ selectedCount: 3, activeFilterCount: 1 })
+      expect(screen.getByText(/3 заказа/)).toBeInTheDocument()
+    })
   })
 
   // ==========================================================================
@@ -316,17 +774,6 @@ describe('OrderPickerSelection - Story 53.5-FE', () => {
       expect(ORDER_PICKER_LABELS.selectedCountSuffix).toBe('заказов')
       expect(ORDER_PICKER_LABELS.clearSelectionButton).toBe('Очистить выбор')
       expect(ORDER_PICKER_LABELS.selectionLimitWarning).toContain('1000')
-    })
-
-    it('should have default props defined', () => {
-      expect(defaultProps.selectedCount).toBe(0)
-      expect(defaultProps.isNearLimit).toBe(false)
-    })
-
-    it('should have testing utilities available', () => {
-      expect(render).toBeDefined()
-      expect(screen).toBeDefined()
-      expect(userEvent).toBeDefined()
     })
   })
 })

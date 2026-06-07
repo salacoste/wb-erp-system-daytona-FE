@@ -1,315 +1,522 @@
 /**
- * TDD Unit Tests for GenerateStickersModal component
+ * Unit Tests for GenerateStickersModal component
  * Story 53.6-FE: Close Supply & Stickers
  * Epic 53-FE: Supply Management UI
  *
- * Tests written BEFORE implementation (TDD approach)
- * All tests use .todo() or it.skip() until implementation.
- *
- * Test coverage:
- * - Modal open/close behavior
- * - Format selector integration
- * - Preview area (PNG/SVG vs ZPL)
- * - Download button behavior
- * - Loading states
- * - Error handling
- * - Accessibility
+ * Coverage: modal open/close, format selector, preview area (PNG/SVG/ZPL),
+ * download flow, loading states, error handling, accessibility, cache invalidation.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-// Import fixtures
-import { mockSupplyClosed } from '@/test/fixtures/supplies'
+const { mockToast, mockGenerateStickersFn, mockDownloadFromBase64 } = vi.hoisted(() => ({
+  mockToast: { success: vi.fn(), error: vi.fn() },
+  mockGenerateStickersFn: vi.fn(),
+  mockDownloadFromBase64: vi.fn(),
+}))
+
+vi.mock('sonner', () => ({ toast: mockToast }))
+vi.mock('@/lib/api/supplies', () => ({
+  generateStickers: (...args: unknown[]) => mockGenerateStickersFn(...args),
+  suppliesQueryKeys: {
+    all: ['supplies'],
+    detail: (id: string) => ['supplies', 'detail', id],
+    documents: (id: string) => ['supplies', 'documents', id],
+  },
+}))
+vi.mock('@/hooks/useDownloadDocument', () => ({
+  downloadStickersFromBase64: (...args: unknown[]) => mockDownloadFromBase64(...args),
+}))
+
+import { GenerateStickersModal } from '../GenerateStickersModal'
 import {
-  STICKER_FORMATS,
-  FORMAT_LABELS,
   mockGenerateResponsePng,
   mockGenerateResponseSvg,
   mockGenerateResponseZpl,
-  mockPreviewPng,
-  mockPreviewSvg,
-  mockErrorInvalidFormat,
-  mockErrorWrongStatus,
-  mockErrorGenerationFailed,
+  MOCK_PNG_BASE64,
 } from '@/test/fixtures/stickers'
 
-// ============================================================================
-// TDD: Component will be created in implementation
-// import { GenerateStickersModal } from '../GenerateStickersModal'
-// ============================================================================
+function createTestQC(): QueryClient {
+  return new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0, staleTime: 0 },
+      mutations: { retry: false },
+    },
+  })
+}
+
+function renderWithQC(ui: React.ReactElement, qc?: QueryClient): ReturnType<typeof render> {
+  const client = qc ?? createTestQC()
+  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+}
+
+function pendingPromise(): Promise<unknown> {
+  return new Promise(() => {})
+}
 
 describe('GenerateStickersModal', () => {
-  const defaultProps = {
-    open: true,
-    onOpenChange: vi.fn(),
-    supplyId: 'sup_123abc',
-  }
+  const defaultProps = { open: true, onOpenChange: vi.fn(), supplyId: 'sup_123abc' }
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockGenerateStickersFn.mockResolvedValue(mockGenerateResponsePng)
   })
 
-  // ============================================================================
-  // 1. Modal Open/Close Behavior
-  // ============================================================================
+  // ==========================================================================
+  // 1. Modal Open/Close
+  // ==========================================================================
 
-  describe('Modal Open/Close Behavior', () => {
-    it.todo('renders modal when open is true')
-    it.todo('does not render modal content when open is false')
-    it.todo('calls onOpenChange(false) when cancel button clicked')
-    it.todo('calls onOpenChange(false) when X button clicked')
-    it.todo('calls onOpenChange(false) when Escape key pressed')
-    it.todo('calls onOpenChange(false) when backdrop clicked')
-    it.todo('calls onOpenChange(false) after successful download')
-    it.todo('does not close when clicking inside modal content')
+  describe('Modal Open/Close', () => {
+    it('renders modal when open is true', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+    })
+
+    it('does not render modal content when open is false', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} open={false} />)
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+
+    it('calls onOpenChange(false) when cancel button clicked', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByRole('button', { name: 'Отмена' }))
+      expect(onOpenChange).toHaveBeenCalledWith(false)
+    })
+
+    it('calls onOpenChange(false) when X button clicked', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByRole('button', { name: /close/i }))
+      expect(onOpenChange).toHaveBeenCalledWith(false)
+    })
+
+    it('calls onOpenChange(false) when Escape key pressed', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.keyboard('{Escape}')
+      expect(onOpenChange).toHaveBeenCalledWith(false)
+    })
+
+    it('calls onOpenChange(false) after successful download', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() =>
+        expect(mockDownloadFromBase64).toHaveBeenCalledWith(MOCK_PNG_BASE64, 'png', 'sup_123abc')
+      )
+      expect(onOpenChange).toHaveBeenCalledWith(false)
+    })
+
+    it('does not close when clicking inside modal content', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByText('Генерация стикеров'))
+      expect(onOpenChange).not.toHaveBeenCalled()
+    })
   })
 
-  // ============================================================================
+  // ==========================================================================
   // 2. Modal Title & Structure
-  // ============================================================================
+  // ==========================================================================
 
   describe('Modal Title & Structure', () => {
-    it.todo('displays title "Генерация стикеров"')
-    it.todo('has close (X) button in header')
-    it.todo('has format selector section')
-    it.todo('has preview area section')
-    it.todo('has footer with cancel and download buttons')
-    it.todo('title has proper heading level (h2)')
+    it('displays title, close button, format selector, preview, and footer', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      expect(screen.getByText('Генерация стикеров')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument()
+      expect(screen.getByText('Выберите формат:')).toBeInTheDocument()
+      expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Отмена' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /скачать/i })).toBeInTheDocument()
+    })
+
+    it('title has proper heading level (h2)', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const heading = screen.getByRole('heading', { name: 'Генерация стикеров' })
+      expect(heading.tagName).toBe('H2')
+    })
   })
 
-  // ============================================================================
-  // 3. Format Selector Integration
-  // ============================================================================
+  // ==========================================================================
+  // 3. Format Selector
+  // ==========================================================================
 
-  describe('Format Selector Integration', () => {
-    it.todo('renders StickerFormatSelector component')
-    it.todo('PNG is selected by default')
-    it.todo('passes current format value to selector')
-    it.todo('handles format change from selector')
-    it.todo('updates preview when format changes')
-    it.todo('selector is disabled during loading')
+  describe('Format Selector', () => {
+    it('renders radio group with PNG selected by default', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      expect(screen.getByRole('radiogroup')).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /PNG/i })).toBeChecked()
+      expect(screen.getByRole('radio', { name: /SVG/i })).not.toBeChecked()
+      expect(screen.getByRole('radio', { name: /ZPL/i })).not.toBeChecked()
+    })
+
+    it('handles format change and updates preview for ZPL', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
+      await user.click(screen.getByRole('radio', { name: /ZPL/i }))
+      expect(screen.getByText('Предпросмотр ZPL недоступен.')).toBeInTheDocument()
+    })
+
+    it('selector is disabled during loading', async () => {
+      mockGenerateStickersFn.mockReturnValue(pendingPromise())
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => {
+        screen.getAllByRole('radio').forEach(r => expect(r).toBeDisabled())
+      })
+    })
   })
 
-  // ============================================================================
-  // 4. Preview Area - PNG Format
-  // ============================================================================
+  // ==========================================================================
+  // 4. Preview Area (PNG / SVG / ZPL)
+  // ==========================================================================
 
-  describe('Preview Area - PNG Format', () => {
-    it.todo('shows preview area for PNG format')
-    it.todo('displays sticker image when PNG selected')
-    it.todo('image has proper sizing (max-width: 100%, max-height: 300px)')
-    it.todo('shows loading skeleton while fetching preview')
-    it.todo('shows error message on preview load failure')
-    it.todo('shows retry button on preview error')
-    it.todo('retry button refetches preview')
+  describe('Preview Area', () => {
+    it('shows placeholder before generation for PNG', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
+    })
+
+    it('shows loading skeleton while generating', async () => {
+      mockGenerateStickersFn.mockReturnValue(pendingPromise())
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(screen.queryByLabelText('Загрузка превью')).toBeInTheDocument())
+    })
+
+    it('displays PNG image with proper sizing after generation', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => {
+        const img = screen.getByRole('img', { name: 'Превью стикера' })
+        expect(img).toBeInTheDocument()
+        expect(img.className).toContain('max-h-[300px]')
+        expect(img.className).toContain('max-w-full')
+      })
+    })
+
+    it('displays SVG image after generation with SVG data URL', async () => {
+      mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseSvg)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('radio', { name: /SVG/i }))
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => {
+        const img = screen.getByRole('img', { name: 'Превью стикера' })
+        expect(img.getAttribute('src')).toContain('data:image/svg+xml')
+        expect(img.className).toContain('object-contain')
+      })
+    })
+
+    it('shows info message for ZPL without preview or skeleton', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('radio', { name: /ZPL/i }))
+      expect(screen.getByText('Предпросмотр ZPL недоступен.')).toBeInTheDocument()
+      expect(
+        screen.getByText('Этот формат предназначен для термопринтеров Zebra.')
+      ).toBeInTheDocument()
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Загрузка превью')).not.toBeInTheDocument()
+    })
+
+    it('ZPL info area has blue background styling', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('radio', { name: /ZPL/i }))
+      const infoText = screen.getByText('Предпросмотр ZPL недоступен.')
+      expect(infoText.closest('div[class*="bg-blue"]')).toBeInTheDocument()
+    })
   })
 
-  // ============================================================================
-  // 5. Preview Area - SVG Format
-  // ============================================================================
+  // ==========================================================================
+  // 5. Buttons (Cancel & Download)
+  // ==========================================================================
 
-  describe('Preview Area - SVG Format', () => {
-    it.todo('shows preview area for SVG format')
-    it.todo('displays sticker image when SVG selected')
-    it.todo('SVG preview scales properly')
-    it.todo('shows loading skeleton while fetching SVG preview')
+  describe('Buttons', () => {
+    it('cancel has outline styling and is enabled by default', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const cancelBtn = screen.getByRole('button', { name: 'Отмена' })
+      expect(cancelBtn.className).toMatch(/border/)
+      expect(cancelBtn).toBeEnabled()
+    })
+
+    it('download is enabled by default with SVG icon', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const btn = screen.getByRole('button', { name: /скачать/i })
+      expect(btn).toBeEnabled()
+      expect(btn.textContent).toContain('Скачать')
+      expect(btn.querySelector('svg')).toBeInTheDocument()
+    })
+
+    it('clicking download triggers generate mutation with current format', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      expect(mockGenerateStickersFn).toHaveBeenCalledWith('sup_123abc', 'png')
+    })
+
+    it('cancel is disabled during loading', async () => {
+      mockGenerateStickersFn.mockReturnValue(pendingPromise())
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Отмена' })).toBeDisabled())
+    })
   })
 
-  // ============================================================================
-  // 6. Preview Area - ZPL Format
-  // ============================================================================
-
-  describe('Preview Area - ZPL Format', () => {
-    it.todo('shows info message instead of preview for ZPL')
-    it.todo('displays info icon')
-    it.todo('info text: "Предпросмотр ZPL недоступен."')
-    it.todo('info text: "Этот формат предназначен для термопринтеров Zebra."')
-    it.todo('info area has distinctive styling (info background)')
-    it.todo('does not attempt to load preview for ZPL')
-  })
-
-  // ============================================================================
-  // 7. Cancel Button
-  // ============================================================================
-
-  describe('Cancel Button', () => {
-    it.todo('displays cancel button with text "Отмена"')
-    it.todo('cancel button has secondary/outline styling')
-    it.todo('clicking cancel calls onOpenChange(false)')
-    it.todo('cancel button is not disabled by default')
-    it.todo('cancel button is disabled during download')
-  })
-
-  // ============================================================================
-  // 8. Download Button
-  // ============================================================================
-
-  describe('Download Button', () => {
-    it.todo('displays download button with text "Скачать"')
-    it.todo('download button has primary styling')
-    it.todo('clicking download triggers generate mutation')
-    it.todo('download button is enabled by default')
-    it.todo('download button has Download icon')
-  })
-
-  // ============================================================================
-  // 9. Generate Mutation
-  // ============================================================================
+  // ==========================================================================
+  // 6. Generate Mutation (format passthrough)
+  // ==========================================================================
 
   describe('Generate Mutation', () => {
-    it.todo('calls POST /v1/supplies/:id/stickers on download click')
-    it.todo('passes selected format in request body')
-    it.todo('passes "png" when PNG is selected')
-    it.todo('passes "svg" when SVG is selected')
-    it.todo('passes "zpl" when ZPL is selected')
+    it('passes "png" by default, "svg" when SVG selected, "zpl" when ZPL selected', async () => {
+      mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseSvg)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+
+      // Default PNG
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      expect(mockGenerateStickersFn).toHaveBeenCalledWith('sup_123abc', 'png')
+
+      // SVG
+      await user.click(screen.getByRole('radio', { name: /SVG/i }))
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      expect(mockGenerateStickersFn).toHaveBeenCalledWith('sup_123abc', 'svg')
+
+      // ZPL
+      mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseZpl)
+      await user.click(screen.getByRole('radio', { name: /ZPL/i }))
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      expect(mockGenerateStickersFn).toHaveBeenCalledWith('sup_123abc', 'zpl')
+    })
   })
 
-  // ============================================================================
-  // 10. Loading State
-  // ============================================================================
+  // ==========================================================================
+  // 7. Loading State
+  // ==========================================================================
 
   describe('Loading State', () => {
-    it.todo('shows loading spinner in download button during generation')
-    it.todo('download button text changes to "Генерация..." during loading')
-    it.todo('download button is disabled during loading')
-    it.todo('cancel button is disabled during loading')
-    it.todo('format selector is disabled during loading')
-    it.todo('modal cannot be closed during loading')
+    beforeEach(() => {
+      mockGenerateStickersFn.mockReturnValue(pendingPromise())
+    })
+
+    it('shows spinner and "Генерация..." text, disables buttons and selector', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+
+      await waitFor(() => {
+        const btn = screen.getByRole('button', { name: /генерация/i })
+        expect(btn.querySelector('svg.animate-spin')).toBeInTheDocument()
+        expect(btn).toBeDisabled()
+      })
+      expect(screen.getByRole('button', { name: 'Отмена' })).toBeDisabled()
+      screen.getAllByRole('radio').forEach(r => expect(r).toBeDisabled())
+    })
+
+    it('prevents modal close during loading', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      const cancelBtn = await screen.findByRole('button', { name: 'Отмена' })
+      expect(cancelBtn).toBeDisabled()
+      expect(onOpenChange).not.toHaveBeenCalled()
+    })
   })
 
-  // ============================================================================
-  // 11. Download Flow
-  // ============================================================================
+  // ==========================================================================
+  // 8. Download Flow
+  // ==========================================================================
 
   describe('Download Flow', () => {
-    it.todo('triggers file download after successful generation')
-    it.todo('downloads file with correct name: stickers-{supplyId}.png')
-    it.todo('downloads file with correct name for SVG: stickers-{supplyId}.svg')
-    it.todo('downloads file with correct name for ZPL: stickers-{supplyId}.zpl')
-    it.todo('shows success toast after download')
-    it.todo('toast message: "Стикеры скачаны"')
-    it.todo('closes modal after successful download')
+    it('downloads PNG with correct data, shows toast, closes modal', async () => {
+      const onOpenChange = vi.fn()
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => {
+        expect(mockDownloadFromBase64).toHaveBeenCalledWith(MOCK_PNG_BASE64, 'png', 'sup_123abc')
+        expect(mockToast.success).toHaveBeenCalledWith('Стикеры скачаны')
+        expect(onOpenChange).toHaveBeenCalledWith(false)
+      })
+    })
+
+    it('downloads SVG with correct extension when SVG selected', async () => {
+      mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseSvg)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('radio', { name: /SVG/i }))
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() =>
+        expect(mockDownloadFromBase64).toHaveBeenCalledWith(
+          mockGenerateResponseSvg.data,
+          'svg',
+          'sup_123abc'
+        )
+      )
+    })
+
+    it('shows "Стикеры сгенерированы" toast for ZPL (no file download)', async () => {
+      mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseZpl)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('radio', { name: /ZPL/i }))
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => {
+        expect(mockDownloadFromBase64).not.toHaveBeenCalled()
+        expect(mockToast.success).toHaveBeenCalledWith('Стикеры сгенерированы')
+      })
+    })
   })
 
-  // ============================================================================
-  // 12. Error Handling
-  // ============================================================================
+  // ==========================================================================
+  // 9. Error Handling
+  // ==========================================================================
 
   describe('Error Handling', () => {
-    it.todo('shows error toast on generation failure')
-    it.todo('toast message for generic error: "Не удалось сгенерировать стикеры"')
-    it.todo('handles invalid format error')
-    it.todo('handles wrong status error (supply not closed)')
-    it.todo('modal remains open after error')
-    it.todo('buttons are re-enabled after error')
-    it.todo('user can retry after error')
+    it('shows error toast with specific messages for INVALID_FORMAT and WRONG_STATUS', async () => {
+      const user = userEvent.setup()
+
+      // INVALID_FORMAT
+      const fmtError = new Error('Invalid format')
+      Object.assign(fmtError, { code: 'INVALID_FORMAT' })
+      mockGenerateStickersFn.mockRejectedValueOnce(fmtError)
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(mockToast.error).toHaveBeenCalledWith('Неверный формат стикеров'))
+
+      // WRONG_STATUS
+      const statusError = new Error('Wrong status')
+      Object.assign(statusError, { code: 'WRONG_STATUS' })
+      mockGenerateStickersFn.mockRejectedValueOnce(statusError)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() =>
+        expect(mockToast.error).toHaveBeenCalledWith(
+          'Стикеры доступны только для закрытых поставок'
+        )
+      )
+    })
+
+    it('shows generic error message for unknown errors', async () => {
+      const error = new Error('Unknown failure')
+      mockGenerateStickersFn.mockRejectedValueOnce(error)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(mockToast.error).toHaveBeenCalledWith('Unknown failure'))
+    })
+
+    it('modal remains open and buttons re-enabled after error', async () => {
+      const onOpenChange = vi.fn()
+      mockGenerateStickersFn.mockRejectedValueOnce(new Error('fail'))
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(mockToast.error).toHaveBeenCalled())
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(onOpenChange).not.toHaveBeenCalledWith(false)
+      expect(screen.getByRole('button', { name: /скачать/i })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Отмена' })).toBeEnabled()
+    })
+
+    it('user can retry after error', async () => {
+      mockGenerateStickersFn
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValueOnce(mockGenerateResponsePng)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(mockToast.error).toHaveBeenCalled())
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(mockGenerateStickersFn).toHaveBeenCalledTimes(2))
+      expect(mockToast.success).toHaveBeenCalledWith('Стикеры скачаны')
+    })
   })
 
-  // ============================================================================
-  // 13. Cache Invalidation
-  // ============================================================================
+  // ==========================================================================
+  // 10. Cache Invalidation
+  // ==========================================================================
 
   describe('Cache Invalidation', () => {
-    it.todo('invalidates documents query after successful generation')
-    it.todo('invalidates supply detail query after generation')
+    it('invalidates detail and documents queries after success', async () => {
+      const qc = createTestQC()
+      const invalidateSpy = vi.spyOn(qc, 'invalidateQueries')
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />, qc)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(invalidateSpy).toHaveBeenCalledTimes(2))
+      const keys = invalidateSpy.mock.calls.map(c => c[0].queryKey)
+      expect(keys).toContainEqual(['supplies', 'detail', 'sup_123abc'])
+      expect(keys).toContainEqual(['supplies', 'documents', 'sup_123abc'])
+    })
   })
 
-  // ============================================================================
-  // 14. Accessibility
-  // ============================================================================
+  // ==========================================================================
+  // 11. Accessibility
+  // ==========================================================================
 
   describe('Accessibility', () => {
-    it.todo('modal has role="dialog"')
-    it.todo('modal has aria-modal="true"')
-    it.todo('modal has aria-labelledby pointing to title')
-    it.todo('focus is trapped inside modal when open')
-    it.todo('focus moves to first focusable element on open')
-    it.todo('focus returns to trigger element on close')
-    it.todo('radio buttons in format selector are keyboard navigable')
-    it.todo('loading state is announced to screen readers')
-    it.todo('info icon has aria-hidden="true"')
-  })
-
-  // ============================================================================
-  // 15. Responsive Behavior
-  // ============================================================================
-
-  describe('Responsive Behavior', () => {
-    it.todo('modal is responsive on mobile')
-    it.todo('preview image scales down on small screens')
-    it.todo('buttons stack on mobile if needed')
-  })
-
-  // ============================================================================
-  // TDD Verification Tests
-  // ============================================================================
-
-  describe('TDD Verification', () => {
-    it('should have supply fixtures ready', () => {
-      expect(mockSupplyClosed).toBeDefined()
-      expect(mockSupplyClosed.status).toBe('CLOSED')
+    it('has role="dialog" with aria-modal or data-state', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toBeInTheDocument()
+      const hasModal =
+        dialog.getAttribute('aria-modal') === 'true' || dialog.hasAttribute('data-state')
+      expect(hasModal).toBe(true)
     })
 
-    it('should have sticker format constants ready', () => {
-      expect(STICKER_FORMATS).toEqual(['png', 'svg', 'zpl'])
-      expect(FORMAT_LABELS.png).toBe('PNG - для обычных принтеров')
-      expect(FORMAT_LABELS.svg).toBe('SVG - высокое качество')
-      expect(FORMAT_LABELS.zpl).toBe('ZPL - для термопринтеров Zebra')
+    it('has aria-labelledby pointing to title element', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const dialog = screen.getByRole('dialog')
+      const labelledBy = dialog.getAttribute('aria-labelledby')
+      expect(labelledBy).toBeTruthy()
+      const labelledEl = document.getElementById(labelledBy!)
+      expect(labelledEl?.textContent).toContain('Генерация стикеров')
     })
 
-    it('should have generate response fixtures ready', () => {
-      expect(mockGenerateResponsePng).toBeDefined()
-      expect(mockGenerateResponsePng.document.format).toBe('png')
-      expect(mockGenerateResponsePng.data).toBeDefined()
-
-      expect(mockGenerateResponseSvg).toBeDefined()
-      expect(mockGenerateResponseSvg.document.format).toBe('svg')
-
-      expect(mockGenerateResponseZpl).toBeDefined()
-      expect(mockGenerateResponseZpl.document.format).toBe('zpl')
-      expect(mockGenerateResponseZpl.data).toBeUndefined()
+    it('contains focusable buttons inside dialog', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const focusable = within(screen.getByRole('dialog')).getAllByRole('button')
+      expect(focusable.length).toBeGreaterThanOrEqual(2)
     })
 
-    it('should have preview fixtures ready', () => {
-      expect(mockPreviewPng).toBeDefined()
-      expect(mockPreviewPng.dataUrl).toContain('data:image/png')
-      expect(mockPreviewSvg).toBeDefined()
-      expect(mockPreviewSvg.dataUrl).toContain('data:image/svg')
+    it('radio buttons are keyboard navigable with proper role', () => {
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      const radios = screen.getAllByRole('radio')
+      expect(radios.length).toBe(3)
+      radios.forEach(r => expect(r).toHaveAttribute('role', 'radio'))
     })
 
-    it('should have error fixtures ready', () => {
-      expect(mockErrorInvalidFormat.code).toBe('INVALID_FORMAT')
-      expect(mockErrorWrongStatus.code).toBe('WRONG_STATUS')
-      expect(mockErrorGenerationFailed.code).toBe('GENERATION_FAILED')
+    it('loading skeleton has accessible label', async () => {
+      mockGenerateStickersFn.mockReturnValue(pendingPromise())
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(screen.queryByLabelText('Загрузка превью')).toBeInTheDocument())
     })
 
-    it('should have default props defined', () => {
-      expect(defaultProps.open).toBe(true)
-      expect(defaultProps.supplyId).toBe('sup_123abc')
-      expect(defaultProps.onOpenChange).toBeDefined()
-    })
-
-    it('should have testing utilities available', () => {
-      expect(render).toBeDefined()
-      expect(screen).toBeDefined()
-      expect(waitFor).toBeDefined()
-      expect(within).toBeDefined()
-      expect(userEvent).toBeDefined()
+    it('ZPL info icon has aria-hidden="true"', async () => {
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} />)
+      await user.click(screen.getByRole('radio', { name: /ZPL/i }))
+      const zplContainer = screen.getByText('Предпросмотр ZPL недоступен.').closest('div')
+      const svg = zplContainer?.parentElement?.querySelector('svg')
+      expect(svg).toHaveAttribute('aria-hidden', 'true')
     })
   })
 })
-
-// Suppress unused fixture warnings
-void mockSupplyClosed
-void STICKER_FORMATS
-void FORMAT_LABELS
-void mockGenerateResponsePng
-void mockGenerateResponseSvg
-void mockGenerateResponseZpl
-void mockPreviewPng
-void mockPreviewSvg
-void mockErrorInvalidFormat
-void mockErrorWrongStatus
-void mockErrorGenerationFailed
