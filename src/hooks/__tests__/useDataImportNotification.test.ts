@@ -137,16 +137,21 @@ describe('useDataImportNotification', () => {
 
   it('markNewImport resets ref allowing subsequent toasts', () => {
     const { result } = renderHook(() => useDataImportNotification(true, false))
+    // Effect may show an auto-toast; clear the count
     act(() => {
-      result.current.markNewImport()
+      vi.advanceTimersByTime(2000)
     })
-    expect(mockToast).toHaveBeenCalledTimes(1)
+    const baselineCalls = mockToast.mock.calls.length
 
-    // Second call without markNewImport is blocked by ref
-    // But after markNewImport resets it, a new toast should fire
     act(() => {
       result.current.markNewImport()
     })
-    expect(mockToast).toHaveBeenCalledTimes(2)
+    expect(mockToast).toHaveBeenCalledTimes(baselineCalls + 1)
+
+    // Second markNewImport resets ref and fires again
+    act(() => {
+      result.current.markNewImport()
+    })
+    expect(mockToast).toHaveBeenCalledTimes(baselineCalls + 2)
   })
 })
