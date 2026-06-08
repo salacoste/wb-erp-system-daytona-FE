@@ -10,11 +10,11 @@
 
 'use client'
 
-import { useCallback, useId, useRef, useState } from 'react'
-import { RotateCw, Info, TrendingDown, TrendingUp, Minus } from 'lucide-react'
+import { TrendingDown, TrendingUp, Minus, RotateCw } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { TurnoverTooltip } from './TurnoverTooltip'
 
 export interface TurnoverCardProps {
   type: 'sales' | 'orders'
@@ -98,7 +98,7 @@ export function TurnoverCard({
 
   const turnoverDays = calculateTurnover(totalStock, count, daysInPeriod)
   const hasValue = turnoverDays !== null
-  const displayValue = hasValue ? formatDays(turnoverDays) : '\u2014'
+  const displayValue = hasValue ? formatDays(turnoverDays) : '—'
   const direction =
     hasValue && previousTurnoverDays !== null
       ? getTrendDirection(turnoverDays, previousTurnoverDays)
@@ -139,62 +139,6 @@ function InlineTrend({ direction }: { direction: TrendDirection }) {
         className={cn('h-3 w-3', TREND_COLORS[direction])}
         aria-hidden="true"
       />
-    </div>
-  )
-}
-
-function TurnoverTooltip({ type }: { type: 'sales' | 'orders' }) {
-  const [open, setOpen] = useState(false)
-  const tooltipId = useId()
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const show = useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    setOpen(true)
-  }, [])
-
-  const hide = useCallback(() => {
-    timeoutRef.current = setTimeout(() => setOpen(false), 100)
-  }, [])
-
-  const label =
-    type === 'sales'
-      ? 'Оборачиваемость по продажам показывает, за сколько дней будет распродан текущий остаток при текущей скорости продаж.'
-      : 'Оборачиваемость по заказам показывает, за сколько дней будет распродан текущий остаток при текущей скорости заказов.'
-
-  return (
-    <div className="relative inline-block">
-      <button
-        className="text-muted-foreground hover:text-foreground"
-        aria-label="Подробнее об оборачиваемости"
-        aria-describedby={open ? tooltipId : undefined}
-        data-testid="turnover-tooltip-trigger"
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onFocus={show}
-        onBlur={hide}
-      >
-        <Info className="h-4 w-4" />
-      </button>
-      {open && (
-        <div
-          id={tooltipId}
-          role="tooltip"
-          className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
-          style={{
-            backgroundColor: '#1e293b',
-            color: '#f1f5f9',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            minWidth: '220px',
-            maxWidth: '280px',
-          }}
-          onMouseEnter={show}
-          onMouseLeave={hide}
-        >
-          <p className="text-xs text-slate-100">{label}</p>
-        </div>
-      )}
     </div>
   )
 }

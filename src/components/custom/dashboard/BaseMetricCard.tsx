@@ -11,9 +11,10 @@ import { Info } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { TrendIndicator } from '@/components/custom/TrendIndicator'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
-import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
-import { calculateComparison, type TrendDirection } from '@/lib/comparison-helpers'
+import { cn } from '@/lib/utils'
+import { calculateComparison } from '@/lib/comparison-helpers'
 import { BaseMetricCardSkeleton, BaseMetricCardError } from './BaseMetricCardParts'
+import { formatValue, getSentimentClasses, type MetricFormat } from './BaseMetricCardHelpers'
 
 export interface BaseMetricCardProps {
   title: string
@@ -22,7 +23,7 @@ export interface BaseMetricCardProps {
   accentColor: string
   value: number | null | undefined
   previousValue?: number | null | undefined
-  format: 'currency' | 'percent' | 'number' | 'days'
+  format: MetricFormat
   inverted?: boolean
   secondaryValue?: string
   variant?: 'standard' | 'highlighted'
@@ -38,25 +39,6 @@ export interface BaseMetricCardProps {
   onRetry?: () => void
   className?: string
   'data-testid'?: string
-}
-
-function formatValue(value: number, format: BaseMetricCardProps['format']): string {
-  switch (format) {
-    case 'currency':
-      return formatCurrency(value)
-    case 'percent':
-      return formatPercentage(value)
-    case 'number':
-      return new Intl.NumberFormat('ru-RU').format(value)
-    case 'days':
-      return `${value} дн.`
-  }
-}
-
-function getSentimentClasses(direction: TrendDirection): string {
-  if (direction === 'positive') return 'bg-green-50 border-green-200'
-  if (direction === 'negative') return 'bg-red-50 border-red-200'
-  return ''
 }
 
 export function BaseMetricCard(props: BaseMetricCardProps): React.ReactElement {

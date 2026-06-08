@@ -1,5 +1,5 @@
 /**
- * Advertising Card — Секция 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА (правая)
+ * Advertising Card — СЕКЦИЯ 4: СЕБЕСТОИМОСТЬ И РЕКЛАМА (правая)
  * Dashboard Restructuring: P&L Narrative
  *
  * Shows ad spend + ROAS, ДРР (% of sales), ДРРз (% of orders revenue).
@@ -19,6 +19,13 @@ import { calculateComparison } from '@/lib/comparison-helpers'
 import { TrendIndicator } from '@/components/custom/TrendIndicator'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { StandardMetricSkeleton, MetricCardError } from './MetricCardStates'
+import {
+  calculateDrr,
+  calculateDrrz,
+  ADVERTISING_TOOLTIPS,
+  ROAS_TOOLTIP,
+  DRR_TOOLTIP,
+} from './AdvertisingCardHelpers'
 
 export interface AdvertisingCardProps {
   totalSpend: number | null | undefined
@@ -35,24 +42,6 @@ export interface AdvertisingCardProps {
   error?: Error | null
   onRetry?: () => void
   className?: string
-}
-
-/** DRR = totalSpend / saleGross * 100 (% of net sales) */
-function calculateDrr(
-  totalSpend: number | null | undefined,
-  saleGross: number | null | undefined
-): number | null {
-  if (totalSpend == null || saleGross == null || saleGross <= 0) return null
-  return (totalSpend / saleGross) * 100
-}
-
-/** DRRz = totalSpend / ordersRevenue * 100 (% of orders retail price) */
-function calculateDrrz(
-  totalSpend: number | null | undefined,
-  ordersRevenue: number | null | undefined
-): number | null {
-  if (totalSpend == null || ordersRevenue == null || ordersRevenue <= 0) return null
-  return (totalSpend / ordersRevenue) * 100
 }
 
 export function AdvertisingCard({
@@ -120,9 +109,7 @@ export function AdvertisingCard({
             </TooltipTrigger>
             <TooltipContent size="lg">
               <p style={{ whiteSpace: 'pre-line' }}>
-                {useFinanceSrc
-                  ? 'Расходы на продвижение — фактические удержания WB за рекламу.\nИсточник суммы: строки «Продвижение» из недельного финансового отчёта WB (wb_finance_raw).\nЭто реальные списания, которые уже учтены в «К перечислению».\nROAS и ДРР рассчитаны на основе этих данных.\nСумма может отличаться от рекламного API на ~1–3% из-за финальных корректировок WB.\nСравнение инвертировано: рост расходов = негативная тенденция (красный).\nИсточник: wb_finance_raw (reason = «Удержание», pattern ~«продвижен»).'
-                  : 'Расходы на рекламу — данные из рекламного кабинета WB (Promotion API).\nВключает все типы кампаний: поиск, каталог, авто, карточка товара.\nЭто затраты по рекламному API — могут незначительно отличаться от финального удержания в отчёте WB.\nROAS рассчитан как: выручка от рекламы ÷ расход (по данным рекламного API).\nСравнение инвертировано: рост расходов = негативная тенденция (красный).\nИсточник: advertising-analytics (adv_daily_stats).'}
+                {useFinanceSrc ? ADVERTISING_TOOLTIPS.finance : ADVERTISING_TOOLTIPS.api}
               </p>
             </TooltipContent>
           </Tooltip>
@@ -156,11 +143,7 @@ export function AdvertisingCard({
                   </button>
                 </TooltipTrigger>
                 <TooltipContent size="lg">
-                  <p style={{ whiteSpace: 'pre-line' }}>
-                    {
-                      'ROAS (Return on Ad Spend) — рентабельность рекламы.\nФормула: выручка от рекламных кампаний ÷ расход на кампании.\nДанные из рекламного кабинета WB (Promotion API) — учитывается только выручка, атрибутированная к рекламе.\nОриентиры: ≥5x — отлично (зелёный), 3–5x — хорошо, 2–3x — умеренно, 1–2x — слабо, <1x — убыток (красный).\n⚠ Отличается от «финансового ROAS» (sale_gross ÷ wb_promotion из отчёта), т.к. источники данных разные.'
-                    }
-                  </p>
+                  <p style={{ whiteSpace: 'pre-line' }}>{ROAS_TOOLTIP}</p>
                 </TooltipContent>
               </Tooltip>
             </span>
@@ -181,11 +164,7 @@ export function AdvertisingCard({
                   </button>
                 </TooltipTrigger>
                 <TooltipContent size="lg">
-                  <p style={{ whiteSpace: 'pre-line' }}>
-                    {
-                      'ДРР (Доля Рекламных Расходов) = расход на рекламу ÷ чистые продажи (sale_gross) × 100%.\nПоказывает, какой % от выручки уходит на рекламу.\nОриентиры: <5% — экономно, 5–15% — нормально, >15% — дорого.\nДРРз = расход ÷ заказы по РРЦ (розничная цена) × 100%.\nДРРз всегда ниже ДРР, т.к. заказы по РРЦ > чистых продаж (не все заказы выкупаются + РРЦ до комиссии WB).'
-                    }
-                  </p>
+                  <p style={{ whiteSpace: 'pre-line' }}>{DRR_TOOLTIP}</p>
                 </TooltipContent>
               </Tooltip>
             </span>
