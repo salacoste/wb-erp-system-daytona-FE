@@ -8,6 +8,7 @@ import type {
   JamStatusResponse,
   JamTier,
   SellerInfoResponse,
+  SellerRatingResponse,
   TaxSystem,
   TokenHealthResponse,
 } from '@/types/cabinet'
@@ -64,4 +65,14 @@ export function normalizeTokenHealthResponse(raw: unknown): TokenHealthResponse 
     lastCheckedAt: String(r.lastCheckedAt ?? r.last_checked_at ?? ''),
     errorCount: Number(r.errorCount ?? r.error_count ?? 0),
   } as TokenHealthResponse
+}
+
+export function normalizeSellerRatingResponse(raw: unknown): SellerRatingResponse {
+  const r = (raw ?? {}) as Record<string, unknown>
+  return {
+    valuation: r.valuation != null ? Number(r.valuation) : null,
+    feedbackCount: r.feedbackCount != null ? Number(r.feedbackCount) : null,
+    available: Boolean(r.available ?? false),
+    reason: (r.reason ?? null) as string | null,
+  } as SellerRatingResponse
 }

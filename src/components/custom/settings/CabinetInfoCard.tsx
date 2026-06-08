@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
+import { SellerRatingCard } from './SellerRatingCard'
 import {
   JAM_TIER_LABELS,
   SELLER_INFO_REASON_LABELS,
@@ -142,6 +143,9 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
           ) : null}
         </CardContent>
       </Card>
+
+      {/* Seller Rating */}
+      <SellerRatingCard cabinetId={cabinetId} />
     </div>
   )
 }

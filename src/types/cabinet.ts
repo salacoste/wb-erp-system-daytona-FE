@@ -196,3 +196,28 @@ export interface TokenHealthResponse {
   lastSuccessAt?: string
   recommendation?: string
 }
+
+// --- Seller Rating (GET /v1/cabinets/:id/seller-rating) ---
+
+export type SellerRatingReason =
+  | 'token_error'
+  | 'insufficient_permissions'
+  | 'timeout'
+  | 'wb_api_error'
+  | 'sdk_version_mismatch'
+
+export const SELLER_RATING_REASON_LABELS: Record<SellerRatingReason, string> = {
+  token_error: 'Токен невалидный',
+  insufficient_permissions: 'Недостаточно прав (нужна категория «Вопросы и отзывы»)',
+  timeout: 'Таймаут запроса',
+  wb_api_error: 'Ошибка WB API',
+  sdk_version_mismatch: 'Требуется обновление SDK',
+}
+
+/** /v1/cabinets/:id/seller-rating — 0–5 scale, cached 1h */
+export interface SellerRatingResponse {
+  valuation: number | null
+  feedbackCount: number | null
+  available: boolean
+  reason?: SellerRatingReason
+}

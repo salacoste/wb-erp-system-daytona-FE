@@ -12,6 +12,7 @@ import type {
   UpdateCabinetTaxRequest,
   JamStatusResponse,
   SellerInfoResponse,
+  SellerRatingResponse,
   TokenHealthResponse,
 } from '@/types/cabinet'
 // Story 89.1-FE: Boundary normalizers — Jam tier falls back to 'unknown' for new tiers
@@ -19,6 +20,7 @@ import {
   normalizeCabinetResponse,
   normalizeJamStatusResponse,
   normalizeSellerInfoResponse,
+  normalizeSellerRatingResponse,
   normalizeTokenHealthResponse,
 } from './cabinet-normalizer'
 
@@ -70,4 +72,14 @@ export async function getSellerInfo(cabinetId: string): Promise<SellerInfoRespon
 export async function getTokenHealth(cabinetId: string): Promise<TokenHealthResponse> {
   const raw = await apiClient.get<unknown>(`/v1/cabinets/${cabinetId}/token-status`)
   return normalizeTokenHealthResponse(raw)
+}
+
+/**
+ * GET /v1/cabinets/:id/seller-rating
+ * Seller valuation (0–5 scale) + feedback count. Cached 1h.
+ * Graceful: available=false when token lacks "Questions & Reviews" category.
+ */
+export async function getSellerRating(cabinetId: string): Promise<SellerRatingResponse> {
+  const raw = await apiClient.get<unknown>(`/v1/cabinets/${cabinetId}/seller-rating`)
+  return normalizeSellerRatingResponse(raw)
 }
