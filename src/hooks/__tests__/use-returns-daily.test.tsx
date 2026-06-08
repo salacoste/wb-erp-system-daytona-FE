@@ -119,15 +119,14 @@ describe('useReturnsDailyTrends', () => {
   })
 
   it('handles API errors gracefully', async () => {
-    // hook has retry: 1, so mock rejection twice (initial + retry)
-    mockGetReturnsDailyTrends.mockRejectedValueOnce(new Error('Network error'))
-    mockGetReturnsDailyTrends.mockRejectedValueOnce(new Error('Network error'))
+    // hook has retry: 1 — use persistent rejection so both attempts fail
+    mockGetReturnsDailyTrends.mockRejectedValue(new Error('Network error'))
 
     const { result } = renderHook(() => useReturnsDailyTrends('2026-06-01', '2026-06-07'), {
       wrapper: createWrapper(),
     })
 
-    await waitFor(() => expect(result.current.isError).toBe(true))
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
     expect(result.current.error?.message).toBe('Network error')
   })
 })
