@@ -17,6 +17,7 @@ const mockQueries: SearchQueryItem[] = [
     totalClicks: 200,
     avgCtr: 4.0,
     totalOrders: 15,
+    searchCartAdds: 100,
   },
   {
     searchQuery: 'платье красное',
@@ -25,6 +26,7 @@ const mockQueries: SearchQueryItem[] = [
     totalClicks: 350,
     avgCtr: 4.4,
     totalOrders: 25,
+    searchCartAdds: 200,
   },
   {
     searchQuery: 'платье вечернее',
@@ -33,18 +35,20 @@ const mockQueries: SearchQueryItem[] = [
     totalClicks: 100,
     avgCtr: 3.3,
     totalOrders: 8,
+    searchCartAdds: 60,
   },
 ]
 
 describe('SearchByProductTable', () => {
-  // Story 91.1-FE: 'Выручка ₽' column removed (was 7, now 6)
-  it('renders 6 column headers', () => {
+  // Story 91.1-FE: 'Выручка ₽' column removed; cart conversion rate column added (7 columns)
+  it('renders 7 column headers', () => {
     render(<SearchByProductTable queries={mockQueries} />)
     expect(screen.getByText('Запрос')).toBeInTheDocument()
     expect(screen.getByText('Ср. позиция')).toBeInTheDocument()
     expect(screen.getByText('Показы')).toBeInTheDocument()
     expect(screen.getByText('Клики')).toBeInTheDocument()
     expect(screen.getByText('CTR %')).toBeInTheDocument()
+    expect(screen.getByText('Конверсия в корзину')).toBeInTheDocument()
     expect(screen.getByText('Заказы')).toBeInTheDocument()
   })
 
@@ -115,11 +119,13 @@ describe('SearchByProductTable', () => {
             totalClicks: 5,
             avgCtr: null,
             totalOrders: 1,
+            searchCartAdds: 3,
           },
         ]}
       />
     )
-    expect(screen.getByText('—')).toBeInTheDocument() // CTR is the only percent column
+    // CTR null → "—"; cartConversionRate has data (3/100=3%) so only one em-dash
+    expect(screen.getByText('—')).toBeInTheDocument()
     expect(screen.queryByText(/0,0\s*%/)).not.toBeInTheDocument()
   })
 })

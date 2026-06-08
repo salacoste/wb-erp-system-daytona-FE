@@ -16,6 +16,7 @@ import { MergedGroupTable } from './MergedGroupTable'
 import { DailyTrendChart } from './DailyTrendChart'
 import { MultiCampaignWarningBanner } from './MultiCampaignWarningBanner'
 import { AdCostDiscrepancySection } from './AdCostDiscrepancySection'
+import { CannibalizationSection } from './CannibalizationSection'
 import { OverAttributionBanner } from './OverAttributionBanner'
 import { features } from '@/config/features'
 import { PAGE_SIZE } from './useAdvertisingPageState'
@@ -47,6 +48,7 @@ export function AdvertisingMainContent({ state, filters }: AdvertisingMainConten
         platformSpend={filters.filteredSummary?.total_spend ?? null}
         isLoading={state.isLoading}
       />
+      <CannibalizationSection items={state.data?.data ?? []} isLoading={state.isLoading} />
       <OverAttributionBanner
         count={filters.overAttributionCount}
         filterActive={state.hideOverAttribution}

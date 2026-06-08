@@ -14,6 +14,7 @@ import type { DateRange } from '@/types/date-range'
 import type { ComparisonPreset } from '@/components/custom/comparison-period/comparison-period-types'
 import { ReturnsSummaryCards } from './ReturnsSummaryCards'
 import { ReturnReasonsPieChart } from './ReturnReasonsPieChart'
+import { ReturnTrendChart } from './ReturnTrendChart'
 import { ReturnsTable } from './ReturnsTable'
 import { calculatePreviousPeriod } from './returns-comparison-utils'
 
@@ -111,6 +112,9 @@ export function ReturnsPageContent() {
         compareFrom={comparePeriod?.prevFrom ?? ''}
         compareTo={comparePeriod?.prevTo ?? ''}
       />
+
+      {/* Daily return trend chart */}
+      <ReturnTrendChart from={apiFrom} to={apiTo} />
 
       {/* Pie chart */}
       <ReturnReasonsPieChart from={apiFrom} to={apiTo} />

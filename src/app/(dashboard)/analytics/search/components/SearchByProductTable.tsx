@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Search By Product Table - Sortable 7-column table for search query items
+ * Search By Product Table - Sortable table for search query items
  * Story 71.6-FE: By-Product Keyword Explorer Tab
  */
 
@@ -17,6 +17,7 @@ import {
 import type { SearchQueryItem } from '@/types/search-analytics'
 import { SortButton } from './SortButton'
 import { formatDecimal } from '@/lib/utils'
+import { formatPercentage } from '@/lib/formatters'
 
 interface SearchByProductTableProps {
   queries: SearchQueryItem[]
@@ -28,6 +29,7 @@ type SortField =
   | 'totalClicks'
   | 'avgCtr'
   | 'searchCartAdds'
+  | 'cartConversionRate'
   | 'totalOrders'
 
 function formatNumber(n: number): string {
@@ -53,9 +55,15 @@ const COLUMNS: { label: string; field: SortField }[] = [
   { label: 'Клики', field: 'totalClicks' },
   { label: 'CTR %', field: 'avgCtr' },
   { label: 'В корзину', field: 'searchCartAdds' },
+  { label: 'Конверсия в корзину', field: 'cartConversionRate' },
   { label: 'Заказы', field: 'totalOrders' },
-  // Story 91.1-FE: 'Выручка ₽' column removed — backend dropped totalRevenue
 ]
+
+/** Cart conversion rate: searchCartAdds / totalImpressions * 100. null when denominator is 0 or data missing (anti-pattern #8). */
+function getCartConversionRate(item: SearchQueryItem): number | null {
+  if (!item.totalImpressions || item.searchCartAdds == null) return null
+  return (item.searchCartAdds / item.totalImpressions) * 100
+}
 
 export function SearchByProductTable({ queries }: SearchByProductTableProps) {
   const [sort, setSort] = useState<SortField>('totalImpressions')
@@ -70,23 +78,33 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
     }
   }
 
+  const getSortValue = (item: SearchQueryItem, field: SortField): number => {
+    if (field === 'cartConversionRate') return getCartConversionRate(item) ?? 0
+    return Number(item[field] ?? 0)
+  }
+
   const sorted = [...queries].sort((a, b) => {
-    // avgCtr is number | null; `?? 0` keeps the sort arithmetic NaN-free. Null CTRs sort as 0
-    // (accepted AP#8 sort exception) though they DISPLAY as "—" — do not "fix" with -Infinity.
-    const aVal = Number(a[sort] ?? 0)
-    const bVal = Number(b[sort] ?? 0)
+    const aVal = getSortValue(a, sort)
+    const bVal = getSortValue(b, sort)
     return order === 'desc' ? bVal - aVal : aVal - bVal
   })
 
   const formatCell = (field: SortField, value: number | null): string => {
     switch (field) {
       case 'avgPosition':
-        return formatDecimal(value ?? 0) // toCount-sourced (never null); ?? 0 = type-safety only
+        return formatDecimal(value ?? 0)
       case 'avgCtr':
-        return formatPercent(value) // rate: null → "—"
+        return formatPercent(value)
+      case 'cartConversionRate':
+        return value == null ? '—' : formatPercentage(value)
       default:
         return formatNumber(value ?? 0)
     }
+  }
+
+  const getCellValue = (item: SearchQueryItem, field: SortField): number | null => {
+    if (field === 'cartConversionRate') return getCartConversionRate(item)
+    return item[field] ?? null
   }
 
   return (
@@ -117,7 +135,7 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
               <TableCell className="font-medium">{item.searchQuery}</TableCell>
               {COLUMNS.map(col => (
                 <TableCell key={col.field}>
-                  {formatCell(col.field, item[col.field] ?? null)}
+                  {formatCell(col.field, getCellValue(item, col.field))}
                 </TableCell>
               ))}
             </TableRow>

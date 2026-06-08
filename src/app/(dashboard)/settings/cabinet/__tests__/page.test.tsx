@@ -15,6 +15,15 @@ vi.mock('@/components/custom/settings/CabinetInfoCard', () => ({
   ),
 }))
 
+// Mock the JamStatusBadge component
+vi.mock('@/components/custom/settings/JamStatusBadge', () => ({
+  JamStatusBadge: ({ cabinetId }: { cabinetId: string }) => (
+    <div data-testid="jam-status-badge" data-cabinet-id={cabinetId}>
+      JamStatusBadge
+    </div>
+  ),
+}))
+
 // Mock auth store
 const mockCabinetId = vi.fn<[], string | null>()
 vi.mock('@/stores/authStore', () => ({

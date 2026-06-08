@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/jest.config.* /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/jest.config 2>/dev/null\",\"description\":\"List jest con...",
-  "error": "Exit code 1\n(eval):1: no matches found: /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/jest.config.*",
-  "timestamp": "2026-06-08T12:42:13.372Z",
-  "retry_count": 1
+  "tool_input_preview": "{\"command\":\"npx vitest run \\\"src/app/(dashboard)/settings/\\\" 2>&1\",\"timeout\":60000,\"description\":\"Run cabinet settings page tests\"}",
+  "error": "Exit code 1\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n\n RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend\n\n[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`\n(node:87686) Warning: `--localstorage-file` was provided without a valid path\n(Use `...",
+  "timestamp": "2026-06-08T14:25:31.095Z",
+  "retry_count": 2
 }

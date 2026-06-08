@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Search By Query Table - Sortable 7-column table for product rankings
+ * Search By Query Table - Sortable table for product rankings
  * Story 71.7-FE: By-Query Product Ranking Tab
  */
 
@@ -17,6 +17,7 @@ import {
 import type { SearchProductItem } from '@/types/search-analytics'
 import { SortButton } from './SortButton'
 import { formatDecimal } from '@/lib/utils'
+import { formatPercentage } from '@/lib/formatters'
 
 interface SearchByQueryTableProps {
   products: SearchProductItem[]
@@ -28,6 +29,7 @@ type SortField =
   | 'totalClicks'
   | 'avgCtr'
   | 'searchCartAdds'
+  | 'cartConversionRate'
   | 'totalOrders'
 
 function formatNumber(n: number): string {
@@ -61,8 +63,15 @@ const COLUMNS: { label: string; field: SortField }[] = [
   { label: 'Клики', field: 'totalClicks' },
   { label: 'CTR %', field: 'avgCtr' },
   { label: 'В корзину', field: 'searchCartAdds' },
+  { label: 'Конверсия в корзину', field: 'cartConversionRate' },
   { label: 'Заказы', field: 'totalOrders' },
 ]
+
+/** Cart conversion rate: searchCartAdds / totalImpressions * 100. null when denominator is 0 or data missing (anti-pattern #8). */
+function getCartConversionRate(item: SearchProductItem): number | null {
+  if (!item.totalImpressions || item.searchCartAdds == null) return null
+  return (item.searchCartAdds / item.totalImpressions) * 100
+}
 
 export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
   const [sort, setSort] = useState<SortField>('avgPosition')
@@ -77,23 +86,33 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
     }
   }
 
+  const getSortValue = (item: SearchProductItem, field: SortField): number => {
+    if (field === 'cartConversionRate') return getCartConversionRate(item) ?? 0
+    return Number(item[field] ?? 0)
+  }
+
   const sorted = [...products].sort((a, b) => {
-    // avgCtr is number | null; `?? 0` keeps the sort arithmetic NaN-free. Null CTRs sort as 0
-    // (accepted AP#8 sort exception) though they DISPLAY as "—" — do not "fix" with -Infinity.
-    const aVal = Number(a[sort] ?? 0)
-    const bVal = Number(b[sort] ?? 0)
+    const aVal = getSortValue(a, sort)
+    const bVal = getSortValue(b, sort)
     return order === 'desc' ? bVal - aVal : aVal - bVal
   })
 
   const formatCell = (field: SortField, value: number | null): string => {
     switch (field) {
       case 'avgPosition':
-        return formatDecimal(value ?? 0) // toCount-sourced (never null); ?? 0 = type-safety only
+        return formatDecimal(value ?? 0)
       case 'avgCtr':
-        return formatPercent(value) // rate: null → "—"
+        return formatPercent(value)
+      case 'cartConversionRate':
+        return value == null ? '—' : formatPercentage(value)
       default:
         return formatNumber(value ?? 0)
     }
+  }
+
+  const getCellValue = (item: SearchProductItem, field: SortField): number | null => {
+    if (field === 'cartConversionRate') return getCartConversionRate(item)
+    return item[field] ?? null
   }
 
   return (
@@ -127,17 +146,20 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
                   <div className="text-xs text-muted-foreground">{item.vendorCode}</div>
                 )}
               </TableCell>
-              {COLUMNS.map(col => (
-                <TableCell key={col.field}>
-                  {col.field === 'avgPosition' ? (
-                    <span className={getPositionBadgeClass(item.avgPosition)}>
-                      {formatCell(col.field, item[col.field] ?? null)}
-                    </span>
-                  ) : (
-                    formatCell(col.field, item[col.field] ?? null)
-                  )}
-                </TableCell>
-              ))}
+              {COLUMNS.map(col => {
+                const value = getCellValue(item, col.field)
+                return (
+                  <TableCell key={col.field}>
+                    {col.field === 'avgPosition' ? (
+                      <span className={getPositionBadgeClass(item.avgPosition)}>
+                        {formatCell(col.field, value)}
+                      </span>
+                    ) : (
+                      formatCell(col.field, value)
+                    )}
+                  </TableCell>
+                )
+              })}
             </TableRow>
           ))}
         </TableBody>
