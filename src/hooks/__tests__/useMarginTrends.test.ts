@@ -189,3 +189,155 @@ describe('useMarginTrends', () => {
     expect(mockGet).toHaveBeenCalledTimes(1)
   })
 })
+
+// =============================================================================
+// Parameter validation
+// =============================================================================
+
+describe('useMarginTrends parameter validation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('throws when neither weeks nor weekStart/weekEnd provided', () => {
+    expect(() => useMarginTrends({})).toThrow(
+      'useMarginTrends: Must provide either "weeks" or both "weekStart" and "weekEnd"'
+    )
+  })
+
+  it('throws when only weekStart is provided without weekEnd', () => {
+    expect(() => useMarginTrends({ weekStart: '2025-W40' })).toThrow(
+      'useMarginTrends: Must provide either "weeks" or both "weekStart" and "weekEnd"'
+    )
+  })
+
+  it('throws when only weekEnd is provided without weekStart', () => {
+    expect(() => useMarginTrends({ weekEnd: '2025-W47' })).toThrow(
+      'useMarginTrends: Must provide either "weeks" or both "weekStart" and "weekEnd"'
+    )
+  })
+
+  it('throws when weeks is combined with weekStart', () => {
+    expect(() => useMarginTrends({ weeks: 12, weekStart: '2025-W40' })).toThrow(
+      'useMarginTrends: Cannot use both "weeks" and "weekStart/weekEnd" parameters'
+    )
+  })
+
+  it('throws when weeks is combined with weekEnd', () => {
+    expect(() => useMarginTrends({ weeks: 12, weekEnd: '2025-W47' })).toThrow(
+      'useMarginTrends: Cannot use both "weeks" and "weekStart/weekEnd" parameters'
+    )
+  })
+
+  it('throws when weeks is combined with both weekStart and weekEnd', () => {
+    expect(() =>
+      useMarginTrends({ weeks: 12, weekStart: '2025-W40', weekEnd: '2025-W47' })
+    ).toThrow('useMarginTrends: Cannot use both "weeks" and "weekStart/weekEnd" parameters')
+  })
+})
+
+// =============================================================================
+// getWeekRange pure function
+// =============================================================================
+
+describe('getWeekRange', () => {
+  it('returns weekStart and weekEnd strings', () => {
+    const { getWeekRange } = require('../useMarginTrends')
+    const result = getWeekRange(12)
+    expect(result.weekStart).toMatch(/^\d{4}-W\d{2}$/)
+    expect(result.weekEnd).toMatch(/^\d{4}-W\d{2}$/)
+  })
+
+  it('returns end week as current week', () => {
+    const { getWeekRange } = require('../useMarginTrends')
+    const result = getWeekRange(4)
+
+    // weekEnd should represent the current ISO week
+    const now = new Date()
+    const shifted = new Date(now.getTime() + 3 * 60 * 60 * 1000)
+    const dayNr = (shifted.getUTCDay() + 6) % 7
+    const target = new Date(shifted.getTime())
+    target.setUTCDate(target.getUTCDate() - dayNr + 3)
+    const firstThursday = new Date(target.getUTCFullYear(), 0, 4)
+    const currentWeek =
+      1 +
+      Math.round(
+        ((target.getTime() - firstThursday.getTime()) / 86400000 -
+          3 +
+          ((firstThursday.getUTCDay() + 6) % 7)) /
+          7
+      )
+    const expectedWeekEnd = `${now.getFullYear()}-W${currentWeek.toString().padStart(2, '0')}`
+
+    expect(result.weekEnd).toBe(expectedWeekEnd)
+  })
+
+  it('start week is earlier than end week', () => {
+    const { getWeekRange } = require('../useMarginTrends')
+    const result = getWeekRange(12)
+    expect(result.weekStart.localeCompare(result.weekEnd)).toBeLessThanOrEqual(0)
+  })
+
+  it('larger numWeeks produces earlier start week', () => {
+    const { getWeekRange } = require('../useMarginTrends')
+    const short = getWeekRange(4)
+    const long = getWeekRange(24)
+    expect(long.weekStart.localeCompare(short.weekStart)).toBeLessThanOrEqual(0)
+  })
+
+  it('handles numWeeks = 1', () => {
+    const { getWeekRange } = require('../useMarginTrends')
+    const result = getWeekRange(1)
+    expect(result.weekStart).toMatch(/^\d{4}-W\d{2}$/)
+    expect(result.weekEnd).toMatch(/^\d{4}-W\d{2}$/)
+  })
+})
+
+// =============================================================================
+// Error handling edge cases
+// =============================================================================
+
+describe('useMarginTrends error handling', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('returns empty array on 404 response', async () => {
+    const httpError = new Error('Not Found') as Error & { response: { status: number } }
+    httpError.response = { status: 404 }
+    mockGet.mockRejectedValueOnce(httpError)
+
+    const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 5000 })
+    expect(result.current.data).toEqual([])
+  })
+
+  it('throws translated error on 400 response', async () => {
+    const httpError = new Error('Bad Request') as Error & {
+      response: { status: number; data: { error: { message: string } } }
+    }
+    httpError.response = { status: 400, data: { error: { message: 'Invalid week format' } } }
+    mockGet.mockRejectedValueOnce(httpError)
+
+    const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
+    expect(result.current.error?.message).toContain('Неверные параметры запроса')
+  })
+
+  it('re-throws non-HTTP errors for TanStack Query', async () => {
+    mockGet.mockRejectedValueOnce(new Error('Network failure'))
+
+    const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
+    expect(result.current.error?.message).toBe('Network failure')
+  })
+})
