@@ -10,6 +10,8 @@ import {
   TaxWarningBanner,
   InventorySummaryWidget,
   PeriodComparisonSection,
+  OrdersSeasonalPatterns,
+  FulfillmentShareBar,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { ReportPendingBanner } from './ReportPendingBanner'
@@ -24,6 +26,8 @@ import { MissingCogsAlert } from '@/components/custom/MissingCogsAlert'
 import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
 import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
+import { UnitEconomicsSection } from './UnitEconomicsSection'
+import { StorageSection } from './StorageSection'
 
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()
@@ -77,6 +81,7 @@ export function DashboardContent(): React.ReactElement {
         wbCommissionAdj={d.summary?.wb_commission_adj_total}
         wbServicesCost={undefined}
         logisticsCost={d.summary?.logistics_cost_total}
+        logisticsBreakdown={d.logisticsBreakdown}
         payoutTotal={d.summary?.payout_total}
         storageCost={d.summary?.storage_cost_total}
         paidAcceptanceCost={d.summary?.paid_acceptance_cost_total}
@@ -102,6 +107,9 @@ export function DashboardContent(): React.ReactElement {
         onRetry={d.handleRetry}
         onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
       />
+      {(d.fboShare > 0 || d.fbsShare > 0) && (
+        <FulfillmentShareBar fboShare={d.fboShare} fbsShare={d.fbsShare} />
+      )}
       <CogsCoverageMetricCard
         productsWithCogs={d.inventoryWithCogs}
         totalProducts={d.totalProducts ?? 0}
@@ -112,15 +120,18 @@ export function DashboardContent(): React.ReactElement {
       <PeriodComparisonSection currentWeek={d.selectedWeek} />
       <DailyBreakdownSection className="mt-4" />
       <InventorySummaryWidget />
+      <StorageSection selectedWeek={d.selectedWeek} />
       <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
       <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
       <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
+      <UnitEconomicsSection />
       {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
           <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />
           Обновление данных...
         </div>
       )}
+      <OrdersSeasonalPatterns />
       <TrendGraph />
       <InitialDataSummary
         cogsCoverage={d.cogsCoverage}

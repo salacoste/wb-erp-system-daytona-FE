@@ -104,6 +104,8 @@ vi.mock('@/app/(dashboard)/analytics/components/MarketingKpiCard', () => ({
   MarketingKpiCard: () => null,
 }))
 vi.mock('./ReportPendingBanner', () => ({ ReportPendingBanner: () => null }))
+vi.mock('../UnitEconomicsSection', () => ({ UnitEconomicsSection: () => null }))
+vi.mock('../StorageSection', () => ({ StorageSection: () => null }))
 vi.mock('@/components/custom/dashboard', () => ({
   DashboardMetricsGrid: () => null,
   DailyBreakdownSection: () => null,
@@ -111,6 +113,8 @@ vi.mock('@/components/custom/dashboard', () => ({
   TaxWarningBanner: () => null,
   InventorySummaryWidget: () => null,
   PeriodComparisonSection: () => null,
+  OrdersSeasonalPatterns: () => null,
+  FulfillmentShareBar: () => null,
 }))
 // NOTE: DashboardAlerts is intentionally NOT mocked — we assert the real
 // ProcessingAlert is absent.

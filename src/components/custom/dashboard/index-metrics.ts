@@ -131,6 +131,15 @@ export type { TheoreticalProfitCardProps } from './TheoreticalProfitCard'
 export { ProfitBreakdownPopover } from './ProfitBreakdownPopover'
 export type { ProfitBreakdownPopoverProps } from './ProfitBreakdownPopover'
 
+export { CommissionBreakdownPopover } from './CommissionBreakdownPopover'
+export type { CommissionBreakdownPopoverProps } from './CommissionBreakdownPopover'
+
+export { LogisticsBreakdownPopover } from './LogisticsBreakdownPopover'
+export type { LogisticsBreakdownPopoverProps } from './LogisticsBreakdownPopover'
+
+export { FulfillmentShareBar } from './FulfillmentShareBar'
+export type { FulfillmentShareBarProps } from './FulfillmentShareBar'
+
 // Shared Metric Card States (Story 62.3-FE, 62.4-FE)
 export {
   MetricCardError,

@@ -25,6 +25,7 @@ export function renderDetailCards(props: DashboardMetricsGridProps): React.React
     penaltiesTotal,
     wbCommissionAdj,
     logisticsCost,
+    logisticsBreakdown,
     saleGross,
     payoutTotal,
     storageCost,
@@ -81,6 +82,7 @@ export function renderDetailCards(props: DashboardMetricsGridProps): React.React
         logisticsCost={logisticsCost}
         previousLogisticsCost={prev?.logisticsCost}
         revenueTotal={saleGross}
+        logisticsBreakdown={logisticsBreakdown}
         isLoading={false}
         error={error}
         onRetry={onRetry}

@@ -19,7 +19,7 @@
  * └────────────────────────────────────────────────────────────────────┘
  */
 
-import type { TaxMetrics } from '@/types/finance-summary'
+import type { LogisticsBreakdown, TaxMetrics } from '@/types/finance-summary'
 
 export interface PreviousPeriodData {
   ordersAmount: number | null
@@ -72,6 +72,8 @@ export interface DashboardMetricsGridProps {
   wbCommissionAdj: number | undefined
   wbServicesCost: number | undefined
   logisticsCost: number | undefined
+  /** Story 65.6: Logistics breakdown by delivery type */
+  logisticsBreakdown?: LogisticsBreakdown | null
   // К перечислению
   payoutTotal: number | undefined
   storageCost: number | undefined

@@ -197,6 +197,12 @@ vi.mock('./DashboardAlerts', () => ({
   ErrorAlert: () => null,
 }))
 
+vi.mock('../UnitEconomicsSection', () => ({
+  UnitEconomicsSection: () => null,
+}))
+
+vi.mock('../StorageSection', () => ({ StorageSection: () => null }))
+
 vi.mock('@/components/custom/dashboard', () => ({
   DashboardMetricsGrid: vi.fn(({ previousPeriodData }) => (
     <div data-testid="metrics-grid" data-previous={JSON.stringify(previousPeriodData)}>
@@ -208,6 +214,8 @@ vi.mock('@/components/custom/dashboard', () => ({
   TaxWarningBanner: () => null,
   InventorySummaryWidget: () => null,
   PeriodComparisonSection: () => null,
+  OrdersSeasonalPatterns: () => null,
+  FulfillmentShareBar: () => null,
 }))
 
 // =============================================================================
