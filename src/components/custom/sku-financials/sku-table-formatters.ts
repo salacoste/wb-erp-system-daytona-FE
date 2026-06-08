@@ -3,19 +3,15 @@
  * Extracted from SkuFinancialsTable.tsx — pure formatting helpers
  */
 
+import { formatCogsCost } from '@/lib/formatters'
 import { formatPercentage } from '@/lib/utils'
 
 /**
- * Format currency in Russian locale
+ * Format currency in Russian locale.
+ * Delegates to canonical formatCogsCost (2 fixed decimal places, null → "—").
  */
 export function formatCurrency(value: number | null): string {
-  if (value === null) return '—'
-  return (
-    value.toLocaleString('ru-RU', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }) + ' ₽'
-  )
+  return formatCogsCost(value)
 }
 
 /**

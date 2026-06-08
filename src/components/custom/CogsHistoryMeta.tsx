@@ -1,6 +1,7 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
+import { formatCogsCost } from '@/lib/formatters'
 
 interface CogsHistoryMetaProps {
   meta: {
@@ -19,21 +20,6 @@ interface CogsHistoryMetaProps {
  * Reference: frontend/docs/stories/epic-5/story-5.1-fe-cogs-history-view.md
  */
 export function CogsHistoryMeta({ meta }: CogsHistoryMetaProps) {
-  /**
-   * Format currency to Russian locale
-   */
-  const formatCurrency = (value: number): string => {
-    // current_cogs.unit_cost_rub is NaN when the backend cost is invalid/missing (cogs-history
-    // normalizer's honest sentinel, NOT 0 — anti-pattern #8). Render "—", never "не число ₽".
-    if (!Number.isFinite(value)) return '—'
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value)
-  }
-
   return (
     <Card>
       <CardContent className="pt-6">
@@ -49,7 +35,7 @@ export function CogsHistoryMeta({ meta }: CogsHistoryMetaProps) {
             <span>•</span>
             <span>
               Текущий COGS:{' '}
-              {meta.current_cogs ? formatCurrency(meta.current_cogs.unit_cost_rub) : '—'}
+              {meta.current_cogs ? formatCogsCost(meta.current_cogs.unit_cost_rub) : '—'}
             </span>
             <span>•</span>
             <span>Всего версий: {meta.total_versions}</span>

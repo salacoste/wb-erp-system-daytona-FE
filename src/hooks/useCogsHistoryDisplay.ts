@@ -27,26 +27,11 @@ export function formatDateRu(dateString: string | null | undefined): string {
 
 /**
  * Formats currency to Russian locale with RUB symbol.
- * NOTE: distinct from the same-named `formatCurrencyRu` in `cogs-edit-helpers.ts` — this
- * display variant guards null/undefined (→ '—'); the helper variant expects a valid number.
+ * Delegates to canonical formatCogsCost (2 fixed decimal places, null/NaN → "—").
  * @example formatCurrencyRu(1250.5) -> '1 250,50 ₽'
  */
 export function formatCurrencyRu(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '—'
-  // NaN is the cogs-history normalizer's "invalid cost" sentinel (anti-pattern #8). Intl.format(NaN)
-  // does NOT throw (it returns "не число ₽"), so the try/catch below can't catch it — guard explicitly.
-  // (Matches the sibling formatters fixed in iter-136; closes the drift that left this copy unguarded.)
-  if (!Number.isFinite(value)) return '—'
-  try {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value)
-  } catch {
-    return '—'
-  }
+  return formatCogsCost(value)
 }
 
 /**
