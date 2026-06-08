@@ -186,62 +186,14 @@ export const isPublicRoute = (pathname: string): boolean => {
   return publicPaths.includes(pathname)
 }
 
-// Route builder helpers for dynamic routes
-
-/**
- * Build supply detail route with specific supply ID
- * Epic 53-FE: Supply Management
- */
-export const buildSupplyDetailRoute = (supplyId: string): string => {
-  return `/supplies/${supplyId}`
-}
-
-/**
- * Build shipment detail route with specific shipment ID
- * Epic 76-FE: Shipment Planning & Cost Calculation
- */
-export const buildShipmentDetailRoute = (shipmentId: string): string => {
-  return `/shipments/${shipmentId}`
-}
-
-export const buildCampaignDetailRoute = (advertId: number): string => {
-  return `/analytics/advertising/campaigns/${advertId}`
-}
-
-/**
- * Build model performance detail route.
- * Story 109.5-FE: dynamic route /analytics/models/[id]/performance.
- * Function-style helper (not ROUTES entry) because ROUTES.ANALYTICS is `as const`
- * and only accepts string-literal values — matches buildSupplyDetailRoute / buildCampaignDetailRoute precedent.
- * Renamed buildModelPerformanceRoute (F-6: aligns with buildSupplyDetailRoute / buildCampaignDetailRoute naming).
- */
-export const buildModelPerformanceRoute = (modelId: string): string => {
-  return `${ROUTES.ANALYTICS.MODELS}/${modelId}/performance`
-}
-
-/**
- * Build model evaluations list route.
- * Story 110.1-FE: pre-registered for Epic 110 evaluations feature (Story 110.2 destination).
- * Arrow-function style — matches buildModelPerformanceRoute / buildCampaignDetailRoute precedent.
- */
-export const buildModelEvaluationsRoute = (modelId: string): string =>
-  `${ROUTES.ANALYTICS.MODELS}/${modelId}/evaluations`
-
-/**
- * Build model SKU accuracy table route.
- * Story 110.1-FE: pre-registered for Epic 110 evaluations feature (Story 110.3 destination).
- * Arrow-function style — matches buildModelPerformanceRoute / buildCampaignDetailRoute precedent.
- */
-export const buildModelSkuAccuracyRoute = (modelId: string): string =>
-  `${ROUTES.ANALYTICS.MODELS}/${modelId}/evaluations/sku-accuracy`
-
-/**
- * Build Unified Product Analytics route for a given nmId.
- * Epic 120-FE Story 120.5: dynamic route /analytics/product/[nmId].
- * nmId is an opaque ID — typed `string` so the AP#10 "never formatNumber / never
- * lose precision" contract is enforced at the call boundary (callers with a
- * numeric nmId must String() it explicitly). Matches the opaque-ID sibling
- * precedent buildModelPerformanceRoute / buildShipmentDetailRoute (string-typed).
- */
-export const buildProductAnalyticsRoute = (nmId: string): string =>
-  `${ROUTES.ANALYTICS.PRODUCT}/${nmId}`
+// Route builder helpers re-exported from route-helpers.ts for backward compatibility.
+// New consumers should import directly from '@/lib/route-helpers'.
+export {
+  buildSupplyDetailRoute,
+  buildShipmentDetailRoute,
+  buildCampaignDetailRoute,
+  buildModelPerformanceRoute,
+  buildModelEvaluationsRoute,
+  buildModelSkuAccuracyRoute,
+  buildProductAnalyticsRoute,
+} from '@/lib/route-helpers'

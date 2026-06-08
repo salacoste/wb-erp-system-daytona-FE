@@ -9,11 +9,11 @@
  */
 
 import { apiClient } from '@/lib/api-client'
+import { normalizeUnifiedProductResponse } from '@/lib/api/unified-product-normalizer'
 import {
-  normalizeUnifiedProductResponse,
   normalizeOrganicShareResponse,
   normalizeIncrementalRoasResponse,
-} from '@/lib/api/unified-product-normalizer'
+} from '@/lib/api/unified-product-share-normalizer'
 import type {
   UnifiedProductData,
   CorrelationDayItem,

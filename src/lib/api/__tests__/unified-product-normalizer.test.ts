@@ -6,11 +6,11 @@
  */
 
 import { describe, it, expect } from 'vitest'
+import { normalizeUnifiedProductResponse } from '@/lib/api/unified-product-normalizer'
 import {
-  normalizeUnifiedProductResponse,
   normalizeOrganicShareResponse,
   normalizeIncrementalRoasResponse,
-} from '@/lib/api/unified-product-normalizer'
+} from '@/lib/api/unified-product-share-normalizer'
 
 const FULL_BACKEND_RESPONSE = {
   nmId: 887604577,
