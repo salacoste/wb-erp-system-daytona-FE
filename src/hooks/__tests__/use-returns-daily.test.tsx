@@ -127,7 +127,7 @@ describe('useReturnsDailyTrends', () => {
       wrapper: createWrapper(),
     })
 
-    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
+    await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.error?.message).toBe('Network error')
   })
 })
