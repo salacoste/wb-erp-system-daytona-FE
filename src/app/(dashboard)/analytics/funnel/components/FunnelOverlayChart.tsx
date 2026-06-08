@@ -80,15 +80,13 @@ export function FunnelOverlayChart({
   const activeSeries = OVERLAY_SERIES.filter(s => s.key !== 'adSpend' || showAdOverlay)
 
   // Alert/loading states (extracted for max-lines compliance)
-  const alert = (
-    <FunnelChartAlert
-      isLoading={isLoading}
-      isError={isError}
-      dailyGranularityAvailable={dailyGranularityAvailable}
-      dataLength={data.length}
-    />
-  )
-  if (alert) return alert
+  const alertContent = FunnelChartAlert({
+    isLoading,
+    isError,
+    dailyGranularityAvailable,
+    dataLength: data.length,
+  })
+  if (alertContent) return alertContent
 
   return (
     <Card>
