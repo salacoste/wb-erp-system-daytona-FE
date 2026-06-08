@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import { useMarginPollingWithQuery } from '../useMarginPollingWithQuery'
 import { DEFAULT_POLLING_STRATEGY } from '../margin-polling-types'
+import { ApiError } from '@/types/api'
 
 // Mock the child hooks and modules
 vi.mock('@/lib/api', () => ({
@@ -175,10 +176,8 @@ describe('useMarginPollingWithQuery', () => {
   })
 
   it('falls back to product fetch when margin-status returns 404', async () => {
-    // First call: margin-status returns 404
-    const apiError = new Error('Not Found') as Error & { status: number }
-    apiError.status = 404
-    mockGetStatus.mockRejectedValueOnce(apiError)
+    // First call: margin-status returns 404 via ApiError
+    mockGetStatus.mockRejectedValueOnce(new ApiError('Not Found', 404))
 
     // Fallback: product fetch returns margin
     mockApiClientGet.mockResolvedValueOnce({
@@ -192,15 +191,12 @@ describe('useMarginPollingWithQuery', () => {
     })
 
     await waitFor(() => expect(mockApiClientGet).toHaveBeenCalled(), { timeout: 3000 })
-    // The fallback should have been called with the product endpoint
     expect(mockApiClientGet).toHaveBeenCalledWith(expect.stringContaining('/v1/products/12345'))
   })
 
   it('sets completedWithoutMargin when orphan product fetch fails', async () => {
     // margin-status 404
-    const apiError = new Error('Not Found') as Error & { status: number }
-    apiError.status = 404
-    mockGetStatus.mockRejectedValueOnce(apiError)
+    mockGetStatus.mockRejectedValueOnce(new ApiError('Not Found', 404))
 
     // Product fetch also fails (orphan product)
     mockApiClientGet.mockRejectedValueOnce(new Error('Product not found'))
@@ -257,7 +253,6 @@ describe('useMarginPollingWithQuery', () => {
   })
 
   it('returns default polling strategy constant', () => {
-    const { DEFAULT_POLLING_STRATEGY } = require('../margin-polling-types')
     expect(DEFAULT_POLLING_STRATEGY.interval).toBe(2500)
     expect(DEFAULT_POLLING_STRATEGY.maxAttempts).toBe(24)
     expect(DEFAULT_POLLING_STRATEGY.estimatedTime).toBe(10000)
