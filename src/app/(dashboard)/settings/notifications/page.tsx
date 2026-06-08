@@ -21,6 +21,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { NotificationsHeroBanner } from './NotificationsHeroBanner'
 import { NotificationsDisabledPanel } from './NotificationsDisabledPanel'
+import { OrderNotificationSettings } from '@/components/custom/settings/OrderNotificationSettings'
 
 /**
  * Telegram Notifications Settings Page
@@ -108,6 +109,9 @@ export default function NotificationsSettingsPage() {
             lockMessage="Тихие часы станут доступны после подключения"
           />
         )}
+
+        {/* Card 4: FBS Order Notification Settings (Epic 132-FE) */}
+        <OrderNotificationSettings />
 
         {/* Help Section */}
         <Card className="bg-blue-50 border-blue-200">
