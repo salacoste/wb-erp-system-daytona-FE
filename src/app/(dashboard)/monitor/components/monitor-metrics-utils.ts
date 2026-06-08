@@ -2,8 +2,8 @@
  * Monitor Metrics Table — pure utilities
  * Epic 92-FE Story 92.3: Extracted per 180-line split trigger.
  *
- * Contains: computeDelta, hasAnomaly, getAnomalyPeriods, buildRows and shared types.
- * Rule-of-two: if Story 92.4 also needs computeDelta, keep here (already extracted).
+ * Contains: computeDelta, hasAnomaly, getAnomalyPeriods and shared types.
+ * Row definitions & buildRows extracted to ./monitor-metrics-config.ts (200-line cap, batch 2).
  */
 
 import { formatPercentage } from '@/lib/utils'
@@ -17,19 +17,6 @@ export interface Delta {
   colorClass: string
 }
 
-export interface RowDef {
-  key: string
-  label: string
-  direction: Direction
-  values: {
-    today: number | null
-    yesterday: number | null
-    last30: number | null
-    prev30: number | null
-  }
-  isMoney: boolean
-}
-
 export interface AnomalyPeriod {
   key: string
   label: string
@@ -37,17 +24,6 @@ export interface AnomalyPeriod {
   revenue: number | null
   margin: number | null
 }
-
-/** Single source of truth for which metrics are higher-is-better vs higher-is-worse (fix L-2). */
-export const ROW_DIRECTIONS = {
-  orders: 'higher-is-better',
-  sales: 'higher-is-better',
-  revenue: 'higher-is-better',
-  cogs: 'higher-is-worse',
-  expenses: 'higher-is-worse',
-  margin: 'higher-is-better',
-  returns: 'higher-is-worse',
-} as const satisfies Record<string, Direction>
 
 const PERIOD_LABELS: Record<string, string> = {
   today: 'сегодня',
@@ -123,93 +99,6 @@ export function getAnomalyPeriods(periods: MonitorSummaryResponse['periods']): A
   return result
 }
 
-/** Builds the 7 static row definitions from the 4-period data. */
-export function buildRows(periods: MonitorSummaryResponse['periods']): RowDef[] {
-  const { today, yesterday, last30Days, prev30Days } = periods
-  return [
-    {
-      key: 'orders',
-      label: 'Заказы',
-      direction: ROW_DIRECTIONS.orders,
-      values: {
-        today: today.salesCount + today.returnsCount,
-        yesterday: yesterday.salesCount + yesterday.returnsCount,
-        last30: last30Days.salesCount + last30Days.returnsCount,
-        prev30: prev30Days.salesCount + prev30Days.returnsCount,
-      },
-      isMoney: false,
-    },
-    {
-      key: 'sales',
-      label: 'Продажи',
-      direction: ROW_DIRECTIONS.sales,
-      values: {
-        today: today.salesCount,
-        yesterday: yesterday.salesCount,
-        last30: last30Days.salesCount,
-        prev30: prev30Days.salesCount,
-      },
-      isMoney: false,
-    },
-    {
-      key: 'revenue',
-      label: 'Выручка',
-      direction: ROW_DIRECTIONS.revenue,
-      values: {
-        today: today.revenue,
-        yesterday: yesterday.revenue,
-        last30: last30Days.revenue,
-        prev30: prev30Days.revenue,
-      },
-      isMoney: true,
-    },
-    {
-      key: 'cogs',
-      label: 'Продажи по себестоимости',
-      direction: ROW_DIRECTIONS.cogs,
-      values: {
-        today: today.cogs,
-        yesterday: yesterday.cogs,
-        last30: last30Days.cogs,
-        prev30: prev30Days.cogs,
-      },
-      isMoney: true,
-    },
-    {
-      key: 'expenses',
-      label: 'Расходы',
-      direction: ROW_DIRECTIONS.expenses,
-      values: {
-        today: today.expenses,
-        yesterday: yesterday.expenses,
-        last30: last30Days.expenses,
-        prev30: prev30Days.expenses,
-      },
-      isMoney: true,
-    },
-    {
-      key: 'margin',
-      label: 'Маржа',
-      direction: ROW_DIRECTIONS.margin,
-      values: {
-        today: today.margin,
-        yesterday: yesterday.margin,
-        last30: last30Days.margin,
-        prev30: prev30Days.margin,
-      },
-      isMoney: true,
-    },
-    {
-      key: 'returns',
-      label: 'Возвраты',
-      direction: ROW_DIRECTIONS.returns,
-      values: {
-        today: today.returnsCount,
-        yesterday: yesterday.returnsCount,
-        last30: last30Days.returnsCount,
-        prev30: prev30Days.returnsCount,
-      },
-      isMoney: false,
-    },
-  ]
-}
+// Re-export from extracted config module
+export { ROW_DIRECTIONS, buildRows } from './monitor-metrics-config'
+export type { RowDef } from './monitor-metrics-config'
