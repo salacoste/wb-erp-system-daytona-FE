@@ -16,6 +16,7 @@ import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
 import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
+import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
 import { ProcessingAlert, FailedAlert, ErrorAlert, DataGapsAlert } from './DashboardAlerts'
 import { useDashboardData } from './useDashboardData'
@@ -97,6 +98,7 @@ export function DashboardContent(): React.ReactElement {
       <DailyBreakdownSection className="mt-4" />
       <InventorySummaryWidget />
       <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
+      <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
       <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
       {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">

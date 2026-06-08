@@ -9,9 +9,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatNumber, formatPercentage } from '@/lib/utils'
-import type { AdvTotals, CampaignBreakdown } from '@/types/unified-product'
+import type { AdvDayItem, AdvTotals, CampaignBreakdown } from '@/types/unified-product'
+import { ProductAdvTrendChart } from './ProductAdvTrendChart'
 
 interface AdvertisingTabProps {
+  dates: AdvDayItem[]
   totals: AdvTotals
   campaigns: CampaignBreakdown[]
 }
@@ -30,7 +32,7 @@ function KpiCard({ title, value, subtitle }: { title: string; value: string; sub
   )
 }
 
-export function AdvertisingTab({ totals, campaigns }: AdvertisingTabProps) {
+export function AdvertisingTab({ dates, totals, campaigns }: AdvertisingTabProps) {
   return (
     <div className="space-y-6">
       {/* Ad KPIs */}
@@ -44,6 +46,18 @@ export function AdvertisingTab({ totals, campaigns }: AdvertisingTabProps) {
           subtitle={`CPC: ${formatCurrency(totals.avgCpc)}`}
         />
       </div>
+
+      {/* Daily trend chart */}
+      {dates.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Динамика рекламы</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProductAdvTrendChart dates={dates} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Campaign table */}
       {campaigns.length > 0 && (

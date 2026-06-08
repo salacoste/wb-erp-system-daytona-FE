@@ -119,6 +119,7 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         }
         return (
           <AdvertisingTab
+            dates={unified.data.advertising.dates}
             totals={unified.data.advertising.totals}
             campaigns={unified.data.advertising.campaigns}
           />

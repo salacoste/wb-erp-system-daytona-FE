@@ -10,6 +10,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatNumber, formatPercentage } from '@/lib/utils'
 import type { CorrelationDayItem, IncrementalRoasData } from '@/types/unified-product'
+import { ProductOrganicChart } from './ProductOrganicChart'
 
 interface OrganicTabProps {
   correlation: CorrelationDayItem[]
@@ -95,6 +96,18 @@ export function OrganicTab({ correlation, iroas }: OrganicTabProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Stacked bar chart: organic vs ad cart */}
+      {correlation.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Добавления в корзину</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProductOrganicChart correlation={correlation} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Per-day correlation table */}
       {correlation.length > 0 && (
