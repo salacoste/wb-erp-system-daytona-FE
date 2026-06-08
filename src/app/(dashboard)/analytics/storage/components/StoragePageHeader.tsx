@@ -22,7 +22,10 @@ export function StoragePageHeader() {
   return (
     <div className="space-y-4">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
+      <nav
+        className="flex items-center gap-1 text-sm text-muted-foreground"
+        aria-label="Breadcrumb"
+      >
         <Link href="/dashboard" className="hover:text-foreground transition-colors">
           Главная
         </Link>
@@ -35,13 +38,11 @@ export function StoragePageHeader() {
       </nav>
 
       {/* Title Row */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Warehouse className="h-8 w-8 text-muted-foreground" />
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              Аналитика расходов на хранение
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight">Аналитика расходов на хранение</h1>
             <p className="text-sm text-muted-foreground">
               Анализ затрат на платное хранение по товарам
             </p>
@@ -56,10 +57,7 @@ export function StoragePageHeader() {
       </div>
 
       {/* Import Dialog */}
-      <PaidStorageImportDialog
-        open={importDialogOpen}
-        onOpenChange={setImportDialogOpen}
-      />
+      <PaidStorageImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} />
     </div>
   )
 }

@@ -1,33 +1,19 @@
 'use client'
 
 /**
- * Price Elasticity Section — batch summary + per-SKU table
- * Integrated into Pricing page as an "Elasticity" card section.
+ * Price Elasticity Section — batch summary + expandable per-SKU detail rows.
+ * Rows expand to show elasticity curve, metrics, and optimal price.
  */
 
+import { useState, useCallback } from 'react'
 import { Activity } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { usePriceElasticityBatch } from '@/hooks/usePriceElasticity'
-import { formatDecimal, formatNumber } from '@/lib/utils'
+import { formatNumber } from '@/lib/utils'
 import { ElasticityConfidence } from '@/types/price-elasticity'
-import type { ElasticityConfidenceKey } from '@/types/price-elasticity'
-
-/** Color map for confidence badges */
-const CONFIDENCE_VARIANT: Record<ElasticityConfidenceKey, 'default' | 'secondary' | 'outline'> = {
-  high: 'default',
-  medium: 'secondary',
-  low: 'outline',
-}
+import { ElasticitySkuDetail } from './ElasticitySkuDetail'
 
 function ElasticityLoadingSkeleton() {
   return (
@@ -55,6 +41,11 @@ function ElasticityLoadingSkeleton() {
 
 export function ElasticitySection() {
   const { data, isLoading, isError } = usePriceElasticityBatch({ limit: 50 })
+  const [expandedNmId, setExpandedNmId] = useState<number | null>(null)
+
+  const handleToggle = useCallback((nmId: number) => {
+    setExpandedNmId(prev => (prev === nmId ? null : nmId))
+  }, [])
 
   if (isLoading) return <ElasticityLoadingSkeleton />
 
@@ -119,11 +110,12 @@ export function ElasticitySection() {
           ))}
         </div>
 
-        {/* Per-SKU table */}
+        {/* Expandable per-SKU table */}
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-8" />
                 <TableHead className="w-24">nmId</TableHead>
                 <TableHead className="text-right">Эластичность</TableHead>
                 <TableHead className="text-right">R²</TableHead>
@@ -134,24 +126,12 @@ export function ElasticitySection() {
             </TableHeader>
             <TableBody>
               {items.map(item => (
-                <TableRow key={item.nmId}>
-                  <TableCell className="font-mono text-sm">{item.nmId}</TableCell>
-                  <TableCell className="text-right font-medium">
-                    {formatDecimal(item.elasticity, 3)}
-                  </TableCell>
-                  <TableCell className="text-right text-muted-foreground">
-                    {formatDecimal(item.rSquared, 3)}
-                  </TableCell>
-                  <TableCell className="text-right text-muted-foreground">
-                    {formatNumber(item.dataPoints)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{item.source}</TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant={CONFIDENCE_VARIANT[item.confidence]}>
-                      {ElasticityConfidence[item.confidence]}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
+                <ElasticitySkuDetail
+                  key={item.nmId}
+                  item={item}
+                  isExpanded={expandedNmId === item.nmId}
+                  onToggle={() => handleToggle(item.nmId)}
+                />
               ))}
             </TableBody>
           </Table>

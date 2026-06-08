@@ -119,7 +119,7 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table>
+      <Table aria-label="Рейтинг товаров по поисковому запросу">
         <TableHeader>
           <TableRow>
             <TableHead>Артикул</TableHead>

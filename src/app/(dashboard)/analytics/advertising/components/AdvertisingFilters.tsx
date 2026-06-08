@@ -119,7 +119,7 @@ export function AdvertisingFilters({
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-4 p-4 bg-muted/30 rounded-lg border">
+    <div className="flex flex-col gap-4 p-4 bg-muted/30 rounded-lg border sm:flex-row sm:flex-wrap sm:items-end">
       {/* Date Range Picker (AC3) */}
       <div className="flex items-end gap-2">
         {/* From Date */}

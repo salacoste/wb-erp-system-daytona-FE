@@ -6,12 +6,20 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatNumber, formatDecimal } from '@/lib/utils'
+import { formatNumber, formatDecimal, cn } from '@/lib/utils'
 import Link from 'next/link'
 import { ROUTES } from '@/lib/routes'
 import type { PositionTrendMover, CloseToPageOneItem } from '@/types/search-position-trends'
 
-export function SearchPositionMoversTable({ movers }: { movers: PositionTrendMover[] }) {
+export function SearchPositionMoversTable({
+  movers,
+  onSelectSku,
+  selectedNmId,
+}: {
+  movers: PositionTrendMover[]
+  onSelectSku?: (nmId: number) => void
+  selectedNmId?: number | null
+}) {
   if (movers.length === 0) {
     return (
       <Card>
@@ -41,11 +49,20 @@ export function SearchPositionMoversTable({ movers }: { movers: PositionTrendMov
             </thead>
             <tbody>
               {movers.slice(0, 20).map(m => (
-                <tr key={m.nmId} className="border-b last:border-0 hover:bg-muted/50">
+                <tr
+                  key={m.nmId}
+                  className={cn(
+                    'border-b last:border-0 hover:bg-muted/50',
+                    selectedNmId === m.nmId && 'bg-blue-50',
+                    onSelectSku && 'cursor-pointer'
+                  )}
+                  onClick={() => onSelectSku?.(m.nmId)}
+                >
                   <td className="p-2 font-mono text-xs">
                     <Link
                       href={`${ROUTES.ANALYTICS.SEARCH}?tab=by-product&nmId=${m.nmId}`}
                       className="text-blue-600 hover:underline"
+                      onClick={e => e.stopPropagation()}
                     >
                       {m.nmId}
                     </Link>
@@ -81,7 +98,15 @@ export function SearchPositionMoversTable({ movers }: { movers: PositionTrendMov
   )
 }
 
-export function SearchPositionOpportunitiesTable({ items }: { items: CloseToPageOneItem[] }) {
+export function SearchPositionOpportunitiesTable({
+  items,
+  onSelectSku,
+  selectedNmId,
+}: {
+  items: CloseToPageOneItem[]
+  onSelectSku?: (nmId: number) => void
+  selectedNmId?: number | null
+}) {
   if (items.length === 0) {
     return (
       <Card>
@@ -111,11 +136,20 @@ export function SearchPositionOpportunitiesTable({ items }: { items: CloseToPage
             </thead>
             <tbody>
               {items.slice(0, 20).map(item => (
-                <tr key={item.nmId} className="border-b last:border-0 hover:bg-muted/50">
+                <tr
+                  key={item.nmId}
+                  className={cn(
+                    'border-b last:border-0 hover:bg-muted/50',
+                    selectedNmId === item.nmId && 'bg-blue-50',
+                    onSelectSku && 'cursor-pointer'
+                  )}
+                  onClick={() => onSelectSku?.(item.nmId)}
+                >
                   <td className="p-2 font-mono text-xs">
                     <Link
                       href={`${ROUTES.ANALYTICS.SEARCH}?tab=by-product&nmId=${item.nmId}`}
                       className="text-blue-600 hover:underline"
+                      onClick={e => e.stopPropagation()}
                     >
                       {item.nmId}
                     </Link>

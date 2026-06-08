@@ -50,7 +50,7 @@ export function SearchOrdersTable({ items }: SearchOrdersTableProps) {
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table>
+      <Table aria-label="Заказы из поиска">
         <TableHeader>
           <TableRow>
             <TableHead>Запрос</TableHead>

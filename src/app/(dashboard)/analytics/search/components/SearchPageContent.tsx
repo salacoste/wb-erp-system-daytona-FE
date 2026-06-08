@@ -90,30 +90,33 @@ export function SearchPageContent({ initialQuery }: SearchPageContentProps = {})
         </div>
       </div>
 
-      <DateRangePickerExtended
-        value={dateRange}
-        onChange={setDateRange}
-        maxDays={365}
-        placeholder="Выберите период"
-        id="search-date-range"
-      />
+      {/* Controls row */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-center">
+        <DateRangePickerExtended
+          value={dateRange}
+          onChange={setDateRange}
+          maxDays={365}
+          placeholder="Выберите период"
+          id="search-date-range"
+        />
 
-      {/* Comparison Period Selector — mirrors buyout (127.4-FE) / returns (127.5-FE) */}
-      <ComparisonPeriodSelector
-        enabled={comparisonEnabled}
-        onEnabledChange={setComparisonEnabled}
-        preset={comparisonPreset}
-        onPresetChange={setComparisonPreset}
-        compareStart={compareStart}
-        compareEnd={compareEnd}
-        onCompareRangeChange={handleCompareRangeChange}
-        currentPeriodStart={dateRange ? toIsoWeek(dateRange.from) : ''}
-        currentPeriodEnd={dateRange ? toIsoWeek(dateRange.to) : ''}
-      />
+        {/* Comparison Period Selector — mirrors buyout (127.4-FE) / returns (127.5-FE) */}
+        <ComparisonPeriodSelector
+          enabled={comparisonEnabled}
+          onEnabledChange={setComparisonEnabled}
+          preset={comparisonPreset}
+          onPresetChange={setComparisonPreset}
+          compareStart={compareStart}
+          compareEnd={compareEnd}
+          onCompareRangeChange={handleCompareRangeChange}
+          currentPeriodStart={dateRange ? toIsoWeek(dateRange.from) : ''}
+          currentPeriodEnd={dateRange ? toIsoWeek(dateRange.to) : ''}
+        />
+      </div>
 
       <RequireJam requiredTier="standard">
         <Tabs defaultValue={defaultTab}>
-          <TabsList>
+          <TabsList aria-label="Разделы поисковой аналитики">
             <TabsTrigger value="orders">Заказы</TabsTrigger>
             <TabsTrigger value="by-product">По товарам</TabsTrigger>
             <TabsTrigger value="by-query">По запросам</TabsTrigger>

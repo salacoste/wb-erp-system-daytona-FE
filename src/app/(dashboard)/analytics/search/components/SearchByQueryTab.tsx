@@ -77,7 +77,7 @@ export function SearchByQueryTab({ from, to, initialQuery }: SearchByQueryTabPro
           value={queryInput}
           onChange={e => handleInputChange(e.target.value)}
           placeholder="Введите поисковый запрос (мин. 2 символа)"
-          aria-label="Поисковый запрос"
+          aria-label="Поиск по запросам"
           className="pl-9 pr-9"
         />
         {queryInput && (

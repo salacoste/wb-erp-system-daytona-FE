@@ -60,18 +60,22 @@ export function UnitEconomicsTable({
     <div className="rounded-md border bg-white">
       {/* Scrollable container with max height for sticky header effect */}
       <div className="max-h-[600px] overflow-auto">
-        <Table>
+        <Table aria-label="Юнит-экономика по товарам">
           {/* Sticky header - UX-001 fix */}
           <TableHeader className="sticky top-0 z-10 bg-gray-50">
             <TableRow className="bg-gray-50">
               <TableHead className="w-[100px]">Артикул</TableHead>
               <TableHead className="min-w-[200px]">Название</TableHead>
-              <TableHead className="text-right">
+              <TableHead
+                className="text-right"
+                aria-sort={sortBy === 'revenue' ? (`${sortOrder}ending` as const) : 'none'}
+              >
                 <Button
                   variant="ghost"
                   size="sm"
                   className="-ml-3 h-8"
                   onClick={() => onSort('revenue')}
+                  aria-label="Сортировать по выручке"
                 >
                   Выручка
                   {getSortIcon('revenue', sortBy, sortOrder)}
@@ -84,22 +88,30 @@ export function UnitEconomicsTable({
               <TableHead
                 className="text-right"
                 title="Стоимость доставки на единицу товара из последней подтверждённой отправки"
+                aria-sort={
+                  sortBy === 'delivery_to_warehouse' ? (`${sortOrder}ending` as const) : 'none'
+                }
               >
                 <Button
                   variant="ghost"
                   size="sm"
                   className="-ml-3 h-8"
                   onClick={() => onSort('delivery_to_warehouse')}
+                  aria-label="Сортировать по доставке"
                 >
                   Доставка %{getSortIcon('delivery_to_warehouse', sortBy, sortOrder)}
                 </Button>
               </TableHead>
-              <TableHead className="text-right">
+              <TableHead
+                className="text-right"
+                aria-sort={sortBy === 'net_margin_pct' ? (`${sortOrder}ending` as const) : 'none'}
+              >
                 <Button
                   variant="ghost"
                   size="sm"
                   className="-ml-3 h-8"
                   onClick={() => onSort('net_margin_pct')}
+                  aria-label="Сортировать по марже"
                 >
                   Маржа %{getSortIcon('net_margin_pct', sortBy, sortOrder)}
                 </Button>

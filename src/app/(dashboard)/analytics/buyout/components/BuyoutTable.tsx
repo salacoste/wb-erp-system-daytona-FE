@@ -81,7 +81,7 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
   return (
     <div className="space-y-4">
       <div className="rounded-md border overflow-x-auto">
-        <Table>
+        <Table aria-label="Таблица выкупов">
           <BuyoutTableHeader sort={sort} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>
             {items.map(item => (

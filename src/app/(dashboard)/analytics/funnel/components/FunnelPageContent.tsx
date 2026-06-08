@@ -104,7 +104,7 @@ export function FunnelPageContent() {
 
       <SyncStatusBanner syncStatus={syncStatus} />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <DateRangePickerExtended
           value={dateRange}
           onChange={setDateRange}
@@ -112,7 +112,7 @@ export function FunnelPageContent() {
           placeholder="Выберите период"
           id="funnel-date-range"
         />
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={toggleCompare}

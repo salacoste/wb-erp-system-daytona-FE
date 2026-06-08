@@ -23,17 +23,11 @@ export function AdvertisingPageHeader() {
         className="flex items-center gap-1 text-sm text-muted-foreground"
         aria-label="Breadcrumb"
       >
-        <Link
-          href="/dashboard"
-          className="hover:text-foreground transition-colors"
-        >
+        <Link href="/dashboard" className="hover:text-foreground transition-colors">
           Главная
         </Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        <Link
-          href="/analytics"
-          className="hover:text-foreground transition-colors"
-        >
+        <Link href="/analytics" className="hover:text-foreground transition-colors">
           Аналитика
         </Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -41,16 +35,12 @@ export function AdvertisingPageHeader() {
       </nav>
 
       {/* Title Row (AC2) */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Megaphone className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              Рекламная аналитика
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Анализ эффективности рекламных кампаний
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight">Рекламная аналитика</h1>
+            <p className="text-sm text-muted-foreground">Анализ эффективности рекламных кампаний</p>
           </div>
         </div>
 

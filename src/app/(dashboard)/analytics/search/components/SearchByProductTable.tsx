@@ -109,7 +109,7 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table>
+      <Table aria-label="Поисковые запросы товара">
         <TableHeader>
           <TableRow>
             <TableHead>Запрос</TableHead>

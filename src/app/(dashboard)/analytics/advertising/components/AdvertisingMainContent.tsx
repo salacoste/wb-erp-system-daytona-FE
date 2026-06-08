@@ -54,16 +54,20 @@ export function AdvertisingMainContent({ state, filters }: AdvertisingMainConten
         filterActive={state.hideOverAttribution}
         onFilterChange={state.setHideOverAttribution}
       />
-      <div className="flex items-center justify-between">
+      <div
+        className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+        role="tablist"
+        aria-label="Группировка данных"
+      >
         <h3 className="text-sm font-medium text-muted-foreground">Группировка</h3>
         <GroupByToggle groupBy={state.groupBy} onGroupByChange={state.handleGroupByChange} />
       </div>
       <Card>
-        <CardHeader className="flex flex-row items-end justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-col gap-2 space-y-0 pb-4 sm:flex-row sm:items-end sm:justify-between">
           <CardTitle className="text-lg font-semibold pb-2">
             Детализация по {viewByLabel(state.viewBy)}
           </CardTitle>
-          <div className="flex items-end gap-3">
+          <div className="flex flex-wrap items-end gap-3">
             <CampaignSelector
               selectedIds={state.selectedCampaigns}
               onSelectionChange={state.handleCampaignFilterChange}

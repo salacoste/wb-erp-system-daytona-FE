@@ -155,10 +155,12 @@ export default function StorageAnalyticsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <TopConsumersWidget
-            data={topConsumersData?.top_consumers ?? []}
-            isLoading={isLoadingTopConsumers}
-          />
+          <div className="overflow-x-auto">
+            <TopConsumersWidget
+              data={topConsumersData?.top_consumers ?? []}
+              isLoading={isLoadingTopConsumers}
+            />
+          </div>
         </CardContent>
       </Card>
 
@@ -176,7 +178,9 @@ export default function StorageAnalyticsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <StorageBySkuTable data={bySkuData?.data ?? []} isLoading={isLoadingBySku} />
+          <div className="overflow-x-auto">
+            <StorageBySkuTable data={bySkuData?.data ?? []} isLoading={isLoadingBySku} />
+          </div>
         </CardContent>
       </Card>
     </div>

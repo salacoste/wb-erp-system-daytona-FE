@@ -314,13 +314,13 @@ vi.mock('next/navigation', () => ({
 describe('ProfitabilityFilter - Rendering', () => {
   it('should render filter dropdown button', () => {
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={vi.fn()} />)
-    expect(screen.getByRole('button', { name: /статус/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /фильтр по рентабельности/i })).toBeInTheDocument()
   })
 
   it('should show all 6 status options in dropdown', async () => {
     const user = userEvent.setup()
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={vi.fn()} />)
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       expect(screen.getByText('Отлично')).toBeInTheDocument()
       expect(screen.getByText('Хорошо')).toBeInTheDocument()
@@ -334,7 +334,7 @@ describe('ProfitabilityFilter - Rendering', () => {
   it('should display color indicator for each option', async () => {
     const user = userEvent.setup()
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={vi.fn()} />)
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       const dots = document.querySelectorAll('.rounded-full[style]')
       expect(dots.length).toBeGreaterThanOrEqual(6)
@@ -344,7 +344,7 @@ describe('ProfitabilityFilter - Rendering', () => {
   it('should display Russian labels for each option', async () => {
     const user = userEvent.setup()
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={vi.fn()} />)
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       expect(screen.getByText('Отлично')).toBeInTheDocument()
       expect(screen.getByText('Хорошо')).toBeInTheDocument()
@@ -358,7 +358,7 @@ describe('ProfitabilityFilter - Selection', () => {
     const onFilterChange = vi.fn()
     const user = userEvent.setup()
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={onFilterChange} />)
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       expect(screen.getByText('Отлично')).toBeInTheDocument()
     })
@@ -370,7 +370,7 @@ describe('ProfitabilityFilter - Selection', () => {
     const onFilterChange = vi.fn()
     const user = userEvent.setup()
     render(<ProfitabilityFilter selectedStatuses={['excellent']} onFilterChange={onFilterChange} />)
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       expect(screen.getByText('Хорошо')).toBeInTheDocument()
     })
@@ -381,7 +381,7 @@ describe('ProfitabilityFilter - Selection', () => {
   it('should show checkmark for selected statuses', async () => {
     const user = userEvent.setup()
     render(<ProfitabilityFilter selectedStatuses={['excellent']} onFilterChange={vi.fn()} />)
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       const item = screen.getByRole('menuitemcheckbox', { name: /отлично/i })
       expect(item).toHaveAttribute('aria-checked', 'true')
@@ -404,7 +404,7 @@ describe('ProfitabilityFilter - Selection', () => {
         onFilterChange={onFilterChange}
       />
     )
-    await user.click(screen.getByRole('button', { name: /статус/i }))
+    await user.click(screen.getByRole('button', { name: /фильтр по рентабельности/i }))
     await waitFor(() => {
       expect(screen.getByText('Отлично')).toBeInTheDocument()
     })
@@ -796,7 +796,7 @@ describe('UnitEconomicsEnhancement - Accessibility', () => {
 
   it('should have accessible filter dropdown', () => {
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={vi.fn()} />)
-    expect(screen.getByRole('button', { name: /статус/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /фильтр по рентабельности/i })).toBeInTheDocument()
   })
 
   it('should meet focus ring requirements on interactive elements', () => {
@@ -828,7 +828,7 @@ describe('UnitEconomicsEnhancement - Loading State', () => {
 
   it('should render filter with no active selections', () => {
     render(<ProfitabilityFilter selectedStatuses={[]} onFilterChange={vi.fn()} />)
-    expect(screen.getByRole('button', { name: /статус/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /фильтр по рентабельности/i })).toBeInTheDocument()
     expect(screen.queryByLabelText('Сбросить фильтр')).not.toBeInTheDocument()
   })
 

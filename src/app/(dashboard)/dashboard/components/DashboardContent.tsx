@@ -1,7 +1,9 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ROUTES } from '@/lib/routes'
 import {
   DashboardMetricsGrid,
@@ -10,16 +12,11 @@ import {
   TaxWarningBanner,
   InventorySummaryWidget,
   PeriodComparisonSection,
-  OrdersSeasonalPatterns,
   FulfillmentShareBar,
-  HistoricalTrendsSection,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { ReportPendingBanner } from './ReportPendingBanner'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
-import { ExpenseChart } from '@/components/custom/ExpenseChart'
-import { ExpenseStructurePieChart } from '@/components/custom/dashboard'
-import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { WidgetSettingsSheet } from '@/components/custom/dashboard/WidgetSettingsSheet'
 import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
@@ -31,6 +28,41 @@ import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
 import { UnitEconomicsSection } from './UnitEconomicsSection'
 import { StorageSection } from './StorageSection'
+
+// Lazy-loaded chart components (below-the-fold recharts heavyweights)
+const ExpenseChart = dynamic(
+  () => import('@/components/custom/ExpenseChart').then(m => ({ default: m.ExpenseChart })),
+  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
+)
+
+const ExpenseStructurePieChart = dynamic(
+  () =>
+    import('@/components/custom/dashboard/ExpenseStructurePieChart').then(m => ({
+      default: m.ExpenseStructurePieChart,
+    })),
+  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
+)
+
+const TrendGraph = dynamic(
+  () => import('@/components/custom/TrendGraph').then(m => ({ default: m.TrendGraph })),
+  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
+)
+
+const OrdersSeasonalPatterns = dynamic(
+  () =>
+    import('@/components/custom/dashboard/OrdersSeasonalPatterns').then(m => ({
+      default: m.OrdersSeasonalPatterns,
+    })),
+  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
+)
+
+const HistoricalTrendsSection = dynamic(
+  () =>
+    import('@/components/custom/dashboard/HistoricalTrendsSection').then(m => ({
+      default: m.HistoricalTrendsSection,
+    })),
+  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
+)
 
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()
@@ -50,7 +82,7 @@ export function DashboardContent(): React.ReactElement {
             lastRefresh={d.lastRefresh}
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" role="region" aria-label="Выбор периода">
           <DashboardPeriodSelector />
           <WidgetSettingsSheet />
         </div>
@@ -71,48 +103,50 @@ export function DashboardContent(): React.ReactElement {
         <MissingCogsAlert missingCount={(d.totalProducts ?? 0) - d.inventoryWithCogs} />
       )}
 
-      <DashboardMetricsGrid
-        totalOrders={d.fSummary?.total.ordersCount}
-        ordersRevenue={d.fSummary?.total.ordersRevenue}
-        ordersRevenueDiscounted={d.fSummary?.total.ordersRevenueDiscounted}
-        salesCount={d.salesCount}
-        returnsCount={d.returnsCount}
-        saleGross={d.summary?.sale_gross_total}
-        wbSalesGross={d.summary?.wb_sales_gross_total}
-        wbReturnsGross={d.summary?.wb_returns_gross_total}
-        commissionSales={d.summary?.commission_sales_total}
-        acquiringFee={d.summary?.acquiring_fee_total}
-        loyaltyFee={d.summary?.loyalty_fee_total}
-        penaltiesTotal={d.summary?.penalties_total}
-        wbCommissionAdj={d.summary?.wb_commission_adj_total}
-        wbServicesCost={undefined}
-        logisticsCost={d.summary?.logistics_cost_total}
-        logisticsBreakdown={d.logisticsBreakdown}
-        payoutTotal={d.summary?.payout_total}
-        storageCost={d.summary?.storage_cost_total}
-        paidAcceptanceCost={d.summary?.paid_acceptance_cost_total}
-        cogsTotal={d.summary?.cogs_total ?? undefined}
-        cogsCoverage={d.cogsCoverage}
-        productsWithCogs={d.inventoryWithCogs}
-        totalProducts={d.totalProducts ?? 0}
-        advertisingSpend={d.advertisingQuery.current?.summary?.total_spend}
-        advertisingRoas={d.advertisingQuery.current?.summary?.overall_roas}
-        wbPromotionCost={d.summary?.wb_promotion_cost_total ?? undefined}
-        wbJamCost={d.summary?.wb_jam_cost_total ?? undefined}
-        wbOtherServicesCost={d.summary?.wb_other_services_cost_total ?? undefined}
-        grossProfit={d.summary?.gross_profit ?? undefined}
-        marginPct={d.summary?.margin_pct ?? undefined}
-        grossProfitAnalytical={d.summary?.gross_profit_analytical ?? undefined}
-        operatingProfitAnalytical={d.summary?.operating_profit_analytical ?? undefined}
-        operatingMarginPct={d.summary?.operating_margin_pct ?? undefined}
-        grossMarginPct={d.summary?.gross_margin_pct ?? undefined}
-        taxMetrics={d.effectiveTaxMetrics ?? null}
-        previousPeriodData={d.previousPeriodData}
-        isLoading={d.isLoading || d.productsLoading || d.cogsLoading}
-        error={d.error}
-        onRetry={d.handleRetry}
-        onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
-      />
+      <div role="region" aria-label="Ключевые метрики">
+        <DashboardMetricsGrid
+          totalOrders={d.fSummary?.total.ordersCount}
+          ordersRevenue={d.fSummary?.total.ordersRevenue}
+          ordersRevenueDiscounted={d.fSummary?.total.ordersRevenueDiscounted}
+          salesCount={d.salesCount}
+          returnsCount={d.returnsCount}
+          saleGross={d.summary?.sale_gross_total}
+          wbSalesGross={d.summary?.wb_sales_gross_total}
+          wbReturnsGross={d.summary?.wb_returns_gross_total}
+          commissionSales={d.summary?.commission_sales_total}
+          acquiringFee={d.summary?.acquiring_fee_total}
+          loyaltyFee={d.summary?.loyalty_fee_total}
+          penaltiesTotal={d.summary?.penalties_total}
+          wbCommissionAdj={d.summary?.wb_commission_adj_total}
+          wbServicesCost={undefined}
+          logisticsCost={d.summary?.logistics_cost_total}
+          logisticsBreakdown={d.logisticsBreakdown}
+          payoutTotal={d.summary?.payout_total}
+          storageCost={d.summary?.storage_cost_total}
+          paidAcceptanceCost={d.summary?.paid_acceptance_cost_total}
+          cogsTotal={d.summary?.cogs_total ?? undefined}
+          cogsCoverage={d.cogsCoverage}
+          productsWithCogs={d.inventoryWithCogs}
+          totalProducts={d.totalProducts ?? 0}
+          advertisingSpend={d.advertisingQuery.current?.summary?.total_spend}
+          advertisingRoas={d.advertisingQuery.current?.summary?.overall_roas}
+          wbPromotionCost={d.summary?.wb_promotion_cost_total ?? undefined}
+          wbJamCost={d.summary?.wb_jam_cost_total ?? undefined}
+          wbOtherServicesCost={d.summary?.wb_other_services_cost_total ?? undefined}
+          grossProfit={d.summary?.gross_profit ?? undefined}
+          marginPct={d.summary?.margin_pct ?? undefined}
+          grossProfitAnalytical={d.summary?.gross_profit_analytical ?? undefined}
+          operatingProfitAnalytical={d.summary?.operating_profit_analytical ?? undefined}
+          operatingMarginPct={d.summary?.operating_margin_pct ?? undefined}
+          grossMarginPct={d.summary?.gross_margin_pct ?? undefined}
+          taxMetrics={d.effectiveTaxMetrics ?? null}
+          previousPeriodData={d.previousPeriodData}
+          isLoading={d.isLoading || d.productsLoading || d.cogsLoading}
+          error={d.error}
+          onRetry={d.handleRetry}
+          onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
+        />
+      </div>
       {(d.fboShare > 0 || d.fbsShare > 0) && (
         <FulfillmentShareBar fboShare={d.fboShare} fbsShare={d.fbsShare} />
       )}
@@ -126,12 +160,16 @@ export function DashboardContent(): React.ReactElement {
       <PeriodComparisonSection currentWeek={d.selectedWeek} />
       <DailyBreakdownSection className="mt-4" />
       <InventorySummaryWidget />
-      <StorageSection selectedWeek={d.selectedWeek} />
+      <div role="region" aria-label="Хранение">
+        <StorageSection selectedWeek={d.selectedWeek} />
+      </div>
       <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
       <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
       <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
       {d.periodType === 'week' && <ExpenseStructurePieChart week={d.selectedWeek} />}
-      <UnitEconomicsSection />
+      <div role="region" aria-label="Юнит-экономика">
+        <UnitEconomicsSection />
+      </div>
       {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
           <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />

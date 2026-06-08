@@ -71,7 +71,7 @@ export function ReturnsPageContent() {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-4 flex-wrap">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
         <DateRangePickerExtended
           value={dateRange}
           onChange={setDateRange}

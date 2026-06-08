@@ -134,7 +134,7 @@ describe('SearchPageContent', () => {
       renderPage({ initialQuery: 'жидкая изолента' })
       const byQueryTab = screen.getByRole('tab', { name: 'По запросам' })
       expect(byQueryTab).toHaveAttribute('aria-selected', 'true')
-      const input = screen.getByLabelText('Поисковый запрос')
+      const input = screen.getByLabelText('Поиск по запросам')
       expect(input).toHaveValue('жидкая изолента')
     })
 

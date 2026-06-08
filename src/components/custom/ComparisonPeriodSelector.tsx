@@ -84,6 +84,7 @@ export function ComparisonPeriodSelector({
               checked={enabled}
               onCheckedChange={onEnabledToggle}
               onClick={e => e.stopPropagation()}
+              aria-label="Сравнение периодов"
             />
             <Label
               htmlFor="comparison-mode"

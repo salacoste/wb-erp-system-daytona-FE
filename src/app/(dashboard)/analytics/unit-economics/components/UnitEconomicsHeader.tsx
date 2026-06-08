@@ -62,11 +62,11 @@ export function UnitEconomicsHeader({
       <div className="flex flex-wrap items-center gap-3">
         {/* Week Selector */}
         <Select value={selectedWeek} onValueChange={onWeekChange}>
-          <SelectTrigger className="w-[220px] h-9">
+          <SelectTrigger className="w-[220px] h-9" aria-label="Выбор недели">
             <SelectValue placeholder="Выберите неделю" />
           </SelectTrigger>
           <SelectContent>
-            {weekOptions.map((option) => (
+            {weekOptions.map(option => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -76,7 +76,7 @@ export function UnitEconomicsHeader({
 
         {/* View Toggle */}
         <Tabs value={viewBy} onValueChange={onViewByChange} className="hidden md:block">
-          <TabsList className="h-9">
+          <TabsList className="h-9" aria-label="Группировка данных">
             <TabsTrigger value="sku" className="text-xs px-3">
               SKU
             </TabsTrigger>

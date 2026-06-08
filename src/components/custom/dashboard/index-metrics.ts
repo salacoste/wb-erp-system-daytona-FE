@@ -120,10 +120,6 @@ export type { FulfillmentMetricCardProps } from './FulfillmentMetricCard'
 export { EmptyStateFulfillment } from './EmptyStateFulfillment'
 export type { EmptyStateFulfillmentProps } from './EmptyStateFulfillment'
 
-// Placeholder (temporary, removed as real cards are implemented)
-export { PlaceholderMetricCard } from './PlaceholderMetricCard'
-export type { PlaceholderMetricCardProps } from './PlaceholderMetricCard'
-
 // Theoretical Profit Card (Story 62.4-FE)
 export { TheoreticalProfitCard } from './TheoreticalProfitCard'
 export type { TheoreticalProfitCardProps } from './TheoreticalProfitCard'

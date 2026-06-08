@@ -21,12 +21,14 @@ export function SortableHeader({
   onSort,
 }: SortableHeaderProps) {
   const isSorted = currentSort === field
+  const sortDirection = isSorted ? currentOrder : undefined
 
   return (
     <button
       onClick={() => onSort(field)}
       className="flex items-center gap-1 hover:text-foreground transition-colors"
       aria-label={`Сортировать по ${label}`}
+      aria-sort={sortDirection ? (`${sortDirection}ending` as const) : undefined}
     >
       {label}
       {isSorted ? (
