@@ -7,11 +7,15 @@
  * and /incremental-roas. Funnel tab shipped in Story 122.1-FE.
  */
 
+import { useState } from 'react'
+import { format, subDays } from 'date-fns'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ROUTES } from '@/lib/routes'
+import type { DateRange } from '@/types/date-range'
 import {
   UNIFIED_PRODUCT_TABS,
   UNIFIED_PRODUCT_TAB_LABELS,
@@ -34,10 +38,19 @@ interface ProductAnalyticsContentProps {
 
 const DEFAULT_TAB: UnifiedProductTab = UNIFIED_PRODUCT_TABS[0]
 
+/** Default 30-day lookback */
+function getDefaultRange(): DateRange {
+  const to = new Date()
+  to.setHours(23, 59, 59, 999)
+  const from = subDays(to, 29)
+  from.setHours(0, 0, 0, 0)
+  return { from, to }
+}
+
 export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) {
-  // Default date range — will be replaced by week selector (FUTURE)
-  const from = '2026-05-19'
-  const to = '2026-06-01'
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
+  const from = dateRange ? format(dateRange.from, 'yyyy-MM-dd') : ''
+  const to = dateRange ? format(dateRange.to, 'yyyy-MM-dd') : ''
   const hookParams = { nmId, from, to }
 
   const unified = useUnifiedProductAnalytics(hookParams)
@@ -57,6 +70,14 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
           Аналитика товара #{String(nmId)}
         </h1>
       </div>
+
+      <DateRangePickerExtended
+        value={dateRange}
+        onChange={setDateRange}
+        maxDays={90}
+        placeholder="Выберите период"
+        id="product-analytics-date-range"
+      />
 
       <Tabs defaultValue={DEFAULT_TAB}>
         <TabsList aria-label="Разделы аналитики товара">
