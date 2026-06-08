@@ -1,6 +1,7 @@
 'use client'
 
 import { TrendingUp, Trophy, List } from 'lucide-react'
+import { StorageNoDataContent } from './components/StoragePageContent'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useStoragePageState } from './components/useStoragePageState'
@@ -73,9 +74,7 @@ export default function StorageAnalyticsPage() {
     return (
       <div className="space-y-6">
         <StoragePageHeader />
-
-        {/* Filters Section - still show filters even when no data */}
-        <StorageFilters
+        <StorageNoDataContent
           weekStart={weekStart}
           weekEnd={weekEnd}
           selectedBrands={selectedBrands}
@@ -87,21 +86,6 @@ export default function StorageAnalyticsPage() {
           onBrandsChange={handleBrandsChange}
           onWarehousesChange={handleWarehousesChange}
         />
-
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-              Нет данных за выбранный период
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              По периоду с {weekStart} по {weekEnd} отсутствуют данные о расходах на хранение.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Попробуйте выбрать другой период времени или загрузите данные через импорт WB API.
-            </p>
-          </CardContent>
-        </Card>
       </div>
     )
   }

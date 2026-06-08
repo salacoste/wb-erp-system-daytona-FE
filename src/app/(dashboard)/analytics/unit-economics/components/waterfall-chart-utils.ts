@@ -1,12 +1,16 @@
-import { logger } from '@/lib/logger'
-
 /**
  * Waterfall Chart Utilities
  * Story 5.3: Cost Breakdown Visualization
  *
- * Pure data transformation and constants for the waterfall chart.
+ * Pure data transformation for the waterfall chart.
  * Extracted from UnitEconomicsWaterfall.tsx (Epic 74 - file size compliance).
  */
+
+import { logger } from '@/lib/logger'
+import { WATERFALL_COLORS, COST_CATEGORIES, COST_CATEGORY_BY_KEY } from './waterfall-chart-config'
+
+// Re-export config for backward compatibility
+export { WATERFALL_COLORS } from './waterfall-chart-config'
 
 export interface WaterfallChartDataPoint {
   name: string
@@ -19,55 +23,6 @@ export interface WaterfallChartDataPoint {
   percentage: number
   absoluteValue: number
 }
-
-/** Color scheme from UX specs */
-export const WATERFALL_COLORS = {
-  revenue: '#2196F3', // Blue - starting point
-  cogs: '#FF9800', // Orange - significant cost
-  commission: '#9C27B0', // Purple - WB brand
-  logistics_delivery: '#00BCD4', // Teal - movement
-  logistics_return: '#4DD0E1', // Cyan - related to delivery
-  storage: '#795548', // Brown - warehouse
-  paid_acceptance: '#FFC107', // Amber - processing
-  penalties: '#F44336', // Red - negative
-  other_deductions: '#9E9E9E', // Gray - misc
-  advertising: '#14B8A6', // Teal - marketing
-  delivery_to_warehouse: '#06B6D4', // Cyan - seller delivery cost
-  profit: '#4CAF50', // Green - positive outcome
-  loss: '#F44336', // Red - negative outcome
-}
-
-/**
- * Cost categories configuration for waterfall chart bars.
- * Indexed by `key` for runtime lookup of label + color when ordering is
- * driven externally (e.g., by `meta.cost_category_order` from backend).
- *
- * The array order below is the FALLBACK order — used only when the backend
- * does not provide `cost_category_order` in the response meta. Real ordering
- * for production cabinets comes from the backend (per request-backend/173 § F4)
- * via `transformToWaterfallData(..., categoryOrder)`. Story 96.3-FE.
- */
-const COST_CATEGORIES = [
-  { key: 'cogs', label: 'COGS', color: WATERFALL_COLORS.cogs },
-  { key: 'commission', label: 'Комиссия', color: WATERFALL_COLORS.commission },
-  { key: 'logistics_delivery', label: 'Доставка', color: WATERFALL_COLORS.logistics_delivery },
-  { key: 'logistics_return', label: 'Возвраты', color: WATERFALL_COLORS.logistics_return },
-  { key: 'storage', label: 'Хранение', color: WATERFALL_COLORS.storage },
-  {
-    key: 'delivery_to_warehouse',
-    label: 'Доставка на склад',
-    color: WATERFALL_COLORS.delivery_to_warehouse,
-  },
-  { key: 'paid_acceptance', label: 'Приёмка', color: WATERFALL_COLORS.paid_acceptance },
-  { key: 'penalties', label: 'Штрафы', color: WATERFALL_COLORS.penalties },
-  { key: 'other_deductions', label: 'Прочее', color: WATERFALL_COLORS.other_deductions },
-  { key: 'advertising', label: 'Реклама', color: WATERFALL_COLORS.advertising },
-]
-
-/** Lookup table: category key → { label, color }. Built from COST_CATEGORIES. */
-const COST_CATEGORY_BY_KEY: Record<string, { label: string; color: string }> = Object.fromEntries(
-  COST_CATEGORIES.map(c => [c.key, { label: c.label, color: c.color }])
-)
 
 /**
  * Transform revenue + cost data into waterfall chart data points.
@@ -123,7 +78,6 @@ export function transformToWaterfallData(
     const cat = COST_CATEGORY_BY_KEY[key]
     if (!cat) {
       // Backend introduced a category the frontend doesn't know how to render — skip.
-      // (Not a defect; backwards-compatible additive changes from backend should not break UX.)
       continue
     }
 
@@ -149,12 +103,6 @@ export function transformToWaterfallData(
   }
 
   // Profit/Loss bar (from 0 to remaining).
-  // NOTE (Epic 114.2): this is a DISPLAY-ONLY residual of the visual cost decomposition
-  // (revenue 100% − Σ visible cost bars, incl. commission/acquiring as cost categories). It is
-  // INTENTIONALLY different from the API `net_profit` field, which is the canonical operating_profit
-  // (commission/acquiring/loyalty are already netted out of revenue_net, so they are NOT re-subtracted
-  // there). The waterfall answers "where does net revenue go" (cost structure); the summary cards/table
-  // show the canonical profit. Do not "reconcile" the two — they measure different things by design.
   const profitPct = runningTotal
   const profitRub = revenue * (profitPct / 100)
   dataPoints.push({
@@ -181,14 +129,7 @@ export function transformToWaterfallData(
  * the COGS bar's `start` goes negative (100 − 133 = −33) and a deep loss bar can exceed 100,
  * so the clipped chart UNDERSTATES the loss — a Defensive-Frontend / data-correctness defect.
  *
- * Returns a domain that always includes 0..100 (so a normal profit case is unchanged) and is
- * widened outward to a tidy 20 %-grid bound whenever a bar extends below 0 or above 100.
- *
- * `max` takes max(start + value, value) so the domain is robust to BOTH recharts stacking
- * models for a negative transparent base: the documented d3 `stackOffsetNone` (floating bar →
- * top = start + value) AND a sign-separated stack (positive value renders 0→value → top =
- * value). We could not confirm 3.4.1's exact behavior in jsdom, so we bound for both — never
- * clipping either way, at the cost of a little extra headroom in the floating case.
+ * Returns a domain that always includes 0..100 and is widened outward to a tidy 20%-grid bound.
  */
 export function computeWaterfallYDomain(data: WaterfallChartDataPoint[]): [number, number] {
   let min = 0

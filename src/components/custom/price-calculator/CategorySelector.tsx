@@ -6,7 +6,6 @@
  * Story 44.26b-FE: Auto-fill Category with Lock/Unlock
  */
 
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandInput } from '@/components/ui/command'
 import { Button } from '@/components/ui/button'
@@ -14,16 +13,12 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { ChevronsUpDown, X, Lock } from 'lucide-react'
 import { cn, formatPercentage } from '@/lib/utils'
-import { useCommissions } from '@/hooks/useCommissions'
 import { FieldTooltip } from './FieldTooltip'
 import { AutoFillBadge } from './AutoFillBadge'
 import { CategorySelectorLoading, CategorySelectorError } from './CategorySelectorStates'
 import { CategoryCommandList } from './CategoryCommandList'
-import {
-  MAX_VISIBLE_RESULTS,
-  SEARCH_DEBOUNCE_MS,
-  HIGH_COMMISSION_THRESHOLD,
-} from './category-selector-constants'
+import { HIGH_COMMISSION_THRESHOLD } from './category-selector-constants'
+import { useCategorySelectorState } from './useCategorySelectorState'
 import type { CategoryCommission } from '@/types/tariffs'
 import type { FulfillmentType, CategoryAutoFillState } from '@/types/price-calculator'
 
@@ -44,57 +39,25 @@ export function CategorySelector({
   error,
   autoFillState,
 }: CategorySelectorProps) {
-  const [open, setOpen] = useState(false)
-  const [searchInput, setSearchInput] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
-
-  const { data: commissionsData, isLoading, error: apiError, refetch } = useCommissions()
-  const categories = commissionsData?.commissions ?? []
+  const {
+    open,
+    setOpen,
+    searchInput,
+    setSearchInput,
+    debouncedSearch,
+    filteredCategories,
+    isLoading,
+    apiError,
+    refetch,
+    getCommissionPct,
+    formatCategoryName,
+    handleSelect,
+    handleClear,
+  } = useCategorySelectorState(fulfillmentType, onChange)
 
   const isLocked = autoFillState?.isLocked ?? false
   const isAutoFilled = autoFillState?.source === 'auto'
   const effectiveDisabled = disabled || isLocked
-
-  useEffect(() => {
-    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
-    debounceTimerRef.current = setTimeout(() => setDebouncedSearch(searchInput), SEARCH_DEBOUNCE_MS)
-    return () => {
-      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
-    }
-  }, [searchInput])
-
-  const filteredCategories = useMemo(() => {
-    if (!debouncedSearch.trim()) return categories.slice(0, MAX_VISIBLE_RESULTS)
-    const query = debouncedSearch.toLowerCase()
-    return categories
-      .filter(
-        c =>
-          c.parentName.toLowerCase().includes(query) || c.subjectName.toLowerCase().includes(query)
-      )
-      .slice(0, MAX_VISIBLE_RESULTS)
-  }, [categories, debouncedSearch])
-
-  const getCommissionPct = useCallback(
-    (category: CategoryCommission) =>
-      fulfillmentType === 'FBO' ? category.paidStorageKgvp : category.kgvpMarketplace,
-    [fulfillmentType]
-  )
-
-  const formatCategoryName = (category: CategoryCommission) =>
-    `${category.parentName} → ${category.subjectName}`
-
-  const handleSelect = (category: CategoryCommission) => {
-    onChange(category)
-    setOpen(false)
-    setSearchInput('')
-    setDebouncedSearch('')
-  }
-  const handleClear = () => {
-    onChange(null)
-    setSearchInput('')
-    setDebouncedSearch('')
-  }
 
   if (isLoading) return <CategorySelectorLoading />
   if (apiError) return <CategorySelectorError onRetry={() => refetch()} />

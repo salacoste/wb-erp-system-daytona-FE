@@ -1,50 +1,10 @@
 import { formatCurrency } from '@/lib/utils'
+import type { ChartInputParams, ChartSegment } from './cost-breakdown-types'
+import { CHART_COLORS, MIN_SEGMENT_WIDTH_PX } from './cost-breakdown-types'
 
-/**
- * Input parameters from the form for dynamic chart labels
- * Passed through PriceCalculatorResults -> CostBreakdownChart
- */
-export interface ChartInputParams {
-  /** Commission percentage from category selection */
-  commissionPct: number
-  /** Acquiring percentage (usually 1.5-2.5%) */
-  acquiringPct: number
-  /** Advertising/DRR percentage */
-  drrPct: number
-  /** VAT percentage (0 if not VAT payer) */
-  vatPct: number
-}
-
-/** Single chart segment data */
-export interface ChartSegment {
-  /** Unique key for the segment */
-  key: string
-  /** Display label with input percentage */
-  label: string
-  /** Percentage of total price */
-  pct: number
-  /** Ruble amount */
-  rub: number
-  /** Segment color */
-  color: string
-  /** Whether this is the margin (always last) */
-  isMargin: boolean
-  /** Input percentage for tooltip */
-  inputPct: number
-}
-
-/** Color palette for chart segments (fix #9: teal for acquiring instead of green) */
-export const CHART_COLORS = {
-  commission_wb: '#8b5cf6', // purple
-  acquiring: '#3b82f6', // blue (was green, changed for color-blind safety)
-  advertising: '#f97316', // orange
-  vat: '#ef4444', // red
-  margin: '#10b981', // emerald
-  fixed: '#64748b', // slate — base cost (COGS + logistics + storage)
-} as const
-
-/** Minimum visual width in pixels for any non-zero segment (#7) */
-export const MIN_SEGMENT_WIDTH_PX = 24
+// Re-export types and constants for backward compatibility
+export type { ChartInputParams, ChartSegment } from './cost-breakdown-types'
+export { CHART_COLORS, MIN_SEGMENT_WIDTH_PX } from './cost-breakdown-types'
 
 /**
  * Format percentage with Russian locale (comma separator, 1 decimal)
@@ -81,9 +41,7 @@ export function buildChartSegments(
 
   const toPct = (rub: number): number => (rub / recommendedPrice) * 100
 
-  // Fixed-cost base = price minus all percentage segments (commission, acquiring,
-  // advertising, vat) and margin. Equals backend `fixed_total` (COGS + logistics +
-  // storage) by construction, so the chart reconciles to 100% of the price.
+  // Fixed-cost base = price minus all percentage segments and margin.
   const fixedRub =
     recommendedPrice -
     (breakdown.commission_wb +
@@ -96,12 +54,8 @@ export function buildChartSegments(
   const costSegments: ChartSegment[] = [
     {
       key: 'fixed',
-      // Names all three components of fixed_total (the segment is usually the largest, ~50-63%);
-      // "Себестоимость и логистика" alone hid that storage is folded in.
       label: 'Себестоимость, логистика, хранение',
       pct: toPct(fixedRub),
-      // The `.filter(s => s.pct > 0)` below drops a degenerate ≤0 remainder; the `> 0 ? : 0`
-      // here is belt-and-suspenders so a filtered-out row never carries a negative rub.
       rub: fixedRub > 0 ? fixedRub : 0,
       color: CHART_COLORS.fixed,
       isMargin: false,
@@ -145,7 +99,6 @@ export function buildChartSegments(
     },
   ]
     .filter(s => s.pct > 0)
-    // #8: Sort cost segments largest -> smallest
     .sort((a, b) => b.pct - a.pct)
 
   // Margin is always last

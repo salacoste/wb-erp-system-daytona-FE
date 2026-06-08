@@ -8,6 +8,7 @@ import {
   DailyBreakdownSection,
   IncompleteWeekBanner,
   TaxWarningBanner,
+  InventorySummaryWidget,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { ReportPendingBanner } from './ReportPendingBanner'
@@ -94,6 +95,7 @@ export function DashboardContent(): React.ReactElement {
         onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
       />
       <DailyBreakdownSection className="mt-4" />
+      <InventorySummaryWidget />
       <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
       <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
       {d.advertisingQuery.isLoading && (

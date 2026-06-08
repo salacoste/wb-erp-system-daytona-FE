@@ -102,6 +102,7 @@ vi.mock('@/components/custom/dashboard', () => ({
   DailyBreakdownSection: () => null,
   IncompleteWeekBanner: () => null,
   TaxWarningBanner: () => null,
+  InventorySummaryWidget: () => null,
 }))
 // NOTE: DashboardAlerts is intentionally NOT mocked — we assert the real
 // ProcessingAlert is absent.

@@ -22,29 +22,14 @@ import {
   isValidMonthFormat,
 } from '@/lib/period-helpers'
 import type { PeriodType, DashboardPeriodContextValue } from './dashboard-period-types'
+import {
+  PERIOD_URL_PARAMS,
+  getStoredPeriodType,
+  setStoredPeriodType,
+  buildPeriodUrlParams,
+} from './dashboard-period-storage'
 
-const STORAGE_KEY = 'dashboard-period-type'
-const URL_PARAMS = { week: 'week', month: 'month', type: 'type' } as const
-
-function getStoredPeriodType(): PeriodType | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'week' || stored === 'month') return stored
-  } catch {
-    /* ignore storage errors */
-  }
-  return null
-}
-
-function setStoredPeriodType(type: PeriodType): void {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY, type)
-  } catch {
-    /* ignore storage errors */
-  }
-}
+const URL_PARAMS = PERIOD_URL_PARAMS
 
 export function useDashboardPeriodState(initialWeek?: string): DashboardPeriodContextValue {
   const searchParams = useSearchParams()
@@ -82,16 +67,8 @@ export function useDashboardPeriodState(initialWeek?: string): DashboardPeriodCo
 
   const syncToUrl = useCallback(
     (week: string, month: string, type: PeriodType) => {
-      const params = new URLSearchParams(searchParams.toString())
-      if (type === 'week') {
-        params.set(URL_PARAMS.week, week)
-        params.delete(URL_PARAMS.month)
-      } else {
-        params.set(URL_PARAMS.month, month)
-        params.delete(URL_PARAMS.week)
-      }
-      params.set(URL_PARAMS.type, type)
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+      const qs = buildPeriodUrlParams(week, month, type, searchParams.toString())
+      router.replace(`${pathname}?${qs}`, { scroll: false })
     },
     [searchParams, router, pathname]
   )
@@ -139,16 +116,13 @@ export function useDashboardPeriodState(initialWeek?: string): DashboardPeriodCo
   }, [queryClient])
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (periodType === 'week') {
-      params.set(URL_PARAMS.week, selectedWeek)
-      params.delete(URL_PARAMS.month)
-    } else {
-      params.set(URL_PARAMS.month, selectedMonth)
-      params.delete(URL_PARAMS.week)
-    }
-    params.set(URL_PARAMS.type, periodType)
-    const newUrl = `${pathname}?${params.toString()}`
+    const qs = buildPeriodUrlParams(
+      selectedWeek,
+      selectedMonth,
+      periodType,
+      searchParams.toString()
+    )
+    const newUrl = `${pathname}?${qs}`
     if (newUrl !== pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')) {
       router.replace(newUrl, { scroll: false })
     }

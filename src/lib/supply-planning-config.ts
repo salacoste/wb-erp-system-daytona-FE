@@ -1,17 +1,20 @@
 /**
  * Supply Planning Configuration & Status Helpers
  * Extracted from supply-planning-utils.ts (Epic 74, Story 74.5, Task 6.1)
- * Stockout risk, reorder status, and velocity trend configurations
+ * Stockout risk configuration and helpers.
+ * Reorder status & velocity trend extracted to supply-planning-reorder-velocity.ts
  */
 
-import type {
-  StockoutRisk,
-  ReorderStatus,
-  VelocityTrend,
-  RiskStatusConfig,
-  ReorderStatusConfig,
-  SupplyPlanningSummary,
-} from '@/types/supply-planning'
+import type { StockoutRisk, RiskStatusConfig, SupplyPlanningSummary } from '@/types/supply-planning'
+
+// Re-export for backward compatibility
+export {
+  getReorderStatusConfig,
+  getReorderStatusLabel,
+  getReorderStatusColor,
+  VELOCITY_TREND_CONFIG,
+  getVelocityTrendInfo,
+} from './supply-planning-reorder-velocity'
 
 // -- Stockout Risk Configuration --
 
@@ -124,77 +127,4 @@ export function getStockoutRiskBadgeClasses(risk: StockoutRisk): string {
 /** Get count of urgent SKUs (out_of_stock + critical) for nav badge */
 export function getUrgentSkuCount(summary: SupplyPlanningSummary): number {
   return summary.out_of_stock_count + summary.stockout_critical
-}
-
-// -- Reorder Status Helpers --
-
-/** Get display configuration for reorder status */
-export function getReorderStatusConfig(status: ReorderStatus): ReorderStatusConfig {
-  const configs: Record<ReorderStatus, ReorderStatusConfig> = {
-    urgent: { label: 'Срочно заказать', color: '#EF4444', bgColor: '#FEE2E2' },
-    soon: { label: 'Заказать скоро', color: '#F97316', bgColor: '#FED7AA' },
-    ok: { label: 'Запас достаточен', color: '#22C55E', bgColor: '#D1FAE5' },
-  }
-  return configs[status]
-}
-
-/** Get label for reorder status */
-export function getReorderStatusLabel(status: ReorderStatus): string {
-  return getReorderStatusConfig(status).label
-}
-
-/** Get color for reorder status */
-export function getReorderStatusColor(status: ReorderStatus): string {
-  return getReorderStatusConfig(status).color
-}
-
-// -- Velocity Trend Helpers --
-
-/**
- * Velocity trend display configuration
- * UX Specs by Sally (UX Expert) - 2025-12-12
- */
-// 'no_data' is excluded: it has no renderable trend display (Defensive Frontend — indicate, don't fabricate).
-export const VELOCITY_TREND_CONFIG: Record<
-  Exclude<VelocityTrend, 'no_data'>,
-  {
-    label: string
-    icon: string
-    color: string
-    textClass: string
-    lucideIcon: string
-  }
-> = {
-  growing: {
-    label: 'Растёт',
-    icon: '↗️',
-    color: '#16A34A',
-    textClass: 'text-green-600',
-    lucideIcon: 'TrendingUp',
-  },
-  stable: {
-    label: 'Стабильно',
-    icon: '➡️',
-    color: '#6B7280',
-    textClass: 'text-gray-500',
-    lucideIcon: 'Minus',
-  },
-  declining: {
-    label: 'Падает',
-    icon: '↘️',
-    color: '#DC2626',
-    textClass: 'text-red-600',
-    lucideIcon: 'TrendingDown',
-  },
-} as const
-
-/** Get display info for a renderable velocity trend ('no_data' has no display — handle at call site). */
-export function getVelocityTrendInfo(trend: Exclude<VelocityTrend, 'no_data'>): {
-  label: string
-  icon: string
-  color: string
-  textClass: string
-  lucideIcon: string
-} {
-  return VELOCITY_TREND_CONFIG[trend]
 }

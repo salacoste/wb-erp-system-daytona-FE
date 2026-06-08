@@ -16,6 +16,7 @@ import { PricingFilters } from './components/PricingFilters'
 import { PricingSummaryCards } from './components/PricingSummaryCards'
 import { PricingTable } from './components/PricingTable'
 import { PriceHistorySheet } from './components/PriceHistorySheet'
+import { ElasticitySection } from './components/ElasticitySection'
 
 export default function PricingPage() {
   const state = usePricingPageState()
@@ -86,6 +87,8 @@ export default function PricingPage() {
         open={historyOpen}
         onOpenChange={setHistoryOpen}
       />
+
+      <ElasticitySection />
     </div>
   )
 }

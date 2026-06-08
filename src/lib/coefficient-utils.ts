@@ -4,101 +4,36 @@
  * Reference: docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md
  */
 
-import { formatCurrency, formatDate, formatDecimal, formatPercentage } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
+import type {
+  RawCoefficient,
+  NormalizedCoefficient,
+  CoefficientStatus,
+  CoefficientStatusConfig,
+  CoefficientImpact,
+} from './coefficient-types'
+import { COEFFICIENT_STATUS_CONFIG } from './coefficient-types'
 
-/** Raw coefficient from WB API (integer: 100 = 1.0) */
-export interface RawCoefficient {
-  date: string
-  coefficient: number
-  /** Optional availability flag from API */
-  isAvailable?: boolean
-}
+// Re-export types and config for backward compatibility
+export type {
+  RawCoefficient,
+  NormalizedCoefficient,
+  CoefficientStatus,
+  CoefficientStatusConfig,
+  CoefficientImpact,
+} from './coefficient-types'
+export { COEFFICIENT_STATUS_CONFIG } from './coefficient-types'
 
-/** Normalized coefficient for frontend (decimal: 1.0, 1.25) */
-export interface NormalizedCoefficient {
-  date: string
-  coefficient: number
-  status: CoefficientStatus
-  /** Availability flag from API - coefficient=0 with isAvailable=true means FREE slot */
-  isAvailable: boolean
-}
-
-/** Coefficient status - 5 levels for Story 44.26a-FE */
-export type CoefficientStatus = 'base' | 'elevated' | 'high' | 'peak' | 'unavailable'
-
-/** Coefficient status configuration */
-export interface CoefficientStatusConfig {
-  status: CoefficientStatus
-  label: string
-  color: 'green' | 'yellow' | 'orange' | 'red' | 'gray'
-  bgColor: string
-  textColor: string
-  borderColor: string
-  minValue: number
-  maxValue: number
-}
-
-/** Coefficient impact calculation result */
-export interface CoefficientImpact {
-  increase: number
-  percentIncrease: number
-  increaseDisplay: string
-  percentDisplay: string
-}
-
-/** 5-level status config: base 0-1.0 (0=FREE), elevated 1.01-1.5, high 1.51-2.0, peak >2.0, unavailable <0 */
-export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientStatusConfig> = {
-  base: {
-    status: 'base',
-    label: 'Базовый',
-    color: 'green',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-700',
-    borderColor: 'border-green-300',
-    minValue: 0,
-    maxValue: 1.0,
-  },
-  elevated: {
-    status: 'elevated',
-    label: 'Повышенный',
-    color: 'yellow',
-    bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-700',
-    borderColor: 'border-yellow-300',
-    minValue: 1.01,
-    maxValue: 1.5,
-  },
-  high: {
-    status: 'high',
-    label: 'Высокий',
-    color: 'orange',
-    bgColor: 'bg-orange-100',
-    textColor: 'text-orange-700',
-    borderColor: 'border-orange-300',
-    minValue: 1.51,
-    maxValue: 2.0,
-  },
-  peak: {
-    status: 'peak',
-    label: 'Пиковый',
-    color: 'red',
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-700',
-    borderColor: 'border-red-300',
-    minValue: 2.01,
-    maxValue: Infinity,
-  },
-  unavailable: {
-    status: 'unavailable',
-    label: 'Недоступно',
-    color: 'gray',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-400',
-    borderColor: 'border-gray-300',
-    minValue: -Infinity,
-    maxValue: -0.01,
-  },
-}
+// Re-export date helpers for backward compatibility
+export {
+  formatCoefficient,
+  formatCoefficientDate,
+  getDayFromDate,
+  isToday,
+  formatDateLongRu,
+  getTomorrowDate,
+  getFirstAvailableDate,
+} from './coefficient-date-helpers'
 
 /** Normalize coefficient from API: 100 → 1.0 */
 export function normalizeCoefficient(raw: number): number {
@@ -167,46 +102,4 @@ export function calculateCoefficientImpact(
     // percentIncrease > 0 here (guard returns early for coefficient <= 1), so '+' never doubles.
     percentDisplay: `+${formatPercentage(percentIncrease, 1)}`,
   }
-}
-
-/** Format coefficient for display (Russian comma decimal, e.g. "1,25") */
-export function formatCoefficient(coefficient: number): string {
-  return formatDecimal(coefficient, 2)
-}
-
-/** Format date for coefficient display (Russian locale) */
-export function formatCoefficientDate(dateString: string): string {
-  return formatDate(dateString)
-}
-
-/** Get day of month from date string */
-export function getDayFromDate(dateString: string): number {
-  return new Date(dateString).getDate()
-}
-
-/** Check if date is today */
-export function isToday(dateString: string): boolean {
-  const today = new Date().toISOString().split('T')[0]
-  return dateString === today
-}
-
-/** Format date in long Russian format: "21 января 2026" - Story 44.26a-FE */
-export function formatDateLongRu(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
-/** Get tomorrow's date in ISO format - Story 44.26a-FE */
-export function getTomorrowDate(): string {
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  return tomorrow.toISOString().split('T')[0]
-}
-
-/** Get first available date from coefficients - Story 44.26a-FE */
-export function getFirstAvailableDate(
-  coefficients: NormalizedCoefficient[]
-): NormalizedCoefficient | null {
-  // Use isAvailable flag: coefficient=0 with isAvailable=true means FREE slot
-  return coefficients.find(c => c.isAvailable) ?? null
 }

@@ -18,10 +18,6 @@
       "env": {
         "CONTEXT7_API_KEY": "ctx7sk-5d755f9d-fce7-424e-be0c-209540b4ab27"
       }
-    },
-    "openmemory": {
-      "type": "sse",
-      "url": "http://localhost:4050/mcp/claude/sse/prj_wb_repricer_system_new"
     }
   }
 }

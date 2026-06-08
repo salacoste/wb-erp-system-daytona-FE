@@ -176,3 +176,6 @@ export {
   formatCompactValue,
 } from './trends-config'
 export type { TrendsMetricKey, TrendsMetricConfig } from './trends-config'
+
+// Inventory Summary Widget
+export { InventorySummaryWidget } from './InventorySummaryWidget'

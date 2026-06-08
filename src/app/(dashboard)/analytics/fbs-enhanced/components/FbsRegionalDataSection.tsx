@@ -103,6 +103,7 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
               axisLine={false}
               tickLine={false}
             />
+            {/* Recharts ContentType is opaque — third-party type constraint requires cast */}
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <Tooltip content={RegionalTooltip as any} />
             <Bar

@@ -2,74 +2,12 @@
 
 import { format, formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useAdvertisingSyncStatus } from '@/hooks/useAdvertisingAnalytics'
-import {
-  deriveHealthStatus,
-  type HealthStatus,
-  type SyncTaskStatus,
-} from '@/types/advertising-analytics'
-
-// ============================================================================
-// Health Status Configuration
-// ============================================================================
-
-interface HealthStatusConfig {
-  /** Russian label for the status */
-  label: string
-  /** Dot color class (Tailwind) */
-  dotColor: string
-  /** Description text */
-  description: string
-}
-
-/**
- * Health status configuration.
- *
- * Note: Backend marks sync as "stale" after 26 hours (not 24h).
- * Rationale: 24h daily sync schedule + 2h buffer for network delays and retry attempts.
- */
-const healthStatusConfig: Record<HealthStatus, HealthStatusConfig> = {
-  healthy: {
-    label: 'Синхронизировано',
-    dotColor: 'bg-green-500',
-    description: 'Данные актуальны',
-  },
-  degraded: {
-    label: 'Частичная синхронизация',
-    dotColor: 'bg-yellow-500',
-    description: 'Есть ошибки, но синхронизация работает',
-  },
-  unhealthy: {
-    label: 'Ошибка синхронизации',
-    dotColor: 'bg-red-500',
-    description: 'Синхронизация не работает',
-  },
-  stale: {
-    label: 'Данные устарели',
-    dotColor: 'bg-orange-500',
-    // 26h = 24h daily sync + 2h buffer for delays
-    description: 'Нет синхронизации более 26 часов',
-  },
-}
-
-/**
- * Sync task status configuration.
- * @see Request #72 backend-response for status values
- */
-const syncTaskStatusConfig: Record<SyncTaskStatus, string> = {
-  syncing: 'Синхронизация...',
-  completed: 'Завершено',
-  failed: 'Ошибка',
-  idle: 'Ожидание',
-}
+import { deriveHealthStatus } from '@/types/advertising-analytics'
+import { healthStatusConfig, syncTaskStatusConfig } from './sync-status-config'
 
 // ============================================================================
 // Sync Status Indicator Component
@@ -105,11 +43,7 @@ export function SyncStatusIndicator() {
 
   // Error state - show gracefully without blocking page
   if (error || !data) {
-    return (
-      <span className="text-sm text-muted-foreground">
-        Статус недоступен
-      </span>
-    )
+    return <span className="text-sm text-muted-foreground">Статус недоступен</span>
   }
 
   // Derive health status from response (backend doesn't return health_status directly)
@@ -144,19 +78,14 @@ export function SyncStatusIndicator() {
               className={cn('w-2 h-2 rounded-full flex-shrink-0', config.dotColor)}
               aria-hidden="true"
             />
-            <span className="text-muted-foreground">
-              Обновлено {lastSyncText}
-            </span>
+            <span className="text-muted-foreground">Обновлено {lastSyncText}</span>
           </button>
         </TooltipTrigger>
         <TooltipContent className="w-64" align="end">
           <div className="space-y-2">
             {/* Status header */}
             <div className="flex items-center gap-2 font-medium">
-              <span
-                className={cn('w-2 h-2 rounded-full', config.dotColor)}
-                aria-hidden="true"
-              />
+              <span className={cn('w-2 h-2 rounded-full', config.dotColor)} aria-hidden="true" />
               {config.label}
             </div>
             <p className="text-sm text-muted-foreground">{config.description}</p>

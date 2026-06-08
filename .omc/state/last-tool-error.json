@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"npx vitest run src/components/custom/margin-trend-chart/__tests__/margin-trend-utils.test.ts 2>&1\",\"timeout\":30000,\"description\":\"Run margin-trend utils tests\"}",
-  "error": "Exit code 1\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n\n RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend\n\n[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`\n(node:5109) Warning: `--localstorage-file` was provided without a valid path\n(Use `n...",
-  "timestamp": "2026-06-07T15:09:05.611Z",
-  "retry_count": 2
+  "tool_input_preview": "{\"command\":\"# Re-check the 195-199 critical zone files after extraction\\necho \\\"=== Files previously at 195-199 lines - current status ===\\\" && for f in \\\\\\n  src/lib/supply-planning-utils.ts \\\\\\n  sr...",
+  "error": "Exit code 1\n(eval):35: unmatched \"",
+  "timestamp": "2026-06-08T09:40:19.079Z",
+  "retry_count": 1
 }

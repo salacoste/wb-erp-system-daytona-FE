@@ -68,9 +68,8 @@ export function StatusStackedBar({ data, height = 60, onSegmentClick }: StatusSt
             >
               <Cell
                 fill={getStatusColor(status)}
-                // Add payload for tooltip
-                // @ts-expect-error - Recharts Cell accepts custom props
-                payload={{ status, count: item.count, percentage: item.percentage }}
+                // Recharts Cell passes custom props through to tooltip — type widen via spread
+                {...{ payload: { status, count: item.count, percentage: item.percentage } }}
               />
             </Bar>
           )

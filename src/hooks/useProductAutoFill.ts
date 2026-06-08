@@ -92,12 +92,9 @@ export function useProductAutoFill<T extends FieldValues>({
         const volumeLiters = product.dimensions.volume_liters
 
         // Set form values — Path<T> + value cast needed for generic form compatibility
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue('length_cm' as Path<T>, lengthCm as any)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue('width_cm' as Path<T>, widthCm as any)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue('height_cm' as Path<T>, heightCm as any)
+        setValue('length_cm' as Path<T>, lengthCm as unknown as Parameters<typeof setValue>[1])
+        setValue('width_cm' as Path<T>, widthCm as unknown as Parameters<typeof setValue>[1])
+        setValue('height_cm' as Path<T>, heightCm as unknown as Parameters<typeof setValue>[1])
 
         setDimensionAutoFill({
           source: 'auto',
@@ -144,12 +141,9 @@ export function useProductAutoFill<T extends FieldValues>({
   const restoreDimensions = useCallback(() => {
     if (dimensionAutoFill.originalValues) {
       const { length_cm, width_cm, height_cm } = dimensionAutoFill.originalValues
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue('length_cm' as Path<T>, length_cm as any)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue('width_cm' as Path<T>, width_cm as any)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue('height_cm' as Path<T>, height_cm as any)
+      setValue('length_cm' as Path<T>, length_cm as unknown as Parameters<typeof setValue>[1])
+      setValue('width_cm' as Path<T>, width_cm as unknown as Parameters<typeof setValue>[1])
+      setValue('height_cm' as Path<T>, height_cm as unknown as Parameters<typeof setValue>[1])
       setDimensionAutoFill(prev => ({ ...prev, status: 'auto' }))
     }
   }, [dimensionAutoFill.originalValues, setValue])

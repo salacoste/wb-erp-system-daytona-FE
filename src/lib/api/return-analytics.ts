@@ -80,37 +80,44 @@ export async function getReturnsBySku(params: {
     anomalyOnly: params.anomalyOnly ?? false,
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const raw = await apiClient.get<any>(`/v1/analytics/returns/reasons/by-sku?${sp.toString()}`, {
-    skipDataUnwrap: true,
-  })
+  const raw = await apiClient.get<unknown>(
+    `/v1/analytics/returns/reasons/by-sku?${sp.toString()}`,
+    {
+      skipDataUnwrap: true,
+    }
+  )
 
-  const items = raw.data ?? []
-  const isRaw = items.length > 0 && 'returnCategory' in items[0]
+  const rawResponse = raw as { data?: unknown[]; pagination?: unknown; summary?: unknown }
+  const items = rawResponse.data ?? []
+  const isRaw = items.length > 0 && 'returnCategory' in (items[0] as Record<string, unknown>)
 
   if (isRaw) {
-    const aggregated = aggregateRawRecords(items)
+    const aggregated = aggregateRawRecords(
+      items as Array<{ nmId: number; returnCategory: string; [k: string]: unknown }>
+    )
     logger.debug('[Returns] by-sku (raw→aggregated):', {
       rawRecords: items.length,
       aggregatedSkus: aggregated.length,
     })
     return {
       data: aggregated,
-      pagination: raw.pagination ?? { count: aggregated.length, hasMore: false },
+      pagination: (rawResponse.pagination as { count: number; hasMore: boolean }) ?? {
+        count: aggregated.length,
+        hasMore: false,
+      },
       summary: { totalSkus: aggregated.length, anomalyCount: 0 },
     }
   }
 
   logger.debug('[Returns] by-sku (pre-aggregated):', {
     items: items.length,
-    totalSkus: raw.summary?.totalSkus ?? 0,
+    totalSkus: (rawResponse.summary as Record<string, unknown>)?.totalSkus ?? 0,
   })
-  return raw as BySkuReturnResponse
+  return rawResponse as unknown as BySkuReturnResponse
 }
 
 /** Aggregate raw classification records into per-SKU summary. Exported for unit testing (iter-127). */
 export function aggregateRawRecords(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   records: Array<{ nmId: number; returnCategory: string; [k: string]: unknown }>
 ) {
   const map = new Map<number, { cancel: number; refusal: number; receipt: number }>()
