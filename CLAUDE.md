@@ -137,13 +137,13 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 
 | Gate | Command | Baseline |
 |---|---|---|
-| Doc citations | `bash scripts/check-doc-citations.sh` | 46 broken (auto set-diff vs `.check-docs-baseline.txt`) |
+| Doc citations | `bash scripts/check-doc-citations.sh` | 85 broken (auto set-diff vs `.check-docs-baseline.txt`) |
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
 | Dot-locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
 | ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 0 warnings |
-| Vitest | `npm test -- --run` | ≥ 14064 passing, 676 skipped, 0 failed (floor) |
+| Vitest | `npm test -- --run` | ≥ 16101 passing, 676 skipped, 0 failed (floor) |
 
 **Drift rules.** check:docs — exit code is the gate (automated). type-check / lint — count must equal 0; any error/warning is a regression. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` enforced via root `eslint.config.js` flat config (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated and does NOT load `.eslintrc.json` — enforcement is exclusively `npx eslint` from monorepo root. **When a story legitimately moves a baseline, update this table in the same PR.**
 

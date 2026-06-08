@@ -11,8 +11,6 @@
 #       (output enumerates what changed)
 src/analytics/weekly-analytics.service.ts:357-399 | file not found
 src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | line 142 > file has 35 lines
-src/app/(dashboard)/dashboard/components/DashboardContent.tsx:156-162 | line 162 > file has 117 lines
-src/app/(dashboard)/dashboard/components/DashboardContent.tsx:158 | line 158 > file has 117 lines
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/components/custom/dashboard/table-columns.ts:188-191 | line 191 > file has 150 lines
@@ -49,11 +47,11 @@ src/lib/api/ai/models.ts:76 | line 76 > file has 42 lines
 src/lib/api/ai/status.ts:27 | line 27 > file has 16 lines
 src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
 src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
-src/lib/daily/aggregation.ts:130-134 | line 134 > file has 117 lines
-src/lib/daily/aggregation.ts:130-134 | line 134 > file has 117 lines
-src/lib/daily/aggregation.ts:153-169 | line 169 > file has 117 lines
-src/lib/daily/aggregation.ts:153-169 | line 169 > file has 117 lines
-src/lib/daily/aggregation.ts:155 | line 155 > file has 117 lines
+src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
+src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
+src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
+src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
+src/lib/daily/aggregation.ts:155 | line 155 > file has 116 lines
 src/lib/routes.ts:206 | line 206 > file has 126 lines
 src/lib/routes.ts:206 | line 206 > file has 126 lines
 src/lib/routes.ts:213-215 | line 215 > file has 126 lines
@@ -61,4 +59,38 @@ src/lib/routes.ts:213-215 | line 215 > file has 126 lines
 src/lib/routes.ts:215 | line 215 > file has 126 lines
 src/products/products.service.ts:210-259 | file not found
 src/products/products.service.ts:83-182 | file not found
-src/types/unit-economics.ts:223-232 | line 232 > file has 218 lines
+src/types/cabinet.ts:10-11 | file not found
+src/types/cabinet.ts:112 | file not found
+src/types/cabinet.ts:112 | file not found
+src/types/cabinet.ts:112 | file not found
+src/types/cabinet.ts:112-127 | file not found
+src/types/cabinet.ts:115-119 | file not found
+src/types/cabinet.ts:117-118 | file not found
+src/types/cabinet.ts:172-178 | file not found
+src/types/cabinet.ts:35 | file not found
+src/types/cabinet.ts:7 | file not found
+src/types/cabinet.ts:7 | file not found
+src/types/daily-metrics.ts:125 | file not found
+src/types/daily-metrics.ts:125 | file not found
+src/types/daily-metrics.ts:190-192 | file not found
+src/types/daily-metrics.ts:190-192 | file not found
+src/types/daily-metrics.ts:61 | file not found
+src/types/daily-metrics.ts:61 | file not found
+src/types/daily-metrics.ts:86 | file not found
+src/types/daily-metrics.ts:86 | file not found
+src/types/sku-financials.ts:143-150 | file not found
+src/types/sku-financials.ts:86-93 | file not found
+src/types/sku-financials.ts:86-93 | file not found
+src/types/unit-economics.ts:111 | file not found
+src/types/unit-economics.ts:181-190 | file not found
+src/types/unit-economics.ts:181-190 | file not found
+src/types/unit-economics.ts:187 | file not found
+src/types/unit-economics.ts:223-232 | file not found
+src/types/unit-economics.ts:40-51 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:85 | file not found
+src/types/unit-economics.ts:85 | file not found
