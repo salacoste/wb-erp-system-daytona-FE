@@ -205,36 +205,6 @@ export interface UnitEconomicsSummary {
   missing_cogs_count: number
 }
 
-/**
- * Response metadata
- */
-export interface UnitEconomicsMeta {
-  /** ISO week */
-  week: string
-  /** Cabinet UUID */
-  cabinet_id: string
-  /** Aggregation level used */
-  view_by: UnitEconomicsViewBy
-  /** When response was generated */
-  generated_at: string
-  /**
-   * Ordered list of cost-category keys driving waterfall chart ordering.
-   * Per request-backend/173 § F4. Frontend uses this array as authoritative;
-   * falls back to hardcoded order with `console.warn` if response omits the field.
-   * Added in Story 96.3-FE.
-   */
-  cost_category_order?: string[]
-}
-
-/**
- * Full API response from GET /v1/analytics/unit-economics
- */
-export interface UnitEconomicsResponse {
-  meta: UnitEconomicsMeta
-  summary: UnitEconomicsSummary
-  data: UnitEconomicsItem[]
-}
-
 // ============================================================================
 // Re-exports from unit-economics-cost-categories.ts (backward compatibility)
 // ============================================================================
@@ -243,4 +213,6 @@ export type {
   ProfitabilityStatusConfig,
   CostCategoryConfig,
   WaterfallDataPoint,
+  UnitEconomicsMeta,
+  UnitEconomicsResponse,
 } from './unit-economics-cost-categories'

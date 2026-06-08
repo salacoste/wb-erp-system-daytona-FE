@@ -5,7 +5,7 @@
  * Epic 53-FE: Supply Management UI
  */
 
-import type { SupplyListItem, SupplyStatus, StickerFormat } from './supplies'
+import type { SupplyListItem, SupplyStatus, StickerFormat, DocumentType } from './supplies'
 
 // =============================================================================
 // Core Interfaces
@@ -34,7 +34,7 @@ export interface SupplyOrder {
 /** Document attached to a supply */
 export interface SupplyDocument {
   /** Document type */
-  type: string
+  type: DocumentType
   /** File format */
   format: string
   /** When document was generated */
