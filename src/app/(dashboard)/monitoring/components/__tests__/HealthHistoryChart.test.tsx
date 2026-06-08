@@ -26,8 +26,8 @@ vi.mock('@/lib/api/monitoring', () => ({
   },
 }))
 
-// Mock HealthReportSheet
-vi.mock('./HealthReportSheet', () => ({
+// Mock HealthReportSheet (relative to __tests__ -> ../HealthReportSheet)
+vi.mock('../HealthReportSheet', () => ({
   HealthReportSheet: () => <div data-testid="report-sheet" />,
 }))
 
@@ -121,9 +121,7 @@ describe('HealthHistoryChart', () => {
     expect(screen.getByRole('radiogroup', { name: 'Период' })).toBeInTheDocument()
   })
 
-  it('shows loading state initially', () => {
-    render(<HealthHistoryChart enabled={true} />)
-    // Skeleton renders with aria-busy
+  it('shows loading state with aria-busy', () => {
     const { container } = render(<HealthHistoryChart enabled={true} />)
     const busyEl = container.querySelector('[aria-busy="true"]')
     expect(busyEl).toBeTruthy()

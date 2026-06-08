@@ -100,12 +100,14 @@ describe('MergedGroupRows', () => {
   it('renders rowspan cell for multi-product groups', () => {
     render(<MergedGroupRows group={makeGroup()} />)
     expect(screen.getByText('+ 1 товаров')).toBeInTheDocument()
-    expect(screen.getByText('VC-001')).toBeInTheDocument()
+    // VC-001 appears in both rowspan header and detail row
+    const vc001Elements = screen.getAllByText('VC-001')
+    expect(vc001Elements.length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders detail rows for each product', () => {
     render(<MergedGroupRows group={makeGroup()} />)
-    expect(screen.getByText('VC-001')).toBeInTheDocument()
+    expect(screen.getAllByText('VC-001').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('VC-002')).toBeInTheDocument()
   })
 

@@ -167,8 +167,10 @@ describe('NotConfiguredBlock', () => {
 
 describe('DetailPanelSkeleton', () => {
   it('renders loading skeleton', () => {
-    render(<DetailPanelSkeleton />)
-    expect(screen.getByRole('status')).toBeInTheDocument()
+    const { container } = render(<DetailPanelSkeleton />)
+    // Skeleton renders aria-busy on the card content area
+    const busyEl = container.querySelector('[aria-busy="true"]')
+    expect(busyEl).toBeTruthy()
   })
 
   it('has aria-busy attribute', () => {

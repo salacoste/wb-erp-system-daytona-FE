@@ -7,7 +7,7 @@ import type { SupplyPlanningItem, StockoutRisk } from '@/types/supply-planning'
 vi.mock('../SupplyPlanningRow', () => ({
   SupplyPlanningRow: ({ item }: { item: SupplyPlanningItem }) => (
     <tr data-testid={`row-${item.sku_id}`}>
-      <td>{item.vendor_code}</td>
+      <td>{item.product_name}</td>
     </tr>
   ),
 }))
@@ -61,33 +61,41 @@ vi.mock('../supply-table-export', () => ({
 const mockItems: SupplyPlanningItem[] = [
   {
     sku_id: 'sku-1',
-    vendor_code: 'VC-001',
     product_name: 'Product A',
-    stockout_risk: 'critical' as StockoutRisk,
     current_stock: 5,
+    in_transit: 0,
+    effective_stock: 5,
     avg_daily_sales: 10,
+    velocity_trend: null,
     days_until_stockout: 1,
-    total_sales_7d: 70,
-    total_sales_30d: 300,
-    reorder_value: 50000,
+    stockout_date: '2026-03-10',
+    stockout_risk: 'critical' as StockoutRisk,
     safety_stock_units: 20,
-    in_transit_units: 0,
-    warehouse_stock: 5,
+    reorder_quantity: 50,
+    reorder_status: 'urgent',
+    cogs_per_unit: 100,
+    has_cogs: true,
+    selling_price: 200,
+    warehouses: [],
   },
   {
     sku_id: 'sku-2',
-    vendor_code: 'VC-002',
     product_name: 'Product B',
-    stockout_risk: 'healthy' as StockoutRisk,
     current_stock: 100,
+    in_transit: 10,
+    effective_stock: 110,
     avg_daily_sales: 2,
+    velocity_trend: 'stable',
     days_until_stockout: 50,
-    total_sales_7d: 14,
-    total_sales_30d: 60,
-    reorder_value: 0,
+    stockout_date: '2026-05-01',
+    stockout_risk: 'healthy' as StockoutRisk,
     safety_stock_units: 30,
-    in_transit_units: 10,
-    warehouse_stock: 90,
+    reorder_quantity: 0,
+    reorder_status: 'ok',
+    cogs_per_unit: 50,
+    has_cogs: true,
+    selling_price: 150,
+    warehouses: [],
   },
 ]
 

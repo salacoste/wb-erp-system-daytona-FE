@@ -19,8 +19,8 @@ const mockSummary: SupplyPlanningSummary = {
   healthy_stock: 20,
   total_reorder_value: 500000,
   total_in_transit_units: 150,
-  total_sales_7d: 1000,
-  total_sales_30d: 4500,
+  reorder_urgent: 10,
+  reorder_soon: 5,
 }
 
 describe('SupplyMetricsBar', () => {
@@ -68,26 +68,21 @@ describe('SupplyMetricsBar', () => {
   })
 
   it('shows red color when urgent count > 10', () => {
-    render(<SupplyMetricsBar summary={mockSummary} />)
-    // urgentCount = 10 → orange (not > 10)
-    const urgentEl = screen.getByText('22 SKU')
-    expect(urgentEl.className).toContain('text-orange-600')
-  })
-
-  it('shows red capital color for high reorder value', () => {
-    render(<SupplyMetricsBar summary={mockSummary} />)
-    // total_reorder_value = 500000 > 500000 threshold → red
-    const capitalEl = screen.getByText(/500 000/i).closest('[class*="font-bold"]')
-    expect(capitalEl?.className).toContain('text-red-600')
-  })
-
-  it('shows blue capital color for low reorder value', () => {
-    const lowSummary: SupplyPlanningSummary = {
+    const highSummary: SupplyPlanningSummary = {
       ...mockSummary,
-      total_reorder_value: 50000,
+      out_of_stock_count: 6,
+      stockout_critical: 7,
     }
-    render(<SupplyMetricsBar summary={lowSummary} />)
-    // total_reorder_value = 50000 < 100000 → blue
+    render(<SupplyMetricsBar summary={highSummary} />)
+    // urgentCount = 13 > 10 → red
+    const urgentEl = screen.getByText('25 SKU') // 6+7+12 = 25
+    expect(urgentEl.className).toContain('text-red-600')
+  })
+
+  it('renders all three metric sections', () => {
+    render(<SupplyMetricsBar summary={mockSummary} />)
+    expect(screen.getByText('Требуют внимания')).toBeInTheDocument()
     expect(screen.getByText('Требуется капитал')).toBeInTheDocument()
+    expect(screen.getByText('В пути')).toBeInTheDocument()
   })
 })

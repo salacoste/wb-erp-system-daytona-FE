@@ -9,50 +9,44 @@ vi.mock('@/stores/authStore', () => ({
   ),
 }))
 
+const mockTasks = [
+  {
+    taskType: 'weekly_sync',
+    displayName: 'Еженедельная синхронизация',
+    lastAttempt: '2026-03-01T10:00:00Z',
+    totalAttempts: 5,
+    status: 'healthy',
+    canRetry: true,
+  },
+  {
+    taskType: 'daily_sync',
+    displayName: 'Ежедневная синхронизация',
+    lastAttempt: '2026-03-02T08:00:00Z',
+    totalAttempts: 3,
+    status: 'overdue',
+    canRetry: true,
+  },
+  {
+    taskType: 'stocks_sync',
+    displayName: 'Синхронизация остатков',
+    lastAttempt: null,
+    totalAttempts: 0,
+    status: 'no_history',
+    canRetry: true,
+  },
+]
+
 // Mock recovery hooks
+const mockUseRecoveryStatus = vi.fn()
+const mockUseTriggerRecovery = vi.fn()
+
 vi.mock('../../hooks/use-recovery', () => ({
-  useRecoveryStatus: vi.fn((enabled: boolean) => ({
-    data: enabled
-      ? {
-          cabinetId: 'cab-123',
-          tasks: [
-            {
-              taskType: 'weekly_sync',
-              displayName: 'Еженедельная синхронизация',
-              lastAttempt: '2026-03-01T10:00:00Z',
-              totalAttempts: 5,
-              status: 'healthy',
-              canRetry: true,
-            },
-            {
-              taskType: 'daily_sync',
-              displayName: 'Ежедневная синхронизация',
-              lastAttempt: '2026-03-02T08:00:00Z',
-              totalAttempts: 3,
-              status: 'overdue',
-              canRetry: true,
-            },
-            {
-              taskType: 'stocks_sync',
-              displayName: 'Синхронизация остатков',
-              lastAttempt: null,
-              totalAttempts: 0,
-              status: 'no_history',
-              canRetry: true,
-            },
-          ],
-        }
-      : undefined,
-    isLoading: false,
-  })),
-  useTriggerRecovery: vi.fn(() => ({
-    mutate: vi.fn(),
-    isPending: false,
-  })),
+  useRecoveryStatus: (...args: unknown[]) => mockUseRecoveryStatus(...args),
+  useTriggerRecovery: (...args: unknown[]) => mockUseTriggerRecovery(...args),
 }))
 
-// Mock RecoveryPanelSubcomponents
-vi.mock('./RecoveryPanelSubcomponents', () => ({
+// Mock RecoveryPanelSubcomponents (relative from __tests__/ -> ../)
+vi.mock('../RecoveryPanelSubcomponents', () => ({
   Confirm: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="confirm">{children}</div>
   ),
@@ -63,6 +57,14 @@ vi.mock('./RecoveryPanelSubcomponents', () => ({
 describe('RecoveryPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockUseRecoveryStatus.mockReturnValue({
+      data: { cabinetId: 'cab-123', tasks: mockTasks },
+      isLoading: false,
+    })
+    mockUseTriggerRecovery.mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+    })
   })
 
   it('renders table with recovery tasks when enabled', () => {
@@ -100,29 +102,27 @@ describe('RecoveryPanel', () => {
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
-  it('shows recover button for non-healthy tasks', () => {
+  it('shows recover buttons for non-healthy tasks', () => {
     render(<RecoveryPanel enabled={true} />)
-    // overdue task shows "▶ Восстановить" button
-    expect(screen.getByText('▶ Восстановить')).toBeInTheDocument()
+    // Both overdue and no_history tasks have "▶ Восстановить"
+    const recoverButtons = screen.getAllByText('▶ Восстановить')
+    expect(recoverButtons.length).toBe(2)
   })
 
   it('shows empty message when no tasks', () => {
-    // Override mock to return empty tasks
-    const { useRecoveryStatus } = vi.mocked(await import('../../hooks/use-recovery'))
-    useRecoveryStatus.mockReturnValueOnce({
+    mockUseRecoveryStatus.mockReturnValue({
       data: { cabinetId: 'cab-123', tasks: [] },
       isLoading: false,
-    } as never)
+    })
     render(<RecoveryPanel enabled={true} />)
     expect(screen.getByText('Нет задач для восстановления')).toBeInTheDocument()
   })
 
   it('shows skeleton during loading', () => {
-    const { useRecoveryStatus } = vi.mocked(await import('../../hooks/use-recovery'))
-    useRecoveryStatus.mockReturnValueOnce({
+    mockUseRecoveryStatus.mockReturnValue({
       data: undefined,
       isLoading: true,
-    } as never)
+    })
     render(<RecoveryPanel enabled={true} />)
     expect(screen.getByTestId('skeleton')).toBeInTheDocument()
   })

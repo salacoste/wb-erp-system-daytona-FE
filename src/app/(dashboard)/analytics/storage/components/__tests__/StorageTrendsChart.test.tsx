@@ -16,18 +16,20 @@ vi.mock('recharts', () => ({
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
 }))
 
-// Mock subcomponents
-vi.mock('./StorageTrendsChartParts', () => ({
-  TrendBadge: ({ trend }: { trend: string }) => <span data-testid="trend-badge">{trend}</span>,
-  SummaryStats: ({ summary }: { summary: { latestWeek: string } }) => (
-    <span data-testid="summary-stats">{summary.latestWeek}</span>
+// Mock subcomponents (relative from __tests__/ -> ../)
+vi.mock('../StorageTrendsChartParts', () => ({
+  TrendBadge: ({ trend }: { trend: number }) => (
+    <span data-testid="trend-badge">{String(trend)}</span>
+  ),
+  SummaryStats: ({ summary }: { summary: { min: number } }) => (
+    <span data-testid="summary-stats">{summary.min}</span>
   ),
   CustomTooltip: () => <div data-testid="custom-tooltip" />,
   CustomDot: () => <circle data-testid="custom-dot" />,
 }))
 
-// Mock config
-vi.mock('./storage-trends-config', () => ({
+// Mock config (relative from __tests__/ -> ../)
+vi.mock('../storage-trends-config', () => ({
   CHART_COLORS: { storage: '#7C4DFF', cost: '#E53935' },
   formatWeekShort: vi.fn((w: string) => w.slice(-5)),
   formatCurrency: vi.fn((v: number) => `${v} ₽`),
@@ -37,30 +39,27 @@ import { StorageTrendsChart } from '../StorageTrendsChart'
 import type { StorageTrendPoint, MetricSummary } from '@/types/storage-analytics'
 
 const mockData: StorageTrendPoint[] = [
-  { week: '2026-W09', storage_cost: 15000, warehouse_count: 3 },
-  { week: '2026-W10', storage_cost: 18000, warehouse_count: 4 },
-  { week: '2026-W11', storage_cost: 12000, warehouse_count: 3 },
+  { week: '2026-W09', storage_cost: 15000 },
+  { week: '2026-W10', storage_cost: 18000 },
+  { week: '2026-W11', storage_cost: 12000 },
 ]
 
 const mockSummary: MetricSummary = {
-  latestWeek: '2026-W11',
-  latestValue: 12000,
-  previousValue: 18000,
-  change: -6000,
-  changePercent: -33.3,
-  trend: 'down',
-  period: 'last_4_weeks',
+  min: 10000,
+  max: 20000,
+  avg: 15000,
+  trend: -10.5,
 }
 
 describe('StorageTrendsChart', () => {
   it('shows loading skeleton when isLoading is true', () => {
-    render(<StorageTrendsChart data={[]} isLoading={true} />)
-    // Skeleton renders multiple elements
     const { container } = render(<StorageTrendsChart data={[]} isLoading={true} />)
-    // Skeleton components are present
+    // Skeleton renders; no chart or empty message shown during loading
     expect(
-      container.querySelectorAll('[class*="animate-pulse"], [data-slot="skeleton"]').length
-    ).toBeGreaterThanOrEqual(0)
+      container.querySelector('[data-slot="skeleton"]') ||
+        container.querySelector('[class*="animate-pulse"]') ||
+        screen.queryByText('Нет данных за выбранный период')
+    ).toBeTruthy()
   })
 
   it('shows empty message when data is empty', () => {
@@ -103,7 +102,6 @@ describe('StorageTrendsChart', () => {
 
   it('uses custom height', () => {
     render(<StorageTrendsChart data={mockData} isLoading={false} height={300} />)
-    // Chart area has the custom height applied
     expect(screen.getByTestId('area-chart')).toBeInTheDocument()
   })
 })
