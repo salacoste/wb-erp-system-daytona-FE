@@ -3,22 +3,17 @@
  * Extracted from FinancialSummaryTable.tsx - pure utility functions
  */
 
-// canonical Russian-locale formatter (comma + NBSP) — NOT the dot-locale
-// `formatPercentage` shadow in advertising/utils/formatters.ts (same name, opposite output)
+// canonical Russian-locale formatter (comma + NBSP)
+import { formatCogsCost } from '@/lib/formatters'
+// NOT the dot-locale `formatPercentage` shadow in advertising/utils/formatters.ts
 import { formatPercentage } from '@/lib/utils'
 
 /**
- * Format currency value in Russian locale (RUB)
+ * Format currency value in Russian locale (RUB).
+ * Delegates to canonical formatCogsCost (2 fixed decimal places, null/undefined → "—").
  */
 export function formatCurrency(value: number | undefined | null): string {
-  if (value === undefined || value === null) return '\u2014'
-
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value)
+  return formatCogsCost(value)
 }
 
 /**

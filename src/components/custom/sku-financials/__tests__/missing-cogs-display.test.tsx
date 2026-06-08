@@ -79,7 +79,7 @@ describe('SkuRow — missing COGS display (Story 87.3-FE)', () => {
     renderRow(item)
 
     // The actual value shows, not "—"
-    expect(screen.getByText(/4 400 ₽/)).toBeTruthy()
+    expect(screen.getByText(/4 400,00 ₽/)).toBeTruthy()
   })
 })
 
