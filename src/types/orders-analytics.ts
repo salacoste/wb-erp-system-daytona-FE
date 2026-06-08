@@ -3,8 +3,16 @@
  * Story 40.1-FE: TypeScript Types & API Client Foundation
  * Epic 40-FE: Orders UI & WB Native Status History
  *
- * Types for order velocity, SLA compliance, and volume analytics.
+ * Types for order velocity and volume analytics.
+ * SLA types live in orders-analytics-sla-types.ts.
  */
+
+// Re-export SLA types for backward compatibility
+export type {
+  AtRiskOrder,
+  SlaMetricsResponse,
+  SlaMetricsParams,
+} from './orders-analytics-sla-types'
 
 // ============================================================================
 // Velocity Metrics Types (GET /v1/analytics/orders/velocity)
@@ -15,8 +23,7 @@
  * Скорость обработки по измерению
  */
 export interface VelocityBreakdown {
-  // iter-90: nullable — the live velocity endpoint returns avgCompletion: null when the mean
-  // can't be computed (no completed orders in the window). null = "no data", NOT 0 minutes.
+  /** null = "no data", NOT 0 minutes (iter-90). */
   avgConfirmation: number | null
   avgCompletion: number | null
 }
@@ -26,12 +33,10 @@ export interface VelocityBreakdown {
  * Метрики скорости обработки заказов
  */
 export interface VelocityMetricsResponse {
-  /** Average confirmation time (minutes). null when the backend can't compute a mean — render "—". */
+  /** Average confirmation time (minutes). null — render "—". */
   avgConfirmationTimeMinutes: number | null
-  /** Average completion time (minutes). null when the backend can't compute a mean (live-observed) — render "—". */
+  /** Average completion time (minutes). null — render "—". */
   avgCompletionTimeMinutes: number | null
-  // Percentiles stay non-null (backend computes them from the distribution even when the mean is
-  // null). Guard: PercentilesSection hides when totalOrders===0 to avoid "P50: 0 мин" fabrication.
   /** 50th percentile confirmation (minutes) */
   p50ConfirmationMinutes: number
   /** 95th percentile confirmation (minutes) */
@@ -63,63 +68,6 @@ export interface VelocityMetricsResponse {
 export interface VelocityMetricsParams {
   from: string
   to: string
-}
-
-// ============================================================================
-// SLA Metrics Types (GET /v1/analytics/orders/sla)
-// ============================================================================
-
-/**
- * At-risk order info
- * Заказ с риском нарушения SLA
- */
-export interface AtRiskOrder {
-  orderId: string
-  createdAt: string
-  currentStatus: string
-  /** Minutes remaining before SLA breach */
-  minutesRemaining: number
-  /** Type of risk: confirmation or completion */
-  riskType: 'confirmation' | 'completion'
-  /** True if SLA already breached */
-  isBreached: boolean
-}
-
-/**
- * Response from GET /v1/analytics/orders/sla
- * Метрики соблюдения SLA
- */
-export interface SlaMetricsResponse {
-  /** Confirmation SLA threshold (hours) */
-  confirmationSlaHours: number
-  /** Completion SLA threshold (hours) */
-  completionSlaHours: number
-  /** Confirmation compliance percentage */
-  confirmationCompliancePercent: number
-  /** Completion compliance percentage */
-  completionCompliancePercent: number
-  /** Number of pending orders */
-  pendingOrdersCount: number
-  /** Total at-risk orders (before pagination) */
-  atRiskTotal: number
-  /** At-risk orders list (paginated) */
-  atRiskOrders: AtRiskOrder[]
-  /** Number of breached orders */
-  breachedCount: number
-}
-
-/**
- * Parameters for GET /v1/analytics/orders/sla
- */
-export interface SlaMetricsParams {
-  /** SLA threshold for confirmation (hours, default 2) */
-  confirmationSlaHours?: number
-  /** SLA threshold for completion (hours, default 24) */
-  completionSlaHours?: number
-  /** Max at-risk orders to return (default 20, max 100) */
-  atRiskLimit?: number
-  /** Offset for at-risk pagination */
-  atRiskOffset?: number
 }
 
 // ============================================================================

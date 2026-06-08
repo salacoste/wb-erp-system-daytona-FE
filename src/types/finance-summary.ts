@@ -1,70 +1,14 @@
 /**
  * Finance Summary Types
  * Story 60.4-FE: Connect Dashboard to Period State
- * Epic 66-FE: Added TaxMetrics interface (Story 66.1)
- * Story 96.1-FE: tax_system tightened from `string | null` to `TaxSystem | null`
- *               for compile-time enum enforcement (request-backend/173 § F1).
  *
  * Types for weekly financial summary data from backend API.
+ * Sub-types (LogisticsBreakdown, TaxMetrics) live in finance-summary-sub-types.ts.
  */
 
-import type { TaxSystem } from './cabinet'
-
-/**
- * Logistics breakdown subcategories — Story 65.6
- * Backend request #139: breakdown of logistics_cost by delivery type.
- * All fields nullable for graceful degradation when backend doesn't return breakdown.
- */
-// story-65.6: logistics breakdown
-export interface LogisticsBreakdown {
-  /** Delivery to buyer on sale (doc_type=sale) */
-  to_buyer: number | null
-  /** Delivery to buyer on cancel (doc_type=cancel) */
-  to_buyer_cancel: number | null
-  /** Return from buyer on cancel (doc_type=cancel) */
-  from_buyer_cancel: number | null
-  /** Return from buyer on return (doc_type=return) */
-  from_buyer_return: number | null
-}
-
-/**
- * Tax + VAT metrics from backend (Epic 72 + Task-50).
- * Located in summary_total.tax ONLY (summary_rus/eaeu are always null).
- */
-export interface TaxMetrics {
-  // Income tax fields (Epic 72)
-  tax_amount: number | null
-  tax_base: number | null
-  effective_tax_rate: number | null
-  /**
-   * Income tax system. See {@link TaxSystem} from cabinet.ts.
-   * Backend confirms `'usn6' | 'usn15' | 'manual'` per request-backend/173 § F1.
-   * Hardened from loose `string | null` to typed union in Story 96.1-FE.
-   */
-  tax_system: TaxSystem | null
-  is_minimum_rule: boolean
-  net_profit_after_tax: number | null
-
-  // VAT/НДС fields (Task-50)
-  vat_payer: boolean
-  vat_rate: number | null // 0, 5, 20, 22
-  vat_output: number | null // НДС от продаж
-  vat_payable: number | null // НДС к уплате (output - input)
-  revenue_excl_vat: number | null // Выручка без НДС
-  net_profit_after_all_tax: number | null // После ВСЕХ налогов
-
-  // Request #159: Preliminary tax for incomplete weeks
-  preliminary?: boolean
-  data_completeness?: {
-    revenueSource: string
-    hasLogistics: boolean
-    hasStorage: boolean
-    hasAcceptance: boolean
-    hasPenalties: boolean
-    hasCogs: boolean
-    hasAdvertising: boolean
-  }
-}
+// Re-export sub-types for backward compatibility
+export type { LogisticsBreakdown, TaxMetrics } from './finance-summary-sub-types'
+import type { LogisticsBreakdown } from './finance-summary-sub-types'
 
 export interface FinanceSummary {
   week: string
@@ -104,11 +48,6 @@ export interface FinanceSummary {
    * Acquiring cost (4th expense slice). Per request-backend/169 § 2.1 — new canonical field
    * added by Epic 101. Coexists with legacy `acquiring_fee_total`/`acquiring_fee` until backend
    * deprecates them. `null` = no acquiring data available (graceful degradation).
-   *
-   * Backend uses the SAME field name `acquiring_total` across summary_total, summary_rus, and
-   * summary_eaeu scopes (verified empirically 2026-05-08). No `_total` / `_combined` variant —
-   * unlike `retail_price_total` which has a separate `retail_price_total_combined` for
-   * summary_total scope.
    */
   acquiring_total?: number | null
   commission_sales_total?: number // Комиссия продаж - from summary_total
@@ -135,30 +74,12 @@ export interface FinanceSummary {
   wb_returns_gross?: number
 
   // Request #58: Retail Price Total
-  /**
-   * Sum of YOUR catalog prices BEFORE WB discounts (per-region scope: summary_rus / summary_eaeu).
-   * Per request-backend/169 § 2.2 — funnel-base-cost field for sales-funnel visualization
-   * (`SalesFunnelSection.tsx` first level "РРЦ"). Distinct from `sales_gross` (post-discount price).
-   * Backend NAME differs from summary_total scope, which uses `retail_price_total_combined`.
-   */
+  /** Sum of YOUR catalog prices BEFORE WB discounts (per-region scope: summary_rus / summary_eaeu). */
   retail_price_total?: number
-  /**
-   * Sum of catalog prices BEFORE WB discounts at the **summary_total** scope — the funnel "РРЦ"
-   * base for the combined RUS+EAEU view. This is the field the backend ACTUALLY emits at
-   * summary_total (`finance-mapping.service.ts:271` → `retail_price_total_combined`), verified
-   * against backend source 2026-06-04. `SalesFunnelSection` reads this FIRST so the "Воронка
-   * продаж" card renders on the default `summary_total` view (previously hidden — see ghost field
-   * below). Per-region scopes use `retail_price_total` instead.
-   */
+  /** Sum of catalog prices BEFORE WB discounts at the summary_total scope. */
   retail_price_total_combined?: number
   /**
-   * ⚠️ GHOST FIELD — does NOT correspond to any backend field (no `_total_total` exists).
-   * Verified empirically 2026-05-08 and against backend source 2026-06-04. Reading it always
-   * yields `undefined`. Superseded by `retail_price_total_combined` above, which
-   * `SalesFunnelSection.tsx` now reads as the primary summary_total source (the earlier
-   * `?? retail_price_total` fallback only worked for summary_rus/eaeu, leaving the funnel card
-   * HIDDEN on the default summary_total view). Retained as a harmless defensive fallback; safe to
-   * remove once no consumer references it.
+   * GHOST FIELD — does NOT correspond to any backend field. Retained as defensive fallback.
    */
   retail_price_total_total?: number
 
@@ -170,12 +91,9 @@ export interface FinanceSummary {
   gross_profit?: number | null
 
   // Story 61.13-FE: Margin Calculation Consistency
-  // margin_pct = (payout_total - cogs_total) / sale_gross_total * 100
-  // Calculated by frontend aggregation, only when cogs_coverage_pct = 100%
   margin_pct?: number | null
 
   // Validation fix: product-level transaction count (qty=1 operations)
-  // More accurate than fulfillment.fbo.salesCount which misses FBS/EAEU
   product_transactions?: number
 
   // Request #155: Product transactions total (from summary_total)
@@ -189,5 +107,5 @@ export interface FinanceSummary {
   operating_margin_pct?: number | null // operating_profit / revenue_net × 100
 
   // Epic 66-FE: Tax metrics from summary_total.tax (Story 66.1)
-  tax?: TaxMetrics | null
+  tax?: import('./finance-summary-sub-types').TaxMetrics | null
 }
