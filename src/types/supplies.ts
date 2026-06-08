@@ -29,40 +29,6 @@ export type SortOrder = 'asc' | 'desc'
 // Core Interfaces
 // =============================================================================
 
-/** Order within a supply */
-export interface SupplyOrder {
-  /** Order ID from WB */
-  orderId: string
-  /** Unique order identifier */
-  orderUid: string
-  /** Product article (nm_id) */
-  nmId: number
-  /** Vendor code (SKU) */
-  vendorCode: string
-  /** Product name (can be null) */
-  productName: string | null
-  /** Sale price in rubles */
-  salePrice: number
-  /** Supplier status from WB */
-  supplierStatus: string
-  /** When order was added to supply */
-  addedAt: string
-}
-
-/** Document attached to a supply */
-export interface SupplyDocument {
-  /** Document type */
-  type: DocumentType
-  /** File format */
-  format: string
-  /** When document was generated */
-  generatedAt: string
-  /** URL to download document */
-  downloadUrl: string
-  /** File size in bytes (null if unknown) */
-  sizeBytes: number | null
-}
-
 /** Supply list item (minimal data for list display) */
 export interface SupplyListItem {
   /** Internal supply ID */
@@ -85,18 +51,6 @@ export interface SupplyListItem {
   closedAt: string | null
   /** Last sync with WB timestamp */
   syncedAt: string | null
-}
-
-/** Full supply with orders and documents */
-export interface Supply extends SupplyListItem {
-  /** Target warehouse ID (null if not assigned) */
-  warehouseId: number | null
-  /** Target warehouse name (null if not assigned) */
-  warehouseName: string | null
-  /** Orders in this supply */
-  orders: SupplyOrder[]
-  /** Generated documents */
-  documents: SupplyDocument[]
 }
 
 // =============================================================================
@@ -124,15 +78,22 @@ export interface SuppliesListResponse {
   filters: SuppliesFilters
 }
 
-/** Rate limit info for sync operations */
-export interface SyncRateLimit {
-  remaining: number
-  resetAt: string
+/** Request to create a new supply */
+export interface CreateSupplyRequest {
+  name?: string
 }
 
-/** Supply detail response (extends Supply) */
-export interface SupplyDetailResponse extends Supply {
-  syncRateLimit?: SyncRateLimit
+/** Response from creating a supply */
+export interface CreateSupplyResponse extends SupplyListItem {}
+
+/**
+ * Response from triggering supply sync — matches backend TriggerSyncResponseDto.
+ * POST /v1/supplies/sync is ASYNC (HTTP 202, fire-and-forget): it only enqueues a job.
+ * Real status changes arrive later via polling/cache invalidation, NOT in this response.
+ */
+export interface SyncSuppliesResponse {
+  jobId: string
+  message: string
 }
 
 // =============================================================================
@@ -148,76 +109,6 @@ export interface SuppliesListParams {
   offset?: number
 }
 
-/** Request to create a new supply */
-export interface CreateSupplyRequest {
-  name?: string
-}
-
-/** Response from creating a supply */
-export interface CreateSupplyResponse extends SupplyListItem {}
-
-/** Request to add orders to a supply */
-export interface AddOrdersRequest {
-  orderIds: string[]
-}
-
-/** Response from adding orders — matches backend AddOrdersResultDto verbatim (no normalizer). */
-export interface AddOrdersResponse {
-  /** Number of orders successfully added */
-  added: number
-  /** Number of orders that failed to add */
-  failed: number
-  /** Error messages for failed orders (present only on partial/total failure) */
-  errors?: string[]
-}
-
-/** Request to remove orders from a supply */
-export interface RemoveOrdersRequest {
-  orderIds: string[]
-}
-
-/** Response from removing orders */
-export interface RemoveOrdersResponse {
-  removedCount: number
-  totalOrdersCount: number
-}
-
-/** Response from closing a supply */
-export interface CloseSupplyResponse {
-  status: SupplyStatus
-  closedAt: string
-  message: string
-}
-
-/** Request to generate stickers */
-export interface GenerateStickersRequest {
-  format: StickerFormat
-}
-
-/** Response from generating stickers */
-export interface GenerateStickersResponse {
-  document: SupplyDocument
-  data?: string
-  message: string
-}
-
-/** Status change info from sync */
-export interface SupplyStatusChange {
-  supplyId: string
-  oldStatus: SupplyStatus
-  newStatus: SupplyStatus
-}
-
-/**
- * Response from triggering supply sync — matches backend TriggerSyncResponseDto.
- * POST /v1/supplies/sync is ASYNC (HTTP 202, fire-and-forget): it only enqueues a job.
- * Real status changes arrive later via polling/cache invalidation, NOT in this response.
- */
-export interface SyncSuppliesResponse {
-  jobId: string
-  message: string
-}
-
 // =============================================================================
 // Error Response Types
 // =============================================================================
@@ -228,6 +119,25 @@ export interface SuppliesErrorResponse {
   message: string
   details?: Record<string, unknown>
 }
+
+// =============================================================================
+// Re-exports from supply-orders.ts (backward compatibility)
+// =============================================================================
+
+export type {
+  SupplyOrder,
+  SupplyDocument,
+  Supply,
+  SupplyDetailResponse,
+  AddOrdersRequest,
+  AddOrdersResponse,
+  RemoveOrdersRequest,
+  RemoveOrdersResponse,
+  CloseSupplyResponse,
+  GenerateStickersRequest,
+  GenerateStickersResponse,
+  SupplyStatusChange,
+} from './supply-orders'
 
 // =============================================================================
 // UI Configuration Types

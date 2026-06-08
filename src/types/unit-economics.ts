@@ -236,59 +236,11 @@ export interface UnitEconomicsResponse {
 }
 
 // ============================================================================
-// UI Helper Types
+// Re-exports from unit-economics-cost-categories.ts (backward compatibility)
 // ============================================================================
 
-/**
- * Profitability status display configuration
- */
-export interface ProfitabilityStatusConfig {
-  /** Full Russian label */
-  label: string
-  /** Short label for badges */
-  labelShort: string
-  /** Primary color hex */
-  color: string
-  /** Background color for badges */
-  bgColor: string
-  /** Tailwind bg class */
-  bgClass: string
-  /** Tailwind text class */
-  textClass: string
-  /** Emoji icon */
-  icon: string
-  /** Min margin % for this status */
-  minMargin: number
-  /** Max margin % for this status */
-  maxMargin: number
-}
-
-/**
- * Cost category configuration for waterfall chart
- */
-export interface CostCategoryConfig {
-  /** Unique key */
-  key: keyof CostsPct
-  /** Russian label */
-  label: string
-  /** Color for chart */
-  color: string
-  /** Category grouping */
-  group: 'cogs' | 'wb_fees' | 'seller_costs' | 'other'
-}
-
-/**
- * Waterfall chart data point
- */
-export interface WaterfallDataPoint {
-  /** Category name */
-  name: string
-  /** Value (positive for costs, can be negative for profit) */
-  value: number
-  /** Running total for waterfall */
-  runningTotal: number
-  /** Color */
-  color: string
-  /** Is this the profit bar? */
-  isProfit?: boolean
-}
+export type {
+  ProfitabilityStatusConfig,
+  CostCategoryConfig,
+  WaterfallDataPoint,
+} from './unit-economics-cost-categories'
