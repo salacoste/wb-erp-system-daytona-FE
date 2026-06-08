@@ -1,5 +1,5 @@
 /**
- * AnomaliesList — tests: role gating, state-precedence chain, backend-pending Alert.
+ * AnomaliesList — tests: role gating, state-precedence chain.
  * Story 112.3-FE Task 4.
  * Dual-role gate: Owner AND Manager see table; Analyst and Service see denied Alert.
  * user===null shows skeleton (no flicker per F-11).
@@ -176,129 +176,10 @@ describe('AnomaliesList', () => {
       selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
     )
     renderList()
-    // Table row "Разрешить" button per anomaly (STUB_PENDING_BACKEND_167=false — live mode).
+    // Table row "Разрешить" button per anomaly (live mode — Request #167 shipped).
     await waitFor(() => {
       const buttons = screen.getAllByRole('button', { name: 'Разрешить' })
       expect(buttons.length).toBeGreaterThanOrEqual(1)
-    })
-  })
-})
-
-// ── F-1: STUB_PENDING_BACKEND_167 = false branch ──────────────────────────────
-// Uses vi.doMock + vi.resetModules + dynamic import to override the helpers constant
-// without affecting the top-level vi.mock hoisting above.
-
-describe('AnomaliesList — STUB_PENDING_BACKEND_167=false (backend shipped)', () => {
-  const anomalyData: AnomalyListResponse = {
-    anomalies: [
-      makeAnomaly({ id: 'live-anomaly-1', nmId: 99999999, anomalyType: 'price_anomaly' }),
-    ],
-    total: 1,
-    page: 1,
-    limit: 20,
-  }
-
-  beforeEach(() => {
-    vi.resetModules()
-    // Override helpers to flip the stub flag off
-    vi.doMock('../anomalies-helpers', () => ({
-      STUB_PENDING_BACKEND_167: false,
-      RESOLUTION_CAUSE_LABELS: {
-        seasonal: 'Сезонный фактор',
-        pricing_error: 'Ошибка ценообразования',
-        quality_issue: 'Проблема качества товара',
-        tariff_change: 'Изменение тарифов',
-        category_reclassification: 'Реклассификация категории',
-        other: 'Прочее',
-      },
-      RESOLUTION_CAUSES: [
-        'seasonal',
-        'pricing_error',
-        'quality_issue',
-        'tariff_change',
-        'category_reclassification',
-        'other',
-      ],
-    }))
-    vi.doMock('@/lib/api/ai/system', () => ({
-      getAnomalies: vi.fn().mockResolvedValue(anomalyData),
-      patchAnomalyResolve: vi.fn().mockResolvedValue(undefined),
-    }))
-    vi.doMock('@/stores/authStore', () => ({
-      useAuthStore: vi.fn().mockImplementation((selector: unknown) =>
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (selector as any)({ cabinetId: 'cab-123', user: { role: 'Owner' } })
-      ),
-    }))
-    vi.doMock('next/link', () => ({
-      default: ({ children, href }: { children: React.ReactNode; href: string }) =>
-        React.createElement('a', { href }, children),
-    }))
-    vi.doMock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }))
-  })
-
-  afterEach(() => {
-    vi.resetModules()
-  })
-
-  it('backend-pending Alert is NOT in document when STUB_PENDING_BACKEND_167=false', async () => {
-    const { AnomaliesList: AnomaliesListLive } = await import('../AnomaliesList')
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false, gcTime: 0 } },
-    })
-    render(
-      React.createElement(
-        QueryClientProvider,
-        { client: queryClient },
-        React.createElement(AnomaliesListLive)
-      )
-    )
-    // Positive: verify the table actually rendered with mock data (catches doMock-path failure
-    // silently regressing to true-branch which also lacks the Alert during loading state).
-    expect(await screen.findByText('live-anomaly-1')).toBeInTheDocument()
-    // Wait for data to load
-    await waitFor(() =>
-      expect(screen.queryByLabelText('Загрузка аномалий')).not.toBeInTheDocument()
-    )
-    expect(
-      screen.queryByText(/Эндпоинт \/v1\/ai\/anomalies ещё не реализован/)
-    ).not.toBeInTheDocument()
-  })
-
-  it('"Разрешить аномалию по ID" heading is NOT in document when STUB_PENDING_BACKEND_167=false', async () => {
-    const { AnomaliesList: AnomaliesListLive } = await import('../AnomaliesList')
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false, gcTime: 0 } },
-    })
-    render(
-      React.createElement(
-        QueryClientProvider,
-        { client: queryClient },
-        React.createElement(AnomaliesListLive)
-      )
-    )
-    await waitFor(() =>
-      expect(screen.queryByLabelText('Загрузка аномалий')).not.toBeInTheDocument()
-    )
-    expect(screen.queryByText('Разрешить аномалию по ID')).not.toBeInTheDocument()
-  })
-
-  it('table renders normally with live anomaly data when STUB_PENDING_BACKEND_167=false', async () => {
-    const { AnomaliesList: AnomaliesListLive } = await import('../AnomaliesList')
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false, gcTime: 0 } },
-    })
-    render(
-      React.createElement(
-        QueryClientProvider,
-        { client: queryClient },
-        React.createElement(AnomaliesListLive)
-      )
-    )
-    await waitFor(() => {
-      expect(screen.getByText('live-anomaly-1')).toBeInTheDocument()
-      expect(screen.getByText('99999999')).toBeInTheDocument()
-      expect(screen.getByText('price_anomaly')).toBeInTheDocument()
     })
   })
 })

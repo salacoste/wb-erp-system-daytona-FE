@@ -66,7 +66,11 @@ export interface GetAnomaliesParams {
  */
 export async function getAnomalies(params?: GetAnomaliesParams): Promise<AnomalyListResponse> {
   const sp = new URLSearchParams()
-  if (params?.status) sp.set('status', params.status)
+  // Translate frontend 'pending' → backend 'active' (frontend uses user-facing label;
+  // backend enum is 'active' | 'resolved'). Request #167, Story 112.3-FE.
+  if (params?.status) {
+    sp.set('status', params.status === 'pending' ? 'active' : params.status)
+  }
   if (params?.limit) sp.set('limit', String(params.limit))
   if (params?.page && params.page > 1) {
     const limit = params.limit ?? 20
