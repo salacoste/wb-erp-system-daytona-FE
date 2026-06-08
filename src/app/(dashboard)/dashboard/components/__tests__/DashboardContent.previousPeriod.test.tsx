@@ -215,8 +215,10 @@ vi.mock('@/components/custom/dashboard', () => ({
   InventorySummaryWidget: () => null,
   PeriodComparisonSection: () => null,
   OrdersSeasonalPatterns: () => null,
+  OrdersStatusBreakdown: () => null,
   FulfillmentShareBar: () => null,
   HistoricalTrendsSection: () => null,
+  ExpenseStructurePieChart: () => null,
 }))
 
 // =============================================================================

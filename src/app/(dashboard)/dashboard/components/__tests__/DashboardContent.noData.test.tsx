@@ -116,6 +116,7 @@ vi.mock('@/components/custom/dashboard', () => ({
   OrdersSeasonalPatterns: () => null,
   FulfillmentShareBar: () => null,
   HistoricalTrendsSection: () => null,
+  ExpenseStructurePieChart: () => null,
 }))
 // NOTE: DashboardAlerts is intentionally NOT mocked — we assert the real
 // ProcessingAlert is absent.

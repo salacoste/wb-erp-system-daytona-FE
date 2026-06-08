@@ -7,7 +7,11 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { UnitEconomicsSummaryBanner, UnitEconomicsTable } from '@/components/custom/dashboard'
+import {
+  UnitEconomicsSummaryBanner,
+  UnitEconomicsTable,
+  ProfitabilityFilter,
+} from '@/components/custom/dashboard'
 import type { SortField, SortOrder, SortState } from '@/components/custom/dashboard'
 import type { UnitEconomicsSortBy } from '@/types/unit-economics'
 import type { StatusCount } from '@/components/custom/dashboard/UnitEconomicsSummaryBanner'
@@ -82,7 +86,7 @@ export function UnitEconomicsSection() {
     field: 'revenue',
     order: 'desc',
   })
-  const [statusFilter, setStatusFilter] = useState<ExtendedProfitabilityStatus | null>(null)
+  const [selectedStatuses, setSelectedStatuses] = useState<ExtendedProfitabilityStatus[]>([])
 
   const serverSort = toServerSort(sortState.field)
   const { data, isLoading } = useUnitEconomics(
@@ -101,16 +105,23 @@ export function UnitEconomicsSection() {
   }, [])
 
   const handleStatusClick = useCallback((status: ExtendedProfitabilityStatus) => {
-    setStatusFilter(prev => (prev === status ? null : status))
+    setSelectedStatuses(prev =>
+      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
+    )
+  }, [])
+
+  const handleFilterChange = useCallback((statuses: ExtendedProfitabilityStatus[]) => {
+    setSelectedStatuses(statuses)
   }, [])
 
   const rawItems = data?.data ?? []
   const sortedItems = sortState.field === 'net_profit' ? sortData(rawItems, sortState) : rawItems
-  const filteredItems = statusFilter
-    ? sortedItems.filter(i =>
-        statusFilter === 'unknown' ? !i.has_cogs : i.profitability_status === statusFilter
-      )
-    : sortedItems
+  const filteredItems =
+    selectedStatuses.length > 0
+      ? sortedItems.filter(i =>
+          selectedStatuses.some(f => (f === 'unknown' ? !i.has_cogs : i.profitability_status === f))
+        )
+      : sortedItems
   const statusCounts = useMemo(() => computeStatusCounts(rawItems), [rawItems])
 
   if (!week || !isFinanceAvailable) return null
@@ -122,6 +133,10 @@ export function UnitEconomicsSection() {
       </CardHeader>
       <CardContent className="space-y-3">
         <UnitEconomicsSummaryBanner statusCounts={statusCounts} onStatusClick={handleStatusClick} />
+        <ProfitabilityFilter
+          selectedStatuses={selectedStatuses}
+          onFilterChange={handleFilterChange}
+        />
         {isLoading ? (
           <div className="py-8 text-center text-sm text-muted-foreground">Загрузка...</div>
         ) : filteredItems.length === 0 ? (

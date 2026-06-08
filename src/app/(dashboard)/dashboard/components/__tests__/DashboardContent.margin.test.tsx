@@ -39,6 +39,7 @@ vi.mock('next/navigation', () => ({
     replace: vi.fn(),
     prefetch: vi.fn(),
   }),
+  useSearchParams: () => new URLSearchParams(),
 }))
 
 // Mock all hooks
@@ -145,6 +146,21 @@ vi.mock('@/components/custom/ExpenseChart', () => ({
 vi.mock('@/components/custom/TrendGraph', () => ({
   TrendGraph: () => <div data-testid="trend-graph">Trend Graph</div>,
 }))
+
+vi.mock('@/hooks/useExpenseStructure', () => ({
+  useExpenseStructure: () => ({ data: null, isLoading: false, error: null }),
+}))
+
+vi.mock('@/components/custom/dashboard/OrdersStatusBreakdown', () => ({
+  OrdersStatusBreakdown: () => null,
+}))
+
+vi.mock('@/components/custom/dashboard/ExpenseStructurePieChart', () => ({
+  ExpenseStructurePieChart: () => null,
+}))
+
+vi.mock('../UnitEconomicsSection', () => ({ UnitEconomicsSection: () => null }))
+vi.mock('../StorageSection', () => ({ StorageSection: () => null }))
 
 function createTestQueryClient() {
   return new QueryClient({

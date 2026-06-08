@@ -18,6 +18,7 @@ import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSele
 import { ReportPendingBanner } from './ReportPendingBanner'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
+import { ExpenseStructurePieChart } from '@/components/custom/dashboard'
 import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { WidgetSettingsSheet } from '@/components/custom/dashboard/WidgetSettingsSheet'
@@ -129,6 +130,7 @@ export function DashboardContent(): React.ReactElement {
       <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
       <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
       <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
+      {d.periodType === 'week' && <ExpenseStructurePieChart week={d.selectedWeek} />}
       <UnitEconomicsSection />
       {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
