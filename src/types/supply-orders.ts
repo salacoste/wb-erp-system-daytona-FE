@@ -23,8 +23,8 @@ export interface SupplyOrder {
   vendorCode: string
   /** Product name (can be null) */
   productName: string | null
-  /** Sale price in rubles */
-  salePrice: number
+  /** Sale price in rubles — null when backend has no price data (validation #205) */
+  salePrice: number | null
   /** Supplier status from WB */
   supplierStatus: string
   /** When order was added to supply */

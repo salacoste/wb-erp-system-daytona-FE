@@ -102,7 +102,7 @@ function OrderRow({
         <div className="truncate text-xs text-gray-500">{order.productName || '—'}</div>
       </div>
       <div className="w-[90px] shrink-0 text-right text-sm font-medium">
-        {formatCurrency(order.salePrice)}
+        {order.salePrice != null ? formatCurrency(order.salePrice) : '—'}
       </div>
       <div className="w-[100px] shrink-0">
         <Badge variant="outline" className={statusConfig.className}>

@@ -25,6 +25,7 @@ import { useSeasonalPatterns } from '@/hooks/useSeasonalPatterns'
 import { SeasonalInsightsCard } from './SeasonalInsightsCard'
 import { MonthlyPatternsChart } from './MonthlyPatternsChart'
 import { WeekdayPatternsChart } from './WeekdayPatternsChart'
+import { PeriodSelectorGroup, type PeriodOption } from './PeriodSelectorGroup'
 
 export interface OrdersSeasonalPatternsProps {
   /** Additional CSS classes */
@@ -32,14 +33,6 @@ export interface OrdersSeasonalPatternsProps {
   /** Default months for analysis */
   defaultMonths?: number
 }
-
-type PeriodOption = 4 | 12 | 24
-
-const PERIOD_OPTIONS: { value: PeriodOption; label: string }[] = [
-  { value: 4, label: '4W' },
-  { value: 12, label: '12W' },
-  { value: 24, label: '24W' },
-]
 
 /**
  * Seasonal patterns section with insights and charts
@@ -143,27 +136,7 @@ export function OrdersSeasonalPatterns({
             </Tooltip>
           </CardTitle>
           {/* Period selector */}
-          <div className="inline-flex rounded-md border border-gray-200" role="radiogroup">
-            {PERIOD_OPTIONS.map(option => (
-              <button
-                key={option.value}
-                type="button"
-                role="radio"
-                aria-checked={months === option.value}
-                onClick={() => setMonths(option.value)}
-                className={cn(
-                  'px-3 py-1 text-xs font-medium transition-colors',
-                  option.value === 4 && 'rounded-l-md',
-                  option.value === 24 && 'rounded-r-md',
-                  months === option.value
-                    ? 'bg-[#E53935] text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <PeriodSelectorGroup value={months} onChange={setMonths} />
         </div>
       </CardHeader>
       <CardContent className="space-y-6">

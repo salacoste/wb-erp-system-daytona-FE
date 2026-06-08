@@ -9,8 +9,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/routes'
 import { formatPercentageInt } from '@/lib/utils'
-import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { ProcessingNoData } from './ProcessingNoData'
+import { getStatusIcon, getStatusText } from './processing-status/StatusHelpers'
 
 /**
  * Processing status component for onboarding flow
@@ -79,29 +80,6 @@ export function ProcessingStatus() {
   // Manual CTA only (no auto-redirect); see ProcessingNoData for copy rationale.
   if (status.status === 'no_data') {
     return <ProcessingNoData />
-  }
-
-  const getStatusIcon = (taskStatus: string) => {
-    if (taskStatus === 'completed') {
-      return <CheckCircle2 className="h-5 w-5 text-green-600" />
-    }
-    if (taskStatus === 'failed') {
-      return <AlertCircle className="h-5 w-5 text-destructive" />
-    }
-    return <Loader2 className="h-5 w-5 text-primary animate-spin" />
-  }
-
-  const getStatusText = (taskStatus: string, taskName: string) => {
-    if (taskStatus === 'completed') {
-      return `${taskName} завершено`
-    }
-    if (taskStatus === 'failed') {
-      return `${taskName} завершилось с ошибкой`
-    }
-    if (taskStatus === 'in_progress') {
-      return `${taskName} выполняется...`
-    }
-    return `${taskName} ожидает начала...`
   }
 
   return (

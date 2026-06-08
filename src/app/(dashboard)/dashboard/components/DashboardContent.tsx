@@ -1,9 +1,7 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { ROUTES } from '@/lib/routes'
 import {
   DashboardMetricsGrid,
@@ -28,41 +26,13 @@ import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
 import { UnitEconomicsSection } from './UnitEconomicsSection'
 import { StorageSection } from './StorageSection'
-
-// Lazy-loaded chart components (below-the-fold recharts heavyweights)
-const ExpenseChart = dynamic(
-  () => import('@/components/custom/ExpenseChart').then(m => ({ default: m.ExpenseChart })),
-  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
-)
-
-const ExpenseStructurePieChart = dynamic(
-  () =>
-    import('@/components/custom/dashboard/ExpenseStructurePieChart').then(m => ({
-      default: m.ExpenseStructurePieChart,
-    })),
-  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
-)
-
-const TrendGraph = dynamic(
-  () => import('@/components/custom/TrendGraph').then(m => ({ default: m.TrendGraph })),
-  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
-)
-
-const OrdersSeasonalPatterns = dynamic(
-  () =>
-    import('@/components/custom/dashboard/OrdersSeasonalPatterns').then(m => ({
-      default: m.OrdersSeasonalPatterns,
-    })),
-  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
-)
-
-const HistoricalTrendsSection = dynamic(
-  () =>
-    import('@/components/custom/dashboard/HistoricalTrendsSection').then(m => ({
-      default: m.HistoricalTrendsSection,
-    })),
-  { ssr: false, loading: () => <Skeleton className="h-64 w-full" /> }
-)
+import {
+  ExpenseChart,
+  ExpenseStructurePieChart,
+  TrendGraph,
+  OrdersSeasonalPatterns,
+  HistoricalTrendsSection,
+} from './DashboardLazyCharts'
 
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()

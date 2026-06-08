@@ -12,6 +12,22 @@ export function formatCurrency(value: number): string {
 }
 
 /**
+ * COGS unit-cost formatter — 2 fixed decimal places, null/NaN/undefined → "—".
+ * Consolidates 5 former duplicates (cogs-edit-helpers, useCogsHistoryDisplay,
+ * CogsHistoryMeta, sku-table-formatters, financial-summary-formatters).
+ * COGS is a per-unit cost so 2 decimal places are always shown (e.g. "1 250,50 ₽").
+ */
+export function formatCogsCost(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) return '—'
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+/**
  * Formats a number as percentage in Russian locale (e.g. "15,5 %").
  * @param value - Already in percent units (0-100; signed OK)
  * @param decimals - Fixed decimal places. Omit for 1-2 decimals. Pass 0 for "75 %".

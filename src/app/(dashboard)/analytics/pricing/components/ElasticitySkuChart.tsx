@@ -16,7 +16,7 @@ import {
   ReferenceLine,
   ResponsiveContainer,
 } from 'recharts'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 
 interface ElasticitySkuChartProps {
   elasticity: number
@@ -67,7 +67,7 @@ function ChartTooltip({
       {payload.map(p => (
         <p key={p.dataKey} style={{ color: p.color }}>
           {p.dataKey === 'demand'
-            ? `Спрос: ${p.value.toFixed(1)}%`
+            ? `Спрос: ${formatPercentage(p.value, 1)}`
             : `Выручка: ${formatCurrency(p.value)}`}
         </p>
       ))}

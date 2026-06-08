@@ -122,7 +122,7 @@ export function SupplyOrdersTable({
                       </div>
                     </TableCell>
                     <TableCell className="text-right font-medium">
-                      {formatCurrency(order.salePrice)}
+                      {order.salePrice != null ? formatCurrency(order.salePrice) : '—'}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className={statusConfig.className}>

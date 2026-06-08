@@ -11,13 +11,12 @@ import { PnLWaterfall } from '@/components/custom/PnLWaterfall'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { IncompleteWeekBanner } from '@/components/custom/dashboard'
 import { ReportPendingBanner } from '@/app/(dashboard)/dashboard/components/ReportPendingBanner'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { DashboardPeriodProvider, useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { getWeeksInMonth } from '@/lib/period-helpers'
+import { CabinetDashboardSkeleton } from '@/components/custom/dashboard/CabinetDashboardSkeleton'
 
 export default function CabinetDashboardPage() {
   return (
@@ -139,51 +138,6 @@ function CabinetDashboardContent() {
           </AlertDescription>
         </Alert>
       )}
-    </div>
-  )
-}
-
-function CabinetDashboardSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Card key={i}>
-            <CardHeader className="pb-2">
-              <Skeleton className="h-4 w-20" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-24" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-32" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-32" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   )
 }

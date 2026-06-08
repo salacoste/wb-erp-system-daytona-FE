@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
-import { MergedGroupRows, renderOrganicValue } from '../MergedGroupRows'
+import { MergedGroupRows } from '../MergedGroupRows'
 import type { AdvertisingGroup } from '@/types/advertising-analytics'
 
 // Mock metrics calculator functions
@@ -72,24 +72,6 @@ function makeGroup(overrides: Partial<AdvertisingGroup> = {}): AdvertisingGroup 
     ...overrides,
   }
 }
-
-describe('renderOrganicValue', () => {
-  it('returns formatted currency for non-negative values', () => {
-    const result = renderOrganicValue(5000)
-    expect(result).toBeTruthy()
-  })
-
-  it('returns warning badge for negative values (over-attribution)', () => {
-    const result = renderOrganicValue(-500)
-    render(<>{result}</>)
-    expect(screen.getByText('Переатрибуция')).toBeInTheDocument()
-  })
-
-  it('handles zero value', () => {
-    const result = renderOrganicValue(0)
-    expect(result).toBeTruthy()
-  })
-})
 
 describe('MergedGroupRows', () => {
   it('renders aggregate row with group label', () => {

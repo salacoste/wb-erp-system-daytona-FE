@@ -166,6 +166,15 @@ describe('normalizeSupplyDetailResponse', () => {
     expect(normalizeSupplyDetailResponse(raw).orders[0].productName).toBeNull()
   })
 
+  it('preserves null salePrice when backend sends no price (#205)', () => {
+    const raw = {
+      id: 'sup-303',
+      orders: [{ orderId: 'ord-1', article: 'ART-001' }],
+      documents: [],
+    }
+    expect(normalizeSupplyDetailResponse(raw).orders[0].salePrice).toBeNull()
+  })
+
   it('maps document docType to frontend type', () => {
     const raw = {
       id: 'sup-400',

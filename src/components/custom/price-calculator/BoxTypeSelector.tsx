@@ -13,21 +13,9 @@
  * @see docs/stories/epic-44/story-44.42-fe-box-type-support.md
  */
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { FieldTooltip } from './FieldTooltip'
 import { cn } from '@/lib/utils'
 import {
@@ -36,6 +24,11 @@ import {
   DEFAULT_BOX_TYPE_ID,
   type BoxTypeId,
 } from '@/lib/box-type-utils'
+import { BoxTypeSelectItem } from './BoxTypeSelectItem'
+
+// Re-export constants for consumers
+export { DEFAULT_BOX_TYPE_ID, ALL_BOX_TYPE_IDS, BOX_TYPES }
+export type { BoxTypeId }
 
 /**
  * Props for BoxTypeSelector component
@@ -100,15 +93,12 @@ export function BoxTypeSelector({
 
       <Select
         value={String(value)}
-        onValueChange={(v) => onChange(Number(v) as BoxTypeId)}
+        onValueChange={v => onChange(Number(v) as BoxTypeId)}
         disabled={disabled || availableTypes.length === 0}
       >
         <SelectTrigger
           id="box-type-select"
-          className={cn(
-            'w-full',
-            disabled && 'opacity-50 cursor-not-allowed'
-          )}
+          className={cn('w-full', disabled && 'opacity-50 cursor-not-allowed')}
         >
           <SelectValue placeholder={placeholder}>
             {selectedInfo && (
@@ -122,46 +112,13 @@ export function BoxTypeSelector({
 
         <SelectContent>
           <TooltipProvider>
-            {ALL_BOX_TYPE_IDS.map((typeId) => {
-              const info = BOX_TYPES[typeId]
-              const isAvailable = isTypeAvailable(typeId)
-              const isFixed = info.storageFormula === 'fixed'
-
-              return (
-                <Tooltip key={typeId} delayDuration={300}>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <SelectItem
-                        value={String(typeId)}
-                        disabled={!isAvailable}
-                        className={cn(
-                          'cursor-pointer',
-                          !isAvailable && 'opacity-50 cursor-not-allowed'
-                        )}
-                      >
-                        <span className="flex items-center gap-2">
-                          <span>{info.icon}</span>
-                          <span>{info.nameRu}</span>
-                          {isFixed && (
-                            <Badge
-                              variant="outline"
-                              className="text-xs ml-1 px-1.5 py-0"
-                            >
-                              фикс.
-                            </Badge>
-                          )}
-                        </span>
-                      </SelectItem>
-                    </div>
-                  </TooltipTrigger>
-                  {!isAvailable && (
-                    <TooltipContent side="right">
-                      Недоступно на этом складе
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              )
-            })}
+            {ALL_BOX_TYPE_IDS.map(typeId => (
+              <BoxTypeSelectItem
+                key={typeId}
+                typeId={typeId}
+                isAvailable={isTypeAvailable(typeId)}
+              />
+            ))}
           </TooltipProvider>
         </SelectContent>
       </Select>
@@ -169,8 +126,7 @@ export function BoxTypeSelector({
       {/* Fixed storage explanation for Pallets */}
       {BOX_TYPES[value]?.storageFormula === 'fixed' && (
         <p className="text-sm text-muted-foreground">
-          {BOX_TYPES[value].icon} Для монопаллет хранение не зависит от объёма
-          товара
+          {BOX_TYPES[value].icon} Для монопаллет хранение не зависит от объёма товара
         </p>
       )}
     </div>
@@ -181,9 +137,3 @@ export function BoxTypeSelector({
  * Default export for convenience
  */
 export default BoxTypeSelector
-
-/**
- * Re-export constants for consumers
- */
-export { DEFAULT_BOX_TYPE_ID, ALL_BOX_TYPE_IDS, BOX_TYPES }
-export type { BoxTypeId }

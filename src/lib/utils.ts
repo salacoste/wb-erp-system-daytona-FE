@@ -12,6 +12,7 @@ import { twMerge } from 'tailwind-merge'
 // New consumers may import directly from '@/lib/formatters'.
 export {
   formatCurrency,
+  formatCogsCost,
   formatPercentage,
   formatPercentageInt,
   formatDate,

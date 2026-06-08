@@ -18,6 +18,7 @@ import {
   getRoasColor,
   getRoiColor,
 } from './advertising-card-utils'
+import { getOrganicContributionColorClass } from '@/components/custom/advertising-widget/advertising-widget-helpers'
 
 // Re-export for backward compatibility with test imports
 export { getRoasColor, getRoiColor } from './advertising-card-utils'
@@ -104,14 +105,7 @@ export function AdvertisingSummaryCards({
       label: 'Доля органики',
       value: formatAdPercent(summary.avg_organic_contribution),
       icon: Sprout,
-      colorClass:
-        summary.avg_organic_contribution < 0
-          ? 'text-red-600'
-          : summary.avg_organic_contribution >= 50
-            ? 'text-green-600'
-            : summary.avg_organic_contribution >= 20
-              ? 'text-yellow-600'
-              : 'text-orange-600',
+      colorClass: getOrganicContributionColorClass(summary.avg_organic_contribution),
       tooltip: 'Доля продаж без рекламы. При переатрибуции WB может быть <0%.',
     },
   ]

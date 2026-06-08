@@ -57,7 +57,7 @@ export function useRemoveOrders(supplyId: string) {
           // Recalculate total value
           totalValue: previousSupply.orders
             .filter(order => !orderIds.includes(order.orderId))
-            .reduce((sum, order) => sum + order.salePrice, 0),
+            .reduce((sum, order) => sum + (order.salePrice ?? 0), 0),
         }
 
         queryClient.setQueryData<SupplyDetailResponse>(

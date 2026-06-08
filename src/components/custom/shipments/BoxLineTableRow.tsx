@@ -23,6 +23,11 @@ import { parseDecimal } from '@/lib/decimal-utils'
 import { formatCurrency } from '@/lib/utils'
 import type { BoxLine } from '@/types/shipment-cost'
 
+/** Check whether a Decimal-string cost field has a valid finite value. */
+function hasFiniteCost(value: string | null | undefined): boolean {
+  return value != null && value !== '' && Number.isFinite(parseDecimal(value))
+}
+
 interface BoxLineTableRowProps {
   line: BoxLine
   hasCalculated: boolean
@@ -47,22 +52,28 @@ export function BoxLineTableRow({
       <TableCell className="text-right">{line.totalUnits ?? '—'}</TableCell>
       {hasCalculated && (
         <TableCell className="text-right">
-          {line.unitCostRub ? formatCurrency(parseDecimal(line.unitCostRub)) : '—'}
+          {hasFiniteCost(line.unitCostRub) ? formatCurrency(parseDecimal(line.unitCostRub)) : '—'}
         </TableCell>
       )}
       {hasCalculated && (
         <TableCell className="text-right">
-          {line.deliveryCostPerUnit ? formatCurrency(parseDecimal(line.deliveryCostPerUnit)) : '—'}
+          {hasFiniteCost(line.deliveryCostPerUnit)
+            ? formatCurrency(parseDecimal(line.deliveryCostPerUnit))
+            : '—'}
         </TableCell>
       )}
       {hasCalculated && (
         <TableCell className="text-right font-medium">
-          {line.finalCostPerUnit ? formatCurrency(parseDecimal(line.finalCostPerUnit)) : '—'}
+          {hasFiniteCost(line.finalCostPerUnit)
+            ? formatCurrency(parseDecimal(line.finalCostPerUnit))
+            : '—'}
         </TableCell>
       )}
       {hasCalculated && (
         <TableCell className="text-right">
-          {line.finalCostLine ? formatCurrency(parseDecimal(line.finalCostLine)) : '—'}
+          {hasFiniteCost(line.finalCostLine)
+            ? formatCurrency(parseDecimal(line.finalCostLine))
+            : '—'}
         </TableCell>
       )}
       {isDraft && (

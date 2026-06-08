@@ -76,7 +76,9 @@ function normalizeSupplyOrder(raw: unknown): Record<string, unknown> {
     vendorCode: String(o.vendorCode ?? o.article ?? ''),
     // backend does not send a product name on this endpoint → null (render shows "—").
     productName: (o.productName ?? null) as string | null,
-    salePrice: Number(o.salePrice ?? 0),
+    // null, NOT 0: backend may not know the sale price for unknown orders (#205, anti-pattern #8).
+    // Rendering "—" is honest; 0 would fabricate a free product and hide data gaps.
+    salePrice: o.salePrice != null ? Number(o.salePrice) : null,
     supplierStatus: String(o.supplierStatus ?? ''),
     addedAt: String(o.addedAt ?? ''),
   }

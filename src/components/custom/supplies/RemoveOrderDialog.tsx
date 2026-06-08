@@ -61,7 +61,8 @@ export function RemoveOrderDialog({
                   </p>
                 )}
                 <p>
-                  <span className="text-gray-500">Цена:</span> {formatCurrency(order.salePrice)}
+                  <span className="text-gray-500">Цена:</span>{' '}
+                  {order.salePrice != null ? formatCurrency(order.salePrice) : '—'}
                 </p>
               </div>
             </div>

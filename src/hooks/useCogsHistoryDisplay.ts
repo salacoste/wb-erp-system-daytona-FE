@@ -3,6 +3,7 @@
  * Story 5.1-fe: View COGS History
  */
 
+import { formatCogsCost } from '@/lib/formatters'
 import type { CogsHistoryItem, VersionChainInfo } from '@/types/cogs'
 
 /**

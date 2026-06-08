@@ -16,8 +16,7 @@
  */
 
 import React, { useMemo } from 'react'
-import { AlertTriangle, Crown } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Crown } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { AdvertisingGroup } from '@/types/advertising-analytics'
 import {
@@ -29,36 +28,7 @@ import {
   calculateROAS,
 } from '../utils/metrics-calculator'
 import { formatCurrency, formatRevenueWithPercent, formatROAS } from '../utils/formatters'
-
-// ============================================================================
-// Story 73.6: Negative organicSales rendering helper
-// ============================================================================
-
-/** Render organic sales value with over-attribution warning if negative */
-export function renderOrganicValue(value: number): React.ReactNode {
-  if (value >= 0) return formatCurrency(value)
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="inline-flex items-center gap-1 cursor-help">
-            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-            <Badge variant="outline" className="text-[0.7rem] border-amber-500 text-amber-700">
-              Переатрибуция
-            </Badge>
-          </span>
-        </TooltipTrigger>
-        <TooltipContent side="left" className="text-xs">
-          Рекламная выручка превышает общие продажи ({formatCurrency(value)})
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
-}
-
-// ============================================================================
-// Merged Group Rows Component (3-Tier Structure)
-// ============================================================================
+import { renderOrganicValue } from './OrganicSalesRenderer'
 
 export interface MergedGroupRowsProps {
   group: AdvertisingGroup
