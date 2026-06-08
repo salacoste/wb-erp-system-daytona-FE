@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
-import { useMarginTrends } from '../useMarginTrends'
+import { useMarginTrends, getWeekRange } from '../useMarginTrends'
 
 vi.mock('@/lib/api-client', () => ({
   apiClient: { get: vi.fn() },
@@ -158,7 +158,10 @@ describe('useMarginTrends', () => {
   })
 
   it('handles API error', async () => {
-    mockGet.mockRejectedValue(new Error('Server error'))
+    // retry:1 means initial attempt + 1 retry = 2 rejections needed
+    mockGet
+      .mockRejectedValueOnce(new Error('Server error'))
+      .mockRejectedValueOnce(new Error('Server error'))
 
     const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
       wrapper: createWrapper(),
@@ -242,14 +245,12 @@ describe('useMarginTrends parameter validation', () => {
 
 describe('getWeekRange', () => {
   it('returns weekStart and weekEnd strings', () => {
-    const { getWeekRange } = require('../useMarginTrends')
     const result = getWeekRange(12)
     expect(result.weekStart).toMatch(/^\d{4}-W\d{2}$/)
     expect(result.weekEnd).toMatch(/^\d{4}-W\d{2}$/)
   })
 
   it('returns end week as current week', () => {
-    const { getWeekRange } = require('../useMarginTrends')
     const result = getWeekRange(4)
 
     // weekEnd should represent the current ISO week
@@ -273,20 +274,17 @@ describe('getWeekRange', () => {
   })
 
   it('start week is earlier than end week', () => {
-    const { getWeekRange } = require('../useMarginTrends')
     const result = getWeekRange(12)
     expect(result.weekStart.localeCompare(result.weekEnd)).toBeLessThanOrEqual(0)
   })
 
   it('larger numWeeks produces earlier start week', () => {
-    const { getWeekRange } = require('../useMarginTrends')
     const short = getWeekRange(4)
     const long = getWeekRange(24)
     expect(long.weekStart.localeCompare(short.weekStart)).toBeLessThanOrEqual(0)
   })
 
   it('handles numWeeks = 1', () => {
-    const { getWeekRange } = require('../useMarginTrends')
     const result = getWeekRange(1)
     expect(result.weekStart).toMatch(/^\d{4}-W\d{2}$/)
     expect(result.weekEnd).toMatch(/^\d{4}-W\d{2}$/)
@@ -320,7 +318,8 @@ describe('useMarginTrends error handling', () => {
       response: { status: number; data: { error: { message: string } } }
     }
     httpError.response = { status: 400, data: { error: { message: 'Invalid week format' } } }
-    mockGet.mockRejectedValueOnce(httpError)
+    // retry:1 means 2 rejections needed
+    mockGet.mockRejectedValueOnce(httpError).mockRejectedValueOnce(httpError)
 
     const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
       wrapper: createWrapper(),
@@ -331,7 +330,9 @@ describe('useMarginTrends error handling', () => {
   })
 
   it('re-throws non-HTTP errors for TanStack Query', async () => {
-    mockGet.mockRejectedValueOnce(new Error('Network failure'))
+    mockGet
+      .mockRejectedValueOnce(new Error('Network failure'))
+      .mockRejectedValueOnce(new Error('Network failure'))
 
     const { result } = renderHook(() => useMarginTrends({ weeks: 12 }), {
       wrapper: createWrapper(),

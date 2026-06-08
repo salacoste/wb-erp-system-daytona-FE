@@ -173,4 +173,93 @@ describe('useMarginPollingWithQuery', () => {
 
     await waitFor(() => expect(result.current.error).toBeTruthy(), { timeout: 5000 })
   })
+
+  it('falls back to product fetch when margin-status returns 404', async () => {
+    // First call: margin-status returns 404
+    const apiError = new Error('Not Found') as Error & { status: number }
+    apiError.status = 404
+    mockGetStatus.mockRejectedValueOnce(apiError)
+
+    // Fallback: product fetch returns margin
+    mockApiClientGet.mockResolvedValueOnce({
+      current_margin_pct: 30.0,
+      missing_data_reason: null,
+    })
+
+    const options = createDefaultOptions()
+    renderHook(() => useMarginPollingWithQuery(options), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(mockApiClientGet).toHaveBeenCalled(), { timeout: 3000 })
+    // The fallback should have been called with the product endpoint
+    expect(mockApiClientGet).toHaveBeenCalledWith(expect.stringContaining('/v1/products/12345'))
+  })
+
+  it('sets completedWithoutMargin when orphan product fetch fails', async () => {
+    // margin-status 404
+    const apiError = new Error('Not Found') as Error & { status: number }
+    apiError.status = 404
+    mockGetStatus.mockRejectedValueOnce(apiError)
+
+    // Product fetch also fails (orphan product)
+    mockApiClientGet.mockRejectedValueOnce(new Error('Product not found'))
+
+    const options = createDefaultOptions()
+    renderHook(() => useMarginPollingWithQuery(options), {
+      wrapper: createWrapper(),
+    })
+
+    // Orphan product should be handled gracefully
+    await waitFor(() => expect(mockApiClientGet).toHaveBeenCalled(), { timeout: 3000 })
+  })
+
+  it('handles failed status from margin-status endpoint', async () => {
+    mockGetStatus.mockResolvedValue({ status: 'failed', error: 'Calculation error' })
+
+    const onError = vi.fn()
+    const options = { ...createDefaultOptions(), onError }
+
+    const { result } = renderHook(() => useMarginPollingWithQuery(options), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.error).toBeTruthy(), { timeout: 5000 })
+  })
+
+  it('continues polling when status is in_progress', async () => {
+    mockGetStatus.mockResolvedValue({ status: 'in_progress' })
+
+    const options = createDefaultOptions()
+    const { result } = renderHook(() => useMarginPollingWithQuery(options), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(mockGetStatus).toHaveBeenCalled(), { timeout: 3000 })
+
+    // Should still be polling (not completed, not errored)
+    expect(result.current.margin).toBeNull()
+    expect(result.current.error).toBeNull()
+  })
+
+  it('continues polling when status is pending', async () => {
+    mockGetStatus.mockResolvedValue({ status: 'pending' })
+
+    const options = createDefaultOptions()
+    const { result } = renderHook(() => useMarginPollingWithQuery(options), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(mockGetStatus).toHaveBeenCalled(), { timeout: 3000 })
+
+    expect(result.current.margin).toBeNull()
+    expect(result.current.timeout).toBe(false)
+  })
+
+  it('returns default polling strategy constant', () => {
+    const { DEFAULT_POLLING_STRATEGY } = require('../margin-polling-types')
+    expect(DEFAULT_POLLING_STRATEGY.interval).toBe(2500)
+    expect(DEFAULT_POLLING_STRATEGY.maxAttempts).toBe(24)
+    expect(DEFAULT_POLLING_STRATEGY.estimatedTime).toBe(10000)
+  })
 })
