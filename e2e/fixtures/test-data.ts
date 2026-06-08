@@ -157,6 +157,10 @@ export const ROUTES = {
     tax: '/settings/tax', // Epic 66-FE: Tax & VAT Settings
     expenses: '/settings/expenses', // Operational Expenses Management
   },
+  shipments: '/shipments', // Epic 53-FE: FBS Shipments
+  shipmentsBoxTypes: '/shipments/box-types', // Box Types Management
+  shipmentsSkuPackaging: '/shipments/sku-packaging', // SKU Packaging
+  supplies: '/supplies', // Epic 53-FE: FBS Supplies
 }
 
 // Timeouts

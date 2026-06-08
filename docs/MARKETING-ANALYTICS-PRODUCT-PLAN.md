@@ -158,13 +158,7 @@ The WB Repricer frontend has a strong foundation of marketing analytics features
 | **Top Search Queries in Funnel** | For each SKU in the funnel table, show top 3 search queries that drove views. Links to Search Analytics. | Medium |
 | **Search-to-Cart Conversion** | New metric: what % of search impressions convert to cart adds? Combines search + funnel data. | Medium |
 
-> **⚠️ Backend field absent for "Search-to-Cart Conversion"** (verified Story 119.3-FE, 2026-05-30; full Live Verification Evidence in `_bmad-output/implementation-artifacts/119-3-fe-search-to-cart-conversion-metric.md` per Pass-1 F-6).
->
-> **What's missing**: the cart-adds metric this row proposes assumes a `searchCartAdds`-like field per `SearchQueryItem`/`SearchProductItem`. **No such field exists** in the search analytics pipeline.
->
-> **Evidence** (Pass-1 F-4 bullet-split for readability): backend SQL aggregations in `src/analytics/dto/search-by-query.dto.ts` + `search-analytics.dto.ts` + `services/search-analytics-query.service.ts` compute only `totalImpressions` / `totalClicks` / `avgPosition` / `avgCtr` / `totalOrders` — zero cart-related fields. The only `cart_adds` column anywhere in the backend is `ProductFunnelDaily.cart_adds` (`docs/architecture/04-data-models.md:633`, Epic 68 funnel domain — per-product per-day, NOT per-search-query). Live `GET /v1/analytics/search/*` verification was blocked by an unrelated DB-credentials defect (filed separately as **Request #179** per Pass-1 F-5; see `docs/request-backend/179-WB-USER-DB-CREDENTIALS-AUTH-FAILURE.md`). Backend-source inspection is conclusive on its own — SQL aggregations don't compute cart adds, so a live response could not contain a field the service doesn't write.
->
-> **Action**: Do not build a "Search-to-Cart Conversion" column/card against the search analytics endpoints until backend enriches per Request #178 (`docs/request-backend/178-SEARCH-CART-ADDS-ENRICHMENT.md`). The "Combines search + funnel data" framing remains structurally unclear: funnel `cart_adds` is per-SKU; search impressions are per-query and per-(query,product); a meaningful JOIN requires backend to choose a unit-of-analysis — see Request #178 § "Unit-of-analysis clarification" for per-query / per-product / per-(query,product) options.
+> **✅ Backend field shipped (Request #178 RESOLVED 2026-06-02)**: `searchCartAdds` field is now available on `SearchQueryItem` and `SearchProductItem` (aliases `totalClicks`). Frontend normalizer already wired. "В корзину" column added to both search tables (commit `8346ab5c`). Future: when backend properly tracks cart adds separately from clicks, the numbers will diverge and a conversion-rate column (`searchCartAdds / totalImpressions`) can be added.
 
 **Estimated Effort**: 3 stories, ~12 SP
 
