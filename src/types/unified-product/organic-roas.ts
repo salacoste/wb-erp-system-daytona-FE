@@ -1,8 +1,10 @@
 /**
  * Unified Product Analytics — organic-share & incremental ROAS types (Story 120.7-FE).
  *
- * Request #177 RESOLVED 2026-06-02.
- * Split from unified-product.ts for 200-line ESLint cap compliance.
+ * GET /organic-share and GET /incremental-roas endpoint types
+ * (all Request #177 RESOLVED 2026-06-02).
+ *
+ * AP#8 split: counts → number; ratios/rates/money → number | null.
  */
 
 // ============================================================

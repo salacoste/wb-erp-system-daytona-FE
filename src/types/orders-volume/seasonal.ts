@@ -1,6 +1,7 @@
 /**
- * Orders Volume Types — Status breakdown & seasonal pattern types
- * Split from orders-volume.ts for 200-line ESLint cap compliance.
+ * Orders Volume Types — Status breakdown & seasonal patterns
+ * Story 63.7-FE + Story 63.8-FE
+ * Split from core.ts for 200-line ESLint cap compliance.
  */
 
 // =============================================================================
@@ -12,6 +13,7 @@ export type OrderStatusType = 'complete' | 'confirm' | 'new' | 'cancel'
 
 /**
  * Status breakdown item for charts
+ * Элемент распределения по статусам
  */
 export interface StatusBreakdownItem {
   /** Order status */

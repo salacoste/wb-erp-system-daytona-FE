@@ -1,10 +1,7 @@
 /**
- * Storage Analytics Types — Core interfaces
+ * Storage Analytics Types — By SKU & Top Consumers
  * Story 24.1-FE: TypeScript Types & API Client
  * Epic 24: Paid Storage Analytics (Frontend)
- * Reference: docs/request-backend/36-epic-24-paid-storage-analytics-api.md
- *
- * Split from storage-analytics.ts for 200-line ESLint cap compliance.
  */
 
 // ============================================================================
@@ -94,57 +91,6 @@ export interface StorageBySkuResponse {
   data: StorageBySkuItem[]
   summary: StorageSummary
   pagination: StoragePagination
-  /** Flag indicating if data exists for the requested period */
-  has_data: boolean
-}
-
-// ============================================================================
-// Top Consumers Types (GET /v1/analytics/storage/top-consumers)
-// ============================================================================
-
-/**
- * Top consumer item with storage cost ranking
- *
- * Request #156: Note that storage_cost is HISTORICAL - product may not be on warehouse now.
- * Check has_warehouse_stock to distinguish between active storage vs past charges.
- */
-export interface TopConsumerItem {
-  /** Rank position (1-based) */
-  rank: number
-  /** WB article number */
-  nm_id: string
-  /** Seller's vendor code */
-  vendor_code: string | null
-  /** Product name */
-  product_name: string | null
-  /** Brand name */
-  brand: string | null
-  /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator */
-  storage_cost: number
-  /** Percentage of total storage cost */
-  percent_of_total: number
-  /** Volume (liters, null if no data) */
-  volume: number | null
-  /** Net revenue (optional, if include_revenue=true) */
-  revenue_net?: number
-  /** Storage-to-revenue ratio % (optional, null if no revenue data) */
-  storage_to_revenue_ratio?: number | null
-  /** Current stock level in WB warehouses (null = data unavailable, 0 = no stock) */
-  total_stock?: number | null
-  /** Date of last storage charge (YYYY-MM-DD, null if no charges) */
-  last_charge_date?: string | null
-  /** True if product currently has stock in WB warehouses */
-  has_warehouse_stock?: boolean
-}
-
-/**
- * Response from GET /v1/analytics/storage/top-consumers
- */
-export interface TopConsumersResponse {
-  period: StoragePeriod
-  top_consumers: TopConsumerItem[]
-  /** Total storage cost for all products (for percent calculation) */
-  total_storage_cost: number
   /** Flag indicating if data exists for the requested period */
   has_data: boolean
 }

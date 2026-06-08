@@ -2,10 +2,8 @@
  * Liquidity Analysis Types — Core types
  * Epic 7 - Liquidity Analysis (Ликвидность товаров)
  * Backend: Request #55 - Liquidity API Endpoint
- * Reference: docs/stories/7.1.liquidity-api-integration.md
  *
- * Distribution, trends, and UI helper types extracted to ./liquidity-distribution.ts
- * (200-line ESLint cap, batch 2).
+ * Enums, query parameters, and response types.
  */
 
 // ============================================================================
@@ -148,69 +146,3 @@ export interface LiquidityItem {
   /** Liquidation scenarios (only for illiquid SKUs) */
   liquidation_scenarios: LiquidationScenario[] | null
 }
-
-// ============================================================================
-// Summary & Meta (use distribution/benchmarks from liquidity-distribution.ts)
-// ============================================================================
-
-import type { LiquidityDistribution, LiquidityBenchmarks } from './liquidity-distribution'
-
-/**
- * Summary statistics
- */
-export interface LiquiditySummary {
-  /** Total inventory value in ₽ */
-  total_inventory_value: number
-  /** Total number of SKUs */
-  total_sku_count: number
-  /** Frozen capital (value of illiquid stock) in ₽ */
-  frozen_capital: number
-  /** Frozen capital as percentage of total */
-  frozen_capital_pct: number
-  /** Average turnover days across all SKUs */
-  avg_turnover_days: number
-  /** Distribution by liquidity category */
-  distribution: LiquidityDistribution
-  /** Benchmark comparison */
-  benchmarks: LiquidityBenchmarks
-}
-
-/**
- * Response metadata
- */
-export interface LiquidityMeta {
-  /** Cabinet UUID */
-  cabinet_id: string
-  /** Analysis period in days (default: 30) */
-  analysis_period_days: number
-  /** When response was generated */
-  generated_at: string
-  /** Last stock data update timestamp */
-  stock_data_updated_at: string
-}
-
-/**
- * Full API response from GET /v1/analytics/liquidity
- */
-export interface LiquidityResponse {
-  meta: LiquidityMeta
-  summary: LiquiditySummary
-  data: LiquidityItem[]
-}
-
-// Re-export distribution, trends, and UI helper types for backward compatibility
-export type {
-  LiquidityDistributionItem,
-  LiquidityDistribution,
-  LiquidityBenchmarks,
-  TrendDistribution,
-  TrendDataPoint,
-  TrendInsight,
-  LiquidityTrendsMeta,
-  LiquidityTrendsResponse,
-  LiquidityCategoryConfig,
-  ActionTypeConfig,
-  BenchmarkStatusConfig,
-  DistributionChartData,
-  TrendChartData,
-} from './liquidity-distribution'

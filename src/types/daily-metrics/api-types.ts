@@ -1,13 +1,60 @@
 /**
- * Daily Metrics Types — Advertising, COGS, and aggregation helper types
+ * Daily Metrics Types — API response & hook parameter types
  * Split from daily-metrics.ts for 200-line ESLint cap compliance.
  */
 
-import type { OrdersDailyData, FinanceDailyData } from './daily-metrics-core'
+// ============================================================================
+// API Response Interfaces (Raw data from backend)
+// ============================================================================
 
-// ============================================================================
-// Additional API Response Types
-// ============================================================================
+/**
+ * Raw orders daily data from Orders Trends API.
+ * GET /v1/analytics/orders/trends?aggregation=day
+ * Provides both revenue and count per day (Request #137 fix).
+ */
+export interface OrdersDailyData {
+  /** Date in YYYY-MM-DD format */
+  date: string
+  /** Total order revenue in rubles (from orders/trends.revenue) */
+  total_amount: number
+  /** Total number of orders (from orders/trends.ordersCount) */
+  total_orders: number
+}
+
+/**
+ * Raw finance daily data from Finance Daily API.
+ * GET /v1/analytics/daily/finance?from=...&to=...
+ */
+export interface FinanceDailyData {
+  /** Date in YYYY-MM-DD format */
+  date: string
+  /** Gross sales amount — Выкупы (= sale_gross from weekly report) */
+  wb_sales_gross: number
+  /** Net payout — К перечислению (after all deductions) */
+  revenue_net: number
+  /** Total COGS for sales. Story 88.2-FE: null = no COGS data for this day. 0 = legitimate zero cost. */
+  cogs_total: number | null
+  /** Logistics cost */
+  logistics_cost: number
+  /** Storage cost */
+  storage_cost: number
+  /** Penalties — Штрафы */
+  penalties: number
+  /** Paid acceptance — Платная приёмка */
+  paid_acceptance: number
+  /** WB commission — Комиссия WB */
+  commission: number
+  /** Returns amount in rubles */
+  returns: number
+  /** Returns count */
+  returns_count: number
+  /** Sales count */
+  sales_count: number
+  /** Story 91.2-FE: Advertising spend from adv_daily_stats. 0 = no ads. */
+  advertising_spend: number
+  /** Story 91.2-FE: Server-computed net profit (operatingProfit - advertisingSpend). Null when COGS unknown. */
+  net_profit: number | null
+}
 
 /**
  * Normalized advertising daily data (frontend-canonical shape).
@@ -51,11 +98,12 @@ export interface AdvertisingDailyData {
 /**
  * Per-day COGS data from Orders Volume API.
  * GET /v1/analytics/orders/volume?include_cogs=true
+ * Extracted from by_day_with_cogs response field.
  */
 export interface OrdersCogsDailyData {
   /** Date in YYYY-MM-DD format */
   date: string
-  /** COGS for orders on this day. Story 88.2-FE: null = COGS not assigned. */
+  /** COGS for orders on this day. Story 88.2-FE: null = COGS not assigned for any SKU ordered on this day. */
   cogs: number | null
 }
 
@@ -83,23 +131,4 @@ export interface UseDailyMetricsOptions {
   enabled?: boolean
   /** Refetch interval in milliseconds */
   refetchInterval?: number
-}
-
-// ============================================================================
-// Aggregation Helper Input Types
-// ============================================================================
-
-/**
- * Input for aggregateDailyMetrics function.
- * Combines data from multiple API sources.
- */
-export interface AggregateDailyMetricsInput {
-  /** Daily orders data from Orders Volume API */
-  ordersData: OrdersDailyData[]
-  /** Daily finance data from Finance Summary API */
-  financeData: FinanceDailyData[]
-  /** Daily advertising data from Advertising API */
-  advertisingData: AdvertisingDailyData[]
-  /** Per-day COGS from orders/volume?include_cogs=true */
-  ordersCogsByDay?: OrdersCogsDailyData[]
 }

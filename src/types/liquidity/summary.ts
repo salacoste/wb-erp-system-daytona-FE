@@ -1,10 +1,9 @@
 /**
- * Liquidity Analysis Types — Summary, Meta, and Response interfaces
- * Split from liquidity.ts for 200-line ESLint cap compliance.
+ * Liquidity Analysis Types — Summary & Meta types
+ * Split from core.ts for 200-line ESLint cap compliance.
  */
 
-import type { LiquidityDistribution, LiquidityBenchmarks } from './liquidity-distribution'
-import type { LiquidityItem } from './liquidity-core'
+import type { LiquidityDistribution, LiquidityBenchmarks } from './distribution'
 
 /**
  * Summary statistics
@@ -46,5 +45,5 @@ export interface LiquidityMeta {
 export interface LiquidityResponse {
   meta: LiquidityMeta
   summary: LiquiditySummary
-  data: LiquidityItem[]
+  data: import('./core').LiquidityItem[]
 }
