@@ -5,7 +5,6 @@
  * Epic 76-FE, Story 76.1 (AC: #2, #3, #4, #5)
  */
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -28,12 +27,8 @@ import Link from 'next/link'
 import { buildShipmentDetailRoute } from '@/lib/routes'
 import { formatDate } from '@/lib/utils'
 import { ShipmentStatus, type Shipment } from '@/types/shipment-cost'
-import {
-  SHIPMENTS_COLUMNS,
-  STATUS_LABELS,
-  DELIVERY_MODE_LABELS,
-  STATUS_FILTER_OPTIONS,
-} from './shipments-columns'
+import { SHIPMENTS_COLUMNS, DELIVERY_MODE_LABELS, STATUS_FILTER_OPTIONS } from './shipments-columns'
+import { StatusBadge, ShipmentsPagination } from './ShipmentsPagination'
 
 export type SortOrder = 'asc' | 'desc'
 
@@ -48,14 +43,6 @@ interface ShipmentsTableProps {
   onPageChange: (page: number) => void
   onLimitChange: (limit: number) => void
   onSortToggle: () => void
-}
-
-function StatusBadge({ status }: { status: ShipmentStatus }) {
-  return (
-    <Badge variant={status === ShipmentStatus.CONFIRMED ? 'default' : 'outline'}>
-      {STATUS_LABELS[status]}
-    </Badge>
-  )
 }
 
 export function ShipmentsTable({
@@ -151,41 +138,13 @@ export function ShipmentsTable({
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <Select value={String(limit)} onValueChange={v => onLimitChange(Number(v))}>
-          <SelectTrigger className="w-[100px]" aria-label="Строк на странице">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {[10, 20, 50].map(n => (
-              <SelectItem key={n} value={String(n)}>
-                {n} строк
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            onClick={() => onPageChange(page - 1)}
-          >
-            Назад
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {page} / {totalPages || 1}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            onClick={() => onPageChange(page + 1)}
-          >
-            Вперёд
-          </Button>
-        </div>
-      </div>
+      <ShipmentsPagination
+        page={page}
+        totalPages={totalPages}
+        limit={limit}
+        onPageChange={onPageChange}
+        onLimitChange={onLimitChange}
+      />
     </div>
   )
 }

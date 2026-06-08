@@ -20,7 +20,6 @@ import {
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 import { formatPercentage } from '@/lib/formatters'
 import { BuyoutDailyTrendTooltip } from './BuyoutDailyTrendTooltip'
 import {
@@ -31,6 +30,7 @@ import {
   formatCompactCount,
   type BuyoutTrendMetricKey,
 } from './buyout-daily-trend-config'
+import { BuyoutTrendLegend } from './BuyoutTrendLegend'
 import { useBuyoutDailyTrends } from '@/hooks/use-buyout-daily'
 
 // ============================================================================
@@ -103,27 +103,7 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
         <CardTitle className="text-lg font-semibold">Динамика выкупа</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Legend toggles */}
-        <div className="mb-4 flex flex-wrap gap-3" role="group" aria-label="Переключатели метрик">
-          {BUYOUT_TREND_SERIES.map(series => {
-            const isVisible = visibleSeries.includes(series.key)
-            return (
-              <button
-                key={series.key}
-                onClick={() => toggleSeries(series.key)}
-                className={cn(
-                  'flex items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-opacity',
-                  isVisible ? 'opacity-100' : 'opacity-40'
-                )}
-                aria-pressed={isVisible}
-                aria-label={`${isVisible ? 'Скрыть' : 'Показать'} ${series.label}`}
-              >
-                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: series.color }} />
-                <span>{series.label}</span>
-              </button>
-            )
-          })}
-        </div>
+        <BuyoutTrendLegend visibleSeries={visibleSeries} onToggle={toggleSeries} />
 
         {/* Chart */}
         <div
