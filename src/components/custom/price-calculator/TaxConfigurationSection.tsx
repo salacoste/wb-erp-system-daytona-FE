@@ -2,16 +2,15 @@
 
 import { useState } from 'react'
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { formatPercentageInt } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Receipt } from 'lucide-react'
 import { FieldTooltip } from './FieldTooltip'
 import { TaxPresetGrid } from './TaxPresetGrid'
 import { TaxVatSection } from './TaxVatSection'
 import { TaxImpactPreview } from './TaxImpactPreview'
-import { TAX_PRESETS, QUICK_TAX_RATES } from './tax-presets'
-import { AlertTriangle, Receipt } from 'lucide-react'
+import { TAX_PRESETS } from './tax-presets'
+import { TaxRateInput } from './TaxRateInput'
 import type { TaxType, TaxPreset } from '@/types/price-calculator'
 
 /** Props for TaxConfigurationSection */
@@ -48,16 +47,6 @@ export function TaxConfigurationSection({
 }: TaxConfigurationSectionProps) {
   const [presetsOpen, setPresetsOpen] = useState(false)
   const matchingPreset = TAX_PRESETS.find(p => p.rate === taxRate && p.type === taxType)
-  const isHighTaxRate = taxRate > 20
-
-  const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value)
-    if (!isNaN(value) && value >= 0 && value <= 50) {
-      onTaxRateChange(value)
-    } else if (e.target.value === '') {
-      onTaxRateChange(0)
-    }
-  }
 
   const applyPreset = (preset: TaxPreset) => {
     onTaxRateChange(preset.rate)
@@ -76,54 +65,7 @@ export function TaxConfigurationSection({
 
       <div className="space-y-4">
         {/* Tax Rate Input */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="tax_rate_pct" className="flex-1">
-              Ставка налога
-            </Label>
-            <FieldTooltip content="Процент налога от выручки или прибыли в зависимости от вашего налогового режима. Типичные значения: 6% (УСН), 13% (НДФЛ), 15-20% (прибыль)." />
-          </div>
-          <div className="flex items-center gap-2">
-            <Input
-              id="tax_rate_pct"
-              type="number"
-              value={taxRate}
-              onChange={handleRateChange}
-              min={0}
-              max={50}
-              step={1}
-              disabled={disabled}
-              className="w-24"
-              data-testid="tax-rate-input"
-            />
-            <span className="text-sm text-muted-foreground">%</span>
-            <div className="flex gap-1 ml-2">
-              {QUICK_TAX_RATES.map(rate => (
-                <Button
-                  key={rate}
-                  type="button"
-                  variant={taxRate === rate ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => onTaxRateChange(rate)}
-                  disabled={disabled}
-                  className="h-7 px-2"
-                  data-testid={`tax-rate-preset-${rate}`}
-                >
-                  {formatPercentageInt(rate)}
-                </Button>
-              ))}
-            </div>
-          </div>
-          {isHighTaxRate && (
-            <div
-              className="flex items-center gap-1 text-xs text-yellow-600"
-              data-testid="high-tax-warning"
-            >
-              <AlertTriangle className="h-3 w-3" />
-              Высокая ставка налога
-            </div>
-          )}
-        </div>
+        <TaxRateInput taxRate={taxRate} onTaxRateChange={onTaxRateChange} disabled={disabled} />
 
         {/* Tax Type Selection */}
         <div className="space-y-2">
