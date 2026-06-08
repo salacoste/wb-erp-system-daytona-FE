@@ -53,5 +53,11 @@ src/lib/daily/aggregation.ts:130-134 | line 134 > file has 117 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 117 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 117 lines
 src/lib/daily/aggregation.ts:155 | line 155 > file has 117 lines
+src/lib/routes.ts:206 | line 206 > file has 126 lines
+src/lib/routes.ts:206 | line 206 > file has 126 lines
+src/lib/routes.ts:213-215 | line 215 > file has 126 lines
+src/lib/routes.ts:213-215 | line 215 > file has 126 lines
+src/lib/routes.ts:215 | line 215 > file has 126 lines
 src/products/products.service.ts:210-259 | file not found
 src/products/products.service.ts:83-182 | file not found
+src/types/unit-economics.ts:223-232 | line 232 > file has 218 lines
