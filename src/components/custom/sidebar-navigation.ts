@@ -39,6 +39,8 @@ import {
   Cpu,
   AlertTriangle,
   Tag,
+  ShieldCheck,
+  CalendarSearch,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -60,6 +62,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Dashboard', href: ROUTES.DASHBOARD, icon: Home },
   // Epic 40-FE: Orders UI (WB Native Orders History)
   { label: 'Заказы', href: ROUTES.ORDERS.ROOT, icon: ShoppingCart },
+  // Orders Integrity Dashboard
+  { label: 'Целостность заказов', href: ROUTES.ORDERS.INTEGRITY, icon: ShieldCheck },
   { label: 'COGS Management', href: ROUTES.COGS.ROOT, icon: Package },
   // Epic 44: Price Calculator UI
   { label: 'Price Calculator', href: '/cogs/price-calculator', icon: DollarSign },
@@ -138,6 +142,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Монитор', href: ROUTES.MONITOR, icon: Gauge },
   // Alerts Dashboard — notification rules, history, summary KPIs
   { label: 'Центр уведомлений', href: ROUTES.ANALYTICS.ALERTS, icon: Bell },
+  // Financial Gaps Remediation — missing data detection & fix
+  { label: 'Пропуски в данных', href: ROUTES.ANALYTICS.GAPS, icon: CalendarSearch },
   // Epic 34-FE: Telegram Notifications
   { label: 'Уведомления', href: ROUTES.SETTINGS.NOTIFICATIONS, icon: Bell },
   // Epic 52-FE: Tariff Settings Admin (Admin only)

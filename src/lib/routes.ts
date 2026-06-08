@@ -51,6 +51,7 @@ export const ROUTES = {
     SEARCH: '/analytics/search', // Epic 71-FE: Search Analytics
     CROSS_REFERENCE: '/analytics/cross-reference', // Story 73.7-FE: Search + Advertising Cross-Reference
     ALERTS: '/analytics/alerts', // Alerts Dashboard — notification rules & history
+    GAPS: '/analytics/gaps', // Financial Gaps Remediation — missing data detection & fix
     PRICING: '/analytics/pricing', // Epic 121: Price Recommendations
     FORECAST: '/analytics/forecast', // Epic 103-FE: AI Sales Forecast
     FORECAST_ACCURACY: '/analytics/forecast-accuracy', // Epic 123-FE: Forecast Accuracy Dashboard
@@ -68,6 +69,7 @@ export const ROUTES = {
   ORDERS: {
     ROOT: '/orders',
     LIST: '/orders/list',
+    INTEGRITY: '/orders/integrity', // Orders Integrity Dashboard
   },
 
   // Epic 53-FE: Supply Management
@@ -145,6 +147,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.SEARCH, // Epic 71-FE: Search Analytics
     ROUTES.ANALYTICS.CROSS_REFERENCE, // Story 73.7-FE: Search + Advertising Cross-Reference
     ROUTES.ANALYTICS.ALERTS, // Alerts Dashboard
+    ROUTES.ANALYTICS.GAPS, // Financial Gaps Remediation
     ROUTES.ANALYTICS.PRICING, // Epic 121: Price Recommendations
     ROUTES.ANALYTICS.FORECAST, // Epic 103-FE: AI Sales Forecast
     ROUTES.ANALYTICS.FORECAST_ACCURACY, // Epic 123-FE: Forecast Accuracy Dashboard
@@ -154,6 +157,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.AI_ADMIN.ANOMALIES, // Story 112.3-FE: Anomaly Resolution (Owner/Manager)
     ROUTES.ORDERS.ROOT, // Epic 40-FE: Orders UI
     ROUTES.ORDERS.LIST,
+    ROUTES.ORDERS.INTEGRITY,
     ROUTES.MONITORING, // Epic 68-FE: Monitoring Health Dashboard
     ROUTES.MONITOR, // Epic 92-FE: Monitor Dashboard
     ROUTES.SHIPMENTS.ROOT, // Epic 75-FE: Shipment Cost Allocation
