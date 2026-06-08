@@ -1,6 +1,6 @@
 # #195 — Acquiring detail: doc_type_name null, 500-not-404, list-vs-detail fee mismatch
 
-**Status**: OPEN
+**Status**: ✅ **DELIVERED** (items 1+2); **DOCUMENTED** (item 3) — (1) `doc_type_name` now populated: `ALL_DETAIL_FIELDS` explicitly requests `docTypeName` from WB (`acquiring-reports.service.ts:118-136`), mapped at line 268. (2) 404 fix: `isWbNotFoundError()` detects WB 400/404 for invalid reportId and throws `NotFoundException` (`acquiring-reports.service.ts:228-230,278-299`). (3) Fee mismatch: `acquiring_fee_sum` is WB's pre-aggregated sum; documented as "may diverge ~5-10% from SUM(detail.acquiring_fee) due to WB rounding differences" (`acquiring-reports.service.ts:43`). This is a WB-side artifact, not a backend bug.
 **Reported**: 2026-06-02 (iter-71 validation loop)
 **Page**: `/analytics/acquiring`, `/analytics/acquiring/reports/[id]`, `/analytics/acquiring/period`
 **Related**: extends [#166](./166-ACQUIRING-COST-REPORTS-API.md) (acquiring cost reports API)

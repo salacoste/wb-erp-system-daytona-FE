@@ -1,6 +1,6 @@
 # 202 — FBS Enhanced analytics: FE↔backend contract mismatch (4 of 5 sections)
 
-**Status**: PENDING — needs contract reconciliation (FE-led, with backend confirmation of the real shape + a decision on missing fields)
+**Status**: ✅ **DELIVERED** — Same fix as #182. FE-compat field aliases added in `FbsEnhancedAnalyticsController` (`src/analytics/controllers/fbs-enhanced-analytics.controller.ts:230-298`). All FE-expected keys now present alongside backend-native keys. See #182 for full field mapping. FE normalizer rewrite still needed to consume the real+aliased shape.
 **Severity**: HIGH (page renders fabricated zeros/dashes against live data for 4 of 5 sections)
 **Found**: iter-137 read-only audit of `/analytics/fbs-enhanced`, verified against backend source (not just docs).
 **Endpoint**: `GET /v1/analytics/fbs/enhanced?from=&to=`

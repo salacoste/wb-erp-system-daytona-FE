@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-23
 **Priority**: 🟡 **P2 - ENHANCEMENT** (improves UX, not blocking)
-**Status**: 📝 **PENDING REVIEW**
+**Status**: ✅ **DELIVERED** — `include_cogs` param in `QueryProductsDto` (`src/products/dto/query-products.dto.ts:101`), enrichment in `ProductsQueryService` (`src/products/services/products-query.service.ts:183-205`), controller docs at `src/products/products.controller.ts:186-190`. Backend response at bottom of this file confirms.
 **Frontend Issue**: Margin data not shown in product list despite COGS being assigned
 
 ---

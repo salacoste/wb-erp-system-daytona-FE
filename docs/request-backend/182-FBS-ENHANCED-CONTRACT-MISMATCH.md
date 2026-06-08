@@ -3,7 +3,7 @@
 **Originated by**: Frontend validation campaign (validation finding F-19), 2026-06-02
 **Severity**: P1 — `/analytics/fbs-enhanced` order + stock metric cards render `0`/`—` against the live backend; the FE normalizer reads field names the backend doesn't emit.
 **Related**: Request #181 (FBS stock contract mismatch) — same systemic Epic-96-FE-vs-backend divergence across the FBS-analytics domain.
-**Status**: PENDING BACKEND (needs contract reconciliation — FE cannot safely remap)
+**Status**: ✅ **DELIVERED** — FE-compat field aliases added in `FbsEnhancedAnalyticsController` (`src/analytics/controllers/fbs-enhanced-analytics.controller.ts:230-298`): `totalOrders`/`deliveredOrders`/`returnedOrders`/`returnRate`/`averageOrderValue` (orderStats), `totalUnits`/`totalSkus`/`lowStockSkus`/`outOfStockSkus`/`avgDaysOfCover` (stockAnalytics), `regionName`/`stockShare`/`orderShare` (regionalData), `funnelData` passthrough, `generatedAt` alias. Note: `lowStockSkus`/`outOfStockSkus` are placeholders (0); `orderShare` is null (stock-only data source); `deliveredOrders`/`returnedOrders` are aliases for `buyoutCount`/`cancelCount` (semantic difference documented in Swagger).
 
 ---
 

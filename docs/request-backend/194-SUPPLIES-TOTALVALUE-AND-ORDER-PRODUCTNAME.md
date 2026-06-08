@@ -1,6 +1,6 @@
 # 194 — Supplies: `totalValue` not computed + order `productName` not provided
 
-**Status**: OPEN
+**Status**: ✅ **DELIVERED** — `totalValue` computed via `computeTotalValuePerSupply()` (`src/supplies/services/supply.service.ts:226-232,411-428`); `productName` enriched via `getProductNamesByNmIds()` (`supply.service.ts:287,342,435`); both fields present in `SupplyListItemDto` (`src/supplies/dto/supply.dto.ts:284,333`).
 **Severity**: MEDIUM (FE shows "—" placeholders; no wrong data after iter-68 FE fixes)
 **Filed**: 2026-06-02 (frontend validation iter-68)
 **Endpoints**: `GET /v1/supplies` (list), `GET /v1/supplies/:id` (detail)

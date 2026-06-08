@@ -2,7 +2,7 @@
 
 **Date**: 2025-12-14
 **Priority**: P2 - MEDIUM
-**Status**: 🔲 PENDING
+**Status**: ✅ **DELIVERED** — `retail_price_total` aggregated in `WeeklyPayoutAggregationQueryService` (`src/aggregation/weekly-payout-aggregation-query.service.ts:359`), exposed in `WeeklyPayoutSummaryDto` (`src/analytics/dto/weekly-payout-summary.dto.ts:139`), mapped in `FinanceMappingService` (`src/analytics/services/finance-mapping.service.ts:122`). Backend response at bottom of this file confirms.
 
 ---
 
