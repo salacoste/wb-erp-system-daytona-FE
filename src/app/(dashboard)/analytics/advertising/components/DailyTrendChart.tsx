@@ -6,7 +6,6 @@
  *
  * Multi-series line chart for daily advertising metrics:
  * spend (left Y-axis, currency), views/clicks/orders (right Y-axis, counts).
- * Features toggleable legend, responsive design, and WCAG accessibility.
  */
 
 import { useState, useMemo } from 'react'
@@ -21,8 +20,8 @@ import {
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 import { DailyTrendTooltip } from './DailyTrendTooltip'
+import { DailyTrendLegend } from './DailyTrendLegend'
 import {
   DAILY_TREND_COLORS,
   DAILY_TREND_SERIES,
@@ -30,23 +29,14 @@ import {
   formatDailyDate,
   formatCompactRub,
   formatCompactCount,
-  type DailyTrendMetricKey,
 } from './daily-trend-config'
 import type { AdvertisingDailyItem } from '@/types/advertising-analytics'
-
-// ============================================================================
-// Props
-// ============================================================================
 
 interface DailyTrendChartProps {
   data: AdvertisingDailyItem[]
   isLoading: boolean
   className?: string
 }
-
-// ============================================================================
-// Line Config
-// ============================================================================
 
 const LINE_CONFIG = {
   type: 'monotone' as const,
@@ -56,10 +46,6 @@ const LINE_CONFIG = {
   animationDuration: 300,
   animationEasing: 'ease-in-out' as const,
 }
-
-// ============================================================================
-// Component
-// ============================================================================
 
 export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartProps) {
   const [visibleSeries, setVisibleSeries] = useState<string[]>([...DEFAULT_DAILY_VISIBLE])
@@ -105,29 +91,7 @@ export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartP
         <CardTitle className="text-lg font-semibold">Динамика по дням</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Legend toggles */}
-        <div className="mb-4 flex flex-wrap gap-3" role="group" aria-label="Переключатели метрик">
-          {DAILY_TREND_SERIES.map(series => {
-            const isVisible = visibleSeries.includes(series.key)
-            return (
-              <button
-                key={series.key}
-                onClick={() => toggleSeries(series.key)}
-                className={cn(
-                  'flex items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-opacity',
-                  isVisible ? 'opacity-100' : 'opacity-40'
-                )}
-                aria-pressed={isVisible}
-                aria-label={`${isVisible ? 'Скрыть' : 'Показать'} ${series.label}`}
-              >
-                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: series.color }} />
-                <span>{series.label}</span>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Chart */}
+        <DailyTrendLegend visibleSeries={visibleSeries} onToggle={toggleSeries} />
         <div
           role="img"
           aria-label="График ежедневной динамики рекламных метрик"
@@ -176,7 +140,7 @@ export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartP
                   yAxisId={series.axis}
                   type={LINE_CONFIG.type}
                   dataKey={series.key}
-                  stroke={DAILY_TREND_COLORS[series.key as DailyTrendMetricKey]}
+                  stroke={DAILY_TREND_COLORS[series.key]}
                   strokeWidth={LINE_CONFIG.strokeWidth}
                   dot={LINE_CONFIG.dot}
                   activeDot={LINE_CONFIG.activeDot}

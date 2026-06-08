@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { getLastCompletedWeek } from '@/lib/margin-helpers'
 import { formatIsoWeek } from '@/lib/utils'
 import { fillMissingWeeks } from '@/lib/analytics-utils'
@@ -10,10 +10,10 @@ import {
   useStorageTopConsumers,
   useStorageTrends,
 } from '@/hooks/useStorageAnalytics'
+import { useStorageUrlSync } from './useStorageUrlSync'
 
 /** Storage Analytics Page State — Story 24.2-FE, 24.9-FE, 24.10-FE */
 export function useStoragePageState() {
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   // Calculate default week range (last 4 weeks)
@@ -51,9 +51,7 @@ export function useStoragePageState() {
   const { data: unfilteredData, isLoading: isLoadingUnfiltered } = useStorageBySku(
     weekStart,
     weekEnd,
-    {
-      limit: 200, // Backend max limit is 200
-    }
+    { limit: 200 }
   )
 
   // Fetch filtered storage data — Story 24.10: uses effective week range
@@ -107,65 +105,24 @@ export function useStoragePageState() {
     return fillMissingWeeks(trendsData.data, weekStart, weekEnd)
   }, [trendsData?.data, weekStart, weekEnd])
 
-  // Sync state to URL params - Story 24.9-FE AC3, Story 24.10-FE
-  const updateUrlParams = useCallback(
-    (
-      newWeekStart: string,
-      newWeekEnd: string,
-      newBrands: string[],
-      newWarehouses: string[],
-      newSelectedWeek: string | null
-    ) => {
-      const params = new URLSearchParams()
-      params.set('weekStart', newWeekStart)
-      params.set('weekEnd', newWeekEnd)
-      if (newBrands.length > 0) {
-        params.set('brands', newBrands.join(','))
-      }
-      if (newWarehouses.length > 0) {
-        params.set('warehouses', newWarehouses.join(','))
-      }
-      // Story 24.10: Add selected week to URL
-      if (newSelectedWeek) {
-        params.set('week', newSelectedWeek)
-      }
-      router.replace(`?${params.toString()}`, { scroll: false })
-    },
-    [router]
-  )
-
-  // Update URL when filters change
-  useEffect(() => {
-    updateUrlParams(weekStart, weekEnd, selectedBrands, selectedWarehouses, selectedWeek)
-  }, [weekStart, weekEnd, selectedBrands, selectedWarehouses, selectedWeek, updateUrlParams])
+  // URL sync (extracted for max-lines compliance)
+  useStorageUrlSync(weekStart, weekEnd, selectedBrands, selectedWarehouses, selectedWeek)
 
   // Handle filter changes
   const handleWeekRangeChange = (start: string, end: string) => {
     setWeekStart(start)
     setWeekEnd(end)
-    // Story 24.10 AC4: Clear week filter when week range changes
-    setSelectedWeek(null)
-    // Note: brand/warehouse reset happens in StorageFilters component
+    setSelectedWeek(null) // Story 24.10 AC4: Clear week filter when week range changes
   }
 
   // Story 24.10: Handle week click in trends chart
   const handleWeekClick = (week: string) => {
-    // Toggle selection: click same week to deselect (AC4)
-    setSelectedWeek(prev => (prev === week ? null : week))
+    setSelectedWeek(prev => (prev === week ? null : week)) // Toggle (AC4)
   }
 
-  // Story 24.10: Clear week filter
-  const handleClearWeekFilter = () => {
-    setSelectedWeek(null)
-  }
-
-  const handleBrandsChange = (brands: string[]) => {
-    setSelectedBrands(brands)
-  }
-
-  const handleWarehousesChange = (warehouses: string[]) => {
-    setSelectedWarehouses(warehouses)
-  }
+  const handleClearWeekFilter = () => setSelectedWeek(null)
+  const handleBrandsChange = (brands: string[]) => setSelectedBrands(brands)
+  const handleWarehousesChange = (warehouses: string[]) => setSelectedWarehouses(warehouses)
 
   return {
     weekStart,

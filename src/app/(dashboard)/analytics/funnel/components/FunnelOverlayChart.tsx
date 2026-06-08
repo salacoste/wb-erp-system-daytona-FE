@@ -3,7 +3,6 @@
 /**
  * Funnel Overlay Chart — Story 73.8-FE
  * Recharts ComposedChart with dual Y-axes: funnel counts (left) + ad spend (right).
- * Ad spend renders as dashed purple line when data provided.
  */
 
 import { useState, useEffect, useMemo } from 'react'
@@ -18,11 +17,8 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import {
-  OVERLAY_SERIES,
   OVERLAY_COLORS,
   formatOverlayDate,
   formatCompactRub,
@@ -31,6 +27,8 @@ import {
   type MergedChartDay,
 } from './funnel-overlay-config'
 import { OverlayTooltip, ChartLegend } from './FunnelOverlayTooltip'
+import { FunnelChartAlert } from './FunnelOverlayAlerts'
+import { OVERLAY_SERIES } from './funnel-overlay-config'
 
 interface FunnelOverlayChartProps {
   data: MergedChartDay[]
@@ -38,7 +36,6 @@ interface FunnelOverlayChartProps {
   isError?: boolean
   showAdOverlay: boolean
   isAdLoading?: boolean
-  /** REQ-191: when false, WB has no daily breakdown — show "unavailable" notice */
   dailyGranularityAvailable?: boolean
 }
 
@@ -82,34 +79,16 @@ export function FunnelOverlayChart({
 
   const activeSeries = OVERLAY_SERIES.filter(s => s.key !== 'adSpend' || showAdOverlay)
 
-  if (isLoading) return <Skeleton className="h-64 w-full" />
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Не удалось загрузить график</AlertDescription>
-      </Alert>
-    )
-  }
-  if (!dailyGranularityAvailable) {
-    return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Посуточная разбивка воронки недоступна — WB API возвращает агрегат за период, а не данные
-          по дням. Итоговые метрики воронки доступны в таблице и карточках ниже.
-        </AlertDescription>
-      </Alert>
-    )
-  }
-  if (data.length === 0) {
-    return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Нет данных для графика за выбранный период</AlertDescription>
-      </Alert>
-    )
-  }
+  // Alert/loading states (extracted for max-lines compliance)
+  const alert = (
+    <FunnelChartAlert
+      isLoading={isLoading}
+      isError={isError}
+      dailyGranularityAvailable={dailyGranularityAvailable}
+      dataLength={data.length}
+    />
+  )
+  if (alert) return alert
 
   return (
     <Card>

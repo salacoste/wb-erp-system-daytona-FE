@@ -9,11 +9,12 @@
 
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { FboOrdersTable } from './FboOrdersTable'
 import { FboSalesTable } from './FboSalesTable'
 import { FboSyncControls } from './FboSyncControls'
 import { FboAggregateCards } from './FboAggregateCards'
+import { FboSalesAggregateCards } from './FboSalesAggregateCards'
 import { useOrdersFbo, useOrdersFboAggregate } from '@/hooks/useOrdersFbo'
 import { useSalesFbo, useSalesFboAggregate as useSalesAgg } from '@/hooks/useSalesFbo'
 
@@ -147,47 +148,6 @@ export function FboOrdersPageContent() {
           />
         </TabsContent>
       </Tabs>
-    </div>
-  )
-}
-
-// --- Sales Aggregate Cards (small enough to stay here) ---
-
-function FboSalesAggregateCards({
-  data,
-}: {
-  data: { count: number; totalForPay: number; returnRate: number | null; returnsCount: number }
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-muted-foreground">Продажи</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">{data.count}</CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-muted-foreground">К выплате</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">
-          {data.totalForPay.toLocaleString('ru-RU')} ₽
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-muted-foreground">Возвраты</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">{data.returnsCount}</CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-muted-foreground">% возвратов</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">
-          {data.returnRate != null ? `${data.returnRate} %` : '—'}
-        </CardContent>
-      </Card>
     </div>
   )
 }
