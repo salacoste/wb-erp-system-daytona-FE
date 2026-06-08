@@ -4,6 +4,12 @@
  * Epic 42-FE: Task Handlers Adaptation
  *
  * Enqueues weekly_sanity_check task and polls for completion.
+ *
+ * @internal Currently orphaned — no page-level consumer. Candidate for
+ *   wiring into the `/monitoring` page (add a "Run sanity check" button
+ *   in RecoveryPanel) or a future settings sub-page. The hook is fully
+ *   functional with enqueue + polling + toast feedback.
+ *
  * @see docs/stories/epic-42/story-42.2-fe-sanity-check-hook.md
  */
 

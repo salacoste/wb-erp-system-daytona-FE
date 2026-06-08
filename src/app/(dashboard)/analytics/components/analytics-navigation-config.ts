@@ -19,8 +19,17 @@ import {
   Brain,
   Tag,
   Layers,
+  Boxes,
+  FileCheck,
+  ArrowLeftRight,
+  Truck,
+  Bell,
+  FileWarning,
+  Target,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
+
+const RA = ROUTES.ANALYTICS
 
 export interface NavigationItem {
   href: string
@@ -34,7 +43,6 @@ export interface NavigationItem {
   badge?: string
 }
 
-/** Helper to reduce repetition in navigation item definitions */
 function nav(
   href: string,
   icon: NavigationItem['icon'],
@@ -61,76 +69,55 @@ export const analyticsNavigation = {
     title: 'Финансовый анализ',
     description: 'Доходы, расходы и маржинальность',
     items: [
-      nav(ROUTES.ANALYTICS.SKU, Package, 'По товарам', 'Прибыль и маржа каждого SKU', 'blue'),
-      nav(ROUTES.ANALYTICS.BRAND, Tags, 'По брендам', 'Эффективность брендов', 'emerald'),
-      nav(ROUTES.ANALYTICS.CATEGORY, BarChart3, 'По категориям', 'Сравнение категорий', 'violet'),
-      nav(ROUTES.ANALYTICS.TIME_PERIOD, Calendar, 'По времени', 'Динамика по неделям', 'amber'),
+      nav(RA.SKU, Package, 'По товарам', 'Прибыль и маржа каждого SKU', 'blue'),
+      nav(RA.BRAND, Tags, 'По брендам', 'Эффективность брендов', 'emerald'),
+      nav(RA.CATEGORY, BarChart3, 'По категориям', 'Сравнение категорий', 'violet'),
+      nav(RA.TIME_PERIOD, Calendar, 'По времени', 'Динамика по неделям', 'amber'),
+      nav(
+        RA.BUYOUT_RECONCILIATION,
+        FileCheck,
+        'Сверка выкупов',
+        'Реконсиляция выкупов и заказов',
+        'sky'
+      ),
     ],
   },
   operational: {
     title: 'Операционная аналитика',
     description: 'Склад, поставки и затраты',
     items: [
-      nav(ROUTES.ANALYTICS.STORAGE, Warehouse, 'Хранение', 'Затраты на хранение по SKU', 'slate'),
+      nav(RA.STORAGE, Warehouse, 'Хранение', 'Затраты на хранение по SKU', 'slate'),
+      nav(RA.SUPPLY_PLANNING, PackageSearch, 'Планирование', 'Прогноз стокаутов', 'rose', 'Важно'),
       nav(
-        ROUTES.ANALYTICS.SUPPLY_PLANNING,
-        PackageSearch,
-        'Планирование',
-        'Прогноз стокаутов',
-        'rose',
-        'Важно'
-      ),
-      nav(
-        ROUTES.ANALYTICS.ORDERS,
+        RA.ORDERS,
         ClipboardList,
         'Заказы FBS',
         'Анализ заказов FBS за 365 дней',
         'orange',
         'Новое'
       ),
+      nav(RA.FBS_STOCK, Boxes, 'Остатки FBS', 'Остатки на складах FBS', 'slate'),
+      nav(
+        RA.FBS_ENHANCED,
+        ArrowLeftRight,
+        'Расширенная сверка FBS',
+        'Улучшенная реконсилия FBS',
+        'blue'
+      ),
+      nav(RA.REORDER, Truck, 'Дозаказ', 'Рекомендации по дозаказу', 'amber'),
     ],
   },
   marketing: {
     title: 'Маркетинг и SEO',
     description: 'Воронка, реклама, поиск и аналитика',
     items: [
+      nav(RA.FUNNEL, Filter, 'Воронка продаж', 'Просмотры → корзина → заказы → выкупы', 'cyan'),
+      nav(RA.ADVERTISING, Megaphone, 'Реклама', 'Кампании, ROAS и эффективность', 'amber'),
+      nav(RA.SEARCH, Search, 'Поисковая аналитика', 'Поисковые запросы, позиции и заказы', 'sky'),
+      nav(RA.BUYOUT, ShoppingBag, 'Аналитика выкупов', 'Процент выкупа и тренды по SKU', 'teal'),
+      nav(RA.RETURNS, RotateCcw, 'Аналитика возвратов', 'Причины возвратов и аномалии', 'pink'),
       nav(
-        ROUTES.ANALYTICS.FUNNEL,
-        Filter,
-        'Воронка продаж',
-        'Просмотры → корзина → заказы → выкупы',
-        'cyan'
-      ),
-      nav(
-        ROUTES.ANALYTICS.ADVERTISING,
-        Megaphone,
-        'Реклама',
-        'Кампании, ROAS и эффективность',
-        'amber'
-      ),
-      nav(
-        ROUTES.ANALYTICS.SEARCH,
-        Search,
-        'Поисковая аналитика',
-        'Поисковые запросы, позиции и заказы',
-        'sky'
-      ),
-      nav(
-        ROUTES.ANALYTICS.BUYOUT,
-        ShoppingBag,
-        'Аналитика выкупов',
-        'Процент выкупа и тренды по SKU',
-        'teal'
-      ),
-      nav(
-        ROUTES.ANALYTICS.RETURNS,
-        RotateCcw,
-        'Аналитика возвратов',
-        'Причины возвратов и аномалии',
-        'pink'
-      ),
-      nav(
-        ROUTES.ANALYTICS.CROSS_REFERENCE,
+        RA.CROSS_REFERENCE,
         Layers,
         'Кросс-анализ',
         'Поиск + реклама: пересечение и ROI',
@@ -142,27 +129,17 @@ export const analyticsNavigation = {
     title: 'Стратегический анализ',
     description: 'Юнит-экономика и AI прогнозы',
     items: [
+      nav(RA.UNIT_ECONOMICS, Calculator, 'Юнит-экономика', 'Структура затрат на единицу', 'indigo'),
+      nav(RA.FORECAST, Brain, 'AI Прогноз', 'Прогноз продаж на основе ML', 'purple', 'ML'),
+      nav(RA.PRICING, Tag, 'Рекомендации по ценам', 'Цены для целевой маржинальности', 'emerald'),
+      nav(RA.ALERTS, Bell, 'Оповещения', 'Управление оповещениями и уведомлениями', 'red'),
+      nav(RA.GAPS, FileWarning, 'Пропуски данных', 'Качество и полнота данных', 'yellow'),
       nav(
-        ROUTES.ANALYTICS.UNIT_ECONOMICS,
-        Calculator,
-        'Юнит-экономика',
-        'Структура затрат на единицу',
-        'indigo'
-      ),
-      nav(
-        ROUTES.ANALYTICS.FORECAST,
-        Brain,
-        'AI Прогноз',
-        'Прогноз продаж на основе ML',
-        'purple',
-        'ML'
-      ),
-      nav(
-        ROUTES.ANALYTICS.PRICING,
-        Tag,
-        'Рекомендации по ценам',
-        'Цены для целевой маржинальности',
-        'emerald'
+        RA.FORECAST_ACCURACY,
+        Target,
+        'Точность прогнозов',
+        'Метрики точности ML-моделей',
+        'purple'
       ),
     ],
   },

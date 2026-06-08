@@ -7,6 +7,15 @@
  * for comparison indicators in MetricCardEnhanced components.
  * Supports both weekly and monthly periods with proper data aggregation.
  *
+ * @deprecated Superseded by `useDashboardData` (in
+ *   `src/app/(dashboard)/dashboard/components/useDashboardData.ts`), which
+ *   orchestrates finance-summary, fulfillment, and advertising hooks with
+ *   richer data. No page-level consumer exists for this hook — it can be
+ *   removed once the utils file's fetch functions are confirmed unused.
+ *
+ * @internal Utility consumed by zero pages; retained for backward-compat
+ *   re-exports only.
+ *
  * @see docs/stories/epic-60/story-60.4-fe-connect-dashboard-period.md
  */
 

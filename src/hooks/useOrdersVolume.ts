@@ -5,6 +5,14 @@
  *
  * Hooks for fetching orders volume data with period conversion.
  *
+ * @deprecated This hook has zero page-level consumers. Orders/volume API
+ *   lacks COGS, gross_profit, and margin_pct fields (see MEMORY.md
+ *   "COGS по заказам = 0"). New pages should use `orders/trends` which
+ *   provides richer per-day data. Retained until a migration story removes
+ *   the underlying API client module.
+ *
+ * @internal No pages consume this hook; kept for backward-compat test fixtures.
+ *
  * @see docs/stories/epic-61/story-61.3-fe-orders-volume-api.md
  */
 

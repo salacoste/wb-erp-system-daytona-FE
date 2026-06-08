@@ -4,6 +4,11 @@
  * Hook to fetch storage summary for a date range
  * Extracted from useStorageAnalytics.ts for Story 74.4 (file size compliance)
  * Request #52: For joining with weekly_payout_summary
+ *
+ * @internal Utility hook re-exported via `useStorageAnalytics` barrel.
+ *   Not consumed directly by pages — use `useStorageAnalytics` imports
+ *   for backward-compat access. Part of the storage analytics hook chain
+ *   (query-keys → individual hooks → barrel).
  */
 
 import { useQuery } from '@tanstack/react-query'

@@ -216,6 +216,7 @@ vi.mock('@/components/custom/dashboard', () => ({
   PeriodComparisonSection: () => null,
   OrdersSeasonalPatterns: () => null,
   FulfillmentShareBar: () => null,
+  HistoricalTrendsSection: () => null,
 }))
 
 // =============================================================================

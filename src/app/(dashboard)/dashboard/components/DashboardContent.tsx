@@ -12,6 +12,7 @@ import {
   PeriodComparisonSection,
   OrdersSeasonalPatterns,
   FulfillmentShareBar,
+  HistoricalTrendsSection,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { ReportPendingBanner } from './ReportPendingBanner'
@@ -19,6 +20,7 @@ import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { ExpenseChart } from '@/components/custom/ExpenseChart'
 import { TrendGraph } from '@/components/custom/TrendGraph'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
+import { WidgetSettingsSheet } from '@/components/custom/dashboard/WidgetSettingsSheet'
 import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
 import { ProcessingAlert, FailedAlert, ErrorAlert, DataGapsAlert } from './DashboardAlerts'
@@ -47,7 +49,10 @@ export function DashboardContent(): React.ReactElement {
             lastRefresh={d.lastRefresh}
           />
         </div>
-        <DashboardPeriodSelector />
+        <div className="flex items-center gap-2">
+          <DashboardPeriodSelector />
+          <WidgetSettingsSheet />
+        </div>
       </div>
 
       <IncompleteWeekBanner period={d.selectedPeriod} periodType={d.periodType} />
@@ -133,6 +138,7 @@ export function DashboardContent(): React.ReactElement {
       )}
       <OrdersSeasonalPatterns />
       <TrendGraph />
+      <HistoricalTrendsSection currentWeek={d.selectedWeek} />
       <InitialDataSummary
         cogsCoverage={d.cogsCoverage}
         totalProducts={d.totalProducts ?? 0}
