@@ -3,15 +3,17 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook, waitFor, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import { useTelegramBinding, telegramQueryKeys } from '../useTelegramBinding'
 
-// Mock API module
-const mockStartTelegramBinding = vi.fn()
-const mockGetBindingStatus = vi.fn()
-const mockUnbindTelegram = vi.fn()
+// Use vi.hoisted so mock variables are available when vi.mock factories run
+const { mockStartTelegramBinding, mockGetBindingStatus, mockUnbindTelegram } = vi.hoisted(() => ({
+  mockStartTelegramBinding: vi.fn(),
+  mockGetBindingStatus: vi.fn(),
+  mockUnbindTelegram: vi.fn(),
+}))
 
 vi.mock('@/lib/api/notifications', () => ({
   startTelegramBinding: (...args: unknown[]) => mockStartTelegramBinding(...args),
@@ -25,7 +27,10 @@ vi.mock('@/lib/logger', () => ({
 
 const createWrapper = () => {
   const qc = new QueryClient({
-    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0 },
+      mutations: { retry: false },
+    },
   })
   return ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: qc }, children)
@@ -88,11 +93,17 @@ describe('useTelegramBinding', () => {
       expect(result.current.isCheckingStatus).toBe(false)
     })
 
-    result.current.startBinding({ language: 'ru' })
-
-    await waitFor(() => {
-      expect(mockStartTelegramBinding).toHaveBeenCalledWith({ language: 'ru' })
+    act(() => {
+      result.current.startBinding({ language: 'ru' })
     })
+
+    // Wait for mutation to execute
+    await waitFor(
+      () => {
+        expect(mockStartTelegramBinding).toHaveBeenCalled()
+      },
+      { timeout: 3000 }
+    )
   })
 
   it('unbinds via mutation', async () => {

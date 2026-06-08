@@ -55,17 +55,17 @@ describe('ProductRowBadge', () => {
     expect(icon).toBeInTheDocument()
   })
 
-  it('renders badge with default variant for main product (spend > 0)', () => {
+  it('renders badge element for main product (spend > 0)', () => {
     render(<ProductRowBadge item={makeItem({ imtId: 328632, spend: 500 })} />)
-    // Badge text shows main product info
-    const badge = screen.getByText(/Главный товар/).closest('[data-slot="badge"]')
-    expect(badge).toBeInTheDocument()
+    // Badge text shows main product info with imtId
+    const badgeText = screen.getByText(/Главный товар в склейке №328632/)
+    expect(badgeText).toBeInTheDocument()
   })
 
-  it('renders badge with secondary variant for child product (spend = 0)', () => {
+  it('renders badge element for child product (spend = 0)', () => {
     render(<ProductRowBadge item={makeItem({ imtId: 328632, spend: 0 })} />)
-    const badge = screen.getByText(/Дочерний товар/).closest('[data-slot="badge"]')
-    expect(badge).toBeInTheDocument()
+    const badgeText = screen.getByText(/Дочерний товар склейки №328632/)
+    expect(badgeText).toBeInTheDocument()
   })
 
   it('accepts onShowMergedGroup callback prop without crashing', () => {

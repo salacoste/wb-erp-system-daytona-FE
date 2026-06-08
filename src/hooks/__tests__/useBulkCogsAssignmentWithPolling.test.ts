@@ -9,7 +9,8 @@ import React from 'react'
 import { useBulkCogsAssignmentWithPolling } from '../useBulkCogsAssignmentWithPolling'
 
 // Mock all dependencies
-const mockMutate = vi.fn()
+const mockMutate = vi.hoisted(() => vi.fn())
+
 vi.mock('../useBulkCogsAssignment', () => ({
   useBulkCogsAssignment: vi.fn().mockReturnValue({
     mutate: mockMutate,
