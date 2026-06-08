@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo } from 'react'
 import { useUnitEconomics } from '@/hooks/useUnitEconomics'
 import { useFcuBySku } from '@/hooks/use-fcu-aggregation'
 import type { UnitEconomicsQueryParams, UnitEconomicsViewBy } from '@/types/unit-economics'
+import type { ExtendedProfitabilityStatus } from '@/lib/profitability-utils'
 import { WEEK_OPTIONS } from './unit-economics-config'
 import { exportUnitEconomicsCsv } from './unit-economics-csv-export'
 import {
@@ -32,6 +33,7 @@ export function useUnitEconomicsPageState() {
   const [sortBy, setSortBy] = useState<UeTableSortField>('revenue')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [selectedSku, setSelectedSku] = useState<string | undefined>(undefined)
+  const [selectedStatuses, setSelectedStatuses] = useState<ExtendedProfitabilityStatus[]>([])
 
   // Build query params — only pass server-side sort fields to backend
   const serverSortBy = sortBy === 'delivery_to_warehouse' ? 'revenue' : sortBy
@@ -116,13 +118,28 @@ export function useUnitEconomicsPageState() {
     exportUnitEconomicsCsv(data, selectedWeek)
   }, [data, selectedWeek])
 
+  // Profitability status filter (mirrors dashboard UnitEconomicsSection pattern)
+  const handleFilterChange = useCallback((statuses: ExtendedProfitabilityStatus[]) => {
+    setSelectedStatuses(statuses)
+  }, [])
+
+  const filteredData = useMemo(() => {
+    if (!data) return data
+    if (selectedStatuses.length === 0) return data
+    const filtered = data.data.filter(i =>
+      selectedStatuses.some(f => (f === 'unknown' ? !i.has_cogs : i.profitability_status === f))
+    )
+    return { ...data, data: filtered }
+  }, [data, selectedStatuses])
+
   return {
     selectedWeek,
     viewBy,
     sortBy,
     sortOrder,
     selectedSku,
-    data,
+    selectedStatuses,
+    data: filteredData,
     avgDeliveryCost,
     deliverySkuCount,
     deliveryCoverageRatio,
@@ -134,6 +151,7 @@ export function useUnitEconomicsPageState() {
     handleRefresh,
     handleSort,
     handleExportCSV,
+    handleFilterChange,
     setSelectedSku,
   }
 }

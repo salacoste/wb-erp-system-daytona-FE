@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react'
+import Link from 'next/link'
 import {
   Table,
   TableBody,
@@ -18,6 +19,7 @@ import type { SearchProductItem } from '@/types/search-analytics'
 import { SortButton } from './SortButton'
 import { formatDecimal } from '@/lib/utils'
 import { formatPercentage } from '@/lib/formatters'
+import { buildProductAnalyticsRoute } from '@/lib/route-helpers'
 
 interface SearchByQueryTableProps {
   products: SearchProductItem[]
@@ -141,7 +143,12 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
           {sorted.map((item, i) => (
             <TableRow key={`${item.nmId}-${i}`}>
               <TableCell className="font-medium">
-                <div>{item.nmId}</div>
+                <Link
+                  href={buildProductAnalyticsRoute(String(item.nmId))}
+                  className="text-primary hover:underline"
+                >
+                  {item.nmId}
+                </Link>
                 {item.vendorCode && (
                   <div className="text-xs text-muted-foreground">{item.vendorCode}</div>
                 )}

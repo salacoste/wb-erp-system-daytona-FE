@@ -7,6 +7,7 @@ import { TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/tab
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { ArrowRight } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
+import { buildProductAnalyticsRoute } from '@/lib/route-helpers'
 import { formatPercentage } from '@/lib/utils'
 import type { BySkuBuyoutItem } from '@/types/analytics-buyout'
 import type { ProductInfo } from '@/hooks/use-all-products-map'
@@ -80,7 +81,14 @@ export function BuyoutTableRow({ item, product, searchPosition }: BuyoutTableRow
 
   return (
     <TableRow>
-      <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
+      <TableCell className="font-mono text-xs">
+        <Link
+          href={buildProductAnalyticsRoute(String(item.nmId))}
+          className="text-primary hover:underline"
+        >
+          {item.nmId}
+        </Link>
+      </TableCell>
       <TableCell className="text-sm font-medium">
         {item.supplierArticle || product?.vendorCode || '—'}
       </TableCell>

@@ -17,6 +17,7 @@ import { ShoppingCart, AlertCircle } from 'lucide-react'
 import type { SearchOrdersSummary } from '@/types/search-analytics'
 import { SearchOrdersTable } from './SearchOrdersTable'
 import { SearchShareCard } from './SearchShareCard'
+import { calculateSearchDelta, formatDelta, getDeltaColor } from './search-comparison-utils'
 
 // F-6 (Request #176 / Story 111.6 AC8): a >100% search-order share is EXPECTED —
 // WB attributes one order to several search queries (an interaction rate, "by
@@ -30,6 +31,9 @@ const INFLATED_SHARE_MESSAGE =
 interface SearchOrdersOverviewProps {
   from: string
   to: string
+  compareEnabled?: boolean
+  compareFrom?: string
+  compareTo?: string
 }
 
 function formatNumber(n: number | undefined | null): string {
@@ -51,8 +55,19 @@ function formatPercent(n: number | undefined | null): string {
   }).format(n / 100)
 }
 
-export function SearchOrdersOverview({ from, to }: SearchOrdersOverviewProps) {
+export function SearchOrdersOverview({
+  from,
+  to,
+  compareEnabled,
+  compareFrom,
+  compareTo,
+}: SearchOrdersOverviewProps) {
   const { data, isLoading, isError } = useSearchOrders(from, to, { groupBy: 'query' })
+  const { data: compareData } = useSearchOrders(
+    compareEnabled && compareFrom && compareTo ? compareFrom : '',
+    compareEnabled && compareFrom && compareTo ? compareTo : '',
+    { groupBy: 'query' }
+  )
 
   if (isLoading) {
     return (
@@ -92,16 +107,29 @@ export function SearchOrdersOverview({ from, to }: SearchOrdersOverviewProps) {
 
   return (
     <div className="space-y-4">
-      {summary && <SummaryCards summary={summary} />}
+      {summary && (
+        <SummaryCards
+          summary={summary}
+          compareSummary={compareEnabled ? compareData?.summary : undefined}
+        />
+      )}
       <SearchOrdersTable items={items} />
     </div>
   )
 }
 
-function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
-  // 2 cards since Story 91.1-FE removed the revenue card; grid-cols-2 avoids an empty 3rd column.
-  // Story 111.8-FE: the share card now needs deduplicated-vs-raw branching + subtext, which the
-  // old generic cards.map couldn't express — rendered explicitly via SearchShareCard instead.
+function SummaryCards({
+  summary,
+  compareSummary,
+}: {
+  summary: SearchOrdersSummary
+  compareSummary?: SearchOrdersSummary
+}) {
+  const ordersDelta = calculateSearchDelta(
+    summary.totalSearchOrders,
+    compareSummary?.totalSearchOrders ?? null
+  )
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <Card>
@@ -112,6 +140,11 @@ function SummaryCards({ summary }: { summary: SearchOrdersSummary }) {
           <div>
             <p className="text-sm text-muted-foreground">Поисковые заказы</p>
             <p className="text-2xl font-bold">{formatNumber(summary.totalSearchOrders)}</p>
+            {ordersDelta && (
+              <p className={`text-xs font-medium ${getDeltaColor(ordersDelta.direction)}`}>
+                {formatDelta(ordersDelta)}
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

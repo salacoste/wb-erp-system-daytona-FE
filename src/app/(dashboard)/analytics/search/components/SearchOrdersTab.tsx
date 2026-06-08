@@ -23,13 +23,28 @@ import { TopKeywordsByOrdersCard } from './TopKeywordsByOrdersCard'
 interface SearchOrdersTabProps {
   from: string
   to: string
+  compareEnabled?: boolean
+  compareFrom?: string
+  compareTo?: string
 }
 
-export function SearchOrdersTab({ from, to }: SearchOrdersTabProps) {
+export function SearchOrdersTab({
+  from,
+  to,
+  compareEnabled,
+  compareFrom,
+  compareTo,
+}: SearchOrdersTabProps) {
   return (
     <div className="space-y-4 pt-4">
       <SearchOrdersChart from={from} to={to} />
-      <SearchOrdersOverview from={from} to={to} />
+      <SearchOrdersOverview
+        from={from}
+        to={to}
+        compareEnabled={compareEnabled}
+        compareFrom={compareFrom}
+        compareTo={compareTo}
+      />
       <TopKeywordsByOrdersCard from={from} to={to} />
     </div>
   )

@@ -4,6 +4,7 @@ import { RefreshCw, AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ApiError } from '@/types/api'
+import { ProfitabilityFilter } from '@/components/custom/dashboard'
 import { UnitEconomicsHeader } from './components/UnitEconomicsHeader'
 import { UnitEconomicsSummaryCards } from './components/UnitEconomicsSummaryCards'
 import { UnitEconomicsTable } from './components/UnitEconomicsTable'
@@ -27,6 +28,7 @@ export default function UnitEconomicsPage() {
     sortBy,
     sortOrder,
     selectedSku,
+    selectedStatuses,
     data,
     avgDeliveryCost,
     deliverySkuCount,
@@ -38,6 +40,7 @@ export default function UnitEconomicsPage() {
     handleRefresh,
     handleSort,
     handleExportCSV,
+    handleFilterChange,
     setSelectedSku,
   } = useUnitEconomicsPageState()
 
@@ -107,6 +110,12 @@ export default function UnitEconomicsPage() {
         summary={data.summary}
         avgDeliveryCost={avgDeliveryCost}
         deliverySkuCount={deliverySkuCount}
+      />
+
+      {/* Profitability status filter (mirrors dashboard UnitEconomicsSection) */}
+      <ProfitabilityFilter
+        selectedStatuses={selectedStatuses}
+        onFilterChange={handleFilterChange}
       />
 
       {/* Waterfall Chart (Story 5.3); backend-driven order via meta.cost_category_order (Story 96.3-FE) */}

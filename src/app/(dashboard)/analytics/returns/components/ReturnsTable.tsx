@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
+import { buildProductAnalyticsRoute } from '@/lib/route-helpers'
 import { cn } from '@/lib/utils'
 import { ReturnRateCell, useProductsMap } from './ReturnsTableHelpers'
 
@@ -114,7 +115,14 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
                   <TableCell>
                     {item.anomalyFlag && <AlertTriangle className="h-4 w-4 text-red-500" />}
                   </TableCell>
-                  <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    <Link
+                      href={buildProductAnalyticsRoute(String(item.nmId))}
+                      className="text-primary hover:underline"
+                    >
+                      {item.nmId}
+                    </Link>
+                  </TableCell>
                   <TableCell className="text-sm max-w-48 truncate" title={product?.saName}>
                     {product?.saName || item.productName || '—'}
                   </TableCell>
