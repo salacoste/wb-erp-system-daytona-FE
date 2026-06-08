@@ -198,6 +198,9 @@
 |------|-------|---------|--------|------------|
 | (commit) | Expenses CRUD Page | 1 | DONE | `/settings/expenses` |
 | (commit) | Alerts Enhancements | 1 | DONE | `/analytics/alerts` |
+| (commit) | Seller Rating on Cabinet | 1 | DONE | `/settings/cabinet` |
+| (commit) | Financial Gaps Remediation | 1 | DONE | `/analytics/gaps` |
+| (commit) | Orders Integrity & Reconciliation | 1 | DONE | `/orders/integrity` |
 
 ### Active
 
@@ -267,6 +270,7 @@ Source: `src/lib/routes.ts`
 | `/analytics/alerts` | Alert rules & notification history | 121-FE |
 | `/analytics/pricing` | Price recommendations | 121-FE |
 | `/analytics/reorder` | Warehouse reorder dashboard | 121-FE |
+| `/analytics/gaps` | Financial gaps detection & remediation | (commit) |
 | `/analytics/forecast` | AI Sales Forecast | 103-FE |
 | `/analytics/models` | AI Model Management | 109-FE |
 | `/analytics/models/[id]` | AI Model Detail | 109-FE |
@@ -282,6 +286,7 @@ Source: `src/lib/routes.ts`
 | Route | Purpose | Epic |
 |-------|---------|------|
 | `/orders/list` | FBS orders list | 40-FE |
+| `/orders/integrity` | Data integrity & reconciliation | (commit) |
 | `/supplies` | Supply list | 53-FE |
 | `/supplies/:id` | Supply detail | 53-FE |
 | `/shipments` | Shipment list | 76-FE |
