@@ -1,13 +1,6 @@
 /**
- * SKU Financials Types
- * Epic 31: Complete Per-SKU Financial Analytics
- * Reference: frontend/docs/request-backend/64-per-sku-margin-missing-expenses-backend-response.md
- *
- * Key design decisions:
- * - Storage from paid_storage_daily (Epic 24), NOT wb_finance_raw
- * - Commission/acquiring are visibility fields only (already in net_for_pay)
- * - Request #68: other_adjustments distributed proportionally to SKUs by revenue
- * - Operating profit = grossProfit - logistics - storage - penalties - paidAcceptance - otherAdjustments
+ * SKU Financials Core Types — query, profitability, response interfaces
+ * Split from sku-financials.ts for file size compliance
  */
 
 // ============================================================
@@ -177,43 +170,4 @@ export interface SkuFinancialsResponse {
   meta: SkuFinancialsMeta
   data: SkuFinancialItem[]
   pagination: SkuFinancialsPagination
-}
-
-// ============================================================
-// HELPER FUNCTIONS
-// ============================================================
-
-/**
- * Get CSS classes for profitability status badge
- */
-export function getProfitabilityBadgeClass(status: ProfitabilityStatus): string {
-  return PROFITABILITY_COLORS[status]
-}
-
-/**
- * Get hex color for profitability status
- */
-export function getProfitabilityHex(status: ProfitabilityStatus): string {
-  return PROFITABILITY_HEX[status]
-}
-
-/**
- * Get Russian label for profitability status
- */
-export function getProfitabilityLabel(status: ProfitabilityStatus): string {
-  return PROFITABILITY_LABELS[status]
-}
-
-/**
- * Calculate total operating expenses
- * Request #68: Now includes otherAdjustments
- */
-export function getTotalOperatingExpenses(costs: SkuFinancialCosts): number {
-  return (
-    costs.logistics +
-    costs.storage +
-    costs.penalties +
-    costs.paidAcceptance +
-    costs.otherAdjustments
-  )
 }
