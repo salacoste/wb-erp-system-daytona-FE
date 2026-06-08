@@ -3,28 +3,24 @@
 // Epic 34-FE: Story 34.2-FE
 // ============================================================================
 
-'use client';
+'use client'
 
-import { useState } from 'react';
-import {
-  Card,
-  CardHeader,
-  CardContent,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { useTelegramBinding } from '@/hooks/useTelegramBinding';
-import { TelegramBindingModal } from './TelegramBindingModal';
-import { UnbindConfirmationDialog } from './UnbindConfirmationDialog';
+import { useState } from 'react'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTelegramBinding } from '@/hooks/useTelegramBinding'
+import { TelegramBindingModal } from './TelegramBindingModal'
+import { UnbindConfirmationDialog } from './UnbindConfirmationDialog'
+import { CheckCircle } from 'lucide-react'
 
 // ============================================================================
 // Component Props
 // ============================================================================
 
 interface TelegramBindingCardProps {
-  onBindingComplete?: () => void;
-  onUnbindComplete?: () => void;
+  onBindingComplete?: () => void
+  onUnbindComplete?: () => void
 }
 
 // ============================================================================
@@ -48,23 +44,23 @@ export function TelegramBindingCard({
   // State
   // ============================================================================
 
-  const { status, isBound, isCheckingStatus } = useTelegramBinding();
-  const [bindingModalOpen, setBindingModalOpen] = useState(false);
-  const [unbindDialogOpen, setUnbindDialogOpen] = useState(false);
+  const { status, isBound, isCheckingStatus } = useTelegramBinding()
+  const [bindingModalOpen, setBindingModalOpen] = useState(false)
+  const [unbindDialogOpen, setUnbindDialogOpen] = useState(false)
 
   // ============================================================================
   // Handlers
   // ============================================================================
 
   const handleBindingSuccess = () => {
-    setBindingModalOpen(false);
-    onBindingComplete?.();
-  };
+    setBindingModalOpen(false)
+    onBindingComplete?.()
+  }
 
   const handleUnbindSuccess = () => {
-    setUnbindDialogOpen(false);
-    onUnbindComplete?.();
-  };
+    setUnbindDialogOpen(false)
+    onUnbindComplete?.()
+  }
 
   // ============================================================================
   // Render
@@ -112,25 +108,18 @@ export function TelegramBindingCard({
             </>
           )}
 
-          {/* Bound State */}
+          {/* Bound State (Story 34.7-FE) */}
           {!isCheckingStatus && isBound && status && (
             <>
               <div className="flex items-center gap-3">
-                <span className="text-xl" role="img" aria-label="Уведомления">
-                  🔔
-                </span>
-                <Badge
-                  variant="default"
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                >
-                  Подключен
-                </Badge>
+                <CheckCircle className="h-6 w-6 text-green-500" aria-label="Подключен" />
+                <span className="text-lg font-semibold text-gray-900">Telegram подключен</span>
               </div>
 
-              {status.telegram_username && (
-                <p className="text-sm text-muted-foreground">
-                  @{status.telegram_username}
-                </p>
+              {status.telegram_username ? (
+                <p className="text-sm text-muted-foreground">@{status.telegram_username}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground">@Kernel_crypto_bot</p>
               )}
 
               <Button
@@ -139,7 +128,7 @@ export function TelegramBindingCard({
                 className="w-full sm:w-auto"
                 aria-label="Отключить Telegram"
               >
-                Отключить Telegram
+                Отключить
               </Button>
             </>
           )}
@@ -160,5 +149,5 @@ export function TelegramBindingCard({
         onConfirm={handleUnbindSuccess}
       />
     </>
-  );
+  )
 }

@@ -1,77 +1,81 @@
 'use client'
 
 // ============================================================================
-// Hero Banner for unbound Telegram state
-// Extracted from notifications/page.tsx (Epic 34-FE: Story 34.5-FE)
+// Hero Banner for unbound Telegram state (Story 34.7-FE)
+// Engaging empty state to increase binding conversion from ~20% to ~48%
 // ============================================================================
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Bell, Check, Clock, MessageSquare } from 'lucide-react'
+import { Rocket, Check, Smartphone } from 'lucide-react'
 
 interface NotificationsHeroBannerProps {
   onConnect: () => void
 }
 
-const features = [
-  {
-    icon: Check,
-    title: 'Мгновенные уведомления о задачах',
-    description: 'Получайте уведомления о завершении, сбоях и задержках задач в реальном времени',
-  },
-  {
-    icon: Clock,
-    title: 'Тихие часы',
-    description: 'Настройте время, когда уведомления не будут вас беспокоить',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Ежедневная сводка',
-    description: 'Получайте сводку всех событий за день в удобное время',
-  },
+/** Three benefit bullets displayed in the hero banner */
+const benefits = [
+  'Мгновенные уведомления о критических изменениях',
+  'Аналитика по телефону — без входа в систему',
+  'Бесплатно, никаких подписок',
 ] as const
 
 /**
- * Empty State Hero Banner (Q19) - Only shown when NOT bound
+ * Empty State Hero Banner (Q19) - Only shown when NOT bound.
+ * Gradient background, rocket icon, benefit bullets, large CTA.
  */
 export function NotificationsHeroBanner({ onConnect }: NotificationsHeroBannerProps) {
   return (
-    <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-3">
-          <Bell className="h-7 w-7 text-[#0088CC]" />
-          Подключите Telegram для мгновенных уведомлений
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Feature List */}
-        <div className="space-y-3">
-          {features.map(({ icon: Icon, title, description }) => (
-            <div key={title} className="flex items-start gap-3">
-              <Icon className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-gray-900">{title}</p>
-                <p className="text-sm text-gray-600">{description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="relative overflow-hidden rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 p-6 sm:p-8">
+      {/* Decorative blur circles */}
+      <div
+        className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none"
+        aria-hidden="true"
+      />
 
-        {/* CTA Button */}
-        <div className="pt-2">
-          <p className="text-sm text-gray-600 mb-4">
-            Начните получать уведомления прямо сейчас — подключение занимает меньше минуты
-          </p>
-          <Button
-            onClick={onConnect}
-            size="lg"
-            className="bg-[#0088CC] hover:bg-[#0077B3] text-white"
-          >
-            <Bell className="h-5 w-5 mr-2" />
-            Подключить Telegram
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Rocket Icon */}
+      <div className="relative mb-4 flex justify-center">
+        <Rocket className="h-10 w-10 sm:h-12 sm:w-12 text-white" aria-label="Ракета" />
+      </div>
+
+      {/* Heading */}
+      <h3 className="relative mb-3 text-center text-xl sm:text-2xl font-bold text-white">
+        Получайте уведомления в Telegram
+      </h3>
+
+      {/* Description */}
+      <p className="relative mb-6 text-center text-sm sm:text-base text-white/90">
+        Мгновенные push-уведомления о состоянии импортов, синхронизаций и ошибках прямо в Telegram.
+      </p>
+
+      {/* Benefits List */}
+      <ul className="relative mb-8 space-y-3">
+        {benefits.map(text => (
+          <li key={text} className="flex items-start gap-3">
+            <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-300" aria-label="Галочка" />
+            <span className="text-sm sm:text-base text-white font-medium">{text}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA Button */}
+      <div className="relative flex justify-center">
+        <Button
+          onClick={onConnect}
+          size="lg"
+          className="w-full sm:w-auto bg-[#E53935] hover:bg-[#D32F2F] text-white font-semibold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200 focus-visible:ring-2 focus-visible:ring-white/80"
+          aria-label="Подключить Telegram"
+        >
+          <Smartphone className="h-5 w-5 mr-2" aria-hidden="true" />
+          Подключить Telegram
+        </Button>
+      </div>
+
+      {/* Bot info */}
+      <p className="relative mt-4 text-center text-xs text-white/60">Бот: @Kernel_crypto_bot</p>
+    </div>
   )
 }
