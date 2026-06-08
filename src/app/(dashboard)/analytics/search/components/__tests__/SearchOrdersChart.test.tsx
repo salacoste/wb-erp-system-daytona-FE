@@ -91,7 +91,7 @@ describe('SearchOrdersChart', () => {
         period: { from: '2026-03-01', to: '2026-03-31' },
         groupBy: 'day',
         items: [],
-        summary: {},
+        summary: { totalSearchOrders: 0, searchOrderShare: null },
       } as SearchOrdersResponse,
       isLoading: false,
       isError: false,

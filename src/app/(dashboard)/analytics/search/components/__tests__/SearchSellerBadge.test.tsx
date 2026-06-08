@@ -3,11 +3,6 @@ import { render, screen } from '@/test/utils/test-utils'
 import { SearchSellerBadge, resolveSellerDisplayName } from '../SearchSellerBadge'
 import type { SellerInfoResponse } from '@/types/cabinet'
 
-/** Minimal auth-store shape consumed by SearchSellerBadge's selector */
-interface AuthStoreSlice {
-  cabinetId: string | null
-}
-
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: vi.fn(),
 }))
@@ -21,6 +16,12 @@ import { useSellerInfo } from '@/hooks/useSellerInfo'
 
 const mockUseAuthStore = vi.mocked(useAuthStore)
 const mockUseSellerInfo = vi.mocked(useSellerInfo)
+
+/** Minimal store slice used by the selector in SearchSellerBadge */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Zustand selector mock needs wide type
+function mockAuthSelector(cabinetId: string | null) {
+  return (selector: (state: any) => unknown) => selector({ cabinetId })
+}
 
 describe('resolveSellerDisplayName', () => {
   it('returns empty string when seller is undefined (loading)', () => {
@@ -64,9 +65,7 @@ describe('SearchSellerBadge', () => {
   })
 
   it('renders nothing when no cabinetId', () => {
-    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
-      selector({ cabinetId: null })
-    )
+    mockUseAuthStore.mockImplementation(mockAuthSelector(null))
     mockUseSellerInfo.mockReturnValue({ data: undefined } as unknown as ReturnType<
       typeof useSellerInfo
     >)
@@ -75,9 +74,7 @@ describe('SearchSellerBadge', () => {
   })
 
   it('renders skeleton while loading', () => {
-    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
-      selector({ cabinetId: 'cab-1' })
-    )
+    mockUseAuthStore.mockImplementation(mockAuthSelector('cab-1'))
     mockUseSellerInfo.mockReturnValue({ data: undefined } as unknown as ReturnType<
       typeof useSellerInfo
     >)
@@ -86,9 +83,7 @@ describe('SearchSellerBadge', () => {
   })
 
   it('renders seller name when available', () => {
-    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
-      selector({ cabinetId: 'cab-1' })
-    )
+    mockUseAuthStore.mockImplementation(mockAuthSelector('cab-1'))
     mockUseSellerInfo.mockReturnValue({
       data: { name: 'Test Seller', sid: '123', tradeMark: 'Brand', available: true },
     } as unknown as ReturnType<typeof useSellerInfo>)
@@ -97,9 +92,7 @@ describe('SearchSellerBadge', () => {
   })
 
   it('renders warning icon when seller unavailable', () => {
-    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
-      selector({ cabinetId: 'cab-1' })
-    )
+    mockUseAuthStore.mockImplementation(mockAuthSelector('cab-1'))
     mockUseSellerInfo.mockReturnValue({
       data: {
         name: 'Test',
