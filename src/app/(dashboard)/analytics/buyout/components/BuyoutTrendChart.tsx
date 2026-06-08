@@ -1,12 +1,14 @@
 'use client'
 
 /**
- * Buyout Trend Chart — LineChart showing buyout rate over time.
- * Uses funnel time-series data (groupBy=day) which provides buyoutConversion per day.
- * Follows DailyTrendChart / FunnelOverlayChart patterns from the codebase.
+ * Buyout Trend Chart — Multi-series line chart showing daily buyout metrics.
+ *
+ * Consumes GET /v1/analytics/buyout/daily via useBuyoutDailyTrends hook.
+ * Dual Y-axis: buyout/return rate (left, %) + orders count (right).
+ * Follows DailyTrendChart pattern from advertising analytics.
  */
 
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
   LineChart,
   Line,
@@ -18,10 +20,22 @@ import {
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 import { formatPercentage } from '@/lib/formatters'
-import type { FunnelDayItem } from '@/types/analytics-funnel'
+import { BuyoutDailyTrendTooltip } from './BuyoutDailyTrendTooltip'
+import {
+  BUYOUT_TREND_COLORS,
+  BUYOUT_TREND_SERIES,
+  DEFAULT_BUYOUT_VISIBLE,
+  formatDailyDate,
+  formatCompactCount,
+  type BuyoutTrendMetricKey,
+} from './buyout-daily-trend-config'
+import { useBuyoutDailyTrends } from '@/hooks/use-buyout-daily'
 
-// -- Config --
+// ============================================================================
+// Line Config
+// ============================================================================
 
 const LINE_CONFIG = {
   type: 'monotone' as const,
@@ -32,63 +46,30 @@ const LINE_CONFIG = {
   animationEasing: 'ease-in-out' as const,
 }
 
-const CHART_COLOR = '#22C55E'
-
-/** Format date as DD.MM for x-axis labels */
-function formatDailyDate(date: string): string {
-  const d = new Date(date)
-  const day = d.getDate().toString().padStart(2, '0')
-  const month = (d.getMonth() + 1).toString().padStart(2, '0')
-  return `${day}.${month}`
-}
-
-/** Format full Russian date for tooltip */
-function formatTooltipDate(date: string): string {
-  const d = new Date(date)
-  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
-// -- Tooltip --
-
-interface TooltipPayloadEntry {
-  value: number
-  dataKey: string
-  color: string
-}
-
-function TrendTooltip({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean
-  payload?: TooltipPayloadEntry[]
-  label?: string
-}) {
-  if (!active || !payload?.length || !label) return null
-  return (
-    <div className="rounded-lg border bg-background px-3 py-2 shadow-md">
-      <p className="mb-1 text-sm text-muted-foreground">{formatTooltipDate(label)}</p>
-      <p className="text-sm font-semibold" style={{ color: CHART_COLOR }}>
-        Выкуп: {formatPercentage(payload[0].value)}
-      </p>
-    </div>
-  )
-}
-
-// -- Component --
+// ============================================================================
+// Component
+// ============================================================================
 
 interface BuyoutTrendChartProps {
-  data: FunnelDayItem[]
-  isLoading: boolean
+  from: string
+  to: string
   className?: string
 }
 
-export function BuyoutTrendChart({ data, isLoading, className }: BuyoutTrendChartProps) {
+export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps) {
+  const [visibleSeries, setVisibleSeries] = useState<string[]>([...DEFAULT_BUYOUT_VISIBLE])
+  const { data, isLoading } = useBuyoutDailyTrends(from, to)
+
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
+
+  const toggleSeries = (key: string) => {
+    setVisibleSeries(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]))
+  }
+
+  const daily = data?.daily ?? []
 
   if (isLoading) {
     return (
@@ -103,7 +84,7 @@ export function BuyoutTrendChart({ data, isLoading, className }: BuyoutTrendChar
     )
   }
 
-  if (!data || data.length === 0) {
+  if (daily.length === 0) {
     return (
       <Card className={className}>
         <CardHeader className="pb-2">
@@ -122,21 +103,39 @@ export function BuyoutTrendChart({ data, isLoading, className }: BuyoutTrendChar
         <CardTitle className="text-lg font-semibold">Динамика выкупа</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Legend */}
-        <div className="mb-4 flex items-center gap-2" role="group" aria-label="Легенда графика">
-          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: CHART_COLOR }} />
-          <span className="text-sm text-muted-foreground">Процент выкупа</span>
+        {/* Legend toggles */}
+        <div className="mb-4 flex flex-wrap gap-3" role="group" aria-label="Переключатели метрик">
+          {BUYOUT_TREND_SERIES.map(series => {
+            const isVisible = visibleSeries.includes(series.key)
+            return (
+              <button
+                key={series.key}
+                onClick={() => toggleSeries(series.key)}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-opacity',
+                  isVisible ? 'opacity-100' : 'opacity-40'
+                )}
+                aria-pressed={isVisible}
+                aria-label={`${isVisible ? 'Скрыть' : 'Показать'} ${series.label}`}
+              >
+                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: series.color }} />
+                <span>{series.label}</span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Chart */}
         <div
           role="img"
-          aria-label="Линейный график динамики процента выкупа по дням"
+          aria-label="График ежедневной динамики выкупа"
           className="h-60 w-full md:h-70 lg:h-80"
         >
-          <p className="sr-only">Линейный график показывает процент выкупа за {data.length} дней</p>
+          <p className="sr-only">
+            Линейный график показывает {visibleSeries.length} метрик за {daily.length} дней
+          </p>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
+            <LineChart data={daily} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
               <XAxis
                 dataKey="date"
@@ -146,25 +145,44 @@ export function BuyoutTrendChart({ data, isLoading, className }: BuyoutTrendChar
                 tickLine={{ stroke: '#EEEEEE' }}
               />
               <YAxis
+                yAxisId="left"
                 tickFormatter={(v: number) => formatPercentage(v)}
                 tick={{ fontSize: 12, fill: '#757575' }}
                 axisLine={{ stroke: '#EEEEEE' }}
                 tickLine={false}
                 width={55}
                 domain={['auto', 'auto']}
+                label={{
+                  value: '%',
+                  angle: -90,
+                  position: 'insideLeft',
+                  style: { fontSize: 11, fill: '#757575' },
+                }}
               />
-              <Tooltip content={<TrendTooltip />} />
-              <Line
-                type={LINE_CONFIG.type}
-                dataKey="buyoutConversion"
-                stroke={CHART_COLOR}
-                strokeWidth={LINE_CONFIG.strokeWidth}
-                dot={LINE_CONFIG.dot}
-                activeDot={LINE_CONFIG.activeDot}
-                animationDuration={prefersReducedMotion ? 0 : LINE_CONFIG.animationDuration}
-                animationEasing={LINE_CONFIG.animationEasing}
-                name="Процент выкупа"
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickFormatter={formatCompactCount}
+                tick={{ fontSize: 12, fill: '#757575' }}
+                axisLine={{ stroke: '#EEEEEE' }}
+                tickLine={false}
+                width={55}
               />
+              <Tooltip content={<BuyoutDailyTrendTooltip visibleSeries={visibleSeries} />} />
+              {BUYOUT_TREND_SERIES.filter(s => visibleSeries.includes(s.key)).map(series => (
+                <Line
+                  key={series.key}
+                  yAxisId={series.axis}
+                  type={LINE_CONFIG.type}
+                  dataKey={series.key}
+                  stroke={BUYOUT_TREND_COLORS[series.key as BuyoutTrendMetricKey]}
+                  strokeWidth={LINE_CONFIG.strokeWidth}
+                  dot={LINE_CONFIG.dot}
+                  activeDot={LINE_CONFIG.activeDot}
+                  animationDuration={prefersReducedMotion ? 0 : LINE_CONFIG.animationDuration}
+                  animationEasing={LINE_CONFIG.animationEasing}
+                />
+              ))}
             </LineChart>
           </ResponsiveContainer>
         </div>

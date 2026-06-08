@@ -11,10 +11,8 @@ import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
 import { useFulfillmentSummary } from '@/hooks/useFulfillment'
-import { useFunnelTimeSeries } from '@/hooks/use-funnel-analytics'
 import type { DateRange } from '@/types/date-range'
 import type { BuyoutSource } from '@/types/analytics-buyout'
-import type { FunnelDayItem } from '@/types/analytics-funnel'
 import type { ComparisonPreset } from '@/components/custom/comparison-period/comparison-period-types'
 import {
   Select,
@@ -82,13 +80,6 @@ export function BuyoutPageContent() {
   const { data: fulfillmentData } = useFulfillmentSummary(apiFrom, apiTo)
   const returnBreakdown = fulfillmentData?.summary?.fbs?.returnBreakdown ?? null
 
-  // Funnel time-series for buyout trend chart (daily buyoutConversion)
-  const { data: funnelTs, isLoading: isTsLoading } = useFunnelTimeSeries(apiFrom, apiTo)
-  const trendData: FunnelDayItem[] = useMemo(
-    () => (funnelTs?.items ?? []) as FunnelDayItem[],
-    [funnelTs?.items]
-  )
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -144,8 +135,8 @@ export function BuyoutPageContent() {
         compareTo={comparePeriod?.prevTo ?? ''}
       />
 
-      {/* Buyout rate trend chart (funnel daily data) */}
-      <BuyoutTrendChart data={trendData} isLoading={isTsLoading} />
+      {/* Buyout rate trend chart (buyout daily API) */}
+      <BuyoutTrendChart from={apiFrom} to={apiTo} />
 
       {/* Per-SKU table */}
       <BuyoutTable from={apiFrom} to={apiTo} source={source} />

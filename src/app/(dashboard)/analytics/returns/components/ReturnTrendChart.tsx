@@ -1,28 +1,37 @@
 'use client'
 
 /**
- * ReturnTrendChart — daily return count time-series for Returns Analytics.
+ * ReturnTrendChart — daily return trend with stacked bars + return rate line.
  *
- * Single-axis LineChart: returnsCount per day over the selected period.
- * Consumes DailyMetrics[] (returnsCount field from finance daily data).
- * Follows recharts pattern from DailyTrendChart / ProductAdvTrendChart.
+ * Stacked bar chart: cancellations, refusals, defects (left Y-axis, counts).
+ * Line overlay: returnRate (right Y-axis, percentage).
+ * Consumes useReturnsDailyTrends from the returns-daily API.
  */
 
 import { useMemo } from 'react'
 import {
-  LineChart,
+  ComposedChart,
+  Bar,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatNumber } from '@/lib/utils'
-import { useDailyMetrics } from '@/hooks/useDailyMetrics'
-import type { DailyMetrics } from '@/types/daily-metrics'
+import { formatPercentage } from '@/lib/utils'
+import { useReturnsDailyTrends } from '@/hooks/use-returns-daily'
+import {
+  RETURNS_BAR_SERIES,
+  RETURNS_DAILY_COLORS,
+  formatReturnDate,
+  formatReturnCount,
+} from './returns-daily-trend-config'
+import { ReturnTrendTooltip, ReturnTrendLegend } from './ReturnTrendChartTooltip'
+import type { DailyReturnItem } from '@/types/returns-daily'
 
 // ============================================================================
 // Props
@@ -35,39 +44,19 @@ interface ReturnTrendChartProps {
 }
 
 // ============================================================================
-// Helpers
-// ============================================================================
-
-const RETURN_LINE_COLOR = '#E53935'
-
-function formatDay(dateStr: string): string {
-  const [, m, d] = dateStr.split('-')
-  return `${d}.${m}`
-}
-
-interface ChartPoint {
-  date: string
-  returnsCount: number
-}
-
-function toChartPoints(metrics: DailyMetrics[]): ChartPoint[] {
-  return metrics.map(m => ({
-    date: formatDay(m.date),
-    returnsCount: m.returnsCount,
-  }))
-}
-
-// ============================================================================
 // Component
 // ============================================================================
 
 export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps) {
-  const { data: dailyMetrics, isLoading } = useDailyMetrics(
-    { from: from ?? '', to: to ?? '', mode: 'month' },
-    { enabled: !!from && !!to }
-  )
+  const { data: response, isLoading } = useReturnsDailyTrends(from ?? '', to ?? '')
 
-  const chartData = useMemo(() => (dailyMetrics ? toChartPoints(dailyMetrics) : []), [dailyMetrics])
+  const chartData = useMemo(() => {
+    if (!response?.daily) return []
+    return response.daily.map((item: DailyReturnItem) => ({
+      ...item,
+      date: formatReturnDate(item.date),
+    }))
+  }, [response])
 
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
@@ -106,16 +95,18 @@ export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps)
         <CardTitle className="text-lg font-semibold">Возвраты по дням</CardTitle>
       </CardHeader>
       <CardContent>
+        <ReturnTrendLegend />
         <div
           role="img"
           aria-label={`График возвратов по дням: ${chartData.length} дней`}
           className="h-60 w-full md:h-70 lg:h-80"
         >
           <p className="sr-only">
-            Линейный график показывает количество возвратов за {chartData.length} дней
+            Комбинированный график показывает возвраты по категориям (столбцы) и долю возвратов
+            (линия) за {chartData.length} дней
           </p>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
+            <ComposedChart data={chartData} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
               <XAxis
                 dataKey="date"
@@ -124,28 +115,46 @@ export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps)
                 tickLine={{ stroke: '#EEEEEE' }}
               />
               <YAxis
+                yAxisId="left"
+                tickFormatter={formatReturnCount}
                 tick={{ fontSize: 12, fill: '#757575' }}
-                tickFormatter={(v: number) => formatNumber(v)}
                 axisLine={{ stroke: '#EEEEEE' }}
                 tickLine={false}
                 width={50}
               />
-              <Tooltip
-                formatter={(value: number) => [formatNumber(value), 'Возвраты']}
-                labelFormatter={(label: string) => `Дата: ${label}`}
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickFormatter={(v: number) => formatPercentage(v)}
+                tick={{ fontSize: 12, fill: '#757575' }}
+                axisLine={{ stroke: '#EEEEEE' }}
+                tickLine={false}
+                width={55}
               />
+              <Tooltip content={<ReturnTrendTooltip />} />
+              <Legend content={() => null} />
+              {RETURNS_BAR_SERIES.map(series => (
+                <Bar
+                  key={series.key}
+                  yAxisId="left"
+                  dataKey={series.key}
+                  stackId="returns"
+                  fill={series.color}
+                  animationDuration={prefersReducedMotion ? 0 : 300}
+                />
+              ))}
               <Line
+                yAxisId="right"
                 type="monotone"
-                dataKey="returnsCount"
-                stroke={RETURN_LINE_COLOR}
+                dataKey="returnRate"
+                stroke={RETURNS_DAILY_COLORS.returnRate}
                 strokeWidth={2}
                 dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
                 activeDot={{ r: 5, strokeWidth: 2 }}
-                name="Возвраты"
                 animationDuration={prefersReducedMotion ? 0 : 300}
                 animationEasing="ease-in-out"
               />
-            </LineChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
