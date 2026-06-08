@@ -8,9 +8,26 @@
  * - Renders summary widget and table
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
+
+// recharts needs matchMedia
+beforeAll(() => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  })
+})
 
 vi.mock('@/components/custom/DateRangePickerExtended', () => ({
   DateRangePickerExtended: ({ id }: { id: string }) => <div data-testid={id}>DateRangePicker</div>,
@@ -22,6 +39,10 @@ vi.mock('@/components/custom/ComparisonPeriodSelector', () => ({
 
 vi.mock('@/hooks/useFulfillment', () => ({
   useFulfillmentSummary: () => ({ data: null }),
+}))
+
+vi.mock('../components/BuyoutTrendChart', () => ({
+  BuyoutTrendChart: () => <div data-testid="buyout-trend-chart">TrendChart</div>,
 }))
 
 vi.mock('../components/BuyoutSummaryWidget', () => ({

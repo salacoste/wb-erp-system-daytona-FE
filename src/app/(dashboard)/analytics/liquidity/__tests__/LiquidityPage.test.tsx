@@ -73,6 +73,12 @@ vi.mock('../components/LiquidityLoading', () => ({
   LiquidityLoading: () => <div data-testid="liquidity-loading">Loading</div>,
 }))
 
+vi.mock('../components/LiquidityDistributionChart', () => ({
+  LiquidityDistributionChart: () => (
+    <div data-testid="liquidity-distribution-chart">Distribution Chart</div>
+  ),
+}))
+
 import LiquidityPage from '../page'
 
 describe('LiquidityPage', () => {
