@@ -32,6 +32,7 @@ vi.mock('@/hooks/useOrderNotificationSettings', () => ({
     isLoading: false,
     error: null,
     updateSettings: mockUpdateSettings,
+    updateSettingsAsync: vi.fn(),
     isUpdating: false,
     updateError: null,
   })),
@@ -46,6 +47,7 @@ function mockHook(overrides: Partial<ReturnType<typeof useOrderNotificationSetti
     isLoading: false,
     error: null,
     updateSettings: mockUpdateSettings,
+    updateSettingsAsync: vi.fn(),
     isUpdating: false,
     updateError: null,
   }

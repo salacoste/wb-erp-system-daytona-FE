@@ -1,5 +1,6 @@
 'use client'
 
+import { TokenHealthBanner } from '@/components/custom/dashboard/TokenHealthBanner'
 import { CabinetInfoCard } from '@/components/custom/settings/CabinetInfoCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuthStore } from '@/stores/authStore'
@@ -26,6 +27,7 @@ export default function CabinetSettingsPage() {
         </p>
       </div>
       <CabinetInfoCard cabinetId={cabinetId} />
+      <TokenHealthBanner />
     </div>
   )
 }

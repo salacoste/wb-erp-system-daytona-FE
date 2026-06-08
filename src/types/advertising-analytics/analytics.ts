@@ -87,6 +87,8 @@ export interface AdvertisingDailyItem {
   ctr?: number
   cpc?: number
   revenue_attributed?: number
+  /** Computed: revenue_attributed / spend (null when spend is 0 or data missing) */
+  roas?: number | null
 }
 
 export interface MultiCampaignSkuWarning {

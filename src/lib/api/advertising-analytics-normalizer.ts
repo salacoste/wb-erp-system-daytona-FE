@@ -117,15 +117,20 @@ function normalizeItem(item: unknown, index: number): AdvertisingItem {
 
 function normalizeDaily(day: unknown): AdvertisingDailyItem {
   const d = (day ?? {}) as Record<string, unknown>
+  const spend = toCount(d.spend)
+  const revenueAttributed = toNullableNumber(d.revenueAttributed)
+  // Compute ROAS: revenue_attributed / spend; null when spend is 0 or revenue missing
+  const roas = spend > 0 && revenueAttributed != null ? revenueAttributed / spend : null
   return {
     date: toStr(d.date),
-    spend: toCount(d.spend),
+    spend,
     views: toCount(d.views),
     clicks: toCount(d.clicks),
     orders: toCount(d.orders),
     ctr: toNullableNumber(d.ctr) ?? undefined,
     cpc: toNullableNumber(d.cpc) ?? undefined,
-    revenue_attributed: toNullableNumber(d.revenueAttributed) ?? undefined,
+    revenue_attributed: revenueAttributed ?? undefined,
+    roas,
   }
 }
 

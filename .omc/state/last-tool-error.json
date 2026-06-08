@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"npx vitest run src/components/custom/settings/__tests__/OrderNotificationSettings.test.tsx 2>&1\",\"timeout\":60000,\"description\":\"Run the OrderNotificationSettings test suite\"}",
-  "error": "Exit code 1\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n\n RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend\n\n[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`\n(node:9170) Warning: `--localstorage-file` was provided without a valid path\n(Use `n...",
-  "timestamp": "2026-06-08T11:54:39.543Z",
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/advertising-analytics.ts\",\"limit\":80}",
+  "error": "File does not exist. Note: your current working directory is /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend. Did you mean advertising-analytics?",
+  "timestamp": "2026-06-08T12:00:10.507Z",
   "retry_count": 1
 }

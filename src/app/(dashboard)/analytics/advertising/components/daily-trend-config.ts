@@ -14,6 +14,7 @@ export const DAILY_TREND_COLORS = {
   views: '#3B82F6', // Blue
   clicks: '#22C55E', // Green
   orders: '#E53935', // Primary Red
+  roas: '#F59E0B', // Amber
 } as const
 
 export type DailyTrendMetricKey = keyof typeof DAILY_TREND_COLORS
@@ -27,6 +28,7 @@ export const DAILY_TREND_LABELS: Record<DailyTrendMetricKey, string> = {
   views: 'Показы',
   clicks: 'Клики',
   orders: 'Заказы',
+  roas: 'ROAS',
 }
 
 // ============================================================================
@@ -53,6 +55,12 @@ export const DAILY_TREND_SERIES: DailyTrendSeries[] = [
     key: 'orders',
     label: DAILY_TREND_LABELS.orders,
     color: DAILY_TREND_COLORS.orders,
+    axis: 'right',
+  },
+  {
+    key: 'roas',
+    label: DAILY_TREND_LABELS.roas,
+    color: DAILY_TREND_COLORS.roas,
     axis: 'right',
   },
 ]

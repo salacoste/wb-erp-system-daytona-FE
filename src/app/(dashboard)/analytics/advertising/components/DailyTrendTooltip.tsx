@@ -51,8 +51,9 @@ export function DailyTrendTooltip({ active, payload, visibleSeries }: DailyTrend
       </p>
       <div className="space-y-1.5">
         {DAILY_TREND_SERIES.filter(s => visibleSeries.includes(s.key)).map(series => {
-          const value = dataPoint[series.key as keyof AdvertisingDailyItem] as number
+          const value = dataPoint[series.key as keyof AdvertisingDailyItem] as number | null
           const isCurrency = series.key === 'spend'
+          const isRoas = series.key === 'roas'
           return (
             <div key={series.key} className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2">
@@ -65,7 +66,13 @@ export function DailyTrendTooltip({ active, payload, visibleSeries }: DailyTrend
                 </span>
               </span>
               <span className="font-medium tabular-nums">
-                {isCurrency ? formatCurrency(value ?? 0) : (value ?? 0).toLocaleString('ru-RU')}
+                {isRoas
+                  ? value != null
+                    ? `${value.toFixed(2)}x`
+                    : '—'
+                  : isCurrency
+                    ? formatCurrency(value ?? 0)
+                    : (value ?? 0).toLocaleString('ru-RU')}
               </span>
             </div>
           )

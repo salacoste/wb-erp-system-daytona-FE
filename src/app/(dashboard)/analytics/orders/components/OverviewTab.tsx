@@ -16,6 +16,7 @@ import { AlertCircle, ShoppingCart, TrendingUp, DollarSign, XCircle } from 'luci
 import { useFbsTrends, calculateDaysDiff, getSmartAggregation } from '@/hooks/useFbsAnalytics'
 import { FbsTrendsChart } from '@/components/custom/analytics/FbsTrendsChart'
 import { formatNumber, formatPercentValue } from '@/lib/fbs-analytics-utils'
+import { OrdersCogsSummary } from './OrdersCogsSummary'
 
 interface OverviewTabProps {
   from: string
@@ -121,6 +122,9 @@ export function OverviewTab({ from, to }: OverviewTabProps) {
           isLoading={isLoading}
         />
       </div>
+
+      {/* COGS Summary Metrics */}
+      <OrdersCogsSummary from={from} to={to} />
 
       {/* Trends Chart */}
       <Card>
