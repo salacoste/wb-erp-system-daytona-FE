@@ -4,7 +4,7 @@
  * Alert rules list with enable/disable toggle and severity badges
  */
 
-import { BellOff, Trash2 } from 'lucide-react'
+import { BellOff, Trash2, Pencil } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
@@ -29,9 +29,10 @@ const severityLabels: Record<AlertSeverity, string> = {
 interface AlertRulesListProps {
   rules: AlertRule[] | undefined
   isLoading: boolean
+  onEdit?: (rule: AlertRule) => void
 }
 
-export function AlertRulesList({ rules, isLoading }: AlertRulesListProps) {
+export function AlertRulesList({ rules, isLoading, onEdit }: AlertRulesListProps) {
   const updateRule = useUpdateAlertRule()
   const deleteRule = useDeleteAlertRule()
 
@@ -76,6 +77,7 @@ export function AlertRulesList({ rules, isLoading }: AlertRulesListProps) {
             rule={rule}
             onToggle={enabled => updateRule.mutate({ id: rule.id, payload: { enabled } })}
             onDelete={() => deleteRule.mutate(rule.id)}
+            onEdit={() => onEdit?.(rule)}
             isToggling={updateRule.isPending}
             isDeleting={deleteRule.isPending}
           />
@@ -89,12 +91,14 @@ function RuleRow({
   rule,
   onToggle,
   onDelete,
+  onEdit,
   isToggling,
   isDeleting,
 }: {
   rule: AlertRule
   onToggle: (enabled: boolean) => void
   onDelete: () => void
+  onEdit: () => void
   isToggling: boolean
   isDeleting: boolean
 }) {
@@ -128,6 +132,14 @@ function RuleRow({
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground">{rule.cooldownMinutes} мин</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onEdit}
+          aria-label={`Редактировать правило ${rule.label ?? rule.alertType}`}
+        >
+          <Pencil className="h-4 w-4 text-muted-foreground" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"

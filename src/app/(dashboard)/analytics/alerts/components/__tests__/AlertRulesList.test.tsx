@@ -211,6 +211,33 @@ describe('AlertRulesList', () => {
     })
   })
 
+  describe('onEdit callback', () => {
+    it('calls onEdit with the rule when edit button is clicked', async () => {
+      const user = userEvent.setup()
+      const onEdit = vi.fn()
+      const rule = createRule({ id: 'rule-edit-1', label: 'Editable Rule' })
+
+      renderWithProviders(<AlertRulesList rules={[rule]} isLoading={false} onEdit={onEdit} />)
+
+      const editBtn = screen.getByRole('button', {
+        name: /редактировать правило/i,
+      })
+      await user.click(editBtn)
+
+      expect(onEdit).toHaveBeenCalledTimes(1)
+      expect(onEdit).toHaveBeenCalledWith(rule)
+    })
+
+    it('renders edit button with rule label in aria-label', () => {
+      const rule = createRule({ label: 'My Alert' })
+      renderWithProviders(<AlertRulesList rules={[rule]} isLoading={false} onEdit={vi.fn()} />)
+
+      expect(
+        screen.getByRole('button', { name: /редактировать правило my alert/i })
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('Mutations', () => {
     it('calls useUpdateAlertRule when toggle switch is clicked', async () => {
       const user = userEvent.setup()

@@ -12,11 +12,15 @@ import { AlertRulesList } from './components/AlertRulesList'
 import { AlertHistoryTable } from './components/AlertHistoryTable'
 import { AlertSummaryCards } from './components/AlertSummaryCards'
 import { CreateAlertRuleDialog } from './components/CreateAlertRuleDialog'
+import { EditAlertRuleDialog } from './components/EditAlertRuleDialog'
 import { useAlertsPageState } from './components/useAlertsPageState'
+import type { AlertRule } from '@/types/alerts'
 
 export default function AlertsPage() {
-  const { activeTab, setActiveTab, rules, history, summary } = useAlertsPageState()
+  const { activeTab, setActiveTab, historyParams, updateHistoryParams, rules, history, summary } =
+    useAlertsPageState()
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [editingRule, setEditingRule] = useState<AlertRule | null>(null)
 
   return (
     <div className="space-y-6">
@@ -37,15 +41,27 @@ export default function AlertsPage() {
         </TabsContent>
 
         <TabsContent value="rules" className="mt-6">
-          <AlertRulesList rules={rules.data} isLoading={rules.isLoading} />
+          <AlertRulesList rules={rules.data} isLoading={rules.isLoading} onEdit={setEditingRule} />
         </TabsContent>
 
         <TabsContent value="history" className="mt-6">
-          <AlertHistoryTable items={history.data} isLoading={history.isLoading} />
+          <AlertHistoryTable
+            items={history.data}
+            isLoading={history.isLoading}
+            historyParams={historyParams}
+            onFilterChange={updateHistoryParams}
+          />
         </TabsContent>
       </Tabs>
 
       <CreateAlertRuleDialog isOpen={createDialogOpen} onOpenChange={setCreateDialogOpen} />
+      <EditAlertRuleDialog
+        isOpen={editingRule !== null}
+        onOpenChange={open => {
+          if (!open) setEditingRule(null)
+        }}
+        rule={editingRule}
+      />
     </div>
   )
 }
