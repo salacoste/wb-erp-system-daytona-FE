@@ -64,6 +64,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Заказы', href: ROUTES.ORDERS.ROOT, icon: ShoppingCart },
   // Orders Integrity Dashboard
   { label: 'Целостность заказов', href: ROUTES.ORDERS.INTEGRITY, icon: ShieldCheck },
+  // FBO Orders & Sales
+  { label: 'FBO Заказы', href: ROUTES.ORDERS.FBO, icon: PackageSearch },
   { label: 'COGS Management', href: ROUTES.COGS.ROOT, icon: Package },
   // Epic 44: Price Calculator UI
   { label: 'Price Calculator', href: '/cogs/price-calculator', icon: DollarSign },

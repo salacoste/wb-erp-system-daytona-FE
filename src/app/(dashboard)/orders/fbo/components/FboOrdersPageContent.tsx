@@ -1,0 +1,193 @@
+/**
+ * FBO Orders Page Content — Client Component
+ *
+ * Main page with tabs (Orders / Sales), sync controls, and date filters.
+ * Russian locale for all labels.
+ */
+
+'use client'
+
+import { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FboOrdersTable } from './FboOrdersTable'
+import { FboSalesTable } from './FboSalesTable'
+import { FboSyncControls } from './FboSyncControls'
+import { FboAggregateCards } from './FboAggregateCards'
+import { useOrdersFbo, useOrdersFboAggregate } from '@/hooks/useOrdersFbo'
+import { useSalesFbo, useSalesFboAggregate as useSalesAgg } from '@/hooks/useSalesFbo'
+
+const DEFAULT_FROM = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10)
+const DEFAULT_TO = new Date().toISOString().slice(0, 10)
+const PAGE_SIZE = 20
+
+export function FboOrdersPageContent() {
+  const [tab, setTab] = useState<'orders' | 'sales'>('orders')
+  const [from, setFrom] = useState(DEFAULT_FROM)
+  const [to, setTo] = useState(DEFAULT_TO)
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+
+  const offset = (page - 1) * PAGE_SIZE
+  const listParams = {
+    from,
+    to,
+    nm_id: search ? parseInt(search, 10) : undefined,
+    limit: PAGE_SIZE,
+    offset,
+  }
+
+  // Orders queries
+  const ordersQuery = useOrdersFbo(listParams)
+  const ordersAggQuery = useOrdersFboAggregate({ from, to })
+
+  // Sales queries
+  const salesQuery = useSalesFbo(listParams)
+  const salesAggQuery = useSalesAgg({ from, to })
+
+  function handleFromChange(v: string) {
+    setFrom(v)
+    setPage(1)
+  }
+
+  function handleToChange(v: string) {
+    setTo(v)
+    setPage(1)
+  }
+
+  function handleSearch(v: string) {
+    setSearch(v)
+    setPage(1)
+  }
+
+  return (
+    <div className="space-y-6" data-testid="fbo-orders-page">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">FBO Заказы и продажи</h1>
+        <FboSyncControls />
+      </div>
+
+      {/* Date Filters */}
+      <Card>
+        <CardContent className="flex items-center gap-4 pt-6">
+          <label className="flex items-center gap-2 text-sm">
+            <span>С:</span>
+            <input
+              type="date"
+              value={from}
+              onChange={e => handleFromChange(e.target.value)}
+              className="rounded border px-2 py-1 text-sm"
+              data-testid="fbo-date-from"
+              aria-label="Дата начала"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <span>По:</span>
+            <input
+              type="date"
+              value={to}
+              onChange={e => handleToChange(e.target.value)}
+              className="rounded border px-2 py-1 text-sm"
+              data-testid="fbo-date-to"
+              aria-label="Дата окончания"
+            />
+          </label>
+          <input
+            type="text"
+            placeholder="Артикул (nmId)"
+            value={search}
+            onChange={e => handleSearch(e.target.value)}
+            className="max-w-[160px] rounded border px-2 py-1 text-sm"
+            data-testid="fbo-search"
+            aria-label="Поиск по артикулу"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Aggregate Stats */}
+      {tab === 'orders' && ordersAggQuery.data && (
+        <FboAggregateCards
+          count={ordersAggQuery.data.count}
+          totalPrice={ordersAggQuery.data.totalPrice}
+          totalFinishedPrice={ordersAggQuery.data.totalFinishedPrice}
+          cancelledCount={ordersAggQuery.data.cancelledCount}
+          cancelRate={ordersAggQuery.data.cancelRate}
+        />
+      )}
+      {tab === 'sales' && salesAggQuery.data && (
+        <FboSalesAggregateCards data={salesAggQuery.data} />
+      )}
+
+      {/* Tabs: Orders / Sales */}
+      <Tabs value={tab} onValueChange={v => setTab(v as 'orders' | 'sales')}>
+        <TabsList>
+          <TabsTrigger value="orders">Заказы</TabsTrigger>
+          <TabsTrigger value="sales">Продажи</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="orders">
+          <FboOrdersTable
+            orders={ordersQuery.data?.items ?? []}
+            isLoading={ordersQuery.isLoading && !ordersQuery.data}
+            page={page}
+            totalPages={Math.ceil((ordersQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
+            totalCount={ordersQuery.data?.pagination.total ?? 0}
+            onPageChange={setPage}
+          />
+        </TabsContent>
+
+        <TabsContent value="sales">
+          <FboSalesTable
+            sales={salesQuery.data?.items ?? []}
+            isLoading={salesQuery.isLoading && !salesQuery.data}
+            page={page}
+            totalPages={Math.ceil((salesQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
+            totalCount={salesQuery.data?.pagination.total ?? 0}
+            onPageChange={setPage}
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
+
+// --- Sales Aggregate Cards (small enough to stay here) ---
+
+function FboSalesAggregateCards({
+  data,
+}: {
+  data: { count: number; totalForPay: number; returnRate: number | null; returnsCount: number }
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-muted-foreground">Продажи</CardTitle>
+        </CardHeader>
+        <CardContent className="text-2xl font-bold">{data.count}</CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-muted-foreground">К выплате</CardTitle>
+        </CardHeader>
+        <CardContent className="text-2xl font-bold">
+          {data.totalForPay.toLocaleString('ru-RU')} ₽
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-muted-foreground">Возвраты</CardTitle>
+        </CardHeader>
+        <CardContent className="text-2xl font-bold">{data.returnsCount}</CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-muted-foreground">% возвратов</CardTitle>
+        </CardHeader>
+        <CardContent className="text-2xl font-bold">
+          {data.returnRate != null ? `${data.returnRate} %` : '—'}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
