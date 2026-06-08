@@ -7,7 +7,25 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
 
 // Mock the page state hook
-const mockState = {
+const mockState: {
+  items: unknown[]
+  hasBoxTypes: boolean
+  isLoading: boolean
+  isError: boolean
+  error: Error | null
+  refetch: ReturnType<typeof vi.fn>
+  isCreateOpen: boolean
+  setIsCreateOpen: ReturnType<typeof vi.fn>
+  isBulkOpen: boolean
+  setIsBulkOpen: ReturnType<typeof vi.fn>
+  editingItem: unknown
+  deletingItem: unknown
+  handleEdit: ReturnType<typeof vi.fn>
+  handleDelete: ReturnType<typeof vi.fn>
+  handleFormClose: ReturnType<typeof vi.fn>
+  handleDeleteClose: ReturnType<typeof vi.fn>
+  handleBulkClose: ReturnType<typeof vi.fn>
+} = {
   items: [],
   hasBoxTypes: false,
   isLoading: false,

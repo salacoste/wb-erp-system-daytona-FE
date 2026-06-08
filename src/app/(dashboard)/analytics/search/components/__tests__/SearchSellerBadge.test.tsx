@@ -3,6 +3,11 @@ import { render, screen } from '@/test/utils/test-utils'
 import { SearchSellerBadge, resolveSellerDisplayName } from '../SearchSellerBadge'
 import type { SellerInfoResponse } from '@/types/cabinet'
 
+/** Minimal auth-store shape consumed by SearchSellerBadge's selector */
+interface AuthStoreSlice {
+  cabinetId: string | null
+}
+
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: vi.fn(),
 }))
@@ -59,30 +64,42 @@ describe('SearchSellerBadge', () => {
   })
 
   it('renders nothing when no cabinetId', () => {
-    mockUseAuthStore.mockImplementation((selector: any) => selector({ cabinetId: null }))
-    mockUseSellerInfo.mockReturnValue({} as any)
+    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
+      selector({ cabinetId: null })
+    )
+    mockUseSellerInfo.mockReturnValue({ data: undefined } as unknown as ReturnType<
+      typeof useSellerInfo
+    >)
     const { container } = render(<SearchSellerBadge />)
     expect(container.innerHTML).toBe('')
   })
 
   it('renders skeleton while loading', () => {
-    mockUseAuthStore.mockImplementation((selector: any) => selector({ cabinetId: 'cab-1' }))
-    mockUseSellerInfo.mockReturnValue({ data: undefined } as any)
+    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
+      selector({ cabinetId: 'cab-1' })
+    )
+    mockUseSellerInfo.mockReturnValue({ data: undefined } as unknown as ReturnType<
+      typeof useSellerInfo
+    >)
     const { container } = render(<SearchSellerBadge />)
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument()
   })
 
   it('renders seller name when available', () => {
-    mockUseAuthStore.mockImplementation((selector: any) => selector({ cabinetId: 'cab-1' }))
+    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
+      selector({ cabinetId: 'cab-1' })
+    )
     mockUseSellerInfo.mockReturnValue({
       data: { name: 'Test Seller', sid: '123', tradeMark: 'Brand', available: true },
-    } as any)
+    } as unknown as ReturnType<typeof useSellerInfo>)
     render(<SearchSellerBadge />)
     expect(screen.getByText('Brand')).toBeInTheDocument()
   })
 
   it('renders warning icon when seller unavailable', () => {
-    mockUseAuthStore.mockImplementation((selector: any) => selector({ cabinetId: 'cab-1' }))
+    mockUseAuthStore.mockImplementation((selector: (s: AuthStoreSlice) => unknown) =>
+      selector({ cabinetId: 'cab-1' })
+    )
     mockUseSellerInfo.mockReturnValue({
       data: {
         name: 'Test',
@@ -91,7 +108,7 @@ describe('SearchSellerBadge', () => {
         available: false,
         reason: 'token_error',
       },
-    } as any)
+    } as unknown as ReturnType<typeof useSellerInfo>)
     render(<SearchSellerBadge />)
     expect(screen.getByText('Кабинет')).toBeInTheDocument()
     expect(screen.getByLabelText(/Предупреждение/)).toBeInTheDocument()

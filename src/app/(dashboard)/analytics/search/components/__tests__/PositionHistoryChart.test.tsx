@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { PositionHistoryChart } from '../PositionHistoryChart'
+import type { PositionHistoryPoint } from '@/types/search-position-trends'
 
 // Polyfill matchMedia for jsdom (used by prefers-reduced-motion check)
 beforeAll(() => {
@@ -38,7 +39,10 @@ const mockHistoryData = {
   days: 30,
 }
 
-let mockHookReturn = { data: null, isLoading: false }
+let mockHookReturn: {
+  data: { nmId: number; history: PositionHistoryPoint[]; days: number } | null
+  isLoading: boolean
+} = { data: null, isLoading: false }
 
 vi.mock('@/hooks/use-search-position-trends', () => ({
   usePositionHistory: () => mockHookReturn,

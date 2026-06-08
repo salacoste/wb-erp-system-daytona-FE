@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
 import { SearchOrdersChart, formatDayTick, toChartRows } from '../SearchOrdersChart'
-import type { SearchOrderItem } from '@/types/search-analytics'
+import type { SearchOrderItem, SearchOrdersResponse } from '@/types/search-analytics'
 
 vi.mock('@/hooks/use-search-analytics', () => ({
   useSearchOrders: vi.fn(),
@@ -87,7 +87,12 @@ describe('SearchOrdersChart', () => {
 
   it('shows empty message when no daily data', () => {
     mockUseSearchOrders.mockReturnValue({
-      data: { items: [], summary: {} } as any,
+      data: {
+        period: { from: '2026-03-01', to: '2026-03-31' },
+        groupBy: 'day',
+        items: [],
+        summary: {},
+      } as SearchOrdersResponse,
       isLoading: false,
       isError: false,
     } as ReturnType<typeof useSearchOrders>)
@@ -98,9 +103,11 @@ describe('SearchOrdersChart', () => {
   it('renders chart title', () => {
     mockUseSearchOrders.mockReturnValue({
       data: {
+        period: { from: '2026-03-01', to: '2026-03-31' },
+        groupBy: 'day',
         items: [{ key: '2026-03-15', totalOrders: 10 }],
         summary: {},
-      } as any,
+      } as SearchOrdersResponse,
       isLoading: false,
       isError: false,
     } as ReturnType<typeof useSearchOrders>)
