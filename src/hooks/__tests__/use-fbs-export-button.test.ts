@@ -91,7 +91,7 @@ beforeEach(() => {
   mockTriggerFbsExport.mockResolvedValue({ exportId: 'export-123', status: 'queued' })
 
   // Re-apply polling mock (cleared by clearAllMocks)
-  vi.mocked(useFbsExportPolling).mockReturnValue({ data: null, error: null })
+  vi.mocked(useFbsExportPolling).mockReturnValue(mockPollResult(null))
 
   // Document spies for triggerDownload — only mock createElement('a')
   const origCreateElement = document.createElement.bind(document)
