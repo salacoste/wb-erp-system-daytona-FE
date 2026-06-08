@@ -12,7 +12,9 @@ vi.mock('recharts', () => ({
   Area: ({ dataKey }: { dataKey: string }) => <div data-testid={`area-${dataKey}`} />,
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
-  Tooltip: () => <div data-testid="tooltip" />,
+  Tooltip: ({ content }: { content?: React.ReactNode }) => (
+    <div data-testid="tooltip">{content}</div>
+  ),
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
 }))
 

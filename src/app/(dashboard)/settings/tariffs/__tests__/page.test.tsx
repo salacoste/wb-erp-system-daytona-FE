@@ -26,6 +26,14 @@ vi.mock('next/navigation', () => ({
   }),
 }))
 
+// Mock tariffs-admin components to prevent real API calls
+vi.mock('@/components/custom/tariffs-admin', () => ({
+  RateLimitIndicator: () => <div data-testid="rate-limit-indicator">Rate Limit</div>,
+  VersionHistoryTable: () => <div data-testid="version-history">Version History</div>,
+  AuditLogTable: () => <div data-testid="audit-log">Audit Log</div>,
+  TariffSettingsForm: () => <div data-testid="tariff-form">Settings Form</div>,
+}))
+
 // Mock useAuth hook - extend interface for loading state handling
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(),

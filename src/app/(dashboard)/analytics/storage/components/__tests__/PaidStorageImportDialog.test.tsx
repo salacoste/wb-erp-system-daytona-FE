@@ -10,7 +10,7 @@ const mockSetDateTo = vi.fn()
 const mockHandleConfirmClose = vi.fn()
 const mockSetShowCloseConfirm = vi.fn()
 
-vi.mock('./useStorageImport', () => ({
+vi.mock('../useStorageImport', () => ({
   useStorageImport: () => ({
     dateFrom: '2026-03-01',
     dateTo: '2026-03-08',
@@ -29,7 +29,7 @@ vi.mock('./useStorageImport', () => ({
   }),
 }))
 
-vi.mock('./storage-import-utils', () => ({
+vi.mock('../storage-import-utils', () => ({
   formatDateDisplay: vi.fn((d: string) => d),
 }))
 
