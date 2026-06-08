@@ -2,7 +2,7 @@
 
 Documentation of requests from frontend team to backend team and backend team responses.
 
-**Last Updated**: 2026-05-15 | **Total Requests**: 130+ | **Active**: 0 | **Pending**: 0 | **Resolved**: 130+
+**Last Updated**: 2026-06-09 | **Total Requests**: 211 | **Active**: 0 | **Pending**: 0 | **Resolved**: 211
 
 ---
 
@@ -28,7 +28,14 @@ Documentation of requests from frontend team to backend team and backend team re
 
 None — all requests resolved.
 
-### Latest Resolved (2026-05-04 to 2026-05-06)
+### Latest Resolved (2026-06-09)
+
+| Request | Title | Status | Epic |
+|---------|-------|--------|------|
+| **#210** | **Buyout Analytics Daily Granularity** | **DELIVERED** | Story 127.1 |
+| **#211** | **Returns Analytics Daily Granularity** | **DELIVERED** | Story 127.2 |
+
+### Previously Resolved (2026-05-04 to 2026-05-06)
 
 | Request | Title | Status | Epic |
 |---------|-------|--------|------|
@@ -190,6 +197,7 @@ None — all requests resolved.
 | #45-#64 | [Shard 03](./README-SHARD-03-resolved-financial.md) | Financial metrics, WB Dashboard, Per-SKU |
 | #71-#90 | [Shard 01](./README-SHARD-01-recently-resolved-epics.md) | Epic 33-36, Telegram, SDK upgrade |
 | #93, #98-120 | [Shard 08](./README-SHARD-08-fbs-warehouses.md) + [Shard 09](./README-SHARD-09-margin-fixes.md) | FBS, Warehouses, Tariffs, Margin fixes |
+| #121-#211 | Individual files in this directory | Contract gaps, bug reports, daily trends (#210, #211) |
 
 ---
 
@@ -217,8 +225,8 @@ See [Shard 06](./README-SHARD-06-workflow-guides.md) for full workflow details.
 
 ## Recent Updates (2026-05-15)
 
-### Validation Sweep — All 169 Files Confirmed Resolved
-Full audit of all 169 files in `docs/request-backend/`. Results: 157 resolved, 6 reference docs, 6 guides. Zero pending items.
+### Validation Sweep — All 211 Files Confirmed Resolved
+Full audit of all files in `docs/request-backend/`. Results: 197 resolved, 7 reference docs, 7 guides. Zero pending items.
 
 - **#162**: FCU Aggregation Endpoint — confirmed RESOLVED (endpoint live at `GET /v1/shipment-cost/by-sku`)
 - **#163**: DBW Order Test Seeding — confirmed RESOLVED (Stories 87.1 + 103.2)
@@ -244,7 +252,7 @@ Full audit of all 169 files in `docs/request-backend/`. Results: 157 resolved, 6
 - **#113**: Margin empty state — **DOCUMENTED** (not a bug)
 
 ### All Open Requests Closed
-All 130+ frontend requests are now resolved. New requests → `docs/request-backend/` starting from **#170**.
+All 211 frontend requests are now resolved. New requests → `docs/request-backend/` starting from **#212**.
 
 ---
 
