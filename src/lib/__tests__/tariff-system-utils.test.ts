@@ -8,6 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
+import { format } from 'date-fns'
 import {
   determineTariffSystem,
   isDateInSupplyWindow,
@@ -15,6 +16,11 @@ import {
   getTariffSystemBadgeVariant,
 } from '../tariff-system-utils'
 import { DEFAULT_TARIFFS, SUPPLY_WINDOW_DAYS } from '../tariff-system-types'
+
+/** Format a Date as local YYYY-MM-DD (toISOString uses UTC, which breaks near midnight). */
+function toLocalDateStr(d: Date): string {
+  return format(d, 'yyyy-MM-dd')
+}
 
 // =============================================================================
 // Constants
@@ -54,29 +60,25 @@ describe('determineTariffSystem', () => {
   })
 
   it('returns "inventory" for today', () => {
-    const today = new Date().toISOString().split('T')[0]
-    expect(determineTariffSystem(today)).toBe('inventory')
+    expect(determineTariffSystem(toLocalDateStr(new Date()))).toBe('inventory')
   })
 
   it('returns "supply" for tomorrow', () => {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    const tomorrowStr = tomorrow.toISOString().split('T')[0]
-    expect(determineTariffSystem(tomorrowStr)).toBe('supply')
+    expect(determineTariffSystem(toLocalDateStr(tomorrow))).toBe('supply')
   })
 
   it('returns "supply" for date 14 days ahead', () => {
     const future = new Date()
     future.setDate(future.getDate() + 14)
-    const futureStr = future.toISOString().split('T')[0]
-    expect(determineTariffSystem(futureStr)).toBe('supply')
+    expect(determineTariffSystem(toLocalDateStr(future))).toBe('supply')
   })
 
   it('returns "inventory" for date beyond 14 days', () => {
     const farFuture = new Date()
     farFuture.setDate(farFuture.getDate() + 15)
-    const futureStr = farFuture.toISOString().split('T')[0]
-    expect(determineTariffSystem(futureStr)).toBe('inventory')
+    expect(determineTariffSystem(toLocalDateStr(farFuture))).toBe('inventory')
   })
 })
 
@@ -88,12 +90,11 @@ describe('isDateInSupplyWindow', () => {
   it('returns true for tomorrow', () => {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    expect(isDateInSupplyWindow(tomorrow.toISOString().split('T')[0])).toBe(true)
+    expect(isDateInSupplyWindow(toLocalDateStr(tomorrow))).toBe(true)
   })
 
   it('returns false for today', () => {
-    const today = new Date().toISOString().split('T')[0]
-    expect(isDateInSupplyWindow(today)).toBe(false)
+    expect(isDateInSupplyWindow(toLocalDateStr(new Date()))).toBe(false)
   })
 
   it('returns false for past date', () => {
@@ -103,13 +104,13 @@ describe('isDateInSupplyWindow', () => {
   it('returns true for date 14 days ahead', () => {
     const future = new Date()
     future.setDate(future.getDate() + 14)
-    expect(isDateInSupplyWindow(future.toISOString().split('T')[0])).toBe(true)
+    expect(isDateInSupplyWindow(toLocalDateStr(future))).toBe(true)
   })
 
   it('returns false for date 15 days ahead', () => {
     const future = new Date()
     future.setDate(future.getDate() + 15)
-    expect(isDateInSupplyWindow(future.toISOString().split('T')[0])).toBe(false)
+    expect(isDateInSupplyWindow(toLocalDateStr(future))).toBe(false)
   })
 })
 
