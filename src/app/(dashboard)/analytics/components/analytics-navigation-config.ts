@@ -18,6 +18,7 @@ import {
   Megaphone,
   Brain,
   Tag,
+  Layers,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -127,6 +128,13 @@ export const analyticsNavigation = {
         'Аналитика возвратов',
         'Причины возвратов и аномалии',
         'pink'
+      ),
+      nav(
+        ROUTES.ANALYTICS.CROSS_REFERENCE,
+        Layers,
+        'Кросс-анализ',
+        'Поиск + реклама: пересечение и ROI',
+        'violet'
       ),
     ],
   },

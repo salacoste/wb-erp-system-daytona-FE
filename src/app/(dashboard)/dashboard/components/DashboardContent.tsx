@@ -9,6 +9,7 @@ import {
   IncompleteWeekBanner,
   TaxWarningBanner,
   InventorySummaryWidget,
+  PeriodComparisonSection,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { ReportPendingBanner } from './ReportPendingBanner'
@@ -19,6 +20,8 @@ import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashb
 import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
 import { ProcessingAlert, FailedAlert, ErrorAlert, DataGapsAlert } from './DashboardAlerts'
+import { MissingCogsAlert } from '@/components/custom/MissingCogsAlert'
+import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
 import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
 
@@ -53,6 +56,10 @@ export function DashboardContent(): React.ReactElement {
       {d.error && !d.isProcessing && d.isFinanceAvailable && <ErrorAlert onRetry={d.handleRetry} />}
 
       <TaxWarningBanner taxConfigured={!!d.effectiveTaxMetrics} />
+
+      {!d.productsLoading && !d.cogsLoading && d.cogsCoverage < 100 && (
+        <MissingCogsAlert missingCount={(d.totalProducts ?? 0) - d.inventoryWithCogs} />
+      )}
 
       <DashboardMetricsGrid
         totalOrders={d.fSummary?.total.ordersCount}
@@ -95,6 +102,14 @@ export function DashboardContent(): React.ReactElement {
         onRetry={d.handleRetry}
         onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
       />
+      <CogsCoverageMetricCard
+        productsWithCogs={d.inventoryWithCogs}
+        totalProducts={d.totalProducts ?? 0}
+        coverage={d.cogsCoverage}
+        isLoading={d.productsLoading || d.cogsLoading}
+        onClick={() => router.push(ROUTES.COGS.ROOT)}
+      />
+      <PeriodComparisonSection currentWeek={d.selectedWeek} />
       <DailyBreakdownSection className="mt-4" />
       <InventorySummaryWidget />
       <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />

@@ -96,6 +96,13 @@ vi.mock('@/components/custom/DashboardPeriodSelector', () => ({
 }))
 vi.mock('@/components/custom/PeriodContextLabel', () => ({ PeriodContextLabel: () => null }))
 vi.mock('@/components/custom/InitialDataSummary', () => ({ InitialDataSummary: () => null }))
+vi.mock('@/components/custom/MissingCogsAlert', () => ({ MissingCogsAlert: () => null }))
+vi.mock('@/components/custom/CogsCoverageMetricCard', () => ({
+  CogsCoverageMetricCard: () => null,
+}))
+vi.mock('@/app/(dashboard)/analytics/components/MarketingKpiCard', () => ({
+  MarketingKpiCard: () => null,
+}))
 vi.mock('./ReportPendingBanner', () => ({ ReportPendingBanner: () => null }))
 vi.mock('@/components/custom/dashboard', () => ({
   DashboardMetricsGrid: () => null,
@@ -103,6 +110,7 @@ vi.mock('@/components/custom/dashboard', () => ({
   IncompleteWeekBanner: () => null,
   TaxWarningBanner: () => null,
   InventorySummaryWidget: () => null,
+  PeriodComparisonSection: () => null,
 }))
 // NOTE: DashboardAlerts is intentionally NOT mocked — we assert the real
 // ProcessingAlert is absent.

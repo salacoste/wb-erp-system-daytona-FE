@@ -179,6 +179,13 @@ vi.mock('@/components/custom/PeriodContextLabel', () => ({
 vi.mock('@/components/custom/InitialDataSummary', () => ({
   InitialDataSummary: () => <div data-testid="initial-data-summary">Initial Data Summary</div>,
 }))
+vi.mock('@/components/custom/MissingCogsAlert', () => ({ MissingCogsAlert: () => null }))
+vi.mock('@/components/custom/CogsCoverageMetricCard', () => ({
+  CogsCoverageMetricCard: () => null,
+}))
+vi.mock('@/app/(dashboard)/analytics/components/MarketingKpiCard', () => ({
+  MarketingKpiCard: () => null,
+}))
 
 vi.mock('./ReportPendingBanner', () => ({
   ReportPendingBanner: () => null,
@@ -200,6 +207,7 @@ vi.mock('@/components/custom/dashboard', () => ({
   IncompleteWeekBanner: () => null,
   TaxWarningBanner: () => null,
   InventorySummaryWidget: () => null,
+  PeriodComparisonSection: () => null,
 }))
 
 // =============================================================================

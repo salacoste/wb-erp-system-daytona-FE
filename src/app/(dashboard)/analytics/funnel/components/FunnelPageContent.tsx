@@ -156,7 +156,7 @@ export function FunnelPageContent() {
         />
       )}
 
-      <FunnelTable from={apiFrom} to={apiTo} nmIds={nmIds} />
+      <FunnelTable from={apiFrom} to={apiTo} nmIds={nmIds} compare={compare} />
     </div>
   )
 }

@@ -10,11 +10,11 @@ import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { ROUTES } from '@/lib/routes'
 import { truncateQuery } from '@/lib/string-utils'
+import { DeltaCell } from './funnel-table-delta'
 
-/**
- * Story 120.1-FE: filter raw topSearchQueries to entries with non-empty string `query`.
- * Retained as component-level defense-in-depth per Story 119.2 Pass-1 F-6.
- */
+export type PrevItemsMap = Map<number, FunnelProductItem>
+
+/** Filter raw topSearchQueries to entries with non-empty string `query`. */
 export function filterValidQueries(raw: TopSearchQuery[] | null | undefined): TopSearchQuery[] {
   if (!Array.isArray(raw)) return []
   return raw.filter(
@@ -30,9 +30,10 @@ interface FunnelTableHeaderProps {
   sort: FunnelSortField
   sortOrder: 'asc' | 'desc'
   onSort: (field: FunnelSortField) => void
+  compare?: boolean
 }
 
-export function FunnelTableHeader({ sort, sortOrder, onSort }: FunnelTableHeaderProps) {
+export function FunnelTableHeader({ sort, sortOrder, onSort, compare }: FunnelTableHeaderProps) {
   return (
     <TableHeader>
       <TableRow>
@@ -44,59 +45,53 @@ export function FunnelTableHeader({ sort, sortOrder, onSort }: FunnelTableHeader
             Просмотры
           </SortBtn>
         </TableHead>
+        {compare && <TableHead className="w-20">Δ</TableHead>}
         <TableHead>Корзина</TableHead>
+        {compare && <TableHead className="w-20">Δ</TableHead>}
         <TableHead aria-sort={ariaSort('ordersCount', sort, sortOrder)}>
           <SortBtn active={sort === 'ordersCount'} onClick={() => onSort('ordersCount')}>
             Заказы
           </SortBtn>
         </TableHead>
+        {compare && <TableHead className="w-20">Δ</TableHead>}
         <TableHead aria-sort={ariaSort('buyoutCount', sort, sortOrder)}>
           <SortBtn active={sort === 'buyoutCount'} onClick={() => onSort('buyoutCount')}>
             Выкупы
           </SortBtn>
         </TableHead>
+        {compare && <TableHead className="w-20">Δ</TableHead>}
         <TableHead aria-sort={ariaSort('totalConversion', sort, sortOrder)}>
           <SortBtn active={sort === 'totalConversion'} onClick={() => onSort('totalConversion')}>
             Конверсия
           </SortBtn>
         </TableHead>
+        {compare && <TableHead className="w-20">Δ</TableHead>}
         <TableHead aria-sort={ariaSort('cancelRate', sort, sortOrder)}>
           <SortBtn active={sort === 'cancelRate'} onClick={() => onSort('cancelRate')}>
             Отмены
           </SortBtn>
         </TableHead>
+        {compare && <TableHead className="w-20">Δ</TableHead>}
         <TableHead>Топ поисковых запросов</TableHead>
       </TableRow>
     </TableHeader>
   )
 }
 
-/** Story 119.2-FE: Top 3 search queries cell. Renders top 3 valid queries as Links, or em-dash. */
+/** Story 119.2-FE: Top 3 search queries cell. */
 function TopSearchQueriesCell({ raw }: { raw: TopSearchQuery[] | null | undefined }) {
   const valid = filterValidQueries(raw).slice(0, 3)
   if (valid.length === 0) {
-    // F-4: keep max-width even on the em-dash branch so the column reserves a
-    // consistent footprint regardless of state.
     return <TableCell className="text-muted-foreground max-w-72">—</TableCell>
   }
   return (
-    // Story 119.2-FE Pass-1 F-4: `max-w-72` (288px) bounds the cell so 3 long-ish
-    // queries can't push sibling columns; inner flex-wrap keeps responsive layout.
-    // Mirrors the brand cell's `max-w-40 truncate` constraint pattern in this file.
     <TableCell className="text-sm max-w-72">
       <div className="flex flex-wrap gap-1">
         {valid.map((q, idx) => (
           <Link
-            // Story 119.2-FE Pass-1 F-5: prefix with `idx` so duplicate query
-            // strings (real-data possibility) do NOT collide on the React key.
-            // Precedent: Story 117.4-FE L-2.
             key={`${idx}-${q.query}`}
             href={`${ROUTES.ANALYTICS.SEARCH}?query=${encodeURIComponent(q.query)}`}
             title={q.query}
-            // Story 119.2-FE Pass-1 F-7: design-system link treatment.
-            // `text-primary` → #E53935 per CLAUDE.md § Design System Primary Red
-            // (tailwind.config.ts:colors.primary.DEFAULT). Replaces hardcoded
-            // `text-blue-600` which bypassed the design system.
             className="text-primary hover:underline"
           >
             {truncateQuery(q.query)}
@@ -109,9 +104,12 @@ function TopSearchQueriesCell({ raw }: { raw: TopSearchQuery[] | null | undefine
 
 interface FunnelTableRowProps {
   item: FunnelProductItem
+  compare?: boolean
+  prevItem?: FunnelProductItem
+  prevLoading?: boolean
 }
 
-export function FunnelTableRow({ item }: FunnelTableRowProps) {
+export function FunnelTableRow({ item, compare, prevItem, prevLoading }: FunnelTableRowProps) {
   return (
     <TableRow>
       <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
@@ -120,12 +118,42 @@ export function FunnelTableRow({ item }: FunnelTableRowProps) {
         {item.brandName || '—'}
       </TableCell>
       <TableCell>{item.openCardCount.toLocaleString('ru-RU')}</TableCell>
+      {compare && (
+        <DeltaCell
+          current={item.openCardCount}
+          previous={prevItem?.openCardCount}
+          field="openCardCount"
+          loading={!!prevLoading}
+        />
+      )}
       <TableCell>{item.addToCartCount.toLocaleString('ru-RU')}</TableCell>
+      {compare && (
+        <DeltaCell
+          current={item.addToCartCount}
+          previous={prevItem?.addToCartCount}
+          field="addToCartCount"
+          loading={!!prevLoading}
+        />
+      )}
       <TableCell>{item.ordersCount.toLocaleString('ru-RU')}</TableCell>
+      {compare && (
+        <DeltaCell
+          current={item.ordersCount}
+          previous={prevItem?.ordersCount}
+          field="ordersCount"
+          loading={!!prevLoading}
+        />
+      )}
       <TableCell>{item.buyoutCount.toLocaleString('ru-RU')}</TableCell>
+      {compare && (
+        <DeltaCell
+          current={item.buyoutCount}
+          previous={prevItem?.buyoutCount}
+          field="buyoutCount"
+          loading={!!prevLoading}
+        />
+      )}
       <TableCell className="font-medium">
-        {/* Defensive Frontend Principle (#191): preserve the raw conversion value;
-            flag it with a warning when it's impossible (>100% or buyout>orders). */}
         <span className="inline-flex items-center gap-1.5">
           {item.totalConversion.toLocaleString('ru-RU', {
             minimumFractionDigits: 1,
@@ -134,6 +162,14 @@ export function FunnelTableRow({ item }: FunnelTableRowProps) {
           %{isFunnelConversionAnomalous(item) && <FunnelAnomalyIndicator />}
         </span>
       </TableCell>
+      {compare && (
+        <DeltaCell
+          current={item.totalConversion}
+          previous={prevItem?.totalConversion}
+          field="totalConversion"
+          loading={!!prevLoading}
+        />
+      )}
       <TableCell className="text-red-600">
         {item.cancelRate.toLocaleString('ru-RU', {
           minimumFractionDigits: 1,
@@ -141,6 +177,14 @@ export function FunnelTableRow({ item }: FunnelTableRowProps) {
         })}
         %
       </TableCell>
+      {compare && (
+        <DeltaCell
+          current={item.cancelRate}
+          previous={prevItem?.cancelRate}
+          field="cancelRate"
+          loading={!!prevLoading}
+        />
+      )}
       <TopSearchQueriesCell raw={item.topSearchQueries} />
     </TableRow>
   )

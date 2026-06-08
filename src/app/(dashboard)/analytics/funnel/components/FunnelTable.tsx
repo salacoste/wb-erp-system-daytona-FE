@@ -3,11 +3,12 @@
  * Epic 68: Sortable table with pagination for per-SKU funnel data
  * Refactored in Story 73.1-FE: columns extracted to funnel-table-columns.tsx
  * Story 73.4-FE: Added nmIds product filter prop
+ * WoW delta columns when compare=true
  */
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useFunnelData } from '@/hooks/use-funnel-analytics'
 import { Table, TableBody } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
@@ -17,14 +18,16 @@ import { AlertCircle } from 'lucide-react'
 import type { FunnelProductItem } from '@/types/analytics-funnel'
 import type { FunnelSortField } from './funnel-table-cells'
 import { FunnelTableHeader, FunnelTableRow } from './funnel-table-columns'
+import { calculatePreviousPeriod } from './funnel-comparison-utils'
 
 interface FunnelTableProps {
   from: string
   to: string
   nmIds?: number[]
+  compare?: boolean
 }
 
-export function FunnelTable({ from, to, nmIds }: FunnelTableProps) {
+export function FunnelTable({ from, to, nmIds, compare }: FunnelTableProps) {
   const [sort, setSort] = useState<FunnelSortField>('openCardCount')
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [offset, setOffset] = useState(0)
@@ -35,13 +38,30 @@ export function FunnelTable({ from, to, nmIds }: FunnelTableProps) {
     setOffset(0)
   }, [nmIdsKey])
 
+  const filterParam = nmIds?.length ? nmIds : undefined
   const { data, isLoading, isError } = useFunnelData(from, to, {
     sort,
     order,
     limit,
     offset,
-    nmIds: nmIds?.length ? nmIds : undefined,
+    nmIds: filterParam,
   })
+
+  const prev = compare ? calculatePreviousPeriod(from, to) : null
+  const { data: prevData, isLoading: prevLoading } = useFunnelData(
+    prev?.prevFrom ?? '',
+    prev?.prevTo ?? '',
+    { sort, order, limit, offset, nmIds: filterParam }
+  )
+
+  const prevItemsMap = useMemo(() => {
+    if (!prevData?.items) return new Map<number, FunnelProductItem>()
+    const map = new Map<number, FunnelProductItem>()
+    for (const item of prevData.items as FunnelProductItem[]) {
+      map.set(item.nmId, item)
+    }
+    return map
+  }, [prevData])
 
   const handleSort = (field: FunnelSortField) => {
     if (sort === field) {
@@ -82,10 +102,16 @@ export function FunnelTable({ from, to, nmIds }: FunnelTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border">
         <Table>
-          <FunnelTableHeader sort={sort} sortOrder={order} onSort={handleSort} />
+          <FunnelTableHeader sort={sort} sortOrder={order} onSort={handleSort} compare={compare} />
           <TableBody>
             {items.map(item => (
-              <FunnelTableRow key={item.nmId} item={item} />
+              <FunnelTableRow
+                key={item.nmId}
+                item={item}
+                compare={compare}
+                prevItem={prevItemsMap.get(item.nmId)}
+                prevLoading={prevLoading}
+              />
             ))}
           </TableBody>
         </Table>
