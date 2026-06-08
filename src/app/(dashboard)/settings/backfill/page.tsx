@@ -9,23 +9,16 @@
 
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Database, RefreshCw, Plus } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import {
-  useBackfillStatus,
-  useStartBackfill,
-  usePauseBackfill,
-  useResumeBackfill,
-} from '@/hooks/useBackfillAdmin'
+import { useBackfillStatus } from '@/hooks/useBackfillAdmin'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { toast } from 'sonner'
 import { BackfillStatusTable } from './components/BackfillStatusTable'
 import { StartBackfillDialog } from './components/StartBackfillDialog'
-import type { StartBackfillRequest } from '@/types/backfill'
+import { useBackfillHandlers } from './use-backfill-handlers'
 
 // ============================================================================
 // Loading Skeleton Component
@@ -50,18 +43,21 @@ function BackfillPageSkeleton() {
 export default function BackfillAdminPage() {
   const router = useRouter()
   const { user } = useAuth()
-  const [isStartDialogOpen, setIsStartDialogOpen] = useState(false)
-  const [pausingId, setPausingId] = useState<string | null>(null)
-  const [resumingId, setResumingId] = useState<string | null>(null)
-  const [retryingId, setRetryingId] = useState<string | null>(null)
+  const {
+    isStartDialogOpen,
+    setIsStartDialogOpen,
+    pausingId,
+    resumingId,
+    retryingId,
+    startMutation,
+    handleStart,
+    handlePause,
+    handleResume,
+    handleRetry,
+  } = useBackfillHandlers()
 
   // Fetch backfill status with polling
   const { data: cabinets = [], isLoading, refetch, dataUpdatedAt } = useBackfillStatus()
-
-  // Mutations
-  const startMutation = useStartBackfill()
-  const pauseMutation = usePauseBackfill()
-  const resumeMutation = useResumeBackfill()
 
   // Owner check - redirect non-owners
   if (user && user.role !== 'Owner') {
@@ -72,53 +68,6 @@ export default function BackfillAdminPage() {
   // Loading state while checking auth
   if (!user) {
     return <BackfillPageSkeleton />
-  }
-
-  // Handlers
-  const handleStart = async (request: StartBackfillRequest) => {
-    try {
-      await startMutation.mutateAsync(request)
-      toast.success('Бэкфилл запущен успешно')
-      setIsStartDialogOpen(false)
-    } catch {
-      toast.error('Ошибка запуска бэкфилла')
-    }
-  }
-
-  const handlePause = async (cabinetId: string) => {
-    setPausingId(cabinetId)
-    try {
-      await pauseMutation.mutateAsync(cabinetId)
-      toast.success('Бэкфилл приостановлен')
-    } catch {
-      toast.error('Ошибка приостановки бэкфилла')
-    } finally {
-      setPausingId(null)
-    }
-  }
-
-  const handleResume = async (cabinetId: string) => {
-    setResumingId(cabinetId)
-    try {
-      await resumeMutation.mutateAsync(cabinetId)
-      toast.success('Бэкфилл возобновлён')
-    } catch {
-      toast.error('Ошибка возобновления бэкфилла')
-    } finally {
-      setResumingId(null)
-    }
-  }
-
-  const handleRetry = async (cabinetId: string) => {
-    setRetryingId(cabinetId)
-    try {
-      await startMutation.mutateAsync({ cabinet_id: cabinetId })
-      toast.success('Бэкфилл перезапущен')
-    } catch {
-      toast.error('Ошибка перезапуска бэкфилла')
-    } finally {
-      setRetryingId(null)
-    }
   }
 
   // Europe/Moscow freshness stamp (project rule: all times are Moscow, not browser-local).

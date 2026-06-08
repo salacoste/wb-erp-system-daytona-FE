@@ -18,9 +18,9 @@ import { logger } from '@/lib/logger'
 import { useProductsWithDimensions } from '@/hooks/useProductsWithDimensions'
 import { FieldTooltip } from './FieldTooltip'
 import { SelectedProductCard, ProductSearchResults } from './ProductSearchComponents'
+import { useDebouncedSearch } from './useDebouncedSearch'
 import type { ProductWithDimensions } from '@/types/product'
 
-const SEARCH_DEBOUNCE_MS = 300
 const MAX_VISIBLE_RESULTS = 50
 
 export interface ProductSearchSelectProps {
@@ -47,10 +47,9 @@ export function ProductSearchSelect({
   error,
 }: ProductSearchSelectProps) {
   const [open, setOpen] = useState(false)
-  const [searchInput, setSearchInput] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState(initialNmId ?? '')
+  const { searchInput, debouncedSearch, setSearchInput, setDebouncedSearch, clearSearch } =
+    useDebouncedSearch(initialNmId ?? '')
   const [selectedProduct, setSelectedProduct] = useState<ProductWithDimensions | null>(null)
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   // Story 44.44: Track if preset product was restored
   const presetRestoredRef = useRef(false)
 
@@ -82,32 +81,21 @@ export function ProductSearchSelect({
     }
   }, [initialNmId, products, onChange])
 
-  // Debounce search input
-  useEffect(() => {
-    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
-    debounceTimerRef.current = setTimeout(() => setDebouncedSearch(searchInput), SEARCH_DEBOUNCE_MS)
-    return () => {
-      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
-    }
-  }, [searchInput])
-
   const handleSelect = useCallback(
     (product: ProductWithDimensions) => {
       setSelectedProduct(product)
       onChange(product.nm_id, product)
       setOpen(false)
-      setSearchInput('')
-      setDebouncedSearch('')
+      clearSearch()
     },
-    [onChange]
+    [onChange, clearSearch]
   )
 
   const handleClear = useCallback(() => {
     setSelectedProduct(null)
     onChange(null, null)
-    setSearchInput('')
-    setDebouncedSearch('')
-  }, [onChange])
+    clearSearch()
+  }, [onChange, clearSearch])
 
   const displayName = selectedProductName || selectedProduct?.sa_name || ''
 

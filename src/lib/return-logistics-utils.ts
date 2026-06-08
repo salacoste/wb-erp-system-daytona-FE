@@ -21,7 +21,7 @@ import { formatPercentage } from '@/lib/utils'
 // ============================================================================
 
 /** Format currency with exactly 2 decimal places (Russian locale) */
-function formatCurrencyFixed(value: number): string {
+export function formatCurrencyFixed(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

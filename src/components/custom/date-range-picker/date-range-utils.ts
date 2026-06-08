@@ -108,3 +108,23 @@ export function formatPeriodLabel(weekStart: string, weekEnd: string): string {
   // Different years
   return `${startYear}-W${startWeekNum} — ${endYear}-W${endWeekNum} (${weeksLabel})`
 }
+
+/**
+ * Resolve the actual start week for a quick-select, falling back to the
+ * nearest available week if the ideal start is not in the list.
+ */
+export function resolveQuickSelectStart(weeks: { week: string }[], count: number): string {
+  const latestWeek = weeks[0].week
+  const idealStart = getWeekNWeeksBefore(latestWeek, count)
+  const availableWeeks = weeks.map(w => w.week)
+
+  if (availableWeeks.includes(idealStart)) return idealStart
+
+  const sortedWeeks = [...availableWeeks].sort(
+    (a, b) => parseWeekToNumber(b) - parseWeekToNumber(a)
+  )
+  for (const w of sortedWeeks) {
+    if (parseWeekToNumber(w) <= parseWeekToNumber(idealStart)) return w
+  }
+  return sortedWeeks[sortedWeeks.length - 1]
+}

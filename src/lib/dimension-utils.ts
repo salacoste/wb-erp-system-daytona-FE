@@ -3,76 +3,19 @@
  * Story 44.7-FE: Dimension-Based Volume Calculation
  * Story 44.26b-FE: Auto-fill Dimensions & Category
  *
- * WB Cargo Type Reference:
- * - MGT (Малогабаритный): max dimension ≤ 60 cm
- * - SGT (Среднегабаритный): max dimension ≤ 120 cm
- * - KGT (Крупногабаритный): max dimension > 120 cm (requires manual tariff input)
+ * Types, constants, and conversion helpers extracted to dimension-types.ts
  */
 
-/** Product dimensions in centimeters */
-export interface ProductDimensions {
-  length_cm: number
-  width_cm: number
-  height_cm: number
-}
+export type {
+  ProductDimensions,
+  CargoType,
+  CargoTypeConfig,
+  VolumeTierConfig,
+} from './dimension-types'
+export { CARGO_TYPE_CONFIG, mmToCm, cmToMm } from './dimension-types'
 
-/** Cargo type based on max dimension */
-export type CargoType = 'MGT' | 'SGT' | 'KGT'
-
-/** Cargo type configuration */
-export interface CargoTypeConfig {
-  code: CargoType
-  label: string
-  labelFull: string
-  maxDimension: number
-  color: 'green' | 'yellow' | 'red'
-  bgColor: string
-  textColor: string
-  isError: boolean
-}
-
-/** Volume tier configuration */
-export interface VolumeTierConfig {
-  tier: 'small' | 'standard' | 'large'
-  label: string
-  color: 'green' | 'yellow' | 'orange'
-  minVolume: number
-  maxVolume: number
-}
-
-/** Cargo type configurations */
-export const CARGO_TYPE_CONFIG: Record<CargoType, CargoTypeConfig> = {
-  MGT: {
-    code: 'MGT',
-    label: 'МГТ',
-    labelFull: 'Малогабаритный товар (до 60 см)',
-    maxDimension: 60,
-    color: 'green',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-700',
-    isError: false,
-  },
-  SGT: {
-    code: 'SGT',
-    label: 'СГТ',
-    labelFull: 'Среднегабаритный товар (до 120 см)',
-    maxDimension: 120,
-    color: 'yellow',
-    bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-700',
-    isError: false,
-  },
-  KGT: {
-    code: 'KGT',
-    label: 'КГТ',
-    labelFull: 'Крупногабаритный товар (более 120 см)',
-    maxDimension: Infinity,
-    color: 'red',
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-700',
-    isError: true,
-  },
-}
+import type { ProductDimensions, CargoType } from './dimension-types'
+import { CARGO_TYPE_CONFIG } from './dimension-types'
 
 /**
  * Calculate volume in liters from dimensions in cm
@@ -115,36 +58,36 @@ export function isKgtCargo(dimensions: ProductDimensions): boolean {
 /**
  * Get cargo type configuration
  */
-export function getCargoTypeConfig(cargoType: CargoType): CargoTypeConfig {
+export function getCargoTypeConfig(cargoType: CargoType) {
   return CARGO_TYPE_CONFIG[cargoType]
 }
 
 /**
  * Get volume tier based on volume in liters
  */
-export function getVolumeTier(volumeLiters: number): VolumeTierConfig {
+export function getVolumeTier(volumeLiters: number) {
   if (volumeLiters <= 1) {
     return {
-      tier: 'small',
+      tier: 'small' as const,
       label: 'Малый объём',
-      color: 'green',
+      color: 'green' as const,
       minVolume: 0,
       maxVolume: 1,
     }
   }
   if (volumeLiters <= 30) {
     return {
-      tier: 'standard',
+      tier: 'standard' as const,
       label: 'Стандартный объём',
-      color: 'yellow',
+      color: 'yellow' as const,
       minVolume: 1,
       maxVolume: 30,
     }
   }
   return {
-    tier: 'large',
+    tier: 'large' as const,
     label: 'Большой объём',
-    color: 'orange',
+    color: 'orange' as const,
     minVolume: 30,
     maxVolume: Infinity,
   }
@@ -161,39 +104,5 @@ export function formatVolume(volumeLiters: number): string {
  * Check if all dimensions are provided and valid
  */
 export function hasValidDimensions(dimensions: ProductDimensions): boolean {
-  return (
-    dimensions.length_cm > 0 &&
-    dimensions.width_cm > 0 &&
-    dimensions.height_cm > 0
-  )
-}
-
-// ============================================================================
-// Unit Conversion Utilities (Story 44.26b)
-// ============================================================================
-
-/**
- * Convert millimeters to centimeters
- * Used for auto-fill from product dimensions (backend returns mm)
- *
- * @param mm - Value in millimeters
- * @returns Value in centimeters (mm / 10)
- *
- * @example
- * mmToCm(400) // returns 40
- * mmToCm(255) // returns 25.5
- */
-export function mmToCm(mm: number): number {
-  return mm / 10
-}
-
-/**
- * Convert centimeters to millimeters
- * Used when sending dimensions back to API (if needed)
- *
- * @param cm - Value in centimeters
- * @returns Value in millimeters (cm * 10)
- */
-export function cmToMm(cm: number): number {
-  return cm * 10
+  return dimensions.length_cm > 0 && dimensions.width_cm > 0 && dimensions.height_cm > 0
 }

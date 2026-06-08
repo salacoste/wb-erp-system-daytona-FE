@@ -14,6 +14,7 @@ import {
   calculateWeeksDiff,
   getWeekNWeeksBefore,
   QUICK_SELECT_OPTIONS,
+  resolveQuickSelectStart,
 } from './date-range-picker/date-range-utils'
 import {
   QuickSelectDropdown,
@@ -118,29 +119,9 @@ export function DateRangePicker({
   const handleQuickSelect = useCallback(
     (weeksCount: string) => {
       if (!weeks || weeks.length === 0) return
-
       const count = parseInt(weeksCount, 10)
       const latestWeek = weeks[0].week
-      const startWeek = getWeekNWeeksBefore(latestWeek, count)
-
-      const availableWeeks = weeks.map(w => w.week)
-      let actualStart = startWeek
-
-      if (!availableWeeks.includes(startWeek)) {
-        const sortedWeeks = [...availableWeeks].sort(
-          (a, b) => parseWeekToNumber(b) - parseWeekToNumber(a)
-        )
-        for (const w of sortedWeeks) {
-          if (parseWeekToNumber(w) <= parseWeekToNumber(startWeek)) {
-            actualStart = w
-            break
-          }
-        }
-        if (!availableWeeks.includes(actualStart)) {
-          actualStart = sortedWeeks[sortedWeeks.length - 1]
-        }
-      }
-
+      const actualStart = resolveQuickSelectStart(weeks, count)
       onRangeChange(actualStart, latestWeek)
     },
     [weeks, onRangeChange]

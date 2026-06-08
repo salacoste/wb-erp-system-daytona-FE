@@ -10,58 +10,19 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { HealthReportSheet } from './HealthReportSheet'
-import type { HealthReportSummary, OverallStatus } from '../types/monitoring'
+import {
+  type PeriodDays,
+  PERIOD_OPTIONS,
+  STATUS_COLORS,
+  STATUS_RING,
+  STATUS_EMOJI,
+  formatDayLabel,
+  countByStatus,
+} from './health-history-helpers'
+import type { HealthReportSummary } from '../types/monitoring'
 
 interface HealthHistoryChartProps {
   enabled: boolean
-}
-
-type PeriodDays = 7 | 14 | 30
-
-const PERIOD_OPTIONS: { days: PeriodDays; label: string }[] = [
-  { days: 7, label: '7 дней' },
-  { days: 14, label: '14 дней' },
-  { days: 30, label: '30 дней' },
-]
-
-const STATUS_COLORS: Record<OverallStatus, string> = {
-  healthy: 'bg-green-500',
-  degraded: 'bg-yellow-500',
-  critical: 'bg-red-500',
-}
-
-const STATUS_RING: Record<OverallStatus, string> = {
-  healthy: 'ring-green-300',
-  degraded: 'ring-yellow-300',
-  critical: 'ring-red-300',
-}
-
-const STATUS_EMOJI: Record<OverallStatus, string> = {
-  healthy: '\u2705',
-  degraded: '\u26A0\uFE0F',
-  critical: '\u274C',
-}
-
-function formatDayLabel(dateStr: string): { day: string; date: string } {
-  const d = new Date(dateStr)
-  const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
-  return {
-    day: days[d.getDay()],
-    date: d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
-  }
-}
-
-/** Count reports by status for trend summary */
-function countByStatus(reports: HealthReportSummary[]) {
-  let healthy = 0
-  let degraded = 0
-  let critical = 0
-  for (const r of reports) {
-    if (r.status === 'healthy') healthy++
-    else if (r.status === 'degraded') degraded++
-    else critical++
-  }
-  return { healthy, degraded, critical }
 }
 
 export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {

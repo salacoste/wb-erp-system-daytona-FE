@@ -6,7 +6,6 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -26,41 +25,8 @@ import {
 import type { AlertHistoryItem, AlertHistoryParams } from '@/types/alerts'
 import { ALERT_TYPE_LABELS, AlertType } from '@/types/alerts'
 import { formatDate } from '@/lib/utils'
+import { parseMessage, StatusBadge, STATUS_OPTIONS } from './AlertHistoryHelpers'
 
-const statusStyles: Record<string, string> = {
-  sent: 'bg-green-100 text-green-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  failed: 'bg-red-100 text-red-800',
-}
-
-const statusLabels: Record<string, string> = {
-  sent: 'Отправлено',
-  pending: 'В очереди',
-  failed: 'Ошибка',
-}
-
-/** Parsed structure of messageText JSON */
-interface ParsedMessage {
-  title?: string
-  message?: string
-  severity?: string
-  nmId?: number
-  metadata?: Record<string, unknown>
-}
-
-function parseMessage(raw: string): { title: string; message: string } {
-  try {
-    const parsed: ParsedMessage = JSON.parse(raw)
-    return {
-      title: parsed.title ?? '',
-      message: parsed.message ?? '',
-    }
-  } catch {
-    return { title: raw, message: '' }
-  }
-}
-
-const STATUS_OPTIONS = ['sent', 'pending', 'failed'] as const
 const ALERT_TYPE_OPTIONS = Object.values(AlertType)
 
 interface AlertHistoryTableProps {
@@ -142,7 +108,7 @@ export function AlertHistoryTable({
                   <SelectItem value="all">Все статусы</SelectItem>
                   {STATUS_OPTIONS.map(s => (
                     <SelectItem key={s} value={s}>
-                      {statusLabels[s] ?? s}
+                      {s === 'sent' ? 'Отправлено' : s === 'pending' ? 'В очереди' : 'Ошибка'}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -183,15 +149,5 @@ export function AlertHistoryTable({
         </Table>
       </CardContent>
     </Card>
-  )
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const style = statusStyles[status] ?? 'bg-gray-100 text-gray-800'
-  const label = statusLabels[status] ?? status
-  return (
-    <Badge className={style} variant="outline">
-      {label}
-    </Badge>
   )
 }

@@ -30,6 +30,7 @@ describe('ReorderSummaryCards', () => {
           totalPending: 5,
           totalOrdered: 3,
           totalReceived: 10,
+          totalExpired: 1,
           reorderCoveragePct: 75,
           avgHoursToOrder: 12,
           avgHoursToReceive: 48,

@@ -21,6 +21,7 @@ import { useAddBoxLine, useUpdateBoxLine } from '@/hooks/use-box-lines'
 import { ProductCombobox } from '@/components/custom/sku-packaging/ProductCombobox'
 import { PreflightWarnings } from './PreflightWarnings'
 import type { BoxLine } from '@/types/shipment-cost'
+import { validateBoxLineForm, buildBoxLinePayload } from './box-line-form-helpers'
 
 interface BoxLineFormProps {
   open: boolean
@@ -62,46 +63,27 @@ export function BoxLineForm({
     }
   }, [open, editingLine])
 
-  function validate(): boolean {
-    const errs: Record<string, string> = {}
-    if (!isEdit && !nmId) errs.nmId = 'Выберите товар'
-    const count = Number(boxCount)
-    if (!boxCount || isNaN(count) || count <= 0 || !Number.isInteger(count)) {
-      errs.boxCount = 'Укажите целое число > 0'
-    }
-    if (totalUnits) {
-      const units = Number(totalUnits)
-      if (isNaN(units) || units <= 0 || !Number.isInteger(units)) {
-        errs.totalUnits = 'Укажите целое число > 0'
-      }
-    }
-    setErrors(errs)
-    return Object.keys(errs).length === 0
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!validate()) return
+    const errs = validateBoxLineForm({ nmId, boxCount, totalUnits }, isEdit)
+    setErrors(errs)
+    if (Object.keys(errs).length > 0) return
 
-    try {
-      if (isEdit && editingLine) {
-        await updateAsync({
-          boxLineId: editingLine.id,
-          data: {
-            boxCount: Number(boxCount),
-            ...(totalUnits ? { totalUnits: Number(totalUnits) } : {}),
-          },
-        })
-      } else {
-        await addAsync({
-          nmId: nmId!,
-          boxCount: Number(boxCount),
-          ...(totalUnits ? { totalUnits: Number(totalUnits) } : {}),
-        })
-      }
-      onClose()
-    } catch {
-      setErrors({ form: 'Ошибка сохранения. Попробуйте ещё раз.' })
+    const payload = buildBoxLinePayload({ nmId, boxCount, totalUnits })
+    if (isEdit && editingLine) {
+      updateAsync({
+        boxLineId: editingLine.id,
+        data: {
+          boxCount: payload.boxCount,
+          ...(payload.totalUnits != null ? { totalUnits: payload.totalUnits } : {}),
+        },
+      })
+        .then(onClose)
+        .catch(() => setErrors({ form: 'Ошибка сохранения. Попробуйте ещё раз.' }))
+    } else {
+      addAsync(payload)
+        .then(onClose)
+        .catch(() => setErrors({ form: 'Ошибка сохранения. Попробуйте ещё раз.' }))
     }
   }
 

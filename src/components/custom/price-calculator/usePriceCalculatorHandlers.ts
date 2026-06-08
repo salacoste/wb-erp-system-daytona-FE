@@ -5,13 +5,10 @@
 import { useCallback, useEffect } from 'react'
 import { logger } from '@/lib/logger'
 import { isFormEmpty, toTwoLevelFormData, toApiRequest } from './priceCalculatorUtils'
-import type {
-  PriceCalculatorRequest,
-  TwoLevelPricingFormData,
-  TaxType,
-} from '@/types/price-calculator'
+import type { PriceCalculatorRequest, TwoLevelPricingFormData } from '@/types/price-calculator'
 import { type FormData, defaultFormValues } from './usePriceCalculatorForm'
 import type { usePriceCalculatorState } from './usePriceCalculatorState'
+import { useTaxHandlers } from './useTaxHandlers'
 
 interface HandlerProps {
   onSubmit: (data: PriceCalculatorRequest) => void
@@ -122,37 +119,8 @@ export function usePriceCalculatorHandlers(state: State, props: HandlerProps) {
     [state.setValue, state.setDrrValue]
   )
 
-  const handleTaxRateChange = useCallback(
-    (value: number) => {
-      state.setTaxRate(value)
-      state.setValue('tax_rate_pct', value)
-    },
-    [state.setValue, state.setTaxRate]
-  )
-
-  const handleTaxTypeChange = useCallback(
-    (value: TaxType) => {
-      state.setTaxType(value)
-      state.setValue('tax_type', value)
-    },
-    [state.setValue, state.setTaxType]
-  )
-
-  const handleVatPayerChange = useCallback(
-    (isPayer: boolean) => {
-      state.setIsVatPayer(isPayer)
-      state.setValue('is_vat_payer', isPayer)
-    },
-    [state.setValue, state.setIsVatPayer]
-  )
-
-  const handleVatRateChange = useCallback(
-    (rate: number) => {
-      state.setVatRate(rate)
-      state.setValue('vat_pct', rate)
-    },
-    [state.setValue, state.setVatRate]
-  )
+  const { handleTaxRateChange, handleTaxTypeChange, handleVatPayerChange, handleVatRateChange } =
+    useTaxHandlers(state)
 
   const performCalculation = useCallback(
     (data: FormData) => {

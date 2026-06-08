@@ -6,7 +6,7 @@
  * Supports preset options (previous period, same period last year) and custom ranges.
  */
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import {
@@ -20,11 +20,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { DateRangePicker } from './DateRangePicker'
 import { GitCompare, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import {
-  calculatePreviousPeriod,
-  calculateSamePeriodLastYear,
-  formatPeriodDisplay,
-} from './comparison-period/comparison-period-utils'
+import { formatPeriodDisplay } from './comparison-period/comparison-period-utils'
+import { useComparisonPeriodState } from './comparison-period/useComparisonPeriodState'
 import type {
   ComparisonPeriodSelectorProps,
   ComparisonPreset,
@@ -37,22 +34,6 @@ export type {
 } from './comparison-period/comparison-period-types'
 export { getEffectiveComparisonPeriod } from './comparison-period/comparison-period-utils'
 
-/**
- * Comparison Period Selector
- *
- * @example
- * <ComparisonPeriodSelector
- *   enabled={comparisonEnabled}
- *   onEnabledChange={setComparisonEnabled}
- *   preset={comparisonPreset}
- *   onPresetChange={setComparisonPreset}
- *   compareStart={compareStart}
- *   compareEnd={compareEnd}
- *   onCompareRangeChange={handleCompareRangeChange}
- *   currentPeriodStart={weekStart}
- *   currentPeriodEnd={weekEnd}
- * />
- */
 export function ComparisonPeriodSelector({
   enabled,
   onEnabledChange,
@@ -67,47 +48,26 @@ export function ComparisonPeriodSelector({
 }: ComparisonPeriodSelectorProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  // Calculate preset periods based on current period
-  const previousPeriod = useMemo(
-    () => calculatePreviousPeriod(currentPeriodStart, currentPeriodEnd),
-    [currentPeriodStart, currentPeriodEnd]
-  )
+  const {
+    previousPeriod,
+    samePeriodLastYear,
+    comparisonPeriodLabel,
+    handlePresetChange,
+    handleEnabledChange,
+  } = useComparisonPeriodState({
+    enabled,
+    preset,
+    compareStart,
+    compareEnd,
+    currentPeriodStart,
+    currentPeriodEnd,
+    onPresetChange,
+    onCompareRangeChange,
+  })
 
-  const samePeriodLastYear = useMemo(
-    () => calculateSamePeriodLastYear(currentPeriodStart, currentPeriodEnd),
-    [currentPeriodStart, currentPeriodEnd]
-  )
-
-  // Get display label for current comparison period
-  const comparisonPeriodLabel = useMemo(() => {
-    if (!enabled) return ''
-    if (preset === 'previous') {
-      return formatPeriodDisplay(previousPeriod.start, previousPeriod.end)
-    }
-    if (preset === 'same_last_year') {
-      return formatPeriodDisplay(samePeriodLastYear.start, samePeriodLastYear.end)
-    }
-    return formatPeriodDisplay(compareStart, compareEnd)
-  }, [enabled, preset, previousPeriod, samePeriodLastYear, compareStart, compareEnd])
-
-  // Handle preset change and update comparison period
-  const handlePresetChange = (newPreset: ComparisonPreset) => {
-    onPresetChange(newPreset)
-    if (newPreset === 'previous') {
-      onCompareRangeChange(previousPeriod.start, previousPeriod.end)
-    } else if (newPreset === 'same_last_year') {
-      onCompareRangeChange(samePeriodLastYear.start, samePeriodLastYear.end)
-    }
-    // For 'custom', keep current values
-  }
-
-  // Handle enable toggle
-  const handleEnabledChange = (newEnabled: boolean) => {
+  const onEnabledToggle = (newEnabled: boolean) => {
     onEnabledChange(newEnabled)
-    if (newEnabled && preset === 'previous') {
-      // Initialize with previous period
-      onCompareRangeChange(previousPeriod.start, previousPeriod.end)
-    }
+    handleEnabledChange(newEnabled)
   }
 
   return (
@@ -122,7 +82,7 @@ export function ComparisonPeriodSelector({
             <Switch
               id="comparison-mode"
               checked={enabled}
-              onCheckedChange={handleEnabledChange}
+              onCheckedChange={onEnabledToggle}
               onClick={e => e.stopPropagation()}
             />
             <Label

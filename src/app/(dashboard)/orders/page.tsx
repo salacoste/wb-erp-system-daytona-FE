@@ -12,9 +12,6 @@
 
 import { lazy, Suspense, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { AlertCircle } from 'lucide-react'
 import { useOrders, useOrdersSyncStatus, useOrdersSync } from '@/hooks/useOrders'
 import { useClientInfo } from '@/hooks/useClientInfo'
 import { useAuthStore } from '@/stores/authStore'
@@ -23,10 +20,10 @@ import {
   OrdersFilters,
   OrdersTable,
   OrdersPagination,
-  OrdersLoadingSkeleton,
   OrdersErrorBoundary,
   OrdersSuspenseFallback,
 } from '@/components/custom/orders'
+import { OrdersLoadingState, OrdersErrorState } from './OrdersPageStates'
 import type { SupplierStatus, WbStatus } from '@/types/orders'
 import { useOrdersPageState, PAGE_SIZE } from './useOrdersPageState'
 
@@ -86,36 +83,28 @@ function OrdersPageContent() {
   // Loading state
   if (isLoading && !data) {
     return (
-      <div className="space-y-6">
-        <OrdersPageHeader
-          lastSyncAt={syncStatus?.lastSyncAt ?? null}
-          isSyncing={isSyncing}
-          onSync={() => triggerSync()}
-        />
-        <OrdersLoadingSkeleton />
-      </div>
+      <OrdersLoadingState
+        headerProps={{
+          lastSyncAt: syncStatus?.lastSyncAt ?? null,
+          isSyncing,
+          onSync: () => triggerSync(),
+        }}
+      />
     )
   }
 
   // Error state
   if (isError) {
     return (
-      <div className="space-y-6">
-        <OrdersPageHeader
-          lastSyncAt={syncStatus?.lastSyncAt ?? null}
-          isSyncing={isSyncing}
-          onSync={() => triggerSync()}
-        />
-        <Alert variant="destructive" data-testid="orders-error-state">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>{error instanceof Error ? error.message : 'Ошибка загрузки заказов'}</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Повторить
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <OrdersErrorState
+        headerProps={{
+          lastSyncAt: syncStatus?.lastSyncAt ?? null,
+          isSyncing,
+          onSync: () => triggerSync(),
+        }}
+        error={error}
+        onRetry={() => refetch()}
+      />
     )
   }
 

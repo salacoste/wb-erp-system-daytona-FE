@@ -1,19 +1,13 @@
 /**
  * Supply Planning Utility Functions
  * Epic 6 - Supply Planning & Stockout Prevention
- * Barrel re-export + formatters + chart data + sorting/filtering
+ * Barrel re-export + formatters
  *
  * Refactored: Epic 74, Story 74.5, Task 6
  * Config/status helpers extracted to supply-planning-config.ts
+ * Sorting/filtering extracted to supply-planning-sorting.ts
+ * Chart data extracted to supply-planning-chart.ts
  */
-
-import type {
-  StockoutRisk,
-  RiskDistributionData,
-  SupplyPlanningSummary,
-} from '@/types/supply-planning'
-
-import { STOCKOUT_RISK_CONFIG as RISK_CONFIG } from './supply-planning-config'
 
 // Barrel re-export: all config & status helpers
 export {
@@ -33,6 +27,13 @@ export {
   VELOCITY_TREND_CONFIG,
   getVelocityTrendInfo,
 } from './supply-planning-config'
+
+// Barrel re-export: sorting & filtering helpers
+export {
+  getStockoutRiskSeverity,
+  sortByStockoutRisk,
+  filterByMinRisk,
+} from './supply-planning-sorting'
 
 // ============================================================================
 // Formatting Helpers
@@ -114,86 +115,5 @@ export function formatStockoutDate(dateStr: string | null): string {
   })
 }
 
-// ============================================================================
-// Chart Data Helpers
-// ============================================================================
-
-/**
- * Generate risk distribution data for pie/donut chart
- * Uses colors from STOCKOUT_RISK_CONFIG for consistency
- */
-export function getRiskDistributionData(summary: SupplyPlanningSummary): RiskDistributionData[] {
-  const data: RiskDistributionData[] = [
-    {
-      status: 'out_of_stock',
-      count: summary.out_of_stock_count,
-      label: RISK_CONFIG.out_of_stock.label,
-      color: RISK_CONFIG.out_of_stock.color,
-    },
-    {
-      status: 'critical',
-      count: summary.stockout_critical,
-      label: RISK_CONFIG.critical.label,
-      color: RISK_CONFIG.critical.color,
-    },
-    {
-      status: 'warning',
-      count: summary.stockout_warning,
-      label: RISK_CONFIG.warning.label,
-      color: RISK_CONFIG.warning.color,
-    },
-    {
-      status: 'low',
-      count: summary.stockout_low,
-      label: RISK_CONFIG.low.label,
-      color: RISK_CONFIG.low.color,
-    },
-    {
-      status: 'healthy',
-      count: summary.healthy_stock,
-      label: RISK_CONFIG.healthy.label,
-      color: RISK_CONFIG.healthy.color,
-    },
-  ]
-
-  // Filter out zero counts for cleaner chart
-  return data.filter(d => d.count > 0)
-}
-
-// ============================================================================
-// Sorting & Filtering Helpers
-// ============================================================================
-
-/**
- * Risk severity order for sorting (higher = more urgent)
- */
-export function getStockoutRiskSeverity(risk: StockoutRisk): number {
-  const severity: Record<StockoutRisk, number> = {
-    out_of_stock: 5,
-    critical: 4,
-    warning: 3,
-    low: 2,
-    healthy: 1,
-  }
-  return severity[risk]
-}
-
-/**
- * Sort items by stockout risk (most urgent first)
- */
-export function sortByStockoutRisk<T extends { stockout_risk: StockoutRisk }>(items: T[]): T[] {
-  return [...items].sort(
-    (a, b) => getStockoutRiskSeverity(b.stockout_risk) - getStockoutRiskSeverity(a.stockout_risk)
-  )
-}
-
-/**
- * Filter items by minimum risk level
- */
-export function filterByMinRisk<T extends { stockout_risk: StockoutRisk }>(
-  items: T[],
-  minRisk: StockoutRisk
-): T[] {
-  const minSeverity = getStockoutRiskSeverity(minRisk)
-  return items.filter(item => getStockoutRiskSeverity(item.stockout_risk) >= minSeverity)
-}
+// Barrel re-export: chart data helpers
+export { getRiskDistributionData } from './supply-planning-chart'

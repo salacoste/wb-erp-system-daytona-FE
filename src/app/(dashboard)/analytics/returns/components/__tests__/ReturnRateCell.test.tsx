@@ -4,7 +4,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { ReturnRateCell } from '../ReturnsTable'
+import { ReturnRateCell } from '../ReturnsTableHelpers'
 
 describe('ReturnRateCell', () => {
   it('renders "—" (muted) and no percentage for a null rate (unknown)', () => {

@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useReturnsBySku } from '@/hooks/use-return-analytics'
 import { useProducts } from '@/hooks/useProducts'
@@ -23,7 +23,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
-import { cn, formatPercentage } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { ReturnRateCell, useProductsMap } from './ReturnsTableHelpers'
 
 interface ReturnsTableProps {
   from?: string
@@ -42,17 +43,7 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
 
   // Product enrichment for name/brand/vendor_code
   const { data: productsData } = useProducts({ limit: 200 })
-  const productsMap = useMemo(() => {
-    const map = new Map<number, { saName: string; brand: string; vendorCode: string }>()
-    for (const p of productsData?.products ?? []) {
-      map.set(Number(p.nm_id), {
-        saName: p.sa_name ?? '',
-        brand: p.brand ?? '',
-        vendorCode: p.vendor_code ?? '',
-      })
-    }
-    return map
-  }, [productsData])
+  const productsMap = useProductsMap(productsData)
 
   if (isError) {
     return (
@@ -183,16 +174,4 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
       )}
     </div>
   )
-}
-
-export function ReturnRateCell({ rate }: { rate: number | null }) {
-  // null = rate unknown (no sales data to compute it). Render "—" neutral, NOT 0/green —
-  // a fabricated 0 would falsely signal a healthy SKU (iter-127, anti-pattern #8).
-  if (rate == null) return <span className="font-medium text-muted-foreground">—</span>
-
-  let color = 'text-green-600'
-  if (rate > 50) color = 'text-red-600'
-  else if (rate >= 20) color = 'text-yellow-600'
-
-  return <span className={`font-medium ${color}`}>{formatPercentage(rate, 1)}</span>
 }

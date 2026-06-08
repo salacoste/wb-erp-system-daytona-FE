@@ -1,4 +1,3 @@
-import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -13,11 +12,7 @@ import {
   findCoefficientsByName,
 } from './useAllAcceptanceCoefficients'
 import type { BoxTypeCoefficients, NormalizedCoefficients } from './useAcceptanceCoefficients'
-import {
-  getCoefficientStatus,
-  getTomorrowDate,
-  type NormalizedCoefficient,
-} from '@/lib/coefficient-utils'
+import { getCoefficientStatus, type NormalizedCoefficient } from '@/lib/coefficient-utils'
 import type { FieldSource } from '@/components/custom/price-calculator/AutoFillBadge'
 import type { Warehouse } from '@/types/warehouse'
 import type {
@@ -26,6 +21,7 @@ import type {
   UseWarehouseCoefficientsResult,
 } from './warehouse-coefficient-types'
 import { buildNormalizedCoefficients } from './warehouse-coefficient-helpers'
+import { computeAutoFillState } from './use-coefficient-auto-fill'
 
 // Re-export types for backward compatibility
 export type {
@@ -79,47 +75,10 @@ export function useWarehouseCoefficients(
 
   // Auto-fill coefficients from warehouse data or acceptance API
   useEffect(() => {
-    const hasEmbedded = warehouse?.tariffs?.logisticsCoefficient !== undefined
-
-    if (hasEmbedded) {
-      const logCoeff = warehouse.tariffs.logisticsCoefficient!
-      const storCoeff = warehouse.tariffs.storageCoefficient ?? 1.0
-      logger.debug('[Coefficients] Using embedded coefficients for', warehouse.name, {
-        logistics: logCoeff,
-        storage: storCoeff,
-      })
-      setLogisticsCoeff({ value: logCoeff, source: 'auto', originalValue: logCoeff })
-      setStorageCoeff({ value: storCoeff, source: 'auto', originalValue: storCoeff })
-      const tomorrow = getTomorrowDate()
-      setDeliveryDateState({ date: tomorrow, coefficient: logCoeff })
-    } else if (coefficients) {
-      setLogisticsCoeff({
-        value: coefficients.delivery.coefficient,
-        source: 'auto',
-        originalValue: coefficients.delivery.coefficient,
-      })
-      setStorageCoeff({
-        value: coefficients.storage.coefficient,
-        source: 'auto',
-        originalValue: coefficients.storage.coefficient,
-      })
-    }
-
-    if (coefficients?.dailyCoefficients?.length) {
-      const tomorrow = getTomorrowDate()
-      const tomorrowCoeff = coefficients.dailyCoefficients.find(c => c.date === tomorrow)
-      if (tomorrowCoeff && tomorrowCoeff.isAvailable) {
-        setDeliveryDateState({ date: tomorrow, coefficient: tomorrowCoeff.coefficient })
-      } else {
-        const firstAvailable = coefficients.dailyCoefficients.find(c => c.isAvailable)
-        if (firstAvailable) {
-          setDeliveryDateState({
-            date: firstAvailable.date,
-            coefficient: firstAvailable.coefficient,
-          })
-        }
-      }
-    }
+    const { logistics, storage, delivery } = computeAutoFillState(warehouse, coefficients)
+    setLogisticsCoeff(logistics)
+    setStorageCoeff(storage)
+    setDeliveryDateState(delivery)
   }, [warehouse, coefficients])
 
   // Reset when warehouse cleared

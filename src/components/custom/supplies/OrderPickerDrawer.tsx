@@ -19,11 +19,11 @@ import {
 } from '@/components/ui/sheet'
 import { OrderPickerContent } from './OrderPickerContent'
 import { OrderPickerFooter } from './OrderPickerFooter'
-import { MAX_SELECTION, NEAR_LIMIT_THRESHOLD } from './order-picker-constants'
 import { useOrdersForSupply } from '@/hooks/useOrdersForSupply'
 import { useAddOrdersToSupply } from '@/hooks/useAddOrdersToSupply'
 import type { EligibleSupplierStatus } from '@/hooks/useOrdersForSupply'
 import type { OrderPickerDrawerProps } from './order-picker-constants'
+import { useOrderPickerSelection } from './useOrderPickerSelection'
 
 // Re-export type for backward compatibility (barrel export in index.ts)
 export type { OrderPickerDrawerProps } from './order-picker-constants'
@@ -37,9 +37,6 @@ export function OrderPickerDrawer({
   // Filter state
   const [searchValue, setSearchValue] = useState('')
   const [statusFilter, setStatusFilter] = useState<EligibleSupplierStatus | null>(null)
-
-  // Selection state
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   // Fetch orders
   const {
@@ -56,26 +53,28 @@ export function OrderPickerDrawer({
     { enabled: isOpen }
   )
 
+  // Orders from response
+  const orders = ordersData?.items ?? []
+
+  // Selection state (auto-resets when drawer closes)
+  const selection = useOrderPickerSelection(orders, isOpen)
+
   // Add orders mutation
   const addOrdersMutation = useAddOrdersToSupply(supplyId, {
     onSuccess: () => {
-      setSelectedIds(new Set())
+      selection.handleClearSelection()
       onSuccess?.()
       onClose()
     },
   })
 
-  // Reset state when drawer opens/closes
+  // Reset filter state when drawer closes
   useEffect(() => {
     if (!isOpen) {
       setSearchValue('')
       setStatusFilter(null)
-      setSelectedIds(new Set())
     }
   }, [isOpen])
-
-  // Orders from response
-  const orders = ordersData?.items ?? []
 
   // Filter logic
   const activeFilterCount = useMemo(() => {
@@ -85,67 +84,15 @@ export function OrderPickerDrawer({
     return count
   }, [searchValue, statusFilter])
 
-  // Selection computed values
-  const selectedCount = selectedIds.size
-  const isNearLimit = selectedCount > NEAR_LIMIT_THRESHOLD
-  const isAtLimit = selectedCount >= MAX_SELECTION
-
-  const isAllSelected = useMemo(() => {
-    if (orders.length === 0) return false
-    return orders.every(order => selectedIds.has(order.orderId))
-  }, [orders, selectedIds])
-
-  const isIndeterminate = useMemo(() => {
-    if (orders.length === 0) return false
-    const selectedVisible = orders.filter(o => selectedIds.has(o.orderId)).length
-    return selectedVisible > 0 && selectedVisible < orders.length
-  }, [orders, selectedIds])
-
-  // Handlers
-  const handleToggleOrder = useCallback((orderId: string) => {
-    setSelectedIds(prev => {
-      const next = new Set(prev)
-      if (next.has(orderId)) {
-        next.delete(orderId)
-      } else if (next.size < MAX_SELECTION) {
-        next.add(orderId)
-      }
-      return next
-    })
-  }, [])
-
-  const handleToggleAll = useCallback(() => {
-    if (isAllSelected) {
-      setSelectedIds(prev => {
-        const next = new Set(prev)
-        orders.forEach(order => next.delete(order.orderId))
-        return next
-      })
-    } else {
-      setSelectedIds(prev => {
-        const next = new Set(prev)
-        for (const order of orders) {
-          if (next.size >= MAX_SELECTION) break
-          next.add(order.orderId)
-        }
-        return next
-      })
-    }
-  }, [isAllSelected, orders])
-
   const handleClearFilters = useCallback(() => {
     setSearchValue('')
     setStatusFilter(null)
   }, [])
 
-  const handleClearSelection = useCallback(() => {
-    setSelectedIds(new Set())
-  }, [])
-
   const handleAddOrders = useCallback(() => {
-    if (selectedCount === 0) return
-    addOrdersMutation.mutate(Array.from(selectedIds))
-  }, [selectedCount, selectedIds, addOrdersMutation])
+    if (selection.selectedCount === 0) return
+    addOrdersMutation.mutate(Array.from(selection.selectedIds))
+  }, [selection.selectedCount, selection.selectedIds, addOrdersMutation])
 
   return (
     <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
@@ -174,19 +121,19 @@ export function OrderPickerDrawer({
           onStatusChange={setStatusFilter}
           activeFilterCount={activeFilterCount}
           onClearFilters={handleClearFilters}
-          selectedCount={selectedCount}
-          isNearLimit={isNearLimit}
-          isAtLimit={isAtLimit}
-          isAllSelected={isAllSelected}
-          isIndeterminate={isIndeterminate}
-          selectedIds={selectedIds}
-          onToggleOrder={handleToggleOrder}
-          onToggleAll={handleToggleAll}
-          onClearSelection={handleClearSelection}
+          selectedCount={selection.selectedCount}
+          isNearLimit={selection.isNearLimit}
+          isAtLimit={selection.isAtLimit}
+          isAllSelected={selection.isAllSelected}
+          isIndeterminate={selection.isIndeterminate}
+          selectedIds={selection.selectedIds}
+          onToggleOrder={selection.handleToggleOrder}
+          onToggleAll={selection.handleToggleAll}
+          onClearSelection={selection.handleClearSelection}
         />
 
         <OrderPickerFooter
-          selectedCount={selectedCount}
+          selectedCount={selection.selectedCount}
           isPending={addOrdersMutation.isPending}
           onClose={onClose}
           onAddOrders={handleAddOrders}

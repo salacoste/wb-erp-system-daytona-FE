@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useCreateBoxType, useUpdateBoxType } from '@/hooks/use-box-types'
+import { DimensionField } from './DimensionField'
 import { parseDecimal } from '@/lib/decimal-utils'
 import type { BoxType } from '@/types/shipment-cost'
 
@@ -128,60 +129,30 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="bt-length">Длина (см)</Label>
-              <Input
-                id="bt-length"
-                type="number"
-                min="0"
-                step="any"
-                value={lengthCm}
-                onChange={e => setLengthCm(e.target.value)}
-                aria-describedby={errors.lengthCm ? 'bt-length-error' : undefined}
-                aria-invalid={!!errors.lengthCm}
-              />
-              {errors.lengthCm && (
-                <p id="bt-length-error" className="text-sm text-destructive">
-                  {errors.lengthCm}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="bt-width">Ширина (см)</Label>
-              <Input
-                id="bt-width"
-                type="number"
-                min="0"
-                step="any"
-                value={widthCm}
-                onChange={e => setWidthCm(e.target.value)}
-                aria-describedby={errors.widthCm ? 'bt-width-error' : undefined}
-                aria-invalid={!!errors.widthCm}
-              />
-              {errors.widthCm && (
-                <p id="bt-width-error" className="text-sm text-destructive">
-                  {errors.widthCm}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="bt-height">Высота (см)</Label>
-              <Input
-                id="bt-height"
-                type="number"
-                min="0"
-                step="any"
-                value={heightCm}
-                onChange={e => setHeightCm(e.target.value)}
-                aria-describedby={errors.heightCm ? 'bt-height-error' : undefined}
-                aria-invalid={!!errors.heightCm}
-              />
-              {errors.heightCm && (
-                <p id="bt-height-error" className="text-sm text-destructive">
-                  {errors.heightCm}
-                </p>
-              )}
-            </div>
+            <DimensionField
+              id="bt-length"
+              label="Длина (см)"
+              value={lengthCm}
+              onChange={setLengthCm}
+              error={errors.lengthCm}
+              errorId="bt-length-error"
+            />
+            <DimensionField
+              id="bt-width"
+              label="Ширина (см)"
+              value={widthCm}
+              onChange={setWidthCm}
+              error={errors.widthCm}
+              errorId="bt-width-error"
+            />
+            <DimensionField
+              id="bt-height"
+              label="Высота (см)"
+              value={heightCm}
+              onChange={setHeightCm}
+              error={errors.heightCm}
+              errorId="bt-height-error"
+            />
           </div>
 
           <DialogFooter>

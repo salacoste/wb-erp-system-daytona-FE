@@ -15,17 +15,11 @@ import { Switch } from '@/components/ui/switch'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ReturnLogisticsBreakdown } from './ReturnLogisticsBreakdown'
 import { cn, formatPercentage } from '@/lib/utils'
-import { calculateReturnLogistics, hasSignificantDifference } from '@/lib/return-logistics-utils'
-
-/** Format currency with 2 decimal places (Russian locale: "72,50 ₽") */
-function formatCurrencyFixed(value: number): string {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value)
-}
+import {
+  calculateReturnLogistics,
+  hasSignificantDifference,
+  formatCurrencyFixed,
+} from '@/lib/return-logistics-utils'
 
 export interface ReturnLogisticsCalculatorProps {
   /** Forward logistics cost */
