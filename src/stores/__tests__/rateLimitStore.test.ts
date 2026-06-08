@@ -144,4 +144,144 @@ describe('useRateLimitStore', () => {
     const entry = useRateLimitStore.getState().getRateLimit('/v1/tariffs')
     expect(entry).not.toBeNull()
   })
+
+  it('stores endpoint with query params when using path-only endpoint', () => {
+    // normalizeEndpoint does not strip query params from non-http paths
+    useRateLimitStore.getState().addRateLimit('/v1/tariffs/box?date=2025-01-01', 30)
+
+    const entry = useRateLimitStore.getState().getRateLimit('/v1/tariffs/box?date=2025-01-01')
+    expect(entry).not.toBeNull()
+    expect(entry?.retryAfter).toBe(30)
+  })
+
+  it('strips query parameters from full URL', () => {
+    useRateLimitStore
+      .getState()
+      .addRateLimit('https://api.example.com/v1/tariffs?warehouseId=123&date=2025-01', 45)
+
+    const entry = useRateLimitStore.getState().getRateLimit('/v1/tariffs')
+    expect(entry).not.toBeNull()
+    expect(entry?.retryAfter).toBe(45)
+  })
+
+  it('handles endpoint without query parameters', () => {
+    useRateLimitStore.getState().addRateLimit('/v1/simple-endpoint', 60)
+
+    const entry = useRateLimitStore.getState().getRateLimit('/v1/simple-endpoint')
+    expect(entry).not.toBeNull()
+    expect(entry?.endpoint).toBe('/v1/simple-endpoint')
+  })
+
+  it('stores timestamp as Date.now()', () => {
+    const before = Date.now()
+    useRateLimitStore.getState().addRateLimit('/v1/test', 60)
+    const after = Date.now()
+
+    const entry = useRateLimitStore.getState().getRateLimit('/v1/test')
+    expect(entry!.timestamp).toBeGreaterThanOrEqual(before)
+    expect(entry!.timestamp).toBeLessThanOrEqual(after)
+  })
+
+  it('getRemainingSeconds returns correct countdown', () => {
+    // Set timestamp to 30 seconds ago with 60s retryAfter
+    useRateLimitStore.setState({
+      rateLimits: {
+        '/v1/test': {
+          endpoint: '/v1/test',
+          timestamp: Date.now() - 30000,
+          retryAfter: 60,
+          statusCode: 429,
+        },
+      },
+    })
+
+    const remaining = useRateLimitStore.getState().getRemainingSeconds('/v1/test')
+    expect(remaining).toBeGreaterThan(25)
+    expect(remaining).toBeLessThanOrEqual(35)
+  })
+
+  it('getRemainingSeconds returns 0 when past expiry', () => {
+    useRateLimitStore.setState({
+      rateLimits: {
+        '/v1/test': {
+          endpoint: '/v1/test',
+          timestamp: Date.now() - 120000,
+          retryAfter: 60,
+          statusCode: 429,
+        },
+      },
+    })
+
+    const remaining = useRateLimitStore.getState().getRemainingSeconds('/v1/test')
+    expect(remaining).toBe(0)
+  })
+
+  it('handles addRateLimit without context parameter', () => {
+    useRateLimitStore.getState().addRateLimit('/v1/test', 30)
+
+    const entry = useRateLimitStore.getState().getRateLimit('/v1/test')
+    expect(entry).not.toBeNull()
+    expect(entry?.context).toBeUndefined()
+  })
+
+  it('clears all rate limits when clearing multiple', () => {
+    useRateLimitStore.getState().addRateLimit('/v1/a', 60)
+    useRateLimitStore.getState().addRateLimit('/v1/b', 60)
+    useRateLimitStore.getState().addRateLimit('/v1/c', 60)
+
+    useRateLimitStore.getState().clearRateLimit('/v1/a')
+    useRateLimitStore.getState().clearRateLimit('/v1/b')
+
+    const state = useRateLimitStore.getState()
+    expect(state.rateLimits['/v1/a']).toBeUndefined()
+    expect(state.rateLimits['/v1/b']).toBeUndefined()
+    expect(state.rateLimits['/v1/c']).toBeDefined()
+  })
+
+  it('clearExpired removes all expired entries at once', () => {
+    const now = Date.now()
+    useRateLimitStore.setState({
+      rateLimits: {
+        '/v1/expired-1': {
+          endpoint: '/v1/expired-1',
+          timestamp: now - 10000,
+          retryAfter: 1,
+          statusCode: 429,
+        },
+        '/v1/expired-2': {
+          endpoint: '/v1/expired-2',
+          timestamp: now - 20000,
+          retryAfter: 5,
+          statusCode: 429,
+        },
+        '/v1/active': {
+          endpoint: '/v1/active',
+          timestamp: now,
+          retryAfter: 3600,
+          statusCode: 429,
+        },
+      },
+    })
+
+    useRateLimitStore.getState().clearExpired()
+
+    const state = useRateLimitStore.getState()
+    expect(Object.keys(state.rateLimits)).toHaveLength(1)
+    expect(state.rateLimits['/v1/active']).toBeDefined()
+  })
+
+  it('isRateLimited returns false after retryAfter expires', () => {
+    useRateLimitStore.setState({
+      rateLimits: {
+        '/v1/test': {
+          endpoint: '/v1/test',
+          timestamp: Date.now() - 61000,
+          retryAfter: 60,
+          statusCode: 429,
+        },
+      },
+    })
+
+    expect(useRateLimitStore.getState().isRateLimited('/v1/test')).toBe(false)
+  })
 })
