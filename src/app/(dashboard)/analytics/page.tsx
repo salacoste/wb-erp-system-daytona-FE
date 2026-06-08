@@ -11,28 +11,16 @@
  * - Complete financial summary (all metrics)
  * - Period comparison (two weeks side-by-side)
  * - Responsive design with accessibility
- *
- * UX Improvements (Sally - UX Expert):
- * - Navigation cards moved to top for immediate access
- * - Visual hierarchy: primary actions prominent
- * - Grouped by purpose: Financial / Operational / Strategic
- * - Hover states and visual feedback
  */
 
-import { formatWeekDisplay } from '@/hooks/useFinancialSummary'
-import { FinancialSummaryTable } from '@/components/custom/FinancialSummaryTable'
-import { ExpenseChart } from '@/components/custom/ExpenseChart'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, RefreshCw, GitCompare } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { RequireWbToken } from '@/components/custom/RequireWbToken'
 import { NavigationSection, analyticsNavigation } from './components/AnalyticsNavigation'
 import { AnalyticsWeekSelector } from './components/AnalyticsWeekSelector'
 import { useAnalyticsPageState } from './components/useAnalyticsPageState'
-import { SearchPerformanceWidget } from './components/SearchPerformanceWidget'
-import { MarketingKpiCard } from './components/MarketingKpiCard'
+import { AnalyticsPageHeader } from './components/AnalyticsPageHeader'
+import { AnalyticsSummaryContent } from './components/AnalyticsSummaryContent'
+import { AnalyticsMarketingWidgets } from './components/AnalyticsMarketingWidgets'
 
 export default function AnalyticsSummaryPage() {
   const {
@@ -55,28 +43,11 @@ export default function AnalyticsSummaryPage() {
   return (
     <RequireWbToken>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика</h1>
-            <p className="text-muted-foreground mt-1">
-              {viewMode === 'multi' && selectedWeeks.length > 1
-                ? `Агрегированные данные за ${selectedWeeks.length} ${selectedWeeks.length >= 2 && selectedWeeks.length <= 4 ? 'недели' : 'недель'}`
-                : 'Выберите раздел аналитики или просмотрите финансовую сводку ниже'}
-            </p>
-          </div>
-          <Button
-            variant={viewMode !== 'single' ? 'default' : 'outline'}
-            size="sm"
-            onClick={cycleViewMode}
-            className="gap-2"
-          >
-            <GitCompare className="h-4 w-4" />
-            {viewMode === 'single' && 'Несколько периодов'}
-            {viewMode === 'multi' && 'Сравнить периоды'}
-            {viewMode === 'comparison' && 'Один период'}
-          </Button>
-        </div>
+        <AnalyticsPageHeader
+          viewMode={viewMode}
+          weekCount={selectedWeeks.length}
+          onCycleViewMode={cycleViewMode}
+        />
 
         {/* Quick Navigation - UX: Primary action area at top */}
         <Card className="border-none shadow-none bg-gray-50/50">
@@ -90,17 +61,7 @@ export default function AnalyticsSummaryPage() {
           </CardContent>
         </Card>
 
-        {/* Story 120.3-FE: Search Performance mini-widget (marketing quick stats) */}
-        {/* Story 120.4-FE: Marketing Summary KPI card (organic search orders %, top keywords) */}
-        {/* Pattern 1 graceful degradation: each widget self-fetches and renders null on its own
-            error/empty source. If only one degrades, the grid shows a single column — intentional;
-            a supplementary failure must never blank the hub (Epic 92-FE). */}
-        {selectedWeek && (
-          <div className="grid gap-4 lg:grid-cols-2">
-            <SearchPerformanceWidget from={selectedWeek} to={selectedWeek} />
-            <MarketingKpiCard from={selectedWeek} to={selectedWeek} />
-          </div>
-        )}
+        <AnalyticsMarketingWidgets selectedWeek={selectedWeek} />
 
         {/* Divider with title */}
         <div className="relative">
@@ -114,7 +75,6 @@ export default function AnalyticsSummaryPage() {
           </div>
         </div>
 
-        {/* Week Selector - different UI based on view mode */}
         <AnalyticsWeekSelector
           viewMode={viewMode}
           selectedWeek={selectedWeek}
@@ -125,65 +85,16 @@ export default function AnalyticsSummaryPage() {
           onComparisonWeekChange={setComparisonWeek}
         />
 
-        {/* Error State */}
-        {isError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="flex items-center justify-between">
-              <span>
-                {error instanceof Error
-                  ? error.message
-                  : 'Не удалось загрузить финансовые данные. Пожалуйста, попробуйте еще раз.'}
-              </span>
-              <Button variant="outline" size="sm" onClick={handleRetry} className="ml-4">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Повторить
-              </Button>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="space-y-6">
-            <Skeleton className="h-[600px] w-full" />
-            <Skeleton className="h-[400px] w-full" />
-          </div>
-        )}
-
-        {/* Content */}
-        {!isLoading && !isError && primarySummary && (
-          <>
-            {/* Financial Summary Table */}
-            <FinancialSummaryTable summary={primarySummary} comparisonSummary={secondarySummary} />
-
-            {/* Expense Chart - only for single week mode */}
-            {viewMode === 'single' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Разбивка расходов</CardTitle>
-                  <CardDescription>
-                    Визуализация структуры расходов за {formatWeekDisplay(selectedWeek)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ExpenseChart weekOverride={selectedWeek} />
-                </CardContent>
-              </Card>
-            )}
-          </>
-        )}
-
-        {/* Empty State */}
-        {!isLoading && !isError && !primarySummary && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Нет данных для отображения. Пожалуйста, загрузите финансовые отчеты или выберите
-              другой период.
-            </AlertDescription>
-          </Alert>
-        )}
+        <AnalyticsSummaryContent
+          viewMode={viewMode}
+          selectedWeek={selectedWeek}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          primarySummary={primarySummary}
+          secondarySummary={secondarySummary}
+          onRetry={handleRetry}
+        />
       </div>
     </RequireWbToken>
   )
