@@ -43,5 +43,11 @@ GET /v1/analytics/returns/daily?from=...&to=...
 - Enables daily trend chart on returns analytics page
 - Allows users to spot return spikes and correlate with specific events
 
+## Status: DELIVERED (2026-06-09)
+
+Implemented as `GET /v1/analytics/returns/daily` (Option B — dedicated endpoint).
+Service: `ReturnsDailyService` in `src/analytics/services/`.
+Returns daily total returns, return rate, cancellations, refusals, and defects per day for the requested date range.
+
 ## Priority
 P2 (Feature Enhancement)

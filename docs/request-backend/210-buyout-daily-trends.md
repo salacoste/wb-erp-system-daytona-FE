@@ -41,5 +41,11 @@ GET /v1/analytics/buyout/daily?from=...&to=...
 - Enables daily trend chart on buyout analytics page
 - Allows users to spot buyout rate drops and correlate with external events
 
+## Status: DELIVERED (2026-06-09)
+
+Implemented as `GET /v1/analytics/buyout/daily` (Option B — dedicated endpoint).
+Service: `BuyoutDailyService` in `src/analytics/services/`.
+Returns daily buyout rate, return rate, and orders count per day for the requested date range.
+
 ## Priority
 P2 (Feature Enhancement)
