@@ -89,6 +89,7 @@ export function CoefficientCalendar({
             <CalendarCell
               key={item.date}
               item={item}
+              index={index}
               isSelected={selectedDate === item.date}
               isSelectable={isSelectable}
               onSelect={onDateSelect}

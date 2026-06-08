@@ -21,7 +21,11 @@ import { useAddBoxLine, useUpdateBoxLine } from '@/hooks/use-box-lines'
 import { ProductCombobox } from '@/components/custom/sku-packaging/ProductCombobox'
 import { PreflightWarnings } from './PreflightWarnings'
 import type { BoxLine } from '@/types/shipment-cost'
-import { validateBoxLineForm, buildBoxLinePayload } from './box-line-form-helpers'
+import {
+  validateBoxLineForm,
+  buildBoxLinePayload,
+  type BoxLineFormErrors,
+} from './box-line-form-helpers'
 
 interface BoxLineFormProps {
   open: boolean
@@ -41,7 +45,7 @@ export function BoxLineForm({
   const [nmId, setNmId] = useState<number | null>(null)
   const [boxCount, setBoxCount] = useState('')
   const [totalUnits, setTotalUnits] = useState('')
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<BoxLineFormErrors>({})
 
   const { mutateAsync: addAsync, isPending: isAdding } = useAddBoxLine(shipmentId, palletId)
   const { mutateAsync: updateAsync, isPending: isUpdating } = useUpdateBoxLine(shipmentId)

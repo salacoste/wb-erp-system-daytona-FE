@@ -6,9 +6,10 @@
  */
 
 import { PnLRow } from './PnLRow'
-import type { DeductionsSectionProps } from './pnl-types'
+import type { CabinetSummaryTotals } from '@/types/analytics'
 
-interface DeductionsConditionalRowsProps extends DeductionsSectionProps {
+interface DeductionsConditionalRowsProps {
+  data: CabinetSummaryTotals
   acquiringPct: number | null
   loyaltyFeePct: number | null
   loyaltyCompensationPct: number | null

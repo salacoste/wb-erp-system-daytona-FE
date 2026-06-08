@@ -17,7 +17,7 @@ export interface OrderPickerSelection {
   isAllSelected: boolean
   isIndeterminate: boolean
   handleToggleOrder: (orderId: string) => void
-  handleToggleAll: (orders: { orderId: string }[]) => void
+  handleToggleAll: () => void
   handleClearSelection: () => void
 }
 

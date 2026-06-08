@@ -51,6 +51,7 @@ describe('ReorderSummaryCards', () => {
           totalPending: 5,
           totalOrdered: 3,
           totalReceived: 10,
+          totalExpired: 0,
           reorderCoveragePct: 75,
           avgHoursToOrder: null,
           avgHoursToReceive: null,
@@ -70,16 +71,16 @@ describe('ReorderSummaryCards', () => {
           totalPending: 0,
           totalOrdered: 0,
           totalReceived: 0,
-          reorderCoveragePct: null,
+          totalExpired: 0,
+          reorderCoveragePct: 0,
           avgHoursToOrder: null,
           avgHoursToReceive: null,
         }}
         isLoading={false}
       />
     )
-    // Coverage card should show dash since pct is null
-    const cards = screen.getAllByText('—')
-    expect(cards.length).toBeGreaterThanOrEqual(1)
+    // Cards with zero values should render 0
+    expect(screen.getAllByText('0').length).toBeGreaterThanOrEqual(3)
   })
 
   it('shows sublabel when avgHoursToOrder is provided', () => {
@@ -89,6 +90,7 @@ describe('ReorderSummaryCards', () => {
           totalPending: 5,
           totalOrdered: 3,
           totalReceived: 10,
+          totalExpired: 1,
           reorderCoveragePct: 75,
           avgHoursToOrder: 12.5,
           avgHoursToReceive: 48,

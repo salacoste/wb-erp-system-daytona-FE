@@ -21,9 +21,12 @@ interface AutoFillResult {
  * Returns updated logistics, storage, and delivery date states.
  */
 export function computeAutoFillState(
-  warehouse: {
-    tariffs?: { logisticsCoefficient?: number; storageCoefficient?: number }
-  } | null,
+  warehouse:
+    | {
+        tariffs?: { logisticsCoefficient?: number; storageCoefficient?: number }
+      }
+    | null
+    | undefined,
   coefficients: NormalizedCoefficients | null
 ): AutoFillResult {
   const hasEmbedded = warehouse?.tariffs?.logisticsCoefficient !== undefined

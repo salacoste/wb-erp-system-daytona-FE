@@ -18,7 +18,7 @@ import {
 
 interface CalendarCellProps {
   item: NormalizedCoefficient
-  index: number
+  index?: number
   isSelected: boolean
   isSelectable: boolean
   onSelect?: (date: string, coefficient: number) => void
