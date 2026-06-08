@@ -286,6 +286,7 @@ Source: `src/lib/routes.ts`
 | Route | Purpose | Epic |
 |-------|---------|------|
 | `/orders/list` | FBS orders list | 40-FE |
+| `/orders/fbo` | FBO orders & sales | (commit) |
 | `/orders/integrity` | Data integrity & reconciliation | (commit) |
 | `/supplies` | Supply list | 53-FE |
 | `/supplies/:id` | Supply detail | 53-FE |
