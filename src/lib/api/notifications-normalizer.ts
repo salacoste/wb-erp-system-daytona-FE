@@ -4,12 +4,14 @@
  * Normalizes responses from:
  * - GET /v1/notifications/telegram/status (binding status)
  * - GET /v1/notifications/preferences
+ * - GET /v1/notifications/orders/settings (Epic 132-FE)
  */
 
 import { asRecord, toCount, toStr, toOptionalString } from './normalizer-helpers'
 import type {
   BindingStatusResponseDto,
   NotificationPreferencesResponseDto,
+  OrderNotificationSettingsDto,
 } from '@/types/notifications'
 
 export function normalizeBindingStatusResponse(raw: unknown): BindingStatusResponseDto {
@@ -58,5 +60,34 @@ export function normalizeNotificationPreferencesResponse(
       ? lang
       : 'ru') as NotificationPreferencesResponseDto['language'],
     quiet_hours: normalizeQuietHours(r.quiet_hours),
+  }
+}
+
+// ============================================================================
+// FBS Order Notification Settings Normalizer (Epic 132-FE)
+// ============================================================================
+
+/** Clamp hour to 0-23 range */
+function clampHour(raw: unknown): number {
+  const n = toCount(raw)
+  return Math.max(0, Math.min(23, n))
+}
+
+/**
+ * Normalize GET /v1/notifications/orders/settings response
+ * Backend uses camelCase — no key remapping needed, just type coercion
+ */
+export function normalizeOrderNotificationSettings(raw: unknown): OrderNotificationSettingsDto {
+  const r = asRecord(raw)
+  return {
+    cabinetId: toStr(r.cabinetId),
+    newOrderEnabled: Boolean(r.newOrderEnabled),
+    slaWarningEnabled: Boolean(r.slaWarningEnabled),
+    dailySummaryEnabled: Boolean(r.dailySummaryEnabled),
+    dailySummaryHour: clampHour(r.dailySummaryHour),
+    quietHoursStart: clampHour(r.quietHoursStart),
+    quietHoursEnd: clampHour(r.quietHoursEnd),
+    confirmationSlaWarningMinutes: toCount(r.confirmationSlaWarningMinutes),
+    completionSlaWarningMinutes: toCount(r.completionSlaWarningMinutes),
   }
 }

@@ -9,6 +9,7 @@ import { apiClient } from '../api-client'
 import {
   normalizeBindingStatusResponse,
   normalizeNotificationPreferencesResponse,
+  normalizeOrderNotificationSettings,
 } from './notifications-normalizer'
 import type {
   BindingCodeResponseDto,
@@ -18,6 +19,8 @@ import type {
   UpdatePreferencesRequestDto,
   SendTestNotificationRequestDto,
   TestNotificationResponseDto,
+  OrderNotificationSettingsDto,
+  UpdateOrderNotificationSettingsDto,
 } from '@/types/notifications'
 
 // ============================================================================
@@ -104,4 +107,29 @@ export async function sendTestNotification(
   params?: SendTestNotificationRequestDto
 ): Promise<TestNotificationResponseDto> {
   return apiClient.post<TestNotificationResponseDto>('/v1/notifications/test', params || {})
+}
+
+// ============================================================================
+// FBS Order Notification Settings API (Epic 132-FE, Story 132.1)
+// Backend: Story 40.7 — GET/POST /v1/notifications/orders/settings
+// ============================================================================
+
+/**
+ * GET /v1/notifications/orders/settings
+ * Fetch FBS order notification preferences for current cabinet
+ */
+export async function getOrderNotificationSettings(): Promise<OrderNotificationSettingsDto> {
+  const raw = await apiClient.get<unknown>('/v1/notifications/orders/settings')
+  return normalizeOrderNotificationSettings(raw)
+}
+
+/**
+ * POST /v1/notifications/orders/settings
+ * Update FBS order notification settings (full replacement)
+ */
+export async function updateOrderNotificationSettings(
+  settings: UpdateOrderNotificationSettingsDto
+): Promise<OrderNotificationSettingsDto> {
+  const raw = await apiClient.post<unknown>('/v1/notifications/orders/settings', settings)
+  return normalizeOrderNotificationSettings(raw)
 }

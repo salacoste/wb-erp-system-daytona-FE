@@ -6,6 +6,7 @@ import { describe, it, expect } from 'vitest'
 import {
   normalizeBindingStatusResponse,
   normalizeNotificationPreferencesResponse,
+  normalizeOrderNotificationSettings,
 } from '../notifications-normalizer'
 
 describe('normalizeBindingStatusResponse', () => {
@@ -86,5 +87,52 @@ describe('normalizeNotificationPreferencesResponse', () => {
   it('defaults unknown language to ru', () => {
     const result = normalizeNotificationPreferencesResponse({ language: 'de' })
     expect(result.language).toBe('ru')
+  })
+})
+
+describe('normalizeOrderNotificationSettings', () => {
+  const fullRaw = {
+    cabinetId: 'cab-1',
+    newOrderEnabled: true,
+    slaWarningEnabled: false,
+    dailySummaryEnabled: true,
+    dailySummaryHour: 9,
+    quietHoursStart: 22,
+    quietHoursEnd: 8,
+    confirmationSlaWarningMinutes: 30,
+    completionSlaWarningMinutes: 120,
+  }
+
+  it('maps full settings response', () => {
+    const result = normalizeOrderNotificationSettings(fullRaw)
+    expect(result.cabinetId).toBe('cab-1')
+    expect(result.newOrderEnabled).toBe(true)
+    expect(result.dailySummaryHour).toBe(9)
+    expect(result.confirmationSlaWarningMinutes).toBe(30)
+  })
+
+  it('clamps out-of-range hours to 0-23', () => {
+    const result = normalizeOrderNotificationSettings({
+      ...fullRaw,
+      dailySummaryHour: 99,
+      quietHoursStart: -5,
+    })
+    expect(result.dailySummaryHour).toBe(23)
+    expect(result.quietHoursStart).toBe(0)
+  })
+
+  it('handles null input with safe defaults', () => {
+    const result = normalizeOrderNotificationSettings(null)
+    expect(result.cabinetId).toBe('')
+    expect(result.newOrderEnabled).toBe(false)
+    expect(result.dailySummaryHour).toBe(0)
+    expect(result.confirmationSlaWarningMinutes).toBe(0)
+  })
+
+  it('handles missing fields', () => {
+    const result = normalizeOrderNotificationSettings({})
+    expect(result.slaWarningEnabled).toBe(false)
+    expect(result.dailySummaryEnabled).toBe(false)
+    expect(result.quietHoursEnd).toBe(0)
   })
 })

@@ -13,10 +13,10 @@
  * Contains verification code and instructions for user
  */
 export interface BindingCodeResponseDto {
-  binding_code: string;          // e.g., "A1B2C3D4" (8 chars)
-  expires_at: string;             // ISO 8601 timestamp
-  instructions: string;           // User instructions (ru/en)
-  deep_link: string;              // https://t.me/Kernel_crypto_bot?start=...
+  binding_code: string // e.g., "A1B2C3D4" (8 chars)
+  expires_at: string // ISO 8601 timestamp
+  instructions: string // User instructions (ru/en)
+  deep_link: string // https://t.me/Kernel_crypto_bot?start=...
 }
 
 /**
@@ -24,10 +24,10 @@ export interface BindingCodeResponseDto {
  * Polled every 3 seconds during binding flow
  */
 export interface BindingStatusResponseDto {
-  bound: boolean;                 // true if binding complete
-  telegram_user_id: number | null;  // Telegram user ID if bound
-  telegram_username: string | null; // @username if bound
-  binding_expires_at: string | null; // ISO 8601 timestamp
+  bound: boolean // true if binding complete
+  telegram_user_id: number | null // Telegram user ID if bound
+  telegram_username: string | null // @username if bound
+  binding_expires_at: string | null // ISO 8601 timestamp
 }
 
 /**
@@ -35,7 +35,7 @@ export interface BindingStatusResponseDto {
  * Optionally specify language for instructions
  */
 export interface StartBindingRequestDto {
-  language?: 'ru' | 'en';  // Default: 'ru'
+  language?: 'ru' | 'en' // Default: 'ru'
 }
 
 // ============================================================================
@@ -47,24 +47,24 @@ export interface StartBindingRequestDto {
  * Complete notification preferences for current cabinet
  */
 export interface NotificationPreferencesResponseDto {
-  cabinet_id: string;
-  telegram_enabled: boolean;      // Master toggle
-  telegram_bound: boolean;        // Binding status
-  telegram_username: string | null;
+  cabinet_id: string
+  telegram_enabled: boolean // Master toggle
+  telegram_bound: boolean // Binding status
+  telegram_username: string | null
   preferences: {
-    task_completed: boolean;
-    task_failed: boolean;
-    task_stalled: boolean;
-    daily_digest: boolean;
-    digest_time: string;          // HH:MM format (24-hour)
-  };
-  language: 'ru' | 'en';           // Notification message language
+    task_completed: boolean
+    task_failed: boolean
+    task_stalled: boolean
+    daily_digest: boolean
+    digest_time: string // HH:MM format (24-hour)
+  }
+  language: 'ru' | 'en' // Notification message language
   quiet_hours: {
-    enabled: boolean;
-    from: string;                  // HH:MM format (24-hour)
-    to: string;                    // HH:MM format (24-hour)
-    timezone: string;              // IANA timezone (e.g., "Europe/Moscow")
-  };
+    enabled: boolean
+    from: string // HH:MM format (24-hour)
+    to: string // HH:MM format (24-hour)
+    timezone: string // IANA timezone (e.g., "Europe/Moscow")
+  }
 }
 
 /**
@@ -73,19 +73,19 @@ export interface NotificationPreferencesResponseDto {
  */
 export interface UpdatePreferencesRequestDto {
   preferences?: {
-    task_completed?: boolean;
-    task_failed?: boolean;
-    task_stalled?: boolean;
-    daily_digest?: boolean;
-    digest_time?: string;
-  };
-  language?: 'ru' | 'en';
+    task_completed?: boolean
+    task_failed?: boolean
+    task_stalled?: boolean
+    daily_digest?: boolean
+    digest_time?: string
+  }
+  language?: 'ru' | 'en'
   quiet_hours?: {
-    enabled?: boolean;
-    from?: string;
-    to?: string;
-    timezone?: string;
-  };
+    enabled?: boolean
+    from?: string
+    to?: string
+    timezone?: string
+  }
 }
 
 // ============================================================================
@@ -97,15 +97,15 @@ export interface UpdatePreferencesRequestDto {
  * Send test notification to verify binding
  */
 export interface SendTestNotificationRequestDto {
-  message?: string;  // Optional custom message
+  message?: string // Optional custom message
 }
 
 /**
  * Response from POST /v1/notifications/test
  */
 export interface TestNotificationResponseDto {
-  success: boolean;
-  message: string;  // e.g., "Test notification sent to @username"
+  success: boolean
+  message: string // e.g., "Test notification sent to @username"
 }
 
 // ============================================================================
@@ -117,14 +117,14 @@ export interface TestNotificationResponseDto {
  */
 export interface ApiErrorResponse {
   error: {
-    code: string;  // e.g., "VALIDATION_ERROR", "FORBIDDEN", "RATE_LIMITED"
-    message: string;
+    code: string // e.g., "VALIDATION_ERROR", "FORBIDDEN", "RATE_LIMITED"
+    message: string
     details?: Array<{
-      field: string;
-      issue: string;
-    }>;
-    trace_id?: string;
-  };
+      field: string
+      issue: string
+    }>
+    trace_id?: string
+  }
 }
 
 // ============================================================================
@@ -152,3 +152,31 @@ export enum BindingFlowState {
   ERROR = 'error',
   EXPIRED = 'expired',
 }
+
+// ============================================================================
+// FBS Order Notification Settings Types
+// Epic 132-FE: Story 132.1 — Backend Story 40.7
+// Contract: GET/POST /v1/notifications/orders/settings
+// ============================================================================
+
+/**
+ * Response from GET /v1/notifications/orders/settings
+ * FBS order notification preferences for current cabinet
+ */
+export interface OrderNotificationSettingsDto {
+  cabinetId: string
+  newOrderEnabled: boolean
+  slaWarningEnabled: boolean
+  dailySummaryEnabled: boolean
+  dailySummaryHour: number // 0-23
+  quietHoursStart: number // 0-23
+  quietHoursEnd: number // 0-23
+  confirmationSlaWarningMinutes: number
+  completionSlaWarningMinutes: number
+}
+
+/**
+ * Request body for POST /v1/notifications/orders/settings
+ * Full replacement — send all fields
+ */
+export type UpdateOrderNotificationSettingsDto = Omit<OrderNotificationSettingsDto, 'cabinetId'>

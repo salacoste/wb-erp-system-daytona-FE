@@ -3,9 +3,9 @@
 // Epic 34-FE: Story 34.1-FE
 // ============================================================================
 
-import { describe, expect, it, afterEach, beforeAll, afterAll, vi } from 'vitest';
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
+import { describe, expect, it, afterEach, beforeAll, afterAll, vi } from 'vitest'
+import { setupServer } from 'msw/node'
+import { http, HttpResponse } from 'msw'
 import {
   startTelegramBinding,
   getBindingStatus,
@@ -13,31 +13,33 @@ import {
   getNotificationPreferences,
   updateNotificationPreferences,
   sendTestNotification,
-} from '../notifications';
+  getOrderNotificationSettings,
+  updateOrderNotificationSettings,
+} from '../notifications'
 
 // Mock localStorage
 const localStorageMock = {
   getItem: vi.fn((key: string) => {
-    if (key === 'access_token') return 'test-token';
-    if (key === 'cabinet_id') return 'test-cabinet-id';
-    return null;
+    if (key === 'access_token') return 'test-token'
+    if (key === 'cabinet_id') return 'test-cabinet-id'
+    return null
   }),
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-};
+}
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
-});
+})
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:3000'
 
-const server = setupServer();
+const server = setupServer()
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 describe('Telegram Binding API', () => {
   it('should start binding and return code', async () => {
@@ -48,14 +50,14 @@ describe('Telegram Binding API', () => {
           expires_at: '2025-12-29T14:00:00Z',
           instructions: 'Send /start A1B2C3D4 to @Kernel_crypto_bot',
           deep_link: 'https://t.me/Kernel_crypto_bot?start=A1B2C3D4',
-        });
+        })
       })
-    );
+    )
 
-    const result = await startTelegramBinding();
-    expect(result.binding_code).toBe('A1B2C3D4');
-    expect(result.deep_link).toContain('Kernel_crypto_bot');
-  });
+    const result = await startTelegramBinding()
+    expect(result.binding_code).toBe('A1B2C3D4')
+    expect(result.deep_link).toContain('Kernel_crypto_bot')
+  })
 
   it('should get binding status', async () => {
     server.use(
@@ -65,26 +67,26 @@ describe('Telegram Binding API', () => {
           telegram_user_id: 123456789,
           telegram_username: 'testuser',
           binding_expires_at: null,
-        });
+        })
       })
-    );
+    )
 
-    const result = await getBindingStatus();
-    expect(result.bound).toBe(true);
-    expect(result.telegram_username).toBe('testuser');
-  });
+    const result = await getBindingStatus()
+    expect(result.bound).toBe(true)
+    expect(result.telegram_username).toBe('testuser')
+  })
 
   it('should unbind telegram', async () => {
     server.use(
       http.delete(`${API_BASE_URL}/v1/notifications/telegram/unbind`, () => {
-        return new HttpResponse(null, { status: 204 });
+        return new HttpResponse(null, { status: 204 })
       })
-    );
+    )
 
     // 204 No Content returns empty string from apiClient (response.text())
-    const result = await unbindTelegram();
-    expect(result === undefined || result === '').toBe(true);
-  });
+    const result = await unbindTelegram()
+    expect(result === undefined || result === '').toBe(true)
+  })
 
   it('should handle API errors', async () => {
     server.use(
@@ -97,13 +99,13 @@ describe('Telegram Binding API', () => {
             },
           },
           { status: 429 }
-        );
+        )
       })
-    );
+    )
 
-    await expect(startTelegramBinding()).rejects.toThrow('Too many requests');
-  });
-});
+    await expect(startTelegramBinding()).rejects.toThrow('Too many requests')
+  })
+})
 
 describe('Notification Preferences API', () => {
   it('should get notification preferences', async () => {
@@ -128,14 +130,14 @@ describe('Notification Preferences API', () => {
             to: '07:00',
             timezone: 'Europe/Moscow',
           },
-        });
+        })
       })
-    );
+    )
 
-    const result = await getNotificationPreferences();
-    expect(result.telegram_enabled).toBe(true);
-    expect(result.preferences.task_completed).toBe(true);
-  });
+    const result = await getNotificationPreferences()
+    expect(result.telegram_enabled).toBe(true)
+    expect(result.preferences.task_completed).toBe(true)
+  })
 
   it('should update notification preferences', async () => {
     server.use(
@@ -159,16 +161,16 @@ describe('Notification Preferences API', () => {
             to: '07:00',
             timezone: 'Europe/Moscow',
           },
-        });
+        })
       })
-    );
+    )
 
     const result = await updateNotificationPreferences({
       preferences: { task_completed: false },
-    });
-    expect(result.preferences.task_completed).toBe(false);
-  });
-});
+    })
+    expect(result.preferences.task_completed).toBe(false)
+  })
+})
 
 describe('Test Notification API', () => {
   it('should send test notification', async () => {
@@ -177,12 +179,72 @@ describe('Test Notification API', () => {
         return HttpResponse.json({
           success: true,
           message: 'Test notification sent to @testuser',
-        });
+        })
       })
-    );
+    )
 
-    const result = await sendTestNotification();
-    expect(result.success).toBe(true);
-    expect(result.message).toContain('@testuser');
-  });
-});
+    const result = await sendTestNotification()
+    expect(result.success).toBe(true)
+    expect(result.message).toContain('@testuser')
+  })
+})
+
+describe('FBS Order Notification Settings API', () => {
+  const mockSettings = {
+    cabinetId: 'test-cabinet-id',
+    newOrderEnabled: true,
+    slaWarningEnabled: false,
+    dailySummaryEnabled: true,
+    dailySummaryHour: 9,
+    quietHoursStart: 22,
+    quietHoursEnd: 8,
+    confirmationSlaWarningMinutes: 30,
+    completionSlaWarningMinutes: 120,
+  }
+
+  it('should get order notification settings', async () => {
+    server.use(
+      http.get(`${API_BASE_URL}/v1/notifications/orders/settings`, () => {
+        return HttpResponse.json(mockSettings)
+      })
+    )
+
+    const result = await getOrderNotificationSettings()
+    expect(result.cabinetId).toBe('test-cabinet-id')
+    expect(result.newOrderEnabled).toBe(true)
+    expect(result.dailySummaryHour).toBe(9)
+    expect(result.confirmationSlaWarningMinutes).toBe(30)
+  })
+
+  it('should normalize malformed hour fields', async () => {
+    server.use(
+      http.get(`${API_BASE_URL}/v1/notifications/orders/settings`, () => {
+        return HttpResponse.json({ ...mockSettings, dailySummaryHour: 99 })
+      })
+    )
+
+    const result = await getOrderNotificationSettings()
+    expect(result.dailySummaryHour).toBe(23)
+  })
+
+  it('should update order notification settings', async () => {
+    const updated = { ...mockSettings, newOrderEnabled: false }
+    server.use(
+      http.post(`${API_BASE_URL}/v1/notifications/orders/settings`, () => {
+        return HttpResponse.json(updated)
+      })
+    )
+
+    const result = await updateOrderNotificationSettings({
+      newOrderEnabled: false,
+      slaWarningEnabled: false,
+      dailySummaryEnabled: true,
+      dailySummaryHour: 9,
+      quietHoursStart: 22,
+      quietHoursEnd: 8,
+      confirmationSlaWarningMinutes: 30,
+      completionSlaWarningMinutes: 120,
+    })
+    expect(result.newOrderEnabled).toBe(false)
+  })
+})
