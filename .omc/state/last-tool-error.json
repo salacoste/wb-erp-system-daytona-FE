@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"# Verify the orders/list route - no page.tsx exists\\necho \\\"=== Route ORDERS.LIST defined as '/orders/list' ===\\\"\\necho \\\"=== Checking for corresponding page ===\\\"\\nls -la \\\"/Users/r2d2/Do...",
-  "error": "Exit code 1\n=== Route ORDERS.LIST defined as '/orders/list' ===\n=== Checking for corresponding page ===\nls: /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/app/(dashboard)/orders/list/: No such file or directory",
-  "timestamp": "2026-06-08T12:27:23.387Z",
+  "tool_input_preview": "{\"command\":\"ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/jest.config.* /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/jest.config 2>/dev/null\",\"description\":\"List jest con...",
+  "error": "Exit code 1\n(eval):1: no matches found: /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/jest.config.*",
+  "timestamp": "2026-06-08T12:42:13.372Z",
   "retry_count": 1
 }

@@ -10,6 +10,7 @@ import type { LiquidityUiSortField } from '@/lib/liquidity-utils'
 import type { LiquidityCategory, LiquidityQueryParams } from '@/types/liquidity'
 import { LiquidityHeader } from './components/LiquidityHeader'
 import { LiquidityDistributionCards } from './components/LiquidityDistributionCards'
+import { LiquidityDistributionChart } from './components/LiquidityDistributionChart'
 import { LiquiditySummaryBar } from './components/LiquiditySummaryBar'
 import { LiquidityBenchmarks } from './components/LiquidityBenchmarks'
 import { LiquidityEmpty } from './components/LiquidityEmpty'
@@ -125,6 +126,9 @@ export default function LiquidityPage() {
         activeFilter={activeFilter}
         onCardClick={handleCardClick}
       />
+
+      {/* Distribution Pie Chart */}
+      <LiquidityDistributionChart distribution={data.summary.distribution} />
 
       {/* Summary Metrics Bar */}
       <LiquiditySummaryBar summary={data.summary} />
