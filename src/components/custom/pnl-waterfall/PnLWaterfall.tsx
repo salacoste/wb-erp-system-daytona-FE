@@ -24,6 +24,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toCount } from '@/lib/api/normalizer-helpers'
 import { RevenueSection } from './RevenueSection'
 import { DeductionsSection } from './DeductionsSection'
 import { PayoutSection } from './PayoutSection'
@@ -68,23 +69,17 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
   const totalWBDeductions = revenueBase - sellerPayout
 
   // SPP Compensation: difference between sum of visible deduction lines and actual total
-  // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
+  // toCount: null = absent line item → 0 for summation (DISPLAY-GUARD, AP#8 count exception)
   const sumOfVisibleDeductions =
-    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
-    (data.total_commission_rub ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
-    (data.logistics_cost ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
-    (data.storage_cost ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
-    (data.paid_acceptance_cost ?? 0) +
-    (data.penalties ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
-    (data.acquiring_fee ?? 0) +
-    // eslint-disable-next-line no-restricted-syntax -- DISPLAY-GUARD: deduction field null = absent line item; row hidden when 0; sum requires number
-    (data.loyalty_fee ?? 0) -
-    (data.loyalty_compensation ?? 0) +
-    (data.other_adjustments ?? 0)
+    toCount(data.total_commission_rub) +
+    toCount(data.logistics_cost) +
+    toCount(data.storage_cost) +
+    toCount(data.paid_acceptance_cost) +
+    toCount(data.penalties) +
+    toCount(data.acquiring_fee) +
+    toCount(data.loyalty_fee) -
+    toCount(data.loyalty_compensation) +
+    toCount(data.other_adjustments)
 
   const sppCompensation = sumOfVisibleDeductions - totalWBDeductions
   const showSppCompensation = Math.abs(sppCompensation) > 1

@@ -29,7 +29,7 @@ function normalizeOrdersTrendItem(raw: unknown): OrdersDailyData {
   const d = asRecord(raw)
   return {
     date: toStr(d.date),
-    total_amount: toNullableNumber(d.revenue) ?? 0,
+    total_amount: toCount(d.revenue),
     total_orders: toCount(d.ordersCount),
   }
 }
@@ -52,27 +52,18 @@ function normalizeFinanceDailyItem(raw: unknown): FinanceDailyData {
   const d = asRecord(raw)
   return {
     date: toStr(d.date),
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: wb_sales_gross 0 = partial day
-    wb_sales_gross: toNullableNumber(d.revenueGross ?? d.revenue_gross) ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: revenue_net 0 = partial day
-    revenue_net: toNullableNumber(d.revenueNet ?? d.revenue_net) ?? 0,
+    wb_sales_gross: toCount(d.revenueGross ?? d.revenue_gross),
+    revenue_net: toCount(d.revenueNet ?? d.revenue_net),
     cogs_total: toNullableNumber(d.cogsTotal ?? d.cogs_total),
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: logistics 0 = no logistics
-    logistics_cost: toNullableNumber(d.logistics ?? d.logistics_cost) ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: storage 0 = no storage
-    storage_cost: toNullableNumber(d.storage ?? d.storage_cost) ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: penalties 0 = no penalties
-    penalties: toNullableNumber(d.penalties) ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: paid_acceptance 0 = none
-    paid_acceptance: toNullableNumber(d.paidAcceptance ?? d.paid_acceptance) ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: commission 0 = no commission
-    commission: toNullableNumber(d.commission) ?? 0,
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: returns amount 0 = no returns
-    returns: toNullableNumber(d.returns) ?? 0,
+    logistics_cost: toCount(d.logistics ?? d.logistics_cost),
+    storage_cost: toCount(d.storage ?? d.storage_cost),
+    penalties: toCount(d.penalties),
+    paid_acceptance: toCount(d.paidAcceptance ?? d.paid_acceptance),
+    commission: toCount(d.commission),
+    returns: toCount(d.returns),
     returns_count: toCount(d.returnsCount ?? d.returns_count),
     sales_count: toCount(d.salesCount ?? d.sales_count),
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: ad spend 0 = no ads
-    advertising_spend: toNullableNumber(d.advertisingSpend ?? d.advertising_spend) ?? 0,
+    advertising_spend: toCount(d.advertisingSpend ?? d.advertising_spend),
     net_profit: toNullableNumber(d.netProfit ?? d.net_profit),
   }
 }
@@ -93,8 +84,7 @@ function normalizeAdvertisingDailyItem(raw: unknown): AdvertisingDailyData {
   const d = asRecord(raw)
   return {
     date: toStr(d.date),
-    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: spend 0 = no ads
-    total_spend: toNullableNumber(d.spend ?? d.total_spend) ?? 0,
+    total_spend: toCount(d.spend ?? d.total_spend),
     views: toCount(d.views),
     clicks: toCount(d.clicks),
     ctr: toNullableNumber(d.ctr),

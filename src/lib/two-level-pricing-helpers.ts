@@ -17,6 +17,7 @@ import type {
   TwoLevelMargin,
   PriceGap,
 } from '@/types/price-calculator'
+import { toCount } from '@/lib/api/normalizer-helpers'
 
 /**
  * Calculate fixed costs from form data
@@ -29,15 +30,15 @@ export function calculateFixedCosts(formData: TwoLevelPricingFormData): TwoLevel
 
   // Storage and acceptance only apply to FBO
   const storage = formData.fulfillment_type === 'FBO' ? formData.storage_rub : 0
-  // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: acceptance_cost 0 = FBO without acceptance fee (legitimate)
-  const acceptance = formData.fulfillment_type === 'FBO' ? (formData.acceptance_cost ?? 0) : 0
+  // toCount: acceptance_cost null = FBO without acceptance fee (SEMANTIC-ZERO)
+  const acceptance = formData.fulfillment_type === 'FBO' ? toCount(formData.acceptance_cost) : 0
 
   // Story 44.51: Packaging and logistics to MP - per box/pallet costs divided by units
   const unitsPerPackage = Math.max(formData.units_per_package ?? 1, 1)
-  // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: packaging_rub 0 = no cost entered (form default)
-  const packaging = (formData.packaging_rub ?? 0) / unitsPerPackage
-  // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: logistics_to_mp_rub 0 = no cost entered (form default)
-  const logisticsToMp = (formData.logistics_to_mp_rub ?? 0) / unitsPerPackage
+  // toCount: packaging_rub null = no cost entered, form default (SEMANTIC-ZERO)
+  const packaging = toCount(formData.packaging_rub) / unitsPerPackage
+  // toCount: logistics_to_mp_rub null = no cost entered, form default (SEMANTIC-ZERO)
+  const logisticsToMp = toCount(formData.logistics_to_mp_rub) / unitsPerPackage
 
   const total =
     formData.cogs_rub +
@@ -99,8 +100,8 @@ export function calculatePercentageCosts(
     acquiringPct +
     (taxType === 'income' ? taxRatePct : 0) +
     (isVatPayer ? vatPct : 0)
-  // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: taxIncome/vat 0 = tax type not applicable (arithmetic identity)
-  const totalRub = commissionWb.rub + acquiring.rub + (taxIncome?.rub ?? 0) + (vat?.rub ?? 0)
+  // toCount: taxIncome/vat null = tax type not applicable (SEMANTIC-ZERO, arithmetic identity)
+  const totalRub = commissionWb.rub + acquiring.rub + toCount(taxIncome?.rub) + toCount(vat?.rub)
 
   return {
     commissionWb,
