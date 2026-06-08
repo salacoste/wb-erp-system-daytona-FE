@@ -8,7 +8,7 @@
  * exact NBSP byte.
  */
 import { describe, it, expect } from 'vitest'
-import { formatPercentage, formatMargin } from './unit-economics-config'
+import { formatPercentage, formatMargin } from './unit-economics-formatters'
 
 describe('unit-economics formatPercentage — Russian locale', () => {
   it('uses a comma decimal separator, not a dot', () => {
