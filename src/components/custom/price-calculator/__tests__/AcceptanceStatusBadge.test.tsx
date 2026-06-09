@@ -49,8 +49,8 @@ const BADGE_TEST_CASES = [
     coefficient: 1,
     expectedLabel: 'Стандартно',
     expectedColor: 'default',
-    colorClass: 'text-gray-700',
-    bgClass: 'bg-gray-100',
+    colorClass: 'text-foreground',
+    bgClass: 'bg-muted',
     icon: '',
   },
   {
@@ -110,9 +110,9 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1} />)
 
       const badge = screen.getByText('Стандартно').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-gray-100')
-      expect(badge).toHaveClass('text-gray-700')
-      expect(badge).toHaveClass('border-gray-200')
+      expect(badge).toHaveClass('bg-muted')
+      expect(badge).toHaveClass('text-foreground')
+      expect(badge).toHaveClass('border-border')
     })
 
     it('renders elevated badge with yellow (warning) color', () => {
@@ -442,7 +442,7 @@ describe('AcceptanceStatusBadge - Calendar Integration Support', () => {
     const testCases = [
       { coefficient: -1, expectedBorder: 'border-red-200' },
       { coefficient: 0, expectedBorder: 'border-green-200' },
-      { coefficient: 1, expectedBorder: 'border-gray-200' },
+      { coefficient: 1, expectedBorder: 'border-border' },
       { coefficient: 1.25, expectedBorder: 'border-yellow-200' },
       { coefficient: 1.65, expectedBorder: 'border-orange-200' },
     ]

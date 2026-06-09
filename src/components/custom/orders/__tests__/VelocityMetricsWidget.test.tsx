@@ -38,7 +38,7 @@ describe('VelocityMetricsWidget', () => {
       const value = screen.getByTestId('completion-time-value')
       expect(value).toHaveTextContent('—')
       expect(value).not.toHaveTextContent('0 мин')
-      expect(value).toHaveClass('text-gray-400')
+      expect(value).toHaveClass('text-muted-foreground')
       expect(value).not.toHaveClass('text-green-600')
       expect(screen.getByText('Нет данных')).toBeInTheDocument()
     })
@@ -60,7 +60,7 @@ describe('VelocityMetricsWidget', () => {
       )
       const value = screen.getByTestId('confirmation-time-value')
       expect(value).toHaveTextContent('—')
-      expect(value).toHaveClass('text-gray-400')
+      expect(value).toHaveClass('text-muted-foreground')
       expect(value).not.toHaveClass('text-green-600')
     })
 

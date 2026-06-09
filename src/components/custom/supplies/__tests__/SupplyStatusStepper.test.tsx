@@ -129,11 +129,11 @@ describe('SupplyStatusStepper', () => {
     it('CLOSED, DELIVERING, DELIVERED steps are gray/outlined', () => {
       renderStepper('OPEN')
       const closedLabel = screen.getByText('Закрыта')
-      expect(closedLabel.className).toContain('text-gray')
+      expect(closedLabel.className).toContain('text-muted-foreground')
       const deliveringLabel = screen.getByText('В пути')
-      expect(deliveringLabel.className).toContain('text-gray')
+      expect(deliveringLabel.className).toContain('text-muted-foreground')
       const deliveredLabel = screen.getByText('Доставлена')
-      expect(deliveredLabel.className).toContain('text-gray')
+      expect(deliveredLabel.className).toContain('text-muted-foreground')
     })
 
     it('no checkmarks visible (no completed steps)', () => {
@@ -145,7 +145,7 @@ describe('SupplyStatusStepper', () => {
     it('connectors after OPEN are gray', () => {
       renderStepper('OPEN')
       const nav = screen.getByRole('navigation', { name: 'Статус поставки' })
-      const connectors = nav.querySelectorAll('.bg-gray-300')
+      const connectors = nav.querySelectorAll('.bg-muted')
       expect(connectors.length).toBeGreaterThan(0)
     })
   })
@@ -170,9 +170,9 @@ describe('SupplyStatusStepper', () => {
     it('DELIVERING, DELIVERED steps are gray/outlined', () => {
       renderStepper('CLOSED')
       const deliveringLabel = screen.getByText('В пути')
-      expect(deliveringLabel.className).toContain('text-gray')
+      expect(deliveringLabel.className).toContain('text-muted-foreground')
       const deliveredLabel = screen.getByText('Доставлена')
-      expect(deliveredLabel.className).toContain('text-gray')
+      expect(deliveredLabel.className).toContain('text-muted-foreground')
     })
 
     it('connector between OPEN and CLOSED is green', () => {
@@ -185,7 +185,7 @@ describe('SupplyStatusStepper', () => {
     it('connectors after CLOSED are gray', () => {
       renderStepper('CLOSED')
       const nav = screen.getByRole('navigation', { name: 'Статус поставки' })
-      const grayConnectors = nav.querySelectorAll('.bg-gray-300')
+      const grayConnectors = nav.querySelectorAll('.bg-muted')
       expect(grayConnectors.length).toBeGreaterThan(0)
     })
   })
@@ -216,7 +216,7 @@ describe('SupplyStatusStepper', () => {
     it('DELIVERED step is gray/outlined', () => {
       renderStepper('DELIVERING')
       const deliveredLabel = screen.getByText('Доставлена')
-      expect(deliveredLabel.className).toContain('text-gray')
+      expect(deliveredLabel.className).toContain('text-muted-foreground')
     })
 
     it('connectors up to DELIVERING are green', () => {
@@ -228,7 +228,7 @@ describe('SupplyStatusStepper', () => {
     it('connector after DELIVERING is gray', () => {
       renderStepper('DELIVERING')
       const nav = screen.getByRole('navigation', { name: 'Статус поставки' })
-      const grayConnectors = nav.querySelectorAll('.bg-gray-300')
+      const grayConnectors = nav.querySelectorAll('.bg-muted')
       expect(grayConnectors.length).toBeGreaterThanOrEqual(1)
     })
   })
@@ -265,7 +265,7 @@ describe('SupplyStatusStepper', () => {
 
     it('all connectors are green', () => {
       const { container } = renderStepper('DELIVERED')
-      const grayConnectors = container.querySelectorAll('.bg-gray-300')
+      const grayConnectors = container.querySelectorAll('.bg-muted')
       expect(grayConnectors.length).toBe(0)
     })
 

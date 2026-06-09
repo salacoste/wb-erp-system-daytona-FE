@@ -152,8 +152,9 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
     it('header has distinct background color class', () => {
       renderTable()
       const headerCheckbox = screen.getByLabelText('Выбрать все заказы')
-      // Walk up to the header row container
-      const headerRow = headerCheckbox.closest('.bg-gray-50')
+      // Walk up to the header row container (bg-muted/50 contains slash, escape for selector)
+      const parent = headerCheckbox.parentElement
+      const headerRow = parent?.closest('[class*="bg-muted"]')
       expect(headerRow).toBeTruthy()
     })
   })

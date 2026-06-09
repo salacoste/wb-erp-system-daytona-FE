@@ -207,7 +207,10 @@ describe('SupplyOrdersTable', () => {
       const table = getTable()!
       const dateCells = within(table)
         .getAllByRole('cell')
-        .filter(cell => cell.textContent?.includes('.') && cell.classList.contains('text-gray-500'))
+        .filter(
+          cell =>
+            cell.textContent?.includes('.') && cell.classList.contains('text-muted-foreground')
+        )
       expect(dateCells.length).toBeGreaterThanOrEqual(1)
     })
   })

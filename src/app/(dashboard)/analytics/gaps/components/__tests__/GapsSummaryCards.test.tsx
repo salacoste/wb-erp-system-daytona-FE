@@ -60,6 +60,6 @@ describe('GapsSummaryCards', () => {
   it('uses gray color when missing days is 0', () => {
     const noGaps = { ...mockData, missing_days: 0 }
     const { container } = render(<GapsSummaryCards data={noGaps} isLoading={false} />)
-    expect(container.querySelector('.bg-gray-400')).toBeInTheDocument()
+    expect(container.querySelector('.bg-muted-foreground')).toBeInTheDocument()
   })
 })

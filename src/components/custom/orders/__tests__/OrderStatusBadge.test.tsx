@@ -118,8 +118,8 @@ describe('OrderStatusBadge', () => {
       const config = getSupplierStatusConfig(drift)
       expect(config).toEqual({
         label: 'deprecated',
-        color: 'text-gray-700',
-        bgColor: 'bg-gray-50',
+        color: 'text-foreground',
+        bgColor: 'bg-muted/50',
       })
     })
 

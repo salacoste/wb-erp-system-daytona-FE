@@ -227,7 +227,7 @@ describe('VersionHistoryTable', () => {
       await waitFor(() => {
         const expiredBadge = screen.getByText('Истекло')
         expect(expiredBadge).toBeInTheDocument()
-        expect(expiredBadge).toHaveClass('bg-gray-100')
+        expect(expiredBadge).toHaveClass('bg-muted')
       })
     })
   })

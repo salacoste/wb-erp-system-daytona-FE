@@ -702,7 +702,7 @@ describe('SupplyDetailPage', () => {
       await renderPage()
       await waitFor(() => {
         const h1 = screen.getByText('Поставка январь')
-        expect(h1.classList.toString()).toContain('text-gray-900')
+        expect(h1.classList.toString()).toContain('text-foreground')
       })
     })
 

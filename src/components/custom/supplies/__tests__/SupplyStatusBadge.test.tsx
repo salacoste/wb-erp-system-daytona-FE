@@ -308,7 +308,7 @@ describe('SupplyStatusBadge', () => {
         <SupplyStatusBadge status={'FUTURE_STATUS' as RealSupplyStatus} />
       )
 
-      const badge = container.querySelector('.text-gray-600')
+      const badge = container.querySelector('.text-muted-foreground')
       expect(badge).toBeInTheDocument()
     })
   })
