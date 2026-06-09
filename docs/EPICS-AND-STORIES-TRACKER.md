@@ -5,9 +5,9 @@
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
 **Last Updated**: 2026-06-09
-**Total Epics**: 84 unique (82 done, 2 in-progress) + 2 untracked operational features
+**Total Epics**: 86 unique (84 done, 2 in-progress) + 2 untracked operational features
 **Total Stories**: 375+ (234 in sprint-status.yaml Epics 71-132, 152 + legacy Epics 1-70)
-**Project Status**: Production Ready, 16,705+ tests passing, Epic 155 + 156 in progress
+**Project Status**: Production Ready, 16,707 tests passing, 0 skipped, Epic 157 + 158 in progress
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 
 ---
@@ -209,25 +209,28 @@
 | (commit) | Financial Gaps Remediation | 1 | DONE | `/analytics/gaps` |
 | (commit) | Orders Integrity & Reconciliation | 1 | DONE | `/orders/integrity` |
 
-### Feature Enhancements (Epics 153-154)
+### Feature Enhancements (Epics 153-156)
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
 | 153-FE | CSV Export for Analytics Tables | 5 | DONE | funnel, search, buyout, returns, cross-reference |
 | 154-FE | Dark Mode / Theme Switching | 3 | DONE | global |
+| 155-FE | CSV Gaps + Funnel Comparison + Advertising Export | 3 | DONE | search/orders, advertising, funnel |
+| 156-FE | Preventative Code Splits (180-183 line zone) | 3 | DONE | 15 files across types/lib/components |
 
-### Feature Enhancements (Epics 155-157)
+### Feature Enhancements (Epics 157-158)
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 155-FE | CSV Gaps + Funnel Comparison + Advertising Export | 3 | DONE | search/orders, advertising, funnel |
-| 156-FE | Preventative Code Splits (180-183 line zone) | 3 | DONE | 15 files across types/lib/components |
+| 157-FE | Dark Mode Hardcoded Color Migration | 3 | IN-PROGRESS | auth, dashboard, sidebar |
+| 158-FE | Preventative Code Splits (170-180 zone) | 3 | IN-PROGRESS | 13+ files at 180 lines |
 
 ### Active
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| (none) | — | — | — | — |
+| 157-FE | Dark Mode Hardcoded Color Migration | 3 | IN-PROGRESS | see above |
+| 158-FE | Preventative Code Splits (170-180 zone) | 3 | IN-PROGRESS | see above |
 
 ---
 
