@@ -1,5 +1,6 @@
-import { logger } from '@/lib/logger'
 'use client'
+
+import { logger } from '@/lib/logger'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 
@@ -20,10 +21,7 @@ export interface ColumnWidths {
   [key: string]: number
 }
 
-export function useColumnWidths(
-  storageKey: string,
-  defaultWidths: ColumnWidths
-) {
+export function useColumnWidths(storageKey: string, defaultWidths: ColumnWidths) {
   // Use ref for defaultWidths to avoid infinite loops in resetWidths
   const defaultWidthsRef = useRef(defaultWidths)
   defaultWidthsRef.current = defaultWidths

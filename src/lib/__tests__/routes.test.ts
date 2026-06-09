@@ -10,9 +10,9 @@ import {
   buildModelEvaluationsRoute,
   buildModelSkuAccuracyRoute,
   buildProductAnalyticsRoute,
-  isProtectedRoute,
   ROUTES,
 } from '../routes'
+import { isProtectedRoute } from '../routes-protected'
 
 describe('buildModelEvaluationsRoute', () => {
   it('returns correct evaluations URL for a given model id', () => {

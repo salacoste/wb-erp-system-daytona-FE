@@ -1,4 +1,5 @@
-import { logger } from '@/lib/logger'
+'use client'
+
 /**
  * useCreateSupply Mutation Hook
  * Story 53.3-FE: Create Supply Flow
@@ -8,7 +9,7 @@ import { logger } from '@/lib/logger'
  * Handles cache management, navigation, and error handling.
  */
 
-'use client'
+import { logger } from '@/lib/logger'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'

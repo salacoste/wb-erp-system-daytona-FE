@@ -1,5 +1,6 @@
-import { logger } from '@/lib/logger'
 'use client'
+
+import { logger } from '@/lib/logger'
 
 /**
  * Query function builder for margin polling

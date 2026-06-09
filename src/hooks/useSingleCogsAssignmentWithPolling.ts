@@ -1,5 +1,6 @@
-import { logger } from '@/lib/logger'
 'use client'
+
+import { logger } from '@/lib/logger'
 
 /**
  * Hook combining COGS assignment with automatic margin polling

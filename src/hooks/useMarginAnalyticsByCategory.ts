@@ -1,5 +1,6 @@
+'use client'
+
 import { logger } from '@/lib/logger'
-;('use client')
 
 /**
  * Hook for margin analytics by category
