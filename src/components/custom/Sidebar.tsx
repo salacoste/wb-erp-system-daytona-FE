@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { LogoutButton } from './LogoutButton'
 import { SidebarCabinetInfo } from './SidebarCabinetInfo'
+import { ThemeToggle } from './theme-toggle'
 import { useSupplyPlanning } from '@/hooks/useSupplyPlanning'
 import { getUrgentSkuCount } from '@/lib/supply-planning-utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -39,11 +40,12 @@ export function Sidebar() {
   )
 
   return (
-    <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-white">
+    <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-card">
       <div className="flex h-full min-h-0 flex-col">
         {/* Logo/Title */}
-        <div className="flex h-16 items-center border-b px-6">
-          <h2 className="text-lg font-semibold text-gray-900">WB Repricer</h2>
+        <div className="flex h-16 items-center justify-between border-b px-6">
+          <h2 className="text-lg font-semibold text-foreground">WB Repricer</h2>
+          <ThemeToggle />
         </div>
 
         {/* Cabinet Info: seller name + Jam badge */}

@@ -58,6 +58,51 @@
     --radius: 0.5rem; /* 8px */
   }
 
+  .dark {
+    /* Primary red colors - adjusted for dark backgrounds */
+    --primary: 0 65% 55%; /* Brighter red for dark bg */
+    --primary-dark: 0 65% 47%;
+    --primary-light: 0 50% 25%; /* Darker for dark bg */
+    --primary-foreground: 0 0% 100%;
+
+    /* Background colors */
+    --background: 0 0% 4%; /* #0A0A0A */
+    --foreground: 0 0% 98%; /* #FAFAFA */
+
+    /* Card colors */
+    --card: 0 0% 7%; /* #111111 */
+    --card-foreground: 0 0% 98%;
+
+    /* Popover colors */
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Muted colors */
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 64%;
+
+    /* Secondary colors */
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Accent colors */
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+
+    /* Border and input */
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 65% 55%;
+    --ring-offset-background: 0 0% 4%;
+
+    /* Semantic colors */
+    --success: 142 76% 46%;
+    --error: 0 65% 55%;
+    --info: 217 91% 65%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+  }
+
   * {
     border-color: hsl(var(--border));
   }
