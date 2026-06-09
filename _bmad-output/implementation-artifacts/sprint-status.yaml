@@ -619,3 +619,11 @@ development_status:
   131.1-fe-tracker-update: done  # 2026-06-07 committed c60ac7da. EPICS-AND-STORIES-TRACKER.md updated with Epics 121-129.
   131.2-fe-radix-jsdom-patterns: done  # 2026-06-07 committed ac86dbe7. New section in CLAUDE-PATTERNS.md (Dialog, Select, Tooltip, Popover, general rules).
   131.3-fe-flaky-test-investigation: done  # 2026-06-07 resolved. SupplyDocumentsList stable 3x isolation + 1x full suite (0 failures). Flake from Epic 124 retro resolved.
+
+  # Epic 152-FE: Proactive Code Splitting + API Normalizer Tests (P3 tech debt, ~5 SP)
+  # Source: File-size compliance sweep — 25 files in 185-194 line danger zone + untested API normalizers
+  epic-152-fe: done  # 2026-06-09 committed 97d0b4d2. 13 source files split + 2 API normalizer tests. 16,601 tests passing.
+
+  # Epic 132-FE: Validation Queue Flush + Code Quality Sweep (P2 quality, iter-150 queue)
+  # Source: validation-tracker.md iter-150 — ~15 queued quality items
+  epic-132-fe: done  # 2026-06-09 committed 3aa5f678. CSV defang, dashboard grid decouple, storage DRY, supplies stale-stub cleanup (4,266 lines deleted). 7 new hook tests. 16,676 tests passing.
