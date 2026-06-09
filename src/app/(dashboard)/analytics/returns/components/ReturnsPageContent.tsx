@@ -10,6 +10,9 @@ import { useState, useMemo } from 'react'
 import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportReturnsToCsv } from '@/lib/csv/returns-csv-export'
+import { useReturnsBySku } from '@/hooks/use-return-analytics'
 import type { DateRange } from '@/types/date-range'
 import type { ComparisonPreset } from '@/components/custom/comparison-period/comparison-period-types'
 import { ReturnsSummaryCards } from './ReturnsSummaryCards'
@@ -52,6 +55,12 @@ export function ReturnsPageContent() {
   const apiFrom = dateRange ? formatApi(dateRange.from) : undefined
   const apiTo = dateRange ? formatApi(dateRange.to) : undefined
 
+  // CSV export: fetch all return items for download
+  const { data: exportReturnsData } = useReturnsBySku(apiFrom, apiTo, { limit: 10000 })
+  const exportItems = exportReturnsData?.data ?? []
+  const csvContent = useMemo(() => exportReturnsToCsv(exportItems), [exportItems])
+  const csvFileName = `returns-${apiFrom ?? 'all'}-${apiTo ?? 'all'}.csv`
+
   const comparePeriod = useMemo(() => {
     if (!comparisonEnabled || !apiFrom || !apiTo) return null
     return calculatePreviousPeriod(apiFrom, apiTo)
@@ -89,6 +98,12 @@ export function ReturnsPageContent() {
           />
           <span id="returns-anomaly-label">Только проблемные</span>
         </label>
+        <ExportCsvButton
+          csvContent={csvContent}
+          fileName={csvFileName}
+          label="Скачать CSV"
+          disabled={exportItems.length === 0}
+        />
       </div>
 
       {/* Comparison Period Selector — Story 127.5-FE */}

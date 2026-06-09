@@ -205,14 +205,13 @@ describe('Story 44.27: AC2 - Form State for Warehouse', () => {
     } as ReturnType<typeof useSupplyTariffs>)
   })
 
-  // TODO: Fix this test - Radix UI Popover renders in portal, not accessible in test environment
-  it.skip('should call onWarehouseChange when warehouse is selected', async () => {
+  it('should call onWarehouseChange when warehouse is selected', async () => {
     const onWarehouseChange = vi.fn()
     const user = userEvent.setup()
 
     renderWarehouseSection({ onWarehouseChange })
 
-    // Open warehouse dropdown
+    // Open warehouse dropdown (Popover mock renders inline)
     const dropdown = screen.getByRole('combobox')
     await user.click(dropdown)
 
@@ -552,21 +551,18 @@ describe('Story 44.27: Edge Cases & Invariants', () => {
     expect(screen.queryByText('Коэффициент логистики')).not.toBeInTheDocument()
   })
 
-  // TODO: Fix this test - Radix UI Popover renders in portal, not accessible in test environment
-  // Need to either mock PopoverContent or use a different testing approach
-  it.skip('should reset coefficients to 1.0 when warehouse is cleared', async () => {
+  it('should reset coefficients to 1.0 when warehouse is cleared', async () => {
     const user = userEvent.setup()
     const onWarehouseChange = vi.fn()
 
     renderWarehouseSection({ warehouseId: 507, onWarehouseChange })
 
-    // Open the dropdown first
+    // Open the dropdown (Popover mock renders inline, no portal needed)
     const combobox = screen.getByRole('combobox')
     await user.click(combobox)
 
-    // Wait for popover to render, then find clear option
-    // Note: PopoverContent renders in portal, may need longer timeout
-    const clearOption = await screen.findByText('Очистить выбор', {}, { timeout: 5000 })
+    // Find clear option in the inline-rendered popover content
+    const clearOption = await screen.findByText('Очистить выбор')
     await user.click(clearOption)
 
     expect(onWarehouseChange).toHaveBeenCalledWith(null, null)

@@ -627,3 +627,24 @@ development_status:
   # Epic 132-FE: Validation Queue Flush + Code Quality Sweep (P2 quality, iter-150 queue)
   # Source: validation-tracker.md iter-150 — ~15 queued quality items
   epic-132-fe: done  # 2026-06-09 committed 3aa5f678+0b09db62. CSV defang, dashboard grid decouple, storage DRY, supplies stale-stub cleanup (4,266 lines deleted), E2E networkidle deflaking (20 specs). 16,745 tests passing.
+
+  # Session 2026-06-09 (continuation)
+  # Cleanup: removed 12 empty test stubs (-6,164 lines), 2 deprecated hooks (-1,831 lines)
+  # Fixed: 8 MergedProductBadge tooltip tests unskipped via portal mock
+  # Archived: 3 resolved backlog items
+
+  # Epic 153-FE: CSV Export for Analytics Tables (P1, ~15 SP)
+  # Source: PRD Phase 2 — export functionality for funnel, search, buyout, returns, cross-reference
+  epic-153-fe: in-progress  # 2026-06-09 started
+  153.1-fe-funnel-csv-export: in-progress  # 2026-06-09
+  153.2-fe-search-csv-export: backlog
+  153.3-fe-buyout-csv-export: backlog
+  153.4-fe-returns-csv-export: backlog
+  153.5-fe-cross-reference-csv-export: backlog
+
+  # Epic 154-FE: Dark Mode / Theme Switching (P1, ~20 SP)
+  # Source: PRD Future Enhancement Backlog — most requested UX feature
+  epic-154-fe: in-progress  # 2026-06-09 started
+  154.1-fe-theme-provider-setup: in-progress  # 2026-06-09
+  154.2-fe-dark-color-palette: backlog
+  154.3-fe-theme-toggle-component: backlog

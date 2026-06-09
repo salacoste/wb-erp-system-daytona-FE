@@ -10,7 +10,10 @@ import { useState, useMemo } from 'react'
 import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportBuyoutToCsv } from '@/lib/csv/buyout-csv-export'
 import { useFulfillmentSummary } from '@/hooks/useFulfillment'
+import { useBuyoutBySku } from '@/hooks/use-buyout-analytics'
 import type { DateRange } from '@/types/date-range'
 import type { BuyoutSource } from '@/types/analytics-buyout'
 import type { ComparisonPreset } from '@/components/custom/comparison-period/comparison-period-types'
@@ -65,6 +68,15 @@ export function BuyoutPageContent() {
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
+  // CSV export: fetch all buyout items (no pagination) for download
+  const { data: exportBuyoutData } = useBuyoutBySku(apiFrom, apiTo, {
+    source,
+    limit: 10000,
+  })
+  const exportItems = exportBuyoutData?.data ?? []
+  const csvContent = useMemo(() => exportBuyoutToCsv(exportItems), [exportItems])
+  const csvFileName = `buyout-${apiFrom}-${apiTo}.csv`
+
   // Calculate comparison period
   const comparePeriod = useMemo(() => {
     if (!comparisonEnabled || !apiFrom || !apiTo) return null
@@ -109,6 +121,12 @@ export function BuyoutPageContent() {
             ))}
           </SelectContent>
         </Select>
+        <ExportCsvButton
+          csvContent={csvContent}
+          fileName={csvFileName}
+          label="Скачать CSV"
+          disabled={exportItems.length === 0}
+        />
       </div>
 
       {/* Comparison Period Selector — Story 127.4-FE */}

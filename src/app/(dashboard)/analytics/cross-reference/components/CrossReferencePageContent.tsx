@@ -11,6 +11,8 @@ import { useState, useMemo } from 'react'
 import { format, subDays } from 'date-fns'
 import { RequireJam } from '@/components/custom/jam/RequireJam'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportCrossReferenceToCsv } from '@/lib/csv/cross-reference-csv-export'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertCircle, RefreshCw } from 'lucide-react'
@@ -76,6 +78,10 @@ export function CrossReferencePageContent() {
   const overlapSummary = useMemo(() => computeOverlapSummary(mergedData), [mergedData])
   const topWastedSpend = useMemo(() => getTopWastedSpend(mergedData), [mergedData])
 
+  // CSV export
+  const csvContent = useMemo(() => exportCrossReferenceToCsv(mergedData), [mergedData])
+  const csvFileName = `cross-reference-${apiFrom}-${apiTo}.csv`
+
   const handleRetry = () => {
     searchQuery.refetch()
     adQuery.refetch()
@@ -94,6 +100,13 @@ export function CrossReferencePageContent() {
         maxDays={365}
         placeholder="Выберите период"
         id="cross-ref-date-range"
+      />
+
+      <ExportCsvButton
+        csvContent={csvContent}
+        fileName={csvFileName}
+        label="Скачать CSV"
+        disabled={mergedData.length === 0}
       />
 
       <RequireJam requiredTier="standard">
