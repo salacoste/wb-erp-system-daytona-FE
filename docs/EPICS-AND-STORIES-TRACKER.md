@@ -220,15 +220,14 @@
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 155-FE | CSV Gaps + Funnel Comparison + Advertising Export | 3 | IN-PROGRESS | search/orders, advertising, funnel |
-| 156-FE | Preventative Code Splits (180-183 line zone) | 3 | IN-PROGRESS | 15 files across types/lib/components |
+| 155-FE | CSV Gaps + Funnel Comparison + Advertising Export | 3 | DONE | search/orders, advertising, funnel |
+| 156-FE | Preventative Code Splits (180-183 line zone) | 3 | DONE | 15 files across types/lib/components |
 
 ### Active
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 155-FE | CSV Gaps + Funnel Comparison + Advertising Export | 3 | IN-PROGRESS | see above |
-| 156-FE | Preventative Code Splits (180-183 line zone) | 3 | IN-PROGRESS | see above |
+| (none) | — | — | — | — |
 
 ---
 
