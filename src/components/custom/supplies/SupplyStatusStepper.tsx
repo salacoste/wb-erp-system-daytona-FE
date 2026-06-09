@@ -110,7 +110,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                 <div
                   className={cn(
                     'mx-2 h-0.5 flex-1',
-                    index < currentIndex ? 'bg-green-500' : 'bg-gray-300'
+                    index < currentIndex ? 'bg-green-500' : 'bg-muted'
                   )}
                   aria-hidden="true"
                 />

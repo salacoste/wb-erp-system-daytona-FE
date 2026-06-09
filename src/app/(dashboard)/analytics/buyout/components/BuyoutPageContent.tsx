@@ -96,7 +96,7 @@ export function BuyoutPageContent() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика выкупов</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Аналитика выкупов</h1>
         <p className="text-muted-foreground mt-1">Процент выкупа и тренды по SKU</p>
       </div>
 
