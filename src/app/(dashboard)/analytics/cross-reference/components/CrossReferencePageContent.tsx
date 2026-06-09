@@ -1,8 +1,10 @@
 'use client'
 
 /**
- * Cross-Reference Page Content — Story 73.7-FE
- * Merges search orders (groupBy=product) + advertising (view_by=sku) client-side
+ * Cross-Reference Page Content — Story 73.7-FE + Feature 3.6
+ * Merges search orders (groupBy=product) + advertising (view_by=sku) client-side.
+ * Feature 3.6 adds ad/search correlation: keyword overlap, position-spend scatter,
+ * and cannibalization analysis.
  */
 
 import { useState, useMemo } from 'react'
@@ -24,6 +26,9 @@ import { OverlapSummaryCards } from './OverlapSummaryCards'
 import { CrossReferenceTable } from './CrossReferenceTable'
 import { InsightsCards } from './InsightsCards'
 import { OrganicVsAdScatter } from './OrganicVsAdScatter'
+import { AdOrganicOverlapTable } from './AdOrganicOverlapTable'
+import { PositionSpendChart } from './PositionSpendChart'
+import { CannibalizationAnalysis } from './CannibalizationAnalysis'
 import type { DateRange } from '@/types/date-range'
 import { logger } from '@/lib/logger'
 
@@ -45,6 +50,8 @@ export function CrossReferencePageContent() {
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
   const searchQuery = useSearchOrders(apiFrom, apiTo, { groupBy: 'product' })
+  // Feature 3.6: keyword-level search data for overlap analysis
+  const searchByQueryQuery = useSearchOrders(apiFrom, apiTo, { groupBy: 'query' })
   const adQuery = useAdvertisingAnalytics({
     from: apiFrom,
     to: apiTo,
@@ -59,6 +66,7 @@ export function CrossReferencePageContent() {
   const error = searchQuery.error || adQuery.error
 
   const searchItems = searchQuery.data?.items
+  const searchQueryItems = searchByQueryQuery.data?.items
   const adItems = adQuery.data?.data
   const mergedData = useMemo(() => {
     if (!searchItems || !adItems) return []
@@ -98,6 +106,13 @@ export function CrossReferencePageContent() {
             <InsightsCards items={topWastedSpend} />
             <OrganicVsAdScatter items={mergedData} />
             <CrossReferenceTable items={mergedData} />
+
+            {/* Feature 3.6: Ad ↔ Search correlation analyses */}
+            {searchQueryItems && adItems && (
+              <AdOrganicOverlapTable searchQueryItems={searchQueryItems} adItems={adItems} />
+            )}
+            <PositionSpendChart items={mergedData} />
+            <CannibalizationAnalysis items={mergedData} />
           </div>
         )}
       </RequireJam>
