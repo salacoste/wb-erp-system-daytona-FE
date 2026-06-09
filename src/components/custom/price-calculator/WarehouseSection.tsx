@@ -14,7 +14,7 @@ import { Warehouse as WarehouseIcon, Loader2 } from 'lucide-react'
 import { WarehouseSelect } from './WarehouseSelect'
 import { CoefficientField } from './CoefficientField'
 import { DeliveryDatePicker } from './DeliveryDatePicker'
-import { formatDecimal } from '@/lib/utils'
+import { SupplyTariffInfo } from './SupplyTariffInfo'
 import { RateLimitWarning } from './RateLimitWarning'
 import { CoefficientsLoadingSkeleton } from './CoefficientsLoadingSkeleton'
 import { useWarehouseCoefficients } from '@/hooks/useWarehouseCoefficients'
@@ -161,19 +161,7 @@ export function WarehouseSection({
       )}
 
       {warehouseId && tariffSystem === 'supply' && effectiveTariffs && (
-        <div className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-md p-3">
-          <p className="font-medium text-blue-700 mb-1">Тарифы SUPPLY</p>
-          <p>
-            Тарифы на дату поставки уже включают коэффициент склада
-            {effectiveTariffs.displayLogisticsCoefficient !== 1.0 && (
-              <span className="font-semibold text-blue-600">
-                {' '}
-                x{formatDecimal(effectiveTariffs.displayLogisticsCoefficient, 2)}
-              </span>
-            )}
-            . Дополнительная настройка коэффициентов не требуется.
-          </p>
-        </div>
+        <SupplyTariffInfo effectiveTariffs={effectiveTariffs} />
       )}
     </div>
   )
