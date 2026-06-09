@@ -626,4 +626,4 @@ development_status:
 
   # Epic 132-FE: Validation Queue Flush + Code Quality Sweep (P2 quality, iter-150 queue)
   # Source: validation-tracker.md iter-150 — ~15 queued quality items
-  epic-132-fe: done  # 2026-06-09 committed 3aa5f678. CSV defang, dashboard grid decouple, storage DRY, supplies stale-stub cleanup (4,266 lines deleted). 7 new hook tests. 16,676 tests passing.
+  epic-132-fe: done  # 2026-06-09 committed 3aa5f678+0b09db62. CSV defang, dashboard grid decouple, storage DRY, supplies stale-stub cleanup (4,266 lines deleted), E2E networkidle deflaking (20 specs). 16,745 tests passing.
