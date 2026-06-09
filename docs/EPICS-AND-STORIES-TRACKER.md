@@ -5,9 +5,9 @@
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
 **Last Updated**: 2026-06-09
-**Total Epics**: 80 unique (80 done) + 2 untracked operational features
+**Total Epics**: 82 unique (80 done, 2 in-progress) + 2 untracked operational features
 **Total Stories**: 375+ (234 in sprint-status.yaml Epics 71-132, 152 + legacy Epics 1-70)
-**Project Status**: Production Ready, 16,745+ tests passing, 58 consecutive epics closed (71-132, 152)
+**Project Status**: Production Ready, 16,693+ tests passing, Epic 153 + 154 in progress
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 
 ---
@@ -209,11 +209,19 @@
 | (commit) | Financial Gaps Remediation | 1 | DONE | `/analytics/gaps` |
 | (commit) | Orders Integrity & Reconciliation | 1 | DONE | `/orders/integrity` |
 
+### Feature Enhancements (Epics 153-154)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 153-FE | CSV Export for Analytics Tables | 5 | IN-PROGRESS | funnel, search, buyout, returns, cross-reference |
+| 154-FE | Dark Mode / Theme Switching | 3 | IN-PROGRESS | global |
+
 ### Active
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| (none) | — | — | — | — |
+| 153-FE | CSV Export for Analytics Tables | 5 | IN-PROGRESS | see above |
+| 154-FE | Dark Mode / Theme Switching | 3 | IN-PROGRESS | see above |
 
 ---
 
