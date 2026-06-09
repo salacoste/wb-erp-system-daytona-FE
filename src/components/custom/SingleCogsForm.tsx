@@ -18,19 +18,10 @@ import { SingleCogsFormFields } from './single-cogs/SingleCogsFormFields'
 import { SingleCogsFormStatus } from './single-cogs/SingleCogsFormStatus'
 import { SingleCogsFormActions } from './single-cogs/SingleCogsFormActions'
 import { ProductInfoCard } from './single-cogs/ProductInfoCard'
+import { canEnqueueTasks, type CogsFormData } from './single-cogs/form-helpers'
 import type { CogsAssignmentRequest } from '@/types/api'
 import type { CogsRecord } from '@/types/cogs'
 import { logger } from '@/lib/logger'
-
-/**
- * Story 23.10: Role-based access control for task enqueue
- * Manager+ (Owner, Manager, Service) can trigger recalculation
- * Analyst cannot - button is hidden
- */
-function canEnqueueTasks(role: string | undefined): boolean {
-  if (!role) return false
-  return ['Owner', 'Manager', 'Service'].includes(role)
-}
 
 export interface SingleCogsFormProps {
   nmId: string
@@ -38,12 +29,6 @@ export interface SingleCogsFormProps {
   existingCogs?: CogsRecord
   onSuccess?: () => void
   onCancel?: () => void
-}
-
-interface FormData {
-  unit_cost_rub: string
-  valid_from: string
-  notes: string
 }
 
 /**
@@ -78,7 +63,7 @@ export function SingleCogsForm({
     reset,
     watch,
     formState: { errors: formErrors },
-  } = useForm<FormData>({
+  } = useForm<CogsFormData>({
     defaultValues: {
       unit_cost_rub: existingCogs?.unit_cost_rub || '',
       valid_from: existingCogs?.valid_from?.split('T')[0] || today,
@@ -104,7 +89,7 @@ export function SingleCogsForm({
     setValidationErrors([])
   }, [nmId, existingCogs, reset, today])
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: CogsFormData) => {
     const cogsRequest: CogsAssignmentRequest = {
       unit_cost_rub: parseFloat(data.unit_cost_rub),
       valid_from: data.valid_from,
