@@ -16,7 +16,7 @@ import {
   XCircle,
 } from 'lucide-react'
 import type { FunnelSummary } from '@/types/analytics-funnel'
-import { calculatePreviousPeriod, calculateFunnelDelta } from './funnel-comparison-utils'
+import { calculateFunnelDelta } from './funnel-comparison-utils'
 import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { formatNumber, formatPercent } from './funnel-summary-formatters'
@@ -25,7 +25,9 @@ import { DeltaIndicator } from './FunnelDeltaIndicator'
 interface FunnelSummaryCardsProps {
   from: string
   to: string
-  compare?: boolean
+  compareEnabled?: boolean
+  compareFrom?: string
+  compareTo?: string
   nmIds?: number[]
 }
 
@@ -98,14 +100,21 @@ const CARDS: CardDef[] = [
   },
 ]
 
-export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCardsProps) {
+export function FunnelSummaryCards({
+  from,
+  to,
+  compareEnabled,
+  compareFrom,
+  compareTo,
+  nmIds,
+}: FunnelSummaryCardsProps) {
   const filterParam = nmIds?.length ? nmIds : undefined
   const { data, isLoading } = useFunnelData(from, to, { limit: 1, nmIds: filterParam })
 
-  const prev = compare ? calculatePreviousPeriod(from, to) : null
+  const hasCompare = compareEnabled && !!compareFrom && !!compareTo
   const { data: prevData, isLoading: prevLoading } = useFunnelData(
-    prev?.prevFrom ?? '',
-    prev?.prevTo ?? '',
+    compareFrom ?? '',
+    compareTo ?? '',
     { limit: 1, nmIds: filterParam }
   )
 
@@ -129,7 +138,7 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
         const Icon = card.icon
         const value = summary?.[card.field] ?? 0
         const delta =
-          compare && prevSummary ? calculateFunnelDelta(value, prevSummary[card.field]) : null
+          hasCompare && prevSummary ? calculateFunnelDelta(value, prevSummary[card.field]) : null
         const anomalous =
           card.field === 'totalConversion' && !!summary && isFunnelConversionAnomalous(summary)
         const approximate = card.field === 'totalConversion' && totalConversionApproximate
@@ -156,7 +165,7 @@ export function FunnelSummaryCards({ from, to, compare, nmIds }: FunnelSummaryCa
                   </span>
                   {anomalous && <FunnelAnomalyIndicator />}
                 </p>
-                {compare && (
+                {hasCompare && (
                   <DeltaIndicator delta={delta} field={card.field} loading={prevLoading} />
                 )}
               </div>

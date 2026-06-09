@@ -64,10 +64,10 @@ export default function MarginAnalysisByBrandPage() {
       {/* Page Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Маржинальность по брендам
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-muted-foreground">
             Агрегированная аналитика прибыли и маржинальности по брендам
           </p>
         </div>
@@ -144,8 +144,8 @@ export default function MarginAnalysisByBrandPage() {
           {data?.data ? (
             <MarginByBrandTable data={data.data} onBrandClick={state.handleDrillDown} />
           ) : (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
-              <p className="text-gray-600">Нет данных за выбранную неделю</p>
+            <div className="rounded-lg border border-border bg-muted p-12 text-center">
+              <p className="text-muted-foreground">Нет данных за выбранную неделю</p>
             </div>
           )}
         </CardContent>

@@ -47,9 +47,6 @@ function TariffSettingsPageSkeleton() {
   )
 }
 
-
-
-
 // ============================================================================
 // Main Page Component
 // ============================================================================
@@ -82,34 +79,30 @@ export default function TariffSettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-background">
       {/* Page Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Breadcrumbs (AC7) */}
-          <nav className="text-sm text-gray-600 mb-2">
-            <Link href="/dashboard" className="hover:text-gray-900">
+          <nav className="text-sm text-muted-foreground mb-2">
+            <Link href="/dashboard" className="hover:text-foreground">
               Главная
             </Link>
             {' > '}
-            <Link href="/settings" className="hover:text-gray-900">
+            <Link href="/settings" className="hover:text-foreground">
               Настройки
             </Link>
             {' > '}
-            <span className="text-gray-900">Тарифы</span>
+            <span className="text-foreground">Тарифы</span>
           </nav>
 
           {/* Header with title and rate limit indicator */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <Settings2 className="h-8 w-8 text-gray-700" />
+              <Settings2 className="h-8 w-8 text-muted-foreground" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Управление тарифами
-                </h1>
-                <p className="text-muted-foreground">
-                  Настройки глобальных тарифов Wildberries
-                </p>
+                <h1 className="text-2xl font-bold text-foreground">Управление тарифами</h1>
+                <p className="text-muted-foreground">Настройки глобальных тарифов Wildberries</p>
               </div>
             </div>
             <RateLimitIndicator />

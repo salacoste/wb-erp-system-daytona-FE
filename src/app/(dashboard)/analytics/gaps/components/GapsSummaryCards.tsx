@@ -77,7 +77,7 @@ export function GapsSummaryCards({ data, isLoading }: GapsSummaryCardsProps) {
         icon={<CalendarX className="h-5 w-5 text-white" />}
         label="Пропущено"
         value={data ? formatNumber(data.missing_days) : '—'}
-        color={data && data.missing_days > 0 ? 'bg-red-500' : 'bg-gray-400'}
+        color={data && data.missing_days > 0 ? 'bg-red-500' : 'bg-muted-foreground'}
       />
     </div>
   )

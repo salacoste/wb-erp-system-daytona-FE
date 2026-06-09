@@ -26,7 +26,7 @@ export function SupplyDetailError({ error, onRetry }: SupplyDetailErrorProps) {
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <AlertTriangle className="mb-4 h-12 w-12 text-yellow-500" />
         <h1 className="mb-2 text-2xl font-bold">Поставка не найдена</h1>
-        <p className="mb-6 text-gray-500">Поставка не существует или была удалена</p>
+        <p className="mb-6 text-muted-foreground">Поставка не существует или была удалена</p>
         <Link href="/supplies">
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -42,7 +42,7 @@ export function SupplyDetailError({ error, onRetry }: SupplyDetailErrorProps) {
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <AlertTriangle className="mb-4 h-12 w-12 text-red-500" />
         <h1 className="mb-2 text-2xl font-bold">Нет доступа</h1>
-        <p className="mb-6 text-gray-500">Нет доступа к этой поставке</p>
+        <p className="mb-6 text-muted-foreground">Нет доступа к этой поставке</p>
         <Link href="/supplies">
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />

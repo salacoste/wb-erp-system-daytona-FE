@@ -57,10 +57,10 @@ export default function CogsManagementPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Управление себестоимостью
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-muted-foreground">
           Назначайте себестоимость товарам для расчёта маржинальности и прибыли
         </p>
       </div>

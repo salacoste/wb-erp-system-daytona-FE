@@ -18,16 +18,24 @@ import { AlertCircle } from 'lucide-react'
 import type { FunnelProductItem } from '@/types/analytics-funnel'
 import type { FunnelSortField } from './funnel-table-cells'
 import { FunnelTableHeader, FunnelTableRow } from './funnel-table-columns'
-import { calculatePreviousPeriod } from './funnel-comparison-utils'
 
 interface FunnelTableProps {
   from: string
   to: string
   nmIds?: number[]
-  compare?: boolean
+  compareEnabled?: boolean
+  compareFrom?: string
+  compareTo?: string
 }
 
-export function FunnelTable({ from, to, nmIds, compare }: FunnelTableProps) {
+export function FunnelTable({
+  from,
+  to,
+  nmIds,
+  compareEnabled,
+  compareFrom,
+  compareTo,
+}: FunnelTableProps) {
   const [sort, setSort] = useState<FunnelSortField>('openCardCount')
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [offset, setOffset] = useState(0)
@@ -47,10 +55,10 @@ export function FunnelTable({ from, to, nmIds, compare }: FunnelTableProps) {
     nmIds: filterParam,
   })
 
-  const prev = compare ? calculatePreviousPeriod(from, to) : null
+  const hasCompare = compareEnabled && !!compareFrom && !!compareTo
   const { data: prevData, isLoading: prevLoading } = useFunnelData(
-    prev?.prevFrom ?? '',
-    prev?.prevTo ?? '',
+    compareFrom ?? '',
+    compareTo ?? '',
     { sort, order, limit, offset, nmIds: filterParam }
   )
 
@@ -102,13 +110,18 @@ export function FunnelTable({ from, to, nmIds, compare }: FunnelTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border">
         <Table>
-          <FunnelTableHeader sort={sort} sortOrder={order} onSort={handleSort} compare={compare} />
+          <FunnelTableHeader
+            sort={sort}
+            sortOrder={order}
+            onSort={handleSort}
+            compare={hasCompare}
+          />
           <TableBody>
             {items.map(item => (
               <FunnelTableRow
                 key={item.nmId}
                 item={item}
-                compare={compare}
+                compare={hasCompare}
                 prevItem={prevItemsMap.get(item.nmId)}
                 prevLoading={prevLoading}
               />

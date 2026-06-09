@@ -27,7 +27,7 @@ export function StorageComparisonCard({ data }: StorageComparisonCardProps) {
   const hasDivergence = isStorageDivergent(data.storage, weekly)
 
   return (
-    <Card className={`${hasDivergence ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200'}`}>
+    <Card className={`${hasDivergence ? 'border-yellow-400 bg-yellow-50' : 'border-border'}`}>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           📦 Сравнение источников хранения
@@ -41,25 +41,25 @@ export function StorageComparisonCard({ data }: StorageComparisonCardProps) {
       <CardContent>
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div>
-            <div className="text-gray-500">Storage API (paid_storage)</div>
-            <div className="text-lg font-bold text-gray-900">
+            <div className="text-muted-foreground">Storage API (paid_storage)</div>
+            <div className="text-lg font-bold text-foreground">
               {data.storage.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
             </div>
           </div>
           <div>
-            <div className="text-gray-500">Еженедельный отчёт</div>
-            <div className="text-lg font-bold text-gray-600">
+            <div className="text-muted-foreground">Еженедельный отчёт</div>
+            <div className="text-lg font-bold text-foreground">
               {weekly == null
                 ? '—'
                 : `${weekly.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`}
             </div>
           </div>
           <div>
-            <div className="text-gray-500">Разница</div>
+            <div className="text-muted-foreground">Разница</div>
             <div
               className={`text-lg font-bold ${
                 diff == null
-                  ? 'text-gray-400'
+                  ? 'text-muted-foreground'
                   : !hasDivergence
                     ? 'text-green-600'
                     : diff > 0

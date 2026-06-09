@@ -50,10 +50,10 @@ export default function MarginAnalysisByTimePeriodPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Анализ маржинальности по времени
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Отслеживайте изменения маржинальности и прибыльности во времени
           </p>
         </div>

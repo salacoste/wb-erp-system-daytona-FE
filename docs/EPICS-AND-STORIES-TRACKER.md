@@ -222,15 +222,24 @@
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 157-FE | Dark Mode Hardcoded Color Migration | 3 | IN-PROGRESS | auth, dashboard, sidebar |
-| 158-FE | Preventative Code Splits (170-180 zone) | 3 | IN-PROGRESS | 13+ files at 180 lines |
+| 157-FE | Dark Mode Color Migration (Auth/Layout) | 1 | DONE | auth, sidebar, layout |
+| 158-FE | Preventative Code Splits (180 zone) | 1 | DONE | 28 files split |
+
+### Feature Enhancements (Epics 159-161)
+
+| Epic | Title | Stories | Status | Key Routes |
+|------|-------|---------|--------|------------|
+| 159-FE | Funnel WoW/MoM Comparison Period | 3 | IN-PROGRESS | `/analytics/funnel` |
+| 160-FE | Dark Mode Migration: Dashboard + Analytics | 3 | IN-PROGRESS | dashboard, analytics hub, monitoring |
+| 161-FE | Dark Mode Migration: Products/COGS/Supply | 3 | IN-PROGRESS | cogs, supplies, orders, shipments |
 
 ### Active
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 157-FE | Dark Mode Hardcoded Color Migration | 3 | IN-PROGRESS | see above |
-| 158-FE | Preventative Code Splits (170-180 zone) | 3 | IN-PROGRESS | see above |
+| 159-FE | Funnel WoW/MoM Comparison Period | 3 | IN-PROGRESS | see above |
+| 160-FE | Dark Mode Migration: Dashboard + Analytics | 3 | IN-PROGRESS | see above |
+| 161-FE | Dark Mode Migration: Products/COGS/Supply | 3 | IN-PROGRESS | see above |
 
 ---
 

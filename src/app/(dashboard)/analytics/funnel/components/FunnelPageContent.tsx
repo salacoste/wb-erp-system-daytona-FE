@@ -6,12 +6,14 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { format, subDays } from 'date-fns'
 import { toast } from 'sonner'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
+import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
+import type { ComparisonPreset } from '@/components/custom/comparison-period/comparison-period-types'
 import type { DateRange } from '@/types/date-range'
 import type { FunnelDayItem } from '@/types/analytics-funnel'
 import { useFunnelTimeSeries, useFunnelSyncStatus } from '@/hooks/use-funnel-analytics'
 import { useAdvertisingAnalytics } from '@/hooks/advertising/hooks'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
-import { BarChart3, TrendingUp } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { FunnelSummaryCards } from './FunnelSummaryCards'
 import { FunnelTable } from './FunnelTable'
 import { FunnelOverlayChart } from './FunnelOverlayChart'
@@ -19,6 +21,7 @@ import { FunnelProductFilter } from './FunnelProductFilter'
 import { mergeFunnelAndAdDaily } from './funnel-overlay-config'
 import { useFunnelExportData } from './useFunnelExportData'
 import { SyncStatusBanner } from './SyncStatusBanner'
+import { calculatePreviousPeriod } from './funnel-comparison-utils'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -30,6 +33,16 @@ function getDefaultRange(): DateRange {
 
 function formatApi(date: Date): string {
   return format(date, 'yyyy-MM-dd')
+}
+
+function toIsoWeek(date: Date): string {
+  const d = new Date(date)
+  d.setHours(0, 0, 0, 0)
+  const dayNum = d.getUTCDay() || 7
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum)
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  const weekNo = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`
 }
 
 export function parseNmIds(param: string | null): number[] {
@@ -44,19 +57,26 @@ export function FunnelPageContent() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
   const [showChart, setShowChart] = useState(false)
   const [showAdOverlay, setShowAdOverlay] = useState(false)
+  const [comparisonEnabled, setComparisonEnabled] = useState(false)
+  const [comparisonPreset, setComparisonPreset] = useState<ComparisonPreset>('previous')
+  const [compareStart, setCompareStart] = useState('')
+  const [compareEnd, setCompareEnd] = useState('')
 
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
-  const compare = searchParams.get('compare') === 'wow'
   const nmIdsParam = searchParams.get('nmIds')
   const nmIds = useMemo(() => parseNmIds(nmIdsParam), [nmIdsParam])
 
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
+  const comparePeriod = useMemo(() => {
+    if (!comparisonEnabled || !apiFrom || !apiTo) return null
+    return calculatePreviousPeriod(apiFrom, apiTo)
+  }, [comparisonEnabled, apiFrom, apiTo])
+
   const { data: syncStatus } = useFunnelSyncStatus()
-  // CSV export: fetch all funnel items (no pagination) for download
   const { exportItems, csvContent, csvFileName } = useFunnelExportData(apiFrom, apiTo, nmIds)
   const funnelTs = useFunnelTimeSeries(apiFrom, apiTo, showChart)
   const adQuery = useAdvertisingAnalytics(
@@ -72,7 +92,7 @@ export function FunnelPageContent() {
     [funnelItems, adDaily]
   )
 
-  // AC-3: Toast when toggle on but no ad data (only on toggle-on transition)
+  // Toast when ad overlay toggled on but no ad data
   const prevOverlay = useRef(false)
   useEffect(() => {
     if (showAdOverlay && !prevOverlay.current) {
@@ -89,10 +109,6 @@ export function FunnelPageContent() {
     else params.delete(key)
     const qs = params.toString()
     router.replace(qs ? `${pathname}?${qs}` : pathname)
-  }
-
-  function toggleCompare() {
-    updateParam('compare', compare ? null : 'wow')
   }
 
   function setNmIds(ids: number[]) {
@@ -125,14 +141,6 @@ export function FunnelPageContent() {
           />
           <button
             type="button"
-            onClick={toggleCompare}
-            className={`flex items-center gap-1 text-sm transition-colors ${compare ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            <BarChart3 className="h-3.5 w-3.5" />
-            {compare ? 'Скрыть сравнение' : 'Сравнение'}
-          </button>
-          <button
-            type="button"
             onClick={() => setShowChart(v => !v)}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -152,8 +160,31 @@ export function FunnelPageContent() {
         </div>
       </div>
 
+      {/* Comparison Period Selector — replaces hand-rolled WoW toggle */}
+      <ComparisonPeriodSelector
+        enabled={comparisonEnabled}
+        onEnabledChange={setComparisonEnabled}
+        preset={comparisonPreset}
+        onPresetChange={setComparisonPreset}
+        compareStart={compareStart}
+        compareEnd={compareEnd}
+        onCompareRangeChange={(start, end) => {
+          setCompareStart(start)
+          setCompareEnd(end)
+        }}
+        currentPeriodStart={dateRange ? toIsoWeek(dateRange.from) : ''}
+        currentPeriodEnd={dateRange ? toIsoWeek(dateRange.to) : ''}
+      />
+
       <FunnelProductFilter from={apiFrom} to={apiTo} value={nmIds} onChange={setNmIds} />
-      <FunnelSummaryCards from={apiFrom} to={apiTo} compare={compare} nmIds={nmIds} />
+      <FunnelSummaryCards
+        from={apiFrom}
+        to={apiTo}
+        compareEnabled={comparisonEnabled}
+        compareFrom={comparePeriod?.prevFrom ?? ''}
+        compareTo={comparePeriod?.prevTo ?? ''}
+        nmIds={nmIds}
+      />
 
       {showChart && (
         <FunnelOverlayChart
@@ -166,7 +197,14 @@ export function FunnelPageContent() {
         />
       )}
 
-      <FunnelTable from={apiFrom} to={apiTo} nmIds={nmIds} compare={compare} />
+      <FunnelTable
+        from={apiFrom}
+        to={apiTo}
+        nmIds={nmIds}
+        compareEnabled={comparisonEnabled}
+        compareFrom={comparePeriod?.prevFrom ?? ''}
+        compareTo={comparePeriod?.prevTo ?? ''}
+      />
     </div>
   )
 }

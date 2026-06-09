@@ -20,17 +20,15 @@ export function UnitEconomicsEmpty({ onSelectWeek }: UnitEconomicsEmptyProps) {
   return (
     <Card className="border-dashed">
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <div className="rounded-full bg-gray-100 p-4 mb-4">
-          <Package className="h-8 w-8 text-gray-400" />
+        <div className="rounded-full bg-muted p-4 mb-4">
+          <Package className="h-8 w-8 text-muted-foreground" />
         </div>
 
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
-          Нет данных за выбранный период
-        </h3>
+        <h3 className="text-lg font-medium text-foreground mb-2">Нет данных за выбранный период</h3>
 
-        <p className="text-sm text-gray-500 text-center max-w-md mb-6">
-          Данные юнит-экономики формируются на основе недельных отчётов WB.
-          Выберите другую неделю или убедитесь, что отчёт за эту неделю загружен.
+        <p className="text-sm text-muted-foreground text-center max-w-md mb-6">
+          Данные юнит-экономики формируются на основе недельных отчётов WB. Выберите другую неделю
+          или убедитесь, что отчёт за эту неделю загружен.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">

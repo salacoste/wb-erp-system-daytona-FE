@@ -30,7 +30,7 @@ export function MarginPageError({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
       </div>
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -59,7 +59,7 @@ export function MarginPeriodIndicator({
 }) {
   if (!isRangeMode) return null
   return (
-    <div className="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg">
+    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-blue-50 px-4 py-2 rounded-lg">
       <CalendarRange className="h-4 w-4 text-blue-600" />
       <span>
         Период: <strong>{formatPeriodLabel(weekStart, weekEnd)}</strong>

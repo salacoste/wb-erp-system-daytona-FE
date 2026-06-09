@@ -57,7 +57,7 @@ export function AcquiringPageContent() {
     <div className="space-y-6" data-testid="acquiring-page">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика эквайринга</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Аналитика эквайринга</h1>
         <p className="text-muted-foreground mt-1">Комиссии платёжных систем по отчётам WB</p>
       </div>
 

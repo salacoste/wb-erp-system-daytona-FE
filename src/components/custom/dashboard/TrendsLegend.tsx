@@ -56,7 +56,7 @@ export function TrendsLegend({
             <span
               className={cn(
                 'flex h-4 w-4 items-center justify-center rounded border',
-                isVisible ? 'border-transparent' : 'border-gray-300 bg-white'
+                isVisible ? 'border-transparent' : 'border-border bg-card'
               )}
               style={{ backgroundColor: isVisible ? metric.color : undefined }}
             >

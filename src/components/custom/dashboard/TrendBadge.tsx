@@ -42,7 +42,7 @@ export function TrendBadge({ trend, invertColors = false, className }: TrendBadg
   // For costs (invertColors=true): increase=red, decrease=green
   // For revenue (invertColors=false): increase=green, decrease=red
   const getColorClass = () => {
-    if (isNeutral) return 'text-gray-600 bg-gray-50 border-gray-200'
+    if (isNeutral) return 'text-muted-foreground bg-muted border-border'
     if (invertColors) {
       return isPositive
         ? 'text-red-600 bg-red-50 border-red-200'

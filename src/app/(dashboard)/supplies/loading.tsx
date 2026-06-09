@@ -19,7 +19,7 @@ export default function SuppliesLoading() {
             <Package className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">Поставки FBS</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Поставки FBS</h1>
             <p className="text-sm text-muted-foreground">
               Управление поставками и отслеживание статусов
             </p>

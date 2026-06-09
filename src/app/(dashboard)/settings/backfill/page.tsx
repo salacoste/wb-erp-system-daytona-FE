@@ -76,28 +76,28 @@ export default function BackfillAdminPage() {
     : null
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-background">
       {/* Page Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Breadcrumbs */}
-          <nav className="text-sm text-gray-600 mb-2" aria-label="Breadcrumb">
-            <Link href="/dashboard" className="hover:text-gray-900">
+          <nav className="text-sm text-muted-foreground mb-2" aria-label="Breadcrumb">
+            <Link href="/dashboard" className="hover:text-foreground">
               Главная
             </Link>
             {' > '}
-            <Link href="/settings" className="hover:text-gray-900">
+            <Link href="/settings" className="hover:text-foreground">
               Настройки
             </Link>
             {' > '}
-            <span className="text-gray-900">Бэкфилл</span>
+            <span className="text-foreground">Бэкфилл</span>
           </nav>
 
           {/* Header */}
           <div className="flex items-center gap-3">
-            <Database className="h-8 w-8 text-gray-700" />
+            <Database className="h-8 w-8 text-muted-foreground" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Управление бэкфиллом</h1>
+              <h1 className="text-2xl font-bold text-foreground">Управление бэкфиллом</h1>
               <p className="text-muted-foreground">Загрузка исторических данных FBS за 365 дней</p>
             </div>
           </div>
@@ -114,7 +114,9 @@ export default function BackfillAdminPage() {
           </Button>
 
           <div className="flex items-center gap-4">
-            {lastUpdated && <span className="text-sm text-gray-500">Обновлено: {lastUpdated}</span>}
+            {lastUpdated && (
+              <span className="text-sm text-muted-foreground">Обновлено: {lastUpdated}</span>
+            )}
             <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isLoading}>
               <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
               Обновить

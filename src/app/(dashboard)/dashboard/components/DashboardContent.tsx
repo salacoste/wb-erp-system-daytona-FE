@@ -44,7 +44,7 @@ export function DashboardContent(): React.ReactElement {
     <div className="space-y-4 pb-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Главная страница</h2>
+          <h2 className="text-2xl font-bold text-foreground">Главная страница</h2>
           <PeriodContextLabel
             periodType={d.periodType}
             week={d.selectedWeek}

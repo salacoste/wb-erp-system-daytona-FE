@@ -50,7 +50,7 @@ export default function AnalyticsSummaryPage() {
         />
 
         {/* Quick Navigation - UX: Primary action area at top */}
-        <Card className="border-none shadow-none bg-gray-50/50">
+        <Card className="border-none shadow-none bg-muted/50">
           <CardContent className="p-4">
             <div className="grid gap-6 lg:grid-cols-4">
               <NavigationSection {...analyticsNavigation.financial} />
@@ -69,7 +69,7 @@ export default function AnalyticsSummaryPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-4 text-muted-foreground font-medium">
+            <span className="bg-background px-4 text-muted-foreground font-medium">
               Финансовая сводка за период
             </span>
           </div>

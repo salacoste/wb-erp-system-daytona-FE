@@ -105,7 +105,7 @@ export function OrdersStatusBreakdown({ className, height = 200 }: OrdersStatusB
             <span className="text-sm text-muted-foreground">
               Всего: {data.total.toLocaleString('ru-RU')} заказов
             </span>
-            <div className="inline-flex rounded-md border border-gray-200" role="radiogroup">
+            <div className="inline-flex rounded-md border border-border" role="radiogroup">
               <ViewToggleButton
                 active={view === 'bar'}
                 onClick={() => setView('bar')}

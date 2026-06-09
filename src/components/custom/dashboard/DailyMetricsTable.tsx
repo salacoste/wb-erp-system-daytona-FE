@@ -68,7 +68,7 @@ export function DailyMetricsTable({ data, periodType, isLoading, error }: DailyM
   // Handle loading state
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200">
+      <div className="overflow-hidden rounded-lg border border-border">
         <TableSkeleton />
       </div>
     )
@@ -86,7 +86,7 @@ export function DailyMetricsTable({ data, periodType, isLoading, error }: DailyM
   // Handle empty state
   if (!data || data.length === 0) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200">
+      <div className="overflow-hidden rounded-lg border border-border">
         <EmptyState />
       </div>
     )
@@ -119,7 +119,7 @@ export function DailyMetricsTable({ data, periodType, isLoading, error }: DailyM
 
       {/* Table with scroll container */}
       <div
-        className="overflow-x-auto rounded-lg border border-gray-200"
+        className="overflow-x-auto rounded-lg border border-border"
         role="region"
         aria-label={`Таблица метрик за ${periodType === 'week' ? 'неделю' : 'месяц'}`}
         tabIndex={0}

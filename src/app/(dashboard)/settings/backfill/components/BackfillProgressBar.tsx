@@ -42,7 +42,7 @@ export function BackfillProgressBar({
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className="relative h-2 w-full min-w-[100px] overflow-hidden rounded-full bg-gray-200">
+      <div className="relative h-2 w-full min-w-[100px] overflow-hidden rounded-full bg-muted">
         <div
           className={cn(
             'h-full transition-all duration-500 ease-out',
@@ -58,7 +58,7 @@ export function BackfillProgressBar({
         />
       </div>
       {showText && (
-        <span className="min-w-[3rem] text-sm font-medium text-gray-700" aria-hidden="true">
+        <span className="min-w-[3rem] text-sm font-medium text-foreground" aria-hidden="true">
           {/* visible % → ru-RU 1 decimal ("75,0 %", NBSP). 1 decimal (NOT Int) keeps a LIVE
               in-progress value honest: Int would round 99.7→"100 %" while the bar isn't full and
               status is still in_progress. aria-label keeps dot-locale (§4); CSS width uses raw. */}

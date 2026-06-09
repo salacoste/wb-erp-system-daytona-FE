@@ -82,11 +82,11 @@ export function DailyBreakdownTooltip({
 
   return (
     <div
-      className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg"
+      className="rounded-lg border border-border bg-card p-3 shadow-lg"
       style={{ maxWidth: 280 }}
     >
       {/* Date header */}
-      <p className="mb-2 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-900">
+      <p className="mb-2 border-b border-border pb-2 text-sm font-semibold text-foreground">
         {formatTooltipDate(dataPoint.date)}
       </p>
 
@@ -127,7 +127,7 @@ function TooltipMetricRow({ metricKey, value }: TooltipMetricRowProps) {
         ) : (
           <span className="h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
         )}
-        <span className="text-gray-600">{label}</span>
+        <span className="text-muted-foreground">{label}</span>
       </span>
       <span className="font-medium tabular-nums">
         {/* Story 88.2-FE: null → "—" distinguishes unknown from zero */}

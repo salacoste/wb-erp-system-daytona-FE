@@ -68,8 +68,8 @@ function TableSkeleton() {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <p className="text-lg font-medium text-gray-900">Нет кабинетов для бэкфилла</p>
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="text-lg font-medium text-foreground">Нет кабинетов для бэкфилла</p>
+      <p className="mt-1 text-sm text-muted-foreground">
         Создайте кабинет для начала загрузки исторических данных
       </p>
     </div>
@@ -144,7 +144,7 @@ export function BackfillStatusTable({
                   status={cabinet.status}
                 />
               </TableCell>
-              <TableCell className="text-sm text-gray-600">
+              <TableCell className="text-sm text-muted-foreground">
                 {formatEstimatedTime(cabinet.progress?.estimated_remaining_seconds ?? null)}
               </TableCell>
               <TableCell>

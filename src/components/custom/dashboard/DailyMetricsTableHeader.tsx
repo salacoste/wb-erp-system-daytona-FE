@@ -61,8 +61,8 @@ export function DailyMetricsTableHeader({
 }: DailyMetricsTableHeaderProps) {
   return (
     <TooltipProvider>
-      <TableHeader className="sticky top-0 z-10 bg-gray-50">
-        <TableRow className="border-b-2 border-gray-200 hover:bg-gray-50">
+      <TableHeader className="sticky top-0 z-10 bg-muted">
+        <TableRow className="border-b-2 border-border hover:bg-muted">
           {columns.map(column => (
             <TableHead
               key={column.key}
@@ -76,10 +76,10 @@ export function DailyMetricsTableHeader({
               }
               style={{ width: column.width, minWidth: column.width }}
               className={cn(
-                'h-12 px-4 text-[13px] font-semibold text-gray-700 whitespace-nowrap',
+                'h-12 px-4 text-[13px] font-semibold text-foreground whitespace-nowrap',
                 column.align === 'right' ? 'text-right' : 'text-left',
-                column.key === 'date' && 'sticky left-0 bg-gray-50 z-20',
-                column.sortable && 'cursor-pointer select-none hover:bg-gray-100'
+                column.key === 'date' && 'sticky left-0 bg-muted z-20',
+                column.sortable && 'cursor-pointer select-none hover:bg-muted/80'
               )}
               onClick={() => column.sortable && onSort(column.key)}
               onKeyDown={e => {
@@ -101,7 +101,7 @@ export function DailyMetricsTableHeader({
                         type="button"
                         aria-label={column.tooltip}
                         onClick={e => e.stopPropagation()}
-                        className="inline-flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
+                        className="inline-flex items-center text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
                       >
                         <Info className="h-3 w-3" aria-hidden="true" />
                       </button>

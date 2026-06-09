@@ -25,7 +25,7 @@ interface PeriodSelectorGroupProps {
  */
 export function PeriodSelectorGroup({ value, onChange }: PeriodSelectorGroupProps) {
   return (
-    <div className="inline-flex rounded-md border border-gray-200" role="radiogroup">
+    <div className="inline-flex rounded-md border border-border" role="radiogroup">
       {PERIOD_OPTIONS.map(option => (
         <button
           key={option.value}
@@ -39,7 +39,7 @@ export function PeriodSelectorGroup({ value, onChange }: PeriodSelectorGroupProp
             option.value === 24 && 'rounded-r-md',
             value === option.value
               ? 'bg-[#E53935] text-white'
-              : 'bg-white text-gray-600 hover:bg-gray-50'
+              : 'bg-card text-muted-foreground hover:bg-muted'
           )}
         >
           {option.label}

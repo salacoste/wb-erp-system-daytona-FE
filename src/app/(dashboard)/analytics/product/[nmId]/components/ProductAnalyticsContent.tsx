@@ -66,7 +66,7 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
             Назад к аналитике
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Аналитика товара #{String(nmId)}
         </h1>
       </div>

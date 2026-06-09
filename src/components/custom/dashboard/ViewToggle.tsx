@@ -35,7 +35,7 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
     <div
       role="radiogroup"
       aria-label="Выбор представления данных"
-      className={cn('inline-flex rounded-md border border-gray-200', className)}
+      className={cn('inline-flex rounded-md border border-border', className)}
     >
       <button
         type="button"
@@ -49,7 +49,7 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E53935] focus-visible:ring-offset-2',
           value === 'chart'
             ? 'bg-[#E53935] text-white hover:bg-[#D32F2F]'
-            : 'bg-white text-gray-700 hover:bg-red-50 hover:border-[#E53935]'
+            : 'bg-card text-foreground hover:bg-red-50 hover:border-[#E53935]'
         )}
       >
         <BarChart3 className="h-4 w-4" aria-hidden="true" />
@@ -67,7 +67,7 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E53935] focus-visible:ring-offset-2',
           value === 'table'
             ? 'bg-[#E53935] text-white hover:bg-[#D32F2F]'
-            : 'bg-white text-gray-700 hover:bg-red-50 hover:border-[#E53935]'
+            : 'bg-card text-foreground hover:bg-red-50 hover:border-[#E53935]'
         )}
       >
         <Table2 className="h-4 w-4" aria-hidden="true" />

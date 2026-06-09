@@ -58,7 +58,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
   const currentIndex = STATUS_ORDER[status]
 
   return (
-    <nav aria-label="Статус поставки" className={cn('rounded-lg border bg-white p-4', className)}>
+    <nav aria-label="Статус поставки" className={cn('rounded-lg border bg-card p-4', className)}>
       <ol className="flex items-center justify-between">
         {STEPS.map((step, index) => {
           const isComplete = index < currentIndex

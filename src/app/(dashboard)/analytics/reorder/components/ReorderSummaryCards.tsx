@@ -26,7 +26,7 @@ function MetricCard({ icon, label, value, sublabel }: MetricCardProps) {
   return (
     <Card>
       <CardContent className="flex items-center gap-3 p-4">
-        <div className="rounded-md bg-gray-100 p-2">{icon}</div>
+        <div className="rounded-md bg-muted p-2">{icon}</div>
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
           <p className="text-xl font-bold">{value ?? '—'}</p>

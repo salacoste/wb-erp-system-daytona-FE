@@ -8,9 +8,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function BackfillAdminLoading() {
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-background">
       {/* Page Header Skeleton */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Breadcrumb skeleton */}
           <Skeleton className="h-4 w-48 mb-2" data-testid="skeleton" />
@@ -35,7 +35,7 @@ export default function BackfillAdminLoading() {
         </div>
 
         {/* Table skeleton */}
-        <div className="rounded-md border bg-white">
+        <div className="rounded-md border bg-card">
           <div className="p-4 space-y-4">
             {/* Table header */}
             <div className="flex gap-4">

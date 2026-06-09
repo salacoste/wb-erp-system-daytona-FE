@@ -42,7 +42,7 @@ export function BackfillControlButtons({
   const isLoading = isPausing || isResuming || isRetrying
 
   if (!showPause && !showResume && !showRetry) {
-    return <span className="text-sm text-gray-400">—</span>
+    return <span className="text-sm text-muted-foreground">—</span>
   }
 
   return (

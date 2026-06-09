@@ -39,7 +39,7 @@ export function TrendsPeriodSelector({
     <div
       role="radiogroup"
       aria-label="Период отображения"
-      className={cn('inline-flex rounded-md border border-gray-200 bg-gray-50 p-0.5', className)}
+      className={cn('inline-flex rounded-md border border-border bg-muted p-0.5', className)}
     >
       {PERIOD_OPTIONS.map(weeks => {
         const isActive = value === weeks
@@ -56,7 +56,7 @@ export function TrendsPeriodSelector({
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
               isActive
                 ? 'bg-primary text-white shadow-sm'
-                : 'bg-transparent text-gray-600 hover:bg-gray-100',
+                : 'bg-transparent text-muted-foreground hover:bg-muted',
               disabled && 'cursor-not-allowed opacity-50'
             )}
           >

@@ -45,9 +45,9 @@ export function DailyMetricsTableRow({ row, index, isTotals = false }: DailyMetr
   return (
     <TableRow
       className={cn(
-        'hover:bg-gray-50 transition-colors',
-        !isTotals && index % 2 === 1 && 'bg-gray-50/50',
-        isTotals && 'bg-gray-100 font-semibold border-t-2 border-gray-200'
+        'hover:bg-muted transition-colors',
+        !isTotals && index % 2 === 1 && 'bg-muted/50',
+        isTotals && 'bg-muted font-semibold border-t-2 border-border'
       )}
     >
       {COLUMNS.map(column => {
