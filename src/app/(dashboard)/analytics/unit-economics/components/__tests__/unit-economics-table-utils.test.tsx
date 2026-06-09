@@ -6,7 +6,7 @@ import { Table, TableBody, TableRow } from '@/components/ui/table'
 describe('getSortIcon', () => {
   it('shows gray ArrowUpDown for inactive field', () => {
     const { container } = render(<span>{getSortIcon('revenue', 'net_margin_pct', 'desc')}</span>)
-    expect(container.querySelector('.text-gray-400')).toBeTruthy()
+    expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
     expect(container.querySelector('.text-blue-500')).toBeFalsy()
   })
 
@@ -14,7 +14,7 @@ describe('getSortIcon', () => {
     const { container } = render(<span>{getSortIcon('revenue', 'revenue', 'asc')}</span>)
     const svg = container.querySelector('.text-blue-500')
     expect(svg).toBeTruthy()
-    expect(container.querySelector('.text-gray-400')).toBeFalsy()
+    expect(container.querySelector('.text-muted-foreground')).toBeFalsy()
     // Store asc SVG markup for comparison
     const ascMarkup = svg!.innerHTML
     expect(ascMarkup).toBeTruthy()
@@ -45,12 +45,12 @@ describe('MarginIndicator', () => {
 
   it('shows gray Minus for margin between 10-20%', () => {
     const { container } = render(<MarginIndicator value={15} />)
-    expect(container.querySelector('.text-gray-400')).toBeTruthy()
+    expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
   })
 
   it('shows neutral Minus for null margin (unknown), never green/red (anti-pattern #8)', () => {
     const { container } = render(<MarginIndicator value={null} />)
-    expect(container.querySelector('.text-gray-400')).toBeTruthy()
+    expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
     expect(container.querySelector('.text-green-500')).toBeNull()
     expect(container.querySelector('.text-red-500')).toBeNull()
   })
@@ -81,14 +81,14 @@ describe('CostCell', () => {
 
   it('shows gray for value below thresholds', () => {
     const { container } = renderCell(20, 40, 30)
-    expect(container.querySelector('.text-gray-700')).toBeTruthy()
+    expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
   })
 
   it('renders "—" + neutral for null cost % (no COGS), never a fabricated "0,0 %"', () => {
     const { container } = renderCell(null, 40, 30)
     expect(container.textContent).toContain('—')
     expect(container.textContent).not.toMatch(/0,0\s*%/)
-    expect(container.querySelector('.text-gray-700')).toBeTruthy()
+    expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
     expect(container.querySelector('.text-red-600')).toBeNull()
   })
 })

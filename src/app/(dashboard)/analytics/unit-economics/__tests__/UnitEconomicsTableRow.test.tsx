@@ -68,7 +68,7 @@ describe('UnitEconomicsTableRow delivery column (H2)', () => {
   it('applies gray color for missing delivery', () => {
     renderRow(makeItem())
     const dashes = screen.getAllByText('—')
-    const grayDash = dashes.find(el => el.className.includes('text-gray-400'))
+    const grayDash = dashes.find(el => el.className.includes('text-muted-foreground'))
     expect(grayDash).toBeDefined()
   })
 })
