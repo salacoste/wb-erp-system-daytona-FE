@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"# Check for console.log in frontend source (should use logger)\\ncd frontend && grep -rn \\\"console\\\\.\\\\(log\\\\|info\\\\|warn\\\\|error\\\\)\\\" src/ --include=\\\"*.ts\\\" --include=\\\"*.tsx\\\" | grep -v ...",
-  "error": "Exit code 1\n(eval):cd:2: no such file or directory: frontend",
-  "timestamp": "2026-06-09T02:46:26.794Z",
-  "retry_count": 1
+  "tool_input_preview": "{\"command\":\"echo \\\"=== Uncommitted ===\\\" && git status --short | grep -v \\\"\\\\.claude\\\\|\\\\.mcp\\\\|\\\\.omc\\\\|_bmad\\\" && echo \\\"\\\" && echo \\\"=== Last 6 commits ===\\\" && git log --oneline -6\",\"description\":...",
+  "error": "Exit code 1\n=== Uncommitted ===",
+  "timestamp": "2026-06-09T12:46:29.687Z",
+  "retry_count": 2
 }

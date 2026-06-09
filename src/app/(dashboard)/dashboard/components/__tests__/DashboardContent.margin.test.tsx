@@ -54,18 +54,6 @@ vi.mock('@/hooks/useDashboardPeriod', () => ({
   }),
 }))
 
-vi.mock('@/hooks/useDashboardMetricsWithPeriod', () => ({
-  useDashboardMetricsWithComparison: () => ({
-    current: { totalPayable: 100000, revenue: 150000 },
-    previous: { totalPayable: 90000, revenue: 140000 },
-    isLoading: false,
-    isFetching: false,
-    isError: false,
-    error: null,
-    refetch: vi.fn(),
-  }),
-}))
-
 vi.mock('@/hooks/useProcessingStatus', () => ({
   useProcessingStatus: () => ({ data: null }),
 }))
