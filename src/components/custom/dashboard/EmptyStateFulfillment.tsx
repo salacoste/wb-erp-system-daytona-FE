@@ -33,8 +33,8 @@ export function EmptyStateFulfillment({
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">FBO/FBS аналитика</p>
-        <p className="max-w-xs text-xs text-muted-foreground">
+        <p className="text-sm font-medium text-gray-700">FBO/FBS аналитика</p>
+        <p className="max-w-xs text-xs text-gray-500">
           Данные FBO/FBS ещё не загружены. Запустите синхронизацию для получения аналитики.
         </p>
       </div>

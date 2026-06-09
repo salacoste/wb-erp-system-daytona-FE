@@ -44,7 +44,7 @@ interface AcceptanceStatusBadgeProps {
 const COLOR_CLASSES: Record<string, string> = {
   destructive: 'bg-red-100 text-red-700 border-red-200',
   success: 'bg-green-100 text-green-700 border-green-200',
-  default: 'bg-gray-100 text-gray-700 border-gray-200',
+  default: 'bg-muted text-foreground border-border',
   warning: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   high: 'bg-orange-100 text-orange-700 border-orange-200',
 } as const

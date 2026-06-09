@@ -42,7 +42,7 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
       <CheckCircle className="mb-2 h-10 w-10 text-green-500" data-testid="empty-state-icon" />
-      <p className="text-sm text-gray-600">Нет заказов под угрозой</p>
+      <p className="text-sm text-muted-foreground">Нет заказов под угрозой</p>
     </div>
   )
 }
@@ -63,7 +63,7 @@ function AtRiskCardError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
       <XCircle className="mb-2 h-8 w-8 text-red-500" />
-      <p className="mb-2 text-sm text-gray-600">Не удалось загрузить заказы</p>
+      <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить заказы</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
           <RefreshCw className="mr-1 h-3 w-3" />
@@ -99,7 +99,7 @@ function Pagination({
         <ChevronLeft className="mr-1 h-4 w-4" />
         Предыдущая
       </Button>
-      <span className="text-sm text-gray-500">
+      <span className="text-sm text-muted-foreground">
         Стр. {page + 1} из {totalPages}
       </span>
       <Button

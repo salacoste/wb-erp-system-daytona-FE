@@ -29,7 +29,7 @@ export function FbsStockPageContent() {
       {/* Page header — export button right-aligned beside title (Option A, Story 96.12-FE) */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Складские остатки FBS</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Складские остатки FBS</h1>
           <p className="text-muted-foreground mt-1">
             Распределение остатков по товарным группам, размерам и регионам
           </p>

@@ -31,7 +31,7 @@ export function AtRiskOrderRow({ order, onClick }: AtRiskOrderRowProps) {
       type="button"
       className={cn(
         'flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors',
-        'cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20',
+        'cursor-pointer hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/20',
         isBreached && 'border-red-200 bg-red-50'
       )}
       onClick={() => onClick?.(order.orderId)}
@@ -42,10 +42,10 @@ export function AtRiskOrderRow({ order, onClick }: AtRiskOrderRowProps) {
     >
       <div className="flex flex-col gap-0.5">
         <span className="font-medium">#{order.orderId}</span>
-        <span className="text-xs text-gray-500">{order.currentStatus}</span>
+        <span className="text-xs text-muted-foreground">{order.currentStatus}</span>
       </div>
       <div className="flex items-center gap-3 text-sm">
-        <span className="text-xs text-gray-500">{riskTypeLabel}</span>
+        <span className="text-xs text-muted-foreground">{riskTypeLabel}</span>
         <span
           className={cn('font-medium', countdownColor)}
           data-testid={`countdown-${order.orderId}`}

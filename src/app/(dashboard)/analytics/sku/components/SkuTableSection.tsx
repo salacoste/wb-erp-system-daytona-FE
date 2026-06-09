@@ -24,8 +24,8 @@ export function SkuTableSection({ skuData }: SkuTableSectionProps) {
           {skuData.length > 0 ? (
             <SkuFinancialsTable data={skuData} showVisibility={true} showExpenseBreakdown={true} />
           ) : (
-            <div className="rounded-lg border border-border bg-muted p-12 text-center">
-              <p className="text-muted-foreground">Нет данных за выбранную неделю</p>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
+              <p className="text-gray-600">Нет данных за выбранную неделю</p>
             </div>
           )}
         </CardContent>

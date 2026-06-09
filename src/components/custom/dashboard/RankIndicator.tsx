@@ -33,7 +33,7 @@ export function RankIndicator({ rank }: RankIndicatorProps) {
     case 2:
       return (
         <div className="flex items-center gap-1">
-          <Medal className="h-4 w-4 text-muted-foreground" aria-label="2 место" />
+          <Medal className="h-4 w-4 text-gray-400" aria-label="2 место" />
           <span className="text-sm font-medium">2</span>
         </div>
       )

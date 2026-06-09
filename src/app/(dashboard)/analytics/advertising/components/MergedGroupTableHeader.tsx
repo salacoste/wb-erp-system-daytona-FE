@@ -24,8 +24,8 @@ interface MergedGroupTableHeaderProps {
 
 export function MergedGroupTableHeader({ sortConfig, onSort }: MergedGroupTableHeaderProps) {
   const headerClass =
-    'px-4 py-3 text-left text-xs font-medium text-foreground uppercase tracking-wider bg-muted border-b border-border'
-  const sortableClass = onSort ? 'cursor-pointer hover:bg-muted' : ''
+    'px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200'
+  const sortableClass = onSort ? 'cursor-pointer hover:bg-gray-100' : ''
 
   const renderSortIcon = (field: SortField) => {
     if (!sortConfig || sortConfig.field !== field) return null

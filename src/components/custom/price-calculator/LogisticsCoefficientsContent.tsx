@@ -26,7 +26,7 @@ function AutoFillBadge({ source }: { source: 'auto' | 'manual' }) {
         'text-xs',
         source === 'auto'
           ? 'bg-green-50 text-green-700 border-green-300'
-          : 'bg-gray-50 text-gray-600'
+          : 'bg-muted/50 text-muted-foreground'
       )}
     >
       {source === 'auto' ? 'Автозаполнено' : 'Вручную'}

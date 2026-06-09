@@ -49,7 +49,7 @@ function HourlySparkline({
             key={hour}
             className={cn(
               'w-full min-w-[4px] rounded-t transition-colors',
-              isPeak ? 'bg-primary' : 'bg-gray-300'
+              isPeak ? 'bg-primary' : 'bg-muted'
             )}
             style={{ height: `${Math.max(heightPercent, 4)}%` }}
             title={`${hour}:00 - ${count} заказов`}
@@ -68,8 +68,8 @@ function PeakHoursDisplay({ peakHours }: { peakHours: number[] }) {
   const formatted = peakHours.map(h => `${h}:00`).join(', ')
 
   return (
-    <div className="text-xs text-gray-500">
-      Пиковые часы: <span className="font-medium text-gray-700">{formatted}</span>
+    <div className="text-xs text-muted-foreground">
+      Пиковые часы: <span className="font-medium text-foreground">{formatted}</span>
     </div>
   )
 }
@@ -90,7 +90,7 @@ function VolumeWidgetError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-6 text-center">
       <XCircle className="mb-2 h-8 w-8 text-red-500" />
-      <p className="mb-2 text-sm text-gray-600">Не удалось загрузить объём</p>
+      <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить объём</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
           <RefreshCw className="mr-1 h-3 w-3" />
@@ -120,7 +120,7 @@ export function VolumeMetricsWidget({ data, isLoading, error, onRetry }: VolumeM
           <div className="space-y-3">
             <div className="text-2xl font-bold" data-testid="total-orders-value">
               {data.totalOrders.toLocaleString('ru-RU')}
-              <span className="ml-1 text-sm font-normal text-gray-500">заказов</span>
+              <span className="ml-1 text-sm font-normal text-muted-foreground">заказов</span>
             </div>
 
             {data.hourlyTrend.length > 0 && (

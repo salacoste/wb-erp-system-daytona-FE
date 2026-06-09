@@ -111,7 +111,7 @@ export function PenaltiesCard({
 
         {revenuePct != null && (
           <div className="mt-1">
-            <span className="text-xs text-muted-foreground">{formatRevenuePct(revenuePct)} от выручки</span>
+            <span className="text-xs text-gray-400">{formatRevenuePct(revenuePct)} от выручки</span>
           </div>
         )}
       </CardContent>

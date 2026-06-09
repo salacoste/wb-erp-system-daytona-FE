@@ -41,44 +41,44 @@ export function SupplyDetailLeftColumn({ item, trendConfig, TrendIcon }: LeftCol
   return (
     <div className="space-y-6">
       {/* Current Situation */}
-      <section className="bg-card rounded-lg border p-4">
-        <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+      <section className="bg-white rounded-lg border p-4">
+        <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
           <Package className="h-4 w-4" />
           Текущая ситуация
         </h4>
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Остаток:</dt>
+            <dt className="text-gray-600">Остаток:</dt>
             <dd
               className={cn(
                 'font-medium',
-                item.current_stock === 0 ? 'text-red-600' : 'text-foreground'
+                item.current_stock === 0 ? 'text-red-600' : 'text-gray-900'
               )}
             >
               {formatStockQty(item.current_stock)} шт
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">В пути:</dt>
+            <dt className="text-gray-600">В пути:</dt>
             <dd
-              className={cn('font-medium', item.in_transit > 0 ? 'text-blue-600' : 'text-muted-foreground')}
+              className={cn('font-medium', item.in_transit > 0 ? 'text-blue-600' : 'text-gray-400')}
             >
               {item.in_transit > 0 ? `${formatStockQty(item.in_transit)} шт` : '—'}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Эффективный запас:</dt>
-            <dd className="font-medium text-foreground">{formatStockQty(item.effective_stock)} шт</dd>
+            <dt className="text-gray-600">Эффективный запас:</dt>
+            <dd className="font-medium text-gray-900">{formatStockQty(item.effective_stock)} шт</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Скорость продаж:</dt>
-            <dd className="font-medium text-foreground flex items-center gap-1">
+            <dt className="text-gray-600">Скорость продаж:</dt>
+            <dd className="font-medium text-gray-900 flex items-center gap-1">
               {formatVelocity(item.avg_daily_sales)} шт/день
               <TrendIndicator trendConfig={trendConfig} TrendIcon={TrendIcon} className="h-3 w-3" />
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Стокаут:</dt>
+            <dt className="text-gray-600">Стокаут:</dt>
             <dd
               className={cn(
                 'font-bold',
@@ -86,7 +86,7 @@ export function SupplyDetailLeftColumn({ item, trendConfig, TrendIcon }: LeftCol
                   ? 'text-red-600'
                   : item.days_until_stockout !== null && item.days_until_stockout <= 14
                     ? 'text-orange-600'
-                    : 'text-foreground'
+                    : 'text-gray-900'
               )}
             >
               {item.stockout_date
@@ -102,8 +102,8 @@ export function SupplyDetailLeftColumn({ item, trendConfig, TrendIcon }: LeftCol
 
       {/* Warehouse Distribution */}
       {item.warehouses.length > 0 && (
-        <section className="bg-card rounded-lg border p-4">
-          <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+        <section className="bg-white rounded-lg border p-4">
+          <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
             <Warehouse className="h-4 w-4" />
             Распределение по складам
           </h4>
@@ -113,14 +113,14 @@ export function SupplyDetailLeftColumn({ item, trendConfig, TrendIcon }: LeftCol
                 item.current_stock > 0 ? Math.round((wh.stock / item.current_stock) * 100) : 0
               return (
                 <div key={i} className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground w-24 truncate">{wh.name}</span>
-                  <div className="flex-1 bg-muted rounded-full h-2">
+                  <span className="text-sm text-gray-600 w-24 truncate">{wh.name}</span>
+                  <div className="flex-1 bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-blue-500 rounded-full h-2 transition-all"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
-                  <span className="text-sm font-medium text-foreground w-20 text-right">
+                  <span className="text-sm font-medium text-gray-900 w-20 text-right">
                     {formatStockQty(wh.stock)} шт
                   </span>
                 </div>

@@ -30,7 +30,7 @@ export function RankIndicator({ rank }: { rank: number }) {
     case 2:
       return (
         <div className="flex items-center gap-1">
-          <Medal className="h-4 w-4 text-muted-foreground" aria-label="2 место" />
+          <Medal className="h-4 w-4 text-gray-400" aria-label="2 место" />
           <span className="text-sm font-medium">2</span>
         </div>
       )
@@ -54,7 +54,7 @@ export function CostSeverityDot({ ratio }: { ratio: number | null }) {
     high: 'bg-red-500',
     medium: 'bg-yellow-500',
     low: 'bg-green-500',
-    unknown: 'bg-muted',
+    unknown: 'bg-gray-300',
   }
 
   const labels: Record<CostSeverity, string> = {

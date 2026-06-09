@@ -45,7 +45,7 @@ interface CustomTooltipProps {
 export function RegionalTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null
   return (
-    <div className="rounded-md border bg-card p-3 shadow-sm text-sm">
+    <div className="rounded-md border bg-white p-3 shadow-sm text-sm">
       <p className="font-medium mb-1">{label}</p>
       {payload.map(entry => (
         <p key={entry.name} style={{ color: entry.color }}>

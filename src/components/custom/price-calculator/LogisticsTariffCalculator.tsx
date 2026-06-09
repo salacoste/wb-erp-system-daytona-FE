@@ -141,7 +141,7 @@ export function LogisticsTariffCalculator({
             Настроить тарифы
           </button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="mt-3 space-y-3 p-3 bg-white/50 rounded border border-cyan-200">
+        <CollapsibleContent className="mt-3 space-y-3 p-3 bg-card/50 rounded border border-cyan-200">
           <TariffInputFields
             tariffs={localTariffs}
             onChange={handleTariffChange}

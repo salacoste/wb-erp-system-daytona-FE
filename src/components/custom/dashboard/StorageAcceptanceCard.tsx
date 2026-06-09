@@ -112,17 +112,17 @@ export function StorageAcceptanceCard({
         )}
         <div className="mt-1 flex flex-wrap gap-x-2">
           {storageCost != null && (
-            <span className="text-xs text-muted-foreground">Хранение {formatCurrency(storageCost)}</span>
+            <span className="text-xs text-gray-400">Хранение {formatCurrency(storageCost)}</span>
           )}
           {paidAcceptanceCost != null && paidAcceptanceCost > 0 && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-gray-400">
               Приёмка {formatCurrency(paidAcceptanceCost)}
             </span>
           )}
         </div>
         {pctOfSales != null && (
           <div className="mt-0.5">
-            <span className="text-xs text-muted-foreground">{formatPercentage(pctOfSales)} от продаж</span>
+            <span className="text-xs text-gray-400">{formatPercentage(pctOfSales)} от продаж</span>
           </div>
         )}
       </CardContent>

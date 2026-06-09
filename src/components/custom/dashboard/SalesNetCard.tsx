@@ -100,7 +100,7 @@ export function SalesNetCard({
         )}
         {wbSalesGross != null && wbReturnsGross != null && (
           <div className="mt-1">
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-gray-400">
               Выкупы {formatCurrency(wbSalesGross)} — Возвраты {formatCurrency(wbReturnsGross)}
             </span>
           </div>

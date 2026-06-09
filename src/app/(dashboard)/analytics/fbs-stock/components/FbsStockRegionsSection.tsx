@@ -151,7 +151,7 @@ export function FbsStockRegionsSection() {
                     </TableCell>
                     <TableCell className="text-right text-sm">
                       {item.shareOfTotalPct == null ? (
-                        <span className="text-muted-foreground">—</span>
+                        <span className="text-gray-400">—</span>
                       ) : (
                         formatPercentage(item.shareOfTotalPct)
                       )}

@@ -29,8 +29,8 @@ const STATUS_CONFIG: Record<
   },
   expired: {
     label: 'Истекло',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-600',
+    bgColor: 'bg-muted',
+    textColor: 'text-muted-foreground',
   },
 }
 
@@ -53,10 +53,7 @@ interface VersionStatusBadgeProps {
  * // Renders: Blue badge with "Запланировано"
  * ```
  */
-export function VersionStatusBadge({
-  status,
-  className,
-}: VersionStatusBadgeProps) {
+export function VersionStatusBadge({ status, className }: VersionStatusBadgeProps) {
   const config = STATUS_CONFIG[status]
 
   return (

@@ -43,10 +43,10 @@ export function DailyTrendTooltip({ active, payload, visibleSeries }: DailyTrend
 
   return (
     <div
-      className="rounded-lg border border-border bg-card p-3 shadow-lg"
+      className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg"
       style={{ maxWidth: 260 }}
     >
-      <p className="mb-2 border-b border-border pb-2 text-sm font-semibold text-foreground">
+      <p className="mb-2 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-900">
         {formatDailyTooltipDate(dataPoint.date)}
       </p>
       <div className="space-y-1.5">
@@ -61,7 +61,7 @@ export function DailyTrendTooltip({ active, payload, visibleSeries }: DailyTrend
                   className="h-3 w-3 rounded-full"
                   style={{ backgroundColor: DAILY_TREND_COLORS[series.key as DailyTrendMetricKey] }}
                 />
-                <span className="text-muted-foreground">
+                <span className="text-gray-600">
                   {DAILY_TREND_LABELS[series.key as DailyTrendMetricKey]}
                 </span>
               </span>

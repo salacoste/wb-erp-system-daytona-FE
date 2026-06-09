@@ -32,17 +32,17 @@ export function VelocityMetricCard({
   const ariaTime = minutes == null ? 'нет данных' : formatDuration(minutes)
   const colorClass =
     minutes == null
-      ? 'text-gray-400'
+      ? 'text-muted-foreground'
       : type === 'confirm'
         ? getConfirmationTimeColor(minutes)
         : getCompletionTimeColor(minutes)
 
   return (
     <div
-      className="flex flex-col items-center rounded-lg bg-gray-50 p-4"
+      className="flex flex-col items-center rounded-lg bg-muted/50 p-4"
       data-testid={`${testIdPrefix}-card`}
     >
-      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
       <span
         className={cn('text-2xl font-bold', colorClass)}
         data-testid={`${testIdPrefix}-value`}
@@ -79,14 +79,14 @@ export function PercentilesSection({
   return (
     <div className="grid grid-cols-2 gap-4 pt-2 text-sm" data-testid="percentiles-content">
       <div className="space-y-1">
-        <div className="text-gray-600">Подтверждение</div>
-        <div className="text-gray-500">P50: {formatDuration(p50Confirm)}</div>
-        <div className="text-gray-500">P95: {formatDuration(p95Confirm)}</div>
+        <div className="text-muted-foreground">Подтверждение</div>
+        <div className="text-muted-foreground">P50: {formatDuration(p50Confirm)}</div>
+        <div className="text-muted-foreground">P95: {formatDuration(p95Confirm)}</div>
       </div>
       <div className="space-y-1">
-        <div className="text-gray-600">Выполнение</div>
-        <div className="text-gray-500">P50: {formatDuration(p50Complete)}</div>
-        <div className="text-gray-500">P95: {formatDuration(p95Complete)}</div>
+        <div className="text-muted-foreground">Выполнение</div>
+        <div className="text-muted-foreground">P50: {formatDuration(p50Complete)}</div>
+        <div className="text-muted-foreground">P95: {formatDuration(p95Complete)}</div>
       </div>
     </div>
   )
@@ -110,7 +110,7 @@ export function VelocityWidgetError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
       <XCircle className="mb-2 h-8 w-8 text-red-500" />
-      <p className="mb-2 text-sm text-gray-600">Не удалось загрузить скорость обработки</p>
+      <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить скорость обработки</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
           <RefreshCw className="mr-1 h-3 w-3" />

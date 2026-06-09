@@ -83,7 +83,7 @@ export function SearchPageContent({ initialQuery }: SearchPageContentProps = {})
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Поисковая аналитика</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Поисковая аналитика</h1>
         <p className="text-muted-foreground mt-1">Анализ поисковых запросов, позиций и заказов</p>
         <div className="mt-2">
           <SearchSellerBadge />

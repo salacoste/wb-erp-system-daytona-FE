@@ -27,7 +27,7 @@ export function SheetBody({ report }: { report: HealthReportDetail }) {
         <div className="grid grid-cols-3 gap-3 text-center">
           <Metric label="Успешно" value={successCount} color="text-green-600" />
           <Metric label="Ошибки" value={summary.tasksFailed} color="text-red-600" />
-          <Metric label="Ожидают" value={summary.tasksPending} color="text-muted-foreground" />
+          <Metric label="Ожидают" value={summary.tasksPending} color="text-gray-500" />
         </div>
       </section>
       <Separator />

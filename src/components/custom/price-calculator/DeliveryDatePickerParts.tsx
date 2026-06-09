@@ -142,7 +142,7 @@ function CoefficientColorLegend() {
           &gt;2.0 — пиковый
         </li>
         <li>
-          <span className="inline-block w-3 h-3 rounded bg-gray-200 mr-1" />
+          <span className="inline-block w-3 h-3 rounded bg-muted mr-1" />
           н/д — недоступно
         </li>
       </ul>

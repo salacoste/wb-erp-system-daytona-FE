@@ -36,7 +36,7 @@ export function SupplyPlanningLoading() {
       </div>
 
       {/* Metrics Bar Skeleton */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-muted p-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-gray-50 p-4">
         {/* Metric 1 */}
         <div className="flex items-center gap-3">
           <Skeleton className="h-5 w-5 rounded" />
@@ -47,7 +47,7 @@ export function SupplyPlanningLoading() {
         </div>
 
         {/* Separator */}
-        <div className="hidden sm:block h-10 w-px bg-muted" />
+        <div className="hidden sm:block h-10 w-px bg-gray-300" />
 
         {/* Metric 2 */}
         <div className="flex items-center gap-3">
@@ -59,7 +59,7 @@ export function SupplyPlanningLoading() {
         </div>
 
         {/* Separator */}
-        <div className="hidden sm:block h-10 w-px bg-muted" />
+        <div className="hidden sm:block h-10 w-px bg-gray-300" />
 
         {/* Metric 3 */}
         <div className="flex items-center gap-3">

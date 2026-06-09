@@ -57,7 +57,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
   // absurd badges like "Логистика 50000 %" over a 0 ₽ baseline). Show an honest empty-state instead.
   if (cabinetExpenses.sales_gross <= 0) {
     return (
-      <div className="py-6 text-center text-sm text-muted-foreground">
+      <div className="py-6 text-center text-sm text-gray-500">
         Нет продаж за период — структура cashflow в процентах недоступна.
       </div>
     )
@@ -100,7 +100,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
         label="Чистые продажи (gross)"
         value={fmtRub(netSales)}
       >
-        <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-muted text-muted-foreground">
+        <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-gray-200 text-gray-600">
           {pct(netSales)}%
         </span>
       </CashflowRow>

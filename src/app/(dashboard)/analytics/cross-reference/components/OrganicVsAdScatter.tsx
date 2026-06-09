@@ -72,7 +72,7 @@ function CustomTooltip({
   if (!d) return null
 
   return (
-    <div className="rounded-md border bg-card px-3 py-2 text-sm shadow-md space-y-1">
+    <div className="rounded-md border bg-white px-3 py-2 text-sm shadow-md space-y-1">
       <p className="font-semibold">{d.vendorCode || d.nmId}</p>
       <p>
         Заказы: <span className="font-medium">{d.totalOrders}</span>

@@ -81,7 +81,7 @@ export function SupplyPlanningTable({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Search */}
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Поиск по артикулу или названию..."
               value={searchQuery}
@@ -94,7 +94,7 @@ export function SupplyPlanningTable({
             {searchQuery && (
               <button
                 onClick={() => handleClearSearch(resetPage)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -132,7 +132,7 @@ export function SupplyPlanningTable({
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="px-4 py-12 text-center text-muted-foreground">
+                  <td colSpan={11} className="px-4 py-12 text-center text-gray-500">
                     {searchQuery
                       ? `Товары по запросу "${searchQuery}" не найдены`
                       : 'Нет данных для отображения'}

@@ -28,11 +28,11 @@ export function NotificationsHeroBanner({ onConnect }: NotificationsHeroBannerPr
     <div className="relative overflow-hidden rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 p-6 sm:p-8">
       {/* Decorative blur circles */}
       <div
-        className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-card/10 blur-2xl pointer-events-none"
+        className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none"
         aria-hidden="true"
       />
       <div
-        className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-card/10 blur-2xl pointer-events-none"
+        className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none"
         aria-hidden="true"
       />
 

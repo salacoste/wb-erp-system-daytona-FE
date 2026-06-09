@@ -52,7 +52,7 @@ function SlaMetricCard({
       className={cn('flex flex-col items-center rounded-lg p-4', bgClass)}
       data-testid={`${testIdPrefix}-card`}
     >
-      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
       {/* aria-label intentionally keeps the dot-locale toFixed form: spoken text is a genuine
           exception (a comma decimal can confuse screen-reader number parsing) per
           dot-locale-consolidation-proposal §4 — it stays counted in the gate baseline, NOT a
@@ -93,7 +93,7 @@ function SlaWidgetError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
       <XCircle className="mb-2 h-8 w-8 text-red-500" />
-      <p className="mb-2 text-sm text-gray-600">Не удалось загрузить данные SLA</p>
+      <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить данные SLA</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
           <RefreshCw className="mr-1 h-3 w-3" />
@@ -117,7 +117,7 @@ export function SlaComplianceWidget({ data, isLoading, error, onRetry }: SlaComp
             <Tooltip>
               <TooltipTrigger asChild>
                 <HelpCircle
-                  className="h-4 w-4 cursor-help text-gray-400"
+                  className="h-4 w-4 cursor-help text-muted-foreground"
                   data-testid="sla-help-icon"
                 />
               </TooltipTrigger>
@@ -152,7 +152,7 @@ export function SlaComplianceWidget({ data, isLoading, error, onRetry }: SlaComp
               />
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">В ожидании: {data.pendingOrdersCount}</span>
+              <span className="text-muted-foreground">В ожидании: {data.pendingOrdersCount}</span>
               {data.breachedCount > 0 ? (
                 <span
                   className="rounded-full bg-red-100 px-2 py-0.5 text-red-600"
@@ -161,7 +161,7 @@ export function SlaComplianceWidget({ data, isLoading, error, onRetry }: SlaComp
                   <span data-testid="breached-count">Нарушено: {data.breachedCount}</span>
                 </span>
               ) : (
-                <span className="text-gray-500">Нарушено: 0</span>
+                <span className="text-muted-foreground">Нарушено: 0</span>
               )}
             </div>
           </div>

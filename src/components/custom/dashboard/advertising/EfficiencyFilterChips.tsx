@@ -106,8 +106,8 @@ function FilterChip({
     'cursor-pointer transition-all duration-150 border-2',
     'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary',
     {
-      'bg-muted text-foreground border-transparent': isNeutral && !isActive,
-      'bg-muted text-foreground border-gray-500': isNeutral && isActive,
+      'bg-gray-100 text-gray-700 border-transparent': isNeutral && !isActive,
+      'bg-gray-200 text-gray-900 border-gray-500': isNeutral && isActive,
       [config?.bgColor ?? '']: !isNeutral && !isActive,
       [config?.bgColorActive ?? '']: !isNeutral && isActive,
       [config?.color ?? '']: !isNeutral,
@@ -134,7 +134,7 @@ function FilterChip({
         variant="secondary"
         className={cn(
           'ml-1 px-1.5 py-0 text-xs font-normal',
-          isActive ? 'bg-card/50' : 'bg-black/5'
+          isActive ? 'bg-white/50' : 'bg-black/5'
         )}
       >
         {count}

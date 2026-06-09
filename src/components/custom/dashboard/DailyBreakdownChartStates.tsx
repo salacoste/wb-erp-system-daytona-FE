@@ -59,7 +59,7 @@ interface ChartEmptyStateProps {
 export function ChartEmptyState({ className }: ChartEmptyStateProps) {
   return (
     <div className={cn('flex h-60 w-full items-center justify-center md:h-70 lg:h-80', className)}>
-      <p className="text-muted-foreground">Нет данных для отображения</p>
+      <p className="text-gray-500">Нет данных для отображения</p>
     </div>
   )
 }

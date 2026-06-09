@@ -25,9 +25,7 @@ interface AuditValueDisplayProps {
  */
 function isJsonArrayField(fieldName: string): boolean {
   return (
-    fieldName.includes('Tiers') ||
-    fieldName.includes('tiers') ||
-    fieldName === 'clothingCategories'
+    fieldName.includes('Tiers') || fieldName.includes('tiers') || fieldName === 'clothingCategories'
   )
 }
 
@@ -122,7 +120,7 @@ function JsonExpandable({ value }: JsonExpandableProps) {
       </Button>
 
       {isExpanded && (
-        <pre className="text-xs bg-gray-50 p-2 rounded overflow-x-auto max-w-[200px]">
+        <pre className="text-xs bg-muted/50 p-2 rounded overflow-x-auto max-w-[200px]">
           {formatted}
         </pre>
       )}
@@ -153,11 +151,7 @@ function JsonExpandable({ value }: JsonExpandableProps) {
  * // Renders: Expandable JSON view
  * ```
  */
-export function AuditValueDisplay({
-  fieldName,
-  value,
-  className,
-}: AuditValueDisplayProps) {
+export function AuditValueDisplay({ fieldName, value, className }: AuditValueDisplayProps) {
   // Null value
   if (value === null || value === undefined) {
     return <span className={cn('text-muted-foreground', className)}>—</span>

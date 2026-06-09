@@ -44,13 +44,13 @@ export function StatusTooltip({ active, payload }: StatusTooltipProps) {
   const formattedCount = data.count.toLocaleString('ru-RU')
 
   return (
-    <div className="rounded-lg border bg-card p-3 shadow-lg">
-      <p className="font-medium text-foreground">{label}</p>
-      <p className="mt-1 text-sm text-muted-foreground">
+    <div className="rounded-lg border bg-white p-3 shadow-lg">
+      <p className="font-medium text-gray-900">{label}</p>
+      <p className="mt-1 text-sm text-gray-600">
         <span className="font-semibold">{formattedCount}</span> заказов
       </p>
       {/* percentage is percent-units 0-100, fractional (1 decimal) → formatPercentage(_, 1) → "80,0 %" */}
-      <p className="text-sm text-muted-foreground">{formatPercentage(data.percentage, 1)}</p>
+      <p className="text-sm text-gray-500">{formatPercentage(data.percentage, 1)}</p>
     </div>
   )
 }

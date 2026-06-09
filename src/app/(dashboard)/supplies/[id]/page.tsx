@@ -123,7 +123,7 @@ export default function SupplyDetailPage({ params }: PageProps) {
       <div className="mb-6">
         <Link
           href="/supplies"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-1.5 h-4 w-4" />
           Назад к списку

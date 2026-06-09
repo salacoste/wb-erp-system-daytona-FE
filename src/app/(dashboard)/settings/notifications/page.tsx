@@ -45,35 +45,35 @@ export default function NotificationsSettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-muted">
+    <main className="min-h-screen bg-gray-50">
       {/* Page Header */}
-      <div className="bg-card border-b border-border">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Breadcrumbs - Desktop only */}
-          <nav className="hidden sm:block text-sm text-muted-foreground mb-2">
-            <Link href="/dashboard" className="hover:text-foreground">
+          <nav className="hidden sm:block text-sm text-gray-600 mb-2">
+            <Link href="/dashboard" className="hover:text-gray-900">
               Главная
             </Link>
             {' > '}
-            <Link href="/dashboard" className="hover:text-foreground">
+            <Link href="/dashboard" className="hover:text-gray-900">
               Настройки
             </Link>
             {' > '}
-            <span className="text-foreground">Уведомления</span>
+            <span className="text-gray-900">Уведомления</span>
           </nav>
 
           {/* Back Link - Mobile only */}
           <Link
             href="/dashboard"
-            className="sm:hidden text-sm text-muted-foreground hover:text-foreground mb-2 inline-block"
+            className="sm:hidden text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
           >
             ← Настройки
           </Link>
 
           {/* Page Title */}
           <div className="flex items-center gap-3">
-            <Bell className="h-8 w-8 text-foreground" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Telegram Уведомления</h1>
+            <Bell className="h-8 w-8 text-gray-700" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Telegram Уведомления</h1>
           </div>
         </div>
       </div>
@@ -119,8 +119,8 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-start gap-4">
               <div className="text-3xl">💡</div>
               <div>
-                <h3 className="font-semibold text-foreground mb-2">Нужна помощь с настройкой?</h3>
-                <p className="text-sm text-foreground mb-3">
+                <h3 className="font-semibold text-gray-900 mb-2">Нужна помощь с настройкой?</h3>
+                <p className="text-sm text-gray-700 mb-3">
                   Если у вас возникли вопросы по настройке Telegram уведомлений, обратитесь к нашему
                   руководству или свяжитесь с поддержкой.
                 </p>

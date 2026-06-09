@@ -69,10 +69,10 @@ export default function MarginAnalysisBySkuPage() {
         {/* Page Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
               Маржинальность по товарам
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-gray-600">
               Анализ прибыли и маржинальности по каждому SKU
             </p>
           </div>

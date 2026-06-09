@@ -59,13 +59,13 @@ export function EmptyStateFBS({
 
   return (
     <div className="flex flex-col items-center justify-center space-y-3 py-4 text-center">
-      <div className="rounded-full bg-muted p-3">
-        <Package className="h-6 w-6 text-muted-foreground" />
+      <div className="rounded-full bg-gray-100 p-3">
+        <Package className="h-6 w-6 text-gray-400" />
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">Нет данных FBS за период</p>
-        <p className="max-w-xs text-xs text-muted-foreground">
+        <p className="text-sm font-medium text-gray-700">Нет данных FBS за период</p>
+        <p className="max-w-xs text-xs text-gray-500">
           Синхронизация FBS была подключена позже. Данные появятся автоматически.
         </p>
       </div>
@@ -100,7 +100,7 @@ export function EmptyStateFBS({
       )}
 
       {lastSyncAt && (
-        <p className="text-xs text-muted-foreground">Синхронизация: {formatSyncTime(lastSyncAt)}</p>
+        <p className="text-xs text-gray-400">Синхронизация: {formatSyncTime(lastSyncAt)}</p>
       )}
     </div>
   )

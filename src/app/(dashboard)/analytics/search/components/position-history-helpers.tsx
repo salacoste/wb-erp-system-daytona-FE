@@ -57,7 +57,7 @@ export function PositionTooltipContent({
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
-    <div className="rounded-md border bg-card px-3 py-2 text-sm shadow-sm">
+    <div className="rounded-md border bg-white px-3 py-2 text-sm shadow-sm">
       <p className="font-medium">{formatDate(d.date)}</p>
       <p>
         Позиция: <span className="font-semibold">{d.avgPosition.toFixed(1)}</span>

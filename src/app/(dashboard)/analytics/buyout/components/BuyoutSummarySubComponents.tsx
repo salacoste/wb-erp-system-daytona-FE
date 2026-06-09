@@ -50,7 +50,7 @@ export function ReturnBreakdownBar({ breakdown }: { breakdown: ReturnBreakdown }
   return (
     <div className="space-y-2">
       <p className="text-sm font-medium">Причины возвратов (FBS)</p>
-      <div className="h-2.5 rounded-full bg-muted overflow-hidden flex">
+      <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden flex">
         {segments.map(s =>
           s.pct > 0 ? (
             <div key={s.key} className={`h-full ${s.bg}`} style={{ width: `${s.pct}%` }} />

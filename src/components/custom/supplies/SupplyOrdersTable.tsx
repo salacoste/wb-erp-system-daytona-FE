@@ -118,9 +118,7 @@ export function SupplyOrdersTable({
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">{order.vendorCode}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {order.productName || '—'}
-                        </span>
+                        <span className="text-sm text-muted-foreground">{order.productName || '—'}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right font-medium">

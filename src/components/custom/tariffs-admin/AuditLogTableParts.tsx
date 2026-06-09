@@ -30,7 +30,7 @@ export function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-medium text-gray-900">Журнал изменений пуст</h3>
+      <h3 className="text-lg font-medium text-foreground">Журнал изменений пуст</h3>
       <p className="text-sm text-muted-foreground mt-1">
         Здесь будут отображаться все изменения тарифов.
       </p>
@@ -47,7 +47,7 @@ export function ErrorState({ onRetry, error }: { onRetry: () => void; error?: Er
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <Lock className="text-muted-foreground mb-4 h-8 w-8" />
-        <h3 className="text-lg font-medium text-gray-900">Доступно только администраторам</h3>
+        <h3 className="text-lg font-medium text-foreground">Доступно только администраторам</h3>
         <p className="text-sm text-muted-foreground mt-1">
           Журнал изменений тарифов доступен только системным администраторам.
         </p>
@@ -57,7 +57,7 @@ export function ErrorState({ onRetry, error }: { onRetry: () => void; error?: Er
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="text-red-500 mb-4">&#9888;&#65039;</div>
-      <h3 className="text-lg font-medium text-gray-900">Ошибка загрузки</h3>
+      <h3 className="text-lg font-medium text-foreground">Ошибка загрузки</h3>
       <p className="text-sm text-muted-foreground mt-1 mb-4">
         Не удалось загрузить журнал изменений
       </p>

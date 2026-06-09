@@ -75,7 +75,7 @@ export function ReturnsPageContent() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Аналитика возвратов</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика возвратов</h1>
         <p className="text-muted-foreground mt-1">Причины возвратов и аномалии по SKU</p>
       </div>
 
@@ -93,7 +93,7 @@ export function ReturnsPageContent() {
             type="checkbox"
             checked={anomalyOnly}
             onChange={e => setAnomalyOnly(e.target.checked)}
-            className="rounded border-border"
+            className="rounded border-gray-300"
             aria-labelledby="returns-anomaly-label"
           />
           <span id="returns-anomaly-label">Только проблемные</span>

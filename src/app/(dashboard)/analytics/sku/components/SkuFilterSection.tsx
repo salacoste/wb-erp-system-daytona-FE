@@ -56,17 +56,17 @@ export function SkuFilterSection({
               {/* Margin - uses full expense formula from API */}
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-foreground">
+                  <span className="text-3xl font-bold text-gray-900">
                     {stats.avgMargin !== null ? formatPercentage(stats.avgMargin, 1) : '—'}
                   </span>
-                  <span className="text-sm text-muted-foreground">операционная маржа</span>
+                  <span className="text-sm text-gray-500">операционная маржа</span>
                 </div>
-                <p className="text-xs text-muted-foreground">Выручка − COGS − Все расходы</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">Выручка − COGS − Все расходы</p>
+                <p className="text-xs text-gray-400">
                   (логистика, хранение, комиссия, эквайринг и др.)
                 </p>
               </div>
-              <p className="pt-2 text-sm text-muted-foreground border-t">
+              <p className="pt-2 text-sm text-gray-600 border-t">
                 По {stats.withCogs} товарам с себестоимостью
               </p>
             </CardContent>
@@ -80,20 +80,20 @@ export function SkuFilterSection({
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Всего товаров:</span>
-                  <span className="font-semibold text-foreground">{stats.total}</span>
+                  <span className="text-gray-600">Всего товаров:</span>
+                  <span className="font-semibold text-gray-900">{stats.total}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">С себестоимостью:</span>
+                  <span className="text-gray-600">С себестоимостью:</span>
                   <span className="font-semibold text-green-600">{stats.withCogs}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Без себестоимости:</span>
+                  <span className="text-gray-600">Без себестоимости:</span>
                   <span className="font-semibold text-yellow-600">{stats.withoutCogs}</span>
                 </div>
                 <div className="mt-2 pt-2 border-t">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Охват:</span>
+                    <span className="text-gray-600">Охват:</span>
                     <span className="font-semibold text-blue-600">
                       {stats.total > 0
                         ? formatPercentage((stats.withCogs / stats.total) * 100, 1)

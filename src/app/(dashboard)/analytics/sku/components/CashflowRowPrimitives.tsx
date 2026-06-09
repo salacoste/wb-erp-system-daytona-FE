@@ -24,7 +24,7 @@ export function PctBadge({
 }) {
   return (
     <span
-      className={`ml-2 px-1.5 py-0.5 text-xs font-medium rounded ${colorClass || (isRemaining ? 'bg-muted text-muted-foreground' : 'bg-red-200 text-red-700')}`}
+      className={`ml-2 px-1.5 py-0.5 text-xs font-medium rounded ${colorClass || (isRemaining ? 'bg-gray-200 text-gray-600' : 'bg-red-200 text-red-700')}`}
     >
       {isRemaining ? '' : '−'}
       {pct(value)}%
@@ -46,10 +46,10 @@ const ROW_STYLES = {
     value: 'text-red-600',
   },
   neutral: {
-    bg: 'bg-muted border-border',
-    symbol: 'text-muted-foreground',
-    label: 'text-foreground',
-    value: 'text-foreground',
+    bg: 'bg-gray-100 border-gray-300',
+    symbol: 'text-gray-600',
+    label: 'text-gray-800',
+    value: 'text-gray-700',
   },
 } as const
 

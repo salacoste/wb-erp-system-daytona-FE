@@ -40,9 +40,9 @@ export function UnitEconomicsTablePagination({
   onPageChange,
 }: UnitEconomicsTablePaginationProps) {
   return (
-    <div className="border-t bg-muted px-4 py-3">
+    <div className="border-t bg-gray-50 px-4 py-3">
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-gray-500">
           Показано {startIndex + 1}&ndash;{Math.min(endIndex, totalItems)} из {totalItems} записей
         </div>
 
@@ -50,7 +50,7 @@ export function UnitEconomicsTablePagination({
           <div className="flex items-center gap-4">
             {/* Page size selector */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Строк:</span>
+              <span className="text-sm text-gray-500">Строк:</span>
               <Select value={String(pageSize)} onValueChange={onPageSizeChange}>
                 <SelectTrigger className="h-8 w-[70px]">
                   <SelectValue />
@@ -76,7 +76,7 @@ export function UnitEconomicsTablePagination({
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <span className="px-2 text-sm text-muted-foreground">
+              <span className="px-2 text-sm text-gray-600">
                 {currentPage} / {totalPages}
               </span>
               <Button

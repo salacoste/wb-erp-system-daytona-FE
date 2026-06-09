@@ -80,7 +80,7 @@ export function MarginCard({
   const canShow = marginPct != null
   const diff = canShow && previousMarginPct != null ? marginPct! - previousMarginPct : null
 
-  const borderColor = canShow ? getMarginBorder(marginPct!) : 'border-border'
+  const borderColor = canShow ? getMarginBorder(marginPct!) : 'border-gray-300'
   const bgGradient = canShow ? getMarginBg(marginPct!) : 'bg-gradient-to-br from-gray-50 to-white'
 
   return (
@@ -98,7 +98,7 @@ export function MarginCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Percent className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Percent className="h-4 w-4 text-gray-500" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">
               Операционная маржа
               {showPreTaxLabel && (
@@ -138,7 +138,7 @@ export function MarginCard({
             <span
               className={cn(
                 'text-sm font-medium',
-                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-muted-foreground'
+                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
               )}
             >
               {formatPercentagePoints(diff)}

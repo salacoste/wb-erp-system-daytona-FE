@@ -105,7 +105,7 @@ export function CalendarLegend() {
         <span>&gt;2.0</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="w-2 h-2 rounded bg-gray-200" />
+        <div className="w-2 h-2 rounded bg-muted" />
         <span>н/д</span>
       </div>
     </div>

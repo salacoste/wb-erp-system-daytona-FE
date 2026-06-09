@@ -37,7 +37,7 @@ export function StackedBar({ categories }: { categories: ReturnCategoryItem[] })
 
 export function CategoryRow({ item }: { item: ReturnCategoryItem }) {
   const color = CATEGORY_COLORS[item.category] ?? 'bg-gray-400'
-  const textColor = CATEGORY_TEXT_COLORS[item.category] ?? 'text-muted-foreground'
+  const textColor = CATEGORY_TEXT_COLORS[item.category] ?? 'text-gray-600'
 
   return (
     <div className="flex items-center justify-between text-sm">

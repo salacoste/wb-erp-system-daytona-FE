@@ -68,10 +68,7 @@ export function RateLimitIndicator() {
   const colorClass = getProgressColor(safeRemaining)
 
   return (
-    <div
-      data-testid="rate-limit-indicator"
-      className="flex items-center gap-2 text-sm"
-    >
+    <div data-testid="rate-limit-indicator" className="flex items-center gap-2 text-sm">
       <span className="text-muted-foreground">
         Запросов: {safeRemaining}/{limit}
       </span>
@@ -86,16 +83,14 @@ export function RateLimitIndicator() {
         className={cn('w-20 h-2 rounded-full overflow-hidden', colorClass)}
       >
         <div
-          className="h-full bg-white/30 transition-all duration-300"
+          className="h-full bg-card/30 transition-all duration-300"
           style={{ width: `${100 - percentage}%`, marginLeft: 'auto' }}
         />
       </div>
 
       {/* Countdown timer */}
       {showCountdown && (
-        <span className="text-muted-foreground">
-          Сброс: {formatCountdown(timeUntilReset)}
-        </span>
+        <span className="text-muted-foreground">Сброс: {formatCountdown(timeUntilReset)}</span>
       )}
     </div>
   )

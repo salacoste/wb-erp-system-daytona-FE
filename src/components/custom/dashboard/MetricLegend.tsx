@@ -137,7 +137,7 @@ function LegendItem({ metricKey, label, color, isVisible, onToggle }: LegendItem
       <span
         className={cn(
           'text-sm hover:underline',
-          isVisible ? 'text-foreground' : 'text-muted-foreground line-through'
+          isVisible ? 'text-gray-700' : 'text-gray-400 line-through'
         )}
       >
         {label}

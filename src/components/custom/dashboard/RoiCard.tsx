@@ -129,7 +129,7 @@ export function RoiCard({
             <span
               className={cn(
                 'text-sm font-medium',
-                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-muted-foreground'
+                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
               )}
             >
               {formatPercentagePoints(diff)}

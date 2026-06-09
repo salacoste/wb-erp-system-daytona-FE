@@ -43,7 +43,7 @@ export function parseMessage(raw: string): { title: string; message: string } {
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  const style = statusStyles[status] ?? 'bg-muted text-foreground'
+  const style = statusStyles[status] ?? 'bg-gray-100 text-gray-800'
   const label = statusLabels[status] ?? status
   return (
     <Badge className={style} variant="outline">

@@ -69,7 +69,7 @@ export function StatusLegend({
             disabled={!isClickable}
             className={cn(
               'flex items-center gap-2 text-sm',
-              isClickable && 'cursor-pointer hover:bg-muted rounded px-1 -mx-1',
+              isClickable && 'cursor-pointer hover:bg-gray-50 rounded px-1 -mx-1',
               !isClickable && 'cursor-default'
             )}
             aria-label={`${label}: ${item.count} заказов (${formatPercentage(item.percentage, 1)})`}
@@ -82,11 +82,11 @@ export function StatusLegend({
             />
             {/* Label and values */}
             <span className="flex items-center gap-1.5">
-              <span className="text-foreground">{label}:</span>
-              <span className="font-medium text-foreground">
+              <span className="text-gray-700">{label}:</span>
+              <span className="font-medium text-gray-900">
                 {item.count.toLocaleString('ru-RU')}
               </span>
-              <span className="text-muted-foreground">({formatPercentage(item.percentage, 1)})</span>
+              <span className="text-gray-500">({formatPercentage(item.percentage, 1)})</span>
             </span>
           </button>
         )

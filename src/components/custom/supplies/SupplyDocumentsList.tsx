@@ -66,7 +66,7 @@ export function SupplyDocumentsList({
   }
 
   return (
-    <div className="rounded-lg border bg-white p-6">
+    <div className="rounded-lg border bg-card p-6">
       <h2 className="mb-4 text-lg font-semibold">Документы</h2>
       <ul className="divide-y">
         {documents.map(doc => {

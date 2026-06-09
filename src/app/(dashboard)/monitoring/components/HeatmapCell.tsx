@@ -56,7 +56,7 @@ export function HeatmapCellComponent({ cell, pipelineName }: HeatmapCellProps) {
   const ariaLabel = `${pipelineName}, ${dateLabel}, статус: ${statusRu}, ${cell.executionsActual}/${cell.executionsExpected} выполнений`
 
   // Border for no_data to distinguish from white background
-  const borderClass = cell.status === 'no_data' ? 'border border-border' : ''
+  const borderClass = cell.status === 'no_data' ? 'border border-gray-300' : ''
 
   return (
     <Tooltip>

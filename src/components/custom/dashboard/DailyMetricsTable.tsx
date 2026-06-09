@@ -47,7 +47,7 @@ function TableSkeleton() {
 /** Empty state component */
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+    <div className="flex flex-col items-center justify-center py-12 text-gray-500">
       <p className="text-sm">Нет данных за выбранный период</p>
     </div>
   )

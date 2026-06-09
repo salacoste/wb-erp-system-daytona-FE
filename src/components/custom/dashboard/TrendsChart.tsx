@@ -59,7 +59,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps): React.Re
   if (!active || !payload?.length) return null
 
   return (
-    <div className="rounded-lg border bg-card p-3 shadow-lg">
+    <div className="rounded-lg border bg-white p-3 shadow-lg">
       <p className="mb-2 font-medium">{label}</p>
       {payload.map(entry => {
         const metric = TRENDS_METRIC_MAP[entry.dataKey as TrendsMetricKey]

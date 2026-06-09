@@ -115,7 +115,7 @@ export function SimpleMetricCard({
         )}
         {subtitle && (
           <div className="mt-1">
-            <span className="text-xs text-muted-foreground">{subtitle}</span>
+            <span className="text-xs text-gray-400">{subtitle}</span>
           </div>
         )}
       </CardContent>

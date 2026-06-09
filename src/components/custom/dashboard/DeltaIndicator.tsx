@@ -52,7 +52,7 @@ function getDirection(
 const DIRECTION_STYLES = {
   positive: 'bg-green-100 text-green-700',
   negative: 'bg-red-100 text-red-700',
-  neutral: 'bg-muted text-muted-foreground',
+  neutral: 'bg-gray-100 text-gray-600',
 } as const
 
 /** Arrow icons by direction */

@@ -84,7 +84,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                     <span
                       className={cn(
                         'h-3 w-3 rounded-full',
-                        isCurrent && 'bg-white',
+                        isCurrent && 'bg-card',
                         isFuture && 'bg-muted'
                       )}
                     />

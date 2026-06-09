@@ -22,7 +22,7 @@ export function DisplayAutoFillBadge({ source }: { source: 'auto' | 'manual' }) 
         'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-normal ring-1 ring-inset',
         source === 'auto'
           ? 'bg-green-50 text-green-700 ring-green-300'
-          : 'bg-gray-50 text-gray-600 ring-gray-200'
+          : 'bg-muted/50 text-muted-foreground ring-border'
       )}
     >
       {source === 'auto' ? 'Рассчитано' : 'Вручную'}

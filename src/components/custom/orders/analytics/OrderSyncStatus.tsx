@@ -26,7 +26,7 @@ function getSyncHealth(lastSyncAt: string | null): {
   label: string
 } {
   if (!lastSyncAt) {
-    return { health: 'unhealthy', color: 'bg-gray-400', label: 'Никогда' }
+    return { health: 'unhealthy', color: 'bg-muted-foreground', label: 'Никогда' }
   }
 
   const lastSync = new Date(lastSyncAt)
@@ -97,8 +97,8 @@ export function OrderSyncStatus({ status, isLoading }: OrderSyncStatusProps) {
 
   if (!status) {
     return (
-      <div className="flex items-center gap-2 text-sm text-gray-500">
-        <div className="h-2 w-2 rounded-full bg-gray-400" />
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="h-2 w-2 rounded-full bg-muted-foreground" />
         <span>Статус недоступен</span>
       </div>
     )
@@ -112,7 +112,7 @@ export function OrderSyncStatus({ status, isLoading }: OrderSyncStatusProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex cursor-help items-center gap-2 text-sm text-gray-500">
+          <div className="flex cursor-help items-center gap-2 text-sm text-muted-foreground">
             <div className={cn('h-2 w-2 rounded-full', color)} aria-label={label} />
             <span>{relativeTime}</span>
           </div>
@@ -125,7 +125,7 @@ export function OrderSyncStatus({ status, isLoading }: OrderSyncStatusProps) {
             <p>
               <strong>Следующая:</strong> {nextSyncTime}
             </p>
-            <p className="text-xs text-gray-400">{status.schedule}</p>
+            <p className="text-xs text-muted-foreground">{status.schedule}</p>
           </div>
         </TooltipContent>
       </Tooltip>

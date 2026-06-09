@@ -125,16 +125,16 @@ export function TopKeywordsByOrdersCard({ from, to, n = 10 }: TopKeywordsByOrder
           return (
             <li
               key={`${idx}-${query}`}
-              className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
+              className="flex items-center justify-between gap-3 border-b border-gray-100 py-2 last:border-0"
             >
               {/* `title` is a hover-only affordance — `textContent` carries the
                   full query, so screen readers get it regardless of CSS truncate
                   (Story 117.4-FE Pass-1 L-1 cleanup acknowledgement). */}
-              <span className="truncate font-medium text-foreground" title={query}>
+              <span className="truncate font-medium text-gray-800" title={query}>
                 {query}
               </span>
               <span className="flex shrink-0 items-center gap-2 text-sm tabular-nums">
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-gray-900">
                   {formatNumber(item.totalOrders)}
                 </span>
                 {item.uniqueProducts != null && (

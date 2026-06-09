@@ -51,14 +51,14 @@ export function PatternTooltip({ active, payload, type }: PatternTooltipProps) {
     const localizedMonth = localizeMonth(monthData.month)
 
     return (
-      <div className="rounded-lg border bg-card p-3 shadow-lg">
-        <p className="font-medium text-foreground">{localizedMonth}</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+      <div className="rounded-lg border bg-white p-3 shadow-lg">
+        <p className="font-medium text-gray-900">{localizedMonth}</p>
+        <p className="mt-1 text-sm text-gray-600">
           <span className="font-semibold">{monthData.avgOrders.toLocaleString('ru-RU')}</span>{' '}
           заказов (среднее)
         </p>
         {monthData.avgRevenue != null && (
-          <p className="text-sm text-muted-foreground">{formatCurrency(monthData.avgRevenue)}</p>
+          <p className="text-sm text-gray-500">{formatCurrency(monthData.avgRevenue)}</p>
         )}
       </div>
     )
@@ -69,14 +69,14 @@ export function PatternTooltip({ active, payload, type }: PatternTooltipProps) {
   const localizedDay = localizeWeekday(weekdayData.dayOfWeek)
 
   return (
-    <div className="rounded-lg border bg-card p-3 shadow-lg">
-      <p className="font-medium text-foreground">{localizedDay}</p>
-      <p className="mt-1 text-sm text-muted-foreground">
+    <div className="rounded-lg border bg-white p-3 shadow-lg">
+      <p className="font-medium text-gray-900">{localizedDay}</p>
+      <p className="mt-1 text-sm text-gray-600">
         <span className="font-semibold">{weekdayData.avgOrders.toLocaleString('ru-RU')}</span>{' '}
         заказов (среднее)
       </p>
       {weekdayData.peakHour != null && (
-        <p className="text-sm text-muted-foreground">Пик: {formatPeakHour(weekdayData.peakHour)}</p>
+        <p className="text-sm text-gray-500">Пик: {formatPeakHour(weekdayData.peakHour)}</p>
       )}
     </div>
   )

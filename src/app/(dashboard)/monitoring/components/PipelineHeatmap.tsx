@@ -129,7 +129,7 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
         <div className="min-w-[600px]">
           {filteredPipelines.map(pipeline => (
             <div key={pipeline.pipelineId} className="flex border-b last:border-b-0" role="row">
-              <div className="sticky left-0 z-10 flex w-48 shrink-0 items-center gap-1.5 border-r bg-card px-3 py-2">
+              <div className="sticky left-0 z-10 flex w-48 shrink-0 items-center gap-1.5 border-r bg-white px-3 py-2">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{pipeline.displayName}</p>
                   <div className="flex items-center gap-1">
@@ -162,7 +162,7 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
         {LEGEND_ITEMS.map(item => (
           <div key={item.label} className="flex items-center gap-1">
             <div
-              className={`h-3.5 w-3.5 rounded-sm ${item.border ? 'border border-border' : ''}`}
+              className={`h-3.5 w-3.5 rounded-sm ${item.border ? 'border border-gray-300' : ''}`}
               style={{ backgroundColor: item.color }}
             />
             <span>{item.label}</span>

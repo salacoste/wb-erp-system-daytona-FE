@@ -89,7 +89,7 @@ export function SalesCogsMetricCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Package className="h-4 w-4 text-gray-500" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">COGS выкупов</span>
           </div>
           <Tooltip>
@@ -129,7 +129,7 @@ export function SalesCogsMetricCard({
         ) : (
           <>
             <div className="mt-1">
-              <span className="text-[32px] font-bold text-muted-foreground">
+              <span className="text-[32px] font-bold text-gray-500">
                 {formatCurrency(cogsTotal!)}
               </span>
             </div>
@@ -149,7 +149,7 @@ export function SalesCogsMetricCard({
               {isIncomplete && (
                 <AlertTriangle className="h-3 w-3 text-yellow-500" aria-hidden="true" />
               )}
-              <span className={cn('text-xs', isIncomplete ? 'text-yellow-600' : 'text-muted-foreground')}>
+              <span className={cn('text-xs', isIncomplete ? 'text-yellow-600' : 'text-gray-400')}>
                 COGS: {fmtNum(productsWithCogs)} из {fmtNum(totalProducts)} товаров (
                 {fmtPct(cogsCoverage)})
               </span>

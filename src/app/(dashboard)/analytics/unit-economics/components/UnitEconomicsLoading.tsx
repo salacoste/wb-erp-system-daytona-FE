@@ -76,10 +76,10 @@ export function UnitEconomicsLoading() {
       </div>
 
       {/* Table Skeleton */}
-      <div className="rounded-md border bg-card">
+      <div className="rounded-md border bg-white">
         <table className="w-full">
           <thead>
-            <tr className="border-b bg-muted">
+            <tr className="border-b bg-gray-50">
               <th className="p-4 text-left">
                 <Skeleton className="h-4 w-16" />
               </th>
@@ -117,7 +117,7 @@ export function UnitEconomicsLoading() {
         </table>
 
         {/* Footer Skeleton */}
-        <div className="border-t bg-muted px-4 py-3">
+        <div className="border-t bg-gray-50 px-4 py-3">
           <Skeleton className="h-4 w-32" />
         </div>
       </div>

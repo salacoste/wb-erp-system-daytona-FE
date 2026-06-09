@@ -70,7 +70,7 @@ export function VelocityMetricsWidget({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start text-gray-500 hover:text-gray-700"
+                  className="w-full justify-start text-muted-foreground hover:text-foreground"
                   aria-expanded={isOpen}
                 >
                   {isOpen ? (
