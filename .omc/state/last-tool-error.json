@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/advertising*.ts 2>/dev/null; ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/typ...",
-  "error": "Exit code 1\n/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/advertising-sync-status.ts\n(eval):1: no matches found: /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/analytics-advertising*.ts",
-  "timestamp": "2026-06-09T13:38:34.343Z",
-  "retry_count": 2
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/src/components/custom/MarginAggregatedTableRow.tsx\"}",
+  "error": "File does not exist. Note: your current working directory is /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend. Did you mean /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/components/custom/MarginAggregatedTableRow.tsx?",
+  "timestamp": "2026-06-09T13:57:56.987Z",
+  "retry_count": 1
 }
