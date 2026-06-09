@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ProductList } from '../ProductList'
 import { useProducts } from '@/hooks/useProducts'
@@ -473,24 +473,25 @@ describe('ProductList', () => {
       expect(searchInput.value).toBe('Test Product')
     })
 
-    // Skip: debounce is tested via integration tests, mocked child components bypass debounce logic
-    it.skip('debounces search input (500ms delay)', async () => {
+    it('debounces search input (500ms delay)', async () => {
       vi.useFakeTimers()
 
       renderWithProviders(<ProductList />)
 
       const searchInput = screen.getByTestId('search-input')
 
-      // Type "Test"
+      // Type "Test" — immediate state update sets searchInput, debounced setSearch queued
       fireEvent.change(searchInput, { target: { value: 'Test' } })
 
-      // Should NOT call useProducts immediately with search value
+      // Before debounce fires, useProducts should have been called without search
       expect(mockUseProducts).toHaveBeenCalledWith(expect.objectContaining({ search: undefined }))
 
-      // Fast-forward 500ms and flush all pending timers
-      await vi.advanceTimersByTimeAsync(500)
+      // Fast-forward 500ms to trigger the debounced setSearch, then flush React updates
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(500)
+      })
 
-      // After debounce, should be called with search value
+      // After debounce, useProducts is re-called with the search value
       expect(mockUseProducts).toHaveBeenCalledWith(expect.objectContaining({ search: 'Test' }))
 
       vi.useRealTimers()

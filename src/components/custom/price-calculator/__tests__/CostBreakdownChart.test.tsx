@@ -45,12 +45,12 @@ describe('CostBreakdownChart', () => {
       expect(legendItems.length).toBeGreaterThan(0)
     })
 
-    // Skip this test in test environment since Recharts needs actual DOM dimensions
-    it.skip('displays percentage labels on segments (requires actual DOM)', () => {
+    it('displays percentage labels in legend', () => {
       render(<CostBreakdownChart data={mockPriceCalculatorResponse} />)
 
-      // Chart labels only render with actual DOM dimensions
-      expect(screen.getByText(/10\.0%/)).toBeInTheDocument()
+      // Legend shows percentages via formatPctRu (Russian locale: comma separator)
+      // commission_wb=250/2500=10% → "10,0%"
+      expect(screen.getByText(/\(10,0%\)/)).toBeInTheDocument()
     })
   })
 

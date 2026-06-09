@@ -5,10 +5,12 @@
  * Story 71.6-FE: By-Product Keyword Explorer Tab
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useSearchByProduct } from '@/hooks/use-search-analytics'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportSearchByProductToCsv } from '@/lib/csv/search-csv-export'
 import { AlertCircle, Search } from 'lucide-react'
 import type { SearchQueryItem } from '@/types/search-analytics'
 import { ProductCombobox } from './ProductCombobox'
@@ -74,6 +76,9 @@ function QueryResults({
   totalQueries: number
   nmId: number
 }) {
+  const csvContent = useMemo(() => exportSearchByProductToCsv(queries), [queries])
+  const csvFileName = `search-by-product-${nmId}.csv`
+
   if (queries.length === 0) {
     return (
       <Alert>
@@ -87,10 +92,13 @@ function QueryResults({
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
-        Найдено запросов: <span className="font-medium text-foreground">{totalQueries}</span> для
-        товара nmId: {nmId}
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Найдено запросов: <span className="font-medium text-foreground">{totalQueries}</span> для
+          товара nmId: {nmId}
+        </p>
+        <ExportCsvButton csvContent={csvContent} fileName={csvFileName} label="Скачать CSV" />
+      </div>
       <SearchByProductTable queries={queries} />
     </div>
   )

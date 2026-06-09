@@ -7,11 +7,13 @@
  * and the debounced query so the funnel cross-page link auto-fires the search.
  */
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { useSearchByQuery } from '@/hooks/use-search-analytics'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportSearchByQueryToCsv } from '@/lib/csv/search-csv-export'
 import { AlertCircle, Search, X } from 'lucide-react'
 import type { SearchProductItem } from '@/types/search-analytics'
 import { SearchByQueryTable } from './SearchByQueryTable'
@@ -143,6 +145,9 @@ function QueryResults({
   totalProducts: number
   query: string
 }) {
+  const csvContent = useMemo(() => exportSearchByQueryToCsv(products), [products])
+  const csvFileName = `search-by-query-${query}.csv`
+
   if (products.length === 0) {
     return (
       <Alert>
@@ -154,10 +159,13 @@ function QueryResults({
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
-        Найдено товаров: <span className="font-medium text-foreground">{totalProducts}</span> по
-        запросу &laquo;{query}&raquo;
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Найдено товаров: <span className="font-medium text-foreground">{totalProducts}</span> по
+          запросу &laquo;{query}&raquo;
+        </p>
+        <ExportCsvButton csvContent={csvContent} fileName={csvFileName} label="Скачать CSV" />
+      </div>
       <SearchByQueryTable products={products} />
     </div>
   )
