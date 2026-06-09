@@ -1,7 +1,6 @@
 /**
  * Rate Limit Store
  * Story 44.34-FE: Debounce Warehouse Selection & Rate Limit Handling
- * Epic 44: Price Calculator UI (Frontend)
  *
  * Zustand store for managing API rate limit state across the application
  * Features: Per-endpoint tracking, cross-tab sync, automatic expiry cleanup
@@ -10,6 +9,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { logger } from '@/lib/logger'
+import { normalizeEndpoint, purgeExpired } from './rateLimitHelpers'
 
 /** Rate limit entry for a specific endpoint */
 export interface RateLimitEntry {
@@ -48,21 +48,6 @@ interface RateLimitStore {
   getRateLimit: (endpoint: string) => RateLimitEntry | null
 }
 
-/**
- * Extract endpoint key from full URL for consistent tracking
- * Normalizes: /v1/tariffs/acceptance/coefficients?warehouseId=123
- * To: /v1/tariffs/acceptance/coefficients
- */
-function normalizeEndpoint(endpoint: string): string {
-  try {
-    // Remove query parameters for consistent tracking
-    const url = endpoint.startsWith('http') ? new URL(endpoint) : ({ pathname: endpoint } as URL)
-    return url.pathname
-  } catch {
-    return endpoint
-  }
-}
-
 export const useRateLimitStore = create<RateLimitStore>()(
   persist(
     (set, get) => ({
@@ -85,7 +70,6 @@ export const useRateLimitStore = create<RateLimitStore>()(
           },
         }))
 
-        // Log for monitoring (AC8: Analytics & Logging)
         logger.debug('[RateLimit] Rate limit detected for', normalizedEndpoint, {
           retryAfter,
           context,
@@ -122,20 +106,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
       },
 
       clearExpired: () => {
-        const now = Date.now()
-        set(state => {
-          const cleaned = Object.entries(state.rateLimits).reduce(
-            (acc, [key, entry]) => {
-              const expiryTime = entry.timestamp + entry.retryAfter * 1000
-              if (now < expiryTime) {
-                acc[key] = entry
-              }
-              return acc
-            },
-            {} as Record<string, RateLimitEntry>
-          )
-          return { rateLimits: cleaned }
-        })
+        set(state => ({ rateLimits: purgeExpired(state.rateLimits) }))
       },
 
       clearRateLimit: endpoint => {

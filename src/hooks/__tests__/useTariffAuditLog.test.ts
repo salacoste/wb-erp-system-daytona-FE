@@ -85,7 +85,7 @@ describe('useTariffAuditLog', () => {
       () =>
         new Promise((resolve: (v: unknown) => void) => {
           resolveLoading = resolve
-        })
+        }) as unknown as ReturnType<typeof getTariffAuditLog>
     )
     const { result } = renderHook(() => useTariffAuditLog({ field_name: '__loading_test__' }), {
       wrapper: createWrapper(),
