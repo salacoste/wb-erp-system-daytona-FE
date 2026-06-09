@@ -4,10 +4,10 @@
 > Referenced from `CLAUDE.md` -- do not duplicate this information elsewhere.
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
-**Last Updated**: 2026-06-09
-**Total Epics**: 86 unique (84 done, 2 in-progress) + 2 untracked operational features
+**Last Updated**: 2026-06-10
+**Total Epics**: 86 unique (86 done, 0 in-progress) + 2 untracked operational features
 **Total Stories**: 375+ (234 in sprint-status.yaml Epics 71-132, 152 + legacy Epics 1-70)
-**Project Status**: Production Ready, 16,707 tests passing, 0 skipped, Epic 157 + 158 in progress
+**Project Status**: Production Ready, 16,707 tests passing, 0 skipped, all epics complete
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 
 ---
@@ -229,9 +229,9 @@
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 159-FE | Funnel WoW/MoM Comparison Period | 3 | IN-PROGRESS | `/analytics/funnel` |
-| 160-FE | Dark Mode Migration: Dashboard + Analytics | 3 | IN-PROGRESS | dashboard, analytics hub, monitoring |
-| 161-FE | Dark Mode Migration: Products/COGS/Supply | 3 | IN-PROGRESS | cogs, supplies, orders, shipments |
+| 159-FE | Funnel WoW/MoM Comparison Period | 3 | DONE | `/analytics/funnel` |
+| 160-FE | Dark Mode Migration: Dashboard + Analytics | 3 | DONE | dashboard, analytics hub, monitoring |
+| 161-FE | Dark Mode Migration: Products/COGS/Supply | 3 | DONE | cogs, supplies, orders, shipments |
 
 ### Active
 
