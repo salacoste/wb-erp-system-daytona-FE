@@ -57,13 +57,13 @@ export function UnitEconomicsTable({
   const showPagination = data.length > PAGE_SIZE_OPTIONS[0]
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="rounded-md border bg-card">
       {/* Scrollable container with max height for sticky header effect */}
       <div className="max-h-[600px] overflow-auto">
         <Table aria-label="Юнит-экономика по товарам">
           {/* Sticky header - UX-001 fix */}
-          <TableHeader className="sticky top-0 z-10 bg-gray-50">
-            <TableRow className="bg-gray-50">
+          <TableHeader className="sticky top-0 z-10 bg-muted">
+            <TableRow className="bg-muted">
               <TableHead className="w-[100px]">Артикул</TableHead>
               <TableHead className="min-w-[200px]">Название</TableHead>
               <TableHead

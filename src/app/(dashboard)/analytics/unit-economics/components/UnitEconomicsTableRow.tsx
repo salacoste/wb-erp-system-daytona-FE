@@ -55,16 +55,16 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
     <TableRow
       className={cn(
         'cursor-pointer transition-colors',
-        isSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : 'hover:bg-gray-50'
+        isSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : 'hover:bg-muted'
       )}
       onClick={onSelect}
     >
-      <TableCell className="font-mono text-sm text-gray-600">{item.sku_id}</TableCell>
+      <TableCell className="font-mono text-sm text-muted-foreground">{item.sku_id}</TableCell>
       <TableCell>
         <div className="max-w-[200px] truncate" title={item.product_name}>
           {item.product_name}
         </div>
-        <div className="text-xs text-gray-400">{item.brand}</div>
+        <div className="text-xs text-muted-foreground">{item.brand}</div>
       </TableCell>
       <TableCell className="text-right font-medium">{formatCurrency(item.revenue)}</TableCell>
       <CostCell value={item.costs_pct.cogs} highThreshold={50} medThreshold={40} />
@@ -88,7 +88,7 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
             ) : (
               // H2-1 + M2-1 + L2-1: null-state trigger — aria-label from shared helper.
               <span
-                className="text-gray-400 cursor-help"
+                className="text-muted-foreground cursor-help"
                 aria-label={ariaLabel}
                 data-testid="delivery-tooltip-trigger"
               >
@@ -129,7 +129,7 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
               item.net_margin_pct != null && item.net_margin_pct >= 20 && 'text-green-600',
               (item.net_margin_pct == null ||
                 (item.net_margin_pct >= 10 && item.net_margin_pct < 20)) &&
-                'text-gray-700',
+                'text-muted-foreground',
               item.net_margin_pct != null && item.net_margin_pct < 10 && 'text-red-600'
             )}
           >

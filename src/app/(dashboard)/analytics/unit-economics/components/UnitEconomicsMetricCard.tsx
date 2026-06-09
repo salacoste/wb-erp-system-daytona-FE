@@ -41,18 +41,18 @@ export function MetricCard({
             <Icon className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm text-gray-500 mb-1">{label}</div>
-            <div className={cn('text-2xl font-bold truncate', valueClassName ?? 'text-gray-900')}>
+            <div className="text-sm text-muted-foreground mb-1">{label}</div>
+            <div className={cn('text-2xl font-bold truncate', valueClassName ?? 'text-foreground')}>
               {value}
             </div>
-            {subtext && <div className="text-xs text-gray-400 mt-1">{subtext}</div>}
+            {subtext && <div className="text-xs text-muted-foreground mt-1">{subtext}</div>}
             {trend && trendValue && (
               <div
                 className={cn(
                   'text-xs mt-1 flex items-center gap-1',
                   trend === 'up' && 'text-green-600',
                   trend === 'down' && 'text-red-600',
-                  trend === 'neutral' && 'text-gray-500'
+                  trend === 'neutral' && 'text-muted-foreground'
                 )}
               >
                 {trend === 'up' && '↑'}

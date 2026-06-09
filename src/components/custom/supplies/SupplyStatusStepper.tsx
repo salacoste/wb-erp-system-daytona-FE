@@ -75,7 +75,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                     'flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors',
                     isComplete && 'border-green-500 bg-green-500',
                     isCurrent && 'border-primary bg-primary',
-                    isFuture && 'border-gray-300 bg-white'
+                    isFuture && 'border-border bg-card'
                   )}
                 >
                   {isComplete ? (
