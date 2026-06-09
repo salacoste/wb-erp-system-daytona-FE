@@ -7,9 +7,15 @@ import { format, subDays } from 'date-fns'
 import { toast } from 'sonner'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import type { DateRange } from '@/types/date-range'
-import type { FunnelDayItem } from '@/types/analytics-funnel'
-import { useFunnelTimeSeries, useFunnelSyncStatus } from '@/hooks/use-funnel-analytics'
+import type { FunnelDayItem, FunnelProductItem } from '@/types/analytics-funnel'
+import {
+  useFunnelData,
+  useFunnelTimeSeries,
+  useFunnelSyncStatus,
+} from '@/hooks/use-funnel-analytics'
 import { useAdvertisingAnalytics } from '@/hooks/advertising/hooks'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportFunnelToCsv } from '@/lib/csv/funnel-csv-export'
 import { BarChart3, TrendingUp } from 'lucide-react'
 import { FunnelSummaryCards } from './FunnelSummaryCards'
 import { FunnelTable } from './FunnelTable'
@@ -54,6 +60,18 @@ export function FunnelPageContent() {
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
   const { data: syncStatus } = useFunnelSyncStatus()
+  // CSV export: fetch all funnel items (no pagination) for download
+  const exportFilter = nmIds.length ? nmIds : undefined
+  const { data: exportData } = useFunnelData(apiFrom, apiTo, {
+    limit: 10000,
+    nmIds: exportFilter,
+  })
+  const exportItems = useMemo(
+    () => (exportData?.items ?? []) as FunnelProductItem[],
+    [exportData?.items]
+  )
+  const csvContent = useMemo(() => exportFunnelToCsv(exportItems), [exportItems])
+  const csvFileName = `funnel-${apiFrom}-${apiTo}.csv`
   const funnelTs = useFunnelTimeSeries(apiFrom, apiTo, showChart)
   const adQuery = useAdvertisingAnalytics(
     { from: apiFrom, to: apiTo, include_daily: true },
@@ -113,6 +131,12 @@ export function FunnelPageContent() {
           id="funnel-date-range"
         />
         <div className="flex flex-wrap items-center gap-3">
+          <ExportCsvButton
+            csvContent={csvContent}
+            fileName={csvFileName}
+            label="Скачать CSV"
+            disabled={exportItems.length === 0}
+          />
           <button
             type="button"
             onClick={toggleCompare}
