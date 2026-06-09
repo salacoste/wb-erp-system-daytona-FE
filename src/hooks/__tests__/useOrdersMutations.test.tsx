@@ -109,7 +109,11 @@ describe('useOrdersBackfill', () => {
     result.current.mutate({ dateFrom: '2026-01-01', dateTo: '2026-03-01' })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(mockBackfill).toHaveBeenCalledWith({ dateFrom: '2026-01-01', dateTo: '2026-03-01' })
+    // TanStack v5 passes mutation context as second arg — check first arg only
+    expect(mockBackfill).toHaveBeenCalledWith(
+      { dateFrom: '2026-01-01', dateTo: '2026-03-01' },
+      expect.anything()
+    )
     expect(result.current.data?.days).toBe(60)
   })
 

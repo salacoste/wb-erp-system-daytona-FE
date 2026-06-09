@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { useNotificationPreferences } from '@/hooks/useNotificationPreferences'
 import { TelegramMetrics } from '@/lib/analytics/telegram-metrics'
 import type { NotificationPreferencesResponseDto } from '@/types/notifications'
+import { buildSaveChanges } from './preferencesSaveHandler'
 
 // ============================================================================
 // Hook
@@ -101,38 +102,8 @@ export function usePreferencesPanelState() {
   const handleSave = () => {
     if (!localPreferences) return
 
-    const changes: {
-      event_types?: NotificationPreferencesResponseDto['preferences']
-      language?: string
-      daily_digest?: boolean
-      quiet_hours_enabled?: boolean
-    } = {}
-
-    if (previousPreferencesRef.current) {
-      const prev = previousPreferencesRef.current
-
-      const eventTypesChanged = Object.keys(localPreferences.preferences).some(
-        key =>
-          localPreferences.preferences[key as keyof typeof localPreferences.preferences] !==
-          prev.preferences[key as keyof typeof prev.preferences]
-      )
-
-      if (eventTypesChanged) {
-        changes.event_types = localPreferences.preferences
-      }
-      if (localPreferences.language !== prev.language) {
-        changes.language = localPreferences.language
-      }
-      if (localPreferences.preferences.daily_digest !== prev.preferences.daily_digest) {
-        changes.daily_digest = localPreferences.preferences.daily_digest
-      }
-      if (localPreferences.quiet_hours.enabled !== prev.quiet_hours.enabled) {
-        changes.quiet_hours_enabled = localPreferences.quiet_hours.enabled
-      }
-    }
-
-    TelegramMetrics.preferencesUpdated(changes)
-    previousPreferencesRef.current = { ...localPreferences }
+    const { updatedPrevious } = buildSaveChanges(localPreferences, previousPreferencesRef.current)
+    previousPreferencesRef.current = updatedPrevious
 
     updatePreferences(
       {

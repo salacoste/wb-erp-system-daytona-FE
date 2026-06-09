@@ -2,18 +2,22 @@
 
 import { useMarginAnalyticsByCategory, useCabinetLevelExpenses } from '@/hooks/useMarginAnalytics'
 import { MarginByCategoryTable } from '@/components/custom/MarginByCategoryTable'
-import { formatPeriodLabel } from '@/components/custom/DateRangePicker'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Info, AlertCircle, CalendarRange, GitCompare, Download } from 'lucide-react'
+import { Info, Download } from 'lucide-react'
 import { ExportDialog } from '@/components/custom/ExportDialog'
 import { useMarginPageState } from '@/app/(dashboard)/analytics/shared/useMarginPageState'
 import { StorageComparisonCard } from '@/app/(dashboard)/analytics/shared/StorageComparisonCard'
 import { MarginFilterSection } from '@/app/(dashboard)/analytics/shared/MarginFilterSection'
 import { MarginSummaryCards } from '@/app/(dashboard)/analytics/shared/MarginSummaryCards'
 import { calculateMarginStats } from '@/app/(dashboard)/analytics/shared/calculate-margin-stats'
+import {
+  MarginPageLoading,
+  MarginPageError,
+  MarginPeriodIndicator,
+  MarginComparisonIndicator,
+} from '@/app/(dashboard)/analytics/shared/MarginPageStates'
 import { CategoryHelpSection } from './components/CategoryHelpSection'
 
 /**
@@ -43,34 +47,16 @@ export default function MarginAnalysisByCategoryPage() {
   })
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-96 w-full" />
-      </div>
-    )
+    return <MarginPageLoading />
   }
 
   if (isError) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Маржинальность по категориям
-          </h1>
-        </div>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <div className="flex items-center justify-between">
-              <span>{error instanceof Error ? error.message : 'Ошибка загрузки данных'}</span>
-              <Button variant="outline" size="sm" onClick={() => refetch()}>
-                Повторить
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <MarginPageError
+        title="Маржинальность по категориям"
+        error={error}
+        onRetry={() => refetch()}
+      />
     )
   }
 
@@ -111,29 +97,19 @@ export default function MarginAnalysisByCategoryPage() {
         </AlertDescription>
       </Alert>
 
-      {state.isRangeMode && (
-        <div className="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg">
-          <CalendarRange className="h-4 w-4 text-blue-600" />
-          <span>
-            Период: <strong>{formatPeriodLabel(state.weekStart, state.weekEnd)}</strong>
-          </span>
-        </div>
-      )}
+      <MarginPeriodIndicator
+        weekStart={state.weekStart}
+        weekEnd={state.weekEnd}
+        isRangeMode={state.isRangeMode}
+      />
 
       {state.comparisonEnabled && state.effectiveComparisonPeriod && (
-        <div className="flex items-center gap-2 text-sm text-blue-700 bg-blue-100 px-4 py-2 rounded-lg">
-          <GitCompare className="h-4 w-4" />
-          <span>
-            Сравнение: <strong>{formatPeriodLabel(state.weekStart, state.weekEnd)}</strong>
-            {' vs '}
-            <strong>
-              {formatPeriodLabel(
-                state.effectiveComparisonPeriod.start,
-                state.effectiveComparisonPeriod.end
-              )}
-            </strong>
-          </span>
-        </div>
+        <MarginComparisonIndicator
+          weekStart={state.weekStart}
+          weekEnd={state.weekEnd}
+          compareStart={state.effectiveComparisonPeriod.start}
+          compareEnd={state.effectiveComparisonPeriod.end}
+        />
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">

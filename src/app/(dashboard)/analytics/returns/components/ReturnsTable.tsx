@@ -6,26 +6,15 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useReturnsBySku } from '@/hooks/use-return-analytics'
 import { useProducts } from '@/hooks/useProducts'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react'
-import { ROUTES } from '@/lib/routes'
-import { buildProductAnalyticsRoute } from '@/lib/route-helpers'
-import { cn } from '@/lib/utils'
-import { ReturnRateCell, useProductsMap } from './ReturnsTableHelpers'
+import { AlertCircle } from 'lucide-react'
+import { useProductsMap } from './ReturnsTableHelpers'
+import { ReturnsTableRow } from './ReturnsTableRow'
 
 interface ReturnsTableProps {
   from?: string
@@ -107,53 +96,7 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
           <TableBody>
             {items.map(item => {
               const product = productsMap.get(item.nmId)
-              return (
-                <TableRow
-                  key={item.nmId}
-                  className={cn(item.anomalyFlag && 'bg-red-50 hover:bg-red-100')}
-                >
-                  <TableCell>
-                    {item.anomalyFlag && <AlertTriangle className="h-4 w-4 text-red-500" />}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    <Link
-                      href={buildProductAnalyticsRoute(String(item.nmId))}
-                      className="text-primary hover:underline"
-                    >
-                      {item.nmId}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-sm max-w-48 truncate" title={product?.saName}>
-                    {product?.saName || item.productName || '—'}
-                  </TableCell>
-                  <TableCell className="text-sm">{product?.brand || item.brand || '—'}</TableCell>
-                  <TableCell>{item.totalReturns}</TableCell>
-                  <TableCell>
-                    <ReturnRateCell rate={item.returnRate} />
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {item.cancelBeforeShipment}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{item.refusalAtPvz}</TableCell>
-                  <TableCell className="text-muted-foreground">{item.returnAfterReceipt}</TableCell>
-                  <TableCell>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link
-                            href={`${ROUTES.ANALYTICS.BUYOUT}?nmId=${String(item.nmId)}`}
-                            className="inline-flex items-center text-muted-foreground hover:text-foreground"
-                            aria-label="Перейти к аналитике выкупов"
-                          >
-                            <ArrowRight className="h-4 w-4" />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>Перейти к аналитике выкупов</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                </TableRow>
-              )
+              return <ReturnsTableRow key={item.nmId} item={item} product={product} />
             })}
           </TableBody>
         </Table>

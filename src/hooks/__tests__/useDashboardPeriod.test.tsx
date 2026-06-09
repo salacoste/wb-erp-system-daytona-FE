@@ -6,9 +6,37 @@
  * Tests verify: re-exports exist, helper functions produce correct output.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import React from 'react'
 import { renderHook } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+// Mock next/navigation (hoisted)
+const mockReplace = vi.fn()
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+  useRouter: vi.fn(() => ({ replace: mockReplace, push: vi.fn() })),
+  usePathname: vi.fn(() => '/dashboard'),
+}))
+
+vi.mock('@/lib/margin-helpers', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/lib/margin-helpers')>()
+  return {
+    ...actual,
+    getLastCompletedWeek: vi.fn(() => '2026-W05'),
+  }
+})
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+
 import {
   useDashboardPeriod,
   DashboardPeriodProvider,
@@ -22,45 +50,46 @@ import {
   isValidMonthFormat,
 } from '../useDashboardPeriod'
 
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <DashboardPeriodProvider initialWeek="2026-W05">{children}</DashboardPeriodProvider>
+    </QueryClientProvider>
+  )
+}
+
 describe('useDashboardPeriod re-exports', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('throws when used outside DashboardPeriodProvider', () => {
-    // Suppress console.error for expected error
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-    const { result } = renderHook(() => useDashboardPeriod())
-
-    expect(result.error).toBeInstanceOf(Error)
-    expect(result.error.message).toContain('useDashboardPeriod')
-    expect(result.error.message).toContain('DashboardPeriodProvider')
-
-    spy.mockRestore()
+    expect(() => {
+      renderHook(() => useDashboardPeriod())
+    }).toThrow(/DashboardPeriodProvider/)
   })
 
   it('provides context value when wrapped in provider', () => {
     const { result } = renderHook(() => useDashboardPeriod(), {
-      wrapper: ({ children }: { children: React.ReactNode }) => (
-        <DashboardPeriodProvider initialWeek="2026-W05">
-          {children}
-        </DashboardPeriodProvider>
-      ),
+      wrapper: createWrapper(),
     })
 
-    expect(result.error).toBeUndefined()
     expect(result.current).toBeDefined()
-    expect(result.current.state).toBeDefined()
-    expect(result.current.actions).toBeDefined()
+    // Context value is flat (state + actions merged), not nested
+    expect(result.current.selectedWeek).toBeDefined()
+    expect(result.current.setPeriodType).toBeDefined()
+    expect(result.current.setWeek).toBeDefined()
   })
 
-  it('exposes state with selectedWeek', () => {
+  it('exposes selectedWeek from initialWeek', () => {
     const { result } = renderHook(() => useDashboardPeriod(), {
-      wrapper: ({ children }: { children: React.ReactNode }) => (
-        <DashboardPeriodProvider initialWeek="2026-W10">
-          {children}
-        </DashboardPeriodProvider>
-      ),
+      wrapper: createWrapper(),
     })
 
-    expect(result.current.state.selectedWeek).toBe('2026-W10')
+    expect(result.current.selectedWeek).toBe('2026-W05')
   })
 })
 

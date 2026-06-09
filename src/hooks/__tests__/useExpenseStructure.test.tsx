@@ -31,17 +31,15 @@ function createWrapper() {
 const mockResponse = {
   meta: { week: '2026-W05', view_by: 'total' as const, generated_at: '2026-02-01T00:00:00Z' },
   summary: {
-    revenue: 1000000,
-    total_costs: 600000,
-    gross_profit: 400000,
-    gross_margin_pct: 40,
-    cost_breakdown: {
-      logistics: 200000,
-      storage: 50000,
-      commissions: 150000,
-      cogs: 100000,
-      other: 100000,
-    },
+    total_revenue: 1000000,
+    total_net_profit: 400000,
+    avg_cogs_pct: 10,
+    avg_wb_fees_pct: 25,
+    avg_net_margin_pct: 40,
+    sku_count: 50,
+    profitable_sku_count: 35,
+    loss_making_sku_count: 10,
+    missing_cogs_count: 5,
   },
   data: [],
 }
@@ -70,7 +68,7 @@ describe('useExpenseStructure', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockGet).toHaveBeenCalledWith('/v1/analytics/unit-economics?week=2026-W05&view_by=total')
-    expect(result.current.data?.summary.gross_profit).toBe(400000)
+    expect(result.current.data?.summary.total_net_profit).toBe(400000)
   })
 
   it('returns loading state initially', () => {
@@ -127,7 +125,7 @@ describe('useExpenseStructure', () => {
     expect(mockGet).toHaveBeenCalledWith('/v1/analytics/unit-economics?week=2026-W10&view_by=total')
   })
 
-  it('returns cost breakdown data', async () => {
+  it('returns summary metrics', async () => {
     mockGet.mockResolvedValueOnce(mockResponse)
 
     const { result } = renderHook(() => useExpenseStructure({ week: '2026-W05' }), {
@@ -135,8 +133,8 @@ describe('useExpenseStructure', () => {
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    const breakdown = result.current.data?.summary.cost_breakdown
-    expect(breakdown?.logistics).toBe(200000)
-    expect(breakdown?.commissions).toBe(150000)
+    const summary = result.current.data?.summary
+    expect(summary?.total_revenue).toBe(1000000)
+    expect(summary?.avg_wb_fees_pct).toBe(25)
   })
 })

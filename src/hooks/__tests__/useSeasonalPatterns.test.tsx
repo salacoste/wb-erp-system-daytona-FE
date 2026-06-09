@@ -32,12 +32,12 @@ function createWrapper() {
 const mockResponse = {
   patterns: {
     monthly: [
-      { month: 'January', avgOrders: 2500, avgRevenue: 750000, totalOrders: 75000 },
-      { month: 'December', avgOrders: 5000, avgRevenue: 1500000, totalOrders: 150000 },
+      { month: 'January', avgOrders: 2500, avgRevenue: 750000 },
+      { month: 'December', avgOrders: 5000, avgRevenue: 1500000 },
     ],
     weekday: [
-      { day: 'Monday', avgOrders: 300, avgRevenue: 90000 },
-      { day: 'Saturday', avgOrders: 500, avgRevenue: 150000 },
+      { dayOfWeek: 'Monday', avgOrders: 300, peakHour: 12 },
+      { dayOfWeek: 'Saturday', avgOrders: 500, peakHour: 14 },
     ],
   },
   insights: {
@@ -117,7 +117,7 @@ describe('useSeasonalPatterns', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.patterns.weekday).toHaveLength(2)
-    expect(result.current.data?.patterns.weekday[1].day).toBe('Saturday')
+    expect(result.current.data?.patterns.weekday[1].dayOfWeek).toBe('Saturday')
   })
 
   it('returns insights with peak and low months', async () => {

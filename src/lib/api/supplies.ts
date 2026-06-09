@@ -22,7 +22,7 @@ import type {
   CloseSupplyResponse,
 } from '@/types/supplies'
 import { normalizeSuppliesListResponse, normalizeSupplyDetailResponse } from './supplies-normalizer'
-import { suppliesQueryKeys, buildQueryString } from './supplies-query-keys'
+import { buildQueryString } from './supplies-query-keys'
 
 // Barrel re-exports from extracted modules
 export { generateStickers, downloadDocument, syncSupplies } from './supplies-documents'

@@ -29,15 +29,14 @@ function createWrapper() {
 }
 
 const mockGapsResponse = {
-  gaps: [
-    {
-      missing_date: '2026-05-15',
-      source: 'wb_finance_raw' as const,
-      root_cause: 'IMPORT_FAILED' as const,
-      severity: 'critical' as const,
-    },
-  ],
-  total: 1,
+  cabinet_id: 'cab-1',
+  date_from: '2026-05-01',
+  date_to: '2026-05-31',
+  total_days: 31,
+  existing_days: 30,
+  missing_days: 1,
+  coverage_percent: 96.8,
+  missing_dates: [{ missing_date: '2026-05-15', day_of_week: 4, day_name: 'Thursday' }],
 }
 
 describe('useFinancialGaps', () => {
@@ -55,7 +54,7 @@ describe('useFinancialGaps', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockGetGaps).toHaveBeenCalledWith({ dateFrom: '2026-05-01', dateTo: '2026-05-31' })
-    expect(result.current.data?.total).toBe(1)
+    expect(result.current.data?.missing_days).toBe(1)
   })
 
   it('is disabled when dateFrom is missing', () => {
@@ -101,7 +100,16 @@ describe('useFinancialGaps', () => {
   })
 
   it('returns empty gaps list', async () => {
-    mockGetGaps.mockResolvedValueOnce({ gaps: [], total: 0 } as never)
+    mockGetGaps.mockResolvedValueOnce({
+      cabinet_id: 'cab-1',
+      date_from: '2026-05-01',
+      date_to: '2026-05-31',
+      total_days: 31,
+      existing_days: 31,
+      missing_days: 0,
+      coverage_percent: 100,
+      missing_dates: [],
+    } as never)
 
     const { result } = renderHook(
       () => useFinancialGaps({ dateFrom: '2026-05-01', dateTo: '2026-05-31' }),
@@ -109,8 +117,8 @@ describe('useFinancialGaps', () => {
     )
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.gaps).toEqual([])
-    expect(result.current.data?.total).toBe(0)
+    expect(result.current.data?.missing_dates).toEqual([])
+    expect(result.current.data?.missing_days).toBe(0)
   })
 })
 
@@ -153,8 +161,13 @@ describe('useRemediateGap', () => {
 
   it('calls remediateGap with payload', async () => {
     mockRemediateGap.mockResolvedValueOnce({
-      success: true,
-      message: 'Remediation queued',
+      status: 'queued',
+      cabinet_id: 'cab-1',
+      missing_date: '2026-05-15',
+      root_cause: 'import_failure' as never,
+      remediation: 're_import' as never,
+      task_id: 'task-1',
+      estimated_completion: null,
     } as never)
 
     const { result } = renderHook(
@@ -164,13 +177,13 @@ describe('useRemediateGap', () => {
 
     result.current.mutate({
       missing_date: '2026-05-15',
-      action: 'reimport' as never,
+      root_cause: 'import_failure',
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockRemediateGap).toHaveBeenCalledWith({
       missing_date: '2026-05-15',
-      action: 'reimport' as never,
+      root_cause: 'import_failure',
     })
   })
 
@@ -184,7 +197,7 @@ describe('useRemediateGap', () => {
 
     result.current.mutate({
       missing_date: '2026-05-15',
-      action: 'reimport' as never,
+      root_cause: 'import_failure',
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
