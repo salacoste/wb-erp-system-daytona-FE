@@ -24,8 +24,8 @@ import {
   OrdersSuspenseFallback,
 } from '@/components/custom/orders'
 import { OrdersLoadingState, OrdersErrorState } from './OrdersPageStates'
-import type { SupplierStatus, WbStatus } from '@/types/orders'
 import { useOrdersPageState, PAGE_SIZE } from './useOrdersPageState'
+import { useOrdersFilterHandlers } from './useOrdersFilterHandlers'
 
 // Lazy load heavy components (Story 40.7-FE: Lazy Loading)
 const OrderDetailsModal = lazy(() =>
@@ -50,6 +50,14 @@ export default function OrdersPage() {
  */
 function OrdersPageContent() {
   const state = useOrdersPageState()
+  const filters = useOrdersFilterHandlers({
+    setDateFrom: state.setDateFrom,
+    setDateTo: state.setDateTo,
+    setSupplierStatus: state.setSupplierStatus,
+    setWbStatus: state.setWbStatus,
+    setSearchInput: state.setSearchInput,
+    setPage: state.setPage,
+  })
 
   // Fetch orders
   const { data, isLoading, isError, error, refetch } = useOrders({
@@ -125,26 +133,11 @@ function OrdersPageContent() {
             supplierStatus={state.supplierStatus}
             wbStatus={state.wbStatus}
             searchValue={state.searchInput}
-            onDateFromChange={(v: string) => {
-              state.setDateFrom(v)
-              state.setPage(1)
-            }}
-            onDateToChange={(v: string) => {
-              state.setDateTo(v)
-              state.setPage(1)
-            }}
-            onSupplierStatusChange={(v: SupplierStatus | null) => {
-              state.setSupplierStatus(v)
-              state.setPage(1)
-            }}
-            onWbStatusChange={(v: WbStatus | null) => {
-              state.setWbStatus(v)
-              state.setPage(1)
-            }}
-            onSearchChange={(v: string) => {
-              state.setSearchInput(v)
-              state.setPage(1)
-            }}
+            onDateFromChange={filters.onDateFromChange}
+            onDateToChange={filters.onDateToChange}
+            onSupplierStatusChange={filters.onSupplierStatusChange}
+            onWbStatusChange={filters.onWbStatusChange}
+            onSearchChange={filters.onSearchChange}
             onClearFilters={state.handleClearFilters}
             hasActiveFilters={state.hasActiveFilters}
           />

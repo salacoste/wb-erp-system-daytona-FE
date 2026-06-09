@@ -15,17 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useAddBoxLine, useUpdateBoxLine } from '@/hooks/use-box-lines'
-import { ProductCombobox } from '@/components/custom/sku-packaging/ProductCombobox'
-import { PreflightWarnings } from './PreflightWarnings'
 import type { BoxLine } from '@/types/shipment-cost'
 import {
   validateBoxLineForm,
   buildBoxLinePayload,
   type BoxLineFormErrors,
 } from './box-line-form-helpers'
+import { BoxLineFormFields } from './BoxLineFormFields'
 
 interface BoxLineFormProps {
   open: boolean
@@ -104,69 +101,17 @@ export function BoxLineForm({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="boxline-nmid">Товар</Label>
-            {isEdit ? (
-              <Input id="boxline-nmid" value={editingLine?.nmId ?? ''} disabled />
-            ) : (
-              <ProductCombobox
-                value={nmId}
-                onChange={setNmId}
-                aria-describedby={errors.nmId ? 'nmid-error' : undefined}
-                aria-invalid={!!errors.nmId}
-              />
-            )}
-            {errors.nmId && (
-              <p id="nmid-error" className="text-sm text-destructive">
-                {errors.nmId}
-              </p>
-            )}
-          </div>
-
-          {!isEdit && <PreflightWarnings nmId={nmId} />}
-
-          <div className="space-y-2">
-            <Label htmlFor="boxline-count">Количество коробок</Label>
-            <Input
-              id="boxline-count"
-              type="number"
-              min={1}
-              step={1}
-              value={boxCount}
-              onChange={e => setBoxCount(e.target.value)}
-              aria-describedby={errors.boxCount ? 'count-error' : undefined}
-              aria-invalid={!!errors.boxCount}
-            />
-            {errors.boxCount && (
-              <p id="count-error" className="text-sm text-destructive">
-                {errors.boxCount}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="boxline-units">
-              Всего штук <span className="text-muted-foreground">(необязательно)</span>
-            </Label>
-            <Input
-              id="boxline-units"
-              type="number"
-              min={1}
-              step={1}
-              value={totalUnits}
-              onChange={e => setTotalUnits(e.target.value)}
-              placeholder="По умолчанию = коробок × штук/коробку"
-              aria-describedby={errors.totalUnits ? 'units-error' : undefined}
-              aria-invalid={!!errors.totalUnits}
-            />
-            {errors.totalUnits && (
-              <p id="units-error" className="text-sm text-destructive">
-                {errors.totalUnits}
-              </p>
-            )}
-          </div>
-
-          {errors.form && <p className="text-sm text-destructive">{errors.form}</p>}
+          <BoxLineFormFields
+            isEdit={isEdit}
+            nmId={nmId}
+            boxCount={boxCount}
+            totalUnits={totalUnits}
+            editingLineNmId={editingLine?.nmId ?? null}
+            errors={errors}
+            onNmIdChange={setNmId}
+            onBoxCountChange={setBoxCount}
+            onTotalUnitsChange={setTotalUnits}
+          />
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>

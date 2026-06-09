@@ -21,6 +21,7 @@ import { BulkCogsProductTable } from './BulkCogsProductTable'
 import { BulkCogsFormInputs } from './BulkCogsFormInputs'
 import { BulkCogsPreviewDialog } from './BulkCogsPreviewDialog'
 import { BulkCogsResultsDialog } from './BulkCogsResultsDialog'
+import { useCursorPagination } from './useCursorPagination'
 
 /**
  * Bulk COGS assignment form with product selection
@@ -33,8 +34,7 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
   const [search, setSearch] = useState('')
   const [showPreview, setShowPreview] = useState(false)
   const [showResults, setShowResults] = useState(false)
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
-  const [prevCursors, setPrevCursors] = useState<string[]>([])
+  const { cursor, prevCursors, goNext, goPrev, resetCursor } = useCursorPagination()
 
   const today = new Date().toISOString().split('T')[0]
   const {
@@ -79,8 +79,7 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
-    setCursor(undefined)
-    setPrevCursors([])
+    resetCursor()
   }
 
   const handlePreview = () => {
@@ -120,17 +119,8 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
         totalProducts={data?.pagination?.total || 0}
         hasNextPage={!!data?.pagination?.next_cursor}
         hasPrevPage={prevCursors.length > 0 || cursor !== undefined}
-        onNextPage={() => {
-          if (data?.pagination?.next_cursor) {
-            setPrevCursors(prev => [...prev, cursor!])
-            setCursor(data.pagination.next_cursor)
-          }
-        }}
-        onPrevPage={() => {
-          const copy = [...prevCursors]
-          setCursor(copy.pop())
-          setPrevCursors(copy)
-        }}
+        onNextPage={() => goNext(data?.pagination?.next_cursor)}
+        onPrevPage={goPrev}
       />
 
       <BulkCogsFormInputs
