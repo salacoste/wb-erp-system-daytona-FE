@@ -89,17 +89,17 @@ const SELECTORS = {
  */
 async function navigateToSupplyDetail(page: Page, supplyId?: string) {
   if (supplyId) {
-    await page.goto(`/supplies/${supplyId}`)
+    await page.goto(`/supplies/${supplyId}`, { waitUntil: 'domcontentloaded' })
   } else {
     // Get first supply from list
-    await page.goto(SUPPLIES_LIST_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(SUPPLIES_LIST_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(2000)
 
     const firstRow = page.locator('tbody tr:first-child')
     if (await firstRow.isVisible()) {
       await firstRow.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
     }
   }
 }
@@ -131,7 +131,7 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
 
     test('should display loading state initially', async ({ page }) => {
-      await page.goto('/supplies/test-id')
+      await page.goto('/supplies/test-id', { waitUntil: 'domcontentloaded' })
 
       // Should show loading skeleton
       const loadingOrContent = page
@@ -205,7 +205,7 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
 
         if (hasClickHandler) {
           await orderRow.click()
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
           await expect(page).toHaveURL(/\/orders/)
         }
       }
@@ -257,7 +257,7 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
         if (await statusFilter.isVisible()) {
           await statusFilter.click()
           // Select a status filter option
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
         }
       }
     })
@@ -451,14 +451,14 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
   test.describe('Generate Stickers - Story 53.6', () => {
     test('should show stickers button for CLOSED supply', async ({ page }) => {
       // Navigate to a CLOSED supply
-      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=CLOSED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const stickersButton = page.locator(SELECTORS.generateStickersButton)
         if (await stickersButton.isVisible()) {
@@ -468,14 +468,14 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
 
     test('should open stickers modal with format selector', async ({ page }) => {
-      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=CLOSED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const stickersButton = page.locator(SELECTORS.generateStickersButton)
         if ((await stickersButton.isVisible()) && (await stickersButton.isEnabled())) {
@@ -498,14 +498,14 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
 
   test.describe('Documents List - Story 53.6', () => {
     test('should show documents section for CLOSED/DELIVERED supply', async ({ page }) => {
-      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=DELIVERED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=DELIVERED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const documentsSection = page
           .locator(SELECTORS.documentsSection)
@@ -517,14 +517,14 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
 
     test('should download document on button click', async ({ page }) => {
-      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=DELIVERED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=DELIVERED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const downloadButton = page.locator('button:has-text("Скачать"), a:has-text("Скачать")')
         if ((await downloadButton.count()) > 0 && (await downloadButton.first().isVisible())) {
@@ -542,8 +542,8 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
 
   test.describe('Error States - Story 53.8', () => {
     test('should display 404 error for non-existent supply', async ({ page }) => {
-      await page.goto('/supplies/non-existent-supply-id-12345')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/supplies/non-existent-supply-id-12345', { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       // Should show 404 or "not found" message
@@ -570,7 +570,7 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
         })
       })
 
-      await page.goto('/supplies/some-supply-id')
+      await page.goto('/supplies/some-supply-id', { waitUntil: 'domcontentloaded' })
       await page.waitForTimeout(2000)
 
       const forbiddenMessage = page
@@ -589,7 +589,7 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
         })
       })
 
-      await page.goto('/supplies/some-supply-id')
+      await page.goto('/supplies/some-supply-id', { waitUntil: 'domcontentloaded' })
       await page.waitForTimeout(2000)
 
       const retryButton = page.locator(

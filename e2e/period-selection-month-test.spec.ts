@@ -30,8 +30,7 @@ test.describe('Dashboard Period Selection - Month', () => {
     })
 
     // Navigate to dashboard (auth is handled by setup)
-    await page.goto('/dashboard')
-    await page.waitForLoadState('networkidle')
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2000) // Extra wait for data to load
 
     console.log('=== Dashboard loaded - Initial state ===')
@@ -53,7 +52,7 @@ test.describe('Dashboard Period Selection - Month', () => {
 
     // Wait for data to load
     await page.waitForTimeout(3000)
-    await page.waitForLoadState('networkidle')
+    await page.locator('main').waitFor({ state: 'visible' })
 
     // Debug: Log the current month selector value
     const monthSelector = page.getByTestId('month-selector')

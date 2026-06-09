@@ -27,8 +27,8 @@ const ORDERS_ROUTE = '/orders'
 test.describe('Epic 40-FE: Accessibility - Orders Page', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to orders page
-    await page.goto(ORDERS_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
 
     // Wait for initial data load
     await page.waitForTimeout(2000)
@@ -360,8 +360,8 @@ test.describe('Epic 40-FE: Accessibility - Orders Page', () => {
 
     // Set mobile viewport
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto(ORDERS_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(2000)
 
     // Test touch target sizes (minimum 44x44 pixels per WCAG)

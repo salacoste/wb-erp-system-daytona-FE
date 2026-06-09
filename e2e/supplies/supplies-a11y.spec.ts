@@ -28,8 +28,8 @@ const SUPPLIES_ROUTE = '/supplies'
 test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
   test.describe('Supplies List Page', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
     })
 
@@ -166,8 +166,8 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
   test.describe('Create Supply Modal Accessibility', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
     })
 
     test('should have no WCAG violations in create modal', async ({ page }) => {
@@ -259,14 +259,14 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
   test.describe('Supply Detail Page Accessibility', () => {
     test.beforeEach(async ({ page }) => {
       // Navigate to a supply detail
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
       }
     })
 
@@ -338,14 +338,14 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
   test.describe('Order Picker Drawer Accessibility', () => {
     test.beforeEach(async ({ page }) => {
       // Navigate to OPEN supply
-      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
       }
     })
 
@@ -424,8 +424,8 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
   test.describe('Mobile Accessibility', () => {
     test.beforeEach(async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
     })
 
@@ -470,7 +470,7 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const addButton = page.locator('button:has-text("Добавить заказы")')
         if ((await addButton.isVisible()) && (await addButton.isEnabled())) {
@@ -491,8 +491,8 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
   test.describe('Color Contrast', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
     })
 
@@ -540,8 +540,8 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
   test.describe('Live Regions and Announcements', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
     })
 
     test('should have aria-live regions for dynamic content', async ({ page }) => {

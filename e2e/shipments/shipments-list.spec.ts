@@ -18,8 +18,8 @@ const SHIPMENTS_ROUTE = '/shipments'
 
 test.describe('Shipments List Page - Epic 77-FE', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(SHIPMENTS_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
   })
 
   test.describe('Page Load & Display', () => {
@@ -92,7 +92,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       const viewLink = rows.first().locator('a[href*="/shipments/"]')
       if (await viewLink.isVisible()) {
         await viewLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         await expect(page).toHaveURL(/\/shipments\/[a-zA-Z0-9-]+/)
       }
     })
@@ -150,7 +150,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
       await statusFilter.click()
       await page.getByText('Черновик').click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // All visible badges should show ЧЕРНОВИК
       const badges = page.locator('table tbody [class*="badge"]')
@@ -173,7 +173,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
       await statusFilter.click()
       await page.getByText('Подтверждена').click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const badges = page.locator('table tbody [class*="badge"]')
       const count = await badges.count()
@@ -196,14 +196,14 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       // Apply filter first
       await statusFilter.click()
       await page.getByText('Черновик').click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Clear filter by selecting "Все"
       await statusFilter.click()
       const allOption = page.getByText('Все').first()
       if (await allOption.isVisible()) {
         await allOption.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
       }
     })
   })
@@ -244,7 +244,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       }
 
       await nextButton.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Prev button should now be enabled
       const prevButton = page.getByRole('button', { name: 'Назад' })
@@ -264,7 +264,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       const option20 = page.getByText('20 строк')
       if (await option20.isVisible()) {
         await option20.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
       }
     })
 
@@ -280,7 +280,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         const sortButton = dateHeader.locator('button')
         if (await sortButton.isVisible()) {
           await sortButton.click()
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
         }
       }
     })
@@ -404,8 +404,8 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         })
       )
 
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const emptyState = page.getByText('Нет отправок')
       await expect(emptyState).toBeVisible()
@@ -426,8 +426,8 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         })
       )
 
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Page should not crash
       await expect(page.locator('body')).toBeVisible()
@@ -447,8 +447,8 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         })
       )
 
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const retryButton = page.getByRole('button', { name: 'Повторить' })
       await expect(retryButton).toBeVisible({ timeout: 15000 })

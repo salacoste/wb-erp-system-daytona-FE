@@ -18,8 +18,10 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
   // ============================================================================
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/cogs/price-calculator')
-    await page.waitForLoadState('networkidle')
+    await page.goto('/cogs/price-calculator', { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('[data-testid="price-calculator-form"]')).toBeVisible({
+      timeout: 10000,
+    })
   })
 
   /**
@@ -45,7 +47,7 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
    */
   async function mockCalculation(page: Page, marginPct: number) {
     const gap = marginPct > 20 ? 25 : marginPct > 10 ? 15 : 5
-    await page.route('**/v1/products/price-calculator', (route) => {
+    await page.route('**/v1/products/price-calculator', route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',

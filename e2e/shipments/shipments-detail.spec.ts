@@ -29,13 +29,13 @@ async function navigateToShipmentDetail(page: Page, options?: { status?: 'DRAFT'
   }
 
   await page.goto(url)
-  await page.waitForLoadState('networkidle')
+  await page.locator('main').waitFor({ state: 'visible' })
 
   // Match only detail links (UUID paths), not /shipments/sku-packaging
   const firstViewLink = page.locator('table a[href*="/shipments/"]').first()
   if ((await firstViewLink.count()) > 0 && (await firstViewLink.isVisible())) {
     await firstViewLink.click()
-    await page.waitForLoadState('networkidle')
+    await page.locator('main').waitFor({ state: 'visible' })
     return true
   }
   return false
@@ -82,7 +82,7 @@ test.describe('Shipment Detail Page - Epic 77-FE', () => {
 
       const backLink = page.getByText('Назад к списку').or(page.locator('a[href="/shipments"]'))
       await backLink.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await expect(page).toHaveURL(/\/shipments\/?$/)
     })
 
@@ -129,7 +129,7 @@ test.describe('Shipment Detail Page - Epic 77-FE', () => {
       )
 
       await page.goto('/shipments/non-existent-id')
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Wait for error state to render (TanStack Query retry delay)
       const retryButton = page.getByRole('button', { name: 'Повторить' })
@@ -451,7 +451,7 @@ test.describe('Shipment Detail Page - Epic 77-FE', () => {
 
       try {
         await responsePromise
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // After calculation, should show results or validation errors
         const resultsOrErrors = page

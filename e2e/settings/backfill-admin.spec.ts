@@ -23,8 +23,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
   test.describe('Access Control (Owner Only)', () => {
     test('should display page for authenticated Owner user', async ({ page }) => {
       // Navigate to backfill admin page (assumes auth setup has Owner role)
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // If page loads without redirect, user has access
       const currentUrl = page.url()
@@ -49,8 +49,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
       // This test assumes the auth setup may have different roles
       // For a proper test, we'd need to set up a non-Owner user session
 
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const currentUrl = page.url()
 
@@ -76,7 +76,7 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
         .catch(() => 0)
 
       await response
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Page should eventually show content or redirect
       // Skeletons may have appeared during load (count >= 0 is valid)
@@ -86,8 +86,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Page Layout & Header', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Skip if redirected (non-Owner)
       if (!page.url().includes('/settings/backfill')) {
@@ -124,8 +124,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Status Table Display', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -205,8 +205,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Start Backfill Action', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -291,8 +291,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Pause/Resume Actions', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -322,7 +322,7 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
       if (await pauseButton.isVisible()) {
         await pauseButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         await page.waitForTimeout(1000)
 
         // After pause, resume button should appear
@@ -336,8 +336,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Progress Display', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -365,8 +365,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Error Log Display', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -408,7 +408,7 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Loading & Empty States', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -425,7 +425,7 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
     })
 
     test('should show empty state when no cabinets', async ({ page }) => {
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const emptyState = page
@@ -445,8 +445,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
   test.describe('Polling & Real-time Updates', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -470,7 +470,7 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
       if (await refreshButton.isVisible()) {
         await refreshButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Page should still be functional after refresh
         await expect(page.locator('main')).toBeVisible()
@@ -481,8 +481,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
   test.describe('Responsive Layout', () => {
     test('should display properly on mobile', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -495,8 +495,8 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
 
     test('should display properly on tablet', async ({ page }) => {
       await page.setViewportSize({ width: 768, height: 1024 })
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()

@@ -68,8 +68,8 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
     let createdSupplyId: string | null = null
 
     test('Step 1: Create new supply', async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Click create button
       const createButton = page.locator(SELECTORS.createSupplyButton)
@@ -99,11 +99,11 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
         await expect(page.locator(SELECTORS.supplyTitle)).toBeVisible()
       } else {
         // Still on list page, find the created supply
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         const newRow = page.locator(`text=${TEST_SUPPLY_NAME}`).first()
         if (await newRow.isVisible()) {
           await newRow.click()
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
           createdSupplyId = page.url().split('/supplies/')[1]?.split('?')[0] || null
         }
       }
@@ -119,8 +119,8 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
         return
       }
 
-      await page.goto(`/supplies/${createdSupplyId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
 
       // Open order picker
@@ -168,8 +168,8 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
         return
       }
 
-      await page.goto(`/supplies/${createdSupplyId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
 
       // Check current status
@@ -203,7 +203,7 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
       // Verify status changed to CLOSED
       await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const newStatusBadge = page.locator(SELECTORS.statusBadge).first()
       const newStatus = await newStatusBadge.textContent()
@@ -218,8 +218,8 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
         return
       }
 
-      await page.goto(`/supplies/${createdSupplyId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
 
       // Check current status
@@ -286,8 +286,8 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
       // In a real scenario, the supply would transition through DELIVERING -> DELIVERED
       // after physical delivery. Here we verify the UI handles these states.
 
-      await page.goto(`/supplies/${createdSupplyId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Get current status
       const statusBadge = page.locator(SELECTORS.statusBadge).first()
@@ -316,8 +316,8 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
   test.describe('Lifecycle Edge Cases', () => {
     test('should prevent closing supply without orders', async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Create a new supply
       const createButton = page.locator(SELECTORS.createSupplyButton)
@@ -332,7 +332,7 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
         if (!page.url().includes('/supplies/')) {
           const firstRow = page.locator('tbody tr:first-child')
           await firstRow.click()
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
         }
 
         // Try to close empty supply
@@ -355,14 +355,14 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
     test('should prevent adding orders to CLOSED supply', async ({ page }) => {
       // Navigate to a CLOSED supply
-      await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Add orders button should be disabled or hidden
         const addButton = page.locator(SELECTORS.addOrdersButton)
@@ -376,14 +376,14 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
     test('should prevent removing orders from CLOSED supply', async ({ page }) => {
       // Navigate to a CLOSED supply
-      await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Remove buttons should not be visible for CLOSED supply
         const removeButton = page.locator(
@@ -396,14 +396,14 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
     test('should handle concurrent operations gracefully', async ({ page }) => {
       // Navigate to OPEN supply
-      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Click multiple buttons quickly
         const closeButton = page.locator(SELECTORS.closeSupplyButton)
@@ -427,14 +427,14 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
     test('should maintain state on page refresh', async ({ page }) => {
       // Navigate to a supply
-      await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Get supply info before refresh
         const titleBefore = await page.locator(SELECTORS.supplyTitle).textContent()
@@ -442,7 +442,7 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
 
         // Refresh page
         await page.reload()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Verify info is the same
         const titleAfter = await page.locator(SELECTORS.supplyTitle).textContent()
@@ -454,26 +454,26 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
     })
 
     test('should handle browser back/forward navigation', async ({ page }) => {
-      await page.goto(SUPPLIES_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
 
       // Navigate to supply detail
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const detailUrl = page.url()
 
         // Go back
         await page.goBack()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         await expect(page).toHaveURL(/\/supplies\/?$/)
 
         // Go forward
         await page.goForward()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         await expect(page).toHaveURL(detailUrl)
       }
     })
@@ -487,7 +487,7 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
         route.continue()
       })
 
-      await page.goto(SUPPLIES_ROUTE)
+      await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
 
       // Should show loading skeleton or spinner
       const loadingIndicator = page.locator(
@@ -496,19 +496,19 @@ test.describe('Supply Lifecycle - Epic 53-FE', () => {
       await expect(loadingIndicator.first()).toBeVisible()
 
       // Wait for content
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await expect(page.locator('table, [data-testid*="empty"]').first()).toBeVisible()
     })
 
     test('should show loading state during order addition', async ({ page }) => {
-      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         const addButton = page.locator(SELECTORS.addOrdersButton)
         if ((await addButton.isVisible()) && (await addButton.isEnabled())) {

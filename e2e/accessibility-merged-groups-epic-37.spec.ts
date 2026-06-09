@@ -20,8 +20,8 @@ import AxeBuilder from '@axe-core/playwright'
 test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to advertising analytics page
-    await page.goto('/analytics/advertising')
-    await page.waitForLoadState('networkidle')
+    await page.goto('/analytics/advertising', { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
 
     // Wait for initial data load
     await page.waitForTimeout(2000)
@@ -34,15 +34,14 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
 
     // Wait for API response (may not have data, that's OK)
     try {
-      await page.waitForResponse(
-        response => response.url().includes('group_by=imtId'),
-        { timeout: 5000 }
-      )
+      await page.waitForResponse(response => response.url().includes('group_by=imtId'), {
+        timeout: 5000,
+      })
     } catch {
       // API may return empty data, continue anyway
     }
 
-    await page.waitForLoadState('networkidle')
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(1000)
   })
 
@@ -80,13 +79,9 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
 
     // Test 1: Rowspan cell - gray-600 on gray-50
     const rowspanCell = page.locator('table tbody td[rowspan]').first()
-    if (await rowspanCell.count() > 0) {
-      const textColor = await rowspanCell.evaluate(el =>
-        window.getComputedStyle(el).color
-      )
-      const bgColor = await rowspanCell.evaluate(el =>
-        window.getComputedStyle(el).backgroundColor
-      )
+    if ((await rowspanCell.count()) > 0) {
+      const textColor = await rowspanCell.evaluate(el => window.getComputedStyle(el).color)
+      const bgColor = await rowspanCell.evaluate(el => window.getComputedStyle(el).backgroundColor)
 
       // Verify exact colors from Story 37.4 spec
       expect(textColor).toBe('rgb(75, 85, 99)') // text-gray-600 (#6B7280)
@@ -97,14 +92,13 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     }
 
     // Test 2: Aggregate row - gray-900 on gray-100
-    const aggregateRow = page.locator('table tbody tr').filter({ hasText: /ГРУППА #/ }).first()
-    if (await aggregateRow.count() > 0) {
-      const textColor = await aggregateRow.evaluate(el =>
-        window.getComputedStyle(el).color
-      )
-      const bgColor = await aggregateRow.evaluate(el =>
-        window.getComputedStyle(el).backgroundColor
-      )
+    const aggregateRow = page
+      .locator('table tbody tr')
+      .filter({ hasText: /ГРУППА #/ })
+      .first()
+    if ((await aggregateRow.count()) > 0) {
+      const textColor = await aggregateRow.evaluate(el => window.getComputedStyle(el).color)
+      const bgColor = await aggregateRow.evaluate(el => window.getComputedStyle(el).backgroundColor)
 
       expect(textColor).toBe('rgb(17, 24, 39)') // text-gray-900 (#111827)
       expect(bgColor).toBe('rgb(243, 244, 246)') // bg-gray-100 (#F3F4F6)
@@ -114,14 +108,13 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     }
 
     // Test 3: Detail row - gray-700 on white
-    const detailRow = page.locator('table tbody tr').filter({ hasNot: page.locator('text=/ГРУППА #/') }).first()
-    if (await detailRow.count() > 0) {
-      const textColor = await detailRow.evaluate(el =>
-        window.getComputedStyle(el).color
-      )
-      const bgColor = await detailRow.evaluate(el =>
-        window.getComputedStyle(el).backgroundColor
-      )
+    const detailRow = page
+      .locator('table tbody tr')
+      .filter({ hasNot: page.locator('text=/ГРУППА #/') })
+      .first()
+    if ((await detailRow.count()) > 0) {
+      const textColor = await detailRow.evaluate(el => window.getComputedStyle(el).color)
+      const bgColor = await detailRow.evaluate(el => window.getComputedStyle(el).backgroundColor)
 
       expect(textColor).toBe('rgb(55, 65, 81)') // text-gray-700 (#374151)
       expect(bgColor).toBe('rgb(255, 255, 255)') // bg-white (#FFFFFF)
@@ -131,11 +124,12 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     }
 
     // Test 4: Crown icon - yellow-600 on white
-    const crownIcon = page.locator('svg').filter({ has: page.locator('title:has-text("Главный товар")') }).first()
-    if (await crownIcon.count() > 0) {
-      const iconColor = await crownIcon.evaluate(el =>
-        window.getComputedStyle(el).color
-      )
+    const crownIcon = page
+      .locator('svg')
+      .filter({ has: page.locator('title:has-text("Главный товар")') })
+      .first()
+    if ((await crownIcon.count()) > 0) {
+      const iconColor = await crownIcon.evaluate(el => window.getComputedStyle(el).color)
 
       expect(iconColor).toBe('rgb(202, 138, 4)') // text-yellow-600 (#CA8A04)
 
@@ -165,7 +159,7 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
 
     // Activate with Enter or Space
     await page.keyboard.press('Enter')
-    await page.waitForLoadState('networkidle')
+    await page.locator('main').waitFor({ state: 'visible' })
 
     // Verify toggle worked
     await expect(skuButton).toHaveAttribute('aria-pressed', 'false')
@@ -177,8 +171,8 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     await firstHeader.focus()
 
     // Verify focus visible
-    const focusOutlineWidth = await firstHeader.evaluate(el =>
-      window.getComputedStyle(el).outlineWidth
+    const focusOutlineWidth = await firstHeader.evaluate(
+      el => window.getComputedStyle(el).outlineWidth
     )
     expect(parseFloat(focusOutlineWidth)).toBeGreaterThan(0)
 
@@ -198,8 +192,11 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     await expect(imtIdButton).toHaveAttribute('aria-pressed')
 
     // Test 2: Crown icon has aria-label
-    const crownIcon = page.locator('svg').filter({ has: page.locator('title:has-text("Главный товар")') }).first()
-    if (await crownIcon.count() > 0) {
+    const crownIcon = page
+      .locator('svg')
+      .filter({ has: page.locator('title:has-text("Главный товар")') })
+      .first()
+    if ((await crownIcon.count()) > 0) {
       await expect(crownIcon).toHaveAttribute('aria-label', 'Главный товар')
     }
 
@@ -219,12 +216,12 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     // Test 4: Tooltips have proper ARIA
     // Hover over a badge to trigger tooltip
     const badge = page.locator('text=/🔗 Склейка/').first()
-    if (await badge.count() > 0) {
+    if ((await badge.count()) > 0) {
       await badge.hover()
 
       // Tooltip should appear with role="tooltip" or aria-describedby
       const tooltip = page.locator('[role="tooltip"]').first()
-      if (await tooltip.count() > 0) {
+      if ((await tooltip.count()) > 0) {
         await expect(tooltip).toBeVisible()
       }
     }
@@ -242,12 +239,8 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     await skuButton.focus()
 
     // Verify focus outline is visible
-    const outlineWidth = await skuButton.evaluate(el =>
-      window.getComputedStyle(el).outlineWidth
-    )
-    const outlineStyle = await skuButton.evaluate(el =>
-      window.getComputedStyle(el).outlineStyle
-    )
+    const outlineWidth = await skuButton.evaluate(el => window.getComputedStyle(el).outlineWidth)
+    const outlineStyle = await skuButton.evaluate(el => window.getComputedStyle(el).outlineStyle)
 
     expect(outlineStyle).not.toBe('none')
     expect(parseFloat(outlineWidth)).toBeGreaterThan(0)
@@ -257,18 +250,21 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     const firstHeader = page.locator('table thead th').first()
     await firstHeader.focus()
 
-    const headerOutlineWidth = await firstHeader.evaluate(el =>
-      window.getComputedStyle(el).outlineWidth
+    const headerOutlineWidth = await firstHeader.evaluate(
+      el => window.getComputedStyle(el).outlineWidth
     )
     expect(parseFloat(headerOutlineWidth)).toBeGreaterThan(0)
 
     // Test detail rows (clickable)
-    const firstDetailRow = page.locator('table tbody tr').filter({ hasNot: page.locator('text=/ГРУППА #/') }).first()
-    if (await firstDetailRow.count() > 0) {
+    const firstDetailRow = page
+      .locator('table tbody tr')
+      .filter({ hasNot: page.locator('text=/ГРУППА #/') })
+      .first()
+    if ((await firstDetailRow.count()) > 0) {
       await firstDetailRow.focus()
 
-      const rowOutlineWidth = await firstDetailRow.evaluate(el =>
-        window.getComputedStyle(el).outlineWidth
+      const rowOutlineWidth = await firstDetailRow.evaluate(
+        el => window.getComputedStyle(el).outlineWidth
       )
       expect(parseFloat(rowOutlineWidth)).toBeGreaterThan(0)
     }
@@ -285,7 +281,7 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
 
     // Main content area should have role="main" or <main> element
     const mainRegion = page.locator('main')
-    if (await mainRegion.count() > 0) {
+    if ((await mainRegion.count()) > 0) {
       await expect(mainRegion).toBeVisible()
     }
 
@@ -297,13 +293,13 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     const tableLabel = await table.getAttribute('aria-label')
     const caption = page.locator('table caption')
 
-    if (tableLabel || await caption.count() > 0) {
+    if (tableLabel || (await caption.count()) > 0) {
       console.log('✅ Table has accessible label/caption')
     }
 
     // Navigation elements should have role="navigation" or <nav>
     const nav = page.locator('nav')
-    if (await nav.count() > 0) {
+    if ((await nav.count()) > 0) {
       await expect(nav).toBeVisible()
     }
 
@@ -318,15 +314,15 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 390, height: 844 })
     // Re-navigate after viewport change
-    await page.goto('/analytics/advertising')
-    await page.waitForLoadState('networkidle')
+    await page.goto('/analytics/advertising', { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(2000)
 
     // Switch to merged groups view
     const imtIdButton = page.locator('button:has-text("По склейкам")')
     await imtIdButton.waitFor({ state: 'visible', timeout: 10000 })
     await imtIdButton.click()
-    await page.waitForLoadState('networkidle')
+    await page.locator('main').waitFor({ state: 'visible' })
 
     // Test touch target sizes (minimum 44x44 pixels per WCAC)
     const buttonBox = await imtIdButton.boundingBox()
@@ -338,13 +334,14 @@ test.describe('Epic 37: Accessibility - MergedGroupTable', () => {
     }
 
     // Test table is scrollable with assistive technology
-    const tableWrapper = page.locator('div').filter({ has: page.locator('table') }).first()
+    const tableWrapper = page
+      .locator('div')
+      .filter({ has: page.locator('table') })
+      .first()
     await expect(tableWrapper).toBeVisible()
 
     // Verify overflow-x-auto allows scrolling
-    const overflowX = await tableWrapper.evaluate(el =>
-      window.getComputedStyle(el).overflowX
-    )
+    const overflowX = await tableWrapper.evaluate(el => window.getComputedStyle(el).overflowX)
     expect(overflowX).toBe('auto')
 
     // Test zoom support (viewport should allow pinch-zoom)

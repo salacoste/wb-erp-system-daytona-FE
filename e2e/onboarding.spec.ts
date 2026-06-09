@@ -14,35 +14,35 @@ test.describe('Onboarding Flow', () => {
 
   test.describe('Public Onboarding Pages', () => {
     test('cabinet page shows cabinet creation form', async ({ page }) => {
-      await page.goto(ROUTES.onboarding.cabinet)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('body')).toBeVisible()
 
       // Cabinet creation page is publicly accessible
       // Should show "Создание кабинета" heading and form
       const heading = page.locator('h1:has-text("Создание кабинета"), h1:has-text("кабинет")')
       const form = page.locator('form')
 
-      const hasHeading = await heading.count() > 0
-      const hasForm = await form.count() > 0
+      const hasHeading = (await heading.count()) > 0
+      const hasForm = (await form.count()) > 0
 
       expect(hasHeading || hasForm).toBeTruthy()
     })
 
     test('wb-token page is accessible', async ({ page }) => {
-      await page.goto(ROUTES.onboarding.token)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ROUTES.onboarding.token, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('body')).toBeVisible()
 
       // WB Token page should show form or redirect
       const form = page.locator('form')
-      const hasForm = await form.count() > 0
+      const hasForm = (await form.count()) > 0
       const hasContent = await page.locator('body').textContent()
 
       expect(hasForm || (hasContent && hasContent.length > 0)).toBeTruthy()
     })
 
     test('processing page is accessible', async ({ page }) => {
-      await page.goto(ROUTES.onboarding.processing)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ROUTES.onboarding.processing, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('body')).toBeVisible()
 
       // Processing page should show content
       const hasContent = await page.locator('body').textContent()
@@ -94,7 +94,7 @@ test.describe('Onboarding Flow', () => {
       await page.waitForTimeout(2000)
 
       // Check for error message or that we're still on login
-      const hasError = await page.locator('text=/ошибка|error|неверн|invalid/i').count() > 0
+      const hasError = (await page.locator('text=/ошибка|error|неверн|invalid/i').count()) > 0
       const stillOnLogin = page.url().includes('login')
 
       expect(hasError || stillOnLogin).toBeTruthy()
@@ -135,10 +135,10 @@ test.describe('Authenticated User - Onboarding Routes', () => {
   // Uses default authenticated state from setup
 
   test('cabinet page redirects to dashboard for existing user', async ({ page }) => {
-    await page.goto(ROUTES.onboarding.cabinet)
+    await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
 
     // User with existing cabinet should be redirected to dashboard
-    await page.waitForLoadState('networkidle')
+    await page.locator('body').waitFor({ state: 'visible' })
 
     // Should be on dashboard or still on cabinet page (depending on implementation)
     const currentUrl = page.url()
@@ -151,9 +151,9 @@ test.describe('Authenticated User - Onboarding Routes', () => {
   })
 
   test('wb-token page redirects to dashboard for existing user', async ({ page }) => {
-    await page.goto(ROUTES.onboarding.token)
+    await page.goto(ROUTES.onboarding.token, { waitUntil: 'domcontentloaded' })
 
-    await page.waitForLoadState('networkidle')
+    await page.locator('body').waitFor({ state: 'visible' })
 
     const currentUrl = page.url()
     const isExpectedRoute =
@@ -165,9 +165,9 @@ test.describe('Authenticated User - Onboarding Routes', () => {
   })
 
   test('processing page redirects to dashboard for existing user', async ({ page }) => {
-    await page.goto(ROUTES.onboarding.processing)
+    await page.goto(ROUTES.onboarding.processing, { waitUntil: 'domcontentloaded' })
 
-    await page.waitForLoadState('networkidle')
+    await page.locator('body').waitFor({ state: 'visible' })
 
     const currentUrl = page.url()
     const isExpectedRoute =

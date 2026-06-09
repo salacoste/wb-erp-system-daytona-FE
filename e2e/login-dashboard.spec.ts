@@ -11,8 +11,8 @@ import { ROUTES, SELECTORS, TIMEOUTS } from './fixtures/test-data'
 test.describe('Login → Dashboard Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to dashboard (authenticated via setup)
-    await page.goto(ROUTES.dashboard)
-    await page.waitForLoadState('networkidle')
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('main')).toBeVisible({ timeout: TIMEOUTS.navigation })
   })
 
   test.describe('Dashboard Layout (Story 3.1)', () => {
@@ -39,7 +39,9 @@ test.describe('Login → Dashboard Flow', () => {
     test('has responsive mobile menu', async ({ page, isMobile }) => {
       if (isMobile) {
         // Mobile menu toggle should be visible
-        const menuToggle = page.locator('[data-testid="mobile-menu-toggle"], button[aria-label*="menu"]')
+        const menuToggle = page.locator(
+          '[data-testid="mobile-menu-toggle"], button[aria-label*="menu"]'
+        )
         await expect(menuToggle).toBeVisible()
 
         // Click to open menu
@@ -58,9 +60,9 @@ test.describe('Login → Dashboard Flow', () => {
       await page.waitForTimeout(2000) // Allow API data to load
 
       // Should have multiple metric cards
-      const metricCards = page.locator(SELECTORS.metricCard).or(
-        page.locator('[class*="metric"], [class*="card"]').filter({ hasText: /₽|%/ })
-      )
+      const metricCards = page
+        .locator(SELECTORS.metricCard)
+        .or(page.locator('[class*="metric"], [class*="card"]').filter({ hasText: /₽|%/ }))
 
       // At least one metric should be visible
       const count = await metricCards.count()
@@ -90,9 +92,9 @@ test.describe('Login → Dashboard Flow', () => {
   test.describe('Expense Chart (Story 3.3)', () => {
     test('displays expense breakdown chart', async ({ page }) => {
       // Chart container should be visible
-      const chart = page.locator(SELECTORS.expenseChart).or(
-        page.locator('[class*="chart"], svg[class*="recharts"]')
-      )
+      const chart = page
+        .locator(SELECTORS.expenseChart)
+        .or(page.locator('[class*="chart"], svg[class*="recharts"]'))
 
       await expect(chart.first()).toBeVisible({ timeout: TIMEOUTS.api })
     })
@@ -100,10 +102,10 @@ test.describe('Login → Dashboard Flow', () => {
     test('chart has accessible label', async ({ page }) => {
       // Check for aria-label on chart container
       const chartWithLabel = page.locator('[aria-label*="расход"], [aria-label*="chart"]')
-      const hasLabel = await chartWithLabel.count() > 0
+      const hasLabel = (await chartWithLabel.count()) > 0
 
       // Or check for legend/labels
-      const hasLegend = await page.locator('[class*="legend"], [class*="label"]').count() > 0
+      const hasLegend = (await page.locator('[class*="legend"], [class*="label"]').count()) > 0
 
       expect(hasLabel || hasLegend).toBeTruthy()
     })
@@ -112,9 +114,9 @@ test.describe('Login → Dashboard Flow', () => {
   test.describe('Trend Graph (Story 3.4)', () => {
     test('displays trend graph with weekly data', async ({ page }) => {
       // Trend graph container
-      const trendGraph = page.locator(SELECTORS.trendGraph).or(
-        page.locator('[class*="trend"], [class*="line-chart"]')
-      )
+      const trendGraph = page
+        .locator(SELECTORS.trendGraph)
+        .or(page.locator('[class*="trend"], [class*="line-chart"]'))
 
       await expect(trendGraph.first()).toBeVisible({ timeout: TIMEOUTS.api })
     })
@@ -129,7 +131,9 @@ test.describe('Login → Dashboard Flow', () => {
   test.describe('Navigation', () => {
     test('can navigate to COGS page', async ({ page }) => {
       // Find and click COGS link
-      const cogsLink = page.locator('a[href*="cogs"], a:has-text("COGS"), a:has-text("Себестоимость")')
+      const cogsLink = page.locator(
+        'a[href*="cogs"], a:has-text("COGS"), a:has-text("Себестоимость")'
+      )
       await cogsLink.first().click()
 
       await expect(page).toHaveURL(/cogs/)
@@ -145,9 +149,9 @@ test.describe('Login → Dashboard Flow', () => {
 
     test('can logout', async ({ page }) => {
       // Find logout button
-      const logoutButton = page.locator(SELECTORS.logoutButton).or(
-        page.locator('button:has-text("Выход"), button:has-text("Logout")')
-      )
+      const logoutButton = page
+        .locator(SELECTORS.logoutButton)
+        .or(page.locator('button:has-text("Выход"), button:has-text("Logout")'))
 
       if (await logoutButton.isVisible()) {
         await logoutButton.click()
@@ -160,7 +164,7 @@ test.describe('Login → Dashboard Flow', () => {
   test.describe('Error Handling', () => {
     test('handles API errors gracefully', async ({ page }) => {
       // Block API to simulate error
-      await page.route('**/api/**', (route) => route.abort())
+      await page.route('**/api/**', route => route.abort())
 
       await page.reload()
 

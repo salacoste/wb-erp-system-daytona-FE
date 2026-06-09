@@ -59,8 +59,8 @@ const SELECTORS = {
 
 test.describe('Supplies List Page - Epic 53-FE', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(SUPPLIES_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
   })
 
   test.describe('Page Load & Display', () => {
@@ -71,8 +71,8 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should navigate to Supplies from sidebar', async ({ page }) => {
-      await page.goto('/dashboard')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const suppliesLink = page.locator('a[href*="supplies"], a:has-text("Поставки")')
       if (await suppliesLink.isVisible()) {
@@ -140,7 +140,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       if (await statusFilter.isVisible()) {
         await statusFilter.click()
         await page.click('text=Открыта')
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // URL should contain status parameter
         await expect(page).toHaveURL(/status=OPEN/)
@@ -155,7 +155,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       if (await statusFilter.isVisible()) {
         await statusFilter.click()
         await page.click('text=Закрыта')
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/status=CLOSED/)
       }
@@ -169,7 +169,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       if (await statusFilter.isVisible()) {
         await statusFilter.click()
         await page.click('text=Доставлена')
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/status=DELIVERED/)
       }
@@ -183,7 +183,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       if (await statusFilter.isVisible()) {
         await statusFilter.click()
         await page.click('text=Открыта')
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Clear filter
         const clearButton = page
@@ -192,7 +192,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
         if (await clearButton.isVisible()) {
           await clearButton.click()
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
           await expect(page).not.toHaveURL(/status=/)
         }
       }
@@ -207,7 +207,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
       if (await dateFromInput.isVisible()) {
         await dateFromInput.fill('2025-01-01')
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/from=2025-01-01/)
       }
@@ -220,7 +220,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
       if (await dateToInput.isVisible()) {
         await dateToInput.fill('2025-12-31')
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/to=2025-12-31/)
       }
@@ -240,7 +240,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
         if (await statusFilter.isVisible()) {
           await statusFilter.click()
           await page.click('text=Открыта')
-          await page.waitForLoadState('networkidle')
+          await page.locator('main').waitFor({ state: 'visible' })
 
           // Both filters should be in URL
           const url = page.url()
@@ -258,7 +258,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")')
       if (await dateHeader.isVisible()) {
         await dateHeader.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/sort_by=created_at/)
       }
@@ -270,7 +270,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       const ordersHeader = page.locator('th:has-text("Заказ"), th:has-text("Кол-во")')
       if (await ordersHeader.isVisible()) {
         await ordersHeader.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/sort_by=orders_count/)
       }
@@ -283,11 +283,11 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       if (await dateHeader.isVisible()) {
         // First click - desc
         await dateHeader.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Second click - asc
         await dateHeader.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         await expect(page).toHaveURL(/sort_order=asc/)
       }
@@ -303,7 +303,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
         .or(page.locator(SELECTORS.supplyRow).first())
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Should navigate to /supplies/{id}
         await expect(page).toHaveURL(/\/supplies\/[a-zA-Z0-9-]+/)
@@ -406,15 +406,15 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
       if (await nextButton.isEnabled()) {
         await nextButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         await expect(page).toHaveURL(/page=2/)
       }
     })
 
     test('should navigate to previous page', async ({ page }) => {
       // Go to page 2 first
-      await page.goto(`${SUPPLIES_ROUTE}?page=2`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?page=2`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const prevButton = page
         .locator(SELECTORS.prevPageButton)
@@ -422,7 +422,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
       if (await prevButton.isEnabled()) {
         await prevButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
         await expect(page).not.toHaveURL(/page=2/)
       }
     })
@@ -431,8 +431,10 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
   test.describe('Empty State', () => {
     test('should display empty state when no supplies match filters', async ({ page }) => {
       // Apply filter that returns no results
-      await page.goto(`${SUPPLIES_ROUTE}?status=CANCELLED&from=1990-01-01&to=1990-12-31`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${SUPPLIES_ROUTE}?status=CANCELLED&from=1990-01-01&to=1990-12-31`, {
+        waitUntil: 'domcontentloaded',
+      })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       const emptyState = page

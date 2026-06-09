@@ -10,8 +10,8 @@ const SEARCH_ROUTE = '/analytics/search'
 
 test.describe('Epic 71-FE: Search Analytics Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(SEARCH_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(SEARCH_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
   })
 
   test('should display search analytics page with heading', async ({ page }) => {

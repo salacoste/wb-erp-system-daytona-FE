@@ -20,14 +20,14 @@ const SHIPMENTS_ROUTE = '/shipments'
  * Navigate to the first available shipment detail page.
  */
 async function navigateToDetail(page: Page): Promise<boolean> {
-  await page.goto(SHIPMENTS_ROUTE)
-  await page.waitForLoadState('networkidle')
+  await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+  await page.locator('main').waitFor({ state: 'visible' })
 
   // Match only detail links (UUID paths), not /shipments/sku-packaging
   const viewLink = page.locator('table a[href*="/shipments/"]').first()
   if ((await viewLink.count()) > 0 && (await viewLink.isVisible())) {
     await viewLink.click()
-    await page.waitForLoadState('networkidle')
+    await page.locator('main').waitFor({ state: 'visible' })
     return true
   }
   return false
@@ -36,8 +36,8 @@ async function navigateToDetail(page: Page): Promise<boolean> {
 test.describe('Shipments Accessibility - Epic 77-FE', () => {
   test.describe('List Page - axe-core', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
     })
 
     test('should have no WCAG 2.1 AA violations on list page', async ({ page }) => {
@@ -115,8 +115,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
 
   test.describe('Keyboard Navigation', () => {
     test('should support Tab navigation through list page elements', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Tab to first interactive element
       await page.keyboard.press('Tab')
@@ -136,8 +136,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should open view link with Enter key', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const viewLink = page.locator('a[href*="/shipments/"]').first()
       if (!(await viewLink.isVisible())) {
@@ -147,14 +147,14 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
 
       await viewLink.focus()
       await page.keyboard.press('Enter')
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       await expect(page).toHaveURL(/\/shipments\/[a-zA-Z0-9-]+/)
     })
 
     test('should close dialog with Escape key', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', { name: 'Создать отправку' })
       if (!(await createButton.isVisible()) || !(await createButton.isEnabled())) {
@@ -170,8 +170,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should navigate table rows with Tab', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const rows = page.locator('table tbody tr')
       if ((await rows.count()) === 0) {
@@ -213,8 +213,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
 
   test.describe('ARIA Labels', () => {
     test('should have aria-labels on action buttons in list', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const rows = page.locator('table tbody tr')
       if ((await rows.count()) === 0) {
@@ -257,8 +257,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should have aria-label on status filter select', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const statusFilter = page.getByLabel('Фильтр по статусу')
       if (await statusFilter.isVisible()) {
@@ -267,8 +267,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should have aria-label on rows-per-page select', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const rowsPerPage = page.getByLabel('Строк на странице')
       if (await rowsPerPage.isVisible()) {
@@ -293,8 +293,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
 
   test.describe('Dialog Accessibility', () => {
     test('should have no WCAG violations in create dialog', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', { name: 'Создать отправку' })
       if (!(await createButton.isVisible()) || !(await createButton.isEnabled())) {
@@ -314,8 +314,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should have aria-modal and aria-labelledby on dialog', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', { name: 'Создать отправку' })
       if (!(await createButton.isVisible()) || !(await createButton.isEnabled())) {
@@ -337,8 +337,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should trap focus within create dialog', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', { name: 'Создать отправку' })
       if (!(await createButton.isVisible()) || !(await createButton.isEnabled())) {
@@ -364,8 +364,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
     })
 
     test('should return focus to trigger after dialog closes', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', { name: 'Создать отправку' })
       if (!(await createButton.isVisible()) || !(await createButton.isEnabled())) {
@@ -405,8 +405,8 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
 
   test.describe('Focus Indicators', () => {
     test('should show visible focus indicators on interactive elements', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const buttons = page.locator('button').first()
       if (await buttons.isVisible()) {

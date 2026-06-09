@@ -30,8 +30,8 @@ const ORDERS_ANALYTICS_ROUTE = '/analytics/orders'
 test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
   test.describe('Backfill Admin Page', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       // Skip if redirected (non-Owner)
@@ -176,8 +176,8 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
 
   test.describe('Start Backfill Dialog Accessibility', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -289,8 +289,8 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
   test.describe('Mobile Accessibility', () => {
     test.beforeEach(async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       if (!page.url().includes('/settings/backfill')) {
@@ -337,8 +337,8 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
 
   test.describe('Color Contrast', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
 
       if (!page.url().includes('/settings/backfill')) {
@@ -390,8 +390,8 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
 
   test.describe('Live Regions and Announcements', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
@@ -426,8 +426,8 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
 
 test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(ORDERS_ANALYTICS_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(2000)
   })
 
@@ -505,8 +505,8 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
 
   test('should have no WCAG violations on mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto(ORDERS_ANALYTICS_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(2000)
 
     const accessibilityScanResults = await new AxeBuilder({ page })

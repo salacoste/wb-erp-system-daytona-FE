@@ -121,8 +121,8 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
 
   test.describe('AC #1: Owner role — column visible', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(ORDERS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('table').first()).toBeVisible({ timeout: 10000 })
     })
 
     test('should render the "Клиент" column header for Owner role', async ({ page }) => {
@@ -135,8 +135,8 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       page,
     }) => {
       const requests = await captureClientInfoRequests(page, async () => {
-        await page.reload()
-        await page.waitForLoadState('networkidle')
+        await page.reload({ waitUntil: 'domcontentloaded' })
+        await expect(page.getByRole('table').first()).toBeVisible({ timeout: 10000 })
       })
 
       // If the table has at least one row, exactly one client-info request should fire
@@ -186,8 +186,8 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     test.beforeEach(async ({ page }) => {
       // Intercept the client-info request BEFORE navigation, then await it
       const responsePromise = waitForClientInfoResponseOrNull(page)
-      await page.goto(ORDERS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('table').first()).toBeVisible({ timeout: 10000 })
       await responsePromise // deterministic wait, no hard sleep
     })
 
@@ -235,8 +235,8 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
     }) => {
       // Deterministic wait — no hard sleep
       const responsePromise = waitForClientInfoResponseOrNull(page)
-      await page.goto(ORDERS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('table').first()).toBeVisible({ timeout: 10000 })
       await responsePromise
 
       const phoneLinkLocator = page.getByRole('link', { name: /Позвонить клиенту/i })
@@ -298,8 +298,8 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       const context = await browser.newContext({ storageState: MANAGER_AUTH_FILE })
       const page = await context.newPage()
       try {
-        await page.goto(ORDERS_ROUTE)
-        await page.waitForLoadState('networkidle')
+        await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+        await expect(page.locator('main')).toBeVisible({ timeout: 10000 })
 
         const header = page.getByRole('columnheader', { name: /Клиент/i })
         await expect(header).toHaveCount(0)
@@ -313,8 +313,8 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', ()
       const page = await context.newPage()
       try {
         const requests = await captureClientInfoRequests(page, async () => {
-          await page.goto(ORDERS_ROUTE)
-          await page.waitForLoadState('networkidle')
+          await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
+          await expect(page.locator('main')).toBeVisible({ timeout: 10000 })
         })
         expect(requests).toHaveLength(0)
       } finally {

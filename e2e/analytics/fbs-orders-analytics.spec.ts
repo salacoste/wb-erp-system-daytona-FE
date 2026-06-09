@@ -57,8 +57,8 @@ const SELECTORS = {
 
 test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(ORDERS_ANALYTICS_ROUTE)
-    await page.waitForLoadState('networkidle')
+    await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible' })
     await page.waitForTimeout(2000) // Allow data to load
   })
 
@@ -130,7 +130,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
     test('should switch to Trends tab on click', async ({ page }) => {
       const trendsTab = page.locator(SELECTORS.trendsTab)
       await trendsTab.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Verify tab is now selected
       const isSelected =
@@ -145,7 +145,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
     test('should switch to Seasonality tab on click', async ({ page }) => {
       const seasonalityTab = page.locator(SELECTORS.seasonalityTab)
       await seasonalityTab.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Verify tab is now selected
       const isSelected =
@@ -160,7 +160,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
     test('should switch to Comparison tab on click', async ({ page }) => {
       const comparisonTab = page.locator(SELECTORS.comparisonTab)
       await comparisonTab.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Verify tab is now selected
       const isSelected =
@@ -174,8 +174,8 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
 
     test('should preserve tab state on URL param', async ({ page }) => {
       // Navigate directly to trends tab via URL
-      await page.goto(`${ORDERS_ANALYTICS_ROUTE}?tab=trends`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`${ORDERS_ANALYTICS_ROUTE}?tab=trends`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const trendsTab = page.locator(SELECTORS.trendsTab)
       const isSelected =
@@ -204,7 +204,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
       // Ensure we're on Overview tab
       const overviewTab = page.locator(SELECTORS.overviewTab)
       await overviewTab.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Look for summary metrics (cards with numbers/currency)
       const summarySection = page.locator('[data-testid="overview-tab"]').or(page.locator('main'))
@@ -234,7 +234,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
   test.describe('Trends Tab (Тренды)', () => {
     test.beforeEach(async ({ page }) => {
       await page.locator(SELECTORS.trendsTab).click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
     })
 
@@ -266,7 +266,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
 
       if (await weeklyButton.isVisible()) {
         await weeklyButton.click()
-        await page.waitForLoadState('networkidle')
+        await page.locator('main').waitFor({ state: 'visible' })
 
         // Verify selection changed
         const isSelected =
@@ -280,7 +280,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
   test.describe('Seasonality Tab (Сезонность)', () => {
     test.beforeEach(async ({ page }) => {
       await page.locator(SELECTORS.seasonalityTab).click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
     })
 
@@ -311,7 +311,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
   test.describe('Comparison Tab (Сравнение)', () => {
     test.beforeEach(async ({ page }) => {
       await page.locator(SELECTORS.comparisonTab).click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(1000)
     })
 
@@ -382,7 +382,7 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
 
       // Loading state may be too fast to catch, so we just verify page loads
       expect(hasLoading).toBeTruthy()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
     })
 
     test('should handle API errors gracefully', async ({ page }) => {
@@ -399,8 +399,8 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
   test.describe('Responsive Behavior', () => {
     test('should display properly on mobile viewport', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(ORDERS_ANALYTICS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Page should be visible
       await expect(page.locator('main')).toBeVisible()
@@ -417,8 +417,8 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
 
     test('should display properly on tablet viewport', async ({ page }) => {
       await page.setViewportSize({ width: 768, height: 1024 })
-      await page.goto(ORDERS_ANALYTICS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       await expect(page.locator('main')).toBeVisible()
     })

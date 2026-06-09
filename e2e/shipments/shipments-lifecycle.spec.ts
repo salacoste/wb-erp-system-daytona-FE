@@ -26,8 +26,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
     let shipmentId: string | null = null
 
     test('Step 1: Create shipment', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', {
         name: 'Создать отправку',
@@ -64,7 +64,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
       await dialog.getByRole('button', { name: 'Создать' }).click()
       await responsePromise
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Should navigate to detail page
       await expect(page).toHaveURL(/\/shipments\/[a-zA-Z0-9-]+/)
@@ -82,8 +82,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
         return
       }
 
-      await page.goto(`/shipments/${shipmentId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/shipments/${shipmentId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const addPalletButton = page.getByRole('button', {
         name: 'Добавить паллету',
@@ -97,7 +97,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
       await addPalletButton.click()
       await responsePromise
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Verify pallet accordion item appears
       const palletHeader = page.getByText(/Паллета #\d+/i).first()
@@ -110,8 +110,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
         return
       }
 
-      await page.goto(`/shipments/${shipmentId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/shipments/${shipmentId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Expand first pallet
       const palletTrigger = page.getByRole('button', { name: /Раскрыть паллету/i }).first()
@@ -168,7 +168,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
         return
       }
 
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Verify box line appears in table
       const boxLineRow = page.locator('table tbody tr').filter({ hasText: '173589742' })
@@ -181,8 +181,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
         return
       }
 
-      await page.goto(`/shipments/${shipmentId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/shipments/${shipmentId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const calcButton = page.getByRole('button', { name: /Рассчитать/ })
       if (!(await calcButton.isVisible())) {
@@ -198,7 +198,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
       await calcButton.click()
       await responsePromise
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Should show calculation results or validation errors
       const resultsOrErrors = page
@@ -215,8 +215,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
         return
       }
 
-      await page.goto(`/shipments/${shipmentId}`)
-      await page.waitForLoadState('networkidle')
+      await page.goto(`/shipments/${shipmentId}`, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const confirmButton = page.getByRole('button', { name: /Подтвердить/ })
       if (!(await confirmButton.isVisible())) {
@@ -232,7 +232,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
       await confirmButton.click()
       await responsePromise
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Status should change to CONFIRMED
       await expect(page.getByText('ПОДТВЕРЖДЕНА')).toBeVisible({ timeout: 10000 })
@@ -247,8 +247,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
     test('Step 6: Delete (separate draft shipment)', async ({ page }) => {
       // Create a NEW draft shipment specifically for deletion
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const createButton = page.getByRole('button', {
         name: 'Создать отправку',
@@ -275,7 +275,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
       await dialog.getByRole('button', { name: 'Создать' }).click()
       await createResponse
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Should be on detail page of new shipment
       await expect(page).toHaveURL(/\/shipments\/[a-zA-Z0-9-]+/)
@@ -301,7 +301,7 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
       await confirmDeleteButton.click()
       await deleteResponse
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       // Should redirect back to list
       await expect(page).toHaveURL(/\/shipments\/?$/, { timeout: 10000 })
@@ -310,8 +310,8 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
 
   test.describe('Lifecycle Edge Cases', () => {
     test('should maintain state on page refresh', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const firstViewLink = page.locator('table a[href*="/shipments/"]').first()
       if (!(await firstViewLink.isVisible())) {
@@ -320,20 +320,20 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
       }
 
       await firstViewLink.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const titleBefore = await page.locator('h1').textContent()
 
       await page.reload()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const titleAfter = await page.locator('h1').textContent()
       expect(titleBefore).toBe(titleAfter)
     })
 
     test('should handle browser back/forward navigation', async ({ page }) => {
-      await page.goto(SHIPMENTS_ROUTE)
-      await page.waitForLoadState('networkidle')
+      await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const firstViewLink = page.locator('table a[href*="/shipments/"]').first()
       if (!(await firstViewLink.isVisible())) {
@@ -342,18 +342,18 @@ test.describe('Shipment Lifecycle - Epic 77-FE', () => {
       }
 
       await firstViewLink.click()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
 
       const detailUrl = page.url()
 
       // Go back to list
       await page.goBack()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await expect(page).toHaveURL(/\/shipments\/?$/)
 
       // Go forward to detail
       await page.goForward()
-      await page.waitForLoadState('networkidle')
+      await page.locator('main').waitFor({ state: 'visible' })
       await expect(page).toHaveURL(detailUrl)
     })
   })
