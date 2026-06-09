@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"npx vitest run src/hooks/__tests__/usePendingMarginPolling.test.ts src/hooks/__tests__/useCogsHistoryFull.test.ts src/hooks/__tests__/useUpdateTariffSettings.test.ts src/hooks/__tests__/us...",
-  "error": "Exit code 1\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n\n RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend\n\n[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`\n(node:60626) Warning: `--localstorage-file` was provided without a valid path\n(Use `...",
-  "timestamp": "2026-06-08T23:25:13.693Z",
-  "retry_count": 2
+  "tool_input_preview": "{\"command\":\"npx vitest run src/lib/api/__tests__/liquidity-distribution-mapper.test.ts src/lib/api/__tests__/ai-evaluations-normalizer.test.ts src/lib/api/__tests__/ai-models-normalizer.test.ts src/li...",
+  "error": "Exit code 1\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`\n\n RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend\n\n(node:77590) Warning: `--localstorage-file` was provided without a valid path\n(Use `...",
+  "timestamp": "2026-06-09T00:07:18.325Z",
+  "retry_count": 1
 }

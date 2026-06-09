@@ -7,14 +7,13 @@
  * Presentational sections:
  * - 7-Day Forecast (daily stock depletion table)
  * - Reorder Recommendation (order calculation breakdown)
- * - Cost Analysis (COGS-based profitability estimate)
+ * - Cost Analysis (extracted to SupplyDetailCostAnalysis)
+ *
+ * Sub-components: SupplyDetailCostAnalysis
  */
 
-import { Calendar, ShoppingCart, CircleHelp } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Calendar, ShoppingCart } from 'lucide-react'
 import { cn, formatNumber } from '@/lib/utils'
-import Link from 'next/link'
-import { ROUTES } from '@/lib/routes'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
 import type { ForecastDay } from './supply-detail-calculations'
 import {
@@ -22,6 +21,7 @@ import {
   formatReorderValue,
   formatPlanningHorizon,
 } from '@/lib/supply-planning-utils'
+import { SupplyDetailCostAnalysis } from './SupplyDetailCostAnalysis'
 
 // ============================================================================
 // Types
@@ -117,72 +117,7 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
       </section>
 
       {/* Cost Analysis */}
-      <section className="bg-white rounded-lg border p-4">
-        <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
-          &#x1F4B0; Анализ затрат
-        </h4>
-        {item.has_cogs && item.cogs_per_unit ? (
-          <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-gray-600">Себестоимость:</dt>
-              <dd className="font-medium text-gray-900">
-                {formatReorderValue(item.cogs_per_unit)}/шт ×{' '}
-                {formatStockQty(item.reorder_quantity)} = {formatReorderValue(item.reorder_value)}
-              </dd>
-            </div>
-            {/* Expected revenue/profit — Request #203: uses real selling_price from backend. */}
-            {item.selling_price != null &&
-              item.cogs_per_unit != null &&
-              item.reorder_quantity > 0 &&
-              (() => {
-                const profit = item.reorder_quantity * (item.selling_price - item.cogs_per_unit)
-                return (
-                  <>
-                    <div className="flex justify-between pt-2 border-t">
-                      <dt className="text-gray-600">Ожид. выручка</dt>
-                      <dd className="font-medium">
-                        {formatReorderValue(item.reorder_quantity * item.selling_price)}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-gray-600">Ожид. прибыль</dt>
-                      <dd
-                        className={cn(
-                          'font-medium',
-                          profit >= 0 ? 'text-green-600' : 'text-red-600'
-                        )}
-                      >
-                        {formatReorderValue(profit)}
-                      </dd>
-                    </div>
-                  </>
-                )
-              })()}
-          </dl>
-        ) : (
-          <div className="flex items-center gap-2 text-gray-400">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center gap-1">
-                    — Себестоимость не указана
-                    <CircleHelp className="h-3 w-3" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Укажите себестоимость для расчёта маржи</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <Link
-              href={`${ROUTES.COGS.ROOT}?sku=${item.sku_id}`}
-              className="text-blue-600 hover:underline text-sm ml-2"
-            >
-              Указать COGS
-            </Link>
-          </div>
-        )}
-      </section>
+      <SupplyDetailCostAnalysis item={item} />
     </div>
   )
 }

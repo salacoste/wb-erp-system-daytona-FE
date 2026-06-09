@@ -1,20 +1,20 @@
 /**
  * ExpenseMetricCard - Base expense card for Story 62.5-FE
  * Inverted comparison: decrease = positive (green), increase = negative (red)
+ * Sub-components: ExpenseMetricCardStates (skeleton, error)
  * @see docs/stories/epic-62/story-62.5-fe-expense-metrics-cards.md
  */
 
 'use client'
 
-import { Info, RefreshCw } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { TrendIndicator } from '@/components/custom/TrendIndicator'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
+import { ExpenseCardSkeleton, ExpenseCardError } from './ExpenseMetricCardStates'
 
 export interface ExpenseMetricCardProps {
   title: string
@@ -30,63 +30,12 @@ export interface ExpenseMetricCardProps {
   onRetry?: () => void
 }
 
-interface SkeletonProps {
-  className?: string
-}
-
-interface ErrorProps {
-  title: string
-  icon: React.ComponentType<{ className?: string }>
-  error: Error
-  onRetry?: () => void
-  className?: string
-}
-
 function calculateRevenuePercentage(
   expense: number | null | undefined,
   revenue: number | null | undefined
 ): string | null {
   if (expense == null || revenue == null || revenue === 0) return null
   return formatPercentage((expense / revenue) * 100)
-}
-
-/** Skeleton loading state */
-function ExpenseCardSkeleton({ className }: SkeletonProps): React.ReactElement {
-  return (
-    <Card className={className} data-testid="expense-card-skeleton" aria-busy="true">
-      <CardContent className="p-3">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4 rounded" />
-          <Skeleton className="h-4 w-24" />
-        </div>
-        <Skeleton className="mt-1 h-7 w-32" />
-        <Skeleton className="mt-1 h-3 w-28" />
-        <Skeleton className="mt-1 h-3 w-20" />
-      </CardContent>
-    </Card>
-  )
-}
-
-/** Error state with retry */
-function ExpenseCardError({ title, icon: Icon, error, onRetry, className }: ErrorProps) {
-  return (
-    <Card className={className} data-testid="expense-card-error" role="alert">
-      <CardContent className="p-3">
-        <div className="flex items-center gap-2">
-          <Icon className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium text-muted-foreground">{title}</span>
-        </div>
-        <div className="mt-2 text-sm text-destructive">Ошибка загрузки данных</div>
-        <p className="mt-1 text-xs text-muted-foreground">{error.message}</p>
-        {onRetry && (
-          <Button variant="ghost" size="sm" onClick={onRetry} className="mt-2">
-            <RefreshCw className="mr-1 h-3 w-3" />
-            Повторить
-          </Button>
-        )}
-      </CardContent>
-    </Card>
-  )
 }
 
 /** Base expense metric card - used by Advertising, Logistics, Storage cards */

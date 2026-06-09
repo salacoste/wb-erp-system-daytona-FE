@@ -2,6 +2,7 @@
  * Buyout Summary Widget
  * Epic 69: Progress bar with buyout/return rates + top decliners
  * Story 127.4-FE: Added comparison period delta indicators
+ * Sub-components: BuyoutDeclinersList
  */
 
 'use client'
@@ -10,13 +11,14 @@ import { useBuyoutSummary } from '@/hooks/use-buyout-analytics'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, TrendingDown } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { SourceBadge } from '@/components/custom/badges/SourceBadge'
-import { formatPercentage, formatPercentageInt } from '@/lib/utils'
+import { formatPercentage } from '@/lib/utils'
 import type { BuyoutSource, BuyoutSummaryResponse } from '@/types/analytics-buyout'
 import type { ReturnBreakdown } from '@/types/fulfillment'
 import { calculateBuyoutDelta } from './buyout-comparison-utils'
 import { DeltaTag, ReturnBreakdownBar } from './BuyoutSummarySubComponents'
+import { BuyoutDeclinersList } from './BuyoutDeclinersList'
 
 interface BuyoutSummaryWidgetProps {
   from: string
@@ -156,31 +158,7 @@ export function BuyoutSummaryWidget({
           <ReturnBreakdownBar breakdown={returnBreakdown} />
         )}
 
-        {decliners.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-1 text-sm font-medium text-red-600">
-              <TrendingDown className="h-4 w-4" />
-              Снижение выкупа
-            </div>
-            <div className="space-y-1">
-              {decliners.map(d => (
-                <div
-                  key={d.nmId}
-                  className="flex items-center justify-between text-sm text-muted-foreground"
-                >
-                  <span className="font-mono text-xs">#{d.nmId}</span>
-                  <span>
-                    {d.buyoutRatePct != null ? formatPercentageInt(d.buyoutRatePct) : '—'}
-                    <span className="text-red-500 ml-1">
-                      ({d.trendDelta < 0 ? '' : '+'}
-                      {d.trendDelta.toFixed(0)} п.п.)
-                    </span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <BuyoutDeclinersList decliners={decliners} />
       </CardContent>
     </Card>
   )

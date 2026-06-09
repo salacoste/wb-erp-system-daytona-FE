@@ -1,6 +1,16 @@
 'use client'
 
-import { TrendingUp, Trophy, List } from 'lucide-react'
+/**
+ * Storage Analytics Page
+ * Story 24.2-FE: Storage Analytics Page Layout
+ * Story 24.9-FE: Multi-select Brand & Warehouse Filters
+ * Story 24.10-FE: Chart Click-to-Filter Interaction
+ * Epic 24: Paid Storage Analytics (Frontend)
+ *
+ * Sub-components: StoragePageTableSection (top consumers + SKU table)
+ */
+
+import { TrendingUp } from 'lucide-react'
 import { StorageNoDataContent } from './components/StoragePageContent'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -8,11 +18,10 @@ import { useStoragePageState } from './components/useStoragePageState'
 import { StoragePageHeader } from './components/StoragePageHeader'
 import { StorageFilters } from './components/StorageFilters'
 import { StorageSummaryCards } from './components/StorageSummaryCards'
-import { StorageBySkuTable } from './components/StorageBySkuTable'
-import { TopConsumersWidget } from './components/TopConsumersWidget'
 import { StorageTrendsChart } from './components/StorageTrendsChart'
 import { StorageAlertBanner } from './components/StorageAlertBanner'
 import { WeekFilterBadge } from './components/WeekFilterBadge'
+import { StoragePageTableSection } from './components/StoragePageTableSection'
 import { logger } from '@/lib/logger'
 
 /**
@@ -146,43 +155,13 @@ export default function StorageAnalyticsPage() {
         </CardContent>
       </Card>
 
-      {/* Top Consumers Section - Story 24.4-fe */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-muted-foreground" />
-            Топ-5 по расходам на хранение
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <TopConsumersWidget
-              data={topConsumersData?.top_consumers ?? []}
-              isLoading={isLoadingTopConsumers}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Storage by SKU Table - Story 24.3-fe */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <List className="h-5 w-5 text-muted-foreground" />
-            Все товары
-            {bySkuData?.pagination?.total && (
-              <span className="text-sm font-normal text-muted-foreground">
-                ({bySkuData.pagination.total})
-              </span>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <StorageBySkuTable data={bySkuData?.data ?? []} isLoading={isLoadingBySku} />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Top Consumers + Storage by SKU Tables */}
+      <StoragePageTableSection
+        bySkuData={bySkuData}
+        topConsumers={topConsumersData?.top_consumers}
+        isLoadingBySku={isLoadingBySku}
+        isLoadingTopConsumers={isLoadingTopConsumers}
+      />
     </div>
   )
 }
