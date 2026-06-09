@@ -10,24 +10,15 @@ import { useTelegramBinding } from '@/hooks/useTelegramBinding'
 import { TelegramMetrics } from '@/lib/analytics/telegram-metrics'
 import { toast } from 'sonner'
 import { logger } from '@/lib/logger'
+import {
+  BINDING_CODE_TTL_SECONDS,
+  formatTime,
+  getProgressColor,
+  getPollingMessage,
+} from './useTelegramBindingModal.helpers'
 
-// ============================================================================
-// Constants
-// ============================================================================
-
-/**
- * Binding code expiration time in seconds (10 minutes)
- * Must match backend TTL configuration
- */
-export const BINDING_CODE_TTL_SECONDS = 600
-
-/**
- * Telegram bot username for binding instructions
- * Configured via NEXT_PUBLIC_TELEGRAM_BOT_USERNAME env var
- * Fallback to hardcoded bot for development
- */
-export const TELEGRAM_BOT_USERNAME =
-  process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'Kernel_crypto_bot'
+// Re-export for backward compatibility
+export { BINDING_CODE_TTL_SECONDS, TELEGRAM_BOT_USERNAME } from './useTelegramBindingModal.helpers'
 
 // ============================================================================
 // Hook
@@ -136,24 +127,6 @@ export function useTelegramBindingModal({ open, onSuccess }: UseTelegramBindingM
   const pollingDuration = Math.floor((Date.now() - pollingStartTime) / 1000)
   const progress = (timeRemaining / BINDING_CODE_TTL_SECONDS) * 100
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
-
-  const getProgressColor = () => {
-    if (timeRemaining > 120) return 'bg-[#0088CC]'
-    if (timeRemaining > 30) return 'bg-orange-500'
-    return 'bg-red-500'
-  }
-
-  const getPollingMessage = () => {
-    if (pollingDuration <= 5) return 'Ожидаем подтверждения...'
-    if (pollingDuration <= 60) return 'Всё ещё ожидаем... Проверьте Telegram.'
-    return 'Подтверждение занимает дольше обычного. Убедитесь, что вы отправили команду боту.'
-  }
-
   const handleCopyCode = async () => {
     if (!bindingCode) return
     try {
@@ -176,8 +149,8 @@ export function useTelegramBindingModal({ open, onSuccess }: UseTelegramBindingM
     timeRemaining,
     progress,
     formatTime,
-    getProgressColor,
-    getPollingMessage,
+    getProgressColor: () => getProgressColor(timeRemaining),
+    getPollingMessage: () => getPollingMessage(pollingDuration),
     handleCopyCode,
     handleOpenTelegram,
   }

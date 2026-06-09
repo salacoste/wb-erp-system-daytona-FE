@@ -16,6 +16,7 @@ import type { OrderStatus } from '@/lib/orders-status-config'
 import { StatusPieChart } from './StatusPieChart'
 import { StatusStackedBar } from './StatusStackedBar'
 import { StatusLegend } from './StatusLegend'
+import { ViewToggleButton } from './ViewToggleButton'
 
 export interface OrdersStatusBreakdownProps {
   /** Additional CSS classes */
@@ -150,33 +151,5 @@ export function OrdersStatusBreakdown({ className, height = 200 }: OrdersStatusB
         />
       </CardContent>
     </Card>
-  )
-}
-
-interface ViewToggleButtonProps {
-  active: boolean
-  onClick: () => void
-  label: string
-  icon: React.ReactNode
-  isLast?: boolean
-}
-
-function ViewToggleButton({ active, onClick, label, icon, isLast }: ViewToggleButtonProps) {
-  return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={active}
-      onClick={onClick}
-      className={cn(
-        'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors',
-        isLast ? 'rounded-r-md' : 'rounded-l-md',
-        !isLast && '-mr-px',
-        active ? 'bg-[#E53935] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
-      )}
-    >
-      {icon}
-      <span className="sr-only md:not-sr-only">{label}</span>
-    </button>
   )
 }

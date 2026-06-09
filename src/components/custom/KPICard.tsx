@@ -9,9 +9,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { TrendingUp, TrendingDown, Minus, HelpCircle } from 'lucide-react'
-import { cn, formatPercentage } from '@/lib/utils'
+import { HelpCircle } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type { TrendDirection } from '@/types/analytics'
+import { formatValue, getTrendIcon, getTrendColor } from './KPICard.helpers'
 
 /**
  * Value format type for KPI display
@@ -40,65 +41,6 @@ export interface KPICardProps {
   icon?: React.ReactNode
   /** Additional CSS classes */
   className?: string
-}
-
-/**
- * Format value based on format type
- */
-function formatValue(value: number | null | undefined, format: KPIFormat): string {
-  if (value === null || value === undefined) {
-    return '—'
-  }
-
-  switch (format) {
-    case 'currency':
-      return new Intl.NumberFormat('ru-RU', {
-        style: 'currency',
-        currency: 'RUB',
-        maximumFractionDigits: 0,
-      }).format(value)
-
-    case 'percent':
-      return formatPercentage(value, 1)
-
-    case 'number':
-      return new Intl.NumberFormat('ru-RU').format(value)
-
-    default:
-      return String(value)
-  }
-}
-
-/**
- * Get trend icon component
- */
-function getTrendIcon(trend: TrendDirection | undefined) {
-  switch (trend) {
-    case 'up':
-      return <TrendingUp className="h-4 w-4" />
-    case 'down':
-      return <TrendingDown className="h-4 w-4" />
-    case 'stable':
-      return <Minus className="h-4 w-4" />
-    default:
-      return null
-  }
-}
-
-/**
- * Get trend color class
- */
-function getTrendColor(trend: TrendDirection | undefined): string {
-  switch (trend) {
-    case 'up':
-      return 'text-green-600'
-    case 'down':
-      return 'text-red-600'
-    case 'stable':
-      return 'text-gray-400'
-    default:
-      return ''
-  }
 }
 
 /**

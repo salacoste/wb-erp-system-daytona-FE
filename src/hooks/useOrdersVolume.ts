@@ -17,9 +17,9 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
-import { getISOWeek, getISOWeekYear, subMonths, format } from 'date-fns'
 import { getOrdersVolume, transformToMetrics, ordersVolumeQueryKeys } from '@/lib/api/orders-volume'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
+import { getPreviousWeek, getPreviousMonth } from './useOrdersVolume.helpers'
 import type { OrdersVolumeParams, OrdersVolumeMetrics } from '@/types/orders-volume'
 
 // Re-export query keys for external use
@@ -125,58 +125,4 @@ export function useOrdersVolumeWithComparison(options: UseOrdersVolumeOptions) {
     isError: currentQuery.isError || previousQuery.isError,
     error: currentQuery.error || previousQuery.error,
   }
-}
-
-// =============================================================================
-// Helper Functions
-// =============================================================================
-
-/**
- * Get previous ISO week string
- * Handles year boundary: "2026-W01" -> "2025-W52"
- *
- * @param week - ISO week string (YYYY-Www)
- * @returns Previous week in ISO format
- */
-function getPreviousWeek(week: string): string {
-  const match = week.match(/^(\d{4})-W(\d{2})$/)
-  if (!match) return week
-
-  const [, yearStr, weekStr] = match
-  const year = parseInt(yearStr, 10)
-  const weekNum = parseInt(weekStr, 10)
-
-  // If week number is 1, we need to go to previous year's last week
-  if (weekNum === 1) {
-    // Go to last week of previous year
-    const lastYearDec = new Date(year - 1, 11, 28) // Dec 28 is always in last week
-    const lastWeek = getISOWeek(lastYearDec)
-    const lastWeekYear = getISOWeekYear(lastYearDec)
-    return `${lastWeekYear}-W${lastWeek.toString().padStart(2, '0')}`
-  }
-
-  // Simple case: just decrement week number
-  return `${year}-W${(weekNum - 1).toString().padStart(2, '0')}`
-}
-
-/**
- * Get previous month string
- * Handles year boundary: "2026-01" -> "2025-12"
- *
- * @param month - Month string (YYYY-MM)
- * @returns Previous month in YYYY-MM format
- */
-function getPreviousMonth(month: string): string {
-  const match = month.match(/^(\d{4})-(\d{2})$/)
-  if (!match) return month
-
-  const [, yearStr, monthStr] = match
-  const year = parseInt(yearStr, 10)
-  const monthNum = parseInt(monthStr, 10)
-
-  // Create a date and subtract 1 month
-  const date = new Date(year, monthNum - 1, 1)
-  const prevDate = subMonths(date, 1)
-
-  return format(prevDate, 'yyyy-MM')
 }
