@@ -44,7 +44,7 @@ export function UnitEconomicsSummaryCards({
       ? 'text-green-600'
       : summary.avg_net_margin_pct != null && summary.avg_net_margin_pct < 10
         ? 'text-red-600'
-        : 'text-gray-900'
+        : 'text-foreground'
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

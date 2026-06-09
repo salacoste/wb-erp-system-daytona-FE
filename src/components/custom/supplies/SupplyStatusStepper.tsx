@@ -85,7 +85,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                       className={cn(
                         'h-3 w-3 rounded-full',
                         isCurrent && 'bg-white',
-                        isFuture && 'bg-gray-300'
+                        isFuture && 'bg-muted'
                       )}
                     />
                   )}
@@ -97,7 +97,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                     'mt-2 text-sm font-medium',
                     isComplete && 'text-green-600',
                     isCurrent && 'text-primary',
-                    isFuture && 'text-gray-400'
+                    isFuture && 'text-muted-foreground'
                   )}
                   aria-current={isCurrent ? 'step' : undefined}
                 >

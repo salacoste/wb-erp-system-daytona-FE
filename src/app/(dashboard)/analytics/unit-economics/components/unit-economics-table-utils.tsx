@@ -23,13 +23,13 @@ export function MarginIndicator({ value }: { value: number | null }) {
   if (value != null && value < 10) {
     return <TrendingDown className="h-4 w-4 text-red-500" />
   }
-  return <Minus className="h-4 w-4 text-gray-400" />
+  return <Minus className="h-4 w-4 text-muted-foreground" />
 }
 
 /** Sort icon for column headers. Active column shows direction; inactive is gray. */
 export function getSortIcon(field: string, sortBy: string, sortOrder: 'asc' | 'desc') {
   if (sortBy !== field) {
-    return <ArrowUpDown className="ml-2 h-4 w-4 text-gray-400" />
+    return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
   }
   const Icon = sortOrder === 'asc' ? ArrowUp : ArrowDown
   return <Icon className={cn('ml-2 h-4 w-4', 'text-blue-500')} />
@@ -53,7 +53,7 @@ export function CostCell({
         className={cn(
           value != null && value > highThreshold && 'text-red-600 font-medium',
           value != null && value > med && value <= highThreshold && 'text-orange-600',
-          (value == null || value <= med) && 'text-gray-700'
+          (value == null || value <= med) && 'text-muted-foreground'
         )}
       >
         {formatPercentage(value)}
