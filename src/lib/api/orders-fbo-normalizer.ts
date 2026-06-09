@@ -1,44 +1,21 @@
 /**
- * FBO Orders & Sales Boundary Normalizer
+ * FBO Orders Boundary Normalizer
  *
- * Normalizes responses from FBO order and sales endpoints.
- * Uses shared normalizer-helpers for AP#8-safe coercion.
+ * Normalizes responses from FBO order endpoints.
+ * Sales normalizers extracted to fbo-sales-normalizer.ts for 200-line compliance.
  */
 
 import { asRecord, toCount, toNullableNumber, toStr, toOptionalString } from './normalizer-helpers'
+import { normalizeDateRange, normalizePagination } from './fbo-sales-normalizer'
 import type {
   OrderFboItem,
   OrderFboDetail,
   FboOrdersListResponse,
-  FboOrdersPagination,
   FboOrdersAggregateResponse,
   FboOrdersSyncStatusResponse,
   FboOrdersSyncTriggerResponse,
   FboOrdersBackfillResponse,
-  SaleFboItem,
-  SalesFboListResponse,
-  SalesFboAggregateResponse,
-  FboAggregateDateRange,
 } from '@/types/orders-fbo'
-
-// --- Scalar helpers ---
-
-function normalizeDateRange(raw: unknown): FboAggregateDateRange {
-  const r = asRecord(raw)
-  return {
-    from: typeof r.from === 'string' ? r.from : null,
-    to: typeof r.to === 'string' ? r.to : null,
-  }
-}
-
-function normalizePagination(raw: unknown): FboOrdersPagination {
-  const p = asRecord(raw)
-  return {
-    total: toCount(p.total),
-    limit: toCount(p.limit),
-    offset: toCount(p.offset),
-  }
-}
 
 // --- Item normalizers ---
 
@@ -75,27 +52,6 @@ export function normalizeFboOrderDetail(raw: unknown): OrderFboDetail {
     ...item,
     deliveryDate: typeof r.deliveryDate === 'string' ? r.deliveryDate : null,
     countryName: typeof r.countryName === 'string' ? r.countryName : null,
-  }
-}
-
-export function normalizeSaleFboItem(raw: unknown): SaleFboItem {
-  const r = asRecord(raw)
-  return {
-    id: toStr(r.id),
-    srid: toStr(r.srid),
-    odid: toCount(r.odid),
-    nmId: toCount(r.nmId),
-    supplierArticle: toStr(r.supplierArticle),
-    brand: toStr(r.brand),
-    subject: toStr(r.subject),
-    category: toOptionalString(r.category) ?? null,
-    finishedPrice: toCount(r.finishedPrice),
-    forPay: toCount(r.forPay),
-    isStorno: r.isStorno === true,
-    saleDate: toStr(r.saleDate),
-    warehouseName: toStr(r.warehouseName),
-    regionName: typeof r.regionName === 'string' ? r.regionName : null,
-    createdAt: toStr(r.createdAt),
   }
 }
 
@@ -150,31 +106,5 @@ export function normalizeFboBackfillResponse(raw: unknown): FboOrdersBackfillRes
   return {
     jobId: toStr(r.jobId),
     message: toStr(r.message),
-  }
-}
-
-export function normalizeSalesFboListResponse(raw: unknown): SalesFboListResponse {
-  const r = asRecord(raw)
-  const rawItems = Array.isArray(r.data) ? r.data : Array.isArray(r.items) ? r.items : []
-  const rawPagination = asRecord(r.meta)
-  return {
-    items: rawItems.map(normalizeSaleFboItem),
-    pagination: normalizePagination(
-      Object.keys(rawPagination).length > 0 ? rawPagination : r.pagination
-    ),
-  }
-}
-
-export function normalizeSalesFboAggregateResponse(raw: unknown): SalesFboAggregateResponse {
-  const r = asRecord(raw)
-  return {
-    count: toCount(r.count),
-    totalFinishedPrice: toCount(r.totalFinishedPrice),
-    totalForPay: toCount(r.totalForPay),
-    returnsCount: toCount(r.returnsCount),
-    returnsRevenue: toNullableNumber(r.returnsRevenue),
-    returnRate: toNullableNumber(r.returnRate),
-    avgSaleValue: toNullableNumber(r.avgSaleValue),
-    dateRange: normalizeDateRange(r.dateRange),
   }
 }

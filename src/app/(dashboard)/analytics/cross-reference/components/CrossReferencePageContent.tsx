@@ -13,10 +13,6 @@ import { RequireJam } from '@/components/custom/jam/RequireJam'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
 import { exportCrossReferenceToCsv } from '@/lib/csv/cross-reference-csv-export'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Skeleton } from '@/components/ui/skeleton'
-import { AlertCircle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { useSearchOrders } from '@/hooks/use-search-analytics'
 import { useAdvertisingAnalytics } from '@/hooks/advertising/hooks'
 import {
@@ -31,8 +27,8 @@ import { OrganicVsAdScatter } from './OrganicVsAdScatter'
 import { AdOrganicOverlapTable } from './AdOrganicOverlapTable'
 import { PositionSpendChart } from './PositionSpendChart'
 import { CannibalizationAnalysis } from './CannibalizationAnalysis'
+import { LoadingSkeleton, ErrorState, EmptyState } from './CrossReferenceStates'
 import type { DateRange } from '@/types/date-range'
-import { logger } from '@/lib/logger'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -130,42 +126,5 @@ export function CrossReferencePageContent() {
         )}
       </RequireJam>
     </div>
-  )
-}
-
-function LoadingSkeleton() {
-  return (
-    <div className="space-y-4" role="status" aria-busy="true">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-24" />
-        ))}
-      </div>
-      <Skeleton className="h-96 w-full" />
-    </div>
-  )
-}
-
-function ErrorState({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
-  if (error) logger.error('[CrossReference] Load error:', error)
-  return (
-    <Alert variant="destructive">
-      <AlertCircle className="h-4 w-4" />
-      <AlertDescription className="flex items-center justify-between">
-        <span>{'Не удалось загрузить данные. Попробуйте снова.'}</span>
-        <Button variant="outline" size="sm" onClick={onRetry} className="ml-4 shrink-0">
-          <RefreshCw className="h-3.5 w-3.5 mr-1" /> Повторить
-        </Button>
-      </AlertDescription>
-    </Alert>
-  )
-}
-
-function EmptyState() {
-  return (
-    <Alert>
-      <AlertCircle className="h-4 w-4" />
-      <AlertDescription>Нет данных за выбранный период</AlertDescription>
-    </Alert>
   )
 }

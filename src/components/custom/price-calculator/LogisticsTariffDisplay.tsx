@@ -1,17 +1,15 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
 import { Truck, RotateCcw, Info } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FieldTooltip } from './FieldTooltip'
 import { TariffBreakdown } from './TariffBreakdown'
 import { cn } from '@/lib/utils'
-import { calculateLogisticsTariff, DEFAULT_BOX_TARIFFS, type BoxDeliveryTariffs } from '@/lib/logistics-tariff'
+import { DisplayAutoFillBadge, useLogisticsTariffState } from './DisplayAutoFillBadge'
 
 export interface LogisticsTariffDisplayProps {
   /** Volume in liters from Story 44.7 */
@@ -32,17 +30,6 @@ export interface LogisticsTariffDisplayProps {
   isLoading?: boolean
 }
 
-/** Auto-fill badge indicator for LogisticsTariffDisplay */
-function DisplayAutoFillBadge({ source }: { source: 'auto' | 'manual' }) {
-  return (
-    <Badge variant="outline" className={cn('text-xs',
-      source === 'auto' ? 'bg-green-50 text-green-700 border-green-300' : 'bg-gray-50 text-gray-600'
-    )}>
-      {source === 'auto' ? 'Рассчитано' : 'Вручную'}
-    </Badge>
-  )
-}
-
 /**
  * Logistics tariff display with auto-calculation
  * Story 44.8-FE: Logistics Tariff Calculation
@@ -57,52 +44,21 @@ export function LogisticsTariffDisplay({
   disabled = false,
   isLoading = false,
 }: LogisticsTariffDisplayProps) {
-  const [autoCalculate, setAutoCalculate] = useState(true)
-  // Internal state for manual input - allows controlled input to work in tests
-  const [inputValue, setInputValue] = useState<string>(String(value || ''))
-
-  // Sync inputValue when value prop changes (from parent or restore)
-  useEffect(() => {
-    setInputValue(String(value || ''))
-  }, [value])
-
-  // Build effective tariffs
-  const effectiveTariffs: BoxDeliveryTariffs = useMemo(() => ({
-    baseLiterRub: warehouseTariffs?.baseLiterRub ?? DEFAULT_BOX_TARIFFS.baseLiterRub,
-    additionalLiterRub: warehouseTariffs?.additionalLiterRub ?? DEFAULT_BOX_TARIFFS.additionalLiterRub,
-    coefficient: coefficient > 0 ? coefficient : 1.0,
-  }), [warehouseTariffs, coefficient])
-
-  // Calculate logistics cost
-  const result = useMemo(
-    () => calculateLogisticsTariff(volumeLiters, effectiveTariffs),
-    [volumeLiters, effectiveTariffs]
-  )
-
-  // Auto-update form value when auto-calculate enabled
-  const calculatedValue = result.totalCost
-  // When auto-calculate is on, show "Рассчитано"; otherwise show "Вручную"
-  const isManualOverride = !autoCalculate
-
-  const handleAutoCalculateChange = (enabled: boolean) => {
-    setAutoCalculate(enabled)
-    if (enabled) {
-      onChange(calculatedValue)
-    }
-  }
-
-  const handleRestore = () => {
-    onChange(calculatedValue)
-    setAutoCalculate(true)
-  }
-
-  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value
-    setInputValue(rawValue)
-    const newValue = parseFloat(rawValue) || 0
-    onChange(newValue)
-    setAutoCalculate(false)
-  }
+  const {
+    autoCalculate,
+    inputValue,
+    result,
+    isManualOverride,
+    handleAutoCalculateChange,
+    handleRestore,
+    handleManualChange,
+  } = useLogisticsTariffState({
+    volumeLiters,
+    coefficient,
+    value,
+    onChange,
+    warehouseTariffs,
+  })
 
   return (
     <div className="bg-cyan-50 rounded-lg p-4 border-l-4 border-l-cyan-400 space-y-4">
@@ -126,7 +82,9 @@ export function LogisticsTariffDisplay({
 
       {/* Auto-calculate toggle */}
       <div className="flex items-center justify-between">
-        <Label htmlFor="auto-calc-logistics" className="text-sm">Рассчитать автоматически</Label>
+        <Label htmlFor="auto-calc-logistics" className="text-sm">
+          Рассчитать автоматически
+        </Label>
         <Switch
           id="auto-calc-logistics"
           checked={autoCalculate}
@@ -138,7 +96,9 @@ export function LogisticsTariffDisplay({
       {/* Input field with badge */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="logistics_forward_calc" className="text-sm">Стоимость, ₽</Label>
+          <Label htmlFor="logistics_forward_calc" className="text-sm">
+            Стоимость, ₽
+          </Label>
           <DisplayAutoFillBadge source={isManualOverride ? 'manual' : 'auto'} />
         </div>
         <div className="flex gap-2">
@@ -169,7 +129,7 @@ export function LogisticsTariffDisplay({
         </div>
         {/* Screen reader announcement for calculated result */}
         <div aria-live="polite" className="sr-only">
-          Рассчитанное значение логистики: {calculatedValue.toFixed(2)} рублей
+          Рассчитанное значение логистики: {result.totalCost.toFixed(2)} рублей
         </div>
       </div>
 

@@ -65,7 +65,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content Area - занимает оставшееся место */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top Navbar */}
-        <div className="flex items-center gap-4 border-b bg-white px-4 py-4 lg:px-6">
+        <div className="flex items-center gap-4 border-b bg-card px-4 py-4 lg:px-6">
           {/* Mobile Menu Button and Sheet */}
           <MobileSidebarSheet open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
@@ -75,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <TokenHealthBanner />
 
         {/* Page Content - overscroll-contain prevents elastic scrolling artifacts */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-y-contain">
+        <main className="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">
           <div className="p-4 lg:p-6">{children}</div>
         </main>
       </div>

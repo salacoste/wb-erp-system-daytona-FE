@@ -11,79 +11,20 @@ import { toast } from 'sonner'
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { ApiError } from '@/types/api'
 import { useTariffRateLimitStore } from '@/stores/tariffRateLimitStore'
+import {
+  parseValidationErrors,
+  getRetryAfterSeconds,
+  formatRetryTime,
+} from './tariff-error-helpers'
+import type { TariffValidationError } from './tariff-error-helpers'
 
-export interface TariffValidationError {
-  field: string
-  message: string
-}
+export type { TariffValidationError } from './tariff-error-helpers'
 
 export interface TariffErrorResult {
   type: 'validation' | 'permission' | 'conflict' | 'rate_limit' | 'network'
   message: string
   errors?: TariffValidationError[]
   retryAfterSeconds?: number
-}
-
-/**
- * Parse validation errors from 400 response
- */
-function parseValidationErrors(data: unknown): TariffValidationError[] {
-  if (!data || typeof data !== 'object') return []
-
-  const errorData = data as Record<string, unknown>
-  const errors: TariffValidationError[] = []
-
-  // Handle { errors: [...] } format
-  if (Array.isArray(errorData.errors)) {
-    for (const err of errorData.errors) {
-      if (typeof err === 'object' && err !== null) {
-        const errObj = err as Record<string, unknown>
-        errors.push({
-          field: String(errObj.field || 'unknown'),
-          message: String(errObj.message || 'Ошибка валидации'),
-        })
-      }
-    }
-  }
-
-  // Handle { field: 'message' } format
-  for (const [key, value] of Object.entries(errorData)) {
-    if (key !== 'errors' && key !== 'message' && key !== 'statusCode') {
-      errors.push({
-        field: key,
-        message: String(value),
-      })
-    }
-  }
-
-  return errors
-}
-
-/**
- * Calculate retry time from headers or error data
- */
-function getRetryAfterSeconds(error: ApiError): number {
-  // Try to get from error data
-  if (error.data && typeof error.data === 'object') {
-    const data = error.data as Record<string, unknown>
-    if (typeof data.retryAfter === 'number') {
-      return data.retryAfter
-    }
-  }
-
-  // Default to 60 seconds (rate limit window)
-  return 60
-}
-
-/**
- * Format seconds to human-readable time
- */
-function formatRetryTime(seconds: number): string {
-  if (seconds < 60) {
-    return `${seconds} сек.`
-  }
-  const minutes = Math.ceil(seconds / 60)
-  return `${minutes} мин.`
 }
 
 /**
@@ -108,9 +49,10 @@ export function handleTariffApiError(
     // 400 Bad Request - Validation errors
     case 400: {
       const errors = parseValidationErrors(error.data)
-      const message = errors.length > 0
-        ? errors.map((e) => e.message).join(', ')
-        : error.message || 'Ошибка валидации данных'
+      const message =
+        errors.length > 0
+          ? errors.map(e => e.message).join(', ')
+          : error.message || 'Ошибка валидации данных'
 
       toast.error(message)
       return { type: 'validation', message, errors }
@@ -145,9 +87,7 @@ export function handleTariffApiError(
       // Update rate limit store
       useTariffRateLimitStore.getState().reset()
 
-      toast.error(
-        `Превышен лимит запросов. Попробуйте через ${formattedTime}`
-      )
+      toast.error(`Превышен лимит запросов. Попробуйте через ${formattedTime}`)
 
       return {
         type: 'rate_limit',

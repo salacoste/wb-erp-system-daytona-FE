@@ -3,14 +3,14 @@
 // Epic 34-FE: Story 34.4-FE
 // ============================================================================
 
-import { useState, useEffect } from 'react'
+'use client'
+
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
-import { useQuietHours } from '@/hooks/useQuietHours'
 import { cn } from '@/lib/utils'
 import { QuietHoursTimePickers } from './QuietHoursTimePickers'
 import { QuietHoursScheduleDisplay } from './QuietHoursScheduleDisplay'
-import type { UpdatePreferencesRequestDto } from '@/types/notifications'
+import { useQuietHoursPanel } from './useQuietHoursPanel'
 
 interface QuietHoursPanelProps {
   disabled?: boolean // Disable when Telegram not bound
@@ -29,72 +29,15 @@ interface QuietHoursPanelProps {
  * Ref: UX-ANSWERS-EPIC-34-FE.md Q11-Q15
  */
 export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
-  const { quietHours, updateQuietHours, isUpdating, isQuietHoursActive } = useQuietHours()
-
-  // Local state for optimistic updates
-  const [localQuietHours, setLocalQuietHours] =
-    useState<UpdatePreferencesRequestDto['quiet_hours']>(quietHours)
-
-  // Current time preview state
-  const [currentTime, setCurrentTime] = useState('')
-
-  // Sync with fetched quiet hours
-  useEffect(() => {
-    if (quietHours) {
-      setLocalQuietHours(quietHours)
-    }
-  }, [quietHours])
-
-  // Update current time preview every 60 seconds
-  // Ref: Story 34.4-FE AC#3
-  useEffect(() => {
-    if (!localQuietHours?.timezone) return
-
-    const updateTime = () => {
-      const formatter = new Intl.DateTimeFormat('ru-RU', {
-        timeZone: localQuietHours.timezone,
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      })
-      setCurrentTime(formatter.format(new Date()))
-    }
-
-    updateTime()
-    const interval = setInterval(updateTime, 60000)
-
-    return () => clearInterval(interval)
-  }, [localQuietHours?.timezone])
-
-  /** Toggle quiet hours enabled */
-  const toggleEnabled = () => {
-    const updated = {
-      ...localQuietHours,
-      enabled: !localQuietHours?.enabled,
-    }
-    setLocalQuietHours(updated)
-    updateQuietHours(updated)
-  }
-
-  /** Update time range (from or to) */
-  const updateTimeRange = (field: 'from' | 'to', value: string) => {
-    const updated = {
-      ...localQuietHours,
-      [field]: value,
-    }
-    setLocalQuietHours(updated)
-    updateQuietHours(updated)
-  }
-
-  /** Update timezone */
-  const updateTimezone = (timezone: string) => {
-    const updated = {
-      ...localQuietHours,
-      timezone,
-    }
-    setLocalQuietHours(updated)
-    updateQuietHours(updated)
-  }
+  const {
+    localQuietHours,
+    currentTime,
+    isUpdating,
+    isQuietHoursActive,
+    toggleEnabled,
+    updateTimeRange,
+    updateTimezone,
+  } = useQuietHoursPanel(disabled)
 
   // Loading skeleton
   if (!localQuietHours) {

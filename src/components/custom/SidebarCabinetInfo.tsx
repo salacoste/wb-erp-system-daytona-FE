@@ -12,7 +12,7 @@ import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 const JAM_TIER_COLORS: Record<JamTier, string> = {
-  none: 'bg-gray-100 text-gray-600',
+  none: 'bg-muted text-muted-foreground',
   standard: 'bg-blue-100 text-blue-700',
   advanced: 'bg-purple-100 text-purple-700',
   unknown: 'bg-amber-100 text-amber-700', // indicate an unrecognised backend tier
@@ -44,8 +44,8 @@ export function SidebarCabinetInfo() {
       className="block border-b px-4 py-3 transition-colors hover:bg-accent/30"
     >
       {displayName ? (
-        <div className="flex items-center gap-2 text-sm font-medium text-gray-800">
-          <Store className="h-3.5 w-3.5 shrink-0 text-gray-500" />
+        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+          <Store className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           <span className="truncate">{displayName}</span>
           {showWarning && (
             <Tooltip>
@@ -59,11 +59,11 @@ export function SidebarCabinetInfo() {
           )}
         </div>
       ) : (
-        <div className="h-4 w-28 animate-pulse rounded bg-gray-100" />
+        <div className="h-4 w-28 animate-pulse rounded bg-muted" />
       )}
       {showJamBadge ? (
         <div className="mt-1.5 flex items-center gap-1.5">
-          <Sparkles className="h-3 w-3 text-gray-400" />
+          <Sparkles className="h-3 w-3 text-muted-foreground" />
           <span
             className={cn(
               'inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold',

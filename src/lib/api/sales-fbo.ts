@@ -10,7 +10,7 @@ import { logger } from '@/lib/logger'
 import {
   normalizeSalesFboListResponse,
   normalizeSalesFboAggregateResponse,
-} from './orders-fbo-normalizer'
+} from './fbo-sales-normalizer'
 import type { FboOrdersListParams } from '@/types/orders-fbo'
 import type { SalesFboListResponse, SalesFboAggregateResponse } from '@/types/orders-fbo'
 

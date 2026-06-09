@@ -2,22 +2,22 @@
 
 import { useEffect } from 'react'
 import { useProducts } from '@/hooks/useProducts'
-import { Button } from '@/components/ui/button'
 import { Table, TableBody } from '@/components/ui/table'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useMarginPollingStore } from '@/stores/marginPollingStore'
 import { usePendingMarginProducts } from '@/hooks/usePendingMarginProducts'
 import { useManualMarginRecalculation } from '@/hooks/useManualMarginRecalculation'
 import { useColumnWidths } from '@/hooks/useColumnWidths'
-import { AlertCircle } from 'lucide-react'
 import type { ProductListItem } from '@/types/api'
 import { ProductSearchFilter } from './ProductSearchFilter'
-import { ProductEmptyState } from './ProductEmptyState'
-import { ProductLoadingSkeleton } from './ProductLoadingSkeleton'
 import { ProductPagination } from './ProductPagination'
 import { ProductTableRow } from './ProductTableRow'
 import { ProductListTableHeader } from './ProductListTableHeader'
 import { useProductListHandlers } from './useProductListHandlers'
+import {
+  renderProductListState,
+  renderProductEmptyState,
+  MarginUnavailableAlert,
+} from './ProductListStates'
 
 export interface ProductListProps {
   onProductSelect?: (product: ProductListItem) => void
@@ -85,36 +85,18 @@ export function ProductList({
 
   const hasNext = Boolean(data?.pagination?.next_cursor)
 
-  if (isLoading && handlers.isFirstLoad) return <ProductLoadingSkeleton />
-
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          <div className="flex items-center justify-between">
-            <span>{error instanceof Error ? error.message : 'Ошибка загрузки товаров'}</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Повторить
-            </Button>
-          </div>
-        </AlertDescription>
-      </Alert>
-    )
-  }
+  // Early-return for loading/error states
+  const earlyState = renderProductListState({
+    isLoading,
+    isFirstLoad: handlers.isFirstLoad,
+    isError,
+    error,
+    refetch,
+  })
+  if (earlyState) return earlyState
 
   if (!data?.products?.length) {
-    return (
-      <div className="space-y-4">
-        <ProductSearchFilter
-          searchValue={handlers.searchInput}
-          onSearchChange={handlers.handleSearchChange}
-          filterLabel={handlers.filterLabel}
-          onFilterToggle={handlers.handleFilterToggle}
-        />
-        <ProductEmptyState hasSearchQuery={!!handlers.searchInput} />
-      </div>
-    )
+    return renderProductEmptyState(handlers)
   }
 
   return (
@@ -125,16 +107,7 @@ export function ProductList({
         filterLabel={handlers.filterLabel}
         onFilterToggle={handlers.handleFilterToggle}
       />
-      {marginUnavailable && (
-        // Request #190: honest degraded-mode indicator (Defensive Frontend Principle).
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Маржа временно недоступна из-за ошибки сервера — товары показаны без маржи. Откройте
-            карточку товара или вкладку «С себестоимостью», чтобы увидеть маржу.
-          </AlertDescription>
-        </Alert>
-      )}
+      {marginUnavailable && <MarginUnavailableAlert />}
       <div className="rounded-md border overflow-x-auto">
         <Table className="table-fixed" aria-label="Список товаров">
           <caption className="sr-only">Список товаров с себестоимостью и маржинальностью</caption>

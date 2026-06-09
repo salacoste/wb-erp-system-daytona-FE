@@ -6,15 +6,17 @@ import { describe, it, expect } from 'vitest'
 import {
   normalizeFboOrderItem,
   normalizeFboOrderDetail,
-  normalizeSaleFboItem,
   normalizeFboOrdersListResponse,
   normalizeFboOrdersAggregateResponse,
   normalizeFboSyncStatusResponse,
   normalizeFboSyncTriggerResponse,
   normalizeFboBackfillResponse,
+} from '../orders-fbo-normalizer'
+import {
+  normalizeSaleFboItem,
   normalizeSalesFboListResponse,
   normalizeSalesFboAggregateResponse,
-} from '../orders-fbo-normalizer'
+} from '../fbo-sales-normalizer'
 
 // --- normalizeFboOrderItem ---
 
