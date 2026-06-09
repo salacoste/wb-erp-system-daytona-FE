@@ -21,10 +21,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { aggregateFinanceSummaries } from '@/hooks/financial/aggregation'
+import type { FinanceSummary as RealFinanceSummary } from '@/types/finance-summary'
 
-// NOTE: We're testing the aggregateFinanceSummaries function which is currently
-// not exported. Implementation should export it for testing, or we test via
-// useMultiWeekFinancialSummary hook behavior.
+// NOTE: aggregateFinanceSummaries is now exported from @/hooks/financial/aggregation.
+// The local FinanceSummary interface below is used by the standalone fixed-function tests.
 
 // For now, we'll create a standalone function test and also test via hook
 
@@ -472,17 +473,59 @@ describe('useFinancialSummary hook integration (Story 61.2-FE)', () => {
     vi.restoreAllMocks()
   })
 
-  // Placeholder for hook integration tests
-  // These will be added when testing the actual hook implementation
+  it('should calculate gross_profit using Operating Margin formula (payout_total - cogs_total)', () => {
+    const summaries: RealFinanceSummary[] = [
+      {
+        week: '2026-W05',
+        sale_gross_total: 100000,
+        payout_total: 60000,
+        cogs_total: 40000,
+        cogs_coverage_pct: 100,
+        products_total: 100,
+        products_with_cogs: 100,
+        penalties_total: 0,
+      },
+    ]
 
-  it.skip('should fetch data and calculate gross_profit correctly', async () => {
-    // TODO: Implement after hook is updated
-    // This test will verify end-to-end behavior
+    const result = aggregateFinanceSummaries(summaries)
+
+    // Operating Margin: gross_profit = payout_total - cogs_total = 60000 - 40000 = 20000
+    expect(result?.gross_profit).toBe(20000)
+    // margin_pct = gross_profit / sale_gross_total * 100 = 20000 / 100000 * 100 = 20
+    expect(result?.margin_pct).toBe(20)
   })
 
-  it.skip('should use correct formula when aggregating month data', async () => {
-    // TODO: Implement after hook is updated
-    // This test will verify monthly aggregation uses correct formula
+  it('should use correct formula when aggregating multi-week data', () => {
+    const summaries: RealFinanceSummary[] = [
+      {
+        week: '2026-W04',
+        sale_gross_total: 50000,
+        payout_total: 30000,
+        cogs_total: 20000,
+        cogs_coverage_pct: 100,
+        products_total: 100,
+        products_with_cogs: 100,
+        penalties_total: 0,
+      },
+      {
+        week: '2026-W05',
+        sale_gross_total: 50000,
+        payout_total: 30000,
+        cogs_total: 20000,
+        cogs_coverage_pct: 100,
+        products_total: 100,
+        products_with_cogs: 100,
+        penalties_total: 0,
+      },
+    ]
+
+    const result = aggregateFinanceSummaries(summaries)
+
+    // Aggregated: payout_total=60000, cogs_total=40000, sale_gross_total=100000
+    // gross_profit = 60000 - 40000 = 20000
+    expect(result?.gross_profit).toBe(20000)
+    // margin_pct = 20000 / 100000 * 100 = 20
+    expect(result?.margin_pct).toBe(20)
   })
 })
 
