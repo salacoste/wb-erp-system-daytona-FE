@@ -338,8 +338,8 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
 
     // TrendBadge should show gray for zero trend
     const trendBadge = screen.getByText(/Тренд:.*0,0\s*%/).closest('div')
-    expect(trendBadge).toHaveClass('text-gray-600')
-    expect(trendBadge).toHaveClass('bg-gray-50')
+    expect(trendBadge).toHaveClass('text-muted-foreground')
+    expect(trendBadge).toHaveClass('bg-muted')
   })
 
   it('displays + sign for positive trend', () => {
