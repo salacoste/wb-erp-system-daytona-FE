@@ -20,7 +20,7 @@ const S: Record<string, { label: string; cls: string }> = {
   healthy: { label: '✓ OK', cls: 'border-green-500 text-green-700' },
   overdue: { label: '⚠ Просрочено', cls: 'border-yellow-500 text-yellow-700' },
   overdue_critical: { label: '✕ Критично', cls: 'border-red-500 text-red-700' },
-  no_history: { label: '— Нет данных', cls: 'border-gray-400 text-gray-600' },
+  no_history: { label: '— Нет данных', cls: 'border-muted-foreground text-muted-foreground' },
 }
 const ORDER: Record<string, number> = { overdue_critical: 0, overdue: 1, no_history: 2, healthy: 3 }
 

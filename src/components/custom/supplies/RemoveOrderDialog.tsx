@@ -47,21 +47,21 @@ export function RemoveOrderDialog({
           <AlertDialogDescription asChild>
             <div className="space-y-2">
               <p>Вы уверены, что хотите удалить этот заказ из поставки?</p>
-              <div className="mt-3 rounded-md bg-gray-50 p-3 text-sm">
+              <div className="mt-3 rounded-md bg-muted/50 p-3 text-sm">
                 <p>
-                  <span className="text-gray-500">ID:</span>{' '}
+                  <span className="text-muted-foreground">ID:</span>{' '}
                   <span className="font-mono">{order.orderId}</span>
                 </p>
                 <p>
-                  <span className="text-gray-500">Артикул:</span> {order.vendorCode}
+                  <span className="text-muted-foreground">Артикул:</span> {order.vendorCode}
                 </p>
                 {order.productName && (
                   <p>
-                    <span className="text-gray-500">Товар:</span> {order.productName}
+                    <span className="text-muted-foreground">Товар:</span> {order.productName}
                   </p>
                 )}
                 <p>
-                  <span className="text-gray-500">Цена:</span>{' '}
+                  <span className="text-muted-foreground">Цена:</span>{' '}
                   {order.salePrice != null ? formatCurrency(order.salePrice) : '—'}
                 </p>
               </div>

@@ -86,7 +86,7 @@ export function ProductNameCell({ productName }: { productName: string }) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="text-xs text-gray-600">{truncateText(productName, 40)}</span>
+          <span className="text-xs text-muted-foreground">{truncateText(productName, 40)}</span>
         </TooltipTrigger>
         <TooltipContent>
           <p className="max-w-xs">{productName}</p>
@@ -94,6 +94,6 @@ export function ProductNameCell({ productName }: { productName: string }) {
       </Tooltip>
     </TooltipProvider>
   ) : (
-    <span className="text-xs text-gray-600">{productName}</span>
+    <span className="text-xs text-muted-foreground">{productName}</span>
   )
 }

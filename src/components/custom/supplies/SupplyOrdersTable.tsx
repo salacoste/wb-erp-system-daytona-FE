@@ -40,7 +40,7 @@ function getSupplierStatusBadge(supplierStatus: string) {
     complete: { label: 'Готов', className: 'bg-green-50 text-green-700 border-green-200' },
     cancel: { label: 'Отменён', className: 'bg-red-50 text-red-700 border-red-200' },
   }
-  const config = statusMap[supplierStatus] || { label: supplierStatus, className: 'bg-gray-50' }
+  const config = statusMap[supplierStatus] || { label: supplierStatus, className: 'bg-muted/50' }
   return config
 }
 
@@ -69,12 +69,12 @@ export function SupplyOrdersTable({
   // Empty state
   if (orders.length === 0) {
     return (
-      <div className="rounded-lg border bg-white p-8">
+      <div className="rounded-lg border bg-card p-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <Package className="mb-4 h-12 w-12 text-gray-300" aria-hidden="true" />
-          <p className="text-lg font-medium text-gray-500">В поставке пока нет заказов</p>
+          <Package className="mb-4 h-12 w-12 text-muted-foreground" aria-hidden="true" />
+          <p className="text-lg font-medium text-muted-foreground">В поставке пока нет заказов</p>
           {status === 'OPEN' && (
-            <p className="mt-1 text-sm text-gray-400">
+            <p className="mt-1 text-sm text-muted-foreground">
               Добавьте заказы, чтобы начать сборку поставки
             </p>
           )}
@@ -85,7 +85,7 @@ export function SupplyOrdersTable({
 
   return (
     <>
-      <div className="rounded-lg border bg-white">
+      <div className="rounded-lg border bg-card">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -104,7 +104,7 @@ export function SupplyOrdersTable({
                 return (
                   <TableRow
                     key={order.orderId}
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="cursor-pointer hover:bg-muted/50"
                     onClick={() => onOrderClick?.(order)}
                     tabIndex={0}
                     onKeyDown={e => {
@@ -118,7 +118,9 @@ export function SupplyOrdersTable({
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">{order.vendorCode}</span>
-                        <span className="text-sm text-gray-500">{order.productName || '—'}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {order.productName || '—'}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right font-medium">
@@ -129,7 +131,7 @@ export function SupplyOrdersTable({
                         {statusConfig.label}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-gray-500">
+                    <TableCell className="text-sm text-muted-foreground">
                       {formatDateTime(order.addedAt)}
                     </TableCell>
                     {canRemove && (

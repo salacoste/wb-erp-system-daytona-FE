@@ -78,7 +78,7 @@ export function MergedGroupTable({
   return (
     // Story 37.4 AC 18-20, 25: Responsive wrapper with sticky columns on tablet/mobile
     <div className="overflow-x-auto md:overflow-x-visible scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-      <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg text-sm md:text-base">
+      <table className="min-w-full border-collapse bg-card shadow-sm rounded-lg text-sm md:text-base">
         <caption className="sr-only">Таблица рекламной аналитики по склейкам товаров</caption>
         <MergedGroupTableHeader sortConfig={sortConfig} onSort={onSort} />
         <tbody>

@@ -37,7 +37,11 @@ export default function PricingPage() {
   if (state.isError) {
     return (
       <div className="space-y-6">
-        <PricingPageHeader isRefreshing={state.isRefreshing} onRefresh={state.handleRefresh} />
+        <PricingPageHeader
+          items={state.items}
+          isRefreshing={state.isRefreshing}
+          onRefresh={state.handleRefresh}
+        />
         <Alert variant="destructive">
           <AlertDescription>
             Не удалось загрузить рекомендации по ценам. Попробуйте обновить данные.
@@ -49,7 +53,11 @@ export default function PricingPage() {
 
   return (
     <div className="space-y-6">
-      <PricingPageHeader isRefreshing={state.isRefreshing} onRefresh={state.handleRefresh} />
+      <PricingPageHeader
+        items={state.items}
+        isRefreshing={state.isRefreshing}
+        onRefresh={state.handleRefresh}
+      />
 
       <PricingFilters
         targetMargin={state.targetMargin}

@@ -84,7 +84,7 @@ export function BuyoutReconciliationPageContent() {
     <div className="space-y-6" data-testid="buyout-reconciliation-page">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Сверка выкупов и возвратов
         </h1>
         <p className="text-muted-foreground mt-1">

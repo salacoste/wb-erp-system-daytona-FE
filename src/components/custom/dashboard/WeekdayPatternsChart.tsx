@@ -64,7 +64,7 @@ export function WeekdayPatternsChart({ data, peakDay, height = 250 }: WeekdayPat
 
   return (
     <div>
-      <h4 className="text-sm font-medium text-gray-700 mb-2">Распределение по дням</h4>
+      <h4 className="text-sm font-medium text-foreground mb-2">Распределение по дням</h4>
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
           <XAxis dataKey="dayRu" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />

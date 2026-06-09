@@ -149,12 +149,12 @@ export function AdvertisingCard({
             </span>
           )}
           {roas != null && drr != null && (
-            <span className="text-xs text-gray-300" aria-hidden="true">
+            <span className="text-xs text-muted-foreground" aria-hidden="true">
               ·
             </span>
           )}
           {drr != null && (
-            <span className="text-xs text-gray-400 flex items-center gap-0.5">
+            <span className="text-xs text-muted-foreground flex items-center gap-0.5">
               ДРР: {formatPercentage(drr)}
               {showDrrz && drrz != null && ` · ДРРз: ${formatPercentage(drrz)}`}
               <Tooltip>

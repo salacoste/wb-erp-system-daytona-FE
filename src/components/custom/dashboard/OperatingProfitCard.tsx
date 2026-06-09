@@ -60,7 +60,7 @@ export function OperatingProfitCard({
       : null
 
   const borderColor = !canShow
-    ? 'border-gray-300'
+    ? 'border-border'
     : isPositive
       ? 'border-green-500'
       : 'border-red-500'
@@ -85,7 +85,7 @@ export function OperatingProfitCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <TrendingUp className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">
               Операционная прибыль
               {showPreTaxLabel && (

@@ -78,7 +78,7 @@ export function GrossMarginCard({
   const diff =
     canShow && previousGrossMarginPct != null ? grossMarginPct! - previousGrossMarginPct : null
 
-  const borderColor = canShow ? getMarginBorder(grossMarginPct!) : 'border-gray-300'
+  const borderColor = canShow ? getMarginBorder(grossMarginPct!) : 'border-border'
   const bgGradient = canShow
     ? getMarginBg(grossMarginPct!)
     : 'bg-gradient-to-br from-gray-50 to-white'
@@ -98,7 +98,7 @@ export function GrossMarginCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Percent className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Percent className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Валовая маржа</span>
           </div>
           <Tooltip>
@@ -133,7 +133,7 @@ export function GrossMarginCard({
             <span
               className={cn(
                 'text-sm font-medium',
-                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
+                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-muted-foreground'
               )}
             >
               {formatPercentagePoints(diff)}

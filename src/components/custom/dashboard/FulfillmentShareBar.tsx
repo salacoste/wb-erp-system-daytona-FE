@@ -25,7 +25,7 @@ export interface FulfillmentShareBarProps {
 export function FulfillmentShareBar({ fboShare, fbsShare }: FulfillmentShareBarProps) {
   return (
     <div className="mt-4 space-y-2" role="img" aria-label={`FBO: ${fboShare}%, FBS: ${fbsShare}%`}>
-      <div className="flex h-3 w-full overflow-hidden rounded-full bg-gray-100">
+      <div className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
         <div
           className="bg-purple-500 transition-all duration-300"
           style={{ width: `${fboShare}%` }}

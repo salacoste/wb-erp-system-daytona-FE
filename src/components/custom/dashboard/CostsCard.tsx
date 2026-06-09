@@ -87,7 +87,7 @@ export function CostsCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Себестоимость</span>
           </div>
           <Tooltip>
@@ -127,7 +127,7 @@ export function CostsCard({
         ) : (
           <>
             <div className="mt-1">
-              <span className="text-xl font-bold text-gray-600">{formatCurrency(cogsTotal!)}</span>
+              <span className="text-xl font-bold text-muted-foreground">{formatCurrency(cogsTotal!)}</span>
             </div>
             {comparison && (
               <div className="mt-1 flex items-center gap-2">
@@ -143,7 +143,7 @@ export function CostsCard({
               <span className={cn('text-xs', getCoverageColor(cogsCoverage))}>
                 Покрытие: {formatPercentageInt(cogsCoverage)}
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 ({fmtNum(productsWithCogs)} из {fmtNum(totalProducts)})
               </span>
             </div>

@@ -152,7 +152,7 @@ export function OrdersMetricCard({
           </div>
         )}
         <div className="mt-1">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-muted-foreground">
             {totalOrders != null ? pluralizeOrders(totalOrders) : ''}
           </span>
         </div>

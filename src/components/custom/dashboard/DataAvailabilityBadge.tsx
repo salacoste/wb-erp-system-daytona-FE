@@ -53,9 +53,9 @@ const statusColors: Record<DataAvailability, { icon: string; bg: string; text: s
     text: 'text-yellow-700',
   },
   pending_week: {
-    icon: 'text-gray-400',
-    bg: 'bg-gray-100',
-    text: 'text-gray-600',
+    icon: 'text-muted-foreground',
+    bg: 'bg-muted',
+    text: 'text-muted-foreground',
   },
   unavailable: {
     icon: 'text-red-500',
@@ -118,7 +118,7 @@ export function DataAvailabilityBadge({
       <TooltipContent side="top" size="md">
         <div className="space-y-1">
           <div className="font-medium">{displayInfo.label}</div>
-          <div className="text-xs text-gray-300">{displayInfo.description}</div>
+          <div className="text-xs text-muted-foreground">{displayInfo.description}</div>
         </div>
       </TooltipContent>
     </Tooltip>

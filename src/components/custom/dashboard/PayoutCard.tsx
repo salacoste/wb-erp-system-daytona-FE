@@ -110,7 +110,7 @@ export function PayoutCard({
           </div>
         )}
         <div className="mt-1">
-          <span className="text-xs text-gray-400">После всех удержаний WB</span>
+          <span className="text-xs text-muted-foreground">После всех удержаний WB</span>
         </div>
       </CardContent>
     </Card>

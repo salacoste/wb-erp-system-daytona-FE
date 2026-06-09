@@ -21,14 +21,14 @@ export function TrendsChartSkeleton({ className }: TrendsChartSkeletonProps): Re
   return (
     <div className={cn('animate-pulse', className)} aria-busy="true" aria-label="Загрузка графика">
       {/* Chart area skeleton */}
-      <div className="h-[300px] w-full rounded-md bg-gray-100">
+      <div className="h-[300px] w-full rounded-md bg-muted">
         <div className="flex h-full flex-col justify-end p-4">
           {/* Fake chart lines */}
           <div className="flex items-end gap-2">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="flex-1 rounded-t bg-gray-200"
+                className="flex-1 rounded-t bg-muted"
                 style={{ height: `${20 + Math.random() * 60}%` }}
               />
             ))}

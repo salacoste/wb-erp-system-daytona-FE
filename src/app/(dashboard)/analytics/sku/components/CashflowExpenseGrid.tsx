@@ -79,7 +79,7 @@ function StorageExpenseItem({
       </div>
       <div className="text-xs text-amber-500">{pct(cabinetExpenses.storage)}%</div>
       {/* Request #67: Show weekly report storage for comparison */}
-      <div className="text-[10px] text-gray-500 mt-1 border-t border-gray-200 pt-1">
+      <div className="text-[10px] text-muted-foreground mt-1 border-t border-border pt-1">
         Отчёт:{' '}
         {(cabinetExpenses.storage_weekly_report ?? 0).toLocaleString('ru-RU', {
           maximumFractionDigits: 0,

@@ -1,19 +1,26 @@
 'use client'
 
 /**
- * Pricing page header with breadcrumbs and refresh button
+ * Pricing page header with breadcrumbs, CSV export, and refresh button
  * Epic 121 Phase 1: Per-SKU price recommendation engine
  */
 
+import { useMemo } from 'react'
 import { RefreshCw, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportPricingToCsv } from '@/lib/csv/pricing-csv-export'
+import type { PriceRecommendation } from '@/types/price-recommendations'
 
 interface PricingPageHeaderProps {
+  items: PriceRecommendation[]
   isRefreshing: boolean
   onRefresh: () => void
 }
 
-export function PricingPageHeader({ isRefreshing, onRefresh }: PricingPageHeaderProps) {
+export function PricingPageHeader({ items, isRefreshing, onRefresh }: PricingPageHeaderProps) {
+  const csvContent = useMemo(() => exportPricingToCsv(items), [items])
+
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -30,10 +37,18 @@ export function PricingPageHeader({ isRefreshing, onRefresh }: PricingPageHeader
           Рекомендованные цены для достижения целевой маржинальности по каждому SKU
         </p>
       </div>
-      <Button variant="outline" size="sm" onClick={onRefresh} disabled={isRefreshing}>
-        <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-        {isRefreshing ? 'Обновление...' : 'Обновить'}
-      </Button>
+      <div className="flex items-center gap-2">
+        <ExportCsvButton
+          csvContent={csvContent}
+          fileName="pricing-recommendations.csv"
+          label="Скачать CSV"
+          disabled={items.length === 0}
+        />
+        <Button variant="outline" size="sm" onClick={onRefresh} disabled={isRefreshing}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Обновление...' : 'Обновить'}
+        </Button>
+      </div>
     </div>
   )
 }

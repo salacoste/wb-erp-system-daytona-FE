@@ -18,7 +18,7 @@ interface SyncGapsTimelineProps {
 const STATUS_CONFIG: Record<DayStatusType, { bg: string; label: string }> = {
   complete: { bg: 'bg-green-500', label: 'Данные есть' },
   missing: { bg: 'bg-red-500', label: 'Нет данных' },
-  unavailable: { bg: 'bg-gray-300', label: 'За пределами синхронизации' },
+  unavailable: { bg: 'bg-muted', label: 'За пределами синхронизации' },
 }
 
 export function SyncGapsTimeline({ from, to, syncStatus }: SyncGapsTimelineProps) {

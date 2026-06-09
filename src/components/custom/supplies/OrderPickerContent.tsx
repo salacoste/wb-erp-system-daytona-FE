@@ -136,8 +136,8 @@ export function OrderPickerContent({
         ) : isError ? (
           <div role="alert" className="flex flex-col items-center justify-center py-12">
             <Package className="mb-4 h-12 w-12 text-red-300" />
-            <p className="text-lg font-medium text-gray-700">Не удалось загрузить заказы</p>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="text-lg font-medium text-foreground">Не удалось загрузить заказы</p>
+            <p className="mt-1 text-sm text-muted-foreground">
               {error?.message || 'Произошла ошибка при загрузке'}
             </p>
             <Button variant="outline" onClick={() => refetch()} className="mt-4">

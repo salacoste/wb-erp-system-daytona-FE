@@ -27,13 +27,13 @@ interface TrendIndicatorProps {
  */
 export function TrendIndicator({ trendConfig, TrendIcon, className }: TrendIndicatorProps) {
   if (TrendIcon) {
-    return <TrendIcon className={cn(className, trendConfig?.textClass ?? 'text-gray-500')} />
+    return <TrendIcon className={cn(className, trendConfig?.textClass ?? 'text-muted-foreground')} />
   }
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-help text-gray-300" aria-label="Нет данных о тренде продаж">
+          <span className="cursor-help text-muted-foreground" aria-label="Нет данных о тренде продаж">
             —
           </span>
         </TooltipTrigger>
@@ -53,8 +53,8 @@ interface TrendSectionProps {
 /** "Тренд скорости продаж" section: label + sparkline (suppressed for unknown trends). */
 export function SupplyDetailTrendSection({ trendConfig, TrendIcon }: TrendSectionProps) {
   return (
-    <section className="bg-white rounded-lg border p-4">
-      <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+    <section className="bg-card rounded-lg border p-4">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
         <TrendIndicator trendConfig={trendConfig} TrendIcon={TrendIcon} className="h-4 w-4" />
         Тренд скорости продаж
       </h4>
@@ -62,13 +62,13 @@ export function SupplyDetailTrendSection({ trendConfig, TrendIcon }: TrendSectio
         <div
           className={cn(
             'flex items-center gap-2 text-lg font-bold',
-            trendConfig?.textClass ?? 'text-gray-500'
+            trendConfig?.textClass ?? 'text-muted-foreground'
           )}
         >
           <TrendIndicator trendConfig={trendConfig} TrendIcon={TrendIcon} className="h-5 w-5" />
           {trendConfig?.label ?? 'Нет данных'}
         </div>
-        <span className="text-sm text-gray-500">(за последние 14 дней)</span>
+        <span className="text-sm text-muted-foreground">(за последние 14 дней)</span>
       </div>
       {/* Sparkline: only for known trends. For unknown (no_data/null) we MUST NOT fabricate an
           upward ramp — render a neutral placeholder instead (Defensive Frontend). */}
@@ -80,15 +80,15 @@ export function SupplyDetailTrendSection({ trendConfig, TrendIcon }: TrendSectio
               className={cn(
                 'flex-1 rounded-t',
                 i >= 12
-                  ? (trendConfig?.textClass ?? 'text-gray-500').replace('text-', 'bg-')
-                  : 'bg-gray-300'
+                  ? (trendConfig?.textClass ?? 'text-muted-foreground').replace('text-', 'bg-')
+                  : 'bg-muted'
               )}
               style={{ height: `${h * 10}%` }}
             />
           ))}
         </div>
       ) : (
-        <div className="mt-3 flex items-center h-8 text-sm text-gray-400">Недостаточно данных</div>
+        <div className="mt-3 flex items-center h-8 text-sm text-muted-foreground">Недостаточно данных</div>
       )}
     </section>
   )

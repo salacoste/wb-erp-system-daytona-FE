@@ -75,19 +75,19 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
   }
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-b-lg p-6 animate-in slide-in-from-top-2 duration-200">
+    <div className="bg-muted border border-border rounded-b-lg p-6 animate-in slide-in-from-top-2 duration-200">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <span
           className={cn(
             'inline-flex items-center justify-center w-6 h-6 rounded-full text-xs',
-            statusConfig?.bgClass ?? 'bg-gray-100',
-            statusConfig?.textClass ?? 'text-gray-600'
+            statusConfig?.bgClass ?? 'bg-muted',
+            statusConfig?.textClass ?? 'text-muted-foreground'
           )}
         >
           {statusConfig?.icon ?? '?'}
         </span>
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-foreground">
           {item.sku_id}: {item.product_name}
         </h3>
         {item.stockout_risk !== 'healthy' && (
@@ -95,7 +95,7 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
             className={cn(
               'text-sm font-medium',
               item.stockout_risk === 'out_of_stock'
-                ? 'text-gray-700'
+                ? 'text-foreground'
                 : item.stockout_risk === 'critical'
                   ? 'text-red-600'
                   : item.stockout_risk === 'warning'
@@ -135,7 +135,7 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
           История заказов
         </Button>
         <div className="flex-1" />
-        <Button variant="ghost" size="sm" className="text-gray-500">
+        <Button variant="ghost" size="sm" className="text-muted-foreground">
           <X className="h-4 w-4 mr-2" />
           Закрыть
         </Button>

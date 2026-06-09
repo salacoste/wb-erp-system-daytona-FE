@@ -55,16 +55,16 @@ export function OrderPickerTable({
   }
 
   return (
-    <div className="flex flex-col rounded-lg border bg-white">
+    <div className="flex flex-col rounded-lg border bg-card">
       {/* Header Row */}
-      <div className="flex items-center gap-3 border-b bg-gray-50 px-4 py-3">
+      <div className="flex items-center gap-3 border-b bg-muted/50 px-4 py-3">
         <Checkbox
           checked={isAllSelected}
           onCheckedChange={handleSelectAllChange}
           aria-label="Выбрать все заказы"
           className={isIndeterminate && !isAllSelected ? 'opacity-50' : ''}
         />
-        <span className="text-sm font-medium text-gray-700">Выбрать все ({orders.length})</span>
+        <span className="text-sm font-medium text-foreground">Выбрать все ({orders.length})</span>
       </div>
 
       {/* Virtualized List */}

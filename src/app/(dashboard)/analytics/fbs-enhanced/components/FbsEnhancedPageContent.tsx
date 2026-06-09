@@ -61,7 +61,7 @@ export function FbsEnhancedPageContent() {
     <div className="space-y-6" data-testid="fbs-enhanced-page">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Расширенная аналитика FBS
         </h1>
         <p className="text-muted-foreground mt-1">Сводный обзор метрик FBS склада</p>

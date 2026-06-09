@@ -55,11 +55,11 @@ export function SupplyDocumentsList({
   // Empty state
   if (documents.length === 0) {
     return (
-      <div className="rounded-lg border bg-white p-6">
+      <div className="rounded-lg border bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">Документы</h2>
         <div className="flex flex-col items-center justify-center py-4 text-center">
-          <FileText className="mb-3 h-10 w-10 text-gray-300" aria-hidden="true" />
-          <p className="text-gray-500">Документы ещё не сгенерированы</p>
+          <FileText className="mb-3 h-10 w-10 text-muted-foreground" aria-hidden="true" />
+          <p className="text-muted-foreground">Документы ещё не сгенерированы</p>
         </div>
       </div>
     )
@@ -81,12 +81,12 @@ export function SupplyDocumentsList({
               className="flex items-center justify-between py-3"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
-                  <Icon className="h-5 w-5 text-gray-600" aria-hidden="true" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                  <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{label}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="font-medium text-foreground">{label}</p>
+                  <p className="text-sm text-muted-foreground">
                     {formatFileSize(doc.sizeBytes)} &middot; {formatDateTime(doc.generatedAt)}
                   </p>
                 </div>

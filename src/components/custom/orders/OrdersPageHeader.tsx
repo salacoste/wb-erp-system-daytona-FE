@@ -47,7 +47,7 @@ export function OrdersPageHeader({ lastSyncAt, isSyncing, onSync }: OrdersPageHe
           <Package className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Заказы FBS</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Заказы FBS</h1>
           <p className="text-sm text-muted-foreground">
             Управление заказами и отслеживание статусов
           </p>

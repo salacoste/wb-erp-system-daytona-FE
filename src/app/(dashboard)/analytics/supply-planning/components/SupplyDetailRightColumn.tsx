@@ -41,8 +41,8 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
   return (
     <div className="space-y-6">
       {/* 7-Day Forecast */}
-      <section className="bg-white rounded-lg border p-4">
-        <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+      <section className="bg-card rounded-lg border p-4">
+        <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
           <Calendar className="h-4 w-4" />
           Прогноз на 7 дней
         </h4>
@@ -55,11 +55,11 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
                 day.isStockout ? 'bg-red-50' : ''
               )}
             >
-              <span className="text-gray-600">
+              <span className="text-muted-foreground">
                 День {day.day} ({day.date}):
               </span>
               <span
-                className={cn('font-medium', day.isStockout ? 'text-red-600' : 'text-gray-900')}
+                className={cn('font-medium', day.isStockout ? 'text-red-600' : 'text-foreground')}
               >
                 {day.stockStart} → {day.stockEnd} шт
                 {day.isStockout && (
@@ -85,30 +85,30 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
       </section>
 
       {/* Reorder Recommendation */}
-      <section className="bg-white rounded-lg border p-4">
-        <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+      <section className="bg-card rounded-lg border p-4">
+        <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
           <ShoppingCart className="h-4 w-4" />
           Рекомендация по заказу
         </h4>
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <dt className="text-gray-600">Горизонт планирования:</dt>
-            <dd className="font-medium text-gray-900">
+            <dt className="text-muted-foreground">Горизонт планирования:</dt>
+            <dd className="font-medium text-foreground">
               {formatPlanningHorizon(item.safety_stock_units, item.avg_daily_sales)}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-gray-600">Буфер безопасности:</dt>
-            <dd className="font-medium text-gray-900">
+            <dt className="text-muted-foreground">Буфер безопасности:</dt>
+            <dd className="font-medium text-foreground">
               {formatStockQty(item.safety_stock_units)} шт
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-gray-600">Уже есть:</dt>
-            <dd className="font-medium text-gray-900">{formatStockQty(item.effective_stock)} шт</dd>
+            <dt className="text-muted-foreground">Уже есть:</dt>
+            <dd className="font-medium text-foreground">{formatStockQty(item.effective_stock)} шт</dd>
           </div>
           <div className="flex justify-between pt-2 border-t">
-            <dt className="font-bold text-gray-900">Рекомендуем заказать:</dt>
+            <dt className="font-bold text-foreground">Рекомендуем заказать:</dt>
             <dd className="font-bold text-blue-600 text-lg">
               {formatStockQty(item.reorder_quantity)} шт
             </dd>

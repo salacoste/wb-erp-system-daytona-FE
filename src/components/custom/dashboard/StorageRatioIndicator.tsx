@@ -41,7 +41,7 @@ const SEVERITY_COLORS: Record<RatioSeverity, string> = {
   high: 'bg-red-500',
   medium: 'bg-yellow-500',
   low: 'bg-green-500',
-  unknown: 'bg-gray-300',
+  unknown: 'bg-muted',
 }
 
 const SEVERITY_LABELS: Record<RatioSeverity, string> = {

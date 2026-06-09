@@ -58,7 +58,7 @@ function CustomTooltip({
   if (!d) return null
 
   return (
-    <div className="rounded-md border bg-white px-3 py-2 text-sm shadow-md space-y-1">
+    <div className="rounded-md border bg-card px-3 py-2 text-sm shadow-md space-y-1">
       <p className="font-semibold">{d.vendorCode || d.nmId}</p>
       <p>
         Органические заказы: <span className="font-medium">{d.totalOrders}</span>
@@ -86,7 +86,7 @@ function CorrelationBadge({ r }: { r: number }) {
 
   const color =
     pct < 30
-      ? 'bg-gray-100 text-gray-800 border-gray-300'
+      ? 'bg-muted text-foreground border-border'
       : pct < 60
         ? 'bg-amber-100 text-amber-800 border-amber-300'
         : 'bg-red-100 text-red-800 border-red-300'

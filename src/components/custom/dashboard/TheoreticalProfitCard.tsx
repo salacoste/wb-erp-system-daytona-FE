@@ -145,7 +145,7 @@ function Header({ isComplete }: { isComplete: boolean }): React.ReactElement {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Calculator className="h-4 w-4 text-gray-500" />
+        <Calculator className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">Теор. прибыль</span>
       </div>
       <div className="flex items-center gap-2">

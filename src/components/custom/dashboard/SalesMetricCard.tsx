@@ -147,7 +147,7 @@ export function SalesMetricCard({
         {/* Net sales subtitle (after returns) */}
         {netSales != null && returnsGross != null && (
           <div className="mt-1">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               Чистая сумма (после возвратов): {formatCurrency(netSales)}
             </span>
           </div>

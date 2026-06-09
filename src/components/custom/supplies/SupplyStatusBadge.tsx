@@ -74,9 +74,9 @@ const STATUS_CONFIG: Record<
 // masquerade as the blue "Открыта" (OPEN, implies editable) — show a gray "Неизвестно".
 const FALLBACK_CONFIG = {
   label: 'Неизвестно',
-  color: 'text-gray-600',
-  bgColor: 'bg-gray-50',
-  borderColor: 'border-gray-200',
+  color: 'text-muted-foreground',
+  bgColor: 'bg-muted/50',
+  borderColor: 'border-border',
   Icon: HelpCircle,
 }
 

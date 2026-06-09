@@ -98,9 +98,11 @@ export function CloseSupplyDialog({
               </div>
 
               {/* Order count */}
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 В поставке:{' '}
-                <span className="font-medium text-gray-900">{getOrderCountText(ordersCount)}</span>
+                <span className="font-medium text-foreground">
+                  {getOrderCountText(ordersCount)}
+                </span>
               </p>
             </div>
           </AlertDialogDescription>

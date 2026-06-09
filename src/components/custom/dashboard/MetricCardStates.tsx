@@ -46,7 +46,7 @@ export function MetricCardError({
     <Card className={cn(minHeight, 'border-red-200', className)} role="alert">
       <CardContent className="p-3">
         <div className="flex items-center gap-2">
-          <Icon className="h-4 w-4 text-gray-500" />
+          <Icon className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium text-muted-foreground">{title}</span>
         </div>
         <div className="mt-2 text-sm text-red-600">{error.message || 'Ошибка загрузки данных'}</div>

@@ -34,17 +34,17 @@ export function VelocityCell({ item }: CellProps) {
 
   return (
     <td className="px-4 py-3 text-right hidden lg:table-cell">
-      <span className="text-sm text-gray-900 flex items-center justify-end gap-1">
+      <span className="text-sm text-foreground flex items-center justify-end gap-1">
         {formatVelocity(item.avg_daily_sales)}
-        <span className="text-gray-400 text-xs">шт/д</span>
+        <span className="text-muted-foreground text-xs">шт/д</span>
         {TrendIcon ? (
-          <TrendIcon className={cn('h-3 w-3', trendConfig?.textClass ?? 'text-gray-500')} />
+          <TrendIcon className={cn('h-3 w-3', trendConfig?.textClass ?? 'text-muted-foreground')} />
         ) : (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span
-                  className="cursor-help text-gray-300 text-xs"
+                  className="cursor-help text-muted-foreground text-xs"
                   aria-label="Нет данных о тренде продаж"
                 >
                   —
@@ -72,7 +72,7 @@ export function DaysUntilStockoutCell({ item }: CellProps) {
             ? 'text-red-600'
             : item.days_until_stockout !== null && item.days_until_stockout <= 14
               ? 'text-orange-600'
-              : 'text-gray-900'
+              : 'text-foreground'
         )}
       >
         {formatDaysUntilStockout(item.days_until_stockout)}
@@ -85,7 +85,7 @@ export function DaysUntilStockoutCell({ item }: CellProps) {
 export function SellingPriceCell({ item }: CellProps) {
   return (
     <td className="px-4 py-3 text-right hidden xl:table-cell">
-      <span className="text-sm text-gray-900">
+      <span className="text-sm text-foreground">
         {item.selling_price != null ? formatReorderValue(item.selling_price) : '—'}
       </span>
     </td>
@@ -108,7 +108,7 @@ export function ActionCell({ item }: CellProps) {
           <span className="hidden sm:inline">{actionConfig.label}</span>
         </Button>
       ) : (
-        <span className="text-gray-400">—</span>
+        <span className="text-muted-foreground">—</span>
       )}
     </td>
   )

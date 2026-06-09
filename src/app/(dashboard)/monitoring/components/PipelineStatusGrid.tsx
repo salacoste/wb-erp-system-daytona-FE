@@ -140,7 +140,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
 
       {/* Mini progress bar for successRate24h */}
       <div
-        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-200"
+        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
         role="progressbar"
         aria-valuenow={rate}
         aria-valuemin={0}

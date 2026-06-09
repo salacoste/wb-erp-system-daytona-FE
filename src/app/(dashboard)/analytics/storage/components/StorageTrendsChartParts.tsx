@@ -23,7 +23,7 @@ export function TrendBadge({ trend }: { trend: number }) {
     ? 'text-red-600 bg-red-50'
     : isNegative
       ? 'text-green-600 bg-green-50'
-      : 'text-gray-600 bg-gray-50'
+      : 'text-muted-foreground bg-muted'
 
   const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus
 

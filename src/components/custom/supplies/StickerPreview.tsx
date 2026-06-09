@@ -69,7 +69,7 @@ export function StickerPreview({
   // Loading state
   if (isLoading) {
     return (
-      <div className={cn('rounded-lg border bg-gray-50 p-4', className)} aria-busy="true">
+      <div className={cn('rounded-lg border bg-muted/50 p-4', className)} aria-busy="true">
         <Skeleton className="mx-auto h-[200px] w-full max-w-[300px]" aria-label="Загрузка превью" />
       </div>
     )
@@ -99,8 +99,8 @@ export function StickerPreview({
   // No data yet
   if (!data) {
     return (
-      <div className={cn('rounded-lg border bg-gray-50 p-6', className)}>
-        <div className="flex items-center justify-center text-sm text-gray-500">
+      <div className={cn('rounded-lg border bg-muted/50 p-6', className)}>
+        <div className="flex items-center justify-center text-sm text-muted-foreground">
           Превью будет доступно после генерации
         </div>
       </div>
@@ -113,7 +113,7 @@ export function StickerPreview({
 
   return (
     <div
-      className={cn('flex items-center justify-center rounded-lg border bg-white p-4', className)}
+      className={cn('flex items-center justify-center rounded-lg border bg-card p-4', className)}
     >
       <img
         src={dataUrl}

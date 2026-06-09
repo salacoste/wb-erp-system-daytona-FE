@@ -89,7 +89,7 @@ export function AdvertisingSummaryCards({
       value: summary.overall_roas != null ? formatRoas(summary.overall_roas) : '—',
       icon: TrendingUp,
       colorClass:
-        summary.overall_roas != null ? getRoasColor(summary.overall_roas) : 'text-gray-400',
+        summary.overall_roas != null ? getRoasColor(summary.overall_roas) : 'text-muted-foreground',
       tooltip: 'Выручка от рекламы ÷ расход на кампании. Данные из рекламного кабинета WB.',
     },
     {
@@ -97,7 +97,7 @@ export function AdvertisingSummaryCards({
       label: 'Общий ROI',
       value: summary.overall_roi != null ? formatAdPercent(summary.overall_roi) : '—',
       icon: Percent,
-      colorClass: summary.overall_roi != null ? getRoiColor(summary.overall_roi) : 'text-gray-400',
+      colorClass: summary.overall_roi != null ? getRoiColor(summary.overall_roi) : 'text-muted-foreground',
       tooltip: '(Прибыль − расход на рекламу) ÷ расход × 100%. Прибыль из маржинальной аналитики.',
     },
     {

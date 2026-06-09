@@ -29,11 +29,11 @@ export function NotificationsDisabledPanel({
   return (
     <Card className="relative">
       {/* Disabled Overlay */}
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center">
+      <div className="absolute inset-0 bg-card/60 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center">
         <div className="text-center px-6">
-          <Lock className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-lg font-medium text-gray-700 mb-1">Подключите Telegram</p>
-          <p className="text-sm text-gray-500">{lockMessage}</p>
+          <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-lg font-medium text-foreground mb-1">Подключите Telegram</p>
+          <p className="text-sm text-muted-foreground">{lockMessage}</p>
         </div>
       </div>
 

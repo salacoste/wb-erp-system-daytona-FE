@@ -57,11 +57,11 @@ function NavigationCard({
       </div>
 
       {/* Content */}
-      <h3 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+      <h3 className="font-semibold text-foreground mb-1 flex items-center gap-2">
         {title}
-        <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-gray-400" />
+        <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-muted-foreground" />
       </h3>
-      <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+      <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
     </Link>
   )
 }
@@ -81,8 +81,10 @@ export function NavigationSection({
   return (
     <div className="flex flex-col h-full">
       <div className="mb-3">
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{title}</h3>
-        <p className="text-xs text-gray-400">{description}</p>
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+          {title}
+        </h3>
+        <p className="text-xs text-muted-foreground">{description}</p>
       </div>
       <div
         className={cn('grid gap-3 flex-1', items.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2')}

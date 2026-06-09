@@ -51,7 +51,7 @@ export function StickerFormatSelector({
 }: StickerFormatSelectorProps) {
   return (
     <div className={cn('space-y-3', className)}>
-      <Label className="text-sm font-medium text-gray-700">Выберите формат:</Label>
+      <Label className="text-sm font-medium text-foreground">Выберите формат:</Label>
 
       <RadioGroup
         value={value}
@@ -71,12 +71,12 @@ export function StickerFormatSelector({
             <Label
               htmlFor={`format-${option.value}`}
               className={cn(
-                'cursor-pointer font-normal text-gray-700',
+                'cursor-pointer font-normal text-foreground',
                 disabled && 'cursor-not-allowed opacity-50'
               )}
             >
               <span className="font-medium">{option.label}</span>
-              <span className="text-gray-500"> - {option.description}</span>
+              <span className="text-muted-foreground"> - {option.description}</span>
             </Label>
           </div>
         ))}

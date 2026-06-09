@@ -59,12 +59,12 @@ export function SupplyHeader({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{displayName}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{displayName}</h1>
             <SupplyStatusBadge status={status} size="lg" />
           </div>
 
           {/* Meta information */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" aria-hidden="true" />
               <span>Создана: {formatDateTime(createdAt)}</span>

@@ -25,7 +25,7 @@ export function ViewToggleButton({ active, onClick, label, icon, isLast }: ViewT
         'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors',
         isLast ? 'rounded-r-md' : 'rounded-l-md',
         !isLast && '-mr-px',
-        active ? 'bg-[#E53935] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
+        active ? 'bg-[#E53935] text-white' : 'bg-card text-muted-foreground hover:bg-muted'
       )}
     >
       {icon}

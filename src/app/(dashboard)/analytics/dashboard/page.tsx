@@ -83,7 +83,7 @@ function CabinetDashboardContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Сводка по кабинету</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Сводка по кабинету</h1>
         </div>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -106,7 +106,7 @@ function CabinetDashboardContent() {
       {/* Header with Period Selector */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Сводка по кабинету</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Сводка по кабинету</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Ключевые показатели эффективности и топ-товары
           </p>

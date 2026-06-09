@@ -42,8 +42,8 @@ export function getSupplierStatusConfig(status: string): {
   return (
     SUPPLIER_STATUS_CONFIG[status as SupplierStatus] ?? {
       label: status,
-      color: 'text-gray-700',
-      bgColor: 'bg-gray-50',
+      color: 'text-foreground',
+      bgColor: 'bg-muted/50',
     }
   )
 }

@@ -29,7 +29,7 @@ const BOT_STATUS_CONFIG: Record<BotStatus, { icon: string; label: string; color:
   active: { icon: '\u{1F7E2}', label: 'Активен', color: 'text-green-600' },
   degraded: { icon: '\u26A0\uFE0F', label: 'Проблемы с доставкой', color: 'text-yellow-600' },
   offline: { icon: '\u{1F534}', label: 'Бот оффлайн', color: 'text-red-600' },
-  not_configured: { icon: '\u26AA', label: 'Не настроен', color: 'text-gray-500' },
+  not_configured: { icon: '\u26AA', label: 'Не настроен', color: 'text-muted-foreground' },
 } as const
 
 export function TelegramDetailPanel({ enabled }: TelegramDetailPanelProps) {

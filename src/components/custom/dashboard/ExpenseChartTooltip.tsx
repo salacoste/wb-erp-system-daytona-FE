@@ -26,12 +26,12 @@ export function ExpenseChartTooltip({ active, payload }: ExpenseChartTooltipProp
   const data = payload[0].payload
 
   return (
-    <div className="rounded-lg border bg-white p-3 shadow-md">
-      <p className="font-semibold text-gray-900">{data.name}</p>
-      <p className="text-sm text-gray-600">
+    <div className="rounded-lg border bg-card p-3 shadow-md">
+      <p className="font-semibold text-foreground">{data.name}</p>
+      <p className="text-sm text-muted-foreground">
         Сумма: <span className="font-medium">{formatCurrency(data.value)}</span>
       </p>
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-muted-foreground">
         Доля: <span className="font-medium">{formatPercentage(data.percentage, 1)}</span>
       </p>
     </div>
