@@ -24,8 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useCreateAlertRule } from '@/hooks/useAlerts'
 import {
   AlertType,
@@ -34,6 +32,7 @@ import {
   ALERT_THRESHOLD_FIELDS,
 } from '@/types/alerts'
 import type { ThresholdFieldConfig } from '@/types/alerts'
+import { ThresholdInput } from './ThresholdInput'
 
 interface CreateAlertRuleDialogProps {
   isOpen: boolean
@@ -106,7 +105,6 @@ export function CreateAlertRuleDialog({ isOpen, onOpenChange }: CreateAlertRuleD
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="alert-type">Тип оповещения</Label>
             <Select value={selectedType} onValueChange={handleTypeChange}>
               <SelectTrigger id="alert-type">
                 <SelectValue placeholder="Выберите тип" />
@@ -151,31 +149,5 @@ export function CreateAlertRuleDialog({ isOpen, onOpenChange }: CreateAlertRuleD
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function ThresholdInput({
-  field,
-  value,
-  onChange,
-}: {
-  field: ThresholdFieldConfig
-  value: number
-  onChange: (raw: string) => void
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={field.key}>{field.label}</Label>
-      <div className="flex items-center gap-2">
-        <Input
-          id={field.key}
-          type="number"
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          className="flex-1"
-        />
-        <span className="text-sm text-muted-foreground whitespace-nowrap">{field.unit}</span>
-      </div>
-    </div>
   )
 }
