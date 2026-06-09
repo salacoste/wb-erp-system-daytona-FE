@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { isProtectedRoute, isPublicRoute, ROUTES } from '@/lib/routes'
+import { ROUTES } from '@/lib/routes'
+import { isProtectedRoute, isPublicRoute } from '@/lib/routes-protected'
 import { isValidToken } from '@/lib/auth'
 
 /**
@@ -14,9 +15,7 @@ export async function middleware(request: NextRequest) {
   // Middleware runs on server and cannot access localStorage, so we use cookies
   // Cookie is set by LoginForm after successful login
   const tokenFromCookie = request.cookies.get('auth-token')?.value
-  const tokenFromHeader = request.headers
-    .get('authorization')
-    ?.replace('Bearer ', '')
+  const tokenFromHeader = request.headers.get('authorization')?.replace('Bearer ', '')
 
   const token = tokenFromCookie || tokenFromHeader
 
@@ -44,10 +43,9 @@ export async function middleware(request: NextRequest) {
   ) {
     // Check if there's a redirect parameter in the URL
     const redirectParam = request.nextUrl.searchParams.get('redirect')
-    const redirectTo = redirectParam && redirectParam.startsWith('/')
-      ? redirectParam
-      : ROUTES.DASHBOARD
-    
+    const redirectTo =
+      redirectParam && redirectParam.startsWith('/') ? redirectParam : ROUTES.DASHBOARD
+
     // Only redirect if not already on the target page
     if (pathname !== redirectTo) {
       return NextResponse.redirect(new URL(redirectTo, request.url))
@@ -71,4 +69,3 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
-

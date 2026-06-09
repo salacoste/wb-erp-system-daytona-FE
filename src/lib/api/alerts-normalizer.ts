@@ -44,16 +44,18 @@ function normalizeAlertHistoryItem(raw: unknown): AlertHistoryItem {
   }
 }
 
-/** Normalize GET /v1/alerts/rules response */
+/** Normalize GET /v1/alerts/rules response — backend returns { items, total, nextCursor } */
 export function normalizeAlertRulesResponse(raw: unknown): AlertRule[] {
-  if (!Array.isArray(raw)) return []
-  return raw.map(normalizeAlertRule)
+  const r = asRecord(raw)
+  const items = Array.isArray(r.items) ? r.items : Array.isArray(raw) ? raw : []
+  return items.map(normalizeAlertRule)
 }
 
-/** Normalize GET /v1/alerts/history response */
+/** Normalize GET /v1/alerts/history response — backend returns { items, total, nextCursor } */
 export function normalizeAlertHistoryResponse(raw: unknown): AlertHistoryItem[] {
-  if (!Array.isArray(raw)) return []
-  return raw.map(normalizeAlertHistoryItem)
+  const r = asRecord(raw)
+  const items = Array.isArray(r.items) ? r.items : Array.isArray(raw) ? raw : []
+  return items.map(normalizeAlertHistoryItem)
 }
 
 /** Normalize GET /v1/alerts/summary response */

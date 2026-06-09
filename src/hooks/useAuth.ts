@@ -1,5 +1,6 @@
-import { logger } from '@/lib/logger'
 'use client'
+
+import { logger } from '@/lib/logger'
 
 import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -59,9 +60,12 @@ export function useAuth() {
     refreshTokenIfNeeded()
 
     // Set up interval to check token every 5 minutes
-    const interval = setInterval(() => {
-      refreshTokenIfNeeded()
-    }, 5 * 60 * 1000) // 5 minutes
+    const interval = setInterval(
+      () => {
+        refreshTokenIfNeeded()
+      },
+      5 * 60 * 1000
+    ) // 5 minutes
 
     return () => clearInterval(interval)
   }, [token, refreshTokenIfNeeded])
@@ -73,4 +77,3 @@ export function useAuth() {
     refreshToken: refreshTokenIfNeeded,
   }
 }
-

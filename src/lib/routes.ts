@@ -109,9 +109,8 @@ export type RoutePath =
   | (typeof ROUTES.SETTINGS)[keyof typeof ROUTES.SETTINGS]
   | string
 
-// Re-export protected/public route matchers for backward compatibility.
-// New consumers should import directly from '@/lib/routes-protected'.
-export { isProtectedRoute, isPublicRoute } from './routes-protected'
+// Route matchers moved to routes-protected.ts (circular dependency fix).
+// Import isProtectedRoute / isPublicRoute directly from '@/lib/routes-protected'.
 
 // Route builder helpers re-exported from route-helpers.ts for backward compatibility.
 // New consumers should import directly from '@/lib/route-helpers'.

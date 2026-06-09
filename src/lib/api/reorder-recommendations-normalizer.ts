@@ -40,10 +40,11 @@ function toItem(raw: unknown): ReorderRecommendation {
   }
 }
 
-/** Normalize GET /v1/analytics/reorder-recommendations response */
+/** Normalize GET /v1/analytics/reorder-recommendations response — backend returns { meta, summary, data: [...] } */
 export function normalizeReorderRecommendationsResponse(raw: unknown): ReorderRecommendation[] {
-  if (!Array.isArray(raw)) return []
-  return raw.map(toItem)
+  const r = asRecord(raw)
+  const data = Array.isArray(r.data) ? r.data : Array.isArray(raw) ? raw : []
+  return data.map(toItem)
 }
 
 /** Normalize GET /v1/analytics/reorder-recommendations/metrics response */
