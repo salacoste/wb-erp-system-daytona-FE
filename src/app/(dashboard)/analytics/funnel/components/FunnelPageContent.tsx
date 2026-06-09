@@ -7,21 +7,17 @@ import { format, subDays } from 'date-fns'
 import { toast } from 'sonner'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import type { DateRange } from '@/types/date-range'
-import type { FunnelDayItem, FunnelProductItem } from '@/types/analytics-funnel'
-import {
-  useFunnelData,
-  useFunnelTimeSeries,
-  useFunnelSyncStatus,
-} from '@/hooks/use-funnel-analytics'
+import type { FunnelDayItem } from '@/types/analytics-funnel'
+import { useFunnelTimeSeries, useFunnelSyncStatus } from '@/hooks/use-funnel-analytics'
 import { useAdvertisingAnalytics } from '@/hooks/advertising/hooks'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
-import { exportFunnelToCsv } from '@/lib/csv/funnel-csv-export'
 import { BarChart3, TrendingUp } from 'lucide-react'
 import { FunnelSummaryCards } from './FunnelSummaryCards'
 import { FunnelTable } from './FunnelTable'
 import { FunnelOverlayChart } from './FunnelOverlayChart'
 import { FunnelProductFilter } from './FunnelProductFilter'
 import { mergeFunnelAndAdDaily } from './funnel-overlay-config'
+import { useFunnelExportData } from './useFunnelExportData'
 import { SyncStatusBanner } from './SyncStatusBanner'
 
 function getDefaultRange(): DateRange {
@@ -61,17 +57,7 @@ export function FunnelPageContent() {
 
   const { data: syncStatus } = useFunnelSyncStatus()
   // CSV export: fetch all funnel items (no pagination) for download
-  const exportFilter = nmIds.length ? nmIds : undefined
-  const { data: exportData } = useFunnelData(apiFrom, apiTo, {
-    limit: 10000,
-    nmIds: exportFilter,
-  })
-  const exportItems = useMemo(
-    () => (exportData?.items ?? []) as FunnelProductItem[],
-    [exportData?.items]
-  )
-  const csvContent = useMemo(() => exportFunnelToCsv(exportItems), [exportItems])
-  const csvFileName = `funnel-${apiFrom}-${apiTo}.csv`
+  const { exportItems, csvContent, csvFileName } = useFunnelExportData(apiFrom, apiTo, nmIds)
   const funnelTs = useFunnelTimeSeries(apiFrom, apiTo, showChart)
   const adQuery = useAdvertisingAnalytics(
     { from: apiFrom, to: apiTo, include_daily: true },

@@ -18,6 +18,8 @@ import type { SearchOrdersSummary } from '@/types/search-analytics'
 import { SearchOrdersTable } from './SearchOrdersTable'
 import { SearchShareCard } from './SearchShareCard'
 import { calculateSearchDelta, formatDelta, getDeltaColor } from './search-comparison-utils'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportSearchOrdersToCsv } from '@/lib/csv/search-csv-export'
 
 // F-6 (Request #176 / Story 111.6 AC8): a >100% search-order share is EXPECTED —
 // WB attributes one order to several search queries (an interaction rate, "by
@@ -113,6 +115,13 @@ export function SearchOrdersOverview({
           compareSummary={compareEnabled ? compareData?.summary : undefined}
         />
       )}
+      <div className="flex justify-end">
+        <ExportCsvButton
+          csvContent={exportSearchOrdersToCsv(items)}
+          fileName={`search-orders-${from}-${to}.csv`}
+          disabled={items.length === 0}
+        />
+      </div>
       <SearchOrdersTable items={items} />
     </div>
   )

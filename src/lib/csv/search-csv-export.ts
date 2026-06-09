@@ -3,7 +3,7 @@
  * No side effects — Blob/DOM/download handled by <ExportCsvButton>.
  */
 
-import type { SearchQueryItem, SearchProductItem } from '@/types/search-analytics'
+import type { SearchOrderItem, SearchQueryItem, SearchProductItem } from '@/types/search-analytics'
 import { escapeCsvCell, prefixUtf8Bom } from './csv-helpers'
 
 function fmt(n: number): string {
@@ -79,5 +79,21 @@ function productItemToRow(item: SearchProductItem): string[] {
 export function exportSearchByQueryToCsv(products: SearchProductItem[]): string {
   const headerRow = BY_QUERY_HEADERS.map(escapeCsvCell).join(',')
   const dataRows = products.map(p => productItemToRow(p).map(escapeCsvCell).join(','))
+  return prefixUtf8Bom([headerRow, ...dataRows].join('\r\n'))
+}
+
+const ORDERS_HEADERS = ['Запрос', 'Заказы', 'Товаров']
+
+function orderItemToRow(item: SearchOrderItem): string[] {
+  return [String(item.key), fmt(item.totalOrders), fmt(item.uniqueProducts ?? 0)]
+}
+
+/**
+ * Exports search-attributed orders (groupBy=query) to CSV with UTF-8 BOM.
+ * Empty items array → BOM + headers only.
+ */
+export function exportSearchOrdersToCsv(items: SearchOrderItem[]): string {
+  const headerRow = ORDERS_HEADERS.map(escapeCsvCell).join(',')
+  const dataRows = items.map(i => orderItemToRow(i).map(escapeCsvCell).join(','))
   return prefixUtf8Bom([headerRow, ...dataRows].join('\r\n'))
 }

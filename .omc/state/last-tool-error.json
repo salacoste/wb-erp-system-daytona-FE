@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"echo \\\"=== Uncommitted ===\\\" && git status --short | grep -v \\\"\\\\.claude\\\\|\\\\.mcp\\\\|\\\\.omc\\\\|_bmad\\\" && echo \\\"\\\" && echo \\\"=== Last 6 commits ===\\\" && git log --oneline -6\",\"description\":...",
-  "error": "Exit code 1\n=== Uncommitted ===",
-  "timestamp": "2026-06-09T12:46:29.687Z",
+  "tool_input_preview": "{\"command\":\"ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/advertising*.ts 2>/dev/null; ls /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/typ...",
+  "error": "Exit code 1\n/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/advertising-sync-status.ts\n(eval):1: no matches found: /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/types/analytics-advertising*.ts",
+  "timestamp": "2026-06-09T13:38:34.343Z",
   "retry_count": 2
 }

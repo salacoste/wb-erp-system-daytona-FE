@@ -6,6 +6,8 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { exportAdvertisingToCsv } from '@/lib/csv/advertising-csv-export'
 import type { SortField } from './PerformanceMetricsTable'
 import { GroupByToggle } from './GroupByToggle'
 import { AdvertisingSummaryCards } from './AdvertisingSummaryCards'
@@ -68,6 +70,11 @@ export function AdvertisingMainContent({ state, filters }: AdvertisingMainConten
             Детализация по {viewByLabel(state.viewBy)}
           </CardTitle>
           <div className="flex flex-wrap items-end gap-3">
+            <ExportCsvButton
+              csvContent={exportAdvertisingToCsv(filters.filteredData)}
+              fileName={`advertising-${state.dateRange.from}-${state.dateRange.to}.csv`}
+              disabled={filters.filteredData.length === 0}
+            />
             <CampaignSelector
               selectedIds={state.selectedCampaigns}
               onSelectionChange={state.handleCampaignFilterChange}

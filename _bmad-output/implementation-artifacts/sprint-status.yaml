@@ -630,21 +630,36 @@ development_status:
 
   # Session 2026-06-09 (continuation)
   # Cleanup: removed 12 empty test stubs (-6,164 lines), 2 deprecated hooks (-1,831 lines)
-  # Fixed: 8 MergedProductBadge tooltip tests unskipped via portal mock
-  # Archived: 3 resolved backlog items
+  # Fixed: ALL 14 skipped tests unskipped (MergedProductBadge 8, WarehouseSection 2, ProductList 1, CostBreakdownChart 1, useFinancialSummary 2)
+  # Archived: 3 resolved backlog items. ZERO skipped tests in entire codebase.
 
   # Epic 153-FE: CSV Export for Analytics Tables (P1, ~15 SP)
   # Source: PRD Phase 2 — export functionality for funnel, search, buyout, returns, cross-reference
-  epic-153-fe: in-progress  # 2026-06-09 started
-  153.1-fe-funnel-csv-export: in-progress  # 2026-06-09
-  153.2-fe-search-csv-export: backlog
-  153.3-fe-buyout-csv-export: backlog
-  153.4-fe-returns-csv-export: backlog
-  153.5-fe-cross-reference-csv-export: backlog
+  epic-153-fe: done  # 2026-06-09 committed fe4657ba+0b7cb819. 5 CSV export files + buttons on 6 pages.
+  153.1-fe-funnel-csv-export: done  # 2026-06-09
+  153.2-fe-search-csv-export: done  # 2026-06-09
+  153.3-fe-buyout-csv-export: done  # 2026-06-09
+  153.4-fe-returns-csv-export: done  # 2026-06-09
+  153.5-fe-cross-reference-csv-export: done  # 2026-06-09
 
   # Epic 154-FE: Dark Mode / Theme Switching (P1, ~20 SP)
   # Source: PRD Future Enhancement Backlog — most requested UX feature
-  epic-154-fe: in-progress  # 2026-06-09 started
-  154.1-fe-theme-provider-setup: in-progress  # 2026-06-09
-  154.2-fe-dark-color-palette: backlog
+  epic-154-fe: done  # 2026-06-09 committed 2f7b65de. ThemeProvider + toggle + dark palette + sidebar integration.
+  154.1-fe-theme-provider-setup: done  # 2026-06-09
+  154.2-fe-dark-color-palette: done  # 2026-06-09
+  154.3-fe-theme-toggle-component: done  # 2026-06-09
+
+  # Epic 155-FE: CSV Gaps + Advertising Export + Funnel Split (P1, ~10 SP)
+  # Source: Codebase audit — search orders CSV gap, advertising CSV gap, funnel 186-line danger zone
+  epic-155-fe: in-progress  # 2026-06-09 started
+  155.1-fe-search-orders-csv-export: in-progress  # 2026-06-09
+  155.2-fe-advertising-csv-export: backlog
+  155.3-fe-funnel-page-split: backlog
+
+  # Epic 156-FE: Preventative Code Splits (P2 tech debt, ~8 SP)
+  # Source: File-size compliance sweep — 15 files in 180-183 line danger zone
+  epic-156-fe: in-progress  # 2026-06-09 started
+  156.1-fe-types-splits: in-progress  # 2026-06-09 analytics-comparison, notifications
+  156.2-fe-lib-splits: backlog
+  156.3-fe-component-splits: backlog
   154.3-fe-theme-toggle-component: backlog

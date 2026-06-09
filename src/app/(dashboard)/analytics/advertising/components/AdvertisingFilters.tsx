@@ -1,11 +1,29 @@
 'use client'
 
+/**
+ * Advertising Filters Component
+ * Story 33.2-FE: Advertising Analytics Page Layout
+ * Epic 33: Advertising Analytics (Frontend)
+ *
+ * Features:
+ * - Date range picker with validation (AC3)
+ * - Data availability constraints from sync status
+ * - View mode toggle: SKU | Campaign | Brand | Category (AC4)
+ * - Keyboard accessible (AC8)
+ */
+
 import { useMemo } from 'react'
-import { format, parse, differenceInDays, subDays } from 'date-fns'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ViewByToggle } from './ViewByToggle'
 import type { ViewByMode } from '@/types/advertising-analytics'
+import {
+  MAX_RANGE_DAYS,
+  isRangeExceedsMax,
+  getEffectiveDateBounds,
+  handleFromDateChange,
+  handleToDateChange,
+} from './advertising-filter-handlers'
 
 /**
  * Props for AdvertisingFilters component
@@ -28,20 +46,6 @@ interface AdvertisingFiltersProps {
   dataAvailableTo?: string | null
 }
 
-/** Max allowed date range in days (AC3) */
-const MAX_RANGE_DAYS = 90
-
-/**
- * Advertising Filters Component
- * Story 33.2-FE: Advertising Analytics Page Layout
- * Epic 33: Advertising Analytics (Frontend)
- *
- * Features:
- * - Date range picker with validation (AC3)
- * - Data availability constraints from sync status
- * - View mode toggle: SKU | Campaign | Brand | Category (AC4)
- * - Keyboard accessible (AC8)
- */
 export function AdvertisingFilters({
   dateRange,
   onDateRangeChange,
@@ -50,73 +54,15 @@ export function AdvertisingFilters({
   dataAvailableFrom,
   dataAvailableTo,
 }: AdvertisingFiltersProps) {
-  // Parse dates for validation
-  const fromDate = useMemo(() => parse(dateRange.from, 'yyyy-MM-dd', new Date()), [dateRange.from])
-  const toDate = useMemo(() => parse(dateRange.to, 'yyyy-MM-dd', new Date()), [dateRange.to])
+  const rangeExceedsMax = useMemo(
+    () => isRangeExceedsMax(dateRange.from, dateRange.to),
+    [dateRange.from, dateRange.to]
+  )
 
-  // Validation: check if range exceeds max
-  const rangeExceedsMax = useMemo(() => {
-    return differenceInDays(toDate, fromDate) > MAX_RANGE_DAYS
-  }, [fromDate, toDate])
-
-  // Yesterday as max date (sync delay)
-  const maxDateStr = format(subDays(new Date(), 1), 'yyyy-MM-dd')
-
-  // Effective min/max from data availability
-  const effectiveMinDate = dataAvailableFrom || undefined
-  const effectiveMaxDate = dataAvailableTo
-    ? dataAvailableTo < maxDateStr
-      ? dataAvailableTo
-      : maxDateStr
-    : maxDateStr
-
-  // Handle from date change
-  const handleFromChange = (value: string) => {
-    if (!value) return
-
-    const newFromDate = parse(value, 'yyyy-MM-dd', new Date())
-    const currentToDate = parse(dateRange.to, 'yyyy-MM-dd', new Date())
-
-    // Ensure to >= from (AC3)
-    if (value > dateRange.to) {
-      onDateRangeChange(value, value)
-      return
-    }
-
-    // Auto-correct if range exceeds 90 days
-    const daysDiff = differenceInDays(currentToDate, newFromDate)
-    if (daysDiff > MAX_RANGE_DAYS) {
-      // Keep the most recent 90 days from 'to' date
-      const correctedFrom = format(subDays(currentToDate, MAX_RANGE_DAYS), 'yyyy-MM-dd')
-      onDateRangeChange(correctedFrom, dateRange.to)
-    } else {
-      onDateRangeChange(value, dateRange.to)
-    }
-  }
-
-  // Handle to date change
-  const handleToChange = (value: string) => {
-    if (!value) return
-
-    const newToDate = parse(value, 'yyyy-MM-dd', new Date())
-    const currentFromDate = parse(dateRange.from, 'yyyy-MM-dd', new Date())
-
-    // Ensure to >= from (AC3)
-    if (value < dateRange.from) {
-      onDateRangeChange(value, value)
-      return
-    }
-
-    // Auto-correct if range exceeds 90 days
-    const daysDiff = differenceInDays(newToDate, currentFromDate)
-    if (daysDiff > MAX_RANGE_DAYS) {
-      // Keep the most recent 90 days from new 'to' date
-      const correctedFrom = format(subDays(newToDate, MAX_RANGE_DAYS), 'yyyy-MM-dd')
-      onDateRangeChange(correctedFrom, value)
-    } else {
-      onDateRangeChange(dateRange.from, value)
-    }
-  }
+  const { min: effectiveMinDate, max: effectiveMaxDate } = getEffectiveDateBounds(
+    dataAvailableFrom,
+    dataAvailableTo
+  )
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-muted/30 rounded-lg border sm:flex-row sm:flex-wrap sm:items-end">
@@ -131,7 +77,7 @@ export function AdvertisingFilters({
             id="date-from"
             type="date"
             value={dateRange.from}
-            onChange={e => handleFromChange(e.target.value)}
+            onChange={e => handleFromDateChange(e.target.value, dateRange.to, onDateRangeChange)}
             min={effectiveMinDate}
             max={dateRange.to}
             className="w-36"
@@ -152,7 +98,7 @@ export function AdvertisingFilters({
             id="date-to"
             type="date"
             value={dateRange.to}
-            onChange={e => handleToChange(e.target.value)}
+            onChange={e => handleToDateChange(e.target.value, dateRange.from, onDateRangeChange)}
             min={dateRange.from}
             max={effectiveMaxDate}
             className="w-36"

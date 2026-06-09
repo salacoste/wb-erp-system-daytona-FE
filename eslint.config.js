@@ -84,4 +84,11 @@ module.exports = [
       'max-lines': ['error', { max: 800, skipBlankLines: true, skipComments: true }],
     },
   },
+  // shadcn/ui components — managed via CLI, exempt from max-lines
+  {
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'max-lines': 'off',
+    },
+  },
 ]
