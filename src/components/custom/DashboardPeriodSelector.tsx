@@ -6,12 +6,12 @@
  *
  * Unified period selector for dashboard with week/month toggle,
  * dropdowns, and refresh button.
+ * Sub-components: PeriodSelectorRefreshButton
  *
  * @see docs/stories/epic-60/story-60.2-fe-period-selector-component.md
  */
 
 import React, { useEffect, useState, useCallback } from 'react'
-import { RefreshCw } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
@@ -23,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { useAvailableWeeks } from '@/hooks/useFinancialSummary'
@@ -38,6 +37,7 @@ import {
   MAX_MONTHS,
 } from './period-selector'
 import { ensureCurrentWeekFirst } from './period-selector-week-helpers'
+import { PeriodRefreshButton } from './PeriodSelectorRefreshButton'
 
 export interface DashboardPeriodSelectorProps {
   className?: string
@@ -162,24 +162,12 @@ export function DashboardPeriodSelector({
       </Select>
 
       {!compact && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleRefresh}
-            disabled={disabled || isRefreshing}
-            aria-label="Обновить данные"
-            data-testid="refresh-button"
-          >
-            <RefreshCw
-              data-testid={isRefreshing ? 'refresh-spinner' : 'refresh-icon'}
-              className={cn('h-4 w-4', isRefreshing && 'animate-spin')}
-            />
-          </Button>
-          <span className="text-sm text-muted-foreground" data-testid="last-updated">
-            Обновлено: {relativeTime}
-          </span>
-        </div>
+        <PeriodRefreshButton
+          disabled={disabled}
+          isRefreshing={isRefreshing}
+          relativeTime={relativeTime}
+          onRefresh={handleRefresh}
+        />
       )}
     </div>
   )

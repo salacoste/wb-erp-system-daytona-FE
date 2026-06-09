@@ -24,7 +24,17 @@ vi.mock('@/lib/logger', () => ({
 
 import { apiClient } from '@/lib/api-client'
 import { logger } from '@/lib/logger'
-import { getSupplies, getSupply, createSupply, suppliesQueryKeys } from '../supplies'
+import {
+  getSupplies,
+  getSupply,
+  createSupply,
+  addOrders,
+  removeOrders,
+  closeSupply,
+  getSupplyDetail,
+  removeOrdersFromSupply,
+  suppliesQueryKeys,
+} from '../supplies'
 import { syncSupplies } from '../supplies-documents'
 import {
   normalizeSuppliesListResponse,
@@ -356,7 +366,180 @@ describe('createSupply()', () => {
 })
 
 // =============================================================================
-// SECTION 4: syncSupplies() Tests
+// SECTION 4: addOrders() Tests
+// =============================================================================
+
+describe('addOrders()', () => {
+  beforeEach(resetMocks)
+
+  const ADD_RESPONSE = { added: 2, failed: 0 }
+
+  it('calls POST /v1/supplies/:id/orders with orderIds', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(ADD_RESPONSE)
+    await addOrders('sup-001', ['ord-1', 'ord-2'])
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/supplies/sup-001/orders', {
+      orderIds: ['ord-1', 'ord-2'],
+    })
+  })
+
+  it('returns added and failed counts', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(ADD_RESPONSE)
+    const r = await addOrders('sup-001', ['ord-1', 'ord-2'])
+    expect(r.added).toBe(2)
+    expect(r.failed).toBe(0)
+  })
+
+  it('handles partial failure with errors array', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({
+      added: 1,
+      failed: 1,
+      errors: ['Order ord-2 already in supply'],
+    })
+    const r = await addOrders('sup-001', ['ord-1', 'ord-2'])
+    expect(r.added).toBe(1)
+    expect(r.failed).toBe(1)
+    expect(r.errors).toEqual(['Order ord-2 already in supply'])
+  })
+
+  it('sends empty array when no order IDs provided', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ added: 0, failed: 0 })
+    await addOrders('sup-001', [])
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/supplies/sup-001/orders', { orderIds: [] })
+  })
+
+  it('logs supply ID and order count', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(ADD_RESPONSE)
+    await addOrders('sup-001', ['ord-1', 'ord-2'])
+    expect(logger.debug).toHaveBeenCalledWith('[Supplies API] Adding orders:', {
+      supplyId: 'sup-001',
+      orderCount: 2,
+    })
+    expect(logger.debug).toHaveBeenCalledWith('[Supplies API] Orders added:', {
+      added: 2,
+      failed: 0,
+    })
+  })
+
+  it('propagates API errors', async () => {
+    vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Conflict'))
+    await expect(addOrders('sup-001', ['ord-1'])).rejects.toThrow('Conflict')
+  })
+})
+
+// =============================================================================
+// SECTION 5: removeOrders() Tests
+// =============================================================================
+
+describe('removeOrders()', () => {
+  beforeEach(resetMocks)
+
+  const REMOVE_RESPONSE = { removedCount: 3, totalOrdersCount: 10 }
+
+  it('calls POST /v1/supplies/:id/orders/remove with orderIds', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(REMOVE_RESPONSE)
+    await removeOrders('sup-001', ['ord-1', 'ord-2', 'ord-3'])
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/supplies/sup-001/orders/remove', {
+      orderIds: ['ord-1', 'ord-2', 'ord-3'],
+    })
+  })
+
+  it('returns removedCount and totalOrdersCount', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(REMOVE_RESPONSE)
+    const r = await removeOrders('sup-001', ['ord-1', 'ord-2', 'ord-3'])
+    expect(r.removedCount).toBe(3)
+    expect(r.totalOrdersCount).toBe(10)
+  })
+
+  it('handles removing single order', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ removedCount: 1, totalOrdersCount: 5 })
+    const r = await removeOrders('sup-001', ['ord-1'])
+    expect(r.removedCount).toBe(1)
+  })
+
+  it('logs removal operation', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(REMOVE_RESPONSE)
+    await removeOrders('sup-001', ['ord-1'])
+    expect(logger.debug).toHaveBeenCalledWith('[Supplies API] Removing orders:', {
+      supplyId: 'sup-001',
+      orderCount: 1,
+    })
+    expect(logger.debug).toHaveBeenCalledWith('[Supplies API] Orders removed:', 3)
+  })
+
+  it('propagates API errors', async () => {
+    vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Not Found'))
+    await expect(removeOrders('sup-001', ['ord-1'])).rejects.toThrow('Not Found')
+  })
+})
+
+// =============================================================================
+// SECTION 6: closeSupply() Tests
+// =============================================================================
+
+describe('closeSupply()', () => {
+  beforeEach(resetMocks)
+
+  const CLOSE_RESPONSE = {
+    status: 'CLOSED',
+    closedAt: '2025-06-01T15:00:00Z',
+    message: 'Supply closed successfully',
+  }
+
+  it('calls POST /v1/supplies/:id/close with empty body', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(CLOSE_RESPONSE)
+    await closeSupply('sup-001')
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/supplies/sup-001/close', {})
+  })
+
+  it('returns closed supply status and timestamp', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(CLOSE_RESPONSE)
+    const r = await closeSupply('sup-001')
+    expect(r.status).toBe('CLOSED')
+    expect(r.closedAt).toBe('2025-06-01T15:00:00Z')
+    expect(r.message).toBe('Supply closed successfully')
+  })
+
+  it.each(['sup-abc', '550e8400-e29b-41d4-a716-446655440000'] as const)(
+    'uses correct URL for supply ID %s',
+    async id => {
+      vi.mocked(apiClient.post).mockResolvedValueOnce(CLOSE_RESPONSE)
+      await closeSupply(id)
+      expect(apiClient.post).toHaveBeenCalledWith(`/v1/supplies/${id}/close`, {})
+    }
+  )
+
+  it('logs close operation and result', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce(CLOSE_RESPONSE)
+    await closeSupply('sup-001')
+    expect(logger.debug).toHaveBeenCalledWith('[Supplies API] Closing supply:', 'sup-001')
+    expect(logger.debug).toHaveBeenCalledWith(
+      '[Supplies API] Supply closed:',
+      '2025-06-01T15:00:00Z'
+    )
+  })
+
+  it('propagates API errors', async () => {
+    vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Conflict'))
+    await expect(closeSupply('sup-001')).rejects.toThrow('Conflict')
+  })
+})
+
+// =============================================================================
+// SECTION 7: Alias Exports Tests
+// =============================================================================
+
+describe('alias exports', () => {
+  it('getSupplyDetail is an alias for getSupply', () => {
+    expect(getSupplyDetail).toBe(getSupply)
+  })
+
+  it('removeOrdersFromSupply is an alias for removeOrders', () => {
+    expect(removeOrdersFromSupply).toBe(removeOrders)
+  })
+})
+
+// =============================================================================
+// SECTION 8: syncSupplies() Tests
 // =============================================================================
 
 describe('syncSupplies()', () => {
@@ -385,7 +568,7 @@ describe('syncSupplies()', () => {
 })
 
 // =============================================================================
-// SECTION 5: Normalizer Tests
+// SECTION 9: Normalizer Tests
 // =============================================================================
 
 describe('normalizeSuppliesListResponse', () => {
@@ -497,7 +680,7 @@ describe('normalizeSupplyDetailResponse', () => {
 })
 
 // =============================================================================
-// SECTION 6: Query Keys Factory Tests
+// SECTION 10: Query Keys Factory Tests
 // =============================================================================
 
 describe('suppliesQueryKeys', () => {

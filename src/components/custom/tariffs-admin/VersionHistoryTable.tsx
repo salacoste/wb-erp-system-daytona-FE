@@ -4,10 +4,11 @@
 // Version History Table Component
 // Epic 52-FE: Story 52-FE.1 - Version History Table
 // Displays all tariff versions with status, dates, and delete action
+// Sub-components: VersionHistoryTableStates (skeleton, empty, error)
 // ============================================================================
 
 import { useState } from 'react'
-import { Trash2, ClipboardList, RefreshCcw, Lock } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -17,98 +18,13 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatDateTime } from '@/lib/utils'
+import { formatDateTime, formatDate } from '@/lib/utils'
 import { useTariffVersionHistory } from '@/hooks/useTariffVersionHistory'
-import { isForbiddenError } from '@/types/api'
 import { VersionStatusBadge } from './VersionStatusBadge'
 import { DeleteVersionDialog } from './DeleteVersionDialog'
-import { formatDate } from '@/lib/utils'
+import { formatSource, TableSkeleton, EmptyState, ErrorState } from './VersionHistoryTableStates'
 import type { TariffVersion } from '@/types/tariffs-admin'
-
-// created_at is rendered via the shared formatDateTime (Europe/Moscow) — see @/lib/utils.
-
-/**
- * Format source for display
- * @param source - 'manual' or 'api' from API
- * @returns Display text
- */
-function formatSource(source: 'manual' | 'api'): string {
-  return source === 'api' ? 'API' : 'manual'
-}
-
-/**
- * Loading skeleton for table rows
- */
-function TableSkeleton() {
-  return (
-    <>
-      {Array.from({ length: 3 }).map((_, i) => (
-        <TableRow key={i}>
-          {Array.from({ length: 8 }).map((_, j) => (
-            <TableCell key={j}>
-              <Skeleton className="h-4 w-full" data-testid="skeleton" />
-            </TableCell>
-          ))}
-        </TableRow>
-      ))}
-    </>
-  )
-}
-
-/**
- * Empty state component
- */
-function EmptyState() {
-  return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <ClipboardList className="h-12 w-12 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-medium text-gray-900">История версий пуста</h3>
-      <p className="text-sm text-muted-foreground mt-1">
-        Создайте первую версию тарифов или запланируйте изменения.
-      </p>
-    </div>
-  )
-}
-
-/**
- * Error state component
- */
-interface ErrorStateProps {
-  onRetry: () => void
-  error?: Error | null
-}
-
-function ErrorState({ onRetry, error }: ErrorStateProps) {
-  // F-21: for these Admin-only endpoints a 403 is overwhelmingly a missing-role
-  // denial (not a transient/session error), so show a permission message and
-  // suppress the futile retry. Copy says "системным администраторам" because the
-  // cabinet Owner (the highest FE role) still lacks this backend Admin role —
-  // see docs/request-backend/183 for the Owner-vs-Admin authz-model gap.
-  if (isForbiddenError(error)) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <Lock className="text-muted-foreground mb-4 h-8 w-8" />
-        <h3 className="text-lg font-medium text-gray-900">Доступно только администраторам</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          История версий тарифов доступна только системным администраторам.
-        </p>
-      </div>
-    )
-  }
-  return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="text-red-500 mb-4">⚠️</div>
-      <h3 className="text-lg font-medium text-gray-900">Ошибка загрузки</h3>
-      <p className="text-sm text-muted-foreground mt-1 mb-4">Не удалось загрузить историю версий</p>
-      <Button variant="outline" onClick={onRetry}>
-        <RefreshCcw className="h-4 w-4 mr-2" />
-        Повторить
-      </Button>
-    </div>
-  )
-}
 
 /**
  * Version History Table Component

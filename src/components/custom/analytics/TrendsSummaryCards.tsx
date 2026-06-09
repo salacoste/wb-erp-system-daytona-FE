@@ -6,6 +6,7 @@
  * Displays 4 key metrics from FBS trends data in a responsive grid:
  * - Total orders, Total revenue, Avg daily orders, Cancellation rate
  * Russian locale formatting, delta indicators, loading states.
+ * Sub-components: TrendsSummaryCardHelpers (types, formatters)
  */
 
 'use client'
@@ -13,87 +14,19 @@
 import { ShoppingCart, Banknote, TrendingUp, XCircle } from 'lucide-react'
 import { SummaryCard } from './SummaryCard'
 import { formatNumber, formatPercentValue } from '@/lib/fbs-analytics-utils'
-import { formatCurrency, formatPercentage, cn } from '@/lib/utils'
+import { formatCurrency, cn } from '@/lib/utils'
+import {
+  getPeriodLabel,
+  getCancellationColor,
+  formatAvgDaily,
+  buildDeltaTooltip,
+  DEFAULT_SUMMARY,
+  type TrendsSummaryData,
+  type TrendsSummaryCardsProps,
+} from './TrendsSummaryCardHelpers'
 
-// ============================================================================
-// Types
-// ============================================================================
-
-/**
- * Summary data from FBS trends API
- */
-export interface TrendsSummaryData {
-  totalOrders: number
-  totalRevenue: number
-  avgDailyOrders: number
-  cancellationRate: number
-  returnRate?: number
-  /** Optional delta values for period comparison */
-  ordersDelta?: number
-  revenueDelta?: number
-  avgDailyDelta?: number
-  cancellationDelta?: number
-}
-
-/**
- * Props for TrendsSummaryCards component
- */
-export interface TrendsSummaryCardsProps {
-  /** Summary data from trends API */
-  data?: TrendsSummaryData | null
-  /** Number of days in period (for subtitle) */
-  periodDays?: number
-  /** Loading state */
-  isLoading?: boolean
-  /** Additional CSS classes */
-  className?: string
-}
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Get Russian period label based on days count
- */
-function getPeriodLabel(days?: number): string {
-  if (!days) return ''
-  if (days === 7) return 'за неделю'
-  if (days === 30) return 'за 30 дней'
-  if (days === 90) return 'за 90 дней'
-  if (days === 365) return 'за год'
-  return `за ${days} дней`
-}
-
-/**
- * Get color class for cancellation rate based on thresholds
- */
-function getCancellationColor(rate: number): 'green' | 'yellow' | 'red' {
-  if (rate < 5) return 'green'
-  if (rate <= 10) return 'yellow'
-  return 'red'
-}
-
-/**
- * Format average daily orders (1 decimal if needed)
- */
-function formatAvgDaily(value: number): string {
-  if (Number.isInteger(value)) return formatNumber(value)
-  return new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 1,
-  }).format(value)
-}
-
-/**
- * Build the visible "change vs previous period" tooltip in Russian locale (comma + NBSP; '+'
- * prefix for positive, Intl minus for negative; nothing for 0). Exported pure function so the
- * locale format is unit-testable without the hover-gated tooltip render. iter-79.
- */
-export function buildDeltaTooltip(delta: number | undefined): string | undefined {
-  if (delta === undefined) return undefined
-  return `Изменение к предыдущему периоду: ${delta > 0 ? '+' : ''}${formatPercentage(delta, 1)}`
-}
+export type { TrendsSummaryData, TrendsSummaryCardsProps }
+export { buildDeltaTooltip }
 
 // ============================================================================
 // Component
@@ -117,13 +50,7 @@ export function TrendsSummaryCards({
 }: TrendsSummaryCardsProps) {
   const periodLabel = getPeriodLabel(periodDays)
 
-  // Handle empty/null data
-  const summary: TrendsSummaryData = data ?? {
-    totalOrders: 0,
-    totalRevenue: 0,
-    avgDailyOrders: 0,
-    cancellationRate: 0,
-  }
+  const summary: TrendsSummaryData = data ?? DEFAULT_SUMMARY
 
   return (
     <div
