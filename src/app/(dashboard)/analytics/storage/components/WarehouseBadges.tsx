@@ -1,12 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 /**
  * Warehouse Badges with overflow indicator
@@ -23,12 +18,14 @@ export function WarehouseBadges({ warehouses, maxVisible = 2 }: WarehouseBadgesP
     return <span className="text-muted-foreground text-sm">—</span>
   }
 
-  const visible = warehouses.slice(0, maxVisible)
-  const overflow = warehouses.length - maxVisible
+  // Dedupe warehouse names to prevent React duplicate key warnings
+  const unique = [...new Set(warehouses)]
+  const visible = unique.slice(0, maxVisible)
+  const overflow = unique.length - maxVisible
 
   return (
     <div className="flex gap-1 flex-wrap">
-      {visible.map((warehouse) => (
+      {visible.map(warehouse => (
         <Badge key={warehouse} variant="outline" className="text-xs font-normal">
           {warehouse}
         </Badge>
@@ -42,7 +39,7 @@ export function WarehouseBadges({ warehouses, maxVisible = 2 }: WarehouseBadgesP
               </Badge>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="max-w-[200px]">{warehouses.slice(maxVisible).join(', ')}</p>
+              <p className="max-w-[200px]">{unique.slice(maxVisible).join(', ')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

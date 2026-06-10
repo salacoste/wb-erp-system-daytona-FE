@@ -51,8 +51,8 @@ export async function getPriceRecommendation(nmId: number): Promise<PriceRecomme
 }
 
 /** POST /v1/products/price-recommendations/refresh — trigger recomputation */
-export async function refreshPriceRecommendations(): Promise<{ message: string }> {
-  return apiClient.post<{ message: string }>(`${BASE}/refresh`)
+export async function refreshPriceRecommendations(): Promise<{ jobId: string }> {
+  return apiClient.post<{ jobId: string }>(`${BASE}/refresh`)
 }
 
 /** GET /v1/products/price-recommendations/{nmId}/history — weekly price history (Story 122.2) */

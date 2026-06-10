@@ -6,6 +6,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
+import { useAuthStore } from '@/stores/authStore'
 import { ApiError } from '@/types/api'
 import type { ProductListResponse, ProductWithCogs } from '@/types/api'
 import {
@@ -23,8 +24,9 @@ export type { ProductFilters } from './useProducts-utils'
  * Hook to fetch product list with optional filters
  */
 export function useProducts(filters: ProductFilters = {}) {
+  const { cabinetId } = useAuthStore()
   return useQuery({
-    queryKey: ['products', filters],
+    queryKey: ['products', cabinetId, filters],
     queryFn: async (): Promise<ProductListResponse> => {
       try {
         const params = buildProductParams(filters)
@@ -73,8 +75,9 @@ export function useProducts(filters: ProductFilters = {}) {
  * Hook to fetch single product details with COGS and margin data
  */
 export function useProductDetail(nmId: string | undefined) {
+  const { cabinetId } = useAuthStore()
   return useQuery({
-    queryKey: ['products', nmId],
+    queryKey: ['products', cabinetId, nmId],
     queryFn: async () => {
       if (!nmId) throw new Error('Product ID is required')
       try {
@@ -108,8 +111,9 @@ export function useProductsWithCogs(filters: Omit<ProductFilters, 'has_cogs'> = 
 
 /** Hook to fetch total product count */
 export function useProductsCount() {
+  const { cabinetId } = useAuthStore()
   return useQuery({
-    queryKey: ['products', 'count'],
+    queryKey: ['products', cabinetId, 'count'],
     queryFn: async (): Promise<number> => {
       try {
         const response = await apiClient.get<ProductListResponse>('/v1/products?limit=1')

@@ -8,7 +8,7 @@
  * Follows DailyTrendChart pattern from advertising analytics.
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import {
   LineChart,
   Line,
@@ -60,9 +60,10 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
   const [visibleSeries, setVisibleSeries] = useState<string[]>([...DEFAULT_BUYOUT_VISIBLE])
   const { data, isLoading } = useBuyoutDailyTrends(from, to)
 
-  const prefersReducedMotion = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // Hydration-safe: read matchMedia after mount to avoid server/client mismatch
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  useEffect(() => {
+    setPrefersReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   }, [])
 
   const toggleSeries = (key: string) => {

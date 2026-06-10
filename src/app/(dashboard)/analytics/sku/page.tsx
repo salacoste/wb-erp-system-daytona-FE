@@ -10,6 +10,7 @@
  * - Profitability classification badges
  */
 
+import { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import { ExportDialog } from '@/components/custom/ExportDialog'
@@ -33,6 +34,14 @@ import { SkuTableSection } from './components/SkuTableSection'
  * - Sortable table with expense breakdown tooltips
  */
 export default function MarginAnalysisBySkuPage() {
+  return (
+    <Suspense fallback={<SkuPageLoading />}>
+      <MarginAnalysisBySkuPageContent />
+    </Suspense>
+  )
+}
+
+function MarginAnalysisBySkuPageContent() {
   const state = useSkuPageState()
 
   // Loading skeleton - show while loading weeks or SKU financials

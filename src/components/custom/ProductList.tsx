@@ -118,9 +118,9 @@ export function ProductList({
             enableSelection={enableSelection}
           />
           <TableBody>
-            {data.products.map(product => (
+            {data.products.map((product, index) => (
               <ProductTableRow
-                key={product.nm_id}
+                key={`${product.nm_id}-${index}`}
                 product={product}
                 isSelected={selectedProductId === product.nm_id}
                 enableSelection={enableSelection}

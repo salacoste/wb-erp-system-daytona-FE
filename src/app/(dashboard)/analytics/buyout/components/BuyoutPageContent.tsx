@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * Buyout Page orchestrator
  * Epic 69: Buyout Rate Analytics
@@ -6,7 +8,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
@@ -58,12 +60,18 @@ const SOURCE_OPTIONS: { value: BuyoutSource; label: string }[] = [
 ]
 
 export function BuyoutPageContent() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
+  // Hydration-safe: initialize dateRange as undefined, set after mount
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [source, setSource] = useState<BuyoutSource>('blended')
   const [comparisonEnabled, setComparisonEnabled] = useState(false)
   const [comparisonPreset, setComparisonPreset] = useState<ComparisonPreset>('previous')
   const [compareStart, setCompareStart] = useState('')
   const [compareEnd, setCompareEnd] = useState('')
+
+  // Hydration-safe: set default date range after mount to avoid server/client mismatch
+  useEffect(() => {
+    setDateRange(getDefaultRange())
+  }, [])
 
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''

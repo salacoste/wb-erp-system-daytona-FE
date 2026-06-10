@@ -126,8 +126,8 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               cursor={{ fill: '#f3f4f6' }}
             />
             <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={24}>
-              {chartData.map((entry, i) => (
-                <Cell key={i} fill={entry.color} />
+              {chartData.map(entry => (
+                <Cell key={entry.category} fill={entry.color} />
               ))}
               <LabelList
                 dataKey="amount"

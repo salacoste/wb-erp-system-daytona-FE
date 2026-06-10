@@ -137,7 +137,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 
 | Gate | Command | Baseline |
 |---|---|---|
-| Doc citations | `bash scripts/check-doc-citations.sh` | 85 broken (auto set-diff vs `.check-docs-baseline.txt`) |
+| Doc citations | `bash scripts/check-doc-citations.sh` | 101 broken (auto set-diff vs `.check-docs-baseline.txt`) |
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |

@@ -188,7 +188,7 @@ describe('usePriceRefresh', () => {
   })
 
   it('calls refreshPriceRecommendations and invalidates cache', async () => {
-    mockRefresh.mockResolvedValueOnce({ message: 'Refreshed' })
+    mockRefresh.mockResolvedValueOnce({ jobId: 'price-rec-test-job-123' })
     const { result } = renderHook(() => usePriceRefresh(), { wrapper: createWrapper() })
 
     result.current.mutate()
