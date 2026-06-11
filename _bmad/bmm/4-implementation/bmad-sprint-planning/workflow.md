@@ -121,7 +121,7 @@ development_status:
 **Status Flow Reference:**
 
 - Epic: `backlog` → `in-progress` → `done`
-- Story: `backlog` → `ready-for-dev` → `in-progress` → `review` → `done`
+- Story: `backlog` → `ready-for-dev` → `in-progress` → `review` → `done`; `deferred` is a terminal parked state for externally blocked/split-scope work
 - Retrospective: `optional` ↔ `done`
   </step>
 
@@ -143,11 +143,11 @@ development_status:
 # Epic Status:
 #   - backlog: Epic not yet started
 #   - in-progress: Epic actively being worked on
-#   - done: All tracked stories in epic completed, or epic-level item completed when no story rows exist
+#   - done: All tracked non-deferred stories in epic completed, or epic-level item completed when no story rows exist
 #
 # Epic Status Transitions:
 #   - backlog → in-progress: Automatically when first story is created (via create-story)
-#   - in-progress → done: Manually when all stories reach 'done' status
+#   - in-progress → done: Manually when all non-deferred stories reach 'done' status and deferred stories are documented
 #
 # Story Status:
 #   - backlog: Story only exists in epic file
@@ -155,6 +155,7 @@ development_status:
 #   - in-progress: Developer actively working on implementation
 #   - review: Ready for code review (via Dev's code-review workflow)
 #   - done: Story completed
+#   - deferred: Story intentionally parked due external dependency/scope split; not actionable and not counted as active work
 #
 # Retrospective Status:
 #   - optional: Can be completed but not required
@@ -236,12 +237,13 @@ backlog → in-progress → done
 
 - **backlog**: Epic not yet started
 - **in-progress**: Epic actively being worked on (stories being created/implemented)
-- **done**: All tracked stories in epic completed, or epic-level item completed when no story rows exist
+- **done**: All tracked non-deferred stories in epic completed, or epic-level item completed when no story rows exist
 
 **Story Status Flow:**
 
 ```
 backlog → ready-for-dev → in-progress → review → done
+(deferred is a terminal parked state for externally blocked or split-scope work)
 ```
 
 - **backlog**: Story only exists in epic file
@@ -249,6 +251,7 @@ backlog → ready-for-dev → in-progress → review → done
 - **in-progress**: Developer actively working
 - **review**: Ready for code review (via Dev's code-review workflow)
 - **done**: Completed
+- **deferred**: Intentionally parked due external dependency or scope split; not actionable and not counted as active work
 
 **Retrospective Status:**
 

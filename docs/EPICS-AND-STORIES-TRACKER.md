@@ -9,7 +9,7 @@
 **Total Stories**: 375+ (sprint-status mixes story rows and epic-level entries across Epics 71-156; Epics 157-161 are tracked at epic level, plus legacy Epics 1-70)
 **Project Status**: Production Ready, ~16.7k tests passing, 0 skipped, all epics complete
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
-**Epic-only convention**: `epic-only` rows are intentional epic-level status records with no corresponding `N.x` story or retrospective rows in `sprint-status.yaml`; they are excluded from story and retrospective counts and are complete when their epic-level entry is `done`.
+**Epic-only convention**: `epic-only` rows are intentional epic-level status records with no corresponding `N.x` story or retrospective rows in `sprint-status.yaml`; they are excluded from story and retrospective counts and are complete when their epic-level entry is `done`. `deferred` story rows are documented parked work due external dependency/scope split and are not active work.
 
 ---
 
@@ -17,7 +17,7 @@
 
 | Status | Meaning |
 |--------|---------|
-| DONE | Complete; all tracked stories shipped, or epic-level item complete when no story rows exist |
+| DONE | Complete; all tracked non-deferred stories shipped, or epic-level item complete when no story rows exist |
 | IN-PROGRESS | Actively being worked on |
 | READY | Ready for development |
 | BACKLOG | Not yet started |
@@ -184,7 +184,7 @@
 | 124-FE | Test Coverage Completion (2,737 TODO Stubs) | 1 | DONE | (test infrastructure) |
 | 125-FE | Zero-Test Route Coverage | 11 | DONE | (baseline tests for 11 routes) |
 | 126-FE | Stale Markers + E2E + Edge-Case Tests | 3 | DONE | (cleanup, forecast-accuracy E2E) |
-| 127-FE | Comparison Periods + Cross-Links | 4 | DONE | buyout, returns, advertising |
+| 127-FE | Comparison Periods + Cross-Links | 4 done + 2 deferred | DONE | buyout, returns, advertising |
 | 128-FE | TypeScript Cleanup + Source Compliance | 3 | DONE | (quality gate hardening) |
 
 ### Code Quality & Refactoring (Epics 132, 152, epic-level only)
@@ -362,7 +362,7 @@ Chronological log, newest first. Sprint-status source: `_bmad-output/implementat
 | 2026-06-09 | 132-FE | Validation queue flush: CSV defang, dashboard grid fix, storage DRY, stale stubs cleanup | epic-only |
 | 2026-06-07 | 129-FE | FBS Enhanced contract reconciliation: types + normalizer + 7 components rewritten for real backend (Request #202) | 4 |
 | 2026-06-07 | 128-FE | TypeScript cleanup: 64 TS errors → 0, 15 files >200 lines → 0, 56 tests for 4 dirs | 3 |
-| 6/7 (cont.) | 127-FE | Comparison periods on 3 pages + buyout↔returns cross-links | 4 |
+| 6/7 (cont.) | 127-FE | Comparison periods on 3 pages + buyout↔returns cross-links | 4 done + 2 deferred |
 | 6/7 (cont.) | 126-FE | Stale markers removed, forecast-accuracy E2E, edge-case tests | 3 |
 | 6/7 (cont.) | 125-FE | Baseline tests for 11 routes with zero coverage | 11 |
 | 6/7 (cont.) | 124-FE | Flush 2,737 TODO stubs → 0 (largest single-session test delta, +3,663 tests) | 1 |

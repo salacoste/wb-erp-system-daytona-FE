@@ -13,7 +13,7 @@
 # Epic Status:
 #   - backlog: Epic not yet started
 #   - in-progress: Epic actively being worked on
-#   - done: All tracked stories in epic completed, or epic-level item completed when no story rows exist
+#   - done: All tracked non-deferred stories in epic completed, or epic-level item completed when no story rows exist
 #
 # Story Status:
 #   - backlog: Story only exists in epic file
@@ -21,6 +21,7 @@
 #   - in-progress: Developer actively working on implementation
 #   - review: Implementation complete, ready for review
 #   - done: Story completed
+#   - deferred: Story intentionally parked due external dependency/scope split; not actionable and not counted as active work
 #
 # Retrospective Status:
 #   - optional: Can be completed but not required
