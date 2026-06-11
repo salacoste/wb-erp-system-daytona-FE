@@ -91,7 +91,7 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 2. **Story entries** - Key: `{epic}-{story}-{title}`, Default status: `backlog`
 3. **Retrospective entry** - Key: `epic-{num}-retrospective`, Default status: `optional`
 
-**Epic-only exception:** If an epic is intentionally tracked without `N.x` story artifacts, create only its `epic-{num}` entry, document that no story rows exist, exclude it from story counts, and do not fabricate placeholder story keys.
+**Epic-only exception:** If an epic is intentionally tracked without `N.x` story artifacts, create only its `epic-{num}` entry, document that no story rows exist, exclude it from story and retrospective counts, and do not fabricate placeholder story or retrospective keys.
 
 **Example structure:**
 
@@ -182,7 +182,7 @@ development_status:
 
 <action>Write the complete sprint status YAML to {status_file}</action>
 <action>CRITICAL: Metadata appears TWICE - once as comments (#) for documentation, once as YAML key:value fields for parsing</action>
-<action>Ensure all items are ordered: epic, its stories, its retrospective, next epic...</action>
+<action>Ensure all story-backed items are ordered: epic, its stories, its retrospective, next epic. Epic-only exceptions contain only the epic row plus a no-story-ID note.</action>
 </step>
 
 <step n="5" goal="Validate and report">
@@ -190,9 +190,9 @@ development_status:
 
 - [ ] Every epic in epic files appears in {status_file}
 - [ ] Every story in epic files appears in {status_file}
-- [ ] Every epic has a corresponding retrospective entry
+- [ ] Every story-backed epic has a corresponding retrospective entry
 - [ ] No items in {status_file} that don't exist in epic files
-- [ ] Epic-only exceptions are explicitly documented, excluded from story counts, and have no fabricated story keys
+- [ ] Epic-only exceptions are explicitly documented, excluded from story and retrospective counts, and have no fabricated story or retrospective keys
 - [ ] All status values are legal (match state machine definitions)
 - [ ] File is valid YAML syntax
 
@@ -263,7 +263,7 @@ optional ↔ done
 
 1. **Epic Activation**: Mark epic as `in-progress` when starting work on its first story
 2. **Sequential Default**: Stories are typically worked in order, but parallel work is supported
-3. **Epic-only Exception**: Completed epics without story artifacts may be tracked as epic-only rows when documented with a no-story-ID note and excluded from story counts
+3. **Epic-only Exception**: Completed epics without story artifacts may be tracked as epic-only rows when documented with a no-story-ID note and excluded from story and retrospective counts
 4. **Parallel Work Supported**: Multiple stories can be `in-progress` if team capacity allows
 5. **Review Before Done**: Stories should pass through `review` before `done`
 6. **Learning Transfer**: SM typically creates next story after previous one is `done` to incorporate learnings

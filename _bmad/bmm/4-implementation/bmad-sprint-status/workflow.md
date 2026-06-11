@@ -72,7 +72,7 @@ Run `/bmad:bmm:workflows:sprint-planning` to generate it, then rerun sprint-stat
   - Epics: keys starting with "epic-" (and not ending with "-retrospective")
   - Retrospectives: keys ending with "-retrospective"
   - Stories: everything else (e.g., 1-2-login-form)
-  <action>Allow documented epic-only entries: an epic key may be `done` without story keys when the status file explicitly notes that no corresponding N.x story artifacts exist. Count these as epics, not stories, and do not warn about missing story rows.</action>
+  <action>Allow documented epic-only entries: an epic key may be `done` without story or retrospective keys when the status file explicitly notes that no corresponding N.x story artifacts exist. Count these as epics, not stories or retrospectives, and do not warn about missing story or retrospective rows.</action>
   <action>Map legacy story status "drafted" → "ready-for-dev"</action>
   <action>Count story statuses: backlog, ready-for-dev, in-progress, review, done</action>
   <action>Map legacy epic status "contexted" → "in-progress"</action>
