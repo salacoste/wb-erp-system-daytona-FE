@@ -8,7 +8,7 @@
 - [ ] Every story found in epic\*.md files appears in sprint-status.yaml
 - [ ] Every story-backed epic has a corresponding retrospective entry
 - [ ] No items in sprint-status.yaml that don't exist in epic files
-- [ ] Epic-only exceptions are allowed only when explicitly documented as no-story-ID status records and excluded from story counts
+- [ ] Epic-only exceptions are allowed only when explicitly documented as no-story-ID status records and excluded from story and retrospective counts
 
 ### Parsing Verification
 

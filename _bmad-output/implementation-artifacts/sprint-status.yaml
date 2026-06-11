@@ -31,8 +31,8 @@
 # - Mark epic as 'in-progress' when starting work on its first story
 # - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
-# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story artifacts;
-#   they are excluded from story-row counts and must be documented with a no-story-ID note.
+# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story or retrospective artifacts;
+#   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-06-11  # header refreshed after status reconciliation; content hand-updated through Epics 155-161 all-complete state
 project: frontend
@@ -624,10 +624,12 @@ development_status:
 
   # Epic 152-FE: Proactive Code Splitting + API Normalizer Tests (P3 tech debt, ~5 SP)
   # Source: File-size compliance sweep — 25 files in 185-194 line danger zone + untested API normalizers
+  # Epic-level entry only: no corresponding 152.x story IDs exist in repo artifacts.
   epic-152-fe: done  # 2026-06-09 committed 97d0b4d2. 13 source files split + 2 API normalizer tests. 16,601 tests passing.
 
   # Epic 132-FE: Validation Queue Flush + Code Quality Sweep (P2 quality, iter-150 queue)
   # Source: validation-tracker.md iter-150 — ~15 queued quality items
+  # Epic-level entry only: no corresponding 132.x story IDs exist in repo artifacts.
   epic-132-fe: done  # 2026-06-09 committed 3aa5f678+0b09db62. CSV defang, dashboard grid decouple, storage DRY, supplies stale-stub cleanup (4,266 lines deleted), E2E networkidle deflaking (20 specs). 16,745 tests passing.
 
   # Session 2026-06-09 (continuation)

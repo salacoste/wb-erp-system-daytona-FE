@@ -166,8 +166,8 @@ development_status:
 # - Stories can be worked in parallel if team capacity allows
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
-# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story artifacts;
-#   they are excluded from story counts and must be documented with a no-story-ID note.
+# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story or retrospective artifacts;
+#   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: { date }
 last_updated: { date }

@@ -9,7 +9,7 @@
 **Total Stories**: 375+ (sprint-status mixes story rows and epic-level entries across Epics 71-156; Epics 157-161 are tracked at epic level, plus legacy Epics 1-70)
 **Project Status**: Production Ready, ~16.7k tests passing, 0 skipped, all epics complete
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
-**Epic-only convention**: `epic-only` rows are intentional epic-level status records with no corresponding `N.x` story rows in `sprint-status.yaml`; they are excluded from story-row counts and are complete when their epic-level entry is `done`.
+**Epic-only convention**: `epic-only` rows are intentional epic-level status records with no corresponding `N.x` story or retrospective rows in `sprint-status.yaml`; they are excluded from story and retrospective counts and are complete when their epic-level entry is `done`.
 
 ---
 
@@ -17,7 +17,7 @@
 
 | Status | Meaning |
 |--------|---------|
-| DONE | Complete, all stories shipped |
+| DONE | Complete; all tracked stories shipped, or epic-level item complete when no story rows exist |
 | IN-PROGRESS | Actively being worked on |
 | READY | Ready for development |
 | BACKLOG | Not yet started |
@@ -187,12 +187,12 @@
 | 127-FE | Comparison Periods + Cross-Links | 4 | DONE | buyout, returns, advertising |
 | 128-FE | TypeScript Cleanup + Source Compliance | 3 | DONE | (quality gate hardening) |
 
-### Code Quality & Refactoring (Epics 132, 152)
+### Code Quality & Refactoring (Epics 132, 152, epic-level only)
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 132-FE | Validation Queue Flush + Code Quality Sweep | 3 | DONE | (CSV defang, dashboard grid, storage DRY, stale stubs) |
-| 152-FE | Proactive Code Splitting + API Normalizer Tests | 2 | DONE | (13 files split, 2 normalizer test files) |
+| 132-FE | Validation Queue Flush + Code Quality Sweep | epic-only | DONE | (CSV defang, dashboard grid, storage DRY, stale stubs) |
+| 152-FE | Proactive Code Splitting + API Normalizer Tests | epic-only | DONE | (13 files split, 2 normalizer test files) |
 
 ### Contract Reconciliation (Epic 129)
 
@@ -358,8 +358,8 @@ Chronological log, newest first. Sprint-status source: `_bmad-output/implementat
 
 | Date | Epic | Summary | Stories |
 |------|------|---------|---------|
-| 2026-06-09 | 152-FE | Proactive code splitting: 13 files split, 2 API normalizer test files added | 2 |
-| 2026-06-09 | 132-FE | Validation queue flush: CSV defang, dashboard grid fix, storage DRY, stale stubs cleanup | 3 |
+| 2026-06-09 | 152-FE | Proactive code splitting: 13 files split, 2 API normalizer test files added | epic-only |
+| 2026-06-09 | 132-FE | Validation queue flush: CSV defang, dashboard grid fix, storage DRY, stale stubs cleanup | epic-only |
 | 2026-06-07 | 129-FE | FBS Enhanced contract reconciliation: types + normalizer + 7 components rewritten for real backend (Request #202) | 4 |
 | 2026-06-07 | 128-FE | TypeScript cleanup: 64 TS errors → 0, 15 files >200 lines → 0, 56 tests for 4 dirs | 3 |
 | 6/7 (cont.) | 127-FE | Comparison periods on 3 pages + buyout↔returns cross-links | 4 |
