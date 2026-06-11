@@ -1,4 +1,5 @@
 # generated: 2026-06-11
+# last_updated: 2026-06-11
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -36,6 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-06-11  # header refreshed after status reconciliation; content hand-updated through Epics 155-161 all-complete state
+last_updated: 2026-06-11  # metadata aligned with sprint-status workflow staleness checks
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
