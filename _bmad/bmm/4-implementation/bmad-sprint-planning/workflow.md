@@ -91,6 +91,8 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 2. **Story entries** - Key: `{epic}-{story}-{title}`, Default status: `backlog`
 3. **Retrospective entry** - Key: `epic-{num}-retrospective`, Default status: `optional`
 
+**Epic-only exception:** If an epic is intentionally tracked without `N.x` story artifacts, create only its `epic-{num}` entry, document that no story rows exist, exclude it from story counts, and do not fabricate placeholder story keys.
+
 **Example structure:**
 
 ```yaml
@@ -141,7 +143,7 @@ development_status:
 # Epic Status:
 #   - backlog: Epic not yet started
 #   - in-progress: Epic actively being worked on
-#   - done: All stories in epic completed
+#   - done: All tracked stories in epic completed, or epic-level item completed when no story rows exist
 #
 # Epic Status Transitions:
 #   - backlog → in-progress: Automatically when first story is created (via create-story)
@@ -164,6 +166,8 @@ development_status:
 # - Stories can be worked in parallel if team capacity allows
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story artifacts;
+#   they are excluded from story counts and must be documented with a no-story-ID note.
 
 generated: { date }
 last_updated: { date }
@@ -188,6 +192,7 @@ development_status:
 - [ ] Every story in epic files appears in {status_file}
 - [ ] Every epic has a corresponding retrospective entry
 - [ ] No items in {status_file} that don't exist in epic files
+- [ ] Epic-only exceptions are explicitly documented, excluded from story counts, and have no fabricated story keys
 - [ ] All status values are legal (match state machine definitions)
 - [ ] File is valid YAML syntax
 
@@ -231,7 +236,7 @@ backlog → in-progress → done
 
 - **backlog**: Epic not yet started
 - **in-progress**: Epic actively being worked on (stories being created/implemented)
-- **done**: All stories in epic completed
+- **done**: All tracked stories in epic completed, or epic-level item completed when no story rows exist
 
 **Story Status Flow:**
 
@@ -258,6 +263,7 @@ optional ↔ done
 
 1. **Epic Activation**: Mark epic as `in-progress` when starting work on its first story
 2. **Sequential Default**: Stories are typically worked in order, but parallel work is supported
-3. **Parallel Work Supported**: Multiple stories can be `in-progress` if team capacity allows
-4. **Review Before Done**: Stories should pass through `review` before `done`
-5. **Learning Transfer**: SM typically creates next story after previous one is `done` to incorporate learnings
+3. **Epic-only Exception**: Completed epics without story artifacts may be tracked as epic-only rows when documented with a no-story-ID note and excluded from story counts
+4. **Parallel Work Supported**: Multiple stories can be `in-progress` if team capacity allows
+5. **Review Before Done**: Stories should pass through `review` before `done`
+6. **Learning Transfer**: SM typically creates next story after previous one is `done` to incorporate learnings
