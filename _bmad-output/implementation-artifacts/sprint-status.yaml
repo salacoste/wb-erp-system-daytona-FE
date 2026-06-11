@@ -1,4 +1,4 @@
-# generated: 2026-05-06
+# generated: 2026-06-11
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -32,7 +32,7 @@
 # - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
 
-generated: 2026-06-09  # header refreshed (was 2026-05-27); content continuously hand-updated through Epics 131-132, 152 closes
+generated: 2026-06-11  # header refreshed after status reconciliation; content hand-updated through Epics 155-161 all-complete state
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -651,15 +651,34 @@ development_status:
 
   # Epic 155-FE: CSV Gaps + Advertising Export + Funnel Split (P1, ~10 SP)
   # Source: Codebase audit — search orders CSV gap, advertising CSV gap, funnel 186-line danger zone
-  epic-155-fe: in-progress  # 2026-06-09 started
-  155.1-fe-search-orders-csv-export: in-progress  # 2026-06-09
-  155.2-fe-advertising-csv-export: backlog
-  155.3-fe-funnel-page-split: backlog
+  epic-155-fe: done  # 2026-06-09 committed 08c27883; tracker marked done in 32872430.
+  155.1-fe-search-orders-csv-export: done  # 2026-06-09
+  155.2-fe-advertising-csv-export: done  # 2026-06-09
+  155.3-fe-funnel-page-split: done  # 2026-06-09
 
   # Epic 156-FE: Preventative Code Splits (P2 tech debt, ~8 SP)
   # Source: File-size compliance sweep — 15 files in 180-183 line danger zone
-  epic-156-fe: in-progress  # 2026-06-09 started
-  156.1-fe-types-splits: in-progress  # 2026-06-09 analytics-comparison, notifications
-  156.2-fe-lib-splits: backlog
-  156.3-fe-component-splits: backlog
-  154.3-fe-theme-toggle-component: backlog
+  epic-156-fe: done  # 2026-06-09 committed 08c27883; tracker marked done in 32872430.
+  156.1-fe-types-splits: done  # 2026-06-09 analytics-comparison, notifications
+  156.2-fe-lib-splits: done  # 2026-06-09
+  156.3-fe-component-splits: done  # 2026-06-09
+
+  # Epic 157-FE: Dark Mode Color Migration (Auth/Layout)
+  # Source: tracker commits 2e60bf51/bd7e9866. Epic-level entry only: no corresponding 157.x story IDs exist in repo artifacts.
+  epic-157-fe: done
+
+  # Epic 158-FE: Preventative Code Splits (180 zone)
+  # Source: tracker commits 2e60bf51/bd7e9866 plus substantive split commits fff134ed/19f135ba. Epic-level entry only: no corresponding 158.x story IDs exist in repo artifacts.
+  epic-158-fe: done
+
+  # Epic 159-FE: Funnel WoW/MoM Comparison Period
+  # Source: bd7e9866 and final all-complete tracker commit af8720d4. Epic-level entry only: no corresponding 159.x story IDs exist in repo artifacts.
+  epic-159-fe: done
+
+  # Epic 160-FE: Dark Mode Migration: Dashboard + Analytics
+  # Source: bd7e9866 and final all-complete tracker commit af8720d4. Epic-level entry only: no corresponding 160.x story IDs exist in repo artifacts.
+  epic-160-fe: done
+
+  # Epic 161-FE: Dark Mode Migration: Products/COGS/Supply
+  # Source: bd7e9866 and final all-complete tracker commit af8720d4. Epic-level entry only: no corresponding 161.x story IDs exist in repo artifacts.
+  epic-161-fe: done

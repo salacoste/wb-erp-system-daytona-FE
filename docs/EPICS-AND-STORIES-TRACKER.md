@@ -4,10 +4,10 @@
 > Referenced from `CLAUDE.md` -- do not duplicate this information elsewhere.
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
-**Last Updated**: 2026-06-10
-**Total Epics**: 86 unique (86 done, 0 in-progress) + 2 untracked operational features
-**Total Stories**: 375+ (234 in sprint-status.yaml Epics 71-132, 152 + legacy Epics 1-70)
-**Project Status**: Production Ready, 16,707 tests passing, 0 skipped, all epics complete
+**Last Updated**: 2026-06-11
+**Total Epics**: 89 unique (89 done, 0 in-progress) + 5 untracked operational features
+**Total Stories**: 375+ (sprint-status mixes story rows and epic-level entries across Epics 71-156; Epics 157-161 are tracked at epic level, plus legacy Epics 1-70)
+**Project Status**: Production Ready, ~16.7k tests passing, 0 skipped, all epics complete
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 
 ---
@@ -215,31 +215,23 @@
 |------|-------|---------|--------|------------|
 | 153-FE | CSV Export for Analytics Tables | 5 | DONE | funnel, search, buyout, returns, cross-reference |
 | 154-FE | Dark Mode / Theme Switching | 3 | DONE | global |
-| 155-FE | CSV Gaps + Funnel Comparison + Advertising Export | 3 | DONE | search/orders, advertising, funnel |
+| 155-FE | CSV Gaps + Advertising Export + Funnel Split | 3 | DONE | search/orders, advertising, funnel |
 | 156-FE | Preventative Code Splits (180-183 line zone) | 3 | DONE | 15 files across types/lib/components |
 
-### Feature Enhancements (Epics 157-158)
+### Feature Enhancements (Epics 157-158, epic-level only)
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 157-FE | Dark Mode Color Migration (Auth/Layout) | 1 | DONE | auth, sidebar, layout |
-| 158-FE | Preventative Code Splits (180 zone) | 1 | DONE | 28 files split |
+| 157-FE | Dark Mode Color Migration (Auth/Layout) | epic-only | DONE | auth, sidebar, layout |
+| 158-FE | Preventative Code Splits (180 zone) | epic-only | DONE | 28 files split |
 
-### Feature Enhancements (Epics 159-161)
-
-| Epic | Title | Stories | Status | Key Routes |
-|------|-------|---------|--------|------------|
-| 159-FE | Funnel WoW/MoM Comparison Period | 3 | DONE | `/analytics/funnel` |
-| 160-FE | Dark Mode Migration: Dashboard + Analytics | 3 | DONE | dashboard, analytics hub, monitoring |
-| 161-FE | Dark Mode Migration: Products/COGS/Supply | 3 | DONE | cogs, supplies, orders, shipments |
-
-### Active
+### Feature Enhancements (Epics 159-161, epic-level only)
 
 | Epic | Title | Stories | Status | Key Routes |
 |------|-------|---------|--------|------------|
-| 159-FE | Funnel WoW/MoM Comparison Period | 3 | IN-PROGRESS | see above |
-| 160-FE | Dark Mode Migration: Dashboard + Analytics | 3 | IN-PROGRESS | see above |
-| 161-FE | Dark Mode Migration: Products/COGS/Supply | 3 | IN-PROGRESS | see above |
+| 159-FE | Funnel WoW/MoM Comparison Period | epic-only | DONE | `/analytics/funnel` |
+| 160-FE | Dark Mode Migration: Dashboard + Analytics | epic-only | DONE | dashboard, analytics hub, monitoring |
+| 161-FE | Dark Mode Migration: Products/COGS/Supply | epic-only | DONE | cogs, supplies, orders, shipments |
 
 ---
 
