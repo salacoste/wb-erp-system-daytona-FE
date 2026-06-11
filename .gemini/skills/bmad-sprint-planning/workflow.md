@@ -178,12 +178,12 @@ tracking_system: { tracking_system }
 story_location: { story_location }
 
 development_status:
-  # All epics, stories, and retrospectives in order
+  # All epics, stories, and present retrospectives in order
 ```
 
 <action>Write the complete sprint status YAML to {status_file}</action>
 <action>CRITICAL: Metadata appears TWICE - once as comments (#) for documentation, once as YAML key:value fields for parsing</action>
-<action>Ensure all story-backed items are ordered: epic, its stories, its retrospective, next epic. Epic-only exceptions contain only the epic row plus a no-story-ID note.</action>
+<action>Ensure all story-backed items are ordered: epic, its stories, optional retrospective, next epic. Historical story-backed epics may omit retrospective rows; epic-only exceptions contain only the epic row plus a no-story-ID note.</action>
 </step>
 
 <step n="5" goal="Validate and report">
@@ -191,7 +191,7 @@ development_status:
 
 - [ ] Every epic in epic files appears in {status_file}
 - [ ] Every story in epic files appears in {status_file}
-- [ ] Every story-backed epic has a corresponding retrospective entry
+- [ ] Retrospective entries are present when explicitly required or already tracked; historical story-backed epics may omit retrospective rows
 - [ ] No items in {status_file} that don't exist in epic files, except explicitly documented epic-only status records
 - [ ] Epic-only exceptions are explicitly documented, excluded from story and retrospective counts, and have no fabricated story or retrospective keys
 - [ ] All status values are legal (match state machine definitions)
