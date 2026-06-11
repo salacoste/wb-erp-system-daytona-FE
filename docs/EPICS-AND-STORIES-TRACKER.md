@@ -9,6 +9,7 @@
 **Total Stories**: 375+ (sprint-status mixes story rows and epic-level entries across Epics 71-156; Epics 157-161 are tracked at epic level, plus legacy Epics 1-70)
 **Project Status**: Production Ready, ~16.7k tests passing, 0 skipped, all epics complete
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
+**Epic-only convention**: `epic-only` rows are intentional epic-level status records with no corresponding `N.x` story rows in `sprint-status.yaml`; they are excluded from story-row counts and are complete when their epic-level entry is `done`.
 
 ---
 
