@@ -192,7 +192,7 @@ development_status:
 - [ ] Every epic in epic files appears in {status_file}
 - [ ] Every story in epic files appears in {status_file}
 - [ ] Every story-backed epic has a corresponding retrospective entry
-- [ ] No items in {status_file} that don't exist in epic files
+- [ ] No items in {status_file} that don't exist in epic files, except explicitly documented epic-only status records
 - [ ] Epic-only exceptions are explicitly documented, excluded from story and retrospective counts, and have no fabricated story or retrospective keys
 - [ ] All status values are legal (match state machine definitions)
 - [ ] File is valid YAML syntax

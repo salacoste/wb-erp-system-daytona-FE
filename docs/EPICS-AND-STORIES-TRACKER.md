@@ -18,6 +18,7 @@
 | Status | Meaning |
 |--------|---------|
 | DONE | Complete; all tracked non-deferred stories shipped, or epic-level item complete when no story rows exist |
+| DEFERRED | Parked due external dependency/scope split; documented and not active work |
 | IN-PROGRESS | Actively being worked on |
 | READY | Ready for development |
 | BACKLOG | Not yet started |
