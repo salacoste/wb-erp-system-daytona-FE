@@ -1,4 +1,5 @@
 # generated: 2026-06-11
+# last_updated: 2026-06-11
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -9,11 +10,11 @@
 # Epic Status:
 #   - backlog: Epic not yet started
 #   - in-progress: Epic actively being worked on
-#   - done: All stories in epic completed
+#   - done: All tracked non-deferred stories in epic completed, or epic-level item completed when no story rows exist
 #
 # Epic Status Transitions:
 #   - backlog → in-progress: Automatically when first story is created (via create-story)
-#   - in-progress → done: Manually when all stories reach 'done' status
+#   - in-progress → done: Manually when all non-deferred stories reach 'done' status and deferred stories are documented
 #
 # Story Status:
 #   - backlog: Story only exists in epic file
@@ -21,6 +22,7 @@
 #   - in-progress: Developer actively working on implementation
 #   - review: Implementation complete, ready for review
 #   - done: Story completed
+#   - deferred: Story intentionally parked due external dependency/scope split; not actionable and not counted as active work
 #
 # Retrospective Status:
 #   - optional: Can be completed but not required
@@ -31,8 +33,11 @@
 # - Mark epic as 'in-progress' when starting work on its first story
 # - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
+# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story or retrospective artifacts;
+#   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-06-11  # header refreshed after status reconciliation; content hand-updated through Epics 155-161 all-complete state
+last_updated: 2026-06-11  # metadata aligned with sprint-status workflow staleness checks
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -622,10 +627,12 @@ development_status:
 
   # Epic 152-FE: Proactive Code Splitting + API Normalizer Tests (P3 tech debt, ~5 SP)
   # Source: File-size compliance sweep — 25 files in 185-194 line danger zone + untested API normalizers
+  # Epic-level entry only: no corresponding 152.x story IDs exist in repo artifacts.
   epic-152-fe: done  # 2026-06-09 committed 97d0b4d2. 13 source files split + 2 API normalizer tests. 16,601 tests passing.
 
   # Epic 132-FE: Validation Queue Flush + Code Quality Sweep (P2 quality, iter-150 queue)
   # Source: validation-tracker.md iter-150 — ~15 queued quality items
+  # Epic-level entry only: no corresponding 132.x story IDs exist in repo artifacts.
   epic-132-fe: done  # 2026-06-09 committed 3aa5f678+0b09db62. CSV defang, dashboard grid decouple, storage DRY, supplies stale-stub cleanup (4,266 lines deleted), E2E networkidle deflaking (20 specs). 16,745 tests passing.
 
   # Session 2026-06-09 (continuation)

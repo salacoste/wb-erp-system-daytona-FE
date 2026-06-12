@@ -91,6 +91,8 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 2. **Story entries** - Key: `{epic}-{story}-{title}`, Default status: `backlog`
 3. **Retrospective entry** - Key: `epic-{num}-retrospective`, Default status: `optional`
 
+**Epic-only exception:** If an epic is intentionally tracked without `N.x` story artifacts, create only its `epic-{num}` entry, document that no story rows exist, exclude it from story and retrospective counts, and do not fabricate placeholder story or retrospective keys.
+
 **Example structure:**
 
 ```yaml
@@ -119,7 +121,7 @@ development_status:
 **Status Flow Reference:**
 
 - Epic: `backlog` → `in-progress` → `done`
-- Story: `backlog` → `ready-for-dev` → `in-progress` → `review` → `done`
+- Story: `backlog` → `ready-for-dev` → `in-progress` → `review` → `done`; `deferred` is a terminal parked state for externally blocked/split-scope work
 - Retrospective: `optional` ↔ `done`
   </step>
 
@@ -141,11 +143,11 @@ development_status:
 # Epic Status:
 #   - backlog: Epic not yet started
 #   - in-progress: Epic actively being worked on
-#   - done: All stories in epic completed
+#   - done: All tracked non-deferred stories in epic completed, or epic-level item completed when no story rows exist
 #
 # Epic Status Transitions:
 #   - backlog → in-progress: Automatically when first story is created (via create-story)
-#   - in-progress → done: Manually when all stories reach 'done' status
+#   - in-progress → done: Manually when all non-deferred stories reach 'done' status and deferred stories are documented
 #
 # Story Status:
 #   - backlog: Story only exists in epic file
@@ -153,6 +155,7 @@ development_status:
 #   - in-progress: Developer actively working on implementation
 #   - review: Ready for code review (via Dev's code-review workflow)
 #   - done: Story completed
+#   - deferred: Story intentionally parked due external dependency/scope split; not actionable and not counted as active work
 #
 # Retrospective Status:
 #   - optional: Can be completed but not required
@@ -164,6 +167,8 @@ development_status:
 # - Stories can be worked in parallel if team capacity allows
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Epic-only rows are intentional status records for completed epics with no corresponding N.x story or retrospective artifacts;
+#   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: { date }
 last_updated: { date }
@@ -173,12 +178,12 @@ tracking_system: { tracking_system }
 story_location: { story_location }
 
 development_status:
-  # All epics, stories, and retrospectives in order
+  # All epics, stories, and present retrospectives in order
 ```
 
 <action>Write the complete sprint status YAML to {status_file}</action>
 <action>CRITICAL: Metadata appears TWICE - once as comments (#) for documentation, once as YAML key:value fields for parsing</action>
-<action>Ensure all items are ordered: epic, its stories, its retrospective, next epic...</action>
+<action>Ensure all story-backed items are ordered: epic, its stories, optional retrospective, next epic. Historical story-backed epics may omit retrospective rows; epic-only exceptions contain only the epic row plus a no-story-ID note.</action>
 </step>
 
 <step n="5" goal="Validate and report">
@@ -186,8 +191,9 @@ development_status:
 
 - [ ] Every epic in epic files appears in {status_file}
 - [ ] Every story in epic files appears in {status_file}
-- [ ] Every epic has a corresponding retrospective entry
-- [ ] No items in {status_file} that don't exist in epic files
+- [ ] Retrospective entries are present when explicitly required or already tracked; historical story-backed epics may omit retrospective rows
+- [ ] No items in {status_file} that don't exist in epic files, except explicitly documented epic-only status records
+- [ ] Epic-only exceptions are explicitly documented, excluded from story and retrospective counts, and have no fabricated story or retrospective keys
 - [ ] All status values are legal (match state machine definitions)
 - [ ] File is valid YAML syntax
 
@@ -231,12 +237,13 @@ backlog → in-progress → done
 
 - **backlog**: Epic not yet started
 - **in-progress**: Epic actively being worked on (stories being created/implemented)
-- **done**: All stories in epic completed
+- **done**: All tracked non-deferred stories in epic completed, or epic-level item completed when no story rows exist
 
 **Story Status Flow:**
 
 ```
 backlog → ready-for-dev → in-progress → review → done
+(deferred is a terminal parked state for externally blocked or split-scope work)
 ```
 
 - **backlog**: Story only exists in epic file
@@ -244,6 +251,7 @@ backlog → ready-for-dev → in-progress → review → done
 - **in-progress**: Developer actively working
 - **review**: Ready for code review (via Dev's code-review workflow)
 - **done**: Completed
+- **deferred**: Intentionally parked due external dependency or scope split; not actionable and not counted as active work
 
 **Retrospective Status:**
 
@@ -258,6 +266,7 @@ optional ↔ done
 
 1. **Epic Activation**: Mark epic as `in-progress` when starting work on its first story
 2. **Sequential Default**: Stories are typically worked in order, but parallel work is supported
-3. **Parallel Work Supported**: Multiple stories can be `in-progress` if team capacity allows
-4. **Review Before Done**: Stories should pass through `review` before `done`
-5. **Learning Transfer**: SM typically creates next story after previous one is `done` to incorporate learnings
+3. **Epic-only Exception**: Completed epics without story artifacts may be tracked as epic-only rows when documented with a no-story-ID note and excluded from story and retrospective counts
+4. **Parallel Work Supported**: Multiple stories can be `in-progress` if team capacity allows
+5. **Review Before Done**: Stories should pass through `review` before `done`
+6. **Learning Transfer**: SM typically creates next story after previous one is `done` to incorporate learnings

@@ -6,8 +6,9 @@
 
 - [ ] Every epic found in epic\*.md files appears in sprint-status.yaml
 - [ ] Every story found in epic\*.md files appears in sprint-status.yaml
-- [ ] Every epic has a corresponding retrospective entry
-- [ ] No items in sprint-status.yaml that don't exist in epic files
+- [ ] Retrospective entries are present when explicitly required or already tracked; historical story-backed epics may omit retrospective rows
+- [ ] No items in sprint-status.yaml that don't exist in epic files, except explicitly documented epic-only status records
+- [ ] Epic-only exceptions are allowed only when explicitly documented as no-story-ID status records and excluded from story and retrospective counts
 
 ### Parsing Verification
 
@@ -29,5 +30,6 @@ Epic Files Contains:                Sprint Status Contains:
 ### Final Check
 
 - [ ] Total count of epics matches
-- [ ] Total count of stories matches
-- [ ] All items are in the expected order (epic, stories, retrospective)
+- [ ] Total count of stories matches for story-backed rows; documented epic-only entries are excluded from story and retrospective counts
+- [ ] Story-backed items are in the expected order (epic, stories, optional retrospective); documented epic-only entries contain only the epic row
+- [ ] Any epic-only entries have no fabricated story or retrospective rows and include an explicit no-story-ID note
