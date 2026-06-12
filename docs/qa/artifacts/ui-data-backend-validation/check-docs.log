@@ -1,0 +1,419 @@
+## check-docs
+CMD: npm run check:docs
+START: 2026-06-12T13:03:29Z
+
+> wb-repricer-frontend@1.0.0 check:docs
+> bash scripts/check-doc-citations.sh
+
+[BROKEN] src/types/cabinet.ts:35
+  cited in docs/archive/BACKEND-CHANGES-COMPATIBILITY-REPORT.md:36
+  reason: file not found
+
+[BROKEN] src/components/notifications/TelegramBindingModal.tsx:216
+  cited in docs/archive/DEV-HANDOFF-EPIC-34-FE.md:184
+  reason: line 216 > file has 95 lines
+
+[BROKEN] src/analytics/weekly-analytics.service.ts:357-399
+  cited in docs/archive/BUG-FIX-MARGIN-NOT-DISPLAYED.md:244
+  reason: file not found
+
+[BROKEN] src/products/products.service.ts:210-259
+  cited in docs/archive/BUG-FIX-MARGIN-NOT-DISPLAYED.md:307
+  reason: file not found
+
+[BROKEN] src/products/products.service.ts:83-182
+  cited in docs/archive/BUG-FIX-MARGIN-NOT-DISPLAYED.md:308
+  reason: file not found
+
+[BROKEN] src/hooks-v1/useMarginTrends.ts:70
+  cited in docs/VALIDATION-PLAN.md:189
+  reason: file not found
+
+[BROKEN] src/hooks/useDashboardMetricsWithPeriod.ts:32-49
+  cited in docs/stories/epic-60/INTEGRATION-VALIDATION-REPORT.md:41
+  reason: file not found
+
+[BROKEN] src/hooks/useDashboardMetricsWithPeriod.ts:64-76
+  cited in docs/stories/epic-60/INTEGRATION-VALIDATION-REPORT.md:70
+  reason: file not found
+
+[BROKEN] src/hooks/useDashboardMetricsWithPeriod.ts:59
+  cited in docs/stories/epic-60/INTEGRATION-VALIDATION-REPORT.md:91
+  reason: file not found
+
+[BROKEN] src/app/(dashboard)/dashboard/components/DashboardContent.tsx:156-162
+  cited in docs/stories/epic-60/INTEGRATION-VALIDATION-REPORT.md:146
+  reason: line 162 > file has 159 lines
+
+[BROKEN] src/hooks/useDashboardMetricsWithPeriod.ts:32-49
+  cited in docs/stories/epic-60/WAVE-4-INTEGRATION-SUMMARY.md:63
+  reason: file not found
+
+[BROKEN] src/hooks/useDashboardMetricsWithPeriod.ts:64-76
+  cited in docs/stories/epic-60/WAVE-4-INTEGRATION-SUMMARY.md:93
+  reason: file not found
+
+[BROKEN] src/hooks/useDashboardMetricsWithPeriod.ts:59
+  cited in docs/stories/epic-60/WAVE-4-INTEGRATION-SUMMARY.md:110
+  reason: file not found
+
+[BROKEN] src/hooks/useFinancialSummary.ts:72
+  cited in docs/stories/epic-60/INTEGRATION-ACCEPTANCE-CHECKLIST.md:232
+  reason: line 72 > file has 30 lines
+
+[BROKEN] src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142
+  cited in docs/process/backend-open-blockers-2026-05-15.md:85
+  reason: line 142 > file has 35 lines
+
+[BROKEN] src/types/cabinet.ts:7
+  cited in _bmad-output/planning-artifacts/epics-96-fe.md:66
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:44
+  cited in _bmad-output/planning-artifacts/epics-96-fe.md:92
+  reason: file not found
+
+[BROKEN] src/components/custom/dashboard/table-columns.ts:188-191
+  cited in _bmad-output/planning-artifacts/epics-107-fe.md:53
+  reason: line 191 > file has 150 lines
+
+[BROKEN] src/lib/api/advertising-analytics.ts:117
+  cited in _bmad-output/planning-artifacts/epics-88-fe.md:38
+  reason: line 117 > file has 99 lines
+
+[BROKEN] src/lib/api/advertising-analytics-api.ts:88-168
+  cited in _bmad-output/implementation-artifacts/88-4-fe-boundary-normalizer-pattern-documentation.md:40
+  reason: line 168 > file has 87 lines
+
+[BROKEN] src/lib/api/advertising-analytics-api.ts:88-168
+  cited in _bmad-output/implementation-artifacts/88-4-fe-boundary-normalizer-pattern-documentation.md:222
+  reason: line 168 > file has 87 lines
+
+[BROKEN] src/types/unit-economics.ts:223-232
+  cited in _bmad-output/implementation-artifacts/77.4-fe-unit-economics-types-waterfall-delivery-cost.md:68
+  reason: file not found
+
+[BROKEN] src/lib/daily/aggregation.ts:130-134
+  cited in _bmad-output/implementation-artifacts/93-3-fe-document-thresholds-heuristics-inline-comments.md:38
+  reason: line 134 > file has 116 lines
+
+[BROKEN] src/lib/daily/aggregation.ts:130-134
+  cited in _bmad-output/implementation-artifacts/93-3-fe-document-thresholds-heuristics-inline-comments.md:134
+  reason: line 134 > file has 116 lines
+
+[BROKEN] src/lib/api/ai/models.ts:129
+  cited in _bmad-output/implementation-artifacts/109-5-fe-model-performance-detail-mape-trend.md:17
+  reason: line 129 > file has 42 lines
+
+[BROKEN] src/lib/api/ai/models.ts:129
+  cited in _bmad-output/implementation-artifacts/109-5-fe-model-performance-detail-mape-trend.md:261
+  reason: line 129 > file has 42 lines
+
+[BROKEN] src/types/unit-economics.ts:44
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:18
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:44
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:30
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:44
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:34
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:44
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:184
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:40-51
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:215
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:187
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:263
+  reason: file not found
+
+[BROKEN] src/mocks/handlers/unit-economics.ts:224
+  cited in _bmad-output/implementation-artifacts/96-2-fe-unit-economics-query-param-view-by.md:328
+  reason: line 224 > file has 28 lines
+
+[BROKEN] src/types/daily-metrics.ts:61
+  cited in _bmad-output/implementation-artifacts/96-16-fe-remove-redundant-defensive-markers-backend-closures.md:200
+  reason: file not found
+
+[BROKEN] src/types/daily-metrics.ts:61
+  cited in _bmad-output/implementation-artifacts/96-16-fe-remove-redundant-defensive-markers-backend-closures.md:280
+  reason: file not found
+
+[BROKEN] src/lib/daily/aggregation.ts:155
+  cited in _bmad-output/implementation-artifacts/96-16-fe-remove-redundant-defensive-markers-backend-closures.md:289
+  reason: line 155 > file has 116 lines
+
+[BROKEN] src/lib/api/advertising-analytics.ts:117
+  cited in _bmad-output/implementation-artifacts/88-1-fe-clean-source-todos.md:21
+  reason: line 117 > file has 99 lines
+
+[BROKEN] src/lib/api/advertising-analytics.ts:117
+  cited in _bmad-output/implementation-artifacts/88-1-fe-clean-source-todos.md:67
+  reason: line 117 > file has 99 lines
+
+[BROKEN] src/lib/api/advertising-analytics.ts:117
+  cited in _bmad-output/implementation-artifacts/88-1-fe-clean-source-todos.md:96
+  reason: line 117 > file has 99 lines
+
+[BROKEN] src/lib/api/advertising-analytics.ts:117
+  cited in _bmad-output/implementation-artifacts/88-1-fe-clean-source-todos.md:150
+  reason: line 117 > file has 99 lines
+
+[BROKEN] src/lib/api/ai/models.ts:76
+  cited in _bmad-output/implementation-artifacts/109-4-fe-model-training-trigger-polling.md:17
+  reason: line 76 > file has 42 lines
+
+[BROKEN] src/lib/api/ai/models.ts:76
+  cited in _bmad-output/implementation-artifacts/109-4-fe-model-training-trigger-polling.md:264
+  reason: line 76 > file has 42 lines
+
+[BROKEN] src/lib/api/ai/evaluations.ts:89-153
+  cited in _bmad-output/implementation-artifacts/110-3-fe-sku-accuracy-table.md:89
+  reason: line 153 > file has 58 lines
+
+[BROKEN] src/lib/routes.ts:213-215
+  cited in _bmad-output/implementation-artifacts/110-3-fe-sku-accuracy-table.md:90
+  reason: line 215 > file has 125 lines
+
+[BROKEN] src/lib/api/ai/evaluations.ts:89-153
+  cited in _bmad-output/implementation-artifacts/110-3-fe-sku-accuracy-table.md:169
+  reason: line 153 > file has 58 lines
+
+[BROKEN] src/lib/routes.ts:213-215
+  cited in _bmad-output/implementation-artifacts/110-3-fe-sku-accuracy-table.md:170
+  reason: line 215 > file has 125 lines
+
+[BROKEN] src/types/unit-economics.ts:85
+  cited in _bmad-output/implementation-artifacts/96-4-fe-delivery-to-warehouse-nested-location-migration.md:33
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:85
+  cited in _bmad-output/implementation-artifacts/96-4-fe-delivery-to-warehouse-nested-location-migration.md:43
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:111
+  cited in _bmad-output/implementation-artifacts/96-4-fe-delivery-to-warehouse-nested-location-migration.md:44
+  reason: file not found
+
+[BROKEN] src/mocks/handlers/unit-economics.ts:37-48
+  cited in _bmad-output/implementation-artifacts/96-4-fe-delivery-to-warehouse-nested-location-migration.md:98
+  reason: line 48 > file has 28 lines
+
+[BROKEN] src/mocks/handlers/unit-economics.ts:54-66
+  cited in _bmad-output/implementation-artifacts/96-4-fe-delivery-to-warehouse-nested-location-migration.md:99
+  reason: line 66 > file has 28 lines
+
+[BROKEN] src/types/cabinet.ts:172-178
+  cited in _bmad-output/implementation-artifacts/117-3-fe-search-seller-profile-card.md:51
+  reason: file not found
+
+[BROKEN] src/types/cabinet.ts:112
+  cited in _bmad-output/implementation-artifacts/71.1-fe-fix-jam-tier-naming-search-foundation-types.md:22
+  reason: file not found
+
+[BROKEN] src/types/cabinet.ts:117-118
+  cited in _bmad-output/implementation-artifacts/71.1-fe-fix-jam-tier-naming-search-foundation-types.md:23
+  reason: file not found
+
+[BROKEN] src/lib/daily/aggregation.ts:153-169
+  cited in _bmad-output/implementation-artifacts/93-2-fe-calculate-daily-theoretical-profit-fallback-policy.md:30
+  reason: line 169 > file has 116 lines
+
+[BROKEN] src/lib/daily/aggregation.ts:153-169
+  cited in _bmad-output/implementation-artifacts/93-2-fe-calculate-daily-theoretical-profit-fallback-policy.md:186
+  reason: line 169 > file has 116 lines
+
+[BROKEN] src/types/daily-metrics.ts:190-192
+  cited in _bmad-output/implementation-artifacts/93-2-fe-calculate-daily-theoretical-profit-fallback-policy.md:188
+  reason: file not found
+
+[BROKEN] src/types/daily-metrics.ts:190-192
+  cited in _bmad-output/implementation-artifacts/93-2-fe-calculate-daily-theoretical-profit-fallback-policy.md:252
+  reason: file not found
+
+[BROKEN] src/types/finance-summary.ts:123-124
+  cited in _bmad-output/implementation-artifacts/96-7-fe-retail-price-total-sales-funnel-visualization.md:18
+  reason: line 124 > file has 111 lines
+
+[BROKEN] src/types/finance-summary.ts:123-124
+  cited in _bmad-output/implementation-artifacts/96-7-fe-retail-price-total-sales-funnel-visualization.md:52
+  reason: line 124 > file has 111 lines
+
+[BROKEN] src/types/cabinet.ts:112
+  cited in _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:71
+  reason: file not found
+
+[BROKEN] src/types/cabinet.ts:115-119
+  cited in _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:72
+  reason: file not found
+
+[BROKEN] src/app/(dashboard)/settings/notifications/page.tsx:160
+  cited in _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:88
+  reason: line 160 > file has 148 lines
+
+[BROKEN] src/types/cabinet.ts:112-127
+  cited in _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:196
+  reason: file not found
+
+[BROKEN] src/app/(dashboard)/settings/notifications/page.tsx:160
+  cited in _bmad-output/implementation-artifacts/71.3-fe-requirejam-gating-component.md:198
+  reason: line 160 > file has 148 lines
+
+[BROKEN] src/types/cabinet.ts:7
+  cited in _bmad-output/implementation-artifacts/96-1-fe-fix-usepreliminarytax-response-shape-enum.md:23
+  reason: file not found
+
+[BROKEN] src/types/cabinet.ts:10-11
+  cited in _bmad-output/implementation-artifacts/96-1-fe-fix-usepreliminarytax-response-shape-enum.md:24
+  reason: file not found
+
+[BROKEN] src/lib/routes.ts:206
+  cited in _bmad-output/implementation-artifacts/110-2-fe-evaluations-list-page.md:116
+  reason: line 206 > file has 125 lines
+
+[BROKEN] src/lib/routes.ts:206
+  cited in _bmad-output/implementation-artifacts/110-2-fe-evaluations-list-page.md:242
+  reason: line 206 > file has 125 lines
+
+[BROKEN] src/lib/routes.ts:215
+  cited in _bmad-output/implementation-artifacts/110-2-fe-evaluations-list-page.md:243
+  reason: line 215 > file has 125 lines
+
+[BROKEN] src/lib/api/advertising-analytics-api.ts:104
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:55
+  reason: line 104 > file has 87 lines
+
+[BROKEN] src/lib/api/advertising-analytics-api.ts:140-147
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:87
+  reason: line 147 > file has 87 lines
+
+[BROKEN] src/types/daily-metrics.ts:86
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:110
+  reason: file not found
+
+[BROKEN] src/types/daily-metrics.ts:125
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:111
+  reason: file not found
+
+[BROKEN] src/lib/api/daily-analytics/api.ts:159
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:114
+  reason: line 159 > file has 123 lines
+
+[BROKEN] src/types/daily-metrics.ts:86
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:312
+  reason: file not found
+
+[BROKEN] src/types/daily-metrics.ts:125
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:313
+  reason: file not found
+
+[BROKEN] src/lib/api/advertising-analytics-api.ts:104
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:317
+  reason: line 104 > file has 87 lines
+
+[BROKEN] src/lib/api/daily-analytics/api.ts:159
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:320
+  reason: line 159 > file has 123 lines
+
+[BROKEN] src/app/(dashboard)/analytics/advertising/components/performance-table/performance-table-columns.tsx:152-158
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:325
+  reason: line 158 > file has 67 lines
+
+[BROKEN] src/app/(dashboard)/analytics/advertising/components/performance-table/performance-table-columns.tsx:152-158
+  cited in _bmad-output/implementation-artifacts/88-2-fe-null-type-audit-propagation.md:331
+  reason: line 158 > file has 67 lines
+
+[BROKEN] src/lib/api/ai/forecast.ts:43-57
+  cited in _bmad-output/implementation-artifacts/109-2-fe-forecast-chart-confidence-band.md:21
+  reason: line 57 > file has 23 lines
+
+[BROKEN] src/components/custom/orders/OrdersTableRow.tsx:134-137
+  cited in _bmad-output/implementation-artifacts/87-3-fe-data-quality-polish.md:42
+  reason: line 137 > file has 113 lines
+
+[BROKEN] src/types/sku-financials.ts:143-150
+  cited in _bmad-output/implementation-artifacts/87-3-fe-data-quality-polish.md:87
+  reason: file not found
+
+[BROKEN] src/types/sku-financials.ts:86-93
+  cited in _bmad-output/implementation-artifacts/87-3-fe-data-quality-polish.md:290
+  reason: file not found
+
+[BROKEN] src/components/custom/orders/OrdersTableRow.tsx:134-137
+  cited in _bmad-output/implementation-artifacts/87-3-fe-data-quality-polish.md:305
+  reason: line 137 > file has 113 lines
+
+[BROKEN] src/types/sku-financials.ts:86-93
+  cited in _bmad-output/implementation-artifacts/87-3-fe-data-quality-polish.md:310
+  reason: file not found
+
+[BROKEN] src/types/cabinet.ts:112
+  cited in _bmad-output/implementation-artifacts/71.4-fe-search-page-scaffold-route-registration.md:79
+  reason: file not found
+
+[BROKEN] src/lib/api/ai/status.ts:27
+  cited in _bmad-output/implementation-artifacts/epic-108-fe-retro-2026-05-16.md:102
+  reason: line 27 > file has 16 lines
+
+[BROKEN] src/lib/margin-helpers.ts:128-129
+  cited in _bmad-output/implementation-artifacts/96-12-fe-fbs-csv-export-async-polling-flow.md:27
+  reason: line 129 > file has 109 lines
+
+[BROKEN] src/types/finance-summary.ts:121-126
+  cited in _bmad-output/implementation-artifacts/87-1-fe-dashboard-profit-hierarchy-funnel-limit.md:123
+  reason: line 126 > file has 111 lines
+
+[BROKEN] src/lib/api/ai/admin.ts:1-50
+  cited in _bmad-output/implementation-artifacts/112-1-fe-model-rollback-admin-ui.md:49
+  reason: line 50 > file has 31 lines
+
+[BROKEN] src/lib/api/ai/admin.ts:1-50
+  cited in _bmad-output/implementation-artifacts/112-1-fe-model-rollback-admin-ui.md:116
+  reason: line 50 > file has 31 lines
+
+[BROKEN] src/lib/api/ai/admin.ts:1-50
+  cited in _bmad-output/implementation-artifacts/112-1-fe-model-rollback-admin-ui.md:198
+  reason: line 50 > file has 31 lines
+
+[BROKEN] src/lib/api/ai/models.ts:69
+  cited in _bmad-output/implementation-artifacts/109-3-fe-model-list-section.md:17
+  reason: line 69 > file has 42 lines
+
+[BROKEN] src/lib/api/ai/models.ts:69
+  cited in _bmad-output/implementation-artifacts/109-3-fe-model-list-section.md:114
+  reason: line 69 > file has 42 lines
+
+[BROKEN] src/lib/api/ai/models.ts:69
+  cited in _bmad-output/implementation-artifacts/109-3-fe-model-list-section.md:243
+  reason: line 69 > file has 42 lines
+
+[BROKEN] src/hooks-v1/use-search-analytics.ts:44-54
+  cited in _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:80
+  reason: file not found
+
+[BROKEN] src/hooks-v1/use-search-analytics.ts:44-54
+  cited in _bmad-output/implementation-artifacts/71.5-fe-search-orders-tab.md:239
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:181-190
+  cited in _bmad-output/implementation-artifacts/96-3-fe-refactor-cost-category-order-from-meta.md:18
+  reason: file not found
+
+[BROKEN] src/types/unit-economics.ts:181-190
+  cited in _bmad-output/implementation-artifacts/96-3-fe-refactor-cost-category-order-from-meta.md:208
+  reason: file not found
+
+Scanned: CLAUDE.md,CLAUDE-PATTERNS.md,CLAUDE-ANTI-PATTERNS.md,docs,_bmad-output,backlog/docs,backlog/tasks
+Total citations: 430
+Broken: 101
+
+=== Baseline comparison ===
+OK: broken citations match baseline (101 entries).
+EXIT: 0
+END: 2026-06-12T13:03:30Z

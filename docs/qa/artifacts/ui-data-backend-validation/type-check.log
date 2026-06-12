@@ -1,0 +1,9 @@
+## type-check
+CMD: npm run type-check
+START: 2026-06-12T13:03:07Z
+
+> wb-repricer-frontend@1.0.0 type-check
+> tsc --noEmit
+
+EXIT: 0
+END: 2026-06-12T13:03:09Z

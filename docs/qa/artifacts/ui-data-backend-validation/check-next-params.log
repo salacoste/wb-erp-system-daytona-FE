@@ -1,0 +1,10 @@
+## check-next-params
+CMD: npm run check:next-params
+START: 2026-06-12T13:03:28Z
+
+> wb-repricer-frontend@1.0.0 check:next-params
+> bash scripts/check-next-async-params.sh
+
+[0;32mOK: all params/searchParams props are Promise-typed (Next.js 15 contract)[0m
+EXIT: 0
+END: 2026-06-12T13:03:29Z
