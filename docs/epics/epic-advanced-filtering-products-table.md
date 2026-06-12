@@ -475,6 +475,20 @@
 
 ---
 
+## 🧭 Backlog Decision — 2026-06-13
+
+**Decision**: Do **not** create a duplicate new epic/story right now. This document is already the candidate epic for Advanced Filtering in the Products Table; keep it in **Draft** until PO/PM confirms priority and the backend `/api/products` filtering contract.
+
+**Rationale**:
+
+- Canonical tracker currently shows no active implementation epics; this is feature scope, not a bugfix/tech-debt reconciliation item.
+- The draft already contains a complete epic outline with 6 stories, acceptance criteria, dependencies, risks, and Definition of Done.
+- Implementation depends on backend-supported filter query parameters (`marginMin`, `marginMax`, `stockMin`, `stockMax`, `salesMin`, `salesMax`) and performance targets, so creating active sprint stories before API confirmation would risk rework.
+
+**Next activation step**: if product priority is confirmed, promote this draft through the BMad PM/PO flow into active backlog stories instead of creating a second epic.
+
+---
+
 **Status**: Draft ✅
 **Ready for Story Creation**: YES ✅
 **Priority**: P1 (High Impact Feature)
