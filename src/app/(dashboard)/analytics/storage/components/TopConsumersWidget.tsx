@@ -108,14 +108,14 @@ export function TopConsumersWidget({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((item, index) => (
+          {data.map(item => (
             <TableRow
               key={item.nm_id}
               className="cursor-pointer"
               onClick={() => handleRowClick(item.nm_id)}
             >
               <TableCell>
-                <RankIndicator rank={index + 1} />
+                <RankIndicator rank={item.rank} />
               </TableCell>
               <TableCell
                 className="font-medium max-w-[200px]"

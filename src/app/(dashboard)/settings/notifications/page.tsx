@@ -45,7 +45,7 @@ export default function NotificationsSettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <section className="min-h-screen bg-gray-50">
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -143,6 +143,6 @@ export default function NotificationsSettingsPage() {
         onOpenChange={setIsBindingModalOpen}
         onSuccess={() => setIsBindingModalOpen(false)}
       />
-    </main>
+    </section>
   )
 }

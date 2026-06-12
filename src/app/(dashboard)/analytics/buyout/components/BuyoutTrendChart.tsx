@@ -32,6 +32,7 @@ import {
 } from './buyout-daily-trend-config'
 import { BuyoutTrendLegend } from './BuyoutTrendLegend'
 import { useBuyoutDailyTrends } from '@/hooks/use-buyout-daily'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 
 // ============================================================================
 // Line Config
@@ -107,15 +108,20 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
         <BuyoutTrendLegend visibleSeries={visibleSeries} onToggle={toggleSeries} />
 
         {/* Chart */}
-        <div
-          role="img"
-          aria-label="График ежедневной динамики выкупа"
-          className="h-60 w-full md:h-70 lg:h-80"
+        <ResponsiveChartFrame
+          label="График ежедневной динамики выкупа"
+          className="h-60 md:h-70 lg:h-80"
         >
           <p className="sr-only">
             Линейный график показывает {visibleSeries.length} метрик за {daily.length} дней
           </p>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={1}
+            minHeight={1}
+            initialDimension={{ width: 1, height: 1 }}
+          >
             <LineChart data={daily} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
               <XAxis
@@ -166,7 +172,7 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
               ))}
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ResponsiveChartFrame>
       </CardContent>
     </Card>
   )

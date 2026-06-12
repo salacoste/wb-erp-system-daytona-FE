@@ -1,3 +1,5 @@
+import type { AdvertisingGroup } from './grouping'
+
 /**
  * Advertising Analytics — Enums, Response & Campaign Types
  * Extracted from advertising-analytics.ts (Story 99.1-FE)
@@ -78,6 +80,8 @@ export interface AdvertisingItem {
   efficiency_status: EfficiencyStatus
 }
 
+export type AdvertisingGroupedItem = AdvertisingItem & Partial<AdvertisingGroup>
+
 export interface AdvertisingDailyItem {
   date: string
   spend: number
@@ -100,7 +104,7 @@ export interface MultiCampaignSkuWarning {
 export interface AdvertisingAnalyticsResponse {
   meta: AdvertisingMeta
   summary: AdvertisingSummary
-  data: AdvertisingItem[]
+  data: AdvertisingGroupedItem[]
   daily?: AdvertisingDailyItem[]
   multiCampaignSkuWarnings?: MultiCampaignSkuWarning[]
 }

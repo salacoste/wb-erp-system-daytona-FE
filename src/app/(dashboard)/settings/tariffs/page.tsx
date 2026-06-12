@@ -79,7 +79,7 @@ export default function TariffSettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <section className="min-h-screen bg-background">
       {/* Page Header */}
       <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -133,6 +133,6 @@ export default function TariffSettingsPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </main>
+    </section>
   )
 }

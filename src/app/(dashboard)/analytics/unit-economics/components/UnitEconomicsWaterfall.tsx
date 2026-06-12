@@ -19,6 +19,7 @@ import type { UnitEconomicsItem, UnitEconomicsSummary } from '@/types/unit-econo
 import { CustomTooltip, WaterfallLegend } from './WaterfallTooltip'
 import { useWaterfallData } from './useWaterfallData'
 import { computeWaterfallYDomain } from './waterfall-chart-utils'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 
 /**
  * Unit Economics Waterfall Chart
@@ -124,8 +125,14 @@ export function UnitEconomicsWaterfall({
           isCollapsed ? 'h-0 py-0' : 'h-auto'
         )}
       >
-        <div className="h-[320px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveChartFrame label="График структуры затрат" className="h-[320px]">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={1}
+            minHeight={1}
+            initialDimension={{ width: 1, height: 1 }}
+          >
             <BarChart data={waterfallData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <XAxis
                 dataKey="name"
@@ -162,7 +169,7 @@ export function UnitEconomicsWaterfall({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </ResponsiveChartFrame>
 
         {/* Legend */}
         <WaterfallLegend items={legendItems} />

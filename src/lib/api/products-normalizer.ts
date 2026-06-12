@@ -39,8 +39,8 @@ export interface RawProductsResponse {
  */
 export interface RawProduct {
   // Core fields (guaranteed)
-  nm_id?: string
-  nmId?: string // Alternative naming
+  nm_id?: string | number | bigint
+  nmId?: string | number | bigint // Alternative naming
   sa_name?: string
   saName?: string // Alternative naming
   vendor_code?: string

@@ -32,6 +32,7 @@ import {
 } from './returns-daily-trend-config'
 import { ReturnTrendTooltip, ReturnTrendLegend } from './ReturnTrendChartTooltip'
 import type { DailyReturnItem } from '@/types/returns-daily'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 
 // ============================================================================
 // Props
@@ -96,16 +97,21 @@ export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps)
       </CardHeader>
       <CardContent>
         <ReturnTrendLegend />
-        <div
-          role="img"
-          aria-label={`График возвратов по дням: ${chartData.length} дней`}
-          className="h-60 w-full md:h-70 lg:h-80"
+        <ResponsiveChartFrame
+          label={`График возвратов по дням: ${chartData.length} дней`}
+          className="h-60 md:h-70 lg:h-80"
         >
           <p className="sr-only">
             Комбинированный график показывает возвраты по категориям (столбцы) и долю возвратов
             (линия) за {chartData.length} дней
           </p>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={1}
+            minHeight={1}
+            initialDimension={{ width: 1, height: 1 }}
+          >
             <ComposedChart data={chartData} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
               <XAxis
@@ -156,7 +162,7 @@ export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps)
               />
             </ComposedChart>
           </ResponsiveContainer>
-        </div>
+        </ResponsiveChartFrame>
       </CardContent>
     </Card>
   )

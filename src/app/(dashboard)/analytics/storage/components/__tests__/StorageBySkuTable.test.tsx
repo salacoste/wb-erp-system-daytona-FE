@@ -80,10 +80,12 @@ describe('StorageBySkuTable', () => {
     })
 
     it('shows dash for null volume', () => {
-      const dataWithNullVolume = [{
-        ...mockStorageBySkuItems[0],
-        volume_avg: null,
-      }]
+      const dataWithNullVolume = [
+        {
+          ...mockStorageBySkuItems[0],
+          volume_avg: null,
+        },
+      ]
       render(<StorageBySkuTable data={dataWithNullVolume} />)
 
       // Find cells with "—" (dash)
@@ -96,12 +98,7 @@ describe('StorageBySkuTable', () => {
   describe('sorting', () => {
     it('sorts by storage_cost_total column', () => {
       const onSortChange = vi.fn()
-      render(
-        <StorageBySkuTable
-          data={mockStorageBySkuItems}
-          onSortChange={onSortChange}
-        />
-      )
+      render(<StorageBySkuTable data={mockStorageBySkuItems} onSortChange={onSortChange} />)
 
       const sortButton = screen.getByRole('button', { name: /Хранение/i })
       fireEvent.click(sortButton)
@@ -111,12 +108,7 @@ describe('StorageBySkuTable', () => {
 
     it('sorts by days_stored column', () => {
       const onSortChange = vi.fn()
-      render(
-        <StorageBySkuTable
-          data={mockStorageBySkuItems}
-          onSortChange={onSortChange}
-        />
-      )
+      render(<StorageBySkuTable data={mockStorageBySkuItems} onSortChange={onSortChange} />)
 
       const sortButton = screen.getByRole('button', { name: /Дней/i })
       fireEvent.click(sortButton)
@@ -126,12 +118,7 @@ describe('StorageBySkuTable', () => {
 
     it('toggles sort order on repeated clicks', () => {
       const onSortChange = vi.fn()
-      render(
-        <StorageBySkuTable
-          data={mockStorageBySkuItems}
-          onSortChange={onSortChange}
-        />
-      )
+      render(<StorageBySkuTable data={mockStorageBySkuItems} onSortChange={onSortChange} />)
 
       const sortButton = screen.getByRole('button', { name: /Хранение/i })
 
@@ -154,26 +141,26 @@ describe('StorageBySkuTable', () => {
 
     it('calls onSearch when search value changes (after debounce)', async () => {
       const onSearch = vi.fn()
-      render(
-        <StorageBySkuTable
-          data={mockStorageBySkuItems}
-          onSearch={onSearch}
-        />
-      )
+      render(<StorageBySkuTable data={mockStorageBySkuItems} onSearch={onSearch} />)
 
       const searchInput = screen.getByPlaceholderText('Поиск по артикулу, бренду...')
       fireEvent.change(searchInput, { target: { value: '147' } })
 
       // Component uses 300ms debounce, wait for callback
-      await waitFor(() => {
-        expect(onSearch).toHaveBeenCalledWith('147')
-      }, { timeout: 500 })
+      await waitFor(
+        () => {
+          expect(onSearch).toHaveBeenCalledWith('147')
+        },
+        { timeout: 500 }
+      )
     })
 
     it('updates input value on change', () => {
       render(<StorageBySkuTable data={mockStorageBySkuItems} />)
 
-      const searchInput = screen.getByPlaceholderText('Поиск по артикулу, бренду...') as HTMLInputElement
+      const searchInput = screen.getByPlaceholderText(
+        'Поиск по артикулу, бренду...'
+      ) as HTMLInputElement
       fireEvent.change(searchInput, { target: { value: 'test' } })
 
       expect(searchInput.value).toBe('test')
@@ -183,12 +170,7 @@ describe('StorageBySkuTable', () => {
   describe('interactions', () => {
     it('calls onProductClick when row is clicked', () => {
       const onProductClick = vi.fn()
-      render(
-        <StorageBySkuTable
-          data={mockStorageBySkuItems}
-          onProductClick={onProductClick}
-        />
-      )
+      render(<StorageBySkuTable data={mockStorageBySkuItems} onProductClick={onProductClick} />)
 
       const rows = screen.getAllByRole('row')
       // Click on first data row (index 1)
@@ -235,10 +217,12 @@ describe('StorageBySkuTable', () => {
     })
 
     it('shows dash for null product_name', () => {
-      const dataWithNullName = [{
-        ...mockStorageBySkuItems[0],
-        product_name: null,
-      }]
+      const dataWithNullName = [
+        {
+          ...mockStorageBySkuItems[0],
+          product_name: null,
+        },
+      ]
       render(<StorageBySkuTable data={dataWithNullName} />)
 
       // Find cells with "—" (dash)

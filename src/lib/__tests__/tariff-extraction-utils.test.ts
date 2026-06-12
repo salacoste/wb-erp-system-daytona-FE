@@ -488,3 +488,18 @@ describe('real-world scenarios', () => {
     expect(result.tariffs.coefficient).toBe(1.65) // Preserve actual coefficient
   })
 })
+
+describe('extractStorageTariffs warning options', () => {
+  beforeEach(() => {
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
+  })
+
+  it('can suppress per-row fallback warnings for route-scoped aggregation', () => {
+    const result = extractStorageTariffs({ baseLiterRub: 0, additionalLiterRub: 0 }, 'supply', {
+      warn: false,
+    })
+
+    expect(result.usingFallback).toBe(true)
+    expect(logger.warn).not.toHaveBeenCalled()
+  })
+})

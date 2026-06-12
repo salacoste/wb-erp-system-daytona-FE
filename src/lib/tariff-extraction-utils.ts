@@ -32,6 +32,10 @@ export interface StorageTariffExtraction {
   rawResponse: unknown
 }
 
+interface ExtractStorageTariffsOptions {
+  warn?: boolean
+}
+
 // ============================================================================
 // Constants
 // ============================================================================
@@ -66,11 +70,14 @@ import { logger } from '@/lib/logger'
  */
 export function extractStorageTariffs(
   storageResponse: unknown,
-  source: 'inventory' | 'supply'
+  source: 'inventory' | 'supply',
+  options: ExtractStorageTariffsOptions = {}
 ): StorageTariffExtraction {
   // Handle null/undefined/non-object responses
   if (!storageResponse || typeof storageResponse !== 'object' || Array.isArray(storageResponse)) {
-    logger.warn('[StorageTariffs] Empty or invalid response, using fallback')
+    if (options.warn !== false) {
+      logger.warn('[StorageTariffs] Empty or invalid response, using fallback')
+    }
     return {
       tariffs: { ...DEFAULT_STORAGE_TARIFFS },
       usingFallback: true,
@@ -105,7 +112,9 @@ export function extractStorageTariffs(
   // Apply fallback ONLY when baseLiterRub is 0
   // NOTE: additionalLiterRub = 0 is VALID for Pallets, not a fallback trigger
   if (baseLiterRub === 0) {
-    logger.warn('[StorageTariffs] baseLiterRub=0, applying fallback')
+    if (options.warn !== false) {
+      logger.warn('[StorageTariffs] baseLiterRub=0, applying fallback')
+    }
     return {
       tariffs: {
         baseLiterRub: DEFAULT_STORAGE_TARIFFS.baseLiterRub,

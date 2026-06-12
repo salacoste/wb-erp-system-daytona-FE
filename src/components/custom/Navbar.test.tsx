@@ -45,6 +45,16 @@ describe('Navbar', () => {
     { timeout: 5000 }
   )
 
+
+
+  it('does not render the shell label as a page H1', () => {
+    mockAuthStore({ user: null })
+
+    render(<Navbar />)
+
+    expect(screen.queryByRole('heading', { level: 1, name: 'Dashboard' })).not.toBeInTheDocument()
+  })
+
   it(
     'displays user email when available',
     () => {

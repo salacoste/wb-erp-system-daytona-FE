@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DailyTrendTooltip } from './DailyTrendTooltip'
 import { DailyTrendLegend } from './DailyTrendLegend'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 import {
   DAILY_TREND_COLORS,
   DAILY_TREND_SERIES,
@@ -92,15 +93,20 @@ export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartP
       </CardHeader>
       <CardContent>
         <DailyTrendLegend visibleSeries={visibleSeries} onToggle={toggleSeries} />
-        <div
-          role="img"
-          aria-label="График ежедневной динамики рекламных метрик"
-          className="h-60 w-full md:h-70 lg:h-80"
+        <ResponsiveChartFrame
+          label="График ежедневной динамики рекламных метрик"
+          className="h-60 md:h-70 lg:h-80"
         >
           <p className="sr-only">
             Линейный график показывает {visibleSeries.length} метрик за {data.length} дней
           </p>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={1}
+            minHeight={1}
+            initialDimension={{ width: 1, height: 1 }}
+          >
             <LineChart data={data} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
               <XAxis
@@ -150,7 +156,7 @@ export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartP
               ))}
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ResponsiveChartFrame>
       </CardContent>
     </Card>
   )

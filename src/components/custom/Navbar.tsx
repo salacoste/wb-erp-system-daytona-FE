@@ -13,7 +13,7 @@ export function Navbar() {
   return (
     <div className="flex flex-1 items-center justify-between">
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+        <div className="text-xl font-semibold text-gray-900">Dashboard</div>
       </div>
 
       <div className="flex items-center gap-4">
