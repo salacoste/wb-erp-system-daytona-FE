@@ -8,50 +8,189 @@
  * @see frontend/docs/stories/epic-37/STORY-37.1-INTEGRATION-PLAN.md
  */
 
-import type { AdvertisingGroup } from '@/types/advertising-analytics'
+import type { AdvertisingGroup, MergedGroupProduct } from '@/types/advertising-analytics'
 import { logger } from '@/lib/logger'
+
+function toNumber(raw: unknown, fallback = 0): number {
+  return typeof raw === 'number' && Number.isFinite(raw) ? raw : fallback
+}
+
+function toNullableNumber(raw: unknown): number | null {
+  if (raw == null) return null
+  const value = Number(raw)
+  return Number.isFinite(value) ? value : null
+}
+
+function toFiniteNumberOrNull(raw: unknown): number | null {
+  if (raw == null) return null
+  const value = Number(raw)
+  return Number.isFinite(value) ? value : null
+}
+
+function flatMetrics(item: Record<string, unknown>) {
+  return {
+    totalViews: toNumber(item.views),
+    totalClicks: toNumber(item.clicks),
+    totalOrders: toNumber(item.orders),
+    totalSpend: toNumber(item.spend),
+    totalRevenue: toNumber(item.revenue),
+    totalSales: toNumber(item.total_sales ?? item.totalSales),
+    organicSales: toNumber(item.organic_sales ?? item.organicSales),
+    organicContribution: toNumber(item.organic_contribution ?? item.organicContribution),
+    roas: toNullableNumber(item.roas),
+    roi: toNullableNumber(item.roi),
+    ctr: toNumber(item.ctr),
+    cpc: toNullableNumber(item.cpc),
+    conversionRate: toNumber(item.conversion_rate ?? item.conversionRate),
+    profitAfterAds: toNumber(item.profit_after_ads ?? item.profitAfterAds),
+  }
+}
+
+function normalizeFlatProduct(
+  raw: Record<string, unknown>,
+  imtId: number | null,
+  isMainProduct: boolean,
+  fallbackMetrics: ReturnType<typeof flatMetrics>
+): MergedGroupProduct {
+  return {
+    nmId: Number(raw.nmId ?? raw.sku_id ?? 0),
+    vendorCode: String(
+      raw.vendorCode ?? raw.product_name ?? raw.label ?? raw.nmId ?? raw.sku_id ?? ''
+    ),
+    imtId: raw.imtId != null ? Number(raw.imtId) : imtId,
+    isMainProduct,
+    totalViews: toNumber(raw.totalViews, fallbackMetrics.totalViews),
+    totalClicks: toNumber(raw.totalClicks, fallbackMetrics.totalClicks),
+    totalOrders: toNumber(raw.totalOrders ?? raw.orders, fallbackMetrics.totalOrders),
+    totalSpend: toNumber(raw.totalSpend ?? raw.spend, fallbackMetrics.totalSpend),
+    totalRevenue: toNumber(raw.totalRevenue ?? raw.revenue, fallbackMetrics.totalRevenue),
+    totalSales: toNumber(raw.totalSales ?? raw.total_sales, fallbackMetrics.totalSales),
+    organicSales: toNumber(raw.organicSales ?? raw.organic_sales, fallbackMetrics.organicSales),
+    organicContribution: toNumber(
+      raw.organicContribution ?? raw.organic_contribution,
+      fallbackMetrics.organicContribution
+    ),
+    roas: toNullableNumber(raw.roas) ?? fallbackMetrics.roas,
+    roi: toNullableNumber(raw.roi) ?? fallbackMetrics.roi,
+    ctr: toNumber(raw.ctr, fallbackMetrics.ctr),
+    cpc: toNullableNumber(raw.cpc) ?? fallbackMetrics.cpc,
+    conversionRate: toNumber(
+      raw.conversionRate ?? raw.conversion_rate,
+      fallbackMetrics.conversionRate
+    ),
+    profitAfterAds: toNumber(
+      raw.profitAfterAds ?? raw.profit_after_ads,
+      fallbackMetrics.profitAfterAds
+    ),
+  }
+}
+
+function normalizeFlatIndividual(item: Record<string, unknown>): AdvertisingGroup | null {
+  if (item.type !== 'individual') return null
+
+  const nmId = Number(item.sku_id ?? item.nmId ?? 0)
+  if (!nmId) return null
+
+  const vendorCode = String(item.product_name ?? item.vendorCode ?? item.label ?? nmId)
+  const imtId = item.imtId != null ? Number(item.imtId) : null
+  const metrics = flatMetrics(item)
+  const product = normalizeFlatProduct({ ...item, nmId, vendorCode }, imtId, true, metrics)
+
+  return {
+    type: 'individual',
+    imtId,
+    mainProduct: { nmId, vendorCode },
+    productCount: 1,
+    aggregateMetrics: metrics,
+    products: [product],
+  }
+}
+
+function normalizeFlatMergedGroup(item: Record<string, unknown>): AdvertisingGroup | null {
+  if (item.type !== 'merged_group') return null
+
+  const imtId = toFiniteNumberOrNull(item.imtId)
+  if (imtId == null) return null
+
+  const metrics = flatMetrics(item)
+  const main = (item.mainProduct ?? {}) as Record<string, unknown>
+  const mainNmId = toFiniteNumberOrNull(main.nmId)
+  const mainVendorCode =
+    typeof main.vendorCode === 'string' && main.vendorCode ? main.vendorCode : '—'
+  const mergedProducts = Array.isArray(item.mergedProducts) ? item.mergedProducts : []
+  const productsSource = Array.isArray(item.products) ? item.products : mergedProducts
+  const products = productsSource
+    .map(raw => {
+      const product = (raw ?? {}) as Record<string, unknown>
+      const explicitMain = typeof product.isMainProduct === 'boolean' ? product.isMainProduct : null
+      const isMainProduct = explicitMain ?? (mainNmId != null && Number(product.nmId) === mainNmId)
+      return normalizeFlatProduct(product, imtId, isMainProduct, metrics)
+    })
+    .filter(product => product.nmId > 0)
+
+  if (mainNmId == null && products.length === 0) return null
+
+  return {
+    type: 'merged_group',
+    imtId,
+    mainProduct: {
+      nmId: mainNmId ?? 0,
+      vendorCode: mainVendorCode,
+      name: typeof main.name === 'string' ? main.name : undefined,
+    },
+    productCount: Number(item.productCount ?? products.length),
+    aggregateMetrics: metrics,
+    products,
+  }
+}
 
 /**
  * Transform backend merged group response to frontend AdvertisingGroup.
  *
- * NOTE: As of Request #88, backend already returns the exact structure
- * we need, so this is mostly a pass-through with type validation.
+ * Supports all live contracts seen in QA:
+ * - Request #88 nested merged_group rows with aggregateMetrics/products.
+ * - Legacy flat merged_group rows with mergedProducts and top-level metrics.
+ * - Flat individual rows in imtId mode, normalized as one-product groups.
  *
  * @param backendItem - Raw backend response item
  * @returns Validated AdvertisingGroup or null if invalid
  */
-export function transformMergedGroup(backendItem: unknown): AdvertisingGroup | null {
+export function transformMergedGroup(
+  backendItem: unknown,
+  options: { warn?: boolean } = {}
+): AdvertisingGroup | null {
   const item = backendItem as Record<string, unknown>
+  const shouldWarn = options.warn ?? true
 
-  // Type guard: verify it's a merged_group or individual type
   if (item.type !== 'merged_group' && item.type !== 'individual') {
-    logger.warn('[Transformer] Invalid type:', item.type)
+    if (shouldWarn) logger.warn('[Transformer] Invalid type:', item.type)
     return null
   }
 
-  // Verify required fields exist
   if (!item.aggregateMetrics || !Array.isArray(item.products)) {
-    logger.warn('[Transformer] Missing required fields:', {
-      hasAggregateMetrics: !!item.aggregateMetrics,
-      hasProducts: Array.isArray(item.products),
-    })
+    const flatGroup = normalizeFlatMergedGroup(item) ?? normalizeFlatIndividual(item)
+    if (flatGroup) return flatGroup
+
+    if (shouldWarn) {
+      logger.warn('[Transformer] Missing required fields:', {
+        hasAggregateMetrics: !!item.aggregateMetrics,
+        hasProducts: Array.isArray(item.products),
+      })
+    }
     return null
   }
 
-  // For merged groups, imtId is required
-  if (item.type === 'merged_group' && !item.imtId) {
-    logger.warn('[Transformer] merged_group requires imtId')
+  if (item.type === 'merged_group' && toFiniteNumberOrNull(item.imtId) == null) {
+    if (shouldWarn) logger.warn('[Transformer] merged_group requires imtId')
     return null
   }
 
-  // Validate mainProduct exists
   const mainProduct = item.mainProduct as Record<string, unknown> | undefined
   if (!mainProduct?.nmId) {
-    logger.warn('[Transformer] Invalid mainProduct:', mainProduct)
+    if (shouldWarn) logger.warn('[Transformer] Invalid mainProduct:', mainProduct)
     return null
   }
 
-  // Return as-is (backend structure matches frontend)
   return item as unknown as AdvertisingGroup
 }
 
@@ -71,9 +210,26 @@ export function transformMergedGroups(backendData: unknown[]): AdvertisingGroup[
     return []
   }
 
-  const transformed = backendData
-    .map(transformMergedGroup)
-    .filter((item): item is AdvertisingGroup => item !== null)
+  const transformed: AdvertisingGroup[] = []
+  let droppedCount = 0
+
+  backendData.forEach(rawItem => {
+    const item = transformMergedGroup(rawItem, { warn: false })
+    if (item) {
+      transformed.push(item)
+    } else {
+      droppedCount++
+    }
+  })
+
+  if (droppedCount > 0) {
+    const payload = { droppedCount, totalCount: backendData.length }
+    if (droppedCount === backendData.length) {
+      logger.warn('[Transformer] Dropped all advertising group rows:', payload)
+    } else {
+      logger.debug('[Transformer] Dropped invalid advertising group rows:', payload)
+    }
+  }
 
   return transformed
 }

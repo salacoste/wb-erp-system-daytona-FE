@@ -1,6 +1,32 @@
-import { describe, it, expect } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { AdCostDiscrepancyChart } from '../AdCostDiscrepancyChart'
+
+
+const originalGetBoundingClientRect = HTMLElement.prototype.getBoundingClientRect
+
+beforeEach(() => {
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+    if (this.classList.contains('recharts-responsive-container')) {
+      return {
+        width: 320,
+        height: 192,
+        top: 0,
+        right: 320,
+        bottom: 192,
+        left: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => {},
+      }
+    }
+    return originalGetBoundingClientRect.call(this)
+  })
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('AdCostDiscrepancyChart', () => {
   it('returns null when both values are null', () => {

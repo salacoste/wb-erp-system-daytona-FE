@@ -1,0 +1,48 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 [setup] › e2e/auth-manager.setup.ts:22:6 › authenticate as manager (non-Owner) (2.3s)
+  ✓  2 [setup] › e2e/auth.setup.ts:10:6 › authenticate (1.5s)
+  ✓  3 [setup] › e2e/auth.setup.ts:49:8 › unauthenticated › verify login page accessible (452ms)
+  ✓  4 [setup] › e2e/auth.setup.ts:54:8 › unauthenticated › verify register page accessible (782ms)
+  ✘  5 [chromium] › e2e/advertising-analytics-epic-36.spec.ts:125:7 › Epic 36: Product Card Linking (Склейки) › should preserve Epic 33 functionality in both modes (1.1s)
+
+
+  1) [chromium] › e2e/advertising-analytics-epic-36.spec.ts:125:7 › Epic 36: Product Card Linking (Склейки) › should preserve Epic 33 functionality in both modes
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('table')
+    Expected: visible
+    Error: strict mode violation: locator('table') resolved to 2 elements:
+        1) <table role="table" class="w-full text-sm">…</table> aka getByText('АртикулРасходОрганика %Орг. продажиРиск9947034083 391,49 ₽63,8 %10 000,11')
+        2) <table class="w-full caption-bottom text-sm">…</table> aka getByRole('table').filter({ hasText: 'АртикулНазваниеЗатратыВсего продажИз рекламыОрганика%ПрибыльROASROICTRСтатус' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('table')[22m
+
+
+      178 |
+      179 |   // Check table exists
+    > 180 |   await expect(page.locator('table')).toBeVisible()
+          |                                       ^
+      181 |
+      182 |   // Check summary cards exist. Actual card labels are "Всего продаж" / "Общий ROAS" / "Общий
+      183 |   // ROI" / "Расходы" (NOT "Рекламные затраты"). These strings also recur as column headers, so
+        at testEpic33Features (/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/advertising-analytics-epic-36.spec.ts:180:39)
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/advertising-analytics-epic-36.spec.ts:127:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/advertising-analytics-epic-3e1ee-functionality-in-both-modes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/advertising-analytics-epic-3e1ee-functionality-in-both-modes-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/advertising-analytics-epic-3e1ee-functionality-in-both-modes-chromium/error-context.md
+
+  1 failed
+    [chromium] › e2e/advertising-analytics-epic-36.spec.ts:125:7 › Epic 36: Product Card Linking (Склейки) › should preserve Epic 33 functionality in both modes
+  4 passed (6.9s)

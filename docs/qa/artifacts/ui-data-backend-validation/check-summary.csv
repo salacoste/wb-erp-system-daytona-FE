@@ -1,0 +1,9 @@
+name,exit,start,end,cmd
+type-check,0,2026-06-12T13:03:07Z,2026-06-12T13:03:09Z,npm run type-check
+lint,0,2026-06-12T13:03:09Z,2026-06-12T13:03:16Z,npm run lint
+check-eslint-rules,0,2026-06-12T13:03:16Z,2026-06-12T13:03:17Z,npm run check:eslint-rules
+check-max-lines,0,2026-06-12T13:03:17Z,2026-06-12T13:03:28Z,npm run check:max-lines
+check-next-params,0,2026-06-12T13:03:28Z,2026-06-12T13:03:29Z,npm run check:next-params
+check-locale-percent,0,2026-06-12T13:03:29Z,2026-06-12T13:03:29Z,npm run check:locale-percent
+check-docs,0,2026-06-12T13:03:29Z,2026-06-12T13:03:30Z,npm run check:docs
+unit-business,0,2026-06-12T13:03:30Z,2026-06-12T13:03:37Z,npx vitest --run src/lib/api-client.test.ts src/stores/authStore.test.ts src/hooks/useProducts.test.ts src/hooks/sku-financials-transform.test.ts src/hooks/orders-cogs-helpers.test.ts src/hooks/supply-tariffs-helpers.test.ts src/lib/analytics src/lib/api --reporter=default

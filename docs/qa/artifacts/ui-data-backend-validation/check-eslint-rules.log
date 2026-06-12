@@ -1,0 +1,10 @@
+## check-eslint-rules
+CMD: npm run check:eslint-rules
+START: 2026-06-12T13:03:16Z
+
+> wb-repricer-frontend@1.0.0 check:eslint-rules
+> bash scripts/check-eslint-rules.sh
+
+[0;32mOK: all rule names valid in 2 file(s)[0m
+EXIT: 0
+END: 2026-06-12T13:03:17Z

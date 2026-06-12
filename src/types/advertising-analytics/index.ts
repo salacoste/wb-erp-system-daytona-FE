@@ -4,4 +4,5 @@
  */
 
 export * from './analytics'
+export * from './grouping'
 export * from './sync-groups'

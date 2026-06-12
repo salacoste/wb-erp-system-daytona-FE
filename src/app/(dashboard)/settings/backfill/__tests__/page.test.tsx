@@ -152,6 +152,13 @@ describe('BackfillAdminPage - Header & Layout', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Управление бэкфиллом')
   })
 
+
+  it('should not render a nested main landmark inside the dashboard shell', () => {
+    const { container } = renderPage()
+    expect(container.querySelectorAll('main')).toHaveLength(0)
+    expect(container.querySelector('section.min-h-screen')).toBeInTheDocument()
+  })
+
   it('should render page subtitle with description', () => {
     renderPage()
     expect(screen.getByText(/Загрузка исторических данных FBS/i)).toBeInTheDocument()

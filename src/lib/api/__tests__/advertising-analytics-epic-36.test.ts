@@ -170,6 +170,73 @@ describe('Advertising Analytics API Client - Epic 36', () => {
       })
     })
 
+    it('preserves Request #88 nested merged group fields for transformer consumption', async () => {
+      const mockResponse = {
+        items: [
+          {
+            key: 'group:303077974',
+            type: 'merged_group',
+            imtId: 303077974,
+            label: 'MK-400-Gray (склейка)',
+            mainProduct: { nmId: 321678606, vendorCode: 'MK-400-Gray' },
+            productCount: 2,
+            aggregateMetrics: {
+              totalViews: 10,
+              totalClicks: 2,
+              totalOrders: 1,
+              totalSpend: 100,
+              totalRevenue: 500,
+              totalSales: 700,
+              organicSales: 200,
+              organicContribution: 28.57,
+              roas: 5,
+              roi: 4,
+              ctr: 20,
+              cpc: 50,
+              conversionRate: 50,
+              profitAfterAds: 123,
+            },
+            products: [
+              {
+                nmId: 321678606,
+                vendorCode: 'MK-400-Gray',
+                imtId: 303077974,
+                isMainProduct: true,
+                totalViews: 10,
+                totalClicks: 2,
+                totalOrders: 1,
+                totalSpend: 100,
+                totalRevenue: 500,
+                totalSales: 700,
+                organicSales: 200,
+                organicContribution: 28.57,
+                roas: 5,
+                roi: 4,
+                ctr: 20,
+                cpc: 50,
+                conversionRate: 50,
+                profitAfterAds: 123,
+              },
+            ],
+          },
+        ],
+        summary: {},
+      }
+
+      vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
+      const result = await getAdvertisingAnalytics({
+        from: '2025-12-01',
+        to: '2025-12-21',
+        group_by: 'imtId',
+      })
+
+      expect(result.data[0].mainProduct).toEqual({ nmId: 321678606, vendorCode: 'MK-400-Gray' })
+      expect(result.data[0].productCount).toBe(2)
+      expect(result.data[0].aggregateMetrics).toMatchObject({ totalSpend: 100, totalSales: 700 })
+      expect(result.data[0].products).toHaveLength(1)
+      expect(result.data[0].products?.[0]).toMatchObject({ nmId: 321678606, totalSpend: 100 })
+    })
+
     it('handles null imtId correctly', async () => {
       const mockResponse = {
         period: { from: '2025-12-01', to: '2025-12-21' },

@@ -74,7 +74,7 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     )
     await imtIdButton.click()
     await imtResp
-    await expect(page.locator('table')).toBeVisible()
+    await expect(mergedGroupsTable(page)).toBeVisible()
 
     // Look for merged group badge (if data has merged groups)
     const badges = page.locator('text=/🔗 Склейка \\(\\d+\\)/')
@@ -95,7 +95,7 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     } else {
       // No merged groups for this cabinet — the склейки table renders its header with an empty
       // body (valid: nothing to merge). Verify the table is present and shows no склейка badges.
-      await expect(page.locator('table')).toBeVisible()
+      await expect(mergedGroupsTable(page)).toBeVisible()
       await expect(page.locator('text=/🔗 Склейка/')).toHaveCount(0)
     }
   })
@@ -123,7 +123,8 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
    * AC: All Epic 33 features work in both grouping modes
    */
   test('should preserve Epic 33 functionality in both modes', async ({ page }) => {
-    // Test in SKU mode (default)
+    // Test in SKU mode (default). Gate on the URL because the helper selects the table by group_by.
+    await expect(page).toHaveURL(/group_by=sku/)
     await testEpic33Features(page)
 
     // Switch to merged groups mode (wait for the imtId refetch, not networkidle #9)
@@ -132,6 +133,7 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     )
     await page.getByRole('button', { name: /По склейкам/i }).click()
     await imtResp
+    await expect(page).toHaveURL(/group_by=imtId/)
 
     // Test Epic 33 features still work
     await testEpic33Features(page)
@@ -157,7 +159,7 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
     await expect(imtIdButton).toBeVisible()
 
     // Table should be scrollable
-    const table = page.locator('table')
+    const table = advertisingMetricsTable(page)
     await expect(table).toBeVisible()
 
     // Toggle should work on mobile. Use click (not tap — the chromium project doesn't enable
@@ -168,6 +170,14 @@ test.describe('Epic 36: Product Card Linking (Склейки)', () => {
   })
 })
 
+function advertisingMetricsTable(page: Page) {
+  return page.getByRole('table', { name: /таблица рекламных метрик/i })
+}
+
+function mergedGroupsTable(page: Page) {
+  return page.getByRole('table', { name: /таблица рекламной аналитики по склейкам/i })
+}
+
 /**
  * Helper: Test Epic 33 features (filters, sorting, pagination)
  */
@@ -176,8 +186,12 @@ async function testEpic33Features(page: Page) {
   // textboxes ("Дата начала периода" / "Дата окончания периода").
   await expect(page.getByRole('textbox', { name: /Дата начала периода/i })).toBeVisible()
 
-  // Check table exists
-  await expect(page.locator('table')).toBeVisible()
+  const table = page.url().includes('group_by=imtId')
+    ? mergedGroupsTable(page)
+    : advertisingMetricsTable(page)
+
+  // Check the intended analytics table exists even when other risk tables are visible
+  await expect(table).toBeVisible()
 
   // Check summary cards exist. Actual card labels are "Всего продаж" / "Общий ROAS" / "Общий
   // ROI" / "Расходы" (NOT "Рекламные затраты"). These strings also recur as column headers, so
@@ -190,6 +204,6 @@ async function testEpic33Features(page: Page) {
   const spendHeader = page.getByRole('columnheader', { name: /Spend|Затраты/i })
   if ((await spendHeader.count()) > 0) {
     await spendHeader.first().click()
-    await expect(page.locator('table')).toBeVisible()
+    await expect(table).toBeVisible()
   }
 }

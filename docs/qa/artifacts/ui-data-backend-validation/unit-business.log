@@ -1,0 +1,594 @@
+## unit-business
+CMD: npx vitest --run src/lib/api-client.test.ts src/stores/authStore.test.ts src/hooks/useProducts.test.ts src/hooks/sku-financials-transform.test.ts src/hooks/orders-cogs-helpers.test.ts src/hooks/supply-tariffs-helpers.test.ts src/lib/analytics src/lib/api --reporter=default
+START: 2026-06-12T13:03:30Z
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v1.6.1 /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/reorder-recommendations-normalizer.test.ts  (42 tests) 5ms
+ ✓ src/lib/api/__tests__/supplies-documents.test.ts  (49 tests) 8ms
+ ✓ src/lib/api/monitoring/__tests__/api.test.ts  (48 tests) 8ms
+ ✓ src/lib/api/__tests__/fbs-analytics-admin.test.ts  (47 tests) 9ms
+ ✓ src/lib/api/__tests__/search-analytics-normalizer.test.ts  (46 tests) 8ms
+ ✓ src/lib/api/__tests__/supplies-orders.test.ts  (71 tests) 10ms
+ ✓ src/lib/api/__tests__/supplies.test.ts  (71 tests) 9ms
+ ✓ src/lib/api/__tests__/advertising-analytics-epic-36.test.ts  (19 tests) 8ms
+ ✓ src/lib/api/__tests__/fbs-analytics.test.ts  (77 tests) 10ms
+ ✓ src/lib/api/__tests__/normalizers.test.ts  (27 tests) 5ms
+ ✓ src/lib/api/__tests__/storage-analytics.test.ts  (21 tests) 7ms
+stderr | src/lib/api/__tests__/advertising-analytics-normalizer.test.ts > normalizeAdvertisingResponse > F-50: sanitizes efficiency_status — out-of-union backend value → unknown; valid passes
+[warn] [AdvertisingNormalizer] unknown efficiency_status "critical" from backend → 'unknown' (file a backend ticket if it persists)
+
+ ✓ src/lib/api/__tests__/advertising-analytics-normalizer.test.ts  (19 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/liquidity-distribution-mapper.test.ts  (23 tests) 4ms
+ ✓ src/lib/api/__tests__/price-recommendations-normalizer.test.ts  (37 tests) 5ms
+ ✓ src/lib/api/__tests__/return-analytics.test.ts  (25 tests) 10ms
+ ✓ src/lib/api/__tests__/buyout-analytics.test.ts  (19 tests) 6ms
+ ✓ src/lib/api/__tests__/search-analytics.test.ts  (22 tests) 9ms
+ ✓ src/lib/api/__tests__/funnel-normalizer.test.ts  (30 tests) 4ms
+ ✓ src/lib/api/__tests__/alerts-normalizer.test.ts  (27 tests) 4ms
+ ✓ src/lib/api/__tests__/orders-volume.test.ts  (24 tests) 6ms
+ ✓ src/lib/api/__tests__/fulfillment.test.ts  (22 tests) 7ms
+ ✓ src/lib/api/__tests__/orders-fbo-normalizer.test.ts  (22 tests) 4ms
+stderr | src/lib/analytics/__tests__/analytics.service.test.ts > AnalyticsService > flush > clears queue before sending (no double-send on concurrent flush)
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST /v1/analytics/events
+
+  • Request body: {"events":[{"event_type":"back50","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back51","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back52","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back53","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back54","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back55","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back56","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back57","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back58","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back59","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back60","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back61","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back62","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back63","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back64","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back65","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back66","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back67","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back68","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back69","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back70","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back71","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back72","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back73","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back74","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back75","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back76","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back77","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back78","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back79","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back80","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back81","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back82","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back83","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back84","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back85","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back86","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back87","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back88","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back89","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back90","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back91","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back92","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back93","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back94","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back95","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back96","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back97","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back98","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"},{"event_type":"back99","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.510Z"}]}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/analytics/__tests__/analytics.service.test.ts > AnalyticsService > start > does not create duplicate intervals on double-start
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST /v1/analytics/events
+
+  • Request body: {"events":[{"event_type":"ev1","category":"behavior","properties":{},"timestamp":"2026-06-12T13:03:32.542Z"}]}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+ ✓ src/lib/analytics/__tests__/analytics.service.test.ts  (18 tests) 60ms
+ ✓ src/lib/api/__tests__/remaining-normalizers.test.ts  (19 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/products.test.ts  (12 tests) 6ms
+ ✓ src/lib/api/__tests__/unified-product-normalizer.test.ts  (11 tests) 4ms
+ ✓ src/lib/api/__tests__/orders-history-normalizer.test.ts  (23 tests) 3ms
+ ✓ src/lib/api/__tests__/ai-evaluations-normalizer.test.ts  (14 tests) 8ms
+ ✓ src/lib/api/ai/__tests__/evaluations.test.ts  (25 tests) 5ms
+ ✓ src/lib/api/__tests__/tariffs-normalizer.test.ts  (20 tests) 18ms
+ ✓ src/lib/api/__tests__/analytics-comparison.test.ts  (17 tests) 8ms
+stderr | src/lib/api-client.test.ts > ApiClient > Error handling > throws ApiError for 4xx responses
+[error] API Error [400]: {
+  "message": "Validation error"
+}
+[error] API Error [400]: {
+  "message": "Validation error"
+}
+
+stderr | src/lib/api-client.test.ts > ApiClient > Error handling > throws ApiError for 5xx responses
+[error] API Error [500]: {
+  "message": "Server error"
+}
+
+stderr | src/lib/api-client.test.ts > ApiClient > Error handling > handles network errors
+[error] Network error: Network error
+[error] Network error: Network error
+
+ ✓ src/lib/api-client.test.ts  (13 tests) 11ms
+ ✓ src/lib/api/__tests__/fbs-enhanced-normalizer.test.ts  (12 tests) 37ms
+ ✓ src/lib/api/shipment-cost/__tests__/shipment-cost-normalizers.test.ts  (18 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/liquidity-summary-mapper.test.ts  (12 tests) 5ms
+ ✓ src/lib/api/__tests__/fbs-stock-normalizer.test.ts  (13 tests) 3ms
+ ✓ src/lib/api/liquidity-summary-mapper.test.ts  (10 tests) 7ms
+ ✓ src/lib/api/__tests__/ai-models-normalizer.test.ts  (20 tests) 7ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/price-calculator.test.ts  (16 tests) 8ms
+ ✓ src/lib/api/daily-analytics/__tests__/daily-analytics-normalizer.test.ts  (22 tests) 5ms
+ ✓ src/lib/api/__tests__/price-elasticity-normalizer.test.ts  (16 tests) 7ms
+ ✓ src/lib/api/__tests__/orders-analytics.test.ts  (16 tests) 12ms
+ ✓ src/lib/api/expenses/__tests__/expense-normalizer.test.ts  (16 tests) 3ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/monitor-summary-normalizer.test.ts  (12 tests) 2ms
+ ✓ src/lib/api/__tests__/fbs-analytics-normalizer.test.ts  (20 tests) 4ms
+ ✓ src/lib/api/__tests__/orders-analytics-normalizer.test.ts  (13 tests) 4ms
+ ✓ src/lib/api/__tests__/orders-history.test.ts  (12 tests) 4ms
+ ✓ src/lib/api/__tests__/tariffs.test.ts  (11 tests) 5ms
+ ✓ src/lib/api/__tests__/supplies-query-keys.test.ts  (37 tests) 5ms
+ ✓ src/lib/api/__tests__/supplies-normalizer.test.ts  (19 tests) 6ms
+ ✓ src/lib/api/__tests__/monitoring-normalizer.test.ts  (10 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/buyout-reconciliation-normalizer.test.ts  (13 tests) 4ms
+ ✓ src/lib/api/ai/__tests__/forecast.test.ts  (16 tests) 4ms
+ ✓ src/lib/api/orders/__tests__/client-info-api.test.ts  (12 tests) 6ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/fulfillment-normalizer.test.ts  (12 tests) 4ms
+ ✓ src/lib/api/__tests__/returns-daily-normalizer.test.ts  (10 tests) 3ms
+ ✓ src/lib/api/__tests__/funnel-item-normalizer.test.ts  (18 tests) 5ms
+ ✓ src/lib/api/daily-analytics/__tests__/api.test.ts  (9 tests) 5ms
+ ✓ src/lib/api/__tests__/search-position-trends-normalizer.test.ts  (13 tests) 4ms
+ ✓ src/lib/api/__tests__/buyout-analytics-normalizer.test.ts  (14 tests) 9ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/monitoring-grid-normalizer.test.ts  (8 tests) 3ms
+stderr | src/lib/api.test.ts > createCabinet > throws error on creation failure
+[error] API Error [undefined]: {
+  "message": "Validation error"
+}
+
+stderr | src/lib/api.test.ts > updateWbToken > throws error for invalid token
+[error] API Error [400]: {
+  "code": "INVALID_TOKEN",
+  "message": "WB API token is invalid or expired",
+  "details": [
+    {
+      "field": "token",
+      "issue": "Token validation failed",
+      "recommendation": "Get a new token from https://seller.wildberries.ru/"
+    }
+  ]
+}
+
+stderr | src/lib/api.test.ts > updateWbToken > throws error for missing X-Cabinet-Id header
+[error] API Error [400]: {
+  "code": "VALIDATION_ERROR",
+  "message": "Missing X-Cabinet-Id header"
+}
+
+stderr | src/lib/api.test.ts > updateWbToken > throws error for insufficient permissions
+[error] API Error [403]: {
+  "message": "Insufficient permissions"
+}
+
+stderr | src/lib/api.test.ts > updateWbToken > throws error for not found
+[error] API Error [404]: {
+  "message": "Cabinet or key not found"
+}
+
+ ✓ src/lib/api.test.ts  (7 tests) 10ms
+ ✓ src/lib/api/__tests__/orders-volume-normalizer.test.ts  (12 tests) 4ms
+ ✓ src/lib/api/ai/__tests__/system.test.ts  (17 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+stderr | src/lib/api/__tests__/notifications.test.ts > Telegram Binding API > should start binding and return code
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST /v1/notifications/telegram/bind
+
+  • Request body: {}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > Telegram Binding API > should get binding status
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /v1/notifications/telegram/status
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > Telegram Binding API > should unbind telegram
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • DELETE /v1/notifications/telegram/unbind
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > Telegram Binding API > should handle API errors
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST /v1/notifications/telegram/bind
+
+  • Request body: {}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+[error] API Error [429]: {
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "Too many requests"
+  }
+}
+
+stderr | src/lib/api/__tests__/notifications.test.ts > Notification Preferences API > should get notification preferences
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /v1/notifications/preferences
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > Notification Preferences API > should update notification preferences
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • PUT /v1/notifications/preferences
+
+  • Request body: {"preferences":{"task_completed":false}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > Test Notification API > should send test notification
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST /v1/notifications/test
+
+  • Request body: {}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > FBS Order Notification Settings API > should get order notification settings
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /v1/notifications/orders/settings
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > FBS Order Notification Settings API > should normalize malformed hour fields
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /v1/notifications/orders/settings
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+stderr | src/lib/api/__tests__/notifications.test.ts > FBS Order Notification Settings API > should update order notification settings
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST /v1/notifications/orders/settings
+
+  • Request body: {"newOrderEnabled":false,"slaWarningEnabled":false,"dailySummaryEnabled":true,"dailySummaryHour":9,"quietHoursStart":22,"quietHoursEnd":8,"confirmationSlaWarningMinutes":30,"completionSlaWarningMinutes":120}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/notifications.test.ts  (10 tests) 59ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/storage-queries-normalizer.test.ts  (10 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/search-analytics-item-normalizer.test.ts  (20 tests) 3ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/orders-detail-normalizer.test.ts  (9 tests) 3ms
+ ✓ src/lib/api/__tests__/orders.test.ts  (10 tests) 7ms
+ ✓ src/lib/api/__tests__/tariffs-settings-normalizer.test.ts  (7 tests) 4ms
+ ✓ src/lib/api/__tests__/analytics-comparison-normalizer.test.ts  (9 tests) 3ms
+ ✓ src/lib/api/__tests__/advertising-campaigns-normalizer.test.ts  (14 tests) 16ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/tariffs-box-normalizer.test.ts  (10 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+stderr | src/lib/analytics/__tests__/analytics.test.ts > Analytics Service > Event Tracking > should auto-flush when queue reaches 50 events
+[error] [Analytics] Network error sending events: TypeError: Cannot read properties of undefined (reading 'ok')
+    at AnalyticsService.flush (/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/src/lib/analytics/analytics-service-class.ts:69:21)
+
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/orders-integrity-normalizer.test.ts  (11 tests) 4ms
+ ✓ src/lib/api/__tests__/products-normalizer.test.ts  (16 tests) 3ms
+ ✓ src/lib/api/__tests__/storage-trends-normalizer.test.ts  (9 tests) 4ms
+stderr | src/lib/analytics/__tests__/analytics.test.ts > Analytics Service > Batch Flushing > should retry failed requests once
+[warn] [Analytics] Failed to send events (500): Internal Server Error
+
+ ✓ src/lib/analytics/__tests__/analytics.test.ts  (20 tests) 121ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/unified-product-share-normalizer.test.ts  (12 tests) 5ms
+ ✓ src/lib/api/__tests__/acquiring-normalizer.detail.test.ts  (8 tests) 21ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/bulk-cogs-normalizer.test.ts  (7 tests) 5ms
+ ✓ src/lib/api/__tests__/return-analytics-normalizer.test.ts  (10 tests) 6ms
+ ✓ src/lib/api/__tests__/acquiring-normalizer.list.test.ts  (8 tests) 3ms
+ ✓ src/lib/api/ai/__tests__/models.test.ts  (12 tests) 8ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/stores/authStore.test.ts  (11 tests) 10ms
+ ✓ src/lib/api/__tests__/cabinet-summary-normalizer.test.ts  (6 tests) 2ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/fbs-export-normalizer.test.ts  (13 tests) 3ms
+ ✓ src/lib/api/shipment-cost/__tests__/shipments-api.test.ts  (8 tests) 6ms
+ ✓ src/lib/api/__tests__/notifications-normalizer.test.ts  (11 tests) 3ms
+ ✓ src/lib/api/__tests__/orders-volume-transforms.test.ts  (8 tests) 3ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/normalizer-helpers.test.ts  (41 tests) 5ms
+ ✓ src/lib/api/__tests__/tariffs-admin-normalizer.test.ts  (6 tests) 4ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/buyout-daily-normalizer.test.ts  (8 tests) 4ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/recovery-normalizer.test.ts  (9 tests) 3ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/tax-analytics.test.ts  (6 tests) 24ms
+ ✓ src/lib/api/__tests__/liquidity-item-mapper.test.ts  (7 tests) 6ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/fbs-backfill-normalizer.test.ts  (7 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/liquidity-normalizer.test.ts  (8 tests) 4ms
+ ✓ src/lib/api/shipment-cost/__tests__/sku-packaging-api.test.ts  (7 tests) 4ms
+ ✓ src/lib/api/__tests__/bid-recommendations.test.ts  (7 tests) 13ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/shipment-cost/__tests__/shipment-calculations-api.test.ts  (6 tests) 3ms
+ ✓ src/lib/api/__tests__/orders-normalizer.test.ts  (8 tests) 7ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/cogs-history-normalizer.test.ts  (6 tests) 4ms
+stderr | src/lib/api/__tests__/cogs-history-normalizer.test.ts > normalizeCogsHistoryResponse — F-37 unit_cost_rub coercion > returns [] data for a malformed (missing data array) response
+[warn] [F-37] normalizeCogsHistoryResponse: raw.data is not an array: undefined
+
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/ai-forecast-api.test.ts  (6 tests) 3ms
+ ✓ src/lib/api/shipment-cost/__tests__/box-types-api.test.ts  (6 tests) 4ms
+ ✓ src/lib/api/__tests__/supply-planning-normalizer.test.ts  (5 tests) 2ms
+ ✓ src/lib/api/__tests__/margin-trends-normalizer.test.ts  (6 tests) 3ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/client-info-normalizer.test.ts  (8 tests) 14ms
+ ✓ src/lib/api/__tests__/storage-import-normalizer.test.ts  (7 tests) 16ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/monitoring-telegram-normalizer.test.ts  (3 tests) 5ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > passes through valid readiness levels unchanged
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'collecting' }
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'sneak_preview' }
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'ready' }
+
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > falls back to "ready" for unknown readiness level (Fix 2: spec mandates ready to avoid blanking page)
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'unknown_state' }
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: null }
+[warn] [ai/status] weeksRequired absent from backend response {}
+
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > preserves null for ratio fields (progressPct, cogsCoveragePct)
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'collecting' }
+
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > passes through ratio fields when provided
+[warn] [ai/status] weeksRequired absent from backend response {
+  readinessLevel: 'collecting',
+  progressPct: 67,
+  cogsCoveragePct: 85.5
+}
+
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > preserves null for estimatedActivationDate when backend omits
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'collecting' }
+
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > passes through estimatedActivationDate when provided
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'collecting', estimatedActivationDate: '2026-05-22' }
+
+ ✓ src/lib/api/ai/__tests__/status.test.ts  (11 tests) 6ms
+stderr | src/lib/api/ai/__tests__/status.test.ts > normalizeAiStatusResponse > defaults missingRequirements to empty array when null
+[warn] [ai/status] weeksRequired absent from backend response { readinessLevel: 'collecting', missingRequirements: null }
+
+ ✓ src/lib/api/ai/__tests__/ai-forecast-normalizer.test.ts  (11 tests) 5ms
+ ✓ src/lib/api/shipment-cost/__tests__/fcu-aggregation-api.test.ts  (5 tests) 7ms
+ ✓ src/lib/api/__tests__/unit-economics-normalizer.test.ts  (4 tests) 7ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/tax-analytics-normalizer.test.ts  (5 tests) 2ms
+ ✓ src/lib/api/ai/__tests__/trends-sneak.test.ts  (11 tests) 3ms
+ ✓ src/lib/api/__tests__/cabinet-normalizer.test.ts  (5 tests) 2ms
+ ✓ src/lib/api/__tests__/backfill-normalizer.test.ts  (3 tests) 2ms
+ ✓ src/lib/api/shipment-cost/__tests__/box-lines-api.test.ts  (4 tests) 3ms
+(node:70506) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/lib/api/__tests__/monitoring.test.ts  (2 tests) 3ms
+ ✓ src/lib/api/__tests__/imports-reconcile.test.ts  (3 tests) 3ms
+ ✓ src/lib/api/__tests__/orders-sync-normalizer.test.ts  (3 tests) 2ms
+ ✓ src/lib/api/ai/__tests__/admin.test.ts  (6 tests) 3ms
+ ✓ src/lib/api/__tests__/return-analytics-aggregate.test.ts  (2 tests) 2ms
+
+ Test Files  123 passed (123)
+      Tests  1937 passed (1937)
+   Start at  16:03:31
+   Duration  6.66s (transform 2.25s, setup 15.85s, collect 18.14s, tests 974ms, environment 28.76s, prepare 5.21s)
+
+EXIT: 0
+END: 2026-06-12T13:03:37Z

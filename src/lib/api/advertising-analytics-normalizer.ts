@@ -14,10 +14,13 @@
 import type {
   AdvertisingAnalyticsResponse,
   AdvertisingSummary,
-  AdvertisingItem,
+  AdvertisingGroupedItem,
   AdvertisingDailyItem,
   MultiCampaignSkuWarning,
   ViewByMode,
+  MainProduct,
+  AggregateMetrics,
+  MergedGroupProduct,
 } from '@/types/advertising-analytics'
 import { toCount, toNullableNumber, toStr } from '@/lib/api/normalizer-helpers'
 import { logger } from '@/lib/logger'
@@ -39,7 +42,7 @@ const VALID_EFFICIENCY_STATUSES = new Set([
   'unknown',
 ])
 
-function toEfficiencyStatus(raw: unknown): AdvertisingItem['efficiency_status'] {
+function toEfficiencyStatus(raw: unknown): AdvertisingGroupedItem['efficiency_status'] {
   const s = toStr(raw)
   if (s !== '' && !VALID_EFFICIENCY_STATUSES.has(s)) {
     // F-50: indicate the anomaly rather than silently masking a backend contract drift
@@ -48,7 +51,9 @@ function toEfficiencyStatus(raw: unknown): AdvertisingItem['efficiency_status'] 
       `[AdvertisingNormalizer] unknown efficiency_status "${s}" from backend → 'unknown' (file a backend ticket if it persists)`
     )
   }
-  return (VALID_EFFICIENCY_STATUSES.has(s) ? s : 'unknown') as AdvertisingItem['efficiency_status']
+  return (
+    VALID_EFFICIENCY_STATUSES.has(s) ? s : 'unknown'
+  ) as AdvertisingGroupedItem['efficiency_status']
 }
 
 function toNumArr(raw: unknown): number[] {
@@ -75,7 +80,59 @@ function normalizeSummary(raw: unknown): AdvertisingSummary {
   }
 }
 
-function normalizeItem(item: unknown, index: number): AdvertisingItem {
+function normalizeMainProduct(raw: unknown): MainProduct | undefined {
+  const d = (raw ?? {}) as Record<string, unknown>
+  const nmId = Number(d.nmId ?? 0)
+  if (!nmId) return undefined
+  return { nmId, vendorCode: toStr(d.vendorCode), name: toStr(d.name) || undefined }
+}
+
+function normalizeAggregateMetrics(raw: unknown): AggregateMetrics | undefined {
+  if (!raw || typeof raw !== 'object') return undefined
+  const d = raw as Record<string, unknown>
+  return {
+    totalViews: toCount(d.totalViews),
+    totalClicks: toCount(d.totalClicks),
+    totalOrders: toCount(d.totalOrders),
+    totalSpend: toCount(d.totalSpend),
+    totalRevenue: toCount(d.totalRevenue),
+    totalSales: toCount(d.totalSales),
+    organicSales: toCount(d.organicSales),
+    organicContribution: toCount(d.organicContribution),
+    roas: toNullableNumber(d.roas),
+    roi: toNullableNumber(d.roi),
+    ctr: toCount(d.ctr),
+    cpc: toNullableNumber(d.cpc),
+    conversionRate: toCount(d.conversionRate),
+    profitAfterAds: toCount(d.profitAfterAds),
+  }
+}
+
+function normalizeMergedGroupProduct(raw: unknown): MergedGroupProduct {
+  const d = (raw ?? {}) as Record<string, unknown>
+  return {
+    nmId: Number(d.nmId ?? 0),
+    vendorCode: toStr(d.vendorCode),
+    imtId: d.imtId != null ? Number(d.imtId) : null,
+    isMainProduct: Boolean(d.isMainProduct),
+    totalViews: toCount(d.totalViews),
+    totalClicks: toCount(d.totalClicks),
+    totalOrders: toCount(d.totalOrders),
+    totalSpend: toCount(d.totalSpend),
+    totalRevenue: toCount(d.totalRevenue),
+    totalSales: toCount(d.totalSales),
+    organicSales: toCount(d.organicSales),
+    organicContribution: toCount(d.organicContribution),
+    roas: toNullableNumber(d.roas),
+    roi: toNullableNumber(d.roi),
+    ctr: toCount(d.ctr),
+    cpc: toNullableNumber(d.cpc),
+    conversionRate: toCount(d.conversionRate),
+    profitAfterAds: toCount(d.profitAfterAds),
+  }
+}
+
+function normalizeItem(item: unknown, index: number): AdvertisingGroupedItem {
   const d = (item ?? {}) as Record<string, unknown>
   const eff = (d.efficiency ?? {}) as Record<string, unknown>
   return {
@@ -88,9 +145,9 @@ function normalizeItem(item: unknown, index: number): AdvertisingItem {
           return { nmId: Number(mp.nmId ?? 0), vendorCode: toStr(mp.vendorCode) }
         })
       : undefined,
-    sku_id: d.nmId != null ? String(d.nmId) : undefined,
+    sku_id: d.sku_id != null ? String(d.sku_id) : d.nmId != null ? String(d.nmId) : undefined,
     campaign_id: d.campaignId != null ? Number(d.campaignId) : undefined,
-    product_name: toStr(d.label) || undefined,
+    product_name: toStr(d.label) || toStr(d.product_name) || undefined,
     brand: toStr(d.brand) || undefined,
     category: toStr(d.category) || undefined,
     views: toCount(d.views),
@@ -112,6 +169,10 @@ function normalizeItem(item: unknown, index: number): AdvertisingItem {
     conversion_rate: toNullableNumber(d.conversionRate),
     profit_after_ads: toNullableNumber(d.profitAfterAds),
     efficiency_status: toEfficiencyStatus(eff.status),
+    mainProduct: normalizeMainProduct(d.mainProduct),
+    productCount: d.productCount != null ? Number(d.productCount) : undefined,
+    aggregateMetrics: normalizeAggregateMetrics(d.aggregateMetrics),
+    products: Array.isArray(d.products) ? d.products.map(normalizeMergedGroupProduct) : undefined,
   }
 }
 

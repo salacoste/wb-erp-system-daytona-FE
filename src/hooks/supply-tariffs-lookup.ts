@@ -26,11 +26,24 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
     }
   })
 
-  return Array.from(warehouseMap.values())
+  let storageFallbackCount = 0
+  const storageFallbackSamples: Array<{ warehouseId: number; warehouseName: string }> = []
+
+  const warehouses = Array.from(warehouseMap.values())
     .map(c => {
-      // Use extractStorageTariffs utility for proper fallback logic
-      // Only triggers fallback when baseLiterRub=0, NOT when additionalLiterRub=0 (Pallets)
-      const storageExtraction = extractStorageTariffs(c.storage, 'supply')
+      // Use extractStorageTariffs utility for proper fallback logic. Suppress per-row
+      // warnings here and emit one invocation-scoped summary after aggregation.
+      // Only triggers fallback when baseLiterRub=0, NOT when additionalLiterRub=0 (Pallets).
+      const storageExtraction = extractStorageTariffs(c.storage, 'supply', { warn: false })
+      if (storageExtraction.usingFallback) {
+        storageFallbackCount++
+        if (storageFallbackSamples.length < 3) {
+          storageFallbackSamples.push({
+            warehouseId: c.warehouseId,
+            warehouseName: c.warehouseName,
+          })
+        }
+      }
 
       // CRITICAL: SUPPLY API returns rates ALREADY multiplied by coefficient!
       // Example: base=46, coefficient=1.65 -> API returns baseLiterRub=75.9 (46*1.65)
@@ -55,6 +68,15 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
       }
     })
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
+
+  if (storageFallbackCount > 0) {
+    logger.warn(
+      `[StorageTariffs] ${storageFallbackCount} warehouse(s) using fallback storage tariffs for this calculation`,
+      { sample: storageFallbackSamples }
+    )
+  }
+
+  return warehouses
 }
 
 /** Find tariffs for a specific warehouse ID and date. Prefers boxTypeId: 2, falls back to any. */

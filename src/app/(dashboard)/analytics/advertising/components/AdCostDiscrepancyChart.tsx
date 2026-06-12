@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency } from '@/lib/utils'
 import { AD_COST_LAYERS } from './ad-cost-discrepancy-config'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 
 interface AdCostDiscrepancyChartProps {
   platformSpend: number | null
@@ -79,12 +80,17 @@ export function AdCostDiscrepancyChart({
         <CardTitle className="text-base">Сравнение расходов</CardTitle>
       </CardHeader>
       <CardContent>
-        <div
-          role="img"
-          aria-label="Сравнение рекламных расходов: платформа и факт"
-          className="h-48 w-full"
+        <ResponsiveChartFrame
+          label="Сравнение рекламных расходов: платформа и факт"
+          className="h-48 min-h-[192px]"
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={1}
+            minHeight={1}
+            initialDimension={{ width: 1, height: 1 }}
+          >
             <BarChart
               data={chartData}
               layout="vertical"
@@ -116,7 +122,7 @@ export function AdCostDiscrepancyChart({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </ResponsiveChartFrame>
       </CardContent>
     </Card>
   )

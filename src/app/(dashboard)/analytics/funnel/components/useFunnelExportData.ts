@@ -6,9 +6,11 @@
  */
 
 import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import type { FunnelProductItem } from '@/types/analytics-funnel'
-import { useFunnelData } from '@/hooks/use-funnel-analytics'
 import { exportFunnelToCsv } from '@/lib/csv/funnel-csv-export'
+import { FUNNEL_CACHE, funnelQueryKeys } from '@/lib/api/funnel-analytics'
+import { fetchFunnelExportItems } from '@/lib/api/funnel-export'
 
 interface UseFunnelExportDataReturn {
   exportItems: FunnelProductItem[]
@@ -21,15 +23,16 @@ export function useFunnelExportData(
   apiTo: string,
   nmIds: number[]
 ): UseFunnelExportDataReturn {
-  const exportFilter = nmIds.length ? nmIds : undefined
-  const { data: exportData } = useFunnelData(apiFrom, apiTo, {
-    limit: 10000,
-    nmIds: exportFilter,
+  const { data } = useQuery({
+    queryKey: [...funnelQueryKeys.all, 'export', { apiFrom, apiTo, nmIds }],
+    queryFn: () => fetchFunnelExportItems(apiFrom, apiTo, nmIds),
+    enabled: !!apiFrom && !!apiTo,
+    staleTime: FUNNEL_CACHE.staleTime,
+    gcTime: FUNNEL_CACHE.gcTime,
+    retry: 1,
   })
-  const exportItems = useMemo(
-    () => (exportData?.items ?? []) as FunnelProductItem[],
-    [exportData?.items]
-  )
+
+  const exportItems = useMemo(() => data ?? [], [data])
   const csvContent = useMemo(() => exportFunnelToCsv(exportItems), [exportItems])
   const csvFileName = `funnel-${apiFrom}-${apiTo}.csv`
 

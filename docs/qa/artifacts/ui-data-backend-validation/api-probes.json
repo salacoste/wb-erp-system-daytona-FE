@@ -1,0 +1,284 @@
+{
+  "generatedAt": "2026-06-12T12:59:45.505Z",
+  "cabinetId": "f75836f7-c0bc-4b2c-823c-a1f3508cce8e",
+  "results": [
+    {
+      "path": "/v1/health",
+      "status": 200,
+      "ok": true,
+      "durationMs": 46,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "status",
+          "timestamp",
+          "version",
+          "dependencies"
+        ]
+      }
+    },
+    {
+      "path": "/v1/cabinets",
+      "status": 200,
+      "ok": true,
+      "durationMs": 5,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "data",
+          "meta"
+        ],
+        "dataLength": 1
+      }
+    },
+    {
+      "path": "/v1/cabinets/f75836f7-c0bc-4b2c-823c-a1f3508cce8e/seller-info",
+      "status": 200,
+      "ok": true,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "name",
+          "sid",
+          "tradeMark",
+          "tin",
+          "available"
+        ]
+      }
+    },
+    {
+      "path": "/v1/cabinets/f75836f7-c0bc-4b2c-823c-a1f3508cce8e/token-status",
+      "status": 200,
+      "ok": true,
+      "durationMs": 1,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "healthy",
+          "lastError",
+          "lastErrorAt",
+          "firstErrorAt",
+          "errorCount",
+          "recommendation"
+        ]
+      }
+    },
+    {
+      "path": "/v1/imports/historical?limit=5",
+      "status": 404,
+      "ok": false,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "error"
+        ],
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "An error occurred",
+          "details": [],
+          "trace_id": "240155e2-1eeb-45ff-b1f9-f4b034f4725f",
+          "timestamp": "2026-06-12T12:59:45.469Z",
+          "path": "/v1/imports/historical?limit=5"
+        }
+      }
+    },
+    {
+      "path": "/v1/analytics/funnel?from=2026-05-14&to=2026-06-12&groupBy=product&limit=10000&offset=0",
+      "status": 400,
+      "ok": false,
+      "durationMs": 1,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "error"
+        ],
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "Validation failed",
+          "details": [
+            {
+              "field": "limit",
+              "issue": "not be greater than 500",
+              "message": "limit must not be greater than 500"
+            }
+          ],
+          "trace_id": "b4b2429a-ef42-4a0c-ae86-0ee5c394d243",
+          "timestamp": "2026-06-12T12:59:45.470Z",
+          "path": "/v1/analytics/funnel?from=2026-05-14&to=2026-06-12&groupBy=product&limit=10000&offset=0"
+        }
+      }
+    },
+    {
+      "path": "/v1/analytics/funnel?from=2026-05-14&to=2026-06-12&groupBy=product&limit=500&offset=0",
+      "status": 200,
+      "ok": true,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "items",
+          "summary",
+          "pagination",
+          "meta"
+        ],
+        "itemsLength": 53
+      }
+    },
+    {
+      "path": "/v1/analytics/advertising?from=2026-05-29&to=2026-06-11&view_by=sku&group_by=sku&sort_by=spend&sort_order=desc&limit=25&offset=0&include_daily=true",
+      "status": 200,
+      "ok": true,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "items",
+          "summary",
+          "query",
+          "pagination",
+          "cachedAt",
+          "multiCampaignSkuWarnings",
+          "daily"
+        ],
+        "itemsLength": 25
+      }
+    },
+    {
+      "path": "/v1/analytics/advertising/campaigns",
+      "status": 200,
+      "ok": true,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "campaigns",
+          "total",
+          "limit",
+          "offset"
+        ]
+      }
+    },
+    {
+      "path": "/v1/analytics/sku-financials",
+      "status": 400,
+      "ok": false,
+      "durationMs": 3,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "error"
+        ],
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "Validation failed",
+          "details": [
+            {
+              "field": "week",
+              "issue": "be in ISO format YYYY-Www (e.g., 2025-W50)",
+              "message": "week must be in ISO format YYYY-Www (e.g., 2025-W50)"
+            },
+            {
+              "field": "week",
+              "issue": "be a string",
+              "message": "week must be a string"
+            }
+          ],
+          "trace_id": "b3521219-48a5-49e0-9fd0-fad9fb371fb7",
+          "timestamp": "2026-06-12T12:59:45.478Z",
+          "path": "/v1/analytics/sku-financials"
+        }
+      }
+    },
+    {
+      "path": "/v1/analytics/storage/by-sku?weekStart=2026-W20&weekEnd=2026-W23",
+      "status": 200,
+      "ok": true,
+      "durationMs": 20,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "period",
+          "data",
+          "summary",
+          "pagination",
+          "has_data"
+        ],
+        "dataLength": 40
+      }
+    },
+    {
+      "path": "/v1/analytics/unit-economics",
+      "status": 400,
+      "ok": false,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "error"
+        ],
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "Validation failed",
+          "details": [
+            {
+              "field": "week",
+              "issue": "be in ISO format YYYY-Www (e.g., 2025-W47)",
+              "message": "week must be in ISO format YYYY-Www (e.g., 2025-W47)"
+            },
+            {
+              "field": "week",
+              "issue": "be a string",
+              "message": "week must be a string"
+            }
+          ],
+          "trace_id": "c6d2d7b4-8dc4-4e92-8174-95add6102708",
+          "timestamp": "2026-06-12T12:59:45.501Z",
+          "path": "/v1/analytics/unit-economics"
+        }
+      }
+    },
+    {
+      "path": "/v1/analytics/supply-planning",
+      "status": 200,
+      "ok": true,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "meta",
+          "summary",
+          "data"
+        ],
+        "dataLength": 44
+      }
+    },
+    {
+      "path": "/v1/products?limit=10&offset=0",
+      "status": 400,
+      "ok": false,
+      "durationMs": 2,
+      "sample": {
+        "kind": "object",
+        "keys": [
+          "error"
+        ],
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "Validation failed",
+          "details": [
+            {
+              "field": "property",
+              "issue": "offset should not exist",
+              "message": "property offset should not exist"
+            }
+          ],
+          "trace_id": "99143560-54b1-4851-937a-244d720b1969",
+          "timestamp": "2026-06-12T12:59:45.504Z",
+          "path": "/v1/products?limit=10&offset=0"
+        }
+      }
+    }
+  ]
+}

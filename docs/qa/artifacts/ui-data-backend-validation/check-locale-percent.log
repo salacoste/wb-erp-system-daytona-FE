@@ -1,0 +1,10 @@
+## check-locale-percent
+CMD: npm run check:locale-percent
+START: 2026-06-12T13:03:29Z
+
+> wb-repricer-frontend@1.0.0 check:locale-percent
+> bash scripts/check-locale-percent.sh
+
+[0;32mOK: dot-locale percent occurrences = 4 (== baseline; no new violations)[0m
+EXIT: 0
+END: 2026-06-12T13:03:29Z

@@ -311,4 +311,21 @@ describe('TariffSettingsPage', () => {
       })
     })
   })
+
+  it('should not render a nested main landmark inside the dashboard shell', async () => {
+    mockUseAuth.mockReturnValue(
+      createMockAuth({
+        user: { id: '1', email: 'owner@test.com', role: 'Owner' },
+        isAuthenticated: true,
+        token: 'test-token',
+      })
+    )
+
+    const { default: TariffSettingsPage } = await import('../page')
+    renderWithProviders(<TariffSettingsPage />)
+
+    expect(document.querySelectorAll('main')).toHaveLength(0)
+    expect(document.querySelector('section.min-h-screen')).toBeInTheDocument()
+  })
+
 })

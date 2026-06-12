@@ -1,0 +1,1153 @@
+## e2e-targeted-live
+START: 2026-06-12T12:54:53Z
+
+Running 134 tests using 2 workers
+
+(node:30101) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30102) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30101) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30102) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓    2 [setup] › e2e/auth.setup.ts:10:6 › authenticate (8.6s)
+  ✓    1 [setup] › e2e/auth-manager.setup.ts:22:6 › authenticate as manager (non-Owner) (8.6s)
+  ✓    4 [setup] › e2e/auth.setup.ts:54:8 › unauthenticated › verify register page accessible (1.1s)
+  ✓    3 [setup] › e2e/auth.setup.ts:49:8 › unauthenticated › verify login page accessible (1.1s)
+(node:38683) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38682) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38682) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38683) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓    5 [chromium] › e2e/advertising-analytics-epic-36.spec.ts:69:7 › Epic 36: Product Card Linking (Склейки) › should display merged groups with badge and tooltip (2.2s)
+  ✓    6 [chromium] › e2e/advertising-analytics-epic-36.spec.ts:28:7 › Epic 36: Product Card Linking (Склейки) › should switch between SKU and imtId grouping modes (2.7s)
+  ✓    7 [chromium] › e2e/advertising-analytics-epic-36.spec.ts:107:7 › Epic 36: Product Card Linking (Склейки) › should persist groupBy state in URL across page refresh (1.6s)
+  ✓    9 [chromium] › e2e/advertising-analytics-epic-36.spec.ts:144:7 › Epic 36: Product Card Linking (Склейки) › should be mobile responsive (1.6s)
+  ✓   10 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:29:7 › Analytics Pages — Smoke › brand page renders heading and content area (2.8s)
+  ✘    8 [chromium] › e2e/advertising-analytics-epic-36.spec.ts:125:7 › Epic 36: Product Card Linking (Склейки) › should preserve Epic 33 functionality in both modes (6.2s)
+(node:46998) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46998) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   11 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:42:7 › Analytics Pages — Smoke › brand page has correct heading hierarchy (2.2s)
+  ✓   12 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:55:7 › Analytics Pages — Smoke › category page renders heading and content area (2.9s)
+  ✓   13 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:68:7 › Analytics Pages — Smoke › category page has correct heading hierarchy (2.7s)
+  ✓   14 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:81:7 › Analytics Pages — Smoke › returns page renders heading and content area (2.9s)
+  ✓   15 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:94:7 › Analytics Pages — Smoke › returns page has correct heading hierarchy (3.0s)
+  ✓   16 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:107:7 › Analytics Pages — Smoke › sku page renders heading and content area (2.9s)
+  ✓   17 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:121:7 › Analytics Pages — Smoke › sku page has correct heading hierarchy (2.2s)
+  ✓   19 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:148:7 › Analytics Pages — Smoke › storage page has correct heading hierarchy (2.9s)
+  ✓   18 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:134:7 › Analytics Pages — Smoke › storage page renders heading and content area (3.2s)
+  ✓   20 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:163:7 › Analytics Pages — Smoke › time-period page renders heading and content area (2.6s)
+  ✓   21 [chromium] › e2e/analytics/analytics-pages-smoke.spec.ts:175:7 › Analytics Pages — Smoke › time-period page has correct heading hierarchy (2.6s)
+  ✓   22 [chromium] › e2e/funnel.spec.ts:61:7 › Funnel Analytics page › page loads with Воронка продаж heading (1.5s)
+  ✓   24 [chromium] › e2e/funnel.spec.ts:109:7 › Funnel Analytics page › summary cards render metric labels for the 8 funnel KPIs (716ms)
+  ✓   23 [chromium] › e2e/funnel.spec.ts:71:7 › Funnel Analytics page › funnel table renders rows with numeric values when backend has data (2.2s)
+  ✓   25 [chromium] › e2e/funnel.spec.ts:133:7 › Funnel Analytics page › table header contains Топ поисковых запросов column (1.1s)
+  ✓   26 [chromium] › e2e/funnel.spec.ts:147:7 › Funnel Analytics page › top search query links deep-link to /analytics/search?query= (1.1s)
+  ✓   28 [chromium] › e2e/funnel.spec.ts:249:7 › Funnel Analytics page › empty funnel response renders an informational alert (no data for period) (668ms)
+  ✓   27 [chromium] › e2e/funnel.spec.ts:204:7 › Funnel Analytics page › clicking a top-search-query link navigates to /analytics/search with query param (2.2s)
+  ✓   30 [chromium] › e2e/login-dashboard.spec.ts:19:9 › Login → Dashboard Flow › Dashboard Layout (Story 3.1) › displays sidebar navigation (1.3s)
+  ✓   29 [chromium] › e2e/funnel.spec.ts:276:7 › Funnel Analytics page › funnel 500 renders a destructive error alert without crashing the page (3.6s)
+  ✓   31 [chromium] › e2e/login-dashboard.spec.ts:29:9 › Login → Dashboard Flow › Dashboard Layout (Story 3.1) › displays main dashboard content area (1.1s)
+  ✓   32 [chromium] › e2e/login-dashboard.spec.ts:39:9 › Login → Dashboard Flow › Dashboard Layout (Story 3.1) › has responsive mobile menu (1.1s)
+  ✓   34 [chromium] › e2e/login-dashboard.spec.ts:72:9 › Login → Dashboard Flow › Metric Cards (Story 3.2) › metric cards show formatted currency values (1.1s)
+  ✓   33 [chromium] › e2e/login-dashboard.spec.ts:58:9 › Login → Dashboard Flow › Metric Cards (Story 3.2) › displays key metric cards (3.2s)
+  ✓   35 [chromium] › e2e/login-dashboard.spec.ts:78:9 › Login → Dashboard Flow › Metric Cards (Story 3.2) › metric cards handle loading state (1.8s)
+  ✓   36 [chromium] › e2e/login-dashboard.spec.ts:93:9 › Login → Dashboard Flow › Expense Chart (Story 3.3) › displays expense breakdown chart (1.1s)
+  ✓   37 [chromium] › e2e/login-dashboard.spec.ts:102:9 › Login → Dashboard Flow › Expense Chart (Story 3.3) › chart has accessible label (1.1s)
+  ✓   38 [chromium] › e2e/login-dashboard.spec.ts:115:9 › Login → Dashboard Flow › Trend Graph (Story 3.4) › displays trend graph with weekly data (1.1s)
+  ✓   39 [chromium] › e2e/login-dashboard.spec.ts:124:9 › Login → Dashboard Flow › Trend Graph (Story 3.4) › trend graph is functional (2.2s)
+  ✓   40 [chromium] › e2e/login-dashboard.spec.ts:132:9 › Login → Dashboard Flow › Navigation › can navigate to COGS page (3.0s)
+  ✓   41 [chromium] › e2e/login-dashboard.spec.ts:142:9 › Login → Dashboard Flow › Navigation › can navigate to Analytics pages (2.5s)
+  ✓   42 [chromium] › e2e/login-dashboard.spec.ts:150:9 › Login → Dashboard Flow › Navigation › can logout (2.1s)
+  -   44 [chromium] › e2e/orders-client-info.spec.ts:128:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #1: Owner role — column visible › should render the "Клиент" column header for Owner role
+  -   45 [chromium] › e2e/orders-client-info.spec.ts:134:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #1: Owner role — column visible › should fire a client-info API request when Owner loads orders with rows
+  -   46 [chromium] › e2e/orders-client-info.spec.ts:156:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #1: Owner role — column visible › should render phone as a tel: link with aria-label when client info is available
+  -   47 [chromium] › e2e/orders-client-info.spec.ts:170:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #1: Owner role — column visible › should render "—" placeholder for orders without client info
+  -   48 [chromium] › e2e/orders-client-info.spec.ts:194:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #4 + #5: Privacy guardrails — PII never persisted to browser storage › should NOT persist any rendered client name to localStorage or sessionStorage
+  -   49 [chromium] › e2e/orders-client-info.spec.ts:205:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #4 + #5: Privacy guardrails — PII never persisted to browser storage › should NOT persist phone numbers (tel: links) to browser storage
+  -   50 [chromium] › e2e/orders-client-info.spec.ts:215:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #4 + #5: Privacy guardrails — PII never persisted to browser storage › should clean PII from in-memory cache after navigating away (gcTime: 0)
+  -   51 [chromium] › e2e/orders-client-info.spec.ts:233:9 › Story 86.2: Client Info (PII) — Orders Клиент column › Click-to-call interaction › should not open the order detail modal when clicking the phone link (stopPropagation)
+  -   52 [chromium] › e2e/orders-client-info.spec.ts:297:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #2: Non-Owner role gate › should NOT render the "Клиент" column for Manager role
+  -   53 [chromium] › e2e/orders-client-info.spec.ts:311:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #2: Non-Owner role gate › should NOT fire any client-info API request for Manager role
+  -   54 [chromium] › e2e/orders-client-info.spec.ts:325:9 › Story 86.2: Client Info (PII) — Orders Клиент column › AC #2: Non-Owner role gate › should return 403 if a Manager directly hits the client-info endpoint
+  -   55 [chromium] › e2e/orders-client-info.spec.ts:369:9 › Story 86.2: Client Info (PII) — Orders Клиент column › G4: Privacy regression sentinel (canary) › should not leak any rendered PII across navigation cycles
+  ✘   56 [chromium] › e2e/settings/backfill-admin.spec.ts:24:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should display page for authenticated Owner user (1.8s)
+(node:76079) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   43 [chromium] › e2e/login-dashboard.spec.ts:165:9 › Login → Dashboard Flow › Error Handling › handles API errors gracefully (3.1s)
+(node:76079) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   57 [chromium] › e2e/settings/backfill-admin.spec.ts:67:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should show loading skeleton while checking permissions (631ms)
+(node:76934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   58 [chromium] › e2e/settings/backfill-admin.spec.ts:48:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should redirect non-Owner users to dashboard (610ms)
+(node:76934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77118) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77118) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   59 [chromium] › e2e/settings/backfill-admin.spec.ts:98:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display page title "Управление бэкфиллом" (615ms)
+(node:77696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   60 [chromium] › e2e/settings/backfill-admin.spec.ts:105:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display page subtitle with description (621ms)
+(node:77782) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77782) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   61 [chromium] › e2e/settings/backfill-admin.spec.ts:114:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display refresh button (639ms)
+(node:78228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   62 [chromium] › e2e/settings/backfill-admin.spec.ts:135:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display status table or empty state (606ms)
+(node:78228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:78456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:78456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   63 [chromium] › e2e/settings/backfill-admin.spec.ts:151:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display table columns: Кабинет, Статус, Прогресс, ETA, Действия (614ms)
+(node:79258) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   64 [chromium] › e2e/settings/backfill-admin.spec.ts:164:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display cabinet rows with data (622ms)
+(node:79258) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79366) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79366) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   65 [chromium] › e2e/settings/backfill-admin.spec.ts:181:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display status badges with correct colors (619ms)
+(node:80198) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   66 [chromium] › e2e/settings/backfill-admin.spec.ts:195:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display progress bars for in-progress cabinets (617ms)
+(node:80198) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80578) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80578) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   67 [chromium] › e2e/settings/backfill-admin.spec.ts:216:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should display "Запустить бэкфилл" button (609ms)
+(node:81613) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   68 [chromium] › e2e/settings/backfill-admin.spec.ts:225:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should open confirmation dialog on start button click (618ms)
+(node:81613) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:81760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:81760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   69 [chromium] › e2e/settings/backfill-admin.spec.ts:245:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should show cabinet selector in start dialog (597ms)
+(node:82209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   70 [chromium] › e2e/settings/backfill-admin.spec.ts:269:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should close dialog on cancel (621ms)
+(node:82209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82521) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82521) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   71 [chromium] › e2e/settings/backfill-admin.spec.ts:302:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should display Pause button for in-progress cabinets (620ms)
+(node:82996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   72 [chromium] › e2e/settings/backfill-admin.spec.ts:311:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should display Resume button for paused cabinets (613ms)
+(node:82996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83053) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83053) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   73 [chromium] › e2e/settings/backfill-admin.spec.ts:320:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should toggle between Pause and Resume states (638ms)
+(node:83526) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   74 [chromium] › e2e/settings/backfill-admin.spec.ts:347:9 › Epic 51-FE: Backfill Admin Page › Progress Display › should display progress percentage (612ms)
+(node:83526) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:84008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:84008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   75 [chromium] › e2e/settings/backfill-admin.spec.ts:356:9 › Epic 51-FE: Backfill Admin Page › Progress Display › should display ETA when available (611ms)
+(node:84942) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   76 [chromium] › e2e/settings/backfill-admin.spec.ts:376:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should display error badge for failed cabinets (620ms)
+(node:84942) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:85266) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:85266) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   77 [chromium] › e2e/settings/backfill-admin.spec.ts:385:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should display retry button for failed cabinets (600ms)
+(node:85808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   78 [chromium] › e2e/settings/backfill-admin.spec.ts:393:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should show error details on click (617ms)
+(node:85808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86103) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86103) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   79 [chromium] › e2e/settings/backfill-admin.spec.ts:418:9 › Epic 51-FE: Backfill Admin Page › Loading & Empty States › should show loading skeleton while fetching (540ms)
+  ✘   80 [chromium] › e2e/settings/backfill-admin.spec.ts:427:9 › Epic 51-FE: Backfill Admin Page › Loading & Empty States › should show empty state when no cabinets (621ms)
+(node:87005) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   81 [chromium] › e2e/settings/backfill-admin.spec.ts:456:9 › Epic 51-FE: Backfill Admin Page › Polling & Real-time Updates › should show last update timestamp (608ms)
+(node:87005) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:87231) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:87231) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   82 [chromium] › e2e/settings/backfill-admin.spec.ts:465:9 › Epic 51-FE: Backfill Admin Page › Polling & Real-time Updates › should update on manual refresh (611ms)
+(node:87701) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:87701) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   83 [chromium] › e2e/settings/backfill-admin.spec.ts:482:9 › Epic 51-FE: Backfill Admin Page › Responsive Layout › should display properly on mobile (658ms)
+(node:87858) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:87858) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   84 [chromium] › e2e/settings/backfill-admin.spec.ts:496:9 › Epic 51-FE: Backfill Admin Page › Responsive Layout › should display properly on tablet (611ms)
+(node:88235) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:88235) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   85 [chromium] › e2e/settings-pages.spec.ts:32:9 › Settings Pages › Cabinet page › navigates to /settings/cabinet and shows heading (1.3s)
+  ✓   86 [chromium] › e2e/settings-pages.spec.ts:41:9 › Settings Pages › Cabinet page › renders seller info section or skeleton (610ms)
+  ✓   88 [chromium] › e2e/settings-pages.spec.ts:81:9 › Settings Pages › Tariffs page › navigates to /settings/tariffs and shows heading (1.7s)
+  ✓   87 [chromium] › e2e/settings-pages.spec.ts:59:9 › Settings Pages › Cabinet page › shows subscription section (Джем) or skeleton (2.0s)
+  ✓   89 [chromium] › e2e/settings-pages.spec.ts:90:9 › Settings Pages › Tariffs page › renders tab navigation with three tabs (643ms)
+  ✓   90 [chromium] › e2e/settings-pages.spec.ts:102:9 › Settings Pages › Tariffs page › shows rate-limit indicator in header (648ms)
+  ✓   91 [chromium] › e2e/settings-pages.spec.ts:121:9 › Settings Pages › Notifications page › navigates to /settings/notifications and shows heading (1.5s)
+  ✓   92 [chromium] › e2e/settings-pages.spec.ts:129:9 › Settings Pages › Notifications page › renders telegram section or hero banner (1.2s)
+  ✓   94 [chromium] › e2e/settings-pages.spec.ts:165:9 › Settings Pages › Tax page › navigates to /settings/tax and shows heading (1.3s)
+  -   95 [chromium] › e2e/settings-pages.spec.ts:173:9 › Settings Pages › Tax page › renders form area or skeleton
+  ✓   93 [chromium] › e2e/settings-pages.spec.ts:148:9 › Settings Pages › Notifications page › shows help section with guide link (2.1s)
+  ✓   96 [chromium] › e2e/settings-pages.spec.ts:191:9 › Settings Pages › Expenses page › navigates to /settings/expenses and shows heading (1.7s)
+  ✓   97 [chromium] › e2e/settings-pages.spec.ts:199:9 › Settings Pages › Expenses page › shows month selector (1.5s)
+  ✓   98 [chromium] › e2e/settings-pages.spec.ts:215:9 › Settings Pages › Root settings redirect › /settings redirects to a sub-page with content visible (1.5s)
+  ✓   99 [chromium] › e2e/settings-pages.spec.ts:259:11 › Settings Pages › Accessibility › Cabinet page has exactly one h1 heading (1.5s)
+  ✓  101 [chromium] › e2e/settings-pages.spec.ts:259:11 › Settings Pages › Accessibility › Notifications page has exactly one h1 heading (765ms)
+  ✓  100 [chromium] › e2e/settings-pages.spec.ts:259:11 › Settings Pages › Accessibility › Tariffs page has exactly one h1 heading (1.1s)
+  ✓  102 [chromium] › e2e/settings-pages.spec.ts:259:11 › Settings Pages › Accessibility › Tax page has exactly one h1 heading (661ms)
+  ✓  103 [chromium] › e2e/settings-pages.spec.ts:259:11 › Settings Pages › Accessibility › Expenses page has exactly one h1 heading (551ms)
+  ✓  104 [chromium] › e2e/sku-analytics.spec.ts:27:7 › SKU Financial Analytics — Smoke › page loads with heading (1.5s)
+  ✓  105 [chromium] › e2e/sku-analytics.spec.ts:33:7 › SKU Financial Analytics — Smoke › subtitle describes the page purpose (1.4s)
+  ✓  106 [chromium] › e2e/sku-analytics.spec.ts:39:7 › SKU Financial Analytics — Smoke › table or grid content area is present (759ms)
+  ✓  107 [chromium] › e2e/sku-analytics.spec.ts:49:7 › SKU Financial Analytics — Smoke › week or period selector is visible (739ms)
+  ✓  108 [chromium] › e2e/sku-analytics.spec.ts:58:7 › SKU Financial Analytics — Smoke › export button is present (1.0s)
+  ✓  109 [chromium] › e2e/storage-analytics.spec.ts:20:7 › Storage Analytics › renders page heading (1.5s)
+  ✓  111 [chromium] › e2e/storage-analytics.spec.ts:40:7 › Storage Analytics › date/period filter controls present (1.1s)
+  ✓  110 [chromium] › e2e/storage-analytics.spec.ts:25:7 › Storage Analytics › KPI summary cards or empty state visible (3.1s)
+  ✓  112 [chromium] › e2e/storage-analytics.spec.ts:51:7 › Storage Analytics › trends chart or data table present (2.6s)
+  ✓  113 [chromium] › e2e/unit-economics.spec.ts:24:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-6: displays Unit Economics page with correct heading (1.9s)
+  ✓  115 [chromium] › e2e/unit-economics.spec.ts:41:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-7: has week selector (811ms)
+  ✓  114 [chromium] › e2e/unit-economics.spec.ts:30:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-6: displays 6 summary cards (2.6s)
+  ✓  116 [chromium] › e2e/unit-economics.spec.ts:53:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-7: changing week selector updates data (3.3s)
+  ✓  117 [chromium] › e2e/unit-economics.spec.ts:76:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-9: displays data table with sortable columns (2.6s)
+  ✓  119 [chromium] › e2e/unit-economics.spec.ts:125:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-10: displays waterfall chart section (2.6s)
+  ✓  118 [chromium] › e2e/unit-economics.spec.ts:102:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › AC-9: table sorting works (3.8s)
+  ✓  121 [chromium] › e2e/unit-economics.spec.ts:155:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › has refresh button (793ms)
+  ✓  122 [chromium] › e2e/unit-economics.spec.ts:165:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › has export button (782ms)
+  ✓  120 [chromium] › e2e/unit-economics.spec.ts:141:9 › Unit Economics Analytics › Story 5.4: Happy Path Tests › shows profitability status badges (2.6s)
+  ✓  124 [chromium] › e2e/unit-economics.spec.ts:197:9 › Unit Economics Analytics › Story 5.4: Table Interactions › pagination controls work when visible (2.6s)
+  ✓  123 [chromium] › e2e/unit-economics.spec.ts:184:9 › Unit Economics Analytics › Story 5.4: Table Interactions › table row click selects SKU for waterfall (3.2s)
+  ✓  125 [chromium] › e2e/unit-economics.spec.ts:215:9 › Unit Economics Analytics › Story 5.4: Table Interactions › sticky header works on scroll (2.9s)
+  ✓  126 [chromium] › e2e/unit-economics.spec.ts:234:9 › Unit Economics Analytics › Story 5.4: Loading & Error States › shows loading state while fetching data (2.5s)
+  ✓  127 [chromium] › e2e/unit-economics.spec.ts:248:9 › Unit Economics Analytics › Story 5.4: Loading & Error States › AC-3: handles API error gracefully (2.2s)
+  ✓  128 [chromium] › e2e/unit-economics.spec.ts:264:9 › Unit Economics Analytics › Story 5.4: Loading & Error States › AC-3: shows empty state for no data (2.2s)
+  ✓  130 [chromium] › e2e/unit-economics.spec.ts:335:9 › Unit Economics Analytics › Story 5.4: Navigation & Integration › can navigate to Unit Economics from sidebar (1.9s)
+  ✓  129 [chromium] › e2e/unit-economics.spec.ts:302:9 › Unit Economics Analytics › Story 5.4: Loading & Error States › retry button works after error (2.2s)
+  ✓  131 [chromium] › e2e/unit-economics.spec.ts:351:9 › Unit Economics Analytics › Story 5.4: Navigation & Integration › page is accessible directly via URL (1.7s)
+  ✓  133 [chromium] › e2e/unit-economics.spec.ts:395:9 › Unit Economics Analytics › Story 5.4: Performance › AC-11: page loads within acceptable time (795ms)
+  ✓  132 [chromium] › e2e/unit-economics.spec.ts:370:9 › Unit Economics Analytics › Story 5.4: Navigation & Integration › view selector changes aggregation level (2.6s)
+  ✓  134 [chromium] › e2e/unit-economics.spec.ts:410:9 › Unit Economics Analytics › Story 5.4: Performance › AC-12: handles data without crashing (3.6s)
+
+
+  1) [chromium] › e2e/advertising-analytics-epic-36.spec.ts:125:7 › Epic 36: Product Card Linking (Склейки) › should preserve Epic 33 functionality in both modes
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/Общий ROAS/i).first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/Общий ROAS/i).first()[22m
+
+
+      184 |   // scope to the first match to avoid a strict-mode violation.
+      185 |   await expect(page.getByText(/Всего продаж/i).first()).toBeVisible()
+    > 186 |   await expect(page.getByText(/Общий ROAS/i).first()).toBeVisible()
+          |                                                       ^
+      187 |
+      188 |   // Check sorting works (click the Spend column header). Don't wait for a network response —
+      189 |   // a repeat sort can be served from the TanStack cache; just assert the table stays rendered.
+        at testEpic33Features (/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/advertising-analytics-epic-36.spec.ts:186:55)
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/advertising-analytics-epic-36.spec.ts:137:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/advertising-analytics-epic-3e1ee-functionality-in-both-modes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/advertising-analytics-epic-3e1ee-functionality-in-both-modes-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/advertising-analytics-epic-3e1ee-functionality-in-both-modes-chromium/error-context.md
+
+  2) [chromium] › e2e/settings/backfill-admin.spec.ts:24:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should display page for authenticated Owner user
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      25 |       // Navigate to backfill admin page (assumes auth setup has Owner role)
+      26 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 27 |       await page.locator('main').waitFor({ state: 'visible' })
+         |                                  ^
+      28 |
+      29 |       // If page loads without redirect, user has access
+      30 |       const currentUrl = page.url()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:27:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-7a550-or-authenticated-Owner-user-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-7a550-or-authenticated-Owner-user-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-7a550-or-authenticated-Owner-user-chromium/error-context.md
+
+  3) [chromium] › e2e/settings/backfill-admin.spec.ts:48:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should redirect non-Owner users to dashboard
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      51 |
+      52 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 53 |       await page.locator('main').waitFor({ state: 'visible' })
+         |                                  ^
+      54 |
+      55 |       const currentUrl = page.url()
+      56 |
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:53:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-ddd01-on-Owner-users-to-dashboard-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-ddd01-on-Owner-users-to-dashboard-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-ddd01-on-Owner-users-to-dashboard-chromium/error-context.md
+
+  4) [chromium] › e2e/settings/backfill-admin.spec.ts:67:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should show loading skeleton while checking permissions
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      77 |
+      78 |       await response
+    > 79 |       await page.locator('main').waitFor({ state: 'visible' })
+         |                                  ^
+      80 |
+      81 |       // Page should eventually show content or redirect
+      82 |       // Skeletons may have appeared during load (count >= 0 is valid)
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:79:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-ca3f0--while-checking-permissions-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-ca3f0--while-checking-permissions-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-ca3f0--while-checking-permissions-chromium/error-context.md
+
+  5) [chromium] › e2e/settings/backfill-admin.spec.ts:98:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display page title "Управление бэкфиллом"
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      88 |     test.beforeEach(async ({ page }) => {
+      89 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 90 |       await page.locator('main').waitFor({ state: 'visible' })
+         |                                  ^
+      91 |
+      92 |       // Skip if redirected (non-Owner)
+      93 |       if (!page.url().includes('/settings/backfill')) {
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:90:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-94ece-title-Управление-бэкфиллом--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-94ece-title-Управление-бэкфиллом--chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-94ece-title-Управление-бэкфиллом--chromium/error-context.md
+
+  6) [chromium] › e2e/settings/backfill-admin.spec.ts:105:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display page subtitle with description
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      88 |     test.beforeEach(async ({ page }) => {
+      89 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 90 |       await page.locator('main').waitFor({ state: 'visible' })
+         |                                  ^
+      91 |
+      92 |       // Skip if redirected (non-Owner)
+      93 |       if (!page.url().includes('/settings/backfill')) {
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:90:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-1c0f1-e-subtitle-with-description-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-1c0f1-e-subtitle-with-description-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-1c0f1-e-subtitle-with-description-chromium/error-context.md
+
+  7) [chromium] › e2e/settings/backfill-admin.spec.ts:114:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display refresh button
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      88 |     test.beforeEach(async ({ page }) => {
+      89 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 90 |       await page.locator('main').waitFor({ state: 'visible' })
+         |                                  ^
+      91 |
+      92 |       // Skip if redirected (non-Owner)
+      93 |       if (!page.url().includes('/settings/backfill')) {
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:90:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-ce33e-ould-display-refresh-button-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-ce33e-ould-display-refresh-button-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-ce33e-ould-display-refresh-button-chromium/error-context.md
+
+  8) [chromium] › e2e/settings/backfill-admin.spec.ts:135:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display status table or empty state
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      126 |     test.beforeEach(async ({ page }) => {
+      127 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 128 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      129 |
+      130 |       if (!page.url().includes('/settings/backfill')) {
+      131 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:128:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-705c8-status-table-or-empty-state-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-705c8-status-table-or-empty-state-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-705c8-status-table-or-empty-state-chromium/error-context.md
+
+  9) [chromium] › e2e/settings/backfill-admin.spec.ts:151:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display table columns: Кабинет, Статус, Прогресс, ETA, Действия
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      126 |     test.beforeEach(async ({ page }) => {
+      127 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 128 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      129 |
+      130 |       if (!page.url().includes('/settings/backfill')) {
+      131 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:128:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-17c9c-татус-Прогресс-ETA-Действия-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-17c9c-татус-Прогресс-ETA-Действия-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-17c9c-татус-Прогресс-ETA-Действия-chromium/error-context.md
+
+  10) [chromium] › e2e/settings/backfill-admin.spec.ts:164:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display cabinet rows with data
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      126 |     test.beforeEach(async ({ page }) => {
+      127 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 128 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      129 |
+      130 |       if (!page.url().includes('/settings/backfill')) {
+      131 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:128:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-e15fd-play-cabinet-rows-with-data-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-e15fd-play-cabinet-rows-with-data-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-e15fd-play-cabinet-rows-with-data-chromium/error-context.md
+
+  11) [chromium] › e2e/settings/backfill-admin.spec.ts:181:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display status badges with correct colors
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      126 |     test.beforeEach(async ({ page }) => {
+      127 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 128 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      129 |
+      130 |       if (!page.url().includes('/settings/backfill')) {
+      131 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:128:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-58f11--badges-with-correct-colors-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-58f11--badges-with-correct-colors-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-58f11--badges-with-correct-colors-chromium/error-context.md
+
+  12) [chromium] › e2e/settings/backfill-admin.spec.ts:195:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display progress bars for in-progress cabinets
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      126 |     test.beforeEach(async ({ page }) => {
+      127 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 128 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      129 |
+      130 |       if (!page.url().includes('/settings/backfill')) {
+      131 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:128:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-26b5f-rs-for-in-progress-cabinets-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-26b5f-rs-for-in-progress-cabinets-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-26b5f-rs-for-in-progress-cabinets-chromium/error-context.md
+
+  13) [chromium] › e2e/settings/backfill-admin.spec.ts:216:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should display "Запустить бэкфилл" button
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      207 |     test.beforeEach(async ({ page }) => {
+      208 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 209 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      210 |
+      211 |       if (!page.url().includes('/settings/backfill')) {
+      212 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:209:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-b0168-ay-Запустить-бэкфилл-button-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-b0168-ay-Запустить-бэкфилл-button-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-b0168-ay-Запустить-бэкфилл-button-chromium/error-context.md
+
+  14) [chromium] › e2e/settings/backfill-admin.spec.ts:225:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should open confirmation dialog on start button click
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      207 |     test.beforeEach(async ({ page }) => {
+      208 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 209 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      210 |
+      211 |       if (!page.url().includes('/settings/backfill')) {
+      212 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:209:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-c97be-ialog-on-start-button-click-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-c97be-ialog-on-start-button-click-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-c97be-ialog-on-start-button-click-chromium/error-context.md
+
+  15) [chromium] › e2e/settings/backfill-admin.spec.ts:245:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should show cabinet selector in start dialog
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      207 |     test.beforeEach(async ({ page }) => {
+      208 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 209 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      210 |
+      211 |       if (!page.url().includes('/settings/backfill')) {
+      212 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:209:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-2d880-et-selector-in-start-dialog-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-2d880-et-selector-in-start-dialog-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-2d880-et-selector-in-start-dialog-chromium/error-context.md
+
+  16) [chromium] › e2e/settings/backfill-admin.spec.ts:269:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should close dialog on cancel
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      207 |     test.beforeEach(async ({ page }) => {
+      208 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 209 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      210 |
+      211 |       if (!page.url().includes('/settings/backfill')) {
+      212 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:209:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-869a3-ould-close-dialog-on-cancel-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-869a3-ould-close-dialog-on-cancel-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-869a3-ould-close-dialog-on-cancel-chromium/error-context.md
+
+  17) [chromium] › e2e/settings/backfill-admin.spec.ts:302:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should display Pause button for in-progress cabinets
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      293 |     test.beforeEach(async ({ page }) => {
+      294 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 295 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      296 |
+      297 |       if (!page.url().includes('/settings/backfill')) {
+      298 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:295:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-0067b-on-for-in-progress-cabinets-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-0067b-on-for-in-progress-cabinets-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-0067b-on-for-in-progress-cabinets-chromium/error-context.md
+
+  18) [chromium] › e2e/settings/backfill-admin.spec.ts:311:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should display Resume button for paused cabinets
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      293 |     test.beforeEach(async ({ page }) => {
+      294 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 295 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      296 |
+      297 |       if (!page.url().includes('/settings/backfill')) {
+      298 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:295:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-f4b15--button-for-paused-cabinets-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-f4b15--button-for-paused-cabinets-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-f4b15--button-for-paused-cabinets-chromium/error-context.md
+
+  19) [chromium] › e2e/settings/backfill-admin.spec.ts:320:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should toggle between Pause and Resume states
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      293 |     test.beforeEach(async ({ page }) => {
+      294 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 295 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      296 |
+      297 |       if (!page.url().includes('/settings/backfill')) {
+      298 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:295:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-dc82f-een-Pause-and-Resume-states-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-dc82f-een-Pause-and-Resume-states-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-dc82f-een-Pause-and-Resume-states-chromium/error-context.md
+
+  20) [chromium] › e2e/settings/backfill-admin.spec.ts:347:9 › Epic 51-FE: Backfill Admin Page › Progress Display › should display progress percentage
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      338 |     test.beforeEach(async ({ page }) => {
+      339 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 340 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      341 |
+      342 |       if (!page.url().includes('/settings/backfill')) {
+      343 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:340:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-43354-display-progress-percentage-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-43354-display-progress-percentage-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-43354-display-progress-percentage-chromium/error-context.md
+
+  21) [chromium] › e2e/settings/backfill-admin.spec.ts:356:9 › Epic 51-FE: Backfill Admin Page › Progress Display › should display ETA when available
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      338 |     test.beforeEach(async ({ page }) => {
+      339 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 340 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      341 |
+      342 |       if (!page.url().includes('/settings/backfill')) {
+      343 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:340:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-948ea--display-ETA-when-available-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-948ea--display-ETA-when-available-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-948ea--display-ETA-when-available-chromium/error-context.md
+
+  22) [chromium] › e2e/settings/backfill-admin.spec.ts:376:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should display error badge for failed cabinets
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      367 |     test.beforeEach(async ({ page }) => {
+      368 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 369 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      370 |
+      371 |       if (!page.url().includes('/settings/backfill')) {
+      372 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:369:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-229c5-r-badge-for-failed-cabinets-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-229c5-r-badge-for-failed-cabinets-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-229c5-r-badge-for-failed-cabinets-chromium/error-context.md
+
+  23) [chromium] › e2e/settings/backfill-admin.spec.ts:385:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should display retry button for failed cabinets
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      367 |     test.beforeEach(async ({ page }) => {
+      368 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 369 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      370 |
+      371 |       if (!page.url().includes('/settings/backfill')) {
+      372 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:369:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-002ec--button-for-failed-cabinets-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-002ec--button-for-failed-cabinets-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-002ec--button-for-failed-cabinets-chromium/error-context.md
+
+  24) [chromium] › e2e/settings/backfill-admin.spec.ts:393:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should show error details on click
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      367 |     test.beforeEach(async ({ page }) => {
+      368 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 369 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      370 |
+      371 |       if (!page.url().includes('/settings/backfill')) {
+      372 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:369:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-45492-show-error-details-on-click-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-45492-show-error-details-on-click-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-45492-show-error-details-on-click-chromium/error-context.md
+
+  25) [chromium] › e2e/settings/backfill-admin.spec.ts:427:9 › Epic 51-FE: Backfill Admin Page › Loading & Empty States › should show empty state when no cabinets
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      426 |
+      427 |     test('should show empty state when no cabinets', async ({ page }) => {
+    > 428 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      429 |       await page.waitForTimeout(2000)
+      430 |
+      431 |       const emptyState = page
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:428:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-b819e-mpty-state-when-no-cabinets-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-b819e-mpty-state-when-no-cabinets-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-b819e-mpty-state-when-no-cabinets-chromium/error-context.md
+
+  26) [chromium] › e2e/settings/backfill-admin.spec.ts:456:9 › Epic 51-FE: Backfill Admin Page › Polling & Real-time Updates › should show last update timestamp
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      447 |     test.beforeEach(async ({ page }) => {
+      448 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 449 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      450 |
+      451 |       if (!page.url().includes('/settings/backfill')) {
+      452 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:449:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-cdb76--show-last-update-timestamp-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-cdb76--show-last-update-timestamp-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-cdb76--show-last-update-timestamp-chromium/error-context.md
+
+  27) [chromium] › e2e/settings/backfill-admin.spec.ts:465:9 › Epic 51-FE: Backfill Admin Page › Polling & Real-time Updates › should update on manual refresh
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      447 |     test.beforeEach(async ({ page }) => {
+      448 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 449 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      450 |
+      451 |       if (!page.url().includes('/settings/backfill')) {
+      452 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:449:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-696fa-ld-update-on-manual-refresh-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-696fa-ld-update-on-manual-refresh-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-696fa-ld-update-on-manual-refresh-chromium/error-context.md
+
+  28) [chromium] › e2e/settings/backfill-admin.spec.ts:482:9 › Epic 51-FE: Backfill Admin Page › Responsive Layout › should display properly on mobile
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      483 |       await page.setViewportSize({ width: 390, height: 844 })
+      484 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 485 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      486 |
+      487 |       if (!page.url().includes('/settings/backfill')) {
+      488 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:485:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-f578a--display-properly-on-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-f578a--display-properly-on-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-f578a--display-properly-on-mobile-chromium/error-context.md
+
+  29) [chromium] › e2e/settings/backfill-admin.spec.ts:496:9 › Epic 51-FE: Backfill Admin Page › Responsive Layout › should display properly on tablet
+
+    Error: locator.waitFor: Error: strict mode violation: locator('main') resolved to 2 elements:
+        1) <main class="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain">…</main> aka getByRole('main').first()
+        2) <main class="min-h-screen bg-background">…</main> aka getByRole('main').nth(1)
+
+    Call log:
+    [2m  - waiting for locator('main') to be visible[22m
+
+
+      497 |       await page.setViewportSize({ width: 768, height: 1024 })
+      498 |       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+    > 499 |       await page.locator('main').waitFor({ state: 'visible' })
+          |                                  ^
+      500 |
+      501 |       if (!page.url().includes('/settings/backfill')) {
+      502 |         test.skip()
+        at /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend/e2e/settings/backfill-admin.spec.ts:499:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-e4620--display-properly-on-tablet-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-backfill-admin-Ep-e4620--display-properly-on-tablet-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-backfill-admin-Ep-e4620--display-properly-on-tablet-chromium/error-context.md
+
+  29 failed
+    [chromium] › e2e/advertising-analytics-epic-36.spec.ts:125:7 › Epic 36: Product Card Linking (Склейки) › should preserve Epic 33 functionality in both modes
+    [chromium] › e2e/settings/backfill-admin.spec.ts:24:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should display page for authenticated Owner user
+    [chromium] › e2e/settings/backfill-admin.spec.ts:48:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should redirect non-Owner users to dashboard
+    [chromium] › e2e/settings/backfill-admin.spec.ts:67:9 › Epic 51-FE: Backfill Admin Page › Access Control (Owner Only) › should show loading skeleton while checking permissions
+    [chromium] › e2e/settings/backfill-admin.spec.ts:98:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display page title "Управление бэкфиллом"
+    [chromium] › e2e/settings/backfill-admin.spec.ts:105:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display page subtitle with description
+    [chromium] › e2e/settings/backfill-admin.spec.ts:114:9 › Epic 51-FE: Backfill Admin Page › Page Layout & Header › should display refresh button
+    [chromium] › e2e/settings/backfill-admin.spec.ts:135:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display status table or empty state
+    [chromium] › e2e/settings/backfill-admin.spec.ts:151:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display table columns: Кабинет, Статус, Прогресс, ETA, Действия
+    [chromium] › e2e/settings/backfill-admin.spec.ts:164:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display cabinet rows with data
+    [chromium] › e2e/settings/backfill-admin.spec.ts:181:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display status badges with correct colors
+    [chromium] › e2e/settings/backfill-admin.spec.ts:195:9 › Epic 51-FE: Backfill Admin Page › Status Table Display › should display progress bars for in-progress cabinets
+    [chromium] › e2e/settings/backfill-admin.spec.ts:216:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should display "Запустить бэкфилл" button
+    [chromium] › e2e/settings/backfill-admin.spec.ts:225:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should open confirmation dialog on start button click
+    [chromium] › e2e/settings/backfill-admin.spec.ts:245:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should show cabinet selector in start dialog
+    [chromium] › e2e/settings/backfill-admin.spec.ts:269:9 › Epic 51-FE: Backfill Admin Page › Start Backfill Action › should close dialog on cancel
+    [chromium] › e2e/settings/backfill-admin.spec.ts:302:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should display Pause button for in-progress cabinets
+    [chromium] › e2e/settings/backfill-admin.spec.ts:311:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should display Resume button for paused cabinets
+    [chromium] › e2e/settings/backfill-admin.spec.ts:320:9 › Epic 51-FE: Backfill Admin Page › Pause/Resume Actions › should toggle between Pause and Resume states
+    [chromium] › e2e/settings/backfill-admin.spec.ts:347:9 › Epic 51-FE: Backfill Admin Page › Progress Display › should display progress percentage
+    [chromium] › e2e/settings/backfill-admin.spec.ts:356:9 › Epic 51-FE: Backfill Admin Page › Progress Display › should display ETA when available
+    [chromium] › e2e/settings/backfill-admin.spec.ts:376:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should display error badge for failed cabinets
+    [chromium] › e2e/settings/backfill-admin.spec.ts:385:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should display retry button for failed cabinets
+    [chromium] › e2e/settings/backfill-admin.spec.ts:393:9 › Epic 51-FE: Backfill Admin Page › Error Log Display › should show error details on click
+    [chromium] › e2e/settings/backfill-admin.spec.ts:427:9 › Epic 51-FE: Backfill Admin Page › Loading & Empty States › should show empty state when no cabinets
+    [chromium] › e2e/settings/backfill-admin.spec.ts:456:9 › Epic 51-FE: Backfill Admin Page › Polling & Real-time Updates › should show last update timestamp
+    [chromium] › e2e/settings/backfill-admin.spec.ts:465:9 › Epic 51-FE: Backfill Admin Page › Polling & Real-time Updates › should update on manual refresh
+    [chromium] › e2e/settings/backfill-admin.spec.ts:482:9 › Epic 51-FE: Backfill Admin Page › Responsive Layout › should display properly on mobile
+    [chromium] › e2e/settings/backfill-admin.spec.ts:496:9 › Epic 51-FE: Backfill Admin Page › Responsive Layout › should display properly on tablet
+  13 skipped
+  92 passed (1.9m)
+EXIT: 1
+END: 2026-06-12T12:56:48Z

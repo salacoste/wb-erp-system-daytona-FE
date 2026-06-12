@@ -84,6 +84,13 @@ vi.mock('../NotificationsDisabledPanel', () => ({
   ),
 }))
 
+
+vi.mock('@/components/custom/settings/OrderNotificationSettings', () => ({
+  OrderNotificationSettings: () => (
+    <div data-testid="order-notification-settings">OrderNotificationSettings</div>
+  ),
+}))
+
 // Import after mocks
 import NotificationsSettingsPage from '../page'
 
@@ -99,6 +106,15 @@ describe('NotificationsSettingsPage', () => {
       render(<NotificationsSettingsPage />)
 
       expect(screen.getByRole('heading', { name: /telegram уведомления/i })).toBeInTheDocument()
+    })
+
+    it('does not render a nested main landmark inside the dashboard shell', () => {
+      mockIsBound.mockReturnValue(false)
+
+      const { container } = render(<NotificationsSettingsPage />)
+
+      expect(container.querySelectorAll('main')).toHaveLength(0)
+      expect(container.querySelector('section.min-h-screen')).toBeInTheDocument()
     })
 
     it('should render the Bell icon alongside the title', () => {
@@ -153,6 +169,7 @@ describe('NotificationsSettingsPage', () => {
       render(<NotificationsSettingsPage />)
 
       const helpLink = screen.getByText(/открыть руководство/i)
+      helpLink.addEventListener('click', event => event.preventDefault())
       fireEvent.click(helpLink)
 
       expect(mockHelpClicked).toHaveBeenCalledTimes(1)
