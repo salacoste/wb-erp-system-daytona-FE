@@ -4,7 +4,7 @@
 
 import { cn } from '@/lib/utils'
 import { DashboardMetricsGridSkeleton } from './DashboardMetricsGridSkeleton'
-import { renderGridCards } from './DashboardMetricsGridCards'
+import { DashboardMetricsGridCards } from './DashboardMetricsGridCards'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 
 export type {
@@ -28,7 +28,7 @@ export function DashboardMetricsGrid(props: DashboardMetricsGridProps): React.Re
 
   return (
     <div className={cn(gridCls, className)} role="region" aria-label="Основные метрики P&L">
-      {renderGridCards(props)}
+      <DashboardMetricsGridCards {...props} />
     </div>
   )
 }

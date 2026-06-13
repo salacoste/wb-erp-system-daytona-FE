@@ -86,6 +86,31 @@ export function StorageTopConsumersWidget({
   )
 }
 
+function getConsumerRowBaseKey(item: TopConsumerItem): string {
+  const nmId = item.nm_id.trim()
+  if (nmId) return `nm:${nmId}`
+
+  const identityParts = [item.vendor_code, item.product_name, item.brand, item.last_charge_date]
+    .map(part => part?.trim())
+    .filter(Boolean)
+
+  return identityParts.length > 0
+    ? `storage-consumer:${identityParts.join('|')}`
+    : `storage-consumer:unknown`
+}
+
+function getConsumerRowKey(
+  item: TopConsumerItem,
+  index: number,
+  seenKeys: Map<string, number>
+): string {
+  const baseKey = getConsumerRowBaseKey(item)
+  const seenCount = seenKeys.get(baseKey) ?? 0
+  seenKeys.set(baseKey, seenCount + 1)
+
+  return seenCount === 0 ? baseKey : `${baseKey}#${seenCount + 1}-${index}`
+}
+
 function ConsumersList({
   items,
   onRowClick,
@@ -95,11 +120,13 @@ function ConsumersList({
   onRowClick: (nmId: string) => void
   onKeyDown: (e: React.KeyboardEvent, nmId: string) => void
 }) {
+  const seenKeys = new Map<string, number>()
+
   return (
     <div className="space-y-1">
-      {items.map(item => (
+      {items.map((item, index) => (
         <ConsumerRow
-          key={item.nm_id}
+          key={getConsumerRowKey(item, index, seenKeys)}
           item={item}
           onClick={() => onRowClick(item.nm_id)}
           onKeyDown={e => onKeyDown(e, item.nm_id)}
