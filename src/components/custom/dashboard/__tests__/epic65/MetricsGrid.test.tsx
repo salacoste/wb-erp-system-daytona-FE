@@ -173,5 +173,29 @@ describe('MetricsGrid (Story 65.17)', () => {
       // Metric cards should not be rendered during loading
       expect(screen.queryAllByRole('article').length).toBe(0)
     })
+
+    it('does not emit React identity warnings when switching from loading to loaded', () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const props = createMinimalGridProps()
+
+      try {
+        const { rerender } = renderWithProviders(
+          <DashboardMetricsGrid {...props} isLoading={true} />
+        )
+        rerender(<DashboardMetricsGrid {...props} isLoading={false} />)
+
+        expect(
+          consoleError.mock.calls.some(call =>
+            call.some(arg =>
+              /Expected static flag was missing|Encountered two children with the same key/.test(
+                String(arg)
+              )
+            )
+          )
+        ).toBe(false)
+      } finally {
+        consoleError.mockRestore()
+      }
+    })
   })
 })

@@ -120,6 +120,69 @@ function renderWidget(overrides: Record<string, unknown> = {}) {
   return renderWithProviders(<StorageTopConsumersWidget {...props} />)
 }
 
+describe('StorageTopConsumersWidget - React child identity', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('does not emit duplicate-key warnings when backend rows have blank nm_id values', () => {
+    const blankIdConsumers: TopConsumerItem[] = mockTopConsumers.slice(0, 3).map((item, index) => ({
+      ...item,
+      rank: index + 1,
+      nm_id: '',
+      vendor_code: item.vendor_code ? `${item.vendor_code}-${index}` : null,
+    }))
+    vi.mocked(useStorageTopConsumers).mockReturnValue(
+      createMockQueryResult({
+        ...mockResponse,
+        top_consumers: blankIdConsumers,
+      } as TopConsumersResponse)
+    )
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+
+    try {
+      renderWidget()
+
+      expect(
+        consoleError.mock.calls.some(call =>
+          call.some(arg => String(arg).includes('Encountered two children with the same key'))
+        )
+      ).toBe(false)
+    } finally {
+      consoleError.mockRestore()
+    }
+  })
+
+  it('preserves focused row identity when blank-id rows reorder on refresh', () => {
+    const blankIdConsumers: TopConsumerItem[] = mockTopConsumers.slice(0, 2).map(item => ({
+      ...item,
+      nm_id: '',
+    }))
+    vi.mocked(useStorageTopConsumers).mockReturnValue(
+      createMockQueryResult({
+        ...mockResponse,
+        top_consumers: blankIdConsumers,
+      } as TopConsumersResponse)
+    )
+
+    const { rerender } = renderWidget()
+    const focusedProduct = screen.getByRole('button', { name: /Пальто зимнее XL/ })
+    focusedProduct.focus()
+    expect(document.activeElement).toHaveAccessibleName(/Пальто зимнее XL/)
+
+    vi.mocked(useStorageTopConsumers).mockReturnValue(
+      createMockQueryResult({
+        ...mockResponse,
+        top_consumers: [...blankIdConsumers].reverse(),
+      } as TopConsumersResponse)
+    )
+
+    rerender(<StorageTopConsumersWidget weekStart="2026-W01" weekEnd="2026-W05" />)
+
+    expect(document.activeElement).toHaveAccessibleName(/Пальто зимнее XL/)
+  })
+})
+
 // ============================================================================
 // Ranking Display Tests (~8 tests)
 // ============================================================================

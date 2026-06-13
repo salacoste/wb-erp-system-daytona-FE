@@ -23,7 +23,7 @@ function resolveSimpleWidget(title: string): WidgetId | null {
   return prefix ? (SIMPLE_CARD_WIDGET[prefix] ?? null) : null
 }
 
-export function renderGridCards(props: DashboardMetricsGridProps): React.ReactElement {
+export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): React.ReactElement {
   const {
     saleGross,
     payoutTotal,
