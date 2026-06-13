@@ -39,5 +39,5 @@ Completed 2026-06-13 via backend PR https://github.com/salacoste/wb-erp-system-d
 - PASS: clean-backend live API probe `/tmp/task24-live-api-probe.json` against `/tmp/wb-backend-task24-clean` served on `localhost:3002`: valid auth + `X-Cabinet-Id` returned 200 (not 404), missing cabinet returned 400, missing auth returned 401.
 - PASS: clean dashboard probe `/tmp/task24-clean-dashboard-probe.json` using `/tmp/wb-fe-task24-clean` at FE `04536d42` against clean patched backend on `localhost:3002`: `/v1/imports/historical?limit=5` returned 200, no console/page/request failures, no processing-status 404/warning.
 
-Known unrelated backend baseline: `npm run type-check` on backend `origin/main` currently reports existing bigint-related errors outside the task-24 changed files; task-24 focused regression/lint/live probes passed.
+Known unrelated backend baseline: `npm run type-check` on backend `origin/main` currently reports existing bigint-related errors outside the task-24 changed files; task-24 focused regression/lint/live probes passed. Backend PR #6 is currently blocked by broader CI baseline failures (20 circular dependencies and E2E auth 429 throttling); tracked separately as `task-31`.
 <!-- SECTION:NOTES:END -->
