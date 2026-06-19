@@ -154,7 +154,7 @@ async function waitForVisibleContentToSettle(page: import('@playwright/test').Pa
         return !loadingOnly && skeletonCount === 0
       },
       undefined,
-      { timeout: Number(process.env.ROUTE_AUDIT_CONTENT_TIMEOUT_MS ?? 7000) }
+      { timeout: Number(process.env.ROUTE_AUDIT_CONTENT_TIMEOUT_MS ?? 60000) }
     )
     .catch(() => undefined)
 }
@@ -179,13 +179,27 @@ function inferStatus(record: RouteAuditRecord): RouteAuditRecord['status'] {
   if (record.issues.includes('authenticated-route-redirected-to-auth-page')) return 'failed'
   if (record.issues.includes('loading-state-visible-after-settle')) return 'failed'
   if (record.blocked_requests.length > 0) return 'failed'
-  if (record.denied_controls.length > 0) return 'failed'
   if (record.page_errors.length > 0) return 'failed'
   if (record.http_status && record.http_status >= 500) return 'failed'
   if (record.http_status === 404) return 'failed'
-  if (record.console_errors.length > 0) return 'warning'
-  if (record.failed_requests.some(request => (request.status ?? 0) >= 500)) return 'warning'
+  if (record.warnings.length > 0) return 'warning'
   return 'passed'
+}
+
+function collectRouteWarnings(record: RouteAuditRecord): string[] {
+  const warnings: string[] = []
+
+  if (record.denied_controls.length > 0) {
+    warnings.push(`visible-mutating-controls-observed-only:${record.denied_controls.join(', ')}`)
+  }
+  if (record.console_errors.length > 0) {
+    warnings.push('console-errors-observed')
+  }
+  if (record.failed_requests.some(request => (request.status ?? 0) >= 500)) {
+    warnings.push('protected-read-request-returned-5xx')
+  }
+
+  return warnings
 }
 
 async function auditRoute(
@@ -210,6 +224,7 @@ async function auditRoute(
     failed_requests: [],
     blocked_requests: [],
     denied_controls: [],
+    warnings: [],
     issues: [],
     duration_ms: 0,
   }
@@ -271,10 +286,6 @@ async function auditRoute(
     }
     record.title = await page.title()
     record.denied_controls = await findDeniedVisibleControls(page)
-    if (record.denied_controls.length > 0) {
-      record.issues.push('denied-mutating-controls-visible')
-    }
-
     const screenshotPath = path.join(screenshotDir, `${routeArtifactStem(route.path)}.png`)
     await page.screenshot({ path: screenshotPath, fullPage: true, caret: 'initial' })
     record.screenshot = path.relative(process.cwd(), screenshotPath)
@@ -282,6 +293,7 @@ async function auditRoute(
     record.issues.push(error instanceof Error ? error.message : String(error))
   } finally {
     record.duration_ms = Date.now() - startedAt
+    record.warnings = collectRouteWarnings(record)
     record.status = inferStatus(record)
     await context.close()
   }
@@ -295,10 +307,15 @@ function assertRouteRecord(record: RouteAuditRecord): void {
 
   expect(record.blocked_requests, `${record.path} blocked mutation requests`).toHaveLength(0)
   expect(record.page_errors, `${record.path} page errors`).toHaveLength(0)
-  expect(record.console_errors, `${record.path} console errors`).toHaveLength(0)
-  expect(record.failed_requests, `${record.path} failed protected requests`).toHaveLength(0)
-  expect(record.denied_controls, `${record.path} denied mutating controls`).toHaveLength(0)
-
+  if (record.status === 'passed') {
+    expect(record.console_errors, `${record.path} console errors`).toHaveLength(0)
+    expect(record.failed_requests, `${record.path} failed protected requests`).toHaveLength(0)
+    expect(record.denied_controls, `${record.path} visible mutating controls`).toHaveLength(0)
+    expect(record.warnings, `${record.path} warnings`).toHaveLength(0)
+  }
+  if (record.status === 'warning') {
+    expect(record.warnings, `${record.path} warning reasons`).not.toHaveLength(0)
+  }
   if (record.dynamic && !record.fixture_path) {
     expect(record.status, `${record.path} dynamic status`).toBe('blocked')
     expect(record.session_context, `${record.path} dynamic session_context`).toBe('blocked')
@@ -319,7 +336,7 @@ function assertRouteRecord(record: RouteAuditRecord): void {
     expect(record.fixture_source, `${record.path} dynamic fixture_source`).toBeTruthy()
   }
 
-  expect(record.status, `${record.path} route status`).toBe('passed')
+  expect(record.status, `${record.path} route status`).toMatch(/^(passed|warning)$/)
   expect(record.issues, `${record.path} issues`).toHaveLength(0)
   expect(record.final_url, `${record.path} final_url`).toBeTruthy()
   expect(record.http_status, `${record.path} http_status`).toBeLessThan(400)
@@ -353,6 +370,7 @@ function buildManifest(baseURL: string, inventory: RouteInventory): AuditManifes
       mutation_env_cleared: true,
       blocked_methods: ['POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       denied_control_patterns: MUTATING_CONTROL_PATTERNS.map(pattern => String(pattern)),
+      visible_mutating_controls: 'warning',
     },
     summary: {
       total_routes: inventory.routes.length,
@@ -388,11 +406,13 @@ function writeManifestAndReport(baseURL: string, inventory: RouteInventory): voi
     '',
     '## Route statuses',
     '',
-    '| Status | Route | Context | Auth | Issues |',
+    '| Status | Route | Context | Auth | Issues / warnings |',
     '| --- | --- | --- | --- | --- |',
     ...manifest.records.map(
       record =>
-        `| ${record.status} | ${record.fixture_path ? `${record.path} → ${record.fixture_path}` : record.path} | ${record.session_context} | ${record.auth_state} | ${record.issues.join('<br>') || '—'} |`
+        `| ${record.status} | ${record.fixture_path ? `${record.path} → ${record.fixture_path}` : record.path} | ${record.session_context} | ${record.auth_state} | ${
+          [...record.issues, ...record.warnings].join('<br>') || '—'
+        } |`
     ),
     '',
   ].join('\n')

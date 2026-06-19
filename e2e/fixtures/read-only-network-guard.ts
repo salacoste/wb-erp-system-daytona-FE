@@ -47,6 +47,7 @@ export interface RouteAuditRecord {
   failed_requests: FailedRequestRecord[]
   blocked_requests: BlockedRequestRecord[]
   denied_controls: string[]
+  warnings: string[]
   issues: string[]
   duration_ms: number
 }
@@ -62,6 +63,7 @@ export interface AuditManifest {
     mutation_env_cleared: true
     blocked_methods: string[]
     denied_control_patterns: string[]
+    visible_mutating_controls: 'warning'
   }
   summary: {
     total_routes: number
@@ -191,6 +193,17 @@ function isAllowedAuthSetupRequest(request: Request): boolean {
   return /\/(auth|login|session|token)(\/|$)/.test(pathname)
 }
 
+function isAllowedNextDevDiagnosticRequest(
+  request: Request,
+  options: ReadOnlyNetworkGuardOptions
+): boolean {
+  if (request.method().toUpperCase() !== 'POST') return false
+
+  const url = safeURL(request.url())
+  const frontendOrigin = normalizeOrigin(options.baseURL)
+  return url?.origin === frontendOrigin && url.pathname === '/__nextjs_original-stack-frames'
+}
+
 export function isAllowedReadOnlyRequest(
   request: Request,
   options: ReadOnlyNetworkGuardOptions
@@ -209,7 +222,10 @@ export async function installReadOnlyNetworkGuard(
   await page.route('**/*', async (route: Route) => {
     const request = route.request()
 
-    if (isAllowedReadOnlyRequest(request, options)) {
+    if (
+      isAllowedReadOnlyRequest(request, options) ||
+      isAllowedNextDevDiagnosticRequest(request, options)
+    ) {
       await route.continue()
       return
     }

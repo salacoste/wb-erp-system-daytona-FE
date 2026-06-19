@@ -11,6 +11,14 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { logger } from '@/lib/logger'
 import { normalizeEndpoint, purgeExpired } from './rateLimitHelpers'
 
+function getBrowserLocalStorage(): Storage {
+  if (typeof window === 'undefined') {
+    throw new Error('localStorage is unavailable during server rendering')
+  }
+
+  return window.localStorage
+}
+
 /** Rate limit entry for a specific endpoint */
 export interface RateLimitEntry {
   /** API endpoint path */
@@ -125,7 +133,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
     }),
     {
       name: 'rate-limit-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => getBrowserLocalStorage()),
       partialize: state => ({ rateLimits: state.rateLimits }),
       // Clean expired entries on rehydration
       onRehydrateStorage: () => state => {

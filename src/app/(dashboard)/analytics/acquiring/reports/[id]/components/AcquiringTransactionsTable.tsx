@@ -70,6 +70,10 @@ export function sortTransactions(
   })
 }
 
+export function transactionRowKey(item: AcquiringReportDetailItem): string {
+  return `${item.reportId}-${item.rrdId}-${item.srid || 'no-srid'}`
+}
+
 export function AcquiringTransactionsTable({ transactions }: AcquiringTransactionsTableProps) {
   const [sort, setSort] = useState<SortField>('acqDate')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -112,9 +116,9 @@ export function AcquiringTransactionsTable({ transactions }: AcquiringTransactio
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sorted.map((item, idx) => {
+          {sorted.map(item => {
             return (
-              <TableRow key={item.srid || `${item.rrdId}-${idx}`}>
+              <TableRow key={transactionRowKey(item)}>
                 <TableCell className="whitespace-nowrap text-sm">
                   {formatDate(item.acqDate)}
                 </TableCell>

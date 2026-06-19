@@ -7,7 +7,11 @@ import { describe, it, expect } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import userEvent from '@testing-library/user-event'
-import { AcquiringTransactionsTable, sortTransactions } from '../AcquiringTransactionsTable'
+import {
+  AcquiringTransactionsTable,
+  sortTransactions,
+  transactionRowKey,
+} from '../AcquiringTransactionsTable'
 import type { AcquiringReportDetailItem } from '@/types/acquiring-analytics'
 
 const makeTransaction = (
@@ -42,6 +46,13 @@ const tx3 = makeTransaction({
 })
 
 describe('AcquiringTransactionsTable', () => {
+  it('uses stable unique row keys when backend SRID values repeat', () => {
+    const duplicateSridA = makeTransaction({ rrdId: 101, srid: 'DUPLICATE-SRID' })
+    const duplicateSridB = makeTransaction({ rrdId: 102, srid: 'DUPLICATE-SRID' })
+
+    expect(transactionRowKey(duplicateSridA)).not.toBe(transactionRowKey(duplicateSridB))
+  })
+
   it('renders all 9 column headers', () => {
     renderWithProviders(<AcquiringTransactionsTable transactions={[tx1]} />)
     expect(screen.getByText('Дата комиссии')).toBeInTheDocument()

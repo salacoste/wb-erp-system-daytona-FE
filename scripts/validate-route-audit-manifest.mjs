@@ -11,6 +11,9 @@ function usage() {
   console.log(
     'Usage: node scripts/validate-route-audit-manifest.mjs <manifest.json> [route-inventory.json] [--allow-failures] [--allow-warnings] [--allow-blocked-network]'
   )
+  console.log(
+    'Warnings are intentional advisory findings (for example visible mutating controls observed during a read-only audit). The validator fails warnings unless --allow-warnings is passed.'
+  )
   console.log('Validates the read-only frontend route audit manifest structure and route coverage.')
 }
 
@@ -88,8 +91,38 @@ function validateRecord(record, index, errors) {
     `${prefix}.denied_controls must be an array`,
     errors
   )
+  assert(Array.isArray(record.warnings), `${prefix}.warnings must be an array`, errors)
   assert(Array.isArray(record.issues), `${prefix}.issues must be an array`, errors)
   assert(Number.isFinite(record.duration_ms), `${prefix}.duration_ms must be a number`, errors)
+
+  const warnings = Array.isArray(record.warnings) ? record.warnings : []
+  const deniedControls = Array.isArray(record.denied_controls) ? record.denied_controls : []
+
+  if (record.status === 'passed') {
+    assert(warnings.length === 0, `${prefix}.passed records must not include warnings`, errors)
+    assert(
+      deniedControls.length === 0,
+      `${prefix}.passed records must not include visible mutating controls`,
+      errors
+    )
+  }
+
+  if (record.status === 'warning') {
+    assert(warnings.length > 0, `${prefix}.warning records must include warning reasons`, errors)
+  }
+
+  if (deniedControls.length > 0) {
+    assert(
+      record.status === 'warning' || record.status === 'failed',
+      `${prefix}.visible mutating controls must be warning or failed status`,
+      errors
+    )
+    assert(
+      warnings.some(warning => warning.startsWith('visible-mutating-controls-observed-only:')),
+      `${prefix}.visible mutating controls must be represented in warnings`,
+      errors
+    )
+  }
 
   if (record.dynamic && record.status === 'blocked') {
     assert(
@@ -238,6 +271,11 @@ function validateManifest(manifest, inventory, options) {
     errors
   )
   assert(Array.isArray(manifest.records), 'records must be an array', errors)
+  assert(
+    manifest.safety_policy?.visible_mutating_controls === 'warning',
+    'safety_policy.visible_mutating_controls must be warning',
+    errors
+  )
 
   const records = manifest.records ?? []
   records.forEach((record, index) => validateRecord(record, index, errors))
