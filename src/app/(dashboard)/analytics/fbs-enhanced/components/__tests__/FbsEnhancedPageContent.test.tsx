@@ -55,9 +55,7 @@ describe('FbsEnhancedPageContent', () => {
 
     renderWithProviders(<FbsEnhancedPageContent />)
 
-    expect(
-      screen.getByText(/Данные FBS загружаются дольше обычного/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Данные FBS загружаются дольше обычного/)).toBeInTheDocument()
     await screen.getByRole('button', { name: /Повторить/ }).click()
     expect(refetch).toHaveBeenCalledTimes(1)
   })

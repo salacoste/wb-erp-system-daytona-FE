@@ -14,6 +14,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { OrdersTable } from '../OrdersTable'
 import {
@@ -262,45 +263,43 @@ describe('OrdersTable', () => {
   describe('Row Interaction', () => {
     it('renders rows with hover styling', () => {
       renderTable()
-      const rows = screen.getAllByRole('button', { name: /Заказ/ })
-      expect(rows[0].closest('tr')).toHaveClass('hover:bg-muted/50')
+      const firstRow = screen.getByText('1234567890').closest('tr')
+      expect(firstRow).toHaveClass('hover:bg-muted/50')
     })
 
     it('calls onRowClick with order data when clicking row', () => {
       renderTable()
-      const firstRow = screen.getByRole('button', { name: /Заказ 1234567890/ })
+      const firstRow = screen.getByText('1234567890').closest('tr')!
       fireEvent.click(firstRow)
       expect(defaultProps.onRowClick).toHaveBeenCalledWith(
         expect.objectContaining({ orderId: '1234567890' })
       )
     })
 
-    it('calls onRowClick when pressing Enter on focused row', () => {
+    it('calls onRowClick when activating the accessible open button with Enter', async () => {
+      const user = userEvent.setup()
       renderTable()
-      const firstRow = screen.getByRole('button', { name: /Заказ 1234567890/ })
-      fireEvent.keyDown(firstRow, { key: 'Enter' })
+      const openButton = screen.getByRole('button', { name: /Открыть заказ 1234567890/ })
+
+      openButton.focus()
+      await user.keyboard('{Enter}')
+
       expect(defaultProps.onRowClick).toHaveBeenCalledWith(
         expect.objectContaining({ orderId: '1234567890' })
       )
     })
 
-    it('calls onRowClick when pressing Space on focused row', () => {
+    it('does not make data rows interactive containers with nested links', () => {
       renderTable()
-      const firstRow = screen.getByRole('button', { name: /Заказ 1234567890/ })
-      fireEvent.keyDown(firstRow, { key: ' ' })
-      expect(defaultProps.onRowClick).toHaveBeenCalled()
-    })
-
-    it('makes rows focusable with tabindex', () => {
-      renderTable()
-      const firstRow = screen.getByRole('button', { name: /Заказ 1234567890/ })
-      expect(firstRow).toHaveAttribute('tabindex', '0')
+      const firstRow = screen.getByText('1234567890').closest('tr')!
+      expect(firstRow).not.toHaveAttribute('role', 'button')
+      expect(firstRow).not.toHaveAttribute('tabindex')
     })
 
     it('has cursor pointer on rows', () => {
       renderTable()
-      const firstRow = screen.getByRole('button', { name: /Заказ 1234567890/ })
-      expect(firstRow.closest('tr')).toHaveClass('cursor-pointer')
+      const firstRow = screen.getByText('1234567890').closest('tr')
+      expect(firstRow).toHaveClass('cursor-pointer')
     })
   })
 
@@ -341,9 +340,9 @@ describe('OrdersTable', () => {
 
     it('renders all three order rows', () => {
       renderTable()
-      expect(screen.getByRole('button', { name: /Заказ 1234567890/ })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Заказ 1234567891/ })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Заказ 1234567892/ })).toBeInTheDocument()
+      expect(screen.getByText('1234567890')).toBeInTheDocument()
+      expect(screen.getByText('1234567891')).toBeInTheDocument()
+      expect(screen.getByText('1234567892')).toBeInTheDocument()
     })
   })
 
@@ -403,17 +402,19 @@ describe('OrdersTable', () => {
       expect(createdHeader).toHaveAttribute('aria-sort', 'descending')
     })
 
-    it('rows have aria-label describing order', () => {
+    it('provides visible accessible buttons for opening order details', () => {
       renderTable()
-      expect(screen.getByRole('button', { name: /Заказ 1234567890/ })).toBeInTheDocument()
+      const openButton = screen.getByRole('button', { name: /Открыть заказ 1234567890/ })
+      expect(openButton).toBeInTheDocument()
+      expect(openButton).toBeVisible()
+      expect(openButton).toHaveTextContent('Открыть')
     })
 
-    it('rows are keyboard navigable via tabindex', () => {
+    it('keeps rows semantic to avoid nested-interactive violations', () => {
       renderTable()
-      const rows = screen.getAllByRole('button', { name: /Заказ/ })
-      rows.forEach(row => {
-        expect(row).toHaveAttribute('tabindex', '0')
-      })
+      const row = screen.getByText('1234567890').closest('tr')!
+      expect(row).not.toHaveAttribute('role', 'button')
+      expect(row.querySelector('a[href="/cogs?search=12345678"]')).toBeInTheDocument()
     })
 
     it('sortable headers respond to click for sorting', () => {

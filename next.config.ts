@@ -7,12 +7,18 @@ const nextConfig: NextConfig = {
   // Workspace root - monorepo with backend at parent level
   outputFileTracingRoot: path.join(__dirname, '../..'),
 
+  // Next 15 build lint phase still passes removed ESLint options in this repo.
+  // Keep lint as an explicit CI/local gate via `pnpm lint` instead of build-time lint.
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Disable tracing for lockfiles in development
   ...(isDevelopment && {
     // Disable webpack cache to avoid ENOENT race conditions
-    webpack: (config) => {
-      config.cache = false;
-      return config;
+    webpack: config => {
+      config.cache = false
+      return config
     },
   }),
   // React strict mode for development
@@ -65,4 +71,3 @@ const nextConfig: NextConfig = {
 }
 
 export default nextConfig
-

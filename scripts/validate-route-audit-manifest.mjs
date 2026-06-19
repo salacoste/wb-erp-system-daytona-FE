@@ -25,6 +25,26 @@ function readJSON(filePath) {
 function assert(condition, message, errors) {
   if (!condition) errors.push(message)
 }
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function routeTemplateToRegExp(templatePath) {
+  const pattern = templatePath
+    .split('/')
+    .map(segment => {
+      if (!segment) return ''
+      if (/^\[[^\]/]+\]$/.test(segment)) return '[^/]+'
+      return escapeRegExp(segment)
+    })
+    .join('/')
+
+  return new RegExp(`^${pattern}$`)
+}
+
+function fixturePathMatchesTemplate(templatePath, fixturePath) {
+  return routeTemplateToRegExp(templatePath).test(fixturePath)
+}
 
 function validateRecord(record, index, errors) {
   const prefix = `records[${index}]`
@@ -71,33 +91,88 @@ function validateRecord(record, index, errors) {
   assert(Array.isArray(record.issues), `${prefix}.issues must be an array`, errors)
   assert(Number.isFinite(record.duration_ms), `${prefix}.duration_ms must be a number`, errors)
 
-  if (record.dynamic) {
-    assert(record.status === 'blocked', `${prefix}.dynamic routes must use status=blocked`, errors)
+  if (record.dynamic && record.status === 'blocked') {
     assert(
       record.session_context === 'blocked',
-      `${prefix}.dynamic routes must use session_context=blocked`,
+      `${prefix}.blocked dynamic routes must use session_context=blocked`,
       errors
     )
     assert(
       record.auth_state === 'blocked',
-      `${prefix}.dynamic routes must use auth_state=blocked`,
+      `${prefix}.blocked dynamic routes must use auth_state=blocked`,
       errors
     )
-    assert(record.final_url == null, `${prefix}.dynamic routes must not include final_url`, errors)
+    assert(
+      record.final_url == null,
+      `${prefix}.blocked dynamic routes must not include final_url`,
+      errors
+    )
     assert(
       record.http_status == null,
-      `${prefix}.dynamic routes must not include http_status`,
+      `${prefix}.blocked dynamic routes must not include http_status`,
       errors
     )
-    assert(record.title == null, `${prefix}.dynamic routes must not include title`, errors)
+    assert(record.title == null, `${prefix}.blocked dynamic routes must not include title`, errors)
     assert(
       record.screenshot == null,
-      `${prefix}.dynamic routes must not include screenshot`,
+      `${prefix}.blocked dynamic routes must not include screenshot`,
+      errors
+    )
+    assert(
+      record.fixture_path == null,
+      `${prefix}.blocked dynamic routes must not include fixture_path`,
       errors
     )
     assert(
       record.issues.includes('dynamic-route-blocked-until-safe-fixture-is-explicitly-provided'),
-      `${prefix}.dynamic routes must include safe-fixture blocked issue`,
+      `${prefix}.blocked dynamic routes must include safe-fixture blocked issue`,
+      errors
+    )
+  } else if (record.dynamic) {
+    assert(
+      record.status !== 'blocked',
+      `${prefix}.resolved dynamic routes must not be blocked`,
+      errors
+    )
+    assert(
+      record.session_context !== 'blocked',
+      `${prefix}.resolved dynamic routes must not use session_context=blocked`,
+      errors
+    )
+    assert(
+      record.auth_state !== 'blocked',
+      `${prefix}.resolved dynamic routes must not use auth_state=blocked`,
+      errors
+    )
+    assert(
+      typeof record.fixture_path === 'string' && record.fixture_path.startsWith('/'),
+      `${prefix}.resolved dynamic routes must include fixture_path`,
+      errors
+    )
+    assert(
+      !/\[[^\]]+\]/.test(record.fixture_path ?? ''),
+      `${prefix}.fixture_path must not contain unresolved route params`,
+      errors
+    )
+    assert(record.template_path === record.path, `${prefix}.template_path must equal path`, errors)
+    assert(
+      fixturePathMatchesTemplate(record.path, record.fixture_path ?? ''),
+      `${prefix}.fixture_path must match dynamic route template`,
+      errors
+    )
+    assert(
+      typeof record.fixture_source === 'string' && record.fixture_source.length > 0,
+      `${prefix}.resolved dynamic routes must include fixture_source`,
+      errors
+    )
+    assert(
+      typeof record.final_url === 'string',
+      `${prefix}.resolved dynamic routes need final_url`,
+      errors
+    )
+    assert(
+      !record.issues.includes('dynamic-route-blocked-until-safe-fixture-is-explicitly-provided'),
+      `${prefix}.resolved dynamic routes must not include safe-fixture blocked issue`,
       errors
     )
   }
@@ -170,7 +245,7 @@ function validateManifest(manifest, inventory, options) {
   const summary = manifest.summary ?? {}
   const computedSummary = {
     total_routes: records.length,
-    audited_routes: records.filter(record => !record.dynamic).length,
+    audited_routes: records.filter(record => !record.dynamic || record.status !== 'blocked').length,
     dynamic_blocked_routes: records.filter(record => record.dynamic && record.status === 'blocked')
       .length,
     failed_routes: records.filter(record => record.status === 'failed').length,

@@ -36,6 +36,12 @@ export interface RouteAuditRecord {
   http_status?: number
   title?: string
   screenshot?: string
+  /** Original dynamic route template when a safe fixture path resolves it. */
+  template_path?: string
+  /** Explicit safe path used to audit a dynamic route template. */
+  fixture_path?: string
+  /** Human-readable source of the dynamic route fixture map. */
+  fixture_source?: string
   console_errors: string[]
   page_errors: string[]
   failed_requests: FailedRequestRecord[]

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -105,6 +106,9 @@ export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Массовое добавление упаковки</DialogTitle>
+          <DialogDescription>
+            Вставьте строки с nmId, типом коробки и количеством единиц для пакетного добавления.
+          </DialogDescription>
         </DialogHeader>
 
         {step === 'input' && (

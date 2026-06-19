@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -86,6 +87,9 @@ export function SkuPackagingFormDialog({ open, item, onClose }: SkuPackagingForm
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Редактировать упаковку' : 'Добавить упаковку'}</DialogTitle>
+          <DialogDescription>
+            Свяжите товар с типом коробки и количеством единиц в одной коробке.
+          </DialogDescription>
         </DialogHeader>
 
         <form

@@ -18,7 +18,6 @@ import {
   productMatchesSearch,
 } from './useProducts-utils'
 
-
 const PRODUCT_SEARCH_FALLBACK_PAGE_LIMIT = 200
 const PRODUCT_SEARCH_FALLBACK_MAX_PAGES = 5
 
@@ -92,7 +91,9 @@ async function fetchProductsByClientSearchFallback(
     if (!cursor) break
   }
 
-  const matchedProducts = collected.filter(product => productMatchesSearch(product, filters.search!))
+  const matchedProducts = collected.filter(product =>
+    productMatchesSearch(product, filters.search!)
+  )
   return paginateClientSearchResults(matchedProducts, filters, marginUnavailable)
 }
 

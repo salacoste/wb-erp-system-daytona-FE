@@ -26,7 +26,16 @@ type RouteInventory = {
   routes: InventoryRoute[]
 }
 
+type DynamicRouteFixtureValue = string | { path: string }
+type DynamicRouteFixtureMap = Record<string, DynamicRouteFixtureValue>
+
+type DynamicRouteFixture = {
+  path: string
+  source: string
+}
+
 const inventoryPath = process.env.ROUTE_AUDIT_INVENTORY
+const dynamicFixturesInput = process.env.ROUTE_AUDIT_DYNAMIC_FIXTURES
 const runId =
   process.env.ROUTE_AUDIT_RUN_ID ??
   new Date().toISOString().replace(/[:.]/g, '-').replace('T', 'T').replace('Z', 'Z')
@@ -53,11 +62,44 @@ function readInventory(): RouteInventory {
   return JSON.parse(fs.readFileSync(inventoryPath, 'utf8')) as RouteInventory
 }
 
-function classifyRoute(route: InventoryRoute): {
+function readDynamicRouteFixtures(): Map<string, DynamicRouteFixture> {
+  if (!dynamicFixturesInput) return new Map()
+
+  const trimmed = dynamicFixturesInput.trim()
+  const fixtureSource = trimmed.startsWith('{') ? 'env:ROUTE_AUDIT_DYNAMIC_FIXTURES' : trimmed
+  const rawFixtures = trimmed.startsWith('{')
+    ? (JSON.parse(trimmed) as DynamicRouteFixtureMap)
+    : (JSON.parse(fs.readFileSync(path.resolve(trimmed), 'utf8')) as DynamicRouteFixtureMap)
+
+  return new Map(
+    Object.entries(rawFixtures).map(([templatePath, value]) => {
+      const fixturePath = typeof value === 'string' ? value : value.path
+      if (!templatePath.startsWith('/')) {
+        throw new Error(`Dynamic fixture template must be an absolute route: ${templatePath}`)
+      }
+      if (!fixturePath.startsWith('/')) {
+        throw new Error(`Dynamic fixture path for ${templatePath} must be an absolute route`)
+      }
+      if (/\[[^\]]+\]/.test(fixturePath)) {
+        throw new Error(`Dynamic fixture path for ${templatePath} must not contain route params`)
+      }
+      if (!fixturePathMatchesTemplate(templatePath, fixturePath)) {
+        throw new Error(`Dynamic fixture path ${fixturePath} must match template ${templatePath}`)
+      }
+
+      return [templatePath, { path: fixturePath, source: fixtureSource }]
+    })
+  )
+}
+
+function classifyRoute(
+  route: InventoryRoute,
+  dynamicFixture?: DynamicRouteFixture
+): {
   sessionContext: SessionContext
   authState: AuthState
 } {
-  if (route.dynamic) return { sessionContext: 'blocked', authState: 'blocked' }
+  if (route.dynamic && !dynamicFixture) return { sessionContext: 'blocked', authState: 'blocked' }
   if (route.group === '(auth)' || route.path === '/')
     return { sessionContext: 'anonymous', authState: 'clean' }
   if (route.group === '(onboarding)') return { sessionContext: 'onboarding', authState: 'clean' }
@@ -77,6 +119,26 @@ function contextOptionsFor(
 
 function buildURL(baseURL: string, routePath: string): string {
   return new URL(routePath, baseURL).toString()
+}
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function routeTemplateToRegExp(templatePath: string): RegExp {
+  const pattern = templatePath
+    .split('/')
+    .map(segment => {
+      if (!segment) return ''
+      if (/^\[[^\]/]+\]$/.test(segment)) return '[^/]+'
+      return escapeRegExp(segment)
+    })
+    .join('/')
+
+  return new RegExp(`^${pattern}$`)
+}
+
+function fixturePathMatchesTemplate(templatePath: string, fixturePath: string): boolean {
+  return routeTemplateToRegExp(templatePath).test(fixturePath)
 }
 
 async function waitForVisibleContentToSettle(page: import('@playwright/test').Page): Promise<void> {
@@ -113,7 +175,7 @@ async function detectVisibleLoadingState(page: import('@playwright/test').Page):
 }
 
 function inferStatus(record: RouteAuditRecord): RouteAuditRecord['status'] {
-  if (record.dynamic) return 'blocked'
+  if (record.dynamic && !record.fixture_path) return 'blocked'
   if (record.issues.includes('authenticated-route-redirected-to-auth-page')) return 'failed'
   if (record.issues.includes('loading-state-visible-after-settle')) return 'failed'
   if (record.blocked_requests.length > 0) return 'failed'
@@ -132,7 +194,9 @@ async function auditRoute(
   browser: Browser
 ): Promise<RouteAuditRecord> {
   const startedAt = Date.now()
-  const { sessionContext, authState } = classifyRoute(route)
+  const dynamicFixture = route.dynamic ? dynamicRouteFixtures.get(route.path) : undefined
+  const navigationPath = dynamicFixture?.path ?? route.path
+  const { sessionContext, authState } = classifyRoute(route, dynamicFixture)
   const record: RouteAuditRecord = {
     path: route.path,
     source: route.source,
@@ -140,7 +204,7 @@ async function auditRoute(
     group: route.group,
     session_context: sessionContext,
     auth_state: authState,
-    status: route.dynamic ? 'blocked' : 'failed',
+    status: route.dynamic && !dynamicFixture ? 'blocked' : 'failed',
     console_errors: [],
     page_errors: [],
     failed_requests: [],
@@ -150,7 +214,13 @@ async function auditRoute(
     duration_ms: 0,
   }
 
-  if (route.dynamic) {
+  if (route.dynamic && dynamicFixture) {
+    record.template_path = route.path
+    record.fixture_path = dynamicFixture.path
+    record.fixture_source = dynamicFixture.source
+  }
+
+  if (route.dynamic && !dynamicFixture) {
     record.issues.push('dynamic-route-blocked-until-safe-fixture-is-explicitly-provided')
     record.duration_ms = Date.now() - startedAt
     return record
@@ -162,7 +232,7 @@ async function auditRoute(
     baseURL,
     apiURL: process.env.E2E_API_URL ?? process.env.NEXT_PUBLIC_API_URL,
     allowAuthSetup: false,
-    routePath: route.path,
+    routePath: navigationPath,
     sessionContext,
   }
 
@@ -174,7 +244,7 @@ async function auditRoute(
   await installReadOnlyNetworkGuard(page, record.blocked_requests, guardOptions)
 
   try {
-    const response = await page.goto(buildURL(baseURL, route.path), {
+    const response = await page.goto(buildURL(baseURL, navigationPath), {
       waitUntil: 'domcontentloaded',
       timeout: Number(process.env.ROUTE_AUDIT_NAV_TIMEOUT_MS ?? 30000),
     })
@@ -229,7 +299,7 @@ function assertRouteRecord(record: RouteAuditRecord): void {
   expect(record.failed_requests, `${record.path} failed protected requests`).toHaveLength(0)
   expect(record.denied_controls, `${record.path} denied mutating controls`).toHaveLength(0)
 
-  if (record.dynamic) {
+  if (record.dynamic && !record.fixture_path) {
     expect(record.status, `${record.path} dynamic status`).toBe('blocked')
     expect(record.session_context, `${record.path} dynamic session_context`).toBe('blocked')
     expect(record.auth_state, `${record.path} dynamic auth_state`).toBe('blocked')
@@ -241,6 +311,12 @@ function assertRouteRecord(record: RouteAuditRecord): void {
     expect(record.title, `${record.path} dynamic title`).toBeUndefined()
     expect(record.screenshot, `${record.path} dynamic screenshot`).toBeUndefined()
     return
+  }
+
+  if (record.dynamic) {
+    expect(record.template_path, `${record.path} dynamic template_path`).toBe(record.path)
+    expect(record.fixture_path, `${record.path} dynamic fixture_path`).toMatch(/^\//)
+    expect(record.fixture_source, `${record.path} dynamic fixture_source`).toBeTruthy()
   }
 
   expect(record.status, `${record.path} route status`).toBe('passed')
@@ -262,6 +338,9 @@ function buildManifest(baseURL: string, inventory: RouteInventory): AuditManifes
   const dynamicBlockedRoutes = records.filter(
     record => record.dynamic && record.status === 'blocked'
   ).length
+  const auditedRoutes = records.filter(
+    record => !record.dynamic || record.status !== 'blocked'
+  ).length
 
   return {
     schema_version: 1,
@@ -277,7 +356,7 @@ function buildManifest(baseURL: string, inventory: RouteInventory): AuditManifes
     },
     summary: {
       total_routes: inventory.routes.length,
-      audited_routes: records.filter(record => !record.dynamic).length,
+      audited_routes: auditedRoutes,
       dynamic_blocked_routes: dynamicBlockedRoutes,
       failed_routes: failedRoutes,
       warning_routes: warningRoutes,
@@ -313,7 +392,7 @@ function writeManifestAndReport(baseURL: string, inventory: RouteInventory): voi
     '| --- | --- | --- | --- | --- |',
     ...manifest.records.map(
       record =>
-        `| ${record.status} | ${record.path} | ${record.session_context} | ${record.auth_state} | ${record.issues.join('<br>') || '—'} |`
+        `| ${record.status} | ${record.fixture_path ? `${record.path} → ${record.fixture_path}` : record.path} | ${record.session_context} | ${record.auth_state} | ${record.issues.join('<br>') || '—'} |`
     ),
     '',
   ].join('\n')
@@ -322,6 +401,7 @@ function writeManifestAndReport(baseURL: string, inventory: RouteInventory): voi
 }
 
 const inventory = readInventory()
+const dynamicRouteFixtures = readDynamicRouteFixtures()
 
 test.describe('read-only full route audit', () => {
   test.describe.configure({ mode: 'serial' })

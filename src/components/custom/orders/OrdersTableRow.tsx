@@ -40,24 +40,25 @@ export function OrdersTableRow({
 
   const handleClick = () => onClick(order)
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onClick(order)
-    }
-  }
-
   return (
-    <TableRow
-      className="cursor-pointer hover:bg-muted/50"
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      role="button"
-      aria-label={`Заказ ${order.orderId}`}
-    >
+    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={handleClick}>
       {/* Order ID */}
-      <TableCell className="font-medium">{order.orderId}</TableCell>
+      <TableCell className="font-medium">
+        <div className="flex flex-col items-start gap-1">
+          <span>{order.orderId}</span>
+          <button
+            type="button"
+            className="inline-flex rounded px-1 text-xs font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={`Открыть заказ ${order.orderId}`}
+            onClick={e => {
+              e.stopPropagation()
+              onClick(order)
+            }}
+          >
+            Открыть
+          </button>
+        </div>
+      </TableCell>
 
       {/* Product Info */}
       <TableCell className="min-w-[200px]">

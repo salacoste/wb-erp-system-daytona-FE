@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -101,6 +102,9 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Редактировать тип коробки' : 'Добавить тип коробки'}</DialogTitle>
+          <DialogDescription>
+            Укажите название и габариты коробки для расчёта логистики поставок.
+          </DialogDescription>
         </DialogHeader>
 
         <form

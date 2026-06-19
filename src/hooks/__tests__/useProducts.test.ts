@@ -118,8 +118,6 @@ describe('useProducts', () => {
     expect(result.current.data?.products).toHaveLength(0)
   })
 
-
-
   it('falls back to client-side vendor_code search when backend search returns empty', async () => {
     mockGet.mockResolvedValueOnce({
       products: [],

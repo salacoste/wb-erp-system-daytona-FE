@@ -18,7 +18,6 @@ export interface ProductFilters {
   include_storage?: boolean
 }
 
-
 // ============================================================================
 // Search normalization helpers
 // ============================================================================
@@ -93,7 +92,11 @@ export function getProductSearchVariants(value: string): string[] {
   if (!base) return []
 
   return Array.from(
-    new Set([base, remapChars(base, CYRILLIC_TO_LATIN_LOOKALIKE), remapChars(base, RUSSIAN_KEYBOARD_TO_ENGLISH)])
+    new Set([
+      base,
+      remapChars(base, CYRILLIC_TO_LATIN_LOOKALIKE),
+      remapChars(base, RUSSIAN_KEYBOARD_TO_ENGLISH),
+    ])
   ).filter(Boolean)
 }
 
@@ -119,7 +122,9 @@ export function productMatchesSearch(product: ProductSearchableFields, query: st
     product.barcode,
   ]
 
-  const fieldVariants = searchableValues.flatMap(value => getProductSearchVariants(String(value ?? '')))
+  const fieldVariants = searchableValues.flatMap(value =>
+    getProductSearchVariants(String(value ?? ''))
+  )
   return queryVariants.some(queryVariant =>
     fieldVariants.some(fieldVariant => fieldVariant.includes(queryVariant))
   )
