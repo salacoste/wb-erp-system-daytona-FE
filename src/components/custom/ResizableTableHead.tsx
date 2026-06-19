@@ -80,12 +80,12 @@ export function ResizableTableHead({
           <div
             className="cursor-col-resize flex items-center justify-center px-1 py-1 -my-1 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors flex-shrink-0 text-gray-400 hover:text-gray-600"
             onMouseDown={handleMouseDown}
-            onTouchStart={(e) => {
+            onTouchStart={e => {
               const touch = e.touches[0]
               handleMouseDown({
                 preventDefault: () => e.preventDefault(),
                 stopPropagation: () => e.stopPropagation(),
-                clientX: touch.clientX
+                clientX: touch.clientX,
               } as React.MouseEvent)
             }}
             title="Перетащите для изменения ширины"

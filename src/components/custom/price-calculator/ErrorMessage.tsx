@@ -103,10 +103,13 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
   }, [])
 
   // Get error configuration based on status code
-  const getErrorConfig = useCallback((err: Error) => {
-    const status = getStatusCode(err)
-    return ERROR_CONFIG[status as keyof typeof ERROR_CONFIG] || ERROR_CONFIG[0]
-  }, [getStatusCode])
+  const getErrorConfig = useCallback(
+    (err: Error) => {
+      const status = getStatusCode(err)
+      return ERROR_CONFIG[status as keyof typeof ERROR_CONFIG] || ERROR_CONFIG[0]
+    },
+    [getStatusCode]
+  )
 
   if (!error) {
     return null
@@ -126,12 +129,7 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
         {config.action && (
           <div className="flex items-center gap-2 mt-2">
             {'onClick' in config.action ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onRetry}
-                className="h-7"
-              >
+              <Button variant="outline" size="sm" onClick={onRetry} className="h-7">
                 {config.action.label}
               </Button>
             ) : (
@@ -152,9 +150,7 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
             <summary className="cursor-pointer opacity-70 hover:opacity-100">
               Технические детали
             </summary>
-            <pre className="mt-2 p-2 bg-black/5 rounded overflow-x-auto">
-              {error.message}
-            </pre>
+            <pre className="mt-2 p-2 bg-black/5 rounded overflow-x-auto">{error.message}</pre>
           </details>
         )}
       </AlertDescription>

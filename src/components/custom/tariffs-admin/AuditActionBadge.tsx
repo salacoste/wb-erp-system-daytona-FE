@@ -15,10 +15,7 @@ type AuditAction = TariffAuditEntry['action']
  * - CREATE: Green - new value or version created
  * - DELETE: Red - value or version removed
  */
-const ACTION_CONFIG: Record<
-  AuditAction,
-  { label: string; bgColor: string; textColor: string }
-> = {
+const ACTION_CONFIG: Record<AuditAction, { label: string; bgColor: string; textColor: string }> = {
   UPDATE: {
     label: 'Изменение',
     bgColor: 'bg-blue-100',

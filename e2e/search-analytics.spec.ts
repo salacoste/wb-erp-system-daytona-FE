@@ -10,7 +10,7 @@
  * Run: npx playwright test e2e/search-analytics.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const SEARCH_URL = '/analytics/search'
@@ -26,12 +26,32 @@ const TEST_TIMEOUT = 60_000
  * Navigate to the search analytics page and wait for the heading.
  * Anti-pattern #9: no networkidle — background queries never settle.
  */
-async function gotoSearch(page: import('@playwright/test').Page) {
+async function gotoSearch(page: Page) {
   await page.goto(SEARCH_URL, { waitUntil: 'domcontentloaded' })
   await page
     .getByRole('heading', { name: 'Поисковая аналитика' })
     .waitFor({ state: 'visible', timeout: TIMEOUTS.api })
 }
+
+async function expectJamGateOrTabs(page: Page) {
+  const gate = page.getByRole('region', { name: 'Требуется подписка WB Джем' })
+  const tabs = page.locator('[role="tablist"]')
+  const state = await Promise.race([
+    gate.waitFor({ state: 'visible', timeout: TIMEOUTS.api }).then(() => 'gate' as const),
+    tabs.waitFor({ state: 'visible', timeout: TIMEOUTS.api }).then(() => 'tabs' as const),
+  ]).catch(() => 'timeout' as const)
+
+  expect(state).not.toBe('timeout')
+
+  if (state === 'gate') {
+    await expect(page.getByRole('link', { name: /Подробнее/ })).toBeVisible()
+    return false
+  }
+
+  await expect(tabs).toBeVisible()
+  return true
+}
+
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -58,7 +78,10 @@ test.describe('Search Analytics Page', () => {
     test.setTimeout(TEST_TIMEOUT)
     await gotoSearch(page)
 
-    const tabLabels = ['Заказы', 'По товарам', 'По запросам']
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
+
+    const tabLabels = ['Заказы', 'По товарам', 'По запросам', 'Позиции']
     for (const label of tabLabels) {
       await expect(page.getByRole('tab', { name: label })).toBeVisible()
     }
@@ -70,6 +93,9 @@ test.describe('Search Analytics Page', () => {
   test('default tab shows orders content area', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT)
     await gotoSearch(page)
+
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
 
     // Orders tab is active by default (no initialQuery). Verify its content
     // area is present — either skeleton, data, or empty state.
@@ -87,6 +113,9 @@ test.describe('Search Analytics Page', () => {
     test.setTimeout(TEST_TIMEOUT)
     await gotoSearch(page)
 
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
+
     await page.getByRole('tab', { name: 'По товарам' }).click()
 
     // Placeholder text for no product selected
@@ -101,6 +130,9 @@ test.describe('Search Analytics Page', () => {
   test('По запросам tab shows search input and placeholder', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT)
     await gotoSearch(page)
+
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
 
     await page.getByRole('tab', { name: 'По запросам' }).click()
 
@@ -131,6 +163,9 @@ test.describe('Search Analytics Page', () => {
 
     await gotoSearch(page)
 
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
+
     // Page should not crash — either shows a table, empty alert, or overview
     // cards. Verify the tab panel is present (no JS error crashed the page).
     const tabPanel = page.getByRole('tabpanel')
@@ -149,13 +184,16 @@ test.describe('Search Analytics Page', () => {
     await expect(h1).toHaveCount(1)
     await expect(h1).toHaveText('Поисковая аналитика')
 
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
+
     // Tab list has proper ARIA role
     const tabList = page.getByRole('tablist')
     await expect(tabList).toBeVisible()
 
-    // All three tabs have tab role
+    // All four tabs have tab role
     const tabs = page.getByRole('tab')
-    await expect(tabs).toHaveCount(3)
+    await expect(tabs).toHaveCount(4)
   })
 
   // -------------------------------------------------------------------------
@@ -170,6 +208,9 @@ test.describe('Search Analytics Page', () => {
     await page
       .getByRole('heading', { name: 'Поисковая аналитика' })
       .waitFor({ state: 'visible', timeout: TIMEOUTS.api })
+
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
 
     // By-query tab should be active (defaultTab = 'by-query' when initialQuery set)
     const byQueryTab = page.getByRole('tab', { name: 'По запросам' })

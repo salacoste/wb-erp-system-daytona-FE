@@ -6,8 +6,8 @@
  * Mocks DateRangePickerExtended to isolate orchestrator behavior.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { act, screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import type { AcquiringDetailResponse } from '@/types/acquiring-analytics'
 
@@ -68,6 +68,10 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
+afterEach(() => {
+  vi.useRealTimers()
+})
+
 describe('AcquiringPeriodDetailPage', () => {
   it('renders landmark, header, and back button when data resolves', () => {
     mockSuccess({
@@ -113,5 +117,21 @@ describe('AcquiringPeriodDetailPage', () => {
 
     // No transactions table or summary yet
     expect(screen.queryByText(/Транзакции за выбранный период не найдены/)).not.toBeInTheDocument()
+  })
+
+  it('replaces long-loading skeleton with an explicit retry state', () => {
+    vi.useFakeTimers()
+    mockLoading()
+
+    renderWithProviders(<AcquiringPeriodDetailPage />)
+
+    act(() => {
+      vi.advanceTimersByTime(5_000)
+    })
+
+    expect(
+      screen.getByText(/Транзакции эквайринга загружаются дольше обычного/)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
   })
 })

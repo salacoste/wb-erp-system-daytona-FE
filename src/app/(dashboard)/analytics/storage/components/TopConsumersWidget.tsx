@@ -50,11 +50,12 @@ export function TopConsumersWidget({
   }
 
   // Handle row click
-  const handleRowClick = (nmId: string) => {
+  const handleRowClick = (nmId: string | number) => {
+    const normalizedNmId = String(nmId)
     if (onProductClick) {
-      onProductClick(nmId)
+      onProductClick(normalizedNmId)
     } else {
-      router.push(`/analytics/sku?nm_id=${nmId}`)
+      router.push(`/analytics/sku?nm_id=${normalizedNmId}`)
     }
   }
 
@@ -108,9 +109,9 @@ export function TopConsumersWidget({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(item => (
+          {data.map((item, index) => (
             <TableRow
-              key={item.nm_id}
+              key={`${item.nm_id || 'unknown'}-${item.rank || index}-${item.vendor_code || index}`}
               className="cursor-pointer"
               onClick={() => handleRowClick(item.nm_id)}
             >

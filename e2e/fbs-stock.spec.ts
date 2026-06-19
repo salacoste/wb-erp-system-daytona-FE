@@ -304,7 +304,7 @@ test.describe('FBS Export (Story 96.12-FE)', () => {
         status: 200,
         contentType: 'text/csv',
         body: 'nm_id,name\n123,Test',
-        headers: { 'Content-Disposition': 'attachment; filename="fbs-export.csv"' },
+        headers: { 'Content-Disposition': 'attachment; filename="fbs-stock-export-e2e.csv"' },
       })
     )
 

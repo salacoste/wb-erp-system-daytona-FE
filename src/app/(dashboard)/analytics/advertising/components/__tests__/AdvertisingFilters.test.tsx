@@ -32,10 +32,7 @@ describe('AdvertisingFilters', () => {
       const today = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       render(
-        <AdvertisingFilters
-          {...defaultProps}
-          dateRange={{ from: from100DaysAgo, to: today }}
-        />
+        <AdvertisingFilters {...defaultProps} dateRange={{ from: from100DaysAgo, to: today }} />
       )
 
       expect(screen.getByText('Максимум 90 дней')).toBeInTheDocument()
@@ -52,10 +49,7 @@ describe('AdvertisingFilters', () => {
       const today = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       render(
-        <AdvertisingFilters
-          {...defaultProps}
-          dateRange={{ from: from90DaysAgo, to: today }}
-        />
+        <AdvertisingFilters {...defaultProps} dateRange={{ from: from90DaysAgo, to: today }} />
       )
 
       expect(screen.queryByText('Максимум 90 дней')).not.toBeInTheDocument()

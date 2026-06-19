@@ -24,12 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { BOX_TYPES, type BoxTypeId } from '@/lib/box-type-utils'
 import { cn } from '@/lib/utils'
@@ -84,7 +79,7 @@ export function DeliveryTypeSelector({
 
         <Select
           value={String(value)}
-          onValueChange={(v) => onChange(Number(v) as BoxTypeId)}
+          onValueChange={v => onChange(Number(v) as BoxTypeId)}
           disabled={disabled}
         >
           <SelectTrigger id="box-type" aria-label="Тип доставки">
@@ -97,7 +92,7 @@ export function DeliveryTypeSelector({
           </SelectTrigger>
 
           <SelectContent>
-            {Object.values(BOX_TYPES).map((boxType) => {
+            {Object.values(BOX_TYPES).map(boxType => {
               const isAvailable = availableTypes.includes(boxType.id)
               const isFixed = boxType.storageFormula === 'fixed'
 

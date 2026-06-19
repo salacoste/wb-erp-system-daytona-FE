@@ -15,6 +15,7 @@
  */
 
 import { test, expect } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
 import { ROUTES } from './fixtures/test-data'
 
 // Extend routes for Orders (not yet in fixtures)
@@ -441,7 +442,9 @@ test.describe('Orders Page - Epic 40-FE', () => {
     })
   })
 
-  test.describe('Manual Sync - Story 40.3', () => {
+  test.describe('Manual Sync - Story 40.3 @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test.skip('should display sync button for Manager+ role', async ({ page }) => {
       // TODO: Implement sync button display test
       // AC1: Manual sync trigger works

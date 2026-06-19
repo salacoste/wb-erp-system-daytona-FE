@@ -158,6 +158,17 @@ describe('ModelListSection — loading state', () => {
     // `return null` would have passed the negative assertion alone.
     expect(container.querySelectorAll('[class*="animate-pulse"]').length).toBeGreaterThanOrEqual(1)
   })
+
+  it('keeps a page-level h1 in loading state', () => {
+    mockUseAiModels.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAiModels>)
+    renderSection()
+    expect(screen.getByRole('heading', { level: 1, name: 'Модели AI' })).toBeTruthy()
+  })
 })
 
 describe('ModelListSection — error state', () => {
@@ -201,6 +212,7 @@ describe('ModelListSection — happy path', () => {
 
   it('renders all 7 column headers (Story 109.4-FE adds "Действия")', () => {
     renderSection()
+    expect(screen.getByRole('heading', { level: 1, name: 'Модели AI' })).toBeTruthy()
     expect(screen.getByText('Тип')).toBeTruthy()
     expect(screen.getByText('Движок')).toBeTruthy()
     expect(screen.getByText('Версия')).toBeTruthy()

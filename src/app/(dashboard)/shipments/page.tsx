@@ -44,7 +44,8 @@ export default function ShipmentsPage() {
     return (
       <div className="space-y-6">
         <h1 className="text-2xl font-semibold">Отправки</h1>
-        <div className="animate-pulse space-y-4">
+        <div role="status" aria-live="polite" className="animate-pulse space-y-4">
+          <span className="sr-only">Загрузка отправок</span>
           <div className="h-10 bg-muted rounded" />
           <div className="h-64 bg-muted rounded" />
         </div>

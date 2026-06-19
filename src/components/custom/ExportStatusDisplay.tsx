@@ -53,11 +53,7 @@ const STATUS_LABELS: Record<ExportStatus['status'], string> = {
  * />
  * ```
  */
-export function ExportStatusDisplay({
-  status,
-  onRetry,
-  className,
-}: ExportStatusDisplayProps) {
+export function ExportStatusDisplay({ status, onRetry, className }: ExportStatusDisplayProps) {
   const isLoading = status.status === 'pending' || status.status === 'processing'
   const isCompleted = status.status === 'completed'
   const isFailed = status.status === 'failed'
@@ -67,15 +63,9 @@ export function ExportStatusDisplay({
       {/* Status Header */}
       <div className="flex items-center gap-3">
         {/* Status Icon */}
-        {isLoading && (
-          <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-        )}
-        {isCompleted && (
-          <CheckCircle className="h-5 w-5 text-green-600" />
-        )}
-        {isFailed && (
-          <XCircle className="h-5 w-5 text-red-600" />
-        )}
+        {isLoading && <Loader2 className="h-5 w-5 animate-spin text-blue-600" />}
+        {isCompleted && <CheckCircle className="h-5 w-5 text-green-600" />}
+        {isFailed && <XCircle className="h-5 w-5 text-red-600" />}
 
         {/* Status Label */}
         <span
@@ -92,8 +82,7 @@ export function ExportStatusDisplay({
         {/* Estimated Time (during processing) */}
         {isLoading && status.estimated_time_sec && (
           <span className="text-sm text-gray-500 flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            ~{Math.ceil(status.estimated_time_sec / 60)} мин
+            <Clock className="h-3 w-3" />~{Math.ceil(status.estimated_time_sec / 60)} мин
           </span>
         )}
       </div>
@@ -120,12 +109,7 @@ export function ExportStatusDisplay({
           </div>
 
           {/* Download Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            asChild
-          >
+          <Button variant="outline" size="sm" className="gap-2" asChild>
             <a href={status.download_url} download>
               <Download className="h-4 w-4" />
               Скачать файл
@@ -143,12 +127,7 @@ export function ExportStatusDisplay({
           </p>
 
           {/* Retry Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRetry}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={onRetry} className="gap-2">
             Попробовать снова
           </Button>
         </div>

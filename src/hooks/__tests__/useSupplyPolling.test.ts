@@ -26,6 +26,12 @@ import { apiClient } from '@/lib/api-client'
 
 const mockGet = vi.mocked(apiClient.get)
 
+async function advanceTimersByTime(ms: number): Promise<void> {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(ms)
+  })
+}
+
 function makeSuppliesResponse(items: Array<{ id: string; status: string }>): SuppliesListResponse {
   return {
     items: items.map(item => ({
@@ -178,16 +184,13 @@ describe('useSupplyPolling', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     // Advance timer to trigger refetch
-    act(() => {
-      vi.advanceTimersByTime(30000)
-    })
+    await advanceTimersByTime(30000)
 
     await waitFor(() => expect(mockGet).toHaveBeenCalledTimes(2))
 
     // Status change should be detected
     await waitFor(() => {
-      const changes = result.current.changedSupplies
-      return changes.length > 0
+      expect(result.current.changedSupplies.length).toBeGreaterThan(0)
     })
 
     const change = result.current.changedSupplies[0] as SupplyStatusChange
@@ -208,9 +211,7 @@ describe('useSupplyPolling', () => {
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    act(() => {
-      vi.advanceTimersByTime(30000)
-    })
+    await advanceTimersByTime(30000)
     await waitFor(() => expect(result.current.changedSupplies.length).toBeGreaterThan(0))
 
     act(() => {
@@ -348,9 +349,7 @@ describe('useSupplyPolling', () => {
     await waitFor(() => expect(result.current.error).toBeTruthy(), { timeout: 5000 })
     expect(result.current.consecutiveErrors).toBe(1)
 
-    act(() => {
-      vi.advanceTimersByTime(30000)
-    })
+    await advanceTimersByTime(30000)
 
     await waitFor(() => expect(result.current.consecutiveErrors).toBe(0), { timeout: 5000 })
   })
@@ -367,9 +366,7 @@ describe('useSupplyPolling', () => {
     const initialCountdown = result.current.nextSyncIn
     expect(initialCountdown).toBeLessThanOrEqual(30)
 
-    act(() => {
-      vi.advanceTimersByTime(1000)
-    })
+    await advanceTimersByTime(1000)
 
     expect(result.current.nextSyncIn).toBeLessThan(initialCountdown)
   })

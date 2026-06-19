@@ -81,10 +81,7 @@ export default function PriceCalculatorPage() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <nav className="mb-4 text-sm text-muted-foreground">
-        <Link
-          href="/cogs"
-          className="hover:text-foreground hover:underline"
-        >
+        <Link href="/cogs" className="hover:text-foreground hover:underline">
           Управление себестоимостью
         </Link>
         {' / '}

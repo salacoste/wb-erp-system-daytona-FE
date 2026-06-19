@@ -3,17 +3,17 @@
 // Epic 34-FE: Story 34.3-FE - Notification Preferences Panel
 // ============================================================================
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'
 
 /**
  * Props for LanguageRadio component
  * Story 34.3-FE: AC3 - Language Switcher with Q8 Radio Buttons
  */
 interface LanguageRadioProps {
-  value: 'ru' | 'en';
-  label: string; // e.g., "🇷🇺 Русский" or "🇬🇧 English"
-  selected: boolean;
-  onSelect: () => void;
+  value: 'ru' | 'en'
+  label: string // e.g., "🇷🇺 Русский" or "🇬🇧 English"
+  selected: boolean
+  onSelect: () => void
 }
 
 /**
@@ -35,12 +35,7 @@ interface LanguageRadioProps {
  * />
  * ```
  */
-export function LanguageRadio({
-  value,
-  label,
-  selected,
-  onSelect,
-}: LanguageRadioProps) {
+export function LanguageRadio({ value, label, selected, onSelect }: LanguageRadioProps) {
   return (
     <label
       className={cn(
@@ -74,5 +69,5 @@ export function LanguageRadio({
 
       <span>{label}</span>
     </label>
-  );
+  )
 }

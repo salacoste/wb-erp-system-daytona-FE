@@ -21,9 +21,7 @@ function renderTargetMarginSection(error?: string) {
       defaultValues: { target_margin_pct: 17 },
     })
 
-    return (
-      <TargetMarginSection<TestFormData> control={control} error={error} />
-    )
+    return <TargetMarginSection<TestFormData> control={control} error={error} />
   }
 
   return render(<Wrapper />)
@@ -90,17 +88,13 @@ describe('TargetMarginSection', () => {
     it('should display error message when provided', () => {
       renderTargetMarginSection('Маржа не может быть отрицательной')
 
-      expect(
-        screen.getByText('Маржа не может быть отрицательной')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Маржа не может быть отрицательной')).toBeInTheDocument()
     })
 
     it('should not display error when not provided', () => {
       renderTargetMarginSection()
 
-      expect(
-        screen.queryByText('Маржа не может быть отрицательной')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText('Маржа не может быть отрицательной')).not.toBeInTheDocument()
     })
   })
 

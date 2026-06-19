@@ -235,7 +235,7 @@ describe('Form Integration Scenarios', () => {
     // Various ways NaN could be introduced
     const scenarios = ['', null, undefined, 'abc', NaN]
 
-    scenarios.forEach((input) => {
+    scenarios.forEach(input => {
       const result = options.setValueAs?.(input as string)
       expect(result).toBe(0)
       expect(isNaN(result as number)).toBe(false)

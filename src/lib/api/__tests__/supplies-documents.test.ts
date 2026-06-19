@@ -403,9 +403,7 @@ describe('downloadDocument()', () => {
     })
 
     it('should throw 404 when document not found', async () => {
-      vi.mocked(apiClient.get).mockRejectedValueOnce(
-        createApiError(404, 'Document not found')
-      )
+      vi.mocked(apiClient.get).mockRejectedValueOnce(createApiError(404, 'Document not found'))
       await expect(downloadDocument('supply-001', 'sticker')).rejects.toThrow()
     })
   })

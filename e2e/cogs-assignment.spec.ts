@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
 import { ROUTES, SELECTORS, TIMEOUTS, TEST_PRODUCTS } from './fixtures/test-data'
 
 /**
@@ -96,7 +97,9 @@ test.describe('COGS Assignment', () => {
     })
   })
 
-  test.describe('Story 4.1: Single Product COGS Assignment', () => {
+  test.describe('Story 4.1: Single Product COGS Assignment @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('can open COGS assignment form', async ({ page }) => {
       // Wait for products to load
       await page.waitForTimeout(2000)
@@ -226,7 +229,9 @@ test.describe('COGS Assignment', () => {
     })
   })
 
-  test.describe('Bulk COGS Assignment', () => {
+  test.describe('Bulk COGS Assignment @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('has bulk assignment option', async ({ page }) => {
       // Bulk assignment button or tab
       const bulkOption = page.locator(

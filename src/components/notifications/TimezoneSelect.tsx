@@ -11,7 +11,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/select'
 
 /**
  * Timezone data structure with grouped Russian timezones
@@ -39,12 +39,12 @@ const TIMEZONES = [
       { value: 'Asia/Kamchatka', label: 'Камчатка (GMT+12)', offset: '+12:00' },
     ],
   },
-];
+]
 
 interface TimezoneSelectProps {
-  value: string;
-  onChange: (timezone: string) => void;
-  disabled?: boolean;
+  value: string
+  onChange: (timezone: string) => void
+  disabled?: boolean
 }
 
 /**
@@ -61,25 +61,18 @@ interface TimezoneSelectProps {
 export function TimezoneSelect({ value, onChange, disabled = false }: TimezoneSelectProps) {
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
-      <SelectTrigger
-        className="w-full sm:w-60"
-        aria-label="Выберите часовой пояс"
-      >
+      <SelectTrigger className="w-full sm:w-60" aria-label="Выберите часовой пояс">
         <SelectValue placeholder="Выберите часовой пояс" />
       </SelectTrigger>
 
       <SelectContent className="max-h-80">
-        {TIMEZONES.map((group) => (
+        {TIMEZONES.map(group => (
           <SelectGroup key={group.group}>
             <SelectLabel className="text-xs font-semibold text-gray-700 uppercase">
               {group.group}
             </SelectLabel>
-            {group.zones.map((zone) => (
-              <SelectItem
-                key={zone.value}
-                value={zone.value}
-                className="pl-6"
-              >
+            {group.zones.map(zone => (
+              <SelectItem key={zone.value} value={zone.value} className="pl-6">
                 {zone.label}
               </SelectItem>
             ))}
@@ -87,5 +80,5 @@ export function TimezoneSelect({ value, onChange, disabled = false }: TimezoneSe
         ))}
       </SelectContent>
     </Select>
-  );
+  )
 }

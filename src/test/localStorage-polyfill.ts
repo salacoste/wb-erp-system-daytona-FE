@@ -35,7 +35,7 @@ if (!hasWorkingLocalStorage) {
       delete store[key]
     },
     clear(): void {
-      Object.keys(store).forEach((key) => delete store[key])
+      Object.keys(store).forEach(key => delete store[key])
     },
     get length(): number {
       return Object.keys(store).length

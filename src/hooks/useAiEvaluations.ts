@@ -17,12 +17,12 @@ export const aiEvaluationsKeys = {
     [...aiEvaluationsKeys.all(cabinetId), modelId] as const,
 }
 
-export function useAiEvaluations(modelId: string) {
+export function useAiEvaluations(modelId: string, options: { enabled?: boolean } = {}) {
   const cabinetId = useAuthStore(s => s.cabinetId)
   return useQuery<AiEvaluationListResponse>({
     queryKey: aiEvaluationsKeys.byModel(cabinetId, modelId),
     queryFn: () => getEvaluations({ modelId }),
-    enabled: !!cabinetId && !!modelId,
+    enabled: !!cabinetId && !!modelId && (options.enabled ?? true),
     staleTime: 60_000,
     gcTime: 5 * 60_000,
     retry: 1,

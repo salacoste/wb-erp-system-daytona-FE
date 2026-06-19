@@ -21,6 +21,9 @@ import { SupplyHeader } from '@/components/custom/supplies/SupplyHeader'
 import { SupplyStatusStepper } from '@/components/custom/supplies/SupplyStatusStepper'
 import { SupplyOrdersTable } from '@/components/custom/supplies/SupplyOrdersTable'
 import { SupplyDocumentsList } from '@/components/custom/supplies/SupplyDocumentsList'
+import { OrderPickerDrawer } from '@/components/custom/supplies/OrderPickerDrawer'
+import { CloseSupplyDialog } from '@/components/custom/supplies/CloseSupplyDialog'
+import { GenerateStickersModal } from '@/components/custom/supplies/GenerateStickersModal'
 import { toast } from 'sonner'
 import { SupplyDetailSkeleton } from './SupplyDetailSkeleton'
 import { SupplyDetailError } from './SupplyDetailError'
@@ -33,6 +36,9 @@ export default function SupplyDetailPage({ params }: PageProps) {
   const { id: supplyId } = use(params)
   const router = useRouter()
   const [downloadingType, setDownloadingType] = useState<string | undefined>()
+  const [isOrderPickerOpen, setIsOrderPickerOpen] = useState(false)
+  const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
+  const [isStickersModalOpen, setIsStickersModalOpen] = useState(false)
 
   const { data: supply, isLoading, error, refetch } = useSupplyDetail(supplyId)
   const removeOrdersMutation = useRemoveOrders(supplyId)
@@ -62,20 +68,16 @@ export default function SupplyDetailPage({ params }: PageProps) {
     }
   }
 
-  // Placeholder handlers for future stories
   const handleAddOrders = () => {
-    // Will open OrderPickerDrawer (Story 53.5-FE)
-    toast.info('Добавление заказов скоро будет доступно')
+    setIsOrderPickerOpen(true)
   }
 
   const handleCloseSupply = () => {
-    // Will open CloseSupplyDialog (Story 53.6-FE)
-    toast.info('Закрытие поставки скоро будет доступно')
+    setIsCloseDialogOpen(true)
   }
 
   const handleGenerateStickers = () => {
-    // Will open StickerFormatSelector (Story 53.6-FE)
-    toast.info('Генерация стикеров скоро будет доступна')
+    setIsStickersModalOpen(true)
   }
 
   const handleRefreshStatus = () => {
@@ -168,6 +170,31 @@ export default function SupplyDetailPage({ params }: PageProps) {
           />
         )}
       </div>
+
+      <OrderPickerDrawer
+        supplyId={supply.id}
+        isOpen={isOrderPickerOpen}
+        onClose={() => setIsOrderPickerOpen(false)}
+        onSuccess={() => {
+          void refetch()
+        }}
+      />
+
+      <CloseSupplyDialog
+        open={isCloseDialogOpen}
+        onOpenChange={setIsCloseDialogOpen}
+        supplyId={supply.id}
+        ordersCount={supply.ordersCount}
+        onSuccess={() => {
+          void refetch()
+        }}
+      />
+
+      <GenerateStickersModal
+        open={isStickersModalOpen}
+        onOpenChange={setIsStickersModalOpen}
+        supplyId={supply.id}
+      />
     </div>
   )
 }

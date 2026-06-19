@@ -57,15 +57,9 @@ function FormSkeleton() {
   )
 }
 
-export function ScheduleVersionModal({
-  isOpen,
-  onClose,
-}: ScheduleVersionModalProps) {
+export function ScheduleVersionModal({ isOpen, onClose }: ScheduleVersionModalProps) {
   // Fetch current settings for pre-filling form
-  const {
-    data: currentSettings,
-    isLoading: isLoadingSettings,
-  } = useQuery({
+  const { data: currentSettings, isLoading: isLoadingSettings } = useQuery({
     queryKey: tariffQueryKeys.settings(),
     queryFn: getTariffSettings,
     enabled: isOpen,
@@ -115,7 +109,7 @@ export function ScheduleVersionModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

@@ -22,8 +22,7 @@ export const supplyPlanningQueryKeys = {
     [...supplyPlanningQueryKeys.all, 'list', params] as const,
 
   /** Key for specific SKU detail (for future expansion) */
-  detail: (skuId: string) =>
-    [...supplyPlanningQueryKeys.all, 'detail', skuId] as const,
+  detail: (skuId: string) => [...supplyPlanningQueryKeys.all, 'detail', skuId] as const,
 }
 
 // ============================================================================

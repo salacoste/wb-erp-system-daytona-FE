@@ -35,11 +35,7 @@ describe('WarehouseBadges', () => {
   })
 
   it('shows +N overflow for 3+ warehouses', () => {
-    render(
-      <WarehouseBadges
-        warehouses={['Коледино', 'Подольск', 'Казань', 'Электросталь']}
-      />
-    )
+    render(<WarehouseBadges warehouses={['Коледино', 'Подольск', 'Казань', 'Электросталь']} />)
 
     expect(screen.getByText('Коледино')).toBeInTheDocument()
     expect(screen.getByText('Подольск')).toBeInTheDocument()
@@ -50,12 +46,7 @@ describe('WarehouseBadges', () => {
   })
 
   it('shows +1 overflow for exactly 3 warehouses', () => {
-    render(
-      <WarehouseBadges
-        warehouses={['Коледино', 'Подольск', 'Казань']}
-        maxVisible={2}
-      />
-    )
+    render(<WarehouseBadges warehouses={['Коледино', 'Подольск', 'Казань']} maxVisible={2} />)
 
     expect(screen.getByText('Коледино')).toBeInTheDocument()
     expect(screen.getByText('Подольск')).toBeInTheDocument()
@@ -63,12 +54,7 @@ describe('WarehouseBadges', () => {
   })
 
   it('respects custom maxVisible prop', () => {
-    render(
-      <WarehouseBadges
-        warehouses={['W1', 'W2', 'W3', 'W4', 'W5']}
-        maxVisible={3}
-      />
-    )
+    render(<WarehouseBadges warehouses={['W1', 'W2', 'W3', 'W4', 'W5']} maxVisible={3} />)
 
     expect(screen.getByText('W1')).toBeInTheDocument()
     expect(screen.getByText('W2')).toBeInTheDocument()
@@ -77,11 +63,7 @@ describe('WarehouseBadges', () => {
   })
 
   it('renders with default maxVisible of 2', () => {
-    render(
-      <WarehouseBadges
-        warehouses={['W1', 'W2', 'W3']}
-      />
-    )
+    render(<WarehouseBadges warehouses={['W1', 'W2', 'W3']} />)
 
     expect(screen.getByText('W1')).toBeInTheDocument()
     expect(screen.getByText('W2')).toBeInTheDocument()

@@ -81,10 +81,18 @@ export function useAllAcceptanceCoefficients() {
     queryFn: async () => {
       const response = await getAllAcceptanceCoefficients()
       const coefficients = response.coefficients || []
-      logger.debug('[AllCoefficients] Fetched from /all:', coefficients.length, 'coefficient entries')
+      logger.debug(
+        '[AllCoefficients] Fetched from /all:',
+        coefficients.length,
+        'coefficient entries'
+      )
       if (coefficients.length > 0) {
         const uniqueNames = new Set(coefficients.map(c => c.warehouseName))
-        logger.debug('[AllCoefficients] Unique warehouse names:', uniqueNames.size, Array.from(uniqueNames).slice(0, 10))
+        logger.debug(
+          '[AllCoefficients] Unique warehouse names:',
+          uniqueNames.size,
+          Array.from(uniqueNames).slice(0, 10)
+        )
       }
       return groupCoefficients(coefficients)
     },
@@ -117,7 +125,7 @@ function normalizeWarehouseName(name: string): string {
  */
 export function findCoefficientsByName(
   grouped: GroupedCoefficients | undefined,
-  warehouseName: string | undefined,
+  warehouseName: string | undefined
 ): WarehouseCoefficientsData | null {
   if (!grouped || !warehouseName) return null
 
@@ -161,7 +169,7 @@ export function findCoefficientsByName(
  */
 export function findCoefficientsById(
   grouped: GroupedCoefficients | undefined,
-  warehouseId: number | undefined,
+  warehouseId: number | undefined
 ): WarehouseCoefficientsData | null {
   if (!grouped || !warehouseId) return null
   return grouped.byId.get(warehouseId) ?? null

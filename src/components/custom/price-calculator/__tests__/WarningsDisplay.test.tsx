@@ -11,9 +11,7 @@ import { mockPriceCalculatorResponse } from '@/test/fixtures/price-calculator'
 describe('WarningsDisplay', () => {
   describe('Empty State', () => {
     it('returns null when no warnings', () => {
-      const { container } = render(
-        <WarningsDisplay data={mockPriceCalculatorResponse} />
-      )
+      const { container } = render(<WarningsDisplay data={mockPriceCalculatorResponse} />)
 
       expect(container.firstChild).toBeNull()
     })
@@ -35,9 +33,7 @@ describe('WarningsDisplay', () => {
         warnings: undefined as unknown as [],
       }
 
-      const { container } = render(
-        <WarningsDisplay data={dataWithoutWarningsProp} />
-      )
+      const { container } = render(<WarningsDisplay data={dataWithoutWarningsProp} />)
 
       expect(container.firstChild).toBeNull()
     })

@@ -95,6 +95,42 @@ test.describe('Price Recommendations page', () => {
   })
 
   // -------------------------------------------------------------------------
+  // 2. Filter controls use backend enum values
+  // -------------------------------------------------------------------------
+  test('filter controls send backend-compatible enum query params', async ({ page }) => {
+    test.setTimeout(TEST_TIMEOUT)
+
+    const requestedUrls: string[] = []
+    await page.route(PRICING_API_GLOB, route => {
+      requestedUrls.push(route.request().url())
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(makeMockResponse()),
+      })
+    })
+
+    await gotoPricing(page)
+
+    await page.getByRole('combobox').nth(0).click()
+    await page.getByRole('option', { name: 'Ниже цели' }).click()
+
+    await expect
+      .poll(() => requestedUrls.some(url => url.includes('gap_filter=below_target')))
+      .toBe(true)
+
+    await page.getByRole('combobox').nth(1).click()
+    await page.getByRole('option', { name: 'По текущей марже' }).click()
+
+    await expect
+      .poll(() => requestedUrls.some(url => url.includes('sort=margin_at_current_pct')))
+      .toBe(true)
+
+    expect(requestedUrls.some(url => url.includes('gap_filter=below&'))).toBe(false)
+    expect(requestedUrls.some(url => url.includes('sort=margin_asc') || url.includes('sort=margin_desc'))).toBe(false)
+  })
+
+  // -------------------------------------------------------------------------
   // 2. Summary cards render with metric labels
   // -------------------------------------------------------------------------
   test('summary cards display 4 metric labels', async ({ page }) => {

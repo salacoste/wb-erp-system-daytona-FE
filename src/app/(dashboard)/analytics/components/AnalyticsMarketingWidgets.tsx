@@ -13,6 +13,7 @@
 
 import { SearchPerformanceWidget } from './SearchPerformanceWidget'
 import { MarketingKpiCard } from './MarketingKpiCard'
+import { weekToDateRange } from '@/lib/date-utils'
 
 interface AnalyticsMarketingWidgetsProps {
   selectedWeek: string | null
@@ -20,11 +21,12 @@ interface AnalyticsMarketingWidgetsProps {
 
 export function AnalyticsMarketingWidgets({ selectedWeek }: AnalyticsMarketingWidgetsProps) {
   if (!selectedWeek) return null
+  const { from, to } = weekToDateRange(selectedWeek)
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <SearchPerformanceWidget from={selectedWeek} to={selectedWeek} />
-      <MarketingKpiCard from={selectedWeek} to={selectedWeek} />
+      <SearchPerformanceWidget from={from} to={to} />
+      <MarketingKpiCard from={from} to={to} />
     </div>
   )
 }

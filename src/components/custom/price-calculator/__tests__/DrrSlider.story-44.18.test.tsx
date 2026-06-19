@@ -67,9 +67,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
     it('should display label "DRR (Доля рекламных расходов)"', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      expect(
-        screen.getByText('DRR (Доля рекламных расходов)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('DRR (Доля рекламных расходов)')).toBeInTheDocument()
     })
 
     it('should have tooltip explaining what DRR is', async () => {
@@ -81,9 +79,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
       await user.click(tooltipTrigger)
 
       await waitFor(() => {
-        const tooltipTexts = screen.getAllByText(
-          /DRR — процент от цены на рекламу/
-        )
+        const tooltipTexts = screen.getAllByText(/DRR — процент от цены на рекламу/)
         expect(tooltipTexts.length).toBeGreaterThan(0)
       })
     })
@@ -178,26 +174,14 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
 
   describe('AC4: Advertising Cost Preview', () => {
     it('should display advertising cost when provided', () => {
-      render(
-        <DrrSlider
-          value={5}
-          onChange={mockOnChange}
-          advertisingCost={202.89}
-        />
-      )
+      render(<DrrSlider value={5} onChange={mockOnChange} advertisingCost={202.89} />)
 
       expect(screen.getByTestId('advertising-cost-preview')).toBeInTheDocument()
       expect(screen.getByText('Расходы на рекламу:')).toBeInTheDocument()
     })
 
     it('should format advertising cost in Russian rubles', () => {
-      render(
-        <DrrSlider
-          value={5}
-          onChange={mockOnChange}
-          advertisingCost={1234.56}
-        />
-      )
+      render(<DrrSlider value={5} onChange={mockOnChange} advertisingCost={1234.56} />)
 
       const preview = screen.getByTestId('advertising-cost-preview')
       expect(preview).toHaveTextContent(/1[\s ]234,56/)
@@ -205,21 +189,15 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
     })
 
     it('should not display preview when cost is 0', () => {
-      render(
-        <DrrSlider value={0} onChange={mockOnChange} advertisingCost={0} />
-      )
+      render(<DrrSlider value={0} onChange={mockOnChange} advertisingCost={0} />)
 
-      expect(
-        screen.queryByTestId('advertising-cost-preview')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('advertising-cost-preview')).not.toBeInTheDocument()
     })
 
     it('should not display preview when cost is undefined', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      expect(
-        screen.queryByTestId('advertising-cost-preview')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('advertising-cost-preview')).not.toBeInTheDocument()
     })
 
     it('should update cost preview when value changes', () => {
@@ -227,17 +205,11 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
         <DrrSlider value={5} onChange={mockOnChange} advertisingCost={100} />
       )
 
-      expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent(
-        '100'
-      )
+      expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent('100')
 
-      rerender(
-        <DrrSlider value={10} onChange={mockOnChange} advertisingCost={200} />
-      )
+      rerender(<DrrSlider value={10} onChange={mockOnChange} advertisingCost={200} />)
 
-      expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent(
-        '200'
-      )
+      expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent('200')
     })
   })
 
@@ -246,9 +218,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
       render(<DrrSlider value={16} onChange={mockOnChange} />)
 
       expect(screen.getByTestId('drr-high-warning')).toBeInTheDocument()
-      expect(
-        screen.getByText('Очень высокий DRR может привести к убыточности')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Очень высокий DRR может привести к убыточности')).toBeInTheDocument()
     })
 
     it('should not show warning when DRR <= 15%', () => {
@@ -277,9 +247,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
     })
 
     it('should be a controlled component', () => {
-      const { rerender } = render(
-        <DrrSlider value={5} onChange={mockOnChange} />
-      )
+      const { rerender } = render(<DrrSlider value={5} onChange={mockOnChange} />)
 
       expect(screen.getByTestId('drr-input')).toHaveValue(5)
 
@@ -298,8 +266,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
       await user.clear(input)
       await user.type(input, '35')
 
-      const lastCall =
-        mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1]
+      const lastCall = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1]
       if (lastCall) {
         expect(lastCall[0]).toBeLessThanOrEqual(30)
       }
@@ -324,20 +291,14 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
       await user.type(input, '-5')
 
       const calls = mockOnChange.mock.calls
-      const hasNegativeCall = calls.some((call) => call[0] < 0)
+      const hasNegativeCall = calls.some(call => call[0] < 0)
       expect(hasNegativeCall).toBe(false)
     })
   })
 
   describe('Error State', () => {
     it('should display error message when provided', () => {
-      render(
-        <DrrSlider
-          value={5}
-          onChange={mockOnChange}
-          error="DRR слишком высокий"
-        />
-      )
+      render(<DrrSlider value={5} onChange={mockOnChange} error="DRR слишком высокий" />)
 
       expect(screen.getByTestId('drr-error')).toBeInTheDocument()
       expect(screen.getByText('DRR слишком высокий')).toBeInTheDocument()
@@ -363,10 +324,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
       const slider = screen.getByTestId('drr-slider')
-      expect(slider).toHaveAttribute(
-        'aria-label',
-        'DRR (Доля рекламных расходов)'
-      )
+      expect(slider).toHaveAttribute('aria-label', 'DRR (Доля рекламных расходов)')
     })
 
     it('should have aria-valuenow on slider', () => {

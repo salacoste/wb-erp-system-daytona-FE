@@ -127,16 +127,10 @@ export function RegistrationForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isSubmitting}
-          aria-busy={isSubmitting}
-        >
+        <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
         </Button>
       </form>
     </Form>
   )
 }
-

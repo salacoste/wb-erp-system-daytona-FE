@@ -235,6 +235,7 @@ describe('EvaluationsList', () => {
     setup({ data: makeModelList({ models: [] }) })
     render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Модель не найдена/)).toBeTruthy()
+    expect(mockUseAiEvaluations).toHaveBeenCalledWith('model-1', { enabled: false })
     const link = screen.getByRole('link', { name: /Вернуться к списку моделей/ })
     expect(link.getAttribute('href')).toBe(ROUTES.ANALYTICS.MODELS)
   })
@@ -248,6 +249,7 @@ describe('EvaluationsList', () => {
   it('happy path: header renders modelType label + version + status badge', () => {
     setup()
     render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
+    expect(mockUseAiEvaluations).toHaveBeenCalledWith('model-1', { enabled: true })
     expect(screen.getByText('Оценки точности модели')).toBeTruthy()
     expect(screen.getByText('Прогноз продаж')).toBeTruthy()
     expect(screen.getByText('v3')).toBeTruthy()

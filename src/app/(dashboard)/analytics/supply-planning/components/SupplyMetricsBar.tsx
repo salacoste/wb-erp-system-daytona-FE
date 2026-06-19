@@ -45,14 +45,10 @@ export function SupplyMetricsBar({ summary }: SupplyMetricsBarProps) {
       <div className="flex items-center gap-3">
         <AlertTriangle className="h-5 w-5 text-orange-500 flex-shrink-0" />
         <div>
-          <div className="text-sm text-gray-600">
-            Требуют внимания
-          </div>
+          <div className="text-sm text-gray-600">Требуют внимания</div>
           <div className={cn('text-lg font-bold', getLossColor(urgentCount))}>
             {totalAtRisk} SKU
-            <span className="text-sm font-normal text-gray-500 ml-2">
-              ({urgentCount} срочно)
-            </span>
+            <span className="text-sm font-normal text-gray-500 ml-2">({urgentCount} срочно)</span>
           </div>
         </div>
       </div>
@@ -64,9 +60,7 @@ export function SupplyMetricsBar({ summary }: SupplyMetricsBarProps) {
       <div className="flex items-center gap-3">
         <Wallet className="h-5 w-5 text-blue-500 flex-shrink-0" />
         <div>
-          <div className="text-sm text-gray-600">
-            Требуется капитал
-          </div>
+          <div className="text-sm text-gray-600">Требуется капитал</div>
           <div className={cn('text-lg font-bold', getCapitalColor(total_reorder_value))}>
             {formatReorderValue(total_reorder_value)}
           </div>
@@ -80,9 +74,7 @@ export function SupplyMetricsBar({ summary }: SupplyMetricsBarProps) {
       <div className="flex items-center gap-3">
         <TrendingDown className="h-5 w-5 text-purple-500 flex-shrink-0" />
         <div>
-          <div className="text-sm text-gray-600">
-            В пути
-          </div>
+          <div className="text-sm text-gray-600">В пути</div>
           <div className="text-lg font-bold text-purple-600">
             {total_in_transit_units.toLocaleString('ru-RU')} шт
           </div>

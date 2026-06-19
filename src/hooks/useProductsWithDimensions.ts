@@ -13,8 +13,7 @@ const STALE_TIME = 60 * 1000 // 1 minute (cached by backend for 24h)
 
 export const productsWithDimensionsKeys = {
   all: ['products-with-dimensions'] as const,
-  search: (query: string) =>
-    [...productsWithDimensionsKeys.all, 'search', query] as const,
+  search: (query: string) => [...productsWithDimensionsKeys.all, 'search', query] as const,
 }
 
 /**
@@ -46,12 +45,12 @@ export function useProductsWithDimensions(search: string) {
     enabled: shouldSearch,
     staleTime: STALE_TIME,
     // Show previous data while loading new results
-    placeholderData: (previousData) => previousData,
+    placeholderData: previousData => previousData,
     // Case-insensitive client-side filtering across ALL searchable fields
     // Including brand for cases like searching "Вилли" brand name
-    select: (data) => ({
+    select: data => ({
       ...data,
-      products: data.products.filter((product) => {
+      products: data.products.filter(product => {
         // Normalize all fields to lowercase for case-insensitive search
         const saName = product.sa_name?.toLowerCase() ?? ''
         const vendorCode = product.vendor_code?.toLowerCase() ?? ''

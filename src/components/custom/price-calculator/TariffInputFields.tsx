@@ -43,7 +43,8 @@ export function TariffInputFields({
     setCoeffValue(String(tariffs.coefficient || ''))
   }, [tariffs.baseLiterRub, tariffs.additionalLiterRub, tariffs.coefficient])
 
-  const handleChange = (field: keyof BoxDeliveryTariffs, setter: (v: string) => void) =>
+  const handleChange =
+    (field: keyof BoxDeliveryTariffs, setter: (v: string) => void) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const rawValue = e.target.value
       setter(rawValue)
@@ -88,7 +89,10 @@ export function TariffInputFields({
           placeholder="48"
           aria-describedby="base-liter-unit"
         />
-        <span id="base-liter-unit" className="absolute right-2 bottom-1 text-xs text-muted-foreground">
+        <span
+          id="base-liter-unit"
+          className="absolute right-2 bottom-1 text-xs text-muted-foreground"
+        >
           ₽
         </span>
       </div>
@@ -111,7 +115,10 @@ export function TariffInputFields({
           placeholder="5"
           aria-describedby="additional-liter-unit"
         />
-        <span id="additional-liter-unit" className="absolute right-2 bottom-1 text-xs text-muted-foreground">
+        <span
+          id="additional-liter-unit"
+          className="absolute right-2 bottom-1 text-xs text-muted-foreground"
+        >
           ₽
         </span>
       </div>
@@ -134,9 +141,7 @@ export function TariffInputFields({
           placeholder="1.0"
           aria-describedby="coefficient-hint"
         />
-        <span className="absolute right-2 bottom-1 text-xs text-muted-foreground">
-          ×
-        </span>
+        <span className="absolute right-2 bottom-1 text-xs text-muted-foreground">×</span>
       </div>
 
       {/* Validation hints */}
@@ -144,9 +149,7 @@ export function TariffInputFields({
         <p id="coefficient-hint">
           Допустимый диапазон: {validation.minCoefficient} — {validation.maxCoefficient}
         </p>
-        <p>
-          По умолчанию: 48 ₽ + 5 ₽/л × 1.0
-        </p>
+        <p>По умолчанию: 48 ₽ + 5 ₽/л × 1.0</p>
       </div>
     </div>
   )

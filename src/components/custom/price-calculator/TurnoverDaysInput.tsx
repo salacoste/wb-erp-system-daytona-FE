@@ -88,7 +88,7 @@ export function TurnoverDaysInput({
           max={365}
           step={1}
           value={value}
-          onChange={(e) => {
+          onChange={e => {
             const numValue = parseInt(e.target.value)
             if (!isNaN(numValue)) {
               handleChange(numValue)
@@ -124,7 +124,7 @@ export function TurnoverDaysInput({
           className={cn(
             'p-3 bg-muted/50 rounded-lg',
             isFreePeriod && 'bg-green-50 border border-green-200',
-            !isFreePeriod && value > 90 && 'bg-yellow-50 border border-yellow-200',
+            !isFreePeriod && value > 90 && 'bg-yellow-50 border border-yellow-200'
           )}
         >
           {isFreePeriod ? (
@@ -156,15 +156,9 @@ export function TurnoverDaysInput({
         </div>
       )}
 
-      {value < 1 && (
-        <p className="text-sm text-destructive">
-          Значение должно быть не менее 1 дня
-        </p>
-      )}
+      {value < 1 && <p className="text-sm text-destructive">Значение должно быть не менее 1 дня</p>}
       {value > 365 && (
-        <p className="text-sm text-destructive">
-          Значение должно быть не более 365 дней
-        </p>
+        <p className="text-sm text-destructive">Значение должно быть не более 365 дней</p>
       )}
     </div>
   )

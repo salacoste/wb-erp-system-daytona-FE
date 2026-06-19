@@ -27,9 +27,7 @@ describe('DrrSlider', () => {
     it('should render with Russian labels', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      expect(
-        screen.getByText('DRR (Доля рекламных расходов)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('DRR (Доля рекламных расходов)')).toBeInTheDocument()
     })
 
     it('should display current value in input', () => {
@@ -95,34 +93,22 @@ describe('DrrSlider', () => {
 
   describe('Advertising Cost Preview', () => {
     it('should display advertising cost when provided', () => {
-      render(
-        <DrrSlider
-          value={5}
-          onChange={mockOnChange}
-          advertisingCost={60.87}
-        />
-      )
+      render(<DrrSlider value={5} onChange={mockOnChange} advertisingCost={60.87} />)
 
       expect(screen.getByTestId('advertising-cost-preview')).toBeInTheDocument()
       expect(screen.getByText('Расходы на рекламу:')).toBeInTheDocument()
     })
 
     it('should not display preview when cost is 0', () => {
-      render(
-        <DrrSlider value={0} onChange={mockOnChange} advertisingCost={0} />
-      )
+      render(<DrrSlider value={0} onChange={mockOnChange} advertisingCost={0} />)
 
-      expect(
-        screen.queryByTestId('advertising-cost-preview')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('advertising-cost-preview')).not.toBeInTheDocument()
     })
 
     it('should not display preview when cost is undefined', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      expect(
-        screen.queryByTestId('advertising-cost-preview')
-      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('advertising-cost-preview')).not.toBeInTheDocument()
     })
   })
 
@@ -131,9 +117,7 @@ describe('DrrSlider', () => {
       render(<DrrSlider value={16} onChange={mockOnChange} />)
 
       expect(screen.getByTestId('drr-high-warning')).toBeInTheDocument()
-      expect(
-        screen.getByText('Очень высокий DRR может привести к убыточности')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Очень высокий DRR может привести к убыточности')).toBeInTheDocument()
     })
 
     it('should not show warning when DRR <= 15%', () => {
@@ -173,13 +157,7 @@ describe('DrrSlider', () => {
 
   describe('Error State', () => {
     it('should display error message when provided', () => {
-      render(
-        <DrrSlider
-          value={5}
-          onChange={mockOnChange}
-          error="DRR слишком высокий"
-        />
-      )
+      render(<DrrSlider value={5} onChange={mockOnChange} error="DRR слишком высокий" />)
 
       expect(screen.getByTestId('drr-error')).toBeInTheDocument()
       expect(screen.getByText('DRR слишком высокий')).toBeInTheDocument()
@@ -384,9 +362,7 @@ describe('DrrSlider - AC4: Advertising Cost Preview Formatting', () => {
   const mockOnChange = vi.fn()
 
   it('should format advertising cost in Russian rubles', () => {
-    render(
-      <DrrSlider value={5} onChange={mockOnChange} advertisingCost={1234.56} />
-    )
+    render(<DrrSlider value={5} onChange={mockOnChange} advertisingCost={1234.56} />)
 
     const preview = screen.getByTestId('advertising-cost-preview')
     // Should show formatted currency: "1 234,56 ₽"
@@ -401,9 +377,7 @@ describe('DrrSlider - AC4: Advertising Cost Preview Formatting', () => {
 
     expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent('100')
 
-    rerender(
-      <DrrSlider value={10} onChange={mockOnChange} advertisingCost={200} />
-    )
+    rerender(<DrrSlider value={10} onChange={mockOnChange} advertisingCost={200} />)
 
     expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent('200')
   })
@@ -575,9 +549,7 @@ describe('DrrSlider - Component Integration', () => {
   })
 
   it('should keep slider and input in sync when value prop changes', () => {
-    const { rerender } = render(
-      <DrrSlider value={5} onChange={mockOnChange} />
-    )
+    const { rerender } = render(<DrrSlider value={5} onChange={mockOnChange} />)
 
     const input = screen.getByTestId('drr-input')
     expect(input).toHaveValue(5)
@@ -588,9 +560,7 @@ describe('DrrSlider - Component Integration', () => {
   })
 
   it('should update level badge when value changes', () => {
-    const { rerender } = render(
-      <DrrSlider value={2} onChange={mockOnChange} />
-    )
+    const { rerender } = render(<DrrSlider value={2} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
     expect(badge).toHaveTextContent('Низкий')
@@ -601,9 +571,7 @@ describe('DrrSlider - Component Integration', () => {
   })
 
   it('should show/hide warning based on value threshold', () => {
-    const { rerender } = render(
-      <DrrSlider value={10} onChange={mockOnChange} />
-    )
+    const { rerender } = render(<DrrSlider value={10} onChange={mockOnChange} />)
 
     expect(screen.queryByTestId('drr-high-warning')).not.toBeInTheDocument()
 
@@ -634,13 +602,7 @@ describe('DrrSlider - TDD RED PHASE: Future Enhancements', () => {
    * Story 44.18 edge case: Allow up to 100%, show strong warning above 15%
    */
   it('should allow values up to 100% with extended range prop', () => {
-    render(
-      <DrrSlider
-        value={50}
-        onChange={mockOnChange}
-        maxValue={100}
-      />
-    )
+    render(<DrrSlider value={50} onChange={mockOnChange} maxValue={100} />)
 
     const input = screen.getByTestId('drr-input')
     expect(input).toHaveAttribute('max', '100')
@@ -651,13 +613,7 @@ describe('DrrSlider - TDD RED PHASE: Future Enhancements', () => {
    * Configurable warning threshold
    */
   it('should use custom warning threshold when provided', () => {
-    render(
-      <DrrSlider
-        value={12}
-        onChange={mockOnChange}
-        warningThreshold={10}
-      />
-    )
+    render(<DrrSlider value={12} onChange={mockOnChange} warningThreshold={10} />)
 
     // With threshold=10, value=12 should show warning
     expect(screen.getByTestId('drr-high-warning')).toBeInTheDocument()
@@ -695,9 +651,7 @@ describe('DrrSlider - TDD RED PHASE: Future Enhancements', () => {
     )
 
     // Should show auto-calculated cost
-    expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent(
-      /202,89/
-    )
+    expect(screen.getByTestId('advertising-cost-preview')).toHaveTextContent(/202,89/)
   })
 
   /**
@@ -759,9 +713,7 @@ describe('DrrSlider - Complete AC Verification', () => {
   it('AC2: should have correct Russian label', () => {
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-    expect(
-      screen.getByText('DRR (Доля рекламных расходов)')
-    ).toBeInTheDocument()
+    expect(screen.getByText('DRR (Доля рекламных расходов)')).toBeInTheDocument()
   })
 
   // AC3: Visual feedback with all 4 color levels
@@ -774,9 +726,7 @@ describe('DrrSlider - Complete AC Verification', () => {
     ]
 
     for (const { value, label, bgClass } of levels) {
-      const { unmount } = render(
-        <DrrSlider value={value} onChange={mockOnChange} />
-      )
+      const { unmount } = render(<DrrSlider value={value} onChange={mockOnChange} />)
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent(label)
@@ -788,13 +738,7 @@ describe('DrrSlider - Complete AC Verification', () => {
 
   // AC4: Advertising cost preview
   it('AC4: should display formatted advertising cost in rubles', () => {
-    render(
-      <DrrSlider
-        value={5}
-        onChange={mockOnChange}
-        advertisingCost={202.89}
-      />
-    )
+    render(<DrrSlider value={5} onChange={mockOnChange} advertisingCost={202.89} />)
 
     const preview = screen.getByTestId('advertising-cost-preview')
     expect(preview).toHaveTextContent('Расходы на рекламу:')
@@ -803,9 +747,7 @@ describe('DrrSlider - Complete AC Verification', () => {
 
   // AC5: Form state integration - value controlled by parent
   it('AC5: should be a controlled component', () => {
-    const { rerender } = render(
-      <DrrSlider value={5} onChange={mockOnChange} />
-    )
+    const { rerender } = render(<DrrSlider value={5} onChange={mockOnChange} />)
 
     expect(screen.getByTestId('drr-input')).toHaveValue(5)
 

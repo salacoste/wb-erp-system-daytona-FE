@@ -40,11 +40,7 @@ export { liquidityQueryKeys, type UseLiquidityOptions } from './useLiquidity-uti
  * frozen capital analysis, and liquidation recommendations.
  */
 export function useLiquidity(params: LiquidityQueryParams = {}, options: UseLiquidityOptions = {}) {
-  const {
-    enabled = true,
-    refetchInterval,
-    staleTime = LIQUIDITY_STALE_TIME,
-  } = options
+  const { enabled = true, refetchInterval, staleTime = LIQUIDITY_STALE_TIME } = options
 
   return useQuery<LiquidityResponse, Error>({
     queryKey: liquidityQueryKeys.list(params),
@@ -65,11 +61,7 @@ export function useLiquidityTrends(
   params: LiquidityTrendsQueryParams = {},
   options: UseLiquidityOptions = {}
 ) {
-  const {
-    enabled = true,
-    refetchInterval,
-    staleTime = TRENDS_STALE_TIME,
-  } = options
+  const { enabled = true, refetchInterval, staleTime = TRENDS_STALE_TIME } = options
 
   return useQuery<LiquidityTrendsResponse, Error>({
     queryKey: liquidityQueryKeys.trends(params.period),

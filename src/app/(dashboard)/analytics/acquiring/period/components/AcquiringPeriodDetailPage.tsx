@@ -32,6 +32,7 @@ import { AcquiringTransactionsTable } from '@/app/(dashboard)/analytics/acquirin
 import { AcquiringPeriodSummary } from './AcquiringPeriodSummary'
 import { AcquiringRateLimitBanner } from '@/app/(dashboard)/analytics/acquiring/components/shared/AcquiringRateLimitBanner'
 import type { DateRange } from '@/types/date-range'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 
 function getDefaultRange(): DateRange {
   const to = new Date()
@@ -61,6 +62,7 @@ export function AcquiringPeriodDetailPage() {
 
   // Show full-page skeleton ONLY on first load (no cached data yet)
   const showSkeleton = isLoading && !hasData
+  const showSlowLoading = useDelayedLoadingState(showSkeleton)
   // Show rate-limit banner (503) before generic error — Defensive Frontend Principle
   const showRateLimitBanner = rateLimit.isRateLimited && !hasData
   // Show generic error alert ONLY when no cached data AND not a 503
@@ -115,11 +117,30 @@ export function AcquiringPeriodDetailPage() {
       </div>
 
       {/* Body state machine — skeleton → rate-limit banner → full-error → empty/cached */}
-      {showSkeleton ? (
+      {showSkeleton && !showSlowLoading ? (
         <div className="space-y-4" role="status" aria-busy="true" aria-label="Загрузка транзакций">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
+      ) : showSkeleton && showSlowLoading ? (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>
+              Транзакции эквайринга загружаются дольше обычного. Можно подождать или повторить
+              запрос.
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-4 shrink-0"
+              onClick={() => void refetch()}
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
       ) : showRateLimitBanner ? (
         <AcquiringRateLimitBanner
           retryAfterSeconds={rateLimit.retryAfterSeconds}

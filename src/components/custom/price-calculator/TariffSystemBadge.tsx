@@ -53,7 +53,9 @@ export function TariffSystemBadge({
       className={className}
       aria-label={`Используемая система тарифов: ${label}`}
     >
-      <span className="mr-1" aria-hidden="true">{icon}</span>
+      <span className="mr-1" aria-hidden="true">
+        {icon}
+      </span>
       {label}
     </Badge>
   )
@@ -62,16 +64,15 @@ export function TariffSystemBadge({
     return badge
   }
 
-  const tooltipText = system === 'inventory'
-    ? 'Используются текущие тарифы склада (фактические расходы на сегодня)'
-    : 'Используются тарифы планирования поставки (могут отличаться от текущих)'
+  const tooltipText =
+    system === 'inventory'
+      ? 'Используются текущие тарифы склада (фактические расходы на сегодня)'
+      : 'Используются тарифы планирования поставки (могут отличаться от текущих)'
 
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {badge}
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{badge}</TooltipTrigger>
         <TooltipContent className="max-w-xs">
           <p className="text-xs">{tooltipText}</p>
         </TooltipContent>

@@ -23,9 +23,10 @@ import {
   OrdersErrorBoundary,
   OrdersSuspenseFallback,
 } from '@/components/custom/orders'
-import { OrdersLoadingState, OrdersErrorState } from './OrdersPageStates'
+import { OrdersLoadingState, OrdersErrorState, OrdersSlowLoadingState } from './OrdersPageStates'
 import { useOrdersPageState, PAGE_SIZE } from './useOrdersPageState'
 import { useOrdersFilterHandlers } from './useOrdersFilterHandlers'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 
 // Lazy load heavy components (Story 40.7-FE: Lazy Loading)
 const OrderDetailsModal = lazy(() =>
@@ -75,6 +76,7 @@ function OrdersPageContent() {
   // Sync status and mutation
   const { data: syncStatus } = useOrdersSyncStatus()
   const { mutate: triggerSync, isPending: isSyncing } = useOrdersSync()
+  const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   // Story 86.2: Client info (PII) — Owner only, hook is no-op for other roles
   // Selector argument intentionally named `auth` to avoid shadowing the outer
@@ -90,6 +92,19 @@ function OrdersPageContent() {
 
   // Loading state
   if (isLoading && !data) {
+    if (showSlowLoading) {
+      return (
+        <OrdersSlowLoadingState
+          headerProps={{
+            lastSyncAt: syncStatus?.lastSyncAt ?? null,
+            isSyncing,
+            onSync: () => triggerSync(),
+          }}
+          onRetry={() => refetch()}
+        />
+      )
+    }
+
     return (
       <OrdersLoadingState
         headerProps={{

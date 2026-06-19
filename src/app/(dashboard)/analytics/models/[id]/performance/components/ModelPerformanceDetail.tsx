@@ -7,6 +7,7 @@
  */
 
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { useModelPerformance } from '@/hooks/useModelPerformance'
 import { useAiModels } from '@/hooks/useAiModels'
 import { getModelTypeLabel } from '@/types/ai/forecast'
@@ -35,42 +36,57 @@ interface ModelPerformanceDetailProps {
   modelId: string
 }
 
+function ModelPerformancePageShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="space-y-6 p-6">
+      <h1 className="text-2xl font-bold tracking-tight">Производительность модели</h1>
+      {children}
+    </div>
+  )
+}
+
 export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps) {
-  const { data: perfData, isLoading: perfLoading, isError, error } = useModelPerformance(modelId)
   const {
     data: modelsData,
     isLoading: modelsLoading,
     isError: modelsError,
     error: modelsListError,
   } = useAiModels()
+  const model = modelsData?.models?.find(m => m.id === modelId)
+  const canFetchPerformance = !modelsLoading && !modelsError && !!model
+  const {
+    data: perfData,
+    isLoading: perfLoading,
+    isError,
+    error,
+  } = useModelPerformance(modelId, { enabled: canFetchPerformance })
 
-  if (perfLoading || modelsLoading) {
+  if (modelsLoading || (canFetchPerformance && perfLoading)) {
     return (
-      <div className="space-y-6 p-6" data-testid="skeleton">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-64 w-full" />
-      </div>
+      <ModelPerformancePageShell>
+        <div data-testid="skeleton">
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </ModelPerformancePageShell>
     )
   }
 
   if (modelsError) {
     return (
-      <div className="p-6">
+      <ModelPerformancePageShell>
         <Alert variant="destructive">
           <AlertDescription>
             Ошибка загрузки списка моделей
             {modelsListError?.message ? `: ${modelsListError.message}` : ''}
           </AlertDescription>
         </Alert>
-      </div>
+      </ModelPerformancePageShell>
     )
   }
 
-  const model = modelsData?.models?.find(m => m.id === modelId)
-
   if (!model) {
     return (
-      <div className="p-6">
+      <ModelPerformancePageShell>
         <Alert>
           <AlertDescription>
             Модель не найдена. Возможно, она была удалена или ещё не загружена.{' '}
@@ -79,19 +95,19 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
             </Link>
           </AlertDescription>
         </Alert>
-      </div>
+      </ModelPerformancePageShell>
     )
   }
 
   if (isError) {
     return (
-      <div className="p-6">
+      <ModelPerformancePageShell>
         <Alert variant="destructive">
           <AlertDescription>
             Ошибка загрузки производительности модели{error?.message ? `: ${error.message}` : ''}
           </AlertDescription>
         </Alert>
-      </div>
+      </ModelPerformancePageShell>
     )
   }
 
@@ -112,11 +128,11 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
   const statusBadge = STATUS_BADGE_CONFIG[model.status]
 
   return (
-    <div className="space-y-6 p-6">
+    <ModelPerformancePageShell>
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Производительность модели</CardTitle>
+            <CardTitle>Сводка производительности</CardTitle>
             <Button asChild variant="outline" size="sm">
               <Link href={buildModelEvaluationsRoute(modelId)}>Подробные оценки</Link>
             </Button>
@@ -156,6 +172,6 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
 
       {/* Evaluation rows table — AC-7 */}
       <EvaluationHistoryTable mapeTrend={mapeTrend} />
-    </div>
+    </ModelPerformancePageShell>
   )
 }

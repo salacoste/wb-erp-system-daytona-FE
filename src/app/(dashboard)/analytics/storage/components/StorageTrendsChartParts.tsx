@@ -117,6 +117,7 @@ export function CustomDot({ cx, cy, payload, selectedWeek, onClick }: CustomDotP
 
   return (
     <circle
+      key={payload.week}
       cx={cx}
       cy={cy}
       r={radius}

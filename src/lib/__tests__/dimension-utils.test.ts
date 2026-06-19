@@ -435,7 +435,7 @@ describe('cmToMm', () => {
 
   it('should be inverse of mmToCm', () => {
     const testValues = [10, 25.5, 100, 0, 12.3]
-    testValues.forEach((cm) => {
+    testValues.forEach(cm => {
       expect(mmToCm(cmToMm(cm))).toBe(cm)
     })
   })

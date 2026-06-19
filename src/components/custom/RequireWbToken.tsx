@@ -51,7 +51,7 @@ export function RequireWbToken({ children }: RequireWbTokenProps) {
 
   // Check if wb_api_token exists
   const keys = data?.cabinetKeys || data?.keys || []
-  const hasWbToken = keys.some((key) => key.keyName === 'wb_api_token')
+  const hasWbToken = keys.some(key => key.keyName === 'wb_api_token')
 
   // Redirect to /wb-token if no token found (after loading completes)
   useEffect(() => {

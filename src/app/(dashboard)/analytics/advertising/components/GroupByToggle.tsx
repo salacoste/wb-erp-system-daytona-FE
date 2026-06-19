@@ -18,11 +18,7 @@ interface GroupByToggleProps {
   className?: string
 }
 
-export function GroupByToggle({
-  groupBy,
-  onGroupByChange,
-  className,
-}: GroupByToggleProps) {
+export function GroupByToggle({ groupBy, onGroupByChange, className }: GroupByToggleProps) {
   return (
     <div className={`flex gap-2 ${className || ''}`}>
       <Button

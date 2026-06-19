@@ -1,6 +1,13 @@
 'use client'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { formatCurrency } from '@/lib/utils'
 import type { PriceCalculatorResponse } from '@/types/price-calculator'
 
@@ -31,9 +38,7 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
     <div className="space-y-6">
       {/* Fixed Costs Section */}
       <div>
-        <h3 className="text-sm font-medium text-muted-foreground mb-3">
-          Фиксированные затраты
-        </h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-3">Фиксированные затраты</h3>
         <Table>
           <TableHeader>
             <TableRow>
@@ -78,9 +83,7 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
 
       {/* Percentage Costs Section */}
       <div>
-        <h3 className="text-sm font-medium text-muted-foreground mb-3">
-          Процентные затраты
-        </h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-3">Процентные затраты</h3>
         <Table>
           <TableHeader>
             <TableRow>

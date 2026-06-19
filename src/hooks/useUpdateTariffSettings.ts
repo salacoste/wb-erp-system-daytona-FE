@@ -7,15 +7,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import {
-  putTariffSettings,
-  patchTariffSettings,
-} from '@/lib/api/tariffs-admin'
+import { putTariffSettings, patchTariffSettings } from '@/lib/api/tariffs-admin'
 import { tariffQueryKeys } from './tariff-query-keys'
-import type {
-  TariffSettingsDto,
-  UpdateTariffSettingsDto,
-} from '@/types/tariffs-admin'
+import type { TariffSettingsDto, UpdateTariffSettingsDto } from '@/types/tariffs-admin'
 
 interface UpdateTariffSettingsParams {
   data: UpdateTariffSettingsDto

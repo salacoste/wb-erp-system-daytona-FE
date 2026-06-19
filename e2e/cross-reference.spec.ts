@@ -11,7 +11,7 @@
  * Run: npx playwright test e2e/cross-reference.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const XREF_URL = '/analytics/cross-reference'
@@ -30,12 +30,26 @@ const TEST_TIMEOUT = 60_000
  * Navigate to the cross-reference page and wait for the Кросс-анализ heading.
  * Anti-pattern #9: no networkidle — the page fires background queries.
  */
-async function gotoCrossRef(page: import('@playwright/test').Page) {
+async function gotoCrossRef(page: Page) {
   await page.goto(XREF_URL, { waitUntil: 'domcontentloaded' })
   await page
     .getByRole('heading', { name: 'Кросс-анализ' })
     .waitFor({ state: 'visible', timeout: TIMEOUTS.api })
 }
+
+async function waitForCrossRefState(page: Page, candidates: Locator[]) {
+  const gate = page.getByRole('region', { name: 'Требуется подписка WB Джем' })
+  const state = await Promise.race([
+    gate.waitFor({ state: 'visible', timeout: TIMEOUTS.api }).then(() => 'gate' as const),
+    ...candidates.map(candidate =>
+      candidate.waitFor({ state: 'visible', timeout: TIMEOUTS.api }).then(() => 'ready' as const)
+    ),
+  ]).catch(() => 'timeout' as const)
+
+  expect(state).not.toBe('timeout')
+  test.skip(state === 'gate', 'Cross-reference protected analytics are hidden behind RequireJam gate')
+}
+
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -62,24 +76,21 @@ test.describe('Cross-Reference Analytics Page', () => {
     test.setTimeout(TEST_TIMEOUT)
     await gotoCrossRef(page)
 
-    // Wait for loading to resolve — either cards or empty state appears
+    // Wait for loading to resolve — either cards, empty/error state, or Jam gate appears.
     const cardLabel = page.getByText('Только органика')
     const emptyAlert = page.getByText('Нет данных за выбранный период')
     const errorAlert = page.getByText('Не удалось загрузить данные')
 
-    await Promise.race([
-      cardLabel.waitFor({ state: 'visible', timeout: TIMEOUTS.api }),
-      emptyAlert.waitFor({ state: 'visible', timeout: TIMEOUTS.api }),
-      errorAlert.waitFor({ state: 'visible', timeout: TIMEOUTS.api }),
-    ])
+    await waitForCrossRefState(page, [cardLabel, emptyAlert, errorAlert])
 
     const hasCards = await cardLabel.isVisible().catch(() => false)
     test.skip(!hasCards, 'Summary cards not visible — empty state or no data')
 
-    // All 3 channel labels must be present
-    await expect(page.getByText('Только органика')).toBeVisible()
-    await expect(page.getByText('Только реклама')).toBeVisible()
-    await expect(page.getByText('Оба канала')).toBeVisible()
+    // All 3 channel labels must be present (scope to cards to avoid Recharts legend collisions).
+    const summaryCards = page.locator('.grid.grid-cols-1.sm\:grid-cols-3')
+    await expect(summaryCards.getByText('Только органика')).toBeVisible()
+    await expect(summaryCards.getByText('Только реклама')).toBeVisible()
+    await expect(summaryCards.getByText('Оба канала')).toBeVisible()
 
     // Each card shows a count (digits)
     const cards = page.locator('.grid.grid-cols-1.sm\\:grid-cols-3 > div')
@@ -94,14 +105,11 @@ test.describe('Cross-Reference Analytics Page', () => {
     test.setTimeout(TEST_TIMEOUT)
     await gotoCrossRef(page)
 
-    // Wait for content resolution
+    // Wait for content resolution or Jam gate.
     const scatterHeading = page.getByRole('heading', { name: 'Органика vs Реклама' })
     const emptyAlert = page.getByText('Нет данных за выбранный период')
 
-    await Promise.race([
-      scatterHeading.waitFor({ state: 'visible', timeout: TIMEOUTS.api }),
-      emptyAlert.waitFor({ state: 'visible', timeout: TIMEOUTS.api }),
-    ])
+    await waitForCrossRefState(page, [scatterHeading, emptyAlert])
 
     const hasChart = await scatterHeading.isVisible().catch(() => false)
     test.skip(!hasChart, 'Scatter chart not visible — no data for period')
@@ -134,8 +142,10 @@ test.describe('Cross-Reference Analytics Page', () => {
     )
 
     await gotoCrossRef(page)
+    const emptyState = page.getByText('Нет данных за выбранный период')
+    await waitForCrossRefState(page, [emptyState])
 
-    await expect(page.getByText('Нет данных за выбранный период')).toBeVisible({
+    await expect(emptyState).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -158,8 +168,10 @@ test.describe('Cross-Reference Analytics Page', () => {
     )
 
     await gotoCrossRef(page)
+    const errorState = page.getByText('Не удалось загрузить данные')
+    await waitForCrossRefState(page, [errorState])
 
-    await expect(page.getByText('Не удалось загрузить данные')).toBeVisible({
+    await expect(errorState).toBeVisible({
       timeout: TIMEOUTS.api,
     })
     await expect(page.getByRole('button', { name: /Повторить/ })).toBeVisible()

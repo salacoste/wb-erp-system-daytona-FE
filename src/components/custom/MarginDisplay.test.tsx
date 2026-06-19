@@ -11,12 +11,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import {
-  formatMarginPercent,
-  MarginDisplay,
-  MarginBadge,
-  MarginInfoCard,
-} from './MarginDisplay'
+import { formatMarginPercent, MarginDisplay, MarginBadge, MarginInfoCard } from './MarginDisplay'
 
 describe('formatMarginPercent', () => {
   it('should format positive margin with Russian locale', () => {
@@ -170,9 +165,7 @@ describe('MarginDisplay', () => {
 
   describe('custom className', () => {
     it('should apply custom className', () => {
-      const { container } = render(
-        <MarginDisplay marginPct={35.5} className="custom-class" />
-      )
+      const { container } = render(<MarginDisplay marginPct={35.5} className="custom-class" />)
 
       const wrapper = container.querySelector('.custom-class')
       expect(wrapper).toBeInTheDocument()
@@ -248,14 +241,7 @@ describe('MarginBadge', () => {
 
 describe('MarginInfoCard', () => {
   it('should render margin with all details', () => {
-    render(
-      <MarginInfoCard
-        marginPct={35.5}
-        period="2025-W46"
-        salesQty={50}
-        revenue={125000.5}
-      />
-    )
+    render(<MarginInfoCard marginPct={35.5} period="2025-W46" salesQty={50} revenue={125000.5} />)
 
     expect(screen.getByText('Маржинальность')).toBeInTheDocument()
     expect(screen.getByText(/35/)).toBeInTheDocument()
@@ -272,14 +258,7 @@ describe('MarginInfoCard', () => {
   })
 
   it('should not show period details when margin is null', () => {
-    render(
-      <MarginInfoCard
-        marginPct={null}
-        period="2025-W46"
-        salesQty={50}
-        revenue={125000.5}
-      />
-    )
+    render(<MarginInfoCard marginPct={null} period="2025-W46" salesQty={50} revenue={125000.5} />)
 
     expect(screen.queryByText(/2025-W46/)).not.toBeInTheDocument()
     expect(screen.queryByText(/50 шт/)).not.toBeInTheDocument()
@@ -292,9 +271,7 @@ describe('MarginInfoCard', () => {
   })
 
   it('should apply custom className', () => {
-    const { container } = render(
-      <MarginInfoCard marginPct={35.5} className="custom-card" />
-    )
+    const { container } = render(<MarginInfoCard marginPct={35.5} className="custom-card" />)
 
     const card = container.querySelector('.custom-card')
     expect(card).toBeInTheDocument()

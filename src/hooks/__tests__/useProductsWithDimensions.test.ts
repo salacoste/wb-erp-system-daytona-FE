@@ -6,10 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import {
-  useProductsWithDimensions,
-  productsWithDimensionsKeys,
-} from '../useProductsWithDimensions'
+import { useProductsWithDimensions, productsWithDimensionsKeys } from '../useProductsWithDimensions'
 import { createQueryWrapper } from '@/test/utils/test-utils'
 import {
   mockProductsWithDimensionsResponse,
@@ -65,7 +62,7 @@ describe('useProductsWithDimensions', () => {
       })
 
       // Wait a tick to ensure query would have triggered if enabled
-      await new Promise((resolve) => setTimeout(resolve, 50))
+      await new Promise(resolve => setTimeout(resolve, 50))
 
       expect(getProductsWithDimensions).not.toHaveBeenCalled()
       expect(result.current.data).toBeUndefined()
@@ -76,7 +73,7 @@ describe('useProductsWithDimensions', () => {
         wrapper: createQueryWrapper(),
       })
 
-      await new Promise((resolve) => setTimeout(resolve, 50))
+      await new Promise(resolve => setTimeout(resolve, 50))
 
       expect(getProductsWithDimensions).not.toHaveBeenCalled()
       expect(result.current.data).toBeUndefined()
@@ -169,7 +166,7 @@ describe('useProductsWithDimensions', () => {
         })
         .mockImplementationOnce(
           () =>
-            new Promise((resolve) =>
+            new Promise(resolve =>
               setTimeout(
                 () =>
                   resolve({
@@ -190,13 +187,10 @@ describe('useProductsWithDimensions', () => {
             )
         )
 
-      const { result, rerender } = renderHook(
-        ({ search }) => useProductsWithDimensions(search),
-        {
-          wrapper: createQueryWrapper(),
-          initialProps: { search: 'платье' },
-        }
-      )
+      const { result, rerender } = renderHook(({ search }) => useProductsWithDimensions(search), {
+        wrapper: createQueryWrapper(),
+        initialProps: { search: 'платье' },
+      })
 
       // Wait for first search to complete
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -241,9 +235,7 @@ describe('useProductsWithDimensions', () => {
     it('shows loading state during fetch', async () => {
       vi.mocked(getProductsWithDimensions).mockImplementation(
         () =>
-          new Promise((resolve) =>
-            setTimeout(() => resolve(mockProductsWithDimensionsResponse), 100)
-          )
+          new Promise(resolve => setTimeout(() => resolve(mockProductsWithDimensionsResponse), 100))
       )
 
       const { result } = renderHook(() => useProductsWithDimensions('платье'), {
@@ -271,7 +263,12 @@ describe('useProductsWithDimensions', () => {
             sa_name: 'Шпатлевка автомобильная',
             brand: 'TestBrand',
             dimensions: { length_mm: 100, width_mm: 50, height_mm: 30, volume_liters: 0.15 },
-            category_hierarchy: { subject_id: 123, subject_name: 'Авто', parent_id: 1, parent_name: 'Авто' },
+            category_hierarchy: {
+              subject_id: 123,
+              subject_name: 'Авто',
+              parent_id: 1,
+              parent_name: 'Авто',
+            },
           },
         ],
         pagination: { next_cursor: null, has_more: false, count: 1, total: 1 },
@@ -377,9 +374,7 @@ describe('useProductsWithDimensions', () => {
 
   describe('product data integrity', () => {
     it('returns products with nm_id as string', async () => {
-      vi.mocked(getProductsWithDimensions).mockResolvedValue(
-        mockProductsWithDimensionsResponse
-      )
+      vi.mocked(getProductsWithDimensions).mockResolvedValue(mockProductsWithDimensionsResponse)
 
       const { result } = renderHook(() => useProductsWithDimensions('платье'), {
         wrapper: createQueryWrapper(),
@@ -392,9 +387,7 @@ describe('useProductsWithDimensions', () => {
     })
 
     it('returns products with sa_name (not title)', async () => {
-      vi.mocked(getProductsWithDimensions).mockResolvedValue(
-        mockProductsWithDimensionsResponse
-      )
+      vi.mocked(getProductsWithDimensions).mockResolvedValue(mockProductsWithDimensionsResponse)
 
       const { result } = renderHook(() => useProductsWithDimensions('платье'), {
         wrapper: createQueryWrapper(),
@@ -408,9 +401,7 @@ describe('useProductsWithDimensions', () => {
     })
 
     it('returns products with dimensions when available', async () => {
-      vi.mocked(getProductsWithDimensions).mockResolvedValue(
-        mockProductsWithDimensionsResponse
-      )
+      vi.mocked(getProductsWithDimensions).mockResolvedValue(mockProductsWithDimensionsResponse)
 
       const { result } = renderHook(() => useProductsWithDimensions('платье'), {
         wrapper: createQueryWrapper(),
@@ -418,9 +409,7 @@ describe('useProductsWithDimensions', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      const productWithDimensions = result.current.data?.products.find(
-        (p) => p.dimensions !== null
-      )
+      const productWithDimensions = result.current.data?.products.find(p => p.dimensions !== null)
       expect(productWithDimensions?.dimensions).toBeDefined()
       expect(productWithDimensions?.dimensions?.volume_liters).toBeDefined()
     })

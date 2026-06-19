@@ -27,9 +27,7 @@ export function MetricCard({
   return (
     <Card className={cn('bg-white', className)}>
       <CardHeader>
-        <CardTitle className="text-base font-medium text-gray-600">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-base font-medium text-gray-600">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
@@ -37,16 +35,11 @@ export function MetricCard({
         ) : isLoading ? (
           <Skeleton className="h-12 w-32" />
         ) : value !== undefined ? (
-          <div className="text-4xl font-bold text-blue-600">
-            {formatCurrency(value)}
-          </div>
+          <div className="text-4xl font-bold text-blue-600">{formatCurrency(value)}</div>
         ) : (
-          <div className="text-2xl font-semibold text-gray-400">
-            Нет данных
-          </div>
+          <div className="text-2xl font-semibold text-gray-400">Нет данных</div>
         )}
       </CardContent>
     </Card>
   )
 }
-

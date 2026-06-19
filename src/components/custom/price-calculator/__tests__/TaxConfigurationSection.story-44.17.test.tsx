@@ -220,13 +220,7 @@ describe('Story 44.17: Tax Configuration (Rate + Type)', () => {
     })
 
     it('should not show preview when tax amount is 0', () => {
-      render(
-        <TaxConfigurationSection
-          {...defaultProps}
-          taxRate={0}
-          calculatedTaxAmount={0}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={0} calculatedTaxAmount={0} />)
 
       expect(screen.queryByTestId('tax-impact-preview')).not.toBeInTheDocument()
     })
@@ -364,7 +358,7 @@ describe('Story 44.17: Tax Configuration (Rate + Type)', () => {
       // Input has min=0, so negative values should not be accepted
       // or onChange should clamp to 0
       const calls = mockOnTaxRateChange.mock.calls
-      const hasNegativeCall = calls.some((call) => call[0] < 0)
+      const hasNegativeCall = calls.some(call => call[0] < 0)
       expect(hasNegativeCall).toBe(false)
     })
   })

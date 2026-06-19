@@ -40,4 +40,3 @@ export function saveDismissedTimestamp(timestamp: number): void {
   if (typeof window === 'undefined') return
   localStorage.setItem(NOTIFICATION_DISMISSED_KEY, timestamp.toString())
 }
-

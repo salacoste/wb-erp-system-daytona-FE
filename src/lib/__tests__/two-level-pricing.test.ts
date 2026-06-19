@@ -43,7 +43,6 @@ const fbsFormData: TwoLevelPricingFormData = {
   acceptance_cost: 25, // Should be ignored for FBS
 }
 
-
 describe('calculateTwoLevelPricing', () => {
   describe('Minimum Price Calculation', () => {
     it('should calculate minimum price as floor with 0% margin', () => {
@@ -211,10 +210,7 @@ describe('calculateTwoLevelPricing', () => {
 
       // Tax on profit is not included in price calculation (applied to margin after)
       expect(result.percentageCosts.taxIncome).toBeNull()
-      expect(result.margin.afterTax).toBeCloseTo(
-        result.margin.rub * (1 - 0.15),
-        1
-      )
+      expect(result.margin.afterTax).toBeCloseTo(result.margin.rub * (1 - 0.15), 1)
     })
   })
 

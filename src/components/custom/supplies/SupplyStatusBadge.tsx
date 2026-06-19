@@ -118,6 +118,8 @@ export function SupplyStatusBadge({
   return (
     <Badge
       variant="outline"
+      data-testid="supply-status-badge"
+      aria-label={`Статус поставки: ${label}`}
       className={cn(
         'inline-flex items-center gap-1.5 font-medium border',
         bgColor,

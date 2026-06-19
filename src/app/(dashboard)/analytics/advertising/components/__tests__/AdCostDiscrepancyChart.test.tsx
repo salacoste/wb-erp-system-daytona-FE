@@ -2,11 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { AdCostDiscrepancyChart } from '../AdCostDiscrepancyChart'
 
-
 const originalGetBoundingClientRect = HTMLElement.prototype.getBoundingClientRect
 
 beforeEach(() => {
-  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+    this: HTMLElement
+  ) {
     if (this.classList.contains('recharts-responsive-container')) {
       return {
         width: 320,

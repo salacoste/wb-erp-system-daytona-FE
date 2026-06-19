@@ -1,11 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -50,10 +46,7 @@ export function AffectedWeeksCell({ weeks }: AffectedWeeksCellProps) {
           {weeks.length} {getPluralForm(weeks.length)}
         </span>
         <ChevronDown
-          className={cn(
-            'h-4 w-4 transition-transform duration-200',
-            expanded && 'rotate-180'
-          )}
+          className={cn('h-4 w-4 transition-transform duration-200', expanded && 'rotate-180')}
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="text-sm text-muted-foreground mt-1">

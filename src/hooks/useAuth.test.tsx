@@ -73,7 +73,6 @@ describe('useAuth', () => {
       login: mockLogin,
       logout: mockLogout,
     })
-
     ;(refreshToken as ReturnType<typeof vi.fn>).mockResolvedValue({
       token: 'new-token',
       user: {
@@ -94,4 +93,3 @@ describe('useAuth', () => {
     )
   })
 })
-

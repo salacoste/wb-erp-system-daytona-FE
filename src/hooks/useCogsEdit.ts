@@ -47,10 +47,7 @@ export function useCogsEdit(cogsId: string, options: UseCogsEditOptions = {}) {
     mutationFn: async (data: UpdateCogsRecordDto): Promise<EditCogsResponse> => {
       logger.debug(`[COGS Edit] Updating COGS ${cogsId}`, data)
 
-      const response = await apiClient.patch<EditCogsResponse>(
-        `/v1/cogs/${cogsId}`,
-        data
-      )
+      const response = await apiClient.patch<EditCogsResponse>(`/v1/cogs/${cogsId}`, data)
 
       logger.debug('[COGS Edit] Update successful', {
         cogs_id: response.cogs_id,
@@ -61,7 +58,7 @@ export function useCogsEdit(cogsId: string, options: UseCogsEditOptions = {}) {
       return response
     },
 
-    onSuccess: (response) => {
+    onSuccess: response => {
       queryClient.invalidateQueries({ queryKey: ['cogs-history-full'] })
       queryClient.invalidateQueries({ queryKey: ['cogs-history'] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
@@ -85,8 +82,7 @@ export function useCogsEdit(cogsId: string, options: UseCogsEditOptions = {}) {
       const status = error.status || error.response?.status
 
       if (status === 400) {
-        const errorMessage =
-          error.response?.data?.message || 'Проверьте введённые данные'
+        const errorMessage = error.response?.data?.message || 'Проверьте введённые данные'
         toast.error('Ошибка валидации', { description: errorMessage })
       } else if (status === 403) {
         toast.error('Недостаточно прав для редактирования')

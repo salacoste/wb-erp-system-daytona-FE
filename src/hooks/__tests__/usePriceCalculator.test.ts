@@ -76,10 +76,9 @@ describe('Price Calculator Hooks', () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockPriceCalculatorResponse)
 
       const onSuccess = vi.fn()
-      const { result } = renderHook(
-        () => usePriceCalculator({ onSuccess }),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator({ onSuccess }), {
+        wrapper: createQueryWrapper(),
+      })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -96,10 +95,7 @@ describe('Price Calculator Hooks', () => {
         () => new Promise(() => {}) // Never resolves
       )
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -112,10 +108,9 @@ describe('Price Calculator Hooks', () => {
       vi.mocked(apiClient.post).mockRejectedValue(error)
 
       const onError = vi.fn()
-      const { result } = renderHook(
-        () => usePriceCalculator({ onError }),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator({ onError }), {
+        wrapper: createQueryWrapper(),
+      })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -129,10 +124,9 @@ describe('Price Calculator Hooks', () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockPriceCalculatorResponse)
 
       const onSuccess = vi.fn()
-      const { result } = renderHook(
-        () => usePriceCalculator({ onSuccess }),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator({ onSuccess }), {
+        wrapper: createQueryWrapper(),
+      })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -147,10 +141,9 @@ describe('Price Calculator Hooks', () => {
       vi.mocked(apiClient.post).mockRejectedValue(error)
 
       const onError = vi.fn()
-      const { result } = renderHook(
-        () => usePriceCalculator({ onError }),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator({ onError }), {
+        wrapper: createQueryWrapper(),
+      })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -163,10 +156,7 @@ describe('Price Calculator Hooks', () => {
     it('works without callbacks', async () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockPriceCalculatorResponse)
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -178,10 +168,7 @@ describe('Price Calculator Hooks', () => {
     it('handles response with warnings', async () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockPriceCalculatorResponseWithWarnings)
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -194,10 +181,7 @@ describe('Price Calculator Hooks', () => {
     it('includes cost breakdown in response', async () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockPriceCalculatorResponse)
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -211,10 +195,7 @@ describe('Price Calculator Hooks', () => {
     it('includes intermediate values in response', async () => {
       vi.mocked(apiClient.post).mockResolvedValue(mockPriceCalculatorResponse)
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       result.current.mutate(mockPriceCalculatorRequest)
 
@@ -229,10 +210,7 @@ describe('Price Calculator Hooks', () => {
         .mockResolvedValueOnce(mockPriceCalculatorResponse)
         .mockResolvedValueOnce(mockPriceCalculatorResponseWithWarnings)
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       // First mutation
       result.current.mutate(mockPriceCalculatorRequest)
@@ -250,10 +228,7 @@ describe('Price Calculator Hooks', () => {
         .mockRejectedValueOnce(new Error('First failure'))
         .mockResolvedValueOnce(mockPriceCalculatorResponse)
 
-      const { result } = renderHook(
-        () => usePriceCalculator(),
-        { wrapper: createQueryWrapper() }
-      )
+      const { result } = renderHook(() => usePriceCalculator(), { wrapper: createQueryWrapper() })
 
       // First mutation fails
       result.current.mutate(mockPriceCalculatorRequest)

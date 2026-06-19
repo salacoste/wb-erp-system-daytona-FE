@@ -92,6 +92,7 @@ export function MarketingKpiCard({ from, to }: MarketingKpiCardProps) {
                       <TooltipTrigger asChild>
                         <span
                           className="inline-flex cursor-help text-muted-foreground"
+                          role="img"
                           aria-label="Доля превышает 100% из-за мультиатрибуции"
                         >
                           <Info className="h-3.5 w-3.5" />

@@ -27,6 +27,7 @@ export function useWarehouseSelectData(useSupplySource: boolean) {
         storagePerLiterRub: sw.tariffs.storagePerLiterRub,
         logisticsCoefficient: sw.tariffs.logisticsCoefficient,
         storageCoefficient: sw.tariffs.storageCoefficient,
+        usingStorageFallback: sw.tariffs.usingStorageFallback,
       },
     }))
   }, [supplyQuery.warehouses])

@@ -35,19 +35,14 @@ export interface ResetConfirmDialogProps {
  *   onConfirm={handleConfirmReset}
  * />
  */
-export function ResetConfirmDialog({
-  open,
-  onOpenChange,
-  onConfirm,
-}: ResetConfirmDialogProps) {
+export function ResetConfirmDialog({ open, onOpenChange, onConfirm }: ResetConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Подтверждение сброса</DialogTitle>
           <DialogDescription>
-            Вы уверены, что хотите сбросить форму? Все текущие значения будут
-            очищены.
+            Вы уверены, что хотите сбросить форму? Все текущие значения будут очищены.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

@@ -14,10 +14,11 @@ import { Table, TableBody } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, RefreshCw } from 'lucide-react'
 import type { FunnelProductItem } from '@/types/analytics-funnel'
 import type { FunnelSortField } from './funnel-table-cells'
 import { FunnelTableHeader, FunnelTableRow } from './funnel-table-columns'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 
 interface FunnelTableProps {
   from: string
@@ -47,13 +48,14 @@ export function FunnelTable({
   }, [nmIdsKey])
 
   const filterParam = nmIds?.length ? nmIds : undefined
-  const { data, isLoading, isError } = useFunnelData(from, to, {
+  const { data, isLoading, isError, refetch } = useFunnelData(from, to, {
     sort,
     order,
     limit,
     offset,
     nmIds: filterParam,
   })
+  const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   const hasCompare = compareEnabled && !!compareFrom && !!compareTo
   const { data: prevData, isLoading: prevLoading } = useFunnelData(
@@ -90,8 +92,23 @@ export function FunnelTable({
     )
   }
 
-  if (isLoading) {
+  if (isLoading && !showSlowLoading) {
     return <Skeleton className="h-96 w-full" />
+  }
+
+  if (isLoading && showSlowLoading) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription className="flex items-center justify-between gap-4">
+          <span>Таблица воронки загружается дольше обычного. Можно повторить запрос.</span>
+          <Button variant="outline" size="sm" className="shrink-0" onClick={() => void refetch()}>
+            <RefreshCw className="h-4 w-4 mr-1" />
+            Повторить
+          </Button>
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   const items = (data?.items ?? []) as FunnelProductItem[]

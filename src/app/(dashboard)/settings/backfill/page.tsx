@@ -9,6 +9,7 @@
 
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Database, RefreshCw, Plus } from 'lucide-react'
@@ -43,6 +44,7 @@ function BackfillPageSkeleton() {
 export default function BackfillAdminPage() {
   const router = useRouter()
   const { user } = useAuth()
+  const isOwner = user?.role === 'Owner'
   const {
     isStartDialogOpen,
     setIsStartDialogOpen,
@@ -56,17 +58,25 @@ export default function BackfillAdminPage() {
     handleRetry,
   } = useBackfillHandlers()
 
-  // Fetch backfill status with polling
-  const { data: cabinets = [], isLoading, refetch, dataUpdatedAt } = useBackfillStatus()
+  // Fetch backfill status with polling only for owners; managers must not call owner-only API.
+  const {
+    data: cabinets = [],
+    isLoading,
+    refetch,
+    dataUpdatedAt,
+  } = useBackfillStatus({
+    enabled: isOwner,
+  })
 
-  // Owner check - redirect non-owners
-  if (user && user.role !== 'Owner') {
-    router.push('/dashboard')
-    return null
-  }
+  // Owner check - redirect non-owners after mount to avoid router updates during render.
+  useEffect(() => {
+    if (user && !isOwner) {
+      router.push('/dashboard')
+    }
+  }, [isOwner, router, user])
 
-  // Loading state while checking auth
-  if (!user) {
+  // Loading/redirect state while checking auth or redirecting non-owners.
+  if (!user || !isOwner) {
     return <BackfillPageSkeleton />
   }
 

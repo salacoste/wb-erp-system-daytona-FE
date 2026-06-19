@@ -41,8 +41,14 @@ const TYPE_AUCTION = 9
 
 describe('campaignStatusConfig', () => {
   it('should have configuration for all known WB statuses', () => {
-    const knownStatuses = [STATUS_READY, STATUS_ENDED, STATUS_DECLINED, STATUS_ACTIVE, STATUS_PAUSED]
-    knownStatuses.forEach((status) => {
+    const knownStatuses = [
+      STATUS_READY,
+      STATUS_ENDED,
+      STATUS_DECLINED,
+      STATUS_ACTIVE,
+      STATUS_PAUSED,
+    ]
+    knownStatuses.forEach(status => {
       expect(campaignStatusConfig[status]).toBeDefined()
       expect(campaignStatusConfig[status].label).toBeTruthy()
       expect(campaignStatusConfig[status].dotColor).toBeTruthy()

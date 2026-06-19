@@ -13,6 +13,7 @@
 
 import { existsSync } from 'node:fs'
 import { test, expect, type Page, type Request } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
 import { HAS_MANAGER_CREDS } from './fixtures/test-data'
 import {
   seedDbwOrder,
@@ -100,7 +101,9 @@ async function sweepBrowserStorageForPii(
   }, piiNeedles)
 }
 
-test.describe('Story 86.2: Client Info (PII) — Orders Клиент column', () => {
+test.describe('Story 86.2: Client Info (PII) — Orders Клиент column @mutating', () => {
+  test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
   // Seed a DBW order with known PII via POST /v1/test/seed/dbw-order (dev-only).
   // When seeding succeeds, the tests below assert deterministically — no skips.
   // When seeding fails (production, endpoint down), the entire block skips visibly.

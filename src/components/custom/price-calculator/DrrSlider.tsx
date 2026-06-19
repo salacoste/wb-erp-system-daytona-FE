@@ -21,24 +21,44 @@ export interface DrrLevelConfig {
 
 /** DRR Level Labels for accessibility and display */
 export const DRR_LEVEL_LABELS: Record<DrrLevel, string> = {
-  'low': 'Низкий',
-  'moderate': 'Умеренный',
-  'high': 'Высокий',
+  low: 'Низкий',
+  moderate: 'Умеренный',
+  high: 'Высокий',
   'very-high': 'Очень высокий',
 } as const
 
 /** Get DRR level config: 0-3% low, 3-7% moderate, 7-15% high, >15% very-high */
 export function getDrrLevel(drr: number): DrrLevelConfig {
   if (drr <= 3) {
-    return { level: 'low', label: DRR_LEVEL_LABELS['low'], color: 'text-green-600', bgColor: 'bg-green-100' }
+    return {
+      level: 'low',
+      label: DRR_LEVEL_LABELS['low'],
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    }
   }
   if (drr <= 7) {
-    return { level: 'moderate', label: DRR_LEVEL_LABELS['moderate'], color: 'text-yellow-600', bgColor: 'bg-yellow-100' }
+    return {
+      level: 'moderate',
+      label: DRR_LEVEL_LABELS['moderate'],
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100',
+    }
   }
   if (drr <= 15) {
-    return { level: 'high', label: DRR_LEVEL_LABELS['high'], color: 'text-orange-600', bgColor: 'bg-orange-100' }
+    return {
+      level: 'high',
+      label: DRR_LEVEL_LABELS['high'],
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100',
+    }
   }
-  return { level: 'very-high', label: DRR_LEVEL_LABELS['very-high'], color: 'text-red-600', bgColor: 'bg-red-100' }
+  return {
+    level: 'very-high',
+    label: DRR_LEVEL_LABELS['very-high'],
+    color: 'text-red-600',
+    bgColor: 'bg-red-100',
+  }
 }
 
 /** Props for DrrSlider component */
@@ -59,15 +79,22 @@ export interface DrrSliderProps {
 
 /** DRR slider with visual zones, configurable range/threshold, auto-calculation */
 export function DrrSlider({
-  value, onChange, disabled, advertisingCost, error,
-  maxValue = 50, warningThreshold = 15, recommendedPrice,
+  value,
+  onChange,
+  disabled,
+  advertisingCost,
+  error,
+  maxValue = 50,
+  warningThreshold = 15,
+  recommendedPrice,
 }: DrrSliderProps) {
   const { label, color, bgColor } = getDrrLevel(value)
   const isVeryHigh = value > warningThreshold
 
   // Auto-calculate advertising cost if recommendedPrice provided
   const calculatedCost = recommendedPrice ? recommendedPrice * (value / 100) : advertisingCost
-  const displayCost = calculatedCost !== undefined && calculatedCost > 0 ? calculatedCost : undefined
+  const displayCost =
+    calculatedCost !== undefined && calculatedCost > 0 ? calculatedCost : undefined
 
   const handleSliderChange = (values: number[]) => onChange(values[0])
 
@@ -85,10 +112,16 @@ export function DrrSlider({
       {/* Label and Level Badge */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Label htmlFor="drr_pct" className="flex-1">DRR (Доля рекламных расходов)</Label>
+          <Label htmlFor="drr_pct" className="flex-1">
+            DRR (Доля рекламных расходов)
+          </Label>
           <FieldTooltip content="DRR — процент от цены на рекламу. Это переменный расход, который влияет на финальную маржу. Новые продавцы: 5-10%, средние: 3-7%, топ-продавцы: 2-5%, без рекламы: 0%." />
         </div>
-        <Badge variant="outline" className={cn('text-xs', bgColor, color)} data-testid="drr-level-badge">
+        <Badge
+          variant="outline"
+          className={cn('text-xs', bgColor, color)}
+          data-testid="drr-level-badge"
+        >
           {label}
         </Badge>
       </div>
@@ -134,13 +167,20 @@ export function DrrSlider({
             aria-label="DRR в процентах"
             data-testid="drr-input"
           />
-          <span className="text-sm text-muted-foreground" aria-hidden="true">%</span>
+          <span className="text-sm text-muted-foreground" aria-hidden="true">
+            %
+          </span>
         </div>
       </div>
 
       {/* Warning for very high DRR */}
       {isVeryHigh && (
-        <div className="flex items-center gap-1 text-xs text-red-600" role="alert" aria-live="polite" data-testid="drr-high-warning">
+        <div
+          className="flex items-center gap-1 text-xs text-red-600"
+          role="alert"
+          aria-live="polite"
+          data-testid="drr-high-warning"
+        >
           <AlertTriangle className="h-3 w-3" aria-hidden="true" />
           Очень высокий DRR может привести к убыточности
         </div>
@@ -149,12 +189,17 @@ export function DrrSlider({
       {/* Advertising Cost Preview */}
       {displayCost !== undefined && (
         <div className="text-sm text-muted-foreground" data-testid="advertising-cost-preview">
-          Расходы на рекламу: <span className="font-medium text-foreground">{formatCurrency(displayCost)}</span>
+          Расходы на рекламу:{' '}
+          <span className="font-medium text-foreground">{formatCurrency(displayCost)}</span>
         </div>
       )}
 
       {/* Error message */}
-      {error && <p className="text-sm text-destructive" data-testid="drr-error">{error}</p>}
+      {error && (
+        <p className="text-sm text-destructive" data-testid="drr-error">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

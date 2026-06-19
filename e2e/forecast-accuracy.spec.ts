@@ -64,17 +64,20 @@ test.describe('Forecast Accuracy Dashboard', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    // Wait for content to load (data or error)
-    await page.waitForTimeout(2000)
-
-    // If data loaded, section headings should be visible
-    const hasHorizonHeading =
-      (await page.getByRole('heading', { name: 'По горизонту прогноза' }).count()) > 0
-    const hasSkuHeading = (await page.getByRole('heading', { name: 'По SKU (топ-20)' }).count()) > 0
-    const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
-
-    // Either data sections are visible OR error state — both valid
-    expect(hasHorizonHeading || hasSkuHeading || hasError).toBeTruthy()
+    // If data loaded, section headings should be visible; otherwise error is valid.
+    await expect
+      .poll(
+        async () => {
+          const hasHorizonHeading =
+            (await page.getByText('По горизонту прогноза', { exact: true }).count()) > 0
+          const hasSkuHeading =
+            (await page.getByText('По SKU (топ-20)', { exact: true }).count()) > 0
+          const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
+          return hasHorizonHeading || hasSkuHeading || hasError
+        },
+        { timeout: TIMEOUTS.api }
+      )
+      .toBe(true)
   })
 
   // --- Metric cards ---

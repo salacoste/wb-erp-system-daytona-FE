@@ -23,10 +23,7 @@ import {
   type BoxTypeId,
   type AcceptanceCoefficient,
 } from '@/lib/box-type-utils'
-import {
-  calculateDailyStorageCost,
-  type StorageTariff,
-} from '@/lib/storage-cost-utils'
+import { calculateDailyStorageCost, type StorageTariff } from '@/lib/storage-cost-utils'
 
 // ============================================================================
 // AC1: Box Type Dropdown
@@ -364,7 +361,7 @@ describe('Story 44.42: AC7 - Visual Design', () => {
   describe('BoxTypeSelector Styling', () => {
     it('should be styled consistently with warehouse selector', () => {
       // Verify all box types have consistent structure
-      ALL_BOX_TYPE_IDS.forEach((id) => {
+      ALL_BOX_TYPE_IDS.forEach(id => {
         const info = BOX_TYPES[id]
         expect(info.icon).toBeDefined()
         expect(info.nameRu).toBeDefined()
@@ -474,7 +471,7 @@ describe('Story 44.42: Accessibility', () => {
   })
 
   it('should display icon + text for each option (not icon-only)', () => {
-    ALL_BOX_TYPE_IDS.forEach((id) => {
+    ALL_BOX_TYPE_IDS.forEach(id => {
       const info = BOX_TYPES[id]
       expect(info.icon).toBeTruthy() // Has icon
       expect(info.nameRu).toBeTruthy() // Has text

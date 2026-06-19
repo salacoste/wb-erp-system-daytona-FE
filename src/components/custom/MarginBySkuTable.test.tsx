@@ -207,7 +207,7 @@ describe('MarginBySkuTable', () => {
 
       const rows = container.querySelectorAll('tbody tr')
       // Product C has missing_cogs_flag: true
-      const productCRow = Array.from(rows).find((row) => row.textContent?.includes('Product C'))
+      const productCRow = Array.from(rows).find(row => row.textContent?.includes('Product C'))
       expect(productCRow).toHaveClass('bg-yellow-50/30')
     })
 
@@ -297,7 +297,7 @@ describe('MarginBySkuTable', () => {
       render(<MarginBySkuTable data={mockData} onProductClick={handleClick} />)
 
       const buttons = screen.getAllByRole('button')
-      const externalLinkButton = buttons.find((btn) =>
+      const externalLinkButton = buttons.find(btn =>
         btn.getAttribute('aria-label')?.includes('Открыть детали товара')
       )
 
@@ -324,7 +324,7 @@ describe('MarginBySkuTable', () => {
       const { container } = render(<MarginBySkuTable data={mockData} />)
 
       // Find the row containing Product A and verify green color exists
-      const productARow = Array.from(container.querySelectorAll('tbody tr')).find((row) =>
+      const productARow = Array.from(container.querySelectorAll('tbody tr')).find(row =>
         row.textContent?.includes('Product A')
       )
       // Check for green color class anywhere in the row (profit cell)
@@ -336,7 +336,7 @@ describe('MarginBySkuTable', () => {
       const { container } = render(<MarginBySkuTable data={mockData} />)
 
       // Find the row containing Product D and verify red color exists
-      const productDRow = Array.from(container.querySelectorAll('tbody tr')).find((row) =>
+      const productDRow = Array.from(container.querySelectorAll('tbody tr')).find(row =>
         row.textContent?.includes('Product D')
       )
       // Check for red color class anywhere in the row (profit cell)
@@ -345,4 +345,3 @@ describe('MarginBySkuTable', () => {
     })
   })
 })
-

@@ -7,6 +7,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import { useProducts, useProductDetail, useProductsCount } from '../useProducts'
+import { productMatchesSearch } from '../useProducts-utils'
 import { ApiError } from '@/types/api'
 
 vi.mock('@/lib/api-client', () => ({
@@ -31,6 +32,7 @@ const mockProductsResponse = {
     {
       nm_id: '12345678',
       sa_name: 'Футболка TestBrand',
+      vendor_code: 'MK-800-Gray',
       brand: 'TestBrand',
       has_cogs: true,
       current_margin_pct: 75,
@@ -38,6 +40,7 @@ const mockProductsResponse = {
     {
       nm_id: '87654321',
       sa_name: 'Шорты TestBrand',
+      vendor_code: 'ABC-100',
       brand: 'TestBrand',
       has_cogs: false,
       current_margin_pct: null,
@@ -113,6 +116,45 @@ describe('useProducts', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.products).toHaveLength(0)
+  })
+
+
+
+  it('falls back to client-side vendor_code search when backend search returns empty', async () => {
+    mockGet.mockResolvedValueOnce({
+      products: [],
+      pagination: { total: 0, page: 1, limit: 25, total_pages: 0 },
+    })
+    mockGet.mockResolvedValueOnce(mockProductsResponse)
+
+    const { result } = renderHook(() => useProducts({ search: 'мк', limit: 25 }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(result.current.data?.products).toHaveLength(1)
+    expect(result.current.data?.products[0].vendor_code).toBe('MK-800-Gray')
+    expect(result.current.data?.pagination.total).toBe(1)
+    expect(mockGet).toHaveBeenCalledTimes(2)
+    expect(mockGet.mock.calls[0][0]).toContain('q=%D0%BC%D0%BA')
+    expect(mockGet.mock.calls[1][0]).not.toContain('q=')
+    expect(mockGet.mock.calls[1][0]).toContain('limit=200')
+  })
+
+  it('matches Cyrillic lookalike search against Latin vendor codes', () => {
+    expect(
+      productMatchesSearch(
+        { nm_id: '785293635', vendor_code: 'MK-800-Gray', sa_name: 'Краска' },
+        'мк'
+      )
+    ).toBe(true)
+    expect(
+      productMatchesSearch(
+        { nm_id: '785293635', vendor_code: 'MK-800-Gray', sa_name: 'Краска' },
+        'zz'
+      )
+    ).toBe(false)
   })
 
   it('passes filter params to API', async () => {

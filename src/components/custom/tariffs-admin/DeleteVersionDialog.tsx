@@ -50,11 +50,7 @@ interface DeleteVersionDialogProps {
  * />
  * ```
  */
-export function DeleteVersionDialog({
-  open,
-  version,
-  onClose,
-}: DeleteVersionDialogProps) {
+export function DeleteVersionDialog({ open, version, onClose }: DeleteVersionDialogProps) {
   const deleteVersion = useDeleteTariffVersion()
 
   const handleConfirm = () => {
@@ -95,9 +91,7 @@ export function DeleteVersionDialog({
                 Вы уверены, что хотите удалить версию, запланированную на{' '}
                 <strong>{formattedDate}</strong>?
               </span>
-              <span className="block text-red-600">
-                Это действие нельзя отменить.
-              </span>
+              <span className="block text-red-600">Это действие нельзя отменить.</span>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>

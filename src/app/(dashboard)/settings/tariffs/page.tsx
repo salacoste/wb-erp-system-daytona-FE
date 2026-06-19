@@ -6,6 +6,7 @@
 // Admin-only page for managing global Wildberries tariff settings
 // ============================================================================
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
@@ -66,15 +67,18 @@ export default function TariffSettingsPage() {
   const router = useRouter()
   const { user } = useAuth()
 
-  // Admin check (AC2): Only Owner role can access this page
-  // Redirect non-admin users to dashboard
-  if (user && user.role !== 'Owner') {
-    router.push('/dashboard')
-    return null
-  }
+  const isOwner = user?.role === 'Owner'
 
-  // Loading state (AC9): Show skeleton while user is null
-  if (!user) {
+  // Admin check (AC2): Only Owner role can access this page.
+  // Redirect after mount to avoid mutating Next router during render.
+  useEffect(() => {
+    if (user && !isOwner) {
+      router.push('/dashboard')
+    }
+  }, [isOwner, router, user])
+
+  // Loading/redirect state (AC9): Show skeleton while auth is unresolved or redirecting.
+  if (!user || !isOwner) {
     return <TariffSettingsPageSkeleton />
   }
 

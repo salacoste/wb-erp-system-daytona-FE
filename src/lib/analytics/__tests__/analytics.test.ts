@@ -3,21 +3,21 @@
 // Epic 34-FE: Monitoring & Analytics
 // ============================================================================
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { analyticsService } from '../analytics.service';
-import { TelegramMetrics } from '../telegram-metrics';
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { analyticsService } from '../analytics.service'
+import { TelegramMetrics } from '../telegram-metrics'
 
 // Create fetch mock that can be reset between tests
-const fetchMock = vi.fn();
+const fetchMock = vi.fn()
 
 describe('Analytics Service', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks()
     // Reset fetch mock for each test
-    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('fetch', fetchMock)
     // Clear any queued events
-    analyticsService.stop();
-  });
+    analyticsService.stop()
+  })
 
   describe('Event Tracking', () => {
     it('should track events with timestamp', () => {
@@ -25,18 +25,18 @@ describe('Analytics Service', () => {
         event_type: 'test_event',
         category: 'binding' as const,
         properties: { test: true },
-      };
+      }
 
-      analyticsService.track(event);
+      analyticsService.track(event)
 
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should auto-flush when queue reaches 50 events', async () => {
       fetchMock.mockResolvedValue({
         ok: true,
         json: async () => ({}),
-      });
+      })
 
       // Add 50 events to trigger auto-flush
       for (let i = 0; i < 50; i++) {
@@ -44,36 +44,36 @@ describe('Analytics Service', () => {
           event_type: `test_event_${i}`,
           category: 'binding',
           properties: {},
-        });
+        })
       }
 
       // Wait for async flush
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100))
 
-      expect(fetchMock).toHaveBeenCalled();
-    });
-  });
+      expect(fetchMock).toHaveBeenCalled()
+    })
+  })
 
   describe('Batch Flushing', () => {
     it('should send events in batch to backend', async () => {
       fetchMock.mockResolvedValue({
         ok: true,
         json: async () => ({}),
-      });
+      })
 
       analyticsService.track({
         event_type: 'event_1',
         category: 'binding',
         properties: {},
-      });
+      })
 
       analyticsService.track({
         event_type: 'event_2',
         category: 'preferences',
         properties: {},
-      });
+      })
 
-      await analyticsService.flush();
+      await analyticsService.flush()
 
       expect(fetchMock).toHaveBeenCalledWith(
         expect.stringContaining('/v1/analytics/events'),
@@ -81,136 +81,136 @@ describe('Analytics Service', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
         })
-      );
-    });
+      )
+    })
 
     it('should retry failed requests once', async () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 500,
         text: async () => 'Internal Server Error',
-      });
+      })
 
       analyticsService.track({
         event_type: 'test_event',
         category: 'error',
         properties: {},
-      });
+      })
 
-      await analyticsService.flush();
+      await analyticsService.flush()
 
       // Events should be re-queued for retry
-      expect(analyticsService.getQueueSize()).toBeGreaterThan(0);
-    });
-  });
-});
+      expect(analyticsService.getQueueSize()).toBeGreaterThan(0)
+    })
+  })
+})
 
 describe('TelegramMetrics Helpers', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    analyticsService.stop();
-  });
+    vi.clearAllMocks()
+    analyticsService.stop()
+  })
 
   describe('Binding Flow Metrics', () => {
     it('should track binding started', () => {
-      TelegramMetrics.bindingStarted();
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.bindingStarted()
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track binding completed with duration', () => {
-      TelegramMetrics.bindingCompleted(45.3);
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.bindingCompleted(45.3)
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track binding failed with error message', () => {
-      TelegramMetrics.bindingFailed('Rate limit exceeded');
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.bindingFailed('Rate limit exceeded')
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track binding expired', () => {
-      TelegramMetrics.bindingExpired();
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.bindingExpired()
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track binding cancelled with elapsed time', () => {
-      TelegramMetrics.bindingCancelled(120);
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
-  });
+      TelegramMetrics.bindingCancelled(120)
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
+  })
 
   describe('API Error Metrics', () => {
     it('should track API errors with status code', () => {
-      TelegramMetrics.apiError('/v1/notifications/bind', 500, 'Internal Server Error');
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.apiError('/v1/notifications/bind', 500, 'Internal Server Error')
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track network errors', () => {
-      TelegramMetrics.networkError('/v1/notifications/status');
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.networkError('/v1/notifications/status')
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should truncate long error messages to 500 chars', () => {
-      const longError = 'A'.repeat(1000);
-      TelegramMetrics.apiError('/v1/test', 400, longError);
+      const longError = 'A'.repeat(1000)
+      TelegramMetrics.apiError('/v1/test', 400, longError)
 
       // Verify event is queued (actual truncation happens in helper)
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
-  });
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
+  })
 
   describe('Preferences Metrics', () => {
     it('should track preferences update with changes', () => {
       const changes = {
         event_types: { task_completed: true, task_failed: false },
         language: 'en',
-      };
+      }
 
-      TelegramMetrics.preferencesUpdated(changes);
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.preferencesUpdated(changes)
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track test notification sent', () => {
-      TelegramMetrics.testNotificationSent('task_completed');
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
-  });
+      TelegramMetrics.testNotificationSent('task_completed')
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
+  })
 
   describe('User Behavior Metrics', () => {
     it('should track page views', () => {
-      TelegramMetrics.pageViewed();
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.pageViewed()
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track help link clicks', () => {
-      TelegramMetrics.helpClicked();
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.helpClicked()
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track event type toggles', () => {
-      TelegramMetrics.eventTypeToggled('task_completed', true);
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
+      TelegramMetrics.eventTypeToggled('task_completed', true)
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
 
     it('should track language changes', () => {
-      TelegramMetrics.languageChanged('ru', 'en');
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
-  });
+      TelegramMetrics.languageChanged('ru', 'en')
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
+  })
 
   describe('Unbind Metrics', () => {
     it('should track unbind completion', () => {
-      TelegramMetrics.unbindCompleted();
-      expect(analyticsService.getQueueSize()).toBe(1);
-    });
-  });
-});
+      TelegramMetrics.unbindCompleted()
+      expect(analyticsService.getQueueSize()).toBe(1)
+    })
+  })
+})
 
 describe('SSR Safety', () => {
   it('should not initialize in SSR environment', () => {
     // Mock SSR environment
-    const originalWindow = global.window;
+    const originalWindow = global.window
     // @ts-ignore
-    delete global.window;
+    delete global.window
 
     // Service should not throw error
     expect(() => {
@@ -218,11 +218,11 @@ describe('SSR Safety', () => {
         event_type: 'test',
         category: 'binding',
         properties: {},
-      });
-    }).not.toThrow();
+      })
+    }).not.toThrow()
 
     // Restore window
     // @ts-ignore
-    global.window = originalWindow;
-  });
-});
+    global.window = originalWindow
+  })
+})

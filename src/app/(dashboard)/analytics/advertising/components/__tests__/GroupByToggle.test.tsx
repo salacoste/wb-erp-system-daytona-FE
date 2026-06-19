@@ -52,11 +52,7 @@ describe('GroupByToggle', () => {
     it('applies custom className', () => {
       const mockOnChange = vi.fn()
       const { container } = render(
-        <GroupByToggle
-          groupBy="sku"
-          onGroupByChange={mockOnChange}
-          className="custom-toggle"
-        />
+        <GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} className="custom-toggle" />
       )
 
       const wrapper = container.querySelector('.custom-toggle')
@@ -92,10 +88,7 @@ describe('GroupByToggle', () => {
       render(<GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />)
 
       const skuButton = screen.getByText('По артикулам').closest('button')
-      expect(skuButton).toHaveAttribute(
-        'aria-label',
-        'Группировка по артикулам'
-      )
+      expect(skuButton).toHaveAttribute('aria-label', 'Группировка по артикулам')
     })
 
     it('has descriptive aria-label for imtId button', () => {
@@ -151,12 +144,10 @@ describe('GroupByToggle', () => {
   describe('Button Sizing', () => {
     it('applies small size to both buttons', () => {
       const mockOnChange = vi.fn()
-      const { container } = render(
-        <GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />
-      )
+      const { container } = render(<GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />)
 
       const buttons = container.querySelectorAll('button')
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button.className).toContain('h-8') // updated to smaller size
       })
     })
@@ -165,9 +156,7 @@ describe('GroupByToggle', () => {
   describe('Layout', () => {
     it('displays buttons in flex gap layout', () => {
       const mockOnChange = vi.fn()
-      const { container } = render(
-        <GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />
-      )
+      const { container } = render(<GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />)
 
       const wrapper = container.querySelector('.flex.gap-2')
       expect(wrapper).toBeInTheDocument()
@@ -177,9 +166,7 @@ describe('GroupByToggle', () => {
   describe('State Transitions', () => {
     it('updates visual state when groupBy changes', () => {
       const mockOnChange = vi.fn()
-      const { rerender } = render(
-        <GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />
-      )
+      const { rerender } = render(<GroupByToggle groupBy="sku" onGroupByChange={mockOnChange} />)
 
       let skuButton = screen.getByText('По артикулам').closest('button')
       expect(skuButton).toHaveAttribute('aria-pressed', 'true')

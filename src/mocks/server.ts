@@ -7,8 +7,8 @@
  * Reference: https://mswjs.io/docs/integrations/node
  */
 
-import { setupServer } from 'msw/node';
-import { handlers } from './handlers';
+import { setupServer } from 'msw/node'
+import { handlers } from './handlers'
 
 /**
  * MSW Server instance for Node.js tests
@@ -22,4 +22,4 @@ import { handlers } from './handlers';
  * afterAll(() => server.close());
  * ```
  */
-export const server = setupServer(...handlers);
+export const server = setupServer(...handlers)

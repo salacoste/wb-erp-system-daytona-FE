@@ -12,7 +12,7 @@ export function LiquidityLoading() {
     <div className="space-y-6">
       {/* Distribution Cards Skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2, 3, 4].map(i => (
           <Card key={i}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -37,7 +37,7 @@ export function LiquidityLoading() {
       <Card>
         <CardContent className="p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4].map(i => (
               <div key={i} className="flex items-center gap-3">
                 <Skeleton className="h-10 w-10 rounded-lg" />
                 <div className="space-y-2">
@@ -57,7 +57,7 @@ export function LiquidityLoading() {
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-6 w-24 rounded-full" />
           </div>
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div key={i} className="space-y-2">
               <div className="flex items-center justify-between">
                 <Skeleton className="h-4 w-32" />
@@ -76,7 +76,7 @@ export function LiquidityLoading() {
           <Skeleton className="h-6 w-48 mb-4" />
           <div className="space-y-3">
             <Skeleton className="h-10 w-full" />
-            {[1, 2, 3, 4, 5].map((i) => (
+            {[1, 2, 3, 4, 5].map(i => (
               <Skeleton key={i} className="h-16 w-full" />
             ))}
           </div>

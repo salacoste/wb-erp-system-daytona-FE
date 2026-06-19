@@ -19,9 +19,7 @@ import type { CategoryHierarchy } from '@/types/product'
  * getCategoryDisplayName(null)
  * // Returns: "Без категории"
  */
-export function getCategoryDisplayName(
-  category: CategoryHierarchy | null | undefined
-): string {
+export function getCategoryDisplayName(category: CategoryHierarchy | null | undefined): string {
   if (!category) return 'Без категории'
 
   if (category.parent_name) {
@@ -41,9 +39,7 @@ export function getCategoryDisplayName(
  * getCategoryName(null)
  * // Returns: "Без категории"
  */
-export function getCategoryName(
-  category: CategoryHierarchy | null | undefined
-): string {
+export function getCategoryName(category: CategoryHierarchy | null | undefined): string {
   return category?.subject_name || 'Без категории'
 }
 
@@ -60,9 +56,7 @@ export function getCategoryName(
  * getParentCategoryName(null)
  * // Returns: "—"
  */
-export function getParentCategoryName(
-  category: CategoryHierarchy | null | undefined
-): string {
+export function getParentCategoryName(category: CategoryHierarchy | null | undefined): string {
   return category?.parent_name || '—'
 }
 
@@ -76,8 +70,6 @@ export function getParentCategoryName(
  * getCategoryId(null)
  * // Returns: null
  */
-export function getCategoryId(
-  category: CategoryHierarchy | null | undefined
-): number | null {
+export function getCategoryId(category: CategoryHierarchy | null | undefined): number | null {
   return category?.subject_id ?? null
 }

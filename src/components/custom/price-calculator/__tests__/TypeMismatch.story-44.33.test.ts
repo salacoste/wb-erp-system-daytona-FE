@@ -337,7 +337,8 @@ describe('Story 44.33: Dimension Conversion', () => {
     const dimensions = mockApiProduct.dimensions!
     // Frontend should use backend's volume_liters, not recalculate
     // Manual calc: 400×300×100/1000000 = 12.0
-    const manualCalc = (dimensions.length_mm * dimensions.width_mm * dimensions.height_mm) / 1_000_000
+    const manualCalc =
+      (dimensions.length_mm * dimensions.width_mm * dimensions.height_mm) / 1_000_000
     expect(dimensions.volume_liters).toBe(manualCalc)
   })
 })
@@ -355,12 +356,12 @@ describe('Story 44.33: Product Search Integration', () => {
     ]
 
     const searchQuery = 'Эпокси'
-    const filtered = products.filter((p) =>
+    const filtered = products.filter(p =>
       p.sa_name.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
     expect(filtered).toHaveLength(2)
-    expect(filtered.map((p) => p.nm_id)).toEqual(['686701815', '3'])
+    expect(filtered.map(p => p.nm_id)).toEqual(['686701815', '3'])
   })
 
   it('should search by vendor_code field', () => {
@@ -370,9 +371,7 @@ describe('Story 44.33: Product Search Integration', () => {
     ]
 
     const searchQuery = 'EPO'
-    const filtered = products.filter(
-      (p) => p.vendor_code && p.vendor_code.includes(searchQuery)
-    )
+    const filtered = products.filter(p => p.vendor_code && p.vendor_code.includes(searchQuery))
 
     expect(filtered).toHaveLength(1)
     expect(filtered[0].vendor_code).toBe('EPO-123')
@@ -381,13 +380,15 @@ describe('Story 44.33: Product Search Integration', () => {
   it('should filter by category_hierarchy.subject_id', () => {
     const products: ProductWithDimensions[] = [
       mockApiProduct, // subject_id: 123
-      { ...mockApiProduct, nm_id: '2', category_hierarchy: { ...mockApiProduct.category_hierarchy!, subject_id: 456 } },
+      {
+        ...mockApiProduct,
+        nm_id: '2',
+        category_hierarchy: { ...mockApiProduct.category_hierarchy!, subject_id: 456 },
+      },
     ]
 
     const categoryFilter = 123
-    const filtered = products.filter(
-      (p) => p.category_hierarchy?.subject_id === categoryFilter
-    )
+    const filtered = products.filter(p => p.category_hierarchy?.subject_id === categoryFilter)
 
     expect(filtered).toHaveLength(1)
     expect(filtered[0].nm_id).toBe('686701815')
@@ -467,9 +468,7 @@ describe('Story 44.33: Category Display Helpers', () => {
   // These tests define the expected behavior for helper functions
   // that need to be created: getCategoryDisplayName, getCategoryName, getCategoryId
 
-  function getCategoryDisplayName(
-    category: CategoryHierarchy | null | undefined
-  ): string {
+  function getCategoryDisplayName(category: CategoryHierarchy | null | undefined): string {
     if (!category) return 'Без категории'
     if (category.parent_name) {
       return `${category.parent_name} → ${category.subject_name}`
@@ -477,15 +476,11 @@ describe('Story 44.33: Category Display Helpers', () => {
     return category.subject_name
   }
 
-  function getCategoryName(
-    category: CategoryHierarchy | null | undefined
-  ): string {
+  function getCategoryName(category: CategoryHierarchy | null | undefined): string {
     return category?.subject_name || 'Без категории'
   }
 
-  function getCategoryId(
-    category: CategoryHierarchy | null | undefined
-  ): number | null {
+  function getCategoryId(category: CategoryHierarchy | null | undefined): number | null {
     return category?.subject_id ?? null
   }
 

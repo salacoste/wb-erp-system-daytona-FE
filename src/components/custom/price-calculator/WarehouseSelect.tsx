@@ -7,7 +7,13 @@
  */
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { ChevronsUpDown, Warehouse as WarehouseIcon, Loader2, Info } from 'lucide-react'
+import {
+  ChevronsUpDown,
+  Warehouse as WarehouseIcon,
+  Loader2,
+  Info,
+  AlertTriangle,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Command, CommandInput } from '@/components/ui/command'
@@ -156,6 +162,15 @@ export function WarehouseSelect({
       {error && <p className="text-sm text-destructive">{error}</p>}
       {warehouses && !isLoading && !selectedWarehouse && (
         <p className="text-xs text-muted-foreground">Найдено: {warehouses.length} складов</p>
+      )}
+      {selectedWarehouse?.tariffs.usingStorageFallback && (
+        <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>
+            Backend вернул нулевой тариф хранения для этого склада; расчет использует тариф по
+            умолчанию до обновления справочника.
+          </span>
+        </div>
       )}
       {selectedWarehouse && (
         <WarehouseTariffsByBoxType

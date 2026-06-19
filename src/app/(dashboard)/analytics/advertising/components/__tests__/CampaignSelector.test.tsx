@@ -39,9 +39,7 @@ function createTestQueryClient() {
 
 function renderWithProviders(ui: React.ReactElement) {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 describe('CampaignSelector', () => {
@@ -60,10 +58,7 @@ describe('CampaignSelector', () => {
   describe('Initial Rendering', () => {
     it('renders with "Все кампании" when nothing selected', async () => {
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(() => {
@@ -86,10 +81,7 @@ describe('CampaignSelector', () => {
 
     it('shows count when multiple selected', async () => {
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[1001, 1002]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[1001, 1002]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(() => {
@@ -102,10 +94,7 @@ describe('CampaignSelector', () => {
     it('opens dropdown when clicked', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(() => {
@@ -125,16 +114,13 @@ describe('CampaignSelector', () => {
     it('shows disabled button while loading', async () => {
       server.use(
         http.get(`${API_BASE_URL}/v1/analytics/advertising/campaigns`, async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000))
+          await new Promise(resolve => setTimeout(resolve, 1000))
           return HttpResponse.json(mockCampaignsResponse)
         })
       )
 
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       // Button should be disabled while loading
@@ -155,10 +141,7 @@ describe('CampaignSelector', () => {
 
       const user = userEvent.setup()
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(
@@ -182,11 +165,7 @@ describe('CampaignSelector', () => {
   describe('Disabled State', () => {
     it('disables button when disabled prop is true', () => {
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-          disabled
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} disabled />
       )
 
       expect(screen.getByRole('combobox')).toBeDisabled()
@@ -196,10 +175,7 @@ describe('CampaignSelector', () => {
   describe('Accessibility', () => {
     it('has accessible combobox button', async () => {
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(() => {
@@ -212,10 +188,7 @@ describe('CampaignSelector', () => {
     it('updates aria-expanded when opened', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(() => {
@@ -234,10 +207,7 @@ describe('CampaignSelector', () => {
     it('calls onSelectionChange when dropdown closes after selection', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <CampaignSelector
-          selectedIds={[]}
-          onSelectionChange={onSelectionChange}
-        />
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
       )
 
       await waitFor(() => {

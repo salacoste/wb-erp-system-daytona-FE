@@ -59,6 +59,8 @@ export interface BoxTypeTariffs {
     baseLiterRub: number
     additionalLiterRub: number
     coefficient: number
+    /** True when storage rates use fallback defaults because backend returned 0 */
+    usingStorageFallback?: boolean
   }
   /** True if storage uses fixed formula (Pallets) */
   isFixedStorage: boolean

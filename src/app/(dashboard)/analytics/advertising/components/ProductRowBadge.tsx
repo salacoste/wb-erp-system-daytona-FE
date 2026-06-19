@@ -15,12 +15,7 @@
 import { Link2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
 
 interface ProductRowBadgeProps {
@@ -82,9 +77,7 @@ export function ProductRowBadge({ item, onShowMergedGroup }: ProductRowBadgeProp
               <p className="font-medium">
                 {isMainProduct ? 'Главный товар в склейке' : 'Дочерний товар склейки'}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Склейка №{item.imtId}
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Склейка №{item.imtId}</p>
             </div>
 
             {/* Explanation */}
@@ -105,14 +98,14 @@ export function ProductRowBadge({ item, onShowMergedGroup }: ProductRowBadgeProp
                     <strong>Дочерний товар</strong> — не получает прямой бюджет (spend = 0).
                   </p>
                   <p>
-                    Продажи дочернего товара учитываются как результат рекламы главного товара
-                    из этой же склейки.
+                    Продажи дочернего товара учитываются как результат рекламы главного товара из
+                    этой же склейки.
                   </p>
                 </>
               )}
               <p className="mt-2">
-                <strong>Склейка</strong> — группа карточек товаров с одинаковым imtId,
-                объединённых WB для совместной рекламы и аналитики.
+                <strong>Склейка</strong> — группа карточек товаров с одинаковым imtId, объединённых
+                WB для совместной рекламы и аналитики.
               </p>
             </div>
 
@@ -122,7 +115,7 @@ export function ProductRowBadge({ item, onShowMergedGroup }: ProductRowBadgeProp
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation()
                     onShowMergedGroup(item.imtId!)
                   }}

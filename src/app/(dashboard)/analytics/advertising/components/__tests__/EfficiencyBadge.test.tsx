@@ -47,13 +47,13 @@ const STATUS_COLORS: Record<EfficiencyStatus, string> = {
 
 describe('EfficiencyBadge', () => {
   describe('Rendering', () => {
-    it.each(ALL_STATUSES)('renders %s status with Russian label', (status) => {
+    it.each(ALL_STATUSES)('renders %s status with Russian label', status => {
       render(<EfficiencyBadge status={status} />)
 
       expect(screen.getByText(STATUS_LABELS[status])).toBeInTheDocument()
     })
 
-    it.each(ALL_STATUSES)('applies %s color class', (status) => {
+    it.each(ALL_STATUSES)('applies %s color class', status => {
       const { container } = render(<EfficiencyBadge status={status} />)
 
       const badge = container.querySelector('[class*="bg-"]')
@@ -70,9 +70,7 @@ describe('EfficiencyBadge', () => {
     })
 
     it('hides icon when showIcon is false', () => {
-      const { container } = render(
-        <EfficiencyBadge status="excellent" showIcon={false} />
-      )
+      const { container } = render(<EfficiencyBadge status="excellent" showIcon={false} />)
 
       const icon = container.querySelector('svg')
       expect(icon).not.toBeInTheDocument()
@@ -84,10 +82,7 @@ describe('EfficiencyBadge', () => {
       const { container } = render(<EfficiencyBadge status="good" />)
 
       const badge = container.querySelector('[aria-label]')
-      expect(badge).toHaveAttribute(
-        'aria-label',
-        expect.stringContaining('Статус эффективности')
-      )
+      expect(badge).toHaveAttribute('aria-label', expect.stringContaining('Статус эффективности'))
     })
 
     it('hides icon from screen readers', () => {
@@ -100,9 +95,7 @@ describe('EfficiencyBadge', () => {
 
   describe('Custom className', () => {
     it('applies additional className', () => {
-      const { container } = render(
-        <EfficiencyBadge status="good" className="custom-class" />
-      )
+      const { container } = render(<EfficiencyBadge status="good" className="custom-class" />)
 
       const badge = container.querySelector('.custom-class')
       expect(badge).toBeInTheDocument()

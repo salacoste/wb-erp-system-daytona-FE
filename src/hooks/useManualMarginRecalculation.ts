@@ -22,10 +22,10 @@ export interface ManualRecalculationResponse {
 
 /**
  * Hook to manually trigger margin recalculation for specific weeks
- * 
+ *
  * @example
  * const { mutate: recalculate, isPending } = useManualMarginRecalculation();
- * 
+ *
  * recalculate({
  *   weeks: ["2025-W46"],
  *   nm_ids: ["321678606"] // Optional
@@ -36,7 +36,9 @@ export function useManualMarginRecalculation() {
   const { cabinetId } = useAuthStore()
 
   return useMutation({
-    mutationFn: async (payload: ManualRecalculationPayload): Promise<ManualRecalculationResponse> => {
+    mutationFn: async (
+      payload: ManualRecalculationPayload
+    ): Promise<ManualRecalculationResponse> => {
       if (!cabinetId) {
         throw new Error('Cabinet ID is required')
       }
@@ -44,17 +46,14 @@ export function useManualMarginRecalculation() {
       try {
         logger.debug('[Manual Recalculation] Triggering recalculation:', payload)
 
-        const response = await apiClient.post<ManualRecalculationResponse>(
-          '/v1/tasks/enqueue',
-          {
-            task_type: 'recalculate_weekly_margin',
-            payload: {
-              cabinet_id: cabinetId,
-              weeks: payload.weeks,
-              nm_ids: payload.nm_ids || undefined,
-            },
-          }
-        )
+        const response = await apiClient.post<ManualRecalculationResponse>('/v1/tasks/enqueue', {
+          task_type: 'recalculate_weekly_margin',
+          payload: {
+            cabinet_id: cabinetId,
+            weeks: payload.weeks,
+            nm_ids: payload.nm_ids || undefined,
+          },
+        })
 
         logger.debug('[Manual Recalculation] Task enqueued:', response.task_uuid)
 
@@ -64,7 +63,7 @@ export function useManualMarginRecalculation() {
         throw error
       }
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       toast.success('Пересчет маржи запущен', {
         description: `Задача ${data.task_uuid.substring(0, 8)}... поставлена в очередь. Ожидайте 5-30 секунд.`,
       })
@@ -81,4 +80,3 @@ export function useManualMarginRecalculation() {
     },
   })
 }
-

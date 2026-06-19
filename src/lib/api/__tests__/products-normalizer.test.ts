@@ -95,8 +95,6 @@ describe('normalizeProduct', () => {
     expect(typeof result.nm_id).toBe('string')
   })
 
-
-
   it('coerces bigint nm_id to string without precision loss', () => {
     const raw = { nm_id: 1234567890123456789n }
     const result = normalizeProduct(raw as unknown as RawProduct)

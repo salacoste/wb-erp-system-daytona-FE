@@ -105,7 +105,7 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
                 max={max}
                 step={step}
                 value={[value]}
-                onValueChange={(values) => field.onChange(values[0])}
+                onValueChange={values => field.onChange(values[0])}
                 className="w-full relative z-10"
               />
             </div>
@@ -134,7 +134,7 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
                   min={min}
                   max={max}
                   value={value}
-                  onChange={(e) => {
+                  onChange={e => {
                     const num = parseFloat(e.target.value)
                     field.onChange(isNaN(num) ? 0 : num)
                   }}

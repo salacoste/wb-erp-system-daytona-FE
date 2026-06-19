@@ -104,9 +104,7 @@ describe('WeekFilterBadge', () => {
 
   describe('styling', () => {
     it('applies primary color theme classes', () => {
-      const { container } = render(
-        <WeekFilterBadge week="2025-W47" onClear={vi.fn()} />
-      )
+      const { container } = render(<WeekFilterBadge week="2025-W47" onClear={vi.fn()} />)
 
       const badge = container.firstChild as HTMLElement
       expect(badge.className).toContain('bg-primary/10')

@@ -455,7 +455,7 @@ export const mockAllDatesUnavailable = Array.from({ length: 14 }, (_, i) => ({
  * Get product by nm_id
  */
 export function getProductByNmId(nmId: string): ProductWithDimensions | undefined {
-  return mockProductsWithDimensions.find((p) => p.nm_id === nmId)
+  return mockProductsWithDimensions.find(p => p.nm_id === nmId)
 }
 
 /**
@@ -464,7 +464,7 @@ export function getProductByNmId(nmId: string): ProductWithDimensions | undefine
 export function filterProductsByQuery(query: string): ProductWithDimensions[] {
   const lowerQuery = query.toLowerCase()
   return mockProductsWithDimensions.filter(
-    (p) =>
+    p =>
       p.sa_name.toLowerCase().includes(lowerQuery) ||
       p.vendor_code.toLowerCase().includes(lowerQuery)
   )

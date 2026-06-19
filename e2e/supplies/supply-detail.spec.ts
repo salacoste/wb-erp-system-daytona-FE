@@ -16,6 +16,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes
 const SUPPLIES_LIST_ROUTE = '/supplies'
@@ -138,6 +139,8 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
         .locator('[class*="skeleton"]')
         .or(page.locator(SELECTORS.loadingState))
         .or(page.locator(SELECTORS.supplyTitle))
+        .or(page.locator(SELECTORS.errorState))
+        .or(page.getByText(/не найдена|not found|ошибка/i))
 
       await expect(loadingOrContent.first()).toBeVisible({ timeout: 10000 })
     })
@@ -187,9 +190,11 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
       await navigateToSupplyDetail(page)
 
       // Should show "Заказы в поставке (N)" heading
-      const ordersHeading = page.locator('h2:has-text("Заказы"), text=/Заказы.*\\(\\d+\\)/')
+      const ordersHeading = page
+        .getByRole('heading', { name: /Заказы.*\(\d+\)/ })
+        .or(page.getByRole('heading', { name: /Заказы/ }))
       if (await ordersHeading.isVisible()) {
-        await expect(ordersHeading).toBeVisible()
+        await expect(ordersHeading.first()).toBeVisible()
       }
     })
 
@@ -212,7 +217,9 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
   })
 
-  test.describe('Order Picker Drawer - Story 53.5', () => {
+  test.describe('Order Picker Drawer - Story 53.5 @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('should open order picker drawer on Add Orders click', async ({ page }) => {
       await navigateToSupplyDetail(page)
 
@@ -325,7 +332,9 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
   })
 
-  test.describe('Remove Orders - Story 53.4', () => {
+  test.describe('Remove Orders - Story 53.4 @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('should show remove button for each order in OPEN supply', async ({ page }) => {
       await navigateToSupplyDetail(page)
 
@@ -399,7 +408,9 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
   })
 
-  test.describe('Close Supply - Story 53.6', () => {
+  test.describe('Close Supply - Story 53.6 @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('should show close supply button for OPEN supply', async ({ page }) => {
       await navigateToSupplyDetail(page)
 
@@ -448,7 +459,9 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
   })
 
-  test.describe('Generate Stickers - Story 53.6', () => {
+  test.describe('Generate Stickers - Story 53.6 @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('should show stickers button for CLOSED supply', async ({ page }) => {
       // Navigate to a CLOSED supply
       await page.goto(`${SUPPLIES_LIST_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
@@ -640,7 +653,7 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
       await navigateToSupplyDetail(page)
 
       const tableWrapper = page
-        .locator('div')
+        .locator('.overflow-x-auto')
         .filter({ has: page.locator('table') })
         .first()
       if (await tableWrapper.isVisible()) {

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useJamStatus } from '@/hooks/useJamStatus'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 import { JAM_TIER_LABELS, JAM_TIER_LEVEL } from '@/types/cabinet'
 import type { JamTier } from '@/types/cabinet'
 import { jamUrls } from '@/config/features'
@@ -24,8 +25,9 @@ const JAM_TIER_STYLES: Record<JamTier, string> = {
  */
 export function JamStatusBadge({ cabinetId }: { cabinetId: string }) {
   const { data: jam, isLoading } = useJamStatus(cabinetId)
+  const isDelayed = useDelayedLoadingState(isLoading)
 
-  if (isLoading) {
+  if (isLoading && !isDelayed) {
     return (
       <div className="flex items-center gap-3">
         <Skeleton className="h-6 w-32" />
@@ -34,7 +36,15 @@ export function JamStatusBadge({ cabinetId }: { cabinetId: string }) {
     )
   }
 
-  if (!jam) return null
+  if (isLoading && isDelayed) {
+    return (
+      <span className="text-sm text-muted-foreground">Статус Джем загружается дольше обычного</span>
+    )
+  }
+
+  if (!jam) {
+    return <span className="text-sm text-muted-foreground">Статус Джем сейчас недоступен</span>
+  }
 
   const tier = jam.tier
   const showUpgrade =

@@ -26,9 +26,7 @@ export const tariffSettingsSchema = z.object({
   acceptancePalletRate: z.number().positive('Должно быть больше 0'),
 
   // Logistics (3 fields + volume tiers)
-  logisticsVolumeTiers: z
-    .array(volumeTierSchema)
-    .min(1, 'Минимум 1 тарифный уровень'),
+  logisticsVolumeTiers: z.array(volumeTierSchema).min(1, 'Минимум 1 тарифный уровень'),
   logisticsLargeFirstLiterRate: z.number().positive('Должно быть больше 0'),
   logisticsLargeAdditionalLiterRate: z.number().positive('Должно быть больше 0'),
 
@@ -37,37 +35,19 @@ export const tariffSettingsSchema = z.object({
   returnLogisticsFbsRate: z.number().positive('Должно быть больше 0'),
 
   // Commission (2 fields) - percentages 0-100
-  defaultCommissionFboPct: z
-    .number()
-    .min(0, 'Минимум 0%')
-    .max(100, 'Максимум 100%'),
-  defaultCommissionFbsPct: z
-    .number()
-    .min(0, 'Минимум 0%')
-    .max(100, 'Максимум 100%'),
+  defaultCommissionFboPct: z.number().min(0, 'Минимум 0%').max(100, 'Максимум 100%'),
+  defaultCommissionFbsPct: z.number().min(0, 'Минимум 0%').max(100, 'Максимум 100%'),
 
   // Storage (3 fields) - non-negative integers
   storageFreeDays: z.number().int('Должно быть целое число').min(0, 'Минимум 0'),
-  fixationClothingDays: z
-    .number()
-    .int('Должно быть целое число')
-    .min(0, 'Минимум 0'),
-  fixationOtherDays: z
-    .number()
-    .int('Должно быть целое число')
-    .min(0, 'Минимум 0'),
+  fixationClothingDays: z.number().int('Должно быть целое число').min(0, 'Минимум 0'),
+  fixationOtherDays: z.number().int('Должно быть целое число').min(0, 'Минимум 0'),
 
   // FBS-specific (4+ fields)
   fbsUsesFboLogisticsRates: z.boolean(),
   logisticsFbsVolumeTiers: z.array(volumeTierSchema).optional(),
-  logisticsFbsLargeFirstLiterRate: z
-    .number()
-    .positive('Должно быть больше 0')
-    .optional(),
-  logisticsFbsLargeAdditionalLiterRate: z
-    .number()
-    .positive('Должно быть больше 0')
-    .optional(),
+  logisticsFbsLargeFirstLiterRate: z.number().positive('Должно быть больше 0').optional(),
+  logisticsFbsLargeAdditionalLiterRate: z.number().positive('Должно быть больше 0').optional(),
   clothingCategories: z.array(z.string()).optional(),
 
   // Meta fields
@@ -99,8 +79,7 @@ export function getDefaultFormValues(
       { fromLiters: 0.001, toLiters: 0.2, rateRub: 24 },
     ],
     logisticsLargeFirstLiterRate: settings?.logisticsLargeFirstLiterRate ?? 48,
-    logisticsLargeAdditionalLiterRate:
-      settings?.logisticsLargeAdditionalLiterRate ?? 15,
+    logisticsLargeAdditionalLiterRate: settings?.logisticsLargeAdditionalLiterRate ?? 15,
 
     // Returns
     returnLogisticsFboRate: settings?.returnLogisticsFboRate ?? 50,
@@ -119,8 +98,7 @@ export function getDefaultFormValues(
     fbsUsesFboLogisticsRates: settings?.fbsUsesFboLogisticsRates ?? true,
     logisticsFbsVolumeTiers: settings?.logisticsFbsVolumeTiers,
     logisticsFbsLargeFirstLiterRate: settings?.logisticsFbsLargeFirstLiterRate,
-    logisticsFbsLargeAdditionalLiterRate:
-      settings?.logisticsFbsLargeAdditionalLiterRate,
+    logisticsFbsLargeAdditionalLiterRate: settings?.logisticsFbsLargeAdditionalLiterRate,
     clothingCategories: settings?.clothingCategories,
 
     // Meta

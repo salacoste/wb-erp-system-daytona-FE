@@ -26,38 +26,59 @@ vi.mock('@/lib/api/daily-analytics', () => ({
 
 // Mock the aggregation helpers
 vi.mock('@/lib/daily-helpers', () => ({
-  aggregateDailyMetrics: vi.fn((params: {
-    ordersData: Array<{ date: string }>
-    financeData: Array<{ date: string }>
-    advertisingData: Array<{ date: string }>
-  }) => {
-    // Simple aggregation: return merged entries by date
-    const allDates = new Set<string>()
-    params.ordersData.forEach(d => allDates.add(d.date))
-    params.financeData.forEach(d => allDates.add(d.date))
-    params.advertisingData.forEach(d => allDates.add(d.date))
-    return Array.from(allDates).sort().map(date => ({
-      date,
-      dayOfWeek: 1,
-      orders: 100,
-      ordersCount: 5,
-      ordersCogs: null,
-      sales: 80,
-      salesCogs: null,
-      advertising: 10,
-      logistics: 5,
-      storage: 2,
-      penalties: 0,
-      paidAcceptance: 0,
-      commission: 15,
-      theoreticalProfit: null,
-      salesCount: 3,
-      returnsCount: 1,
-    }))
-  }),
+  aggregateDailyMetrics: vi.fn(
+    (params: {
+      ordersData: Array<{ date: string }>
+      financeData: Array<{ date: string }>
+      advertisingData: Array<{ date: string }>
+    }) => {
+      // Simple aggregation: return merged entries by date
+      const allDates = new Set<string>()
+      params.ordersData.forEach(d => allDates.add(d.date))
+      params.financeData.forEach(d => allDates.add(d.date))
+      params.advertisingData.forEach(d => allDates.add(d.date))
+      return Array.from(allDates)
+        .sort()
+        .map(date => ({
+          date,
+          dayOfWeek: 1,
+          orders: 100,
+          ordersCount: 5,
+          ordersCogs: null,
+          sales: 80,
+          salesCogs: null,
+          advertising: 10,
+          logistics: 5,
+          storage: 2,
+          penalties: 0,
+          paidAcceptance: 0,
+          commission: 15,
+          theoreticalProfit: null,
+          salesCount: 3,
+          returnsCount: 1,
+        }))
+    }
+  ),
   fillMissingDays: vi.fn((data: Array<{ date: string }>, from: string, to: string) => {
     // Generate all dates between from and to
-    const result: Array<{ date: string; dayOfWeek: number; orders: number; ordersCount: number; ordersCogs: number | null; sales: number; salesCogs: number | null; advertising: number; logistics: number; storage: number; penalties: number; paidAcceptance: number; commission: number; theoreticalProfit: number | null; salesCount: number; returnsCount: number }> = []
+    const result: Array<{
+      date: string
+      dayOfWeek: number
+      orders: number
+      ordersCount: number
+      ordersCogs: number | null
+      sales: number
+      salesCogs: number | null
+      advertising: number
+      logistics: number
+      storage: number
+      penalties: number
+      paidAcceptance: number
+      commission: number
+      theoreticalProfit: number | null
+      salesCount: number
+      returnsCount: number
+    }> = []
     const existingDates = new Set(data.map(d => d.date))
     const start = new Date(from)
     const end = new Date(to)
@@ -85,7 +106,7 @@ vi.mock('@/lib/daily-helpers', () => ({
         })
       } else {
         const existing = data.find(d => d.date === dateStr)
-        if (existing) result.push(existing as typeof result[0])
+        if (existing) result.push(existing as (typeof result)[0])
       }
       current.setDate(current.getDate() + 1)
     }
@@ -265,10 +286,22 @@ describe('useDailyMetrics Hook', () => {
       const metric = result.current.data![0]
       // Verify all required fields exist
       const requiredFields = [
-        'date', 'dayOfWeek', 'orders', 'ordersCount', 'ordersCogs',
-        'sales', 'salesCogs', 'advertising', 'logistics', 'storage',
-        'penalties', 'paidAcceptance', 'commission', 'theoreticalProfit',
-        'salesCount', 'returnsCount',
+        'date',
+        'dayOfWeek',
+        'orders',
+        'ordersCount',
+        'ordersCogs',
+        'sales',
+        'salesCogs',
+        'advertising',
+        'logistics',
+        'storage',
+        'penalties',
+        'paidAcceptance',
+        'commission',
+        'theoreticalProfit',
+        'salesCount',
+        'returnsCount',
       ] as const
       for (const field of requiredFields) {
         expect(metric).toHaveProperty(field)
@@ -278,22 +311,24 @@ describe('useDailyMetrics Hook', () => {
     it('should calculate theoreticalProfit from finance data', async () => {
       mockGetAllDailyData.mockResolvedValue({
         ordersData: [{ date: '2026-01-05', total_amount: 1000, total_orders: 10 }],
-        financeData: [{
-          date: '2026-01-05',
-          wb_sales_gross: 800,
-          revenue_net: 500,
-          cogs_total: 200,
-          logistics_cost: 50,
-          storage_cost: 30,
-          penalties: 0,
-          paid_acceptance: 0,
-          commission: 100,
-          returns: 20,
-          returns_count: 1,
-          sales_count: 8,
-          advertising_spend: 50,
-          net_profit: 70,
-        }],
+        financeData: [
+          {
+            date: '2026-01-05',
+            wb_sales_gross: 800,
+            revenue_net: 500,
+            cogs_total: 200,
+            logistics_cost: 50,
+            storage_cost: 30,
+            penalties: 0,
+            paid_acceptance: 0,
+            commission: 100,
+            returns: 20,
+            returns_count: 1,
+            sales_count: 8,
+            advertising_spend: 50,
+            net_profit: 70,
+          },
+        ],
         advertisingData: [],
         ordersCogsByDay: [],
       })

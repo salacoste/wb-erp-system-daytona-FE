@@ -63,7 +63,7 @@ export function calculateLogisticsForward(
   volumeLiters: number,
   baseTariff: number,
   perLiterTariff: number,
-  coefficient: number = 1.0,
+  coefficient: number = 1.0
 ): number {
   if (volumeLiters <= 0) return 0
 
@@ -83,7 +83,7 @@ export function calculateLogisticsForward(
  */
 export function calculateLogisticsCost(
   volumeLiters: number,
-  tariff: LogisticsTariff = DEFAULT_LOGISTICS_TARIFF,
+  tariff: LogisticsTariff = DEFAULT_LOGISTICS_TARIFF
 ): LogisticsCostResult {
   // Return zero result for invalid volume
   if (volumeLiters <= 0) {
@@ -122,7 +122,7 @@ export function getLogisticsBreakdown(
   volumeLiters: number,
   baseTariff: number,
   perLiterTariff: number,
-  coefficient: number,
+  coefficient: number
 ): string {
   if (volumeLiters <= 0) {
     return 'Введите объём для расчёта логистики'
@@ -160,7 +160,7 @@ export function formatLogisticsBreakdown(result: LogisticsCostResult): string[] 
   if (result.additionalLiters > 0) {
     const additionalCost = result.additionalLiters * result.tariff.perLiterRub
     lines.push(
-      `Доп. литры (${result.additionalLiters.toFixed(1)} л): ${formatCurrency(additionalCost)}`,
+      `Доп. литры (${result.additionalLiters.toFixed(1)} л): ${formatCurrency(additionalCost)}`
     )
   }
 

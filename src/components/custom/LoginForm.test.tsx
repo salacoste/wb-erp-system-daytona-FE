@@ -235,6 +235,31 @@ describe('LoginForm', () => {
     expect(toast.error).toHaveBeenCalledWith('Неверный email или пароль')
   })
 
+  it('does not retry failed login submissions even when global mutation retries are enabled', async () => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false, gcTime: 0 },
+        mutations: { retry: 2, retryDelay: 1, gcTime: 0 },
+      },
+    })
+    const user = userEvent.setup()
+    const mockLoginUser = vi.mocked(api.loginUser)
+    mockLoginUser.mockRejectedValue(new Error('rate limited'))
+
+    renderForm()
+
+    await user.type(screen.getByLabelText(/email/i), 'test@example.com')
+    await user.type(screen.getByLabelText(/пароль/i), 'password123')
+    await user.click(screen.getByRole('button', { name: /войти/i }))
+
+    await waitFor(
+      () => {
+        expect(mockLoginUser).toHaveBeenCalledTimes(1)
+      },
+      { timeout: 5000 }
+    )
+  })
+
   it('handles network errors', async () => {
     const user = userEvent.setup()
     const mockLoginUser = vi.mocked(api.loginUser)

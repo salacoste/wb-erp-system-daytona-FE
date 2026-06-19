@@ -46,24 +46,19 @@ export function CabinetCreationForm() {
     mutationFn: async (data: CabinetFormData) => {
       return await handleCreateCabinet(data.name)
     },
-    onSuccess: (result) => {
+    onSuccess: result => {
       toast.success(`Кабинет "${result.cabinet.name}" успешно создан!`)
       // Navigate to next onboarding step (WB token input)
       router.push(ROUTES.ONBOARDING.WB_TOKEN)
     },
     onError: (error: Error) => {
       const errorMessage = error.message.toLowerCase()
-      if (
-        errorMessage.includes('token') ||
-        errorMessage.includes('refresh')
-      ) {
+      if (errorMessage.includes('token') || errorMessage.includes('refresh')) {
         toast.error(
-          'Кабинет создан, но произошла ошибка обновления токена. Пожалуйста, обновите страницу или войдите снова.',
+          'Кабинет создан, но произошла ошибка обновления токена. Пожалуйста, обновите страницу или войдите снова.'
         )
       } else {
-        toast.error(
-          error.message || 'Ошибка создания кабинета. Попробуйте еще раз.',
-        )
+        toast.error(error.message || 'Ошибка создания кабинета. Попробуйте еще раз.')
       }
     },
   })
@@ -100,16 +95,10 @@ export function CabinetCreationForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isSubmitting}
-          aria-busy={isSubmitting}
-        >
+        <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? 'Создание...' : 'Создать кабинет'}
         </Button>
       </form>
     </Form>
   )
 }
-

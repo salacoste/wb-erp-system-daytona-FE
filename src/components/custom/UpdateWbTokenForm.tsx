@@ -24,14 +24,14 @@ const updateTokenFormSchema = z.object({
     .min(1, 'WB API токен обязателен')
     .min(50, 'Токен кажется слишком коротким. Пожалуйста, проверьте токен.')
     .refine(
-      (value) => {
+      value => {
         // Базовая валидация формата JWT (3 части, разделенные точками)
         const parts = value.split('.')
         return parts.length === 3
       },
       {
         message: 'Формат токена кажется неверным. Пожалуйста, проверьте токен.',
-      },
+      }
     ),
 })
 
@@ -88,8 +88,7 @@ export function UpdateWbTokenForm({
         userMessage =
           'WB API токен недействителен или истек. Пожалуйста, проверьте токен или получите новый на https://seller.wildberries.ru/'
       } else if (errorMessage.includes('permission') || errorMessage.includes('forbidden')) {
-        userMessage =
-          'У вас нет прав для обновления токена. Требуется роль Owner или Manager.'
+        userMessage = 'У вас нет прав для обновления токена. Требуется роль Owner или Manager.'
       } else if (errorMessage.includes('not found')) {
         userMessage = 'Кабинет или ключ не найден. Пожалуйста, проверьте данные.'
       } else if (errorMessage.includes('rate limit')) {
@@ -149,12 +148,7 @@ export function UpdateWbTokenForm({
         />
 
         <div className="flex gap-2">
-          <Button
-            type="submit"
-            className="flex-1"
-            disabled={isSubmitting}
-            aria-busy={isSubmitting}
-          >
+          <Button type="submit" className="flex-1" disabled={isSubmitting} aria-busy={isSubmitting}>
             {isSubmitting ? 'Обновление...' : 'Обновить токен'}
           </Button>
           <Button
@@ -172,4 +166,3 @@ export function UpdateWbTokenForm({
     </Form>
   )
 }
-

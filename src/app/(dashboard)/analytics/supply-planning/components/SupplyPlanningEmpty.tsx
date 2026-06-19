@@ -24,21 +24,17 @@ export function SupplyPlanningEmpty() {
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Нет данных об остатках
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Нет данных об остатках</h3>
 
         {/* Message */}
         <p className="text-sm text-muted-foreground mb-6 max-w-md">
-          Подключите импорт остатков из Wildberries для анализа рисков стокаута
-          и получения рекомендаций по заказам.
+          Подключите импорт остатков из Wildberries для анализа рисков стокаута и получения
+          рекомендаций по заказам.
         </p>
 
         {/* CTA */}
         <Button asChild>
-          <Link href={ROUTES.SETTINGS.ROOT}>
-            Настроить импорт
-          </Link>
+          <Link href={ROUTES.SETTINGS.ROOT}>Настроить импорт</Link>
         </Button>
       </CardContent>
     </Card>

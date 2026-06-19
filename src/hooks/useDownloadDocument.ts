@@ -1,3 +1,5 @@
+'use client'
+
 import { logger } from '@/lib/logger'
 /**
  * useDownloadDocument Mutation Hook
@@ -6,9 +8,6 @@ import { logger } from '@/lib/logger'
  *
  * Hook for downloading supply documents (stickers, barcodes, etc.)
  */
-
-'use client'
-
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { downloadDocument } from '@/lib/api/supplies'

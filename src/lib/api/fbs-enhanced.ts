@@ -45,19 +45,70 @@ export const fbsEnhancedQueryKeys = {
 // API function
 // ---------------------------------------------------------------------------
 
+const DEFAULT_FBS_ENHANCED_TIMEOUT_MS = 8_000
+const FBS_ENHANCED_TIMEOUT_ERROR = 'FBS enhanced request timed out'
+
+async function withTimeout<T>(
+  startRequest: (signal: AbortSignal) => Promise<T>,
+  timeoutMs: number,
+  parentSignal: AbortSignal | undefined
+): Promise<T> {
+  const controller = new AbortController()
+  const abortFromParent = () => controller.abort(parentSignal?.reason)
+
+  if (parentSignal?.aborted) {
+    abortFromParent()
+  } else {
+    parentSignal?.addEventListener('abort', abortFromParent, { once: true })
+  }
+
+  let timeoutId: ReturnType<typeof globalThis.setTimeout> | undefined
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = globalThis.setTimeout(() => {
+      const error = new Error(FBS_ENHANCED_TIMEOUT_ERROR)
+      controller.abort(error)
+      reject(error)
+    }, timeoutMs)
+  })
+
+  const request = startRequest(controller.signal)
+  // The timeout aborts the underlying fetch; attach a catch eagerly so a fetch
+  // rejection that races with the timeout rejection is still observed by JS runtimes.
+  void request.catch(() => undefined)
+
+  try {
+    return await Promise.race([request, timeout])
+  } finally {
+    if (timeoutId !== undefined) globalThis.clearTimeout(timeoutId)
+    parentSignal?.removeEventListener('abort', abortFromParent)
+  }
+}
+
 /**
  * GET /v1/analytics/fbs/enhanced?from=&to=
  * Returns aggregated FBS analytics: orderStats, stockAnalytics, regionalData,
  * calculatedMetrics, funnelData for the given date range.
  */
-export async function getFbsEnhanced(params: FbsEnhancedParams): Promise<FbsEnhancedResponse> {
+export async function getFbsEnhanced(
+  params: FbsEnhancedParams,
+  options?: { signal?: AbortSignal; timeoutMs?: number }
+): Promise<FbsEnhancedResponse> {
   // Fail-fast: backend returns 400 for missing from/to.
   if (!params.from || !params.to) {
     throw new Error('getFbsEnhanced: from and to are required')
   }
-  const raw = await apiClient.get<unknown>(
-    `/v1/analytics/fbs/enhanced${qs({ from: params.from, to: params.to })}`,
-    { skipDataUnwrap: true }
+  const raw = await withTimeout(
+    signal =>
+      apiClient.get<unknown>(
+        `/v1/analytics/fbs/enhanced${qs({ from: params.from, to: params.to })}`,
+        {
+          skipDataUnwrap: true,
+          signal,
+          suppressNetworkErrorLog: true,
+        }
+      ),
+    options?.timeoutMs ?? DEFAULT_FBS_ENHANCED_TIMEOUT_MS,
+    options?.signal
   )
   return normalizeFbsEnhancedResponse(raw)
 }

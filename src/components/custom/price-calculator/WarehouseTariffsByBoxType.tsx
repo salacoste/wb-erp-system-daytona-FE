@@ -9,13 +9,16 @@
  * so users can compare costs before selecting delivery type.
  */
 
-import { Package, Layers, Shield, Truck, Archive } from 'lucide-react'
+import { Package, Layers, Shield, Truck, Archive, AlertTriangle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn, formatCurrency } from '@/lib/utils'
 import type { BoxTypeTariffs } from '@/hooks/useSupplyTariffs'
 
 /** Box type display configuration */
-const BOX_TYPE_CONFIG: Record<number, { icon: React.ElementType; label: string; shortLabel: string }> = {
+const BOX_TYPE_CONFIG: Record<
+  number,
+  { icon: React.ElementType; label: string; shortLabel: string }
+> = {
   2: { icon: Package, label: 'Коробки', shortLabel: 'Короб' },
   5: { icon: Layers, label: 'Монопалеты', shortLabel: 'Палет' },
   6: { icon: Shield, label: 'Суперсейф', shortLabel: 'Сейф' },
@@ -59,8 +62,10 @@ export function WarehouseTariffsByBoxType({
       </div>
 
       {/* Tariffs grid - one column per box type */}
-      <div className={cn('grid gap-2', tariffsByBoxType.length === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
-        {tariffsByBoxType.map((bt) => (
+      <div
+        className={cn('grid gap-2', tariffsByBoxType.length === 2 ? 'grid-cols-2' : 'grid-cols-3')}
+      >
+        {tariffsByBoxType.map(bt => (
           <BoxTypeTariffCard key={bt.boxTypeId} tariffs={bt} compact={compact} />
         ))}
       </div>
@@ -90,6 +95,15 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
             фикс.
           </Badge>
         )}
+        {tariffs.storage.usingStorageFallback && (
+          <Badge
+            variant="outline"
+            className="text-[10px] px-1 py-0 h-4 border-amber-300 text-amber-700"
+            title="Backend вернул нулевой тариф хранения; используется значение по умолчанию"
+          >
+            замещ.
+          </Badge>
+        )}
       </div>
 
       {/* Logistics */}
@@ -97,7 +111,8 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
         <Truck className="h-3 w-3 text-muted-foreground" />
         <span className="text-muted-foreground">Лог:</span>
         <span className="font-medium">
-          {formatCurrency(tariffs.delivery.baseLiterRub)} + {formatCurrency(tariffs.delivery.additionalLiterRub)}/л
+          {formatCurrency(tariffs.delivery.baseLiterRub)} +{' '}
+          {formatCurrency(tariffs.delivery.additionalLiterRub)}/л
         </span>
       </div>
 
@@ -111,12 +126,20 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
           <span className="text-muted-foreground">/день</span>
         </span>
       </div>
+      {tariffs.storage.usingStorageFallback && (
+        <div className="flex items-start gap-1 text-[11px] text-amber-700">
+          <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
+          <span>Тариф хранения замещён значением по умолчанию</span>
+        </div>
+      )}
 
       {/* Coefficient if not 1.0 */}
       {tariffs.delivery.coefficient !== 1.0 && (
         <div className="text-xs">
           <span className="text-muted-foreground">Коэф:</span>{' '}
-          <span className={cn('font-medium', tariffs.delivery.coefficient > 1 && 'text-yellow-600')}>
+          <span
+            className={cn('font-medium', tariffs.delivery.coefficient > 1 && 'text-yellow-600')}
+          >
             ×{tariffs.delivery.coefficient.toFixed(2)}
           </span>
         </div>

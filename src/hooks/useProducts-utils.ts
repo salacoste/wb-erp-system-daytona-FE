@@ -18,6 +18,113 @@ export interface ProductFilters {
   include_storage?: boolean
 }
 
+
+// ============================================================================
+// Search normalization helpers
+// ============================================================================
+
+const CYRILLIC_TO_LATIN_LOOKALIKE: Record<string, string> = {
+  а: 'a',
+  в: 'b',
+  с: 'c',
+  е: 'e',
+  ё: 'e',
+  н: 'h',
+  к: 'k',
+  м: 'm',
+  о: 'o',
+  р: 'p',
+  т: 't',
+  у: 'y',
+  х: 'x',
+}
+
+const RUSSIAN_KEYBOARD_TO_ENGLISH: Record<string, string> = {
+  й: 'q',
+  ц: 'w',
+  у: 'e',
+  к: 'r',
+  е: 't',
+  н: 'y',
+  г: 'u',
+  ш: 'i',
+  щ: 'o',
+  з: 'p',
+  х: '[',
+  ъ: ']',
+  ф: 'a',
+  ы: 's',
+  в: 'd',
+  а: 'f',
+  п: 'g',
+  р: 'h',
+  о: 'j',
+  л: 'k',
+  д: 'l',
+  ж: ';',
+  э: "'",
+  я: 'z',
+  ч: 'x',
+  с: 'c',
+  м: 'v',
+  и: 'b',
+  т: 'n',
+  ь: 'm',
+  б: ',',
+  ю: '.',
+}
+
+function normalizeSearchToken(value: string): string {
+  return value
+    .toLocaleLowerCase('ru-RU')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+}
+
+function remapChars(value: string, map: Record<string, string>): string {
+  return Array.from(value)
+    .map(char => map[char] ?? char)
+    .join('')
+}
+
+export function getProductSearchVariants(value: string): string[] {
+  const base = normalizeSearchToken(value)
+  if (!base) return []
+
+  return Array.from(
+    new Set([base, remapChars(base, CYRILLIC_TO_LATIN_LOOKALIKE), remapChars(base, RUSSIAN_KEYBOARD_TO_ENGLISH)])
+  ).filter(Boolean)
+}
+
+export interface ProductSearchableFields {
+  nm_id?: string | number | null
+  vendor_code?: string | null
+  sa_name?: string | null
+  brand?: string | null
+  category?: string | null
+  barcode?: string | null
+}
+
+export function productMatchesSearch(product: ProductSearchableFields, query: string): boolean {
+  const queryVariants = getProductSearchVariants(query)
+  if (!queryVariants.length) return true
+
+  const searchableValues = [
+    product.nm_id,
+    product.vendor_code,
+    product.sa_name,
+    product.brand,
+    product.category,
+    product.barcode,
+  ]
+
+  const fieldVariants = searchableValues.flatMap(value => getProductSearchVariants(String(value ?? '')))
+  return queryVariants.some(queryVariant =>
+    fieldVariants.some(fieldVariant => fieldVariant.includes(queryVariant))
+  )
+}
+
 // ============================================================================
 // Query Config Constants
 // ============================================================================

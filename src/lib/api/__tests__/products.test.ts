@@ -249,10 +249,7 @@ describe('getProductsWithDimensions', () => {
       await getProductsWithDimensions({ q: 'платье' })
 
       // Query is URL-encoded (Cyrillic becomes %D0%BF%D0%BB%D0%B0%D1%82%D1%8C%D0%B5)
-      expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('q='),
-        expect.any(Object)
-      )
+      expect(apiClient.get).toHaveBeenCalledWith(expect.stringContaining('q='), expect.any(Object))
       // Verify the actual URL includes the encoded query
       const calledUrl = vi.mocked(apiClient.get).mock.calls[0][0]
       expect(calledUrl).toContain('q=%D0%BF%D0%BB%D0%B0%D1%82%D1%8C%D0%B5') // URL-encoded "платье"

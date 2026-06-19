@@ -14,7 +14,9 @@ interface TestFormData {
 }
 
 // Helper to render MarginSlider with form context
-function renderMarginSlider(overrides: { error?: string; min?: number; max?: number; step?: number } = {}) {
+function renderMarginSlider(
+  overrides: { error?: string; min?: number; max?: number; step?: number } = {}
+) {
   function Wrapper() {
     const { control } = useForm<TestFormData>({ defaultValues: { testField: 50 } })
     return (

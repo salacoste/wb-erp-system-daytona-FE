@@ -29,46 +29,40 @@ export interface TariffRateLimitState {
   reset: () => void
 }
 
-export const useTariffRateLimitStore = create<TariffRateLimitState>(
-  (set, get) => ({
-    limit: DEFAULT_LIMIT,
-    remaining: DEFAULT_LIMIT,
-    resetAt: null,
+export const useTariffRateLimitStore = create<TariffRateLimitState>((set, get) => ({
+  limit: DEFAULT_LIMIT,
+  remaining: DEFAULT_LIMIT,
+  resetAt: null,
 
-    updateFromHeaders: (headers: Headers) => {
-      const limitHeader = headers.get('X-RateLimit-Limit')
-      const remainingHeader = headers.get('X-RateLimit-Remaining')
-      const resetHeader = headers.get('X-RateLimit-Reset')
+  updateFromHeaders: (headers: Headers) => {
+    const limitHeader = headers.get('X-RateLimit-Limit')
+    const remainingHeader = headers.get('X-RateLimit-Remaining')
+    const resetHeader = headers.get('X-RateLimit-Reset')
 
-      const limit = limitHeader ? parseInt(limitHeader, 10) : get().limit
-      const remaining = remainingHeader
-        ? parseInt(remainingHeader, 10)
-        : get().remaining
-      const resetAt = resetHeader ? parseInt(resetHeader, 10) * 1000 : null
+    const limit = limitHeader ? parseInt(limitHeader, 10) : get().limit
+    const remaining = remainingHeader ? parseInt(remainingHeader, 10) : get().remaining
+    const resetAt = resetHeader ? parseInt(resetHeader, 10) * 1000 : null
 
-      // Show warning toast when remaining drops to 3 or below (but > 0)
-      const prevRemaining = get().remaining
-      if (remaining <= 3 && remaining > 0 && remaining < prevRemaining) {
-        toast.warning(
-          `Осталось ${remaining} запросов. Лимит сбросится через минуту.`
-        )
-      }
+    // Show warning toast when remaining drops to 3 or below (but > 0)
+    const prevRemaining = get().remaining
+    if (remaining <= 3 && remaining > 0 && remaining < prevRemaining) {
+      toast.warning(`Осталось ${remaining} запросов. Лимит сбросится через минуту.`)
+    }
 
-      set({ limit, remaining, resetAt })
-    },
+    set({ limit, remaining, resetAt })
+  },
 
-    decrementRemaining: () => {
-      set((state) => ({
-        remaining: Math.max(0, state.remaining - 1),
-      }))
-    },
+  decrementRemaining: () => {
+    set(state => ({
+      remaining: Math.max(0, state.remaining - 1),
+    }))
+  },
 
-    reset: () => {
-      set({
-        limit: DEFAULT_LIMIT,
-        remaining: DEFAULT_LIMIT,
-        resetAt: null,
-      })
-    },
-  })
-)
+  reset: () => {
+    set({
+      limit: DEFAULT_LIMIT,
+      remaining: DEFAULT_LIMIT,
+      resetAt: null,
+    })
+  },
+}))

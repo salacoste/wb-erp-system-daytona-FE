@@ -5,7 +5,7 @@
  * Epic 123-FE Story 123.4: consumes GET /v1/ai/forecast-accuracy.
  */
 
-import { Target } from 'lucide-react'
+import { AlertTriangle, Target } from 'lucide-react'
 import { AccuracyMetricsCards } from './AccuracyMetricsCards'
 import { HorizonBreakdownTable } from './HorizonBreakdownTable'
 import { SkuBreakdownTable } from './SkuBreakdownTable'
@@ -13,6 +13,21 @@ import { useForecastAccuracy } from '@/hooks/useForecastAccuracy'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
+const EXTREME_MAPE_THRESHOLD = 1000
+
+function hasExtremeMape(data: {
+  avgMAPE: number | null
+  byHorizon: Array<{ mape: number | null }>
+  bySKU: Array<{ mape: number | null }>
+}): boolean {
+  const values = [
+    data.avgMAPE,
+    ...data.byHorizon.map(row => row.mape),
+    ...data.bySKU.map(row => row.mape),
+  ]
+  return values.some(value => value != null && value >= EXTREME_MAPE_THRESHOLD)
+}
 
 export function ForecastAccuracyPageContent() {
   const { data, isLoading, isError, error } = useForecastAccuracy()
@@ -48,6 +63,18 @@ export function ForecastAccuracyPageContent() {
         avgMAE={data.avgMAE}
         avgBias={data.avgBias}
       />
+
+      {hasExtremeMape(data) && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Очень высокая MAPE</AlertTitle>
+          <AlertDescription>
+            MAPE может становиться тысячами процентов, если фактические продажи близки к нулю или
+            равны нулю. Проверяйте MAE и количество наблюдений рядом с MAPE; значения «—» означают,
+            что MAPE не рассчитана для этого SKU.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

@@ -16,12 +16,15 @@
  */
 
 import { test, expect } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 const SHIPMENTS_ROUTE = '/shipments'
 const TEST_SHIPMENT_NAME = `E2E Lifecycle ${Date.now()}`
 const TEST_DELETE_SHIPMENT_NAME = `E2E Delete ${Date.now()}`
 
-test.describe('Shipment Lifecycle - Epic 77-FE', () => {
+test.describe('Shipment Lifecycle - Epic 77-FE @mutating', () => {
+  test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
   test.describe.serial('Complete Shipment Flow', () => {
     let shipmentId: string | null = null
 

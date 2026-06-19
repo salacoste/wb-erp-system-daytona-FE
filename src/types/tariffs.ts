@@ -55,6 +55,8 @@ export interface AcceptanceCoefficient {
   coefficient: number
   isAvailable: boolean
   allowUnload: boolean
+  hasTariffRates?: boolean
+  tariffDataStatus?: 'complete' | 'missing_rates'
   boxTypeId: number
   boxTypeName: string
   delivery: DeliveryCoefficient

@@ -34,9 +34,7 @@ export function hasValidMargin(product: ProductListItem): boolean {
  * Check if margin calculation is complete for a sample of products
  * Complete when >= 50% of sample products have calculated margin
  */
-export function isMarginCalculationComplete(
-  sampleProducts: ProductListItem[],
-): boolean {
+export function isMarginCalculationComplete(sampleProducts: ProductListItem[]): boolean {
   const withMargin = sampleProducts.filter(hasValidMargin).length
   return withMargin >= sampleProducts.length * MARGIN_COMPLETION_THRESHOLD
 }
@@ -44,9 +42,7 @@ export function isMarginCalculationComplete(
 /**
  * Extract successful item IDs from bulk assignment response (first 10)
  */
-export function extractSampleIds(
-  results: Array<{ success: boolean; nm_id: string }>
-): string[] {
+export function extractSampleIds(results: Array<{ success: boolean; nm_id: string }>): string[] {
   return results
     .filter(r => r.success)
     .slice(0, MAX_SAMPLE_SIZE)

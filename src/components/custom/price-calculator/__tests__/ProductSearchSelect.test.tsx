@@ -64,12 +64,8 @@ describe('ProductSearchSelect', () => {
     it('renders search button with placeholder text', () => {
       render(<ProductSearchSelect {...defaultProps} />, { wrapper: createWrapper() })
 
-      expect(
-        screen.getByRole('combobox', { name: /поиск товара/i })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(/поиск по sku, артикулу или названию/i)
-      ).toBeInTheDocument()
+      expect(screen.getByRole('combobox', { name: /поиск товара/i })).toBeInTheDocument()
+      expect(screen.getByText(/поиск по sku, артикулу или названию/i)).toBeInTheDocument()
     })
 
     it('renders helper text when no product selected', () => {
@@ -88,9 +84,7 @@ describe('ProductSearchSelect', () => {
         { wrapper: createWrapper() }
       )
 
-      expect(
-        screen.queryByText(/или введите данные вручную ниже/i)
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText(/или введите данные вручную ниже/i)).not.toBeInTheDocument()
     })
 
     it('renders tooltip button for help content', () => {
@@ -228,9 +222,7 @@ describe('ProductSearchSelect', () => {
       await userEvent.click(searchButton)
 
       // Don't type anything
-      expect(
-        screen.getByText(/введите минимум 2 символа для поиска/i)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/введите минимум 2 символа для поиска/i)).toBeInTheDocument()
     })
 
     it('shows product results when search returns data', async () => {

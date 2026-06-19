@@ -295,6 +295,7 @@ describe('ModelPerformanceDetail', () => {
     setup({}, { data: { models: [] } })
     render(<ModelPerformanceDetail modelId="model-1" />)
     expect(screen.getByText(/Модель не найдена/)).toBeTruthy()
+    expect(mockUseModelPerformance).toHaveBeenCalledWith('model-1', { enabled: false })
     const link = screen.getByRole('link', { name: /Вернуться к списку моделей/ })
     expect(link).toBeTruthy()
     expect(link.getAttribute('href')).toBe(ROUTES.ANALYTICS.MODELS)
@@ -321,6 +322,7 @@ describe('ModelPerformanceDetail', () => {
   it('happy path: renders CardTitle and model identity', () => {
     setup()
     render(<ModelPerformanceDetail modelId="model-1" />)
+    expect(mockUseModelPerformance).toHaveBeenCalledWith('model-1', { enabled: true })
     expect(screen.getByText('Производительность модели')).toBeTruthy()
     // version
     expect(screen.getByText('v2')).toBeTruthy()

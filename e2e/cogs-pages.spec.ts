@@ -72,7 +72,7 @@ test.describe('COGS Pages', () => {
     await page.goto(ROUTES.cogsHistory, { waitUntil: 'domcontentloaded' })
 
     // Breadcrumb navigation is always rendered
-    await expect(page.getByRole('link', { name: 'COGS' })).toBeVisible({
+    await expect(page.getByRole('link', { name: 'COGS', exact: true })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -90,7 +90,7 @@ test.describe('COGS Pages', () => {
     await page.goto(`${ROUTES.cogsHistory}?nmId=173589742`, { waitUntil: 'domcontentloaded' })
 
     // Breadcrumb navigation
-    await expect(page.getByRole('link', { name: 'COGS' })).toBeVisible({
+    await expect(page.getByRole('link', { name: 'COGS', exact: true })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -104,7 +104,7 @@ test.describe('COGS Pages', () => {
 
   test('COGS history page has correct heading hierarchy', async ({ page }) => {
     await page.goto(`${ROUTES.cogsHistory}?nmId=173589742`, { waitUntil: 'domcontentloaded' })
-    await expect(page.getByRole('link', { name: 'COGS' })).toBeVisible({
+    await expect(page.getByRole('link', { name: 'COGS', exact: true })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -147,7 +147,7 @@ test.describe('COGS Pages', () => {
     await page.goto(ROUTES.cogsHistory, { waitUntil: 'domcontentloaded' })
 
     // Breadcrumb confirms the page mounted correctly
-    await expect(page.getByRole('link', { name: 'COGS' })).toBeVisible({
+    await expect(page.getByRole('link', { name: 'COGS', exact: true })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
     expect(page.url()).toContain('/cogs/history')

@@ -46,8 +46,8 @@ export function SaveConfirmDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Сохранить изменения тарифов?</AlertDialogTitle>
           <AlertDialogDescription>
-            Новые тарифы вступят в силу немедленно и будут применяться ко всем
-            последующим расчётам. Это действие будет записано в журнал изменений.
+            Новые тарифы вступят в силу немедленно и будут применяться ко всем последующим расчётам.
+            Это действие будет записано в журнал изменений.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

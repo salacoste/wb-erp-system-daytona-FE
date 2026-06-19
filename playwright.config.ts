@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 import dotenv from 'dotenv'
+import { shouldSkipMutatingE2E } from './e2e/fixtures/mutation-guard'
 
 // Load E2E environment variables
 dotenv.config({ path: '.env.e2e' })
@@ -17,6 +18,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
+  grepInvert: shouldSkipMutatingE2E() ? /@mutating/ : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
     baseURL: process.env.E2E_BASE_URL || 'http://localhost:3100',

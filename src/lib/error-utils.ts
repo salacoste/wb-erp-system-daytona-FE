@@ -29,11 +29,7 @@ export function checkWbTokenError(error: unknown): boolean {
       if (errorObj) {
         const errorMessage = errorObj.message as string | undefined
         const errorCode = errorObj.code as string | undefined
-        if (
-          errorCode === 'UNAUTHORIZED' &&
-          errorMessage &&
-          errorMessage.includes('WB API token')
-        ) {
+        if (errorCode === 'UNAUTHORIZED' && errorMessage && errorMessage.includes('WB API token')) {
           return true
         }
       }
@@ -42,4 +38,3 @@ export function checkWbTokenError(error: unknown): boolean {
 
   return false
 }
-

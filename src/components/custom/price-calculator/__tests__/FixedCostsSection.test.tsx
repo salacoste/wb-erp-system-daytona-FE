@@ -6,9 +6,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { useForm } from 'react-hook-form'
-import { FixedCostsSection } from '../FixedCostsSection'
+import { FixedCostsSection, type FixedCostsSectionProps } from '../FixedCostsSection'
 import type { FulfillmentType } from '@/types/price-calculator'
 
 // Test form data interface
@@ -22,7 +22,8 @@ interface TestFormData {
 // Helper to render FixedCostsSection with form context
 function renderFixedCostsSection(
   fulfillmentType: FulfillmentType = 'FBO',
-  disabled = false
+  disabled = false,
+  props: Partial<FixedCostsSectionProps<TestFormData>> = {}
 ) {
   function Wrapper() {
     const {
@@ -43,6 +44,7 @@ function renderFixedCostsSection(
         errors={errors}
         disabled={disabled}
         fulfillmentType={fulfillmentType}
+        {...props}
       />
     )
   }
@@ -59,9 +61,7 @@ describe('FixedCostsSection', () => {
     it('should render section header with Russian text', () => {
       renderFixedCostsSection()
 
-      expect(
-        screen.getByText('Фиксированные затраты (₽)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Фиксированные затраты (₽)')).toBeInTheDocument()
     })
 
     it('should render COGS input with Russian label', () => {
@@ -138,6 +138,29 @@ describe('FixedCostsSection', () => {
 
       const cogsInput = screen.getByLabelText(/себестоимость/i)
       expect(cogsInput).toHaveAttribute('placeholder', '0,00')
+    })
+
+    it('should keep manual logistics input visible when auto-fill display value is present', () => {
+      const onLogisticsForwardChange = vi.fn()
+      const onLogisticsReverseChange = vi.fn()
+
+      renderFixedCostsSection('FBO', false, {
+        logisticsForwardValue: 0,
+        onLogisticsForwardChange,
+        logisticsReverseValue: 0,
+        onLogisticsReverseChange,
+      })
+
+      const logisticsForwardInput = screen.getByLabelText('Логистика к клиенту')
+      const logisticsReverseInput = screen.getByLabelText('Логистика возврата')
+
+      fireEvent.change(logisticsForwardInput, { target: { value: '150' } })
+      fireEvent.change(logisticsReverseInput, { target: { value: '200' } })
+
+      expect(logisticsForwardInput).toHaveValue(150)
+      expect(logisticsReverseInput).toHaveValue(200)
+      expect(onLogisticsForwardChange).toHaveBeenLastCalledWith(150)
+      expect(onLogisticsReverseChange).toHaveBeenLastCalledWith(200)
     })
   })
 

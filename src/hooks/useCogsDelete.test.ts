@@ -9,16 +9,10 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import {
-  analyzeVersionChain,
-  formatDateForDelete,
-  formatCurrencyForDelete,
-} from './useCogsDelete'
+import { analyzeVersionChain, formatDateForDelete, formatCurrencyForDelete } from './useCogsDelete'
 import type { CogsHistoryItem } from '@/types/cogs'
 
-const createMockItem = (
-  overrides: Partial<CogsHistoryItem> = {}
-): CogsHistoryItem => ({
+const createMockItem = (overrides: Partial<CogsHistoryItem> = {}): CogsHistoryItem => ({
   cogs_id: 'cogs-1',
   nm_id: '12345678',
   unit_cost_rub: 100,

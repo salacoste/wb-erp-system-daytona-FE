@@ -13,10 +13,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import {
-  calculateDailyStorageCost,
-  type StorageTariff,
-} from '../storage-cost-utils'
+import { calculateDailyStorageCost, type StorageTariff } from '../storage-cost-utils'
 import type { BoxTypeId } from '../box-type-utils'
 
 // ============================================================================

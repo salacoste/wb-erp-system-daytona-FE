@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useFbsEnhanced } from '@/hooks/use-fbs-enhanced'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 import { FbsOrderStatsSection } from './FbsOrderStatsSection'
 import { FbsStockAnalyticsSection } from './FbsStockAnalyticsSection'
 import { FbsRegionalDataSection } from './FbsRegionalDataSection'
@@ -55,6 +56,7 @@ export function FbsEnhancedPageContent() {
 
   const hasData = data != null
   const showSkeleton = isLoading && !hasData
+  const showSlowLoading = useDelayedLoadingState(showSkeleton)
   const showFullError = isError && !isLoading && !hasData
 
   return (
@@ -77,7 +79,7 @@ export function FbsEnhancedPageContent() {
       />
 
       {/* Page-level state machine */}
-      {showSkeleton ? (
+      {showSkeleton && !showSlowLoading ? (
         <div className="space-y-4" role="status" aria-busy="true" aria-label="Загрузка данных">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-32 w-full" />
@@ -85,6 +87,24 @@ export function FbsEnhancedPageContent() {
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-48 w-full" />
         </div>
+      ) : showSkeleton && showSlowLoading ? (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>
+              Данные FBS загружаются дольше обычного. Можно подождать или повторить запрос.
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-4 shrink-0"
+              onClick={() => void refetch()}
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
       ) : showFullError ? (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />

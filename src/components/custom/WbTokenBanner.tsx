@@ -51,9 +51,7 @@ export function WbTokenBanner() {
 
   // Check if wb_api_token exists in keys array (API uses 'cabinetKeys' field)
   const keys = data?.cabinetKeys || data?.keys || []
-  const hasWbToken = keys.some(
-    (key) => key.keyName === 'wb_api_token'
-  )
+  const hasWbToken = keys.some(key => key.keyName === 'wb_api_token')
 
   // Don't show banner if token exists
   if (hasWbToken) return null
@@ -65,11 +63,15 @@ export function WbTokenBanner() {
         <div className="flex-1">
           <h4 className="font-semibold text-amber-800">WB API токен не настроен</h4>
           <p className="text-sm text-amber-700 mt-1">
-            Для получения данных о товарах необходимо настроить WB API токен.
-            Перейдите в настройки кабинета для ввода токена.
+            Для получения данных о товарах необходимо настроить WB API токен. Перейдите в настройки
+            кабинета для ввода токена.
           </p>
           <Link href={ROUTES.ONBOARDING.WB_TOKEN}>
-            <Button variant="outline" size="sm" className="mt-3 border-amber-400 text-amber-800 hover:bg-amber-100">
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3 border-amber-400 text-amber-800 hover:bg-amber-100"
+            >
               Перейти в настройки
             </Button>
           </Link>

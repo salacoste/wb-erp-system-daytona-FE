@@ -376,10 +376,12 @@ describe('Dimension Edit Detection', () => {
    */
   function handleDimensionChange(
     currentSource: AutoFillSource,
-    setDimensionsAutoFill: (updater: (prev: DimensionAutoFillState) => DimensionAutoFillState) => void
+    setDimensionsAutoFill: (
+      updater: (prev: DimensionAutoFillState) => DimensionAutoFillState
+    ) => void
   ) {
     if (currentSource === 'auto') {
-      setDimensionsAutoFill((prev) => ({ ...prev, status: 'modified' }))
+      setDimensionsAutoFill(prev => ({ ...prev, status: 'modified' }))
     }
   }
 
@@ -420,14 +422,16 @@ describe('Restore Functionality', () => {
   function handleRestoreDimensions(
     originalValues: DimensionAutoFillState['originalValues'],
     setValue: (field: string, value: number) => void,
-    setDimensionsAutoFill: (updater: (prev: DimensionAutoFillState) => DimensionAutoFillState) => void
+    setDimensionsAutoFill: (
+      updater: (prev: DimensionAutoFillState) => DimensionAutoFillState
+    ) => void
   ) {
     if (originalValues) {
       setValue('length_cm', originalValues.length_cm)
       setValue('width_cm', originalValues.width_cm)
       setValue('height_cm', originalValues.height_cm)
       setValue('volume_liters', originalValues.volume_liters)
-      setDimensionsAutoFill((prev) => ({ ...prev, status: 'auto' }))
+      setDimensionsAutoFill(prev => ({ ...prev, status: 'auto' }))
     }
   }
 

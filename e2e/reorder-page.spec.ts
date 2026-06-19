@@ -202,14 +202,16 @@ test.describe('Reorder Dashboard page', () => {
     // Select "Заказано" option
     const orderedOption = page.getByRole('option', { name: 'Заказано' })
     await expect(orderedOption).toBeVisible({ timeout: TIMEOUTS.api })
-    await orderedOption.click()
-
-    // After selecting "ordered" filter, a new request with status=ordered should fire
-    const filteredResponse = await page.waitForResponse(
-      resp =>
-        resp.url().includes('reorder-recommendations') && resp.url().includes('status=ordered'),
-      { timeout: TIMEOUTS.api }
-    )
+    // After selecting "ordered" filter, a new request with status=ordered should fire.
+    // Start waiting before the click so the assertion cannot miss a fast mocked response.
+    const [filteredResponse] = await Promise.all([
+      page.waitForResponse(
+        resp =>
+          resp.url().includes('reorder-recommendations') && resp.url().includes('status=ordered'),
+        { timeout: TIMEOUTS.api }
+      ),
+      orderedOption.click(),
+    ])
     expect(filteredResponse.status()).toBe(200)
   })
 

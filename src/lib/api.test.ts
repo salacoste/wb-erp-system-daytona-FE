@@ -68,17 +68,14 @@ describe('createCabinet', () => {
 
     const result = await createCabinet({ name: 'Test Cabinet' }, 'jwt-token')
 
-    expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:3000/api/v1/cabinets',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer jwt-token',
-        },
-        body: JSON.stringify({ name: 'Test Cabinet' }),
+    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/v1/cabinets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer jwt-token',
       },
-    )
+      body: JSON.stringify({ name: 'Test Cabinet' }),
+    })
 
     expect(result).toEqual(mockResponse)
     expect(result.newToken).toBe('new-jwt-token-with-updated-cabinet-ids')
@@ -92,9 +89,7 @@ describe('createCabinet', () => {
       json: async () => ({ message: 'Validation error' }),
     })
 
-    await expect(
-      createCabinet({ name: '' }, 'jwt-token'),
-    ).rejects.toThrow('Validation error')
+    await expect(createCabinet({ name: '' }, 'jwt-token')).rejects.toThrow('Validation error')
   })
 })
 
@@ -144,7 +139,7 @@ describe('updateWbToken', () => {
           'X-Cabinet-Id': cabinetId, // ⚠️ ОБЯЗАТЕЛЬНО!
         },
         body: JSON.stringify({ token: newToken }),
-      },
+      }
     )
 
     expect(result).toEqual(mockResponse)
@@ -170,9 +165,9 @@ describe('updateWbToken', () => {
       json: async () => mockError,
     })
 
-    await expect(
-      updateWbToken(cabinetId, keyName, 'invalid-token', jwtToken),
-    ).rejects.toThrow('Get a new token from https://seller.wildberries.ru/')
+    await expect(updateWbToken(cabinetId, keyName, 'invalid-token', jwtToken)).rejects.toThrow(
+      'Get a new token from https://seller.wildberries.ru/'
+    )
   })
 
   it('throws error for missing X-Cabinet-Id header', async () => {
@@ -186,9 +181,7 @@ describe('updateWbToken', () => {
       }),
     })
 
-    await expect(
-      updateWbToken(cabinetId, keyName, newToken, jwtToken),
-    ).rejects.toThrow()
+    await expect(updateWbToken(cabinetId, keyName, newToken, jwtToken)).rejects.toThrow()
   })
 
   it('throws error for insufficient permissions', async () => {
@@ -201,9 +194,9 @@ describe('updateWbToken', () => {
       }),
     })
 
-    await expect(
-      updateWbToken(cabinetId, keyName, newToken, jwtToken),
-    ).rejects.toThrow('Insufficient permissions')
+    await expect(updateWbToken(cabinetId, keyName, newToken, jwtToken)).rejects.toThrow(
+      'Insufficient permissions'
+    )
   })
 
   it('throws error for not found', async () => {
@@ -216,8 +209,8 @@ describe('updateWbToken', () => {
       }),
     })
 
-    await expect(
-      updateWbToken(cabinetId, keyName, newToken, jwtToken),
-    ).rejects.toThrow('Cabinet or key not found')
+    await expect(updateWbToken(cabinetId, keyName, newToken, jwtToken)).rejects.toThrow(
+      'Cabinet or key not found'
+    )
   })
 })

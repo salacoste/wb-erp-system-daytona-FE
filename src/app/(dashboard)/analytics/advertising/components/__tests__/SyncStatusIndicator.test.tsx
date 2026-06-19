@@ -38,9 +38,7 @@ function createTestQueryClient() {
 
 function renderWithProviders(ui: React.ReactElement) {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 describe('SyncStatusIndicator', () => {
@@ -58,7 +56,7 @@ describe('SyncStatusIndicator', () => {
       // Delay the response to keep loading state
       server.use(
         http.get(`${API_BASE_URL}/v1/analytics/advertising/sync-status`, async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000))
+          await new Promise(resolve => setTimeout(resolve, 1000))
           return HttpResponse.json({})
         })
       )

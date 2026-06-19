@@ -60,7 +60,7 @@ export function parseWarehouse(raw: RawWarehouse): Warehouse {
  * @returns Array of parsed warehouses (valid entries only)
  */
 export function parseWarehouses(raw: RawWarehouse[]): Warehouse[] {
-  return raw.map(parseWarehouse).filter((w) => w.id > 0)
+  return raw.map(parseWarehouse).filter(w => w.id > 0)
 }
 
 /**
@@ -71,20 +71,13 @@ export function parseWarehouses(raw: RawWarehouse[]): Warehouse[] {
  * @param query - Search query string
  * @returns Filtered array of warehouses (excludes invalid entries)
  */
-export function filterWarehouses(
-  warehouses: Warehouse[],
-  query: string,
-): Warehouse[] {
+export function filterWarehouses(warehouses: Warehouse[], query: string): Warehouse[] {
   // Filter out invalid warehouses first (safety check)
-  const validWarehouses = warehouses.filter(
-    (w) => w && typeof w.id === 'number' && w.id > 0,
-  )
+  const validWarehouses = warehouses.filter(w => w && typeof w.id === 'number' && w.id > 0)
   if (!query.trim()) return validWarehouses
   const lowerQuery = query.toLowerCase().trim()
   return validWarehouses.filter(
-    (w) =>
-      w.name.toLowerCase().includes(lowerQuery) ||
-      w.id.toString().includes(query.trim()),
+    w => w.name.toLowerCase().includes(lowerQuery) || w.id.toString().includes(query.trim())
   )
 }
 
