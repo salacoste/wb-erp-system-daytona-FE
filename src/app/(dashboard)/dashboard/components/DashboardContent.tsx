@@ -88,7 +88,6 @@ export function DashboardContent(): React.ReactElement {
           loyaltyFee={d.summary?.loyalty_fee_total}
           penaltiesTotal={d.summary?.penalties_total}
           wbCommissionAdj={d.summary?.wb_commission_adj_total}
-          wbServicesCost={undefined}
           logisticsCost={d.summary?.logistics_cost_total}
           logisticsBreakdown={d.logisticsBreakdown}
           payoutTotal={d.summary?.payout_total}

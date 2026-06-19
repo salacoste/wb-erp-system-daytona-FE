@@ -1,5 +1,5 @@
 /**
- * Tests for OtherDeductionsCard — "Прочие удержания"
+ * Tests for OtherDeductionsCard — "Прочие удержания (WB сервисы)"
  * Shows Jam + other WB services (excl. promotion) with ₽/% format.
  */
 
@@ -24,7 +24,7 @@ describe('OtherDeductionsCard', () => {
       expect(screen.getByText(/₽/)).toBeInTheDocument()
     })
 
-    it('displays card title as "Прочие удержания"', () => {
+    it('displays card title as "Прочие удержания (WB сервисы)"', () => {
       renderWithProviders(
         <OtherDeductionsCard
           jamCost={500}
@@ -34,7 +34,10 @@ describe('OtherDeductionsCard', () => {
         />
       )
 
-      expect(screen.getByText('Прочие удержания')).toBeInTheDocument()
+      expect(screen.getByText('Прочие удержания (WB сервисы)')).toBeInTheDocument()
+      expect(
+        screen.getByRole('article', { name: /Прочие удержания \(WB сервисы\)/ })
+      ).toBeInTheDocument()
     })
   })
 

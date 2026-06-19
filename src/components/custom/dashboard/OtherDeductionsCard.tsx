@@ -1,5 +1,5 @@
 /**
- * Other Deductions Card — "Прочие удержания"
+ * Other Deductions Card — "Прочие удержания (WB сервисы)"
  * Shows Jam subscription + other WB services (excl. promotion).
  * Value ₽ / % format with breakdown tooltip.
  */
@@ -13,6 +13,10 @@ import { cn, formatCurrency } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { StandardMetricSkeleton, MetricCardError } from './MetricCardStates'
+import {
+  DASHBOARD_WB_DEDUCTIONS_COPY,
+  WB_OTHER_DEDUCTIONS_TOOLTIP,
+} from './dashboardWbDeductionsCopy'
 
 export interface OtherDeductionsCardProps {
   jamCost: number | null | undefined
@@ -39,7 +43,7 @@ export function OtherDeductionsCard({
   if (error) {
     return (
       <MetricCardError
-        title="Прочие удержания"
+        title={DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle}
         icon={FileText}
         error={error}
         onRetry={onRetry}
@@ -73,26 +77,28 @@ export function OtherDeductionsCard({
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
       data-testid="metric-card"
-      aria-label={`Прочие удержания: ${total != null ? formatCurrency(total) : 'нет данных'}`}
+      aria-label={`${DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle}: ${total != null ? formatCurrency(total) : 'нет данных'}`}
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-red-500" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Прочие удержания</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              {DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle}
+            </span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Подробнее о прочих удержаниях"
+                aria-label={DASHBOARD_WB_DEDUCTIONS_COPY.servicesDetailsAriaLabel}
               >
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent size="lg">
               <p style={{ whiteSpace: 'pre-line' }}>
-                {`Затраты, связанные с подпиской «Джем», транзитом и пр. и соотношение данных затрат к реализации (продажи без учета СПП и ВБ кошелька для ВБ и Соинвеста для Ozon).\nИсточник: еженедельный финансовый отчёт WB.${breakdown}`}
+                {`${WB_OTHER_DEDUCTIONS_TOOLTIP}${breakdown}`}
               </p>
             </TooltipContent>
           </Tooltip>
