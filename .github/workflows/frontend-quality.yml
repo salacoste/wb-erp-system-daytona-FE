@@ -33,7 +33,9 @@ jobs:
     name: Quality Gates
     runs-on: self-hosted
     # Full Vitest suite can exceed 30 min on the 2 vCPU self-hosted runner.
-    timeout-minutes: 45
+    # The self-hosted runner can also spend 20+ minutes in the runner/host lock
+    # before test execution starts, so keep the job timeout above test runtime.
+    timeout-minutes: 90
 
     env:
       NODE_ENV: test
