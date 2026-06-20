@@ -71,7 +71,7 @@ const createWrapper = () => {
 }
 
 const defaultProps = {
-  data: mockData.filter((d) => d.is_active),
+  data: mockData.filter(d => d.is_active),
   includeDeleted: false,
   onIncludeDeletedChange: () => {},
   userRole: 'manager' as const,

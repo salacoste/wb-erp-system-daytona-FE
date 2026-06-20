@@ -38,12 +38,7 @@ export function CommissionRatesSection({
   onToggle,
 }: CommissionRatesSectionProps) {
   return (
-    <TariffSectionWrapper
-      title="Комиссии"
-      icon={Percent}
-      isOpen={isOpen}
-      onToggle={onToggle}
-    >
+    <TariffSectionWrapper title="Комиссии" icon={Percent} isOpen={isOpen} onToggle={onToggle}>
       <div className="grid gap-4 sm:grid-cols-2">
         <TariffFieldInput
           label="Комиссия FBO"

@@ -39,7 +39,7 @@ test.describe('Storage Analytics', () => {
 
   test('date/period filter controls present', async ({ page }) => {
     // StorageFilters renders week-range inputs and brand/warehouse comboboxes
-    const input = page.locator('input[type="text"], input[type="date"]').first()
+    const input = page.locator('input[type="text"], input[type="date"], input[type="week"]').first()
     const combobox = page.locator('button[role="combobox"]').first()
 
     const hasInput = await input.isVisible().catch(() => false)

@@ -33,7 +33,6 @@ export function renderDetailCards(
             loyaltyFee={p.loyaltyFee}
             penaltiesTotal={p.penaltiesTotal}
             wbCommissionAdj={p.wbCommissionAdj}
-            wbServicesCost={undefined}
             previousTotal={prev?.wbCommissionsTotal}
             saleGross={p.saleGross}
             isLoading={false}

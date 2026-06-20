@@ -402,8 +402,8 @@ test.describe('Dashboard Period Switching', () => {
     test('period selector has proper ARIA attributes', async ({ page }) => {
       await page.waitForSelector(PERIOD_SELECTORS.periodToggle)
 
-      // Tabs should have proper role
-      const tabsList = page.locator('[role="tablist"]')
+      // Scope to the period toggle: the page also contains comparison-mode tablists.
+      const tabsList = page.locator(PERIOD_SELECTORS.periodToggle).locator('[role="tablist"]')
       await expect(tabsList).toBeVisible()
 
       // Week tab should have tab role

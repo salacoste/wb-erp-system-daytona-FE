@@ -8,7 +8,7 @@
  * Header extracted to EvaluationsHeaderCard.tsx (Story 112.4-FE, A-5).
  */
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAiModels } from '@/hooks/useAiModels'
@@ -25,6 +25,15 @@ interface EvaluationsListProps {
   modelId: string
 }
 
+function EvaluationsPageShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="space-y-6 p-6">
+      <h1 className="text-2xl font-bold tracking-tight">Оценки точности модели</h1>
+      {children}
+    </div>
+  )
+}
+
 export function EvaluationsList({ modelId }: EvaluationsListProps) {
   const router = useRouter()
   const [sortCol, setSortCol] = useState<SortColumn>('mapeUnits')
@@ -37,45 +46,47 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
     error: modelsListError,
   } = useAiModels()
 
+  const model = modelsData?.models?.find(m => m.id === modelId)
+  const canFetchEvaluations = !modelsLoading && !modelsError && !!model
+
   const {
     data: evalData,
     isLoading: evalLoading,
     isError: evalError,
     error: evalErr,
-  } = useAiEvaluations(modelId)
+  } = useAiEvaluations(modelId, { enabled: canFetchEvaluations })
 
-  const isLoading = modelsLoading || evalLoading
+  const isLoading = modelsLoading || (canFetchEvaluations && evalLoading)
 
   // State-precedence chain (Story 109.5 post-2nd-pass F-17):
   // loading → list-error → model-not-found → evaluations-error → happy.
   if (isLoading) {
     return (
-      <div className="space-y-6 p-6" data-testid="evaluations-skeleton">
-        <Skeleton className="h-8 w-64" data-testid="evaluations-skeleton-header" />
-        <Skeleton className="h-32 w-full" data-testid="evaluations-skeleton-summary" />
-        <Skeleton className="h-64 w-full" data-testid="evaluations-skeleton-table" />
-      </div>
+      <EvaluationsPageShell>
+        <div className="space-y-6" data-testid="evaluations-skeleton">
+          <Skeleton className="h-32 w-full" data-testid="evaluations-skeleton-summary" />
+          <Skeleton className="h-64 w-full" data-testid="evaluations-skeleton-table" />
+        </div>
+      </EvaluationsPageShell>
     )
   }
 
   if (modelsError) {
     return (
-      <div className="p-6">
+      <EvaluationsPageShell>
         <Alert variant="destructive">
           <AlertDescription>
             Ошибка загрузки списка моделей
             {modelsListError?.message ? `: ${modelsListError.message}` : ''}
           </AlertDescription>
         </Alert>
-      </div>
+      </EvaluationsPageShell>
     )
   }
 
-  const model = modelsData?.models?.find(m => m.id === modelId)
-
   if (!model) {
     return (
-      <div className="p-6">
+      <EvaluationsPageShell>
         <Alert>
           <AlertDescription>
             Модель не найдена. Возможно, она была удалена или ещё не загружена.{' '}
@@ -84,20 +95,20 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
             </Link>
           </AlertDescription>
         </Alert>
-      </div>
+      </EvaluationsPageShell>
     )
   }
 
   if (evalError) {
     return (
-      <div className="p-6">
+      <EvaluationsPageShell>
         <Alert variant="destructive">
           <AlertDescription>
             Ошибка загрузки оценок модели
             {evalErr?.message ? `: ${evalErr.message}` : ''}
           </AlertDescription>
         </Alert>
-      </div>
+      </EvaluationsPageShell>
     )
   }
 
@@ -118,7 +129,7 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <EvaluationsPageShell>
       <EvaluationsHeaderCard model={model} data={evalData} modelId={modelId} />
 
       {evaluations.length === 0 ? (
@@ -142,6 +153,6 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
           </CardContent>
         </Card>
       )}
-    </div>
+    </EvaluationsPageShell>
   )
 }

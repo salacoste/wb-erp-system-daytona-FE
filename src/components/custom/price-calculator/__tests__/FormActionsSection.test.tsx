@@ -20,12 +20,7 @@ describe('FormActionsSection', () => {
   describe('Rendering', () => {
     it('should render reset button with Russian text', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       expect(screen.getByText('Сбросить')).toBeInTheDocument()
@@ -33,12 +28,7 @@ describe('FormActionsSection', () => {
 
     it('should render submit button with Russian text', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       expect(screen.getByText('Рассчитать цену')).toBeInTheDocument()
@@ -46,12 +36,7 @@ describe('FormActionsSection', () => {
 
     it('should render calculator icon', () => {
       const { container } = render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const icon = container.querySelector('.lucide-calculator')
@@ -60,12 +45,7 @@ describe('FormActionsSection', () => {
 
     it('should render rotate icon on reset button', () => {
       const { container } = render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const icon = container.querySelector('.lucide-rotate-ccw')
@@ -76,12 +56,7 @@ describe('FormActionsSection', () => {
   describe('Loading State', () => {
     it('should show loading text when loading', () => {
       render(
-        <FormActionsSection
-          loading={true}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={true} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       // Loading text appears in both loading indicator and submit button
@@ -91,12 +66,7 @@ describe('FormActionsSection', () => {
 
     it('should show loading spinner when loading', () => {
       const { container } = render(
-        <FormActionsSection
-          loading={true}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={true} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       // Loader2 renders as lucide-loader-circle in DOM
@@ -106,12 +76,7 @@ describe('FormActionsSection', () => {
 
     it('should disable submit button when loading', () => {
       render(
-        <FormActionsSection
-          loading={true}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={true} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const submitButton = screen.getByRole('button', { name: /расчёт/i })
@@ -120,12 +85,7 @@ describe('FormActionsSection', () => {
 
     it('should disable reset button when loading', () => {
       render(
-        <FormActionsSection
-          loading={true}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={true} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
@@ -136,12 +96,7 @@ describe('FormActionsSection', () => {
   describe('Disabled State', () => {
     it('should disable all buttons when disabled prop is true', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={true}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={true} isValid={true} onReset={mockOnReset} />
       )
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
@@ -169,12 +124,7 @@ describe('FormActionsSection', () => {
 
     it('should enable submit button when form is valid', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const submitButton = screen.getByRole('button', { name: /рассчитать/i })
@@ -186,12 +136,7 @@ describe('FormActionsSection', () => {
     it('should call onReset when reset button is clicked', async () => {
       const user = userEvent.setup()
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
@@ -202,12 +147,7 @@ describe('FormActionsSection', () => {
 
     it('should have type="button" on reset button', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
@@ -216,12 +156,7 @@ describe('FormActionsSection', () => {
 
     it('should have type="submit" on submit button', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const submitButton = screen.getByRole('button', { name: /рассчитать/i })
@@ -232,12 +167,7 @@ describe('FormActionsSection', () => {
   describe('Keyboard Shortcuts Hints', () => {
     it('should have Esc hint on reset button', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const resetButton = screen.getByRole('button', { name: /сбросить/i })
@@ -246,12 +176,7 @@ describe('FormActionsSection', () => {
 
     it('should have Enter hint on submit button', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const submitButton = screen.getByRole('button', { name: /рассчитать/i })
@@ -262,12 +187,7 @@ describe('FormActionsSection', () => {
   describe('Button Variants', () => {
     it('should have outline variant on reset button', () => {
       render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       // Reset button should have outline variant classes
@@ -277,12 +197,7 @@ describe('FormActionsSection', () => {
 
     it('should have gradient styling on submit button', () => {
       const { container } = render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const submitButton = container.querySelector('.bg-gradient-to-r')
@@ -293,12 +208,7 @@ describe('FormActionsSection', () => {
   describe('Accessibility', () => {
     it('should have hidden icons for screen readers', () => {
       const { container } = render(
-        <FormActionsSection
-          loading={false}
-          disabled={false}
-          isValid={true}
-          onReset={mockOnReset}
-        />
+        <FormActionsSection loading={false} disabled={false} isValid={true} onReset={mockOnReset} />
       )
 
       const hiddenIcons = container.querySelectorAll('[aria-hidden="true"]')

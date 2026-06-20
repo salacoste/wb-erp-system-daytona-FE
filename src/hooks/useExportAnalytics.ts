@@ -53,7 +53,7 @@ export function useExportAnalytics() {
       }
       return apiClient.post<ExportCreateResponse>('/v1/exports/analytics', apiRequest)
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       setExportId(response.export_id)
       pollingStartRef.current = Date.now()
       setIsTimedOut(false)
@@ -72,7 +72,7 @@ export function useExportAnalytics() {
       return apiClient.get<ExportStatus>(`/v1/exports/${exportId}`)
     },
     enabled: !!exportId && !isTimedOut,
-    refetchInterval: (query) => {
+    refetchInterval: query => {
       const status = query.state.data
       if (!shouldContinuePolling(status)) return false
       return POLLING_INTERVAL_MS
@@ -111,7 +111,7 @@ export function useExportAnalytics() {
 
   const effectiveStatus: ExportStatus | null = isTimedOut
     ? buildTimeoutStatus(exportId || '')
-    : statusQuery.data ?? null
+    : (statusQuery.data ?? null)
 
   return {
     createExport: createMutation.mutate,

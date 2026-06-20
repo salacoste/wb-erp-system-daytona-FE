@@ -56,10 +56,7 @@ function pluralize(count: number, one: string, few: string, many: string): strin
  * - Links to filtered view with status=loss
  * - Accessible with role="alert" and proper ARIA labels (AC5)
  */
-export function EfficiencyAlertBanner({
-  lossCount,
-  currentParams,
-}: EfficiencyAlertBannerProps) {
+export function EfficiencyAlertBanner({ lossCount, currentParams }: EfficiencyAlertBannerProps) {
   // Track if component is mounted (for SSR safety)
   const [isMounted, setIsMounted] = useState(false)
   // Track dismissed state locally to trigger re-renders
@@ -104,11 +101,7 @@ export function EfficiencyAlertBanner({
   }
 
   return (
-    <Alert
-      variant="destructive"
-      role="alert"
-      className="relative pr-12"
-    >
+    <Alert variant="destructive" role="alert" className="relative pr-12">
       <XCircle className="h-4 w-4" aria-hidden="true" />
       <AlertTitle>Убыточные кампании</AlertTitle>
       <AlertDescription className="mt-1">
@@ -116,10 +109,7 @@ export function EfficiencyAlertBanner({
           {lossCount} {pluralize(lossCount, 'товар', 'товара', 'товаров')} с отрицательной
           эффективностью рекламы (ROAS &lt; 1.0).
         </span>
-        <Link
-          href={buildFilterUrl()}
-          className="ml-2 underline hover:no-underline font-medium"
-        >
+        <Link href={buildFilterUrl()} className="ml-2 underline hover:no-underline font-medium">
           Показать
         </Link>
       </AlertDescription>

@@ -38,7 +38,6 @@ function createMinimalGridProps() {
     loyaltyFee: 200,
     penaltiesTotal: 100,
     wbCommissionAdj: 50,
-    wbServicesCost: 150,
     logisticsCost: 8000,
     payoutTotal: 40000,
     storageCost: 2000,

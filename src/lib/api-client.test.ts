@@ -53,49 +53,49 @@ describe('ApiClient', () => {
     it(
       'includes Authorization header when token is available',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ data: { id: '1' } }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ data: { id: '1' } }),
+        })
 
-      await apiClient.get('/v1/test')
+        await apiClient.get('/v1/test')
 
-      expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/test',
-        expect.objectContaining({
-          method: 'GET',
-          headers: expect.objectContaining({
-            Authorization: 'Bearer test-jwt-token',
-            'X-Cabinet-Id': 'test-cabinet-id',
-          }),
-        }),
-      )
-    },
-      { timeout: 5000 },
+        expect(fetch).toHaveBeenCalledWith(
+          'http://localhost:3000/api/v1/test',
+          expect.objectContaining({
+            method: 'GET',
+            headers: expect.objectContaining({
+              Authorization: 'Bearer test-jwt-token',
+              'X-Cabinet-Id': 'test-cabinet-id',
+            }),
+          })
+        )
+      },
+      { timeout: 5000 }
     )
 
     it(
       'skips auth headers when skipAuth is true',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ data: {} }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ data: {} }),
+        })
 
-      await apiClient.get('/v1/auth/public', { skipAuth: true })
+        await apiClient.get('/v1/auth/public', { skipAuth: true })
 
-      expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/auth/public',
-        expect.objectContaining({
-          headers: expect.not.objectContaining({
-            Authorization: expect.anything(),
-          }),
-        }),
-      )
-    },
-      { timeout: 5000 },
+        expect(fetch).toHaveBeenCalledWith(
+          'http://localhost:3000/api/v1/auth/public',
+          expect.objectContaining({
+            headers: expect.not.objectContaining({
+              Authorization: expect.anything(),
+            }),
+          })
+        )
+      },
+      { timeout: 5000 }
     )
   })
 
@@ -123,10 +123,10 @@ describe('ApiClient', () => {
               Authorization: 'Bearer test-jwt-token',
               'X-Cabinet-Id': 'test-cabinet-id',
             }),
-          }),
+          })
         )
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     )
   })
 
@@ -162,7 +162,7 @@ describe('ApiClient', () => {
           expect((error as ApiError).message).toBe('Validation error')
         }
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     )
 
     it(
@@ -178,22 +178,18 @@ describe('ApiClient', () => {
 
         await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     )
 
     it(
       'handles network errors',
       async () => {
-        mockFetch.mockRejectedValueOnce(
-          new Error('Network error'),
-        )
+        mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
         await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
 
         // Verify error details in separate call
-        mockFetch.mockRejectedValueOnce(
-          new Error('Network error'),
-        )
+        mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
         try {
           await apiClient.get('/v1/test')
@@ -203,7 +199,7 @@ describe('ApiClient', () => {
           expect((error as ApiError).status).toBe(0)
         }
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     )
   })
 
@@ -217,47 +213,43 @@ describe('ApiClient', () => {
           json: async () => ({ data: { id: '1', name: 'Test' } }),
         })
 
-        const result = await apiClient.get<{ id: string; name: string }>(
-          '/v1/test',
-        )
+        const result = await apiClient.get<{ id: string; name: string }>('/v1/test')
 
         expect(result).toEqual({ id: '1', name: 'Test' })
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     )
 
     it(
       'handles direct response T',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ id: '1', name: 'Test' }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ id: '1', name: 'Test' }),
+        })
 
-      const result = await apiClient.get<{ id: string; name: string }>(
-        '/v1/test',
-      )
+        const result = await apiClient.get<{ id: string; name: string }>('/v1/test')
 
-      expect(result).toEqual({ id: '1', name: 'Test' })
-    },
-      { timeout: 5000 },
+        expect(result).toEqual({ id: '1', name: 'Test' })
+      },
+      { timeout: 5000 }
     )
 
     it(
       'handles non-JSON responses',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'text/plain' }),
-        text: async () => 'Success',
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'text/plain' }),
+          text: async () => 'Success',
+        })
 
-      const result = await apiClient.get<string>('/v1/test')
+        const result = await apiClient.get<string>('/v1/test')
 
-      expect(result).toBe('Success')
-    },
-      { timeout: 5000 },
+        expect(result).toBe('Success')
+      },
+      { timeout: 5000 }
     )
   })
 
@@ -265,58 +257,58 @@ describe('ApiClient', () => {
     it(
       'supports PUT requests',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ data: {} }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ data: {} }),
+        })
 
-      await apiClient.put('/v1/test', { name: 'Updated' })
+        await apiClient.put('/v1/test', { name: 'Updated' })
 
-      expect(fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({ method: 'PUT' }),
-      )
-    },
-      { timeout: 5000 },
+        expect(fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({ method: 'PUT' })
+        )
+      },
+      { timeout: 5000 }
     )
 
     it(
       'supports PATCH requests',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ data: {} }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ data: {} }),
+        })
 
-      await apiClient.patch('/v1/test', { name: 'Patched' })
+        await apiClient.patch('/v1/test', { name: 'Patched' })
 
-      expect(fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({ method: 'PATCH' }),
-      )
-    },
-      { timeout: 5000 },
+        expect(fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({ method: 'PATCH' })
+        )
+      },
+      { timeout: 5000 }
     )
 
     it(
       'supports DELETE requests',
       async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ data: {} }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ data: {} }),
+        })
 
-      await apiClient.delete('/v1/test')
+        await apiClient.delete('/v1/test')
 
-      expect(fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({ method: 'DELETE' }),
-      )
-    },
-      { timeout: 5000 },
+        expect(fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({ method: 'DELETE' })
+        )
+      },
+      { timeout: 5000 }
     )
   })
 
@@ -324,30 +316,29 @@ describe('ApiClient', () => {
     it(
       'works without token when skipAuth is true',
       async () => {
-      vi.mocked(useAuthStore.getState).mockReturnValueOnce({
-        token: null,
-        cabinetId: null,
-      } as never)
+        vi.mocked(useAuthStore.getState).mockReturnValueOnce({
+          token: null,
+          cabinetId: null,
+        } as never)
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        json: async () => ({ data: {} }),
-      })
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ data: {} }),
+        })
 
-      await apiClient.get('/v1/public', { skipAuth: true })
+        await apiClient.get('/v1/public', { skipAuth: true })
 
-      expect(fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          headers: expect.not.objectContaining({
-            Authorization: expect.anything(),
-          }),
-        }),
-      )
-    },
-      { timeout: 5000 },
+        expect(fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            headers: expect.not.objectContaining({
+              Authorization: expect.anything(),
+            }),
+          })
+        )
+      },
+      { timeout: 5000 }
     )
   })
 })
-

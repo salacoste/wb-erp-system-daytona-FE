@@ -49,9 +49,7 @@ const createTestQueryClient = () =>
 // Wrapper with providers
 const renderWithProviders = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 // Mock current settings for pre-filling
@@ -94,24 +92,16 @@ describe('ScheduleVersionModal', () => {
 
   describe('AC1: Modal opens when button clicked', () => {
     it('modal is closed by default', () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={false} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={false} onClose={vi.fn()} />)
 
-      expect(
-        screen.queryByText(/запланировать новую версию/i)
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText(/запланировать новую версию/i)).not.toBeInTheDocument()
     })
 
     it('modal opens when isOpen is true', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/запланировать новую версию тарифов/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/запланировать новую версию тарифов/i)).toBeInTheDocument()
       })
     })
 
@@ -119,14 +109,10 @@ describe('ScheduleVersionModal', () => {
       const onClose = vi.fn()
       const user = userEvent.setup()
 
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={onClose} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={onClose} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/запланировать новую версию тарифов/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/запланировать новую версию тарифов/i)).toBeInTheDocument()
       })
 
       const closeButton = screen.getByRole('button', { name: /закрыть/i })
@@ -138,22 +124,16 @@ describe('ScheduleVersionModal', () => {
 
   describe('AC2: Modal includes required components', () => {
     it('displays date picker for effective_from', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
         expect(screen.getByText(/дата начала действия/i)).toBeInTheDocument()
-        expect(
-          screen.getByRole('button', { name: /выберите дату/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /выберите дату/i })).toBeInTheDocument()
       })
     })
 
     it('displays all tariff fields pre-filled from current settings', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
         // Check some pre-filled values
@@ -166,9 +146,7 @@ describe('ScheduleVersionModal', () => {
     })
 
     it('displays notes field as optional', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
         expect(screen.getByLabelText(/заметки/i)).toBeInTheDocument()
@@ -179,14 +157,10 @@ describe('ScheduleVersionModal', () => {
   describe('AC3: Date validation - must be future date', () => {
     it('date picker does not allow past dates', async () => {
       const user = userEvent.setup()
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', { name: /выберите дату/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /выберите дату/i })).toBeInTheDocument()
       })
 
       // Open date picker
@@ -201,9 +175,8 @@ describe('ScheduleVersionModal', () => {
 
       // Find the day button and check if it's disabled
       const dayButtons = screen.getAllByRole('button')
-      const todayButton = dayButtons.find(btn =>
-        btn.textContent === String(todayDay) &&
-        btn.getAttribute('data-day')
+      const todayButton = dayButtons.find(
+        btn => btn.textContent === String(todayDay) && btn.getAttribute('data-day')
       )
 
       // Today should be disabled (only future dates allowed)
@@ -213,9 +186,7 @@ describe('ScheduleVersionModal', () => {
     })
 
     it('shows hint text about minimum date', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
         expect(screen.getByText(/минимум.*завтра/i)).toBeInTheDocument()
@@ -225,9 +196,7 @@ describe('ScheduleVersionModal', () => {
 
   describe('AC4: Submit button disabled without date', () => {
     it('submit button is disabled initially', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
         const submitButton = screen.getByRole('button', {
@@ -246,14 +215,10 @@ describe('ScheduleVersionModal', () => {
       })
 
       const user = userEvent.setup()
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', { name: /выберите дату/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /выберите дату/i })).toBeInTheDocument()
       })
 
       // Select date and submit
@@ -267,9 +232,8 @@ describe('ScheduleVersionModal', () => {
 
       // Find day button by data attribute
       const dayButtons = screen.getAllByRole('button')
-      const tomorrowButton = dayButtons.find(btn =>
-        btn.textContent === String(tomorrow.getDate()) &&
-        !btn.hasAttribute('disabled')
+      const tomorrowButton = dayButtons.find(
+        btn => btn.textContent === String(tomorrow.getDate()) && !btn.hasAttribute('disabled')
       )
 
       if (tomorrowButton) {
@@ -297,14 +261,10 @@ describe('ScheduleVersionModal', () => {
       const user = userEvent.setup()
       const onClose = vi.fn()
 
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={onClose} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={onClose} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', { name: /выберите дату/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /выберите дату/i })).toBeInTheDocument()
       })
 
       // Select date and submit
@@ -317,9 +277,8 @@ describe('ScheduleVersionModal', () => {
       tomorrow.setDate(tomorrow.getDate() + 1)
 
       const dayButtons = screen.getAllByRole('button')
-      const tomorrowButton = dayButtons.find(btn =>
-        btn.textContent === String(tomorrow.getDate()) &&
-        !btn.hasAttribute('disabled')
+      const tomorrowButton = dayButtons.find(
+        btn => btn.textContent === String(tomorrow.getDate()) && !btn.hasAttribute('disabled')
       )
 
       if (tomorrowButton) {
@@ -344,14 +303,10 @@ describe('ScheduleVersionModal', () => {
 
   describe('AC7: Info badge about max versions', () => {
     it('displays info about maximum 10 scheduled versions', async () => {
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/максимум 10 запланированных версий/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/максимум 10 запланированных версий/i)).toBeInTheDocument()
       })
     })
   })
@@ -359,19 +314,14 @@ describe('ScheduleVersionModal', () => {
   describe('Loading state', () => {
     it('shows loading spinner during submission', async () => {
       mockScheduleTariffVersion.mockImplementation(
-        () =>
-          new Promise((resolve) => setTimeout(() => resolve({}), 1000))
+        () => new Promise(resolve => setTimeout(() => resolve({}), 1000))
       )
 
       const user = userEvent.setup()
-      renderWithProviders(
-        <ScheduleVersionModal isOpen={true} onClose={vi.fn()} />
-      )
+      renderWithProviders(<ScheduleVersionModal isOpen={true} onClose={vi.fn()} />)
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', { name: /выберите дату/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /выберите дату/i })).toBeInTheDocument()
       })
 
       // Select date and submit
@@ -384,9 +334,8 @@ describe('ScheduleVersionModal', () => {
       tomorrow.setDate(tomorrow.getDate() + 1)
 
       const dayButtons = screen.getAllByRole('button')
-      const tomorrowButton = dayButtons.find(btn =>
-        btn.textContent === String(tomorrow.getDate()) &&
-        !btn.hasAttribute('disabled')
+      const tomorrowButton = dayButtons.find(
+        btn => btn.textContent === String(tomorrow.getDate()) && !btn.hasAttribute('disabled')
       )
 
       if (tomorrowButton) {

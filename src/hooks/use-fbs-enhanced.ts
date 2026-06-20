@@ -26,13 +26,13 @@ export function useFbsEnhanced(from: string, to: string, enabled = true) {
 
   return useQuery<FbsEnhancedResponse>({
     queryKey: fbsEnhancedQueryKeys.view(cabinetId, { from, to }),
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!cabinetId) throw new Error('useFbsEnhanced: cabinetId is required')
-      return getFbsEnhanced({ from, to })
+      return getFbsEnhanced({ from, to }, { signal })
     },
     enabled: enabled && cabinetId != null && from !== '' && to !== '',
     staleTime: 30 * 60_000,
     gcTime: 60 * 60_000,
-    retry: 1,
+    retry: false,
   })
 }

@@ -3,7 +3,8 @@
  * Story 6.4-FE: Cabinet Summary Dashboard
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderWithProviders, screen } from '@/test/utils/test-utils'
 import CabinetDashboardPage from '../page'
 
@@ -106,6 +107,10 @@ function renderPage() {
   return renderWithProviders(<CabinetDashboardPage />)
 }
 
+afterEach(() => {
+  vi.useRealTimers()
+})
+
 // --- Rendering ---
 
 describe('CabinetDashboardPage - Rendering', () => {
@@ -168,6 +173,18 @@ describe('CabinetDashboardPage - Loading State', () => {
     expect(screen.queryByTestId('pnl-waterfall')).not.toBeInTheDocument()
     expect(screen.queryByTestId('top-products-table')).not.toBeInTheDocument()
     expect(screen.queryByTestId('top-brands-table')).not.toBeInTheDocument()
+  })
+
+  it('replaces long-loading skeletons with an explicit retry state', () => {
+    vi.useFakeTimers()
+    renderPage()
+
+    act(() => {
+      vi.advanceTimersByTime(5_000)
+    })
+
+    expect(screen.getByText(/Сводка по кабинету загружается дольше обычного/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
   })
 })
 

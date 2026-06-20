@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -62,6 +63,9 @@ export function BulkCogsResultsDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Результаты массового назначения</DialogTitle>
+          <DialogDescription>
+            Проверьте, какие себестоимости назначены успешно, а какие требуют повторной попытки.
+          </DialogDescription>
         </DialogHeader>
 
         {resultData && (

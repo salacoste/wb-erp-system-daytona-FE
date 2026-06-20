@@ -70,7 +70,6 @@ export interface DashboardMetricsGridProps {
   loyaltyFee: number | undefined
   penaltiesTotal: number | undefined
   wbCommissionAdj: number | undefined
-  wbServicesCost: number | undefined
   logisticsCost: number | undefined
   /** Story 65.6: Logistics breakdown by delivery type */
   logisticsBreakdown?: LogisticsBreakdown | null

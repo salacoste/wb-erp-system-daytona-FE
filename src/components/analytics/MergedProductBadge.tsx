@@ -11,12 +11,7 @@
  */
 
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { MergedProduct } from '@/types/advertising-analytics'
 
 interface MergedProductBadgeProps {
@@ -49,34 +44,24 @@ export function MergedProductBadge({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge
-            variant="secondary"
-            className={`ml-2 cursor-help ${className || ''}`}
-          >
+          <Badge variant="secondary" className={`ml-2 cursor-help ${className || ''}`}>
             🔗 {label ?? defaultLabel}
           </Badge>
         </TooltipTrigger>
         <TooltipContent side="right" className="max-w-xs">
           <div className="space-y-2">
-            <p className="font-semibold text-sm">
-              Объединённая карточка #{imtId}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Товары в группе:
-            </p>
+            <p className="font-semibold text-sm">Объединённая карточка #{imtId}</p>
+            <p className="text-xs text-muted-foreground">Товары в группе:</p>
             <ul className="list-disc pl-4 space-y-1 text-xs">
-              {mergedProducts.map((product) => (
+              {mergedProducts.map(product => (
                 <li key={product.nmId}>
                   <span className="font-mono">{product.vendorCode}</span>
-                  <span className="text-muted-foreground ml-1">
-                    (#{product.nmId})
-                  </span>
+                  <span className="text-muted-foreground ml-1">(#{product.nmId})</span>
                 </li>
               ))}
             </ul>
             <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
-              💡 Рекламные затраты основной карточки распределены между всеми
-              товарами группы
+              💡 Рекламные затраты основной карточки распределены между всеми товарами группы
             </p>
           </div>
         </TooltipContent>

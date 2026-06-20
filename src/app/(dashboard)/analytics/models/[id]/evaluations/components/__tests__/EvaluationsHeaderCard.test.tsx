@@ -53,11 +53,11 @@ describe('EvaluationsHeaderCard', () => {
     expect(container.innerHTML).toBe('')
   })
 
-  it('renders the page title', () => {
+  it('renders the summary card title', () => {
     renderWithProviders(
       <EvaluationsHeaderCard model={mockModel} data={mockEvalData} modelId="model-1" />
     )
-    expect(screen.getByText('Оценки точности модели')).toBeInTheDocument()
+    expect(screen.getByText('Сводка оценок')).toBeInTheDocument()
   })
 
   it('renders model identity: type label, version, and status badge', () => {

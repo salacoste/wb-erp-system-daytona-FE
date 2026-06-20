@@ -101,13 +101,7 @@ describe('MultiSelectDropdown', () => {
 
     it('clears and resets search when clear clicked', () => {
       const onChange = vi.fn()
-      render(
-        <MultiSelectDropdown
-          {...defaultProps}
-          selected={['Brand A']}
-          onChange={onChange}
-        />
-      )
+      render(<MultiSelectDropdown {...defaultProps} selected={['Brand A']} onChange={onChange} />)
 
       fireEvent.click(screen.getByLabelText('Очистить'))
 

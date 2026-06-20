@@ -53,7 +53,7 @@ export function EvaluationsHeaderCard({ model, data, modelId }: EvaluationsHeade
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Оценки точности модели</CardTitle>
+          <CardTitle>Сводка оценок</CardTitle>
           <ExportCsvButton
             csvContent={csvContent}
             fileName={csvFileName}

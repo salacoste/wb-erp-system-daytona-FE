@@ -39,16 +39,10 @@ export function CoefficientsLoadingSkeleton({
         {Array.from({ length: fieldCount }).map((_, index) => (
           <div key={index} className="space-y-2">
             {/* Label skeleton */}
-            <Skeleton
-              className="h-4 w-32 bg-muted/50"
-              aria-hidden="true"
-            />
+            <Skeleton className="h-4 w-32 bg-muted/50" aria-hidden="true" />
 
             {/* Input skeleton */}
-            <Skeleton
-              className="h-10 w-full bg-muted/50"
-              aria-hidden="true"
-            />
+            <Skeleton className="h-10 w-full bg-muted/50" aria-hidden="true" />
           </div>
         ))}
 

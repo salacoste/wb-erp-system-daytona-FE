@@ -100,13 +100,8 @@ export function WeekSelector({
         <SelectTrigger id={id} className="w-full">
           <SelectValue placeholder="Выберите неделю" />
         </SelectTrigger>
-        <SelectContent
-          position="popper"
-          sideOffset={4}
-          className="max-h-[300px]"
-          usePortal={false}
-        >
-          {weeks.map((week) => (
+        <SelectContent position="popper" sideOffset={4} className="max-h-[300px]" usePortal={false}>
+          {weeks.map(week => (
             <SelectItem key={week.week} value={week.week}>
               {formatWeekWithDateRange(week.week)}
             </SelectItem>
@@ -153,18 +148,8 @@ export function WeekComparisonSelector({
 }: WeekComparisonSelectorProps) {
   return (
     <div className={`grid gap-4 md:grid-cols-2 ${className || ''}`}>
-      <WeekSelector
-        value={week1}
-        onChange={onWeek1Change}
-        label="Период 1"
-        id="week1-selector"
-      />
-      <WeekSelector
-        value={week2}
-        onChange={onWeek2Change}
-        label="Период 2"
-        id="week2-selector"
-      />
+      <WeekSelector value={week1} onChange={onWeek1Change} label="Период 1" id="week1-selector" />
+      <WeekSelector value={week2} onChange={onWeek2Change} label="Период 2" id="week2-selector" />
     </div>
   )
 }

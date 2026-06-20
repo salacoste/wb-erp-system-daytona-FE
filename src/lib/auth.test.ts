@@ -8,9 +8,7 @@ describe('auth utilities', () => {
       // Header: {"alg":"HS256","typ":"JWT"}
       // Payload: {"exp":1735689600,"userId":"123"}
       const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
-      const payload = btoa(
-        JSON.stringify({ exp: 1735689600, userId: '123' }),
-      )
+      const payload = btoa(JSON.stringify({ exp: 1735689600, userId: '123' }))
       const token = `${header}.${payload}.signature`
 
       const decoded = decodeJWT(token)
@@ -99,4 +97,3 @@ describe('auth utilities', () => {
     })
   })
 })
-

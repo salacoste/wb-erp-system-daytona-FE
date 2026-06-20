@@ -112,7 +112,7 @@ describe('RequireJam', () => {
       expect(screen.getByText('Джем Стандарт')).toBeInTheDocument()
     })
 
-    it('blurred content has aria-hidden', () => {
+    it('does not mount protected children by default and shows an aria-hidden safe preview', () => {
       mockedUseJamStatus.mockReturnValue({
         data: { ...mockJamData, tier: 'none' },
         isLoading: false,
@@ -125,8 +125,9 @@ describe('RequireJam', () => {
         </RequireJam>
       )
 
-      const blurredContainer = screen.getByTestId('content').closest('[aria-hidden="true"]')
-      expect(blurredContainer).toBeInTheDocument()
+      expect(screen.queryByTestId('content')).not.toBeInTheDocument()
+      const preview = screen.getByTestId('jam-default-preview')
+      expect(preview.closest('[aria-hidden="true"]')).toBeInTheDocument()
     })
 
     it('overlay region has aria-label', () => {
@@ -204,7 +205,7 @@ describe('RequireJam', () => {
   })
 
   describe('error state', () => {
-    it('shows skeleton on error (fail-closed)', () => {
+    it('shows explicit unavailable state on error (fail-closed)', () => {
       mockedUseJamStatus.mockReturnValue({
         data: undefined,
         isLoading: false,
@@ -217,15 +218,15 @@ describe('RequireJam', () => {
         </RequireJam>
       )
 
-      // Skeleton renders on error (fail-closed behavior)
+      expect(screen.getByText(/Статус подписки WB Джем недоступен/)).toBeInTheDocument()
       const skeletons = container.querySelectorAll('[class*="animate-pulse"]')
-      expect(skeletons.length).toBeGreaterThan(0)
+      expect(skeletons.length).toBe(0)
       expect(screen.queryByTestId('content')).not.toBeInTheDocument()
     })
   })
 
   describe('cabinetId null state', () => {
-    it('shows skeleton when cabinetId is null (fail-closed)', () => {
+    it('shows explicit unavailable state when cabinetId is null (fail-closed)', () => {
       mockUseAuthStore.mockReturnValueOnce({ cabinetId: null })
       mockedUseJamStatus.mockReturnValue({
         data: undefined,
@@ -239,9 +240,9 @@ describe('RequireJam', () => {
         </RequireJam>
       )
 
-      // Skeleton renders when no data available (fail-closed behavior)
+      expect(screen.getByText(/Статус подписки WB Джем недоступен/)).toBeInTheDocument()
       const skeletons = container.querySelectorAll('[class*="animate-pulse"]')
-      expect(skeletons.length).toBeGreaterThan(0)
+      expect(skeletons.length).toBe(0)
       expect(screen.queryByTestId('content')).not.toBeInTheDocument()
     })
   })

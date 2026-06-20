@@ -144,9 +144,7 @@ describe('Tariff Input Editing', () => {
 
     // Find and edit base rate input
     const inputs = screen.getAllByRole('spinbutton')
-    const baseInput = inputs.find((input) =>
-      input.closest('div')?.textContent?.includes('Базовый')
-    )
+    const baseInput = inputs.find(input => input.closest('div')?.textContent?.includes('Базовый'))
 
     if (baseInput) {
       await user.clear(baseInput)
@@ -550,7 +548,7 @@ describe('Disabled State', () => {
 
     await waitFor(() => {
       const inputs = screen.getAllByRole('spinbutton')
-      inputs.forEach((input) => {
+      inputs.forEach(input => {
         expect(input).toBeDisabled()
       })
     })

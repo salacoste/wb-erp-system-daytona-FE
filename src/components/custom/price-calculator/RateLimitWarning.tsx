@@ -54,7 +54,7 @@ export function RateLimitWarning({
     if (localRemaining <= 0) return
 
     const interval = setInterval(() => {
-      setLocalRemaining((prev) => Math.max(0, prev - 1))
+      setLocalRemaining(prev => Math.max(0, prev - 1))
     }, 1000)
 
     return () => clearInterval(interval)
@@ -84,9 +84,7 @@ export function RateLimitWarning({
       <AlertCircle className="h-4 w-4" aria-hidden="true" />
 
       <div className="flex-1 space-y-3">
-        <AlertDescription className="font-medium">
-          {defaultMessage}
-        </AlertDescription>
+        <AlertDescription className="font-medium">{defaultMessage}</AlertDescription>
 
         {/* Countdown display with icon */}
         <div className="space-y-2">

@@ -57,10 +57,7 @@ export function MarginCalculationStatus({
 
   return (
     <div
-      className={cn(
-        'rounded-lg border border-blue-200 bg-blue-50 p-4',
-        className,
-      )}
+      className={cn('rounded-lg border border-blue-200 bg-blue-50 p-4', className)}
       role="status"
       aria-live="polite"
       aria-label="Расчёт маржи в процессе"
@@ -69,13 +66,9 @@ export function MarginCalculationStatus({
         <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
         <div className="flex-1">
           <div className="text-sm font-medium text-blue-900">
-            {isBulk && bulkCount
-              ? `Расчёт маржи для ${bulkCount} товаров...`
-              : 'Расчёт маржи...'}
+            {isBulk && bulkCount ? `Расчёт маржи для ${bulkCount} товаров...` : 'Расчёт маржи...'}
           </div>
-          <div className="mt-1 text-xs text-blue-700">
-            Ожидаемое время: ~{estimatedSeconds}с
-          </div>
+          <div className="mt-1 text-xs text-blue-700">Ожидаемое время: ~{estimatedSeconds}с</div>
         </div>
       </div>
 
@@ -89,4 +82,3 @@ export function MarginCalculationStatus({
     </div>
   )
 }
-

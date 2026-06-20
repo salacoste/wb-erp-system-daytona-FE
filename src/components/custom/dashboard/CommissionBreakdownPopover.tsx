@@ -3,10 +3,10 @@
  * Badge + Popover showing 4 commission subcategories on WbCommissionsCard.
  *
  * Rows:
- * 1. Скидка МП (wbCommissionAdj) -- green (compensation)
+ * 1. Корректировка ВВ (wbCommissionAdj)
  * 2. Номинальная комиссия (commissionSales) -- red
  * 3. Эквайринг (acquiringFee) -- red
- * 4. Прочие (loyaltyFee + penaltiesTotal + wbServicesCost) -- red
+ * 4. Комиссия лояльности + штрафы
  *
  * @see docs/epics/epic-65-dashboard-metrics-parity/stories-wave-1-2.md Story 65.7
  */
@@ -15,6 +15,7 @@
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { formatCurrency } from '@/lib/utils'
+import { DASHBOARD_WB_DEDUCTIONS_COPY } from './dashboardWbDeductionsCopy'
 
 export interface CommissionBreakdownPopoverProps {
   commissionSales: number | null | undefined
@@ -22,7 +23,6 @@ export interface CommissionBreakdownPopoverProps {
   wbCommissionAdj: number | null | undefined
   loyaltyFee: number | null | undefined
   penaltiesTotal: number | null | undefined
-  wbServicesCost: number | null | undefined
   saleGross: number | null | undefined
 }
 
@@ -61,46 +61,37 @@ interface RowDef {
 export function CommissionBreakdownPopover(
   props: CommissionBreakdownPopoverProps
 ): React.ReactElement {
-  const {
-    commissionSales,
-    acquiringFee,
-    wbCommissionAdj,
-    loyaltyFee,
-    penaltiesTotal,
-    wbServicesCost,
-    saleGross,
-  } = props
+  const { commissionSales, acquiringFee, wbCommissionAdj, loyaltyFee, penaltiesTotal, saleGross } =
+    props
 
-  const prochie = sumNullable(loyaltyFee, penaltiesTotal, wbServicesCost)
+  const prochie = sumNullable(loyaltyFee, penaltiesTotal)
   const hasProchie = prochie != null
   const rowCount = hasProchie ? 4 : 3
-
   const netTotal = sumNullable(
     wbCommissionAdj,
     commissionSales,
     acquiringFee,
     loyaltyFee,
-    penaltiesTotal,
-    wbServicesCost
+    penaltiesTotal
   )
 
   const revenue = saleGross ?? 0
 
   const rows: RowDef[] = [
     {
-      label: 'Скидка МП',
+      label: DASHBOARD_WB_DEDUCTIONS_COPY.correctionLabel,
       value: wbCommissionAdj ?? 0,
-      colorClass: 'text-green-600 bg-green-50',
-      testId: 'row-discount',
+      colorClass: 'text-red-600 bg-red-50',
+      testId: 'row-correction',
     },
     {
-      label: 'Номинальная комиссия',
+      label: DASHBOARD_WB_DEDUCTIONS_COPY.nominalCommissionLabel,
       value: commissionSales ?? 0,
       colorClass: 'text-red-600 bg-red-50',
       testId: 'row-commission',
     },
     {
-      label: 'Эквайринг',
+      label: DASHBOARD_WB_DEDUCTIONS_COPY.acquiringLabel,
       value: acquiringFee ?? 0,
       colorClass: 'text-red-600 bg-red-50',
       testId: 'row-acquiring',
@@ -109,7 +100,7 @@ export function CommissionBreakdownPopover(
 
   if (hasProchie) {
     rows.push({
-      label: 'Прочие',
+      label: DASHBOARD_WB_DEDUCTIONS_COPY.loyaltyPenaltiesLabel,
       value: prochie,
       colorClass: 'text-red-600 bg-red-50',
       testId: 'row-other',
@@ -128,7 +119,9 @@ export function CommissionBreakdownPopover(
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-3" role="dialog">
-        <p className="mb-2 text-sm font-semibold text-foreground">Разбивка комиссий</p>
+        <p className="mb-2 text-sm font-semibold text-foreground">
+          {DASHBOARD_WB_DEDUCTIONS_COPY.breakdownTitle}
+        </p>
         <div className="space-y-1.5">
           {rows.map(row => (
             <div

@@ -42,8 +42,8 @@ export function DashboardContent(): React.ReactElement {
 
   return (
     <div className="space-y-4 pb-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-foreground">Главная страница</h1>
           <PeriodContextLabel
             periodType={d.periodType}
@@ -52,7 +52,11 @@ export function DashboardContent(): React.ReactElement {
             lastRefresh={d.lastRefresh}
           />
         </div>
-        <div className="flex items-center gap-2" role="region" aria-label="Выбор периода">
+        <div
+          className="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end"
+          role="region"
+          aria-label="Выбор периода"
+        >
           <DashboardPeriodSelector />
           <WidgetSettingsSheet />
         </div>
@@ -67,7 +71,7 @@ export function DashboardContent(): React.ReactElement {
       {!d.isFailed && d.failedBatchCount > 0 && <DataGapsAlert failedCount={d.failedBatchCount} />}
       {d.error && !d.isProcessing && d.isFinanceAvailable && <ErrorAlert onRetry={d.handleRetry} />}
 
-      <TaxWarningBanner taxConfigured={!!d.effectiveTaxMetrics} />
+      <TaxWarningBanner taxConfigured={d.taxConfigured} />
 
       {!d.productsLoading && !d.cogsLoading && d.cogsCoverage < 100 && (
         <MissingCogsAlert missingCount={(d.totalProducts ?? 0) - d.inventoryWithCogs} />
@@ -88,7 +92,6 @@ export function DashboardContent(): React.ReactElement {
           loyaltyFee={d.summary?.loyalty_fee_total}
           penaltiesTotal={d.summary?.penalties_total}
           wbCommissionAdj={d.summary?.wb_commission_adj_total}
-          wbServicesCost={undefined}
           logisticsCost={d.summary?.logistics_cost_total}
           logisticsBreakdown={d.logisticsBreakdown}
           payoutTotal={d.summary?.payout_total}
@@ -111,7 +114,7 @@ export function DashboardContent(): React.ReactElement {
           grossMarginPct={d.summary?.gross_margin_pct ?? undefined}
           taxMetrics={d.effectiveTaxMetrics ?? null}
           previousPeriodData={d.previousPeriodData}
-          isLoading={d.isLoading || d.productsLoading || d.cogsLoading}
+          isLoading={d.isLoading}
           error={d.error}
           onRetry={d.handleRetry}
           onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}

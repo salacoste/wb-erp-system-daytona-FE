@@ -16,9 +16,11 @@ priority: medium
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Block 3 — line chart showing 3 metrics over 7 days.
 
 **3 lines:**
+
 - Продажи (blue): `day.salesCount`
 - Заказы (green): `day.salesCount + day.returnsCount`
 - Возвраты (orange): `day.returnsCount`
@@ -30,13 +32,16 @@ Block 3 — line chart showing 3 metrics over 7 days.
 Optional enhancement: supplement with `orders/volume` for real-time order accuracy (Indeepa shows orders not just buyouts).
 
 Depends on: task-16
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
-- [ ] #1 Line chart with 3 series renders for 7-day range
-- [ ] #2 Responsive container + tooltip on hover
-- [ ] #3 Legend toggleable per series
-- [ ] #4 X-axis shows day names (Пн, Вт, ...)
-- [ ] #5 Chart accessible (role=img, aria-label)
+
+- [x] #1 Line chart with 3 series renders for 7-day range
+- [x] #2 Responsive container + tooltip on hover
+- [x] #3 Legend toggleable per series
+- [x] #4 X-axis shows day names (Пн, Вт, ...)
+- [x] #5 Chart accessible (role=img, aria-label)
 <!-- AC:END -->

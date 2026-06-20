@@ -327,5 +327,4 @@ describe('TariffSettingsPage', () => {
     expect(document.querySelectorAll('main')).toHaveLength(0)
     expect(document.querySelector('section.min-h-screen')).toBeInTheDocument()
   })
-
 })

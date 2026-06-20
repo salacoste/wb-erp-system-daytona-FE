@@ -55,30 +55,36 @@ export function PricingFilters({
 
           <div className="space-y-2">
             <Label>Фильтр по разрыву</Label>
-            <Select value={gapFilter} onValueChange={v => onGapFilterChange(v as GapFilter)}>
+            <Select
+              value={gapFilter || 'all'}
+              onValueChange={v => onGapFilterChange(v === 'all' ? '' : (v as GapFilter))}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Все товары" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Все товары</SelectItem>
-                <SelectItem value="below">Ниже цели</SelectItem>
-                <SelectItem value="above">Выше цели</SelectItem>
+                <SelectItem value="below_target">Ниже цели</SelectItem>
+                <SelectItem value="above_target">Выше цели</SelectItem>
+                <SelectItem value="at_target">У цели</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <Label>Сортировка</Label>
-            <Select value={sort} onValueChange={v => onSortChange(v as SortOption)}>
+            <Select
+              value={sort || 'default'}
+              onValueChange={v => onSortChange(v === 'default' ? '' : (v as SortOption))}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="По умолчанию" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="default">По умолчанию</SelectItem>
-                <SelectItem value="gap_asc">Разрыв ↑ (возрастание)</SelectItem>
-                <SelectItem value="gap_desc">Разрыв ↓ (убывание)</SelectItem>
-                <SelectItem value="margin_asc">Маржа ↑ (возрастание)</SelectItem>
-                <SelectItem value="margin_desc">Маржа ↓ (убывание)</SelectItem>
+                <SelectItem value="gap_pct">По разрыву</SelectItem>
+                <SelectItem value="margin_at_current_pct">По текущей марже</SelectItem>
+                <SelectItem value="recommended_price">По рекомендованной цене</SelectItem>
               </SelectContent>
             </Select>
           </div>

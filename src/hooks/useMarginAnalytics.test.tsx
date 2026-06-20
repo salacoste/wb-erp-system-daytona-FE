@@ -119,10 +119,9 @@ describe('useMarginAnalyticsBySku', () => {
 
     vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
-    const { result } = renderHook(
-      () => useMarginAnalyticsBySku({ week: '2025-W47' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useMarginAnalyticsBySku({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -133,15 +132,11 @@ describe('useMarginAnalyticsBySku', () => {
   it('handles API errors', async () => {
     vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('API Error'))
 
-    const { result } = renderHook(
-      () => useMarginAnalyticsBySku({ week: '2025-W47' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useMarginAnalyticsBySku({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
 
-    await waitFor(
-      () => expect(result.current.isError).toBe(true),
-      { timeout: 5000 }
-    )
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 5000 })
     expect(result.current.error).toBeDefined()
   })
 
@@ -168,10 +163,9 @@ describe('useMarginAnalyticsBySku', () => {
   })
 
   it('disables query when week is not provided', () => {
-    const { result } = renderHook(
-      () => useMarginAnalyticsBySku({ week: '' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useMarginAnalyticsBySku({ week: '' }), {
+      wrapper: createWrapper(),
+    })
 
     expect(result.current.isFetching).toBe(false)
   })
@@ -239,10 +233,9 @@ describe('useMarginAnalyticsByBrand', () => {
 
     vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
-    const { result } = renderHook(
-      () => useMarginAnalyticsByBrand({ week: '2025-W47' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useMarginAnalyticsByBrand({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -311,10 +304,9 @@ describe('useMarginAnalyticsByCategory', () => {
 
     vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
-    const { result } = renderHook(
-      () => useMarginAnalyticsByCategory({ week: '2025-W47' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useMarginAnalyticsByCategory({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
@@ -356,4 +348,3 @@ describe('Helper Functions', () => {
     })
   })
 })
-

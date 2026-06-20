@@ -104,9 +104,9 @@ export function StorageBySkuTable({
                 </TableCell>
               </TableRow>
             ) : (
-              filteredAndSortedData.map(item => (
+              filteredAndSortedData.map((item, index) => (
                 <TableRow
-                  key={item.nm_id}
+                  key={`${item.nm_id || 'unknown'}-${item.vendor_code || index}-${index}`}
                   className="cursor-pointer"
                   onClick={() => handleRowClick(item.nm_id)}
                 >

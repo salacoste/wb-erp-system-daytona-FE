@@ -270,12 +270,7 @@ describe('MergedGroupTable', () => {
     it('calls onProductClick when row clicked', () => {
       const mockOnProductClick = vi.fn()
 
-      render(
-        <MergedGroupTable
-          groups={[mockMergedGroup]}
-          onProductClick={mockOnProductClick}
-        />
-      )
+      render(<MergedGroupTable groups={[mockMergedGroup]} onProductClick={mockOnProductClick} />)
 
       // Find detail row by vendor code
       const childRow = screen.getByText('CHILD-001').closest('tr')
@@ -309,12 +304,7 @@ describe('MergedGroupTable', () => {
     it('calls onSort when column header clicked', () => {
       const mockOnSort = vi.fn()
 
-      render(
-        <MergedGroupTable
-          groups={[mockMergedGroup]}
-          onSort={mockOnSort}
-        />
-      )
+      render(<MergedGroupTable groups={[mockMergedGroup]} onSort={mockOnSort} />)
 
       // Click "Всего продаж" column
       const totalSalesHeader = screen.getByText('Всего продаж')
@@ -325,12 +315,7 @@ describe('MergedGroupTable', () => {
     })
 
     it('applies sortable cursor styles to headers when onSort provided', () => {
-      render(
-        <MergedGroupTable
-          groups={[mockMergedGroup]}
-          onSort={vi.fn()}
-        />
-      )
+      render(<MergedGroupTable groups={[mockMergedGroup]} onSort={vi.fn()} />)
 
       const totalSalesHeader = screen.getByText('Всего продаж').closest('th')
       expect(totalSalesHeader).toHaveClass('cursor-pointer')

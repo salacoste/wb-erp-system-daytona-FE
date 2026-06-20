@@ -36,7 +36,7 @@
  * [ ] Disabled state: all inputs disabled
  */
 
-import { QuietHoursPanel } from '../QuietHoursPanel';
+import { QuietHoursPanel } from '../QuietHoursPanel'
 
 export function VisualTest() {
   return (
@@ -75,8 +75,12 @@ export function VisualTest() {
             <h4 className="font-medium text-blue-700 mb-2">Test Overnight Period (AC#4)</h4>
             <ol className="list-decimal list-inside space-y-1 text-sm">
               <li>Toggle quiet hours ON</li>
-              <li>Set "С" (from) to <code>23:00</code></li>
-              <li>Set "До" (to) to <code>07:00</code></li>
+              <li>
+                Set "С" (from) to <code>23:00</code>
+              </li>
+              <li>
+                Set "До" (to) to <code>07:00</code>
+              </li>
               <li>✅ Verify orange hint appears: "период через полночь"</li>
             </ol>
           </div>
@@ -133,7 +137,7 @@ export function VisualTest() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default VisualTest;
+export default VisualTest

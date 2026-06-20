@@ -17,9 +17,7 @@ describe('ErrorMessage', () => {
 
   describe('Rendering', () => {
     it('returns null when no error', () => {
-      const { container } = render(
-        <ErrorMessage error={null} onRetry={onRetryMock} />
-      )
+      const { container } = render(<ErrorMessage error={null} onRetry={onRetryMock} />)
 
       expect(container.firstChild).toBeNull()
     })
@@ -45,7 +43,9 @@ describe('ErrorMessage', () => {
 
       // Russian locale
       expect(screen.getByText('Не авторизован')).toBeInTheDocument()
-      expect(screen.getByText('Войдите в систему для использования калькулятора цены.')).toBeInTheDocument()
+      expect(
+        screen.getByText('Войдите в систему для использования калькулятора цены.')
+      ).toBeInTheDocument()
       expect(screen.getByRole('link', { name: /войти/i })).toHaveAttribute('href', '/login')
     })
 
@@ -57,9 +57,7 @@ describe('ErrorMessage', () => {
 
       // Russian locale
       expect(screen.getByText('Доступ к кабинету запрещён')).toBeInTheDocument()
-      expect(
-        screen.getByText('Выберите действующий кабинет для продолжения.')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Выберите действующий кабинет для продолжения.')).toBeInTheDocument()
       expect(screen.getByRole('link', { name: /выбрать кабинет/i })).toHaveAttribute(
         'href',
         '/cabinets'
@@ -74,9 +72,7 @@ describe('ErrorMessage', () => {
 
       // Russian locale
       expect(screen.getByText('Слишком много запросов')).toBeInTheDocument()
-      expect(
-        screen.getByText('Подождите немного перед повторной попыткой.')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Подождите немного перед повторной попыткой.')).toBeInTheDocument()
     })
 
     it('displays network error (status 0) with retry button', () => {

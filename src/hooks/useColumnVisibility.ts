@@ -84,7 +84,7 @@ export function useColumnVisibility(storageKey: string) {
    * Toggle a single column's visibility
    */
   const toggleColumn = useCallback((column: keyof ColumnVisibility) => {
-    setVisibility((prev) => ({
+    setVisibility(prev => ({
       ...prev,
       [column]: !prev[column],
     }))
@@ -94,7 +94,7 @@ export function useColumnVisibility(storageKey: string) {
    * Set visibility for all columns at once
    */
   const setAll = useCallback((newVisibility: Partial<ColumnVisibility>) => {
-    setVisibility((prev) => ({
+    setVisibility(prev => ({
       ...prev,
       ...newVisibility,
     }))

@@ -58,15 +58,12 @@ export function WeightThresholdCheckbox({
           <Checkbox
             id="weight-checkbox"
             checked={checked}
-            onCheckedChange={(c) => onChange?.(c === true)}
+            onCheckedChange={c => onChange?.(c === true)}
             disabled={disabled}
           />
           <Label
             htmlFor="weight-checkbox"
-            className={cn(
-              'cursor-pointer flex-1',
-              disabled && 'cursor-not-allowed'
-            )}
+            className={cn('cursor-pointer flex-1', disabled && 'cursor-not-allowed')}
           >
             Вес превышает 25 кг
           </Label>
@@ -78,8 +75,7 @@ export function WeightThresholdCheckbox({
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Учтён повышенный тариф логистики для тяжеловесных грузов
-            (коэффициент ~1.5x)
+            Учтён повышенный тариф логистики для тяжеловесных грузов (коэффициент ~1.5x)
           </AlertDescription>
         </Alert>
       )}

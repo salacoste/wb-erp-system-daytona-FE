@@ -8,10 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import {
-  validateBulkCogsAssignment,
-  createBulkCogsItems,
-} from './useBulkCogsAssignment'
+import { validateBulkCogsAssignment, createBulkCogsItems } from './useBulkCogsAssignment'
 import type { BulkCogsItem } from '@/types/cogs'
 
 describe('validateBulkCogsAssignment', () => {
@@ -196,7 +193,7 @@ describe('validateBulkCogsAssignment', () => {
   })
 
   describe('valid_from validation', () => {
-    it('should pass validation for today\'s date', () => {
+    it("should pass validation for today's date", () => {
       const today = new Date().toISOString().split('T')[0]
       const items: BulkCogsItem[] = [
         {
@@ -280,7 +277,7 @@ describe('validateBulkCogsAssignment', () => {
     it('should pass validation for valid currencies', () => {
       const validCurrencies = ['RUB', 'USD', 'EUR', 'CNY']
 
-      validCurrencies.forEach((currency) => {
+      validCurrencies.forEach(currency => {
         const items: BulkCogsItem[] = [
           {
             nm_id: '12345678',

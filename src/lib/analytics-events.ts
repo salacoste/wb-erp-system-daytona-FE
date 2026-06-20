@@ -38,10 +38,7 @@ export function trackAdvertisingPageView(viewMode: ViewMode): void {
  * Track toggle between SKU and Merged Groups view
  * Call when user switches view mode
  */
-export function trackToggleMode(params: {
-  mode: ViewMode
-  previousMode: ViewMode
-}): void {
+export function trackToggleMode(params: { mode: ViewMode; previousMode: ViewMode }): void {
   analytics.track(ANALYTICS_EVENTS.TOGGLE_MODE, {
     mode: params.mode,
     previous_mode: params.previousMode,

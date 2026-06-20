@@ -46,6 +46,7 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
+/.playwright-mcp/
 /e2e/.auth/user.json
 /e2e/.auth/manager.json
 

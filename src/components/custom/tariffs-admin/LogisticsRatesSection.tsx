@@ -49,12 +49,7 @@ export function LogisticsRatesSection({
   }
 
   return (
-    <TariffSectionWrapper
-      title="Логистика"
-      icon={Truck}
-      isOpen={isOpen}
-      onToggle={onToggle}
-    >
+    <TariffSectionWrapper title="Логистика" icon={Truck} isOpen={isOpen} onToggle={onToggle}>
       <div className="space-y-4">
         {/* Large item rates */}
         <div className="grid gap-4 sm:grid-cols-2">

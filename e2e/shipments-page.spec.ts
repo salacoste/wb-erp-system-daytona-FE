@@ -33,12 +33,15 @@ test.describe('Shipments List Page', () => {
       timeout: TIMEOUTS.api,
     })
 
-    const hasTable = (await page.locator('table').count()) > 0
-    const hasEmpty = (await page.getByText(/нет отправк|нет данных/i).count()) > 0
-    const hasDenied = (await page.getByText('Доступ запрещён').count()) > 0
-    const hasSkeleton = (await page.locator('[data-slot="skeleton"]').count()) > 0
+    const main = page.locator('main')
+    const mainText = (await main.textContent()) ?? ''
+    const hasTable = (await main.locator('table').count()) > 0
+    const hasKnownStateText = /нет отправок|создайте первую отправку|создать отправку|нет данных|доступ запрещён|загрузка отправок/i.test(
+      mainText
+    )
+    const hasSkeleton = (await main.locator('[data-slot="skeleton"], .animate-pulse').count()) > 0
 
-    expect(hasTable || hasEmpty || hasDenied || hasSkeleton).toBeTruthy()
+    expect(hasTable || hasKnownStateText || hasSkeleton).toBeTruthy()
   })
 
   test('main content area rendered within <main>', async ({ page }) => {

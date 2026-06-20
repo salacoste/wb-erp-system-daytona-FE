@@ -32,7 +32,7 @@ export interface CogsHistoryResponse {
 
 /**
  * Hook to fetch all COGS versions (current and historical) for a product
- * 
+ *
  * @example
  * const { data: history, isLoading } = useCogsHistory('321678606');
  */
@@ -62,8 +62,8 @@ export function useCogsHistory(nmId: string | undefined) {
         throw error
       }
     },
-    staleTime: 60000,  // 1 minute
-    gcTime: 300000,    // 5 minutes
+    staleTime: 60000, // 1 minute
+    gcTime: 300000, // 5 minutes
     refetchOnWindowFocus: true,
     retry: 1,
     enabled: !!nmId,
@@ -72,7 +72,7 @@ export function useCogsHistory(nmId: string | undefined) {
 
 /**
  * Hook to get COGS valid at specific date (temporal lookup)
- * 
+ *
  * @example
  * const { data: cogs } = useCogsAtDate('321678606', '2025-11-15');
  */
@@ -105,11 +105,10 @@ export function useCogsAtDate(nmId: string | undefined, date: string | undefined
         throw error
       }
     },
-    staleTime: 60000,  // 1 minute
-    gcTime: 300000,    // 5 minutes
+    staleTime: 60000, // 1 minute
+    gcTime: 300000, // 5 minutes
     refetchOnWindowFocus: true,
     retry: 1,
     enabled: !!nmId && !!date,
   })
 }
-

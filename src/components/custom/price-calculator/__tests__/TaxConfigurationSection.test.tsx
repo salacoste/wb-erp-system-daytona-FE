@@ -168,13 +168,7 @@ describe('TaxConfigurationSection', () => {
     })
 
     it('should not show preview when calculatedTaxAmount is 0', () => {
-      render(
-        <TaxConfigurationSection
-          {...defaultProps}
-          taxRate={0}
-          calculatedTaxAmount={0}
-        />
-      )
+      render(<TaxConfigurationSection {...defaultProps} taxRate={0} calculatedTaxAmount={0} />)
 
       expect(screen.queryByTestId('tax-impact-preview')).not.toBeInTheDocument()
     })

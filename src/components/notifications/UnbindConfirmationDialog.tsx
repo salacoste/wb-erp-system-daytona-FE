@@ -3,7 +3,7 @@
 // Epic 34-FE: Story 34.2-FE
 // ============================================================================
 
-'use client';
+'use client'
 
 import {
   AlertDialog,
@@ -14,9 +14,9 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from '@/components/ui/alert-dialog';
-import { useTelegramBinding } from '@/hooks/useTelegramBinding';
-import { toast } from 'sonner';
+} from '@/components/ui/alert-dialog'
+import { useTelegramBinding } from '@/hooks/useTelegramBinding'
+import { toast } from 'sonner'
 import { logger } from '@/lib/logger'
 
 // ============================================================================
@@ -24,9 +24,9 @@ import { logger } from '@/lib/logger'
 // ============================================================================
 
 interface UnbindConfirmationDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onConfirm: () => void
 }
 
 // ============================================================================
@@ -53,7 +53,7 @@ export function UnbindConfirmationDialog({
   // Hooks
   // ============================================================================
 
-  const { unbind, isUnbinding } = useTelegramBinding();
+  const { unbind, isUnbinding } = useTelegramBinding()
 
   // ============================================================================
   // Handlers
@@ -62,15 +62,15 @@ export function UnbindConfirmationDialog({
   const handleUnbind = () => {
     unbind(undefined, {
       onSuccess: () => {
-        toast.success('Telegram отключен');
-        onConfirm();
+        toast.success('Telegram отключен')
+        onConfirm()
       },
-      onError: (error) => {
-        toast.error('Не удалось отключить Telegram. Попробуйте ещё раз.');
-        logger.error('Unbind error:', error);
+      onError: error => {
+        toast.error('Не удалось отключить Telegram. Попробуйте ещё раз.')
+        logger.error('Unbind error:', error)
       },
-    });
-  };
+    })
+  }
 
   // ============================================================================
   // Render
@@ -87,9 +87,7 @@ export function UnbindConfirmationDialog({
             Отключить Telegram?
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-4">
-            <p className="text-gray-700">
-              Вы уверены, что хотите отключить Telegram-уведомления?
-            </p>
+            <p className="text-gray-700">Вы уверены, что хотите отключить Telegram-уведомления?</p>
 
             <ul className="space-y-2 text-sm text-gray-600">
               <li className="flex items-start gap-2">
@@ -109,10 +107,7 @@ export function UnbindConfirmationDialog({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel
-            disabled={isUnbinding}
-            aria-label="Отменить отключение"
-          >
+          <AlertDialogCancel disabled={isUnbinding} aria-label="Отменить отключение">
             Отменить
           </AlertDialogCancel>
           <AlertDialogAction
@@ -126,5 +121,5 @@ export function UnbindConfirmationDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

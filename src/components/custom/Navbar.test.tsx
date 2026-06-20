@@ -45,8 +45,6 @@ describe('Navbar', () => {
     { timeout: 5000 }
   )
 
-
-
   it('does not render the shell label as a page H1', () => {
     mockAuthStore({ user: null })
 

@@ -27,8 +27,20 @@ const zeroFees = { commission: 0, logistics_delivery: 0, logistics_return: 0, st
 
 describe('generateMockSummary — revenue-weighted portfolio averages (iter-131)', () => {
   const portfolio = [
-    item({ revenue: 10000, net_profit: 3000, net_margin_pct: 30, has_cogs: true, costs_pct: { cogs: 40, ...zeroFees } }),
-    item({ revenue: 1000, net_profit: -1000, net_margin_pct: -100, has_cogs: true, costs_pct: { cogs: 120, ...zeroFees } }),
+    item({
+      revenue: 10000,
+      net_profit: 3000,
+      net_margin_pct: 30,
+      has_cogs: true,
+      costs_pct: { cogs: 40, ...zeroFees },
+    }),
+    item({
+      revenue: 1000,
+      net_profit: -1000,
+      net_margin_pct: -100,
+      has_cogs: true,
+      costs_pct: { cogs: 120, ...zeroFees },
+    }),
   ]
 
   it('derives avg_net_margin_pct from totals (NOT a simple per-SKU mean)', () => {

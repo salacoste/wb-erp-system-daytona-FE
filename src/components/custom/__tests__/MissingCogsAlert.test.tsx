@@ -202,7 +202,7 @@ describe('Story 42.3-FE: Tooltip Product Preview', () => {
       await user.hover(badge)
       await waitFor(() => {
         expect(screen.getAllByText('Артикулы без себестоимости:').length).toBeGreaterThanOrEqual(1)
-    })
+      })
     })
   })
 

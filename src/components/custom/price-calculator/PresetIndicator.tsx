@@ -42,10 +42,7 @@ export interface PresetIndicatorProps {
  * <PresetIndicator isVisible={isPresetLoaded} />
  * ```
  */
-export function PresetIndicator({
-  isVisible,
-  autoHideMs = 3000,
-}: PresetIndicatorProps) {
+export function PresetIndicator({ isVisible, autoHideMs = 3000 }: PresetIndicatorProps) {
   const [show, setShow] = useState(isVisible)
 
   // AC4: Auto-hide after configured duration

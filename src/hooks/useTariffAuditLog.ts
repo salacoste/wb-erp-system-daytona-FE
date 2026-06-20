@@ -47,6 +47,6 @@ export function useTariffAuditLog(params: TariffAuditParams = {}) {
     queryFn: () => getTariffAuditLog(params),
     staleTime: 30000, // 30 seconds
     gcTime: 300000, // 5 minutes
-    placeholderData: (previousData) => previousData, // Keep previous data while loading
+    placeholderData: previousData => previousData, // Keep previous data while loading
   })
 }

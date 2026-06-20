@@ -60,7 +60,7 @@ describe('CoefficientField', () => {
   it('calls onSourceChange when auto value is edited', () => {
     const onSourceChange = vi.fn()
     renderWithProviders(
-      <CoefficientField {...defaultProps} source="auto" onSourceChange={onSourceChange} />,
+      <CoefficientField {...defaultProps} source="auto" onSourceChange={onSourceChange} />
     )
 
     const input = screen.getByRole('spinbutton')
@@ -72,7 +72,7 @@ describe('CoefficientField', () => {
   it('does not call onSourceChange when already manual', () => {
     const onSourceChange = vi.fn()
     renderWithProviders(
-      <CoefficientField {...defaultProps} source="manual" onSourceChange={onSourceChange} />,
+      <CoefficientField {...defaultProps} source="manual" onSourceChange={onSourceChange} />
     )
 
     const input = screen.getByRole('spinbutton')
@@ -89,7 +89,7 @@ describe('CoefficientField', () => {
         source="manual"
         originalValue={1.0}
         onRestore={onRestore}
-      />,
+      />
     )
 
     const restoreButton = screen.getByRole('button', { name: /восстановить/i })
@@ -98,16 +98,14 @@ describe('CoefficientField', () => {
 
   it('does not show restore button when auto', () => {
     renderWithProviders(
-      <CoefficientField {...defaultProps} source="auto" originalValue={1.0} onRestore={vi.fn()} />,
+      <CoefficientField {...defaultProps} source="auto" originalValue={1.0} onRestore={vi.fn()} />
     )
 
     expect(screen.queryByRole('button', { name: /восстановить/i })).not.toBeInTheDocument()
   })
 
   it('does not show restore button when manual but no originalValue', () => {
-    renderWithProviders(
-      <CoefficientField {...defaultProps} source="manual" onRestore={vi.fn()} />,
-    )
+    renderWithProviders(<CoefficientField {...defaultProps} source="manual" onRestore={vi.fn()} />)
 
     expect(screen.queryByRole('button', { name: /восстановить/i })).not.toBeInTheDocument()
   })
@@ -120,7 +118,7 @@ describe('CoefficientField', () => {
         source="manual"
         originalValue={1.0}
         onRestore={onRestore}
-      />,
+      />
     )
 
     const restoreButton = screen.getByRole('button', { name: /восстановить/i })
@@ -130,9 +128,7 @@ describe('CoefficientField', () => {
   })
 
   it('shows original value hint when manual with originalValue', () => {
-    renderWithProviders(
-      <CoefficientField {...defaultProps} source="manual" originalValue={1.0} />,
-    )
+    renderWithProviders(<CoefficientField {...defaultProps} source="manual" originalValue={1.0} />)
 
     expect(screen.getByText('Тарифное значение: 1.00')).toBeInTheDocument()
   })
@@ -146,7 +142,7 @@ describe('CoefficientField', () => {
 
   it('renders tooltip when provided', () => {
     renderWithProviders(
-      <CoefficientField {...defaultProps} tooltip="Коэффициент увеличения стоимости" />,
+      <CoefficientField {...defaultProps} tooltip="Коэффициент увеличения стоимости" />
     )
 
     // Info icon (tooltip trigger) should be present
@@ -173,35 +169,27 @@ describe('CoefficientField', () => {
 
   describe('isWarehouseLocked behavior', () => {
     it('disables input when warehouse is locked and source is auto', () => {
-      renderWithProviders(
-        <CoefficientField {...defaultProps} source="auto" isWarehouseLocked />,
-      )
+      renderWithProviders(<CoefficientField {...defaultProps} source="auto" isWarehouseLocked />)
 
       const input = screen.getByRole('spinbutton')
       expect(input).toBeDisabled()
     })
 
     it('shows warehouse coefficient note when locked', () => {
-      renderWithProviders(
-        <CoefficientField {...defaultProps} source="auto" isWarehouseLocked />,
-      )
+      renderWithProviders(<CoefficientField {...defaultProps} source="auto" isWarehouseLocked />)
 
       expect(screen.getByText('Используются коэффициенты склада WB')).toBeInTheDocument()
     })
 
     it('does not lock when source is manual even if isWarehouseLocked', () => {
-      renderWithProviders(
-        <CoefficientField {...defaultProps} source="manual" isWarehouseLocked />,
-      )
+      renderWithProviders(<CoefficientField {...defaultProps} source="manual" isWarehouseLocked />)
 
       const input = screen.getByRole('spinbutton')
       expect(input).not.toBeDisabled()
     })
 
     it('does not show note when source is manual', () => {
-      renderWithProviders(
-        <CoefficientField {...defaultProps} source="manual" isWarehouseLocked />,
-      )
+      renderWithProviders(<CoefficientField {...defaultProps} source="manual" isWarehouseLocked />)
 
       expect(screen.queryByText('Используются коэффициенты склада WB')).not.toBeInTheDocument()
     })

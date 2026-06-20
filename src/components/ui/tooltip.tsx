@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import * as React from 'react'
+import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 const TooltipProvider = TooltipPrimitive.Provider
 
@@ -11,7 +11,8 @@ const Tooltip = TooltipPrimitive.Root
 
 const TooltipTrigger = TooltipPrimitive.Trigger
 
-interface TooltipContentProps extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> {
+interface TooltipContentProps
+  extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> {
   /**
    * Size variant for tooltip width
    * - 'sm': 180px (default, compact tooltips)
@@ -48,7 +49,7 @@ const TooltipContent = React.forwardRef<
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }}
         className={cn(
-          "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+          'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
           className
         )}
         {...props}

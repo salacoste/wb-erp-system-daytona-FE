@@ -38,21 +38,11 @@ export function CogsHistoryPagination({
         Показано {displayedCount} из {totalCount} записей
       </p>
       <div className="flex items-center space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onPrevious}
-          disabled={!hasPrevious}
-        >
+        <Button variant="outline" size="sm" onClick={onPrevious} disabled={!hasPrevious}>
           <ChevronLeft className="h-4 w-4 mr-1" />
           Назад
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onNext}
-          disabled={!hasNext}
-        >
+        <Button variant="outline" size="sm" onClick={onNext} disabled={!hasNext}>
           Вперёд
           <ChevronRight className="h-4 w-4 ml-1" />
         </Button>

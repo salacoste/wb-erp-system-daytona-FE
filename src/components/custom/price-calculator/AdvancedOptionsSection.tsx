@@ -66,9 +66,7 @@ export function AdvancedOptionsSection<T extends FieldValues>({
           className="flex w-full items-center justify-between p-0 h-auto text-left hover:bg-muted/50"
         >
           <span className="text-sm font-medium">Дополнительные параметры</span>
-          <ChevronDown
-            className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          />
+          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-4 pt-4">
@@ -81,7 +79,7 @@ export function AdvancedOptionsSection<T extends FieldValues>({
             </div>
             <Select
               value={vatValue?.toString() ?? '20'}
-              onValueChange={(value) => onVatChange(Number(value))}
+              onValueChange={value => onVatChange(Number(value))}
               disabled={disabled}
             >
               <SelectTrigger id="vat_pct">

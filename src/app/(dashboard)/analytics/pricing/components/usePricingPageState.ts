@@ -11,8 +11,8 @@ import { usePriceRecommendations, usePriceRefresh } from '@/hooks/usePriceRecomm
 const DEFAULT_TARGET_MARGIN = 15
 const DEFAULT_LIMIT = 50
 
-export type GapFilter = '' | 'below' | 'above'
-export type SortOption = '' | 'gap_asc' | 'gap_desc' | 'margin_asc' | 'margin_desc'
+export type GapFilter = '' | 'above_target' | 'below_target' | 'at_target'
+export type SortOption = '' | 'gap_pct' | 'margin_at_current_pct' | 'recommended_price'
 
 export function usePricingPageState() {
   const [targetMargin, setTargetMargin] = useState(DEFAULT_TARGET_MARGIN)

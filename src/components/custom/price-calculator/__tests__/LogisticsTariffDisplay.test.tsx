@@ -77,9 +77,7 @@ describe('AC1: Volume-Based Tariff Calculation Display', () => {
     )
 
     // Rerender with different volume
-    rerender(
-      <LogisticsTariffDisplay {...defaultProps} volumeLiters={5.0} onChange={onChange} />
-    )
+    rerender(<LogisticsTariffDisplay {...defaultProps} volumeLiters={5.0} onChange={onChange} />)
 
     // Should trigger recalculation (if auto-calculate is enabled)
     // Note: Actual behavior depends on component implementation
@@ -414,9 +412,7 @@ describe('AC6: Real-time Updates', () => {
     )
 
     // Change coefficient
-    rerender(
-      <LogisticsTariffDisplay {...defaultProps} coefficient={1.25} onChange={onChange} />
-    )
+    rerender(<LogisticsTariffDisplay {...defaultProps} coefficient={1.25} onChange={onChange} />)
 
     // Should trigger update (if auto-calculate enabled)
     // Component should recalculate
@@ -538,8 +534,8 @@ describe('Accessibility', () => {
     const { container } = renderComponent()
 
     // Tooltip trigger should exist and be accessible
-    const tooltipTrigger = container.querySelector('[data-state]') ||
-      container.querySelector('button[aria-label]')
+    const tooltipTrigger =
+      container.querySelector('[data-state]') || container.querySelector('button[aria-label]')
     expect(tooltipTrigger).toBeInTheDocument()
   })
 })

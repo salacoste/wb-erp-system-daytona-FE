@@ -65,30 +65,24 @@ export function SupplyPlanningHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Планирование поставок
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Прогноз стокаутов и рекомендации по заказам
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">Планирование поставок</h1>
+        <p className="text-sm text-muted-foreground">Прогноз стокаутов и рекомендации по заказам</p>
       </div>
 
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Safety Stock Days Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Запас:
-          </span>
+          <span className="text-sm text-muted-foreground whitespace-nowrap">Запас:</span>
           <Select
             value={String(safetyStockDays)}
-            onValueChange={(value) => onSafetyStockChange(Number(value))}
+            onValueChange={value => onSafetyStockChange(Number(value))}
           >
             <SelectTrigger className="w-[110px] h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SAFETY_STOCK_OPTIONS.map((option) => (
+              {SAFETY_STOCK_OPTIONS.map(option => (
                 <SelectItem key={option.value} value={String(option.value)}>
                   {option.label}
                 </SelectItem>
@@ -99,18 +93,16 @@ export function SupplyPlanningHeader({
 
         {/* Velocity Weeks Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Скорость:
-          </span>
+          <span className="text-sm text-muted-foreground whitespace-nowrap">Скорость:</span>
           <Select
             value={String(velocityWeeks)}
-            onValueChange={(value) => onVelocityWeeksChange(Number(value))}
+            onValueChange={value => onVelocityWeeksChange(Number(value))}
           >
             <SelectTrigger className="w-[120px] h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {VELOCITY_WEEKS_OPTIONS.map((option) => (
+              {VELOCITY_WEEKS_OPTIONS.map(option => (
                 <SelectItem key={option.value} value={String(option.value)}>
                   {option.label}
                 </SelectItem>

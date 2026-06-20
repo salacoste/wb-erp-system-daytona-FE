@@ -1,3 +1,5 @@
+'use client'
+
 import { logger } from '@/lib/logger'
 /**
  * useGenerateStickers Mutation Hook
@@ -6,9 +8,6 @@ import { logger } from '@/lib/logger'
  *
  * Mutation hook for generating stickers with cache invalidation.
  */
-
-'use client'
-
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { generateStickers, suppliesQueryKeys } from '@/lib/api/supplies'

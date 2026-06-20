@@ -11,7 +11,13 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, RefreshCcw } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { getOrderById, ordersQueryKeys } from '@/lib/api/orders'
@@ -69,6 +75,9 @@ export function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) 
           <DialogTitle id={MODAL_TITLE_ID}>
             {orderDetails ? `Заказ #${orderDetails.orderId}` : 'Детали заказа'}
           </DialogTitle>
+          <DialogDescription>
+            Просмотр состава заказа и истории изменений статусов WB и локальных операций.
+          </DialogDescription>
         </DialogHeader>
 
         <div aria-busy={isLoading} data-testid="modal-content">

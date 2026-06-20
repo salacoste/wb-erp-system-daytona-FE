@@ -50,9 +50,7 @@ function formatDateRu(dateString: string): string {
  * })
  * ```
  */
-export function useScheduleTariffVersion(
-  options?: UseScheduleTariffVersionOptions
-) {
+export function useScheduleTariffVersion(options?: UseScheduleTariffVersionOptions) {
   const queryClient = useQueryClient()
   const router = useRouter()
 
@@ -73,7 +71,7 @@ export function useScheduleTariffVersion(
       options?.onSuccess?.(data, variables.effective_from)
     },
 
-    onError: (error) => {
+    onError: error => {
       // Use centralized error handler
       handleTariffApiError(error, router)
 

@@ -29,7 +29,7 @@ export function ProductSearchFilter({
           type="text"
           placeholder="Поиск по артикулу или названию..."
           value={searchValue}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={e => onSearchChange(e.target.value)}
           className="pl-10"
         />
       </div>

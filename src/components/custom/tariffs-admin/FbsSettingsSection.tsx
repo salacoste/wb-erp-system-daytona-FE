@@ -12,12 +12,7 @@ import { Switch } from '@/components/ui/switch'
 import { TariffFieldInput } from './TariffFieldInput'
 import { TariffSectionWrapper } from './TariffSectionWrapper'
 import { LogisticsTiersEditor } from './LogisticsTiersEditor'
-import type {
-  UseFormRegister,
-  FieldErrors,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form'
+import type { UseFormRegister, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import type { TariffSettingsFormData, VolumeTierFormData } from './tariffSettingsSchema'
 
 interface FbsSettingsSectionProps {
@@ -64,20 +59,12 @@ export function FbsSettingsSection({
   }
 
   return (
-    <TariffSectionWrapper
-      title="FBS настройки"
-      icon={Package2}
-      isOpen={isOpen}
-      onToggle={onToggle}
-    >
+    <TariffSectionWrapper title="FBS настройки" icon={Package2} isOpen={isOpen} onToggle={onToggle}>
       <div className="space-y-4">
         {/* Toggle for using FBO rates */}
         <div className="flex items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
-            <Label
-              htmlFor="fbs-uses-fbo-rates"
-              className="text-sm font-medium cursor-pointer"
-            >
+            <Label htmlFor="fbs-uses-fbo-rates" className="text-sm font-medium cursor-pointer">
               Использовать тарифы FBO
             </Label>
             <p className="text-xs text-muted-foreground">

@@ -17,6 +17,7 @@ import { AlertCircle, RefreshCw } from 'lucide-react'
 import { DashboardPeriodProvider, useDashboardPeriod } from '@/hooks/useDashboardPeriod'
 import { getWeeksInMonth } from '@/lib/period-helpers'
 import { CabinetDashboardSkeleton } from '@/components/custom/dashboard/CabinetDashboardSkeleton'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 
 export default function CabinetDashboardPage() {
   return (
@@ -57,6 +58,8 @@ function CabinetDashboardContent() {
     { weekStart, weekEnd },
     { enabled: isFinanceAvailable }
   )
+  const showSkeleton = isLoading && !data
+  const showSlowLoading = useDelayedLoadingState(showSkeleton)
 
   // When finance not available, show banners instead of error
   if (!isFinanceAvailable) {
@@ -113,7 +116,30 @@ function CabinetDashboardContent() {
       </div>
 
       {/* Loading State */}
-      {isLoading && <CabinetDashboardSkeleton />}
+      {showSkeleton && !showSlowLoading && <CabinetDashboardSkeleton />}
+
+      {showSkeleton && showSlowLoading && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <div className="flex items-center justify-between gap-4">
+              <span>
+                Сводка по кабинету загружается дольше обычного. Можно подождать или повторить
+                запрос.
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => void refetch()}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Повторить
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Content */}
       {!isLoading && data && (

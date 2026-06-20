@@ -1,3 +1,5 @@
+'use client'
+
 import { logger } from '@/lib/logger'
 /**
  * useCloseSupply Mutation Hook
@@ -6,9 +8,6 @@ import { logger } from '@/lib/logger'
  *
  * Mutation hook for closing supplies with cache invalidation.
  */
-
-'use client'
-
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { closeSupply, suppliesQueryKeys } from '@/lib/api/supplies'

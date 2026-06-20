@@ -29,6 +29,5 @@ export const tariffQueryKeys = {
   versionHistory: () => [...tariffQueryKeys.all, 'history'] as const,
 
   /** Key for audit log queries with optional filters */
-  auditLog: (params?: TariffAuditParams) =>
-    [...tariffQueryKeys.all, 'audit', params] as const,
+  auditLog: (params?: TariffAuditParams) => [...tariffQueryKeys.all, 'audit', params] as const,
 }

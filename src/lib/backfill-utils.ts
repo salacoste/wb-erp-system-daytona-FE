@@ -102,7 +102,7 @@ const STATUS_CONFIG: Record<
     label: 'Не начат',
     color: 'gray',
     bgColor: 'bg-gray-100',
-    textColor: 'text-gray-500',
+    textColor: 'text-gray-600',
     progressColor: 'bg-gray-300',
   },
   pending: {

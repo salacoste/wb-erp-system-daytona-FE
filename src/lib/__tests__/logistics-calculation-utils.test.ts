@@ -139,23 +139,23 @@ describe('formatLogisticsBreakdown', () => {
 
     expect(Array.isArray(lines)).toBe(true)
     expect(lines.length).toBeGreaterThan(0)
-    expect(lines.some((line) => line.includes('Базовый тариф'))).toBe(true)
-    expect(lines.some((line) => line.includes('Доп. литры'))).toBe(true)
-    expect(lines.some((line) => line.includes('Коэффициент'))).toBe(true)
-    expect(lines.some((line) => line.includes('Итого'))).toBe(true)
+    expect(lines.some(line => line.includes('Базовый тариф'))).toBe(true)
+    expect(lines.some(line => line.includes('Доп. литры'))).toBe(true)
+    expect(lines.some(line => line.includes('Коэффициент'))).toBe(true)
+    expect(lines.some(line => line.includes('Итого'))).toBe(true)
   })
 
   it('excludes additional liters line when volume <= 1', () => {
     const result = calculateLogisticsCost(1, DEFAULT_LOGISTICS_TARIFF)
     const lines = formatLogisticsBreakdown(result)
 
-    expect(lines.some((line) => line.includes('Доп. литры'))).toBe(false)
+    expect(lines.some(line => line.includes('Доп. литры'))).toBe(false)
   })
 
   it('excludes coefficient line when 1.0', () => {
     const result = calculateLogisticsCost(3, DEFAULT_LOGISTICS_TARIFF)
     const lines = formatLogisticsBreakdown(result)
 
-    expect(lines.some((line) => line.includes('Коэффициент'))).toBe(false)
+    expect(lines.some(line => line.includes('Коэффициент'))).toBe(false)
   })
 })

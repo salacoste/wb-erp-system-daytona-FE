@@ -11,12 +11,7 @@
 
 import { Info } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import {
   getCoefficientStatusConfig,
@@ -82,8 +77,8 @@ export function CoefficientDisplay({
             </TooltipTrigger>
             <TooltipContent size="md">
               <p>
-                Коэффициент логистики зависит от загруженности склада. Повышенный
-                коэффициент увеличивает стоимость доставки.
+                Коэффициент логистики зависит от загруженности склада. Повышенный коэффициент
+                увеличивает стоимость доставки.
               </p>
             </TooltipContent>
           </Tooltip>

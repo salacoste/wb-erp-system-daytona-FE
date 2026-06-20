@@ -3,19 +3,19 @@
 // Epic 34-FE: Story 34.3-FE - Notification Preferences Panel
 // ============================================================================
 
-import { cn } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils'
+import { Switch } from '@/components/ui/switch'
 
 /**
  * Props for EventTypeCard component
  * Story 34.3-FE: AC1 - Event Type Cards with Q6 Border Highlight
  */
 interface EventTypeCardProps {
-  title: string;
-  description: string;
-  enabled: boolean;
-  onToggle: () => void;
-  children?: React.ReactNode; // For conditional time picker (daily digest)
+  title: string
+  description: string
+  enabled: boolean
+  onToggle: () => void
+  children?: React.ReactNode // For conditional time picker (daily digest)
 }
 
 /**
@@ -57,10 +57,10 @@ export function EventTypeCard({
       )}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onToggle();
+          e.preventDefault()
+          onToggle()
         }
       }}
     >
@@ -83,7 +83,7 @@ export function EventTypeCard({
         <Switch
           checked={enabled}
           onCheckedChange={onToggle}
-          onClick={(e) => e.stopPropagation()} // Prevent double-toggle
+          onClick={e => e.stopPropagation()} // Prevent double-toggle
           className={cn(
             'data-[state=checked]:bg-telegram-blue',
             'data-[state=unchecked]:bg-gray-300'
@@ -95,5 +95,5 @@ export function EventTypeCard({
       {/* AC4: Conditional Content (e.g., time picker for daily digest) */}
       {children}
     </div>
-  );
+  )
 }

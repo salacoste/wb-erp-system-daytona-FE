@@ -14,11 +14,16 @@ import Link from 'next/link'
 import { Breadcrumbs } from './CogsHistoryBreadcrumbs'
 import { CogsHistoryMeta } from '@/components/custom/CogsHistoryMeta'
 
+function CogsHistoryHeading() {
+  return <h1 className="text-2xl font-bold tracking-tight">История COGS</h1>
+}
+
 /** No nmId provided state */
 export function CogsHistoryNoNmId() {
   return (
     <div className="space-y-6">
       <Breadcrumbs />
+      <CogsHistoryHeading />
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
@@ -40,6 +45,7 @@ export function CogsHistoryLoading() {
   return (
     <div className="space-y-6">
       <Breadcrumbs />
+      <CogsHistoryHeading />
       <Card>
         <CardContent className="space-y-4 pt-6">
           <Skeleton className="h-8 w-64" />
@@ -65,6 +71,7 @@ export function CogsHistoryError({ error, onRetry }: ErrorStateProps) {
   return (
     <div className="space-y-6">
       <Breadcrumbs />
+      <CogsHistoryHeading />
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
@@ -96,6 +103,7 @@ export function CogsHistoryEmpty({ nmId, meta }: EmptyStateProps) {
   return (
     <div className="space-y-6">
       <Breadcrumbs productName={meta?.product_name} />
+      {!meta && <CogsHistoryHeading />}
       {meta && <CogsHistoryMeta meta={meta as Parameters<typeof CogsHistoryMeta>[0]['meta']} />}
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">

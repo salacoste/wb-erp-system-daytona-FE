@@ -7,11 +7,7 @@
 // ============================================================================
 
 import { ChevronDown, ChevronRight, type LucideIcon } from 'lucide-react'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 
 interface TariffSectionWrapperProps {

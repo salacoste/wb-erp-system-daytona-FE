@@ -48,9 +48,7 @@ const createTestQueryClient = () =>
 // Wrapper with providers
 const renderWithProviders = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 // Mock tariff settings data - exported for use in integration tests
@@ -272,7 +270,7 @@ describe('TariffSettingsForm', () => {
   describe('Loading and error states', () => {
     it('shows loading skeleton while fetching', () => {
       mockGetTariffSettings.mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve(mockTariffSettings), 1000))
+        () => new Promise(resolve => setTimeout(() => resolve(mockTariffSettings), 1000))
       )
 
       renderWithProviders(<TariffSettingsForm />)
@@ -302,7 +300,7 @@ describe('TariffSettingsForm', () => {
 
       // Check that inputs are properly labeled
       const inputs = screen.getAllByRole('spinbutton')
-      inputs.forEach((input) => {
+      inputs.forEach(input => {
         expect(input).toHaveAccessibleName()
       })
     })

@@ -28,7 +28,7 @@ const createRawWarehouse = (
   deliveryBase = '48*1',
   deliveryLiter = '5*x',
   storageBase = '1*1',
-  storageLiter = '1*x',
+  storageLiter = '1*x'
 ): RawWarehouse => ({
   warehouseID: id,
   warehouseName: name,
@@ -131,7 +131,7 @@ describe('parseWarehouses', () => {
     expect(parsed[0].id).toBe(507)
     expect(parsed[1].id).toBe(117501)
     expect(parsed[2].id).toBe(208699)
-    expect(parsed.every((w) => typeof w.tariffs.deliveryBaseLiterRub === 'number')).toBe(true)
+    expect(parsed.every(w => typeof w.tariffs.deliveryBaseLiterRub === 'number')).toBe(true)
   })
 
   it('should return empty array for empty input', () => {
@@ -141,10 +141,46 @@ describe('parseWarehouses', () => {
 
 describe('filterWarehouses', () => {
   const warehouses: Warehouse[] = [
-    { id: 507, name: 'Коледино', tariffs: { deliveryBaseLiterRub: 48, deliveryPerLiterRub: 5, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 117501, name: 'Подольск', tariffs: { deliveryBaseLiterRub: 45, deliveryPerLiterRub: 4, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 208699, name: 'Казань', tariffs: { deliveryBaseLiterRub: 43, deliveryPerLiterRub: 4, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 218123, name: 'Краснодар', tariffs: { deliveryBaseLiterRub: 42, deliveryPerLiterRub: 4, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
+    {
+      id: 507,
+      name: 'Коледино',
+      tariffs: {
+        deliveryBaseLiterRub: 48,
+        deliveryPerLiterRub: 5,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 117501,
+      name: 'Подольск',
+      tariffs: {
+        deliveryBaseLiterRub: 45,
+        deliveryPerLiterRub: 4,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 208699,
+      name: 'Казань',
+      tariffs: {
+        deliveryBaseLiterRub: 43,
+        deliveryPerLiterRub: 4,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 218123,
+      name: 'Краснодар',
+      tariffs: {
+        deliveryBaseLiterRub: 42,
+        deliveryPerLiterRub: 4,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
   ]
 
   it('should return all warehouses for empty query', () => {
@@ -190,8 +226,8 @@ describe('filterWarehouses', () => {
     // Filter for warehouses containing "од" (matches Подольск, Краснодар)
     const result = filterWarehouses(warehouses, 'од')
     expect(result).toHaveLength(2)
-    expect(result.some((w) => w.name === 'Подольск')).toBe(true)
-    expect(result.some((w) => w.name === 'Краснодар')).toBe(true)
+    expect(result.some(w => w.name === 'Подольск')).toBe(true)
+    expect(result.some(w => w.name === 'Краснодар')).toBe(true)
   })
 })
 
@@ -213,11 +249,56 @@ describe('isPopularWarehouse', () => {
 
 describe('separateWarehouses', () => {
   const warehouses: Warehouse[] = [
-    { id: 507, name: 'Коледино', tariffs: { deliveryBaseLiterRub: 48, deliveryPerLiterRub: 5, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 100001, name: 'Алматы', tariffs: { deliveryBaseLiterRub: 40, deliveryPerLiterRub: 3, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 117501, name: 'Подольск', tariffs: { deliveryBaseLiterRub: 45, deliveryPerLiterRub: 4, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 100002, name: 'Астана', tariffs: { deliveryBaseLiterRub: 38, deliveryPerLiterRub: 3, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-    { id: 208699, name: 'Казань', tariffs: { deliveryBaseLiterRub: 43, deliveryPerLiterRub: 4, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
+    {
+      id: 507,
+      name: 'Коледино',
+      tariffs: {
+        deliveryBaseLiterRub: 48,
+        deliveryPerLiterRub: 5,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 100001,
+      name: 'Алматы',
+      tariffs: {
+        deliveryBaseLiterRub: 40,
+        deliveryPerLiterRub: 3,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 117501,
+      name: 'Подольск',
+      tariffs: {
+        deliveryBaseLiterRub: 45,
+        deliveryPerLiterRub: 4,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 100002,
+      name: 'Астана',
+      tariffs: {
+        deliveryBaseLiterRub: 38,
+        deliveryPerLiterRub: 3,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
+    {
+      id: 208699,
+      name: 'Казань',
+      tariffs: {
+        deliveryBaseLiterRub: 43,
+        deliveryPerLiterRub: 4,
+        storageBaseLiterRub: 1,
+        storagePerLiterRub: 1,
+      },
+    },
   ]
 
   it('should separate popular and other warehouses', () => {
@@ -230,7 +311,7 @@ describe('separateWarehouses', () => {
   it('should include correct warehouses in popular', () => {
     const { popular } = separateWarehouses(warehouses)
 
-    const popularIds = popular.map((w) => w.id)
+    const popularIds = popular.map(w => w.id)
     expect(popularIds).toContain(507)
     expect(popularIds).toContain(117501)
     expect(popularIds).toContain(208699)
@@ -239,7 +320,7 @@ describe('separateWarehouses', () => {
   it('should include correct warehouses in other', () => {
     const { other } = separateWarehouses(warehouses)
 
-    const otherIds = other.map((w) => w.id)
+    const otherIds = other.map(w => w.id)
     expect(otherIds).toContain(100001)
     expect(otherIds).toContain(100002)
   })
@@ -252,8 +333,26 @@ describe('separateWarehouses', () => {
 
   it('should handle all popular warehouses', () => {
     const allPopular: Warehouse[] = [
-      { id: 507, name: 'Коледино', tariffs: { deliveryBaseLiterRub: 48, deliveryPerLiterRub: 5, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-      { id: 117501, name: 'Подольск', tariffs: { deliveryBaseLiterRub: 45, deliveryPerLiterRub: 4, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
+      {
+        id: 507,
+        name: 'Коледино',
+        tariffs: {
+          deliveryBaseLiterRub: 48,
+          deliveryPerLiterRub: 5,
+          storageBaseLiterRub: 1,
+          storagePerLiterRub: 1,
+        },
+      },
+      {
+        id: 117501,
+        name: 'Подольск',
+        tariffs: {
+          deliveryBaseLiterRub: 45,
+          deliveryPerLiterRub: 4,
+          storageBaseLiterRub: 1,
+          storagePerLiterRub: 1,
+        },
+      },
     ]
 
     const { popular, other } = separateWarehouses(allPopular)
@@ -263,8 +362,26 @@ describe('separateWarehouses', () => {
 
   it('should handle no popular warehouses', () => {
     const nonPopular: Warehouse[] = [
-      { id: 100001, name: 'Алматы', tariffs: { deliveryBaseLiterRub: 40, deliveryPerLiterRub: 3, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
-      { id: 100002, name: 'Астана', tariffs: { deliveryBaseLiterRub: 38, deliveryPerLiterRub: 3, storageBaseLiterRub: 1, storagePerLiterRub: 1 } },
+      {
+        id: 100001,
+        name: 'Алматы',
+        tariffs: {
+          deliveryBaseLiterRub: 40,
+          deliveryPerLiterRub: 3,
+          storageBaseLiterRub: 1,
+          storagePerLiterRub: 1,
+        },
+      },
+      {
+        id: 100002,
+        name: 'Астана',
+        tariffs: {
+          deliveryBaseLiterRub: 38,
+          deliveryPerLiterRub: 3,
+          storageBaseLiterRub: 1,
+          storagePerLiterRub: 1,
+        },
+      },
     ]
 
     const { popular, other } = separateWarehouses(nonPopular)

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement, type ReactNode } from 'react'
 import { useProcessingStatus, getRefetchInterval, MAX_EMPTY_POLLS } from '../useProcessingStatus'
 import { apiClient } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 import type { ProcessingStatus } from '@/types/api'
 
 vi.mock('@/lib/api-client', () => ({
@@ -14,7 +15,14 @@ vi.mock('@/stores/authStore', () => ({
   useAuthStore: () => ({ cabinetId: 'cab-1' }),
 }))
 
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    warn: vi.fn(),
+  },
+}))
+
 const mockGet = vi.mocked(apiClient.get)
+const mockWarn = vi.mocked(logger.warn)
 
 function wrapper({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient({
@@ -39,6 +47,8 @@ describe('useProcessingStatus — empty-batch terminal state', () => {
 
     await waitFor(() => expect(result.current.data).toBeDefined())
     expect(result.current.data?.status).toBe('processing')
+    expect(mockGet).toHaveBeenCalledWith('/v1/imports/historical?limit=5')
+    expect(mockWarn).not.toHaveBeenCalled()
   })
 
   it('flips to "no_data" after MAX_EMPTY_POLLS empty polls', async () => {

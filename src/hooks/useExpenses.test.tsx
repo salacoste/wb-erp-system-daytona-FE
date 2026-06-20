@@ -55,7 +55,7 @@ describe('useExpenses', () => {
       storage_cost_total: 30000,
       paid_acceptance_cost_total: 10000,
       penalties_total: 20000,
-      wb_commission_adj_total: 5000,  // Корректировка ВВ
+      wb_commission_adj_total: 5000, // Корректировка ВВ
       // WB Services breakdown (Request #56)
       wb_promotion_cost_total: 15000,
       wb_jam_cost_total: 3000,
@@ -79,7 +79,12 @@ describe('useExpenses', () => {
 
   it('fetches and transforms expense data successfully', { timeout: 5000 }, async () => {
     ;(apiClient.get as ReturnType<typeof vi.fn>)
-      .mockResolvedValueOnce({ data: [{ week: '2025-W03', start_date: '2025-01-13' }, { week: '2025-W02', start_date: '2025-01-06' }] })
+      .mockResolvedValueOnce({
+        data: [
+          { week: '2025-W03', start_date: '2025-01-13' },
+          { week: '2025-W02', start_date: '2025-01-06' },
+        ],
+      })
       .mockResolvedValueOnce(mockFinanceSummaryResponse)
 
     const { result } = renderHook(() => useExpenses(), { wrapper })
@@ -174,9 +179,7 @@ describe('useExpenses', () => {
   })
 
   it('handles API errors gracefully', { timeout: 5000 }, async () => {
-    ;(apiClient.get as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-      new Error('API Error'),
-    )
+    ;(apiClient.get as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('API Error'))
 
     const { result } = renderHook(() => useExpenses(), { wrapper })
 
@@ -207,14 +210,17 @@ describe('useExpenses', () => {
       expect(result.current.isSuccess).toBe(true)
     })
 
-    expect(apiClient.get).toHaveBeenCalledWith(
-      '/v1/analytics/weekly/finance-summary?week=2025-W05',
-    )
+    expect(apiClient.get).toHaveBeenCalledWith('/v1/analytics/weekly/finance-summary?week=2025-W05')
   })
 
   it('handles object response format for weeks', { timeout: 5000 }, async () => {
     ;(apiClient.get as ReturnType<typeof vi.fn>)
-      .mockResolvedValueOnce({ data: [{ week: '2025-W03', start_date: '2025-01-13' }, { week: '2025-W02', start_date: '2025-01-06' }] })
+      .mockResolvedValueOnce({
+        data: [
+          { week: '2025-W03', start_date: '2025-01-13' },
+          { week: '2025-W02', start_date: '2025-01-06' },
+        ],
+      })
       .mockResolvedValueOnce(mockFinanceSummaryResponse)
 
     const { result } = renderHook(() => useExpenses(), { wrapper })
@@ -256,4 +262,3 @@ describe('useExpenses', () => {
     expect(result.current.data).toBeDefined()
   })
 })
-

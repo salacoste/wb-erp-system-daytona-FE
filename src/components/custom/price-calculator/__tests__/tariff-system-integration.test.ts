@@ -227,13 +227,17 @@ describe('Story 44.40: Tariff Selection Logic', () => {
       const tariffs = extractTariffs('supply', mockInventoryWarehouse, mockSupplyTariffs)
 
       // SUPPLY rates are typically higher than INVENTORY
-      expect(tariffs.deliveryBaseLiterRub).toBeGreaterThan(mockInventoryWarehouse.tariffs.deliveryBaseLiterRub)
+      expect(tariffs.deliveryBaseLiterRub).toBeGreaterThan(
+        mockInventoryWarehouse.tariffs.deliveryBaseLiterRub
+      )
     })
 
     it('should correctly extract storage.baseLiterRub from SUPPLY data', () => {
       const tariffs = extractTariffs('supply', mockInventoryWarehouse, mockSupplyTariffs)
 
-      expect(tariffs.storageBaseLiterRub).toBeGreaterThan(mockInventoryWarehouse.tariffs.storageBaseLiterRub)
+      expect(tariffs.storageBaseLiterRub).toBeGreaterThan(
+        mockInventoryWarehouse.tariffs.storageBaseLiterRub
+      )
     })
 
     it('should use SUPPLY delivery coefficient for display', () => {
@@ -633,7 +637,7 @@ describe('Story 44.40: API Integration', () => {
       const targetDate = '2026-01-27'
 
       const filtered = coefficients.find(
-        (c) => c.warehouseId === targetWarehouseId && c.date === targetDate
+        c => c.warehouseId === targetWarehouseId && c.date === targetDate
       )
 
       expect(filtered?.warehouseId).toBe(507)

@@ -117,9 +117,7 @@ describe('RateLimitIndicator', () => {
         toast.warning(`Осталось ${remaining} запросов.`)
       }
 
-      expect(toast.warning).toHaveBeenCalledWith(
-        expect.stringContaining('Осталось 3 запросов')
-      )
+      expect(toast.warning).toHaveBeenCalledWith(expect.stringContaining('Осталось 3 запросов'))
     })
 
     it('shows warning toast when remaining drops to 1', () => {

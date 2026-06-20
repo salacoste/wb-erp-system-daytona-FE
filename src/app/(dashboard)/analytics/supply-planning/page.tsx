@@ -39,20 +39,14 @@ export default function SupplyPlanningPage() {
   }
 
   // Fetch data
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    dataUpdatedAt,
-  } = useSupplyPlanning(queryParams, {
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useSupplyPlanning(queryParams, {
     staleTime: 60000, // 1 minute
     refetchInterval: 300000, // 5 minutes auto-refresh
   })
 
   // Handle card click - toggle filter
   const handleCardClick = useCallback((status: StockoutRisk) => {
-    setActiveFilter(prev => prev === status ? null : status)
+    setActiveFilter(prev => (prev === status ? null : status))
   }, [])
 
   // Handle refresh

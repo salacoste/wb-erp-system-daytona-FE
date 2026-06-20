@@ -122,7 +122,12 @@ describe('useFinancialSummary', () => {
       summary_total: { week: '2025-W01', payout_total: 750000 },
       summary_rus: null,
       summary_eaeu: null,
-      meta: { week: '2025-W01', cabinet_id: 'cabinet-123', generated_at: '2025-01-20T10:00:00Z', timezone: 'Europe/Moscow' },
+      meta: {
+        week: '2025-W01',
+        cabinet_id: 'cabinet-123',
+        generated_at: '2025-01-20T10:00:00Z',
+        timezone: 'Europe/Moscow',
+      },
     }
 
     vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
@@ -148,14 +153,24 @@ describe('useFinancialSummaryComparison', () => {
       summary_total: { week: '2025-W01', payout_total: 750000 },
       summary_rus: null,
       summary_eaeu: null,
-      meta: { week: '2025-W01', cabinet_id: 'cabinet-123', generated_at: '2025-01-20T10:00:00Z', timezone: 'Europe/Moscow' },
+      meta: {
+        week: '2025-W01',
+        cabinet_id: 'cabinet-123',
+        generated_at: '2025-01-20T10:00:00Z',
+        timezone: 'Europe/Moscow',
+      },
     }
 
     const mockResponse2 = {
       summary_total: { week: '2025-W02', payout_total: 900000 },
       summary_rus: null,
       summary_eaeu: null,
-      meta: { week: '2025-W02', cabinet_id: 'cabinet-123', generated_at: '2025-01-27T10:00:00Z', timezone: 'Europe/Moscow' },
+      meta: {
+        week: '2025-W02',
+        cabinet_id: 'cabinet-123',
+        generated_at: '2025-01-27T10:00:00Z',
+        timezone: 'Europe/Moscow',
+      },
     }
 
     vi.mocked(apiClient.get)
@@ -166,7 +181,9 @@ describe('useFinancialSummaryComparison', () => {
       wrapper: createWrapper(),
     })
 
-    await waitFor(() => expect(result.current.week1.isSuccess && result.current.week2.isSuccess).toBe(true))
+    await waitFor(() =>
+      expect(result.current.week1.isSuccess && result.current.week2.isSuccess).toBe(true)
+    )
 
     expect(result.current.week1.data).toEqual(mockResponse1)
     expect(result.current.week2.data).toEqual(mockResponse2)
@@ -178,7 +195,12 @@ describe('useFinancialSummaryComparison', () => {
       summary_total: { week: '2025-W01', payout_total: 750000 },
       summary_rus: null,
       summary_eaeu: null,
-      meta: { week: '2025-W01', cabinet_id: 'cabinet-123', generated_at: '2025-01-20T10:00:00Z', timezone: 'Europe/Moscow' },
+      meta: {
+        week: '2025-W01',
+        cabinet_id: 'cabinet-123',
+        generated_at: '2025-01-20T10:00:00Z',
+        timezone: 'Europe/Moscow',
+      },
     }
 
     vi.mocked(apiClient.get)
@@ -199,7 +221,12 @@ describe('useFinancialSummaryComparison', () => {
       summary_total: { week: '2025-W01', payout_total: 750000 },
       summary_rus: null,
       summary_eaeu: null,
-      meta: { week: '2025-W01', cabinet_id: 'cabinet-123', generated_at: '2025-01-20T10:00:00Z', timezone: 'Europe/Moscow' },
+      meta: {
+        week: '2025-W01',
+        cabinet_id: 'cabinet-123',
+        generated_at: '2025-01-20T10:00:00Z',
+        timezone: 'Europe/Moscow',
+      },
     }
 
     const error = { status: 404, message: 'Week not found' }
@@ -357,4 +384,3 @@ describe('Helper functions', () => {
     })
   })
 })
-

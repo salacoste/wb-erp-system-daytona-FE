@@ -94,7 +94,9 @@ export function FixedCostsBreakdown({
             <span>├─ Логистика до МП</span>
             <span className="flex gap-4">
               <span className="w-16 text-right">{formatCurrency(costs.logisticsToMp)}</span>
-              <span className="w-12 text-right text-xs">{formatPercentage(logisticsToMpPct, 1)}</span>
+              <span className="w-12 text-right text-xs">
+                {formatPercentage(logisticsToMpPct, 1)}
+              </span>
             </span>
           </div>
         )}
@@ -137,7 +139,9 @@ export function FixedCostsBreakdown({
               <span>└─ Приёмка</span>
               <span className="flex gap-4">
                 <span className="w-16 text-right">{formatCurrency(costs.acceptance)}</span>
-                <span className="w-12 text-right text-xs">{formatPercentage(acceptancePct, 1)}</span>
+                <span className="w-12 text-right text-xs">
+                  {formatPercentage(acceptancePct, 1)}
+                </span>
               </span>
             </div>
             {/* Show per-unit breakdown when multiple units per package */}

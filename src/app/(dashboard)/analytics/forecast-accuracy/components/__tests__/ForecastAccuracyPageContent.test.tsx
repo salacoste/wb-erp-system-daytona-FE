@@ -88,4 +88,24 @@ describe('ForecastAccuracyPageContent', () => {
     render(<ForecastAccuracyPageContent />)
     expect(screen.getByText('По SKU (топ-20)')).toBeInTheDocument()
   })
+
+  it('explains extreme MAPE values so users do not read outliers as normal accuracy', () => {
+    mockUseForecastAccuracy.mockReturnValue({
+      data: {
+        ...mockData,
+        avgMAPE: 8374.35,
+        byHorizon: [{ horizonDays: 7, mape: 8374.35, mae: 669.11, count: 103 }],
+        bySKU: [{ nmId: 395995092, mape: 9999.99, mae: 712.14, count: 7 }],
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useForecastAccuracy>)
+
+    render(<ForecastAccuracyPageContent />)
+
+    expect(screen.getByText('Очень высокая MAPE')).toBeInTheDocument()
+    expect(screen.getByText(/фактические продажи близки к нулю/)).toBeInTheDocument()
+    expect(screen.getByText(/Проверяйте MAE и количество наблюдений/)).toBeInTheDocument()
+  })
 })

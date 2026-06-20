@@ -7,7 +7,7 @@
  * Story 109.4-FE: added 7th "Действия" column with per-row TrainModelButton + polling.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAiModels } from '@/hooks/useAiModels'
@@ -33,6 +33,18 @@ import {
 } from './model-list-helpers'
 import { TrainModelButton } from './TrainModelButton'
 
+function ModelsPageShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="space-y-6 p-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Модели AI</h1>
+        <p className="text-muted-foreground">Список ML-моделей вашего кабинета</p>
+      </div>
+      {children}
+    </div>
+  )
+}
+
 export function ModelListSection() {
   const router = useRouter()
 
@@ -49,31 +61,31 @@ export function ModelListSection() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 p-6">
+      <ModelsPageShell>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-12 w-full" />
         <Skeleton className="h-12 w-full" />
         <Skeleton className="h-12 w-full" />
-      </div>
+      </ModelsPageShell>
     )
   }
 
   if (isError) {
     return (
-      <div className="p-6">
+      <ModelsPageShell>
         <Alert variant="destructive">
           <AlertDescription>
             Ошибка загрузки списка моделей
             {error?.message ? `: ${error.message}` : ''}
           </AlertDescription>
         </Alert>
-      </div>
+      </ModelsPageShell>
     )
   }
 
   if (!data?.models?.length) {
     return (
-      <div className="p-6">
+      <ModelsPageShell>
         <Alert>
           <AlertDescription>
             Модели ещё не обучены.{' '}
@@ -82,15 +94,15 @@ export function ModelListSection() {
             </Link>
           </AlertDescription>
         </Alert>
-      </div>
+      </ModelsPageShell>
     )
   }
 
   return (
-    <div className="p-6">
+    <ModelsPageShell>
       <Card>
         <CardHeader>
-          <CardTitle>Модели AI</CardTitle>
+          <CardTitle>Список моделей</CardTitle>
           <CardDescription>Список ML-моделей вашего кабинета</CardDescription>
         </CardHeader>
         <CardContent>
@@ -161,6 +173,6 @@ export function ModelListSection() {
           </Table>
         </CardContent>
       </Card>
-    </div>
+    </ModelsPageShell>
   )
 }

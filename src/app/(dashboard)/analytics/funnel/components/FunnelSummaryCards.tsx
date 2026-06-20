@@ -5,7 +5,10 @@ import { useFunnelData } from '@/hooks/use-funnel-analytics'
 import { formatCurrency } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import {
+  AlertCircle,
   Eye,
   ShoppingBag,
   ShoppingCart,
@@ -21,6 +24,7 @@ import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { formatNumber, formatPercent } from './funnel-summary-formatters'
 import { DeltaIndicator } from './FunnelDeltaIndicator'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 
 interface FunnelSummaryCardsProps {
   from: string
@@ -109,7 +113,8 @@ export function FunnelSummaryCards({
   nmIds,
 }: FunnelSummaryCardsProps) {
   const filterParam = nmIds?.length ? nmIds : undefined
-  const { data, isLoading } = useFunnelData(from, to, { limit: 1, nmIds: filterParam })
+  const { data, isLoading, refetch } = useFunnelData(from, to, { limit: 1, nmIds: filterParam })
+  const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   const hasCompare = compareEnabled && !!compareFrom && !!compareTo
   const { data: prevData, isLoading: prevLoading } = useFunnelData(
@@ -118,13 +123,27 @@ export function FunnelSummaryCards({
     { limit: 1, nmIds: filterParam }
   )
 
-  if (isLoading) {
+  if (isLoading && !showSlowLoading) {
     return (
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <Skeleton key={i} className="h-24" />
         ))}
       </div>
+    )
+  }
+
+  if (isLoading && showSlowLoading) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription className="flex items-center justify-between gap-4">
+          <span>Метрики воронки загружаются дольше обычного. Можно повторить запрос.</span>
+          <Button variant="outline" size="sm" className="shrink-0" onClick={() => void refetch()}>
+            Повторить
+          </Button>
+        </AlertDescription>
+      </Alert>
     )
   }
 

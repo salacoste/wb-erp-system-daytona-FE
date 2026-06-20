@@ -46,16 +46,12 @@ describe('handleCreateCabinet', () => {
       setCabinetId: mockSetCabinetId,
       user: mockUser,
     })
-
     ;(createCabinet as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse)
 
     const result = await handleCreateCabinet('Test Cabinet')
 
     // Проверяем, что createCabinet был вызван
-    expect(createCabinet).toHaveBeenCalledWith(
-      { name: 'Test Cabinet' },
-      mockToken,
-    )
+    expect(createCabinet).toHaveBeenCalledWith({ name: 'Test Cabinet' }, mockToken)
 
     // Проверяем, что refreshToken был вызван с новым токеном
     expect(mockRefreshToken).toHaveBeenCalledWith(mockNewToken, mockUser)
@@ -79,9 +75,7 @@ describe('handleCreateCabinet', () => {
       token: null,
     })
 
-    await expect(handleCreateCabinet('Test Cabinet')).rejects.toThrow(
-      'User not authenticated',
-    )
+    await expect(handleCreateCabinet('Test Cabinet')).rejects.toThrow('User not authenticated')
   })
 
   it('should throw error if token update fails', async () => {
@@ -105,12 +99,8 @@ describe('handleCreateCabinet', () => {
       refreshToken: mockRefreshToken,
       user: null,
     })
-
     ;(createCabinet as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse)
 
-    await expect(handleCreateCabinet('Test Cabinet')).rejects.toThrow(
-      'token update failed',
-    )
+    await expect(handleCreateCabinet('Test Cabinet')).rejects.toThrow('token update failed')
   })
 })
-

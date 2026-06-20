@@ -27,4 +27,3 @@ export const env = {
   isProduction: process.env.NODE_ENV === 'production',
   enableDevTools: process.env.NEXT_PUBLIC_ENABLE_DEV_TOOLS === 'true',
 } as const
-

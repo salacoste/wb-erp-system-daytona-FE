@@ -404,7 +404,7 @@ describe('Story 44.40 AC6: API Hook Updates', () => {
 
       // Хук должен фильтровать по warehouseId и date
       const filtered = [mockSupplyTariffs].find(
-        (t) => t.warehouseId === warehouseId && t.date === date
+        t => t.warehouseId === warehouseId && t.date === date
       )
 
       expect(filtered).toBeDefined()
@@ -417,7 +417,7 @@ describe('Story 44.40 AC6: API Hook Updates', () => {
       const date = '2026-02-15' // Date not in data
 
       const filtered = [mockSupplyTariffs].find(
-        (t) => t.warehouseId === warehouseId && t.date === date
+        t => t.warehouseId === warehouseId && t.date === date
       )
 
       expect(filtered).toBeUndefined()
@@ -446,7 +446,8 @@ describe('Story 44.40 AC7: Calculation Integration', () => {
       const tariffs = extractTariffs('inventory', mockWarehouse, null)
 
       const volumeLiters = 5
-      const logistics = tariffs.deliveryBaseLiterRub + tariffs.deliveryPerLiterRub * (volumeLiters - 1)
+      const logistics =
+        tariffs.deliveryBaseLiterRub + tariffs.deliveryPerLiterRub * (volumeLiters - 1)
 
       // 46 + 14 * 4 = 102
       expect(logistics).toBe(102)
@@ -456,7 +457,8 @@ describe('Story 44.40 AC7: Calculation Integration', () => {
       const tariffs = extractTariffs('supply', mockWarehouse, mockSupplyTariffs)
 
       const volumeLiters = 5
-      const logistics = tariffs.deliveryBaseLiterRub + tariffs.deliveryPerLiterRub * (volumeLiters - 1)
+      const logistics =
+        tariffs.deliveryBaseLiterRub + tariffs.deliveryPerLiterRub * (volumeLiters - 1)
 
       // 52 + 16 * 4 = 116
       expect(logistics).toBe(116)
@@ -476,8 +478,10 @@ describe('Story 44.40 AC7: Calculation Integration', () => {
     it('should use INVENTORY rates when tariffSystem=inventory', () => {
       const volumeLiters = 5
       const days = 30
-      const storage = (mockInventoryTariffs.storageBaseLiterRub +
-        mockInventoryTariffs.storagePerLiterRub * volumeLiters) * days
+      const storage =
+        (mockInventoryTariffs.storageBaseLiterRub +
+          mockInventoryTariffs.storagePerLiterRub * volumeLiters) *
+        days
 
       // (0.07 + 0.05 * 5) * 30 = (0.07 + 0.25) * 30 = 9.6
       expect(storage).toBeCloseTo(9.6, 1)
@@ -486,8 +490,10 @@ describe('Story 44.40 AC7: Calculation Integration', () => {
     it('should use SUPPLY rates when tariffSystem=supply', () => {
       const volumeLiters = 5
       const days = 30
-      const storage = (mockSupplyTariffs.storage.baseLiterRub +
-        mockSupplyTariffs.storage.additionalLiterRub * volumeLiters) * days
+      const storage =
+        (mockSupplyTariffs.storage.baseLiterRub +
+          mockSupplyTariffs.storage.additionalLiterRub * volumeLiters) *
+        days
 
       // (0.09 + 0.06 * 5) * 30 = (0.09 + 0.30) * 30 = 11.7
       expect(storage).toBeCloseTo(11.7, 1)

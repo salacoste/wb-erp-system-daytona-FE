@@ -16,6 +16,7 @@
  */
 
 import { test, expect } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes
 const SUPPLIES_ROUTE = '/supplies'
@@ -57,6 +58,12 @@ const SELECTORS = {
   statusBadge: '[data-testid="supply-status-badge"]',
 }
 
+async function selectStatus(page: import('@playwright/test').Page, statusLabel: string) {
+  await page.getByLabel('Фильтр по статусу').click()
+  await page.getByRole('option', { name: statusLabel, exact: true }).click()
+  await page.locator('main').waitFor({ state: 'visible' })
+}
+
 test.describe('Supplies List Page - Epic 53-FE', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
@@ -67,7 +74,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     test('should display supplies page with heading', async ({ page }) => {
       // AC1: Page loads correctly with title
       await expect(page.getByRole('heading', { name: /Поставки|Supplies/i })).toBeVisible()
-      await expect(page.locator(SELECTORS.page).or(page.locator('main'))).toBeVisible()
+      await expect(page.locator(SELECTORS.page)).toBeVisible()
     })
 
     test('should navigate to Supplies from sidebar', async ({ page }) => {
@@ -133,57 +140,38 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
   test.describe('Status Filtering - Story 53.2', () => {
     test('should filter by OPEN status', async ({ page }) => {
-      const statusFilter = page
-        .locator(SELECTORS.statusFilter)
-        .or(page.locator('select[name*="status"], button:has-text("Статус")'))
+      const statusFilter = page.getByLabel('Фильтр по статусу')
 
       if (await statusFilter.isVisible()) {
-        await statusFilter.click()
-        await page.click('text=Открыта')
-        await page.locator('main').waitFor({ state: 'visible' })
-
+        await selectStatus(page, 'Открыта')
         // URL should contain status parameter
         await expect(page).toHaveURL(/status=OPEN/)
       }
     })
 
     test('should filter by CLOSED status', async ({ page }) => {
-      const statusFilter = page
-        .locator(SELECTORS.statusFilter)
-        .or(page.locator('select[name*="status"], button:has-text("Статус")'))
+      const statusFilter = page.getByLabel('Фильтр по статусу')
 
       if (await statusFilter.isVisible()) {
-        await statusFilter.click()
-        await page.click('text=Закрыта')
-        await page.locator('main').waitFor({ state: 'visible' })
-
+        await selectStatus(page, 'Закрыта')
         await expect(page).toHaveURL(/status=CLOSED/)
       }
     })
 
     test('should filter by DELIVERED status', async ({ page }) => {
-      const statusFilter = page
-        .locator(SELECTORS.statusFilter)
-        .or(page.locator('select[name*="status"], button:has-text("Статус")'))
+      const statusFilter = page.getByLabel('Фильтр по статусу')
 
       if (await statusFilter.isVisible()) {
-        await statusFilter.click()
-        await page.click('text=Доставлена')
-        await page.locator('main').waitFor({ state: 'visible' })
-
+        await selectStatus(page, 'Доставлена')
         await expect(page).toHaveURL(/status=DELIVERED/)
       }
     })
 
     test('should clear status filter', async ({ page }) => {
       // Apply filter first
-      const statusFilter = page
-        .locator(SELECTORS.statusFilter)
-        .or(page.locator('button:has-text("Статус")'))
+      const statusFilter = page.getByLabel('Фильтр по статусу')
       if (await statusFilter.isVisible()) {
-        await statusFilter.click()
-        await page.click('text=Открыта')
-        await page.locator('main').waitFor({ state: 'visible' })
+        await selectStatus(page, 'Открыта')
 
         // Clear filter
         const clearButton = page
@@ -201,9 +189,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
   test.describe('Date Range Filtering', () => {
     test('should filter by date from', async ({ page }) => {
-      const dateFromInput = page
-        .locator(SELECTORS.dateFromInput)
-        .or(page.locator('input[name*="from"], input[type="date"]:first-of-type'))
+      const dateFromInput = page.getByLabel('Дата начала')
 
       if (await dateFromInput.isVisible()) {
         await dateFromInput.fill('2025-01-01')
@@ -214,9 +200,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should filter by date to', async ({ page }) => {
-      const dateToInput = page
-        .locator(SELECTORS.dateToInput)
-        .or(page.locator('input[name*="to"], input[type="date"]:last-of-type'))
+      const dateToInput = page.getByLabel('Дата окончания')
 
       if (await dateToInput.isVisible()) {
         await dateToInput.fill('2025-12-31')
@@ -228,19 +212,16 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
     test('should combine date range with status filter', async ({ page }) => {
       // Apply date filter
-      const dateFromInput = page.locator('input[name*="from"], input[type="date"]').first()
+      const dateFromInput = page.getByLabel('Дата начала')
       if (await dateFromInput.isVisible()) {
         await dateFromInput.fill('2025-01-01')
         await page.waitForTimeout(500)
 
         // Apply status filter
-        const statusFilter = page
-          .locator(SELECTORS.statusFilter)
-          .or(page.locator('button:has-text("Статус")'))
+        const statusFilter = page.getByLabel('Фильтр по статусу')
         if (await statusFilter.isVisible()) {
-          await statusFilter.click()
-          await page.click('text=Открыта')
-          await page.locator('main').waitFor({ state: 'visible' })
+          await selectStatus(page, 'Открыта')
+          await expect(page).toHaveURL(/status=OPEN/)
 
           // Both filters should be in URL
           const url = page.url()
@@ -255,12 +236,13 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     test('should sort by created_at column', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")')
+      const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")').first()
       if (await dateHeader.isVisible()) {
-        await dateHeader.click()
-        await page.locator('main').waitFor({ state: 'visible' })
+        await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
 
-        await expect(page).toHaveURL(/sort_by=created_at/)
+        await dateHeader.click()
+        await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
+        await expect(page).toHaveURL(/sort_order=asc/)
       }
     })
 
@@ -279,17 +261,17 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     test('should toggle sort direction on second click', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")')
+      const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")').first()
       if (await dateHeader.isVisible()) {
-        // First click - desc
-        await dateHeader.click()
-        await page.locator('main').waitFor({ state: 'visible' })
+        await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
 
-        // Second click - asc
         await dateHeader.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-
+        await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
         await expect(page).toHaveURL(/sort_order=asc/)
+
+        await dateHeader.click()
+        await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
+        await expect(page).not.toHaveURL(/sort_order=asc/)
       }
     })
   })
@@ -311,7 +293,9 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
   })
 
-  test.describe('Create Supply Modal - Story 53.3', () => {
+  test.describe('Create Supply Modal - Story 53.3 @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('should open create supply modal', async ({ page }) => {
       const createButton = page
         .locator(SELECTORS.createSupplyButton)
@@ -324,9 +308,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should close modal with close button', async ({ page }) => {
-      const createButton = page.locator(
-        'button:has-text("Создать"), button:has-text("Новая поставка")'
-      )
+      const createButton = page.getByRole('button', { name: /Создать поставку|Новая поставка/i })
       if (await createButton.isVisible()) {
         await createButton.click()
         await expect(page.getByRole('dialog')).toBeVisible()
@@ -367,7 +349,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
         }
 
         // Submit
-        const submitButton = page.locator('button[type="submit"], button:has-text("Создать")')
+        const submitButton = page.getByRole('dialog').getByRole('button', { name: /^Создать$/ })
         await submitButton.click()
 
         // Wait for response
@@ -400,14 +382,12 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     test('should navigate to next page', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      const nextButton = page
-        .locator(SELECTORS.nextPageButton)
-        .or(page.locator('button:has-text("Далее"), button[aria-label*="Next"]'))
+      const nextButton = page.getByRole('button', { name: 'Следующая страница' })
 
       if (await nextButton.isEnabled()) {
         await nextButton.click()
         await page.locator('main').waitFor({ state: 'visible' })
-        await expect(page).toHaveURL(/page=2/)
+        await expect(page.getByText(/Стр\.\s*2/)).toBeVisible()
       }
     })
 
@@ -450,7 +430,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
   test.describe('Error Handling', () => {
     test('should display error state on API failure', async ({ page }) => {
       // Block API to simulate error
-      await page.route('**/supplies**', route => route.abort())
+      await page.route('**/v1/supplies**', route => route.abort())
       await page.reload()
       await page.waitForTimeout(2000)
 
@@ -467,7 +447,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should display retry button on error', async ({ page }) => {
-      await page.route('**/supplies**', route => {
+      await page.route('**/v1/supplies**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: 'Internal Server Error' }),
@@ -486,7 +466,9 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
   })
 
-  test.describe('Sync Button', () => {
+  test.describe('Sync Button @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test('should display sync button', async ({ page }) => {
       const syncButton = page
         .locator(SELECTORS.syncButton)

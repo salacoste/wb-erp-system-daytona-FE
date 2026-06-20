@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSellerInfo } from '@/hooks/useSellerInfo'
 import { useJamStatus } from '@/hooks/useJamStatus'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 import { SellerRatingCard } from './SellerRatingCard'
 import {
   JAM_TIER_LABELS,
@@ -49,6 +50,8 @@ function InfoRow({
 export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
   const { data: seller, isLoading: sellerLoading } = useSellerInfo(cabinetId)
   const { data: jam, isLoading: jamLoading } = useJamStatus(cabinetId)
+  const sellerLoadingDelayed = useDelayedLoadingState(sellerLoading)
+  const jamLoadingDelayed = useDelayedLoadingState(jamLoading)
 
   return (
     <div className="space-y-6">
@@ -61,12 +64,20 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {sellerLoading ? (
+          {sellerLoading && !sellerLoadingDelayed ? (
             <div className="space-y-3">
               <Skeleton className="h-5 w-48" />
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-5 w-40" />
             </div>
+          ) : sellerLoadingDelayed && !seller ? (
+            <Alert className="border-yellow-500 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-900">
+                Информация о продавце загружается дольше обычного. Проверьте токен WB или повторите
+                позже.
+              </AlertDescription>
+            </Alert>
           ) : seller ? (
             <>
               {seller.available === false && (
@@ -93,7 +104,14 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
                 <InfoRow icon={Tag} label="Торговая марка" value={seller.tradeMark || '—'} />
               </div>
             </>
-          ) : null}
+          ) : (
+            <Alert className="border-yellow-500 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-900">
+                Информация о продавце сейчас недоступна. Проверьте токен WB или повторите позже.
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
 
@@ -106,11 +124,19 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {jamLoading ? (
+          {jamLoading && !jamLoadingDelayed ? (
             <div className="space-y-3">
               <Skeleton className="h-6 w-36" />
               <Skeleton className="h-5 w-52" />
             </div>
+          ) : jamLoadingDelayed && !jam ? (
+            <Alert className="border-yellow-500 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-900">
+                Статус подписки Джем загружается дольше обычного. Проверьте доступ WB API или
+                повторите позже.
+              </AlertDescription>
+            </Alert>
           ) : jam ? (
             <div className="space-y-4">
               {jam.available === false && (
@@ -140,7 +166,15 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
                 value={new Date(jam.checkedAt).toLocaleString('ru-RU')}
               />
             </div>
-          ) : null}
+          ) : (
+            <Alert className="border-yellow-500 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-900">
+                Статус подписки Джем сейчас недоступен. Доступ к функциям Джем остаётся закрыт до
+                подтверждения подписки.
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
 

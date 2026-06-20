@@ -17,12 +17,12 @@ export const modelPerformanceKeys = {
     [...modelPerformanceKeys.all(cabinetId), modelId] as const,
 }
 
-export function useModelPerformance(modelId: string) {
+export function useModelPerformance(modelId: string, options: { enabled?: boolean } = {}) {
   const cabinetId = useAuthStore(s => s.cabinetId)
   return useQuery<ModelPerformanceResponse>({
     queryKey: modelPerformanceKeys.byId(cabinetId, modelId),
     queryFn: () => getModelPerformance(modelId),
-    enabled: !!cabinetId && !!modelId,
+    enabled: !!cabinetId && !!modelId && (options.enabled ?? true),
     staleTime: 60_000,
     gcTime: 5 * 60_000,
     retry: 1,

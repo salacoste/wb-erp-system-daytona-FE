@@ -408,7 +408,10 @@ describe('useWarehouseCoefficients', () => {
         ({ warehouseId, warehouse }) => useWarehouseCoefficients(warehouseId, warehouse),
         {
           wrapper: createQueryWrapper(),
-          initialProps: { warehouseId: mockWarehouse.id as number | null, warehouse: mockWarehouse as Warehouse | null },
+          initialProps: {
+            warehouseId: mockWarehouse.id as number | null,
+            warehouse: mockWarehouse as Warehouse | null,
+          },
         }
       )
 

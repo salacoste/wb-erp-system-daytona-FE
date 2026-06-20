@@ -85,9 +85,11 @@ test.describe('Buyout Reconciliation Page (Story 96.14-FE)', () => {
     await expect(page.locator(PAGE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.navigation })
     await expect(page.locator(TABLE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.api })
 
-    // AlertTriangle tooltip triggers visible for anomalous row
-    const anomalyButtons = page.getByRole('button', { name: /Аномалия/ })
-    await expect(anomalyButtons.first()).toBeVisible({ timeout: TIMEOUTS.api })
+    // AlertTriangle tooltip triggers are focusable spans, not buttons:
+    // accessibility is provided by aria-label + tabIndex (see AnomalyIndicator).
+    const anomalyIndicators = page.getByLabel(/Аномалия/)
+    await expect(anomalyIndicators.first()).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(anomalyIndicators).toHaveCount(3, { timeout: TIMEOUTS.api })
   })
 
   test('renders no-anomalies success state when all anomaly counts are 0', async ({ page }) => {
@@ -124,9 +126,9 @@ test.describe('Buyout Reconciliation Page (Story 96.14-FE)', () => {
   })
 
   test('nmId filter sends nmId query param to API', async ({ page }) => {
-    let capturedUrl = ''
+    const capturedUrls: string[] = []
     await page.route(API_PATTERN, route => {
-      capturedUrl = route.request().url()
+      capturedUrls.push(route.request().url())
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -141,17 +143,15 @@ test.describe('Buyout Reconciliation Page (Story 96.14-FE)', () => {
     const nmIdInput = page.getByLabel('Фильтр по артикулу WB')
     await nmIdInput.fill('12345')
 
-    // Wait for the debounce / query re-fire — the URL should include nmId=12345
-    await page
-      .waitForFunction((url: string) => url.includes('nmId=12345'), capturedUrl, {
-        timeout: TIMEOUTS.api,
-      })
-      .catch(() => {
-        // If debounce hasn't fired, check latest captured
-      })
+    // Wait for the debounce / query re-fire — the latest captured route should include nmId=12345.
+    // Do not use page.waitForFunction with a Node-side string: it serializes the initial value only.
+    await expect
+      .poll(() => capturedUrls.some(url => url.includes('nmId=12345')), { timeout: TIMEOUTS.api })
+      .toBe(true)
 
-    // Assert the filter input accepted the value
+    // Assert the filter input accepted the value and the API contract was exercised.
     await expect(nmIdInput).toHaveValue('12345')
+    expect(capturedUrls.at(-1)).toContain('nmId=12345')
   })
 
   test('refresh schedule note is visible on page', async ({ page }) => {

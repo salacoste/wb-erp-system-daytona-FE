@@ -73,9 +73,7 @@ const createTestQueryClient = () =>
 // Wrapper with providers
 const renderWithProviders = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
 }
 
 describe('TariffSettingsForm Integration', () => {
@@ -103,7 +101,7 @@ describe('TariffSettingsForm Integration', () => {
 
     it('shows loading skeleton while fetching', () => {
       mockGetTariffSettings.mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve(mockTariffSettings), 1000))
+        () => new Promise(resolve => setTimeout(() => resolve(mockTariffSettings), 1000))
       )
 
       renderWithProviders(<TariffSettingsForm />)
@@ -223,9 +221,7 @@ describe('TariffSettingsForm Integration', () => {
       await user.click(confirmButton)
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringContaining('Превышен лимит запросов')
-        )
+        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Превышен лимит запросов'))
       })
     })
   })

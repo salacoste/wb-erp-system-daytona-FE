@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
@@ -30,6 +31,7 @@ interface LoginFormData {
 export function LoginForm() {
   const searchParams = useSearchParams()
   const { login } = useAuthStore()
+  const [isHydrated, setIsHydrated] = useState(false)
   const form = useForm<LoginFormData>({
     defaultValues: {
       email: '',
@@ -38,18 +40,21 @@ export function LoginForm() {
     mode: 'onBlur',
   })
 
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
+
   const mutation = useMutation({
+    // Auth attempts must never retry automatically: retries duplicate credential submissions,
+    // accelerate backend throttling, and can make E2E setup flaky after a single failed attempt.
+    retry: false,
     mutationFn: async (data: LoginRequest) => {
       return await loginUser(data)
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Store user and token in auth store (localStorage)
       // login() also sets cookie automatically for middleware
-      login(
-        response.user,
-        response.token,
-        response.user.cabinet_ids?.[0] || null,
-      )
+      login(response.user, response.token, response.user.cabinet_ids?.[0] || null)
 
       toast.success('Вход выполнен успешно!')
 
@@ -74,7 +79,7 @@ export function LoginForm() {
     mutation.mutate(data)
   }
 
-  const isSubmitting = mutation.isPending
+  const isSubmitting = !isHydrated || mutation.isPending
 
   return (
     <Form {...form}>
@@ -137,16 +142,10 @@ export function LoginForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isSubmitting}
-          aria-busy={isSubmitting}
-        >
+        <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? 'Вход...' : 'Войти'}
         </Button>
       </form>
     </Form>
   )
 }
-

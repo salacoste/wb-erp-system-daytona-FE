@@ -108,8 +108,10 @@ class ApiClient {
 
       const errorMessage = error instanceof Error ? error.message : 'Network error occurred'
 
-      trackTelegramNetworkError(endpoint)
-      logger.error('Network error:', errorMessage)
+      if (!options.suppressNetworkErrorLog) {
+        trackTelegramNetworkError(endpoint)
+        logger.error('Network error:', errorMessage)
+      }
 
       throw new ApiError(errorMessage, 0, error)
     }

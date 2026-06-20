@@ -91,12 +91,19 @@ test.describe('Financial Gaps Analysis', () => {
     })
 
     // GapsTable renders one of three states: skeleton (loading), empty message, or table rows.
-    // Check for any of: table headers (Дата, День недели), empty-state text, or skeleton.
-    const hasTableHeaders = (await page.getByText('Дата', { exact: true }).count()) > 0
-    const hasEmptyState = (await page.getByText('Пропуски не обнаружены').count()) > 0
-    const hasSkeleton = (await page.locator('.space-y-3 > [data-slot="skeleton"]').count()) > 0
-
-    expect(hasTableHeaders || hasEmptyState || hasSkeleton).toBeTruthy()
+    // Poll because the heading appears before the gaps request resolves.
+    await expect
+      .poll(
+        async () => {
+          const hasTableHeaders = (await page.getByText('Дата', { exact: true }).count()) > 0
+          const hasEmptyState = (await page.getByText('Пропуски не обнаружены').count()) > 0
+          const hasSkeleton =
+            (await page.locator('.space-y-3 > [data-slot="skeleton"], .animate-pulse').count()) > 0
+          return hasTableHeaders || hasEmptyState || hasSkeleton
+        },
+        { timeout: TIMEOUTS.api }
+      )
+      .toBe(true)
   })
 
   test('shows empty-state message when API returns no gaps', async ({ page }) => {

@@ -77,10 +77,7 @@ export function TariffFieldInput({
 
   return (
     <div className={cn('space-y-2', className)}>
-      <Label
-        htmlFor={inputId}
-        className={cn('text-sm font-medium', error && 'text-destructive')}
-      >
+      <Label htmlFor={inputId} className={cn('text-sm font-medium', error && 'text-destructive')}>
         {label}
         {unit && <span className="text-muted-foreground ml-1">({unit})</span>}
       </Label>
@@ -96,10 +93,7 @@ export function TariffFieldInput({
           disabled={disabled}
           aria-invalid={!!error}
           aria-describedby={error ? errorId : undefined}
-          className={cn(
-            'w-full',
-            error && 'border-destructive focus-visible:ring-destructive'
-          )}
+          className={cn('w-full', error && 'border-destructive focus-visible:ring-destructive')}
           {...register}
         />
       </div>
@@ -110,9 +104,7 @@ export function TariffFieldInput({
         </p>
       )}
 
-      {helpText && !error && (
-        <p className="text-xs text-muted-foreground">{helpText}</p>
-      )}
+      {helpText && !error && <p className="text-xs text-muted-foreground">{helpText}</p>}
     </div>
   )
 }

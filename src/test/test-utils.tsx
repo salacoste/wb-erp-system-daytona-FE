@@ -5,10 +5,10 @@
  * Includes QueryClientProvider setup for TanStack Query hooks.
  */
 
-import React, { ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, RenderHookOptions } from '@testing-library/react';
-import { useAuthStore } from '@/stores/authStore';
+import React, { ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { renderHook, RenderHookOptions } from '@testing-library/react'
+import { useAuthStore } from '@/stores/authStore'
 
 /**
  * Creates a fresh QueryClient for each test
@@ -31,42 +31,33 @@ export function createTestQueryClient(): QueryClient {
         retry: false,
       },
     },
-  });
+  })
 }
 
 /**
  * Props for QueryWrapper
  */
 interface QueryWrapperProps {
-  children: ReactNode;
-  queryClient?: QueryClient;
+  children: ReactNode
+  queryClient?: QueryClient
 }
 
 /**
  * Wrapper component that provides QueryClient context
  */
-export function QueryWrapper({
-  children,
-  queryClient,
-}: QueryWrapperProps): React.ReactElement {
-  const client = queryClient ?? createTestQueryClient();
-  return (
-    <QueryClientProvider client={client}>{children}</QueryClientProvider>
-  );
+export function QueryWrapper({ children, queryClient }: QueryWrapperProps): React.ReactElement {
+  const client = queryClient ?? createTestQueryClient()
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 }
 
 /**
  * Creates a wrapper function for renderHook with QueryClient
  */
-export function createQueryWrapper(
-  queryClient?: QueryClient
-): React.FC<{ children: ReactNode }> {
-  const client = queryClient ?? createTestQueryClient();
+export function createQueryWrapper(queryClient?: QueryClient): React.FC<{ children: ReactNode }> {
+  const client = queryClient ?? createTestQueryClient()
   return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
-    );
-  };
+    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  }
 }
 
 /**
@@ -80,14 +71,14 @@ export function createQueryWrapper(
 export function renderHookWithClient<TResult, TProps>(
   hook: (props: TProps) => TResult,
   options?: Omit<RenderHookOptions<TProps>, 'wrapper'> & {
-    queryClient?: QueryClient;
+    queryClient?: QueryClient
   }
 ) {
-  const { queryClient, ...renderOptions } = options ?? {};
+  const { queryClient, ...renderOptions } = options ?? {}
   return renderHook(hook, {
     wrapper: createQueryWrapper(queryClient),
     ...renderOptions,
-  });
+  })
 }
 
 /**
@@ -95,9 +86,9 @@ export function renderHookWithClient<TResult, TProps>(
  * Sets up the Zustand auth store with test values
  */
 export function setupMockAuth(overrides?: {
-  token?: string;
-  cabinetId?: string;
-  isAuthenticated?: boolean;
+  token?: string
+  cabinetId?: string
+  isAuthenticated?: boolean
 }): void {
   useAuthStore.setState({
     token: overrides?.token ?? 'test-jwt-token',
@@ -106,10 +97,10 @@ export function setupMockAuth(overrides?: {
     user: {
       id: 'test-user-id',
       email: 'test@example.com',
-      role: 'Owner',  // Valid roles: Owner, Manager, Analyst, Service
+      role: 'Owner', // Valid roles: Owner, Manager, Analyst, Service
       cabinet_ids: [overrides?.cabinetId ?? 'test-cabinet-id'],
     },
-  });
+  })
 }
 
 /**
@@ -121,5 +112,5 @@ export function clearMockAuth(): void {
     cabinetId: null,
     isAuthenticated: false,
     user: null,
-  });
+  })
 }

@@ -12,12 +12,7 @@ import { Info, RotateCcw, AlertTriangle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { AutoFillBadge, type FieldSource } from './AutoFillBadge'
 
 export interface CoefficientFieldProps {
@@ -102,7 +97,7 @@ export function CoefficientField({
         <Input
           type="number"
           value={value}
-          onChange={(e) => handleChange(parseFloat(e.target.value) || 0)}
+          onChange={e => handleChange(parseFloat(e.target.value) || 0)}
           step={step}
           min={min}
           max={max}
@@ -126,9 +121,7 @@ export function CoefficientField({
 
       {/* Show warehouse coefficient source note */}
       {isLocked && (
-        <p className="text-xs text-muted-foreground">
-          Используются коэффициенты склада WB
-        </p>
+        <p className="text-xs text-muted-foreground">Используются коэффициенты склада WB</p>
       )}
 
       {source === 'manual' && originalValue !== undefined && (

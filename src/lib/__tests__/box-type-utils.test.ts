@@ -134,7 +134,7 @@ describe('BOX_TYPES constant', () => {
     expect(validIds).toHaveLength(3)
 
     // Each valid ID should be in BOX_TYPES
-    validIds.forEach((id) => {
+    validIds.forEach(id => {
       expect(BOX_TYPES[id]).toBeDefined()
     })
   })
@@ -351,9 +351,7 @@ describe('Edge Cases', () => {
   })
 
   it('should handle isAvailable: false explicitly', () => {
-    const coefficientsExplicitFalse = [
-      { warehouseId: 130744, boxTypeId: 2, isAvailable: false },
-    ]
+    const coefficientsExplicitFalse = [{ warehouseId: 130744, boxTypeId: 2, isAvailable: false }]
 
     const result = getAvailableBoxTypes(coefficientsExplicitFalse, 130744)
     expect(result).toHaveLength(0)
@@ -381,7 +379,7 @@ describe('Type Safety', () => {
     // These should be valid
     const validTypes: BoxTypeId[] = [2, 5, 6]
 
-    validTypes.forEach((typeId) => {
+    validTypes.forEach(typeId => {
       const info = getBoxTypeInfo(typeId)
       expect(info.id).toBe(typeId)
     })
@@ -400,7 +398,7 @@ describe('Type Safety', () => {
   })
 
   it('should enforce storageFormula as "standard" | "fixed"', () => {
-    Object.values(BOX_TYPES).forEach((boxType) => {
+    Object.values(BOX_TYPES).forEach(boxType => {
       expect(['standard', 'fixed']).toContain(boxType.storageFormula)
     })
   })

@@ -14,14 +14,14 @@ export interface FixedCostLogisticsFieldProps<T extends FieldValues> {
   label: string
   tooltipContent: string
   fieldPath: Path<T>
-  /** Controlled mode (auto-fill) */
+  /** Auto-fill calculation value for badge/display; input stays registered/uncontrolled. */
   controlledValue?: number
   isAutoFilled?: boolean
   onControlledChange?: (value: number) => void
 }
 
 /**
- * Logistics input field with controlled/uncontrolled dual mode
+ * Logistics input field with optional auto-fill badge/calculated display.
  * Extracted from FixedCostsSection for file size compliance (Story 74.8)
  */
 export function FixedCostLogisticsField<T extends FieldValues>({
@@ -36,8 +36,15 @@ export function FixedCostLogisticsField<T extends FieldValues>({
   isAutoFilled = false,
   onControlledChange,
 }: FixedCostLogisticsFieldProps<T>) {
-  const isControlled = controlledValue !== undefined
+  const isAutoFillCalculated = controlledValue !== undefined
   const errorMessage = (errors[id as keyof typeof errors] as { message?: string })?.message
+  const registration = register(
+    fieldPath,
+    numericFieldOptions({
+      required: 'Обязательное поле',
+      min: { value: 0, message: 'Не может быть отрицательным' },
+    })
+  )
 
   return (
     <FixedCostField
@@ -45,41 +52,24 @@ export function FixedCostLogisticsField<T extends FieldValues>({
       label={label}
       tooltipContent={tooltipContent}
       showBadge={isAutoFilled}
-      showCalculated={isControlled && (controlledValue ?? 0) > 0}
+      showCalculated={isAutoFillCalculated && (controlledValue ?? 0) > 0}
       calculatedValue={controlledValue}
       error={errorMessage}
     >
-      {isControlled ? (
-        <Input
-          id={id}
-          type="number"
-          step="0.01"
-          min={0}
-          placeholder="0,00"
-          disabled={disabled}
-          value={controlledValue ?? ''}
-          onChange={e => {
-            const value = parseFloat(e.target.value) || 0
-            onControlledChange?.(value)
-          }}
-        />
-      ) : (
-        <Input
-          id={id}
-          type="number"
-          step="0.01"
-          min={0}
-          placeholder="0,00"
-          disabled={disabled}
-          {...register(
-            fieldPath,
-            numericFieldOptions({
-              required: 'Обязательное поле',
-              min: { value: 0, message: 'Не может быть отрицательным' },
-            })
-          )}
-        />
-      )}
+      <Input
+        id={id}
+        type="number"
+        step="0.01"
+        min={0}
+        placeholder="0,00"
+        disabled={disabled}
+        {...registration}
+        onChange={event => {
+          registration.onChange(event)
+          const value = parseFloat(event.target.value) || 0
+          onControlledChange?.(value)
+        }}
+      />
     </FixedCostField>
   )
 }

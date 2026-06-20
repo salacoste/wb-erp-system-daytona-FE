@@ -20,15 +20,17 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 test.describe('Backfill Admin Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.settings.backfill, { waitUntil: 'domcontentloaded' })
+    await page.locator('main').waitFor({ state: 'visible', timeout: TIMEOUTS.navigation })
   })
 
   test('renders heading "Управление бэкфиллом" for Owner or redirects non-Owner', async ({
     page,
   }) => {
     // Owner sees the heading; non-Owner gets redirected to /dashboard
-    const hasHeading = await page
-      .getByRole('heading', { name: 'Управление бэкфиллом' })
-      .isVisible({ timeout: TIMEOUTS.api })
+    const heading = page.getByRole('heading', { name: 'Управление бэкфиллом' })
+    const hasHeading = await expect(heading)
+      .toBeVisible({ timeout: TIMEOUTS.api })
+      .then(() => true)
       .catch(() => false)
     const wasRedirected = page.url().includes('/dashboard')
 
@@ -59,12 +61,9 @@ test.describe('Backfill Admin Page', () => {
   })
 
   test('sidebar navigation present', async ({ page }) => {
-    // Wait for any page state to settle
-    await page.waitForTimeout(500)
     const sidebar = page.locator('nav[aria-label="Main navigation"]')
-    const sidebarAlt = page.locator('nav').first()
-    const hasSidebar =
-      (await sidebar.count()) > 0 || (await sidebarAlt.isVisible().catch(() => false))
-    expect(hasSidebar).toBeTruthy()
+    await expect(sidebar.or(page.locator('nav').first()).first()).toBeVisible({
+      timeout: TIMEOUTS.navigation,
+    })
   })
 })

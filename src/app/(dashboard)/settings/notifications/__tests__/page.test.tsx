@@ -84,7 +84,6 @@ vi.mock('../NotificationsDisabledPanel', () => ({
   ),
 }))
 
-
 vi.mock('@/components/custom/settings/OrderNotificationSettings', () => ({
   OrderNotificationSettings: () => (
     <div data-testid="order-notification-settings">OrderNotificationSettings</div>

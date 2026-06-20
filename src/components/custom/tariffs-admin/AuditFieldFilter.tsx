@@ -67,7 +67,7 @@ const ALL_FIELDS_VALUE = '_all'
  */
 const FILTER_OPTIONS = [
   { value: ALL_FIELDS_VALUE, label: 'Все поля' },
-  ...TRACKED_TARIFF_FIELDS.map((field) => ({
+  ...TRACKED_TARIFF_FIELDS.map(field => ({
     value: field,
     label: FIELD_LABELS[field] || field,
   })),
@@ -100,11 +100,7 @@ interface AuditFieldFilterProps {
  * />
  * ```
  */
-export function AuditFieldFilter({
-  value,
-  onChange,
-  disabled,
-}: AuditFieldFilterProps) {
+export function AuditFieldFilter({ value, onChange, disabled }: AuditFieldFilterProps) {
   // Convert empty string to special value for Select
   const selectValue = value || ALL_FIELDS_VALUE
 
@@ -118,20 +114,12 @@ export function AuditFieldFilter({
       <label htmlFor="field-filter" className="text-sm text-muted-foreground">
         Фильтр по полю:
       </label>
-      <Select
-        value={selectValue}
-        onValueChange={handleChange}
-        disabled={disabled}
-      >
-        <SelectTrigger
-          id="field-filter"
-          className="w-[280px]"
-          aria-label="Фильтр по полю"
-        >
+      <Select value={selectValue} onValueChange={handleChange} disabled={disabled}>
+        <SelectTrigger id="field-filter" className="w-[280px]" aria-label="Фильтр по полю">
           <SelectValue placeholder="Все поля" />
         </SelectTrigger>
         <SelectContent>
-          {FILTER_OPTIONS.map((option) => (
+          {FILTER_OPTIONS.map(option => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>

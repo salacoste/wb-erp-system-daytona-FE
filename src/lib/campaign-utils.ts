@@ -132,15 +132,15 @@ export function canResumeCampaign(status: number): boolean {
 /**
  * Sort campaigns: by creation date (newest first), then by status (active > paused), then by name.
  */
-export function sortCampaignsByStatus<T extends { status: number; name: string; created_at: string }>(
-  campaigns: T[]
-): T[] {
+export function sortCampaignsByStatus<
+  T extends { status: number; name: string; created_at: string },
+>(campaigns: T[]): T[] {
   return [...campaigns].sort((a, b) => {
     // First: Sort by creation date (newest first)
     const dateA = new Date(a.created_at).getTime()
     const dateB = new Date(b.created_at).getTime()
     if (dateA !== dateB) {
-      return dateB - dateA  // DESC (newest first)
+      return dateB - dateA // DESC (newest first)
     }
 
     // Second: Active (9) before others

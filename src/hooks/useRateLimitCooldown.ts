@@ -107,7 +107,7 @@ export function useRateLimitCooldown(endpoint?: string): UseRateLimitCooldownRes
         }
       } else {
         // Update remaining seconds
-        setCooldown((prev) => ({
+        setCooldown(prev => ({
           ...prev,
           remainingSeconds: remaining,
         }))

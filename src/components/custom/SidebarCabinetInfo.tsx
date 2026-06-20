@@ -41,6 +41,9 @@ export function SidebarCabinetInfo() {
   return (
     <Link
       href={ROUTES.SETTINGS.CABINET}
+      aria-label={
+        displayName ? `Открыть настройки кабинета ${displayName}` : 'Открыть настройки кабинета'
+      }
       className="block border-b px-4 py-3 transition-colors hover:bg-accent/30"
     >
       {displayName ? (

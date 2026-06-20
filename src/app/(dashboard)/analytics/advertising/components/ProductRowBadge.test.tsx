@@ -63,9 +63,7 @@ describe('ProductRowBadge', () => {
     it('should NOT render badge even with callback provided', () => {
       const item = createMockItem({ imtId: null })
       const mockCallback = vi.fn()
-      const { container } = render(
-        <ProductRowBadge item={item} onShowMergedGroup={mockCallback} />
-      )
+      const { container } = render(<ProductRowBadge item={item} onShowMergedGroup={mockCallback} />)
 
       expect(container.firstChild).toBeNull()
       expect(mockCallback).not.toHaveBeenCalled()

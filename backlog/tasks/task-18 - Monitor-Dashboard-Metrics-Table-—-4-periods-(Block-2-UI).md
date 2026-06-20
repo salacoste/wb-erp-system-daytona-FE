@@ -15,9 +15,11 @@ priority: medium
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Block 2 — comparison table showing 7 metrics across 4 time periods (Today / Yesterday / 30 days / Previous 30 days).
 
 **Table structure:**
+
 - Rows: Заказы шт, Продажи шт, Выручка руб, COGS руб, Расходы руб, Маржа руб, Возвраты шт
 - Columns: Сегодня | Вчера | 30 дней | Пред. 30 дней
 - Delta indicators between columns (green/red arrows + % change)
@@ -31,13 +33,16 @@ Block 2 — comparison table showing 7 metrics across 4 time periods (Today / Ye
 Currency formatting: formatCurrency from src/lib/utils (Russian locale, ₽).
 
 Depends on: task-16
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
-- [ ] #1 7-row x 4-column table renders with real data
-- [ ] #2 Delta indicators (green/red) between periods
-- [ ] #3 Today shows lag badge when data empty
-- [ ] #4 formatCurrency for all monetary values
-- [ ] #5 Responsive on mobile (sticky first column)
+
+- [x] #1 7-row x 4-column table renders with real data
+- [x] #2 Delta indicators (green/red) between periods
+- [x] #3 Today shows lag badge when data empty
+- [x] #4 formatCurrency for all monetary values
+- [x] #5 Responsive on mobile (sticky first column)
 <!-- AC:END -->

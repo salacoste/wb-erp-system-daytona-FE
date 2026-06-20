@@ -10,6 +10,7 @@ import { Lock } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { useJamStatus } from '@/hooks/useJamStatus'
+import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 import { useAuthStore } from '@/stores/authStore'
 import { isJamTierSufficient, JAM_TIER_LABELS } from '@/types/cabinet'
 import type { JamTier } from '@/types/cabinet'
@@ -25,15 +26,35 @@ const JAM_TIER_COLORS: Record<JamTier, string> = {
 interface RequireJamProps {
   requiredTier: JamTier
   children: ReactNode
+  /**
+   * Safe static preview shown behind the upgrade overlay for insufficient tiers.
+   * Do not pass data-fetching components here: the default preview is intentionally
+   * non-sensitive and does not mount protected children.
+   */
   previewContent?: ReactNode
+}
+
+function DefaultPreview() {
+  return (
+    <div className="space-y-4" data-testid="jam-default-preview">
+      <Skeleton className="h-10 w-full" />
+      <div className="grid gap-3 md:grid-cols-3">
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+      </div>
+      <Skeleton className="h-48 w-full" />
+    </div>
+  )
 }
 
 export function RequireJam({ requiredTier, children, previewContent }: RequireJamProps) {
   const { cabinetId } = useAuthStore()
   const { data, isLoading, isError } = useJamStatus(cabinetId ?? '')
+  const loadingDelayed = useDelayedLoadingState(isLoading || (!cabinetId && !data))
 
-  // Loading → skeleton placeholder (no flash of content or gate)
-  if (isLoading) {
+  // Loading → short skeleton placeholder (no flash of content or gate).
+  if (isLoading && !loadingDelayed) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-full" />
@@ -43,13 +64,12 @@ export function RequireJam({ requiredTier, children, previewContent }: RequireJa
     )
   }
 
-  // Error or no data → show retry UI (fail-closed for  // This prevents free access if Jam API is unreliable
+  // Slow/error/no data → fail closed with explicit state instead of indefinite shimmer.
   if (isError || !data) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-8 w-2/3" />
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900">
+        Статус подписки WB Джем недоступен или загружается дольше обычного. Доступ закрыт до
+        подтверждения подписки.
       </div>
     )
   }
@@ -57,11 +77,13 @@ export function RequireJam({ requiredTier, children, previewContent }: RequireJa
   // Sufficient tier → render children normally
   if (isJamTierSufficient(data.tier, requiredTier)) return <>{children}</>
 
-  // Insufficient tier → blur overlay with CTA
+  // Insufficient tier → fail closed: do NOT mount protected children by default.
+  // Mounting real children here can trigger protected API calls and leak business data
+  // behind a blur. Only explicitly provided previewContent is rendered.
   return (
     <div className="relative">
       <div className="blur-[8px] opacity-40 pointer-events-none select-none" aria-hidden="true">
-        {previewContent ?? children}
+        {previewContent ?? <DefaultPreview />}
       </div>
       <div
         className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center"

@@ -35,8 +35,7 @@ test.describe('AI Models Pages', () => {
   test('models listing page renders title and content area', async ({ page }) => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
 
-    // Page title rendered via CardTitle (div, not heading element)
-    await expect(page.getByText('Модели AI')).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
 
     // Valid mount states: table with models, empty-state alert, loading skeleton, or error alert
     const hasTable = (await page.getByRole('table').count()) > 0
@@ -48,7 +47,7 @@ test.describe('AI Models Pages', () => {
 
   test('models listing page has correct heading hierarchy', async ({ page }) => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
-    await expect(page.getByText('Модели AI')).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
 
     // At least one h1-level heading should exist in the layout shell
     const h1Count = await page.getByRole('heading', { level: 1 }).count()
@@ -59,7 +58,7 @@ test.describe('AI Models Pages', () => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
 
     await expect(page).toHaveURL(/\/analytics\/models$/, { timeout: TIMEOUTS.navigation })
-    await expect(page.getByText('Модели AI')).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
   })
 
   // --- Model evaluations page (/analytics/models/[id]/evaluations) ---
@@ -69,13 +68,17 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    // Valid mount states: header card title, skeleton, model-not-found, evaluations-error, or empty
-    const hasTitle = (await page.getByText('Оценки точности модели').count()) > 0
+    await expect(page.getByRole('heading', { name: 'Оценки точности модели', level: 1 })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+
+    // Valid mount states: model-not-found, loading skeleton, evaluations-error, empty, or table
     const hasSkeleton = (await page.locator('[data-testid="evaluations-skeleton"]').count()) > 0
     const hasNotFound = (await page.getByText('Модель не найдена').count()) > 0
     const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
     const hasEmpty = (await page.getByText('Нет оценок этой модели').count()) > 0
-    expect(hasTitle || hasSkeleton || hasNotFound || hasError || hasEmpty).toBeTruthy()
+    const hasTable = (await page.getByRole('table').count()) > 0
+    expect(hasSkeleton || hasNotFound || hasError || hasEmpty || hasTable).toBeTruthy()
   })
 
   test('evaluations page has correct heading hierarchy', async ({ page }) => {
@@ -83,8 +86,7 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    // Wait for any mounted content: skeleton, alert, or card title
-    await expect(page.locator('[data-testid="evaluations-skeleton"], .space-y-6')).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'Оценки точности модели', level: 1 })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -99,12 +101,16 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    // Valid mount states: performance card title, skeleton, model-not-found, or error alert
-    const hasTitle = (await page.getByText('Производительность модели').count()) > 0
+    await expect(page.getByRole('heading', { name: 'Производительность модели', level: 1 })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+
+    // Valid mount states: model-not-found, loading skeleton, performance table/chart, or error alert
     const hasSkeleton = (await page.locator('[data-testid="skeleton"], .animate-pulse').count()) > 0
     const hasNotFound = (await page.getByText('Модель не найдена').count()) > 0
     const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
-    expect(hasTitle || hasSkeleton || hasNotFound || hasError).toBeTruthy()
+    const hasChart = (await page.getByRole('img', { name: /График тренда точности модели MAPE/ }).count()) > 0
+    expect(hasSkeleton || hasNotFound || hasError || hasChart).toBeTruthy()
   })
 
   test('performance page has correct heading hierarchy', async ({ page }) => {
@@ -112,8 +118,7 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    // Wait for any mounted content: skeleton or page wrapper
-    await expect(page.locator('[data-testid="skeleton"], .space-y-6')).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'Производительность модели', level: 1 })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -134,7 +139,7 @@ test.describe('AI Models Pages', () => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
 
     // Wait for content to mount
-    await expect(page.getByText('Модели AI')).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
 
     // Filter out known harmless warnings
     const realErrors = consoleErrors.filter(

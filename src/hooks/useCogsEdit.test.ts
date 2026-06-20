@@ -10,12 +10,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import {
-  hasCogsChanges,
-  buildUpdatePayload,
-  validateUnitCost,
-  validateNotes,
-} from './useCogsEdit'
+import { hasCogsChanges, buildUpdatePayload, validateUnitCost, validateNotes } from './useCogsEdit'
 
 describe('validateUnitCost', () => {
   it('should return null for valid positive number', () => {
@@ -90,7 +85,7 @@ describe('hasCogsChanges', () => {
 
     it('should detect small decimal change', () => {
       const result = hasCogsChanges(
-        { unit_cost_rub: 100.50, notes: null },
+        { unit_cost_rub: 100.5, notes: null },
         { unit_cost_rub: 100.51, notes: '' }
       )
       expect(result).toBe(true)

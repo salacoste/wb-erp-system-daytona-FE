@@ -15,6 +15,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
+import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -134,6 +135,7 @@ describe('OrdersPage', () => {
 
   afterEach(() => {
     vi.clearAllMocks()
+    vi.useRealTimers()
   })
 
   // ============================================================================
@@ -320,6 +322,27 @@ describe('OrdersPage', () => {
       renderPage()
       // Loading state should render the header + skeleton
       expect(screen.getByText('Заказы FBS')).toBeInTheDocument()
+    })
+
+    it('replaces long-loading skeleton with an explicit retry state', () => {
+      vi.useFakeTimers()
+      mockUseOrders.mockReturnValue(
+        createOrdersResult({
+          isLoading: true,
+          data: undefined,
+          isSuccess: false,
+          isPending: true,
+        })
+      )
+
+      renderPage()
+
+      act(() => {
+        vi.advanceTimersByTime(5_000)
+      })
+
+      expect(screen.getByText(/Заказы загружаются дольше обычного/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
     })
   })
 

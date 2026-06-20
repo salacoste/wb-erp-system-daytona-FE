@@ -4,9 +4,30 @@
  * Epic 71-FE: Search Analytics & Jam Gating
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 const SEARCH_ROUTE = '/analytics/search'
+
+
+async function expectJamGateOrTabs(page: Page) {
+  const gate = page.getByRole('region', { name: 'Требуется подписка WB Джем' })
+  const tabs = page.locator('[role="tablist"]')
+  const state = await Promise.race([
+    gate.waitFor({ state: 'visible', timeout: 30_000 }).then(() => 'gate' as const),
+    tabs.waitFor({ state: 'visible', timeout: 30_000 }).then(() => 'tabs' as const),
+  ]).catch(() => 'timeout' as const)
+
+  expect(state).not.toBe('timeout')
+
+  if (state === 'gate') {
+    await expect(page.getByRole('link', { name: /Подробнее/ })).toBeVisible()
+    return false
+  }
+
+  await expect(tabs).toBeVisible()
+  return true
+}
+
 
 test.describe('Epic 71-FE: Search Analytics Page', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,24 +44,23 @@ test.describe('Epic 71-FE: Search Analytics Page', () => {
     expect(headingText).toMatch(/Поисковая аналитика/i)
   })
 
-  test('should display 3 tab triggers', async ({ page }) => {
+  test('should display tab triggers or RequireJam overlay', async ({ page }) => {
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
+
     const tabList = page.locator('[role="tablist"]')
-    await expect(tabList).toBeVisible()
 
     await expect(page.getByRole('tab', { name: /Заказы/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /По товарам/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /По запросам/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Позиции/i })).toBeVisible()
   })
 
   test('should render content or RequireJam overlay', async ({ page }) => {
-    // Check text-based markers rather than DOM roles (tabpanel exists in both states)
-    const overlay = page.getByText('Доступно с подпиской WB Джем')
-    const hasOverlay = await overlay.isVisible().catch(() => false)
+    // Check text-based markers rather than DOM roles (tabpanel is absent in fail-closed gate).
+    const hasTabs = await expectJamGateOrTabs(page)
+    if (!hasTabs) return
 
-    if (hasOverlay) {
-      await expect(page.getByRole('link', { name: /Подробнее о WB Джем/ })).toBeVisible()
-    } else {
-      await expect(page.locator('[data-state="active"][role="tabpanel"]')).toBeVisible()
-    }
+    await expect(page.locator('[data-state="active"][role="tabpanel"]')).toBeVisible()
   })
 })

@@ -15,10 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Settings2 } from 'lucide-react'
-import {
-  ColumnVisibility,
-  OPTIONAL_COLUMNS,
-} from '@/hooks/useColumnVisibility'
+import { ColumnVisibility, OPTIONAL_COLUMNS } from '@/hooks/useColumnVisibility'
 
 export interface ColumnVisibilityToggleProps {
   /** Current visibility state */
@@ -56,16 +53,14 @@ export function ColumnVisibilityToggle({
           <Settings2 className="h-4 w-4 mr-2" />
           Колонки
           {visibleCount > 0 && (
-            <span className="ml-1 text-xs text-muted-foreground">
-              ({visibleCount})
-            </span>
+            <span className="ml-1 text-xs text-muted-foreground">({visibleCount})</span>
           )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Дополнительные колонки</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {OPTIONAL_COLUMNS.map((column) => (
+        {OPTIONAL_COLUMNS.map(column => (
           <DropdownMenuCheckboxItem
             key={column.key}
             checked={visibility[column.key]}
@@ -73,19 +68,14 @@ export function ColumnVisibilityToggle({
           >
             <div className="flex flex-col">
               <span>{column.label}</span>
-              <span className="text-xs text-muted-foreground">
-                {column.description}
-              </span>
+              <span className="text-xs text-muted-foreground">{column.description}</span>
             </div>
           </DropdownMenuCheckboxItem>
         ))}
         {onReset && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={false}
-              onCheckedChange={onReset}
-            >
+            <DropdownMenuCheckboxItem checked={false} onCheckedChange={onReset}>
               <span className="text-muted-foreground">Сбросить</span>
             </DropdownMenuCheckboxItem>
           </>

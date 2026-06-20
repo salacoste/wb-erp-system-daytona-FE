@@ -71,8 +71,7 @@ export interface JamUrlsConfig {
 }
 
 export const jamUrls: JamUrlsConfig = {
-  subscription:
-    process.env.NEXT_PUBLIC_JAM_SUBSCRIPTION_URL || 'https://seller.wildberries.ru/jam',
+  subscription: process.env.NEXT_PUBLIC_JAM_SUBSCRIPTION_URL || 'https://seller.wildberries.ru/jam',
   info: process.env.NEXT_PUBLIC_JAM_INFO_URL || 'https://seller.wildberries.ru/jam',
 }
 

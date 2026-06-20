@@ -15,6 +15,7 @@
  */
 
 import { test, expect } from '@playwright/test'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes
 const BACKFILL_ADMIN_ROUTE = '/settings/backfill'
@@ -203,7 +204,9 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
     })
   })
 
-  test.describe('Start Backfill Action', () => {
+  test.describe('Start Backfill Action @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test.beforeEach(async ({ page }) => {
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
@@ -289,7 +292,9 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
     })
   })
 
-  test.describe('Pause/Resume Actions', () => {
+  test.describe('Pause/Resume Actions @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test.beforeEach(async ({ page }) => {
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })

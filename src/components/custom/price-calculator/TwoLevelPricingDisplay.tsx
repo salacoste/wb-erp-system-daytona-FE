@@ -111,11 +111,7 @@ export function TwoLevelPricingDisplay({
             <VariableCostsBreakdown costs={result.variableCosts} />
 
             {/* Margin Section */}
-            <MarginSection
-              margin={result.margin}
-              taxType={taxType}
-              taxRatePct={taxRatePct}
-            />
+            <MarginSection margin={result.margin} taxType={taxType} taxRatePct={taxRatePct} />
           </CollapsibleContent>
         </Collapsible>
 

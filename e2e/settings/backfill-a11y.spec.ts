@@ -22,6 +22,7 @@
 
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes
 const BACKFILL_ADMIN_ROUTE = '/settings/backfill'
@@ -174,7 +175,9 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
   })
 
-  test.describe('Start Backfill Dialog Accessibility', () => {
+  test.describe('Start Backfill Dialog Accessibility @mutating', () => {
+    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
+
     test.beforeEach(async ({ page }) => {
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
@@ -449,11 +452,11 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
 
   test('should have proper tab panel ARIA attributes', async ({ page }) => {
     // Tabs should have role="tablist"
-    const tablist = page.locator('[role="tablist"]')
+    const tablist = page.locator('main [role="tablist"]').first()
     await expect(tablist).toBeVisible()
 
     // Individual tabs should have role="tab"
-    const tabs = page.locator('[role="tab"]')
+    const tabs = tablist.locator('[role="tab"]')
     const tabCount = await tabs.count()
     expect(tabCount).toBeGreaterThanOrEqual(4) // Overview, Trends, Seasonality, Comparison
 
@@ -465,12 +468,12 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
     expect(activeCount >= 0).toBeTruthy()
 
     // Tab panels should have role="tabpanel"
-    const tabpanel = page.locator('[role="tabpanel"]')
+    const tabpanel = page.locator('main [role="tabpanel"][data-state="active"]').first()
     await expect(tabpanel).toBeVisible()
   })
 
   test('should support keyboard navigation between tabs', async ({ page }) => {
-    const tablist = page.locator('[role="tablist"]')
+    const tablist = page.locator('main [role="tablist"]').first()
     const firstTab = tablist.locator('[role="tab"]').first()
 
     await firstTab.focus()
@@ -486,11 +489,11 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
 
   test('should have proper page heading hierarchy', async ({ page }) => {
     // Should have h1
-    const h1 = page.locator('h1')
+    const h1 = page.locator('main h1')
     await expect(h1).toBeVisible()
 
     // Check h2 elements come after h1
-    const h2Elements = page.locator('h2')
+    const h2Elements = page.locator('main h2')
     const h2Count = await h2Elements.count()
 
     if (h2Count > 0) {

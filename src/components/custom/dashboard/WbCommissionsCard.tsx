@@ -2,12 +2,11 @@
  * WB Commissions Card — Секция 2: РАСХОДЫ WB (левая)
  * Dashboard Restructuring: P&L Narrative
  *
- * Aggregates 6 commission/fee fields from finance-summary.
+ * Aggregates commission/fee fields from finance-summary.
  * Shows total + % от продаж. Red accent. Inverted comparison.
  * Story 65.7: Commission breakdown popover badge.
  *
- * Note: Renamed to "Удержания WB" (WB Deductions) as it includes
- * not only commissions but also acquiring, loyalty fees, penalties, etc.
+ * WB services and promotion are displayed separately to avoid double-counting.
  */
 
 'use client'
@@ -15,6 +14,10 @@
 import { Receipt } from 'lucide-react'
 import { ExpenseMetricCard } from './ExpenseMetricCard'
 import { CommissionBreakdownPopover } from './CommissionBreakdownPopover'
+import {
+  DASHBOARD_WB_DEDUCTIONS_COPY,
+  WB_COMMISSION_CARD_TOOLTIP,
+} from './dashboardWbDeductionsCopy'
 
 export interface WbCommissionsCardProps {
   commissionSales: number | null | undefined
@@ -22,7 +25,6 @@ export interface WbCommissionsCardProps {
   loyaltyFee: number | null | undefined
   penaltiesTotal: number | null | undefined
   wbCommissionAdj: number | null | undefined
-  wbServicesCost: number | null | undefined
   previousTotal: number | null | undefined
   saleGross: number | null | undefined
   isLoading?: boolean
@@ -49,7 +51,6 @@ export function WbCommissionsCard({
   loyaltyFee,
   penaltiesTotal,
   wbCommissionAdj,
-  wbServicesCost,
   previousTotal,
   saleGross,
   isLoading,
@@ -62,17 +63,14 @@ export function WbCommissionsCard({
     acquiringFee,
     loyaltyFee,
     penaltiesTotal,
-    wbCommissionAdj,
-    wbServicesCost
+    wbCommissionAdj
   )
 
   return (
     <div className="relative">
       <ExpenseMetricCard
-        title="Удержания WB"
-        tooltip={
-          'Все удержания WB за период (кроме продвижения):\n• Комиссия за продажу — основная комиссия WB за выкупленные товары\n• Эквайринг — за приём платежей от покупателей\n• Программа лояльности — за участие в акциях WB\n• Штрафы — за нарушения правил (некомплект, брак и т.д.)\n• Корректировки — ручные поправки WB\n• Сервисы WB — прочие услуги (без продвижения)\n⚠ Продвижение (реклама) показано отдельно в карточке «Реклама», чтобы не задваивать.\nИсточник: еженедельный финансовый отчёт WB.'
-        }
+        title={DASHBOARD_WB_DEDUCTIONS_COPY.commissionTitle}
+        tooltip={WB_COMMISSION_CARD_TOOLTIP}
         icon={Receipt}
         valueColor="text-red-500"
         value={total}
@@ -91,7 +89,6 @@ export function WbCommissionsCard({
             wbCommissionAdj={wbCommissionAdj}
             loyaltyFee={loyaltyFee}
             penaltiesTotal={penaltiesTotal}
-            wbServicesCost={wbServicesCost}
             saleGross={saleGross}
           />
         </div>

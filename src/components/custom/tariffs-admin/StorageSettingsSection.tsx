@@ -39,12 +39,7 @@ export function StorageSettingsSection({
   onToggle,
 }: StorageSettingsSectionProps) {
   return (
-    <TariffSectionWrapper
-      title="Хранение"
-      icon={Warehouse}
-      isOpen={isOpen}
-      onToggle={onToggle}
-    >
+    <TariffSectionWrapper title="Хранение" icon={Warehouse} isOpen={isOpen} onToggle={onToggle}>
       <div className="grid gap-4 sm:grid-cols-3">
         <TariffFieldInput
           label="Бесплатные дни"

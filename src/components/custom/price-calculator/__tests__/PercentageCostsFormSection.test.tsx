@@ -26,12 +26,7 @@ interface RenderOptions {
 
 // Helper to render PercentageCostsFormSection with form context
 function renderPercentageCostsFormSection(options: RenderOptions = {}) {
-  const {
-    drrValue = 5,
-    sppValue = 0,
-    buybackValue = 98,
-    disabled = false,
-  } = options
+  const { drrValue = 5, sppValue = 0, buybackValue = 98, disabled = false } = options
 
   const mockOnDrrChange = vi.fn()
   const mockOnSppChange = vi.fn()
@@ -94,9 +89,7 @@ describe('PercentageCostsFormSection', () => {
     it('should render DRR with Russian label', () => {
       renderPercentageCostsFormSection()
 
-      expect(
-        screen.getByText('DRR (Доля рекламных расходов)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('DRR (Доля рекламных расходов)')).toBeInTheDocument()
     })
 
     it('should display DRR value from props', () => {
@@ -117,9 +110,7 @@ describe('PercentageCostsFormSection', () => {
     it('should render SPP with Russian label', () => {
       renderPercentageCostsFormSection()
 
-      expect(
-        screen.getByText('СПП (Скидка постоянного покупателя)')
-      ).toBeInTheDocument()
+      expect(screen.getByText('СПП (Скидка постоянного покупателя)')).toBeInTheDocument()
     })
 
     it('should display SPP value from props', () => {

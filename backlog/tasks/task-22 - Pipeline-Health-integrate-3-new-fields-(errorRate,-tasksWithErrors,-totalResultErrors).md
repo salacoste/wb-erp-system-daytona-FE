@@ -18,6 +18,7 @@ priority: low
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Backend Epics 89-93: Pipeline health grid now returns 3 new fields per pipeline:
 
 - `errorRate: number` — 0-1, proportion of completed tasks with errors
@@ -27,6 +28,7 @@ Backend Epics 89-93: Pipeline health grid now returns 3 new fields per pipeline:
 **Logic:** Pipeline with `successRate: 1.0` but `errorRate > 0.1` gets `warning` status.
 
 **Frontend action:**
+
 - Show `errorRate` alongside `successRate` in monitoring/pipeline-health UI when `errorRate > 0`
 - Tooltip: "X задач завершились с ошибками (Y ошибок всего)"
 - Update pipeline health types in frontend
@@ -36,18 +38,23 @@ Backend Epics 89-93: Pipeline health grid now returns 3 new fields per pipeline:
 This also affects task-20 (Monitor Dashboard Block 5) — the pipeline health block should show error rates.
 
 Source: Backend Epics 89-93, doc-2 section 4
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
-- [ ] #1 PipelineHealthData type includes errorRate, tasksWithErrors, totalResultErrors
-- [ ] #2 errorRate shown when > 0 in pipeline health UI
-- [ ] #3 Tooltip shows task/error counts
-- [ ] #4 Warning status badge for successRate=1 + errorRate>0.1
+
+- [x] #1 PipelineHealthData type includes errorRate, tasksWithErrors, totalResultErrors
+- [x] #2 errorRate shown when > 0 in pipeline health UI
+- [x] #3 Tooltip shows task/error counts
+- [x] #4 Warning status badge for successRate=1 + errorRate>0.1
 <!-- AC:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
+
 Completed via Story 91.3-FE (2026-04-21). Added errorRate, tasksWithErrors, totalResultErrors to GridPipeline + DashboardPipeline types. Amber error badge + tooltip in PipelineStatusGrid when errorRate > 0. Type-check + lint clean, 6792 tests pass.
+
 <!-- SECTION:NOTES:END -->

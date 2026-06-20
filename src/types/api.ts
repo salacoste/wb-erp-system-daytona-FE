@@ -55,6 +55,8 @@ export interface ApiRequestOptions extends RequestInit {
    * Story 24: Fix storage analytics response parsing
    */
   skipDataUnwrap?: boolean
+  /** Suppress console logging for expected client-side abort/timeout fallbacks. */
+  suppressNetworkErrorLog?: boolean
 }
 
 /**

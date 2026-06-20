@@ -32,14 +32,10 @@ const VIEW_MODES: Array<{
   { value: 'category', label: 'По категориям', ariaLabel: 'Просмотр по категориям' },
 ]
 
-export function ViewByToggle({
-  viewBy,
-  onViewByChange,
-  className,
-}: ViewByToggleProps) {
+export function ViewByToggle({ viewBy, onViewByChange, className }: ViewByToggleProps) {
   return (
     <div className={`flex gap-2 ${className || ''}`}>
-      {VIEW_MODES.map((mode) => (
+      {VIEW_MODES.map(mode => (
         <Button
           key={mode.value}
           variant={viewBy === mode.value ? 'default' : 'outline'}

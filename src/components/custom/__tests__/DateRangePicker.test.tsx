@@ -70,7 +70,11 @@ describe('DateRangePicker helpers', () => {
 
 describe('DateRangePicker validation logic', () => {
   // Helper to simulate validation
-  const validateRange = (start: string, end: string, maxWeeks = 52): { isValid: boolean; error?: string } => {
+  const validateRange = (
+    start: string,
+    end: string,
+    maxWeeks = 52
+  ): { isValid: boolean; error?: string } => {
     // Parse weeks
     const startMatch = start.match(/^(\d{4})-W(\d{2})$/)
     const endMatch = end.match(/^(\d{4})-W(\d{2})$/)

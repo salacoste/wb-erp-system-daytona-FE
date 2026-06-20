@@ -74,18 +74,10 @@ export function PercentageCostsFormSection<T extends FieldValues>({
         />
 
         {/* DRR Slider - Story 44.18 */}
-        <DrrSlider
-          value={drrValue}
-          onChange={onDrrChange}
-          disabled={disabled}
-        />
+        <DrrSlider value={drrValue} onChange={onDrrChange} disabled={disabled} />
 
         {/* SPP Input - Story 44.19 */}
-        <SppInput
-          value={sppValue}
-          onChange={onSppChange}
-          disabled={disabled}
-        />
+        <SppInput value={sppValue} onChange={onSppChange} disabled={disabled} />
       </div>
     </div>
   )

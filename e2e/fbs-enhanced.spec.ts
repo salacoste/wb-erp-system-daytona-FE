@@ -129,8 +129,8 @@ test.describe('FBS Enhanced Analytics Page (Story 96.13-FE)', () => {
       timeout: TIMEOUTS.api,
     })
     await expect(page.getByText(/Воронка конверсии/)).toBeVisible()
-    // SVG funnel present
-    await expect(page.getByTestId('fbs-funnel-svg')).toBeVisible()
+    await expect(page.getByText('Конверсия в корзину')).toBeVisible()
+    await expect(page.getByText('Конверсия в заказ')).toBeVisible()
   })
 
   // ---------------------------------------------------------------------------

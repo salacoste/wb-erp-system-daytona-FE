@@ -26,10 +26,7 @@ vi.mock('@/lib/api', () => ({
 }))
 
 // Mock ProductWithCogs type
-const createMockProduct = (
-  nmId: string,
-  hasMargin: boolean,
-): ProductWithCogs => ({
+const createMockProduct = (nmId: string, hasMargin: boolean): ProductWithCogs => ({
   nm_id: nmId,
   sa_name: 'Test Product',
   has_cogs: true,
@@ -58,11 +55,7 @@ const createWrapper = () => {
   })
 
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(
-      QueryClientProvider,
-      { client: queryClient },
-      children,
-    )
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
   Wrapper.displayName = 'QueryClientWrapper'
   return Wrapper
 }
@@ -86,7 +79,7 @@ describe('useMarginPollingWithQuery', () => {
             onSuccess,
             onTimeout,
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       expect(result.current.isPolling).toBe(false)
@@ -105,7 +98,7 @@ describe('useMarginPollingWithQuery', () => {
             onSuccess,
             onTimeout: vi.fn(),
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       expect(result.current.isPolling).toBe(false)
@@ -114,7 +107,9 @@ describe('useMarginPollingWithQuery', () => {
 
     it('should start polling when enabled is true and nmId is provided', async () => {
       const statusResponse: MarginCalculationStatusResponse = { status: 'pending' }
-      ;(api.getMarginCalculationStatus as ReturnType<typeof vi.fn>).mockResolvedValue(statusResponse)
+      ;(api.getMarginCalculationStatus as ReturnType<typeof vi.fn>).mockResolvedValue(
+        statusResponse
+      )
 
       renderHook(
         () =>
@@ -129,7 +124,7 @@ describe('useMarginPollingWithQuery', () => {
             onSuccess: vi.fn(),
             onTimeout: vi.fn(),
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       // Wait for first poll
@@ -137,7 +132,7 @@ describe('useMarginPollingWithQuery', () => {
         () => {
           expect(api.getMarginCalculationStatus).toHaveBeenCalledWith('12345678')
         },
-        { timeout: 1000 },
+        { timeout: 1000 }
       )
     })
 
@@ -155,7 +150,7 @@ describe('useMarginPollingWithQuery', () => {
 
       // When status is completed, fetch full product
       ;(apiClient.get as ReturnType<typeof vi.fn>).mockResolvedValue(
-        createMockProduct('12345678', true), // Margin available
+        createMockProduct('12345678', true) // Margin available
       )
 
       const { result } = renderHook(
@@ -171,7 +166,7 @@ describe('useMarginPollingWithQuery', () => {
             onSuccess,
             onTimeout: vi.fn(),
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       // Wait for margin to become available
@@ -180,7 +175,7 @@ describe('useMarginPollingWithQuery', () => {
           expect(result.current.margin).toBe(12.5)
           expect(onSuccess).toHaveBeenCalledWith(12.5)
         },
-        { timeout: 3000 },
+        { timeout: 3000 }
       )
     })
 
@@ -205,7 +200,7 @@ describe('useMarginPollingWithQuery', () => {
             onSuccess: vi.fn(),
             onTimeout,
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       // Wait for timeout
@@ -214,7 +209,7 @@ describe('useMarginPollingWithQuery', () => {
           expect(result.current.timeout).toBe(true)
           expect(onTimeout).toHaveBeenCalled()
         },
-        { timeout: 3000 },
+        { timeout: 3000 }
       )
     })
 
@@ -236,7 +231,7 @@ describe('useMarginPollingWithQuery', () => {
             onTimeout: vi.fn(),
             onError,
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       // Wait for error
@@ -245,7 +240,7 @@ describe('useMarginPollingWithQuery', () => {
           expect(result.current.error).not.toBeNull()
           expect(onError).toHaveBeenCalled()
         },
-        { timeout: 1000 },
+        { timeout: 1000 }
       )
     })
   })
@@ -256,12 +251,12 @@ describe('useMarginPollingWithQuery', () => {
 
       // First call throws 404
       ;(api.getMarginCalculationStatus as ReturnType<typeof vi.fn>).mockRejectedValue(
-        new ApiError('Not Found', 404, 'Endpoint not found'),
+        new ApiError('Not Found', 404, 'Endpoint not found')
       )
 
       // Fallback: product has margin
       ;(apiClient.get as ReturnType<typeof vi.fn>).mockResolvedValue(
-        createMockProduct('12345678', true),
+        createMockProduct('12345678', true)
       )
 
       const onSuccess = vi.fn()
@@ -279,17 +274,15 @@ describe('useMarginPollingWithQuery', () => {
             onSuccess,
             onTimeout: vi.fn(),
           }),
-        { wrapper: createWrapper() },
+        { wrapper: createWrapper() }
       )
 
       // Wait for fallback to complete
       await waitFor(
         () => {
-          expect(apiClient.get).toHaveBeenCalledWith(
-            '/v1/products/12345678?include_cogs=true',
-          )
+          expect(apiClient.get).toHaveBeenCalledWith('/v1/products/12345678?include_cogs=true')
         },
-        { timeout: 2000 },
+        { timeout: 2000 }
       )
     })
   })

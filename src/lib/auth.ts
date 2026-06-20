@@ -17,8 +17,8 @@ export function decodeJWT(token: string): { exp?: number; [key: string]: unknown
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join(''),
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
     )
 
     return JSON.parse(jsonPayload)
@@ -57,4 +57,3 @@ export function isValidToken(token: string | null): boolean {
   if (!token) return false
   return !isTokenExpired(token)
 }
-

@@ -47,10 +47,12 @@ export function useSuppliesPageState() {
     if (status) params.set('status', status)
     if (dateFrom !== defaultRange.from) params.set('from', dateFrom)
     if (dateTo !== defaultRange.to) params.set('to', dateTo)
+    if (sortBy !== DEFAULT_SORT) params.set('sort_by', sortBy)
+    if (sortOrder !== DEFAULT_ORDER) params.set('sort_order', sortOrder)
     if (page > 1) params.set('page', String(page))
     const qs = params.toString()
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
-  }, [status, dateFrom, dateTo, page, pathname, router])
+  }, [status, dateFrom, dateTo, sortBy, sortOrder, page, pathname, router])
 
   // Data fetching (sort is client-side — backend does not support sort params)
   const { data, isLoading, isError, error, refetch } = useSupplies({
@@ -67,17 +69,18 @@ export function useSuppliesPageState() {
   const { mutate: triggerSync, isPending: isSyncing } = useSyncSupplies()
 
   // Handlers
-  const handleSortChange = useCallback((field: SuppliesSortField) => {
-    setSortBy(prev => {
-      if (prev === field) {
+  const handleSortChange = useCallback(
+    (field: SuppliesSortField) => {
+      if (sortBy === field) {
         setSortOrder(cur => (cur === 'asc' ? 'desc' : 'asc'))
-        return prev
+      } else {
+        setSortBy(field)
+        setSortOrder('desc')
       }
-      setSortOrder('desc')
-      return field
-    })
-    setPage(1)
-  }, [])
+      setPage(1)
+    },
+    [sortBy]
+  )
 
   const handleRowClick = useCallback(
     (supply: SupplyListItem) => router.push(buildSupplyDetailRoute(supply.id)),

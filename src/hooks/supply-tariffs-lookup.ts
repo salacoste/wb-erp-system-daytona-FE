@@ -12,6 +12,19 @@ import type { SupplyWarehouse, BoxTypeTariffs } from './supply-tariffs-types'
 import { logger } from '@/lib/logger'
 import { toSupplyDateTariffs } from './supply-tariffs-helpers'
 
+const loggedStorageFallbackSummaries = new Set<string>()
+
+export function resetStorageFallbackLogDedupForTests() {
+  loggedStorageFallbackSummaries.clear()
+}
+
+function warehousePreferenceScore(coefficient: AcceptanceCoefficient): number {
+  const hasUsableTariffs = coefficient.hasTariffRates !== false
+  const isBoxes = coefficient.boxTypeId === 2
+
+  return (hasUsableTariffs ? 2 : 0) + (isBoxes ? 1 : 0)
+}
+
 /** Extract unique warehouses from SUPPLY coefficients. Prefers boxTypeId: 2 (Boxes). */
 export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): SupplyWarehouse[] {
   if (!coefficients.length) return []
@@ -19,10 +32,11 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
   const warehouseMap = new Map<number, AcceptanceCoefficient>()
   // Prefer boxTypeId: 2 (Boxes) when collecting first coefficient
   coefficients.forEach(c => {
-    if (!warehouseMap.has(c.warehouseId)) {
+    const current = warehouseMap.get(c.warehouseId)
+    if (!current) {
       warehouseMap.set(c.warehouseId, c)
-    } else if (c.boxTypeId === 2 && warehouseMap.get(c.warehouseId)?.boxTypeId !== 2) {
-      warehouseMap.set(c.warehouseId, c) // Prefer boxTypeId: 2
+    } else if (warehousePreferenceScore(c) > warehousePreferenceScore(current)) {
+      warehouseMap.set(c.warehouseId, c)
     }
   })
 
@@ -30,6 +44,7 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
   const storageFallbackSamples: Array<{ warehouseId: number; warehouseName: string }> = []
 
   const warehouses = Array.from(warehouseMap.values())
+    .filter(c => c.hasTariffRates !== false)
     .map(c => {
       // Use extractStorageTariffs utility for proper fallback logic. Suppress per-row
       // warnings here and emit one invocation-scoped summary after aggregation.
@@ -70,10 +85,14 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 
   if (storageFallbackCount > 0) {
-    logger.warn(
-      `[StorageTariffs] ${storageFallbackCount} warehouse(s) using fallback storage tariffs for this calculation`,
-      { sample: storageFallbackSamples }
-    )
+    const fallbackSignature = JSON.stringify({ storageFallbackCount, storageFallbackSamples })
+    if (!loggedStorageFallbackSummaries.has(fallbackSignature)) {
+      loggedStorageFallbackSummaries.add(fallbackSignature)
+      logger.debug(
+        `[StorageTariffs] ${storageFallbackCount} warehouse(s) using fallback storage tariffs for this calculation`,
+        { sample: storageFallbackSamples }
+      )
+    }
   }
 
   return warehouses
@@ -173,21 +192,26 @@ export function getTariffsByBoxTypeFromCoefficients(
 
   // Convert to BoxTypeTariffs array
   return Array.from(boxTypeMap.values())
-    .map(c => ({
-      boxTypeId: c.boxTypeId,
-      boxTypeName: c.boxTypeName,
-      delivery: {
-        baseLiterRub: c.delivery.baseLiterRub,
-        additionalLiterRub: c.delivery.additionalLiterRub,
-        coefficient: c.delivery.coefficient,
-      },
-      storage: {
-        baseLiterRub: c.storage.baseLiterRub,
-        additionalLiterRub: c.storage.additionalLiterRub,
-        coefficient: c.storage.coefficient,
-      },
-      // Pallets (boxTypeId: 5) use fixed storage formula
-      isFixedStorage: c.boxTypeId === 5,
-    }))
+    .map(c => {
+      const storageExtraction = extractStorageTariffs(c.storage, 'supply', { warn: false })
+
+      return {
+        boxTypeId: c.boxTypeId,
+        boxTypeName: c.boxTypeName,
+        delivery: {
+          baseLiterRub: c.delivery.baseLiterRub,
+          additionalLiterRub: c.delivery.additionalLiterRub,
+          coefficient: c.delivery.coefficient,
+        },
+        storage: {
+          baseLiterRub: storageExtraction.tariffs.baseLiterRub,
+          additionalLiterRub: storageExtraction.tariffs.additionalLiterRub,
+          coefficient: storageExtraction.tariffs.coefficient,
+          usingStorageFallback: storageExtraction.usingFallback,
+        },
+        // Pallets (boxTypeId: 5) use fixed storage formula
+        isFixedStorage: c.boxTypeId === 5,
+      }
+    })
     .sort((a, b) => a.boxTypeId - b.boxTypeId)
 }

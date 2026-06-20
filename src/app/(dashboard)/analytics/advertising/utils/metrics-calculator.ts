@@ -10,10 +10,10 @@
 
 /** Interface for product metrics (minimal required fields) */
 export interface ProductMetrics {
-  totalSales: number;
-  totalRevenue: number;  // Revenue attributed to ads only
-  organicSales?: number; // Optional: can be pre-calculated by backend or derived
-  totalSpend: number;    // Ad spend in rubles
+  totalSales: number
+  totalRevenue: number // Revenue attributed to ads only
+  organicSales?: number // Optional: can be pre-calculated by backend or derived
+  totalSpend: number // Ad spend in rubles
 }
 
 /**
@@ -34,7 +34,7 @@ export interface ProductMetrics {
  * calculateTotalSales(products); // Returns: 35570
  */
 export function calculateTotalSales(products: ProductMetrics[]): number {
-  return products.reduce((sum, product) => sum + product.totalSales, 0);
+  return products.reduce((sum, product) => sum + product.totalSales, 0)
 }
 
 /**
@@ -50,7 +50,7 @@ export function calculateTotalSales(products: ProductMetrics[]): number {
  * calculateRevenue(products); // Returns: 10234
  */
 export function calculateRevenue(products: ProductMetrics[]): number {
-  return products.reduce((sum, product) => sum + product.totalRevenue, 0);
+  return products.reduce((sum, product) => sum + product.totalRevenue, 0)
 }
 
 /**
@@ -68,7 +68,7 @@ export function calculateRevenue(products: ProductMetrics[]): number {
  * calculateOrganicSales(35570, 10234); // Returns: 25336
  */
 export function calculateOrganicSales(totalSales: number, revenue: number): number {
-  return totalSales - revenue;
+  return totalSales - revenue
 }
 
 /**
@@ -82,7 +82,7 @@ export function calculateOrganicSales(totalSales: number, revenue: number): numb
 export function calculateOrganicSalesFromProducts(
   products: (ProductMetrics & { organicSales: number })[]
 ): number {
-  return products.reduce((sum, product) => sum + product.organicSales, 0);
+  return products.reduce((sum, product) => sum + product.organicSales, 0)
 }
 
 /**
@@ -106,13 +106,13 @@ export function calculateOrganicSalesFromProducts(
 export function calculateOrganicContribution(organicSales: number, totalSales: number): number {
   // Handle division by zero
   if (totalSales === 0) {
-    return 0;
+    return 0
   }
 
-  const contribution = (organicSales / totalSales) * 100;
+  const contribution = (organicSales / totalSales) * 100
 
   // Handle NaN (both zero case)
-  return isNaN(contribution) ? 0 : contribution;
+  return isNaN(contribution) ? 0 : contribution
 }
 
 /**
@@ -136,7 +136,7 @@ export function calculateOrganicContribution(organicSales: number, totalSales: n
  * calculateSpend(products); // Returns: 6000
  */
 export function calculateSpend(products: ProductMetrics[]): number {
-  return products.reduce((sum, product) => sum + product.totalSpend, 0);
+  return products.reduce((sum, product) => sum + product.totalSpend, 0)
 }
 
 /**
@@ -167,9 +167,9 @@ export function calculateSpend(products: ProductMetrics[]): number {
 export function calculateROAS(revenue: number, spend: number): number | null {
   // Edge case: No spend → ROAS is undefined
   if (spend === 0) {
-    return null;
+    return null
   }
 
   // Normal case: ROAS = revenue / spend
-  return revenue / spend;
+  return revenue / spend
 }

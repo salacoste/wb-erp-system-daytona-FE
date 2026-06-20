@@ -88,9 +88,7 @@ export function CogsDeleteDialog({
             <div className="space-y-4">
               {/* Detailed summary (AC: 5, 6) */}
               <div className="rounded-lg bg-muted p-4 text-sm space-y-1">
-                <div>
-                  Себестоимость: {formatCurrencyForDelete(record.unit_cost_rub)}
-                </div>
+                <div>Себестоимость: {formatCurrencyForDelete(record.unit_cost_rub)}</div>
                 <div>
                   Период действия: {formatDateForDelete(record.valid_from)} —{' '}
                   {formatDateForDelete(record.valid_to)}
@@ -102,13 +100,8 @@ export function CogsDeleteDialog({
               <div className="text-sm">
                 <p className="font-medium mb-2 text-foreground">После удаления:</p>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                  <li>
-                    Маржа будет пересчитана для {record.affected_weeks.length}{' '}
-                    недель
-                  </li>
-                  {versionInfo.hasPreviousVersion && (
-                    <li>Предыдущая версия станет активной</li>
-                  )}
+                  <li>Маржа будет пересчитана для {record.affected_weeks.length} недель</li>
+                  {versionInfo.hasPreviousVersion && <li>Предыдущая версия станет активной</li>}
                 </ul>
               </div>
 
@@ -118,9 +111,8 @@ export function CogsDeleteDialog({
                   <Info className="h-4 w-4" />
                   <AlertDescription>
                     После удаления предыдущая версия (
-                    {formatCurrencyForDelete(versionInfo.previousVersionCost!)}{' '}
-                    от {formatDateForDelete(versionInfo.previousVersionDate!)})
-                    станет активной.
+                    {formatCurrencyForDelete(versionInfo.previousVersionCost!)} от{' '}
+                    {formatDateForDelete(versionInfo.previousVersionDate!)}) станет активной.
                   </AlertDescription>
                 </Alert>
               )}
@@ -131,8 +123,8 @@ export function CogsDeleteDialog({
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Внимание!</AlertTitle>
                   <AlertDescription>
-                    Это единственная запись COGS для товара. После удаления расчёт
-                    маржи станет невозможен.
+                    Это единственная запись COGS для товара. После удаления расчёт маржи станет
+                    невозможен.
                   </AlertDescription>
                 </Alert>
               )}
@@ -143,7 +135,7 @@ export function CogsDeleteDialog({
                   <Checkbox
                     id="confirm-delete"
                     checked={confirmed}
-                    onCheckedChange={(checked) => setConfirmed(checked === true)}
+                    onCheckedChange={checked => setConfirmed(checked === true)}
                   />
                   <Label htmlFor="confirm-delete" className="text-sm">
                     Я понимаю, что товар останется без COGS
@@ -156,19 +148,13 @@ export function CogsDeleteDialog({
 
         {/* Form actions (AC: 9, 10, 11) */}
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={mutation.isPending}>
-            Отмена
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={mutation.isPending}>Отмена</AlertDialogCancel>
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={
-              mutation.isPending || (versionInfo.isOnlyVersion && !confirmed)
-            }
+            disabled={mutation.isPending || (versionInfo.isOnlyVersion && !confirmed)}
           >
-            {mutation.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Удалить
           </Button>
         </AlertDialogFooter>

@@ -4,6 +4,14 @@ import type { User } from '@/types/auth'
 import { setAuthCookie, removeAuthCookie } from '@/lib/utils'
 import { normalizeUser, STORAGE_KEY, STORAGE_EVENT_KEY } from './authStoreHelpers'
 
+function getBrowserLocalStorage(): Storage {
+  if (typeof window === 'undefined') {
+    throw new Error('localStorage is unavailable during server rendering')
+  }
+
+  return window.localStorage
+}
+
 interface AuthState {
   // State
   user: User | null
@@ -74,7 +82,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => getBrowserLocalStorage()),
       partialize: state => ({
         user: state.user,
         token: state.token,

@@ -7,10 +7,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getSupplyPlanning } from '@/lib/api/supply-planning'
-import type {
-  SupplyPlanningQueryParams,
-  SupplyPlanningResponse,
-} from '@/types/supply-planning'
+import type { SupplyPlanningQueryParams, SupplyPlanningResponse } from '@/types/supply-planning'
 import {
   supplyPlanningQueryKeys,
   type UseSupplyPlanningOptions,
@@ -21,10 +18,7 @@ import {
 import { logger } from '@/lib/logger'
 
 // Re-export for consumers
-export {
-  supplyPlanningQueryKeys,
-  type UseSupplyPlanningOptions,
-} from './useSupplyPlanning-utils'
+export { supplyPlanningQueryKeys, type UseSupplyPlanningOptions } from './useSupplyPlanning-utils'
 
 // ============================================================================
 // Query Hooks
@@ -38,13 +32,9 @@ export {
  */
 export function useSupplyPlanning(
   params: SupplyPlanningQueryParams = {},
-  options: UseSupplyPlanningOptions = {},
+  options: UseSupplyPlanningOptions = {}
 ) {
-  const {
-    enabled = true,
-    refetchInterval,
-    staleTime = SUPPLY_STALE_TIME,
-  } = options
+  const { enabled = true, refetchInterval, staleTime = SUPPLY_STALE_TIME } = options
 
   return useQuery<SupplyPlanningResponse, Error>({
     queryKey: supplyPlanningQueryKeys.list(params),
@@ -64,32 +54,28 @@ export function useSupplyPlanning(
 
 /** Hook to fetch only stockout risk SKUs */
 export function useStockoutRisks(
-  options: Omit<SupplyPlanningQueryParams, 'show_only'> &
-    UseSupplyPlanningOptions = {},
+  options: Omit<SupplyPlanningQueryParams, 'show_only'> & UseSupplyPlanningOptions = {}
 ) {
   const { enabled, refetchInterval, staleTime, ...params } = options
   return useSupplyPlanning(
     { ...params, show_only: 'stockout_risk' },
-    { enabled, refetchInterval, staleTime },
+    { enabled, refetchInterval, staleTime }
   )
 }
 
 /** Hook to fetch SKUs needing reorder */
 export function useReorderNeeded(
-  options: Omit<SupplyPlanningQueryParams, 'show_only'> &
-    UseSupplyPlanningOptions = {},
+  options: Omit<SupplyPlanningQueryParams, 'show_only'> & UseSupplyPlanningOptions = {}
 ) {
   const { enabled, refetchInterval, staleTime, ...params } = options
   return useSupplyPlanning(
     { ...params, show_only: 'reorder_needed' },
-    { enabled, refetchInterval, staleTime },
+    { enabled, refetchInterval, staleTime }
   )
 }
 
 /** Hook to fetch supply planning summary only (limit=1) */
-export function useSupplyPlanningSummary(
-  options: UseSupplyPlanningOptions = {},
-) {
+export function useSupplyPlanningSummary(options: UseSupplyPlanningOptions = {}) {
   return useSupplyPlanning({ limit: 1 }, options)
 }
 

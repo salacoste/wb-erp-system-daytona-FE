@@ -133,9 +133,7 @@ describe('DeliveryTypeSelector - Selection', () => {
     // Find the Boxes option specifically (use getAllByText since text appears in trigger too)
     const boxesOptions = screen.getAllByText('Коробки')
     // Click the one inside the listbox (not the trigger)
-    const boxesOption = boxesOptions.find(
-      (el) => el.closest('[role="option"]') !== null
-    )
+    const boxesOption = boxesOptions.find(el => el.closest('[role="option"]') !== null)
     await user.click(boxesOption!)
 
     expect(mockOnChange).toHaveBeenCalledWith(2)
@@ -279,12 +277,7 @@ describe('DeliveryTypeSelector - Available Types', () => {
 
   it('should show visual indication for unavailable types (opacity)', async () => {
     const user = userEvent.setup()
-    render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        availableTypes={[2, 5]}
-      />
-    )
+    render(<DeliveryTypeSelector {...defaultProps} availableTypes={[2, 5]} />)
 
     await user.click(screen.getByRole('combobox'))
 
@@ -295,12 +288,7 @@ describe('DeliveryTypeSelector - Available Types', () => {
 
   it('should not call onChange when clicking unavailable type', async () => {
     const user = userEvent.setup()
-    render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        availableTypes={[2, 5]}
-      />
-    )
+    render(<DeliveryTypeSelector {...defaultProps} availableTypes={[2, 5]} />)
 
     await user.click(screen.getByRole('combobox'))
 
@@ -320,12 +308,7 @@ describe('DeliveryTypeSelector - Available Types', () => {
 describe('DeliveryTypeSelector - Tooltips', () => {
   it('should show tooltip for unavailable types on hover', async () => {
     const user = userEvent.setup()
-    render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        availableTypes={[2]}
-      />
-    )
+    render(<DeliveryTypeSelector {...defaultProps} availableTypes={[2]} />)
 
     await user.click(screen.getByRole('combobox'))
 
@@ -340,12 +323,7 @@ describe('DeliveryTypeSelector - Tooltips', () => {
 
   it('should not show tooltip for available types', async () => {
     const user = userEvent.setup()
-    render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        availableTypes={[2, 5, 6]}
-      />
-    )
+    render(<DeliveryTypeSelector {...defaultProps} availableTypes={[2, 5, 6]} />)
 
     await user.click(screen.getByRole('combobox'))
 
@@ -367,9 +345,7 @@ describe('DeliveryTypeSelector - Pallets Special Handling', () => {
     render(<DeliveryTypeSelector {...defaultProps} value={5} />)
 
     // Should show explanation text about fixed rate
-    expect(
-      screen.getByText(/Хранение не зависит от объёма товара/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Хранение не зависит от объёма товара/)).toBeInTheDocument()
   })
 
   it('should show Pallets icon in explanation', () => {
@@ -383,17 +359,13 @@ describe('DeliveryTypeSelector - Pallets Special Handling', () => {
   it('should NOT show fixed rate explanation for Boxes', () => {
     render(<DeliveryTypeSelector {...defaultProps} value={2} />)
 
-    expect(
-      screen.queryByText(/Хранение не зависит от объёма товара/)
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText(/Хранение не зависит от объёма товара/)).not.toBeInTheDocument()
   })
 
   it('should NOT show fixed rate explanation for Supersafe', () => {
     render(<DeliveryTypeSelector {...defaultProps} value={6} />)
 
-    expect(
-      screen.queryByText(/Хранение не зависит от объёма товара/)
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText(/Хранение не зависит от объёма товара/)).not.toBeInTheDocument()
   })
 })
 
@@ -430,12 +402,7 @@ describe('DeliveryTypeSelector - Accessibility', () => {
 
   it('should have proper aria attributes for disabled items', async () => {
     const user = userEvent.setup()
-    render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        availableTypes={[2]}
-      />
-    )
+    render(<DeliveryTypeSelector {...defaultProps} availableTypes={[2]} />)
 
     await user.click(screen.getByRole('combobox'))
 
@@ -489,11 +456,7 @@ describe('DeliveryTypeSelector - Form Integration', () => {
     })
 
     const { rerender } = render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        value={value}
-        onChange={handleChange}
-      />
+      <DeliveryTypeSelector {...defaultProps} value={value} onChange={handleChange} />
     )
 
     // Select Pallets
@@ -503,13 +466,7 @@ describe('DeliveryTypeSelector - Form Integration', () => {
     expect(handleChange).toHaveBeenCalledWith(5)
 
     // Rerender with new value
-    rerender(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        value={5}
-        onChange={handleChange}
-      />
-    )
+    rerender(<DeliveryTypeSelector {...defaultProps} value={5} onChange={handleChange} />)
 
     // Should now show Pallets
     expect(screen.getByText('Монопаллеты')).toBeInTheDocument()
@@ -517,23 +474,13 @@ describe('DeliveryTypeSelector - Form Integration', () => {
 
   it('should preserve selection when availableTypes changes', () => {
     const { rerender } = render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        value={5}
-        availableTypes={[2, 5, 6]}
-      />
+      <DeliveryTypeSelector {...defaultProps} value={5} availableTypes={[2, 5, 6]} />
     )
 
     expect(screen.getByText('Монопаллеты')).toBeInTheDocument()
 
     // Remove Supersafe from available
-    rerender(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        value={5}
-        availableTypes={[2, 5]}
-      />
-    )
+    rerender(<DeliveryTypeSelector {...defaultProps} value={5} availableTypes={[2, 5]} />)
 
     // Should still show Pallets selected
     expect(screen.getByText('Монопаллеты')).toBeInTheDocument()
@@ -547,12 +494,7 @@ describe('DeliveryTypeSelector - Form Integration', () => {
 describe('DeliveryTypeSelector - Edge Cases', () => {
   it('should handle empty availableTypes array', async () => {
     const user = userEvent.setup()
-    render(
-      <DeliveryTypeSelector
-        {...defaultProps}
-        availableTypes={[]}
-      />
-    )
+    render(<DeliveryTypeSelector {...defaultProps} availableTypes={[]} />)
 
     await user.click(screen.getByRole('combobox'))
 
@@ -575,16 +517,12 @@ describe('DeliveryTypeSelector - Edge Cases', () => {
     // Select Pallets
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByRole('option', { name: /Монопаллеты/i }))
-    rerender(
-      <DeliveryTypeSelector {...defaultProps} value={5} onChange={handleChange} />
-    )
+    rerender(<DeliveryTypeSelector {...defaultProps} value={5} onChange={handleChange} />)
 
     // Select Supersafe
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByRole('option', { name: /Суперсейф/i }))
-    rerender(
-      <DeliveryTypeSelector {...defaultProps} value={6} onChange={handleChange} />
-    )
+    rerender(<DeliveryTypeSelector {...defaultProps} value={6} onChange={handleChange} />)
 
     // Select Boxes
     await user.click(screen.getByRole('combobox'))

@@ -9,9 +9,9 @@
  * Note: localStorage is mocked in globalSetup.ts to support MSW v2
  */
 
-import '@testing-library/jest-dom';
-import { beforeAll, afterEach, afterAll } from 'vitest';
-import { server } from '@/mocks/server';
+import '@testing-library/jest-dom'
+import { beforeAll, afterEach, afterAll } from 'vitest'
+import { server } from '@/mocks/server'
 
 // Mock ResizeObserver for Radix UI components
 class ResizeObserverMock {
@@ -20,7 +20,7 @@ class ResizeObserverMock {
   disconnect() {}
 }
 
-global.ResizeObserver = ResizeObserverMock;
+global.ResizeObserver = ResizeObserverMock
 
 // Mock pointer capture methods for Radix UI components (AlertDialog, Select, etc.)
 Element.prototype.hasPointerCapture = () => false
@@ -32,15 +32,15 @@ Element.prototype.scrollIntoView = () => {}
 
 // Start MSW server before all tests
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'warn' });
-});
+  server.listen({ onUnhandledRequest: 'warn' })
+})
 
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {
-  server.resetHandlers();
-});
+  server.resetHandlers()
+})
 
 // Close server after all tests
 afterAll(() => {
-  server.close();
-});
+  server.close()
+})

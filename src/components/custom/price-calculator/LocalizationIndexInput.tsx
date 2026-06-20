@@ -73,9 +73,7 @@ export function LocalizationIndexInput({
   warehouseId,
   disabled = false,
 }: LocalizationIndexInputProps) {
-  const [originalValue, setOriginalValue] = useState<number | undefined>(
-    undefined
-  )
+  const [originalValue, setOriginalValue] = useState<number | undefined>(undefined)
   const [isModified, setIsModified] = useState(false)
 
   // Update original value when warehouse changes
@@ -137,9 +135,7 @@ export function LocalizationIndexInput({
           disabled={disabled}
           className="w-24"
         />
-        <span className="text-sm text-muted-foreground">
-          {getZoneLabel(value)}
-        </span>
+        <span className="text-sm text-muted-foreground">{getZoneLabel(value)}</span>
       </div>
 
       {value < LOCALIZATION_RANGES.MIN && (

@@ -65,11 +65,7 @@ describe('useCommissions', () => {
       expect(tariffsQueryKeys.commissions()).toEqual(['tariffs', 'commissions'])
       expect(tariffsQueryKeys.warehouses()).toEqual(['tariffs', 'warehouses'])
       expect(tariffsQueryKeys.settings()).toEqual(['tariffs', 'settings'])
-      expect(tariffsQueryKeys.acceptanceByWarehouse(123)).toEqual([
-        'tariffs',
-        'acceptance',
-        123,
-      ])
+      expect(tariffsQueryKeys.acceptanceByWarehouse(123)).toEqual(['tariffs', 'acceptance', 123])
     })
   })
 

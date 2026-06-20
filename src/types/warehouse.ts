@@ -41,6 +41,8 @@ export interface WarehouseTariffs {
   logisticsCoefficient?: number
   /** Storage coefficient (e.g., 1.45 = 145%) */
   storageCoefficient?: number
+  /** True when storage tariffs use frontend fallback defaults because backend returned 0 */
+  usingStorageFallback?: boolean
 }
 
 /**

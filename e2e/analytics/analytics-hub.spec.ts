@@ -76,11 +76,7 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
 
     test('should navigate to /analytics/orders when FBS card is clicked', async ({ page }) => {
       // Find and click the FBS Orders card
-      const fbsOrdersCard = page
-        .locator('a[href="/analytics/orders"]')
-        .or(page.locator('a:has-text("Заказы FBS")'))
-        .or(page.locator('a:has-text("Заказы")'))
-        .first()
+      const fbsOrdersCard = page.locator('a[href="/analytics/orders"]').first()
 
       if (await fbsOrdersCard.isVisible()) {
         await fbsOrdersCard.click()

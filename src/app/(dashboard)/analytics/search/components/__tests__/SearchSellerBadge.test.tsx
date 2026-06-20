@@ -17,10 +17,13 @@ import { useSellerInfo } from '@/hooks/useSellerInfo'
 const mockUseAuthStore = vi.mocked(useAuthStore)
 const mockUseSellerInfo = vi.mocked(useSellerInfo)
 
+type AuthCabinetSelectorState = Pick<ReturnType<typeof useAuthStore.getState>, 'cabinetId'>
+type MockAuthImplementation = Parameters<typeof mockUseAuthStore.mockImplementation>[0]
+
 /** Minimal store slice used by the selector in SearchSellerBadge */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Zustand selector mock needs wide type
-function mockAuthSelector(cabinetId: string | null) {
-  return (selector: (state: any) => unknown) => selector({ cabinetId })
+function mockAuthSelector(cabinetId: string | null): MockAuthImplementation {
+  return ((selector: (state: AuthCabinetSelectorState) => unknown) =>
+    selector({ cabinetId })) as MockAuthImplementation
 }
 
 describe('resolveSellerDisplayName', () => {

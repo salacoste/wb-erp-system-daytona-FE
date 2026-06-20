@@ -37,12 +37,7 @@ export function AcceptanceRatesSection({
   onToggle,
 }: AcceptanceRatesSectionProps) {
   return (
-    <TariffSectionWrapper
-      title="Приёмка"
-      icon={Package}
-      isOpen={isOpen}
-      onToggle={onToggle}
-    >
+    <TariffSectionWrapper title="Приёмка" icon={Package} isOpen={isOpen} onToggle={onToggle}>
       <div className="grid gap-4 sm:grid-cols-2">
         <TariffFieldInput
           label="Тариф приёмки"

@@ -7,7 +7,7 @@
  * and cannibalization analysis.
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { format, subDays } from 'date-fns'
 import { RequireJam } from '@/components/custom/jam/RequireJam'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
@@ -42,11 +42,12 @@ function formatApi(date: Date): string {
   return format(date, 'yyyy-MM-dd')
 }
 
-export function CrossReferencePageContent() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
-  const apiFrom = dateRange ? formatApi(dateRange.from) : ''
-  const apiTo = dateRange ? formatApi(dateRange.to) : ''
+interface CrossReferenceDataContentProps {
+  apiFrom: string
+  apiTo: string
+}
 
+function CrossReferenceDataContent({ apiFrom, apiTo }: CrossReferenceDataContentProps) {
   const searchQuery = useSearchOrders(apiFrom, apiTo, { groupBy: 'product' })
   // Feature 3.6: keyword-level search data for overlap analysis
   const searchByQueryQuery = useSearchOrders(apiFrom, apiTo, { groupBy: 'query' })
@@ -74,7 +75,7 @@ export function CrossReferencePageContent() {
   const overlapSummary = useMemo(() => computeOverlapSummary(mergedData), [mergedData])
   const topWastedSpend = useMemo(() => getTopWastedSpend(mergedData), [mergedData])
 
-  // CSV export
+  // CSV export is gated with the data it exports.
   const csvContent = useMemo(() => exportCrossReferenceToCsv(mergedData), [mergedData])
   const csvFileName = `cross-reference-${apiFrom}-${apiTo}.csv`
 
@@ -82,6 +83,47 @@ export function CrossReferencePageContent() {
     searchQuery.refetch()
     adQuery.refetch()
   }
+
+  return (
+    <div className="space-y-6">
+      <ExportCsvButton
+        csvContent={csvContent}
+        fileName={csvFileName}
+        label="Скачать CSV"
+        disabled={mergedData.length === 0}
+      />
+
+      {isLoading && <LoadingSkeleton />}
+      {isError && <ErrorState error={error} onRetry={handleRetry} />}
+      {!isLoading && !isError && mergedData.length === 0 && <EmptyState />}
+      {!isLoading && !isError && mergedData.length > 0 && (
+        <div className="space-y-6">
+          <OverlapSummaryCards summary={overlapSummary} />
+          <InsightsCards items={topWastedSpend} />
+          <OrganicVsAdScatter items={mergedData} />
+          <CrossReferenceTable items={mergedData} />
+
+          {/* Feature 3.6: Ad ↔ Search correlation analyses */}
+          {searchQueryItems && adItems && (
+            <AdOrganicOverlapTable searchQueryItems={searchQueryItems} adItems={adItems} />
+          )}
+          <PositionSpendChart items={mergedData} />
+          <CannibalizationAnalysis items={mergedData} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function CrossReferencePageContent() {
+  // Hydration-safe: initialize dateRange after mount to avoid server/client date drift.
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
+
+  useEffect(() => {
+    setDateRange(getDefaultRange())
+  }, [])
+  const apiFrom = dateRange ? formatApi(dateRange.from) : ''
+  const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
   return (
     <div className="space-y-6">
@@ -98,31 +140,11 @@ export function CrossReferencePageContent() {
         id="cross-ref-date-range"
       />
 
-      <ExportCsvButton
-        csvContent={csvContent}
-        fileName={csvFileName}
-        label="Скачать CSV"
-        disabled={mergedData.length === 0}
-      />
-
       <RequireJam requiredTier="standard">
-        {isLoading && <LoadingSkeleton />}
-        {isError && <ErrorState error={error} onRetry={handleRetry} />}
-        {!isLoading && !isError && mergedData.length === 0 && <EmptyState />}
-        {!isLoading && !isError && mergedData.length > 0 && (
-          <div className="space-y-6">
-            <OverlapSummaryCards summary={overlapSummary} />
-            <InsightsCards items={topWastedSpend} />
-            <OrganicVsAdScatter items={mergedData} />
-            <CrossReferenceTable items={mergedData} />
-
-            {/* Feature 3.6: Ad ↔ Search correlation analyses */}
-            {searchQueryItems && adItems && (
-              <AdOrganicOverlapTable searchQueryItems={searchQueryItems} adItems={adItems} />
-            )}
-            <PositionSpendChart items={mergedData} />
-            <CannibalizationAnalysis items={mergedData} />
-          </div>
+        {dateRange ? (
+          <CrossReferenceDataContent apiFrom={apiFrom} apiTo={apiTo} />
+        ) : (
+          <LoadingSkeleton />
         )}
       </RequireJam>
     </div>
