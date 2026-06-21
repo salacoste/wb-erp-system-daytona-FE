@@ -74,6 +74,63 @@ describe('normalizeComparisonResponse', () => {
     expect(result.breakdown![0].name).toBe('Brand X')
   })
 
+  it('maps current wrapped backend comparison response shape', () => {
+    const raw = {
+      comparison: {
+        period1: {
+          label: '2026-W24',
+          data: {
+            revenue_net: 509021.38,
+            cogs_total: 374480,
+            profit: 134541.38,
+            margin_pct: 26.43,
+            qty: 841,
+          },
+        },
+        period2: {
+          label: '2026-W23',
+          data: {
+            revenue_net: 458945.21,
+            cogs_total: 399518,
+            profit: 59427.21,
+            margin_pct: 12.95,
+            qty: 873,
+          },
+        },
+        delta: {
+          revenue_net: { absolute: 50076.17, percent: 10.91 },
+          cogs_total: { absolute: -25038, percent: -6.27 },
+          profit: { absolute: 75114.17, percent: 126.4 },
+          margin_pct: { absolute: 13.48, percent: 104.09 },
+          qty: { absolute: -32, percent: -3.67 },
+        },
+      },
+      breakdown: [],
+    }
+
+    const result = normalizeComparisonResponse(raw)
+    expect(result.period1).toMatchObject({
+      week: '2026-W24',
+      revenue: 509021.38,
+      profit: 134541.38,
+      margin_pct: 26.43,
+      orders: 841,
+      cogs: 374480,
+    })
+    expect(result.period2).toMatchObject({
+      week: '2026-W23',
+      revenue: 458945.21,
+      profit: 59427.21,
+      margin_pct: 12.95,
+      orders: 873,
+      cogs: 399518,
+    })
+    expect(result.delta.revenue).toEqual({ absolute: 50076.17, percent: 10.91 })
+    expect(result.delta.orders).toEqual({ absolute: -32, percent: -3.67 })
+    expect(result.delta.cogs).toEqual({ absolute: -25038, percent: -6.27 })
+    expect(result.breakdown).toEqual([])
+  })
+
   it('returns safe defaults for null input', () => {
     const result = normalizeComparisonResponse(null)
     expect(result.period1).toEqual({

@@ -10,8 +10,14 @@ import { renderWithProviders } from '@/test/utils/test-utils'
 
 // Mock hooks and utilities
 const mockRefetch = vi.fn()
+const mockFinancialSummaryComparison = vi.hoisted(() => vi.fn())
+
 vi.mock('@/hooks/comparison', () => ({
   useAnalyticsComparison: vi.fn(),
+}))
+
+vi.mock('@/hooks/useFinancialSummary', () => ({
+  useFinancialSummaryWithPeriodComparison: mockFinancialSummaryComparison,
 }))
 
 vi.mock('@/lib/period-comparison-helpers', () => ({
@@ -95,10 +101,22 @@ function setError() {
   } as unknown as ReturnType<typeof useAnalyticsComparison>)
 }
 
+function setFinancialComparison(overrides?: Record<string, unknown>) {
+  mockFinancialSummaryComparison.mockReturnValue({
+    current: undefined,
+    previous: undefined,
+    isLoading: false,
+    isError: false,
+    error: null,
+    ...overrides,
+  })
+}
+
 beforeEach(() => {
   vi.clearAllMocks()
   localStorage.clear()
   setLoaded()
+  setFinancialComparison()
 })
 
 // ============================================================================
@@ -180,6 +198,46 @@ describe('PeriodComparisonSection - Value Formatting', () => {
     renderWithProviders(<PeriodComparisonSection currentWeek="2026-W05" />)
     const texts = screen.getAllByText(/500\s*000/)
     expect(texts.length).toBeGreaterThan(0)
+  })
+
+  it('should fall back to financial summary for logistics and storage when comparison omits them', () => {
+    setLoaded({
+      period1: {
+        ...MOCK_DATA.period1,
+        logistics: 0,
+        storage: 0,
+      },
+      period2: {
+        ...MOCK_DATA.period2,
+        logistics: 0,
+        storage: 0,
+      },
+      delta: {
+        ...MOCK_DATA.delta,
+        logistics: dv(0, 0),
+        storage: dv(0, 0),
+      },
+    })
+    setFinancialComparison({
+      current: {
+        summary_total: {
+          logistics_cost_total: 77835.86,
+          storage_cost_total: 3881.44,
+        },
+      },
+      previous: {
+        summary_total: {
+          logistics_cost_total: 71018.1,
+          storage_cost_total: 2689.2,
+        },
+      },
+    })
+
+    renderWithProviders(<PeriodComparisonSection currentWeek="2026-W24" />)
+
+    expect(screen.getByText(/77\s*835,86/)).toBeInTheDocument()
+    expect(screen.getByText(/3\s*881,44/)).toBeInTheDocument()
+    expect(screen.queryByText(/^0\s*₽$/)).not.toBeInTheDocument()
   })
 
   it('should render null values as em-dash', () => {
@@ -306,6 +364,9 @@ describe('PeriodComparisonSection - Edge Cases', () => {
   it('should pass enabled:false when currentWeek is empty', () => {
     renderWithProviders(<PeriodComparisonSection currentWeek="" />)
     expect(mockComparison).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+    expect(mockFinancialSummaryComparison).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: false })
+    )
   })
 
   it('should handle null delta gracefully', () => {

@@ -17,6 +17,8 @@ import { ComparisonModeToggle } from './ComparisonModeToggle'
 import { PeriodComparisonCard } from './PeriodComparisonCard'
 import { PeriodComparisonSkeleton } from './PeriodComparisonSkeleton'
 import { useAnalyticsComparison } from '@/hooks/comparison'
+import { useFinancialSummaryWithPeriodComparison } from '@/hooks/useFinancialSummary'
+import { calculateDelta } from '@/lib/api/analytics-comparison'
 import {
   getComparisonPeriods,
   formatPeriodLabel,
@@ -85,6 +87,12 @@ export function PeriodComparisonSection({
     period2,
     enabled: !!currentWeek,
   })
+  const isSingleWeekComparison = !period1.includes(':') && !period2.includes(':')
+  const financeComparison = useFinancialSummaryWithPeriodComparison({
+    periodType: 'week',
+    period: period1,
+    enabled: !!currentWeek && isSingleWeekComparison,
+  })
 
   // Format period labels
   const currentLabel = formatPeriodLabel(period1)
@@ -115,14 +123,43 @@ export function PeriodComparisonSection({
     )
   }
 
+  const getFinanceFallbackValue = (
+    period: 'period1' | 'period2',
+    key: MetricConfig['key']
+  ): number | null => {
+    if (key !== 'logistics' && key !== 'storage') return null
+
+    const summary =
+      period === 'period1'
+        ? financeComparison.current?.summary_total
+        : financeComparison.previous?.summary_total
+
+    if (!summary) return null
+
+    if (key === 'logistics') {
+      return summary.logistics_cost_total ?? summary.logistics_cost ?? null
+    }
+
+    return summary.storage_cost_total ?? summary.storage_cost ?? null
+  }
+
   // Helper to get metric value
   const getValue = (period: 'period1' | 'period2', key: MetricConfig['key']): number | null => {
+    const fallback = getFinanceFallbackValue(period, key)
+    if (fallback != null) return fallback
+
     if (!data) return null
     return data[period][key] ?? null
   }
 
   // Helper to get delta
   const getDelta = (key: MetricConfig['key']) => {
+    const currentFallback = getFinanceFallbackValue('period1', key)
+    const previousFallback = getFinanceFallbackValue('period2', key)
+    if (currentFallback != null && previousFallback != null) {
+      return calculateDelta(currentFallback, previousFallback)
+    }
+
     if (!data?.delta) return null
     return data.delta[key] ?? null
   }
