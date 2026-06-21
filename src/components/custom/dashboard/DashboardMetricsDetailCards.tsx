@@ -11,7 +11,7 @@ import { CostsCard } from './CostsCard'
 import { AdvertisingCard } from './AdvertisingCard'
 import { OtherDeductionsCard } from './OtherDeductionsCard'
 import { renderProfitDetailCards } from './DashboardProfitDetailCards'
-import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
+import { getWbDeductions, type DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 import type { WidgetId } from '@/stores/dashboardWidgetsStore'
 
 export function renderDetailCards(
@@ -20,6 +20,7 @@ export function renderDetailCards(
 ): React.ReactElement {
   const p = props
   const prev = p.previousPeriodData
+  const wbDeductions = getWbDeductions(p)
   const preTax = !p.taxMetrics
   const s = (id: WidgetId) => !vw || vw[id] !== false
 
@@ -28,22 +29,22 @@ export function renderDetailCards(
       {s('commissions') && (
         <>
           <WbCommissionsCard
-            commissionSales={p.commissionSales}
-            acquiringFee={p.acquiringFee}
-            loyaltyFee={p.loyaltyFee}
-            penaltiesTotal={p.penaltiesTotal}
-            wbCommissionAdj={p.wbCommissionAdj}
-            previousTotal={prev?.wbCommissionsTotal}
-            saleGross={p.saleGross}
+            commissionSales={wbDeductions.commission.commissionSales}
+            acquiringFee={wbDeductions.commission.acquiringFee}
+            loyaltyFee={wbDeductions.commission.loyaltyFee}
+            penaltiesTotal={wbDeductions.commission.penaltiesTotal}
+            wbCommissionAdj={wbDeductions.commission.wbCommissionAdj}
+            previousTotal={wbDeductions.commission.previousTotal}
+            saleGross={wbDeductions.saleGross}
             isLoading={false}
             error={p.error}
             onRetry={p.onRetry}
           />
           <OtherDeductionsCard
-            jamCost={p.wbJamCost}
-            otherServicesCost={p.wbOtherServicesCost}
-            previousTotal={prev?.wbOtherDeductionsTotal}
-            saleGross={p.saleGross}
+            jamCost={wbDeductions.services.jamCost}
+            otherServicesCost={wbDeductions.services.otherServicesCost}
+            previousTotal={wbDeductions.services.previousTotal}
+            saleGross={wbDeductions.saleGross}
             isLoading={false}
             error={p.error}
             onRetry={p.onRetry}
@@ -107,12 +108,12 @@ export function renderDetailCards(
       )}
       {s('advertising') && (
         <AdvertisingCard
-          totalSpend={p.advertisingSpend}
-          roas={p.advertisingRoas}
-          wbPromotionCost={p.wbPromotionCost}
-          previousWbPromotionCost={prev?.wbPromotionCost}
-          previousSpend={prev?.advertisingSpend}
-          saleGross={p.saleGross}
+          totalSpend={wbDeductions.promotion.advertisingSpend}
+          roas={wbDeductions.promotion.advertisingRoas}
+          wbPromotionCost={wbDeductions.promotion.wbPromotionCost}
+          previousWbPromotionCost={wbDeductions.promotion.previousWbPromotionCost}
+          previousSpend={wbDeductions.promotion.previousAdvertisingSpend}
+          saleGross={wbDeductions.saleGross}
           isLoading={false}
           error={p.error}
           onRetry={p.onRetry}

@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, '../..'),
 
   // Next 15 build lint phase still passes removed ESLint options in this repo.
-  // Keep lint as an explicit CI/local gate via `pnpm lint` instead of build-time lint.
+  // Keep lint as an explicit CI/local gate instead of build-time lint.
   eslint: {
     ignoreDuringBuilds: true,
   },

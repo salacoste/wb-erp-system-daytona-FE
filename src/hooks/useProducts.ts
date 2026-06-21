@@ -138,13 +138,12 @@ export function useProductDetail(nmId: string | undefined) {
   const { cabinetId } = useAuthStore()
   return useQuery({
     queryKey: ['products', cabinetId, nmId],
-    queryFn: async () => {
+    queryFn: async (): Promise<ProductWithCogs | null> => {
       if (!nmId) throw new Error('Product ID is required')
       try {
         return await apiClient.get<ProductWithCogs>(`/v1/products/${nmId}`)
       } catch (err) {
-        if (err instanceof ApiError && err.isWbTokenError)
-          return undefined as unknown as ProductWithCogs
+        if (err instanceof ApiError && err.isWbTokenError) return null
         throw err
       }
     },

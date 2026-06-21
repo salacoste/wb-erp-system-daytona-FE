@@ -109,6 +109,64 @@ export interface DashboardMetricsGridProps {
   className?: string
 }
 
+export interface WbCommissionDeductions {
+  commissionSales: number | undefined
+  acquiringFee: number | undefined
+  loyaltyFee: number | undefined
+  penaltiesTotal: number | undefined
+  wbCommissionAdj: number | undefined
+  previousTotal: number | null | undefined
+}
+
+export interface WbServiceDeductions {
+  jamCost: number | undefined
+  otherServicesCost: number | undefined
+  previousTotal: number | null | undefined
+}
+
+export interface WbPromotionDeductions {
+  advertisingSpend: number | undefined
+  advertisingRoas: number | null | undefined
+  wbPromotionCost: number | undefined
+  previousWbPromotionCost: number | null | undefined
+  previousAdvertisingSpend: number | null | undefined
+}
+
+export interface WbDeductions {
+  saleGross: number | undefined
+  commission: WbCommissionDeductions
+  services: WbServiceDeductions
+  promotion: WbPromotionDeductions
+}
+
+export function getWbDeductions(props: DashboardMetricsGridProps): WbDeductions {
+  const previous = props.previousPeriodData
+
+  return {
+    saleGross: props.saleGross,
+    commission: {
+      commissionSales: props.commissionSales,
+      acquiringFee: props.acquiringFee,
+      loyaltyFee: props.loyaltyFee,
+      penaltiesTotal: props.penaltiesTotal,
+      wbCommissionAdj: props.wbCommissionAdj,
+      previousTotal: previous?.wbCommissionsTotal,
+    },
+    services: {
+      jamCost: props.wbJamCost,
+      otherServicesCost: props.wbOtherServicesCost,
+      previousTotal: previous?.wbOtherDeductionsTotal,
+    },
+    promotion: {
+      advertisingSpend: props.advertisingSpend,
+      advertisingRoas: props.advertisingRoas,
+      wbPromotionCost: props.wbPromotionCost,
+      previousWbPromotionCost: previous?.wbPromotionCost,
+      previousAdvertisingSpend: previous?.advertisingSpend,
+    },
+  }
+}
+
 // Re-export for backward compatibility
 export interface FinanceSummaryData {
   revenue?: number | null

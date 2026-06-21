@@ -209,11 +209,8 @@ describe('useProductDetail', () => {
       wrapper: createWrapper(),
     })
 
-    // The hook catches WB token errors and returns undefined,
-    // but TanStack Query v5 cannot store undefined as data.
-    // The query settles (either error or success with void), and retry is suppressed.
-    await waitFor(() => expect(result.current.isFetching).toBe(false), { timeout: 5000 })
-    // Should NOT have retried
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 5000 })
+    expect(result.current.data).toBeNull()
     expect(mockGet).toHaveBeenCalledTimes(1)
   })
 
