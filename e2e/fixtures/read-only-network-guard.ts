@@ -87,7 +87,7 @@ export const MUTATING_CONTROL_PATTERNS = [
   /\b(send|generate|update|remove|recalculate|refresh wb|sync wb)\b/i,
   /\b(token|shipment|supply|tariff|tax|cogs)\b.*\b(save|assign|delete|sync|create|close)\b/i,
   /\b(save|assign|delete|sync|create|close)\b.*\b(token|shipment|supply|tariff|tax|cogs)\b/i,
-  /созда(ть|й|ние)|сохран(ить|и)|назнач(ить|ь)|синхрон|запусти(ть|)|закры(ть|тие)|удали(ть|)|отправ(ить|ка)|поставк/i,
+  /созда(ть|й|ние)|сохран(ить|и)|назнач(ить|ь)|синхрон|запусти(ть|)|закры(ть|тие)|удали(ть|)|отправ(ить|ка)/i,
 ]
 
 export function clearMutationEnv(): void {
