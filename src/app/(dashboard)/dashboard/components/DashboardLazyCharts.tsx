@@ -37,7 +37,7 @@ function DashboardChartLazyFallback({
             </AlertDescription>
           </Alert>
         ) : (
-          <Skeleton className="h-64 w-full" />
+          <Skeleton aria-hidden="true" className="h-64 w-full" />
         )}
       </CardContent>
     </Card>

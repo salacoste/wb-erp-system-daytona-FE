@@ -11,9 +11,14 @@ import { ROUTES } from '@/lib/routes'
 interface ShipmentsEmptyStateProps {
   hasSkuPackaging: boolean
   onCreateClick: () => void
+  canCreate?: boolean
 }
 
-export function ShipmentsEmptyState({ hasSkuPackaging, onCreateClick }: ShipmentsEmptyStateProps) {
+export function ShipmentsEmptyState({
+  hasSkuPackaging,
+  onCreateClick,
+  canCreate = true,
+}: ShipmentsEmptyStateProps) {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -35,10 +40,12 @@ export function ShipmentsEmptyState({ hasSkuPackaging, onCreateClick }: Shipment
           </p>
         )}
 
-        <Button onClick={onCreateClick} disabled={!hasSkuPackaging}>
-          <Plus className="h-4 w-4 mr-2" />
-          Создать отправку
-        </Button>
+        {canCreate && (
+          <Button onClick={onCreateClick} disabled={!hasSkuPackaging}>
+            <Plus className="h-4 w-4 mr-2" />
+            Создать отправку
+          </Button>
+        )}
       </CardContent>
     </Card>
   )

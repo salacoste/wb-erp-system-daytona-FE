@@ -23,6 +23,8 @@ import { LocalizationIndexInput } from './LocalizationIndexInput'
 import { TurnoverDaysInput } from './TurnoverDaysInput'
 import { UnitsPerPackageInput } from './UnitsPerPackageInput'
 import { PresetActions } from './PresetActions'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 import { defaultFormValues } from './usePriceCalculatorForm'
 import type { usePriceCalculatorState } from './usePriceCalculatorState'
 import type { usePriceCalculatorHandlers } from './usePriceCalculatorHandlers'
@@ -36,6 +38,9 @@ interface FormFieldsProps {
 }
 
 export function PriceCalculatorFormFields({ state, handlers, loading, disabled }: FormFieldsProps) {
+  const userRole = useAuthStore(authState => authState.user?.role)
+  const canUsePresetActions = canManageOperationalData(userRole)
+
   return (
     <form onSubmit={state.handleSubmit(handlers.performCalculation)} className="space-y-6">
       <FulfillmentTypeSelector
@@ -159,17 +164,19 @@ export function PriceCalculatorFormFields({ state, handlers, loading, disabled }
         isValid={state.isValid}
         onReset={handlers.onReset}
         presetActions={
-          <PresetActions
-            getFormValues={state.getValues}
-            isFormValid={state.isValid}
-            hasPreset={state.hasPreset}
-            onSave={state.savePreset}
-            onClear={() => {
-              state.clearPreset()
-              state.reset(defaultFormValues)
-            }}
-            disabled={disabled}
-          />
+          canUsePresetActions ? (
+            <PresetActions
+              getFormValues={state.getValues}
+              isFormValid={state.isValid}
+              hasPreset={state.hasPreset}
+              onSave={state.savePreset}
+              onClear={() => {
+                state.clearPreset()
+                state.reset(defaultFormValues)
+              }}
+              disabled={disabled}
+            />
+          ) : null
         }
       />
     </form>

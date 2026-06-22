@@ -10,7 +10,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useSupplies, useSyncSupplies } from '@/hooks/useSupplies'
+import { canManageOperationalData } from '@/lib/role-permissions'
 import { buildSupplyDetailRoute } from '@/lib/routes'
+import { useAuthStore } from '@/stores/authStore'
 import type { SupplyStatus, SuppliesSortField, SortOrder, SupplyListItem } from '@/types/supplies'
 import {
   PAGE_SIZE,
@@ -24,6 +26,8 @@ export function useSuppliesPageState() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const userRole = useAuthStore(state => state.user?.role)
+  const canManageSupplies = canManageOperationalData(userRole)
   const defaultRange = getDefaultDateRange()
 
   // State
@@ -106,8 +110,13 @@ export function useSuppliesPageState() {
     lastSyncAt: data?.items?.[0]?.syncedAt ?? null,
     nextSyncAt: null,
     isSyncing,
-    onSync: () => triggerSync(),
-    onCreateClick: () => setIsCreateModalOpen(true),
+    onSync: () => {
+      if (canManageSupplies) triggerSync()
+    },
+    onCreateClick: () => {
+      if (canManageSupplies) setIsCreateModalOpen(true)
+    },
+    canManage: canManageSupplies,
   }
 
   return {
@@ -143,5 +152,6 @@ export function useSuppliesPageState() {
     // Derived
     hasFilters,
     headerProps,
+    canManageSupplies,
   }
 }

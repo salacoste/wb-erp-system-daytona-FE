@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle } from 'lucide-react'
 import { useSkuPackaging } from '@/hooks/use-sku-packaging'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 import {
   ShipmentsEmptyState,
   ShipmentsTable,
@@ -37,6 +39,8 @@ export default function ShipmentsPage() {
     handleSortToggle,
   } = useShipmentsPageState()
 
+  const userRole = useAuthStore(state => state.user?.role)
+  const canManageShipments = canManageOperationalData(userRole)
   const { data: skuPackaging } = useSkuPackaging()
   const hasSkuPackaging = (skuPackaging?.length ?? 0) > 0
 
@@ -74,7 +78,7 @@ export default function ShipmentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Отправки</h1>
-        {shipments.length > 0 && (
+        {canManageShipments && shipments.length > 0 && (
           <Button onClick={() => setIsCreateOpen(true)}>Создать отправку</Button>
         )}
       </div>
@@ -83,6 +87,7 @@ export default function ShipmentsPage() {
         <ShipmentsEmptyState
           hasSkuPackaging={hasSkuPackaging}
           onCreateClick={() => setIsCreateOpen(true)}
+          canCreate={canManageShipments}
         />
       ) : (
         <ShipmentsTable
@@ -99,7 +104,9 @@ export default function ShipmentsPage() {
         />
       )}
 
-      <CreateShipmentDialog open={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+      {canManageShipments && (
+        <CreateShipmentDialog open={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+      )}
     </div>
   )
 }

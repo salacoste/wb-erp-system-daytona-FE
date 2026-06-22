@@ -17,6 +17,8 @@ import { FboAggregateCards } from './FboAggregateCards'
 import { FboSalesAggregateCards } from './FboSalesAggregateCards'
 import { useOrdersFbo, useOrdersFboAggregate } from '@/hooks/useOrdersFbo'
 import { useSalesFbo, useSalesFboAggregate as useSalesAgg } from '@/hooks/useSalesFbo'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 
 const DEFAULT_FROM = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10)
 const DEFAULT_TO = new Date().toISOString().slice(0, 10)
@@ -28,6 +30,8 @@ export function FboOrdersPageContent() {
   const [to, setTo] = useState(DEFAULT_TO)
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const userRole = useAuthStore(state => state.user?.role)
+  const canSyncFboOrders = canManageOperationalData(userRole)
 
   const offset = (page - 1) * PAGE_SIZE
   const listParams = {
@@ -65,7 +69,7 @@ export function FboOrdersPageContent() {
     <div className="space-y-6" data-testid="fbo-orders-page">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">FBO Заказы и продажи</h1>
-        <FboSyncControls />
+        <FboSyncControls canSync={canSyncFboOrders} />
       </div>
 
       {/* Date Filters */}

@@ -50,6 +50,7 @@ describe('WbTokenForm', () => {
     ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       token: 'jwt-token',
       cabinetId: 'cabinet-uuid',
+      user: { id: 'manager-1', email: 'manager@test.local', role: 'Manager' },
     })
   })
 
@@ -125,6 +126,38 @@ describe('WbTokenForm', () => {
       )
     },
     { timeout: 10000 }
+  )
+
+  it(
+    'keeps token save disabled for analyst users',
+    () => {
+      ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+        token: 'jwt-token',
+        cabinetId: 'cabinet-uuid',
+        user: { id: 'analyst-1', email: 'analyst@test.local', role: 'Analyst' },
+      })
+
+      renderForm()
+
+      expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeDisabled()
+    },
+    { timeout: 5000 }
+  )
+
+  it(
+    'keeps token save disabled when role is missing',
+    () => {
+      ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+        token: 'jwt-token',
+        cabinetId: 'cabinet-uuid',
+        user: null,
+      })
+
+      renderForm()
+
+      expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeDisabled()
+    },
+    { timeout: 5000 }
   )
 
   it(
@@ -279,6 +312,7 @@ describe('WbTokenForm', () => {
       ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         token: 'jwt-token',
         cabinetId: null,
+        user: { id: 'manager-1', email: 'manager@test.local', role: 'Manager' },
       })
 
       renderForm()

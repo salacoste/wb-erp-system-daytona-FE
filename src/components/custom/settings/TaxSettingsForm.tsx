@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useCabinetTaxSettings, useUpdateTaxSettings } from '@/hooks/useCabinetTaxSettings'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 import type { TaxSystem, VatRate } from '@/types/cabinet'
 import { TaxSystemSection, VatSection } from './tax-settings-sections'
 
@@ -27,6 +29,8 @@ interface TaxSettingsFormProps {
 export function TaxSettingsForm({ cabinetId }: TaxSettingsFormProps) {
   const { data, isLoading, isError } = useCabinetTaxSettings(cabinetId)
   const mutation = useUpdateTaxSettings(cabinetId)
+  const userRole = useAuthStore(state => state.user?.role)
+  const canManageTaxSettings = canManageOperationalData(userRole)
 
   const [taxSystem, setTaxSystem] = useState<TaxSystem | null>(null)
   const [taxRate, setTaxRate] = useState('')
@@ -116,6 +120,7 @@ export function TaxSettingsForm({ cabinetId }: TaxSettingsFormProps) {
           setTaxRate(v)
           markDirty()
         }}
+        disabled={!canManageTaxSettings}
       />
       <VatSection
         vatPayer={vatPayer}
@@ -131,26 +136,36 @@ export function TaxSettingsForm({ cabinetId }: TaxSettingsFormProps) {
           setVatError(null)
           markDirty()
         }}
+        disabled={!canManageTaxSettings}
       />
-      <div className="flex justify-end gap-3 border-t pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleCancel}
-          disabled={mutation.isPending || !isDirty}
-        >
-          <X className="mr-2 h-4 w-4" />
-          Отменить
-        </Button>
-        <Button onClick={handleSubmit} disabled={mutation.isPending}>
-          {mutation.isPending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="mr-2 h-4 w-4" />
-          )}
-          Сохранить
-        </Button>
-      </div>
+      {canManageTaxSettings ? (
+        <div className="flex justify-end gap-3 border-t pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={mutation.isPending || !isDirty}
+          >
+            <X className="mr-2 h-4 w-4" />
+            Отменить
+          </Button>
+          <Button onClick={handleSubmit} disabled={mutation.isPending}>
+            {mutation.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}
+            Сохранить
+          </Button>
+        </div>
+      ) : (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Налоговые настройки доступны только для просмотра вашей роли.
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   )
 }

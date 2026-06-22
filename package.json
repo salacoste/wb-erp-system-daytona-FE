@@ -31,7 +31,7 @@
     "check:locale-percent": "bash scripts/check-locale-percent.sh"
   },
   "lint-staged": {
-    "*.{ts,tsx}": "eslint --max-warnings=0"
+    "*.{ts,tsx}": "eslint --max-warnings=0 --no-warn-ignored"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

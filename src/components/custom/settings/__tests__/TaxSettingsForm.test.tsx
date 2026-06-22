@@ -12,6 +12,7 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { TaxSettingsForm } from '../TaxSettingsForm'
+import { useAuthStore } from '@/stores/authStore'
 
 // --- Mocks -----------------------------------------------------------
 
@@ -51,6 +52,12 @@ const TEST_CABINET_ID = 'cab-1'
 describe('TaxSettingsForm (Story 66.3-FE)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    useAuthStore.setState({
+      user: { id: 'manager-1', email: 'manager@test.local', role: 'Manager' },
+      token: 'jwt-token',
+      cabinetId: TEST_CABINET_ID,
+      isAuthenticated: true,
+    })
     vi.mocked(useCabinetTaxSettings).mockReturnValue({
       data: mockTaxData,
       isLoading: false,

@@ -6,6 +6,7 @@ import { CabinetCreationForm } from './CabinetCreationForm'
 import { handleCreateCabinet } from '@/services/cabinets.service'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/authStore'
 
 // Mock dependencies
 vi.mock('@/services/cabinets.service', () => ({
@@ -37,6 +38,16 @@ describe('CabinetCreationForm', () => {
       },
     })
     vi.clearAllMocks()
+    useAuthStore.setState({
+      user: {
+        id: 'manager-1',
+        email: 'manager@test.local',
+        role: 'Manager',
+      },
+      token: 'jwt-token',
+      cabinetId: null,
+      isAuthenticated: true,
+    })
     ;(useRouter as ReturnType<typeof vi.fn>).mockReturnValue({
       push: mockPush,
     })
@@ -103,6 +114,39 @@ describe('CabinetCreationForm', () => {
         },
         { timeout: 3000 }
       )
+    },
+    { timeout: 5000 }
+  )
+
+  it(
+    'keeps cabinet creation disabled for analyst users',
+    async () => {
+      useAuthStore.getState().setUser({
+        id: 'analyst-1',
+        email: 'analyst@test.local',
+        role: 'Analyst',
+      })
+      renderForm()
+
+      const submitButton = screen.getByRole('button', { name: /создать кабинет/i })
+      expect(submitButton).toBeDisabled()
+    },
+    { timeout: 5000 }
+  )
+
+  it(
+    'keeps cabinet creation disabled when role is missing',
+    async () => {
+      useAuthStore.setState({
+        user: null,
+        token: 'jwt-token',
+        cabinetId: null,
+        isAuthenticated: true,
+      })
+      renderForm()
+
+      const submitButton = screen.getByRole('button', { name: /создать кабинет/i })
+      expect(submitButton).toBeDisabled()
     },
     { timeout: 5000 }
   )

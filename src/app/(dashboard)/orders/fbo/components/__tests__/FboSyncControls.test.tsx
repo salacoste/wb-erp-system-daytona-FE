@@ -44,6 +44,12 @@ describe('FboSyncControls', () => {
     expect(screen.getByText('Синхронизировать')).toBeInTheDocument()
   })
 
+  it('hides sync action when syncing is not allowed', () => {
+    renderWithProviders(<FboSyncControls canSync={false} />)
+    expect(screen.queryByLabelText('Синхронизировать FBO заказы')).not.toBeInTheDocument()
+    expect(screen.queryByText('Синхронизировать')).not.toBeInTheDocument()
+  })
+
   it('renders sync status badge when data is available', () => {
     mockSyncStatusData = {
       enabled: true,
