@@ -118,9 +118,12 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column @mut
     }
   })
 
-  // Gate the entire seed-dependent suite: if the dev-only endpoint is unavailable
-  // (production, backend down), skip visibly rather than failing every assertion.
-  test.skip(!seedData, 'DBW order seed endpoint unavailable — tests require dev backend')
+  // Gate each seed-dependent test after beforeAll has attempted seeding.
+  // Do not use a describe-time skip here: seedData is intentionally null at
+  // module load and is only populated in beforeAll.
+  test.beforeEach(() => {
+    test.skip(!seedData, 'DBW order seed endpoint unavailable — tests require dev backend')
+  })
 
   test.describe('AC #1: Owner role — column visible', () => {
     test.beforeEach(async ({ page }) => {
