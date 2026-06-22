@@ -32,8 +32,6 @@ export interface OrderDetailsModalProps {
   onClose: () => void
 }
 
-const MODAL_TITLE_ID = 'order-details-modal-title'
-
 /**
  * Order Details Modal with tabbed history views
  * - Fetches order details when orderId changes
@@ -67,12 +65,9 @@ export function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent
-        className="max-w-[700px] max-h-[90vh] overflow-y-auto"
-        aria-labelledby={MODAL_TITLE_ID}
-      >
+      <DialogContent className="max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="sr-only">
-          <DialogTitle id={MODAL_TITLE_ID}>
+          <DialogTitle>
             {orderDetails ? `Заказ #${orderDetails.orderId}` : 'Детали заказа'}
           </DialogTitle>
           <DialogDescription>

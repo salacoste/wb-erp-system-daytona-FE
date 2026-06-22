@@ -7,6 +7,7 @@
  * Focus: Modal behavior, accessibility, focus management
  */
 
+import { act } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -261,9 +262,10 @@ describe('OrderDetailsModal', () => {
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
+        expect(screen.getByText(/итого:/i)).toBeInTheDocument()
       })
 
-      const results = await axe(container)
+      const results = await act(async () => axe(container))
       expect(results).toHaveNoViolations()
     })
 
