@@ -83,6 +83,10 @@ export function toChartRows(items: SearchOrderItem[]): ChartRow[] {
     .map(item => ({ date: String(item.key), totalOrders: Number(item.totalOrders) || 0 }))
 }
 
+function tooltipNumber(value: unknown): number {
+  return typeof value === 'number' ? value : Number(value) || 0
+}
+
 function ChartShell({ children }: { children: ReactNode }) {
   return (
     <Card>
@@ -158,8 +162,8 @@ export function SearchOrdersChart({ from, to }: SearchOrdersChartProps) {
               width={48}
             />
             <Tooltip
-              formatter={(value: number) => [value.toLocaleString('ru-RU'), 'Заказы']}
-              labelFormatter={formatDayTick}
+              formatter={value => [tooltipNumber(value).toLocaleString('ru-RU'), 'Заказы']}
+              labelFormatter={label => formatDayTick(String(label ?? ''))}
             />
             <Line
               type="monotone"
