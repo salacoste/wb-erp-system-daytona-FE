@@ -56,6 +56,10 @@ function formatDay(dateStr: string): string {
   return `${d}.${m}`
 }
 
+function tooltipNumber(value: unknown): number {
+  return typeof value === 'number' ? value : Number(value) || 0
+}
+
 export function FunnelTab({ dates, totals }: FunnelTabProps) {
   const chartData = dates.map(d => ({
     date: formatDay(d.date),
@@ -109,9 +113,11 @@ export function FunnelTab({ dates, totals }: FunnelTabProps) {
                 <YAxis yAxisId="counts" tick={{ fontSize: 12 }} />
                 <YAxis yAxisId="pct" orientation="right" tick={{ fontSize: 12 }} unit="%" />
                 <Tooltip
-                  formatter={(value: number, name: string) => {
-                    if (name === 'Конверсия') return [formatPercentage(value), name]
-                    return [formatNumber(value), name]
+                  formatter={(value, name) => {
+                    const label = String(name)
+                    const numericValue = tooltipNumber(value)
+                    if (label === 'Конверсия') return [formatPercentage(numericValue), label]
+                    return [formatNumber(numericValue), label]
                   }}
                 />
                 <Legend />

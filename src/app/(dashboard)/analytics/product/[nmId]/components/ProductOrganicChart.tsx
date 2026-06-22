@@ -38,6 +38,10 @@ function formatShortDate(iso: string): string {
   return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
 
+function tooltipNumber(value: unknown): number {
+  return typeof value === 'number' ? value : Number(value) || 0
+}
+
 export function ProductOrganicChart({ correlation }: ProductOrganicChartProps) {
   const data = useMemo<ChartRow[]>(
     () =>
@@ -76,11 +80,11 @@ export function ProductOrganicChart({ correlation }: ProductOrganicChartProps) {
             width={48}
           />
           <Tooltip
-            formatter={(value: number, name: string) => [
-              formatNumber(value),
-              name === 'organicCart' ? 'Орг. корзина' : 'Рекл. корзина',
+            formatter={(value, name) => [
+              formatNumber(tooltipNumber(value)),
+              String(name) === 'organicCart' ? 'Орг. корзина' : 'Рекл. корзина',
             ]}
-            labelFormatter={(label: string) => label}
+            labelFormatter={label => String(label ?? '')}
             contentStyle={{ fontSize: 12, borderRadius: 8 }}
           />
           <Legend
