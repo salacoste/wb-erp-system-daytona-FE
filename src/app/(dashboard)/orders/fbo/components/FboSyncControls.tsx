@@ -10,7 +10,11 @@ import { Badge } from '@/components/ui/badge'
 import { RefreshCw } from 'lucide-react'
 import { useSyncOrdersFbo, useOrdersFboSyncStatus } from '@/hooks/useOrdersFbo'
 
-export function FboSyncControls() {
+interface FboSyncControlsProps {
+  canSync?: boolean
+}
+
+export function FboSyncControls({ canSync = true }: FboSyncControlsProps) {
   const { data: syncStatus } = useOrdersFboSyncStatus()
   const { mutate: triggerSync, isPending: isSyncing } = useSyncOrdersFbo()
 
@@ -24,16 +28,18 @@ export function FboSyncControls() {
           <span>{syncStatus.schedule}</span>
         </div>
       )}
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isSyncing}
-        onClick={() => triggerSync()}
-        aria-label="Синхронизировать FBO заказы"
-      >
-        <RefreshCw className={`mr-1 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
-        {isSyncing ? 'Синхронизация...' : 'Синхронизировать'}
-      </Button>
+      {canSync && (
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={isSyncing}
+          onClick={() => triggerSync()}
+          aria-label="Синхронизировать FBO заказы"
+        >
+          <RefreshCw className={`mr-1 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+          {isSyncing ? 'Синхронизация...' : 'Синхронизировать'}
+        </Button>
+      )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import type { Page, Route, Request, Response } from '@playwright/test'
+import { emptyFbsEnhancedResponse } from '@/test/fixtures/fbs-enhanced-empty'
 
 export type SessionContext = 'anonymous' | 'onboarding' | 'authenticated' | 'blocked'
 export type AuthState = 'clean' | 'storage-state' | 'fresh-login' | 'redirected' | 'blocked'
@@ -24,6 +25,13 @@ export interface FailedRequestRecord {
   timestamp: string
 }
 
+export interface ApiFixtureRecord {
+  route_path: string
+  url_pattern: string
+  methods: string[]
+  source: string
+}
+
 export interface RouteAuditRecord {
   path: string
   source: string
@@ -42,6 +50,8 @@ export interface RouteAuditRecord {
   fixture_path?: string
   /** Human-readable source of the dynamic route fixture map. */
   fixture_source?: string
+  /** Built-in API fixtures installed by the audit harness for deterministic route rendering. */
+  api_fixtures?: ApiFixtureRecord[]
   console_errors: string[]
   page_errors: string[]
   failed_requests: FailedRequestRecord[]
@@ -58,6 +68,14 @@ export interface AuditManifest {
   generated_at: string
   base_url: string
   inventory_path: string
+  auth_context: {
+    requested_role: string
+    auth_file: string
+    storage_state_strategy: 'preserve' | 'client-storage-role-override'
+    client_storage_role: string | null
+    token_roles: string[]
+    token_role_matches_requested: boolean | null
+  }
   safety_policy: {
     read_only: true
     mutation_env_cleared: true
@@ -72,6 +90,9 @@ export interface AuditManifest {
     failed_routes: number
     warning_routes: number
     blocked_network_requests: number
+    visible_mutating_control_routes: number
+    visible_mutating_controls_observed: number
+    api_fixture_routes: number
   }
   records: RouteAuditRecord[]
 }
@@ -87,8 +108,16 @@ export const MUTATING_CONTROL_PATTERNS = [
   /\b(send|generate|update|remove|recalculate|refresh wb|sync wb)\b/i,
   /\b(token|shipment|supply|tariff|tax|cogs)\b.*\b(save|assign|delete|sync|create|close)\b/i,
   /\b(save|assign|delete|sync|create|close)\b.*\b(token|shipment|supply|tariff|tax|cogs)\b/i,
-  /созда(ть|й|ние)|сохран(ить|и)|назнач(ить|ь)|синхрон|запусти(ть|)|закры(ть|тие)|удали(ть|)|отправ(ить|ка)/i,
+  /созда(ть|й|ние)|сохран(ить|и)|назнач(ить|ь)|синхрон|запусти(ть|)|удали(ть|)|отправ(ить|ка)/i,
+  /закры(ть|тие).*(поставк|отправк|заказ|смен|период|доступ)|(поставк|отправк|заказ|смен|период|доступ).*закры(ть|тие)/i,
 ]
+
+export const FBS_ENHANCED_API_FIXTURE: ApiFixtureRecord = {
+  route_path: '/analytics/fbs-enhanced',
+  url_pattern: '**/v1/analytics/fbs/enhanced**',
+  methods: ['GET', 'HEAD'],
+  source: '@/test/fixtures/fbs-enhanced-empty#emptyFbsEnhancedResponse',
+}
 
 export function clearMutationEnv(): void {
   for (const key of MUTATION_ENV_KEYS) {
@@ -124,6 +153,49 @@ export function routeArtifactStem(routePath: string): string {
 export function isMutatingControlText(text: string): boolean {
   const normalized = text.replace(/\s+/g, ' ').trim()
   return Boolean(normalized) && MUTATING_CONTROL_PATTERNS.some(pattern => pattern.test(normalized))
+}
+
+export function collectOperationalRouteWarnings(
+  record: Pick<RouteAuditRecord, 'console_errors' | 'failed_requests' | 'denied_controls'>
+): string[] {
+  const warnings: string[] = []
+
+  if (record.denied_controls.length > 0) {
+    warnings.push(`visible-mutating-controls-observed-only:${record.denied_controls.join(', ')}`)
+  }
+  if (record.console_errors.length > 0) {
+    warnings.push('console-errors-observed')
+  }
+  if (record.failed_requests.some(request => (request.status ?? 0) >= 500)) {
+    warnings.push('protected-read-request-returned-5xx')
+  }
+
+  return warnings
+}
+
+export async function installFbsEnhancedReadOnlyApiFixture(
+  page: Page,
+  routePath: string,
+  enabled = true
+): Promise<ApiFixtureRecord[]> {
+  if (!enabled) return []
+  if (routePath !== FBS_ENHANCED_API_FIXTURE.route_path) return []
+
+  await page.route(FBS_ENHANCED_API_FIXTURE.url_pattern, async route => {
+    const method = route.request().method().toUpperCase()
+    if (!FBS_ENHANCED_API_FIXTURE.methods.includes(method)) {
+      await route.fallback()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(emptyFbsEnhancedResponse()),
+    })
+  })
+
+  return [FBS_ENHANCED_API_FIXTURE]
 }
 
 export interface ReadOnlyNetworkGuardOptions {

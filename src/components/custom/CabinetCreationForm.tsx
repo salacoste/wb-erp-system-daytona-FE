@@ -18,6 +18,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { handleCreateCabinet } from '@/services/cabinets.service'
 import { ROUTES } from '@/lib/routes'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 
 const cabinetFormSchema = z.object({
   name: z
@@ -34,6 +36,8 @@ type CabinetFormData = z.infer<typeof cabinetFormSchema>
  */
 export function CabinetCreationForm() {
   const router = useRouter()
+  const userRole = useAuthStore(state => state.user?.role)
+  const canCreateCabinet = canManageOperationalData(userRole)
   const form = useForm<CabinetFormData>({
     resolver: zodResolver(cabinetFormSchema),
     defaultValues: {
@@ -64,6 +68,7 @@ export function CabinetCreationForm() {
   })
 
   const onSubmit = (data: CabinetFormData) => {
+    if (!canCreateCabinet) return
     mutation.mutate(data)
   }
 
@@ -95,7 +100,12 @@ export function CabinetCreationForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSubmitting || !canCreateCabinet}
+          aria-busy={isSubmitting}
+        >
           {isSubmitting ? 'Создание...' : 'Создать кабинет'}
         </Button>
       </form>

@@ -24,6 +24,8 @@ export interface SuppliesPageHeaderProps {
   onSync: () => void
   /** Callback to open create modal */
   onCreateClick: () => void
+  /** Whether mutation controls should be visible for the current role */
+  canManage?: boolean
 }
 
 /**
@@ -35,6 +37,7 @@ export function SuppliesPageHeader({
   isSyncing,
   onSync,
   onCreateClick,
+  canManage = true,
 }: SuppliesPageHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -60,17 +63,21 @@ export function SuppliesPageHeader({
           isLoading={isSyncing}
         />
 
-        {/* Sync button */}
-        <Button variant="outline" size="sm" onClick={onSync} disabled={isSyncing}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
-          Обновить статусы
-        </Button>
+        {canManage && (
+          <>
+            {/* Sync button */}
+            <Button variant="outline" size="sm" onClick={onSync} disabled={isSyncing}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+              Обновить статусы
+            </Button>
 
-        {/* Create button */}
-        <Button size="sm" onClick={onCreateClick}>
-          <Plus className="h-4 w-4 mr-2" />
-          Создать поставку
-        </Button>
+            {/* Create button */}
+            <Button size="sm" onClick={onCreateClick}>
+              <Plus className="h-4 w-4 mr-2" />
+              Создать поставку
+            </Button>
+          </>
+        )}
       </div>
     </div>
   )

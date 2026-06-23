@@ -19,6 +19,8 @@ interface MissingCogsAlertProps {
   onDismiss?: () => void
   /** Additional CSS classes */
   className?: string
+  /** Whether to show the COGS assignment call-to-action. */
+  canAssignCogs?: boolean
 }
 
 /**
@@ -53,6 +55,7 @@ export function MissingCogsAlert({
   missingProducts = [],
   onDismiss,
   className,
+  canAssignCogs = true,
 }: MissingCogsAlertProps) {
   const [isDismissed, setIsDismissed] = useState(false)
 
@@ -112,17 +115,19 @@ export function MissingCogsAlert({
       </AlertTitle>
       <AlertDescription className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <span>без назначенной себестоимости. Маржа не рассчитывается.</span>
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          className="whitespace-nowrap border-yellow-400 text-yellow-800 hover:bg-yellow-100"
-        >
-          <Link href={`${ROUTES.COGS.ROOT}?has_cogs=false`}>
-            Назначить COGS
-            <ArrowRight className="ml-1 h-3 w-3" />
-          </Link>
-        </Button>
+        {canAssignCogs && (
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="whitespace-nowrap border-yellow-400 text-yellow-800 hover:bg-yellow-100"
+          >
+            <Link href={`${ROUTES.COGS.ROOT}?has_cogs=false`}>
+              Назначить COGS
+              <ArrowRight className="ml-1 h-3 w-3" />
+            </Link>
+          </Button>
+        )}
       </AlertDescription>
 
       {/* Dismiss button - only show if onDismiss provided or always allow dismiss */}

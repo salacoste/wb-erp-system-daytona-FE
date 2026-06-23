@@ -8,10 +8,11 @@
  * - Create dialog opens/closes
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
+import { useAuthStore } from '@/stores/authStore'
 
 // Mock the page state hook
 vi.mock('../components/useAlertsPageState', () => ({
@@ -84,6 +85,15 @@ vi.mock('../components/EditAlertRuleDialog', () => ({
 import AlertsPage from '../page'
 
 describe('AlertsPage', () => {
+  beforeEach(() => {
+    useAuthStore.setState({
+      user: { id: 'manager-1', email: 'manager@test.local', role: 'Manager' },
+      token: 'jwt-token',
+      cabinetId: 'cab-1',
+      isAuthenticated: true,
+    })
+  })
+
   it('renders page header', () => {
     renderWithProviders(<AlertsPage />)
     expect(screen.getByTestId('alerts-header')).toBeInTheDocument()

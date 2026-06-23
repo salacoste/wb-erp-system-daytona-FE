@@ -6,13 +6,14 @@ import process from 'node:process'
 const SESSION_CONTEXTS = new Set(['anonymous', 'onboarding', 'authenticated', 'blocked'])
 const AUTH_STATES = new Set(['clean', 'storage-state', 'fresh-login', 'redirected', 'blocked'])
 const STATUSES = new Set(['passed', 'warning', 'failed', 'blocked', 'skipped'])
+const STORAGE_STATE_STRATEGIES = new Set(['preserve', 'client-storage-role-override'])
 
 function usage() {
   console.log(
     'Usage: node scripts/validate-route-audit-manifest.mjs <manifest.json> [route-inventory.json] [--allow-failures] [--allow-warnings] [--allow-blocked-network]'
   )
   console.log(
-    'Warnings are intentional advisory findings (for example visible mutating controls observed during a read-only audit). The validator fails warnings unless --allow-warnings is passed.'
+    'Warnings are intentional advisory findings (for example visible mutating controls, console errors, or protected read 5xx). The validator fails warnings unless --allow-warnings is passed.'
   )
   console.log('Validates the read-only frontend route audit manifest structure and route coverage.')
 }
@@ -94,6 +95,33 @@ function validateRecord(record, index, errors) {
   assert(Array.isArray(record.warnings), `${prefix}.warnings must be an array`, errors)
   assert(Array.isArray(record.issues), `${prefix}.issues must be an array`, errors)
   assert(Number.isFinite(record.duration_ms), `${prefix}.duration_ms must be a number`, errors)
+  if (record.api_fixtures !== undefined) {
+    assert(Array.isArray(record.api_fixtures), `${prefix}.api_fixtures must be an array`, errors)
+    for (const [fixtureIndex, fixture] of record.api_fixtures.entries()) {
+      const fixturePrefix = `${prefix}.api_fixtures[${fixtureIndex}]`
+      assert(
+        typeof fixture.route_path === 'string' && fixture.route_path === record.path,
+        `${fixturePrefix}.route_path must equal the record path`,
+        errors
+      )
+      assert(
+        typeof fixture.url_pattern === 'string' && fixture.url_pattern.length > 0,
+        `${fixturePrefix}.url_pattern is required`,
+        errors
+      )
+      assert(Array.isArray(fixture.methods), `${fixturePrefix}.methods must be an array`, errors)
+      assert(
+        fixture.methods.every(method => method === 'GET' || method === 'HEAD'),
+        `${fixturePrefix}.methods may only include GET/HEAD read methods`,
+        errors
+      )
+      assert(
+        typeof fixture.source === 'string' && fixture.source.length > 0,
+        `${fixturePrefix}.source is required`,
+        errors
+      )
+    }
+  }
 
   const warnings = Array.isArray(record.warnings) ? record.warnings : []
   const deniedControls = Array.isArray(record.denied_controls) ? record.denied_controls : []
@@ -259,6 +287,46 @@ function validateManifest(manifest, inventory, options) {
     'inventory_path is required',
     errors
   )
+  assert(
+    typeof manifest.auth_context?.requested_role === 'string' &&
+      manifest.auth_context.requested_role.length > 0,
+    'auth_context.requested_role is required',
+    errors
+  )
+  assert(
+    typeof manifest.auth_context?.auth_file === 'string' && manifest.auth_context.auth_file.length > 0,
+    'auth_context.auth_file is required',
+    errors
+  )
+  assert(
+    STORAGE_STATE_STRATEGIES.has(manifest.auth_context?.storage_state_strategy),
+    `auth_context.storage_state_strategy invalid: ${manifest.auth_context?.storage_state_strategy}`,
+    errors
+  )
+  assert(
+    manifest.auth_context?.client_storage_role === null ||
+      typeof manifest.auth_context?.client_storage_role === 'string',
+    'auth_context.client_storage_role must be a string or null',
+    errors
+  )
+  assert(
+    Array.isArray(manifest.auth_context?.token_roles),
+    'auth_context.token_roles must be an array',
+    errors
+  )
+  assert(
+    manifest.auth_context?.token_role_matches_requested === null ||
+      typeof manifest.auth_context?.token_role_matches_requested === 'boolean',
+    'auth_context.token_role_matches_requested must be boolean or null',
+    errors
+  )
+  if (manifest.auth_context?.storage_state_strategy === 'client-storage-role-override') {
+    assert(
+      manifest.auth_context.client_storage_role === manifest.auth_context.requested_role,
+      'auth_context.client_storage_role must equal requested_role for client-storage-role-override',
+      errors
+    )
+  }
   assert(manifest.safety_policy?.read_only === true, 'safety_policy.read_only must be true', errors)
   assert(
     manifest.safety_policy?.mutation_env_cleared === true,
@@ -292,6 +360,14 @@ function validateManifest(manifest, inventory, options) {
       (sum, record) => sum + (record.blocked_requests?.length ?? 0),
       0
     ),
+    visible_mutating_control_routes: records.filter(
+      record => (record.denied_controls?.length ?? 0) > 0
+    ).length,
+    visible_mutating_controls_observed: records.reduce(
+      (sum, record) => sum + (record.denied_controls?.length ?? 0),
+      0
+    ),
+    api_fixture_routes: records.filter(record => (record.api_fixtures?.length ?? 0) > 0).length,
   }
 
   for (const [key, expectedValue] of Object.entries(computedSummary)) {

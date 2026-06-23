@@ -24,6 +24,8 @@ import { MissingCogsAlert } from '@/components/custom/MissingCogsAlert'
 import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
 import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 import { UnitEconomicsSection } from './UnitEconomicsSection'
 import { StorageSection } from './StorageSection'
 import {
@@ -37,6 +39,8 @@ import {
 export function DashboardContent(): React.ReactElement {
   const router = useRouter()
   const d = useDashboardData()
+  const userRole = useAuthStore(state => state.user?.role)
+  const canAssignCogs = canManageOperationalData(userRole)
 
   useDataImportNotification(!!d.hasFinancialData, d.isLoading)
 
@@ -74,7 +78,10 @@ export function DashboardContent(): React.ReactElement {
       <TaxWarningBanner taxConfigured={d.taxConfigured} />
 
       {!d.productsLoading && !d.cogsLoading && d.cogsCoverage < 100 && (
-        <MissingCogsAlert missingCount={(d.totalProducts ?? 0) - d.inventoryWithCogs} />
+        <MissingCogsAlert
+          missingCount={(d.totalProducts ?? 0) - d.inventoryWithCogs}
+          canAssignCogs={canAssignCogs}
+        />
       )}
 
       <div role="region" aria-label="Ключевые метрики">
@@ -117,7 +124,7 @@ export function DashboardContent(): React.ReactElement {
           isLoading={d.isLoading}
           error={d.error}
           onRetry={d.handleRetry}
-          onAssignCogs={() => router.push(ROUTES.COGS.ROOT)}
+          onAssignCogs={canAssignCogs ? () => router.push(ROUTES.COGS.ROOT) : undefined}
         />
       </div>
       {(d.fboShare > 0 || d.fbsShare > 0) && (
@@ -128,7 +135,7 @@ export function DashboardContent(): React.ReactElement {
         totalProducts={d.totalProducts ?? 0}
         coverage={d.cogsCoverage}
         isLoading={d.productsLoading || d.cogsLoading}
-        onClick={() => router.push(ROUTES.COGS.ROOT)}
+        onClick={canAssignCogs ? () => router.push(ROUTES.COGS.ROOT) : undefined}
       />
       <PeriodComparisonSection currentWeek={d.selectedWeek} />
       <DailyBreakdownSection className="mt-4" />
@@ -156,6 +163,7 @@ export function DashboardContent(): React.ReactElement {
         cogsCoverage={d.cogsCoverage}
         totalProducts={d.totalProducts ?? 0}
         productsWithCogs={d.inventoryWithCogs}
+        canAssignCogs={canAssignCogs}
       />
     </div>
   )

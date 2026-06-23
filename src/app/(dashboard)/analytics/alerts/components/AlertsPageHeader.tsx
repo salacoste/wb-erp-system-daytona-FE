@@ -9,9 +9,10 @@ import { Button } from '@/components/ui/button'
 
 interface AlertsPageHeaderProps {
   onCreateRule: () => void
+  canCreateRule?: boolean
 }
 
-export function AlertsPageHeader({ onCreateRule }: AlertsPageHeaderProps) {
+export function AlertsPageHeader({ onCreateRule, canCreateRule = true }: AlertsPageHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -23,10 +24,12 @@ export function AlertsPageHeader({ onCreateRule }: AlertsPageHeaderProps) {
           </p>
         </div>
       </div>
-      <Button onClick={onCreateRule}>
-        <Plus className="mr-2 h-4 w-4" />
-        Создать правило
-      </Button>
+      {canCreateRule && (
+        <Button onClick={onCreateRule}>
+          <Plus className="mr-2 h-4 w-4" />
+          Создать правило
+        </Button>
+      )}
     </div>
   )
 }

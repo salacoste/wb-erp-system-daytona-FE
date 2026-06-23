@@ -14,17 +14,24 @@ import { AlertSummaryCards } from './components/AlertSummaryCards'
 import { CreateAlertRuleDialog } from './components/CreateAlertRuleDialog'
 import { EditAlertRuleDialog } from './components/EditAlertRuleDialog'
 import { useAlertsPageState } from './components/useAlertsPageState'
+import { canManageOperationalData } from '@/lib/role-permissions'
+import { useAuthStore } from '@/stores/authStore'
 import type { AlertRule } from '@/types/alerts'
 
 export default function AlertsPage() {
   const { activeTab, setActiveTab, historyParams, updateHistoryParams, rules, history, summary } =
     useAlertsPageState()
+  const userRole = useAuthStore(state => state.user?.role)
+  const canManageAlerts = canManageOperationalData(userRole)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [editingRule, setEditingRule] = useState<AlertRule | null>(null)
 
   return (
     <div className="space-y-6">
-      <AlertsPageHeader onCreateRule={() => setCreateDialogOpen(true)} />
+      <AlertsPageHeader
+        onCreateRule={() => setCreateDialogOpen(true)}
+        canCreateRule={canManageAlerts}
+      />
 
       <Tabs
         value={activeTab}
@@ -41,7 +48,12 @@ export default function AlertsPage() {
         </TabsContent>
 
         <TabsContent value="rules" className="mt-6">
-          <AlertRulesList rules={rules.data} isLoading={rules.isLoading} onEdit={setEditingRule} />
+          <AlertRulesList
+            rules={rules.data}
+            isLoading={rules.isLoading}
+            onEdit={setEditingRule}
+            canManageRules={canManageAlerts}
+          />
         </TabsContent>
 
         <TabsContent value="history" className="mt-6">
@@ -54,14 +66,18 @@ export default function AlertsPage() {
         </TabsContent>
       </Tabs>
 
-      <CreateAlertRuleDialog isOpen={createDialogOpen} onOpenChange={setCreateDialogOpen} />
-      <EditAlertRuleDialog
-        isOpen={editingRule !== null}
-        onOpenChange={open => {
-          if (!open) setEditingRule(null)
-        }}
-        rule={editingRule}
-      />
+      {canManageAlerts && (
+        <>
+          <CreateAlertRuleDialog isOpen={createDialogOpen} onOpenChange={setCreateDialogOpen} />
+          <EditAlertRuleDialog
+            isOpen={editingRule !== null}
+            onOpenChange={open => {
+              if (!open) setEditingRule(null)
+            }}
+            rule={editingRule}
+          />
+        </>
+      )}
     </div>
   )
 }

@@ -18,6 +18,7 @@ export interface TaxSystemSectionProps {
   error: string | null
   onTaxSystemChange: (v: TaxSystem | null) => void
   onTaxRateChange: (v: string) => void
+  disabled?: boolean
 }
 
 export function TaxSystemSection({
@@ -26,6 +27,7 @@ export function TaxSystemSection({
   error,
   onTaxSystemChange,
   onTaxRateChange,
+  disabled = false,
 }: TaxSystemSectionProps) {
   return (
     <Card>
@@ -40,6 +42,7 @@ export function TaxSystemSection({
           value={taxSystem ?? '__none__'}
           onValueChange={v => onTaxSystemChange(v === '__none__' ? null : (v as TaxSystem))}
           aria-label="Система налогообложения"
+          disabled={disabled}
         >
           {TAX_SYSTEM_OPTIONS.map(opt => {
             const val = opt.value ?? '__none__'
@@ -62,6 +65,7 @@ export function TaxSystemSection({
               max={100}
               value={taxRate}
               onChange={e => onTaxRateChange(e.target.value)}
+              disabled={disabled}
               placeholder="Введите ставку"
               aria-describedby={error ? 'tax-rate-error' : undefined}
             />
@@ -85,6 +89,7 @@ export interface VatSectionProps {
   vatError: string | null
   onVatPayerChange: (v: boolean) => void
   onVatRateChange: (v: VatRate | null) => void
+  disabled?: boolean
 }
 
 export function VatSection({
@@ -93,6 +98,7 @@ export function VatSection({
   vatError,
   onVatPayerChange,
   onVatRateChange,
+  disabled = false,
 }: VatSectionProps) {
   return (
     <Card>
@@ -105,6 +111,7 @@ export function VatSection({
             id="vat-payer"
             checked={vatPayer}
             onCheckedChange={v => onVatPayerChange(v === true)}
+            disabled={disabled}
           />
           <Label htmlFor="vat-payer">Являюсь плательщиком НДС</Label>
         </div>
@@ -115,6 +122,7 @@ export function VatSection({
               value={vatRate != null ? String(vatRate) : ''}
               onValueChange={v => onVatRateChange(Number(v) as VatRate)}
               aria-label="Ставка НДС"
+              disabled={disabled}
             >
               {VAT_RATES.map(rate => (
                 <div key={rate} className="flex items-center space-x-2">

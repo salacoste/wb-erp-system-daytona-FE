@@ -51,6 +51,7 @@ export default function SuppliesPage() {
     handleClearFilters,
     hasFilters,
     headerProps,
+    canManageSupplies,
   } = useSuppliesPageState()
 
   // Loading
@@ -129,7 +130,9 @@ export default function SuppliesPage() {
         />
       )}
 
-      <CreateSupplyModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} />
+      {canManageSupplies && (
+        <CreateSupplyModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} />
+      )}
     </div>
   )
 }

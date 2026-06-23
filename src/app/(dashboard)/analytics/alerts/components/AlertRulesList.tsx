@@ -30,9 +30,15 @@ interface AlertRulesListProps {
   rules: AlertRule[] | undefined
   isLoading: boolean
   onEdit?: (rule: AlertRule) => void
+  canManageRules?: boolean
 }
 
-export function AlertRulesList({ rules, isLoading, onEdit }: AlertRulesListProps) {
+export function AlertRulesList({
+  rules,
+  isLoading,
+  onEdit,
+  canManageRules = true,
+}: AlertRulesListProps) {
   const updateRule = useUpdateAlertRule()
   const deleteRule = useDeleteAlertRule()
 
@@ -80,6 +86,7 @@ export function AlertRulesList({ rules, isLoading, onEdit }: AlertRulesListProps
             onEdit={() => onEdit?.(rule)}
             isToggling={updateRule.isPending}
             isDeleting={deleteRule.isPending}
+            canManage={canManageRules}
           />
         ))}
       </CardContent>
@@ -94,6 +101,7 @@ function RuleRow({
   onEdit,
   isToggling,
   isDeleting,
+  canManage,
 }: {
   rule: AlertRule
   onToggle: (enabled: boolean) => void
@@ -101,6 +109,7 @@ function RuleRow({
   onEdit: () => void
   isToggling: boolean
   isDeleting: boolean
+  canManage: boolean
 }) {
   const VALID_SEVERITIES: AlertSeverity[] = ['critical', 'warning', 'info']
   const severity: AlertSeverity = VALID_SEVERITIES.includes(rule.severity as AlertSeverity)
@@ -112,7 +121,7 @@ function RuleRow({
         <Switch
           checked={rule.enabled}
           onCheckedChange={onToggle}
-          disabled={isToggling}
+          disabled={!canManage || isToggling}
           aria-label={`Переключить правило ${rule.label ?? rule.alertType}`}
         />
         <div>
@@ -132,23 +141,27 @@ function RuleRow({
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground">{rule.cooldownMinutes} мин</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onEdit}
-          aria-label={`Редактировать правило ${rule.label ?? rule.alertType}`}
-        >
-          <Pencil className="h-4 w-4 text-muted-foreground" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onDelete}
-          disabled={isDeleting}
-          aria-label={`Удалить правило ${rule.label ?? rule.alertType}`}
-        >
-          <Trash2 className="h-4 w-4 text-muted-foreground" />
-        </Button>
+        {canManage && (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onEdit}
+              aria-label={`Редактировать правило ${rule.label ?? rule.alertType}`}
+            >
+              <Pencil className="h-4 w-4 text-muted-foreground" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onDelete}
+              disabled={isDeleting}
+              aria-label={`Удалить правило ${rule.label ?? rule.alertType}`}
+            >
+              <Trash2 className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </>
+        )}
       </div>
     </div>
   )

@@ -1,10 +1,12 @@
-import { expect, test, type Browser, type BrowserContextOptions } from '@playwright/test'
+import { expect, test, type Browser, type BrowserContextOptions, type Page } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
 import {
   attachRequestCollectors,
   clearMutationEnv,
+  collectOperationalRouteWarnings,
   findDeniedVisibleControls,
+  installFbsEnhancedReadOnlyApiFixture,
   installReadOnlyNetworkGuard,
   MUTATING_CONTROL_PATTERNS,
   routeArtifactStem,
@@ -34,6 +36,9 @@ type DynamicRouteFixture = {
   source: string
 }
 
+type StorageState = Exclude<BrowserContextOptions['storageState'], string | undefined>
+type AuditAuthContext = AuditManifest['auth_context']
+
 const inventoryPath = process.env.ROUTE_AUDIT_INVENTORY
 const dynamicFixturesInput = process.env.ROUTE_AUDIT_DYNAMIC_FIXTURES
 const runId =
@@ -45,8 +50,14 @@ const artifactRoot =
 const runDir = path.resolve(artifactRoot, runId)
 const screenshotDir = path.join(runDir, 'screenshots')
 const routeDir = path.join(runDir, 'routes')
-const authFile = 'e2e/.auth/user.json'
+const ownerAuthFile = 'e2e/.auth/user.json'
+const managerAuthFile = 'e2e/.auth/manager.json'
+const authFile =
+  process.env.ROUTE_AUDIT_AUTH_FILE ??
+  (fs.existsSync(managerAuthFile) ? managerAuthFile : ownerAuthFile)
+const auditAuthRole = process.env.ROUTE_AUDIT_AUTH_ROLE ?? 'Analyst'
 const records: RouteAuditRecord[] = []
+const builtInApiFixturesEnabled = process.env.ROUTE_AUDIT_BUILTIN_API_FIXTURES !== '0'
 
 clearMutationEnv()
 fs.mkdirSync(screenshotDir, { recursive: true })
@@ -102,7 +113,8 @@ function classifyRoute(
   if (route.dynamic && !dynamicFixture) return { sessionContext: 'blocked', authState: 'blocked' }
   if (route.group === '(auth)' || route.path === '/')
     return { sessionContext: 'anonymous', authState: 'clean' }
-  if (route.group === '(onboarding)') return { sessionContext: 'onboarding', authState: 'clean' }
+  if (route.group === '(onboarding)')
+    return { sessionContext: 'onboarding', authState: 'storage-state' }
   return { sessionContext: 'authenticated', authState: 'storage-state' }
 }
 
@@ -110,11 +122,114 @@ function contextOptionsFor(
   sessionContext: SessionContext,
   authState: AuthState
 ): BrowserContextOptions {
-  if (sessionContext === 'authenticated' && authState === 'storage-state') {
-    return { storageState: authFile }
+  if (
+    (sessionContext === 'authenticated' || sessionContext === 'onboarding') &&
+    authState === 'storage-state'
+  ) {
+    return { storageState: storageStateForRouteAudit() }
   }
 
   return { storageState: { cookies: [], origins: [] } }
+}
+
+function storageStateForRouteAudit(): BrowserContextOptions['storageState'] {
+  if (auditAuthRole === 'preserve') return authFile
+
+  const storageState = JSON.parse(fs.readFileSync(authFile, 'utf8')) as StorageState
+  let rewroteAuthStorage = false
+  for (const origin of storageState.origins ?? []) {
+    const authEntry = origin.localStorage?.find(entry => entry.name === 'auth-storage')
+    if (!authEntry) continue
+
+    const persistedAuth = JSON.parse(authEntry.value) as {
+      state?: { user?: { role?: string; email?: string; name?: string } }
+      version?: number
+    }
+    if (persistedAuth.state?.user) {
+      persistedAuth.state.user.role = auditAuthRole
+      persistedAuth.state.user.email = `route-audit-${auditAuthRole.toLowerCase()}@test.local`
+      persistedAuth.state.user.name = `Route Audit ${auditAuthRole}`
+      authEntry.value = JSON.stringify(persistedAuth)
+      rewroteAuthStorage = true
+    }
+  }
+
+  if (!rewroteAuthStorage) {
+    throw new Error(
+      `ROUTE_AUDIT_AUTH_ROLE=${auditAuthRole} requested but ${authFile} has no auth-storage user role to override`
+    )
+  }
+
+  return storageState
+}
+
+function decodeJwtRole(token: unknown): string | null {
+  if (typeof token !== 'string') return null
+  const [, payload] = token.split('.')
+  if (!payload) return null
+
+  try {
+    const decoded = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
+      role?: unknown
+    }
+    return typeof decoded.role === 'string' ? decoded.role : null
+  } catch {
+    return null
+  }
+}
+
+function inspectAuthStorageState(): StorageState {
+  return JSON.parse(fs.readFileSync(authFile, 'utf8')) as StorageState
+}
+
+function buildAuthContext(): AuditAuthContext {
+  if (auditAuthRole === 'preserve') {
+    return {
+      requested_role: 'preserve',
+      auth_file: authFile,
+      storage_state_strategy: 'preserve',
+      client_storage_role: null,
+      token_roles: [],
+      token_role_matches_requested: null,
+    }
+  }
+
+  const storageState = inspectAuthStorageState()
+  const tokenRoles = new Set<string>()
+  for (const cookie of storageState.cookies ?? []) {
+    const role = decodeJwtRole(cookie.value)
+    if (role) tokenRoles.add(role)
+  }
+
+  let clientStorageRole: string | null = null
+  for (const origin of storageState.origins ?? []) {
+    const authEntry = origin.localStorage?.find(entry => entry.name === 'auth-storage')
+    if (!authEntry) continue
+
+    const persistedAuth = JSON.parse(authEntry.value) as {
+      state?: { token?: unknown; user?: { role?: string } }
+    }
+    const tokenRole = decodeJwtRole(persistedAuth.state?.token)
+    if (tokenRole) tokenRoles.add(tokenRole)
+    if (persistedAuth.state?.user?.role) clientStorageRole = auditAuthRole
+  }
+
+  if (!clientStorageRole) {
+    throw new Error(
+      `ROUTE_AUDIT_AUTH_ROLE=${auditAuthRole} requested but ${authFile} has no auth-storage user role to override`
+    )
+  }
+
+  const observedTokenRoles = [...tokenRoles].sort()
+  return {
+    requested_role: auditAuthRole,
+    auth_file: authFile,
+    storage_state_strategy: 'client-storage-role-override',
+    client_storage_role: clientStorageRole,
+    token_roles: observedTokenRoles,
+    token_role_matches_requested:
+      observedTokenRoles.length > 0 ? observedTokenRoles.every(role => role === auditAuthRole) : null,
+  }
 }
 
 function buildURL(baseURL: string, routePath: string): string {
@@ -141,15 +256,19 @@ function fixturePathMatchesTemplate(templatePath: string, fixturePath: string): 
   return routeTemplateToRegExp(templatePath).test(fixturePath)
 }
 
-async function waitForVisibleContentToSettle(page: import('@playwright/test').Page): Promise<void> {
+async function waitForVisibleContentToSettle(page: Page): Promise<void> {
   await page
     .waitForFunction(
       () => {
         const text = document.body.innerText.replace(/\s+/g, ' ').trim()
         const loadingOnly = /^(Загрузка|Loading)\.?/i.test(text) && text.length < 80
-        const skeletonCount = document.querySelectorAll(
-          '.animate-pulse, [data-slot="skeleton"], [class*="skeleton"]'
-        ).length
+        const skeletonCount = Array.from(
+          document.querySelectorAll('.animate-pulse, [data-slot="skeleton"], [class*="skeleton"]')
+        ).filter(element => {
+          if (element.closest('[aria-hidden="true"]')) return false
+          const rect = element.getBoundingClientRect()
+          return rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight
+        }).length
 
         return !loadingOnly && skeletonCount === 0
       },
@@ -159,7 +278,7 @@ async function waitForVisibleContentToSettle(page: import('@playwright/test').Pa
     .catch(() => undefined)
 }
 
-async function detectVisibleLoadingState(page: import('@playwright/test').Page): Promise<{
+async function detectVisibleLoadingState(page: Page): Promise<{
   loadingOnly: boolean
   skeletonCount: number
 }> {
@@ -169,7 +288,11 @@ async function detectVisibleLoadingState(page: import('@playwright/test').Page):
       loadingOnly: /^(Загрузка|Loading)\.?/i.test(text) && text.length < 80,
       skeletonCount: Array.from(
         document.querySelectorAll('.animate-pulse, [data-slot="skeleton"], [class*="skeleton"]')
-      ).filter(element => !element.closest('[aria-hidden="true"]')).length,
+      ).filter(element => {
+        if (element.closest('[aria-hidden="true"]')) return false
+        const rect = element.getBoundingClientRect()
+        return rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight
+      }).length,
     }
   })
 }
@@ -184,22 +307,6 @@ function inferStatus(record: RouteAuditRecord): RouteAuditRecord['status'] {
   if (record.http_status === 404) return 'failed'
   if (record.warnings.length > 0) return 'warning'
   return 'passed'
-}
-
-function collectRouteWarnings(record: RouteAuditRecord): string[] {
-  const warnings: string[] = []
-
-  if (record.denied_controls.length > 0) {
-    warnings.push(`visible-mutating-controls-observed-only:${record.denied_controls.join(', ')}`)
-  }
-  if (record.console_errors.length > 0) {
-    warnings.push('console-errors-observed')
-  }
-  if (record.failed_requests.some(request => (request.status ?? 0) >= 500)) {
-    warnings.push('protected-read-request-returned-5xx')
-  }
-
-  return warnings
 }
 
 async function auditRoute(
@@ -257,6 +364,12 @@ async function auditRoute(
   page.on('pageerror', error => record.page_errors.push(error.message))
   attachRequestCollectors(page, record.failed_requests, guardOptions)
   await installReadOnlyNetworkGuard(page, record.blocked_requests, guardOptions)
+  const apiFixtures = await installFbsEnhancedReadOnlyApiFixture(
+    page,
+    navigationPath,
+    builtInApiFixturesEnabled
+  )
+  if (apiFixtures.length > 0) record.api_fixtures = apiFixtures
 
   try {
     const response = await page.goto(buildURL(baseURL, navigationPath), {
@@ -293,7 +406,7 @@ async function auditRoute(
     record.issues.push(error instanceof Error ? error.message : String(error))
   } finally {
     record.duration_ms = Date.now() - startedAt
-    record.warnings = collectRouteWarnings(record)
+    record.warnings = collectOperationalRouteWarnings(record)
     record.status = inferStatus(record)
     await context.close()
   }
@@ -358,6 +471,14 @@ function buildManifest(baseURL: string, inventory: RouteInventory): AuditManifes
   const auditedRoutes = records.filter(
     record => !record.dynamic || record.status !== 'blocked'
   ).length
+  const visibleMutatingControlRoutes = records.filter(
+    record => record.denied_controls.length > 0
+  ).length
+  const visibleMutatingControlsObserved = records.reduce(
+    (sum, record) => sum + record.denied_controls.length,
+    0
+  )
+  const apiFixtureRoutes = records.filter(record => (record.api_fixtures?.length ?? 0) > 0).length
 
   return {
     schema_version: 1,
@@ -365,6 +486,7 @@ function buildManifest(baseURL: string, inventory: RouteInventory): AuditManifes
     generated_at: new Date().toISOString(),
     base_url: baseURL,
     inventory_path: inventoryPath ?? '',
+    auth_context: buildAuthContext(),
     safety_policy: {
       read_only: true,
       mutation_env_cleared: true,
@@ -382,6 +504,9 @@ function buildManifest(baseURL: string, inventory: RouteInventory): AuditManifes
         (sum, record) => sum + record.blocked_requests.length,
         0
       ),
+      visible_mutating_control_routes: visibleMutatingControlRoutes,
+      visible_mutating_controls_observed: visibleMutatingControlsObserved,
+      api_fixture_routes: apiFixtureRoutes,
     },
     records: [...records].sort((a, b) => a.path.localeCompare(b.path)),
   }
@@ -397,12 +522,20 @@ function writeManifestAndReport(baseURL: string, inventory: RouteInventory): voi
     '',
     `- Base URL: ${baseURL}`,
     `- Inventory: ${inventoryPath}`,
+    `- Requested auth role: ${manifest.auth_context.requested_role}`,
+    `- Storage state strategy: ${manifest.auth_context.storage_state_strategy}`,
+    `- Client storage role: ${manifest.auth_context.client_storage_role ?? 'preserve'}`,
+    `- Token roles: ${manifest.auth_context.token_roles.join(', ') || 'unverified'}`,
+    `- Token roles match requested: ${String(manifest.auth_context.token_role_matches_requested)}`,
     `- Routes: ${manifest.summary.total_routes}`,
     `- Audited: ${manifest.summary.audited_routes}`,
     `- Dynamic blocked: ${manifest.summary.dynamic_blocked_routes}`,
     `- Failed: ${manifest.summary.failed_routes}`,
     `- Warnings: ${manifest.summary.warning_routes}`,
     `- Blocked network requests: ${manifest.summary.blocked_network_requests}`,
+    `- Visible mutating control routes: ${manifest.summary.visible_mutating_control_routes}`,
+    `- Visible mutating controls observed: ${manifest.summary.visible_mutating_controls_observed}`,
+    `- API fixture routes: ${manifest.summary.api_fixture_routes}`,
     '',
     '## Route statuses',
     '',

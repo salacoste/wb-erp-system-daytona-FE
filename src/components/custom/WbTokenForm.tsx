@@ -21,6 +21,7 @@ import { AlertCircle, ExternalLink } from 'lucide-react'
 import { updateWbToken } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/lib/routes'
+import { canManageOperationalData } from '@/lib/role-permissions'
 import { wbTokenFormSchema, getErrorMessage, type WbTokenFormData } from './wb-token-form-helpers'
 
 /**
@@ -30,7 +31,8 @@ import { wbTokenFormSchema, getErrorMessage, type WbTokenFormData } from './wb-t
  */
 export function WbTokenForm() {
   const router = useRouter()
-  const { token, cabinetId } = useAuthStore()
+  const { token, cabinetId, user } = useAuthStore()
+  const canSaveToken = canManageOperationalData(user?.role)
   const [formError, setFormError] = useState<{
     title: string
     message: string
@@ -68,7 +70,10 @@ export function WbTokenForm() {
     },
   })
 
-  const onSubmit = (data: WbTokenFormData) => mutation.mutate(data)
+  const onSubmit = (data: WbTokenFormData) => {
+    if (!canSaveToken) return
+    mutation.mutate(data)
+  }
   const isSubmitting = mutation.isPending
 
   if (!cabinetId) {
@@ -142,7 +147,12 @@ export function WbTokenForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSubmitting || !canSaveToken}
+          aria-busy={isSubmitting}
+        >
           {isSubmitting ? 'Проверка токена...' : 'Сохранить токен'}
         </Button>
       </form>

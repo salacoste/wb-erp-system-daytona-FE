@@ -26,6 +26,8 @@ export interface InitialDataSummaryProps {
   totalProducts?: number
   /** Products with COGS assigned */
   productsWithCogs?: number
+  /** Whether to show the COGS assignment call-to-action. */
+  canAssignCogs?: boolean
 }
 
 /**
@@ -36,11 +38,12 @@ export function InitialDataSummary({
   cogsCoverage = 0,
   totalProducts = 0,
   productsWithCogs = 0,
+  canAssignCogs = true,
 }: InitialDataSummaryProps): React.ReactElement | null {
   const router = useRouter()
 
   // Don't show CTA if no products or full COGS coverage
-  const showCta = totalProducts > 0 && cogsCoverage < 100
+  const showCta = canAssignCogs && totalProducts > 0 && cogsCoverage < 100
 
   if (!showCta) {
     return null
