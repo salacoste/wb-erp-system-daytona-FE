@@ -178,7 +178,7 @@ function ConsumerRow({
           {/* Request #156: Last charge date indicator */}
           {item.last_charge_date && (
             <p
-              className="text-[10px] text-muted-foreground flex items-center gap-0.5"
+              className="text-xs text-muted-foreground flex items-center gap-0.5"
               title="Последняя оплата хранения"
             >
               <Calendar className="h-2.5 w-2.5" />
