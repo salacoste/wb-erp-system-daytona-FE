@@ -1,12 +1,14 @@
 'use client'
 
 import { CabinetCreationForm } from '@/components/custom/CabinetCreationForm'
+import { useOnboardingGuard } from '@/hooks/useOnboardingGuard'
 
 /**
  * Cabinet creation page for onboarding flow
  * Story 2.1: Cabinet Creation Interface
  */
 export default function CabinetCreationPage() {
+  useOnboardingGuard()
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
       <div className="space-y-6">

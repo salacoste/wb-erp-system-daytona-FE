@@ -1,12 +1,14 @@
 'use client'
 
 import { WbTokenForm } from '@/components/custom/WbTokenForm'
+import { useOnboardingGuard } from '@/hooks/useOnboardingGuard'
 
 /**
  * WB Token input page for onboarding flow
  * Story 2.2: WB Token Input & Validation
  */
 export default function WbTokenPage() {
+  useOnboardingGuard()
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
       <div className="space-y-6">

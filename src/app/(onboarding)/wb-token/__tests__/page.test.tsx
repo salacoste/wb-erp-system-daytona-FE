@@ -11,6 +11,11 @@ vi.mock('@/components/custom/WbTokenForm', () => ({
   WbTokenForm: () => <div data-testid="wb-token-form">WbTokenForm</div>,
 }))
 
+// useOnboardingGuard (FE-14) calls useRouter; provide a no-op router so the page renders in tests
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+}))
+
 import WbTokenPage from '../page'
 
 describe('WbTokenPage', () => {

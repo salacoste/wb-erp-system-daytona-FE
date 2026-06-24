@@ -11,6 +11,11 @@ vi.mock('@/components/custom/CabinetCreationForm', () => ({
   CabinetCreationForm: () => <div data-testid="cabinet-creation-form">CabinetCreationForm</div>,
 }))
 
+// useOnboardingGuard (FE-14) calls useRouter; provide a no-op router so the page renders in tests
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+}))
+
 import CabinetCreationPage from '../page'
 
 describe('CabinetCreationPage', () => {
