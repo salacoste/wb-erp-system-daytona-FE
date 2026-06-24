@@ -12,12 +12,16 @@
 
 'use client'
 
-import { Banknote, Info } from 'lucide-react'
+import { AlertTriangle, Banknote, Info } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatCurrency } from '@/lib/utils'
 import { calculateComparison } from '@/lib/comparison-helpers'
-import { getNetProfit, calculateAfterTaxMargin } from '@/lib/tax-display-helpers'
+import {
+  calculateAfterTaxMargin,
+  getNetProfit,
+  isNetProfitConsistent,
+} from '@/lib/tax-display-helpers'
 import { ComparisonBadge } from '@/components/custom/ComparisonBadge'
 import { HighlightedMetricSkeleton } from './MetricCardStates'
 import type { TaxMetrics } from '@/types/finance-summary'
@@ -72,6 +76,12 @@ export function NetProfitCard({
     result && prevResult && prevResult.value !== 0
       ? calculateComparison(result.value, prevResult.value, false)
       : null
+
+  // Defensive Frontend Principle (Story 89.4-FE): indicate — never silently
+  // display — an impossible net profit (net > operating, or after-all-tax >
+  // after-tax). Backend root cause: request-backend/213. FE preserves the value.
+  const inconsistent =
+    result != null && !isNetProfitConsistent(result.value, operatingProfit, taxMetrics)
 
   // Style by sign
   const isPositive = result != null && result.value >= 0
@@ -132,13 +142,33 @@ export function NetProfitCard({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="mt-1">
+        <div className="mt-1 flex items-center gap-1">
           {result ? (
             <span className={cn('text-xl font-bold', valueColor)}>
               {formatCurrency(result.value)}
             </span>
           ) : (
             <span className="text-xl font-bold text-muted-foreground">—</span>
+          )}
+          {inconsistent && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="text-yellow-600 hover:text-yellow-700"
+                  aria-label="Значение чистой прибыли противоречит операционной прибыли"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent size="lg">
+                <p style={{ whiteSpace: 'pre-line' }}>
+                  {
+                    'Значение чистой прибыли больше операционной — данные противоречивы (вероятно, не вычтены удержания WB). Показано «как есть», уточняется. См. тикет 213.'
+                  }
+                </p>
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
         {margin != null && (

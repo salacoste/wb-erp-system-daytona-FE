@@ -77,3 +77,37 @@ export function calculateAfterTaxMargin(
   if (!revenue || revenue === 0) return null
   return (netProfit / revenue) * 100
 }
+
+/**
+ * Detect whether a displayed net-profit figure is consistent with the
+ * operating profit it is derived from. Two accounting invariants must hold:
+ *   1. net profit ≤ operating profit (net = operating − tax − VAT)
+ *   2. net_profit_after_all_tax ≤ net_profit_after_tax (more deductions ⇒ smaller)
+ * A `false` result signals a backend calc anomaly the FE must *indicate*, not
+ * silently display (Defensive Frontend Principle, Story 89.4-FE).
+ * Related: docs/request-backend/213-FINANCE-SUMMARY-NET-PROFIT-INVARIANT-VIOLATION.md
+ *
+ * @param netProfit value currently displayed (result of getNetProfit)
+ * @param operatingProfit operating_profit_analytical (full-expense base)
+ * @param tax optional tax metrics (to compare after-all-tax vs after-tax)
+ * @param tolerance kopeck rounding tolerance
+ */
+export function isNetProfitConsistent(
+  netProfit: number,
+  operatingProfit: number | null | undefined,
+  tax?: TaxMetrics | null,
+  tolerance = 0.005
+): boolean {
+  // Invariant 1: net profit can never exceed operating profit.
+  if (operatingProfit != null && netProfit > operatingProfit + tolerance) return false
+  // Invariant 2: after-all-tax can never exceed after-tax.
+  if (
+    tax &&
+    tax.net_profit_after_all_tax != null &&
+    tax.net_profit_after_tax != null &&
+    tax.net_profit_after_all_tax > tax.net_profit_after_tax + tolerance
+  ) {
+    return false
+  }
+  return true
+}
