@@ -5,8 +5,10 @@
  * Extracted from SkuFinancialsTable.tsx — single data row with tooltips
  */
 
+import Link from 'next/link'
 import { TableRow, TableCell } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { SkuFinancialItem } from '@/types/sku-financials'
 import { getTotalOperatingExpenses } from '@/types/sku-financials'
@@ -26,10 +28,13 @@ export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowPro
     <TableRow className={cn('hover:bg-gray-50', item.missingCogs && 'bg-yellow-50/30')}>
       <TableCell className="font-mono text-sm text-gray-500">{item.nmId}</TableCell>
       <TableCell>
-        <div className="max-w-[200px]">
-          <div className="truncate font-medium">{item.productName}</div>
+        <Link
+          href={`${ROUTES.ANALYTICS.PRODUCT}/${item.nmId}`}
+          className="group block max-w-[200px]"
+        >
+          <div className="truncate font-medium group-hover:underline">{item.productName}</div>
           {item.brand && <div className="truncate text-xs text-gray-400">{item.brand}</div>}
-        </div>
+        </Link>
       </TableCell>
       <TableCell className="text-right">
         <TooltipProvider>
