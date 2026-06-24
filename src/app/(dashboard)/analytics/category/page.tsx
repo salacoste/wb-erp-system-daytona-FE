@@ -138,6 +138,7 @@ export default function MarginAnalysisByCategoryPage() {
 
       <Card>
         <CardHeader>
+          <h2 className="sr-only">Детализация по категориям</h2>
           <CardTitle>Маржинальность по категориям</CardTitle>
           <CardDescription>
             Кликните на строку для детализации по товарам категории. Сортировка по клику на
