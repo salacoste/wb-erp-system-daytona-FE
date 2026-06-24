@@ -53,7 +53,7 @@ export function SalesCogsMetricCard({
     if (onAssignCogs) {
       onAssignCogs()
     } else if (typeof window !== 'undefined') {
-      window.location.href = ROUTES.COGS.SINGLE
+      window.location.href = ROUTES.COGS.ROOT
     }
   }
 

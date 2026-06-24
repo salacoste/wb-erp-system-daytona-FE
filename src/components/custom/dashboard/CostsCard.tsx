@@ -57,7 +57,7 @@ export function CostsCard({
 
   const handleAssignCogs = () => {
     if (onAssignCogs) onAssignCogs()
-    else router.push(ROUTES.COGS.SINGLE)
+    else router.push(ROUTES.COGS.ROOT)
   }
 
   if (isLoading) return <StandardMetricSkeleton className={className} />

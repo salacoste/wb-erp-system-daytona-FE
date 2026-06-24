@@ -20,7 +20,6 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   COGS: {
     ROOT: '/cogs',
-    SINGLE: '/cogs/single',
     BULK: '/cogs/bulk',
     PRICE_CALCULATOR: '/cogs/price-calculator',
   },
@@ -31,7 +30,6 @@ export const ROUTES = {
     BRAND: '/analytics/brand',
     CATEGORY: '/analytics/category',
     TIME_PERIOD: '/analytics/time-period',
-    SUMMARY: '/analytics/summary',
     STORAGE: '/analytics/storage',
     SUPPLY_PLANNING: '/analytics/supply-planning',
     UNIT_ECONOMICS: '/analytics/unit-economics',
@@ -66,7 +64,6 @@ export const ROUTES = {
 
   ORDERS: {
     ROOT: '/orders',
-    LIST: '/orders/list',
     INTEGRITY: '/orders/integrity',
     FBO: '/orders/fbo', // FBO Orders & Sales
   },
