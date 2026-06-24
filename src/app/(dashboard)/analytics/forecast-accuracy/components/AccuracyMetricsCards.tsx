@@ -5,7 +5,7 @@
  * Epic 123-FE Story 123.4
  */
 
-import { formatPercentage } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface AccuracyMetricsCardsProps {
@@ -32,6 +32,9 @@ export function AccuracyMetricsCards({
   avgMAE,
   avgBias,
 }: AccuracyMetricsCardsProps) {
+  // FE-9: MAPE explodes near zero sales — de-emphasise when absurdly high.
+  const isHighMape = avgMAPE != null && avgMAPE > 200
+
   return (
     <div className="grid gap-4 md:grid-cols-4">
       <Card>
@@ -45,21 +48,29 @@ export function AccuracyMetricsCards({
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Средний MAPE</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Средний MAE</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatMape(avgMAPE)}</div>
-          <p className="text-xs text-muted-foreground">Средняя абсолютная ошибка %</p>
+          <div className="text-2xl font-bold">{avgMAE?.toLocaleString('ru-RU') ?? '—'}</div>
+          <p className="text-xs text-muted-foreground">
+            Средняя абсолютная ошибка (шт) — основной показатель точности
+          </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Средний MAE</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Средний MAPE</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{avgMAE?.toLocaleString('ru-RU') ?? '—'}</div>
-          <p className="text-xs text-muted-foreground">Средняя абсолютная ошибка (шт)</p>
+          <div className={cn('text-2xl font-bold', isHighMape && 'text-amber-600')}>
+            {formatMape(avgMAPE)}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {isHighMape
+              ? 'Очень высока — возможна при продажах около 0; смотрите MAE'
+              : 'Средняя абсолютная ошибка %'}
+          </p>
         </CardContent>
       </Card>
 
