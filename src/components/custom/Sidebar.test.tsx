@@ -79,10 +79,10 @@ describe('Sidebar', () => {
     () => {
       renderWithQueryClient(<Sidebar />)
 
-      expect(screen.getByText('Dashboard')).toBeInTheDocument()
-      expect(screen.getByText('COGS Management')).toBeInTheDocument()
-      expect(screen.getByText('Analytics')).toBeInTheDocument()
-      expect(screen.getByText('Settings')).toBeInTheDocument()
+      expect(screen.getByText('Главная')).toBeInTheDocument()
+      expect(screen.getByText('Себестоимость')).toBeInTheDocument()
+      expect(screen.getByText('Аналитика')).toBeInTheDocument()
+      expect(screen.getByText('Настройки')).toBeInTheDocument()
     },
     { timeout: 5000 }
   )
@@ -93,7 +93,7 @@ describe('Sidebar', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
       renderWithQueryClient(<Sidebar />)
 
-      const dashboardLink = screen.getByText('Dashboard').closest('a')
+      const dashboardLink = screen.getByText('Главная').closest('a')
       // Active item has bg-accent class (Tailwind CSS theme class)
       expect(dashboardLink).toHaveClass('bg-accent', 'text-accent-foreground')
     },
@@ -107,7 +107,7 @@ describe('Sidebar', () => {
       vi.mocked(usePathname).mockReturnValue('/cogs')
       renderWithQueryClient(<Sidebar />)
 
-      const cogsLink = screen.getByText('COGS Management').closest('a')
+      const cogsLink = screen.getByText('Себестоимость').closest('a')
       // Active item has bg-accent class (Tailwind CSS theme class)
       expect(cogsLink).toHaveClass('bg-accent', 'text-accent-foreground')
     },
