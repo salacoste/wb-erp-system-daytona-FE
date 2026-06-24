@@ -109,7 +109,7 @@ export function SkuFinancialsTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">nm_id</TableHead>
+            <TableHead className="w-[100px]">Код WB</TableHead>
             <TableHead>
               <button
                 onClick={() => handleSort('productName')}
@@ -150,7 +150,11 @@ export function SkuFinancialsTable({
                 sortIcon={renderSortIcon('operatingMarginPct')}
               />
             </TableHead>
-            {showVisibility && <TableHead className="w-[50px]" />}
+            {showVisibility && (
+              <TableHead className="w-[50px]">
+                <span className="sr-only">Видимость</span>
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
