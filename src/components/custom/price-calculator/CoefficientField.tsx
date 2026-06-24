@@ -103,6 +103,7 @@ export function CoefficientField({
           max={max}
           disabled={effectiveDisabled}
           className="flex-1"
+          aria-label={label}
           aria-describedby={canRestore ? `${label}-restore-hint` : undefined}
         />
         {canRestore && onRestore && (

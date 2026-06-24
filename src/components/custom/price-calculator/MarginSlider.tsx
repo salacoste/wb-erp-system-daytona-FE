@@ -54,6 +54,8 @@ export interface MarginSliderProps<T extends FieldValues = FieldValues> {
   unit: string
   /** Error message to display */
   error?: string
+  /** Accessible label for the numeric input (FE-3, WCAG 1.3.1 / 3.3.2) */
+  ariaLabel?: string
 }
 
 /**
@@ -78,6 +80,7 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
   step,
   unit,
   error,
+  ariaLabel = 'Маржа',
 }: MarginSliderProps<T>) {
   return (
     <Controller
@@ -134,6 +137,7 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
                   min={min}
                   max={max}
                   value={value}
+                  aria-label={ariaLabel}
                   onChange={e => {
                     const num = parseFloat(e.target.value)
                     field.onChange(isNaN(num) ? 0 : num)
