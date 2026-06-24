@@ -12,7 +12,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DeltaIndicator } from './DeltaIndicator'
-import { formatCurrency, cn } from '@/lib/utils'
+import { formatCurrency, cn, formatPercentage } from '@/lib/utils'
 
 export interface DeltaValue {
   absolute: number
@@ -52,7 +52,7 @@ function formatValue(value: number | null, format: 'currency' | 'percentage' | '
     case 'currency':
       return formatCurrency(value)
     case 'percentage':
-      return `${value.toFixed(1).replace('.', ',')}%`
+      return formatPercentage(value, 1)
     case 'number':
       return new Intl.NumberFormat('ru-RU').format(value)
   }
@@ -99,7 +99,7 @@ export function PeriodComparisonCard({
   const formattedCurrent = formatValue(currentValue, format)
   const formattedPrevious = formatValue(previousValue, format)
   const deltaStr = delta
-    ? `${delta.percent >= 0 ? '+' : ''}${Math.abs(delta.percent).toFixed(1).replace('.', ',')}%`
+    ? `${delta.percent >= 0 ? '+' : ''}${formatPercentage(Math.abs(delta.percent), 1)}`
     : ''
   const ariaLabel = `${title}: ${formattedCurrent}${delta ? `, изменение ${deltaStr}` : ''}`
 

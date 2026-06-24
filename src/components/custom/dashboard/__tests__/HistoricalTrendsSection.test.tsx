@@ -297,17 +297,17 @@ describe('Summary', () => {
   })
   it('trend', () => {
     go()
-    expect(screen.getAllByText(/\+16,0%/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/\+16,0\s*%/).length).toBeGreaterThan(0)
   })
   it('up green', () => {
     go()
-    expect(screen.getAllByText(/\+16,0%/)[0].closest('div')).toHaveClass('text-green-600')
+    expect(screen.getAllByText(/\+16,0\s*%/)[0].closest('div')).toHaveClass('text-green-600')
   })
   it('down red', () => {
     go({
       data: { data: D8, summary: { wb_sales_gross: mkS({ trend: '-5.2%' }) }, period: OK.period },
     })
-    expect(screen.getByText(/-5,2%/).closest('div')).toHaveClass('text-red-600')
+    expect(screen.getByText(/-5,2\s*%/).closest('div')).toHaveClass('text-red-600')
   })
   it('border', () => {
     go()
@@ -609,11 +609,11 @@ describe('TrendsSummaryCard', () => {
     renderWithProviders(<TrendsSummaryCard {...b} />)
     expect(screen.getByText('Выручка')).toBeInTheDocument()
     ;['min:', 'max:', 'avg:'].forEach(t => expect(screen.getByText(t)).toBeInTheDocument())
-    expect(screen.getByText(/\+16,0%/)).toBeInTheDocument()
+    expect(screen.getByText(/\+16,0\s*%/)).toBeInTheDocument()
   })
   it('pct + border', () => {
     renderWithProviders(<TrendsSummaryCard {...b} format="percentage" avg={15.5} />)
-    expect(screen.getByText('avg:').parentElement?.textContent).toMatch(/15,5%/)
+    expect(screen.getByText('avg:').parentElement?.textContent).toMatch(/15,5\s*%/)
     cleanup()
     renderWithProviders(<TrendsSummaryCard {...b} />)
     expect(
@@ -622,10 +622,10 @@ describe('TrendsSummaryCard', () => {
   })
   it('up green + down red', () => {
     renderWithProviders(<TrendsSummaryCard {...b} />)
-    expect(screen.getByText(/\+16,0%/).closest('div')).toHaveClass('text-green-600')
+    expect(screen.getByText(/\+16,0\s*%/).closest('div')).toHaveClass('text-green-600')
     cleanup()
     renderWithProviders(<TrendsSummaryCard {...b} trendPct={-5.2} />)
-    expect(screen.getByText(/-5,2%/).closest('div')).toHaveClass('text-red-600')
+    expect(screen.getByText(/-5,2\s*%/).closest('div')).toHaveClass('text-red-600')
   })
 })
 describe('TrendsPeriodSelector', () => {
@@ -775,7 +775,7 @@ describe('Edge', () => {
         color="#F59E0B"
       />
     )
-    expect(screen.getByText(/-12,5%/)).toBeInTheDocument()
+    expect(screen.getByText(/-12,5\s*%/)).toBeInTheDocument()
   })
   it('rapid per + tog', async () => {
     const x = U()
