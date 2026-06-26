@@ -1,26 +1,25 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 import {
   DashboardMetricsGrid,
   DailyBreakdownSection,
-  IncompleteWeekBanner,
-  TaxWarningBanner,
   InventorySummaryWidget,
   PeriodComparisonSection,
   FulfillmentShareBar,
 } from '@/components/custom/dashboard'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
-import { ReportPendingBanner } from './ReportPendingBanner'
+import { DashboardStatusBanners } from './DashboardStatusBanners'
+import { DashboardStatusStrip } from './DashboardStatusStrip'
+import { getDashboardStatusAlerts } from './dashboard-status'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { WidgetSettingsSheet } from '@/components/custom/dashboard/WidgetSettingsSheet'
 import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
-import { ProcessingAlert, FailedAlert, ErrorAlert, DataGapsAlert } from './DashboardAlerts'
-import { MissingCogsAlert } from '@/components/custom/MissingCogsAlert'
 import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
 import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
@@ -44,6 +43,29 @@ export function DashboardContent(): React.ReactElement {
 
   useDataImportNotification(!!d.hasFinancialData, d.isLoading)
 
+  // TaxWarningBanner is session-dismissible via sessionStorage; read once at mount so the
+  // status-strip count stays consistent with the banner's own self-gating (mirrors its init).
+  const [taxDismissed] = useState(
+    () =>
+      typeof window !== 'undefined' && sessionStorage.getItem('tax-warning-dismissed') === 'true'
+  )
+  const status = getDashboardStatusAlerts({
+    selectedPeriod: d.selectedPeriod,
+    periodType: d.periodType,
+    isFinanceAvailable: d.isFinanceAvailable,
+    isProcessing: d.isProcessing,
+    isFailed: d.isFailed,
+    failedBatchCount: d.failedBatchCount,
+    hasError: !!d.error,
+    taxConfigured: d.taxConfigured,
+    taxDismissed,
+    productsLoading: d.productsLoading,
+    cogsLoading: d.cogsLoading,
+    cogsCoverage: d.cogsCoverage,
+    totalProducts: d.totalProducts ?? 0,
+    inventoryWithCogs: d.inventoryWithCogs,
+  })
+
   return (
     <div className="space-y-4 pb-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -66,22 +88,10 @@ export function DashboardContent(): React.ReactElement {
         </div>
       </div>
 
-      <IncompleteWeekBanner period={d.selectedPeriod} periodType={d.periodType} />
-      {!d.isFinanceAvailable && !d.isProcessing && (
-        <ReportPendingBanner week={d.selectedWeek} latestAvailableWeek={d.latestAvailableWeek} />
-      )}
-      {d.isProcessing && <ProcessingAlert processingStatus={d.processingStatus} />}
-      {d.isFailed && <FailedAlert />}
-      {!d.isFailed && d.failedBatchCount > 0 && <DataGapsAlert failedCount={d.failedBatchCount} />}
-      {d.error && !d.isProcessing && d.isFinanceAvailable && <ErrorAlert onRetry={d.handleRetry} />}
-
-      <TaxWarningBanner taxConfigured={d.taxConfigured} />
-
-      {!d.productsLoading && !d.cogsLoading && d.cogsCoverage < 100 && (
-        <MissingCogsAlert
-          missingCount={(d.totalProducts ?? 0) - d.inventoryWithCogs}
-          canAssignCogs={canAssignCogs}
-        />
+      {status.count > 0 && status.highestSeverity && (
+        <DashboardStatusStrip count={status.count} severity={status.highestSeverity}>
+          <DashboardStatusBanners data={d} canAssignCogs={canAssignCogs} />
+        </DashboardStatusStrip>
       )}
 
       <div role="region" aria-label="Ключевые метрики">
