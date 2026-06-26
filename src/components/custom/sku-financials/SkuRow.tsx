@@ -36,7 +36,7 @@ export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowPro
           {item.brand && <div className="truncate text-xs text-gray-400">{item.brand}</div>}
         </Link>
       </TableCell>
-      <TableCell className="text-right">
+      <TableCell className="hidden lg:table-cell text-right">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -64,14 +64,14 @@ export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowPro
         </TooltipProvider>
       </TableCell>
       <TableCell className="text-right font-medium">{formatCurrency(item.revenue.net)}</TableCell>
-      <TableCell className="text-right">
+      <TableCell className="hidden lg:table-cell text-right">
         {item.missingCogs ? (
           <span className="text-xs text-gray-400">Не назначена</span>
         ) : (
           <span className="text-gray-700">{formatCurrency(item.costs.cogs)}</span>
         )}
       </TableCell>
-      <TableCell className="text-right">
+      <TableCell className="hidden lg:table-cell text-right">
         {showExpenseBreakdown ? (
           <ExpenseBreakdown item={item} />
         ) : (

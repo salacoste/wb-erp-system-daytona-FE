@@ -55,9 +55,13 @@ export function PerformanceTableRow({
       )}
       <TableCell className="text-right">{renderValue(item, 'spend', formatCurrency)}</TableCell>
       <TableCell className="text-right">{renderTotalSales(item)}</TableCell>
-      <TableCell className="text-right">{renderValue(item, 'revenue', formatCurrency)}</TableCell>
-      <TableCell className="text-right">{renderOrganicSales(item)}</TableCell>
-      <TableCell className="text-right">{renderOrganicContribution(item)}</TableCell>
+      <TableCell className="hidden lg:table-cell text-right">
+        {renderValue(item, 'revenue', formatCurrency)}
+      </TableCell>
+      <TableCell className="hidden lg:table-cell text-right">{renderOrganicSales(item)}</TableCell>
+      <TableCell className="hidden lg:table-cell text-right">
+        {renderOrganicContribution(item)}
+      </TableCell>
       <TableCell className="text-right">
         {warning ? (
           <div className="flex items-center justify-end gap-1">
@@ -69,8 +73,10 @@ export function PerformanceTableRow({
         )}
       </TableCell>
       <TableCell className="text-right">{renderROAS(item)}</TableCell>
-      <TableCell className="text-right">{renderROI(item)}</TableCell>
-      <TableCell className="text-right">{renderValue(item, 'ctr', formatPercentRaw)}</TableCell>
+      <TableCell className="hidden lg:table-cell text-right">{renderROI(item)}</TableCell>
+      <TableCell className="hidden lg:table-cell text-right">
+        {renderValue(item, 'ctr', formatPercentRaw)}
+      </TableCell>
       <TableCell>
         <EfficiencyBadge status={item.efficiency_status} showRecommendation />
       </TableCell>

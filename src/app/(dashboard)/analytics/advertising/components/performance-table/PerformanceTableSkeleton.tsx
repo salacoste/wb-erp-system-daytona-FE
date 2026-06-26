@@ -22,13 +22,13 @@ export function PerformanceTableSkeleton({ rows = 10 }: { rows?: number }) {
           <TableCell>
             <Skeleton className="h-4 w-20" />
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:table-cell">
             <Skeleton className="h-4 w-16" />
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:table-cell">
             <Skeleton className="h-4 w-16" />
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:table-cell">
             <Skeleton className="h-4 w-12" />
           </TableCell>
           <TableCell>
@@ -37,10 +37,10 @@ export function PerformanceTableSkeleton({ rows = 10 }: { rows?: number }) {
           <TableCell>
             <Skeleton className="h-4 w-12" />
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:table-cell">
             <Skeleton className="h-4 w-12" />
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:table-cell">
             <Skeleton className="h-4 w-12" />
           </TableCell>
           <TableCell>

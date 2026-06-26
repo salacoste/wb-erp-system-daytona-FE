@@ -40,15 +40,18 @@ export function CostCell({
   value,
   highThreshold,
   medThreshold,
+  className,
 }: {
   value: number | null
   highThreshold: number
   medThreshold?: number
+  /** TZ-10: pass `hidden lg:table-cell` to hide this secondary column below lg. */
+  className?: string
 }) {
   const med = medThreshold ?? highThreshold
   // null (unknown cost %: no COGS) → neutral styling + "—" via formatPercentage (rules 1+2).
   return (
-    <TableCell className="text-right">
+    <TableCell className={cn('text-right', className)}>
       <span
         className={cn(
           value != null && value > highThreshold && 'text-red-600 font-medium',

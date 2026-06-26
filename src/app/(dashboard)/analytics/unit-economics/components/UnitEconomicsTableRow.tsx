@@ -67,11 +67,20 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
         <div className="text-xs text-muted-foreground">{item.brand}</div>
       </TableCell>
       <TableCell className="text-right font-medium">{formatCurrency(item.revenue)}</TableCell>
-      <CostCell value={item.costs_pct.cogs} highThreshold={50} medThreshold={40} />
-      <CostCell value={item.costs_pct.commission} highThreshold={20} />
-      <CostCell value={totalLogistics} highThreshold={15} />
-      <CostCell value={item.costs_pct.storage} highThreshold={5} />
-      <TableCell className="text-right">
+      <CostCell
+        value={item.costs_pct.cogs}
+        highThreshold={50}
+        medThreshold={40}
+        className="hidden lg:table-cell"
+      />
+      <CostCell
+        value={item.costs_pct.commission}
+        highThreshold={20}
+        className="hidden lg:table-cell"
+      />
+      <CostCell value={totalLogistics} highThreshold={15} className="hidden lg:table-cell" />
+      <CostCell value={item.costs_pct.storage} highThreshold={5} className="hidden lg:table-cell" />
+      <TableCell className="hidden lg:table-cell text-right">
         <Tooltip>
           <TooltipTrigger asChild>
             {item.costs_pct.delivery_to_warehouse != null ? (
