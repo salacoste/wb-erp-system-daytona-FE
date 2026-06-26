@@ -146,7 +146,16 @@ function normalizeItem(item: unknown, index: number): AdvertisingGroupedItem {
         })
       : undefined,
     sku_id: d.sku_id != null ? String(d.sku_id) : d.nmId != null ? String(d.nmId) : undefined,
-    campaign_id: d.campaignId != null ? Number(d.campaignId) : undefined,
+    // FE-16: campaign-GROUPED items expose the id as `advertId`; sku-grouped items may
+    // reference a campaign via `campaignId`. Read advertId first (the campaign-listing case
+    // that powers drill-through), fall back to campaignId. Reading only campaignId left
+    // campaign_id undefined for campaign view → the drill-through Link never rendered.
+    campaign_id:
+      d.advertId != null
+        ? Number(d.advertId)
+        : d.campaignId != null
+          ? Number(d.campaignId)
+          : undefined,
     product_name: toStr(d.label) || toStr(d.product_name) || undefined,
     brand: toStr(d.brand) || undefined,
     category: toStr(d.category) || undefined,

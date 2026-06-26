@@ -266,6 +266,34 @@ describe('normalizeAdvertisingResponse', () => {
     expect(typeof result.data[0].campaign_id).toBe('number')
   })
 
+  // FE-16: campaign-GROUPED backend items expose the id as `advertId` (with key `campaign:<id>`),
+  // not `campaignId`. Reading only campaignId left campaign_id undefined → drill-through Link
+  // never rendered in campaign view. advertId must map to campaign_id.
+  it('FE-16: maps advertId (campaign-grouped) to campaign_id, preferring it over campaignId', () => {
+    const raw = {
+      items: [
+        { key: 'campaign:36175469', advertId: 36175469, label: 'меловая серая' },
+        { key: 'campaign:999', advertId: 999, campaignId: 111, label: 'advertId wins' },
+      ],
+      summary: {},
+    }
+
+    const result = normalizeAdvertisingResponse(raw, '2026-05-26', '2026-06-26', 'campaign')
+    expect(result.data[0].campaign_id).toBe(36175469)
+    // when both present, advertId is authoritative
+    expect(result.data[1].campaign_id).toBe(999)
+  })
+
+  it('FE-16: falls back to campaignId when advertId is absent (sku-grouped referencing a campaign)', () => {
+    const raw = {
+      items: [{ nmId: 100, campaignId: 42 }],
+      summary: {},
+    }
+
+    const result = normalizeAdvertisingResponse(raw, '2026-05-26', '2026-06-26')
+    expect(result.data[0].campaign_id).toBe(42)
+  })
+
   // ---------------------------------------------------------------------------
   // Empty / missing arrays
   // ---------------------------------------------------------------------------
