@@ -68,4 +68,28 @@ describe('LiquidityDistributionCards — avg turnover', () => {
     // medium + low both have avg_turnover_days 0 → "< 1 дня"
     expect(screen.getAllByText(/Ср\. оборот: < 1 дня/)).toHaveLength(2)
   })
+
+  it('shows neutral "Нет продаж за период" headline for zero-sales categories (TZ-12)', () => {
+    render(
+      <LiquidityDistributionCards
+        distribution={makeDistribution()}
+        activeFilter={null}
+        onCardClick={() => {}}
+      />
+    )
+    // illiquid (avg_turnover_days=999 → all SKUs zero sales) shows neutral framing.
+    expect(screen.getByText('Нет продаж за период')).toBeInTheDocument()
+  })
+
+  it('shows the percentage headline for selling categories (TZ-12)', () => {
+    render(
+      <LiquidityDistributionCards
+        distribution={makeDistribution()}
+        activeFilter={null}
+        onCardClick={() => {}}
+      />
+    )
+    // highly_liquid (pct=9, avg_turnover_days=15 → selling) shows its percentage, not "Нет продаж".
+    expect(screen.getByText(/9,0\s*%/)).toBeInTheDocument()
+  })
 })

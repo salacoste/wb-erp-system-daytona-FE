@@ -71,11 +71,17 @@ export function LiquidityDistributionCards({
                 </span>
               </div>
 
-              {/* Main value - percentage */}
-              <div className="mb-2">
-                <span className="text-3xl font-bold" style={{ color: config.color }}>
-                  {formatPercentage(item.pct)}
-                </span>
+              {/* Main value - percentage (or neutral "no sales" when all SKUs zero-sales) */}
+              <div className="mb-2 flex min-h-[2.5rem] items-center">
+                {item.count > 0 && item.avg_turnover_days >= 999 ? (
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Нет продаж за период
+                  </span>
+                ) : (
+                  <span className="text-3xl font-bold" style={{ color: config.color }}>
+                    {formatPercentage(item.pct)}
+                  </span>
+                )}
               </div>
 
               {/* Secondary metrics */}
