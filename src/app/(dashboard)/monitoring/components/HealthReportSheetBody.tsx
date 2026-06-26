@@ -71,7 +71,7 @@ export function SheetBody({ report }: { report: HealthReportDetail }) {
               return (
                 <li key={i} className="rounded-md border p-2.5 text-sm">
                   <div className="mb-1 flex items-center gap-2">
-                    <Badge className={cn('text-[10px]', sev.cls)}>{sev.label}</Badge>
+                    <Badge className={cn('text-xs', sev.cls)}>{sev.label}</Badge>
                     <span className="text-xs text-muted-foreground">{issue.category}</span>
                   </div>
                   <p>{issue.description}</p>

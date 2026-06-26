@@ -106,6 +106,7 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
                   className="group flex flex-col items-center gap-1 rounded-lg p-1.5 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => handleCircleClick(report.date)}
                   aria-label={`${day} ${date}: ${report.status}, проблем: ${report.issues}`}
+                  title={`${day} ${date}: ${report.status}, проблем: ${report.issues}`}
                   role="listitem"
                 >
                   <div

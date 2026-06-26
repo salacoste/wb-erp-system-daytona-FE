@@ -133,10 +133,17 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{pipeline.displayName}</p>
                   <div className="flex items-center gap-1">
-                    <Badge variant="outline" className="px-1 py-0 text-[10px]">
+                    <Badge
+                      variant="outline"
+                      className="px-1 py-0 text-[10px]"
+                      title={`Категория: ${CATEGORY_RU[pipeline.category]}`}
+                    >
                       {CATEGORY_RU[pipeline.category]}
                     </Badge>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span
+                      className="text-[10px] text-muted-foreground"
+                      title={`Ожидаемая частота: ${pipeline.expectedFrequency}`}
+                    >
                       {pipeline.expectedFrequency}
                     </span>
                   </div>

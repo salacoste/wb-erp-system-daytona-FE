@@ -91,7 +91,11 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
           {compact ? config.shortLabel : config.label}
         </span>
         {tariffs.isFixedStorage && (
-          <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
+          <Badge
+            variant="outline"
+            className="text-[10px] px-1 py-0 h-4"
+            title="Фиксированная ставка хранения"
+          >
             фикс.
           </Badge>
         )}
