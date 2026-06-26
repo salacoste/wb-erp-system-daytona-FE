@@ -68,7 +68,7 @@ export function MarginBySkuTable({
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table>
+      <Table className="sticky-first-column">
         <MarginSkuTableHeader
           sortField={sortField}
           sortOrder={sortOrder}

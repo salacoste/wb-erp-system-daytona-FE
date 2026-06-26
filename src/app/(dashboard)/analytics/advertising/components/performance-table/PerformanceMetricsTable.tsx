@@ -107,7 +107,7 @@ export function PerformanceMetricsTable({
   return (
     <div className="space-y-4">
       <div className="rounded-md border overflow-x-auto">
-        <Table aria-label="Таблица рекламных метрик">
+        <Table aria-label="Таблица рекламных метрик" className="sticky-first-column">
           <PerformanceTableHeader
             identifierLabel={identifierColumn.label}
             nameColumn={nameColumn}
