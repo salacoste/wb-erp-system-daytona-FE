@@ -1,19 +1,25 @@
 'use client'
 
 /**
- * Zustand store for dashboard widget visibility settings.
- * Persists user preferences to localStorage.
- * Minimum 3 widgets must remain visible at all times.
+ * Zustand store for dashboard widget visibility settings + persona presets (TZ-4).
+ * Persists user preferences (visibleWidgets + persona) to localStorage via
+ * dashboardWidgetsStorage. Minimum 3 widgets must remain visible at all times.
  *
- * Uses manual localStorage sync with a custom getState override
- * so reading the store always reflects the latest localStorage value.
- * Format in localStorage: { state: { visibleWidgets: {...} } }
+ * Uses manual localStorage sync with a custom getState override so reading the
+ * store always reflects the latest localStorage value.
  *
  * @see Story 65.8: Widget Visibility Settings
- * @see docs/epics/epic-65-dashboard-metrics-parity/stories-wave-1-2.md
+ * @see docs/ux/IMPLEMENTATION-TZ.md (TZ-4 persona presets)
  */
 
 import { create } from 'zustand'
+import { HIDDEN_BY_PERSONA, type Persona } from './persona-presets'
+import {
+  countVisible,
+  readFromStorage,
+  writeToStorage,
+  type PersistedState,
+} from './dashboardWidgetsStorage'
 
 /** All widget identifiers available on the dashboard */
 export type WidgetId =
@@ -55,9 +61,6 @@ export type VisibleWidgets = Record<WidgetId, boolean>
 /** Minimum number of widgets that must remain visible */
 const MIN_VISIBLE_WIDGETS = 3
 
-/** localStorage key for persistence */
-const STORAGE_KEY = 'wb-repricer-dashboard-widgets'
-
 /** Default state: all widgets visible */
 const DEFAULT_VISIBLE: VisibleWidgets = {
   orders: true,
@@ -76,44 +79,29 @@ const DEFAULT_VISIBLE: VisibleWidgets = {
   returns: true,
 }
 
-function countVisible(widgets: VisibleWidgets): number {
-  return Object.values(widgets).filter(Boolean).length
-}
-
-/** Read persisted widgets from localStorage */
-function readFromStorage(): VisibleWidgets | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as {
-      state?: { visibleWidgets?: VisibleWidgets }
-    }
-    return parsed?.state?.visibleWidgets ?? null
-  } catch {
-    return null
+/** Resolve a persona's full visibility config: all-visible default minus its hidden set. */
+function personaPreset(persona: Persona): VisibleWidgets {
+  const widgets = { ...DEFAULT_VISIBLE }
+  for (const id of HIDDEN_BY_PERSONA[persona]) {
+    widgets[id] = false
   }
-}
-
-/** Write state to localStorage in persist-compatible format */
-function writeToStorage(visibleWidgets: VisibleWidgets): void {
-  if (typeof window === 'undefined') return
-  try {
-    const data = { state: { visibleWidgets } }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-  } catch {
-    // Silently ignore storage errors (quota, etc.)
-  }
+  return widgets
 }
 
 interface DashboardWidgetsState {
   visibleWidgets: VisibleWidgets
+  /** Active persona preset, or null when none applied yet (role default applied by PersonaSelector). */
+  persona: Persona | null
   toggleWidget: (id: WidgetId) => void
+  applyPersona: (persona: Persona) => void
   resetAll: () => void
 }
 
+const initialStored: PersistedState | null = readFromStorage()
+
 export const useDashboardWidgetsStore = create<DashboardWidgetsState>()((set, get) => ({
-  visibleWidgets: readFromStorage() ?? { ...DEFAULT_VISIBLE },
+  visibleWidgets: initialStored?.visibleWidgets ?? { ...DEFAULT_VISIBLE },
+  persona: initialStored?.persona ?? null,
 
   toggleWidget: (id: WidgetId) => {
     const current = get().visibleWidgets
@@ -125,14 +113,23 @@ export const useDashboardWidgetsStore = create<DashboardWidgetsState>()((set, ge
     }
 
     const updated = { ...current, [id]: !isCurrentlyVisible }
-    writeToStorage(updated)
+    writeToStorage(updated, get().persona)
     set({ visibleWidgets: updated })
   },
 
+  applyPersona: (persona: Persona) => {
+    const visibleWidgets = personaPreset(persona)
+    writeToStorage(visibleWidgets, persona)
+    set({ visibleWidgets, persona })
+  },
+
   resetAll: () => {
+    // Reset to the all-visible Owner preset (NOT persona null) so PersonaSelector's
+    // role-default effect (which only fires when persona===null) doesn't immediately
+    // re-apply a persona and undo the user's reset. (TZ-4 review.)
     const defaults = { ...DEFAULT_VISIBLE }
-    writeToStorage(defaults)
-    set({ visibleWidgets: defaults })
+    writeToStorage(defaults, 'Owner')
+    set({ visibleWidgets: defaults, persona: 'Owner' })
   },
 }))
 
@@ -140,7 +137,7 @@ export const useDashboardWidgetsStore = create<DashboardWidgetsState>()((set, ge
  * Keep localStorage in sync when state changes externally (e.g., setState).
  */
 useDashboardWidgetsStore.subscribe(state => {
-  writeToStorage(state.visibleWidgets)
+  writeToStorage(state.visibleWidgets, state.persona)
 })
 
 /**
@@ -153,13 +150,15 @@ useDashboardWidgetsStore.getState = () => {
   const stored = readFromStorage()
   const current = originalGetState()
   if (stored) {
-    // Merge stored widgets into current state (without triggering set)
-    const merged = { ...current, visibleWidgets: stored }
-    // Sync in-memory state silently if localStorage differs
-    const currentJson = JSON.stringify(current.visibleWidgets)
-    const storedJson = JSON.stringify(stored)
-    if (currentJson !== storedJson) {
-      useDashboardWidgetsStore.setState({ visibleWidgets: stored })
+    const merged = { ...current, visibleWidgets: stored.visibleWidgets, persona: stored.persona }
+    const widgetsChanged =
+      JSON.stringify(current.visibleWidgets) !== JSON.stringify(stored.visibleWidgets)
+    const personaChanged = current.persona !== stored.persona
+    if (widgetsChanged || personaChanged) {
+      useDashboardWidgetsStore.setState({
+        visibleWidgets: stored.visibleWidgets,
+        persona: stored.persona,
+      })
     }
     return merged
   }
