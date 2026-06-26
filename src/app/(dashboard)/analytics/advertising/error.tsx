@@ -34,7 +34,7 @@ export default function AdvertisingAnalyticsError({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Произошла ошибка</h3>
+          <h2 className="text-lg font-semibold mb-2">Произошла ошибка</h2>
           <p className="text-muted-foreground mb-6 max-w-md">
             Не удалось загрузить страницу рекламной аналитики. Попробуйте обновить страницу.
           </p>

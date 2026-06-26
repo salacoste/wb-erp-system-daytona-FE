@@ -80,7 +80,7 @@ export function ElasticitySkuChart({ elasticity, profitMaxPrice }: ElasticitySku
 
   return (
     <div>
-      <h4 className="text-sm font-medium mb-2">Кривая эластичности спроса</h4>
+      <h2 className="text-sm font-medium mb-2">Кривая эластичности спроса</h2>
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />

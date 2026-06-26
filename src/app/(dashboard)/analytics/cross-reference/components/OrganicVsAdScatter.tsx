@@ -100,7 +100,7 @@ export function OrganicVsAdScatter({ items }: OrganicVsAdScatterProps) {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-3">Органика vs Реклама</h3>
+      <h2 className="text-lg font-semibold mb-3">Органика vs Реклама</h2>
       <ResponsiveContainer width="100%" height={350}>
         <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />

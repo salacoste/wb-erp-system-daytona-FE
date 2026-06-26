@@ -62,7 +62,8 @@ export function AlertRulesList({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <BellOff className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold text-muted-foreground mb-2">Нет правил</h3>
+          {/* h2 — alerts page renders h1 in AlertsPageHeader; no h2 precedes this empty-state section */}
+          <h2 className="text-lg font-semibold text-muted-foreground mb-2">Нет правил</h2>
           <p className="text-sm text-muted-foreground">
             Создайте первое правило оповещения для автоматического мониторинга
           </p>

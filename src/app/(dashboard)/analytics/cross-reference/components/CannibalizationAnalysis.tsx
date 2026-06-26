@@ -59,7 +59,7 @@ export function CannibalizationAnalysis({ items }: CannibalizationAnalysisProps)
     <div>
       <div className="flex items-center gap-2 mb-3">
         <ShieldAlert className="h-5 w-5 text-amber-600" aria-hidden="true" />
-        <h3 className="text-lg font-semibold">Анализ каннибализации</h3>
+        <h2 className="text-lg font-semibold">Анализ каннибализации</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
         Товары, где рекламные расходы могут замещать органические продажи

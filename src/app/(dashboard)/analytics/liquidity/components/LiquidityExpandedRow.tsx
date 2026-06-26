@@ -19,11 +19,11 @@ export function LiquidityExpandedRow({ item }: LiquidityExpandedRowProps) {
       <TableCell colSpan={8} className="bg-muted/20 p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <h4 className="text-sm font-medium mb-2">Рекомендация</h4>
+            <h3 className="text-sm font-medium mb-2">Рекомендация</h3>
             <p className="text-sm text-muted-foreground">{item.recommendation}</p>
           </div>
           <div>
-            <h4 className="text-sm font-medium mb-2">Ценообразование</h4>
+            <h3 className="text-sm font-medium mb-2">Ценообразование</h3>
             <div className="space-y-1 text-sm">
               <p>
                 Цена:{' '}
@@ -42,7 +42,7 @@ export function LiquidityExpandedRow({ item }: LiquidityExpandedRowProps) {
             </div>
           </div>
           <div>
-            <h4 className="text-sm font-medium mb-2">Продажи (30 дней)</h4>
+            <h3 className="text-sm font-medium mb-2">Продажи (30 дней)</h3>
             <div className="space-y-1 text-sm">
               <p>Продано: {item.units_sold_30d} шт.</p>
               <p>Ср. остаток: {Math.round(item.avg_stock_qty_30d)} шт.</p>

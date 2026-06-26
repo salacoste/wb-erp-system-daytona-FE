@@ -86,9 +86,9 @@ export function AdvertisingEmptyState({
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+          <h2 className="text-lg font-semibold text-muted-foreground mb-2">
             Нет данных за выбранный период
-          </h3>
+          </h2>
           <p className="text-muted-foreground mb-4 max-w-md">
             Попробуйте выбрать другой период или проверьте, есть ли рекламные кампании
           </p>

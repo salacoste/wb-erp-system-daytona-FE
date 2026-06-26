@@ -94,7 +94,7 @@ export function ProductScatterChart({ items }: ProductScatterChartProps) {
   if (data.length < 2) {
     return (
       <div>
-        <h3 className="text-lg font-semibold mb-3">Вклад органики vs Расходы на рекламу</h3>
+        <h2 className="text-lg font-semibold mb-3">Вклад органики vs Расходы на рекламу</h2>
         <p className="text-muted-foreground text-sm">
           Недостаточно данных для построения графика (нужно минимум 2 товара с рекламными расходами)
         </p>
@@ -106,7 +106,7 @@ export function ProductScatterChart({ items }: ProductScatterChartProps) {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-3">Вклад органики vs Расходы на рекламу</h3>
+      <h2 className="text-lg font-semibold mb-3">Вклад органики vs Расходы на рекламу</h2>
       <ResponsiveContainer width="100%" height={400}>
         <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
           <CartesianGrid strokeDasharray="3 3" />

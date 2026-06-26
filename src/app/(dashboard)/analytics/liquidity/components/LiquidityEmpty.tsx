@@ -16,7 +16,7 @@ export function LiquidityEmpty() {
             <Droplets className="h-16 w-16 text-muted-foreground/30" />
             <FileQuestion className="absolute -bottom-1 -right-1 h-8 w-8 text-muted-foreground/50" />
           </div>
-          <h3 className="text-lg font-semibold mb-2">Нет данных о ликвидности</h3>
+          <h2 className="text-lg font-semibold mb-2">Нет данных о ликвидности</h2>
           <p className="text-sm text-muted-foreground max-w-md">
             Для анализа ликвидности необходимы данные о продажах и остатках товаров. Убедитесь, что
             данные загружены и обработаны.

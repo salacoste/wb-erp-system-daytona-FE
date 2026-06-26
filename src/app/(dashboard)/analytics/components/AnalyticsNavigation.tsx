@@ -81,7 +81,8 @@ export function NavigationSection({
   return (
     <div className="flex flex-col h-full">
       <div className="mb-3">
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{title}</h3>
+        {/* h2 — analytics hub renders h1 in AnalyticsPageHeader; section title groups navigation cards */}
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{title}</h2>
         <p className="text-xs text-gray-400">{description}</p>
       </div>
       <div

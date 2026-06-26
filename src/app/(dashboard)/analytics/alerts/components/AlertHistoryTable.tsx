@@ -61,7 +61,8 @@ export function AlertHistoryTable({
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <h3 className="text-lg font-semibold text-muted-foreground mb-2">Нет уведомлений</h3>
+          {/* h2 — alerts page renders h1 in AlertsPageHeader; no h2 precedes this empty-state section */}
+          <h2 className="text-lg font-semibold text-muted-foreground mb-2">Нет уведомлений</h2>
           <p className="text-sm text-muted-foreground">
             За выбранный период уведомлений не найдено
           </p>
