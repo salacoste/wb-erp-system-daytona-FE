@@ -66,7 +66,7 @@ export function MarginByBrandTable({
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table>
+      <Table className="sticky-first-column">
         <MarginAggregatedTableHeader
           entityLabel="Бренд"
           sortField={sortField}

@@ -106,7 +106,7 @@ export function SkuFinancialsTable({
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table>
+      <Table className="sticky-first-column">
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Код WB</TableHead>
