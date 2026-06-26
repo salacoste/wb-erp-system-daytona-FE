@@ -5,8 +5,8 @@
  * anomaly indicator + comparison + tooltip are preserved exactly). Expanded: the
  * P&L waterfall chain Revenue → −COGS → Gross → −Logistics/Storage/Commissions →
  * Operating → −Tax → Net, plus the two margin-% rows, so every metric stays
- * reachable. The low-COGS-coverage indicator (formerly on GrossProfit/Margin
- * cards) is preserved with its Assign-COGS CTA.
+ * reachable. (TZ-6: the low-COGS-coverage indicator that lived here was removed —
+ * CogsCoverageMetricCard is the single canonical COGS-coverage surface.)
  *
  * @see docs/ux/IMPLEMENTATION-TZ.md (TZ-2)
  */
@@ -14,8 +14,8 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle, ChevronDown } from 'lucide-react'
-import { cn, formatCurrency, formatPercentage, formatPercentageInt } from '@/lib/utils'
+import { ChevronDown } from 'lucide-react'
+import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
 import { getNetProfit } from '@/lib/tax-display-helpers'
 import { NetProfitCard } from './NetProfitCard'
 import { buildProfitWaterfall, type ProfitWaterfallRow } from './profit-waterfall'
@@ -88,23 +88,8 @@ export function ProfitWaterfallCard(props: DashboardMetricsGridProps): React.Rea
             <WaterfallRowItem key={row.id} row={row} />
           ))}
         </ul>
-        {props.cogsCoverage < 100 && (
-          <div className="mt-2 flex items-center gap-1 text-xs text-yellow-600">
-            <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden="true" />
-            <span>
-              Покрытие COGS: {formatPercentageInt(props.cogsCoverage)} — прибыль может быть завышена
-            </span>
-            {props.onAssignCogs && (
-              <button
-                type="button"
-                onClick={props.onAssignCogs}
-                className="ml-1 font-medium text-primary hover:underline"
-              >
-                Назначить
-              </button>
-            )}
-          </div>
-        )}
+        {/* TZ-6: low-COGS-coverage indicator removed — CogsCoverageMetricCard (T1) is the single
+            canonical COGS-coverage surface (AC: coverage in exactly 1 place). */}
         <p className="mt-2 text-xs text-muted-foreground">
           Показаны основные статьи P&amp;L. Чистая прибыль соответствует карточке выше (полный
           налоговый каскад; точная сумма строк зависит от всех удержаний WB).
