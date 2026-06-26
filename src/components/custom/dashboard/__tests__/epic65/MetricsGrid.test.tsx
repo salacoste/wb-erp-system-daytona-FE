@@ -102,13 +102,14 @@ describe('MetricsGrid (Story 65.17)', () => {
   })
 
   describe('flat grid card count', () => {
-    it('renders all 20 metric cards in flat grid', () => {
+    it('renders the consolidated metric grid (TZ-2: 6 profit cards → 1 waterfall)', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
-      // 8 simple + 12 complex + 2 tax cards (Epic 66-FE: TaxCard + NetProfitCard) = 22
+      // TZ-2: 5 profit detail cards retired; NetProfitCard is now the lead inside one
+      // ProfitWaterfallCard (1 article). 8 simple + 8 complex + 1 net-profit = 17.
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(22)
+      expect(articles.length).toBe(17)
     })
   })
 

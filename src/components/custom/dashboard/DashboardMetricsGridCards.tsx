@@ -4,7 +4,7 @@
 
 import { SimpleMetricCard } from './SimpleMetricCard'
 import { buildSimpleCards } from './simpleCardConfigs'
-import { NetProfitCard } from './NetProfitCard'
+import { ProfitWaterfallCard } from './ProfitWaterfallCard'
 import { renderDetailCards } from './DashboardMetricsDetailCards'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 import { useDashboardWidgetsStore, type WidgetId } from '@/stores/dashboardWidgetsStore'
@@ -24,16 +24,7 @@ function resolveSimpleWidget(title: string): WidgetId | null {
 }
 
 export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): React.ReactElement {
-  const {
-    saleGross,
-    payoutTotal,
-    grossProfit,
-    operatingProfitAnalytical,
-    taxMetrics,
-    previousPeriodData: prev,
-    error,
-    onRetry,
-  } = props
+  const { error, onRetry } = props
 
   const visibleWidgets = useDashboardWidgetsStore(s => s.visibleWidgets)
   const isVisible = (id: WidgetId | null) => id === null || visibleWidgets[id]
@@ -43,16 +34,10 @@ export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): Rea
 
   return (
     <>
-      <NetProfitCard
-        taxMetrics={taxMetrics ?? null}
-        payoutTotal={payoutTotal ?? null}
-        saleGrossTotal={saleGross ?? null}
-        operatingProfit={operatingProfitAnalytical ?? grossProfit ?? null}
-        previousTaxMetrics={prev?.taxMetrics ?? null}
-        previousPayoutTotal={prev?.payoutTotal ?? null}
-        previousOperatingProfit={prev?.operatingProfitAnalytical ?? prev?.grossProfit ?? null}
-        isLoading={false}
-      />
+      {/* TZ-2: replaces NetProfitCard + 5 profit detail cards. The 'grossProfit'/'margin'
+          widget toggles are now no-ops until TZ-4 (persona presets) reworks the model —
+          NetProfit must stay always-visible as the hero, so the card is not widget-gated. */}
+      <ProfitWaterfallCard {...props} />
       {cards.map(c => (
         <SimpleMetricCard key={c.title} {...c} error={e} onRetry={onRetry} />
       ))}

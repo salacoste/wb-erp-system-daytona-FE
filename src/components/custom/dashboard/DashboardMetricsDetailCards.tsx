@@ -10,7 +10,6 @@ import { PaidAcceptanceCard } from './PaidAcceptanceCard'
 import { CostsCard } from './CostsCard'
 import { AdvertisingCard } from './AdvertisingCard'
 import { OtherDeductionsCard } from './OtherDeductionsCard'
-import { renderProfitDetailCards } from './DashboardProfitDetailCards'
 import { getWbDeductions, type DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 import type { WidgetId } from '@/stores/dashboardWidgetsStore'
 
@@ -119,7 +118,7 @@ export function renderDetailCards(
           onRetry={p.onRetry}
         />
       )}
-      {renderProfitDetailCards(props, s)}
+      {/* TZ-2: gross/operating/margin/tax cards merged into ProfitWaterfallCard. */}
     </>
   )
 }
