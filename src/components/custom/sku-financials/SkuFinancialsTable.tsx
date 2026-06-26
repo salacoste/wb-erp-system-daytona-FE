@@ -119,7 +119,7 @@ export function SkuFinancialsTable({
                 {renderSortIcon('productName')}
               </button>
             </TableHead>
-            <TableHead className="text-right">
+            <TableHead className="hidden lg:table-cell text-right">
               <SalesQtyHeader
                 onSort={() => handleSort('salesQty')}
                 sortIcon={renderSortIcon('salesQty')}
@@ -131,8 +131,8 @@ export function SkuFinancialsTable({
                 sortIcon={renderSortIcon('revenueNet')}
               />
             </TableHead>
-            <TableHead className="text-right">COGS</TableHead>
-            <TableHead className="text-right">
+            <TableHead className="hidden lg:table-cell text-right">COGS</TableHead>
+            <TableHead className="hidden lg:table-cell text-right">
               <ExpensesHeader />
             </TableHead>
             <TableHead className="text-right">

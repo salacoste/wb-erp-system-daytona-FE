@@ -82,12 +82,12 @@ export function UnitEconomicsTable({
                   {getSortIcon('revenue', sortBy, sortOrder)}
                 </Button>
               </TableHead>
-              <TableHead className="text-right">COGS %</TableHead>
-              <TableHead className="text-right">Комиссия %</TableHead>
-              <TableHead className="text-right">Логистика %</TableHead>
-              <TableHead className="text-right">Хранение %</TableHead>
+              <TableHead className="hidden lg:table-cell text-right">COGS %</TableHead>
+              <TableHead className="hidden lg:table-cell text-right">Комиссия %</TableHead>
+              <TableHead className="hidden lg:table-cell text-right">Логистика %</TableHead>
+              <TableHead className="hidden lg:table-cell text-right">Хранение %</TableHead>
               <TableHead
-                className="text-right"
+                className="hidden lg:table-cell text-right"
                 title="Стоимость доставки на единицу товара из последней подтверждённой отправки"
                 aria-sort={
                   sortBy === 'delivery_to_warehouse' ? (`${sortOrder}ending` as const) : 'none'

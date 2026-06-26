@@ -51,13 +51,20 @@ export function PerformanceTableHeader({
           minWidth="min-w-[120px]"
           label="Из рекламы"
           tooltip="Выручка только из рекламных кампаний"
+          hiddenOnNarrow
         />
         <HeaderTooltip
           minWidth="min-w-[100px]"
           label="Органика"
           tooltip="Продажи не связанные с рекламой (Всего - Реклама)"
+          hiddenOnNarrow
         />
-        <HeaderTooltip minWidth="min-w-[70px]" label="%" tooltip="Доля органики от общих продаж" />
+        <HeaderTooltip
+          minWidth="min-w-[70px]"
+          label="%"
+          tooltip="Доля органики от общих продаж"
+          hiddenOnNarrow
+        />
         <TableHead scope="col" className="min-w-[100px] text-right">
           Прибыль
         </TableHead>
@@ -70,7 +77,7 @@ export function PerformanceTableHeader({
             onSort={onSortChange}
           />
         </TableHead>
-        <TableHead scope="col" className="min-w-[80px] text-right">
+        <TableHead scope="col" className="min-w-[80px] hidden lg:table-cell text-right">
           <SortableHeader
             label="ROI"
             field="roi"
@@ -79,7 +86,7 @@ export function PerformanceTableHeader({
             onSort={onSortChange}
           />
         </TableHead>
-        <TableHead scope="col" className="min-w-[70px] text-right">
+        <TableHead scope="col" className="min-w-[70px] hidden lg:table-cell text-right">
           CTR
         </TableHead>
         <TableHead scope="col" className="min-w-[100px]">
@@ -95,13 +102,19 @@ function HeaderTooltip({
   minWidth,
   label,
   tooltip,
+  hiddenOnNarrow = false,
 }: {
   minWidth: string
   label: string
   tooltip: string
+  /** TZ-10: hide this secondary column below the lg breakpoint (primary cols stay visible). */
+  hiddenOnNarrow?: boolean
 }) {
   return (
-    <TableHead scope="col" className={`${minWidth} text-right`}>
+    <TableHead
+      scope="col"
+      className={`${minWidth} text-right${hiddenOnNarrow ? ' hidden lg:table-cell' : ''}`}
+    >
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
