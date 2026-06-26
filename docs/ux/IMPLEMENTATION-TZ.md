@@ -171,4 +171,4 @@
 _(loop appends one dated line per shipped item: `TZ-N — what shipped · gates result · commit hash`)_
 
 - **2026-06-26** — ТЗ created (approved direction). All Phase 0-4 items `[ ]`. Prior FE work (16 findings + polish round 2 + FE-16 fix + sticky-columns) already on `main`.
-- **2026-06-26** — **TZ-0 shipped.** Added Operations Manager (3rd persona) + role→persona mapping note to `docs/front-end-spec.md` (personas section + Document Change Log v1.1). Docs-only. Gates: `check-doc-citations` exit 0 (broken 100 == baseline, unchanged). Commit/merge pending.
+- **2026-06-26** — **TZ-0 shipped.** Added Operations Manager (3rd persona) + role→persona mapping note to `docs/front-end-spec.md` (personas section + Document Change Log v1.1). Docs-only. Gates: `check-doc-citations` exit 0 (broken 100 == baseline, unchanged). Commit `de08ef88` + merge `6dd282ba` on `main`; pushed `origin/main`.
