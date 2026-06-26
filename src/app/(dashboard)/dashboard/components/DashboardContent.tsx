@@ -22,7 +22,7 @@ import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashb
 import { WidgetSettingsSheet } from '@/components/custom/dashboard/WidgetSettingsSheet'
 import { PersonaSelector } from '@/components/custom/dashboard/PersonaSelector'
 import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
-import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
+import { AnalyticalDisclosure } from './AnalyticalDisclosure'
 import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
 import { useDashboardData } from './useDashboardData'
 import { useDataImportNotification } from '@/hooks/useDataImportNotification'
@@ -131,8 +131,9 @@ export function DashboardContent(): React.ReactElement {
         <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
       </section>
 
-      {/* T3 — Analytical (collapse + lazy deferred to TZ-6) */}
-      <section aria-label="Аналитика" className="space-y-4">
+      {/* T3 — Analytical: collapsed + lazy by default (TZ-6). COGS de-dup: InitialDataSummary
+          removed; CogsCoverageMetricCard (T1) is the canonical COGS indicator. */}
+      <AnalyticalDisclosure>
         <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
         {d.periodType === 'week' && <ExpenseStructurePieChart week={d.selectedWeek} />}
         <div role="region" aria-label="Юнит-экономика">
@@ -141,13 +142,7 @@ export function DashboardContent(): React.ReactElement {
         <OrdersSeasonalPatterns />
         <TrendGraph />
         <HistoricalTrendsSection currentWeek={d.selectedWeek} />
-        <InitialDataSummary
-          cogsCoverage={d.cogsCoverage}
-          totalProducts={d.totalProducts ?? 0}
-          productsWithCogs={d.inventoryWithCogs}
-          canAssignCogs={canAssignCogs}
-        />
-      </section>
+      </AnalyticalDisclosure>
 
       {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">

@@ -96,13 +96,9 @@ export function renderDetailCards(
         <CostsCard
           cogsTotal={p.cogsTotal}
           previousCogs={prev?.cogsTotal}
-          cogsCoverage={p.cogsCoverage}
-          productsWithCogs={p.productsWithCogs}
-          totalProducts={p.totalProducts}
           isLoading={false}
           error={p.error}
           onRetry={p.onRetry}
-          onAssignCogs={p.onAssignCogs}
         />
       )}
       {s('advertising') && (

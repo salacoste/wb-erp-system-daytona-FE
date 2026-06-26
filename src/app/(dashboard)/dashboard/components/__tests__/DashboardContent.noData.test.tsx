@@ -95,7 +95,6 @@ vi.mock('@/components/custom/DashboardPeriodSelector', () => ({
   DashboardPeriodSelector: () => null,
 }))
 vi.mock('@/components/custom/PeriodContextLabel', () => ({ PeriodContextLabel: () => null }))
-vi.mock('@/components/custom/InitialDataSummary', () => ({ InitialDataSummary: () => null }))
 vi.mock('@/components/custom/MissingCogsAlert', () => ({ MissingCogsAlert: () => null }))
 vi.mock('@/components/custom/CogsCoverageMetricCard', () => ({
   CogsCoverageMetricCard: () => null,

@@ -176,9 +176,6 @@ vi.mock('@/components/custom/PeriodContextLabel', () => ({
   PeriodContextLabel: () => <span data-testid="period-label">Period Label</span>,
 }))
 
-vi.mock('@/components/custom/InitialDataSummary', () => ({
-  InitialDataSummary: () => <div data-testid="initial-data-summary">Initial Data Summary</div>,
-}))
 vi.mock('@/components/custom/MissingCogsAlert', () => ({ MissingCogsAlert: () => null }))
 vi.mock('@/components/custom/CogsCoverageMetricCard', () => ({
   CogsCoverageMetricCard: () => null,

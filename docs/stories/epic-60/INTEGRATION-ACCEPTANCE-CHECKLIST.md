@@ -111,7 +111,7 @@ const { data: financeSummary } = useFinancialSummary(
 
 **Root Cause**:
 ```typescript
-// src/app/(dashboard)/dashboard/components/DashboardContent.tsx:158
+// src/app/(dashboard)/dashboard/components/DashboardContent.tsx
 <MetricCardEnhanced
   title="ROAS рекламы"
   value={null}  // ❌ EXPLICITLY HARDCODED

@@ -6,7 +6,7 @@
  * re-wiring regressions that the pure-helper test (which takes values as input) cannot.
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { screen, fireEvent } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { ProfitWaterfallCard } from '../ProfitWaterfallCard'
@@ -117,17 +117,6 @@ describe('ProfitWaterfallCard (TZ-2)', () => {
     // Both the lead headline and the chain 'net' row carry the same 41500.
     expect(leadDigits).toContain('41500')
     expect(rowDigits(container, 'Чистая прибыль')).toBe('41500')
-  })
-
-  it('shows the low-COGS-coverage indicator with CTA when coverage < 100', () => {
-    const onAssignCogs = vi.fn()
-    renderWithProviders(
-      <ProfitWaterfallCard {...createProps({ cogsCoverage: 60, onAssignCogs })} />
-    )
-    fireEvent.click(screen.getByRole('button', { name: /структура прибыли/i }))
-    expect(screen.getByText(/покрытие cogs/i)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /назначить/i }))
-    expect(onAssignCogs).toHaveBeenCalledOnce()
   })
 
   it('falls back to operating profit for Net when tax is not configured', () => {

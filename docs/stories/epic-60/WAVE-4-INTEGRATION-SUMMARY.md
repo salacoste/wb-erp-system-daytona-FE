@@ -147,7 +147,7 @@ const { data: financeSummary } = useFinancialSummary(
 
 ### Bug #5: ROAS Hardcoded to Null
 **Severity**: 🟠 High
-**Location**: `src/app/(dashboard)/dashboard/components/DashboardContent.tsx:158`
+**Location**: `src/app/(dashboard)/dashboard/components/DashboardContent.tsx`
 **Impact**: ROAS always shows "—"
 
 **Current Code**:
