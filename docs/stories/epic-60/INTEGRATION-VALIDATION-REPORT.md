@@ -143,7 +143,7 @@ const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
 ```
 
 #### Issue 2.2: ROAS Hardcoded to Null
-**File**: `src/app/(dashboard)/dashboard/components/DashboardContent.tsx:156-162`
+**File**: `src/app/(dashboard)/dashboard/components/DashboardContent.tsx`
 
 ```typescript
 // ❌ EXPLICITLY HARDCODED TO NULL

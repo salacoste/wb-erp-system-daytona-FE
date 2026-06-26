@@ -11,6 +11,8 @@ import {
   PeriodComparisonSection,
   FulfillmentShareBar,
 } from '@/components/custom/dashboard'
+import { DashboardHero } from '@/components/custom/dashboard/DashboardHero'
+import { buildDashboardGridProps } from './dashboardGridProps'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { DashboardStatusBanners } from './DashboardStatusBanners'
 import { DashboardStatusStrip } from './DashboardStatusStrip'
@@ -67,8 +69,14 @@ export function DashboardContent(): React.ReactElement {
     inventoryWithCogs: d.inventoryWithCogs,
   })
 
+  // Shared P&L props for the hero (T1) and the detailed grid (T2). TZ-5.
+  const gridProps = buildDashboardGridProps(
+    d,
+    canAssignCogs ? () => router.push(ROUTES.COGS.ROOT) : undefined
+  )
+
   return (
-    <div className="space-y-4 pb-8">
+    <div className="space-y-6 pb-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-foreground">Главная страница</h1>
@@ -90,93 +98,63 @@ export function DashboardContent(): React.ReactElement {
         </div>
       </div>
 
+      {/* T1 — Hero (above the fold): status strip + persona KPIs + canonical COGS indicator */}
       {status.count > 0 && status.highestSeverity && (
         <DashboardStatusStrip count={status.count} severity={status.highestSeverity}>
           <DashboardStatusBanners data={d} canAssignCogs={canAssignCogs} />
         </DashboardStatusStrip>
       )}
-
-      <div role="region" aria-label="Ключевые метрики">
-        <DashboardMetricsGrid
-          totalOrders={d.fSummary?.total.ordersCount}
-          ordersRevenue={d.fSummary?.total.ordersRevenue}
-          ordersRevenueDiscounted={d.fSummary?.total.ordersRevenueDiscounted}
-          salesCount={d.salesCount}
-          returnsCount={d.returnsCount}
-          saleGross={d.summary?.sale_gross_total}
-          wbSalesGross={d.summary?.wb_sales_gross_total}
-          wbReturnsGross={d.summary?.wb_returns_gross_total}
-          commissionSales={d.summary?.commission_sales_total}
-          acquiringFee={d.summary?.acquiring_fee_total}
-          loyaltyFee={d.summary?.loyalty_fee_total}
-          penaltiesTotal={d.summary?.penalties_total}
-          wbCommissionAdj={d.summary?.wb_commission_adj_total}
-          logisticsCost={d.summary?.logistics_cost_total}
-          logisticsBreakdown={d.logisticsBreakdown}
-          payoutTotal={d.summary?.payout_total}
-          storageCost={d.summary?.storage_cost_total}
-          paidAcceptanceCost={d.summary?.paid_acceptance_cost_total}
-          cogsTotal={d.summary?.cogs_total ?? undefined}
-          cogsCoverage={d.cogsCoverage}
+      <section aria-label="Главные метрики" className="space-y-3">
+        <DashboardHero {...gridProps} />
+        <CogsCoverageMetricCard
           productsWithCogs={d.inventoryWithCogs}
           totalProducts={d.totalProducts ?? 0}
-          advertisingSpend={d.advertisingQuery.current?.summary?.total_spend}
-          advertisingRoas={d.advertisingQuery.current?.summary?.overall_roas}
-          wbPromotionCost={d.summary?.wb_promotion_cost_total ?? undefined}
-          wbJamCost={d.summary?.wb_jam_cost_total ?? undefined}
-          wbOtherServicesCost={d.summary?.wb_other_services_cost_total ?? undefined}
-          grossProfit={d.summary?.gross_profit ?? undefined}
-          marginPct={d.summary?.margin_pct ?? undefined}
-          grossProfitAnalytical={d.summary?.gross_profit_analytical ?? undefined}
-          operatingProfitAnalytical={d.summary?.operating_profit_analytical ?? undefined}
-          operatingMarginPct={d.summary?.operating_margin_pct ?? undefined}
-          grossMarginPct={d.summary?.gross_margin_pct ?? undefined}
-          taxMetrics={d.effectiveTaxMetrics ?? null}
-          previousPeriodData={d.previousPeriodData}
-          isLoading={d.isLoading}
-          error={d.error}
-          onRetry={d.handleRetry}
-          onAssignCogs={canAssignCogs ? () => router.push(ROUTES.COGS.ROOT) : undefined}
+          coverage={d.cogsCoverage}
+          isLoading={d.productsLoading || d.cogsLoading}
+          onClick={canAssignCogs ? () => router.push(ROUTES.COGS.ROOT) : undefined}
         />
-      </div>
-      {(d.fboShare > 0 || d.fbsShare > 0) && (
-        <FulfillmentShareBar fboShare={d.fboShare} fbsShare={d.fbsShare} />
-      )}
-      <CogsCoverageMetricCard
-        productsWithCogs={d.inventoryWithCogs}
-        totalProducts={d.totalProducts ?? 0}
-        coverage={d.cogsCoverage}
-        isLoading={d.productsLoading || d.cogsLoading}
-        onClick={canAssignCogs ? () => router.push(ROUTES.COGS.ROOT) : undefined}
-      />
-      <PeriodComparisonSection currentWeek={d.selectedWeek} />
-      <DailyBreakdownSection className="mt-4" />
-      <InventorySummaryWidget />
-      <div role="region" aria-label="Хранение">
-        <StorageSection selectedWeek={d.selectedWeek} />
-      </div>
-      <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
-      <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
-      <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
-      {d.periodType === 'week' && <ExpenseStructurePieChart week={d.selectedWeek} />}
-      <div role="region" aria-label="Юнит-экономика">
-        <UnitEconomicsSection />
-      </div>
+      </section>
+
+      {/* T2 — Operational: detailed P&L grid + period/daily/inventory/storage/ads */}
+      <section aria-label="Операционные метрики" className="space-y-4">
+        {(d.fboShare > 0 || d.fbsShare > 0) && (
+          <FulfillmentShareBar fboShare={d.fboShare} fbsShare={d.fbsShare} />
+        )}
+        <DashboardMetricsGrid {...gridProps} />
+        <PeriodComparisonSection currentWeek={d.selectedWeek} />
+        <DailyBreakdownSection className="mt-4" />
+        <InventorySummaryWidget />
+        <div role="region" aria-label="Хранение">
+          <StorageSection selectedWeek={d.selectedWeek} />
+        </div>
+        <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
+        <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
+      </section>
+
+      {/* T3 — Analytical (collapse + lazy deferred to TZ-6) */}
+      <section aria-label="Аналитика" className="space-y-4">
+        <ExpenseChart weekOverride={d.periodType === 'week' ? d.selectedWeek : undefined} />
+        {d.periodType === 'week' && <ExpenseStructurePieChart week={d.selectedWeek} />}
+        <div role="region" aria-label="Юнит-экономика">
+          <UnitEconomicsSection />
+        </div>
+        <OrdersSeasonalPatterns />
+        <TrendGraph />
+        <HistoricalTrendsSection currentWeek={d.selectedWeek} />
+        <InitialDataSummary
+          cogsCoverage={d.cogsCoverage}
+          totalProducts={d.totalProducts ?? 0}
+          productsWithCogs={d.inventoryWithCogs}
+          canAssignCogs={canAssignCogs}
+        />
+      </section>
+
       {d.advertisingQuery.isLoading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-primary/10 px-3 py-2 text-sm">
           <RefreshCw className="mr-2 inline-block h-4 w-4 animate-spin" />
           Обновление данных...
         </div>
       )}
-      <OrdersSeasonalPatterns />
-      <TrendGraph />
-      <HistoricalTrendsSection currentWeek={d.selectedWeek} />
-      <InitialDataSummary
-        cogsCoverage={d.cogsCoverage}
-        totalProducts={d.totalProducts ?? 0}
-        productsWithCogs={d.inventoryWithCogs}
-        canAssignCogs={canAssignCogs}
-      />
     </div>
   )
 }
