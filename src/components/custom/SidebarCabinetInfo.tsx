@@ -69,7 +69,7 @@ export function SidebarCabinetInfo() {
           <Sparkles className="h-3 w-3 text-muted-foreground" />
           <span
             className={cn(
-              'inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold',
+              'inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold',
               JAM_TIER_COLORS[jam.tier]
             )}
           >
