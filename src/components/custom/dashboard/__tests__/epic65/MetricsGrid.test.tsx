@@ -102,14 +102,15 @@ describe('MetricsGrid (Story 65.17)', () => {
   })
 
   describe('flat grid card count', () => {
-    it('renders the consolidated metric grid (TZ-2: 6 profit cards → 1 waterfall)', () => {
+    it('renders the consolidated metric grid (TZ-3: 4 price-level cards → 1)', () => {
       const props = createMinimalGridProps()
       renderWithProviders(<DashboardMetricsGrid {...props} />)
 
-      // TZ-2: 5 profit detail cards retired; NetProfitCard is now the lead inside one
-      // ProfitWaterfallCard (1 article). 8 simple + 8 complex + 1 net-profit = 17.
+      // TZ-2: 6 profit cards → 1 ProfitWaterfallCard (1 article = NetProfitCard).
+      // TZ-3: 4 revenue-by-price-level simple cards → 1 SalesByPriceLevelCard.
+      // 1 net-profit + 4 simple + 1 sales-by-price + 8 complex = 14.
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(17)
+      expect(articles.length).toBe(14)
     })
   })
 
