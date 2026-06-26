@@ -51,9 +51,10 @@ export function StorageNoDataContent({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+          {/* h2 — page renders h1 in StoragePageHeader with no h2 before this empty-state section */}
+          <h2 className="text-lg font-semibold text-muted-foreground mb-2">
             Нет данных за выбранный период
-          </h3>
+          </h2>
           <p className="text-muted-foreground mb-4">
             По периоду с {weekStart} по {weekEnd} отсутствуют данные о расходах на хранение.
           </p>

@@ -23,8 +23,8 @@ export function SupplyPlanningEmpty() {
           <Package className="h-16 w-16 text-gray-400" />
         </div>
 
-        {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Нет данных об остатках</h3>
+        {/* Title — h2 (page renders h1 in SupplyPlanningHeader; no h2 precedes this empty-state section) */}
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">Нет данных об остатках</h2>
 
         {/* Message */}
         <p className="text-sm text-muted-foreground mb-6 max-w-md">

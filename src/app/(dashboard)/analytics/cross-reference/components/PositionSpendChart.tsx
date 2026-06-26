@@ -106,7 +106,7 @@ export function PositionSpendChart({ items }: PositionSpendChartProps) {
   if (data.length < 2) {
     return (
       <div>
-        <h3 className="text-lg font-semibold mb-3">Позиция в поиске vs Расход на рекламу</h3>
+        <h2 className="text-lg font-semibold mb-3">Позиция в поиске vs Расход на рекламу</h2>
         <p className="text-muted-foreground text-sm">
           Недостаточно данных для построения графика (минимум 2 точки)
         </p>
@@ -123,7 +123,7 @@ export function PositionSpendChart({ items }: PositionSpendChartProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-semibold">Позиция в поиске vs Расход на рекламу</h3>
+        <h2 className="text-lg font-semibold">Позиция в поиске vs Расход на рекламу</h2>
         {correlation.pearsonR !== null && <CorrelationBadge r={correlation.pearsonR} />}
       </div>
       <p className="text-sm text-muted-foreground mb-2">

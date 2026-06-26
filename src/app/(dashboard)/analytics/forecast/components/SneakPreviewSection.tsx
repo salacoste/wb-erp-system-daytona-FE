@@ -116,8 +116,8 @@ export function SneakPreviewSection({ status }: Props) {
               : ' Полная AI активируется при сборе достаточного количества данных.'}
           </p>
 
-          {/* Forecast table */}
-          <h3 className="text-base font-semibold">Предварительный прогноз — топ SKU</h3>
+          {/* Forecast table — h2 (page renders h1 in ForecastPageHeader; no h2 precedes this section) */}
+          <h2 className="text-base font-semibold">Предварительный прогноз — топ SKU</h2>
 
           {isLoading && (
             <div className="space-y-2">

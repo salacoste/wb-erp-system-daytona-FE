@@ -86,7 +86,7 @@ export function AdOrganicOverlapTable({ searchQueryItems, adItems }: AdOrganicOv
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-1">Пересечение поисковых запросов и рекламы</h3>
+      <h2 className="text-lg font-semibold mb-1">Пересечение поисковых запросов и рекламы</h2>
       <p className="text-sm text-muted-foreground mb-3">
         Запросы из органического поиска, которые пересекаются с рекламными ключевыми словами
       </p>

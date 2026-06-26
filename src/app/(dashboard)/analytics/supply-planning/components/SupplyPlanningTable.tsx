@@ -76,6 +76,9 @@ export function SupplyPlanningTable({
 
   return (
     <Card>
+      {/* sr-only h2 — page renders h1 in SupplyPlanningHeader; labels this table section so the
+          expanded-row detail panel h3 (SupplyPlanningDetail) doesn't skip h1→h3. */}
+      <h2 className="sr-only">Детализация по поставкам</h2>
       <CardHeader className="pb-4">
         {/* Toolbar: Search, Filter info, Export */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
