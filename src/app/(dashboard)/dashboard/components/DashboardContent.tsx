@@ -104,7 +104,10 @@ export function DashboardContent(): React.ReactElement {
           <DashboardStatusBanners data={d} canAssignCogs={canAssignCogs} />
         </DashboardStatusStrip>
       )}
-      <section aria-label="Главные метрики" className="space-y-3">
+      <section aria-labelledby="dashboard-hero-heading" className="space-y-3">
+        <h2 id="dashboard-hero-heading" className="sr-only">
+          Главные метрики
+        </h2>
         <DashboardHero {...gridProps} />
         <CogsCoverageMetricCard
           productsWithCogs={d.inventoryWithCogs}
@@ -116,7 +119,10 @@ export function DashboardContent(): React.ReactElement {
       </section>
 
       {/* T2 — Operational: detailed P&L grid + period/daily/inventory/storage/ads */}
-      <section aria-label="Операционные метрики" className="space-y-4">
+      <section aria-labelledby="dashboard-operational-heading" className="space-y-4">
+        <h2 id="dashboard-operational-heading" className="sr-only">
+          Операционные метрики
+        </h2>
         {(d.fboShare > 0 || d.fbsShare > 0) && (
           <FulfillmentShareBar fboShare={d.fboShare} fbsShare={d.fbsShare} />
         )}

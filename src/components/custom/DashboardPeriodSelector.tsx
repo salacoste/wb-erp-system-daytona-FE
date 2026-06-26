@@ -15,7 +15,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -132,6 +132,12 @@ export function DashboardPeriodSelector({
             Месяц
           </TabsTrigger>
         </TabsList>
+        {/* TZ-7: the Tabs are used as a week/month toggle (no real panel content). These
+            forceMount hidden panels exist so each trigger's aria-controls resolves to a real
+            id (axe aria-valid-attr-value), with no visual or behavior change.
+            FUTURE tech-debt: migrate to ToggleGroup (proper toggle semantics, no panel contract). */}
+        <TabsContent value="week" forceMount className="hidden" />
+        <TabsContent value="month" forceMount className="hidden" />
       </Tabs>
 
       <Select
