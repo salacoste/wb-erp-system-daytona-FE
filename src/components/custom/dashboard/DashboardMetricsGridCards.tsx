@@ -5,6 +5,7 @@
 import { SimpleMetricCard } from './SimpleMetricCard'
 import { buildSimpleCards } from './simpleCardConfigs'
 import { ProfitWaterfallCard } from './ProfitWaterfallCard'
+import { SalesByPriceLevelCard } from './SalesByPriceLevelCard'
 import { renderDetailCards } from './DashboardMetricsDetailCards'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 import { useDashboardWidgetsStore, type WidgetId } from '@/stores/dashboardWidgetsStore'
@@ -14,7 +15,6 @@ const SIMPLE_CARD_WIDGET: Record<string, WidgetId> = {
   Заказы: 'orders',
   Выкупы: 'sales',
   Возвраты: 'returns',
-  Продажи: 'sales',
 }
 
 /** Resolve which widget a simple card belongs to based on its title */
@@ -41,6 +41,8 @@ export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): Rea
       {cards.map(c => (
         <SimpleMetricCard key={c.title} {...c} error={e} onRetry={onRetry} />
       ))}
+      {/* TZ-3: the 4 revenue-by-price-level cards consolidated into one. */}
+      <SalesByPriceLevelCard {...props} />
       {renderDetailCards(props, visibleWidgets)}
     </>
   )
