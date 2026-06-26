@@ -87,7 +87,7 @@ export function CalendarCell({
 
 export function CalendarLegend() {
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-muted-foreground mt-2">
+    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground mt-2">
       <div className="flex items-center gap-1">
         <div className="w-2 h-2 rounded bg-green-200" />
         <span>≤1.0</span>

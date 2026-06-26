@@ -61,7 +61,7 @@ export function DimensionInputSection<T extends FieldValues>({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Ruler className="h-4 w-4 text-purple-600" aria-hidden="true" />
-          <h3 className="text-sm font-medium text-purple-900">Габариты товара</h3>
+          <div className="text-sm font-medium text-purple-900">Габариты товара</div>
           <AutoFillBadge status={autoFillStatus} onRestore={onRestore} />
         </div>
         <FieldTooltip content="Укажите размеры товара для автоматического расчёта объёма и определения типа груза (МГТ/СГТ/КГТ). Это влияет на тарифы логистики." />

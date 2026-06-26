@@ -54,6 +54,7 @@ export function LiquidityTable({
     <>
       <Card>
         <CardHeader className="pb-2">
+          <h2 className="sr-only">Детализация по ликвидности</h2>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">
               Детализация по артикулам

@@ -98,7 +98,7 @@ export function BackfillStatusTable({
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table scrollContainerTabIndex={0} scrollContainerAriaLabel="Таблица статусов бэкфилла">
         <TableHeader>
           <TableRow>

@@ -61,7 +61,7 @@ export function AdvertisingMainContent({ state, filters }: AdvertisingMainConten
         role="tablist"
         aria-label="Группировка данных"
       >
-        <h3 className="text-sm font-medium text-muted-foreground">Группировка</h3>
+        <div className="text-sm font-medium text-muted-foreground">Группировка</div>
         <GroupByToggle groupBy={state.groupBy} onGroupByChange={state.handleGroupByChange} />
       </div>
       <Card>

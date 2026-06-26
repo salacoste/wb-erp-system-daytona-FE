@@ -56,7 +56,7 @@ export function PercentageCostsFormSection<T extends FieldValues>({
     <div className="bg-emerald-50 rounded-lg p-4 border-l-4 border-l-emerald-400">
       <div className="flex items-center gap-2 mb-4">
         <Percent className="h-4 w-4 text-emerald-600" aria-hidden="true" />
-        <h3 className="text-base font-semibold text-emerald-900">Процентные расходы (%)</h3>
+        <div className="text-base font-semibold text-emerald-900">Процентные расходы (%)</div>
       </div>
 
       <div className="space-y-4">

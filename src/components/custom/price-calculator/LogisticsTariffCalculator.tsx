@@ -64,7 +64,7 @@ export function LogisticsTariffCalculator({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Truck className="h-4 w-4 text-cyan-600" aria-hidden="true" />
-          <h3 className="text-sm font-medium text-cyan-900">Логистика прямая</h3>
+          <div className="text-sm font-medium text-cyan-900">Логистика прямая</div>
         </div>
         <FieldTooltip content="Стоимость доставки товара от склада WB до покупателя. Рассчитывается по формуле: (базовый тариф + (объём - 1) × доп. литр) × коэффициент" />
       </div>

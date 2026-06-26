@@ -98,7 +98,7 @@ export function ReturnLogisticsSection({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Undo2 className="h-4 w-4 text-orange-600" aria-hidden="true" />
-          <h3 className="text-sm font-medium text-orange-900">Логистика обратная</h3>
+          <div className="text-sm font-medium text-orange-900">Логистика обратная</div>
         </div>
         <FieldTooltip content="Стоимость возврата товара. Рассчитывается автоматически на основе прямой логистики и процента buyback (выкупа). Чем выше buyback, тем меньше эффективная стоимость возвратов." />
       </div>

@@ -57,7 +57,8 @@ export function UnitEconomicsTable({
   const showPagination = data.length > PAGE_SIZE_OPTIONS[0]
 
   return (
-    <div className="rounded-md border bg-card">
+    <div className="rounded-md border bg-card overflow-x-auto">
+      <h2 className="sr-only">Детализация по юнит-экономике</h2>
       {/* Scrollable container with max height for sticky header effect */}
       <div className="max-h-[600px] overflow-auto">
         <Table aria-label="Юнит-экономика по товарам">

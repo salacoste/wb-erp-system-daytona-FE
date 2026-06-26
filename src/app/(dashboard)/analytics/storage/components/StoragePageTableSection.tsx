@@ -45,6 +45,7 @@ export function StoragePageTableSection({
       {/* Storage by SKU Table - Story 24.3-fe */}
       <Card>
         <CardHeader>
+          <h2 className="sr-only">Детализация по хранению</h2>
           <CardTitle className="flex items-center gap-2">
             <List className="h-5 w-5 text-muted-foreground" />
             Все товары

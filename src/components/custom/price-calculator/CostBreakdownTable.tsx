@@ -38,7 +38,7 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
     <div className="space-y-6">
       {/* Fixed Costs Section */}
       <div>
-        <h3 className="text-sm font-medium text-muted-foreground mb-3">Фиксированные затраты</h3>
+        <div className="text-sm font-medium text-muted-foreground mb-3">Фиксированные затраты</div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -83,7 +83,7 @@ export function CostBreakdownTable({ data }: CostBreakdownTableProps) {
 
       {/* Percentage Costs Section */}
       <div>
-        <h3 className="text-sm font-medium text-muted-foreground mb-3">Процентные затраты</h3>
+        <div className="text-sm font-medium text-muted-foreground mb-3">Процентные затраты</div>
         <Table>
           <TableHeader>
             <TableRow>
