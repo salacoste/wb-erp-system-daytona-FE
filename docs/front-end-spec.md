@@ -48,6 +48,23 @@ The specification is based on the Product Requirements Document (PRD), Project B
   - Want to track financial trends and identify anomalies
 - **Usage Patterns:** Regular dashboard monitoring, detailed analytics exploration, report generation for stakeholders
 
+**Third Persona: Operations Manager**
+
+- **Profile:** Operations-focused team members responsible for inventory, fulfillment, and logistics on Wildberries — managing stock health, FBO/FBS order flow, returns processing, and warehouse/storage costs across the catalog
+- **Technical Comfort:** Moderate - fluent with operational dashboards and supply/warehouse tooling, but focused on day-to-day execution rather than financial modeling
+- **Primary Goals:**
+  - Catch stockouts and at-risk SKUs before they disrupt sales
+  - Track fulfillment performance and order flow (FBO vs FBS split)
+  - Monitor returns rate and storage-cost trends
+  - Keep COGS coverage complete so profit figures stay trustworthy
+- **Key Pain Points:**
+  - Stock-health and fulfillment data buried below the fold on the default dashboard
+  - No single operational view combining stock, orders, returns, and storage
+  - Hard to tell "no sales yet" from a real performance problem in a category
+- **Usage Patterns:** Daily, operational — opening the dashboard to triage what is broken or at-risk (stock, fulfillment, returns, storage) before any financial deep-dive
+
+> **Role → persona mapping note:** Personas are a *lens* over the same data, not a 1:1 of system roles. Default mapping is `Owner`/`Manager` → Owner, `Analyst` → CFO, `Service` → CFO; the **Operations Manager** lens aligns with the operational dashboards (stock health, fulfillment, returns, storage, inventory) and is selectable by any role via the persona selector.
+
 ### Usability Goals
 
 1. **Ease of Learning:** New users can complete onboarding (cabinet creation, WB token setup, initial data processing) within 10 minutes
@@ -2768,6 +2785,7 @@ formatPercentage(15.5); // "15,5 %"
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
 | 2025-01-20 | 1.0 | Initial front-end specification creation | Sally (UX Expert) |
+| 2026-06-26 | 1.1 | Add Operations Manager (3rd) persona + role→persona mapping note (TZ-0) | UX implementation loop |
 
 ---
 
