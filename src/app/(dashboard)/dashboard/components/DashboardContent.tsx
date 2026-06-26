@@ -18,6 +18,7 @@ import { getDashboardStatusAlerts } from './dashboard-status'
 import { PeriodContextLabel } from '@/components/custom/PeriodContextLabel'
 import { AdvertisingDashboardWidget } from '@/components/custom/AdvertisingDashboardWidget'
 import { WidgetSettingsSheet } from '@/components/custom/dashboard/WidgetSettingsSheet'
+import { PersonaSelector } from '@/components/custom/dashboard/PersonaSelector'
 import { MarketingKpiCard } from '@/app/(dashboard)/analytics/components/MarketingKpiCard'
 import { InitialDataSummary } from '@/components/custom/InitialDataSummary'
 import { CogsCoverageMetricCard } from '@/components/custom/CogsCoverageMetricCard'
@@ -83,6 +84,7 @@ export function DashboardContent(): React.ReactElement {
           role="region"
           aria-label="Выбор периода"
         >
+          <PersonaSelector />
           <DashboardPeriodSelector />
           <WidgetSettingsSheet />
         </div>
