@@ -10,7 +10,7 @@
 'use client'
 
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { formatCurrency, cn } from '@/lib/utils'
+import { formatCurrency, cn, formatPercentage } from '@/lib/utils'
 import { formatWeekLabel } from './trends-config'
 
 export interface TrendsSummaryCardProps {
@@ -39,7 +39,7 @@ function formatValue(value: number, format: 'currency' | 'percentage'): string {
   // Guard non-finite (NaN/Infinity, or a null slipping past the type) → render — (AP#8).
   if (!Number.isFinite(value)) return '—'
   if (format === 'percentage') {
-    return `${value.toFixed(1).replace('.', ',')}%`
+    return formatPercentage(value, 1)
   }
   return formatCurrency(value)
 }
@@ -118,7 +118,7 @@ export function TrendsSummaryCard({
         <TrendIcon className="h-4 w-4" />
         <span>
           {trendPct >= 0 ? '+' : ''}
-          {trendPct.toFixed(1).replace('.', ',')}%
+          {formatPercentage(trendPct, 1)}
         </span>
       </div>
     </div>

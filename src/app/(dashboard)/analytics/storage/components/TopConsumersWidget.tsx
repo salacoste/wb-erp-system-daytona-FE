@@ -134,14 +134,14 @@ export function TopConsumersWidget({
                   <span className="font-medium">{formatCurrency(item.storage_cost)}</span>
                   {/* Show last charge date if available */}
                   {item.last_charge_date && (
-                    <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                    <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                       <Calendar className="h-2.5 w-2.5" />
                       {new Date(item.last_charge_date).toLocaleDateString('ru-RU')}
                     </span>
                   )}
                   {/* Show "No stock" indicator when has_warehouse_stock is false */}
                   {item.has_warehouse_stock === false && (
-                    <span className="text-[10px] text-amber-600 flex items-center gap-0.5">
+                    <span className="text-xs text-amber-600 flex items-center gap-0.5">
                       <PackageX className="h-2.5 w-2.5" />
                       Нет на складе
                     </span>

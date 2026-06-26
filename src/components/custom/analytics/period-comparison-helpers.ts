@@ -9,6 +9,7 @@
 import { ShoppingCart, Wallet, XCircle, Receipt } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { PeriodMetrics, ComparisonMetrics } from '@/types/fbs-analytics'
+import { formatPercentage } from '@/lib/utils'
 
 // Re-export preset types and functions
 export type { PeriodRange, ComparisonPreset } from './period-presets'
@@ -43,7 +44,7 @@ export function formatCurrency(value: number): string {
 
 /** Format percentage with Russian locale */
 export function formatPercent(value: number): string {
-  return `${value.toFixed(2).replace('.', ',')}%`
+  return formatPercentage(value, 2)
 }
 
 /** Format delta with sign */
@@ -55,7 +56,7 @@ export function formatDeltaWithSign(value: number, formatter: (v: number) => str
 /** Format delta percentage with sign */
 export function formatDeltaPctWithSign(value: number): string {
   const sign = value > 0 ? '+' : ''
-  return `${sign}${value.toFixed(1).replace('.', ',')}%`
+  return `${sign}${formatPercentage(value, 1)}`
 }
 
 /** Metric configurations for comparison table */

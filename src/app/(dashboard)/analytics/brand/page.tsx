@@ -134,6 +134,7 @@ export default function MarginAnalysisByBrandPage() {
 
       <Card>
         <CardHeader>
+          <h2 className="sr-only">Детализация по брендам</h2>
           <CardTitle>Маржинальность по брендам</CardTitle>
           <CardDescription>
             Кликните на строку для детализации по товарам бренда. Сортировка по клику на заголовок

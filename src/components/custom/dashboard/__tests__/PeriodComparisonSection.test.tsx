@@ -163,13 +163,13 @@ describe('PeriodComparisonSection - Delta Indicators', () => {
   it('should render negative delta indicator', () => {
     // Logistics -16.7% with invertDirection renders as positive (cost decrease = good)
     renderWithProviders(<PeriodComparisonSection currentWeek="2026-W05" />)
-    expect(screen.getAllByText(/16,7%/).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText(/16,7\s*%/).length).toBeGreaterThanOrEqual(1)
   })
 
   it('should display delta percentages', () => {
     // Revenue +11.1% renders as "+11,1%"
     renderWithProviders(<PeriodComparisonSection currentWeek="2026-W05" />)
-    expect(screen.getByText(/\+11,1%/)).toBeInTheDocument()
+    expect(screen.getByText(/\+11,1\s*%/)).toBeInTheDocument()
   })
 })
 

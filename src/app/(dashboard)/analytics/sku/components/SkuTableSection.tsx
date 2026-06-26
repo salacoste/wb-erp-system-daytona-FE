@@ -17,6 +17,7 @@ export function SkuTableSection({ skuData }: SkuTableSectionProps) {
       {/* SKU Financials Table - Epic 31 */}
       <Card>
         <CardHeader>
+          <h2 className="sr-only">Детализация по товарам</h2>
           <CardTitle>Маржинальность по товарам</CardTitle>
           <CardDescription>Сортировка по клику на заголовок столбца.</CardDescription>
         </CardHeader>

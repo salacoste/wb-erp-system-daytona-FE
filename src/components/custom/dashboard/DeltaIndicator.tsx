@@ -11,7 +11,7 @@
 'use client'
 
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 
 export interface DeltaIndicatorProps {
   /** Percentage change value */
@@ -70,7 +70,7 @@ function formatPercent(value: number): string {
   if (absValue > MAX_DISPLAY_PERCENT) {
     return '999+%'
   }
-  return `${absValue.toFixed(1).replace('.', ',')}%`
+  return formatPercentage(absValue, 1)
 }
 
 /**

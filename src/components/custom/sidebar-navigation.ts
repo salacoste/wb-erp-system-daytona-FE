@@ -59,21 +59,21 @@ export interface NavigationItem {
  * patched in the Sidebar component.
  */
 export const NAVIGATION_ITEMS: NavigationItem[] = [
-  { label: 'Dashboard', href: ROUTES.DASHBOARD, icon: Home },
+  { label: 'Главная', href: ROUTES.DASHBOARD, icon: Home },
   // Epic 40-FE: Orders UI (WB Native Orders History)
   { label: 'Заказы', href: ROUTES.ORDERS.ROOT, icon: ShoppingCart },
   // Orders Integrity Dashboard
   { label: 'Целостность заказов', href: ROUTES.ORDERS.INTEGRITY, icon: ShieldCheck },
   // FBO Orders & Sales
   { label: 'FBO Заказы', href: ROUTES.ORDERS.FBO, icon: PackageSearch },
-  { label: 'COGS Management', href: ROUTES.COGS.ROOT, icon: Package },
+  { label: 'Себестоимость', href: ROUTES.COGS.ROOT, icon: Package },
   // Epic 44: Price Calculator UI
-  { label: 'Price Calculator', href: '/cogs/price-calculator', icon: DollarSign },
+  { label: 'Калькулятор цены', href: '/cogs/price-calculator', icon: DollarSign },
   // Story 6.4-FE: Cabinet Summary Dashboard
-  { label: 'Cabinet Summary', href: ROUTES.ANALYTICS.DASHBOARD, icon: LayoutDashboard },
-  { label: 'Analytics', href: ROUTES.ANALYTICS.ROOT, icon: BarChart3 },
+  { label: 'Сводка по кабинету', href: ROUTES.ANALYTICS.DASHBOARD, icon: LayoutDashboard },
+  { label: 'Аналитика', href: ROUTES.ANALYTICS.ROOT, icon: BarChart3 },
   // Epic 24: Paid Storage Analytics
-  { label: 'Storage', href: ROUTES.ANALYTICS.STORAGE, icon: Warehouse },
+  { label: 'Хранение', href: ROUTES.ANALYTICS.STORAGE, icon: Warehouse },
   // Epic 6: Supply Planning & Stockout Prevention
   { label: 'Планирование', href: ROUTES.ANALYTICS.SUPPLY_PLANNING, icon: PackageSearch },
   // Reorder Dashboard — warehouse replenishment recommendations
@@ -87,10 +87,10 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   // Epic 51-FE: FBS Historical Analytics
   { label: 'Заказы FBS', href: ROUTES.ANALYTICS.ORDERS, icon: ClipboardList },
   // Epic 96-FE Story 96.11: FBS Stock Breakdowns (adjacent to "Заказы FBS" — L-2 fix)
-  // Boxes icon (M2-4): distinguishes from "Storage" which uses Warehouse.
+  // Boxes icon (M2-4): distinguishes from "Хранение" which uses Warehouse.
   { label: 'Остатки FBS', href: ROUTES.ANALYTICS.FBS_STOCK, icon: Boxes },
   // Epic 96-FE Story 96.13: FBS Enhanced Analytics aggregated view (orderStats + funnel)
-  // BarChart2 icon: visually distinct from Boxes (FBS Stock) and Warehouse (Storage).
+  // BarChart2 icon: visually distinct from Boxes (FBS Stock) and Warehouse (Хранение).
   { label: 'Расширенная аналитика FBS', href: ROUTES.ANALYTICS.FBS_ENHANCED, icon: BarChart2 },
   // Epic 68: Marketing Funnel Analytics
   { label: 'Воронка продаж', href: ROUTES.ANALYTICS.FUNNEL, icon: Filter },
@@ -156,5 +156,5 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Налоги', href: ROUTES.SETTINGS.TAX, icon: Receipt },
   // Operational Expenses Management
   { label: 'Расходы', href: ROUTES.SETTINGS.EXPENSES, icon: DollarSign },
-  { label: 'Settings', href: ROUTES.SETTINGS.ROOT, icon: Settings },
+  { label: 'Настройки', href: ROUTES.SETTINGS.ROOT, icon: Settings },
 ]

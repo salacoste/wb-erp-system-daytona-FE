@@ -20,8 +20,11 @@ export function VisibilityTooltip({ commission, acquiring }: VisibilityTooltipPr
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button className="text-gray-400 hover:text-gray-600">
-            <Eye className="h-4 w-4" />
+          <button
+            className="text-gray-400 hover:text-gray-600"
+            aria-label="Удержания WB: комиссия и эквайринг (уже включены в выручку)"
+          >
+            <Eye className="h-4 w-4" aria-hidden="true" />
           </button>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">

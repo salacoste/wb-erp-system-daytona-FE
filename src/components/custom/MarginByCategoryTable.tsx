@@ -65,7 +65,7 @@ export function MarginByCategoryTable({
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <MarginAggregatedTableHeader
           entityLabel="Категория"

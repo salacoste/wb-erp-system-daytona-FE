@@ -210,7 +210,7 @@ describe('PeriodComparisonTable - Metric Rows', () => {
 
   it('should format percentages with comma decimal', () => {
     renderTable()
-    expect(screen.getAllByText(/\d+,\d+%/).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText(/\d+,\d+\s*%/).length).toBeGreaterThanOrEqual(1)
   })
 
   it('should align numeric values to the right (text-right)', () => {
@@ -255,7 +255,7 @@ describe('PeriodComparisonTable - Delta Indicators', () => {
   it('should display percentage delta in parentheses', () => {
     mockSuccess(mockCompareResponsePositive)
     renderTable()
-    expect(screen.getAllByText(/\([+-]?\d+,\d%\)/).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText(/\([+-]?\d+,\d\s*%\)/).length).toBeGreaterThanOrEqual(1)
   })
 
   it('should show green color (text-green-600) for positive changes', () => {

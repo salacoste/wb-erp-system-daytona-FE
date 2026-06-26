@@ -19,7 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { formatCurrency, cn } from '@/lib/utils'
+import { formatCurrency, cn, formatPercentage } from '@/lib/utils'
 import {
   TRENDS_METRIC_MAP,
   formatWeekLabel,
@@ -67,7 +67,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps): React.Re
 
         const formattedValue =
           metric.format === 'percentage'
-            ? `${entry.value.toFixed(1).replace('.', ',')}%`
+            ? formatPercentage(entry.value, 1)
             : formatCurrency(entry.value)
 
         return (
