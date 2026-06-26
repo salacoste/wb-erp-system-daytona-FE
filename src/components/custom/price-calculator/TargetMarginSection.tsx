@@ -33,7 +33,7 @@ export function TargetMarginSection<T extends FieldValues>({
     <div className="bg-primary/5 rounded-lg p-4 border-l-4 border-l-primary">
       <div className="flex items-center gap-2 mb-3">
         <Target className="h-4 w-4 text-primary" aria-hidden="true" />
-        <h3 className="text-sm font-medium">Целевая маржа</h3>
+        <div className="text-sm font-medium">Целевая маржа</div>
       </div>
       <div className="space-y-2">
         <div className="flex items-center gap-2">

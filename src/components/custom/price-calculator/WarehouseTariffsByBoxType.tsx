@@ -127,7 +127,7 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
         </span>
       </div>
       {tariffs.storage.usingStorageFallback && (
-        <div className="flex items-start gap-1 text-[11px] text-amber-700">
+        <div className="flex items-start gap-1 text-xs text-amber-700">
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
           <span>Тариф хранения замещён значением по умолчанию</span>
         </div>

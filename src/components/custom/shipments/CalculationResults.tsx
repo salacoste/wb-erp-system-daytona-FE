@@ -34,7 +34,7 @@ export function CalculationResults({ results }: CalculationResultsProps) {
         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
         <h3 className="text-sm font-semibold">Результаты расчёта</h3>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

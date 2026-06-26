@@ -63,7 +63,7 @@ export function LogisticsTiersEditor({
     <div className="space-y-3">
       <Label className={cn('text-sm font-medium', error && 'text-destructive')}>{label}</Label>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

@@ -60,7 +60,7 @@ export function TaxConfigurationSection({
     >
       <div className="flex items-center gap-2 mb-4">
         <Receipt className="h-4 w-4 text-amber-600" aria-hidden="true" />
-        <h3 className="text-sm font-medium text-amber-900">Налоги</h3>
+        <div className="text-sm font-medium text-amber-900">Налоги</div>
       </div>
 
       <div className="space-y-4">

@@ -111,7 +111,7 @@ export function ElasticitySection() {
         </div>
 
         {/* Expandable per-SKU table */}
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

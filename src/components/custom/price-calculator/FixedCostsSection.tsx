@@ -49,7 +49,7 @@ export function FixedCostsSection<T extends FieldValues>({
     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400">
       <div className="flex items-center gap-2 mb-4">
         <Package className="h-4 w-4 text-blue-600" aria-hidden="true" />
-        <h3 className="text-base font-semibold text-blue-900">Фиксированные затраты (₽)</h3>
+        <div className="text-base font-semibold text-blue-900">Фиксированные затраты (₽)</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">

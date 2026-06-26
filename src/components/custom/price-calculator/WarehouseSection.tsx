@@ -87,7 +87,7 @@ export function WarehouseSection({
     <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-l-purple-400 space-y-5">
       <div className="flex items-center gap-2 mb-4">
         <WarehouseIcon className="h-4 w-4 text-purple-600" aria-hidden="true" />
-        <h3 className="text-base font-semibold text-purple-900">Склад и хранение</h3>
+        <div className="text-base font-semibold text-purple-900">Склад и хранение</div>
         {isLoading && (
           <Loader2
             className="h-4 w-4 animate-spin text-purple-500"
