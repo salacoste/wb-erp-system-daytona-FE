@@ -31,7 +31,7 @@
 
 ## Phase 0 — Prerequisite
 
-### `[ ]` TZ-0 · Add Operations Manager persona to the spec
+### `[x]` TZ-0 · Add Operations Manager persona to the spec
 - **Scope:** document the 3rd persona (approved) in `docs/front-end-spec.md:19-49` — profile, goals, pain points, usage pattern (operational: stock/fulfillment/returns/storage; daily).
 - **AC:** `front-end-spec.md` lists 3 personas (Owner primary, CFO secondary, **Operations Manager**); roles mapping note added (Ops persona ↔ operational dashboards).
 - **Files:** `docs/front-end-spec.md`.
@@ -171,3 +171,4 @@
 _(loop appends one dated line per shipped item: `TZ-N — what shipped · gates result · commit hash`)_
 
 - **2026-06-26** — ТЗ created (approved direction). All Phase 0-4 items `[ ]`. Prior FE work (16 findings + polish round 2 + FE-16 fix + sticky-columns) already on `main`.
+- **2026-06-26** — **TZ-0 shipped.** Added Operations Manager (3rd persona) + role→persona mapping note to `docs/front-end-spec.md` (personas section + Document Change Log v1.1). Docs-only. Gates: `check-doc-citations` exit 0 (broken 100 == baseline, unchanged). Commit/merge pending.
