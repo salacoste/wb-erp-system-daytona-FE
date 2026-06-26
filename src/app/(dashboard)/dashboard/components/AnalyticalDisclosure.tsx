@@ -28,7 +28,10 @@ export function AnalyticalDisclosure({
   const [open, setOpen] = useState(false)
 
   return (
-    <section aria-label="Аналитика" className={cn('space-y-4', className)}>
+    <section aria-labelledby="dashboard-analytical-heading" className={cn('space-y-4', className)}>
+      <h2 id="dashboard-analytical-heading" className="sr-only">
+        Аналитика
+      </h2>
       <Button
         type="button"
         variant="ghost"
@@ -43,7 +46,7 @@ export function AnalyticalDisclosure({
         />
         Аналитика
         {!open && (
-          <span className="ml-1 font-normal text-muted-foreground/70">
+          <span className="ml-1 font-normal text-muted-foreground">
             — расходы, юнит-экономика, тренды
           </span>
         )}

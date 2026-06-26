@@ -65,12 +65,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content Area - занимает оставшееся место */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top Navbar */}
-        <div className="flex items-center gap-4 border-b bg-card px-4 py-4 lg:px-6">
+        <header className="flex items-center gap-4 border-b bg-card px-4 py-4 lg:px-6">
           {/* Mobile Menu Button and Sheet */}
           <MobileSidebarSheet open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
           <Navbar />
-        </div>
+        </header>
 
         <TokenHealthBanner />
 
