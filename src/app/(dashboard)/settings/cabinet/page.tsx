@@ -1,6 +1,5 @@
 'use client'
 
-import { TokenHealthBanner } from '@/components/custom/dashboard/TokenHealthBanner'
 import { CabinetInfoCard } from '@/components/custom/settings/CabinetInfoCard'
 import { JamStatusBadge } from '@/components/custom/settings/JamStatusBadge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -32,7 +31,6 @@ export default function CabinetSettingsPage() {
         <h2 className="mb-2 text-sm font-medium text-muted-foreground">Подписка Джем</h2>
         <JamStatusBadge cabinetId={cabinetId} />
       </div>
-      <TokenHealthBanner />
     </div>
   )
 }
