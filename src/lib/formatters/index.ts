@@ -4,7 +4,7 @@
  * so `import { formatCurrency } from '@/lib/formatters'` continues to work.
  */
 
-export { formatCurrency, formatCogsCost } from './currency-formatters'
+export { formatCurrency, formatCurrencyCompact, formatCogsCost } from './currency-formatters'
 
 export {
   formatPercentage,

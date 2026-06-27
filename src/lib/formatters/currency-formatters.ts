@@ -14,6 +14,21 @@ export function formatCurrency(value: number): string {
 }
 
 /**
+ * Compact currency for summary views (TZ-15). Uses Intl compact notation
+ * (e.g., "1,2 млн ₽" for millions, "980 тыс. ₽" for thousands).
+ * Pair with `formatCurrency` as a hover `title` for full precision.
+ */
+export function formatCurrencyCompact(value: number): string {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    notation: 'compact',
+    compactDisplay: 'short',
+    maximumFractionDigits: 1,
+  }).format(value)
+}
+
+/**
  * COGS unit-cost formatter — 2 fixed decimal places, null/NaN/undefined → "—".
  * Consolidates 5 former duplicates (cogs-edit-helpers, useCogsHistoryDisplay,
  * CogsHistoryMeta, sku-table-formatters, financial-summary-formatters).
