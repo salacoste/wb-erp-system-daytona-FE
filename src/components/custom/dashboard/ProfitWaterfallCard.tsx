@@ -58,7 +58,10 @@ export function ProfitWaterfallCard(props: DashboardMetricsGridProps): React.Rea
   })
 
   return (
-    <section className="flex flex-col gap-2" aria-label="Структура прибыли">
+    <section
+      className="flex flex-col gap-2 rounded-lg border bg-card p-3 transition-shadow hover:shadow-md"
+      aria-label="Структура прибыли"
+    >
       <NetProfitCard
         taxMetrics={props.taxMetrics ?? null}
         payoutTotal={props.payoutTotal ?? null}
@@ -68,6 +71,7 @@ export function ProfitWaterfallCard(props: DashboardMetricsGridProps): React.Rea
         previousPayoutTotal={prev?.payoutTotal ?? null}
         previousOperatingProfit={prev?.operatingProfitAnalytical ?? prev?.grossProfit ?? null}
         isLoading={false}
+        className="flex-1 border-0 p-0 shadow-none"
       />
       <button
         type="button"

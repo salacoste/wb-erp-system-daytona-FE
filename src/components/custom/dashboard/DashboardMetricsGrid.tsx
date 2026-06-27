@@ -14,7 +14,7 @@ export type {
 } from './DashboardMetricsGridTypes'
 
 const gridCls = cn(
-  'grid gap-3 items-stretch',
+  'grid gap-3 items-stretch [&>*]:h-full',
   'grid-cols-1',
   'sm:grid-cols-2',
   'lg:grid-cols-3',
