@@ -12,7 +12,7 @@ import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { SkuFinancialItem } from '@/types/sku-financials'
 import { getTotalOperatingExpenses } from '@/types/sku-financials'
-import { formatCurrency, getValueColorClass } from './sku-table-formatters'
+import { formatCurrency, formatSignedCurrency, getValueColorClass } from './sku-table-formatters'
 import { ProfitabilityBadge } from './ProfitabilityBadge'
 import { VisibilityTooltip } from './VisibilityTooltip'
 import { ExpenseBreakdown } from './ExpenseBreakdown'
@@ -92,7 +92,7 @@ export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowPro
           </TooltipProvider>
         ) : (
           <span className={cn('font-medium', getValueColorClass(item.profit.operating))}>
-            {formatCurrency(item.profit.operating)}
+            {formatSignedCurrency(item.profit.operating)}
           </span>
         )}
       </TableCell>

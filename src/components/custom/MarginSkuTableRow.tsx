@@ -75,6 +75,7 @@ export function MarginSkuTableRow({ item, onProductClick, showROI, showProfitPer
       <TableCell className="text-right">
         {profit !== null ? (
           <span className={cn('font-medium', profit >= 0 ? 'text-green-600' : 'text-red-600')}>
+            {profit > 0 ? '+' : ''}
             {formatCogs(profit)}
           </span>
         ) : (
@@ -93,6 +94,7 @@ export function MarginSkuTableRow({ item, onProductClick, showROI, showProfitPer
             <span
               className={cn('font-medium', profitPerUnit >= 0 ? 'text-green-600' : 'text-red-600')}
             >
+              {profitPerUnit > 0 ? '+' : ''}
               {formatProfitPerUnit(profitPerUnit)}
             </span>
           ) : (
