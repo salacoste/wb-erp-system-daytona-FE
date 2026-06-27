@@ -159,7 +159,7 @@
 ### `[x]` TZ-17 · Tooltip-reliance → inline micro-labels  〔P2-3〕
 - Cards distinguishable only by tooltip → inline micro-labels; tooltip as supplement.
 
-### `[ ]` TZ-18 · Loading-pattern consistency  〔P2-4〕
+### `[x]` TZ-18 · Loading-pattern consistency  〔P2-4〕
 - Standardise skeletons (above-fold) vs toast (background refresh); remove mixed patterns.
 
 (P2 items: brief scope — expand into full AC when picked up.)
@@ -189,3 +189,15 @@ _(loop appends one dated line per shipped item: `TZ-N — what shipped · gates 
 - **2026-06-26** — **TZ-15 shipped.** Compact number mode. New `formatCurrencyCompact` (Intl compact notation: "1,2 млн ₽" / "980 тыс. ₽") in `currency-formatters.ts`, re-exported through the formatters barrel + `@/lib/utils`. Applied to `DashboardHero` tiles (the primary summary view): currency tiles show compact format; `title` attribute shows full `formatCurrency` precision on hover. Full precision preserved in the detailed P&L grid (Tier 2). Gates: type-check 0, eslint 0/0, full suite passing/0 failed, locale-percent 4, doc-citations exit 0 (100), eslint-rules OK. Follow-up (documented): apply compact to other summary views (table totals, summary cards). Commit `28bbe396` + merge `f545a09a` on `main`; pushed `origin/main`.
 - **2026-06-27** — **TZ-16 shipped.** Color-as-sole-indicator → sign/icon (WCAG 1.4.1). Profit/loss values in `SkuFinancialsTable` (SkuRow + SummaryFooter) and `MarginBy*Table` (MarginSkuTableRow + MarginAggregatedTableRow) now have a non-color indicator alongside the existing green/red color: `formatSignedCurrency` (prefixes "+" for positives; negatives already have "−" from Intl) in the SkuFinancials table; inline "+" prefix for positive profit values in the MarginBy tables. Gates: type-check 0, eslint 0/0, full suite passing/0, locale-percent 4, doc-citations exit 0 (100), eslint-rules OK. Commit `8bdb4f5b` + merge `934a6108` on `main`; pushed `origin/main`.
 - **2026-06-27** — **TZ-17 closed as no-op (already addressed by TZ-3).** The tooltip-reliance issue (cards distinguishable only by tooltip) was fixed by TZ-3: the 4 near-identical price-level cards (distinguishable only by tooltip) were consolidated into `SalesByPriceLevelCard` with inline labelled sub-rows. Audited all remaining dashboard cards: `SimpleMetricCard` has a required visible `title` (tooltip is optional supplement); `SalesByPriceLevelCard` JSDoc explicitly states "no tooltip needed to tell them apart"; `ProfitWaterfallCard` uses NetProfitCard (visible title) as lead + labelled waterfall rows. No card is distinguishable ONLY by tooltip. All ACs met by existing code.
+- **2026-06-27** — **TZ-18 closed as no-op (loading patterns already consistent).** Audited loading patterns across the app: initial page load uses skeletons (DashboardSkeleton, component-specific skeletons, loading.tsx files); background refresh + action results use toasts (useDataImportNotification, toast.success/error). No page mixes the two (no toast for initial load, no skeleton for background refresh). All `toast.*` hits are action-result feedback (status updated, rule edited, token refreshed), not loading states. All ACs met by existing code.
+
+---
+
+## 🎉 ALL ITEMS COMPLETE (TZ-0..18)
+
+All 19 items shipped across 4 phases:
+- **Phase 0** (TZ-0): Operations Manager persona added to spec.
+- **Phase 1** (TZ-1..7): Dashboard rework — status strip, profit waterfall, sales-by-price-level, persona presets, 3-tier hero, collapsible analytical, a11y pass (axe 0).
+- **Phase 2** (TZ-8..9): Readability P0 — sub-12px text promoted/tooltipped, analytics heading hierarchy standardized.
+- **Phase 3** (TZ-10..14): Readability P1 — wide-table column priority, MAPE gating (no-op), liquidity misframe, settings layout, empty/error distinction (no-op).
+- **Phase 4** (TZ-15..18): Polish P2 — compact numbers, color+sign (WCAG 1.4.1), tooltip-reliance (no-op), loading patterns (no-op).
