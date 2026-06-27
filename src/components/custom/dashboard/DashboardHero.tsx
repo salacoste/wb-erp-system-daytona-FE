@@ -14,7 +14,13 @@
 import { useDashboardWidgetsStore } from '@/stores/dashboardWidgetsStore'
 import { PERSONA_LABELS } from '@/stores/persona-presets'
 import { getPersonaHeroKpis, type HeroKpiDef } from './persona-hero'
-import { cn, formatCurrency, formatNumber, formatPercentage } from '@/lib/utils'
+import {
+  cn,
+  formatCurrency,
+  formatCurrencyCompact,
+  formatNumber,
+  formatPercentage,
+} from '@/lib/utils'
 import type { DashboardMetricsGridProps } from './DashboardMetricsGridTypes'
 
 export function DashboardHero(props: DashboardMetricsGridProps): React.ReactElement {
@@ -37,7 +43,7 @@ function formatHeroValue(def: HeroKpiDef, value: number | null): string {
   if (value == null) return '—'
   switch (def.format) {
     case 'currency':
-      return formatCurrency(value)
+      return formatCurrencyCompact(value)
     case 'percent':
       return formatPercentage(value)
     case 'pcs':
@@ -65,6 +71,7 @@ function HeroKpiTile({
     >
       <div className="text-xs font-medium text-muted-foreground">{def.label}</div>
       <div
+        title={def.format === 'currency' && value != null ? formatCurrency(value) : undefined}
         className={cn(
           'mt-1 min-w-0 break-words font-bold tabular-nums',
           def.lead ? 'text-2xl' : 'text-xl',
