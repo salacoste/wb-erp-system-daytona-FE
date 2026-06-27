@@ -28,7 +28,7 @@ export function LiquidityDistributionCards({
   onCardClick,
 }: LiquidityDistributionCardsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch [&>*]:h-full">
       {CATEGORY_ORDER.map(category => {
         const item = distribution[category]
         const config = getLiquidityCategoryConfig(category)
