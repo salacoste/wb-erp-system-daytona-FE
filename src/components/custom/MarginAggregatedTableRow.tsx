@@ -67,6 +67,7 @@ export function MarginAggregatedTableRow({
       <TableCell className="text-right">
         {hasCogs && item.profit !== undefined ? (
           <span className={cn('font-medium', item.profit >= 0 ? 'text-green-600' : 'text-red-600')}>
+            {item.profit > 0 ? '+' : ''}
             {formatCogs(item.profit)}
           </span>
         ) : (

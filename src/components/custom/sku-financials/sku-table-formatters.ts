@@ -24,6 +24,16 @@ export function formatPercent(value: number | null): string {
 }
 
 /**
+ * Format signed currency — prefixes "+" for positive values (WCAG 1.4.1: non-color
+ * indicator alongside getValueColorClass). Negatives already get "−" from Intl.
+ */
+export function formatSignedCurrency(value: number | null): string {
+  if (value === null) return '—'
+  if (value > 0) return `+${formatCurrency(value)}`
+  return formatCurrency(value)
+}
+
+/**
  * Get color class based on value (positive = green, negative = red)
  */
 export function getValueColorClass(value: number | null): string {

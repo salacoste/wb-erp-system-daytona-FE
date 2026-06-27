@@ -6,7 +6,12 @@
  */
 
 import { cn } from '@/lib/utils'
-import { formatCurrency, formatPercent, getValueColorClass } from './sku-table-formatters'
+import {
+  formatCurrency,
+  formatSignedCurrency,
+  formatPercent,
+  getValueColorClass,
+} from './sku-table-formatters'
 
 export interface Totals {
   count: number
@@ -56,7 +61,7 @@ export function SummaryFooter({ totals }: { totals: Totals }) {
         <div>
           <span className="text-gray-500">Опер. прибыль:</span>{' '}
           <span className={cn('font-medium', getValueColorClass(totals.operatingProfit))}>
-            {formatCurrency(totals.operatingProfit)}
+            {formatSignedCurrency(totals.operatingProfit)}
           </span>
         </div>
         <div>
