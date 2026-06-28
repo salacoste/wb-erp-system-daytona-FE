@@ -88,7 +88,7 @@ describe('useDashboardWidgetsStore — persona presets (TZ-4)', () => {
     expect(useDashboardWidgetsStore.getState().persona).toBeNull()
   })
 
-  it('getState restores a persisted persona from localStorage', () => {
+  it('re-hydrates a persisted persona from localStorage on a cross-tab storage event', () => {
     const persisted = {
       state: {
         visibleWidgets: {
@@ -111,12 +111,14 @@ describe('useDashboardWidgetsStore — persona presets (TZ-4)', () => {
       },
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted))
+    // A write in another tab fires a 'storage' event in this tab.
+    window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }))
     const { persona, visibleWidgets } = useDashboardWidgetsStore.getState()
     expect(persona).toBe('Ops')
     expect(visibleWidgets.commissions).toBe(false)
   })
 
-  it('backward-compat: pre-TZ-4 storage without persona → persona null, widgets restored', () => {
+  it('backward-compat: pre-TZ-4 storage without persona → persona null, widgets restored (on cross-tab storage event)', () => {
     const legacy = {
       state: {
         visibleWidgets: {
@@ -138,6 +140,8 @@ describe('useDashboardWidgetsStore — persona presets (TZ-4)', () => {
       },
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy))
+    // A write in another tab fires a 'storage' event in this tab.
+    window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }))
     const { persona, visibleWidgets } = useDashboardWidgetsStore.getState()
     expect(persona).toBeNull()
     expect(visibleWidgets.orders).toBe(false)

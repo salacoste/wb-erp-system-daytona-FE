@@ -5,8 +5,10 @@
  * Persists user preferences (visibleWidgets + persona) to localStorage via
  * dashboardWidgetsStorage. Minimum 3 widgets must remain visible at all times.
  *
- * Uses manual localStorage sync with a custom getState override so reading the
- * store always reflects the latest localStorage value.
+ * Persistence: a single `subscribe` writes on every state change, and a
+ * `storage`-event listener re-hydrates on cross-tab writes. There is NO
+ * `getState` override — overriding it would break useSyncExternalStore's
+ * snapshot-stability contract (see the comment below the store).
  *
  * @see Story 65.8: Widget Visibility Settings
  * @see docs/ux/IMPLEMENTATION-TZ.md (TZ-4 persona presets)
@@ -15,6 +17,7 @@
 import { create } from 'zustand'
 import { HIDDEN_BY_PERSONA, type Persona } from './persona-presets'
 import {
+  STORAGE_KEY,
   countVisible,
   readFromStorage,
   writeToStorage,
@@ -97,6 +100,9 @@ interface DashboardWidgetsState {
   resetAll: () => void
 }
 
+// Single in-memory read at module load. Same-tab external localStorage writes
+// are NOT re-hydrated (browsers fire `storage` only for OTHER tabs) — all in-app
+// writers must go through the store actions, which persist via the subscribe below.
 const initialStored: PersistedState | null = readFromStorage()
 
 export const useDashboardWidgetsStore = create<DashboardWidgetsState>()((set, get) => ({
@@ -112,55 +118,50 @@ export const useDashboardWidgetsStore = create<DashboardWidgetsState>()((set, ge
       return
     }
 
-    const updated = { ...current, [id]: !isCurrentlyVisible }
-    writeToStorage(updated, get().persona)
-    set({ visibleWidgets: updated })
+    set({ visibleWidgets: { ...current, [id]: !isCurrentlyVisible } })
   },
 
   applyPersona: (persona: Persona) => {
-    const visibleWidgets = personaPreset(persona)
-    writeToStorage(visibleWidgets, persona)
-    set({ visibleWidgets, persona })
+    set({ visibleWidgets: personaPreset(persona), persona })
   },
 
   resetAll: () => {
     // Reset to the all-visible Owner preset (NOT persona null) so PersonaSelector's
     // role-default effect (which only fires when persona===null) doesn't immediately
     // re-apply a persona and undo the user's reset. (TZ-4 review.)
-    const defaults = { ...DEFAULT_VISIBLE }
-    writeToStorage(defaults, 'Owner')
-    set({ visibleWidgets: defaults, persona: 'Owner' })
+    set({ visibleWidgets: { ...DEFAULT_VISIBLE }, persona: 'Owner' })
   },
 }))
 
 /**
- * Keep localStorage in sync when state changes externally (e.g., setState).
+ * Persist to localStorage on every state change — the single canonical write path
+ * (actions no longer write explicitly, so this covers toggleWidget / applyPersona /
+ * resetAll + any external setState).
  */
 useDashboardWidgetsStore.subscribe(state => {
   writeToStorage(state.visibleWidgets, state.persona)
 })
 
 /**
- * Override getState to hydrate from localStorage first.
- * Ensures external localStorage writes (e.g., from tests or other tabs)
- * are always reflected in the store state.
+ * Cross-tab sync: when another tab writes localStorage, re-hydrate this store.
+ *
+ * This REPLACES a former `getState` override that re-read localStorage on every
+ * call and returned a fresh object each time. That violated useSyncExternalStore's
+ * snapshot-stability contract (getSnapshot must return a cached, referentially-
+ * stable value when nothing changed), and under Concurrent React it caused the
+ * widget toggles to not reflect clicks in the browser — while jsdom tests passed
+ * (localStorage is empty there, so the override was a no-op). The storage-event
+ * listener achieves the same cross-tab reflection without breaking the snapshot.
  */
-const originalGetState = useDashboardWidgetsStore.getState.bind(useDashboardWidgetsStore)
-useDashboardWidgetsStore.getState = () => {
-  const stored = readFromStorage()
-  const current = originalGetState()
-  if (stored) {
-    const merged = { ...current, visibleWidgets: stored.visibleWidgets, persona: stored.persona }
-    const widgetsChanged =
-      JSON.stringify(current.visibleWidgets) !== JSON.stringify(stored.visibleWidgets)
-    const personaChanged = current.persona !== stored.persona
-    if (widgetsChanged || personaChanged) {
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', e => {
+    if (e.key !== STORAGE_KEY) return
+    const stored = readFromStorage()
+    if (stored) {
       useDashboardWidgetsStore.setState({
         visibleWidgets: stored.visibleWidgets,
         persona: stored.persona,
       })
     }
-    return merged
-  }
-  return current
+  })
 }
