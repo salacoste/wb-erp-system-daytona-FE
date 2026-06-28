@@ -91,6 +91,18 @@ function personaPreset(persona: Persona): VisibleWidgets {
   return widgets
 }
 
+/**
+ * Resolve a persisted visibleWidgets into a safe initial value. Defends against a
+ * corrupt persisted state (e.g. an all-false / empty object left by a prior bug, or
+ * a below-minimum set a user could never reach via the UI) — never hydrate below the
+ * minimum-visible threshold; fall back to the all-visible default. This is what makes
+ * the widget-settings toggles show their real on/off state instead of all-off after a
+ * bad localStorage entry.
+ */
+function hydrateVisibleWidgets(stored: VisibleWidgets | undefined): VisibleWidgets {
+  return stored && countVisible(stored) >= MIN_VISIBLE_WIDGETS ? stored : { ...DEFAULT_VISIBLE }
+}
+
 interface DashboardWidgetsState {
   visibleWidgets: VisibleWidgets
   /** Active persona preset, or null when none applied yet (role default applied by PersonaSelector). */
@@ -106,7 +118,7 @@ interface DashboardWidgetsState {
 const initialStored: PersistedState | null = readFromStorage()
 
 export const useDashboardWidgetsStore = create<DashboardWidgetsState>()((set, get) => ({
-  visibleWidgets: initialStored?.visibleWidgets ?? { ...DEFAULT_VISIBLE },
+  visibleWidgets: hydrateVisibleWidgets(initialStored?.visibleWidgets),
   persona: initialStored?.persona ?? null,
 
   toggleWidget: (id: WidgetId) => {
@@ -159,7 +171,7 @@ if (typeof window !== 'undefined') {
     const stored = readFromStorage()
     if (stored) {
       useDashboardWidgetsStore.setState({
-        visibleWidgets: stored.visibleWidgets,
+        visibleWidgets: hydrateVisibleWidgets(stored.visibleWidgets),
         persona: stored.persona,
       })
     }
