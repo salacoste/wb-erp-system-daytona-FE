@@ -12,6 +12,7 @@ import {
   Settings,
   Warehouse,
   LayoutDashboard,
+  Layers,
   PackageSearch,
   Calculator,
   DollarSign,
@@ -67,6 +68,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   // FBO Orders & Sales
   { label: 'FBO Заказы', href: ROUTES.ORDERS.FBO, icon: PackageSearch },
   { label: 'Себестоимость', href: ROUTES.COGS.ROOT, icon: Package },
+  // Assortment management — discontinued lifecycle («Снят с продажи»)
+  { label: 'Ассортимент', href: ROUTES.PRODUCTS, icon: Layers },
   // Epic 44: Price Calculator UI
   { label: 'Калькулятор цены', href: '/cogs/price-calculator', icon: DollarSign },
   // Story 6.4-FE: Cabinet Summary Dashboard
