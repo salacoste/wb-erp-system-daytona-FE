@@ -111,6 +111,40 @@ describe('useDashboardWidgetsStore', () => {
     expect(visibleWidgets.orders).toBe(false)
   })
 
+  it('defends against a corrupt all-false persisted state (resets to the all-visible default)', () => {
+    // A below-minimum state a user could never reach via the UI (e.g. left by a
+    // prior bug) arrives via a cross-tab write.
+    const corrupt = {
+      state: {
+        visibleWidgets: {
+          orders: false,
+          sales: false,
+          commissions: false,
+          logistics: false,
+          payout: false,
+          storage: false,
+          cogs: false,
+          advertising: false,
+          grossProfit: false,
+          margin: false,
+          buyoutRate: false,
+          averages: false,
+          roi: false,
+          returns: false,
+        },
+        persona: null,
+      },
+    }
+    localStorage.setItem('wb-repricer-dashboard-widgets', JSON.stringify(corrupt))
+    window.dispatchEvent(new StorageEvent('storage', { key: 'wb-repricer-dashboard-widgets' }))
+
+    // The corrupt below-minimum state is rejected → all-visible default applied
+    // (so the widget-settings toggles never render all-off).
+    const { visibleWidgets } = useDashboardWidgetsStore.getState()
+    expect(Object.values(visibleWidgets).filter(Boolean).length).toBeGreaterThanOrEqual(3)
+    expect(visibleWidgets.orders).toBe(true)
+  })
+
   it('WIDGET_LABELS has a label for every WidgetId', () => {
     const allIds = Object.keys(WIDGET_LABELS) as WidgetId[]
     allIds.forEach(id => {
