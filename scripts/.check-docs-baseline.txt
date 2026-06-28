@@ -53,8 +53,8 @@ src/lib/api/ai/models.ts:69 | line 69 > file has 42 lines
 src/lib/api/ai/models.ts:76 | line 76 > file has 42 lines
 src/lib/api/ai/models.ts:76 | line 76 > file has 42 lines
 src/lib/api/ai/status.ts:27 | line 27 > file has 16 lines
-src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 125 lines
-src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 125 lines
+src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
+src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
 src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
 src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
