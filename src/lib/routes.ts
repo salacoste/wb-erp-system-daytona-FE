@@ -18,6 +18,8 @@ export const ROUTES = {
 
   // Protected routes
   DASHBOARD: '/dashboard',
+  // Assortment management (discontinued lifecycle / «Снят с продажи»)
+  PRODUCTS: '/products',
   COGS: {
     ROOT: '/cogs',
     BULK: '/cogs/bulk',
@@ -30,6 +32,7 @@ export const ROUTES = {
     BRAND: '/analytics/brand',
     CATEGORY: '/analytics/category',
     TIME_PERIOD: '/analytics/time-period',
+    FINANCE_HISTORY: '/analytics/finance-history',
     STORAGE: '/analytics/storage',
     SUPPLY_PLANNING: '/analytics/supply-planning',
     UNIT_ECONOMICS: '/analytics/unit-economics',

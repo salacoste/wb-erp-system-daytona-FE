@@ -8,5 +8,6 @@
 export { useFinancialSummary, useAvailableWeeks } from './useFinancialSummary'
 export { useFinancialSummaryComparison } from './useFinancialSummaryComparison'
 export { useMultiWeekFinancialSummary } from './useMultiWeekFinancialSummary'
+export { useWeeklyFinancialSeries } from './useWeeklyFinancialSeries'
 export { useFinancialSummaryWithPeriodComparison } from './useFinancialSummaryWithPeriodComparison'
 export { type UseFinancialSummaryComparisonOptions } from './financial-summary-helpers'

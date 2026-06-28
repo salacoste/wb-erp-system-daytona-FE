@@ -24,5 +24,6 @@ export {
   useFinancialSummaryWithPeriodComparison,
   useAvailableWeeks,
   useMultiWeekFinancialSummary,
+  useWeeklyFinancialSeries,
   type UseFinancialSummaryComparisonOptions,
 } from './hooks'
