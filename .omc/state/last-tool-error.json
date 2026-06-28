@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ls frontend/e2e/fixtures/\",\"description\":\"List e2e fixtures directory\"}",
-  "error": "Exit code 1\nls: frontend/e2e/fixtures/: No such file or directory",
-  "timestamp": "2026-06-17T22:38:12.370Z",
-  "retry_count": 1
-}
