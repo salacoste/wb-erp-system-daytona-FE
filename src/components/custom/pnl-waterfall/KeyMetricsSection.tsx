@@ -14,7 +14,7 @@ import { formatCurrency } from './pnl-formatters'
 import { formatPercentageInt } from '@/lib/utils'
 import type { KeyMetricsSectionProps } from './pnl-types'
 
-export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
+export function KeyMetricsSection({ data, roi, profitPerUnit }: KeyMetricsSectionProps) {
   return (
     <div>
       <SectionHeader
@@ -25,7 +25,7 @@ export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
         {/* ROI */}
         <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
           <div className="text-2xl font-bold text-blue-700">
-            {data.roi !== null ? formatPercentageInt(data.roi) : '—'}
+            {roi !== null ? formatPercentageInt(roi) : '—'}
           </div>
           <div className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
             ROI
@@ -38,9 +38,8 @@ export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
                 <p className="text-xs mt-1">
                   Сколько рублей прибыли приносит каждый рубль, вложенный в закупку товаров.
                 </p>
-                {/* Story 70.2-FE: Fixed ROI formula — uses payout-minus-COGS, not gross-profit/COGS */}
                 <p className="text-xs font-mono mt-2 bg-slate-100 p-1 rounded">
-                  ROI = (Чистая выручка − COGS) ÷ COGS × 100%
+                  ROI = (К перечислению − COGS) ÷ COGS × 100%
                 </p>
                 <p className="text-xs mt-1 text-green-600">Норма: &gt;50%</p>
               </TooltipContent>
@@ -51,7 +50,7 @@ export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
         {/* Profit per Unit */}
         <div className="bg-green-50 rounded-lg p-4 text-center border border-green-100">
           <div className="text-2xl font-bold text-green-700">
-            {data.profit_per_unit !== null ? formatCurrency(data.profit_per_unit) : '—'}
+            {profitPerUnit !== null ? formatCurrency(profitPerUnit) : '—'}
           </div>
           <div className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
             Прибыль/ед.
@@ -64,9 +63,8 @@ export function KeyMetricsSection({ data }: KeyMetricsSectionProps) {
                 <p className="text-xs mt-1">
                   Средняя валовая прибыль с каждой проданной единицы товара.
                 </p>
-                {/* Story 70.2-FE: Fixed PPU formula — clarifies it is (payout − COGS) ÷ qty, not gross-profit label */}
                 <p className="text-xs font-mono mt-2 bg-slate-100 p-1 rounded">
-                  Прибыль/ед = (Чистая выручка − COGS) ÷ Кол-во проданных
+                  Прибыль/ед = (К перечислению − COGS) ÷ Кол-во проданных
                 </p>
               </TooltipContent>
             </Tooltip>
