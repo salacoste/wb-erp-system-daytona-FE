@@ -31,6 +31,8 @@ export interface PnLCalculations {
   grossProfit: number | null
   grossMarginPct: number | null
   profitToRevenuePct: number | null
+  keyMetricRoi: number | null
+  keyMetricProfitPerUnit: number | null
 }
 
 export function calculatePnL(
@@ -81,6 +83,12 @@ export function calculatePnL(
     grossProfit !== null && sellerPayout ? (grossProfit / sellerPayout) * 100 : null
   const profitToRevenuePct =
     grossProfit !== null && revenueBase ? (grossProfit / revenueBase) * 100 : null
+  const keyMetricRoi =
+    grossProfit !== null && data.cogs_total && data.cogs_total > 0
+      ? (grossProfit / data.cogs_total) * 100
+      : null
+  const keyMetricProfitPerUnit =
+    grossProfit !== null && data.qty > 0 ? grossProfit / data.qty : null
 
   return {
     hasCogs,
@@ -106,5 +114,7 @@ export function calculatePnL(
     grossProfit,
     grossMarginPct,
     profitToRevenuePct,
+    keyMetricRoi,
+    keyMetricProfitPerUnit,
   }
 }

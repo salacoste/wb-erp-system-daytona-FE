@@ -68,7 +68,8 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
           </CardTitle>
           <CardDescription>
             Полная финансовая картина за выбранный период. Все суммы соответствуют данным WB
-            Dashboard.
+            Dashboard. Показатели рассчитаны до налогов и не включают НДС, УСН и другие налоговые
+            начисления.
           </CardDescription>
         </CardHeader>
 
@@ -111,7 +112,11 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
             products={products}
           />
 
-          <KeyMetricsSection data={data} />
+          <KeyMetricsSection
+            data={data}
+            roi={calc.keyMetricRoi}
+            profitPerUnit={calc.keyMetricProfitPerUnit}
+          />
         </CardContent>
       </Card>
     </TooltipProvider>

@@ -55,4 +55,10 @@ export interface GrossProfitSectionProps {
 
 export interface KeyMetricsSectionProps {
   data: CabinetSummaryTotals
+  // FE-computed from the card's payout-based grossProfit (see usePnLCalculations).
+  // Intentionally supersedes data.roi / data.profit_per_unit (backend fields,
+  // margin-fact-based — a different profit base, ~44% divergence) so the card's
+  // ROI/PPU agree with the grossProfit it displays.
+  roi: number | null
+  profitPerUnit: number | null
 }
