@@ -8,6 +8,7 @@ import {
   getDiscrepancyStatus,
   calculateStorageDiscrepancy,
   isStorageDivergent,
+  sharePercentage,
 } from '../analytics-utils'
 
 describe('getDiscrepancyStatus — Request #52 bands', () => {
@@ -48,5 +49,26 @@ describe('isStorageDivergent — canonical 3% tolerance (not a flat >1 ₽)', ()
   it('returns false when the weekly report is null or zero (no baseline)', () => {
     expect(isStorageDivergent(5000, null)).toBe(false)
     expect(isStorageDivergent(5000, 0)).toBe(false)
+  })
+})
+
+describe('sharePercentage — FR-1 contribution shares', () => {
+  it('computes part / total × 100', () => {
+    expect(sharePercentage(250, 1000)).toBe(25)
+    expect(sharePercentage(50, 200)).toBe(25)
+  })
+  it('returns null when the part is null/undefined (missing value)', () => {
+    expect(sharePercentage(null, 1000)).toBeNull()
+    expect(sharePercentage(undefined, 1000)).toBeNull()
+  })
+  it('returns null when the total is null/undefined', () => {
+    expect(sharePercentage(250, null)).toBeNull()
+    expect(sharePercentage(250, undefined)).toBeNull()
+  })
+  it('returns null on divide-by-zero (total = 0)', () => {
+    expect(sharePercentage(250, 0)).toBeNull()
+  })
+  it('preserves a negative part (loss-making contribution)', () => {
+    expect(sharePercentage(-100, 1000)).toBe(-10)
   })
 })

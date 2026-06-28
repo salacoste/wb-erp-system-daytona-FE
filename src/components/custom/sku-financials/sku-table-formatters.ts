@@ -24,6 +24,21 @@ export function formatPercent(value: number | null): string {
 }
 
 /**
+ * Contribution share: part / total × 100. Returns null when `part` is null, or
+ * `total` is null/0 (avoids divide-by-zero and a misleading "0,0 %"). Used for
+ * the competitor-parity share-% columns on the SKU financials table: BD (revenue
+ * contribution), BE (gross-profit contribution), BC (logistics / own revenue).
+ * Sibling of `@/lib/analytics-utils#sharePercentage` (which also accepts
+ * `undefined` for the aggregated margin tables); this overload serves the SKU
+ * table whose fields are `number | null`.
+ * Pure + unit-tested.
+ */
+export function sharePercentage(part: number | null, total: number | null): number | null {
+  if (part == null || total == null || total === 0) return null
+  return (part / total) * 100
+}
+
+/**
  * Format signed currency — prefixes "+" for positive values (WCAG 1.4.1: non-color
  * indicator alongside getValueColorClass). Negatives already get "−" from Intl.
  */
