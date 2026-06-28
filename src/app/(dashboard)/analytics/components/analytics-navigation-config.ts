@@ -74,6 +74,13 @@ export const analyticsNavigation = {
       nav(RA.CATEGORY, BarChart3, 'По категориям', 'Сравнение категорий', 'violet'),
       nav(RA.TIME_PERIOD, Calendar, 'По времени', 'Динамика по неделям', 'amber'),
       nav(
+        RA.FINANCE_HISTORY,
+        BarChart3,
+        'Финансовая история',
+        'P&L по неделям: прибыль, маржа, доли расходов',
+        'cyan'
+      ),
+      nav(
         RA.BUYOUT_RECONCILIATION,
         FileCheck,
         'Сверка выкупов',
