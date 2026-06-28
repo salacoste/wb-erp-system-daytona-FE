@@ -83,10 +83,12 @@ const defaultSummaryData = {
 function setupMocks(overrides?: {
   summary?: Partial<ReturnType<typeof mockUseCabinetSummary>>
   financeAvailable?: boolean
+  period?: Partial<typeof defaultPeriodState>
+  availableWeeks?: { week: string }[]
 }) {
-  mockUseDashboardPeriod.mockReturnValue(defaultPeriodState)
+  mockUseDashboardPeriod.mockReturnValue({ ...defaultPeriodState, ...overrides?.period })
   mockUseAvailableWeeks.mockReturnValue({
-    data: [{ week: '2025-W49' }],
+    data: overrides?.availableWeeks ?? [{ week: '2025-W49' }],
     isLoading: false,
   })
   mockUseDataAvailability.mockReturnValue({
@@ -149,6 +151,27 @@ describe('CabinetDashboardPage - Rendering', () => {
   it('renders TopBrandsTable when data is loaded', () => {
     renderPage()
     expect(screen.getByTestId('top-brands-table')).toBeInTheDocument()
+  })
+
+  it('makes effective WB-week coverage visible in month mode', () => {
+    setupMocks({
+      period: { periodType: 'month', selectedMonth: '2026-05', selectedWeek: '2026-W22' },
+      availableWeeks: [
+        { week: '2026-W19' },
+        { week: '2026-W20' },
+        { week: '2026-W21' },
+        { week: '2026-W22' },
+      ],
+    })
+
+    renderPage()
+
+    expect(screen.getByText(/2026-W19 — 2026-W22/)).toBeInTheDocument()
+    expect(screen.getByText(/04\.05\.2026 — 31\.05\.2026/)).toBeInTheDocument()
+    expect(mockUseCabinetSummary).toHaveBeenCalledWith(
+      { weekStart: '2026-W19', weekEnd: '2026-W22' },
+      { enabled: true }
+    )
   })
 })
 
