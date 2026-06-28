@@ -180,8 +180,8 @@ describe('WidgetSettingsSheet', () => {
       }
     })
 
-    it('restores settings from localStorage on mount', () => {
-      // Pre-set localStorage
+    it('re-hydrates from localStorage on a cross-tab storage event', () => {
+      // Simulate another tab writing localStorage with orders + logistics off.
       const customSettings = {
         state: {
           visibleWidgets: {
@@ -200,13 +200,16 @@ describe('WidgetSettingsSheet', () => {
             roi: true,
             returns: true,
           },
+          persona: null,
         },
       }
       localStorage.setItem('wb-repricer-dashboard-widgets', JSON.stringify(customSettings))
 
-      // Re-initialize store from localStorage
+      // A write in another tab fires a 'storage' event in this tab.
+      window.dispatchEvent(new StorageEvent('storage', { key: 'wb-repricer-dashboard-widgets' }))
+
+      // The store re-hydrates from the cross-tab write.
       const state = useDashboardWidgetsStore.getState()
-      // After hydration, orders should be false
       expect(state.visibleWidgets.orders).toBe(false)
       expect(state.visibleWidgets.logistics).toBe(false)
     })

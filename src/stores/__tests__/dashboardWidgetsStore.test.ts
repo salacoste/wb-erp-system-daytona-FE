@@ -80,8 +80,8 @@ describe('useDashboardWidgetsStore', () => {
     expect(parsed.state.visibleWidgets.cogs).toBe(false)
   })
 
-  it('restores state from localStorage on getState', () => {
-    // Write a state directly to localStorage
+  it('re-hydrates from localStorage on a cross-tab storage event', () => {
+    // Another tab writes localStorage with orders off.
     const customState = {
       state: {
         visibleWidgets: {
@@ -103,6 +103,9 @@ describe('useDashboardWidgetsStore', () => {
       },
     }
     localStorage.setItem('wb-repricer-dashboard-widgets', JSON.stringify(customState))
+
+    // A write in another tab fires a 'storage' event in this tab.
+    window.dispatchEvent(new StorageEvent('storage', { key: 'wb-repricer-dashboard-widgets' }))
 
     const { visibleWidgets } = useDashboardWidgetsStore.getState()
     expect(visibleWidgets.orders).toBe(false)
