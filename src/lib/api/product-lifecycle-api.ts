@@ -46,7 +46,8 @@ interface BackendLifecycleProduct {
   discontinuedReason: string | null
 }
 
-function normalizeLifecycleProduct(raw: BackendLifecycleProduct): LifecycleProduct {
+/** Exported for unit tests (Boundary Normalizer Pattern — ≥1 test per normalizer). */
+export function normalizeLifecycleProduct(raw: BackendLifecycleProduct): LifecycleProduct {
   return {
     id: raw.id,
     nmId: raw.nmId,
