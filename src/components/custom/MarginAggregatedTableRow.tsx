@@ -6,7 +6,7 @@
  */
 import { TableCell, TableRow } from '@/components/ui/table'
 import { ExternalLink } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatPercentage } from '@/lib/utils'
 import { MarginBadge } from './MarginDisplay'
 import { formatCogs } from '@/hooks/useSingleCogsAssignment'
 import {
@@ -15,6 +15,7 @@ import {
   formatProfitPerUnit,
   calculateROI,
   calculateProfitPerUnit,
+  sharePercentage,
 } from '@/lib/analytics-utils'
 import { OperatingProfitCell, MissingCogsCell } from './MarginRowCells'
 import type { MarginAnalyticsAggregated } from '@/types/api'
@@ -27,6 +28,10 @@ interface Props {
   showROI: boolean
   showProfitPerUnit: boolean
   rowKey: string | number
+  /** Total revenue across the table — denominator for the BD revenue-share column. */
+  totalRevenue?: number | null
+  /** Total gross profit across the table — denominator for the BE profit-share column. */
+  totalGrossProfit?: number | null
 }
 
 export function MarginAggregatedTableRow({
@@ -37,12 +42,17 @@ export function MarginAggregatedTableRow({
   showROI,
   showProfitPerUnit,
   rowKey,
+  totalRevenue,
+  totalGrossProfit,
 }: Props) {
   const entityValue = item[entityField]
   const hasCogs = item.cogs !== undefined
   // Backend now returns missing_cogs_count for by-brand/by-category when include_cogs=true.
   // Defensive guard (|| 0) preserved for cached/stale responses.
   const hasMissingCogs = (item.missing_cogs_count || 0) > 0
+  // FR-1 competitor-parity contribution shares (null → "—", never a misleading 0 %).
+  const revenueShare = sharePercentage(item.revenue_net, totalRevenue)
+  const profitShare = sharePercentage(item.profit, totalGrossProfit)
 
   return (
     <TableRow
@@ -79,6 +89,12 @@ export function MarginAggregatedTableRow({
           marginPct={item.margin_pct}
           missingDataReason={!hasCogs ? 'COGS_NOT_ASSIGNED' : null}
         />
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Вклад в общую выручку">
+        {revenueShare === null ? '—' : formatPercentage(revenueShare, 1)}
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Вклад в валовую прибыль">
+        {profitShare === null ? '—' : formatPercentage(profitShare, 1)}
       </TableCell>
       {showProfitPerUnit && (
         <TableCell className="text-right">

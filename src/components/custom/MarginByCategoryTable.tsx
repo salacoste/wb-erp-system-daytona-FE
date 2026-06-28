@@ -56,6 +56,15 @@ export function MarginByCategoryTable({
     [data, sortField, sortOrder]
   )
 
+  // FR-1: totals power the BD/BE contribution-share columns on each row.
+  const shareTotals = useMemo(
+    () => ({
+      revenue: data.reduce((sum, item) => sum + item.revenue_net, 0),
+      grossProfit: data.reduce((sum, item) => sum + (item.profit || 0), 0),
+    }),
+    [data]
+  )
+
   if (!data || data.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
@@ -86,6 +95,8 @@ export function MarginByCategoryTable({
               onEntityClick={onCategoryClick}
               showROI={showROI}
               showProfitPerUnit={showProfitPerUnit}
+              totalRevenue={shareTotals.revenue}
+              totalGrossProfit={shareTotals.grossProfit}
             />
           ))}
         </TableBody>

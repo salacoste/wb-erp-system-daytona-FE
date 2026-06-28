@@ -92,6 +92,12 @@ export function MarginAggregatedTableHeader({
             Маржа %{Icon('margin_pct')}
           </button>
         </TableHead>
+        <TableHead className="text-right" title="Вклад в общую выручку">
+          <div className="ml-auto flex items-center font-medium">Доля выручки</div>
+        </TableHead>
+        <TableHead className="text-right" title="Вклад в валовую прибыль">
+          <div className="ml-auto flex items-center font-medium">Доля прибыли</div>
+        </TableHead>
         {showProfitPerUnit && (
           <TableHead className="text-right">
             <TooltipProvider>

@@ -12,7 +12,13 @@ import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { SkuFinancialItem } from '@/types/sku-financials'
 import { getTotalOperatingExpenses } from '@/types/sku-financials'
-import { formatCurrency, formatSignedCurrency, getValueColorClass } from './sku-table-formatters'
+import {
+  formatCurrency,
+  formatPercent,
+  formatSignedCurrency,
+  getValueColorClass,
+  sharePercentage,
+} from './sku-table-formatters'
 import { ProfitabilityBadge } from './ProfitabilityBadge'
 import { VisibilityTooltip } from './VisibilityTooltip'
 import { ExpenseBreakdown } from './ExpenseBreakdown'
@@ -21,9 +27,19 @@ interface SkuRowProps {
   item: SkuFinancialItem
   showExpenseBreakdown: boolean
   showVisibility: boolean
+  /** Total revenue across the table — denominator for the BD revenue-share column. */
+  totalRevenue?: number | null
+  /** Total gross profit across the table — denominator for the BE profit-share column. */
+  totalGrossProfit?: number | null
 }
 
-export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowProps) {
+export function SkuRow({
+  item,
+  showExpenseBreakdown,
+  showVisibility,
+  totalRevenue,
+  totalGrossProfit,
+}: SkuRowProps) {
   return (
     <TableRow className={cn('hover:bg-gray-50', item.missingCogs && 'bg-yellow-50/30')}>
       <TableCell className="font-mono text-sm text-gray-500">{item.nmId}</TableCell>
@@ -101,6 +117,24 @@ export function SkuRow({ item, showExpenseBreakdown, showVisibility }: SkuRowPro
           status={item.profitabilityStatus}
           marginPct={item.profit.operatingMarginPct}
         />
+      </TableCell>
+      <TableCell
+        className="hidden lg:table-cell text-right text-gray-600"
+        title="Вклад в общую выручку"
+      >
+        {formatPercent(sharePercentage(item.revenue.net, totalRevenue ?? null))}
+      </TableCell>
+      <TableCell
+        className="hidden lg:table-cell text-right text-gray-600"
+        title="Вклад в валовую прибыль"
+      >
+        {formatPercent(sharePercentage(item.profit.gross, totalGrossProfit ?? null))}
+      </TableCell>
+      <TableCell
+        className="hidden lg:table-cell text-right text-gray-600"
+        title="Логистика / выручка"
+      >
+        {formatPercent(sharePercentage(item.costs.logistics, item.revenue.net))}
       </TableCell>
       {showVisibility && item.visibility && (
         <TableCell>

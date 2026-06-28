@@ -67,14 +67,6 @@ export function SkuFinancialsTable({
     )
   }
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
-        <p className="text-gray-600">Нет данных за выбранную неделю</p>
-      </div>
-    )
-  }
-
   const totals = useMemo(() => {
     const totalSalesQty = data.reduce((sum, item) => sum + item.quantity.salesQty, 0)
     const totalReturnsQty = data.reduce((sum, item) => sum + item.quantity.returnsQty, 0)
@@ -103,6 +95,17 @@ export function SkuFinancialsTable({
       totalRows: data.length,
     }
   }, [data])
+
+  // Early return AFTER all hooks (sortedData + totals useMemo) so hook order is
+  // stable across empty/non-empty renders (React rules-of-hooks). FR-1 made
+  // `totals` load-bearing (BD/BE share columns read totals.revenue/grossProfit).
+  if (!data || data.length === 0) {
+    return (
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
+        <p className="text-gray-600">Нет данных за выбранную неделю</p>
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-md border overflow-x-auto">
@@ -150,6 +153,15 @@ export function SkuFinancialsTable({
                 sortIcon={renderSortIcon('operatingMarginPct')}
               />
             </TableHead>
+            <TableHead className="hidden lg:table-cell text-right" title="Вклад в общую выручку">
+              Доля выручки
+            </TableHead>
+            <TableHead className="hidden lg:table-cell text-right" title="Вклад в валовую прибыль">
+              Доля прибыли
+            </TableHead>
+            <TableHead className="hidden lg:table-cell text-right" title="Логистика / выручка">
+              Доля логистики
+            </TableHead>
             {showVisibility && (
               <TableHead className="w-[50px]">
                 <span className="sr-only">Видимость</span>
@@ -164,6 +176,8 @@ export function SkuFinancialsTable({
               item={item}
               showExpenseBreakdown={showExpenseBreakdown}
               showVisibility={showVisibility}
+              totalRevenue={totals.revenue}
+              totalGrossProfit={totals.grossProfit}
             />
           ))}
         </TableBody>

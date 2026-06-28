@@ -45,6 +45,26 @@ export {
 } from './orders-analytics-utils'
 
 // ============================================================================
+// Share / contribution percentages (FR-1: competitor-parity share columns)
+// ============================================================================
+
+/**
+ * Contribution share: part / total × 100. Returns null when `part` is null, or
+ * `total` is null/0 (avoids divide-by-zero and a misleading "0,0 %"). Used for
+ * the BD (revenue share) and BE (gross-profit share) columns on the by-brand /
+ * by-category margin tables. Sibling of `sku-table-formatters#sharePercentage`
+ * (SKU overload, `number | null`); this overload also accepts `undefined`
+ * (aggregated fields are optional). Pure + unit-tested.
+ */
+export function sharePercentage(
+  part: number | null | undefined,
+  total: number | null | undefined
+): number | null {
+  if (part == null || total == null || total === 0) return null
+  return (part / total) * 100
+}
+
+// ============================================================================
 // Storage Data Discrepancy Tracking (Request #52)
 // ============================================================================
 
