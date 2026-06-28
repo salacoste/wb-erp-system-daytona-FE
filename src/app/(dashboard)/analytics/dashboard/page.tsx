@@ -15,7 +15,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { DashboardPeriodProvider, useDashboardPeriod } from '@/hooks/useDashboardPeriod'
-import { getWeeksInMonth } from '@/lib/period-helpers'
+import {
+  getDashboardMonthCoverage,
+  getDashboardMonthSummaryWeeks,
+} from './dashboard-period-coverage'
 import { CabinetDashboardSkeleton } from '@/components/custom/dashboard/CabinetDashboardSkeleton'
 import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
 
@@ -42,17 +45,27 @@ function CabinetDashboardContent() {
     availableWeeks
   )
 
+  const monthSummaryWeeks = useMemo(() => {
+    if (periodType !== 'month') return null
+    return getDashboardMonthSummaryWeeks(selectedMonth, availableWeeks)
+  }, [periodType, selectedMonth, availableWeeks])
+
   // Convert selected period → weekStart/weekEnd for the API
   const { weekStart, weekEnd } = useMemo(() => {
     if (periodType === 'week') {
       return { weekStart: selectedWeek, weekEnd: selectedWeek }
     }
-    const weeks = getWeeksInMonth(selectedMonth)
+    const weeks = monthSummaryWeeks?.weeks ?? []
     if (weeks.length === 0) {
       return { weekStart: selectedWeek, weekEnd: selectedWeek }
     }
     return { weekStart: weeks[0], weekEnd: weeks[weeks.length - 1] }
-  }, [periodType, selectedWeek, selectedMonth])
+  }, [periodType, selectedWeek, monthSummaryWeeks])
+
+  const monthCoverage = useMemo(() => {
+    if (periodType !== 'month' || monthSummaryWeeks?.source !== 'available') return null
+    return getDashboardMonthCoverage(selectedMonth, weekStart, weekEnd)
+  }, [periodType, selectedMonth, weekStart, weekEnd, monthSummaryWeeks])
 
   const { data, isLoading, isError, error, refetch } = useCabinetSummary(
     { weekStart, weekEnd },
@@ -114,6 +127,21 @@ function CabinetDashboardContent() {
         </div>
         <DashboardPeriodSelector />
       </div>
+
+      {/* Month Coverage Notice */}
+      {monthCoverage && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Месячная сводка построена по завершённым WB-неделям {monthCoverage.weeksLabel}:{' '}
+            {monthCoverage.coveredRangeLabel}. Календарный месяц: {monthCoverage.calendarRangeLabel}
+            .
+            {monthCoverage.hasCalendarGap
+              ? ' Часть календарных дней вне этих недель не включена.'
+              : ''}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Loading State */}
       {showSkeleton && !showSlowLoading && <CabinetDashboardSkeleton />}
