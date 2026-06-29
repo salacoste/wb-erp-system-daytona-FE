@@ -86,15 +86,15 @@ function WidgetToggle({
       <span
         aria-hidden="true"
         className={cn(
-          'pointer-events-none absolute inset-0 rounded-full transition-colors',
-          checked ? 'bg-primary' : 'bg-input',
+          'pointer-events-none absolute inset-0 rounded-full border-2 transition-colors',
+          checked ? 'border-transparent bg-primary' : 'border-gray-400 bg-gray-300',
           disabled && 'opacity-50'
         )}
       />
       <span
         aria-hidden="true"
         className={cn(
-          'pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform',
+          'pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md ring-1 ring-black/10 transition-transform',
           checked && 'translate-x-4'
         )}
       />
