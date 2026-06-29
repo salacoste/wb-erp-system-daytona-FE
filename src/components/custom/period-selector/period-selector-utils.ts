@@ -5,7 +5,7 @@
  * Utility functions for the period selector component.
  */
 
-import { getMonthFromWeek } from '@/lib/period-helpers'
+import { getCurrentMonth, getMonthFromWeek } from '@/lib/period-helpers'
 
 /** Maximum number of weeks to show in dropdown */
 export const MAX_WEEKS = 12
@@ -20,10 +20,13 @@ export const MAX_MONTHS = 6
  */
 export function getUniqueMonths(weeks: string[]): string[] {
   const months = new Set<string>()
+  const currentMonth = getCurrentMonth()
   weeks.forEach(week => {
     try {
       const month = getMonthFromWeek(week)
-      months.add(month)
+      if (month <= currentMonth) {
+        months.add(month)
+      }
     } catch {
       // Skip invalid weeks
     }
