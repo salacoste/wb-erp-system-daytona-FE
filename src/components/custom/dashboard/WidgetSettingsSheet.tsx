@@ -65,23 +65,40 @@ function WidgetToggle({
   onChange: () => void
 }) {
   return (
-    <input
-      type="checkbox"
-      role="switch"
-      id={id}
-      aria-labelledby={labelId}
-      checked={checked}
-      disabled={disabled}
-      onChange={onChange}
-      className={cn(
-        'h-5 w-9 cursor-pointer appearance-none rounded-full border-2',
-        'border-transparent shadow-sm transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2',
-        checked ? 'bg-primary' : 'bg-input',
-        disabled && 'cursor-not-allowed opacity-50'
-      )}
-      aria-checked={checked}
-    />
+    // The wrapper renders the visible track + sliding thumb; an invisible native
+    // <input> overlays it as the click target so the toggle keeps role="switch",
+    // .checked, and onChange (a11y + test compatibility). Sibling spans are used
+    // (not ::before/::after) because pseudo-elements aren't reliably supported on
+    // native inputs (replaced elements) — a plain-coloured pill with no thumb was
+    // the cause of the state being hard to see at a glance.
+    <div className="relative inline-block h-5 w-9 shrink-0">
+      <input
+        type="checkbox"
+        role="switch"
+        id={id}
+        aria-labelledby={labelId}
+        checked={checked}
+        disabled={disabled}
+        onChange={onChange}
+        className="absolute inset-0 z-10 m-0 h-full w-full cursor-pointer appearance-none opacity-0 focus-visible:outline-none focus-visible:ring-2"
+        aria-checked={checked}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          'pointer-events-none absolute inset-0 rounded-full transition-colors',
+          checked ? 'bg-primary' : 'bg-input',
+          disabled && 'opacity-50'
+        )}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          'pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform',
+          checked && 'translate-x-4'
+        )}
+      />
+    </div>
   )
 }
 
