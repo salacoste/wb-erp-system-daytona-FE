@@ -47,3 +47,22 @@ Once `/sku-financials` returns the fields, the FE adds the 7 parity columns to `
 ## Note
 
 Brand/category (`/weekly/by-brand|by-category`) already serve these fields — FE integration there is unblocked and in progress. This request is only for the **SKU** surface (`/sku-financials`).
+
+## Backend implementation guide (exact files)
+
+The FR fields are already computed in the **`/weekly/by-sku`** path. To add them to `/sku-financials`, modify these files (all paths from repo root):
+
+| File | What to do |
+|---|---|
+| `src/analytics/dto/query/sku-financials-query.dto.ts` | Add `include_ads?: boolean` + `include_stock?: boolean` query params (mirror the existing `include_visibility` pattern). |
+| `src/analytics/dto/response/sku-financials-response.dto.ts` | Add the 13 FR fields (`advertising_cost`, `drr_pct`, `ad_cost_per_unit`, `tax_allocated`, `net_profit_after_tax`, `net_margin_after_tax_pct`, `spp_rub`, `spp_pct`, `cancellations_qty`, `stock_fbs`, `stock_fbo`, `stock_total`, `stock_value_rub`, `stock_value_share_pct`) — all `number | null`. |
+| `src/analytics/controllers/sku-financials.controller.ts` | Pass `include_ads`/`include_stock` from the query DTO to the service. |
+| `src/analytics/services/sku-financials.service.ts` + `sku-financials-data.service.ts` | When the flags are set, compute/attach the FR fields per SKU. |
+
+**FR logic source to reuse** (the `/weekly/by-sku` implementation):
+- `src/analytics/services/sku-analytics.service.ts` — the FR field computation (gated by `includeCogs`/`includeAds`/`includeStock`).
+- `src/analytics/services/sku-analytics.mapper.ts` — the mapper that sets `advertising_cost`, `drr_pct`, `tax_allocated`, `net_profit_after_tax`, `spp_rub`, `stock_value_rub`, etc.
+
+The simplest path: extract the FR-computation helpers from `sku-analytics.service.ts` into a shared utility, then call them from BOTH `sku-analytics.service.ts` (by-sku) and `sku-financials.service.ts` (sku-financials). Both serve per-SKU data from the same underlying tables (`weekly_margin_fact`, `adv_daily_stats`, `inventory_snapshots`, `wb_finance_raw`).
+
+**FE is prepped** — `SkuFinancialItem` type + `useSkuFinancials` flags are ready; when the backend lands these fields, the FE columns are a mechanical add.
