@@ -98,6 +98,27 @@ export function MarginAggregatedTableHeader({
         <TableHead className="text-right" title="Вклад в валовую прибыль">
           <div className="ml-auto flex items-center font-medium">Доля прибыли</div>
         </TableHead>
+        <TableHead className="text-right" title="Расходы на рекламу">
+          <div className="ml-auto flex items-center font-medium">Реклама</div>
+        </TableHead>
+        <TableHead className="text-right" title="Доля рекламных расходов в выручке (ДРР)">
+          <div className="ml-auto flex items-center font-medium">ДРР</div>
+        </TableHead>
+        <TableHead className="text-right" title="Чистая прибыль после налога">
+          <div className="ml-auto flex items-center font-medium">Чист. прибыль</div>
+        </TableHead>
+        <TableHead className="text-right" title="Сумма продаж без скидок (СПП)">
+          <div className="ml-auto flex items-center font-medium">СПП</div>
+        </TableHead>
+        <TableHead className="text-right" title="Количество отмен">
+          <div className="ml-auto flex items-center font-medium">Отмены</div>
+        </TableHead>
+        <TableHead className="text-right" title="Стоимость остатков по закупочной цене">
+          <div className="ml-auto flex items-center font-medium">Остаток ₽</div>
+        </TableHead>
+        <TableHead className="text-right" title="Доля стоимости остатков в оборотном капитале">
+          <div className="ml-auto flex items-center font-medium">Доля остатка</div>
+        </TableHead>
         {showProfitPerUnit && (
           <TableHead className="text-right">
             <TooltipProvider>

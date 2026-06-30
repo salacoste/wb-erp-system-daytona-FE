@@ -166,7 +166,9 @@ describe('CabinetDashboardPage - Rendering', () => {
 
     renderPage()
 
-    expect(screen.getByText(/2026-W19 — 2026-W22/)).toBeInTheDocument()
+    // Concurrent commit 1176c0ad changed the notice to list each covered week
+    // (weekListLabel, comma-separated) instead of a "start — end" range.
+    expect(screen.getByText(/2026-W19, 2026-W20, 2026-W21, 2026-W22/)).toBeInTheDocument()
     expect(screen.getByText(/04\.05\.2026 — 31\.05\.2026/)).toBeInTheDocument()
     expect(mockUseCabinetSummary).toHaveBeenCalledWith(
       { weekStart: '2026-W19', weekEnd: '2026-W22' },

@@ -120,6 +120,20 @@ interface RawBrandItem {
   operating_profit: number | null
   operating_margin_pct: number | null
   skus_with_expenses_only: number
+  // FR-2..FR-5 competitor-parity fields (contract #219, verified W26)
+  advertising_cost?: number | null
+  drr_pct?: number | null
+  tax_allocated?: number | null
+  net_profit_after_tax?: number | null
+  net_margin_after_tax_pct?: number | null
+  spp_rub?: number | null
+  spp_pct?: number | null
+  cancellations_qty?: number | null
+  stock_fbs?: number | null
+  stock_fbo?: number | null
+  stock_total?: number | null
+  stock_value_rub?: number | null
+  stock_value_share_pct?: number | null
 }
 
 /** Map a single brand API item to the frontend response shape */
@@ -149,5 +163,19 @@ function mapBrandItem(raw: unknown): MarginAnalyticsAggregated {
     operating_profit: item.operating_profit ?? undefined,
     operating_margin_pct: item.operating_margin_pct,
     skus_with_expenses_only: item.skus_with_expenses_only,
+    // FR-2..FR-5 competitor-parity pass-through (preserve null, never ?? 0)
+    advertising_cost: item.advertising_cost ?? null,
+    drr_pct: item.drr_pct ?? null,
+    tax_allocated: item.tax_allocated ?? null,
+    net_profit_after_tax: item.net_profit_after_tax ?? null,
+    net_margin_after_tax_pct: item.net_margin_after_tax_pct ?? null,
+    spp_rub: item.spp_rub ?? null,
+    spp_pct: item.spp_pct ?? null,
+    cancellations_qty: item.cancellations_qty ?? null,
+    stock_fbs: item.stock_fbs ?? null,
+    stock_fbo: item.stock_fbo ?? null,
+    stock_total: item.stock_total ?? null,
+    stock_value_rub: item.stock_value_rub ?? null,
+    stock_value_share_pct: item.stock_value_share_pct ?? null,
   }
 }

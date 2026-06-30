@@ -6,7 +6,7 @@
  */
 import { TableCell, TableRow } from '@/components/ui/table'
 import { ExternalLink } from 'lucide-react'
-import { cn, formatPercentage } from '@/lib/utils'
+import { cn, formatCurrency, formatPercentage } from '@/lib/utils'
 import { MarginBadge } from './MarginDisplay'
 import { formatCogs } from '@/hooks/useSingleCogsAssignment'
 import {
@@ -95,6 +95,33 @@ export function MarginAggregatedTableRow({
       </TableCell>
       <TableCell className="text-right text-gray-600" title="Вклад в валовую прибыль">
         {profitShare === null ? '—' : formatPercentage(profitShare, 1)}
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Расходы на рекламу">
+        {item.advertising_cost == null ? '—' : formatCurrency(item.advertising_cost)}
+      </TableCell>
+      <TableCell
+        className="text-right text-gray-600"
+        title="Доля рекламных расходов в выручке (ДРР)"
+      >
+        {item.drr_pct == null ? '—' : formatPercentage(item.drr_pct, 1)}
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Чистая прибыль после налога">
+        {item.net_profit_after_tax == null ? '—' : formatCurrency(item.net_profit_after_tax)}
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Сумма продаж без скидок (СПП)">
+        {item.spp_rub == null ? '—' : formatCurrency(item.spp_rub)}
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Количество отмен">
+        {item.cancellations_qty ?? '—'}
+      </TableCell>
+      <TableCell className="text-right text-gray-600" title="Стоимость остатков по закупочной цене">
+        {item.stock_value_rub == null ? '—' : formatCurrency(item.stock_value_rub)}
+      </TableCell>
+      <TableCell
+        className="text-right text-gray-600"
+        title="Доля стоимости остатков в оборотном капитале"
+      >
+        {item.stock_value_share_pct == null ? '—' : formatPercentage(item.stock_value_share_pct, 1)}
       </TableCell>
       {showProfitPerUnit && (
         <TableCell className="text-right">
