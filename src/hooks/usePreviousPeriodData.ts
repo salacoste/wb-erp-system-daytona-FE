@@ -8,6 +8,7 @@
 
 import { useMemo } from 'react'
 import type { PreviousPeriodData } from '@/components/custom/dashboard'
+import { resolveDashboardOrderMetrics } from '@/lib/dashboard-order-metrics'
 import type { FulfillmentSummaryResponse } from '@/types/fulfillment'
 import type { FinanceSummary } from '@/types/finance-summary'
 
@@ -38,6 +39,12 @@ export function usePreviousPeriodData(
     const prevPaidAcceptance = s?.paid_acceptance_cost_total ?? null
     const prevCogsTotal = s?.cogs_total ?? null
     const prevWbPromotionCost = s?.wb_promotion_cost_total ?? null
+    const previousOrderMetrics = resolveDashboardOrderMetrics({
+      ordersCount: fulfillmentPrevious?.summary.total.ordersCount,
+      ordersRevenue: fulfillmentPrevious?.summary.total.ordersRevenue,
+      ordersRevenueDiscounted: fulfillmentPrevious?.summary.total.ordersRevenueDiscounted,
+      financeBuyoutCount: s?.product_transactions ?? s?.product_transactions_total,
+    })
 
     // WB Commissions: pure commissions/fees only (no wb_services_cost)
     // Promotion → AdvertisingCard, Jam+Other → OtherDeductionsCard
@@ -68,8 +75,8 @@ export function usePreviousPeriodData(
         : null
 
     return {
-      ordersAmount: fulfillmentPrevious?.summary.total.ordersRevenue ?? null,
-      ordersCount: fulfillmentPrevious?.summary.total.ordersCount ?? null,
+      ordersAmount: previousOrderMetrics.ordersRevenue ?? null,
+      ordersCount: previousOrderMetrics.ordersCount ?? null,
       saleGross: s?.sale_gross_total ?? null,
       wbCommissionsTotal,
       logisticsCost: prevLogisticsCost,

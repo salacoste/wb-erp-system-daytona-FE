@@ -8,6 +8,7 @@
  */
 
 import type { DashboardMetricsGridProps } from '@/components/custom/dashboard/DashboardMetricsGridTypes'
+import { resolveDashboardOrderMetrics } from '@/lib/dashboard-order-metrics'
 import type { useDashboardData } from './useDashboardData'
 
 type DashboardData = ReturnType<typeof useDashboardData>
@@ -16,10 +17,17 @@ export function buildDashboardGridProps(
   d: DashboardData,
   onAssignCogs: (() => void) | undefined
 ): DashboardMetricsGridProps {
-  return {
-    totalOrders: d.fSummary?.total.ordersCount,
+  const orderMetrics = resolveDashboardOrderMetrics({
+    ordersCount: d.fSummary?.total.ordersCount,
     ordersRevenue: d.fSummary?.total.ordersRevenue,
     ordersRevenueDiscounted: d.fSummary?.total.ordersRevenueDiscounted,
+    financeBuyoutCount: d.salesCount,
+  })
+
+  return {
+    totalOrders: orderMetrics.ordersCount,
+    ordersRevenue: orderMetrics.ordersRevenue,
+    ordersRevenueDiscounted: orderMetrics.ordersRevenueDiscounted,
     salesCount: d.salesCount,
     returnsCount: d.returnsCount,
     saleGross: d.summary?.sale_gross_total,
