@@ -66,6 +66,10 @@ export function useSkuFinancials(params: SkuFinancialsQuery, enabled = true) {
       if (params.includeVisibility !== undefined) {
         searchParams.set('include_visibility', String(params.includeVisibility))
       }
+      // FR-2..FR-5 (#219): opt-in flags for competitor-parity fields. Default true
+      // so the share/parity columns populate out of the box; pass false to opt out.
+      searchParams.set('include_ads', String(params.includeAds ?? true))
+      searchParams.set('include_stock', String(params.includeStock ?? true))
       if (params.limit !== undefined) {
         searchParams.set('limit', String(params.limit))
       }
@@ -127,6 +131,9 @@ export function useSkuFinancialsWithPagination(
       if (baseParams.includeVisibility !== undefined) {
         searchParams.set('include_visibility', String(baseParams.includeVisibility))
       }
+      // FR-2..FR-5 (#219): opt-in flags for competitor-parity fields. Default true.
+      searchParams.set('include_ads', String(baseParams.includeAds ?? true))
+      searchParams.set('include_stock', String(baseParams.includeStock ?? true))
 
       // apiClient.get returns the response directly (type T), not wrapped in { data: T }
       // Backend returns snake_case, we transform to camelCase for frontend

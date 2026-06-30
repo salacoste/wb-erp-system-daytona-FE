@@ -62,6 +62,24 @@ export interface BackendSkuItem {
   operating_profit: number | null
   operating_margin_pct: number | null
   profitability_status: ProfitabilityStatus
+  // — FR-2..FR-5 competitor-parity fields (backend contract #219, verified W26).
+  //   All gated by include_ads/include_stock query flags; null (never 0) when N/A
+  //   → transform preserves null → UI renders "—" (anti-pattern #8). All optional
+  //   because they are absent unless the corresponding flag is sent. —
+  advertising_cost?: number | null
+  drr_pct?: number | null
+  ad_cost_per_unit?: number | null
+  tax_allocated?: number | null
+  net_profit_after_tax?: number | null
+  net_margin_after_tax_pct?: number | null
+  spp_rub?: number | null
+  spp_pct?: number | null
+  cancellations_qty?: number | null
+  stock_fbs?: number | null
+  stock_fbo?: number | null
+  stock_total?: number | null
+  stock_value_rub?: number | null
+  stock_value_share_pct?: number | null
 }
 
 export interface BackendMeta {

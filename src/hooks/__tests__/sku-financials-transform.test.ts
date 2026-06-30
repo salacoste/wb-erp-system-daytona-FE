@@ -72,3 +72,80 @@ describe('transformBackendItem — Story 87.3-FE null preservation', () => {
     expect(result.profit.operating).toBe(4350)
   })
 })
+
+describe('transformBackendItem — FR-2..FR-5 parity mapping (#219)', () => {
+  it('maps backend snake_case parity fields to item.parity camelCase', () => {
+    const item = makeBackendItem({
+      advertising_cost: 246.1,
+      drr_pct: 17.39,
+      ad_cost_per_unit: 12.3,
+      tax_allocated: 84.91,
+      net_profit_after_tax: 516.55,
+      net_margin_after_tax_pct: 12.34,
+      spp_rub: 548.95,
+      spp_pct: 26.07,
+      cancellations_qty: 2,
+      stock_fbs: 530,
+      stock_fbo: null,
+      stock_total: 530,
+      stock_value_rub: 54060,
+      stock_value_share_pct: 7.5,
+    })
+    const result = transformBackendItem(item)
+    expect(result.parity).toEqual({
+      advertisingCost: 246.1,
+      drrPct: 17.39,
+      adCostPerUnit: 12.3,
+      taxAllocated: 84.91,
+      netProfitAfterTax: 516.55,
+      netMarginAfterTaxPct: 12.34,
+      sppRub: 548.95,
+      sppPct: 26.07,
+      cancellationsQty: 2,
+      stockFbs: 530,
+      stockFbo: null,
+      stockTotal: 530,
+      stockValueRub: 54060,
+      stockValueSharePct: 7.5,
+    })
+  })
+
+  it('preserves null for unavailable parity fields (never ?? 0)', () => {
+    const item = makeBackendItem({
+      advertising_cost: null,
+      drr_pct: null,
+      net_profit_after_tax: null,
+      spp_rub: null,
+      cancellations_qty: null,
+      stock_value_rub: null,
+      stock_value_share_pct: null,
+    })
+    const result = transformBackendItem(item)
+    expect(result.parity?.advertisingCost).toBe(null)
+    expect(result.parity?.drrPct).toBe(null)
+    expect(result.parity?.netProfitAfterTax).toBe(null)
+    expect(result.parity?.sppRub).toBe(null)
+    expect(result.parity?.cancellationsQty).toBe(null)
+    expect(result.parity?.stockValueRub).toBe(null)
+    expect(result.parity?.stockValueSharePct).toBe(null)
+  })
+
+  it('omits parity entirely when backend sends no FR fields (flags off)', () => {
+    const result = transformBackendItem(makeBackendItem())
+    expect(result.parity).toBeUndefined()
+  })
+
+  it('preserves legitimate zero parity values (not converted to null)', () => {
+    const item = makeBackendItem({
+      advertising_cost: 0,
+      drr_pct: 0,
+      cancellations_qty: 0,
+      stock_value_share_pct: 0,
+    })
+    const result = transformBackendItem(item)
+    expect(result.parity?.advertisingCost).toBe(0)
+    expect(result.parity?.drrPct).toBe(0)
+    expect(result.parity?.cancellationsQty).toBe(0)
+    expect(result.parity?.stockValueSharePct).toBe(0)
+  })
+})
