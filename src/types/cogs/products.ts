@@ -115,6 +115,28 @@ export interface MarginAnalyticsSku {
   net_profit?: number
   net_margin_pct?: number | null
   storage_data_source?: 'paid_storage_api' | 'unavailable'
+  // — FR-2..FR-5 competitor-parity fields (backend contract #219). All gated by
+  //   opt-in query flags; null (never 0) when N/A → render "—" (anti-pattern #8). —
+  // FR-2 per-SKU advertising (include_ads). Note: distinct from the Epic-26
+  // `advertising_cost_rub` (string expense) above — this is the attributed ₽ number.
+  advertising_cost?: number | null
+  drr_pct?: number | null
+  ad_cost_per_unit?: number | null
+  // FR-3 per-SKU net profit after tax (include_cogs). Distinct from `net_profit`
+  // (pre-tax) — this is after the regime-based tax allocation.
+  tax_allocated?: number | null
+  net_profit_after_tax?: number | null
+  net_margin_after_tax_pct?: number | null
+  // FR-5 СПП (positive discount ₽) + cancellations (include_cogs)
+  spp_rub?: number | null
+  spp_pct?: number | null
+  cancellations_qty?: number | null
+  // FR-4 stock at purchase price (include_stock). stock_fbo null until FBO sync.
+  stock_fbs?: number | null
+  stock_fbo?: number | null
+  stock_total?: number | null
+  stock_value_rub?: number | null
+  stock_value_share_pct?: number | null
 }
 
 export interface MarginAnalyticsAggregated {
@@ -143,6 +165,22 @@ export interface MarginAnalyticsAggregated {
   operating_profit?: number
   operating_margin_pct?: number | null
   skus_with_expenses_only?: number
+  // — FR-2..FR-5 competitor-parity fields (backend contract #219), aggregated
+  //   across the brand/category's SKUs. Gated by include_ads/include_cogs/include_stock;
+  //   null (never 0) when N/A → render "—" (anti-pattern #8). —
+  advertising_cost?: number | null
+  drr_pct?: number | null
+  tax_allocated?: number | null
+  net_profit_after_tax?: number | null
+  net_margin_after_tax_pct?: number | null
+  spp_rub?: number | null
+  spp_pct?: number | null
+  cancellations_qty?: number | null
+  stock_fbs?: number | null
+  stock_fbo?: number | null
+  stock_total?: number | null
+  stock_value_rub?: number | null
+  stock_value_share_pct?: number | null
 }
 
 export interface MarginAnalyticsSkuResponse {
