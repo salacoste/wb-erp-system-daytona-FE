@@ -67,16 +67,17 @@ export const PERSONA_HERO_KPIS: Record<Persona, HeroKpiDef[]> = {
   ],
 }
 
+function resolveNetProfit(p: DashboardMetricsGridProps) {
+  const operating = p.operatingProfitAnalytical ?? p.grossProfit
+  const hasData = p.payoutTotal != null || p.taxMetrics != null || operating != null
+  return hasData ? getNetProfit(p.taxMetrics ?? null, p.payoutTotal ?? 0, operating) : null
+}
+
 /** Resolve a hero KPI's raw numeric value from grid props (null when unavailable). */
 export function resolveHeroKpiValue(id: HeroKpiId, p: DashboardMetricsGridProps): number | null {
   switch (id) {
-    case 'netProfit': {
-      const operating = p.operatingProfitAnalytical ?? p.grossProfit
-      const hasData = p.payoutTotal != null || p.taxMetrics != null || operating != null
-      return hasData
-        ? getNetProfit(p.taxMetrics ?? null, p.payoutTotal ?? 0, operating).value
-        : null
-    }
+    case 'netProfit':
+      return resolveNetProfit(p)?.value ?? null
     case 'wbRevenue':
       return p.wbSalesGross ?? null
     case 'revenue':
@@ -103,6 +104,15 @@ export function resolveHeroKpiValue(id: HeroKpiId, p: DashboardMetricsGridProps)
 export interface ResolvedHeroKpi {
   def: HeroKpiDef
   value: number | null
+  label: string
+}
+
+export function resolveHeroKpiLabel(id: HeroKpiId, p: DashboardMetricsGridProps): string | null {
+  if (id !== 'netProfit') return null
+
+  const result = resolveNetProfit(p)
+  if (!result) return null
+  return `${result.label}${result.isPreTax ? ' (до налога)' : ''}`
 }
 
 /** Resolve the full hero KPI list (defs + values) for a persona. */
@@ -113,5 +123,6 @@ export function getPersonaHeroKpis(
   return PERSONA_HERO_KPIS[persona].map(def => ({
     def,
     value: resolveHeroKpiValue(def.id, props),
+    label: resolveHeroKpiLabel(def.id, props) ?? def.label,
   }))
 }

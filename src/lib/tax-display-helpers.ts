@@ -52,7 +52,7 @@ export function getNetProfit(
 
   // Without tax — prefer operating profit (actual profit metric with COGS)
   if (operatingProfit != null) {
-    return { value: operatingProfit, label: 'Операционная прибыль (до налога)', isPreTax: true }
+    return { value: operatingProfit, label: 'Операционная прибыль', isPreTax: true }
   }
 
   // Last resort — payout is cash flow, not profit (COGS not subtracted)

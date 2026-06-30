@@ -107,6 +107,20 @@ describe('NetProfitCard (Story 66.6-FE)', () => {
     expect(card.textContent).toMatch(/до налога/i)
   })
 
+  it('renders operating profit pre-tax label without duplicating suffix', () => {
+    renderCard({
+      taxMetrics: null,
+      payoutTotal: 250000,
+      saleGrossTotal: 200000,
+      operatingProfit: 180000,
+    })
+
+    const card = screen.getByRole('article')
+    expect(card.textContent).toContain('Операционная прибыль (до налога)')
+    expect(card.textContent).not.toContain('Операционная прибыль (до налога) (до налога)')
+    expect(card.textContent).toMatch(/180\s?000/)
+  })
+
   it('shows after-tax margin percentage', () => {
     const tax = createTaxMetrics({
       vat_payer: false,

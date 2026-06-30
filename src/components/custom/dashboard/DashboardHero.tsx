@@ -32,8 +32,8 @@ export function DashboardHero(props: DashboardMetricsGridProps): React.ReactElem
       aria-label={`Главные метрики · ${PERSONA_LABELS[persona]}`}
       className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-6"
     >
-      {kpis.map(({ def, value }) => (
-        <HeroKpiTile key={def.id} def={def} value={value} />
+      {kpis.map(({ def, value, label }) => (
+        <HeroKpiTile key={def.id} def={def} label={label} value={value} />
       ))}
     </section>
   )
@@ -53,9 +53,11 @@ function formatHeroValue(def: HeroKpiDef, value: number | null): string {
 
 function HeroKpiTile({
   def,
+  label,
   value,
 }: {
   def: HeroKpiDef
+  label: string
   value: number | null
 }): React.ReactElement {
   const text = formatHeroValue(def, value)
@@ -63,13 +65,13 @@ function HeroKpiTile({
   return (
     <div
       role="article"
-      aria-label={`${def.label}: ${text}`}
+      aria-label={`${label}: ${text}`}
       className={cn(
         'rounded-lg border bg-card p-3 transition-shadow hover:shadow-md',
         def.lead && 'col-span-2'
       )}
     >
-      <div className="text-xs font-medium text-muted-foreground">{def.label}</div>
+      <div className="text-xs font-medium text-muted-foreground">{label}</div>
       <div
         title={def.format === 'currency' && value != null ? formatCurrency(value) : undefined}
         className={cn(

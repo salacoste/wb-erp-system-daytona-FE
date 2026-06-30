@@ -6,6 +6,7 @@ import { describe, it, expect } from 'vitest'
 import {
   PERSONA_HERO_KPIS,
   getPersonaHeroKpis,
+  resolveHeroKpiLabel,
   resolveHeroKpiValue,
   type HeroKpiId,
 } from '../persona-hero'
@@ -112,6 +113,13 @@ describe('persona-hero (TZ-5)', () => {
           })
         )
       ).toBeNull()
+    })
+
+    it('netProfit label is honest when the value is pre-tax operating profit', () => {
+      const p = createProps({ taxMetrics: null, operatingProfitAnalytical: 18000 })
+
+      expect(resolveHeroKpiLabel('netProfit', p)).toBe('Операционная прибыль (до налога)')
+      expect(getPersonaHeroKpis('Owner', p)[0].label).toBe('Операционная прибыль (до налога)')
     })
 
     it('returns null for undefined scalar values', () => {
