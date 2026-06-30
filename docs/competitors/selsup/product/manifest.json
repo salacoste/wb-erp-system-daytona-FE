@@ -1,0 +1,107 @@
+{
+  "kb": "selsup-reverse-engineering",
+  "description": "База знаний: реверс-инжиниринг SaaS SelSup (WB+Ozon) по 419 статьям базы знаний selsup.ru/help + реализация клона (backend+frontend).",
+  "source_site": "https://selsup.ru/help/",
+  "language": "ru",
+  "agent_guide": "AGENT_GUIDE.md",
+  "human_readme": "README.md",
+  "truth_source": {
+    "note": "Сырые факты — corpus/ (статьи) + INDEX.md. Аналитика ниже — сгенерирована ИИ; критичные тезисы сверяй с corpus/.",
+    "corpus": {
+      "path": "corpus/",
+      "count": 419,
+      "size": "4.8MB",
+      "format": "markdown, one article per file, front-matter: {title, slug, source(url), chars}",
+      "file_pattern": "corpus/<slug>.md"
+    },
+    "index": {
+      "path": "INDEX.md",
+      "description": "Таблица 419 статей: title | символы | файл | исходный URL"
+    }
+  },
+  "analysis": [
+    { "path": "README.md", "bytes": 11891, "desc": "Точка входа для ПМ (что это, артефакты, маршрут изучения)" },
+    { "path": "AGENT_GUIDE.md", "desc": "Тех. документация для ИИ-агентов (структура, форматы, навигация, query-рецепты)" },
+    { "path": "PRD.md", "bytes": 159560, "desc": "Полный PRD продукта (16 модулей, широкий)" },
+    { "path": "MVP_PRD.md", "bytes": 61215, "desc": "MVP-срез WB+Ozon: скоуп IN/OUT, журнеи, модель данных, WB/Ozon API, 7-фазный roadmap, метрики, риски" },
+    { "path": "FEATURE_MAP.md", "bytes": 25238, "desc": "Карта 16 модулей: 608 возможностей, 190 воркфлоу, статистика" },
+    { "path": "DATA_MODEL.md", "bytes": 71445, "desc": "Сквозная модель данных: сущности, атрибуты, связи, инварианты" },
+    { "path": "INTEGRATIONS.md", "bytes": 50675, "desc": "Матрица интеграций: маркетплейсы, 1С/МойСклад/СБИС, Честный Знак, логистика, AI" },
+    { "path": "WORKFLOWS.md", "bytes": 80596, "desc": "190 end-to-end бизнес-процессов (шаги: действие→реакция системы)" }
+  ],
+  "specs": {
+    "path": "specs/",
+    "count": 16,
+    "format": "per-module spec: назначение, возможности, воркфлоу, сущности, интеграции, настройки, бизнес-правила, открытые вопросы",
+    "modules": [
+      { "file": "product-cards.md", "name": "Карточки товаров / PIM" },
+      { "file": "stocks-inventory.md", "name": "Склад, остатки, адресное хранение" },
+      { "file": "orders-assembly.md", "name": "Заказы и сборка (FBS/FBO/DBS)" },
+      { "file": "prices-strategies.md", "name": "Цены, стратегии ценообразования, акции" },
+      { "file": "integrations-marketplaces.md", "name": "Интеграции с маркетплейсами (WB/Ozon)" },
+      { "file": "integration-1s-moysklad.md", "name": "1С, МойСклад, СБИС, API" },
+      { "file": "fbo-deliveries.md", "name": "Отгрузки, упаковка, поставки FBO" },
+      { "file": "marking-labels.md", "name": "Маркировка, Честный Знак, этикетки" },
+      { "file": "import-export.md", "name": "Импорт/экспорт и перенос карточек" },
+      { "file": "purchasing-production.md", "name": "Закупки, производство, комплекты, себестоимость" },
+      { "file": "analytics-finance.md", "name": "Аналитика, финансы, P&L" },
+      { "file": "ai-modules.md", "name": "AI-модули (стратегии, финдир, фото, видео)" },
+      { "file": "automation-tasks.md", "name": "Автоматизация, задания и настройки" },
+      { "file": "crm-customers.md", "name": "CRM, покупатели и конкуренты" },
+      { "file": "onboarding-account.md", "name": "Онбординг, аккаунт, тарифы, организации" },
+      { "file": "support-misc.md", "name": "Поддержка, отладка, служебное" }
+    ]
+  },
+  "design": {
+    "path": "design/",
+    "format": "dev-ready дизайн фазы: SQL DDL, REST API контракты, потоки, экраны, acceptance",
+    "phases": [
+      { "file": "PHASE0_FOUNDATION.md", "bytes": 104827, "name": "Foundation (multi-tenant, RBAC, sync-очередь, шифрование, аудит, 14 таблиц)" },
+      { "file": "PHASE1_PIM_MARKETPLACES.md", "bytes": 120319, "name": "PIM-каталог + адаптеры WB/Ozon (публикация тумблерами, импорт, матчинг)" }
+    ]
+  },
+  "validation": {
+    "path": ".",
+    "format": "VALIDATION_PHASE<N>.md: вердикт, таблица accept-критериев, баги, что осталось",
+    "phases": [
+      "VALIDATION_PHASE0.md", "VALIDATION_PHASE1.md", "VALIDATION_PHASE2.md",
+      "VALIDATION_PHASE3.md", "VALIDATION_PHASE4.md", "VALIDATION_PHASE5.md",
+      "VALIDATION_PHASE6.md"
+    ]
+  },
+  "build_status": { "path": "BUILD_PROGRESS.md", "desc": "Таблица фаз 0-6 + журнал циклов сборки" },
+  "implementation": {
+    "root": "app/",
+    "stack": "NestJS + Prisma + PostgreSQL (backend), React + Vite + TS (frontend)",
+    "tests": "120 (backend, vitest)",
+    "backend_modules": [
+      "auth", "rbac", "prisma", "crypto", "sync", "audit", "organizations",
+      "products", "stock", "prices", "orders", "labels", "analytics",
+      "debug", "observability"
+    ],
+    "key_files": {
+      "schema": "app/backend/prisma/schema.prisma",
+      "controllers": "app/backend/src/<module>/<module>.controller.ts",
+      "adapters": "app/backend/src/products/{wb,ozon}.adapter.ts",
+      "adapter_interface": "app/backend/src/products/marketplace.types.ts",
+      "frontend_pages": "app/frontend/src/pages/",
+      "frontend_api": "app/frontend/src/api.ts",
+      "run_guide": "app/README.md"
+    },
+    "notes": "Реализован MVP (WB+Ozon, FBS). Реальный API WB/Ozon — MockMarketplaceTransport ([SPIKE], нужны токены кабинета)."
+  },
+  "conventions": {
+    "marketplaces": ["WB", "OZON"],
+    "schemes": ["FBS", "FBO", "DBS", "realFBS", "dropshipping", "КГТ"],
+    "roles": ["owner", "admin", "manager", "operator"],
+    "traceability": "[<file> §<section>] — ведёт к источнику; [SPIKE] — неподтверждено (нужен тестовый кабинет)"
+  },
+  "reading_orders": {
+    "answer_question": ["INDEX.md", "corpus/<slug>.md", "specs/<module>.md"],
+    "build_feature": ["MVP_PRD.md §8", "design/PHASE*.md", "app/backend/src/<module>/", "VALIDATION_PHASE*.md"],
+    "data_model": ["DATA_MODEL.md", "app/backend/prisma/schema.prisma"],
+    "integration": ["INTEGRATIONS.md", "specs/integrations-*.md", "app/backend/src/products/{wb,ozon}.adapter.ts"],
+    "workflow": ["WORKFLOWS.md", "specs/<module>.md §воркфлоу"],
+    "api_endpoint": ["VALIDATION_PHASE*.md", "app/backend/src/<module>/<module>.controller.ts"]
+  }
+}
