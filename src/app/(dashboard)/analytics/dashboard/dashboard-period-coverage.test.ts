@@ -13,6 +13,7 @@ describe('getDashboardMonthCoverage', () => {
     const coverage = getDashboardMonthCoverage('2026-05', '2026-W19', '2026-W22')
 
     expect(coverage.weeksLabel).toBe('2026-W19 — 2026-W22')
+    expect(coverage.weekListLabel).toBe('2026-W19, 2026-W20, 2026-W21, 2026-W22')
     expect(coverage.coveredRangeLabel).toBe('04.05.2026 — 31.05.2026')
     expect(coverage.calendarRangeLabel).toBe('01.05.2026 — 31.05.2026')
     expect(coverage.hasCalendarGap).toBe(true)

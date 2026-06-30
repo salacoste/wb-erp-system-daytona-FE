@@ -81,7 +81,7 @@ export function PeriodContextLabel({
     <div
       data-testid="period-context-label"
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2',
+        'flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-1 sm:gap-2',
         'text-sm text-muted-foreground',
         className
       )}

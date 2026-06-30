@@ -12,6 +12,7 @@ import {
   FulfillmentShareBar,
 } from '@/components/custom/dashboard'
 import { DashboardHero } from '@/components/custom/dashboard/DashboardHero'
+import { DashboardMonthWeekScope } from '@/components/custom/dashboard/DashboardMonthWeekScope'
 import { buildDashboardGridProps } from './dashboardGridProps'
 import { DashboardPeriodSelector } from '@/components/custom/DashboardPeriodSelector'
 import { DashboardStatusBanners } from './DashboardStatusBanners'
@@ -77,8 +78,8 @@ export function DashboardContent(): React.ReactElement {
 
   return (
     <div className="space-y-6 pb-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 flex-1">
+      <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-start lg:justify-between">
+        <div className="min-w-[260px] flex-1">
           <h1 className="text-2xl font-bold text-foreground">Главная страница</h1>
           <PeriodContextLabel
             periodType={d.periodType}
@@ -88,7 +89,7 @@ export function DashboardContent(): React.ReactElement {
           />
         </div>
         <div
-          className="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end"
+          className="flex min-w-0 flex-wrap items-center gap-2 lg:flex-1 lg:justify-end"
           role="region"
           aria-label="Выбор периода"
         >
@@ -97,6 +98,8 @@ export function DashboardContent(): React.ReactElement {
           <WidgetSettingsSheet />
         </div>
       </div>
+
+      {d.periodType === 'month' && <DashboardMonthWeekScope month={d.selectedMonth} />}
 
       {/* T1 — Hero (above the fold): status strip + persona KPIs + canonical COGS indicator */}
       {status.count > 0 && status.highestSeverity && (

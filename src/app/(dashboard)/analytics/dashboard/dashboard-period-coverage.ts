@@ -23,6 +23,7 @@ export interface DashboardMonthCoverage {
   coveredRangeLabel: string
   calendarRangeLabel: string
   weeksLabel: string
+  weekListLabel: string
   hasCalendarGap: boolean
 }
 
@@ -86,10 +87,13 @@ export function getDashboardMonthCoverage(
   const calendarStart = getMonthStartDate(month)
   const calendarEnd = getMonthEndDate(month)
 
+  const monthWeeks = getWeeksInMonth(month).filter(week => week >= weekStart && week <= weekEnd)
+
   return {
     coveredRangeLabel: formatDateRangeRu(coveredStart, coveredEnd),
     calendarRangeLabel: formatDateRangeRu(calendarStart, calendarEnd),
     weeksLabel: weekStart === weekEnd ? weekStart : `${weekStart} — ${weekEnd}`,
+    weekListLabel: monthWeeks.length > 0 ? monthWeeks.join(', ') : weekStart,
     hasCalendarGap:
       coveredStart.getTime() > calendarStart.getTime() ||
       coveredEnd.getTime() < calendarEnd.getTime(),

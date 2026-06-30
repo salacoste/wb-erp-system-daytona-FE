@@ -133,9 +133,9 @@ function CabinetDashboardContent() {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Месячная сводка построена по завершённым WB-неделям {monthCoverage.weeksLabel}:{' '}
-            {monthCoverage.coveredRangeLabel}. Календарный месяц: {monthCoverage.calendarRangeLabel}
-            .
+            Месячная сводка построена по завершённым WB-неделям {monthCoverage.weekListLabel}:
+            включены даты {monthCoverage.coveredRangeLabel}. Календарный месяц:{' '}
+            {monthCoverage.calendarRangeLabel}.
             {monthCoverage.hasCalendarGap
               ? ' Часть календарных дней вне этих недель не включена.'
               : ''}
