@@ -24,6 +24,10 @@ export interface SkuFinancialsQuery {
   sortBy?: SkuFinancialsSortBy
   order?: 'asc' | 'desc'
   includeVisibility?: boolean
+  /** FR-2..FR-5 (#219): request competitor-parity ad fields (advertising_cost, drr_pct, ...). Default true. */
+  includeAds?: boolean
+  /** FR-2..FR-5 (#219): request competitor-parity stock fields (stock_fbs, stock_value_rub, ...). Default true. */
+  includeStock?: boolean
   limit?: number
   offset?: number
 }

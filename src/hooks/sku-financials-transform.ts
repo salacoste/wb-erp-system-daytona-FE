@@ -54,7 +54,56 @@ export function transformBackendItem(item: BackendSkuItem): SkuFinancialItem {
     },
     profitabilityStatus: item.profitability_status,
     missingCogs: item.cogs === null,
+    // FR-2..FR-5 (#219): competitor-parity enrichment. Backend returns these
+    // top-level on each item when include_ads/include_stock are sent (contract
+    // #219, verified W26). Preserve null (never ?? 0) so the UI renders "—"
+    // for unavailable fields (anti-pattern #8). Omit `parity` entirely when no
+    // FR field is present (flags not sent) to keep the item shape clean.
+    ...(hasAnyParityField(item)
+      ? {
+          parity: {
+            advertisingCost: item.advertising_cost ?? null,
+            drrPct: item.drr_pct ?? null,
+            adCostPerUnit: item.ad_cost_per_unit ?? null,
+            taxAllocated: item.tax_allocated ?? null,
+            netProfitAfterTax: item.net_profit_after_tax ?? null,
+            netMarginAfterTaxPct: item.net_margin_after_tax_pct ?? null,
+            sppRub: item.spp_rub ?? null,
+            sppPct: item.spp_pct ?? null,
+            cancellationsQty: item.cancellations_qty ?? null,
+            stockFbs: item.stock_fbs ?? null,
+            stockFbo: item.stock_fbo ?? null,
+            stockTotal: item.stock_total ?? null,
+            stockValueRub: item.stock_value_rub ?? null,
+            stockValueSharePct: item.stock_value_share_pct ?? null,
+          },
+        }
+      : {}),
   }
+}
+
+/**
+ * True when the backend item carries any FR-2..FR-5 parity field. Used to decide
+ * whether to attach `parity` to the transformed item (absent when the caller
+ * didn't send include_ads/include_stock).
+ */
+function hasAnyParityField(item: BackendSkuItem): boolean {
+  return (
+    item.advertising_cost !== undefined ||
+    item.drr_pct !== undefined ||
+    item.ad_cost_per_unit !== undefined ||
+    item.tax_allocated !== undefined ||
+    item.net_profit_after_tax !== undefined ||
+    item.net_margin_after_tax_pct !== undefined ||
+    item.spp_rub !== undefined ||
+    item.spp_pct !== undefined ||
+    item.cancellations_qty !== undefined ||
+    item.stock_fbs !== undefined ||
+    item.stock_fbo !== undefined ||
+    item.stock_total !== undefined ||
+    item.stock_value_rub !== undefined ||
+    item.stock_value_share_pct !== undefined
+  )
 }
 
 /**

@@ -56,7 +56,7 @@ describe('getNetProfit (Story 66.6-FE)', () => {
     const result = getNetProfit(null, 250000, 65000)
 
     expect(result.value).toBe(65000)
-    expect(result.label).toBe('Операционная прибыль (до налога)')
+    expect(result.label).toBe('Операционная прибыль')
     expect(result.isPreTax).toBe(true)
   })
 
@@ -77,7 +77,7 @@ describe('getNetProfit (Story 66.6-FE)', () => {
     const result = getNetProfit(tax, 250000, 65000)
 
     expect(result.value).toBe(65000)
-    expect(result.label).toBe('Операционная прибыль (до налога)')
+    expect(result.label).toBe('Операционная прибыль')
     expect(result.isPreTax).toBe(true)
   })
 
