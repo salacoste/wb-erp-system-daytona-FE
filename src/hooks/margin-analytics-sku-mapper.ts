@@ -30,6 +30,21 @@ export interface RawSkuItem {
   net_profit?: number | null
   net_margin_pct?: number | null
   storage_data_source?: 'paid_storage_api' | 'unavailable'
+  // FR-2..FR-5 (#219) — number|null, passed through unchanged. advertising_cost
+  // is already above (also feeds the Epic-26 advertising_cost_rub string).
+  drr_pct?: number | null
+  ad_cost_per_unit?: number | null
+  tax_allocated?: number | null
+  net_profit_after_tax?: number | null
+  net_margin_after_tax_pct?: number | null
+  spp_rub?: number | null
+  spp_pct?: number | null
+  cancellations_qty?: number | null
+  stock_fbs?: number | null
+  stock_fbo?: number | null
+  stock_total?: number | null
+  stock_value_rub?: number | null
+  stock_value_share_pct?: number | null
 }
 
 /** Map a single SKU API item to the frontend response shape */
@@ -70,5 +85,20 @@ export function mapSkuItem(raw: unknown) {
     net_profit: item.net_profit ?? undefined,
     net_margin_pct: item.net_margin_pct ?? undefined,
     storage_data_source: item.storage_data_source,
+    // FR-2..FR-5 (#219) — pass through, preserve null (never ?? 0; anti-pattern #8).
+    advertising_cost: item.advertising_cost ?? null,
+    drr_pct: item.drr_pct ?? null,
+    ad_cost_per_unit: item.ad_cost_per_unit ?? null,
+    tax_allocated: item.tax_allocated ?? null,
+    net_profit_after_tax: item.net_profit_after_tax ?? null,
+    net_margin_after_tax_pct: item.net_margin_after_tax_pct ?? null,
+    spp_rub: item.spp_rub ?? null,
+    spp_pct: item.spp_pct ?? null,
+    cancellations_qty: item.cancellations_qty ?? null,
+    stock_fbs: item.stock_fbs ?? null,
+    stock_fbo: item.stock_fbo ?? null,
+    stock_total: item.stock_total ?? null,
+    stock_value_rub: item.stock_value_rub ?? null,
+    stock_value_share_pct: item.stock_value_share_pct ?? null,
   }
 }
