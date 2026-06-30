@@ -16,6 +16,10 @@ export interface MarginAnalyticsFilters {
   compareToStart?: string // Story 6.2-FE: Comparison range start
   compareToEnd?: string // Story 6.2-FE: Comparison range end
   includeCogs?: boolean // Default: true (maps to include_cogs in API)
+  // FR-2..FR-5 (#219): opt-in flags for the competitor-parity fields. Default true
+  // so the share/parity columns populate out of the box; pass false to opt out.
+  includeAds?: boolean // → advertising_cost / drr_pct / ad_cost_per_unit
+  includeStock?: boolean // → stock_fbs / stock_fbo / stock_total / stock_value_rub / share_pct
   cursor?: string // Pagination cursor
   limit?: number // Items per page (default: 50)
   nmId?: string // Story 4.9: nm_id for CLIENT-SIDE filtering only
@@ -118,6 +122,8 @@ export function buildMarginAnalyticsParams(filters: MarginAnalyticsFilters): URL
     compareToStart,
     compareToEnd,
     includeCogs = true,
+    includeAds = true,
+    includeStock = true,
     cursor,
     limit = 50,
   } = filters
@@ -134,6 +140,8 @@ export function buildMarginAnalyticsParams(filters: MarginAnalyticsFilters): URL
   }
 
   params.append('include_cogs', String(includeCogs))
+  params.append('include_ads', String(includeAds))
+  params.append('include_stock', String(includeStock))
 
   if (cursor) {
     params.append('cursor', cursor)
