@@ -22,6 +22,7 @@ import {
 import { ProfitabilityBadge } from './ProfitabilityBadge'
 import { VisibilityTooltip } from './VisibilityTooltip'
 import { ExpenseBreakdown } from './ExpenseBreakdown'
+import { ParityMetricCells } from './ParityMetricCells'
 
 interface SkuRowProps {
   item: SkuFinancialItem
@@ -136,6 +137,7 @@ export function SkuRow({
       >
         {formatPercent(sharePercentage(item.costs.logistics, item.revenue.net))}
       </TableCell>
+      <ParityMetricCells parity={item.parity} />
       {showVisibility && item.visibility && (
         <TableCell>
           <VisibilityTooltip

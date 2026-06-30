@@ -32,11 +32,17 @@ export default function MarginAnalysisByCategoryPage() {
     drillDownParam: 'category',
   })
 
-  // Story 6.1-FE & 6.2-FE: Fetch margin analytics data with date range and optional comparison
+  // Contract #219: single-week queries populate FR-2..FR-5 fields; range-mode v1 may return them null.
+  const analyticsPeriodParams = state.isRangeMode
+    ? { weekStart: state.weekStart, weekEnd: state.weekEnd }
+    : { week: state.weekEnd }
+
+  // Story 6.1-FE & 6.2-FE: Fetch margin analytics data with date range and optional comparison.
   const { data, isLoading, isError, error, refetch } = useMarginAnalyticsByCategory({
-    weekStart: state.weekStart,
-    weekEnd: state.weekEnd,
+    ...analyticsPeriodParams,
     includeCogs: true,
+    includeAds: true,
+    includeStock: true,
     ...state.comparisonParams,
   })
 

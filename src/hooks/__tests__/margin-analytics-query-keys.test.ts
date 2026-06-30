@@ -119,6 +119,22 @@ describe('buildMarginAnalyticsParams', () => {
     const params = buildMarginAnalyticsParams({ week: '2025-W47', includeCogs: false })
     expect(params.get('include_cogs')).toBe('false')
   })
+
+  it('defaults FR-2 and FR-4 opt-in flags to true for contract #219 fields', () => {
+    const params = buildMarginAnalyticsParams({ week: '2026-W26' })
+    expect(params.get('include_ads')).toBe('true')
+    expect(params.get('include_stock')).toBe('true')
+  })
+
+  it('allows explicitly disabling FR opt-in flags', () => {
+    const params = buildMarginAnalyticsParams({
+      week: '2026-W26',
+      includeAds: false,
+      includeStock: false,
+    })
+    expect(params.get('include_ads')).toBe('false')
+    expect(params.get('include_stock')).toBe('false')
+  })
 })
 
 // ---------------------------------------------------------------------------

@@ -136,6 +136,37 @@ export interface SkuFinancialProfit {
   operatingMarginPct: number | null
 }
 
+export interface SkuFinancialParity {
+  /** FR-2: attributed ad spend, ₽; null means N/A/unavailable. */
+  advertisingCost: number | null
+  /** FR-2: ДРР = advertisingCost / revenue.net × 100; null means N/A. */
+  drrPct: number | null
+  /** FR-2: ad spend per sold unit; null when units=0/unavailable. */
+  adCostPerUnit: number | null
+  /** FR-3: allocated cabinet tax, ₽; null when tax system is unavailable. */
+  taxAllocated: number | null
+  /** FR-3: operating profit minus allocated tax, ₽; null when unavailable. */
+  netProfitAfterTax: number | null
+  /** FR-3: netProfitAfterTax / revenue.net × 100; null when unavailable. */
+  netMarginAfterTaxPct: number | null
+  /** FR-5: СПП buyer saving, positive ₽ discount; null when unavailable. */
+  sppRub: number | null
+  /** FR-5: revenue-weighted average СПП %, null when unavailable. */
+  sppPct: number | null
+  /** FR-5: cancellations in period, pcs; null when unavailable. */
+  cancellationsQty: number | null
+  /** FR-4: FBS stock units at latest snapshot <= week end. */
+  stockFbs: number | null
+  /** FR-4: FBO stock units; null until FBO sync exists. */
+  stockFbo: number | null
+  /** FR-4: total stock units; null when unavailable. */
+  stockTotal: number | null
+  /** FR-4: stock at purchase price, ₽; null for historical weeks/without COGS. */
+  stockValueRub: number | null
+  /** FR-4: stockValueRub share of cabinet stock value, %. */
+  stockValueSharePct: number | null
+}
+
 export interface SkuFinancialItem {
   nmId: number
   productName: string
@@ -151,6 +182,8 @@ export interface SkuFinancialItem {
   profitabilityStatus: ProfitabilityStatus
   /** True if COGS is not assigned for this SKU */
   missingCogs: boolean
+  /** Optional competitor-parity enrichment from /v1/analytics/weekly/by-sku (#219). */
+  parity?: SkuFinancialParity
 }
 
 export interface SkuFinancialsMeta {

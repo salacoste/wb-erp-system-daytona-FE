@@ -178,6 +178,20 @@ describe('MarginAnalysisByCategoryPage - Rendering', () => {
     expect(screen.getByTestId('margin-filter-section')).toBeInTheDocument()
   })
 
+  it('requests single-week analytics with FR opt-in flags when start=end', () => {
+    renderPage()
+    expect(mockUseMarginAnalyticsByCategory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        week: '2025-W49',
+        includeCogs: true,
+        includeAds: true,
+        includeStock: true,
+      })
+    )
+    expect(mockUseMarginAnalyticsByCategory.mock.calls[0][0]).not.toHaveProperty('weekStart')
+    expect(mockUseMarginAnalyticsByCategory.mock.calls[0][0]).not.toHaveProperty('weekEnd')
+  })
+
   it('renders MarginSummaryCards with "категориям" entity name', () => {
     renderPage()
     expect(screen.getByTestId('margin-summary-cards')).toHaveTextContent('категориям')

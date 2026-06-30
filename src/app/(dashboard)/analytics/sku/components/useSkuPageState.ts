@@ -6,11 +6,13 @@
  * from the SKU analytics page (Epic 31).
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAvailableWeeks } from '@/hooks/useFinancialSummary'
-import { useCabinetLevelExpenses } from '@/hooks/useMarginAnalytics'
+import { useCabinetLevelExpenses, useMarginAnalyticsBySku } from '@/hooks/useMarginAnalytics'
 import { useSkuFinancials } from '@/hooks/useSkuFinancials'
+import type { MarginAnalyticsSku } from '@/types/api'
+import type { SkuFinancialParity } from '@/types/sku-financials'
 
 export function useSkuPageState() {
   const router = useRouter()
@@ -65,10 +67,10 @@ export function useSkuPageState() {
     weekEnd,
   })
 
-  // Epic 31: Fetch SKU financials from new endpoint with correct storage and visibility
+  // Epic 31: Fetch SKU financials from the detailed endpoint with correct storage and visibility.
   const {
-    data: skuFinancialsData,
-    isLoading: isLoadingSkuFinancials,
+    data: baseSkuFinancialsData,
+    isLoading: isLoadingBaseSkuFinancials,
     isError: isErrorSkuFinancials,
     error: errorSkuFinancials,
     refetch,
@@ -82,6 +84,43 @@ export function useSkuPageState() {
     },
     isInitialized && !!weekEnd
   )
+
+  const parityPeriodParams = weekStart === weekEnd ? { week: weekEnd } : { weekStart, weekEnd }
+
+  // Contract #219: FR-2..FR-5 fields live on /weekly/by-sku behind include flags.
+  // Single-week mode returns live values; range-mode is still requested for shape parity
+  // but backend v1 may return null for the new fields (documented boundary).
+  const {
+    data: skuParityData,
+    isLoading: isLoadingSkuParity,
+    refetch: refetchSkuParity,
+  } = useMarginAnalyticsBySku(
+    {
+      ...parityPeriodParams,
+      includeCogs: true,
+      includeAds: true,
+      includeStock: true,
+      limit: 500,
+      nmId: nmIdFilter ?? undefined,
+    },
+    isInitialized && !!weekEnd
+  )
+
+  const skuFinancialsData = useMemo(() => {
+    if (!baseSkuFinancialsData) return baseSkuFinancialsData
+
+    const parityByNmId = new Map(
+      (skuParityData?.data ?? []).map(item => [String(item.nm_id), toSkuParity(item)])
+    )
+
+    return {
+      ...baseSkuFinancialsData,
+      data: baseSkuFinancialsData.data.map(item => ({
+        ...item,
+        parity: parityByNmId.get(String(item.nmId)) ?? item.parity,
+      })),
+    }
+  }, [baseSkuFinancialsData, skuParityData])
 
   // Handle week change
   const handleRangeChange = (newStart: string, newEnd: string) => {
@@ -122,7 +161,7 @@ export function useSkuPageState() {
     isLoadingWeeks,
     isErrorWeeks,
     errorWeeks,
-    isLoadingSkuFinancials,
+    isLoadingSkuFinancials: isLoadingBaseSkuFinancials || isLoadingSkuParity,
     isErrorSkuFinancials,
     errorSkuFinancials,
     // Data
@@ -132,10 +171,32 @@ export function useSkuPageState() {
     // Handlers
     handleRangeChange,
     handleClearFilter,
-    refetch,
+    refetch: () => {
+      void refetch()
+      void refetchSkuParity()
+    },
     router,
   }
 }
 
 /** Return type helper for consumers */
 export type SkuPageState = ReturnType<typeof useSkuPageState>
+
+function toSkuParity(item: MarginAnalyticsSku): SkuFinancialParity {
+  return {
+    advertisingCost: item.advertising_cost ?? null,
+    drrPct: item.drr_pct ?? null,
+    adCostPerUnit: item.ad_cost_per_unit ?? null,
+    taxAllocated: item.tax_allocated ?? null,
+    netProfitAfterTax: item.net_profit_after_tax ?? null,
+    netMarginAfterTaxPct: item.net_margin_after_tax_pct ?? null,
+    sppRub: item.spp_rub ?? null,
+    sppPct: item.spp_pct ?? null,
+    cancellationsQty: item.cancellations_qty ?? null,
+    stockFbs: item.stock_fbs ?? null,
+    stockFbo: item.stock_fbo ?? null,
+    stockTotal: item.stock_total ?? null,
+    stockValueRub: item.stock_value_rub ?? null,
+    stockValueSharePct: item.stock_value_share_pct ?? null,
+  }
+}

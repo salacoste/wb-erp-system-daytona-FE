@@ -111,3 +111,61 @@ describe('SummaryFooter — COGS coverage footnote (Story 87.3-FE)', () => {
     expect(screen.queryByText(/COGS назначен для/i)).toBeNull()
   })
 })
+
+describe('SkuRow — competitor parity FR-2..FR-5 display (#219)', () => {
+  it('renders enriched FR values when weekly/by-sku parity data is merged', () => {
+    renderRow(
+      makeItem({
+        parity: {
+          advertisingCost: 246.1,
+          drrPct: 17.39,
+          adCostPerUnit: 12.3,
+          taxAllocated: 84.91,
+          netProfitAfterTax: 516.55,
+          netMarginAfterTaxPct: 12.34,
+          sppRub: 548.95,
+          sppPct: 26.07,
+          cancellationsQty: 2,
+          stockFbs: 530,
+          stockFbo: null,
+          stockTotal: 530,
+          stockValueRub: 54060,
+          stockValueSharePct: 7.5,
+        },
+      })
+    )
+
+    expect(screen.getByText('246,10 ₽')).toBeInTheDocument()
+    expect(screen.getByText('17,4 %')).toBeInTheDocument()
+    expect(screen.getByText('516,55 ₽')).toBeInTheDocument()
+    expect(screen.getByText('548,95 ₽')).toBeInTheDocument()
+    expect(screen.getByText('54 060,00 ₽')).toBeInTheDocument()
+    expect(screen.getByText('7,5 %')).toBeInTheDocument()
+  })
+
+  it('renders em-dashes for unavailable/null FR values instead of misleading zeros', () => {
+    renderRow(
+      makeItem({
+        parity: {
+          advertisingCost: null,
+          drrPct: null,
+          adCostPerUnit: null,
+          taxAllocated: null,
+          netProfitAfterTax: null,
+          netMarginAfterTaxPct: null,
+          sppRub: null,
+          sppPct: null,
+          cancellationsQty: null,
+          stockFbs: null,
+          stockFbo: null,
+          stockTotal: null,
+          stockValueRub: null,
+          stockValueSharePct: null,
+        },
+      })
+    )
+
+    expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(7)
+    expect(screen.queryByText('0,0 %')).not.toBeInTheDocument()
+  })
+})

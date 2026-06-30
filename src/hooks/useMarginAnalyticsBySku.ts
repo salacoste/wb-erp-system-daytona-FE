@@ -26,7 +26,7 @@ import { mapSkuItem } from './margin-analytics-sku-mapper'
  *
  * @returns Query result with margin data for each SKU
  */
-export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
+export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters, enabled = true) {
   const {
     week,
     weekStart,
@@ -35,6 +35,8 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
     compareToStart,
     compareToEnd,
     includeCogs = true,
+    includeAds = true,
+    includeStock = true,
     cursor,
     limit = 50,
     nmId,
@@ -57,6 +59,8 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
         compareToStart,
         compareToEnd,
         includeCogs,
+        includeAds,
+        includeStock,
         cursor,
         limit,
         nmId,
@@ -71,6 +75,8 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
           isRangeQuery,
           isComparisonMode,
           includeCogs,
+          includeAds,
+          includeStock,
           cursor,
           limit,
           nmId: nmId ?? 'all',
@@ -111,6 +117,6 @@ export function useMarginAnalyticsBySku(filters: MarginAnalyticsFilters) {
       }
     },
     ...MARGIN_ANALYTICS_QUERY_CONFIG,
-    enabled: !!(week || (weekStart && weekEnd)),
+    enabled: enabled && !!(week || (weekStart && weekEnd)),
   })
 }

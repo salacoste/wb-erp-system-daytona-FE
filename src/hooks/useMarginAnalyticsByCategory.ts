@@ -34,6 +34,8 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
     compareToStart,
     compareToEnd,
     includeCogs = true,
+    includeAds = true,
+    includeStock = true,
   } = filters
 
   const isRangeQuery = weekStart && weekEnd
@@ -53,6 +55,8 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
         compareToStart,
         compareToEnd,
         includeCogs,
+        includeAds,
+        includeStock,
         cursor: filters.cursor,
         limit: filters.limit ?? 50,
       },
@@ -66,6 +70,8 @@ export function useMarginAnalyticsByCategory(filters: MarginAnalyticsFilters) {
           isRangeQuery,
           isComparisonMode,
           includeCogs,
+          includeAds,
+          includeStock,
         })
 
         const response = await apiClient.get<unknown[] | RawMarginAnalyticsResponse>(

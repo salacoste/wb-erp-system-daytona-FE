@@ -162,6 +162,39 @@ export function SkuFinancialsTable({
             <TableHead className="hidden lg:table-cell text-right" title="Логистика / выручка">
               Доля логистики
             </TableHead>
+            <TableHead className="hidden lg:table-cell text-right" title="FR-2: расходы на рекламу">
+              Реклама
+            </TableHead>
+            <TableHead
+              className="hidden lg:table-cell text-right"
+              title="FR-2: доля рекламных расходов"
+            >
+              ДРР
+            </TableHead>
+            <TableHead
+              className="hidden lg:table-cell text-right"
+              title="FR-3: прибыль после налога"
+            >
+              Чист. прибыль
+            </TableHead>
+            <TableHead className="hidden lg:table-cell text-right" title="FR-5: СПП">
+              СПП
+            </TableHead>
+            <TableHead className="hidden lg:table-cell text-right" title="FR-5: отмены">
+              Отмены
+            </TableHead>
+            <TableHead
+              className="hidden lg:table-cell text-right"
+              title="FR-4: остаток в закупочных ценах"
+            >
+              Остаток ₽
+            </TableHead>
+            <TableHead
+              className="hidden lg:table-cell text-right"
+              title="FR-4: доля стоимости остатков"
+            >
+              Доля остатка
+            </TableHead>
             {showVisibility && (
               <TableHead className="w-[50px]">
                 <span className="sr-only">Видимость</span>

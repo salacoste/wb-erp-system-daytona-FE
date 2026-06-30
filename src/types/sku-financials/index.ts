@@ -17,6 +17,7 @@ export type {
   SkuFinancialCosts,
   SkuFinancialVisibility,
   SkuFinancialProfit,
+  SkuFinancialParity,
   SkuFinancialItem,
   SkuFinancialsMeta,
   SkuFinancialsPagination,
