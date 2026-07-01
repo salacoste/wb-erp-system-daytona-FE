@@ -22,7 +22,14 @@ export function ExpenseBreakdown({ item }: ExpenseBreakdownProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-help underline decoration-dotted">{formatCurrency(total)}</span>
+          <span
+            className="cursor-help underline decoration-dotted"
+            role="button"
+            tabIndex={0}
+            aria-label={`Подробности расходов: операционные расходы ${formatCurrency(total)}`}
+          >
+            {formatCurrency(total)}
+          </span>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">
           <p className="font-medium mb-2">Операционные расходы</p>

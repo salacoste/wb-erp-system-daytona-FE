@@ -19,8 +19,16 @@ export function SalesQtyHeader({ onSort, sortIcon }: SortableHeaderProps) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="cursor-help">
-              <HelpCircle className="h-3 w-3 text-gray-400 hover:text-gray-600" />
+            <span
+              className="cursor-help"
+              role="button"
+              tabIndex={0}
+              aria-label="Информация о продажах: продано штук"
+            >
+              <HelpCircle
+                className="h-3 w-3 text-gray-400 hover:text-gray-600"
+                aria-hidden="true"
+              />
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-xs">
@@ -46,8 +54,16 @@ export function RevenueNetHeader({ onSort, sortIcon }: SortableHeaderProps) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="cursor-help">
-              <HelpCircle className="h-3 w-3 text-gray-400 hover:text-gray-600" />
+            <span
+              className="cursor-help"
+              role="button"
+              tabIndex={0}
+              aria-label="Информация о выручке: К перечислению"
+            >
+              <HelpCircle
+                className="h-3 w-3 text-gray-400 hover:text-gray-600"
+                aria-hidden="true"
+              />
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-xs">
@@ -89,7 +105,7 @@ export function ExpensesHeader() {
         <TooltipTrigger asChild>
           <span className="flex items-center justify-end font-medium cursor-help">
             Расходы
-            <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
+            <HelpCircle className="ml-1 h-3 w-3 text-gray-400" aria-hidden="true" />
           </span>
         </TooltipTrigger>
         <TooltipContent>
@@ -107,8 +123,13 @@ export function MarginHeader({ onSort, sortIcon }: SortableHeaderProps) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="cursor-help">
-              <HelpCircle className="h-3 w-3 text-gray-400 hover:text-gray-600" />
+            <span
+              className="cursor-help"
+              role="button"
+              tabIndex={0}
+              aria-label="Информация о марже: операционная маржинальность"
+            >
+              <HelpCircle className="h-3 w-3 text-gray-400 hover:text-gray-600" aria-hidden="true" />
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-xs">

@@ -66,7 +66,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   // Orders Integrity Dashboard
   { label: 'Целостность заказов', href: ROUTES.ORDERS.INTEGRITY, icon: ShieldCheck },
   // FBO Orders & Sales
-  { label: 'FBO Заказы', href: ROUTES.ORDERS.FBO, icon: PackageSearch },
+  { label: 'Заказы FBO', href: ROUTES.ORDERS.FBO, icon: PackageSearch },
   { label: 'Себестоимость', href: ROUTES.COGS.ROOT, icon: Package },
   // Assortment management — discontinued lifecycle («Снят с продажи»)
   { label: 'Ассортимент', href: ROUTES.PRODUCTS, icon: Layers },
