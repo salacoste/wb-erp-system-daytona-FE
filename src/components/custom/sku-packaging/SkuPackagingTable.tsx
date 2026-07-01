@@ -36,7 +36,7 @@ export function SkuPackagingTable({ items, onEdit, onDelete }: SkuPackagingTable
             <TableRow>
               {SKU_PACKAGING_COLUMNS.map(col => (
                 <TableHead key={col.key} className={col.align === 'right' ? 'text-right' : ''}>
-                  {col.label}
+                  {col.srOnly ? <span className="sr-only">{col.label}</span> : col.label}
                 </TableHead>
               ))}
             </TableRow>

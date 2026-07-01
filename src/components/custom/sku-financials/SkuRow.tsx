@@ -57,7 +57,14 @@ export function SkuRow({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="font-medium cursor-help">{item.quantity.salesQty} шт.</span>
+              <span
+                className="font-medium cursor-help"
+                role="button"
+                tabIndex={0}
+                aria-label={`Подробности продаж: продано ${item.quantity.salesQty} шт.`}
+              >
+                {item.quantity.salesQty} шт.
+              </span>
             </TooltipTrigger>
             <TooltipContent>
               <div className="space-y-1 text-sm">
@@ -100,7 +107,14 @@ export function SkuRow({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="text-gray-400 cursor-help">—</span>
+                <span
+                  className="text-gray-400 cursor-help"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Информация о прибыли: нет COGS, прибыль не рассчитана"
+                >
+                  —
+                </span>
               </TooltipTrigger>
               <TooltipContent>
                 <p className="text-sm">Нет COGS — прибыль не рассчитана</p>

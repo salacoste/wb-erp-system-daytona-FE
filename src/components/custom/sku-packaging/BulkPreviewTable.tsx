@@ -39,8 +39,8 @@ export function BulkPreviewTable({ rows, showStatus }: BulkPreviewTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>nmId</TableHead>
-            <TableHead>boxTypeId</TableHead>
+            <TableHead>Код WB</TableHead>
+            <TableHead>Тип короба</TableHead>
             <TableHead className="text-right">Штук</TableHead>
             {showStatus && <TableHead>Статус</TableHead>}
           </TableRow>
