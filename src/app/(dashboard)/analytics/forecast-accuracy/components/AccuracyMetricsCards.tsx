@@ -64,7 +64,7 @@ export function AccuracyMetricsCards({
         </CardHeader>
         <CardContent>
           <div className={cn('text-2xl font-bold', isHighMape && 'text-amber-600')}>
-            {formatMape(avgMAPE)}
+            {isHighMape ? '>200 %' : formatMape(avgMAPE)}
           </div>
           <p className="text-xs text-muted-foreground">
             {isHighMape
