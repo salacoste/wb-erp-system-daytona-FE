@@ -135,18 +135,23 @@ export default function OrdersAnalyticsPage() {
         </TabsList>
 
         <TabsContent value="overview" role="tabpanel" aria-labelledby="overview-tab">
+          {/* FE-5: sr-only section heading — gives the tabbed page an h1→h2 outline (WCAG 1.3.1) */}
+          <h2 className="sr-only">Обзор заказов</h2>
           <OverviewTab from={apiDateRange.from} to={apiDateRange.to} />
         </TabsContent>
 
         <TabsContent value="trends" role="tabpanel" aria-labelledby="trends-tab">
+          <h2 className="sr-only">Тренды заказов</h2>
           <TrendsTab from={apiDateRange.from} to={apiDateRange.to} />
         </TabsContent>
 
         <TabsContent value="seasonality" role="tabpanel" aria-labelledby="seasonality-tab">
+          <h2 className="sr-only">Сезонность заказов</h2>
           <SeasonalityTab />
         </TabsContent>
 
         <TabsContent value="comparison" role="tabpanel" aria-labelledby="comparison-tab">
+          <h2 className="sr-only">Сравнение заказов</h2>
           <ComparisonTab />
         </TabsContent>
       </Tabs>
