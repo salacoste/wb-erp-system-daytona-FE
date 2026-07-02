@@ -85,6 +85,11 @@ export const ROUTES = {
   MONITORING: '/monitoring',
   MONITOR: '/monitor',
 
+  // МойСклад integration (read-only FE, Phase 1 MVP — contract #221)
+  MOYSKLAD: {
+    ROOT: '/moysklad',
+  },
+
   SETTINGS: {
     ROOT: '/settings',
     CABINET: '/settings/cabinet',
@@ -107,6 +112,7 @@ export type RoutePath =
   | (typeof ROUTES.SHIPMENTS)[keyof typeof ROUTES.SHIPMENTS]
   | (typeof ROUTES.SUPPLIES)[keyof typeof ROUTES.SUPPLIES]
   | (typeof ROUTES.SETTINGS)[keyof typeof ROUTES.SETTINGS]
+  | (typeof ROUTES.MOYSKLAD)[keyof typeof ROUTES.MOYSKLAD]
   | string
 
 // Route matchers moved to routes-protected.ts (circular dependency fix).
