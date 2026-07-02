@@ -35,8 +35,8 @@ describe('FboAggregateCards', () => {
     // count uses toLocaleString('ru-RU') — in jsdom this may render differently
     expect(screen.getByText('150')).toBeInTheDocument()
     expect(screen.getByText('12')).toBeInTheDocument()
-    // cancelRate 8.0 → "8 %"
-    expect(screen.getByText('8 %')).toBeInTheDocument()
+    // cancelRate 8.0 → "8,0 %" (Russian locale via formatPercentage)
+    expect(screen.getByText(/8,0\s%/)).toBeInTheDocument()
   })
 
   it('renders em-dash when cancelRate is null', () => {

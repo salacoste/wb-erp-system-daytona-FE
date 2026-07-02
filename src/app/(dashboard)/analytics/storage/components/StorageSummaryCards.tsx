@@ -74,7 +74,10 @@ export function StorageSummaryCards({
     },
     {
       title: 'Среднее на товар',
-      value: summary ? formatCurrency(summary.avg_cost_per_product) : '—',
+      value:
+        summary && summary.avg_cost_per_product != null
+          ? formatCurrency(summary.avg_cost_per_product)
+          : '—',
       icon: Calculator,
       description: 'за период',
       tooltip: 'Средние расходы на хранение в расчёте на один товар за выбранный период.',

@@ -24,8 +24,9 @@ export interface ReturnReasonsResponse {
     cancelBeforeShipment: number
     refusalAtPvz: number
     returnAfterReceipt: number
-    overallReturnRate: number
-    classificationCoverage: number
+    // AP#8: rate/coverage ratios are number|null — null renders '—', not "0 %".
+    overallReturnRate: number | null
+    classificationCoverage: number | null
   }
   byCategory: ReturnCategoryItem[]
   period: { from: string; to: string }

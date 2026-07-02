@@ -59,11 +59,13 @@ describe('MonitorMetricsTable', () => {
     expect(screen.getByText('30 дней')).toBeInTheDocument()
     expect(screen.getByText('Пред. 30 дней')).toBeInTheDocument()
 
-    // Row labels
-    expect(screen.getByText('Заказы')).toBeInTheDocument()
+    // Row labels (BD-22 renamed "Заказы"→"Продажи + Возвраты (транзакций)"; BD-24 renamed COGS)
+    expect(screen.getByText('Продажи + Возвраты (транзакций)')).toBeInTheDocument()
+    expect(screen.getByText('Сумма транзакций, не количество заказов')).toBeInTheDocument()
     expect(screen.getByText('Продажи')).toBeInTheDocument()
     expect(screen.getByText('Выручка')).toBeInTheDocument()
-    expect(screen.getByText('Продажи по себестоимости')).toBeInTheDocument()
+    expect(screen.getByText('Себестоимость (COGS)')).toBeInTheDocument()
+    expect(screen.getByText('Затраты на проданные товары')).toBeInTheDocument()
     expect(screen.getByText('Расходы')).toBeInTheDocument()
     expect(screen.getByText('Маржа')).toBeInTheDocument()
     expect(screen.getByText('Возвраты')).toBeInTheDocument()

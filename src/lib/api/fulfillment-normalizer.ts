@@ -28,37 +28,40 @@ import type {
 
 function normalizeFulfillmentMetrics(raw: unknown): FulfillmentMetrics {
   const r = asRecord(raw)
+  // AP#8: money/ratio fields preserve null (render '—'); counts use toCount.
   return {
     ordersCount: toCount(r.ordersCount),
-    ordersRevenue: toNullableNumber(r.ordersRevenue) ?? 0,
-    ordersRevenueDiscounted: toNullableNumber(r.ordersRevenueDiscounted) ?? 0,
+    ordersRevenue: toNullableNumber(r.ordersRevenue),
+    ordersRevenueDiscounted: toNullableNumber(r.ordersRevenueDiscounted),
     salesCount: toCount(r.salesCount),
-    salesRevenue: toNullableNumber(r.salesRevenue) ?? 0,
-    forPayTotal: toNullableNumber(r.forPayTotal) ?? 0,
+    salesRevenue: toNullableNumber(r.salesRevenue),
+    forPayTotal: toNullableNumber(r.forPayTotal),
     returnsCount: toCount(r.returnsCount),
-    returnsRevenue: toNullableNumber(r.returnsRevenue) ?? 0,
-    returnRate: toNullableNumber(r.returnRate) ?? 0,
-    avgOrderValue: toNullableNumber(r.avgOrderValue) ?? 0,
+    returnsRevenue: toNullableNumber(r.returnsRevenue),
+    returnRate: toNullableNumber(r.returnRate),
+    avgOrderValue: toNullableNumber(r.avgOrderValue),
   }
 }
 
 function normalizeFulfillmentTotal(raw: unknown): FulfillmentTotal {
   const r = asRecord(raw)
+  // AP#8: money/share fields preserve null (render '—'); counts use toCount.
   return {
     ordersCount: toCount(r.ordersCount),
-    ordersRevenue: toNullableNumber(r.ordersRevenue) ?? 0,
-    ordersRevenueDiscounted: toNullableNumber(r.ordersRevenueDiscounted) ?? 0,
-    fboShare: toNullableNumber(r.fboShare) ?? 0,
-    fbsShare: toNullableNumber(r.fbsShare) ?? 0,
+    ordersRevenue: toNullableNumber(r.ordersRevenue),
+    ordersRevenueDiscounted: toNullableNumber(r.ordersRevenueDiscounted),
+    fboShare: toNullableNumber(r.fboShare),
+    fbsShare: toNullableNumber(r.fbsShare),
   }
 }
 
 function normalizeDayMetrics(raw: unknown): FulfillmentDayMetrics {
   const r = asRecord(raw)
+  // AP#8: money fields preserve null (render '—'); counts use toCount.
   return {
     ordersCount: toCount(r.ordersCount),
-    ordersRevenue: toNullableNumber(r.ordersRevenue) ?? 0,
-    salesRevenue: toNullableNumber(r.salesRevenue) ?? 0,
+    ordersRevenue: toNullableNumber(r.ordersRevenue),
+    salesRevenue: toNullableNumber(r.salesRevenue),
     returnsCount: toCount(r.returnsCount),
   }
 }
@@ -87,9 +90,9 @@ function normalizeProductMetrics(raw: unknown): FulfillmentProductMetrics {
   const r = asRecord(raw)
   return {
     ordersCount: toCount(r.ordersCount),
-    salesRevenue: toNullableNumber(r.salesRevenue) ?? 0,
+    salesRevenue: toNullableNumber(r.salesRevenue),
     returnsCount: toCount(r.returnsCount),
-    returnRate: toNullableNumber(r.returnRate) ?? 0,
+    returnRate: toNullableNumber(r.returnRate),
   }
 }
 

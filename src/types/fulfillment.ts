@@ -71,25 +71,27 @@ export interface ReturnBreakdown {
  */
 export interface FulfillmentMetrics {
   ordersCount: number // Количество заказов (шт)
-  ordersRevenue: number // РРЦ — полная цена каталога
-  ordersRevenueDiscounted: number // Цена на карточке WB (база для комиссии)
+  // AP#8: money/ratio fields are number|null — null renders '—' (never "0 ₽"/"0 %").
+  ordersRevenue: number | null // РРЦ — полная цена каталога
+  ordersRevenueDiscounted: number | null // Цена на карточке WB (база для комиссии)
   salesCount: number // Количество выкупов (шт)
-  salesRevenue: number // Выкупы — деньги от выкупленных товаров
-  forPayTotal: number // К перечислению
+  salesRevenue: number | null // Выкупы — деньги от выкупленных товаров
+  forPayTotal: number | null // К перечислению
   returnsCount: number // Количество возвратов (шт)
-  returnsRevenue: number // Возвраты — деньги за возвращённые товары
-  returnRate: number // % возвратов от выкупов
-  avgOrderValue: number // Средний чек
+  returnsRevenue: number | null // Возвраты — деньги за возвращённые товары
+  returnRate: number | null // % возвратов от выкупов
+  avgOrderValue: number | null // Средний чек
   returnBreakdown?: ReturnBreakdown | null
 }
 
 /** Aggregated totals with FBO/FBS share percentages */
 export interface FulfillmentTotal {
   ordersCount: number
-  ordersRevenue: number
-  ordersRevenueDiscounted: number
-  fboShare: number
-  fbsShare: number
+  // AP#8: money/share fields are number|null — null renders '—'.
+  ordersRevenue: number | null
+  ordersRevenueDiscounted: number | null
+  fboShare: number | null
+  fbsShare: number | null
 }
 
 /** Response from GET /v1/analytics/fulfillment/summary */
@@ -109,8 +111,9 @@ export interface FulfillmentSummaryResponse {
 /** Daily metrics for a single fulfillment type */
 export interface FulfillmentDayMetrics {
   ordersCount: number
-  ordersRevenue: number
-  salesRevenue: number
+  // AP#8: money fields are number|null — null renders '—'.
+  ordersRevenue: number | null
+  salesRevenue: number | null
   returnsCount: number
 }
 

@@ -40,13 +40,13 @@ function itemToRow(item: PriceRecommendation): string[] {
     item.vendorCode ?? '—',
     item.productName ?? '—',
     item.lastPrice != null ? formatCurrency(item.lastPrice) : '—',
-    formatCurrency(item.breakEvenPrice),
-    formatCurrency(item.recommendedPrice),
+    item.breakEvenPrice != null ? formatCurrency(item.breakEvenPrice) : '—',
+    item.recommendedPrice != null ? formatCurrency(item.recommendedPrice) : '—',
     item.marginAtCurrentPct != null ? formatPercentage(item.marginAtCurrentPct) : '—',
     formatPercentage(item.targetMarginPct),
     item.gap != null ? formatCurrency(item.gap) : '—',
     item.gapPct != null ? formatPercentage(item.gapPct) : '—',
-    formatPercentage(item.marginAtRecommendedPct),
+    item.marginAtRecommendedPct != null ? formatPercentage(item.marginAtRecommendedPct) : '—',
     fmtDate(item.computedAt),
   ]
 }

@@ -82,18 +82,22 @@ export interface OrdersCogsMetrics {
   totalOrders: number
   /** Total order amount in RUB */
   totalAmount: number
-  /** Total COGS in RUB */
-  cogsTotal: number
-  /** Gross profit (totalAmount - cogsTotal) */
-  grossProfit: number
-  /** Margin percentage */
-  marginPct: number
-  /** COGS coverage percentage */
-  cogsCoveragePct: number
-  /** Number of orders missing COGS */
-  ordersMissingCogs: number
-  /** Average profit per order */
-  avgProfitPerOrder: number
+  /**
+   * Total COGS in RUB. null when the backend emits NO COGS block at all
+   * (cogs_total, gross_profit AND margin_pct all absent) — BD-1: avoids fabricating
+   * a 100 %-margin block from `cogs_total || 0` when data is genuinely missing.
+   */
+  cogsTotal: number | null
+  /** Gross profit (totalAmount - cogsTotal). null when no COGS block — see cogsTotal. */
+  grossProfit: number | null
+  /** Margin percentage. null when no COGS block — see cogsTotal. */
+  marginPct: number | null
+  /** COGS coverage percentage. null when no COGS block — see cogsTotal. */
+  cogsCoveragePct: number | null
+  /** Number of orders missing COGS. null when no COGS block — see cogsTotal. */
+  ordersMissingCogs: number | null
+  /** Average profit per order. null when no COGS block — see cogsTotal. */
+  avgProfitPerOrder: number | null
   /** Completion rate % */
   completionRate: number
   /** Cancellation rate % */

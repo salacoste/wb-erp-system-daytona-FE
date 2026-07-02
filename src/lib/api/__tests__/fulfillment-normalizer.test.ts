@@ -65,8 +65,9 @@ describe('normalizeFulfillmentSummaryResponse', () => {
 
   it('handles missing fields', () => {
     const result = normalizeFulfillmentSummaryResponse({})
-    expect(result.summary.fbo.salesRevenue).toBe(0)
-    expect(result.summary.total.fboShare).toBe(0)
+    // AP#8: money/share ratio fields preserve null (render '—'), not 0.
+    expect(result.summary.fbo.salesRevenue).toBeNull()
+    expect(result.summary.total.fboShare).toBeNull()
   })
 })
 

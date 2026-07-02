@@ -41,10 +41,11 @@ export interface StorageBySkuItem {
   product_name: string | null
   /** Brand name */
   brand: string | null
-  /** Total storage cost for the period (₽) - HISTORICAL, not current stock indicator */
-  storage_cost_total: number
-  /** Average daily storage cost (₽/day) */
-  storage_cost_avg_daily: number
+  /** Total storage cost for the period (₽) - HISTORICAL, not current stock indicator.
+   *  AP#8: money field is number|null — null renders '—', not "0 ₽". */
+  storage_cost_total: number | null
+  /** Average daily storage cost (₽/day). AP#8: number|null — null renders '—'. */
+  storage_cost_avg_daily: number | null
   /** Average volume (liters, null if no data) */
   volume_avg: number | null
   /** List of warehouses where product is stored */
@@ -67,8 +68,8 @@ export interface StorageSummary {
   total_storage_cost: number
   /** Number of unique products */
   products_count: number
-  /** Average cost per product (₽) */
-  avg_cost_per_product: number
+  /** Average cost per product (₽). AP#8: money ratio is number|null — null renders '—'. */
+  avg_cost_per_product: number | null
 }
 
 /**

@@ -41,7 +41,8 @@ describe('WeeklyChartTooltip', () => {
     renderWithProviders(<WeeklyChartTooltip active payload={payload} />)
 
     expect(screen.getByText('Продажи:')).toBeInTheDocument()
-    expect(screen.getByText('Заказы:')).toBeInTheDocument()
+    // BD-22: renamed from "Заказы" — tooltip label matches updated LINE_LABELS.orders
+    expect(screen.getByText('Продажи + Возвраты:')).toBeInTheDocument()
     expect(screen.getByText('Возвраты:')).toBeInTheDocument()
     // Values rendered as locale strings — use regex to match Russian numeral format
     expect(screen.getByText('12')).toBeInTheDocument()

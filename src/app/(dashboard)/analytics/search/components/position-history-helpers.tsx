@@ -9,7 +9,8 @@ import type { PositionHistoryPoint } from '@/types/search-position-trends'
 /** Internal chart data shape after normalizing backend history points. */
 export interface ChartDatum {
   date: string
-  avgPosition: number
+  // AP#8: avgPosition preserves null — recharts renders a line gap, never a "0" point.
+  avgPosition: number | null
   impressions: number
   clicks: number
 }
@@ -32,7 +33,7 @@ export function toChartData(history: PositionHistoryPoint[]): ChartDatum[] {
 /** Compute [yMin, yMax] domain for the inverted Y-axis. */
 export function computeYDomain(data: ChartDatum[]): [number, number] {
   if (data.length === 0) return [1, 100]
-  const positions = data.map(d => d.avgPosition).filter(v => v > 0)
+  const positions = data.map(d => d.avgPosition).filter((v): v is number => v != null && v > 0)
   if (positions.length === 0) return [1, 100]
   const yMax = Math.ceil(Math.max(...positions) / 5) * 5 + 5
   const yMin = Math.max(1, Math.floor(Math.min(...positions) / 5) * 5 - 5)
@@ -60,7 +61,10 @@ export function PositionTooltipContent({
     <div className="rounded-md border bg-white px-3 py-2 text-sm shadow-sm">
       <p className="font-medium">{formatDate(d.date)}</p>
       <p>
-        Позиция: <span className="font-semibold">{d.avgPosition.toFixed(1)}</span>
+        Позиция:{' '}
+        <span className="font-semibold">
+          {d.avgPosition == null ? '—' : d.avgPosition.toFixed(1)}
+        </span>
       </p>
       <p className="text-muted-foreground">
         Показы: {d.impressions} · Клики: {d.clicks}

@@ -48,6 +48,14 @@ describe('formatDayLabel', () => {
     const result = formatDayLabel('2026-03-02')
     expect(result.day).toBe('Пн')
   })
+
+  it('parses date-only strings as LOCAL time (no UTC weekday off-by-one) — BD-30', () => {
+    // Regression: new Date('2026-03-01') parses as UTC midnight, which is the previous
+    // calendar day (Sat) in Europe/Moscow (UTC+3). Local parse keeps it Sunday.
+    expect(formatDayLabel('2026-03-01').day).toBe('Вс')
+    // A full ISO timestamp is honoured as-is (not double-suffixed).
+    expect(formatDayLabel('2026-03-02T09:00:00').day).toBe('Пн')
+  })
 })
 
 describe('countByStatus', () => {

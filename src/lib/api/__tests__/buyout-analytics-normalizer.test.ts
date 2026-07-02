@@ -178,4 +178,12 @@ describe('normalizeBuyoutSummaryResponse', () => {
     const result = normalizeBuyoutSummaryResponse({ topDecliners: [] })
     expect(result.topDecliners).toEqual([])
   })
+
+  // BD-38 (task-47): trendDelta is a money/ratio delta — null must be preserved
+  // (not collapsed to 0), else "(0 п.п.)" reads as "no change" instead of "unknown".
+  it('preserves null trendDelta on a topDecliner (AP#8)', () => {
+    const raw = { topDecliners: [{ nmId: 7, buyoutRatePct: null, trendDelta: null }] }
+    const result = normalizeBuyoutSummaryResponse(raw)
+    expect(result.topDecliners![0].trendDelta).toBeNull()
+  })
 })

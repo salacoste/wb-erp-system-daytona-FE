@@ -94,7 +94,7 @@ function CorrelationBadge({ r }: { r: number }) {
   return (
     <Badge variant="outline" className={color}>
       {label}: {formatPercentage(pct)} ({r >= 0 ? '+' : ''}
-      {r.toFixed(2)})
+      {r.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
     </Badge>
   )
 }

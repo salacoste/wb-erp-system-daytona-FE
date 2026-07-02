@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp } from 'lucide-react'
 import { formatPercentage } from '@/lib/utils'
+import { getValueColorClass } from '@/components/custom/sku-financials/sku-table-formatters'
 
 export interface MarginStats {
   total: number
@@ -77,7 +78,8 @@ export function MarginSummaryCards({
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Общая прибыль:</span>
-              <span className="font-semibold text-green-600">
+              {/* BD-13: colour by sign (green ≥0 / red <0), not hardcoded green. */}
+              <span className={`font-semibold ${getValueColorClass(stats.totalProfit)}`}>
                 {currencyFormatter.format(stats.totalProfit)}
               </span>
             </div>

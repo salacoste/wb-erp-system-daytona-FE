@@ -100,9 +100,11 @@ export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps
             <TableCell className="text-right">
               {item.lastPrice !== null ? formatCurrency(item.lastPrice) : '—'}
             </TableCell>
-            <TableCell className="text-right">{formatCurrency(item.breakEvenPrice)}</TableCell>
+            <TableCell className="text-right">
+              {item.breakEvenPrice == null ? '—' : formatCurrency(item.breakEvenPrice)}
+            </TableCell>
             <TableCell className="text-right font-medium">
-              {formatCurrency(item.recommendedPrice)}
+              {item.recommendedPrice == null ? '—' : formatCurrency(item.recommendedPrice)}
             </TableCell>
             <TableCell className="text-right">
               <GapCell gap={item.gap} gapPct={item.gapPct} />

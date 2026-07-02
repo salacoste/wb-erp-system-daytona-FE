@@ -12,6 +12,8 @@ import type { Direction } from './monitor-metrics-utils'
 export interface RowDef {
   key: string
   label: string
+  /** Optional clarifying text rendered below the main label (BD-22/23/24 mislabel fixes). */
+  subtitle?: string
   direction: Direction
   values: {
     today: number | null
@@ -39,7 +41,10 @@ export function buildRows(periods: MonitorSummaryResponse['periods']): RowDef[] 
   return [
     {
       key: 'orders',
-      label: 'Заказы',
+      // BD-22: renamed from "Заказы" — value is salesCount+returnsCount, NOT a real order count.
+      // Monitor endpoint exposes no real order count; this is a transaction sum shown for reference.
+      label: 'Продажи + Возвраты (транзакций)',
+      subtitle: 'Сумма транзакций, не количество заказов',
       direction: ROW_DIRECTIONS.orders,
       values: {
         today: today.salesCount + today.returnsCount,
@@ -75,7 +80,9 @@ export function buildRows(periods: MonitorSummaryResponse['periods']): RowDef[] 
     },
     {
       key: 'cogs',
-      label: 'Продажи по себестоимости',
+      // BD-24: renamed from "Продажи по себестоимости" — value IS the cost (COGS), not revenue.
+      label: 'Себестоимость (COGS)',
+      subtitle: 'Затраты на проданные товары',
       direction: ROW_DIRECTIONS.cogs,
       values: {
         today: today.cogs,

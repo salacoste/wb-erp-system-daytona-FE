@@ -27,8 +27,9 @@ export interface TopConsumerItem {
   product_name: string | null
   /** Brand name */
   brand: string | null
-  /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator */
-  storage_cost: number
+  /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator.
+   *  AP#8: money field is number|null — null renders '—', not "0 ₽". */
+  storage_cost: number | null
   /** Percentage of total storage cost */
   percent_of_total: number
   /** Volume (liters, null if no data) */

@@ -53,7 +53,10 @@ export function AccuracyMetricsCards({
         <CardContent>
           <div className="text-2xl font-bold">{avgMAE?.toLocaleString('ru-RU') ?? '—'}</div>
           <p className="text-xs text-muted-foreground">
-            Средняя абсолютная ошибка (шт) — основной показатель точности
+            {/* BD-36: avgMAE aggregates heterogeneous forecast models (unit-based
+                sales_forecast + revenue models) with no per-model unit field, so a hard
+                "(шт)" suffix would be wrong for revenue forecasts — drop the unit. */}
+            Средняя абсолютная ошибка — основной показатель точности
           </p>
         </CardContent>
       </Card>
