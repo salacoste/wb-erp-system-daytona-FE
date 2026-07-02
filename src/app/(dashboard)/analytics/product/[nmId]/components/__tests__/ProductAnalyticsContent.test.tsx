@@ -1,6 +1,6 @@
 /**
  * Tests for ProductAnalyticsContent — Unified Product Analytics shell (Stories 120.5–120.7-FE).
- * Covers: header render, opaque-id handling (AP#10), all four tabs, data-driven
+ * Covers: header render, opaque-id handling (AP#10), all five tabs, data-driven
  * overview/advertising/organic tabs, and funnel tab with real data (Story 122.1-FE).
  *
  * TanStack Query mock: all 3 hooks mocked at module level.
@@ -66,7 +66,7 @@ describe('ProductAnalyticsContent', () => {
     expect(screen.getByRole('heading', { name: 'Аналитика товара #00123' })).toBeInTheDocument()
   })
 
-  it('renders all four tabs with their Russian labels', () => {
+  it('renders all five tabs with their Russian labels', () => {
     render(<ProductAnalyticsContent nmId="1" />)
     for (const tab of UNIFIED_PRODUCT_TABS) {
       expect(screen.getByRole('tab', { name: UNIFIED_PRODUCT_TAB_LABELS[tab] })).toBeInTheDocument()
