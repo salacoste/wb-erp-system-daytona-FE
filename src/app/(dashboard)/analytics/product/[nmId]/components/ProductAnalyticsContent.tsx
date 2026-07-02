@@ -31,6 +31,7 @@ import { ProductOverviewTab } from './ProductOverviewTab'
 import { FunnelTab } from './FunnelTab'
 import { AdvertisingTab } from './AdvertisingTab'
 import { OrganicTab } from './OrganicTab'
+import { VariantsTab } from './VariantsTab'
 
 interface ProductAnalyticsContentProps {
   nmId: string
@@ -128,6 +129,9 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
       case 'organic':
         if (organicShare.isLoading || iroas.isLoading) return <OverviewSkeleton />
         return <OrganicTab correlation={organicShare.data ?? []} iroas={iroas.data ?? null} />
+
+      case 'variants':
+        return <VariantsTab nmId={nmId} />
 
       default:
         return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS[tab]} />

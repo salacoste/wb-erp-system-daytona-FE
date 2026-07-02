@@ -122,22 +122,27 @@ export function useSkuPageState() {
     }
   }, [baseSkuFinancialsData, skuParityData])
 
-  // Handle week change
+  // Handle week change — preserve existing params (e.g. group_by) so FR-7 variant
+  // mode survives a week change; only weekStart/weekEnd/nm_id are re-scoped.
   const handleRangeChange = (newStart: string, newEnd: string) => {
     setWeekStart(newStart)
     setWeekEnd(newEnd)
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(searchParams)
     params.set('weekStart', newStart)
     params.set('weekEnd', newEnd)
-    if (nmIdFilter) {
-      params.set('nm_id', nmIdFilter)
-    }
+    // Range selected → by-variant mode is single-week-only; drop group_by so the URL
+    // matches the (sku) view instead of lying about the active mode.
+    if (newStart !== newEnd) params.delete('group_by')
     router.push(`/analytics/sku?${params.toString()}`)
   }
 
-  // Story 4.9: Clear nm_id filter
+  // Story 4.9: Clear nm_id filter — preserve group_by (FR-7) and other params.
   const handleClearFilter = () => {
-    router.push(`/analytics/sku?weekStart=${weekStart}&weekEnd=${weekEnd}`)
+    const params = new URLSearchParams(searchParams)
+    params.delete('nm_id')
+    params.set('weekStart', weekStart)
+    params.set('weekEnd', weekEnd)
+    router.push(`/analytics/sku?${params.toString()}`)
   }
 
   // Check if using date range (multiple weeks)

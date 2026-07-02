@@ -25,3 +25,10 @@ export { useMarginAnalyticsBySku } from './useMarginAnalyticsBySku'
 export { useMarginAnalyticsByBrand } from './useMarginAnalyticsByBrand'
 export { useMarginAnalyticsByCategory } from './useMarginAnalyticsByCategory'
 export { useCabinetLevelExpenses } from './useCabinetLevelExpenses'
+// FR-7 (#221): by-variant (color/size) — single-week only.
+export { useMarginAnalyticsByVariant } from './useMarginAnalyticsByVariant'
+export type {
+  VariantAnalyticsFilters,
+  VariantAnalyticsResponse,
+} from './useMarginAnalyticsByVariant'
+export type { VariantAnalyticsItem } from '@/types/variant-analytics'

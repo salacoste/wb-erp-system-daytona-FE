@@ -13,7 +13,13 @@
 // ============================================================
 
 /** Tab identifiers for the per-product analytics home. Order = display order. */
-export const UNIFIED_PRODUCT_TABS = ['overview', 'funnel', 'advertising', 'organic'] as const
+export const UNIFIED_PRODUCT_TABS = [
+  'overview',
+  'funnel',
+  'advertising',
+  'organic',
+  'variants',
+] as const
 
 export type UnifiedProductTab = (typeof UNIFIED_PRODUCT_TABS)[number]
 
@@ -23,6 +29,7 @@ export const UNIFIED_PRODUCT_TAB_LABELS: Record<UnifiedProductTab, string> = {
   funnel: 'Воронка',
   advertising: 'Реклама',
   organic: 'Органика',
+  variants: 'Варианты',
 }
 
 // ============================================================
