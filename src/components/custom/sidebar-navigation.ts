@@ -81,6 +81,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Планирование', href: ROUTES.ANALYTICS.SUPPLY_PLANNING, icon: PackageSearch },
   // Reorder Dashboard — warehouse replenishment recommendations
   { label: 'Пополнение склада', href: ROUTES.ANALYTICS.REORDER, icon: Package },
+  // МойСклад integration (read-only FE, Phase 1 MVP — contract #221)
+  { label: 'МойСклад', href: ROUTES.MOYSKLAD.ROOT, icon: Store },
   // Epic 5: Unit Economics Analytics
   { label: 'Юнит-экономика', href: ROUTES.ANALYTICS.UNIT_ECONOMICS, icon: Calculator },
   // Epic 7: Liquidity Analysis

@@ -61,16 +61,18 @@ src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
 src/lib/daily/aggregation.ts:155 | line 155 > file has 116 lines
 src/lib/margin-helpers.ts:128-129 | line 129 > file has 109 lines
-src/lib/routes.ts:206 | line 206 > file has 125 lines
-src/lib/routes.ts:206 | line 206 > file has 125 lines
-src/lib/routes.ts:213-215 | line 215 > file has 125 lines
-src/lib/routes.ts:213-215 | line 215 > file has 125 lines
-src/lib/routes.ts:215 | line 215 > file has 125 lines
+src/lib/routes.ts:206 | line 206 > file has 131 lines
+src/lib/routes.ts:206 | line 206 > file has 131 lines
+src/lib/routes.ts:213-215 | line 215 > file has 131 lines
+src/lib/routes.ts:213-215 | line 215 > file has 131 lines
+src/lib/routes.ts:215 | line 215 > file has 131 lines
 src/mocks/handlers/unit-economics.ts:224 | line 224 > file has 28 lines
 src/mocks/handlers/unit-economics.ts:37-48 | line 48 > file has 28 lines
 src/mocks/handlers/unit-economics.ts:54-66 | line 66 > file has 28 lines
+src/products/marketplace.types.ts:156-161 | file not found
 src/products/products.service.ts:210-259 | file not found
 src/products/products.service.ts:83-182 | file not found
+src/sync/sync.service.ts:108-122 | file not found
 src/types/cabinet.ts:10-11 | file not found
 src/types/cabinet.ts:112 | file not found
 src/types/cabinet.ts:112 | file not found
