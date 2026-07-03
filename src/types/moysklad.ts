@@ -151,3 +151,37 @@ export interface MoyskladProductsResponse {
   /** Total МС products available (meta.size). */
   total: number
 }
+
+/**
+ * FE-canonical МС variant row (GET /v1/moysklad/variants live read-through, M3).
+ *
+ * Variants LACK `article` (the contract's key point — unlike products, МС
+ * variants have no vendorCode); only `code` exists. Hence no article field here
+ * and the table renders no «Артикул» column.
+ *
+ * `parentProductHref` is a best-effort string ref to the parent МС product
+ * (entity link object). We store its href/id verbatim as a string and render a
+ * short form — we do NOT resolve or render rich parent detail (best-effort).
+ * NULL when МС omits the `product` ref (render «—»).
+ *
+ * `barcodesCount` is the length of the `barcodes` array (AP#8 count exception —
+ * missing/non-array → 0, the legitimate empty-state value).
+ * `name`/`code`/`updated` are NULL when МС omits them (render «—»).
+ */
+export interface MoyskladVariant {
+  id: string
+  name: string | null
+  code: string | null
+  /** Best-effort parent-product ref href/id (string). NULL = unknown (render «—»). */
+  parentProductHref: string | null
+  /** Count of `barcodes` entries. 0 when МС omits the array (count exception). */
+  barcodesCount: number
+  updated: string | null
+}
+
+/** GET /v1/moysklad/variants response (`{ rows, meta:{ size, ... } }`). */
+export interface MoyskladVariantsResponse {
+  rows: MoyskladVariant[]
+  /** Total МС variants available (meta.size). */
+  total: number
+}

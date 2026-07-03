@@ -200,3 +200,57 @@ export const moyskladProductsEmptyResponse = {
   rows: [],
   meta: { size: 0, limit: 20, offset: 0 },
 }
+
+/**
+ * Raw GET /variants row sample (live МС `/variants` read-through, M3).
+ * Variants LACK `article` (the contract's key point). `product` is a parent-
+ * product entity-link object (`{ meta:{ href }, id, name }`). `barcodes` is an
+ * array; here 3 entries.
+ */
+export const moyskladVariantSample = {
+  id: 'var-1',
+  name: 'Футболка белая / M',
+  code: '00001-M',
+  product: {
+    meta: {
+      href: 'https://online.moysklad.ru/api/remap/1.2/entity/product/prod-1',
+      type: 'product',
+    },
+    id: 'prod-1',
+    name: 'Футболка белая',
+  },
+  barcodes: [{ ean13: '2000000000017' }, { ean13: '2000000000024' }, { ean13: '2000000000031' }],
+  updated: '2026-07-01T10:00:00.000Z',
+}
+
+/**
+ * Variant missing product ref + barcodes (parentProductHref → null → «—»,
+ * barcodesCount → 0, code/updated null → «—»). A bare `product.id` (no
+ * meta.href) exercises the href-then-id fallback.
+ */
+export const moyskladVariantMissingRefsSample = {
+  id: 'var-2',
+  name: 'Носки чёрные / 42',
+  code: null,
+  // Bare id, no meta.href — fallback to product.id string.
+  product: { id: 'prod-2' },
+  // barcodes omitted entirely.
+  updated: null,
+}
+
+/** Raw GET /variants `{ rows, meta:{ size } }` shape. */
+export const moyskladVariantsRawFixture = {
+  rows: [moyskladVariantSample, moyskladVariantMissingRefsSample],
+  meta: {
+    size: 41,
+    limit: 20,
+    offset: 0,
+    nextHref: 'https://online.moysklad.ru/api/remap/1.2/entity/variant?offset=20',
+  },
+}
+
+/** Empty variants response (no variants in МС account). */
+export const moyskladVariantsEmptyResponse = {
+  rows: [],
+  meta: { size: 0, limit: 20, offset: 0 },
+}
