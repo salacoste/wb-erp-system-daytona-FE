@@ -69,3 +69,64 @@ export function toStr(raw: unknown): string {
 export function asRecord(raw: unknown): Record<string, unknown> {
   return raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {}
 }
+
+/**
+ * Coerce a Prisma Decimal (serialized decimal.js) to number | null.
+ *
+ * Prisma serializes `Decimal` columns as the decimal.js internal shape `{s,e,d}`
+ * (sign, exponent of the MSB, base-1e7 digit groups). This reconstructs the value
+ * WITHOUT importing decimal.js at runtime. Falls through to number/string parsing
+ * for backends that serialize decimals as plain numbers or strings.
+ *
+ *   - `s`: sign (1 positive, -1 negative)
+ *   - `e`: decimal exponent of the most-significant digit (value = coeff × 10^(e-L+1))
+ *   - `d`: digit groups — first group 1-7 digits, rest zero-padded to 7
+ *
+ * AP#8: ratio/money/quantity — preserves null, renders '—' (never collapses to 0).
+ *
+ * Reference sample (decimal.js-verified): `{s:1,e:4,d:[28765,3100000]}` → 28765.31.
+ */
+export function toDecimalNumber(raw: unknown): number | null {
+  if (raw == null) return null
+  if (typeof raw === 'number') return Number.isFinite(raw) ? raw : null
+  if (typeof raw === 'string') {
+    const n = Number(raw)
+    return Number.isFinite(n) ? n : null
+  }
+  // decimal.js `{s,e,d}` shape — narrow defensively (no `as` cast).
+  if (typeof raw === 'object' && raw !== null) {
+    const r = raw as Record<string, unknown>
+    const s = r.s
+    const e = r.e
+    const d = r.d
+    if (typeof s !== 'number' || typeof e !== 'number' || !Array.isArray(d)) return null
+    // Build the coefficient string: first group as-is, rest zero-padded to 7 digits.
+    const coeff = d
+      .map((group: unknown, i: number) => {
+        if (typeof group !== 'number' || !Number.isFinite(group) || group < 0) return null
+        return i === 0 ? String(group) : String(group).padStart(7, '0')
+      })
+      .join('')
+    // Any malformed group → abort (Defensive Frontend: indicate, never guess).
+    if (coeff.length === 0 || coeff.includes('null')) return null
+    const length = coeff.length
+    const intLen = e + 1
+    let intPart: string
+    let fracPart: string
+    if (intLen >= length) {
+      // Pure integer (decimal point is at/after the last digit).
+      intPart = coeff + '0'.repeat(intLen - length)
+      fracPart = ''
+    } else if (intLen > 0) {
+      intPart = coeff.slice(0, intLen)
+      fracPart = coeff.slice(intLen)
+    } else {
+      // Small fraction (e < 0): leading zeros before the coefficient.
+      intPart = '0'
+      fracPart = '0'.repeat(-intLen) + coeff
+    }
+    const numeric = Number((s < 0 ? '-' : '') + intPart + (fracPart ? `.${fracPart}` : ''))
+    return Number.isFinite(numeric) ? numeric : null
+  }
+  return null
+}

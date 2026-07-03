@@ -16,6 +16,7 @@ import {
   linkMapping,
   type MoyskladMappingsParams,
 } from '@/lib/api/moysklad'
+import { getMoyskladStockDb, type MoyskladStockDbParams } from '@/lib/api/moysklad-stock'
 
 /** Centralized МойСклад query keys (scope `['moysklad', ...]`). */
 export const moyskladQueryKeys = {
@@ -23,6 +24,7 @@ export const moyskladQueryKeys = {
   health: ['moysklad', 'health'] as const,
   organizations: ['moysklad', 'organizations'] as const,
   mappings: (params: MoyskladMappingsParams) => ['moysklad', 'mappings', params] as const,
+  stockDb: (params: MoyskladStockDbParams) => ['moysklad', 'stock-db', params] as const,
 }
 
 const HEALTH_STALE_TIME = 60_000
@@ -60,6 +62,21 @@ export function useMoyskladMappings(params: MoyskladMappingsParams = {}) {
     staleTime: 60_000,
     gcTime: 5 * 60_000,
     retry: 1,
+  })
+}
+
+/**
+ * GET /v1/moysklad/stock-db — cached МС stock snapshots (OUR DB, read-only).
+ * `date` omitted → latest snapshot date. Invalid `date` → 400 surfaced as error.
+ * retry disabled so an invalid-date 400 shows immediately (not retried).
+ */
+export function useMoyskladStockDb(params: MoyskladStockDbParams = {}) {
+  return useQuery({
+    queryKey: moyskladQueryKeys.stockDb(params),
+    queryFn: () => getMoyskladStockDb(params),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: 0,
   })
 }
 

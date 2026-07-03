@@ -4,7 +4,7 @@
  * МойСклад page (read-only FE, Phase 1 MVP).
  * Contract: docs/request-backend/221-moysklad-integration-backend-contract.md
  *
- * Tabs: «Обзор» / «Товары и привязки» / «Сток» (Phase-2 placeholder).
+ * Tabs: «Обзор» / «Товары и привязки» / «Сток».
  * FE-5: sr-only <h2> per tab for the page outline (WCAG 1.3.1).
  *
  * Bootstrap-cabinet note: X-Cabinet-Id is IGNORED for МС (token is
@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MoyskladHealthBadge } from './components/MoyskladHealthBadge'
 import { MoyskladOverview } from './components/MoyskladOverview'
 import { MoyskladMappingsTable } from './components/MoyskladMappingsTable'
+import { MoyskladStockTable } from './components/MoyskladStockTable'
 
 export default function MoyskladPage() {
   return (
@@ -48,7 +49,7 @@ export default function MoyskladPage() {
 
         <TabsContent value="stock" role="tabpanel">
           <h2 className="sr-only">Сток МойСклад</h2>
-          <p className="text-muted-foreground py-8 text-center">Раздел стока — скоро</p>
+          <MoyskladStockTable />
         </TabsContent>
       </Tabs>
     </div>
