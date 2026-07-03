@@ -82,3 +82,33 @@ export interface EnqueueSyncResponse {
   taskUuid: string
   queue: string
 }
+
+/**
+ * FE-canonical МС stock snapshot row (GET /v1/moysklad/stock-db).
+ *
+ * `stockFree` / `reserve` come from the backend as Prisma Decimal (serialized
+ * decimal.js `{s,e,d}`); the normalizer (`toDecimalNumber`) reconstructs them to
+ * a JS number. NULL when the backend value is absent (render «—», AP#8 — never 0).
+ *
+ * `nmId` is NULL when the assortment is unmatched (render «не привязан»).
+ * `date` is the snapshot date (YYYY-MM-DD); NULL when the backend omits it.
+ * `syncedAt` is the row sync timestamp; NULL when unknown.
+ */
+export interface MoyskladStockSnapshot {
+  id: string
+  date: string | null
+  moyskladAssortmentId: string
+  nmId: number | null
+  stockFree: number | null
+  reserve: number | null
+  syncedAt: string | null
+}
+
+/** GET /v1/moysklad/stock-db response (`{ count, total, date, rows }`). */
+export interface MoyskladStockDbResponse {
+  count: number
+  total: number
+  /** Snapshot date for these rows (YYYY-MM-DD); NULL when absent. */
+  date: string | null
+  rows: MoyskladStockSnapshot[]
+}

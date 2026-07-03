@@ -26,8 +26,8 @@
 
 ## Epic M — МойСклад (complete the module)
 
-### M1 — Сток tab: `/stock-db` snapshots ⬜
-- **Verify-first**: `GET /v1/moysklad/stock-db?limit=2&date=YYYY-MM-DD` → `{count,total,date,rows: MoyskladStockSnapshot[]}` (fields: date, moyskladAssortmentId, nmId|null, stockFree, reserve). `skipDataUnwrap`.
+### M1 — Сток tab: `/stock-db` snapshots ✅
+- **Verify-first (VERIFIED 2026-07-03)**: `GET /v1/moysklad/stock-db?limit=&date=YYYY-MM-DD` → `{count,total,date,rows[]}` (skipDataUnwrap). Omit `date` → latest snapshot date. Invalid `date` → 400. Row: `{id,cabinetId,date,moyskladAssortmentId,nmId(null=unmatched),stockFree,reserve(null),syncedAt}`. **`stockFree`/`reserve` are Prisma Decimal** — serialized as `{s,e,d}` decimal.js object (e.g. `{s:1,e:4,d:[28765,3100000]}`) → parse to number via a tested helper. 365 total snapshots (2026-07-03).
 - **ACs**: (1) Сток tab renders a table (date, МС товар name [join via mappings cache or assortmentId], nmId or «не привязан», stockFree, reserve); (2) date selector (latest by default; invalid date → 400 handled); (3) pagination hint + pager; (4) loading/empty states; (5) null money → «—».
 - **Files**: `stock-db` in `moysklad.ts` + normalizer; `useMoyskladStockDb`; `components/MoyskladStockTable.tsx`; wire into page.tsx Сток tab (replace placeholder).
 - **Tests**: normalizer (null, date-validation), table render; E2E (Сток tab renders rows).
@@ -110,4 +110,4 @@ For the **first ⬜ story** in order (M1→M5→O1→O5):
 ⬜ pending · 🔄 in-progress · ✅ done · ⛔ blocked
 
 ## Progress log (append-only)
-- _(loop writes one entry per ✅/⛔)_
+- **2026-07-03 — M1 ✅**: Сток tab (`/stock-db` snapshots). Files: `src/types/moysklad.ts` (stock types), `src/lib/api/moysklad-stock.ts` (new — `mapStockSnapshot` + `getMoyskladStockDb` skipDataUnwrap), `src/lib/api/normalizer-helpers.ts` (`toDecimalNumber` — Prisma Decimal `{s,e,d}`→number, no runtime decimal.js dep), `src/hooks/useMoyskladQueries.ts` (`useMoyskladStockDb`), `src/app/(dashboard)/moysklad/components/MoyskladStockTable.tsx`, page.tsx Сток-tab wiring, fixture + tests, `e2e/m1-moysklad-stock.spec.ts`. Fresh-context review SHIP (0 CRIT/HIGH/MED; 1 LOW — dropped redundant `as` casts for strict no-`as`). Gates: type-check 0 · eslint 0 · 73 unit tests · locale 4 · E2E 2/2 · eslint-rules OK. Caught + fixed a type error the executor's self-report missed (test fixture `nmId:null` vs `typeof matchedRow[]` param — independent gate re-run).

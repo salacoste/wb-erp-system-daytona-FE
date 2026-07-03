@@ -109,3 +109,47 @@ export const moyskladMappingsEmptyFixture = {
   total: 0,
   rows: [],
 }
+
+/**
+ * Raw GET /stock-db row sample. stockFree/reserve arrive as Prisma Decimal
+ * (decimal.js `{s,e,d}`). `{s:1,e:4,d:[28765,3100000]}` = +28765.31 (decimal.js-
+ * verified). nmId null = unmatched assortment. reserve null = unknown.
+ */
+export const stockSnapshotSample = {
+  id: 'stk-1',
+  cabinetId: 'cab-1',
+  date: '2026-07-03',
+  moyskladAssortmentId: 'assort-1',
+  nmId: 12345678,
+  stockFree: { s: 1, e: 4, d: [28765, 3100000] }, // 28765.31
+  reserve: { s: 1, e: 1, d: [50] }, // 50
+  syncedAt: '2026-07-03T08:00:00.000Z',
+}
+
+/** Unmatched stock row (nmId null -> «не привязан», reserve null -> «—»). */
+export const stockSnapshotUnmatchedSample = {
+  id: 'stk-2',
+  cabinetId: 'cab-1',
+  date: '2026-07-03',
+  moyskladAssortmentId: 'assort-2',
+  nmId: null,
+  stockFree: { s: 1, e: 2, d: [100] }, // 100
+  reserve: null,
+  syncedAt: null,
+}
+
+/** Raw GET /stock-db `{ count, total, date, rows }` shape. */
+export const stockDbRawFixture = {
+  count: 2,
+  total: 365,
+  date: '2026-07-03',
+  rows: [stockSnapshotSample, stockSnapshotUnmatchedSample],
+}
+
+/** Empty stock-db response (no snapshot for the date). */
+export const stockDbEmptyFixture = {
+  count: 0,
+  total: 0,
+  date: null,
+  rows: [],
+}
