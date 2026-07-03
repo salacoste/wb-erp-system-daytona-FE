@@ -112,3 +112,42 @@ export interface MoyskladStockDbResponse {
   date: string | null
   rows: MoyskladStockSnapshot[]
 }
+
+/**
+ * МС money object (live `/products` read-through). `value` is in МС minor units
+ * (kopecks for RUB) — the normalizer divides by 100 → rubles. NULL value = unknown.
+ * `currency` is the МС currency code (e.g. "RUB"); NULL when МС omits it.
+ */
+export interface MoyskladMoney {
+  value: number | null
+  currency: string | null
+}
+
+/**
+ * FE-canonical МС product row (GET /v1/moysklad/products live read-through).
+ *
+ * `buyPriceRub` / `salePriceRub` are converted from МС minor units (kopecks) →
+ * rubles (/100). NULL when МС omits buyPrice / salePrices (render «—», AP#8 — never 0).
+ *
+ * `salePriceRub` is the FIRST sale-price tier (МС returns up to 3; simplified).
+ * `name`/`article`/`code`/`externalCode`/`updated` are NULL when МС omits them.
+ */
+export interface MoyskladProduct {
+  id: string
+  name: string | null
+  article: string | null
+  code: string | null
+  externalCode: string | null
+  /** Buy price in rubles (kopeck/100). NULL = unknown (render «—»). */
+  buyPriceRub: number | null
+  /** First sale-price tier in rubles (kopeck/100). NULL = unknown (render «—»). */
+  salePriceRub: number | null
+  updated: string | null
+}
+
+/** GET /v1/moysklad/products response (`{ rows, meta:{ size, ... } }`). */
+export interface MoyskladProductsResponse {
+  rows: MoyskladProduct[]
+  /** Total МС products available (meta.size). */
+  total: number
+}

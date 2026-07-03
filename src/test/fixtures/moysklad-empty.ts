@@ -153,3 +153,50 @@ export const stockDbEmptyFixture = {
   date: null,
   rows: [],
 }
+
+/**
+ * Raw GET /products row sample (live МС `/products` read-through, M2).
+ * buyPrice.value/salePrices[].value are МС minor units (kopecks for RUB).
+ * 7080000 kopecks = 70800.00 ₽; 1200000 kopecks = 12000.00 ₽.
+ */
+export const moyskladProductSample = {
+  id: 'prod-1',
+  name: 'Футболка белая',
+  article: 'WB-001',
+  code: '00001',
+  externalCode: 'ext-1',
+  buyPrice: { value: 7080000, currency: { meta: { href: '.../currency/rub', type: 'currency' } } },
+  salePrices: [
+    { value: 1200000, currency: { meta: { href: '.../currency/rub', type: 'currency' } } },
+    { value: 1100000, currency: { meta: { href: '.../currency/rub', type: 'currency' } } },
+  ],
+  updated: '2026-07-01T10:00:00.000Z',
+}
+
+/** Product missing buyPrice + salePrices (render «—», AP#8 — never 0). */
+export const moyskladProductMissingPricesSample = {
+  id: 'prod-2',
+  name: 'Носки (без цены)',
+  article: null,
+  code: null,
+  externalCode: null,
+  // buyPrice + salePrices omitted entirely.
+  updated: null,
+}
+
+/** Raw GET /products `{ rows, meta:{ size } }` shape. */
+export const moyskladProductsRawFixture = {
+  rows: [moyskladProductSample, moyskladProductMissingPricesSample],
+  meta: {
+    size: 394,
+    limit: 20,
+    offset: 0,
+    nextHref: 'https://online.moysklad.ru/api/remap/1.2/entity/product?offset=20',
+  },
+}
+
+/** Empty products response (no products in МС account). */
+export const moyskladProductsEmptyResponse = {
+  rows: [],
+  meta: { size: 0, limit: 20, offset: 0 },
+}

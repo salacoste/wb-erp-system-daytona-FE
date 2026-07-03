@@ -32,8 +32,8 @@
 - **Files**: `stock-db` in `moysklad.ts` + normalizer; `useMoyskladStockDb`; `components/MoyskladStockTable.tsx`; wire into page.tsx Сток tab (replace placeholder).
 - **Tests**: normalizer (null, date-validation), table render; E2E (Сток tab renders rows).
 
-### M2 — МС товары browse (live `/products`) ⬜
-- **Verify-first**: `GET /v1/moysklad/products?limit=2&offset=0` → `{rows: MoyskladProduct[], meta:{size}}` (live read-through). `skipDataUnwrap`.
+### M2 — МС товары browse (live `/products`) ✅
+- **Verify-first (VERIFIED 2026-07-03)**: `GET /v1/moysklad/products?limit=&offset=` → `{rows: MoyskladProduct[], meta:{size,...}}` (NO `{data}` wrapper — top-level is `{rows,meta}`; read `.rows` + `.meta.size`). 394 products. Row: `{id,name,article?,code?,externalCode?,buyPrice?:{value,currency},salePrices?:[{value,currency}],updated?}`. **`buyPrice.value`/`salePrices[].value` are МС minor units (kopecks for RUB) → ÷100 for rubles** (matches Phase-1 `buyPriceKopeck/100`).
 - **ACs**: (1) paginated list of МС products (name, article, code, buyPrice, salePrices); (2) live-call failure → graceful error (per contract v1-boundary #2, live ESM path); (3) limit/offset pager.
 - **Files**: `getMoyskladProducts`; `useMoyskladProducts`; `components/MoyskladProductsList.tsx`; sub-tab or section on Обзор.
 - **Tests**: normalizer + pager; E2E (list renders).
@@ -111,3 +111,4 @@ For the **first ⬜ story** in order (M1→M5→O1→O5):
 
 ## Progress log (append-only)
 - **2026-07-03 — M1 ✅**: Сток tab (`/stock-db` snapshots). Files: `src/types/moysklad.ts` (stock types), `src/lib/api/moysklad-stock.ts` (new — `mapStockSnapshot` + `getMoyskladStockDb` skipDataUnwrap), `src/lib/api/normalizer-helpers.ts` (`toDecimalNumber` — Prisma Decimal `{s,e,d}`→number, no runtime decimal.js dep), `src/hooks/useMoyskladQueries.ts` (`useMoyskladStockDb`), `src/app/(dashboard)/moysklad/components/MoyskladStockTable.tsx`, page.tsx Сток-tab wiring, fixture + tests, `e2e/m1-moysklad-stock.spec.ts`. Fresh-context review SHIP (0 CRIT/HIGH/MED; 1 LOW — dropped redundant `as` casts for strict no-`as`). Gates: type-check 0 · eslint 0 · 73 unit tests · locale 4 · E2E 2/2 · eslint-rules OK. Caught + fixed a type error the executor's self-report missed (test fixture `nmId:null` vs `typeof matchedRow[]` param — independent gate re-run).
+- **2026-07-03 — M2 ✅**: МС товары tab (live `/products` browse). Files: `src/types/moysklad.ts` (MoyskladProduct), `src/lib/api/moysklad-products.ts` (new — `mapMoyskladProduct` reuses `kopeckToRubles` for buyPrice.value/salePrices[0].value ÷100; `getMoyskladProducts` skipDataUnwrap → `{rows,total:meta.size}`), `src/hooks/useMoyskladQueries.ts` (`useMoyskladProducts`, retry:0), `src/app/(dashboard)/moysklad/components/MoyskladProductsTable.tsx` (paginated, 6 cols, graceful live-call error banner), page.tsx 4th tab, fixture + tests, `e2e/m2-moysklad-products.spec.ts`. Read-path trivial normalizer (reuses helpers) → inline-verified (formal review reserved for O-stories' mutations). Gates: type-check 0 · eslint 0 · 18 unit tests · locale 4 · E2E 1/1.
