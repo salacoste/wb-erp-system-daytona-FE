@@ -1,15 +1,19 @@
 'use client'
 
 /**
- * МС mappings table with matched/pending filter toggle + link action.
+ * МС mappings table with matched/pending filter toggle, link action, + pager (M4).
  * Contract: docs/request-backend/221-moysklad-integration-backend-contract.md
  *
  * Counts derive from the backend's filtered `.total` (3 lightweight `limit:1`
  * queries) — NOT row-filtering the sampled `all` view, which caps at 100 rows
  * while `total` can be 400+. Rows come from the active filter view.
+ *
+ * Pager (M4): page size 20, limit/offset on the active view so all 400+ pending
+ * are reachable (the backend default caps ~100). Page resets to 0 on filter
+ * change so switching matched/pending never lands on an out-of-range page.
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -25,6 +29,7 @@ import { cn } from '@/lib/utils'
 import type { MoyskladProductMapping } from '@/types/moysklad'
 import { MoyskladMappingRow } from './MoyskladMappingRow'
 import { LinkMappingDialog } from './LinkMappingDialog'
+import { MoyskladMappingsPager } from './MoyskladMappingsPager'
 
 type Filter = 'all' | 'matched' | 'pending'
 
@@ -34,23 +39,36 @@ const FILTER_TO_MATCHED: Record<Filter, boolean | undefined> = {
   pending: false,
 }
 
+const PAGE_SIZE = 20
+
 export function MoyskladMappingsTable() {
   const [filter, setFilter] = useState<Filter>('pending')
+  const [page, setPage] = useState(0)
   const [linkTarget, setLinkTarget] = useState<MoyskladProductMapping | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  // Reset page when the filter changes (avoid out-of-range offset).
+  useEffect(() => {
+    setPage(0)
+  }, [filter])
 
   // Counts: backend-filtered `.total` via lightweight `limit:1` queries.
   // Robust past the 100-row sample cap (total can be 400+).
   const matchedView = useMoyskladMappings({ matched: true, limit: 1 })
   const pendingView = useMoyskladMappings({ matched: false, limit: 1 })
   const allCountView = useMoyskladMappings({ limit: 1 })
-  // Rows: the active filter view (full page of rows to display).
-  const activeView = useMoyskladMappings({ matched: FILTER_TO_MATCHED[filter] })
+  // Rows: the active filter view (paginated — full reach past the 100-row cap).
+  const activeView = useMoyskladMappings({
+    matched: FILTER_TO_MATCHED[filter],
+    limit: PAGE_SIZE,
+    offset: page * PAGE_SIZE,
+  })
 
   const matchedCount = matchedView.data?.total ?? 0
   const pendingCount = pendingView.data?.total ?? 0
   const total = allCountView.data?.total ?? 0
   const visibleRows = activeView.data?.rows ?? []
+  const activeTotal = activeView.data?.total ?? 0
 
   const handleLink = (m: MoyskladProductMapping) => {
     setLinkTarget(m)
@@ -113,10 +131,13 @@ export function MoyskladMappingsTable() {
         </Table>
       </div>
 
-      {/* Pagination hint — full pager is Phase 2. */}
-      <p className="text-xs text-muted-foreground">
-        Показано {visibleRows.length} из {activeView.data?.total ?? 0}
-      </p>
+      <MoyskladMappingsPager
+        page={page}
+        pageSize={PAGE_SIZE}
+        rowsCount={visibleRows.length}
+        total={activeTotal}
+        onPageChange={setPage}
+      />
 
       {/* key={linkTarget?.id} → remount per row so internal nmId state resets. */}
       <LinkMappingDialog
