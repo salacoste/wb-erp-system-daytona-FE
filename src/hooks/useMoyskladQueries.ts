@@ -17,6 +17,7 @@ import {
   type MoyskladMappingsParams,
 } from '@/lib/api/moysklad'
 import { getMoyskladStockDb, type MoyskladStockDbParams } from '@/lib/api/moysklad-stock'
+import { getMoyskladProducts, type MoyskladProductsParams } from '@/lib/api/moysklad-products'
 
 /** Centralized МойСклад query keys (scope `['moysklad', ...]`). */
 export const moyskladQueryKeys = {
@@ -25,6 +26,7 @@ export const moyskladQueryKeys = {
   organizations: ['moysklad', 'organizations'] as const,
   mappings: (params: MoyskladMappingsParams) => ['moysklad', 'mappings', params] as const,
   stockDb: (params: MoyskladStockDbParams) => ['moysklad', 'stock-db', params] as const,
+  products: (params: MoyskladProductsParams) => ['moysklad', 'products', params] as const,
 }
 
 const HEALTH_STALE_TIME = 60_000
@@ -74,6 +76,21 @@ export function useMoyskladStockDb(params: MoyskladStockDbParams = {}) {
   return useQuery({
     queryKey: moyskladQueryKeys.stockDb(params),
     queryFn: () => getMoyskladStockDb(params),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: 0,
+  })
+}
+
+/**
+ * GET /v1/moysklad/products — live МС `/products` read-through (M2).
+ * Live call may fail at runtime (boundary #2); retry disabled so a live failure
+ * surfaces the error banner immediately instead of hammering МС on retries.
+ */
+export function useMoyskladProducts(params: MoyskladProductsParams = {}) {
+  return useQuery({
+    queryKey: moyskladQueryKeys.products(params),
+    queryFn: () => getMoyskladProducts(params),
     staleTime: 60_000,
     gcTime: 5 * 60_000,
     retry: 0,
