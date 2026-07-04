@@ -43,6 +43,12 @@ vi.mock('@/hooks/useOrders', () => ({
   useOrders: (...args: unknown[]) => mockUseOrders(...args),
   useOrdersSyncStatus: () => mockUseOrdersSyncStatus(),
   useOrdersSync: () => mockUseOrdersSync(),
+  // Story O1: operational-status mutation stub (idle by default).
+  useUpdateOrderOperationalStatus: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,

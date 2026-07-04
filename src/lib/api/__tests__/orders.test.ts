@@ -9,11 +9,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../api-client', () => ({
-  apiClient: { get: vi.fn(), post: vi.fn() },
+  apiClient: { get: vi.fn(), post: vi.fn(), patch: vi.fn() },
 }))
 
 import { apiClient } from '../../api-client'
-import { getOrders, getOrderById, triggerOrdersSync, getOrdersSyncStatus } from '../orders'
+import {
+  getOrders,
+  getOrderById,
+  triggerOrdersSync,
+  getOrdersSyncStatus,
+  updateOrderOperationalStatus,
+} from '../orders'
 
 vi.spyOn(console, 'info').mockImplementation(() => {})
 
@@ -152,6 +158,39 @@ describe('Orders API Client - Core', () => {
       expect(apiClient.get).toHaveBeenCalledWith('/v1/orders/sync-status')
       expect(result.enabled).toBe(true)
       expect(result.timezone).toBe('Europe/Moscow')
+    })
+  })
+
+  // --- Story O1: operational status ---
+
+  describe('updateOrderOperationalStatus', () => {
+    it('PATCHes /v1/orders/:uuid/operational-status with {status}', async () => {
+      const uuid = '2405776e-4660-4857-ab4f-a56a3134dda9'
+      const mockResponse = {
+        id: uuid,
+        operationalStatus: 'ASSEMBLED',
+        operationalStatusUpdatedAt: '2026-07-04T12:00:00Z',
+      }
+      vi.mocked(apiClient.patch).mockResolvedValue(mockResponse)
+      const result = await updateOrderOperationalStatus(uuid, 'ASSEMBLED')
+      expect(apiClient.patch).toHaveBeenCalledWith(`/v1/orders/${uuid}/operational-status`, {
+        status: 'ASSEMBLED',
+      })
+      expect(result.id).toBe(uuid)
+      expect(result.operationalStatus).toBe('ASSEMBLED')
+      expect(result.operationalStatusUpdatedAt).toBe('2026-07-04T12:00:00Z')
+    })
+
+    it('uses the UUID (not the WB orderId) in the URL', async () => {
+      const uuid = '11111111-2222-3333-4444-555555555555'
+      vi.mocked(apiClient.patch).mockResolvedValue({
+        id: uuid,
+        operationalStatus: 'CANCELLED',
+        operationalStatusUpdatedAt: null,
+      })
+      await updateOrderOperationalStatus(uuid, 'CANCELLED')
+      const url = vi.mocked(apiClient.patch).mock.calls[0][0]
+      expect(url).toBe(`/v1/orders/${uuid}/operational-status`)
     })
   })
 })
