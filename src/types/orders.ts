@@ -28,10 +28,72 @@ export type WbStatus =
   | 'return_at_pvz'
   | 'returned_to_seller'
 
+// --- Operational Status (Epic Moysklad, Story O1) ---
+
+/**
+ * Order operational status (operational pipeline).
+ * Story O1: seller-managed lifecycle distinct from WB/native statuses.
+ * PATCH /v1/orders/:uuid/operational-status drives transitions.
+ */
+export type OrderOperationalStatus =
+  | 'NEW'
+  | 'ASSEMBLED'
+  | 'PACKED'
+  | 'SHIPPED'
+  | 'DELIVERED'
+  | 'CANCELLED'
+  | 'RETURNED'
+
+/** Russian labels for operational statuses */
+export const ORDER_OPERATIONAL_STATUS_LABELS: Record<OrderOperationalStatus, string> = {
+  NEW: 'Новый',
+  ASSEMBLED: 'Собран',
+  PACKED: 'Упакован',
+  SHIPPED: 'Отгружен',
+  DELIVERED: 'Доставлен',
+  CANCELLED: 'Отменён',
+  RETURNED: 'Возврат',
+}
+
+/**
+ * Operational status state machine (verified against backend 2026-07-04).
+ * Keys = current status; values = statuses the operator MAY transition to.
+ * Backend enforces the same; FE shows only these as dropdown options.
+ */
+export const ALLOWED_TRANSITIONS: Record<OrderOperationalStatus, OrderOperationalStatus[]> = {
+  NEW: ['ASSEMBLED', 'CANCELLED'],
+  ASSEMBLED: ['PACKED', 'CANCELLED'],
+  PACKED: ['SHIPPED'],
+  SHIPPED: ['DELIVERED', 'RETURNED'],
+  DELIVERED: [],
+  CANCELLED: [],
+  RETURNED: [],
+}
+
+/** Terminal operational statuses — no further transitions (badge only, no dropdown). */
+export const TERMINAL_STATUSES: Set<OrderOperationalStatus> = new Set([
+  'DELIVERED',
+  'CANCELLED',
+  'RETURNED',
+])
+
+/** Response from PATCH /v1/orders/:uuid/operational-status */
+export interface UpdateOrderOperationalStatusResponse {
+  id: string
+  operationalStatus: OrderOperationalStatus
+  operationalStatusUpdatedAt: string | null
+}
+
 // --- Order Item Types ---
 
 /** Order item in list view (GET /v1/orders) */
 export interface OrderFbsItem {
+  /**
+   * OrderFbs UUID — primary key for ALL mutations (Story O1).
+   * NOT the WB `orderId` (a number string); use this for PATCH/operational-status.
+   * AP#10: opaque UUID rendered via String().
+   */
+  id: string
   /** WB Order ID (string for BigInt compatibility) */
   orderId: string
   /** Order grouping UID */
@@ -62,6 +124,10 @@ export interface OrderFbsItem {
   createdAt: string
   /** Last status change timestamp */
   statusUpdatedAt: string
+  /** Operational status (Story O1) — defaults to NEW */
+  operationalStatus: OrderOperationalStatus
+  /** Last operational-status change timestamp — null until first transition (AP#8: render «—») */
+  operationalStatusUpdatedAt: string | null
 }
 
 /** Delivery address info (Адрес доставки) */

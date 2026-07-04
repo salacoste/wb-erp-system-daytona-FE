@@ -6,7 +6,7 @@
  * Runtime type guards for order types, status validation, and discriminated unions.
  */
 
-import type { SupplierStatus, WbStatus } from './orders'
+import type { SupplierStatus, WbStatus, OrderOperationalStatus } from './orders'
 import type {
   FullHistoryEntry,
   FullHistoryLocalEntry,
@@ -61,6 +61,29 @@ export function isValidSupplierStatus(value: unknown): value is SupplierStatus {
  */
 export function isValidWbStatus(value: unknown): value is WbStatus {
   return typeof value === 'string' && VALID_WB_STATUSES.includes(value as WbStatus)
+}
+
+// --- Operational status guard (Story O1) ---
+
+/** Valid operational status values — kept in sync with OrderOperationalStatus union */
+const VALID_OPERATIONAL_STATUSES = [
+  'NEW',
+  'ASSEMBLED',
+  'PACKED',
+  'SHIPPED',
+  'DELIVERED',
+  'CANCELLED',
+  'RETURNED',
+] as const satisfies readonly OrderOperationalStatus[]
+
+/**
+ * Check if value is a valid OrderOperationalStatus.
+ * Unknown backend values fall back to NEW at the normalizer layer.
+ */
+export function isValidOperationalStatus(value: unknown): value is OrderOperationalStatus {
+  return (
+    typeof value === 'string' && (VALID_OPERATIONAL_STATUSES as readonly string[]).includes(value)
+  )
 }
 
 // ============================================================================

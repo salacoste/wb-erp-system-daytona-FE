@@ -23,6 +23,7 @@ import {
   OrdersErrorBoundary,
   OrdersSuspenseFallback,
 } from '@/components/custom/orders'
+import { useOrderOperationalStatus } from '@/components/custom/orders/useOrderOperationalStatus'
 import { OrdersLoadingState, OrdersErrorState, OrdersSlowLoadingState } from './OrdersPageStates'
 import { useOrdersPageState, PAGE_SIZE } from './useOrdersPageState'
 import { useOrdersFilterHandlers } from './useOrdersFilterHandlers'
@@ -76,6 +77,9 @@ function OrdersPageContent() {
   // Sync status and mutation
   const { data: syncStatus } = useOrdersSyncStatus()
   const { mutate: triggerSync, isPending: isSyncing } = useOrdersSync()
+  // Story O1: operational-status change controller (handler + pending UUID).
+  const { onOperationalStatusChange, pendingUuid: operationalStatusPendingUuid } =
+    useOrderOperationalStatus()
   const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   // Story 86.2: Client info (PII) — Owner only, hook is no-op for other roles
@@ -170,6 +174,8 @@ function OrdersPageContent() {
         onClearFilters={state.handleClearFilters}
         showClientColumn={showClientColumn}
         clientInfoMap={clientInfoMap}
+        onOperationalStatusChange={onOperationalStatusChange}
+        operationalStatusPendingUuid={operationalStatusPendingUuid}
       />
 
       {/* Pagination */}

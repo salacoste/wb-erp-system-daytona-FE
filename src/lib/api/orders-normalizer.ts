@@ -9,11 +9,22 @@
  * price fields are non-nullable numbers (toCount — backend sends 0 for free).
  */
 
-import { asRecord, toCount, toStr, toOptionalString } from '@/lib/api/normalizer-helpers'
-import { isValidWbStatus, isValidSupplierStatus } from '@/types/orders-guards'
+import {
+  asRecord,
+  toCount,
+  toStr,
+  toOptionalString,
+  toStringOrNull,
+} from '@/lib/api/normalizer-helpers'
+import {
+  isValidWbStatus,
+  isValidSupplierStatus,
+  isValidOperationalStatus,
+} from '@/types/orders-guards'
 import type {
   WbStatus,
   SupplierStatus,
+  OrderOperationalStatus,
   OrderFbsItem,
   OrdersListResponse,
   OrdersPagination,
@@ -26,6 +37,9 @@ const UNKNOWN_WB_STATUS: WbStatus = 'waiting'
 /** Fallback for unknown supplier statuses */
 const UNKNOWN_SUPPLIER_STATUS: SupplierStatus = 'new'
 
+/** Fallback for unknown operational statuses (Story O1) — default per backend */
+const DEFAULT_OPERATIONAL_STATUS: OrderOperationalStatus = 'NEW'
+
 function normalizeWbStatus(raw: unknown): WbStatus {
   if (isValidWbStatus(raw)) return raw
   return UNKNOWN_WB_STATUS
@@ -36,10 +50,19 @@ function normalizeSupplierStatus(raw: unknown): SupplierStatus {
   return UNKNOWN_SUPPLIER_STATUS
 }
 
+/** Story O1: normalize operational status — unknown values fall back to NEW */
+function normalizeOperationalStatus(raw: unknown): OrderOperationalStatus {
+  if (isValidOperationalStatus(raw)) return raw
+  return DEFAULT_OPERATIONAL_STATUS
+}
+
 /** Normalize a single order row from the list endpoint */
 export function normalizeOrderItem(raw: unknown): OrderFbsItem {
   const r = asRecord(raw)
   return {
+    // Story O1: id is the OrderFbs UUID (primary mutation key), NOT WB orderId.
+    // AP#10: opaque UUID via String() — `String(raw)` mangles objects, so guard first.
+    id: typeof r.id === 'string' ? r.id : String(r.id ?? ''),
     orderId: toStr(r.orderId),
     orderUid: toOptionalString(r.orderUid) ?? '',
     nmId: toCount(r.nmId),
@@ -55,6 +78,9 @@ export function normalizeOrderItem(raw: unknown): OrderFbsItem {
     cargoType: typeof r.cargoType === 'string' ? r.cargoType : null,
     createdAt: toStr(r.createdAt),
     statusUpdatedAt: toStr(r.statusUpdatedAt),
+    operationalStatus: normalizeOperationalStatus(r.operationalStatus),
+    // AP#8: null until first transition — preserve null, render «—» in UI.
+    operationalStatusUpdatedAt: toStringOrNull(r.operationalStatusUpdatedAt),
   }
 }
 

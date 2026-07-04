@@ -16,8 +16,6 @@ src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | lin
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/components/custom/dashboard/table-columns.ts:188-191 | line 191 > file has 150 lines
-src/components/custom/orders/OrdersTableRow.tsx:134-137 | line 137 > file has 114 lines
-src/components/custom/orders/OrdersTableRow.tsx:134-137 | line 137 > file has 114 lines
 src/components/notifications/TelegramBindingModal.tsx:216 | line 216 > file has 95 lines
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found

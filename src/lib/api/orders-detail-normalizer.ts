@@ -13,13 +13,18 @@ import {
   toNullableNumber,
   toStringOrNull,
 } from '@/lib/api/normalizer-helpers'
+import { isValidOperationalStatus } from '@/types/orders-guards'
 import type {
   OrderFbsDetails,
   OrderAddress,
   StatusHistoryBrief,
   SupplierStatus,
   WbStatus,
+  OrderOperationalStatus,
 } from '@/types/orders'
+
+/** Story O1: default operational status when backend omits it or sends an unknown value */
+const DEFAULT_OPERATIONAL_STATUS: OrderOperationalStatus = 'NEW'
 
 function normalizeOrderAddress(raw: unknown): OrderAddress | null {
   if (raw == null) return null
@@ -43,7 +48,10 @@ function normalizeStatusHistoryBrief(raw: unknown): StatusHistoryBrief {
 /** Normalize GET /v1/orders/:orderId response */
 export function normalizeOrderDetail(raw: unknown): OrderFbsDetails {
   const d = asRecord(raw)
+  const operationalRaw = d.operationalStatus ?? d.operational_status
   return {
+    // Story O1: id is the OrderFbs UUID (primary mutation key). AP#10 opaque UUID.
+    id: typeof d.id === 'string' ? d.id : String(d.id ?? ''),
     orderId: toStr(d.orderId ?? d.order_id),
     orderUid: toStr(d.orderUid ?? d.order_uid),
     nmId: toCount(d.nmId ?? d.nm_id),
@@ -59,6 +67,12 @@ export function normalizeOrderDetail(raw: unknown): OrderFbsDetails {
     cargoType: toStringOrNull(d.cargoType ?? d.cargo_type),
     createdAt: toStr(d.createdAt ?? d.created_at),
     statusUpdatedAt: toStr(d.statusUpdatedAt ?? d.status_updated_at),
+    operationalStatus: isValidOperationalStatus(operationalRaw)
+      ? operationalRaw
+      : DEFAULT_OPERATIONAL_STATUS,
+    operationalStatusUpdatedAt: toStringOrNull(
+      d.operationalStatusUpdatedAt ?? d.operational_status_updated_at
+    ),
     chrtId: toCount(d.chrtId ?? d.chrt_id),
     address: normalizeOrderAddress(d.address),
     statusHistory: Array.isArray(d.statusHistory)

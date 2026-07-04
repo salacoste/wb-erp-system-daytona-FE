@@ -310,8 +310,13 @@ describe('OrdersTable', () => {
   describe('Status Badges', () => {
     it('renders OrderStatusBadge for supplier status', () => {
       renderTable()
-      // "Новый" is the label for supplierStatus='new'
-      expect(screen.getByText('Новый')).toBeInTheDocument()
+      // "Новый" is the label for supplierStatus='new'. The operational-status
+      // badge (NEW) also renders "Новый" (Story O1), so scope to the supplier
+      // badge via its yellow color class.
+      const supplierBadges = screen
+        .getAllByText('Новый')
+        .filter(el => el.className.includes('text-yellow-700'))
+      expect(supplierBadges).toHaveLength(1)
     })
 
     it('renders WB status badge', () => {
@@ -322,8 +327,11 @@ describe('OrdersTable', () => {
 
     it('displays correct color for new supplier status (yellow)', () => {
       renderTable()
-      const badge = screen.getByText('Новый')
-      expect(badge.className).toContain('text-yellow-700')
+      // Story O1: operational NEW badge also shows "Новый"; filter by color.
+      const badge = screen
+        .getAllByText('Новый')
+        .find(el => el.className.includes('text-yellow-700'))
+      expect(badge?.className).toContain('text-yellow-700')
     })
 
     it('displays correct color for confirm supplier status (blue)', () => {
