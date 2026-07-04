@@ -25,9 +25,19 @@ interface LinkMappingDialogProps {
   mapping: MoyskladProductMapping | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  /**
+   * M5: fired on a successful link so the table can mark the row recently-linked
+   * (transient «себестоимость обновлена» badge). Optional — omitted in stories/tests.
+   */
+  onLinked?: (mappingId: string) => void
 }
 
-export function LinkMappingDialog({ mapping, open, onOpenChange }: LinkMappingDialogProps) {
+export function LinkMappingDialog({
+  mapping,
+  open,
+  onOpenChange,
+  onLinked,
+}: LinkMappingDialogProps) {
   const [nmId, setNmId] = useState<number | undefined>(undefined)
   const [confirmed, setConfirmed] = useState(false)
   const linkMutation = useLinkMapping()
@@ -53,6 +63,7 @@ export function LinkMappingDialog({ mapping, open, onOpenChange }: LinkMappingDi
       {
         onSuccess: () => {
           toast.success('Привязано')
+          if (mapping) onLinked?.(mapping.id)
           reset()
           onOpenChange(false)
         },

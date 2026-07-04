@@ -30,6 +30,7 @@ import type { MoyskladProductMapping } from '@/types/moysklad'
 import { MoyskladMappingRow } from './MoyskladMappingRow'
 import { LinkMappingDialog } from './LinkMappingDialog'
 import { MoyskladMappingsPager } from './MoyskladMappingsPager'
+import { useRecentlyLinked } from './useRecentlyLinked'
 
 type Filter = 'all' | 'matched' | 'pending'
 
@@ -69,6 +70,10 @@ export function MoyskladMappingsTable() {
   const total = allCountView.data?.total ?? 0
   const visibleRows = activeView.data?.rows ?? []
   const activeTotal = activeView.data?.total ?? 0
+
+  // M5: transient «себестоимость обновлена» badge. dataUpdatedAt bumps when a
+  // sync invalidates mappings (cross-component signal) → set clears (AC #3).
+  const { isRecent, markLinked } = useRecentlyLinked(activeView.dataUpdatedAt)
 
   const handleLink = (m: MoyskladProductMapping) => {
     setLinkTarget(m)
@@ -125,7 +130,12 @@ export function MoyskladMappingsTable() {
               </TableRow>
             )}
             {visibleRows.map(m => (
-              <MoyskladMappingRow key={m.id} mapping={m} onLink={handleLink} />
+              <MoyskladMappingRow
+                key={m.id}
+                mapping={m}
+                onLink={handleLink}
+                isRecent={isRecent(m.id)}
+              />
             ))}
           </TableBody>
         </Table>
@@ -145,6 +155,7 @@ export function MoyskladMappingsTable() {
         mapping={linkTarget}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
+        onLinked={markLinked}
       />
     </div>
   )
