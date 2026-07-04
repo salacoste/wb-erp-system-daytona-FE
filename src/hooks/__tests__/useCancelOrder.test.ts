@@ -22,6 +22,8 @@ vi.mock('@/lib/api/orders', () => ({
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,
+    details: () => ['orders', 'detail'] as const,
+    detail: (id: string) => ['orders', 'detail', id] as const,
   },
   cancelOrder: (...args: unknown[]) => mockCancel(...args),
 }))
@@ -48,6 +50,7 @@ describe('useCancelOrder (Story O3)', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockCancel).toHaveBeenCalledWith(uuid)
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['orders', 'list'] })
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['orders', 'detail', uuid] })
     expect(mockToastSuccess).toHaveBeenCalledWith('Заказ отменён')
   })
 

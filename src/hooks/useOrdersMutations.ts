@@ -150,9 +150,12 @@ export function useConfirmOrder() {
 
   return useMutation<ConfirmOrderResponse, Error, ConfirmOrderInput>({
     mutationFn: ({ orderUuid }) => confirmOrder(orderUuid),
-    onSuccess: data => {
+    onSuccess: (data, variables) => {
       logger.debug('[Orders] Order confirmed:', data)
       queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      // Invalidate the detail cache so OrderDetailsModal doesn't show a stale
+      // operationalStatus on reopen (mirrors useUpdateOrderMeta).
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.detail(variables.orderUuid) })
       toast.success('Заказ подтверждён')
     },
     onError: error => {
@@ -182,9 +185,12 @@ export function useCancelOrder() {
 
   return useMutation<CancelOrderResponse, Error, CancelOrderInput>({
     mutationFn: ({ orderUuid }) => cancelOrder(orderUuid),
-    onSuccess: data => {
+    onSuccess: (data, variables) => {
       logger.debug('[Orders] Order canceled:', data)
       queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      // Invalidate the detail cache so OrderDetailsModal doesn't show a stale
+      // operationalStatus on reopen (mirrors useUpdateOrderMeta).
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.detail(variables.orderUuid) })
       toast.success('Заказ отменён')
     },
     onError: error => {

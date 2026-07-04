@@ -22,6 +22,8 @@ vi.mock('@/lib/api/orders', () => ({
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,
+    details: () => ['orders', 'detail'] as const,
+    detail: (id: string) => ['orders', 'detail', id] as const,
   },
   confirmOrder: (...args: unknown[]) => mockConfirm(...args),
 }))
@@ -48,6 +50,7 @@ describe('useConfirmOrder (Story O2)', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockConfirm).toHaveBeenCalledWith(uuid)
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['orders', 'list'] })
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['orders', 'detail', uuid] })
     expect(mockToastSuccess).toHaveBeenCalledWith('Заказ подтверждён')
   })
 
