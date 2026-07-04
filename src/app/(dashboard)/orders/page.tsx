@@ -82,7 +82,7 @@ function OrdersPageContent() {
   const { onOperationalStatusChange, pendingUuid: operationalStatusPendingUuid } =
     useOrderOperationalStatus()
   // Stories O2/O3/O4: per-row order-actions controller (confirm / cancel / meta).
-  const { onConfirm, onCancel, pendingUuid: actionsPendingUuid } = useOrderActions()
+  const { onConfirm, onCancel, onSaveMeta, pendingUuid: actionsPendingUuid } = useOrderActions()
   const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   // Story 86.2: Client info (PII) — Owner only, hook is no-op for other roles
@@ -181,6 +181,7 @@ function OrdersPageContent() {
         operationalStatusPendingUuid={operationalStatusPendingUuid}
         onConfirm={onConfirm}
         onCancel={onCancel}
+        onSaveMeta={onSaveMeta}
         actionsPendingUuid={actionsPendingUuid}
       />
 

@@ -8,7 +8,12 @@
  */
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
-import type { ConfirmOrderResponse, CancelOrderResponse } from '@/types/orders-actions'
+import type {
+  ConfirmOrderResponse,
+  CancelOrderResponse,
+  UpdateOrderMetaBody,
+  UpdateOrderMetaResponse,
+} from '@/types/orders-actions'
 
 /**
  * Confirm an order. Story O2.
@@ -33,4 +38,19 @@ export async function cancelOrder(orderUuid: string): Promise<CancelOrderRespons
   const url = `/v1/orders/${String(orderUuid)}/cancel`
   logger.debug('[Orders API] Cancel order:', orderUuid)
   return apiClient.post<CancelOrderResponse>(url)
+}
+
+/**
+ * Update an order's marking-code meta. Story O4.
+ * PATCH /v1/orders/:orderUuid/meta { metaType, value } → { updated: true }.
+ * Maps to WB SDK ordersFBS.updateMeta* (Честный ЗНАК). `value` is 1–200 chars
+ * (backend-validated; the FE dialog mirrors the same constraint).
+ */
+export async function updateOrderMeta(
+  orderUuid: string,
+  body: UpdateOrderMetaBody
+): Promise<UpdateOrderMetaResponse> {
+  const url = `/v1/orders/${String(orderUuid)}/meta`
+  logger.debug('[Orders API] Update order meta:', { orderUuid, metaType: body.metaType })
+  return apiClient.patch<UpdateOrderMetaResponse>(url, body)
 }

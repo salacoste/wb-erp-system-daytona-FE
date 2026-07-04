@@ -61,6 +61,12 @@ vi.mock('@/hooks/useOrders', () => ({
     variables: undefined,
     isPending: false,
   }),
+  // Story O4: update-order-meta mutation stub (idle by default).
+  useUpdateOrderMeta: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,

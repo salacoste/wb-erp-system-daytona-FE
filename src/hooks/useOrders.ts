@@ -27,6 +27,7 @@ export {
   useUpdateOrderOperationalStatus,
   useConfirmOrder,
   useCancelOrder,
+  useUpdateOrderMeta,
 } from './useOrdersMutations'
 export type {
   UseOrdersSyncOptions,
@@ -34,6 +35,7 @@ export type {
   UpdateOrderOperationalStatusInput,
   ConfirmOrderInput,
   CancelOrderInput,
+  UpdateOrderMetaInput,
 } from './useOrdersMutations'
 
 // ============================================================================

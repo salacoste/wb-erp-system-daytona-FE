@@ -10,7 +10,7 @@ vi.mock('../../api-client', () => ({
 }))
 
 import { apiClient } from '../../api-client'
-import { confirmOrder, cancelOrder } from '../orders-actions'
+import { confirmOrder, cancelOrder, updateOrderMeta } from '../orders-actions'
 
 vi.spyOn(console, 'debug').mockImplementation(() => {})
 
@@ -51,5 +51,24 @@ describe('Orders Actions API (Story O3)', () => {
 
     expect(apiClient.post).toHaveBeenCalledWith(`/v1/orders/${uuid}/cancel`)
     expect(result).toEqual({ canceled: true })
+  })
+})
+
+describe('Orders Actions API (Story O4)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('updateOrderMeta PATCHes /v1/orders/:uuid/meta with {metaType,value}', async () => {
+    const uuid = '2405776e-4660-4857-ab4f-a56a3134dda9'
+    vi.mocked(apiClient.patch).mockResolvedValue({ updated: true })
+
+    const result = await updateOrderMeta(uuid, { metaType: 'IMEI', value: '123456789012345' })
+
+    expect(apiClient.patch).toHaveBeenCalledWith(`/v1/orders/${uuid}/meta`, {
+      metaType: 'IMEI',
+      value: '123456789012345',
+    })
+    expect(result).toEqual({ updated: true })
   })
 })

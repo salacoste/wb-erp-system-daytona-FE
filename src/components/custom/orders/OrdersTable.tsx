@@ -16,6 +16,7 @@ import { OrdersTableRow } from './OrdersTableRow'
 import { OrdersEmptyState } from './OrdersEmptyState'
 import type { OrderFbsItem, OrderOperationalStatus } from '@/types/orders'
 import type { ClientInfoMap } from '@/types/orders-client-info'
+import type { UpdateOrderMetaBody } from '@/types/orders-actions'
 
 /** Sortable fields matching API */
 export type SortField = 'created_at' | 'status_updated_at' | 'price' | 'sale_price'
@@ -41,6 +42,8 @@ interface OrdersTableProps {
   onConfirm?: (orderUuid: string) => void
   /** Story O3: cancel-handler (omit to hide the cancel action). */
   onCancel?: (orderUuid: string) => void
+  /** Story O4: marking-code save-handler (omit to hide the meta action). */
+  onSaveMeta?: (orderUuid: string, body: UpdateOrderMetaBody) => void
   /** Story O2: per-order action pending map (orderUuid → in-flight). */
   actionsPendingUuid?: string | null
 }
@@ -125,6 +128,7 @@ export function OrdersTable({
   operationalStatusPendingUuid,
   onConfirm,
   onCancel,
+  onSaveMeta,
   actionsPendingUuid,
 }: OrdersTableProps) {
   // Empty state
@@ -181,6 +185,7 @@ export function OrdersTable({
               operationalStatusPending={operationalStatusPendingUuid === order.id}
               onConfirm={onConfirm}
               onCancel={onCancel}
+              onSaveMeta={onSaveMeta}
               actionsPending={actionsPendingUuid === order.id}
             />
           ))}

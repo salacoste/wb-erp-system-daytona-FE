@@ -32,7 +32,7 @@ export {
 } from './orders-history-api'
 
 // Barrel re-export — order action mutations (Stories O2 / O3 / O4)
-export { confirmOrder, cancelOrder } from './orders-actions'
+export { confirmOrder, cancelOrder, updateOrderMeta } from './orders-actions'
 
 // ============================================================================
 // Utility Functions

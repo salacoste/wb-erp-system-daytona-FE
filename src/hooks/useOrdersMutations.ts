@@ -13,6 +13,7 @@ import {
   updateOrderOperationalStatus,
   confirmOrder,
   cancelOrder,
+  updateOrderMeta,
   ordersQueryKeys,
 } from '@/lib/api/orders'
 import type { BackfillParams, BackfillResponse } from '@/lib/api/orders'
@@ -21,7 +22,12 @@ import type {
   OrderOperationalStatus,
   UpdateOrderOperationalStatusResponse,
 } from '@/types/orders'
-import type { ConfirmOrderResponse, CancelOrderResponse } from '@/types/orders-actions'
+import type {
+  ConfirmOrderResponse,
+  CancelOrderResponse,
+  UpdateOrderMetaBody,
+  UpdateOrderMetaResponse,
+} from '@/types/orders-actions'
 import { logger } from '@/lib/logger'
 
 export interface UseOrdersSyncOptions {
@@ -184,6 +190,41 @@ export function useCancelOrder() {
     onError: error => {
       logger.error('[Orders] Cancel failed:', error)
       toast.error(error.message || 'Не удалось отменить заказ')
+    },
+  })
+}
+
+// ============================================================================
+// Edit Order Meta — marking codes (Story O4)
+// ============================================================================
+
+/** Input for useUpdateOrderMeta. */
+export interface UpdateOrderMetaInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+  /** Marking-code body { metaType, value 1–200 chars }. */
+  body: UpdateOrderMetaBody
+}
+
+/**
+ * Hook to update an order's marking-code meta. Story O4:
+ * PATCH /v1/orders/:orderUuid/meta. On success: invalidate the order's detail
+ * cache + lists + toast. On error: surface the backend message.
+ */
+export function useUpdateOrderMeta() {
+  const queryClient = useQueryClient()
+
+  return useMutation<UpdateOrderMetaResponse, Error, UpdateOrderMetaInput>({
+    mutationFn: ({ orderUuid, body }) => updateOrderMeta(orderUuid, body),
+    onSuccess: (_data, variables) => {
+      logger.debug('[Orders] Meta updated:', variables)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.detail(variables.orderUuid) })
+      toast.success('Код маркировки сохранён')
+    },
+    onError: error => {
+      logger.error('[Orders] Meta update failed:', error)
+      toast.error(error.message || 'Не удалось сохранить код маркировки')
     },
   })
 }

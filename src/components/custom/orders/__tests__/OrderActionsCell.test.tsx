@@ -115,3 +115,61 @@ describe('OrderActionsCell cancel (Story O3)', () => {
     expect(onCancel).not.toHaveBeenCalled()
   })
 })
+
+describe('OrderActionsCell meta (Story O4)', () => {
+  const onConfirm = vi.fn()
+  const onCancel = vi.fn()
+  const onSaveMeta = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('enables Код маркировки for an editable status (ASSEMBLED)', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <OrderActionsCell
+        order={makeOrder('ASSEMBLED')}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+        onSaveMeta={onSaveMeta}
+      />
+    )
+
+    await user.click(screen.getByLabelText('Действия с заказом 12345'))
+    expect(screen.getByTestId('order-meta-12345')).not.toHaveAttribute('data-disabled')
+  })
+
+  it('disables Код маркировки for a terminal status (DELIVERED)', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <OrderActionsCell
+        order={makeOrder('DELIVERED')}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+        onSaveMeta={onSaveMeta}
+      />
+    )
+
+    await user.click(screen.getByLabelText('Действия с заказом 12345'))
+    expect(screen.getByTestId('order-meta-12345')).toHaveAttribute('data-disabled')
+  })
+
+  it('opens the meta editor dialog when Код маркировки selected', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <OrderActionsCell
+        order={makeOrder('NEW')}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+        onSaveMeta={onSaveMeta}
+      />
+    )
+
+    await user.click(screen.getByLabelText('Действия с заказом 12345'))
+    await user.click(screen.getByText('Код маркировки'))
+
+    expect(screen.getByTestId('edit-order-meta-dialog')).toBeInTheDocument()
+    expect(onSaveMeta).not.toHaveBeenCalled()
+  })
+})

@@ -2,12 +2,13 @@
  * OrderActionsCell — per-row actions dropdown for the orders table.
  * Epic Moysklad, Stories O2 / O3 / O4.
  *
- * Hosts the operator actions (confirm, cancel, marking-code meta) behind a
- * kebab menu. Confirm fires directly; cancel is destructive and opens a
- * confirm dialog (CancelOrderDialog). Each item is contextually enabled per
- * the order's operational status; the whole trigger disables while an action
- * for this row is in-flight. The wrapper stops propagation so menu/dialog
- * interaction does not trigger the row's open-details click.
+ * Hosts the operator actions behind a kebab menu:
+ *  - Подтвердить (O2): fires directly; enabled only for NEW.
+ *  - Отменить (O3): destructive — opens CancelOrderDialog; enabled pre-shipment.
+ *  - Код маркировки (O4): opens EditOrderMetaDialog; enabled for non-terminal.
+ * The trigger disables while an action for this row is in-flight. The wrapper
+ * stops propagation so menu/dialog interaction does not trigger the row's
+ * open-details click.
  *
  * Reference: docs/epics/epic-moysklad-order-management.md (Stories O2–O4)
  */
@@ -24,7 +25,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { CancelOrderDialog } from './CancelOrderDialog'
-import { CONFIRMABLE_STATUSES, CANCELLABLE_STATUSES } from '@/types/orders-actions'
+import { EditOrderMetaDialog } from './EditOrderMetaDialog'
+import {
+  CONFIRMABLE_STATUSES,
+  CANCELLABLE_STATUSES,
+  META_EDITABLE_STATUSES,
+  type UpdateOrderMetaBody,
+} from '@/types/orders-actions'
 import type { OrderFbsItem } from '@/types/orders'
 
 interface OrderActionsCellProps {
@@ -33,6 +40,8 @@ interface OrderActionsCellProps {
   onConfirm?: (orderUuid: string) => void
   /** Cancel-handler (Story O3). Omit to hide the cancel item + dialog. */
   onCancel?: (orderUuid: string) => void
+  /** Marking-code save-handler (Story O4). Omit to hide the meta item + dialog. */
+  onSaveMeta?: (orderUuid: string, body: UpdateOrderMetaBody) => void
   /** True while an action for THIS row is in-flight (disables the trigger). */
   pending?: boolean
 }
@@ -44,11 +53,15 @@ export function OrderActionsCell({
   order,
   onConfirm,
   onCancel,
+  onSaveMeta,
   pending = false,
 }: OrderActionsCellProps) {
   const [cancelOpen, setCancelOpen] = useState(false)
+  const [metaOpen, setMetaOpen] = useState(false)
+
   const confirmable = CONFIRMABLE_STATUSES.includes(order.operationalStatus)
   const cancellable = CANCELLABLE_STATUSES.includes(order.operationalStatus)
+  const metaEditable = META_EDITABLE_STATUSES.includes(order.operationalStatus)
 
   return (
     <div onClick={e => e.stopPropagation()}>
@@ -85,6 +98,15 @@ export function OrderActionsCell({
               Отменить
             </DropdownMenuItem>
           )}
+          {onSaveMeta && (
+            <DropdownMenuItem
+              disabled={!metaEditable}
+              onSelect={() => setMetaOpen(true)}
+              data-testid={`order-meta-${order.orderId}`}
+            >
+              Код маркировки
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -98,6 +120,19 @@ export function OrderActionsCell({
             setCancelOpen(false)
           }}
           onClose={() => setCancelOpen(false)}
+        />
+      )}
+
+      {onSaveMeta && (
+        <EditOrderMetaDialog
+          order={metaOpen ? order : null}
+          open={metaOpen}
+          pending={pending}
+          onSave={(orderUuid, body) => {
+            onSaveMeta(orderUuid, body)
+            setMetaOpen(false)
+          }}
+          onClose={() => setMetaOpen(false)}
         />
       )}
     </div>

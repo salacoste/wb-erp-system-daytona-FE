@@ -20,6 +20,7 @@ import { OperationalStatusSelect } from './OperationalStatusSelect'
 import { OrderActionsCell } from './OrderActionsCell'
 import type { OrderFbsItem, OrderOperationalStatus } from '@/types/orders'
 import type { ClientInfoItem } from '@/types/orders-client-info'
+import type { UpdateOrderMetaBody } from '@/types/orders-actions'
 
 interface OrdersTableRowProps {
   order: OrderFbsItem
@@ -36,6 +37,8 @@ interface OrdersTableRowProps {
   onConfirm?: (orderUuid: string) => void
   /** Story O3: cancel-handler (omit to hide the cancel action + dialog). */
   onCancel?: (orderUuid: string) => void
+  /** Story O4: marking-code save-handler (omit to hide the meta action + dialog). */
+  onSaveMeta?: (orderUuid: string, body: UpdateOrderMetaBody) => void
   /** Story O2: disable the actions menu while a mutation for this row is in-flight. */
   actionsPending?: boolean
 }
@@ -52,6 +55,7 @@ export function OrdersTableRow({
   operationalStatusPending = false,
   onConfirm,
   onCancel,
+  onSaveMeta,
   actionsPending = false,
 }: OrdersTableRowProps) {
   const productName = order.productName || '—'
@@ -148,6 +152,7 @@ export function OrdersTableRow({
           order={order}
           onConfirm={onConfirm}
           onCancel={onCancel}
+          onSaveMeta={onSaveMeta}
           pending={actionsPending}
         />
       </TableCell>
