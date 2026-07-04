@@ -14,7 +14,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import { MoyskladMappingsTable } from '../MoyskladMappingsTable'
-import type { MoyskladMappingsResponse } from '@/types/moysklad'
+import { MoyskladMappingRow } from '../MoyskladMappingRow'
+import type { MoyskladMappingsResponse, MoyskladProductMapping } from '@/types/moysklad'
 
 // Mock the mappings hook (controlled per-test via mockReturnValue).
 // Captures the params passed to each call so pager navigation is observable.
@@ -249,5 +250,65 @@ describe('MoyskladMappingsTable', () => {
     expect(afterSwitch?.offset).toBe(0)
     // «Назад» disabled again (page 0).
     expect(screen.getByRole('button', { name: 'Предыдущая страница' })).toBeDisabled()
+  })
+
+  // --- M5: drill-through link on matched nmId (FR-7 product page) ---
+
+  it('renders a drill-through link to /analytics/product/<nmId> on matched rows', () => {
+    render(<MoyskladMappingsTable />)
+    fireEvent.click(screen.getByRole('button', { name: /Привязаны/ }))
+    const link = screen.getByRole('link', { name: /12345678/ })
+    expect(link).toHaveAttribute('href', '/analytics/product/12345678')
+  })
+
+  it('renders no drill-through link on pending rows (nmId null → «не привязан»)', () => {
+    render(<MoyskladMappingsTable />)
+    // Default = pending view; no anchor to a product page.
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+    expect(screen.getByText('не привязан')).toBeInTheDocument()
+  })
+
+  // --- M5: transient «себестоимость обновлена» badge ---
+
+  it('shows «себестоимость обновлена» badge on a recently-linked row with a buy price', () => {
+    render(
+      <table>
+        <tbody>
+          <MoyskladMappingRow
+            mapping={matched as MoyskladProductMapping}
+            onLink={vi.fn()}
+            isRecent={true}
+          />
+        </tbody>
+      </table>
+    )
+    expect(screen.getByText('себестоимость обновлена')).toBeInTheDocument()
+  })
+
+  it('hides the badge when the row is not recently linked', () => {
+    render(
+      <table>
+        <tbody>
+          <MoyskladMappingRow
+            mapping={matched as MoyskladProductMapping}
+            onLink={vi.fn()}
+            isRecent={false}
+          />
+        </tbody>
+      </table>
+    )
+    expect(screen.queryByText('себестоимость обновлена')).not.toBeInTheDocument()
+  })
+
+  it('hides the badge on a recently-linked row when buy price is null (AP#8)', () => {
+    const noPrice = { ...(matched as MoyskladProductMapping), buyPriceRub: null }
+    render(
+      <table>
+        <tbody>
+          <MoyskladMappingRow mapping={noPrice} onLink={vi.fn()} isRecent={true} />
+        </tbody>
+      </table>
+    )
+    expect(screen.queryByText('себестоимость обновлена')).not.toBeInTheDocument()
   })
 })
