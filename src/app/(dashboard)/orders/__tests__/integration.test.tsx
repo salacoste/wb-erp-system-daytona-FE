@@ -49,6 +49,12 @@ vi.mock('@/hooks/useOrders', () => ({
     variables: undefined,
     isPending: false,
   }),
+  // Story O2: confirm-order mutation stub (idle by default).
+  useConfirmOrder: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,
@@ -327,6 +333,12 @@ describe('Orders Page - Integration Tests (Story 40.7-FE)', () => {
       await renderOrdersPage(queryClient)
       // Table renders — at minimum page container is present
       expect(screen.getByTestId('orders-page')).toBeInTheDocument()
+    })
+
+    it('should render the Действия column header (Story O2 actions cell)', async () => {
+      mockUseOrders.mockReturnValue(createOrdersResult())
+      await renderOrdersPage(queryClient)
+      expect(screen.getByRole('columnheader', { name: 'Действия' })).toBeInTheDocument()
     })
 
     it('should render filters section within a card', async () => {

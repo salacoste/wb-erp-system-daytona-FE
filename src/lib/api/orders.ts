@@ -31,6 +31,9 @@ export {
   type BackfillResponse,
 } from './orders-history-api'
 
+// Barrel re-export — order action mutations (Stories O2 / O3 / O4)
+export { confirmOrder } from './orders-actions'
+
 // ============================================================================
 // Utility Functions
 // ============================================================================

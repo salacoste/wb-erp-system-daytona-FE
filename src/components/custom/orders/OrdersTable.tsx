@@ -37,6 +37,10 @@ interface OrdersTableProps {
   onOperationalStatusChange?: (orderUuid: string, status: OrderOperationalStatus) => void
   /** Story O1: per-order pending map (orderUuid → in-flight) */
   operationalStatusPendingUuid?: string | null
+  /** Story O2: confirm-handler (omit to hide the confirm action). */
+  onConfirm?: (orderUuid: string) => void
+  /** Story O2: per-order action pending map (orderUuid → in-flight). */
+  actionsPendingUuid?: string | null
 }
 
 /** Column definitions */
@@ -68,6 +72,7 @@ const COLUMNS = [
     sortField: 'status_updated_at' as SortField,
     width: 'w-36',
   },
+  { key: 'actions', label: 'Действия', sortable: false, width: 'w-20' },
 ] as const
 
 /**
@@ -116,6 +121,8 @@ export function OrdersTable({
   showClientColumn = false,
   onOperationalStatusChange,
   operationalStatusPendingUuid,
+  onConfirm,
+  actionsPendingUuid,
 }: OrdersTableProps) {
   // Empty state
   if (orders.length === 0) {
@@ -169,6 +176,8 @@ export function OrdersTable({
               showClientColumn={showClientColumn}
               onOperationalStatusChange={onOperationalStatusChange}
               operationalStatusPending={operationalStatusPendingUuid === order.id}
+              onConfirm={onConfirm}
+              actionsPending={actionsPendingUuid === order.id}
             />
           ))}
         </TableBody>

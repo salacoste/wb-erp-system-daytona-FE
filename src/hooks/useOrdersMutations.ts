@@ -11,6 +11,7 @@ import {
   triggerOrdersSync,
   triggerOrdersBackfill,
   updateOrderOperationalStatus,
+  confirmOrder,
   ordersQueryKeys,
 } from '@/lib/api/orders'
 import type { BackfillParams, BackfillResponse } from '@/lib/api/orders'
@@ -19,6 +20,7 @@ import type {
   OrderOperationalStatus,
   UpdateOrderOperationalStatusResponse,
 } from '@/types/orders'
+import type { ConfirmOrderResponse } from '@/types/orders-actions'
 import { logger } from '@/lib/logger'
 
 export interface UseOrdersSyncOptions {
@@ -117,6 +119,38 @@ export function useUpdateOrderOperationalStatus() {
       // Backend 400 message lists allowed targets (e.g.
       // "Invalid transition: NEW -> DELIVERED. Allowed from NEW: ASSEMBLED, CANCELLED").
       toast.error(error.message || 'Не удалось обновить статус')
+    },
+  })
+}
+
+// ============================================================================
+// Confirm Order (Story O2)
+// ============================================================================
+
+/** Input for useConfirmOrder. */
+export interface ConfirmOrderInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+}
+
+/**
+ * Hook to confirm an order. Story O2: POST /v1/orders/:orderUuid/confirm.
+ * On success: invalidate orders lists + toast. On error: surface backend msg
+ * (e.g. a non-NEW order is not confirmable).
+ */
+export function useConfirmOrder() {
+  const queryClient = useQueryClient()
+
+  return useMutation<ConfirmOrderResponse, Error, ConfirmOrderInput>({
+    mutationFn: ({ orderUuid }) => confirmOrder(orderUuid),
+    onSuccess: data => {
+      logger.debug('[Orders] Order confirmed:', data)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      toast.success('Заказ подтверждён')
+    },
+    onError: error => {
+      logger.error('[Orders] Confirm failed:', error)
+      toast.error(error.message || 'Не удалось подтвердить заказ')
     },
   })
 }
