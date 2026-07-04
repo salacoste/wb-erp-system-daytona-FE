@@ -14,7 +14,7 @@ import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { OrdersTableRow } from './OrdersTableRow'
 import { OrdersEmptyState } from './OrdersEmptyState'
-import type { OrderFbsItem } from '@/types/orders'
+import type { OrderFbsItem, OrderOperationalStatus } from '@/types/orders'
 import type { ClientInfoMap } from '@/types/orders-client-info'
 
 /** Sortable fields matching API */
@@ -33,6 +33,10 @@ interface OrdersTableProps {
   clientInfoMap?: ClientInfoMap
   /** Story 86.2: render the "Клиент" column (true only for Owner) */
   showClientColumn?: boolean
+  /** Story O1: change-operational-status handler (omit to hide the control) */
+  onOperationalStatusChange?: (orderUuid: string, status: OrderOperationalStatus) => void
+  /** Story O1: per-order pending map (orderUuid → in-flight) */
+  operationalStatusPendingUuid?: string | null
 }
 
 /** Column definitions */
@@ -49,6 +53,7 @@ const COLUMNS = [
   },
   { key: 'supplierStatus', label: 'Статус', sortable: false, width: 'w-28' },
   { key: 'wbStatus', label: 'Статус WB', sortable: false, width: 'w-32' },
+  { key: 'operationalStatus', label: 'Опер. статус', sortable: false, width: 'w-40' },
   {
     key: 'createdAt',
     label: 'Создан',
@@ -109,6 +114,8 @@ export function OrdersTable({
   onClearFilters,
   clientInfoMap,
   showClientColumn = false,
+  onOperationalStatusChange,
+  operationalStatusPendingUuid,
 }: OrdersTableProps) {
   // Empty state
   if (orders.length === 0) {
@@ -160,6 +167,8 @@ export function OrdersTable({
               onClick={onRowClick}
               clientInfo={showClientColumn ? clientInfoMap?.[order.orderId] : undefined}
               showClientColumn={showClientColumn}
+              onOperationalStatusChange={onOperationalStatusChange}
+              operationalStatusPending={operationalStatusPendingUuid === order.id}
             />
           ))}
         </TableBody>

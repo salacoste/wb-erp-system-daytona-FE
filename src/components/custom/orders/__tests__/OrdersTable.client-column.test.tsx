@@ -11,6 +11,7 @@ import type { OrderFbsItem } from '@/types/orders'
 import type { ClientInfoMap } from '@/types/orders-client-info'
 
 const baseOrder: OrderFbsItem = {
+  id: '00000000-0000-0000-0000-000000000100',
   orderId: '100',
   orderUid: 'uid-100',
   nmId: 12345,
@@ -26,6 +27,8 @@ const baseOrder: OrderFbsItem = {
   cargoType: null,
   createdAt: '2026-04-06T10:00:00Z',
   statusUpdatedAt: '2026-04-06T11:00:00Z',
+  operationalStatus: 'NEW',
+  operationalStatusUpdatedAt: null,
 }
 
 const orders: OrderFbsItem[] = [

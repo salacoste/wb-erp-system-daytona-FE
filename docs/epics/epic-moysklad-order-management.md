@@ -63,27 +63,27 @@
 
 ## Epic O — Order Management
 
-### O1 — Order operational-status (PATCH) ⛔
+### O1 — Order operational-status (PATCH) ✅
 - **Verify-first (CRITICAL)**: probe `PATCH /v1/orders/<realOrderId>/operational-status` with a valid order id (from `GET /orders?limit=1`) → capture the `OrderOperationalStatus` enum + the response shape + valid transitions. Do NOT guess.
 - **ACs**: (1) per-order status badge in the orders table (supplierStatus/wbStatus → operational); (2) a status-change control (dropdown) → PATCH; (3) only valid transitions enabled (capture from verify); (4) optimistic update + invalidate; (5) error toast on failure.
 - **Files**: `orders.ts` `updateOrderOperationalStatus`; normalizer + enum type; `useUpdateOrderOperationalStatus`; row component in `/orders`.
 - **Tests**: enum/normalizer; mutation + invalidate; E2E (status change on a real order — or non-mutating: control visible/disabled states).
 - **2-pass review** (state machine + mutation).
 
-### O2 — Confirm order (POST `/orders/:id/confirm`) ⬜
+### O2 — Confirm order (POST /orders/:id/confirm) 🔄
 - **Verify-first**: probe with a real pending order → response shape + preconditions (which orders can be confirmed).
 - **ACs**: (1) «Подтвердить» action on confirmable orders; (2) success → status flips; (3) disabled on non-confirmable; (4) loading state.
 - **Files**: `confirmOrder`; `useConfirmOrder`; row action.
 - **Tests**: mutation + state; E2E.
 
-### O3 — Cancel order (POST `/orders/:id/cancel`) ⬜
+### O3 — Cancel order (POST /orders/:id/cancel) 🔄
 - **Verify-first**: probe → shape + preconditions.
 - **ACs**: (1) «Отменить» action with a **confirm dialog** (destructive); (2) success → status flips; (3) reason field if the API requires it; (4) disabled on non-cancellable.
 - **Files**: `cancelOrder`; `useCancelOrder`; `CancelOrderDialog.tsx`.
 - **Tests**: confirm-gate; mutation; E2E.
 
-### O4 — Edit order meta (PATCH `/orders/:id/meta`) ⬜
-- **Verify-first (CRITICAL)**: probe `PATCH /meta` with `{}` (400) and a valid body → capture **which fields** are editable (the contract is unknown). Do NOT guess.
+### O4 — Edit order meta (PATCH `/orders/:id/meta`) 🔄
+- **Verify-first (VERIFIED 2026-07-04, backend source)**: `PATCH /v1/orders/:orderId/meta` body `{metaType: OrderMetaType, value: string(1-200)}` → `{updated: true}`. **`OrderMetaType` = `IMEI|GTIN|SGTIN|UIN`** (marking codes / ЧестныйЗНАК for WB FBS assembly orders; maps to WB SDK `ordersFBS.updateMeta*`). Mutation writes to WB. Host: `OrdersTable` (orders list, `/orders` page.tsx:163).
 - **ACs**: (1) edit dialog with the editable fields (from verify); (2) save → PATCH; (3) validation; (4) success → row updates.
 - **Files**: `updateOrderMeta`; `useUpdateOrderMeta`; `EditOrderMetaDialog.tsx`.
 - **Tests**: field validation; mutation; E2E.
@@ -119,3 +119,5 @@ For the **first ⬜ story** in order (M1→M5→O1→O5):
 - **2026-07-04 — M4 ✅**: Mappings pagination (reach all 422 pending). `MoyskladMappingsTable` + new `MoyskladMappingsPager` (page size 20, limit/offset on the active view, reset-on-filter-change, «Назад»/«Вперёд» + «Показано N–M из total», disabled at bounds). 3 count queries (limit:1) untouched. Gates: type-check 0 · eslint 0 · 34 moysklad tests (11 MappingsTable: 8 existing + 3 pager) · locale 4 · E2E 1/1.
 - **2026-07-04 — M5 ✅**: COGS-recalc visibility. Drill-through Link on matched nmId → `/analytics/product/<nmId>` (anti-pattern #10: String id); transient «себестоимость обновлена» badge via `useRecentlyLinked` (in-memory Set, cleared on the mappings-query `dataUpdatedAt` bump = sync-completed signal — crosses the tab boundary a 2nd `useMoyskladSync` instance couldn't). New `CogsRecalcBadge.tsx` + `useRecentlyLinked.ts`. 5 new tests (drill-through href, no-link-on-pending, badge on recent+buyPrice, no-badge-otherwise, no-badge-null-price). **No live E2E** — drill-through is data-dependent (needs matched rows); live matched count dropped 13→0 (re-sync lost the vendorCode auto-matches — data/backend concern, not M5). Link rendering unit-tested. Gates: type-check 0 · eslint 0 · 39 moysklad tests · locale 4. **МойСклад module COMPLETE (M1–M5).**
 - **2026-07-04 — O1 ⛔ (BLOCKED: backend gap)**: operational-status verify-first captured the state machine (`NEW→[ASSEMBLED,CANCELLED]`, `ASSEMBLED→[PACKED,CANCELLED]`, `PACKED→[SHIPPED]`, `SHIPPED→[DELIVERED,RETURNED]`, `DELIVERED`/`CANCELLED` terminal; enum `NEW|ASSEMBLED|PACKED|SHIPPED|DELIVERED|CANCELLED|RETURNED`) + PATCH shape (`{id,operationalStatus,operationalStatusUpdatedAt}`). **BUT** `GET /v1/orders` list + `GET /v1/orders/:id` details do NOT return `operationalStatus` → FE can't display current status or drive transition-aware changes. Filed backend request **#223** (`docs/request-backend/223-…`). O2/O3 (confirm/cancel) degraded by the same gap. O4 (meta) / O5 (acceptance-act) are independent and buildable. **МойСклад module COMPLETE (M1–M5).**
+- **2026-07-04 — BACKEND UNBLOCKED (#223 + UUID + O2/O3 contracts)**: `GET /orders` list + details now return `id` (OrderFbs UUID — usable for mutations), `operationalStatus` (default NEW), `operationalStatusUpdatedAt`. PATCH guard returns allowed transitions in the error. **O1–O4 all unblocked.** Verified contracts: O2 `POST /orders/{uuid}/confirm` → `{confirmed:true}` (no WB call; promotes NEW→ASSEMBLED best-effort). O3 `POST /orders/{uuid}/cancel` → `{canceled:true}` (WB SDK cancel → CANCELLED). O4 `PATCH /orders/{uuid}/meta` `{metaType, value}` → `{updated:true}`. Enum/transition STABLE.
+- **2026-07-04 — O1 ✅**: operational-status UI (backend #223 unblocked). Status badge (colored, RU labels) + transition-aware «Сменить статус» select (ALLOWED_TRANSITIONS[current] only; terminal → no control) → PATCH /orders/{uuid}/operational-status. Normalizer: id(UUID)/operationalStatus(validate→NEW fallback)/operationalStatusUpdatedAt(null-preserving). 16 unit tests (state machine, badge, select) + E2E 2/2 (non-mutating). Gates: type-check 0 · eslint 0 · 16 unit · locale 4 · E2E 2/2. Backend delivered #223 (operationalStatus in list+details) + UUID id in items + stable enum/transitions.

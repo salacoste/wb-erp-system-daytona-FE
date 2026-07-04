@@ -15,7 +15,9 @@ import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { OrderStatusBadge } from './OrderStatusBadge'
 import { ClientInfoCell } from './ClientInfoCell'
 import { WbStatusBadge, SalePriceCell, ProductNameCell } from './OrdersRowHelpers'
-import type { OrderFbsItem } from '@/types/orders'
+import { OperationalStatusBadge } from './OperationalStatusBadge'
+import { OperationalStatusSelect } from './OperationalStatusSelect'
+import type { OrderFbsItem, OrderOperationalStatus } from '@/types/orders'
 import type { ClientInfoItem } from '@/types/orders-client-info'
 
 interface OrdersTableRowProps {
@@ -25,6 +27,10 @@ interface OrdersTableRowProps {
   clientInfo?: ClientInfoItem
   /** Story 86.2: render the client cell (matches parent table's column visibility) */
   showClientColumn?: boolean
+  /** Story O1: change-operational-status handler (omit to hide the control) */
+  onOperationalStatusChange?: (orderUuid: string, status: OrderOperationalStatus) => void
+  /** Story O1: disable the control while a mutation is in-flight */
+  operationalStatusPending?: boolean
 }
 
 /**
@@ -35,10 +41,17 @@ export function OrdersTableRow({
   onClick,
   clientInfo,
   showClientColumn = false,
+  onOperationalStatusChange,
+  operationalStatusPending = false,
 }: OrdersTableRowProps) {
   const productName = order.productName || '—'
 
   const handleClick = () => onClick(order)
+
+  // AP#8: null until first transition → render «—».
+  const operationalStatusUpdatedAtLabel = order.operationalStatusUpdatedAt
+    ? formatDateTime(order.operationalStatusUpdatedAt)
+    : '—'
 
   return (
     <TableRow className="cursor-pointer hover:bg-muted/50" onClick={handleClick}>
@@ -91,6 +104,22 @@ export function OrdersTableRow({
       {/* WB Status */}
       <TableCell>
         <WbStatusBadge status={order.wbStatus} />
+      </TableCell>
+
+      {/* Story O1: Operational Status — badge + (optional) change control */}
+      <TableCell>
+        <div className="flex flex-col items-start gap-1">
+          <OperationalStatusBadge status={order.operationalStatus} />
+          {onOperationalStatusChange && (
+            <OperationalStatusSelect
+              orderUuid={order.id}
+              currentStatus={order.operationalStatus}
+              disabled={operationalStatusPending}
+              onStatusChange={onOperationalStatusChange}
+            />
+          )}
+          <span className="text-xs text-muted-foreground">{operationalStatusUpdatedAtLabel}</span>
+        </div>
       </TableCell>
 
       {/* Created At */}

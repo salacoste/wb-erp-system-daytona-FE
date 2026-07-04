@@ -27,11 +27,15 @@ const mockUseOrders = vi.fn()
 const mockUseOrdersSyncStatus = vi.fn()
 const mockUseOrdersSync = vi.fn()
 const mockUseClientInfo = vi.fn()
+const mockUseUpdateOrderOperationalStatus = vi.fn()
 
 vi.mock('@/hooks/useOrders', () => ({
   useOrders: (...args: unknown[]) => mockUseOrders(...args),
   useOrdersSyncStatus: (...args: unknown[]) => mockUseOrdersSyncStatus(...args),
   useOrdersSync: (...args: unknown[]) => mockUseOrdersSync(...args),
+  // Story O1: operational-status mutation stub.
+  useUpdateOrderOperationalStatus: (...args: unknown[]) =>
+    mockUseUpdateOrderOperationalStatus(...args),
 }))
 
 vi.mock('@/hooks/useClientInfo', () => ({
@@ -131,6 +135,12 @@ describe('OrdersPage', () => {
     mockUseOrdersSyncStatus.mockReturnValue(createSyncStatusResult())
     mockUseOrdersSync.mockReturnValue(createSyncMutationResult())
     mockUseClientInfo.mockReturnValue({ data: {} })
+    // Story O1: idle operational-status mutation.
+    mockUseUpdateOrderOperationalStatus.mockReturnValue({
+      mutate: vi.fn(),
+      variables: undefined,
+      isPending: false,
+    })
   })
 
   afterEach(() => {

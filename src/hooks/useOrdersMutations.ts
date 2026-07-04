@@ -6,9 +6,19 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { triggerOrdersSync, triggerOrdersBackfill, ordersQueryKeys } from '@/lib/api/orders'
+import { toast } from 'sonner'
+import {
+  triggerOrdersSync,
+  triggerOrdersBackfill,
+  updateOrderOperationalStatus,
+  ordersQueryKeys,
+} from '@/lib/api/orders'
 import type { BackfillParams, BackfillResponse } from '@/lib/api/orders'
-import type { TriggerSyncResponse } from '@/types/orders'
+import type {
+  TriggerSyncResponse,
+  OrderOperationalStatus,
+  UpdateOrderOperationalStatusResponse,
+} from '@/types/orders'
 import { logger } from '@/lib/logger'
 
 export interface UseOrdersSyncOptions {
@@ -66,6 +76,47 @@ export function useOrdersBackfill(options: UseOrdersBackfillOptions = {}) {
     onError: error => {
       logger.error('[Orders] Backfill failed:', error)
       options.onError?.(error)
+    },
+  })
+}
+
+// ============================================================================
+// Operational Status (Story O1)
+// ============================================================================
+
+/** Input for useUpdateOrderOperationalStatus */
+export interface UpdateOrderOperationalStatusInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+  /** Target operational status (must be in ALLOWED_TRANSITIONS[current]) */
+  status: OrderOperationalStatus
+}
+
+/**
+ * Hook to update an order's operational status.
+ * Story O1: PATCH /v1/orders/:orderUuid/operational-status.
+ * On success: invalidate orders lists + toast. On error: surface the backend
+ * message (it lists the allowed transition targets on a 400).
+ */
+export function useUpdateOrderOperationalStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    UpdateOrderOperationalStatusResponse,
+    Error,
+    UpdateOrderOperationalStatusInput
+  >({
+    mutationFn: ({ orderUuid, status }) => updateOrderOperationalStatus(orderUuid, status),
+    onSuccess: data => {
+      logger.debug('[Orders] Operational status updated:', data)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      toast.success('Статус обновлён')
+    },
+    onError: error => {
+      logger.error('[Orders] Operational status update failed:', error)
+      // Backend 400 message lists allowed targets (e.g.
+      // "Invalid transition: NEW -> DELIVERED. Allowed from NEW: ASSEMBLED, CANCELLED").
+      toast.error(error.message || 'Не удалось обновить статус')
     },
   })
 }

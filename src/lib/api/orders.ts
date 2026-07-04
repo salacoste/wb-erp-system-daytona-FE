@@ -11,7 +11,13 @@ import { apiClient } from '../api-client'
 import { normalizeOrdersResponse } from './orders-normalizer'
 import { normalizeOrderDetail } from './orders-detail-normalizer'
 import { logger } from '@/lib/logger'
-import type { OrdersListParams, OrdersListResponse, OrderFbsDetails } from '@/types/orders'
+import type {
+  OrdersListParams,
+  OrdersListResponse,
+  OrderFbsDetails,
+  OrderOperationalStatus,
+  UpdateOrderOperationalStatusResponse,
+} from '@/types/orders'
 
 // Barrel re-exports from extracted module (history, sync, backfill)
 export {
@@ -89,6 +95,33 @@ export async function getOrderById(orderId: string): Promise<OrderFbsDetails> {
 
   const raw = await apiClient.get<unknown>(`/v1/orders/${orderId}`)
   return normalizeOrderDetail(raw)
+}
+
+// ============================================================================
+// Operational Status (Story O1)
+// ============================================================================
+
+/**
+ * Update an order's operational status.
+ * PATCH /v1/orders/:orderUuid/operational-status
+ *
+ * Story O1: `orderUuid` is the OrderFbs UUID (order.id), NOT the WB orderId.
+ * Backend enforces the state machine; a 400 is returned on an invalid transition
+ * (the message lists allowed targets — surfaced to the user by the mutation hook).
+ * AP#10: opaque UUID passed through String().
+ *
+ * @param orderUuid - OrderFbs UUID (order.id)
+ * @param status - target operational status
+ * @returns { id, operationalStatus, operationalStatusUpdatedAt }
+ */
+export async function updateOrderOperationalStatus(
+  orderUuid: string,
+  status: OrderOperationalStatus
+): Promise<UpdateOrderOperationalStatusResponse> {
+  const url = `/v1/orders/${String(orderUuid)}/operational-status`
+  logger.debug('[Orders API] Updating operational status:', { orderUuid, status })
+
+  return apiClient.patch<UpdateOrderOperationalStatusResponse>(url, { status })
 }
 
 // ============================================================================
