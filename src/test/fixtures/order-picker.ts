@@ -24,6 +24,7 @@ export const SEARCH_DEBOUNCE_MS = 300
 // =============================================================================
 
 export const mockEligibleOrderConfirm: OrderFbsItem = {
+  id: '11111111-1111-1111-1111-111111111111',
   orderId: '1234567890',
   orderUid: 'order-uid-confirm-001',
   nmId: 12345678,
@@ -39,6 +40,8 @@ export const mockEligibleOrderConfirm: OrderFbsItem = {
   cargoType: 'MGT',
   createdAt: '2026-01-15T10:30:00.000Z',
   statusUpdatedAt: '2026-01-15T12:00:00.000Z',
+  operationalStatus: 'NEW',
+  operationalStatusUpdatedAt: null,
 }
 
 export const mockEligibleOrderComplete: OrderFbsItem = {
@@ -107,6 +110,7 @@ export function createMockOrdersForPicker(count: number, eligibleOnly = true): O
             : 'canceled'
 
     return {
+      id: `22222222-2222-2222-2222-${String(i + 1).padStart(12, '0')}`,
       orderId: `order-${String(i + 1).padStart(10, '0')}`,
       orderUid: `order-uid-${String(i + 1).padStart(6, '0')}`,
       nmId: 10000000 + i,
@@ -122,6 +126,8 @@ export function createMockOrdersForPicker(count: number, eligibleOnly = true): O
       cargoType: i % 5 === 0 ? 'KGT' : 'MGT',
       createdAt: new Date(Date.now() - i * 3600000).toISOString(),
       statusUpdatedAt: new Date(Date.now() - i * 1800000).toISOString(),
+      operationalStatus: 'NEW',
+      operationalStatusUpdatedAt: null,
     }
   })
 }

@@ -17,8 +17,10 @@ import { ClientInfoCell } from './ClientInfoCell'
 import { WbStatusBadge, SalePriceCell, ProductNameCell } from './OrdersRowHelpers'
 import { OperationalStatusBadge } from './OperationalStatusBadge'
 import { OperationalStatusSelect } from './OperationalStatusSelect'
+import { OrderActionsCell } from './OrderActionsCell'
 import type { OrderFbsItem, OrderOperationalStatus } from '@/types/orders'
 import type { ClientInfoItem } from '@/types/orders-client-info'
+import type { UpdateOrderMetaBody } from '@/types/orders-actions'
 
 interface OrdersTableRowProps {
   order: OrderFbsItem
@@ -31,6 +33,14 @@ interface OrdersTableRowProps {
   onOperationalStatusChange?: (orderUuid: string, status: OrderOperationalStatus) => void
   /** Story O1: disable the control while a mutation is in-flight */
   operationalStatusPending?: boolean
+  /** Story O2: confirm-handler (omit to hide the confirm action in the menu). */
+  onConfirm?: (orderUuid: string) => void
+  /** Story O3: cancel-handler (omit to hide the cancel action + dialog). */
+  onCancel?: (orderUuid: string) => void
+  /** Story O4: marking-code save-handler (omit to hide the meta action + dialog). */
+  onSaveMeta?: (orderUuid: string, body: UpdateOrderMetaBody) => void
+  /** Story O2: disable the actions menu while a mutation for this row is in-flight. */
+  actionsPending?: boolean
 }
 
 /**
@@ -43,6 +53,10 @@ export function OrdersTableRow({
   showClientColumn = false,
   onOperationalStatusChange,
   operationalStatusPending = false,
+  onConfirm,
+  onCancel,
+  onSaveMeta,
+  actionsPending = false,
 }: OrdersTableRowProps) {
   const productName = order.productName || '—'
 
@@ -130,6 +144,17 @@ export function OrdersTableRow({
       {/* Updated At */}
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
         {formatDateTime(order.statusUpdatedAt)}
+      </TableCell>
+
+      {/* Stories O2/O3/O4: per-row actions (confirm / cancel / marking-code meta) */}
+      <TableCell className="text-right">
+        <OrderActionsCell
+          order={order}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          onSaveMeta={onSaveMeta}
+          pending={actionsPending}
+        />
       </TableCell>
 
       {/* Story 86.2: Client (PII) — Owner only */}

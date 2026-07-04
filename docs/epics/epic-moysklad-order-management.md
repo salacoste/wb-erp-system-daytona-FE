@@ -70,19 +70,19 @@
 - **Tests**: enum/normalizer; mutation + invalidate; E2E (status change on a real order — or non-mutating: control visible/disabled states).
 - **2-pass review** (state machine + mutation).
 
-### O2 — Confirm order (POST /orders/:id/confirm) 🔄
+### O2 — Confirm order (POST /orders/:id/confirm) ✅
 - **Verify-first**: probe with a real pending order → response shape + preconditions (which orders can be confirmed).
 - **ACs**: (1) «Подтвердить» action on confirmable orders; (2) success → status flips; (3) disabled on non-confirmable; (4) loading state.
 - **Files**: `confirmOrder`; `useConfirmOrder`; row action.
 - **Tests**: mutation + state; E2E.
 
-### O3 — Cancel order (POST /orders/:id/cancel) 🔄
+### O3 — Cancel order (POST /orders/:id/cancel) ✅
 - **Verify-first**: probe → shape + preconditions.
 - **ACs**: (1) «Отменить» action with a **confirm dialog** (destructive); (2) success → status flips; (3) reason field if the API requires it; (4) disabled on non-cancellable.
 - **Files**: `cancelOrder`; `useCancelOrder`; `CancelOrderDialog.tsx`.
 - **Tests**: confirm-gate; mutation; E2E.
 
-### O4 — Edit order meta (PATCH `/orders/:id/meta`) 🔄
+### O4 — Edit order meta (PATCH `/orders/:id/meta`) ✅
 - **Verify-first (VERIFIED 2026-07-04, backend source)**: `PATCH /v1/orders/:orderId/meta` body `{metaType: OrderMetaType, value: string(1-200)}` → `{updated: true}`. **`OrderMetaType` = `IMEI|GTIN|SGTIN|UIN`** (marking codes / ЧестныйЗНАК for WB FBS assembly orders; maps to WB SDK `ordersFBS.updateMeta*`). Mutation writes to WB. Host: `OrdersTable` (orders list, `/orders` page.tsx:163).
 - **ACs**: (1) edit dialog with the editable fields (from verify); (2) save → PATCH; (3) validation; (4) success → row updates.
 - **Files**: `updateOrderMeta`; `useUpdateOrderMeta`; `EditOrderMetaDialog.tsx`.
@@ -121,3 +121,6 @@ For the **first ⬜ story** in order (M1→M5→O1→O5):
 - **2026-07-04 — O1 ⛔ (BLOCKED: backend gap)**: operational-status verify-first captured the state machine (`NEW→[ASSEMBLED,CANCELLED]`, `ASSEMBLED→[PACKED,CANCELLED]`, `PACKED→[SHIPPED]`, `SHIPPED→[DELIVERED,RETURNED]`, `DELIVERED`/`CANCELLED` terminal; enum `NEW|ASSEMBLED|PACKED|SHIPPED|DELIVERED|CANCELLED|RETURNED`) + PATCH shape (`{id,operationalStatus,operationalStatusUpdatedAt}`). **BUT** `GET /v1/orders` list + `GET /v1/orders/:id` details do NOT return `operationalStatus` → FE can't display current status or drive transition-aware changes. Filed backend request **#223** (`docs/request-backend/223-…`). O2/O3 (confirm/cancel) degraded by the same gap. O4 (meta) / O5 (acceptance-act) are independent and buildable. **МойСклад module COMPLETE (M1–M5).**
 - **2026-07-04 — BACKEND UNBLOCKED (#223 + UUID + O2/O3 contracts)**: `GET /orders` list + details now return `id` (OrderFbs UUID — usable for mutations), `operationalStatus` (default NEW), `operationalStatusUpdatedAt`. PATCH guard returns allowed transitions in the error. **O1–O4 all unblocked.** Verified contracts: O2 `POST /orders/{uuid}/confirm` → `{confirmed:true}` (no WB call; promotes NEW→ASSEMBLED best-effort). O3 `POST /orders/{uuid}/cancel` → `{canceled:true}` (WB SDK cancel → CANCELLED). O4 `PATCH /orders/{uuid}/meta` `{metaType, value}` → `{updated:true}`. Enum/transition STABLE.
 - **2026-07-04 — O1 ✅**: operational-status UI (backend #223 unblocked). Status badge (colored, RU labels) + transition-aware «Сменить статус» select (ALLOWED_TRANSITIONS[current] only; terminal → no control) → PATCH /orders/{uuid}/operational-status. Normalizer: id(UUID)/operationalStatus(validate→NEW fallback)/operationalStatusUpdatedAt(null-preserving). 16 unit tests (state machine, badge, select) + E2E 2/2 (non-mutating). Gates: type-check 0 · eslint 0 · 16 unit · locale 4 · E2E 2/2. Backend delivered #223 (operationalStatus in list+details) + UUID id in items + stable enum/transitions.
+- **2026-07-05 — O2 ✅**: confirm order. `confirmOrder` (orders-actions.ts) + `useConfirmOrder` (invalidate lists+detail, toast) + new `OrderActionsCell` (kebab dropdown) / `useOrderActions` controller + new «Действия» column on the orders table. «Подтвердить» enabled only for `operationalStatus=NEW` (CONFIRMABLE_STATUSES). 2 API + 2 hook + 4 cell + integration assertion. Gates: type-check 0 · eslint 0 · locale 4 · doc-citations 0.
+- **2026-07-05 — O3 ✅**: cancel order (destructive). `cancelOrder` + `useCancelOrder` (invalidate lists+detail) + `CancelOrderDialog` (AlertDialog, destructive styling). «Отменить» menu item (NEW/ASSEMBLED/PACKED) opens the confirm gate — cancel CANNOT fire from the menu directly. Controller `pendingUuid` aggregates confirm+cancel. 1 API + 2 hook + 3 dialog + 3 cell + page/integration stubs. 2-pass review: SHIP/SHIP, MED cache-drift fixed (detail invalidation).
+- **2026-07-05 — O4 ✅**: marking-code meta editor (Честный ЗНАК). `updateOrderMeta` (PATCH /meta {metaType:IMEI|GTIN|SGTIN|UIN, value:1–200}) + `useUpdateOrderMeta` (invalidate lists+detail) + `EditOrderMetaDialog` (Select + Input, 1–200 validation, mirrors backend MaxLength(200)). «Код маркировки» item (non-terminal statuses). 1 API + 2 hook + 3 dialog + 3 cell + page/integration stubs. 2-pass review SHIP/SHIP. **Order Management O1–O4 complete (acceptance-act O5 remains).**

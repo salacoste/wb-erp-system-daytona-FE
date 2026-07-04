@@ -24,6 +24,7 @@ import {
   OrdersSuspenseFallback,
 } from '@/components/custom/orders'
 import { useOrderOperationalStatus } from '@/components/custom/orders/useOrderOperationalStatus'
+import { useOrderActions } from '@/components/custom/orders/useOrderActions'
 import { OrdersLoadingState, OrdersErrorState, OrdersSlowLoadingState } from './OrdersPageStates'
 import { useOrdersPageState, PAGE_SIZE } from './useOrdersPageState'
 import { useOrdersFilterHandlers } from './useOrdersFilterHandlers'
@@ -80,6 +81,8 @@ function OrdersPageContent() {
   // Story O1: operational-status change controller (handler + pending UUID).
   const { onOperationalStatusChange, pendingUuid: operationalStatusPendingUuid } =
     useOrderOperationalStatus()
+  // Stories O2/O3/O4: per-row order-actions controller (confirm / cancel / meta).
+  const { onConfirm, onCancel, onSaveMeta, pendingUuid: actionsPendingUuid } = useOrderActions()
   const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   // Story 86.2: Client info (PII) — Owner only, hook is no-op for other roles
@@ -176,6 +179,10 @@ function OrdersPageContent() {
         clientInfoMap={clientInfoMap}
         onOperationalStatusChange={onOperationalStatusChange}
         operationalStatusPendingUuid={operationalStatusPendingUuid}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+        onSaveMeta={onSaveMeta}
+        actionsPendingUuid={actionsPendingUuid}
       />
 
       {/* Pagination */}

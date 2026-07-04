@@ -11,6 +11,9 @@ import {
   triggerOrdersSync,
   triggerOrdersBackfill,
   updateOrderOperationalStatus,
+  confirmOrder,
+  cancelOrder,
+  updateOrderMeta,
   ordersQueryKeys,
 } from '@/lib/api/orders'
 import type { BackfillParams, BackfillResponse } from '@/lib/api/orders'
@@ -19,6 +22,12 @@ import type {
   OrderOperationalStatus,
   UpdateOrderOperationalStatusResponse,
 } from '@/types/orders'
+import type {
+  ConfirmOrderResponse,
+  CancelOrderResponse,
+  UpdateOrderMetaBody,
+  UpdateOrderMetaResponse,
+} from '@/types/orders-actions'
 import { logger } from '@/lib/logger'
 
 export interface UseOrdersSyncOptions {
@@ -117,6 +126,111 @@ export function useUpdateOrderOperationalStatus() {
       // Backend 400 message lists allowed targets (e.g.
       // "Invalid transition: NEW -> DELIVERED. Allowed from NEW: ASSEMBLED, CANCELLED").
       toast.error(error.message || 'Не удалось обновить статус')
+    },
+  })
+}
+
+// ============================================================================
+// Confirm Order (Story O2)
+// ============================================================================
+
+/** Input for useConfirmOrder. */
+export interface ConfirmOrderInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+}
+
+/**
+ * Hook to confirm an order. Story O2: POST /v1/orders/:orderUuid/confirm.
+ * On success: invalidate orders lists + toast. On error: surface backend msg
+ * (e.g. a non-NEW order is not confirmable).
+ */
+export function useConfirmOrder() {
+  const queryClient = useQueryClient()
+
+  return useMutation<ConfirmOrderResponse, Error, ConfirmOrderInput>({
+    mutationFn: ({ orderUuid }) => confirmOrder(orderUuid),
+    onSuccess: (data, variables) => {
+      logger.debug('[Orders] Order confirmed:', data)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      // Invalidate the detail cache so OrderDetailsModal doesn't show a stale
+      // operationalStatus on reopen (mirrors useUpdateOrderMeta).
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.detail(variables.orderUuid) })
+      toast.success('Заказ подтверждён')
+    },
+    onError: error => {
+      logger.error('[Orders] Confirm failed:', error)
+      toast.error(error.message || 'Не удалось подтвердить заказ')
+    },
+  })
+}
+
+// ============================================================================
+// Cancel Order (Story O3)
+// ============================================================================
+
+/** Input for useCancelOrder. */
+export interface CancelOrderInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+}
+
+/**
+ * Hook to cancel an order. Story O3: POST /v1/orders/:orderUuid/cancel.
+ * Destructive — the UI gates it behind a confirm dialog. On success:
+ * invalidate orders lists + toast. On error: surface backend message.
+ */
+export function useCancelOrder() {
+  const queryClient = useQueryClient()
+
+  return useMutation<CancelOrderResponse, Error, CancelOrderInput>({
+    mutationFn: ({ orderUuid }) => cancelOrder(orderUuid),
+    onSuccess: (data, variables) => {
+      logger.debug('[Orders] Order canceled:', data)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      // Invalidate the detail cache so OrderDetailsModal doesn't show a stale
+      // operationalStatus on reopen (mirrors useUpdateOrderMeta).
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.detail(variables.orderUuid) })
+      toast.success('Заказ отменён')
+    },
+    onError: error => {
+      logger.error('[Orders] Cancel failed:', error)
+      toast.error(error.message || 'Не удалось отменить заказ')
+    },
+  })
+}
+
+// ============================================================================
+// Edit Order Meta — marking codes (Story O4)
+// ============================================================================
+
+/** Input for useUpdateOrderMeta. */
+export interface UpdateOrderMetaInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+  /** Marking-code body { metaType, value 1–200 chars }. */
+  body: UpdateOrderMetaBody
+}
+
+/**
+ * Hook to update an order's marking-code meta. Story O4:
+ * PATCH /v1/orders/:orderUuid/meta. On success: invalidate the order's detail
+ * cache + lists + toast. On error: surface the backend message.
+ */
+export function useUpdateOrderMeta() {
+  const queryClient = useQueryClient()
+
+  return useMutation<UpdateOrderMetaResponse, Error, UpdateOrderMetaInput>({
+    mutationFn: ({ orderUuid, body }) => updateOrderMeta(orderUuid, body),
+    onSuccess: (_data, variables) => {
+      logger.debug('[Orders] Meta updated:', variables)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.detail(variables.orderUuid) })
+      toast.success('Код маркировки сохранён')
+    },
+    onError: error => {
+      logger.error('[Orders] Meta update failed:', error)
+      toast.error(error.message || 'Не удалось сохранить код маркировки')
     },
   })
 }

@@ -62,6 +62,36 @@ describe('normalizeOrderItem', () => {
     expect(result.isB2B).toBe(false)
     expect(result.cargoType).toBeNull()
   })
+
+  // --- Story O1: operational status mapping ---
+
+  it('maps id (UUID), operationalStatus, operationalStatusUpdatedAt', () => {
+    const result = normalizeOrderItem({
+      ...validItem,
+      id: '2405776e-4660-4857-ab4f-a56a3134dda9',
+      operationalStatus: 'ASSEMBLED',
+      operationalStatusUpdatedAt: '2026-07-04T12:00:00Z',
+    })
+    expect(result.id).toBe('2405776e-4660-4857-ab4f-a56a3134dda9')
+    expect(result.operationalStatus).toBe('ASSEMBLED')
+    expect(result.operationalStatusUpdatedAt).toBe('2026-07-04T12:00:00Z')
+  })
+
+  it('preserves null operationalStatusUpdatedAt (AP#8)', () => {
+    const result = normalizeOrderItem({ ...validItem, operationalStatusUpdatedAt: null })
+    expect(result.operationalStatusUpdatedAt).toBeNull()
+  })
+
+  it('defaults unknown operationalStatus to NEW', () => {
+    const result = normalizeOrderItem({ ...validItem, operationalStatus: 'BOGUS' })
+    expect(result.operationalStatus).toBe('NEW')
+  })
+
+  it('defaults missing operationalStatus to NEW', () => {
+    const result = normalizeOrderItem({ ...validItem })
+    expect(result.operationalStatus).toBe('NEW')
+    expect(result.operationalStatusUpdatedAt).toBeNull()
+  })
 })
 
 describe('normalizeOrdersResponse', () => {
