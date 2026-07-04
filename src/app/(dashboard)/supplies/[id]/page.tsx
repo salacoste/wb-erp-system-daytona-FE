@@ -24,6 +24,8 @@ import { SupplyDocumentsList } from '@/components/custom/supplies/SupplyDocument
 import { OrderPickerDrawer } from '@/components/custom/supplies/OrderPickerDrawer'
 import { CloseSupplyDialog } from '@/components/custom/supplies/CloseSupplyDialog'
 import { GenerateStickersModal } from '@/components/custom/supplies/GenerateStickersModal'
+import { AcceptanceActSection } from '@/components/custom/supplies/AcceptanceActSection'
+import { useUploadAcceptanceAct, useDownloadAcceptanceAct } from '@/hooks/useAcceptanceAct'
 import { toast } from 'sonner'
 import { SupplyDetailSkeleton } from './SupplyDetailSkeleton'
 import { SupplyDetailError } from './SupplyDetailError'
@@ -42,6 +44,9 @@ export default function SupplyDetailPage({ params }: PageProps) {
 
   const { data: supply, isLoading, error, refetch } = useSupplyDetail(supplyId)
   const removeOrdersMutation = useRemoveOrders(supplyId)
+  // Story O5: acceptance-act upload/download.
+  const uploadAcceptanceActMutation = useUploadAcceptanceAct()
+  const downloadAcceptanceActMutation = useDownloadAcceptanceAct()
 
   const handleRemoveOrders = (orderIds: string[]) => {
     removeOrdersMutation.mutate(orderIds)
@@ -118,6 +123,8 @@ export default function SupplyDetailPage({ params }: PageProps) {
   }
 
   const showDocuments = ['CLOSED', 'DELIVERING', 'DELIVERED'].includes(supply.status)
+  // Story O5: stored acceptance-act doc (if any).
+  const storedAcceptanceAct = supply.documents.find(d => d.type === 'acceptance_act') ?? null
 
   return (
     <div className="container py-6">
@@ -169,6 +176,20 @@ export default function SupplyDetailPage({ params }: PageProps) {
             downloadingType={downloadingType}
           />
         )}
+
+        {/* Story O5: acceptance-act upload/download */}
+        <AcceptanceActSection
+          storedAct={storedAcceptanceAct}
+          uploadPending={uploadAcceptanceActMutation.isPending}
+          downloadPending={downloadAcceptanceActMutation.isPending}
+          onUpload={file => uploadAcceptanceActMutation.mutate({ supplyId, file })}
+          onDownload={() =>
+            downloadAcceptanceActMutation.mutate({
+              supplyId,
+              filename: `acceptance-act-${supplyId}.${storedAcceptanceAct?.format ?? 'xlsx'}`,
+            })
+          }
+        />
       </div>
 
       <OrderPickerDrawer

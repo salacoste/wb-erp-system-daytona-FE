@@ -185,6 +185,20 @@ describe('normalizeSupplyDetailResponse', () => {
     expect(result.documents[0].type).toBe('act')
   })
 
+  it('lowercases an UPPERCASE backend docType [Story O5: STICKER/ACCEPTANCE_ACT]', () => {
+    const raw = {
+      id: 'sup-405',
+      orders: [],
+      documents: [
+        { docType: 'ACCEPTANCE_ACT', format: 'xlsx', generatedAt: '2026-07-05Z' },
+        { docType: 'STICKER', format: 'png', generatedAt: '2026-07-05Z' },
+      ],
+    }
+    const docs = normalizeSupplyDetailResponse(raw).documents
+    expect(docs[0].type).toBe('acceptance_act')
+    expect(docs[1].type).toBe('sticker')
+  })
+
   it('maps fileSize to sizeBytes on documents', () => {
     const raw = {
       id: 'sup-401',

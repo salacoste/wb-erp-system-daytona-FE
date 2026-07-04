@@ -48,6 +48,7 @@ export async function downloadDocument(supplyId: string, docType: DocumentType):
 
   const response = await apiClient.get<Blob>(`/v1/supplies/${supplyId}/documents/${docType}`, {
     skipDataUnwrap: true,
+    responseType: 'blob',
   })
 
   logger.debug('[Supplies API] Document downloaded')

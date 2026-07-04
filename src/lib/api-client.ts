@@ -89,6 +89,12 @@ class ApiClient {
         throw apiError
       }
 
+      // Binary downloads (Story O5): resolve the raw Blob. The non-JSON branch
+      // below would otherwise return `response.text()` and corrupt the bytes.
+      if (options.responseType === 'blob') {
+        return (await response.blob()) as unknown as T
+      }
+
       if (isJson) {
         const rawData: ApiResponse<T> = await response.json()
         logCogsRawResponse(endpoint, rawData)
