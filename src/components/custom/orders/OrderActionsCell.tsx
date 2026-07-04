@@ -3,16 +3,18 @@
  * Epic Moysklad, Stories O2 / O3 / O4.
  *
  * Hosts the operator actions (confirm, cancel, marking-code meta) behind a
- * kebab menu. Each item is contextually enabled per the order's operational
- * status; the whole trigger disables while an action for this row is in-flight.
- * The wrapper stops propagation so menu interaction does not trigger the row's
- * open-details click.
+ * kebab menu. Confirm fires directly; cancel is destructive and opens a
+ * confirm dialog (CancelOrderDialog). Each item is contextually enabled per
+ * the order's operational status; the whole trigger disables while an action
+ * for this row is in-flight. The wrapper stops propagation so menu/dialog
+ * interaction does not trigger the row's open-details click.
  *
  * Reference: docs/epics/epic-moysklad-order-management.md (Stories O2–O4)
  */
 
 'use client'
 
+import { useState } from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,13 +23,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { CONFIRMABLE_STATUSES } from '@/types/orders-actions'
+import { CancelOrderDialog } from './CancelOrderDialog'
+import { CONFIRMABLE_STATUSES, CANCELLABLE_STATUSES } from '@/types/orders-actions'
 import type { OrderFbsItem } from '@/types/orders'
 
 interface OrderActionsCellProps {
   order: OrderFbsItem
   /** Confirm-handler (Story O2). Omit to hide the confirm item. */
   onConfirm?: (orderUuid: string) => void
+  /** Cancel-handler (Story O3). Omit to hide the cancel item + dialog. */
+  onCancel?: (orderUuid: string) => void
   /** True while an action for THIS row is in-flight (disables the trigger). */
   pending?: boolean
 }
@@ -35,8 +40,15 @@ interface OrderActionsCellProps {
 /**
  * Renders the kebab actions menu for a single order row.
  */
-export function OrderActionsCell({ order, onConfirm, pending = false }: OrderActionsCellProps) {
+export function OrderActionsCell({
+  order,
+  onConfirm,
+  onCancel,
+  pending = false,
+}: OrderActionsCellProps) {
+  const [cancelOpen, setCancelOpen] = useState(false)
   const confirmable = CONFIRMABLE_STATUSES.includes(order.operationalStatus)
+  const cancellable = CANCELLABLE_STATUSES.includes(order.operationalStatus)
 
   return (
     <div onClick={e => e.stopPropagation()}>
@@ -63,8 +75,31 @@ export function OrderActionsCell({ order, onConfirm, pending = false }: OrderAct
               Подтвердить
             </DropdownMenuItem>
           )}
+          {onCancel && (
+            <DropdownMenuItem
+              disabled={!cancellable}
+              onSelect={() => setCancelOpen(true)}
+              className="text-destructive focus:text-destructive"
+              data-testid={`order-cancel-${order.orderId}`}
+            >
+              Отменить
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {onCancel && (
+        <CancelOrderDialog
+          order={cancelOpen ? order : null}
+          open={cancelOpen}
+          pending={pending}
+          onCancel={orderUuid => {
+            onCancel(orderUuid)
+            setCancelOpen(false)
+          }}
+          onClose={() => setCancelOpen(false)}
+        />
+      )}
     </div>
   )
 }

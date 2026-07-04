@@ -12,6 +12,7 @@ import {
   triggerOrdersBackfill,
   updateOrderOperationalStatus,
   confirmOrder,
+  cancelOrder,
   ordersQueryKeys,
 } from '@/lib/api/orders'
 import type { BackfillParams, BackfillResponse } from '@/lib/api/orders'
@@ -20,7 +21,7 @@ import type {
   OrderOperationalStatus,
   UpdateOrderOperationalStatusResponse,
 } from '@/types/orders'
-import type { ConfirmOrderResponse } from '@/types/orders-actions'
+import type { ConfirmOrderResponse, CancelOrderResponse } from '@/types/orders-actions'
 import { logger } from '@/lib/logger'
 
 export interface UseOrdersSyncOptions {
@@ -151,6 +152,38 @@ export function useConfirmOrder() {
     onError: error => {
       logger.error('[Orders] Confirm failed:', error)
       toast.error(error.message || 'Не удалось подтвердить заказ')
+    },
+  })
+}
+
+// ============================================================================
+// Cancel Order (Story O3)
+// ============================================================================
+
+/** Input for useCancelOrder. */
+export interface CancelOrderInput {
+  /** OrderFbs UUID (order.id) — NOT the WB orderId */
+  orderUuid: string
+}
+
+/**
+ * Hook to cancel an order. Story O3: POST /v1/orders/:orderUuid/cancel.
+ * Destructive — the UI gates it behind a confirm dialog. On success:
+ * invalidate orders lists + toast. On error: surface backend message.
+ */
+export function useCancelOrder() {
+  const queryClient = useQueryClient()
+
+  return useMutation<CancelOrderResponse, Error, CancelOrderInput>({
+    mutationFn: ({ orderUuid }) => cancelOrder(orderUuid),
+    onSuccess: data => {
+      logger.debug('[Orders] Order canceled:', data)
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.lists() })
+      toast.success('Заказ отменён')
+    },
+    onError: error => {
+      logger.error('[Orders] Cancel failed:', error)
+      toast.error(error.message || 'Не удалось отменить заказ')
     },
   })
 }

@@ -16,9 +16,27 @@ import type { OrderOperationalStatus } from './orders'
 export const CONFIRMABLE_STATUSES: readonly OrderOperationalStatus[] = ['NEW']
 
 /**
+ * Operational statuses from which cancel (→ CANCELLED) is allowed
+ * (pre-shipment). Story O3: backend calls the WB SDK cancel → CANCELLED.
+ */
+export const CANCELLABLE_STATUSES: readonly OrderOperationalStatus[] = [
+  'NEW',
+  'ASSEMBLED',
+  'PACKED',
+]
+
+/**
  * Response from POST /v1/orders/:orderUuid/confirm.
  * Story O2 — backend returns { confirmed: true } (no WB call).
  */
 export interface ConfirmOrderResponse {
   confirmed: boolean
+}
+
+/**
+ * Response from POST /v1/orders/:orderUuid/cancel.
+ * Story O3 — backend WB SDK cancel → CANCELLED, returns { canceled: true }.
+ */
+export interface CancelOrderResponse {
+  canceled: boolean
 }

@@ -10,31 +10,42 @@
 
 'use client'
 
-import { useConfirmOrder } from '@/hooks/useOrders'
+import { useConfirmOrder, useCancelOrder } from '@/hooks/useOrders'
 
 /** Confirm-handler signature (uuid of the order to confirm). */
 export type ConfirmOrderHandler = (orderUuid: string) => void
 
+/** Cancel-handler signature (uuid of the order to cancel). */
+export type CancelOrderHandler = (orderUuid: string) => void
+
 /** Controller shape consumed by the orders table actions cell. */
 export interface OrderActionsController {
   onConfirm: ConfirmOrderHandler
+  onCancel: CancelOrderHandler
   /** OrderFbs UUID currently being acted upon, or null when idle. */
   pendingUuid: string | null
 }
 
 /**
- * Returns a stable onConfirm handler + the in-flight order UUID.
- * Cancel (O3) and meta (O4) handlers are added in their stories.
+ * Returns stable onConfirm/onCancel handlers + the in-flight order UUID.
+ * Meta (O4) handler is added in its story. `pendingUuid` reflects whichever
+ * mutation (confirm or cancel) is currently in-flight.
  */
 export function useOrderActions(): OrderActionsController {
-  const { mutate: confirm, variables, isPending } = useConfirmOrder()
+  const { mutate: confirm, variables: confirmVars, isPending: confirmPending } = useConfirmOrder()
+  const { mutate: cancel, variables: cancelVars, isPending: cancelPending } = useCancelOrder()
 
   const onConfirm: ConfirmOrderHandler = orderUuid => {
     confirm({ orderUuid })
   }
-
-  return {
-    onConfirm,
-    pendingUuid: isPending ? (variables?.orderUuid ?? null) : null,
+  const onCancel: CancelOrderHandler = orderUuid => {
+    cancel({ orderUuid })
   }
+
+  const pendingUuid =
+    confirmPending || cancelPending
+      ? (confirmVars?.orderUuid ?? cancelVars?.orderUuid ?? null)
+      : null
+
+  return { onConfirm, onCancel, pendingUuid }
 }

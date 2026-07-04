@@ -29,6 +29,7 @@ const mockUseOrdersSync = vi.fn()
 const mockUseClientInfo = vi.fn()
 const mockUseUpdateOrderOperationalStatus = vi.fn()
 const mockUseConfirmOrder = vi.fn()
+const mockUseCancelOrder = vi.fn()
 
 vi.mock('@/hooks/useOrders', () => ({
   useOrders: (...args: unknown[]) => mockUseOrders(...args),
@@ -39,6 +40,8 @@ vi.mock('@/hooks/useOrders', () => ({
     mockUseUpdateOrderOperationalStatus(...args),
   // Story O2: confirm-order mutation stub (idle by default).
   useConfirmOrder: (...args: unknown[]) => mockUseConfirmOrder(...args),
+  // Story O3: cancel-order mutation stub (idle by default).
+  useCancelOrder: (...args: unknown[]) => mockUseCancelOrder(...args),
 }))
 
 vi.mock('@/hooks/useClientInfo', () => ({
@@ -146,6 +149,12 @@ describe('OrdersPage', () => {
     })
     // Story O2: idle confirm-order mutation.
     mockUseConfirmOrder.mockReturnValue({
+      mutate: vi.fn(),
+      variables: undefined,
+      isPending: false,
+    })
+    // Story O3: idle cancel-order mutation.
+    mockUseCancelOrder.mockReturnValue({
       mutate: vi.fn(),
       variables: undefined,
       isPending: false,

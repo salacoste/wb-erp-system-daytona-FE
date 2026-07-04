@@ -39,6 +39,8 @@ interface OrdersTableProps {
   operationalStatusPendingUuid?: string | null
   /** Story O2: confirm-handler (omit to hide the confirm action). */
   onConfirm?: (orderUuid: string) => void
+  /** Story O3: cancel-handler (omit to hide the cancel action). */
+  onCancel?: (orderUuid: string) => void
   /** Story O2: per-order action pending map (orderUuid → in-flight). */
   actionsPendingUuid?: string | null
 }
@@ -122,6 +124,7 @@ export function OrdersTable({
   onOperationalStatusChange,
   operationalStatusPendingUuid,
   onConfirm,
+  onCancel,
   actionsPendingUuid,
 }: OrdersTableProps) {
   // Empty state
@@ -177,6 +180,7 @@ export function OrdersTable({
               onOperationalStatusChange={onOperationalStatusChange}
               operationalStatusPending={operationalStatusPendingUuid === order.id}
               onConfirm={onConfirm}
+              onCancel={onCancel}
               actionsPending={actionsPendingUuid === order.id}
             />
           ))}

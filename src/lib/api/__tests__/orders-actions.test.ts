@@ -10,7 +10,7 @@ vi.mock('../../api-client', () => ({
 }))
 
 import { apiClient } from '../../api-client'
-import { confirmOrder } from '../orders-actions'
+import { confirmOrder, cancelOrder } from '../orders-actions'
 
 vi.spyOn(console, 'debug').mockImplementation(() => {})
 
@@ -35,5 +35,21 @@ describe('Orders Actions API (Story O2)', () => {
     await confirmOrder(uuid)
     const url = vi.mocked(apiClient.post).mock.calls[0][0]
     expect(url).toBe(`/v1/orders/${uuid}/confirm`)
+  })
+})
+
+describe('Orders Actions API (Story O3)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('cancelOrder POSTs to /v1/orders/:uuid/cancel', async () => {
+    const uuid = '2405776e-4660-4857-ab4f-a56a3134dda9'
+    vi.mocked(apiClient.post).mockResolvedValue({ canceled: true })
+
+    const result = await cancelOrder(uuid)
+
+    expect(apiClient.post).toHaveBeenCalledWith(`/v1/orders/${uuid}/cancel`)
+    expect(result).toEqual({ canceled: true })
   })
 })

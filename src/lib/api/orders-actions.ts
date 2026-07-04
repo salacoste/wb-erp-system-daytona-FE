@@ -8,7 +8,7 @@
  */
 import { apiClient } from '../api-client'
 import { logger } from '@/lib/logger'
-import type { ConfirmOrderResponse } from '@/types/orders-actions'
+import type { ConfirmOrderResponse, CancelOrderResponse } from '@/types/orders-actions'
 
 /**
  * Confirm an order. Story O2.
@@ -21,4 +21,16 @@ export async function confirmOrder(orderUuid: string): Promise<ConfirmOrderRespo
   const url = `/v1/orders/${String(orderUuid)}/confirm`
   logger.debug('[Orders API] Confirm order:', orderUuid)
   return apiClient.post<ConfirmOrderResponse>(url)
+}
+
+/**
+ * Cancel an order. Story O3.
+ * POST /v1/orders/:orderUuid/cancel → { canceled: true }.
+ * Backend calls the WB SDK cancel → CANCELLED. Precondition: pre-shipment
+ * status (see CANCELLABLE_STATUSES); backend rejects already-shipped orders.
+ */
+export async function cancelOrder(orderUuid: string): Promise<CancelOrderResponse> {
+  const url = `/v1/orders/${String(orderUuid)}/cancel`
+  logger.debug('[Orders API] Cancel order:', orderUuid)
+  return apiClient.post<CancelOrderResponse>(url)
 }

@@ -55,6 +55,12 @@ vi.mock('@/hooks/useOrders', () => ({
     variables: undefined,
     isPending: false,
   }),
+  // Story O3: cancel-order mutation stub (idle by default).
+  useCancelOrder: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,

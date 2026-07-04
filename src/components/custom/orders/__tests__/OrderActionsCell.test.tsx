@@ -72,3 +72,46 @@ describe('OrderActionsCell (Story O2)', () => {
     expect(screen.getByLabelText('Действия с заказом 12345')).toBeDisabled()
   })
 })
+
+describe('OrderActionsCell cancel (Story O3)', () => {
+  const onConfirm = vi.fn()
+  const onCancel = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('enables Отменить for a cancellable status (PACKED)', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <OrderActionsCell order={makeOrder('PACKED')} onConfirm={onConfirm} onCancel={onCancel} />
+    )
+
+    await user.click(screen.getByLabelText('Действия с заказом 12345'))
+    expect(screen.getByTestId('order-cancel-12345')).not.toHaveAttribute('data-disabled')
+  })
+
+  it('disables Отменить for a non-cancellable status (SHIPPED)', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <OrderActionsCell order={makeOrder('SHIPPED')} onConfirm={onConfirm} onCancel={onCancel} />
+    )
+
+    await user.click(screen.getByLabelText('Действия с заказом 12345'))
+    expect(screen.getByTestId('order-cancel-12345')).toHaveAttribute('data-disabled')
+  })
+
+  it('opens the confirm dialog (not firing onCancel) when Отменить selected', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <OrderActionsCell order={makeOrder('NEW')} onConfirm={onConfirm} onCancel={onCancel} />
+    )
+
+    await user.click(screen.getByLabelText('Действия с заказом 12345'))
+    await user.click(screen.getByText('Отменить'))
+
+    // Destructive confirm dialog renders — onCancel has NOT fired yet (gated).
+    expect(screen.getByTestId('cancel-order-dialog')).toBeInTheDocument()
+    expect(onCancel).not.toHaveBeenCalled()
+  })
+})

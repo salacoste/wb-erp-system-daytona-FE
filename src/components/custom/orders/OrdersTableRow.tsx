@@ -34,6 +34,8 @@ interface OrdersTableRowProps {
   operationalStatusPending?: boolean
   /** Story O2: confirm-handler (omit to hide the confirm action in the menu). */
   onConfirm?: (orderUuid: string) => void
+  /** Story O3: cancel-handler (omit to hide the cancel action + dialog). */
+  onCancel?: (orderUuid: string) => void
   /** Story O2: disable the actions menu while a mutation for this row is in-flight. */
   actionsPending?: boolean
 }
@@ -49,6 +51,7 @@ export function OrdersTableRow({
   onOperationalStatusChange,
   operationalStatusPending = false,
   onConfirm,
+  onCancel,
   actionsPending = false,
 }: OrdersTableRowProps) {
   const productName = order.productName || '—'
@@ -141,7 +144,12 @@ export function OrdersTableRow({
 
       {/* Stories O2/O3/O4: per-row actions (confirm / cancel / marking-code meta) */}
       <TableCell className="text-right">
-        <OrderActionsCell order={order} onConfirm={onConfirm} pending={actionsPending} />
+        <OrderActionsCell
+          order={order}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          pending={actionsPending}
+        />
       </TableCell>
 
       {/* Story 86.2: Client (PII) — Owner only */}

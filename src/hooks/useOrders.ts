@@ -26,12 +26,14 @@ export {
   useOrdersBackfill,
   useUpdateOrderOperationalStatus,
   useConfirmOrder,
+  useCancelOrder,
 } from './useOrdersMutations'
 export type {
   UseOrdersSyncOptions,
   UseOrdersBackfillOptions,
   UpdateOrderOperationalStatusInput,
   ConfirmOrderInput,
+  CancelOrderInput,
 } from './useOrdersMutations'
 
 // ============================================================================
