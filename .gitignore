@@ -78,3 +78,9 @@ logs/
 .omc/ux-validation/
 .claude/scheduled_tasks.json
 .claude/scheduled_tasks.lock
+.claude/sessions/
+.claude/state/
+.claude/worktrees/
+
+# Scratch / debug screenshots (not repo material)
+liquidity-full.png
