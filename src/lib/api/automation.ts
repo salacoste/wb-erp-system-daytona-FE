@@ -50,14 +50,10 @@ function toCategory(raw: unknown): CannedRuleCategory {
     : 'audit'
 }
 
-/** Coerce a number-like value to a safe number (undefined for non-finite). */
+/** Coerce a number field to a safe number (undefined otherwise). The contract
+ * types priority/cooldownMin as number — validate, don't invent a coercion. */
 function toOptionalNumber(raw: unknown): number | undefined {
-  if (typeof raw === 'number' && Number.isFinite(raw)) return raw
-  if (typeof raw === 'string' && raw.trim() !== '') {
-    const n = Number(raw)
-    if (Number.isFinite(n)) return n
-  }
-  return undefined
+  return typeof raw === 'number' && Number.isFinite(raw) ? raw : undefined
 }
 
 /** Pass-through for opaque param objects (validate it's a record, else drop). */
