@@ -58,6 +58,8 @@ export const ROUTES = {
     FORECAST_ACCURACY: '/analytics/forecast-accuracy',
     MODELS: '/analytics/models',
     PRODUCT: '/analytics/product',
+    // PR4b — brand competitive-positioning (rating + share by price/qty).
+    BRAND_SHARE: '/analytics/brand-share',
     AI_ADMIN: {
       MODELS: '/analytics/ai-admin/models',
       PREFERENCES: '/analytics/ai-admin/preferences',
