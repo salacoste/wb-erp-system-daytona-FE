@@ -9,6 +9,7 @@ import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { BrandShareView } from '../BrandShareView'
 import type { BrandShareDateRange } from '@/types/brand-share'
+import { ApiError } from '@/types/api'
 
 // Mock the three hooks — keep per-test return values mutable via mockReturnValue.
 const mockBrands = vi.fn()
@@ -121,7 +122,7 @@ describe('BrandShareView', () => {
     mockReport.mockReturnValue({
       data: undefined,
       isLoading: false,
-      error: { status: 503, message: 'upstream WB failed' },
+      error: new ApiError('ServiceUnavailableException', 503, {}),
       refetch: vi.fn(),
     })
     renderView({ brand: 'DURABOND', parentId: 8555 })
@@ -135,7 +136,7 @@ describe('BrandShareView', () => {
     mockReport.mockReturnValue({
       data: undefined,
       isLoading: false,
-      error: { status: 500, message: 'boom' },
+      error: new ApiError('boom', 500, {}),
       refetch: vi.fn(),
     })
     renderView({ brand: 'DURABOND', parentId: 8555 })

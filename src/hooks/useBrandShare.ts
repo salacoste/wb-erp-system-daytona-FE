@@ -17,11 +17,7 @@ import {
   getBrandShareParentSubjects,
   getBrandShareReport,
 } from '@/lib/api/brand-share'
-import type {
-  BrandParentSubject,
-  BrandShareDateRange,
-  BrandShareReport,
-} from '@/types/brand-share'
+import type { BrandParentSubject, BrandShareDateRange, BrandShareReport } from '@/types/brand-share'
 
 const BRAND_SHARE_QUERY_CONFIG = {
   staleTime: 60_000,
@@ -46,7 +42,10 @@ export function useBrandShareParentSubjects(
   const enabled = !!brand && brand.trim() !== ''
   return useQuery({
     queryKey: brandShareQueryKeys.parentSubjects(brand ?? '', range),
-    queryFn: () => getBrandShareParentSubjects({ brand: brand as string, ...range }),
+    queryFn: () => {
+      if (!brand) throw new Error('brand-share: brand required for parent-subjects')
+      return getBrandShareParentSubjects({ brand, ...range })
+    },
     ...BRAND_SHARE_QUERY_CONFIG,
     enabled,
   })
@@ -61,8 +60,12 @@ export function useBrandShareReport(
   const enabled = !!brand && brand.trim() !== '' && parentId != null
   return useQuery({
     queryKey: brandShareQueryKeys.report(brand ?? '', parentId ?? 0, range),
-    queryFn: () =>
-      getBrandShareReport({ brand: brand as string, parentId: parentId as number, ...range }),
+    queryFn: () => {
+      if (!brand || parentId == null) {
+        throw new Error('brand-share: brand + parentId required for report')
+      }
+      return getBrandShareReport({ brand, parentId, ...range })
+    },
     ...BRAND_SHARE_QUERY_CONFIG,
     enabled,
   })

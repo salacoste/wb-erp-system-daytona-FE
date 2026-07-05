@@ -93,9 +93,7 @@ describe('getBrandShareReport', () => {
 
   it('GETs the report with brand + parentId + dates', async () => {
     vi.mocked(apiClient.get).mockResolvedValue({
-      report: [
-        { applyDate: '2026-07-01', brandRating: 3, pricePercent: 12.5, qtyPercent: 8 },
-      ],
+      report: [{ applyDate: '2026-07-01', brandRating: 3, pricePercent: 12.5, qtyPercent: 8 }],
     })
     const result = await getBrandShareReport({
       brand: 'DURABOND',
@@ -112,26 +110,35 @@ describe('getBrandShareReport', () => {
     ])
   })
 
-  it('PRESERVES null percents and ratings (AP#8 — never coerces to 0)', async () => {
+  it('maps 0 share percents to null (contract §2: 0 = no-data), keeps brandRating 0 + non-zero shares', async () => {
     vi.mocked(apiClient.get).mockResolvedValue({
       report: [
         { applyDate: '2026-07-01', brandRating: null, pricePercent: null, qtyPercent: null },
         { applyDate: '2026-07-02', brandRating: 5, pricePercent: 0, qtyPercent: 0 },
+        { applyDate: '2026-07-03', brandRating: 0, pricePercent: 7.5, qtyPercent: 4 },
       ],
     })
     const result = await getBrandShareReport({ brand: 'B', parentId: 1 })
+    // nulls preserved (AP#8).
     expect(result.report[0]).toEqual({
       applyDate: '2026-07-01',
       brandRating: null,
       pricePercent: null,
       qtyPercent: null,
     })
-    // A real 0 stays 0 (distinct from null) — the view renders «—» only for null.
+    // Contract §2: 0 share on a low-volume day is a no-data sentinel → null.
     expect(result.report[1]).toEqual({
       applyDate: '2026-07-02',
       brandRating: 5,
-      pricePercent: 0,
-      qtyPercent: 0,
+      pricePercent: null,
+      qtyPercent: null,
+    })
+    // brandRating 0 is a real value (kept); non-zero shares are kept.
+    expect(result.report[2]).toEqual({
+      applyDate: '2026-07-03',
+      brandRating: 0,
+      pricePercent: 7.5,
+      qtyPercent: 4,
     })
   })
 

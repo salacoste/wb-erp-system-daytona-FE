@@ -7,7 +7,8 @@
  *   3. GET /v1/analytics/brand-share                   → { report: [{ applyDate, … }] }
  *
  * NULLABILITY (AP#8): brandRating / pricePercent / qtyPercent are `number | null`.
- * The normalizer preserves null/0 verbatim — render «—», never coerce to 0.
+ * Per contract §2, a `0` SHARE (pricePercent/qtyPercent) on a low-volume day is a
+ * no-data sentinel → mapped to null (render «—», gap the line); brandRating 0 is real.
  *
  * Errors: a failing upstream WB call surfaces as `503 ServiceUnavailableException`
  * (`ApiError { status: 503 }`); the hook/view maps that to a friendly RU error state.
@@ -50,6 +51,16 @@ function toNullableMetric(raw: unknown): number | null {
   return null
 }
 
+/**
+ * Share-percent coercion (pricePercent/qtyPercent). Contract §2: a `0` share on
+ * a low-volume day is a no-data sentinel → map to null (the chart renders «—»
+ * and gaps the line via connectNulls={false}). brandRating uses toNullableMetric.
+ */
+function toNullableShareMetric(raw: unknown): number | null {
+  const n = toNullableMetric(raw)
+  return n === 0 ? null : n
+}
+
 /** Map one raw report row to the FE-canonical shape. Preserves nulls (AP#8). */
 function mapReportPoint(raw: unknown): BrandShareReportPoint {
   const e = (raw ?? {}) as Record<string, unknown>
@@ -57,16 +68,15 @@ function mapReportPoint(raw: unknown): BrandShareReportPoint {
   return {
     applyDate,
     brandRating: toNullableMetric(e.brandRating),
-    pricePercent: toNullableMetric(e.pricePercent),
-    qtyPercent: toNullableMetric(e.qtyPercent),
+    pricePercent: toNullableShareMetric(e.pricePercent),
+    qtyPercent: toNullableShareMetric(e.qtyPercent),
   }
 }
 
 /** Map one raw parent-subject row to the FE-canonical shape. */
 function mapParentSubject(raw: unknown): BrandParentSubject | null {
   const e = (raw ?? {}) as Record<string, unknown>
-  const parentId =
-    typeof e.parentId === 'number' ? e.parentId : Number(e.parentId ?? NaN)
+  const parentId = typeof e.parentId === 'number' ? e.parentId : Number(e.parentId ?? NaN)
   if (!Number.isFinite(parentId)) return null
   const parentName = typeof e.parentName === 'string' ? e.parentName : String(e.parentName ?? '')
   return { parentId, parentName }
@@ -81,9 +91,11 @@ export async function getBrandShareBrands(): Promise<string[]> {
 }
 
 /** 2. GET /v1/analytics/brand-share/parent-subjects?brand=&dateFrom=&dateTo= */
-export async function getBrandShareParentSubjects(params: {
-  brand: string
-} & BrandShareDateRange): Promise<BrandParentSubject[]> {
+export async function getBrandShareParentSubjects(
+  params: {
+    brand: string
+  } & BrandShareDateRange
+): Promise<BrandParentSubject[]> {
   const qs = buildBrandShareQuery({
     brand: params.brand,
     dateFrom: params.dateFrom,
@@ -94,16 +106,16 @@ export async function getBrandShareParentSubjects(params: {
     `/v1/analytics/brand-share/parent-subjects${qs}`
   )) as unknown
   if (!Array.isArray(raw)) return []
-  return raw
-    .map(mapParentSubject)
-    .filter((s): s is BrandParentSubject => s !== null)
+  return raw.map(mapParentSubject).filter((s): s is BrandParentSubject => s !== null)
 }
 
 /** 3. GET /v1/analytics/brand-share?brand=&parentId=&dateFrom=&dateTo= */
-export async function getBrandShareReport(params: {
-  brand: string
-  parentId: number
-} & BrandShareDateRange): Promise<BrandShareReport> {
+export async function getBrandShareReport(
+  params: {
+    brand: string
+    parentId: number
+  } & BrandShareDateRange
+): Promise<BrandShareReport> {
   const qs = buildBrandShareQuery({
     brand: params.brand,
     parentId: params.parentId,

@@ -43,6 +43,7 @@ import {
   ShieldCheck,
   CalendarSearch,
   Zap,
+  TrendingUp,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -92,6 +93,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Ликвидность', href: ROUTES.ANALYTICS.LIQUIDITY, icon: Droplets },
   // Epic 33: Advertising Analytics
   { label: 'Реклама', href: ROUTES.ANALYTICS.ADVERTISING, icon: Megaphone },
+  // PR4b: brand competitive-positioning (rating + share by price/qty)
+  { label: 'Доля бренда', href: ROUTES.ANALYTICS.BRAND_SHARE, icon: TrendingUp },
   // Epic 51-FE: FBS Historical Analytics
   { label: 'Заказы FBS', href: ROUTES.ANALYTICS.ORDERS, icon: ClipboardList },
   // Epic 96-FE Story 96.11: FBS Stock Breakdowns (adjacent to "Заказы FBS" — L-2 fix)
