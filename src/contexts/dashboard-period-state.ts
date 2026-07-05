@@ -28,6 +28,7 @@ import {
   setStoredPeriodType,
   buildPeriodUrlParams,
 } from './dashboard-period-storage'
+import { invalidateDashboardDataQueries } from '@/hooks/dashboard-query-invalidation'
 
 const URL_PARAMS = PERIOD_URL_PARAMS
 
@@ -111,8 +112,7 @@ export function useDashboardPeriodState(initialWeek?: string): DashboardPeriodCo
 
   const refresh = useCallback(() => {
     setLastRefresh(new Date())
-    queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-    queryClient.invalidateQueries({ queryKey: ['analytics'] })
+    invalidateDashboardDataQueries(queryClient)
   }, [queryClient])
 
   useEffect(() => {

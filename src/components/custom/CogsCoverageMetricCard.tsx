@@ -3,8 +3,10 @@
  * Story 60.5-FE: Remove Data Duplication
  * Epic 60-FE: Dashboard & Analytics UX Improvements
  *
- * Displays COGS coverage as "X из Y товаров" with percentage badge.
- * Shows how many products have COGS assigned vs total products.
+ * Displays catalog-level COGS coverage as "X из Y товаров" with percentage badge.
+ * Shows how many products have COGS assigned vs total products. This is a
+ * catalog readiness indicator and is intentionally independent from dashboard
+ * week/month period filters.
  *
  * @see docs/stories/epic-60/story-60.5-fe-remove-data-duplication.md
  */
@@ -114,14 +116,19 @@ export function CogsCoverageMetricCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <PieChart className="h-4 w-4 text-muted-foreground" data-testid="metric-icon" />
-            <span className="text-sm font-medium text-muted-foreground">COGS покрытие</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              COGS покрытие каталога
+            </span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <Info className="h-4 w-4 text-muted-foreground cursor-help" data-testid="info-icon" />
             </TooltipTrigger>
             <TooltipContent size="md">
-              <p>Количество товаров с назначенной себестоимостью</p>
+              <p>
+                Доля товаров каталога с назначенной себестоимостью. Показатель не зависит от
+                выбранной недели или месяца.
+              </p>
             </TooltipContent>
           </Tooltip>
         </div>

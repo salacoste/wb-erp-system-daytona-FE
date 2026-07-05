@@ -121,21 +121,41 @@ export function DashboardContent(): React.ReactElement {
         />
       </section>
 
-      {/* T2 — Operational: detailed P&L grid + period/daily/inventory/storage/ads */}
-      <section aria-labelledby="dashboard-operational-heading" className="space-y-4">
-        <h2 id="dashboard-operational-heading" className="sr-only">
-          Операционные метрики
+      {/* T2 — Period structure: P&L first, then comparisons, operations, inventory, marketing. */}
+      <section aria-labelledby="dashboard-period-structure-heading" className="space-y-4">
+        <h2 id="dashboard-period-structure-heading" className="text-lg font-semibold">
+          Финансовая структура периода
         </h2>
         {(d.fboShare > 0 || d.fbsShare > 0) && (
           <FulfillmentShareBar fboShare={d.fboShare} fbsShare={d.fbsShare} />
         )}
         <DashboardMetricsGrid {...gridProps} />
-        <PeriodComparisonSection currentWeek={d.selectedWeek} />
+        <PeriodComparisonSection
+          periodType={d.periodType}
+          currentWeek={d.selectedWeek}
+          currentMonth={d.selectedMonth}
+        />
+      </section>
+
+      <section aria-labelledby="dashboard-operations-heading" className="space-y-4">
+        <h2 id="dashboard-operations-heading" className="text-lg font-semibold">
+          Операции и остатки
+        </h2>
         <DailyBreakdownSection className="mt-4" />
         <InventorySummaryWidget />
         <div role="region" aria-label="Хранение">
-          <StorageSection selectedWeek={d.selectedWeek} />
+          <StorageSection
+            periodType={d.periodType}
+            selectedWeek={d.selectedWeek}
+            selectedMonth={d.selectedMonth}
+          />
         </div>
+      </section>
+
+      <section aria-labelledby="dashboard-marketing-heading" className="space-y-4">
+        <h2 id="dashboard-marketing-heading" className="text-lg font-semibold">
+          Маркетинг
+        </h2>
         <AdvertisingDashboardWidget dateRange={d.dateRange} hideLocalSelector />
         <MarketingKpiCard from={d.dateRange.from} to={d.dateRange.to} />
       </section>

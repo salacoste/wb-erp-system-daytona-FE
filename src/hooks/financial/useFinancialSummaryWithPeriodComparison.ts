@@ -55,18 +55,27 @@ export function useFinancialSummaryWithPeriodComparison(
   // Query previous period (disabled when previousPeriod is empty)
   const previousQuery = useFinancialSummary(previousPeriod, periodType)
 
-  // Handle previous period errors gracefully - return undefined instead of error
-  const previousData = previousQuery.isError ? undefined : previousQuery.data
+  // Do not expose React Query placeholder data as actual period data. Dashboard period
+  // selectors must never render the previous week's financial summary while the newly
+  // selected week/month is still loading.
+  const currentData = currentQuery.isPlaceholderData ? undefined : currentQuery.data
+  // Handle previous period errors gracefully - return undefined instead of error.
+  const previousData =
+    previousQuery.isError || previousQuery.isPlaceholderData ? undefined : previousQuery.data
 
   // Determine combined loading state
-  const isLoading = currentQuery.isLoading || (previousQuery.isLoading && !previousQuery.isError)
+  const isLoading =
+    currentQuery.isLoading ||
+    currentQuery.isPlaceholderData ||
+    (previousQuery.isLoading && !previousQuery.isError) ||
+    (previousQuery.isPlaceholderData && !previousQuery.isError)
 
   // Current period error is critical, previous period error is graceful
   const isError = currentQuery.isError
   const error = currentQuery.error
 
   return {
-    current: currentQuery.data,
+    current: currentData,
     previous: previousData,
     isLoading,
     isError,

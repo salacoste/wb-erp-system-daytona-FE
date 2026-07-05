@@ -108,9 +108,31 @@ describe('MetricsGrid (Story 65.17)', () => {
 
       // TZ-2: 6 profit cards → 1 ProfitWaterfallCard (1 article = NetProfitCard).
       // TZ-3: 4 revenue-by-price-level simple cards → 1 SalesByPriceLevelCard.
-      // 1 net-profit + 4 simple + 1 sales-by-price + 8 complex = 14.
+      // 1 net-profit + 3 simple (returns ₽/шт consolidated) + 1 sales-by-price
+      // + 7 complex (paid acceptance consolidated into storage) = 12.
       const articles = screen.getAllByRole('article')
-      expect(articles.length).toBe(14)
+      expect(articles.length).toBe(12)
+    })
+
+    it('consolidates returns amount and quantity into one card', () => {
+      const props = createMinimalGridProps()
+      renderWithProviders(<DashboardMetricsGrid {...props} />)
+
+      expect(screen.getByText('Возвраты')).toBeInTheDocument()
+      expect(screen.queryByText('Возвраты, ₽')).not.toBeInTheDocument()
+      expect(screen.queryByText('Возвраты, шт')).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('article', { name: /Возвраты: 20 шт \/ 5\s*000/ })
+      ).toBeInTheDocument()
+    })
+
+    it('consolidates paid acceptance into the storage and acceptance card', () => {
+      const props = createMinimalGridProps()
+      renderWithProviders(<DashboardMetricsGrid {...props} />)
+
+      expect(screen.getByText('Хранение и приёмка')).toBeInTheDocument()
+      expect(screen.queryByText('Плат. приемка')).not.toBeInTheDocument()
+      expect(screen.getByText(/Приёмка/)).toBeInTheDocument()
     })
   })
 

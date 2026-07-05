@@ -45,7 +45,7 @@ export interface PreviousPeriodData {
   salesCogs: number | null
   storageCost: number | null
   theoreticalProfit: number | null
-  // Paid acceptance cost for PaidAcceptanceCard comparison
+  // Paid acceptance cost; displayed inside StorageAcceptanceCard comparison/detail
   paidAcceptanceCost: number | null
   // WB other deductions total for OtherDeductionsCard comparison
   wbOtherDeductionsTotal: number | null

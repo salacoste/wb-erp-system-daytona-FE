@@ -50,20 +50,13 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
     {
       icon: RotateCcw,
       iconColor: 'text-red-500',
-      title: 'Возвраты, ₽',
-      value: fmtRub(p.wbReturnsGross),
+      title: 'Возвраты',
+      value: `${fmtPcs(p.returnsCount)} / ${fmtRub(p.wbReturnsGross)}`,
       valueColor: 'text-red-600',
+      current: p.returnsCount,
       tooltip:
-        'Сколько WB удержал за возвращённые товары — на том же ценовом уровне, что и «Выкупы» (уже после комиссии WB).\nРозничная стоимость возвратов выше, так как не учитывает комиссию.\nПример: покупатель вернул товар за 1000₽ по рознице → WB удержит с вас ~650₽ (за вычетом своей комиссии).\nИсточник: еженедельный финансовый отчёт WB.',
-    },
-    {
-      icon: RotateCcw,
-      iconColor: 'text-red-500',
-      title: 'Возвраты, шт',
-      value: fmtPcs(p.returnsCount),
-      valueColor: 'text-red-600',
-      tooltip:
-        'Количество возвращённых товаров за период (FBO + FBS).\nИсточник: данные о заказах WB (fulfillment).',
+        'Возвраты за период в штуках и ₽.\nШтуки: количество возвращённых товаров (FBO + FBS), источник — fulfillment.\n₽: сколько WB удержал за возвращённые товары на уровне поставщика, источник — еженедельный финансовый отчёт WB.\nРозничная стоимость возвратов выше, так как не учитывает комиссию WB.',
+      subtitle: 'шт / ₽',
     },
   ]
 }

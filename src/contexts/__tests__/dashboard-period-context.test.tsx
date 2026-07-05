@@ -410,6 +410,34 @@ describe('Story 60.1-FE: AC8, AC9 - Refresh Action', () => {
       act(() => result.current.refresh())
       expect(result.current.lastRefresh.getTime()).toBeGreaterThan(before.getTime())
     })
+
+    it('invalidates every dashboard data namespace', () => {
+      const expectedQueryKeys = [
+        ['dashboard'],
+        ['analytics'],
+        ['financial'],
+        ['fulfillment'],
+        ['advertising'],
+        ['analytics-comparison'],
+        ['processing-status'],
+      ]
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      })
+      const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+          <DashboardPeriodProvider>{children}</DashboardPeriodProvider>
+        </QueryClientProvider>
+      )
+      const { result } = renderHook(() => useDashboardPeriod(), { wrapper })
+
+      act(() => result.current.refresh())
+
+      expectedQueryKeys.forEach(queryKey => {
+        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey })
+      })
+    })
   })
 })
 

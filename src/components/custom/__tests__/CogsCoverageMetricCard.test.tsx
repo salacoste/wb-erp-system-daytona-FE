@@ -116,10 +116,10 @@ describe('CogsCoverageMetricCard', () => {
   })
 
   describe('title and icon', () => {
-    it('should display "COGS покрытие" title', () => {
+    it('should display catalog-scoped COGS coverage title', () => {
       renderCard({ productsWithCogs: 50, totalProducts: 100, coverage: 50 })
 
-      expect(screen.getByText('COGS покрытие')).toBeInTheDocument()
+      expect(screen.getByText('COGS покрытие каталога')).toBeInTheDocument()
     })
 
     it('should display PieChart icon', () => {

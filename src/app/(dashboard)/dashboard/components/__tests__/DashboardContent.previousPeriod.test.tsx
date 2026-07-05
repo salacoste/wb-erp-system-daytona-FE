@@ -25,13 +25,24 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 const mockFinancialSummaryComparison = vi.fn()
 const mockAdvertisingComparison = vi.fn()
 const mockFulfillmentSummaryComparison = vi.fn()
+const mockDashboardPeriod = vi.hoisted(() => ({
+  value: {
+    periodType: 'week',
+    selectedWeek: '2026-W05',
+    selectedMonth: '2026-01',
+    previousWeek: '2026-W04',
+    previousMonth: '2025-12',
+    lastRefresh: new Date(),
+  },
+}))
 
 vi.mock('@/hooks/useFulfillment', () => ({
   useFulfillmentSummaryWithComparison: (_params: unknown) => mockFulfillmentSummaryComparison(),
 }))
 
 vi.mock('@/hooks/useFinancialSummary', () => ({
-  useFinancialSummaryWithPeriodComparison: () => mockFinancialSummaryComparison(),
+  useFinancialSummaryWithPeriodComparison: (params: unknown) =>
+    mockFinancialSummaryComparison(params),
   useAvailableWeeks: () => ({
     data: [{ week: '2026-W05' }, { week: '2026-W04' }],
     isLoading: false,
@@ -126,19 +137,16 @@ vi.mock('next/navigation', () => ({
 
 // Mock dashboard period hook
 vi.mock('@/hooks/useDashboardPeriod', () => ({
-  useDashboardPeriod: () => ({
-    periodType: 'week',
-    selectedWeek: '2026-W05',
-    selectedMonth: '2026-01',
-    previousWeek: '2026-W04',
-    previousMonth: '2025-12',
-    lastRefresh: new Date(),
-  }),
+  useDashboardPeriod: () => mockDashboardPeriod.value,
 }))
 
 // Mock processing status
 vi.mock('@/hooks/useProcessingStatus', () => ({
   useProcessingStatus: () => ({ data: null }),
+}))
+
+vi.mock('@/hooks/usePreliminaryTax', () => ({
+  usePreliminaryTax: () => null,
 }))
 
 // Mock products hooks
@@ -201,8 +209,13 @@ vi.mock('../UnitEconomicsSection', () => ({
 vi.mock('../StorageSection', () => ({ StorageSection: () => null }))
 
 vi.mock('@/components/custom/dashboard', () => ({
-  DashboardMetricsGrid: vi.fn(({ previousPeriodData }) => (
-    <div data-testid="metrics-grid" data-previous={JSON.stringify(previousPeriodData)}>
+  DashboardMetricsGrid: vi.fn(({ previousPeriodData, isLoading, saleGross }) => (
+    <div
+      data-testid="metrics-grid"
+      data-is-loading={String(isLoading)}
+      data-previous={JSON.stringify(previousPeriodData)}
+      data-sale-gross={String(saleGross)}
+    >
       Metrics Grid
     </div>
   )),
@@ -237,11 +250,20 @@ function createTestQueryClient() {
 
 function renderWithProviders(component: React.ReactElement) {
   const queryClient = createTestQueryClient()
-  return render(
+  const view = render(
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>{component}</TooltipProvider>
     </QueryClientProvider>
   )
+  return {
+    ...view,
+    rerenderWithProviders: (nextComponent: React.ReactElement) =>
+      view.rerender(
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>{nextComponent}</TooltipProvider>
+        </QueryClientProvider>
+      ),
+  }
 }
 
 /**
@@ -251,6 +273,10 @@ function getPreviousPeriodDataFromRender() {
   const grid = screen.getByTestId('metrics-grid')
   const dataAttr = grid.getAttribute('data-previous')
   return dataAttr ? JSON.parse(dataAttr) : null
+}
+
+function getMetricsGridAttr(name: string) {
+  return screen.getByTestId('metrics-grid').getAttribute(name)
 }
 
 /**
@@ -307,6 +333,14 @@ function setupDefaultMocks() {
 describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockDashboardPeriod.value = {
+      periodType: 'week',
+      selectedWeek: '2026-W05',
+      selectedMonth: '2026-01',
+      previousWeek: '2026-W04',
+      previousMonth: '2025-12',
+      lastRefresh: new Date(),
+    }
     // Set default mock implementations
     setupDefaultMocks()
   })
@@ -446,6 +480,97 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
   // ===========================================================================
 
   describe('Full Previous Period Data Integration', () => {
+    it('keeps the metrics grid loading while a selected finance period is transitioning', async () => {
+      mockFinancialSummaryComparison.mockReturnValue({
+        current: undefined,
+        previous: undefined,
+        isLoading: true,
+        isError: false,
+        error: null,
+      })
+
+      renderWithProviders(<DashboardContent />)
+
+      await waitFor(() => {
+        expect(getMetricsGridAttr('data-is-loading')).toBe('true')
+        expect(getMetricsGridAttr('data-sale-gross')).toBe('undefined')
+      })
+    })
+
+    it('keeps stale available-weeks UI loading until selected finance period data resolves', async () => {
+      mockDashboardPeriod.value = {
+        ...mockDashboardPeriod.value,
+        selectedWeek: '2026-W03',
+        previousWeek: '2026-W02',
+      }
+      type MockFinancialComparisonState = {
+        current?: { summary_total: typeof mockCurrentFinanceSummaryTotal }
+        previous?: { summary_total: typeof mockPreviousFinanceSummaryTotal }
+        isLoading: boolean
+        isError: boolean
+        error: Error | null
+      }
+      let financeState: MockFinancialComparisonState = {
+        current: undefined,
+        previous: undefined,
+        isLoading: true,
+        isError: false,
+        error: null,
+      }
+      mockFinancialSummaryComparison.mockImplementation(() => financeState)
+
+      const { rerenderWithProviders } = renderWithProviders(<DashboardContent />)
+
+      await waitFor(() => {
+        expect(mockFinancialSummaryComparison).toHaveBeenCalledWith(
+          expect.objectContaining({ period: '2026-W03', enabled: true })
+        )
+        expect(getMetricsGridAttr('data-is-loading')).toBe('true')
+        expect(getMetricsGridAttr('data-sale-gross')).toBe('undefined')
+      })
+
+      financeState = {
+        current: {
+          summary_total: {
+            ...mockCurrentFinanceSummaryTotal,
+            sale_gross_total: 123456,
+          },
+        },
+        previous: {
+          summary_total: mockPreviousFinanceSummaryTotal,
+        },
+        isLoading: false,
+        isError: false,
+        error: null,
+      }
+      rerenderWithProviders(<DashboardContent />)
+
+      await waitFor(() => {
+        expect(getMetricsGridAttr('data-is-loading')).toBe('false')
+        expect(getMetricsGridAttr('data-sale-gross')).toBe('123456')
+      })
+    })
+
+    it('requests selected finance period even when available-weeks does not list it yet', async () => {
+      mockDashboardPeriod.value = {
+        ...mockDashboardPeriod.value,
+        selectedWeek: '2026-W03',
+        previousWeek: '2026-W02',
+      }
+
+      renderWithProviders(<DashboardContent />)
+
+      await waitFor(() => {
+        expect(mockFinancialSummaryComparison).toHaveBeenCalledWith(
+          expect.objectContaining({
+            periodType: 'week',
+            period: '2026-W03',
+            enabled: true,
+          })
+        )
+      })
+    })
+
     it('should provide all 8 metrics for previous period comparison', async () => {
       renderWithProviders(<DashboardContent />)
 
