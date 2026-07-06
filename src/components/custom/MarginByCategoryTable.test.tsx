@@ -259,4 +259,113 @@ describe('MarginByCategoryTable', () => {
       expect(handleClick).not.toHaveBeenCalled()
     })
   })
+
+  describe('BD-5: cogs === 0 (COGS unassigned) degenerate guard', () => {
+    // Live W26 condition: by-category normalizer maps cogs_rub:"0" → cogs:0 when no COGS
+    // version exists ⇒ profit collapses to revenue, margin_pct → 100 %. Every COGS-derived
+    // metric must render «—». Mirrors period-card fix 0436ecc9; REPORT.md BD-5.
+    const bd5Data: MarginAnalyticsAggregated[] = [
+      {
+        category: 'NoCogs Cat',
+        revenue_net: 100000,
+        qty: 50,
+        total_skus: 2,
+        cogs: 0,
+        profit: 100000,
+        operating_profit: 35000,
+        net_profit_after_tax: 34000,
+        margin_pct: 100,
+        markup_percent: undefined,
+        missing_cogs_count: 0,
+      },
+      {
+        category: 'CogsOK Cat',
+        revenue_net: 100000,
+        qty: 50,
+        total_skus: 2,
+        cogs: 60000,
+        profit: 40000,
+        operating_profit: 35000,
+        net_profit_after_tax: 34000,
+        margin_pct: 40,
+        markup_percent: 66.67,
+        missing_cogs_count: 0,
+      },
+    ]
+
+    const rowByName = (container: HTMLElement, name: string) =>
+      Array.from(container.querySelectorAll('tbody tr')).find(tr =>
+        tr.textContent?.includes(name)
+      ) as HTMLElement
+
+    it('suppresses the margin badge (→ gray «—») when cogs === 0', () => {
+      const { container } = render(<MarginByCategoryTable data={bd5Data} />)
+      const noCogsRow = rowByName(container, 'NoCogs Cat')
+      expect(noCogsRow.querySelector('.bg-green-50, .bg-red-50')).toBeNull()
+    })
+
+    it('renders «—» for COGS-dependent cells when cogs === 0', () => {
+      const { container } = render(<MarginByCategoryTable data={bd5Data} />)
+      const noCogsRow = rowByName(container, 'NoCogs Cat')
+      const cogsOkRow = rowByName(container, 'CogsOK Cat')
+      const noCogsDashes = (noCogsRow.textContent?.match(/—/g) ?? []).length
+      const cogsOkDashes = (cogsOkRow.textContent?.match(/—/g) ?? []).length
+      // 6 gated cells render «—» only on the cogs=0 row ⇒ sentinel delta ≥6.
+      expect(noCogsDashes - cogsOkDashes).toBeGreaterThanOrEqual(6)
+    })
+
+    it('keeps revenue / operating profit visible (real, non-COGS) when cogs === 0', () => {
+      const { container } = render(<MarginByCategoryTable data={bd5Data} />)
+      const noCogsRow = rowByName(container, 'NoCogs Cat')
+      expect(noCogsRow.textContent).toMatch(/100\s*000/) // Выручка 100 000
+      expect(noCogsRow.textContent).toMatch(/35\s*000/) // Опер. прибыль 35 000
+    })
+
+    it('renders real margin badge + profit for cogs > 0 rows (control)', () => {
+      const { container } = render(<MarginByCategoryTable data={bd5Data} />)
+      const cogsOkRow = rowByName(container, 'CogsOK Cat')
+      expect(cogsOkRow.querySelector('.bg-green-50')).not.toBeNull()
+      expect(cogsOkRow.textContent).toMatch(/40\s*000/)
+    })
+
+    it('renders «—» profit-share for every row when ALL rows are cogs === 0 (production W26 reality)', () => {
+      // W26: 0/20 rows have assigned COGS ⇒ shareTotals.grossProfit === 0. Forward-guard
+      // on the zero-denominator path — no row may leak NaN/Infinity/0-% into the
+      // «Вклад в валовую прибыль» column (pins sharePercentage's total===0 guard).
+      const allDegenerate: MarginAnalyticsAggregated[] = [
+        {
+          category: 'DegA',
+          revenue_net: 100000,
+          qty: 10,
+          total_skus: 1,
+          cogs: 0,
+          profit: 100000,
+          operating_profit: 5000,
+          margin_pct: 100,
+          markup_percent: undefined,
+          missing_cogs_count: 0,
+        },
+        {
+          category: 'DegB',
+          revenue_net: 50000,
+          qty: 5,
+          total_skus: 1,
+          cogs: 0,
+          profit: 50000,
+          operating_profit: 3000,
+          margin_pct: 100,
+          markup_percent: undefined,
+          missing_cogs_count: 0,
+        },
+      ]
+      const { container } = render(<MarginByCategoryTable data={allDegenerate} />)
+      const rows = Array.from(container.querySelectorAll('tbody tr'))
+      expect(rows).toHaveLength(2)
+      for (const row of rows) {
+        const profitShareCell = row.querySelector('[title="Вклад в валовую прибыль"]')
+        expect(profitShareCell?.textContent?.trim()).toBe('—')
+        expect(row.textContent ?? '').not.toMatch(/NaN|Infinity/)
+      }
+    })
+  })
 })
