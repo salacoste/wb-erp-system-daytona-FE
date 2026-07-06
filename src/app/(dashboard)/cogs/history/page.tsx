@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useCogsHistoryFull } from '@/hooks/useCogsHistoryFull'
+import { useAuthStore } from '@/stores/authStore'
 import { CogsHistoryMeta } from '@/components/custom/CogsHistoryMeta'
 import { CogsHistoryTable } from '@/components/custom/CogsHistoryTable'
 import { CogsHistoryPagination } from '@/components/custom/CogsHistoryPagination'
@@ -37,6 +38,9 @@ import {
 export default function CogsHistoryPage() {
   const searchParams = useSearchParams()
   const nmId = searchParams.get('nmId')
+  // BD-14: pass the canonical (Capitalized) role so the table can gate the
+  // «Показать удалённые записи» toggle (Owner/Service) — previously never passed.
+  const userRole = useAuthStore(state => state.user?.role)
 
   const {
     cursor,
@@ -99,6 +103,7 @@ export default function CogsHistoryPage() {
             data={data?.data || []}
             includeDeleted={includeDeleted}
             onIncludeDeletedChange={handleIncludeDeletedChange}
+            userRole={userRole ?? 'Analyst'}
           />
 
           {/* AC: 6 - Pagination */}

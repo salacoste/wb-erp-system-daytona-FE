@@ -12,7 +12,9 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { canManageOperationalData } from '@/lib/role-permissions'
 import type { CogsHistoryItem } from '@/types/cogs'
+import type { User } from '@/types/auth'
 import { AffectedWeeksCell } from './AffectedWeeksCell'
 import { CogsEditDialog } from './CogsEditDialog'
 import { CogsDeleteDialog } from './CogsDeleteDialog'
@@ -22,7 +24,8 @@ export interface CogsHistoryTableProps {
   data: CogsHistoryItem[]
   includeDeleted: boolean
   onIncludeDeletedChange: (value: boolean) => void
-  userRole?: 'analyst' | 'manager' | 'owner' | 'admin'
+  /** BD-14: canonical (Capitalized) auth role — required so the page can't forget it. */
+  userRole: User['role']
 }
 
 /**
@@ -33,13 +36,15 @@ export function CogsHistoryTable({
   data,
   includeDeleted,
   onIncludeDeletedChange,
-  userRole = 'manager',
+  userRole,
 }: CogsHistoryTableProps) {
   const [editRecord, setEditRecord] = useState<CogsHistoryItem | null>(null)
   const [deleteRecord, setDeleteRecord] = useState<CogsHistoryItem | null>(null)
 
-  const canViewDeleted = userRole === 'owner' || userRole === 'admin'
-  const canEdit = userRole !== 'analyst'
+  // BD-14: canonical roles are Capitalized (authStoreHelpers.normalizeUser maps
+  // owner→Owner, etc.). Viewing soft-deleted COGS is Owner + Service only (not Manager).
+  const canViewDeleted = userRole === 'Owner' || userRole === 'Service'
+  const canEdit = canManageOperationalData(userRole)
 
   return (
     <div className="space-y-4">

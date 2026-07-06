@@ -74,7 +74,7 @@ const defaultProps = {
   data: mockData.filter(d => d.is_active),
   includeDeleted: false,
   onIncludeDeletedChange: () => {},
-  userRole: 'manager' as const,
+  userRole: 'Manager' as const,
 }
 
 describe('CogsHistoryTable', () => {
@@ -162,35 +162,48 @@ describe('CogsHistoryTable', () => {
       React.createElement(
         createWrapper(),
         null,
-        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'analyst' })
+        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'Analyst' })
       )
     )
 
     expect(screen.queryByText('Показать удалённые записи')).not.toBeInTheDocument()
   })
 
-  it('shows "Show deleted" checkbox for owner role', () => {
+  it('shows "Show deleted" checkbox for Owner role', () => {
     render(
       React.createElement(
         createWrapper(),
         null,
-        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'owner' })
+        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'Owner' })
       )
     )
 
     expect(screen.getByText('Показать удалённые записи')).toBeInTheDocument()
   })
 
-  it('shows "Show deleted" checkbox for admin role', () => {
+  it('shows "Show deleted" checkbox for Service role', () => {
     render(
       React.createElement(
         createWrapper(),
         null,
-        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'admin' })
+        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'Service' })
       )
     )
 
     expect(screen.getByText('Показать удалённые записи')).toBeInTheDocument()
+  })
+
+  it('hides "Show deleted" checkbox for Manager role (BD-14: Owner/Service only)', () => {
+    render(
+      React.createElement(
+        createWrapper(),
+        null,
+        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'Manager' })
+      )
+    )
+
+    // Manager can edit COGS but must NOT view soft-deleted versions.
+    expect(screen.queryByText('Показать удалённые записи')).not.toBeInTheDocument()
   })
 
   it('hides actions column for analyst role', () => {
@@ -198,11 +211,23 @@ describe('CogsHistoryTable', () => {
       React.createElement(
         createWrapper(),
         null,
-        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'analyst' })
+        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'Analyst' })
       )
     )
 
     expect(screen.queryByText('Действия')).not.toBeInTheDocument()
+  })
+
+  it('shows actions column for Manager role (BD-14: canEdit via canManageOperationalData)', () => {
+    render(
+      React.createElement(
+        createWrapper(),
+        null,
+        React.createElement(CogsHistoryTable, { ...defaultProps, userRole: 'Manager' })
+      )
+    )
+
+    expect(screen.getByText('Действия')).toBeInTheDocument()
   })
 
   it('displays deleted records with strikethrough when included', () => {
@@ -214,7 +239,7 @@ describe('CogsHistoryTable', () => {
           ...defaultProps,
           data: mockData, // Include deleted record
           includeDeleted: true,
-          userRole: 'admin',
+          userRole: 'Service',
         })
       )
     )
@@ -232,7 +257,7 @@ describe('CogsHistoryTable', () => {
         React.createElement(CogsHistoryTable, {
           ...defaultProps,
           onIncludeDeletedChange,
-          userRole: 'admin',
+          userRole: 'Service',
         })
       )
     )
