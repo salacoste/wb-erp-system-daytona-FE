@@ -163,7 +163,7 @@ export function CabinetInfoCard({ cabinetId }: { cabinetId: string }) {
               <InfoRow
                 icon={Clock}
                 label="Проверено"
-                value={new Date(jam.checkedAt).toLocaleString('ru-RU')}
+                value={jam.checkedAt ? new Date(jam.checkedAt).toLocaleString('ru-RU') : '—'}
               />
             </div>
           ) : (

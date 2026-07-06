@@ -68,7 +68,8 @@ export function FbsCalculatedMetricsSection({
         <KpiCard
           title="Дней покрытия остатков"
           value={
-            calculatedMetrics.stockCoverageDays == null
+            calculatedMetrics.stockCoverageDays == null ||
+            calculatedMetrics.stockCoverageDays >= 999
               ? '—'
               : formatDecimal(calculatedMetrics.stockCoverageDays, 1)
           }

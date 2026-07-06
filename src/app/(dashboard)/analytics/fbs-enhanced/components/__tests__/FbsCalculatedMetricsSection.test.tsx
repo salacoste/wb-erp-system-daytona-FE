@@ -43,4 +43,20 @@ describe('FbsCalculatedMetricsSection (Story 96.13-FE)', () => {
     expect(screen.getByText('30,0')).toBeInTheDocument()
     expect(screen.getByText('1,80')).toBeInTheDocument()
   })
+
+  it('BD-43: renders «—» for stockCoverageDays >= 999 (BE "never-sells" sentinel)', () => {
+    renderWithProviders(
+      <FbsCalculatedMetricsSection
+        calculatedMetrics={{
+          turnoverRate: 2.5,
+          stockCoverageDays: 999,
+          ordersPerProduct: 1.8,
+        }}
+      />
+    )
+    // 999 sentinel must NOT render as "999,0"
+    expect(screen.queryByText('999,0')).toBeNull()
+    // The coverage card renders «—» (the only dash — the other two have real values)
+    expect(screen.getAllByText('—')).toHaveLength(1)
+  })
 })
