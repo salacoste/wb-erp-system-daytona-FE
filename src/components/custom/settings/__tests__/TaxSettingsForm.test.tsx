@@ -177,7 +177,8 @@ describe('TaxSettingsForm (Story 66.3-FE)', () => {
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledWith(
-        expect.objectContaining({ taxSystem: 'usn6' }),
+        // BD-FE-004: vatRate:0 (not null) when vatPayer=false — BE rejects null
+        expect.objectContaining({ taxSystem: 'usn6', vatRate: 0 }),
         expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) })
       )
     })

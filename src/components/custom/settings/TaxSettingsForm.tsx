@@ -69,7 +69,10 @@ export function TaxSettingsForm({ cabinetId }: TaxSettingsFormProps) {
         taxSystem,
         taxRate: taxSystem === 'manual' ? Number(taxRate) : null,
         vatPayer,
-        vatRate: vatPayer ? vatRate : null,
+        // BD-FE-004: BE PUT rejects `vatRate:null` (must be 0|5|20|22) even though GET
+        // returns null for non-VAT-payers. Send 0 (the canonical "no-VAT" value); BE
+        // stores null internally. Verified: PUT with vatRate:0 → 200.
+        vatRate: vatPayer ? vatRate : 0,
       },
       {
         onSuccess: () => {
