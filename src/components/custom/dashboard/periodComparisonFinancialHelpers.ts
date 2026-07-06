@@ -68,10 +68,19 @@ export function getSummaryValue(
   switch (key) {
     case 'revenue':
       return summary.sale_gross_total ?? summary.sale_gross ?? summary.wb_sales_gross_total ?? null
-    case 'profit':
+    case 'profit': {
+      // BD-5: when COGS is unassigned (cogs_total === 0), profit is degenerate
+      // (operating_profit_analytical collapses to revenue_net). Return null → «—»
+      // rather than mislead the seller that revenue == profit.
+      if ((summary.cogs_total ?? 0) === 0) return null
       return summary.operating_profit_analytical ?? summary.gross_profit ?? null
-    case 'margin_pct':
+    }
+    case 'margin_pct': {
+      // BD-5: with cogs_total === 0, margin is degenerate (100% — (rev−0)/rev).
+      // Return null → «—» (don't show a fabricated 100 % margin).
+      if ((summary.cogs_total ?? 0) === 0) return null
       return summary.operating_margin_pct ?? summary.margin_pct ?? null
+    }
     case 'orders':
       return summary.product_transactions_total ?? summary.product_transactions ?? null
     case 'logistics':
