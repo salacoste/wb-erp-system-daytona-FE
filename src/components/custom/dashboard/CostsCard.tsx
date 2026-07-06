@@ -47,7 +47,10 @@ export function CostsCard({
     )
   }
 
-  const hasNoCogs = cogsTotal == null
+  // BD-2: treat cogs_total === 0 the same as null — the BE returns 0 (not null)
+  // when COGS is unassigned for the period, which would render a misleading "0 ₽".
+  // Render «—» + "не заполнена" until COGS is actually assigned.
+  const hasNoCogs = cogsTotal == null || cogsTotal === 0
   const comparison =
     !hasNoCogs && cogsTotal != null && previousCogs != null && previousCogs !== 0
       ? calculateComparison(cogsTotal, previousCogs, true)
