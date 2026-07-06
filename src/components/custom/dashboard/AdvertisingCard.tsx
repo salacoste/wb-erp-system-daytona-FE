@@ -57,11 +57,18 @@ export function AdvertisingCard({
   onRetry,
   className,
 }: AdvertisingCardProps): React.ReactElement {
+  // BD-12: headline source — wb_promotion (finance) vs ad-cabinet API spend. Computed
+  // once from props (before early returns) so the label is consistent across loading /
+  // error / loaded. The advertising page's «Расход» uses the same plain «Реклама» label
+  // for a different number, hence the source-tracked label (REPORT.md BD-12/A5).
+  const useFinanceSrc = wbPromotionCost != null
+  const cardLabel = useFinanceSrc ? 'Продвижение WB' : 'Реклама'
+
   if (isLoading) return <StandardMetricSkeleton className={className} />
   if (error) {
     return (
       <MetricCardError
-        title="Реклама"
+        title={cardLabel}
         icon={Megaphone}
         error={error}
         onRetry={onRetry}
@@ -71,7 +78,6 @@ export function AdvertisingCard({
   }
 
   // Prefer actual WB deductions (finance-summary), fallback to ad API spend
-  const useFinanceSrc = wbPromotionCost != null
   const amount = useFinanceSrc ? wbPromotionCost : totalSpend
   const prevAmount = useFinanceSrc ? (previousWbPromotionCost ?? previousSpend) : previousSpend
   const hasValue = amount != null
@@ -90,19 +96,19 @@ export function AdvertisingCard({
     <Card
       className={cn('transition-shadow hover:shadow-md', className)}
       role="article"
-      aria-label={`Реклама: ${displayValue}`}
+      aria-label={`${cardLabel}: ${displayValue}`}
     >
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Megaphone className="h-4 w-4 text-yellow-600" aria-hidden="true" />
-            <span className="text-sm font-medium text-muted-foreground">Реклама</span>
+            <span className="text-sm font-medium text-muted-foreground">{cardLabel}</span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Подробнее о метрике Реклама"
+                aria-label={`Подробнее о метрике ${cardLabel}`}
               >
                 <Info className="h-4 w-4" />
               </button>
