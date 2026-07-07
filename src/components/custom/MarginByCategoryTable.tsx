@@ -102,6 +102,7 @@ export function MarginByCategoryTable({
               showProfitPerUnit={showProfitPerUnit}
               totalRevenue={shareTotals.revenue}
               totalGrossProfit={shareTotals.grossProfit}
+              rowCount={data.length}
             />
           ))}
         </TableBody>
