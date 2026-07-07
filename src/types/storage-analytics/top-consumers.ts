@@ -27,8 +27,8 @@ export interface TopConsumerItem {
   product_name: string | null
   /** Brand name */
   brand: string | null
-  /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator */
-  storage_cost: number
+  /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator. Null = unknown (AP#8: money, never 0). */
+  storage_cost: number | null
   /** Percentage of total storage cost */
   percent_of_total: number
   /** Volume (liters, null if no data) */
@@ -51,8 +51,8 @@ export interface TopConsumerItem {
 export interface TopConsumersResponse {
   period: StoragePeriod
   top_consumers: TopConsumerItem[]
-  /** Total storage cost for all products (for percent calculation) */
-  total_storage_cost: number
+  /** Total storage cost for all products (for percent calculation). Null = unknown (AP#8: money, never 0). */
+  total_storage_cost: number | null
   /** Flag indicating if data exists for the requested period */
   has_data: boolean
 }

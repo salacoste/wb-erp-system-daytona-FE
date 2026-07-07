@@ -156,7 +156,9 @@ function ConsumerRow({
       )}
       onClick={onClick}
       onKeyDown={onKeyDown}
-      aria-label={`${item.product_name || item.vendor_code || item.nm_id}, хранение ${formatCurrency(item.storage_cost)}`}
+      aria-label={`${item.product_name || item.vendor_code || item.nm_id}, хранение ${
+        item.storage_cost === null ? '—' : formatCurrency(item.storage_cost)
+      }`}
     >
       <div className="w-10 flex-shrink-0">
         <RankIndicator rank={item.rank} />
@@ -191,7 +193,9 @@ function ConsumerRow({
         </div>
       </div>
       <div className="text-right flex-shrink-0">
-        <p className="text-sm font-medium text-[#7C4DFF]">{formatCurrency(item.storage_cost)}</p>
+        <p className="text-sm font-medium text-[#7C4DFF]">
+          {item.storage_cost === null ? '—' : formatCurrency(item.storage_cost)}
+        </p>
         <p className="text-xs text-muted-foreground">
           {formatPercentage(item.percent_of_total, 1)}
         </p>

@@ -42,8 +42,9 @@ export const SKELETON_ROWS = 5
 // Formatters
 // ============================================================================
 
-/** Format number as Russian Ruble currency (no decimals) */
-export function formatCurrency(value: number): string {
+/** Format number as Russian Ruble currency (no decimals). Null = unknown cost → "—" (AP#8: money, never 0). */
+export function formatCurrency(value: number | null): string {
+  if (value === null) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

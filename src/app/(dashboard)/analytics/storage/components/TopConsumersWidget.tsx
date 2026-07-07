@@ -40,8 +40,9 @@ export function TopConsumersWidget({
 }: TopConsumersWidgetProps) {
   const router = useRouter()
 
-  // Format currency
-  const formatCurrency = (value: number): string => {
+  // Format currency. Null = unknown cost (AP#8: money, never collapse to 0 ₽) → render "—".
+  const formatCurrency = (value: number | null): string => {
+    if (value === null) return '—'
     return new Intl.NumberFormat('ru-RU', {
       style: 'currency',
       currency: 'RUB',

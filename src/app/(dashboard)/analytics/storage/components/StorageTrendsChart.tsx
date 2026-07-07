@@ -28,7 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import type { StorageTrendPoint, MetricSummary } from '@/types/storage-analytics'
+import type { StorageTrendPoint, MoneyMetricSummary } from '@/types/storage-analytics'
 import { CHART_COLORS, formatWeekShort } from './storage-trends-config'
 import { TrendBadge, SummaryStats, CustomTooltip, CustomDot } from './StorageTrendsChartParts'
 
@@ -39,7 +39,7 @@ export type { TooltipPayload, CustomDotProps } from './StorageTrendsChartParts'
 
 interface StorageTrendsChartProps {
   data: StorageTrendPoint[]
-  summary?: MetricSummary
+  summary?: MoneyMetricSummary
   isLoading?: boolean
   height?: number
   /** Story 24.10: Currently selected week for filtering */

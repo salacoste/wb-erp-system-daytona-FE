@@ -41,8 +41,8 @@ function normalizeSkuItem(raw: unknown): StorageBySkuItem {
     vendor_code: toStringOrNull(d.vendor_code ?? d.vendorCode),
     product_name: toStringOrNull(d.product_name ?? d.productName),
     brand: toStringOrNull(d.brand),
-    storage_cost_total: toCount(d.storage_cost_total ?? d.storageCostTotal),
-    storage_cost_avg_daily: toCount(d.storage_cost_avg_daily ?? d.storageCostAvgDaily),
+    storage_cost_total: toNullableNumber(d.storage_cost_total ?? d.storageCostTotal),
+    storage_cost_avg_daily: toNullableNumber(d.storage_cost_avg_daily ?? d.storageCostAvgDaily),
     volume_avg: toNullableNumber(d.volume_avg ?? d.volumeAvg),
     warehouses: Array.isArray(d.warehouses) ? d.warehouses.map(String) : [],
     days_stored: toCount(d.days_stored ?? d.daysStored),
@@ -60,7 +60,7 @@ function normalizeTopConsumerItem(raw: unknown): TopConsumerItem {
     vendor_code: toStringOrNull(d.vendor_code ?? d.vendorCode),
     product_name: toStringOrNull(d.product_name ?? d.productName),
     brand: toStringOrNull(d.brand),
-    storage_cost: toCount(d.storage_cost ?? d.storageCost),
+    storage_cost: toNullableNumber(d.storage_cost ?? d.storageCost),
     percent_of_total: toNullableNumber(d.percent_of_total ?? d.percentOfTotal) ?? 0,
     volume: toNullableNumber(d.volume),
     revenue_net: toNullableNumber(d.revenue_net ?? d.revenueNet) ?? undefined,
@@ -89,9 +89,11 @@ export function normalizeStorageBySkuResponse(
   const rawSummary = asRecord(r.summary)
   const items = Array.isArray(r.data) ? r.data : Array.isArray(raw) ? raw : []
   const summary: StorageSummary = {
-    total_storage_cost: toCount(rawSummary.total_storage_cost ?? r.total_storage_cost),
+    total_storage_cost: toNullableNumber(rawSummary.total_storage_cost ?? r.total_storage_cost),
     products_count: toCount(rawSummary.products_count ?? r.products_count ?? items.length),
-    avg_cost_per_product: toCount(rawSummary.avg_cost_per_product ?? r.avg_cost_per_product),
+    avg_cost_per_product: toNullableNumber(
+      rawSummary.avg_cost_per_product ?? r.avg_cost_per_product
+    ),
   }
   const rawPagination = asRecord(r.pagination)
   const pagination: StoragePagination = {
@@ -117,7 +119,7 @@ export function normalizeTopConsumersResponse(raw: unknown): TopConsumersRespons
   return {
     period: normalizePeriod(r.period),
     top_consumers: consumers.map(normalizeTopConsumerItem),
-    total_storage_cost: toCount(r.total_storage_cost),
+    total_storage_cost: toNullableNumber(r.total_storage_cost),
     has_data: !!r.has_data || consumers.length > 0,
   }
 }

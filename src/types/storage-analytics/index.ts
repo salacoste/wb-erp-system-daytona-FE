@@ -29,6 +29,7 @@ export type {
 export type {
   StorageTrendPoint,
   MetricSummary,
+  MoneyMetricSummary,
   StorageTrendsResponse,
   PaidStorageImportRequest,
   ImportStatus,
