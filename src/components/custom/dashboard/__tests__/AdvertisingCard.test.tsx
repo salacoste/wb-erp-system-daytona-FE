@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AdvertisingCard } from '../AdvertisingCard'
+import { ADVERTISING_TOOLTIPS, ROAS_TOOLTIP } from '../AdvertisingCardHelpers'
 
 const renderCard = (props: React.ComponentProps<typeof AdvertisingCard>) =>
   render(
@@ -38,5 +39,20 @@ describe('AdvertisingCard — BD-12 label follows the data source', () => {
 
     expect(screen.getByText('Реклама')).toBeInTheDocument()
     expect(screen.queryByText('Продвижение WB')).not.toBeInTheDocument()
+  })
+})
+
+// ROAS is ALWAYS the ad-API value (overall_roas); only the spend HEADLINE switches to
+// wb_promotion when present. So the finance header tooltip must NOT claim ROAS is computed
+// from the finance figure, and ROAS_TOOLTIP must flag the cross-source pairing.
+describe('AdvertisingCard tooltip accuracy — ROAS base (finance-tooltip fix)', () => {
+  it('finance header tooltip no longer claims ROAS is computed from wb_promotion', () => {
+    expect(ADVERTISING_TOOLTIPS.finance).not.toMatch(/на основе этих данных/)
+    expect(ADVERTISING_TOOLTIPS.finance).toMatch(/другой базе/)
+  })
+
+  it('ROAS_TOOLTIP discloses the «Продвижение WB» headline is a different base', () => {
+    expect(ROAS_TOOLTIP).toMatch(/Продвижение WB/)
+    expect(ROAS_TOOLTIP).toMatch(/не делите заголовок на этот ROAS/)
   })
 })
