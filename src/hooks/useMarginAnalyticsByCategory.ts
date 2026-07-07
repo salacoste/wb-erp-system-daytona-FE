@@ -113,6 +113,9 @@ interface RawCategoryItem {
   profit_rub?: string
   margin_pct?: number
   markup_percent?: number
+  // Backend by-category returns roi (percent 0-100, null when cogs=0) + profit_per_unit
+  roi?: number | null
+  profit_per_unit?: number | null
   missing_cogs_count?: number
   storage_cost_rub?: string
   penalties_rub?: string
@@ -155,6 +158,9 @@ function mapCategoryItem(raw: unknown) {
     profit: item.profit_rub ? parseFloat(item.profit_rub) : undefined,
     margin_pct: item.margin_pct,
     markup_percent: item.markup_percent,
+    // Prefer backend roi/profit_per_unit; MarginAggregatedTableRow falls back to FE recompute (margin-aggregated ROI mapper gap)
+    roi: item.roi ?? null,
+    profit_per_unit: item.profit_per_unit ?? null,
     missing_cogs_count: item.missing_cogs_count,
     // Epic 26: Operating expenses and profit
     storage_cost: item.storage_cost_rub ? parseFloat(item.storage_cost_rub) : undefined,

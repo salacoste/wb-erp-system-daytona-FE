@@ -113,6 +113,9 @@ interface RawBrandItem {
   profit: number | null
   margin_pct: number | null
   markup_percent: number | null
+  // Backend by-brand returns roi (percent 0-100, null when cogs=0) + profit_per_unit
+  roi?: number | null
+  profit_per_unit?: number | null
   missing_cogs_count: number
   storage_cost: number | null
   penalties: number | null
@@ -155,6 +158,9 @@ function mapBrandItem(raw: unknown): MarginAnalyticsAggregated {
     profit: item.profit ?? undefined,
     margin_pct: item.margin_pct ?? undefined,
     markup_percent: item.markup_percent ?? undefined,
+    // Prefer backend roi/profit_per_unit; MarginAggregatedTableRow falls back to FE recompute (margin-aggregated ROI mapper gap)
+    roi: item.roi ?? null,
+    profit_per_unit: item.profit_per_unit ?? null,
     missing_cogs_count: item.missing_cogs_count,
     // Epic 26: Operating expenses and profit
     storage_cost: item.storage_cost ?? undefined,
