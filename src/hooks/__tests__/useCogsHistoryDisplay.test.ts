@@ -6,8 +6,6 @@ import { describe, it, expect } from 'vitest'
 import {
   formatDateRu,
   formatCurrencyRu,
-  getSourceLabel,
-  getSourceIcon,
   analyzeVersionChain,
   formatWeeksCount,
 } from '../useCogsHistoryDisplay'
@@ -92,48 +90,6 @@ describe('formatCurrencyRu', () => {
   it('formats zero', () => {
     const result = formatCurrencyRu(0)
     expect(result).toContain('0,00')
-  })
-})
-
-// ---------------------------------------------------------------------------
-// getSourceLabel
-// ---------------------------------------------------------------------------
-describe('getSourceLabel', () => {
-  it('returns Russian label for manual', () => {
-    expect(getSourceLabel('manual')).toBe('Ручной ввод')
-  })
-
-  it('returns Russian label for import', () => {
-    expect(getSourceLabel('import')).toBe('Импорт')
-  })
-
-  it('returns Russian label for system', () => {
-    expect(getSourceLabel('system')).toBe('Система')
-  })
-
-  it('returns raw source for unknown', () => {
-    expect(getSourceLabel('api')).toBe('api')
-  })
-})
-
-// ---------------------------------------------------------------------------
-// getSourceIcon
-// ---------------------------------------------------------------------------
-describe('getSourceIcon', () => {
-  it('returns icon for manual', () => {
-    expect(getSourceIcon('manual')).toBe('✏️')
-  })
-
-  it('returns icon for import', () => {
-    expect(getSourceIcon('import')).toBe('📥')
-  })
-
-  it('returns icon for system', () => {
-    expect(getSourceIcon('system')).toBe('⚙️')
-  })
-
-  it('returns default icon for unknown', () => {
-    expect(getSourceIcon('unknown')).toBe('📋')
   })
 })
 

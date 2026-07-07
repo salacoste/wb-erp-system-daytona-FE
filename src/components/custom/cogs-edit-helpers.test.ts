@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { formatCurrencyRu } from './cogs-edit-helpers'
+import { formatCurrencyRu, sourceLabels } from './cogs-edit-helpers'
 
 describe('cogs-edit-helpers.formatCurrencyRu', () => {
   it('renders "—" for NaN (normalizer invalid-cost sentinel), not "не число ₽"', () => {
@@ -22,5 +22,14 @@ describe('cogs-edit-helpers.formatCurrencyRu', () => {
   it('renders a legitimate zero as "0,00 ₽" (distinct from the NaN "—")', () => {
     expect(formatCurrencyRu(0)).not.toBe('—')
     expect(formatCurrencyRu(0)).toMatch(/0,00/)
+  })
+})
+
+describe('cogs-edit-helpers.sourceLabels — BD-13 МойСклад provenance', () => {
+  it('labels moysklad so CogsEditDialog does not fall back to the raw string', () => {
+    expect(sourceLabels.moysklad).toBe('Синхронизация с МойСклад')
+    // All backend-emitted sources resolve — no raw-string leak for known values.
+    expect(sourceLabels.manual).toBe('Ручной ввод')
+    expect(sourceLabels.system).toBe('Системный пересчёт')
   })
 })

@@ -4,7 +4,12 @@
  */
 
 // History types live in cogs-history.ts; re-exported via barrel index.ts
-export type { CogsHistoryItem, CogsHistoryResponse, VersionChainInfo } from './cogs-history'
+export type {
+  CogsHistoryItem,
+  CogsHistoryResponse,
+  VersionChainInfo,
+  CogsSource,
+} from './cogs-history'
 
 // ============================================================================
 // Core COGS Types

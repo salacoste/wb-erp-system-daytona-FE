@@ -5,6 +5,7 @@
  */
 
 import { formatCogsCost } from '@/lib/formatters'
+import { COGS_SOURCE_CONFIG } from '@/lib/cogs-source-config'
 
 /** Format date to Russian locale (dd.mm.yyyy) */
 export function formatDateRu(dateStr: string): string {
@@ -27,8 +28,8 @@ export function formatCurrencyRu(value: number): string {
   return formatCogsCost(value)
 }
 
-export const sourceLabels: Record<string, string> = {
-  manual: 'Ручной ввод',
-  import: 'Импорт из файла',
-  system: 'Системный пересчёт',
-}
+// BD-13 DRY: derived from the single source of truth at @/lib/cogs-source-config, so a new
+// source updates the edit dialog automatically (no third map to keep in sync by hand).
+export const sourceLabels: Record<string, string> = Object.fromEntries(
+  Object.entries(COGS_SOURCE_CONFIG).map(([source, { label }]) => [source, label])
+)

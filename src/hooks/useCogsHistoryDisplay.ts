@@ -35,32 +35,6 @@ export function formatCurrencyRu(value: number | null | undefined): string {
 }
 
 /**
- * Returns Russian label for COGS source
- * @example getSourceLabel('manual') -> 'Ручной ввод'
- */
-export function getSourceLabel(source: string): string {
-  const labels: Record<string, string> = {
-    manual: 'Ручной ввод',
-    import: 'Импорт',
-    system: 'Система',
-  }
-  return labels[source] || source
-}
-
-/**
- * Returns icon emoji for COGS source
- * @example getSourceIcon('manual') -> '✏️'
- */
-export function getSourceIcon(source: string): string {
-  const icons: Record<string, string> = {
-    manual: '✏️',
-    import: '📥',
-    system: '⚙️',
-  }
-  return icons[source] || '📋'
-}
-
-/**
  * Analyzes version chain for delete confirmation logic
  * Story 5.3-fe: Delete COGS Entry
  */

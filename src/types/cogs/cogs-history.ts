@@ -3,6 +3,14 @@
  * Extracted from cogs.ts for file-size compliance (Epic 134-FE)
  */
 
+/**
+ * Provenance of a COGS unit-cost record (single source of truth — referenced by
+ * the boundary type, `SourceCell`, and the display helpers).
+ * BD-13: `moysklad` added — backend МойСклад sync emits it (moysklad-sync.service.ts);
+ * without it the sourceConfig/manual fallback mislabels synced rows as «Ручной ввод».
+ */
+export type CogsSource = 'manual' | 'import' | 'system' | 'moysklad'
+
 export interface CogsHistoryItem {
   cogs_id: string
   nm_id: string
@@ -10,7 +18,7 @@ export interface CogsHistoryItem {
   currency: string
   valid_from: string
   valid_to: string | null
-  source: 'manual' | 'import' | 'system'
+  source: CogsSource
   notes: string | null
   created_by: string
   created_at: string
