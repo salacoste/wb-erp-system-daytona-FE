@@ -2,6 +2,12 @@
  * Other Deductions Card — "Прочие удержания (WB сервисы)"
  * Shows Jam subscription + other WB services (excl. promotion).
  * Value ₽ / % format with breakdown tooltip.
+ *
+ * Intentionally reads ONLY `wb_jam_cost_total` + `wb_other_services_cost_total`,
+ * EXCLUDING promotion (`wb_promotion_cost_total`) — promotion is shown in its own
+ * separate card to avoid double-counting. So a displayed 0 ₽ is a genuine zero
+ * (no Jam / no other-service deductions that week), NOT a field-binding error,
+ * even when `wb_services_cost_total` (= promotion + jam + other) is non-zero.
  */
 
 'use client'

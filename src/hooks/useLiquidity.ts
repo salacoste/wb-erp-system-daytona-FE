@@ -54,6 +54,9 @@ export function useLiquidity(params: LiquidityQueryParams = {}, options: UseLiqu
   })
 }
 
+// NOTE: The `/v1/analytics/liquidity/trends` endpoint is LIVE (HTTP 200) but returns
+// an empty `trends` series until backend Story 29.4 persists daily snapshots. This
+// hook is staged FE scaffolding for that feature, NOT dead code.
 /**
  * Hook to fetch liquidity trends data (historical)
  */
@@ -143,6 +146,8 @@ export function usePrefetchLiquidity() {
   }
 }
 
+// NOTE: Prefetch scaffolding for `/v1/analytics/liquidity/trends` (LIVE, empty series
+// pending backend Story 29.4) — not dead code; see useLiquidityTrends above.
 /** Hook to prefetch liquidity trends */
 export function usePrefetchLiquidityTrends() {
   const queryClient = useQueryClient()
