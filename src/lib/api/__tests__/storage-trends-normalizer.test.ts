@@ -69,6 +69,47 @@ describe('normalizeStorageTrendsResponse', () => {
     expect(result.data[0].storage_cost).toBeNull()
     expect(result.data[0].volume).toBeNull()
   })
+
+  // BD-44: summary split — money (storage_cost) preserves null on min/max/avg (AP#8);
+  // count (volume) keeps toCount (0) on null. Same polymorphic source, type-honest split.
+  it('BD-44: null summary min/max/avg — money → null, volume → 0', () => {
+    const raw = {
+      data: [{ week: 'W1', storage_cost: 100, volume: 5 }],
+      summary: {
+        storage_cost: { min: null, max: null, avg: null, trend: null },
+        volume: { min: null, max: null, avg: null, trend: null },
+      },
+    }
+    const result = normalizeStorageTrendsResponse(raw, 'W1', 'W2')
+    // money (storage_cost): null preserved — never «0 ₽»
+    expect(result.summary?.storage_cost?.min).toBeNull()
+    expect(result.summary?.storage_cost?.max).toBeNull()
+    expect(result.summary?.storage_cost?.avg).toBeNull()
+    // trend is SEMANTIC-ZERO ratio → 0 (null ?? 0)
+    expect(result.summary?.storage_cost?.trend).toBe(0)
+    // count (volume): null → 0 (toCount, 0 is meaningful)
+    expect(result.summary?.volume?.min).toBe(0)
+    expect(result.summary?.volume?.max).toBe(0)
+    expect(result.summary?.volume?.avg).toBe(0)
+    expect(result.summary?.volume?.trend).toBe(0)
+  })
+
+  it('BD-44: numeric summary min/max/avg pass through unchanged for both metrics', () => {
+    const raw = {
+      data: [{ week: 'W1', storage_cost: 100, volume: 5 }],
+      summary: {
+        storage_cost: { min: 100, max: 200, avg: 150, trend: 12.5 },
+        volume: { min: 5, max: 8, avg: 6.5, trend: -3.2 },
+      },
+    }
+    const result = normalizeStorageTrendsResponse(raw, 'W1', 'W2')
+    expect(result.summary?.storage_cost?.min).toBe(100)
+    expect(result.summary?.storage_cost?.max).toBe(200)
+    expect(result.summary?.storage_cost?.avg).toBe(150)
+    expect(result.summary?.storage_cost?.trend).toBe(12.5)
+    expect(result.summary?.volume?.avg).toBe(6.5)
+    expect(result.summary?.volume?.trend).toBe(-3.2)
+  })
 })
 
 // ---------------------------------------------------------------------------

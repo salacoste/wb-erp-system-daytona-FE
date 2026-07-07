@@ -17,6 +17,7 @@ import type {
   StorageSummaryResponse,
   StoragePeriod,
   MetricSummary,
+  MoneyMetricSummary,
 } from '@/types/storage-analytics'
 
 // ---------------------------------------------------------------------------
@@ -51,6 +52,21 @@ function normalizeMetricSummary(raw: unknown): MetricSummary {
   }
 }
 
+/**
+ * BD-44: money metric summary — min/max/avg MUST preserve null (AP#8: money, never 0).
+ * `trend` is a SEMANTIC-ZERO ratio (0 = no change), so it falls back to 0.
+ * Sibling of {@link normalizeMetricSummary} which is for counts (volume) where 0 is meaningful.
+ */
+function normalizeMoneyMetricSummary(raw: unknown): MoneyMetricSummary {
+  const d = asRecord(raw)
+  return {
+    min: toNullableNumber(d.min),
+    max: toNullableNumber(d.max),
+    avg: toNullableNumber(d.avg),
+    trend: toNullableNumber(d.trend) ?? 0,
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Exported normalizers
 // ---------------------------------------------------------------------------
@@ -70,7 +86,7 @@ export function normalizeStorageTrendsResponse(
   const rawSummary = r.summary
   const summary = rawSummary
     ? {
-        storage_cost: normalizeMetricSummary(asRecord(rawSummary).storage_cost),
+        storage_cost: normalizeMoneyMetricSummary(asRecord(rawSummary).storage_cost),
         volume: normalizeMetricSummary(asRecord(rawSummary).volume),
       }
     : undefined

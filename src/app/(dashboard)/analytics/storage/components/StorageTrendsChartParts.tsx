@@ -10,7 +10,7 @@
 
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { cn, formatPercentage } from '@/lib/utils'
-import type { StorageTrendPoint, MetricSummary } from '@/types/storage-analytics'
+import type { StorageTrendPoint, MoneyMetricSummary } from '@/types/storage-analytics'
 import { CHART_COLORS, formatCurrency, formatWeekShort } from './storage-trends-config'
 
 // Trend Badge Component
@@ -43,21 +43,28 @@ export function TrendBadge({ trend }: { trend: number }) {
   )
 }
 
-// Summary Stats Component
-export function SummaryStats({ summary }: { summary: MetricSummary }) {
+// Summary Stats Component — renders storage_cost (money) summary.
+// BD-44/AP#8: min/max/avg are nullable money; null renders '—' (never «0 ₽»).
+export function SummaryStats({ summary }: { summary: MoneyMetricSummary }) {
   return (
     <div className="flex flex-wrap gap-4 text-sm mb-4">
       <div>
         <span className="text-muted-foreground">Мин: </span>
-        <span className="font-medium">{formatCurrency(summary.min)}</span>
+        <span className="font-medium">
+          {summary.min != null ? formatCurrency(summary.min) : '—'}
+        </span>
       </div>
       <div>
         <span className="text-muted-foreground">Макс: </span>
-        <span className="font-medium">{formatCurrency(summary.max)}</span>
+        <span className="font-medium">
+          {summary.max != null ? formatCurrency(summary.max) : '—'}
+        </span>
       </div>
       <div>
         <span className="text-muted-foreground">Среднее: </span>
-        <span className="font-medium">{formatCurrency(summary.avg)}</span>
+        <span className="font-medium">
+          {summary.avg != null ? formatCurrency(summary.avg) : '—'}
+        </span>
       </div>
     </div>
   )

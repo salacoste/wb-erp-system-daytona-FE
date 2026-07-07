@@ -38,6 +38,23 @@ export interface MetricSummary {
 }
 
 /**
+ * Summary statistics for a MONEY metric (e.g. storage_cost).
+ * min/max/avg are nullable — null = unknown (AP#8: money, never 0, renders '—').
+ * `trend` is a SEMANTIC-ZERO ratio (0 = no change), so it stays `number`.
+ * (BD-44: split from MetricSummary — volume keeps MetricSummary where 0 is meaningful.)
+ */
+export interface MoneyMetricSummary {
+  /** Minimum storage cost in period. Null = unknown (AP#8: money, never 0). */
+  min: number | null
+  /** Maximum storage cost in period. Null = unknown (AP#8: money, never 0). */
+  max: number | null
+  /** Average storage cost in period. Null = unknown (AP#8: money, never 0). */
+  avg: number | null
+  /** Trend percentage (positive = increase, negative = decrease); 0 = no change. */
+  trend: number
+}
+
+/**
  * Response from GET /v1/analytics/storage/trends
  */
 export interface StorageTrendsResponse {
@@ -45,9 +62,9 @@ export interface StorageTrendsResponse {
   /** nm_id if filtered by product, null for all products */
   nm_id: string | null
   data: StorageTrendPoint[]
-  /** Summary statistics per metric (optional) */
+  /** Summary statistics per metric (optional). storage_cost = money (nullable, AP#8); volume = count. */
   summary?: {
-    storage_cost?: MetricSummary
+    storage_cost?: MoneyMetricSummary
     volume?: MetricSummary
   }
   /** Flag indicating if data exists for the requested period */
