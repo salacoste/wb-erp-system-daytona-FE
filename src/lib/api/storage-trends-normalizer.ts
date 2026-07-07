@@ -95,11 +95,11 @@ export function normalizeStorageSummaryResponse(raw: unknown): StorageSummaryRes
   return {
     period: normalizePeriod(r.period),
     data: {
-      totalCost: toCount(d.totalCost ?? d.total_cost),
+      totalCost: toNullableNumber(d.totalCost ?? d.total_cost),
       uniqueSkus: toCount(d.uniqueSkus ?? d.unique_skus),
       totalVolume: toCount(d.totalVolume ?? d.total_volume),
       daysCount: toCount(d.daysCount ?? d.days_count),
-      avgCostPerSku: toCount(d.avgCostPerSku ?? d.avg_cost_per_sku),
+      avgCostPerSku: toNullableNumber(d.avgCostPerSku ?? d.avg_cost_per_sku),
       dateFrom: toStr(d.dateFrom ?? d.date_from),
       dateTo: toStr(d.dateTo ?? d.date_to),
     },

@@ -100,18 +100,21 @@ describe('normalizeStorageSummaryResponse', () => {
 
   it('null input returns zeros and empty strings', () => {
     const result = normalizeStorageSummaryResponse(null)
-    expect(result.data.totalCost).toBe(0)
+    // BD-16: money fields (totalCost, avgCostPerSku) preserve null (AP#8); counts stay 0.
+    expect(result.data.totalCost).toBeNull()
     expect(result.data.uniqueSkus).toBe(0)
     expect(result.data.totalVolume).toBe(0)
     expect(result.data.daysCount).toBe(0)
+    expect(result.data.avgCostPerSku).toBeNull()
     expect(result.data.dateFrom).toBe('')
     expect(result.data.dateTo).toBe('')
   })
 
   it('missing data object defaults to zeros', () => {
     const result = normalizeStorageSummaryResponse({})
-    expect(result.data.totalCost).toBe(0)
+    expect(result.data.totalCost).toBeNull()
     expect(result.data.uniqueSkus).toBe(0)
+    expect(result.data.avgCostPerSku).toBeNull()
   })
 
   it('snake_case dual-lookup: total_cost maps to totalCost', () => {
@@ -123,5 +126,18 @@ describe('normalizeStorageSummaryResponse', () => {
     expect(result.data.totalCost).toBe(3000)
     expect(result.data.uniqueSkus).toBe(50)
     expect(result.data.totalVolume).toBe(100)
+  })
+
+  // BD-16: summary money fields must preserve null (AP#8) — never collapse to 0.
+  it('null totalCost/avgCostPerSku preserved as null (BD-16, AP#8)', () => {
+    const raw = {
+      period: { from: 'W1', to: 'W2', days_count: 7 },
+      data: { totalCost: null, avgCostPerSku: null, uniqueSkus: 5, totalVolume: 10 },
+    }
+    const result = normalizeStorageSummaryResponse(raw)
+    expect(result.data.totalCost).toBeNull()
+    expect(result.data.avgCostPerSku).toBeNull()
+    expect(result.data.uniqueSkus).toBe(5) // count stays
+    expect(result.data.totalVolume).toBe(10) // count stays
   })
 })

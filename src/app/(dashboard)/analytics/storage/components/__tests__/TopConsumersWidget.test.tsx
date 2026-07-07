@@ -8,7 +8,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { TopConsumersWidget } from '../TopConsumersWidget'
 import type { TopConsumerItem } from '@/types/storage-analytics'
-import { mockTopConsumerItems } from '@/test/fixtures/storage-analytics'
+import {
+  mockTopConsumerItems,
+  mockNullCostTopConsumerItem,
+} from '@/test/fixtures/storage-analytics'
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -144,6 +147,17 @@ describe('TopConsumersWidget', () => {
 
       // First item has 49,5 % (Russian locale: comma + NBSP; \s matches the NBSP)
       expect(screen.getByText(/49,5\s%/)).toBeInTheDocument()
+    })
+
+    // BD-16 / AP#8: null storage_cost must render «—», never «0 ₽».
+    it('shows dash (not "0 ₽") for null storage cost (BD-16, AP#8)', () => {
+      render(<TopConsumersWidget data={[mockNullCostTopConsumerItem]} />)
+
+      const cells = screen.getAllByRole('cell')
+      const dashCell = cells.find(cell => cell.textContent === '—')
+      expect(dashCell).toBeTruthy()
+      const zeroRubles = cells.filter(cell => /0\s*₽/.test(cell.textContent || ''))
+      expect(zeroRubles).toHaveLength(0)
     })
   })
 

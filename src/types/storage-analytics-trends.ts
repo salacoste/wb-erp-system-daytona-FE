@@ -118,16 +118,16 @@ export interface StorageSummaryResponse {
   /** Period information (added for defensive normalization) */
   period: StoragePeriod
   data: {
-    /** Total storage cost for the period (RUB) */
-    totalCost: number
+    /** Total storage cost for the period (RUB). Null = unknown (AP#8: money, never 0). */
+    totalCost: number | null
     /** Total volume (liters) */
     totalVolume: number
     /** Number of days in the period */
     daysCount: number
     /** Number of unique SKUs with storage data */
     uniqueSkus: number
-    /** Average cost per SKU (calculated as totalCost / uniqueSkus) */
-    avgCostPerSku: number
+    /** Average cost per SKU (calculated as totalCost / uniqueSkus). Null = unknown (AP#8: money, never 0). */
+    avgCostPerSku: number | null
     /** Period start date (YYYY-MM-DD) */
     dateFrom: string
     /** Period end date (YYYY-MM-DD) */
