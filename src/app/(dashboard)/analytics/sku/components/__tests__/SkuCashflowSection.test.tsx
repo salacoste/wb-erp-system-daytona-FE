@@ -61,6 +61,19 @@ describe('SkuCashflowSection', () => {
     expect(screen.queryByText(/Нет продаж за период/)).not.toBeInTheDocument()
   })
 
+  it('BD-11: labels the final row «ПРИБЫЛЬ ДО НАЛОГА» (pre-tax), not «ЧИСТАЯ ПРИБЫЛЬ»', () => {
+    // SKU cashflow net = gross_profit_sku − cabinet deductions ≈ payout (PRE-tax). Relabelled
+    // so it no longer collides with the dashboard's post-tax «Чистая прибыль» (BD-11).
+    renderWithProviders(
+      <SkuCashflowSection
+        cabinetExpenses={makeExpenses({ sales_gross: 100000 })}
+        isLoading={false}
+      />
+    )
+    expect(screen.getByText('ПРИБЫЛЬ ДО НАЛОГА')).toBeInTheDocument()
+    expect(screen.queryByText('ЧИСТАЯ ПРИБЫЛЬ')).not.toBeInTheDocument()
+  })
+
   it('shows skeletons while loading', () => {
     const { container } = renderWithProviders(
       <SkuCashflowSection cabinetExpenses={undefined} isLoading />
