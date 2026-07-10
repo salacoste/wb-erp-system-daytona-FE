@@ -155,6 +155,8 @@ export type {
   CogsAssignmentRequest,
   BulkCogsItem,
   BulkCogsUploadRequest,
+  BulkCogsWireItem, // BE-A-1: integer-nm_id wire shape for the bulk-COGS POST body
+  BulkCogsWireRequest,
   BulkCogsUploadResponse,
   BulkCogsUploadResponseLegacy,
   BulkCogsResultSummary, // Validation F-34: canonical normalized bulk-COGS result

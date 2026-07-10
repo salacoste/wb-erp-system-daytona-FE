@@ -5,7 +5,12 @@
 
 import { describe, it, expect } from 'vitest'
 import type { BulkCogsItem } from '@/types/api'
-import { validateBulkCogsAssignment, createBulkCogsItems } from '../useBulkCogsAssignment-utils'
+import {
+  validateBulkCogsAssignment,
+  createBulkCogsItems,
+  toBulkCogsWireItem,
+  toBulkCogsWireRequest,
+} from '../useBulkCogsAssignment-utils'
 
 // ---------------------------------------------------------------------------
 // validateBulkCogsAssignment
@@ -132,5 +137,67 @@ describe('createBulkCogsItems', () => {
   it('returns empty array for empty nm_ids', () => {
     const result = createBulkCogsItems([], 100, '2026-01-01')
     expect(result).toHaveLength(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// toBulkCogsWireItem / toBulkCogsWireRequest (BE-A-1)
+// ---------------------------------------------------------------------------
+
+describe('toBulkCogsWireItem (BE-A-1: string nm_id → integer at the wire boundary)', () => {
+  it('converts a numeric-string nm_id to a number', () => {
+    const wire = toBulkCogsWireItem({
+      nm_id: '12345678',
+      unit_cost_rub: 1250.5,
+      valid_from: '2026-01-30',
+      source: 'manual',
+    })
+    expect(wire.nm_id).toBe(12345678)
+    expect(typeof wire.nm_id).toBe('number')
+    // other fields pass through unchanged
+    expect(wire.unit_cost_rub).toBe(1250.5)
+    expect(wire.source).toBe('manual')
+  })
+
+  it('keeps currency undefined when absent (BE rejects the property if present)', () => {
+    const wire = toBulkCogsWireItem({ nm_id: '1', unit_cost_rub: 100, valid_from: '2026-01-30' })
+    expect(wire.currency).toBeUndefined()
+    expect(wire).not.toHaveProperty('currency') // JSON.stringify will drop it
+  })
+
+  it('preserves an explicitly-set currency', () => {
+    const wire = toBulkCogsWireItem({
+      nm_id: '1',
+      unit_cost_rub: 100,
+      valid_from: '2026-01-30',
+      currency: 'RUB',
+    })
+    expect(wire.currency).toBe('RUB')
+  })
+})
+
+describe('toBulkCogsWireRequest (BE-A-1)', () => {
+  it('maps items to integer nm_id', () => {
+    const wire = toBulkCogsWireRequest({
+      items: [
+        { nm_id: '11', unit_cost_rub: 1, valid_from: '2026-01-30' },
+        { nm_id: '22', unit_cost_rub: 2, valid_from: '2026-01-30' },
+      ],
+    })
+    expect(wire.items?.map(i => i.nm_id)).toEqual([11, 22])
+    expect(wire.items?.every(i => typeof i.nm_id === 'number')).toBe(true)
+  })
+
+  it('maps assignments too', () => {
+    const wire = toBulkCogsWireRequest({
+      assignments: [{ nm_id: '99', unit_cost_rub: 9, valid_from: '2026-01-30' }],
+    })
+    expect(wire.assignments?.[0].nm_id).toBe(99)
+  })
+
+  it('returns undefined arrays for an empty request', () => {
+    const wire = toBulkCogsWireRequest({})
+    expect(wire.items).toBeUndefined()
+    expect(wire.assignments).toBeUndefined()
   })
 })

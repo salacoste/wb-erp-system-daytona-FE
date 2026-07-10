@@ -85,6 +85,22 @@ export interface BulkCogsUploadRequest {
   assignments?: BulkCogsItem[]
 }
 
+/**
+ * Wire item for `POST /v1/products/cogs/bulk` (BE-A-1). The backend validator rejects
+ * string `nm_id` (400 "nm_id must be an integer number"); the FE keeps nm_id as string
+ * in its domain model (anti-pattern #10, `product.ts:7` "nm_id is STRING"), so this wire
+ * shape carries the integer form used ONLY at the POST boundary. Produced by
+ * `toBulkCogsWireItem` (`useBulkCogsAssignment-utils.ts`) — never constructed by hand.
+ */
+export interface BulkCogsWireItem extends Omit<BulkCogsItem, 'nm_id'> {
+  nm_id: number
+}
+
+export interface BulkCogsWireRequest {
+  items?: BulkCogsWireItem[]
+  assignments?: BulkCogsWireItem[]
+}
+
 export interface BulkCogsResult {
   nm_id: string
   sa_name?: string

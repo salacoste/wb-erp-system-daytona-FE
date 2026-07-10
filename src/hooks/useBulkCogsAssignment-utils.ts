@@ -3,7 +3,12 @@
  * Extracted from useBulkCogsAssignment.ts for file size compliance (Epic 74)
  */
 
-import type { BulkCogsItem } from '@/types/api'
+import type {
+  BulkCogsItem,
+  BulkCogsUploadRequest,
+  BulkCogsWireItem,
+  BulkCogsWireRequest,
+} from '@/types/api'
 
 // ============================================================================
 // Validation
@@ -96,4 +101,31 @@ export function createBulkCogsItems(
     source: options?.source || 'manual',
     notes: options?.notes,
   }))
+}
+
+// ============================================================================
+// Wire-boundary conversion (BE-A-1)
+// ============================================================================
+
+/**
+ * Convert a FE-canonical bulk-COGS item (string `nm_id`) to the wire shape the
+ * `POST /v1/products/cogs/bulk` endpoint requires (integer `nm_id`). The backend
+ * validator rejects string nm_id (400 "nm_id must be an integer number"), which made
+ * the whole bulk-COGS feature unusable. The FE keeps nm_id as string everywhere else
+ * (anti-pattern #10, `product.ts:7`), so the conversion lives at this boundary only.
+ * `currency` is left undefined-when-absent (BE rejects the property if present;
+ * `JSON.stringify` drops undefined).
+ */
+export function toBulkCogsWireItem(item: BulkCogsItem): BulkCogsWireItem {
+  return { ...item, nm_id: Number(item.nm_id) }
+}
+
+/**
+ * Map a full bulk-COGS request to its wire shape (converts `items` + `assignments`).
+ */
+export function toBulkCogsWireRequest(request: BulkCogsUploadRequest): BulkCogsWireRequest {
+  return {
+    items: request.items?.map(toBulkCogsWireItem),
+    assignments: request.assignments?.map(toBulkCogsWireItem),
+  }
 }
