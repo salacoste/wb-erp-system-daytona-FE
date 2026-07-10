@@ -252,13 +252,21 @@ describe('Story 42.3-FE: Tooltip Product Preview', () => {
       })
     })
 
-    it('handles empty missingProducts array gracefully', async () => {
+    it('renders a bare count badge (no tooltip) when missingProducts is empty', async () => {
+      // BD-5 review MEDIUM: aggregate-level usages (by-brand/by-category, dashboard) pass no
+      // nmId list. Don't render a help tooltip that would only say «Список недоступен» — the
+      // badge stays non-interactive.
       const user = userEvent.setup()
       render(<MissingCogsAlert {...createMockProps({ missingCount: 10, missingProducts: [] })} />)
-      await user.hover(screen.getByText(/товаров/))
-      await waitFor(() => {
-        expect(screen.getAllByText('Список недоступен').length).toBeGreaterThanOrEqual(1)
-      })
+      const badge = screen.getByText(/10\s+товаров/)
+      expect(badge).toBeInTheDocument()
+      expect(badge.className).not.toContain('cursor-help')
+      // a11y invariant: bare badge is NOT in the tab order (no tooltip to open).
+      expect(badge).not.toHaveAttribute('tabindex')
+      await user.hover(badge)
+      // No tooltip opens — neither the list header nor the old «Список недоступен» fallback.
+      expect(screen.queryByText('Артикулы без себестоимости:')).not.toBeInTheDocument()
+      expect(screen.queryByText('Список недоступен')).not.toBeInTheDocument()
     })
   })
 })
