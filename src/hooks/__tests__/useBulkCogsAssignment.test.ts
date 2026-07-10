@@ -80,6 +80,22 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
       const body = vi.mocked(apiClient.post).mock.calls[0][1] as { items: { nm_id: unknown }[] }
       expect(body.items.every(i => typeof i.nm_id === 'number')).toBe(true)
     })
+
+    it('rejects invalid nm_id before POSTing', async () => {
+      const { result } = renderHook(() => useBulkCogsAssignment(), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await act(async () => {
+        await expect(
+          result.current.mutateAsync({
+            items: [{ nm_id: '1e5', unit_cost_rub: 100, valid_from: '2026-01-30' }],
+          })
+        ).rejects.toThrow(/Invalid bulk COGS nm_id/)
+      })
+
+      expect(apiClient.post).not.toHaveBeenCalled()
+    })
   })
 
   // ==========================================================================
