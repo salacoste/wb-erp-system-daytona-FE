@@ -1,0 +1,1 @@
+{"error":{"code":"BAD_REQUEST","message":"Validation failed","details":[{"field":"property","issue":"include_margin should not exist","message":"property include_margin should not exist"}],"trace_id":"c085a1e5-e71c-44ee-b3be-d6b4d00b9bdd","timestamp":"2026-07-06T00:39:07.562Z","path":"/v1/products?limit=3&has_cogs=false&include_cogs=true&include_margin=true"}}
