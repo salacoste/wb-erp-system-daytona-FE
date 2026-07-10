@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { renderHook, act, cleanup } from '@testing-library/react'
+import { renderHook, act, cleanup, waitFor } from '@testing-library/react'
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { DashboardPeriodProvider, useDashboardPeriod } from '../dashboard-period-context'
@@ -380,6 +380,68 @@ describe('Story 60.1-FE: AC5 - localStorage Persistence', () => {
       const { result } = renderHook(() => useDashboardPeriod(), { wrapper: createWrapper() })
       expect(result.current.periodType).toBe('week')
     })
+  })
+})
+
+// =============================================================================
+// FE-4: URL params are source of truth during SPA navigation
+// =============================================================================
+
+describe('FE-4: Dashboard Period URL reconciliation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorageMock.getItem.mockReturnValue(null)
+    mockSearchParams.delete('week')
+    mockSearchParams.delete('month')
+    mockSearchParams.delete('type')
+  })
+
+  afterEach(() => {
+    cleanup()
+  })
+
+  it('reconciles a new week search param on rerender without replacing it with stale state', async () => {
+    const { result, rerender } = renderHook(() => useDashboardPeriod(), {
+      wrapper: createWrapper(),
+    })
+
+    expect(result.current.selectedWeek).toBe(CURRENT_WEEK)
+    mockReplace.mockClear()
+
+    act(() => {
+      mockSearchParams.set('week', '2026-W04')
+      mockSearchParams.set('type', 'week')
+      mockSearchParams.delete('month')
+    })
+    rerender()
+
+    await waitFor(() => {
+      expect(result.current.selectedWeek).toBe('2026-W04')
+    })
+    expect(result.current.periodType).toBe('week')
+    expect(mockReplace).not.toHaveBeenCalled()
+  })
+
+  it('reconciles month/type search params on rerender without week-state canonicalization', async () => {
+    const { result, rerender } = renderHook(() => useDashboardPeriod(), {
+      wrapper: createWrapper(),
+    })
+
+    expect(result.current.periodType).toBe('week')
+    mockReplace.mockClear()
+
+    act(() => {
+      mockSearchParams.set('month', '2026-02')
+      mockSearchParams.set('type', 'month')
+      mockSearchParams.delete('week')
+    })
+    rerender()
+
+    await waitFor(() => {
+      expect(result.current.periodType).toBe('month')
+      expect(result.current.selectedMonth).toBe('2026-02')
+    })
+    expect(mockReplace).not.toHaveBeenCalled()
   })
 })
 

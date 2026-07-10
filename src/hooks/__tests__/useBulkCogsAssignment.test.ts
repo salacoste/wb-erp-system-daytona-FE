@@ -46,6 +46,59 @@ describe('useBulkCogsAssignment - with marginRecalculation field', () => {
   })
 
   // ==========================================================================
+  // BE-A-1: the bulk-COGS endpoint rejects string nm_id (400 "nm_id must be an
+  // integer number"). The hook converts to integer at the wire boundary (the FE
+  // keeps nm_id as string in its domain model — anti-pattern #10, product.ts:7).
+  // ==========================================================================
+  describe('BE-A-1 wire nm_id (integer, not string)', () => {
+    it('POSTs nm_id as a number', async () => {
+      vi.mocked(apiClient.post).mockResolvedValue({
+        totalItems: 2,
+        createdItems: 2,
+        skippedItems: 0,
+        errors: [],
+      })
+
+      const { result } = renderHook(() => useBulkCogsAssignment(), {
+        wrapper: createQueryWrapper(),
+      })
+      await act(async () => {
+        await result.current.mutate({ items: mockItems })
+      })
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/v1/products/cogs/bulk?format=v2',
+        expect.objectContaining({
+          items: [
+            expect.objectContaining({ nm_id: 12345678 }),
+            expect.objectContaining({ nm_id: 87654321 }),
+          ],
+        })
+      )
+      // No string nm_id leaks to the wire body.
+      const body = vi.mocked(apiClient.post).mock.calls[0][1] as { items: { nm_id: unknown }[] }
+      expect(body.items.every(i => typeof i.nm_id === 'number')).toBe(true)
+    })
+
+    it('rejects invalid nm_id before POSTing', async () => {
+      const { result } = renderHook(() => useBulkCogsAssignment(), {
+        wrapper: createQueryWrapper(),
+      })
+
+      await act(async () => {
+        await expect(
+          result.current.mutateAsync({
+            items: [{ nm_id: '1e5', unit_cost_rub: 100, valid_from: '2026-01-30' }],
+          })
+        ).rejects.toThrow(/Invalid bulk COGS nm_id/)
+      })
+
+      expect(apiClient.post).not.toHaveBeenCalled()
+    })
+  })
+
+  // ==========================================================================
   // F-34: the REAL backend shape today is the LEGACY { totalItems, createdItems,
   // skippedItems, errors } (the endpoint ignores ?format=v2). This pins that the
   // hook normalizes it correctly through the full pipeline (the other tests mock

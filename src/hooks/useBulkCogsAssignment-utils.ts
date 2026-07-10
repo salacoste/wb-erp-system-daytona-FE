@@ -4,6 +4,13 @@
  */
 
 import type { BulkCogsItem } from '@/types/api'
+import { parseBulkCogsNmId } from '@/lib/api/bulk-cogs-wire'
+
+export {
+  parseBulkCogsNmId,
+  toBulkCogsWireItem,
+  toBulkCogsWireRequest,
+} from '@/lib/api/bulk-cogs-wire'
 
 // ============================================================================
 // Validation
@@ -28,8 +35,13 @@ export function validateBulkCogsAssignment(items: BulkCogsItem[]): string[] {
   items.forEach((item, index) => {
     const itemNum = index + 1
 
-    if (!item.nm_id || item.nm_id.trim() === '') {
-      errors.push(`Товар ${itemNum}: Артикул обязателен`)
+    const parsedNmId = parseBulkCogsNmId(item.nm_id)
+    if (!parsedNmId.ok) {
+      if (parsedNmId.code === 'required') {
+        errors.push(`Товар ${itemNum}: Артикул обязателен`)
+      } else {
+        errors.push(`Товар ${itemNum} (${item.nm_id}): ${parsedNmId.message}`)
+      }
     }
 
     if (item.unit_cost_rub === undefined || item.unit_cost_rub === null) {

@@ -12,6 +12,7 @@ import { StorageComparisonCard } from '@/app/(dashboard)/analytics/shared/Storag
 import { MarginFilterSection } from '@/app/(dashboard)/analytics/shared/MarginFilterSection'
 import { MarginSummaryCards } from '@/app/(dashboard)/analytics/shared/MarginSummaryCards'
 import { calculateMarginStats } from '@/app/(dashboard)/analytics/shared/calculate-margin-stats'
+import { MarginMissingCogsBanner } from '@/app/(dashboard)/analytics/shared/MarginMissingCogsBanner'
 import {
   MarginPageLoading,
   MarginPageError,
@@ -94,6 +95,8 @@ export default function MarginAnalysisByCategoryPage() {
         defaultWeekStart={state.weekStart}
         defaultWeekEnd={state.weekEnd}
       />
+
+      <MarginMissingCogsBanner data={data?.data} />
 
       <Alert>
         <Info className="h-4 w-4" />

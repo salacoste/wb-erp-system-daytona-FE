@@ -259,3 +259,90 @@ See **[DATA-SOURCES-REFERENCE.md](DATA-SOURCES-REFERENCE.md)** for full document
 ## Test Credentials
 - Email: test@test.com
 - Password: Russia23!
+
+---
+
+## Part 7 — Runtime Data-Validation Methodology (2026-07-05)
+
+**Goal.** Prior passes covered (a) dashboard formula audit (Parts 1–6 above),
+(b) load-health of 56 routes ([`.omc/ux-validation/matrix.md`](../.omc/ux-validation/matrix.md)),
+(c) **code-level** business-data audit ([`business-data-audit-2026-07-02.md`](../.omc/ux-validation/business-data-audit-2026-07-02.md), `BD-*`).
+This pass is **runtime data-level**: with the backend fully ready, drive the live
+app, **log the actual rendered numbers** per page (with filters), then
+**reconcile meanings between pages** to prove the data is computed correctly and
+is consistent everywhere it appears. It validates the *output*, on real data.
+
+**Stack.** FE dev server `:3100`, backend `:3000` (both PM2-managed, live).
+Drive via Playwright (canonical browser tool). Raw API data captured via direct
+calls with the test JWT + `X-Cabinet-Id` (the same payloads the hooks consume).
+Test creds: `test@test.com` / `Russia23!`.
+
+### 7.1 Per-page data log (artifact)
+
+For every page under test, write `.omc/validation/<YYYY-MM-DD>/<page>.md` (+
+`<page>.raw.json` for the verbatim API payloads) capturing:
+
+1. **URL + active filters** (week, period, brand, category, tab, sort, search —
+   every input that changes the numbers).
+2. **Raw API calls** — method, path, query, HTTP status, and the salient numeric
+   fields of the response (the exact values the hook reads).
+3. **Rendered values** — the number as shown in the UI (text + the formatter
+   used), with the component/`data-testid`.
+4. **Page-local checks** — does each rendered value equal its API source
+   (post-format, post-currency/percent rounding)? Pass/fail + delta.
+
+### 7.2 Cross-page consistency invariants (the «смыслы»)
+
+The core of this pass. Each invariant ties the **same business quantity** across
+the pages that show it, so a divergence is a real bug (formula, data-source, or
+label). Verified on the same week/period unless noted.
+
+**A. Identity (must match exactly, modulo ₽-rounding):**
+- A1 `Выкупы/Продажи (розница), ₽` — dashboard == finance-summary `sale_gross_total`
+  == Σ over SKU/brand/category aggregation of the same week.
+- A2 `К перечислению, ₽` — dashboard == finance-summary `payout_total` == PnL-waterfall endpoint.
+- A3 `Себестоимость, ₽` — dashboard == finance-summary `cogs_total`.
+- A4 `Логистика / Хранение / Удержания WB` — dashboard cards == the matching
+  `finance-summary` totals (commission+acquiring+promotion for Удержания).
+- A5 `Реклама (Spend), ₽` — dashboard == advertising page `totalSpend` == advertising API.
+- A6 `Заказы, шт` — dashboard == fulfillment `/summary` ordersCount == orders page total.
+- A7 Period deltas — dashboard W07→W06 % tiles == deltas recomputed from the
+  underlying totals for both weeks.
+
+**B. Aggregation (different groupings of the same underlying must reconcile):**
+- B1 Σ SKU `sale_gross` ≈ Σ brand `sale_gross` ≈ Σ category `sale_gross` ≈
+  finance-summary total (same week; ≤ rounding).
+- B2 Unique-SKU count: dashboard == distinct nmIds in SKU page == brand/category totals.
+- B3 Σ advertising-by-day `spend` == advertising summary `totalSpend` (date range match).
+
+**C. Meaning / label (no silent contradictions):**
+- C1 `Маржинальность` — dashboard vs SKU operating-margin vs unit-economics: each
+  must either share a formula or be labelled with its distinct meaning
+  (e.g. «до удержаний» vs «операционная»). No two pages show different numbers
+  under the same label.
+- C2 `Валовая прибыль` vs `Чистая прибыль` — gross (sale_gross − cogs) vs net
+  (payout − cogs) must be distinguishable; never both presented as "profit".
+- C3 FBS-vs-FBO scope — any page showing FBS-only revenue/count under a plain
+  label flagged (BD-6/BD-7 family).
+- C4 AP#8 at runtime — any money/ratio that is `null` upstream renders «—», not
+  `0`/`0 %` (the BD-2/BD-3/BD-5 findings, verified on live data, not just code).
+
+### 7.3 Execution + verdict
+
+- Capture order per page: filters → API payloads → rendered values → page-local
+  checks → then fold into the cross-page matrix (§7.2).
+- Each invariant gets a verdict: **✅ consistent** / **⚠️ delta** (with amount) /
+  **❌ contradictory** (with the two values + pages) / **⬜ blocked** (data absent).
+- Findings feed `docs/request-backend/*.md` (BE-owned) or FE tickets, reusing the
+  `BD-*` namespace continuation.
+- Summary lands in `.omc/validation/<date>/REPORT.md`; per-page logs are the
+  evidence trail.
+
+### 7.4 Scope of this pass
+
+Starts with the **P0 financial clusters** (where a wrong number misleads a
+business decision): `/dashboard`, `/analytics/sku|brand|category`,
+`/analytics/advertising`, `/analytics/orders`, `/analytics/unit-economics`,
+`/analytics/liquidity`, `/orders` (+ the new `/orders` actions + `/automation`
++ `/analytics/brand-share` shipped this week). Expands to the remaining pages
+once the financial core is reconciled.

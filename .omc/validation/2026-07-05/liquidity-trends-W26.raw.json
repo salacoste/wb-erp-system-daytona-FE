@@ -1,0 +1,1 @@
+{"error":{"code":"NOT_FOUND","message":"Cannot GET /v1/analytics/liquidity/trends?period=30","details":[],"trace_id":"e6293025-09cb-4314-9d44-4e94264b1811","timestamp":"2026-07-05T22:44:21.781Z","path":"/v1/analytics/liquidity/trends?period=30"}}
