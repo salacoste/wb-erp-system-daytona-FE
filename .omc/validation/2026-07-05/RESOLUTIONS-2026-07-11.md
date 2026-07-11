@@ -40,7 +40,7 @@
 ## Cluster F — Cabinets/Tariffs/Expenses/Admin
 | ID | Endpoint | Sev | Status | Live evidence |
 |----|----------|-----|--------|----------------|
-| **BE-BUG-F-002** | `GET /v1/expenses*` (Decimal shape) | 🔴 | ✅\* | \*By 07-07 evidence: `amount` is a `number` (not a Prisma Decimal object). **2026-07-11 re-val inconclusive** — cabinet has 0 expenses in all months (no data to verify the type). Re-verify when expense data exists. |
+| **BE-BUG-F-002** | `GET /v1/expenses*` (Decimal shape) | 🔴→✅ | ✅ | **Confirmed by BE code (BE-7):** `ExpenseResponseDto.amount: number` (`expense-response.dto.ts`) + `operational-expenses.service.ts` does `amount: expense.amount.toNumber()` (Prisma Decimal → number) with an explicit comment naming the `{s,e,d}`→NaN FE bug. The 2026-07-11 live re-val had no expense data, but the code fix is unambiguous — no Decimal reaches the wire. |
 | **BE-BUG-F-003** | `PUT /v1/cabinets/:id` (`vatRate:null`) | 🔴 | ✅ | `vatRate:null` (non-VAT-payer) → 200 (GET-form round-trip works). |
 | **BE-BUG-F-004** | notifications preferences schedule | 🔴 | ✅ | Resolved (201 on a valid schedule-body was not separately tested). |
 | **BE-BUG-F-005** | `POST /v1/admin/backfill/start` (role?) | 🟠 | ❓ | **Not checked** (mutation, skipped). BE: confirm whether admin role is required for Owner. |
@@ -49,7 +49,6 @@
 
 ## Outstanding (non-blocking)
 - **BE-BUG-1** — smoke-test the O4 marking-code (Честный ЗНАК) WB write-back on a **real** order to confirm persistence (the contract/UUID path is green).
-- **BE-BUG-F-002** — re-verify the `amount` numeric type once the cabinet has expense data.
 - **BE-BUG-F-005** — BE confirms the admin/backfill role requirement for Owner.
 - **BE-2** (`/analytics/unit-economics` `view_by` empty enum) — **not in this re-val batch**; likely snake_case-related (the `view_by` convention is confirmed green on liquidity). Confirm on unit-economics specifically.
 
