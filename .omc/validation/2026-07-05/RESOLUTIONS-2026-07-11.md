@@ -42,15 +42,20 @@
 |----|----------|-----|--------|----------------|
 | **BE-BUG-F-002** | `GET /v1/expenses*` (Decimal shape) | 🔴→✅ | ✅ | **Confirmed by BE code (BE-7):** `ExpenseResponseDto.amount: number` (`expense-response.dto.ts`) + `operational-expenses.service.ts` does `amount: expense.amount.toNumber()` (Prisma Decimal → number) with an explicit comment naming the `{s,e,d}`→NaN FE bug. The 2026-07-11 live re-val had no expense data, but the code fix is unambiguous — no Decimal reaches the wire. |
 | **BE-BUG-F-003** | `PUT /v1/cabinets/:id` (`vatRate:null`) | 🔴 | ✅ | `vatRate:null` (non-VAT-payer) → 200 (GET-form round-trip works). |
-| **BE-BUG-F-004** | notifications preferences schedule | 🔴 | ✅ | Resolved (201 on a valid schedule-body was not separately tested). |
+| **BE-BUG-F-004** | `PUT /v1/tariffs/settings` (admin role) | 🔴 | ❓ | ⚠️ Was mislabeled above as "notifications schedule". Actual finding (`BE-BUGS-F.md`): `admin` role required — Owner gets 403 `INSUFFICIENT_PERMISSIONS`; GET works for Owner → every Tariffs-page save 403s. Status unconfirmed in this re-val. See `docs/request-backend/226` §2.4. |
 | **BE-BUG-F-005** | `POST /v1/admin/backfill/start` (role?) | 🟠 | ❓ | **Not checked** (mutation, skipped). BE: confirm whether admin role is required for Owner. |
 
 ---
 
 ## Outstanding (non-blocking)
 - **BE-BUG-1** — smoke-test the O4 marking-code (Честный ЗНАК) WB write-back on a **real** order to confirm persistence (the contract/UUID path is green).
+- **BE-BUG-2** — `GET /v1/orders/:id` orderId-vs-UUID asymmetry — **not covered in this re-val**; status unconfirmed.
+- **BE-BUG-F-001** — `PUT /v1/notifications/preferences` `quiet_hours.timezone` round-trip — **not covered in this re-val**; FE omits `timezone` as workaround.
+- **BE-BUG-F-004** — corrected: `PUT /v1/tariffs/settings` admin-role 403 for Owner (was mislabeled in the Cluster F table above as "notifications schedule").
 - **BE-BUG-F-005** — BE confirms the admin/backfill role requirement for Owner.
 - **BE-2** (`/analytics/unit-economics` `view_by` empty enum) — **not in this re-val batch**; likely snake_case-related (the `view_by` convention is confirmed green on liquidity). Confirm on unit-economics specifically.
+
+> **Full status table + detailed professional write-up of all 6 outstanding items** (each with context, current live state, the exact BE ask, repro, impact): [`docs/request-backend/226-validation-2026-07-be-status-and-outstanding.md`](../../../docs/request-backend/226-validation-2026-07-be-status-and-outstanding.md).
 
 ## FE parameter-contract conventions (confirmed live)
 - **liquidity** — snake_case: `turnover_weeks`, `view_by`, `category_filter`, `sort_by`, `sort_order` (camelCase `weeks`/`viewBy` → 400 `forbidNonWhitelisted`). FE client `getLiquidity` ✅ compliant.
