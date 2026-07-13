@@ -47,13 +47,14 @@
 
 ---
 
-## Outstanding (non-blocking)
-- **BE-BUG-1** — smoke-test the O4 marking-code (Честный ЗНАК) WB write-back on a **real** order to confirm persistence (the contract/UUID path is green).
-- **BE-BUG-2** — `GET /v1/orders/:id` orderId-vs-UUID asymmetry — **not covered in this re-val**; status unconfirmed.
-- **BE-BUG-F-001** — `PUT /v1/notifications/preferences` `quiet_hours.timezone` round-trip — **not covered in this re-val**; FE omits `timezone` as workaround.
-- **BE-BUG-F-004** — corrected: `PUT /v1/tariffs/settings` admin-role 403 for Owner (was mislabeled in the Cluster F table above as "notifications schedule").
-- **BE-BUG-F-005** — BE confirms the admin/backfill role requirement for Owner.
-- **BE-2** (`/analytics/unit-economics` `view_by` empty enum) — **not in this re-val batch**; likely snake_case-related (the `view_by` convention is confirmed green on liquidity). Confirm on unit-economics specifically.
+## Outstanding (non-blocking) — updated 2026-07-13 (BE verification)
+
+BE verified all 6 items against current code/DTO/RBAC/services/tests (see `docs/request-backend/226` "Update — BE verification results"): **5 confirmed resolved; 1 operational confirmation remains; 0 blockers.**
+
+- **BE-BUG-1** (O4 marking-code persistence) — ⚠️ **the one remaining**: the write chain is verified (UUID, `{metaType,value}` 1–200, WB SDK call, `{updated:true}`, diagnosable 502 on WB error), but a PATCH→GET smoke-test **cannot** prove persistence — BE proxies the write to WB (no local source-of-truth) and `GET /v1/orders/:id` doesn't return `metaType`/`value`. Operational-confirmation item, not a contract blocker.
+- **BE-BUG-F-005** (backfill) — ✅ Owner role allowed, **BUT a separate scope/RBAC risk**: `Admin` is not currently included in the backfill endpoints and cabinet-scoping isn't enforced. FE must **not** treat the launch button as cabinet-scoped (show scope explicitly, require confirmation); a separate BE security/policy ticket should cover Admin-eligibility + cabinet-membership enforcement.
+
+**Confirmed resolved BE-side (2026-07-13):** BE-BUG-2 (orders detail accepts UUID + orderId), BE-BUG-F-001 (timezone top-level writable), BE-BUG-F-004 (tariffs Owner allowed), BE-2 (unit-economics `view_by` snake_case). **Optional FE cleanups now enabled** (non-blocking): standardize orders detail navigation on UUID (drop the orderId-for-detail workaround); remove the notifications `timezone` strip workaround. See #226 for details.
 
 > **Full status table + detailed professional write-up of all 6 outstanding items** (each with context, current live state, the exact BE ask, repro, impact): [`docs/request-backend/226-validation-2026-07-be-status-and-outstanding.md`](../../../docs/request-backend/226-validation-2026-07-be-status-and-outstanding.md).
 

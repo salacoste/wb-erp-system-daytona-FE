@@ -134,3 +134,47 @@ A one-line reply per item suffices:
 - **BE-BUG-F-004** — "owner allowed for tariffs" / "FE should role-gate"
 - **BE-BUG-F-005** — "admin required" / "owner allowed"
 - **BE-2** — "view_by enum = sku|brand|category (snake_case)" / "…"
+
+---
+
+## Update — BE verification results (2026-07-13)
+
+The BE team verified all 6 outstanding items against current code, DTOs, RBAC, services, and fresh tests. **Result: 15/16 confirmed BE-side; 1 operational confirmation remains (BE-BUG-1 marking-code persistence); 0 blockers for normal FE development.** Verifications run: focused Jest 2× (9 suites, 124 tests, 0 failed/skipped), malformed-DTO 19/19, tsc 0 errors, eslint pass, production build pass, endpoint-drift 75/75, code-review APPROVE, architecture CLEAR, adversarial UltraQA PASS.
+
+### Verdicts on the 6 outstanding items
+
+| ID | Verdict | FE implication |
+|----|---------|----------------|
+| **BE-BUG-2** (orders detail UUID/orderId) | ✅ Fixed & confirmed — `GET /v1/orders/:id` accepts both the internal UUID and numeric WB `orderId`; lookup stays cabinet-scoped | FE **may standardize detail navigation on UUID** — the old "orderId-for-detail / UUID-for-mutations" split is no longer necessary (optional cleanup). |
+| **BE-BUG-F-001** (timezone) | ✅ Fixed & confirmed — GET-shaped PUT no longer 400s; `timezone` is a top-level writable field; its absence does not reset the saved value | FE **`timezone`-strip workaround is no longer required** (optional cleanup). |
+| **BE-BUG-F-004** (tariffs Owner) | ✅ Fixed & confirmed — `PUT /v1/tariffs/settings` allows Admin + Owner; Manager/Analyst → 403 | **No FE change** — the page already admitted Owner; the former 403 was the BE bug (no FE role-gate was ever added). |
+| **BE-BUG-F-005** (backfill Owner) | ✅ Owner role allowed — **BUT a separate scope/RBAC risk exists** | See the F-005 caution below — FE must **not** treat the launch button as automatically cabinet-scoped. |
+| **BE-2** (unit-economics `view_by`) | ✅ Confirmed (part of 15/16; the snake_case `view_by` convention is green, matching liquidity) | **No FE change** — FE clients are already snake_case-compliant. |
+| **BE-BUG-1** (O4 marking-code persistence) | ⚠️ **The one remaining operational confirmation** — write chain verified, but persistence cannot be live-confirmed | FE may integrate the PATCH contract; **cannot claim full live-confirmation** (see below). |
+
+### BE-BUG-1 — why it can't be fully live-confirmed (the 1 remaining)
+The marking-code write chain is verified up to the WB proxy (UUID path, `{metaType:"IMEI"|"GTIN"|"SGTIN"|"UIN", value:string 1–200}` body, exact WB SDK call, `{updated:true}` success, diagnosable 502 on WB error). A PATCH→GET smoke-test **cannot** prove persistence because:
+- BE proxies the write to WB (no local source-of-truth for the marking code);
+- `GET /v1/orders/:id` does not currently return `metaType`/`value`.
+
+FE can integrate and use the PATCH contract; the O4 feature's persistence remains an **operational-confirmation item**, not a BE-contract blocker.
+
+### F-005 backfill — scope/RBAC caution (non-blocker; FE-UX + separate BE security ticket)
+Owner is allowed, but the operation's cabinet-scoping is not yet guaranteed safe:
+- the `Admin` role (despite a "full-access" description) is **not** currently included in the backfill endpoints;
+- cabinet-membership enforcement needs a separate BE security/policy decision.
+
+**FE recommendations until that is resolved:**
+- always show the operation's scope explicitly in the UI;
+- do not promise the user it runs only for the current cabinet;
+- no blind one-click launch — require explicit scope confirmation;
+- track Admin-eligibility + cabinet-membership enforcement as a separate BE security/policy ticket.
+
+### FE-actionable items now enabled by the BE fixes (all optional, non-blocking)
+1. **Standardize Orders detail navigation on UUID** — drop the `orderId`-for-detail workaround (`useOrdersPageState` passes `orderId` today); possible since BE-BUG-2 was fixed.
+2. **Remove the notifications `timezone` strip workaround** (if the FE has one) — possible since F-001 was fixed.
+3. **(No tariffs role-gate to remove — the FE never added one; it admitted Owner throughout, so F-004's fix needs no FE change.)**
+4. **Backfill launch-button UX** — add scope confirmation per the F-005 caution.
+
+**Net: 0 blockers for normal FE development.** The validation batch is closed except the BE-BUG-1 operational confirmation (BE-side) and the optional FE cleanups above.
+
