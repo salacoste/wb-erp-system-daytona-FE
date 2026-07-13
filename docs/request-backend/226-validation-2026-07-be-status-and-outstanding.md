@@ -148,7 +148,7 @@ The BE team verified all 6 outstanding items against current code, DTOs, RBAC, s
 | **BE-BUG-2** (orders detail UUID/orderId) | ✅ Fixed & confirmed — `GET /v1/orders/:id` accepts both the internal UUID and numeric WB `orderId`; lookup stays cabinet-scoped | FE **may standardize detail navigation on UUID** — the old "orderId-for-detail / UUID-for-mutations" split is no longer necessary (optional cleanup). |
 | **BE-BUG-F-001** (timezone) | ✅ Fixed & confirmed — GET-shaped PUT no longer 400s; `timezone` is a top-level writable field; its absence does not reset the saved value | FE **`timezone`-strip workaround is no longer required** (optional cleanup). |
 | **BE-BUG-F-004** (tariffs Owner) | ✅ Fixed & confirmed — `PUT /v1/tariffs/settings` allows Admin + Owner; Manager/Analyst → 403 | **No FE change** — the page already admitted Owner; the former 403 was the BE bug (no FE role-gate was ever added). |
-| **BE-BUG-F-005** (backfill Owner) | ✅ Owner role allowed — **BUT a separate scope/RBAC risk exists** | See the F-005 caution below — FE must **not** treat the launch button as automatically cabinet-scoped. |
+| **BE-BUG-F-005** (backfill Owner) | ✅ **RESOLVED (2026-07-13 BE batch, build 09:35:56)** — Admin + Owner allowed within JWT `cabinet_ids`; `start` requires `cabinetId`; `status`/`pause`/`resume` protected; empty scope fail-closed | FE may **simplify** the launch UX — cabinet-scoping is now BE-enforced fail-closed (one-click safe; explicit scope display optional). See [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md) §5. |
 | **BE-2** (unit-economics `view_by`) | ✅ Confirmed (part of 15/16; the snake_case `view_by` convention is green, matching liquidity) | **No FE change** — FE clients are already snake_case-compliant. |
 | **BE-BUG-1** (O4 marking-code persistence) | ⚠️ **The one remaining operational confirmation** — write chain verified, but persistence cannot be live-confirmed | FE may integrate the PATCH contract; **cannot claim full live-confirmation** (see below). |
 
@@ -159,22 +159,18 @@ The marking-code write chain is verified up to the WB proxy (UUID path, `{metaTy
 
 FE can integrate and use the PATCH contract; the O4 feature's persistence remains an **operational-confirmation item**, not a BE-contract blocker.
 
-### F-005 backfill — scope/RBAC caution (non-blocker; FE-UX + separate BE security ticket)
-Owner is allowed, but the operation's cabinet-scoping is not yet guaranteed safe:
-- the `Admin` role (despite a "full-access" description) is **not** currently included in the backfill endpoints;
-- cabinet-membership enforcement needs a separate BE security/policy decision.
+### F-005 backfill — scope/RBAC ✅ RESOLVED (2026-07-13 BE batch, build 09:35:56)
+Filed as [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md) — now resolved BE-side:
+- `Admin` + `Owner` are both allowed, strictly within the caller's JWT `cabinet_ids`;
+- `POST /start` requires `cabinetId`; `status` / `pause` / `resume` are also protected;
+- empty scope is **fail-closed** (no cross-cabinet blast radius).
 
-**FE recommendations until that is resolved:**
-- always show the operation's scope explicitly in the UI;
-- do not promise the user it runs only for the current cabinet;
-- no blind one-click launch — require explicit scope confirmation;
-- track Admin-eligibility + cabinet-membership enforcement as a separate BE security/policy ticket.
+**FE implication:** the prior defensive UX commitments (explicit scope confirmation, "do not promise current-cabinet-only") are no longer safety-critical — cabinet-scoping is now BE-enforced. FE may simplify the launch UX; an explicit scope display remains optional good practice.
 
 ### FE-actionable items now enabled by the BE fixes (all optional, non-blocking)
-1. **Standardize Orders detail navigation on UUID** — drop the `orderId`-for-detail workaround (`useOrdersPageState` passes `orderId` today); possible since BE-BUG-2 was fixed.
-2. **Remove the notifications `timezone` strip workaround** (if the FE has one) — possible since F-001 was fixed.
+1. **Standardize Orders detail navigation on UUID** — ⚠️ **BLOCKED 2026-07-13 (live empirical check)**: the base `GET /v1/orders/:id` accepts both UUID and orderId (BE-BUG-2 confirmed — both → 200), but the three **history sub-routes** (`/history`, `/wb-history`, `/full-history`) **return HTTP 500 on UUID, 200 only on WB orderId**. The Orders detail modal shares its identifier with `OrderHistoryTabs` (which calls all three history sub-routes), so switching to UUID would load the detail but **500 every history tab**. FE correctly keeps `orderId` for the whole modal chain. This is filed as [`229-orders-history-endpoints-uuid-compat-500.md`](./229-orders-history-endpoints-uuid-compat-500.md) — the FE cleanup is unblocked only after BE makes the history sub-routes UUID-compatible (or 404-on-UUID).
+2. **Notifications `timezone` strip workaround** — ✅ **verified ABSENT 2026-07-13 (FE source trace, no-op)**: the FE already round-trips `quiet_hours.timezone` in the PUT — `updateNotificationPreferences` (src/lib/api/notifications.ts) passes the body unchanged, and `useQuietHours` → `useNotificationPreferences` optimistic-merge includes `timezone`. A full-codebase grep for strip/omit/`delete timezone` patterns returned nothing. **No FE change needed.** (The 2026-07-05 "FE timezone-strip workaround" note in RESOLUTIONS-2026-07-11.md §2.3 was describing the *intended* defensive omission; it was never present in code.)
 3. **(No tariffs role-gate to remove — the FE never added one; it admitted Owner throughout, so F-004's fix needs no FE change.)**
-4. **Backfill launch-button UX** — add scope confirmation per the F-005 caution.
+4. **Backfill launch-button UX** — ✅ F-005 resolved (2026-07-13): cabinet-scoping now BE-enforced fail-closed, so the prior "explicit scope confirmation / do not promise current-cabinet-only" caution is no longer safety-critical. FE may simplify (one-click launch is now safe; explicit scope display optional). See [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md) §5.
 
-**Net: 0 blockers for normal FE development.** The validation batch is closed except the BE-BUG-1 operational confirmation (BE-side) and the optional FE cleanups above.
-
+**Net: 0 blockers for normal FE development.** Open BE-side items: **BE-BUG-1** (O4 marking-code persistence — operational confirmation; ticket #227) and **#229** (orders history endpoints 500 on UUID — blocks the optional orderId→UUID cleanup; re-verified still 500 on build 09:35:56). **F-005 resolved** (2026-07-13); F-001 needs no FE change (no-op); F-004 needs no FE change.
