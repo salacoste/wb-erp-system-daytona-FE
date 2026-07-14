@@ -3,9 +3,8 @@
 # CI guard for the Next.js frontend (this repo: salacoste/wb-erp-system-daytona-FE).
 # Runs on every push to main/develop. Uses the dedicated external runner at 188.245.163.220.
 #
-# Architecture: SINGLE JOB with sequential steps. The VPS has 2 vCPU / 2 GB RAM + 2 GB swap.
-# Parallel jobs would each run npm ci (869 packages) and exhaust memory.
-# Sequential steps share one node_modules install and stay within RAM budget.
+# Architecture: SINGLE JOB with sequential steps. The VPS has 2 vCPU / 4 GB RAM + 4 GB swap.
+# Sequential steps share one node_modules install; Vitest uses both CPUs without duplicating npm ci.
 #
 # Key Node.js memory settings:
 #   - tsc: --max-old-space-size=1536 (type-check is memory-hungry)
@@ -59,14 +58,14 @@ jobs:
         run: npm run lint
 
       # ── Step 2: TypeScript type-check ─────────────────────────────────────
-      # tsc --noEmit needs ~1.2 GB heap on this codebase. The VPS has 2 GB RAM
-      # + 2 GB swap, so --max-old-space-size=1536 fits comfortably.
+      # tsc --noEmit needs ~1.2 GB heap on this codebase. The VPS has 4 GB RAM
+      # + 4 GB swap, so --max-old-space-size=1536 fits comfortably.
       - name: Run TypeScript type-check
         run: node --max-old-space-size=1536 ./node_modules/.bin/tsc --noEmit
 
       # ── Step 3: Unit Tests (Vitest) ───────────────────────────────────────
       - name: Run Vitest unit tests
-        run: npm test -- --run --reporter=default
+        run: npm test -- --run --minWorkers=1 --maxWorkers=2 --reporter=default
 
       # ── Step 4: Privacy Guard ─────────────────────────────────────────────
       # Forbid console.* in PII files (Story 86.2 / Epic 86-FE retro #7)
