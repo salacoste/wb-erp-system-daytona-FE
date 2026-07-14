@@ -1,1 +1,0 @@
-{"period":{"from":"2026-W23","to":"2026-W26","days_count":29},"nm_id":null,"data":[{"week":"2026-W23","storage_cost":3916.84},{"week":"2026-W24","storage_cost":3881.47},{"week":"2026-W25","storage_cost":3554.69},{"week":"2026-W26","storage_cost":4309.65}],"has_data":true,"summary":{"storage_cost":{"min":3554.69,"max":4309.65,"avg":3915.66,"trend":10.03}}}
