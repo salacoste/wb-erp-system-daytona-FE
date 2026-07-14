@@ -71,16 +71,21 @@ export function LiquidityDistributionCards({
                 </span>
               </div>
 
-              {/* Main value - percentage (or neutral "no sales" when all SKUs zero-sales) */}
-              <div className="mb-2 flex min-h-[2.5rem] items-center">
+              {/* Main value - percentage (or neutral "no sales" when all SKUs zero-sales).
+                  BD-14: `pct` is the share of total inventory VALUE (capital), not SKU count —
+                  label it so it isn't misread as "% of SKUs". */}
+              <div className="mb-2 flex min-h-[2.5rem] items-baseline gap-2">
                 {item.count > 0 && item.avg_turnover_days >= 999 ? (
                   <span className="text-sm font-medium text-muted-foreground">
                     Нет продаж за период
                   </span>
                 ) : (
-                  <span className="text-3xl font-bold" style={{ color: config.color }}>
-                    {formatPercentage(item.pct)}
-                  </span>
+                  <>
+                    <span className="text-3xl font-bold" style={{ color: config.color }}>
+                      {formatPercentage(item.pct)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">от стоимости запасов</span>
+                  </>
                 )}
               </div>
 

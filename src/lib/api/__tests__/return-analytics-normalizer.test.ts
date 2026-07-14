@@ -61,7 +61,8 @@ describe('normalizeReturnReasonsResponse', () => {
     const result = normalizeReturnReasonsResponse(null)
     expect(result.summary.totalReturns).toBe(0)
     expect(result.summary.cancelBeforeShipment).toBe(0)
-    expect(result.summary.overallReturnRate).toBe(0)
+    // AP#8: rate ratio preserves null (render '—'), not 0.
+    expect(result.summary.overallReturnRate).toBeNull()
     expect(result.byCategory).toEqual([])
     expect(result.period).toEqual({ from: '', to: '' })
   })
@@ -75,7 +76,8 @@ describe('normalizeReturnReasonsResponse', () => {
   it('handles missing summary fields', () => {
     const result = normalizeReturnReasonsResponse({ summary: {}, byCategory: [] })
     expect(result.summary.totalReturns).toBe(0)
-    expect(result.summary.overallReturnRate).toBe(0)
+    // AP#8: rate ratio preserves null (render '—'), not 0.
+    expect(result.summary.overallReturnRate).toBeNull()
   })
 
   it('handles empty byCategory array', () => {

@@ -46,4 +46,14 @@ describe('ForecastMetrics', () => {
     render(<ForecastMetrics data={data} />)
     expect(screen.getByText(/80\s%/)).toBeTruthy() // was dot-locale "80%"; \s matches NBSP
   })
+
+  it('renders "—" for avg confidence when no prediction has a confidence — BD-35', () => {
+    const noConfidence: AiForecastResponse = {
+      ...data,
+      predictions: data.predictions.map(p => ({ ...p, confidence: null })),
+    }
+    render(<ForecastMetrics data={noConfidence} />)
+    expect(screen.getByText('—')).toBeTruthy() // not a fabricated "0 %"
+    expect(screen.getByText('нет данных')).toBeTruthy()
+  })
 })

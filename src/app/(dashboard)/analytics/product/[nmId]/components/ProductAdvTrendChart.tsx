@@ -34,6 +34,10 @@ function formatDay(dateStr: string): string {
   return `${d}.${m}`
 }
 
+function tooltipNumber(value: unknown): number {
+  return typeof value === 'number' ? value : Number(value) || 0
+}
+
 export function ProductAdvTrendChart({ dates }: ProductAdvTrendChartProps) {
   const chartData = dates.map(d => ({
     date: formatDay(d.date),
@@ -57,9 +61,11 @@ export function ProductAdvTrendChart({ dates }: ProductAdvTrendChartProps) {
           />
           <YAxis yAxisId="orders" orientation="right" tick={{ fontSize: 12 }} width={40} />
           <Tooltip
-            formatter={(value: number, name: string) => {
-              if (name === 'Затраты') return [formatCurrency(value), name]
-              return [formatNumber(value), name]
+            formatter={(value, name) => {
+              const label = String(name)
+              const numericValue = tooltipNumber(value)
+              if (label === 'Затраты') return [formatCurrency(numericValue), label]
+              return [formatNumber(numericValue), label]
             }}
           />
           <Legend />

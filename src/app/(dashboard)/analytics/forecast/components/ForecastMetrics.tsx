@@ -7,10 +7,12 @@ import { formatPercentageInt } from '@/lib/utils'
 
 export function ForecastMetrics({ data }: { data: AiForecastResponse }) {
   const confidenceValues = data.predictions.filter(p => p.confidence != null)
+  // BD-35: null (not 0) when no prediction carries a confidence — a fabricated "0 %"
+  // reads as "zero confidence" rather than "unknown". Render "—" instead (anti-pattern #8).
   const avgConfidence =
     confidenceValues.length > 0
       ? confidenceValues.reduce((s, p) => s + (p.confidence ?? 0), 0) / confidenceValues.length
-      : 0
+      : null
 
   const metrics = [
     { label: 'Движок', value: data.engine, sub: `v${data.modelVersion}` },
@@ -22,8 +24,8 @@ export function ForecastMetrics({ data }: { data: AiForecastResponse }) {
     },
     {
       label: 'Средняя уверенность',
-      value: formatPercentageInt(avgConfidence * 100),
-      sub: getConfidenceBand(avgConfidence),
+      value: avgConfidence != null ? formatPercentageInt(avgConfidence * 100) : '—',
+      sub: avgConfidence != null ? getConfidenceBand(avgConfidence) : 'нет данных',
     },
   ]
 

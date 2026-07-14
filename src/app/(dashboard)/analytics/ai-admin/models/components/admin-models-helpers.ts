@@ -65,9 +65,15 @@ export const STATUS_OPTIONS = [
   { value: 'retired', label: 'Архив' },
 ]
 
-/** AP#8: null MAPE → '—'; formatPercentage when non-null. */
+/**
+ * AP#8: null MAPE → '—'; formatPercentage when non-null.
+ * BD-33: model-level MAPE === 0 is the #185 train-time un-evaluated SENTINEL (a real 0.0 %
+ * MAPE is statistically implausible), so treat 0 like null → '—' — mirrors formatMape in
+ * src/app/(dashboard)/analytics/models/components/model-list-helpers.ts (single 0-guard
+ * convention for model-level MAPE renders).
+ */
 export function formatMapeDisplay(mape: number | null): string {
-  if (mape == null) return '—'
+  if (mape == null || mape === 0) return '—'
   return formatPercentage(mape)
 }
 

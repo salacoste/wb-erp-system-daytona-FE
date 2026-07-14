@@ -21,7 +21,9 @@ function computeStats(items: PriceRecommendation[]) {
   const belowTarget = items.filter(i => i.gap !== null && i.gap < 0).length
   const aboveTarget = items.filter(i => i.gap !== null && i.gap >= 0).length
   const gaps = items.filter(i => i.gapPct !== null).map(i => i.gapPct!)
-  const avgGapPct = gaps.length > 0 ? gaps.reduce((a, b) => a + b, 0) / gaps.length : 0
+  // BD-37: null (not 0) when no SKU reports a gap — a fabricated "0 %" reads as "no gap",
+  // which is different from "unknown". Render "—" instead (anti-pattern #8).
+  const avgGapPct = gaps.length > 0 ? gaps.reduce((a, b) => a + b, 0) / gaps.length : null
   return { total: items.length, belowTarget, aboveTarget, avgGapPct }
 }
 
@@ -53,7 +55,7 @@ export function PricingSummaryCards({ items, isLoading }: PricingSummaryCardsPro
     },
     {
       title: 'Средний разрыв',
-      value: formatPercentage(stats.avgGapPct),
+      value: stats.avgGapPct != null ? formatPercentage(stats.avgGapPct) : '—',
       icon: BarChart3,
       description: 'от целевой маржи',
     },

@@ -92,7 +92,9 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
         </h4>
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <dt className="text-gray-600">Покрытие страхового запаса:</dt>
+            {/* BD-17: this value is safety-stock ÷ daily sales = how many days the safety
+                buffer covers, not a generic "planning horizon". */}
+            <dt className="text-gray-600">Срок покрытия страхового запаса (дней):</dt>
             <dd className="font-medium text-gray-900">
               {formatSafetyStockCoverage(item.safety_stock_units, item.avg_daily_sales)}
             </dd>

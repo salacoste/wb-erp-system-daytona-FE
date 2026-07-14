@@ -28,7 +28,8 @@
     "restart:safe": "node scripts/start-fresh-next-dev.mjs",
     "cleanup:claude": "bash scripts/cleanup-claude-sessions.sh",
     "prepare": "husky",
-    "check:locale-percent": "bash scripts/check-locale-percent.sh"
+    "check:locale-percent": "bash scripts/check-locale-percent.sh",
+    "check:anti-pattern-8-normalizer": "bash scripts/check-anti-pattern-8-normalizer.sh"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --max-warnings=0 --no-warn-ignored"

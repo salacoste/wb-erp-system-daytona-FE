@@ -94,4 +94,27 @@ describe('transformToCogsMetrics', () => {
     expect(m.grossProfit).toBe(600)
     expect(m.marginPct).toBe(60)
   })
+
+  // BD-1: no COGS block at all → null (not a fabricated 100 %-margin block).
+  it('nulls the COGS block when cogs_total, gross_profit AND margin_pct are all absent', () => {
+    const m = transformToCogsMetrics(
+      resp({ total_orders: 10, total_amount: 1000 }) // no cogs fields
+    )
+    expect(m.cogsTotal).toBeNull()
+    expect(m.grossProfit).toBeNull()
+    expect(m.marginPct).toBeNull()
+    expect(m.cogsCoveragePct).toBeNull()
+    expect(m.ordersMissingCogs).toBeNull()
+    expect(m.avgProfitPerOrder).toBeNull()
+    // Non-COGS metrics still computed.
+    expect(m.totalOrders).toBe(10)
+  })
+
+  it('keeps the COGS block when only cogs_total is present (gross_profit/margin_pct absent)', () => {
+    const m = transformToCogsMetrics(
+      resp({ total_orders: 10, total_amount: 1000, cogs_total: 400 })
+    )
+    expect(m.cogsTotal).toBe(400)
+    expect(m.grossProfit).toBe(600)
+  })
 })

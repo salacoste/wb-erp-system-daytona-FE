@@ -79,7 +79,12 @@ export function MonitorMetricsTable({ periods }: { periods: MonitorSummaryRespon
             return (
               <TableRow key={row.key}>
                 <TableCell className="font-medium">
-                  {row.label}
+                  <span>{row.label}</span>
+                  {row.subtitle && (
+                    <span className="block text-xs text-muted-foreground font-normal">
+                      {row.subtitle}
+                    </span>
+                  )}
                   {isMargin && anomalousPeriods.length > 0 && (
                     <TooltipProvider>
                       <Tooltip>

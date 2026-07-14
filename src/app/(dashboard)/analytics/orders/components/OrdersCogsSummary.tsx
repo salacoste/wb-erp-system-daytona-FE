@@ -97,19 +97,19 @@ export function OrdersCogsSummary({ from, to }: OrdersCogsSummaryProps) {
       />
       <CogsMetricCard
         title="Себестоимость"
-        value={data ? formatCurrency(data.cogsTotal) : '—'}
+        value={data?.cogsTotal != null ? formatCurrency(data.cogsTotal) : '—'}
         icon={<Package className="h-5 w-5 text-blue-600" />}
         isLoading={isLoading}
       />
       <CogsMetricCard
         title="Валовая прибыль"
-        value={data ? formatCurrency(data.grossProfit) : '—'}
+        value={data?.grossProfit != null ? formatCurrency(data.grossProfit) : '—'}
         icon={<TrendingUp className="h-5 w-5 text-primary" />}
         isLoading={isLoading}
       />
       <CogsMetricCard
         title="Маржинальность"
-        value={data ? formatPercentage(data.marginPct) : '—'}
+        value={data?.marginPct != null ? formatPercentage(data.marginPct) : '—'}
         icon={<Percent className="h-5 w-5 text-purple-600" />}
         isLoading={isLoading}
       />

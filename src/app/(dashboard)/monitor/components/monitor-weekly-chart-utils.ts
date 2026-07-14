@@ -19,7 +19,7 @@ export interface ChartRow {
   label: string
   /** Sales count (DailyMetrics.salesCount from finance.sales_count) — integer, NOT currency */
   sales: number
-  /** Total orders: salesCount + returnsCount (derived) — integer count */
+  /** Transaction sum: salesCount + returnsCount (derived, BD-22 — NOT a real order count) */
   orders: number
   /** Returns count (DailyMetrics.returnsCount from finance.returns_count) — integer */
   returns: number
@@ -33,7 +33,8 @@ export const LINE_COLORS = {
 
 export const LINE_LABELS = {
   sales: 'Продажи', // count, not currency — no "(руб.)"
-  orders: 'Заказы',
+  // BD-22: renamed from "Заказы" — this series is salesCount+returnsCount, not a real order count.
+  orders: 'Продажи + Возвраты',
   returns: 'Возвраты',
 } as const
 

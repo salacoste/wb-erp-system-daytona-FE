@@ -9,7 +9,28 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatNumber, formatDecimal, cn } from '@/lib/utils'
 import Link from 'next/link'
 import { ROUTES } from '@/lib/routes'
-import type { PositionTrendMover, CloseToPageOneItem } from '@/types/search-position-trends'
+import type {
+  PositionTrendMover,
+  CloseToPageOneItem,
+  TrendDirection,
+} from '@/types/search-position-trends'
+
+/**
+ * Color the "Изменение" cell off the semantic `trend` enum, NOT the raw
+ * positionChange sign (task-51 / BD-25). This is unambiguous regardless of the
+ * numeric sign convention: rank improvement = green, decline = red, stable = muted.
+ *
+ * Backend convention (confirmed, docs/API-PATHS-REFERENCE.md:7518): for the
+ * /position/trends endpoint positionChange is a pre-signed improvement value —
+ * POSITIVE = improved (moved up), NEGATIVE = declined — so `trend: 'improving'`
+ * pairs with positionChange > 0. (Note the sibling /position-movers endpoint
+ * uses positionDelta where NEGATIVE = up; driving off `trend` avoids that trap.)
+ */
+function trendColorClass(trend: TrendDirection): string {
+  if (trend === 'improving') return 'text-green-600 font-medium'
+  if (trend === 'declining') return 'text-red-500'
+  return 'text-muted-foreground'
+}
 
 export function SearchPositionMoversTable({
   movers,
@@ -71,15 +92,7 @@ export function SearchPositionMoversTable({
                     {formatDecimal(m.currentAvgPosition, 1)}
                   </td>
                   <td className="p-2 text-right">
-                    <span
-                      className={
-                        m.positionChange > 0
-                          ? 'text-green-600 font-medium'
-                          : m.positionChange < 0
-                            ? 'text-red-500'
-                            : 'text-muted-foreground'
-                      }
-                    >
+                    <span className={trendColorClass(m.trend)}>
                       {m.positionChange > 0 ? '+' : ''}
                       {formatDecimal(m.positionChange, 1)}
                     </span>

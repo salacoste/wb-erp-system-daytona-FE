@@ -2,7 +2,8 @@
  * SupplyDetailRightColumn — BD-17 label regression guard.
  *
  * Bug BD-17 renamed the user-visible <dt> label in SupplyDetailRightColumn.tsx:95 from the
- * deceptive `Горизонт планирования:` (planning horizon) → honest `Покрытие страхового запаса:`
+ * deceptive `Горизонт планирования:` (planning horizon) → honest
+ * `Срок покрытия страхового запаса (дней):`
  * (safety stock coverage). The formatter (formatSafetyStockCoverage) is unit-tested, but NO test
  * asserted the rendered <dt> string itself — a future refactor could revert the label and every
  * test would stay green. These tests lock the visible label + its coverage value + the negative
@@ -62,9 +63,9 @@ function makeItem(overrides: Partial<SupplyPlanningItem> = {}): SupplyPlanningIt
 }
 
 describe('SupplyDetailRightColumn — BD-17 safety-stock coverage label', () => {
-  it('renders the corrected "Покрытие страхового запаса:" label', () => {
+  it('renders the corrected "Срок покрытия страхового запаса (дней):" label', () => {
     render(<SupplyDetailRightColumn item={makeItem()} forecast={forecast} totalLostUnits={0} />)
-    expect(screen.getByText(/Покрытие страхового запаса/)).toBeInTheDocument()
+    expect(screen.getByText(/Срок покрытия страхового запаса \(дней\)/)).toBeInTheDocument()
   })
 
   it('renders the coverage value = safety_stock_units / avg_daily_sales (40 / 5 → 8 дней)', () => {
@@ -83,10 +84,10 @@ describe('SupplyDetailRightColumn — BD-17 safety-stock coverage label', () => 
     // No safety buffer → formatter returns "—"; the corrected label must survive edge data
     const item = makeItem({ safety_stock_units: 0 })
     render(<SupplyDetailRightColumn item={item} forecast={forecast} totalLostUnits={0} />)
-    expect(screen.getByText(/Покрытие страхового запаса/)).toBeInTheDocument()
+    expect(screen.getByText(/Срок покрытия страхового запаса \(дней\)/)).toBeInTheDocument()
     // the dd renders the em dash for the no-buffer case
     const dd = screen
-      .getByText(/Покрытие страхового запаса/)
+      .getByText(/Срок покрытия страхового запаса \(дней\)/)
       .closest('div')
       ?.querySelector('dd')
     expect(dd?.textContent).toMatch(/—/)

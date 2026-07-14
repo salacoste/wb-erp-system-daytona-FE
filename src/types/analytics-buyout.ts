@@ -63,7 +63,8 @@ export interface BuyoutSummaryResponse {
   topDecliners?: Array<{
     nmId: number
     buyoutRatePct: number | null
-    trendDelta: number
+    // AP#8: trend delta is a ratio — number|null; null renders '—'.
+    trendDelta: number | null
   }>
   period: { from: string; to: string }
   source: BuyoutSource

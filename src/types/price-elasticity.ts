@@ -24,8 +24,9 @@ export interface PriceElasticityBatchParams {
 /** Single item from batch response */
 export interface PriceElasticityItem {
   nmId: number
-  elasticity: number
-  rSquared: number
+  // AP#8: elasticity & rSquared (statistical ratios) are number|null — null renders '—'.
+  elasticity: number | null
+  rSquared: number | null
   dataPoints: number
   source: string
   confidence: ElasticityConfidenceKey
@@ -41,8 +42,9 @@ export interface PriceElasticityBatchResponse {
 /** Single-SKU response: GET /v1/products/price-elasticity/{nmId} */
 export interface PriceElasticitySkuResponse {
   nmId: number
-  elasticity: number
-  rSquared: number
+  // AP#8: elasticity & rSquared (statistical ratios) are number|null — null renders '—'.
+  elasticity: number | null
+  rSquared: number | null
   dataPoints: number
   source: string
   confidence: ElasticityConfidenceKey

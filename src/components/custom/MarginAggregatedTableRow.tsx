@@ -80,7 +80,9 @@ export function MarginAggregatedTableRow({
         <div className="font-medium">{entityValue || entityFallback}</div>
       </TableCell>
       <TableCell className="text-right font-medium">
-        {(item.total_skus ?? item.qty).toLocaleString('ru-RU')}
+        {/* BD-20: "Товаров (SKU)" is a SKU count — fall back to "—" when missing, NOT to
+            item.qty (total units sold), which would mislabel units as SKU count. */}
+        {item.total_skus != null ? item.total_skus.toLocaleString('ru-RU') : '—'}
       </TableCell>
       <TableCell className="text-right font-medium">{formatCogs(item.revenue_net)}</TableCell>
       <TableCell className="text-right">

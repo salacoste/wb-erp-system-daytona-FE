@@ -56,18 +56,63 @@ describe('SearchPositionMoversTable', () => {
     expect(screen.getByText('789012')).toBeInTheDocument()
   })
 
-  it('shows positive position change in green with + sign', () => {
+  it('colors an improving mover green (rank improvement)', () => {
     render(<SearchPositionMoversTable movers={mockMovers} />)
     const change = screen.getByText('+5,8')
     expect(change).toBeInTheDocument()
     expect(change.className).toContain('text-green-600')
   })
 
-  it('shows negative position change in red', () => {
+  it('colors a declining mover red (rank decline)', () => {
     render(<SearchPositionMoversTable movers={mockMovers} />)
     const change = screen.getByText('-5,1')
     expect(change).toBeInTheDocument()
     expect(change.className).toContain('text-red-500')
+  })
+
+  it('colors a stable mover muted', () => {
+    render(
+      <SearchPositionMoversTable
+        movers={[
+          {
+            nmId: 111,
+            currentAvgPosition: 10,
+            previousAvgPosition: 10,
+            positionChange: 0,
+            trend: 'stable',
+            totalQueries: 3,
+            totalImpressions: 100,
+            topQuery: 'кепка',
+          },
+        ]}
+      />
+    )
+    const change = screen.getByText('0,0')
+    expect(change.className).toContain('text-muted-foreground')
+  })
+
+  it('drives color off the trend enum, not the positionChange sign (task-51/BD-25)', () => {
+    // Contrived divergence: numeric sign contradicts the semantic trend.
+    // Color MUST follow `trend`, so a POSITIVE number with trend:'declining' is RED.
+    render(
+      <SearchPositionMoversTable
+        movers={[
+          {
+            nmId: 222,
+            currentAvgPosition: 30,
+            previousAvgPosition: 20,
+            positionChange: 4.2,
+            trend: 'declining',
+            totalQueries: 3,
+            totalImpressions: 100,
+            topQuery: 'носки',
+          },
+        ]}
+      />
+    )
+    const change = screen.getByText('+4,2')
+    expect(change.className).toContain('text-red-500')
+    expect(change.className).not.toContain('text-green-600')
   })
 
   it('shows dash for null topQuery', () => {

@@ -5,6 +5,7 @@ import {
   getTopWastedSpend,
   fmtCurrency,
 } from '../cross-reference-utils'
+import { classifyCannibalization } from '../ad-search-correlation-utils'
 import type { SearchOrderItem } from '@/types/search-analytics'
 import type { AdvertisingItem } from '@/types/advertising-analytics'
 
@@ -122,6 +123,57 @@ describe('mergeSearchAndAdData', () => {
     const ad = [makeAdItem({ key: 'campaign:123', spend: 999 })]
     const result = mergeSearchAndAdData([], ad)
     expect(result).toHaveLength(0)
+  })
+
+  // Task-50 (BD-26): organicContribution must be sourced from the ad item so the
+  // cannibalization analysis is not silently stuck at 'low' for every row.
+  it('populates organicContribution from the ad item on both/ad-channel rows', () => {
+    const search = [makeSearchItem({ key: 300 })]
+    const ad = [makeAdItem({ key: 'sku:300', organic_contribution: 62.5 })]
+    const result = mergeSearchAndAdData(search, ad)
+    expect(result[0].channel).toBe('both')
+    expect(result[0].organicContribution).toBe(62.5)
+  })
+
+  it('leaves organicContribution null for organic-only rows (no ad item)', () => {
+    const result = mergeSearchAndAdData([makeSearchItem({ key: 100 })], [])
+    expect(result[0].channel).toBe('organic')
+    expect(result[0].organicContribution).toBeNull()
+  })
+})
+
+// Task-50 (BD-26): end-to-end guard — merged output must produce non-trivial
+// high/low buckets through classifyCannibalization on realistic data. Before the
+// mergeSearchAndAdData fix organicContribution was never set → org=0 for every
+// row → 100% 'low' (the reported defect).
+describe('mergeSearchAndAdData → classifyCannibalization (BD-26 regression)', () => {
+  it('produces a HIGH-risk bucket for high organic + top-quartile spend', () => {
+    // 10 matched (both-channel) rows: one strong-organic + top-spend outlier.
+    const search = Array.from({ length: 10 }, (_, i) => makeSearchItem({ key: i + 1 }))
+    const ad = Array.from({ length: 10 }, (_, i) =>
+      makeAdItem({
+        key: `sku:${i + 1}`,
+        organic_contribution: i === 9 ? 85 : 25, // row 10 = high organic
+        spend: i === 9 ? 20000 : 100 + i * 100, // row 10 = highest spend
+      })
+    )
+    const merged = mergeSearchAndAdData(search, ad)
+    const classified = classifyCannibalization(merged)
+    const buckets = new Set(classified.map(c => c.risk))
+    expect(classified.find(c => c.nmId === 10)?.risk).toBe('high')
+    // non-trivial: not everything collapses to a single bucket
+    expect(buckets.size).toBeGreaterThan(1)
+    expect(buckets.has('low')).toBe(true)
+  })
+
+  it('classifies genuinely low-organic rows as LOW risk', () => {
+    const search = Array.from({ length: 3 }, (_, i) => makeSearchItem({ key: i + 1 }))
+    const ad = Array.from({ length: 3 }, (_, i) =>
+      makeAdItem({ key: `sku:${i + 1}`, organic_contribution: 10 + i * 5, spend: 100 + i * 100 })
+    )
+    const merged = mergeSearchAndAdData(search, ad)
+    const classified = classifyCannibalization(merged)
+    expect(classified.every(c => c.risk === 'low')).toBe(true)
   })
 })
 

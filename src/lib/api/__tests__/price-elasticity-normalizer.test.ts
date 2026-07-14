@@ -95,7 +95,7 @@ describe('getPriceElasticityBatch (normalizeBatchResponse)', () => {
     expect(result.byConfidence).toEqual({ high: 0, medium: 0, low: 0 })
   })
 
-  it('defaults null fields to 0/empty for count/string fields', async () => {
+  it('defaults null count/string fields, preserves null on ratio fields (AP#8)', async () => {
     mockedGet.mockResolvedValueOnce({
       items: [{ nmId: null, elasticity: null, rSquared: null, dataPoints: null, source: null }],
       total: null,
@@ -104,8 +104,9 @@ describe('getPriceElasticityBatch (normalizeBatchResponse)', () => {
     const result = await getPriceElasticityBatch()
     const item = result.items[0]
     expect(item.nmId).toBe(0)
-    expect(item.elasticity).toBe(0)
-    expect(item.rSquared).toBe(0)
+    // AP#8: elasticity & rSquared are ratios — preserve null (render '—'), not 0.
+    expect(item.elasticity).toBeNull()
+    expect(item.rSquared).toBeNull()
     expect(item.dataPoints).toBe(0)
     expect(item.source).toBe('')
     expect(item.confidence).toBe('low')
@@ -165,7 +166,7 @@ describe('getPriceElasticitySku (normalizeSkuResponse)', () => {
     expect(result.profitMaxPrice).toBeNull()
   })
 
-  it('defaults null count fields to 0', async () => {
+  it('defaults null count fields to 0, preserves null on ratio fields (AP#8)', async () => {
     mockedGet.mockResolvedValueOnce({
       nmId: null,
       elasticity: null,
@@ -176,8 +177,9 @@ describe('getPriceElasticitySku (normalizeSkuResponse)', () => {
     })
     const result = await getPriceElasticitySku(1)
     expect(result.nmId).toBe(0)
-    expect(result.elasticity).toBe(0)
-    expect(result.rSquared).toBe(0)
+    // AP#8: elasticity & rSquared are ratios — preserve null (render '—'), not 0.
+    expect(result.elasticity).toBeNull()
+    expect(result.rSquared).toBeNull()
     expect(result.dataPoints).toBe(0)
     expect(result.source).toBe('')
     expect(result.confidence).toBe('low')
