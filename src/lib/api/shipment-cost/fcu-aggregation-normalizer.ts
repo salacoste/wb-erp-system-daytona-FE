@@ -15,6 +15,7 @@ export function normalizeFcuBySkuItem(raw: unknown): FcuBySkuItem {
   return {
     nmId: toCount(d.nmId),
     productName: toStr(d.productName),
+    // eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: the FCU contract requires PCU as a non-null number; malformed/missing input falls back to 0.
     latestPcu: toNullableNumber(d.latestPcu) ?? 0,
     latestDcu: toNullableNumber(d.latestDcu),
     latestFcu: toNullableNumber(d.latestFcu),
