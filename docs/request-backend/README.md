@@ -2,6 +2,8 @@
 
 Documentation of requests from frontend team to backend team and backend team responses.
 
+> **Canonical current status (2026-07-13):** use [AUDIT-2026-07-13.md](./AUDIT-2026-07-13.md) when a historical heading, shard, or counter conflicts with current code/evidence. The audit freezes and maps all 244 source Markdown basenames; this README remains part of that source set. Counters and “all resolved” statements below are historical snapshots, not precedence over the dated ledger.
+
 **Last Updated**: 2026-06-09 | **Total Requests**: 211 | **Active**: 0 | **Pending**: 0 | **Resolved**: 211
 
 ---
