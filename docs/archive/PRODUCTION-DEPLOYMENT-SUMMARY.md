@@ -123,7 +123,7 @@ pm2 logs wb-repricer-frontend --lines 50
 
 **Login Flow:**
 - ✅ Страница `/login` загружается
-- ✅ Ввод `test@test.com` / `Russia23!`
+- ✅ Ввод `test@test.com` / `LocalTest123!`
 - ✅ Успешный редирект на `/dashboard`
 
 **Navigation Menu:**

@@ -144,7 +144,7 @@ npm run test:e2e        # E2E tests (Playwright)
 
 **Test User Credentials**:
 - Email: `test@test.com`
-- Password: `Russia23!`
+- Password: `LocalTest123!`
 
 **Critical Files to Understand First**:
 1. `CLAUDE.md` - Start here for everything

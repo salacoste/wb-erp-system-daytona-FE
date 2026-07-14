@@ -4,7 +4,7 @@
 
 **Context**:
 - **Cabinet ID**: `f75836f7-c0bc-4b2c-823c-a1f3508cce8e`
-- **Test Credentials**: `test@test.com` / `Russia23!`
+- **Test Credentials**: `test@test.com` / `LocalTest123!`
 - **Period Shown**: 20-26 Jan 2026 (Week 2026-W04)
 - **Backend Status**: COGS data filled for weeks 2025-W47 to 2026-W04
 
@@ -192,7 +192,7 @@ Content-Type: application/json
 
 {
   "email": "test@test.com",
-  "password": "Russia23!"
+  "password": "LocalTest123!"
 }
 ```
 

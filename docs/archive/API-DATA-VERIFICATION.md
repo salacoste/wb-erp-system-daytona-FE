@@ -254,7 +254,7 @@ if (!options.skipCabinetId && cabinetId) {
    @baseUrl = http://localhost:3000
    @cabinetId = f75836f7-c0bc-4b2c-823c-a1f3508cce8e
    @email = test@test.com
-   @password = Russia23!
+   @password = LocalTest123!
    ```
 
 3. Выполните запросы в порядке:

@@ -24,7 +24,7 @@
   - `bash scripts/check-doc-citations.sh` → exit 0 (100 broken == baseline)
   - `bash scripts/check-eslint-rules.sh` → OK
 - **Git:** one item = one branch `fix/tz-<ID>-<slug>` → commit → `merge --no-ff` to `main` → `push origin main`. No bundling.
-- **Visual-verify** via `playwright-cli -s=wb-repricer` (reopen `http://localhost:3100/login --persistent` + login `test@test.com`/`Russia23!` if closed).
+- **Visual-verify** via `playwright-cli -s=wb-repricer` (reopen `http://localhost:3100/login --persistent` + login `test@test.com`/`LocalTest123!` if closed).
 - **No `TODO`** in shipped code; `PENDING BACKEND:` with a `docs/request-backend/*.md` link if backend-blocked.
 
 ---

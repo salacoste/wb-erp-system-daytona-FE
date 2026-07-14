@@ -242,7 +242,7 @@ pm2 info wb-repricer-frontend
 - [ ] **Проверить:** Пароль валидация работает
 - [ ] **Действие:** Войти с тестовыми данными:
   - Email: `test@test.com`
-  - Password: `Russia23!`
+  - Password: `LocalTest123!`
 - [ ] **Проверить:** При отправке показывается loading state
 - [ ] **Проверить:** После успешного входа происходит редирект на `/dashboard`
 - [ ] **Проверить:** При неверных данных показывается ошибка "Неверный email или пароль"
@@ -377,7 +377,7 @@ pm2 info wb-repricer-frontend
 
 ```
 Email: test@test.com
-Password: Russia23!
+Password: LocalTest123!
 ```
 
 **Примечание:** Этот пользователь доступен на backend только для разработки и тестирования.

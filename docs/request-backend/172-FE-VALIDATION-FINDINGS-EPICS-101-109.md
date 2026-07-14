@@ -17,7 +17,7 @@ Frontend team validated all empirically-checkable claims from backend reports #1
 # Auth setup
 TOKEN=$(curl -s -X POST http://localhost:3000/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","password":"Russia23!"}' | jq -r '.access_token // .data.access_token')
+  -d '{"email":"test@test.com","password":"LocalTest123!"}' | jq -r '.access_token // .data.access_token')
 CABINET="f75836f7-c0bc-4b2c-823c-a1f3508cce8e"
 
 # Each finding below is reproducible via the cited curl command.

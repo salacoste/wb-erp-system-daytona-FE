@@ -113,7 +113,7 @@
 
 ```bash
 # Валидация дашборда
-E2E_TEST_EMAIL=test@test.com E2E_TEST_PASSWORD=Russia23! \
+E2E_TEST_EMAIL=test@test.com E2E_TEST_PASSWORD=LocalTest123! \
   npx tsx scripts/validate-dashboard-data-v2.ts
 ```
 

@@ -103,7 +103,7 @@ interface OrdersVolumeWithCogsResponse extends OrdersVolumeResponse {
 ```bash
 TOKEN=$(curl -s 'http://localhost:3000/v1/auth/login' -X POST \
   -H 'Content-Type: application/json' \
-  -d '{"email":"test@test.com","password":"Russia23!"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+  -d '{"email":"test@test.com","password":"LocalTest123!"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
 CABINET=$(curl -s 'http://localhost:3000/v1/cabinets' \
   -H "Authorization: Bearer $TOKEN" | python3 -c "import sys,json; print(json.load(sys.stdin)['data'][0]['id'])")
 

@@ -258,7 +258,7 @@ See **[DATA-SOURCES-REFERENCE.md](DATA-SOURCES-REFERENCE.md)** for full document
 
 ## Test Credentials
 - Email: test@test.com
-- Password: Russia23!
+- Password: LocalTest123!
 
 ---
 
@@ -275,7 +275,7 @@ is consistent everywhere it appears. It validates the *output*, on real data.
 **Stack.** FE dev server `:3100`, backend `:3000` (both PM2-managed, live).
 Drive via Playwright (canonical browser tool). Raw API data captured via direct
 calls with the test JWT + `X-Cabinet-Id` (the same payloads the hooks consume).
-Test creds: `test@test.com` / `Russia23!`.
+Test creds: `test@test.com` / `LocalTest123!`.
 
 ### 7.1 Per-page data log (artifact)
 

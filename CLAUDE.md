@@ -509,7 +509,7 @@ NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot
 E2E_BASE_URL=http://localhost:3100        # Frontend dev server
 E2E_API_URL=http://localhost:3000         # Backend API URL
 E2E_TEST_EMAIL=test@test.com              # Test user credentials
-E2E_TEST_PASSWORD=Russia23!               # Test user password
+E2E_TEST_PASSWORD=LocalTest123!               # Test user password
 E2E_REQUEST_TIMEOUT=30000                 # Request timeout (ms)
 E2E_SCREENSHOT_DIR=test-results/screenshots  # Screenshot directory
 E2E_DEBUG=false                           # Debug mode
@@ -581,7 +581,7 @@ git commit -m "feat: implement story X.Y"
 
 ```
 Email: test@test.com
-Password: Russia23!
+Password: LocalTest123!
 ```
 
 ---

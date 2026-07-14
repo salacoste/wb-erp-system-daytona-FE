@@ -439,7 +439,7 @@ E2E Tests: Environmental issue detected
 ```yaml
 test_user:
   email: test@test.com
-  password: Russia23!
+  password: LocalTest123!
 
 required_data:
   - advertising_campaigns: true
