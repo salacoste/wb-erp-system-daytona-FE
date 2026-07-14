@@ -84,3 +84,9 @@ logs/
 
 # Scratch / debug screenshots (not repo material)
 liquidity-full.png
+
+# Local E2E credentials and generated live-validation artifacts
+/.env.e2e
+/scripts/login.json
+/.omc/validation/
+/docs/qa/artifacts/ui-data-backend-validation/

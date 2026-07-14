@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cd .omc/validation/2026-07-05/ && echo \\\"=== BD-13 everywhere ===\\\" && grep -rn -B1 -A12 \\\"BD-13\\\" . --include=\\\"*.md\\\" | head -50 && echo \\\"\\\" && echo \\\"=== moysklad in pages ===\\\" && gre...",
-  "error": "Exit code 1\n(eval):cd:1: no such file or directory: .omc/validation/2026-07-05/",
-  "timestamp": "2026-07-06T22:31:39.374Z",
-  "retry_count": 1
-}
