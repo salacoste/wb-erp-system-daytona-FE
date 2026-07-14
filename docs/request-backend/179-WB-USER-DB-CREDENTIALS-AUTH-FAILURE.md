@@ -41,7 +41,7 @@ the provided database credentials for `wb_user` are not valid.
 ```bash
 curl -s -X POST http://localhost:3000/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","password":"Russia23!"}'
+  -d '{"email":"test@test.com","password":"LocalTest123!"}'
 # Returns: {"error":{"code":"INTERNAL_SERVER_ERROR", ...}}
 # PM2 log shows the Prisma auth failure
 ```
@@ -70,13 +70,13 @@ curl -s -X POST http://localhost:3000/v1/auth/login \
    ```bash
    curl -s -X POST http://localhost:3000/v1/auth/login \
      -H "Content-Type: application/json" \
-     -d '{"email":"test@test.com","password":"Russia23!"}' | jq '.data.access_token // .access_token'
+     -d '{"email":"test@test.com","password":"LocalTest123!"}' | jq '.data.access_token // .access_token'
    # Should return a JWT, not 500
    ```
 
 ## Acceptance criteria (backend)
 
-1. `POST /v1/auth/login` returns 200 OK with a valid JWT for the test credentials (`test@test.com` / `Russia23!`)
+1. `POST /v1/auth/login` returns 200 OK with a valid JWT for the test credentials (`test@test.com` / `LocalTest123!`)
 2. `Authorization: Bearer <JWT>` flow works end-to-end against any session-gated endpoint (e.g., `GET /v1/cabinets`)
 3. PM2 backend error log shows no further `Authentication failed against database server` entries
 4. Root cause documented in this ticket's resolution (which of the 5 likely causes above was the culprit)

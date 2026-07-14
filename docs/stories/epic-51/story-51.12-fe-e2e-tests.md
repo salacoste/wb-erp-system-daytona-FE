@@ -108,7 +108,7 @@ import { loginAsUser, navigateToAnalytics } from '../utils/auth-helpers'
 
 test.describe('FBS Analytics Page', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAsUser(page, 'test@test.com', 'Russia23!')
+    await loginAsUser(page, 'test@test.com', 'LocalTest123!')
     await page.goto('/analytics/orders')
   })
 
@@ -186,7 +186,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Analytics Hub - FBS Card', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAsUser(page, 'test@test.com', 'Russia23!')
+    await loginAsUser(page, 'test@test.com', 'LocalTest123!')
     await page.goto('/analytics')
   })
 
@@ -320,7 +320,7 @@ import AxeBuilder from '@axe-core/playwright'
 
 test.describe('FBS Analytics Accessibility', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAsUser(page, 'test@test.com', 'Russia23!')
+    await loginAsUser(page, 'test@test.com', 'LocalTest123!')
   })
 
   test('analytics page has no accessibility violations', async ({ page }) => {

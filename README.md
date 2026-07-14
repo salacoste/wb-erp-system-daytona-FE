@@ -104,7 +104,7 @@ For development and testing purposes, use the following test account:
 
 ```bash
 Email: test@test.com
-Password: Russia23!
+Password: LocalTest123!
 ```
 
 **Note:** This test user is available on the backend for development and testing only. Do not use in production.

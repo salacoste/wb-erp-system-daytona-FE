@@ -256,7 +256,7 @@ curl https://your-frontend-domain.com
 
 1. **Login Flow** (`http://localhost:3100/login`)
    - ✅ Страница логина загружается
-   - ✅ Ввод `test@test.com` / `Russia23!`
+   - ✅ Ввод `test@test.com` / `LocalTest123!`
    - ✅ Успешная авторизация → редирект на `/dashboard`
 
 2. **Navigation** (проверьте все пункты меню)

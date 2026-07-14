@@ -205,7 +205,7 @@
    cd frontend
    npm run dev
    # Access: http://localhost:3100
-   # Login: test@test.com / Russia23!
+   # Login: test@test.com / LocalTest123!
    ```
 
 ### Development Workflow
