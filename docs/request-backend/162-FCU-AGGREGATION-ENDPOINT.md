@@ -1,10 +1,18 @@
 # Request #162: FCU Aggregation Endpoint — Per-SKU Final Cost from Latest Confirmed Shipment
 
 **Date**: 2026-03-12
-**Status**: Requested
+**Status**: ✅ Code-complete locally (2026-07-13); deployment/live API validation external
 **Priority**: P1 (blocks Stories 77.4, 77.5 — Unit Economics dashboard integration)
 **Related**: Epic 77-FE (Story 77.3), Backend Epic 79 (Shipment Cost Allocation)
 **Requested By**: Frontend Team
+
+---
+
+## Current audit update — 2026-07-13
+
+The historical proposal below is superseded where it conflicts with the implemented compatibility contract. The endpoint is locally code-complete and verified: strict Moscow ISO-week validation, confirmed-only frozen snapshots, cabinet isolation, deterministic latest row per `nmId`, numeric serialization, and the complete eight-field **raw array** response. Focused tests passed 22/22 and the shipment-cost suite passed 266/266; timezone variants, typecheck, circular check, build, and diff hygiene also passed.
+
+Governing evidence: [G002 — #162 implementation](../../../.omx/ultragoal/evidence/G002-162-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md). Production deployment/live API validation and a seeded PostgreSQL integration execution remain external; they are not claimed here.
 
 ---
 

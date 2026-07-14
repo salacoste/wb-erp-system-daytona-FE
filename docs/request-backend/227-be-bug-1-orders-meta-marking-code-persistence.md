@@ -64,3 +64,13 @@ curl -s $BASE/v1/orders/<real-order-uuid> $H     # metaType/value absent → can
 
 - Parent: [`226-validation-2026-07-be-status-and-outstanding.md`](./226-validation-2026-07-be-status-and-outstanding.md) §2.1 + "Update — BE verification results" (BE-BUG-1).
 - FE write client: PATCH `/v1/orders/:orderUuid/meta` in `src/lib/api/orders-actions.ts` (`updateOrderMeta`); order UUID = `order.id` (OrderFbsItem), not the WB `orderId`.
+
+---
+
+## Current implementation addendum — 2026-07-13
+
+**Current status:** ✅ **Code-complete locally; external validation remains.** The historical “no local source-of-truth” diagnosis above is superseded in the current worktree. The PATCH flow now validates and cabinet-scopes the order, encrypts the value before the external mutation, calls the type-specific WB SDK method, and after WB success persists only ciphertext through a cabinet-and-order-scoped write. `GET /v1/orders/:id` exposes the latest authorized value as nullable `markingMeta`; list and history routes do not select or decrypt it. Upstream, encryption, persistence, count-zero, corrupt-ciphertext, tenant-isolation, and secret-canary cases are covered by passing tests.
+
+Governing evidence: [G003 — #227 encrypted persistence and #229 preservation](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md).
+
+**Still external:** applying the additive nullable migration in deployment, a real WB marking mutation, and a production PATCH→GET round-trip. Local code completion does not claim those actions occurred.

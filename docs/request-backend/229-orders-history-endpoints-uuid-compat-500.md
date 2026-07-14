@@ -70,3 +70,13 @@ curl -s -o /dev/null -w "history   WBID=%{http_code}\n" "$BASE/v1/orders/$WBID/h
 
 - Parent: [`226-validation-2026-07-be-status-and-outstanding.md`](./226-validation-2026-07-be-status-and-outstanding.md) §2.2 (BE-BUG-2) + "FE-actionable items" #1.
 - FE consumers: `OrderDetailsModal` → `OrderHistoryTabs` → `getOrderHistory` / `getWbHistory` / `getFullHistory` (src/lib/api/orders-history-api.ts); modal identifier sourced from `useOrdersPageState.handleRowClick` (`order.orderId`).
+
+---
+
+## Current implementation addendum — 2026-07-13
+
+**Current status:** ✅ **Code-complete locally; deployment/live reprobe external.** The existing UUID/numeric compatibility work was preserved and freshly verified across detail, history, WB-history, and full-history. Owning-cabinet UUID and numeric identifiers succeed; malformed, unknown, signed/decimal, PostgreSQL-bigint-overflow, and foreign-cabinet identifiers all resolve to the same non-leaking `ORDER_NOT_FOUND` 404 rather than 500. The focused compatibility regression passed 5 suites / 167 tests, and the broader orders/encryption regression passed all 23 executed suites / 424 tests.
+
+Governing evidence: [G003 — #227 encrypted persistence and #229 preservation](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md).
+
+The live 500 reproduction above remains valid evidence for the older deployed build; it is not evidence against the current local code. Production deployment and a new live reprobe are still required before describing the deployed endpoint as fixed.

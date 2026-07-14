@@ -174,3 +174,19 @@ Filed as [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md
 4. **Backfill launch-button UX** — ✅ F-005 resolved (2026-07-13): cabinet-scoping now BE-enforced fail-closed, so the prior "explicit scope confirmation / do not promise current-cabinet-only" caution is no longer safety-critical. FE may simplify (one-click launch is now safe; explicit scope display optional). See [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md) §5.
 
 **Net: 0 blockers for normal FE development.** Open BE-side items: **BE-BUG-1** (O4 marking-code persistence — operational confirmation; ticket #227) and **#229** (orders history endpoints 500 on UUID — blocks the optional orderId→UUID cleanup; re-verified still 500 on build 09:35:56). **F-005 resolved** (2026-07-13); F-001 needs no FE change (no-op); F-004 needs no FE change.
+
+---
+
+## Canonical closure addendum — 2026-07-13 (after G002–G004)
+
+This addendum preserves the validation chronology above but supersedes its current local-code status. The [canonical corpus ledger](./AUDIT-2026-07-13.md) governs conflicts.
+
+| Scope | Current local state | External boundary |
+|---|---|---|
+| **#227 / BE-BUG-1** | ✅ Code-complete: the PATCH path now persists a cabinet-scoped encrypted local copy and order detail returns authorized decrypted `markingMeta`; focused and broad tests pass. See [G003](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md). | Migration deployment, real WB mutation, and production PATCH→GET remain external. |
+| **#229** | ✅ Code-complete: UUID and numeric identifiers work for detail/history/WB-history/full-history; malformed, unknown, overflow, and foreign IDs return uniform non-leaking 404. See [G003](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md). | Deployment and live reprobe remain external; the earlier live 500 evidence describes the older build. |
+| **#228 / F-005** | ✅ Preserved and verified; cabinet scope/RBAC remains fail-closed. | Deployment state is not inferred from local tests. |
+| **Notification timezone** | ✅ Preserved and verified for validation, persistence/defaulting, and round-trip compatibility. | Deployment/live validation remains external. |
+| **#165** | ✅ Approved read-only check returned `anomaly_count=0`; no repair created. See [G004](../../../.omx/ultragoal/evidence/G004-165-price-anomaly.md). | A separate production scan is not claimed. |
+
+Accordingly, #227 and #229 are no longer open **local implementation** items. They remain external-validation items only. No production deployment or real WB order mutation was performed.
