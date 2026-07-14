@@ -165,8 +165,8 @@ describe('FbsExportButton', () => {
     })
 
     // Advance 5 seconds → countdown reaches 0 → button re-enables
-    act(() => {
-      vi.advanceTimersByTime(5_000)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5_000)
     })
 
     await waitFor(() => {
