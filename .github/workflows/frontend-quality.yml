@@ -1,7 +1,7 @@
 # Frontend Quality Gates Pipeline
 #
 # CI guard for the Next.js frontend (this repo: salacoste/wb-erp-system-daytona-FE).
-# Runs on every push to main/develop. Uses self-hosted runner on VPS (43.131.5.136).
+# Runs on every push to main/develop. Uses the dedicated external runner at 188.245.163.220.
 #
 # Architecture: SINGLE JOB with sequential steps. The VPS has 2 vCPU / 2 GB RAM + 2 GB swap.
 # Parallel jobs would each run npm ci (869 packages) and exhaust memory.
@@ -31,7 +31,7 @@ concurrency:
 jobs:
   quality:
     name: Quality Gates
-    runs-on: self-hosted
+    runs-on: [self-hosted, Linux, X64, wb-ci-fe]
     # Full Vitest suite can exceed 30 min on the 2 vCPU self-hosted runner.
     # The self-hosted runner can also spend 20+ minutes in the runner/host lock
     # before test execution starts, so keep the job timeout above test runtime.
