@@ -13,11 +13,11 @@ import type {
   RemediatePayload,
 } from '@/types/financial-gaps'
 
-/** GET /v1/imports/gaps?dateFrom=...&dateTo=... */
+/** GET /v1/imports/gaps?dateFrom=...&dateTo=...
+ *  Cabinet is sent via the X-Cabinet-Id header (auto-injected by apiClient) — BE-E-2
+ *  live-re-validated 2026-07-11: the header is accepted, no `cabinet_id` query param needed. */
 export async function getFinancialGaps(params: GapsQueryParams): Promise<FinancialGapsResponse> {
-  const cabinetId = useAuthStore.getState().cabinetId
   const query = new URLSearchParams({
-    cabinet_id: cabinetId ?? '',
     dateFrom: params.dateFrom,
     dateTo: params.dateTo,
   })

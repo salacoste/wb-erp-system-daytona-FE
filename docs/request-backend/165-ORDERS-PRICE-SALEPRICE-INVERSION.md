@@ -3,7 +3,15 @@
 **Date**: 2026-04-14
 **Priority**: Medium (data integrity — affects minority of rows but display is misleading when it hits)
 **Source**: Epic 87-FE page validation audit (2026-04-13) + Story 87.3-FE frontend mitigation
-**Status**: ⚠️ Awaiting backend investigation
+**Status**: ✅ Resolved for the configured database (2026-07-13); read-only anomaly count = 0
+
+---
+
+## Current audit update — 2026-07-13
+
+The active FBS ingest mapping was verified and its focused tests passed. The approved historical anomaly query then ran against the configured loopback PostgreSQL database inside a repeatable-read transaction with `transaction_read_only=on`; the sanitized result was `anomaly_count=0`. Under the approved evidence gate, no correction/backfill path was warranted or created. The historical reproduction and remediation ideas below are retained as investigation history; blind swapping or clamping is not an approved repair.
+
+Governing evidence: [G004 — #165 read-only anomaly evidence](../../../.omx/ultragoal/evidence/G004-165-price-anomaly.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md). This result does not claim a separately credentialed production scan.
 
 ---
 
