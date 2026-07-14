@@ -51,3 +51,10 @@ export type {
   GenerateStickersResponse,
   SupplyStatusChange,
 } from '../supply-orders'
+
+// Acceptance-act (Story O5)
+export type {
+  AcceptanceActFormat,
+  UploadAcceptanceActBody,
+  AcceptanceActMeta,
+} from './acceptance-act'

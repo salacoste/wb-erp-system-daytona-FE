@@ -19,7 +19,7 @@ import type { ForecastDay } from './supply-detail-calculations'
 import {
   formatStockQty,
   formatReorderValue,
-  formatPlanningHorizon,
+  formatSafetyStockCoverage,
 } from '@/lib/supply-planning-utils'
 import { SupplyDetailCostAnalysis } from './SupplyDetailCostAnalysis'
 
@@ -96,7 +96,7 @@ export function SupplyDetailRightColumn({ item, forecast, totalLostUnits }: Righ
                 buffer covers, not a generic "planning horizon". */}
             <dt className="text-gray-600">Срок покрытия страхового запаса (дней):</dt>
             <dd className="font-medium text-gray-900">
-              {formatPlanningHorizon(item.safety_stock_units, item.avg_daily_sales)}
+              {formatSafetyStockCoverage(item.safety_stock_units, item.avg_daily_sales)}
             </dd>
           </div>
           <div className="flex justify-between">

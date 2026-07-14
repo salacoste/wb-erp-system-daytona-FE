@@ -82,3 +82,106 @@ export interface EnqueueSyncResponse {
   taskUuid: string
   queue: string
 }
+
+/**
+ * FE-canonical МС stock snapshot row (GET /v1/moysklad/stock-db).
+ *
+ * `stockFree` / `reserve` come from the backend as Prisma Decimal (serialized
+ * decimal.js `{s,e,d}`); the normalizer (`toDecimalNumber`) reconstructs them to
+ * a JS number. NULL when the backend value is absent (render «—», AP#8 — never 0).
+ *
+ * `nmId` is NULL when the assortment is unmatched (render «не привязан»).
+ * `date` is the snapshot date (YYYY-MM-DD); NULL when the backend omits it.
+ * `syncedAt` is the row sync timestamp; NULL when unknown.
+ */
+export interface MoyskladStockSnapshot {
+  id: string
+  date: string | null
+  moyskladAssortmentId: string
+  nmId: number | null
+  stockFree: number | null
+  reserve: number | null
+  syncedAt: string | null
+}
+
+/** GET /v1/moysklad/stock-db response (`{ count, total, date, rows }`). */
+export interface MoyskladStockDbResponse {
+  count: number
+  total: number
+  /** Snapshot date for these rows (YYYY-MM-DD); NULL when absent. */
+  date: string | null
+  rows: MoyskladStockSnapshot[]
+}
+
+/**
+ * МС money object (live `/products` read-through). `value` is in МС minor units
+ * (kopecks for RUB) — the normalizer divides by 100 → rubles. NULL value = unknown.
+ * `currency` is the МС currency code (e.g. "RUB"); NULL when МС omits it.
+ */
+export interface MoyskladMoney {
+  value: number | null
+  currency: string | null
+}
+
+/**
+ * FE-canonical МС product row (GET /v1/moysklad/products live read-through).
+ *
+ * `buyPriceRub` / `salePriceRub` are converted from МС minor units (kopecks) →
+ * rubles (/100). NULL when МС omits buyPrice / salePrices (render «—», AP#8 — never 0).
+ *
+ * `salePriceRub` is the FIRST sale-price tier (МС returns up to 3; simplified).
+ * `name`/`article`/`code`/`externalCode`/`updated` are NULL when МС omits them.
+ */
+export interface MoyskladProduct {
+  id: string
+  name: string | null
+  article: string | null
+  code: string | null
+  externalCode: string | null
+  /** Buy price in rubles (kopeck/100). NULL = unknown (render «—»). */
+  buyPriceRub: number | null
+  /** First sale-price tier in rubles (kopeck/100). NULL = unknown (render «—»). */
+  salePriceRub: number | null
+  updated: string | null
+}
+
+/** GET /v1/moysklad/products response (`{ rows, meta:{ size, ... } }`). */
+export interface MoyskladProductsResponse {
+  rows: MoyskladProduct[]
+  /** Total МС products available (meta.size). */
+  total: number
+}
+
+/**
+ * FE-canonical МС variant row (GET /v1/moysklad/variants live read-through, M3).
+ *
+ * Variants LACK `article` (the contract's key point — unlike products, МС
+ * variants have no vendorCode); only `code` exists. Hence no article field here
+ * and the table renders no «Артикул» column.
+ *
+ * `parentProductHref` is a best-effort string ref to the parent МС product
+ * (entity link object). We store its href/id verbatim as a string and render a
+ * short form — we do NOT resolve or render rich parent detail (best-effort).
+ * NULL when МС omits the `product` ref (render «—»).
+ *
+ * `barcodesCount` is the length of the `barcodes` array (AP#8 count exception —
+ * missing/non-array → 0, the legitimate empty-state value).
+ * `name`/`code`/`updated` are NULL when МС omits them (render «—»).
+ */
+export interface MoyskladVariant {
+  id: string
+  name: string | null
+  code: string | null
+  /** Best-effort parent-product ref href/id (string). NULL = unknown (render «—»). */
+  parentProductHref: string | null
+  /** Count of `barcodes` entries. 0 when МС omits the array (count exception). */
+  barcodesCount: number
+  updated: string | null
+}
+
+/** GET /v1/moysklad/variants response (`{ rows, meta:{ size, ... } }`). */
+export interface MoyskladVariantsResponse {
+  rows: MoyskladVariant[]
+  /** Total МС variants available (meta.size). */
+  total: number
+}

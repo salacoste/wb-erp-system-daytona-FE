@@ -91,7 +91,7 @@ export function normalizeStorageBySkuResponse(
   const rawSummary = asRecord(r.summary)
   const items = Array.isArray(r.data) ? r.data : Array.isArray(raw) ? raw : []
   const summary: StorageSummary = {
-    total_storage_cost: toCount(rawSummary.total_storage_cost ?? r.total_storage_cost),
+    total_storage_cost: toNullableNumber(rawSummary.total_storage_cost ?? r.total_storage_cost),
     products_count: toCount(rawSummary.products_count ?? r.products_count ?? items.length),
     // AP#8: avg cost is a money ratio — preserve null (render '—'), not 0.
     avg_cost_per_product: toNullableNumber(
@@ -122,7 +122,7 @@ export function normalizeTopConsumersResponse(raw: unknown): TopConsumersRespons
   return {
     period: normalizePeriod(r.period),
     top_consumers: consumers.map(normalizeTopConsumerItem),
-    total_storage_cost: toCount(r.total_storage_cost),
+    total_storage_cost: toNullableNumber(r.total_storage_cost),
     has_data: !!r.has_data || consumers.length > 0,
   }
 }

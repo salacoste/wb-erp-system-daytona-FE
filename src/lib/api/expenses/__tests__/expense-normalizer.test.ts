@@ -51,6 +51,23 @@ describe('normalizeExpenseItem', () => {
     expect(result.amount).toBe(50000)
   })
 
+  it('parses a Prisma Decimal object {s,e,d} (BD-FE-003: Number(raw) was NaN)', () => {
+    const dec = (amount: unknown) =>
+      normalizeExpenseItem({
+        id: 'x',
+        cabinetId: 'c',
+        category: 'rent',
+        amount,
+        month: '2026-07',
+        description: null,
+        createdAt: '',
+        updatedAt: '',
+      }).amount
+    expect(dec({ s: 1, e: 4, d: [15000] })).toBe(15000) // the live bug shape
+    expect(dec({ s: 1, e: 4, d: [28765, 3100000] })).toBe(28765.31) // multi-group (decimal.js-verified)
+    expect(dec({ s: -1, e: 1, d: [155] })).toBe(-15.5) // negative decimal
+  })
+
   it('handles null amount as NaN', () => {
     const raw = {
       id: 'exp-3',

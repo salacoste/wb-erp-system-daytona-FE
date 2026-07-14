@@ -168,4 +168,37 @@ describe('useMarginAnalyticsByCategory', () => {
     expect(url).toContain('weekStart=2025-W40')
     expect(url).toContain('weekEnd=2025-W47')
   })
+
+  it('preserves backend roi and profit_per_unit when present (percent 0-100)', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [{ ...mockRawCategoryItem, roi: 309.48, profit_per_unit: 9.47 }],
+      meta: {},
+    })
+
+    const { result } = renderHook(() => useMarginAnalyticsByCategory({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    const category = result.current.data!.data[0]
+    expect(category.roi).toBe(309.48)
+    expect(category.profit_per_unit).toBe(9.47)
+  })
+
+  it('maps roi and profit_per_unit to null when omitted (preserve null, never undefined/0)', async () => {
+    mockGet.mockResolvedValueOnce({
+      // cogs=0 → backend sends roi=null (ROI meaningless without COGS)
+      items: [{ ...mockRawCategoryItem, cogs_rub: '0', roi: null, profit_per_unit: null }],
+      meta: {},
+    })
+
+    const { result } = renderHook(() => useMarginAnalyticsByCategory({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    const category = result.current.data!.data[0]
+    expect(category.roi).toBeNull()
+    expect(category.profit_per_unit).toBeNull()
+  })
 })

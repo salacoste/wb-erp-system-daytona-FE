@@ -56,15 +56,16 @@ export function formatDaysUntilStockout(days: number | null): string {
 }
 
 /**
- * Planning horizon — how many days the safety-stock buffer lasts at the current sales velocity
- * (safety_stock_units / avg_daily_sales). Guards the division (iter-125): no safety stock → "—";
+ * Safety-stock coverage — how many days the safety-stock buffer lasts at the current sales
+ * velocity (safety_stock_units / avg_daily_sales). This is a COVERAGE metric (days of buffer
+ * ahead), NOT a planning horizon. Guards the division (iter-125): no safety stock → "—";
  * zero/negative sales velocity → "∞" (the buffer never depletes). Before this guard the inline
  * `safety_stock_units / avg_daily_sales` rendered the literal "Infinity дней" for a no-sales item
  * with a safety buffer. "∞" matches formatDaysUntilStockout's never-stocks-out case. Non-finite
  * inputs (NaN/Infinity — not expected from the `number` backend contract) → "—" (no data),
  * mirroring formatReorderValue's `Number.isFinite` guard.
  */
-export function formatPlanningHorizon(safetyStockUnits: number, avgDailySales: number): string {
+export function formatSafetyStockCoverage(safetyStockUnits: number, avgDailySales: number): string {
   if (!Number.isFinite(safetyStockUnits) || safetyStockUnits <= 0) return '—'
   if (!Number.isFinite(avgDailySales)) return '—'
   if (avgDailySales <= 0) return '∞'

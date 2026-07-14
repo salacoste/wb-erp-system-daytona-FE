@@ -50,6 +50,7 @@ export const WB_STATUSES: WbStatus[] = [
 // =============================================================================
 
 export const mockOrderFbsItem: OrderFbsItem = {
+  id: '2405776e-4660-4857-ab4f-a56a3134dda9',
   orderId: '1234567890',
   orderUid: 'order-uid-abc123',
   nmId: 12345678,
@@ -65,6 +66,8 @@ export const mockOrderFbsItem: OrderFbsItem = {
   cargoType: 'MGT',
   createdAt: '2026-01-04T10:30:00.000Z',
   statusUpdatedAt: '2026-01-04T11:00:00.000Z',
+  operationalStatus: 'NEW',
+  operationalStatusUpdatedAt: null,
 }
 
 export const mockOrderFbsItemConfirmed: OrderFbsItem = {

@@ -19,5 +19,5 @@ export const WB_COMMISSION_CARD_TOOLTIP = `Состав текущей карт�
 ${DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle} и WB.Продвижение показаны отдельно и не входят в эту карточку.
 Источник: еженедельный финансовый отчёт WB.`
 
-export const WB_OTHER_DEDUCTIONS_TOOLTIP = `${DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle}: подписка «Джем», транзит, утилизация и другие сервисы WB без WB.Продвижения. Продвижение показано отдельно в карточке «Реклама», чтобы не задваивать расходы.
+export const WB_OTHER_DEDUCTIONS_TOOLTIP = `${DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle}: подписка «Джем», транзит, утилизация и другие сервисы WB без WB.Продвижения. Продвижение показано отдельно в карточке расходов на рекламу, чтобы не задваивать расходы.
 Источник: еженедельный финансовый отчёт WB.`

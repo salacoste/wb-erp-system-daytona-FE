@@ -23,6 +23,14 @@ function resolveSimpleWidget(title: string): WidgetId | null {
   return prefix ? (SIMPLE_CARD_WIDGET[prefix] ?? null) : null
 }
 
+function GridGroupHeading({ children }: { children: React.ReactNode }): React.ReactElement {
+  return (
+    <div className="col-span-full pt-1 first:pt-0">
+      <h3 className="text-sm font-semibold text-muted-foreground">{children}</h3>
+    </div>
+  )
+}
+
 export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): React.ReactElement {
   const { error, onRetry } = props
 
@@ -34,6 +42,7 @@ export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): Rea
 
   return (
     <>
+      <GridGroupHeading>Итог, объём и продажи</GridGroupHeading>
       {/* TZ-2: replaces NetProfitCard + 5 profit detail cards. The 'grossProfit'/'margin'
           widget toggles are now no-ops until TZ-4 (persona presets) reworks the model —
           NetProfit must stay always-visible as the hero, so the card is not widget-gated. */}
@@ -43,6 +52,7 @@ export function DashboardMetricsGridCards(props: DashboardMetricsGridProps): Rea
       ))}
       {/* TZ-3: the 4 revenue-by-price-level cards consolidated into one. */}
       <SalesByPriceLevelCard {...props} />
+      <GridGroupHeading>Расходы, удержания и себестоимость</GridGroupHeading>
       {renderDetailCards(props, visibleWidgets)}
     </>
   )

@@ -60,7 +60,12 @@ export function MarginByBrandTable({
   const shareTotals = useMemo(
     () => ({
       revenue: data.reduce((sum, item) => sum + item.revenue_net, 0),
-      grossProfit: data.reduce((sum, item) => sum + (item.profit || 0), 0),
+      // BD-5: exclude degenerate rows (cogs=0 ⇒ profit==revenue) from the gross-profit
+      // denominator so cogs-assigned rows' profit-share stays honest in mixed weeks.
+      grossProfit: data.reduce(
+        (sum, item) => sum + ((item.cogs ?? 0) > 0 ? item.profit || 0 : 0),
+        0
+      ),
     }),
     [data]
   )
@@ -97,6 +102,7 @@ export function MarginByBrandTable({
               showProfitPerUnit={showProfitPerUnit}
               totalRevenue={shareTotals.revenue}
               totalGrossProfit={shareTotals.grossProfit}
+              rowCount={data.length}
             />
           ))}
         </TableBody>

@@ -16,66 +16,24 @@ import { usePreliminaryTax } from '@/hooks/usePreliminaryTax'
 import { usePreviousPeriodData } from '@/hooks/usePreviousPeriodData'
 import { useCabinetTaxSettings } from '@/hooks/useCabinetTaxSettings'
 import { weekToDateRange, monthToDateRange } from '@/lib/date-utils'
-import { dashboardQueryKeys } from '@/hooks/useDashboard'
+import { invalidateDashboardDataQueries } from '@/hooks/dashboard-query-invalidation'
 import { useAuthStore } from '@/stores/authStore'
-import type { Cabinet } from '@/types/cabinet'
-import type { TaxMetrics } from '@/types/finance-summary-sub-types'
+import {
+  isDashboardTaxConfigured,
+  shouldShowDashboardMetricsSkeleton,
+} from './useDashboardData.helpers'
+export {
+  isDashboardTaxConfigured,
+  shouldShowDashboardMetricsSkeleton,
+} from './useDashboardData.helpers'
+export type {
+  DashboardMetricsLoadingState,
+  DashboardTaxConfigurationState,
+} from './useDashboardData.helpers'
 
 /**
  * Aggregated data hook for DashboardContent.
- * Extracted for file-size compliance (212 → ~150 lines).
  */
-export interface DashboardMetricsLoadingState {
-  isFinanceAvailable: boolean
-  financialLoading: boolean
-  fulfillmentLoading: boolean
-  advertisingLoading: boolean
-  hasFinancialData: boolean
-  hasFulfillmentData: boolean
-  hasAdvertisingData: boolean
-}
-
-export function shouldShowDashboardMetricsSkeleton({
-  isFinanceAvailable,
-  financialLoading,
-  fulfillmentLoading,
-  advertisingLoading,
-  hasFinancialData,
-  hasFulfillmentData,
-  hasAdvertisingData,
-}: DashboardMetricsLoadingState): boolean {
-  const hasPrimaryMetricsData = hasFinancialData || hasFulfillmentData || hasAdvertisingData
-  const isPrimaryMetricsLoading =
-    (isFinanceAvailable && financialLoading) || fulfillmentLoading || advertisingLoading
-
-  return isPrimaryMetricsLoading && !hasPrimaryMetricsData
-}
-
-export interface DashboardTaxConfigurationState {
-  effectiveTaxMetrics: TaxMetrics | null | undefined
-  cabinetTaxSettings: Pick<Cabinet, 'taxSystem'> | null | undefined
-  taxSettingsLoading: boolean
-  taxSettingsError: boolean
-  cabinetId: string | null
-}
-
-export function isDashboardTaxConfigured({
-  effectiveTaxMetrics,
-  cabinetTaxSettings,
-  taxSettingsLoading,
-  taxSettingsError,
-  cabinetId,
-}: DashboardTaxConfigurationState): boolean {
-  if (effectiveTaxMetrics != null) return true
-  if (cabinetTaxSettings != null) return cabinetTaxSettings.taxSystem != null
-
-  // Do not show "not configured" while the configuration state is still unknown.
-  // The banner is only valid after a successful settings response proves taxSystem is null.
-  if (!cabinetId || taxSettingsLoading || taxSettingsError) return true
-
-  return false
-}
-
 export function useDashboardData() {
   const queryClient = useQueryClient()
   const cabinetId = useAuthStore(state => state.cabinetId)
@@ -109,7 +67,10 @@ export function useDashboardData() {
   const financialComparison = useFinancialSummaryWithPeriodComparison({
     periodType,
     period: selectedPeriod,
-    enabled: isFinanceAvailable,
+    // `available-weeks` is an availability/status hint, not an authoritative gate for the
+    // selected period request. If it is stale or incomplete, disabling this query leaves the
+    // dashboard stuck with `—` values even when finance-summary exists for the chosen week.
+    enabled: !!selectedPeriod,
   })
   const advertisingQuery = useAdvertisingAnalyticsComparison(
     { from: dateRange.from, to: dateRange.to, limit: 1 },
@@ -129,7 +90,14 @@ export function useDashboardData() {
   const cogsCoverage =
     totalProducts && totalProducts > 0 ? (inventoryWithCogs / totalProducts) * 100 : 0
 
-  const summary = isFinanceAvailable ? (financialComparison.current?.summary_total ?? null) : null
+  const summary = financialComparison.current?.summary_total ?? null
+  const hasActualFinanceSummary = Boolean(financialComparison.current?.summary_total)
+  const isFinanceReportPending =
+    !isFinanceAvailable &&
+    !hasActualFinanceSummary &&
+    !financialComparison.isLoading &&
+    !financialComparison.error
+  const effectiveIsFinanceAvailable = !isFinanceReportPending
   const fSummary = fulfillmentQuery.current?.summary
   const salesCount = summary?.product_transactions ?? undefined
   const returnsCount = fSummary
@@ -140,7 +108,7 @@ export function useDashboardData() {
   const prelimTax = usePreliminaryTax({
     from: dateRange.from,
     to: dateRange.to,
-    enabled: !isFinanceAvailable,
+    enabled: isFinanceReportPending,
   })
   const effectiveTaxMetrics = summary?.tax ?? prelimTax
   const taxSettingsQuery = useCabinetTaxSettings(cabinetId ?? '')
@@ -158,22 +126,28 @@ export function useDashboardData() {
     advertisingPrevious: advertisingQuery.previous,
   })
 
-  const isLoading = shouldShowDashboardMetricsSkeleton({
-    isFinanceAvailable,
-    financialLoading: financialComparison.isLoading,
-    fulfillmentLoading: fulfillmentQuery.isLoading,
-    advertisingLoading: advertisingQuery.isLoading,
-    hasFinancialData: Boolean(financialComparison.current),
-    hasFulfillmentData: Boolean(fulfillmentQuery.current),
-    hasAdvertisingData: Boolean(advertisingQuery.current),
-  })
-  const error = (isFinanceAvailable && financialComparison.error) || null
+  const hasFinancialData = financialComparison.current !== undefined
+  const hasFulfillmentData = fulfillmentQuery.current !== undefined
+  const hasAdvertisingData = advertisingQuery.current !== undefined
+  const isFinanceTransitionLoading =
+    financialComparison.isLoading && !hasFinancialData && !financialComparison.isError
+  const isLoading =
+    isFinanceTransitionLoading ||
+    shouldShowDashboardMetricsSkeleton({
+      isFinanceAvailable: true,
+      financialLoading: financialComparison.isLoading,
+      fulfillmentLoading: fulfillmentQuery.isLoading,
+      advertisingLoading: advertisingQuery.isLoading,
+      hasFinancialData,
+      hasFulfillmentData,
+      hasAdvertisingData,
+    })
+  const error = financialComparison.error || null
   const handleRetry = (): void => {
-    void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all })
+    invalidateDashboardDataQueries(queryClient)
   }
 
   const reportStatus = processingStatus?.reportLoading?.status
-  const hasFinancialData = fulfillmentQuery.current !== undefined
   const isProcessing =
     processingStatus?.status !== 'no_data' &&
     !hasFinancialData &&
@@ -187,7 +161,7 @@ export function useDashboardData() {
     selectedMonth,
     selectedPeriod,
     lastRefresh,
-    isFinanceAvailable,
+    isFinanceAvailable: effectiveIsFinanceAvailable,
     latestAvailableWeek,
     summary,
     fSummary,

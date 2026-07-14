@@ -148,6 +148,50 @@ describe('PeriodComparisonSection - Card Titles', () => {
     )
     expect(container.querySelector('.custom-class')).toBeInTheDocument()
   })
+
+  it('renders a month-aware comparison from financial summary without enabling weekly analytics', () => {
+    setFinancialComparison({
+      current: {
+        summary_total: {
+          sale_gross_total: 1000000,
+          operating_profit_analytical: 250000,
+          operating_margin_pct: 25,
+          product_transactions_total: 700,
+          logistics_cost_total: 90000,
+          storage_cost_total: 12000,
+          paid_acceptance_cost_total: 3000,
+        },
+      },
+      previous: {
+        summary_total: {
+          sale_gross_total: 800000,
+          operating_profit_analytical: 200000,
+          operating_margin_pct: 25,
+          product_transactions_total: 650,
+          logistics_cost_total: 100000,
+          storage_cost_total: 10000,
+          paid_acceptance_cost_total: 1000,
+        },
+      },
+    })
+
+    renderWithProviders(
+      <PeriodComparisonSection periodType="month" currentWeek="2026-W26" currentMonth="2026-06" />
+    )
+
+    expect(screen.getByText('Сравнение месяцев')).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.getByText('Выкупы')).toBeInTheDocument()
+    expect(screen.getByText('Хранение и приёмка')).toBeInTheDocument()
+    expect(screen.getByText(/1\s*000\s*000/)).toBeInTheDocument()
+    expect(screen.getByText(/15\s*000/)).toBeInTheDocument()
+    expect(mockComparison).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: false, period1: '2026-W05', period2: '2026-W04' })
+    )
+    expect(mockFinancialSummaryComparison).toHaveBeenCalledWith(
+      expect.objectContaining({ periodType: 'month', period: '2026-06', enabled: true })
+    )
+  })
 })
 
 // ============================================================================
@@ -315,6 +359,23 @@ describe('PeriodComparisonSection - Loading State', () => {
   it('should not render cards while loading', () => {
     setLoading()
     renderWithProviders(<PeriodComparisonSection currentWeek="2026-W05" />)
+    expect(screen.queryByText('Выручка')).not.toBeInTheDocument()
+  })
+
+  it('should keep weekly comparison loading while finance fallbacks are loading', () => {
+    setLoaded()
+    setFinancialComparison({ isLoading: true })
+    const { container } = renderWithProviders(<PeriodComparisonSection currentWeek="2026-W05" />)
+    expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
+    expect(screen.queryByText('Логистика')).not.toBeInTheDocument()
+  })
+
+  it('should keep monthly comparison loading while finance summary is loading', () => {
+    setFinancialComparison({ isLoading: true })
+    const { container } = renderWithProviders(
+      <PeriodComparisonSection periodType="month" currentWeek="2026-W26" currentMonth="2026-06" />
+    )
+    expect(container.querySelectorAll('[class*="animate"]').length).toBeGreaterThan(0)
     expect(screen.queryByText('Выручка')).not.toBeInTheDocument()
   })
 })

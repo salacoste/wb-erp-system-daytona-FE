@@ -11,18 +11,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { MoreVertical, Pencil, Trash2 } from 'lucide-react'
-import type { CogsHistoryItem } from '@/types/cogs'
-
-/** Source icon configuration (UX Decision from Story 5.1-fe) */
-const sourceConfig: Record<string, { icon: string; label: string }> = {
-  manual: { icon: '\u270F\uFE0F', label: 'Ручной ввод' },
-  import: { icon: '\uD83D\uDCE5', label: 'Импорт из файла' },
-  system: { icon: '\u2699\uFE0F', label: 'Системный пересчёт' },
-}
+import type { CogsHistoryItem, CogsSource } from '@/types/cogs'
+// BD-13 DRY: source → {icon,label} lives in ONE place now. Adding a backend source is a
+// single edit there (+ the CogsSource union) instead of three synchronized maps.
+import { COGS_SOURCE_CONFIG as sourceConfig } from '@/lib/cogs-source-config'
 
 /** Format date to Russian locale (AC: 4) */
 export function formatDate(dateStr: string | null): string {
@@ -51,14 +48,17 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
-/** Source cell with icon and tooltip (AC: 8) */
-export function SourceCell({ source }: { source: 'manual' | 'import' | 'system' }) {
+/** Source cell with icon and tooltip (AC: 8). tabIndex={0} so keyboard users can focus the
+ * trigger and read the source-provenance tooltip (a11y — Review 2 MEDIUM). */
+export function SourceCell({ source }: { source: CogsSource }) {
   const config = sourceConfig[source] || sourceConfig.manual
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-help text-lg">{config.icon}</span>
+          <span className="cursor-help text-lg" tabIndex={0}>
+            {config.icon}
+          </span>
         </TooltipTrigger>
         <TooltipContent>
           <p>{config.label}</p>
@@ -68,7 +68,10 @@ export function SourceCell({ source }: { source: 'manual' | 'import' | 'system' 
   )
 }
 
-/** Actions dropdown (AC: 17, 18, 19) */
+/** Actions dropdown (AC: 17, 18, 19). For МойСклад-synced rows the actions are disabled with
+ * an explanatory label instead of hidden — keeps the row's affordance shape and explains WHY
+ * (BD-13 follow-up, Review 2 MEDIUM): the next sync closes this version + writes a new one
+ * (moysklad-sync.service.ts → CogsService.createCogs), so local edit/delete is futile. */
 export function ActionsDropdown({
   record,
   onEdit,
@@ -78,6 +81,7 @@ export function ActionsDropdown({
   onEdit: (record: CogsHistoryItem) => void
   onDelete: (record: CogsHistoryItem) => void
 }) {
+  const managedByMoysklad = record.source === 'moysklad'
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -87,13 +91,19 @@ export function ActionsDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => onEdit(record)}>
+        {managedByMoysklad && (
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            Управляется МойСклад — изменение или удаление отменятся следующей синхронизацией
+          </DropdownMenuLabel>
+        )}
+        <DropdownMenuItem onClick={() => onEdit(record)} disabled={managedByMoysklad}>
           <Pencil className="mr-2 h-4 w-4" />
           Редактировать
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onDelete(record)}
-          className="text-destructive focus:text-destructive"
+          disabled={managedByMoysklad}
+          className={managedByMoysklad ? undefined : 'text-destructive focus:text-destructive'}
         >
           <Trash2 className="mr-2 h-4 w-4" />
           Удалить

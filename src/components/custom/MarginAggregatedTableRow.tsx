@@ -16,6 +16,7 @@ import {
   calculateROI,
   calculateProfitPerUnit,
   sharePercentage,
+  sharePercentageGate,
 } from '@/lib/analytics-utils'
 import { OperatingProfitCell, MissingCogsCell } from './MarginRowCells'
 import type { MarginAnalyticsAggregated } from '@/types/api'
@@ -32,6 +33,8 @@ interface Props {
   totalRevenue?: number | null
   /** Total gross profit across the table — denominator for the BE profit-share column. */
   totalGrossProfit?: number | null
+  /** Rows in the table — shares render «—» when <2 (a single row is trivially 100 %). */
+  rowCount?: number | null
 }
 
 export function MarginAggregatedTableRow({
@@ -44,15 +47,28 @@ export function MarginAggregatedTableRow({
   rowKey,
   totalRevenue,
   totalGrossProfit,
+  rowCount,
 }: Props) {
   const entityValue = item[entityField]
-  const hasCogs = item.cogs !== undefined
+  // BD-5: cogs === 0 means COGS unassigned for the period (by-brand: cogs:0,
+  // by-category: cogs_rub:"0"). Then profit collapses to revenue, margin_pct → 100 %,
+  // ROI / profit-per-unit are meaningless. Gate on cogs > 0 → render «—». Mirrors the
+  // period-card fix 0436ecc9 + the cogs===0→null convention in roi-profit-utils.ts:93.
+  const hasCogs = (item.cogs ?? 0) > 0
   // Backend now returns missing_cogs_count for by-brand/by-category when include_cogs=true.
   // Defensive guard (|| 0) preserved for cached/stale responses.
   const hasMissingCogs = (item.missing_cogs_count || 0) > 0
-  // FR-1 competitor-parity contribution shares (null → "—", never a misleading 0 %).
-  const revenueShare = sharePercentage(item.revenue_net, totalRevenue)
-  const profitShare = sharePercentage(item.profit, totalGrossProfit)
+  // FR-1 contribution shares (null → "—", never a misleading 0 %). BD-5 review R1:
+  // gate when <2 rows — a single row is trivially 100 % of the total («Вклад 100 %»).
+  const revenueShare = sharePercentageGate(
+    sharePercentage(item.revenue_net, totalRevenue),
+    rowCount
+  )
+  // BD-5: profit-share derives from gross profit — degenerate when cogs=0 (profit == revenue).
+  const profitShare = sharePercentageGate(
+    sharePercentage(hasCogs ? item.profit : null, totalGrossProfit),
+    rowCount
+  )
 
   return (
     <TableRow
@@ -88,7 +104,7 @@ export function MarginAggregatedTableRow({
       </TableCell>
       <TableCell className="text-right">
         <MarginBadge
-          marginPct={item.margin_pct}
+          marginPct={hasCogs ? item.margin_pct : null}
           missingDataReason={!hasCogs ? 'COGS_NOT_ASSIGNED' : null}
         />
       </TableCell>
@@ -119,6 +135,9 @@ export function MarginAggregatedTableRow({
       <TableCell className="text-right text-gray-600" title="Стоимость остатков по закупочной цене">
         {item.stock_value_rub == null ? '—' : formatCurrency(item.stock_value_rub)}
       </TableCell>
+      {/* Not rowCount-gated (unlike revenueShare/profitShare): a per-entity liquidity ratio
+          (stock ÷ working capital), not a contribution-to-table-total share — 100 % for one
+          row is meaningful, not degenerate. */}
       <TableCell
         className="text-right text-gray-600"
         title="Доля стоимости остатков в оборотном капитале"

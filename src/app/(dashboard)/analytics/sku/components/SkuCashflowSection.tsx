@@ -153,7 +153,15 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
       </div>
 
       {/* Net Profit */}
-      <NetProfitRow netProfit={netProfit} pct={pct} />
+      {/* BD-11: this cabinet-level cashflow net is PRE-tax (gross_profit_sku − deductions,
+          ≈ payout_total). Relabelled to distinguish from the dashboard's post-tax
+          «Чистая прибыль» (net_profit_after_all_tax), which is lower by the УСН/VAT wedge. */}
+      <NetProfitRow
+        netProfit={netProfit}
+        pct={pct}
+        label="ПРИБЫЛЬ ДО НАЛОГА"
+        note="Прибыль до налога = валовая прибыль по SKU − общекабинетные удержания WB. Считается до уплаты УСН/НДС, поэтому больше «Чистой прибыли» на дашборде на сумму налога."
+      />
     </div>
   )
 }

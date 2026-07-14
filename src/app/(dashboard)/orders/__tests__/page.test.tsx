@@ -27,11 +27,24 @@ const mockUseOrders = vi.fn()
 const mockUseOrdersSyncStatus = vi.fn()
 const mockUseOrdersSync = vi.fn()
 const mockUseClientInfo = vi.fn()
+const mockUseUpdateOrderOperationalStatus = vi.fn()
+const mockUseConfirmOrder = vi.fn()
+const mockUseCancelOrder = vi.fn()
+const mockUseUpdateOrderMeta = vi.fn()
 
 vi.mock('@/hooks/useOrders', () => ({
   useOrders: (...args: unknown[]) => mockUseOrders(...args),
   useOrdersSyncStatus: (...args: unknown[]) => mockUseOrdersSyncStatus(...args),
   useOrdersSync: (...args: unknown[]) => mockUseOrdersSync(...args),
+  // Story O1: operational-status mutation stub.
+  useUpdateOrderOperationalStatus: (...args: unknown[]) =>
+    mockUseUpdateOrderOperationalStatus(...args),
+  // Story O2: confirm-order mutation stub (idle by default).
+  useConfirmOrder: (...args: unknown[]) => mockUseConfirmOrder(...args),
+  // Story O3: cancel-order mutation stub (idle by default).
+  useCancelOrder: (...args: unknown[]) => mockUseCancelOrder(...args),
+  // Story O4: update-order-meta mutation stub (idle by default).
+  useUpdateOrderMeta: (...args: unknown[]) => mockUseUpdateOrderMeta(...args),
 }))
 
 vi.mock('@/hooks/useClientInfo', () => ({
@@ -131,6 +144,30 @@ describe('OrdersPage', () => {
     mockUseOrdersSyncStatus.mockReturnValue(createSyncStatusResult())
     mockUseOrdersSync.mockReturnValue(createSyncMutationResult())
     mockUseClientInfo.mockReturnValue({ data: {} })
+    // Story O1: idle operational-status mutation.
+    mockUseUpdateOrderOperationalStatus.mockReturnValue({
+      mutate: vi.fn(),
+      variables: undefined,
+      isPending: false,
+    })
+    // Story O2: idle confirm-order mutation.
+    mockUseConfirmOrder.mockReturnValue({
+      mutate: vi.fn(),
+      variables: undefined,
+      isPending: false,
+    })
+    // Story O3: idle cancel-order mutation.
+    mockUseCancelOrder.mockReturnValue({
+      mutate: vi.fn(),
+      variables: undefined,
+      isPending: false,
+    })
+    // Story O4: idle update-order-meta mutation.
+    mockUseUpdateOrderMeta.mockReturnValue({
+      mutate: vi.fn(),
+      variables: undefined,
+      isPending: false,
+    })
   })
 
   afterEach(() => {

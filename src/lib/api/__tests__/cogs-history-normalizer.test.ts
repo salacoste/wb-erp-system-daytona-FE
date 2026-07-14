@@ -84,4 +84,24 @@ describe('normalizeCogsHistoryResponse — F-37 unit_cost_rub coercion', () => {
     } as unknown as CogsHistoryResponse)
     expect(res.data).toEqual([])
   })
+
+  it('preserves source:"moysklad" through normalization (BD-13)', () => {
+    // МойСклад sync emits source:"moysklad"; the normalizer spreads {...item} and must
+    // NOT whitelist `source`, otherwise SourceCell falls back to `manual` (✏️ «Ручной ввод»).
+    const res = normalizeCogsHistoryResponse(
+      build({
+        data: [
+          {
+            cogs_id: 'c1',
+            nm_id: '1',
+            unit_cost_rub: 500,
+            valid_from: '2026-05-01',
+            valid_to: null,
+            source: 'moysklad',
+          },
+        ] as unknown as CogsHistoryResponse['data'],
+      })
+    )
+    expect(res.data[0].source).toBe('moysklad')
+  })
 })

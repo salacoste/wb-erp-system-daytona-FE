@@ -73,7 +73,7 @@ Base path: `/v1/moysklad` (`src/moysklad/moysklad.controller.ts`). All `@UseGuar
 > **KEPT SEPARATE from `inventory_snapshots`** (WB stocks on WB warehouses — D41). Do not merge.
 
 ### `MoyskladSyncState` (`prisma/schema.prisma`) — sync cursor
-`{ cabinetId, entity: 'PRODUCT'|'STOCK'|'VARIANT', lastSyncedAt, lastUpdatedFilter?, lastError? }`. `@@unique [cabinetId, entity]`. `lastUpdatedFilter` is the incremental cursor ([SPIKE] — see v1 boundaries).
+`{ cabinetId, entity: 'PRODUCT'|'STOCK'|'VARIANT', lastSyncedAt, lastUpdatedFilter?, lastError? }`. `@@unique [cabinetId, entity]`. `lastUpdatedFilter` is the **live incremental cursor** (S1g, 2026-07-03): the ISO timestamp of the last successful product/variant sync's start; the next sync pulls only МС rows `updated >=` it. Null on STOCK (stock is a full current-snapshot) and on the first-ever product/variant sync.
 
 ---
 
@@ -125,9 +125,9 @@ Read methods are unaffected by the gate.
 
 1. **Single-cabinet, token from `.env`.** The МС token is `MOYSKLAD_TOKEN` (one production cabinet). Multi-tenant per-`CabinetKey` token is **TODO (S1h)** — every endpoint today operates on the bootstrap cabinet declared by `MOYSKLAD_CABINET_ID`, NOT a per-user cabinet.
 2. **`[SPIKE]` runtime ESM-load of `moysklad-ts` — verified by `tsc` ONLY, not yet by a live sync** (pending **S1b**). The SDK is native ESM; the factory hides a native `import()` behind `new Function('s','return import(s)')` so the CommonJS build doesn't downgrade it (`src/shared/moysklad/create-moysklad-client.ts`). `buildMoyskladOptions()` (the pure mapper) is unit-tested; the live import path is NOT (Jest's node env can't resolve native dynamic `import()`). **Do not assume a live pull works until S1b lands.**
-3. **Variants now persisted (S1c).** `syncVariants()` (`moysklad-sync.service.ts`) paginates `getVariants` (100/page) and upserts each modification as a `MoyskladProductMapping` row with `moyskladType=VARIANT`, keyed by the same `@@unique([cabinetId, moyskladAssortmentId])` as products (idempotent). The variant `code` is stored in the existing `moyskladArticle` column (it is the variant analog of a product article and the vendorCode match key). **Parent-linkage GAP:** there is NO parent-assortment column on `MoyskladProductMapping` (`parentAssortmentId` / jsonb `metaData` absent) and schema changes are blocked this step — so variants are persisted WITHOUT a link to their parent product mapping for now (deferred → S1f barcode/migration step). Barcode matching still NOT implemented (`Product.barcode` absent → S1f).
-4. **Barcode matching NOT implemented.** `MoyskladMatchStrategy.BARCODE` exists in the enum but the matcher only does `VENDOR_CODE` (+ `MANUAL`); `Product.barcode` is absent from our schema.
-5. **Incremental sync NOT implemented.** MS0b does a **FULL pull** every run. `MoyskladSyncState.lastUpdatedFilter` is reserved for the `updated>` cursor once the МС filter format is validated (`[SPIKE]`).
+3. **Variants now persisted (S1c).** `syncVariants()` (`moysklad-sync.service.ts`) paginates `getVariants` (100/page) and upserts each modification as a `MoyskladProductMapping` row with `moyskladType=VARIANT`, keyed by the same `@@unique([cabinetId, moyskladAssortmentId])` as products (idempotent). The variant `code` is stored in the existing `moyskladArticle` column (it is the variant analog of a product article and the vendorCode match key). **Parent-linkage GAP:** there is NO parent-assortment column on `MoyskladProductMapping` (`parentAssortmentId` / jsonb `metaData` absent) and schema changes are blocked this step — so variants are persisted WITHOUT a link to their parent product mapping for now (the only remaining variant gap). Barcode matching IS implemented (S1f) via `ProductVariant.barcode` — see boundary #4.
+4. **Barcode matching IMPLEMENTED (S1f).** `matchByBarcode` runs as a FALLBACK after `matchByVendorCode` on still-pending variants — flattens the МС `barcodes` array (`ean13`/`ean8`/`code128`/`gtin`) and matches against `ProductVariant.barcode` (WB per-size barcode, FR-7) → `MoyskladMatchStrategy.BARCODE`. Conflict handling mirrors vendorCode: a barcode shared by ≥2 WB variants is ambiguous → left pending for manual link.
+5. **Incremental sync IMPLEMENTED (S1g, 2026-07-03).** Products & variants are pulled INCREMENTALLY via the МС `updated>` filter (`updated >= <high-watermark>`), confirmed live on the production token. The cursor is each sync's START time (captured before the pull — `gte` inclusive → no skipped rows under concurrent edits), stored as ISO in `MoyskladSyncState.lastUpdatedFilter`; the FIRST sync has no cursor → full pull, and a re-sync that finds nothing changed pulls **0 rows**. Stock is still a full current-snapshot every run (`report.stock.allCurrent` is not `updated>`-filterable). Known gap: hard-deleted МС products aren't surfaced by `updated>` (МС soft-archives, which IS caught).
 6. **No FE integration yet.** This doc is the first FE-facing artifact. No widgets / hooks / pages exist for МойСклад data.
 
 ---
@@ -139,9 +139,10 @@ Read methods are unaffected by the gate.
 - A **manual-link queue UI**: `GET /mappings?matched=false` → list pending МС assortments → `POST /mappings/:id/link { nmId }` to resolve conflicts. Poll `POST /sync` `taskUuid` for progress.
 - A **stock view** off `GET /stock-db` (persisted daily snapshots — `date`, `moyskladAssortmentId`, `nmId`, `stockFree`, `reserve`). This is OUR-DB; no МС dependency at read time.
 
-**Wait for (the `[SPIKE]` dependency):**
-- Anything that assumes a **live** МойСклад pull actually works end-to-end (organizations/products/variants/stock) — gate behind **S1b** (live-sync verification). The live endpoints are wired and type-correct, but the ESM runtime load is only `tsc`-verified today.
-- **Variants UI** — variants are now persisted (`moyskladType=VARIANT`) so a variants view CAN be built off `GET /mappings`; only the parent-product linkage + barcode auto-match are still pending (→ S1f). **Barcode auto-matching** (gap #4), **incremental sync** progress indicator (gap #5), and **multi-cabinet** selection (gap #1 — pending S1h).
+**Verified live (no longer gated):**
+- A **live** МойСклад pull works end-to-end (organizations/products/variants/stock). The ESM runtime load is confirmed by a live SPIKE (2026-07-03: 394 products pulled via the SDK on the production token; read-only honored). The `updated>` incremental filter is confirmed live in the same SPIKE.
+- **Variants UI** — variants are persisted (`moyskladType=VARIANT`), **barcode auto-match is LIVE (S1f)**, and **incremental sync is LIVE (S1g)**. So a variants view, a barcode-match status column, and a last-sync / incremental-progress indicator (off `MoyskladSyncState.lastSyncedAt` + `lastUpdatedFilter`) CAN all be built now. Only the variant **parent-product linkage** remains a gap.
+- Still pending: **multi-cabinet** selection (gap #1 — per-`CabinetKey` token resolved in S1h, but FE multi-cabinet UX is not built).
 
 ---
 

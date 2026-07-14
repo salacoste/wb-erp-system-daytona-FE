@@ -64,8 +64,8 @@ export interface StorageBySkuItem {
  * Summary statistics for storage by SKU
  */
 export interface StorageSummary {
-  /** Total storage cost for all products (₽) */
-  total_storage_cost: number
+  /** Total storage cost for all products (₽). Null = unknown (AP#8: money, never 0). */
+  total_storage_cost: number | null
   /** Number of unique products */
   products_count: number
   /** Average cost per product (₽). AP#8: money ratio is number|null — null renders '—'. */

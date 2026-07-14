@@ -7,6 +7,7 @@
 import type {
   StorageBySkuItem,
   StorageBySkuResponse,
+  StorageSummary,
   TopConsumerItem,
   TopConsumersResponse,
   StorageTrendPoint,
@@ -238,4 +239,40 @@ export const mockImportStatusFailed: ImportStatusResponse = {
   status: 'failed',
   error_message: 'WB API timeout after 5 retries',
   completed_at: '2025-11-24T10:30:00Z',
+}
+
+// ============================================================================
+// Null-cost Fixtures (BD-16: anti-pattern #8 — null money must render "—", never "0 ₽")
+// ============================================================================
+
+/** SKU whose storage cost is unknown upstream (null) — must render «—», never «0 ₽». */
+export const mockNullCostStorageBySkuItem: StorageBySkuItem = {
+  nm_id: '778899001',
+  vendor_code: 'SKU-NULL-COST',
+  product_name: 'Товар без данных о стоимости хранения',
+  brand: 'NoCostData',
+  storage_cost_total: null,
+  storage_cost_avg_daily: null,
+  volume_avg: 0.4,
+  warehouses: ['Коледино'],
+  days_stored: 7,
+}
+
+/** Summary where totals are unknown upstream (null) — must render «—», never «0 ₽». */
+export const mockNullCostStorageSummary: StorageSummary = {
+  total_storage_cost: null,
+  products_count: 1,
+  avg_cost_per_product: null,
+}
+
+/** Top consumer whose storage cost is unknown upstream (null) — must render «—», never «0 ₽». */
+export const mockNullCostTopConsumerItem: TopConsumerItem = {
+  rank: 1,
+  nm_id: '778899001',
+  vendor_code: 'SKU-NULL-COST',
+  product_name: 'Товар без данных о стоимости хранения',
+  brand: 'NoCostData',
+  storage_cost: null,
+  percent_of_total: 0,
+  volume: 0.4,
 }

@@ -15,8 +15,12 @@ import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { OrderStatusBadge } from './OrderStatusBadge'
 import { ClientInfoCell } from './ClientInfoCell'
 import { WbStatusBadge, SalePriceCell, ProductNameCell } from './OrdersRowHelpers'
-import type { OrderFbsItem } from '@/types/orders'
+import { OperationalStatusBadge } from './OperationalStatusBadge'
+import { OperationalStatusSelect } from './OperationalStatusSelect'
+import { OrderActionsCell } from './OrderActionsCell'
+import type { OrderFbsItem, OrderOperationalStatus } from '@/types/orders'
 import type { ClientInfoItem } from '@/types/orders-client-info'
+import type { UpdateOrderMetaBody } from '@/types/orders-actions'
 
 interface OrdersTableRowProps {
   order: OrderFbsItem
@@ -25,6 +29,18 @@ interface OrdersTableRowProps {
   clientInfo?: ClientInfoItem
   /** Story 86.2: render the client cell (matches parent table's column visibility) */
   showClientColumn?: boolean
+  /** Story O1: change-operational-status handler (omit to hide the control) */
+  onOperationalStatusChange?: (orderUuid: string, status: OrderOperationalStatus) => void
+  /** Story O1: disable the control while a mutation is in-flight */
+  operationalStatusPending?: boolean
+  /** Story O2: confirm-handler (omit to hide the confirm action in the menu). */
+  onConfirm?: (orderUuid: string) => void
+  /** Story O3: cancel-handler (omit to hide the cancel action + dialog). */
+  onCancel?: (orderUuid: string) => void
+  /** Story O4: marking-code save-handler (omit to hide the meta action + dialog). */
+  onSaveMeta?: (orderUuid: string, body: UpdateOrderMetaBody) => void
+  /** Story O2: disable the actions menu while a mutation for this row is in-flight. */
+  actionsPending?: boolean
 }
 
 /**
@@ -35,10 +51,21 @@ export function OrdersTableRow({
   onClick,
   clientInfo,
   showClientColumn = false,
+  onOperationalStatusChange,
+  operationalStatusPending = false,
+  onConfirm,
+  onCancel,
+  onSaveMeta,
+  actionsPending = false,
 }: OrdersTableRowProps) {
   const productName = order.productName || '—'
 
   const handleClick = () => onClick(order)
+
+  // AP#8: null until first transition → render «—».
+  const operationalStatusUpdatedAtLabel = order.operationalStatusUpdatedAt
+    ? formatDateTime(order.operationalStatusUpdatedAt)
+    : '—'
 
   return (
     <TableRow className="cursor-pointer hover:bg-muted/50" onClick={handleClick}>
@@ -93,6 +120,22 @@ export function OrdersTableRow({
         <WbStatusBadge status={order.wbStatus} />
       </TableCell>
 
+      {/* Story O1: Operational Status — badge + (optional) change control */}
+      <TableCell>
+        <div className="flex flex-col items-start gap-1">
+          <OperationalStatusBadge status={order.operationalStatus} />
+          {onOperationalStatusChange && (
+            <OperationalStatusSelect
+              orderUuid={order.id}
+              currentStatus={order.operationalStatus}
+              disabled={operationalStatusPending}
+              onStatusChange={onOperationalStatusChange}
+            />
+          )}
+          <span className="text-xs text-muted-foreground">{operationalStatusUpdatedAtLabel}</span>
+        </div>
+      </TableCell>
+
       {/* Created At */}
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
         {formatDateTime(order.createdAt)}
@@ -101,6 +144,17 @@ export function OrdersTableRow({
       {/* Updated At */}
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
         {formatDateTime(order.statusUpdatedAt)}
+      </TableCell>
+
+      {/* Stories O2/O3/O4: per-row actions (confirm / cancel / marking-code meta) */}
+      <TableCell className="text-right">
+        <OrderActionsCell
+          order={order}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          onSaveMeta={onSaveMeta}
+          pending={actionsPending}
+        />
       </TableCell>
 
       {/* Story 86.2: Client (PII) — Owner only */}

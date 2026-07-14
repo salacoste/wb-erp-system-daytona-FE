@@ -148,4 +148,37 @@ describe('useMarginAnalyticsByBrand', () => {
     expect(url).toContain('weekStart=2025-W40')
     expect(url).toContain('weekEnd=2025-W47')
   })
+
+  it('preserves backend roi and profit_per_unit when present (percent 0-100)', async () => {
+    mockGet.mockResolvedValueOnce({
+      items: [{ ...mockRawBrandItem, roi: 309.48, profit_per_unit: 9.47 }],
+      meta: {},
+    })
+
+    const { result } = renderHook(() => useMarginAnalyticsByBrand({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    const brand = result.current.data!.data[0]
+    expect(brand.roi).toBe(309.48)
+    expect(brand.profit_per_unit).toBe(9.47)
+  })
+
+  it('maps roi and profit_per_unit to null when omitted (preserve null, never undefined/0)', async () => {
+    mockGet.mockResolvedValueOnce({
+      // cogs=0 → backend sends roi=null (ROI meaningless without COGS)
+      items: [{ ...mockRawBrandItem, cogs: 0, roi: null, profit_per_unit: 395.66 }],
+      meta: {},
+    })
+
+    const { result } = renderHook(() => useMarginAnalyticsByBrand({ week: '2025-W47' }), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    const brand = result.current.data!.data[0]
+    expect(brand.roi).toBeNull()
+    expect(brand.profit_per_unit).toBe(395.66)
+  })
 })

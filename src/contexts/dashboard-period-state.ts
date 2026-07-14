@@ -28,6 +28,7 @@ import {
   setStoredPeriodType,
   buildPeriodUrlParams,
 } from './dashboard-period-storage'
+import { invalidateDashboardDataQueries } from '@/hooks/dashboard-query-invalidation'
 
 const URL_PARAMS = PERIOD_URL_PARAMS
 
@@ -44,19 +45,24 @@ export function useDashboardPeriodState(initialWeek?: string): DashboardPeriodCo
   const urlWeek = searchParams.get(URL_PARAMS.week)
   const urlMonth = searchParams.get(URL_PARAMS.month)
   const urlType = searchParams.get(URL_PARAMS.type) as PeriodType | null
+  const validUrlWeek = urlWeek && isValidWeekFormat(urlWeek) ? urlWeek : null
+  const validUrlMonth = urlMonth && isValidMonthFormat(urlMonth) ? urlMonth : null
+  const validUrlType = urlType === 'week' || urlType === 'month' ? urlType : null
+  const urlPeriodType = validUrlType ?? (validUrlWeek ? 'week' : validUrlMonth ? 'month' : null)
 
   const [periodType, setPeriodTypeState] = useState<PeriodType>(() => {
-    if (urlType === 'week' || urlType === 'month') return urlType
+    if (urlPeriodType) return urlPeriodType
     return getStoredPeriodType() ?? 'week'
   })
 
   const [selectedWeek, setSelectedWeekState] = useState<string>(() => {
-    if (urlWeek && isValidWeekFormat(urlWeek)) return urlWeek
+    if (validUrlWeek) return validUrlWeek
     return defaultWeek
   })
 
   const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
-    if (urlMonth && isValidMonthFormat(urlMonth)) return urlMonth
+    if (validUrlMonth) return validUrlMonth
+    if (validUrlWeek) return getMonthFromWeek(validUrlWeek)
     return getMonthFromWeek(defaultWeek)
   })
 
@@ -111,22 +117,61 @@ export function useDashboardPeriodState(initialWeek?: string): DashboardPeriodCo
 
   const refresh = useCallback(() => {
     setLastRefresh(new Date())
-    queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-    queryClient.invalidateQueries({ queryKey: ['analytics'] })
+    invalidateDashboardDataQueries(queryClient)
   }, [queryClient])
 
+  const urlDerivedMonth = validUrlWeek && !validUrlMonth ? getMonthFromWeek(validUrlWeek) : null
+  const hasValidPeriodUrlParam = Boolean(validUrlWeek || validUrlMonth || urlPeriodType)
+  const urlReconciliationPending =
+    hasValidPeriodUrlParam &&
+    ((urlPeriodType !== null && periodType !== urlPeriodType) ||
+      (validUrlWeek !== null && selectedWeek !== validUrlWeek) ||
+      (validUrlMonth !== null && selectedMonth !== validUrlMonth) ||
+      (urlDerivedMonth !== null && selectedMonth !== urlDerivedMonth))
+
   useEffect(() => {
-    const qs = buildPeriodUrlParams(
-      selectedWeek,
-      selectedMonth,
-      periodType,
-      searchParams.toString()
-    )
+    if (!hasValidPeriodUrlParam) return
+
+    if (urlPeriodType && periodType !== urlPeriodType) {
+      setPeriodTypeState(urlPeriodType)
+    }
+    if (validUrlWeek && selectedWeek !== validUrlWeek) {
+      setSelectedWeekState(validUrlWeek)
+    }
+    if (validUrlMonth && selectedMonth !== validUrlMonth) {
+      setSelectedMonthState(validUrlMonth)
+    } else if (urlDerivedMonth && selectedMonth !== urlDerivedMonth) {
+      setSelectedMonthState(urlDerivedMonth)
+    }
+  }, [
+    hasValidPeriodUrlParam,
+    periodType,
+    selectedMonth,
+    selectedWeek,
+    urlDerivedMonth,
+    urlPeriodType,
+    validUrlMonth,
+    validUrlWeek,
+  ])
+
+  useEffect(() => {
+    if (urlReconciliationPending) return
+
+    const currentQs = searchParams.toString()
+    const qs = buildPeriodUrlParams(selectedWeek, selectedMonth, periodType, currentQs)
     const newUrl = `${pathname}?${qs}`
-    if (newUrl !== pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')) {
+    if (newUrl !== pathname + (currentQs ? `?${currentQs}` : '')) {
       router.replace(newUrl, { scroll: false })
     }
-  }, [periodType, selectedWeek, selectedMonth, searchParams, pathname, router])
+  }, [
+    periodType,
+    selectedWeek,
+    selectedMonth,
+    searchParams,
+    pathname,
+    router,
+    urlReconciliationPending,
+  ])
 
   const getDateRange = useCallback((): { startDate: string; endDate: string } => {
     if (periodType === 'week') {

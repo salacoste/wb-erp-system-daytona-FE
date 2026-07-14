@@ -16,6 +16,9 @@ import {
   linkMapping,
   type MoyskladMappingsParams,
 } from '@/lib/api/moysklad'
+import { getMoyskladStockDb, type MoyskladStockDbParams } from '@/lib/api/moysklad-stock'
+import { getMoyskladProducts, type MoyskladProductsParams } from '@/lib/api/moysklad-products'
+import { getMoyskladVariants, type MoyskladVariantsParams } from '@/lib/api/moysklad-variants'
 
 /** Centralized МойСклад query keys (scope `['moysklad', ...]`). */
 export const moyskladQueryKeys = {
@@ -23,6 +26,9 @@ export const moyskladQueryKeys = {
   health: ['moysklad', 'health'] as const,
   organizations: ['moysklad', 'organizations'] as const,
   mappings: (params: MoyskladMappingsParams) => ['moysklad', 'mappings', params] as const,
+  stockDb: (params: MoyskladStockDbParams) => ['moysklad', 'stock-db', params] as const,
+  products: (params: MoyskladProductsParams) => ['moysklad', 'products', params] as const,
+  variants: (params: MoyskladVariantsParams) => ['moysklad', 'variants', params] as const,
 }
 
 const HEALTH_STALE_TIME = 60_000
@@ -60,6 +66,51 @@ export function useMoyskladMappings(params: MoyskladMappingsParams = {}) {
     staleTime: 60_000,
     gcTime: 5 * 60_000,
     retry: 1,
+  })
+}
+
+/**
+ * GET /v1/moysklad/stock-db — cached МС stock snapshots (OUR DB, read-only).
+ * `date` omitted → latest snapshot date. Invalid `date` → 400 surfaced as error.
+ * retry disabled so an invalid-date 400 shows immediately (not retried).
+ */
+export function useMoyskladStockDb(params: MoyskladStockDbParams = {}) {
+  return useQuery({
+    queryKey: moyskladQueryKeys.stockDb(params),
+    queryFn: () => getMoyskladStockDb(params),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: 0,
+  })
+}
+
+/**
+ * GET /v1/moysklad/products — live МС `/products` read-through (M2).
+ * Live call may fail at runtime (boundary #2); retry disabled so a live failure
+ * surfaces the error banner immediately instead of hammering МС on retries.
+ */
+export function useMoyskladProducts(params: MoyskladProductsParams = {}) {
+  return useQuery({
+    queryKey: moyskladQueryKeys.products(params),
+    queryFn: () => getMoyskladProducts(params),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: 0,
+  })
+}
+
+/**
+ * GET /v1/moysklad/variants — live МС `/variants` read-through (M3).
+ * Live call may fail at runtime (boundary #2); retry disabled so a live failure
+ * surfaces the error banner immediately instead of hammering МС on retries.
+ */
+export function useMoyskladVariants(params: MoyskladVariantsParams = {}) {
+  return useQuery({
+    queryKey: moyskladQueryKeys.variants(params),
+    queryFn: () => getMoyskladVariants(params),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: 0,
   })
 }
 

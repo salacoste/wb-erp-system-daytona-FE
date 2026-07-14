@@ -88,7 +88,10 @@ function normalizeSupplyOrder(raw: unknown): Record<string, unknown> {
 function normalizeSupplyDocument(raw: unknown): Record<string, unknown> {
   const d = (raw ?? {}) as Record<string, unknown>
   return {
-    type: (d.type ?? d.docType ?? '') as string,
+    // Backend serializes the Prisma enum verbatim (UPPERCASE: STICKER/ACCEPTANCE_ACT).
+    // The FE DocumentType is lowercase snake_case → fold at the boundary (Story O5:
+    // acceptance-act lookup + sticker/barcode label rendering both need lowercase).
+    type: String(d.type ?? d.docType ?? '').toLowerCase(),
     format: String(d.format ?? ''),
     generatedAt: String(d.generatedAt ?? ''),
     // backend sends `fileSize`; FE field is `sizeBytes` (null when unknown).

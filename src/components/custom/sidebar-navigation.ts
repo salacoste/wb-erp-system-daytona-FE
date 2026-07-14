@@ -42,6 +42,8 @@ import {
   Tag,
   ShieldCheck,
   CalendarSearch,
+  Zap,
+  TrendingUp,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -83,12 +85,16 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Пополнение склада', href: ROUTES.ANALYTICS.REORDER, icon: Package },
   // МойСклад integration (read-only FE, Phase 1 MVP — contract #221)
   { label: 'МойСклад', href: ROUTES.MOYSKLAD.ROOT, icon: Store },
+  // AT1: Canned automation rules gallery (contract #224)
+  { label: 'Автоматизация', href: ROUTES.AUTOMATION.CANNED_RULES, icon: Zap },
   // Epic 5: Unit Economics Analytics
   { label: 'Юнит-экономика', href: ROUTES.ANALYTICS.UNIT_ECONOMICS, icon: Calculator },
   // Epic 7: Liquidity Analysis
   { label: 'Ликвидность', href: ROUTES.ANALYTICS.LIQUIDITY, icon: Droplets },
   // Epic 33: Advertising Analytics
   { label: 'Реклама', href: ROUTES.ANALYTICS.ADVERTISING, icon: Megaphone },
+  // PR4b: brand competitive-positioning (rating + share by price/qty)
+  { label: 'Доля бренда', href: ROUTES.ANALYTICS.BRAND_SHARE, icon: TrendingUp },
   // Epic 51-FE: FBS Historical Analytics
   { label: 'Заказы FBS', href: ROUTES.ANALYTICS.ORDERS, icon: ClipboardList },
   // Epic 96-FE Story 96.11: FBS Stock Breakdowns (adjacent to "Заказы FBS" — L-2 fix)

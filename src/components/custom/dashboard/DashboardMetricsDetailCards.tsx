@@ -6,7 +6,6 @@ import { WbCommissionsCard } from './WbCommissionsCard'
 import { LogisticsMetricCard } from './LogisticsMetricCard'
 import { PayoutCard } from './PayoutCard'
 import { StorageAcceptanceCard } from './StorageAcceptanceCard'
-import { PaidAcceptanceCard } from './PaidAcceptanceCard'
 import { CostsCard } from './CostsCard'
 import { AdvertisingCard } from './AdvertisingCard'
 import { OtherDeductionsCard } from './OtherDeductionsCard'
@@ -62,25 +61,15 @@ export function renderDetailCards(
         />
       )}
       {s('storage') && (
-        <>
-          <StorageAcceptanceCard
-            storageCost={p.storageCost}
-            paidAcceptanceCost={p.paidAcceptanceCost}
-            previousTotal={prev?.storageCost}
-            saleGross={p.saleGross}
-            isLoading={false}
-            error={p.error}
-            onRetry={p.onRetry}
-          />
-          <PaidAcceptanceCard
-            paidAcceptanceCost={p.paidAcceptanceCost}
-            previousPaidAcceptanceCost={prev?.paidAcceptanceCost}
-            saleGross={p.saleGross}
-            isLoading={false}
-            error={p.error}
-            onRetry={p.onRetry}
-          />
-        </>
+        <StorageAcceptanceCard
+          storageCost={p.storageCost}
+          paidAcceptanceCost={p.paidAcceptanceCost}
+          previousTotal={prev?.storageAcceptanceTotal}
+          saleGross={p.saleGross}
+          isLoading={false}
+          error={p.error}
+          onRetry={p.onRetry}
+        />
       )}
       {s('payout') && (
         <PayoutCard

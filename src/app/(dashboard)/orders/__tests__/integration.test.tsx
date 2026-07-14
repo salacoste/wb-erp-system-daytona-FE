@@ -43,6 +43,30 @@ vi.mock('@/hooks/useOrders', () => ({
   useOrders: (...args: unknown[]) => mockUseOrders(...args),
   useOrdersSyncStatus: () => mockUseOrdersSyncStatus(),
   useOrdersSync: () => mockUseOrdersSync(),
+  // Story O1: operational-status mutation stub (idle by default).
+  useUpdateOrderOperationalStatus: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
+  // Story O2: confirm-order mutation stub (idle by default).
+  useConfirmOrder: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
+  // Story O3: cancel-order mutation stub (idle by default).
+  useCancelOrder: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
+  // Story O4: update-order-meta mutation stub (idle by default).
+  useUpdateOrderMeta: () => ({
+    mutate: vi.fn(),
+    variables: undefined,
+    isPending: false,
+  }),
   ordersQueryKeys: {
     all: ['orders'] as const,
     lists: () => ['orders', 'list'] as const,
@@ -321,6 +345,12 @@ describe('Orders Page - Integration Tests (Story 40.7-FE)', () => {
       await renderOrdersPage(queryClient)
       // Table renders — at minimum page container is present
       expect(screen.getByTestId('orders-page')).toBeInTheDocument()
+    })
+
+    it('should render the Действия column header (Story O2 actions cell)', async () => {
+      mockUseOrders.mockReturnValue(createOrdersResult())
+      await renderOrdersPage(queryClient)
+      expect(screen.getByRole('columnheader', { name: 'Действия' })).toBeInTheDocument()
     })
 
     it('should render filters section within a card', async () => {

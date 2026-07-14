@@ -21,8 +21,22 @@ import { logger } from '@/lib/logger'
 export { ordersQueryKeys } from '@/lib/api/orders'
 
 // Re-export mutation hooks — preserve consumer API
-export { useOrdersSync, useOrdersBackfill } from './useOrdersMutations'
-export type { UseOrdersSyncOptions, UseOrdersBackfillOptions } from './useOrdersMutations'
+export {
+  useOrdersSync,
+  useOrdersBackfill,
+  useUpdateOrderOperationalStatus,
+  useConfirmOrder,
+  useCancelOrder,
+  useUpdateOrderMeta,
+} from './useOrdersMutations'
+export type {
+  UseOrdersSyncOptions,
+  UseOrdersBackfillOptions,
+  UpdateOrderOperationalStatusInput,
+  ConfirmOrderInput,
+  CancelOrderInput,
+  UpdateOrderMetaInput,
+} from './useOrdersMutations'
 
 // ============================================================================
 // Orders List Hook

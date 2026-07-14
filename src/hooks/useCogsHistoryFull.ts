@@ -17,8 +17,6 @@ import { logger } from '@/lib/logger'
 export {
   formatDateRu,
   formatCurrencyRu,
-  getSourceLabel,
-  getSourceIcon,
   analyzeVersionChain,
   formatWeeksCount,
 } from './useCogsHistoryDisplay'

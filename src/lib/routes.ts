@@ -58,6 +58,8 @@ export const ROUTES = {
     FORECAST_ACCURACY: '/analytics/forecast-accuracy',
     MODELS: '/analytics/models',
     PRODUCT: '/analytics/product',
+    // PR4b — brand competitive-positioning (rating + share by price/qty).
+    BRAND_SHARE: '/analytics/brand-share',
     AI_ADMIN: {
       MODELS: '/analytics/ai-admin/models',
       PREFERENCES: '/analytics/ai-admin/preferences',
@@ -90,6 +92,12 @@ export const ROUTES = {
     ROOT: '/moysklad',
   },
 
+  // Automation — AT1 canned-rules gallery (contract #224)
+  AUTOMATION: {
+    ROOT: '/automation',
+    CANNED_RULES: '/automation/canned-rules',
+  },
+
   SETTINGS: {
     ROOT: '/settings',
     CABINET: '/settings/cabinet',
@@ -113,6 +121,7 @@ export type RoutePath =
   | (typeof ROUTES.SUPPLIES)[keyof typeof ROUTES.SUPPLIES]
   | (typeof ROUTES.SETTINGS)[keyof typeof ROUTES.SETTINGS]
   | (typeof ROUTES.MOYSKLAD)[keyof typeof ROUTES.MOYSKLAD]
+  | (typeof ROUTES.AUTOMATION)[keyof typeof ROUTES.AUTOMATION]
   | string
 
 // Route matchers moved to routes-protected.ts (circular dependency fix).

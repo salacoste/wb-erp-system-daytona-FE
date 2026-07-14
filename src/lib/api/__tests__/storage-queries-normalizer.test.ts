@@ -120,7 +120,8 @@ describe('normalizeTopConsumersResponse', () => {
   it('null input returns empty safe response', () => {
     const result = normalizeTopConsumersResponse(null)
     expect(result.top_consumers).toEqual([])
-    expect(result.total_storage_cost).toBe(0)
+    // BD-16: total_storage_cost is money (AP#8) — null, not 0.
+    expect(result.total_storage_cost).toBeNull()
     expect(result.has_data).toBe(false)
   })
 
@@ -147,5 +148,42 @@ describe('normalizeTopConsumersResponse', () => {
     const result = normalizeTopConsumersResponse(raw)
     expect(result.top_consumers[0].volume).toBeNull()
     expect(result.top_consumers[0].revenue_net).toBeUndefined()
+  })
+
+  // BD-16: money fields must preserve null (AP#8) — never collapse to 0. A null upstream
+  // cost would otherwise render "0 ₽" (a lie). Counts stay toCount→0.
+  it('null money fields are preserved as null (BD-16, AP#8)', () => {
+    const raw = {
+      period: { from: 'W1', to: 'W2', days_count: 7 },
+      data: [
+        {
+          nm_id: '1',
+          storage_cost_total: null,
+          storage_cost_avg_daily: null,
+          days_stored: 5,
+        },
+      ],
+      summary: { total_storage_cost: null, products_count: 1, avg_cost_per_product: null },
+    }
+    const result = normalizeStorageBySkuResponse(raw, 'W1', 'W2')
+    const item = result.data[0]
+    expect(item.storage_cost_total).toBeNull()
+    expect(item.storage_cost_avg_daily).toBeNull()
+    expect(item.days_stored).toBe(5) // count stays 0-defaulted
+    expect(result.summary.total_storage_cost).toBeNull()
+    expect(result.summary.products_count).toBe(1) // count stays
+    expect(result.summary.avg_cost_per_product).toBeNull()
+  })
+
+  it('null top-consumer storage_cost and total are preserved as null (BD-16, AP#8)', () => {
+    const raw = {
+      period: { from: 'W1', to: 'W2', days_count: 7 },
+      top_consumers: [{ rank: 1, nm_id: '1', storage_cost: null }],
+      total_storage_cost: null,
+    }
+    const result = normalizeTopConsumersResponse(raw)
+    expect(result.top_consumers[0].storage_cost).toBeNull()
+    expect(result.total_storage_cost).toBeNull()
+    expect(result.top_consumers[0].rank).toBe(1) // count stays
   })
 })

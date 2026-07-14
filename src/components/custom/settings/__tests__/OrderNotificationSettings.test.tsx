@@ -131,6 +131,8 @@ describe('OrderNotificationSettings', () => {
     expect(calledWith.slaWarningEnabled).toBe(false)
     expect(calledWith.dailySummaryEnabled).toBe(true)
     expect(calledWith.dailySummaryHour).toBe(9)
+    // BD-FE-001: cabinetId (present in GET) must NOT be sent in the PUT body (BE rejects it)
+    expect(calledWith).not.toHaveProperty('cabinetId')
   })
 
   // 5. Hour input change calls updateSettings with clamped value

@@ -16,8 +16,6 @@ src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | lin
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/components/custom/dashboard/table-columns.ts:188-191 | line 191 > file has 150 lines
-src/components/custom/orders/OrdersTableRow.tsx:134-137 | line 137 > file has 114 lines
-src/components/custom/orders/OrdersTableRow.tsx:134-137 | line 137 > file has 114 lines
 src/components/notifications/TelegramBindingModal.tsx:216 | line 216 > file has 95 lines
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
@@ -61,11 +59,11 @@ src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
 src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
 src/lib/daily/aggregation.ts:155 | line 155 > file has 116 lines
 src/lib/margin-helpers.ts:128-129 | line 129 > file has 109 lines
-src/lib/routes.ts:206 | line 206 > file has 131 lines
-src/lib/routes.ts:206 | line 206 > file has 131 lines
-src/lib/routes.ts:213-215 | line 215 > file has 131 lines
-src/lib/routes.ts:213-215 | line 215 > file has 131 lines
-src/lib/routes.ts:215 | line 215 > file has 131 lines
+src/lib/routes.ts:206 | line 206 > file has 140 lines
+src/lib/routes.ts:206 | line 206 > file has 140 lines
+src/lib/routes.ts:213-215 | line 215 > file has 140 lines
+src/lib/routes.ts:213-215 | line 215 > file has 140 lines
+src/lib/routes.ts:215 | line 215 > file has 140 lines
 src/mocks/handlers/unit-economics.ts:224 | line 224 > file has 28 lines
 src/mocks/handlers/unit-economics.ts:37-48 | line 48 > file has 28 lines
 src/mocks/handlers/unit-economics.ts:54-66 | line 66 > file has 28 lines

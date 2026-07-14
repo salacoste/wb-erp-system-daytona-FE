@@ -115,13 +115,18 @@ export function GrossProfitRow({
   )
 }
 
-/** Final net profit row */
+/** Final net profit row. `label`/`note` let callers disambiguate this pre-tax cashflow
+ * net from the dashboard's post-tax «Чистая прибыль» — BD-11: same label, ~33 400 ₽ apart. */
 export function NetProfitRow({
   netProfit,
   pct,
+  label = 'ЧИСТАЯ ПРИБЫЛЬ',
+  note,
 }: {
   netProfit: number
   pct: (v: number) => string
+  label?: string
+  note?: string
 }) {
   const isPositive = netProfit >= 0
   return (
@@ -134,8 +139,9 @@ export function NetProfitRow({
         </span>
         <span
           className={`text-base font-semibold ${isPositive ? 'text-green-800' : 'text-red-800'}`}
+          title={note}
         >
-          ЧИСТАЯ ПРИБЫЛЬ
+          {label}
         </span>
         <span
           className={`ml-1 px-2 py-0.5 text-sm font-bold rounded ${isPositive ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}`}

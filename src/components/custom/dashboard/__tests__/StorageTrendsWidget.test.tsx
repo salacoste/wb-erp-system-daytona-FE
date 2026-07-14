@@ -22,7 +22,7 @@ import {
   createLoadingQueryResult,
   createErrorQueryResult,
 } from '@/test/utils/query-mock'
-import type { StorageTrendsResponse, MetricSummary } from '@/types/storage-analytics'
+import type { StorageTrendsResponse, MoneyMetricSummary } from '@/types/storage-analytics'
 
 // ============================================================================
 // Mock Setup
@@ -40,7 +40,8 @@ import { StorageTrendsWidget } from '../StorageTrendsWidget'
 // Test Data
 // ============================================================================
 
-const mockSummary: { storage_cost: MetricSummary } = {
+// BD-44: storage_cost summary is money → MoneyMetricSummary (nullable min/max/avg).
+const mockSummary: { storage_cost: MoneyMetricSummary } = {
   storage_cost: {
     min: 1200.5,
     max: 3500.75,

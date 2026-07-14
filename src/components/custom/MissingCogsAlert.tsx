@@ -79,20 +79,20 @@ export function MissingCogsAlert({
       <AlertTriangle className="h-4 w-4" data-testid="alert-triangle-icon" />
       <AlertTitle className="flex items-center gap-2">
         Товары без себестоимости
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge
-                variant="outline"
-                className="cursor-help border-yellow-500 text-yellow-700 bg-yellow-100"
-                tabIndex={0}
-              >
-                {missingCount} {pluralizeProduct(missingCount)}
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" size="md">
-              <p className="font-medium mb-1">Артикулы без себестоимости:</p>
-              {displayProducts.length > 0 ? (
+        {missingProducts.length > 0 ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge
+                  variant="outline"
+                  className="cursor-help border-yellow-500 text-yellow-700 bg-yellow-100"
+                  tabIndex={0}
+                >
+                  {missingCount} {pluralizeProduct(missingCount)}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" size="md">
+                <p className="font-medium mb-1">Артикулы без себестоимости:</p>
                 <ul className="text-xs space-y-0.5">
                   {displayProducts.map(id => (
                     <li key={id}>• {id}</li>
@@ -101,17 +101,22 @@ export function MissingCogsAlert({
                     <li className="text-gray-400">и ещё {remainingInList}...</li>
                   )}
                 </ul>
-              ) : (
-                <p className="text-xs text-gray-400">Список недоступен</p>
-              )}
-              {showTotalNote && (
-                <p className="text-xs text-gray-400 mt-1 pt-1 border-t border-gray-600">
-                  Всего: {missingCount} / показаны первые {missingProducts.length}
-                </p>
-              )}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+                {showTotalNote && (
+                  <p className="text-xs text-gray-400 mt-1 pt-1 border-t border-gray-600">
+                    Всего: {missingCount} / показаны первые {missingProducts.length}
+                  </p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          // Aggregate-level usages (by-brand/by-category margin banner, dashboard) pass no
+          // nmId list — render a bare count badge WITHOUT a tooltip, so keyboard users never
+          // land on a help affordance that only said «Список недоступен».
+          <Badge variant="outline" className="border-yellow-500 text-yellow-700 bg-yellow-100">
+            {missingCount} {pluralizeProduct(missingCount)}
+          </Badge>
+        )}
       </AlertTitle>
       <AlertDescription className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <span>без назначенной себестоимости. Маржа не рассчитывается.</span>

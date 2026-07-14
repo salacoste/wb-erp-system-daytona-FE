@@ -153,6 +153,140 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
   // ===========================================================================
 
   describe('Logistics Cost Comparison', () => {
+    it('does not expose previous period placeholder data after selected week changes', async () => {
+      let resolveNextWeek: (value: typeof mockCurrentPeriodSummary) => void = () => {}
+      const nextWeekPromise = new Promise<typeof mockCurrentPeriodSummary>(resolve => {
+        resolveNextWeek = resolve
+      })
+      const nextWeekSummary = {
+        ...mockCurrentPeriodSummary,
+        summary_total: {
+          ...mockCurrentPeriodSummary.summary_total,
+          sale_gross_total: 250000,
+        },
+        meta: {
+          ...mockCurrentPeriodSummary.meta,
+          week: '2026-W06',
+        },
+      }
+
+      vi.mocked(apiClient.get).mockImplementation((url: string) => {
+        if (url.includes('2026-W06')) return nextWeekPromise
+        if (url.includes('2026-W05')) return Promise.resolve(mockCurrentPeriodSummary)
+        if (url.includes('2026-W04')) return Promise.resolve(mockPreviousPeriodSummary)
+        return Promise.resolve(mockEmptySummary)
+      })
+
+      const { useFinancialSummaryWithPeriodComparison } = await import(
+        '@/hooks/useFinancialSummary'
+      )
+
+      const { result, rerender } = renderHook(
+        ({ period }) =>
+          useFinancialSummaryWithPeriodComparison({
+            periodType: 'week',
+            period,
+          }),
+        {
+          initialProps: { period: '2026-W05' },
+          wrapper: createWrapper(),
+        }
+      )
+
+      await waitFor(() => {
+        expect(result.current.current?.summary_total?.sale_gross_total).toBe(150000)
+      })
+
+      rerender({ period: '2026-W06' })
+
+      await waitFor(() => {
+        expect(apiClient.get).toHaveBeenCalledWith(
+          '/v1/analytics/weekly/finance-summary?week=2026-W06'
+        )
+      })
+      expect(result.current.current).toBeUndefined()
+      expect(result.current.isLoading).toBe(true)
+
+      resolveNextWeek(nextWeekSummary)
+
+      await waitFor(() => {
+        expect(result.current.current?.meta.week).toBe('2026-W06')
+        expect(result.current.current?.summary_total?.sale_gross_total).toBe(250000)
+      })
+    })
+
+    it('does not expose previous comparison placeholder while the new previous week loads', async () => {
+      let resolvePreviousWeek: (value: typeof mockPreviousPeriodSummary) => void = () => {}
+      const previousWeekPromise = new Promise<typeof mockPreviousPeriodSummary>(resolve => {
+        resolvePreviousWeek = resolve
+      })
+      const weekSevenSummary = {
+        ...mockCurrentPeriodSummary,
+        summary_total: {
+          ...mockCurrentPeriodSummary.summary_total,
+          sale_gross_total: 310000,
+        },
+        meta: {
+          ...mockCurrentPeriodSummary.meta,
+          week: '2026-W07',
+        },
+      }
+      const weekSixSummary = {
+        ...mockPreviousPeriodSummary,
+        summary_total: {
+          ...mockPreviousPeriodSummary.summary_total,
+          sale_gross_total: 260000,
+        },
+        meta: {
+          ...mockPreviousPeriodSummary.meta,
+          week: '2026-W06',
+        },
+      }
+
+      vi.mocked(apiClient.get).mockImplementation((url: string) => {
+        if (url.includes('2026-W07')) return Promise.resolve(weekSevenSummary)
+        if (url.includes('2026-W06')) return previousWeekPromise
+        if (url.includes('2026-W05')) return Promise.resolve(mockCurrentPeriodSummary)
+        if (url.includes('2026-W04')) return Promise.resolve(mockPreviousPeriodSummary)
+        return Promise.resolve(mockEmptySummary)
+      })
+
+      const { useFinancialSummaryWithPeriodComparison } = await import(
+        '@/hooks/useFinancialSummary'
+      )
+
+      const { result, rerender } = renderHook(
+        ({ period }) =>
+          useFinancialSummaryWithPeriodComparison({
+            periodType: 'week',
+            period,
+          }),
+        {
+          initialProps: { period: '2026-W05' },
+          wrapper: createWrapper(),
+        }
+      )
+
+      await waitFor(() => {
+        expect(result.current.previous?.meta.week).toBe('2026-W04')
+      })
+
+      rerender({ period: '2026-W07' })
+
+      await waitFor(() => {
+        expect(result.current.current?.meta.week).toBe('2026-W07')
+      })
+      expect(result.current.previous).toBeUndefined()
+      expect(result.current.isLoading).toBe(true)
+
+      resolvePreviousWeek(weekSixSummary)
+
+      await waitFor(() => {
+        expect(result.current.previous?.meta.week).toBe('2026-W06')
+        expect(result.current.previous?.summary_total?.sale_gross_total).toBe(260000)
+      })
+    })
+
     it('should return logistics_cost for both current and previous periods', async () => {
       vi.mocked(apiClient.get)
         .mockResolvedValueOnce(mockCurrentPeriodSummary)

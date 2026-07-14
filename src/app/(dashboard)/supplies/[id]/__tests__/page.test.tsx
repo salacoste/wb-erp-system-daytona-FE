@@ -55,6 +55,12 @@ vi.mock('@/hooks/useDownloadDocument', () => ({
   useDownloadDocument: () => mockUseDownloadDocument(),
 }))
 
+// Story O5: acceptance-act hooks stub (idle by default).
+vi.mock('@/hooks/useAcceptanceAct', () => ({
+  useUploadAcceptanceAct: () => ({ mutate: vi.fn(), isPending: false }),
+  useDownloadAcceptanceAct: () => ({ mutate: vi.fn(), isPending: false }),
+}))
+
 vi.mock('next/navigation', () => ({
   useRouter: () => mockRouter,
   useParams: () => ({ id: 'supply-001' }),

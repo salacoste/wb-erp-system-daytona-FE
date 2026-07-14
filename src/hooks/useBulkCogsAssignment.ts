@@ -9,9 +9,15 @@ import { apiClient } from '@/lib/api-client'
 import type { BulkCogsUploadRequest, BulkCogsResultSummary, BulkCogsItem } from '@/types/api'
 import { normalizeBulkCogsResponse } from '@/lib/api/bulk-cogs-normalizer'
 import { logger } from '@/lib/logger'
+import { toBulkCogsWireRequest } from './useBulkCogsAssignment-utils'
 
 // Re-export utils for consumers
-export { validateBulkCogsAssignment, createBulkCogsItems } from './useBulkCogsAssignment-utils'
+export {
+  validateBulkCogsAssignment,
+  createBulkCogsItems,
+  toBulkCogsWireItem,
+  toBulkCogsWireRequest,
+} from './useBulkCogsAssignment-utils'
 
 export interface BulkCogsAssignmentParams {
   items: BulkCogsItem[]
@@ -44,7 +50,11 @@ export function useBulkCogsAssignment() {
         // F-34: the endpoint returns the legacy { totalItems, createdItems, … } shape
         // today (not v2), so normalize BOTH shapes to the canonical summary. The old
         // `response.data.succeeded` read crashed on the legacy result (TypeError).
-        const response = await apiClient.post<unknown>('/v1/products/cogs/bulk?format=v2', request)
+        // BE-A-1: convert string nm_id → integer at the wire boundary (BE rejects string).
+        const response = await apiClient.post<unknown>(
+          '/v1/products/cogs/bulk?format=v2',
+          toBulkCogsWireRequest(request)
+        )
         const summary = normalizeBulkCogsResponse(response)
 
         logger.debug('[Bulk COGS Assignment] Response:', {

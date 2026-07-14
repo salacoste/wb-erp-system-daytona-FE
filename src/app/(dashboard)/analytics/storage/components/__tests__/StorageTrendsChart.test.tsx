@@ -23,8 +23,8 @@ vi.mock('../StorageTrendsChartParts', () => ({
   TrendBadge: ({ trend }: { trend: number }) => (
     <span data-testid="trend-badge">{String(trend)}</span>
   ),
-  SummaryStats: ({ summary }: { summary: { min: number } }) => (
-    <span data-testid="summary-stats">{summary.min}</span>
+  SummaryStats: ({ summary }: { summary: { min: number | null } }) => (
+    <span data-testid="summary-stats">{String(summary.min)}</span>
   ),
   CustomTooltip: () => <div data-testid="custom-tooltip" />,
   CustomDot: () => <circle data-testid="custom-dot" />,
@@ -38,7 +38,7 @@ vi.mock('../storage-trends-config', () => ({
 }))
 
 import { StorageTrendsChart } from '../StorageTrendsChart'
-import type { StorageTrendPoint, MetricSummary } from '@/types/storage-analytics'
+import type { StorageTrendPoint, MoneyMetricSummary } from '@/types/storage-analytics'
 
 const mockData: StorageTrendPoint[] = [
   { week: '2026-W09', storage_cost: 15000 },
@@ -46,7 +46,8 @@ const mockData: StorageTrendPoint[] = [
   { week: '2026-W11', storage_cost: 12000 },
 ]
 
-const mockSummary: MetricSummary = {
+// BD-44: StorageTrendsChart renders storage_cost (money) → MoneyMetricSummary (nullable min/max/avg).
+const mockSummary: MoneyMetricSummary = {
   min: 10000,
   max: 20000,
   avg: 15000,

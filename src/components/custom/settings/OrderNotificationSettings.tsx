@@ -42,8 +42,13 @@ export function OrderNotificationSettings() {
     )
   }
 
-  const patch = (partial: Partial<UpdateOrderNotificationSettingsDto>) =>
-    updateSettings({ ...settings, ...partial } as UpdateOrderNotificationSettingsDto)
+  // BD-FE-001: strip `cabinetId` — the BE GET response includes it but the PUT DTO
+  // rejects it ("property cabinetId should not exist"). Spread only writable fields.
+  const patch = (partial: Partial<UpdateOrderNotificationSettingsDto>) => {
+    const { cabinetId, ...rest } = settings
+    void cabinetId
+    return updateSettings({ ...rest, ...partial } as UpdateOrderNotificationSettingsDto)
+  }
 
   return (
     <div className="space-y-4">

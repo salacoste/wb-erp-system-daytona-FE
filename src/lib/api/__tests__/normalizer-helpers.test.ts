@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   asRecord,
   toCount,
+  toDecimalNumber,
   toNullableNumber,
   toOptionalString,
   toStr,
@@ -79,5 +80,45 @@ describe('normalizer-helpers', () => {
       expect(result[0]).toBe(1)
       expect(result[1]).toBe(2)
     })
+  })
+
+  // --- toDecimalNumber ---
+  describe('toDecimalNumber', () => {
+    // decimal.js-verified samples (Prisma Decimal serialization: {s,e,d}).
+    it('decodes the real backend sample {s:1,e:4,d:[28765,3100000]} → 28765.31', () => {
+      expect(toDecimalNumber({ s: 1, e: 4, d: [28765, 3100000] })).toBe(28765.31)
+    })
+    it('decodes a fractional decimal {s:1,e:4,d:[28765,310000]} → 28765.031', () => {
+      expect(toDecimalNumber({ s: 1, e: 4, d: [28765, 310000] })).toBeCloseTo(28765.031, 3)
+    })
+    it('returns null for null', () => expect(toDecimalNumber(null)).toBeNull())
+    it('returns null for undefined', () => expect(toDecimalNumber(undefined)).toBeNull())
+    it('passes a number through', () => expect(toDecimalNumber(5)).toBe(5))
+    it('parses a numeric string "12.5" → 12.5', () => expect(toDecimalNumber('12.5')).toBe(12.5))
+    it('returns null for a non-numeric string', () => expect(toDecimalNumber('abc')).toBeNull())
+    it('returns null for NaN number', () => expect(toDecimalNumber(NaN)).toBeNull())
+    it('decodes a negative integer {s:-1,e:0,d:[5]} → -5', () => {
+      expect(toDecimalNumber({ s: -1, e: 0, d: [5] })).toBe(-5)
+    })
+    it('decodes a small fraction {s:1,e:-2,d:[500000]} → 0.05', () => {
+      expect(toDecimalNumber({ s: 1, e: -2, d: [500000] })).toBeCloseTo(0.05, 2)
+    })
+    it('decodes a pure integer {s:1,e:3,d:[1000]} → 1000', () => {
+      expect(toDecimalNumber({ s: 1, e: 3, d: [1000] })).toBe(1000)
+    })
+    it('decodes a large integer across digit groups {s:1,e:14,d:[1,2345678,9012345]}', () => {
+      expect(toDecimalNumber({ s: 1, e: 14, d: [1, 2345678, 9012345] })).toBe(123456789012345)
+    })
+    it('decodes pi {s:1,e:0,d:[3,1415900]} → 3.14159', () => {
+      expect(toDecimalNumber({ s: 1, e: 0, d: [3, 1415900] })).toBeCloseTo(3.14159, 5)
+    })
+    it('returns null for a malformed {s,e,d} (non-array d)', () =>
+      expect(toDecimalNumber({ s: 1, e: 4, d: 'x' })).toBeNull())
+    it('returns null for a malformed {s,e,d} (non-number e)', () =>
+      expect(toDecimalNumber({ s: 1, e: '4', d: [28765] })).toBeNull())
+    it('returns null for a malformed {s,e,d} (negative digit group)', () =>
+      expect(toDecimalNumber({ s: 1, e: 4, d: [-5] })).toBeNull())
+    it('returns null for an unrelated object', () =>
+      expect(toDecimalNumber({ foo: 'bar' })).toBeNull())
   })
 })

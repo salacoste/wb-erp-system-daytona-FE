@@ -27,6 +27,12 @@ import { buildQueryString } from './supplies-query-keys'
 // Barrel re-exports from extracted modules
 export { generateStickers, downloadDocument, syncSupplies } from './supplies-documents'
 export { suppliesQueryKeys } from './supplies-query-keys'
+export {
+  uploadAcceptanceAct,
+  downloadAcceptanceAct,
+  detectAcceptanceActFormat,
+  fileToBase64,
+} from './supplies-acceptance-act'
 
 // =============================================================================
 // List & Detail Operations

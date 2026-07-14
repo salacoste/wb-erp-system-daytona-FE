@@ -55,6 +55,11 @@ export interface ApiRequestOptions extends RequestInit {
    * Story 24: Fix storage analytics response parsing
    */
   skipDataUnwrap?: boolean
+  /**
+   * Request a binary Blob response (file downloads). When set, the client
+   * resolves `response.blob()` instead of JSON/text. Story O5 (acceptance-act).
+   */
+  responseType?: 'blob'
   /** Suppress console logging for expected client-side abort/timeout fallbacks. */
   suppressNetworkErrorLog?: boolean
 }
@@ -150,6 +155,8 @@ export type {
   CogsAssignmentRequest,
   BulkCogsItem,
   BulkCogsUploadRequest,
+  BulkCogsWireItem, // BE-A-1: integer-nm_id wire shape for the bulk-COGS POST body
+  BulkCogsWireRequest,
   BulkCogsUploadResponse,
   BulkCogsUploadResponseLegacy,
   BulkCogsResultSummary, // Validation F-34: canonical normalized bulk-COGS result

@@ -143,7 +143,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
 | Dot-locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
 | ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 0 warnings |
-| Vitest | `npm test -- --run` | ≥ 16745 passing, 380 skipped, 0 failed (floor) |
+| Vitest | `npm test -- --run` | ≥ 17186 passing, 0 skipped, 0 failed (floor) |
 
 **Drift rules.** check:docs — exit code is the gate (automated). type-check / lint — count must equal 0; any error/warning is a regression. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` enforced via root `eslint.config.js` flat config (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated and does NOT load `.eslintrc.json` — enforcement is exclusively `npx eslint` from monorepo root. **When a story legitimately moves a baseline, update this table in the same PR.**
 
@@ -594,4 +594,17 @@ Password: Russia23!
 
 ---
 
-**Last Updated**: 2026-01-31
+## OpenWiki
+
+This repository has documentation located in the /openwiki directory.
+
+Start here:
+- [OpenWiki quickstart](openwiki/quickstart.md)
+
+OpenWiki includes repository overview, architecture notes, workflows, domain concepts, operations, integrations, testing guidance, and source maps.
+
+When working in this repository, read the OpenWiki quickstart first, then follow its links to the relevant architecture, workflow, domain, operation, and testing notes.
+
+---
+
+**Last Updated**: 2026-07-06

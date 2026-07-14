@@ -64,6 +64,20 @@ export function sharePercentage(
   return (part / total) * 100
 }
 
+/**
+ * Display gate for a contribution share: returns null when the table has fewer than
+ * 2 rows, because a single row is trivially 100 % of the total — uninformative and
+ * misleading («Вклад 100 %»). BD-5 review R1 MEDIUM. Pure + unit-tested; composes
+ * with `sharePercentage` (which already nulls on zero-total / null numerator).
+ */
+export function sharePercentageGate(
+  share: number | null,
+  rowCount: number | null | undefined
+): number | null {
+  if ((rowCount ?? 0) < 2) return null
+  return share
+}
+
 // ============================================================================
 // Storage Data Discrepancy Tracking (Request #52)
 // ============================================================================

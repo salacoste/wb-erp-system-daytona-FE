@@ -9,6 +9,7 @@ import {
   calculateStorageDiscrepancy,
   isStorageDivergent,
   sharePercentage,
+  sharePercentageGate,
 } from '../analytics-utils'
 
 describe('getDiscrepancyStatus — Request #52 bands', () => {
@@ -70,5 +71,21 @@ describe('sharePercentage — FR-1 contribution shares', () => {
   })
   it('preserves a negative part (loss-making contribution)', () => {
     expect(sharePercentage(-100, 1000)).toBe(-10)
+  })
+})
+
+describe('sharePercentageGate — BD-5 review R1 single-row suppression', () => {
+  it('nulls the share when fewer than 2 rows (single row is trivially 100 %)', () => {
+    expect(sharePercentageGate(100, 1)).toBeNull()
+    expect(sharePercentageGate(50, 0)).toBeNull()
+    expect(sharePercentageGate(100, null)).toBeNull()
+    expect(sharePercentageGate(100, undefined)).toBeNull()
+  })
+  it('passes the share through when 2+ rows', () => {
+    expect(sharePercentageGate(25, 2)).toBe(25)
+    expect(sharePercentageGate(100, 5)).toBe(100)
+  })
+  it('preserves a null share (total===0 case) regardless of rowCount', () => {
+    expect(sharePercentageGate(null, 5)).toBeNull()
   })
 })
