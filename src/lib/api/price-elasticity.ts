@@ -30,10 +30,11 @@ function toConfidence(raw: unknown): ElasticityConfidenceKey {
 
 function normalizeElasticityItem(raw: unknown): PriceElasticityItem {
   const r = asRecord(raw)
+  // AP#8: elasticity & rSquared are statistical ratios — preserve null (render '—'), not 0.
   return {
     nmId: toCount(r.nmId),
-    elasticity: toCount(r.elasticity),
-    rSquared: toCount(r.rSquared),
+    elasticity: toNullableNumber(r.elasticity),
+    rSquared: toNullableNumber(r.rSquared),
     dataPoints: toCount(r.dataPoints),
     source: toStr(r.source),
     confidence: toConfidence(r.confidence),
@@ -61,10 +62,11 @@ function normalizeBatchResponse(raw: unknown): PriceElasticityBatchResponse {
 
 function normalizeSkuResponse(raw: unknown): PriceElasticitySkuResponse {
   const r = asRecord(raw)
+  // AP#8: elasticity & rSquared are statistical ratios — preserve null (render '—'), not 0.
   return {
     nmId: toCount(r.nmId),
-    elasticity: toCount(r.elasticity),
-    rSquared: toCount(r.rSquared),
+    elasticity: toNullableNumber(r.elasticity),
+    rSquared: toNullableNumber(r.rSquared),
     dataPoints: toCount(r.dataPoints),
     source: toStr(r.source),
     confidence: toConfidence(r.confidence),

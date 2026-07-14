@@ -6,6 +6,7 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatPercentage } from '@/lib/utils'
 
 interface FboSalesAggregateCardsProps {
   data: {
@@ -45,7 +46,7 @@ export function FboSalesAggregateCards({ data }: FboSalesAggregateCardsProps) {
           <CardTitle className="text-sm text-muted-foreground">% возвратов</CardTitle>
         </CardHeader>
         <CardContent className="text-2xl font-bold">
-          {data.returnRate != null ? `${data.returnRate} %` : '—'}
+          {data.returnRate != null ? formatPercentage(data.returnRate, 1) : '—'}
         </CardContent>
       </Card>
     </div>

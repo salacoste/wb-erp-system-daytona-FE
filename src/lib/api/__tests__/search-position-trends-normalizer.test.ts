@@ -190,12 +190,12 @@ describe('normalizePositionHistoryResponse', () => {
     expect(result.days).toBe(0)
   })
 
-  it('defaults null position and ctr to 0', () => {
+  it('preserves null position and ctr (AP#8: ratio fields render "—", not 0)', () => {
     const raw = {
       history: [{ avgPosition: null, ctr: null }],
     }
     const result = normalizePositionHistoryResponse(raw)
-    expect(result.history[0].avgPosition).toBe(0)
-    expect(result.history[0].ctr).toBe(0)
+    expect(result.history[0].avgPosition).toBeNull()
+    expect(result.history[0].ctr).toBeNull()
   })
 })

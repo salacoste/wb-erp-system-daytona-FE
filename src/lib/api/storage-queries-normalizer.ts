@@ -41,6 +41,7 @@ function normalizeSkuItem(raw: unknown): StorageBySkuItem {
     vendor_code: toStringOrNull(d.vendor_code ?? d.vendorCode),
     product_name: toStringOrNull(d.product_name ?? d.productName),
     brand: toStringOrNull(d.brand),
+    // AP#8: money fields preserve null — null renders '—', not "0 ₽".
     storage_cost_total: toNullableNumber(d.storage_cost_total ?? d.storageCostTotal),
     storage_cost_avg_daily: toNullableNumber(d.storage_cost_avg_daily ?? d.storageCostAvgDaily),
     volume_avg: toNullableNumber(d.volume_avg ?? d.volumeAvg),
@@ -60,6 +61,7 @@ function normalizeTopConsumerItem(raw: unknown): TopConsumerItem {
     vendor_code: toStringOrNull(d.vendor_code ?? d.vendorCode),
     product_name: toStringOrNull(d.product_name ?? d.productName),
     brand: toStringOrNull(d.brand),
+    // AP#8: money field preserves null — null renders '—', not "0 ₽".
     storage_cost: toNullableNumber(d.storage_cost ?? d.storageCost),
     percent_of_total: toNullableNumber(d.percent_of_total ?? d.percentOfTotal) ?? 0,
     volume: toNullableNumber(d.volume),
@@ -91,6 +93,7 @@ export function normalizeStorageBySkuResponse(
   const summary: StorageSummary = {
     total_storage_cost: toNullableNumber(rawSummary.total_storage_cost ?? r.total_storage_cost),
     products_count: toCount(rawSummary.products_count ?? r.products_count ?? items.length),
+    // AP#8: avg cost is a money ratio — preserve null (render '—'), not 0.
     avg_cost_per_product: toNullableNumber(
       rawSummary.avg_cost_per_product ?? r.avg_cost_per_product
     ),

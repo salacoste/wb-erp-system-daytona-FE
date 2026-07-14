@@ -54,11 +54,15 @@ export function GapsSummaryCards({ data, isLoading }: GapsSummaryCardsProps) {
         label="Покрытие"
         value={data ? formatPercentage(data.coverage_percent) : '—'}
         color={
-          data && data.coverage_percent >= 90
-            ? 'bg-green-500'
-            : data && data.coverage_percent >= 70
-              ? 'bg-yellow-500'
-              : 'bg-red-500'
+          // BD-31: no data → neutral muted, not red (a red flash before data loads
+          // reads as a critical-coverage alert that isn't real).
+          !data
+            ? 'bg-muted-foreground'
+            : data.coverage_percent >= 90
+              ? 'bg-green-500'
+              : data.coverage_percent >= 70
+                ? 'bg-yellow-500'
+                : 'bg-red-500'
         }
       />
       <MetricCard

@@ -119,7 +119,11 @@ export function StorageBySkuTable({
                   <TableCell className="text-sm">{item.brand || '—'}</TableCell>
                   <TableCell className="font-medium">
                     <div className="flex flex-col gap-0.5">
-                      <span>{formatCurrency(item.storage_cost_total)}</span>
+                      <span>
+                        {item.storage_cost_total == null
+                          ? '—'
+                          : formatCurrency(item.storage_cost_total)}
+                      </span>
                       {item.last_charge_date && (
                         <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                           <Calendar className="h-2.5 w-2.5" />
@@ -135,7 +139,9 @@ export function StorageBySkuTable({
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    {formatCurrency(item.storage_cost_avg_daily)}
+                    {item.storage_cost_avg_daily == null
+                      ? '—'
+                      : formatCurrency(item.storage_cost_avg_daily)}
                   </TableCell>
                   <TableCell className="text-sm">{formatVolume(item.volume_avg)}</TableCell>
                   <TableCell>

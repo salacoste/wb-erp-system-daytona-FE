@@ -7,6 +7,7 @@
  */
 
 import { differenceInDays, subDays, format } from 'date-fns'
+import { formatPercentage } from '@/lib/utils'
 
 /** Shift a date range back by its own duration to get the previous period */
 export function calculatePreviousPeriod(from: string, to: string) {
@@ -39,13 +40,12 @@ export function calculateSearchDelta(
   return { percent: 0, direction: 'neutral' }
 }
 
-/** Format delta as "▲ 25,0%" / "▼ 5,7%" / "— 0,0%" */
+/** Format delta as "▲ 25,0 %" / "▼ 5,7 %" / "— 0,0 %" */
 export function formatDelta(delta: SearchDelta): string {
-  const fmt = (n: number) =>
-    n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-  if (delta.direction === 'neutral') return `— ${fmt(Math.abs(delta.percent))}%`
+  const pct = formatPercentage(Math.abs(delta.percent), 1)
+  if (delta.direction === 'neutral') return `— ${pct}`
   const arrow = delta.direction === 'up' ? '▲' : '▼'
-  return `${arrow} ${fmt(Math.abs(delta.percent))}%`
+  return `${arrow} ${pct}`
 }
 
 /** Get Tailwind color class for delta direction */

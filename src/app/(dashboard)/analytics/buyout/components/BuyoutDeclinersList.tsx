@@ -33,9 +33,11 @@ export function BuyoutDeclinersList({ decliners }: BuyoutDeclinersListProps) {
             <span className="font-mono text-xs">#{d.nmId}</span>
             <span>
               {d.buyoutRatePct != null ? formatPercentageInt(d.buyoutRatePct) : '—'}
+              {/* AP#8: null trend delta renders '—', never a fabricated "0 п.п." */}
               <span className="text-red-500 ml-1">
-                ({d.trendDelta < 0 ? '' : '+'}
-                {d.trendDelta.toFixed(0)} п.п.)
+                {d.trendDelta == null
+                  ? '(— п.п.)'
+                  : `(${d.trendDelta < 0 ? '' : '+'}${d.trendDelta.toFixed(0)} п.п.)`}
               </span>
             </span>
           </div>

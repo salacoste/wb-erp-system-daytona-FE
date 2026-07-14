@@ -6,7 +6,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 
 interface FboAggregateCardsProps {
   count: number
@@ -58,7 +58,7 @@ export function FboAggregateCards({
           <CardTitle className="text-sm text-muted-foreground">% отмен</CardTitle>
         </CardHeader>
         <CardContent className="text-2xl font-bold">
-          {cancelRate != null ? `${cancelRate} %` : '—'}
+          {cancelRate != null ? formatPercentage(cancelRate, 1) : '—'}
         </CardContent>
       </Card>
     </div>

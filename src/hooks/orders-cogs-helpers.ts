@@ -102,26 +102,37 @@ export async function getOrdersWithCogs(
  */
 export function transformToCogsMetrics(response: OrdersVolumeWithCogsResponse): OrdersCogsMetrics {
   const total = response.total_orders || 1
-  const cogsTotal = response.cogs_total || 0
-  const ordersWithCogs = response.orders_with_cogs || 0
-  const grossProfit = response.gross_profit ?? response.total_amount - cogsTotal
 
   // Defensive: handle missing by_status (API may not always return it)
   const byStatus = response.by_status ?? { new: 0, confirm: 0, complete: 0, cancel: 0 }
 
+  // BD-1: gate the COGS block. When cogs_total, gross_profit AND margin_pct are all
+  // absent the backend sent no COGS data at all — emitting a computed block from
+  // `cogs_total || 0` would fabricate a 100 %-margin figure (gross_profit === total_amount).
+  // Return null for the COGS-derived fields so components render "—" instead (anti-pattern #8).
+  const hasCogsBlock =
+    response.cogs_total != null || response.gross_profit != null || response.margin_pct != null
+
+  const cogsTotal = response.cogs_total ?? 0
+  const ordersWithCogs = response.orders_with_cogs ?? 0
+  const grossProfit = response.gross_profit ?? response.total_amount - cogsTotal
+  const marginPct =
+    response.margin_pct ??
+    (response.total_amount > 0
+      ? ((response.total_amount - cogsTotal) / response.total_amount) * 100
+      : 0)
+
   return {
     totalOrders: response.total_orders,
     totalAmount: response.total_amount,
-    cogsTotal,
-    grossProfit,
-    marginPct:
-      response.margin_pct ??
-      (response.total_amount > 0
-        ? ((response.total_amount - cogsTotal) / response.total_amount) * 100
-        : 0),
-    cogsCoveragePct: response.cogs_coverage_pct ?? (ordersWithCogs / total) * 100,
-    ordersMissingCogs: response.total_orders - ordersWithCogs,
-    avgProfitPerOrder: total > 0 ? grossProfit / total : 0,
+    cogsTotal: hasCogsBlock ? cogsTotal : null,
+    grossProfit: hasCogsBlock ? grossProfit : null,
+    marginPct: hasCogsBlock ? marginPct : null,
+    cogsCoveragePct: hasCogsBlock
+      ? (response.cogs_coverage_pct ?? (ordersWithCogs / total) * 100)
+      : null,
+    ordersMissingCogs: hasCogsBlock ? response.total_orders - ordersWithCogs : null,
+    avgProfitPerOrder: hasCogsBlock ? (total > 0 ? grossProfit / total : 0) : null,
     completionRate: (byStatus.complete / total) * 100,
     cancellationRate: (byStatus.cancel / total) * 100,
     byStatus,

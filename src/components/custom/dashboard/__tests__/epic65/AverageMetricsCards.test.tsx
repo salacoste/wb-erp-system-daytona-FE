@@ -32,7 +32,8 @@ const defaultFulfillment = createFulfillmentSummary()
 const salesCount =
   defaultFulfillment.summary.fbo.salesCount + defaultFulfillment.summary.fbs.salesCount // 500 + 350 = 850
 const ordersCount = defaultFulfillment.summary.total.ordersCount // 1000
-const ordersRevenue = defaultFulfillment.summary.total.ordersRevenue // 5_000_000
+// AP#8: ordersRevenue is number|null; fixture guarantees a value — `?? 0` test-guard.
+const ordersRevenue = defaultFulfillment.summary.total.ordersRevenue ?? 0 // 5_000_000
 const saleGross = defaultFinance.sale_gross_total! // 1_500_000
 const logisticsCost = defaultFinance.logistics_cost_total! // 180_000
 const grossProfit = defaultFinance.gross_profit! // 350_000

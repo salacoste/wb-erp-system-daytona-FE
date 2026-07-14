@@ -51,6 +51,13 @@ describe('GapsSummaryCards', () => {
     expect(dashes.length).toBeGreaterThanOrEqual(4)
   })
 
+  it('coverage card is neutral (not red) when there is no data — BD-31', () => {
+    const { container } = render(<GapsSummaryCards data={undefined} isLoading={false} />)
+    // No red-flash: coverage defaults to muted, and no card should be red.
+    expect(container.querySelector('.bg-red-500')).toBeNull()
+    expect(container.querySelector('.bg-muted-foreground')).toBeInTheDocument()
+  })
+
   it('uses red color for missing days > 0', () => {
     const { container } = render(<GapsSummaryCards data={mockData} isLoading={false} />)
     // The "Пропущено" card should have bg-red-500

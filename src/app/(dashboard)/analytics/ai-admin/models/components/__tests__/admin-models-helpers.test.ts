@@ -5,7 +5,11 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { getModelTypeLabel, ADMIN_MODEL_TYPE_LABELS } from '../admin-models-helpers'
+import {
+  getModelTypeLabel,
+  ADMIN_MODEL_TYPE_LABELS,
+  formatMapeDisplay,
+} from '../admin-models-helpers'
 import { MODEL_TYPE_LABELS } from '@/types/ai/forecast'
 
 describe('getModelTypeLabel — F-40', () => {
@@ -40,5 +44,19 @@ describe('getModelTypeLabel — F-40', () => {
   it('falls back to the raw value for an unknown/future model type (never blank)', () => {
     expect(getModelTypeLabel('some_future_type')).toBe('some_future_type')
     expect(getModelTypeLabel('')).toBe('')
+  })
+})
+
+describe('formatMapeDisplay — BD-33', () => {
+  it('renders null MAPE as an em dash', () => {
+    expect(formatMapeDisplay(null)).toBe('—')
+  })
+
+  it('treats model-level MAPE === 0 as un-evaluated (#185 sentinel) → em dash', () => {
+    expect(formatMapeDisplay(0)).toBe('—')
+  })
+
+  it('formats a real non-zero MAPE as a Russian percentage', () => {
+    expect(formatMapeDisplay(12.4)).toMatch(/12,4\s*%/)
   })
 })

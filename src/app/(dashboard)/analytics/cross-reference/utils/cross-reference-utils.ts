@@ -79,6 +79,14 @@ export function mergeSearchAndAdData(
       // adRevenue is DISPLAYED per row (not aggregated), so preserve null: ad ran but WB returned
       // no revenue → null → "—" (anti-pattern #8). Organic rows (no ad item) → genuine 0.
       adRevenue: ad ? ad.revenue : 0,
+      // Task-50 (BD-26): organic order share, sourced from the ad item's organic_contribution
+      // (backend contract #88: organicContribution = (organicSales/totalSales)×100, a 0-100 %,
+      // normalized via toCount → always a number on AdvertisingItem). This drives
+      // classifyCannibalization's 40%/70% thresholds; before this fix it was never assigned →
+      // organic=0 for every row → the whole cannibalization analysis silently classified all as
+      // 'low'. Organic-only rows (no ad item) → null: classifyCannibalization only scores
+      // channel='both' rows, so null never reaches a live classification.
+      organicContribution: ad ? ad.organic_contribution : null,
       channel: inSearch && inAd ? 'both' : inSearch ? 'organic' : 'ad',
     })
   }

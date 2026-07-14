@@ -91,4 +91,11 @@ describe('PricingSummaryCards', () => {
     expect(screen.getByText('с рекомендациями')).toBeInTheDocument()
     expect(screen.getByText('от целевой маржи')).toBeInTheDocument()
   })
+
+  it('renders "—" for avg gap when no SKU has a gapPct — BD-37', () => {
+    const noGaps = mockItems.map(i => ({ ...i, gapPct: null }))
+    render(<PricingSummaryCards items={noGaps} isLoading={false} />)
+    // "Средний разрыв" value is "—", not a fabricated "0 %".
+    expect(screen.getByText('—')).toBeInTheDocument()
+  })
 })

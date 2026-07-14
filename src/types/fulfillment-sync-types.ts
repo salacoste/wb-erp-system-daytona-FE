@@ -56,9 +56,10 @@ export interface StartFulfillmentSyncResponse {
 /** Per-product metrics for a single fulfillment type */
 export interface FulfillmentProductMetrics {
   ordersCount: number
-  salesRevenue: number
+  // AP#8: money/ratio fields are number|null — null renders '—'.
+  salesRevenue: number | null
   returnsCount: number
-  returnRate: number
+  returnRate: number | null
 }
 
 /** Single product item with FBO/FBS breakdown */

@@ -77,11 +77,19 @@ export function ReturnsSummaryCards({
 
   const prevSummary = prevData?.summary
 
-  const cards = [
+  // AP#8: overallReturnRate & classificationCoverage may be null — render '—', not "0 %".
+  const cards: Array<{
+    label: string
+    value: number | null
+    field: 'totalReturns' | 'overallReturnRate' | 'classificationCoverage'
+    icon: typeof RotateCcw
+    color: string
+    format: (n: number) => string
+  }> = [
     {
       label: 'Всего возвратов',
       value: summary.totalReturns,
-      field: 'totalReturns' as const,
+      field: 'totalReturns',
       icon: RotateCcw,
       color: 'text-red-600',
       format: (n: number) => n.toLocaleString('ru-RU'),
@@ -89,7 +97,7 @@ export function ReturnsSummaryCards({
     {
       label: 'Процент возвратов',
       value: summary.overallReturnRate,
-      field: 'overallReturnRate' as const,
+      field: 'overallReturnRate',
       icon: Percent,
       color: 'text-orange-600',
       format: (n: number) => formatPercentage(n, 1),
@@ -97,7 +105,7 @@ export function ReturnsSummaryCards({
     {
       label: 'Покрытие классификации',
       value: summary.classificationCoverage,
-      field: 'classificationCoverage' as const,
+      field: 'classificationCoverage',
       icon: ShieldCheck,
       color: 'text-green-600',
       format: (n: number) => formatPercentageInt(n),
@@ -123,7 +131,9 @@ export function ReturnsSummaryCards({
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{card.label}</p>
-                <p className="text-2xl font-bold">{card.format(card.value)}</p>
+                <p className="text-2xl font-bold">
+                  {card.value == null ? '—' : card.format(card.value)}
+                </p>
                 {hasCompare && (
                   <DeltaIndicator delta={delta} field={card.field} loading={prevLoading} />
                 )}

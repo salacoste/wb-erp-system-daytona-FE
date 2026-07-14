@@ -74,10 +74,11 @@ export function normalizeReturnReasonsResponse(raw: unknown): ReturnReasonsRespo
       cancelBeforeShipment: toCount(summary.cancelBeforeShipment ?? summary.cancel_before_shipment),
       refusalAtPvz: toCount(summary.refusalAtPvz ?? summary.refusal_at_pvz),
       returnAfterReceipt: toCount(summary.returnAfterReceipt ?? summary.return_after_receipt),
-      overallReturnRate:
-        toNullableNumber(summary.overallReturnRate ?? summary.overall_return_rate) ?? 0,
-      classificationCoverage:
-        toNullableNumber(summary.classificationCoverage ?? summary.classification_coverage) ?? 0,
+      // AP#8: rate/coverage ratios preserve null — null renders '—', not "0 %".
+      overallReturnRate: toNullableNumber(summary.overallReturnRate ?? summary.overall_return_rate),
+      classificationCoverage: toNullableNumber(
+        summary.classificationCoverage ?? summary.classification_coverage
+      ),
     },
     byCategory: Array.isArray(byCatRaw)
       ? (byCatRaw as unknown[]).map(normalizeReturnCategoryItem)

@@ -68,7 +68,7 @@ describe('normalizeStorageBySkuResponse', () => {
     expect(item.nm_id).toBe('')
     expect(item.vendor_code).toBeNull()
     expect(item.product_name).toBeNull()
-    // BD-16: money fields preserve null (AP#8) — never collapse to 0.
+    // AP#8: money fields preserve null (render '—'), not 0.
     expect(item.storage_cost_total).toBeNull()
     expect(item.storage_cost_avg_daily).toBeNull()
     expect(item.volume_avg).toBeNull()
@@ -137,7 +137,7 @@ describe('normalizeTopConsumersResponse', () => {
     expect(item.rank).toBe(0)
     expect(item.nm_id).toBe('')
     expect(item.vendor_code).toBeNull()
-    // BD-16: storage_cost is money (AP#8) — null, not 0.
+    // AP#8: money field preserves null (render '—'), not 0.
     expect(item.storage_cost).toBeNull()
     expect(item.volume).toBeNull()
     expect(item.revenue_net).toBeUndefined()

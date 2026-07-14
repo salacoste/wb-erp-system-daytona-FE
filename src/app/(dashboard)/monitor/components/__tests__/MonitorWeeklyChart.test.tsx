@@ -84,7 +84,11 @@ describe('MonitorWeeklyChart', () => {
     renderWithProviders(<MonitorWeeklyChart data={sevenDays} />)
 
     expect(screen.getByTestId('line-sales')).toHaveAttribute('data-line-name', 'Продажи')
-    expect(screen.getByTestId('line-orders')).toHaveAttribute('data-line-name', 'Заказы')
+    // BD-22: renamed from "Заказы" — series is salesCount+returnsCount, not real order count
+    expect(screen.getByTestId('line-orders')).toHaveAttribute(
+      'data-line-name',
+      'Продажи + Возвраты'
+    )
     expect(screen.getByTestId('line-returns')).toHaveAttribute('data-line-name', 'Возвраты')
   })
 

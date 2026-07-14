@@ -56,10 +56,11 @@ export function ElasticitySkuDetail({ item, isExpanded, onToggle }: ElasticitySk
         </TableCell>
         <TableCell className="font-mono text-sm">{item.nmId}</TableCell>
         <TableCell className="text-right font-medium">
-          {formatDecimal(item.elasticity, 3)}
+          {/* AP#8: null elasticity renders '—', never a fabricated 0,000 */}
+          {item.elasticity == null ? '—' : formatDecimal(item.elasticity, 3)}
         </TableCell>
         <TableCell className="text-right text-muted-foreground">
-          {formatDecimal(item.rSquared, 3)}
+          {item.rSquared == null ? '—' : formatDecimal(item.rSquared, 3)}
         </TableCell>
         <TableCell className="text-right text-muted-foreground">
           {formatNumber(item.dataPoints)}
@@ -93,14 +94,26 @@ export function ElasticitySkuDetail({ item, isExpanded, onToggle }: ElasticitySk
 function DetailContent({
   data,
 }: {
-  data: { elasticity: number; rSquared: number; dataPoints: number; profitMaxPrice: number | null }
+  // AP#8: elasticity & rSquared (statistical ratios) are number|null — null renders '—'.
+  data: {
+    elasticity: number | null
+    rSquared: number | null
+    dataPoints: number
+    profitMaxPrice: number | null
+  }
 }) {
   return (
     <div className="space-y-4">
       {/* Metrics row */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <MetricCard label="Коэффициент" value={formatDecimal(data.elasticity, 3)} />
-        <MetricCard label="R² (качество)" value={formatDecimal(data.rSquared, 3)} />
+        <MetricCard
+          label="Коэффициент"
+          value={data.elasticity == null ? '—' : formatDecimal(data.elasticity, 3)}
+        />
+        <MetricCard
+          label="R² (качество)"
+          value={data.rSquared == null ? '—' : formatDecimal(data.rSquared, 3)}
+        />
         <MetricCard label="Точек данных" value={formatNumber(data.dataPoints)} />
         <MetricCard
           label="Оптимальная цена"
@@ -108,8 +121,12 @@ function DetailContent({
         />
       </div>
 
-      {/* Elasticity curve chart */}
-      <ElasticitySkuChart elasticity={data.elasticity} profitMaxPrice={data.profitMaxPrice} />
+      {/* Elasticity curve chart — omitted when the coefficient is unknown (no fabricated curve) */}
+      {data.elasticity == null ? (
+        <p className="text-sm text-muted-foreground">Недостаточно данных для построения кривой.</p>
+      ) : (
+        <ElasticitySkuChart elasticity={data.elasticity} profitMaxPrice={data.profitMaxPrice} />
+      )}
     </div>
   )
 }

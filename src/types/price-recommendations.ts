@@ -10,10 +10,11 @@ export interface PriceRecommendation {
   vendorCode: string | null
   productName: string | null
   lastPrice: number | null
-  breakEvenPrice: number
-  recommendedPrice: number
+  // AP#8: money/ratio fields are number|null — null renders '—' (never a fabricated "0,00 ₽").
+  breakEvenPrice: number | null
+  recommendedPrice: number | null
   marginAtCurrentPct: number | null
-  marginAtRecommendedPct: number
+  marginAtRecommendedPct: number | null
   gap: number | null
   gapPct: number | null
   targetMarginPct: number

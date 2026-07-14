@@ -136,10 +136,11 @@ function normalizePositionHistoryPoint(raw: unknown): PositionHistoryPoint {
   const r = asRecord(raw)
   return {
     date: toStr(r.date),
-    avgPosition: toNullableNumber(r.avgPosition) ?? 0,
+    // AP#8: avgPosition (ratio) & ctr (ratio) preserve null — null renders '—'.
+    avgPosition: toNullableNumber(r.avgPosition),
     impressions: toCount(r.impressions),
     clicks: toCount(r.clicks),
-    ctr: toNullableNumber(r.ctr) ?? 0,
+    ctr: toNullableNumber(r.ctr),
   }
 }
 

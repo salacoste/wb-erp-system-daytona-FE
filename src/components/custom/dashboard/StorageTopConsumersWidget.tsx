@@ -145,6 +145,8 @@ function ConsumerRow({
   onClick: () => void
   onKeyDown: (e: React.KeyboardEvent) => void
 }) {
+  // AP#8: money field may be null — render '—' (never a fabricated "0 ₽").
+  const storageCostLabel = item.storage_cost == null ? '—' : formatCurrency(item.storage_cost)
   return (
     <div
       role="button"
@@ -156,9 +158,7 @@ function ConsumerRow({
       )}
       onClick={onClick}
       onKeyDown={onKeyDown}
-      aria-label={`${item.product_name || item.vendor_code || item.nm_id}, хранение ${
-        item.storage_cost === null ? '—' : formatCurrency(item.storage_cost)
-      }`}
+      aria-label={`${item.product_name || item.vendor_code || item.nm_id}, хранение ${storageCostLabel}`}
     >
       <div className="w-10 flex-shrink-0">
         <RankIndicator rank={item.rank} />
@@ -193,9 +193,7 @@ function ConsumerRow({
         </div>
       </div>
       <div className="text-right flex-shrink-0">
-        <p className="text-sm font-medium text-[#7C4DFF]">
-          {item.storage_cost === null ? '—' : formatCurrency(item.storage_cost)}
-        </p>
+        <p className="text-sm font-medium text-[#7C4DFF]">{storageCostLabel}</p>
         <p className="text-xs text-muted-foreground">
           {formatPercentage(item.percent_of_total, 1)}
         </p>

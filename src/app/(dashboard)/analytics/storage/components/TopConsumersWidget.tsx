@@ -132,7 +132,9 @@ export function TopConsumersWidget({
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex flex-col items-end gap-0.5">
-                  <span className="font-medium">{formatCurrency(item.storage_cost)}</span>
+                  <span className="font-medium">
+                    {item.storage_cost == null ? '—' : formatCurrency(item.storage_cost)}
+                  </span>
                   {/* Show last charge date if available */}
                   {item.last_charge_date && (
                     <span className="text-xs text-muted-foreground flex items-center gap-0.5">

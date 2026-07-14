@@ -172,25 +172,27 @@ describe('normalizePriceRecommendation', () => {
     expect(result.gapPct).toBeNull()
   })
 
-  // --- Required number fields default to 0 on null/missing ---
+  // --- Money/ratio fields preserve null (AP#8: render '—', never fabricate 0) ---
 
-  it('defaults breakEvenPrice to 0 when null', () => {
+  it('preserves null on breakEvenPrice (money field)', () => {
     const result = normalizePriceRecommendation(rawItem({ breakEvenPrice: null }))
 
-    expect(result.breakEvenPrice).toBe(0)
+    expect(result.breakEvenPrice).toBeNull()
   })
 
-  it('defaults recommendedPrice to 0 when null', () => {
+  it('preserves null on recommendedPrice (money field)', () => {
     const result = normalizePriceRecommendation(rawItem({ recommendedPrice: null }))
 
-    expect(result.recommendedPrice).toBe(0)
+    expect(result.recommendedPrice).toBeNull()
   })
 
-  it('defaults marginAtRecommendedPct to 0 when null', () => {
+  it('preserves null on marginAtRecommendedPct (ratio field)', () => {
     const result = normalizePriceRecommendation(rawItem({ marginAtRecommendedPct: null }))
 
-    expect(result.marginAtRecommendedPct).toBe(0)
+    expect(result.marginAtRecommendedPct).toBeNull()
   })
+
+  // --- Required number fields default to 0 on null/missing ---
 
   it('defaults targetMarginPct to 0 when null', () => {
     const result = normalizePriceRecommendation(rawItem({ targetMarginPct: null }))
@@ -254,10 +256,10 @@ describe('normalizePriceRecommendation', () => {
     expect(result.vendorCode).toBeNull()
     expect(result.productName).toBeNull()
     expect(result.lastPrice).toBeNull()
-    expect(result.breakEvenPrice).toBe(0)
-    expect(result.recommendedPrice).toBe(0)
+    expect(result.breakEvenPrice).toBeNull()
+    expect(result.recommendedPrice).toBeNull()
     expect(result.marginAtCurrentPct).toBeNull()
-    expect(result.marginAtRecommendedPct).toBe(0)
+    expect(result.marginAtRecommendedPct).toBeNull()
     expect(result.gap).toBeNull()
     expect(result.gapPct).toBeNull()
     expect(result.targetMarginPct).toBe(0)

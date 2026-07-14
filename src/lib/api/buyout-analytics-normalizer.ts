@@ -101,7 +101,8 @@ function normalizeReturnBreakdown(rb: unknown): BySkuBuyoutItem['returnBreakdown
 interface TopDecliner {
   nmId: number
   buyoutRatePct: number | null
-  trendDelta: number
+  // AP#8: trend delta is a ratio — preserve null (render '—'), not 0.
+  trendDelta: number | null
 }
 
 function normalizeTopDecliner(raw: unknown): TopDecliner {
@@ -109,7 +110,7 @@ function normalizeTopDecliner(raw: unknown): TopDecliner {
   return {
     nmId: toCount(d.nmId ?? d.nm_id),
     buyoutRatePct: toNullableNumber(d.buyoutRatePct ?? d.buyout_rate_pct),
-    trendDelta: toNullableNumber(d.trendDelta ?? d.trend_delta) ?? 0,
+    trendDelta: toNullableNumber(d.trendDelta ?? d.trend_delta),
   }
 }
 

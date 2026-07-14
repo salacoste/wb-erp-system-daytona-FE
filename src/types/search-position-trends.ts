@@ -103,10 +103,11 @@ export interface PositionHistoryParams {
 
 export interface PositionHistoryPoint {
   date: string
-  avgPosition: number
+  // AP#8: avgPosition & ctr (ratio fields) are number|null — null renders '—'.
+  avgPosition: number | null
   impressions: number
   clicks: number
-  ctr: number
+  ctr: number | null
 }
 
 export interface PositionHistoryResponse {

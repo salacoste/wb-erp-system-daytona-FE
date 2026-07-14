@@ -32,7 +32,11 @@ export const STATUS_EMOJI: Record<OverallStatus, string> = {
 }
 
 export function formatDayLabel(dateStr: string): { day: string; date: string } {
-  const d = new Date(dateStr)
+  // BD-30: a bare "YYYY-MM-DD" is parsed as UTC midnight by new Date(), which shifts the
+  // weekday back a day in Europe/Moscow (UTC+3). Append "T00:00:00" so date-only strings
+  // parse as LOCAL midnight; strings that already carry a time component are left as-is.
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
+  const d = new Date(isDateOnly ? `${dateStr}T00:00:00` : dateStr)
   const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
   return {
     day: days[d.getDay()],
