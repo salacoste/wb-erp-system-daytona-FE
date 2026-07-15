@@ -42,6 +42,9 @@ jobs:
           ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
           OPENWIKI_MODEL_ID: glm-5.2
 
+      - name: Preserve scheduled self-hosted workflow
+        run: git restore --source=HEAD -- .github/workflows/openwiki-update.yml
+
       - name: Show generated changes
         run: git status --short
 
