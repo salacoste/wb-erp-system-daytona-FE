@@ -1,0 +1,63 @@
+name: OpenWiki Update (Frontend)
+
+# Refreshes frontend repository documentation once per day on the dedicated VPS runner.
+# Cron is UTC: 08:47 UTC = 11:47 Europe/Moscow.
+# The 30-minute offset keeps backend and frontend generation from competing for the VPS.
+
+on:
+  schedule:
+    - cron: '47 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: openwiki-frontend
+  cancel-in-progress: false
+
+jobs:
+  update-frontend:
+    name: Update frontend OpenWiki
+    runs-on: [self-hosted, Linux, X64, wb-ci-fe]
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate frontend OpenWiki
+        run: npx --yes openwiki@0.1.2 code --update --print
+        env:
+          OPENWIKI_PROVIDER: anthropic
+          ANTHROPIC_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
+          OPENWIKI_MODEL_ID: glm-5.2
+
+      - name: Show generated changes
+        run: git status --short
+
+      - name: Commit OpenWiki updates
+        if: github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          git config user.name "OpenWiki Bot"
+          git config user.email "actions@github.com"
+          git add openwiki/ AGENTS.md CLAUDE.md
+
+          if git diff --cached --quiet; then
+            echo "No OpenWiki changes to commit."
+            exit 0
+          fi
+
+          git commit -m "docs: update frontend OpenWiki [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
