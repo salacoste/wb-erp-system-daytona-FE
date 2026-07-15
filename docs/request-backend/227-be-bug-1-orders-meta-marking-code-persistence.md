@@ -1,6 +1,6 @@
 # Request #227 — BE-BUG-1: O4 marking-code (Честный ЗНАК) write-back persistence
 
-**Status:** ⚠️ Code and migrations complete; real WB PATCH→GET intentionally not executed under the read-only cabinet policy (2026-07-15). FE contract is available; the only remaining item is an explicitly authorized real WB write confirmation.
+**Status:** ⚠️ `external-validation` — code and migrations are complete. The 2026-07-15 safety run ended `SAFE_NO_CANDIDATE`; no real WB PATCH was sent. FE contract is available, but live PATCH→GET confirmation remains open until a safe already-filled candidate exists.
 **Severity:** 🟠 non-blocking contract; user-facing feature depends on persisted write-back.
 **Parent validation record:** [`226-validation-2026-07-be-status-and-outstanding.md`](./226-validation-2026-07-be-status-and-outstanding.md) §2.1 + "Update — BE verification results" (2026-07-13, BE-BUG-1).
 **Endpoint:** `PATCH /v1/orders/:orderUuid/meta`
@@ -76,3 +76,23 @@ Governing evidence: [G003 — #227 encrypted persistence and #229 preservation](
 **Post-merge validation — 2026-07-15:** both marking migrations are already applied in the configured database, and the complete 43-migration chain deployed successfully to a disposable PostgreSQL database. The configured database currently contains zero plaintext `meta_details` rows and zero encrypted marking rows, so no existing marking value was available for a GET-only readback check.
 
 **Still external:** a real WB marking mutation and PATCH→GET round-trip. This was deliberately **not** attempted: the available WB cabinet is restricted to read-only validation, and this endpoint writes both to WB and the database. Explicit write authorization is required before performing that final smoke test.
+
+---
+
+## Safety-validation closure — 2026-07-15
+
+**Current classification remains:** `external-validation` / **not resolved**.
+
+- The production marking-only SDK client now uses `maxRetries: 0`. Isolated real-SDK adapter tests prove timeout, HTTP 429, 500, and 503 each result in exactly **one** PUT attempt; unrelated SDK callers retain their default retry policy.
+- The approved read-only candidate scan inspected **1,999 / 1,999** locally eligible orders across **one cabinet**. It found **zero** orders with exactly one supported, already-`filled` WB marking value that could be safely rewritten idempotently.
+- Terminal outcome: `SAFE_NO_CANDIDATE` with `truncated=false`.
+- Controller PATCH dispatches: **0**; WB mutations: **0**; preserved PostgreSQL mutations: **0**.
+- The one-write authorization was **not consumed**. No claim is made that a real PATCH or live PATCH→GET round-trip succeeded.
+
+Future live validation is allowed only when a qualifying real order exists. It must reuse that order's exact already-filled marking value through the reviewed one-shot path; documentation examples or synthetic marking values must not be written to a real order.
+
+Sanitized evidence:
+
+- [G227 marking round-trip safety record](../../../.omx/ultragoal/evidence/G227-marking-roundtrip-safety.md)
+- [G227 final independent code review — APPROVE](../../../.omx/ultragoal/evidence/G227-code-reviewer.md)
+- [G227 UltraQA report — PASS](../../../.omx/ultragoal/evidence/G227-ultraqa-report.md)
