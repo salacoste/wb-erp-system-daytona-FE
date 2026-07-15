@@ -1,7 +1,7 @@
 # Request #162: FCU Aggregation Endpoint — Per-SKU Final Cost from Latest Confirmed Shipment
 
 **Date**: 2026-03-12
-**Status**: ✅ Code-complete locally (2026-07-13); deployment/live API validation external
+**Status**: ✅ RESOLVED — code, live local API, full migration chain, and seeded PostgreSQL execution validated (2026-07-15)
 **Priority**: P1 (blocks Stories 77.4, 77.5 — Unit Economics dashboard integration)
 **Related**: Epic 77-FE (Story 77.3), Backend Epic 79 (Shipment Cost Allocation)
 **Requested By**: Frontend Team
@@ -12,7 +12,15 @@
 
 The historical proposal below is superseded where it conflicts with the implemented compatibility contract. The endpoint is locally code-complete and verified: strict Moscow ISO-week validation, confirmed-only frozen snapshots, cabinet isolation, deterministic latest row per `nmId`, numeric serialization, and the complete eight-field **raw array** response. Focused tests passed 22/22 and the shipment-cost suite passed 266/266; timezone variants, typecheck, circular check, build, and diff hygiene also passed.
 
-Governing evidence: [G002 — #162 implementation](../../../.omx/ultragoal/evidence/G002-162-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md). Production deployment/live API validation and a seeded PostgreSQL integration execution remain external; they are not claimed here.
+Governing evidence: [G002 — #162 implementation](../../../.omx/ultragoal/evidence/G002-162-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md).
+
+### Post-merge runtime validation — 2026-07-15
+
+- The running local API returned `200` with the raw array contract for both the unfiltered request and `week=2026-W01`; the configured business database currently has no confirmed shipments, so both arrays were correctly empty.
+- `week=2026-W99` returned `400 BAD_REQUEST`.
+- A disposable PostgreSQL database applied all **43** repository migrations and was seeded with two cabinets, confirmed/draft shipments, duplicate SKU snapshots, deterministic tie cases, and Moscow week-boundary rows.
+- The actual `FcuAnalyticsService` SQL proved cabinet isolation, confirmed-only selection, latest-per-SKU ranking, deterministic tie-breaks, inclusive Moscow week start/end, exclusive next-week boundary, numeric serialization, and nonexistent-week rejection.
+- The disposable database was dropped after validation (`scratch_database_remaining=0`). No shipment rows were written to the preserved business database.
 
 ---
 
@@ -40,9 +48,9 @@ The frontend needs a lightweight aggregation endpoint that returns, for each nmI
 ## Backend Team Response
 
 **Status**: RESOLVED — Endpoint `GET /v1/shipment-cost/by-sku` implemented in Epic 79. Frontend hook `useFcuAggregation` and API client `fcu-aggregation-api.ts` wired up. Returns per-SKU FCU (PCU+DCU) from latest confirmed shipment.
-**Resolution date**: Not yet implemented
-**Summary**: Request filed for a lightweight aggregation endpoint returning the latest confirmed FCU (Final Cost Unit = PCU + DCU) per SKU. Would enable a 10th cost category `delivery_to_warehouse` in the Unit Economics dashboard. Blocking Stories 77.4 and 77.5.
-**Remaining frontend action**: Awaiting backend implementation. Unit Economics dashboard currently shows 9 categories without delivery-to-warehouse.
+**Resolution date**: 2026-07-15 (post-merge runtime validation complete)
+**Summary**: `GET /v1/shipment-cost/by-sku` is implemented and runtime-validated against PostgreSQL using frozen confirmed snapshots.
+**Remaining frontend action**: Integrate/use the existing raw-array contract; no backend implementation blocker remains.
 
 ## Proposed Endpoint
 

@@ -1,6 +1,6 @@
 # Request #227 — BE-BUG-1: O4 marking-code (Честный ЗНАК) write-back persistence
 
-**Status:** BE action requested — operational confirmation OR contract addition. **Non-blocking** for the PATCH contract itself; blocks confident FE ship of the O4 feature's "saved" state. **Still OPEN after the 2026-07-13 BE batch** (timezone F-001 + backfill F-005 + swagger/error-envelope) — not addressed in that batch; remains the 1 operational confirmation item.
+**Status:** ⚠️ Code and migrations complete; real WB PATCH→GET intentionally not executed under the read-only cabinet policy (2026-07-15). FE contract is available; the only remaining item is an explicitly authorized real WB write confirmation.
 **Severity:** 🟠 non-blocking contract; user-facing feature depends on persisted write-back.
 **Parent validation record:** [`226-validation-2026-07-be-status-and-outstanding.md`](./226-validation-2026-07-be-status-and-outstanding.md) §2.1 + "Update — BE verification results" (2026-07-13, BE-BUG-1).
 **Endpoint:** `PATCH /v1/orders/:orderUuid/meta`
@@ -73,4 +73,6 @@ curl -s $BASE/v1/orders/<real-order-uuid> $H     # metaType/value absent → can
 
 Governing evidence: [G003 — #227 encrypted persistence and #229 preservation](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md).
 
-**Still external:** applying the additive nullable migration in deployment, a real WB marking mutation, and a production PATCH→GET round-trip. Local code completion does not claim those actions occurred.
+**Post-merge validation — 2026-07-15:** both marking migrations are already applied in the configured database, and the complete 43-migration chain deployed successfully to a disposable PostgreSQL database. The configured database currently contains zero plaintext `meta_details` rows and zero encrypted marking rows, so no existing marking value was available for a GET-only readback check.
+
+**Still external:** a real WB marking mutation and PATCH→GET round-trip. This was deliberately **not** attempted: the available WB cabinet is restricted to read-only validation, and this endpoint writes both to WB and the database. Explicit write authorization is required before performing that final smoke test.

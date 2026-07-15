@@ -1,6 +1,6 @@
 # Request #229 — Orders history endpoints: UUID compatibility + 500-on-UUID robustness
 
-**Status:** BE action requested — **blocks** the optional FE cleanup "standardize orders detail navigation on UUID" (#226 optional item #1). ❗ **Still OPEN after the 2026-07-13 BE batch (build 09:35:56):** re-probed live — `/history`, `/wb-history`, `/full-history` all return **HTTP 500 on UUID, 200 on WB orderId** (unchanged from the earlier 01:25 build). This issue was NOT in the F-001 / F-005 / swagger+error-envelope batch.
+**Status:** ✅ RESOLVED and runtime-validated on the current local backend (2026-07-15). UUID and legacy numeric identifiers return 200; malformed/unknown identifiers return 404 `ORDER_NOT_FOUND`, never 500. FE UUID standardization is unblocked for this backend revision.
 **Severity:** 🟠 contract inconsistency + minor robustness (500 where 404 is expected); non-blocking for current FE (FE uses `orderId` today).
 **Parent validation record:** [`226-validation-2026-07-be-status-and-outstanding.md`](./226-validation-2026-07-be-status-and-outstanding.md) §2.2 (BE-BUG-2) + "FE-actionable items" #1.
 **Endpoints:** `GET /v1/orders/:id/history`, `GET /v1/orders/:id/wb-history`, `GET /v1/orders/:id/full-history`.
@@ -79,4 +79,16 @@ curl -s -o /dev/null -w "history   WBID=%{http_code}\n" "$BASE/v1/orders/$WBID/h
 
 Governing evidence: [G003 — #227 encrypted persistence and #229 preservation](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md) and the [canonical corpus ledger](./AUDIT-2026-07-13.md).
 
-The live 500 reproduction above remains valid evidence for the older deployed build; it is not evidence against the current local code. Production deployment and a new live reprobe are still required before describing the deployed endpoint as fixed.
+The live 500 reproduction above remains valid evidence for the older deployed build; it is not evidence against the current code.
+
+### Post-merge runtime re-probe — 2026-07-15
+
+Using a real stored order from the configured cabinet against the running local API:
+
+- `GET /v1/orders/<uuid>` → 200;
+- `<uuid>/history`, `<uuid>/wb-history`, and `<uuid>/full-history` → 200;
+- the legacy numeric `orderId` detail/history paths → 200;
+- unknown UUID and malformed identifiers on all three history paths → 404 `ORDER_NOT_FOUND`;
+- no tested identifier path returned 500.
+
+This closes the backend blocker for the FE `orderId`→UUID cleanup on the current revision.
