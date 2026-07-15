@@ -1,0 +1,62 @@
+# WB ERP System — Frontend OpenWiki
+
+Financial analytics dashboard for Wildberries marketplace sellers. Built with Next.js 15 App Router, TypeScript, and a Russian-locale UI.
+
+## Overview
+
+| Aspect | Detail |
+|--------|--------|
+| **Stack** | Next.js 15 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
+| **Server State** | TanStack Query v5 (all pages are client components) |
+| **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
+| **Testing** | Vitest (~975 unit test files) + Playwright (83 E2E specs) |
+| **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
+| **Port** | 3100 (both dev and prod via PM2 — never run both simultaneously) |
+
+**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, buyout/return analytics, liquidity analysis, unit economics, FBS/FBO order analytics, AI forecasting, Telegram notifications, multi-cabinet (tenant) support.
+
+## Quick Commands
+
+```bash
+npm run dev                    # Dev server on :3100
+npm run build                  # Production build
+npm run lint                   # ESLint (max-warnings: 112)
+npm run type-check             # tsc --noEmit
+npm test                       # Vitest unit tests
+npm run test:e2e               # Playwright E2E
+npm run check:docs             # Doc-citation drift gate
+npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
+```
+
+## Documentation Sections
+
+- **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth middleware, deployment.
+- **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
+- **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, two-pass review discipline.
+- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, CI workflows, PM2 deployment, environment variables.
+
+## Key Source References
+
+| What | Where |
+|------|-------|
+| Root layout + providers | `src/app/layout.tsx`, `src/app/providers.tsx` |
+| Dashboard shell + auth gate | `src/app/(dashboard)/layout.tsx` |
+| Auth middleware | `middleware.ts` |
+| API client singleton | `src/lib/api-client.ts` |
+| Normalizer helpers | `src/lib/api/normalizer-helpers.ts` |
+| Route constants | `src/lib/routes.ts` |
+| Auth store | `src/stores/authStore.ts` |
+| Agent guidelines | `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md` |
+| Epics & stories tracker | `docs/EPICS-AND-STORIES-TRACKER.md` |
+| API integration guide | `docs/api-integration-guide.md` |
+
+## Backlog
+
+| Area | Source Anchor | Reason Deferred |
+|------|---------------|-----------------|
+| Analytics module deep-dives (30+ sub-routes) | `src/app/(dashboard)/analytics/*/` | Too many independent modules; each follows the same normalizer→hook→component pattern documented in [API Layer & Normalizers](api-and-normalizers.md) |
+| Component library inventory | `src/components/` | Large surface; shadcn/ui base + custom feature components; not architecturally load-bearing for wiki navigation |
+| docs/ directory structure | `docs/epics/`, `docs/stories/`, `docs/request-backend/` | 211 resolved backend requests; primarily project-management artifacts, not code documentation |
+| Backlog task tracking | `backlog/tasks/` | 55 tracked tasks via Backlog.md CLI; process artifacts, not source code |
+| Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
