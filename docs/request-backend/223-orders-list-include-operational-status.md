@@ -1,6 +1,8 @@
 # 223 — GET /v1/orders (+ /:id) must return `operationalStatus`
 
-> **Blocks FE Order Management (epic O1–O3).** Filed from FE story O1 verify-first.
+**Status:** ✅ Backend LIVE — `operationalStatus` + `operationalStatusUpdatedAt` are returned by both `GET /v1/orders` (list) and `GET /v1/orders/:orderId` (details). Verified in `src/orders/services/orders-query.service.ts` (select projection at lines 103–104 and 174–175) + `src/orders/services/orders-query.mapper.ts`; FE integrated via `src/lib/api/orders-normalizer.ts` and `OrdersTableRow.tsx`. Retained as a historical record; the problem description below predates the fix.
+
+> **(Historical — was blocking.)** Originally blocked FE Order Management (epic O1–O3). Filed from FE story O1 verify-first.
 
 ## Problem
 
