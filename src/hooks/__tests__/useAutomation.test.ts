@@ -93,9 +93,7 @@ describe('useInstallCannedRule (AT1)', () => {
   })
 
   it('toasts a friendly RU message on 409 (duplicate name)', async () => {
-    mockInstallCannedRule.mockRejectedValueOnce(
-      new ApiError('Duplicate rule name', 409, {})
-    )
+    mockInstallCannedRule.mockRejectedValueOnce(new ApiError('Duplicate rule name', 409, {}))
     const { result } = renderHook(() => useInstallCannedRule(), {
       wrapper: createQueryWrapper(createTestQueryClient()),
     })
@@ -107,9 +105,7 @@ describe('useInstallCannedRule (AT1)', () => {
   })
 
   it('toasts a friendly RU message on 404 (unknown template)', async () => {
-    mockInstallCannedRule.mockRejectedValueOnce(
-      new ApiError('Template not found', 404, {})
-    )
+    mockInstallCannedRule.mockRejectedValueOnce(new ApiError('Template not found', 404, {}))
     const { result } = renderHook(() => useInstallCannedRule(), {
       wrapper: createQueryWrapper(createTestQueryClient()),
     })
