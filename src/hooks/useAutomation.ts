@@ -12,11 +12,7 @@
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-  getCannedRules,
-  installCannedRule,
-  automationQueryKeys,
-} from '@/lib/api/automation'
+import { getCannedRules, installCannedRule, automationQueryKeys } from '@/lib/api/automation'
 import type { CannedRuleTemplate, AutomationRule, InstallCannedRuleBody } from '@/types/automation'
 import { ApiError } from '@/types/api'
 import { logger } from '@/lib/logger'

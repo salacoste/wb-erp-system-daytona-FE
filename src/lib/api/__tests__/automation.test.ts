@@ -131,10 +131,7 @@ describe('installCannedRule (AT1)', () => {
   it('defaults the body to {} when no overrides are passed', async () => {
     vi.mocked(apiClient.post).mockResolvedValue({ id: 'r', name: 'n', enabled: true })
     await installCannedRule('key-x')
-    expect(apiClient.post).toHaveBeenCalledWith(
-      '/v1/automation/canned-rules/key-x/install',
-      {}
-    )
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/automation/canned-rules/key-x/install', {})
   })
 })
 

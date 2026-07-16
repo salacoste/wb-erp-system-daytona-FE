@@ -30,9 +30,7 @@ const createTestQueryClient = (): QueryClient =>
   })
 
 function renderWith(ui: React.ReactElement) {
-  return render(
-    <QueryClientProvider client={createTestQueryClient()}>{ui}</QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={createTestQueryClient()}>{ui}</QueryClientProvider>)
 }
 
 const NOTIFY: CannedRuleTemplate = {

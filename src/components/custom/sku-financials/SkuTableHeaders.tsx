@@ -129,7 +129,10 @@ export function MarginHeader({ onSort, sortIcon }: SortableHeaderProps) {
               tabIndex={0}
               aria-label="Информация о марже: операционная маржинальность"
             >
-              <HelpCircle className="h-3 w-3 text-gray-400 hover:text-gray-600" aria-hidden="true" />
+              <HelpCircle
+                className="h-3 w-3 text-gray-400 hover:text-gray-600"
+                aria-hidden="true"
+              />
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-xs">
