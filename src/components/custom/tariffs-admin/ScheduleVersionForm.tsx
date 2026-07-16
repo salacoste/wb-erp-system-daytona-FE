@@ -116,7 +116,7 @@ export function ScheduleVersionForm({
               }}
               disabled={date => date < tomorrow}
               locale={ru}
-              initialFocus
+              autoFocus
             />
           </PopoverContent>
         </Popover>
