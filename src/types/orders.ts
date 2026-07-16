@@ -147,6 +147,22 @@ export interface StatusHistoryBrief {
   changedAt: string
 }
 
+export type ExpirationRequirement = 'required' | 'optional'
+
+/** Backend-authoritative WB expiration metadata capability. */
+export interface ExpirationMeta {
+  requirement: ExpirationRequirement
+  value: string | null
+  decision: string
+  /** At least one write workflow is available; prefer the specific capability flags below. */
+  editable: boolean
+  manualEditable: boolean
+  fefoAvailable: boolean
+  /** A previous WB write has no definitive read-back and must be reconciled before another PUT. */
+  reconciliationRequired: boolean
+  minimumDate: string
+}
+
 /** Extended order details (GET /v1/orders/:orderId) */
 export interface OrderFbsDetails extends OrderFbsItem {
   /** Size/variant ID */
@@ -159,6 +175,8 @@ export interface OrderFbsDetails extends OrderFbsItem {
   processingTimeSeconds: number
   /** Last sync timestamp */
   syncedAt: string
+  /** WB expiration capability; null means the metadata must not be sent. */
+  expirationMeta: ExpirationMeta | null
 }
 
 // --- Pagination & Query Types ---

@@ -6,11 +6,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../api-client', () => ({
-  apiClient: { get: vi.fn(), post: vi.fn(), patch: vi.fn() },
+  apiClient: { get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn() },
 }))
 
 import { apiClient } from '../../api-client'
-import { confirmOrder, cancelOrder, updateOrderMeta } from '../orders-actions'
+import {
+  confirmOrder,
+  cancelOrder,
+  updateOrderExpiration,
+  autoFillOrderExpiration,
+  updateOrderMeta,
+} from '../orders-actions'
 
 vi.spyOn(console, 'debug').mockImplementation(() => {})
 
@@ -70,5 +76,45 @@ describe('Orders Actions API (Story O4)', () => {
       value: '123456789012345',
     })
     expect(result).toEqual({ updated: true })
+  })
+})
+
+describe('Orders Actions API (expiration)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('PUTs the ISO date to the dedicated UUID route', async () => {
+    const uuid = '2405776e-4660-4857-ab4f-a56a3134dda9'
+    const response = {
+      updated: true as const,
+      expirationDate: '2030-09-12',
+      decision: 'filled' as const,
+    }
+    vi.mocked(apiClient.put).mockResolvedValue(response)
+
+    await expect(updateOrderExpiration(uuid, { expirationDate: '2030-09-12' })).resolves.toEqual(
+      response
+    )
+    expect(apiClient.put).toHaveBeenCalledWith(`/v1/orders/${uuid}/meta/expiration`, {
+      expirationDate: '2030-09-12',
+    })
+  })
+
+  it('PUTs no body to the controlled FEFO auto-fill route', async () => {
+    const uuid = '2405776e-4660-4857-ab4f-a56a3134dda9'
+    vi.mocked(apiClient.put).mockResolvedValue({
+      updated: true,
+      expirationDate: '2030-09-12',
+      decision: 'filled',
+      reservationId: 'reservation-1',
+      batchId: 'batch-1',
+    })
+
+    await autoFillOrderExpiration(uuid)
+
+    expect(apiClient.put).toHaveBeenCalledWith(
+      `/v1/orders/${uuid}/meta/expiration/from-stock-batch`
+    )
   })
 })

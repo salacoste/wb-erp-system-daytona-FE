@@ -24,6 +24,7 @@ import { getOrderById, ordersQueryKeys } from '@/lib/api/orders'
 import { OrderModalHeader } from './OrderModalHeader'
 import { OrderHistoryTabs } from './OrderHistoryTabs'
 import { ModalLoadingSkeleton } from './ModalLoadingSkeleton'
+import { OrderExpirationSection } from './OrderExpirationSection'
 
 export interface OrderDetailsModalProps {
   /** Order ID to display, null = modal closed */
@@ -85,6 +86,13 @@ export function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) 
           {orderDetails && !isLoading && !isError && (
             <>
               <OrderModalHeader order={orderDetails} />
+              {orderDetails.expirationMeta !== null && (
+                <OrderExpirationSection
+                  orderUuid={orderDetails.id}
+                  wbOrderId={orderDetails.orderId}
+                  expirationMeta={orderDetails.expirationMeta}
+                />
+              )}
               <OrderHistoryTabs orderId={orderId!} />
             </>
           )}

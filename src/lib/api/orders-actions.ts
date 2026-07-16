@@ -13,6 +13,10 @@ import type {
   CancelOrderResponse,
   UpdateOrderMetaBody,
   UpdateOrderMetaResponse,
+  UpdateOrderExpirationBody,
+  UpdateOrderExpirationResponse,
+  AutoFillOrderExpirationResponse,
+  ReconcileOrderExpirationResponse,
 } from '@/types/orders-actions'
 
 /**
@@ -53,4 +57,32 @@ export async function updateOrderMeta(
   const url = `/v1/orders/${String(orderUuid)}/meta`
   logger.debug('[Orders API] Update order meta:', { orderUuid, metaType: body.metaType })
   return apiClient.patch<UpdateOrderMetaResponse>(url, body)
+}
+
+/** Update WB expiration metadata and return only after verified read-back. */
+export async function updateOrderExpiration(
+  orderUuid: string,
+  body: UpdateOrderExpirationBody
+): Promise<UpdateOrderExpirationResponse> {
+  const url = `/v1/orders/${String(orderUuid)}/meta/expiration`
+  logger.debug('[Orders API] Update order expiration:', { orderUuid })
+  return apiClient.put<UpdateOrderExpirationResponse>(url, body)
+}
+
+/** Reserve the next FEFO batch and write its date through the verified WB flow. */
+export async function autoFillOrderExpiration(
+  orderUuid: string
+): Promise<AutoFillOrderExpirationResponse> {
+  const url = `/v1/orders/${String(orderUuid)}/meta/expiration/from-stock-batch`
+  logger.debug('[Orders API] Auto-fill expiration from FEFO batch:', { orderUuid })
+  return apiClient.put<AutoFillOrderExpirationResponse>(url)
+}
+
+/** Safe read-only WB read-back for the latest correlated expiration attempt. */
+export async function reconcileOrderExpiration(
+  orderUuid: string
+): Promise<ReconcileOrderExpirationResponse> {
+  const url = `/v1/orders/${String(orderUuid)}/meta/expiration/reconcile`
+  logger.debug('[Orders API] Reconcile order expiration:', { orderUuid })
+  return apiClient.post<ReconcileOrderExpirationResponse>(url)
 }

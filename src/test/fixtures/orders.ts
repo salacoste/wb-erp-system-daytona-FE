@@ -122,6 +122,7 @@ export const mockOrderFbsDetails: OrderFbsDetails = {
   ],
   processingTimeSeconds: 5400,
   syncedAt: '2026-01-04T12:05:00.000Z',
+  expirationMeta: null,
 }
 
 export const mockOrderFbsDetailsNoAddress: OrderFbsDetails = {

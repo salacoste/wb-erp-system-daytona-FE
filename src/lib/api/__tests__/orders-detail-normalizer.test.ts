@@ -158,4 +158,67 @@ describe('normalizeOrderDetail', () => {
     expect(result.address).toBeNull()
     expect(result.statusHistory).toEqual([])
   })
+
+  it('normalizes a strict expiration capability', () => {
+    const expirationMeta = {
+      requirement: 'required',
+      value: '2030-09-12',
+      decision: 'filled',
+      editable: true,
+      manualEditable: true,
+      fefoAvailable: true,
+      reconciliationRequired: false,
+      minimumDate: '2026-08-14',
+    }
+    expect(normalizeOrderDetail({ expirationMeta }).expirationMeta).toEqual(expirationMeta)
+  })
+
+  it('normalizes a snake_case reconciliation flag', () => {
+    expect(
+      normalizeOrderDetail({
+        expirationMeta: {
+          requirement: 'optional',
+          value: null,
+          decision: 'optional',
+          editable: false,
+          reconciliation_required: true,
+          minimumDate: '2026-08-14',
+        },
+      }).expirationMeta
+    ).toMatchObject({ reconciliationRequired: true })
+  })
+
+  it.each([
+    undefined,
+    {
+      requirement: 'category-guess',
+      value: null,
+      decision: 'required',
+      editable: true,
+      minimumDate: '2026-08-14',
+    },
+    {
+      requirement: 'optional',
+      value: '2030-02-30',
+      decision: 'filled',
+      editable: true,
+      minimumDate: '2026-08-14',
+    },
+    {
+      requirement: 'required',
+      value: null,
+      decision: 'required',
+      editable: 'yes',
+      minimumDate: '2026-08-14',
+    },
+    {
+      requirement: 'required',
+      value: null,
+      decision: 'required',
+      editable: true,
+      minimumDate: '14.08.2026',
+    },
+  ])('normalizes absent or malformed expiration capability to null', expirationMeta => {
+    expect(normalizeOrderDetail({ expirationMeta }).expirationMeta).toBeNull()
+  })
 })

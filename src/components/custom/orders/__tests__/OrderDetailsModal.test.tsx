@@ -117,6 +117,31 @@ describe('OrderDetailsModal', () => {
         expect(overlay).toBeInTheDocument()
       })
     })
+
+    it('renders expiration only when the detail capability is present', async () => {
+      mockGetOrderDetails.mockResolvedValueOnce({
+        ...mockOrderDetails,
+        expirationMeta: {
+          requirement: 'required',
+          value: null,
+          decision: 'required',
+          editable: true,
+          manualEditable: true,
+          fefoAvailable: true,
+          reconciliationRequired: false,
+          minimumDate: '2026-08-14',
+        },
+      })
+      renderWithProviders(<OrderDetailsModal orderId="1234567890" onClose={vi.fn()} />)
+      expect(await screen.findByRole('heading', { name: 'Годен до' })).toBeInTheDocument()
+      expect(screen.getByLabelText('Дата срока годности')).toBeInTheDocument()
+    })
+
+    it('does not render expiration when the detail capability is null', async () => {
+      renderWithProviders(<OrderDetailsModal orderId="1234567890" onClose={vi.fn()} />)
+      await screen.findByText(/итого:/i)
+      expect(screen.queryByRole('heading', { name: 'Годен до' })).not.toBeInTheDocument()
+    })
   })
 
   describe('Modal Close Behavior', () => {
