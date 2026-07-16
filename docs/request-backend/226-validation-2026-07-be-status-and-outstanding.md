@@ -24,7 +24,7 @@ A full FE→BE validation (2026-07-05/06, clusters A–F) originally surfaced ~1
 |---|---|---|---|---|
 | A | BE-A-1 | `POST /v1/products/cogs/bulk` | ✅ resolved | FE-fixed (PR #39, `nm_id` string→integer at wire); BE accepts int → 202. |
 | A | BE-A-2 | `GET /v1/products?include_cogs=true` | ✅ resolved | BE: `last_sales_margin_pct=null` for no-COGS. |
-| B | **BE-BUG-1** | `PATCH /v1/orders/:uuid/meta` (O4) | ⚠️ **confirm** | Contract green (UUID, `{metaType,value}`); needs real-order WB write-back smoke-test. → §2.1 |
+| B | **BE-BUG-1** | `PATCH /v1/orders/:uuid/meta` (O4) | ✅ **closed (N/A)** | Code complete + verified by inspection; live round-trip permanently N/A — catalog has no marking-category SKUs (IMEI/GTIN/SGTIN/UIN). Closed 2026-07-16. → §2.1 |
 | B | **BE-BUG-2** | `GET /v1/orders/:id` (orderId vs UUID) | ❓ **confirm** | NOT in the 2026-07-11 re-val doc; status unconfirmed. → §2.2 |
 | B | BE-BUG-3 | `DELETE /v1/supplies/:id` | ✅ resolved | Route registered (404 for unknown id, not "Cannot DELETE"). |
 | B | BE-BUG-4 | `GET /v1/box-types`, `/v1/sku-packaging` | ✅ resolved | Accept `limit`/`offset`/`page` (no 400 on unknown param). |
@@ -173,7 +173,7 @@ Filed as [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md
 3. **(No tariffs role-gate to remove — the FE never added one; it admitted Owner throughout, so F-004's fix needs no FE change.)**
 4. **Backfill launch-button UX** — ✅ F-005 resolved (2026-07-13): cabinet-scoping now BE-enforced fail-closed, so the prior "explicit scope confirmation / do not promise current-cabinet-only" caution is no longer safety-critical. FE may simplify (one-click launch is now safe; explicit scope display optional). See [`228-…`](./228-be-bug-f-005-backfill-admin-cabinet-scope-security.md) §5.
 
-**Net: 0 blockers for normal FE development.** Open BE-side items: **BE-BUG-1** (O4 marking-code persistence — operational confirmation; ticket #227) and **#229** (orders history endpoints 500 on UUID — blocks the optional orderId→UUID cleanup; re-verified still 500 on build 09:35:56). **F-005 resolved** (2026-07-13); F-001 needs no FE change (no-op); F-004 needs no FE change.
+**Net: 0 blockers for normal FE development.** Open BE-side items: **#229** (orders history endpoints 500 on UUID — blocks the optional orderId→UUID cleanup; re-verified still 500 on build 09:35:56). **#227 / BE-BUG-1 closed 2026-07-16** (theoretically successful — catalog has no marking-category SKUs, live round-trip permanently N/A). **F-005 resolved** (2026-07-13); F-001 needs no FE change (no-op); F-004 needs no FE change.
 
 ---
 
@@ -183,10 +183,10 @@ This addendum preserves the validation chronology above but supersedes its curre
 
 | Scope | Current local state | External boundary |
 |---|---|---|
-| **#227 / BE-BUG-1** | ✅ Code/migrations complete: PATCH persists a cabinet-scoped encrypted copy and detail returns authorized `markingMeta`. Marking-only `maxRetries=0` has one-PUT timeout/429/500/503 proof. The 2026-07-15 read-only scan inspected 1,999/1,999 eligible rows across one cabinet and ended `SAFE_NO_CANDIDATE`; dispatch/WB/DB mutations were 0/0/0. See [safety evidence](../../../.omx/ultragoal/evidence/G227-marking-roundtrip-safety.md), [final review](../../../.omx/ultragoal/evidence/G227-code-reviewer.md), and [UltraQA](../../../.omx/ultragoal/evidence/G227-ultraqa-report.md). | Still `external-validation`, not resolved. Authorization is unconsumed; a real PATCH→GET may be validated only when a safe exact already-filled candidate exists. No real PATCH is claimed. |
+| **#227 / BE-BUG-1** | ✅ Code/migrations complete: PATCH persists a cabinet-scoped encrypted copy and detail returns authorized `markingMeta`. Marking-only `maxRetries=0` has one-PUT timeout/429/500/503 proof. The 2026-07-15 read-only scan inspected 1,999/1,999 eligible rows across one cabinet and ended `SAFE_NO_CANDIDATE`; dispatch/WB/DB mutations were 0/0/0. See [safety evidence](../../../.omx/ultragoal/evidence/G227-marking-roundtrip-safety.md), [final review](../../../.omx/ultragoal/evidence/G227-code-reviewer.md), and [UltraQA](../../../.omx/ultragoal/evidence/G227-ultraqa-report.md). | **CLOSED 2026-07-16 — theoretically successful / N/A-by-catalog.** Business confirmed the catalog has no marking-category SKUs (IMEI/GTIN/SGTIN/UIN), so no order ever qualifies; `SAFE_NO_CANDIDATE` is the expected terminal state, not a gap. No live PATCH is possible or needed; re-open only if marking SKUs are added. |
 | **#229** | ✅ Code-complete: UUID and numeric identifiers work for detail/history/WB-history/full-history; malformed, unknown, overflow, and foreign IDs return uniform non-leaking 404. See [G003](../../../.omx/ultragoal/evidence/G003-227-229-implementation.md). | Deployment and live reprobe remain external; the earlier live 500 evidence describes the older build. |
 | **#228 / F-005** | ✅ Preserved and verified; cabinet scope/RBAC remains fail-closed. | Deployment state is not inferred from local tests. |
 | **Notification timezone** | ✅ Preserved and verified for validation, persistence/defaulting, and round-trip compatibility. | Deployment/live validation remains external. |
 | **#165** | ✅ Approved read-only check returned `anomaly_count=0`; no repair created. See [G004](../../../.omx/ultragoal/evidence/G004-165-price-anomaly.md). | A separate production scan is not claimed. |
 
-Accordingly, #227 is no longer an open **local implementation** item but remains the sole `external-validation` item. #229 is runtime-resolved under the later canonical ledger. No real WB marking mutation was performed for #227.
+Accordingly, #227 is **closed (2026-07-16) as theoretically successful — N/A-by-catalog** (business confirmed no marking-category SKUs; live round-trip permanently inapplicable). #229 is runtime-resolved under the later canonical ledger. No real WB marking mutation was performed for #227.
