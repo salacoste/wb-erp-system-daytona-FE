@@ -81,3 +81,29 @@ export interface UpdateOrderMetaBody {
 export interface UpdateOrderMetaResponse {
   updated: boolean
 }
+
+/** Body for PUT /v1/orders/:orderUuid/meta/expiration. */
+export interface UpdateOrderExpirationBody {
+  expirationDate: string
+}
+
+/** Returned only after the backend verifies the exact WB read-back. */
+export interface UpdateOrderExpirationResponse {
+  updated: true
+  expirationDate: string
+  decision: 'filled'
+}
+
+/** FEFO reservation plus the verified WB expiration write result. */
+export interface AutoFillOrderExpirationResponse extends UpdateOrderExpirationResponse {
+  reservationId: string
+  batchId: string
+}
+
+export interface ReconcileOrderExpirationResponse {
+  reconciled: true
+  verified: boolean
+  expirationDate: string | null
+  decision: string | null
+  outcome: 'verified' | 'mismatch' | 'invalid_readback'
+}

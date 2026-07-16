@@ -2,7 +2,7 @@
 
 **Date**: 2026-06-29
 **Priority**: High
-**Status**: 🔵 OPEN — needed for FR columns on the main `/analytics/sku` page
+**Status**: ✅ Backend LIVE — Request #220 closed (2026-06-30). Fulfilled by [220-fr2-fr5-sku-financials-backend-contract.md](./220-fr2-fr5-sku-financials-backend-contract.md). Retained as a historical record; the request below predates the fix.
 **Component**: Backend — Analytics (`sku-financials`)
 **Requester**: Frontend Team
 **Related**:

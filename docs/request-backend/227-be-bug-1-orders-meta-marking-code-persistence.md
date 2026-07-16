@@ -1,6 +1,6 @@
 # Request #227 — BE-BUG-1: O4 marking-code (Честный ЗНАК) write-back persistence
 
-**Status:** ⚠️ `external-validation` — code and migrations are complete. The 2026-07-15 safety run ended `SAFE_NO_CANDIDATE`; no real WB PATCH was sent. FE contract is available, but live PATCH→GET confirmation remains open until a safe already-filled candidate exists.
+**Status:** ✅ **CLOSED — theoretically successful (verified-by-inspection); live round-trip permanently N/A.** The cabinet catalog has **no products in mandatory-marking categories (IMEI/GTIN/SGTIN/UIN)**, so no order ever qualifies for a marking-code write — there is and will be no safe candidate. Code, migrations, and read-model are complete and verified by inspection + unit tests; **no further live testing will be attempted.** (Previously `external-validation`; closed 2026-07-16 on business confirmation that the catalog carries no marking-category SKUs.)
 **Severity:** 🟠 non-blocking contract; user-facing feature depends on persisted write-back.
 **Parent validation record:** [`226-validation-2026-07-be-status-and-outstanding.md`](./226-validation-2026-07-be-status-and-outstanding.md) §2.1 + "Update — BE verification results" (2026-07-13, BE-BUG-1).
 **Endpoint:** `PATCH /v1/orders/:orderUuid/meta`
@@ -96,3 +96,17 @@ Sanitized evidence:
 - [G227 marking round-trip safety record](../../../.omx/ultragoal/evidence/G227-marking-roundtrip-safety.md)
 - [G227 final independent code review — APPROVE](../../../.omx/ultragoal/evidence/G227-code-reviewer.md)
 - [G227 UltraQA report — PASS](../../../.omx/ultragoal/evidence/G227-ultraqa-report.md)
+
+---
+
+## Business closure — 2026-07-16 (no further live testing)
+
+**Classification:** `closed — theoretically successful / N/A-by-catalog`.
+
+Confirmed with the business owner: **the cabinet's catalog contains no products subject to mandatory «Честный ЗНАК» marking** (no IMEI/GTIN/SGTIN/UIN categories — e.g. no phones, footwear, medicines, perfume, light-industry goods, etc.). Consequences:
+
+- No order in this cabinet can ever carry a marking-code requirement, so a real WB `PATCH /orders/:uuid/meta` → `GET` round-trip is **permanently inapplicable** — not merely "pending a candidate."
+- The 2026-07-15 safety scan's `SAFE_NO_CANDIDATE` outcome (0/1,999 eligible rows) is the **expected terminal state** for this catalog, not a transient gap.
+- The implementation remains **code-complete and verified by inspection + unit tests** (write chain, AES encryption before the external mutation, cabinet-scoped persistence, nullable `markingMeta` read-back, `maxRetries:0` one-PUT timeout/429/500/503 proof, tenant isolation, corrupt-ciphertext handling). See the 2026-07-13 addendum + G003/G227 evidence above.
+
+**Disposition:** #227 is closed as **theoretically successful**. The FE contract (`PATCH /v1/orders/:orderUuid/meta` with `{metaType:"IMEI"|"GTIN"|"SGTIN"|"UIN", value}`, `GET /v1/orders/:id` → nullable `markingMeta`) remains available and correct; the O4 «Код маркировки» UI can ship behind it. **No live WB marking mutation will be performed.** Should marking-category SKUs ever be added to the catalog, re-open this ticket and run the reviewed one-shot idempotent candidate path.

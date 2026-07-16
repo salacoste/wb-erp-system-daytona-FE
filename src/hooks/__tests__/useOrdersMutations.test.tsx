@@ -7,8 +7,16 @@ import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useOrdersSync, useOrdersBackfill } from '../useOrdersMutations'
+import { toast } from 'sonner'
+import {
+  useOrdersSync,
+  useOrdersBackfill,
+  useUpdateOrderExpiration,
+  useAutoFillOrderExpiration,
+  useReconcileOrderExpiration,
+} from '../useOrdersMutations'
 import * as ordersApi from '@/lib/api/orders'
+import { ApiError } from '@/types/api'
 
 vi.mock('@/lib/api/orders', async () => {
   const actual = await vi.importActual<typeof ordersApi>('@/lib/api/orders')
@@ -16,11 +24,19 @@ vi.mock('@/lib/api/orders', async () => {
     ...actual,
     triggerOrdersSync: vi.fn(),
     triggerOrdersBackfill: vi.fn(),
+    updateOrderExpiration: vi.fn(),
+    autoFillOrderExpiration: vi.fn(),
+    reconcileOrderExpiration: vi.fn(),
   }
 })
 
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }))
+
 const mockSync = vi.mocked(ordersApi.triggerOrdersSync)
 const mockBackfill = vi.mocked(ordersApi.triggerOrdersBackfill)
+const mockUpdateExpiration = vi.mocked(ordersApi.updateOrderExpiration)
+const mockAutoFillExpiration = vi.mocked(ordersApi.autoFillOrderExpiration)
+const mockReconcileExpiration = vi.mocked(ordersApi.reconcileOrderExpiration)
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -167,5 +183,174 @@ describe('useOrdersBackfill', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.error?.message).toBe('Server error')
+  })
+})
+
+describe('useUpdateOrderExpiration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('uses the UUID route input and invalidates exactly detail(wbOrderId)', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    })
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue(undefined)
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    )
+    mockUpdateExpiration.mockResolvedValue({
+      updated: true,
+      expirationDate: '2030-09-12',
+      decision: 'filled',
+    })
+
+    const { result } = renderHook(() => useUpdateOrderExpiration(), { wrapper })
+    result.current.mutate({
+      orderUuid: 'order-uuid',
+      wbOrderId: '1234567890',
+      expirationDate: '2030-09-12',
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockUpdateExpiration).toHaveBeenCalledWith('order-uuid', {
+      expirationDate: '2030-09-12',
+    })
+    expect(invalidate).toHaveBeenCalledTimes(1)
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: ordersApi.ordersQueryKeys.detail('1234567890'),
+    })
+    expect(invalidate).not.toHaveBeenCalledWith({
+      queryKey: ordersApi.ordersQueryKeys.detail('order-uuid'),
+    })
+    expect(toast.success).toHaveBeenCalledWith('Срок годности сохранён')
+    expect(toast.error).not.toHaveBeenCalled()
+  })
+
+  it('does not invalidate detail cache when the mutation fails', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    })
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue(undefined)
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    )
+    mockUpdateExpiration.mockRejectedValue(new Error('Дата слишком ранняя'))
+
+    const { result } = renderHook(() => useUpdateOrderExpiration(), { wrapper })
+    result.current.mutate({
+      orderUuid: 'order-uuid',
+      wbOrderId: '1234567890',
+      expirationDate: '2030-09-12',
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(invalidate).not.toHaveBeenCalled()
+    expect(toast.error).toHaveBeenCalledWith('Дата слишком ранняя')
+    expect(toast.success).not.toHaveBeenCalled()
+  })
+
+  it('uses read-only reconciliation instead of retrying an uncertain WB write', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    })
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue(undefined)
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    )
+    mockUpdateExpiration.mockRejectedValue(
+      new ApiError('Исход требует проверки', 502, {
+        error: { code: 'ORDER_EXPIRATION_OUTCOME_UNCERTAIN' },
+      })
+    )
+    mockReconcileExpiration.mockResolvedValue({
+      reconciled: true,
+      verified: true,
+      expirationDate: '2030-09-12',
+      decision: 'filled',
+      outcome: 'verified',
+    })
+
+    const { result } = renderHook(() => useUpdateOrderExpiration(), { wrapper })
+    result.current.mutate({
+      orderUuid: 'order-uuid',
+      wbOrderId: '1234567890',
+      expirationDate: '2030-09-12',
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    await waitFor(() => expect(mockReconcileExpiration).toHaveBeenCalledWith('order-uuid'))
+    expect(mockUpdateExpiration).toHaveBeenCalledTimes(1)
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: ordersApi.ordersQueryKeys.detail('1234567890'),
+    })
+    expect(toast.success).toHaveBeenCalledWith('Срок годности подтверждён повторным чтением WB')
+  })
+})
+
+describe('useAutoFillOrderExpiration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('invalidates the WB detail key after FEFO reservation and verified write', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    })
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue(undefined)
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    )
+    mockAutoFillExpiration.mockResolvedValue({
+      updated: true,
+      expirationDate: '2030-09-12',
+      decision: 'filled',
+      reservationId: 'reservation-1',
+      batchId: 'batch-1',
+    })
+
+    const { result } = renderHook(() => useAutoFillOrderExpiration(), { wrapper })
+    result.current.mutate({ orderUuid: 'order-uuid', wbOrderId: '5327897132' })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockAutoFillExpiration).toHaveBeenCalledWith('order-uuid')
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: ordersApi.ordersQueryKeys.detail('5327897132'),
+    })
+    expect(toast.success).toHaveBeenCalledWith('Срок годности заполнен по партии FEFO')
+  })
+})
+
+describe('useReconcileOrderExpiration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('performs only read-back and invalidates the WB detail key', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    })
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue(undefined)
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    )
+    mockReconcileExpiration.mockResolvedValue({
+      reconciled: true,
+      verified: true,
+      expirationDate: '2030-09-12',
+      decision: 'filled',
+      outcome: 'verified',
+    })
+
+    const { result } = renderHook(() => useReconcileOrderExpiration(), { wrapper })
+    result.current.mutate({ orderUuid: 'order-uuid', wbOrderId: '5327897132' })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockReconcileExpiration).toHaveBeenCalledWith('order-uuid')
+    expect(mockUpdateExpiration).not.toHaveBeenCalled()
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: ordersApi.ordersQueryKeys.detail('5327897132'),
+    })
+    expect(toast.success).toHaveBeenCalledWith('Срок годности подтверждён повторным чтением WB')
   })
 })

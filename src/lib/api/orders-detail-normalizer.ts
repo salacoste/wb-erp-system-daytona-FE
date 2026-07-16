@@ -14,6 +14,7 @@ import {
   toStringOrNull,
 } from '@/lib/api/normalizer-helpers'
 import { isValidOperationalStatus } from '@/types/orders-guards'
+import { isIsoCalendarDate } from '@/lib/order-expiration-date'
 import type {
   OrderFbsDetails,
   OrderAddress,
@@ -21,10 +22,43 @@ import type {
   SupplierStatus,
   WbStatus,
   OrderOperationalStatus,
+  ExpirationMeta,
 } from '@/types/orders'
 
 /** Story O1: default operational status when backend omits it or sends an unknown value */
 const DEFAULT_OPERATIONAL_STATUS: OrderOperationalStatus = 'NEW'
+
+function normalizeExpirationMeta(raw: unknown): ExpirationMeta | null {
+  if (raw == null) return null
+  const d = asRecord(raw)
+  const requirement = d.requirement
+  const value = d.value
+  const reconciliationRequired = d.reconciliationRequired ?? d.reconciliation_required ?? false
+  const manualEditable = d.manualEditable ?? d.manual_editable ?? d.editable
+  const fefoAvailable = d.fefoAvailable ?? d.fefo_available ?? d.editable
+  if (
+    (requirement !== 'required' && requirement !== 'optional') ||
+    (value !== null && !isIsoCalendarDate(value)) ||
+    typeof d.decision !== 'string' ||
+    typeof d.editable !== 'boolean' ||
+    typeof manualEditable !== 'boolean' ||
+    typeof fefoAvailable !== 'boolean' ||
+    typeof reconciliationRequired !== 'boolean' ||
+    !isIsoCalendarDate(d.minimumDate)
+  ) {
+    return null
+  }
+  return {
+    requirement,
+    value,
+    decision: d.decision,
+    editable: d.editable,
+    manualEditable,
+    fefoAvailable,
+    reconciliationRequired,
+    minimumDate: d.minimumDate,
+  }
+}
 
 function normalizeOrderAddress(raw: unknown): OrderAddress | null {
   if (raw == null) return null
@@ -82,5 +116,6 @@ export function normalizeOrderDetail(raw: unknown): OrderFbsDetails {
         : [],
     processingTimeSeconds: toCount(d.processingTimeSeconds ?? d.processing_time_seconds),
     syncedAt: toStr(d.syncedAt ?? d.synced_at),
+    expirationMeta: normalizeExpirationMeta(d.expirationMeta ?? d.expiration_meta),
   }
 }

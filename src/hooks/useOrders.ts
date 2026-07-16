@@ -28,6 +28,9 @@ export {
   useConfirmOrder,
   useCancelOrder,
   useUpdateOrderMeta,
+  useUpdateOrderExpiration,
+  useAutoFillOrderExpiration,
+  useReconcileOrderExpiration,
 } from './useOrdersMutations'
 export type {
   UseOrdersSyncOptions,
@@ -36,6 +39,9 @@ export type {
   ConfirmOrderInput,
   CancelOrderInput,
   UpdateOrderMetaInput,
+  UpdateOrderExpirationInput,
+  AutoFillOrderExpirationInput,
+  ReconcileOrderExpirationInput,
 } from './useOrdersMutations'
 
 // ============================================================================

@@ -43,6 +43,8 @@ export type { OrdersSuspenseFallbackProps } from './OrdersSuspenseFallback'
 // Main modal component
 export { OrderDetailsModal } from './OrderDetailsModal'
 export type { OrderDetailsModalProps } from './OrderDetailsModal'
+export { OrderExpirationSection } from './OrderExpirationSection'
+export type { OrderExpirationSectionProps } from './OrderExpirationSection'
 
 // Modal header
 export { OrderModalHeader } from './OrderModalHeader'
