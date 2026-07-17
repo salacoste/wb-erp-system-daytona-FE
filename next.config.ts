@@ -12,14 +12,11 @@ const nextConfig: NextConfig = {
   // explicit CI/local gate: `npx eslint 'src/**/*.{ts,tsx}'` — which is
   // what this repo already enforced. No build-time lint to opt out of.
 
-  // Disable tracing for lockfiles in development
-  ...(isDevelopment && {
-    // Disable webpack cache to avoid ENOENT race conditions
-    webpack: config => {
-      config.cache = false
-      return config
-    },
-  }),
+  // Next 16: Turbopack is the default dev bundler. The previous dev-only
+  // `webpack` cache-disable block below (a workaround for a webpack ENOENT
+  // cache race) made `next dev` fatal-error: "This build is using Turbopack,
+  // with a `webpack` config and no `turbopack` config." Removed — Turbopack
+  // does not use the webpack cache, so the workaround is obsolete.
   // React strict mode for development
   // TEMPORARILY DISABLED: Investigating infinite reload issue
   // reactStrictMode: true,
