@@ -95,7 +95,7 @@ export async function refreshToken(currentToken: string): Promise<RefreshTokenRe
 export async function logoutUser(): Promise<{ message: string }> {
   try {
     return await apiClient.post<{ message: string }>('/v1/auth/logout')
-  } catch (error) {
+  } catch {
     // Even if logout fails on backend, we should still clear local state
     logger.warn('Logout API call failed, but clearing local state')
     return { message: 'Logged out locally' }
