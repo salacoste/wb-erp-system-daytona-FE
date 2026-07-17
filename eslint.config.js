@@ -15,6 +15,18 @@ const jsxA11y = require('eslint-plugin-jsx-a11y')
 module.exports = [
   {
     ignores: ['node_modules/**', '.next/**', 'dist/**', 'out/**'],
+    // ESLint 9 changed the default for unused disable directives from 'off'
+    // (ESLint 8) to 'warn'. This repo has ~34 intentionally-defensive
+    // `// eslint-disable-next-line no-restricted-syntax` comments on
+    // SEMANTIC-ZERO count sites (severity counts, qty, etc.) that the
+    // Anti-Pattern #8 money/ratio selector legitimately does NOT cover.
+    // Under ESLint 8 these were silently allowed; restore that behavior so
+    // the 0-warning baseline is preserved without churning 20+ source files.
+    // Genuine rule violations still error; only the unused-DIRECTIVE lint
+    // signal is dialed back to the ESLint 8 default.
+    linterOptions: {
+      reportUnusedDisableDirectives: 'off',
+    },
   },
   // Source files — strict enforcement
   {

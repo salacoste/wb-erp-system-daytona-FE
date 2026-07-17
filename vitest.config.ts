@@ -40,6 +40,11 @@ export default defineConfig({
       'tests/e2e/**', // Exclude E2E tests in tests/ directory
       'dist/**',
       '**/*.config.*',
+      // Exclude OMC agent worktrees (stale full-repo copies under
+      // .claude/worktrees/**) — they hold duplicate test files that vitest's
+      // default include would otherwise discover and run, causing spurious
+      // failures. .claude/ is agent operational state, never testable source.
+      '.claude/**',
     ],
     coverage: {
       provider: 'v8',

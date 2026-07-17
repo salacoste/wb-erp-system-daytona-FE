@@ -7,11 +7,10 @@ const nextConfig: NextConfig = {
   // Workspace root - monorepo with backend at parent level
   outputFileTracingRoot: path.join(__dirname, '../..'),
 
-  // Next 15 build lint phase still passes removed ESLint options in this repo.
-  // Keep lint as an explicit CI/local gate instead of build-time lint.
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Next 16 removed build-time ESLint integration entirely (the `eslint`
+  // config key is gone from NextConfig). Linting is now exclusively the
+  // explicit CI/local gate: `npx eslint 'src/**/*.{ts,tsx}'` — which is
+  // what this repo already enforced. No build-time lint to opt out of.
 
   // Disable tracing for lockfiles in development
   ...(isDevelopment && {
