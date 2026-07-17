@@ -101,3 +101,30 @@ All formatters use **Russian locale** (`ru-RU`) for number/currency display.
 Enforces the "null not undefined" standard for missing data: `isNullish`, `coerceToNull`, `hasValue`, `nullSafe`. This is the foundation of AP#8 null semantics — missing money/ratio data is `null`, not `0` or `undefined`.
 
 **File**: `src/lib/decimal-utils.ts` — `parseDecimal()` handles Prisma DECIMAL strings ("96000.0000" → 96000).
+
+## Order Expiration (WB Shelf-Life Management)
+
+Wildberries supports per-order product expiration dates (shelf-life / срок годности). This feature lets operators manually set or auto-fill the expiration date on FBS orders, with a reconcile-and-retry strategy for WB API write uncertainties.
+
+**Backend capability metadata** (`ExpirationMeta` in `src/types/orders.ts`):
+- `requirement` — `'required'` or `'optional'` per SKU/category
+- `value` — current committed expiration date (`null` if unset)
+- `editable` / `manualEditable` / `fefoAvailable` — which write workflows are available
+- `reconciliationRequired` — a previous WB write has no definitive read-back; must reconcile before another PUT
+- `minimumDate` — earliest acceptable date (backend-authoritative)
+
+**Three write workflows** (`src/hooks/useOrdersExpirationMutations.ts`, API in `src/lib/api/orders-actions.ts`):
+
+| Workflow | Endpoint | Description |
+|----------|----------|-------------|
+| Manual update | `PUT /v1/orders/:orderUuid/meta/expiration` | Operator enters a date directly |
+| FEFO auto-fill | `PUT /v1/orders/:orderUuid/meta/expiration/from-stock-batch` | Backend picks the soonest-expiring stock batch (First-Expire-First-Out), reserves it, and writes the date |
+| Reconcile | `POST /v1/orders/:orderUuid/meta/expiration/reconcile` | Read-only WB read-back to verify a previous uncertain write; never repeats the PUT |
+
+**Uncertain-write handling** (`src/lib/api/order-expiration-error.ts`):
+- HTTP 502 with `ORDER_EXPIRATION_OUTCOME_UNCERTAIN` — the WB write may or may not have succeeded. The mutation hooks automatically call reconcile; if verified, the date is confirmed; otherwise the write stays blocked until the operator intervenes.
+- HTTP 400 with `ORDER_EXPIRATION_DATE_TOO_EARLY` — `extractExpirationMinimumDate()` reads the authoritative minimum from the backend envelope and surfaces it so the UI can clamp the date picker.
+
+**Date validation** (`src/lib/order-expiration-date.ts`): `isIsoCalendarDate()` performs strict `YYYY-MM-DD` pattern + UTC calendar round-trip validation, guarding against invalid dates like `2026-02-31`.
+
+**UI**: `OrderExpirationSection` (`src/components/custom/orders/OrderExpirationSection.tsx`) — integrated into `OrderDetailsModal`, renders the date input, FEFO auto-fill button, and reconcile button based on `ExpirationMeta` capability flags.

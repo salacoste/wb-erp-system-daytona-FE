@@ -1,19 +1,19 @@
 # WB ERP System — Frontend OpenWiki
 
-Financial analytics dashboard for Wildberries marketplace sellers. Built with Next.js 15 App Router, TypeScript, and a Russian-locale UI.
+Financial analytics dashboard for Wildberries marketplace sellers. Built with Next.js 16 App Router, TypeScript, and a Russian-locale UI.
 
 ## Overview
 
 | Aspect | Detail |
 |--------|--------|
-| **Stack** | Next.js 15 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
+| **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (all pages are client components) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
 | **Testing** | Vitest (~975 unit test files) + Playwright (83 E2E specs) |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (both dev and prod via PM2 — never run both simultaneously) |
 
-**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, buyout/return analytics, liquidity analysis, unit economics, FBS/FBO order analytics, AI forecasting, Telegram notifications, multi-cabinet (tenant) support.
+**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, buyout/return analytics, liquidity analysis, unit economics, FBS/FBO order analytics with WB shelf-life (expiration) management, AI forecasting, Telegram notifications, multi-cabinet (tenant) support.
 
 ## Quick Commands
 
@@ -30,7 +30,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 
 ## Documentation Sections
 
-- **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth middleware, deployment.
+- **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, deployment.
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, two-pass review discipline.
@@ -42,7 +42,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 |------|-------|
 | Root layout + providers | `src/app/layout.tsx`, `src/app/providers.tsx` |
 | Dashboard shell + auth gate | `src/app/(dashboard)/layout.tsx` |
-| Auth middleware | `middleware.ts` |
+| Auth proxy (Next 16) | `src/proxy.ts` |
 | API client singleton | `src/lib/api-client.ts` |
 | Normalizer helpers | `src/lib/api/normalizer-helpers.ts` |
 | Route constants | `src/lib/routes.ts` |

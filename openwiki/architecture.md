@@ -55,8 +55,8 @@ Query keys use structured factory patterns (e.g., `cabinetSummaryKeys.all` / `.b
 
 ## Authentication
 
-### Middleware (server-side)
-`middleware.ts` reads the `auth-token` cookie (set client-side after login) and validates the JWT structure. Protected routes without a valid token redirect to `/login` with a `redirect` query param. Authenticated users hitting `/login` or `/register` are redirected to the dashboard (or the `redirect` target).
+### Proxy (server-side, Next 16 convention)
+`src/proxy.ts` (renamed from `middleware.ts` for Next.js 16) reads the `auth-token` cookie (set client-side after login) and validates the JWT structure. Protected routes without a valid token redirect to `/login` with a `redirect` query param. Authenticated users hitting `/login` or `/register` are redirected to the dashboard (or the `redirect` target). Next.js 16 renamed the middleware entrypoint from `middleware.ts` to `proxy.ts` and the exported function from `middleware` to `proxy`; the auth logic is otherwise unchanged.
 
 ### Client-side auth store
 `src/stores/authStore.ts` — Zustand store with `persist` middleware → localStorage. Stores `token`, `cabinetId`, `user` data. The `auth-token` cookie is mirrored from the store via `setAuthCookie()` in `src/lib/utils.ts` for middleware access.

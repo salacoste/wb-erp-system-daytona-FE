@@ -23,7 +23,7 @@ Enforced via `eslint.config.js` flat config. `next lint` is deprecated and does 
 - **Strict mode** — no `any` types (use `unknown`)
 - **No `as` casts** — widen types with optional fields (`?:`) or add `?? fallback` guards
 - **Path aliases** — use `@/components` not `../../components`
-- **Next.js 15 async params** — `params`/`searchParams` on page/layout must be typed `Promise<...>` (validated by `check:next-params`)
+- **Next.js 16 async params** — `params`/`searchParams` on page/layout must be typed `Promise<...>` (validated by `check:next-params`)
 
 ## Key Anti-Patterns
 
