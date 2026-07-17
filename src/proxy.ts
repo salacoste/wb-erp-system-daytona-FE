@@ -5,10 +5,10 @@ import { isProtectedRoute, isPublicRoute } from '@/lib/routes-protected'
 import { isValidToken } from '@/lib/auth'
 
 /**
- * Next.js middleware for authentication
+ * Next.js proxy for authentication (Next 16: middleware → proxy convention)
  * Protects routes and handles redirects based on authentication state
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Get token from cookie (set by client after login) or header
@@ -55,7 +55,7 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// Configure which routes middleware runs on
+// Configure which routes proxy runs on
 export const config = {
   matcher: [
     /*
