@@ -42,6 +42,10 @@ jobs:
           # required front matter to all 6 openwiki/*.md, then revert to "$(npm view openwiki version)".
           OPENWIKI_VERSION="0.1.2"
           echo "Using openwiki@$OPENWIKI_VERSION"
+          # Clear the npx cache so openwiki's native dep (better-sqlite3) is rebuilt for the
+          # current Node (24) via prebuild-install. Without this, npx reuses a stale Node-20
+          # binary from the cache → "NODE_MODULE_VERSION 127 vs 137" load error → exit 1.
+          rm -rf ~/.npm/_npx
           npx --yes "openwiki@$OPENWIKI_VERSION" code --update --print
         env:
           # z.ai GLM 5.2 via Anthropic-compatible endpoint.
