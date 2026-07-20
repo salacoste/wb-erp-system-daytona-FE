@@ -40,11 +40,13 @@ jobs:
           echo "Using openwiki@$OPENWIKI_VERSION"
           npx --yes "openwiki@$OPENWIKI_VERSION" code --update --print
         env:
-          # z.ai GLM 5.2 via OpenAI-compatible coding-paas endpoint (active subscription).
-          # Mirrors docker-compose.openwiki.yml — single source of truth for provider config.
-          OPENWIKI_PROVIDER: openai
-          OPENAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-          OPENAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
+          # z.ai GLM 5.2 via Anthropic-compatible endpoint.
+          # NOTE: the openai/coding-paas endpoint does NOT work with openwiki — @langchain/openai
+          # hits a sub-path z.ai coding-paas doesn't implement (404 → MODEL_NOT_FOUND). Verified
+          # 2026-07-20: anthropic works on openwiki 0.2.0; openai/coding-paas fails on 0.1.2 AND 0.2.0.
+          OPENWIKI_PROVIDER: anthropic
+          ANTHROPIC_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
           OPENWIKI_MODEL_ID: glm-5.2
 
       - name: Preserve scheduled self-hosted workflow
