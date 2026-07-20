@@ -24,26 +24,36 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: true
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '24'
 
-      - name: Generate frontend OpenWiki
-        run: npx --yes openwiki@0.1.2 code --update --print
+      - name: Generate frontend OpenWiki (latest version)
+        run: |
+          OPENWIKI_VERSION="$(npm view openwiki version)"
+          echo "Using openwiki@$OPENWIKI_VERSION"
+          npx --yes "openwiki@$OPENWIKI_VERSION" code --update --print
         env:
-          OPENWIKI_PROVIDER: anthropic
-          ANTHROPIC_API_KEY: ${{ secrets.ZAI_API_KEY }}
-          ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
+          # z.ai GLM 5.2 via OpenAI-compatible coding-paas endpoint (active subscription).
+          # Mirrors docker-compose.openwiki.yml — single source of truth for provider config.
+          OPENWIKI_PROVIDER: openai
+          OPENAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          OPENAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
           OPENWIKI_MODEL_ID: glm-5.2
 
       - name: Preserve scheduled self-hosted workflow
         run: git restore --source=HEAD -- .github/workflows/openwiki-update.yml
+
+      - name: Preserve BMad framework AGENTS.md files
+        # AGENTS.md is a BMad framework file. OpenWiki appends agent guidance to it —
+        # revert so BMad routing stays authoritative and the unstaged-changes guard below passes.
+        run: git restore --source=HEAD -- ':(glob)**/AGENTS.md'
 
       - name: Show generated changes
         run: git status --short
@@ -54,7 +64,8 @@ jobs:
           set -euo pipefail
           git config user.name "OpenWiki Bot"
           git config user.email "actions@github.com"
-          git add openwiki/ AGENTS.md CLAUDE.md
+          # AGENTS.md is intentionally EXCLUDED — it is a BMad framework file, preserved above.
+          git add openwiki/ CLAUDE.md
 
           if git diff --cached --quiet; then
             echo "No OpenWiki changes to commit."
