@@ -63,10 +63,10 @@ Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, li
   4. Privacy Guard — scans PII-adjacent files for forbidden `console.*` calls
 
 ### `openwiki-update.yml` — OpenWiki Documentation Update
-- **Triggers**: Schedule (daily `47 8 * * *` UTC, offset from backend to avoid VPS contention) + manual `workflow_dispatch`
-- **Runner**: Self-hosted (`wb-ci-fe` label), 60-min timeout, Node 24
-- **Provider**: z.ai GLM 5.2 via Anthropic-compatible endpoint (`OPENWIKI_PROVIDER: anthropic`)
-- **Process**: Clears npx cache (`~/.npm/_npx`) → `npx openwiki@0.1.2 code --update --print` → commits directly to `main` (no PR). Pinned to 0.1.2 because 0.2.0 requires YAML front matter not yet present in generated docs. AGENTS.md is intentionally excluded from commits (BMad framework file, restored each run).
+- **Triggers**: Schedule (daily `0 8 * * *` UTC) + manual `workflow_dispatch`
+- **Runner**: `ubuntu-latest`, Node 22
+- **Provider**: GLM 5.2 via OpenRouter (`OPENWIKI_PROVIDER: openrouter`, `OPENWIKI_MODEL_ID: z-ai/glm-5.2`); LangSmith tracing enabled
+- **Process**: `npm install --global openwiki` → `openwiki code --update --print` → creates a pull request via `peter-evans/create-pull-request` (branch `openwiki/update`). PR includes `openwiki/`, `AGENTS.md`, `CLAUDE.md`, and `.github/workflows/openwiki-update.yml`.
 
 ## PM2 Deployment
 
