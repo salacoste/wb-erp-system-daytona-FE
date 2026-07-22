@@ -1,3 +1,8 @@
+---
+type: "Operations Runbook"
+title: "Testing & Operations"
+description: "Testing strategy (Vitest unit with MSW, Playwright E2E), test organization and fixtures, CI/CD workflows, PM2 deployment, and environment variables."
+---
 # Testing & Operations
 
 ## Unit Tests — Vitest

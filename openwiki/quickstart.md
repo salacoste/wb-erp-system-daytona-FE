@@ -1,3 +1,8 @@
+---
+type: "Project Overview"
+title: "WB ERP System — Frontend OpenWiki"
+description: "Financial analytics dashboard for Wildberries (WB) marketplace sellers. Built with Next.js App Router, TypeScript, Tailwind, and a Russian-locale UI. Entry point for frontend OpenWiki documentation."
+---
 # WB ERP System — Frontend OpenWiki
 
 Financial analytics dashboard for Wildberries marketplace sellers. Built with Next.js 16 App Router, TypeScript, and a Russian-locale UI.

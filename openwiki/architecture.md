@@ -1,3 +1,8 @@
+---
+type: "Architecture Overview"
+title: "Architecture"
+description: "Next.js App Router single-page dashboard architecture — route groups, layout and provider hierarchy, 100% client-side data fetching, authentication (proxy + Zustand store), and state management."
+---
 # Architecture
 
 ## Route Groups

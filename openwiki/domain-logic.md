@@ -1,3 +1,8 @@
+---
+type: "Domain Reference"
+title: "Domain Logic"
+description: "Financial and business-logic helpers as pure functions in src/lib/ — theoretical profit, margin/COGS temporal logic, unit economics, liquidity, cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
+---
 # Domain Logic
 
 Financial and business-logic helpers that encode the core domain rules of the Wildberries seller analytics ERP. These live primarily in `src/lib/` as pure functions, separate from API calls and React hooks.

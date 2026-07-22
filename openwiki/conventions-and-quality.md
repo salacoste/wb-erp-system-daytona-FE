@@ -1,3 +1,8 @@
+---
+type: "Engineering Standards"
+title: "Conventions & Quality Gates"
+description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, ratchet baseline gates, and the two-pass review discipline."
+---
 # Conventions & Quality Gates
 
 The project enforces a rigorous set of coding standards and automated quality gates. These are load-bearing for every PR — not optional guidelines.

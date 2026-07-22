@@ -1,3 +1,8 @@
+---
+type: "Architecture Overview"
+title: "API Layer & Normalizers"
+description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, Anti-Pattern #8 null semantics, and CSV export infrastructure."
+---
 # API Layer & Normalizers
 
 ## API Client Singleton
