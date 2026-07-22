@@ -29,6 +29,10 @@ vi.mock('@/lib/api-client', () => ({
 }))
 
 import { apiClient } from '@/lib/api-client'
+// Pre-load the hook module at file-load time so the per-test `await import()` calls below return
+// a cached module instantly. Without this, the FIRST test pays the full module-evaluation cost
+// (TanStack Query + React graph) and exceeds the per-test timeout under CI runner load.
+import * as useOrdersCogsModule from '@/hooks/useOrdersCogs'
 
 // =============================================================================
 // Mock Response Fixtures
@@ -134,11 +138,11 @@ describe('useOrdersCogsWithComparison Hook - Story 61.11-FE', () => {
   // ===========================================================================
 
   describe('Hook Availability', () => {
-    it('should export useOrdersCogsWithComparison from useOrdersCogs module', async () => {
-      // RED: This test FAILS because hook doesn't exist yet
-      const module = await import('@/hooks/useOrdersCogs')
-      expect(module).toHaveProperty('useOrdersCogsWithComparison')
-      expect(typeof module.useOrdersCogsWithComparison).toBe('function')
+    it('should export useOrdersCogsWithComparison from useOrdersCogs module', () => {
+      // Hook is implemented (Story 61.11-FE). Assert on the pre-loaded namespace import above
+      // instead of a per-test `await import()` — avoids the dynamic-import timeout under CI load.
+      expect(useOrdersCogsModule).toHaveProperty('useOrdersCogsWithComparison')
+      expect(typeof useOrdersCogsModule.useOrdersCogsWithComparison).toBe('function')
     })
   })
 
@@ -383,9 +387,8 @@ describe('useOrdersCogsWithComparison Hook - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodResponse)
         .mockResolvedValueOnce(mockPreviousPeriodResponse)
 
-      const { useOrdersCogsWithComparison, ordersCogsQueryKeys } = await import(
-        '@/hooks/useOrdersCogs'
-      )
+      const { useOrdersCogsWithComparison, ordersCogsQueryKeys } =
+        await import('@/hooks/useOrdersCogs')
 
       renderHook(
         () =>

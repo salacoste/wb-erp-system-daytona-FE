@@ -29,6 +29,10 @@ vi.mock('@/lib/api-client', () => ({
 }))
 
 import { apiClient } from '@/lib/api-client'
+// Pre-load the hook module at file-load time so the per-test `await import()` calls below return
+// a cached module instantly. Without this, the FIRST test pays the full module-evaluation cost
+// (TanStack Query + React graph) and exceeds the per-test timeout under CI runner load.
+import * as useFinancialSummaryModule from '@/hooks/useFinancialSummary'
 
 // =============================================================================
 // Mock Response Fixtures
@@ -138,13 +142,13 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
   // ===========================================================================
 
   describe('Hook Availability', () => {
-    it('should export useFinancialSummaryWithPeriodComparison from financial hooks', async () => {
-      // RED: This test FAILS because hook doesn't exist yet
-      const module = await import('@/hooks/useFinancialSummary')
-
-      // Check for new period-based comparison hook
-      expect(module).toHaveProperty('useFinancialSummaryWithPeriodComparison')
-      expect(typeof module.useFinancialSummaryWithPeriodComparison).toBe('function')
+    it('should export useFinancialSummaryWithPeriodComparison from financial hooks', () => {
+      // Hook is implemented (Story 61.11-FE). Assert on the pre-loaded namespace import above
+      // instead of a per-test `await import()` — avoids the dynamic-import timeout under CI load.
+      expect(useFinancialSummaryModule).toHaveProperty('useFinancialSummaryWithPeriodComparison')
+      expect(typeof useFinancialSummaryModule.useFinancialSummaryWithPeriodComparison).toBe(
+        'function'
+      )
     })
   })
 
@@ -177,9 +181,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         return Promise.resolve(mockEmptySummary)
       })
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result, rerender } = renderHook(
         ({ period }) =>
@@ -251,9 +254,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         return Promise.resolve(mockEmptySummary)
       })
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result, rerender } = renderHook(
         ({ period }) =>
@@ -293,9 +295,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockPreviousPeriodSummary)
 
       // RED: Will fail until hook is implemented
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
@@ -323,9 +324,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockResolvedValueOnce(mockPreviousPeriodSummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
@@ -360,9 +360,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockResolvedValueOnce(mockPreviousPeriodSummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
@@ -390,9 +389,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockResolvedValueOnce(mockPreviousPeriodSummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
@@ -427,9 +425,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockResolvedValueOnce(mockPreviousPeriodSummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       renderHook(
         () =>
@@ -455,9 +452,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
       // Month periods aggregate multiple weeks
       vi.mocked(apiClient.get).mockResolvedValue(mockCurrentPeriodSummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       renderHook(
         () =>
@@ -479,9 +475,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockResolvedValueOnce(mockPreviousPeriodSummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       renderHook(
         () =>
@@ -513,9 +508,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockResolvedValueOnce(mockEmptySummary)
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
@@ -542,9 +536,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
         .mockResolvedValueOnce(mockCurrentPeriodSummary)
         .mockRejectedValueOnce(new Error('No data available'))
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
@@ -574,9 +567,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
 
   describe('Query Options', () => {
     it('should respect enabled option', async () => {
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       renderHook(
         () =>
@@ -592,9 +584,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
     })
 
     it('should not fetch when period is empty', async () => {
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       renderHook(
         () =>
@@ -622,9 +613,8 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
           })
       )
 
-      const { useFinancialSummaryWithPeriodComparison } = await import(
-        '@/hooks/useFinancialSummary'
-      )
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
 
       const { result } = renderHook(
         () =>
