@@ -16,18 +16,10 @@ export type {
 // ============================================================================
 
 export type MissingDataReason =
-  | 'NO_SALES_IN_PERIOD'
-  | 'COGS_NOT_ASSIGNED'
-  | 'NO_SALES_DATA'
-  | 'ANALYTICS_UNAVAILABLE'
-  | null
+  'NO_SALES_IN_PERIOD' | 'COGS_NOT_ASSIGNED' | 'NO_SALES_DATA' | 'ANALYTICS_UNAVAILABLE' | null
 
 export type MarginCalculationStatus =
-  | 'pending'
-  | 'in_progress'
-  | 'completed'
-  | 'not_found'
-  | 'failed'
+  'pending' | 'in_progress' | 'completed' | 'not_found' | 'failed'
 
 export interface MarginCalculationStatusResponse {
   status: MarginCalculationStatus

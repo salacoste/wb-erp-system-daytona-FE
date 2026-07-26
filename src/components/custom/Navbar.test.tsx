@@ -33,17 +33,13 @@ describe('Navbar', () => {
     cleanup()
   })
 
-  it(
-    'renders dashboard title',
-    () => {
-      mockAuthStore({ user: null })
+  it('renders dashboard title', { timeout: 5000 }, () => {
+    mockAuthStore({ user: null })
 
-      render(<Navbar />)
+    render(<Navbar />)
 
-      expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText('Dashboard')).toBeInTheDocument()
+  })
 
   it('does not render the shell label as a page H1', () => {
     mockAuthStore({ user: null })
@@ -53,42 +49,30 @@ describe('Navbar', () => {
     expect(screen.queryByRole('heading', { level: 1, name: 'Dashboard' })).not.toBeInTheDocument()
   })
 
-  it(
-    'displays user email when available',
-    () => {
-      mockAuthStore({ user: { email: 'user@example.com', role: 'Owner' } })
+  it('displays user email when available', { timeout: 5000 }, () => {
+    mockAuthStore({ user: { email: 'user@example.com', role: 'Owner' } })
 
-      render(<Navbar />)
+    render(<Navbar />)
 
-      expect(screen.getByText('user@example.com')).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText('user@example.com')).toBeInTheDocument()
+  })
 
-  it(
-    'displays user name when available',
-    () => {
-      mockAuthStore({
-        user: { name: 'John Doe', email: 'user@example.com', role: 'Owner' },
-      })
+  it('displays user name when available', { timeout: 5000 }, () => {
+    mockAuthStore({
+      user: { name: 'John Doe', email: 'user@example.com', role: 'Owner' },
+    })
 
-      render(<Navbar />)
+    render(<Navbar />)
 
-      expect(screen.getByText('John Doe')).toBeInTheDocument()
-      expect(screen.queryByText('user@example.com')).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText('John Doe')).toBeInTheDocument()
+    expect(screen.queryByText('user@example.com')).not.toBeInTheDocument()
+  })
 
-  it(
-    'renders logout button',
-    () => {
-      mockAuthStore({ user: null })
+  it('renders logout button', { timeout: 5000 }, () => {
+    mockAuthStore({ user: null })
 
-      render(<Navbar />)
+    render(<Navbar />)
 
-      expect(screen.getByText('Logout')).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText('Logout')).toBeInTheDocument()
+  })
 })

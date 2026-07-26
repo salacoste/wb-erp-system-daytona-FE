@@ -36,11 +36,7 @@ export function isJamTierSufficient(userTier: JamTier, requiredTier: JamTier): b
 }
 
 export type JamStatusReason =
-  | 'no_products'
-  | 'token_error'
-  | 'insufficient_permissions'
-  | 'timeout'
-  | 'wb_api_error'
+  'no_products' | 'token_error' | 'insufficient_permissions' | 'timeout' | 'wb_api_error'
 
 export const JAM_STATUS_REASON_LABELS: Record<JamStatusReason, string> = {
   no_products: 'Нет товаров',
@@ -62,10 +58,7 @@ export interface JamStatusResponse {
 // --- Seller Info (GET /v1/cabinets/:id/seller-info) ---
 
 export type SellerInfoReason =
-  | 'token_error'
-  | 'insufficient_permissions'
-  | 'timeout'
-  | 'wb_api_error'
+  'token_error' | 'insufficient_permissions' | 'timeout' | 'wb_api_error'
 
 export const SELLER_INFO_REASON_LABELS: Record<SellerInfoReason, string> = {
   token_error: 'Токен невалидный',
@@ -97,11 +90,7 @@ export interface TokenHealthResponse {
 // --- Seller Rating (GET /v1/cabinets/:id/seller-rating) ---
 
 export type SellerRatingReason =
-  | 'token_error'
-  | 'insufficient_permissions'
-  | 'timeout'
-  | 'wb_api_error'
-  | 'sdk_version_mismatch'
+  'token_error' | 'insufficient_permissions' | 'timeout' | 'wb_api_error' | 'sdk_version_mismatch'
 
 export const SELLER_RATING_REASON_LABELS: Record<SellerRatingReason, string> = {
   token_error: 'Токен невалидный',

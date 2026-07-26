@@ -40,6 +40,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="${ROOT_OVERRIDE:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 BASELINE_FILE="${BASELINE_FILE_OVERRIDE:-$SCRIPT_DIR/.anti-pattern-8-normalizer-baseline.txt}"
+ESLINT_BIN="${ESLINT_BIN_OVERRIDE:-$ROOT/node_modules/.bin/eslint}"
+
+if [[ ! -x "$ESLINT_BIN" ]]; then
+  echo "AP#8 infrastructure error: ESLint binary is missing or not executable: $ESLINT_BIN" >&2
+  exit 2
+fi
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; NC='\033[0m'
 
@@ -91,10 +97,19 @@ module.exports = [{
 }];
 CFGEOF
 
+  local output status
+  set +e
   # shellcheck disable=SC2086
-  n=$(cd "$ROOT" && echo "$files" | xargs npx eslint --config "$cfg" --no-config-lookup 2>/dev/null \
-        | grep -c 'AP8_HELPER_DEFEAT' || true)
+  output=$(cd "$ROOT" && "$ESLINT_BIN" --config "$cfg" --no-config-lookup $files 2>&1)
+  status=$?
+  set -e
   rm -f "$cfg"
+  if [[ $status -gt 1 ]]; then
+    echo "AP#8 infrastructure error: ESLint exited with status $status" >&2
+    printf '%s\n' "$output" >&2
+    return "$status"
+  fi
+  n=$(printf '%s\n' "$output" | grep -c 'AP8_HELPER_DEFEAT' || true)
   echo "${n:-0}"
 }
 

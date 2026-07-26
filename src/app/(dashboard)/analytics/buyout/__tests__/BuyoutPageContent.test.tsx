@@ -41,6 +41,10 @@ vi.mock('@/hooks/useFulfillment', () => ({
   useFulfillmentSummary: () => ({ data: null }),
 }))
 
+vi.mock('@/hooks/use-buyout-analytics', () => ({
+  useBuyoutBySku: () => ({ data: null }),
+}))
+
 vi.mock('../components/BuyoutTrendChart', () => ({
   BuyoutTrendChart: () => <div data-testid="buyout-trend-chart">TrendChart</div>,
 }))

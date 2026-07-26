@@ -18,11 +18,13 @@ import {
   mockPaginationEmpty,
   mockListParamsDefault,
   mockListParamsFiltered,
+} from '@/test/fixtures/supplies'
+import {
   mockSuppliesListResponse,
   mockSuppliesListResponseEmpty,
   mockSupplyDetailResponse,
   mockSupplyDetailResponseNoRateLimit,
-} from '@/test/fixtures/supplies'
+} from '@/test/fixtures/supplies-responses'
 
 // =============================================================================
 // SECTION 1: SuppliesPagination Interface Tests

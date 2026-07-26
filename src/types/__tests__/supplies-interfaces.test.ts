@@ -22,10 +22,12 @@ import {
   mockSupplyListItemOpen,
   mockSupplyListItemClosed,
   mockSupplyListItemNoName,
+} from '@/test/fixtures/supplies'
+import {
   mockSupplyOpen,
   mockSupplyEmpty,
   mockSupplyClosed,
-} from '@/test/fixtures/supplies'
+} from '@/test/fixtures/supplies-responses'
 
 // =============================================================================
 // SECTION 1: SupplyOrder Interface Tests

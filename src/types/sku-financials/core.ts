@@ -12,11 +12,7 @@
  * Backend uses snake_case values
  */
 export type SkuFinancialsSortBy =
-  | 'revenue_net'
-  | 'operating_profit'
-  | 'operating_margin_pct'
-  | 'storage_cost'
-  | 'logistics_cost'
+  'revenue_net' | 'operating_profit' | 'operating_margin_pct' | 'storage_cost' | 'logistics_cost'
 
 export interface SkuFinancialsQuery {
   week: string

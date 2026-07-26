@@ -1,9 +1,41 @@
 # WB Repricer System - Frontend
 
 **Version:** 1.0.0  
-**Framework:** Next.js 15 (App Router) + TypeScript  
+**Framework:** Next.js 16.2.10 (App Router) + TypeScript
 **Component Library:** shadcn/ui + Tailwind CSS
-**Default Port:** 3100 (production via PM2)
+**Application Port:** 3100 (`npm run dev` and `npm run start`)
+
+---
+
+## Readiness status (2026-07-26)
+
+- **Release authorization:** **NO-GO** for an unconditional production release.
+- **Certification boundary:** runtime is **UNDETERMINED**, CERT-F01 is **NOT_ELIGIBLE_FOR_CERT_F01**, and the repository-remediation certificate is **NOT_ISSUED**.
+- **Runtime contract:** the lockfile resolves Next.js 16.2.10; the canonical lane is Node.js 24.18.0 with npm 11.11.0; `npm run dev` and `npm run start` bind to port 3100.
+- **Fresh inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
+- **Integrated evidence base:** all 49/49 recorded gate outcomes matched their expected exits before documentation reconciliation. This base count excludes any later documentation or reseal gates. TypeScript, lint, format, AP8, and coverage-governance tests (27/27) passed.
+- **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
+- **Static/unit and coverage:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. The isolated candidate-index coverage run recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. The actual repository index cannot select that policy because the canonical coverage files are `NOT_TRACKED`; its selector failed closed with exit 1. The isolated candidate index was local-only, did not stage files, did not change the actual index, and has no release effect.
+- **AP8 compatibility:** the Node 24 rule/normalizer lanes passed, and the isolated Node 25 compatibility lane passed; Node 25 was not used for canonical gates.
+- **Build evidence:** two Next.js 16.2.10 production builds generated 67/67 pages with strict source/candidate/runtime inputs invariant. The first build normalized generated `next-env.d.ts`, which then remained stable; incident 034 separates that generated-input event from the strict invariant inputs. Build IDs and output digests differed, so bit-for-bit reproducibility is not claimed.
+- **Tier-0 harness:** helper Vitest passed 8/8, safety tests passed 72/72, and static discovery lists 24 tests in exactly 2 files. The missing-descriptor helper and orchestrator each exited 3 as expected, producing 38/38 `BLOCKED`, 0 `PASS`, and 0 `FAIL`; the malformed-descriptor negative exited 1 as expected. These fail-closed results do not certify runtime behavior.
+- **Orders Integrity:** source, unit coverage, and the dedicated live contract are authored. No credentialed live `PASS` exists.
+- **Candidate and external blockers:** the tested candidate is dirty and uncommitted. There is no clean immutable candidate publication or independently fetched receipt, externally published runtime-input manifest, trusted signed sandbox descriptor or execution/cleanup authority, external ECC or RRC receipt, CERT-F01 result, or external attestation.
+
+Static/unit completion, an epic marked `DONE`, or the presence of an E2E spec does not authorize a release. Runtime remains **UNDETERMINED**, CERT-F01 remains **NOT_ELIGIBLE_FOR_CERT_F01**, the repository certificate is **NOT_ISSUED**, and release remains **NO-GO**. See the durable, sanitized [G006 frontend readiness summary](docs/evidence/frontend-readiness-g006-20260726.md). Its source evidence root, `.omx/tmp/g006-final-integrated-20260726T002604Z`, is local and transient rather than durable release evidence.
+
+### Reproduce the current inventories
+
+Run these commands from the frontend repository root:
+
+```bash
+find src/app -type f -name 'page.tsx' -print | LC_ALL=C sort -u | wc -l
+find src -type f \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \) -print | LC_ALL=C sort -u | wc -l
+find e2e tests/e2e -type f -name '*.spec.ts' -print | LC_ALL=C sort -u | wc -l
+npm run test:tier0:list
+```
+
+Expected inventory output on 2026-07-26: `72`, `1047`, `86`; the Tier-0 list reports 24 tests in exactly 2 files. The G006 base evidence records 49/49 expected gate outcomes before documentation reconciliation. The missing-descriptor matrix exited 3 by design and therefore does not certify runtime behavior.
 
 ---
 
@@ -11,8 +43,8 @@
 
 ### Prerequisites
 
-- Node.js 20.x or higher
-- npm, yarn, or pnpm
+- Node.js 24.18.0 for the canonical CI-compatible lane
+- npm 11.11.0
 - Git
 - PM2 (for production deployment) - `npm install -g pm2`
 
@@ -37,15 +69,16 @@ npx shadcn@latest init
 ### Development Mode (Recommended for Development)
 
 **Features:**
+
 - ✅ Hot reload (automatic refresh on file changes)
 - ✅ No caching (always fresh code)
 - ✅ Fast startup (no build required)
 - ✅ Debug information
 
 ```bash
-# Option 1: Direct Next.js dev server (port 3000)
+# Option 1: Direct Next.js dev server (port 3100)
 npm run dev
-# Application available at: http://localhost:3000
+# Application available at: http://localhost:3100
 
 # Option 2: PM2 with development mode (port 3100)
 pm2 start ecosystem.config.js --only wb-repricer-frontend-dev
@@ -55,6 +88,7 @@ pm2 start ecosystem.config.js --only wb-repricer-frontend-dev
 ### Production Mode (For Server Deployment)
 
 **Features:**
+
 - ✅ Optimized code
 - ✅ Caching enabled
 - ✅ Maximum performance
@@ -98,22 +132,15 @@ frontend/
 
 ## 🛠️ Development
 
-### Test User Credentials
+### Test credentials
 
-For development and testing purposes, use the following test account:
-
-```bash
-Email: test@test.com
-Password: LocalTest123!
-```
-
-**Note:** This test user is available on the backend for development and testing only. Do not use in production.
+Credentials are secret-only runtime inputs. Obtain an authorized isolated test account through the environment owner and provide it via ignored environment variables; do not store usernames, passwords, tokens, or storage state in tracked documentation.
 
 ### Available Scripts
 
 ```bash
 # Development
-npm run dev              # Start dev server (localhost:3000, default Next.js port)
+npm run dev              # Start dev server on localhost:3100
                         # Hot reload enabled, no caching
 
 # Production (PM2)
@@ -136,7 +163,7 @@ pm2 delete wb-repricer-frontend-dev  # Remove dev process
 
 # Build & Start (without PM2)
 npm run build           # Production build
-npm run start           # Start production server (localhost:3000)
+npm run start           # Start production server on localhost:3100
 
 # Code Quality
 npm run lint             # Run ESLint
@@ -155,7 +182,7 @@ npm run test:e2e:ui      # Run E2E tests with UI
 
 ### Key Technologies
 
-- **Next.js 15** - React framework with App Router
+- **Next.js 16.2.10** - React framework with App Router
 - **TypeScript** - Type-safe JavaScript
 - **shadcn/ui** - Component library (copy-paste architecture)
 - **Tailwind CSS** - Utility-first CSS framework
@@ -209,10 +236,12 @@ npm run test:e2e:ui      # Run E2E tests with UI
 ### Stories & Epics Documentation ⭐ **UPDATED**
 
 **Status Reports:**
+
 - **[STORIES-STATUS-REPORT.md](docs/stories/STORIES-STATUS-REPORT.md)** - All stories status (22 total, 14 Done)
 - **[EPIC-4-COMPLETION-SUMMARY.md](docs/stories/EPIC-4-COMPLETION-SUMMARY.md)** - Epic 4 COGS & Margin (8/8 stories, 100%)
 
 **Epic 4: COGS Management & Margin Analysis** (8 stories - 100% complete):
+
 - [4.1 Single Product COGS Assignment](docs/stories/4.1.single-product-cogs-assignment.md)
 - [4.2 Bulk COGS Assignment](docs/stories/4.2.bulk-cogs-assignment.md)
 - [4.3 COGS Input Validation](docs/stories/4.3.cogs-input-validation-error-handling.md)
@@ -223,6 +252,7 @@ npm run test:e2e:ui      # Run E2E tests with UI
 - [4.8 Margin Recalculation Polling](docs/stories/4.8.margin-recalculation-polling.md)
 
 **Epic 24: Paid Storage Analytics** (8 stories - 100% complete) ⭐ **DONE**:
+
 - [24.1-fe Types & API Client](docs/stories/epic-24/story-24.1-fe-types-api-client.md)
 - [24.2-fe Page Layout](docs/stories/epic-24/story-24.2-fe-page-layout.md)
 - [24.3-fe Storage by SKU Table](docs/stories/epic-24/story-24.3-fe-storage-by-sku-table.md)
@@ -232,10 +262,11 @@ npm run test:e2e:ui      # Run E2E tests with UI
 - [24.7-fe Product Card Storage Info](docs/stories/epic-24/story-24.7-fe-product-card-storage.md)
 - [24.8-fe High Ratio Alert](docs/stories/epic-24/story-24.8-fe-high-ratio-alert.md)
 
-**Epic 34-FE: Telegram Notifications UI** (6 stories - 100% complete) ✅ **PRODUCTION READY** 🎉:
-- 🚀 **[Developer Handoff Guide](docs/DEV-HANDOFF-EPIC-34-FE.md)** - Production deployment guide
-  - [Bot Config](docs/DEV-HANDOFF-EPIC-34-FE.md#-telegram-bot-configuration-urgent-action-required) | [Monitoring](docs/DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended) | [Testing](docs/DEV-HANDOFF-EPIC-34-FE.md#testing-status)
-- **[CHANGELOG-EPIC-34-FE.md](docs/CHANGELOG-EPIC-34-FE.md)** - Complete implementation summary
+**Epic 34-FE: Telegram Notifications UI** (6 stories - source implementation complete; live certification pending):
+
+- 🚀 **[Developer Handoff Guide](docs/archive/DEV-HANDOFF-EPIC-34-FE.md)** - Historical deployment guide
+  - [Bot Config](docs/archive/DEV-HANDOFF-EPIC-34-FE.md#-telegram-bot-configuration-urgent-action-required) | [Monitoring](docs/archive/DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended) | [Testing](docs/archive/DEV-HANDOFF-EPIC-34-FE.md#testing-status)
+- **[CHANGELOG-EPIC-34-FE.md](docs/archive/CHANGELOG-EPIC-34-FE.md)** - Complete implementation summary
 - **[Epic 34-FE Main Doc](docs/epics/epic-34-fe-telegram-notifications-ui.md)** - Architecture & API integration
 - [34.1-FE Types & API Client](docs/stories/epic-34/story-34.1-fe-types-api-client.md) - ✅ Done (SSR-safe, React Query v5)
 - [34.2-FE Telegram Binding Flow](docs/stories/epic-34/story-34.2-fe-telegram-binding-flow.md) - ✅ Done (Modal, countdown, polling)
@@ -254,13 +285,15 @@ npm run test:e2e:ui      # Run E2E tests with UI
 - **Backend Integration**: [Request #73](docs/request-backend/73-telegram-notifications-epic-34.md) - 6 API endpoints
 
 **Epic 6: Advanced Analytics** (5 stories - 100% complete) ✅ **COMPLETE**:
+
 - [6.1-fe Date Range Support](docs/stories/epic-6/story-6.1-fe-date-range-support.md) - ✅ Done
 - [6.2-fe Period Comparison](docs/stories/epic-6/story-6.2-fe-period-comparison.md) - ✅ Done
 - [6.3-fe ROI & Profit Metrics](docs/stories/epic-6/story-6.3-fe-roi-profit-metrics.md) - ✅ Done
 - [6.4-fe Cabinet Summary Dashboard](docs/stories/epic-6/story-6.4-fe-cabinet-summary.md) - ✅ Done
 - [6.5-fe Export Analytics UI](docs/stories/epic-6/story-6.5-fe-export-analytics.md) - ✅ Done
 
-**Epic 24: Paid Storage Analytics** (11 stories - 100% Complete) ✅ **PRODUCTION READY** 🎉:
+**Epic 24: Paid Storage Analytics** (11 stories - source implementation complete; live certification pending):
+
 - **[Epic 24 README](docs/stories/epic-24/README.md)** - Complete Epic 24 documentation
 - [24.1-fe Types & API Client](docs/stories/epic-24/story-24.1-fe-types-api-client.md) - ✅ Complete (3 SP)
 - [24.2-fe Page Layout](docs/stories/epic-24/story-24.2-fe-page-layout.md) - ✅ Complete (5 SP)
@@ -283,10 +316,11 @@ npm run test:e2e:ui      # Run E2E tests with UI
   - Chart click-to-filter interaction
   - Comprehensive unit tests (133 tests passing, 8 test files)
   - WCAG 2.1 AA accessibility compliance
-  - QA Review: PASS - Ready for production deployment
+  - Historical source/unit QA: PASS; current live release certification pending
 - **Backend Integration**: Epic 24 ✅ COMPLETE
 
-**Epic 44: Price Calculator UI** (6 stories - 100% Complete) ✅ **PRODUCTION READY** 🎉:
+**Epic 44: Price Calculator UI** (6 stories - source implementation complete; live certification pending):
+
 - **[Epic 44 Documentation](docs/epics/epic-44-price-calculator-ui.md)** - Complete Epic 44 documentation
 - [44.1-fe Types & API Client](docs/stories/epic-44/story-44.1-fe-types-api-client.md) - ✅ Complete (2 SP)
 - [44.2-fe Input Form Component](docs/stories/epic-44/story-44.2-fe-input-form-component.md) - ✅ Complete (3 SP)
@@ -304,7 +338,8 @@ npm run test:e2e:ui      # Run E2E tests with UI
   - 208 tests passing, 6 QA gates passed (88-95/100 scores)
   - Backend Integration: Epic 43 ✅ COMPLETE
 
-**Epic 24: Paid Storage Analytics** (11 stories - 100% Complete) ✅ **PRODUCTION READY** 🎉:
+**Epic 24: Paid Storage Analytics** (11 stories - source implementation complete; live certification pending):
+
 - **[Epic 24 README](docs/stories/epic-24/README.md)** - Complete Epic 24 documentation
 - [24.1-fe Types & API Client](docs/stories/epic-24/story-24.1-fe-types-api-client.md) - ✅ Complete (3 SP)
 - [24.2-fe Page Layout](docs/stories/epic-24/story-24.2-fe-page-layout.md) - ✅ Complete (5 SP)
@@ -327,11 +362,12 @@ npm run test:e2e:ui      # Run E2E tests with UI
   - Chart click-to-filter interaction
   - Comprehensive unit tests (133 tests passing, 8 test files)
   - WCAG 2.1 AA accessibility compliance
-  - QA Review: PASS - Ready for production deployment
+  - Historical source/unit QA: PASS; current live release certification pending
 - **Backend Integration**: Epic 24 ✅ COMPLETE
 
 **Epic 37: Merged Group Table Display (Склейки)** (6 stories + Phase 2 QA - 100% Complete) 📋 **READY FOR DEVELOPMENT**:
-- **[CHANGELOG-EPIC-37-FE.md](docs/CHANGELOG-EPIC-37-FE.md)** - Complete Epic 37 documentation ✨
+
+- **[CHANGELOG-EPIC-37-FE.md](docs/archive/CHANGELOG-EPIC-37-FE.md)** - Complete Epic 37 documentation ✨
 - **[PO Validation Report](docs/stories/epic-37/PO-VALIDATION-REPORT-EPIC-37.md)** - Quality 9.2/10 ⭐⭐⭐⭐
 - [37.1 Backend API Validation](docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md) - 1-2h
 - [37.2 MergedGroupTable Component](docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md) - 3-4h
@@ -351,6 +387,7 @@ npm run test:e2e:ui      # Run E2E tests with UI
 - **Backend Integration**: [Request #88](docs/request-backend/88-epic-37-individual-product-metrics.md) - Enhanced API with 16 fields per product
 
 **Backend Requests:**
+
 - **[Request Index](docs/request-backend/README.md)** - All 22+ backend requests
 - **[All Completed Summary](docs/request-backend/23-all-requests-completed-summary.md)** - Final status
 
@@ -414,12 +451,14 @@ NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot
 ```
 
 **Примечание:**
+
 - API URL без `/api` - endpoints начинаются с `/v1/` (например: `/v1/auth/login`)
 - Default value for `NEXT_PUBLIC_API_URL` is `http://localhost:3000` (works for local development)
 - In production, set `NEXT_PUBLIC_API_URL` to your production API URL
 - All `NEXT_PUBLIC_*` variables are embedded at build time
 
 **Telegram Configuration (Epic 34-FE):**
+
 - `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` - **OPTIONAL** (имеет fallback `Kernel_crypto_bot`)
 - Bot token (`TELEGRAM_BOT_TOKEN`) настраивается **на бэкенде** (не на фронтенде!)
 - Backend configuration см. в backend `.env.example`
@@ -441,6 +480,7 @@ The project includes `ecosystem.config.js` with two configurations:
    - Full caching, optimized
 
 **Usage:**
+
 ```bash
 # Development
 pm2 start ecosystem.config.js --only wb-repricer-frontend-dev
@@ -510,15 +550,16 @@ The API client (`src/lib/api.ts`) automatically includes these headers.
 
 Some endpoints require specific roles:
 
-| Endpoint | Manager+ | Analyst |
-|----------|----------|---------|
-| `POST /v1/tasks/enqueue` | ✅ | ❌ 403 |
-| `PUT /v1/schedules/:id` | ✅ | ❌ 403 |
-| `POST /v1/schedules/:id/trigger` | ✅ | ❌ 403 |
-| `GET /v1/schedules/*` | ✅ | ✅ |
-| `GET /v1/tasks/*` | ✅ | ✅ |
+| Endpoint                         | Manager+ | Analyst |
+| -------------------------------- | -------- | ------- |
+| `POST /v1/tasks/enqueue`         | ✅       | ❌ 403  |
+| `PUT /v1/schedules/:id`          | ✅       | ❌ 403  |
+| `POST /v1/schedules/:id/trigger` | ✅       | ❌ 403  |
+| `GET /v1/schedules/*`            | ✅       | ✅      |
+| `GET /v1/tasks/*`                | ✅       | ✅      |
 
 **Frontend Action Required:**
+
 - Hide/disable action buttons for Analyst users
 - Example: Manual margin recalculation button in `ProductMarginCell.tsx`
 
@@ -540,23 +581,22 @@ npm run test:coverage # With coverage report
 npm run test:e2e      # E2E tests
 ```
 
-### Test Coverage Goals
+### Coverage policy
 
-- Unit Tests: 60%+
-- Integration Tests: 30%+
-- E2E Tests: 10%+
+The candidate Node 24 policy uses the paired Vitest 4.1.10 and `@vitest/coverage-v8` 4.1.10 packages with count-derived thresholds and a 0.01 percentage-point epsilon. The isolated G006 candidate-index run recorded 73.32% statements, 70.04% branches, 69.85% functions, and 74.46% lines. However, the actual repository index reports the canonical coverage selection as `NOT_TRACKED` and fails closed; the isolated candidate-index pass did not stage or change the actual index and has no release effect. These local coverage results do not replace Tier-0 live certification or authorize release. See the [sanitized G006 summary](docs/evidence/frontend-readiness-g006-20260726.md).
 
 ---
 
 ## 🚢 Deployment
 
-📖 **[Complete Deployment Guide](docs/DEPLOYMENT-GUIDE.md)** - Подробная инструкция по продакшн-деплою
+📖 **[Historical Deployment Guide](docs/archive/DEPLOYMENT-GUIDE.md)** - архивная инструкция по деплою; она не заменяет текущую Tier-0 сертификацию
 
 ### Quick Start Deployment
 
 #### Option 1: PM2 (Recommended)
 
 **Development Environment:**
+
 ```bash
 # 1. Install dependencies
 npm install
@@ -575,6 +615,7 @@ pm2 logs wb-repricer-frontend-dev
 ```
 
 **Production Environment:**
+
 ```bash
 # 1. Install dependencies
 npm install
@@ -602,6 +643,7 @@ pm2 logs wb-repricer-frontend
 ```
 
 **PM2 Process Management:**
+
 ```bash
 # View all processes
 pm2 list
@@ -631,12 +673,12 @@ pm2 monit
 ```bash
 # Development mode
 npm run dev
-# Available at: http://localhost:3000
+# Available at: http://localhost:3100
 
 # Production mode (requires build)
 npm run build
 npm run start
-# Available at: http://localhost:3000
+# Available at: http://localhost:3100
 ```
 
 #### Option 3: Docker (Optional)
@@ -646,6 +688,7 @@ The project includes Docker configuration. See `Dockerfile` for details.
 ### Environment Configuration
 
 **Development:**
+
 - Uses `next dev` command
 - No caching (always fresh code)
 - Hot reload enabled
@@ -653,6 +696,7 @@ The project includes Docker configuration. See `Dockerfile` for details.
 - Default API URL: `http://localhost:3000`
 
 **Production:**
+
 - Uses `next start` command (requires `npm run build` first)
 - Caching enabled for performance
 - Optimized bundle
@@ -661,10 +705,12 @@ The project includes Docker configuration. See `Dockerfile` for details.
 
 ### Port Configuration
 
-- **Development (npm run dev):** Port 3000 (Next.js default)
-- **PM2 (both modes):** Port 3100 (configured in `ecosystem.config.js`)
+- **Development (`npm run dev`):** port 3100 (configured in `package.json`)
+- **Production (`npm run start`):** port 3100 (configured in `package.json`)
+- **PM2:** port 3100 (configured in `ecosystem.config.js`)
 
 To change the port, edit `ecosystem.config.js`:
+
 ```javascript
 env: {
   NODE_ENV: 'development',
@@ -675,11 +721,13 @@ env: {
 ### Caching Behavior
 
 **Development Mode:**
+
 - ✅ No ISR caching (`isrMemoryCacheSize: 0`)
 - ✅ Minimal page buffer (2 pages, 25s max age)
 - ✅ Always fresh code on file changes
 
 **Production Mode:**
+
 - ✅ Full caching enabled
 - ✅ Optimized performance
 - ✅ Requires rebuild to update code
@@ -692,23 +740,24 @@ env: {
 
 The system visualizes **9 expense categories** from the weekly finance summary:
 
-| # | Category (Russian) | API Field (summary_total) | Description |
-|---|-------------------|--------------------------|-------------|
-| 1 | Логистика | `logistics_cost_total` | Delivery + returns logistics |
-| 2 | Хранение | `storage_cost_total` | Storage fees |
-| 3 | Платная приёмка | `paid_acceptance_cost_total` | Paid acceptance services |
-| 4 | Штрафы | `penalties_total` | Penalties |
-| 5 | Прочие комиссии WB | `wb_commission_adj_total` | Various deductions and payments: WB promotion services, one-time compensations. Not tied to orders. Contains only `commission_other` (excludes `commission_sales`) |
-| 6 | Комиссия лояльности | `loyalty_fee_total` | Loyalty program fees |
-| 7 | Удержание баллов лояльности | `loyalty_points_withheld_total` | Loyalty points withheld |
-| 8 | Эквайринг | `acquiring_fee_total` | Acquiring fees (added in Request #06) |
-| 9 | Комиссия продаж | `commission_sales_total` | Sales commission (added in Request #06) |
+| #   | Category (Russian)          | API Field (summary_total)       | Description                                                                                                                                                        |
+| --- | --------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Логистика                   | `logistics_cost_total`          | Delivery + returns logistics                                                                                                                                       |
+| 2   | Хранение                    | `storage_cost_total`            | Storage fees                                                                                                                                                       |
+| 3   | Платная приёмка             | `paid_acceptance_cost_total`    | Paid acceptance services                                                                                                                                           |
+| 4   | Штрафы                      | `penalties_total`               | Penalties                                                                                                                                                          |
+| 5   | Прочие комиссии WB          | `wb_commission_adj_total`       | Various deductions and payments: WB promotion services, one-time compensations. Not tied to orders. Contains only `commission_other` (excludes `commission_sales`) |
+| 6   | Комиссия лояльности         | `loyalty_fee_total`             | Loyalty program fees                                                                                                                                               |
+| 7   | Удержание баллов лояльности | `loyalty_points_withheld_total` | Loyalty points withheld                                                                                                                                            |
+| 8   | Эквайринг                   | `acquiring_fee_total`           | Acquiring fees (added in Request #06)                                                                                                                              |
+| 9   | Комиссия продаж             | `commission_sales_total`        | Sales commission (added in Request #06)                                                                                                                            |
 
 ### API Response Structure
 
 **Endpoint:** `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 
 **Response Format:**
+
 ```typescript
 {
   data: {
@@ -807,6 +856,7 @@ payout_total = to_pay_goods           // WB "К перечислению за т
 ```
 
 **Important Notes:**
+
 - All expense values are stored as **positive numbers** (absolute values)
 - Fields return `0` (not `null` or `undefined`) when no expenses in category
 - `payout_total` can be **negative**
@@ -816,14 +866,15 @@ payout_total = to_pay_goods           // WB "К перечислению за т
 
 Поле `commission_other` в raw данных содержит **4 разных типа** записей:
 
-| reason | Сумма | Вычитаем? | Почему |
-|--------|-------|-----------|--------|
-| **Продажа** | 67,064₽ | ❌ НЕТ | Уже в `total_commission_rub` (двойной учёт!) |
-| **Возврат** | 1,080₽ | ❌ НЕТ | Уже в `total_commission_rub` (двойной учёт!) |
-| **Возмещение за ПВЗ** | 36,967₽ | ❌ НЕТ | **Инфо-строка** (gross=0, комиссия уже в retail-gross) |
-| **Удержание** | 4,008₽ | ✅ ДА | Реальное удержание = WB "Корректировка ВВ" |
+| reason                | Сумма   | Вычитаем? | Почему                                                 |
+| --------------------- | ------- | --------- | ------------------------------------------------------ |
+| **Продажа**           | 67,064₽ | ❌ НЕТ    | Уже в `total_commission_rub` (двойной учёт!)           |
+| **Возврат**           | 1,080₽  | ❌ НЕТ    | Уже в `total_commission_rub` (двойной учёт!)           |
+| **Возмещение за ПВЗ** | 36,967₽ | ❌ НЕТ    | **Инфо-строка** (gross=0, комиссия уже в retail-gross) |
+| **Удержание**         | 4,008₽  | ✅ ДА     | Реальное удержание = WB "Корректировка ВВ"             |
 
 **SQL-агрегация:**
+
 ```sql
 -- ПРАВИЛЬНО: только reason='Удержание'
 SUM(CASE WHEN reason = 'Удержание' THEN ABS(commission_other) ELSE 0 END) as wb_commission_adj
@@ -835,6 +886,7 @@ SUM(ABS(commission_other)) as wb_commission_adj
 📖 **Полная документация**: `docs/WB-DASHBOARD-METRICS.md` | `docs/request-backend/51-wb-commission-adj-payout.md`
 
 **"Корректировка ВВ" (wb_commission_adj) Details:**
+
 - **Source:** WB Excel column "Прочие удержания/начисления" WHERE reason='Удержание'
 - **Contains:** Only actual WB commission adjustments (deductions)
 - **Examples:**
@@ -862,6 +914,7 @@ SUM(ABS(commission_other)) as wb_commission_adj
 The product list (`/cogs` page) uses **cursor-based pagination** with a **client-side workaround** for Wildberries SDK issues.
 
 **Features:**
+
 - ✅ Cursor-based pagination (server-side slicing)
 - ✅ Product search by `nm_id`, `sa_name`, or `brand` (partial match)
 - ✅ Debounced search input (500ms delay) - prevents API spam
@@ -875,22 +928,26 @@ The product list (`/cogs` page) uses **cursor-based pagination** with a **client
 **Problem:** Wildberries SDK cursor pagination returned duplicate products on page 2 instead of next products.
 
 **Solution:** Backend implements client-side pagination workaround:
+
 1. Fetch ALL products via `getAllProductsList()` (with Redis cache)
 2. Apply filters (category, `has_cogs`) on server
 3. Paginate using `findIndex()` + `slice()` based on cursor
 4. Return correct page to frontend
 
 **Performance:**
+
 - First load: ~500ms (fetches all products from WB API)
 - Cached loads: ~50ms (instant page switching)
 - Tested with 30+ products successfully
 
 **Documentation:**
+
 - Issue report: `docs/request-backend/13-products-pagination-wb-sdk-issue.md`
 - Completion summary: `docs/request-backend/REQUEST-13-FINAL-COMPLETION.md`
 - Story integration: `docs/stories/4.1.single-product-cogs-assignment.md`
 
 **Frontend Components:**
+
 - Hook: `src/hooks/useProducts.ts` - TanStack Query with cursor pagination
 - Component: `src/components/custom/ProductList.tsx` - Product list with pagination UI
 - Page: `src/app/(dashboard)/cogs/page.tsx` - COGS management page
@@ -900,11 +957,13 @@ The product list (`/cogs` page) uses **cursor-based pagination** with a **client
 Three search-related bugs were fixed in the same session:
 
 **Fix 1: Search Parameter Name Mismatch**
+
 - **Problem**: Frontend sent `search=` parameter, backend expected `q=`
 - **Solution**: Changed `useProducts.ts` to send `q` parameter (line 47)
 - **Documentation**: `docs/BUG-FIX-SEARCH-PARAMETER-MISMATCH.md`
 
 **Fix 2: Search Input Disappearing on Keystroke**
+
 - **Problem**: Input field disappeared after each keystroke (skeleton loading hid entire component)
 - **Solution**:
   - Added debounce (500ms delay) using two-state pattern (`searchInput` + `search`)
@@ -913,6 +972,7 @@ Three search-related bugs were fixed in the same session:
 - **Documentation**: `docs/BUG-FIX-SEARCH-INPUT-DISAPPEARING.md`
 
 **Fix 3: Partial Article Search Not Working (Backend)**
+
 - **Problem**: Search "3216" didn't find products with articles "321678606"
 - **Root Cause**: WB API `textSearch` doesn't support partial article matching
 - **Solution**: Backend now filters client-side for partial article matches
@@ -920,12 +980,14 @@ Three search-related bugs were fixed in the same session:
 - **Documentation**: `docs/BACKEND-CHANGES-SEARCH-FIX.md` (frontend), backend request #14
 
 **How Search Works Now**:
+
 1. User types "3216" → Input shows immediately (no API call yet)
 2. After 500ms of no typing → API call with `?q=3216`
 3. Backend fetches all products (cached) → Filters by `nmId.includes("3216")`
 4. Returns matching products → Frontend updates table (input stays visible)
 
 **Performance**:
+
 - First search: ~500ms (backend fetch + filter)
 - Subsequent searches: ~50ms (Redis cache + in-memory filter)
 - Typing experience: Instant feedback, no input lag
@@ -952,6 +1014,7 @@ Added opt-in margin display for product list via `enableMarginDisplay` prop, pow
 ```
 
 **Result:**
+
 - Products with sales: `35.5%` (green for positive, red for negative)
 - No sales: `— (нет продаж)`
 - No COGS: `— (нет COGS)`
@@ -972,11 +1035,13 @@ Added opt-in margin display for product list via `enableMarginDisplay` prop, pow
 **Problem**: Margin data only available in single product detail view due to performance concerns.
 
 **Solution**: Backend implements batched Epic 17 analytics query:
+
 1. Single batch query for all products on page (~150ms)
 2. HashMap-based O(1) product enrichment (<1ms per product)
 3. Total: ~300ms for 25 products vs 2.5s with sequential queries
 
 **Performance:**
+
 - Without margin (`enableMarginDisplay=false`): ~150ms (default, unchanged)
 - With margin (`enableMarginDisplay=true`): ~300ms (+150ms overhead)
 - 8x faster than simple sequential implementation (300ms vs 2500ms)
@@ -984,6 +1049,7 @@ Added opt-in margin display for product list via `enableMarginDisplay` prop, pow
 ### Usage Patterns
 
 **COGS Management** (recommended - show margin):
+
 ```typescript
 <ProductList
   showOnlyWithoutCogs={false}
@@ -992,6 +1058,7 @@ Added opt-in margin display for product list via `enableMarginDisplay` prop, pow
 ```
 
 **Product Browsing** (default - keep fast):
+
 ```typescript
 <ProductList
   enableMarginDisplay={false}  // Default: fast loading
@@ -1000,6 +1067,7 @@ Added opt-in margin display for product list via `enableMarginDisplay` prop, pow
 ```
 
 **Toggle Margin Display**:
+
 ```typescript
 const [showMargin, setShowMargin] = useState(false)
 
@@ -1013,11 +1081,12 @@ const [showMargin, setShowMargin] = useState(false)
 ### API Integration
 
 **Hook Enhancement**:
+
 ```typescript
 // src/hooks/useProducts.ts
 export interface ProductFilters {
   // ... existing filters
-  include_margin?: boolean  // Request #15: Request margin data
+  include_margin?: boolean // Request #15: Request margin data
 }
 
 // Sends include_cogs=true to backend when include_margin=true
@@ -1027,6 +1096,7 @@ if (filters.include_margin) {
 ```
 
 **Backend Response** (when `include_cogs=true`):
+
 ```json
 {
   "products": [
@@ -1034,13 +1104,13 @@ if (filters.include_margin) {
       "nm_id": "147205694",
       "sa_name": "Жидкая кожа черная",
       "has_cogs": true,
-      "cogs": { "unit_cost_rub": 22.00 },
+      "cogs": { "unit_cost_rub": 22.0 },
 
-      "current_margin_pct": 35.5,           // NEW
-      "current_margin_period": "2025-W46",  // NEW
-      "current_margin_sales_qty": 50,       // NEW
-      "current_margin_revenue": 125000.50,  // NEW
-      "missing_data_reason": null           // NEW
+      "current_margin_pct": 35.5, // NEW
+      "current_margin_period": "2025-W46", // NEW
+      "current_margin_sales_qty": 50, // NEW
+      "current_margin_revenue": 125000.5, // NEW
+      "missing_data_reason": null // NEW
     }
   ]
 }
@@ -1049,41 +1119,43 @@ if (filters.include_margin) {
 ### Documentation
 
 **Backend**:
+
 - Completion Summary: `docs/request-backend/REQUEST-15-COMPLETION-SUMMARY.md`
 - Implementation Plan: `docs/request-backend/REQUEST-15-IMPLEMENTATION-PLAN.md`
 - E2E Tests: `test/products/products-include-cogs.e2e-spec.ts`
 
 **Frontend**:
+
 - Backend Response: `docs/backend-response-15-includecogs-implementation.md`
 - Usage Guide: `docs/REQUEST-15-USAGE-GUIDE.md`
 - Integration Complete: `docs/REQUEST-15-FRONTEND-INTEGRATION-COMPLETE.md`
 - Ready to Use: `docs/REQUEST-15-READY-TO-USE.md`
 
 **Related**:
+
 - Epic 17 Story 17.2: `docs/stories/epic-17/story-17.2-api-includecogs-flag.md`
 - Epic 18 Phase 1: `docs/backend-response-09-epic-18-products-api-enhancement.md`
 
 ### Files Modified
 
 **Frontend Changes**:
+
 1. `src/hooks/useProducts.ts` - Added `include_margin` flag
 2. `src/components/custom/ProductList.tsx` - Added `enableMarginDisplay` prop and display logic
 
-**Backend Changes** (already deployed):
-3. `src/products/dto/query-products.dto.ts` - Added `include_cogs` parameter
-4. `src/products/products.service.ts` - Batch margin enrichment
-5. `test/products/products-include-cogs.e2e-spec.ts` - E2E tests
+**Backend Changes** (already deployed): 3. `src/products/dto/query-products.dto.ts` - Added `include_cogs` parameter 4. `src/products/products.service.ts` - Batch margin enrichment 5. `test/products/products-include-cogs.e2e-spec.ts` - E2E tests
 
 ### Performance
 
-| Scenario | Products | Margin | Time |
-|----------|----------|--------|------|
-| Default | 25 | No | ~150ms |
-| With margin | 25 | Yes | ~300ms |
-| Default | 50 | No | ~200ms |
-| With margin | 50 | Yes | ~500ms |
+| Scenario    | Products | Margin | Time   |
+| ----------- | -------- | ------ | ------ |
+| Default     | 25       | No     | ~150ms |
+| With margin | 25       | Yes    | ~300ms |
+| Default     | 50       | No     | ~200ms |
+| With margin | 50       | Yes    | ~500ms |
 
 **Recommendations**:
+
 - Use `enableMarginDisplay=true` on COGS management UI
 - Keep default `false` for general product browsing
 - Pagination limit 25-50 products when margin enabled
@@ -1103,15 +1175,15 @@ Added opt-in storage cost display for product list via `include_storage=true` pa
 ```typescript
 // Enable storage display in hook
 const { data } = useProducts({
-  include_storage: true,  // ← Request storage data
-  limit: 50
+  include_storage: true, // ← Request storage data
+  limit: 50,
 })
 
 // Access storage fields on each product
 products.forEach(product => {
-  console.log(product.storage_cost_daily_avg)  // 12.50 ₽/день
-  console.log(product.storage_cost_weekly)     // 87.50 ₽/неделю
-  console.log(product.storage_period)          // "2025-W47"
+  console.log(product.storage_cost_daily_avg) // 12.50 ₽/день
+  console.log(product.storage_cost_weekly) // 87.50 ₽/неделю
+  console.log(product.storage_period) // "2025-W47"
 })
 ```
 
@@ -1126,11 +1198,12 @@ products.forEach(product => {
 ### API Integration
 
 **Hook Enhancement**:
+
 ```typescript
 // src/hooks/useProducts.ts
 export interface ProductFilters {
   // ... existing filters
-  include_storage?: boolean  // Epic 24: Request storage cost data
+  include_storage?: boolean // Epic 24: Request storage cost data
 }
 
 // Sends include_storage=true to backend when enabled
@@ -1140,19 +1213,21 @@ if (filters.include_storage) {
 ```
 
 **Response Fields** (when `include_storage=true`):
+
 ```typescript
 // src/types/cogs.ts - ProductListItem
 interface ProductListItem {
   // ... existing fields
 
   // Epic 24: Storage cost fields
-  storage_cost_daily_avg?: number | null  // Average daily cost in ₽
-  storage_cost_weekly?: number | null     // Total weekly cost in ₽
-  storage_period?: string | null          // ISO week (e.g., "2025-W47")
+  storage_cost_daily_avg?: number | null // Average daily cost in ₽
+  storage_cost_weekly?: number | null // Total weekly cost in ₽
+  storage_period?: string | null // ISO week (e.g., "2025-W47")
 }
 ```
 
 **Backend Response Example**:
+
 ```json
 {
   "products": [
@@ -1161,9 +1236,9 @@ interface ProductListItem {
       "sa_name": "Жидкая кожа черная",
       "has_cogs": true,
 
-      "storage_cost_daily_avg": 12.50,    // NEW
-      "storage_cost_weekly": 87.50,        // NEW
-      "storage_period": "2025-W47"         // NEW
+      "storage_cost_daily_avg": 12.5, // NEW
+      "storage_cost_weekly": 87.5, // NEW
+      "storage_period": "2025-W47" // NEW
     }
   ]
 }
@@ -1172,6 +1247,7 @@ interface ProductListItem {
 ### Files Modified
 
 **Frontend Changes**:
+
 1. `src/types/cogs.ts` - Added storage fields to `ProductListItem` interface
 2. `src/hooks/useProducts.ts` - Added `include_storage` parameter to `ProductFilters`
 
@@ -1200,12 +1276,14 @@ When COGS is assigned with a date **after** the last completed week, automatic m
 ### Problem
 
 **Scenario:**
+
 - Last completed week: W46 (ended November 19, 2025)
 - COGS assigned: November 23-24, 2025 (AFTER last completed week)
 - Expected: Margin calculated for week W46 using temporal COGS lookup
 - Actual: Margin not shown (`current_margin_pct: null`)
 
 **Root Cause:**
+
 - Backend's `calculateAffectedWeeks()` returns empty array if `valid_from > last completed week end`
 - Automatic recalculation task is not enqueued
 - `weekly_margin_fact` table is not updated for historical weeks
@@ -1214,6 +1292,7 @@ When COGS is assigned with a date **after** the last completed week, automatic m
 ### Solution
 
 **Frontend Implementation:**
+
 1. **Warning Alert**: Shows when COGS `valid_from` date is after last completed week
 2. **Manual Recalculation Button**: Triggers `POST /v1/tasks/enqueue` for specific week
 3. **Recommendation**: Suggests assigning COGS with historical date for automatic recalculation
@@ -1225,6 +1304,7 @@ When COGS is assigned with a date **after** the last completed week, automatic m
 ### Usage
 
 **Automatic (Recommended):**
+
 ```typescript
 // Assign COGS with date DURING target week
 POST /v1/products/321678606/cogs
@@ -1237,6 +1317,7 @@ POST /v1/products/321678606/cogs
 ```
 
 **Manual (When Needed):**
+
 ```typescript
 // 1. Assign COGS with future date
 POST /v1/products/321678606/cogs
@@ -1263,10 +1344,11 @@ POST /v1/tasks/enqueue
 ### UI Behavior
 
 **Warning Alert** (shown in form):
+
 ```
 ⚠️ COGS назначен с даты после последней завершенной недели (2025-W46)
 
-Автоматический пересчет маржи для прошлых недель не запустится. 
+Автоматический пересчет маржи для прошлых недель не запустится.
 Если нужна маржа для 2025-W46, назначьте COGS с датой до или во время этой недели.
 
 [Пересчитать маржу для 2025-W46] ← Button
@@ -1275,25 +1357,30 @@ POST /v1/tasks/enqueue
 ### Technical Details
 
 **Files Created:**
+
 - `src/hooks/useManualMarginRecalculation.ts` - Hook for manual recalculation API call
 - Updated `src/components/custom/SingleCogsForm.tsx` - Warning alert and button
 
 **Helper Functions:**
+
 - `isCogsAfterLastCompletedWeek()` - Checks if COGS date is after last completed week
 - `getLastCompletedWeek()` - Calculates last completed week (matches backend logic)
 
 **API Endpoint:**
+
 - `POST /v1/tasks/enqueue` - Enqueue margin recalculation task
 - Response: `{ task_uuid, status, enqueued_at }`
 
 ### Documentation
 
 **Backend:**
+
 - Request #17: `docs/request-backend/17-cogs-assigned-after-completed-week-recalculation.md`
 - COGS Backdating Logic: `docs/COGS-BACKDATING-BUSINESS-LOGIC.md`
 - Epic 20 Overview: Backend documentation
 
 **Frontend:**
+
 - Story 4.1: `docs/stories/4.1.single-product-cogs-assignment.md` (updated with warning)
 - Story 4.8: `docs/stories/4.8.margin-recalculation-polling.md` (related polling feature)
 
@@ -1307,29 +1394,30 @@ POST /v1/tasks/enqueue
 
 **⚠️ Important**: Manual recalculation requires **Manager+** role.
 
-| Role | Manual Recalculation | View Margin |
-|------|---------------------|-------------|
-| Owner | ✅ Allowed | ✅ |
-| Manager | ✅ Allowed | ✅ |
-| Service | ✅ Allowed | ✅ |
-| Analyst | ❌ Hidden (403) | ✅ |
+| Role    | Manual Recalculation | View Margin |
+| ------- | -------------------- | ----------- |
+| Owner   | ✅ Allowed           | ✅          |
+| Manager | ✅ Allowed           | ✅          |
+| Service | ✅ Allowed           | ✅          |
+| Analyst | ❌ Hidden (403)      | ✅          |
 
 **Frontend Implementation:**
+
 - Button "Пересчитать вручную" hidden for Analyst users
 - Uses `canEnqueueTasks(role)` helper function
 - Files: `ProductMarginCell.tsx`, `SingleCogsForm.tsx`
 
 ### Task Types Reference
 
-| Task Type | Purpose | Status |
-|-----------|---------|--------|
-| `finances_weekly_ingest` | Import weekly financial data | Active |
-| `products_sync` | Sync product catalog | Active |
+| Task Type                   | Purpose                       | Status               |
+| --------------------------- | ----------------------------- | -------------------- |
+| `finances_weekly_ingest`    | Import weekly financial data  | Active               |
+| `products_sync`             | Sync product catalog          | Active               |
 | `recalculate_weekly_margin` | Recalculate margins for weeks | Active (recommended) |
-| `weekly_margin_aggregate` | Re-aggregate weekly data | Active |
-| `weekly_sanity_check` | Data quality validation | Active |
-| `publish_weekly_views` | Publish materialized views | Active |
-| `enrich_cogs` | Legacy margin calculation | **Deprecated** |
+| `weekly_margin_aggregate`   | Re-aggregate weekly data      | Active               |
+| `weekly_sanity_check`       | Data quality validation       | Active               |
+| `publish_weekly_views`      | Publish materialized views    | Active               |
+| `enrich_cogs`               | Legacy margin calculation     | **Deprecated**       |
 
 **Note:** `enrich_cogs` is deprecated. Use `recalculate_weekly_margin` instead.
 
@@ -1346,31 +1434,35 @@ After COGS assignment, automatic polling monitors margin calculation progress an
 ### Key Components
 
 **Hooks:**
+
 - `useMarginPolling.ts` - Generic polling hook with configurable intervals
 - `useSingleCogsAssignmentWithPolling.ts` - Single COGS + auto-polling
 - `useBulkCogsAssignmentWithPolling.ts` - Bulk COGS + batch polling
 - `useManualMarginRecalculation.ts` - Manual trigger via `POST /v1/tasks/enqueue`
 
 **Helper Functions:**
+
 - `margin-helpers.ts`:
   - `getLastCompletedWeek()` - Returns ISO week string for last completed week
   - `isCogsAfterLastCompletedWeek(validFrom)` - Checks if COGS date is after last completed week
   - `calculateAffectedWeeks(validFrom)` - Returns array of ISO weeks needing recalculation
 
 **Components:**
+
 - `MarginCalculationStatus.tsx` - Status display with warnings
 
 **Store:**
+
 - `marginPollingStore.ts` - Zustand store for polling state
 
 ### Polling Strategy
 
-| Operation | Interval | Max Attempts | Timeout |
-|-----------|----------|--------------|---------|
-| Single COGS | 5s | 12 | 1 min |
-| Historical COGS | 5s | 12 | Warning shown |
-| Bulk (≤100) | 3s | 20 | 1 min |
-| Bulk (>100) | 5s | 36 | 3 min |
+| Operation       | Interval | Max Attempts | Timeout       |
+| --------------- | -------- | ------------ | ------------- |
+| Single COGS     | 5s       | 12           | 1 min         |
+| Historical COGS | 5s       | 12           | Warning shown |
+| Bulk (≤100)     | 3s       | 20           | 1 min         |
+| Bulk (>100)     | 5s       | 36           | 3 min         |
 
 ### API Integration
 
@@ -1381,6 +1473,7 @@ After COGS assignment, automatic polling monitors margin calculation progress an
 ### Test Coverage
 
 23 unit tests:
+
 - 19 helper function tests (`margin-helpers.test.ts`)
 - 4 polling hook tests (`useMarginPolling.test.ts`)
 
@@ -1438,7 +1531,7 @@ const { user, token, login, logout } = useAuthStore()
 1. **TypeScript errors:** Run `npm run type-check`
 2. **ESLint errors:** Run `npm run lint:fix`
 3. **Build fails:** Check for files over 200 lines
-4. **API connection:** 
+4. **API connection:**
    - Default value `http://localhost:3000` works for local development
    - Verify `NEXT_PUBLIC_API_URL` in `.env.local` if you need a different URL
    - No warning needed - default is acceptable for development
@@ -1480,7 +1573,7 @@ const { user, token, login, logout } = useAuthStore()
    - Environment variables are optional (defaults work for local dev)
    - Initialize shadcn/ui components as needed
    - Choose your development mode:
-     - **Option A:** `npm run dev` (port 3000, standard Next.js)
+     - **Option A:** `npm run dev` (port 3100)
      - **Option B:** `pm2 start ecosystem.config.js --only wb-repricer-frontend-dev` (port 3100, PM2 managed)
 
 3. **Review UI/UX Specifications**
@@ -1525,45 +1618,48 @@ const { user, token, login, logout } = useAuthStore()
 **Что это**: Базовые TypeScript типы и React Query хуки для работы с API расходов на хранение.
 
 **Файлы**:
+
 - `src/types/storage-analytics.ts` - Типы данных
 - `src/lib/api/storage-analytics.ts` - API клиент
 - `src/hooks/useStorageAnalytics.ts` - React Query хуки
 
 **Доступные хуки**:
+
 ```typescript
 // Данные по товарам
-const { data } = useStorageBySku(weekStart, weekEnd, { brand, warehouse, limit });
+const { data } = useStorageBySku(weekStart, weekEnd, { brand, warehouse, limit })
 
 // Топ-потребители
-const { data } = useStorageTopConsumers(weekStart, weekEnd, { limit: 5, include_revenue: true });
+const { data } = useStorageTopConsumers(weekStart, weekEnd, { limit: 5, include_revenue: true })
 
 // Тренды
-const { data } = useStorageTrends(weekStart, weekEnd, { metrics: ['storage_cost'] });
+const { data } = useStorageTrends(weekStart, weekEnd, { metrics: ['storage_cost'] })
 
 // Импорт данных
-const mutation = usePaidStorageImport();
-await mutation.mutateAsync({ dateFrom: '2025-11-18', dateTo: '2025-11-24' });
+const mutation = usePaidStorageImport()
+await mutation.mutateAsync({ dateFrom: '2025-11-18', dateTo: '2025-11-24' })
 ```
 
 **Ключевые типы**:
+
 ```typescript
 interface StorageBySkuItem {
-  nm_id: string;
-  vendor_code: string | null;
-  product_name: string | null;
-  brand: string | null;
-  storage_cost_total: number;      // Общие расходы за период
-  storage_cost_avg_daily: number;  // Средние расходы в день
-  volume_avg: number | null;       // Средний объём (л)
-  warehouses: string[];            // Склады
-  days_stored: number;             // Дней хранения
+  nm_id: string
+  vendor_code: string | null
+  product_name: string | null
+  brand: string | null
+  storage_cost_total: number // Общие расходы за период
+  storage_cost_avg_daily: number // Средние расходы в день
+  volume_avg: number | null // Средний объём (л)
+  warehouses: string[] // Склады
+  days_stored: number // Дней хранения
 }
 
 interface TopConsumerItem {
-  rank: number;                           // Место в рейтинге
-  storage_cost: number;                   // Расходы на хранение
-  percent_of_total: number;               // % от общих расходов
-  storage_to_revenue_ratio?: number | null; // Соотношение к выручке
+  rank: number // Место в рейтинге
+  storage_cost: number // Расходы на хранение
+  percent_of_total: number // % от общих расходов
+  storage_to_revenue_ratio?: number | null // Соотношение к выручке
 }
 ```
 
@@ -1574,6 +1670,7 @@ interface TopConsumerItem {
 **Маршрут**: `/analytics/storage`
 
 **Компоненты страницы**:
+
 1. **Заголовок** с хлебными крошками: `Главная > Аналитика > Хранение`
 2. **Фильтры**:
    - Период (недели ISO): `2025-W44` - `2025-W47`
@@ -1590,6 +1687,7 @@ interface TopConsumerItem {
    - Полная таблица товаров
 
 **Дизайн-решения**:
+
 - Иконки: только Lucide (`Warehouse`, `TrendingUp`, `Trophy`, `List`)
 - Цветовая схема: фиолетовый (#7C4DFF) для хранения
 - Мобильная адаптация: горизонтальный скролл таблиц
@@ -1600,18 +1698,19 @@ interface TopConsumerItem {
 
 **Колонки таблицы**:
 
-| Колонка | Сортировка | Описание |
-|---------|------------|----------|
-| Артикул | ❌ | nm_id (клик → карточка товара) |
-| Название | ❌ | Обрезка 45 символов + tooltip |
-| Бренд | ❌ | Название бренда |
-| Хранение | ✅ | Общие расходы (₽) |
-| ₽/день | ✅ | Средние расходы в день |
-| Объём | ✅ | Средний объём (л) |
-| Склады | ❌ | Бейджи (2 видимых + "+N") |
-| Дней | ✅ | Количество дней хранения |
+| Колонка  | Сортировка | Описание                       |
+| -------- | ---------- | ------------------------------ |
+| Артикул  | ❌         | nm_id (клик → карточка товара) |
+| Название | ❌         | Обрезка 45 символов + tooltip  |
+| Бренд    | ❌         | Название бренда                |
+| Хранение | ✅         | Общие расходы (₽)              |
+| ₽/день   | ✅         | Средние расходы в день         |
+| Объём    | ✅         | Средний объём (л)              |
+| Склады   | ❌         | Бейджи (2 видимых + "+N")      |
+| Дней     | ✅         | Количество дней хранения       |
 
 **Особенности**:
+
 - **Поиск**: по артикулу или названию (дебаунс 500мс)
 - **Пагинация**: курсорная, 20 записей на страницу
 - **Бейджи складов**: показываем 2 склада + "+N" с tooltip
@@ -1619,15 +1718,17 @@ interface TopConsumerItem {
 - **Клик по строке**: переход на `/analytics/sku?nm_id={nm_id}`
 
 **Почему так работает**:
-- *Бейджи с overflow* - длинные списки складов не ломают вёрстку
-- *Обрезка 45 символов* - реальные названия WB очень длинные
-- *Дебаунс 500мс* - снижает нагрузку на API при поиске
+
+- _Бейджи с overflow_ - длинные списки складов не ломают вёрстку
+- _Обрезка 45 символов_ - реальные названия WB очень длинные
+- _Дебаунс 500мс_ - снижает нагрузку на API при поиске
 
 ### 24.4 Виджет "Топ-5 потребителей"
 
 **Что это**: Компактный виджет с товарами, которые больше всего тратят на хранение.
 
 **Визуальные элементы**:
+
 - 🏆 Место 1: иконка Trophy (золотая)
 - 🥈 Место 2: иконка Medal (серебряная)
 - 🥉 Место 3: иконка Medal (бронзовая)
@@ -1636,25 +1737,27 @@ interface TopConsumerItem {
 **Соотношение хранение/выручка**:
 Цветные индикаторы показывают эффективность товара:
 
-| Значение | Цвет | Статус |
-|----------|------|--------|
-| >20% | 🔴 Красный | Требует оптимизации |
-| 10-20% | 🟡 Жёлтый | Обратите внимание |
-| <10% | 🟢 Зелёный | Здоровое соотношение |
-| null | ⚫ Серый | Нет данных о выручке |
+| Значение | Цвет       | Статус               |
+| -------- | ---------- | -------------------- |
+| >20%     | 🔴 Красный | Требует оптимизации  |
+| 10-20%   | 🟡 Жёлтый  | Обратите внимание    |
+| <10%     | 🟢 Зелёный | Здоровое соотношение |
+| null     | ⚫ Серый   | Нет данных о выручке |
 
 **Tooltip**: объясняет что означает показатель и даёт рекомендации.
 
 **Почему так работает**:
-- *Иконки Lucide* - согласованность с дизайн-системой
-- *CSS-классы для цветов* - доступность и темизация
-- *Tooltip с рекомендациями* - помощь пользователю
+
+- _Иконки Lucide_ - согласованность с дизайн-системой
+- _CSS-классы для цветов_ - доступность и темизация
+- _Tooltip с рекомендациями_ - помощь пользователю
 
 ### 24.5 График трендов расходов
 
 **Что это**: Area-график динамики расходов на хранение по неделям.
 
 **Компоненты графика**:
+
 1. **Заголовок**: "Динамика расходов на хранение"
 2. **Бейдж тренда**:
    - `+5.2%` 🔴 (рост = плохо для расходов)
@@ -1666,14 +1769,16 @@ interface TopConsumerItem {
    - Заливка: фиолетовый градиент
 
 **Обработка пустых данных**:
+
 - Разрывы в графике (не интерполируем)
 - Пунктирный круг для недель без данных
 - Tooltip: "Нет данных за эту неделю"
 
 **Почему так работает**:
-- *Разрывы вместо интерполяции* - честная визуализация данных
-- *Красный для роста* - для расходов рост = негатив
-- *Фиолетовый цвет* - отличие от других графиков (красный = расходы, зелёный = доход)
+
+- _Разрывы вместо интерполяции_ - честная визуализация данных
+- _Красный для роста_ - для расходов рост = негатив
+- _Фиолетовый цвет_ - отличие от других графиков (красный = расходы, зелёный = доход)
 
 ### 24.6 Диалог ручного импорта
 
@@ -1699,15 +1804,17 @@ interface TopConsumerItem {
    - Ошибка: сообщение об ошибке + кнопка повтора
 
 **Закрытие во время импорта**:
+
 - Появляется подтверждение: "Импорт продолжится в фоновом режиме"
 - Можно закрыть диалог, импорт не прервётся
 
 **Инфо о расписании**: "Автоматический импорт: каждый вторник в 08:00 МСК"
 
 **Почему так работает**:
-- *8 дней максимум* - ограничение Wildberries API
-- *Индикатор без %* - бэкенд не возвращает прогресс
-- *Продолжение в фоне* - не теряем импорт при закрытии диалога
+
+- _8 дней максимум_ - ограничение Wildberries API
+- _Индикатор без %_ - бэкенд не возвращает прогресс
+- _Продолжение в фоне_ - не теряем импорт при закрытии диалога
 
 ### 24.7 Информация о хранении в карточке товара
 
@@ -1716,6 +1823,7 @@ interface TopConsumerItem {
 **Компонент**: `<ProductStorageInfo nmId="12345678" />`
 
 **Отображение**:
+
 ```
 📦 160 ₽/день (~4,800 ₽/мес)
 ```
@@ -1723,13 +1831,15 @@ interface TopConsumerItem {
 **Tooltip**: период данных, дневная стоимость, месячная оценка, объём
 
 **Ограничения**:
+
 - Компонент делает отдельный API-запрос
 - Не рекомендуется в списках (N+1 проблема)
 - Рекомендация: интегрировать storage_cost_daily в ProductListItem на бэкенде
 
 **Почему так работает**:
-- *Отдельный запрос* - пока нет интеграции в API продуктов
-- *Месячная оценка* - помогает понять масштаб расходов
+
+- _Отдельный запрос_ - пока нет интеграции в API продуктов
+- _Месячная оценка_ - помогает понять масштаб расходов
 
 ### 24.8 Алерт о высоком соотношении
 
@@ -1738,16 +1848,19 @@ interface TopConsumerItem {
 **Условие показа**: есть товары с соотношением хранение/выручка > 20%
 
 **Отображение**:
+
 ```
 ⚠️ 5 товаров с соотношением хранение/выручка > 20%
 ```
 
 **Tooltip с рекомендациями**:
+
 - < 10% — отлично 🟢
 - 10-20% — обратите внимание 🟡
 - > 20% — требует оптимизации 🔴
 
 Рекомендации:
+
 - Уменьшить запасы на складе
 - Повысить оборачиваемость
 - Рассмотреть вывод товара
@@ -1755,8 +1868,9 @@ interface TopConsumerItem {
 **Плюрализация**: "1 товар", "2 товара", "5 товаров" (русские правила)
 
 **Почему так работает**:
-- *Порог 20%* - решение PO на основе бизнес-анализа
-- *Tooltip с рекомендациями* - actionable insights для продавца
+
+- _Порог 20%_ - решение PO на основе бизнес-анализа
+- _Tooltip с рекомендациями_ - actionable insights для продавца
 
 ### File Structure
 
@@ -1786,24 +1900,24 @@ src/
 
 ### API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/analytics/storage/by-sku` | GET | Данные по SKU |
-| `/v1/analytics/storage/top-consumers` | GET | Топ потребители |
-| `/v1/analytics/storage/trends` | GET | Тренды по неделям |
-| `/v1/imports/paid-storage` | POST | Запуск импорта |
-| `/v1/imports/{id}` | GET | Статус импорта |
+| Endpoint                              | Method | Description       |
+| ------------------------------------- | ------ | ----------------- |
+| `/v1/analytics/storage/by-sku`        | GET    | Данные по SKU     |
+| `/v1/analytics/storage/top-consumers` | GET    | Топ потребители   |
+| `/v1/analytics/storage/trends`        | GET    | Тренды по неделям |
+| `/v1/imports/paid-storage`            | POST   | Запуск импорта    |
+| `/v1/imports/{id}`                    | GET    | Статус импорта    |
 
 ### Color Scheme
 
-| Element | Color | Usage |
-|---------|-------|-------|
-| Storage | `#7C4DFF` (Purple) | Charts, badges |
-| High cost | `#EF4444` (Red) | >20% ratio |
-| Medium cost | `#F59E0B` (Yellow) | 10-20% ratio |
-| Low cost | `#22C55E` (Green) | <10% ratio |
-| Trend up (bad) | `#DC2626` (Red) | Increasing costs |
-| Trend down (good) | `#16A34A` (Green) | Decreasing costs |
+| Element           | Color              | Usage            |
+| ----------------- | ------------------ | ---------------- |
+| Storage           | `#7C4DFF` (Purple) | Charts, badges   |
+| High cost         | `#EF4444` (Red)    | >20% ratio       |
+| Medium cost       | `#F59E0B` (Yellow) | 10-20% ratio     |
+| Low cost          | `#22C55E` (Green)  | <10% ratio       |
+| Trend up (bad)    | `#DC2626` (Red)    | Increasing costs |
+| Trend down (good) | `#16A34A` (Green)  | Decreasing costs |
 
 ### Testing
 
@@ -1827,6 +1941,7 @@ npm test -- --testPathPattern="storage"
 **Maintained by:** Development Team
 
 **Recent Updates:**
+
 - 2025-01-17: **Epic 24: Paid Storage Analytics** ✅ COMPLETE — QA Review PASS
   - 11 stories implemented (39 SP total)
   - 133 tests passing, 8 test files, 3.91s duration
@@ -1834,7 +1949,7 @@ npm test -- --testPathPattern="storage"
   - Multi-select brand/warehouse filters
   - Chart click-to-filter interaction
   - Full E2E test coverage
-  - QA Review: PASS - Ready for production deployment
+  - Historical source/unit QA: PASS; current live release certification pending
   - Route: `/analytics/storage`
 - 2025-01-17: **Epic 44: Price Calculator UI** ✅ COMPLETE
   - 6 stories implemented (14 SP total)
@@ -1915,4 +2030,3 @@ npm test -- --testPathPattern="storage"
 - 2025-11-22: Added Financial Data Structure section with all 9 expense categories
 - 2025-11-22: Updated API Response Structure with Request #06 changes (acquiring_fee_total, commission_sales_total)
 - 2025-11-22: Added payout_total formula with new expense fields
-

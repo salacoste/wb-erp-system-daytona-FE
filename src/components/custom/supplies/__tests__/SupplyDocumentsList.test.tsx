@@ -23,10 +23,12 @@ import {
   mockBarcodeDocument,
   mockAcceptanceActDocument,
   mockDocumentNoSize,
+} from '@/test/fixtures/supplies'
+import {
   mockSupplyClosed,
   mockSupplyDelivering,
   mockSupplyDelivered,
-} from '@/test/fixtures/supplies'
+} from '@/test/fixtures/supplies-responses'
 import type { SupplyDocument } from '@/types/supplies'
 
 const mockDocuments = [mockStickerDocumentPng, mockBarcodeDocument, mockAcceptanceActDocument]

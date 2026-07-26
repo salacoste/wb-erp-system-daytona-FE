@@ -176,20 +176,33 @@ describe('AnalyticsService', () => {
     })
 
     it('drops events when back-queue is full (>=100)', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new Error('fail'))
+      let rejectRequest: (reason?: unknown) => void
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementationOnce(
+        () =>
+          new Promise<Response>((_, reject) => {
+            rejectRequest = reject
+          })
+      )
 
-      // Fill back-queue to 100
+      service.track({ event_type: 'failed-batch', category: 'error', properties: {} })
+      const failedFlush = service.flush()
+
+      // Keep events tracked while the request is in-flight in the back-queue.
+      // Otherwise track() would auto-flush at 50 and invalidate this retry-limit scenario.
+      const autoFlushSpy = vi.spyOn(service, 'flush').mockResolvedValue(undefined)
       for (let i = 0; i < 100; i++) {
         service.track({ event_type: `back${i}`, category: 'behavior', properties: {} })
       }
 
-      // These events are in the queue already. Now flush will fail and try to re-add.
-      // But queue already has 100 items (flush moved them to eventsToSend then reset this.events=[])
-      // Actually: flush copies events, resets this.events=[], then on failure checks this.events.length < 100
-      // After reset, this.events.length is 0, so 100 < 100 is false → events are dropped
-      await service.flush()
+      rejectRequest!(new Error('fail'))
+      await failedFlush
 
-      expect(service.getQueueSize()).toBe(0)
+      // The full back-queue remains intact; only the failed in-flight batch is dropped.
+      expect(service.getQueueSize()).toBe(100)
+      expect(autoFlushSpy).toHaveBeenCalled()
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+
+      autoFlushSpy.mockRestore()
       fetchSpy.mockRestore()
     })
 

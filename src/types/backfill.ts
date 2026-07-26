@@ -13,13 +13,7 @@
 
 /** Possible backfill status states */
 export type BackfillStatus =
-  | 'idle'
-  | 'not_started'
-  | 'pending'
-  | 'in_progress'
-  | 'completed'
-  | 'failed'
-  | 'paused'
+  'idle' | 'not_started' | 'pending' | 'in_progress' | 'completed' | 'failed' | 'paused'
 
 /** Data source type for backfill */
 export type DataSource = 'api' | 'report' | 'none'

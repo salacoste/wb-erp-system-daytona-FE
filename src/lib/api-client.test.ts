@@ -50,295 +50,243 @@ describe('ApiClient', () => {
   })
 
   describe('GET requests', () => {
-    it(
-      'includes Authorization header when token is available',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: { id: '1' } }),
+    it('includes Authorization header when token is available', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: { id: '1' } }),
+      })
+
+      await apiClient.get('/v1/test')
+
+      expect(fetch).toHaveBeenCalledWith(
+        'http://localhost:3000/api/v1/test',
+        expect.objectContaining({
+          method: 'GET',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-jwt-token',
+            'X-Cabinet-Id': 'test-cabinet-id',
+          }),
         })
+      )
+    })
 
-        await apiClient.get('/v1/test')
+    it('skips auth headers when skipAuth is true', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: {} }),
+      })
 
-        expect(fetch).toHaveBeenCalledWith(
-          'http://localhost:3000/api/v1/test',
-          expect.objectContaining({
-            method: 'GET',
-            headers: expect.objectContaining({
-              Authorization: 'Bearer test-jwt-token',
-              'X-Cabinet-Id': 'test-cabinet-id',
-            }),
-          })
-        )
-      },
-      { timeout: 5000 }
-    )
+      await apiClient.get('/v1/auth/public', { skipAuth: true })
 
-    it(
-      'skips auth headers when skipAuth is true',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: {} }),
+      expect(fetch).toHaveBeenCalledWith(
+        'http://localhost:3000/api/v1/auth/public',
+        expect.objectContaining({
+          headers: expect.not.objectContaining({
+            Authorization: expect.anything(),
+          }),
         })
-
-        await apiClient.get('/v1/auth/public', { skipAuth: true })
-
-        expect(fetch).toHaveBeenCalledWith(
-          'http://localhost:3000/api/v1/auth/public',
-          expect.objectContaining({
-            headers: expect.not.objectContaining({
-              Authorization: expect.anything(),
-            }),
-          })
-        )
-      },
-      { timeout: 5000 }
-    )
+      )
+    })
   })
 
   describe('POST requests', () => {
-    it(
-      'sends JSON body and includes auth headers',
-      async () => {
-        const requestData = { name: 'Test' }
+    it('sends JSON body and includes auth headers', { timeout: 5000 }, async () => {
+      const requestData = { name: 'Test' }
 
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: { id: '1', name: 'Test' } }),
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: { id: '1', name: 'Test' } }),
+      })
+
+      await apiClient.post('/v1/test', requestData)
+
+      expect(fetch).toHaveBeenCalledWith(
+        'http://localhost:3000/api/v1/test',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify(requestData),
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-jwt-token',
+            'X-Cabinet-Id': 'test-cabinet-id',
+          }),
         })
-
-        await apiClient.post('/v1/test', requestData)
-
-        expect(fetch).toHaveBeenCalledWith(
-          'http://localhost:3000/api/v1/test',
-          expect.objectContaining({
-            method: 'POST',
-            body: JSON.stringify(requestData),
-            headers: expect.objectContaining({
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer test-jwt-token',
-              'X-Cabinet-Id': 'test-cabinet-id',
-            }),
-          })
-        )
-      },
-      { timeout: 5000 }
-    )
+      )
+    })
   })
 
   describe('Error handling', () => {
-    it(
-      'throws ApiError for 4xx responses',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: false,
-          status: 400,
-          statusText: 'Bad Request',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ message: 'Validation error' }),
-        })
+    it('throws ApiError for 4xx responses', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ message: 'Validation error' }),
+      })
 
-        await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
+      await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
 
-        // Verify error details in separate call
-        mockFetch.mockResolvedValueOnce({
-          ok: false,
-          status: 400,
-          statusText: 'Bad Request',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ message: 'Validation error' }),
-        })
+      // Verify error details in separate call
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ message: 'Validation error' }),
+      })
 
-        try {
-          await apiClient.get('/v1/test')
-          expect.fail('Should have thrown ApiError')
-        } catch (error) {
-          expect(error).toBeInstanceOf(ApiError)
-          expect((error as ApiError).status).toBe(400)
-          expect((error as ApiError).message).toBe('Validation error')
-        }
-      },
-      { timeout: 5000 }
-    )
+      try {
+        await apiClient.get('/v1/test')
+        expect.fail('Should have thrown ApiError')
+      } catch (error) {
+        expect(error).toBeInstanceOf(ApiError)
+        expect((error as ApiError).status).toBe(400)
+        expect((error as ApiError).message).toBe('Validation error')
+      }
+    })
 
-    it(
-      'throws ApiError for 5xx responses',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: false,
-          status: 500,
-          statusText: 'Internal Server Error',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ message: 'Server error' }),
-        })
+    it('throws ApiError for 5xx responses', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ message: 'Server error' }),
+      })
 
-        await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
-      },
-      { timeout: 5000 }
-    )
+      await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
+    })
 
-    it(
-      'handles network errors',
-      async () => {
-        mockFetch.mockRejectedValueOnce(new Error('Network error'))
+    it('handles network errors', { timeout: 5000 }, async () => {
+      mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
-        await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
+      await expect(apiClient.get('/v1/test')).rejects.toThrow(ApiError)
 
-        // Verify error details in separate call
-        mockFetch.mockRejectedValueOnce(new Error('Network error'))
+      // Verify error details in separate call
+      mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
-        try {
-          await apiClient.get('/v1/test')
-          expect.fail('Should have thrown ApiError')
-        } catch (error) {
-          expect(error).toBeInstanceOf(ApiError)
-          expect((error as ApiError).status).toBe(0)
-        }
-      },
-      { timeout: 5000 }
-    )
+      try {
+        await apiClient.get('/v1/test')
+        expect.fail('Should have thrown ApiError')
+      } catch (error) {
+        expect(error).toBeInstanceOf(ApiError)
+        expect((error as ApiError).status).toBe(0)
+      }
+    })
   })
 
   describe('Response transformation', () => {
-    it(
-      'handles wrapped response { data: T }',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: { id: '1', name: 'Test' } }),
-        })
+    it('handles wrapped response { data: T }', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: { id: '1', name: 'Test' } }),
+      })
 
-        const result = await apiClient.get<{ id: string; name: string }>('/v1/test')
+      const result = await apiClient.get<{ id: string; name: string }>('/v1/test')
 
-        expect(result).toEqual({ id: '1', name: 'Test' })
-      },
-      { timeout: 5000 }
-    )
+      expect(result).toEqual({ id: '1', name: 'Test' })
+    })
 
-    it(
-      'handles direct response T',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ id: '1', name: 'Test' }),
-        })
+    it('handles direct response T', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ id: '1', name: 'Test' }),
+      })
 
-        const result = await apiClient.get<{ id: string; name: string }>('/v1/test')
+      const result = await apiClient.get<{ id: string; name: string }>('/v1/test')
 
-        expect(result).toEqual({ id: '1', name: 'Test' })
-      },
-      { timeout: 5000 }
-    )
+      expect(result).toEqual({ id: '1', name: 'Test' })
+    })
 
-    it(
-      'handles non-JSON responses',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'text/plain' }),
-          text: async () => 'Success',
-        })
+    it('handles non-JSON responses', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/plain' }),
+        text: async () => 'Success',
+      })
 
-        const result = await apiClient.get<string>('/v1/test')
+      const result = await apiClient.get<string>('/v1/test')
 
-        expect(result).toBe('Success')
-      },
-      { timeout: 5000 }
-    )
+      expect(result).toBe('Success')
+    })
   })
 
   describe('HTTP methods', () => {
-    it(
-      'supports PUT requests',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: {} }),
-        })
+    it('supports PUT requests', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: {} }),
+      })
 
-        await apiClient.put('/v1/test', { name: 'Updated' })
+      await apiClient.put('/v1/test', { name: 'Updated' })
 
-        expect(fetch).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({ method: 'PUT' })
-        )
-      },
-      { timeout: 5000 }
-    )
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ method: 'PUT' })
+      )
+    })
 
-    it(
-      'supports PATCH requests',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: {} }),
-        })
+    it('supports PATCH requests', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: {} }),
+      })
 
-        await apiClient.patch('/v1/test', { name: 'Patched' })
+      await apiClient.patch('/v1/test', { name: 'Patched' })
 
-        expect(fetch).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({ method: 'PATCH' })
-        )
-      },
-      { timeout: 5000 }
-    )
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ method: 'PATCH' })
+      )
+    })
 
-    it(
-      'supports DELETE requests',
-      async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: {} }),
-        })
+    it('supports DELETE requests', { timeout: 5000 }, async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: {} }),
+      })
 
-        await apiClient.delete('/v1/test')
+      await apiClient.delete('/v1/test')
 
-        expect(fetch).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({ method: 'DELETE' })
-        )
-      },
-      { timeout: 5000 }
-    )
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ method: 'DELETE' })
+      )
+    })
   })
 
   describe('Missing token/cabinet ID', () => {
-    it(
-      'works without token when skipAuth is true',
-      async () => {
-        vi.mocked(useAuthStore.getState).mockReturnValueOnce({
-          token: null,
-          cabinetId: null,
-        } as never)
+    it('works without token when skipAuth is true', { timeout: 5000 }, async () => {
+      vi.mocked(useAuthStore.getState).mockReturnValueOnce({
+        token: null,
+        cabinetId: null,
+      } as never)
 
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({ data: {} }),
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ data: {} }),
+      })
+
+      await apiClient.get('/v1/public', { skipAuth: true })
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.not.objectContaining({
+            Authorization: expect.anything(),
+          }),
         })
-
-        await apiClient.get('/v1/public', { skipAuth: true })
-
-        expect(fetch).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({
-            headers: expect.not.objectContaining({
-              Authorization: expect.anything(),
-            }),
-          })
-        )
-      },
-      { timeout: 5000 }
-    )
+      )
+    })
   })
 })

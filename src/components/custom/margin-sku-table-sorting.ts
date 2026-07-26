@@ -6,13 +6,7 @@ import type { MarginAnalyticsSku } from '@/types/api'
 
 // Story 6.3-FE: Added roi and profit_per_unit sort fields
 export type SortField =
-  | 'margin_pct'
-  | 'revenue_net'
-  | 'sa_name'
-  | 'profit'
-  | 'qty'
-  | 'roi'
-  | 'profit_per_unit'
+  'margin_pct' | 'revenue_net' | 'sa_name' | 'profit' | 'qty' | 'roi' | 'profit_per_unit'
 export type SortOrder = 'asc' | 'desc'
 
 // Helper: Get operating profit from API (includes all expenses)

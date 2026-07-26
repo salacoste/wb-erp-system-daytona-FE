@@ -43,11 +43,11 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 describe('CampaignSelector', () => {
-  let onSelectionChange: ReturnType<typeof vi.fn>
+  let onSelectionChange: ReturnType<typeof vi.fn<(ids: number[]) => void>>
 
   beforeEach(() => {
     setupMockAuth()
-    onSelectionChange = vi.fn()
+    onSelectionChange = vi.fn<(ids: number[]) => void>()
   })
 
   afterEach(() => {

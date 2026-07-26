@@ -204,39 +204,6 @@ export const mockDocumentNoSize: SupplyDocument = {
 }
 
 // =============================================================================
-// Re-exports from supplies-responses.ts
-// =============================================================================
-
-export {
-  mockSupplyOpen,
-  mockSupplyClosed,
-  mockSupplyDelivering,
-  mockSupplyDelivered,
-  mockSupplyCancelled,
-  mockSupplyEmpty,
-  mockSuppliesListResponse,
-  mockSuppliesListResponseEmpty,
-  mockSuppliesListResponsePaginated,
-  mockSupplyDetailResponse,
-  mockSupplyDetailResponseNoRateLimit,
-  mockCreateSupplyRequestEmpty,
-  mockCreateSupplyRequestWithName,
-  mockCreateSupplyResponse,
-  mockAddOrdersRequest,
-  mockAddOrdersResponse,
-  mockAddOrdersResponsePartial,
-  mockRemoveOrdersRequest,
-  mockRemoveOrdersResponse,
-  mockCloseSupplyResponse,
-  mockGenerateStickersRequestPng,
-  mockGenerateStickersRequestSvg,
-  mockGenerateStickersRequestZpl,
-  mockGenerateStickersResponsePng,
-  mockGenerateStickersResponseSvg,
-  mockGenerateStickersResponseZpl,
-} from './supplies-responses'
-
-// =============================================================================
 // Error Fixtures
 // =============================================================================
 

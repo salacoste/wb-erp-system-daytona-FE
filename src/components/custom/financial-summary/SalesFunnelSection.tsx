@@ -25,13 +25,11 @@ export function SalesFunnelSection({
   // the per-region (rus/eaeu) name. The legacy retail_price_total_total is a ghost field (always
   // undefined) kept only as a defensive fallback. Reading combined FIRST fixes the funnel card
   // being hidden on the default summary_total view (verified vs backend finance-mapping.service.ts:271).
-  if (
-    !(
-      summary.retail_price_total_combined ||
-      summary.retail_price_total_total ||
-      summary.retail_price_total
-    )
-  ) {
+  if (!(
+    summary.retail_price_total_combined ||
+    summary.retail_price_total_total ||
+    summary.retail_price_total
+  )) {
     return null
   }
 

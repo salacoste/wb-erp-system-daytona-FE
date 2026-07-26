@@ -15,6 +15,8 @@ import {
   mockGenerateStickersResponsePng,
   mockGenerateStickersResponseSvg,
   mockGenerateStickersResponseZpl,
+} from '@/test/fixtures/supplies-responses'
+import {
   mockSyncSuppliesResponse,
   mockSyncSuppliesResponseNoChanges,
   mockErrorNotFound,

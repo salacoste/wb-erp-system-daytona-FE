@@ -52,15 +52,15 @@ describe('invalidateProductQueries', () => {
 })
 
 describe('usePollingHandlers', () => {
-  let removePollingProduct: ReturnType<typeof vi.fn>
-  let setPollingConfig: ReturnType<typeof vi.fn>
-  let setPollingNmId: ReturnType<typeof vi.fn>
+  let removePollingProduct: ReturnType<typeof vi.fn<(nmId: string) => void>>
+  let setPollingConfig: ReturnType<typeof vi.fn<(config: null) => void>>
+  let setPollingNmId: ReturnType<typeof vi.fn<(nmId: null) => void>>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    removePollingProduct = vi.fn()
-    setPollingConfig = vi.fn()
-    setPollingNmId = vi.fn()
+    removePollingProduct = vi.fn<(nmId: string) => void>()
+    setPollingConfig = vi.fn<(config: null) => void>()
+    setPollingNmId = vi.fn<(nmId: null) => void>()
   })
 
   it('returns handler functions', () => {

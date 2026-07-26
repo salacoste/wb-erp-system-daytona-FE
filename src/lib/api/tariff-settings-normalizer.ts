@@ -27,13 +27,11 @@ export function normalizeTariffSettings(raw: unknown): TariffSettings {
       r.acceptance_box_rate_per_liter ?? r.acceptanceBoxRatePerLiter ?? 0
     ),
     acceptance_pallet_rate: Number(r.acceptance_pallet_rate ?? r.acceptancePalletRate ?? 0),
-    logistics_volume_tiers: tiers.map(
-      (t): VolumeTier => ({
-        min: Number(t.min ?? 0),
-        max: Number(t.max ?? 0),
-        rate: Number(t.rate ?? 0),
-      })
-    ),
+    logistics_volume_tiers: tiers.map((t): VolumeTier => ({
+      min: Number(t.min ?? 0),
+      max: Number(t.max ?? 0),
+      rate: Number(t.rate ?? 0),
+    })),
     logistics_large_first_liter_rate: Number(
       r.logistics_large_first_liter_rate ?? r.logisticsLargeFirstLiterRate ?? 0
     ),

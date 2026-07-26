@@ -24,8 +24,8 @@ import {
   mockSupplyDelivered,
   mockSupplyCancelled,
   mockSupplyEmpty,
-  mockSupplyListItemNoName,
-} from '@/test/fixtures/supplies'
+} from '@/test/fixtures/supplies-responses'
+import { mockSupplyListItemNoName } from '@/test/fixtures/supplies'
 import type { Supply } from '@/types/supplies'
 
 function renderHeader(overrides: Partial<Parameters<typeof SupplyHeader>[0]> = {}) {

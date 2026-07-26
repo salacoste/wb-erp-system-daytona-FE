@@ -73,8 +73,7 @@ export function transformToMetrics(response: OrdersVolumeResponse): OrdersVolume
   // Handle daily breakdown - by_day (snake_case) or dailyTrend (camelCase)
   let dailyBreakdown = raw.by_day as OrdersVolumeMetrics['dailyBreakdown']
   const dailyTrend = raw.dailyTrend as
-    | Array<{ date: string; count: number; amount?: number }>
-    | undefined
+    Array<{ date: string; count: number; amount?: number }> | undefined
   if (!dailyBreakdown && Array.isArray(dailyTrend)) {
     dailyBreakdown = dailyTrend.map(d => ({
       date: d.date,

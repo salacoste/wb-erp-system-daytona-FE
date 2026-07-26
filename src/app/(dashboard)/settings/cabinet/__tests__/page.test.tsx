@@ -25,7 +25,7 @@ vi.mock('@/components/custom/settings/JamStatusBadge', () => ({
 }))
 
 // Mock auth store
-const mockCabinetId = vi.fn<[], string | null>()
+const mockCabinetId = vi.fn<() => string | null>()
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: (selector: (state: { cabinetId: string | null }) => string | null) =>
     selector({ cabinetId: mockCabinetId() }),

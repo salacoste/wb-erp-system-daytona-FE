@@ -15,7 +15,7 @@ vi.mock('next/navigation', () => ({
 }))
 
 // --- Mock auth store ---
-const mockCabinetId = vi.fn<[], string | null>()
+const mockCabinetId = vi.fn<() => string | null>()
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: (selector: (s: { cabinetId: string | null }) => string | null) =>
     selector({ cabinetId: mockCabinetId() }),

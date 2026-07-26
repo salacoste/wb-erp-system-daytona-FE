@@ -18,7 +18,7 @@ vi.mock('@/lib/analytics/telegram-metrics', () => ({
 }))
 
 // Mock useTelegramBinding hook
-const mockIsBound = vi.fn<[], boolean>()
+const mockIsBound = vi.fn<() => boolean>()
 vi.mock('@/hooks/useTelegramBinding', () => ({
   useTelegramBinding: () => ({
     isBound: mockIsBound(),

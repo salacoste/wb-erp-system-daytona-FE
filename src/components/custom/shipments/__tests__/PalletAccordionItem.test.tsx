@@ -31,11 +31,11 @@ const mockPallet: Pallet = {
   updatedAt: '2026-01-01T00:00:00Z',
 }
 
-let mockOnRemove: ReturnType<typeof vi.fn>
+let mockOnRemove: ReturnType<typeof vi.fn<(palletId: string) => void>>
 
 describe('PalletAccordionItem', () => {
   beforeEach(() => {
-    mockOnRemove = vi.fn()
+    mockOnRemove = vi.fn<(palletId: string) => void>()
   })
 
   it('renders pallet number and box line count', () => {

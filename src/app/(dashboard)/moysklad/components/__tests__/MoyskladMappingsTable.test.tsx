@@ -19,9 +19,9 @@ import type { MoyskladMappingsResponse, MoyskladProductMapping } from '@/types/m
 
 // Mock the mappings hook (controlled per-test via mockReturnValue).
 // Captures the params passed to each call so pager navigation is observable.
-const useMoyskladMappingsMock = vi.fn()
+const useMoyskladMappingsMock = vi.fn<(params?: MappingsParams) => unknown>()
 vi.mock('@/hooks/useMoyskladQueries', () => ({
-  useMoyskladMappings: (...args: unknown[]) => useMoyskladMappingsMock(...args),
+  useMoyskladMappings: (...args: [params?: MappingsParams]) => useMoyskladMappingsMock(...args),
   useMoyskladHealth: vi.fn(() => ({ data: undefined, isLoading: false })),
   useMoyskladOrganizations: vi.fn(() => ({ data: [] })),
   useLinkMapping: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),

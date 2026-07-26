@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "provider": "v8",
+  "reporter": ["text", "json", "json-summary", "html"],
+  "include": ["src/**/*.{ts,tsx}"],
+  "exclude": [
+    "node_modules/**",
+    "src/test/**",
+    "src/**/*.test.{ts,tsx}",
+    "src/**/__tests__/**",
+    "e2e/**",
+    "**/*.d.ts",
+    "**/*.config.*",
+    "**/mockData/**"
+  ]
+}

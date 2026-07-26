@@ -18,6 +18,20 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT_DIR="$ROOT/scripts"
+ESLINT_BIN="${ESLINT_BIN_OVERRIDE:-$ROOT/node_modules/.bin/eslint}"
+CREATED_FILES=()
+
+cleanup() {
+  if [[ ${#CREATED_FILES[@]} -gt 0 ]]; then
+    rm -f "${CREATED_FILES[@]}"
+  fi
+}
+trap cleanup EXIT
+
+if [[ ! -x "$ESLINT_BIN" ]]; then
+  echo "AP#8 infrastructure error: ESLint binary is missing or not executable: $ESLINT_BIN" >&2
+  exit 2
+fi
 
 [[ "${1:-}" == "--help" ]] && { echo "Usage: $0 [--self-test|--help]"; exit 0; }
 if [[ -n "${1:-}" && "${1:-}" != "--self-test" ]]; then
@@ -30,8 +44,17 @@ FAIL=0
 # Run ESLint on a file INSIDE the frontend so the flat-config override matches by
 # path glob. $1 = absolute path to a temp file already placed under src/lib/api.
 run_eslint() {
-  local file="$1"
-  cd "$ROOT" && npx eslint "$file" 2>&1 | grep 'no-restricted-syntax' || true
+  local file="$1" output status
+  set +e
+  output=$(cd "$ROOT" && "$ESLINT_BIN" "$file" 2>&1)
+  status=$?
+  set -e
+  if [[ $status -gt 1 ]]; then
+    echo "AP#8 infrastructure error: ESLint exited with status $status" >&2
+    printf '%s\n' "$output" >&2
+    return "$status"
+  fi
+  printf '%s\n' "$output"
 }
 
 # assert_fires <label> <basename-with-ext> <code>
@@ -39,6 +62,7 @@ run_eslint() {
 assert_fires() {
   local label="$1" name="$2" code="$3"
   local srcfile="$ROOT/src/lib/api/_ap8n_test_tmp_${name}"
+  CREATED_FILES+=("$srcfile")
   printf '/* eslint-disable @typescript-eslint/no-unused-vars */\n%s\n' "$code" > "$srcfile"
   local out; out=$(run_eslint "$srcfile"); rm -f "$srcfile"
   if echo "$out" | grep -q 'no-restricted-syntax'; then
@@ -52,6 +76,7 @@ assert_fires() {
 assert_silent() {
   local label="$1" name="$2" code="$3"
   local srcfile="$ROOT/src/lib/api/_ap8n_test_tmp_${name}"
+  CREATED_FILES+=("$srcfile")
   printf '/* eslint-disable @typescript-eslint/no-unused-vars */\n%s\n' "$code" > "$srcfile"
   local out; out=$(run_eslint "$srcfile"); rm -f "$srcfile"
   if echo "$out" | grep -q 'no-restricted-syntax'; then

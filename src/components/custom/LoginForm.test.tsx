@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -22,21 +22,6 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
 }))
 
-// Mock window.location
-const originalLocation = window.location
-
-beforeAll(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsdom Location is read-only; must delete+reassign for redirect tests
-  delete (window as any).location
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsdom Location mock for redirect tests
-  ;(window as any).location = { ...originalLocation, href: '' }
-})
-
-afterAll(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- restore original Location after tests
-  window.location = originalLocation as any
-})
-
 // Mock sonner
 vi.mock('sonner', () => ({
   toast: {
@@ -53,6 +38,7 @@ vi.mock('@/stores/authStore', () => ({
 describe('LoginForm', () => {
   let queryClient: QueryClient
   const mockLogin = vi.fn()
+  const mockNavigate = vi.fn()
 
   beforeEach(() => {
     queryClient = new QueryClient({
@@ -76,7 +62,7 @@ describe('LoginForm', () => {
   const renderForm = () => {
     return render(
       <QueryClientProvider client={queryClient}>
-        <LoginForm />
+        <LoginForm navigate={mockNavigate} />
       </QueryClientProvider>
     )
   }
@@ -332,9 +318,6 @@ describe('LoginForm', () => {
       token: 'fake-token',
     })
 
-    // Clear any existing href before test
-    window.location.href = ''
-
     renderForm()
 
     await user.type(screen.getByLabelText(/email/i), 'test@example.com')
@@ -343,7 +326,7 @@ describe('LoginForm', () => {
 
     await waitFor(
       () => {
-        expect(window.location.href).toBe('/dashboard')
+        expect(mockNavigate).toHaveBeenCalledWith('/dashboard')
       },
       { timeout: 5000 }
     )

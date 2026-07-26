@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "waiver-validation.v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "result",
+    "mode",
+    "selectedPolicy",
+    "selectedPolicyDigest",
+    "selectionDigest",
+    "owner",
+    "issue",
+    "reason",
+    "metrics",
+    "scope",
+    "baselineReduction",
+    "controls",
+    "revocation",
+    "created_at",
+    "expires_at",
+    "approvals",
+    "validatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "result": { "const": "PASS" },
+    "mode": { "const": "waiver" },
+    "selectedPolicy": {
+      "type": "string",
+      "pattern": "^quality/coverage-waivers/[A-Za-z0-9](?:[A-Za-z0-9_-]*[A-Za-z0-9])?\\.v1\\.json$"
+    },
+    "selectedPolicyDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "selectionDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "owner": { "type": "string", "minLength": 1 },
+    "issue": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string", "minLength": 1 },
+    "metrics": { "const": ["statements", "branches", "functions", "lines"] },
+    "scope": { "const": "frontend-global-coverage-non-regression" },
+    "baselineReduction": { "const": false },
+    "controls": { "type": "string", "minLength": 1 },
+    "revocation": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "approvals": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["name", "role", "approved_at"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "role": { "enum": ["Frontend Tech Lead", "QA Owner"] },
+          "approved_at": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "validatedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

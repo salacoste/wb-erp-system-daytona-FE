@@ -1,19 +1,48 @@
 # UI Deep Validation Report
 
 ## Validation Date: 2026-02-21
+
 ## Scope: All pages, business logic, data correctness, filter behavior
+
+---
+
+## Current certification boundary (2026-07-26)
+
+Parts 1–7 below are historical validation material and methodology, not proof that a current immutable release candidate ran live.
+
+- **Release Authorization:** **NO-GO** for an unconditional production release.
+- **Certification boundary:** runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**.
+- **Runtime contract:** lockfile-resolved Next.js 16.2.10; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` and `npm run start` bind the frontend to port 3100.
+- **Current inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
+- **Integrated evidence base:** 49/49 expected outcomes matched before documentation reconciliation; no later documentation/reseal total is claimed here. TypeScript, lint, format, AP8, and coverage governance 27/27 passed.
+- **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
+- **Static/unit and coverage evidence:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. Isolated candidate-index coverage recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. The actual repository index reports the canonical selection as `NOT_TRACKED` and fails closed with exit 1; the isolated candidate index was local-only, did not stage or change the actual index, and has no release effect.
+- **AP8/build evidence:** the Node 24 rule/normalizer lanes and isolated Node 25 compatibility lane passed. Two Next.js 16.2.10 production builds generated 67/67 pages with strict source/candidate/runtime inputs invariant. The first build normalized generated `next-env.d.ts`, which then remained stable; incident 034 separates that generated-input event from the strict inputs. Build IDs and output digests differed, so bit-for-bit reproducibility is not claimed.
+- **Tier-0 evidence:** helper Vitest passed 8/8, safety passed 72/72, and static discovery lists 24 tests in exactly 2 files. Missing-descriptor execution exited 3 and produced 38/38 `BLOCKED`, 0 `PASS`, and 0 `FAIL`; the malformed-descriptor negative exited 1. Orders Integrity source/unit and its dedicated live contract are authored, but no credentialed live `PASS` exists.
+- **Candidate/external blockers:** the candidate is dirty and uncommitted. Immutable publication/receipt, an externally published runtime-input manifest, a trusted signed sandbox plus execution/cleanup authority, ECC, RRC, CERT-F01, and external attestation are absent.
+- **Evidence:** durable sanitized [G006 frontend readiness summary](evidence/frontend-readiness-g006-20260726.md); its source root `.omx/tmp/g006-final-integrated-20260726T002604Z` is local and transient.
+
+```bash
+find src/app -type f -name 'page.tsx' -print | LC_ALL=C sort -u | wc -l
+find src -type f \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \) -print | LC_ALL=C sort -u | wc -l
+find e2e tests/e2e -type f -name '*.spec.ts' -print | LC_ALL=C sort -u | wc -l
+npm run test:tier0:list
+```
 
 ---
 
 ## Part 1: Page Load Validation (30 pages)
 
 ### 1. Public Pages
+
 - [x] `/`, `/login`, `/register` — redirect to dashboard when authenticated ✅
 
 ### 2. Dashboard
+
 - [x] `/dashboard` (week & month modes) — all APIs 200, no console errors ✅
 
 ### 3. Analytics (15 pages)
+
 - [x] `/analytics`, `/analytics/sku`, `/analytics/brand`, `/analytics/category` ✅
 - [x] `/analytics/unit-economics`, `/analytics/advertising`, `/analytics/orders` ✅
 - [x] `/analytics/funnel`, `/analytics/buyout`, `/analytics/returns` ✅
@@ -22,12 +51,14 @@
 - [x] `/analytics/time-period` ❌ API 400: `includeCogs should not exist`
 
 ### 4. Management
+
 - [x] `/orders`, `/cogs`, `/cogs/price-calculator` ✅
 - [x] `/supplies` ❌ API 400: `sort_by, sort_order should not exist`
 
 ### 5. Settings & Monitoring
+
 - [x] `/settings/notifications`, `/monitoring` ✅
-- [x] `/settings` → 404 (no landing page)
+- [x] Historical run: `/settings` returned 404. Current source has `src/app/(dashboard)/settings/page.tsx`, which redirects to `/settings/notifications`; live rendering remains unverified without ECC.
 - [x] `/settings/tariffs`, `/settings/backfill` → redirect to dashboard (admin-only)
 
 **Page load score: 25/30 (83%)**
@@ -37,57 +68,58 @@
 ## Part 2: Business Logic Deep Validation
 
 ### Method
+
 - Fetched raw API responses via `curl` for W07 and W06
 - Compared every dashboard metric against raw API values
 - Cross-validated totals between Dashboard, SKU analytics, Fulfillment, and Advertising
 
 ### 2.1 Dashboard Metrics vs API Data (Week W07)
 
-| Metric | Dashboard | API Field | Source | Match |
-|--------|-----------|-----------|--------|-------|
-| Заказы, шт | 301 | fulfillment.total.ordersCount | fulfillment/summary | ✅ |
-| Заказы (РРЦ), ₽ | 646 426,87 | fulfillment.total.ordersRevenue | fulfillment/summary | ✅ |
-| Заказы (со скидкой), ₽ | 225 878,24 | fulfillment.total.ordersRevenueDiscounted | fulfillment/summary | ✅ |
-| Выкупы, ₽ | 112 677,88 | summary_total.wb_sales_gross_total | finance-summary | ✅ |
-| Выкупы, шт | 167 | fulfillment.fbo.salesCount | fulfillment/summary | ⚠️ see #1 |
-| Возвраты, ₽ | 0 | summary_total.returns_gross_total | finance-summary | ✅ |
-| Продажи (розница) | 180 771,02 | summary_total.sale_gross_total | finance-summary | ✅ |
-| Удержания WB | 34 867,93 | commission_sales + acquiring + wb_promotion | finance-summary | ✅ |
-| Логистика | 23 608,53 | summary_total.logistics_cost_total | finance-summary | ✅ |
-| Хранение и приёмка | 1 787,07 | storage_cost (1487.07) + paid_acceptance (300) | finance-summary | ✅ |
-| К перечислению | 78 890,39 | summary_total.payout_total | finance-summary | ✅ |
-| Себестоимость | 54 020 | summary_total.cogs_total | finance-summary | ✅ |
-| Реклама | 6 314,22 | advertising.totalSpend | advertising API | ✅ |
-| Валовая прибыль | 126 751,02 | sale_gross - cogs | calculated | ⚠️ see #2 |
-| Маржинальность | 70.1% | (sale_gross - cogs) / sale_gross | calculated | ⚠️ see #3 |
+| Metric                 | Dashboard  | API Field                                      | Source              | Match     |
+| ---------------------- | ---------- | ---------------------------------------------- | ------------------- | --------- |
+| Заказы, шт             | 301        | fulfillment.total.ordersCount                  | fulfillment/summary | ✅        |
+| Заказы (РРЦ), ₽        | 646 426,87 | fulfillment.total.ordersRevenue                | fulfillment/summary | ✅        |
+| Заказы (со скидкой), ₽ | 225 878,24 | fulfillment.total.ordersRevenueDiscounted      | fulfillment/summary | ✅        |
+| Выкупы, ₽              | 112 677,88 | summary_total.wb_sales_gross_total             | finance-summary     | ✅        |
+| Выкупы, шт             | 167        | fulfillment.fbo.salesCount                     | fulfillment/summary | ⚠️ see #1 |
+| Возвраты, ₽            | 0          | summary_total.returns_gross_total              | finance-summary     | ✅        |
+| Продажи (розница)      | 180 771,02 | summary_total.sale_gross_total                 | finance-summary     | ✅        |
+| Удержания WB           | 34 867,93  | commission_sales + acquiring + wb_promotion    | finance-summary     | ✅        |
+| Логистика              | 23 608,53  | summary_total.logistics_cost_total             | finance-summary     | ✅        |
+| Хранение и приёмка     | 1 787,07   | storage_cost (1487.07) + paid_acceptance (300) | finance-summary     | ✅        |
+| К перечислению         | 78 890,39  | summary_total.payout_total                     | finance-summary     | ✅        |
+| Себестоимость          | 54 020     | summary_total.cogs_total                       | finance-summary     | ✅        |
+| Реклама                | 6 314,22   | advertising.totalSpend                         | advertising API     | ✅        |
+| Валовая прибыль        | 126 751,02 | sale_gross - cogs                              | calculated          | ⚠️ see #2 |
+| Маржинальность         | 70.1%      | (sale_gross - cogs) / sale_gross               | calculated          | ⚠️ see #3 |
 
 ### 2.2 Period Comparison (W07 vs W06)
 
-| Metric | W07→W06 % | Dashboard shows | Match |
-|--------|-----------|-----------------|-------|
-| Выкупы, ₽ | -9.4% | -9,4% | ✅ |
-| К перечислению | +60.0% | +60,0% | ✅ |
-| Логистика | -13.3% | -13,3% | ✅ |
-| Удержания WB | -51.7% | -51,7% | ✅ |
-| Логистика % выручки | 13.06% | 13,06% | ✅ |
+| Metric              | W07→W06 % | Dashboard shows | Match |
+| ------------------- | --------- | --------------- | ----- |
+| Выкупы, ₽           | -9.4%     | -9,4%           | ✅    |
+| К перечислению      | +60.0%    | +60,0%          | ✅    |
+| Логистика           | -13.3%    | -13,3%          | ✅    |
+| Удержания WB        | -51.7%    | -51,7%          | ✅    |
+| Логистика % выручки | 13.06%    | 13,06%          | ✅    |
 
 ### 2.3 W06 Validation (with returns)
 
-| Metric | Dashboard | API | Match |
-|--------|-----------|-----|-------|
-| Продажи (розница) | 194 039,30 | sale_gross_total = 194 039,30 | ✅ |
-| Note | | sales_gross (198 935) - returns (4 896) = sale_gross (194 039) | Correctly uses net sales |
-| Возвраты, ₽ | 3 365 | | ✅ (displayed separately) |
+| Metric            | Dashboard  | API                                                            | Match                     |
+| ----------------- | ---------- | -------------------------------------------------------------- | ------------------------- |
+| Продажи (розница) | 194 039,30 | sale_gross_total = 194 039,30                                  | ✅                        |
+| Note              |            | sales_gross (198 935) - returns (4 896) = sale_gross (194 039) | Correctly uses net sales  |
+| Возвраты, ₽       | 3 365      |                                                                | ✅ (displayed separately) |
 
 ### 2.4 Filter Behavior
 
-| Test | Result |
-|------|--------|
-| Dashboard: switch Week → Month | ✅ URL updates, data reloads |
-| Dashboard: switch W07 → W06 via URL | ✅ All metrics change correctly |
+| Test                                      | Result                                |
+| ----------------------------------------- | ------------------------------------- |
+| Dashboard: switch Week → Month            | ✅ URL updates, data reloads          |
+| Dashboard: switch W07 → W06 via URL       | ✅ All metrics change correctly       |
 | Dashboard: month view sums multiple weeks | ✅ APIs called for each week in month |
-| SKU page: defaults to latest week | ✅ Shows W07 with week selector |
-| Advertising: date range applied | ✅ from/to params sent correctly |
+| SKU page: defaults to latest week         | ✅ Shows W07 with week selector       |
+| Advertising: date range applied           | ✅ from/to params sent correctly      |
 
 ---
 
@@ -95,10 +127,10 @@
 
 ### ISSUE #1 (Medium): Выкупы шт — FBO-only count on Dashboard
 
-| | Dashboard | SKU page | API finance-summary |
-|--|-----------|----------|---------------------|
-| Count | **167** | **187** | product_transactions = **187** |
-| Source | fulfillment.fbo.salesCount | sku-financials SUM(quantity) | summary_total |
+|        | Dashboard                  | SKU page                     | API finance-summary            |
+| ------ | -------------------------- | ---------------------------- | ------------------------------ |
+| Count  | **167**                    | **187**                      | product_transactions = **187** |
+| Source | fulfillment.fbo.salesCount | sku-financials SUM(quantity) | summary_total                  |
 
 **Problem**: Dashboard shows 167 buyouts (FBO only from fulfillment API), but the actual number of products sold from the finance report is 187. The 20 missing items are EAEU + FBS sales.
 
@@ -114,12 +146,13 @@
 
 **Dashboard formula**: `Валовая прибыль = Продажи(розница) - Себестоимость`
 
-| Week | Dashboard shows | Actual profit (payout - COGS) | Overstatement |
-|------|-----------------|-------------------------------|---------------|
-| W07 | **+126 751 ₽** | **+24 870 ₽** | 5.1x |
-| W06 | **+137 515 ₽** | **-7 231 ₽** (LOSS!) | ∞ (wrong sign!) |
+| Week | Dashboard shows | Actual profit (payout - COGS) | Overstatement   |
+| ---- | --------------- | ----------------------------- | --------------- |
+| W07  | **+126 751 ₽**  | **+24 870 ₽**                 | 5.1x            |
+| W06  | **+137 515 ₽**  | **-7 231 ₽** (LOSS!)          | ∞ (wrong sign!) |
 
 **Problem**: "Валовая прибыль" = `sale_gross - cogs` counts the **retail price** minus COGS, but does NOT subtract:
+
 - WB commission (~68K)
 - Logistics (~24K)
 - Storage (~1.5K)
@@ -133,6 +166,7 @@ The seller sees "Валовая прибыль +137К" but their actual payout a
 **Note**: The `PnLWaterfall` component (`PnLWaterfall.tsx:267`) correctly uses `payout - COGS`. The problem is in the dashboard metric card which uses `sale_gross - COGS`.
 
 **Recommendation**:
+
 1. Rename to "Валовая прибыль (до удержаний)" to clarify it's before WB deductions
 2. OR change formula to `payout_total - cogs_total` (actual profit after all deductions)
 3. Add a prominent "Чистая прибыль" card showing `payout - cogs`
@@ -143,10 +177,10 @@ The seller sees "Валовая прибыль +137К" but their actual payout a
 
 **Dashboard formula**: `Маржинальность = (sale_gross - cogs) / sale_gross × 100`
 
-| Week | Dashboard margin | SKU operating margin | Reality |
-|------|------------------|----------------------|---------|
-| W07 | **70.1%** | **20.0%** | 3.5x overstatement |
-| W06 | **70.9%** | N/A | Actual: **-3.7%** (loss) |
+| Week | Dashboard margin | SKU operating margin | Reality                  |
+| ---- | ---------------- | -------------------- | ------------------------ |
+| W07  | **70.1%**        | **20.0%**            | 3.5x overstatement       |
+| W06  | **70.9%**        | N/A                  | Actual: **-3.7%** (loss) |
 
 **Problem**: Same root cause as Issue #2 — uses retail price, not seller payout.
 
@@ -158,9 +192,9 @@ The seller sees "Валовая прибыль +137К" but their actual payout a
 
 ### ISSUE #4 (Low): Удержания WB — partial deductions shown
 
-| | Shown on Dashboard | Actual total deductions |
-|--|--------------------|-----------------------|
-| Amount | 34 868 ₽ (19.3%) | 101 881 ₽ (56.4%) |
+|            | Shown on Dashboard                          | Actual total deductions              |
+| ---------- | ------------------------------------------- | ------------------------------------ |
+| Amount     | 34 868 ₽ (19.3%)                            | 101 881 ₽ (56.4%)                    |
 | Components | commission_sales + acquiring + wb_promotion | All deductions (sale_gross - payout) |
 
 **Problem**: "Удержания WB" only includes `commission_sales` (13 368) + `acquiring_fee` (2 762) + `wb_promotion` (18 738) = 34 868₽. This is ~34% of actual total deductions. The rest appears in "Логистика" and "Хранение" cards separately, but the total WB commission (68 093₽) is much larger.
@@ -178,6 +212,7 @@ The seller sees "Валовая прибыль +137К" but their actual payout a
 ```
 include_liquidation_scenarios should not exist
 ```
+
 - Frontend: `src/lib/api/liquidity.ts:45-46`
 - Fix: remove `include_liquidation_scenarios` param or add to backend DTO
 
@@ -186,6 +221,7 @@ include_liquidation_scenarios should not exist
 ```
 includeCogs should not exist
 ```
+
 - Frontend: `src/hooks-v1/useMarginTrends.ts:70`
 - Fix: remove `includeCogs` param or add to backend DTO
 
@@ -194,6 +230,7 @@ includeCogs should not exist
 ```
 sort_by should not exist, sort_order should not exist
 ```
+
 - Frontend: `src/lib/api/supplies.ts:47-54`
 - Fix: remove sort params or add to backend DTO
 
@@ -201,14 +238,14 @@ sort_by should not exist, sort_order should not exist
 
 ## Part 5: Advertising Data Validation
 
-| Metric | API | Dashboard | Match |
-|--------|-----|-----------|-------|
-| Spend | 6 314,22 ₽ | 6 314,22 ₽ | ✅ |
-| ROAS | 6.64x | 6.6x | ✅ (rounded) |
-| ДРР | 3.49% | 3,49% | ✅ (spend/sale_gross) |
-| Organic % | 70.02% | 70% | ✅ |
-| Ad-attributed | 41 941 ₽ | — | (not shown directly) |
-| Total sales (ad) | 139 874 ₽ | ~140К | ✅ |
+| Metric           | API        | Dashboard  | Match                 |
+| ---------------- | ---------- | ---------- | --------------------- |
+| Spend            | 6 314,22 ₽ | 6 314,22 ₽ | ✅                    |
+| ROAS             | 6.64x      | 6.6x       | ✅ (rounded)          |
+| ДРР              | 3.49%      | 3,49%      | ✅ (spend/sale_gross) |
+| Organic %        | 70.02%     | 70%        | ✅                    |
+| Ad-attributed    | 41 941 ₽   | —          | (not shown directly)  |
+| Total sales (ad) | 139 874 ₽  | ~140К      | ✅                    |
 
 **Note**: ДРР uses `sale_gross` as denominator (industry standard for WB), not ad-attributed revenue.
 
@@ -219,18 +256,21 @@ sort_by should not exist, sort_order should not exist
 See **[DATA-SOURCES-REFERENCE.md](DATA-SOURCES-REFERENCE.md)** for full documentation.
 
 ### ROAS Discrepancy (6.6x vs 6.01x) — NOT A BUG
+
 - Dashboard ROAS uses Advertising API (`ad_attributed_revenue / ad_spend`)
 - Finance-derived ROAS uses `sale_gross / wb_promotion`
 - Different data sources, different business questions
 - Backend confirmed: Request #75 guarantees revenue source isolation
 
 ### Storage Discrepancy (~1.8%) — NOT A BUG
+
 - Paid Storage API: daily per-SKU (`paid_storage_daily.warehouse_price`)
 - Weekly Report: aggregate (`wb_finance_raw.storage`)
 - <3% difference is expected due to rounding, corrections, tariff recalculations
 - Backend confirmed: `cabinet-expenses` endpoint provides both values for comparison
 
 ### Brand Table "Товаров (SKU)" — BUG FIXED
+
 - Column showed `total_units` (sold quantity) instead of `total_skus` (unique SKU count)
 - Fix: Added `total_skus` field to type + updated hooks and tables (2026-02-23)
 
@@ -240,12 +280,12 @@ See **[DATA-SOURCES-REFERENCE.md](DATA-SOURCES-REFERENCE.md)** for full document
 
 ### Severity Distribution
 
-| Severity | Count | Issues |
-|----------|-------|--------|
-| 🔴 Critical | 2 | Валовая прибыль formula, Маржинальность formula |
-| 🟡 Medium | 1 | Выкупы шт (FBO-only count) |
-| 🟠 API Bugs | 3 | liquidity, time-period, supplies — broken pages |
-| ℹ️ Low | 2 | Удержания WB partial, /settings 404 |
+| Severity    | Count | Issues                                                                              |
+| ----------- | ----- | ----------------------------------------------------------------------------------- |
+| 🔴 Critical | 2     | Валовая прибыль formula, Маржинальность formula                                     |
+| 🟡 Medium   | 1     | Выкупы шт (FBO-only count)                                                          |
+| 🟠 API Bugs | 3     | liquidity, time-period, supplies — broken pages                                     |
+| ℹ️ Low      | 2     | Удержания WB partial; historical `/settings` 404 is source-closed, live ECC pending |
 
 ### Priority Recommendations
 
@@ -256,26 +296,26 @@ See **[DATA-SOURCES-REFERENCE.md](DATA-SOURCES-REFERENCE.md)** for full document
 
 ---
 
-## Test Credentials
-- Email: test@test.com
-- Password: LocalTest123!
+## Test credentials
+
+Use only environment-owner-provisioned credentials for an isolated non-production tenant. Keep all usernames, passwords, JWTs, cabinet IDs and Playwright storage state in ignored secret inputs; never add literal credentials to this document.
 
 ---
 
 ## Part 7 — Runtime Data-Validation Methodology (2026-07-05)
 
 **Goal.** Prior passes covered (a) dashboard formula audit (Parts 1–6 above),
-(b) load-health of 56 routes ([`.omc/ux-validation/matrix.md`](../.omc/ux-validation/matrix.md)),
+(b) historical load-health of 56 routes ([`.omc/ux-validation/matrix.md`](../.omc/ux-validation/matrix.md)); the current source inventory is 72 routes,
 (c) **code-level** business-data audit ([`business-data-audit-2026-07-02.md`](../.omc/ux-validation/business-data-audit-2026-07-02.md), `BD-*`).
-This pass is **runtime data-level**: with the backend fully ready, drive the live
+This pass is **runtime data-level**: when the authorized sandbox backend and its
+fixtures are available, drive the live
 app, **log the actual rendered numbers** per page (with filters), then
 **reconcile meanings between pages** to prove the data is computed correctly and
-is consistent everywhere it appears. It validates the *output*, on real data.
+is consistent everywhere it appears. It validates the _output_, on real data.
 
-**Stack.** FE dev server `:3100`, backend `:3000` (both PM2-managed, live).
+**Stack.** The frontend scripts use `:3100`; the API origin must be supplied explicitly by the authorized environment. Historical references to a backend on `:3000` are not a current environment assertion.
 Drive via Playwright (canonical browser tool). Raw API data captured via direct
-calls with the test JWT + `X-Cabinet-Id` (the same payloads the hooks consume).
-Test creds: `test@test.com` / `LocalTest123!`.
+calls with an environment-provided test JWT + `X-Cabinet-Id` (the same payloads the hooks consume). No credential value belongs in tracked docs or publishable evidence.
 
 ### 7.1 Per-page data log (artifact)
 
@@ -298,6 +338,7 @@ the pages that show it, so a divergence is a real bug (formula, data-source, or
 label). Verified on the same week/period unless noted.
 
 **A. Identity (must match exactly, modulo ₽-rounding):**
+
 - A1 `Выкупы/Продажи (розница), ₽` — dashboard == finance-summary `sale_gross_total`
   == Σ over SKU/brand/category aggregation of the same week.
 - A2 `К перечислению, ₽` — dashboard == finance-summary `payout_total` == PnL-waterfall endpoint.
@@ -310,12 +351,14 @@ label). Verified on the same week/period unless noted.
   underlying totals for both weeks.
 
 **B. Aggregation (different groupings of the same underlying must reconcile):**
+
 - B1 Σ SKU `sale_gross` ≈ Σ brand `sale_gross` ≈ Σ category `sale_gross` ≈
   finance-summary total (same week; ≤ rounding).
 - B2 Unique-SKU count: dashboard == distinct nmIds in SKU page == brand/category totals.
 - B3 Σ advertising-by-day `spend` == advertising summary `totalSpend` (date range match).
 
 **C. Meaning / label (no silent contradictions):**
+
 - C1 `Маржинальность` — dashboard vs SKU operating-margin vs unit-economics: each
   must either share a formula or be labelled with its distinct meaning
   (e.g. «до удержаний» vs «операционная»). No two pages show different numbers
@@ -344,5 +387,6 @@ Starts with the **P0 financial clusters** (where a wrong number misleads a
 business decision): `/dashboard`, `/analytics/sku|brand|category`,
 `/analytics/advertising`, `/analytics/orders`, `/analytics/unit-economics`,
 `/analytics/liquidity`, `/orders` (+ the new `/orders` actions + `/automation`
-+ `/analytics/brand-share` shipped this week). Expands to the remaining pages
-once the financial core is reconciled.
+
+- `/analytics/brand-share` shipped this week). Expands to the remaining pages
+  once the financial core is reconciled.

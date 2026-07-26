@@ -19,11 +19,7 @@ export type AdvertisingDeltas = Partial<Record<ComparisonMetricKey, AdvertisingD
 
 /** Metrics available for comparison */
 export type ComparisonMetricKey =
-  | 'total_spend'
-  | 'total_revenue'
-  | 'overall_roas'
-  | 'total_sales'
-  | 'avg_ctr'
+  'total_spend' | 'total_revenue' | 'overall_roas' | 'total_sales' | 'avg_ctr'
 
 /** Metrics where a decrease is positive (spend going down is good) */
 const INVERTED_METRICS: Set<string> = new Set(['total_spend'])

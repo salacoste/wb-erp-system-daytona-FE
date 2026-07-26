@@ -14,13 +14,7 @@ export type ModelEngine = 'prophet' | 'mindsdb'
 // F-39: 'deprecated' added — GET /v1/ai/models returns it live; without it the
 // STATUS_BADGE_CONFIG lookup was undefined → TypeError crash on the model list.
 export type ModelStatus =
-  | 'active'
-  | 'training'
-  | 'degraded'
-  | 'retired'
-  | 'rolled_back'
-  | 'failed'
-  | 'deprecated'
+  'active' | 'training' | 'degraded' | 'retired' | 'rolled_back' | 'failed' | 'deprecated'
 
 /**
  * Drift direction for model performance over time.
