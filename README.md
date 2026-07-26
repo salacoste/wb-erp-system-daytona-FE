@@ -7,7 +7,7 @@
 
 ---
 
-## Readiness status (2026-07-26)
+## Readiness status (updated 2026-07-27)
 
 - **Release authorization:** **NO-GO** for an unconditional production release.
 - **Certification boundary:** runtime is **UNDETERMINED**, CERT-F01 is **NOT_ELIGIBLE_FOR_CERT_F01**, and the repository-remediation certificate is **NOT_ISSUED**.
@@ -15,12 +15,12 @@
 - **Fresh inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
 - **Integrated evidence base:** all 49/49 recorded gate outcomes matched their expected exits before documentation reconciliation. This base count excludes any later documentation or reseal gates. TypeScript, lint, format, AP8, and coverage-governance tests (27/27) passed.
 - **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
-- **Static/unit and coverage:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. The isolated candidate-index coverage run recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. The actual repository index cannot select that policy because the canonical coverage files are `NOT_TRACKED`; its selector failed closed with exit 1. The isolated candidate index was local-only, did not stage files, did not change the actual index, and has no release effect.
+- **Static/unit and coverage:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. The isolated candidate-index coverage run recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. At evidence capture, the canonical coverage files were `NOT_TRACKED` in the actual repository index and the selector failed closed with exit 1. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` now tracks them; a post-commit Node 24 selector smoke selected the threshold policy and coverage governance passed 27/27. This later publication state does not retroactively alter the captured evidence or authorize release.
 - **AP8 compatibility:** the Node 24 rule/normalizer lanes passed, and the isolated Node 25 compatibility lane passed; Node 25 was not used for canonical gates.
 - **Build evidence:** two Next.js 16.2.10 production builds generated 67/67 pages with strict source/candidate/runtime inputs invariant. The first build normalized generated `next-env.d.ts`, which then remained stable; incident 034 separates that generated-input event from the strict invariant inputs. Build IDs and output digests differed, so bit-for-bit reproducibility is not claimed.
 - **Tier-0 harness:** helper Vitest passed 8/8, safety tests passed 72/72, and static discovery lists 24 tests in exactly 2 files. The missing-descriptor helper and orchestrator each exited 3 as expected, producing 38/38 `BLOCKED`, 0 `PASS`, and 0 `FAIL`; the malformed-descriptor negative exited 1 as expected. These fail-closed results do not certify runtime behavior.
 - **Orders Integrity:** source, unit coverage, and the dedicated live contract are authored. No credentialed live `PASS` exists.
-- **Candidate and external blockers:** the tested candidate is dirty and uncommitted. There is no clean immutable candidate publication or independently fetched receipt, externally published runtime-input manifest, trusted signed sandbox descriptor or execution/cleanup authority, external ECC or RRC receipt, CERT-F01 result, or external attestation.
+- **Candidate and external blockers:** the repository remediation is committed as `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9`, but there is no independently fetched immutable candidate receipt, externally published runtime-input manifest, trusted signed sandbox descriptor or execution/cleanup authority, external ECC or RRC receipt, CERT-F01 result, or external attestation.
 
 Static/unit completion, an epic marked `DONE`, or the presence of an E2E spec does not authorize a release. Runtime remains **UNDETERMINED**, CERT-F01 remains **NOT_ELIGIBLE_FOR_CERT_F01**, the repository certificate is **NOT_ISSUED**, and release remains **NO-GO**. See the durable, sanitized [G006 frontend readiness summary](docs/evidence/frontend-readiness-g006-20260726.md). Its source evidence root, `.omx/tmp/g006-final-integrated-20260726T002604Z`, is local and transient rather than durable release evidence.
 
@@ -583,7 +583,7 @@ npm run test:e2e      # E2E tests
 
 ### Coverage policy
 
-The candidate Node 24 policy uses the paired Vitest 4.1.10 and `@vitest/coverage-v8` 4.1.10 packages with count-derived thresholds and a 0.01 percentage-point epsilon. The isolated G006 candidate-index run recorded 73.32% statements, 70.04% branches, 69.85% functions, and 74.46% lines. However, the actual repository index reports the canonical coverage selection as `NOT_TRACKED` and fails closed; the isolated candidate-index pass did not stage or change the actual index and has no release effect. These local coverage results do not replace Tier-0 live certification or authorize release. See the [sanitized G006 summary](docs/evidence/frontend-readiness-g006-20260726.md).
+The candidate Node 24 policy uses the paired Vitest 4.1.10 and `@vitest/coverage-v8` 4.1.10 packages with count-derived thresholds and a 0.01 percentage-point epsilon. The isolated G006 candidate-index run recorded 73.32% statements, 70.04% branches, 69.85% functions, and 74.46% lines. At the G006 capture boundary, the actual repository index reported the canonical coverage selection as `NOT_TRACKED` and failed closed; the isolated candidate-index pass did not stage or change that index. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` subsequently tracks the canonical selection and policy, and a post-commit selector/governance smoke passed. Neither the historical local measurement nor the later tracked-policy state replaces Tier-0 live certification or authorizes release. See the [sanitized G006 summary](docs/evidence/frontend-readiness-g006-20260726.md).
 
 ---
 

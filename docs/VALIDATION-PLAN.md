@@ -6,7 +6,7 @@
 
 ---
 
-## Current certification boundary (2026-07-26)
+## Current certification boundary (updated 2026-07-27)
 
 Parts 1–7 below are historical validation material and methodology, not proof that a current immutable release candidate ran live.
 
@@ -16,10 +16,10 @@ Parts 1–7 below are historical validation material and methodology, not proof 
 - **Current inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
 - **Integrated evidence base:** 49/49 expected outcomes matched before documentation reconciliation; no later documentation/reseal total is claimed here. TypeScript, lint, format, AP8, and coverage governance 27/27 passed.
 - **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
-- **Static/unit and coverage evidence:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. Isolated candidate-index coverage recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. The actual repository index reports the canonical selection as `NOT_TRACKED` and fails closed with exit 1; the isolated candidate index was local-only, did not stage or change the actual index, and has no release effect.
+- **Static/unit and coverage evidence:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. Isolated candidate-index coverage recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. At evidence capture, the actual repository index reported the canonical selection as `NOT_TRACKED` and failed closed with exit 1; the isolated candidate index was local-only and did not change that index. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` now tracks the canonical selection and policy, and a post-commit Node 24 selector/governance smoke passed. This does not alter the historical evidence boundary or authorize release.
 - **AP8/build evidence:** the Node 24 rule/normalizer lanes and isolated Node 25 compatibility lane passed. Two Next.js 16.2.10 production builds generated 67/67 pages with strict source/candidate/runtime inputs invariant. The first build normalized generated `next-env.d.ts`, which then remained stable; incident 034 separates that generated-input event from the strict inputs. Build IDs and output digests differed, so bit-for-bit reproducibility is not claimed.
 - **Tier-0 evidence:** helper Vitest passed 8/8, safety passed 72/72, and static discovery lists 24 tests in exactly 2 files. Missing-descriptor execution exited 3 and produced 38/38 `BLOCKED`, 0 `PASS`, and 0 `FAIL`; the malformed-descriptor negative exited 1. Orders Integrity source/unit and its dedicated live contract are authored, but no credentialed live `PASS` exists.
-- **Candidate/external blockers:** the candidate is dirty and uncommitted. Immutable publication/receipt, an externally published runtime-input manifest, a trusted signed sandbox plus execution/cleanup authority, ECC, RRC, CERT-F01, and external attestation are absent.
+- **Candidate/external blockers:** the remediation is committed as `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9`. An independently fetched immutable candidate receipt, externally published runtime-input manifest, trusted signed sandbox plus execution/cleanup authority, ECC, RRC, CERT-F01, and external attestation are absent.
 - **Evidence:** durable sanitized [G006 frontend readiness summary](evidence/frontend-readiness-g006-20260726.md); its source root `.omx/tmp/g006-final-integrated-20260726T002604Z` is local and transient.
 
 ```bash

@@ -2,16 +2,16 @@
 
 ## Decision
 
-| Boundary                                                    | Recorded status             |
-| ----------------------------------------------------------- | --------------------------- |
-| Safe local verification                                     | `PASS_AS_EXPECTED`          |
-| Canonical coverage selection in the actual repository index | `NOT_TRACKED`               |
-| Runtime                                                     | `UNDETERMINED`              |
-| CERT-F01                                                    | `NOT_ELIGIBLE_FOR_CERT_F01` |
-| Repository certificate                                      | `NOT_ISSUED`                |
-| Release                                                     | **NO-GO**                   |
+| Boundary                                         | Recorded status             |
+| ------------------------------------------------ | --------------------------- |
+| Safe local verification                          | `PASS_AS_EXPECTED`          |
+| Canonical coverage selection at evidence capture | `NOT_TRACKED`               |
+| Runtime                                          | `UNDETERMINED`              |
+| CERT-F01                                         | `NOT_ELIGIBLE_FOR_CERT_F01` |
+| Repository certificate                           | `NOT_ISSUED`                |
+| Release                                          | **NO-GO**                   |
 
-This summary preserves a sanitized, durable account of the local G006 verification result. It is not a certificate, release authorization, commit record, staging record, or assertion that evidence was published to external durable storage.
+This summary preserves a sanitized, durable account of the local G006 verification result. It is not a certificate, release authorization, or assertion that the captured evidence was published to external durable storage. A publication reconciliation dated 2026-07-27 is recorded below without changing the historical evidence boundary.
 
 ## Evidence boundary
 
@@ -36,9 +36,13 @@ The evidence base contains **49/49 expected gate outcomes** through final report
 
 ## Coverage-selection limitation
 
-The measured candidate coverage passed only through an **isolated candidate index**. In the actual repository index, the canonical coverage selection is `NOT_TRACKED` and the selector exits 1 as designed. The isolated index was local-only, did not stage files, did not modify the actual index, and has **no staging or release effect**. The actual index remained unchanged during the integrated capture.
+The measured candidate coverage passed only through an **isolated candidate index**. During the integrated capture, the canonical coverage selection in the actual repository index was `NOT_TRACKED` and the selector exited 1 as designed. The isolated index was local-only, did not stage files, did not modify the actual index, and had **no staging or release effect**. The actual index remained unchanged during the integrated capture.
 
-Therefore, the coverage percentages are valid local measurements of the isolated candidate, but they do not establish an active tracked repository policy and do not authorize release.
+Therefore, the coverage percentages are valid local measurements of the isolated candidate, but within the capture boundary they did not establish an active tracked repository policy and do not authorize release.
+
+## Publication reconciliation — 2026-07-27
+
+Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` subsequently committed the remediation, including the canonical coverage selection and threshold policy. Against that committed tree, a Node 24.18.0 selector smoke selected `quality/coverage-policy.v1.json`, and the coverage-governance test suite passed 27/27. This later tracked state does not rewrite the captured identities or manifest, does not supply live Tier-0 evidence, and does not change runtime, CERT-F01, certificate, or release status.
 
 ## Key identities and digests
 
@@ -58,11 +62,11 @@ Therefore, the coverage percentages are valid local measurements of the isolated
 | Actual repository index    | `b2ffc5f7c805863c3cc8953f4b9269d966a8339f4cb0f42d6dba1a88f39cfaf5` |
 | Package lock               | `2af0fb2d4c15a1b65c81ed5b11fad3e9401d76dca2ff896684a705a15ac41030` |
 
-These identities describe the captured local evidence base. They do not imply that the worktree was committed, that the candidate was fetched independently, or that any artifact was stored externally.
+These identities describe the captured local evidence base before the later commit. They do not imply that the candidate was fetched independently or that any evidence artifact was stored externally.
 
 ## Unresolved requirements
 
-The worktree was a dirty, uncommitted local candidate. The run did not receive a signed Tier-0 environment descriptor, immutable runtime artifact, execution or cleanup authority, credentials, receipts, a live sandbox result, CERT-F01 evaluation, or external attestation. As a result:
+At capture time, the worktree was a dirty, uncommitted local candidate. The later commit resolves that repository-state condition only; the run still did not receive a signed Tier-0 environment descriptor, independently fetched immutable runtime artifact, execution or cleanup authority, credentials, receipts, a live sandbox result, CERT-F01 evaluation, or external attestation. As a result:
 
 - runtime remains `UNDETERMINED`;
 - CERT-F01 remains `NOT_ELIGIBLE_FOR_CERT_F01`;

@@ -6,7 +6,7 @@
 
 ---
 
-## Актуальный статус готовности (2026-07-26)
+## Актуальный статус готовности (обновлён 2026-07-27)
 
 Этот документ сохраняет исторические результаты проверки данных за февраль 2026 года; они не являются текущей live-сертификацией релизного артефакта.
 
@@ -16,10 +16,10 @@
 - **Статическая база:** 72 route source-файла, 1,047 unit/integration test-файлов и 86 Playwright spec-файлов. Команды инвентаризации приведены ниже.
 - **Integrated evidence base:** 49/49 ожидаемых результатов совпали до reconciliation документации; последующий post-doc/reseal total здесь не заявляется. TypeScript, lint, format, AP8 и coverage governance 27/27 — PASS.
 - **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
-- **Node 24:** canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 — 1,047/1,047 файлов и 17,296/17,296 тестов PASS. Isolated candidate-index coverage — lines 74.46%, statements 73.32%, functions 69.85%, branches 70.04%. Actual repository index возвращает `NOT_TRACKED` и fail-closed exit 1; isolated candidate index был только локальным, ничего не staged, не изменил actual index и не влияет на release.
+- **Node 24:** canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 — 1,047/1,047 файлов и 17,296/17,296 тестов PASS. Isolated candidate-index coverage — lines 74.46%, statements 73.32%, functions 69.85%, branches 70.04%. На момент evidence capture actual repository index возвращал `NOT_TRACKED` и fail-closed exit 1; isolated candidate index был только локальным и не изменил actual index. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` теперь отслеживает selection и policy; post-commit Node 24 selector/governance smoke прошёл. Это не изменяет историческую evidence boundary и не разрешает release.
 - **AP8/build:** Node 24 rule/normalizer и isolated Node 25 compatibility lane — PASS. Две Next.js 16.2.10 production-сборки с 67/67 страницами прошли при invariant strict source/candidate/runtime inputs. Первая сборка нормализовала generated `next-env.d.ts`, который затем стабилизировался; incident 034 отделяет generated-input событие от strict inputs. Build IDs и output digests различаются; bit-for-bit reproducibility не заявляется.
 - **Tier-0:** helper Vitest 8/8; safety 72/72; static list — 24 теста ровно в 2 файлах. Missing descriptor дал ожидаемый exit 3 и matrix 38/38 `BLOCKED`, 0 `PASS`, 0 `FAIL`; malformed descriptor дал ожидаемый exit 1. Orders Integrity source/unit и dedicated live contract реализованы, но credentialed live `PASS` отсутствует.
-- **Candidate/external blockers:** кандидат dirty и uncommitted; отсутствуют immutable publication/receipt, externally published runtime-input manifest, trusted signed sandbox и execution/cleanup authority, ECC, RRC, CERT-F01 и external attestation.
+- **Candidate/external blockers:** remediation закоммичен как `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9`; отсутствуют independently fetched immutable candidate receipt, externally published runtime-input manifest, trusted signed sandbox и execution/cleanup authority, ECC, RRC, CERT-F01 и external attestation.
 - **Evidence:** durable sanitized [G006 frontend readiness summary](evidence/frontend-readiness-g006-20260726.md); исходный root `.omx/tmp/g006-final-integrated-20260726T002604Z` является локальным и transient.
 
 ```bash
