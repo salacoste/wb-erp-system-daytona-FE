@@ -93,11 +93,7 @@ export function AdvertisingMainContent({ state, filters }: AdvertisingMainConten
               groups={filters.mergedGroupsData}
               sortConfig={{
                 field: state.sortBy as
-                  | 'totalSales'
-                  | 'totalRevenue'
-                  | 'organicSales'
-                  | 'totalSpend'
-                  | 'roas',
+                  'totalSales' | 'totalRevenue' | 'organicSales' | 'totalSpend' | 'roas',
                 direction: state.sortOrder,
               }}
               onSort={field => state.handleSortChange(field as SortField)}

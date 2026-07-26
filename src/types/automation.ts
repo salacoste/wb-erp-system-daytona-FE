@@ -19,23 +19,14 @@
  * by the boundary normalizer, so this union is intentionally non-exhaustive.
  */
 export type AutomationTrigger =
-  | 'STOCK_LEVEL'
-  | 'MARGIN_BELOW'
-  | 'PRICE_GAP'
-  | 'ML_FORECAST'
-  | 'SLOW_MOVER'
-  | (string & {})
+  'STOCK_LEVEL' | 'MARGIN_BELOW' | 'PRICE_GAP' | 'ML_FORECAST' | 'SLOW_MOVER' | (string & {})
 
 /**
  * Action types a canned rule can take. WRITEBACK_PRICE templates are inert
  * until the cabinet arms PRICE_WRITEBACK_ENABLED (see contract § Safety).
  */
 export type AutomationAction =
-  | 'NOTIFY'
-  | 'LOG_ONLY'
-  | 'WRITEBACK_PRICE'
-  | 'CREATE_TASK'
-  | (string & {})
+  'NOTIFY' | 'LOG_ONLY' | 'WRITEBACK_PRICE' | 'CREATE_TASK' | (string & {})
 
 /** Gallery category — drives card grouping + the price-writeback safety badge. */
 export type CannedRuleCategory = 'notify' | 'price' | 'task' | 'audit'

@@ -74,97 +74,74 @@ describe('Sidebar', () => {
     cleanup()
   })
 
-  it(
-    'renders navigation items',
-    () => {
-      renderWithQueryClient(<Sidebar />)
+  it('renders navigation items', { timeout: 5000 }, () => {
+    renderWithQueryClient(<Sidebar />)
 
-      expect(screen.getByText('Главная')).toBeInTheDocument()
-      expect(screen.getByText('Себестоимость')).toBeInTheDocument()
-      expect(screen.getByText('Аналитика')).toBeInTheDocument()
-      expect(screen.getByText('Настройки')).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText('Главная')).toBeInTheDocument()
+    expect(screen.getByText('Себестоимость')).toBeInTheDocument()
+    expect(screen.getByText('Аналитика')).toBeInTheDocument()
+    expect(screen.getByText('Настройки')).toBeInTheDocument()
+  })
 
-  it(
-    'highlights active navigation item',
-    () => {
-      vi.mocked(usePathname).mockReturnValue('/dashboard')
-      renderWithQueryClient(<Sidebar />)
+  it('highlights active navigation item', { timeout: 5000 }, () => {
+    vi.mocked(usePathname).mockReturnValue('/dashboard')
+    renderWithQueryClient(<Sidebar />)
 
-      const dashboardLink = screen.getByText('Главная').closest('a')
-      // Active item has bg-accent class (Tailwind CSS theme class)
-      expect(dashboardLink).toHaveClass('bg-accent', 'text-accent-foreground')
-    },
-    { timeout: 5000 }
-  )
+    const dashboardLink = screen.getByText('Главная').closest('a')
+    // Active item has bg-accent class (Tailwind CSS theme class)
+    expect(dashboardLink).toHaveClass('bg-accent', 'text-accent-foreground')
+  })
 
-  it(
-    'highlights active section for nested routes',
-    () => {
-      // Sidebar uses exact match (pathname === item.href), so we need to test with /cogs exact match
-      vi.mocked(usePathname).mockReturnValue('/cogs')
-      renderWithQueryClient(<Sidebar />)
+  it('highlights active section for nested routes', { timeout: 5000 }, () => {
+    // Sidebar uses exact match (pathname === item.href), so we need to test with /cogs exact match
+    vi.mocked(usePathname).mockReturnValue('/cogs')
+    renderWithQueryClient(<Sidebar />)
 
-      const cogsLink = screen.getByText('Себестоимость').closest('a')
-      // Active item has bg-accent class (Tailwind CSS theme class)
-      expect(cogsLink).toHaveClass('bg-accent', 'text-accent-foreground')
-    },
-    { timeout: 5000 }
-  )
+    const cogsLink = screen.getByText('Себестоимость').closest('a')
+    // Active item has bg-accent class (Tailwind CSS theme class)
+    expect(cogsLink).toHaveClass('bg-accent', 'text-accent-foreground')
+  })
 
-  it(
-    'renders logout button',
-    () => {
-      renderWithQueryClient(<Sidebar />)
+  it('renders logout button', { timeout: 5000 }, () => {
+    renderWithQueryClient(<Sidebar />)
 
-      expect(screen.getByText('Logout')).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText('Logout')).toBeInTheDocument()
+  })
 
-  it(
-    'has keyboard accessible navigation items',
-    () => {
-      renderWithQueryClient(<Sidebar />)
+  it('has keyboard accessible navigation items', { timeout: 5000 }, () => {
+    renderWithQueryClient(<Sidebar />)
 
-      const links = screen.getAllByRole('link')
-      links.forEach(link => {
-        expect(link).toHaveAttribute('href')
-        // Links are keyboard accessible by default in Next.js
-        expect(link).toBeInTheDocument()
-      })
-    },
-    { timeout: 5000 }
-  )
+    const links = screen.getAllByRole('link')
+    links.forEach(link => {
+      expect(link).toHaveAttribute('href')
+      // Links are keyboard accessible by default in Next.js
+      expect(link).toBeInTheDocument()
+    })
+  })
 
-  it(
-    'renders Search Analytics navigation item (Epic 71-FE)',
-    () => {
-      renderWithQueryClient(<Sidebar />)
+  it('renders Search Analytics navigation item (Epic 71-FE)', { timeout: 5000 }, () => {
+    renderWithQueryClient(<Sidebar />)
 
-      const searchLink = screen.getByRole('link', { name: /Поиск/ })
-      expect(searchLink).toBeInTheDocument()
-      expect(searchLink).toHaveAttribute('href', '/analytics/search')
-    },
-    { timeout: 5000 }
-  )
+    const searchLink = screen.getByRole('link', { name: /Поиск/ })
+    expect(searchLink).toBeInTheDocument()
+    expect(searchLink).toHaveAttribute('href', '/analytics/search')
+  })
 
   it(
     'renders "Управление моделями" admin link for Owner (Epic 112-FE Story 112.1)',
+    { timeout: 5000 },
     () => {
       renderWithQueryClient(<Sidebar />)
 
       const adminLink = screen.getByRole('link', { name: /Управление моделями/ })
       expect(adminLink).toBeInTheDocument()
       expect(adminLink).toHaveAttribute('href', '/analytics/ai-admin/models')
-    },
-    { timeout: 5000 }
+    }
   )
 
   it(
     'does NOT render "Управление моделями" admin link for non-Owner (Epic 112-FE Story 112.1)',
+    { timeout: 5000 },
     () => {
       vi.mocked(useAuth).mockReturnValue({
         user: { id: '1', email: 'manager@example.com', role: 'Manager' },
@@ -175,24 +152,20 @@ describe('Sidebar', () => {
       renderWithQueryClient(<Sidebar />)
 
       expect(screen.queryByRole('link', { name: /Управление моделями/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
+    }
   )
 
-  it(
-    'renders "Настройки AI" admin link for Owner (Story 112.2-FE)',
-    () => {
-      renderWithQueryClient(<Sidebar />)
+  it('renders "Настройки AI" admin link for Owner (Story 112.2-FE)', { timeout: 5000 }, () => {
+    renderWithQueryClient(<Sidebar />)
 
-      const adminLink = screen.getByRole('link', { name: /Настройки AI/ })
-      expect(adminLink).toBeInTheDocument()
-      expect(adminLink).toHaveAttribute('href', '/analytics/ai-admin/preferences')
-    },
-    { timeout: 5000 }
-  )
+    const adminLink = screen.getByRole('link', { name: /Настройки AI/ })
+    expect(adminLink).toBeInTheDocument()
+    expect(adminLink).toHaveAttribute('href', '/analytics/ai-admin/preferences')
+  })
 
   it(
     'does NOT render "Настройки AI" admin link for non-Owner (Story 112.2-FE)',
+    { timeout: 5000 },
     () => {
       vi.mocked(useAuth).mockReturnValue({
         user: { id: '1', email: 'analyst@example.com', role: 'Analyst' },
@@ -203,49 +176,41 @@ describe('Sidebar', () => {
       renderWithQueryClient(<Sidebar />)
 
       expect(screen.queryByRole('link', { name: /Настройки AI/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
+    }
   )
 
   // 1st-pass review F-9: Manager-vs-Настройки-AI cross-coverage
-  it(
-    'Manager does NOT see "Настройки AI" sub-item',
-    () => {
-      vi.mocked(useAuth).mockReturnValue({
-        user: { id: '1', email: 'manager@example.com', role: 'Manager' },
-        isAuthenticated: true,
-        token: 'test-token',
-        refreshToken: vi.fn().mockResolvedValue(false),
-      })
-      renderWithQueryClient(<Sidebar />)
+  it('Manager does NOT see "Настройки AI" sub-item', { timeout: 5000 }, () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: { id: '1', email: 'manager@example.com', role: 'Manager' },
+      isAuthenticated: true,
+      token: 'test-token',
+      refreshToken: vi.fn().mockResolvedValue(false),
+    })
+    renderWithQueryClient(<Sidebar />)
 
-      expect(screen.queryByRole('link', { name: /Настройки AI/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.queryByRole('link', { name: /Настройки AI/ })).not.toBeInTheDocument()
+  })
 
   // 1st-pass review F-9: Analyst-vs-Управление-моделями cross-coverage
-  it(
-    'Analyst does NOT see "Управление моделями" sub-item',
-    () => {
-      vi.mocked(useAuth).mockReturnValue({
-        user: { id: '1', email: 'analyst@example.com', role: 'Analyst' },
-        isAuthenticated: true,
-        token: 'test-token',
-        refreshToken: vi.fn().mockResolvedValue(false),
-      })
-      renderWithQueryClient(<Sidebar />)
+  it('Analyst does NOT see "Управление моделями" sub-item', { timeout: 5000 }, () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: { id: '1', email: 'analyst@example.com', role: 'Analyst' },
+      isAuthenticated: true,
+      token: 'test-token',
+      refreshToken: vi.fn().mockResolvedValue(false),
+    })
+    renderWithQueryClient(<Sidebar />)
 
-      expect(screen.queryByRole('link', { name: /Управление моделями/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.queryByRole('link', { name: /Управление моделями/ })).not.toBeInTheDocument()
+  })
 
   // F-4 (Story 112.3-FE 1st-pass review): "Разрешение аномалий" sidebar asymmetry tests.
   // adminOnly=true hides the link from non-Owner sidebar; Manager direct-URL access is
   // enforced at component+hook level (not sidebar) per AC-12 asymmetry.
   it(
     'Owner sees "Разрешение аномалий" link in sidebar (adminOnly item visible to Owner)',
+    { timeout: 5000 },
     () => {
       // beforeEach already sets Owner — default role for this test suite
       renderWithQueryClient(<Sidebar />)
@@ -253,12 +218,12 @@ describe('Sidebar', () => {
       const link = screen.getByRole('link', { name: /Разрешение аномалий/ })
       expect(link).toBeInTheDocument()
       expect(link).toHaveAttribute('href', '/analytics/ai-admin/anomalies')
-    },
-    { timeout: 5000 }
+    }
   )
 
   it(
     'Manager does NOT see "Разрешение аномалий" link in sidebar (adminOnly filter is Owner-only)',
+    { timeout: 5000 },
     () => {
       vi.mocked(useAuth).mockReturnValue({
         user: { id: '1', email: 'manager@example.com', role: 'Manager' },
@@ -271,39 +236,30 @@ describe('Sidebar', () => {
       // AC-12 asymmetry: sidebar hides "Разрешение аномалий" from non-Owner BUT component-level guard allows Manager direct-URL access.
       // Manager direct-URL access verified in AnomaliesList.test.tsx — see test "renders page header for Manager role (dual-role gate)" around line 85.
       expect(screen.queryByRole('link', { name: /Разрешение аномалий/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
+    }
   )
 
-  it(
-    'Analyst does NOT see "Разрешение аномалий" link in sidebar',
-    () => {
-      vi.mocked(useAuth).mockReturnValue({
-        user: { id: '1', email: 'analyst@example.com', role: 'Analyst' },
-        isAuthenticated: true,
-        token: 'test-token',
-        refreshToken: vi.fn().mockResolvedValue(false),
-      })
-      renderWithQueryClient(<Sidebar />)
+  it('Analyst does NOT see "Разрешение аномалий" link in sidebar', { timeout: 5000 }, () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: { id: '1', email: 'analyst@example.com', role: 'Analyst' },
+      isAuthenticated: true,
+      token: 'test-token',
+      refreshToken: vi.fn().mockResolvedValue(false),
+    })
+    renderWithQueryClient(<Sidebar />)
 
-      expect(screen.queryByRole('link', { name: /Разрешение аномалий/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.queryByRole('link', { name: /Разрешение аномалий/ })).not.toBeInTheDocument()
+  })
 
-  it(
-    'Service does NOT see "Разрешение аномалий" link in sidebar',
-    () => {
-      vi.mocked(useAuth).mockReturnValue({
-        user: { id: '1', email: 'service@example.com', role: 'Service' },
-        isAuthenticated: true,
-        token: 'test-token',
-        refreshToken: vi.fn().mockResolvedValue(false),
-      })
-      renderWithQueryClient(<Sidebar />)
+  it('Service does NOT see "Разрешение аномалий" link in sidebar', { timeout: 5000 }, () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: { id: '1', email: 'service@example.com', role: 'Service' },
+      isAuthenticated: true,
+      token: 'test-token',
+      refreshToken: vi.fn().mockResolvedValue(false),
+    })
+    renderWithQueryClient(<Sidebar />)
 
-      expect(screen.queryByRole('link', { name: /Разрешение аномалий/ })).not.toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.queryByRole('link', { name: /Разрешение аномалий/ })).not.toBeInTheDocument()
+  })
 })

@@ -67,269 +67,225 @@ describe('WbTokenForm', () => {
     )
   }
 
-  it(
-    'renders WB token form with token field',
-    () => {
-      renderForm()
+  it('renders WB token form with token field', { timeout: 5000 }, () => {
+    renderForm()
 
-      expect(screen.getByLabelText(/wb api токен/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByLabelText(/wb api токен/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeInTheDocument()
+  })
 
-  it(
-    'validates token minimum length',
-    async () => {
-      const user = userEvent.setup()
-      renderForm()
+  it('validates token minimum length', { timeout: 5000 }, async () => {
+    const user = userEvent.setup()
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      await user.type(tokenInput, 'short')
-      await user.tab()
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    await user.type(tokenInput, 'short')
+    await user.tab()
 
-      await waitFor(
-        () => {
-          expect(screen.getByText(/слишком коротким/i)).toBeInTheDocument()
-        },
-        { timeout: 3000 }
-      )
-    },
-    { timeout: 5000 }
-  )
+    await waitFor(
+      () => {
+        expect(screen.getByText(/слишком коротким/i)).toBeInTheDocument()
+      },
+      { timeout: 3000 }
+    )
+  })
 
-  it(
-    'validates token format (JWT structure)',
-    async () => {
-      const user = userEvent.setup()
-      renderForm()
+  it('validates token format (JWT structure)', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      // Type a long token that doesn't have JWT structure (3 parts)
-      await user.type(
-        tokenInput,
-        'invalid-token-format-without-proper-jwt-structure-that-is-long-enough'
-      )
-      await user.tab()
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    // Type a long token that doesn't have JWT structure (3 parts)
+    await user.type(
+      tokenInput,
+      'invalid-token-format-without-proper-jwt-structure-that-is-long-enough'
+    )
+    await user.tab()
 
-      await waitFor(
-        () => {
-          const errorText = screen.queryByText(/формат токена/i)
-          if (!errorText) {
-            // Try alternative error message
-            expect(screen.getByText(/неверным/i) || screen.getByText(/формат/i)).toBeInTheDocument()
-          } else {
-            expect(errorText).toBeInTheDocument()
-          }
-        },
-        { timeout: 5000 }
-      )
-    },
-    { timeout: 10000 }
-  )
+    await waitFor(
+      () => {
+        const errorText = screen.queryByText(/формат токена/i)
+        if (!errorText) {
+          // Try alternative error message
+          expect(screen.getByText(/неверным/i) || screen.getByText(/формат/i)).toBeInTheDocument()
+        } else {
+          expect(errorText).toBeInTheDocument()
+        }
+      },
+      { timeout: 5000 }
+    )
+  })
 
-  it(
-    'keeps token save disabled for analyst users',
-    () => {
-      ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-        token: 'jwt-token',
-        cabinetId: 'cabinet-uuid',
-        user: { id: 'analyst-1', email: 'analyst@test.local', role: 'Analyst' },
-      })
+  it('keeps token save disabled for analyst users', { timeout: 5000 }, () => {
+    ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      token: 'jwt-token',
+      cabinetId: 'cabinet-uuid',
+      user: { id: 'analyst-1', email: 'analyst@test.local', role: 'Analyst' },
+    })
 
-      renderForm()
+    renderForm()
 
-      expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeDisabled()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeDisabled()
+  })
 
-  it(
-    'keeps token save disabled when role is missing',
-    () => {
-      ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-        token: 'jwt-token',
-        cabinetId: 'cabinet-uuid',
-        user: null,
-      })
+  it('keeps token save disabled when role is missing', { timeout: 5000 }, () => {
+    ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      token: 'jwt-token',
+      cabinetId: 'cabinet-uuid',
+      user: null,
+    })
 
-      renderForm()
+    renderForm()
 
-      expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeDisabled()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByRole('button', { name: /сохранить токен/i })).toBeDisabled()
+  })
 
-  it(
-    'calls updateWbToken on valid form submission',
-    async () => {
-      const user = userEvent.setup()
-      const mockUpdateWbToken = vi.mocked(updateWbToken)
-      mockUpdateWbToken.mockResolvedValue({
-        id: 'key-id',
-        keyName: 'wb_api_token',
-        updatedAt: '2025-01-12T10:00:00Z',
-      })
+  it('calls updateWbToken on valid form submission', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    const mockUpdateWbToken = vi.mocked(updateWbToken)
+    mockUpdateWbToken.mockResolvedValue({
+      id: 'key-id',
+      keyName: 'wb_api_token',
+      updatedAt: '2025-01-12T10:00:00Z',
+    })
 
-      renderForm()
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      await user.clear(tokenInput)
-      await user.type(tokenInput, validToken)
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    await user.clear(tokenInput)
+    await user.type(tokenInput, validToken)
 
-      await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
-      const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
-      await user.click(submitButton)
+    const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
+    await user.click(submitButton)
 
-      await waitFor(
-        () => {
-          expect(mockUpdateWbToken).toHaveBeenCalledWith('cabinet-uuid', 'wb_api_token', validToken)
-        },
-        { timeout: 5000 }
-      )
-    },
-    { timeout: 10000 }
-  )
+    await waitFor(
+      () => {
+        expect(mockUpdateWbToken).toHaveBeenCalledWith('cabinet-uuid', 'wb_api_token', validToken)
+      },
+      { timeout: 5000 }
+    )
+  })
 
-  it(
-    'shows loading state during submission',
-    async () => {
-      const user = userEvent.setup()
-      const mockUpdateWbToken = vi.mocked(updateWbToken)
-      let resolvePromise: (value: Record<string, unknown>) => void
-      const promise = new Promise<Record<string, unknown>>(resolve => {
-        resolvePromise = resolve
-      })
-      mockUpdateWbToken.mockReturnValue(promise as unknown as ReturnType<typeof updateWbToken>)
+  it('shows loading state during submission', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    const mockUpdateWbToken = vi.mocked(updateWbToken)
+    let resolvePromise: (value: Record<string, unknown>) => void
+    const promise = new Promise<Record<string, unknown>>(resolve => {
+      resolvePromise = resolve
+    })
+    mockUpdateWbToken.mockReturnValue(promise as unknown as ReturnType<typeof updateWbToken>)
 
-      renderForm()
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      await user.clear(tokenInput)
-      await user.type(tokenInput, validToken)
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    await user.clear(tokenInput)
+    await user.type(tokenInput, validToken)
 
-      await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
-      const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
-      await user.click(submitButton)
+    const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
+    await user.click(submitButton)
 
-      await waitFor(
-        () => {
-          expect(screen.getByRole('button', { name: /проверка токена/i })).toBeInTheDocument()
-          expect(screen.getByRole('button')).toBeDisabled()
-        },
-        { timeout: 3000 }
-      )
+    await waitFor(
+      () => {
+        expect(screen.getByRole('button', { name: /проверка токена/i })).toBeInTheDocument()
+        expect(screen.getByRole('button')).toBeDisabled()
+      },
+      { timeout: 3000 }
+    )
 
-      resolvePromise!({
-        id: 'key-id',
-        keyName: 'wb_api_token',
-        updatedAt: '2025-01-12T10:00:00Z',
-      })
+    resolvePromise!({
+      id: 'key-id',
+      keyName: 'wb_api_token',
+      updatedAt: '2025-01-12T10:00:00Z',
+    })
 
-      await waitFor(
-        () => {
-          expect(mockUpdateWbToken).toHaveBeenCalled()
-        },
-        { timeout: 3000 }
-      )
-    },
-    { timeout: 10000 }
-  )
+    await waitFor(
+      () => {
+        expect(mockUpdateWbToken).toHaveBeenCalled()
+      },
+      { timeout: 3000 }
+    )
+  })
 
-  it(
-    'handles token save errors',
-    async () => {
-      const user = userEvent.setup()
-      const mockUpdateWbToken = vi.mocked(updateWbToken)
-      mockUpdateWbToken.mockRejectedValue(new Error('Invalid token'))
+  it('handles token save errors', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    const mockUpdateWbToken = vi.mocked(updateWbToken)
+    mockUpdateWbToken.mockRejectedValue(new Error('Invalid token'))
 
-      renderForm()
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      await user.clear(tokenInput)
-      await user.type(tokenInput, validToken)
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    await user.clear(tokenInput)
+    await user.type(tokenInput, validToken)
 
-      await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
-      const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
-      await user.click(submitButton)
+    const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
+    await user.click(submitButton)
 
-      await waitFor(
-        () => {
-          expect(toast.error).toHaveBeenCalled()
-        },
-        { timeout: 5000 }
-      )
-    },
-    { timeout: 10000 }
-  )
+    await waitFor(
+      () => {
+        expect(toast.error).toHaveBeenCalled()
+      },
+      { timeout: 5000 }
+    )
+  })
 
-  it(
-    'navigates to processing page on success',
-    async () => {
-      const user = userEvent.setup()
-      const mockUpdateWbToken = vi.mocked(updateWbToken)
-      mockUpdateWbToken.mockResolvedValue({
-        id: 'key-id',
-        keyName: 'wb_api_token',
-        updatedAt: '2025-01-12T10:00:00Z',
-      })
+  it('navigates to processing page on success', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    const mockUpdateWbToken = vi.mocked(updateWbToken)
+    mockUpdateWbToken.mockResolvedValue({
+      id: 'key-id',
+      keyName: 'wb_api_token',
+      updatedAt: '2025-01-12T10:00:00Z',
+    })
 
-      renderForm()
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      await user.clear(tokenInput)
-      await user.type(tokenInput, validToken)
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    await user.clear(tokenInput)
+    await user.type(tokenInput, validToken)
 
-      await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
-      const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
-      await user.click(submitButton)
+    const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
+    await user.click(submitButton)
 
-      await waitFor(
-        () => {
-          expect(mockUpdateWbToken).toHaveBeenCalled()
-        },
-        { timeout: 5000 }
-      )
+    await waitFor(
+      () => {
+        expect(mockUpdateWbToken).toHaveBeenCalled()
+      },
+      { timeout: 5000 }
+    )
 
-      await waitFor(
-        () => {
-          expect(mockPush).toHaveBeenCalledWith('/processing')
-          expect(toast.success).toHaveBeenCalled()
-        },
-        { timeout: 5000 }
-      )
-    },
-    { timeout: 10000 }
-  )
+    await waitFor(
+      () => {
+        expect(mockPush).toHaveBeenCalledWith('/processing')
+        expect(toast.success).toHaveBeenCalled()
+      },
+      { timeout: 5000 }
+    )
+  })
 
-  it(
-    'shows error message when cabinetId is missing',
-    () => {
-      ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-        token: 'jwt-token',
-        cabinetId: null,
-        user: { id: 'manager-1', email: 'manager@test.local', role: 'Manager' },
-      })
+  it('shows error message when cabinetId is missing', { timeout: 5000 }, () => {
+    ;(useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      token: 'jwt-token',
+      cabinetId: null,
+      user: { id: 'manager-1', email: 'manager@test.local', role: 'Manager' },
+    })
 
-      renderForm()
+    renderForm()
 
-      expect(screen.getByText(/кабинет не найден/i)).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText(/кабинет не найден/i)).toBeInTheDocument()
+  })
 
-  it(
-    'masks token input (password type)',
-    () => {
-      renderForm()
+  it('masks token input (password type)', { timeout: 5000 }, () => {
+    renderForm()
 
-      const tokenInput = screen.getByLabelText(/wb api токен/i)
-      expect(tokenInput).toHaveAttribute('type', 'password')
-    },
-    { timeout: 5000 }
-  )
+    const tokenInput = screen.getByLabelText(/wb api токен/i)
+    expect(tokenInput).toHaveAttribute('type', 'password')
+  })
 })

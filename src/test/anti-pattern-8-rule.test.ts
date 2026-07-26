@@ -13,22 +13,43 @@
  * @see eslint.config.js (root monorepo) — Story 105.1-FE rule definition
  */
 
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
+import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import { describe, it, expect } from 'vitest'
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..')
 const SCRIPT_PATH = path.join(REPO_ROOT, 'scripts', 'test-anti-pattern-8-rule.sh')
+const TEMP_PREFIX = '_ap8_test_tmp_'
+
+function runSelfTest(env: NodeJS.ProcessEnv = process.env): string {
+  return execFileSync('bash', [SCRIPT_PATH], {
+    cwd: REPO_ROOT,
+    stdio: 'pipe',
+    encoding: 'utf-8',
+    env,
+  })
+}
+
+function remainingFixtures(): string[] {
+  const srcDir = path.join(REPO_ROOT, 'src')
+  if (!existsSync(srcDir)) return []
+  return readdirSync(srcDir).filter(entry => entry.startsWith(TEMP_PREFIX))
+}
 
 describe('Anti-Pattern #8 ESLint rule — shell self-test', () => {
   it('passes all 9 fixtures (6 positive + 3 negative)', () => {
-    // execSync throws on non-zero exit; stdio: 'pipe' captures output for failure messages
-    expect(() => {
-      execSync(`bash ${SCRIPT_PATH}`, {
-        cwd: REPO_ROOT,
-        stdio: 'pipe',
-        encoding: 'utf-8',
+    expect(runSelfTest()).toContain('=== Results: 9 passed, 0 failed ===')
+    expect(remainingFixtures()).toEqual([])
+  }, 30_000)
+
+  it('fails loudly when the repository ESLint binary cannot execute', () => {
+    expect(() =>
+      runSelfTest({
+        ...process.env,
+        ESLINT_BIN_OVERRIDE: path.join(REPO_ROOT, 'node_modules', '.bin', 'missing-eslint'),
       })
-    }).not.toThrow()
-  })
+    ).toThrow(/AP#8 infrastructure error/)
+    expect(remainingFixtures()).toEqual([])
+  }, 30_000)
 })

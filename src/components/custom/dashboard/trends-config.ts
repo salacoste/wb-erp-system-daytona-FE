@@ -12,11 +12,7 @@
 // ============================================================================
 
 export type TrendsMetricKey =
-  | 'wb_sales_gross'
-  | 'payout_total'
-  | 'margin_pct'
-  | 'logistics_cost'
-  | 'storage_cost'
+  'wb_sales_gross' | 'payout_total' | 'margin_pct' | 'logistics_cost' | 'storage_cost'
 
 export interface TrendsMetricConfig {
   key: TrendsMetricKey

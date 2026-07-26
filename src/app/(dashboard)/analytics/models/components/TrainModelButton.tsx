@@ -19,9 +19,7 @@ interface TrainModelButtonProps {
 }
 
 type InlineState =
-  | { kind: 'idle' }
-  | { kind: 'success'; text: string }
-  | { kind: 'error'; text: string }
+  { kind: 'idle' } | { kind: 'success'; text: string } | { kind: 'error'; text: string }
 
 export function TrainModelButton({ modelType, currentStatus }: TrainModelButtonProps) {
   const { mutate, isPending } = useTrainAiModel()

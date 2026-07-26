@@ -20,10 +20,6 @@ import type { ReactNode, ComponentType } from 'react'
 // Test helpers
 // ============================================================================
 
-// Mock console to suppress warnings during tests
-vi.spyOn(console, 'error').mockImplementation(() => {})
-vi.spyOn(console, 'warn').mockImplementation(() => {})
-
 // Skeleton mock for fallback testing
 function MockSkeleton() {
   return <div data-testid="skeleton">Loading...</div>
@@ -61,6 +57,8 @@ class TestErrorBoundary extends Component<
 describe('Orders Page - Lazy Loading (Story 40.7-FE)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
   })
 
   // ============================================================================

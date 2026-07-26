@@ -23,13 +23,11 @@ import {
 function renderFilters(overrides: Partial<Parameters<typeof OrderPickerFilters>[0]> = {}) {
   const props = {
     searchValue: '',
-    onSearchChange: vi.fn<[value: string], void>(),
+    onSearchChange: vi.fn<(value: string) => void>(),
     statusFilter: null as import('@/hooks/useOrdersForSupply').EligibleSupplierStatus | null,
-    onStatusChange: vi.fn<
-      [status: import('@/hooks/useOrdersForSupply').EligibleSupplierStatus | null],
-      void
-    >(),
-    onClearFilters: vi.fn<[], void>(),
+    onStatusChange:
+      vi.fn<(status: import('@/hooks/useOrdersForSupply').EligibleSupplierStatus | null) => void>(),
+    onClearFilters: vi.fn<() => void>(),
     activeFilterCount: 0,
     ...overrides,
   }

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "mode": "threshold",
+  "epsilonPercentagePoints": 0.01,
+  "baseline": {
+    "statements": {
+      "total": 25487,
+      "covered": 18688,
+      "uncovered": 6799,
+      "percentage": 73.32365519676698
+    },
+    "branches": {
+      "total": 25228,
+      "covered": 17670,
+      "uncovered": 7558,
+      "percentage": 70.04122403678453
+    },
+    "functions": {
+      "total": 7836,
+      "covered": 5474,
+      "uncovered": 2362,
+      "percentage": 69.85706993363962
+    },
+    "lines": {
+      "total": 23147,
+      "covered": 17237,
+      "uncovered": 5910,
+      "percentage": 74.46753358966605
+    }
+  },
+  "vitestThresholds": {
+    "statements": -6799,
+    "branches": -7558,
+    "functions": -2362,
+    "lines": -5910
+  }
+}

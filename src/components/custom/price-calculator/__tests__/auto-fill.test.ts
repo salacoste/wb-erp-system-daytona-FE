@@ -136,12 +136,12 @@ describe('getExpectedFormValuesAfterAutoFill', () => {
 // ============================================================================
 
 describe('handleProductSelect - Dimensions Auto-fill', () => {
-  let setValueMock: ReturnType<typeof vi.fn>
-  let setDimensionsAutoFillMock: ReturnType<typeof vi.fn>
+  let setValueMock: ReturnType<typeof vi.fn<(field: string, value: number) => void>>
+  let setDimensionsAutoFillMock: ReturnType<typeof vi.fn<(state: DimensionAutoFillState) => void>>
 
   beforeEach(() => {
-    setValueMock = vi.fn()
-    setDimensionsAutoFillMock = vi.fn()
+    setValueMock = vi.fn<(field: string, value: number) => void>()
+    setDimensionsAutoFillMock = vi.fn<(state: DimensionAutoFillState) => void>()
   })
 
   /**
@@ -222,7 +222,7 @@ describe('handleProductSelect - Dimensions Auto-fill', () => {
     expect(setValueMock).toHaveBeenCalledWith('volume_liters', 6.0)
 
     const autoFillCall = setDimensionsAutoFillMock.mock.calls[0][0]
-    expect(autoFillCall.originalValues.volume_liters).toBe(6.0)
+    expect(autoFillCall.originalValues!.volume_liters).toBe(6.0)
   })
 
   it('handles decimal dimensions correctly', () => {
@@ -256,12 +256,12 @@ describe('handleProductSelect - Dimensions Auto-fill', () => {
 // ============================================================================
 
 describe('handleProductSelect - Category Auto-fill', () => {
-  let setSelectedCategoryMock: ReturnType<typeof vi.fn>
-  let setCategoryAutoFillMock: ReturnType<typeof vi.fn>
+  let setSelectedCategoryMock: ReturnType<typeof vi.fn<(category: unknown) => void>>
+  let setCategoryAutoFillMock: ReturnType<typeof vi.fn<(state: CategoryAutoFillState) => void>>
 
   beforeEach(() => {
-    setSelectedCategoryMock = vi.fn()
-    setCategoryAutoFillMock = vi.fn()
+    setSelectedCategoryMock = vi.fn<(category: unknown) => void>()
+    setCategoryAutoFillMock = vi.fn<(state: CategoryAutoFillState) => void>()
   })
 
   /**
@@ -408,12 +408,15 @@ describe('Dimension Edit Detection', () => {
 // ============================================================================
 
 describe('Restore Functionality', () => {
-  let setValueMock: ReturnType<typeof vi.fn>
-  let setDimensionsAutoFillMock: ReturnType<typeof vi.fn>
+  let setValueMock: ReturnType<typeof vi.fn<(field: string, value: number) => void>>
+  let setDimensionsAutoFillMock: ReturnType<
+    typeof vi.fn<(updater: (prev: DimensionAutoFillState) => DimensionAutoFillState) => void>
+  >
 
   beforeEach(() => {
-    setValueMock = vi.fn()
-    setDimensionsAutoFillMock = vi.fn()
+    setValueMock = vi.fn<(field: string, value: number) => void>()
+    setDimensionsAutoFillMock =
+      vi.fn<(updater: (prev: DimensionAutoFillState) => DimensionAutoFillState) => void>()
   })
 
   /**

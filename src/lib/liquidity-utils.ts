@@ -99,8 +99,7 @@ export function calculatePotentialUnlock(
 /** Get recommended scenario from liquidation options */
 export function getRecommendedScenario(
   scenarios:
-    | { target_days: number; suggested_discount_pct: number; is_profitable: boolean | null }[]
-    | null
+    { target_days: number; suggested_discount_pct: number; is_profitable: boolean | null }[] | null
 ): typeof scenarios extends null ? null : NonNullable<typeof scenarios>[number] | null {
   if (!scenarios || scenarios.length === 0) return null
 

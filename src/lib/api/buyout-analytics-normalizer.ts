@@ -66,8 +66,7 @@ function normalizeBySkuBuyoutItem(raw: unknown): BySkuBuyoutItem {
   return {
     nmId: toCount(d.nmId ?? d.nm_id),
     supplierArticle: (typeof d.supplierArticle === 'string' ? d.supplierArticle : null) as
-      | string
-      | null,
+      string | null,
     productName: (typeof d.productName === 'string' ? d.productName : null) as string | null,
     brand: (typeof d.brand === 'string' ? d.brand : null) as string | null,
     category: toOptionalString(d.category),

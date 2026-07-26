@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
 import path from 'path'
+import coveragePolicy from './quality/coverage-policy.v1.json'
+import coverageScope from './quality/coverage-scope.v1.json'
 
 export default defineConfig({
-  plugins: [react()] as any,
   test: {
     environment: 'jsdom',
     environmentOptions: {
@@ -16,6 +16,10 @@ export default defineConfig({
     setupFiles: ['./src/test/localStorage-polyfill.ts', './src/test/setup.ts'],
     testTimeout: 10000, // 10 seconds timeout for all tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
+    // Vitest 4 preserves spies between tests unless explicitly restored. The
+    // suite creates DOM spies in beforeEach hooks and expects the real method
+    // to be restored before the next hook captures it.
+    restoreMocks: true,
     // Configure fake timers to work with waitFor and MSW
     // Story 44.44: Required for PresetIndicator auto-hide tests
     fakeTimers: {
@@ -38,6 +42,8 @@ export default defineConfig({
       'node_modules/**',
       'e2e/**', // Exclude E2E tests from Vitest
       'tests/e2e/**', // Exclude E2E tests in tests/ directory
+      'scripts/tier0/**/*.test.mjs', // Tier-0 safety tests run under node:test, never Vitest
+      'scripts/certification/**/*.test.mjs', // Coverage governance tests run under node:test
       'dist/**',
       '**/*.config.*',
       // Exclude OMC agent worktrees (stale full-repo copies under
@@ -47,16 +53,14 @@ export default defineConfig({
       '.claude/**',
     ],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        'e2e/', // Exclude E2E tests from coverage
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/mockData',
-      ],
+      provider: coverageScope.provider as 'v8',
+      reporter: coverageScope.reporter,
+      include: coverageScope.include,
+      exclude: coverageScope.exclude,
+      thresholds:
+        process.env.COVERAGE_GOVERNANCE_MODE === 'threshold'
+          ? coveragePolicy.vitestThresholds
+          : undefined,
     },
     globals: true,
   },
@@ -66,4 +70,3 @@ export default defineConfig({
     },
   },
 })
-

@@ -8,17 +8,39 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMPDIR_AP8="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR_AP8"' EXIT
+ESLINT_BIN="${ESLINT_BIN_OVERRIDE:-$ROOT/node_modules/.bin/eslint}"
+CREATED_FILES=()
+
+cleanup() {
+  rm -rf "$TMPDIR_AP8"
+  if [[ ${#CREATED_FILES[@]} -gt 0 ]]; then
+    rm -f "${CREATED_FILES[@]}"
+  fi
+}
+trap cleanup EXIT
+
+if [[ ! -x "$ESLINT_BIN" ]]; then
+  echo "AP#8 infrastructure error: ESLint binary is missing or not executable: $ESLINT_BIN" >&2
+  exit 2
+fi
 
 PASS=0
 FAIL=0
 
 run_eslint() {
-  local file="$1"
-  # Run ESLint from frontend dir so it picks up frontend/eslint.config.js (flat config).
-  # The frontend flat config omits parserOptions.project to avoid OOM on low-memory CI.
-  # Suppress @typescript-eslint/no-unused-vars — only care about no-restricted-syntax.
-  cd "$ROOT" && npx eslint "$file" 2>&1 | grep "no-restricted-syntax" || true
+  local file="$1" output status
+  # ESLint status 0 means no findings and 1 means lint findings. Any higher status
+  # is an infrastructure/configuration failure and must never become semantic silence.
+  set +e
+  output=$(cd "$ROOT" && "$ESLINT_BIN" "$file" 2>&1)
+  status=$?
+  set -e
+  if [[ $status -gt 1 ]]; then
+    echo "AP#8 infrastructure error: ESLint exited with status $status" >&2
+    printf '%s\n' "$output" >&2
+    return "$status"
+  fi
+  printf '%s\n' "$output"
 }
 
 assert_fires() {
@@ -29,6 +51,7 @@ assert_fires() {
   printf '/* eslint-disable @typescript-eslint/no-unused-vars */\n%s\n' "$code" > "$tmpfile"
   # Copy into frontend/src so the eslint flat-config frontend block matches.
   local srcfile="$ROOT/src/_ap8_test_tmp_${label}.tsx"
+  CREATED_FILES+=("$srcfile")
   cp "$tmpfile" "$srcfile"
   local out
   out=$(run_eslint "$srcfile")
@@ -49,6 +72,7 @@ assert_silent() {
   local tmpfile="$TMPDIR_AP8/neg_${label}.tsx"
   printf '/* eslint-disable @typescript-eslint/no-unused-vars */\n%s\n' "$code" > "$tmpfile"
   local srcfile="$ROOT/src/_ap8_test_tmp_${label}.tsx"
+  CREATED_FILES+=("$srcfile")
   cp "$tmpfile" "$srcfile"
   local out
   out=$(run_eslint "$srcfile")

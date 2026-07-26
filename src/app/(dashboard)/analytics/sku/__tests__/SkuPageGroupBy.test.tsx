@@ -47,7 +47,7 @@ interface StubState {
 // `vi.hoisted` so the mock functions exist before the `vi.mock` factory runs.
 const { searchParamsGetMock, stateMock } = vi.hoisted(() => ({
   searchParamsGetMock: vi.fn(),
-  stateMock: vi.fn<[], StubState>(),
+  stateMock: vi.fn<() => StubState>(),
 }))
 
 // next/navigation: control `group_by` per test via searchParamsGetMock.

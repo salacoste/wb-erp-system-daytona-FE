@@ -11,10 +11,7 @@ import type { StorageBySkuItem } from '@/types/storage-analytics'
 // ============================================================================
 
 export type SortField =
-  | 'storage_cost_total'
-  | 'storage_cost_avg_daily'
-  | 'volume_avg'
-  | 'days_stored'
+  'storage_cost_total' | 'storage_cost_avg_daily' | 'volume_avg' | 'days_stored'
 export type SortOrder = 'asc' | 'desc'
 
 export interface StorageBySkuTableProps {
@@ -64,16 +61,12 @@ export function formatVolume(value: number | null): string {
 
 /**
  * Create case-insensitive regex for filtering (like SQL LIKE %query%)
- * Returns null for empty/invalid queries
+ * Returns null for empty queries and treats regex metacharacters literally.
  */
 export function createSearchRegex(query: string): RegExp | null {
   if (!query.trim()) return null
-  try {
-    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    return new RegExp(escaped, 'i')
-  } catch {
-    return null
-  }
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(escaped, 'i')
 }
 
 // ============================================================================

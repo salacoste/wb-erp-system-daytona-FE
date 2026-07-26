@@ -28,8 +28,8 @@ describe('ExportCsvButton', () => {
   let capturedBlobs: Blob[]
   let createdObjectUrls: string[]
   let revokedObjectUrls: string[]
-  let mockAnchorClick: ReturnType<typeof vi.fn>
-  let removeSpy: ReturnType<typeof vi.fn>
+  let mockAnchorClick: ReturnType<typeof vi.fn<() => void>>
+  let removeSpy: ReturnType<typeof vi.fn<() => void>>
   // appendChildCalled tracked via a closure counter — avoids MockInstance type clash
   let appendChildCallCount: number
   let originalAppendChild: typeof document.body.appendChild
@@ -38,8 +38,8 @@ describe('ExportCsvButton', () => {
     capturedBlobs = []
     createdObjectUrls = []
     revokedObjectUrls = []
-    mockAnchorClick = vi.fn()
-    removeSpy = vi.fn()
+    mockAnchorClick = vi.fn<() => void>()
+    removeSpy = vi.fn<() => void>()
     appendChildCallCount = 0
 
     global.URL.createObjectURL = vi.fn((blob: Blob) => {
@@ -164,17 +164,8 @@ describe('ExportCsvButton', () => {
 
     it('download attribute is set to fileName on synthetic anchor', () => {
       let capturedDownload = ''
-      const originalCreateElement = document.createElement.bind(document)
-      vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
-        if (tag === 'a') {
-          const anchor = originalCreateElement('a') as HTMLAnchorElement
-          anchor.click = vi.fn(() => {
-            capturedDownload = anchor.download
-          })
-          anchor.remove = vi.fn()
-          return anchor
-        }
-        return originalCreateElement(tag)
+      mockAnchorClick.mockImplementation(function (this: HTMLAnchorElement) {
+        capturedDownload = this.download
       })
 
       render(<ExportCsvButton csvContent={VALID_CSV} fileName="my-file.csv" />)

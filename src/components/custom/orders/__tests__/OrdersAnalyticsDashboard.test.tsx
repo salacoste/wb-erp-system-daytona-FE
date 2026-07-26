@@ -81,7 +81,7 @@ function renderWithProviders(
 
 describe('OrdersAnalyticsDashboard', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
     vi.useFakeTimers({ shouldAdvanceTime: true })
     mockGetSlaMetrics.mockResolvedValue(mockSlaMetricsExcellent)
     mockGetVelocityMetrics.mockResolvedValue(mockVelocityMetricsFast)

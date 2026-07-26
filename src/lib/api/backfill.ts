@@ -67,11 +67,9 @@ export async function getBackfillStatus(): Promise<BackfillStatusResponse> {
     analytics_status: toBackfillStatus(item.analyticsStatus ?? item.analytics_status),
     data_source: toDataSource(item.dataSource ?? item.data_source),
     oldest_available_date: (item.oldestAvailableDate ?? item.oldest_available_date ?? null) as
-      | string
-      | null,
+      string | null,
     newest_available_date: (item.newestAvailableDate ?? item.newest_available_date ?? null) as
-      | string
-      | null,
+      string | null,
     progress:
       (item.progress as BackfillCabinetStatus['progress']) ??
       (item.overallProgress != null

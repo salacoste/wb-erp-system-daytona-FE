@@ -44,55 +44,48 @@ describe('ProcessingStatus', () => {
     )
   }
 
-  it(
-    'shows loading state initially',
-    () => {
-      vi.mocked(useProcessingStatus).mockReturnValue({
-        data: undefined,
-        isLoading: true,
-        error: null,
-      } as unknown as ReturnType<typeof useProcessingStatus>)
+  it('shows loading state initially', { timeout: 5000 }, () => {
+    vi.mocked(useProcessingStatus).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+    } as unknown as ReturnType<typeof useProcessingStatus>)
 
-      renderComponent()
+    renderComponent()
 
-      expect(screen.getByText(/проверка статуса обработки/i)).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText(/проверка статуса обработки/i)).toBeInTheDocument()
+  })
 
-  it(
-    'displays processing status with progress bars',
-    () => {
-      vi.mocked(useProcessingStatus).mockReturnValue({
-        data: {
-          status: 'processing',
-          productParsing: {
-            progress: 45,
-            status: 'in_progress',
-            taskUuid: 'task-1',
-          },
-          reportLoading: {
-            progress: 30,
-            status: 'in_progress',
-            taskUuid: 'task-2',
-          },
+  it('displays processing status with progress bars', { timeout: 5000 }, () => {
+    vi.mocked(useProcessingStatus).mockReturnValue({
+      data: {
+        status: 'processing',
+        productParsing: {
+          progress: 45,
+          status: 'in_progress',
+          taskUuid: 'task-1',
         },
-        isLoading: false,
-        error: null,
-      } as unknown as ReturnType<typeof useProcessingStatus>)
+        reportLoading: {
+          progress: 30,
+          status: 'in_progress',
+          taskUuid: 'task-2',
+        },
+      },
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof useProcessingStatus>)
 
-      renderComponent()
+    renderComponent()
 
-      expect(screen.getByText(/парсинг продуктов/i)).toBeInTheDocument()
-      expect(screen.getAllByText(/загрузка финансовых отчетов/i)[0]).toBeInTheDocument()
-      expect(screen.getByText(/^45\s%$/)).toBeInTheDocument() // ru-RU: "45 %" (NBSP); anchored
-      expect(screen.getByText(/^30\s%$/)).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText(/парсинг продуктов/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/загрузка финансовых отчетов/i)[0]).toBeInTheDocument()
+    expect(screen.getByText(/^45\s%$/)).toBeInTheDocument() // ru-RU: "45 %" (NBSP); anchored
+    expect(screen.getByText(/^30\s%$/)).toBeInTheDocument()
+  })
 
   it(
     'shows completion message and redirects when processing completes',
+    { timeout: 10000 },
     async () => {
       vi.mocked(useProcessingStatus).mockReturnValue({
         data: {
@@ -123,76 +116,64 @@ describe('ProcessingStatus', () => {
         },
         { timeout: 5000 }
       )
-    },
-    { timeout: 10000 }
+    }
   )
 
-  it(
-    'displays error state when processing fails',
-    () => {
-      vi.mocked(useProcessingStatus).mockReturnValue({
-        data: {
+  it('displays error state when processing fails', { timeout: 5000 }, () => {
+    vi.mocked(useProcessingStatus).mockReturnValue({
+      data: {
+        status: 'failed',
+        productParsing: {
+          progress: 0,
           status: 'failed',
-          productParsing: {
-            progress: 0,
-            status: 'failed',
-            taskUuid: 'task-1',
-          },
-          reportLoading: {
-            progress: 0,
-            status: 'failed',
-            taskUuid: 'task-2',
-          },
-          error: 'Processing failed',
+          taskUuid: 'task-1',
         },
-        isLoading: false,
-        error: null,
-      } as unknown as ReturnType<typeof useProcessingStatus>)
+        reportLoading: {
+          progress: 0,
+          status: 'failed',
+          taskUuid: 'task-2',
+        },
+        error: 'Processing failed',
+      },
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof useProcessingStatus>)
 
-      renderComponent()
+    renderComponent()
 
-      expect(screen.getByText(/ошибка обработки/i)).toBeInTheDocument()
-      expect(screen.getByText(/processing failed/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /повторить попытку/i })).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText(/ошибка обработки/i)).toBeInTheDocument()
+    expect(screen.getByText(/processing failed/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /повторить попытку/i })).toBeInTheDocument()
+  })
 
-  it(
-    'handles API error state',
-    () => {
-      vi.mocked(useProcessingStatus).mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error: new Error('Network error'),
-      } as unknown as ReturnType<typeof useProcessingStatus>)
+  it('handles API error state', { timeout: 5000 }, () => {
+    vi.mocked(useProcessingStatus).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error('Network error'),
+    } as unknown as ReturnType<typeof useProcessingStatus>)
 
-      renderComponent()
+    renderComponent()
 
-      expect(screen.getByText(/ошибка загрузки статуса/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /обновить страницу/i })).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText(/ошибка загрузки статуса/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /обновить страницу/i })).toBeInTheDocument()
+  })
 
-  it(
-    'shows status when no data available',
-    () => {
-      vi.mocked(useProcessingStatus).mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error: null,
-      } as unknown as ReturnType<typeof useProcessingStatus>)
+  it('shows status when no data available', { timeout: 5000 }, () => {
+    vi.mocked(useProcessingStatus).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof useProcessingStatus>)
 
-      renderComponent()
+    renderComponent()
 
-      expect(screen.getByText(/статус не найден/i)).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(screen.getByText(/статус не найден/i)).toBeInTheDocument()
+  })
 
   it(
     'renders no_data CTA and navigates to dashboard on click without auto-redirect',
+    { timeout: 5000 },
     async () => {
       const { fireEvent } = await import('@testing-library/react')
       vi.mocked(useProcessingStatus).mockReturnValue({
@@ -217,40 +198,35 @@ describe('ProcessingStatus', () => {
 
       fireEvent.click(cta)
       expect(mockPush).toHaveBeenCalledWith('/dashboard')
-    },
-    { timeout: 5000 }
+    }
   )
 
-  it(
-    'displays correct status text for each task',
-    () => {
-      vi.mocked(useProcessingStatus).mockReturnValue({
-        data: {
-          status: 'processing',
-          productParsing: {
-            progress: 50,
-            status: 'in_progress',
-            taskUuid: 'task-1',
-          },
-          reportLoading: {
-            progress: 25,
-            status: 'pending',
-            taskUuid: 'task-2',
-          },
+  it('displays correct status text for each task', { timeout: 5000 }, () => {
+    vi.mocked(useProcessingStatus).mockReturnValue({
+      data: {
+        status: 'processing',
+        productParsing: {
+          progress: 50,
+          status: 'in_progress',
+          taskUuid: 'task-1',
         },
-        isLoading: false,
-        error: null,
-      } as unknown as ReturnType<typeof useProcessingStatus>)
+        reportLoading: {
+          progress: 25,
+          status: 'pending',
+          taskUuid: 'task-2',
+        },
+      },
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof useProcessingStatus>)
 
-      renderComponent()
+    renderComponent()
 
-      expect(
-        screen.getByText(/парсинг исторических данных за 3 месяца выполняется/i)
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(/загрузка финансовых отчетов за 3 месяца ожидает начала/i)
-      ).toBeInTheDocument()
-    },
-    { timeout: 5000 }
-  )
+    expect(
+      screen.getByText(/парсинг исторических данных за 3 месяца выполняется/i)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/загрузка финансовых отчетов за 3 месяца ожидает начала/i)
+    ).toBeInTheDocument()
+  })
 })

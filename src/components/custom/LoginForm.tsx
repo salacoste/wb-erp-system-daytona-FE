@@ -24,11 +24,19 @@ interface LoginFormData {
   password: string
 }
 
+interface LoginFormProps {
+  navigate?: (href: string) => void
+}
+
 /**
  * Login form component
  * Handles user authentication with email and password validation
  */
-export function LoginForm() {
+export function LoginForm({
+  navigate = href => {
+    window.location.href = href
+  },
+}: LoginFormProps) {
   const searchParams = useSearchParams()
   const { login } = useAuthStore()
   const [isHydrated, setIsHydrated] = useState(false)
@@ -66,7 +74,7 @@ export function LoginForm() {
       // Use window.location for full page reload to ensure middleware can check auth state
       // Small delay to ensure token is saved to localStorage and cookie before navigation
       setTimeout(() => {
-        window.location.href = safeRedirect
+        navigate(safeRedirect)
       }, 100)
     },
     onError: (_error: Error) => {

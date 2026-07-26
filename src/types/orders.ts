@@ -36,13 +36,7 @@ export type WbStatus =
  * PATCH /v1/orders/:uuid/operational-status drives transitions.
  */
 export type OrderOperationalStatus =
-  | 'NEW'
-  | 'ASSEMBLED'
-  | 'PACKED'
-  | 'SHIPPED'
-  | 'DELIVERED'
-  | 'CANCELLED'
-  | 'RETURNED'
+  'NEW' | 'ASSEMBLED' | 'PACKED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURNED'
 
 /** Russian labels for operational statuses */
 export const ORDER_OPERATIONAL_STATUS_LABELS: Record<OrderOperationalStatus, string> = {

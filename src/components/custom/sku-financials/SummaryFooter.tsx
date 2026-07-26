@@ -73,8 +73,8 @@ export function SummaryFooter({ totals }: { totals: Totals }) {
       </div>
       {showCogsFootnote && (
         <p className="mt-2 text-xs text-amber-700">
-          ⚠ COGS назначен для {totals.rowsWithCogs} из {totals.totalRows} товаров. Прибыль
-          посчитана только по товарам с COGS.
+          ⚠ COGS назначен для {totals.rowsWithCogs} из {totals.totalRows} товаров. Прибыль посчитана
+          только по товарам с COGS.
         </p>
       )}
     </div>

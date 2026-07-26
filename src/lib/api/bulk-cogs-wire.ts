@@ -15,15 +15,10 @@ import type {
 } from '@/types/api'
 
 export type BulkCogsNmIdParseErrorCode =
-  | 'required'
-  | 'non_digit'
-  | 'non_finite'
-  | 'non_integer'
-  | 'unsafe_integer'
+  'required' | 'non_digit' | 'non_finite' | 'non_integer' | 'unsafe_integer'
 
 export type BulkCogsNmIdParseResult =
-  | { ok: true; value: number }
-  | { ok: false; code: BulkCogsNmIdParseErrorCode; message: string }
+  { ok: true; value: number } | { ok: false; code: BulkCogsNmIdParseErrorCode; message: string }
 
 const DIGITS_ONLY = /^\d+$/
 
