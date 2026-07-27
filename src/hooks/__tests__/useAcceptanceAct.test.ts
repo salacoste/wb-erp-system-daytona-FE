@@ -115,6 +115,9 @@ describe('useDownloadAcceptanceAct (Story O5)', () => {
   it('downloads the act and toasts success', async () => {
     const blob = new Blob(['x'])
     mockDownload.mockResolvedValue(blob)
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined)
 
     const { result } = renderHook(() => useDownloadAcceptanceAct(), {
       wrapper: createQueryWrapper(createTestQueryClient()),
@@ -124,6 +127,7 @@ describe('useDownloadAcceptanceAct (Story O5)', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockDownload).toHaveBeenCalledWith('supply-1')
+    expect(clickSpy).toHaveBeenCalledTimes(1)
     expect(toast.success).toHaveBeenCalledWith('Акт приёмки скачан')
   })
 

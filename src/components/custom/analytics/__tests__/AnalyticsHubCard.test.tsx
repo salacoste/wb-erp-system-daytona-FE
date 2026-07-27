@@ -152,7 +152,10 @@ describe('AnalyticsHubCard - Интерактивность', () => {
         href: '/analytics/orders',
         tabIndex: 0,
         onKeyDown: (e: React.KeyboardEvent) => {
-          if (e.key === 'Enter') onKeyDown(e.key)
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            onKeyDown(e.key)
+          }
         },
       })
     )

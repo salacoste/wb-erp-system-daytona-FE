@@ -84,6 +84,10 @@ describe('OrdersTable — Client column (Story 86.2)', () => {
         />
       )
       const link = screen.getByRole('link', { name: /позвонить клиенту/i })
+      // jsdom schedules navigation for real anchor clicks unless the default action is cancelled.
+      // Keep the component's React handler responsible for stopPropagation while preventing only
+      // the unsupported test-environment navigation side effect.
+      link.addEventListener('click', event => event.preventDefault())
       fireEvent.click(link)
       expect(onRowClick).not.toHaveBeenCalled()
     })

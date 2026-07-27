@@ -190,6 +190,9 @@ describe('FbsExportButton', () => {
       return node
     })
     const removeSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(node => node)
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined)
 
     renderButton()
 
@@ -203,6 +206,7 @@ describe('FbsExportButton', () => {
     // download anchor was appended + removed
     expect(appendSpy).toHaveBeenCalled()
     expect(removeSpy).toHaveBeenCalled()
+    expect(clickSpy).toHaveBeenCalledTimes(1)
 
     // H-1+H-2: href must be the signed S3 URL, NOT a relative /v1/... path
     expect(appendedLinks).toHaveLength(1)
@@ -214,6 +218,7 @@ describe('FbsExportButton', () => {
 
     appendSpy.mockRestore()
     removeSpy.mockRestore()
+    clickSpy.mockRestore()
   })
 
   it('polling ready with null url → defensive-frontend error shown, no anchor created (H-2 fix)', async () => {
