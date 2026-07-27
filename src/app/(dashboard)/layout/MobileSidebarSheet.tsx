@@ -60,14 +60,13 @@ export function MobileSidebarSheet({ open, onOpenChange }: MobileSidebarSheetPro
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <span
-          className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        <button
+          type="button"
+          className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:hidden"
           aria-label="Open menu"
-          role="button"
-          tabIndex={0}
         >
           <Menu className="h-5 w-5" />
-        </span>
+        </button>
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0 bg-white">
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
