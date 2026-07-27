@@ -14,7 +14,7 @@ Financial analytics dashboard for Wildberries marketplace sellers. Built with Ne
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (all pages are client components) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~975 unit test files) + Playwright (83 E2E specs) |
+| **Testing** | Vitest (~975 unit test files) + Playwright (83 E2E specs) + Tier 0 runtime certification + governed coverage certification |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (both dev and prod via PM2 — never run both simultaneously) |
 
@@ -31,6 +31,9 @@ npm test                       # Vitest unit tests
 npm run test:e2e               # Playwright E2E
 npm run check:docs             # Doc-citation drift gate
 npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
+npm run cert:coverage:ci       # Governed coverage certification (CI mode)
+npm run test:tier0:safety      # Tier 0 script unit tests
+npm run test:tier0:certify     # Tier 0 runtime certification
 ```
 
 ## Documentation Sections
@@ -38,8 +41,8 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 - **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, deployment.
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
-- **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, two-pass review discipline.
-- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, CI workflows, PM2 deployment, environment variables.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
+- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, coverage governance certification, Tier 0 runtime certification, CI workflows, PM2 deployment, environment variables.
 
 ## Key Source References
 

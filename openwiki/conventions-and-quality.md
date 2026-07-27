@@ -76,15 +76,22 @@ Each gate has an accepted baseline. Stories close only when all gates match thei
 | ESLint rules valid | `npm run check:eslint-rules` | All rule names recognized |
 | Next.js async-params | `npm run check:next-params` | All params Promise-typed |
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ (lower baseline when migrating; started at ~108) |
-| AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline |
+| AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, max-warnings: 112 |
 | Vitest | `npm test -- --run` | ≥ 17186 passing, 0 failed |
+| Governed coverage | `npm run cert:coverage:ci` | Non-regression vs baseline in `quality/coverage-policy.v1.json` (see [Testing & Operations](testing-and-ops.md#coverage-governance-certification)) |
+| Coverage governance tests | `npm run test:coverage:governance` | All governance engine tests pass |
+| Tier 0 safety tests | `npm run test:tier0:safety` | All Tier 0 script unit tests pass |
 
 ### Ratchet gate behavior
 
 Ratchet gates (check:docs, check:locale-percent, check:anti-pattern-8-normalizer) are **not zero-tolerance** — they fail only when the violation count *increases* above a stored baseline. When a story legitimately reduces violations, the baseline file must be lowered in the same commit.
 
 **Exit-code caveat**: Bash pipes capture only the last command's exit code — `npm run check:docs | tail` returns 0 even on failure. Always run the bare `npm run check:docs` or invoke the script directly.
+
+### Toolchain pinning
+
+`package.json` `engines` pins Node `24.18.0` and npm `11.11.0`. Vitest and `@vitest/coverage-v8` are pinned to exact `4.1.10`. The coverage governance system enforces these versions at runtime (see [Testing & Operations — Coverage Governance](testing-and-ops.md#coverage-governance-certification)), and CI asserts them at job start.
 
 ## Two-Pass Review Discipline
 
