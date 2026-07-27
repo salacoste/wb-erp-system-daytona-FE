@@ -81,7 +81,7 @@ Mode selection is validated by `quality/schemas/coverage-policy-selection.v1.jso
 - **Sealed artifacts** — all output files are `chmod 0444`, directories `chmod 0555` (tamper evidence).
 - **Identity binding** — every run carries an `identity.json` with SHA-256 digests over the source tree, resolved test paths, lockfile, policy files, and toolchain versions.
 - **Forbidden warning scan** — test transcript scanned for known Vite/Vitest migration deprecation warnings (`quality/coverage-warning-governance.v1.json`).
-- **Toolchain pinning** — Node v24.18.0, npm 11.11.0, Vitest 4.1.10, `@vitest/coverage-v8` 4.1.10 (exact versions enforced at runtime).
+- **Toolchain pinning** — Node v24.18.0, npm 11.11.0, Vitest 4.1.10, `@vitest/coverage-v8` 4.1.10 (exact versions enforced at runtime). npm `overrides` in `package.json` pin transitive deps: vite 7.3.6, picomatch 2.3.2, postcss 8.5.23, sharp 0.35.3.
 
 ### Certification run
 
