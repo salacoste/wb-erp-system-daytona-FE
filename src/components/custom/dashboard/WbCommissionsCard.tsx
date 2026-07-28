@@ -12,6 +12,7 @@
 'use client'
 
 import { Receipt } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { ExpenseMetricCard } from './ExpenseMetricCard'
 import { CommissionBreakdownPopover } from './CommissionBreakdownPopover'
 import {
@@ -67,7 +68,7 @@ export function WbCommissionsCard({
   )
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <ExpenseMetricCard
         title={DASHBOARD_WB_DEDUCTIONS_COPY.commissionTitle}
         tooltip={WB_COMMISSION_CARD_TOOLTIP}
@@ -78,7 +79,7 @@ export function WbCommissionsCard({
         revenueTotal={saleGross}
         isLoading={isLoading}
         error={error}
-        className={className}
+        className={cn('h-full', className)}
         onRetry={onRetry}
       />
       {total != null && (

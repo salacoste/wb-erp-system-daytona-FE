@@ -13,6 +13,7 @@
 
 import { Truck } from 'lucide-react'
 import type { LogisticsBreakdown } from '@/types/finance-summary'
+import { cn } from '@/lib/utils'
 import { ExpenseMetricCard } from './ExpenseMetricCard'
 import { LogisticsBreakdownPopover } from './LogisticsBreakdownPopover'
 
@@ -57,7 +58,7 @@ export function LogisticsMetricCard({
   onRetry,
 }: LogisticsMetricCardProps): React.ReactElement {
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <ExpenseMetricCard
         title="Логистика"
         tooltip={
@@ -70,7 +71,7 @@ export function LogisticsMetricCard({
         revenueTotal={revenueTotal}
         isLoading={isLoading}
         error={error}
-        className={className}
+        className={cn('h-full', className)}
         onRetry={onRetry}
       />
       {logisticsBreakdown && (

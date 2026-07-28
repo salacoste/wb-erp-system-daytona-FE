@@ -91,6 +91,19 @@ describe('MetricsGrid (Story 65.17)', () => {
       expect(grid).toHaveClass('items-stretch')
     })
 
+    it('stretches overlay-wrapped cards to the full grid row height', () => {
+      const props = createMinimalGridProps()
+      renderWithProviders(<DashboardMetricsGrid {...props} />)
+
+      const logisticsCard = screen.getByRole('article', { name: /Логистика:/i })
+      const commissionsCard = screen.getByRole('article', { name: /Комиссия WB.*:/i })
+
+      expect(logisticsCard.parentElement).toHaveClass('h-full')
+      expect(logisticsCard).toHaveClass('h-full')
+      expect(commissionsCard.parentElement).toHaveClass('h-full')
+      expect(commissionsCard).toHaveClass('h-full')
+    })
+
     /** AC-65.17.1: gap-3 between cards */
     it('applies gap-3 between grid items', () => {
       const props = createMinimalGridProps()
