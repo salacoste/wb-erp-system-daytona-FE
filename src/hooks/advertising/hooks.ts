@@ -157,11 +157,15 @@ export function useAdvertisingAnalyticsComparison(
   })
 
   const [currentResult, previousResult] = results
+  const isCurrentLoading = currentResult.isLoading
+  const isComparisonLoading = previousResult.isLoading
 
   return {
     current: currentResult.data,
     previous: previousResult.data,
-    isLoading: currentResult.isLoading || previousResult.isLoading,
+    isCurrentLoading,
+    isComparisonLoading,
+    isLoading: isCurrentLoading || isComparisonLoading,
     isError: currentResult.isError || previousResult.isError,
     error: currentResult.error || previousResult.error,
   }

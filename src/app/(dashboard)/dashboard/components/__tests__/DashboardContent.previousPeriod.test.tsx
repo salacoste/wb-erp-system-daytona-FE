@@ -480,7 +480,7 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
   // ===========================================================================
 
   describe('Full Previous Period Data Integration', () => {
-    it('keeps the metrics grid loading while a selected finance period is transitioning', async () => {
+    it('keeps available current-period metrics visible while finance is transitioning', async () => {
       mockFinancialSummaryComparison.mockReturnValue({
         current: undefined,
         previous: undefined,
@@ -492,12 +492,12 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
       renderWithProviders(<DashboardContent />)
 
       await waitFor(() => {
-        expect(getMetricsGridAttr('data-is-loading')).toBe('true')
+        expect(getMetricsGridAttr('data-is-loading')).toBe('false')
         expect(getMetricsGridAttr('data-sale-gross')).toBe('undefined')
       })
     })
 
-    it('keeps stale available-weeks UI loading until selected finance period data resolves', async () => {
+    it('does not let stale available-weeks data blank other selected-period metrics', async () => {
       mockDashboardPeriod.value = {
         ...mockDashboardPeriod.value,
         selectedWeek: '2026-W03',
@@ -525,7 +525,7 @@ describe('DashboardContent - Previous Period Data (Story 61.11-FE)', () => {
         expect(mockFinancialSummaryComparison).toHaveBeenCalledWith(
           expect.objectContaining({ period: '2026-W03', enabled: true })
         )
-        expect(getMetricsGridAttr('data-is-loading')).toBe('true')
+        expect(getMetricsGridAttr('data-is-loading')).toBe('false')
         expect(getMetricsGridAttr('data-sale-gross')).toBe('undefined')
       })
 

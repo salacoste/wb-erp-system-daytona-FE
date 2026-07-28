@@ -69,68 +69,24 @@ const WEEK_W04_RESPONSE = {
   },
 }
 
-/** Week W01 API response */
-const WEEK_W01_RESPONSE = {
+/** Backend monthly aggregation response for January 2025 */
+const MONTH_JANUARY_RESPONSE = {
   summary_total: {
-    week: '2025-W01',
-    sale_gross_total: 150000,
-    payout_total: 60000,
-    cogs_total: 42000,
+    week: '2025-W01, 2025-W02, 2025-W03, 2025-W04',
+    sale_gross_total: 676244.8,
+    payout_total: 226248.26,
+    cogs_total: 187200,
     cogs_coverage_pct: 100,
     products_total: 50,
     products_with_cogs: 50,
-    gross_profit: 18000,
+    gross_profit: 39048.26,
   },
   summary_rus: null,
   summary_eaeu: null,
   meta: {
-    week: '2025-W01',
+    week: '2025-W01, 2025-W02, 2025-W03, 2025-W04',
     cabinet_id: 'test-cabinet',
-    generated_at: '2025-01-03T12:00:00Z',
-    timezone: 'Europe/Moscow',
-  },
-}
-
-/** Week W02 API response */
-const WEEK_W02_RESPONSE = {
-  summary_total: {
-    week: '2025-W02',
-    sale_gross_total: 175000,
-    payout_total: 70000,
-    cogs_total: 49000,
-    cogs_coverage_pct: 100,
-    products_total: 50,
-    products_with_cogs: 50,
-    gross_profit: 21000,
-  },
-  summary_rus: null,
-  summary_eaeu: null,
-  meta: {
-    week: '2025-W02',
-    cabinet_id: 'test-cabinet',
-    generated_at: '2025-01-10T12:00:00Z',
-    timezone: 'Europe/Moscow',
-  },
-}
-
-/** Week W03 API response */
-const WEEK_W03_RESPONSE = {
-  summary_total: {
-    week: '2025-W03',
-    sale_gross_total: 224322.35,
-    payout_total: 44028.34,
-    cogs_total: 60382,
-    cogs_coverage_pct: 100,
-    products_total: 50,
-    products_with_cogs: 50,
-    gross_profit: -16353.66,
-  },
-  summary_rus: null,
-  summary_eaeu: null,
-  meta: {
-    week: '2025-W03',
-    cabinet_id: 'test-cabinet',
-    generated_at: '2025-01-17T12:00:00Z',
+    generated_at: '2025-02-01T12:00:00Z',
     timezone: 'Europe/Moscow',
   },
 }
@@ -160,7 +116,7 @@ function createWrapper() {
 
 describe('useFinancialSummary - Margin Consistency (Story 61.13-FE)', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.mocked(apiClient.get).mockReset()
   })
 
   afterEach(() => {
@@ -216,13 +172,7 @@ describe('useFinancialSummary - Margin Consistency (Story 61.13-FE)', () => {
      */
     it('should calculate Operating Margin for month period (aggregated weeks)', async () => {
       const mockGet = vi.mocked(apiClient.get)
-
-      // Mock all week responses for January (W01-W04)
-      mockGet
-        .mockResolvedValueOnce(WEEK_W01_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W02_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W03_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W04_RESPONSE)
+      mockGet.mockResolvedValueOnce(MONTH_JANUARY_RESPONSE)
 
       const { result } = renderHook(() => useFinancialSummary('2025-01', 'month'), {
         wrapper: createWrapper(),
@@ -230,7 +180,7 @@ describe('useFinancialSummary - Margin Consistency (Story 61.13-FE)', () => {
 
       await waitFor(
         () => expect(result.current.isSuccess).toBe(true),
-        { timeout: 5000 } // Allow more time for multiple requests
+        { timeout: 5000 }
       )
 
       const summary = result.current.data?.summary_total
@@ -249,12 +199,7 @@ describe('useFinancialSummary - Margin Consistency (Story 61.13-FE)', () => {
      */
     it('should use aggregated sale_gross_total for month margin', async () => {
       const mockGet = vi.mocked(apiClient.get)
-
-      mockGet
-        .mockResolvedValueOnce(WEEK_W01_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W02_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W03_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W04_RESPONSE)
+      mockGet.mockResolvedValueOnce(MONTH_JANUARY_RESPONSE)
 
       const { result } = renderHook(() => useFinancialSummary('2025-01', 'month'), {
         wrapper: createWrapper(),
@@ -308,11 +253,7 @@ describe('useFinancialSummary - Margin Consistency (Story 61.13-FE)', () => {
 
       // Reset and test month
       mockGet.mockReset()
-      mockGet
-        .mockResolvedValueOnce(WEEK_W01_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W02_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W03_RESPONSE)
-        .mockResolvedValueOnce(WEEK_W04_RESPONSE)
+      mockGet.mockResolvedValueOnce(MONTH_JANUARY_RESPONSE)
 
       const monthResult = renderHook(() => useFinancialSummary('2025-01', 'month'), {
         wrapper: createWrapper(),

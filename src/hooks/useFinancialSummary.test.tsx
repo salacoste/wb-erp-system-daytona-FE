@@ -80,6 +80,42 @@ describe('useFinancialSummary', () => {
     expect(apiClient.get).toHaveBeenCalledWith('/v1/analytics/weekly/finance-summary?week=2025-W01')
   })
 
+  it('uses the backend month aggregation endpoint instead of N weekly requests', async () => {
+    const mockResponse = {
+      summary_total: {
+        week: '2026-W01, 2026-W02',
+        payout_total: 1500000,
+        sale_gross_total: 2000000,
+        cogs_total: 500000,
+        cogs_coverage_pct: 100,
+        product_transactions_total: 42,
+      },
+      summary_rus: null,
+      summary_eaeu: null,
+      meta: {
+        week: '2026-W01, 2026-W02',
+        cabinet_id: 'cabinet-123',
+        generated_at: '2026-02-01T10:00:00Z',
+        timezone: 'Europe/Moscow',
+      },
+    }
+
+    vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
+
+    const { result } = renderHook(() => useFinancialSummary('2026-01', 'month'), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(apiClient.get).toHaveBeenCalledTimes(1)
+    expect(apiClient.get).toHaveBeenCalledWith(
+      '/v1/analytics/weekly/finance-summary?month=2026-01'
+    )
+    expect(result.current.data?.summary_total?.product_transactions).toBe(42)
+    expect(result.current.data?.summary_total?.margin_pct).toBe(50)
+  })
+
   it('handles 404 error when week not found', async () => {
     const error = { status: 404, message: 'Week not found' }
     vi.mocked(apiClient.get).mockRejectedValueOnce(error)

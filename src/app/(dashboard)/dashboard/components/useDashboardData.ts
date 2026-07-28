@@ -92,10 +92,14 @@ export function useDashboardData() {
 
   const summary = financialComparison.current?.summary_total ?? null
   const hasActualFinanceSummary = Boolean(financialComparison.current?.summary_total)
+  const financialLoading =
+    financialComparison.isCurrentLoading ?? financialComparison.isLoading
+  const fulfillmentLoading = fulfillmentQuery.isCurrentLoading ?? fulfillmentQuery.isLoading
+  const advertisingLoading = advertisingQuery.isCurrentLoading ?? advertisingQuery.isLoading
   const isFinanceReportPending =
     !isFinanceAvailable &&
     !hasActualFinanceSummary &&
-    !financialComparison.isLoading &&
+    !financialLoading &&
     !financialComparison.error
   const effectiveIsFinanceAvailable = !isFinanceReportPending
   const fSummary = fulfillmentQuery.current?.summary
@@ -129,19 +133,15 @@ export function useDashboardData() {
   const hasFinancialData = financialComparison.current !== undefined
   const hasFulfillmentData = fulfillmentQuery.current !== undefined
   const hasAdvertisingData = advertisingQuery.current !== undefined
-  const isFinanceTransitionLoading =
-    financialComparison.isLoading && !hasFinancialData && !financialComparison.isError
-  const isLoading =
-    isFinanceTransitionLoading ||
-    shouldShowDashboardMetricsSkeleton({
-      isFinanceAvailable: true,
-      financialLoading: financialComparison.isLoading,
-      fulfillmentLoading: fulfillmentQuery.isLoading,
-      advertisingLoading: advertisingQuery.isLoading,
-      hasFinancialData,
-      hasFulfillmentData,
-      hasAdvertisingData,
-    })
+  const isLoading = shouldShowDashboardMetricsSkeleton({
+    isFinanceAvailable: true,
+    financialLoading,
+    fulfillmentLoading,
+    advertisingLoading,
+    hasFinancialData,
+    hasFulfillmentData,
+    hasAdvertisingData,
+  })
   const error = financialComparison.error || null
   const handleRetry = (): void => {
     invalidateDashboardDataQueries(queryClient)

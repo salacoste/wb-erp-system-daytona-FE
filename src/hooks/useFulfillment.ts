@@ -95,10 +95,15 @@ export function useFulfillmentSummaryWithComparison(params: UseFulfillmentCompar
   })
 
   const [currentQuery, previousQuery] = queries
+  const isCurrentLoading = currentQuery.isLoading
+  const isComparisonLoading = hasPreviousPeriod && previousQuery.isLoading
+
   return {
     current: currentQuery.data,
     previous: hasPreviousPeriod ? previousQuery.data : undefined,
-    isLoading: currentQuery.isLoading || (hasPreviousPeriod && previousQuery.isLoading),
+    isCurrentLoading,
+    isComparisonLoading,
+    isLoading: isCurrentLoading || isComparisonLoading,
     isSuccess: currentQuery.isSuccess && (!hasPreviousPeriod || previousQuery.isSuccess),
     isError: currentQuery.isError || previousQuery.isError,
     error: currentQuery.error || previousQuery.error,

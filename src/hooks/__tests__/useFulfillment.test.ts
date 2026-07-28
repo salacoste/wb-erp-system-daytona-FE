@@ -182,6 +182,29 @@ describe('Fulfillment Hooks - Epic 60', () => {
       expect(result.current.isLoading).toBe(true)
     })
 
+    it('marks current data ready while the previous-period comparison is still loading', async () => {
+      vi.mocked(getFulfillmentSummary).mockImplementation(({ from }) => {
+        if (from === '2026-01-19') return Promise.resolve(mockFulfillmentSummary)
+        return new Promise(() => {})
+      })
+      const { result } = renderHook(
+        () =>
+          useFulfillmentSummaryWithComparison({
+            from: '2026-01-19',
+            to: '2026-01-25',
+            previousFrom: '2026-01-12',
+            previousTo: '2026-01-18',
+          }),
+        { wrapper: createQueryWrapper() }
+      )
+
+      await waitFor(() => expect(result.current.current).toBeDefined())
+
+      expect(result.current.isCurrentLoading).toBe(false)
+      expect(result.current.isComparisonLoading).toBe(true)
+      expect(result.current.isLoading).toBe(true)
+    })
+
     it('skips previous period when dates not provided', async () => {
       vi.mocked(getFulfillmentSummary).mockResolvedValueOnce(mockFulfillmentSummary)
       const { result } = renderHook(

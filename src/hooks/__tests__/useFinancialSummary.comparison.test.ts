@@ -605,6 +605,33 @@ describe('useFinancialSummaryWithPeriodComparison - Story 61.11-FE', () => {
   // ===========================================================================
 
   describe('Loading States', () => {
+    it('separates selected-period loading from a slow previous-period comparison', async () => {
+      vi.mocked(apiClient.get).mockImplementation((url: string) => {
+        if (url.includes('2026-W05')) return Promise.resolve(mockCurrentPeriodSummary)
+        return new Promise(() => {})
+      })
+
+      const { useFinancialSummaryWithPeriodComparison } =
+        await import('@/hooks/useFinancialSummary')
+
+      const { result } = renderHook(
+        () =>
+          useFinancialSummaryWithPeriodComparison({
+            periodType: 'week',
+            period: '2026-W05',
+          }),
+        { wrapper: createWrapper() }
+      )
+
+      await waitFor(() => {
+        expect(result.current.current).toBeDefined()
+      })
+
+      expect(result.current.isCurrentLoading).toBe(false)
+      expect(result.current.isComparisonLoading).toBe(true)
+      expect(result.current.isLoading).toBe(true)
+    })
+
     it('should indicate loading while fetching both periods', async () => {
       vi.mocked(apiClient.get).mockImplementation(
         () =>

@@ -63,12 +63,13 @@ export function useFinancialSummaryWithPeriodComparison(
   const previousData =
     previousQuery.isError || previousQuery.isPlaceholderData ? undefined : previousQuery.data
 
-  // Determine combined loading state
-  const isLoading =
-    currentQuery.isLoading ||
-    currentQuery.isPlaceholderData ||
-    (previousQuery.isLoading && !previousQuery.isError) ||
-    (previousQuery.isPlaceholderData && !previousQuery.isError)
+  // Keep selected-period readiness separate from the optional comparison request. A cold
+  // previous period can take substantially longer than the current period and must not keep
+  // the dashboard's primary metrics in a full-page skeleton after current data has arrived.
+  const isCurrentLoading = currentQuery.isLoading || currentQuery.isPlaceholderData
+  const isComparisonLoading =
+    !previousQuery.isError && (previousQuery.isLoading || previousQuery.isPlaceholderData)
+  const isLoading = isCurrentLoading || isComparisonLoading
 
   // Current period error is critical, previous period error is graceful
   const isError = currentQuery.isError
@@ -77,6 +78,8 @@ export function useFinancialSummaryWithPeriodComparison(
   return {
     current: currentData,
     previous: previousData,
+    isCurrentLoading,
+    isComparisonLoading,
     isLoading,
     isError,
     error,

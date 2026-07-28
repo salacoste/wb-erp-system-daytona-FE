@@ -16,11 +16,13 @@
 
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import { getWeeksInMonth } from '@/lib/period-helpers'
-import { getLastCompletedWeek } from '@/lib/margin-helpers'
 import { aggregateFinanceSummaries } from './aggregation'
 import type { FinanceSummaryResponse, WeekData } from './types'
 import type { FinanceSummary } from '../useDashboard'
+
+type BackendMonthlyFinanceSummary = FinanceSummary & {
+  product_transactions_total?: number | null
+}
 
 /**
  * Hook to get financial summary for a specific week or month
@@ -65,57 +67,31 @@ export function useFinancialSummary(period: string, periodType: 'week' | 'month'
     })
   }
 
-  // For month periods, use multi-week aggregation
-  // BUG FIX: Filter out weeks after last completed week
-  const allWeeksInMonth = getWeeksInMonth(period)
-  const lastCompletedWeek = getLastCompletedWeek()
-  const weeksInMonth = allWeeksInMonth.filter(week => week <= lastCompletedWeek)
-
+  // The backend owns month aggregation and skips missing weeks safely. Using its month endpoint
+  // avoids N client requests (plus another N for comparison) and keeps aggregation rules aligned
+  // across consumers.
   return useQuery({
-    queryKey: ['financial', 'summary', period, 'month', weeksInMonth],
+    queryKey: ['financial', 'summary', period, 'month'],
     queryFn: async (): Promise<FinanceSummaryResponse> => {
-      // Fetch all weeks in parallel
-      const weekPromises = weeksInMonth.map((week: string) =>
-        apiClient.get<FinanceSummaryResponse>(`/v1/analytics/weekly/finance-summary?week=${week}`)
+      const response = await apiClient.get<FinanceSummaryResponse>(
+        `/v1/analytics/weekly/finance-summary?month=${period}`
       )
+      if (!response.summary_total) return response
 
-      const responses = await Promise.all(weekPromises)
-
-      // Aggregate all summaries
-      const summaries = responses
-        .map(r => r.summary_total || r.summary_rus)
-        .filter(Boolean) as FinanceSummary[]
-
-      const aggregatedSummary = aggregateFinanceSummaries(summaries)
-
-      // Sum product_transactions across all weeks from original summaries
-      if (aggregatedSummary) {
-        let totalPt = 0
-        let hasPt = false
-        for (const r of responses) {
-          const ptR = r.summary_rus?.product_transactions
-          const ptE = r.summary_eaeu?.product_transactions
-          if (ptR != null || ptE != null) {
-            totalPt += (ptR ?? 0) + (ptE ?? 0)
-            hasPt = true
-          }
-        }
-        if (hasPt) aggregatedSummary.product_transactions = totalPt
-      }
+      const backendSummary = response.summary_total as BackendMonthlyFinanceSummary
+      const processedSummary = aggregateFinanceSummaries([backendSummary]) ?? backendSummary
+      const productTransactions =
+        backendSummary.product_transactions ?? backendSummary.product_transactions_total
 
       return {
-        summary_total: aggregatedSummary,
-        summary_rus: aggregatedSummary,
-        summary_eaeu: null,
-        meta: {
-          week: weeksInMonth.join(', '),
-          cabinet_id: responses[0]?.meta?.cabinet_id || '',
-          generated_at: new Date().toISOString(),
-          timezone: 'Europe/Moscow',
+        ...response,
+        summary_total: {
+          ...processedSummary,
+          ...(productTransactions != null ? { product_transactions: productTransactions } : {}),
         },
       }
     },
-    enabled: !!period && weeksInMonth.length > 0,
+    enabled: !!period,
     staleTime: 30000,
     gcTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
