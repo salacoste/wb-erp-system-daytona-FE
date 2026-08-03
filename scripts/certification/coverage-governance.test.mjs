@@ -558,7 +558,14 @@ describe('coverage policy exclusivity and waiver validation', () => {
     const governance = fileURLToPath(new URL('./coverage-governance.mjs', import.meta.url))
     const result = spawnSync(
       process.execPath,
-      [governance, 'validate-waiver-fixture', '--waiver', fixture],
+      [
+        governance,
+        'validate-waiver-fixture',
+        '--waiver',
+        fixture,
+        '--now',
+        '2026-07-26T00:00:00.000Z',
+      ],
       {
         encoding: 'utf8',
       }
