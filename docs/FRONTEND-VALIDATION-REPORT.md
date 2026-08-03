@@ -6,28 +6,16 @@
 
 ---
 
-## Актуальный статус готовности (обновлён 2026-07-27)
+<!-- CURRENT-STATUS:START -->
 
-Этот документ сохраняет исторические результаты проверки данных за февраль 2026 года; они не являются текущей live-сертификацией релизного артефакта.
+## Актуальный режим проверки (обновлён 2026-08-03)
 
-- **Release Authorization:** **NO-GO** для безусловного production-релиза.
-- **Certification boundary:** runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**.
-- **Runtime contract:** lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` и `npm run start` используют frontend-порт 3100.
-- **Статическая база:** 72 route source-файла, 1,047 unit/integration test-файлов и 86 Playwright spec-файлов. Команды инвентаризации приведены ниже.
-- **Integrated evidence base:** 49/49 ожидаемых результатов совпали до reconciliation документации; последующий post-doc/reseal total здесь не заявляется. TypeScript, lint, format, AP8 и coverage governance 27/27 — PASS.
-- **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
-- **Node 24:** canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 — 1,047/1,047 файлов и 17,296/17,296 тестов PASS. Isolated candidate-index coverage — lines 74.46%, statements 73.32%, functions 69.85%, branches 70.04%. На момент evidence capture actual repository index возвращал `NOT_TRACKED` и fail-closed exit 1; isolated candidate index был только локальным и не изменил actual index. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` теперь отслеживает selection и policy; post-commit Node 24 selector/governance smoke прошёл. Это не изменяет историческую evidence boundary и не разрешает release.
-- **AP8/build:** Node 24 rule/normalizer и isolated Node 25 compatibility lane — PASS. Две Next.js 16.2.10 production-сборки с 67/67 страницами прошли при invariant strict source/candidate/runtime inputs. Первая сборка нормализовала generated `next-env.d.ts`, который затем стабилизировался; incident 034 отделяет generated-input событие от strict inputs. Build IDs и output digests различаются; bit-for-bit reproducibility не заявляется.
-- **Tier-0:** helper Vitest 8/8; safety 72/72; static list — 24 теста ровно в 2 файлах. Missing descriptor дал ожидаемый exit 3 и matrix 38/38 `BLOCKED`, 0 `PASS`, 0 `FAIL`; malformed descriptor дал ожидаемый exit 1. Orders Integrity source/unit и dedicated live contract реализованы, но credentialed live `PASS` отсутствует.
-- **Candidate/external blockers:** remediation закоммичен как `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9`; отсутствуют independently fetched immutable candidate receipt, externally published runtime-input manifest, trusted signed sandbox и execution/cleanup authority, ECC, RRC, CERT-F01 и external attestation.
-- **Evidence:** durable sanitized [G006 frontend readiness summary](evidence/frontend-readiness-g006-20260726.md); исходный root `.omx/tmp/g006-final-integrated-20260726T002604Z` является локальным и transient.
-
-```bash
-find src/app -type f -name 'page.tsx' -print | LC_ALL=C sort -u | wc -l
-find src -type f \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \) -print | LC_ALL=C sort -u | wc -l
-find e2e tests/e2e -type f -name '*.spec.ts' -print | LC_ALL=C sort -u | wc -l
-npm run test:tier0:list
-```
+Новый продукт разрабатывается и проверяется локально: frontend на
+`localhost:3100`, backend задаётся через `NEXT_PUBLIC_API_URL` (локальное
+значение по умолчанию — `http://localhost:3000`). Ниже сохранены исторические
+результаты проверки данных за февраль 2026 года; текущая проверка выполняется
+обычными unit/integration/E2E тестами и локальной сборкой.
+<!-- CURRENT-STATUS:END -->
 
 ---
 
@@ -739,7 +727,7 @@ Telegram: not_configured (deliveryRate7d: 100%, recentFailures: 0)
 - `/settings` имеет `page.tsx` и перенаправляет на `/settings/notifications`.
 - `/cabinet` реализован в onboarding route group; `/settings/cabinet` реализован отдельно.
 - `/analytics/summary` больше не определяется текущим `src/lib/routes.ts`; актуальная сводка кабинета находится на `/analytics/dashboard`.
-- Исторический 404-набор ниже не должен использоваться как актуальная route-gap оценка; live production rendering этих маршрутов остаётся частью Tier-0 ECC.
+- Исторический 404-набор ниже не должен использоваться как актуальная route-gap оценка; текущие маршруты проверяются обычным локальным Playwright smoke.
 
 ### Расхождения ⚠️
 
@@ -747,7 +735,7 @@ Telegram: not_configured (deliveryRate7d: 100%, recentFailures: 0)
 
 - исходная оценка трёх 404 устарела;
 - source-проверка подтверждает реализации/redirect выше;
-- live результат не заявляется без ECC evidence.
+- историческая runtime-проверка не заменяет текущий локальный Playwright smoke.
 
 ---
 
@@ -898,24 +886,24 @@ Cabinet settings:
 
 ## Статус исправлений (Epic 70-FE)
 
-| ID   | Приоритет | Story     | Статус             | Коммит              | Описание исправления                                                                                                            |
-| ---- | --------- | --------- | ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| D-1  | MEDIUM    | 70.1-FE   | ✅ Исправлено      | `b4f37f9`           | Единый источник `summary_total` — устранено смешивание полей                                                                    |
-| D-2  | HIGH      | 70.1-FE   | ✅ Исправлено      | `b4f37f9`           | То же — единый источник данных                                                                                                  |
-| D-3  | LOW       | —         | ℹ️ By design       | —                   | Разная база: каталог (57) vs транзакции (23) — корректно                                                                        |
-| D-4  | HIGH      | 70.1-FE   | ✅ Исправлено      | `b4f37f9`           | То же — единый источник данных                                                                                                  |
-| D-5  | CRITICAL  | 70.1+70.2 | ✅ Исправлено      | `b4f37f9`+`ff266a7` | Единый источник + тултипы с формулами прибыли                                                                                   |
-| D-6  | LOW       | —         | ℹ️ By design       | —                   | SKU с расходами без продаж — корректное поведение                                                                               |
-| D-7  | MEDIUM    | 70.3-FE   | ✅ Исправлено      | `ff1dd26`           | Знаменатель header выровнен с footer (`revenue_net`)                                                                            |
-| D-8  | MEDIUM    | —         | ℹ️ Minor           | —                   | Агрегация SKU vs cabinet-level baseline — малая разница                                                                         |
-| D-9  | MEDIUM    | 70.3-FE   | ✅ Исправлено      | `ff1dd26`           | Footer: взвешенное среднее по выручке вместо арифметического                                                                    |
-| D-10 | MEDIUM    | —         | ℹ️ By design       | —                   | FBS-only (9) vs FBS+FBO (16) — разный scope                                                                                     |
-| D-11 | LOW       | —         | ℹ️ Stale build     | —                   | Код корректен, требовался restart dev-сервера                                                                                   |
-| D-12 | HIGH      | 70.5-FE   | ✅ Fixed (Backend) | `39e47fa`           | Query-time buyout enrichment из daily_sales_raw + orders_fbs                                                                    |
-| D-13 | MEDIUM    | 70.4-FE   | ✅ Исправлено      | `432f110`           | `Number.isFinite()` guard в `formatReorderValue()`                                                                              |
-| D-14 | HIGH      | 70.6-FE   | ✅ Fixed (Backend) | `d36a840`           | SQL fix `category`→`subject`, param rename, multi-tenancy fix                                                                   |
-| D-15 | LOW       | —         | ✅ Source closed   | —                   | `/settings` redirect и `/cabinet` routes присутствуют; `/analytics/summary` удалён из текущего route contract; live ECC pending |
-| D-16 | HIGH      | 70.2-FE   | ✅ Уточнено        | `ff266a7`           | Тултипы ROI/PPU уточнены: формулы от `revenue_net − COGS`                                                                       |
+| ID   | Приоритет | Story     | Статус             | Коммит              | Описание исправления                                                                                                                                 |
+| ---- | --------- | --------- | ------------------ | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-1  | MEDIUM    | 70.1-FE   | ✅ Исправлено      | `b4f37f9`           | Единый источник `summary_total` — устранено смешивание полей                                                                                         |
+| D-2  | HIGH      | 70.1-FE   | ✅ Исправлено      | `b4f37f9`           | То же — единый источник данных                                                                                                                       |
+| D-3  | LOW       | —         | ℹ️ By design       | —                   | Разная база: каталог (57) vs транзакции (23) — корректно                                                                                             |
+| D-4  | HIGH      | 70.1-FE   | ✅ Исправлено      | `b4f37f9`           | То же — единый источник данных                                                                                                                       |
+| D-5  | CRITICAL  | 70.1+70.2 | ✅ Исправлено      | `b4f37f9`+`ff266a7` | Единый источник + тултипы с формулами прибыли                                                                                                        |
+| D-6  | LOW       | —         | ℹ️ By design       | —                   | SKU с расходами без продаж — корректное поведение                                                                                                    |
+| D-7  | MEDIUM    | 70.3-FE   | ✅ Исправлено      | `ff1dd26`           | Знаменатель header выровнен с footer (`revenue_net`)                                                                                                 |
+| D-8  | MEDIUM    | —         | ℹ️ Minor           | —                   | Агрегация SKU vs cabinet-level baseline — малая разница                                                                                              |
+| D-9  | MEDIUM    | 70.3-FE   | ✅ Исправлено      | `ff1dd26`           | Footer: взвешенное среднее по выручке вместо арифметического                                                                                         |
+| D-10 | MEDIUM    | —         | ℹ️ By design       | —                   | FBS-only (9) vs FBS+FBO (16) — разный scope                                                                                                          |
+| D-11 | LOW       | —         | ℹ️ Stale build     | —                   | Код корректен, требовался restart dev-сервера                                                                                                        |
+| D-12 | HIGH      | 70.5-FE   | ✅ Fixed (Backend) | `39e47fa`           | Query-time buyout enrichment из daily_sales_raw + orders_fbs                                                                                         |
+| D-13 | MEDIUM    | 70.4-FE   | ✅ Исправлено      | `432f110`           | `Number.isFinite()` guard в `formatReorderValue()`                                                                                                   |
+| D-14 | HIGH      | 70.6-FE   | ✅ Fixed (Backend) | `d36a840`           | SQL fix `category`→`subject`, param rename, multi-tenancy fix                                                                                        |
+| D-15 | LOW       | —         | ✅ Source closed   | —                   | `/settings` redirect и `/cabinet` routes присутствуют; `/analytics/summary` удалён из текущего route contract; актуальный smoke выполняется локально |
+| D-16 | HIGH      | 70.2-FE   | ✅ Уточнено        | `ff266a7`           | Тултипы ROI/PPU уточнены: формулы от `revenue_net − COGS`                                                                                            |
 
 **Итого**: 9 исправлено (7 frontend + 2 backend), 6 by design/minor, 1 уточнено тултипами
 
@@ -923,21 +911,21 @@ Cabinet settings:
 
 ## Сводка находок (исходная)
 
-| ID   | Приоритет | Описание                                                                         | Страницы                  | Статус                             |
-| ---- | --------- | -------------------------------------------------------------------------------- | ------------------------- | ---------------------------------- |
-| D-5  | CRITICAL  | Чистая прибыль: Dashboard 7 749 ₽ vs Analytics 17 476 ₽                          | Dashboard, Analytics, SKU | ✅ Fixed                           |
-| D-4  | HIGH      | Продажи (gross): экран 194 314 vs API 180 202 (+14 112 ₽)                        | Analytics, SKU            | ✅ Fixed                           |
-| D-2  | HIGH      | К перечислению: экран 75 950 vs API payout_total 68 127                          | Dashboard, Analytics      | ✅ Fixed                           |
-| D-1  | MEDIUM    | Логистика: экран 26 065 vs API 24 349 (+1 716 ₽)                                 | Dashboard, Analytics      | ✅ Fixed                           |
-| D-7  | MEDIUM    | Три разных маржи на SKU-странице (11.3%, 16.6%, 15.86%)                          | SKU                       | ✅ Fixed                           |
-| D-9  | MEDIUM    | Маржа header 10.83% vs footer 51.47%                                             | Brand                     | ✅ Fixed                           |
-| D-8  | MEDIUM    | Опер. прибыль SKU-сумма 21 460 vs API 20 501                                     | SKU                       | ℹ️ Minor                           |
-| D-12 | HIGH      | Воронка: Выкупы=0 и Отмены=0% для всех 32 товаров (backend не джойнит)           | Funnel                    | ✅ Fixed                           |
-| D-10 | MEDIUM    | Buyout: summary "9 возвратов" vs таблица сумма 16 (FBS vs FBS+FBO)               | Buyout                    | ℹ️ By design                       |
-| D-6  | LOW       | Товаров 27 vs API 23 (включены 0-продажные)                                      | SKU                       | ℹ️ By design                       |
-| D-3  | LOW       | COGS покрытие: Dashboard 77% vs Analytics 100%                                   | Dashboard vs Analytics    | ℹ️ By design                       |
-| D-14 | HIGH      | Backend /v1/analytics/liquidity → 500 Internal Server Error                      | Liquidity                 | ✅ Fixed                           |
-| D-13 | MEDIUM    | "не число ₽" (NaN) в колонке СУММА планирования поставок                         | Supply Planning           | ✅ Fixed                           |
-| D-11 | LOW       | Estimated FBO товары показывают "—" вместо "~" (требует restart)                 | Buyout                    | ℹ️ Stale build                     |
-| D-16 | HIGH      | ROI (130%) и Прибыль/ед. (374₽) рассчитаны от profit=269K, а Валовая прибыль=54K | Cabinet Summary           | ✅ Clarified                       |
-| D-15 | LOW       | Историческая route-gap оценка `/settings`, `/cabinet`, `/analytics/summary`      | Settings                  | ✅ Source closed; live ECC pending |
+| ID   | Приоритет | Описание                                                                         | Страницы                  | Статус                                |
+| ---- | --------- | -------------------------------------------------------------------------------- | ------------------------- | ------------------------------------- |
+| D-5  | CRITICAL  | Чистая прибыль: Dashboard 7 749 ₽ vs Analytics 17 476 ₽                          | Dashboard, Analytics, SKU | ✅ Fixed                              |
+| D-4  | HIGH      | Продажи (gross): экран 194 314 vs API 180 202 (+14 112 ₽)                        | Analytics, SKU            | ✅ Fixed                              |
+| D-2  | HIGH      | К перечислению: экран 75 950 vs API payout_total 68 127                          | Dashboard, Analytics      | ✅ Fixed                              |
+| D-1  | MEDIUM    | Логистика: экран 26 065 vs API 24 349 (+1 716 ₽)                                 | Dashboard, Analytics      | ✅ Fixed                              |
+| D-7  | MEDIUM    | Три разных маржи на SKU-странице (11.3%, 16.6%, 15.86%)                          | SKU                       | ✅ Fixed                              |
+| D-9  | MEDIUM    | Маржа header 10.83% vs footer 51.47%                                             | Brand                     | ✅ Fixed                              |
+| D-8  | MEDIUM    | Опер. прибыль SKU-сумма 21 460 vs API 20 501                                     | SKU                       | ℹ️ Minor                              |
+| D-12 | HIGH      | Воронка: Выкупы=0 и Отмены=0% для всех 32 товаров (backend не джойнит)           | Funnel                    | ✅ Fixed                              |
+| D-10 | MEDIUM    | Buyout: summary "9 возвратов" vs таблица сумма 16 (FBS vs FBS+FBO)               | Buyout                    | ℹ️ By design                          |
+| D-6  | LOW       | Товаров 27 vs API 23 (включены 0-продажные)                                      | SKU                       | ℹ️ By design                          |
+| D-3  | LOW       | COGS покрытие: Dashboard 77% vs Analytics 100%                                   | Dashboard vs Analytics    | ℹ️ By design                          |
+| D-14 | HIGH      | Backend /v1/analytics/liquidity → 500 Internal Server Error                      | Liquidity                 | ✅ Fixed                              |
+| D-13 | MEDIUM    | "не число ₽" (NaN) в колонке СУММА планирования поставок                         | Supply Planning           | ✅ Fixed                              |
+| D-11 | LOW       | Estimated FBO товары показывают "—" вместо "~" (требует restart)                 | Buyout                    | ℹ️ Stale build                        |
+| D-16 | HIGH      | ROI (130%) и Прибыль/ед. (374₽) рассчитаны от profit=269K, а Валовая прибыль=54K | Cabinet Summary           | ✅ Clarified                          |
+| D-15 | LOW       | Историческая route-gap оценка `/settings`, `/cabinet`, `/analytics/summary`      | Settings                  | ✅ Source closed; local smoke current |

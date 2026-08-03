@@ -1,37 +1,20 @@
 # Frontend Work Summary
 
-**Создан**: 2026-01-30 (Backend Integration Analysis)
-**Последнее обновление**: 2026-07-27
-**Статус реализации**: отслеживаемые эпики завершены; это не является разрешением production-релиза
-**Release Authorization**: **NO-GO** для безусловного production-релиза
-**Certification boundary**: runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**
-**Runtime contract**: lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` и `npm run start` используют frontend-порт 3100
+<!-- CURRENT-STATUS:START -->
 
----
+**Создан**: 2026-01-30 (Backend Integration Analysis)
+**Последнее обновление**: 2026-08-03
+**Статус реализации**: отслеживаемые эпики завершены; продукт продолжает локальную разработку
+**Локальный контур**: frontend `localhost:3100`; backend задаётся через `NEXT_PUBLIC_API_URL` (локальное значение по умолчанию — `http://localhost:3000`)
+**Текущая проверка**: Vitest, Playwright, coverage, privacy scan, lint, type-check, format и local build smoke
 
 ## Executive Summary
 
-**Backend Status**: вне области текущей frontend-сертификации; готовность backend к релизу этим документом не подтверждается
-**Frontend implementation status**: исторически отслеживаемая работа отмечена завершённой; канонический текущий подсчёт — 89 уникальных эпиков и 5 untracked operational features в `docs/EPICS-AND-STORIES-TRACKER.md`
-
-С момента исходного анализа (2026-01-30) объём и схема учёта эпиков неоднократно менялись, поэтому прежний счётчик «131 эпик» сохранён ниже только как исторический sprint label. Все пункты из исходного Priority 1–3 отмечены завершёнными. Остаток: 2 истории отложены до реализации бэкенда (#210 buyout daily trends, #211 returns daily trends).
-
-**Текущая доказательная база** (capture 2026-07-26; publication reconciliation 2026-07-27):
-
-- source-инвентарь: 72 route source-файла, 1,047 unit/integration test-файлов и 86 Playwright spec-файлов;
-- integrated evidence base: 49/49 ожидаемых результатов совпали до reconciliation документации; последующий post-doc/reseal total здесь не заявляется; TypeScript, lint, format, AP8 и coverage governance 27/27 — PASS;
-- evidence manifest: 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`;
-- Node 24.18.0/npm 11.11.0: Vitest 4.1.10 — 1,047/1,047 файлов и 17,296/17,296 тестов PASS;
-- coverage: изолированный candidate-index run — lines 74.46%, statements 73.32%, functions 69.85%, branches 70.04%; на момент capture actual repository index возвращал `NOT_TRACKED` и fail-closed exit 1, а isolated candidate index был только локальным и не изменил actual index; commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` теперь отслеживает selection и policy, post-commit Node 24 selector/governance smoke прошёл; это не изменяет историческую evidence boundary и не влияет на release authorization;
-- AP8: Node 24 rule/normalizer и изолированный Node 25 compatibility lane — PASS; Node 25 не использовался для канонических gates;
-- builds: две Next.js 16.2.10 production-сборки с 67/67 страницами — PASS; strict source/candidate/runtime inputs неизменны, а первая сборка нормализовала generated `next-env.d.ts`, после чего он стабилизировался; incident 034 отделяет это событие от strict inputs; build IDs и output digests различаются, bit-for-bit reproducibility не заявляется;
-- Tier-0: helper Vitest 8/8; safety 72/72; static list — 24 теста ровно в 2 файлах;
-- live matrix: missing descriptor дал ожидаемый exit 3 и 38/38 `BLOCKED`, 0 `PASS`, 0 `FAIL`; malformed descriptor дал ожидаемый exit 1; verdict `UNDETERMINED`, CERT-F01 `NOT_ELIGIBLE_FOR_CERT_F01`, repository certificate `NOT_ISSUED`, release `NO-GO`;
-- Orders Integrity: source/unit и dedicated live contract реализованы, credentialed live `PASS` отсутствует;
-- candidate/external blockers: remediation закоммичен как `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9`; отсутствуют independently fetched immutable candidate receipt, externally published runtime-input manifest, trusted signed sandbox и execution/cleanup authority, ECC, RRC, CERT-F01 и external attestation;
-- Evidence: durable sanitized [G006 frontend readiness summary](evidence/frontend-readiness-g006-20260726.md); исходный root `.omx/tmp/g006-final-integrated-20260726T002604Z` является локальным и transient.
-
-Инвентарь воспроизводится командами `find src/app -type f -name 'page.tsx' -print | LC_ALL=C sort -u | wc -l`, `find src -type f \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \) -print | LC_ALL=C sort -u | wc -l` и `find e2e tests/e2e -type f -name '*.spec.ts' -print | LC_ALL=C sort -u | wc -l`.
+Исторически отслеживаемая frontend-работа отмечена завершённой. Канонический
+текущий подсчёт — 89 уникальных эпиков и 5 untracked operational features в
+`docs/EPICS-AND-STORIES-TRACKER.md`. Две истории остаются отложенными до
+реализации backend (#210 buyout daily trends, #211 returns daily trends).
+<!-- CURRENT-STATUS:END -->
 
 ---
 
@@ -100,7 +83,7 @@
 - **Было**: «5-8 hours, fix infinite loop»
 - **Факт**: `useMarginPollingWithQuery.ts` — TanStack Query с `refetchInterval`, 2.5s polling, max 24 attempts
 - `usePendingMarginProducts.ts` — мемоизация через `productsKey`, бесконечный цикл отсутствует
-- Все перечисленные файлы реализованы в source; текущая live-сертификация ожидает Tier-0 ECC
+- Все перечисленные файлы реализованы в source и проверяются общим локальным набором тестов; отдельной внешней сертификации нет
 
 ### ~~Priority 2.1: Telegram Notifications UI~~ → ✅ ЗАВЕРШЕНО (Epic 34-FE)
 
@@ -111,12 +94,12 @@
   - Notifications API (`src/lib/api/notifications.ts`)
   - Страница `/settings/notifications` с binding flow
 
-### Priority 2.2: Orders Integrity Dashboard → ✅ SOURCE/UNIT IMPLEMENTED; LIVE UNDETERMINED
+### Priority 2.2: Orders Integrity Dashboard → ✅ IMPLEMENTED AND LOCALLY VALIDATED
 
 - **Было**: «❌ Not implemented, 8-12 hours»
 - **Факт**: маршрут `/orders/integrity`, компоненты, API/normalizer/hooks/types и unit-покрытие присутствуют в source.
-- **Dedicated E2E**: отдельный Playwright spec присутствует в текущем дереве, но его authentic live Tier-0 результат ещё не сертифицирован.
-- **Release impact**: наличие source/unit/E2E-кода не меняет общий **NO-GO / UNDETERMINED** статус.
+- **Dedicated E2E**: `e2e/orders-integrity.spec.ts` проверяет локальные контракты авторизации, loading/error/empty states, шесть integrity-счётчиков и изоляцию кабинетов через обычный Playwright.
+- **Проверка**: unit/integration тесты и dedicated E2E входят в локальный validation workflow; отдельного внешнего release gate нет.
 
 ### ~~Priority 3.1: Epic 40-FE Orders Module~~ → ✅ ЗАВЕРШЕНО (ранее)
 
@@ -165,12 +148,11 @@
 
 ## Оставшийся бэклог
 
-| Приоритет            | Задача                             | Оценка            | Статус                                         |
-| -------------------- | ---------------------------------- | ----------------- | ---------------------------------------------- |
-| **P0 certification** | Orders Integrity live Tier-0 row   | environment-owned | ⏳ Spec present; authentic live result pending |
-| **P2**               | Buyout Daily Trends (Story 127.1)  | 4-6h              | ⏳ Blocked: Backend Request #210               |
-| **P2**               | Returns Daily Trends (Story 127.2) | 4-6h              | ⏳ Blocked: Backend Request #211               |
-| **P4**               | Cache Timestamps Display           | 1h                | ℹ️ Optional                                    |
+| Приоритет | Задача                             | Оценка | Статус                           |
+| --------- | ---------------------------------- | ------ | -------------------------------- |
+| **P2**    | Buyout Daily Trends (Story 127.1)  | 4-6h   | ⏳ Blocked: Backend Request #210 |
+| **P2**    | Returns Daily Trends (Story 127.2) | 4-6h   | ⏳ Blocked: Backend Request #211 |
+| **P4**    | Cache Timestamps Display           | 1h     | ℹ️ Optional                      |
 
 ---
 
@@ -223,7 +205,7 @@
 | 69-FE | Buyout Rate Analytics             |  28 | ✅ Complete | 2026-02-27 |
 | 70-FE | Validation Fixes                  |  13 | ✅ Complete | 2026-02-27 |
 
-**Orders Integrity реализован в source/unit и имеет dedicated E2E spec; live Tier-0 результат остаётся неподтверждённым.**
+**Orders Integrity реализован и покрыт source/unit плюс dedicated local Playwright spec.**
 
 ---
 
@@ -259,4 +241,4 @@
 ---
 
 **Исходный анализ**: 2026-01-30
-**Обновлено**: 2026-07-25 — implementation tracker актуализирован; release authorization остаётся **NO-GO**, runtime status — **UNDETERMINED / NOT_ELIGIBLE_FOR_CERT_F01**
+**Обновлено**: 2026-08-03 — implementation tracker и локальный validation workflow актуализированы; устаревшая внешняя сертификация больше не является release gate

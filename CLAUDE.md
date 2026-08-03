@@ -36,10 +36,10 @@ Guidance for Claude Code when working with this repository.
 
 ```bash
 # Development
-npm run dev              # Port 3000
+npm run dev              # Frontend: http://localhost:3100
 
-# Production (PM2)
-npm run build && pm2 start ecosystem.config.js --only wb-repricer-frontend  # Port 3100
+# Local build smoke
+npm run build && npm run start  # Frontend: http://localhost:3100
 
 # Quality
 npm run lint && npm run type-check && npm run format:check
@@ -47,6 +47,7 @@ npm run lint && npm run type-check && npm run format:check
 # Testing
 npm test                 # Unit (Vitest)
 npm run test:e2e         # E2E (Playwright)
+npm run check:privacy    # PII console guard
 ```
 
 ---

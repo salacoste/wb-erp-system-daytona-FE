@@ -11,6 +11,7 @@ etc...
 
 ## Internal Integration Points
 
-- **Frontend Communication**: REST API on port 3100 (default, production via PM2), expects specific headers
+- **Local frontend**: `http://localhost:3100`
+- **Backend communication**: REST API at `http://localhost:3000` by default via `NEXT_PUBLIC_API_URL`; application requests use `/v1/...` paths and expect the required auth/cabinet headers
 - **Background Jobs**: Redis queue, see `src/workers/`
 - **[Other integrations]**
