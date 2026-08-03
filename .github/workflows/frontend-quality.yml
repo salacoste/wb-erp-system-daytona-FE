@@ -118,3 +118,12 @@ jobs:
           fi
 
           echo "✅ No forbidden console.* calls in PII files"
+
+      # Coverage governance seals evidence read-only. Restore owner write bits so
+      # the next checkout can clean a persistent self-hosted runner workspace.
+      - name: Restore generated coverage permissions
+        if: always()
+        run: |
+          if [ -d coverage/ci ]; then
+            chmod -R u+rwX -- coverage/ci
+          fi
