@@ -58,7 +58,8 @@ export function useUpdateTaxSettings(cabinetId: string) {
   return useMutation({
     mutationFn: (data: UpdateCabinetTaxRequest) => updateCabinetTaxSettings(cabinetId, data),
 
-    onSuccess: () => {
+    onSuccess: updatedCabinet => {
+      queryClient.setQueryData(cabinetTaxKeys.byId(cabinetId), updatedCabinet)
       // Invalidate cabinet tax cache so the form refreshes
       queryClient.invalidateQueries({ queryKey: cabinetTaxKeys.all })
       // Invalidate financial queries so dashboards pick up new tax rates

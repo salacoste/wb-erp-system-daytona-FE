@@ -7,10 +7,16 @@ import { handleCreateCabinet } from '@/services/cabinets.service'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
+import { getCabinetTaxSettings, updateCabinetTaxSettings } from '@/lib/api/cabinet'
 
 // Mock dependencies
 vi.mock('@/services/cabinets.service', () => ({
   handleCreateCabinet: vi.fn(),
+}))
+
+vi.mock('@/lib/api/cabinet', () => ({
+  getCabinetTaxSettings: vi.fn(),
+  updateCabinetTaxSettings: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
@@ -29,6 +35,18 @@ vi.mock('sonner', () => ({
 describe('CabinetCreationForm', () => {
   let queryClient: QueryClient
   const mockPush = vi.fn()
+  const existingCabinet = {
+    id: 'cabinet-1',
+    name: 'Existing Cabinet',
+    isActive: true,
+    createdAt: '2025-01-12T10:00:00Z',
+    updatedAt: '2025-01-12T10:00:00Z',
+    taxSystem: null,
+    taxRate: null,
+    vatPayer: false,
+    vatRate: null,
+    targetMarginPct: null as number | null,
+  }
 
   beforeEach(() => {
     queryClient = new QueryClient({
@@ -51,6 +69,8 @@ describe('CabinetCreationForm', () => {
     ;(useRouter as ReturnType<typeof vi.fn>).mockReturnValue({
       push: mockPush,
     })
+    vi.mocked(getCabinetTaxSettings).mockResolvedValue(existingCabinet)
+    vi.mocked(updateCabinetTaxSettings).mockResolvedValue(existingCabinet)
   })
 
   afterEach(() => {
@@ -70,6 +90,7 @@ describe('CabinetCreationForm', () => {
     renderForm()
 
     expect(screen.getByLabelText(/название кабинета/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/целевая маржа/i)).toHaveValue(20)
     expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeInTheDocument()
   })
 
@@ -141,6 +162,7 @@ describe('CabinetCreationForm', () => {
         isActive: true,
         createdAt: '2025-01-12T10:00:00Z',
         updatedAt: '2025-01-12T10:00:00Z',
+        targetMarginPct: 20,
       },
     })
 
@@ -158,7 +180,7 @@ describe('CabinetCreationForm', () => {
 
     await waitFor(
       () => {
-        expect(mockHandleCreateCabinet).toHaveBeenCalledWith('Test Cabinet')
+        expect(mockHandleCreateCabinet).toHaveBeenCalledWith('Test Cabinet', 20)
       },
       { timeout: 5000 }
     )
@@ -203,6 +225,7 @@ describe('CabinetCreationForm', () => {
         isActive: true,
         createdAt: '2025-01-12T10:00:00Z',
         updatedAt: '2025-01-12T10:00:00Z',
+        targetMarginPct: 20,
       },
     })
 
@@ -249,6 +272,7 @@ describe('CabinetCreationForm', () => {
         isActive: true,
         createdAt: '2025-01-12T10:00:00Z',
         updatedAt: '2025-01-12T10:00:00Z',
+        targetMarginPct: 20,
       },
     })
 
@@ -278,5 +302,120 @@ describe('CabinetCreationForm', () => {
       },
       { timeout: 5000 }
     )
+  })
+
+  it('accepts and persists an explicit 0% target margin', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    vi.mocked(handleCreateCabinet).mockResolvedValue({
+      cabinet: {
+        id: 'cabinet-1',
+        name: 'Zero Margin',
+        isActive: true,
+        createdAt: '2025-01-12T10:00:00Z',
+        updatedAt: '2025-01-12T10:00:00Z',
+        targetMarginPct: 0,
+      },
+    })
+    renderForm()
+
+    await user.type(screen.getByLabelText(/название кабинета/i), 'Zero Margin')
+    const marginInput = screen.getByLabelText(/целевая маржа/i)
+    await user.clear(marginInput)
+    await user.type(marginInput, '0')
+    await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+    await waitFor(() => expect(handleCreateCabinet).toHaveBeenCalledWith('Zero Margin', 0))
+  })
+
+  it.each([
+    ['negative', '-1'],
+    ['over 100', '101'],
+    ['non-finite', '1e309'],
+  ])('blocks %s target margin input', { timeout: 10000 }, async (_label, value) => {
+    const user = userEvent.setup()
+    renderForm()
+
+    await user.type(screen.getByLabelText(/название кабинета/i), 'Invalid Margin')
+    const marginInput = screen.getByLabelText(/целевая маржа/i)
+    await user.clear(marginInput)
+    await user.type(marginInput, value)
+    await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/от 0 до 100|корректное число|укажите целевую маржу/i)
+      ).toBeInTheDocument()
+    })
+    expect(handleCreateCabinet).not.toHaveBeenCalled()
+  })
+
+  it('does not advance when target margin persistence fails', { timeout: 10000 }, async () => {
+    const user = userEvent.setup()
+    vi.mocked(handleCreateCabinet).mockRejectedValue(
+      new Error('Cabinet created, but target margin could not be saved')
+    )
+    renderForm()
+
+    await user.type(screen.getByLabelText(/название кабинета/i), 'Failed Margin')
+    await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringMatching(/маржа/i)))
+    expect(mockPush).not.toHaveBeenCalled()
+    expect(toast.success).not.toHaveBeenCalled()
+  })
+
+  it('retries the failed post-create margin PUT without creating a duplicate', async () => {
+    const user = userEvent.setup()
+    vi.mocked(handleCreateCabinet).mockImplementation(async () => {
+      useAuthStore.getState().setCabinetId('cabinet-1')
+      throw new Error('Cabinet created, but target margin could not be saved')
+    })
+    vi.mocked(updateCabinetTaxSettings).mockResolvedValue({
+      ...existingCabinet,
+      name: 'Retry Cabinet',
+      targetMarginPct: 35,
+    })
+    renderForm()
+
+    await user.type(screen.getByLabelText(/название кабинета/i), 'Retry Cabinet')
+    const marginInput = screen.getByLabelText(/целевая маржа/i)
+    await user.clear(marginInput)
+    await user.type(marginInput, '35')
+    await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /сохранить и продолжить/i })).toBeInTheDocument()
+    )
+    expect(marginInput).toHaveValue(35)
+
+    await user.click(screen.getByRole('button', { name: /сохранить и продолжить/i }))
+
+    await waitFor(() =>
+      expect(updateCabinetTaxSettings).toHaveBeenCalledWith('cabinet-1', {
+        targetMarginPct: 35,
+      })
+    )
+    expect(handleCreateCabinet).toHaveBeenCalledTimes(1)
+    expect(mockPush).toHaveBeenCalledWith('/wb-token')
+  })
+
+  it.each([
+    [null, 20],
+    [0, 0],
+    [37.5, 37.5],
+  ])('hydrates reopened persisted target %s as %s without writing', async (stored, shown) => {
+    useAuthStore.setState({ cabinetId: 'cabinet-1' })
+    vi.mocked(getCabinetTaxSettings).mockResolvedValue({
+      ...existingCabinet,
+      targetMarginPct: stored,
+    })
+    renderForm()
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Existing Cabinet')
+      expect(screen.getByLabelText(/целевая маржа/i)).toHaveValue(shown)
+    })
+    expect(handleCreateCabinet).not.toHaveBeenCalled()
+    expect(updateCabinetTaxSettings).not.toHaveBeenCalled()
   })
 })

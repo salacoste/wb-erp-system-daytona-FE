@@ -38,6 +38,7 @@ const mockCabinet: Cabinet = {
   taxRate: null,
   vatPayer: false,
   vatRate: null,
+  targetMarginPct: null,
 }
 
 const mockUpdatedCabinet: Cabinet = {
@@ -158,6 +159,21 @@ describe('useUpdateTaxSettings', () => {
       expect.objectContaining({ queryKey: ['cabinet-tax'] })
     )
     expect(invalidateSpy).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['financial'] }))
+  })
+
+  it('updates the exact cabinet cache with the persisted response', async () => {
+    const persisted = { ...mockUpdatedCabinet, targetMarginPct: 0 }
+    mockedUpdate.mockResolvedValueOnce(persisted)
+    const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData')
+
+    const { result } = renderHook(() => useUpdateTaxSettings('cab-123'), {
+      wrapper: createQueryWrapper(queryClient),
+    })
+
+    result.current.mutate({ targetMarginPct: 0 })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(setQueryDataSpy).toHaveBeenCalledWith(cabinetTaxKeys.byId('cab-123'), persisted)
   })
 
   it('handles 400 validation error', async () => {
