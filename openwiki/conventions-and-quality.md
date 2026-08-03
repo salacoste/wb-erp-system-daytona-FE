@@ -109,6 +109,19 @@ Every story closes only after **two adversarial code-review passes** in fresh co
 
 **Marker convention**: Each pass produces a `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading in the story's Dev Agent Record.
 
+## Local Validation and Merge Authority
+
+> Codified in `AGENTS.md` § Local validation and merge policy
+
+This project has **no mandatory CI/CD merge gate** — GitHub Actions (including the [frontend-quality workflow](testing-and-ops.md#frontend-qualityyml--frontend-quality-gates)) are not a completion prerequisite. Merge authority is local:
+
+- Before merge, run the relevant tests, lint, type-check, and production build locally **with the pinned Node.js/npm versions** and record concise evidence.
+- After local validation passes, commit, push the feature branch, merge its PR into `main`, and remove completed local/remote feature branches and temporary worktrees.
+- Do **not** enable or add a required `Quality Gates`/`CI` status check without an explicit owner decision.
+- Local-only merge authority does **not** permit deploys, production operations, force-pushes, or direct pushes to `main`.
+
+This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): the two passes establish story-level correctness, and local validation establishes that the merged tree still builds and passes gates on the pinned toolchain.
+
 ## Doc-Citation Validation
 
 `scripts/check-doc-citations.sh` scans `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md`, `docs/`, `backlog/` for backtick-wrapped citations `` `src/path.ts:N` `` and fails if any don't resolve (file not found or line > file length). Uses a baseline diff — exit code is the gate.

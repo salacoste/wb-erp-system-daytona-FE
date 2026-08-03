@@ -1,6 +1,8 @@
 {
-  "updatedAt": "2026-07-27T08:49:40.520Z",
+  "updatedAt": "2026-08-03T08:49:33.515Z",
   "command": "update",
-  "gitHead": "af4e98ca2247abfff3d1ba18116973904f6b40d2",
-  "model": "glm-5.2"
+  "gitHead": "96958d826863ecfbb065ef71b79586673f42213a",
+  "model": "glm-5.2",
+  "status": "complete",
+  "language": "en"
 }

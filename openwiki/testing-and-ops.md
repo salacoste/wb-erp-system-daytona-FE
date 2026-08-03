@@ -175,7 +175,7 @@ Source: `e2e/tier0/README.md`, `scripts/tier0/`, `playwright.tier0.config.ts`
 ## CI/CD Workflows
 
 ### `frontend-quality.yml` — Frontend Quality Gates
-- **Triggers**: PR + push to `main`/`develop`
+- **Triggers**: PR + push to `main`/`develop`, plus manual `workflow_dispatch`
 - **Runner**: Self-hosted (`wb-ci-fe` label), 2 vCPU / 4 GB RAM
 - **Timeout**: 90 minutes
 - **Toolchain pin**: Node `24.18.0` + npm `11.11.0` (installed and asserted at job start)
@@ -185,6 +185,7 @@ Source: `e2e/tier0/README.md`, `scripts/tier0/`, `playwright.tier0.config.ts`
   3. Governed coverage validation helpers (`npm run test:coverage:governance`)
   4. Full Vitest suite with governed coverage (`npm run cert:coverage:ci`) — uploads sealed evidence artifacts via `upload-artifact`
   5. Privacy Guard — scans PII-adjacent files for forbidden `console.*` calls
+  6. Restore generated coverage permissions (`if: always()`) — `chmod -R u+rwX coverage/ci` so the read-only sealed artifacts from [Coverage Governance](#coverage-governance-certification) don't block the next checkout on the persistent self-hosted runner.
 
 ### `openwiki-update.yml` — OpenWiki Documentation Update
 - **Triggers**: Schedule (daily `0 8 * * *` UTC) + manual `workflow_dispatch`
