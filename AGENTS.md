@@ -6,6 +6,14 @@
 
 ## Development Guidelines
 
+### Local validation and merge policy
+
+- This project has no mandatory CI/CD merge gate. GitHub Actions are not a completion prerequisite.
+- Before merge, run the relevant tests, lint, type-check, and production build locally with the pinned Node.js/npm versions and record concise evidence.
+- After local validation passes, commit, push the feature branch, merge its PR into `main`, and remove completed local/remote feature branches and temporary worktrees.
+- Do not enable or add a required `Quality Gates`/`CI` status check without an explicit owner decision.
+- Local-only merge authority does not permit deploys, production operations, force-pushes, or direct pushes to `main`.
+
 **CRITICAL: Context7 MCP Server**
 - Context7 MCP server is ALWAYS available for code planning and implementation
 - Use `mcp_context7_resolve-library-id` to find library IDs
