@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { normalizeJamStatusResponse } from '../cabinet-normalizer'
+import { normalizeCabinetResponse, normalizeJamStatusResponse } from '../cabinet-normalizer'
 import { JAM_TIER_LABELS, JAM_TIER_LEVEL, type JamTier } from '@/types/cabinet'
 
 // iter-96: toJamTier coerces unrecognised backend tiers to 'unknown'. 'unknown' MUST be a JamTier
@@ -34,5 +34,40 @@ describe('JamTier maps cover every tier (no blank badge)', () => {
   it('"unknown" is fail-closed (level 0 — never satisfies a standard/advanced gate)', () => {
     expect(JAM_TIER_LEVEL.unknown).toBe(0)
     expect(JAM_TIER_LEVEL.unknown).toBeLessThan(JAM_TIER_LEVEL.standard)
+  })
+})
+
+describe('normalizeCabinetResponse — target margin', () => {
+  it.each([
+    [{ targetMarginPct: null }, null],
+    [{ targetMarginPct: 0 }, 0],
+    [{ targetMarginPct: 20 }, 20],
+    [{ target_margin_pct: 35.5 }, 35.5],
+  ])('preserves %# as %s', (raw, expected) => {
+    expect(normalizeCabinetResponse(raw).targetMarginPct).toBe(expected)
+  })
+
+  it('returns all declared cabinet core fields across camel/snake response drift', () => {
+    expect(
+      normalizeCabinetResponse({
+        id: 'cab-1',
+        name: 'Cabinet',
+        description: 'Primary cabinet',
+        is_active: true,
+        created_at: '2026-08-01T10:00:00.000Z',
+        updatedAt: '2026-08-03T10:00:00.000Z',
+        target_margin_pct: 0,
+      })
+    ).toEqual(
+      expect.objectContaining({
+        id: 'cab-1',
+        name: 'Cabinet',
+        description: 'Primary cabinet',
+        isActive: true,
+        createdAt: '2026-08-01T10:00:00.000Z',
+        updatedAt: '2026-08-03T10:00:00.000Z',
+        targetMarginPct: 0,
+      })
+    )
   })
 })

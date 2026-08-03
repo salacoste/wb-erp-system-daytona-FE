@@ -24,6 +24,14 @@ vi.mock('@/components/custom/settings/JamStatusBadge', () => ({
   ),
 }))
 
+vi.mock('@/components/custom/settings/TargetMarginSettingsCard', () => ({
+  TargetMarginSettingsCard: ({ cabinetId }: { cabinetId: string }) => (
+    <div data-testid="target-margin-card" data-cabinet-id={cabinetId}>
+      TargetMarginSettingsCard
+    </div>
+  ),
+}))
+
 // Mock auth store
 const mockCabinetId = vi.fn<() => string | null>()
 vi.mock('@/stores/authStore', () => ({
@@ -90,6 +98,15 @@ describe('CabinetSettingsPage', () => {
       const card = screen.getByTestId('cabinet-info-card')
       expect(card).toBeInTheDocument()
       expect(card).toHaveAttribute('data-cabinet-id', 'cabinet-123')
+    })
+
+    it('renders target margin settings for the active cabinet', () => {
+      render(<CabinetSettingsPage />)
+
+      expect(screen.getByTestId('target-margin-card')).toHaveAttribute(
+        'data-cabinet-id',
+        'cabinet-123'
+      )
     })
 
     it('should not render skeleton elements when cabinetId exists', () => {
