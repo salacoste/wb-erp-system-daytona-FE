@@ -1,7 +1,7 @@
 # WB Repricer System - Frontend
 
 **Version:** 1.0.0  
-**Framework:** Next.js 16.2.10 (App Router) + TypeScript
+**Framework:** Next.js 16.2.12 (App Router) + TypeScript
 **Component Library:** shadcn/ui + Tailwind CSS
 **Application Port:** 3100 (`npm run dev` and `npm run start`)
 
@@ -11,7 +11,7 @@
 
 - **Release authorization:** **NO-GO** for an unconditional production release.
 - **Certification boundary:** runtime is **UNDETERMINED**, CERT-F01 is **NOT_ELIGIBLE_FOR_CERT_F01**, and the repository-remediation certificate is **NOT_ISSUED**.
-- **Runtime contract:** the lockfile resolves Next.js 16.2.10; the canonical lane is Node.js 24.18.0 with npm 11.11.0; `npm run dev` and `npm run start` bind to port 3100.
+- **Runtime contract:** the lockfile resolves Next.js 16.2.12; the canonical lane is Node.js 24.18.0 with npm 11.11.0; `npm run dev` and `npm run start` bind to port 3100.
 - **Fresh inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
 - **Integrated evidence base:** all 49/49 recorded gate outcomes matched their expected exits before documentation reconciliation. This base count excludes any later documentation or reseal gates. TypeScript, lint, format, AP8, and coverage-governance tests (27/27) passed.
 - **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
@@ -182,7 +182,7 @@ npm run test:e2e:ui      # Run E2E tests with UI
 
 ### Key Technologies
 
-- **Next.js 16.2.10** - React framework with App Router
+- **Next.js 16.2.12** - React framework with App Router
 - **TypeScript** - Type-safe JavaScript
 - **shadcn/ui** - Component library (copy-paste architecture)
 - **Tailwind CSS** - Utility-first CSS framework

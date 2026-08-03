@@ -10,7 +10,7 @@
 **Delivery Status**: tracked epic implementation is complete; this is not a release-readiness assertion
 **Release Authorization**: **NO-GO** for an unconditional production release
 **Certification Boundary**: runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**
-**Runtime Contract**: lockfile-resolved Next.js 16.2.10; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` and `npm run start` bind to port 3100
+**Runtime Contract**: lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` and `npm run start` bind to port 3100
 **Current Evidence Baseline**: 72 route sources, 1,047 unit/integration test files, and 86 Playwright spec files. The canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. Isolated candidate-index coverage recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. At evidence capture, the actual repository index reported the canonical coverage selection as `NOT_TRACKED`; the isolated pass was local-only and did not change that index. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` now tracks the selection and policy, and a post-commit Node 24 selector/governance smoke passed. This does not alter the historical evidence boundary or authorize release.
 **Integrated Gates**: the base evidence contains 49/49 expected outcomes before documentation reconciliation; no later documentation/reseal total is claimed here. TypeScript, lint, format, AP8, and coverage governance 27/27 passed.
 **Evidence Manifest**: 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.

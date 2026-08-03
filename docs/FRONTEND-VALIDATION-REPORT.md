@@ -12,7 +12,7 @@
 
 - **Release Authorization:** **NO-GO** для безусловного production-релиза.
 - **Certification boundary:** runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**.
-- **Runtime contract:** lockfile-resolved Next.js 16.2.10; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` и `npm run start` используют frontend-порт 3100.
+- **Runtime contract:** lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` и `npm run start` используют frontend-порт 3100.
 - **Статическая база:** 72 route source-файла, 1,047 unit/integration test-файлов и 86 Playwright spec-файлов. Команды инвентаризации приведены ниже.
 - **Integrated evidence base:** 49/49 ожидаемых результатов совпали до reconciliation документации; последующий post-doc/reseal total здесь не заявляется. TypeScript, lint, format, AP8 и coverage governance 27/27 — PASS.
 - **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
