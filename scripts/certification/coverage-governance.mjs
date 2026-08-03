@@ -1033,7 +1033,10 @@ async function main() {
       negativeWaiver(requireOption('output-dir'))
       break
     case 'validate-waiver-fixture':
-      validateWaiver(readJson(requireOption('waiver')))
+      validateWaiver(
+        readJson(requireOption('waiver')),
+        option('now') ? new Date(option('now')) : new Date()
+      )
       break
     case 'compare-identities': {
       const result = compareIdentities([
