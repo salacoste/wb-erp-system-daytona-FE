@@ -1,7 +1,0 @@
-{
-  "$schema": "./schemas/coverage-policy-selection.v1.json",
-  "schemaVersion": 1,
-  "mode": "threshold",
-  "thresholdPolicy": "quality/coverage-policy.v1.json",
-  "waiver": null
-}

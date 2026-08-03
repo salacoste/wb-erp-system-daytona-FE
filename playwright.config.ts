@@ -56,11 +56,11 @@ export default defineConfig({
   ],
 
   // Web server configuration
-  // Comment out if frontend is already running (e.g., via pm2)
+  // Local runs reuse the frontend already running on localhost:3100.
   webServer: process.env.CI
     ? {
         command: 'npm run dev',
-        url: 'http://localhost:3000',
+        url: 'http://localhost:3100',
         reuseExistingServer: false,
         timeout: 120 * 1000,
       }

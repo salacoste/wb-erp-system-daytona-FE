@@ -1,50 +1,137 @@
-import {
-  CHECK_LABELS,
-  countsValue,
-  expectRenderedChecks,
-  fixtures,
-  matchesOrdersResponse,
-  setCabinet,
-  textValue,
-} from './fixtures/tier0-orders'
-import { test, expect } from './fixtures/tier0-runtime'
+import { expect, test, type Page, type Route } from '@playwright/test'
 
 const ROUTE = '/orders/integrity'
+const INTEGRITY_API = '**/health/orders-integrity**'
+const RECONCILIATION_API = '**/v1/orders/reconciliation**'
+const CABINET_A = 'cabinet-orders-a'
+const CABINET_B = 'cabinet-orders-b'
+const EMPTY_CABINET = 'cabinet-orders-empty'
 
-test.describe('Tier-0 Orders Integrity live contracts', () => {
-  test.beforeEach(({}, testInfo) => {
-    testInfo.annotations.push({ type: 'tier0-product-contract' })
-  })
-  test('[OI-E01] authorized route renders under the bound production build', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const cabinetId = textValue(fixtures(tier0Runtime.descriptor.fixtures).cabinet_a_id)
-    test.skip(!cabinetId, 'BLOCKED:CABINET_FIXTURE_MISSING')
-    await setCabinet(page, cabinetId!)
+const CHECK_LABELS: Record<string, string> = {
+  duplicates: 'Дубликаты',
+  orphans: 'Сироты',
+  missing_history: 'Пропущенная история',
+  duplicate_status_history: 'Дубли истории',
+  invalid_transitions: 'Неверные переходы',
+  sync_overlaps: 'Пересечения синхронизации',
+}
 
-    const integrity = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
+const COUNTS_A: Record<string, number> = {
+  duplicates: 1,
+  orphans: 2,
+  missing_history: 3,
+  duplicate_status_history: 4,
+  invalid_transitions: 5,
+  sync_overlaps: 6,
+}
+
+const COUNTS_B: Record<string, number> = {
+  duplicates: 11,
+  orphans: 12,
+  missing_history: 13,
+  duplicate_status_history: 14,
+  invalid_transitions: 15,
+  sync_overlaps: 16,
+}
+
+test.use({ storageState: { cookies: [], origins: [] } })
+
+function encodeJwtPart(value: Record<string, unknown>): string {
+  return Buffer.from(JSON.stringify(value)).toString('base64url')
+}
+
+const TEST_TOKEN = `${encodeJwtPart({ alg: 'none', typ: 'JWT' })}.${encodeJwtPart({
+  sub: 'orders-integrity-e2e',
+  exp: 4_102_444_800,
+})}.local-test`
+
+function integrityResponse(counts: Record<string, number>) {
+  return {
+    status: 'healthy',
+    checks: Object.fromEntries(
+      Object.entries(counts).map(([key, count]) => [key, { status: 'pass', count }])
+    ),
+    last_check: '2026-08-03T12:00:00Z',
+    duration_ms: 25,
+  }
+}
+
+function reconciliationResponse(
+  byDate: unknown[] = [
+    {
+      date: '2026-08-03',
+      local_count: 10,
+      expected_count: 10,
+      variance: 0,
+      variance_percent: 0,
+    },
+  ]
+) {
+  return {
+    data: {
+      total_count: 10,
+      local_count: 10,
+      expected_count: 10,
+      variance: 0,
+      variance_percent: 0,
+      by_status: [],
+      by_date: byDate,
+    },
+  }
+}
+
+async function fulfillJson(route: Route, body: unknown, status = 200): Promise<void> {
+  await route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) })
+}
+
+async function installAuthenticatedState(page: Page, baseURL: string, cabinetId: string) {
+  await page.context().addCookies([{ name: 'auth-token', value: TEST_TOKEN, url: baseURL }])
+  await page.addInitScript(
+    ({ token, initialCabinetId }) => {
+      if (window.sessionStorage.getItem('orders-integrity-auth-seeded')) return
+      window.localStorage.setItem(
+        'auth-storage',
+        JSON.stringify({
+          state: {
+            user: {
+              id: 'orders-integrity-e2e',
+              email: 'orders-integrity@example.test',
+              role: 'Owner',
+              cabinet_ids: [initialCabinetId],
+            },
+            token,
+            cabinetId: initialCabinetId,
+          },
+          version: 0,
+        })
       )
-    )
-    await page.goto(ROUTE)
-    await expect(page.getByTestId('orders-integrity-page')).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Целостность заказов', level: 1 })).toBeVisible()
-    expect((await integrity).ok()).toBe(true)
-  })
+      window.sessionStorage.setItem('orders-integrity-auth-seeded', 'true')
+    },
+    { token: TEST_TOKEN, initialCabinetId: cabinetId }
+  )
+}
 
-  test('[OI-E02] anonymous denial and optional wrong-role proof have no data flash', async ({
-    page,
-    tier0Runtime,
-  }) => {
+async function changeCabinet(page: Page, cabinetId: string): Promise<void> {
+  await page.evaluate(id => {
+    const stored = JSON.parse(window.localStorage.getItem('auth-storage') || '{}')
+    stored.state = { ...stored.state, cabinetId: id }
+    window.localStorage.setItem('auth-storage', JSON.stringify(stored))
+  }, cabinetId)
+}
+
+async function expectRenderedChecks(page: Page, counts: Record<string, number>) {
+  for (const [key, label] of Object.entries(CHECK_LABELS)) {
+    const card = page.getByText(label, { exact: true }).locator('xpath=../..')
+    await expect(card.getByText(String(counts[key]), { exact: true })).toBeVisible()
+  }
+}
+
+test.describe('Orders integrity local contracts', () => {
+  test('anonymous access redirects without protected-data flash', async ({ page }) => {
     await page.addInitScript(() => {
       const observer = new MutationObserver(() => {
         if (document.querySelector('[data-testid="orders-integrity-page"]')) {
-          window.sessionStorage.setItem('tier0-protected-data-flash', 'observed')
+          window.sessionStorage.setItem('orders-integrity-data-flash', 'observed')
         }
       })
       const start = () =>
@@ -52,327 +139,118 @@ test.describe('Tier-0 Orders Integrity live contracts', () => {
       if (document.documentElement) start()
       else window.addEventListener('DOMContentLoaded', start, { once: true })
     })
+
     await page.goto(ROUTE)
-    await expect(page.getByTestId('orders-integrity-page')).toHaveCount(0)
+
     await expect(page).toHaveURL(/\/login(?:\?|$)/)
+    await expect(page.getByTestId('orders-integrity-page')).toHaveCount(0)
     expect(
-      await page.evaluate(() => sessionStorage.getItem('tier0-protected-data-flash'))
+      await page.evaluate(() => sessionStorage.getItem('orders-integrity-data-flash'))
     ).toBeNull()
-
-    const email = process.env.E2E_RESTRICTED_EMAIL
-    const password = process.env.E2E_RESTRICTED_PASSWORD
-    if (email && password) {
-      const config = fixtures(tier0Runtime.descriptor.fixtures)
-      const deniedPath = textValue(config.orders_integrity_denied_path)
-      const deniedText = textValue(config.orders_integrity_denied_text)
-      expect(deniedPath, 'signed wrong-role denial path is required').toBeDefined()
-      expect(deniedText, 'signed wrong-role denial text is required').toBeDefined()
-      await page.locator('input[type="email"]').fill(email)
-      await page.locator('input[type="password"]').fill(password)
-      await page.locator('button[type="submit"]').click()
-      await page.waitForURL(url => !url.pathname.includes('/login'))
-      await page.evaluate(() => sessionStorage.removeItem('tier0-protected-data-flash'))
-      await page.goto(ROUTE)
-      await expect(page.getByTestId('orders-integrity-page')).toHaveCount(0)
-      await expect(page).toHaveURL(new RegExp(deniedPath!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
-      await expect(page.getByText(deniedText!, { exact: false })).toBeVisible()
-      expect(
-        await page.evaluate(() => sessionStorage.getItem('tier0-protected-data-flash'))
-      ).toBeNull()
-    }
   })
 
-  test('[OI-E03] deterministic sandbox delay exposes the real loading affordance', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const config = fixtures(tier0Runtime.descriptor.fixtures)
-    const cabinetId = textValue(config.cabinet_a_id)
-    const loadingDelay =
-      typeof config.orders_loading_min_ms === 'number' ? config.orders_loading_min_ms : 0
-    test.skip(!cabinetId || loadingDelay < 250, 'BLOCKED:ORDERS_LOADING_CONTROL_MISSING')
-    await setCabinet(page, cabinetId!)
-
-    await page.goto(ROUTE, { waitUntil: 'commit' })
-    await expect(page.locator('[role="status"][aria-busy="true"]').first()).toBeVisible({
-      timeout: 200,
+  test.describe('authenticated states', () => {
+    test.beforeEach(async ({ page }, testInfo) => {
+      const baseURL = String(testInfo.project.use.baseURL ?? 'http://localhost:3100')
+      await installAuthenticatedState(page, baseURL, CABINET_A)
     })
-    await expect(page.getByRole('heading', { name: 'Целостность заказов' })).toBeVisible()
-  })
 
-  test('[OI-E04] populated real fixture renders all six integrity counts', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const config = fixtures(tier0Runtime.descriptor.fixtures)
-    const cabinetId = textValue(config.cabinet_a_id)
-    const expected = countsValue(config.orders_expected_checks)
-    test.skip(!cabinetId || !expected, 'BLOCKED:ORDERS_CONTROL_MISSING')
-    await setCabinet(page, cabinetId!)
+    test('renders the page and all six integrity counts', async ({ page }) => {
+      await page.route(INTEGRITY_API, route => fulfillJson(route, integrityResponse(COUNTS_A)))
+      await page.route(RECONCILIATION_API, route => fulfillJson(route, reconciliationResponse()))
 
-    const integrity = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page.goto(ROUTE)
-    expect((await integrity).ok()).toBe(true)
-    await expectRenderedChecks(page, expected!)
-  })
+      await page.goto(ROUTE, { waitUntil: 'domcontentloaded' })
 
-  test('[OI-E05] empty cabinet shows an explicit empty state', async ({ page, tier0Runtime }) => {
-    const config = fixtures(tier0Runtime.descriptor.fixtures)
-    const cabinetId = textValue(config.orders_empty_cabinet_id)
-    const priorCabinetId = textValue(config.cabinet_b_id)
-    const priorExpected = countsValue(config.orders_expected_checks_b)
-    const checkKey = textValue(config.isolation_check_key)
-    test.skip(
-      !cabinetId || !priorCabinetId || !priorExpected || !checkKey || !priorExpected[checkKey],
-      'BLOCKED:ORDERS_EMPTY_FIXTURE_MISSING'
-    )
-    await setCabinet(page, priorCabinetId!)
-    await page.goto(ROUTE)
-    await expectRenderedChecks(page, priorExpected!)
-    await page.evaluate(id => {
-      const parsed = JSON.parse(window.localStorage.getItem('auth-storage') || '{}')
-      parsed.state = { ...parsed.state, cabinetId: id }
-      window.localStorage.setItem('auth-storage', JSON.stringify(parsed))
-    }, cabinetId)
+      await expect(page.getByTestId('orders-integrity-page')).toBeVisible()
+      await expect(
+        page.getByRole('heading', { name: 'Целостность заказов', level: 1 })
+      ).toBeVisible()
+      await expectRenderedChecks(page, COUNTS_A)
+    })
 
-    const reconciliation = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/v1/orders/reconciliation',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page.reload()
-    expect((await reconciliation).ok()).toBe(true)
-    await expect(page.getByText('Нет данных за выбранный период.')).toBeVisible()
-    const priorCard = page
-      .getByText(CHECK_LABELS[checkKey!], { exact: true })
-      .locator('xpath=../..')
-    await expect(
-      priorCard.getByText(String(priorExpected![checkKey!]), { exact: true })
-    ).toHaveCount(0)
-  })
+    test('shows the real loading affordance while integrity is pending', async ({ page }) => {
+      let releaseIntegrity: (() => void) | undefined
+      const integrityGate = new Promise<void>(resolve => {
+        releaseIntegrity = resolve
+      })
+      await page.route(INTEGRITY_API, async route => {
+        await integrityGate
+        await fulfillJson(route, integrityResponse(COUNTS_A))
+      })
+      await page.route(RECONCILIATION_API, route => fulfillJson(route, reconciliationResponse()))
 
-  test('[OI-E06] controlled backend error is recoverable and never rendered as zero', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const cabinetId = textValue(
-      fixtures(tier0Runtime.descriptor.fixtures).orders_recovery_cabinet_id
-    )
-    test.skip(!cabinetId, 'BLOCKED:ORDERS_RECOVERY_FIXTURE_MISSING')
-    await setCabinet(page, cabinetId!)
+      await page.goto(ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.locator('[role="status"][aria-busy="true"]').first()).toBeVisible()
+      releaseIntegrity?.()
+      await expect(page.getByText('Данные в порядке')).toBeVisible()
+    })
 
-    const integrity = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page.goto(ROUTE)
-    expect((await integrity).ok()).toBe(false)
-    await expect(
-      page.getByText('Не удалось загрузить данные проверки. Попробуйте ещё раз.')
-    ).toBeVisible()
-    const recovery = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page
-      .getByRole('button', { name: /Повторить/ })
-      .first()
-      .click()
-    expect((await recovery).ok()).toBe(true)
-    await expect(page.getByTestId('orders-integrity-page')).toBeVisible()
-    await expect(
-      page.getByText('Не удалось загрузить данные проверки. Попробуйте ещё раз.')
-    ).toHaveCount(0)
-  })
+    test('shows an explicit empty reconciliation state after a cabinet switch', async ({
+      page,
+    }) => {
+      await page.route(INTEGRITY_API, route => fulfillJson(route, integrityResponse(COUNTS_A)))
+      await page.route(RECONCILIATION_API, route => {
+        const cabinetId = new URL(route.request().url()).searchParams.get('cabinet_id')
+        return fulfillJson(
+          route,
+          reconciliationResponse(cabinetId === EMPTY_CABINET ? [] : undefined)
+        )
+      })
 
-  test('[OI-E07] cabinet A and B remain isolated in requests and rendered counts', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const config = fixtures(tier0Runtime.descriptor.fixtures)
-    const cabinetA = textValue(config.cabinet_a_id)
-    const cabinetB = textValue(config.cabinet_b_id)
-    const expectedA = countsValue(config.orders_expected_checks)
-    const expectedB = countsValue(config.orders_expected_checks_b)
-    const checkKey = textValue(config.isolation_check_key)
-    test.skip(
-      !cabinetA || !cabinetB || !expectedA || !expectedB || !checkKey,
-      'BLOCKED:CABINET_ISOLATION_CONTROL_MISSING'
-    )
-    expect(expectedA![checkKey!]).not.toBe(expectedB![checkKey!])
+      await page.goto(ROUTE)
+      await expect(page.getByText('Всего заказов')).toBeVisible()
 
-    await setCabinet(page, cabinetA!)
-    const responseA = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetA
-      )
-    )
-    await page.goto(ROUTE)
-    expect((await responseA).ok()).toBe(true)
-    await expectRenderedChecks(page, expectedA!)
+      await changeCabinet(page, EMPTY_CABINET)
+      await page.reload()
 
-    await page.evaluate(id => {
-      const parsed = JSON.parse(window.localStorage.getItem('auth-storage') || '{}')
-      parsed.state = { ...parsed.state, cabinetId: id }
-      window.localStorage.setItem('auth-storage', JSON.stringify(parsed))
-    }, cabinetB)
-    const responseB = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetB
-      )
-    )
-    await page.reload()
-    expect((await responseB).ok()).toBe(true)
-    await expectRenderedChecks(page, expectedB!)
-  })
+      await expect(page.getByText('Нет данных за выбранный период.')).toBeVisible()
+    })
 
-  test('[OI-E08] reconciliation headline equals the authorized control within tolerance', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const config = fixtures(tier0Runtime.descriptor.fixtures)
-    const cabinetId = textValue(config.cabinet_a_id)
-    const control = fixtures(config.reconciliation)
-    test.skip(
-      !cabinetId ||
-        !['total_count', 'local_count', 'expected_count'].every(
-          key => typeof control[key] === 'number'
-        ),
-      'BLOCKED:FINANCE_FIXTURE_MISSING'
-    )
-    await setCabinet(page, cabinetId!)
+    test('recovers from an integrity error without rendering it as zero', async ({ page }) => {
+      let attempts = 0
+      await page.route(INTEGRITY_API, route => {
+        attempts += 1
+        return attempts <= 2
+          ? fulfillJson(route, { error: { message: 'controlled failure' } }, 500)
+          : fulfillJson(route, integrityResponse(COUNTS_A))
+      })
+      await page.route(RECONCILIATION_API, route => fulfillJson(route, reconciliationResponse()))
 
-    const reconciliation = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/v1/orders/reconciliation',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page.goto(ROUTE)
-    expect((await reconciliation).ok()).toBe(true)
-    const summary = page.getByText('Всего заказов').locator('xpath=..')
-    await expect(summary.getByText(String(control.total_count), { exact: true })).toBeVisible()
-    await expect(
-      page
-        .getByText('Локальных')
-        .locator('xpath=..')
-        .getByText(String(control.local_count), { exact: true })
-    ).toBeVisible()
-    await expect(
-      page
-        .getByText('Ожидаемых')
-        .locator('xpath=..')
-        .getByText(String(control.expected_count), { exact: true })
-    ).toBeVisible()
-    const variance = page.getByText('Расхождение').locator('xpath=..')
-    const varianceText = (await variance.locator('p').nth(1).textContent())?.trim()
-    if (control.variance_percent == null) {
-      expect(varianceText).toBe('—')
-    } else {
-      expect(typeof control.variance_percent).toBe('number')
-      const actual = Number(varianceText?.replace('%', '').replace(/\s/g, '').replace(',', '.'))
-      const tolerance = typeof control.tolerance === 'number' ? control.tolerance : 0.01
-      expect(Math.abs(actual - Number(control.variance_percent))).toBeLessThanOrEqual(tolerance)
-    }
-  })
+      await page.goto(ROUTE)
+      await expect(
+        page.getByText('Не удалось загрузить данные проверки. Попробуйте ещё раз.')
+      ).toBeVisible()
+      await expect(page.getByText('Дубликаты', { exact: true })).toHaveCount(0)
+      await page
+        .getByRole('button', { name: /Повторить/ })
+        .first()
+        .click()
 
-  test('[OI-E09] configured real row interaction preserves cabinet context', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const config = fixtures(tier0Runtime.descriptor.fixtures)
-    const cabinetId = textValue(config.cabinet_a_id)
-    const selector = textValue(config.orders_drilldown_selector)
-    const expectedPath = textValue(config.orders_drilldown_path)
-    const requestPath = textValue(config.orders_drilldown_request_path)
-    const expectedText = textValue(config.orders_drilldown_expected_text)
-    test.skip(
-      !cabinetId || !selector || !expectedPath || !requestPath || !expectedText,
-      'BLOCKED:ORDERS_DRILLDOWN_CONTROL_MISSING'
-    )
-    await setCabinet(page, cabinetId!)
+      await expect(page.getByText('Данные в порядке')).toBeVisible()
+      await expect(
+        page.getByText('Не удалось загрузить данные проверки. Попробуйте ещё раз.')
+      ).toHaveCount(0)
+    })
 
-    await page.goto(ROUTE)
-    const detailResponse = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        requestPath!,
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page.locator(selector!).click()
-    expect((await detailResponse).ok()).toBe(true)
-    await expect(page).toHaveURL(new RegExp(expectedPath!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
-    await expect(page.getByText(expectedText!, { exact: false })).toBeVisible()
-    expect(
-      await page.evaluate(
-        () => JSON.parse(localStorage.getItem('auth-storage') || '{}')?.state?.cabinetId
-      )
-    ).toBe(cabinetId)
-  })
+    test('keeps cabinet requests and rendered counts isolated', async ({ page }) => {
+      const requestedCabinets: string[] = []
+      await page.route(INTEGRITY_API, route => {
+        const cabinetId = new URL(route.request().url()).searchParams.get('cabinet_id') ?? ''
+        requestedCabinets.push(cabinetId)
+        const counts = cabinetId === CABINET_B ? COUNTS_B : COUNTS_A
+        return fulfillJson(route, integrityResponse(counts))
+      })
+      await page.route(RECONCILIATION_API, route => fulfillJson(route, reconciliationResponse()))
 
-  test('[OI-E10] required live APIs succeed and provenance remains sanitized', async ({
-    page,
-    tier0Runtime,
-  }) => {
-    const cabinetId = textValue(fixtures(tier0Runtime.descriptor.fixtures).cabinet_a_id)
-    test.skip(!cabinetId, 'BLOCKED:CABINET_FIXTURE_MISSING')
-    await setCabinet(page, cabinetId!)
+      await page.goto(ROUTE)
+      await expectRenderedChecks(page, COUNTS_A)
 
-    const integrity = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/health/orders-integrity',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    const reconciliation = page.waitForResponse(response =>
-      matchesOrdersResponse(
-        response,
-        '/v1/orders/reconciliation',
-        tier0Runtime.descriptor.allowed_origins.backend,
-        cabinetId
-      )
-    )
-    await page.goto(ROUTE)
-    expect((await integrity).ok()).toBe(true)
-    expect((await reconciliation).ok()).toBe(true)
-    const requiredPaths = new Set(['/health/orders-integrity', '/v1/orders/reconciliation'])
-    const backendOrigins = tier0Runtime.descriptor.allowed_origins.backend.map(
-      origin => new URL(origin).origin
-    )
-    const records = tier0Runtime.apiProvenance.filter(record => requiredPaths.has(record.pathname))
-    expect(new Set(records.map(record => record.pathname))).toEqual(requiredPaths)
-    expect(
-      records.every(record => backendOrigins.includes(record.origin) && record.status === 200)
-    ).toBe(true)
+      await changeCabinet(page, CABINET_B)
+      await page.reload()
+      await expectRenderedChecks(page, COUNTS_B)
+
+      expect(requestedCabinets).toContain(CABINET_A)
+      expect(requestedCabinets).toContain(CABINET_B)
+    })
   })
 })

@@ -1,7 +1,0 @@
-[Service]
-Environment="ACTIONS_RUNNER_HOOK_JOB_STARTED=/opt/github-actions-global-lock/acquire.sh"
-Environment="ACTIONS_RUNNER_HOOK_JOB_COMPLETED=/opt/github-actions-global-lock/release.sh"
-Environment="GITHUB_ACTIONS_GLOBAL_LOCK_FILE=/var/lock/github-actions-global-ci.lock"
-Environment="GITHUB_ACTIONS_GLOBAL_LOCK_STATE_DIR=/var/tmp/github-actions-global-lock"
-Environment="GITHUB_ACTIONS_GLOBAL_LOCK_MAX_SECONDS=21600"
-Environment="GITHUB_ACTIONS_GLOBAL_LOCK_MAX_WAIT_SECONDS=5400"

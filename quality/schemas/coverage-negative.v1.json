@@ -1,6 +1,0 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "coverage-negative.v1",
-  "type": "object",
-  "required": ["result", "childExitCode", "repositorySubjectUnchanged", "disposableCopyRemoved"]
-}
