@@ -178,10 +178,7 @@ describe('useFinancialSummary - Margin Consistency (Story 61.13-FE)', () => {
         wrapper: createWrapper(),
       })
 
-      await waitFor(
-        () => expect(result.current.isSuccess).toBe(true),
-        { timeout: 5000 }
-      )
+      await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 5000 })
 
       const summary = result.current.data?.summary_total
 
