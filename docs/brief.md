@@ -340,9 +340,10 @@ The MVP is considered successful when:
   - JWT authentication
 - **Database:** 
   - Managed by backend (not frontend concern)
-- **Hosting/Infrastructure:** 
-  - PM2 service for process management
-  - Deployment strategy to be determined (Vercel, AWS, or self-hosted)
+- **Local development infrastructure:**
+  - Frontend runs on `http://localhost:3100`
+  - Backend REST API runs on `http://localhost:3000`
+  - Deployment infrastructure is outside the current product phase
 
 ### Architecture Considerations
 
@@ -583,4 +584,3 @@ Key areas requiring PM attention:
 **Document Status:** Draft - Ready for Review  
 **Next Review Date:** TBD  
 **Owner:** Product Manager / Business Analyst
-

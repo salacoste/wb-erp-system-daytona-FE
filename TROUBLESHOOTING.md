@@ -1,283 +1,63 @@
-# Frontend Troubleshooting Guide
+# Frontend Local Troubleshooting
 
-## Common Issues & Solutions
+## Frontend does not start
 
-### Issue: Webpack Runtime Error (TypeError: __webpack_modules__[moduleId] is not a function)
+Confirm the expected toolchain and port:
 
-**Symptom**: Page stuck on "Загрузка..." or blank screen, Next.js 500 error in browser console.
-
-**Root Cause**: Corrupted Next.js build cache (`.next` directory).
-
-**Quick Fix**:
 ```bash
-# Stop the dev server
-pm2 stop wb-repricer-frontend
+node --version
+npm --version
+lsof -i :3100
+```
 
-# Clean build cache
+The repository expects Node `24.18.0`, npm `11.11.0`, and a free frontend port
+`3100`.
+
+## Blank page or stale Next.js bundle
+
+Stop the local dev server, clean generated caches, and start it again:
+
+```bash
 npm run clean
-
-# Restart
-pm2 start wb-repricer-frontend
+npm run dev
 ```
 
-**Why it happens**:
-- Interrupted build process (Ctrl+C during compilation)
-- Git branch switch during dev server run
-- Code changes while Next.js is compiling
-- System crash or force shutdown
-- Node version mismatch
+If dependencies are also stale:
 
----
-
-## Preventive Measures
-
-### 1. Use Safe Restart Commands
-
-**✅ ALWAYS use** (automatically cleans cache):
-```bash
-pm2 restart wb-repricer-frontend
-```
-
-**❌ AVOID manual restart without cleanup**:
-```bash
-pm2 stop wb-repricer-frontend
-pm2 start wb-repricer-frontend
-```
-
-### 2. Clean Before Major Operations
-
-**Before Git operations**:
-```bash
-# Before branch switch
-pm2 stop wb-repricer-frontend
-git checkout other-branch
-pm2 start wb-repricer-frontend
-```
-
-**After dependency updates**:
-```bash
-npm run clean:full  # Removes .next, node_modules/.cache, reinstalls
-```
-
-**After Next.js version upgrade**:
 ```bash
 npm run clean:full
-pm2 restart wb-repricer-frontend
 ```
 
-### 3. PM2 Configuration (Already Implemented)
+`clean:full` reinstalls dependencies and is intentionally slower.
 
-Our `ecosystem.dev.config.js` includes:
-- **`pre_restart_hook: 'cd frontend && rm -rf .next'`** - Auto-cleanup on restart
-- **`kill_timeout: 5000`** - Gives Next.js 5s to gracefully shutdown
-- **`restart_delay: 2000`** - Waits 2s before restart to avoid race conditions
-- **`max_restarts: 5`** - Prevents infinite restart loops
+## Frontend cannot reach the backend
 
----
+Verify `.env.local`:
 
-## Development Workflow Best Practices
-
-### Starting Work
-```bash
-# Start all services (includes auto-cleanup)
-npm run start:dev
-
-# Or frontend only
-pm2 start wb-repricer-frontend
+```dotenv
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-### During Development
+Then check both localhost services:
 
-**✅ Safe to do while running**:
-- Edit code files (`.tsx`, `.ts`, `.css`)
-- Save files (Next.js HMR will reload)
-- View different pages
-
-**⚠️ Requires restart**:
-- Change `.env.local`
-- Update `next.config.js`
-- Install/remove npm packages
-- Change TypeScript config
-
-**Restart safely**:
 ```bash
-pm2 restart wb-repricer-frontend  # Uses pre_restart_hook
+curl -I http://localhost:3100
+curl -I http://localhost:3000
 ```
 
-### Ending Work
+Restart the frontend after changing `.env.local`. The base URL must not contain
+an `/api` suffix; frontend clients add their `/v1/...` paths.
+
+## Local quality failure
+
+Run the smallest failing check directly:
+
 ```bash
-# Stop all services
-npm run stop:dev
-
-# Or frontend only
-pm2 stop wb-repricer-frontend
-```
-
----
-
-## Emergency Recovery
-
-### Complete Reset (Nuclear Option)
-```bash
-# Stop everything
-pm2 stop all
-
-# Clean all caches
-cd frontend
-rm -rf .next node_modules/.cache
-
-# If still broken, full reinstall
-rm -rf node_modules
-npm install
-
-# Restart
-cd ..
-pm2 start wb-repricer-frontend
-```
-
-### Check for Duplicate Processes
-```bash
-# List all Node processes
-ps aux | grep node
-
-# Kill duplicate Next.js processes
-pkill -f "next dev"
-
-# Restart cleanly
-pm2 restart wb-repricer-frontend
-```
-
----
-
-## Monitoring & Diagnostics
-
-### Check PM2 Logs
-```bash
-# Real-time logs
-pm2 logs wb-repricer-frontend
-
-# Last 50 lines
-pm2 logs wb-repricer-frontend --lines 50
-
-# Errors only
-pm2 logs wb-repricer-frontend --err
-```
-
-### Check Build Status
-```bash
-# Verify .next directory state
-ls -lah frontend/.next
-
-# Check for lock files
-ls -lah frontend/.next/*.lock
-```
-
-### Verify Server is Running
-```bash
-# Check PM2 status
-pm2 status
-
-# Check port 3100
-lsof -i :3100
-
-# Test HTTP response
-curl http://localhost:3100/api/health
-```
-
----
-
-## CI/CD Best Practices
-
-### Pre-deployment Checklist
-```bash
-# 1. Clean build
-npm run clean
-
-# 2. Type check
 npm run type-check
-
-# 3. Lint
 npm run lint
-
-# 4. Production build test
+npm test -- --run
+npm run check:privacy
 npm run build
-
-# 5. Start production server
-npm run start
 ```
 
-### Docker Best Practice
-Always add `.next` to `.dockerignore`:
-```
-# .dockerignore
-.next
-node_modules
-.env*.local
-```
-
-Build fresh in container:
-```dockerfile
-RUN npm run build
-CMD ["npm", "start"]
-```
-
----
-
-## Known Next.js Quirks
-
-### 1. Fast Refresh Limitations
-- Adding/removing files requires manual restart
-- Changing global CSS requires reload
-- Environment variable changes need full restart
-
-### 2. Cache Invalidation
-Next.js caches:
-- `node_modules/.cache` - SWC compilation cache
-- `.next/cache` - Build artifacts
-- `.next/server` - Server bundles
-
-**When to clear**: After major dependency updates, Next.js upgrades, or unexplained build errors.
-
-### 3. Memory Leaks
-If PM2 shows growing memory:
-```bash
-# Check memory usage
-pm2 monit
-
-# Restart if >1GB
-pm2 restart wb-repricer-frontend
-```
-
----
-
-## Quick Reference Commands
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server (local, no PM2) |
-| `npm run dev:clean` | Start with clean cache |
-| `npm run clean` | Remove `.next` and cache |
-| `npm run clean:full` | Nuclear option (reinstall deps) |
-| `pm2 restart wb-repricer-frontend` | Safe restart (auto-cleanup) |
-| `pm2 logs wb-repricer-frontend` | View logs |
-| `pm2 monit` | Real-time monitoring |
-
----
-
-## When to Ask for Help
-
-If issue persists after:
-1. ✅ Running `npm run clean:full`
-2. ✅ Restarting PM2 process
-3. ✅ Checking for duplicate processes
-4. ✅ Verifying `.env.local` exists
-
-Then escalate to team lead or check:
-- GitHub Issues: https://github.com/vercel/next.js/issues
-- Next.js Discord: https://nextjs.org/discord
-- Internal team Slack channel
-
----
-
-**Last Updated**: 2025-12-30
-**Maintainer**: Development Team
+For browser-test setup and mutation safety, see [`e2e/README.md`](e2e/README.md).

@@ -63,7 +63,6 @@ const nextConfig: NextConfig = {
   }),
 
   // Output configuration
-  // output: 'standalone', // Disabled for PM2 - use 'npm start' instead
 }
 
 export default nextConfig

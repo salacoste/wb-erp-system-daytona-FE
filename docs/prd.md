@@ -531,8 +531,8 @@ Given the financial data nature and critical workflows, comprehensive testing is
 - Backend API documentation is located in `../docs/frontend-po/` directory and must be referenced for all API integrations
 - All code comments, logs, and API response handling must be in English language
 - JWT token authentication with Cabinet ID header (X-Cabinet-Id) required for all API requests
-- PM2 service will be used for process management in production
-- Deployment target to be determined (Vercel, AWS, or self-hosted options available)
+- Current development and validation run locally: frontend on `localhost:3100`, backend on `localhost:3000`
+- Deployment infrastructure will be designed only when the product enters a deployment phase
 - Secure token storage required (httpOnly cookies or secure localStorage)
 - HTTPS required for all API communication
 - Browser support: Modern browsers (Chrome, Firefox, Safari, Edge - latest 2 versions)
@@ -1440,4 +1440,3 @@ Create a comprehensive front-end specification document for the WB Repricer Syst
 ### Architect Prompt
 
 Create a comprehensive frontend architecture document for the WB Repricer System Frontend based on this PRD. Define the technical architecture, project structure, coding standards, API integration strategy, state management approach, and testing architecture. Ensure alignment with Next.js, TypeScript, and the 200-line file constraint. Reference backend API documentation in `../docs/frontend-po/` for integration requirements.
-

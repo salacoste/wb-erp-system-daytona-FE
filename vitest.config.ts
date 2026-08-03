@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitest/config'
 import path from 'path'
-import coveragePolicy from './quality/coverage-policy.v1.json'
-import coverageScope from './quality/coverage-scope.v1.json'
 
 export default defineConfig({
   test: {
@@ -42,8 +40,7 @@ export default defineConfig({
       'node_modules/**',
       'e2e/**', // Exclude E2E tests from Vitest
       'tests/e2e/**', // Exclude E2E tests in tests/ directory
-      'scripts/tier0/**/*.test.mjs', // Tier-0 safety tests run under node:test, never Vitest
-      'scripts/certification/**/*.test.mjs', // Coverage governance tests run under node:test
+      'scripts/check-privacy-console.test.mjs', // Runs separately with node:test
       'dist/**',
       '**/*.config.*',
       // Exclude OMC agent worktrees (stale full-repo copies under
@@ -53,14 +50,20 @@ export default defineConfig({
       '.claude/**',
     ],
     coverage: {
-      provider: coverageScope.provider as 'v8',
-      reporter: coverageScope.reporter,
-      include: coverageScope.include,
-      exclude: coverageScope.exclude,
-      thresholds:
-        process.env.COVERAGE_GOVERNANCE_MODE === 'threshold'
-          ? coveragePolicy.vitestThresholds
-          : undefined,
+      provider: 'v8',
+      reportsDirectory: 'coverage/local',
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'node_modules/**',
+        'src/test/**',
+        'src/**/*.test.{ts,tsx}',
+        'src/**/__tests__/**',
+        'e2e/**',
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/mockData/**',
+      ],
     },
     globals: true,
   },

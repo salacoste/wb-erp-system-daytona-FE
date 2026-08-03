@@ -3,10 +3,8 @@
 # Runs `lint-staged` which lints + auto-formats only the files actually staged
 # for this commit. Fast (~1-2 sec) — see lint-staged config in package.json.
 #
-# Type-check and full test suite are NOT run here — they're slower and live in
-# CI (.github/workflows/frontend-quality.yml). The trade-off is intentional:
-# pre-commit should be fast enough that developers don't bypass it with
-# --no-verify. CI is the strict authoritative gate.
+# Type-check and the full test suite are not run here because they are slower.
+# Run the local validation commands from README.md before sharing changes.
 #
 # To temporarily skip this hook (e.g., WIP commits): `git commit --no-verify`
 # Don't make a habit of it — bypassing the hook means broken code can land.

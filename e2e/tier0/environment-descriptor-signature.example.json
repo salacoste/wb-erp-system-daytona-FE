@@ -1,9 +1,0 @@
-{
-  "schema_version": 1,
-  "algorithm": "Ed25519",
-  "issuer": "REPLACE_WITH_DISTINCT_RUNTIME_OPERATOR_ISSUER",
-  "descriptor_sha256": "REPLACE_WITH_64_HEX_DESCRIPTOR_SHA256",
-  "issued_at": "REPLACE_WITH_ISO_TIMESTAMP",
-  "expires_at": "REPLACE_WITH_ISO_TIMESTAMP_WITHIN_72_HOURS",
-  "signature_base64": "REPLACE_WITH_DETACHED_ED25519_SIGNATURE"
-}

@@ -6,28 +6,16 @@
 
 ---
 
-## Current certification boundary (updated 2026-07-27)
+<!-- CURRENT-STATUS:START -->
 
-Parts 1–7 below are historical validation material and methodology, not proof that a current immutable release candidate ran live.
+## Current local validation mode (updated 2026-08-03)
 
-- **Release Authorization:** **NO-GO** for an unconditional production release.
-- **Certification boundary:** runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**.
-- **Runtime contract:** lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` and `npm run start` bind the frontend to port 3100.
-- **Current inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
-- **Integrated evidence base:** 49/49 expected outcomes matched before documentation reconciliation; no later documentation/reseal total is claimed here. TypeScript, lint, format, AP8, and coverage governance 27/27 passed.
-- **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.
-- **Static/unit and coverage evidence:** the canonical Node 24.18.0/npm 11.11.0 Vitest 4.1.10 run passed 1,047/1,047 files and 17,296/17,296 tests. Isolated candidate-index coverage recorded 74.46% lines, 73.32% statements, 69.85% functions, and 70.04% branches. At evidence capture, the actual repository index reported the canonical selection as `NOT_TRACKED` and failed closed with exit 1; the isolated candidate index was local-only and did not change that index. Commit `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9` now tracks the canonical selection and policy, and a post-commit Node 24 selector/governance smoke passed. This does not alter the historical evidence boundary or authorize release.
-- **AP8/build evidence:** the Node 24 rule/normalizer lanes and isolated Node 25 compatibility lane passed. Two Next.js 16.2.10 production builds generated 67/67 pages with strict source/candidate/runtime inputs invariant. The first build normalized generated `next-env.d.ts`, which then remained stable; incident 034 separates that generated-input event from the strict inputs. Build IDs and output digests differed, so bit-for-bit reproducibility is not claimed.
-- **Tier-0 evidence:** helper Vitest passed 8/8, safety passed 72/72, and static discovery lists 24 tests in exactly 2 files. Missing-descriptor execution exited 3 and produced 38/38 `BLOCKED`, 0 `PASS`, and 0 `FAIL`; the malformed-descriptor negative exited 1. Orders Integrity source/unit and its dedicated live contract are authored, but no credentialed live `PASS` exists.
-- **Candidate/external blockers:** the remediation is committed as `f0a470ca26bc1f31fabb04e7a8a4167144ee33c9`. An independently fetched immutable candidate receipt, externally published runtime-input manifest, trusted signed sandbox plus execution/cleanup authority, ECC, RRC, CERT-F01, and external attestation are absent.
-- **Evidence:** durable sanitized [G006 frontend readiness summary](evidence/frontend-readiness-g006-20260726.md); its source root `.omx/tmp/g006-final-integrated-20260726T002604Z` is local and transient.
-
-```bash
-find src/app -type f -name 'page.tsx' -print | LC_ALL=C sort -u | wc -l
-find src -type f \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \) -print | LC_ALL=C sort -u | wc -l
-find e2e tests/e2e -type f -name '*.spec.ts' -print | LC_ALL=C sort -u | wc -l
-npm run test:tier0:list
-```
+The product is developed and validated locally: frontend on `localhost:3100`;
+the backend origin comes from `NEXT_PUBLIC_API_URL` (the local default is
+`http://localhost:3000`). Current checks are Vitest, ordinary Playwright,
+plain coverage measurement, privacy scanning, lint, type-check, format, and a
+local build smoke. Parts 1–7 below are retained as historical methodology.
+<!-- CURRENT-STATUS:END -->
 
 ---
 
@@ -58,7 +46,7 @@ npm run test:tier0:list
 ### 5. Settings & Monitoring
 
 - [x] `/settings/notifications`, `/monitoring` ✅
-- [x] Historical run: `/settings` returned 404. Current source has `src/app/(dashboard)/settings/page.tsx`, which redirects to `/settings/notifications`; live rendering remains unverified without ECC.
+- [x] Historical run: `/settings` returned 404. Current source has `src/app/(dashboard)/settings/page.tsx`, which redirects to `/settings/notifications`; the current route is covered by the ordinary local Playwright smoke.
 - [x] `/settings/tariffs`, `/settings/backfill` → redirect to dashboard (admin-only)
 
 **Page load score: 25/30 (83%)**
@@ -280,12 +268,12 @@ See **[DATA-SOURCES-REFERENCE.md](DATA-SOURCES-REFERENCE.md)** for full document
 
 ### Severity Distribution
 
-| Severity    | Count | Issues                                                                              |
-| ----------- | ----- | ----------------------------------------------------------------------------------- |
-| 🔴 Critical | 2     | Валовая прибыль formula, Маржинальность formula                                     |
-| 🟡 Medium   | 1     | Выкупы шт (FBO-only count)                                                          |
-| 🟠 API Bugs | 3     | liquidity, time-period, supplies — broken pages                                     |
-| ℹ️ Low      | 2     | Удержания WB partial; historical `/settings` 404 is source-closed, live ECC pending |
+| Severity    | Count | Issues                                                                                       |
+| ----------- | ----- | -------------------------------------------------------------------------------------------- |
+| 🔴 Critical | 2     | Валовая прибыль formula, Маржинальность formula                                              |
+| 🟡 Medium   | 1     | Выкупы шт (FBO-only count)                                                                   |
+| 🟠 API Bugs | 3     | liquidity, time-period, supplies — broken pages                                              |
+| ℹ️ Low      | 2     | Удержания WB partial; historical `/settings` 404 is source-closed and covered by local smoke |
 
 ### Priority Recommendations
 
@@ -313,7 +301,8 @@ app, **log the actual rendered numbers** per page (with filters), then
 **reconcile meanings between pages** to prove the data is computed correctly and
 is consistent everywhere it appears. It validates the _output_, on real data.
 
-**Stack.** The frontend scripts use `:3100`; the API origin must be supplied explicitly by the authorized environment. Historical references to a backend on `:3000` are not a current environment assertion.
+**Stack.** The frontend scripts use `:3100`; the API origin is supplied through
+`NEXT_PUBLIC_API_URL`, with `http://localhost:3000` as the local default.
 Drive via Playwright (canonical browser tool). Raw API data captured via direct
 calls with an environment-provided test JWT + `X-Cabinet-Id` (the same payloads the hooks consume). No credential value belongs in tracked docs or publishable evidence.
 
