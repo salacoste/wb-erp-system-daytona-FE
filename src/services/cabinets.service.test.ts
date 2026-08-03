@@ -1,11 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { handleCreateCabinet } from './cabinets.service'
 import { createCabinet } from '@/lib/api'
+import { updateCabinetTaxSettings } from '@/lib/api/cabinet'
 import { useAuthStore } from '@/stores/authStore'
 
 // Mock dependencies
 vi.mock('@/lib/api', () => ({
   createCabinet: vi.fn(),
+}))
+
+vi.mock('@/lib/api/cabinet', () => ({
+  updateCabinetTaxSettings: vi.fn(),
 }))
 
 vi.mock('@/stores/authStore', () => ({
@@ -47,8 +52,12 @@ describe('handleCreateCabinet', () => {
       user: mockUser,
     })
     ;(createCabinet as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse)
+    ;(updateCabinetTaxSettings as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ...mockResponse,
+      targetMarginPct: 20,
+    })
 
-    const result = await handleCreateCabinet('Test Cabinet')
+    const result = await handleCreateCabinet('Test Cabinet', 20)
 
     // Проверяем, что createCabinet был вызван
     expect(createCabinet).toHaveBeenCalledWith({ name: 'Test Cabinet' }, mockToken)
@@ -59,6 +68,12 @@ describe('handleCreateCabinet', () => {
 
     // Проверяем, что setCabinetId был вызван с ID созданного кабинета
     expect(mockSetCabinetId).toHaveBeenCalledWith('cabinet-id')
+    expect(updateCabinetTaxSettings).toHaveBeenCalledWith('cabinet-id', {
+      targetMarginPct: 20,
+    })
+    expect(mockSetCabinetId.mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(updateCabinetTaxSettings).mock.invocationCallOrder[0]
+    )
 
     // Проверяем возвращаемый результат
     expect(result.cabinet).toEqual({
@@ -67,6 +82,7 @@ describe('handleCreateCabinet', () => {
       isActive: true,
       createdAt: '2025-01-01T00:00:00Z',
       updatedAt: '2025-01-01T00:00:00Z',
+      targetMarginPct: 20,
     })
   })
 
@@ -75,7 +91,7 @@ describe('handleCreateCabinet', () => {
       token: null,
     })
 
-    await expect(handleCreateCabinet('Test Cabinet')).rejects.toThrow('User not authenticated')
+    await expect(handleCreateCabinet('Test Cabinet', 20)).rejects.toThrow('User not authenticated')
   })
 
   it('should throw error if token update fails', async () => {
@@ -101,6 +117,36 @@ describe('handleCreateCabinet', () => {
     })
     ;(createCabinet as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse)
 
-    await expect(handleCreateCabinet('Test Cabinet')).rejects.toThrow('token update failed')
+    await expect(handleCreateCabinet('Test Cabinet', 20)).rejects.toThrow('token update failed')
+    expect(updateCabinetTaxSettings).not.toHaveBeenCalled()
+  })
+
+  it('rejects when target margin persistence fails after creation', async () => {
+    const mockRefreshToken = vi.fn()
+    const mockSetCabinetId = vi.fn()
+    ;(useAuthStore.getState as ReturnType<typeof vi.fn>).mockReturnValue({
+      token: 'old-token',
+      refreshToken: mockRefreshToken,
+      setCabinetId: mockSetCabinetId,
+      user: null,
+    })
+    ;(createCabinet as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: 'cabinet-id',
+      name: 'Test Cabinet',
+      isActive: true,
+      createdAt: '2025-01-01T00:00:00Z',
+      updatedAt: '2025-01-01T00:00:00Z',
+      newToken: 'new-token',
+    })
+    ;(updateCabinetTaxSettings as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error('API unavailable')
+    )
+
+    await expect(handleCreateCabinet('Test Cabinet', 0)).rejects.toThrow(
+      'target margin could not be saved'
+    )
+    expect(updateCabinetTaxSettings).toHaveBeenCalledWith('cabinet-id', {
+      targetMarginPct: 0,
+    })
   })
 })

@@ -54,6 +54,8 @@ export interface Cabinet {
   // Epic 66-FE: VAT settings (Backend Task-50)
   vatPayer: boolean
   vatRate: number | null
+  // Epic 121 GAP-3: explicit pricing target; null means use the proposed 20% fallback in UI/runtime
+  targetMarginPct: number | null
 }
 
 /**
@@ -66,6 +68,7 @@ export interface UpdateCabinetTaxRequest {
   taxRate?: number | null
   vatPayer?: boolean
   vatRate?: number | null
+  targetMarginPct?: number | null
 }
 
 export interface CreateCabinetRequest {

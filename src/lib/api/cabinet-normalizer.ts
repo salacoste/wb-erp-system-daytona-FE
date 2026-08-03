@@ -28,14 +28,20 @@ function toTaxSystem(raw: unknown): TaxSystem | null {
 
 export function normalizeCabinetResponse(raw: unknown): Cabinet {
   const r = (raw ?? {}) as Record<string, unknown>
+  const rawTargetMargin = r.targetMarginPct !== undefined ? r.targetMarginPct : r.target_margin_pct
   return {
     id: String(r.id ?? ''),
     name: String(r.name ?? ''),
+    ...(r.description != null ? { description: String(r.description) } : {}),
+    isActive: Boolean(r.isActive ?? r.is_active ?? false),
+    createdAt: String(r.createdAt ?? r.created_at ?? ''),
+    updatedAt: String(r.updatedAt ?? r.updated_at ?? ''),
     taxSystem: toTaxSystem(r.taxSystem ?? r.tax_system),
     taxRate: r.taxRate != null ? Number(r.taxRate) : r.tax_rate != null ? Number(r.tax_rate) : null,
     vatPayer: Boolean(r.vatPayer ?? r.vat_payer ?? false),
     vatRate: r.vatRate != null ? Number(r.vatRate) : r.vat_rate != null ? Number(r.vat_rate) : null,
-  } as Cabinet
+    targetMarginPct: rawTargetMargin != null ? Number(rawTargetMargin) : null,
+  }
 }
 
 export function normalizeJamStatusResponse(raw: unknown): JamStatusResponse {

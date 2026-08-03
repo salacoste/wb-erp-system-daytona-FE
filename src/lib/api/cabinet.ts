@@ -43,7 +43,12 @@ export async function updateCabinetTaxSettings(
   cabinetId: string,
   data: UpdateCabinetTaxRequest
 ): Promise<Cabinet> {
-  const raw = await apiClient.put<unknown>(`/v1/cabinets/${cabinetId}`, data)
+  const { targetMarginPct, ...existingSettings } = data
+  const requestBody =
+    targetMarginPct === undefined
+      ? existingSettings
+      : { ...existingSettings, target_margin_pct: targetMarginPct }
+  const raw = await apiClient.put<unknown>(`/v1/cabinets/${cabinetId}`, requestBody)
   return normalizeCabinetResponse(raw)
 }
 
