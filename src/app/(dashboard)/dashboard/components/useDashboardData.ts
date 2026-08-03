@@ -92,8 +92,7 @@ export function useDashboardData() {
 
   const summary = financialComparison.current?.summary_total ?? null
   const hasActualFinanceSummary = Boolean(financialComparison.current?.summary_total)
-  const financialLoading =
-    financialComparison.isCurrentLoading ?? financialComparison.isLoading
+  const financialLoading = financialComparison.isCurrentLoading ?? financialComparison.isLoading
   const fulfillmentLoading = fulfillmentQuery.isCurrentLoading ?? fulfillmentQuery.isLoading
   const advertisingLoading = advertisingQuery.isCurrentLoading ?? advertisingQuery.isLoading
   const isFinanceReportPending =

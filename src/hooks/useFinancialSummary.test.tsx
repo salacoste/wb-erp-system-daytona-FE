@@ -109,9 +109,7 @@ describe('useFinancialSummary', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     expect(apiClient.get).toHaveBeenCalledTimes(1)
-    expect(apiClient.get).toHaveBeenCalledWith(
-      '/v1/analytics/weekly/finance-summary?month=2026-01'
-    )
+    expect(apiClient.get).toHaveBeenCalledWith('/v1/analytics/weekly/finance-summary?month=2026-01')
     expect(result.current.data?.summary_total?.product_transactions).toBe(42)
     expect(result.current.data?.summary_total?.margin_pct).toBe(50)
   })

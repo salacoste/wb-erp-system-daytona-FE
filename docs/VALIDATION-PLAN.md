@@ -12,7 +12,7 @@ Parts 1–7 below are historical validation material and methodology, not proof 
 
 - **Release Authorization:** **NO-GO** for an unconditional production release.
 - **Certification boundary:** runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**.
-- **Runtime contract:** lockfile-resolved Next.js 16.2.10; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` and `npm run start` bind the frontend to port 3100.
+- **Runtime contract:** lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` and `npm run start` bind the frontend to port 3100.
 - **Current inventory:** 72 `page.tsx` route sources, 1,047 unit/integration test files, and 86 Playwright spec files across `e2e/` and `tests/e2e/`.
 - **Integrated evidence base:** 49/49 expected outcomes matched before documentation reconciliation; no later documentation/reseal total is claimed here. TypeScript, lint, format, AP8, and coverage governance 27/27 passed.
 - **Evidence manifest:** 7,000 entries; SHA-256 `e3dd85025cac37c2fa6ec84f9023b77330f450fa6aab8b0695ba2d3e939c6fa3`.

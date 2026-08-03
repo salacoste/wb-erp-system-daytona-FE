@@ -5,7 +5,7 @@
 **Статус реализации**: отслеживаемые эпики завершены; это не является разрешением production-релиза
 **Release Authorization**: **NO-GO** для безусловного production-релиза
 **Certification boundary**: runtime **UNDETERMINED**; CERT-F01 **NOT_ELIGIBLE_FOR_CERT_F01**; repository-remediation certificate **NOT_ISSUED**
-**Runtime contract**: lockfile-resolved Next.js 16.2.10; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` и `npm run start` используют frontend-порт 3100
+**Runtime contract**: lockfile-resolved Next.js 16.2.12; canonical Node.js 24.18.0/npm 11.11.0; `npm run dev` и `npm run start` используют frontend-порт 3100
 
 ---
 
