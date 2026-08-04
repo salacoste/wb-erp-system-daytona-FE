@@ -54,6 +54,15 @@ Reject any story whose ID, dependency list, immutable `initial_status`, or canon
 
 ## Durable manifest
 
+Use `<frontend-root>/.omx/orchestration/story-delivery-manifest.json` as the
+single canonical manifest. Keep it in the primary repository only, never in a
+disposable story worktree, and never commit it. Serialize every transition
+under an exclusive sibling lock file, write the complete next document to a
+unique same-directory temporary file, validate it, then atomically rename it
+over the canonical path. A write or validation failure leaves the last valid
+manifest authoritative and blocks the transition. Reclaim a stale lock only
+after proving that its recorded owner process is no longer running.
+
 Maintain one record per story with at least:
 
 ```json
