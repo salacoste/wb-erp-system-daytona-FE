@@ -5,13 +5,15 @@
 > Detailed story artifacts: `_bmad-output/implementation-artifacts/`
 
 <!-- CURRENT-STATUS:START -->
+
 **Last Updated**: 2026-08-03
-**Total Epics**: 89 unique (89 done, 0 in-progress) + 5 untracked operational features
-**Total Stories**: 375+ (sprint-status mixes story rows and epic-level entries across Epics 71-156; Epics 157-161 are tracked at epic level, plus legacy Epics 1-70)
+**Total Epics**: 93 unique (89 done, 2 in-progress, 2 backlog) + 5 untracked operational features
+**Total Stories**: 400+ (includes 25 approved stories across Epics 162-165; legacy and epic-only rows remain counted separately)
 **Development Mode**: new product; frontend and backend are developed and tested locally
 **Runtime Contract**: Node.js 24.18.0/npm 11.11.0; frontend `localhost:3100`; backend `localhost:3000`
 **Current Validation**: ordinary Vitest, Playwright, coverage measurement, privacy check, lint, type-check, format, and local build smoke
 <!-- CURRENT-STATUS:END -->
+
 **Pre-flight Verification**: Epics 51, 52, 53, 66 verified as already implemented (2026-06-06)
 **Epic-only convention**: `epic-only` rows are intentional epic-level status records with no corresponding `N.x` story or retrospective rows in `sprint-status.yaml`; they are excluded from story and retrospective counts and are complete when their epic-level entry is `done`. `deferred` story rows are documented parked work due external dependency/scope split and are not active work.
 
@@ -182,15 +184,15 @@
 
 ### Quality & Maintenance (Epics 122-128)
 
-| Epic   | Title                                       | Stories             | Status | Key Routes                             |
-| ------ | ------------------------------------------- | ------------------- | ------ | -------------------------------------- |
-| 122-FE | Funnel Search Attribution + E2E             | 3                   | DONE   | `/analytics/funnel`                    |
-| 123-FE | AI Domain Frontend Integration              | 6                   | DONE   | `/analytics/forecast`, AI admin routes |
-| 124-FE | Test Coverage Completion (2,737 TODO Stubs) | 1                   | DONE   | (test infrastructure)                  |
-| 125-FE | Zero-Test Route Coverage                    | 11                  | DONE   | (baseline tests for 11 routes)         |
-| 126-FE | Stale Markers + E2E + Edge-Case Tests       | 3                   | DONE   | (cleanup, forecast-accuracy E2E)       |
-| 127-FE | Comparison Periods + Cross-Links            | 4 done + 2 deferred | DONE   | buyout, returns, advertising           |
-| 128-FE | TypeScript Cleanup + Source Compliance      | 3                   | DONE   | (quality gate hardening)               |
+| Epic   | Title                                       | Stories | Status | Key Routes                             |
+| ------ | ------------------------------------------- | ------- | ------ | -------------------------------------- |
+| 122-FE | Funnel Search Attribution + E2E             | 3       | DONE   | `/analytics/funnel`                    |
+| 123-FE | AI Domain Frontend Integration              | 6       | DONE   | `/analytics/forecast`, AI admin routes |
+| 124-FE | Test Coverage Completion (2,737 TODO Stubs) | 1       | DONE   | (test infrastructure)                  |
+| 125-FE | Zero-Test Route Coverage                    | 11      | DONE   | (baseline tests for 11 routes)         |
+| 126-FE | Stale Markers + E2E + Edge-Case Tests       | 3       | DONE   | (cleanup, forecast-accuracy E2E)       |
+| 127-FE | Comparison Periods + Cross-Links            | 6 done  | DONE   | buyout, returns, advertising           |
+| 128-FE | TypeScript Cleanup + Source Compliance      | 3       | DONE   | (quality gate hardening)               |
 
 ### Code Quality & Refactoring (Epics 132, 152, epic-level only)
 
@@ -238,6 +240,17 @@
 | 159-FE | Funnel WoW/MoM Comparison Period           | epic-only | DONE   | `/analytics/funnel`                  |
 | 160-FE | Dark Mode Migration: Dashboard + Analytics | epic-only | DONE   | dashboard, analytics hub, monitoring |
 | 161-FE | Dark Mode Migration: Products/COGS/Supply  | epic-only | DONE   | cogs, supplies, orders, shipments    |
+
+### Local Quality & Product Completion (Epics 162-165)
+
+| Epic   | Title                                           | Stories                           | Status      | Key Routes / Scope                          |
+| ------ | ----------------------------------------------- | --------------------------------- | ----------- | ------------------------------------------- |
+| 162-FE | Trustworthy Local Frontend Validation           | 1 done + 9 backlog                | IN-PROGRESS | localhost Playwright and validation gates   |
+| 163-FE | Accessible and Complete Operator Workflows      | 6 backlog                         | BACKLOG     | advertising, automation, analytics          |
+| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 backlog                         | BACKLOG     | API errors, charts, tariffs, package policy |
+| 165-FE | Truthful Status & Backend-Ready Backlog         | 2 review + 1 backlog + 2 deferred | IN-PROGRESS | active docs, OpenWiki, gated integrations   |
+
+Canonical story definitions, dependencies, and acceptance criteria: `_bmad-output/planning-artifacts/epics-162-165-fe.md`. Each story has exactly one correlated execution plan under `.omx/plans/`.
 
 ---
 
@@ -361,58 +374,60 @@ Source: `src/lib/routes.ts` plus the 2026-07-25 `src/app/**/page.tsx` inventory.
 
 Chronological log, newest first. Sprint-status source: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
-| Date        | Epic         | Summary                                                                                                                                       | Stories             |
-| ----------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| 2026-06-09  | 152-FE       | Proactive code splitting: 13 files split, 2 API normalizer test files added                                                                   | epic-only           |
-| 2026-06-09  | 132-FE       | Validation queue flush: CSV defang, dashboard grid fix, storage DRY, stale stubs cleanup                                                      | epic-only           |
-| 2026-06-07  | 129-FE       | FBS Enhanced contract reconciliation: types + normalizer + 7 components rewritten for real backend (Request #202)                             | 4                   |
-| 2026-06-07  | 128-FE       | TypeScript cleanup: 64 TS errors → 0, 15 files >200 lines → 0, 56 tests for 4 dirs                                                            | 3                   |
-| 6/7 (cont.) | 127-FE       | Comparison periods on 3 pages + buyout↔returns cross-links                                                                                    | 4 done + 2 deferred |
-| 6/7 (cont.) | 126-FE       | Stale markers removed, forecast-accuracy E2E, edge-case tests                                                                                 | 3                   |
-| 6/7 (cont.) | 125-FE       | Baseline tests for 11 routes with zero coverage                                                                                               | 11                  |
-| 6/7 (cont.) | 124-FE       | Flush 2,737 TODO stubs → 0 (largest single-session test delta, +3,663 tests)                                                                  | 1                   |
-| 6/7 (cont.) | 123-FE       | AI domain integration: 6 stories, 7 backend requests resolved                                                                                 | 6                   |
-| 2026-06-06  | 122-FE       | Funnel search attribution + price history + E2E                                                                                               | 3                   |
-| 2026-06-05  | 121-FE       | Alerts, pricing recommendations, reorder dashboard                                                                                            | 3+1                 |
-| 2026-06-05  | 120-FE       | Marketing Analytics Expansion: Hub redesign, Product Analytics, organic/paid split, iROAS                                                     | 7                   |
-| 2026-06-05  | —            | Tech debt: Request #186 (bulk COGS v2), Request #203 (selling_price), Epic 121 scope                                                          | —                   |
-| 2026-06-05  | —            | New domains: alerts, price-recommendations, reorder dashboard (33 files, +2212 lines)                                                         | —                   |
-| 2026-05-13  | 101-FE       | Documentation & backlog cleanup                                                                                                               | 1+ (in-progress)    |
-| 2026-05-12  | 100-FE       | Dead code & deprecation sweep (21 deprecated items removed)                                                                                   | 3                   |
-| 2026-05-12  | 99-FE        | ESLint cap 200-line target + HALT scripts (rule validator, propagation checker)                                                               | 2                   |
-| 2026-05-11  | 98-FE        | ESLint cap tightening (400-line target enforcement)                                                                                           | 1                   |
-| 2026-05-10  | 97-FE        | Process hardening: fix-block propagation, citation discipline, cabinet-isolation, max-lines typo fix, HALT investigation                      | 7                   |
-| 2026-05-06  | 96-FE        | Backend Epics 101-109 integration: tax, unit-economics, delivery, acquiring, FBS stock/enhanced, buyout reconciliation, returns, dead markers | 17                  |
-| 2026-05-05  | 95-FE        | Backend-closed tickets cleanup: stale markers, request docs, monitor notice                                                                   | 3                   |
-| 2026-05-04  | 94-FE        | Quality-gate automation: baseline tracking, 2-pass review, changelog lessons, doc grep                                                        | 7                   |
-| 2026-05-03  | 93-FE        | Operational cleanup: shared constants, daily profit fallback, threshold docs, pattern codification                                            | 5                   |
-| 2026-05-02  | 92-FE        | Monitor dashboard: KPI cards, metrics table, weekly chart, buyout pipeline health                                                             | 6                   |
-| 2026-05-01  | 91-FE        | Backend contract updates: totalRevenue removal, daily finance fields, pipeline health                                                         | 3                   |
-| 2026-04-30  | 90-FE        | Acquiring cost reports: list, detail, period views                                                                                            | 5                   |
-| 2026-04-28  | 89-FE        | Tech debt follow-ups: high-risk normalizers, e2e fixes, doc validator, defensive frontend                                                     | 5                   |
-| 2026-04-25  | 88-FE        | Tech debt cleanup: source TODOs, null audit, networkidle migration, normalizer pattern                                                        | 5                   |
-| 2026-04-24  | 87-FE        | Frontend stability: dashboard profit hierarchy, daily breakdown, data quality                                                                 | 3                   |
-| 2026-04-23  | 86-FE        | Bid recommendations UI, client info PII                                                                                                       | 2                   |
-| 2026-04-22  | 85-FE        | Analytics accuracy: trends wb_sales_gross, FCU by-SKU re-enable                                                                               | 2                   |
-| 2026-04-21  | 84-FE        | Cabinet health: seller info, Jam status, token health banner, batch reconciliation                                                            | 4                   |
-| 2026-04-18  | 77-FE        | Shipment dashboard integration: hooks symlink, e2e, FCU column in unit economics                                                              | 6                   |
-| 2026-04-17  | 76-FE        | Shipment planning & cost calculation: list, detail, box lines, calculate/confirm                                                              | 6                   |
-| 2026-04-16  | 75-FE        | Reference data: box types CRUD, SKU packaging (single + bulk)                                                                                 | 4                   |
-| 2026-03-15  | 74-FE        | File size compliance: 131 files split to <=200 lines (9 waves)                                                                                | 9                   |
-| 2026-03-14  | 73-FE        | Marketing analytics enhancements: funnel WoW, product filter, cross-reference, 3-layer ad cost                                                | 9                   |
-| 2026-03-13  | 72-FE        | Marketing data alignment: funnel/buyout types, advertising daily trend, buyout refactor                                                       | 6                   |
-| 2026-03-12  | 71-FE        | Search analytics: API client, jam gating, orders tab, keyword explorer, product ranking                                                       | 8                   |
-| 2026-02-28  | 70-FE        | Frontend validation fixes (23-page audit, 16 discrepancies)                                                                                   | 6                   |
-| 2026-02-25  | 69-FE        | Buyout rate analytics (per-SKU breakdown + summary widget)                                                                                    | 7                   |
-| 2026-02-23  | 66-FE        | Tax & VAT accounting integration (USN 6/15%, VAT 0/5/20/22%)                                                                                  | 7                   |
-| 2026-01-31  | 63-FE        | Dashboard business logic (12 widgets)                                                                                                         | 12                  |
-| 2026-01-31  | 62-FE        | Dashboard UI/UX (8-card grid, daily breakdown)                                                                                                | 10                  |
-| 2026-01-31  | 61-FE        | Dashboard data integration (17 stories, 239 TDD tests)                                                                                        | 17                  |
-| 2026-01-29  | 51-FE        | FBS Historical Analytics (365d)                                                                                                               | 12                  |
-| 2026-01-29  | 53-FE        | Supply Management UI                                                                                                                          | 8                   |
-| 2026-01-20  | 40-FE        | Orders UI & WB Status History                                                                                                                 | 7                   |
-| 2026-01-20  | 44-FE        | Price Calculator V2                                                                                                                           | 6                   |
-| Pre-2026    | 1-37, 42, 52 | Legacy epics (foundation, analytics, settings)                                                                                                | 76                  |
+| Date        | Epic         | Summary                                                                                                                                       | Stories          |
+| ----------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 2026-08-03  | 162-165-FE   | Approved localhost debt-closure program registered; baseline merged, status/local guidance prepared for review, backend-gated work deferred   | 25               |
+| 2026-08-03  | 127-FE       | Buyout and returns daily API clients, hooks, charts, integration, and tests reconciled as implemented                                         | 6 done           |
+| 2026-06-09  | 152-FE       | Proactive code splitting: 13 files split, 2 API normalizer test files added                                                                   | epic-only        |
+| 2026-06-09  | 132-FE       | Validation queue flush: CSV defang, dashboard grid fix, storage DRY, stale stubs cleanup                                                      | epic-only        |
+| 2026-06-07  | 129-FE       | FBS Enhanced contract reconciliation: types + normalizer + 7 components rewritten for real backend (Request #202)                             | 4                |
+| 2026-06-07  | 128-FE       | TypeScript cleanup: 64 TS errors → 0, 15 files >200 lines → 0, 56 tests for 4 dirs                                                            | 3                |
+| 6/7 (cont.) | 127-FE       | Comparison periods on 3 pages + buyout↔returns cross-links; daily trends later delivered and reconciled on 2026-08-03                         | 6 done           |
+| 6/7 (cont.) | 126-FE       | Stale markers removed, forecast-accuracy E2E, edge-case tests                                                                                 | 3                |
+| 6/7 (cont.) | 125-FE       | Baseline tests for 11 routes with zero coverage                                                                                               | 11               |
+| 6/7 (cont.) | 124-FE       | Flush 2,737 TODO stubs → 0 (largest single-session test delta, +3,663 tests)                                                                  | 1                |
+| 6/7 (cont.) | 123-FE       | AI domain integration: 6 stories, 7 backend requests resolved                                                                                 | 6                |
+| 2026-06-06  | 122-FE       | Funnel search attribution + price history + E2E                                                                                               | 3                |
+| 2026-06-05  | 121-FE       | Alerts, pricing recommendations, reorder dashboard                                                                                            | 3+1              |
+| 2026-06-05  | 120-FE       | Marketing Analytics Expansion: Hub redesign, Product Analytics, organic/paid split, iROAS                                                     | 7                |
+| 2026-06-05  | —            | Tech debt: Request #186 (bulk COGS v2), Request #203 (selling_price), Epic 121 scope                                                          | —                |
+| 2026-06-05  | —            | New domains: alerts, price-recommendations, reorder dashboard (33 files, +2212 lines)                                                         | —                |
+| 2026-05-13  | 101-FE       | Documentation & backlog cleanup                                                                                                               | 1+ (in-progress) |
+| 2026-05-12  | 100-FE       | Dead code & deprecation sweep (21 deprecated items removed)                                                                                   | 3                |
+| 2026-05-12  | 99-FE        | ESLint cap 200-line target + HALT scripts (rule validator, propagation checker)                                                               | 2                |
+| 2026-05-11  | 98-FE        | ESLint cap tightening (400-line target enforcement)                                                                                           | 1                |
+| 2026-05-10  | 97-FE        | Process hardening: fix-block propagation, citation discipline, cabinet-isolation, max-lines typo fix, HALT investigation                      | 7                |
+| 2026-05-06  | 96-FE        | Backend Epics 101-109 integration: tax, unit-economics, delivery, acquiring, FBS stock/enhanced, buyout reconciliation, returns, dead markers | 17               |
+| 2026-05-05  | 95-FE        | Backend-closed tickets cleanup: stale markers, request docs, monitor notice                                                                   | 3                |
+| 2026-05-04  | 94-FE        | Quality-gate automation: baseline tracking, 2-pass review, changelog lessons, doc grep                                                        | 7                |
+| 2026-05-03  | 93-FE        | Operational cleanup: shared constants, daily profit fallback, threshold docs, pattern codification                                            | 5                |
+| 2026-05-02  | 92-FE        | Monitor dashboard: KPI cards, metrics table, weekly chart, buyout pipeline health                                                             | 6                |
+| 2026-05-01  | 91-FE        | Backend contract updates: totalRevenue removal, daily finance fields, pipeline health                                                         | 3                |
+| 2026-04-30  | 90-FE        | Acquiring cost reports: list, detail, period views                                                                                            | 5                |
+| 2026-04-28  | 89-FE        | Tech debt follow-ups: high-risk normalizers, e2e fixes, doc validator, defensive frontend                                                     | 5                |
+| 2026-04-25  | 88-FE        | Tech debt cleanup: source TODOs, null audit, networkidle migration, normalizer pattern                                                        | 5                |
+| 2026-04-24  | 87-FE        | Frontend stability: dashboard profit hierarchy, daily breakdown, data quality                                                                 | 3                |
+| 2026-04-23  | 86-FE        | Bid recommendations UI, client info PII                                                                                                       | 2                |
+| 2026-04-22  | 85-FE        | Analytics accuracy: trends wb_sales_gross, FCU by-SKU re-enable                                                                               | 2                |
+| 2026-04-21  | 84-FE        | Cabinet health: seller info, Jam status, token health banner, batch reconciliation                                                            | 4                |
+| 2026-04-18  | 77-FE        | Shipment dashboard integration: hooks symlink, e2e, FCU column in unit economics                                                              | 6                |
+| 2026-04-17  | 76-FE        | Shipment planning & cost calculation: list, detail, box lines, calculate/confirm                                                              | 6                |
+| 2026-04-16  | 75-FE        | Reference data: box types CRUD, SKU packaging (single + bulk)                                                                                 | 4                |
+| 2026-03-15  | 74-FE        | File size compliance: 131 files split to <=200 lines (9 waves)                                                                                | 9                |
+| 2026-03-14  | 73-FE        | Marketing analytics enhancements: funnel WoW, product filter, cross-reference, 3-layer ad cost                                                | 9                |
+| 2026-03-13  | 72-FE        | Marketing data alignment: funnel/buyout types, advertising daily trend, buyout refactor                                                       | 6                |
+| 2026-03-12  | 71-FE        | Search analytics: API client, jam gating, orders tab, keyword explorer, product ranking                                                       | 8                |
+| 2026-02-28  | 70-FE        | Frontend validation fixes (23-page audit, 16 discrepancies)                                                                                   | 6                |
+| 2026-02-25  | 69-FE        | Buyout rate analytics (per-SKU breakdown + summary widget)                                                                                    | 7                |
+| 2026-02-23  | 66-FE        | Tax & VAT accounting integration (USN 6/15%, VAT 0/5/20/22%)                                                                                  | 7                |
+| 2026-01-31  | 63-FE        | Dashboard business logic (12 widgets)                                                                                                         | 12               |
+| 2026-01-31  | 62-FE        | Dashboard UI/UX (8-card grid, daily breakdown)                                                                                                | 10               |
+| 2026-01-31  | 61-FE        | Dashboard data integration (17 stories, 239 TDD tests)                                                                                        | 17               |
+| 2026-01-29  | 51-FE        | FBS Historical Analytics (365d)                                                                                                               | 12               |
+| 2026-01-29  | 53-FE        | Supply Management UI                                                                                                                          | 8                |
+| 2026-01-20  | 40-FE        | Orders UI & WB Status History                                                                                                                 | 7                |
+| 2026-01-20  | 44-FE        | Price Calculator V2                                                                                                                           | 6                |
+| Pre-2026    | 1-37, 42, 52 | Legacy epics (foundation, analytics, settings)                                                                                                | 76               |
 
 ---
 

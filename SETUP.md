@@ -31,7 +31,7 @@ npm install
 ```
 
 This will install all dependencies listed in `package.json`, including:
-- Next.js 15
+- Next.js 16
 - React 19
 - TypeScript
 - Tailwind CSS
@@ -49,7 +49,7 @@ cp .env.example .env.local
 
 # Edit .env.local with your settings
 # At minimum, set:
-# NEXT_PUBLIC_API_URL=http://localhost:3000/api
+# NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 **Required Variables:**
@@ -91,7 +91,7 @@ npm run lint
 npm run dev
 ```
 
-Visit `http://localhost:3000` to see the application.
+Visit `http://localhost:3100` to see the application.
 
 ---
 
@@ -280,4 +280,3 @@ Create `.vscode/settings.json`:
 ---
 
 **Setup Complete!** You're ready to start development. 🚀
-

@@ -4,17 +4,36 @@
 
 **Создан**: 2026-01-30 (Backend Integration Analysis)
 **Последнее обновление**: 2026-08-03
-**Статус реализации**: отслеживаемые эпики завершены; продукт продолжает локальную разработку
+**Статус реализации**: 89 эпиков завершены; Epics 162-165 формируют текущую localhost-программу качества и продуктового завершения
 **Локальный контур**: frontend `localhost:3100`; backend задаётся через `NEXT_PUBLIC_API_URL` (локальное значение по умолчанию — `http://localhost:3000`)
 **Текущая проверка**: Vitest, Playwright, coverage, privacy scan, lint, type-check, format и local build smoke
 
 ## Executive Summary
 
 Исторически отслеживаемая frontend-работа отмечена завершённой. Канонический
-текущий подсчёт — 89 уникальных эпиков и 5 untracked operational features в
-`docs/EPICS-AND-STORIES-TRACKER.md`. Две истории остаются отложенными до
-реализации backend (#210 buyout daily trends, #211 returns daily trends).
+текущий подсчёт — 93 уникальных эпика (89 done, 2 in-progress, 2 backlog) и
+5 untracked operational features в `docs/EPICS-AND-STORIES-TRACKER.md`.
+Stories 127.1/127.2 реализованы; единственные явно backend-gated истории текущей
+программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
+report/analytics retry endpoints). Документационные Stories 165.1/165.2
+подготовлены и остаются в `review` до подтверждённых PR merge и cleanup.
 <!-- CURRENT-STATUS:END -->
+
+---
+
+## Локальный baseline 2026-08-03
+
+- Localhost cleanup влит PR #86, merge SHA `4a24544d`; `main` синхронизирован с `origin/main`.
+- Vitest: 1,047 файлов / 17,313 тестов; coverage observation — 74.56% lines и 73.41% statements.
+- Успешно проверены type-check, ESLint, formatting, privacy, Orders Integrity, npm audit и production build (67/67 pages).
+- Playwright обнаруживает 801 тест в 80 файлах. Полный live localhost E2E не заявлен как пройденный: во время аудита отсутствовали `.env.e2e` и сервисы на портах 3000/3100.
+- Аудит E2E зафиксировал 88 owned-scope tautological assertions, 247 fixed waits и 30 bare skips; устранение разбито на Stories 162.2-162.10.
+
+Канонические требования и 25 stories: `_bmad-output/planning-artifacts/epics-162-165-fe.md`. Исполнение — один story/branch/worktree/PR и один план в `.omx/plans/`.
+
+### OpenWiki generation status
+
+`openwiki/**` остаётся generated-only поверхностью и вручную не редактируется. Текущие generated pages ещё содержат устаревшие Tier-0/PM2/CI-certification и `max-warnings: 112` формулировки. Story 165.3 остаётся backlog до merge исправленных source docs; затем `.github/workflows/openwiki-update.yml` должен выполнить `npx openwiki@$OPENWIKI_VERSION code --update --print` в чистом изолированном worktree. Если provider credential недоступен, это фиксируется как blocker без ручной подмены generated output.
 
 ---
 
@@ -135,10 +154,17 @@
 
 ---
 
-## Текущие блокеры (ожидают бекенд)
+## Текущие backend-gated задачи
 
-**Нет активных блокеров.** Все backend-зависимости из Priority 1-3 разрешены.
-Ожидают backend: Requests #210 (buyout daily) и #211 (returns daily).
+Requests #210 (buyout daily) и #211 (returns daily) доставлены и интегрированы:
+`src/lib/api/buyout-daily.ts`, `src/hooks/use-buyout-daily.ts`,
+`src/lib/api/returns-daily.ts`, `src/hooks/use-returns-daily.ts`, соответствующие
+charts/page integration и тесты присутствуют в source.
+
+Отложены только две новые истории:
+
+- **165.4** — активировать liquidity trends после появления непустых persisted daily snapshots за несколько дат.
+- **165.5** — добавить раздельный retry для report/analytics после появления отдельных backend endpoints.
 
 ~~D-12: Funnel buyoutCount=0~~ — ✅ Исправлено бекендом (2026-02-27): query-time buyout enrichment из `daily_sales_raw` + `orders_fbs`. Commit `39e47fa`.
 
@@ -148,11 +174,15 @@
 
 ## Оставшийся бэклог
 
-| Приоритет | Задача                             | Оценка | Статус                           |
-| --------- | ---------------------------------- | ------ | -------------------------------- |
-| **P2**    | Buyout Daily Trends (Story 127.1)  | 4-6h   | ⏳ Blocked: Backend Request #210 |
-| **P2**    | Returns Daily Trends (Story 127.2) | 4-6h   | ⏳ Blocked: Backend Request #211 |
-| **P4**    | Cache Timestamps Display           | 1h     | ℹ️ Optional                      |
+| Приоритет | Задача                            | Оценка | Статус                            |
+| --------- | --------------------------------- | ------ | --------------------------------- |
+| **P1**    | Local E2E reliability (Epic 162)  | epic   | 📋 1 done + 9 backlog             |
+| **P1**    | Operator workflows (Epic 163)     | epic   | 📋 6 backlog                      |
+| **P2**    | Boundary/maintenance debt (164)   | epic   | 📋 4 backlog                      |
+| **P2**    | OpenWiki regeneration (165.3)     | story  | 📋 After 165.1/165.2 source merge |
+| **P2**    | Liquidity daily trends (165.4)    | gated  | ⏸ Deferred: backend snapshots     |
+| **P2**    | Per-status backfill retry (165.5) | gated  | ⏸ Deferred: backend endpoints     |
+| **P4**    | Cache Timestamps Display          | 1h     | ℹ️ Optional                       |
 
 ---
 
@@ -167,7 +197,7 @@
 | 124-FE | Test Coverage Flush         | 2,737 TODO stubs → real tests (13,533 total)                   |
 | 125-FE | Zero-Test Route Coverage    | 247 baseline tests for 11 uncovered routes                     |
 | 126-FE | Housekeeping                | Stale markers, E2E, edge-case tests                            |
-| 127-FE | Marketing Phase 3           | Comparison periods + cross-links (+ 2 deferred)                |
+| 127-FE | Marketing Phase 3           | Six delivered stories, including buyout/returns daily trends   |
 | 128-FE | TypeScript Cleanup          | 64 TS errors → 0, 15 over-cap files → 0                        |
 | 129-FE | FBS Enhanced Reconciliation | Real backend contract rewrite (14,064 tests)                   |
 | 130-FE | E2E Smoke Tests             | 33 E2E tests for 6 core analytics routes                       |
@@ -177,33 +207,38 @@
 
 ## Полная таблица эпиков
 
-| Epic  | Название                          |  SP | Статус      | Дата       |
-| ----- | --------------------------------- | --: | ----------- | ---------- |
-| 1-FE  | Foundation & Authentication       |   — | ✅ Complete | —          |
-| 2-FE  | Onboarding & Initial Data Setup   |   — | ✅ Complete | —          |
-| 3-FE  | Dashboard & Financial Overview    |   — | ✅ Complete | —          |
-| 4-FE  | COGS Management & Margin Analysis |   — | ✅ Complete | —          |
-| 5-FE  | COGS History Management           |   — | ✅ Complete | —          |
-| 6-FE  | Advanced Analytics & Reporting    |   — | ✅ Complete | —          |
-| 24-FE | Paid Storage Analytics UI         |   — | ✅ Complete | —          |
-| 33-FE | Advertising Analytics UI          |   — | ✅ Complete | —          |
-| 34-FE | Telegram Notifications UI         |   — | ✅ Complete | —          |
-| 36-FE | Product Card Linking UI           |   — | ✅ Complete | —          |
-| 37-FE | Merged Group Table Display UI     |   — | ✅ Complete | —          |
-| 40-FE | Orders UI & WB Status History     |  26 | ✅ Complete | 2026-01-29 |
-| 42-FE | Task Handlers Adaptation          |   — | ✅ Complete | —          |
-| 44-FE | Price Calculator UI               |   — | ✅ Complete | —          |
-| 51-FE | FBS Historical Analytics (365d)   |  39 | ✅ Complete | 2026-02    |
-| 52-FE | Tariff Settings Admin UI          |   — | ✅ Complete | —          |
-| 53-FE | Supply Management UI              |  34 | ✅ Complete | 2026-02    |
-| 61-FE | Dashboard Data Integration        |  49 | ✅ Complete | 2026-02-02 |
-| 62-FE | Dashboard UI/UX Presentation      |  29 | ✅ Complete | 2026-02-02 |
-| 63-FE | Dashboard Business Logic          |  36 | ✅ Complete | 2026-02-15 |
-| 65-FE | Dashboard P&L Layout              |   — | ✅ Complete | 2026-02-16 |
-| 66-FE | Tax & VAT Accounting              |  35 | ✅ Complete | 2026-02-26 |
-| 68-FE | Monitoring Health Dashboard       |   — | ✅ Complete | 2026-02-18 |
-| 69-FE | Buyout Rate Analytics             |  28 | ✅ Complete | 2026-02-27 |
-| 70-FE | Validation Fixes                  |  13 | ✅ Complete | 2026-02-27 |
+| Epic   | Название                          |  SP | Статус         | Дата                  |
+| ------ | --------------------------------- | --: | -------------- | --------------------- |
+| 1-FE   | Foundation & Authentication       |   — | ✅ Complete    | —                     |
+| 2-FE   | Onboarding & Initial Data Setup   |   — | ✅ Complete    | —                     |
+| 3-FE   | Dashboard & Financial Overview    |   — | ✅ Complete    | —                     |
+| 4-FE   | COGS Management & Margin Analysis |   — | ✅ Complete    | —                     |
+| 5-FE   | COGS History Management           |   — | ✅ Complete    | —                     |
+| 6-FE   | Advanced Analytics & Reporting    |   — | ✅ Complete    | —                     |
+| 24-FE  | Paid Storage Analytics UI         |   — | ✅ Complete    | —                     |
+| 33-FE  | Advertising Analytics UI          |   — | ✅ Complete    | —                     |
+| 34-FE  | Telegram Notifications UI         |   — | ✅ Complete    | —                     |
+| 36-FE  | Product Card Linking UI           |   — | ✅ Complete    | —                     |
+| 37-FE  | Merged Group Table Display UI     |   — | ✅ Complete    | —                     |
+| 40-FE  | Orders UI & WB Status History     |  26 | ✅ Complete    | 2026-01-29            |
+| 42-FE  | Task Handlers Adaptation          |   — | ✅ Complete    | —                     |
+| 44-FE  | Price Calculator UI               |   — | ✅ Complete    | —                     |
+| 51-FE  | FBS Historical Analytics (365d)   |  39 | ✅ Complete    | 2026-02               |
+| 52-FE  | Tariff Settings Admin UI          |   — | ✅ Complete    | —                     |
+| 53-FE  | Supply Management UI              |  34 | ✅ Complete    | 2026-02               |
+| 61-FE  | Dashboard Data Integration        |  49 | ✅ Complete    | 2026-02-02            |
+| 62-FE  | Dashboard UI/UX Presentation      |  29 | ✅ Complete    | 2026-02-02            |
+| 63-FE  | Dashboard Business Logic          |  36 | ✅ Complete    | 2026-02-15            |
+| 65-FE  | Dashboard P&L Layout              |   — | ✅ Complete    | 2026-02-16            |
+| 66-FE  | Tax & VAT Accounting              |  35 | ✅ Complete    | 2026-02-26            |
+| 68-FE  | Monitoring Health Dashboard       |   — | ✅ Complete    | 2026-02-18            |
+| 69-FE  | Buyout Rate Analytics             |  28 | ✅ Complete    | 2026-02-27            |
+| 70-FE  | Validation Fixes                  |  13 | ✅ Complete    | 2026-02-27            |
+| 127-FE | Marketing Phase 3                 |   — | ✅ Complete    | 2026-08-03 reconciled |
+| 162-FE | Trustworthy Local Validation      |   — | 🚧 In progress | 2026-08-03            |
+| 163-FE | Complete Operator Workflows       |   — | 📋 Backlog     | 2026-08-03            |
+| 164-FE | Frontend Boundaries & Maintenance |   — | 📋 Backlog     | 2026-08-03            |
+| 165-FE | Truthful Status & Backend Backlog |   — | 🚧 In progress | 2026-08-03            |
 
 **Orders Integrity реализован и покрыт source/unit плюс dedicated local Playwright spec.**
 
