@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-03 # active status synchronized with source and BMad planning artifacts
+last_updated: 2026-08-05 # Story 165.1 closeout started after documentation bootstrap merge.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -725,7 +725,7 @@ development_status:
   # Epic 165-FE: Truthful Product Status and Backend-Ready Backlog
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
   epic-165-fe: in-progress
-  165.1-fe-reconcile-epic-127-delivery-status: review  # Documentation prepared locally; normal PR merge and cleanup evidence still required.
+  165.1-fe-reconcile-epic-127-delivery-status: in-progress  # Source reconciliation merged in PR #87 at bc071fdf; dedicated closeout PR is active.
   165.2-fe-align-local-development-validation-guidance: review  # Documentation prepared locally; normal PR merge and cleanup evidence still required.
   165.3-fe-regenerate-openwiki: backlog  # Requires corrected source docs to be committed before isolated generator execution.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: deferred  # Backend must provide non-empty persisted daily snapshots.

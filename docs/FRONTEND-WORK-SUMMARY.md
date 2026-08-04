@@ -3,7 +3,7 @@
 <!-- CURRENT-STATUS:START -->
 
 **Создан**: 2026-01-30 (Backend Integration Analysis)
-**Последнее обновление**: 2026-08-03
+**Последнее обновление**: 2026-08-05
 **Статус реализации**: 89 эпиков завершены; Epics 162-165 формируют текущую localhost-программу качества и продуктового завершения
 **Локальный контур**: frontend `localhost:3100`; backend задаётся через `NEXT_PUBLIC_API_URL` (локальное значение по умолчанию — `http://localhost:3000`)
 **Текущая проверка**: Vitest, Playwright, coverage, privacy scan, lint, type-check, format и local build smoke
@@ -15,8 +15,9 @@
 5 untracked operational features в `docs/EPICS-AND-STORIES-TRACKER.md`.
 Stories 127.1/127.2 реализованы; единственные явно backend-gated истории текущей
 программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
-report/analytics retry endpoints). Документационные Stories 165.1/165.2
-подготовлены и остаются в `review` до подтверждённых PR merge и cleanup.
+report/analytics retry endpoints). Source reconciliation для Story 165.1
+влита PR #87 (`bc071fdf`), и её отдельный closeout находится в работе;
+Story 165.2 остаётся в `review` до собственного PR merge и cleanup.
 <!-- CURRENT-STATUS:END -->
 
 ---
