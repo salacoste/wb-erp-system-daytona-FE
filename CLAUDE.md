@@ -8,7 +8,7 @@ Guidance for Claude Code when working with this repository.
 
 | Aspect | Details |
 |--------|---------|
-| Stack | Next.js 15 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui |
+| Stack | Next.js 16 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui |
 | State | TanStack Query v5 (server) + Zustand (client) |
 | Testing | Vitest (unit) + Playwright (E2E) |
 | Backend | REST API on `localhost:3000` (configurable via `NEXT_PUBLIC_API_URL`) |
@@ -114,7 +114,7 @@ Four anomaly categories: field inversion, null-where-number-expected, impossible
 
 **Drift gate (Story 94.1-FE).** Validator set-diffs broken citations against `scripts/.check-docs-baseline.txt` and exits 0 only on exact match (emits `NEW`/`RESOLVED` enumeration). **Read the exit code, not the count.**
 
-**Accepted baseline: 46 broken citations** — all pre-existing historical refs in shipped docs/stories (rewriting would re-open closed stories). Updated 2026-06-08 after normalizer migrations. **Source of truth**: `scripts/.check-docs-baseline.txt` (`cat` it for the authoritative list). To accept legitimate churn: `bash scripts/check-doc-citations.sh --update-baseline`, then commit the baseline alongside the story.
+**Accepted baseline is derived, never hard-coded** — pre-existing historical refs in shipped docs/stories are recorded in `scripts/.check-docs-baseline.txt`. The committed file is the authoritative set; its non-comment, non-blank entry count is informational only. The validator exit code is the pass/fail signal. To accept legitimate churn: `bash scripts/check-doc-citations.sh --update-baseline`, review the set diff, then commit the baseline alongside the story.
 
 **Exit-code caveat.** Bash pipes capture only the LAST command's exit code, so `npm run check:docs | tail` returns 0 even on failure. Check the gate via bare `npm run check:docs` (no pipe), `set -o pipefail`, or `bash scripts/check-doc-citations.sh` directly. Same for `--update-baseline` — invoke the script directly, not the `npm run` wrapper.
 
@@ -124,9 +124,9 @@ Four anomaly categories: field inversion, null-where-number-expected, impossible
 
 `scripts/check-eslint-rules.sh` (Story 99.2-FE) validates every rule name in `.eslintrc.json` + `eslint.config.js` is recognized by ESLint (via `eslint --print-config`), catching silent disablement from typos (e.g. `max-lines-per-file` vs `max-lines`). Run after editing either config. Self-test: `bash scripts/check-eslint-rules.sh --self-test`.
 
-### Next.js 15 async-params validation (`npm run check:next-params`)
+### Next.js 16 App Router async-params validation (`npm run check:next-params`)
 
-`scripts/check-next-async-params.sh` (Epic 119-FE retro A-1) flags any `params`/`searchParams` prop on an App Router `page.tsx`/`layout.tsx` that is NOT typed `Promise<...>`. Next.js 15 requires these props to be Promises and awaited — a synchronous type passes `tsc --noEmit` but **fails `next build` route typegen** (the gate gap that caused Story 119.2-FE Pass-2 P2-1 CRITICAL). Run this for any story touching App Router page/layout signatures; `tsc` alone does not catch it. Escape hatch: `// next-async-params-allow: <reason>` on the line. Self-test: `bash scripts/check-next-async-params.sh --self-test`.
+`scripts/check-next-async-params.sh` (Epic 119-FE retro A-1) flags any `params`/`searchParams` prop on an App Router `page.tsx`/`layout.tsx` that is NOT typed `Promise<...>`. Under the current Next.js 16 stack these props must remain Promises and be awaited — a synchronous type can pass `tsc --noEmit` but **fails `next build` route typegen** (the gate gap originally found in Story 119.2-FE). Run this for any story touching App Router page/layout signatures; `tsc` alone does not catch it. Escape hatch: `// next-async-params-allow: <reason>` on the line. Self-test: `bash scripts/check-next-async-params.sh --self-test`.
 
 ### Dot-locale percent ratchet (`npm run check:locale-percent`)
 
@@ -138,7 +138,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 
 | Gate | Command | Baseline |
 |---|---|---|
-| Doc citations | `bash scripts/check-doc-citations.sh` | 100 broken (auto set-diff vs `.check-docs-baseline.txt`) |
+| Doc citations | `bash scripts/check-doc-citations.sh` | exit code 0 when the current broken-citation set exactly matches `.check-docs-baseline.txt` |
 | TypeScript | `npm run type-check` | 0 errors |
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |

@@ -21,7 +21,7 @@
   - `npx eslint 'src/**/*.{ts,tsx}'` → 0 errors, 0 warnings
   - `npm test -- --run` → ≥ **16788** passing, 0 failed
   - `bash scripts/check-locale-percent.sh` → 4 (== baseline)
-  - `bash scripts/check-doc-citations.sh` → exit 0 (100 broken == baseline)
+  - `bash scripts/check-doc-citations.sh` → exit 0 only when the current broken-citation set exactly matches `scripts/.check-docs-baseline.txt`
   - `bash scripts/check-eslint-rules.sh` → OK
 - **Git:** one item = one branch `fix/tz-<ID>-<slug>` → commit → `merge --no-ff` to `main` → `push origin main`. No bundling.
 - **Visual-verify** via `playwright-cli -s=wb-repricer` (reopen `http://localhost:3100/login --persistent` + login `test@test.com`/`LocalTest123!` if closed).

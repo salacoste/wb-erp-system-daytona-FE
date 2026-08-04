@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-This is a Next.js 14 + TypeScript frontend application for WB Repricer System.
-Backend API is a separate service running on http://localhost:3001.
+This is a Next.js 16 + TypeScript frontend application for WB Repricer System.
+Backend API is a separate service running on http://localhost:3000.
 
 ## Technology Stack
 
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript 5+ (strict mode)
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **State Management**: Zustand (global) + React Query (server)
@@ -19,7 +19,7 @@ Backend API is a separate service running on http://localhost:3001.
 
 ```
 src/
-├── app/              # Next.js 14 App Router pages
+├── app/              # Next.js 16 App Router pages
 │   ├── (dashboard)/  # Authenticated routes
 │   ├── (auth)/       # Public auth routes
 │   └── layout.tsx
@@ -28,8 +28,7 @@ src/
 │   ├── features/       # Feature-specific components
 │   └── shared/         # Reusable components
 ├── hooks/             # Custom React hooks
-├── services/          # API client functions
-├── lib/               # Utilities and helpers
+├── lib/               # API client, endpoint modules, utilities, and helpers
 ├── config/            # Configuration files
 └── types/             # TypeScript type definitions
 ```
@@ -56,7 +55,7 @@ src/
 
 ### API Integration Rules
 
-- All API calls go through `services/api/*.ts`
+- All API calls go through `src/lib/api-client.ts` and endpoint modules in `src/lib/api/*.ts`
 - Use `@tanstack/react-query` for data fetching:
   - `useQuery` for GET requests
   - `useMutation` for POST/PUT/DELETE
@@ -72,17 +71,17 @@ src/
 ```typescript
 // Good pattern for API hooks
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { api } from '@/services/api/client';
+import { apiClient } from '@/lib/api-client';
 import { toast } from 'sonner';
 
 export function useMyData() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['my-data'],
-    queryFn: () => api.getMyData(),
+    queryFn: () => apiClient.get('/v1/my-data'),
   });
 
   const updateData = useMutation({
-    mutationFn: (dto: UpdateDto) => api.updateMyData(dto),
+    mutationFn: (dto: UpdateDto) => apiClient.patch('/v1/my-data', dto),
     onSuccess: () => {
       toast.success('Updated successfully');
       queryClient.invalidateQueries(['my-data']);
@@ -236,7 +235,7 @@ Follow story requirements exactly. If something is unclear, ask for clarificatio
 ### API Base URL
 
 ```typescript
-const API_BASE_URL = 'http://localhost:3001/v1';
+const API_BASE_URL = 'http://localhost:3000';
 ```
 
 ### Authentication

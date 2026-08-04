@@ -137,7 +137,7 @@ frontend/
 ✅ **Consistent Development** - All workflows follow BMad methodology
 ✅ **Multi-Agent Collaboration** - Agents work together on complex tasks
 ✅ **IDE Agnostic** - Works with Cursor AI, Claude Code, Codex, Antigravity
-✅ **Project-Specific** - Tailored for WB Repricer Frontend (Next.js 14, TypeScript)
+✅ **Project-Specific** - Tailored for WB Repricer Frontend (Next.js 16, TypeScript)
 ✅ **Comprehensive** - Covers full SDLC: analysis → planning → implementation
 
 ---
