@@ -51,6 +51,7 @@ function isAllowedTextPath(candidate) {
   const basename = path.basename(candidate)
   return (
     ALLOWED_EXTENSIONS.has(path.extname(candidate)) ||
+    basename === '.cursorrules' ||
     basename === '.gitkeep' ||
     basename === '.env' ||
     basename.startsWith('.env.')

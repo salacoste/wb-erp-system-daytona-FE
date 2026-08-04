@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Doc-Link Validator — Stories 89.3-FE (origin), 94.1-FE (baseline tracking)
 #
-# Scans CLAUDE.md + docs/ + _bmad-output/ + backlog/ for backtick-wrapped source
-# citations of the form `src/path/to/file.ts:N` or `src/path/to/file.ts:N-M`
+# Scans Git-tracked Markdown/text files under CLAUDE.md + docs/ +
+# _bmad-output/ + backlog/ for backtick-wrapped source citations of the form
+# `src/path/to/file.ts:N` or `src/path/to/file.ts:N-M`
 # and verifies each:
 #   1. The file exists (relative to repo root).
 #   2. The end line number (or single line) is within the file's line count.
@@ -26,6 +27,9 @@ export LC_ALL=C
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BASELINE_FILE="$SCRIPT_DIR/.check-docs-baseline.txt"
+# Production entry points always use Git-tracked enumeration. The self-test
+# function shadows this variable for its legacy filesystem-only fixtures.
+DOC_CITATION_SCAN_MODE="git"
 
 # ------------------------------------------------------------------------------
 # Citation regex — requires leading backtick so we don't flag illustrative text
@@ -68,6 +72,52 @@ EXCLUDE_PATHS=(
   # 93-5-fe-*: this story's spec embeds the 13-citation baseline table by design (mirrors 89-3 precedent).
   "_bmad-output/implementation-artifacts/93-5-fe-check-docs-signal-quality-investigation.md"
 )
+
+# ------------------------------------------------------------------------------
+# collect_tracked_scan_files — enumerate the production scan set from Git.
+# Uses a NUL-delimited temporary list so spaces and Unicode paths remain intact.
+# Deleted tracked files are skipped because validation reads working-tree content.
+# There is deliberately no filesystem-recursion fallback when Git fails.
+# Populates global: TRACKED_SCAN_FILES.
+# ------------------------------------------------------------------------------
+collect_tracked_scan_files() {
+  TRACKED_SCAN_FILES=()
+
+  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "ERROR: doc citation scan requires a Git worktree." >&2
+    return 1
+  fi
+
+  local tracked_list
+  tracked_list=$(mktemp)
+  if ! git ls-files -z -- "${SCAN_PATHS[@]}" > "$tracked_list"; then
+    rm -f "$tracked_list"
+    echo "ERROR: unable to enumerate Git-tracked documentation files." >&2
+    return 1
+  fi
+
+  local path excluded_path is_excluded
+  while IFS= read -r -d '' path; do
+    case "$path" in
+      *.md|*.txt) ;;
+      *) continue ;;
+    esac
+    [[ -f "$path" ]] || continue
+
+    is_excluded=0
+    for excluded_path in "${EXCLUDE_PATHS[@]}"; do
+      if [[ "$path" == "$excluded_path" || "$path" == "$excluded_path/"* ]]; then
+        is_excluded=1
+        break
+      fi
+    done
+    [[ "$is_excluded" -eq 1 ]] && continue
+
+    TRACKED_SCAN_FILES+=("$path")
+  done < "$tracked_list"
+
+  rm -f "$tracked_list"
+}
 
 # ------------------------------------------------------------------------------
 # Baseline comparison — compares current broken list against committed baseline.
@@ -164,16 +214,29 @@ collect_broken_entries() {
   BROKEN_COUNT=0
   BROKEN_ENTRIES=()
 
-  if [[ ${#existing_paths[@]} -eq 0 ]]; then
+  local scan_targets=()
+  if [[ "$DOC_CITATION_SCAN_MODE" == "filesystem" ]]; then
+    # Explicit self-test compatibility path for legacy scratch fixtures only.
+    scan_targets=("${existing_paths[@]}")
+  elif [[ "$DOC_CITATION_SCAN_MODE" == "git" ]]; then
+    if ! collect_tracked_scan_files; then
+      return 1
+    fi
+    scan_targets=("${TRACKED_SCAN_FILES[@]}")
+  else
+    echo "ERROR: unsupported DOC_CITATION_SCAN_MODE=${DOC_CITATION_SCAN_MODE}." >&2
+    return 1
+  fi
+
+  if [[ ${#scan_targets[@]} -eq 0 ]]; then
     return 0
   fi
 
-  # Grep all citations across scan paths.
-  # -r recursive, -n line numbers, -H with filename (even on single file),
-  # -o only matching text, -E extended regex.
-  # `|| true` so set -e doesn't abort when grep finds zero matches (exit 1).
+  # Grep all citations across the selected targets. Production targets are
+  # individual Git-tracked files; -r remains only for explicit scratch mode.
+  # `|| true` prevents grep's no-match exit 1 from aborting under set -e.
   local raw_matches
-  raw_matches=$(grep -rHnoE "$CITATION_REGEX" "${existing_paths[@]}" --include="*.md" --include="*.txt" 2>/dev/null || true)
+  raw_matches=$(grep -rHnoE "$CITATION_REGEX" "${scan_targets[@]}" --include="*.md" --include="*.txt" 2>/dev/null || true)
 
   # Filter out excluded paths.
   if [[ ${#EXCLUDE_PATHS[@]} -gt 0 && -n "$raw_matches" ]]; then
@@ -275,7 +338,9 @@ run_validator() {
   fi
 
   # Collect broken entries with verbose [BROKEN] output (H-3: shared helper).
-  collect_broken_entries "verbose" "${existing_paths[@]}"
+  if ! collect_broken_entries "verbose" "${existing_paths[@]}"; then
+    return 1
+  fi
 
   if [[ "$TOTAL_CITATIONS" -eq 0 ]]; then
     # Format as comma-separated globs to match AC-2 spec output (L-2 review fix).
@@ -326,7 +391,9 @@ run_update_baseline() {
   done
 
   # Collect broken entries silently (H-3: shared helper eliminates duplication).
-  collect_broken_entries "" "${existing_paths[@]}"
+  if ! collect_broken_entries "" "${existing_paths[@]}"; then
+    return 1
+  fi
 
   # Load existing baseline for comparison summary.
   local old_baseline_sorted=""
@@ -378,6 +445,9 @@ run_update_baseline() {
 # Self-test — spins up a scratch repo with known cases.
 # ------------------------------------------------------------------------------
 run_self_test() {
+  # Tests 1-11 predate Git-tracked enumeration and intentionally use minimal
+  # filesystem-only scratch fixtures. Tests 12-16 override this to "git".
+  local DOC_CITATION_SCAN_MODE="filesystem"
   local scratch=""
   scratch=$(mktemp -d)
   # Guard against `set -u` firing at top-level EXIT where `scratch` is function-local.
@@ -637,6 +707,200 @@ EOF
     echo "     output: $t11_out"
     fail=$((fail + 1))
   fi
+
+  echo ""
+  echo "=== Self-test Git-tracked enumeration scenarios (tests 12-16) ==="
+
+  # ---------------------------------------------------------------------------
+  # Test 12 — ignored docs are excluded from the production Git-tracked scan.
+  # ---------------------------------------------------------------------------
+  local t12_scratch
+  t12_scratch=$(mktemp -d)
+  git -C "$t12_scratch" init -q
+  mkdir -p "$t12_scratch/docs" "$t12_scratch/scripts"
+  cat > "$t12_scratch/.gitignore" <<'EOF'
+docs/ignored.md
+EOF
+  cat > "$t12_scratch/docs/tracked.md" <<'EOF'
+Tracked: `src/fake/tracked.ts:1`
+EOF
+  cat > "$t12_scratch/docs/ignored.md" <<'EOF'
+Ignored: `src/fake/ignored.ts:1`
+EOF
+  cat > "$t12_scratch/scripts/.check-docs-baseline.txt" <<'EOF'
+src/fake/tracked.ts:1 | file not found
+EOF
+  git -C "$t12_scratch" add .gitignore docs/tracked.md scripts/.check-docs-baseline.txt
+  local t12_out t12_exit
+  set +e
+  t12_out=$(DOC_CITATION_SCAN_MODE=git run_validator "$t12_scratch" "$t12_scratch/scripts/.check-docs-baseline.txt" 2>&1)
+  t12_exit=$?
+  set -e
+  rm -rf "$t12_scratch"
+  if [[ "$t12_exit" -eq 0 ]] && \
+     echo "$t12_out" | grep -q '^Total citations: 1$' && \
+     ! echo "$t12_out" | grep -q 'src/fake/ignored\.ts'; then
+    echo "  ✅ Test 12 (ignored docs): ignored Markdown excluded"
+    pass=$((pass + 1))
+  else
+    echo "  ❌ Test 12 (ignored docs) failed: exit=$t12_exit"
+    echo "     output: $t12_out"
+    fail=$((fail + 1))
+  fi
+
+  # ---------------------------------------------------------------------------
+  # Test 13 — untracked docs are excluded from the production Git-tracked scan.
+  # ---------------------------------------------------------------------------
+  local t13_scratch
+  t13_scratch=$(mktemp -d)
+  git -C "$t13_scratch" init -q
+  mkdir -p "$t13_scratch/docs" "$t13_scratch/scripts"
+  cat > "$t13_scratch/docs/tracked.md" <<'EOF'
+Tracked: `src/fake/tracked.ts:1`
+EOF
+  cat > "$t13_scratch/docs/untracked.md" <<'EOF'
+Untracked: `src/fake/untracked.ts:1`
+EOF
+  cat > "$t13_scratch/scripts/.check-docs-baseline.txt" <<'EOF'
+src/fake/tracked.ts:1 | file not found
+EOF
+  git -C "$t13_scratch" add docs/tracked.md scripts/.check-docs-baseline.txt
+  local t13_out t13_exit
+  set +e
+  t13_out=$(DOC_CITATION_SCAN_MODE=git run_validator "$t13_scratch" "$t13_scratch/scripts/.check-docs-baseline.txt" 2>&1)
+  t13_exit=$?
+  set -e
+  rm -rf "$t13_scratch"
+  if [[ "$t13_exit" -eq 0 ]] && \
+     echo "$t13_out" | grep -q '^Total citations: 1$' && \
+     ! echo "$t13_out" | grep -q 'src/fake/untracked\.ts'; then
+    echo "  ✅ Test 13 (untracked docs): untracked Markdown excluded"
+    pass=$((pass + 1))
+  else
+    echo "  ❌ Test 13 (untracked docs) failed: exit=$t13_exit"
+    echo "     output: $t13_out"
+    fail=$((fail + 1))
+  fi
+
+  # ---------------------------------------------------------------------------
+  # Test 14 — tracked paths containing spaces and Unicode are scanned intact.
+  # ---------------------------------------------------------------------------
+  local t14_scratch
+  t14_scratch=$(mktemp -d)
+  git -C "$t14_scratch" init -q
+  mkdir -p "$t14_scratch/docs/Guide Notes" "$t14_scratch/scripts"
+  cat > "$t14_scratch/docs/Guide Notes/Русский файл.md" <<'EOF'
+Tracked Unicode path: `src/fake/unicode.ts:1`
+EOF
+  cat > "$t14_scratch/scripts/.check-docs-baseline.txt" <<'EOF'
+src/fake/unicode-working-tree.ts:1 | file not found
+src/fake/unicode-working-tree.ts:1 | file not found
+EOF
+  git -C "$t14_scratch" add "docs/Guide Notes/Русский файл.md" scripts/.check-docs-baseline.txt
+  cat > "$t14_scratch/docs/Guide Notes/Русский файл.md" <<'EOF'
+Modified tracked Unicode path: `src/fake/unicode-working-tree.ts:1`
+Duplicate citation occurrence: `src/fake/unicode-working-tree.ts:1`
+EOF
+  local t14_out t14_exit
+  set +e
+  t14_out=$(DOC_CITATION_SCAN_MODE=git run_validator "$t14_scratch" "$t14_scratch/scripts/.check-docs-baseline.txt" 2>&1)
+  t14_exit=$?
+  set -e
+  rm -rf "$t14_scratch"
+  if [[ "$t14_exit" -eq 0 ]] && \
+     echo "$t14_out" | grep -q '^Total citations: 2$' && \
+     echo "$t14_out" | grep -q '^Broken: 2$' && \
+     echo "$t14_out" | grep -q 'cited in docs/Guide Notes/Русский файл.md:1' && \
+     echo "$t14_out" | grep -q 'cited in docs/Guide Notes/Русский файл.md:2'; then
+    echo "  ✅ Test 14 (spaces + Unicode): tracked path and duplicate occurrences preserved"
+    pass=$((pass + 1))
+  else
+    echo "  ❌ Test 14 (spaces + Unicode) failed: exit=$t14_exit"
+    echo "     output: $t14_out"
+    fail=$((fail + 1))
+  fi
+
+  # ---------------------------------------------------------------------------
+  # Test 15 — baseline regeneration contains only tracked document citations.
+  # ---------------------------------------------------------------------------
+  local t15_scratch
+  t15_scratch=$(mktemp -d)
+  git -C "$t15_scratch" init -q
+  mkdir -p "$t15_scratch/docs" "$t15_scratch/scripts"
+  cat > "$t15_scratch/.gitignore" <<'EOF'
+docs/ignored.md
+EOF
+  cat > "$t15_scratch/docs/tracked.md" <<'EOF'
+Tracked reverse-order zeta: `src/fake/zeta.ts:9`
+Tracked reverse-order alpha: `src/fake/alpha.ts:1`
+EOF
+  cat > "$t15_scratch/docs/ignored.md" <<'EOF'
+Ignored: `src/fake/ignored.ts:1`
+EOF
+  cat > "$t15_scratch/docs/untracked.md" <<'EOF'
+Untracked: `src/fake/untracked.ts:1`
+EOF
+  cat > "$t15_scratch/scripts/.check-docs-baseline.txt" <<'EOF'
+src/fake/obsolete.ts:1 | file not found
+EOF
+  git -C "$t15_scratch" add .gitignore docs/tracked.md scripts/.check-docs-baseline.txt
+  local t15_out t15_exit
+  set +e
+  t15_out=$(
+    DOC_CITATION_SCAN_MODE=git
+    BASELINE_FILE="$t15_scratch/scripts/.check-docs-baseline.txt"
+    run_update_baseline "$t15_scratch" 2>&1
+  )
+  t15_exit=$?
+  set -e
+  local t15_actual t15_expected t15_validator_out t15_validator_exit
+  t15_actual=$(grep -v '^\s*#' "$t15_scratch/scripts/.check-docs-baseline.txt" | grep -v '^\s*$')
+  t15_expected=$'src/fake/alpha.ts:1 | file not found\nsrc/fake/zeta.ts:9 | file not found'
+  set +e
+  t15_validator_out=$(DOC_CITATION_SCAN_MODE=git run_validator "$t15_scratch" "$t15_scratch/scripts/.check-docs-baseline.txt" 2>&1)
+  t15_validator_exit=$?
+  set -e
+  if [[ "$t15_exit" -eq 0 ]] && \
+     [[ "$t15_actual" == "$t15_expected" ]] && \
+     ! grep -q 'src/fake/ignored\.ts:1' "$t15_scratch/scripts/.check-docs-baseline.txt" && \
+     ! grep -q 'src/fake/untracked\.ts:1' "$t15_scratch/scripts/.check-docs-baseline.txt" && \
+     ! grep -q 'src/fake/obsolete\.ts:1' "$t15_scratch/scripts/.check-docs-baseline.txt" && \
+     echo "$t15_out" | grep -Fq -- '- NEW since previous baseline: 2' && \
+     echo "$t15_out" | grep -Fq -- '- RESOLVED since previous baseline: 1' && \
+     [[ "$t15_validator_exit" -eq 0 ]]; then
+    echo "  ✅ Test 15 (tracked-only baseline): sorted payload, churn counts, and immediate validation"
+    pass=$((pass + 1))
+  else
+    echo "  ❌ Test 15 (tracked-only baseline) failed: update_exit=$t15_exit, validator_exit=$t15_validator_exit"
+    echo "     update output: $t15_out"
+    echo "     validator output: $t15_validator_out"
+    echo "     actual payload: $t15_actual"
+    fail=$((fail + 1))
+  fi
+
+  # ---------------------------------------------------------------------------
+  # Test 16 — repeated tracked-only baseline regeneration is byte-idempotent.
+  # ---------------------------------------------------------------------------
+  local t16_first="$t15_scratch/scripts/.check-docs-baseline.first"
+  cp "$t15_scratch/scripts/.check-docs-baseline.txt" "$t16_first"
+  local t16_out t16_exit
+  set +e
+  t16_out=$(
+    DOC_CITATION_SCAN_MODE=git
+    BASELINE_FILE="$t15_scratch/scripts/.check-docs-baseline.txt"
+    run_update_baseline "$t15_scratch" 2>&1
+  )
+  t16_exit=$?
+  set -e
+  if [[ "$t16_exit" -eq 0 ]] && cmp -s "$t16_first" "$t15_scratch/scripts/.check-docs-baseline.txt"; then
+    echo "  ✅ Test 16 (byte idempotence): repeated regeneration is identical"
+    pass=$((pass + 1))
+  else
+    echo "  ❌ Test 16 (byte idempotence) failed: exit=$t16_exit"
+    echo "     output: $t16_out"
+    fail=$((fail + 1))
+  fi
+  rm -rf "$t15_scratch"
 
   echo ""
   echo "Self-test: $pass passed / $fail failed"

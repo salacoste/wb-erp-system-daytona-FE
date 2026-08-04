@@ -164,6 +164,8 @@ export function MyForm() {
 - Cross-browser testing (Chrome, Safari, Firefox)
 - Use `page.goto()` for navigation
 - Use `page.waitForURL()` for route changes
+- Live E2E requires `.env.e2e`, backend `localhost:3000`, and frontend `localhost:3100`
+- If prerequisites are unavailable, record E2E as unavailable; never report an unexecuted suite as passed
 
 ## Performance Rules
 
@@ -191,7 +193,7 @@ When working on a story:
 4. **Implement tasks sequentially** - Don't skip ahead
 5. **Write tests as you go** - Test-driven approach preferred
 6. **Run lint and type-check** - `npm run lint && npm run type-check`
-7. **Run tests** - `npm run test && npm run test:e2e`
+7. **Run tests** - run `npm run test`; run `npm run test:e2e` only when its local prerequisites are available, otherwise record the gap
 8. **Update Dev Agent Record** - Document progress and issues
 
 ## BMad Agent Integration

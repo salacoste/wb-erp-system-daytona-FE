@@ -8,8 +8,8 @@ This guide provides step-by-step instructions for setting up the WB Repricer Sys
 
 Before starting, ensure you have:
 
-- **Node.js** 20.x or higher ([Download](https://nodejs.org/))
-- **npm**, **yarn**, or **pnpm** package manager
+- **Node.js** 24.18.0 ([Download](https://nodejs.org/))
+- **npm** 11.11.0
 - **Git** for version control
 - **Code Editor** (VS Code recommended)
 
@@ -152,9 +152,13 @@ npm install
 
 **Solution:**
 ```bash
-# Use a different port
-PORT=3001 npm run dev
+# Inspect the process occupying the configured frontend port.
+lsof -nP -iTCP:3100 -sTCP:LISTEN
+# Stop that local process, then restart the frontend on localhost:3100.
+npm run dev
 ```
+
+`localhost:3000` is reserved for the backend.
 
 ---
 

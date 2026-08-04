@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-03
+# last_updated: 2026-08-05
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -726,7 +726,7 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
   epic-165-fe: in-progress
   165.1-fe-reconcile-epic-127-delivery-status: done  # Source reconciliation merged in PR #87 at bc071fdf; dedicated closeout recorded in PR #89.
-  165.2-fe-align-local-development-validation-guidance: review  # Documentation prepared locally; normal PR merge and cleanup evidence still required.
+  165.2-fe-align-local-development-validation-guidance: in-progress  # Git-tracked citation scan and active localhost guidance are under implementation; PR evidence pending.
   165.3-fe-regenerate-openwiki: backlog  # Requires corrected source docs to be committed before isolated generator execution.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: deferred  # Backend must provide non-empty persisted daily snapshots.
   165.5-fe-per-status-backfill-retry-after-separate-contracts: deferred  # Backend must expose separate report/analytics retry endpoints.

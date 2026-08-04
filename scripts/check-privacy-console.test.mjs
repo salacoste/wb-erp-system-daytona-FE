@@ -195,6 +195,27 @@ test('scans Markdown and environment text without retaining matched values', asy
   })
 })
 
+test('scans .cursorrules text while unsupported extensions still fail closed', async () => {
+  await withRoot(async root => {
+    await writeFile(path.join(root, '.cursorrules'), 'sanitized project guidance\n')
+    await writeFile(path.join(root, 'fixtures', 'policy.unsupported'), 'sanitized\n')
+
+    const cursorRules = await scanPrivacyFiles({ root, files: ['.cursorrules'] })
+    assert.equal(cursorRules.valid, true)
+    assert.deepEqual(cursorRules.scanned, ['.cursorrules'])
+
+    const unsupported = await scanPrivacyFiles({
+      root,
+      files: ['fixtures/policy.unsupported'],
+    })
+    assert.equal(unsupported.valid, false)
+    assert.deepEqual(unsupported.scanned, [])
+    assert.deepEqual(unsupported.errors, [
+      'unsupported file type in scan scope: fixtures/policy.unsupported',
+    ])
+  })
+})
+
 test('detects unquoted and multiline authorization values across full file content', async () => {
   await withRoot(async root => {
     const first = ['Author', 'ization: ', 'constructedCredential123'].join('')
