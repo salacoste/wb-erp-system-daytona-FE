@@ -79,9 +79,7 @@ Each gate has an accepted baseline. Stories close only when all gates match thei
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, max-warnings: 112 |
 | Vitest | `npm test -- --run` | ≥ 17186 passing, 0 failed |
-| Governed coverage | `npm run cert:coverage:ci` | Non-regression vs baseline in `quality/coverage-policy.v1.json` (see [Testing & Operations](testing-and-ops.md#coverage-governance-certification)) |
-| Coverage governance tests | `npm run test:coverage:governance` | All governance engine tests pass |
-| Tier 0 safety tests | `npm run test:tier0:safety` | All Tier 0 script unit tests pass |
+| Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
 
 ### Ratchet gate behavior
 
@@ -91,7 +89,7 @@ Ratchet gates (check:docs, check:locale-percent, check:anti-pattern-8-normalizer
 
 ### Toolchain pinning
 
-`package.json` `engines` pins Node `24.18.0` and npm `11.11.0`. Vitest and `@vitest/coverage-v8` are pinned to exact `4.1.10`. The coverage governance system enforces these versions at runtime (see [Testing & Operations — Coverage Governance](testing-and-ops.md#coverage-governance-certification)), and CI asserts them at job start.
+`package.json` `engines` pins Node `24.18.0` and npm `11.11.0`. Vitest and `@vitest/coverage-v8` are pinned to exact `4.1.10`. These versions are enforced via local validation on the pinned toolchain (see [Local Validation and Merge Authority](#local-validation-and-merge-authority)); the project no longer has a CI workflow that asserts them at job start.
 
 ## Two-Pass Review Discipline
 
@@ -113,7 +111,7 @@ Every story closes only after **two adversarial code-review passes** in fresh co
 
 > Codified in `AGENTS.md` § Local validation and merge policy
 
-This project has **no mandatory CI/CD merge gate** — GitHub Actions (including the [frontend-quality workflow](testing-and-ops.md#frontend-qualityyml--frontend-quality-gates)) are not a completion prerequisite. Merge authority is local:
+This project has **no mandatory CI/CD merge gate** — there is currently no required GitHub Actions status check. Merge authority is local:
 
 - Before merge, run the relevant tests, lint, type-check, and production build locally **with the pinned Node.js/npm versions** and record concise evidence.
 - After local validation passes, commit, push the feature branch, merge its PR into `main`, and remove completed local/remote feature branches and temporary worktrees.
@@ -132,4 +130,6 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Pre-flight source-trace verification** — Before implementing a story, grep for the story's AC nouns. If all ACs are already shipped, close as no-op with evidence
 - **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
+- **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
+alue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings

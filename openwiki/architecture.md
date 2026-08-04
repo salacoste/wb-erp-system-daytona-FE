@@ -99,5 +99,4 @@ Source: `src/stores/`
 | `tsconfig.json` | TypeScript strict mode, `@/` path alias |
 | `eslint.config.js` | Flat ESLint config with custom `no-restricted-syntax` for AP#8 |
 | `tailwind.config.ts` | Tailwind theme (red primary `#E53935`, Russian locale) |
-| `ecosystem.config.js` | PM2 deployment (see [Testing & Operations](testing-and-ops.md)) |
 | `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |

@@ -1,7 +1,7 @@
 ---
 type: "Operations Runbook"
 title: "Testing & Operations"
-description: "Testing strategy (Vitest unit with MSW, Playwright E2E, governed coverage certification, Tier 0 runtime certification), test organization and fixtures, CI/CD workflows, PM2 deployment, and environment variables."
+description: "Testing strategy (Vitest unit with MSW, Playwright E2E, privacy console check), test organization and fixtures, CI/CD workflows, local run modes, and environment variables."
 ---
 # Testing & Operations
 
@@ -13,7 +13,7 @@ description: "Testing strategy (Vitest unit with MSW, Playwright E2E, governed c
 |--------|--------|
 | Environment | `jsdom` with 10 MB localStorage quota |
 | Plugin | `@vitejs/plugin-react` |
-| Coverage | V8 provider (text/json/html reporters) |
+| Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
 | Test count | ~975 test files across `src/` |
 
@@ -40,7 +40,7 @@ Tests are co-located with source in `__tests__/` directories:
 
 | Aspect | Detail |
 |--------|--------|
-| Test directory | `./e2e/` (83 `.spec.ts` files) |
+| Test directory | `./e2e/` (~82 `.spec.ts` files) |
 | Base URL | `http://localhost:3100` (overridable via `E2E_BASE_URL`) |
 | Projects | `setup` (auth, uses storage state) → `chromium` (desktop, depends on setup) |
 | CI behavior | 2 retries, 1 worker, `forbidOnly: true`, auto-starts dev server |
@@ -49,143 +49,33 @@ Tests are co-located with source in `__tests__/` directories:
 
 ### Notable fixtures
 - `e2e/auth.setup.ts` — Authentication setup with storage state at `e2e/.auth/user.json`
+- `e2e/auth-manager.setup.ts` — Manager-role auth setup (matched by the `.*\.setup\.ts` setup project)
 - `e2e/fixtures/mutation-guard.ts` — Conditionally skips `@mutating` tests via `grepInvert`
-- `e2e/fixtures/read-only-network-guard.ts` — Network-level mutation guard
 
 ### E2E test areas
-Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, liquidity, unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, accessibility, settings, monitoring, read-only route audit.
+Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, liquidity, unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, accessibility, settings, monitoring.
 
-## Coverage Governance Certification
+> **Note**: A hosted Tier 0 runtime certification harness and governed coverage certification system previously lived here. Both were removed when the project replaced hosted certification with local validation gates. The remaining quality gates are documented in [Conventions & Quality Gates](conventions-and-quality.md).
 
-**Config**: `quality/coverage-policy-selection.v1.json` (active-mode switch), `quality/coverage-policy.v1.json` (threshold baseline)
-**Engine**: `scripts/certification/coverage-governance.mjs`
+## Privacy Console Check
 
-The coverage governance system transforms frontend code-coverage enforcement from a best-effort CI gate into a deterministic, tamper-evident certification process. It wraps Vitest with a governance layer that selects between threshold enforcement and temporary waivers, then produces sealed artifacts that prove the run was legitimate, reproducible, and policy-compliant.
+**Script**: `scripts/check-privacy-console.mjs` · **Test**: `scripts/check-privacy-console.test.mjs`
 
-### Why it exists
+A local privacy guard that scans PII-adjacent source files for forbidden `console.*` calls, preventing customer data (e.g., order client info) from leaking to the browser console. It replaced the privacy step that previously ran in CI.
 
-Standard percentage-based coverage gates are fragile: rounding drift, opaque thresholds, no audit trail for exceptions, and no reproducibility guarantee. The governance system replaces these with exact-count non-regression checks, cryptographic identity binding, and sealed read-only artifacts.
-
-### Policy modes (mutually exclusive)
-
-| Mode | Selection file field | Description |
-|------|---------------------|-------------|
-| `threshold` | `thresholdPolicy` set, `waiver: null` | Non-regression against a frozen baseline of uncovered counts. Currently active. |
-| `waiver` | `waiver` set, `thresholdPolicy: null` | Temporary exception (max 14-day lifetime) requiring dual approval from Frontend Tech Lead + QA Owner. Cannot reduce the baseline. |
-
-Mode selection is validated by `quality/schemas/coverage-policy-selection.v1.json` using a `oneOf` constraint — both active or both inactive is a hard failure.
-
-### Key design choices
-
-- **Uncovered counts, not percentages** — baseline is expressed as negative counts (e.g., `-6799` statements), not "must be ≥ 73%". A 0.01 percentage-point epsilon handles floating-point tolerance.
-- **Sealed artifacts** — all output files are `chmod 0444`, directories `chmod 0555` (tamper evidence).
-- **Identity binding** — every run carries an `identity.json` with SHA-256 digests over the source tree, resolved test paths, lockfile, policy files, and toolchain versions.
-- **Forbidden warning scan** — test transcript scanned for known Vite/Vitest migration deprecation warnings (`quality/coverage-warning-governance.v1.json`).
-- **Toolchain pinning** — Node v24.18.0, npm 11.11.0, Vitest 4.1.10, `@vitest/coverage-v8` 4.1.10 (exact versions enforced at runtime). npm `overrides` in `package.json` pin transitive deps: vite 7.3.6, picomatch 2.3.2, postcss 8.5.23, sharp 0.35.3.
-
-### Certification run
-
-```mermaid
-flowchart TD
-    A["Read selection file"] --> B{"Mode?"}
-    B -->|threshold| C["Validate threshold policy + baseline"]
-    B -->|waiver| D["Validate waiver + dual approval"]
-    C --> E["Pin toolchain versions"]
-    D --> E
-    E --> F["Run Vitest with v8 coverage"]
-    F --> G["Check non-regression vs baseline"]
-    G --> H["Scan transcript for forbidden warnings"]
-    H --> I["Write sealed artifacts 0444"]
-    I --> J["Cross-verify identity digests across runs"]
-```
-
-A complete CI certification produces four sealed artifact directories: `measurement/` (measurement-only), `negative/` (negative control — intentionally mutated to verify the gate fails), `final-1/` and `final-2/` (two enforcement runs proving reproducibility).
-
-### CLI commands
+- **PII file list** — `PII_FILES` in `check-privacy-console.mjs` enumerates the guarded paths (`orders/client-info-api.ts`, `useClientInfo.ts`, `orders-client-info.ts`, and their tests/components).
+- **AST scan** — parses each file with `@typescript-eslint/parser` and flags any `console.<method>` call where method is in `FORBIDDEN_CONSOLE_METHODS` (log, info, warn, error, debug, trace, dir, table, count, group*, time*, profile*, etc.), including computed access (`console['log']`).
+- **Exit code** — non-zero on the first violation, printing file, line, and the offending expression.
 
 | Command | Action |
 |---------|--------|
-| `npm run cert:coverage:ci` | Run coverage in whichever mode the selection file specifies |
-| `npm run cert:coverage:threshold` | Run in threshold enforcement mode |
-| `npm run cert:coverage:waiver` | Run in waiver mode |
-| `npm run test:coverage:governance` | Run the governance engine's own unit tests |
-| `npm run cert:coverage:negative-threshold` | Negative-control flow (verifies the gate fails on regression) |
-| `npm run cert:coverage:verify-artifact-set` | Full four-directory artifact verification |
-
-Source: `quality/`, `scripts/certification/coverage-governance.mjs`, `scripts/certification/read-policy-mode.mjs`
-
-## Tier 0 Runtime Certification
-
-**Config**: `playwright.tier0.config.ts`
-**Scripts**: `scripts/tier0/` (preflight, evidence-matrix, run-certification, runtime-safety, start-bound-server)
-**Specs**: `e2e/tier0/`, `e2e/runtime-certification.spec.ts`, `e2e/orders-integrity.spec.ts`
-
-Tier 0 is a **fail-closed, tamper-evident certification harness** that verifies a production build artifact against live runtime contracts before external certification (gate `CERT-F01`). It is architecturally separate from the generic Playwright E2E suite — it never builds, never installs dependencies, never reuses a process on port 3100, and never authorizes production writes. Its verdict ceiling is intentionally `UNDETERMINED` until a fully authorized live run completes.
-
-### Evidence registry
-
-The 38-row immutable contract (`e2e/tier0/tier0-row-registry.v1.json`) declares every assertion with exact capability dependencies. Its SHA-256 is pinned in code.
-
-| Group | Rows | Purpose |
-|-------|------|---------|
-| prerequisite | PRE-I01–I10 | Artifact, environment, runner, credentials, mutation opt-in, cleanup |
-| runtime | RT-E01–E14 | Server readiness, auth, session, role boundaries, cabinet isolation, API semantics, financial reconciliation, mutation guard/mutation |
-| orders-integrity | OI-E01–E10 | Orders Integrity page contracts: navigation, denial, loading, counts, reconciliation |
-| observability | OBS-I01–I04 | Command provenance, sanitized evidence, matrix completeness |
-
-Each row uses two-tier capabilities: **guard capabilities** (structural preconditions from preflight) and **permission capabilities** (optional authorities checked against descriptor + environment).
-
-### Certification flow
-
-```mermaid
-sequenceDiagram
-    participant RC as run-certification.mjs
-    participant PF as Preflight
-    participant BS as start-bound-server.mjs
-    participant GS as global-setup.ts
-    participant PW as Playwright specs
-    RC->>PF: Validate descriptor + Ed25519 signature + fetch receipt + build binding + runtime identity
-    PF-->>RC: PASS or FAIL all 38 rows
-    RC->>BS: Spawn next start on 127.0.0.1:3100 with sanitized env
-    BS->>GS: Server identity file
-    GS->>GS: Re-derive all bindings receipt, descriptor, build, PID alive
-    GS->>PW: Execute RT-E and OI-E rows per capability-gated projects
-    PW-->>RC: Outcomes + API provenance + failure classes
-    RC->>RC: Scan evidence for secrets, write sealed matrix.json 0600
-```
-
-### Safety mechanisms
-
-- **Triple mutation guard** — three env vars must all be exact: `E2E_ENABLE_MUTATIONS=true`, `E2E_MUTATION_TARGET=sandbox`, `E2E_MUTATION_ACK=I_UNDERSTAND_THIS_MUTATES_TEST_DATA` (RT-E13 tests partial combinations are denied)
-- **Runtime egress enforcement** — every Playwright page route validated against descriptor allowlist; methods restricted to GET/HEAD/OPTIONS except auth POST
-- **Ed25519 descriptor authority** — environment descriptor signed by a runtime-operator; public key pinned via env var, max 72-hour validity window
-- **Immutable fetch receipt** — proves artifact was fetched read-only, verified before extraction, no reconstruction
-- **Credential leak detection** — console output monitored for declared credential values
-
-### CLI commands
-
-| Command | Action |
-|---------|--------|
-| `npm run test:tier0:safety` | Run Tier 0 script unit tests |
-| `npm run test:tier0:list` | List available Tier 0 Playwright tests |
-| `npm run test:tier0:certify` | Run full Tier 0 certification (`run-certification.mjs`) |
-
-Source: `e2e/tier0/README.md`, `scripts/tier0/`, `playwright.tier0.config.ts`
+| `npm run check:privacy` | Run the privacy console scan |
+| `npm run test:privacy` | Run the guard's own unit tests (`node --test`) |
 
 ## CI/CD Workflows
 
-### `frontend-quality.yml` — Frontend Quality Gates
-- **Triggers**: PR + push to `main`/`develop`, plus manual `workflow_dispatch`
-- **Runner**: Self-hosted (`wb-ci-fe` label), 2 vCPU / 4 GB RAM
-- **Timeout**: 90 minutes
-- **Toolchain pin**: Node `24.18.0` + npm `11.11.0` (installed and asserted at job start)
-- **Steps** (sequential, single job):
-  1. ESLint (flat config, `npm run lint`)
-  2. TypeScript type-check (`tsc --noEmit`, `--max-old-space-size=1536`)
-  3. Governed coverage validation helpers (`npm run test:coverage:governance`)
-  4. Full Vitest suite with governed coverage (`npm run cert:coverage:ci`) — uploads sealed evidence artifacts via `upload-artifact`
-  5. Privacy Guard — scans PII-adjacent files for forbidden `console.*` calls
-  6. Restore generated coverage permissions (`if: always()`) — `chmod -R u+rwX coverage/ci` so the read-only sealed artifacts from [Coverage Governance](#coverage-governance-certification) don't block the next checkout on the persistent self-hosted runner.
+### `frontend-quality.yml` — removed
+The self-hosted `frontend-quality.yml` workflow (ESLint, type-check, governed coverage certification, privacy guard) was removed when the project replaced hosted certification with local validation gates. Its quality checks now run locally via the commands in [Conventions & Quality Gates](conventions-and-quality.md). There is currently no required GitHub Actions status check enforcing them.
 
 ### `openwiki-update.yml` — OpenWiki Documentation Update
 - **Triggers**: Schedule (daily `0 8 * * *` UTC) + manual `workflow_dispatch`
@@ -193,20 +83,16 @@ Source: `e2e/tier0/README.md`, `scripts/tier0/`, `playwright.tier0.config.ts`
 - **Provider**: GLM 5.2 via OpenRouter (`OPENWIKI_PROVIDER: openrouter`, `OPENWIKI_MODEL_ID: z-ai/glm-5.2`); LangSmith tracing enabled
 - **Process**: `npm install --global openwiki` → `openwiki code --update --print` → creates a pull request via `peter-evans/create-pull-request` (branch `openwiki/update`). PR includes `openwiki/`, `AGENTS.md`, `CLAUDE.md`, and `.github/workflows/openwiki-update.yml`.
 
-## PM2 Deployment
+## Running Locally
 
-**Config**: `ecosystem.config.js`
+The dev and production servers both use port **3100**; never run both simultaneously.
 
-Two PM2 app definitions — **never run both simultaneously** (both use port 3100):
+| Mode | Command | Notes |
+|------|---------|-------|
+| Development | `npm run dev` | Hot reload, no caching |
+| Production | `npm run build && npm run start` | Built `.next/` served via `next start -p 3100` |
 
-| App | Mode | Script | Requires Build |
-|-----|------|--------|----------------|
-| `wb-repricer-frontend-dev` | Development | `npm run dev` | No (hot reload, no caching) |
-| `wb-repricer-frontend` | Production | `next start` | Yes (`npm run build` first) |
-
-Both configured with: `max_restarts: 5`, `min_uptime: 30s`, `restart_delay: 5000`, `exp_backoff_restart_delay: 100`.
-
-Helper scripts: `pm2-switch-dev.sh` / `pm2-switch-prod.sh`.
+The previous PM2 process manager configuration (`ecosystem.config.js`, `pm2-switch-*.sh`, `.conductor/` scripts) was removed; local lifecycle helpers now live under `scripts/` (e.g., `start-fresh-next-dev.mjs` via `npm run dev:clean` / `npm run restart:safe`).
 
 ## Environment Variables
 

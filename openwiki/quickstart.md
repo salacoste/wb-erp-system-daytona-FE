@@ -14,9 +14,9 @@ Financial analytics dashboard for Wildberries marketplace sellers. Built with Ne
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (all pages are client components) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~975 unit test files) + Playwright (83 E2E specs) + Tier 0 runtime certification + governed coverage certification |
+| **Testing** | Vitest (~975 unit test files, MSW) + Playwright E2E (~82 specs) + privacy console check |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
-| **Port** | 3100 (both dev and prod via PM2 — never run both simultaneously) |
+| **Port** | 3100 (dev and prod) |
 
 **Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, buyout/return analytics, liquidity analysis, unit economics, FBS/FBO order analytics with WB shelf-life (expiration) management, AI forecasting, Telegram notifications, multi-cabinet (tenant) support.
 
@@ -29,11 +29,10 @@ npm run lint                   # ESLint (max-warnings: 112)
 npm run type-check             # tsc --noEmit
 npm test                       # Vitest unit tests
 npm run test:e2e               # Playwright E2E
+npm run check:privacy          # Privacy console guard (PII-adjacent files)
+npm run test:privacy           # Privacy console guard unit tests
 npm run check:docs             # Doc-citation drift gate
 npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
-npm run cert:coverage:ci       # Governed coverage certification (CI mode)
-npm run test:tier0:safety      # Tier 0 script unit tests
-npm run test:tier0:certify     # Tier 0 runtime certification
 ```
 
 ## Documentation Sections
@@ -42,7 +41,7 @@ npm run test:tier0:certify     # Tier 0 runtime certification
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
-- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, coverage governance certification, Tier 0 runtime certification, CI workflows, PM2 deployment, environment variables.
+- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, privacy console check, local validation, environment variables.
 
 ## Key Source References
 
@@ -68,3 +67,4 @@ npm run test:tier0:certify     # Tier 0 runtime certification
 | docs/ directory structure | `docs/epics/`, `docs/stories/`, `docs/request-backend/` | 211 resolved backend requests; primarily project-management artifacts, not code documentation |
 | Backlog task tracking | `backlog/tasks/` | 55 tracked tasks via Backlog.md CLI; process artifacts, not source code |
 | Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
+| OMX story-plan orchestration | `scripts/manage-omx-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
