@@ -17,8 +17,8 @@ Stories 127.1/127.2 реализованы; единственные явно ba
 программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
 report/analytics retry endpoints). Source reconciliation для Story 165.1
 влита PR #87 (`bc071fdf`), а отдельный closeout зафиксирован в PR #89;
-Story 165.2 выполняется в отдельной ветке/worktree и остаётся `in-progress` до
-собственного PR merge и cleanup.
+Story 165.2 закрыта в PR #90: active localhost guidance синхронизирован,
+а doc-citation gate сделан детерминированным для Git-tracked документов.
 <!-- CURRENT-STATUS:END -->
 
 ---
