@@ -198,11 +198,22 @@ test('scans Markdown and environment text without retaining matched values', asy
 test('scans .cursorrules text while unsupported extensions still fail closed', async () => {
   await withRoot(async root => {
     await writeFile(path.join(root, '.cursorrules'), 'sanitized project guidance\n')
+    await writeFile(path.join(root, 'fixtures', '.cursorrules'), 'sanitized nested guidance\n')
     await writeFile(path.join(root, 'fixtures', 'policy.unsupported'), 'sanitized\n')
 
     const cursorRules = await scanPrivacyFiles({ root, files: ['.cursorrules'] })
     assert.equal(cursorRules.valid, true)
     assert.deepEqual(cursorRules.scanned, ['.cursorrules'])
+
+    const nestedCursorRules = await scanPrivacyFiles({
+      root,
+      files: ['fixtures/.cursorrules'],
+    })
+    assert.equal(nestedCursorRules.valid, false)
+    assert.deepEqual(nestedCursorRules.scanned, [])
+    assert.deepEqual(nestedCursorRules.errors, [
+      'unsupported file type in scan scope: fixtures/.cursorrules',
+    ])
 
     const unsupported = await scanPrivacyFiles({
       root,

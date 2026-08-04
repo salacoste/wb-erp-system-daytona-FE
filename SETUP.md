@@ -115,9 +115,16 @@ Ensure these files exist and are properly configured:
 # Run unit tests
 npm test
 
-# Run E2E tests (requires dev server running)
+# Run live E2E only after the prerequisites below are available
 npm run test:e2e
 ```
+
+Live E2E requires `.env.e2e` with `E2E_TEST_EMAIL` and
+`E2E_TEST_PASSWORD`, the backend on `localhost:3000`, and the frontend on
+`localhost:3100`. Ordinary runs exclude mutating scenarios; see
+[`e2e/README.md`](e2e/README.md) before enabling any sandbox mutations. If
+these local prerequisites are unavailable, record live E2E as unavailable and
+do not report the suite as passed.
 
 ---
 
