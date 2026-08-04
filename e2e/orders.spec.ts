@@ -7,7 +7,7 @@
  * until explicit backend fixtures are available for E2E.
  */
 
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/network-test'
 
 const ORDERS_ROUTE = '/orders'
 

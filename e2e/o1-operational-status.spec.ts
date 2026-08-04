@@ -6,7 +6,7 @@
  * empty orders list (uses the same terminal-state pattern as orders.spec.ts).
  */
 
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Page } from './fixtures/network-test'
 
 const ORDERS_ROUTE = '/orders'
 

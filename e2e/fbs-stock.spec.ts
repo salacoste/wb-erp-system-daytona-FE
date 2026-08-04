@@ -8,7 +8,7 @@
  * Auth state loaded from e2e/.auth/user.json via playwright.config.ts.
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const FBS_STOCK_URL = '/analytics/fbs-stock'
@@ -276,7 +276,7 @@ test.describe('FBS Export (Story 96.12-FE)', () => {
           body: JSON.stringify({ exportId: EXPORT_ID, status: 'queued' }),
         })
       } else {
-        await route.continue()
+        await route.fallback()
       }
     })
 

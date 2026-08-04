@@ -11,7 +11,7 @@
  * warning icon when real-world bad data arrives.
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 const ORDERS_ROUTE = '/orders'
 const ORDERS_API_PATTERN = /\/v1\/orders(\?|$)/
@@ -71,7 +71,7 @@ test.describe('Orders Price Anomaly Indicator (Story 87.3-FE)', () => {
           body: JSON.stringify(MOCK_ORDERS_RESPONSE),
         })
       } else {
-        await route.continue()
+        await route.fallback()
       }
     })
 
@@ -104,7 +104,7 @@ test.describe('Orders Price Anomaly Indicator (Story 87.3-FE)', () => {
           body: JSON.stringify(MOCK_ORDERS_RESPONSE),
         })
       } else {
-        await route.continue()
+        await route.fallback()
       }
     })
 
@@ -132,7 +132,7 @@ test.describe('Orders Price Anomaly Indicator (Story 87.3-FE)', () => {
           body: JSON.stringify(MOCK_ORDERS_RESPONSE),
         })
       } else {
-        await route.continue()
+        await route.fallback()
       }
     })
 

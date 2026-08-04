@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E tests for dashboard fixes from 2026-03-30 session:

@@ -14,7 +14,7 @@
  * Owner test suite running even when the Manager fixture is not provisioned.
  */
 
-import { test as setup, expect } from '@playwright/test'
+import { test as setup, expect } from './fixtures/network-test'
 import { TEST_MANAGER, HAS_MANAGER_CREDS, ROUTES } from './fixtures/test-data'
 
 const managerAuthFile = 'e2e/.auth/manager.json'

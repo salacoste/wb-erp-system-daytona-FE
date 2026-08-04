@@ -7,7 +7,7 @@
  * Auth state loaded from e2e/.auth/user.json via playwright.config.ts.
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 import { TIMEOUTS } from './fixtures/test-data'
 

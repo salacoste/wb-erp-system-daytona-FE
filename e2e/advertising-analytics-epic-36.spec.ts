@@ -7,7 +7,7 @@
  * @see frontend/docs/stories/epic-36/story-36.5-fe-testing-documentation.md
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures/network-test'
 
 test.describe('Epic 36: Product Card Linking (Склейки)', () => {
   test.beforeEach(async ({ page }) => {

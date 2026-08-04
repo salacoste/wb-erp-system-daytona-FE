@@ -15,7 +15,7 @@
  * Run: npx playwright test e2e/reorder-page.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const REORDER_URL = '/analytics/reorder'

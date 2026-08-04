@@ -22,7 +22,7 @@
     "lint:fix": "npx eslint 'src/**/*.{ts,tsx}' --fix --max-warnings 112",
     "type-check": "tsc --noEmit",
     "test": "vitest",
-    "test:privacy": "node --test scripts/check-privacy-console.test.mjs",
+    "test:privacy": "node --test scripts/check-privacy-console.test.mjs scripts/privacy/diagnostic-capture-policy.test.mjs",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",

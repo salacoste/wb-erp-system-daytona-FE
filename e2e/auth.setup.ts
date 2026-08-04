@@ -1,4 +1,4 @@
-import { test as setup, expect } from '@playwright/test'
+import { test as setup, expect } from './fixtures/network-test'
 import { TEST_USER, ROUTES } from './fixtures/test-data'
 
 const authFile = 'e2e/.auth/user.json'

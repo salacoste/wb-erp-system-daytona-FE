@@ -4,7 +4,7 @@
  * tab switching, and back navigation.
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 
 const PRODUCT_ROUTE = '/analytics/product/887604577'
 

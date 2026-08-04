@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 /**

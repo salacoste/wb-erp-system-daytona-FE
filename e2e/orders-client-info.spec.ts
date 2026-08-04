@@ -12,7 +12,7 @@
  */
 
 import { existsSync } from 'node:fs'
-import { test, expect, type Page, type Request } from '@playwright/test'
+import { test, expect, type Page, type Request } from './fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
 import { HAS_MANAGER_CREDS } from './fixtures/test-data'
 import {
@@ -301,7 +301,9 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column @mut
     )
 
     test('should NOT render the "Клиент" column for Manager role', async ({ browser }) => {
-      const context = await browser.newContext({ storageState: MANAGER_AUTH_FILE })
+      const context = await browser.newContext({
+        storageState: MANAGER_AUTH_FILE,
+      })
       const page = await context.newPage()
       try {
         await page.goto(ORDERS_ROUTE, { waitUntil: 'domcontentloaded' })
@@ -315,7 +317,9 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column @mut
     })
 
     test('should NOT fire any client-info API request for Manager role', async ({ browser }) => {
-      const context = await browser.newContext({ storageState: MANAGER_AUTH_FILE })
+      const context = await browser.newContext({
+        storageState: MANAGER_AUTH_FILE,
+      })
       const page = await context.newPage()
       try {
         const requests = await captureClientInfoRequests(page, async () => {

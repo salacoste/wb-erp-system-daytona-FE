@@ -15,7 +15,7 @@
  * Run: npx playwright test e2e/funnel.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 import {
   emptyFunnelResponse,
@@ -174,7 +174,7 @@ test.describe('Funnel Analytics page', () => {
     // Intercept the data endpoint (not sync-status) — raw shape (skipDataUnwrap=true)
     await page.route(FUNNEL_API_GLOB, (route, request) => {
       if (request.url().includes('sync-status')) {
-        return route.continue()
+        return route.fallback()
       }
       return route.fulfill({
         status: 200,
@@ -218,7 +218,7 @@ test.describe('Funnel Analytics page', () => {
     })
 
     await page.route(FUNNEL_API_GLOB, (route, request) => {
-      if (request.url().includes('sync-status')) return route.continue()
+      if (request.url().includes('sync-status')) return route.fallback()
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -254,7 +254,7 @@ test.describe('Funnel Analytics page', () => {
     const emptyResp = emptyFunnelResponse()
 
     await page.route(FUNNEL_API_GLOB, (route, request) => {
-      if (request.url().includes('sync-status')) return route.continue()
+      if (request.url().includes('sync-status')) return route.fallback()
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -279,7 +279,7 @@ test.describe('Funnel Analytics page', () => {
     test.setTimeout(TEST_TIMEOUT)
 
     await page.route(FUNNEL_API_GLOB, (route, request) => {
-      if (request.url().includes('sync-status')) return route.continue()
+      if (request.url().includes('sync-status')) return route.fallback()
       return route.fulfill({ status: 500, contentType: 'application/json', body: '{}' })
     })
 

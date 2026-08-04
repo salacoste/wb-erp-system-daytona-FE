@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E: МойСклад Сток tab (story M1) — backend #221-moysklad /stock-db.

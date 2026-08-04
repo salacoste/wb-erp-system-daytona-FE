@@ -15,7 +15,7 @@
  * @see docs/stories/epic-53/story-53.8-fe-e2e-tests-polish.md
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes
@@ -24,7 +24,7 @@ const SUPPLIES_ROUTE = '/supplies'
 // Selectors for supplies list page
 const SELECTORS = {
   // Page elements
-  page: '[data-testid="supplies-page"]',
+  pageRoot: '[data-testid="supplies-page"]',
   pageTitle: 'h1, [data-testid="supplies-page-title"]',
   suppliesTable: '[data-testid="supplies-table"]',
   supplyRow: '[data-testid="supply-row"]',
@@ -74,7 +74,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     test('should display supplies page with heading', async ({ page }) => {
       // AC1: Page loads correctly with title
       await expect(page.getByRole('heading', { name: /Поставки|Supplies/i })).toBeVisible()
-      await expect(page.locator(SELECTORS.page)).toBeVisible()
+      await expect(page.locator(SELECTORS.pageRoot)).toBeVisible()
     })
 
     test('should navigate to Supplies from sidebar', async ({ page }) => {

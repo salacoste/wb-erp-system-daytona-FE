@@ -6,7 +6,7 @@
  * Auth state loaded from e2e/.auth/user.json via playwright.config.ts.
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const RECONCILIATION_URL = '/analytics/buyout-reconciliation'

@@ -4,10 +4,9 @@
  * Epic 71-FE: Search Analytics & Jam Gating
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from '../fixtures/network-test'
 
 const SEARCH_ROUTE = '/analytics/search'
-
 
 async function expectJamGateOrTabs(page: Page) {
   const gate = page.getByRole('region', { name: 'Требуется подписка WB Джем' })
@@ -27,7 +26,6 @@ async function expectJamGateOrTabs(page: Page) {
   await expect(tabs).toBeVisible()
   return true
 }
-
 
 test.describe('Epic 71-FE: Search Analytics Page', () => {
   test.beforeEach(async ({ page }) => {

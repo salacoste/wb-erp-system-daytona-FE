@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E test to verify month period selection bug fix
@@ -10,39 +10,16 @@ import { test, expect } from '@playwright/test'
  */
 test.describe('Dashboard Period Selection - Month', () => {
   test('should select month period and load data without errors', async ({ page }) => {
-    // Collect console logs and errors
-    const consoleLogs: string[] = []
-    const consoleErrors: string[] = []
-    const networkErrors: string[] = []
-
-    page.on('console', msg => {
-      const text = msg.text()
-      consoleLogs.push(`[${msg.type()}] ${text}`)
-      if (msg.type() === 'error') {
-        consoleErrors.push(text)
-      }
-    })
-
+    let serverErrorCount = 0
     page.on('response', response => {
       if (response.status() === 404 || response.status() === 500) {
-        networkErrors.push(`${response.status()} - ${response.url()}`)
+        serverErrorCount += 1
       }
     })
 
     // Navigate to dashboard (auth is handled by setup)
     await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2000) // Extra wait for data to load
-
-    console.log('=== Dashboard loaded - Initial state ===')
-    console.log('Console logs:', consoleLogs.slice(-10)) // Last 10 logs
-    console.log('Console errors:', consoleErrors)
-    console.log('Network errors:', networkErrors)
-
-    // Take initial screenshot
-    await page.screenshot({
-      path: 'test-results/screenshots/month-test-initial.png',
-      fullPage: true,
-    })
 
     // Click "Месяц" button (month period toggle)
     // The button is a TabsTrigger with data-testid="period-tab-month"
@@ -54,21 +31,8 @@ test.describe('Dashboard Period Selection - Month', () => {
     await page.waitForTimeout(3000)
     await page.locator('main').waitFor({ state: 'visible' })
 
-    // Debug: Log the current month selector value
     const monthSelector = page.getByTestId('month-selector')
-    const monthValue = await monthSelector.getAttribute('data-value')
-    console.log('Selected month value:', monthValue)
-
-    console.log('=== After clicking Month button ===')
-    console.log('Console logs:', consoleLogs.slice(-10)) // Last 10 logs
-    console.log('Console errors:', consoleErrors)
-    console.log('Network errors:', networkErrors)
-
-    // Take screenshot after month selection
-    await page.screenshot({
-      path: 'test-results/screenshots/month-test-after-click.png',
-      fullPage: true,
-    })
+    await expect(monthSelector).toHaveAttribute('data-value', /\S+/)
 
     // Verify page shows data (not empty state)
     const pageContent = await page.content()
@@ -79,27 +43,10 @@ test.describe('Dashboard Period Selection - Month', () => {
     const hasNoEmptyState =
       !pageContent.includes('Нет данных') && !pageContent.includes('Нет активных периодов')
 
-    console.log('=== Data verification ===')
-    console.log('Has metric cards:', hasMetricCards)
-    console.log('Has data display:', hasDataDisplay)
-    console.log('Has no empty state:', hasNoEmptyState)
-
-    // Assertions
-    expect(networkErrors.filter(e => e.includes('404')).length, 'Should have no 404 errors').toBe(0)
-    expect(
-      consoleErrors.filter(e => e.includes('404')).length,
-      'Should have no 404 errors in console'
-    ).toBe(0)
+    expect(serverErrorCount, 'Should have no 404/500 responses').toBe(0)
 
     // At least one data indicator should be present
     const hasData = hasMetricCards || hasDataDisplay || hasNoEmptyState
     expect(hasData, 'Page should show some data').toBeTruthy()
-
-    // Log final summary
-    console.log('=== Test Summary ===')
-    console.log('Total console logs:', consoleLogs.length)
-    console.log('Total console errors:', consoleErrors.length)
-    console.log('Total network errors (404/500):', networkErrors.length)
-    console.log('All errors:', [...consoleErrors, ...networkErrors])
   })
 })

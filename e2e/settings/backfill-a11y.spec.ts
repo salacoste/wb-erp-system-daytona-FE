@@ -20,7 +20,7 @@
  * @see https://www.deque.com/axe/core-documentation/api-documentation/
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 

@@ -3,9 +3,9 @@
 // Epic 34-FE: Story 34.1-FE
 // ============================================================================
 
-import { describe, expect, it, afterEach, beforeAll, afterAll, vi } from 'vitest'
-import { setupServer } from 'msw/node'
+import { describe, expect, it, vi } from 'vitest'
 import { http, HttpResponse } from 'msw'
+import { server } from '@/mocks/server'
 import {
   startTelegramBinding,
   getBindingStatus,
@@ -35,11 +35,9 @@ Object.defineProperty(window, 'localStorage', {
 
 const API_BASE_URL = 'http://localhost:3000'
 
-const server = setupServer()
-
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+it('fails closed for an unhandled local request', async () => {
+  await expect(fetch(`${API_BASE_URL}/v1/notifications/unhandled`)).rejects.toThrow()
+})
 
 describe('Telegram Binding API', () => {
   it('should start binding and return code', async () => {

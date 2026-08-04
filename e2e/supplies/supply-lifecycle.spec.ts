@@ -14,7 +14,7 @@
  * @see docs/stories/epic-53/story-53.8-fe-e2e-tests-polish.md
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes
@@ -507,7 +507,7 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       // Slow down API response
       await page.route('**/v1/supplies**', async route => {
         await new Promise(resolve => setTimeout(resolve, 1000))
-        route.continue()
+        route.fallback()
       })
 
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
@@ -544,7 +544,7 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
           // Slow down API for adding orders
           await page.route('**/add-orders**', async route => {
             await new Promise(resolve => setTimeout(resolve, 1000))
-            route.continue()
+            route.fallback()
           })
 
           await addButton.click()

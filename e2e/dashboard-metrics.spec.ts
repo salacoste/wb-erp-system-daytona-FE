@@ -14,7 +14,7 @@
  * @see docs/stories/epic-62/story-62.10-fe-e2e-tests-dashboard-metrics.md
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 import {
@@ -148,7 +148,7 @@ test.describe('Dashboard Metric Cards (Story 62.1-62.5)', () => {
     // Intercept API to delay response
     await page.route(DASHBOARD_API_ROUTES.ordersVolume, async route => {
       await new Promise(r => setTimeout(r, 1000))
-      await route.continue()
+      await route.fallback()
     })
 
     await page.goto(ROUTES.dashboard)
@@ -533,7 +533,7 @@ test.describe('Period Switching', () => {
     // Add network delay
     await page.route(DASHBOARD_API_ROUTES.ordersVolume, async route => {
       await new Promise(r => setTimeout(r, 500))
-      await route.continue()
+      await route.fallback()
     })
 
     const weekDropdown = page.locator('[data-testid="week-selector"]')

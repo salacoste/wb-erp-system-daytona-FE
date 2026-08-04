@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E smoke: FR-1 competitor-parity share-% columns on /analytics/sku

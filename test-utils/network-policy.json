@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "epic128-test-network-policy/v1",
+  "allowedProtocols": ["http:", "https:", "ws:", "wss:"],
+  "allowedHosts": ["localhost", "127.0.0.1", "::1", "host.docker.internal", "postgres", "redis"],
+  "allowUnixSockets": false
+}

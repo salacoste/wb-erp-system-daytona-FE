@@ -7,7 +7,7 @@
  * @see frontend/docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md
  */
 
-import { test, expect, Locator } from '@playwright/test'
+import { test, expect, Locator } from './fixtures/network-test'
 
 test.describe('Epic 37: MergedGroupTable 3-Tier Structure', () => {
   test.beforeEach(async ({ page }) => {

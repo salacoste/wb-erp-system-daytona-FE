@@ -11,7 +11,7 @@
  * Run: npx playwright test e2e/alerts-page.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const ALERTS_URL = '/analytics/alerts'

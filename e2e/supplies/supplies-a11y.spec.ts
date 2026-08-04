@@ -19,7 +19,7 @@
  * @see https://www.deque.com/axe/core-documentation/api-documentation/
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 
 // Routes

@@ -11,7 +11,7 @@
  * Run with: npm run test:e2e -- e2e/monitor.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 import {

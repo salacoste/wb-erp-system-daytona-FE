@@ -13,7 +13,7 @@
  * @see https://www.deque.com/axe/core-documentation/api-documentation/
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 // ✅ axe-core installed (2025-12-29)
 import AxeBuilder from '@axe-core/playwright'
 
