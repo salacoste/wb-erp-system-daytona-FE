@@ -10,8 +10,10 @@ So that the two largest analytics specs are faster and deterministic.
 - **Epic:** 162-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.2, 162.3
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -50,7 +52,7 @@ So that the two largest analytics specs are faster and deterministic.
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Capture the 58 owned fixed waits and the observable state that replaces each wait.
 3. Use response predicates, locator state, and reduced-motion/stable-render signals with bounded diagnostics.
 4. Run repeated targeted localhost executions and record `58 → 0`, runtime, and retry behavior.

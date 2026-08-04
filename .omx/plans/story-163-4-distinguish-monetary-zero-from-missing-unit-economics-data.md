@@ -10,8 +10,10 @@ So that I can interpret unit-economics tables and summaries without mistaking no
 - **Epic:** 163-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.1
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -58,7 +60,7 @@ So that I can interpret unit-economics tables and summaries without mistaking no
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Add regression fixtures for positive, zero, null, undefined, and unavailable currency values.
 3. Centralize the approved currency display semantics through existing formatters/utilities and apply them to affected cards/rows.
 4. Verify visual, accessible, CSV/export, and sorting behavior remains semantically correct.

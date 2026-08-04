@@ -78,7 +78,14 @@
 
 ## OpenWiki
 
-This repository uses OpenWiki for recurring code documentation. Start with `openwiki/quickstart.md`, then follow its links to architecture, workflows, domain concepts, operations, integrations, testing guidance, and source maps.
+> **Temporary authoritative-source redirect (until Story 165.3):** generated
+> `openwiki/**` content is stale and is not authoritative for local development
+> or validation. Use this `AGENTS.md`, `README.md`, `SETUP.md`,
+> `docs/VALIDATION-PLAN.md`, and `e2e/README.md` instead. Ignore any Tier-0,
+> PM2, production-certification, or obsolete port/framework guidance found in
+> OpenWiki until it is regenerated from corrected sources.
+
+This repository uses OpenWiki for recurring code documentation. After Story 165.3 regenerates it, start with `openwiki/quickstart.md`, then follow its links to architecture, workflows, domain concepts, operations, integrations, testing guidance, and source maps.
 
 The scheduled OpenWiki GitHub Actions workflow refreshes the repository wiki. Do not hand-edit generated OpenWiki pages unless explicitly asked; prefer updating source code/docs and letting OpenWiki regenerate.
 

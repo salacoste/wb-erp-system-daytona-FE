@@ -10,8 +10,10 @@ So that I can see real movement between liquidity categories over time without s
 - **Epic:** 165-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** Backend daily snapshots contract
-- **Initial status:** deferred
+- **Immutable `initial_status`:** deferred
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Backend gate: do not create a feature branch/worktree until the dependency evidence in the acceptance criteria exists.
 
@@ -53,7 +55,7 @@ So that I can see real movement between liquidity categories over time without s
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA. Stop before branch creation when the backend gate is absent.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA. Stop before branch creation when the backend gate is absent.
 2. Before creating an implementation worktree, capture a live non-empty multi-date daily-snapshot response and backend persistence/cadence evidence.
 3. If the gate passes, lock normalizer/hook/component behavior for populated, gaps, empty, malformed, and error states.
 4. Activate the independent trends section without synthesizing history or blanking current liquidity content.

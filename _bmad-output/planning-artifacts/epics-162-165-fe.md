@@ -51,7 +51,7 @@ FR11: Activate liquidity historical trends only after the backend supplies non-e
 
 FR12: Add per-status backfill retry controls only after the backend exposes separate report and analytics retry contracts; do not simulate partial retry through the current cabinet-wide endpoint.
 
-FR13: Replace the dashboard period type Tabs workaround with the existing ToggleGroup pattern so week/month selection uses correct toggle semantics without hidden tab panels.
+FR13: Replace the dashboard period type Tabs workaround with the existing RadioGroup pattern so week/month selection uses correct single-choice semantics without hidden tab panels or a new dependency.
 
 FR14: Remove remaining bounded maintainability defects: stale tariff "TDD stub" comments, repeatable fallback-warning noise, the Recharts production `as any` tooltip boundary where a typed adapter is viable, duplicate package metadata, and the obsolete 112-warning ESLint allowance after a fresh zero-warning run.
 
@@ -183,9 +183,14 @@ The project communicates its actual implementation state accurately, and backend
 
 ## Story Execution Metadata
 
-This table is the canonical dependency and initial-status source for the one-story/one-plan OMX handoff. Every correlated plan under `.omx/plans/` must reproduce these values exactly.
+This table is the canonical dependency and immutable `initial_status` source for
+the one-story/one-plan OMX handoff. Every correlated plan under `.omx/plans/`
+must reproduce these generation-time values exactly. Current lifecycle state is
+stored only in `_bmad-output/implementation-artifacts/sprint-status.yaml` and
+the durable orchestration manifest; story execution and closeout must never
+mutate this table's `initial_status` values.
 
-| Story  | Dependencies                       | Initial status                                                      |
+| Story  | Dependencies                       | Immutable `initial_status`                                          |
 | ------ | ---------------------------------- | ------------------------------------------------------------------- |
 | 162.1  | None                               | done — merged by PR #86 at `4a24544d`                               |
 | 162.2  | 162.1                              | backlog                                                             |
@@ -227,10 +232,11 @@ introduces this program may stage the source corrections for Stories 165.1 and
 165.2, but it is not either story's execution PR and must leave both stories in
 `review`. After that package merges, Story 165.1 and then Story 165.2 each use a
 separate branch, worktree, verification-and-closeout diff, normal PR, merge,
-and cleanup cycle. The closeout diff records the story's `done` status and PR
-evidence in the canonical/status artifacts without recreating already merged
-documentation. Story 165.3 remains blocked until both closeout cycles are
-`complete` in the orchestration manifest.
+and cleanup cycle. The closeout diff records the story's current `done` status
+and PR evidence in the mutable sprint registry, tracker, work summary, and
+durable manifest without recreating already merged documentation or changing
+the immutable execution table. Story 165.3 remains blocked until both closeout
+cycles are `complete` in the orchestration manifest.
 
 ## Epic 162-FE: Trustworthy Local Frontend Validation
 
@@ -815,7 +821,7 @@ So that the control's accessibility semantics match its actual behavior.
 
 **Given** `DashboardPeriodSelector` uses Tabs only to choose between week and month
 **When** the control is migrated
-**Then** it uses the project's existing single-choice toggle/radio-group pattern
+**Then** it uses the project's existing `RadioGroup` and `RadioGroupItem` pattern
 **And** the hidden, force-mounted tab panels and their workaround comments are removed.
 
 **Given** "Неделя" is selected
@@ -828,9 +834,9 @@ So that the control's accessibility semantics match its actual behavior.
 **Then** `periodType` changes to `week` exactly once
 **And** the previously selected week remains available according to existing context behavior.
 
-**Given** the control is a required single-choice selection
-**When** the selected option is activated again or an empty value is emitted
-**Then** one valid option remains selected
+**Given** the RadioGroup is a required controlled single-choice selection
+**When** the selected option is activated again or focus moves between options
+**Then** the controlled value remains `week` or `month`
 **And** the dashboard never enters an undefined period type.
 
 **Given** a keyboard user focuses the period toggle

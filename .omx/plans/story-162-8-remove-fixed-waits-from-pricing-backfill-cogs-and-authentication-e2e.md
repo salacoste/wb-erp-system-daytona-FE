@@ -10,8 +10,10 @@ So that calculations, administrative states, assignments, login, and onboarding 
 - **Epic:** 162-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.2, 162.4, 162.5, 162.6, 162.7
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -20,6 +22,7 @@ So that calculations, administrative states, assignments, login, and onboarding 
 - `e2e/pricing-page.spec.ts`
 - `e2e/price-calculator*.spec.ts`
 - `e2e/settings/backfill-admin.spec.ts`
+- `e2e/settings/backfill-a11y.spec.ts`
 - `e2e/backfill-page.spec.ts`
 - `e2e/cogs-assignment.spec.ts`
 - `e2e/login-dashboard.spec.ts`
@@ -60,7 +63,7 @@ So that calculations, administrative states, assignments, login, and onboarding 
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Classify the remaining 46 waits by request, URL, auth storage, calculation, or visible terminal state.
 3. Replace each wait with the corresponding bounded application event.
 4. Run repeated targeted coverage and prove both owned `46 → 0` and repository-wide `247 → 0`.
@@ -77,7 +80,7 @@ So that calculations, administrative states, assignments, login, and onboarding 
 ## Verification Steps
 
 - `rg -n "page\.waitForTimeout\(" e2e`
-- `npx playwright test e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/settings/backfill-admin.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2`
+- `npx playwright test e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/price-calculator-visual.spec.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

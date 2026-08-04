@@ -10,8 +10,10 @@ So that its thresholds, scope, cooldown, enabled state, and actions match my cab
 - **Epic:** 163-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 163.2
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -72,7 +74,7 @@ So that its thresholds, scope, cooldown, enabled state, and actions match my cab
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Lock GET/PATCH rule contracts, query keys, and invalidation behavior with API/hook tests.
 3. Implement editor loading, error, validation, enabled/safety messaging, save, and dirty-state behavior.
 4. Cover success/failure feedback, cache refresh, keyboard access, and graceful page isolation.

@@ -17,10 +17,11 @@ story execution PR. It may stage the already prepared source corrections for
 Stories 165.1 and 165.2, but both remain `review` and neither is complete or
 dependency-unblocking. After the package merges, the orchestrator must run
 165.1 and then 165.2 as separate verification-and-closeout stories, each with
-its own branch, worktree, non-empty status/evidence diff, normal PR, merge, and
-cleanup. Those closeout PRs verify rather than recreate the prepared source
-edits. This exception does not apply to any other story and does not permit one
-PR to complete two stories.
+its own branch, worktree, non-empty mutable status/evidence diff, normal PR,
+merge, and cleanup. Those closeout PRs verify rather than recreate the prepared
+source edits and never change the canonical table's immutable
+`initial_status`. This exception does not apply to any other story and does not
+permit one PR to complete two stories.
 
 ---
 
@@ -49,7 +50,7 @@ Your objective is to deliver the approved BMad stories from `_bmad-output/planni
 - Status registry: `_bmad-output/implementation-artifacts/sprint-status.yaml`
 - Process constraints: `AGENTS.md` and `docs/process/two-repo-coordination.md`
 
-Reject any story whose ID, dependency list, initial status, or canonical acceptance criteria differs between the BMad source and its plan. Run `node scripts/manage-omx-story-plans.mjs` before scheduling work; non-zero exit blocks execution.
+Reject any story whose ID, dependency list, immutable `initial_status`, or canonical acceptance criteria differs between the BMad source and its plan. Run `node scripts/manage-omx-story-plans.mjs` before scheduling work; non-zero exit blocks execution. Treat `initial_status` as generation-time parity metadata only, never as current lifecycle state.
 
 ## Durable manifest
 
@@ -66,6 +67,7 @@ Maintain one record per story with at least:
   "integrated_origin_sha": "<40-char SHA>",
   "integration_status": "current",
   "scope_locks": ["e2e/liquidity.spec.ts"],
+  "initial_status": "backlog",
   "status": "planned"
 }
 ```
@@ -77,11 +79,16 @@ Allowed lifecycle states: `planned`, `blocked_dependency`, `active`, `review`, `
 `integrated_origin_sha` and returns to `current` only after the required
 integration, validation, fresh review, and fresh verification complete.
 
-Map canonical BMad status to the manifest conservatively: `backlog` becomes
-`planned`, `deferred` remains `deferred`, and `review` remains `review` with no
-dependency-unblocking authority. A canonical `done` label may become
-`complete` only after the record contains exact PR, merge SHA, ancestry, and
-cleanup proof. Never infer completion from the label alone. Story 162.1 has
+Store the canonical `initial_status` in the manifest as immutable audit
+metadata. Resolve current lifecycle from the mutable sprint-status registry
+when creating the manifest, then maintain detailed execution state in the
+durable manifest and reconcile it with the registry at every preflight. Map
+registry `backlog`/`ready-for-dev` to `planned`, `in-progress` to `active`,
+`review` to `review`, and `deferred` to `deferred`. A registry `done` value may
+become `complete` only after the manifest contains exact PR, merge SHA,
+ancestry, and cleanup proof; otherwise block reconciliation. Never derive a
+current lifecycle transition from immutable `initial_status`, and never write
+current state back to the canonical table or correlated plan. Story 162.1 has
 the known PR #86 / `4a24544d` evidence; Stories 165.1 and 165.2 intentionally
 remain in review until their own normal merge and cleanup evidence exists.
 
@@ -97,7 +104,7 @@ Run every preflight command from the exact frontend repository root shown above:
 6. Capture `git status --porcelain=v1 -z`, `git worktree list --porcelain`, local branches, and remote branches.
 7. Require the primary worktree to be clean. Never auto-stash, reset, clean, discard, overwrite, or absorb unexpected changes.
 8. Inspect `git rev-list --left-right --count main...origin/main`; require `0 0` before creating the first feature worktree.
-9. Run the story/plan parity checker and parse the canonical dependency/status table.
+9. Run the story/plan parity checker, parse dependencies and immutable `initial_status` from the canonical table, and reconcile current lifecycle from the sprint-status registry and durable manifest. A registry/manifest conflict blocks scheduling; immutable `initial_status` never resolves it.
 10. Parse every plan's `Concrete Scope`, normalize its file, directory, and glob entries, and build the exclusive scope-lock registry.
 11. Resolve proposed branch names and absolute worktree paths. Block on any branch/path collision or an already checked-out branch.
 
@@ -112,7 +119,7 @@ If the primary worktree is dirty, diverged, has an unexpected remote, lacks GitH
 - Story 162.9's broad `e2e/**/*.spec.ts` ownership is serialized after Story 162.8. Apply the same lock logic across epics: for example, a 163.x story touching a specific E2E spec cannot run concurrently with a 162.x story whose glob covers that spec.
 - PR merges are serialized. After each merge, refresh `origin/main`, verify ancestry, and re-evaluate queued and active story bases before merging the next PR.
 - Stories 165.4 and 165.5 remain `deferred`; do not create their branches/worktrees until their exact backend evidence gates pass. Never fabricate snapshots, retry contracts, or frontend substitutes.
-- Story 165.1 is the first post-bootstrap closeout story. Verify the already merged prepared corrections, then create only the honest status/evidence diff needed to close 165.1 through its own PR; do not manufacture product changes.
+- Story 165.1 is the first post-bootstrap closeout story. Verify the already merged prepared corrections, then create only the honest mutable status/evidence diff needed to close 165.1 through its own PR; do not manufacture product changes or edit the canonical execution table.
 - Story 165.2 starts only after 165.1 is `complete`. Apply the same verification-and-closeout pattern through a distinct PR.
 - Story 165.3 starts only after the separate 165.1/165.2 closeout PRs are merged and cleaned up. If the OpenWiki provider credential/runtime is unavailable, preserve its worktree and report the blocker; never hand-edit `openwiki/**`.
 

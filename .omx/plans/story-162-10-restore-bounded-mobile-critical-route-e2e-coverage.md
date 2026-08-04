@@ -10,8 +10,10 @@ So that critical user journeys remain usable on the product's secondary mobile t
 - **Epic:** 162-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.2, 162.9
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -64,7 +66,7 @@ So that critical user journeys remain usable on the product's secondary mobile t
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Define one supported device project and a bounded mobile critical-route test match.
 3. Implement mobile-specific navigation, table overflow, dialog/focus, and 44×44 target assertions.
 4. Run the mobile project through the same preflight and record device, viewport, endpoints, and skips.

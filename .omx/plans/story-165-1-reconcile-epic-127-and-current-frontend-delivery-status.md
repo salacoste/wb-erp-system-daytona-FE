@@ -10,14 +10,15 @@ So that completed work is not repeatedly treated as blocked or deferred.
 - **Epic:** 165-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.1
-- **Initial status:** review — documentation prepared; merge and cleanup evidence pending
+- **Immutable `initial_status`:** review — documentation prepared; merge and cleanup evidence pending
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > The documentation changes are prepared for review, but this story is not complete until its normal PR merge and cleanup evidence are recorded.
 
 ## Concrete Scope
 
-- `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - `_bmad-output/planning-artifacts/epics-127-fe.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 - `docs/EPICS-AND-STORIES-TRACKER.md`
@@ -51,9 +52,9 @@ So that completed work is not repeatedly treated as blocked or deferred.
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. From the merged documentation-bootstrap base, independently verify the shipped buyout/returns clients, hooks, charts, integration, tests, and prepared status corrections; do not recreate the bootstrap edits.
-3. Create a non-empty story-owned closeout diff that records Story 165.1 as done with its PR evidence in the canonical table, sprint registry, tracker, and work summary without editing historical archives.
+3. Create a non-empty story-owned closeout diff that records Story 165.1 as done with its PR evidence in the mutable sprint registry, tracker, and work summary without editing historical archives or immutable plan-generation metadata.
 4. Search for contradicted deferral claims and validate story/status consistency.
 5. Run an independent review and verification pass; merge only through a normal PR after all acceptance criteria have evidence.
 6. After merge proof, remove the clean story worktree and merged branches without force, prune worktree metadata, and audit the repository.

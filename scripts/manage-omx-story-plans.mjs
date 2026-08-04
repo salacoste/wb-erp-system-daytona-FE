@@ -119,6 +119,9 @@ const storyConfig = {
       'e2e/category-analytics.spec.ts',
       'e2e/brand-analytics.spec.ts',
       'e2e/forecast*.spec.ts',
+      'e2e/merged-group-table-epic-37.spec.ts',
+      'e2e/accessibility-merged-groups-epic-37.spec.ts',
+      'e2e/period-selection-month-test.spec.ts',
     ],
     steps: [
       'Inventory the 67 owned waits by trigger and expected visible result.',
@@ -126,8 +129,8 @@ const storyConfig = {
       'Repeat the targeted suite and record `67 → 0`, runtime, and zero retry-only passes.',
     ],
     verify: [
-      'rg -n "page\\.waitForTimeout\\(" e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts',
-      'npx playwright test e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts --repeat-each=2',
+      'rg -n "page\\.waitForTimeout\\(" e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts',
+      'npx playwright test e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts --repeat-each=2',
     ],
     risk: 'Chart animation and independent dashboard requests need purpose-specific readiness signals.',
   },
@@ -156,6 +159,7 @@ const storyConfig = {
       'e2e/pricing-page.spec.ts',
       'e2e/price-calculator*.spec.ts',
       'e2e/settings/backfill-admin.spec.ts',
+      'e2e/settings/backfill-a11y.spec.ts',
       'e2e/backfill-page.spec.ts',
       'e2e/cogs-assignment.spec.ts',
       'e2e/login-dashboard.spec.ts',
@@ -169,7 +173,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "page\\.waitForTimeout\\(" e2e',
-      'npx playwright test e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/settings/backfill-admin.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2',
+      'npx playwright test e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/price-calculator-visual.spec.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2',
     ],
     risk: 'Authentication and mutation tests must use fresh storage state and the existing explicit safety gate.',
   },
@@ -327,8 +331,8 @@ const storyConfig = {
     ],
     steps: [
       'Lock period context callbacks, retained selections, disabled/loading, and responsive behavior.',
-      'Replace Tabs and hidden panels with the existing non-clearable single-choice ToggleGroup pattern.',
-      'Verify pointer, keyboard, accessible group state, and absence of tab-panel semantics.',
+      'Replace Tabs and hidden panels with the existing controlled RadioGroup and RadioGroupItem pattern; add no dependency.',
+      'Verify pointer, arrow-key, accessible radio-group state, and absence of tab-panel semantics.',
     ],
     verify: [
       'npm test -- --run src/components/custom/__tests__/DashboardPeriodSelector.test.tsx',
@@ -336,7 +340,7 @@ const storyConfig = {
       'npm run type-check',
       'npm run lint',
     ],
-    risk: 'ToggleGroup can emit an empty value; guard it so the dashboard never loses a valid period type.',
+    risk: 'Keep RadioGroup controlled by the existing valid period type and preserve accessible labels while styling it as the compact week/month selector.',
   },
   164.1: {
     files: [
@@ -422,7 +426,6 @@ const storyConfig = {
   },
   165.1: {
     files: [
-      sourceRelative,
       '_bmad-output/planning-artifacts/epics-127-fe.md',
       '_bmad-output/implementation-artifacts/sprint-status.yaml',
       'docs/EPICS-AND-STORIES-TRACKER.md',
@@ -434,7 +437,7 @@ const storyConfig = {
     ],
     steps: [
       'From the merged documentation-bootstrap base, independently verify the shipped buyout/returns clients, hooks, charts, integration, tests, and prepared status corrections; do not recreate the bootstrap edits.',
-      'Create a non-empty story-owned closeout diff that records Story 165.1 as done with its PR evidence in the canonical table, sprint registry, tracker, and work summary without editing historical archives.',
+      'Create a non-empty story-owned closeout diff that records Story 165.1 as done with its PR evidence in the mutable sprint registry, tracker, and work summary without editing historical archives or immutable plan-generation metadata.',
       'Search for contradicted deferral claims and validate story/status consistency.',
     ],
     verify: [
@@ -445,7 +448,6 @@ const storyConfig = {
   },
   165.2: {
     files: [
-      sourceRelative,
       '_bmad-output/implementation-artifacts/sprint-status.yaml',
       'docs/EPICS-AND-STORIES-TRACKER.md',
       'docs/FRONTEND-WORK-SUMMARY.md',
@@ -463,7 +465,7 @@ const storyConfig = {
     ],
     steps: [
       'From the merged Story 165.1 base, independently verify the prepared framework-version, port, local-only, validation-baseline, and pre-production corrections; do not recreate the bootstrap edits.',
-      'Create a non-empty story-owned closeout diff that records Story 165.2 as done with its PR evidence in the canonical table, sprint registry, tracker, and work summary.',
+      'Create a non-empty story-owned closeout diff that records Story 165.2 as done with its PR evidence in the mutable sprint registry, tracker, and work summary without changing immutable plan-generation metadata.',
       'Confirm obsolete PM2, Tier-0, production-certification, and CI-governance instructions remain absent without touching generated OpenWiki pages.',
       'Run citation/link validation and focused searches for stale versions, ports, and release assumptions.',
     ],
@@ -538,7 +540,10 @@ function parseSource() {
   const source = fs.readFileSync(sourcePath, 'utf8')
   const metadata = new Map()
   for (const match of source.matchAll(/^\|\s*(\d+\.\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$/gm)) {
-    metadata.set(match[1], { dependencies: match[2].trim(), status: match[3].trim() })
+    metadata.set(match[1], {
+      dependencies: match[2].trim(),
+      initialStatus: match[3].trim(),
+    })
   }
 
   const headings = [...source.matchAll(/^### Story (\d+\.\d+): (.+)$/gm)]
@@ -579,9 +584,9 @@ function renderPlan(story) {
   const config = storyConfig[story.id]
   if (!config) throw new Error(`Missing plan configuration for ${story.id}`)
   const dependencyText = story.dependencies === 'None' ? 'None' : story.dependencies
-  const gated = story.status === 'deferred'
-  const completion = story.status.startsWith('done')
-  const awaitingMerge = story.status.startsWith('review')
+  const gated = story.initialStatus === 'deferred'
+  const completion = story.initialStatus.startsWith('done')
+  const awaitingMerge = story.initialStatus.startsWith('review')
 
   return `# OMX Story Plan ${story.id}: ${story.title}
 
@@ -593,8 +598,10 @@ ${story.userStory}
 - **Epic:** ${story.id.split('.')[0]}-FE
 - **Canonical source:** \`${sourceRelative}\`
 - **Dependencies:** ${dependencyText}
-- **Initial status:** ${story.status}
+- **Immutable \`initial_status\`:** ${story.initialStatus}
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> \`initial_status\` is plan-generation metadata only. Read and update current lifecycle state in \`_bmad-output/implementation-artifacts/sprint-status.yaml\` and the durable orchestration manifest; never mutate this field during story closeout.
 
 ${completion ? '> This story is complete. The plan records merge evidence and must not recreate the already merged cleanup.' : gated ? '> Backend gate: do not create a feature branch/worktree until the dependency evidence in the acceptance criteria exists.' : awaitingMerge ? '> The documentation changes are prepared for review, but this story is not complete until its normal PR merge and cleanup evidence are recorded.' : '> Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.'}
 
@@ -608,7 +615,7 @@ ${story.acceptanceCriteria}
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean \`origin/main\` base SHA.${gated ? ' Stop before branch creation when the backend gate is absent.' : ''}
+1. Verify canonical dependency/immutable \`initial_status\` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean \`origin/main\` base SHA.${gated ? ' Stop before branch creation when the backend gate is absent.' : ''}
 ${config.steps.map((step, index) => `${index + 2}. ${step}`).join('\n')}
 ${config.steps.length + 2}. Run an independent review and verification pass; merge only through a normal PR after all acceptance criteria have evidence.
 ${config.steps.length + 3}. After merge proof, remove the clean story worktree and merged branches without force, prune worktree metadata, and audit the repository.${completion ? ' For this completed story, verify that cleanup already occurred.' : ''}

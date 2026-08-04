@@ -10,8 +10,10 @@ So that the control's accessibility semantics match its actual behavior.
 - **Epic:** 163-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.1
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -28,7 +30,7 @@ So that the control's accessibility semantics match its actual behavior.
 
 **Given** `DashboardPeriodSelector` uses Tabs only to choose between week and month
 **When** the control is migrated
-**Then** it uses the project's existing single-choice toggle/radio-group pattern
+**Then** it uses the project's existing `RadioGroup` and `RadioGroupItem` pattern
 **And** the hidden, force-mounted tab panels and their workaround comments are removed.
 
 **Given** "Неделя" is selected
@@ -41,9 +43,9 @@ So that the control's accessibility semantics match its actual behavior.
 **Then** `periodType` changes to `week` exactly once
 **And** the previously selected week remains available according to existing context behavior.
 
-**Given** the control is a required single-choice selection
-**When** the selected option is activated again or an empty value is emitted
-**Then** one valid option remains selected
+**Given** the RadioGroup is a required controlled single-choice selection
+**When** the selected option is activated again or focus moves between options
+**Then** the controlled value remains `week` or `month`
 **And** the dashboard never enters an undefined period type.
 
 **Given** a keyboard user focuses the period toggle
@@ -63,16 +65,16 @@ So that the control's accessibility semantics match its actual behavior.
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Lock period context callbacks, retained selections, disabled/loading, and responsive behavior.
-3. Replace Tabs and hidden panels with the existing non-clearable single-choice ToggleGroup pattern.
-4. Verify pointer, keyboard, accessible group state, and absence of tab-panel semantics.
+3. Replace Tabs and hidden panels with the existing controlled RadioGroup and RadioGroupItem pattern; add no dependency.
+4. Verify pointer, arrow-key, accessible radio-group state, and absence of tab-panel semantics.
 5. Run an independent review and verification pass; merge only through a normal PR after all acceptance criteria have evidence.
 6. After merge proof, remove the clean story worktree and merged branches without force, prune worktree metadata, and audit the repository.
 
 ## Risks and Mitigations
 
-- **Story-specific risk:** ToggleGroup can emit an empty value; guard it so the dashboard never loses a valid period type.
+- **Story-specific risk:** Keep RadioGroup controlled by the existing valid period type and preserve accessible labels while styling it as the compact week/month selector.
 - **Cross-story contamination:** branch only after dependencies are merged; never auto-stash, reset, clean, or mix unrelated changes.
 - **False completion:** retain the worktree on failure; a merged story with failed cleanup is `cleanup_blocked`, not complete.
 - **Local-only scope:** validate against frontend `localhost:3100` and backend `localhost:3000`; do not deploy or add production/CI certification scope.

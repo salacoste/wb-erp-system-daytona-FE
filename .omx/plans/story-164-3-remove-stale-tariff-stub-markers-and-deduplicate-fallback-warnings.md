@@ -10,8 +10,10 @@ So that maintainers receive accurate guidance and actionable diagnostics without
 - **Epic:** 164-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.1
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -54,7 +56,7 @@ So that maintainers receive accurate guidance and actionable diagnostics without
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Lock tariff outputs and warning behavior with regression tests before removing stale markers.
 3. Replace obsolete stub commentary with current semantics and aggregate repeated fallback warnings.
 4. Add bounded signature-based deduplication tests while preserving direct-call warning behavior.

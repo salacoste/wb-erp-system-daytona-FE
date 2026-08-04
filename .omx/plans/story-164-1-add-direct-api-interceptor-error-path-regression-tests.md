@@ -10,8 +10,10 @@ So that error handling and observability can be maintained without accidental be
 - **Epic:** 164-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** 162.1
-- **Initial status:** backlog
+- **Immutable `initial_status`:** backlog
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > Create the dedicated implementation story artifact before moving this backlog item to `ready-for-dev`.
 
@@ -63,7 +65,7 @@ So that error handling and observability can be maintained without accidental be
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Enumerate every message, Retry-After, WB-token, Telegram, logging, and network suppression branch.
 3. Add direct table-driven unit tests around exported helpers plus focused ApiClient integration cases.
 4. Collect targeted branch coverage before running the full local quality gates.

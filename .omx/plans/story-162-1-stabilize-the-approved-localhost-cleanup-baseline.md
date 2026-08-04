@@ -10,8 +10,10 @@ So that later feature worktrees start from known-good code without mixing unrela
 - **Epic:** 162-FE
 - **Canonical source:** `_bmad-output/planning-artifacts/epics-162-165-fe.md`
 - **Dependencies:** None
-- **Initial status:** done — merged by PR #86 at `4a24544d`
+- **Immutable `initial_status`:** done — merged by PR #86 at `4a24544d`
 - **Execution unit:** one story, one feature branch, one disposable worktree, one PR
+
+> `initial_status` is plan-generation metadata only. Read and update current lifecycle state in `_bmad-output/implementation-artifacts/sprint-status.yaml` and the durable orchestration manifest; never mutate this field during story closeout.
 
 > This story is complete. The plan records merge evidence and must not recreate the already merged cleanup.
 
@@ -45,7 +47,7 @@ So that later feature worktrees start from known-good code without mixing unrela
 
 ## Implementation Steps
 
-1. Verify the canonical dependency/status metadata above and record the exact clean `origin/main` base SHA.
+1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Treat the merged localhost cleanup as immutable baseline evidence; do not recreate or amend it.
 3. Confirm `main`, `origin/main`, the clean primary worktree, and the absence of leftover feature worktrees.
 4. Record the merge SHA and validation evidence in active planning/status artifacts.
