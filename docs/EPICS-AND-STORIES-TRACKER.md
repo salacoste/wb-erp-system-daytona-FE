@@ -243,12 +243,12 @@
 
 ### Local Quality & Product Completion (Epics 162-165)
 
-| Epic   | Title                                           | Stories                           | Status      | Key Routes / Scope                          |
-| ------ | ----------------------------------------------- | --------------------------------- | ----------- | ------------------------------------------- |
-| 162-FE | Trustworthy Local Frontend Validation           | 1 done + 9 backlog                | IN-PROGRESS | localhost Playwright and validation gates   |
-| 163-FE | Accessible and Complete Operator Workflows      | 6 backlog                         | BACKLOG     | advertising, automation, analytics          |
-| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 backlog                         | BACKLOG     | API errors, charts, tariffs, package policy |
-| 165-FE | Truthful Status & Backend-Ready Backlog         | 2 review + 1 backlog + 2 deferred | IN-PROGRESS | active docs, OpenWiki, gated integrations   |
+| Epic   | Title                                           | Stories                                    | Status      | Key Routes / Scope                          |
+| ------ | ----------------------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------- |
+| 162-FE | Trustworthy Local Frontend Validation           | 1 done + 9 backlog                         | IN-PROGRESS | localhost Playwright and validation gates   |
+| 163-FE | Accessible and Complete Operator Workflows      | 6 backlog                                  | BACKLOG     | advertising, automation, analytics          |
+| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 backlog                                  | BACKLOG     | API errors, charts, tariffs, package policy |
+| 165-FE | Truthful Status & Backend-Ready Backlog         | 1 done + 1 review + 1 backlog + 2 deferred | IN-PROGRESS | active docs, OpenWiki, gated integrations   |
 
 Canonical story definitions, dependencies, and acceptance criteria: `_bmad-output/planning-artifacts/epics-162-165-fe.md`. Each story has exactly one correlated execution plan under `.omx/plans/`.
 
