@@ -11,7 +11,7 @@
  * Run: npx playwright test e2e/cross-reference.spec.ts
  */
 
-import { test, expect, type Locator, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const XREF_URL = '/analytics/cross-reference'
@@ -47,9 +47,11 @@ async function waitForCrossRefState(page: Page, candidates: Locator[]) {
   ]).catch(() => 'timeout' as const)
 
   expect(state).not.toBe('timeout')
-  test.skip(state === 'gate', 'Cross-reference protected analytics are hidden behind RequireJam gate')
+  test.skip(
+    state === 'gate',
+    'Cross-reference protected analytics are hidden behind RequireJam gate'
+  )
 }
-
 
 // ---------------------------------------------------------------------------
 // Tests

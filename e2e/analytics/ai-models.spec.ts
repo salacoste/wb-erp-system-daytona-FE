@@ -14,7 +14,7 @@
  * Run with: npm run test:e2e -- e2e/analytics/ai-models.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import { ROUTES, TIMEOUTS } from '../fixtures/test-data'
 
 /** Placeholder model ID for dynamic sub-routes. */
@@ -35,7 +35,9 @@ test.describe('AI Models Pages', () => {
   test('models listing page renders title and content area', async ({ page }) => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
 
-    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
 
     // Valid mount states: table with models, empty-state alert, loading skeleton, or error alert
     const hasTable = (await page.getByRole('table').count()) > 0
@@ -47,7 +49,9 @@ test.describe('AI Models Pages', () => {
 
   test('models listing page has correct heading hierarchy', async ({ page }) => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
-    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
 
     // At least one h1-level heading should exist in the layout shell
     const h1Count = await page.getByRole('heading', { level: 1 }).count()
@@ -58,7 +62,9 @@ test.describe('AI Models Pages', () => {
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
 
     await expect(page).toHaveURL(/\/analytics\/models$/, { timeout: TIMEOUTS.navigation })
-    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
   })
 
   // --- Model evaluations page (/analytics/models/[id]/evaluations) ---
@@ -68,7 +74,9 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    await expect(page.getByRole('heading', { name: 'Оценки точности модели', level: 1 })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { name: 'Оценки точности модели', level: 1 })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -86,7 +94,9 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    await expect(page.getByRole('heading', { name: 'Оценки точности модели', level: 1 })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { name: 'Оценки точности модели', level: 1 })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -101,7 +111,9 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    await expect(page.getByRole('heading', { name: 'Производительность модели', level: 1 })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { name: 'Производительность модели', level: 1 })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -109,7 +121,8 @@ test.describe('AI Models Pages', () => {
     const hasSkeleton = (await page.locator('[data-testid="skeleton"], .animate-pulse').count()) > 0
     const hasNotFound = (await page.getByText('Модель не найдена').count()) > 0
     const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
-    const hasChart = (await page.getByRole('img', { name: /График тренда точности модели MAPE/ }).count()) > 0
+    const hasChart =
+      (await page.getByRole('img', { name: /График тренда точности модели MAPE/ }).count()) > 0
     expect(hasSkeleton || hasNotFound || hasError || hasChart).toBeTruthy()
   })
 
@@ -118,7 +131,9 @@ test.describe('AI Models Pages', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    await expect(page.getByRole('heading', { name: 'Производительность модели', level: 1 })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { name: 'Производительность модели', level: 1 })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 
@@ -129,22 +144,22 @@ test.describe('AI Models Pages', () => {
   // --- Cross-page: error-free load ---
 
   test('models listing page loads without console errors', async ({ page }) => {
-    const consoleErrors: string[] = []
+    let consoleErrorCount = 0
     page.on('console', msg => {
-      if (msg.type() === 'error') {
-        consoleErrors.push(msg.text())
+      const isIgnored =
+        msg.text().includes('downloadable font') || msg.text().includes('Failed to fetch')
+      if (msg.type() === 'error' && !isIgnored) {
+        consoleErrorCount += 1
       }
     })
 
     await page.goto(ROUTES.analytics.models.list, { waitUntil: 'domcontentloaded' })
 
     // Wait for content to mount
-    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('heading', { name: 'Модели AI', level: 1 })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
 
-    // Filter out known harmless warnings
-    const realErrors = consoleErrors.filter(
-      e => !e.includes('downloadable font') && !e.includes('Failed to fetch')
-    )
-    expect(realErrors).toHaveLength(0)
+    expect(consoleErrorCount).toBe(0)
   })
 })

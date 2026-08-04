@@ -10,7 +10,7 @@
  * Run: npx playwright test e2e/search-analytics.spec.ts
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const SEARCH_URL = '/analytics/search'
@@ -51,7 +51,6 @@ async function expectJamGateOrTabs(page: Page) {
   await expect(tabs).toBeVisible()
   return true
 }
-
 
 // ---------------------------------------------------------------------------
 // Tests

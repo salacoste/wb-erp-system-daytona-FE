@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E: МойСклад «МС товары» tab (story M2) — live `/products` read-through.

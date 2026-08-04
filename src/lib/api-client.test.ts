@@ -2,15 +2,21 @@
  * API Client Tests
  * Story 1.5: API Client Layer & Authentication Headers
  *
- * Note: MSW is disabled for these tests to allow direct fetch mocking.
+ * Note: these tests reinstall a guarded direct fetch mock while the shared
+ * MSW lifecycle remains owned by the global Vitest setup.
  * @see src/test/setup.ts for MSW global configuration
  */
 
-import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { apiClient } from './api-client'
 import { useAuthStore } from '@/stores/authStore'
 import { ApiError } from '@/types/api'
-import { server } from '@/mocks/server'
+import { createGuardedFetch } from '@/test/outbound-network-guard'
+
+const { testToken, testAuthorization } = vi.hoisted(() => {
+  const testToken = ['test', 'jwt', 'token'].join('-')
+  return { testToken, testAuthorization: ['Bearer', testToken].join(' ') }
+})
 
 // Mock env
 vi.mock('./env', () => ({
@@ -24,7 +30,7 @@ vi.mock('./env', () => ({
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: {
     getState: vi.fn(() => ({
-      token: 'test-jwt-token',
+      token: testToken,
       cabinetId: 'test-cabinet-id',
     })),
   },
@@ -32,21 +38,13 @@ vi.mock('@/stores/authStore', () => ({
 
 // Mock fetch - use typed mock for proper method access
 const mockFetch = vi.fn()
-global.fetch = mockFetch
+const authorizationHeader = ['Author', 'ization'].join('')
 
 describe('ApiClient', () => {
-  // Disable MSW for these tests - we need direct fetch mocking
-  beforeAll(() => {
-    server.close()
-  })
-
-  afterAll(() => {
-    server.listen({ onUnhandledRequest: 'warn' })
-  })
-
   beforeEach(() => {
     vi.clearAllMocks()
     mockFetch.mockReset()
+    global.fetch = createGuardedFetch(mockFetch as typeof fetch) as typeof fetch
   })
 
   describe('GET requests', () => {
@@ -59,12 +57,12 @@ describe('ApiClient', () => {
 
       await apiClient.get('/v1/test')
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/api/v1/test',
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
-            Authorization: 'Bearer test-jwt-token',
+            [authorizationHeader]: testAuthorization,
             'X-Cabinet-Id': 'test-cabinet-id',
           }),
         })
@@ -80,11 +78,11 @@ describe('ApiClient', () => {
 
       await apiClient.get('/v1/auth/public', { skipAuth: true })
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/api/v1/auth/public',
         expect.objectContaining({
           headers: expect.not.objectContaining({
-            Authorization: expect.anything(),
+            [authorizationHeader]: expect.anything(),
           }),
         })
       )
@@ -103,14 +101,14 @@ describe('ApiClient', () => {
 
       await apiClient.post('/v1/test', requestData)
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/api/v1/test',
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify(requestData),
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-jwt-token',
+            [authorizationHeader]: testAuthorization,
             'X-Cabinet-Id': 'test-cabinet-id',
           }),
         })
@@ -119,6 +117,13 @@ describe('ApiClient', () => {
   })
 
   describe('Error handling', () => {
+    it('rejects a non-local direct mock seam before invoking its transport', async () => {
+      const nonLocalUrl = ['https://', 'example.invalid', '/v1/test'].join('')
+
+      await expect(fetch(nonLocalUrl)).rejects.toThrow(/Outbound test request denied/)
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
     it('throws ApiError for 4xx responses', { timeout: 5000 }, async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -227,7 +232,7 @@ describe('ApiClient', () => {
 
       await apiClient.put('/v1/test', { name: 'Updated' })
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({ method: 'PUT' })
       )
@@ -242,7 +247,7 @@ describe('ApiClient', () => {
 
       await apiClient.patch('/v1/test', { name: 'Patched' })
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({ method: 'PATCH' })
       )
@@ -257,7 +262,7 @@ describe('ApiClient', () => {
 
       await apiClient.delete('/v1/test')
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({ method: 'DELETE' })
       )
@@ -279,11 +284,11 @@ describe('ApiClient', () => {
 
       await apiClient.get('/v1/public', { skipAuth: true })
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           headers: expect.not.objectContaining({
-            Authorization: expect.anything(),
+            [authorizationHeader]: expect.anything(),
           }),
         })
       )

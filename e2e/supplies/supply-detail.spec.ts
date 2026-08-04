@@ -15,7 +15,7 @@
  * @see docs/stories/epic-53/story-53.8-fe-e2e-tests-polish.md
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from '../fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 // Routes

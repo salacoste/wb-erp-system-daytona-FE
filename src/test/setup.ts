@@ -10,8 +10,10 @@
  */
 
 import '@testing-library/jest-dom'
-import { beforeAll, afterEach, afterAll } from 'vitest'
+import { afterEach, afterAll } from 'vitest'
 import { server } from '@/mocks/server'
+
+server.listen({ onUnhandledRequest: 'error' })
 
 // Mock ResizeObserver for Radix UI components
 class ResizeObserverMock {
@@ -29,11 +31,6 @@ Element.prototype.releasePointerCapture = () => {}
 
 // Mock scrollIntoView for Radix UI components
 Element.prototype.scrollIntoView = () => {}
-
-// Start MSW server before all tests
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'warn' })
-})
 
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {

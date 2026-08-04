@@ -11,7 +11,7 @@
  * Run: npx playwright test e2e/settings-pages.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS, ROUTES } from './fixtures/test-data'
 
 const SETTINGS_ROUTES = {

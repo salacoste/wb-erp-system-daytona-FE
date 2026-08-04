@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
 import { ROUTES, SELECTORS, TIMEOUTS, TEST_PRODUCTS } from './fixtures/test-data'
 
@@ -278,7 +278,7 @@ test.describe('COGS Assignment', () => {
       // Simulate slow network
       await page.route('**/products**', async route => {
         await new Promise(resolve => setTimeout(resolve, 5000))
-        route.continue()
+        route.fallback()
       })
 
       // Should show loading state

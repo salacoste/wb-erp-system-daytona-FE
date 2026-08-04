@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 import { PERIOD_SELECTORS, URL_PATTERNS, API_ROUTES } from './fixtures/period-test-data'
@@ -257,7 +257,7 @@ test.describe('Dashboard Period Switching', () => {
       // Intercept API to delay response
       await page.route(API_ROUTES.financeSummary, async route => {
         await new Promise(r => setTimeout(r, 500))
-        await route.continue()
+        await route.fallback()
       })
 
       // Navigate fresh
@@ -286,7 +286,7 @@ test.describe('Dashboard Period Switching', () => {
       // Intercept API to delay response
       await page.route(API_ROUTES.weeklyAnalytics, async route => {
         await new Promise(r => setTimeout(r, 800))
-        await route.continue()
+        await route.fallback()
       })
 
       // Switch period

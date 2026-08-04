@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E: FR-7 «По цветомоделям» (variant analytics) — backend request #221.

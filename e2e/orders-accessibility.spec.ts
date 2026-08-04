@@ -5,7 +5,7 @@
  * deterministic backend fixtures before they can be reliable E2E checks.
  */
 
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
 
 const ORDERS_ROUTE = '/orders'

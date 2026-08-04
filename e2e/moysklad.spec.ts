@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 
 /**
  * E2E: МойСклад read-only UI (Phase 1) — backend contract #221-moysklad.

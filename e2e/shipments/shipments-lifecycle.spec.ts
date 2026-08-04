@@ -15,7 +15,7 @@
  * @see _bmad-output/implementation-artifacts/77.2-fe-shipment-e2e-tests.md
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
 const SHIPMENTS_ROUTE = '/shipments'
@@ -167,7 +167,6 @@ test.describe('Shipment Lifecycle - Epic 77-FE @mutating', () => {
       const response = await responsePromise
       if (!response.ok()) {
         // Product may not exist in test data — skip remaining lifecycle steps gracefully
-        console.log(`Box line creation returned ${response.status()} — skipping row verification`)
         return
       }
 

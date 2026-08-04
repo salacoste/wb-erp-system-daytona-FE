@@ -1,9 +1,18 @@
+import './src/test/network-guard-bootstrap'
+
 import { defineConfig, devices } from '@playwright/test'
-import dotenv from 'dotenv'
 import { shouldSkipMutatingE2E } from './e2e/fixtures/mutation-guard'
+import { assertAllowedTestUrl } from './test-utils/outbound-network-policy'
 
 // Load E2E environment variables
-dotenv.config({ path: '.env.e2e' })
+try {
+  process.loadEnvFile('.env.e2e')
+} catch (error) {
+  if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+}
+
+const e2eBaseUrl = process.env.E2E_BASE_URL || 'http://localhost:3100'
+assertAllowedTestUrl(e2eBaseUrl)
 
 /**
  * Playwright E2E Test Configuration
@@ -21,10 +30,14 @@ export default defineConfig({
   grepInvert: shouldSkipMutatingE2E() ? /@mutating/ : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: process.env.E2E_BASE_URL || 'http://localhost:3100',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    baseURL: e2eBaseUrl,
+    // Story 128.10: raw browser diagnostics can retain URLs, storage, headers,
+    // or bodies, so ordinary suites keep every raw capture channel disabled.
+    trace: 'off',
+    screenshot: 'off',
+    video: 'off',
+    // BrowserContext routing does not intercept service-worker-owned traffic.
+    serviceWorkers: 'block',
   },
 
   projects: [

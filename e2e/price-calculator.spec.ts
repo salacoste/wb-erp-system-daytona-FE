@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures/network-test'
 
 /**
  * Epic 44-FE: Price Calculator UI - E2E Tests
@@ -80,19 +80,21 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
       },
     }
 
-    const coefficients = [{
-      warehouseId: 507,
-      warehouseName: 'Коледино',
-      date: '2026-01-01',
-      coefficient: 1,
-      isAvailable: true,
-      allowUnload: true,
-      boxTypeId: 2,
-      boxTypeName: 'Короб',
-      delivery: { coefficient: 1, baseLiterRub: 46, additionalLiterRub: 14 },
-      storage: { coefficient: 1, baseLiterRub: 0.07, additionalLiterRub: 0.05 },
-      isSortingCenter: false,
-    }]
+    const coefficients = [
+      {
+        warehouseId: 507,
+        warehouseName: 'Коледино',
+        date: '2026-01-01',
+        coefficient: 1,
+        isAvailable: true,
+        allowUnload: true,
+        boxTypeId: 2,
+        boxTypeName: 'Короб',
+        delivery: { coefficient: 1, baseLiterRub: 46, additionalLiterRub: 14 },
+        storage: { coefficient: 1, baseLiterRub: 0.07, additionalLiterRub: 0.05 },
+        isSortingCenter: false,
+      },
+    ]
 
     await page.route('**/v1/tariffs/warehouses-with-tariffs**', route =>
       route.fulfill({
@@ -108,7 +110,12 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           coefficients,
-          meta: { total: coefficients.length, available: coefficients.length, unavailable: 0, cache_ttl_seconds: 3600 },
+          meta: {
+            total: coefficients.length,
+            available: coefficients.length,
+            unavailable: 0,
+            cache_ttl_seconds: 3600,
+          },
         }),
       })
     )
@@ -118,16 +125,18 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          commissions: [{
-            parentID: 1,
-            parentName: 'Одежда',
-            subjectID: 11,
-            subjectName: 'Футболки',
-            paidStorageKgvp: 15,
-            kgvpMarketplace: 18,
-            kgvpSupplier: 15,
-            kgvpSupplierExpress: 20,
-          }],
+          commissions: [
+            {
+              parentID: 1,
+              parentName: 'Одежда',
+              subjectID: 11,
+              subjectName: 'Футболки',
+              paidStorageKgvp: 15,
+              kgvpMarketplace: 18,
+              kgvpSupplier: 15,
+              kgvpSupplierExpress: 20,
+            },
+          ],
           meta: { total: 1, cached: true, cache_ttl_seconds: 86400 },
         }),
       })
@@ -745,26 +754,22 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-012: Страница загружается без JS ошибок', async ({ page }) => {
-    const errors: string[] = []
+    let criticalErrorCount = 0
     page.on('console', msg => {
-      if (msg.type() === 'error') {
-        errors.push(msg.text())
+      const text = msg.text()
+      const isIgnored =
+        text.includes('Warning') ||
+        text.includes('hydration') ||
+        text.includes('Failed to fetch') ||
+        text.includes('Network error')
+      if (msg.type() === 'error' && !isIgnored) {
+        criticalErrorCount += 1
       }
     })
 
     await page.reload()
     await page.waitForLoadState('domcontentloaded')
 
-    // Фильтруем warnings и известные ошибки. "Failed to fetch" after a reload is an MSW
-    // service-worker re-registration race (the page's real API calls fire before MSW re-attaches),
-    // not a JS error — this smoke test checks for JS errors, so exclude network-fetch failures.
-    const criticalErrors = errors.filter(
-      e =>
-        !e.includes('Warning') &&
-        !e.includes('hydration') &&
-        !e.includes('Failed to fetch') &&
-        !e.includes('Network error')
-    )
-    expect(criticalErrors).toHaveLength(0)
+    expect(criticalErrorCount).toBe(0)
   })
 })

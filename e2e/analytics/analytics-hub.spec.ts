@@ -9,7 +9,7 @@
  * @see docs/stories/epic-51/story-51.12-fe-e2e-tests.md
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 
 // Routes
 const ANALYTICS_HUB_ROUTE = '/analytics'

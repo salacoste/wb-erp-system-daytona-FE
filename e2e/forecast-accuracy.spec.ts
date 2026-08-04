@@ -11,7 +11,7 @@
  * Run with: npm run test:e2e -- e2e/forecast-accuracy.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 test.describe('Forecast Accuracy Dashboard', () => {

@@ -13,7 +13,7 @@
  * Run with: npm run test:e2e -- e2e/monitoring.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const MONITORING_ROUTE = '/monitoring'

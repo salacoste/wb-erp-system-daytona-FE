@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "epic128-diagnostic-capture-policy/v1",
+  "enabledByDefault": false,
+  "maxBytes": 65536,
+  "maxRecords": 100,
+  "retentionHours": 24,
+  "accessControl": "OWNER_ONLY",
+  "sanitization": "ALLOWLIST_V1",
+  "allowedFields": [
+    "captureId",
+    "capturedAt",
+    "providerContractVersion",
+    "profileVersion",
+    "responseClass",
+    "statusCode",
+    "bodyShapeHash"
+  ]
+}

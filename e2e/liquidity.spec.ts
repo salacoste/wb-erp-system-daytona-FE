@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
-
 
 async function firstEnabledLiquidationAction(page: import('@playwright/test').Page) {
   const buttons = page.locator('tbody tr button')
@@ -426,7 +425,7 @@ test.describe('Liquidity Analysis', () => {
       // Intercept API to delay response
       await page.route('**/liquidity**', async route => {
         await new Promise(r => setTimeout(r, 1000))
-        await route.continue()
+        await route.fallback()
       })
 
       await page.goto(ROUTES.analytics.liquidity)
@@ -508,7 +507,7 @@ test.describe('Liquidity Analysis', () => {
           })
         } else {
           // Subsequent calls succeed
-          route.continue()
+          route.fallback()
         }
       })
 
@@ -564,8 +563,13 @@ test.describe('Liquidity Analysis', () => {
       await page.waitForLoadState('domcontentloaded')
 
       const sidebarLink = page.getByRole('link', { name: /^Ликвидность$/ })
-      const hasSidebarLink = await sidebarLink.isVisible({ timeout: TIMEOUTS.api }).catch(() => false)
-      test.skip(!hasSidebarLink, 'Liquidity sidebar link is not visible for current viewport/session')
+      const hasSidebarLink = await sidebarLink
+        .isVisible({ timeout: TIMEOUTS.api })
+        .catch(() => false)
+      test.skip(
+        !hasSidebarLink,
+        'Liquidity sidebar link is not visible for current viewport/session'
+      )
 
       await expect(sidebarLink).toHaveAttribute('href', /\/analytics\/liquidity$/)
     })
@@ -598,7 +602,10 @@ test.describe('Liquidity Analysis', () => {
       const hasUnitEconLink = await unitEconLink
         .isVisible({ timeout: TIMEOUTS.api })
         .catch(() => false)
-      test.skip(!hasUnitEconLink, 'Unit economics navigation link is not visible for current session')
+      test.skip(
+        !hasUnitEconLink,
+        'Unit economics navigation link is not visible for current session'
+      )
 
       await Promise.all([
         page.waitForURL(/unit-economics/, { timeout: TIMEOUTS.navigation }),

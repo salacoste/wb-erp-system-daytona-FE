@@ -12,7 +12,7 @@
  * @see _bmad-output/implementation-artifacts/77.2-fe-shipment-e2e-tests.md
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from '../fixtures/network-test'
 
 const SHIPMENTS_ROUTE = '/shipments'
 

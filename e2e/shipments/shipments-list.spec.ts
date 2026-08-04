@@ -12,7 +12,7 @@
  * @see _bmad-output/implementation-artifacts/77.2-fe-shipment-e2e-tests.md
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 
 const SHIPMENTS_ROUTE = '/shipments'
 
@@ -33,9 +33,10 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       const table = main.locator('table')
 
       const hasTable = (await table.count()) > 0 && (await table.isVisible())
-      const hasKnownState = /нет отправок|нет отправок по фильтру|создайте первую отправку|загрузка отправок/i.test(
-        mainText
-      )
+      const hasKnownState =
+        /нет отправок|нет отправок по фильтру|создайте первую отправку|загрузка отправок/i.test(
+          mainText
+        )
       const hasLoadingSkeleton = (await main.locator('.animate-pulse').count()) > 0
 
       expect(hasTable || hasKnownState || hasLoadingSkeleton).toBeTruthy()

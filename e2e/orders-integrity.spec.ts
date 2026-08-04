@@ -1,4 +1,4 @@
-import { expect, test, type Page, type Route } from '@playwright/test'
+import { expect, test, type Page, type Route } from './fixtures/network-test'
 
 const ROUTE = '/orders/integrity'
 const INTEGRITY_API = '**/health/orders-integrity**'

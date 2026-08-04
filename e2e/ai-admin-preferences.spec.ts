@@ -10,7 +10,7 @@
  * Run: npx playwright test e2e/ai-admin-preferences.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 test.describe('AI Admin Preferences Page', () => {

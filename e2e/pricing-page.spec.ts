@@ -14,7 +14,7 @@
  * Run: npx playwright test e2e/pricing-page.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { TIMEOUTS } from './fixtures/test-data'
 
 const PRICING_URL = '/analytics/pricing'
@@ -127,7 +127,9 @@ test.describe('Price Recommendations page', () => {
       .toBe(true)
 
     expect(requestedUrls.some(url => url.includes('gap_filter=below&'))).toBe(false)
-    expect(requestedUrls.some(url => url.includes('sort=margin_asc') || url.includes('sort=margin_desc'))).toBe(false)
+    expect(
+      requestedUrls.some(url => url.includes('sort=margin_asc') || url.includes('sort=margin_desc'))
+    ).toBe(false)
   })
 
   // -------------------------------------------------------------------------

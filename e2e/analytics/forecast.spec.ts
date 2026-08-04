@@ -11,7 +11,7 @@
  * Run with: npm run test:e2e -- e2e/analytics/forecast.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/network-test'
 import { ROUTES, TIMEOUTS } from '../fixtures/test-data'
 
 test.describe('AI Forecast Page', () => {
@@ -76,10 +76,12 @@ test.describe('AI Forecast Page', () => {
   })
 
   test('page loads without console errors', async ({ page }) => {
-    const consoleErrors: string[] = []
+    let consoleErrorCount = 0
     page.on('console', msg => {
-      if (msg.type() === 'error') {
-        consoleErrors.push(msg.text())
+      const isIgnored =
+        msg.text().includes('downloadable font') || msg.text().includes('Failed to fetch')
+      if (msg.type() === 'error' && !isIgnored) {
+        consoleErrorCount += 1
       }
     })
 
@@ -90,10 +92,6 @@ test.describe('AI Forecast Page', () => {
       timeout: TIMEOUTS.api,
     })
 
-    // Filter out known harmless warnings (e.g. React dev-only warnings, network errors from missing backend)
-    const realErrors = consoleErrors.filter(
-      e => !e.includes('downloadable font') && !e.includes('Failed to fetch')
-    )
-    expect(realErrors).toHaveLength(0)
+    expect(consoleErrorCount).toBe(0)
   })
 })

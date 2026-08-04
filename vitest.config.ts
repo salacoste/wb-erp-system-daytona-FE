@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config'
 import path from 'path'
 
+export const VITEST_SETUP_FILES = [
+  './src/test/network-guard-bootstrap.ts',
+  './src/test/fixtures/module-evaluation-network-attempt.ts',
+  './src/test/localStorage-polyfill.ts',
+  './src/test/setup.ts',
+] as const
+
 export default defineConfig({
   test: {
     environment: 'jsdom',
@@ -10,8 +17,11 @@ export default defineConfig({
         storageQuota: 10000000,
       },
     },
-    // Polyfill localStorage before MSW loads
-    setupFiles: ['./src/test/localStorage-polyfill.ts', './src/test/setup.ts'],
+    // Sequence is explicit: the guard must precede every general/MSW import.
+    setupFiles: [...VITEST_SETUP_FILES],
+    sequence: {
+      setupFiles: 'list',
+    },
     testTimeout: 10000, // 10 seconds timeout for all tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
     // Vitest 4 preserves spies between tests unless explicitly restored. The
@@ -41,6 +51,8 @@ export default defineConfig({
       'e2e/**', // Exclude E2E tests from Vitest
       'tests/e2e/**', // Exclude E2E tests in tests/ directory
       'scripts/check-privacy-console.test.mjs', // Runs separately with node:test
+      'scripts/privacy/diagnostic-capture-policy.test.mjs', // Runs separately with node:test
+      'scripts/story-128-10/verify-frontend.test.mjs', // Runs separately with node:test
       'dist/**',
       '**/*.config.*',
       // Exclude OMC agent worktrees (stale full-repo copies under

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 /**
@@ -282,7 +282,7 @@ test.describe('Supply Planning Analytics', () => {
       // Intercept API to delay response
       await page.route('**/supply-planning**', async route => {
         await new Promise(r => setTimeout(r, 1000))
-        await route.continue()
+        await route.fallback()
       })
 
       await page.goto(ROUTES.analytics.supplyPlanning)
@@ -363,7 +363,7 @@ test.describe('Supply Planning Analytics', () => {
           })
         } else {
           // Subsequent calls succeed
-          route.continue()
+          route.fallback()
         }
       })
 

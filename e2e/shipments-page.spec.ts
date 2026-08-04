@@ -13,7 +13,7 @@
  * Run: npx playwright test e2e/shipments-page.spec.ts
  */
 
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 test.describe('Shipments List Page', () => {
@@ -36,9 +36,10 @@ test.describe('Shipments List Page', () => {
     const main = page.locator('main')
     const mainText = (await main.textContent()) ?? ''
     const hasTable = (await main.locator('table').count()) > 0
-    const hasKnownStateText = /нет отправок|создайте первую отправку|создать отправку|нет данных|доступ запрещён|загрузка отправок/i.test(
-      mainText
-    )
+    const hasKnownStateText =
+      /нет отправок|создайте первую отправку|создать отправку|нет данных|доступ запрещён|загрузка отправок/i.test(
+        mainText
+      )
     const hasSkeleton = (await main.locator('[data-slot="skeleton"], .animate-pulse').count()) > 0
 
     expect(hasTable || hasKnownStateText || hasSkeleton).toBeTruthy()
