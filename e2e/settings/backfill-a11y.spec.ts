@@ -248,22 +248,17 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
 
     test('should have proper dialog ARIA attributes', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
+      const startButton = page.getByRole('button', {
+        name: 'Запустить бэкфилл',
+        exact: true,
+      })
       if (await startButton.isVisible()) {
         await startButton.click()
 
-        const dialog = page.getByRole('dialog')
+        const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла', exact: true })
         if (await dialog.isVisible()) {
-          // Should have aria-modal
-          const ariaModal = await dialog.getAttribute('aria-modal')
-          expect(ariaModal).toBe('true')
-
-          // Should have accessible name
-          const hasLabel =
-            (await dialog.getAttribute('aria-label')) !== null ||
-            (await dialog.getAttribute('aria-labelledby')) !== null
-
-          expect(hasLabel).toBeTruthy()
+          await expect(dialog).toHaveAttribute('aria-labelledby', /\S+/)
+          await expect(dialog).toHaveAttribute('aria-describedby', /\S+/)
 
           // Close dialog
           await page.keyboard.press('Escape')
@@ -272,20 +267,18 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
 
     test('should return focus to trigger after dialog closes', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-      if (await startButton.isVisible()) {
-        await startButton.click()
+      const startButton = page.getByRole('button', {
+        name: 'Запустить бэкфилл',
+        exact: true,
+      })
+      await expect(startButton).toBeVisible()
+      await startButton.click()
 
-        const dialog = page.getByRole('dialog')
-        if (await dialog.isVisible()) {
-          await page.keyboard.press('Escape')
-          await expect(dialog).not.toBeVisible()
-
-          // Focus should return to start button (best practice)
-          const isFocused = await startButton.evaluate(el => el === document.activeElement)
-          expect(isFocused || true).toBeTruthy()
-        }
-      }
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expect(dialog).toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(dialog).not.toBeVisible()
+      await expect(startButton).toBeFocused()
     })
   })
 
@@ -393,12 +386,39 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
 
   test.describe('Live Regions and Announcements', () => {
     test.beforeEach(async ({ page }) => {
+      await page.route('**/v1/admin/backfill/status', route =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([
+            {
+              cabinetId: 'cabinet-a11y-running',
+              cabinetName: 'Кабинет доступности',
+              reportsStatus: 'in_progress',
+              analyticsStatus: 'pending',
+              overallProgress: 42,
+              progress: {
+                percentage: 42,
+                estimated_remaining_seconds: 600,
+                total_days: 365,
+                completed_days: 153,
+                current_date: '2026-03-01',
+              },
+              lastError: null,
+              updatedAt: '2026-08-05T09:00:00Z',
+            },
+          ]),
+        })
+      )
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
         test.skip()
       }
+
+      await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
+      await expect(page.getByRole('table')).toBeVisible()
     })
 
     test('should have aria-live regions for dynamic content', async ({ page }) => {
@@ -406,23 +426,21 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
       const liveRegions = page.locator('[aria-live]')
       const liveRegionCount = await liveRegions.count()
 
-      // Live regions are recommended but not required
-      console.log(`Found ${liveRegionCount} aria-live regions`)
-      expect(liveRegionCount >= 0).toBeTruthy()
+      test.skip(
+        liveRegionCount === 0,
+        'Configured running Backfill fixture exposes progressbar semantics but no aria-live region'
+      )
+      await expect(liveRegions.first()).toHaveAttribute('aria-live', /^(polite|assertive)$/)
     })
 
     test('should announce progress changes to assistive technology', async ({ page }) => {
       // Check for progress indicators with proper ARIA
       const progressIndicators = page.locator('[role="progressbar"], [aria-valuenow]')
-      const progressCount = await progressIndicators.count()
-
-      if (progressCount > 0) {
-        const firstProgress = progressIndicators.first()
-        const hasAriaValue = (await firstProgress.getAttribute('aria-valuenow')) !== null
-
-        // Progress bars should have aria-valuenow for screen readers
-        expect(hasAriaValue || true).toBeTruthy()
-      }
+      await expect(progressIndicators).toHaveCount(1)
+      await expect(progressIndicators.first()).toHaveAttribute('aria-label', 'Прогресс: 42%')
+      await expect(progressIndicators.first()).toHaveAttribute('aria-valuemin', '0')
+      await expect(progressIndicators.first()).toHaveAttribute('aria-valuemax', '100')
+      await expect(progressIndicators.first()).toHaveAttribute('aria-valuenow', '42')
     })
   })
 })
@@ -461,11 +479,8 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
     expect(tabCount).toBeGreaterThanOrEqual(4) // Overview, Trends, Seasonality, Comparison
 
     // Active tab should have aria-selected="true"
-    const activeTab = tabs.filter({ has: page.locator('[aria-selected="true"]') })
-    const activeCount = await activeTab.count()
-
-    // At least one tab should be selected (may be nested attribute)
-    expect(activeCount >= 0).toBeTruthy()
+    const activeTabs = tablist.locator('[role="tab"][aria-selected="true"]')
+    await expect(activeTabs).toHaveCount(1)
 
     // Tab panels should have role="tabpanel"
     const tabpanel = page.locator('main [role="tabpanel"][data-state="active"]').first()

@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
+import { execFile } from 'node:child_process'
 import { readFile } from 'node:fs/promises'
 import { isAbsolute, relative, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { promisify } from 'node:util'
 
-export const OWNED_E2E_FILES = [
+const execFileAsync = promisify(execFile)
+
+export const STORY_162_3_E2E_FILES = [
   'e2e/liquidity.spec.ts',
   'e2e/analytics/fbs-orders-analytics.spec.ts',
   'e2e/margin-analytics.spec.ts',
@@ -14,6 +18,22 @@ export const OWNED_E2E_FILES = [
   'e2e/analytics/analytics-hub.spec.ts',
   'e2e/returns-analytics.spec.ts',
 ]
+
+export const STORY_162_4_E2E_FILES = [
+  'e2e/settings/backfill-admin.spec.ts',
+  'e2e/settings/backfill-a11y.spec.ts',
+  'e2e/backfill-page.spec.ts',
+  'e2e/supply-planning.spec.ts',
+  'e2e/supplies/supplies-a11y.spec.ts',
+  'e2e/supplies/supplies-list.spec.ts',
+  'e2e/supplies/supply-detail.spec.ts',
+  'e2e/supplies/supply-lifecycle.spec.ts',
+  'e2e/cogs-assignment.spec.ts',
+  'e2e/cogs-pages.spec.ts',
+  'e2e/price-calculator.spec.ts',
+]
+
+export const OWNED_E2E_FILES = [...STORY_162_3_E2E_FILES, ...STORY_162_4_E2E_FILES]
 
 function maskCommentsAndStrings(source) {
   const masked = [...source]
@@ -165,10 +185,10 @@ function isLocatorCountNonnegativeComparison(expression) {
 
 function isLocatorCountValue(expression) {
   const normalized = stripOuterParentheses(expression)
-  return /^(?:await\s+)?[\s\S]*\.count\s*\(\s*\)$/.test(normalized)
+  return /^(?:await\s+)?[\s\S]*\.count\s*\(\s*\)(?:\s*\.catch\s*\([\s\S]*\))?$/.test(normalized)
 }
 
-function hasUnconditionalLocatorCountDisjunction(expression) {
+function splitTopLevelLogicalOr(expression) {
   const normalized = stripOuterParentheses(expression)
   let depth = 0
   let operandStart = 0
@@ -187,9 +207,24 @@ function hasUnconditionalLocatorCountDisjunction(expression) {
     }
   }
 
-  if (operands.length === 0) return false
+  if (operands.length === 0) return []
   operands.push(normalized.slice(operandStart))
-  return operands.some(isLocatorCountNonnegativeComparison)
+  return operands
+}
+
+function hasUnconditionalLocatorCountDisjunction(expression) {
+  return splitTopLevelLogicalOr(expression).some(isLocatorCountNonnegativeComparison)
+}
+
+function locatorStateValue(expression) {
+  const normalized = stripOuterParentheses(expression)
+  const match = normalized.match(/^(?:await\s+)?(.+?)\.is(Disabled|Enabled)\s*\(\s*\)$/s)
+  if (!match) return null
+
+  return {
+    locator: match[1].replace(/\s+/g, ''),
+    state: match[2].toLowerCase(),
+  }
 }
 
 function collectVariableAssignments(code) {
@@ -212,12 +247,12 @@ function collectVariableAssignments(code) {
       if (assignment.index < declaration.index) continue
       const expressionStart = assignment.index + assignment[0].length
       const expressionEnd = findExpressionEnd(code, expressionStart)
+      const expression = code.slice(expressionStart, expressionEnd)
       events.push({
         index: assignment.index,
-        isUnconditional: isLocatorCountNonnegativeComparison(
-          code.slice(expressionStart, expressionEnd)
-        ),
-        isLocatorCountValue: isLocatorCountValue(code.slice(expressionStart, expressionEnd)),
+        isUnconditional: isLocatorCountNonnegativeComparison(expression),
+        isLocatorCountValue: isLocatorCountValue(expression),
+        locatorState: locatorStateValue(expression),
       })
     }
 
@@ -244,6 +279,34 @@ function isTrackedLocatorCountNonnegativeComparison(
 
   return Boolean(
     latestAssignmentBefore(variableAssignments, leftOperand, assertionIndex)?.isLocatorCountValue
+  )
+}
+
+function resolveLocatorStateOperand(expression, variableAssignments, assertionIndex) {
+  const normalized = stripOuterParentheses(expression)
+  const directState = locatorStateValue(normalized)
+  if (directState) return directState
+  if (!/^[A-Za-z_$][\w$]*$/.test(normalized)) return null
+
+  return (
+    latestAssignmentBefore(variableAssignments, normalized, assertionIndex)?.locatorState ?? null
+  )
+}
+
+function hasLocatorStateLogicalComplement(expression, variableAssignments, assertionIndex) {
+  const statesByLocator = new Map()
+
+  for (const operand of splitTopLevelLogicalOr(expression)) {
+    const locatorState = resolveLocatorStateOperand(operand, variableAssignments, assertionIndex)
+    if (!locatorState) continue
+
+    const states = statesByLocator.get(locatorState.locator) ?? new Set()
+    states.add(locatorState.state)
+    statesByLocator.set(locatorState.locator, states)
+  }
+
+  return [...statesByLocator.values()].some(
+    states => states.has('disabled') && states.has('enabled')
   )
 }
 
@@ -280,7 +343,9 @@ export function scanSource(source, file = '<source>') {
       isTrackedLocatorCountNonnegativeComparison(argument, variableAssignments, match.index)
     ) {
       message = 'a nonnegative count assertion is unconditional'
-    } else if (/^\.toBeGreaterThanOrEqual\s*\(\s*0\s*\)/.test(matcher)) {
+    } else if (hasLocatorStateLogicalComplement(argument, variableAssignments, match.index)) {
+      message = 'disabled-or-enabled checks for the same locator cannot prove validation state'
+    } else if (/^\s*\.toBeGreaterThanOrEqual\s*\(\s*0\s*\)/.test(matcher)) {
       message = 'toBeGreaterThanOrEqual(0) cannot prove content exists'
     } else if (
       latestAssignmentBefore(variableAssignments, argument, match.index)?.isUnconditional
@@ -312,6 +377,19 @@ export async function scanFiles(files = OWNED_E2E_FILES, root = process.cwd()) {
   }
 
   return findings
+}
+
+export async function scanGitRevision(files, revision, root = process.cwd()) {
+  return Promise.all(
+    files.map(async file => {
+      const { stdout } = await execFileAsync('git', ['show', `${revision}:${file}`], {
+        cwd: root,
+        encoding: 'utf8',
+        maxBuffer: 1024 * 1024,
+      })
+      return scanSource(stdout, file)
+    })
+  )
 }
 
 export function resolveScanTargets(args) {

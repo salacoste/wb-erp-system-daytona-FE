@@ -10,7 +10,6 @@
 
 import { useState } from 'react'
 import { Download, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,8 +22,12 @@ import {
 import { StickerFormatSelector } from './StickerFormatSelector'
 import { StickerPreview } from './StickerPreview'
 import { useGenerateStickers } from '@/hooks/useGenerateStickers'
-import { downloadStickersFromBase64 } from '@/hooks/useDownloadDocument'
-import type { StickerFormat } from '@/types/supplies'
+import { useDownloadDocument } from '@/hooks/useDownloadDocument'
+import type { DocumentType, StickerFormat } from '@/types/supplies'
+
+const GENERATED_DOCUMENT_TYPES: Record<'STICKER', DocumentType> = {
+  STICKER: 'sticker',
+}
 
 interface GenerateStickersModalProps {
   /** Whether the modal is open */
@@ -42,27 +45,27 @@ export function GenerateStickersModal({
 }: GenerateStickersModalProps) {
   const [format, setFormat] = useState<StickerFormat>('png')
 
-  const {
-    mutate: generateStickersMutation,
-    isPending,
-    data: generatedData,
-  } = useGenerateStickers({
-    onSuccess: data => {
-      // If we have base64 data, trigger download
-      if (data.data) {
-        downloadStickersFromBase64(data.data, format, supplyId)
-        toast.success('Стикеры скачаны')
-        onOpenChange(false)
-      } else if (format === 'zpl') {
-        // ZPL doesn't have preview data, just success
-        toast.success('Стикеры сгенерированы')
-        onOpenChange(false)
-      }
-    },
-  })
+  const { mutateAsync: generateStickersMutation, isPending: isGenerating } = useGenerateStickers()
+  const { mutateAsync: downloadDocumentMutation, isPending: isDownloading } = useDownloadDocument()
+  const isPending = isGenerating || isDownloading
 
-  const handleDownload = () => {
-    generateStickersMutation({ supplyId, format })
+  const handleDownload = async () => {
+    try {
+      const generatedDocument = await generateStickersMutation({ supplyId, format })
+      const documentType = GENERATED_DOCUMENT_TYPES[generatedDocument.docType]
+      const downloadedFormat: StickerFormat =
+        generatedDocument.format === 'zplv' ? 'zpl' : generatedDocument.format
+
+      await downloadDocumentMutation({
+        supplyId,
+        docType: documentType,
+        format: downloadedFormat,
+        filename: `stickers-${supplyId}.${downloadedFormat}`,
+      })
+      onOpenChange(false)
+    } catch {
+      // Mutation hooks own the user-facing generation/download errors.
+    }
   }
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -72,9 +75,6 @@ export function GenerateStickersModal({
     }
     onOpenChange(newOpen)
   }
-
-  // Get preview data for current format if already generated
-  const previewData = generatedData?.data
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -89,7 +89,7 @@ export function GenerateStickersModal({
           <StickerFormatSelector value={format} onChange={setFormat} disabled={isPending} />
 
           {/* Preview area */}
-          <StickerPreview format={format} data={previewData} isLoading={isPending} />
+          <StickerPreview format={format} isLoading={isPending} />
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">

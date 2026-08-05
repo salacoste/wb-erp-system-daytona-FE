@@ -68,15 +68,14 @@ export function OrderPickerTable({
       </div>
 
       {/* Virtualized List */}
-      <div role="listbox" aria-label="Список заказов" aria-multiselectable="true">
-        <List
-          rowComponent={OrderRow}
-          rowCount={orders.length}
-          rowHeight={ROW_HEIGHT}
-          rowProps={rowProps}
-          style={{ height: height - 48, width: '100%' }}
-        />
-      </div>
+      <List
+        aria-label="Список заказов"
+        rowComponent={OrderRow}
+        rowCount={orders.length}
+        rowHeight={ROW_HEIGHT}
+        rowProps={rowProps}
+        style={{ height: height - 48, width: '100%' }}
+      />
     </div>
   )
 }

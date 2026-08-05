@@ -26,8 +26,6 @@ import {
   mockSupplyOrder2,
   mockSupplyOrderNoName,
   mockStickerDocumentPng,
-  mockStickerDocumentSvg,
-  mockStickerDocumentZpl,
   mockBarcodeDocument,
   mockAcceptanceActDocument,
   mockSupplyListItemOpen,
@@ -191,18 +189,25 @@ export const mockGenerateStickersRequestSvg: GenerateStickersRequest = { format:
 export const mockGenerateStickersRequestZpl: GenerateStickersRequest = { format: 'zpl' }
 
 export const mockGenerateStickersResponsePng: GenerateStickersResponse = {
-  document: mockStickerDocumentPng,
-  data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYA...base64...',
-  message: 'Stickers generated successfully',
+  id: 'sticker-doc-png',
+  docType: 'STICKER',
+  format: 'png',
+  fileSize: 245760,
+  generatedAt: '2026-01-15T16:05:00.000Z',
 }
 
 export const mockGenerateStickersResponseSvg: GenerateStickersResponse = {
-  document: mockStickerDocumentSvg,
-  data: 'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53...base64...',
-  message: 'Stickers generated successfully',
+  id: 'sticker-doc-svg',
+  docType: 'STICKER',
+  format: 'svg',
+  fileSize: 102400,
+  generatedAt: '2026-01-15T16:05:00.000Z',
 }
 
 export const mockGenerateStickersResponseZpl: GenerateStickersResponse = {
-  document: mockStickerDocumentZpl,
-  message: 'Stickers generated successfully',
+  id: 'sticker-doc-zpl',
+  docType: 'STICKER',
+  format: 'zplv',
+  fileSize: 15360,
+  generatedAt: '2026-01-15T16:05:00.000Z',
 }

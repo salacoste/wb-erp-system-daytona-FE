@@ -113,9 +113,16 @@ export interface GenerateStickersRequest {
 
 /** Response from generating stickers */
 export interface GenerateStickersResponse {
-  document: SupplyDocument
-  data?: string
-  message: string
+  /** Generated document ID */
+  id: string
+  /** Backend document type used by the binary download endpoint */
+  docType: 'STICKER'
+  /** Backend maps the requested `zpl` format to vertical ZPL (`zplv`) */
+  format: 'png' | 'svg' | 'zplv'
+  /** Generated file size in bytes */
+  fileSize: number
+  /** Generation time serialized as ISO 8601 */
+  generatedAt: string
 }
 
 /** Status change info from sync */

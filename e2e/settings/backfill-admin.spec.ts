@@ -3,204 +3,237 @@
  * Story 51.12-FE: E2E Tests for FBS Analytics + Backfill
  * Epic 51-FE: FBS Historical Analytics UI (365 Days)
  *
- * Tests the Backfill Admin page (Owner-only access):
- * - Access control (Owner only, non-Owner redirect)
- * - Status table display
- * - Start/Pause/Resume actions
- * - Progress bars and ETA display
- * - Error log display
- *
- * @see docs/stories/epic-51/story-51.11-fe-backfill-admin-page.md
- * @see docs/stories/epic-51/story-51.12-fe-e2e-tests.md
+ * Story 162.4 keeps the Owner shell and every status assertion deterministic.
  */
+
+import type { Page } from '@playwright/test'
 
 import { test, expect } from '../fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
 
-// Routes
 const BACKFILL_ADMIN_ROUTE = '/settings/backfill'
+const BACKFILL_STATUS_ROUTE = '**/v1/admin/backfill/status'
+
+type BackfillFixture = {
+  cabinetId: string
+  cabinetName: string
+  reportsStatus: string
+  analyticsStatus: string
+  overallProgress: number
+  progress: {
+    percentage: number
+    estimated_remaining_seconds: number | null
+    total_days: number
+    completed_days: number
+    current_date: string | null
+  }
+  lastError: string | null
+  updatedAt: string
+}
+
+const runningCabinet: BackfillFixture = {
+  cabinetId: 'cabinet-running',
+  cabinetName: 'Рабочий кабинет',
+  reportsStatus: 'in_progress',
+  analyticsStatus: 'pending',
+  overallProgress: 42,
+  progress: {
+    percentage: 42,
+    estimated_remaining_seconds: 600,
+    total_days: 365,
+    completed_days: 153,
+    current_date: '2026-03-01',
+  },
+  lastError: null,
+  updatedAt: '2026-08-05T09:00:00Z',
+}
+
+const pausedCabinet: BackfillFixture = {
+  ...runningCabinet,
+  cabinetId: 'cabinet-paused',
+  cabinetName: 'Кабинет на паузе',
+  reportsStatus: 'paused',
+  analyticsStatus: 'paused',
+  overallProgress: 30,
+  progress: { ...runningCabinet.progress, percentage: 30, completed_days: 110 },
+}
+
+const failedCabinet: BackfillFixture = {
+  ...runningCabinet,
+  cabinetId: 'cabinet-failed',
+  cabinetName: 'Кабинет с ошибкой',
+  reportsStatus: 'failed',
+  analyticsStatus: 'failed',
+  overallProgress: 17,
+  progress: {
+    ...runningCabinet.progress,
+    percentage: 17,
+    completed_days: 62,
+    estimated_remaining_seconds: null,
+  },
+  lastError: 'WB API timeout after 5 retries',
+}
+
+const idleCabinet: BackfillFixture = {
+  ...runningCabinet,
+  cabinetId: 'cabinet-idle',
+  cabinetName: 'Новый кабинет',
+  reportsStatus: 'not_started',
+  analyticsStatus: 'not_started',
+  overallProgress: 0,
+  progress: { ...runningCabinet.progress, percentage: 0, completed_days: 0 },
+}
+
+const statusFixtures = [runningCabinet, pausedCabinet, failedCabinet, idleCabinet]
+
+async function mockBackfillStatus(page: Page, cabinets: BackfillFixture[]): Promise<void> {
+  await page.route(BACKFILL_STATUS_ROUTE, route =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(cabinets),
+    })
+  )
+}
+
+async function expectOwnerShell(page: Page): Promise<void> {
+  await expect(page).toHaveURL(/\/settings\/backfill(?:[/?#]|$)/)
+  await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
+  await expect(page.getByText('Загрузка исторических данных FBS за 365 дней')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Запустить бэкфилл' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Обновить', exact: true })).toBeVisible()
+}
+
+async function gotoOwnerBackfill(page: Page, cabinets: BackfillFixture[]): Promise<void> {
+  await mockBackfillStatus(page, cabinets)
+  await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+  await expectOwnerShell(page)
+
+  if (cabinets.length === 0) {
+    await expect(page.getByText('Нет кабинетов для бэкфилла')).toBeVisible()
+  } else {
+    await expect(page.getByRole('table')).toBeVisible()
+  }
+}
 
 test.describe('Epic 51-FE: Backfill Admin Page', () => {
   test.describe('Access Control (Owner Only)', () => {
     test('should display page for authenticated Owner user', async ({ page }) => {
-      // Navigate to backfill admin page (assumes auth setup has Owner role)
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      // If page loads without redirect, user has access
-      const currentUrl = page.url()
-      const hasAccess = currentUrl.includes('/settings/backfill')
-
-      if (hasAccess) {
-        // Verify page content
-        await expect(page.locator('main')).toBeVisible()
-
-        // Verify page title
-        const title = page.locator('h1')
-        await expect(title).toBeVisible()
-        const titleText = await title.textContent()
-        expect(titleText?.toLowerCase()).toMatch(/бэкфилл|backfill|управлен/i)
-      } else {
-        // User was redirected (non-Owner)
-        expect(currentUrl).toMatch(/dashboard|login/)
-      }
+      await gotoOwnerBackfill(page, [])
     })
 
     test('should redirect non-Owner users to dashboard', async ({ page }) => {
-      // This test assumes the auth setup may have different roles
-      // For a proper test, we'd need to set up a non-Owner user session
-
+      await mockBackfillStatus(page, [])
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
 
-      const currentUrl = page.url()
+      const redirected = await page
+        .waitForURL(url => !url.pathname.startsWith(BACKFILL_ADMIN_ROUTE), { timeout: 3_000 })
+        .then(() => true)
+        .catch(() => false)
 
-      // Non-Owner should be redirected OR see 403 error
-      if (!currentUrl.includes('/settings/backfill')) {
-        // Redirected - expected for non-Owner
-        expect(currentUrl).toMatch(/dashboard|403|login/)
-      } else {
-        // Has access - must be Owner (test passes)
-        await expect(page.locator('main')).toBeVisible()
+      if (redirected) {
+        await expect(page).toHaveURL(/\/(dashboard|login)(?:[/?#]|$)/)
+        await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toHaveCount(0)
+        return
       }
+
+      await expectOwnerShell(page)
+      test.skip(
+        true,
+        'Configured E2E storage state authenticates an Owner; a non-Owner auth fixture is unavailable'
+      )
     })
 
     test('should show loading skeleton while checking permissions', async ({ page }) => {
-      // Navigate and look for loading state
-      const response = page.goto(BACKFILL_ADMIN_ROUTE)
+      let releaseStatus: (() => void) | undefined
+      const statusGate = new Promise<void>(resolve => {
+        releaseStatus = resolve
+      })
 
-      // Check for skeleton during load - skeletons may appear briefly
-      const skeletonSelector = '[class*="skeleton"]'
-      const skeletonCount = await page
-        .locator(skeletonSelector)
-        .count()
-        .catch(() => 0)
+      await page.route(BACKFILL_STATUS_ROUTE, async route => {
+        await statusGate
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: '[]',
+        })
+      })
 
-      await response
-      await page.locator('main').waitFor({ state: 'visible' })
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
 
-      // Page should eventually show content or redirect
-      // Skeletons may have appeared during load (count >= 0 is valid)
-      expect(skeletonCount >= 0).toBeTruthy()
+      const loadingRows = page.locator('main div.space-y-3 > div.flex.items-center.gap-4')
+      await expect(loadingRows).toHaveCount(3)
+      await expect(loadingRows.first().locator('.animate-pulse')).toHaveCount(5)
+
+      releaseStatus?.()
+      await expect(page.getByText('Нет кабинетов для бэкфилла')).toBeVisible()
     })
   })
 
   test.describe('Page Layout & Header', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      // Skip if redirected (non-Owner)
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
+      await gotoOwnerBackfill(page, [])
     })
 
     test('should display page title "Управление бэкфиллом"', async ({ page }) => {
-      const title = page.locator('h1')
-      await expect(title).toBeVisible()
-      const titleText = await title.textContent()
-      expect(titleText).toMatch(/бэкфилл|backfill|управлен/i)
+      await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
     })
 
     test('should display page subtitle with description', async ({ page }) => {
-      const subtitle = page
-        .locator('p')
-        .filter({ hasText: /данн|истори/i })
-        .first()
-      const hasSubtitle = (await subtitle.count()) > 0
-      expect(hasSubtitle || true).toBeTruthy()
+      await expect(page.getByText('Загрузка исторических данных FBS за 365 дней')).toBeVisible()
     })
 
     test('should display refresh button', async ({ page }) => {
-      const refreshButton = page
-        .locator('button:has-text("Обновить")')
-        .or(page.locator('[aria-label*="refresh"]'))
-        .or(page.locator('button svg[class*="refresh"]').locator('..'))
-
-      const hasRefresh = (await refreshButton.count()) > 0
-      expect(hasRefresh || true).toBeTruthy()
+      await expect(page.getByRole('button', { name: 'Обновить', exact: true })).toBeEnabled()
     })
   })
 
   test.describe('Status Table Display', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
+      await gotoOwnerBackfill(page, statusFixtures)
     })
 
     test('should display status table or empty state', async ({ page }) => {
-      // Wait for content to load
-      await page.waitForTimeout(2000)
-
-      // Either table or empty state should be visible
-      const table = page.locator('table')
-      const emptyState = page
-        .locator('[data-testid="empty-state"]')
-        .or(page.locator('text=/нет кабинет/i'))
-
-      const hasTable = (await table.count()) > 0
-      const hasEmptyState = (await emptyState.count()) > 0
-
-      expect(hasTable || hasEmptyState).toBeTruthy()
+      await expect(page.getByRole('table')).toBeVisible()
+      await expect(page.getByText('Нет кабинетов для бэкфилла')).toHaveCount(0)
     })
 
     test('should display table columns: Кабинет, Статус, Прогресс, ETA, Действия', async ({
       page,
     }) => {
-      const table = page.locator('table')
-      if (await table.isVisible()) {
-        const headers = table.locator('thead th')
-        const headerCount = await headers.count()
-
-        // Should have at least 4 columns
-        expect(headerCount).toBeGreaterThanOrEqual(4)
-      }
+      const headers = page.getByRole('columnheader')
+      await expect(headers).toHaveText([
+        'Кабинет',
+        'Статус',
+        'Прогресс',
+        'ETA',
+        'Ошибки',
+        'Действия',
+      ])
     })
 
     test('should display cabinet rows with data', async ({ page }) => {
-      const table = page.locator('table')
-      if (await table.isVisible()) {
-        const rows = table.locator('tbody tr')
-        const rowCount = await rows.count()
-
-        if (rowCount > 0) {
-          const firstRow = rows.first()
-          await expect(firstRow).toBeVisible()
-
-          // Row should have content
-          const rowText = await firstRow.textContent()
-          expect(rowText?.length).toBeGreaterThan(5)
-        }
-      }
+      const rows = page.getByRole('row')
+      await expect(rows).toHaveCount(statusFixtures.length + 1)
+      await expect(page.getByRole('row', { name: /Рабочий кабинет/ })).toContainText('Выполняется')
+      await expect(page.getByRole('row', { name: /Кабинет на паузе/ })).toContainText(
+        'Приостановлено'
+      )
+      await expect(page.getByRole('row', { name: /Кабинет с ошибкой/ })).toContainText('Ошибка')
     })
 
     test('should display status badges with correct colors', async ({ page }) => {
-      const statusBadges = page.locator('[class*="badge"]')
-      const badgeCount = await statusBadges.count()
-
-      if (badgeCount > 0) {
-        const firstBadge = statusBadges.first()
-        await expect(firstBadge).toBeVisible()
-
-        // Badge should have text
-        const badgeText = await firstBadge.textContent()
-        expect(badgeText?.length).toBeGreaterThan(0)
-      }
+      const runningRow = page.getByRole('row', { name: /Рабочий кабинет/ })
+      await expect(runningRow.getByText('Выполняется', { exact: true })).toBeVisible()
+      await expect(runningRow.getByText('В очереди', { exact: true })).toBeVisible()
     })
 
     test('should display progress bars for in-progress cabinets', async ({ page }) => {
-      const progressBars = page
-        .locator('[role="progressbar"]')
-        .or(page.locator('[class*="progress"]'))
-      const progressCount = await progressBars.count()
-
-      // Progress bars exist if there are cabinets
-      expect(progressCount >= 0).toBeTruthy()
+      const runningRow = page.getByRole('row', { name: /Рабочий кабинет/ })
+      const progress = runningRow.getByRole('progressbar', { name: 'Прогресс: 42%' })
+      await expect(progress).toBeVisible()
+      await expect(progress).toHaveAttribute('aria-valuenow', '42')
     })
   })
 
@@ -208,332 +241,197 @@ test.describe('Epic 51-FE: Backfill Admin Page', () => {
     test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
 
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
+      await gotoOwnerBackfill(page, [idleCabinet])
     })
 
     test('should display "Запустить бэкфилл" button', async ({ page }) => {
-      const startButton = page
-        .locator('button:has-text("Запустить")')
-        .or(page.locator('button:has-text("Старт")'))
-
-      const hasStartButton = (await startButton.count()) > 0
-      expect(hasStartButton || true).toBeTruthy()
+      await expect(page.getByRole('button', { name: 'Запустить бэкфилл' })).toBeEnabled()
     })
 
     test('should open confirmation dialog on start button click', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-
-      if (await startButton.isVisible()) {
-        await startButton.click()
-        await page.waitForTimeout(500)
-
-        // Dialog should appear
-        const dialog = page.getByRole('dialog')
-        const dialogVisible = await dialog.isVisible().catch(() => false)
-
-        if (dialogVisible) {
-          await expect(dialog).toBeVisible()
-
-          // Close dialog
-          await page.keyboard.press('Escape')
-        }
-      }
+      await page.getByRole('button', { name: 'Запустить бэкфилл' }).click()
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expect(dialog).toBeVisible()
+      await expect(
+        dialog.getByText('Выберите кабинет для загрузки исторических данных')
+      ).toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(dialog).not.toBeVisible()
     })
 
     test('should show cabinet selector in start dialog', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-
-      if (await startButton.isVisible()) {
-        await startButton.click()
-        await page.waitForTimeout(500)
-
-        const dialog = page.getByRole('dialog')
-        if (await dialog.isVisible()) {
-          // Look for cabinet selector
-          const selector = dialog
-            .locator('select')
-            .or(dialog.locator('[role="combobox"]'))
-            .or(dialog.locator('[data-testid="cabinet-selector"]'))
-
-          const hasSelector = (await selector.count()) > 0
-          expect(hasSelector || true).toBeTruthy()
-
-          // Close dialog
-          await page.keyboard.press('Escape')
-        }
-      }
+      await page.getByRole('button', { name: 'Запустить бэкфилл' }).click()
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expect(dialog.getByRole('combobox', { name: 'Кабинет' })).toBeVisible()
+      await page.keyboard.press('Escape')
     })
 
     test('should close dialog on cancel', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-
-      if (await startButton.isVisible()) {
-        await startButton.click()
-        await page.waitForTimeout(500)
-
-        const dialog = page.getByRole('dialog')
-        if (await dialog.isVisible()) {
-          const cancelButton = dialog.locator('button:has-text("Отмена")')
-
-          if (await cancelButton.isVisible()) {
-            await cancelButton.click()
-            await expect(dialog).not.toBeVisible()
-          } else {
-            // Close with Escape
-            await page.keyboard.press('Escape')
-          }
-        }
-      }
+      await page.getByRole('button', { name: 'Запустить бэкфилл' }).click()
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await dialog.getByRole('button', { name: 'Отмена' }).click()
+      await expect(dialog).not.toBeVisible()
     })
   })
 
   test.describe('Pause/Resume Actions @mutating', () => {
     test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
 
-    test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
-    })
-
     test('should display Pause button for in-progress cabinets', async ({ page }) => {
-      // Look for pause button in table rows
-      const pauseButtons = page.locator('button:has-text("Пауза")')
-      const pauseCount = await pauseButtons.count()
-
-      // Pause buttons exist for in-progress items
-      expect(pauseCount >= 0).toBeTruthy()
+      await gotoOwnerBackfill(page, [runningCabinet])
+      const row = page.getByRole('row', { name: /Рабочий кабинет/ })
+      await expect(
+        row.getByRole('button', { name: 'Приостановить бэкфилл для Рабочий кабинет' })
+      ).toBeVisible()
     })
 
     test('should display Resume button for paused cabinets', async ({ page }) => {
-      // Look for resume button
-      const resumeButtons = page.locator('button:has-text("Возобновить")')
-      const resumeCount = await resumeButtons.count()
-
-      // Resume buttons exist for paused items
-      expect(resumeCount >= 0).toBeTruthy()
+      await gotoOwnerBackfill(page, [pausedCabinet])
+      const row = page.getByRole('row', { name: /Кабинет на паузе/ })
+      await expect(
+        row.getByRole('button', { name: 'Возобновить бэкфилл для Кабинет на паузе' })
+      ).toBeVisible()
     })
 
     test('should toggle between Pause and Resume states', async ({ page }) => {
-      const pauseButton = page.locator('button:has-text("Пауза")').first()
+      let currentCabinet = runningCabinet
+      await page.route(BACKFILL_STATUS_ROUTE, route =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([currentCabinet]),
+        })
+      )
+      await page.route('**/v1/admin/backfill/pause', async route => {
+        currentCabinet = pausedCabinet
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            cabinet_id: runningCabinet.cabinetId,
+            status: 'paused',
+            message: 'Backfill paused successfully',
+          }),
+        })
+      })
 
-      if (await pauseButton.isVisible()) {
-        await pauseButton.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-        await page.waitForTimeout(1000)
-
-        // After pause, resume button should appear
-        const resumeButton = page.locator('button:has-text("Возобновить")').first()
-        const resumeVisible = await resumeButton.isVisible().catch(() => false)
-
-        expect(resumeVisible || true).toBeTruthy()
-      }
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expectOwnerShell(page)
+      await page.getByRole('button', { name: 'Приостановить бэкфилл для Рабочий кабинет' }).click()
+      await expect(
+        page.getByRole('button', { name: 'Возобновить бэкфилл для Кабинет на паузе' })
+      ).toBeVisible()
     })
   })
 
   test.describe('Progress Display', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
+      await gotoOwnerBackfill(page, [runningCabinet])
     })
 
     test('should display progress percentage', async ({ page }) => {
-      const progressIndicators = page
-        .locator('text=/\\d+%/')
-        .or(page.locator('[role="progressbar"]'))
-
-      const hasProgress = (await progressIndicators.count()) > 0
-      expect(hasProgress || true).toBeTruthy()
+      const progress = page.getByRole('progressbar', { name: 'Прогресс: 42%' })
+      await expect(progress).toHaveAttribute('aria-valuemin', '0')
+      await expect(progress).toHaveAttribute('aria-valuemax', '100')
+      await expect(progress).toHaveAttribute('aria-valuenow', '42')
     })
 
     test('should display ETA when available', async ({ page }) => {
-      const etaIndicators = page
-        .locator('text=/через|осталось|ETA/i')
-        .or(page.locator('[data-testid="eta-display"]'))
-
-      const hasEta = (await etaIndicators.count()) > 0
-      expect(hasEta || true).toBeTruthy()
+      await expect(page.getByRole('row', { name: /Рабочий кабинет/ })).toContainText('~10 мин')
     })
   })
 
   test.describe('Error Log Display', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
+      await gotoOwnerBackfill(page, [failedCabinet])
     })
 
     test('should display error badge for failed cabinets', async ({ page }) => {
-      const errorBadges = page.locator('[class*="badge"]').filter({ hasText: /ошибк|error|fail/i })
-
-      const errorCount = await errorBadges.count()
-
-      // Error badges shown for failed items
-      expect(errorCount >= 0).toBeTruthy()
+      const row = page.getByRole('row', { name: /Кабинет с ошибкой/ })
+      await expect(row.getByText('Ошибка', { exact: true })).toHaveCount(3)
     })
 
     test('should display retry button for failed cabinets', async ({ page }) => {
-      const retryButtons = page.locator('button:has-text("Повторить")')
-      const retryCount = await retryButtons.count()
-
-      // Retry buttons exist for failed items
-      expect(retryCount >= 0).toBeTruthy()
+      const row = page.getByRole('row', { name: /Кабинет с ошибкой/ })
+      await expect(
+        row.getByRole('button', { name: 'Повторить бэкфилл для Кабинет с ошибкой' })
+      ).toBeVisible()
     })
 
     test('should show error details on click', async ({ page }) => {
-      const errorBadge = page.locator('[class*="badge"]').filter({ hasText: /ошибк/i }).first()
-
-      if (await errorBadge.isVisible()) {
-        await errorBadge.click()
-        await page.waitForTimeout(500)
-
-        // Error details modal or popover should appear
-        const errorDetails = page.getByRole('dialog').or(page.locator('[role="tooltip"]'))
-        const detailsVisible = await errorDetails.isVisible().catch(() => false)
-
-        expect(detailsVisible || true).toBeTruthy()
-      }
+      await page.getByRole('button', { name: 'Показать ошибку для Кабинет с ошибкой' }).click()
+      const dialog = page.getByRole('dialog', { name: 'Ошибка бэкфилла: Кабинет с ошибкой' })
+      await expect(dialog).toBeVisible()
+      await expect(dialog.getByText('WB API timeout after 5 retries')).toBeVisible()
     })
   })
 
   test.describe('Loading & Empty States', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
-    })
-
     test('should show loading skeleton while fetching', async ({ page }) => {
-      // Check for skeleton during initial load
-      const skeletons = page.locator('[class*="skeleton"]')
-      const skeletonCount = await skeletons.count()
+      let releaseStatus: (() => void) | undefined
+      const statusGate = new Promise<void>(resolve => {
+        releaseStatus = resolve
+      })
+      await page.route(BACKFILL_STATUS_ROUTE, async route => {
+        await statusGate
+        await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
+      })
 
-      // Skeletons may appear during load
-      expect(skeletonCount >= 0).toBeTruthy()
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
+      const loadingRows = page.locator('main div.space-y-3 > div.flex.items-center.gap-4')
+      await expect(loadingRows).toHaveCount(3)
+
+      releaseStatus?.()
+      await expect(page.getByText('Нет кабинетов для бэкфилла')).toBeVisible()
     })
 
     test('should show empty state when no cabinets', async ({ page }) => {
-      await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
-
-      const emptyState = page
-        .locator('[data-testid="empty-state"]')
-        .or(page.locator('text=/нет кабинет|no cabinet/i'))
-
-      const table = page.locator('table tbody tr')
-      const tableRowCount = await table.count()
-
-      // Either has data or shows empty state
-      if (tableRowCount === 0) {
-        const hasEmptyState = (await emptyState.count()) > 0
-        expect(hasEmptyState || true).toBeTruthy()
-      }
+      await gotoOwnerBackfill(page, [])
+      await expect(page.getByText('Нет кабинетов для бэкфилла')).toBeVisible()
+      await expect(
+        page.getByText('Создайте кабинет для начала загрузки исторических данных')
+      ).toBeVisible()
+      await expect(page.getByRole('table')).toHaveCount(0)
     })
   })
 
   test.describe('Polling & Real-time Updates', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-      }
-    })
-
     test('should show last update timestamp', async ({ page }) => {
-      const updateIndicator = page
-        .locator('text=/обновлено|updated|last/i')
-        .or(page.locator('[data-testid="last-update"]'))
-
-      const hasUpdateTime = (await updateIndicator.count()) > 0
-      expect(hasUpdateTime || true).toBeTruthy()
+      await gotoOwnerBackfill(page, [])
+      await expect(page.getByText(/^Обновлено: \d{2}:\d{2}:\d{2}$/)).toBeVisible()
     })
 
     test('should update on manual refresh', async ({ page }) => {
-      const refreshButton = page
-        .locator('button:has-text("Обновить")')
-        .or(page.locator('[aria-label*="refresh"]'))
-        .first()
+      let statusRequests = 0
+      await page.route(BACKFILL_STATUS_ROUTE, route => {
+        statusRequests += 1
+        return route.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
+      })
+      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+      await expectOwnerShell(page)
+      await expect(page.getByText('Нет кабинетов для бэкфилла')).toBeVisible()
 
-      if (await refreshButton.isVisible()) {
-        await refreshButton.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-
-        // Page should still be functional after refresh
-        await expect(page.locator('main')).toBeVisible()
-      }
+      const beforeRefresh = statusRequests
+      await page.getByRole('button', { name: 'Обновить', exact: true }).click()
+      await expect.poll(() => statusRequests).toBeGreaterThan(beforeRefresh)
+      await expect(page.getByText(/^Обновлено: \d{2}:\d{2}:\d{2}$/)).toBeVisible()
     })
   })
 
   test.describe('Responsive Layout', () => {
     test('should display properly on mobile', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-        return
-      }
-
-      // Page should be visible
-      await expect(page.locator('main')).toBeVisible()
+      await gotoOwnerBackfill(page, [])
+      await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Запустить бэкфилл' })).toBeVisible()
     })
 
     test('should display properly on tablet', async ({ page }) => {
       await page.setViewportSize({ width: 768, height: 1024 })
-      await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
-        return
-      }
-
-      await expect(page.locator('main')).toBeVisible()
+      await gotoOwnerBackfill(page, [])
+      await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Обновить', exact: true })).toBeVisible()
     })
   })
 })
-
-/**
- * QA HANDOFF NOTES:
- *
- * 1. Run tests:
- *    ```bash
- *    npx playwright test e2e/settings/backfill-admin.spec.ts
- *    ```
- *
- * 2. Access Control Testing:
- *    - Tests require Owner role to pass page access tests
- *    - For non-Owner tests, set up a separate auth state with Analyst/Manager role
- *
- * 3. Expected results:
- *    - Owner users can access /settings/backfill
- *    - Non-Owner users are redirected to /dashboard
- *    - Status table displays cabinet backfill progress
- *    - Start/Pause/Resume buttons function correctly
- *
- * 4. Manual testing required:
- *    - Verify actual backfill process starts correctly
- *    - Test with multiple cabinets in different states
- *    - Verify polling updates progress in real-time
- *    - Test error recovery scenarios
- */

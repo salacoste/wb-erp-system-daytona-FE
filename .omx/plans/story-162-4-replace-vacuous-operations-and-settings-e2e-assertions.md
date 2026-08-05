@@ -20,12 +20,30 @@ So that broken backfill, supply, COGS, and pricing behavior cannot appear green.
 ## Concrete Scope
 
 - `e2e/settings/backfill-admin.spec.ts`
+- `e2e/settings/backfill-a11y.spec.ts`
 - `e2e/backfill-page.spec.ts`
 - `e2e/supply-planning.spec.ts`
 - `e2e/supplies/`
+- `e2e/fixtures/story-162-4-supplies.ts`
 - `e2e/cogs-assignment.spec.ts`
 - `e2e/cogs-pages.spec.ts`
 - `e2e/price-calculator.spec.ts`
+- `src/app/(dashboard)/settings/backfill/`
+- `src/app/(dashboard)/supplies/page.tsx`
+- `src/components/custom/supplies/`
+- `src/hooks/useDownloadDocument.ts`
+- `src/lib/api/supplies-documents.ts`
+- `src/lib/api/__tests__/supplies-documents.test.ts`
+- `src/test/fixtures/stickers.ts`
+- `src/test/fixtures/supplies-responses.ts`
+- `src/types/supply-orders.ts`
+- `src/types/__tests__/supplies-stickers-errors.test.ts`
+- `scripts/check-e2e-vacuous-assertions.mjs`
+- `src/test/e2e-vacuous-assertions.test.ts`
+- `scripts/manage-omx-story-plans.mjs`
+- `.omx/plans/story-162-4-replace-vacuous-operations-and-settings-e2e-assertions.md`
+- `_bmad-output/implementation-artifacts/162-4-fe-replace-vacuous-operations-and-settings-e2e-assertions.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
 ## Acceptance Criteria (canonical)
 
@@ -62,15 +80,15 @@ So that broken backfill, supply, COGS, and pricing behavior cannot appear green.
 ## Implementation Steps
 
 1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
-2. Lock the owned 36-site inventory with a static regression check.
-3. Replace each operations/settings truth fallback with explicit fixture, visible-state, and request/response assertions.
-4. Run backfill, supplies, supply-planning, COGS, and calculator coverage and record `36 → 0`.
+2. Lock the canonical raw 36-site inventory and exact 38-site semantic inventory at base SHA `9a882a1de72e8716a1969002a648e027f4a05c0f`, while preserving the exact 57-site Story 162.3 regression.
+3. Replace each operations/settings truth fallback with explicit fixture, visible-state, and request/response assertions; apply only the minimal application/API/type boundary repairs required for deterministic, contract-accurate evidence.
+4. Run backfill, supplies, supply-planning, COGS, and calculator coverage and record semantic `38 → 0` evidence.
 5. Run an independent review and verification pass; merge only through a normal PR after all acceptance criteria have evidence.
 6. After merge proof, remove the clean story worktree and merged branches without force, prune worktree metadata, and audit the repository.
 
 ## Risks and Mitigations
 
-- **Story-specific risk:** Mutating paths remain behind the sandbox acknowledgement guard and require deterministic fixtures.
+- **Story-specific risk:** Mutating paths remain behind the sandbox acknowledgement guard and require deterministic fixtures; production-path edits stay limited to focus semantics, deterministic interaction state, and the existing backend sticker generation/download contract with focused unit and lifecycle coverage.
 - **Cross-story contamination:** branch only after dependencies are merged; never auto-stash, reset, clean, or mix unrelated changes.
 - **False completion:** retain the worktree on failure; a merged story with failed cleanup is `cleanup_blocked`, not complete.
 - **Local-only scope:** validate against frontend `localhost:3100` and backend `localhost:3000`; do not deploy or add production/CI certification scope.
@@ -78,7 +96,11 @@ So that broken backfill, supply, COGS, and pricing behavior cannot appear green.
 ## Verification Steps
 
 - `rg -n "expect\([^\n]*(\|\| true|>= 0)" e2e/settings e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts`
-- `npm run test:e2e:full -- e2e/settings/backfill-admin.spec.ts e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts`
+- `npm run check:e2e-assertions`
+- `npx vitest run src/test/e2e-vacuous-assertions.test.ts`
+- `npm run test:e2e:full -- e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies/supplies-a11y.spec.ts e2e/supplies/supplies-list.spec.ts e2e/supplies/supply-detail.spec.ts e2e/supplies/supply-lifecycle.spec.ts e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts`
+- `npx eslint scripts/check-e2e-vacuous-assertions.mjs src/test/e2e-vacuous-assertions.test.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies/*.spec.ts e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts --max-warnings=0`
+- `npx prettier --check scripts/check-e2e-vacuous-assertions.mjs src/test/e2e-vacuous-assertions.test.ts scripts/manage-omx-story-plans.mjs .omx/plans/story-162-4-replace-vacuous-operations-and-settings-e2e-assertions.md`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

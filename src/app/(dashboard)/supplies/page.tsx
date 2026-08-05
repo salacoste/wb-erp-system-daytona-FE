@@ -1,5 +1,7 @@
 'use client'
 
+import { useRef } from 'react'
+
 /**
  * Supplies List Page
  * Story 53.2-FE: Supplies List Page
@@ -25,6 +27,7 @@ import {
 import { useSuppliesPageState } from './useSuppliesPageState'
 
 export default function SuppliesPage() {
+  const createButtonRef = useRef<HTMLButtonElement>(null)
   const {
     data,
     sortedItems,
@@ -58,7 +61,7 @@ export default function SuppliesPage() {
   if (isLoading && !data) {
     return (
       <div className="space-y-6">
-        <SuppliesPageHeader {...headerProps} />
+        <SuppliesPageHeader {...headerProps} createButtonRef={createButtonRef} />
         <SuppliesLoadingSkeleton />
       </div>
     )
@@ -68,7 +71,7 @@ export default function SuppliesPage() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <SuppliesPageHeader {...headerProps} />
+        <SuppliesPageHeader {...headerProps} createButtonRef={createButtonRef} />
         <Alert variant="destructive" data-testid="supplies-error-state">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
@@ -84,7 +87,7 @@ export default function SuppliesPage() {
 
   return (
     <div className="space-y-6" data-testid="supplies-page">
-      <SuppliesPageHeader {...headerProps} />
+      <SuppliesPageHeader {...headerProps} createButtonRef={createButtonRef} />
 
       <Card>
         <CardContent className="pt-6">
@@ -131,7 +134,11 @@ export default function SuppliesPage() {
       )}
 
       {canManageSupplies && (
-        <CreateSupplyModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} />
+        <CreateSupplyModal
+          open={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          returnFocusRef={createButtonRef}
+        />
       )}
     </div>
   )

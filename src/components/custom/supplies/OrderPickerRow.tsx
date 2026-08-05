@@ -40,6 +40,7 @@ export interface RowPropsData {
 // =============================================================================
 
 export function OrderRow({
+  ariaAttributes,
   index,
   orders,
   selectedIds,
@@ -52,49 +53,44 @@ export function OrderRow({
 
   const handleClick = () => onToggleOrder(order.orderId)
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onToggleOrder(order.orderId)
-    }
-  }
-
-  const handleCheckboxClick = (e: React.MouseEvent) => e.stopPropagation()
-
   return (
     <div
       style={style}
-      role="option"
-      aria-selected={isSelected}
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
+      {...ariaAttributes}
       className={`
-        flex cursor-pointer items-center gap-3 border-b px-4
+        flex items-center border-b
         transition-colors hover:bg-muted/50
         ${isSelected ? 'bg-blue-50' : 'bg-card'}
       `}
     >
-      <div onClick={handleCheckboxClick}>
+      <div className="pl-4">
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleOrder(order.orderId)}
           aria-label={`Выбрать заказ #${order.orderId}`}
         />
       </div>
-      <div className="w-[110px] shrink-0 font-mono text-sm">#{order.orderId.slice(-8)}</div>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{order.vendorCode}</div>
-        <div className="truncate text-xs text-muted-foreground">{order.productName || '—'}</div>
-      </div>
-      <div className="w-[90px] shrink-0 text-right text-sm font-medium">
-        {order.salePrice != null ? formatCurrency(order.salePrice) : '—'}
-      </div>
-      <div className="w-[100px] shrink-0">
-        <Badge variant="outline" className={statusConfig.className}>
-          {statusConfig.label}
-        </Badge>
-      </div>
+      <button
+        type="button"
+        aria-label={`Переключить выбор заказа #${order.orderId}`}
+        aria-pressed={isSelected}
+        onClick={handleClick}
+        className="flex h-full min-w-0 flex-1 cursor-pointer items-center gap-3 px-3 pr-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+      >
+        <div className="w-[110px] shrink-0 font-mono text-sm">#{order.orderId.slice(-8)}</div>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-medium">{order.vendorCode}</div>
+          <div className="truncate text-xs text-muted-foreground">{order.productName || '—'}</div>
+        </div>
+        <div className="w-[90px] shrink-0 text-right text-sm font-medium">
+          {order.salePrice != null ? formatCurrency(order.salePrice) : '—'}
+        </div>
+        <div className="w-[100px] shrink-0">
+          <Badge variant="outline" className={statusConfig.className}>
+            {statusConfig.label}
+          </Badge>
+        </div>
+      </button>
     </div>
   )
 }

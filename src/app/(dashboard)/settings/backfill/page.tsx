@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Database, RefreshCw, Plus } from 'lucide-react'
@@ -42,6 +42,7 @@ function BackfillPageSkeleton() {
 // ============================================================================
 
 export default function BackfillAdminPage() {
+  const startButtonRef = useRef<HTMLButtonElement>(null)
   const router = useRouter()
   const { user } = useAuth()
   const isOwner = user?.role === 'Owner'
@@ -118,7 +119,11 @@ export default function BackfillAdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Actions Bar */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <Button onClick={() => setIsStartDialogOpen(true)} disabled={startMutation.isPending}>
+          <Button
+            ref={startButtonRef}
+            onClick={() => setIsStartDialogOpen(true)}
+            disabled={startMutation.isPending}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Запустить бэкфилл
           </Button>
@@ -153,6 +158,7 @@ export default function BackfillAdminPage() {
           onOpenChange={setIsStartDialogOpen}
           onStart={handleStart}
           isStarting={startMutation.isPending}
+          returnFocusRef={startButtonRef}
         />
       </div>
     </section>

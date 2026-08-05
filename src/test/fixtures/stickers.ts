@@ -90,21 +90,27 @@ export const mockGenerateRequestZpl: GenerateStickersRequest = { format: 'zpl' }
 // =============================================================================
 
 export const mockGenerateResponsePng: GenerateStickersResponse = {
-  document: mockStickerDocPng,
-  data: MOCK_PNG_BASE64,
-  message: 'Stickers generated successfully',
+  id: 'sticker-doc-png',
+  docType: 'STICKER',
+  format: 'png',
+  fileSize: 245760,
+  generatedAt: '2026-03-20T14:35:00.000Z',
 }
 
 export const mockGenerateResponseSvg: GenerateStickersResponse = {
-  document: mockStickerDocSvg,
-  data: MOCK_SVG_BASE64,
-  message: 'Stickers generated successfully',
+  id: 'sticker-doc-svg',
+  docType: 'STICKER',
+  format: 'svg',
+  fileSize: 102400,
+  generatedAt: '2026-03-20T14:35:00.000Z',
 }
 
 export const mockGenerateResponseZpl: GenerateStickersResponse = {
-  document: mockStickerDocZpl,
-  message: 'Stickers generated successfully',
-  // No data field for ZPL (no preview)
+  id: 'sticker-doc-zpl',
+  docType: 'STICKER',
+  format: 'zplv',
+  fileSize: 15360,
+  generatedAt: '2026-03-20T14:35:00.000Z',
 }
 
 // =============================================================================
@@ -216,20 +222,11 @@ export function createMockStickerDocument(
 }
 
 export function createMockGenerateResponse(format: StickerFormat): GenerateStickersResponse {
-  const document = createMockStickerDocument(format)
-
-  if (format === 'zpl') {
-    return { document, message: 'Stickers generated successfully' }
-  }
-
-  const dataMap: Record<'png' | 'svg', string> = {
-    png: MOCK_PNG_BASE64,
-    svg: MOCK_SVG_BASE64,
-  }
-
   return {
-    document,
-    data: dataMap[format],
-    message: 'Stickers generated successfully',
+    id: `sticker-doc-${format}`,
+    docType: 'STICKER',
+    format: format === 'zpl' ? 'zplv' : format,
+    fileSize: createMockStickerDocument(format).sizeBytes ?? 0,
+    generatedAt: new Date().toISOString(),
   }
 }

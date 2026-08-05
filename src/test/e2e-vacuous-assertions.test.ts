@@ -1,20 +1,21 @@
-import { execFile } from 'node:child_process'
 import { mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { promisify } from 'node:util'
 
 import { describe, expect, it } from 'vitest'
 
 import {
   OWNED_E2E_FILES,
+  STORY_162_3_E2E_FILES,
+  STORY_162_4_E2E_FILES,
   resolveScanTargets,
   scanFiles,
+  scanGitRevision,
   scanSource,
 } from '../../scripts/check-e2e-vacuous-assertions.mjs'
 
-const execFileAsync = promisify(execFile)
-const STORY_BASE_REVISION = 'cc733289b03cb16d30dcdc54325e5b5b0b966d4f'
+const STORY_162_3_BASE_REVISION = 'cc733289b03cb16d30dcdc54325e5b5b0b966d4f'
+const STORY_162_4_BASE_REVISION = '9a882a1de72e8716a1969002a648e027f4a05c0f'
 
 describe('E2E vacuous assertion scanner', () => {
   it('detects every prohibited assertion family', () => {
@@ -28,6 +29,19 @@ describe('E2E vacuous assertion scanner', () => {
     `
 
     expect(scanSource(source, 'sample.spec.ts')).toHaveLength(5)
+  })
+
+  it('detects a toBeGreaterThanOrEqual(0) matcher on the next line', () => {
+    const source = `
+      expect(await rows.count())
+        .toBeGreaterThanOrEqual(0)
+    `
+
+    expect(scanSource(source, 'sample.spec.ts')).toEqual([
+      expect.objectContaining({
+        message: 'toBeGreaterThanOrEqual(0) cannot prove content exists',
+      }),
+    ])
   })
 
   it('accepts meaningful assertions, including count > 0', () => {
@@ -88,6 +102,46 @@ describe('E2E vacuous assertion scanner', () => {
     expect(scanSource(source, 'sample.spec.ts')).toHaveLength(3)
   })
 
+  it('detects nonnegative comparisons derived from locator counts with catch fallbacks', () => {
+    const source = `
+      const skeletonCount = await page
+        .locator('[class*="skeleton"]')
+        .count()
+        .catch(() => 0)
+      expect(skeletonCount >= 0).toBeTruthy()
+    `
+
+    expect(scanSource(source, 'sample.spec.ts')).toEqual([
+      expect.objectContaining({
+        message: 'a nonnegative count assertion is unconditional',
+      }),
+    ])
+  })
+
+  it('detects disabled-or-enabled complements derived from the same locator', () => {
+    const source = `
+      const isButtonDisabled = await calculateButton.isDisabled()
+      const isButtonEnabled = await calculateButton.isEnabled()
+      expect(isButtonDisabled || isButtonEnabled).toBeTruthy()
+
+      expect(
+        (await submitButton.isDisabled()) || (await submitButton.isEnabled())
+      ).toBeTruthy()
+    `
+
+    expect(scanSource(source, 'sample.spec.ts')).toHaveLength(2)
+  })
+
+  it('accepts state disjunctions from different locators', () => {
+    const source = `
+      const isPrimaryDisabled = await primaryButton.isDisabled()
+      const isFallbackEnabled = await fallbackButton.isEnabled()
+      expect(isPrimaryDisabled || isFallbackEnabled).toBeTruthy()
+    `
+
+    expect(scanSource(source, 'sample.spec.ts')).toEqual([])
+  })
+
   it('ignores prohibited-looking text in comments and strings', () => {
     const source = `
       // expect(value || true).toBeTruthy()
@@ -114,22 +168,20 @@ describe('E2E vacuous assertion scanner', () => {
     expect(await scanFiles()).toEqual([])
   })
 
-  it('preserves the exact 57-site semantic inventory from the story baseline', async () => {
-    const baselineSources = await Promise.all(
-      OWNED_E2E_FILES.map(async file => {
-        const { stdout } = await execFileAsync('git', ['show', `${STORY_BASE_REVISION}:${file}`], {
-          cwd: process.cwd(),
-          encoding: 'utf8',
-          maxBuffer: 1024 * 1024,
-        })
-        return scanSource(stdout, file)
-      })
-    )
+  it('preserves the exact 57-site Story 162.3 semantic inventory', async () => {
+    const baselineSources = await scanGitRevision(STORY_162_3_E2E_FILES, STORY_162_3_BASE_REVISION)
 
     expect(baselineSources.flat()).toHaveLength(57)
   })
 
-  it('uses explicit CLI paths without changing the eight-file default', () => {
+  it('preserves the exact 38-site Story 162.4 semantic inventory', async () => {
+    const baselineSources = await scanGitRevision(STORY_162_4_E2E_FILES, STORY_162_4_BASE_REVISION)
+
+    expect(baselineSources.flat()).toHaveLength(38)
+  })
+
+  it('uses explicit CLI paths without changing the combined story default', () => {
+    expect(OWNED_E2E_FILES).toEqual([...STORY_162_3_E2E_FILES, ...STORY_162_4_E2E_FILES])
     expect(resolveScanTargets([])).toEqual(OWNED_E2E_FILES)
     expect(resolveScanTargets(['e2e/liquidity.spec.ts'])).toEqual(['e2e/liquidity.spec.ts'])
   })

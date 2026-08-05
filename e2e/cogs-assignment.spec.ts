@@ -1,6 +1,6 @@
-import { test, expect } from './fixtures/network-test'
+import { test, expect, type Page } from './fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
-import { ROUTES, SELECTORS, TIMEOUTS, TEST_PRODUCTS } from './fixtures/test-data'
+import { ROUTES, TIMEOUTS, TEST_PRODUCTS } from './fixtures/test-data'
 
 /**
  * E2E Tests: COGS Assignment
@@ -12,246 +12,212 @@ import { ROUTES, SELECTORS, TIMEOUTS, TEST_PRODUCTS } from './fixtures/test-data
  * - Margin calculation and polling
  * - Bulk COGS assignment
  */
+const COGS_HEADING = 'Управление себестоимостью'
+const PRODUCT_SEARCH_PLACEHOLDER = 'Поиск по артикулу или названию...'
+const SEEDED_PRODUCT_ID = TEST_PRODUCTS.withCogs.nmId.toString()
+
+async function expectCogsShell(page: Page) {
+  await expect(page.getByRole('heading', { name: COGS_HEADING, level: 1 })).toBeVisible({
+    timeout: TIMEOUTS.api,
+  })
+}
+
+async function expectProductTerminalState(page: Page) {
+  const table = page.locator('table[aria-label="Список товаров"]')
+  const emptyState = page.locator('[data-testid="product-empty-state"]')
+  await expect(table.or(emptyState)).toBeVisible({ timeout: TIMEOUTS.api })
+  return { table, emptyState }
+}
+
+async function openSeededProductCogsForm(page: Page) {
+  await expectCogsShell(page)
+  await page.getByPlaceholder(PRODUCT_SEARCH_PLACEHOLDER).fill(SEEDED_PRODUCT_ID)
+
+  const { table, emptyState } = await expectProductTerminalState(page)
+  await expect(emptyState).toHaveCount(0)
+  await expect(table).toBeVisible()
+  const productRow = table.getByRole('row').filter({ hasText: SEEDED_PRODUCT_ID })
+  await expect(productRow).toHaveCount(1)
+  await productRow.click()
+
+  const assignmentDialog = page.getByRole('dialog', { name: 'Назначение себестоимости' })
+  await expect(assignmentDialog).toBeVisible()
+  await expect(assignmentDialog.getByLabel('Себестоимость (₽)')).toBeVisible()
+}
+
 test.describe('COGS Assignment', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.cogs)
     await page.waitForLoadState('domcontentloaded')
+    await expectCogsShell(page)
   })
 
   test.describe('Story 4.1: Product List Display', () => {
     test('displays product list', async ({ page }) => {
-      // Product list container
-      const productList = page
-        .locator(SELECTORS.productList)
-        .or(page.locator('table, [class*="product-list"], [class*="table"]'))
-
-      await expect(productList.first()).toBeVisible({ timeout: TIMEOUTS.api })
+      await expectProductTerminalState(page)
     })
 
     test('shows product rows with key information', async ({ page }) => {
-      // Wait for products to load
-      await page.waitForTimeout(2000)
-
-      // Product rows
-      const productRows = page
-        .locator(SELECTORS.productRow)
-        .or(page.locator('tr[data-testid], tbody tr, [class*="product-row"]'))
-
-      const rowCount = await productRows.count()
-
-      // Should have products or empty state
-      if (rowCount > 0) {
-        // First row should have product info
-        const firstRow = productRows.first()
-        await expect(firstRow).toBeVisible()
-
-        // Should show nm_id or product name
-        const hasProductInfo = (await firstRow.locator('text=/\\d{6,}|товар|product/i').count()) > 0
-        expect(hasProductInfo).toBeTruthy()
-      } else {
-        // Empty state
-        const emptyState = page.locator('text=/нет товаров|no products|пусто|empty/i')
-        await expect(emptyState.first()).toBeVisible()
+      const { table, emptyState } = await expectProductTerminalState(page)
+      if (await emptyState.isVisible()) {
+        await expect(emptyState).toContainText('Товары не найдены')
+        test.skip(true, 'Local COGS fixture contains no products for row-content assertions')
+        return
       }
+
+      const firstProductRow = table.locator('tbody tr').first()
+      await expect(firstProductRow).toBeVisible()
+      await expect(firstProductRow.locator('td').first()).toHaveText(/^\d+$/)
+      await expect(firstProductRow.locator('td').nth(2)).not.toHaveText('')
     })
 
     test('has search or filter functionality', async ({ page }) => {
-      // Search input (may not exist on all pages)
-      const searchInput = page
-        .locator(SELECTORS.filterInput)
-        .or(
-          page.locator(
-            'input[placeholder*="поиск"], input[placeholder*="search"], input[type="search"]'
-          )
-        )
-
-      const hasSearch = (await searchInput.count()) > 0
-
-      // Or has filter buttons/dropdowns
-      const filterElements = page.locator('select, [class*="filter"], button:has-text("Фильтр")')
-      const hasFilter = (await filterElements.count()) > 0
-
-      // Search/filter is optional - page is still functional without it
-      expect(hasSearch || hasFilter || true).toBeTruthy()
+      await expectProductTerminalState(page)
+      await expect(page.getByPlaceholder(PRODUCT_SEARCH_PLACEHOLDER)).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Все товары', exact: true })).toBeVisible()
     })
 
     test('has pagination controls', async ({ page }) => {
-      // Pagination
-      const pagination = page.locator('[class*="pagination"], nav[aria-label*="pagination"]')
-      const pageButtons = page.locator(
-        'button:has-text("Далее"), button:has-text("Next"), [aria-label*="page"]'
-      )
+      const { emptyState } = await expectProductTerminalState(page)
+      if (await emptyState.isVisible()) {
+        test.skip(true, 'Local COGS fixture contains no products, so pagination is not rendered')
+        return
+      }
 
-      const hasPagination = (await pagination.count()) > 0 || (await pageButtons.count()) > 0
-
-      // May not have pagination if few products - either way is valid
-      expect(hasPagination || true).toBeTruthy()
+      await expect(page.getByText(/^Показано \d+ из \d+ товаров$/)).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Назад', exact: true })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Вперёд', exact: true })).toBeVisible()
     })
 
     test('can filter by COGS status', async ({ page }) => {
-      // Filter buttons or dropdown
-      const filterControls = page.locator('button:has-text("COGS"), select, [class*="filter"]')
-
-      const hasFilters = (await filterControls.count()) > 0
-      expect(hasFilters).toBeTruthy()
+      const filterButton = page.getByRole('button', { name: 'Все товары', exact: true })
+      await filterButton.click()
+      await expect(
+        page.getByRole('button', { name: 'Без себестоимости', exact: true })
+      ).toBeVisible()
+      await page.getByRole('button', { name: 'Без себестоимости', exact: true }).click()
+      await expect(
+        page.getByRole('button', { name: 'С себестоимостью', exact: true })
+      ).toBeVisible()
     })
   })
 
   test.describe('Story 4.1: Single Product COGS Assignment @mutating', () => {
+    test.describe.configure({ mode: 'serial' })
     test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
 
     test('can open COGS assignment form', async ({ page }) => {
-      // Wait for products to load
-      await page.waitForTimeout(2000)
-
-      // Find a product row and click to assign COGS
-      const productRows = page.locator('tbody tr, [class*="product-row"]')
-      const rowCount = await productRows.count()
-
-      if (rowCount > 0) {
-        // Click on first product or its assign button
-        const assignButton = productRows
-          .first()
-          .locator('button:has-text("COGS"), button:has-text("Назначить")')
-        const buttonCount = await assignButton.count()
-
-        if (buttonCount > 0) {
-          await assignButton.first().click()
-
-          // Form or modal should appear
-          const cogsForm = page.locator('form, [role="dialog"], [class*="modal"]')
-          await expect(cogsForm.first()).toBeVisible()
-        }
-      }
+      await openSeededProductCogsForm(page)
     })
 
     test('displays COGS input field', async ({ page }) => {
-      // COGS input (may be inline or in modal)
-      const cogsInput = page
-        .locator(SELECTORS.cogsInput)
-        .or(
-          page.locator(
-            'input[name*="cogs"], input[placeholder*="себестоимость"], input[type="number"]'
-          )
-        )
-
-      // May need to click a row first
-      const productRows = page.locator('tbody tr')
-      if ((await productRows.count()) > 0) {
-        await productRows.first().click()
-        await page.waitForTimeout(500)
-      }
-
-      // Check if input is visible somewhere on page
-      const hasInput = (await cogsInput.count()) > 0
-      // Product list should be accessible - input may or may not be visible
-      expect(hasInput || true).toBeTruthy()
+      await openSeededProductCogsForm(page)
+      await expect(page.getByRole('dialog').getByLabel('Себестоимость (₽)')).toHaveAttribute(
+        'id',
+        'unit_cost_rub'
+      )
     })
 
     test('validates COGS input', async ({ page }) => {
-      const cogsInput = page.locator('input[name*="cogs"], input[type="number"]').first()
-
-      if (await cogsInput.isVisible()) {
-        // Enter invalid value (negative)
-        await cogsInput.fill('-100')
-
-        const submitButton = page
-          .locator(SELECTORS.assignCogsButton)
-          .or(page.locator('button[type="submit"], button:has-text("Сохранить")'))
-
-        if ((await submitButton.count()) > 0) {
-          await submitButton.first().click()
-
-          // Should show validation error
-          await page.waitForTimeout(500)
-          const pageContent = await page.locator('body').textContent()
-          expect(pageContent).toBeTruthy()
+      await openSeededProductCogsForm(page)
+      const dialog = page.getByRole('dialog')
+      const cogsInput = dialog.getByLabel('Себестоимость (₽)')
+      await cogsInput.fill('-100')
+      await dialog.getByRole('button', { name: /себестоимость/i }).click()
+      const nativeValidity = await cogsInput.evaluate(input => {
+        const element = input as HTMLInputElement
+        return {
+          isValid: element.validity.valid,
+          isRangeUnderflow: element.validity.rangeUnderflow,
+          validationMessage: element.validationMessage,
         }
-      }
+      })
+      expect(nativeValidity.isValid).toBe(false)
+      expect(nativeValidity.isRangeUnderflow).toBe(true)
+      expect(nativeValidity.validationMessage).not.toBe('')
+      await expect(dialog).toBeVisible()
+      await expect(cogsInput).toBeFocused()
     })
 
     test('can assign COGS to product', async ({ page }) => {
-      // Find COGS input
-      const cogsInput = page.locator('input[name*="cogs"], input[type="number"]').first()
+      await openSeededProductCogsForm(page)
+      const dialog = page.getByRole('dialog')
+      await dialog.getByLabel('Себестоимость (₽)').fill(TEST_PRODUCTS.withCogs.cogs.toString())
 
-      if (await cogsInput.isVisible()) {
-        // Enter valid COGS value
-        await cogsInput.fill(TEST_PRODUCTS.withCogs.cogs.toString())
-
-        const submitButton = page
-          .locator('button[type="submit"], button:has-text("Сохранить")')
-          .first()
-
-        if (await submitButton.isVisible()) {
-          await submitButton.click()
-
-          // Wait for response
-          await page.waitForTimeout(TIMEOUTS.api)
-
-          // Should show success or update the display
-          const pageContent = await page.locator('body').textContent()
-          expect(pageContent).toBeTruthy()
-        }
-      }
+      const responsePromise = page.waitForResponse(
+        response =>
+          response.request().method() === 'POST' &&
+          response.url().includes(`/v1/products/${SEEDED_PRODUCT_ID}/cogs`)
+      )
+      await dialog.getByRole('button', { name: /себестоимость/i }).click()
+      const response = await responsePromise
+      expect(response.ok()).toBeTruthy()
+      await expect(page.getByText('Себестоимость назначена успешно', { exact: true })).toBeVisible()
+      await expect(dialog).not.toBeVisible()
     })
   })
 
   test.describe('Story 4.8: Margin Calculation & Polling', () => {
     test('shows margin after COGS assignment', async ({ page }) => {
-      // Margin display
-      const marginDisplay = page
-        .locator(SELECTORS.marginDisplay)
-        .or(page.locator('text=/%|маржа|margin/i'))
+      const { table, emptyState } = await expectProductTerminalState(page)
+      if (await emptyState.isVisible()) {
+        test.skip(true, 'Local COGS fixture contains no product margin states')
+        return
+      }
 
-      // May not be visible if no COGS assigned
-      const hasMargin = (await marginDisplay.count()) > 0
-
-      // Page is functional - margin display is optional
-      expect(hasMargin || (await page.locator('body').isVisible())).toBeTruthy()
+      await expect(table.locator('tbody tr').first().locator('td').nth(4)).toHaveText(
+        /%|нет COGS|Расчёт|Нет продаж|Нет данных|Аналитика недоступна|в карточке/
+      )
     })
 
     test('displays loading state during margin calculation', async ({ page }) => {
-      // Loading indicator for margin - may be very brief or not visible
-      // This test verifies page is functional during/after calculation
-      await page.waitForTimeout(500)
-
-      // Page should be functional
-      await expect(page.locator('body')).toBeVisible()
+      await page.route('**/v1/products?**', async route => {
+        await new Promise(resolve => setTimeout(resolve, 750))
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            products: [],
+            pagination: { total: 0, page: 1, limit: 25, total_pages: 0 },
+          }),
+        })
+      })
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      await expect(page.locator('[data-testid="product-loading-skeleton"]')).toBeVisible()
     })
 
     test('shows margin calculation status', async ({ page }) => {
-      // Status indicator
-      const statusIndicator = page.locator('[class*="status"], [class*="badge"]')
+      const { table, emptyState } = await expectProductTerminalState(page)
+      if (await emptyState.isVisible()) {
+        await expect(emptyState).toContainText('Товары не найдены')
+        return
+      }
 
-      // Page should be functional - status indicator is optional
-      const hasStatus = (await statusIndicator.count()) > 0
-      expect(hasStatus || (await page.locator('body').isVisible())).toBeTruthy()
+      await expect(table.getByRole('columnheader', { name: 'Маржа' })).toBeVisible()
+      await expect(table.locator('tbody tr').first().locator('td').nth(4)).not.toHaveText('')
     })
   })
 
-  test.describe('Bulk COGS Assignment @mutating', () => {
-    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
-
+  test.describe('Bulk COGS Assignment', () => {
     test('has bulk assignment option', async ({ page }) => {
-      // Bulk assignment button or tab
-      const bulkOption = page.locator(
-        'button:has-text("Массов"), button:has-text("Bulk"), [class*="bulk"]'
-      )
-
-      const hasBulkOption = (await bulkOption.count()) > 0
-
-      // May not have bulk option on all views - either way is valid
-      expect(hasBulkOption || (await page.locator('body').isVisible())).toBeTruthy()
+      await page.goto(ROUTES.cogsBulk, { waitUntil: 'domcontentloaded' })
+      await expect(
+        page.getByRole('heading', { name: 'Массовое назначение себестоимости', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
+      await expect(page.getByText('Выбор товаров и назначение себестоимости')).toBeVisible()
     })
 
-    test('can upload CSV file', async ({ page }) => {
-      // File input
-      const fileInput = page.locator('input[type="file"]')
+    test('uses product selection rather than stale CSV upload workflow', async ({ page }) => {
+      await page.goto(ROUTES.cogsBulk, { waitUntil: 'domcontentloaded' })
+      await expect(
+        page.getByRole('heading', { name: 'Массовое назначение себестоимости', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
 
-      const hasFileUpload = (await fileInput.count()) > 0
-
-      // File upload may be hidden or in different section - either way is valid
-      expect(hasFileUpload || (await page.locator('body').isVisible())).toBeTruthy()
+      const search = page.getByPlaceholder(PRODUCT_SEARCH_PLACEHOLDER)
+      const emptyState = page.getByRole('heading', { name: 'Товары не найдены', level: 3 })
+      await expect(search).toBeVisible()
+      await expect(page.getByText('Выбор товаров и назначение себестоимости')).toBeVisible()
+      await expect(page.getByRole('table').or(emptyState)).toBeVisible({ timeout: TIMEOUTS.api })
     })
   })
 
@@ -270,19 +236,27 @@ test.describe('COGS Assignment', () => {
       // Should show error state or empty state
       await page.waitForTimeout(2000)
 
-      // Page should not crash
-      await expect(page.locator('body')).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Повторить' })).toBeVisible({
+        timeout: TIMEOUTS.api,
+      })
     })
 
     test('handles network timeout', async ({ page }) => {
       // Simulate slow network
       await page.route('**/products**', async route => {
-        await new Promise(resolve => setTimeout(resolve, 5000))
-        route.fallback()
+        await new Promise(resolve => setTimeout(resolve, 750))
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            products: [],
+            pagination: { total: 0, page: 1, limit: 25, total_pages: 0 },
+          }),
+        })
       })
 
-      // Should show loading state
-      await expect(page.locator('body')).toBeVisible()
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      await expect(page.locator('[data-testid="product-loading-skeleton"]')).toBeVisible()
     })
   })
 })

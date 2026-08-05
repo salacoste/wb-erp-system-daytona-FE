@@ -21,6 +21,11 @@
 
 import { test, expect } from '../fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
+import {
+  installStory1624EligibleOrdersRoute,
+  installStory1624OpenSupplyRoutes,
+  STORY_162_4_ELIGIBLE_ORDER,
+} from '../fixtures/story-162-4-supplies'
 
 // Routes
 const SUPPLIES_ROUTE = '/supplies'
@@ -225,34 +230,30 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
         const modal = page.getByRole('dialog')
         await expect(modal).toBeVisible()
 
-        // Should have aria-modal
-        const ariaModal = await modal.getAttribute('aria-modal')
-        expect(ariaModal).toBe('true')
-
-        // Should have accessible name
-        const hasLabel =
-          (await modal.getAttribute('aria-label')) !== null ||
-          (await modal.getAttribute('aria-labelledby')) !== null
-
-        expect(hasLabel).toBeTruthy()
+        await expect(modal).toHaveAttribute('data-state', 'open')
+        await expect(modal).toHaveAccessibleName('Новая поставка')
+        await expect(modal).toHaveAccessibleDescription('Создайте поставку для группировки заказов')
       }
     })
 
     test('should return focus to trigger after modal closes', async ({ page }) => {
-      const createButton = page.locator('button:has-text("Создать"), button:has-text("Новая")')
-      if (await createButton.isVisible()) {
-        // Store button reference
-        await createButton.click()
-        await expect(page.getByRole('dialog')).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
 
-        await page.keyboard.press('Escape')
-        await expect(page.getByRole('dialog')).not.toBeVisible()
-
-        // Focus should return to create button
-        const isFocused = await createButton.evaluate(el => el === document.activeElement)
-        // Note: Focus return is a best practice but not always implemented
-        expect(isFocused || true).toBeTruthy()
+      const createButton = page.getByRole('button', { name: 'Создать поставку', exact: true })
+      if (!(await createButton.isVisible())) {
+        test.skip(
+          true,
+          'Configured authenticated role is view-only, so the create-supply dialog trigger is unavailable'
+        )
+        return
       }
+
+      await createButton.click()
+      await expect(page.getByRole('dialog')).toBeVisible()
+
+      await page.keyboard.press('Escape')
+      await expect(page.getByRole('dialog')).not.toBeVisible()
+      await expect(createButton).toBeFocused()
     })
   })
 
@@ -272,7 +273,7 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
     test('should have no WCAG violations on supply detail page', async ({ page }) => {
       if (!page.url().includes('/supplies/')) {
-        test.skip()
+        test.skip(true, 'Configured supplies fixture has no detail record for WCAG scanning')
         return
       }
 
@@ -292,7 +293,7 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
     test('should have proper heading hierarchy', async ({ page }) => {
       if (!page.url().includes('/supplies/')) {
-        test.skip()
+        test.skip(true, 'Configured supplies fixture has no detail record for heading validation')
         return
       }
 
@@ -316,27 +317,33 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
     test('should have accessible status stepper', async ({ page }) => {
       if (!page.url().includes('/supplies/')) {
-        test.skip()
+        await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
+        test.skip(
+          true,
+          'Configured supplies fixture has no detail record for status-stepper coverage'
+        )
         return
       }
 
-      const stepper = page.locator(
-        '[class*="stepper"], [role="progressbar"], [data-testid*="stepper"]'
-      )
-      if (await stepper.isVisible()) {
-        // Stepper should have some form of accessible labeling
-        const hasAccessibleLabel =
-          (await stepper.getAttribute('aria-label')) !== null ||
-          (await stepper.getAttribute('aria-labelledby')) !== null ||
-          (await stepper.getAttribute('role')) !== null
-
-        expect(hasAccessibleLabel || true).toBeTruthy()
+      await expect(page.locator('h1')).toBeVisible()
+      const stepper = page.getByRole('navigation', { name: 'Статус поставки', exact: true })
+      if (!(await stepper.isVisible())) {
+        await expect(page.getByText('Поставка была отменена', { exact: true })).toBeVisible()
+        test.skip(true, 'Configured supply fixture is CANCELLED and intentionally has no stepper')
+        return
       }
+
+      const currentStep = stepper.locator('[aria-current="step"]')
+      await expect(currentStep).toHaveCount(1)
+      await expect(currentStep).toHaveText(/^(Открыта|Закрыта|В пути|Доставлена)$/)
     })
   })
 
   test.describe('Order Picker Drawer Accessibility', () => {
     test.beforeEach(async ({ page }) => {
+      await installStory1624OpenSupplyRoutes(page)
+      await installStory1624EligibleOrdersRoute(page)
+
       // Navigate to OPEN supply
       await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
@@ -347,77 +354,77 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
         await firstRow.click()
         await page.locator('main').waitFor({ state: 'visible' })
       }
+
+      await expect(page).toHaveURL(/\/supplies\/[^/?]+/)
+      await expect(page.getByLabel('Статус поставки: Открыта', { exact: true })).toBeVisible()
     })
 
     test('should have no WCAG violations in order picker drawer', async ({ page }) => {
-      const addButton = page.locator('button:has-text("Добавить заказы")')
-      if ((await addButton.isVisible()) && (await addButton.isEnabled())) {
-        await addButton.click()
-        await page.waitForTimeout(1000)
+      const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
+      await expect(addButton).toBeEnabled()
+      await addButton.click()
+      await page.waitForTimeout(1000)
 
-        const accessibilityScanResults = await new AxeBuilder({ page })
-          .withTags(['wcag2a', 'wcag2aa'])
-          .include('[role="dialog"], [class*="drawer"], [class*="sheet"]')
-          .analyze()
+      const accessibilityScanResults = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa'])
+        .include('[role="dialog"], [class*="drawer"], [class*="sheet"]')
+        .analyze()
 
-        expect(accessibilityScanResults.violations).toEqual([])
-      }
+      expect(accessibilityScanResults.violations).toEqual([])
     })
 
     test('should trap focus within drawer', async ({ page }) => {
-      const addButton = page.locator('button:has-text("Добавить заказы")')
-      if ((await addButton.isVisible()) && (await addButton.isEnabled())) {
-        await addButton.click()
-        await expect(page.getByRole('dialog')).toBeVisible()
+      const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
+      await expect(addButton).toBeEnabled()
+      await addButton.click()
+      await expect(page.getByRole('dialog')).toBeVisible()
 
-        // Tab through all elements
-        for (let i = 0; i < 15; i++) {
-          await page.keyboard.press('Tab')
-        }
-
-        // Focus should still be within drawer/dialog
-        const activeInDrawer = await page.evaluate(() => {
-          const drawer = document.querySelector(
-            '[role="dialog"], [class*="drawer"], [class*="sheet"]'
-          )
-          return drawer?.contains(document.activeElement)
-        })
-
-        expect(activeInDrawer).toBeTruthy()
+      // Tab through all elements
+      for (let i = 0; i < 15; i++) {
+        await page.keyboard.press('Tab')
       }
+
+      // Focus should still be within drawer/dialog
+      const activeInDrawer = await page.evaluate(() => {
+        const drawer = document.querySelector(
+          '[role="dialog"], [class*="drawer"], [class*="sheet"]'
+        )
+        return drawer?.contains(document.activeElement)
+      })
+
+      expect(activeInDrawer).toBeTruthy()
     })
 
     test('should close drawer with Escape key', async ({ page }) => {
-      const addButton = page.locator('button:has-text("Добавить заказы")')
-      if ((await addButton.isVisible()) && (await addButton.isEnabled())) {
-        await addButton.click()
-        await expect(page.getByRole('dialog')).toBeVisible()
+      const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
+      await expect(addButton).toBeEnabled()
+      await addButton.click()
+      await expect(page.getByRole('dialog')).toBeVisible()
 
-        await page.keyboard.press('Escape')
-        await expect(page.getByRole('dialog')).not.toBeVisible()
-      }
+      await page.keyboard.press('Escape')
+      await expect(page.getByRole('dialog')).not.toBeVisible()
     })
 
     test('should have accessible checkboxes for order selection', async ({ page }) => {
-      const addButton = page.locator('button:has-text("Добавить заказы")')
-      if ((await addButton.isVisible()) && (await addButton.isEnabled())) {
-        await addButton.click()
-        await page.waitForTimeout(2000)
+      await expect(page).toHaveURL(/\/supplies\/[^/?]+/)
+      await expect(page.getByLabel('Статус поставки: Открыта', { exact: true })).toBeVisible()
 
-        const checkboxes = page.locator('input[type="checkbox"]')
-        const checkboxCount = await checkboxes.count()
+      const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
+      await expect(addButton).toBeVisible()
+      await expect(addButton).toBeEnabled()
 
-        for (let i = 0; i < Math.min(checkboxCount, 5); i++) {
-          const checkbox = checkboxes.nth(i)
-          // Checkbox should have accessible label
-          const hasLabel =
-            (await checkbox.getAttribute('aria-label')) !== null ||
-            (await checkbox.getAttribute('aria-labelledby')) !== null ||
-            (await checkbox.evaluate(el => !!el.closest('label')?.textContent))
+      await addButton.click()
+      const drawer = page.getByRole('dialog', { name: 'Добавить заказы в поставку', exact: true })
+      await expect(drawer).toBeVisible()
 
-          expect(hasLabel || true).toBeTruthy()
-        }
-      }
+      const selectAllCheckbox = drawer.getByRole('checkbox', { name: 'Выбрать все заказы' })
+      await expect(selectAllCheckbox).toBeVisible()
+      await expect(
+        drawer.getByRole('checkbox', {
+          name: `Выбрать заказ #${STORY_162_4_ELIGIBLE_ORDER.orderId}`,
+          exact: true,
+        })
+      ).toBeVisible()
     })
   })
 
@@ -545,28 +552,60 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
     })
 
     test('should have aria-live regions for dynamic content', async ({ page }) => {
-      // Check for aria-live regions (used for toasts, loading states, etc.)
-      const liveRegions = page.locator('[aria-live]')
-      const hasLiveRegions = (await liveRegions.count()) > 0
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
+      await page.goto(`${SUPPLIES_ROUTE}?status=DELIVERED`, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
 
-      // Live regions are recommended but not required
-      console.log(`Found ${await liveRegions.count()} aria-live regions`)
-      expect(hasLiveRegions || true).toBeTruthy()
+      const firstRow = page.locator('tbody tr:first-child')
+      if (!(await firstRow.isVisible())) {
+        test.skip(
+          true,
+          'Configured fixture has no DELIVERED supply with a status announcement live region'
+        )
+        return
+      }
+
+      await firstRow.click()
+      await expect(page).toHaveURL(/\/supplies\/[^/?]+/)
+      const deliveredAnnouncement = page
+        .locator('[aria-live="polite"]')
+        .filter({ hasText: 'Поставка успешно доставлена' })
+      await expect(deliveredAnnouncement).toHaveText('Поставка успешно доставлена')
     })
 
     test('should announce loading state changes', async ({ page }) => {
-      // Trigger a loading state by navigating
-      await page.reload()
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
+      await installStory1624OpenSupplyRoutes(page)
+      await installStory1624EligibleOrdersRoute(page, 1000)
+      await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
 
-      // Check for loading indicators with proper ARIA
-      const loadingIndicators = page.locator(
-        '[aria-busy="true"], [role="progressbar"], [aria-live]'
+      const firstRow = page.locator('tbody tr:first-child')
+      await expect(firstRow).toBeVisible()
+      await firstRow.click()
+      await expect(page).toHaveURL(/\/supplies\/[^/?]+/)
+      await expect(page.getByLabel('Статус поставки: Открыта', { exact: true })).toBeVisible()
+      const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
+      await expect(addButton).toBeVisible()
+      await expect(addButton).toBeEnabled()
+
+      await addButton.click()
+      const drawer = page.getByRole('dialog', { name: 'Добавить заказы в поставку', exact: true })
+      await expect(drawer).toBeVisible()
+      await expect(
+        drawer.locator('[aria-busy="true"][aria-label="Загрузка заказов"]')
+      ).toBeVisible()
+
+      await expect(drawer.locator('[aria-busy="true"][aria-label="Загрузка заказов"]')).toHaveCount(
+        0,
+        { timeout: 10000 }
       )
-      const hasIndicator = (await loadingIndicators.count()) > 0
-
-      // Loading states should be announced (best practice)
-      console.log(`Found ${await loadingIndicators.count()} loading indicators with ARIA`)
-      expect(hasIndicator || true).toBeTruthy()
+      await expect(
+        drawer.getByRole('checkbox', {
+          name: `Выбрать заказ #${STORY_162_4_ELIGIBLE_ORDER.orderId}`,
+          exact: true,
+        })
+      ).toBeVisible()
     })
   })
 })

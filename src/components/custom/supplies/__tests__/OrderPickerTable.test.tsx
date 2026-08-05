@@ -13,6 +13,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import {
   mockOrdersLargeDataset,
@@ -28,6 +29,8 @@ import {
   SUPPLIER_STATUS_LABELS,
 } from '@/test/fixtures/order-picker'
 import { OrderPickerTable } from '../OrderPickerTable'
+
+expect.extend(toHaveNoViolations)
 
 describe('OrderPickerTable - Story 53.5-FE', () => {
   const mockOnToggleOrder = vi.fn()
@@ -63,13 +66,12 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
   describe('AC2: Virtualization with react-window', () => {
     it('renders a virtualized list container', () => {
       renderTable()
-      const listbox = screen.getByRole('listbox')
-      expect(listbox).toBeInTheDocument()
+      expect(screen.getByRole('list', { name: 'Список заказов' })).toBeInTheDocument()
     })
 
     it('renders only visible rows, not all 1000', () => {
       renderTable({ orders: mockOrdersLargeDataset })
-      const options = screen.getAllByRole('option')
+      const options = screen.getAllByRole('listitem')
       // With height=600 and rowHeight=48, ~11-12 visible + some overscan
       expect(options.length).toBeLessThan(50)
       expect(options.length).toBeGreaterThan(0)
@@ -77,7 +79,7 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
 
     it('applies correct row height of 48px', () => {
       renderTable({ orders: mockOrdersSmallDataset })
-      const options = screen.getAllByRole('option')
+      const options = screen.getAllByRole('listitem')
       for (const opt of options) {
         // react-window sets height via inline style
         const style = opt.style
@@ -87,18 +89,17 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
 
     it('respects height prop for the list container', () => {
       renderTable({ height: 400 })
-      const listbox = screen.getByRole('listbox')
-      // The inner container has a fixed height = height - 48 (header)
-      const listContainer = listbox.firstElementChild as HTMLElement
-      expect(listContainer).toBeTruthy()
+      const listbox = screen.getByRole('list', { name: 'Список заказов' })
+      expect(listbox).toHaveStyle({ height: '352px' })
     })
 
     it('maintains selection state during scroll', () => {
       const selectedIds = createMockSelectedIds(3)
       renderTable({ orders: mockOrdersLargeDataset, selectedIds })
-      const options = screen.getAllByRole('option')
-      const selected = options.filter(o => o.getAttribute('aria-selected') === 'true')
-      expect(selected.length).toBeGreaterThanOrEqual(0)
+      const selected = screen
+        .getAllByRole('listitem')
+        .filter(row => within(row).getByRole('checkbox').getAttribute('data-state') === 'checked')
+      expect(selected).toHaveLength(3)
     })
   })
 
@@ -114,7 +115,7 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
 
     it('header row is outside the virtualized list (always visible)', () => {
       renderTable()
-      const listbox = screen.getByRole('listbox')
+      const listbox = screen.getByRole('list', { name: 'Список заказов' })
       const headerCheckbox = screen.getByLabelText('Выбрать все заказы')
       // Header checkbox should NOT be inside the listbox
       expect(listbox.contains(headerCheckbox)).toBe(false)
@@ -166,7 +167,7 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
   describe('AC3: Order Row Display', () => {
     it('renders checkbox as first element in each row', () => {
       renderTable({ orders: [mockEligibleOrderConfirm] })
-      const row = screen.getByRole('option')
+      const row = screen.getByRole('listitem')
       const checkbox = within(row).getByRole('checkbox')
       expect(checkbox).toBeTruthy()
     })
@@ -247,15 +248,17 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
     it('clicking row toggles selection', async () => {
       const user = userEvent.setup()
       renderTable({ orders: [mockEligibleOrderConfirm] })
-      const row = screen.getByRole('option')
-      await user.click(row)
+      const rowAction = screen.getByRole('button', {
+        name: `Переключить выбор заказа #${mockEligibleOrderConfirm.orderId}`,
+      })
+      await user.click(rowAction)
       expect(mockOnToggleOrder).toHaveBeenCalledWith(mockEligibleOrderConfirm.orderId)
     })
 
     it('selected row has bg-blue-50 highlight class', () => {
       const selectedIds = new Set([mockEligibleOrderConfirm.orderId])
       renderTable({ orders: [mockEligibleOrderConfirm], selectedIds })
-      const row = screen.getByRole('option')
+      const row = screen.getByRole('listitem')
       expect(row.className).toContain('bg-blue-50')
     })
 
@@ -271,19 +274,28 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Row Interaction', () => {
-    it('row has tabIndex for keyboard nav', () => {
+    it('keeps the list item non-focusable and exposes a separate row action', () => {
       renderTable({ orders: [mockEligibleOrderConfirm] })
-      const row = screen.getByRole('option')
-      expect(row).toHaveAttribute('tabindex', '0')
+      const row = screen.getByRole('listitem')
+      const checkbox = within(row).getByRole('checkbox')
+      const rowAction = within(row).getByRole('button', {
+        name: `Переключить выбор заказа #${mockEligibleOrderConfirm.orderId}`,
+      })
+
+      expect(row).not.toHaveAttribute('tabindex')
+      expect(rowAction).not.toContainElement(checkbox)
+      expect(rowAction).toHaveAttribute('aria-pressed', 'false')
     })
 
     it('cursor is pointer on row hover', () => {
       renderTable({ orders: [mockEligibleOrderConfirm] })
-      const row = screen.getByRole('option')
-      expect(row.className).toContain('cursor-pointer')
+      const rowAction = screen.getByRole('button', {
+        name: `Переключить выбор заказа #${mockEligibleOrderConfirm.orderId}`,
+      })
+      expect(rowAction.className).toContain('cursor-pointer')
     })
 
-    it('checkbox click does not double-toggle (stopPropagation)', async () => {
+    it('checkbox click toggles only once', async () => {
       const user = userEvent.setup()
       renderTable({ orders: [mockEligibleOrderConfirm] })
       const checkbox = screen.getByLabelText(`Выбрать заказ #${mockEligibleOrderConfirm.orderId}`)
@@ -310,7 +322,7 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
 
     it('handles single order correctly', () => {
       renderTable({ orders: [mockEligibleOrderConfirm] })
-      expect(screen.getAllByRole('option')).toHaveLength(1)
+      expect(screen.getAllByRole('listitem')).toHaveLength(1)
       expect(screen.getByText('SKU-CONFIRM-001')).toBeInTheDocument()
     })
 
@@ -319,9 +331,9 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
       expect(screen.getByText('—')).toBeInTheDocument()
     })
 
-    it('does not render listbox when orders are empty', () => {
+    it('does not render list when orders are empty', () => {
       renderTable({ orders: mockOrdersEmpty })
-      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+      expect(screen.queryByRole('list', { name: 'Список заказов' })).not.toBeInTheDocument()
     })
   })
 
@@ -330,28 +342,35 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
   // ==========================================================================
 
   describe('Accessibility', () => {
-    it('list has role="listbox"', () => {
-      renderTable()
-      expect(screen.getByRole('listbox')).toBeInTheDocument()
+    it('has no automated accessibility violations', async () => {
+      const { container } = renderTable({ orders: mockOrdersSmallDataset })
+
+      expect(await axe(container)).toHaveNoViolations()
     })
 
-    it('rows have role="option"', () => {
+    it('uses the react-window list role as the accessible collection', () => {
+      renderTable()
+      expect(screen.getByRole('list', { name: 'Список заказов' })).toBeInTheDocument()
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    })
+
+    it('rows have role="listitem"', () => {
       renderTable({ orders: mockOrdersSmallDataset })
-      const options = screen.getAllByRole('option')
+      const options = screen.getAllByRole('listitem')
       expect(options.length).toBeGreaterThan(0)
     })
 
-    it('selected rows have aria-selected="true"', () => {
+    it('selected rows expose a checked checkbox', () => {
       const selectedIds = new Set([mockEligibleOrderConfirm.orderId])
       renderTable({ orders: [mockEligibleOrderConfirm], selectedIds })
-      const row = screen.getByRole('option')
-      expect(row).toHaveAttribute('aria-selected', 'true')
+      const row = screen.getByRole('listitem')
+      expect(within(row).getByRole('checkbox')).toHaveAttribute('data-state', 'checked')
     })
 
-    it('unselected rows have aria-selected="false"', () => {
+    it('unselected rows expose an unchecked checkbox', () => {
       renderTable({ orders: [mockEligibleOrderConfirm], selectedIds: new Set() })
-      const row = screen.getByRole('option')
-      expect(row).toHaveAttribute('aria-selected', 'false')
+      const row = screen.getByRole('listitem')
+      expect(within(row).getByRole('checkbox')).toHaveAttribute('data-state', 'unchecked')
     })
 
     it('all checkboxes have accessible labels', () => {
@@ -361,10 +380,10 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
       ).toBeInTheDocument()
     })
 
-    it('listbox has aria-multiselectable', () => {
+    it('does not expose listbox-only selection attributes', () => {
       renderTable()
-      const listbox = screen.getByRole('listbox')
-      expect(listbox).toHaveAttribute('aria-multiselectable', 'true')
+      const list = screen.getByRole('list', { name: 'Список заказов' })
+      expect(list).not.toHaveAttribute('aria-multiselectable')
     })
   })
 
