@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-05 # Story 162.4 approved after two fresh reviews, architecture review, independent verification, PR #95 merge, and cleanup.
+last_updated: 2026-08-06 # Story 162.5 approval lifecycle completed after two code reviews, architecture CLEAR, and verifier VERIFIED; delivery evidence remains orchestrator-owned.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -697,7 +697,7 @@ development_status:
   162.2-fe-reproducible-local-e2e-preflight: done  # Independently approved and verified; live AC3/live AC5 gap recorded. Completion is effective through the current normal PR merge.
   162.3-fe-analytics-finance-meaningful-e2e-assertions: done  # Code review APPROVE, architecture CLEAR, verifier VERIFIED; final post-rebase live AC5 passed 191/5/0.
   162.4-fe-operations-settings-meaningful-e2e-assertions: done  # PR #95 merged at 3f43b5e3; APPROVE/CLEAR/VERIFIED and cleanup proven.
-  162.5-fe-liquidity-unit-economics-state-waits: backlog
+  162.5-fe-liquidity-unit-economics-state-waits: done  # APPROVE/CLEAR/VERIFIED; normal PR delivery evidence remains external and orchestrator-owned.
   162.6-fe-dashboard-analytics-state-waits: backlog
   162.7-fe-supplies-state-waits: backlog
   162.8-fe-pricing-backfill-cogs-auth-state-waits: backlog
