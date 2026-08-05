@@ -208,6 +208,11 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - 2026-08-05: Third-run provenance reports `updatedAt: 2026-08-05T01:57:07.364Z`, `gitHead: 5c96699c5ae59dfb695548bdffdd62bfba1f8d15`, `model: glm-5.2`, and `status: complete`. The generator commit changed only `openwiki/.last-update.json`, `openwiki/architecture.md`, `openwiki/conventions-and-quality.md`, `openwiki/index.md`, `openwiki/quickstart.md`, and `openwiki/testing-and-ops.md`; the local story worktree fast-forwarded to `aeffcc2c`.
 - 2026-08-05: Third-run targeted documentation, workflow, provenance, generated-boundary, and diff gates passed. The run resolved every prior systemic blocker: current local-only delivery guidance, historical Story 128.10 validator framing, client/server architecture wording, Epic state, and provenance are now accepted.
 - 2026-08-05: Independent third-run review still returned `REQUEST_CHANGES`, and verification returned `NOT_VERIFIED`, only because `openwiki/architecture.md` contains one malformed duplicated Configuration fragment and the two Anti-Pattern #8 links in `openwiki/domain-logic.md` use a broken single-hyphen anchor. Run 4 source-control instructions are being repaired for a fresh complete generation; generated pages remain untouched by hand.
+- 2026-08-05: Run 4 workflow run [30968672409](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30968672409) failed during generation because the configured provider returned `overloaded_error` with HTTP `500`. The failed attempt produced no generated output, generator commit, or push; the local and remote feature ref remained at `1cdd721ac5cd82eb8a02a0fcd9032264f7b18eaa`, with the prepared source-repair diff unchanged. A fresh retry was required.
+- 2026-08-05: Run 4 retry workflow run [30968987777](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30968987777) started at `2026-08-05T02:18:46Z` and completed successfully at `2026-08-05T02:22:08Z`. It ran from source SHA `1cdd721ac5cd82eb8a02a0fcd9032264f7b18eaa` and produced generator commit `ed94e3c541f726ea3507a8d573ca49a9560e7d36` with parent `1cdd721ac5cd82eb8a02a0fcd9032264f7b18eaa`.
+- 2026-08-05: Retry provenance reports `updatedAt: 2026-08-05T02:22:00.793Z`, `gitHead: 1cdd721ac5cd82eb8a02a0fcd9032264f7b18eaa`, `model: glm-5.2`, and `status: complete`. The generator commit changed only `openwiki/.last-update.json`, `openwiki/architecture.md`, and `openwiki/domain-logic.md`; user-authored `openwiki/INSTRUCTIONS.md` was preserved unchanged.
+- 2026-08-05: Run 4 targeted documentation, provenance, navigation, protected-boundary, workflow-syntax, and diff validation passed. This targeted `PASS` is not final acceptance evidence.
+- 2026-08-05: Fresh independent code review returned `REQUEST_CHANGES`, and verification remained `NOT_VERIFIED`. The blocking findings are false generated source/citation stamps, a HIGH workflow credential-persistence risk, and a MEDIUM manual tag-dispatch safety mismatch. Source/workflow repairs followed by a complete Run 5 generation are pending; generated pages remain untouched by hand.
 - 2026-08-05: No PR or merge is claimed. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
 
 ### Completion Notes List
@@ -220,8 +225,11 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - The second generated output is also not accepted: code review returned `REQUEST_CHANGES` and verification returned `NOT_VERIFIED` because current delivery/local-only guidance remained absent and architecture/validator guidance remained inaccurate.
 - Third credentialed feature-ref generation completed in workflow run `30967725988`, producing generator commit `aeffcc2c` from source parent `5c96699c`; targeted gates passed and all prior systemic findings were resolved.
 - The third generated output is not accepted: code review returned `REQUEST_CHANGES` and verification returned `NOT_VERIFIED` only for one malformed duplicated Configuration fragment in `openwiki/architecture.md` and two broken Anti-Pattern #8 anchors in `openwiki/domain-logic.md`.
-- Run 4 source-control repairs are pending in user-authored `openwiki/INSTRUCTIONS.md`; generated pages have not been manually repaired.
-- Targeted gates are not final acceptance evidence. Story 165.3 remains in progress until a fresh fourth generation passes content, boundary, review, and final delivery gates.
+- Run 4 source-control repairs were committed in user-authored `openwiki/INSTRUCTIONS.md`; generated pages were not manually repaired.
+- Run 4 workflow run `30968672409` failed on provider `overloaded_error` / HTTP `500` before producing output, a commit, or a push. The feature ref and prepared source-repair diff remained unchanged at `1cdd721a`.
+- Run 4 retry workflow run `30968987777` completed successfully from source `1cdd721a`, producing generator commit `ed94e3c5` with parent `1cdd721a` and changing only `openwiki/.last-update.json`, `openwiki/architecture.md`, and `openwiki/domain-logic.md`; `openwiki/INSTRUCTIONS.md` remained unchanged.
+- Run 4 targeted validation passed, but the output is not accepted: independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling.
+- Run 5 source/workflow repair and complete generation are pending. Story 165.3 remains in progress until the new output passes content, boundary, independent review, verification, and final delivery gates.
 - No PR or merge has occurred for Story 165.3.
 
 ### File List
@@ -233,13 +241,13 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - `README.md` (authoritative OpenWiki source guidance)
 - `docs/EPICS-AND-STORIES-TRACKER.md` (authoritative current Epic/story state)
 - `docs/FRONTEND-WORK-SUMMARY.md` (authoritative frontend delivery summary)
-- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 4 architecture-table and anchor repair instructions pending)
+- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 5 source repair pending for false generated stamps)
 - `scripts/story-128-10/README.md` (expected authoritative historical-evidence warning for the next generation)
 - `scripts/story-128-10/frontend-command-manifest.json` (expected authoritative historical lifecycle and current-entrypoint metadata for the next generation)
-- `openwiki/.last-update.json` (third-run generated provenance from `5c96699c`; accepted targeted evidence, pending Run 4)
-- `openwiki/architecture.md` (third-run generated page; one malformed duplicated Configuration fragment remains pending Run 4)
+- `openwiki/.last-update.json` (Run 4 retry provenance from source `1cdd721a` in generator commit `ed94e3c5`; Run 5 pending)
+- `openwiki/architecture.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
 - `openwiki/conventions-and-quality.md` (third-run generated page; prior workflow/validator findings resolved)
-- `openwiki/domain-logic.md` (generated page; two broken Anti-Pattern #8 anchors remain pending Run 4)
+- `openwiki/domain-logic.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
 - `openwiki/index.md` (third-run generated page; current local-only delivery guidance resolved)
 - `openwiki/quickstart.md` (third-run generated page; current local-only delivery guidance resolved)
 - `openwiki/testing-and-ops.md` (third-run generated page; historical-validator guidance resolved)
@@ -257,3 +265,6 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | 2026-08-05 | Second output rejected; additional authoritative-source and workflow-protection repairs prepared. Third source-led generation remains pending and status stays `in-progress`. |
 | 2026-08-05 | Third generation completed in workflow run `30967725988` from `5c96699c`, producing `aeffcc2c`; targeted gates passed and every prior systemic blocker was resolved. |
 | 2026-08-05 | Third output retained `REQUEST_CHANGES` / `NOT_VERIFIED` only for one malformed duplicated architecture fragment and two broken anchors; Run 4 source repair and generation remain pending, with AC4/AC5/final review/merge still open. |
+| 2026-08-05 | Run 4 workflow run `30968672409` failed on provider `overloaded_error` / HTTP `500` without generated output, commit, or push; the feature ref remained `1cdd721a`, status stayed `in-progress`, and a fresh retry was required. |
+| 2026-08-05 | Run 4 retry workflow run `30968987777` completed successfully from source `1cdd721a`, producing generator commit `ed94e3c5` with exactly three generated-file changes while preserving `openwiki/INSTRUCTIONS.md`; fresh validation/review remain pending and AC4/AC5/final review/merge stay open. |
+| 2026-08-05 | Run 4 targeted validation passed, but independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling; Run 5 source/workflow repair and regeneration are pending, with AC4/AC5/final review/merge still open. |

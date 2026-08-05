@@ -48,6 +48,6 @@
 - Repair `openwiki/architecture.md` so it states that Next.js server page/layout wrappers coexist with client components and that interactive data fetching is client-side. It MUST NOT claim that every page uses `use client`.
 - In the Configuration section of generated `openwiki/architecture.md`, write exactly one Markdown table. Remove the orphan `syntax` fragment associated with `AP#8 |`, remove duplicate Tailwind and `.env` rows, and inspect the final page to confirm that no duplicate configuration block remains.
 - Remove orphaned or duplicated fragments from `openwiki/conventions-and-quality.md`.
-- Remove false broken-link comments from `openwiki/domain-logic.md` where the targets resolve. Both Anti-Pattern #8 links MUST use exactly this relative href: `api-and-normalizers.md#anti-pattern-8-null--0-collapse-on-moneyratio-fields` (with two hyphens between `null` and `0`, matching the GitHub heading slug). Verify both occurrences in the generated page.
-- Run final cross-page relative-link and anchor validation after all generated repairs.
+- In `openwiki/api-and-normalizers.md`, the stable generated heading MUST be exactly `## Anti-Pattern 8: Preserve Null Money and Ratio Values`. In `openwiki/domain-logic.md`, both domain links MUST use exactly `api-and-normalizers.md#anti-pattern-8-preserve-null-money-and-ratio-values`. Remove all old broken-link comments associated with those links.
+- Run the final OpenWiki cross-page relative-link and anchor validator after all generated repairs, and confirm that its accepted anchor agrees with the GitHub-style slug `anti-pattern-8-preserve-null-money-and-ratio-values`.
 - Do not preserve inaccurate prose merely to minimize the generated diff.
