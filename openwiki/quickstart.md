@@ -25,7 +25,7 @@ Development and validation are **local-only**: there is no deployment target or 
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~1050 unit test files, MSW) + Playwright E2E (~83 specs) + outbound network guards + privacy/diagnostic-capture checks |
+| **Testing** | Vitest (~1060 unit test files, MSW) + Playwright E2E (~84 specs) + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
@@ -39,7 +39,9 @@ npm run build                  # Production build
 npm run lint                   # ESLint (max-warnings: 112)
 npm run type-check             # tsc --noEmit
 npm test                       # Vitest unit tests
-npm run test:e2e               # Playwright E2E
+npm run test:e2e               # Playwright E2E (bounded read-only smoke, preflight-gated)
+npm run test:e2e:full          # Full Playwright E2E suite (same preflight)
+npm run test:e2e:preflight     # E2E config + service diagnostics only (no browser)
 npm run check:privacy          # Privacy console guard (PII-adjacent files)
 npm run test:privacy           # Privacy console + diagnostic-capture-policy unit tests
 npm run check:docs             # Doc-citation drift gate
@@ -50,9 +52,9 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 
 - **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, configuration.
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
-- **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
+- **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), historical SPP (Story 128.27), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
-- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, outbound network guards (Vitest + Playwright + static boundary), privacy console and diagnostic-capture guards, frontend verification orchestrator, local validation, environment variables.
+- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, local E2E preflight + handshake (Story 162.2), outbound network guards (Vitest + Playwright + static boundary), privacy console and diagnostic-capture guards, frontend verification orchestrator, local validation, environment variables.
 
 ## Key Source References
 
@@ -67,6 +69,8 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Auth store | `src/stores/authStore.ts` |
 | Outbound network guard (Vitest) | `src/test/outbound-network-guard.ts`, `src/test/network-guard-bootstrap.ts`, `test-utils/outbound-network-policy.ts` |
 | Playwright network guard + static boundary | `e2e/fixtures/playwright-network-guard.ts`, `src/test/playwright-static-boundary.ts` |
+| Local E2E preflight + handshake (Story 162.2) | `scripts/e2e-preflight.mjs`, `scripts/e2e-preflight-handshake.mjs`, `scripts/e2e-preflight.test.mjs` |
+| Historical SPP server lifecycle (Story 128.27) | `scripts/historical-spp-global-setup.ts`, `src/test/historical-spp-server-lifecycle.ts`, `src/test/historical-spp-server-lifecycle.test.ts` |
 | Frontend verification orchestrator (historical, Story 128.10) | `scripts/story-128-10/verify-frontend.mjs`, `scripts/story-128-10/frontend-command-manifest.json`, `scripts/story-128-10/README.md` |
 | Agent guidelines | `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md` |
 | Epics & stories tracker | `docs/EPICS-AND-STORIES-TRACKER.md` |

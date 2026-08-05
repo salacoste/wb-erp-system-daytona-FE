@@ -612,19 +612,6 @@ This repository has a generated `openwiki/` evidence index. It is optional just-
 - Treat source code and tests as authoritative. A brief's unknowns and review items are verification gaps, not automatic requirements.
 - Prefer the narrowest quiet validation that proves the changed behavior. Preserve complete failure output.
 
-`.github/workflows/openwiki-update.yml` refreshes it at `47 8 * * *` UTC on the
-`wb-ci-fe` self-hosted runner with Node.js 24. It runs
-`npx --yes openwiki@0.3.0 code --update --print` with provider `anthropic`, model
-`glm-5.2`, and `https://api.z.ai/api/anthropic`.
-
-Scheduled generation from `main` publishes a unique
-`automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` branch and opens a
-PR without merging it. Manual generation from `main` is rejected; a manual run
-on a non-main feature branch pushes the generated commit back to that same
-branch. Generated pages under `openwiki/**` exclude the user-authored
-`openwiki/INSTRUCTIONS.md` control file. The workflow restores
-`.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and
-`openwiki/INSTRUCTIONS.md`, then stages generated `openwiki/**` output while
-explicitly excluding the control file. Do not hand-edit generated pages.
+The scheduled OpenWiki GitHub Actions workflow refreshes the repository wiki. Do not hand-edit generated OpenWiki pages unless explicitly asked; prefer updating source code/docs and letting OpenWiki regenerate.
 
 <!-- OPENWIKI:END -->

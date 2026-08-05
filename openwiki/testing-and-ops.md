@@ -1,7 +1,7 @@
 ---
 type: "Operations Runbook"
 title: "Testing & Operations"
-description: "Testing strategy (Vitest unit with MSW, Playwright E2E, outbound network guards, Playwright static boundary, privacy console and diagnostic-capture guards, frontend verification orchestrator), CI/CD workflows, local run modes, and environment variables."
+description: "Testing strategy (Vitest unit with MSW, Playwright E2E, local E2E preflight and handshake, outbound network guards, Playwright static boundary, privacy console and diagnostic-capture guards, frontend verification orchestrator), CI/CD workflows, local run modes, and environment variables."
 ---
 # Testing & Operations
 
@@ -15,7 +15,7 @@ description: "Testing strategy (Vitest unit with MSW, Playwright E2E, outbound n
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Test count | ~1050 test files across `src/` |
+| Test count | ~1060 test files across `src/` |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -44,15 +44,15 @@ Tests are co-located with source in `__tests__/` directories:
 
 | Aspect | Detail |
 |--------|--------|
-| Test directory | `./e2e/` (~83 `.spec.ts` files) |
+| Test directory | `./e2e/` (~84 `.spec.ts` files) |
 | Base URL | `http://localhost:3100` (overridable via `E2E_BASE_URL`, validated against the network policy allowlist via `assertAllowedTestUrl`) |
-| Projects | `setup` (auth, uses storage state) → `chromium` (desktop, depends on setup) |
+| Projects | `setup` (auth, uses storage state) → `chromium` (desktop, depends on setup); `historical-spp` (self-contained, empty storage state, skips `setup`) for the Story 128.27 exact-command spec |
 | CI behavior | 2 retries, 1 worker, `forbidOnly: true`, auto-starts dev server |
 | Dev behavior | 0 retries, reuse existing server |
 | Diagnostics | `trace: 'off'`, `screenshot: 'off'`, `video: 'off'` — raw browser capture is disabled by default because it can retain URLs, storage, headers, or bodies (Story 128.10) |
 | Service workers | `serviceWorkers: 'block'` — BrowserContext routing cannot intercept service-worker-owned traffic |
 
-`playwright.config.ts` imports `src/test/network-guard-bootstrap` as its first statement so the Node-side outbound network guard is installed before any test file evaluates. The guarded Playwright runtime is supplied to specs via the custom fixtures in [Outbound Network Guards](#outbound-network-guards).
+`playwright.config.ts` imports `src/test/network-guard-bootstrap` as its first statement so the Node-side outbound network guard is installed before any test file evaluates. It also imports `scripts/e2e-preflight-handshake.mjs` and, for non-CI runs, enforces a fresh preflight handshake before collection (see [Local E2E Preflight](#local-e2e-preflight)). The guarded Playwright runtime is supplied to specs via the custom fixtures in [Outbound Network Guards](#outbound-network-guards).
 
 ### Notable fixtures
 - `e2e/auth.setup.ts` — Authentication setup with storage state at `e2e/.auth/user.json`
@@ -62,9 +62,38 @@ Tests are co-located with source in `__tests__/` directories:
 - `e2e/fixtures/playwright-network-guard.ts` — Guarded Playwright object graph (see [Outbound Network Guards](#outbound-network-guards))
 
 ### E2E test areas
-Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, liquidity, unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, accessibility, settings, monitoring, plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
+Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, liquidity, unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
 
 > **Note**: A hosted Tier 0 runtime certification harness and governed coverage certification system previously lived here. Both were removed when the project replaced hosted certification with local validation gates. The remaining quality gates are documented in [Conventions & Quality Gates](conventions-and-quality.md).
+
+## Local E2E Preflight
+
+Story 162.2 introduced a reproducible localhost preflight that gates every local Playwright run. Raw `npx playwright test` invocations are rejected so they cannot silently reuse stale ignored auth state.
+
+| Script | Command | Purpose |
+|--------|---------|---------|
+| Bounded smoke | `npm run test:e2e` | Preflight checks, refresh auth state, run `e2e/orders.spec.ts` on Chromium (read-only) |
+| Full suite | `npm run test:e2e:full` | Same preflight, full suite |
+| Diagnostics only | `npm run test:e2e:preflight` | Validate config + services, print the exact next command (no Playwright launch) |
+| UI mode | `npm run test:e2e:ui` | Full suite with Playwright UI |
+
+**Preflight** (`scripts/e2e-preflight.mjs`) validates the `.env.e2e` configuration and probes both localhost services (`:3100/login`, `:3000/v1/health`) before Playwright collection. It removes only the two ignored auth-state files (`e2e/.auth/user.json`, `e2e/.auth/manager.json`) and regenerates them through the live setup-project login flow. `--no-deps` is rejected by both the preflight and `playwright.config.ts` because Chromium relies on the setup project for a fresh `user.json`. Playwright arguments forward after `--` (e.g., `npm run test:e2e -- --list`).
+
+**Handshake** (`scripts/e2e-preflight-handshake.mjs`) — the preflight creates a fresh random temporary handshake (token + file, 60s max age) for its Playwright child and exports it via `E2E_PREFLIGHT_HANDSHAKE_FILE` / `E2E_PREFLIGHT_HANDSHAKE_TOKEN`. `playwright.config.ts` calls `assertLocalE2EPreflightHandshake()` on non-CI runs; a raw `playwright test` without a handshake is rejected with the message to run `npm run test:e2e`. Cleanup is attempted after Playwright exits; any cleanup failure is surfaced as a redacted non-zero result (the path, token, and raw error are never printed). CI runs (`CI=true`) bypass the handshake.
+
+**Mutation safety**: `@mutating` specs stay excluded by default (see `e2e/fixtures/mutation-guard.ts`). Enabling requires all three opt-ins: `E2E_ENABLE_MUTATIONS=true`, `E2E_MUTATION_TARGET=sandbox`, `E2E_MUTATION_ACK=I_UNDERSTAND_THIS_MUTATES_TEST_DATA`. Full setup, backend-seed, argument-forwarding, and recovery guidance is in `e2e/README.md`.
+
+**Test**: `scripts/e2e-preflight.test.mjs` (runs under `node --test`, excluded from Vitest). The preflight never prints credential values, response bodies, headers, cookies, tokens, or storage state.
+
+### Historical SPP exact-command harness
+
+The Story 128.27 spec (`e2e/historical-spp-analytics.spec.ts`) runs fully mocked and owns its own guarded local server lifecycle, bypassing the standard preflight handshake via a separate execution marker.
+
+- `establishHistoricalSppExecution()` in `scripts/e2e-preflight-handshake.mjs` detects the exact command shape (`historical-spp-analytics.spec.ts` + `--reporter=html` + the evidence `--output` path) and sets `HISTORICAL_SPP_EXACT_COMMAND_VERIFIED=1`; only that exact invocation and its worker-index children bypass the local preflight requirement.
+- `scripts/historical-spp-global-setup.ts` (Playwright `globalSetup`) asserts the port is unoccupied, spawns a guarded `next dev` via `scripts/start-fresh-next-dev.mjs`, waits for readiness, and stops it on teardown. Readiness/stop logic lives in `src/test/historical-spp-server-lifecycle.ts`.
+- The `historical-spp` Playwright project uses empty storage state and a no-op `setup` match (`/$^/`) so it stays self-contained; the `chromium` project explicitly ignores that spec.
+
+**Test**: `src/test/historical-spp-server-lifecycle.test.ts`.
 
 ## Privacy Console Check
 
@@ -296,10 +325,9 @@ From `.env.example` (names only — never commit actual values):
 
 | Variable | Purpose |
 |----------|---------|
-| `E2E_BASE_URL` | Frontend URL (default `:3100`) |
-| `E2E_API_URL` | Backend API URL |
-| `E2E_TEST_EMAIL` / `E2E_TEST_PASSWORD` | Test user credentials |
-| `E2E_REQUEST_TIMEOUT` | Timeout (30s) |
-| `E2E_SCREENSHOT_DIR` | Failure screenshot path |
-| `E2E_DEBUG` / `E2E_HEADED` | Playwright Inspector / headless toggle |
-| `E2E_WB_TOKEN` | Optional real WB API token for integration tests |
+| `E2E_BASE_URL` | Frontend origin (required, exact `http://localhost:3100`) |
+| `E2E_API_URL` | Backend origin (required, exact `http://localhost:3000`) |
+| `E2E_TEST_EMAIL` / `E2E_TEST_PASSWORD` | Owner credentials matching the backend seed (required) |
+| `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
+| `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
+| `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
