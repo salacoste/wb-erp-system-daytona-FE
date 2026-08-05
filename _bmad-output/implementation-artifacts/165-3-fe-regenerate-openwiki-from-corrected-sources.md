@@ -194,18 +194,39 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 ### Debug Log References
 
 - Story context created 2026-08-05 from base `a3425d96`.
-- 2026-08-05: PR-safe workflow repair is prepared in the Story 165.3 worktree; credentialed OpenWiki generation through `workflow_dispatch` on the feature ref remains pending.
+- 2026-08-05: PR-safe workflow repair was committed on the Story 165.3 feature branch and dispatched without using a direct-`main` delivery path.
+- 2026-08-05: GitHub Actions workflow run [30963482084](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30963482084) completed successfully and fast-forward-pushed generator commit `c5b632e2` to `codex/story-165-3-openwiki`.
+- 2026-08-05: Prior targeted validation at `c5b632e2` used isolated npm cache `/tmp/story-165-3-npm-cache.gKeHCr`. Toolchain probe `npx --yes -p node@24.18.0 -p npm@11.11.0 -- sh -c 'node --version; npm --version; command -v node; command -v npm'` reported Node `v24.18.0` and npm `11.11.0`.
+- 2026-08-05: Prior targeted gates at `c5b632e2` passed: `npm run check:docs` in `0.56s` with `75` citations and `18` known broken citations exactly matching the baseline; `npm run format:check` was initially unavailable because `node_modules` was absent, then passed in `9.79s` through the same pinned Node/npm `npx` environment with `prettier@3.9.5`; `git diff --check` passed in `0.02s`; `git diff main...HEAD --check` passed in `0.01s`; workflow YAML parsing passed; all `7` embedded `run` blocks passed `bash -n`; and `actionlint 1.7.11` passed with only the repository-specific `wb-ci-fe` runner-label warning excluded.
+- 2026-08-05: Independent review verdict was `REQUEST_CHANGES`. The first generated output was rejected for factual workflow guidance, a legacy validator reference, incorrect Epic status, broken source/citation stamps, and a malformed generated fragment. These findings block merge and final validation despite the successful generator process and prior targeted gates.
+- 2026-08-05: Recovery source and workflow changes are prepared but uncommitted. The official user-authored `openwiki/INSTRUCTIONS.md` control metadata was added to direct the next OpenWiki update; it is not a generated documentation page and does not authorize manual edits to generated output.
+- 2026-08-05: A second complete feature-ref generation is pending. No recovery commit, push, dispatch, PR, or merge is claimed.
 
 ### Completion Notes List
 
 - Ultimate context engine analysis completed - comprehensive developer guide created.
 - Story prepared for implementation; no OpenWiki generation or workflow/source mutation was performed during story creation.
-- Implementation is in progress: workflow repair is prepared, but no successful feature-ref generator commit or generated-document validation is claimed yet.
+- First credentialed feature-ref generation completed in workflow run `30963482084`, producing generator commit `c5b632e2`.
+- The first generated output is not accepted: independent review returned `REQUEST_CHANGES` for factual workflow/validator/Epic-state defects, broken stamps, and malformed generated content.
+- Recovery changes are prepared in authoritative source/workflow surfaces, including user-authored OpenWiki control metadata at `openwiki/INSTRUCTIONS.md`; the generated pages have not been manually repaired.
+- Prior Node 24 targeted gates passed at `c5b632e2`, but they are not final recovery validation. Story 165.3 remains in progress until a fresh second generation passes content, boundary, review, and final delivery gates.
+- No PR or merge has occurred for Story 165.3.
 
 ### File List
 
 - `_bmad-output/implementation-artifacts/165-3-fe-regenerate-openwiki-from-corrected-sources.md` (created; ignored, force-add exact path)
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` (Story 165.3 lifecycle only)
+- `.github/workflows/openwiki-update.yml` (PR-safe generator delivery and recovery controls)
+- `CLAUDE.md` (authoritative OpenWiki source/control guidance)
+- `README.md` (authoritative OpenWiki source guidance)
+- `docs/EPICS-AND-STORIES-TRACKER.md` (authoritative current Epic/story state)
+- `docs/FRONTEND-WORK-SUMMARY.md` (authoritative frontend delivery summary)
+- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; not a generated page)
+- `openwiki/.last-update.json` (first-run generated provenance; pending replacement by second generation)
+- `openwiki/conventions-and-quality.md` (first-run generated page; rejected pending second generation)
+- `openwiki/index.md` (first-run generated page; rejected pending second generation)
+- `openwiki/quickstart.md` (first-run generated page; rejected pending second generation)
+- `openwiki/testing-and-ops.md` (first-run generated page; rejected pending second generation)
 
 ## Change Log
 
@@ -213,3 +234,6 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | --- | --- |
 | 2026-08-05 | Dedicated Story 165.3 implementation context created and marked ready-for-dev. |
 | 2026-08-05 | Story moved to in-progress after PR-safe workflow repair was prepared; feature-ref generation remains pending. |
+| 2026-08-05 | First pinned OpenWiki generation completed through workflow run `30963482084` and generator commit `c5b632e2`; prior targeted Node 24 gates passed. |
+| 2026-08-05 | Independent review returned `REQUEST_CHANGES`; no merge occurred because generated factual guidance, validator/Epic status, stamps, and a malformed fragment require source-led regeneration. |
+| 2026-08-05 | Recovery source/workflow changes and user-authored `openwiki/INSTRUCTIONS.md` control metadata prepared; second generation remains pending. |

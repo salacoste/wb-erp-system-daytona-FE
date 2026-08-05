@@ -17,8 +17,11 @@ Stories 127.1/127.2 реализованы; единственные явно ba
 программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
 report/analytics retry endpoints). Source reconciliation для Story 165.1
 влита PR #87 (`bc071fdf`), а отдельный closeout зафиксирован в PR #89;
-Story 165.2 закрывается через PR #90: active localhost guidance синхронизирован,
-а doc-citation gate сделан детерминированным для Git-tracked документов.
+Story 165.2 влита PR #90: active localhost guidance синхронизирован, а
+doc-citation gate сделан детерминированным для Git-tracked документов. Story
+165.3 активна; Stories 165.4/165.5 остаются deferred до появления backend
+capabilities. Epic 127 завершён, Epic 162 выполняется, Epics 163/164 находятся
+в backlog, Epic 165 выполняется.
 <!-- CURRENT-STATUS:END -->
 
 ---
@@ -35,7 +38,17 @@ Story 165.2 закрывается через PR #90: active localhost guidance 
 
 ### OpenWiki generation status
 
-`openwiki/**` остаётся generated-only поверхностью и вручную не редактируется. Текущие generated pages ещё содержат устаревшие Tier-0/PM2/CI-certification и `max-warnings: 112` формулировки. Story 165.3 остаётся backlog до merge исправленных source docs; затем `.github/workflows/openwiki-update.yml` должен выполнить `npx openwiki@$OPENWIKI_VERSION code --update --print` в чистом изолированном worktree. Если provider credential недоступен, это фиксируется как blocker без ручной подмены generated output.
+`openwiki/**` остаётся generated-only поверхностью и вручную не редактируется.
+Story 165.3 активна. Workflow запускается ежедневно по cron `47 8 * * *` UTC на
+self-hosted runner `wb-ci-fe` с Node.js 24 и выполняет
+`npx --yes openwiki@0.3.0 code --update --print` через provider `anthropic`,
+model `glm-5.2` и `https://api.z.ai/api/anthropic`. Scheduled run на `main`
+создаёт уникальную branch `automation/openwiki-${GITHUB_RUN_ID}` и PR без
+merge; manual dispatch на `main` отклоняется, а manual dispatch на feature
+branch публикует generated commit обратно в эту же branch. Workflow
+восстанавливает собственный файл, все `AGENTS.md` и `CLAUDE.md`, а в commit
+добавляет только `openwiki/`. Если provider credential недоступен, это
+фиксируется как blocker без ручной подмены generated output.
 
 ---
 
@@ -181,7 +194,7 @@ charts/page integration и тесты присутствуют в source.
 | **P1**    | Local E2E reliability (Epic 162)  | epic   | 📋 1 done + 9 backlog             |
 | **P1**    | Operator workflows (Epic 163)     | epic   | 📋 6 backlog                      |
 | **P2**    | Boundary/maintenance debt (164)   | epic   | 📋 4 backlog                      |
-| **P2**    | OpenWiki regeneration (165.3)     | story  | 📋 After 165.1/165.2 source merge |
+| **P2**    | OpenWiki regeneration (165.3)     | story  | 🚧 Active                         |
 | **P2**    | Liquidity daily trends (165.4)    | gated  | ⏸ Deferred: backend snapshots     |
 | **P2**    | Per-status backfill retry (165.5) | gated  | ⏸ Deferred: backend endpoints     |
 | **P4**    | Cache Timestamps Display          | 1h     | ℹ️ Optional                       |

@@ -24,9 +24,16 @@ jobs:
     timeout-minutes: 60
 
     steps:
+      - name: Reject manual dispatch from main
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        run: |
+          echo "Manual OpenWiki generation from main is prohibited; dispatch a feature branch." >&2
+          exit 1
+
       - name: Check out repository
         uses: actions/checkout@v7
         with:
+          clean: true
           fetch-depth: 0
           persist-credentials: true
 
@@ -53,17 +60,12 @@ jobs:
           ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
           OPENWIKI_MODEL_ID: glm-5.2
 
-      - name: Preserve scheduled self-hosted workflow
+      - name: Restore protected repository guidance
         run: |
           set -euo pipefail
           git restore --source=HEAD -- .github/workflows/openwiki-update.yml
-
-      - name: Preserve BMad framework AGENTS.md files
-        # AGENTS.md is a BMad framework file. OpenWiki appends agent guidance to it —
-        # revert so BMad routing stays authoritative and the unstaged-changes guard below passes.
-        run: |
-          set -euo pipefail
           git restore --source=HEAD -- ':(glob)**/AGENTS.md'
+          git restore --source=HEAD -- CLAUDE.md
 
       - name: Show generated changes
         run: |
@@ -76,13 +78,10 @@ jobs:
           set -euo pipefail
           git config user.name "OpenWiki Bot"
           git config user.email "actions@github.com"
-          # AGENTS.md is intentionally EXCLUDED — it is a BMad framework file, preserved above.
-          git add openwiki/ CLAUDE.md
+          git add -A -- openwiki/
 
-          if ! git diff --cached --quiet -- . \
-            ':(top,exclude)openwiki' \
-            ':(top,exclude)CLAUDE.md'; then
-            echo "Refusing to commit staged changes outside openwiki/ and CLAUDE.md." >&2
+          if ! git diff --cached --quiet -- . ':(top,exclude)openwiki'; then
+            echo "Refusing to commit staged changes outside openwiki/." >&2
             git diff --cached --name-status >&2
             exit 1
           fi
@@ -93,10 +92,18 @@ jobs:
             exit 1
           fi
 
-          if IFS= read -r -d '' untracked_file \
+          if IFS= read -r -d '' unexpected_file \
             < <(git ls-files --others --exclude-standard -z); then
             echo "Refusing to ignore unexpected untracked files." >&2
-            printf 'First unexpected path: %q\n' "$untracked_file" >&2
+            printf 'First unexpected path: %q\n' "$unexpected_file" >&2
+            git status --short --untracked-files=all >&2
+            exit 1
+          fi
+
+          if IFS= read -r -d '' unexpected_ignored_file \
+            < <(git ls-files --others --ignored --exclude-standard -z); then
+            echo "Refusing to ignore unexpected ignored files." >&2
+            printf 'First unexpected ignored path: %q\n' "$unexpected_ignored_file" >&2
             git status --short --untracked-files=all >&2
             exit 1
           fi
@@ -110,8 +117,8 @@ jobs:
           git commit -m "docs: update frontend OpenWiki [skip ci]"
           echo "has_changes=true" >> "$GITHUB_OUTPUT"
 
-      - name: Open pull request for main
-        if: steps.commit.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
+      - name: Open pull request for scheduled main refresh
+        if: steps.commit.outputs.has_changes == 'true' && github.event_name == 'schedule' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

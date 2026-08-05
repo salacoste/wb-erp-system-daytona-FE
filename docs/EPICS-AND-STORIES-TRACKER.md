@@ -6,7 +6,7 @@
 
 <!-- CURRENT-STATUS:START -->
 
-**Last Updated**: 2026-08-03
+**Last Updated**: 2026-08-05
 **Total Epics**: 93 unique (89 done, 2 in-progress, 2 backlog) + 5 untracked operational features
 **Total Stories**: 400+ (includes 25 approved stories across Epics 162-165; legacy and epic-only rows remain counted separately)
 **Development Mode**: new product; frontend and backend are developed and tested locally
@@ -248,9 +248,13 @@
 | 162-FE | Trustworthy Local Frontend Validation           | 1 done + 9 backlog                         | IN-PROGRESS | localhost Playwright and validation gates   |
 | 163-FE | Accessible and Complete Operator Workflows      | 6 backlog                                  | BACKLOG     | advertising, automation, analytics          |
 | 164-FE | Resilient Frontend Boundaries & Maintainability | 4 backlog                                  | BACKLOG     | API errors, charts, tariffs, package policy |
-| 165-FE | Truthful Status & Backend-Ready Backlog         | 2 done + 1 backlog + 2 deferred                | IN-PROGRESS | active docs, OpenWiki, gated integrations   |
+| 165-FE | Truthful Status & Backend-Ready Backlog         | 2 done + 1 in-progress + 2 deferred            | IN-PROGRESS | Story 165.3 active; 165.4/165.5 deferred    |
 
 Canonical story definitions, dependencies, and acceptance criteria: `_bmad-output/planning-artifacts/epics-162-165-fe.md`. Each story has exactly one correlated execution plan under `.omx/plans/`.
+
+Current program status: Epic 127 is done; Epic 162 is in progress; Epics 163
+and 164 are backlog; Epic 165 is in progress with Story 165.3 active and
+Stories 165.4/165.5 deferred on backend capabilities.
 
 ---
 
