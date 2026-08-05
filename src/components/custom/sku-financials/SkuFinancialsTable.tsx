@@ -23,6 +23,7 @@ import { sortSkuData } from './sku-table-sorting'
 import { SalesQtyHeader, RevenueNetHeader, ExpensesHeader, MarginHeader } from './SkuTableHeaders'
 import { SkuRow } from './SkuRow'
 import { SummaryFooter } from './SummaryFooter'
+import { HistoricalSppHeaders } from './HistoricalSppHeaders'
 
 export type { SortField, SortOrder }
 
@@ -32,12 +33,15 @@ export interface SkuFinancialsTableProps {
   showVisibility?: boolean
   /** Show detailed expense breakdown */
   showExpenseBreakdown?: boolean
+  /** Show report-derived historical SPP money and percentage columns. */
+  showHistoricalSpp?: boolean
 }
 
 export function SkuFinancialsTable({
   data,
   showVisibility = true,
   showExpenseBreakdown = true,
+  showHistoricalSpp = true,
 }: SkuFinancialsTableProps) {
   const [sortField, setSortField] = useState<SortField>('operatingProfit')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
@@ -177,9 +181,7 @@ export function SkuFinancialsTable({
             >
               Чист. прибыль
             </TableHead>
-            <TableHead className="hidden lg:table-cell text-right" title="FR-5: СПП">
-              СПП
-            </TableHead>
+            {showHistoricalSpp && <HistoricalSppHeaders />}
             <TableHead className="hidden lg:table-cell text-right" title="FR-5: отмены">
               Отмены
             </TableHead>
@@ -209,6 +211,7 @@ export function SkuFinancialsTable({
               item={item}
               showExpenseBreakdown={showExpenseBreakdown}
               showVisibility={showVisibility}
+              showHistoricalSpp={showHistoricalSpp}
               totalRevenue={totals.revenue}
               totalGrossProfit={totals.grossProfit}
             />

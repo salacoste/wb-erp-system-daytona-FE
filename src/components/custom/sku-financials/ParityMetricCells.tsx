@@ -6,18 +6,29 @@
  */
 
 import { TableCell } from '@/components/ui/table'
+import { formatCurrency as formatRub, formatPercentage } from '@/lib/formatters'
 import type { SkuFinancialParity } from '@/types/sku-financials'
 import { formatCurrency, formatPercent } from './sku-table-formatters'
 
 interface ParityMetricCellsProps {
   parity?: SkuFinancialParity
+  showHistoricalSpp?: boolean
 }
 
 function formatNullableInteger(value: number | null | undefined): string {
   return value == null ? '—' : value.toLocaleString('ru-RU')
 }
 
-export function ParityMetricCells({ parity }: ParityMetricCellsProps) {
+function formatHistoricalSppRub(value: number | null | undefined): string {
+  return value == null ? '—' : formatRub(value)
+}
+
+function formatHistoricalSppPct(value: number | null | undefined): string {
+  if (value == null) return '—'
+  return value === 0 ? '0%' : formatPercentage(value)
+}
+
+export function ParityMetricCells({ parity, showHistoricalSpp = true }: ParityMetricCellsProps) {
   return (
     <>
       <TableCell
@@ -35,9 +46,22 @@ export function ParityMetricCells({ parity }: ParityMetricCellsProps) {
       >
         {formatCurrency(parity?.netProfitAfterTax ?? null)}
       </TableCell>
-      <TableCell className="hidden lg:table-cell text-right text-gray-600" title="FR-5: СПП, ₽">
-        {formatCurrency(parity?.sppRub ?? null)}
-      </TableCell>
+      {showHistoricalSpp && (
+        <>
+          <TableCell
+            className="hidden lg:table-cell text-right text-gray-600"
+            title="Фактическое историческое СПП по транзакциям финансового отчёта WB, ₽"
+          >
+            {formatHistoricalSppRub(parity?.sppRub)}
+          </TableCell>
+          <TableCell
+            className="hidden lg:table-cell text-right text-gray-600"
+            title="Фактическое историческое СПП по транзакциям финансового отчёта WB, %"
+          >
+            {formatHistoricalSppPct(parity?.sppPct)}
+          </TableCell>
+        </>
+      )}
       <TableCell className="hidden lg:table-cell text-right text-gray-600" title="FR-5: отмены, шт">
         {formatNullableInteger(parity?.cancellationsQty)}
       </TableCell>

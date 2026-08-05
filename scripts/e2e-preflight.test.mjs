@@ -643,11 +643,18 @@ test('local config rejects bypasses and applies one explicit CI truth contract',
   assert.match(configSource, /assertPlaywrightDependenciesEnabled/)
   assert.match(configSource, /const isCI = isCIEnvironment\(process\.env\)/)
   assert.doesNotMatch(configSource, /(?:!|!!)?process\.env\.CI/)
-  assert.match(configSource, /if \(!isCI\) assertLocalE2EPreflightHandshake\(\)/)
+  assert.match(
+    configSource,
+    /if \(!isCI && !isHistoricalSppTarget\) assertLocalE2EPreflightHandshake\(\)/
+  )
+  assert.match(
+    configSource,
+    /process\.env\.E2E_BASE_URL \|\| \(isHistoricalSppTarget \? 'http:\/\/localhost:3100' : undefined\)/
+  )
   assert.match(configSource, /forbidOnly: isCI/)
   assert.match(configSource, /retries: isCI \? 2 : 0/)
   assert.match(configSource, /workers: isCI \? 1 : undefined/)
-  assert.match(configSource, /webServer: isCI/)
+  assert.match(configSource, /isCI && !isHistoricalSppTarget/)
 })
 
 test('CI truth contract recognizes only explicit provider truth values', () => {

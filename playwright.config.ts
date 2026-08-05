@@ -9,9 +9,12 @@ import {
 } from './scripts/e2e-preflight-handshake.mjs'
 import { assertAllowedTestUrl } from './test-utils/outbound-network-policy'
 
+const isHistoricalSppTarget = process.argv.some(argument =>
+  argument.endsWith('historical-spp-analytics.spec.ts')
+)
 assertPlaywrightDependenciesEnabled(process.argv)
 const isCI = isCIEnvironment(process.env)
-if (!isCI) assertLocalE2EPreflightHandshake()
+if (!isCI && !isHistoricalSppTarget) assertLocalE2EPreflightHandshake()
 
 // Load E2E environment variables
 try {
@@ -20,7 +23,8 @@ try {
   if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
 }
 
-const e2eBaseUrl = process.env.E2E_BASE_URL
+const e2eBaseUrl =
+  process.env.E2E_BASE_URL || (isHistoricalSppTarget ? 'http://localhost:3100' : undefined)
 if (!e2eBaseUrl) {
   throw new Error('E2E_BASE_URL is required. Run npm run test:e2e:preflight for setup guidance.')
 }
@@ -35,6 +39,7 @@ assertAllowedTestUrl(e2eBaseUrl)
  */
 export default defineConfig({
   testDir: './e2e',
+  globalSetup: isHistoricalSppTarget ? './e2e/historical-spp-global-setup.ts' : undefined,
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
@@ -53,14 +58,24 @@ export default defineConfig({
   },
 
   projects: [
-    // Setup project for authentication
+    // Setup project for authentication. The self-contained Story 128.27 command
+    // deliberately skips credentialed setup so it remains fully mocked.
     {
       name: 'setup',
-      testMatch: /.*\.setup\.ts/,
+      testMatch: isHistoricalSppTarget ? /$^/ : /.*\.setup\.ts/,
+    },
+    {
+      name: 'historical-spp',
+      testMatch: /historical-spp-analytics\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: { cookies: [], origins: [] },
+      },
     },
     // Desktop Chrome (primary)
     {
       name: 'chromium',
+      testIgnore: /historical-spp-analytics\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/user.json',
@@ -80,14 +95,15 @@ export default defineConfig({
     // },
   ],
 
-  // Web server configuration
-  // Local runs reuse the frontend already running on localhost:3100.
-  webServer: isCI
-    ? {
-        command: 'npm run dev',
-        url: 'http://localhost:3100',
-        reuseExistingServer: false,
-        timeout: 120 * 1000,
-      }
-    : undefined, // Use existing server in development
+  // The historical-SPP spec owns a guarded local server lifecycle in globalSetup;
+  // ordinary CI suites keep their established Playwright web-server flow.
+  webServer:
+    isCI && !isHistoricalSppTarget
+      ? {
+          command: 'npm run dev',
+          url: e2eBaseUrl,
+          reuseExistingServer: false,
+          timeout: 120 * 1000,
+        }
+      : undefined,
 })

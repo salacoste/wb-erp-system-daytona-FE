@@ -28,6 +28,7 @@ interface SkuRowProps {
   item: SkuFinancialItem
   showExpenseBreakdown: boolean
   showVisibility: boolean
+  showHistoricalSpp?: boolean
   /** Total revenue across the table — denominator for the BD revenue-share column. */
   totalRevenue?: number | null
   /** Total gross profit across the table — denominator for the BE profit-share column. */
@@ -38,6 +39,7 @@ export function SkuRow({
   item,
   showExpenseBreakdown,
   showVisibility,
+  showHistoricalSpp = true,
   totalRevenue,
   totalGrossProfit,
 }: SkuRowProps) {
@@ -151,7 +153,7 @@ export function SkuRow({
       >
         {formatPercent(sharePercentage(item.costs.logistics, item.revenue.net))}
       </TableCell>
-      <ParityMetricCells parity={item.parity} />
+      <ParityMetricCells parity={item.parity} showHistoricalSpp={showHistoricalSpp} />
       {showVisibility && item.visibility && (
         <TableCell>
           <VisibilityTooltip
