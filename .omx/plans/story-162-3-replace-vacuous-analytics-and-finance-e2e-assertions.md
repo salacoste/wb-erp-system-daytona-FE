@@ -27,6 +27,12 @@ So that a green result proves those workflows actually render and behave correct
 - `e2e/unit-economics.spec.ts`
 - `e2e/analytics/analytics-hub.spec.ts`
 - `e2e/returns-analytics.spec.ts`
+- `scripts/check-e2e-vacuous-assertions.mjs`
+- `src/test/e2e-vacuous-assertions.test.ts`
+- `package.json`
+- `eslint.config.js`
+- `scripts/manage-omx-story-plans.mjs`
+- `.omx/plans/story-162-3-replace-vacuous-analytics-and-finance-e2e-assertions.md`
 
 ## Acceptance Criteria (canonical)
 
@@ -74,7 +80,11 @@ So that a green result proves those workflows actually render and behave correct
 ## Verification Steps
 
 - `rg -n "expect\([^\n]*(\|\| true|>= 0)" e2e/liquidity.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/returns-analytics.spec.ts`
+- `npm run check:e2e-assertions`
+- `npx vitest run src/test/e2e-vacuous-assertions.test.ts`
 - `npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts`
+- `npx eslint e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts src/test/e2e-vacuous-assertions.test.ts scripts/check-e2e-vacuous-assertions.mjs --max-warnings=0`
+- `npx prettier --check e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts src/test/e2e-vacuous-assertions.test.ts scripts/check-e2e-vacuous-assertions.mjs package.json eslint.config.js scripts/manage-omx-story-plans.mjs`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

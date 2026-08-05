@@ -2,15 +2,46 @@ import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 async function firstEnabledLiquidationAction(page: import('@playwright/test').Page) {
-  const buttons = page.locator('tbody tr button')
+  const buttons = page.getByRole('button', { name: 'Ликвидировать' })
   const count = await buttons.count()
   for (let i = 0; i < count; i += 1) {
     const button = buttons.nth(i)
-    const visible = await button.isVisible().catch(() => false)
-    const enabled = await button.isEnabled().catch(() => false)
+    const visible = await button.isVisible()
+    const enabled = await button.isEnabled()
     if (visible && enabled) return button
   }
   return null
+}
+
+async function expectLiquidityShell(page: import('@playwright/test').Page) {
+  await expect(page.getByRole('heading', { name: 'Ликвидность товаров', level: 1 })).toBeVisible({
+    timeout: TIMEOUTS.navigation,
+  })
+  await expect(page.getByRole('button', { name: 'Обновить' })).toBeVisible()
+}
+
+async function expectLiquidityFixture(
+  page: import('@playwright/test').Page,
+  emptyFixtureReason: string
+) {
+  const dataState = page.getByText('Распределение по ликвидности', { exact: true })
+  const emptyState = page.getByRole('heading', { name: 'Нет данных о ликвидности' })
+  const errorState = page.getByText(
+    'Не удалось загрузить данные о ликвидности. Попробуйте ещё раз.'
+  )
+  const loadingState = page.locator('.animate-pulse')
+
+  await expect(loadingState).toHaveCount(0, { timeout: TIMEOUTS.api })
+  const terminalState = dataState.or(emptyState).or(errorState).first()
+  await expect(terminalState).toBeVisible({ timeout: TIMEOUTS.api })
+
+  if (await errorState.isVisible()) {
+    await expect(errorState).toBeVisible()
+    throw new Error('Liquidity fixture failed to load; the documented error state is visible')
+  }
+
+  test.skip(await emptyState.isVisible(), emptyFixtureReason)
+  await expect(dataState).toBeVisible()
 }
 
 /**
@@ -32,6 +63,7 @@ test.describe('Liquidity Analysis', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
       await page.waitForLoadState('domcontentloaded')
+      await expectLiquidityShell(page)
     })
 
     test('AC-6: displays Liquidity page with correct heading', async ({ page }) => {
@@ -56,55 +88,44 @@ test.describe('Liquidity Analysis', () => {
     test('AC-8: distribution cards show correct categories', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Check for category labels
-      const categories = [
-        /высоколиквид|highly.*liquid|быстр/i,
-        /средн.*ликвид|medium.*liquid|нормальн/i,
-        /низколиквид|low.*liquid|медленн/i,
-        /неликвид|illiquid|залежал/i,
-      ]
-
-      let foundCategories = 0
-      for (const category of categories) {
-        const categoryCard = page.locator(`text=${category.source}`)
-        const count = await categoryCard.count()
-        if (count > 0) foundCategories++
-      }
-
-      // Should find at least 2 categories
-      expect(foundCategories).toBeGreaterThanOrEqual(0) // Relaxed check for different text
+      await expectLiquidityFixture(
+        page,
+        'Liquidity distribution fixture is unavailable; the documented empty state rendered'
+      )
+      const distributionCards = page
+        .getByText('> 50%', { exact: true })
+        .locator('xpath=ancestor::div[contains(@class, "grid")][1]')
+      await expect(distributionCards.getByText('Высоколиквидный', { exact: true })).toBeVisible()
+      await expect(
+        distributionCards.getByText('Средняя ликвидность', { exact: true })
+      ).toBeVisible()
+      await expect(distributionCards.getByText('Низкая ликвидность', { exact: true })).toBeVisible()
+      await expect(distributionCards.getByText('Неликвид', { exact: true })).toBeVisible()
     })
 
     test('AC-7: shows summary metrics bar', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Metrics bar or summary section
-      const metricsSection = page.locator(
-        '[class*="metric"], [class*="stat"], [class*="summary"], [class*="bar"]'
+      await expectLiquidityFixture(
+        page,
+        'Liquidity summary fixture is unavailable; the documented empty state rendered'
       )
-      const hasMetrics = (await metricsSection.count()) > 0
-
-      // Or text with key metrics (turnover, capital, etc.)
-      const metricsText = page.locator('text=/оборот|turnover|капитал|capital|дней|days/i')
-      const hasMetricsText = (await metricsText.count()) > 0
-
-      expect(hasMetrics || hasMetricsText || true).toBeTruthy()
+      await expect(page.getByText('Всего на складе', { exact: true })).toBeVisible()
+      await expect(page.getByText('Артикулов', { exact: true })).toBeVisible()
+      await expect(page.getByText('Средний оборот', { exact: true }).first()).toBeVisible()
+      await expect(page.getByText('Замороженный капитал', { exact: true })).toBeVisible()
     })
 
     test('AC-9: displays benchmarks section', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Benchmarks section with comparison data
-      const benchmarksSection = page.locator(
-        'text=/benchmark|эталон|сравнение|целев|target|отрасл|industry/i'
+      await expectLiquidityFixture(
+        page,
+        'Liquidity benchmark fixture is unavailable; the documented empty state rendered'
       )
-      const hasBenchmarks = (await benchmarksSection.count()) > 0
-
-      // Or progress bars/comparison indicators
-      const progressBars = page.locator('[class*="progress"]')
-      const hasProgress = (await progressBars.count()) > 0
-
-      expect(hasBenchmarks || hasProgress || true).toBeTruthy()
+      await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
+      await expect(page.getByText('Доля высоколиквидных', { exact: true })).toBeVisible()
+      await expect(page.getByText('Доля неликвида', { exact: true })).toBeVisible()
     })
 
     test('AC-10: displays data table with sortable columns', async ({ page }) => {
@@ -158,15 +179,13 @@ test.describe('Liquidity Analysis', () => {
     test('shows liquidity status badges', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Status badges in cards or table
-      const badges = page.locator('[class*="badge"]')
-      const hasBadges = (await badges.count()) > 0
-
-      // Or status text
-      const statusText = page.locator('text=/высоколиквид|неликвид|liquidity|оборачиваемость/i')
-      const hasStatusText = (await statusText.count()) > 0
-
-      expect(hasBadges || hasStatusText || true).toBeTruthy()
+      await expectLiquidityFixture(
+        page,
+        'Liquidity status fixture is unavailable; the documented empty state rendered'
+      )
+      const liquidityTable = page.getByRole('table')
+      await expect(liquidityTable.getByRole('cell', { name: /Ликвид\.$/ }).first()).toBeVisible()
+      await expect(liquidityTable.getByRole('cell', { name: /Неликвид$/ }).first()).toBeVisible()
     })
 
     test('has refresh button', async ({ page }) => {
@@ -182,11 +201,11 @@ test.describe('Liquidity Analysis', () => {
     test('shows frozen capital metrics', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Frozen capital text
-      const frozenCapitalText = page.locator('text=/заморож|frozen|капитал|capital|₽|руб/i')
-      const hasFrozenCapital = (await frozenCapitalText.count()) > 0
-
-      expect(hasFrozenCapital || true).toBeTruthy()
+      await expectLiquidityFixture(
+        page,
+        'Liquidity capital fixture is unavailable; the documented empty state rendered'
+      )
+      await expect(page.getByText('Замороженный капитал', { exact: true })).toBeVisible()
     })
   })
 
@@ -194,6 +213,7 @@ test.describe('Liquidity Analysis', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
       await page.waitForLoadState('domcontentloaded')
+      await expectLiquidityShell(page)
       await page.waitForTimeout(2000)
     })
 
@@ -246,11 +266,13 @@ test.describe('Liquidity Analysis', () => {
     })
 
     test('cards show percentage distribution', async ({ page }) => {
-      // Cards should show percentage
-      const percentText = page.locator('text=/%/')
-      const hasPercent = (await percentText.count()) > 0
-
-      expect(hasPercent || true).toBeTruthy()
+      await expectLiquidityFixture(
+        page,
+        'Liquidity distribution fixture is unavailable; the documented empty state rendered'
+      )
+      await expect(
+        page.getByText(/от стоимости запасов|Нет продаж за период/i).first()
+      ).toBeVisible()
     })
   })
 
@@ -258,71 +280,38 @@ test.describe('Liquidity Analysis', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
       await page.waitForLoadState('domcontentloaded')
+      await expectLiquidityShell(page)
       await page.waitForTimeout(2000)
     })
 
-    test('AC-11: table row click opens liquidation planner', async ({ page }) => {
-      // Click on a table row
-      const tableRow = page.locator('tbody tr').first()
+    test('AC-11: liquidation action opens planner dialog', async ({ page }) => {
+      const liquidationAction = await firstEnabledLiquidationAction(page)
+      test.skip(!liquidationAction, 'No qualifying liquidation row exists in current backend data')
 
-      if (await tableRow.isVisible()) {
-        await tableRow.click()
-        await page.waitForTimeout(500)
-
-        // Page should still be functional after click
-        await expect(page.locator('body')).toBeVisible()
-
-        // Modal or expanded content may appear - verify page handles it
-        const modal = page.locator('[role="dialog"], [class*="modal"], [class*="sheet"]')
-        const liquidationInfo = page.locator(
-          'text=/ликвидац|liquidat|сценарий|scenario|скидк|discount/i'
-        )
-
-        // Either modal or liquidation info should be present, or page remains stable
-        expect((await modal.count()) >= 0 || (await liquidationInfo.count()) >= 0).toBeTruthy()
-      }
+      await liquidationAction!.click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible()
+      await expect(dialog.getByText('Планировщик ликвидации', { exact: true })).toBeVisible()
     })
 
     test('AC-11: liquidation planner shows scenarios', async ({ page }) => {
-      // Click on illiquid item row (if available)
-      const illiquidRow = page
-        .locator('tbody tr')
-        .filter({
-          has: page.locator('text=/неликвид|illiquid|низкол/i'),
-        })
-        .first()
+      const liquidationAction = await firstEnabledLiquidationAction(page)
+      test.skip(!liquidationAction, 'No qualifying liquidation row exists in current backend data')
 
-      if (await illiquidRow.isVisible()) {
-        await illiquidRow.click()
-        await page.waitForTimeout(500)
-
-        // Look for scenario text (30 days, 60 days, 90 days)
-        const scenarioText = page.locator('text=/30.*дн|60.*дн|90.*дн|days/i')
-        const hasScenarios = (await scenarioText.count()) > 0
-
-        expect(hasScenarios || true).toBeTruthy()
-      }
+      await liquidationAction!.click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Сценарии ликвидации', { exact: true })).toBeVisible()
+      await expect(dialog.getByText(/Продать за (?:\d+|∞) дней/).first()).toBeVisible()
     })
 
     test('AC-11: liquidation planner shows ROI calculations', async ({ page }) => {
-      // Find row with liquidation planner button
-      const plannerBtn = page
-        .locator('button')
-        .filter({
-          hasText: /ликвидац|план|planner/i,
-        })
-        .first()
+      const liquidationAction = await firstEnabledLiquidationAction(page)
+      test.skip(!liquidationAction, 'No qualifying liquidation row exists in current backend data')
 
-      if (await plannerBtn.isVisible()) {
-        await plannerBtn.click()
-        await page.waitForTimeout(500)
-
-        // Look for ROI or revenue text
-        const roiText = page.locator('text=/ROI|выручка|revenue|прибыль|profit|₽/i')
-        const hasRoi = (await roiText.count()) > 0
-
-        expect(hasRoi || true).toBeTruthy()
-      }
+      await liquidationAction!.click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Выручка', { exact: true }).first()).toBeVisible()
+      await expect(dialog.getByText('Прибыль', { exact: true }).first()).toBeVisible()
     })
 
     test('pagination controls work when visible', async ({ page }) => {
@@ -380,43 +369,33 @@ test.describe('Liquidity Analysis', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
       await page.waitForLoadState('domcontentloaded')
+      await expectLiquidityShell(page)
       await page.waitForTimeout(2000)
     })
 
     test('AC-9: benchmarks show comparison with targets', async ({ page }) => {
-      // Look for benchmark comparison elements
-      const benchmarkSection = page.locator('text=/ваш.*vs|vs.*целев|your.*target|сравнение/i')
-      const hasBenchmark = (await benchmarkSection.count()) > 0
-
-      // Or progress bars with comparison
-      const progressBars = page.locator('[class*="progress"]')
-      const hasProgress = (await progressBars.count()) > 0
-
-      expect(hasBenchmark || hasProgress || true).toBeTruthy()
+      await expectLiquidityFixture(
+        page,
+        'Liquidity benchmark fixture is unavailable; the documented empty state rendered'
+      )
+      await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
+      await expect(page.getByText(/\/ цель:/).first()).toBeVisible()
     })
 
     test('AC-9: shows overall health status', async ({ page }) => {
-      // Look for health status indicator
-      const statusIndicator = page.locator(
-        'text=/отлично|хорошо|внимание|критич|excellent|good|warning|critical/i'
+      await expectLiquidityFixture(
+        page,
+        'Liquidity health fixture is unavailable; the documented empty state rendered'
       )
-      const hasStatus = (await statusIndicator.count()) > 0
-
-      // Or color-coded status
-      const coloredStatus = page.locator(
-        '[class*="green"], [class*="yellow"], [class*="red"], [class*="success"], [class*="warning"], [class*="error"]'
-      )
-      const hasColored = (await coloredStatus.count()) > 0
-
-      expect(hasStatus || hasColored || true).toBeTruthy()
+      await expect(page.getByText(/^(Отлично|Хорошо|Внимание|Критично)$/).first()).toBeVisible()
     })
 
     test('benchmarks show industry comparison', async ({ page }) => {
-      // Look for industry average text
-      const industryText = page.locator('text=/отрасл|industry|рынок|market|средн.*по/i')
-      const hasIndustry = (await industryText.count()) > 0
-
-      expect(hasIndustry || true).toBeTruthy()
+      await expectLiquidityFixture(
+        page,
+        'Liquidity industry benchmark fixture is unavailable; the documented empty state rendered'
+      )
+      await expect(page.getByText(/^Отрасль:/)).toBeVisible()
     })
   })
 
@@ -530,6 +509,7 @@ test.describe('Liquidity Analysis', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.liquidity)
       await page.waitForLoadState('domcontentloaded')
+      await expectLiquidityShell(page)
       await page.waitForTimeout(2000)
     })
 
@@ -688,8 +668,9 @@ test.describe('Liquidity Analysis', () => {
       await liquidationAction.click()
       await page.waitForTimeout(500)
 
-      // Modal or expanded content should appear
-      await expect(page.locator('body')).toBeVisible()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible({ timeout: TIMEOUTS.api })
+      await expect(dialog.getByText('Сценарии ликвидации', { exact: true })).toBeVisible()
     })
 
     test('AC-11: modal can be closed', async ({ page }) => {
@@ -702,14 +683,11 @@ test.describe('Liquidity Analysis', () => {
       await liquidationAction.click()
       await page.waitForTimeout(500)
 
-      // If a dialog opened, close it via Escape (Radix Dialog default) and assert it actually
-      // hides — robust vs clicking the animating X button, which timed out, and meaningful vs the
-      // old tautological body-visible check.
       const dialog = page.getByRole('dialog')
-      if (await dialog.isVisible().catch(() => false)) {
-        await page.keyboard.press('Escape')
-        await expect(dialog).toBeHidden({ timeout: TIMEOUTS.api })
-      }
+      await expect(dialog).toBeVisible({ timeout: TIMEOUTS.api })
+      await expect(dialog.getByText('Сценарии ликвидации', { exact: true })).toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(dialog).toBeHidden({ timeout: TIMEOUTS.api })
     })
 
     test('AC-11: modal shows 3 liquidation scenarios', async ({ page }) => {
@@ -722,12 +700,9 @@ test.describe('Liquidity Analysis', () => {
       await liquidationAction.click()
       await page.waitForTimeout(500)
 
-      // Look for 3 scenario cards or sections
-      const scenarioCards = page.locator('[class*="card"], [class*="scenario"]')
-      const count = await scenarioCards.count()
-
-      // May have 3 scenarios (30d, 60d, 90d) or other structure
-      expect(count).toBeGreaterThanOrEqual(0)
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Сценарии ликвидации', { exact: true })).toBeVisible()
+      expect(await dialog.getByText(/Продать за (?:\d+|∞) дней/).count()).toBeGreaterThan(0)
     })
 
     test('AC-11: modal shows discount percentages', async ({ page }) => {
@@ -740,11 +715,10 @@ test.describe('Liquidity Analysis', () => {
       await liquidationAction.click()
       await page.waitForTimeout(500)
 
-      // Look for discount text
-      const discountText = page.locator('text=/скидк|discount|%/i')
-      const hasDiscount = (await discountText.count()) > 0
-
-      expect(hasDiscount || true).toBeTruthy()
+      const dialog = page.getByRole('dialog')
+      const discountMetric = dialog.getByText('Скидка', { exact: true }).first().locator('..')
+      await expect(discountMetric).toBeVisible()
+      await expect(discountMetric).toContainText(/-\d+(?:[,.]\d+)?\s*%/)
     })
   })
 })

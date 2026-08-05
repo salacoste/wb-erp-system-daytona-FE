@@ -89,6 +89,24 @@ module.exports = [
       ],
     },
   },
+  // Playwright E2E specs — parse TypeScript and enforce basic hygiene without
+  // applying the 200-line source cap to the existing browser-test suite.
+  {
+    files: ['e2e/**/*.ts'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-console': 'off',
+    },
+  },
   // Test files — higher line cap (800 vs 200)
   {
     files: ['src/**/__tests__/**', 'src/**/*.test.*', 'src/test/**', 'src/mocks/**'],

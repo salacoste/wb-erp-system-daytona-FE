@@ -19,6 +19,9 @@ test.describe('Unit Economics Analytics', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(ROUTES.analytics.unitEconomics)
       await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
+      await expect(page.getByRole('heading', { name: 'Юнит-экономика', level: 1 })).toBeVisible({
+        timeout: TIMEOUTS.navigation,
+      })
     })
 
     test('AC-6: displays Unit Economics page with correct heading', async ({ page }) => {
@@ -125,31 +128,33 @@ test.describe('Unit Economics Analytics', () => {
     test('AC-10: displays waterfall chart section', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Waterfall chart container
-      const chartSection = page.locator(
-        '[class*="recharts"], svg, [class*="waterfall"], [class*="chart"]'
-      )
-      const hasChart = (await chartSection.count()) > 0
+      const chartTitle = page.getByText('Структура затрат', { exact: true })
+      const chartState = chartTitle
+        .or(page.getByText('Нет данных за выбранный период', { exact: true }))
+        .or(page.getByText('Не удалось загрузить данные. Попробуйте ещё раз.', { exact: true }))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(chartState).toBeVisible({ timeout: TIMEOUTS.api })
 
-      // Or collapsible chart section
-      const chartHeader = page.locator('text=/водопад|waterfall|cost breakdown/i')
-      const hasChartHeader = (await chartHeader.count()) > 0
-
-      expect(hasChart || hasChartHeader || true).toBeTruthy()
+      if (await chartTitle.isVisible()) {
+        await expect(page.getByRole('img', { name: 'График структуры затрат' })).toBeVisible()
+      }
     })
 
     test('shows profitability status badges', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Profitability badges
-      const badges = page.locator('[class*="badge"]')
-      const hasBadges = (await badges.count()) > 0
+      const profitabilityState = page
+        .getByText('Прибыльные', { exact: true })
+        .or(page.getByText('Нет данных за выбранный период', { exact: true }))
+        .or(page.getByText('Не удалось загрузить данные. Попробуйте ещё раз.', { exact: true }))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(profitabilityState).toBeVisible({ timeout: TIMEOUTS.api })
 
-      // Or status text
-      const statusText = page.locator('text=/отлично|хорошо|warning|critical|loss|excellent|good/i')
-      const hasStatusText = (await statusText.count()) > 0
-
-      expect(hasBadges || hasStatusText || true).toBeTruthy()
+      if (await page.getByText('Прибыльные', { exact: true }).isVisible()) {
+        await expect(page.getByText('Убыточные', { exact: true })).toBeVisible()
+      }
     })
 
     test('has refresh button', async ({ page }) => {
@@ -163,14 +168,9 @@ test.describe('Unit Economics Analytics', () => {
     })
 
     test('has export button', async ({ page }) => {
-      // Export/download button
-      const exportBtn = page.locator(
-        'button:has-text("Экспорт"), button:has-text("CSV"), button:has-text("Export")'
-      )
-      const hasExport = (await exportBtn.count()) > 0
-
-      // Export functionality exists
-      expect(hasExport || true).toBeTruthy()
+      const exportBtn = page.getByRole('button', { name: 'CSV' })
+      await expect(exportBtn).toBeVisible()
+      await expect(exportBtn).toBeEnabled()
     })
   })
 
@@ -335,17 +335,15 @@ test.describe('Unit Economics Analytics', () => {
     test('can navigate to Unit Economics from sidebar', async ({ page }) => {
       await page.goto(ROUTES.dashboard)
       await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
+      await expect(page).toHaveURL(/\/dashboard\?week=[^&]+&type=week$/)
 
-      // Find sidebar link
-      const sidebarLink = page.locator('a[href*="unit-economics"], nav a:has-text("Юнит")')
-
-      if (await sidebarLink.isVisible()) {
-        await sidebarLink.click()
-        await page.waitForLoadState('domcontentloaded') // NOT networkidle — page background-polls (anti-pattern #9)
-
-        // Should navigate to unit economics page
-        await expect(page).toHaveURL(/unit-economics/)
-      }
+      const sidebarLink = page
+        .getByRole('navigation', { name: 'Main navigation' })
+        .getByRole('link', { name: 'Юнит-экономика', exact: true })
+      await expect(sidebarLink).toBeVisible()
+      await expect(sidebarLink).toHaveAttribute('href', ROUTES.analytics.unitEconomics)
+      await sidebarLink.click()
+      await expect(page).toHaveURL(/\/analytics\/unit-economics$/)
     })
 
     test('page is accessible directly via URL', async ({ page }) => {
