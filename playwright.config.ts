@@ -39,7 +39,7 @@ assertAllowedTestUrl(e2eBaseUrl)
  */
 export default defineConfig({
   testDir: './e2e',
-  globalSetup: isHistoricalSppTarget ? './e2e/historical-spp-global-setup.ts' : undefined,
+  globalSetup: isHistoricalSppTarget ? './scripts/historical-spp-global-setup.ts' : undefined,
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,

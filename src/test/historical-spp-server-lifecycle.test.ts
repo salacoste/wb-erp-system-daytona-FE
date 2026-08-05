@@ -3,7 +3,7 @@ import net from 'node:net'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import historicalSppGlobalSetup from '../../e2e/historical-spp-global-setup'
+import historicalSppGlobalSetup from '../../scripts/historical-spp-global-setup'
 import {
   assertHistoricalSppPortUnoccupied,
   stopHistoricalSppServer,
