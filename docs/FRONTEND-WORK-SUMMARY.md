@@ -39,17 +39,21 @@ delivery.
 
 ### OpenWiki generation status
 
-`openwiki/**` остаётся generated-only поверхностью и вручную не редактируется.
+Generated pages в `openwiki/**` остаются generated-only поверхностью и вручную
+не редактируются; `openwiki/INSTRUCTIONS.md` — user-authored control metadata,
+а не generated page.
 Story 165.3 завершает Epic 165 с merge текущей delivery. Workflow запускается ежедневно по cron `47 8 * * *` UTC на
 self-hosted runner `wb-ci-fe` с Node.js 24 и выполняет
 `npx --yes openwiki@0.3.0 code --update --print` через provider `anthropic`,
 model `glm-5.2` и `https://api.z.ai/api/anthropic`. Scheduled run на `main`
-создаёт уникальную branch `automation/openwiki-${GITHUB_RUN_ID}` и PR без
-merge; manual dispatch на `main` отклоняется, а manual dispatch на feature
-branch публикует generated commit обратно в эту же branch. Workflow
-восстанавливает собственный файл, все `AGENTS.md` и `CLAUDE.md`, а в commit
-добавляет только `openwiki/`. Если provider credential недоступен, это
-фиксируется как blocker без ручной подмены generated output.
+создаёт уникальную branch
+`automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` и PR без merge;
+manual dispatch на `main` отклоняется, а manual dispatch на feature branch
+публикует generated commit обратно в эту же branch. Workflow восстанавливает
+собственный файл, все `AGENTS.md`, `CLAUDE.md` и
+`openwiki/INSTRUCTIONS.md`; staging принимает generated `openwiki/**`, явно
+исключая control file. Если provider credential недоступен, это фиксируется
+как blocker без ручной подмены generated output.
 
 ---
 

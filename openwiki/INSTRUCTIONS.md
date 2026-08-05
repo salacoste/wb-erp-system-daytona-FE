@@ -25,7 +25,7 @@
 - Runtime: Node.js 24.
 - Generator: `npx --yes openwiki@0.3.0 code --update --print`.
 - Provider: Anthropic protocol through `https://api.z.ai/api/anthropic`, using model `glm-5.2`.
-- Scheduled runs create a unique automation branch, push normally, and open a normal pull request.
+- Scheduled runs create a unique `automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` branch, push normally, and open a normal pull request. Including the attempt makes failed-publication reruns non-conflicting.
 - Manual runs on a non-`main` ref push the generated commit back to that same branch.
 - Manual runs on `main` must be rejected.
 - Never push directly or force-push to `main`; never auto-merge generated documentation.
@@ -47,6 +47,7 @@
 - In `openwiki/quickstart.md`, the Architecture navigation description MUST NOT advertise deployment. Describe an actually documented topic such as configuration instead.
 - Repair obsolete workflow and validator guidance in both `openwiki/testing-and-ops.md` and `openwiki/conventions-and-quality.md`. They MUST identify `scripts/story-128-10/` as immutable historical, branch-bound Story 128.10 evidence tied to the former `feat/epic-128-10-frontend-verification-foundation` branch, and MUST point to `README.md` Local validation plus the active story plan for current commands.
 - In `openwiki/testing-and-ops.md`, describe the protected/generated boundary exactly: the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and `openwiki/INSTRUCTIONS.md`; it stages generated `openwiki/**` output while explicitly excluding `openwiki/INSTRUCTIONS.md`.
+- In `openwiki/testing-and-ops.md`, document the scheduled automation branch exactly as `automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` so workflow reruns use a fresh branch.
 - Repair `openwiki/architecture.md` so it states that Next.js server page/layout wrappers coexist with client components and that interactive data fetching is client-side. It MUST NOT claim that every page uses `use client`.
 - In the Configuration section of generated `openwiki/architecture.md`, write exactly one Markdown table. Remove the orphan `syntax` fragment associated with `AP#8 |`, remove duplicate Tailwind and `.env` rows, and inspect the final page to confirm that no duplicate configuration block remains.
 - Remove orphaned or duplicated fragments from `openwiki/conventions-and-quality.md`.

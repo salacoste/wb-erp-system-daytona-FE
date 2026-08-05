@@ -136,8 +136,12 @@ jobs:
             echo "Refusing to publish with an invalid workflow run ID." >&2
             exit 1
           fi
+          if [[ ! "$GITHUB_RUN_ATTEMPT" =~ ^[0-9]+$ ]]; then
+            echo "Refusing to publish with an invalid workflow run attempt." >&2
+            exit 1
+          fi
 
-          branch_name="automation/openwiki-${GITHUB_RUN_ID}"
+          branch_name="automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           git check-ref-format --branch "$branch_name"
           git switch -c "$branch_name"
 

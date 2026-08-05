@@ -618,10 +618,13 @@ This repository has a generated `openwiki/` evidence index. It is optional just-
 `glm-5.2`, and `https://api.z.ai/api/anthropic`.
 
 Scheduled generation from `main` publishes a unique
-`automation/openwiki-${GITHUB_RUN_ID}` branch and opens a PR without merging it.
-Manual generation from `main` is rejected; a manual run on a non-main feature
-branch pushes the generated commit back to that same branch. The workflow
-restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, and
-`CLAUDE.md`, then commits only `openwiki/`. Do not hand-edit generated pages.
+`automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` branch and opens a
+PR without merging it. Manual generation from `main` is rejected; a manual run
+on a non-main feature branch pushes the generated commit back to that same
+branch. Generated pages under `openwiki/**` exclude the user-authored
+`openwiki/INSTRUCTIONS.md` control file. The workflow restores
+`.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and
+`openwiki/INSTRUCTIONS.md`, then stages generated `openwiki/**` output while
+explicitly excluding the control file. Do not hand-edit generated pages.
 
 <!-- OPENWIKI:END -->

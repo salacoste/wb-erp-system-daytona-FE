@@ -95,14 +95,19 @@ directive.
 
 ## OpenWiki refresh
 
-Generated `openwiki/**` pages are refreshed daily at `47 8 * * *` UTC on the
-`wb-ci-fe` self-hosted runner with Node.js 24. The pinned generator command is
-`npx --yes openwiki@0.3.0 code --update --print`, using provider `anthropic`,
-model `glm-5.2`, and `https://api.z.ai/api/anthropic`.
+Generated pages under `openwiki/**` are refreshed daily at `47 8 * * *` UTC on
+the `wb-ci-fe` self-hosted runner with Node.js 24. The user-authored
+`openwiki/INSTRUCTIONS.md` control file is not a generated page. The pinned
+generator command is `npx --yes openwiki@0.3.0 code --update --print`, using
+provider `anthropic`, model `glm-5.2`, and
+`https://api.z.ai/api/anthropic`.
 
 Scheduled runs generate on `main`, push a unique
-`automation/openwiki-${GITHUB_RUN_ID}` branch, and open a PR without merging it.
+`automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` branch, and open a
+PR without merging it.
 Manual dispatch from `main` is rejected; manual dispatch from a non-main
 feature branch pushes the generated commit back to that same branch. The
-workflow restores its own file, every `AGENTS.md`, and `CLAUDE.md`, and commits
-only `openwiki/`. Never edit generated OpenWiki pages manually.
+workflow restores its own file, every `AGENTS.md`, `CLAUDE.md`, and
+`openwiki/INSTRUCTIONS.md`; it stages generated `openwiki/**` output while
+explicitly excluding the control file. Never edit generated OpenWiki pages
+manually.
