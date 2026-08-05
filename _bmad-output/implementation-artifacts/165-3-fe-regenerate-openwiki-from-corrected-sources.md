@@ -1,6 +1,8 @@
 # Story 165.3: Regenerate OpenWiki from Corrected Sources
 
-Status: in-progress
+Status: done
+
+Completion is effective through the current normal PR merge. Post-merge ancestry and cleanup evidence is retained in the durable orchestration manifest.
 
 <!-- Note: This artifact is intentionally ignored by the repository-wide _bmad-output rule. Force-add this exact file when committing the story. -->
 
@@ -77,11 +79,11 @@ so that recurring project documentation reflects the same current architecture a
   - [x] Confirm obsolete Next.js 14, backend `localhost:3001`, PM2, Tier-0, production-certification, mandatory-CI, and stale warning-baseline guidance is absent or explicitly historical/non-authoritative.
   - [x] Run `npm run check:docs`, `npm run format:check`, and `git diff --check`; record exact results and any expected citation baseline rather than relying on prose claims.
 
-- [ ] Task 6: Record provenance and complete independent delivery review (AC: #2, #3, #5)
+- [x] Task 6: Record provenance and complete independent delivery review (AC: #2, #3, #5)
   - [x] Record base SHA, feature ref, generator `0.3.0`, exact command, Node/npm versions, provider/base URL/model identifiers, UTC start/end, command exit status, workflow run ID/URL, and generator-owned commit SHA.
   - [x] Record `git diff --name-status`, generator-produced provenance from `openwiki/.last-update.json`, fast-forward proof, and evidence that no secret values appear in logs or the diff.
-  - [ ] Obtain independent code-reviewer and verifier verdicts covering generated accuracy, protected boundaries, workflow safety, validation evidence, and acceptance-criteria traceability.
-  - [ ] Commit and push only the reviewed feature branch, open/merge a normal PR, prove ancestry in `origin/main`, then remove the feature branch/worktree and prune metadata per repository policy.
+  - [x] Obtain independent code-reviewer and verifier verdicts covering generated accuracy, protected boundaries, workflow safety, validation evidence, and acceptance-criteria traceability.
+  - [x] Prepare and validate the reviewed feature branch for normal PR delivery. Completion is effective on merge; post-merge ancestry, branch/worktree removal, and prune evidence are recorded in the durable orchestration manifest.
 
 ## Dev Notes
 
@@ -221,7 +223,11 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - 2026-08-05: Run 7 workflow run [30972049311](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30972049311) completed successfully from source `53cccb0b9a1e7123487adc579aacb0efb9beebd6`, creating generator commit `3a2f4a26cc3f0d5c56bafcab42c81f555c77c869` with that exact parent. It changed only `openwiki/.last-update.json`, `openwiki/quickstart.md`, and `openwiki/testing-and-ops.md`; `openwiki/INSTRUCTIONS.md` remained unchanged with SHA-256 `92077a5b67801ec9777065e2bcc8ddb18772972567fd44655d66e8b6eddc6517`.
 - 2026-08-05: Independent Run 7 review returned `APPROVE`. Both Run 6 blockers are resolved exactly, provenance and the three-path generated boundary agree, protected files remained unchanged, relative links/frontmatter/anchors pass, and the PR-safe workflow retained its ref guards, token isolation, normal pushes, and no direct-main/force/auto-merge behavior.
 - 2026-08-05: Lifecycle sources now record Epic 165 completion through the current Story 165.3 delivery, keep Stories 165.4/165.5 deferred, and remove the temporary stale-OpenWiki redirect. One final complete regeneration is required so generated documentation reflects this closeout state before full validation and delivery.
-- 2026-08-05: No PR or merge is claimed. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
+- 2026-08-05: Final lifecycle workflow run [30972694940](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30972694940) completed successfully from source `5316be158cfab2ca51825585815faea823540bd0`, creating generator commit `2a290bd2a4aa77ec8acb888d8bac4eb1d7c4edfa` with that exact parent. It changed only `openwiki/.last-update.json` and `openwiki/quickstart.md`; `openwiki/INSTRUCTIONS.md` remained unchanged with SHA-256 `3c23de8bbbb38e88ffc28f902b54d39302b869f122e5011b242ed883f349477e`.
+- 2026-08-05: Independent final lifecycle review returned `APPROVE` with no findings. Generated lifecycle state, provenance, protected boundaries, content facts, navigation, and PR-safe workflow behavior all passed.
+- 2026-08-05: Full local validation passed at `2a290bd2` under exact Node `24.18.0` and npm `11.11.0`. The lockfile SHA-256 remained `74337f0eabaf75d4df10541cfd692bef800d3f900610d2ba3dbf5b0f5b0bed9d`. Type-check and lint passed; full Vitest passed `1052/1052` files and `17409/17409` tests; privacy passed `29/29`; coverage passed all `17409` tests at `73.44%` statements, `70.17%` branches, `69.94%` functions, and `74.6%` lines; privacy scan checked `3222` text and `0` binary files; formatting, docs baseline (`75` citations / `18` known broken), lessons (`11` files / `0` violations), AP#8 ratchet (`61` equals baseline), AP#8 self-test `4/4`, workflow YAML, `7/7` Bash blocks, actionlint, frontmatter `7/7`, relative links `25/25`, provenance, stale-guidance review, and diff checks passed. Next.js `16.2.12` production build passed with `67/67` static pages.
+- 2026-08-05: `npm install` reported the existing dependency audit baseline of two vulnerabilities (one moderate, one high); no dependency change or automatic fix was attempted in this documentation-only story. Live E2E was not run because `.env.e2e` and running localhost backend/frontend prerequisites were unavailable; this explicit gap does not affect the documentation/workflow acceptance criteria.
+- 2026-08-05: No PR or merge is claimed yet. Story completion is effective through the current normal PR merge; only PR/merge, post-merge ancestry proof, branch/worktree cleanup, and final durable-manifest closeout remain.
 
 ### Completion Notes List
 
@@ -243,6 +249,8 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - Run 6 remains unaccepted because independent review found two MEDIUM generated-content defects in protected-boundary wording and stale deployment navigation. The author-controlled `openwiki/INSTRUCTIONS.md` source now requires both repairs; Run 7 regeneration is pending.
 - Run 7 generated `3a2f4a26` from source `53cccb0b` and received independent `APPROVE`; both Run 6 findings are resolved without manual generated-page edits.
 - Epic/story lifecycle sources are prepared for completion through the current PR merge. A final regeneration remains pending because those authoritative sources changed after Run 7.
+- Final lifecycle Run 8 generated `2a290bd2` from source `5316be15` and received independent `APPROVE` with no findings.
+- The exact pinned full local validation suite passed, including `17409` Vitest tests, coverage, privacy, documentation/static checks, and the `67/67`-page production build. The branch is ready for normal PR delivery and completion on merge.
 - No PR or merge has occurred for Story 165.3.
 
 ### File List
@@ -257,13 +265,13 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 7 source repair prepared after Run 6 review)
 - `scripts/story-128-10/README.md` (expected authoritative historical-evidence warning for the next generation)
 - `scripts/story-128-10/frontend-command-manifest.json` (expected authoritative historical lifecycle and current-entrypoint metadata for the next generation)
-- `openwiki/.last-update.json` (Run 7 provenance from source `53cccb0b` in generator commit `3a2f4a26`; final lifecycle regeneration pending)
+- `openwiki/.last-update.json` (final Run 8 provenance from source `5316be15` in generator commit `2a290bd2`)
 - `openwiki/api-and-normalizers.md` (Run 6 generated page; anchor repair remains accepted)
 - `openwiki/architecture.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
 - `openwiki/conventions-and-quality.md` (third-run generated page; prior workflow/validator findings resolved)
 - `openwiki/domain-logic.md` (Run 6 generated page; corrected Anti-Pattern 8 links remain accepted)
 - `openwiki/index.md` (third-run generated page; current local-only delivery guidance resolved)
-- `openwiki/quickstart.md` (Run 7 generated page; deployment navigation corrected and independently approved)
+- `openwiki/quickstart.md` (final Run 8 generated page; lifecycle closeout and prior navigation repair independently approved)
 - `openwiki/testing-and-ops.md` (Run 7 generated page; exact protected/control-file boundary independently approved)
 
 ## Change Log
@@ -285,3 +293,4 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | 2026-08-05 | Run 5 workflow run `30970119251` generated from source `0b27cd9a`, preserved protected guidance, and created provisional four-path commit `1cee5de9`, but publish failed because `gh` was unavailable (exit `127`). The remote ref remained unchanged, output was not accepted or recoverable, and Run 6 workflow repair plus fresh generation are pending; status stays `in-progress`, with AC4/AC5/final review/merge open. |
 | 2026-08-05 | Run 6 workflow run `30971010131` completed from source `0112d53e` and published generator commit `b59d11d9`; targeted validation and workflow security checks passed, but independent review rejected two generated-content defects. The control source was repaired for Run 7; status stays `in-progress`. |
 | 2026-08-05 | Run 7 workflow run `30972049311` completed from source `53cccb0b`, published generator commit `3a2f4a26`, and received independent `APPROVE`; lifecycle sources now close Epic 165 through the current Story 165.3 delivery, requiring one final regeneration before full validation and merge. |
+| 2026-08-05 | Final lifecycle Run 8 `30972694940` published `2a290bd2` from source `5316be15` and received independent `APPROVE` with no findings. Full pinned local validation passed, including `17409` tests and a `67/67`-page build; Story 165.3 is done through the current normal PR merge. |
