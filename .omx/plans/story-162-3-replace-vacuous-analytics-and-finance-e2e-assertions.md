@@ -74,7 +74,7 @@ So that a green result proves those workflows actually render and behave correct
 ## Verification Steps
 
 - `rg -n "expect\([^\n]*(\|\| true|>= 0)" e2e/liquidity.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/returns-analytics.spec.ts`
-- `npx playwright test e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts`
+- `npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

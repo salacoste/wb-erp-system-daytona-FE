@@ -22,11 +22,18 @@ So that missing services, credentials, authentication, or fixtures fail early wi
 - `playwright.config.ts`
 - `e2e/auth.setup.ts`
 - `e2e/auth-manager.setup.ts`
+- `e2e/orders-client-info.spec.ts`
 - `e2e/fixtures/mutation-guard.ts`
 - `e2e/README.md`
+- `docs/qa/BROWSER-TESTING-WORKFLOW.md`
+- `.omx/plans/story-162-*.md`
 - `.env.e2e.example`
+- `README.md`
 - `package.json`
+- `vitest.config.ts`
 - `scripts/`
+- `_bmad-output/implementation-artifacts/162-2-fe-add-a-reproducible-local-e2e-preflight.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
 ## Acceptance Criteria (canonical)
 
@@ -64,24 +71,26 @@ So that missing services, credentials, authentication, or fixtures fail early wi
 
 1. Verify canonical dependency/immutable `initial_status` parity, read current lifecycle state from the sprint registry and durable manifest, and record the exact clean `origin/main` base SHA.
 2. Specify the localhost service, credential, auth-state, fixture, and mutation-policy preflight contract in executable tests.
-3. Implement one preflight entry point and wire it into the documented Playwright commands without exposing secrets.
-4. Exercise every success/failure branch and prove the default run remains read-only.
-5. Run an independent review and verification pass; merge only through a normal PR after all acceptance criteria have evidence.
-6. After merge proof, remove the clean story worktree and merged branches without force, prune worktree metadata, and audit the repository.
+3. Implement one effective environment, one explicit CI truth contract, and a fresh, random, cwd-bound local handshake; reject raw marker spoofing and `--no-deps` at the Playwright configuration boundary.
+4. Wire active repository-owned Playwright commands through the preflight, remove collection-time Manager auth-file checks, fail closed on symlinked auth cleanup, and surface redacted temporary-handshake cleanup failures.
+5. Exercise every success/failure branch and prove the default run remains read-only.
+6. Run an independent review and verification pass; merge only through a normal PR after all acceptance criteria have evidence.
+7. After merge proof, remove the clean story worktree and merged branches without force, prune worktree metadata, and audit the repository.
 
 ## Risks and Mitigations
 
-- **Story-specific risk:** A preflight must fail closed without turning missing live services into a false test pass.
+- **Story-specific risk:** A preflight must fail closed without turning missing live services into a false test pass; validate and probe the same effective environment passed to the child while requiring every `.env.e2e` value, treat non-true CI values as local, and prevent accidental bypass with a short-lived random handshake plus configuration-level `--no-deps` rejection and surfaced cleanup failures.
 - **Cross-story contamination:** branch only after dependencies are merged; never auto-stash, reset, clean, or mix unrelated changes.
 - **False completion:** retain the worktree on failure; a merged story with failed cleanup is `cleanup_blocked`, not complete.
 - **Local-only scope:** validate against frontend `localhost:3100` and backend `localhost:3000`; do not deploy or add production/CI certification scope.
 
 ## Verification Steps
 
-- `node scripts/<e2e-preflight-script> --help`
+- `node --test scripts/e2e-preflight.test.mjs`
+- `node scripts/e2e-preflight.mjs --help`
 - `npm run test:e2e -- --list`
 - `npm run type-check`
-- `npm run lint`
+- `npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

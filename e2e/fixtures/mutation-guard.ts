@@ -19,11 +19,11 @@ function isTruthyEnv(value: string | undefined): boolean {
   return TRUE_VALUES.has((value ?? '').trim().toLowerCase())
 }
 
-export function isMutatingE2EEnabled(): boolean {
+export function isMutatingE2EEnabled(environment: NodeJS.ProcessEnv = process.env): boolean {
   return (
-    isTruthyEnv(process.env.E2E_ENABLE_MUTATIONS) &&
-    process.env.E2E_MUTATION_TARGET === 'sandbox' &&
-    process.env.E2E_MUTATION_ACK === E2E_MUTATION_ACK_VALUE
+    isTruthyEnv(environment.E2E_ENABLE_MUTATIONS) &&
+    environment.E2E_MUTATION_TARGET === 'sandbox' &&
+    environment.E2E_MUTATION_ACK === E2E_MUTATION_ACK_VALUE
   )
 }
 

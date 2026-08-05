@@ -80,7 +80,7 @@ So that calculations, administrative states, assignments, login, and onboarding 
 ## Verification Steps
 
 - `rg -n "page\.waitForTimeout\(" e2e`
-- `npx playwright test e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/price-calculator-visual.spec.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2`
+- `npm run test:e2e:full -- e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/price-calculator-visual.spec.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

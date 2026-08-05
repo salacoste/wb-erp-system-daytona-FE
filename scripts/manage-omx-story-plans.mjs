@@ -30,24 +30,33 @@ const storyConfig = {
       'playwright.config.ts',
       'e2e/auth.setup.ts',
       'e2e/auth-manager.setup.ts',
+      'e2e/orders-client-info.spec.ts',
       'e2e/fixtures/mutation-guard.ts',
       'e2e/README.md',
+      'docs/qa/BROWSER-TESTING-WORKFLOW.md',
+      '.omx/plans/story-162-*.md',
       '.env.e2e.example',
+      'README.md',
       'package.json',
+      'vitest.config.ts',
       'scripts/',
+      '_bmad-output/implementation-artifacts/162-2-fe-add-a-reproducible-local-e2e-preflight.md',
+      '_bmad-output/implementation-artifacts/sprint-status.yaml',
     ],
     steps: [
       'Specify the localhost service, credential, auth-state, fixture, and mutation-policy preflight contract in executable tests.',
-      'Implement one preflight entry point and wire it into the documented Playwright commands without exposing secrets.',
+      'Implement one effective environment, one explicit CI truth contract, and a fresh, random, cwd-bound local handshake; reject raw marker spoofing and `--no-deps` at the Playwright configuration boundary.',
+      'Wire active repository-owned Playwright commands through the preflight, remove collection-time Manager auth-file checks, fail closed on symlinked auth cleanup, and surface redacted temporary-handshake cleanup failures.',
       'Exercise every success/failure branch and prove the default run remains read-only.',
     ],
     verify: [
-      'node scripts/<e2e-preflight-script> --help',
+      'node --test scripts/e2e-preflight.test.mjs',
+      'node scripts/e2e-preflight.mjs --help',
       'npm run test:e2e -- --list',
       'npm run type-check',
-      'npm run lint',
+      "npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
     ],
-    risk: 'A preflight must fail closed without turning missing live services into a false test pass.',
+    risk: 'A preflight must fail closed without turning missing live services into a false test pass; validate and probe the same effective environment passed to the child while requiring every `.env.e2e` value, treat non-true CI values as local, and prevent accidental bypass with a short-lived random handshake plus configuration-level `--no-deps` rejection and surfaced cleanup failures.',
   },
   162.3: {
     files: [
@@ -67,7 +76,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "expect\\([^\\n]*(\\|\\| true|>= 0)" e2e/liquidity.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/returns-analytics.spec.ts',
-      'npx playwright test e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts',
+      'npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/analytics/fbs-orders-analytics.spec.ts e2e/margin-analytics.spec.ts e2e/dashboard-metrics.spec.ts e2e/financial-summary.spec.ts e2e/unit-economics.spec.ts e2e/analytics/analytics-hub.spec.ts e2e/returns-analytics.spec.ts',
     ],
     risk: 'Optional data states must be asserted or explicitly skipped; absence must never be converted to success.',
   },
@@ -88,7 +97,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "expect\\([^\\n]*(\\|\\| true|>= 0)" e2e/settings e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts',
-      'npx playwright test e2e/settings/backfill-admin.spec.ts e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts',
+      'npm run test:e2e:full -- e2e/settings/backfill-admin.spec.ts e2e/backfill-page.spec.ts e2e/supply-planning.spec.ts e2e/supplies e2e/cogs-assignment.spec.ts e2e/cogs-pages.spec.ts e2e/price-calculator.spec.ts',
     ],
     risk: 'Mutating paths remain behind the sandbox acknowledgement guard and require deterministic fixtures.',
   },
@@ -105,7 +114,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "page\\.waitForTimeout\\(" e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts',
-      'npx playwright test e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts --repeat-each=2',
+      'npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts --repeat-each=2',
     ],
     risk: 'Replacing sleeps with network-idle can couple independent requests; wait only for the state under test.',
   },
@@ -130,7 +139,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "page\\.waitForTimeout\\(" e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts',
-      'npx playwright test e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts --repeat-each=2',
+      'npm run test:e2e:full -- e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts --repeat-each=2',
     ],
     risk: 'Chart animation and independent dashboard requests need purpose-specific readiness signals.',
   },
@@ -150,7 +159,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "page\\.waitForTimeout\\(" e2e/supply-planning.spec.ts e2e/supplies',
-      'npx playwright test e2e/supply-planning.spec.ts e2e/supplies --repeat-each=2',
+      'npm run test:e2e:full -- e2e/supply-planning.spec.ts e2e/supplies --repeat-each=2',
     ],
     risk: 'Eventual consistency requires bounded polling keyed to the created entity, never an unbounded loop.',
   },
@@ -173,7 +182,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "page\\.waitForTimeout\\(" e2e',
-      'npx playwright test e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/price-calculator-visual.spec.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2',
+      'npm run test:e2e:full -- e2e/pricing-page.spec.ts e2e/price-calculator.spec.ts e2e/price-calculator-visual.spec.ts e2e/settings/backfill-admin.spec.ts e2e/settings/backfill-a11y.spec.ts e2e/backfill-page.spec.ts e2e/cogs-assignment.spec.ts e2e/login-dashboard.spec.ts e2e/onboarding.spec.ts e2e/orders-client-info.spec.ts --repeat-each=2',
     ],
     risk: 'Authentication and mutation tests must use fresh storage state and the existing explicit safety gate.',
   },
@@ -186,7 +195,7 @@ const storyConfig = {
     ],
     verify: [
       'rg -n "test\\.skip\\(\\s*\\)" e2e',
-      'npx playwright test --list',
+      'npm run test:e2e:full -- --list',
       'npm run type-check',
       'npm run lint',
     ],
@@ -208,8 +217,8 @@ const storyConfig = {
       'Run the mobile project through the same preflight and record device, viewport, endpoints, and skips.',
     ],
     verify: [
-      'npx playwright test --project=mobile --list',
-      'npx playwright test --project=mobile',
+      'npm run test:e2e:full -- --project=mobile --list',
+      'npm run test:e2e:full -- --project=mobile',
       'npm run type-check',
       'npm run lint',
     ],
@@ -229,7 +238,7 @@ const storyConfig = {
     ],
     verify: [
       'npm test -- --run src/app/\\(dashboard\\)/analytics/advertising/components/performance-table',
-      'npx playwright test e2e/advertising-analytics-epic-36.spec.ts',
+      'npm run test:e2e:full -- e2e/advertising-analytics-epic-36.spec.ts',
       'npm run type-check',
       'npm run lint',
     ],
@@ -294,7 +303,7 @@ const storyConfig = {
     ],
     verify: [
       'npm test -- --run src/app/\\(dashboard\\)/analytics/unit-economics src/lib/unit-economics',
-      'npx playwright test e2e/unit-economics.spec.ts',
+      'npm run test:e2e:full -- e2e/unit-economics.spec.ts',
       'npm run type-check',
       'npm run lint',
     ],
@@ -314,7 +323,7 @@ const storyConfig = {
     ],
     verify: [
       'npm test -- --run src/app/\\(dashboard\\)/analytics/models/\\[id\\]/evaluations/sku-accuracy',
-      'npx playwright test e2e/forecast-accuracy.spec.ts',
+      'npm run test:e2e:full -- e2e/forecast-accuracy.spec.ts',
       'npm run type-check',
       'npm run lint',
     ],
@@ -336,7 +345,7 @@ const storyConfig = {
     ],
     verify: [
       'npm test -- --run src/components/custom/__tests__/DashboardPeriodSelector.test.tsx',
-      'npx playwright test e2e/dashboard-period.spec.ts e2e/period-selection-month-test.spec.ts',
+      'npm run test:e2e:full -- e2e/dashboard-period.spec.ts e2e/period-selection-month-test.spec.ts',
       'npm run type-check',
       'npm run lint',
     ],
@@ -506,7 +515,7 @@ const storyConfig = {
     ],
     verify: [
       'npm test -- --run src/lib/api/liquidity src/app/\\(dashboard\\)/analytics/liquidity',
-      'npx playwright test e2e/liquidity.spec.ts',
+      'npm run test:e2e:full -- e2e/liquidity.spec.ts',
       'npm run type-check',
       'npm run lint',
     ],
@@ -528,7 +537,7 @@ const storyConfig = {
     ],
     verify: [
       'npm test -- --run src/app/\\(dashboard\\)/settings/backfill src/lib/api/backfill src/hooks/useBackfill.ts src/hooks/useBackfillAdmin.ts',
-      'npx playwright test e2e/settings/backfill-admin.spec.ts',
+      'npm run test:e2e:full -- e2e/settings/backfill-admin.spec.ts',
       'npm run type-check',
       'npm run lint',
     ],

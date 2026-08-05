@@ -51,6 +51,7 @@ export default defineConfig({
       'e2e/**', // Exclude E2E tests from Vitest
       'tests/e2e/**', // Exclude E2E tests in tests/ directory
       'scripts/check-privacy-console.test.mjs', // Runs separately with node:test
+      'scripts/e2e-preflight.test.mjs', // Runs separately with node:test
       'scripts/privacy/diagnostic-capture-policy.test.mjs', // Runs separately with node:test
       'scripts/story-128-10/verify-frontend.test.mjs', // Runs separately with node:test
       'dist/**',

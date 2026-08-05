@@ -82,8 +82,8 @@ So that critical user journeys remain usable on the product's secondary mobile t
 
 ## Verification Steps
 
-- `npx playwright test --project=mobile --list`
-- `npx playwright test --project=mobile`
+- `npm run test:e2e:full -- --project=mobile --list`
+- `npm run test:e2e:full -- --project=mobile`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

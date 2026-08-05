@@ -72,7 +72,7 @@ So that create, update, calculate, confirm, document, and accessibility flows ar
 ## Verification Steps
 
 - `rg -n "page\.waitForTimeout\(" e2e/supply-planning.spec.ts e2e/supplies`
-- `npx playwright test e2e/supply-planning.spec.ts e2e/supplies --repeat-each=2`
+- `npm run test:e2e:full -- e2e/supply-planning.spec.ts e2e/supplies --repeat-each=2`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

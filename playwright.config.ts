@@ -2,7 +2,16 @@ import './src/test/network-guard-bootstrap'
 
 import { defineConfig, devices } from '@playwright/test'
 import { shouldSkipMutatingE2E } from './e2e/fixtures/mutation-guard'
+import {
+  assertLocalE2EPreflightHandshake,
+  assertPlaywrightDependenciesEnabled,
+  isCIEnvironment,
+} from './scripts/e2e-preflight-handshake.mjs'
 import { assertAllowedTestUrl } from './test-utils/outbound-network-policy'
+
+assertPlaywrightDependenciesEnabled(process.argv)
+const isCI = isCIEnvironment(process.env)
+if (!isCI) assertLocalE2EPreflightHandshake()
 
 // Load E2E environment variables
 try {
@@ -11,7 +20,10 @@ try {
   if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
 }
 
-const e2eBaseUrl = process.env.E2E_BASE_URL || 'http://localhost:3100'
+const e2eBaseUrl = process.env.E2E_BASE_URL
+if (!e2eBaseUrl) {
+  throw new Error('E2E_BASE_URL is required. Run npm run test:e2e:preflight for setup guidance.')
+}
 assertAllowedTestUrl(e2eBaseUrl)
 
 /**
@@ -24,9 +36,9 @@ assertAllowedTestUrl(e2eBaseUrl)
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCI,
+  retries: isCI ? 2 : 0,
+  workers: isCI ? 1 : undefined,
   grepInvert: shouldSkipMutatingE2E() ? /@mutating/ : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
@@ -70,7 +82,7 @@ export default defineConfig({
 
   // Web server configuration
   // Local runs reuse the frontend already running on localhost:3100.
-  webServer: process.env.CI
+  webServer: isCI
     ? {
         command: 'npm run dev',
         url: 'http://localhost:3100',
