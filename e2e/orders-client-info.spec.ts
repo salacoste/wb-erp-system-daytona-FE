@@ -11,7 +11,6 @@
  * @see _bmad-output/implementation-artifacts/86-2-client-info-pii.md
  */
 
-import { existsSync } from 'node:fs'
 import { test, expect, type Page, type Request } from './fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from './fixtures/mutation-guard'
 import { HAS_MANAGER_CREDS } from './fixtures/test-data'
@@ -290,14 +289,6 @@ test.describe('Story 86.2: Client Info (PII) — Orders Клиент column @mut
     test.skip(
       !HAS_MANAGER_CREDS,
       'E2E_MANAGER_EMAIL / E2E_MANAGER_PASSWORD not set — non-Owner tests deferred until fixture is provisioned'
-    )
-
-    // Belt-and-suspenders: also skip if the auth-manager.setup.ts didn't
-    // produce manager.json (e.g., login failed). Without this guard, every
-    // test would fail with "ENOENT" when newContext tries to load the file.
-    test.skip(
-      !existsSync(MANAGER_AUTH_FILE),
-      `${MANAGER_AUTH_FILE} not generated — check that auth-manager.setup.ts ran successfully`
     )
 
     test('should NOT render the "Клиент" column for Manager role', async ({ browser }) => {

@@ -77,7 +77,7 @@ So that period changes, charts, metrics, and navigation are validated without ti
 ## Verification Steps
 
 - `rg -n "page\.waitForTimeout\(" e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts`
-- `npx playwright test e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts --repeat-each=2`
+- `npm run test:e2e:full -- e2e/dashboard-*.spec.ts e2e/analytics e2e/margin-analytics.spec.ts e2e/financial-summary.spec.ts e2e/storage-analytics.spec.ts e2e/category-analytics.spec.ts e2e/brand-analytics.spec.ts e2e/forecast*.spec.ts e2e/merged-group-table-epic-37.spec.ts e2e/accessibility-merged-groups-epic-37.spec.ts e2e/period-selection-month-test.spec.ts --repeat-each=2`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

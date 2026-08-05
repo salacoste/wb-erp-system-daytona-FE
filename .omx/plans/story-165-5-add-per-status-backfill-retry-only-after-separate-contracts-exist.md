@@ -77,7 +77,7 @@ So that recovering one pipeline does not unnecessarily restart the other.
 ## Verification Steps
 
 - `npm test -- --run src/app/\(dashboard\)/settings/backfill src/lib/api/backfill src/hooks/useBackfill.ts src/hooks/useBackfillAdmin.ts`
-- `npx playwright test e2e/settings/backfill-admin.spec.ts`
+- `npm run test:e2e:full -- e2e/settings/backfill-admin.spec.ts`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

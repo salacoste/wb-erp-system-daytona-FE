@@ -66,17 +66,27 @@ story-specific plan are authoritative for current work.
 
 ## Browser tests
 
+Local browser tests require the backend-seeded Owner user, the backend on
+`localhost:3000`, and the frontend on `localhost:3100`. The backend repository
+owns its database seed; this frontend has no database-seeding script.
+
 ```bash
 cp .env.e2e.example .env.e2e
-npm run test:e2e
+npm run test:e2e:preflight # configuration and service diagnostics only
+npm run test:e2e           # bounded read-only orders smoke on Chromium
+npm run test:e2e:full      # full suite through the same preflight
 ```
 
-Playwright expects the local frontend and backend to be running and requires
-ordinary test credentials from `.env.e2e`.
-
-Tests that mutate backend or WB-cabinet data are excluded by default. See
-[`e2e/README.md`](e2e/README.md) before intentionally running any mutating spec
-against isolated test data.
+The preflight rejects missing configuration, unhealthy services, redirects,
+unsafe origins, raw-run marker spoofing, and `--no-deps` before Playwright
+starts. It passes one validated effective environment through a fresh temporary
+handshake and regenerates ignored auth state through the live setup project.
+Handshake cleanup is attempted after Playwright exits, and any cleanup failure
+is surfaced as a redacted non-zero result.
+Tests that mutate backend or WB-cabinet data remain excluded by default. Follow
+the complete setup, backend seed, optional
+Manager, argument-forwarding, and recovery guidance in
+[`e2e/README.md`](e2e/README.md).
 
 ## Project map
 

@@ -82,7 +82,7 @@ So that the control's accessibility semantics match its actual behavior.
 ## Verification Steps
 
 - `npm test -- --run src/components/custom/__tests__/DashboardPeriodSelector.test.tsx`
-- `npx playwright test e2e/dashboard-period.spec.ts e2e/period-selection-month-test.spec.ts`
+- `npm run test:e2e:full -- e2e/dashboard-period.spec.ts e2e/period-selection-month-test.spec.ts`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

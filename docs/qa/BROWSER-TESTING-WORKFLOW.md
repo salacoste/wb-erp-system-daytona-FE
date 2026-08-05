@@ -72,14 +72,14 @@ mcp__claude-in-chrome__form_input(ref, value, tabId)
 ### Уровень 3: E2E Automated Tests
 
 ```bash
-# Запуск всех E2E тестов
-npm run test:e2e
+# Запуск всех E2E тестов через обязательный preflight
+npm run test:e2e:full
 
 # С UI интерфейсом
 npm run test:e2e:ui
 
-# Конкретный тест
-npx playwright test price-calculator.spec.ts
+# Конкретный тест через тот же preflight
+npm run test:e2e:full -- e2e/price-calculator.spec.ts
 ```
 
 ---

@@ -75,7 +75,7 @@ So that I can inspect advertising data without relying on a pointer device.
 ## Verification Steps
 
 - `npm test -- --run src/app/\(dashboard\)/analytics/advertising/components/performance-table`
-- `npx playwright test e2e/advertising-analytics-epic-36.spec.ts`
+- `npm run test:e2e:full -- e2e/advertising-analytics-epic-36.spec.ts`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

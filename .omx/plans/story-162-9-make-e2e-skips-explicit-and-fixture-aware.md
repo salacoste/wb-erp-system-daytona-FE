@@ -75,7 +75,7 @@ So that missing fixtures and regressions cannot disappear silently from local re
 ## Verification Steps
 
 - `rg -n "test\.skip\(\s*\)" e2e`
-- `npx playwright test --list`
+- `npm run test:e2e:full -- --list`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

@@ -75,7 +75,7 @@ So that I can compare forecast approaches without confusing unit values with per
 ## Verification Steps
 
 - `npm test -- --run src/app/\(dashboard\)/analytics/models/\[id\]/evaluations/sku-accuracy`
-- `npx playwright test e2e/forecast-accuracy.spec.ts`
+- `npm run test:e2e:full -- e2e/forecast-accuracy.spec.ts`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

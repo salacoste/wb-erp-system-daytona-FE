@@ -77,7 +77,7 @@ So that I can interpret unit-economics tables and summaries without mistaking no
 ## Verification Steps
 
 - `npm test -- --run src/app/\(dashboard\)/analytics/unit-economics src/lib/unit-economics`
-- `npx playwright test e2e/unit-economics.spec.ts`
+- `npm run test:e2e:full -- e2e/unit-economics.spec.ts`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`

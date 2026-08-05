@@ -69,7 +69,7 @@ So that the two largest analytics specs are faster and deterministic.
 ## Verification Steps
 
 - `rg -n "page\.waitForTimeout\(" e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts`
-- `npx playwright test e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts --repeat-each=2`
+- `npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts --repeat-each=2`
 - `npm run format:check`
 - `git diff --check`
 - Browser-facing acceptance criteria require a fresh localhost result; if credentials/services are unavailable, record the gap and do not claim those criteria passed.

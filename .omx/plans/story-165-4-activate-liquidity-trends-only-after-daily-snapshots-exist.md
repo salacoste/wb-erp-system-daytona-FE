@@ -72,7 +72,7 @@ So that I can see real movement between liquidity categories over time without s
 ## Verification Steps
 
 - `npm test -- --run src/lib/api/liquidity src/app/\(dashboard\)/analytics/liquidity`
-- `npx playwright test e2e/liquidity.spec.ts`
+- `npm run test:e2e:full -- e2e/liquidity.spec.ts`
 - `npm run type-check`
 - `npm run lint`
 - `npm run format:check`
