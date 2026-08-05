@@ -13,7 +13,11 @@ import { useCabinetLevelExpenses, useMarginAnalyticsBySku } from '@/hooks/useMar
 import { useSkuFinancials } from '@/hooks/useSkuFinancials'
 import type { MarginAnalyticsSku } from '@/types/api'
 import type { SkuFinancialParity } from '@/types/sku-financials'
-import { readHistoricalSppEnabled, setHistoricalSppSearchParam } from './historical-spp-state'
+import {
+  readHistoricalSppEnabled,
+  selectHistoricalSppValues,
+  setHistoricalSppSearchParam,
+} from './historical-spp-state'
 
 export function useSkuPageState() {
   const router = useRouter()
@@ -200,6 +204,7 @@ export function useSkuPageState() {
 export type SkuPageState = ReturnType<typeof useSkuPageState>
 
 function toSkuParity(item: MarginAnalyticsSku, historicalSppEnabled: boolean): SkuFinancialParity {
+  const historicalSpp = selectHistoricalSppValues(item, historicalSppEnabled)
   return {
     advertisingCost: item.advertising_cost ?? null,
     drrPct: item.drr_pct ?? null,
@@ -209,8 +214,8 @@ function toSkuParity(item: MarginAnalyticsSku, historicalSppEnabled: boolean): S
     netMarginAfterTaxPct: item.net_margin_after_tax_pct ?? null,
     // Do not carry enabled-cache values into the disabled view, even if a caller
     // accidentally supplies a stale object while the false-key query is loading.
-    sppRub: historicalSppEnabled ? (item.spp_rub ?? null) : null,
-    sppPct: historicalSppEnabled ? (item.spp_pct ?? null) : null,
+    sppRub: historicalSpp.sppRub,
+    sppPct: historicalSpp.sppPct,
     cancellationsQty: item.cancellations_qty ?? null,
     stockFbs: item.stock_fbs ?? null,
     stockFbo: item.stock_fbo ?? null,

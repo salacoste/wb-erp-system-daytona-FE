@@ -9,10 +9,14 @@ import {
   assertLocalE2EPreflightHandshake,
   assertPlaywrightDependenciesEnabled,
   createE2EPreflightHandshake,
+  establishHistoricalSppExecution,
   HANDSHAKE_FILE_VARIABLE,
   HANDSHAKE_TOKEN_VARIABLE,
   HANDSHAKE_VERIFIED_VARIABLE,
+  HISTORICAL_SPP_COMMAND_VARIABLE,
+  isHistoricalSppExactCommand,
   isCIEnvironment,
+  requiresLocalE2EPreflight,
 } from './e2e-preflight-handshake.mjs'
 
 const SECRET_EMAIL = 'owner-secret@example.test'
@@ -641,11 +645,13 @@ test('local config rejects bypasses and applies one explicit CI truth contract',
   assert.doesNotMatch(configSource, /E2E_PREFLIGHT_PASSED/)
   assert.match(configSource, /assertLocalE2EPreflightHandshake/)
   assert.match(configSource, /assertPlaywrightDependenciesEnabled/)
+  assert.match(configSource, /establishHistoricalSppExecution/)
+  assert.match(configSource, /requiresLocalE2EPreflight/)
   assert.match(configSource, /const isCI = isCIEnvironment\(process\.env\)/)
   assert.doesNotMatch(configSource, /(?:!|!!)?process\.env\.CI/)
   assert.match(
     configSource,
-    /if \(!isCI && !isHistoricalSppTarget\) assertLocalE2EPreflightHandshake\(\)/
+    /if \(requiresLocalE2EPreflight\(process\.argv, process\.env\)\) assertLocalE2EPreflightHandshake\(\)/
   )
   assert.match(
     configSource,
@@ -655,6 +661,53 @@ test('local config rejects bypasses and applies one explicit CI truth contract',
   assert.match(configSource, /retries: isCI \? 2 : 0/)
   assert.match(configSource, /workers: isCI \? 1 : undefined/)
   assert.match(configSource, /isCI && !isHistoricalSppTarget/)
+})
+
+test('only the literal mocked historical-SPP command bypasses local preflight', () => {
+  const exactArgs = [
+    '/opt/homebrew/opt/node@24/bin/node',
+    'node_modules/.bin/playwright',
+    'test',
+    'e2e/historical-spp-analytics.spec.ts',
+    '--reporter=html',
+    '--output=../.omx/ultragoal/evidence/story-128-27/frontend/test-results',
+  ]
+
+  const exactEnvironment = {}
+  assert.equal(establishHistoricalSppExecution(exactArgs, exactEnvironment), true)
+  assert.equal(exactEnvironment[HISTORICAL_SPP_COMMAND_VARIABLE], '1')
+  assert.equal(requiresLocalE2EPreflight(exactArgs, {}), false)
+  assert.equal(requiresLocalE2EPreflight(exactArgs, { CI: 'false' }), false)
+  assert.equal(requiresLocalE2EPreflight(exactArgs, { CI: 'true' }), false)
+
+  assert.equal(
+    establishHistoricalSppExecution(['/node', '/playwright'], {
+      [HISTORICAL_SPP_COMMAND_VARIABLE]: '1',
+    }),
+    false
+  )
+  assert.equal(
+    establishHistoricalSppExecution(['/node', '/playwright'], {
+      [HISTORICAL_SPP_COMMAND_VARIABLE]: '1',
+      TEST_WORKER_INDEX: '0',
+    }),
+    true
+  )
+
+  for (const args of [
+    exactArgs.slice(0, -1),
+    [...exactArgs, 'e2e/orders.spec.ts'],
+    [...exactArgs.slice(0, -1), '--output=test-results'],
+    [
+      ...exactArgs.slice(0, -1),
+      '--output=../.omx/ultragoal/evidence/story-128-27/frontend/test-results',
+      '--project=chromium',
+    ],
+    ['/node', '/playwright', 'test', 'e2e/orders.spec.ts'],
+  ]) {
+    assert.equal(isHistoricalSppExactCommand(args), false)
+    assert.equal(requiresLocalE2EPreflight(args, {}), true)
+  }
 })
 
 test('CI truth contract recognizes only explicit provider truth values', () => {

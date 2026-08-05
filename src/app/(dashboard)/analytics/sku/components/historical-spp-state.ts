@@ -14,3 +14,13 @@ export function setHistoricalSppSearchParam(
   next.set('include_cogs', String(enabled))
   return next
 }
+
+export function selectHistoricalSppValues(
+  source: { spp_rub?: number | null; spp_pct?: number | null },
+  enabled: boolean
+): { sppRub: number | null; sppPct: number | null } {
+  return {
+    sppRub: enabled ? (source.spp_rub ?? null) : null,
+    sppPct: enabled ? (source.spp_pct ?? null) : null,
+  }
+}

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { readHistoricalSppEnabled, setHistoricalSppSearchParam } from '../historical-spp-state'
+import {
+  readHistoricalSppEnabled,
+  selectHistoricalSppValues,
+  setHistoricalSppSearchParam,
+} from '../historical-spp-state'
 
 describe('historical SPP URL state', () => {
   it('defaults historical financial data to enabled', () => {
@@ -21,5 +25,16 @@ describe('historical SPP URL state', () => {
       'weekStart=2026-W30&weekEnd=2026-W31&nm_id=123&include_cogs=true'
     )
     expect(existing.has('include_cogs')).toBe(false)
+  })
+
+  it('scrubs stale enabled-cache values while disabled and preserves explicit zero when enabled', () => {
+    expect(selectHistoricalSppValues({ spp_rub: 125.5, spp_pct: 12.55 }, false)).toEqual({
+      sppRub: null,
+      sppPct: null,
+    })
+    expect(selectHistoricalSppValues({ spp_rub: 0, spp_pct: 0 }, true)).toEqual({
+      sppRub: 0,
+      sppPct: 0,
+    })
   })
 })

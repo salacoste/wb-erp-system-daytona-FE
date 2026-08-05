@@ -5,16 +5,16 @@ import { shouldSkipMutatingE2E } from './e2e/fixtures/mutation-guard'
 import {
   assertLocalE2EPreflightHandshake,
   assertPlaywrightDependenciesEnabled,
+  establishHistoricalSppExecution,
   isCIEnvironment,
+  requiresLocalE2EPreflight,
 } from './scripts/e2e-preflight-handshake.mjs'
 import { assertAllowedTestUrl } from './test-utils/outbound-network-policy'
 
-const isHistoricalSppTarget = process.argv.some(argument =>
-  argument.endsWith('historical-spp-analytics.spec.ts')
-)
+const isHistoricalSppTarget = establishHistoricalSppExecution(process.argv, process.env)
 assertPlaywrightDependenciesEnabled(process.argv)
 const isCI = isCIEnvironment(process.env)
-if (!isCI && !isHistoricalSppTarget) assertLocalE2EPreflightHandshake()
+if (requiresLocalE2EPreflight(process.argv, process.env)) assertLocalE2EPreflightHandshake()
 
 // Load E2E environment variables
 try {
