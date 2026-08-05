@@ -14,7 +14,7 @@ Financial analytics dashboard for Wildberries marketplace sellers. Built with Ne
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (all pages are client components) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~975 unit test files, MSW) + Playwright E2E (~82 specs) + privacy console check |
+| **Testing** | Vitest (~1050 unit test files, MSW) + Playwright E2E (~83 specs) + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
@@ -30,7 +30,7 @@ npm run type-check             # tsc --noEmit
 npm test                       # Vitest unit tests
 npm run test:e2e               # Playwright E2E
 npm run check:privacy          # Privacy console guard (PII-adjacent files)
-npm run test:privacy           # Privacy console guard unit tests
+npm run test:privacy           # Privacy console + diagnostic-capture-policy unit tests
 npm run check:docs             # Doc-citation drift gate
 npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 ```
@@ -41,7 +41,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
-- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, privacy console check, local validation, environment variables.
+- **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, outbound network guards (Vitest + Playwright + static boundary), privacy console and diagnostic-capture guards, frontend verification orchestrator, local validation, environment variables.
 
 ## Key Source References
 
@@ -54,6 +54,9 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Normalizer helpers | `src/lib/api/normalizer-helpers.ts` |
 | Route constants | `src/lib/routes.ts` |
 | Auth store | `src/stores/authStore.ts` |
+| Outbound network guard (Vitest) | `src/test/outbound-network-guard.ts`, `src/test/network-guard-bootstrap.ts`, `test-utils/outbound-network-policy.ts` |
+| Playwright network guard + static boundary | `e2e/fixtures/playwright-network-guard.ts`, `src/test/playwright-static-boundary.ts` |
+| Frontend verification orchestrator | `scripts/story-128-10/verify-frontend.mjs`, `scripts/story-128-10/frontend-command-manifest.json` |
 | Agent guidelines | `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md` |
 | Epics & stories tracker | `docs/EPICS-AND-STORIES-TRACKER.md` |
 | API integration guide | `docs/api-integration-guide.md` |

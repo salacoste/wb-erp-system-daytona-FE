@@ -80,6 +80,9 @@ Each gate has an accepted baseline. Stories close only when all gates match thei
 | ESLint | `npm run lint` | 0 errors, max-warnings: 112 |
 | Vitest | `npm test -- --run` | ≥ 17186 passing, 0 failed |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
+| Privacy + diagnostic-capture unit tests | `npm run test:privacy` | Console guard + diagnostic-capture-policy tests pass (see [Testing & Operations](testing-and-ops.md#diagnostic-capture-policy)) |
+| Outbound network guards | focused vitest run + `e2e/outbound-network-guard.spec.ts` | All non-local test network attempts denied (see [Testing & Operations](testing-and-ops.md#outbound-network-guards)) |
+| Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
 
 ### Ratchet gate behavior
 
@@ -113,7 +116,7 @@ Every story closes only after **two adversarial code-review passes** in fresh co
 
 This project has **no mandatory CI/CD merge gate** — there is currently no required GitHub Actions status check. Merge authority is local:
 
-- Before merge, run the relevant tests, lint, type-check, and production build locally **with the pinned Node.js/npm versions** and record concise evidence.
+- Before merge, run the relevant tests, lint, type-check, and production build locally **with the pinned Node.js/npm versions** and record concise evidence. The complete pinned command set and artifact set for a full local validation are codified by the [Frontend Verification Orchestrator](testing-and-ops.md#frontend-verification-orchestrator) (`scripts/story-128-10/verify-frontend.mjs`), which self-validates its manifest and emits a tamper-evident receipt.
 - After local validation passes, commit, push the feature branch, merge its PR into `main`, and remove completed local/remote feature branches and temporary worktrees.
 - Do **not** enable or add a required `Quality Gates`/`CI` status check without an explicit owner decision.
 - Local-only merge authority does **not** permit deploys, production operations, force-pushes, or direct pushes to `main`.
