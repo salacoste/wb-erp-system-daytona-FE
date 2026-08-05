@@ -66,6 +66,7 @@ jobs:
           git restore --source=HEAD -- .github/workflows/openwiki-update.yml
           git restore --source=HEAD -- ':(glob)**/AGENTS.md'
           git restore --source=HEAD -- CLAUDE.md
+          git restore --source=HEAD -- openwiki/INSTRUCTIONS.md
 
       - name: Show generated changes
         run: |
@@ -78,7 +79,7 @@ jobs:
           set -euo pipefail
           git config user.name "OpenWiki Bot"
           git config user.email "actions@github.com"
-          git add -A -- openwiki/
+          git add -A -- openwiki/ ':(top,exclude)openwiki/INSTRUCTIONS.md'
 
           if ! git diff --cached --quiet -- . ':(top,exclude)openwiki'; then
             echo "Refusing to commit staged changes outside openwiki/." >&2

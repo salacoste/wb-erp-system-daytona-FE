@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-05 # Story 165.3 started; workflow repair prepared and feature-ref generation pending.
+last_updated: 2026-08-05 # Story 165.3 run 2 rejected; third source-led feature-ref generation pending.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -727,6 +727,6 @@ development_status:
   epic-165-fe: in-progress
   165.1-fe-reconcile-epic-127-delivery-status: done  # Source reconciliation merged in PR #87 at bc071fdf; dedicated closeout recorded in PR #89.
   165.2-fe-align-local-development-validation-guidance: done  # Deterministic tracked-doc validation and active localhost guidance close through PR #90 on merge.
-  165.3-fe-regenerate-openwiki: in-progress  # 2026-08-05: workflow repair prepared; credentialed generation through the feature ref remains pending.
+  165.3-fe-regenerate-openwiki: in-progress  # 2026-08-05: run 2 (30966394210 / 616474d7) rejected by REQUEST_CHANGES + NOT_VERIFIED; third source-led generation pending.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: deferred  # Backend must provide non-empty persisted daily snapshots.
   165.5-fe-per-status-backfill-retry-after-separate-contracts: deferred  # Backend must expose separate report/analytics retry endpoints.

@@ -44,24 +44,24 @@ so that recurring project documentation reflects the same current architecture a
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Prove the dependency and isolation gate before generation (AC: #1, #2)
-  - [ ] Confirm the clean Story 165.3 feature worktree is based on `a3425d96` (`origin/main` after PR #90).
-  - [ ] Record that Story 165.1 closeout is merged through PR #89 and Story 165.2 is merged through PR #90.
-  - [ ] Confirm the active ref is a Story 165.3 feature branch, not `main`, and capture `git status --short` before generation.
-  - [ ] Use the repository-pinned Node.js `24.18.0` and npm `11.11.0` runtime.
+- [x] Task 1: Prove the dependency and isolation gate before generation (AC: #1, #2)
+  - [x] Confirm the clean Story 165.3 feature worktree is based on `a3425d96` (`origin/main` after PR #90).
+  - [x] Record that Story 165.1 closeout is merged through PR #89 and Story 165.2 is merged through PR #90.
+  - [x] Confirm the active ref is a Story 165.3 feature branch, not `main`, and capture `git status --short` before generation.
+  - [x] Use the repository-pinned Node.js `24.18.0` and npm `11.11.0` runtime.
 
-- [ ] Task 2: Establish the permanent PR-safe generation workflow (AC: #1, #2, #3)
-  - [ ] Do **not** dispatch or execute the current direct-`main` workflow path: it can commit and push `HEAD:main`, which conflicts with the repository's PR-only merge policy.
-  - [ ] For scheduled runs from `main`, generate on a unique automation branch, push that branch without force, and open a normal PR targeting `main`; the workflow must never merge the PR itself.
-  - [ ] For `workflow_dispatch`, reject `main` and run only from an existing non-main feature ref; commit generated changes on the checked-out ref and use a normal fast-forward push to that same remote feature branch.
-  - [ ] Preserve the scheduled workflow's runner, concurrency, provider configuration, generated-boundary protections, and intended refresh behavior while replacing direct-main delivery permanently.
-  - [ ] The workflow must never push to `main`, force-push, merge a PR, expose a credential, or manufacture output when generation fails.
+- [x] Task 2: Establish the permanent PR-safe generation workflow (AC: #1, #2, #3)
+  - [x] Do **not** dispatch or execute the current direct-`main` workflow path: it can commit and push `HEAD:main`, which conflicts with the repository's PR-only merge policy.
+  - [x] For scheduled runs from `main`, generate on a unique automation branch, push that branch without force, and open a normal PR targeting `main`; the workflow must never merge the PR itself.
+  - [x] For `workflow_dispatch`, reject `main` and run only from an existing non-main feature ref; commit generated changes on the checked-out ref and use a normal fast-forward push to that same remote feature branch.
+  - [x] Preserve the scheduled workflow's runner, concurrency, provider configuration, generated-boundary protections, and intended refresh behavior while replacing direct-main delivery permanently.
+  - [x] The workflow must never push to `main`, force-push, merge a PR, expose a credential, or manufacture output when generation fails.
 
-- [ ] Task 3: Run the pinned OpenWiki generator with the configured provider (AC: #1, #2, #5)
-  - [ ] Run exactly `npx --yes openwiki@0.3.0 code --update --print`; do not resolve or substitute `latest`.
-  - [ ] Configure `OPENWIKI_PROVIDER=anthropic`, `ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic`, and `OPENWIKI_MODEL_ID=glm-5.2`.
-  - [ ] Map `ANTHROPIC_API_KEY` from the configured z.ai repository secret (`ZAI_API_KEY`) only inside the runner environment; never print, persist, download, or commit its value.
-  - [ ] After the credentialed runner fast-forward-pushes its generator-owned commit to the Story 165.3 branch, fetch that ref and fast-forward the local worktree with `--ff-only`; do not copy, download, reconstruct, or hand-edit generated output.
+- [x] Task 3: Run the pinned OpenWiki generator with the configured provider (AC: #1, #2, #5)
+  - [x] Run exactly `npx --yes openwiki@0.3.0 code --update --print`; do not resolve or substitute `latest`.
+  - [x] Configure `OPENWIKI_PROVIDER=anthropic`, `ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic`, and `OPENWIKI_MODEL_ID=glm-5.2`.
+  - [x] Map `ANTHROPIC_API_KEY` from the configured z.ai repository secret (`ZAI_API_KEY`) only inside the runner environment; never print, persist, download, or commit its value.
+  - [x] After the credentialed runner fast-forward-pushes its generator-owned commit to the Story 165.3 branch, fetch that ref and fast-forward the local worktree with `--ff-only`; do not copy, download, reconstruct, or hand-edit generated output.
 
 - [ ] Task 4: Enforce generated and protected-file boundaries (AC: #1, #3)
   - [ ] Accept generator output only under `openwiki/**` and the explicitly reviewed OpenWiki-generated region of `CLAUDE.md`.
@@ -78,8 +78,8 @@ so that recurring project documentation reflects the same current architecture a
   - [ ] Run `npm run check:docs`, `npm run format:check`, and `git diff --check`; record exact results and any expected citation baseline rather than relying on prose claims.
 
 - [ ] Task 6: Record provenance and complete independent delivery review (AC: #2, #3, #5)
-  - [ ] Record base SHA, feature ref, generator `0.3.0`, exact command, Node/npm versions, provider/base URL/model identifiers, UTC start/end, command exit status, workflow run ID/URL, and generator-owned commit SHA.
-  - [ ] Record `git diff --name-status`, generator-produced provenance from `openwiki/.last-update.json`, fast-forward proof, and evidence that no secret values appear in logs or the diff.
+  - [x] Record base SHA, feature ref, generator `0.3.0`, exact command, Node/npm versions, provider/base URL/model identifiers, UTC start/end, command exit status, workflow run ID/URL, and generator-owned commit SHA.
+  - [x] Record `git diff --name-status`, generator-produced provenance from `openwiki/.last-update.json`, fast-forward proof, and evidence that no secret values appear in logs or the diff.
   - [ ] Obtain independent code-reviewer and verifier verdicts covering generated accuracy, protected boundaries, workflow safety, validation evidence, and acceptance-criteria traceability.
   - [ ] Commit and push only the reviewed feature branch, open/merge a normal PR, prove ancestry in `origin/main`, then remove the feature branch/worktree and prune metadata per repository policy.
 
@@ -162,7 +162,7 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 
 ### Project Structure Notes
 
-- Correlated plan scope: `.github/workflows/openwiki-update.yml`, `openwiki/`, `README.md`, and `CLAUDE.md`.
+- Correlated plan scope: `.github/workflows/openwiki-update.yml`, `openwiki/`, `README.md`, `CLAUDE.md`, `scripts/story-128-10/README.md`, and `scripts/story-128-10/frontend-command-manifest.json`.
 - The story implementation artifact and sprint registry are lifecycle/control evidence, not generator output.
 - No application source, API contract, UI, dependency manifest, or production deployment change is required by this documentation-only story.
 - Browser-facing validation is not required because this story changes generated documentation and workflow behavior only; any unavailable external generation prerequisite is handled by the blocker contract above.
@@ -200,7 +200,11 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - 2026-08-05: Prior targeted gates at `c5b632e2` passed: `npm run check:docs` in `0.56s` with `75` citations and `18` known broken citations exactly matching the baseline; `npm run format:check` was initially unavailable because `node_modules` was absent, then passed in `9.79s` through the same pinned Node/npm `npx` environment with `prettier@3.9.5`; `git diff --check` passed in `0.02s`; `git diff main...HEAD --check` passed in `0.01s`; workflow YAML parsing passed; all `7` embedded `run` blocks passed `bash -n`; and `actionlint 1.7.11` passed with only the repository-specific `wb-ci-fe` runner-label warning excluded.
 - 2026-08-05: Independent review verdict was `REQUEST_CHANGES`. The first generated output was rejected for factual workflow guidance, a legacy validator reference, incorrect Epic status, broken source/citation stamps, and a malformed generated fragment. These findings block merge and final validation despite the successful generator process and prior targeted gates.
 - 2026-08-05: Recovery source and workflow changes are prepared but uncommitted. The official user-authored `openwiki/INSTRUCTIONS.md` control metadata was added to direct the next OpenWiki update; it is not a generated documentation page and does not authorize manual edits to generated output.
-- 2026-08-05: A second complete feature-ref generation is pending. No recovery commit, push, dispatch, PR, or merge is claimed.
+- 2026-08-05: Recovery source commit `2248530b17b397dfa4f539a991c241a770647b9d` was dispatched on the feature ref in GitHub Actions workflow run [30966394210](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30966394210). The run started at `2026-08-05T01:26:46Z`, completed successfully at `2026-08-05T01:30:14Z`, and created generator commit `616474d7e6f180c860aadf9d64dc100ca0d13f34` with parent `2248530b17b397dfa4f539a991c241a770647b9d`.
+- 2026-08-05: Second-run provenance reports `updatedAt: 2026-08-05T01:29:49.609Z`, `gitHead: 2248530b17b397dfa4f539a991c241a770647b9d`, `model: glm-5.2`, and `status: complete`. The generator commit changed only `openwiki/.last-update.json`, `openwiki/conventions-and-quality.md`, `openwiki/domain-logic.md`, and `openwiki/testing-and-ops.md`; the local story worktree fast-forwarded to `616474d7`.
+- 2026-08-05: Second-run targeted documentation, workflow, provenance, and diff gates passed. This technical PASS does not satisfy AC4/AC5 because the independent code-reviewer verdict is `REQUEST_CHANGES` and the verifier verdict is `NOT_VERIFIED`.
+- 2026-08-05: The second generated result was rejected because it still omitted visible current-delivery/local-only guidance, retained the historical Story 128.10 verifier as if it were a current project-wide validation entry point, and retained the false architecture claim that every page uses `use client`. Source-led repairs now include `README.md`, `openwiki/INSTRUCTIONS.md`, `scripts/story-128-10/README.md`, and `scripts/story-128-10/frontend-command-manifest.json`, plus workflow protection for `openwiki/INSTRUCTIONS.md`; a third complete generation is pending.
+- 2026-08-05: No PR or merge is claimed. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
 
 ### Completion Notes List
 
@@ -208,8 +212,10 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - Story prepared for implementation; no OpenWiki generation or workflow/source mutation was performed during story creation.
 - First credentialed feature-ref generation completed in workflow run `30963482084`, producing generator commit `c5b632e2`.
 - The first generated output is not accepted: independent review returned `REQUEST_CHANGES` for factual workflow/validator/Epic-state defects, broken stamps, and malformed generated content.
-- Recovery changes are prepared in authoritative source/workflow surfaces, including user-authored OpenWiki control metadata at `openwiki/INSTRUCTIONS.md`; the generated pages have not been manually repaired.
-- Prior Node 24 targeted gates passed at `c5b632e2`, but they are not final recovery validation. Story 165.3 remains in progress until a fresh second generation passes content, boundary, review, and final delivery gates.
+- Second credentialed feature-ref generation completed in workflow run `30966394210`, producing generator commit `616474d7` from source parent `2248530b`; targeted gates passed.
+- The second generated output is also not accepted: code review returned `REQUEST_CHANGES` and verification returned `NOT_VERIFIED` because current delivery/local-only guidance remained absent and architecture/validator guidance remained inaccurate.
+- Third-run source repairs are prepared in authoritative source/workflow surfaces, including user-authored OpenWiki control metadata at `openwiki/INSTRUCTIONS.md`; generated pages have not been manually repaired.
+- Prior targeted gates are not final acceptance evidence. Story 165.3 remains in progress until a fresh third generation passes content, boundary, review, and final delivery gates.
 - No PR or merge has occurred for Story 165.3.
 
 ### File List
@@ -222,11 +228,15 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - `docs/EPICS-AND-STORIES-TRACKER.md` (authoritative current Epic/story state)
 - `docs/FRONTEND-WORK-SUMMARY.md` (authoritative frontend delivery summary)
 - `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; not a generated page)
-- `openwiki/.last-update.json` (first-run generated provenance; pending replacement by second generation)
-- `openwiki/conventions-and-quality.md` (first-run generated page; rejected pending second generation)
-- `openwiki/index.md` (first-run generated page; rejected pending second generation)
-- `openwiki/quickstart.md` (first-run generated page; rejected pending second generation)
-- `openwiki/testing-and-ops.md` (first-run generated page; rejected pending second generation)
+- `scripts/story-128-10/README.md` (expected authoritative historical-evidence warning for the next generation)
+- `scripts/story-128-10/frontend-command-manifest.json` (expected authoritative historical lifecycle and current-entrypoint metadata for the next generation)
+- `openwiki/.last-update.json` (second-run generated provenance; rejected pending third generation)
+- `openwiki/architecture.md` (generated page with rejected client-component claim; pending third generation)
+- `openwiki/conventions-and-quality.md` (second-run generated page; rejected pending third generation)
+- `openwiki/domain-logic.md` (second-run generated page; rejected pending third generation)
+- `openwiki/index.md` (generated page missing required current delivery/local-only guidance; pending third generation)
+- `openwiki/quickstart.md` (generated page missing required current delivery/local-only guidance; pending third generation)
+- `openwiki/testing-and-ops.md` (second-run generated page with rejected current-validator guidance; pending third generation)
 
 ## Change Log
 
@@ -236,4 +246,6 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | 2026-08-05 | Story moved to in-progress after PR-safe workflow repair was prepared; feature-ref generation remains pending. |
 | 2026-08-05 | First pinned OpenWiki generation completed through workflow run `30963482084` and generator commit `c5b632e2`; prior targeted Node 24 gates passed. |
 | 2026-08-05 | Independent review returned `REQUEST_CHANGES`; no merge occurred because generated factual guidance, validator/Epic status, stamps, and a malformed fragment require source-led regeneration. |
-| 2026-08-05 | Recovery source/workflow changes and user-authored `openwiki/INSTRUCTIONS.md` control metadata prepared; second generation remains pending. |
+| 2026-08-05 | Recovery source/workflow changes and user-authored `openwiki/INSTRUCTIONS.md` control metadata prepared for a second generation. |
+| 2026-08-05 | Second generation completed in workflow run `30966394210` from `2248530b`, producing `616474d7`; targeted gates passed, but review returned `REQUEST_CHANGES` and verification returned `NOT_VERIFIED`. |
+| 2026-08-05 | Second output rejected; additional authoritative-source and workflow-protection repairs prepared. Third source-led generation remains pending and status stays `in-progress`. |

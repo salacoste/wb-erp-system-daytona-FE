@@ -8,6 +8,15 @@ defaults to `http://localhost:3000`. There is currently no deployment or release
 platform.
 <!-- CURRENT-STATUS:END -->
 
+## Current Delivery Status
+
+- Epic 127 is done.
+- Epic 162 is in progress.
+- Epics 163 and 164 are backlog.
+- Epic 165 is in progress.
+- Story 165.3 is active.
+- Stories 165.4 and 165.5 are deferred.
+
 ## Requirements
 
 - Node.js `24.18.0`
@@ -70,6 +79,10 @@ Tests that mutate backend or WB-cabinet data are excluded by default. See
 against isolated test data.
 
 ## Project map
+
+Next.js server page and layout wrappers coexist with client components.
+Interactive data fetching is client-side; not every page uses the `use client`
+directive.
 
 - `src/app/` — Next.js routes and layouts
 - `src/components/` — reusable and feature UI

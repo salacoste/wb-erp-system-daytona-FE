@@ -1,6 +1,10 @@
 {
   "schemaVersion": "epic128-frontend-command-manifest/v1",
   "storyId": "128.10",
+  "lifecycle": "historical",
+  "status": "immutable-evidence",
+  "currentValidationEntrypoint": "README.md#local-validation and the active story plan",
+  "usageWarning": "Historical, branch-bound Story 128.10 evidence only; do not use as the current project-wide validation entry point.",
   "runtime": {
     "node": "v24.18.0",
     "npm": "11.11.0"
