@@ -46,6 +46,8 @@
 - `openwiki/quickstart.md` and/or `openwiki/index.md` MUST state that development and validation are local-only and that there is no deployment target or production platform.
 - Repair obsolete workflow and validator guidance in both `openwiki/testing-and-ops.md` and `openwiki/conventions-and-quality.md`. They MUST identify `scripts/story-128-10/` as immutable historical, branch-bound Story 128.10 evidence tied to the former `feat/epic-128-10-frontend-verification-foundation` branch, and MUST point to `README.md` Local validation plus the active story plan for current commands.
 - Repair `openwiki/architecture.md` so it states that Next.js server page/layout wrappers coexist with client components and that interactive data fetching is client-side. It MUST NOT claim that every page uses `use client`.
+- In the Configuration section of generated `openwiki/architecture.md`, write exactly one Markdown table. Remove the orphan `syntax` fragment associated with `AP#8 |`, remove duplicate Tailwind and `.env` rows, and inspect the final page to confirm that no duplicate configuration block remains.
 - Remove orphaned or duplicated fragments from `openwiki/conventions-and-quality.md`.
-- Remove false broken-link comments from `openwiki/domain-logic.md` where the targets resolve.
+- Remove false broken-link comments from `openwiki/domain-logic.md` where the targets resolve. Both Anti-Pattern #8 links MUST use exactly this relative href: `api-and-normalizers.md#anti-pattern-8-null--0-collapse-on-moneyratio-fields` (with two hyphens between `null` and `0`, matching the GitHub heading slug). Verify both occurrences in the generated page.
+- Run final cross-page relative-link and anchor validation after all generated repairs.
 - Do not preserve inaccurate prose merely to minimize the generated diff.
