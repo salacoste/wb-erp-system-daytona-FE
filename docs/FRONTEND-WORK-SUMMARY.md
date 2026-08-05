@@ -17,7 +17,8 @@ Stories 127.1/127.2 реализованы; единственные явно ba
 программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
 report/analytics retry endpoints). Source reconciliation для Story 165.1
 влита PR #87 (`bc071fdf`), а отдельный closeout зафиксирован в PR #89;
-Story 165.2 остаётся в `review` до собственного PR merge и cleanup.
+Story 165.2 закрывается через PR #90: active localhost guidance синхронизирован,
+а doc-citation gate сделан детерминированным для Git-tracked документов.
 <!-- CURRENT-STATUS:END -->
 
 ---
@@ -26,7 +27,7 @@ Story 165.2 остаётся в `review` до собственного PR merge 
 
 - Localhost cleanup влит PR #86, merge SHA `4a24544d`; `main` синхронизирован с `origin/main`.
 - Vitest: 1,047 файлов / 17,313 тестов; coverage observation — 74.56% lines и 73.41% statements.
-- Успешно проверены type-check, ESLint, formatting, privacy, Orders Integrity, npm audit и production build (67/67 pages).
+- Успешно проверены type-check, ESLint, formatting, privacy, Orders Integrity, npm audit и локальный `npm run build` (67/67 pages). Это production-mode build smoke на localhost, а не deploy или внешняя production-сертификация.
 - Playwright обнаруживает 801 тест в 80 файлах. Полный live localhost E2E не заявлен как пройденный: во время аудита отсутствовали `.env.e2e` и сервисы на портах 3000/3100.
 - Аудит E2E зафиксировал 88 owned-scope tautological assertions, 247 fixed waits и 30 bare skips; устранение разбито на Stories 162.2-162.10.
 

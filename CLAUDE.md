@@ -110,7 +110,7 @@ Four anomaly categories: field inversion, null-where-number-expected, impossible
 
 ### Doc-citation validation (`npm run check:docs`)
 
-`scripts/check-doc-citations.sh` (Story 89.3-FE) scans `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, `backlog/tasks/` for backtick-wrapped citations `` `src/path.ts:N` `` / `:N-M` and fails if any don't resolve (file-not-found OR line > file length). Self-test: `bash scripts/check-doc-citations.sh --self-test`.
+`scripts/check-doc-citations.sh` (Story 89.3-FE) scans only Git-tracked `.md`/`.txt` files under `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md`, `docs/`, `_bmad-output/`, `backlog/docs/`, and `backlog/tasks/`. Ignored/untracked scratch docs are excluded; modified tracked docs use current working-tree contents. Git enumeration failure is an error, never a recursive-filesystem fallback. Self-test: `bash scripts/check-doc-citations.sh --self-test`.
 
 **Drift gate (Story 94.1-FE).** Validator set-diffs broken citations against `scripts/.check-docs-baseline.txt` and exits 0 only on exact match (emits `NEW`/`RESOLVED` enumeration). **Read the exit code, not the count.**
 
@@ -143,10 +143,10 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | ESLint rules | `bash scripts/check-eslint-rules.sh` | OK: all rule names valid in 2 files |
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
 | Dot-locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
-| ESLint | `npx eslint 'frontend/src/**/*.{ts,tsx}'` (from monorepo root) | 0 errors, 0 warnings |
+| ESLint | `npm run lint` (from this frontend repository root) | 0 errors; warnings within the script's explicit budget |
 | Vitest | `npm test -- --run` | ≥ 17186 passing, 0 skipped, 0 failed (floor) |
 
-**Drift rules.** check:docs — exit code is the gate (automated). type-check / lint — count must equal 0; any error/warning is a regression. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` enforced via root `eslint.config.js` flat config (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated and does NOT load `.eslintrc.json` — enforcement is exclusively `npx eslint` from monorepo root. **When a story legitimately moves a baseline, update this table in the same PR.**
+**Drift rules.** check:docs — exit code is the gate (automated). type-check — count must equal 0. lint — errors must equal 0 and warnings must stay within the existing script budget; do not raise the budget while fixing warnings. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` is enforced through `eslint.config.js` (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated, so run `npm run lint` from this repository root. **When a story legitimately moves a baseline, update this table in the same PR.**
 
 ### Two-pass review discipline
 
@@ -595,20 +595,7 @@ Password: LocalTest123!
 
 ---
 
-## OpenWiki
-
-This repository has documentation located in the /openwiki directory.
-
-Start here:
-- [OpenWiki quickstart](openwiki/quickstart.md)
-
-OpenWiki includes repository overview, architecture notes, workflows, domain concepts, operations, integrations, testing guidance, and source maps.
-
-When working in this repository, read the OpenWiki quickstart first, then follow its links to the relevant architecture, workflow, domain, operation, and testing notes.
-
----
-
-**Last Updated**: 2026-07-06
+**Last Updated**: 2026-08-05
 
 <!-- OPENWIKI:START -->
 

@@ -8,8 +8,8 @@ This guide provides step-by-step instructions for setting up the WB Repricer Sys
 
 Before starting, ensure you have:
 
-- **Node.js** 20.x or higher ([Download](https://nodejs.org/))
-- **npm**, **yarn**, or **pnpm** package manager
+- **Node.js** 24.18.0 ([Download](https://nodejs.org/))
+- **npm** 11.11.0
 - **Git** for version control
 - **Code Editor** (VS Code recommended)
 
@@ -115,9 +115,16 @@ Ensure these files exist and are properly configured:
 # Run unit tests
 npm test
 
-# Run E2E tests (requires dev server running)
+# Run live E2E only after the prerequisites below are available
 npm run test:e2e
 ```
+
+Live E2E requires `.env.e2e` with `E2E_TEST_EMAIL` and
+`E2E_TEST_PASSWORD`, the backend on `localhost:3000`, and the frontend on
+`localhost:3100`. Ordinary runs exclude mutating scenarios; see
+[`e2e/README.md`](e2e/README.md) before enabling any sandbox mutations. If
+these local prerequisites are unavailable, record live E2E as unavailable and
+do not report the suite as passed.
 
 ---
 
@@ -152,9 +159,13 @@ npm install
 
 **Solution:**
 ```bash
-# Use a different port
-PORT=3001 npm run dev
+# Inspect the process occupying the configured frontend port.
+lsof -nP -iTCP:3100 -sTCP:LISTEN
+# Stop that local process, then restart the frontend on localhost:3100.
+npm run dev
 ```
+
+`localhost:3000` is reserved for the backend.
 
 ---
 
