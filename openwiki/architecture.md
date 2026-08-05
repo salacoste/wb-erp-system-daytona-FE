@@ -100,6 +100,3 @@ Source: `src/stores/`
 | `eslint.config.js` | Flat ESLint config with custom `no-restricted-syntax` for AP#8 |
 | `tailwind.config.ts` | Tailwind theme (red primary `#E53935`, Russian locale) |
 | `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |
-syntax` for AP#8 |
-| `tailwind.config.ts` | Tailwind theme (red primary `#E53935`, Russian locale) |
-| `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |
