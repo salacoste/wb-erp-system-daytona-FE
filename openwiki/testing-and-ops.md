@@ -250,17 +250,18 @@ Refreshes the generated `openwiki/**` pages. Authoritative contract in `.github/
 
 | Aspect | Detail |
 |--------|--------|
-| **Triggers** | Schedule (daily `47 8 * * *` UTC) + manual `workflow_dispatch`. A manual dispatch from `main` is **rejected** at the first step. |
+| **Triggers** | Schedule (daily `47 8 * * *` UTC) + manual `workflow_dispatch`. A manual dispatch must target a branch ref (not a tag or other ref) and must not target `main`; the `Validate manual dispatch ref` step rejects anything else before checkout. |
 | **Runner** | Self-hosted `wb-ci-fe` (`runs-on: [self-hosted, Linux, X64, wb-ci-fe]`), Node.js 24, 60 min timeout |
 | **Concurrency** | `openwiki-frontend` group, `cancel-in-progress: false` |
 | **Provider** | Anthropic protocol through `https://api.z.ai/api/anthropic`, model `glm-5.2` (`OPENWIKI_PROVIDER: anthropic`, `ANTHROPIC_API_KEY` from the `ZAI_API_KEY` secret) |
 | **Generator** | `npx --yes openwiki@0.3.0 code --update --print` in an isolated per-run `npm_config_cache` under `RUNNER_TEMP` |
 
-**Commit and publish rules** (enforced by the `Commit OpenWiki updates` step):
+**Commit and publish rules** (enforced by the `Commit OpenWiki updates`, `Open pull request for scheduled main refresh`, and `Push updates back to dispatched branch` steps):
+- `actions/checkout` runs with `persist-credentials: false`, so no token is stored in `.git/config` after checkout.
 - After generation, the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, and `CLAUDE.md` to their committed `HEAD` versions so only generated pages are committed.
 - `git add -A -- openwiki/` is the only staging command. The step refuses to commit if any change is staged outside `openwiki/`, if unexpected unstaged tracked changes remain, or if any untracked or ignored file is present.
-- **Scheduled run on `main`** → commits, pushes a unique `automation/openwiki-${GITHUB_RUN_ID}` branch, and opens a PR against `main` via `gh pr create` (no auto-merge).
-- **Manual dispatch on a non-`main` branch** → commits and pushes the generated commit back to that same branch.
+- **Scheduled run on `main`** → commits, creates a unique `automation/openwiki-${GITHUB_RUN_ID}` branch, pushes it with a temporary `x-access-token:${GH_TOKEN}` remote URL that is restored to a credential-free origin via an `EXIT` trap, and opens a PR against `main` through the GitHub REST API (`POST /repos/{owner}/{repo}/pulls` with `curl`); the PR title/body are built with `node`. There is no `gh` CLI dependency and no auto-merge.
+- **Manual dispatch on a non-`main` branch** → commits and pushes the generated commit back to that same branch using the same credential-isolated remote-url pattern.
 - **Manual dispatch on `main`** → rejected before checkout.
 
 > Never edit generated `openwiki/**` pages by hand; update source/docs and let the workflow regenerate. The workflow never force-pushes and never pushes directly to `main`.

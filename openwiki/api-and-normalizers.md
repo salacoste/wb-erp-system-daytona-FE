@@ -70,7 +70,7 @@ Each domain follows the same pattern:
 - `to<Type>` — scalar/enum coercion
 - `normalize<Name>` — per-item normalizer
 
-## Anti-Pattern #8: Null → 0 Collapse on Money/Ratio Fields
+## Anti-Pattern 8: Preserve Null Money and Ratio Values
 
 > Full spec: `CLAUDE-ANTI-PATTERNS.md` AP#8
 
