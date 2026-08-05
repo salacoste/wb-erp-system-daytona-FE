@@ -131,17 +131,51 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          command -v gh >/dev/null 2>&1
-          gh auth setup-git
+          : "${GH_TOKEN:?GitHub token is required for publication}"
+          if [[ ! "$GITHUB_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "Refusing to publish with an invalid workflow run ID." >&2
+            exit 1
+          fi
+
           branch_name="automation/openwiki-${GITHUB_RUN_ID}"
           git check-ref-format --branch "$branch_name"
           git switch -c "$branch_name"
+
+          credential_free_origin="https://github.com/${GITHUB_REPOSITORY}.git"
+          restore_origin() {
+            git remote set-url origin "$credential_free_origin"
+          }
+          trap restore_origin EXIT
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --set-upstream origin "$branch_name"
-          gh pr create \
-            --base "main" \
-            --head "$branch_name" \
-            --title "docs: update frontend OpenWiki" \
-            --body "Automated OpenWiki refresh from workflow run ${GITHUB_RUN_ID}."
+          restore_origin
+
+          pr_payload="$(node -e '
+            const [head, runId] = process.argv.slice(1);
+            process.stdout.write(JSON.stringify({
+              base: "main",
+              head,
+              title: "docs: update frontend OpenWiki",
+              body: "Automated OpenWiki refresh from workflow run " + runId + ".",
+            }));
+          ' "$branch_name" "$GITHUB_RUN_ID")"
+          pr_response="${RUNNER_TEMP}/openwiki-pr-${GITHUB_RUN_ID}.json"
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Content-Type: application/json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data "$pr_payload" \
+            --output "$pr_response" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls"
+          node -e '
+            const response = JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"));
+            if (typeof response.html_url !== "string" || response.html_url.length === 0) {
+              throw new Error("GitHub pull request response did not contain html_url");
+            }
+            process.stdout.write("Created pull request: " + response.html_url + "\n");
+          ' "$pr_response"
 
       - name: Push updates back to dispatched branch
         if: steps.commit.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main'
@@ -149,7 +183,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh auth setup-git
+          : "${GH_TOKEN:?GitHub token is required for publication}"
           target_branch="${GITHUB_REF_NAME}"
           if [[ "$target_branch" == "main" ]]; then
             echo "Refusing to publish story output directly to main." >&2
@@ -157,4 +191,12 @@ jobs:
           fi
           git check-ref-format --branch "$target_branch"
           target_refspec="HEAD:refs/heads/${target_branch}"
+
+          credential_free_origin="https://github.com/${GITHUB_REPOSITORY}.git"
+          restore_origin() {
+            git remote set-url origin "$credential_free_origin"
+          }
+          trap restore_origin EXIT
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push origin "$target_refspec"
+          restore_origin

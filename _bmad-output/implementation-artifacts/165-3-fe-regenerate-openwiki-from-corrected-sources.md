@@ -213,6 +213,9 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - 2026-08-05: Retry provenance reports `updatedAt: 2026-08-05T02:22:00.793Z`, `gitHead: 1cdd721ac5cd82eb8a02a0fcd9032264f7b18eaa`, `model: glm-5.2`, and `status: complete`. The generator commit changed only `openwiki/.last-update.json`, `openwiki/architecture.md`, and `openwiki/domain-logic.md`; user-authored `openwiki/INSTRUCTIONS.md` was preserved unchanged.
 - 2026-08-05: Run 4 targeted documentation, provenance, navigation, protected-boundary, workflow-syntax, and diff validation passed. This targeted `PASS` is not final acceptance evidence.
 - 2026-08-05: Fresh independent code review returned `REQUEST_CHANGES`, and verification remained `NOT_VERIFIED`. The blocking findings are false generated source/citation stamps, a HIGH workflow credential-persistence risk, and a MEDIUM manual tag-dispatch safety mismatch. Source/workflow repairs followed by a complete Run 5 generation are pending; generated pages remain untouched by hand.
+- 2026-08-05: Run 5 workflow run [30970119251](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30970119251) started from source SHA `0b27cd9ac7db1e1103acbd1359467b3625cb0e01`. The generator, protected-guidance restore, generated-change inspection, and commit steps succeeded. The runner created provisional commit `1cee5de9`, changing only four generated paths: `openwiki/.last-update.json`, `openwiki/api-and-normalizers.md`, `openwiki/domain-logic.md`, and `openwiki/testing-and-ops.md`.
+- 2026-08-05: Run 5 failed while publishing the provisional commit because `gh auth setup-git` could not run on the self-hosted runner (`gh: command not found`, exit `127`). The remote feature ref remained unchanged at `0b27cd9a`; provisional commit `1cee5de9` was not pushed and is not accepted or recoverable through the required feature-ref fast-forward path. No merge occurred.
+- 2026-08-05: Run 6 requires a workflow publish fix followed by a fresh complete generation. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
 - 2026-08-05: No PR or merge is claimed. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
 
 ### Completion Notes List
@@ -229,7 +232,9 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - Run 4 workflow run `30968672409` failed on provider `overloaded_error` / HTTP `500` before producing output, a commit, or a push. The feature ref and prepared source-repair diff remained unchanged at `1cdd721a`.
 - Run 4 retry workflow run `30968987777` completed successfully from source `1cdd721a`, producing generator commit `ed94e3c5` with parent `1cdd721a` and changing only `openwiki/.last-update.json`, `openwiki/architecture.md`, and `openwiki/domain-logic.md`; `openwiki/INSTRUCTIONS.md` remained unchanged.
 - Run 4 targeted validation passed, but the output is not accepted: independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling.
-- Run 5 source/workflow repair and complete generation are pending. Story 165.3 remains in progress until the new output passes content, boundary, independent review, verification, and final delivery gates.
+- Run 5 workflow run `30970119251` completed generation and protected-guidance restoration from source `0b27cd9a`, then created provisional commit `1cee5de9` with four generated-path changes.
+- Run 5 publish failed because the self-hosted runner did not provide the `gh` command (`command not found`, exit `127`). The remote feature ref stayed at `0b27cd9a`; provisional output was neither published nor accepted and cannot be recovered through the approved fast-forward integration path.
+- Run 6 workflow publish repair and a fresh complete generation are pending. Story 165.3 remains in progress until new output passes content, boundary, independent review, verification, and final delivery gates.
 - No PR or merge has occurred for Story 165.3.
 
 ### File List
@@ -241,10 +246,10 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - `README.md` (authoritative OpenWiki source guidance)
 - `docs/EPICS-AND-STORIES-TRACKER.md` (authoritative current Epic/story state)
 - `docs/FRONTEND-WORK-SUMMARY.md` (authoritative frontend delivery summary)
-- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 5 source repair pending for false generated stamps)
+- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 5 source repair present at `0b27cd9a` and preserved by the generator)
 - `scripts/story-128-10/README.md` (expected authoritative historical-evidence warning for the next generation)
 - `scripts/story-128-10/frontend-command-manifest.json` (expected authoritative historical lifecycle and current-entrypoint metadata for the next generation)
-- `openwiki/.last-update.json` (Run 4 retry provenance from source `1cdd721a` in generator commit `ed94e3c5`; Run 5 pending)
+- `openwiki/.last-update.json` (Run 4 retry provenance from source `1cdd721a` in generator commit `ed94e3c5`; Run 5 provisional replacement was not published, Run 6 pending)
 - `openwiki/architecture.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
 - `openwiki/conventions-and-quality.md` (third-run generated page; prior workflow/validator findings resolved)
 - `openwiki/domain-logic.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
@@ -268,3 +273,4 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | 2026-08-05 | Run 4 workflow run `30968672409` failed on provider `overloaded_error` / HTTP `500` without generated output, commit, or push; the feature ref remained `1cdd721a`, status stayed `in-progress`, and a fresh retry was required. |
 | 2026-08-05 | Run 4 retry workflow run `30968987777` completed successfully from source `1cdd721a`, producing generator commit `ed94e3c5` with exactly three generated-file changes while preserving `openwiki/INSTRUCTIONS.md`; fresh validation/review remain pending and AC4/AC5/final review/merge stay open. |
 | 2026-08-05 | Run 4 targeted validation passed, but independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling; Run 5 source/workflow repair and regeneration are pending, with AC4/AC5/final review/merge still open. |
+| 2026-08-05 | Run 5 workflow run `30970119251` generated from source `0b27cd9a`, preserved protected guidance, and created provisional four-path commit `1cee5de9`, but publish failed because `gh` was unavailable (exit `127`). The remote ref remained unchanged, output was not accepted or recoverable, and Run 6 workflow repair plus fresh generation are pending; status stays `in-progress`, with AC4/AC5/final review/merge open. |

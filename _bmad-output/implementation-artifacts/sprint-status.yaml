@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-05 # Story 165.3 Run 4 targeted PASS was rejected by independent review; Run 5 repair and generation are pending.
+last_updated: 2026-08-05 # Story 165.3 Run 5 generated provisional output but publish failed because gh was unavailable; Run 6 workflow repair and fresh generation are pending.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -727,6 +727,6 @@ development_status:
   epic-165-fe: in-progress
   165.1-fe-reconcile-epic-127-delivery-status: done  # Source reconciliation merged in PR #87 at bc071fdf; dedicated closeout recorded in PR #89.
   165.2-fe-align-local-development-validation-guidance: done  # Deterministic tracked-doc validation and active localhost guidance close through PR #90 on merge.
-  165.3-fe-regenerate-openwiki: in-progress  # 2026-08-05: Run 4 retry 30968987777 produced ed94e3c5 from 1cdd721a and targeted gates passed; reviewer REQUEST_CHANGES/verifier NOT_VERIFIED for false stamps, HIGH credential persistence, MEDIUM tag dispatch. Run 5 pending; AC4/AC5/final/merge open.
+  165.3-fe-regenerate-openwiki: in-progress  # 2026-08-05: Run 5 30970119251 generated provisional 1cee5de9 from 0b27cd9a with four generated paths and protected guidance preserved, but publish failed because gh was unavailable (127); remote unchanged, output not accepted/recoverable. Run 6 workflow repair + fresh generation pending; AC4/AC5/final/merge open.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: deferred  # Backend must provide non-empty persisted daily snapshots.
   165.5-fe-per-status-backfill-retry-after-separate-contracts: deferred  # Backend must expose separate report/analytics retry endpoints.
