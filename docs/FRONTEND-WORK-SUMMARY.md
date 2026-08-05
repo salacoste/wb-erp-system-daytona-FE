@@ -4,21 +4,25 @@
 
 **Создан**: 2026-01-30 (Backend Integration Analysis)
 **Последнее обновление**: 2026-08-05
-**Статус реализации**: 89 эпиков завершены; Epics 162-165 формируют текущую localhost-программу качества и продуктового завершения
+**Статус реализации**: 90 эпиков завершены; Epics 162-165 формируют текущую localhost-программу качества и продуктового завершения
 **Локальный контур**: frontend `localhost:3100`; backend задаётся через `NEXT_PUBLIC_API_URL` (локальное значение по умолчанию — `http://localhost:3000`)
 **Текущая проверка**: Vitest, Playwright, coverage, privacy scan, lint, type-check, format и local build smoke
 
 ## Executive Summary
 
 Исторически отслеживаемая frontend-работа отмечена завершённой. Канонический
-текущий подсчёт — 93 уникальных эпика (89 done, 2 in-progress, 2 backlog) и
+текущий подсчёт — 93 уникальных эпика (90 done, 1 in-progress, 2 backlog) и
 5 untracked operational features в `docs/EPICS-AND-STORIES-TRACKER.md`.
 Stories 127.1/127.2 реализованы; единственные явно backend-gated истории текущей
 программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
 report/analytics retry endpoints). Source reconciliation для Story 165.1
 влита PR #87 (`bc071fdf`), а отдельный closeout зафиксирован в PR #89;
-Story 165.2 закрывается через PR #90: active localhost guidance синхронизирован,
-а doc-citation gate сделан детерминированным для Git-tracked документов.
+Story 165.2 влита PR #90: active localhost guidance синхронизирован, а
+doc-citation gate сделан детерминированным для Git-tracked документов. Story
+165.3 завершается с merge текущей delivery; Stories 165.4/165.5 остаются
+deferred до появления backend capabilities. Epic 127 завершён, Epic 162
+выполняется, Epics 163/164 находятся в backlog, Epic 165 завершён текущей
+delivery.
 <!-- CURRENT-STATUS:END -->
 
 ---
@@ -35,7 +39,21 @@ Story 165.2 закрывается через PR #90: active localhost guidance 
 
 ### OpenWiki generation status
 
-`openwiki/**` остаётся generated-only поверхностью и вручную не редактируется. Текущие generated pages ещё содержат устаревшие Tier-0/PM2/CI-certification и `max-warnings: 112` формулировки. Story 165.3 остаётся backlog до merge исправленных source docs; затем `.github/workflows/openwiki-update.yml` должен выполнить `npx openwiki@$OPENWIKI_VERSION code --update --print` в чистом изолированном worktree. Если provider credential недоступен, это фиксируется как blocker без ручной подмены generated output.
+Generated pages в `openwiki/**` остаются generated-only поверхностью и вручную
+не редактируются; `openwiki/INSTRUCTIONS.md` — user-authored control metadata,
+а не generated page.
+Story 165.3 завершает Epic 165 с merge текущей delivery. Workflow запускается ежедневно по cron `47 8 * * *` UTC на
+self-hosted runner `wb-ci-fe` с Node.js 24 и выполняет
+`npx --yes openwiki@0.3.0 code --update --print` через provider `anthropic`,
+model `glm-5.2` и `https://api.z.ai/api/anthropic`. Scheduled run на `main`
+создаёт уникальную branch
+`automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` и PR без merge;
+manual dispatch на `main` отклоняется, а manual dispatch на feature branch
+публикует generated commit обратно в эту же branch. Workflow восстанавливает
+собственный файл, все `AGENTS.md`, `CLAUDE.md` и
+`openwiki/INSTRUCTIONS.md`; staging принимает generated `openwiki/**`, явно
+исключая control file. Если provider credential недоступен, это фиксируется
+как blocker без ручной подмены generated output.
 
 ---
 
@@ -181,7 +199,7 @@ charts/page integration и тесты присутствуют в source.
 | **P1**    | Local E2E reliability (Epic 162)  | epic   | 📋 1 done + 9 backlog             |
 | **P1**    | Operator workflows (Epic 163)     | epic   | 📋 6 backlog                      |
 | **P2**    | Boundary/maintenance debt (164)   | epic   | 📋 4 backlog                      |
-| **P2**    | OpenWiki regeneration (165.3)     | story  | 📋 After 165.1/165.2 source merge |
+| **P2**    | OpenWiki regeneration (165.3)     | story  | ✅ Completes on merge             |
 | **P2**    | Liquidity daily trends (165.4)    | gated  | ⏸ Deferred: backend snapshots     |
 | **P2**    | Per-status backfill retry (165.5) | gated  | ⏸ Deferred: backend endpoints     |
 | **P4**    | Cache Timestamps Display          | 1h     | ℹ️ Optional                       |
@@ -240,7 +258,7 @@ charts/page integration и тесты присутствуют в source.
 | 162-FE | Trustworthy Local Validation      |   — | 🚧 In progress | 2026-08-03            |
 | 163-FE | Complete Operator Workflows       |   — | 📋 Backlog     | 2026-08-03            |
 | 164-FE | Frontend Boundaries & Maintenance |   — | 📋 Backlog     | 2026-08-03            |
-| 165-FE | Truthful Status & Backend Backlog |   — | 🚧 In progress | 2026-08-03            |
+| 165-FE | Truthful Status & Backend Backlog |   — | ✅ Completes on merge | 2026-08-05            |
 
 **Orders Integrity реализован и покрыт source/unit плюс dedicated local Playwright spec.**
 

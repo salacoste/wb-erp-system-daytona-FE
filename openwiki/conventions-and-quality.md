@@ -80,6 +80,9 @@ Each gate has an accepted baseline. Stories close only when all gates match thei
 | ESLint | `npm run lint` | 0 errors, max-warnings: 112 |
 | Vitest | `npm test -- --run` | ≥ 17186 passing, 0 failed |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
+| Privacy + diagnostic-capture unit tests | `npm run test:privacy` | Console guard + diagnostic-capture-policy tests pass (see [Testing & Operations](testing-and-ops.md#diagnostic-capture-policy)) |
+| Outbound network guards | focused vitest run + `e2e/outbound-network-guard.spec.ts` | All non-local test network attempts denied (see [Testing & Operations](testing-and-ops.md#outbound-network-guards)) |
+| Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
 
 ### Ratchet gate behavior
 
@@ -113,7 +116,7 @@ Every story closes only after **two adversarial code-review passes** in fresh co
 
 This project has **no mandatory CI/CD merge gate** — there is currently no required GitHub Actions status check. Merge authority is local:
 
-- Before merge, run the relevant tests, lint, type-check, and production build locally **with the pinned Node.js/npm versions** and record concise evidence.
+- Before merge, run the relevant tests, lint, type-check, and production build locally **with the pinned Node.js/npm versions** and record concise evidence. The current authoritative command set is the `README.md` **Local validation** section together with the active story plan. The historical Story 128.10 [Frontend Verification Orchestrator](testing-and-ops.md#frontend-verification-orchestrator-historical-story-12810) (`scripts/story-128-10/verify-frontend.mjs`) and its manifest are **immutable, branch-bound evidence** on the former `feat/epic-128-10-frontend-verification-foundation` branch — they are not the current project-wide validation entry point.
 - After local validation passes, commit, push the feature branch, merge its PR into `main`, and remove completed local/remote feature branches and temporary worktrees.
 - Do **not** enable or add a required `Quality Gates`/`CI` status check without an explicit owner decision.
 - Local-only merge authority does **not** permit deploys, production operations, force-pushes, or direct pushes to `main`.
@@ -130,6 +133,4 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Pre-flight source-trace verification** — Before implementing a story, grep for the story's AC nouns. If all ACs are already shipped, close as no-op with evidence
 - **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
-- **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
-alue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings

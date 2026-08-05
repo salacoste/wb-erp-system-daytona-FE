@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-05 # Story 165.1 closeout recorded in PR #89.
+last_updated: 2026-08-05 # Story 165.3 final Run 9, affected validation, and adversarial review passed; lifecycle closes with the current PR merge.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -724,9 +724,9 @@ development_status:
 
   # Epic 165-FE: Truthful Product Status and Backend-Ready Backlog
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
-  epic-165-fe: in-progress
+  epic-165-fe: done
   165.1-fe-reconcile-epic-127-delivery-status: done  # Source reconciliation merged in PR #87 at bc071fdf; dedicated closeout recorded in PR #89.
   165.2-fe-align-local-development-validation-guidance: done  # Deterministic tracked-doc validation and active localhost guidance close through PR #90 on merge.
-  165.3-fe-regenerate-openwiki: backlog  # Requires corrected source docs to be committed before isolated generator execution.
+  165.3-fe-regenerate-openwiki: done  # Final Run 9 30974657031 produced approved e3d9e137; full application and affected workflow/documentation validation passed. Completion is effective through the current normal PR merge.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: deferred  # Backend must provide non-empty persisted daily snapshots.
   165.5-fe-per-status-backfill-retry-after-separate-contracts: deferred  # Backend must expose separate report/analytics retry endpoints.

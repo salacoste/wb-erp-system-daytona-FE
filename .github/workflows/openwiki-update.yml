@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: openwiki-frontend
@@ -23,28 +24,39 @@ jobs:
     timeout-minutes: 60
 
     steps:
+      - name: Validate manual dispatch ref
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != refs/heads/* ]]; then
+            echo "Manual OpenWiki generation requires a branch ref; tags and other refs are prohibited." >&2
+            exit 1
+          fi
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            echo "Manual OpenWiki generation from main is prohibited; dispatch a feature branch." >&2
+            exit 1
+          fi
+
       - name: Check out repository
         uses: actions/checkout@v7
         with:
+          clean: true
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '24'
 
-      - name: Generate frontend OpenWiki (latest version)
+      - name: Generate frontend OpenWiki
         run: |
-          # openwiki 0.2.0+ requires YAML front matter in openwiki/*.md — added 2026-07-22 to all
-          # 6 frontend openwiki files (type/title/description), unblocking the latest version.
-          OPENWIKI_VERSION="$(npm view openwiki version)"
-          echo "Using openwiki@$OPENWIKI_VERSION"
-          # Clear the npx cache so openwiki's native dep (better-sqlite3) is rebuilt for the
-          # current Node (24) via prebuild-install. Without this, npx reuses a stale Node-20
-          # binary from the cache → "NODE_MODULE_VERSION 127 vs 137" load error → exit 1.
-          rm -rf ~/.npm/_npx
-          npx --yes "openwiki@$OPENWIKI_VERSION" code --update --print
+          set -euo pipefail
+          # Keep npx and native dependencies isolated from persistent self-hosted runner state.
+          npm_config_cache="${RUNNER_TEMP}/openwiki-npm-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          export npm_config_cache
+          mkdir -p "$npm_config_cache"
+          npx --yes "openwiki@0.3.0" code --update --print
         env:
           # z.ai GLM 5.2 via Anthropic-compatible endpoint.
           # NOTE: the openai/coding-paas endpoint does NOT work with openwiki — @langchain/openai
@@ -55,31 +67,140 @@ jobs:
           ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
           OPENWIKI_MODEL_ID: glm-5.2
 
-      - name: Preserve scheduled self-hosted workflow
-        run: git restore --source=HEAD -- .github/workflows/openwiki-update.yml
-
-      - name: Preserve BMad framework AGENTS.md files
-        # AGENTS.md is a BMad framework file. OpenWiki appends agent guidance to it —
-        # revert so BMad routing stays authoritative and the unstaged-changes guard below passes.
-        run: git restore --source=HEAD -- ':(glob)**/AGENTS.md'
+      - name: Restore protected repository guidance
+        run: |
+          set -euo pipefail
+          git restore --source=HEAD -- .github/workflows/openwiki-update.yml
+          git restore --source=HEAD -- ':(glob)**/AGENTS.md'
+          git restore --source=HEAD -- CLAUDE.md
+          git restore --source=HEAD -- openwiki/INSTRUCTIONS.md
 
       - name: Show generated changes
-        run: git status --short
+        run: |
+          set -euo pipefail
+          git status --short
 
       - name: Commit OpenWiki updates
-        if: github.ref == 'refs/heads/main'
+        id: commit
         run: |
           set -euo pipefail
           git config user.name "OpenWiki Bot"
           git config user.email "actions@github.com"
-          # AGENTS.md is intentionally EXCLUDED — it is a BMad framework file, preserved above.
-          git add openwiki/ CLAUDE.md
+          git add -A -- openwiki/ ':(top,exclude)openwiki/INSTRUCTIONS.md'
+
+          if ! git diff --cached --quiet -- . ':(top,exclude)openwiki'; then
+            echo "Refusing to commit staged changes outside openwiki/." >&2
+            git diff --cached --name-status >&2
+            exit 1
+          fi
+
+          if ! git diff --quiet; then
+            echo "Refusing to ignore unexpected unstaged tracked changes." >&2
+            git status --short >&2
+            exit 1
+          fi
+
+          if IFS= read -r -d '' unexpected_file \
+            < <(git ls-files --others --exclude-standard -z); then
+            echo "Refusing to ignore unexpected untracked files." >&2
+            printf 'First unexpected path: %q\n' "$unexpected_file" >&2
+            git status --short --untracked-files=all >&2
+            exit 1
+          fi
+
+          if IFS= read -r -d '' unexpected_ignored_file \
+            < <(git ls-files --others --ignored --exclude-standard -z); then
+            echo "Refusing to ignore unexpected ignored files." >&2
+            printf 'First unexpected ignored path: %q\n' "$unexpected_ignored_file" >&2
+            git status --short --untracked-files=all >&2
+            exit 1
+          fi
 
           if git diff --cached --quiet; then
             echo "No OpenWiki changes to commit."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           git commit -m "docs: update frontend OpenWiki [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request for scheduled main refresh
+        if: steps.commit.outputs.has_changes == 'true' && github.event_name == 'schedule' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          : "${GH_TOKEN:?GitHub token is required for publication}"
+          if [[ ! "$GITHUB_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "Refusing to publish with an invalid workflow run ID." >&2
+            exit 1
+          fi
+          if [[ ! "$GITHUB_RUN_ATTEMPT" =~ ^[0-9]+$ ]]; then
+            echo "Refusing to publish with an invalid workflow run attempt." >&2
+            exit 1
+          fi
+
+          branch_name="automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git check-ref-format --branch "$branch_name"
+          git switch -c "$branch_name"
+
+          credential_free_origin="https://github.com/${GITHUB_REPOSITORY}.git"
+          restore_origin() {
+            git remote set-url origin "$credential_free_origin"
+          }
+          trap restore_origin EXIT
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --set-upstream origin "$branch_name"
+          restore_origin
+
+          pr_payload="$(node -e '
+            const [head, runId] = process.argv.slice(1);
+            process.stdout.write(JSON.stringify({
+              base: "main",
+              head,
+              title: "docs: update frontend OpenWiki",
+              body: "Automated OpenWiki refresh from workflow run " + runId + ".",
+            }));
+          ' "$branch_name" "$GITHUB_RUN_ID")"
+          pr_response="${RUNNER_TEMP}/openwiki-pr-${GITHUB_RUN_ID}.json"
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Content-Type: application/json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data "$pr_payload" \
+            --output "$pr_response" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls"
+          node -e '
+            const response = JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"));
+            if (typeof response.html_url !== "string" || response.html_url.length === 0) {
+              throw new Error("GitHub pull request response did not contain html_url");
+            }
+            process.stdout.write("Created pull request: " + response.html_url + "\n");
+          ' "$pr_response"
+
+      - name: Push updates back to dispatched branch
+        if: steps.commit.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          : "${GH_TOKEN:?GitHub token is required for publication}"
+          target_branch="${GITHUB_REF_NAME}"
+          if [[ "$target_branch" == "main" ]]; then
+            echo "Refusing to publish story output directly to main." >&2
+            exit 1
+          fi
+          git check-ref-format --branch "$target_branch"
+          target_refspec="HEAD:refs/heads/${target_branch}"
+
+          credential_free_origin="https://github.com/${GITHUB_REPOSITORY}.git"
+          restore_origin() {
+            git remote set-url origin "$credential_free_origin"
+          }
+          trap restore_origin EXIT
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "$target_refspec"
+          restore_origin

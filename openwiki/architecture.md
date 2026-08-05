@@ -1,7 +1,7 @@
 ---
 type: "Architecture Overview"
 title: "Architecture"
-description: "Next.js App Router single-page dashboard architecture — route groups, layout and provider hierarchy, 100% client-side data fetching, authentication (proxy + Zustand store), and state management."
+description: "Next.js App Router dashboard architecture — route groups, layout and provider hierarchy, client-side data fetching for interactive pages, authentication (proxy + Zustand store), and state management."
 ---
 # Architecture
 
@@ -40,9 +40,9 @@ The dashboard layout (`src/app/(dashboard)/layout.tsx`) is a **client component*
 
 Source: `src/app/layout.tsx`, `src/app/providers.tsx`, `src/app/(dashboard)/layout.tsx`
 
-## Data Fetching — 100% Client-Side
+## Data Fetching — Interactive Pages Are Client-Side
 
-Every page is `'use client'`. Despite using the App Router, **no React Server Components fetch data**. All data flows through this layered architecture:
+Next.js server page and layout wrappers coexist with client components. **Not every page uses the `use client` directive**; server components still render page/layout wrappers. However, the interactive, data-driven pages fetch client-side — none of the React Server Components fetch data. Those data flows use this layered architecture:
 
 ```
 Page (client component)
