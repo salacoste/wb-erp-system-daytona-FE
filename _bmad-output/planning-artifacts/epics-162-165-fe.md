@@ -404,7 +404,8 @@ So that the two largest analytics specs are faster and deterministic.
 
 **Given** an interaction changes filters, pagination, or selected products
 **When** the UI updates
-**Then** the test verifies both the request parameters and the visible result
+**Then** a request-driven interaction verifies its exact method, path, query, and visible result
+**And** a client-only interaction proves its visible or browser-state transition without inventing an API request
 **And** does not assume completion after elapsed time.
 
 **Given** the remediation is complete

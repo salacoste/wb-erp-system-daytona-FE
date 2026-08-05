@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures/network-test'
-import { ROUTES } from './fixtures/test-data'
+import { installStory1625AnalyticsRoutes } from './fixtures/story-162-5-analytics'
+import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 /**
  * E2E: Unit Economics waterfall Y-axis domain (validation F-44)
@@ -9,30 +10,71 @@ import { ROUTES } from './fixtures/test-data'
  * cogs_pct > 100% (COGS exceeds revenue). Those bars extend below 0% and were CLIPPED
  * by the fixed domain — visually understating the loss.
  *
- * This spec validates the fix end-to-end against the LIVE backend: it finds a SKU whose
+ * This spec validates the fix end-to-end against a deterministic fixture: it finds a SKU whose
  * COGS% > 100, selects it (driving the waterfall to that SKU's breakdown), and asserts the
  * Y-axis renders at least one NEGATIVE tick. With the old `domain={[0,100]}` a negative tick
- * could never appear, so this is a true regression guard. Skips cleanly (visible yellow, not a
- * silent green) when no cogs>100% row exists on the loaded week — no false positive.
+ * could never appear, so this is a true regression guard. The fixture deterministically includes
+ * COGS above 100%, so the regression condition is required rather than optional.
  *
  * Uses element-presence waits + expect.poll, NOT networkidle (anti-pattern #9 — the page
  * background-polls) and no hard waitForTimeout (anti-pattern #7).
  */
 test.describe('Unit Economics waterfall — F-44 Y-axis clipping', () => {
   test('a COGS>100% SKU renders a negative Y-axis tick (not clipped at 0)', async ({ page }) => {
+    const controller = await installStory1625AnalyticsRoutes(page)
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const initialResponse = page.waitForResponse(response => {
+      const url = new URL(response.url())
+      return (
+        response.request().method() === 'GET' &&
+        url.pathname === '/v1/analytics/unit-economics' &&
+        url.searchParams.get('view_by') === 'sku' &&
+        url.searchParams.get('sort_by') === 'revenue' &&
+        url.searchParams.get('sort_order') === 'desc' &&
+        response.status() === 200
+      )
+    })
     await page.goto(ROUTES.analytics.unitEconomics, { waitUntil: 'domcontentloaded' })
+    const initial = await initialResponse
+    const week = new URL(initial.url()).searchParams.get('week')
+    if (!week) throw new Error('Unit Economics fixture request omitted the selected week')
 
-    // Wait for the live data table to populate (rows present).
+    // Wait for the deterministic data table to populate (rows present).
     const rows = page.locator('tbody tr')
-    await expect(rows.first()).toBeVisible({ timeout: 20_000 })
+    await expect(rows.first()).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(rows.first().locator('td').first()).toHaveText('700052')
 
     // The table is paginated + defaults to revenue-desc, so cogs>100% (loss-making) SKUs may sit
     // below the first page. COGS% itself isn't sortable, but Маржа % (net_margin_pct) is — and
     // cogs>100% ⟹ negative margin, so sorting margin ASCENDING surfaces the loss-makers onto the
     // first page deterministically (independent of which week the page defaults to).
     const marginHeader = page.locator('th', { hasText: 'Маржа' }).first()
+    const marginDescending = page.waitForResponse(response => {
+      const url = new URL(response.url())
+      return (
+        url.pathname === '/v1/analytics/unit-economics' &&
+        url.searchParams.get('week') === week &&
+        url.searchParams.get('sort_by') === 'net_margin_pct' &&
+        url.searchParams.get('sort_order') === 'desc' &&
+        response.status() === 200
+      )
+    })
     await marginHeader.click() // → sort net_margin_pct desc (profitable first)
+    await marginDescending
+    await expect(rows.first().locator('td').first()).toHaveText('700037')
+    const marginAscending = page.waitForResponse(response => {
+      const url = new URL(response.url())
+      return (
+        url.pathname === '/v1/analytics/unit-economics' &&
+        url.searchParams.get('week') === week &&
+        url.searchParams.get('sort_by') === 'net_margin_pct' &&
+        url.searchParams.get('sort_order') === 'asc' &&
+        response.status() === 200
+      )
+    })
     await marginHeader.click() // → toggle to asc (most negative / loss first)
+    await marginAscending
+    await expect(rows.first().locator('td').first()).toHaveText('700001')
 
     // COGS% is the 4th column (0-based td index 3): sku_id | name | revenue | COGS% | ...
     // Scan visible rows for the HIGHEST COGS% > 100 (deepest negative domain = clearest tick).
@@ -57,28 +99,20 @@ test.describe('Unit Economics waterfall — F-44 Y-axis clipping', () => {
       return { idx, cogs }
     }
 
-    // Poll while the margin-sort re-fetch lands; skip cleanly (no false-green) if this week's
-    // data genuinely has no cogs>100% SKU even after sorting loss-makers to the top.
+    // Poll while the margin-sort re-fetch lands. The fixture contract requires this condition.
     let target = { idx: -1, cogs: 100 }
-    let found = false
-    try {
-      await expect
-        .poll(
-          async () => {
-            target = await findMaxCogsRow()
-            return target.idx !== -1
-          },
-          { timeout: 8_000 }
-        )
-        .toBe(true)
-      found = true
-    } catch {
-      found = false
-    }
-    test.skip(
-      !found,
-      'No SKU with cogs_pct>100% in the data even after sorting by margin — F-44 condition not reproducible this week'
-    )
+    await expect
+      .poll(
+        async () => {
+          target = await findMaxCogsRow()
+          return target.idx !== -1
+        },
+        {
+          timeout: 8_000,
+          message: 'expected the deterministic Story 162.5 fixture to include COGS above 100%',
+        }
+      )
+      .toBe(true)
     const targetCogs = target.cogs
 
     // Select that SKU → the "Структура затрат" waterfall re-renders for its breakdown.
@@ -112,5 +146,6 @@ test.describe('Unit Economics waterfall — F-44 Y-axis clipping', () => {
         }
       )
       .toBe(true)
+    controller.assertNoUnexpectedRequests()
   })
 })

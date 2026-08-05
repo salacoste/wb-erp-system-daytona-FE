@@ -135,20 +135,32 @@ const storyConfig = {
   },
   162.5: {
     files: [
+      '.omx/plans/story-162-5-remove-fixed-waits-from-liquidity-and-unit-economics-e2e.md',
+      '_bmad-output/implementation-artifacts/162-5-fe-liquidity-unit-economics-state-waits.md',
+      '_bmad-output/implementation-artifacts/sprint-status.yaml',
+      '_bmad-output/planning-artifacts/epics-162-165-fe.md',
+      'e2e/fixtures/story-162-5-analytics.ts',
       'e2e/liquidity.spec.ts',
       'e2e/unit-economics.spec.ts',
       'e2e/unit-economics-waterfall.spec.ts',
+      'package.json',
+      'scripts/check-e2e-fixed-waits.mjs',
+      'scripts/manage-omx-story-plans.mjs',
+      'src/test/e2e-fixed-waits.test.ts',
     ],
     steps: [
-      'Capture the 58 owned fixed waits and the observable state that replaces each wait.',
-      'Use response predicates, locator state, and reduced-motion/stable-render signals with bounded diagnostics.',
-      'Run repeated targeted localhost executions and record `58 → 0`, runtime, and retry behavior.',
+      'Reconcile the historical 58-call baseline with the current 55 browser waits plus two timer-delayed route fixtures, and prove the static guard is RED before implementation.',
+      'Install exact-path deterministic GET fixtures, then use response predicates, visible/browser-state transitions, `page.emulateMedia({ reducedMotion: "reduce" })`, and bounded diagnostics; remove obsolete Liquidity tests for nonexistent search, pagination, and sticky-header behavior.',
+      'Add a fail-closed fixed-wait scanner with Vitest regression coverage, then run repeated targeted localhost executions and record historical/current-to-zero counts, runtime, and retry behavior.',
     ],
     verify: [
-      'rg -n "page\\.waitForTimeout\\(" e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts',
-      'npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts --repeat-each=2',
+      'rg -n "page\\.waitForTimeout\\(|new Promise\\([^\\n]*setTimeout" e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts',
+      'npm run check:e2e-waits',
+      'npx vitest run src/test/e2e-fixed-waits.test.ts',
+      'npm run test:e2e:full -- e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts --project=chromium --workers=1 --repeat-each=2 --retries=0',
+      'npx eslint e2e/fixtures/story-162-5-analytics.ts e2e/liquidity.spec.ts e2e/unit-economics.spec.ts e2e/unit-economics-waterfall.spec.ts scripts/check-e2e-fixed-waits.mjs scripts/manage-omx-story-plans.mjs src/test/e2e-fixed-waits.test.ts --max-warnings=0',
     ],
-    risk: 'Replacing sleeps with network-idle can couple independent requests; wait only for the state under test.',
+    risk: 'Broad route globs can intercept page documents, live fallback can make retry tests self-heal, and network-idle can couple independent requests; fixtures must match exact GET API paths, fail closed, and wait only for the state under test.',
   },
   162.6: {
     files: [
